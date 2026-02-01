@@ -26,8 +26,8 @@
 | 1.6 | Layout: AppHeader (hamburger móvil) + AppFooter | ✅ Hecho | 2026-02-01 | AppHeader con hamburger móvil, social links desktop, lang switch, account btn. AppFooter 3 columnas. Layout default. i18n actualizado. |
 | 1.7 | AuthModal (bottom sheet móvil, modal desktop) | ✅ Hecho | 2026-02-01 | Bottom sheet en móvil, modal centrado en desktop. Login/Register con email+password y Google OAuth. Forgot password. Escape para cerrar. Body scroll lock. |
 | 1.8 | Página / con placeholder + AuthModal | ✅ Hecho | 2026-02-01 | Hero con título + subtítulo + "Próximamente". useSeoMeta. Página /confirm para OAuth callback. AuthModal integrado en layout. |
-| 1.9 | Conectar Cloudflare Pages + deploy automático | ⬜ Pendiente | | |
-| 1.10 | ESLint + Prettier + Husky | ⬜ Pendiente | | |
+| 1.9 | Conectar Cloudflare Pages + deploy automático | ✅ Hecho | 2026-02-01 | Cloudflare Pages conectado a GitHub. Build output: dist. Auto-deploy on push to main. Variables de entorno configuradas. |
+| 1.10 | ESLint + Prettier + Husky | ✅ Hecho | 2026-02-01 | @nuxt/eslint-config flat config. Prettier. Husky pre-commit hook con lint. docs/ excluido de lint. |
 | 1.11 | Test móvil real: registro, login, logout | ⬜ Pendiente | | |
 | 1.12 | Verificar botón atrás móvil | ⬜ Pendiente | | |
 
