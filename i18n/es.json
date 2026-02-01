@@ -52,7 +52,17 @@
     "filters": "Filtros",
     "noResults": "No se encontraron vehículos",
     "clearFilters": "Limpiar filtros",
-    "comingSoon": "Próximamente"
+    "comingSoon": "Próximamente",
+    "allCategories": "Todos",
+    "alquiler": "Alquiler",
+    "venta": "Venta",
+    "terceros": "Terceros",
+    "loadMore": "Cargar más",
+    "vehicles": "vehículos",
+    "from": "desde",
+    "month": "mes",
+    "featured": "Destacado",
+    "searchPlaceholder": "Buscar marca o modelo..."
   },
   "common": {
     "loading": "Cargando...",

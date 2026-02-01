@@ -42,7 +42,7 @@
 | 2.6 | Composable useVehicles | ✅ Hecho | 2026-02-01 | fetchVehicles con filtros (categoría, subcategoría, precio, año, marca, búsqueda), paginación infinita (PAGE_SIZE=20), fetchBySlug, fetchMore, reset. Tipado completo. |
 | 2.7 | Composable useFilters (6 tipos dinámicos) | ✅ Hecho | 2026-02-01 | fetchBySubcategory, visibleFilters (computed con lógica tick extra/hides), setFilter, clearFilter, clearAll. 6 tipos soportados. |
 | 2.8 | Store catalog.ts | ✅ Hecho | 2026-02-01 | useCatalogState con useState (Pinia no disponible en Nuxt 4). Categoría, subcategoría, filtros, scroll position, búsqueda. Persiste entre navegaciones. |
-| 2.9 | CategoryBar (dinámico, scrollable móvil) | ⬜ Pendiente | | |
+| 2.9 | CategoryBar (dinámico, scrollable móvil) | ✅ Hecho | 2026-02-01 | Scroll horizontal en móvil, wrap en desktop. Botones: Todos/Alquiler/Venta/Terceros. i18n añadido. Emite evento change. Touch targets 44px. |
 | 2.10 | SubcategoryBar (chips dinámicos) | ⬜ Pendiente | | |
 | 2.11 | FilterBar (bottom sheet móvil, 6 tipos) | ⬜ Pendiente | | |
 | 2.12 | VehicleGrid + VehicleCard + @nuxt/image | ⬜ Pendiente | | |

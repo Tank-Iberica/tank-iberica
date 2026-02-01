@@ -52,7 +52,17 @@
     "filters": "Filters",
     "noResults": "No vehicles found",
     "clearFilters": "Clear filters",
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "allCategories": "All",
+    "alquiler": "Rental",
+    "venta": "Sale",
+    "terceros": "Third party",
+    "loadMore": "Load more",
+    "vehicles": "vehicles",
+    "from": "from",
+    "month": "month",
+    "featured": "Featured",
+    "searchPlaceholder": "Search brand or model..."
   },
   "common": {
     "loading": "Loading...",
