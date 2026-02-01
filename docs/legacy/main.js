@@ -19,19 +19,11 @@ let activeFilters = {};
 // DETECCIÓN DE IDIOMA POR IP
 // ============================================
 async function detectLanguageByIP() {
-    try {
-        const controller = new AbortController();
-        setTimeout(() => controller.abort(), 5000);
-        const response = await fetch('https://ipapi.co/json/', { signal: controller.signal });
-        if (response.ok) {
-            const data = await response.json();
-            if (data.country_code !== 'ES') {
-                currentLang = 'en';
-                console.log('🌍 País:', data.country_code, '→ EN');
-            }
-        }
-    } catch (e) {
-        console.warn('⚠️ IP detection failed, defaulting to ES');
+    // Detectar idioma por navigator.language en lugar de ipapi.co
+    const browserLang = (navigator.language || navigator.userLanguage || 'es').toLowerCase();
+    if (!browserLang.startsWith('es')) {
+        currentLang = 'en';
+        console.log('🌍 Idioma del navegador:', browserLang, '→ EN');
     }
     const saved = localStorage.getItem('tank_lang');
     if (saved) currentLang = saved;

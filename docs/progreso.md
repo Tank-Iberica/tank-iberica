@@ -13,7 +13,7 @@
 | 0.4 | Reemplazar 163 innerHTML por textContent/DOMPurify | ✅ Hecho | 2026-02-01 | escapeHTML() helper creado. 163 innerHTML revisados en 7 archivos: datos dinámicos escapados, textos estáticos a textContent, clearings mantenidos. |
 | 0.5 | Migrar localStorage a sessionStorage para sesiones | ✅ Hecho | 2026-02-01 | Sesiones (tank_iberica_session/user, tank_token/user) migradas a sessionStorage en 5 archivos. Preferencias (idioma, chatId, plataformas) mantienen localStorage. |
 | 0.6 | Desactivar Apps Script OTP antiguo | ✅ Hecho | 2026-02-01 | Apps Scripts antiguos borrados. Todas las URLs (5 archivos) apuntan al único script activo. |
-| 0.7 | Eliminar ipapi.co, usar navigator.language | ⬜ Pendiente | | |
+| 0.7 | Eliminar ipapi.co, usar navigator.language | ✅ Hecho | 2026-02-01 | ipapi.co eliminado de main.js e index.html. Reemplazado por navigator.language. 0 peticiones externas. |
 
 ## Step 1 — Cimientos: Nuxt + Auth + Deploy
 | # | Tarea | Estado | Fecha | Notas |
