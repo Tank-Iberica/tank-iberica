@@ -11523,21 +11523,18 @@
         let noticiasFromSheets = [];
         let useGoogleSheets = false;
         
-        // Constantes de configuración de Google Sheets
-        const SPREADSHEET_ID = '1GdmirqWFKVt39QvEJxdMH3zW0-itl64YuqYEsOAkF30';
-        const API_KEY = 'AIzaSyCzN8LEMBXM75Mkop9NH0iGqa4XTmLX0i4';
-        
-        // Funciones para Google Sheets (siempre usar versión inline para consistencia)
+        // Proxy Apps Script (API_KEY queda en el servidor)
+        const PROXY_URL = 'https://script.google.com/macros/s/AKfycbzbuibOzpV1iSQVa1JtZny_WU06o18Xly4n2Az7CBKMvpNyiBvwTYLnhSFJfWTMjL90ww/exec';
+
+        // Funciones para Google Sheets via proxy
         window.readSheetData = async function(sheetName) {
-            // Soportar tanto CONFIG.SPREADSHEET_ID como SPREADSHEET_ID directo
-            const spreadsheetId = (typeof CONFIG !== 'undefined' && CONFIG.SPREADSHEET_ID) || (typeof SPREADSHEET_ID !== 'undefined' && SPREADSHEET_ID);
-            const apiKey = (typeof CONFIG !== 'undefined' && CONFIG.API_KEY) || (typeof API_KEY !== 'undefined' && API_KEY);
-            
-            if (!spreadsheetId || !apiKey) {
-                console.warn('⚠️ Google Sheets no configurado: SPREADSHEET_ID o API_KEY no definidos');
+            const proxyUrl = (typeof CONFIG !== 'undefined' && CONFIG.PROXY_URL) || (typeof PROXY_URL !== 'undefined' && PROXY_URL);
+
+            if (!proxyUrl) {
+                console.warn('⚠️ Google Sheets no configurado: PROXY_URL no definido');
                 return [];
             }
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}?key=${apiKey}`;
+            const url = `${proxyUrl}?sheet=${encodeURIComponent(sheetName)}`;
             console.log('📡 Cargando hoja:', sheetName);
             try {
                 const response = await fetch(url);
@@ -11990,16 +11987,15 @@
         
         async function cargarMensajesChat() {
             try {
-                // Obtener configuración de Sheets
-                const spreadsheetId = (typeof CONFIG !== 'undefined' && CONFIG.SPREADSHEET_ID) || (typeof SPREADSHEET_ID !== 'undefined' && SPREADSHEET_ID);
-                const apiKey = (typeof CONFIG !== 'undefined' && CONFIG.API_KEY) || (typeof API_KEY !== 'undefined' && API_KEY);
-                
-                if (!spreadsheetId || !apiKey) {
-                    console.warn('⚠️ Chat: SPREADSHEET_ID o API_KEY no definidos');
+                // Obtener proxy URL
+                const proxyUrl = (typeof CONFIG !== 'undefined' && CONFIG.PROXY_URL) || (typeof PROXY_URL !== 'undefined' && PROXY_URL);
+
+                if (!proxyUrl) {
+                    console.warn('⚠️ Chat: PROXY_URL no definido');
                     return;
                 }
-                
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/chat?key=${apiKey}`;
+
+                const url = `${proxyUrl}?sheet=chat`;
                 const resp = await fetch(url);
                 if (!resp.ok) {
                     console.log('Chat: Hoja no encontrada o vacía');

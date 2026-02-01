@@ -321,10 +321,9 @@ async function cargarMensajesChat() {
     }
     
     try {
-        const SPREADSHEET_ID = '1GdmirqWFKVt39QvEJxdMH3zW0-itl64YuqYEsOAkF30';
-        const API_KEY = 'AIzaSyCzN8LEMBXM75Mkop9NH0iGqa4XTmLX0i4';
-        
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/chat?key=${API_KEY}`;
+        const PROXY_URL = 'https://script.google.com/macros/s/AKfycbzbuibOzpV1iSQVa1JtZny_WU06o18Xly4n2Az7CBKMvpNyiBvwTYLnhSFJfWTMjL90ww/exec';
+
+        const url = `${PROXY_URL}?sheet=chat`;
         const resp = await fetch(url);
         
         if (!resp.ok) {

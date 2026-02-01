@@ -9,7 +9,7 @@
 |---|-------|--------|-------|-------|
 | 0.1 | Revocar API_KEY, crear nueva con restricción de dominio | ✅ Hecho | 2026-02-01 | Nueva key restringida a tankiberica.com. Antigua revocada. Reemplazada en 4 archivos legacy. |
 | 0.2 | Eliminar Keys.txt, añadir a .gitignore | ✅ Hecho | 2026-02-01 | Keys.txt no existía en el repo. Añadido a .gitignore como prevención. |
-| 0.3 | Crear proxy Apps Script para Sheets API | ⬜ Pendiente | | |
+| 0.3 | Crear proxy Apps Script para Sheets API | ✅ Hecho | 2026-02-01 | Proxy desplegado. 4 archivos legacy migrados al proxy. 0 ocurrencias de API_KEY en código cliente. |
 | 0.4 | Reemplazar 163 innerHTML por textContent/DOMPurify | ⬜ Pendiente | | |
 | 0.5 | Migrar localStorage a sessionStorage para sesiones | ⬜ Pendiente | | |
 | 0.6 | Desactivar Apps Script OTP antiguo | ⬜ Pendiente | | |

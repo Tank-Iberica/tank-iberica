@@ -3,8 +3,7 @@
 // ============================================
 
 const CONFIG = {
-    SPREADSHEET_ID: '1GdmirqWFKVt39QvEJxdMH3zW0-itl64YuqYEsOAkF30',
-    API_KEY: 'AIzaSyCzN8LEMBXM75Mkop9NH0iGqa4XTmLX0i4' // Reemplazar con tu API Key de Google
+    PROXY_URL: 'https://script.google.com/macros/s/AKfycbzbuibOzpV1iSQVa1JtZny_WU06o18Xly4n2Az7CBKMvpNyiBvwTYLnhSFJfWTMjL90ww/exec'
 };
 
 let currentLang = 'es';
@@ -63,7 +62,7 @@ function applyLanguage() {
 // CARGAR DATOS DE GOOGLE SHEETS
 // ============================================
 async function loadSheetData(sheetName) {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/${sheetName}?key=${CONFIG.API_KEY}`;
+    const url = `${CONFIG.PROXY_URL}?sheet=${encodeURIComponent(sheetName)}`;
     try {
         const response = await fetch(url);
         if (!response.ok) return [];

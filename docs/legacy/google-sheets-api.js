@@ -3,12 +3,9 @@
 // ============================================
 
 const CONFIG = {
-    // API Key de Google Cloud Console
-    API_KEY: 'AIzaSyCzN8LEMBXM75Mkop9NH0iGqa4XTmLX0i4',
-    
-    // Spreadsheet ID
-    SPREADSHEET_ID: '1GdmirqWFKVt39QvEJxdMH3zW0-itl64YuqYEsOAkF30',
-    
+    // Proxy Apps Script (API_KEY queda en el servidor)
+    PROXY_URL: 'https://script.google.com/macros/s/AKfycbzbuibOzpV1iSQVa1JtZny_WU06o18Xly4n2Az7CBKMvpNyiBvwTYLnhSFJfWTMjL90ww/exec',
+
     // Nombres de las hojas
     SHEETS: {
         SUBCATEGORIAS: 'subcategorias',
@@ -35,8 +32,7 @@ const CONFIG = {
  * @returns {Promise<Array>} Array de objetos con los datos
  */
 async function readSheetData(sheetName) {
-    const range = `${sheetName}!A:Z`;
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
+    const url = `${CONFIG.PROXY_URL}?sheet=${encodeURIComponent(sheetName)}`;
     
     try {
         const response = await fetch(url);
@@ -183,16 +179,11 @@ async function loadComentarios(noticiaId = null) {
 // ============================================
 
 function validarConfiguracion() {
-    if (CONFIG.API_KEY === 'TU_API_KEY_AQUI' || !CONFIG.API_KEY) {
-        console.error('❌ Falta configurar API_KEY');
+    if (!CONFIG.PROXY_URL) {
+        console.error('❌ Falta configurar PROXY_URL');
         return false;
     }
-    
-    if (CONFIG.SPREADSHEET_ID === 'TU_SPREADSHEET_ID_AQUI' || !CONFIG.SPREADSHEET_ID) {
-        console.error('❌ Falta configurar SPREADSHEET_ID');
-        return false;
-    }
-    
+
     console.log('✅ Configuración válida');
     return true;
 }
