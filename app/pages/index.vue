@@ -68,7 +68,23 @@ async function onClearFilters() {
   await fetchVehicles({})
 }
 
+defineOptions({ name: 'index' })
+
+const { saveScrollPosition, scrollPosition } = useCatalogState()
+
 onMounted(loadVehicles)
+
+onActivated(() => {
+  if (scrollPosition.value) {
+    nextTick(() => {
+      window.scrollTo(0, scrollPosition.value)
+    })
+  }
+})
+
+onDeactivated(() => {
+  saveScrollPosition(window.scrollY)
+})
 </script>
 
 <style scoped>
