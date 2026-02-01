@@ -35,7 +35,7 @@
 | # | Tarea | Estado | Fecha | Notas |
 |---|-------|--------|-------|-------|
 | 2.1 | Crear tablas: vehicles, vehicle_images, subcategories, filter_definitions, config | ✅ Hecho | 2026-02-01 | Migration 00002. 3 enums (vehicle_status, vehicle_category, filter_type). 5 tablas con índices, FKs CASCADE, updated_at triggers. |
-| 2.2 | RLS: SELECT público en todas | ⬜ Pendiente | | |
+| 2.2 | RLS: SELECT público en todas | ✅ Hecho | 2026-02-01 | Migration 00003. RLS en 5 tablas. SELECT público para published. Admin full access en todas. vehicle_images filtra por vehicle status. filter_definitions excluye is_hidden. |
 | 2.3 | Exportar CSVs de Sheets | ⬜ Pendiente | | |
 | 2.4 | Script migración CSV → Supabase | ⬜ Pendiente | | |
 | 2.5 | Cloudinary: subir fotos, actualizar URLs | ⬜ Pendiente | | |
