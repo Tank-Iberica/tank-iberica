@@ -1,20 +1,74 @@
 <template>
   <div class="home">
-    <section class="hero">
-      <h1 class="hero-title">Tank Iberica</h1>
-      <p class="hero-subtitle">{{ $t('site.description') }}</p>
-      <p class="hero-coming">{{ $t('catalog.comingSoon') }}</p>
+    <AnnounceBanner />
+
+    <section class="catalog-section">
+      <h1 class="catalog-title">{{ $t('catalog.title') }}</h1>
+
+      <CategoryBar @change="onCategoryChange" />
+      <SubcategoryBar @change="onSubcategoryChange" />
+      <FilterBar @change="onFilterChange" />
+
+      <VehicleGrid
+        :vehicles="vehicles"
+        :loading="loading"
+        :loading-more="loadingMore"
+        :has-more="hasMore"
+        @load-more="onLoadMore"
+        @clear-filters="onClearFilters"
+      />
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
+const { vehicles, loading, loadingMore, hasMore, fetchVehicles, fetchMore } = useVehicles()
+const { filters, activeSubcategoryId, resetCatalog } = useCatalogState()
+const { fetchBySubcategory, clearAll: clearAllFilters, reset: resetFilters } = useFilters()
+
 useSeoMeta({
   title: 'Tank Iberica',
-  description: 'Plataforma de vehículos industriales',
+  description: t('site.description'),
   ogTitle: 'Tank Iberica',
-  ogDescription: 'Plataforma de vehículos industriales',
+  ogDescription: t('site.description'),
 })
+
+async function loadVehicles() {
+  await fetchVehicles(filters.value)
+}
+
+async function onCategoryChange() {
+  resetFilters()
+  await loadVehicles()
+}
+
+async function onSubcategoryChange() {
+  clearAllFilters()
+  if (activeSubcategoryId.value) {
+    await fetchBySubcategory(activeSubcategoryId.value)
+  }
+  else {
+    resetFilters()
+  }
+  await loadVehicles()
+}
+
+async function onFilterChange() {
+  await loadVehicles()
+}
+
+async function onLoadMore() {
+  await fetchMore(filters.value)
+}
+
+async function onClearFilters() {
+  resetCatalog()
+  resetFilters()
+  await fetchVehicles({})
+}
+
+onMounted(loadVehicles)
 </script>
 
 <style scoped>
@@ -22,43 +76,21 @@ useSeoMeta({
   min-height: calc(100vh - var(--header-height));
 }
 
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  padding: var(--spacing-8) var(--spacing-4);
-  text-align: center;
+.catalog-section {
+  padding-bottom: var(--spacing-8);
 }
 
-.hero-title {
-  font-family: var(--font-family-logo);
-  font-size: var(--font-size-3xl);
+.catalog-title {
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: var(--spacing-3);
-}
-
-.hero-subtitle {
-  font-size: var(--font-size-lg);
-  color: var(--text-secondary);
-  margin-bottom: var(--spacing-6);
-}
-
-.hero-coming {
-  font-size: var(--font-size-sm);
-  color: var(--text-auxiliary);
-  background: var(--bg-tertiary);
-  padding: var(--spacing-2) var(--spacing-4);
-  border-radius: var(--border-radius-full);
+  color: var(--text-primary);
+  text-align: center;
+  padding: var(--spacing-6) var(--spacing-4) var(--spacing-2);
 }
 
 @media (min-width: 768px) {
-  .hero-title {
-    font-size: var(--font-size-4xl);
+  .catalog-title {
+    font-size: var(--font-size-3xl);
   }
 }
 </style>
