@@ -1,0 +1,6 @@
+id,nombre,nombre_en,filtros_aplicables,publicado,stock
+1,Cisternas,Tankers,"Clase, Volumen, Compartimentos",TRUE,0
+2,Tractoras,Tractors,Potencia (CV),TRUE,0
+3,Semirremolques,Semitrailers,Tipo,TRUE,0
+4,Remolques,Trailers,"Cisterna, Tipo",TRUE,0
+5,Rigidos,Trucks,"Potencia (CV), Cisterna, Tipo",TRUE,0

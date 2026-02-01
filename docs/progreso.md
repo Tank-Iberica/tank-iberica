@@ -36,8 +36,8 @@
 |---|-------|--------|-------|-------|
 | 2.1 | Crear tablas: vehicles, vehicle_images, subcategories, filter_definitions, config | ✅ Hecho | 2026-02-01 | Migration 00002. 3 enums (vehicle_status, vehicle_category, filter_type). 5 tablas con índices, FKs CASCADE, updated_at triggers. |
 | 2.2 | RLS: SELECT público en todas | ✅ Hecho | 2026-02-01 | Migration 00003. RLS en 5 tablas. SELECT público para published. Admin full access en todas. vehicle_images filtra por vehicle status. filter_definitions excluye is_hidden. |
-| 2.3 | Exportar CSVs de Sheets | ⬜ Pendiente | | |
-| 2.4 | Script migración CSV → Supabase | ⬜ Pendiente | | |
+| 2.3 | Exportar CSVs de Sheets | ✅ Hecho | 2026-02-01 | 4 CSVs en supabase/seed/. Subcategorias (5), filtros (8), config (1). Vehiculos vacío de momento. |
+| 2.4 | Script migración CSV → Supabase | ✅ Hecho | 2026-02-01 | seed.sql con 5 subcategorías, 12 filter_definitions (mapeados por subcategoría con extra/hides logic), 1 config. Vehículos pendientes (hoja vacía). |
 | 2.5 | Cloudinary: subir fotos, actualizar URLs | ⬜ Pendiente | | |
 | 2.6 | Composable useVehicles | ⬜ Pendiente | | |
 | 2.7 | Composable useFilters (6 tipos dinámicos) | ⬜ Pendiente | | |

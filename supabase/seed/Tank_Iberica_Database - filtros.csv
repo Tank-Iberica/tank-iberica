@@ -1,0 +1,9 @@
+id,nombre,nombre_en,tipo,estado,valores_default,extra_filtros,ocultar_filtros,unidad
+1,Clase,Class,desplegable,publicado,,,,
+2,Volumen,Volume,slider,publicado,,,,L
+4,Compartimentos,Sections,desplegable,publicado,,,,
+3,Potencia (CV),Power (HP),slider,pub,,,,
+5,Cisterna,Tanker,tick,pub,,"Tipo, Volumen, Compartimentos, Tipo",Capacidad,
+6,Tipo,Type,desplegable,pub,,,,
+7,Capacidad,Load,slider,pub,,,,Kg
+8,Patatas,Potatos,slider,publicado,,,,
