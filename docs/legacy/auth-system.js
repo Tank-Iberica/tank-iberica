@@ -7,7 +7,7 @@
 
 const AUTH_CONFIG = {
     // ⚠️ IMPORTANTE: Actualiza esta URL después de hacer deploy del Apps Script
-    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzvweSBncWu0sXaZspE6tQ6ZMJIIcmk9dKlpXgjdSdU0LJZUzLOsE3LdeuSkP86H337sw/exec',
+    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzbuibOzpV1iSQVa1JtZny_WU06o18Xly4n2Az7CBKMvpNyiBvwTYLnhSFJfWTMjL90ww/exec',
     SESSION_DURATION: 7 * 24 * 60 * 60 * 1000, // 7 días
     STORAGE_KEY: 'tank_iberica_session',
     USER_KEY: 'tank_iberica_user'

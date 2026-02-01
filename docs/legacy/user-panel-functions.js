@@ -249,7 +249,7 @@ async function enviarMensajeChat() {
     const notifyEmail = document.getElementById('chatNotifyEmail')?.checked ? 'TRUE' : 'FALSE';
     
     try {
-        const APPS_SCRIPT_URL = window.AUTH_CONFIG?.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbzvweSBncWu0sXaZspE6tQ6ZMJIIcmk9dKlpXgjdSdU0LJZUzLOsE3LdeuSkP86H337sw/exec';
+        const APPS_SCRIPT_URL = window.AUTH_CONFIG?.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbzbuibOzpV1iSQVa1JtZny_WU06o18Xly4n2Az7CBKMvpNyiBvwTYLnhSFJfWTMjL90ww/exec';
         
         const newId = Date.now();
         const fecha = new Date().toLocaleString('es-ES');

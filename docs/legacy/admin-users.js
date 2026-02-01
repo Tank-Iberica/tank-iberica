@@ -9,7 +9,7 @@
 // ================================================
 
 const ADMIN_CONFIG = {
-    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwKvLdU3Fw0Wy8ZsqjuCdvfkFEsZyQEKmyvi2GXEU_CC4Vv4zlJglPj6qtnAwIALYNoVA/exec',
+    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzbuibOzpV1iSQVa1JtZny_WU06o18Xly4n2Az7CBKMvpNyiBvwTYLnhSFJfWTMjL90ww/exec',
     SHEET_ID: '1GdmirqWFKVt39QvEJxdMH3zW0-itl64YuqYEsOAkF30'
 };
 
