@@ -64,6 +64,24 @@
     "featured": "Destacado",
     "searchPlaceholder": "Buscar marca o modelo..."
   },
+  "vehicle": {
+    "year": "Año",
+    "price": "Precio",
+    "rentalPrice": "Precio alquiler",
+    "location": "Ubicación",
+    "category": "Categoría",
+    "subcategory": "Subcategoría",
+    "description": "Descripción",
+    "specifications": "Especificaciones",
+    "contact": "Contactar",
+    "call": "Llamar",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "share": "Compartir",
+    "backToCatalog": "Volver al catálogo",
+    "notFound": "Vehículo no encontrado",
+    "imageOf": "Imagen {current} de {total}"
+  },
   "common": {
     "loading": "Cargando...",
     "error": "Ha ocurrido un error",

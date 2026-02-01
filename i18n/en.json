@@ -64,6 +64,24 @@
     "featured": "Featured",
     "searchPlaceholder": "Search brand or model..."
   },
+  "vehicle": {
+    "year": "Year",
+    "price": "Price",
+    "rentalPrice": "Rental price",
+    "location": "Location",
+    "category": "Category",
+    "subcategory": "Subcategory",
+    "description": "Description",
+    "specifications": "Specifications",
+    "contact": "Contact",
+    "call": "Call",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "share": "Share",
+    "backToCatalog": "Back to catalog",
+    "notFound": "Vehicle not found",
+    "imageOf": "Image {current} of {total}"
+  },
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",

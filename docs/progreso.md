@@ -46,7 +46,7 @@
 | 2.10 | SubcategoryBar (chips dinámicos) | ✅ Hecho | 2026-02-01 | Chips desde BD, filtrados por categoría activa (applicable_categories). Toggle on/off. Scroll móvil, wrap desktop. i18n (name_es/name_en). |
 | 2.11 | FilterBar (bottom sheet móvil, 6 tipos) | ✅ Hecho | 2026-02-01 | Bottom sheet en móvil, inline en desktop. 6 tipos: desplegable, desplegable_tick, tick, slider, caja, calc. Badge con contador. Clear all. Touch 44px. |
 | 2.12 | VehicleGrid + VehicleCard + @nuxt/image | ✅ Hecho | 2026-02-01 | Grid: 1 col móvil, 2 tablet, 3 desktop, 4 desktop grande. Card con NuxtImg/Cloudinary WebP, badge destacado, precio formateado. Skeleton loader. Empty state. Load more. |
-| 2.13 | vehiculo/[slug].vue (PÁGINA REAL) | ⬜ Pendiente | | |
+| 2.13 | vehiculo/[slug].vue (PÁGINA REAL) | ✅ Hecho | 2026-02-01 | Página real con URL propia. ImageGallery con swipe táctil y thumbnails desktop. VehicleInfo con meta grid, descripción, especificaciones. Contacto: llamar + WhatsApp. Skeleton loader. 404 state. i18n. |
 | 2.14 | useSeoMeta() en [slug].vue | ⬜ Pendiente | | |
 | 2.15 | Banner + i18n catálogo | ⬜ Pendiente | | |
 | 2.16 | Keep-alive: preservar scroll al volver | ⬜ Pendiente | | |
