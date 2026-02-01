@@ -4,7 +4,7 @@
 
 const CONFIG = {
     // API Key de Google Cloud Console
-    API_KEY: 'AIzaSyD2MnE9L7YeWHEkFpx7SiIMCzM-vpb_hzE',
+    API_KEY: 'AIzaSyCzN8LEMBXM75Mkop9NH0iGqa4XTmLX0i4',
     
     // Spreadsheet ID
     SPREADSHEET_ID: '1GdmirqWFKVt39QvEJxdMH3zW0-itl64YuqYEsOAkF30',

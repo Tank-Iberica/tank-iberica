@@ -1,13 +1,13 @@
 # Tank Iberica — Progreso de Implementación
 
-## Estado actual: Step 0 — Pendiente de inicio
+## Estado actual: Step 0 — En progreso
 
 ---
 
 ## Step 0 — Emergencia de Seguridad
 | # | Tarea | Estado | Fecha | Notas |
 |---|-------|--------|-------|-------|
-| 0.1 | Revocar API_KEY, crear nueva con restricción de dominio | ⬜ Pendiente | | |
+| 0.1 | Revocar API_KEY, crear nueva con restricción de dominio | ✅ Hecho | 2026-02-01 | Nueva key restringida a tankiberica.com. Antigua revocada. Reemplazada en 4 archivos legacy. |
 | 0.2 | Eliminar Keys.txt, añadir a .gitignore | ⬜ Pendiente | | |
 | 0.3 | Crear proxy Apps Script para Sheets API | ⬜ Pendiente | | |
 | 0.4 | Reemplazar 163 innerHTML por textContent/DOMPurify | ⬜ Pendiente | | |

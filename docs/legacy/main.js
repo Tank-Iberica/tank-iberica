@@ -4,7 +4,7 @@
 
 const CONFIG = {
     SPREADSHEET_ID: '1GdmirqWFKVt39QvEJxdMH3zW0-itl64YuqYEsOAkF30',
-    API_KEY: 'AIzaSyD2MnE9L7YeWHEkFpx7SiIMCzM-vpb_hzE' // Reemplazar con tu API Key de Google
+    API_KEY: 'AIzaSyCzN8LEMBXM75Mkop9NH0iGqa4XTmLX0i4' // Reemplazar con tu API Key de Google
 };
 
 let currentLang = 'es';
