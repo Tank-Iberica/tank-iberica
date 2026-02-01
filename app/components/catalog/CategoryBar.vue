@@ -2,13 +2,6 @@
   <nav class="category-bar" :aria-label="$t('catalog.title')">
     <div class="category-scroll">
       <button
-        class="category-btn"
-        :class="{ active: !activeCategory }"
-        @click="selectCategory(null)"
-      >
-        {{ $t('catalog.allCategories') }}
-      </button>
-      <button
         v-for="cat in categories"
         :key="cat"
         class="category-btn"
@@ -25,14 +18,21 @@
 import type { VehicleCategory } from '~/composables/useCatalogState'
 
 const emit = defineEmits<{
-  change: [category: VehicleCategory | null]
+  change: [category: VehicleCategory]
 }>()
 
 const { activeCategory, setCategory } = useCatalogState()
 
 const categories: VehicleCategory[] = ['alquiler', 'venta', 'terceros']
 
-function selectCategory(cat: VehicleCategory | null) {
+// Default to first category if none active
+onMounted(() => {
+  if (!activeCategory.value) {
+    selectCategory('alquiler')
+  }
+})
+
+function selectCategory(cat: VehicleCategory) {
   setCategory(cat)
   emit('change', cat)
 }
