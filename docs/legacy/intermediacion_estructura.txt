@@ -1,0 +1,76 @@
+ESTRUCTURA HOJA "intermediacion" EN GOOGLE SHEETS
+==================================================
+
+HEADERS (Fila 1) - En este orden exacto:
+
+A: id
+B: imagenes
+C: subcategoria
+D: marca
+E: modelo
+F: ano
+G: matricula
+H: precio_venta
+I: ubicacion
+J: ubicacion_en
+K: descripcion
+L: descripcion_en
+M: filtros_json
+N: caracteristicas_json
+O: estado
+P: propietario
+Q: telefono
+R: notas
+S: documentacion
+T: precio_minimo
+U: coste
+V: comision
+W: fecha_adquisicion
+X: gastos_json
+Y: ingresos_json
+Z: fecha_creacion
+
+==================================================
+NOTAS:
+
+1. El campo "tipo" antiguo se reemplaza por "subcategoria" (usa las mismas subcategorías que vehículos)
+
+2. "precio_compra" se renombra a "coste" (igual que en vehículos)
+
+3. "fecha_operacion" se renombra a "fecha_adquisicion"
+
+4. Nuevos campos añadidos:
+   - ubicacion / ubicacion_en
+   - descripcion / descripcion_en  
+   - filtros_json
+   - caracteristicas_json
+   - documentacion
+   - precio_minimo
+   - ingresos_json
+
+5. El campo "gastos" antiguo (JSON simple) se renombra a "gastos_json" 
+   y ahora incluye campo "factura" para cada gasto
+
+6. "ingresos_json" es nuevo - igual estructura que gastos pero para ingresos
+
+7. Los IDs siguen el formato P1, P2, P3...
+
+==================================================
+MIGRACIÓN DE DATOS EXISTENTES:
+
+Si tienes datos en la hoja antigua, necesitas:
+1. Añadir las nuevas columnas (ubicacion, descripcion, filtros_json, etc.)
+2. Renombrar "tipo" → puedes dejarlo vacío o mapear a subcategorías
+3. Renombrar "precio_compra" → "coste"
+4. Renombrar "gastos" → "gastos_json"
+5. Añadir columna "ingresos_json" (vacía inicialmente)
+
+==================================================
+ESTRUCTURA DRIVE:
+
+TankIberica/
+└── Intermediacion/
+    └── [P1, P2, P3...]/
+        ├── Fotos/
+        ├── Documentos/
+        └── Facturas/
