@@ -1,6 +1,6 @@
 # Tank Iberica — Progreso de Implementación
 
-## Estado actual: Step 0 — En progreso
+## Estado actual: Step 1 — En progreso
 
 ---
 
@@ -18,14 +18,14 @@
 ## Step 1 — Cimientos: Nuxt + Auth + Deploy
 | # | Tarea | Estado | Fecha | Notas |
 |---|-------|--------|-------|-------|
-| 1.1 | Crear proyecto Supabase (eu-west-1) | ⬜ Pendiente | | |
-| 1.2 | Configurar Auth: Email+Password + Google | ⬜ Pendiente | | |
-| 1.3 | Crear tabla users + RLS + trigger on signup | ⬜ Pendiente | | |
-| 1.4 | npx nuxi init + módulos | ⬜ Pendiente | | |
-| 1.5 | tokens.css con design system mobile-first | ⬜ Pendiente | | |
-| 1.6 | Layout: AppHeader (hamburger móvil) + AppFooter | ⬜ Pendiente | | |
-| 1.7 | AuthModal (bottom sheet móvil, modal desktop) | ⬜ Pendiente | | |
-| 1.8 | Página / con placeholder + AuthModal | ⬜ Pendiente | | |
+| 1.1 | Crear proyecto Supabase (eu-west-1) | ✅ Hecho | 2026-02-01 | Proyecto creado en eu-west-1. Credenciales en .env. |
+| 1.2 | Configurar Auth: Email+Password + Google | ✅ Hecho | 2026-02-01 | Email+Password activo. Google OAuth pendiente de credenciales Cloud Console. Site URL configurado. |
+| 1.3 | Crear tabla users + RLS + trigger on signup | ✅ Hecho | 2026-02-01 | Tabla users, enum user_role, 4 políticas RLS, trigger on_auth_user_created. Migration 00001. |
+| 1.4 | npx nuxi init + módulos | ✅ Hecho | 2026-02-01 | Nuxt 4 minimal + @nuxtjs/supabase, @nuxtjs/i18n, @pinia/nuxt, @vueuse/nuxt, @nuxt/image. i18n es/en. app.vue + index.vue placeholder. |
+| 1.5 | tokens.css con design system mobile-first | ✅ Hecho | 2026-02-01 | Todos los tokens del DESIGN_SYSTEM.md. Reset global. Touch targets 44px. Breakpoints mobile-first (min-width). |
+| 1.6 | Layout: AppHeader (hamburger móvil) + AppFooter | ✅ Hecho | 2026-02-01 | AppHeader con hamburger móvil, social links desktop, lang switch, account btn. AppFooter 3 columnas. Layout default. i18n actualizado. |
+| 1.7 | AuthModal (bottom sheet móvil, modal desktop) | ✅ Hecho | 2026-02-01 | Bottom sheet en móvil, modal centrado en desktop. Login/Register con email+password y Google OAuth. Forgot password. Escape para cerrar. Body scroll lock. |
+| 1.8 | Página / con placeholder + AuthModal | ✅ Hecho | 2026-02-01 | Hero con título + subtítulo + "Próximamente". useSeoMeta. Página /confirm para OAuth callback. AuthModal integrado en layout. |
 | 1.9 | Conectar Cloudflare Pages + deploy automático | ⬜ Pendiente | | |
 | 1.10 | ESLint + Prettier + Husky | ⬜ Pendiente | | |
 | 1.11 | Test móvil real: registro, login, logout | ⬜ Pendiente | | |

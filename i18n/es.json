@@ -1,0 +1,67 @@
+{
+  "site": {
+    "title": "Tank Iberica",
+    "description": "Plataforma de vehículos industriales"
+  },
+  "nav": {
+    "home": "Inicio",
+    "catalog": "Catálogo",
+    "news": "Noticias",
+    "about": "Sobre nosotros",
+    "contact": "Contacto",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "myAccount": "Mi cuenta",
+    "admin": "Admin",
+    "menu": "Menú",
+    "phone": "Teléfono"
+  },
+  "footer": {
+    "communications": "Comunicación",
+    "newsroom": "Área de prensa",
+    "newsletters": "Boletines",
+    "featured": "Destacados",
+    "events": "Eventos",
+    "aboutUs": "Sobre Nosotros",
+    "whoWeAre": "Quiénes Somos",
+    "ourMission": "Nuestra Misión",
+    "team": "Equipo",
+    "legal": "Legal",
+    "terms": "Términos y Condiciones",
+    "privacy": "Política de Privacidad",
+    "cookies": "Política de Cookies",
+    "allRights": "Todos los derechos reservados."
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "loginWithGoogle": "Continuar con Google",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "orContinueWith": "o continuar con",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "enterEmail": "Introduce tu email primero"
+  },
+  "catalog": {
+    "title": "Catálogo de vehículos",
+    "filters": "Filtros",
+    "noResults": "No se encontraron vehículos",
+    "clearFilters": "Limpiar filtros",
+    "comingSoon": "Próximamente"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ha ocurrido un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "back": "Volver"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "site": {
+    "title": "Tank Iberica",
+    "description": "Industrial vehicles platform"
+  },
+  "nav": {
+    "home": "Home",
+    "catalog": "Catalog",
+    "news": "News",
+    "about": "About us",
+    "contact": "Contact",
+    "login": "Log in",
+    "register": "Sign up",
+    "logout": "Log out",
+    "myAccount": "My account",
+    "admin": "Admin",
+    "menu": "Menu",
+    "phone": "Phone"
+  },
+  "footer": {
+    "communications": "Communications",
+    "newsroom": "Newsroom",
+    "newsletters": "Newsletters",
+    "featured": "Featured",
+    "events": "Events",
+    "aboutUs": "About Us",
+    "whoWeAre": "Who We Are",
+    "ourMission": "Our Mission",
+    "team": "Team",
+    "legal": "Legal",
+    "terms": "Terms and Conditions",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "allRights": "All rights reserved."
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "login": "Log in",
+    "register": "Sign up",
+    "forgotPassword": "Forgot your password?",
+    "loginWithGoogle": "Continue with Google",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "orContinueWith": "or continue with",
+    "passwordMismatch": "Passwords do not match",
+    "enterEmail": "Enter your email first"
+  },
+  "catalog": {
+    "title": "Vehicle catalog",
+    "filters": "Filters",
+    "noResults": "No vehicles found",
+    "clearFilters": "Clear filters",
+    "comingSoon": "Coming soon"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back"
+  }
+}
