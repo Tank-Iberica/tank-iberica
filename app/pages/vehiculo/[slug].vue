@@ -31,7 +31,7 @@
       </div>
 
       <!-- Gallery -->
-      <ImageGallery
+      <VehicleImageGallery
         :images="vehicle.vehicle_images"
         :alt="`${vehicle.brand} ${vehicle.model}`"
       />

@@ -14,7 +14,7 @@
 
     <!-- Vehicle grid -->
     <div v-else-if="vehicles.length" class="vehicle-grid">
-      <VehicleCard
+      <CatalogVehicleCard
         v-for="vehicle in vehicles"
         :key="vehicle.id"
         :vehicle="vehicle"

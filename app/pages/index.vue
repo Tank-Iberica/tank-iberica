@@ -1,15 +1,15 @@
 <template>
   <div class="home">
-    <AnnounceBanner />
+    <CatalogAnnounceBanner />
 
     <section class="catalog-section">
       <h1 class="catalog-title">{{ $t('catalog.title') }}</h1>
 
-      <CategoryBar @change="onCategoryChange" />
-      <SubcategoryBar @change="onSubcategoryChange" />
-      <FilterBar @change="onFilterChange" />
+      <CatalogCategoryBar @change="onCategoryChange" />
+      <CatalogSubcategoryBar @change="onSubcategoryChange" />
+      <CatalogFilterBar @change="onFilterChange" />
 
-      <VehicleGrid
+      <CatalogVehicleGrid
         :vehicles="vehicles"
         :loading="loading"
         :loading-more="loadingMore"
