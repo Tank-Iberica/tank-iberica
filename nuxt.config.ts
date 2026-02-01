@@ -6,7 +6,6 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/supabase',
     '@nuxtjs/i18n',
-    '@pinia/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image',
   ],
