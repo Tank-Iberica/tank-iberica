@@ -1,6 +1,6 @@
 # Tank Iberica — Progreso de Implementación
 
-## Estado actual: Step 1 — En progreso
+## Estado actual: Step 2 — En progreso
 
 ---
 
@@ -28,8 +28,8 @@
 | 1.8 | Página / con placeholder + AuthModal | ✅ Hecho | 2026-02-01 | Hero con título + subtítulo + "Próximamente". useSeoMeta. Página /confirm para OAuth callback. AuthModal integrado en layout. |
 | 1.9 | Conectar Cloudflare Pages + deploy automático | ✅ Hecho | 2026-02-01 | Cloudflare Pages conectado a GitHub. Build output: dist. Auto-deploy on push to main. Variables de entorno configuradas. |
 | 1.10 | ESLint + Prettier + Husky | ✅ Hecho | 2026-02-01 | @nuxt/eslint-config flat config. Prettier. Husky pre-commit hook con lint. docs/ excluido de lint. |
-| 1.11 | Test móvil real: registro, login, logout | ⬜ Pendiente | | |
-| 1.12 | Verificar botón atrás móvil | ⬜ Pendiente | | |
+| 1.11 | Test móvil real: registro, login, logout | ✅ Hecho | 2026-02-01 | Testado en móvil vía LAN (192.168.1.193:3000). Registro, login, nombre en header, logout verificados. Cookie secure fix aplicado para HTTP en dev. |
+| 1.12 | Verificar botón atrás móvil | ✅ Hecho | 2026-02-01 | Navegación correcta. AuthModal cierra sin afectar historial. Back button funciona en todos los flujos. |
 
 ## Step 2 — Catálogo Completo
 | # | Tarea | Estado | Fecha | Notas |
