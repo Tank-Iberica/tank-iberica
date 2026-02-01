@@ -44,7 +44,7 @@
 | 2.8 | Store catalog.ts | ✅ Hecho | 2026-02-01 | useCatalogState con useState (Pinia no disponible en Nuxt 4). Categoría, subcategoría, filtros, scroll position, búsqueda. Persiste entre navegaciones. |
 | 2.9 | CategoryBar (dinámico, scrollable móvil) | ✅ Hecho | 2026-02-01 | Scroll horizontal en móvil, wrap en desktop. Botones: Todos/Alquiler/Venta/Terceros. i18n añadido. Emite evento change. Touch targets 44px. |
 | 2.10 | SubcategoryBar (chips dinámicos) | ✅ Hecho | 2026-02-01 | Chips desde BD, filtrados por categoría activa (applicable_categories). Toggle on/off. Scroll móvil, wrap desktop. i18n (name_es/name_en). |
-| 2.11 | FilterBar (bottom sheet móvil, 6 tipos) | ⬜ Pendiente | | |
+| 2.11 | FilterBar (bottom sheet móvil, 6 tipos) | ✅ Hecho | 2026-02-01 | Bottom sheet en móvil, inline en desktop. 6 tipos: desplegable, desplegable_tick, tick, slider, caja, calc. Badge con contador. Clear all. Touch 44px. |
 | 2.12 | VehicleGrid + VehicleCard + @nuxt/image | ⬜ Pendiente | | |
 | 2.13 | vehiculo/[slug].vue (PÁGINA REAL) | ⬜ Pendiente | | |
 | 2.14 | useSeoMeta() en [slug].vue | ⬜ Pendiente | | |
