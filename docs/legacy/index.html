@@ -6072,6 +6072,7 @@
     <link rel="stylesheet" href="auth-user-panel.css">
     
     <!-- Scripts del sistema -->
+    <script src="sanitize.js"></script>
     <script src="google-sheets-api.js"></script>
     <script src="auth-system.js" defer></script>
     <script src="user-panel.js" defer></script>
@@ -9266,8 +9267,8 @@
                 specs.forEach(spec => {
                     specsHTML += `
                         <div class="spec-item">
-                            <span class="spec-label">${spec.label}</span>
-                            <span class="spec-value">${spec.value}</span>
+                            <span class="spec-label">${escapeHTML(spec.label)}</span>
+                            <span class="spec-value">${escapeHTML(spec.value)}</span>
                         </div>
                     `;
                 });
@@ -9280,7 +9281,7 @@
                 
                 card.innerHTML = `
                     <div class="product-image-container">
-                        <img class="product-image" src="${product.images[0]}" alt="${product.model}" data-index="0">
+                        <img class="product-image" src="${escapeHTML(product.images[0])}" alt="${escapeHTML(product.model)}" data-index="0">
                         ${product.images.length > 1 ? `
                             <div class="image-nav">
                                 <button class="image-nav-btn prev">◀</button>
@@ -9290,19 +9291,19 @@
                         <div class="image-indicators">
                             ${product.images.map((_, i) => `<div class="indicator ${i === 0 ? 'active' : ''}"></div>`).join('')}
                         </div>
-                        <div class="image-overlay-category">${categoryText}</div>
+                        <div class="image-overlay-category">${escapeHTML(categoryText)}</div>
                         <div class="image-overlay-location">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="#C41E3A" stroke="#C41E3A" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3" fill="white"></circle>
                             </svg>
-                            <span>${product.location}</span>
+                            <span>${escapeHTML(product.location)}</span>
                         </div>
-                        <div class="image-overlay-price">${priceText}</div>
+                        <div class="image-overlay-price">${escapeHTML(priceText)}</div>
                     </div>
                     <div class="product-info">
                         ${tercerosBanner}
-                        <h3 class="product-title">${generateProductTitle(product)}</h3>
+                        <h3 class="product-title">${escapeHTML(generateProductTitle(product))}</h3>
                         <div class="product-specs">${specsHTML}</div>
                     </div>
                 `;
@@ -9343,7 +9344,7 @@
             let html = '';
             const cats = product.categories && product.categories.length > 0 ? product.categories : [product.category];
             cats.forEach(cat => {
-                if (cat) html += `<span class="table-category ${cat}">${getCategoryText(cat)}</span> `;
+                if (cat) html += `<span class="table-category ${escapeHTML(cat)}">${escapeHTML(getCategoryText(cat))}</span> `;
             });
             return html;
         }
@@ -9434,38 +9435,38 @@
                 const productTitle = generateProductTitle(product);
                 
                 rowsHTML += `
-                    <tr class="table-row" data-product-id="${product.id}">
-                        <td><img src="${product.images[0]}" class="table-image" alt="${product.model}"></td>
+                    <tr class="table-row" data-product-id="${parseInt(product.id) || 0}">
+                        <td><img src="${escapeHTML(product.images[0])}" class="table-image" alt="${escapeHTML(product.model)}"></td>
                         <td>${getCategoryBadgesHTML(product)}</td>
-                        <td class="table-price">${priceText}</td>
-                        <td>${productTitle}</td>
-                        ${hasType ? `<td>${typeText}</td>` : ''}
-                        <td>${brandUpper}</td>
-                        <td>${modelUpper}</td>
+                        <td class="table-price">${escapeHTML(priceText)}</td>
+                        <td>${escapeHTML(productTitle)}</td>
+                        ${hasType ? `<td>${escapeHTML(typeText)}</td>` : ''}
+                        <td>${escapeHTML(brandUpper)}</td>
+                        <td>${escapeHTML(modelUpper)}</td>
                         <td>${formatNumber(product.year, true)}</td>
-                        ${hasVolumeOrCapacity ? `<td>${volumeCapacityText}</td>` : ''}
-                        ${hasCompartments ? `<td>${compartmentsText}</td>` : ''}
-                        ${hasPower ? `<td>${powerText}</td>` : ''}
+                        ${hasVolumeOrCapacity ? `<td>${escapeHTML(volumeCapacityText)}</td>` : ''}
+                        ${hasCompartments ? `<td>${escapeHTML(compartmentsText)}</td>` : ''}
+                        ${hasPower ? `<td>${escapeHTML(powerText)}</td>` : ''}
                         <td class="table-location">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="#C41E3A" stroke="#C41E3A" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3" fill="white"></circle>
                             </svg>
-                            ${product.location}
+                            ${escapeHTML(product.location)}
                         </td>
                         <td class="table-actions-cell">
                             <div style="display:flex;gap:4px;justify-content:center">
-                                <button class="table-icon-btn favorite-btn ${favoriteClass}" data-product-id="${product.id}" title="${currentLang === 'es' ? 'Favorito' : 'Favorite'}">
+                                <button class="table-icon-btn favorite-btn ${favoriteClass}" data-product-id="${parseInt(product.id) || 0}" title="${currentLang === 'es' ? 'Favorito' : 'Favorite'}">
                                     ${favoriteIcon}
                                 </button>
-                                <button class="table-icon-btn share-btn" data-product-id="${product.id}" title="${currentLang === 'es' ? 'Compartir' : 'Share'}">
+                                <button class="table-icon-btn share-btn" data-product-id="${parseInt(product.id) || 0}" title="${currentLang === 'es' ? 'Compartir' : 'Share'}">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
                                         <polyline points="7 9 12 4 17 9"></polyline>
                                         <line x1="12" y1="4" x2="12" y2="16"></line>
                                     </svg>
                                 </button>
-                                <button class="table-icon-btn download-btn" data-product-id="${product.id}" title="${currentLang === 'es' ? 'Descargar folleto' : 'Download brochure'}">
+                                <button class="table-icon-btn download-btn" data-product-id="${parseInt(product.id) || 0}" title="${currentLang === 'es' ? 'Descargar folleto' : 'Download brochure'}">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                         <polyline points="14 2 14 8 20 8"></polyline>
@@ -9939,7 +9940,7 @@
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3" fill="white"></circle>
                 </svg>
-                ${product.location}
+                ${escapeHTML(product.location)}
             `;
             
             if (esTerceros) {
@@ -9951,7 +9952,7 @@
             document.getElementById('vehicleMainImage').src = product.images[0];
             
             const thumbnailsHTML = product.images.map((img, index) => `
-                <img src="${img}" class="vehicle-thumbnail ${index === 0 ? 'active' : ''}" data-index="${index}" alt="Thumbnail ${index + 1}">
+                <img src="${escapeHTML(img)}" class="vehicle-thumbnail ${index === 0 ? 'active' : ''}" data-index="${index}" alt="Thumbnail ${index + 1}">
             `).join('');
             document.getElementById('vehicleThumbnailsContainer').innerHTML = thumbnailsHTML;
             
@@ -9986,8 +9987,8 @@
                         const label = currentLang === 'en' && filtro?.nombre_en ? filtro.nombre_en : key;
                         charGridHTML.push(`
                             <div class="vehicle-char-item">
-                                <span class="vehicle-char-label">${label.toUpperCase()}</span>
-                                <span class="vehicle-char-value">${displayValue}</span>
+                                <span class="vehicle-char-label">${escapeHTML(label.toUpperCase())}</span>
+                                <span class="vehicle-char-value">${escapeHTML(displayValue)}</span>
                             </div>
                         `);
                     }
@@ -10000,8 +10001,8 @@
                     if (value && !excludeKeys.includes(key.toLowerCase())) {
                         charGridHTML.push(`
                             <div class="vehicle-char-item">
-                                <span class="vehicle-char-label">${key.toUpperCase()}</span>
-                                <span class="vehicle-char-value">${value}</span>
+                                <span class="vehicle-char-label">${escapeHTML(key.toUpperCase())}</span>
+                                <span class="vehicle-char-value">${escapeHTML(String(value))}</span>
                             </div>
                         `);
                     }
@@ -10472,9 +10473,9 @@
             topNewsList.innerHTML = top3.map((news, index) => {
                 const medals = ['🥇', '🥈', '🥉'];
                 return `
-                    <a href="#" class="top-news-item" data-news-id="${news.id}">
+                    <a href="#" class="top-news-item" data-news-id="${parseInt(news.id) || 0}">
                         <span>${medals[index]}</span>
-                        <span>${news.title[currentLang]}</span>
+                        <span>${escapeHTML(news.title[currentLang])}</span>
                     </a>
                 `;
             }).join('');
@@ -10515,10 +10516,10 @@
                 
                 card.innerHTML = `
                     <div class="news-image-container">
-                        <img src="${news.image}" alt="${news.title[currentLang]}" class="news-image">
+                        <img src="${escapeHTML(news.image)}" alt="${escapeHTML(news.title[currentLang])}" class="news-image">
                         <div class="news-image-overlay">
-                            <span class="news-date-badge">${news.date}</span>
-                            <span class="news-category-badge">${categoryLabel}</span>
+                            <span class="news-date-badge">${escapeHTML(news.date)}</span>
+                            <span class="news-category-badge">${escapeHTML(categoryLabel)}</span>
                         </div>
                         <div class="news-comments-badge">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -10528,8 +10529,8 @@
                         </div>
                     </div>
                     <div class="news-content">
-                        <h3 class="news-title">${news.title[currentLang]}</h3>
-                        <p class="news-subtitle">${news.subtitle[currentLang]}</p>
+                        <h3 class="news-title">${escapeHTML(news.title[currentLang])}</h3>
+                        <p class="news-subtitle">${escapeHTML(news.subtitle[currentLang])}</p>
                     </div>
                 `;
                 card.onclick = () => showNewsModal(news);
@@ -10566,8 +10567,8 @@
             
             const categoryHashtag = `#${getCategoryLabel(news.category).replace(/ /g, '_')}`;
             const hashtagsContainer = document.getElementById('newsModalHashtags');
-            hashtagsContainer.innerHTML = [categoryHashtag, ...news.hashtags].map(tag => 
-                `<span class="hashtag" data-hashtag="${tag}">${tag}</span>`
+            hashtagsContainer.innerHTML = [categoryHashtag, ...news.hashtags].map(tag =>
+                `<span class="hashtag" data-hashtag="${escapeHTML(tag)}">${escapeHTML(tag)}</span>`
             ).join('');
             
             document.querySelectorAll('.hashtag').forEach(tag => {
@@ -10616,10 +10617,10 @@
             const byRelevance = [...relatedNews].slice(0, 10);
             
             document.getElementById('hashtagTopViews').innerHTML = byViews.map(n => `
-                <div class="hashtag-news-item" onclick="showNewsModal(sampleNews.find(news => news.id === ${n.id}), true); document.getElementById('hashtagView').classList.remove('active'); document.querySelector('.comments-section').style.display = 'block';">
-                    <div class="hashtag-news-title">${n.title[currentLang]}</div>
+                <div class="hashtag-news-item" onclick="showNewsModal(sampleNews.find(news => news.id === ${parseInt(n.id) || 0}), true); document.getElementById('hashtagView').classList.remove('active'); document.querySelector('.comments-section').style.display = 'block';">
+                    <div class="hashtag-news-title">${escapeHTML(n.title[currentLang])}</div>
                     <div class="hashtag-news-meta">
-                        <div class="hashtag-news-date">${n.date}</div>
+                        <div class="hashtag-news-date">${escapeHTML(n.date)}</div>
                         <div class="hashtag-news-comments">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -10631,10 +10632,10 @@
             `).join('');
             
             document.getElementById('hashtagTopRecent').innerHTML = byDate.map(n => `
-                <div class="hashtag-news-item" onclick="showNewsModal(sampleNews.find(news => news.id === ${n.id}), true); document.getElementById('hashtagView').classList.remove('active'); document.querySelector('.comments-section').style.display = 'block';">
-                    <div class="hashtag-news-title">${n.title[currentLang]}</div>
+                <div class="hashtag-news-item" onclick="showNewsModal(sampleNews.find(news => news.id === ${parseInt(n.id) || 0}), true); document.getElementById('hashtagView').classList.remove('active'); document.querySelector('.comments-section').style.display = 'block';">
+                    <div class="hashtag-news-title">${escapeHTML(n.title[currentLang])}</div>
                     <div class="hashtag-news-meta">
-                        <div class="hashtag-news-date">${n.date}</div>
+                        <div class="hashtag-news-date">${escapeHTML(n.date)}</div>
                         <div class="hashtag-news-comments">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -10646,10 +10647,10 @@
             `).join('');
             
             document.getElementById('hashtagTopRelated').innerHTML = byRelevance.map(n => `
-                <div class="hashtag-news-item" onclick="showNewsModal(sampleNews.find(news => news.id === ${n.id}), true); document.getElementById('hashtagView').classList.remove('active'); document.querySelector('.comments-section').style.display = 'block';">
-                    <div class="hashtag-news-title">${n.title[currentLang]}</div>
+                <div class="hashtag-news-item" onclick="showNewsModal(sampleNews.find(news => news.id === ${parseInt(n.id) || 0}), true); document.getElementById('hashtagView').classList.remove('active'); document.querySelector('.comments-section').style.display = 'block';">
+                    <div class="hashtag-news-title">${escapeHTML(n.title[currentLang])}</div>
                     <div class="hashtag-news-meta">
-                        <div class="hashtag-news-date">${n.date}</div>
+                        <div class="hashtag-news-date">${escapeHTML(n.date)}</div>
                         <div class="hashtag-news-comments">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -10714,13 +10715,13 @@
                     <div class="comment-item">
                         <div class="comment-header">
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span class="comment-author">${comment.name}</span>
+                                <span class="comment-author">${escapeHTML(comment.name)}</span>
                                 <span class="comment-pending" data-es="Pendiente de moderación" data-en="Pending moderation">Pendiente de moderación</span>
                             </div>
-                            <span class="comment-date">${comment.date}</span>
+                            <span class="comment-date">${escapeHTML(comment.date)}</span>
                         </div>
-                        <p class="comment-text">${comment.text}</p>
-                        <button class="reply-btn" data-comment-id="${comment.id}" data-es="Responder" data-en="Reply">Responder</button>
+                        <p class="comment-text">${escapeHTML(comment.text)}</p>
+                        <button class="reply-btn" data-comment-id="${parseInt(comment.id) || 0}" data-es="Responder" data-en="Reply">Responder</button>
                     </div>`;
             
             if (replies.length > 0) {
@@ -11853,7 +11854,7 @@
                 if (deshabilitarSinStock && count === 0) {
                     btn.classList.add('disabled');
                 }
-                btn.innerHTML = displayName;
+                btn.textContent = displayName;
                 
                 // Feedback visual inmediato al presionar
                 btn.onmousedown = () => {
@@ -11950,12 +11951,12 @@
             const texto = currentLang === 'es' ? (banner.valor_es || '') : (banner.valor_en || banner.valor_es || '');
             const url = banner.extra || '';
             
-            let html = `<span>${texto}`;
+            let html = `<span>${escapeHTML(texto)}`;
             if (url && url.trim()) {
                 const isExternal = url.startsWith('http') && !url.includes(window.location.hostname);
                 const target = isExternal ? ' target="_blank"' : '';
                 const linkText = currentLang === 'es' ? 'Más información' : 'More info';
-                html += ` <a href="${url}"${target} class="banner-link">${linkText}</a>`;
+                html += ` <a href="${escapeHTML(url)}"${target} class="banner-link">${linkText}</a>`;
             }
             html += '</span>';
             html += '<button class="announcement-close" onclick="closeBannerDinamico()">×</button>';
@@ -12061,8 +12062,8 @@
             
             container.innerHTML = chatMensajes.map(msg => `
                 <div class="chat-msg ${msg.tipo === 'admin' ? 'admin' : 'user'}">
-                    <div class="bubble">${msg.mensaje}</div>
-                    <div class="meta">${msg.fecha}</div>
+                    <div class="bubble">${escapeHTML(msg.mensaje)}</div>
+                    <div class="meta">${escapeHTML(msg.fecha)}</div>
                 </div>
             `).join('');
             

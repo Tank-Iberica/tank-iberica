@@ -294,7 +294,7 @@ async function enviarMensajeChat() {
             
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chat-msg user';
-            msgDiv.innerHTML = `<div class="bubble">${mensaje}<span class="msg-time">${hora}</span></div>`;
+            msgDiv.innerHTML = `<div class="bubble">${escapeHTML(mensaje)}<span class="msg-time">${escapeHTML(hora)}</span></div>`;
             
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
@@ -333,10 +333,14 @@ async function cargarMensajesChat() {
         
         const data = await resp.json();
         if (!data.values || data.values.length < 2) {
-            container.innerHTML = '<p class="chat-empty">No hay mensajes todavía. ¡Escríbenos!</p>';
+            container.textContent = '';
+            const emptyMsg = document.createElement('p');
+            emptyMsg.className = 'chat-empty';
+            emptyMsg.textContent = 'No hay mensajes todavía. ¡Escríbenos!';
+            container.appendChild(emptyMsg);
             return;
         }
-        
+
         const headers = data.values[0];
         const rows = data.values.slice(1);
         
@@ -356,7 +360,11 @@ async function cargarMensajesChat() {
             });
         
         if (misMensajes.length === 0) {
-            container.innerHTML = '<p class="chat-empty">No hay mensajes todavía. ¡Escríbenos!</p>';
+            container.textContent = '';
+            const emptyMsg2 = document.createElement('p');
+            emptyMsg2.className = 'chat-empty';
+            emptyMsg2.textContent = 'No hay mensajes todavía. ¡Escríbenos!';
+            container.appendChild(emptyMsg2);
             return;
         }
         
@@ -382,13 +390,13 @@ async function cargarMensajesChat() {
             }
             
             if (fecha && fecha !== lastDate) {
-                html += '<div class="chat-date-separator"><span>' + fecha + '</span></div>';
+                html += '<div class="chat-date-separator"><span>' + escapeHTML(fecha) + '</span></div>';
                 lastDate = fecha;
             }
-            
+
             html += `
                 <div class="chat-msg ${msg.tipo === 'admin' ? 'admin' : 'user'}">
-                    <div class="bubble">${msg.mensaje}<span class="msg-time">${hora}</span></div>
+                    <div class="bubble">${escapeHTML(msg.mensaje)}<span class="msg-time">${escapeHTML(hora)}</span></div>
                 </div>
             `;
         });

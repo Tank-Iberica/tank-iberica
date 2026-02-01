@@ -109,22 +109,22 @@ function renderizarUsuarios(usuarios) {
     
     tbody.innerHTML = usuarios.map(usuario => `
         <tr>
-            <td>${usuario.id}</td>
-            <td><strong>${usuario.pseudonimo}</strong></td>
-            <td>${usuario.nombre} ${usuario.apellidos}</td>
-            <td>${usuario.email}</td>
-            <td>${usuario.telefono}</td>
-            <td>${formatearFecha(usuario.fecha_registro)}</td>
-            <td><span class="badge-estado ${usuario.estado}">${formatearEstado(usuario.estado)}</span></td>
+            <td>${escapeHTML(usuario.id)}</td>
+            <td><strong>${escapeHTML(usuario.pseudonimo)}</strong></td>
+            <td>${escapeHTML(usuario.nombre)} ${escapeHTML(usuario.apellidos)}</td>
+            <td>${escapeHTML(usuario.email)}</td>
+            <td>${escapeHTML(usuario.telefono)}</td>
+            <td>${escapeHTML(formatearFecha(usuario.fecha_registro))}</td>
+            <td><span class="badge-estado ${escapeHTML(usuario.estado)}">${escapeHTML(formatearEstado(usuario.estado))}</span></td>
             <td>
                 <div class="table-actions">
-                    <button onclick="verPerfilUsuario(${usuario.id})" title="Ver perfil">👁️</button>
-                    <button onclick="editarUsuario(${usuario.id})" title="Editar">✏️</button>
-                    ${usuario.estado === 'activo' ? 
-                        `<button onclick="desactivarUsuario(${usuario.id})" title="Desactivar">⛔</button>` :
-                        `<button onclick="activarUsuario(${usuario.id})" title="Activar">✅</button>`
+                    <button onclick="verPerfilUsuario(${parseInt(usuario.id) || 0})" title="Ver perfil">👁️</button>
+                    <button onclick="editarUsuario(${parseInt(usuario.id) || 0})" title="Editar">✏️</button>
+                    ${usuario.estado === 'activo' ?
+                        `<button onclick="desactivarUsuario(${parseInt(usuario.id) || 0})" title="Desactivar">⛔</button>` :
+                        `<button onclick="activarUsuario(${parseInt(usuario.id) || 0})" title="Activar">✅</button>`
                     }
-                    <button onclick="enviarEmailUsuario(${usuario.id})" title="Enviar email">📧</button>
+                    <button onclick="enviarEmailUsuario(${parseInt(usuario.id) || 0})" title="Enviar email">📧</button>
                 </div>
             </td>
         </tr>
@@ -171,12 +171,12 @@ async function cargarSolicitudesPendientes() {
         lista.innerHTML = solicitudesPendientes.map(sol => `
             <div class="solicitud-item">
                 <div>
-                    <strong>${sol.tipo_cambio}</strong>: ${sol.usuario_pseudonimo}<br>
-                    <small>De: "${sol.valor_actual}" → "${sol.valor_nuevo}"</small>
+                    <strong>${escapeHTML(sol.tipo_cambio)}</strong>: ${escapeHTML(sol.usuario_pseudonimo)}<br>
+                    <small>De: "${escapeHTML(sol.valor_actual)}" → "${escapeHTML(sol.valor_nuevo)}"</small>
                 </div>
                 <div class="table-actions">
-                    <button onclick="aprobarSolicitud(${sol.id})" class="btn-success">Aprobar</button>
-                    <button onclick="rechazarSolicitud(${sol.id})" class="btn-danger">Rechazar</button>
+                    <button onclick="aprobarSolicitud(${parseInt(sol.id) || 0})" class="btn-success">Aprobar</button>
+                    <button onclick="rechazarSolicitud(${parseInt(sol.id) || 0})" class="btn-danger">Rechazar</button>
                 </div>
             </div>
         `).join('');
@@ -251,49 +251,49 @@ function crearModalPerfil(usuario) {
             <button class="modal-close" onclick="cerrarModal()">×</button>
             
             <h2>👤 Perfil de Usuario</h2>
-            
+
             <div class="perfil-info">
                 <div class="perfil-row">
                     <label>ID:</label>
-                    <span>${usuario.id}</span>
+                    <span>${escapeHTML(usuario.id)}</span>
                 </div>
                 <div class="perfil-row">
                     <label>Pseudónimo:</label>
-                    <span><strong>${usuario.pseudonimo}</strong></span>
+                    <span><strong>${escapeHTML(usuario.pseudonimo)}</strong></span>
                 </div>
                 <div class="perfil-row">
                     <label>Nombre completo:</label>
-                    <span>${usuario.nombre} ${usuario.apellidos}</span>
+                    <span>${escapeHTML(usuario.nombre)} ${escapeHTML(usuario.apellidos)}</span>
                 </div>
                 <div class="perfil-row">
                     <label>Email:</label>
-                    <span>${usuario.email}</span>
+                    <span>${escapeHTML(usuario.email)}</span>
                 </div>
                 <div class="perfil-row">
                     <label>Teléfono:</label>
-                    <span>${usuario.telefono}</span>
+                    <span>${escapeHTML(usuario.telefono)}</span>
                 </div>
                 <div class="perfil-row">
                     <label>Fecha de registro:</label>
-                    <span>${formatearFecha(usuario.fecha_registro)}</span>
+                    <span>${escapeHTML(formatearFecha(usuario.fecha_registro))}</span>
                 </div>
                 <div class="perfil-row">
                     <label>Último acceso:</label>
-                    <span>${formatearFecha(usuario.ultimo_acceso)}</span>
+                    <span>${escapeHTML(formatearFecha(usuario.ultimo_acceso))}</span>
                 </div>
                 <div class="perfil-row">
                     <label>Estado:</label>
-                    <span class="badge-estado ${usuario.estado}">${formatearEstado(usuario.estado)}</span>
+                    <span class="badge-estado ${escapeHTML(usuario.estado)}">${escapeHTML(formatearEstado(usuario.estado))}</span>
                 </div>
             </div>
-            
+
             <div class="perfil-acciones">
-                <button onclick="editarUsuario(${usuario.id})" class="btn-secondary">Editar</button>
-                ${usuario.estado === 'activo' ? 
-                    `<button onclick="desactivarUsuario(${usuario.id})" class="btn-danger">Desactivar</button>` :
-                    `<button onclick="activarUsuario(${usuario.id})" class="btn-success">Activar</button>`
+                <button onclick="editarUsuario(${parseInt(usuario.id) || 0})" class="btn-secondary">Editar</button>
+                ${usuario.estado === 'activo' ?
+                    `<button onclick="desactivarUsuario(${parseInt(usuario.id) || 0})" class="btn-danger">Desactivar</button>` :
+                    `<button onclick="activarUsuario(${parseInt(usuario.id) || 0})" class="btn-success">Activar</button>`
                 }
-                <button onclick="enviarEmailUsuario(${usuario.id})" class="btn-primary">Enviar Email</button>
+                <button onclick="enviarEmailUsuario(${parseInt(usuario.id) || 0})" class="btn-primary">Enviar Email</button>
             </div>
         </div>
     `;

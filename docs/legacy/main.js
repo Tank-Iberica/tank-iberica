@@ -152,12 +152,12 @@ function initBanner() {
     const texto = currentLang === 'es' ? banner.valor_es : (banner.valor_en || banner.valor_es);
     const url = banner.extra || '';
     
-    let html = `<span>${texto}</span>`;
+    let html = `<span>${escapeHTML(texto)}</span>`;
     if (url.trim()) {
         const isExternal = url.startsWith('http') && !url.includes(window.location.hostname);
         const target = isExternal ? ' target="_blank"' : '';
         const linkText = currentLang === 'es' ? 'Más información' : 'More info';
-        html += ` <a href="${url}"${target} class="banner-link">${linkText}</a>`;
+        html += ` <a href="${escapeHTML(url)}"${target} class="banner-link">${linkText}</a>`;
     }
     html += '<button class="banner-close" onclick="closeBanner()">×</button>';
     
@@ -196,8 +196,8 @@ function renderSubcategories() {
     
     subsConStock.forEach(sub => {
         const count = vehiculos.filter(v => v.categoria === currentCategory && v.subcategoria === sub.nombre).length;
-        html += `<button class="subcat-tab ${currentSubcategory === sub.nombre ? 'active' : ''}" onclick="selectSubcategory('${sub.nombre}')">
-            ${sub.nombre} <span class="count">${count}</span>
+        html += `<button class="subcat-tab ${currentSubcategory === sub.nombre ? 'active' : ''}" onclick="selectSubcategory('${escapeHTML(sub.nombre)}')">
+            ${escapeHTML(sub.nombre)} <span class="count">${count}</span>
         </button>`;
     });
     
@@ -283,33 +283,33 @@ function renderFiltro(filtro, vehs) {
 
 function renderSelectFilter(f, opts) {
     const val = activeFilters[f.nombre] || '';
-    return `<div class="filter-item"><label>${f.nombre}</label>
-        <select onchange="setFilter('${f.nombre}', this.value)">
+    return `<div class="filter-item"><label>${escapeHTML(f.nombre)}</label>
+        <select onchange="setFilter('${escapeHTML(f.nombre)}', this.value)">
             <option value="">${currentLang === 'es' ? 'Todos' : 'All'}</option>
-            ${opts.map(o => `<option value="${o}" ${val === String(o) ? 'selected' : ''}>${o}</option>`).join('')}
+            ${opts.map(o => `<option value="${escapeHTML(o)}" ${val === String(o) ? 'selected' : ''}>${escapeHTML(o)}</option>`).join('')}
         </select></div>`;
 }
 
 function renderCheckFilter(f, opts) {
     const vals = activeFilters[f.nombre] || [];
-    return `<div class="filter-item"><label>${f.nombre}</label>
-        <div class="checkbox-group">${opts.map(o => `<label class="cb"><input type="checkbox" ${vals.includes(String(o)) ? 'checked' : ''} onchange="toggleFilter('${f.nombre}','${o}')"><span>${o}</span></label>`).join('')}</div></div>`;
+    return `<div class="filter-item"><label>${escapeHTML(f.nombre)}</label>
+        <div class="checkbox-group">${opts.map(o => `<label class="cb"><input type="checkbox" ${vals.includes(String(o)) ? 'checked' : ''} onchange="toggleFilter('${escapeHTML(f.nombre)}','${escapeHTML(o)}')"><span>${escapeHTML(o)}</span></label>`).join('')}</div></div>`;
 }
 
 function renderTickFilter(f) {
     const checked = activeFilters[f.nombre] || false;
-    return `<div class="filter-item"><label class="cb"><input type="checkbox" ${checked ? 'checked' : ''} onchange="setFilter('${f.nombre}', this.checked)"><span>${f.nombre}</span></label></div>`;
+    return `<div class="filter-item"><label class="cb"><input type="checkbox" ${checked ? 'checked' : ''} onchange="setFilter('${escapeHTML(f.nombre)}', this.checked)"><span>${escapeHTML(f.nombre)}</span></label></div>`;
 }
 
 function renderRangeFilter(f, min, max) {
     const cMin = activeFilters[`${f.nombre}_min`] || min;
     const cMax = activeFilters[`${f.nombre}_max`] || max;
-    const label = f.nombre.toLowerCase() === 'precio' ? `${f.nombre} (€)` : f.nombre;
+    const label = f.nombre.toLowerCase() === 'precio' ? `${escapeHTML(f.nombre)} (€)` : escapeHTML(f.nombre);
     return `<div class="filter-item"><label>${label}</label>
         <div class="range-inputs">
-            <input type="number" value="${cMin}" onchange="setFilter('${f.nombre}_min', this.value)" placeholder="Min">
+            <input type="number" value="${escapeHTML(cMin)}" onchange="setFilter('${escapeHTML(f.nombre)}_min', this.value)" placeholder="Min">
             <span>-</span>
-            <input type="number" value="${cMax}" onchange="setFilter('${f.nombre}_max', this.value)" placeholder="Max">
+            <input type="number" value="${escapeHTML(cMax)}" onchange="setFilter('${escapeHTML(f.nombre)}_max', this.value)" placeholder="Max">
         </div></div>`;
 }
 
@@ -388,15 +388,15 @@ function renderProducts() {
         const loc = currentLang === 'es' ? v.ubicacion : (v.ubicacion_en || v.ubicacion);
         let precio;
         if (v.categoria === 'terceros' || v.precio === 0) precio = `<span class="price consultar">${currentLang === 'es' ? 'A consultar' : 'On request'}</span>`;
-        else if (v.categoria === 'alquiler') precio = `<span class="price">${formatPrice(v.precio)}€<small>/mes</small></span>`;
-        else precio = `<span class="price">${formatPrice(v.precio)}€</span>`;
-        
-        return `<article class="product-card" onclick="openDetail(${v.id})">
-            <div class="product-image"><img src="${img}" alt="${v.marca} ${v.modelo}" loading="lazy"></div>
+        else if (v.categoria === 'alquiler') precio = `<span class="price">${escapeHTML(formatPrice(v.precio))}€<small>/mes</small></span>`;
+        else precio = `<span class="price">${escapeHTML(formatPrice(v.precio))}€</span>`;
+
+        return `<article class="product-card" onclick="openDetail(${parseInt(v.id) || 0})">
+            <div class="product-image"><img src="${escapeHTML(img)}" alt="${escapeHTML(v.marca)} ${escapeHTML(v.modelo)}" loading="lazy"></div>
             <div class="product-info">
-                <h3>${v.marca} ${v.modelo}</h3>
-                <p class="year">${v.año}</p>
-                <p class="location">📍 ${loc || ''}</p>
+                <h3>${escapeHTML(v.marca)} ${escapeHTML(v.modelo)}</h3>
+                <p class="year">${escapeHTML(v.año)}</p>
+                <p class="location">📍 ${escapeHTML(loc || '')}</p>
                 <div class="price-wrap">${precio}</div>
             </div>
         </article>`;

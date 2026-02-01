@@ -428,7 +428,7 @@ function renderResetView() {
             </p>
             <div id="authMessage" class="auth-message"></div>
             <form id="resetForm" onsubmit="handleResetPassword(event)">
-                <input type="hidden" id="resetToken" value="${token}">
+                <input type="hidden" id="resetToken" value="${escapeHTML(token)}">
                 <div class="auth-form-group">
                     <label for="resetPassword">${t('password')}</label>
                     <input type="password" id="resetPassword" required minlength="6" autocomplete="new-password">

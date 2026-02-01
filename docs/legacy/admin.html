@@ -593,6 +593,7 @@
         .chat-msg .meta { font-size: 11px; color: #9ca3af; margin-top: 4px; }
     </style>
     <!-- Librerías para exportación -->
+    <script src="sanitize.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -2427,7 +2428,7 @@
             
             // Matches
             const matches = cache.solicitantes.filter(s=>s.vehiculo_match_id);
-            document.getElementById('matches').innerHTML = matches.length ? matches.slice(0,5).map(m=>'<p style="margin:6px 0">🔗 #'+m.id+' → Veh #'+m.vehiculo_match_id+'</p>').join('') : '<p class="info">Sin matches</p>';
+            document.getElementById('matches').innerHTML = matches.length ? matches.slice(0,5).map(m=>'<p style="margin:6px 0">🔗 #'+(parseInt(m.id)||0)+' → Veh #'+(parseInt(m.vehiculo_match_id)||0)+'</p>').join('') : '<p class="info">Sin matches</p>';
             
             // Dashboard de acciones pendientes
             actualizarDashboardPendientes();
@@ -2653,16 +2654,16 @@
             let r = '<tr><td>' + (v.id || realIdx + 1) + '</td>';
             // Imagen con enlace a carpeta del vehiculo
             const vehId = v.id || realIdx + 1;
-            const imgHtml = img ? '<a href="javascript:void(0)" onclick="abrirCarpetaVehiculo(\'' + vehId + '\')" title="Abrir carpeta de fotos"><img src="' + img + '" class="img-thumb" onerror="this.style.background=\'#ddd\'"></a>' : '<span class="img-thumb" style="background:#ddd"></span>';
+            const imgHtml = img ? '<a href="javascript:void(0)" onclick="abrirCarpetaVehiculo(\'' + (parseInt(vehId)||0) + '\')" title="Abrir carpeta de fotos"><img src="' + escapeHTML(img) + '" class="img-thumb" onerror="this.style.background=\'#ddd\'"></a>' : '<span class="img-thumb" style="background:#ddd"></span>';
             r += '<td>' + imgHtml + '</td>';
             // Documentos con enlace a carpeta de documentos
             if (showDocFinal) {
-                const docsHtml = v.documentacion ? '<a href="javascript:void(0)" onclick="abrirCarpetaDocs(\'' + vehId + '\')" title="Abrir carpeta de documentos" class="doc-link">📁</a>' : '-';
+                const docsHtml = v.documentacion ? '<a href="javascript:void(0)" onclick="abrirCarpetaDocs(\'' + (parseInt(vehId)||0) + '\')" title="Abrir carpeta de documentos" class="doc-link">📁</a>' : '-';
                 r += '<td>' + docsHtml + '</td>';
             }
-            r += '<td><b>' + (v.marca || '-') + '</b></td>';
-            if (showMatFinal) r += '<td>' + (v.matricula || '-') + '</td>';
-            r += '<td>' + (v.modelo || '-') + '</td>';
+            r += '<td><b>' + escapeHTML(v.marca || '-') + '</b></td>';
+            if (showMatFinal) r += '<td>' + escapeHTML(v.matricula || '-') + '</td>';
+            r += '<td>' + escapeHTML(v.modelo || '-') + '</td>';
             r += '<td class="num">' + (v.año || '-') + '</td>';
             // Categorías con badges
             const cats = (v.categoria || '').toLowerCase().split(',').map(c => c.trim()).filter(c => c);
@@ -2675,9 +2676,9 @@
                 }
             });
             r += '<td><div class="cat-badges">' + (catBadges || '-') + '</div></td>';
-            r += '<td>' + (v.subcategoria || '-') + '</td>';
-            if (tieneTipo) r += '<td>' + (v.tipo || '-') + '</td>';
-            if (showTec && tieneMotor) r += '<td>' + (v.motor || '-') + '</td>';
+            r += '<td>' + escapeHTML(v.subcategoria || '-') + '</td>';
+            if (tieneTipo) r += '<td>' + escapeHTML(v.tipo || '-') + '</td>';
+            if (showTec && tieneMotor) r += '<td>' + escapeHTML(v.motor || '-') + '</td>';
             if (tienePotencia) r += '<td class="num">' + (v.potencia || '-') + '</td>';
             r += '<td class="num">' + (v.filtros_json?.volumen || v.filtros_json?.capacidad || '-') + '</td>';
             if (tieneCompartimentos) r += '<td class="center">' + (isCist && v.compartimentos ? v.compartimentos : '-') + '</td>';
@@ -2689,7 +2690,7 @@
             if (showTec && tieneADR) r += formatFecha(v.adr);
             if (showTec && tieneATP) r += formatFecha(v.atp);
             if (showTec && tieneITV) r += formatFecha(v.itv);
-            if (showTec && tieneEtiqueta) r += '<td>' + (v.etiqueta || '-') + '</td>';
+            if (showTec && tieneEtiqueta) r += '<td>' + escapeHTML(v.etiqueta || '-') + '</td>';
             // Precio según filtro: si solo alquiler, mostrar precio alquiler
             const precioMostrar = soloAlquiler && v.precio_alquiler ? v.precio_alquiler : v.precio;
             const precioLabel = soloAlquiler && v.precio_alquiler ? '/mes' : '';
@@ -2700,11 +2701,11 @@
             if (showCue && tieneMant) r += '<td class="num"><span class="mant-link" onclick="editVeh(' + realIdx + ');setTimeout(()=>{document.getElementById(\'mantTable\').scrollIntoView()},100)">' + (mantTotal ? fmtNum(mantTotal) + '€' : '-') + '</span></td>';
             if (showCue && tieneRenta) r += '<td class="num" style="color:#059669"><span class="mant-link" onclick="editVeh(' + realIdx + ');setTimeout(()=>{document.getElementById(\'rentaTable\').scrollIntoView()},100)">' + (rentaTotal ? '-' + fmtNum(rentaTotal) + '€' : '-') + '</span></td>';
             if (showCue && (tieneCoste || tieneMant || tieneRenta)) r += '<td class="num"><b>' + fmtNum(costeTotal) + '€</b></td>';
-            if (showCue && tieneAdq) r += '<td>' + (v.adquisicion || '-') + '</td>';
+            if (showCue && tieneAdq) r += '<td>' + escapeHTML(v.adquisicion || '-') + '</td>';
             r += '<td><span class="badge-estado ' + estadoClass + '">' + estadoText + '</span></td>';
             r += '<td class="table-actions">';
             r += '<button type="button" onclick="editVeh(' + realIdx + ')" title="Editar">✏️</button>';
-            if (v.estado !== 'vendido') r += '<button type="button" onclick="abrirModalVender(\'' + v.id + '\', \'vehiculos\')" title="Vender" style="font-weight:bold;">€</button>';
+            if (v.estado !== 'vendido') r += '<button type="button" onclick="abrirModalVender(\'' + escapeHTML(v.id) + '\', \'vehiculos\')" title="Vender" style="font-weight:bold;">€</button>';
             r += '<button type="button" onclick="prepDel(\'vehiculos\',' + (realIdx + 2) + ')" title="Eliminar">🗑️</button>';
             r += '</td></tr>';
             return r;
@@ -2726,7 +2727,7 @@
         const select = document.getElementById('filtroSubcat');
         select.innerHTML = '<option value="">Todas subcategorías</option>';
         cache.subcategorias.forEach(s => {
-            select.innerHTML += '<option value="' + (s.nombre || '').toLowerCase() + '">' + (s.nombre || '') + '</option>';
+            select.innerHTML += '<option value="' + escapeHTML((s.nombre || '').toLowerCase()) + '">' + escapeHTML(s.nombre || '') + '</option>';
         });
     }
     
@@ -2751,11 +2752,11 @@
                 url = parts[1];
             }
             const displayName = nombre.length > 12 ? nombre.substring(0,10) + '...' : nombre;
-            facturaHTML = '<a href="' + url + '" target="_blank" class="btn-view-file" title="' + nombre + '">📄 ' + displayName + '</a>';
+            facturaHTML = '<a href="' + escapeHTML(url) + '" target="_blank" class="btn-view-file" title="' + escapeHTML(nombre) + '">📄 ' + escapeHTML(displayName) + '</a>';
         } else {
             facturaHTML = '<input type="file" class="mant-factura" accept="image/*,.pdf">';
         }
-        row.innerHTML = '<td><input type="date" class="mant-fecha" value="' + (data.fecha || '') + '"></td><td><input type="text" class="mant-razon" placeholder="Razón" value="' + (data.razon || '') + '"></td><td><input type="number" class="mant-costo" placeholder="0" value="' + (data.costo || '') + '" onchange="calcMantTotal();calcCosteTotal()"></td><td>' + facturaHTML + '<input type="hidden" class="mant-factura-url" value="' + (data.factura || '') + '"></td><td><button type="button" class="btn-remove-row" onclick="this.closest(\'tr\').remove();calcMantTotal();calcCosteTotal()">×</button></td>';
+        row.innerHTML = '<td><input type="date" class="mant-fecha" value="' + escapeHTML(data.fecha || '') + '"></td><td><input type="text" class="mant-razon" placeholder="Razón" value="' + escapeHTML(data.razon || '') + '"></td><td><input type="number" class="mant-costo" placeholder="0" value="' + escapeHTML(data.costo || '') + '" onchange="calcMantTotal();calcCosteTotal()"></td><td>' + facturaHTML + '<input type="hidden" class="mant-factura-url" value="' + escapeHTML(data.factura || '') + '"></td><td><button type="button" class="btn-remove-row" onclick="this.closest(\'tr\').remove();calcMantTotal();calcCosteTotal()">×</button></td>';
         tbody.appendChild(row);
     }
     
@@ -2814,11 +2815,11 @@
                 url = parts[1];
             }
             const displayName = nombre.length > 12 ? nombre.substring(0,10) + '...' : nombre;
-            facturaHTML = '<a href="' + url + '" target="_blank" class="btn-view-file" title="' + nombre + '">📄 ' + displayName + '</a>';
+            facturaHTML = '<a href="' + escapeHTML(url) + '" target="_blank" class="btn-view-file" title="' + escapeHTML(nombre) + '">📄 ' + escapeHTML(displayName) + '</a>';
         } else {
             facturaHTML = '<input type="file" class="renta-factura" accept="image/*,.pdf">';
         }
-        row.innerHTML = '<td><input type="date" class="renta-desde" value="' + (data.desde || '') + '"></td><td><input type="date" class="renta-hasta" value="' + (data.hasta || '') + '"></td><td><input type="text" class="renta-razon" placeholder="Cliente/Razón" value="' + (data.razon || '') + '"></td><td><input type="number" class="renta-importe" placeholder="0" value="' + (data.importe || '') + '" onchange="calcRentaTotal();calcCosteTotal()"></td><td>' + facturaHTML + '<input type="hidden" class="renta-factura-url" value="' + (data.factura || '') + '"></td><td><button type="button" class="btn-remove-row" onclick="this.closest(\'tr\').remove();calcRentaTotal();calcCosteTotal()">×</button></td>';
+        row.innerHTML = '<td><input type="date" class="renta-desde" value="' + escapeHTML(data.desde || '') + '"></td><td><input type="date" class="renta-hasta" value="' + escapeHTML(data.hasta || '') + '"></td><td><input type="text" class="renta-razon" placeholder="Cliente/Razón" value="' + escapeHTML(data.razon || '') + '"></td><td><input type="number" class="renta-importe" placeholder="0" value="' + escapeHTML(data.importe || '') + '" onchange="calcRentaTotal();calcCosteTotal()"></td><td>' + facturaHTML + '<input type="hidden" class="renta-factura-url" value="' + escapeHTML(data.factura || '') + '"></td><td><button type="button" class="btn-remove-row" onclick="this.closest(\'tr\').remove();calcRentaTotal();calcCosteTotal()">×</button></td>';
         tbody.appendChild(row);
     }
     
@@ -2887,7 +2888,7 @@
         }
         
         document.getElementById('transVehIdx').value = idx;
-        document.getElementById('transVehInfo').innerHTML = '<strong>' + (v.marca || '') + ' ' + (v.modelo || '') + '</strong> (' + (v.año || '') + ') - ' + (v.matricula || 'Sin matrícula');
+        document.getElementById('transVehInfo').innerHTML = '<strong>' + escapeHTML(v.marca || '') + ' ' + escapeHTML(v.modelo || '') + '</strong> (' + escapeHTML(v.año || '') + ') - ' + escapeHTML(v.matricula || 'Sin matrícula');
         
         // Reset
         tipoTransaccionActual = null;
@@ -3379,18 +3380,18 @@
                 const tipoClass = b.tipo === 'ingreso' ? 'ingreso' : 'gasto';
                 const tipoIcon = b.tipo === 'ingreso' ? '↑' : '↓';
                 const estadoClass = b.estado || 'pendiente';
-                const facturaLink = b.factura ? '<a href="'+b.factura+'" target="_blank" class="btn-view-file">Ver</a>' : '-';
+                const facturaLink = b.factura ? '<a href="'+escapeHTML(b.factura)+'" target="_blank" class="btn-view-file">Ver</a>' : '-';
                 const benPct = (b.tipo === 'ingreso' && b.coste_asociado) ? (((parseFloat(b.importe)||0) - (parseFloat(b.coste_asociado)||0)) / (parseFloat(b.coste_asociado)||1) * 100).toFixed(1) + '%' : '-';
                 return '<tr>' +
                     '<td><span class="tipo-badge '+tipoClass+'">'+tipoIcon+' '+(b.tipo || '-')+'</span></td>' +
                     '<td>'+fmtDate(b.fecha)+'</td>' +
-                    '<td>'+(b.razon || '-')+'</td>' +
-                    '<td>'+(b.detalle || '-')+'</td>' +
-                    '<td>'+(b.subcategoria || '-')+'</td>' +
+                    '<td>'+escapeHTML(b.razon || '-')+'</td>' +
+                    '<td>'+escapeHTML(b.detalle || '-')+'</td>' +
+                    '<td>'+escapeHTML(b.subcategoria || '-')+'</td>' +
                     '<td class="num" style="color:'+(b.tipo==='ingreso'?'#16a34a':'#dc2626')+';font-weight:600">'+(b.tipo==='ingreso'?'+':'-')+fmtNum(b.importe || 0)+'€</td>' +
                     '<td class="num">'+benPct+'</td>' +
                     '<td>'+facturaLink+'</td>' +
-                    '<td><span class="estado-badge '+estadoClass+'">'+(b.estado || 'pendiente')+'</span></td>' +
+                    '<td><span class="estado-badge '+escapeHTML(estadoClass)+'">'+escapeHTML(b.estado || 'pendiente')+'</span></td>' +
                     '<td class="table-actions"><button onclick="editBalance('+realIdx+')">✏️</button><button onclick="prepDelBalance('+realIdx+')">🗑️</button></td>' +
                 '</tr>';
             }).join('');
@@ -3430,7 +3431,7 @@
         container.innerHTML = Object.keys(desglose).sort().map(razon => {
             const d = desglose[razon];
             return '<div class="desglose-item">' +
-                '<div class="razon"><input type="checkbox" checked onchange="filterDesglose()"> '+razon+'</div>' +
+                '<div class="razon"><input type="checkbox" checked onchange="filterDesglose()"> '+escapeHTML(razon)+'</div>' +
                 '<div class="valores"><span class="ingresos">+'+fmtNum(d.ingresos)+'€</span><span class="gastos">-'+fmtNum(d.gastos)+'€</span></div>' +
             '</div>';
         }).join('');
@@ -3746,13 +3747,13 @@
         const subcats = [...new Set(data.map(h => h.subcategoria).filter(Boolean))].sort();
         const subcatSelect = document.getElementById('historicoSubcatFilter');
         const currentSubcatVal = subcatSelect.value;
-        subcatSelect.innerHTML = '<option value="">Todas subcategorías</option>' + subcats.map(s => '<option value="'+s+'"'+(currentSubcatVal==s?' selected':'')+'>'+s+'</option>').join('');
+        subcatSelect.innerHTML = '<option value="">Todas subcategorías</option>' + subcats.map(s => '<option value="'+escapeHTML(s)+'"'+(currentSubcatVal==s?' selected':'')+'>'+escapeHTML(s)+'</option>').join('');
         
         // Llenar filtro de marcas
         const marcas = [...new Set(data.map(h => h.marca).filter(Boolean))].sort();
         const marcaSelect = document.getElementById('historicoMarcaFilter');
         const currentMarcaVal = marcaSelect.value;
-        marcaSelect.innerHTML = '<option value="">Todas las marcas</option>' + marcas.map(m => '<option value="'+m+'"'+(currentMarcaVal==m?' selected':'')+'>'+m+'</option>').join('');
+        marcaSelect.innerHTML = '<option value="">Todas las marcas</option>' + marcas.map(m => '<option value="'+escapeHTML(m)+'"'+(currentMarcaVal==m?' selected':'')+'>'+escapeHTML(m)+'</option>').join('');
         
         // Obtener valores de filtros
         const searchTerm = (document.getElementById('historicoSearch').value || '').toLowerCase();
@@ -3878,16 +3879,16 @@
                 
                 let r = '<tr>';
                 r += '<td>'+(v.id || '-')+'</td>';
-                if (showDocs) r += '<td>'+(img ? '<img src="'+img+'" style="width:50px;height:35px;object-fit:cover;border-radius:4px">' : '-')+'</td>';
-                if (showDocs) r += '<td>'+(v.documentacion ? '<a href="'+v.documentacion+'" target="_blank">📁</a>' : '-')+'</td>';
-                r += '<td><strong>'+(v.marca || '-')+'</strong></td>';
-                r += '<td>'+(v.matricula || '-')+'</td>';
-                if (showTecnico) r += '<td>'+(v.modelo || '-')+'</td>';
+                if (showDocs) r += '<td>'+(img ? '<img src="'+escapeHTML(img)+'" style="width:50px;height:35px;object-fit:cover;border-radius:4px">' : '-')+'</td>';
+                if (showDocs) r += '<td>'+(v.documentacion ? '<a href="'+escapeHTML(v.documentacion)+'" target="_blank">📁</a>' : '-')+'</td>';
+                r += '<td><strong>'+escapeHTML(v.marca || '-')+'</strong></td>';
+                r += '<td>'+escapeHTML(v.matricula || '-')+'</td>';
+                if (showTecnico) r += '<td>'+escapeHTML(v.modelo || '-')+'</td>';
                 r += '<td>'+(v.año || '-')+'</td>';
                 r += '<td><span class="cat-badge '+catClass+'">'+catText+'</span></td>';
-                r += '<td>'+(v.subcategoria || '-')+'</td>';
-                r += '<td>'+(v.tipo || '-')+'</td>';
-                if (showTecnico) r += '<td>'+volCap+'</td>';
+                r += '<td>'+escapeHTML(v.subcategoria || '-')+'</td>';
+                r += '<td>'+escapeHTML(v.tipo || '-')+'</td>';
+                if (showTecnico) r += '<td>'+escapeHTML(volCap)+'</td>';
                 if (showTecnico) r += '<td>'+(v.compartimentos || '-')+'</td>';
                 if (showTecnico) r += '<td>'+(v.ejes || '-')+'</td>';
                 if (showTecnico) r += '<td>'+(v.bc || '-')+'</td>';
@@ -3897,7 +3898,7 @@
                 if (showTecnico) r += '<td>'+(v.adr || '-')+'</td>';
                 if (showTecnico) r += '<td>'+(v.atp || '-')+'</td>';
                 if (showTecnico) r += '<td>'+(v.itv || '-')+'</td>';
-                if (showTecnico) r += '<td>'+(v.etiqueta || '-')+'</td>';
+                if (showTecnico) r += '<td>'+escapeHTML(v.etiqueta || '-')+'</td>';
                 r += '<td class="num">'+(v.precio ? fmtNum(v.precio)+'€' : '-')+'</td>';
                 r += '<td class="num">'+(v.precio_minimo ? fmtNum(v.precio_minimo)+'€' : '-')+'</td>';
                 r += '<td class="num">'+(coste ? fmtNum(coste)+'€' : '-')+'</td>';
@@ -3908,7 +3909,7 @@
                 r += '<td>'+fmtDate(v.fecha_venta)+'</td>';
                 r += '<td class="num" style="color:#16a34a;font-weight:600">'+(precioVenta ? fmtNum(precioVenta)+'€' : '-')+'</td>';
                 r += '<td class="num" style="color:'+(beneficio >= 0 ? '#16a34a' : '#dc2626')+';font-weight:600">'+(beneficio >= 0 ? '+' : '')+fmtNum(beneficio)+'€</td>';
-                r += '<td>'+(v.comprador || '-')+'</td>';
+                r += '<td>'+escapeHTML(v.comprador || '-')+'</td>';
                 r += '<td class="table-actions"><button onclick="prepRestaurar('+realIdx+')" title="Restaurar">🔄</button></td>';
                 r += '</tr>';
                 return r;
@@ -3931,8 +3932,8 @@
         if (!h || !h.mantenimiento_json) { toast('Sin datos de mantenimiento', 'info'); return; }
         try {
             const mant = typeof h.mantenimiento_json === 'string' ? JSON.parse(h.mantenimiento_json) : h.mantenimiento_json;
-            let html = '<h4>Mantenimientos de '+h.marca+' '+h.modelo+'</h4><table class="mini-table"><tr><th>Fecha</th><th>Razón</th><th>Coste</th></tr>';
-            mant.forEach(m => { html += '<tr><td>'+fmtDate(m.fecha)+'</td><td>'+(m.razon||'-')+'</td><td>'+fmtNum(m.costo||0)+'€</td></tr>'; });
+            let html = '<h4>Mantenimientos de '+escapeHTML(h.marca)+' '+escapeHTML(h.modelo)+'</h4><table class="mini-table"><tr><th>Fecha</th><th>Razón</th><th>Coste</th></tr>';
+            mant.forEach(m => { html += '<tr><td>'+fmtDate(m.fecha)+'</td><td>'+escapeHTML(m.razon||'-')+'</td><td>'+fmtNum(m.costo||0)+'€</td></tr>'; });
             html += '</table>';
             toast(html, 'info', 10000);
         } catch(e) { toast('Error al leer datos', 'error'); }
@@ -3943,8 +3944,8 @@
         if (!h || !h.renta_json) { toast('Sin datos de alquiler', 'info'); return; }
         try {
             const renta = typeof h.renta_json === 'string' ? JSON.parse(h.renta_json) : h.renta_json;
-            let html = '<h4>Alquileres de '+h.marca+' '+h.modelo+'</h4><table class="mini-table"><tr><th>Desde</th><th>Hasta</th><th>Razón</th><th>Importe</th></tr>';
-            renta.forEach(r => { html += '<tr><td>'+fmtDate(r.desde)+'</td><td>'+fmtDate(r.hasta)+'</td><td>'+(r.razon||'-')+'</td><td>'+fmtNum(r.importe||0)+'€</td></tr>'; });
+            let html = '<h4>Alquileres de '+escapeHTML(h.marca)+' '+escapeHTML(h.modelo)+'</h4><table class="mini-table"><tr><th>Desde</th><th>Hasta</th><th>Razón</th><th>Importe</th></tr>';
+            renta.forEach(r => { html += '<tr><td>'+fmtDate(r.desde)+'</td><td>'+fmtDate(r.hasta)+'</td><td>'+escapeHTML(r.razon||'-')+'</td><td>'+fmtNum(r.importe||0)+'€</td></tr>'; });
             html += '</table>';
             toast(html, 'info', 10000);
         } catch(e) { toast('Error al leer datos', 'error'); }
@@ -3952,7 +3953,7 @@
     
     function prepRestaurar(idx) {
         const h = cache.historico[idx];
-        document.getElementById('restaurarMsg').innerHTML = '¿Deseas restaurar <strong>'+(h.marca||'')+' '+(h.modelo||'')+'</strong> al catálogo activo?';
+        document.getElementById('restaurarMsg').innerHTML = '¿Deseas restaurar <strong>'+escapeHTML(h.marca||'')+' '+escapeHTML(h.modelo||'')+'</strong> al catálogo activo?';
         document.getElementById('restaurarIdx').value = idx;
         const input = document.getElementById('restaurarInput');
         const btn = document.getElementById('btnConfirmRestaurar');
@@ -4417,7 +4418,7 @@
         t.innerHTML = cache.subcategorias.map((s,i)=>{
             const upBtn = i > 0 ? '<button class="btn-move" onclick="moverSubcat('+i+',-1)" title="Subir">▲</button>' : '<button class="btn-move" style="visibility:hidden">▲</button>';
             const downBtn = i < cache.subcategorias.length-1 ? '<button class="btn-move" onclick="moverSubcat('+i+',1)" title="Bajar">▼</button>' : '<button class="btn-move" style="visibility:hidden">▼</button>';
-            return '<tr><td>'+(s.id||i+1)+'</td><td><b>'+(s.nombre||'-')+'</b></td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">'+(s.filtros_aplicables||'-')+'</td><td>'+(s.stock||0)+'</td><td><span class="badge-estado '+(s.publicado?'publicado':'oculto')+'">'+(s.publicado?'Pub':'Oculto')+'</span></td><td class="table-actions">'+upBtn+downBtn+' <button onclick="editSubcat('+i+')">✏️</button><button onclick="prepDel(\'subcategorias\','+(i+2)+')">🗑️</button></td></tr>';
+            return '<tr><td>'+(parseInt(s.id)||i+1)+'</td><td><b>'+escapeHTML(s.nombre||'-')+'</b></td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">'+escapeHTML(s.filtros_aplicables||'-')+'</td><td>'+(parseInt(s.stock)||0)+'</td><td><span class="badge-estado '+(s.publicado?'publicado':'oculto')+'">'+(s.publicado?'Pub':'Oculto')+'</span></td><td class="table-actions">'+upBtn+downBtn+' <button onclick="editSubcat('+i+')">✏️</button><button onclick="prepDel(\'subcategorias\','+(i+2)+')">🗑️</button></td></tr>';
         }).join('');
     }
     function renderFil() {
@@ -4430,7 +4431,7 @@
             const estado = normalizarEstadoFiltro(f);
             const estadoClass = estado === 'publicado' ? 'publicado' : (estado === 'oculto' ? 'nuevo' : 'oculto');
             const estadoText = estado === 'publicado' ? 'Pub' : (estado === 'oculto' ? 'Ocul' : 'Inact');
-            return '<tr><td>'+(f.id||i+1)+'</td><td><b>'+(f.nombre||'-')+'</b>'+(f.unidad?' <small style="color:#666">('+f.unidad+')</small>':'')+'</td><td>'+(f.tipo||'-')+'</td><td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;color:#22c55e">'+(f.extra_filtros||'-')+'</td><td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;color:#ef4444">'+(f.ocultar_filtros||'-')+'</td><td><span class="badge-estado '+estadoClass+'">'+estadoText+'</span></td><td class="table-actions">'+upBtn+downBtn+' <button onclick="editFiltro('+i+')">✏️</button><button onclick="prepDel(\'filtros\','+(i+2)+')">🗑️</button></td></tr>';
+            return '<tr><td>'+(parseInt(f.id)||i+1)+'</td><td><b>'+escapeHTML(f.nombre||'-')+'</b>'+(f.unidad?' <small style="color:#666">('+escapeHTML(f.unidad)+')</small>':'')+'</td><td>'+escapeHTML(f.tipo||'-')+'</td><td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;color:#22c55e">'+escapeHTML(f.extra_filtros||'-')+'</td><td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;color:#ef4444">'+escapeHTML(f.ocultar_filtros||'-')+'</td><td><span class="badge-estado '+escapeHTML(estadoClass)+'">'+escapeHTML(estadoText)+'</span></td><td class="table-actions">'+upBtn+downBtn+' <button onclick="editFiltro('+i+')">✏️</button><button onclick="prepDel(\'filtros\','+(i+2)+')">🗑️</button></td></tr>';
         }).join('');
     }
     // Función para mover subcategoría arriba/abajo
@@ -4565,32 +4566,32 @@
     function renderAnu() {
         const t = document.getElementById('tAnu');
         if (!cache.anunciantes.length) { t.innerHTML = '<tr><td colspan="10" class="empty">Sin anunciantes</td></tr>'; return; }
-        t.innerHTML = cache.anunciantes.map((a,i)=>'<tr class="'+(a.vehiculo_match_id?'highlight-row':'')+'"><td>'+(a.id||i+1)+'</td><td><b>'+(a.nombre||'-')+'</b></td><td>'+(a.email||'')+'<br><small>'+(a.telefono||'')+'</small></td><td>'+(a.vehiculo||'-')+'</td><td>'+(a.precio?fmtNum(a.precio)+'€':'-')+'</td><td>'+fmtDate(a.fecha)+'</td><td><span class="badge-estado '+(a.estado==='contactado'?'publicado':'nuevo')+'">'+(a.estado||'nuevo')+'</span></td><td class="table-actions"><button onclick="marcarContactado(\'anunciantes\','+i+')">✅</button></td></tr>').join('');
+        t.innerHTML = cache.anunciantes.map((a,i)=>'<tr class="'+(a.vehiculo_match_id?'highlight-row':'')+'"><td>'+(parseInt(a.id)||i+1)+'</td><td><b>'+escapeHTML(a.nombre||'-')+'</b></td><td>'+escapeHTML(a.email||'')+'<br><small>'+escapeHTML(a.telefono||'')+'</small></td><td>'+escapeHTML(a.vehiculo||'-')+'</td><td>'+(a.precio?fmtNum(a.precio)+'€':'-')+'</td><td>'+fmtDate(a.fecha)+'</td><td><span class="badge-estado '+(a.estado==='contactado'?'publicado':'nuevo')+'">'+escapeHTML(a.estado||'nuevo')+'</span></td><td class="table-actions"><button onclick="marcarContactado(\'anunciantes\','+i+')">✅</button></td></tr>').join('');
     }
     function renderSol() {
         const t = document.getElementById('tSol');
         if (!cache.solicitantes.length) { t.innerHTML = '<tr><td colspan="10" class="empty">Sin solicitantes</td></tr>'; return; }
-        t.innerHTML = cache.solicitantes.map((s,i)=>'<tr class="'+(s.vehiculo_match_id?'highlight-row':'')+'"><td>'+(s.id||i+1)+'</td><td><b>'+(s.nombre||'-')+'</b></td><td>'+(s.email||'')+'<br><small>'+(s.telefono||'')+'</small></td><td>'+(s.requisitos||'-')+'</td><td>'+fmtDate(s.fecha)+'</td><td>'+(s.vehiculo_match_id?'<a href="#" onclick="goSection(\'vehiculos\')">#'+s.vehiculo_match_id+'</a>':'-')+'</td><td><span class="badge-estado '+(s.estado==='contactado'?'publicado':'nuevo')+'">'+(s.estado||'nuevo')+'</span></td><td class="table-actions"><button onclick="marcarContactado(\'solicitantes\','+i+')">✅</button></td></tr>').join('');
+        t.innerHTML = cache.solicitantes.map((s,i)=>'<tr class="'+(s.vehiculo_match_id?'highlight-row':'')+'"><td>'+(parseInt(s.id)||i+1)+'</td><td><b>'+escapeHTML(s.nombre||'-')+'</b></td><td>'+escapeHTML(s.email||'')+'<br><small>'+escapeHTML(s.telefono||'')+'</small></td><td>'+escapeHTML(s.requisitos||'-')+'</td><td>'+fmtDate(s.fecha)+'</td><td>'+(s.vehiculo_match_id?'<a href="#" onclick="goSection(\'vehiculos\')">#'+(parseInt(s.vehiculo_match_id)||0)+'</a>':'-')+'</td><td><span class="badge-estado '+(s.estado==='contactado'?'publicado':'nuevo')+'">'+escapeHTML(s.estado||'nuevo')+'</span></td><td class="table-actions"><button onclick="marcarContactado(\'solicitantes\','+i+')">✅</button></td></tr>').join('');
     }
     function renderPos() {
         const t = document.getElementById('tPos');
         if (!cache.noticias.length) { t.innerHTML = '<tr><td colspan="10" class="empty">Sin posts</td></tr>'; return; }
-        t.innerHTML = cache.noticias.map((p,i)=>'<tr><td>'+(p.id||i+1)+'</td><td><img src="'+(p.imagen||'')+'" style="width:50px;height:30px;object-fit:cover;border-radius:4px;background:#eee"></td><td><b>'+(p.titulo_es||'-')+'</b></td><td>'+(p.categoria||'-')+'</td><td>'+fmtDate(p.fecha)+'</td><td>'+(p.vistas||0)+'</td><td><span class="badge-estado '+(p.publicado?'publicado':'oculto')+'">'+(p.publicado?'Pub':'Borr')+'</span></td><td class="table-actions"><button onclick="toast(\'En desarrollo\',\'info\')">✏️</button><button onclick="prepDel(\'noticias\','+(i+2)+')">🗑️</button></td></tr>').join('');
+        t.innerHTML = cache.noticias.map((p,i)=>'<tr><td>'+(parseInt(p.id)||i+1)+'</td><td><img src="'+escapeHTML(p.imagen||'')+'" style="width:50px;height:30px;object-fit:cover;border-radius:4px;background:#eee"></td><td><b>'+escapeHTML(p.titulo_es||'-')+'</b></td><td>'+escapeHTML(p.categoria||'-')+'</td><td>'+fmtDate(p.fecha)+'</td><td>'+(parseInt(p.vistas)||0)+'</td><td><span class="badge-estado '+(p.publicado?'publicado':'oculto')+'">'+(p.publicado?'Pub':'Borr')+'</span></td><td class="table-actions"><button onclick="toast(\'En desarrollo\',\'info\')">✏️</button><button onclick="prepDel(\'noticias\','+(i+2)+')">🗑️</button></td></tr>').join('');
     }
     function renderCom() {
         const t = document.getElementById('tCom');
         if (!cache.comentarios.length) { t.innerHTML = '<tr><td colspan="7" class="empty">Sin comentarios</td></tr>'; return; }
-        t.innerHTML = cache.comentarios.map((c,i)=>'<tr><td>'+(c.id||i+1)+'</td><td>#'+(c.noticia_id||'-')+'</td><td><b>'+(c.nombre||'-')+'</b><br><small>'+(c.email||'')+'</small></td><td>'+((c.texto||'').substring(0,40))+'...</td><td>'+fmtDate(c.fecha)+'</td><td><span class="badge-estado '+(c.moderado?'publicado':'nuevo')+'">'+(c.moderado?'OK':'Pend')+'</span></td><td class="table-actions">'+(c.moderado?'':'<button onclick="aprobarCom('+i+')">✅</button>')+'<button onclick="prepDel(\'comentarios\','+(i+2)+')">🗑️</button></td></tr>').join('');
+        t.innerHTML = cache.comentarios.map((c,i)=>'<tr><td>'+(parseInt(c.id)||i+1)+'</td><td>#'+(parseInt(c.noticia_id)||'-')+'</td><td><b>'+escapeHTML(c.nombre||'-')+'</b><br><small>'+escapeHTML(c.email||'')+'</small></td><td>'+escapeHTML((c.texto||'').substring(0,40))+'...</td><td>'+fmtDate(c.fecha)+'</td><td><span class="badge-estado '+(c.moderado?'publicado':'nuevo')+'">'+(c.moderado?'OK':'Pend')+'</span></td><td class="table-actions">'+(c.moderado?'':'<button onclick="aprobarCom('+i+')">✅</button>')+'<button onclick="prepDel(\'comentarios\','+(i+2)+')">🗑️</button></td></tr>').join('');
     }
     function renderUsu() {
         const t = document.getElementById('tUsu');
         if (!cache.usuarios.length) { t.innerHTML = '<tr><td colspan="7" class="empty">Sin usuarios</td></tr>'; return; }
-        t.innerHTML = cache.usuarios.map((u,i)=>'<tr><td>'+(u.id||i+1)+'</td><td><b>'+(u.pseudonimo||'-')+'</b></td><td>'+(u.nombre||'')+' '+(u.apellidos||'')+'</td><td>'+(u.email||'-')+'</td><td>'+fmtDate(u.fecha_registro)+'</td><td><span class="badge-estado '+(u.estado==='activo'?'publicado':'nuevo')+'">'+(u.estado||'-')+'</span></td><td class="table-actions"><button onclick="alert(\'Usuario: '+(u.pseudonimo||'-')+'\\nEmail: '+(u.email||'-')+'\')">👁️</button></td></tr>').join('');
+        t.innerHTML = cache.usuarios.map((u,i)=>'<tr><td>'+(parseInt(u.id)||i+1)+'</td><td><b>'+escapeHTML(u.pseudonimo||'-')+'</b></td><td>'+escapeHTML(u.nombre||'')+' '+escapeHTML(u.apellidos||'')+'</td><td>'+escapeHTML(u.email||'-')+'</td><td>'+fmtDate(u.fecha_registro)+'</td><td><span class="badge-estado '+(u.estado==='activo'?'publicado':'nuevo')+'">'+escapeHTML(u.estado||'-')+'</span></td><td class="table-actions"><button onclick="alert(\'Usuario: '+escapeHTML(u.pseudonimo||'-')+'\\nEmail: '+escapeHTML(u.email||'-')+'\')">👁️</button></td></tr>').join('');
     }
     function renderSus() {
         const t = document.getElementById('tSus');
         if (!cache.suscripciones.length) { t.innerHTML = '<tr><td colspan="10" class="empty">Sin suscripciones</td></tr>'; return; }
-        t.innerHTML = cache.suscripciones.map(s=>'<tr><td>'+(s.email||'-')+'</td><td>'+(s.registro_web?'✅':'❌')+'</td><td>'+(s.area_prensa?'✅':'❌')+'</td><td>'+(s.boletines?'✅':'❌')+'</td><td>'+(s.destacados?'✅':'❌')+'</td><td>'+(s.eventos?'✅':'❌')+'</td><td>'+(s.respuestas?'✅':'❌')+'</td><td>'+fmtDate(s.fecha)+'</td></tr>').join('');
+        t.innerHTML = cache.suscripciones.map(s=>'<tr><td>'+escapeHTML(s.email||'-')+'</td><td>'+(s.registro_web?'✅':'❌')+'</td><td>'+(s.area_prensa?'✅':'❌')+'</td><td>'+(s.boletines?'✅':'❌')+'</td><td>'+(s.destacados?'✅':'❌')+'</td><td>'+(s.eventos?'✅':'❌')+'</td><td>'+(s.respuestas?'✅':'❌')+'</td><td>'+fmtDate(s.fecha)+'</td></tr>').join('');
     }
     
     // Banner
@@ -4630,11 +4631,11 @@
         
         if (isActive) {
             icon.textContent = '✅';
-            text.innerHTML = '<span style="color:#28a745">ACTIVO</span> - "' + (mensaje.substring(0,50) || 'Sin mensaje') + (mensaje.length > 50 ? '...' : '') + '"';
+            text.innerHTML = '<span style="color:#28a745">ACTIVO</span> - "' + escapeHTML(mensaje.substring(0,50) || 'Sin mensaje') + (mensaje.length > 50 ? '...' : '') + '"';
             btn.textContent = 'Desactivar';
         } else {
             icon.textContent = '⚠️';
-            text.innerHTML = '<span style="color:#ffc107">INACTIVO</span>' + (mensaje ? ' - "' + mensaje.substring(0,30) + '..."' : '');
+            text.innerHTML = '<span style="color:#ffc107">INACTIVO</span>' + (mensaje ? ' - "' + escapeHTML(mensaje.substring(0,30)) + '..."' : '');
             btn.textContent = 'Activar';
         }
     }
@@ -4687,11 +4688,11 @@
     function previewBanner() {
         const txt = document.getElementById('bannerEs').value;
         const url = document.getElementById('bannerUrl').value;
-        let html = txt;
+        let html = escapeHTML(txt);
         if (url) {
             const isExternal = !url.includes(window.location.hostname) && !url.startsWith('/');
             const target = isExternal ? ' target="_blank"' : '';
-            html += ' <a href="'+url+'"'+target+' style="color:#0F2A2E;font-weight:600;text-decoration:underline">Más información</a>';
+            html += ' <a href="'+escapeHTML(url)+'"'+target+' style="color:#0F2A2E;font-weight:600;text-decoration:underline">Más información</a>';
         }
         const div = document.createElement('div');
         div.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#fbbf24;color:#1F2A2A;padding:12px 20px;text-align:center;z-index:10002;font-size:14px';
@@ -4862,7 +4863,7 @@
         }
     }
     function createCaractRow(nombre, valor) {
-        return '<div class="caract-row"><input type="text" class="caract-nombre" placeholder="Característica" value="'+nombre+'"><input type="text" class="caract-valor" placeholder="Valor" value="'+valor+'"><button type="button" class="btn-remove-caract" onclick="removeCaracteristica(this)">×</button></div>';
+        return '<div class="caract-row"><input type="text" class="caract-nombre" placeholder="Característica" value="'+escapeHTML(nombre)+'"><input type="text" class="caract-valor" placeholder="Valor" value="'+escapeHTML(valor)+'"><button type="button" class="btn-remove-caract" onclick="removeCaracteristica(this)">×</button></div>';
     }
     function addCaracteristica() {
         document.getElementById('caracteristicasContainer').insertAdjacentHTML('beforeend', createCaractRow('', ''));
@@ -4885,7 +4886,7 @@
     
     function updateSubcats() {
         const subs = cache.subcategorias.filter(s => s.publicado);
-        document.getElementById('vehSubcat').innerHTML = '<option value="">Seleccionar</option>' + subs.map(s => '<option value="'+s.nombre+'">'+s.nombre+'</option>').join('');
+        document.getElementById('vehSubcat').innerHTML = '<option value="">Seleccionar</option>' + subs.map(s => '<option value="'+escapeHTML(s.nombre)+'">'+escapeHTML(s.nombre)+'</option>').join('');
     }
     
     function renderFiltrosGrid(vals = {}) {
@@ -4918,7 +4919,7 @@
                     }
                 }
                 
-                return '<div class="filtro-item filtro-tick"><label class="checkbox-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 12px;background:#f8f9fa;border:1px solid #e5e7eb;border-radius:6px"><input type="checkbox" data-filtro="' + nombre + '" data-tipo="tick" ' + (checked ? 'checked' : '') + ' style="width:18px;height:18px"><span style="font-size:13px">' + nombre + ' <small style="color:#888">(' + nombreEn + ')</small></span></label></div>';
+                return '<div class="filtro-item filtro-tick"><label class="checkbox-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 12px;background:#f8f9fa;border:1px solid #e5e7eb;border-radius:6px"><input type="checkbox" data-filtro="' + escapeHTML(nombre) + '" data-tipo="tick" ' + (checked ? 'checked' : '') + ' style="width:18px;height:18px"><span style="font-size:13px">' + escapeHTML(nombre) + ' <small style="color:#888">(' + escapeHTML(nombreEn) + ')</small></span></label></div>';
             }
             
             // Para otros tipos, mostrar campos bilingües
@@ -4939,7 +4940,7 @@
                 }
             }
             
-            return '<div class="filtro-item filtro-bilingue"><label>' + nombre + ' <small style="color:#888">(' + nombreEn + ')</small></label><div style="display:flex;gap:8px"><div style="flex:1"><span style="font-size:10px;color:#666">🇪🇸 ES</span><input type="text" data-filtro="' + nombre + '" data-lang="es" value="' + vEs + '" placeholder="' + (f.tipo||'') + '"></div><div style="flex:1"><span style="font-size:10px;color:#666">🇬🇧 EN</span><input type="text" data-filtro="' + nombre + '" data-lang="en" value="' + vEn + '" placeholder="' + (f.tipo||'') + '"></div></div></div>';
+            return '<div class="filtro-item filtro-bilingue"><label>' + escapeHTML(nombre) + ' <small style="color:#888">(' + escapeHTML(nombreEn) + ')</small></label><div style="display:flex;gap:8px"><div style="flex:1"><span style="font-size:10px;color:#666">🇪🇸 ES</span><input type="text" data-filtro="' + escapeHTML(nombre) + '" data-lang="es" value="' + escapeHTML(vEs) + '" placeholder="' + escapeHTML(f.tipo||'') + '"></div><div style="flex:1"><span style="font-size:10px;color:#666">🇬🇧 EN</span><input type="text" data-filtro="' + escapeHTML(nombre) + '" data-lang="en" value="' + escapeHTML(vEn) + '" placeholder="' + escapeHTML(f.tipo||'') + '"></div></div></div>';
         }).join('');
     }
 
@@ -5000,15 +5001,15 @@
             const isEditing = doc.editing === true;
             
             if (isEditing) {
-                html += '<div class="doc-preview"><input type="text" class="doc-name-edit" value="' + name + '" onkeypress="if(event.key===\'Enter\')saveDocName(' + i + ',this.value)" id="docNameInput' + i + '"><button class="edit-name" onclick="event.stopPropagation();saveDocName(' + i + ',document.getElementById(\'docNameInput' + i + '\').value)" title="Guardar">✓</button><button class="remove" onclick="event.stopPropagation();cancelEditDocName(' + i + ')">✕</button></div>';
+                html += '<div class="doc-preview"><input type="text" class="doc-name-edit" value="' + escapeHTML(name) + '" onkeypress="if(event.key===\'Enter\')saveDocName(' + i + ',this.value)" id="docNameInput' + i + '"><button class="edit-name" onclick="event.stopPropagation();saveDocName(' + i + ',document.getElementById(\'docNameInput' + i + '\').value)" title="Guardar">✓</button><button class="remove" onclick="event.stopPropagation();cancelEditDocName(' + i + ')">✕</button></div>';
             } else {
-                html += '<div class="doc-preview"><a href="' + url + '" target="_blank">📄 ' + name + '</a><button class="edit-name" onclick="event.stopPropagation();editDocName(' + i + ')" title="Editar nombre">✏️</button><button class="remove" onclick="event.stopPropagation();removeDoc(' + i + ')">X</button></div>';
+                html += '<div class="doc-preview"><a href="' + escapeHTML(url) + '" target="_blank">📄 ' + escapeHTML(name) + '</a><button class="edit-name" onclick="event.stopPropagation();editDocName(' + i + ')" title="Editar nombre">✏️</button><button class="remove" onclick="event.stopPropagation();removeDoc(' + i + ')">X</button></div>';
             }
         });
         
         // Archivos pendientes de subir
         docFiles.forEach((file, i) => {
-            html += '<div class="doc-preview doc-pending"><span>📄 ' + file.name + ' (pendiente)</span><button class="remove" onclick="event.stopPropagation();removeDoc(' + (docUrls.length + i) + ')">X</button></div>';
+            html += '<div class="doc-preview doc-pending"><span>📄 ' + escapeHTML(file.name) + ' (pendiente)</span><button class="remove" onclick="event.stopPropagation();removeDoc(' + (docUrls.length + i) + ')">X</button></div>';
         });
         
         container.innerHTML = html;
@@ -5112,7 +5113,7 @@
             const src = isFile ? URL.createObjectURL(img) : convertirUrlDrive(img);
             const portadaClass = i === portada ? 'portada' : '';
             const portadaLabel = i === portada ? '<span class="portada-label">Portada</span>' : '';
-            return '<div class="img-preview ' + portadaClass + '" onclick="setPortada(' + i + ')"><img src="' + src + '" onerror="this.style.background=\'#ddd\'"><button class="remove" onclick="event.stopPropagation();removeImg(' + i + ')">X</button>' + portadaLabel + '</div>';
+            return '<div class="img-preview ' + portadaClass + '" onclick="setPortada(' + i + ')"><img src="' + escapeHTML(src) + '" onerror="this.style.background=\'#ddd\'"><button class="remove" onclick="event.stopPropagation();removeImg(' + i + ')">X</button>' + portadaLabel + '</div>';
         }).join('');
     }
     
@@ -5573,7 +5574,7 @@
         }
         container.innerHTML = filtrosDisponibles.map(f => {
             const checked = activos.includes(f.nombre) ? 'checked' : '';
-            return '<label class="checkbox-label" style="font-size:12px"><input type="checkbox" value="'+f.nombre+'" '+checked+'><span>'+f.nombre+'</span></label>';
+            return '<label class="checkbox-label" style="font-size:12px"><input type="checkbox" value="'+escapeHTML(f.nombre)+'" '+checked+'><span>'+escapeHTML(f.nombre)+'</span></label>';
         }).join('');
     }
     async function guardarSubcat() {
@@ -5654,14 +5655,14 @@
         const otrosFiltros = cache.filtros.filter(f => f.nombre !== excluirNombre);
         containerExtra.innerHTML = otrosFiltros.map(f => {
             const checked = activosExtra.includes(f.nombre) ? 'checked' : '';
-            return '<label class="checkbox-label" style="font-size:12px"><input type="checkbox" value="'+f.nombre+'" '+checked+'><span>'+f.nombre+'</span></label>';
+            return '<label class="checkbox-label" style="font-size:12px"><input type="checkbox" value="'+escapeHTML(f.nombre)+'" '+checked+'><span>'+escapeHTML(f.nombre)+'</span></label>';
         }).join('');
-        
+
         // Renderizar Ocultar filtros
         const containerOcultar = document.getElementById('filOcultarCheck');
         containerOcultar.innerHTML = otrosFiltros.map(f => {
             const checked = activosOcultar.includes(f.nombre) ? 'checked' : '';
-            return '<label class="checkbox-label" style="font-size:12px"><input type="checkbox" value="'+f.nombre+'" '+checked+'><span>'+f.nombre+'</span></label>';
+            return '<label class="checkbox-label" style="font-size:12px"><input type="checkbox" value="'+escapeHTML(f.nombre)+'" '+checked+'><span>'+escapeHTML(f.nombre)+'</span></label>';
         }).join('');
     }
     async function guardarFiltro() {
@@ -5742,8 +5743,8 @@
         
         container.innerHTML = tablaGrupos.map(g => {
             const checked = gruposActivos[g.nombre] ? 'checked' : '';
-            return `<label title="Mostrar ${g.nombre}">
-                <input type="checkbox" id="grp_${sanitizeName(g.nombre)}" ${checked} onchange="toggleGrupo('${g.nombre}')"> ${g.nombre}
+            return `<label title="Mostrar ${escapeHTML(g.nombre)}">
+                <input type="checkbox" id="grp_${sanitizeName(g.nombre)}" ${checked} onchange="toggleGrupo('${escapeHTML(g.nombre)}')"> ${escapeHTML(g.nombre)}
             </label>`;
         }).join('');
     }
@@ -5858,12 +5859,12 @@
                 const seccionIcon = seccion === 'vehiculos' ? '🚗' : (seccion === 'intermediacion' ? '🤝' : '✅');
                 const seccionColor = seccion === 'vehiculos' ? '#3b82f6' : (seccion === 'intermediacion' ? '#f59e0b' : '#22c55e');
                 html += `
-                    <li class="sortable-item" draggable="true" data-index="${i}" data-id="${g.id}">
+                    <li class="sortable-item" draggable="true" data-index="${i}" data-id="${parseInt(g.id)||0}">
                         <span class="drag-handle">⋮⋮</span>
                         <span class="item-name">
-                            <strong>${g.nombre}</strong> 
+                            <strong>${escapeHTML(g.nombre)}</strong>
                             <small style="color:#888">(${elementos} elementos)</small>
-                            <span style="color:${seccionColor};font-size:10px;margin-left:5px">${seccionIcon} ${seccion}</span>
+                            <span style="color:${seccionColor};font-size:10px;margin-left:5px">${seccionIcon} ${escapeHTML(seccion)}</span>
                             ${g.activo_defecto === true || g.activo_defecto === 'TRUE' ? '<span style="color:#22c55e;font-size:10px;margin-left:5px">● Activo</span>' : ''}
                             ${g.obligatorio === true || g.obligatorio === 'TRUE' ? '<span style="color:#ef4444;font-size:10px;margin-left:5px">* Obligatorio</span>' : ''}
                         </span>
@@ -6003,11 +6004,11 @@
                 <div class="form-row">
                     <div>
                         <label>Nombre (ES)</label>
-                        <input type="text" id="grupoNombre" value="${grupo.nombre || ''}" placeholder="Ej: Técnico">
+                        <input type="text" id="grupoNombre" value="${escapeHTML(grupo.nombre || '')}" placeholder="Ej: Técnico">
                     </div>
                     <div>
                         <label>Nombre (EN)</label>
-                        <input type="text" id="grupoNombreEn" value="${grupo.nombre_en || ''}" placeholder="Ej: Technical">
+                        <input type="text" id="grupoNombreEn" value="${escapeHTML(grupo.nombre_en || '')}" placeholder="Ej: Technical">
                     </div>
                 </div>
                 <div class="form-row">
@@ -6032,7 +6033,7 @@
                 <div class="grupo-elementos-list">
                     ${columnasDisponibles.map(col => {
                         const checked = elementosActuales.includes(col.key.toLowerCase()) ? 'checked' : '';
-                        return '<label><input type="checkbox" value="' + col.key + '" ' + checked + '> ' + col.nombre + '</label>';
+                        return '<label><input type="checkbox" value="' + escapeHTML(col.key) + '" ' + checked + '> ' + escapeHTML(col.nombre) + '</label>';
                     }).join('')}
                 </div>
                 <div style="margin-top:15px;display:flex;gap:10px;justify-content:flex-end">
@@ -6041,7 +6042,7 @@
                 </div>
             </div>
         `;
-        
+
         container.innerHTML = html;
         container.scrollIntoView({ behavior: 'smooth' });
     }
@@ -6219,16 +6220,16 @@
         columnasOrdenadas.forEach((c, i) => {
             const tieneFallback = c.esCombinada;
             html += `
-                <li class="sortable-item" draggable="true" data-index="${i}" data-id="${c.id}" data-elementos="${c.elementos}">
+                <li class="sortable-item" draggable="true" data-index="${i}" data-id="${escapeHTML(c.id)}" data-elementos="${escapeHTML(c.elementos)}">
                     <span class="drag-handle">⋮⋮</span>
                     <span class="item-name">
-                        <strong>${c.nombre}</strong>
+                        <strong>${escapeHTML(c.nombre)}</strong>
                         ${tieneFallback ? '<span style="color:#f59e0b;font-size:10px;margin-left:5px">⚡ Combinada</span>' : ''}
                     </span>
                     <div class="item-actions">
                         ${tieneFallback ? 
-                            `<button style="background:#3b82f6;color:#fff;font-size:10px" onclick="editarCombinacion('${c.id}')" title="Editar combinación">✏️</button>
-                             <button style="background:#ef4444;color:#fff;font-size:10px" onclick="descombinaColumna('${c.id}')" title="Separar columnas">Separar</button>` : 
+                            `<button style="background:#3b82f6;color:#fff;font-size:10px" onclick="editarCombinacion('${escapeHTML(c.id)}')" title="Editar combinación">✏️</button>
+                             <button style="background:#ef4444;color:#fff;font-size:10px" onclick="descombinaColumna('${escapeHTML(c.id)}')" title="Separar columnas">Separar</button>` :
                             `<button style="background:#f59e0b;color:#fff;font-size:10px" onclick="combinarColumna(${i})" title="Combinar con otra">Combinar</button>`
                         }
                     </div>
@@ -6238,7 +6239,7 @@
                 html += `<div class="fallback-list" style="margin-left:30px;margin-bottom:10px">`;
                 c.elementosArray.forEach((e, j) => {
                     const colBase = columnasBase.find(cb => cb.key === e);
-                    html += `<span>${j + 1}. ${colBase ? colBase.nombre : e} ${j === 0 ? '(principal)' : '(fallback)'}</span>`;
+                    html += `<span>${j + 1}. ${escapeHTML(colBase ? colBase.nombre : e)} ${j === 0 ? '(principal)' : '(fallback)'}</span>`;
                 });
                 html += '</div>';
             }
@@ -6397,8 +6398,8 @@
                 <h5 style="margin-top:0">Editar columna combinada</h5>
                 <div class="form-group" style="margin-bottom:15px">
                     <label>Nombre de la columna</label>
-                    <input type="text" id="editColNombre" value="${nombreActual}" placeholder="${nombreAuto}">
-                    <small style="color:#666">Deja vacío para usar: ${nombreAuto}</small>
+                    <input type="text" id="editColNombre" value="${escapeHTML(nombreActual)}" placeholder="${escapeHTML(nombreAuto)}">
+                    <small style="color:#666">Deja vacío para usar: ${escapeHTML(nombreAuto)}</small>
                 </div>
                 <p style="color:#666;font-size:12px">Selecciona las columnas a combinar (mínimo 2). Se mostrará el primer valor disponible.</p>
                 <div class="grupo-elementos-list">
@@ -6577,12 +6578,12 @@
         const subcats = cache.subcategorias || [];
         
         if (selectFiltro) {
-            selectFiltro.innerHTML = '<option value="">Todas las subcategorías</option>' + 
-                subcats.map(s => `<option value="${s.nombre}">${s.nombre}</option>`).join('');
+            selectFiltro.innerHTML = '<option value="">Todas las subcategorías</option>' +
+                subcats.map(s => `<option value="${escapeHTML(s.nombre)}">${escapeHTML(s.nombre)}</option>`).join('');
         }
         if (selectModal) {
-            selectModal.innerHTML = '<option value="">Seleccionar</option>' + 
-                subcats.map(s => `<option value="${s.nombre}">${s.nombre}</option>`).join('');
+            selectModal.innerHTML = '<option value="">Seleccionar</option>' +
+                subcats.map(s => `<option value="${escapeHTML(s.nombre)}">${escapeHTML(s.nombre)}</option>`).join('');
         }
     }
     
@@ -6604,7 +6605,7 @@
         
         container.innerHTML = grupos.map(g => {
             const checked = gruposActivosInter[g.nombre] ? 'checked' : '';
-            return '<label title="' + g.nombre + '"><input type="checkbox" ' + checked + ' onchange="toggleGrupoInter(\'' + g.nombre + '\')"> ' + g.nombre.toUpperCase() + '</label>';
+            return '<label title="' + escapeHTML(g.nombre) + '"><input type="checkbox" ' + checked + ' onchange="toggleGrupoInter(\'' + escapeHTML(g.nombre) + '\')"> ' + escapeHTML(g.nombre.toUpperCase()) + '</label>';
         }).join('');
     }
     
@@ -6709,7 +6710,7 @@
         tbody.innerHTML = filtered.map((v) => {
             const esVehiculo = v._esVehiculo;
             const img = v.imagenes ? v.imagenes.split(',')[0] : '';
-            const imgHtml = img ? '<img src="' + img + '" style="width:50px;height:35px;object-fit:cover;border-radius:4px;">' : '—';
+            const imgHtml = img ? '<img src="' + escapeHTML(img) + '" style="width:50px;height:35px;object-fit:cover;border-radius:4px;">' : '—';
             
             const estadoMap = {
                 'vendido': 'vendido',
@@ -6739,16 +6740,16 @@
             const idPrefix = esVehiculo ? '<span style="color:#3b82f6" title="Vehículo propio">V</span>' : '';
             
             let row = '<tr style="' + rowStyle + '">';
-            row += '<td><strong>' + idPrefix + (v.id || '?') + '</strong></td>';
+            row += '<td><strong>' + idPrefix + escapeHTML(v.id || '?') + '</strong></td>';
             row += '<td>' + imgHtml + '</td>';
-            row += '<td>' + (v.subcategoria || '—') + '</td>';
-            row += '<td>' + (v.marca || '—') + '</td>';
-            row += '<td>' + (v.modelo || '—') + '</td>';
+            row += '<td>' + escapeHTML(v.subcategoria || '—') + '</td>';
+            row += '<td>' + escapeHTML(v.marca || '—') + '</td>';
+            row += '<td>' + escapeHTML(v.modelo || '—') + '</td>';
             row += '<td>' + (v.ano || v.año || '—') + '</td>';
             
-            if (showId) row += '<td>' + (v.matricula || '—') + '</td>';
+            if (showId) row += '<td>' + escapeHTML(v.matricula || '—') + '</td>';
             if (showDoc) row += '<td>' + (numDocs > 0 ? '📄 ' + numDocs : '—') + '</td>';
-            if (showProp !== false) row += '<td>' + (esVehiculo ? '<span style="color:#3b82f6;font-weight:600">PROPIO</span>' : (v.propietario || '—')) + '</td>';
+            if (showProp !== false) row += '<td>' + (esVehiculo ? '<span style="color:#3b82f6;font-weight:600">PROPIO</span>' : escapeHTML(v.propietario || '—')) + '</td>';
             row += '<td class="num">' + (precioVenta ? precioVenta.toLocaleString() + '€' : 'Cons') + '</td>';
             
             if (showCue) {
@@ -6758,18 +6759,18 @@
                 row += '<td class="num" style="color:' + (beneficio >= 0 ? '#10b981' : '#ef4444') + ';font-weight:600">' + beneficio.toLocaleString() + '€</td>';
             }
             
-            row += '<td><span class="badge-estado ' + estadoClass + '">' + estadoText + '</span></td>';
-            
+            row += '<td><span class="badge-estado ' + escapeHTML(estadoClass) + '">' + escapeHTML(estadoText) + '</span></td>';
+
             if (esVehiculo) {
                 row += '<td class="table-actions">';
                 row += '<button onclick="editVeh(' + cache.vehiculos.indexOf(cache.vehiculos.find(x => x.id === v.id)) + ')" title="Editar">✏️</button>';
-                if (v.estado !== 'vendido') row += '<button onclick="abrirModalVender(\'' + v.id + '\', \'vehiculos\')" title="Vender" style="font-weight:bold">€</button>';
+                if (v.estado !== 'vendido') row += '<button onclick="abrirModalVender(\'' + escapeHTML(v.id) + '\', \'vehiculos\')" title="Vender" style="font-weight:bold">€</button>';
                 row += '</td></tr>';
             } else {
                 row += '<td class="table-actions">';
-                row += '<button onclick="editarInter(\'' + v.id + '\')" title="Editar">✏️</button>';
-                if (v.estado !== 'vendido') row += '<button onclick="abrirModalVender(\'' + v.id + '\', \'intermediacion\')" title="Vender" style="font-weight:bold">€</button>';
-                row += '<button onclick="prepDelInter(\'' + v.id + '\', ' + v._row + ')" title="Eliminar">🗑️</button>';
+                row += '<button onclick="editarInter(\'' + escapeHTML(v.id) + '\')" title="Editar">✏️</button>';
+                if (v.estado !== 'vendido') row += '<button onclick="abrirModalVender(\'' + escapeHTML(v.id) + '\', \'intermediacion\')" title="Vender" style="font-weight:bold">€</button>';
+                row += '<button onclick="prepDelInter(\'' + escapeHTML(v.id) + '\', ' + (parseInt(v._row)||0) + ')" title="Eliminar">🗑️</button>';
                 row += '</td></tr>';
             }
             
@@ -6918,7 +6919,7 @@
                         checked = valor === true || valor === 'TRUE' || valor === 'true' || valor === 'Si' || valor === 'Sí';
                     }
                 }
-                return `<div class="filtro-item filtro-tick"><label class="checkbox-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 12px;background:#f8f9fa;border:1px solid #e5e7eb;border-radius:6px"><input type="checkbox" data-filtro="${nombre}" data-tipo="tick" ${checked ? 'checked' : ''} style="width:18px;height:18px"><span style="font-size:13px">${nombre}</span></label></div>`;
+                return `<div class="filtro-item filtro-tick"><label class="checkbox-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 12px;background:#f8f9fa;border:1px solid #e5e7eb;border-radius:6px"><input type="checkbox" data-filtro="${escapeHTML(nombre)}" data-tipo="tick" ${checked ? 'checked' : ''} style="width:18px;height:18px"><span style="font-size:13px">${escapeHTML(nombre)}</span></label></div>`;
             }
             
             let vEs = '', vEn = '';
@@ -6935,7 +6936,7 @@
                 }
             }
             
-            return `<div class="filtro-item filtro-bilingue"><label>${nombre}</label><div style="display:flex;gap:8px"><div style="flex:1"><span style="font-size:10px;color:#666">🇪🇸</span><input type="text" data-filtro="${nombre}" data-lang="es" value="${vEs}" placeholder="${f.tipo||''}"></div><div style="flex:1"><span style="font-size:10px;color:#666">🇬🇧</span><input type="text" data-filtro="${nombre}" data-lang="en" value="${vEn}" placeholder="${f.tipo||''}"></div></div></div>`;
+            return `<div class="filtro-item filtro-bilingue"><label>${escapeHTML(nombre)}</label><div style="display:flex;gap:8px"><div style="flex:1"><span style="font-size:10px;color:#666">🇪🇸</span><input type="text" data-filtro="${escapeHTML(nombre)}" data-lang="es" value="${escapeHTML(vEs)}" placeholder="${escapeHTML(f.tipo||'')}"></div><div style="flex:1"><span style="font-size:10px;color:#666">🇬🇧</span><input type="text" data-filtro="${escapeHTML(nombre)}" data-lang="en" value="${escapeHTML(vEn)}" placeholder="${escapeHTML(f.tipo||'')}"></div></div></div>`;
         }).join('');
     }
     
@@ -6948,8 +6949,8 @@
         const entries = Object.entries(interCaracteristicas);
         container.innerHTML = entries.map(([key, val], i) => `
             <div class="caract-row" style="display:flex;gap:8px;margin-bottom:8px">
-                <input type="text" value="${key}" placeholder="Nombre" style="flex:1" onchange="updateCaractInter(${i}, 'key', this.value)">
-                <input type="text" value="${val}" placeholder="Valor" style="flex:1" onchange="updateCaractInter(${i}, 'val', this.value)">
+                <input type="text" value="${escapeHTML(key)}" placeholder="Nombre" style="flex:1" onchange="updateCaractInter(${i}, 'key', this.value)">
+                <input type="text" value="${escapeHTML(val)}" placeholder="Valor" style="flex:1" onchange="updateCaractInter(${i}, 'val', this.value)">
                 <button type="button" onclick="removeCaractInter(${i})" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:0 10px">×</button>
             </div>
         `).join('');
@@ -7003,12 +7004,12 @@
         let html = '';
         
         interImagenes.forEach((url, i) => {
-            html += `<div class="img-thumb"><img src="${url}"><button type="button" onclick="removeInterImg(${i}, 'url')">×</button></div>`;
+            html += `<div class="img-thumb"><img src="${escapeHTML(url)}"><button type="button" onclick="removeInterImg(${i}, 'url')">×</button></div>`;
         });
-        
+
         interImagenesFiles.forEach((file, i) => {
             const url = URL.createObjectURL(file);
-            html += `<div class="img-thumb"><img src="${url}"><span class="pending">⏳</span><button type="button" onclick="removeInterImg(${i}, 'file')">×</button></div>`;
+            html += `<div class="img-thumb"><img src="${escapeHTML(url)}"><span class="pending">⏳</span><button type="button" onclick="removeInterImg(${i}, 'file')">×</button></div>`;
         });
         
         container.innerHTML = html;
@@ -7032,11 +7033,11 @@
         let html = '';
         
         interDocs.forEach((doc, i) => {
-            html += `<div class="doc-preview"><a href="${doc.url}" target="_blank">📄 ${doc.name}</a><button class="edit-name" onclick="editDocNameInter(${i})">✏️</button><button class="remove" onclick="removeDocInter(${i}, 'url')">X</button></div>`;
+            html += `<div class="doc-preview"><a href="${escapeHTML(doc.url)}" target="_blank">📄 ${escapeHTML(doc.name)}</a><button class="edit-name" onclick="editDocNameInter(${i})">✏️</button><button class="remove" onclick="removeDocInter(${i}, 'url')">X</button></div>`;
         });
-        
+
         interDocsFiles.forEach((file, i) => {
-            html += `<div class="doc-preview doc-pending"><span>📄 ${file.name} (pendiente)</span><button class="remove" onclick="removeDocInter(${i}, 'file')">X</button></div>`;
+            html += `<div class="doc-preview doc-pending"><span>📄 ${escapeHTML(file.name)} (pendiente)</span><button class="remove" onclick="removeDocInter(${i}, 'file')">X</button></div>`;
         });
         
         container.innerHTML = html;
@@ -7075,14 +7076,14 @@
                     nombre = parts[0];
                     url = parts[1];
                 }
-                facturaHtml = '<a href="' + url + '" target="_blank" title="' + nombre + '">📄 ' + (nombre.length > 15 ? nombre.substring(0,12) + '...' : nombre) + '</a>';
+                facturaHtml = '<a href="' + escapeHTML(url) + '" target="_blank" title="' + escapeHTML(nombre) + '">📄 ' + escapeHTML(nombre.length > 15 ? nombre.substring(0,12) + '...' : nombre) + '</a>';
             } else {
                 facturaHtml = '<input type="file" onchange="subirFacturaGastoInter(' + i + ', this.files[0])" style="width:80px">';
             }
             return '<tr>' +
-                '<td><input type="date" value="' + (g.fecha || '') + '" onchange="updateInterGasto(' + i + ', \'fecha\', this.value)"></td>' +
-                '<td><input type="text" value="' + (g.concepto || '') + '" onchange="updateInterGasto(' + i + ', \'concepto\', this.value)" placeholder="Concepto"></td>' +
-                '<td><input type="number" value="' + (g.importe || '') + '" onchange="updateInterGasto(' + i + ', \'importe\', this.value)" placeholder="0"></td>' +
+                '<td><input type="date" value="' + escapeHTML(g.fecha || '') + '" onchange="updateInterGasto(' + i + ', \'fecha\', this.value)"></td>' +
+                '<td><input type="text" value="' + escapeHTML(g.concepto || '') + '" onchange="updateInterGasto(' + i + ', \'concepto\', this.value)" placeholder="Concepto"></td>' +
+                '<td><input type="number" value="' + escapeHTML(g.importe || '') + '" onchange="updateInterGasto(' + i + ', \'importe\', this.value)" placeholder="0"></td>' +
                 '<td>' + facturaHtml + '</td>' +
                 '<td><button type="button" onclick="removeInterGasto(' + i + ')">🗑️</button></td>' +
             '</tr>';
@@ -7244,15 +7245,15 @@
                     nombre = parts[0];
                     url = parts[1];
                 }
-                facturaHtml = '<a href="' + url + '" target="_blank" title="' + nombre + '">📄 ' + (nombre.length > 15 ? nombre.substring(0,12) + '...' : nombre) + '</a>';
+                facturaHtml = '<a href="' + escapeHTML(url) + '" target="_blank" title="' + escapeHTML(nombre) + '">📄 ' + escapeHTML(nombre.length > 15 ? nombre.substring(0,12) + '...' : nombre) + '</a>';
             } else {
                 facturaHtml = '<input type="file" onchange="subirFacturaIngresoInter(' + i + ', this.files[0])" style="width:80px">';
             }
             return '<tr>' +
-                '<td><input type="date" value="' + (g.desde || '') + '" onchange="updateInterIngreso(' + i + ', \'desde\', this.value)"></td>' +
+                '<td><input type="date" value="' + escapeHTML(g.desde || '') + '" onchange="updateInterIngreso(' + i + ', \'desde\', this.value)"></td>' +
                 '<td><input type="date" value="' + (g.hasta || '') + '" onchange="updateInterIngreso(' + i + ', \'hasta\', this.value)"></td>' +
-                '<td><input type="text" value="' + (g.concepto || '') + '" onchange="updateInterIngreso(' + i + ', \'concepto\', this.value)" placeholder="Concepto"></td>' +
-                '<td><input type="number" value="' + (g.importe || '') + '" onchange="updateInterIngreso(' + i + ', \'importe\', this.value)" placeholder="0"></td>' +
+                '<td><input type="text" value="' + escapeHTML(g.concepto || '') + '" onchange="updateInterIngreso(' + i + ', \'concepto\', this.value)" placeholder="Concepto"></td>' +
+                '<td><input type="number" value="' + escapeHTML(g.importe || '') + '" onchange="updateInterIngreso(' + i + ', \'importe\', this.value)" placeholder="0"></td>' +
                 '<td>' + facturaHtml + '</td>' +
                 '<td><button type="button" onclick="removeInterIngreso(' + i + ')">🗑️</button></td>' +
             '</tr>';
@@ -7555,7 +7556,7 @@
         if (!v) return;
         
         document.getElementById('venderRow').value = v._row;
-        document.getElementById('venderInfo').innerHTML = `<strong>${v.marca || ''} ${v.modelo || ''}</strong> (${v.matricula || 'Sin matrícula'})<br>ID: ${v.id}`;
+        document.getElementById('venderInfo').innerHTML = `<strong>${escapeHTML(v.marca || '')} ${escapeHTML(v.modelo || '')}</strong> (${escapeHTML(v.matricula || 'Sin matrícula')})<br>ID: ${escapeHTML(v.id)}`;
         document.getElementById('venderPrecio').value = v.precio_venta || v.precio || '';
         document.getElementById('venderComprador').value = '';
         document.getElementById('venderFecha').value = new Date().toISOString().split('T')[0];
@@ -7776,7 +7777,7 @@
         if (filtroSelect) {
             const currentVal = filtroSelect.value;
             filtroSelect.innerHTML = '<option value="">Todas las plataformas</option>' +
-                plataformasOjeados.map(p => '<option value="' + p + '">' + p + '</option>').join('');
+                plataformasOjeados.map(p => '<option value="' + escapeHTML(p) + '">' + escapeHTML(p) + '</option>').join('');
             filtroSelect.value = currentVal;
         }
         
@@ -7785,7 +7786,7 @@
         if (modalSelect) {
             const currentVal = modalSelect.value;
             modalSelect.innerHTML = '<option value="">Seleccionar</option>' +
-                plataformasOjeados.map(p => '<option value="' + p + '">' + p + '</option>').join('');
+                plataformasOjeados.map(p => '<option value="' + escapeHTML(p) + '">' + escapeHTML(p) + '</option>').join('');
             modalSelect.value = currentVal;
         }
     }
@@ -7817,9 +7818,9 @@
     
     function renderPlataformasConfig() {
         const container = document.getElementById('plataformasLista');
-        container.innerHTML = plataformasOjeados.map((p, i) => 
+        container.innerHTML = plataformasOjeados.map((p, i) =>
             '<span style="background:#e2e8f0;padding:5px 10px;border-radius:4px;display:inline-flex;align-items:center;gap:5px">' +
-                p + 
+                escapeHTML(p) +
                 (p !== 'Otra' ? '<button onclick="eliminarPlataforma(' + i + ')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">×</button>' : '') +
             '</span>'
         ).join('');
@@ -7886,20 +7887,20 @@
         tbody.innerHTML = data.map((o, i) => {
             const realIdx = cache.ojeados.indexOf(o);
             const estadoClass = o.estado || 'inactivo';
-            const enlaceBtn = o.enlace ? '<a href="'+o.enlace+'" target="_blank" class="btn-view-file">Ver</a>' : '-';
+            const enlaceBtn = o.enlace ? '<a href="'+escapeHTML(o.enlace)+'" target="_blank" class="btn-view-file">Ver</a>' : '-';
             return '<tr>' +
-                '<td>'+(o.id || i+1)+'</td>' +
-                '<td>'+(o.producto || '-')+'</td>' +
-                '<td>'+(o.plataforma || '-')+'</td>' +
+                '<td>'+(parseInt(o.id) || i+1)+'</td>' +
+                '<td>'+escapeHTML(o.producto || '-')+'</td>' +
+                '<td>'+escapeHTML(o.plataforma || '-')+'</td>' +
                 '<td>'+enlaceBtn+'</td>' +
                 '<td class="num">'+(o.precio ? fmtNum(o.precio)+'€' : '-')+'</td>' +
                 '<td class="num">'+(o.negociado ? fmtNum(o.negociado)+'€' : '-')+'</td>' +
-                '<td>'+(o.telefono || '-')+'</td>' +
-                '<td>'+(o.email || '-')+'</td>' +
-                '<td><span class="status '+estadoClass+'">'+(o.estado || 'inactivo')+'</span></td>' +
+                '<td>'+escapeHTML(o.telefono || '-')+'</td>' +
+                '<td>'+escapeHTML(o.email || '-')+'</td>' +
+                '<td><span class="status '+escapeHTML(estadoClass)+'">'+escapeHTML(o.estado || 'inactivo')+'</span></td>' +
                 '<td class="table-actions">' +
                     '<button onclick="editarOjeado('+realIdx+')" title="Editar">✏️</button>' +
-                    '<button onclick="eliminarOjeado(\''+o.id+'\', '+(o._row || realIdx+2)+')" title="Eliminar">🗑️</button>' +
+                    '<button onclick="eliminarOjeado(\''+escapeHTML(o.id)+'\', '+(parseInt(o._row) || realIdx+2)+')" title="Eliminar">🗑️</button>' +
                 '</td>' +
             '</tr>';
         }).join('');
@@ -8067,9 +8068,9 @@
         
         list.innerHTML = cache.chatAgrupado.map((chat, idx) => `
             <div class="chat-list-item ${chat.sin_leer ? 'unread' : ''} ${chatActivo === idx ? 'active' : ''}" onclick="seleccionarChat(${idx})">
-                <h4>${chat.usuario_pseudo} ${chat.sin_leer ? '<span class="badge-unread">Nuevo</span>' : ''}</h4>
-                <p>${(chat.ultimo_mensaje || '').substring(0, 50)}${chat.ultimo_mensaje?.length > 50 ? '...' : ''}</p>
-                <span class="time">${chat.fecha || ''}</span>
+                <h4>${escapeHTML(chat.usuario_pseudo)} ${chat.sin_leer ? '<span class="badge-unread">Nuevo</span>' : ''}</h4>
+                <p>${escapeHTML((chat.ultimo_mensaje || '').substring(0, 50))}${chat.ultimo_mensaje?.length > 50 ? '...' : ''}</p>
+                <span class="time">${escapeHTML(chat.fecha || '')}</span>
             </div>
         `).join('');
         
@@ -8095,7 +8096,7 @@
         // Actualizar header
         const title = document.getElementById('chatDetailTitle');
         if (title) {
-            title.innerHTML = `<strong>${chat.usuario_pseudo || 'Usuario'}</strong> - ${chat.usuario_email || ''}`;
+            title.innerHTML = `<strong>${escapeHTML(chat.usuario_pseudo || 'Usuario')}</strong> - ${escapeHTML(chat.usuario_email || '')}`;
         }
         
         // Mostrar botones de acciones
@@ -8127,13 +8128,13 @@
                 }
                 
                 if (fecha && fecha !== lastDate) {
-                    html += '<div style="text-align:center;margin:12px 0;"><span style="background:#e5e7eb;color:#6b7280;font-size:11px;padding:4px 12px;border-radius:12px;">' + fecha + '</span></div>';
+                    html += '<div style="text-align:center;margin:12px 0;"><span style="background:#e5e7eb;color:#6b7280;font-size:11px;padding:4px 12px;border-radius:12px;">' + escapeHTML(fecha) + '</span></div>';
                     lastDate = fecha;
                 }
                 
                 html += `
-                    <div class="chat-msg ${msg.tipo}">
-                        <div class="bubble">${msg.texto}<span style="font-size:10px;opacity:0.7;margin-left:10px;float:right;">${hora}</span></div>
+                    <div class="chat-msg ${escapeHTML(msg.tipo)}">
+                        <div class="bubble">${escapeHTML(msg.texto)}<span style="font-size:10px;opacity:0.7;margin-left:10px;float:right;">${escapeHTML(hora)}</span></div>
                     </div>
                 `;
             });
@@ -8346,11 +8347,11 @@
         for (var i = 0; i < num; i++) {
             var html = "<div class=\"form-group\" style=\"margin:0;\"><label style=\"font-size:11px;\">Vehiculo " + (i+1) + "</label><select id=\"factVeh" + i + "\" onchange=\"onVehiculoSeleccionado()\" style=\"padding:6px;width:100%;\"><option value=\"\">(Seleccionar)</option>";
             var vehs = cache.vehiculos || [];
-            for (var j = 0; j < vehs.length; j++) { var v = vehs[j]; html += "<option value=\"V-"+v.id+"\">"+v.id+" - "+(v.marca||"")+" "+(v.modelo||"")+" ("+(v.matricula||"")+")</option>"; }
+            for (var j = 0; j < vehs.length; j++) { var v = vehs[j]; html += "<option value=\"V-"+escapeHTML(v.id)+"\">"+escapeHTML(v.id)+" - "+escapeHTML(v.marca||"")+" "+escapeHTML(v.modelo||"")+" ("+escapeHTML(v.matricula||"")+")</option>"; }
             var inters = cache.intermediacion || [];
-            for (var k = 0; k < inters.length; k++) { var m = inters[k]; html += "<option value=\"I-"+m.id+"\">"+m.id+" - "+(m.marca||"")+" "+(m.modelo||"")+" ("+(m.matricula||"")+")</option>"; }
+            for (var k = 0; k < inters.length; k++) { var m = inters[k]; html += "<option value=\"I-"+escapeHTML(m.id)+"\">"+escapeHTML(m.id)+" - "+escapeHTML(m.marca||"")+" "+escapeHTML(m.modelo||"")+" ("+escapeHTML(m.matricula||"")+")</option>"; }
             var hist = cache.historico || [];
-            for (var l = 0; l < hist.length; l++) { var h = hist[l]; html += "<option value=\"H-"+h.id+"\">"+h.id+" - "+(h.marca||"")+" "+(h.modelo||"")+" ("+(h.matricula||"") + ") [H]</option>"; }
+            for (var l = 0; l < hist.length; l++) { var h = hist[l]; html += "<option value=\"H-"+escapeHTML(h.id)+"\">"+escapeHTML(h.id)+" - "+escapeHTML(h.marca||"")+" "+escapeHTML(h.modelo||"")+" ("+escapeHTML(h.matricula||"") + ") [H]</option>"; }
             html += "</select></div>";
             container.insertAdjacentHTML("beforeend", html);
             agregarLineaFactura();
@@ -8550,7 +8551,7 @@
             var cv = sel.value;
             sel.innerHTML = "<option value=\"\">Subcategoría</option>";
             for (var j = 0; j < subcats.length; j++) {
-                sel.innerHTML += "<option value=\"" + subcats[j] + "\"" + (cv === subcats[j] ? " selected" : "") + ">" + subcats[j] + "</option>";
+                sel.innerHTML += "<option value=\"" + escapeHTML(subcats[j]) + "\"" + (cv === subcats[j] ? " selected" : "") + ">" + escapeHTML(subcats[j]) + "</option>";
             }
         }
     }

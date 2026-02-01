@@ -132,7 +132,11 @@ async function cargarFavoritosUsuario(userId) {
     const favoritosContainer = document.getElementById('userFavorites');
     if (!favoritosContainer) return;
     
-    favoritosContainer.innerHTML = '<p class="loading">Cargando favoritos...</p>';
+    favoritosContainer.textContent = '';
+    const loadingP = document.createElement('p');
+    loadingP.className = 'loading';
+    loadingP.textContent = 'Cargando favoritos...';
+    favoritosContainer.appendChild(loadingP);
     
     try {
         const response = await fetch(`${PANEL_CONFIG.APPS_SCRIPT_URL}?action=obtenerFavoritos&userId=${userId}`);
@@ -140,18 +144,26 @@ async function cargarFavoritosUsuario(userId) {
         
         if (result.success && result.favoritos && result.favoritos.length > 0) {
             favoritosContainer.innerHTML = result.favoritos.map(fav => `
-                <div class="favorite-item" onclick="verVehiculo(${fav.vehiculoId})">
-                    <img src="${fav.imagen || 'placeholder.jpg'}" alt="${fav.titulo}">
-                    <h4>${fav.titulo}</h4>
-                    <p>${fav.precio}</p>
+                <div class="favorite-item" onclick="verVehiculo(${parseInt(fav.vehiculoId) || 0})">
+                    <img src="${escapeHTML(fav.imagen || 'placeholder.jpg')}" alt="${escapeHTML(fav.titulo)}">
+                    <h4>${escapeHTML(fav.titulo)}</h4>
+                    <p>${escapeHTML(fav.precio)}</p>
                 </div>
             `).join('');
         } else {
-            favoritosContainer.innerHTML = '<p class="empty-state">No tienes vehículos en favoritos</p>';
+            favoritosContainer.textContent = '';
+            const emptyP = document.createElement('p');
+            emptyP.className = 'empty-state';
+            emptyP.textContent = 'No tienes vehículos en favoritos';
+            favoritosContainer.appendChild(emptyP);
         }
     } catch (error) {
         console.error('Error cargando favoritos:', error);
-        favoritosContainer.innerHTML = '<p class="empty-state">Error al cargar favoritos</p>';
+        favoritosContainer.textContent = '';
+        const errorP = document.createElement('p');
+        errorP.className = 'empty-state';
+        errorP.textContent = 'Error al cargar favoritos';
+        favoritosContainer.appendChild(errorP);
     }
 }
 
