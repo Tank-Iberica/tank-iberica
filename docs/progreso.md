@@ -34,7 +34,7 @@
 ## Step 2 — Catálogo Completo
 | # | Tarea | Estado | Fecha | Notas |
 |---|-------|--------|-------|-------|
-| 2.1 | Crear tablas: vehicles, vehicle_images, subcategories, filter_definitions, config | ⬜ Pendiente | | |
+| 2.1 | Crear tablas: vehicles, vehicle_images, subcategories, filter_definitions, config | ✅ Hecho | 2026-02-01 | Migration 00002. 3 enums (vehicle_status, vehicle_category, filter_type). 5 tablas con índices, FKs CASCADE, updated_at triggers. |
 | 2.2 | RLS: SELECT público en todas | ⬜ Pendiente | | |
 | 2.3 | Exportar CSVs de Sheets | ⬜ Pendiente | | |
 | 2.4 | Script migración CSV → Supabase | ⬜ Pendiente | | |
