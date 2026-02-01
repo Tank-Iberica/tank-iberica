@@ -53,8 +53,8 @@ function setupPanelEventListeners() {
                 cerrarSesion();
             } else {
                 // Fallback
-                localStorage.removeItem('tank_iberica_session');
-                localStorage.removeItem('tank_iberica_user');
+                sessionStorage.removeItem('tank_iberica_session');
+                sessionStorage.removeItem('tank_iberica_user');
                 location.reload();
             }
         };
@@ -69,7 +69,7 @@ function setupPanelEventListeners() {
 
 function abrirPanelUsuario() {
     // Obtener usuario actual
-    const userDataStr = localStorage.getItem('tank_iberica_user');
+    const userDataStr = sessionStorage.getItem('tank_iberica_user');
     if (!userDataStr) {
         console.warn('⚠️ No hay usuario logueado');
         return;
@@ -172,13 +172,13 @@ async function cargarFavoritosUsuario(userId) {
 // ================================================
 
 function obtenerUsuarioActual() {
-    const userDataStr = localStorage.getItem('tank_iberica_user');
+    const userDataStr = sessionStorage.getItem('tank_iberica_user');
     return userDataStr ? JSON.parse(userDataStr) : null;
 }
 
 function estaLogueado() {
-    const session = localStorage.getItem('tank_iberica_session');
-    const user = localStorage.getItem('tank_iberica_user');
+    const session = sessionStorage.getItem('tank_iberica_session');
+    const user = sessionStorage.getItem('tank_iberica_user');
     
     if (session && user) {
         try {

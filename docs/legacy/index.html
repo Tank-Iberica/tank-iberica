@@ -12085,7 +12085,7 @@
             }
             
             // Verificar si usuario está logueado
-            const user = window.getCurrentUser?.() || JSON.parse(localStorage.getItem('tank_iberica_user') || 'null');
+            const user = window.getCurrentUser?.() || JSON.parse(sessionStorage.getItem('tank_iberica_user') || 'null');
             const pseudo = user?.pseudonimo || user?.nombre || 'Usuario';
             const email = user?.email || '';
             

@@ -148,8 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // ================================================
 
 function verificarSesionActiva() {
-    const session = localStorage.getItem(AUTH_CONFIG.STORAGE_KEY);
-    const userData = localStorage.getItem(AUTH_CONFIG.USER_KEY);
+    const session = sessionStorage.getItem(AUTH_CONFIG.STORAGE_KEY);
+    const userData = sessionStorage.getItem(AUTH_CONFIG.USER_KEY);
     
     if (session && userData) {
         try {
@@ -177,15 +177,15 @@ function guardarSesion(usuario, token) {
         token: token,
         expiracion: Date.now() + AUTH_CONFIG.SESSION_DURATION
     };
-    localStorage.setItem(AUTH_CONFIG.STORAGE_KEY, JSON.stringify(sessionData));
-    localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(usuario));
+    sessionStorage.setItem(AUTH_CONFIG.STORAGE_KEY, JSON.stringify(sessionData));
+    sessionStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(usuario));
     authCurrentUser = usuario;
     authSessionToken = token;
 }
 
 function cerrarSesion(mostrarMensaje = true) {
-    localStorage.removeItem(AUTH_CONFIG.STORAGE_KEY);
-    localStorage.removeItem(AUTH_CONFIG.USER_KEY);
+    sessionStorage.removeItem(AUTH_CONFIG.STORAGE_KEY);
+    sessionStorage.removeItem(AUTH_CONFIG.USER_KEY);
     authCurrentUser = null;
     authSessionToken = null;
     actualizarUIUsuarioDeslogueado();

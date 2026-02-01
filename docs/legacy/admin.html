@@ -2215,14 +2215,14 @@
     
     function initAuth() {
         tokenClient = google.accounts.oauth2.initTokenClient({client_id: CLIENT_ID, scope: SCOPES, callback: handleAuth});
-        const saved = localStorage.getItem('tank_token');
-        if (saved) { token = saved; user = JSON.parse(localStorage.getItem('tank_user')||'{}'); checkToken(); }
+        const saved = sessionStorage.getItem('tank_token');
+        if (saved) { token = saved; user = JSON.parse(sessionStorage.getItem('tank_user')||'{}'); checkToken(); }
     }
     
     async function checkToken() {
         try {
             const r = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {headers:{'Authorization':'Bearer '+token}});
-            if (r.ok) { showAdmin(); loadAll(); } else { localStorage.removeItem('tank_token'); token = null; }
+            if (r.ok) { showAdmin(); loadAll(); } else { sessionStorage.removeItem('tank_token'); token = null; }
         } catch(e) { console.error(e); }
     }
     
@@ -2240,8 +2240,8 @@
                 token = null; return;
             }
             user = info;
-            localStorage.setItem('tank_token', token);
-            localStorage.setItem('tank_user', JSON.stringify(info));
+            sessionStorage.setItem('tank_token', token);
+            sessionStorage.setItem('tank_user', JSON.stringify(info));
             showAdmin(); loadAll();
         } catch(e) { console.error(e); document.getElementById('loginError').textContent = 'Error'; document.getElementById('loginError').classList.add('show'); }
     }
@@ -2253,7 +2253,7 @@
         setupNav();
     }
     
-    function logout() { localStorage.removeItem('tank_token'); localStorage.removeItem('tank_user'); location.reload(); }
+    function logout() { sessionStorage.removeItem('tank_token'); sessionStorage.removeItem('tank_user'); location.reload(); }
     
     // Nav
     function setupNav() { document.querySelectorAll('.nav-item').forEach(n => n.onclick = () => n.dataset.section && goSection(n.dataset.section)); }

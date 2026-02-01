@@ -234,7 +234,7 @@ async function enviarMensajeChat() {
     if (!mensaje) return;
     
     // Obtener usuario actual
-    const user = window.getCurrentUser?.() || JSON.parse(localStorage.getItem('tank_iberica_user') || 'null');
+    const user = window.getCurrentUser?.() || JSON.parse(sessionStorage.getItem('tank_iberica_user') || 'null');
     const pseudo = user?.pseudonimo || user?.nombre || 'Usuario';
     const email = user?.email || '';
     
@@ -470,8 +470,8 @@ function cerrarSesionPanel() {
             cerrarSesion();
         } else {
             window.currentUser = null;
-            localStorage.removeItem('tank_iberica_session');
-            localStorage.removeItem('tank_iberica_user');
+            sessionStorage.removeItem('tank_iberica_session');
+            sessionStorage.removeItem('tank_iberica_user');
             location.reload();
         }
     }
