@@ -16,6 +16,9 @@ export default defineNuxtConfig({
       callback: '/confirm',
       exclude: ['/', '/vehiculo/*', '/noticias/*'],
     },
+    cookieOptions: {
+      secure: process.env.NODE_ENV === 'production',
+    },
   },
 
   i18n: {

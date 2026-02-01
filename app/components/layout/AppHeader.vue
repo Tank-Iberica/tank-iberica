@@ -50,13 +50,39 @@
         </div>
 
         <!-- Account button -->
-        <button class="account-btn" @click="$emit('openAuth')">
+        <button
+          v-if="!user"
+          class="account-btn"
+          @click="$emit('openAuth')"
+        >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
           <span class="account-text desktop-only">{{ $t('nav.login') }}</span>
         </button>
+
+        <!-- Logged-in user -->
+        <div v-else class="user-menu">
+          <button class="account-btn logged-in" @click="toggleUserMenu">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <span class="account-text desktop-only">{{ userDisplayName }}</span>
+          </button>
+          <Transition name="fade">
+            <div v-if="userMenuOpen" class="user-dropdown-backdrop" @click="userMenuOpen = false" />
+          </Transition>
+          <Transition name="slide-up">
+            <div v-if="userMenuOpen" class="user-dropdown">
+              <div class="dropdown-user-info">{{ userDisplayName }}</div>
+              <button class="dropdown-item" @click="handleLogout">
+                {{ $t('nav.logout') }}
+              </button>
+            </div>
+          </Transition>
+        </div>
       </div>
     </div>
 
@@ -67,6 +93,13 @@
           <a href="mailto:info@tankiberica.com" class="mobile-link">{{ $t('nav.contact') }}</a>
           <a href="tel:+34600000000" class="mobile-link">{{ $t('nav.phone') }}</a>
           <a href="https://wa.me/34600000000" target="_blank" rel="noopener" class="mobile-link">WhatsApp</a>
+          <button
+            v-if="user"
+            class="mobile-link"
+            @click="handleLogout()"
+          >
+            {{ $t('nav.logout') }}
+          </button>
           <div class="mobile-lang">
             <button
               v-for="loc in availableLocales"
@@ -88,9 +121,38 @@ defineEmits<{
   openAuth: []
 }>()
 
+const user = useSupabaseUser()
+const supabase = useSupabaseClient()
+
 const { locale, setLocale, locales } = useI18n()
 const scrolled = ref(false)
 const mobileMenuOpen = ref(false)
+const userMenuOpen = ref(false)
+
+const userDisplayName = computed(() => {
+  if (!user.value) return ''
+  return user.value.user_metadata?.pseudonimo
+    || user.value.user_metadata?.name
+    || user.value.email?.split('@')[0]
+    || ''
+})
+
+function toggleUserMenu() {
+  userMenuOpen.value = !userMenuOpen.value
+}
+
+function closeUserMenu(e: MouseEvent) {
+  const target = e.target as HTMLElement
+  if (!target.closest('.user-menu')) {
+    userMenuOpen.value = false
+  }
+}
+
+async function handleLogout() {
+  userMenuOpen.value = false
+  mobileMenuOpen.value = false
+  await supabase.auth.signOut()
+}
 
 const availableLocales = computed(() =>
   (locales.value as Array<{ code: string; name: string }>),
@@ -102,10 +164,12 @@ function onScroll() {
 
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true })
+  document.addEventListener('click', closeUserMenu)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
+  document.removeEventListener('click', closeUserMenu)
 })
 </script>
 
@@ -233,6 +297,81 @@ onUnmounted(() => {
 
 .account-text {
   white-space: nowrap;
+}
+
+.account-btn.logged-in {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* User dropdown */
+.user-menu {
+  position: relative;
+}
+
+.user-dropdown {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+  z-index: calc(var(--z-header) + 1);
+  overflow: hidden;
+}
+
+.user-dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: var(--z-header);
+}
+
+.dropdown-user-info {
+  padding: 12px 16px;
+  font-size: var(--font-size-sm);
+  color: #6B7280;
+  border-bottom: 1px solid #E5E7EB;
+  font-weight: var(--font-weight-medium);
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  color: #1F2937;
+  font-size: var(--font-size-sm);
+  text-align: left;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #F3F4F6;
+}
+
+/* Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.25s ease;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
 }
 
 /* Hamburger (mobile) */
@@ -374,6 +513,33 @@ onUnmounted(() => {
   .account-btn {
     padding: 0.4rem 1rem;
     border-radius: 24px;
+  }
+
+  .user-dropdown-backdrop {
+    display: none;
+  }
+
+  .user-dropdown {
+    position: absolute;
+    bottom: auto;
+    left: auto;
+    top: calc(100% + 8px);
+    right: 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+    border: 1px solid #E5E7EB;
+  }
+
+  .slide-up-enter-from,
+  .slide-up-leave-to {
+    transform: none;
+    opacity: 0;
+  }
+
+  .slide-up-enter-active,
+  .slide-up-leave-active {
+    transition: opacity 0.15s ease;
   }
 }
 </style>
