@@ -1,9 +1,12 @@
+import { computed, readonly } from 'vue'
+import { useState } from '#imports'
 import type { VehicleFilters } from './useVehicles'
 
 export type VehicleCategory = 'alquiler' | 'venta' | 'terceros'
 
 export interface CatalogState {
   activeCategory: VehicleCategory | null
+  activeCategories: VehicleCategory[]
   activeSubcategoryId: string | null
   activeSubcategorySlug: string | null
   filters: VehicleFilters
@@ -13,6 +16,7 @@ export interface CatalogState {
 
 const defaultState: CatalogState = {
   activeCategory: null,
+  activeCategories: ['alquiler'],
   activeSubcategoryId: null,
   activeSubcategorySlug: null,
   filters: {},
@@ -28,6 +32,14 @@ export function useCatalogState() {
     state.value.activeSubcategoryId = null
     state.value.activeSubcategorySlug = null
     state.value.filters = category ? { category } : {}
+  }
+
+  function setCategories(categories: VehicleCategory[]) {
+    state.value.activeCategories = categories
+    state.value.activeCategory = categories[0] || null
+    state.value.activeSubcategoryId = null
+    state.value.activeSubcategorySlug = null
+    state.value.filters = categories.length ? { category: categories[0] } : {}
   }
 
   function setSubcategory(id: string | null, slug: string | null) {
@@ -59,12 +71,14 @@ export function useCatalogState() {
   return {
     state: readonly(state),
     activeCategory: computed(() => state.value.activeCategory),
+    activeCategories: computed(() => state.value.activeCategories),
     activeSubcategoryId: computed(() => state.value.activeSubcategoryId),
     activeSubcategorySlug: computed(() => state.value.activeSubcategorySlug),
     filters: computed(() => state.value.filters),
     scrollPosition: computed(() => state.value.scrollPosition),
     searchQuery: computed(() => state.value.searchQuery),
     setCategory,
+    setCategories,
     setSubcategory,
     updateFilters,
     setSearch,

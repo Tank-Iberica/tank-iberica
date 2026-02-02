@@ -1,14 +1,42 @@
 <template>
-  <nav v-if="filteredSubcategories.length" class="subcategory-bar">
-    <div class="subcategory-scroll">
+  <nav v-if="subcategories.length" class="subcategory-bar" :aria-label="$t('catalog.subcategories')">
+    <div class="subcategory-wrapper">
       <button
-        v-for="sub in filteredSubcategories"
-        :key="sub.id"
-        class="subcategory-chip"
-        :class="{ active: activeSubcategoryId === sub.id }"
-        @click="selectSubcategory(sub)"
+        v-if="showScrollLeft"
+        class="scroll-btn scroll-left"
+        aria-label="Scroll left"
+        @click="scrollLeft"
       >
-        {{ locale === 'en' && sub.name_en ? sub.name_en : sub.name_es }}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+
+      <div ref="scrollContainer" class="subcategory-scroll" @scroll="updateScrollState">
+        <button
+          v-for="sub in subcategories"
+          :key="sub.id"
+          class="subcategory-chip"
+          :class="{
+            active: activeSubcategoryId === sub.id,
+            disabled: !isApplicable(sub),
+          }"
+          :disabled="!isApplicable(sub)"
+          @click="selectSubcategory(sub)"
+        >
+          {{ locale === 'en' && sub.name_en ? sub.name_en : sub.name_es }}
+        </button>
+      </div>
+
+      <button
+        v-if="showScrollRight"
+        class="scroll-btn scroll-right"
+        aria-label="Scroll right"
+        @click="scrollRight"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
       </button>
     </div>
   </nav>
@@ -30,16 +58,17 @@ const emit = defineEmits<{
 
 const supabase = useSupabaseClient()
 const { locale } = useI18n()
-const { activeCategory, activeSubcategoryId, setSubcategory } = useCatalogState()
+const { activeCategories, activeSubcategoryId, setSubcategory } = useCatalogState()
 
 const subcategories = ref<SubcategoryRow[]>([])
+const scrollContainer = ref<HTMLElement | null>(null)
+const showScrollLeft = ref(false)
+const showScrollRight = ref(false)
 
-const filteredSubcategories = computed(() => {
-  if (!activeCategory.value) return subcategories.value
-  return subcategories.value.filter(
-    sub => sub.applicable_categories.includes(activeCategory.value!),
-  )
-})
+function isApplicable(sub: SubcategoryRow): boolean {
+  if (!activeCategories.value.length) return true
+  return activeCategories.value.some(cat => sub.applicable_categories.includes(cat))
+}
 
 async function fetchSubcategories() {
   const { data } = await supabase
@@ -49,6 +78,7 @@ async function fetchSubcategories() {
     .order('sort_order', { ascending: true })
 
   subcategories.value = (data as SubcategoryRow[]) || []
+  nextTick(updateScrollState)
 }
 
 function selectSubcategory(sub: SubcategoryRow) {
@@ -62,10 +92,31 @@ function selectSubcategory(sub: SubcategoryRow) {
   }
 }
 
-watch(activeCategory, () => {
-  setSubcategory(null, null)
-  emit('change', null)
-})
+function updateScrollState() {
+  const el = scrollContainer.value
+  if (!el) return
+  showScrollLeft.value = el.scrollLeft > 4
+  showScrollRight.value = el.scrollLeft < el.scrollWidth - el.clientWidth - 4
+}
+
+function scrollLeft() {
+  scrollContainer.value?.scrollBy({ left: -200, behavior: 'smooth' })
+}
+
+function scrollRight() {
+  scrollContainer.value?.scrollBy({ left: 200, behavior: 'smooth' })
+}
+
+// When categories change, deselect subcategory if no longer applicable
+watch(activeCategories, () => {
+  if (activeSubcategoryId.value) {
+    const current = subcategories.value.find(s => s.id === activeSubcategoryId.value)
+    if (current && !isApplicable(current)) {
+      setSubcategory(null, null)
+      emit('change', null)
+    }
+  }
+}, { deep: true })
 
 onMounted(fetchSubcategories)
 </script>
@@ -76,43 +127,86 @@ onMounted(fetchSubcategories)
   overflow: hidden;
 }
 
+.subcategory-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .subcategory-scroll {
   display: flex;
-  gap: var(--spacing-2);
+  gap: 0.5rem;
   overflow-x: auto;
-  padding: 0 var(--spacing-4) var(--spacing-3);
+  padding: 0.25rem 1rem 0.5rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  flex: 1;
 }
 
 .subcategory-scroll::-webkit-scrollbar {
   display: none;
 }
 
+.scroll-btn {
+  position: absolute;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--border-radius-full);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.scroll-left {
+  left: 0;
+}
+
+.scroll-right {
+  right: 0;
+}
+
 .subcategory-chip {
   flex-shrink: 0;
-  padding: var(--spacing-1) var(--spacing-3);
+  padding: 0.25rem 0.75rem;
   border: 1px solid var(--border-color-light);
   border-radius: var(--border-radius-full);
-  font-size: var(--font-size-sm);
+  font-size: 12px;
   color: var(--text-secondary);
   background: var(--bg-secondary);
   white-space: nowrap;
   min-height: 44px;
   display: flex;
   align-items: center;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
+}
+
+.subcategory-chip.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: var(--text-auxiliary);
+}
+
+.subcategory-chip:not(.active):not(.disabled):hover {
+  border-color: var(--color-primary);
 }
 
 .subcategory-chip.active {
-  background: var(--color-primary-light);
+  background: var(--color-white, #fff);
   border-color: var(--color-primary);
   color: var(--color-primary);
-  font-weight: var(--font-weight-semibold);
+  font-weight: 600;
 }
 
-.subcategory-chip:not(.active):hover {
-  border-color: var(--color-primary);
+@media (max-width: 479px) {
+  .subcategory-chip {
+    font-size: 10px;
+    padding: 0.2rem 0.5rem;
+  }
 }
 
 @media (min-width: 768px) {
@@ -120,6 +214,17 @@ onMounted(fetchSubcategories)
     flex-wrap: wrap;
     overflow-x: visible;
     justify-content: center;
+    padding: 0.25rem 1.5rem 0.5rem;
+  }
+
+  .subcategory-chip {
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+  }
+
+  .scroll-btn {
+    display: none;
   }
 }
 </style>

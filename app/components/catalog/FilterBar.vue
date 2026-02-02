@@ -8,7 +8,7 @@
         <line x1="4" y1="18" x2="12" y2="18" />
       </svg>
       {{ $t('catalog.filters') }}
-      <span v-if="activeCount" class="filter-badge">{{ activeCount }}</span>
+      <span v-if="totalActiveCount" class="filter-badge">{{ totalActiveCount }}</span>
     </button>
 
     <!-- Mobile: bottom sheet backdrop -->
@@ -16,7 +16,7 @@
       <div v-if="open" class="filter-backdrop" @click="open = false" />
     </Transition>
 
-    <!-- Filter panel: bottom sheet on mobile, inline on desktop -->
+    <!-- Filter panel -->
     <Transition name="slide-up">
       <div v-if="open || isDesktop" class="filter-panel">
         <div class="filter-panel-header">
@@ -29,6 +29,84 @@
           </button>
         </div>
 
+        <!-- Static filters: always visible -->
+        <div class="filter-static">
+          <!-- Price dual-range -->
+          <div class="filter-item">
+            <label class="filter-label">{{ $t('catalog.price') }} (€)</label>
+            <div class="filter-dual-range">
+              <input
+                type="number"
+                class="filter-input filter-input-sm"
+                :value="priceMin"
+                min="0"
+                max="200000"
+                step="100"
+                :placeholder="'0'"
+                @change="onPriceMinChange"
+              >
+              <span class="filter-separator">—</span>
+              <input
+                type="number"
+                class="filter-input filter-input-sm"
+                :value="priceMax"
+                min="0"
+                max="200000"
+                step="100"
+                :placeholder="'200.000'"
+                @change="onPriceMaxChange"
+              >
+            </div>
+          </div>
+
+          <!-- Brand dropdown -->
+          <div class="filter-item">
+            <label class="filter-label">{{ $t('catalog.brand') }}</label>
+            <select
+              class="filter-select"
+              :value="selectedBrand"
+              @change="onBrandChange"
+            >
+              <option value="">
+                —
+              </option>
+              <option v-for="b in brands" :key="b" :value="b">
+                {{ b }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Year dual-range -->
+          <div class="filter-item">
+            <label class="filter-label">{{ $t('catalog.year') }}</label>
+            <div class="filter-dual-range">
+              <input
+                type="number"
+                class="filter-input filter-input-sm"
+                :value="yearMin"
+                min="1900"
+                :max="currentYear"
+                :placeholder="'1900'"
+                @change="onYearMinChange"
+              >
+              <span class="filter-separator">—</span>
+              <input
+                type="number"
+                class="filter-input filter-input-sm"
+                :value="yearMax"
+                min="1900"
+                :max="currentYear"
+                :placeholder="String(currentYear)"
+                @change="onYearMaxChange"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic filters separator -->
+        <div v-if="visibleFilters.length" class="filter-divider" />
+
+        <!-- Dynamic filters from BD -->
         <div class="filter-list">
           <div v-for="filter in visibleFilters" :key="filter.id" class="filter-item">
             <!-- Desplegable / Select -->
@@ -128,7 +206,7 @@
           </div>
         </div>
 
-        <div v-if="activeCount" class="filter-actions">
+        <div v-if="totalActiveCount" class="filter-actions">
           <button class="filter-clear" @click="handleClearAll">
             {{ $t('catalog.clearFilters') }}
           </button>
@@ -147,14 +225,66 @@ const emit = defineEmits<{
 
 const { locale } = useI18n()
 const { visibleFilters, activeFilters, setFilter, clearFilter, clearAll } = useFilters()
+const { updateFilters, filters } = useCatalogState()
 
 const open = ref(false)
 const isDesktop = useMediaQuery('(min-width: 1024px)')
+const currentYear = new Date().getFullYear()
 
-const activeCount = computed(() => {
-  return Object.keys(activeFilters.value).length
+// Static filter values (derived from catalog state)
+const priceMin = computed(() => filters.value.price_min ?? null)
+const priceMax = computed(() => filters.value.price_max ?? null)
+const yearMin = computed(() => filters.value.year_min ?? null)
+const yearMax = computed(() => filters.value.year_max ?? null)
+const selectedBrand = computed(() => filters.value.brand ?? '')
+
+// Brand list — common industrial vehicle brands
+const brands = [
+  'DAF', 'Iveco', 'MAN', 'Mercedes', 'Renault', 'Scania', 'Volvo',
+]
+
+const totalActiveCount = computed(() => {
+  let count = Object.keys(activeFilters.value).length
+  if (priceMin.value) count++
+  if (priceMax.value) count++
+  if (yearMin.value) count++
+  if (yearMax.value) count++
+  if (selectedBrand.value) count++
+  return count
 })
 
+// Static filter handlers
+function onPriceMinChange(e: Event) {
+  const val = Number((e.target as HTMLInputElement).value)
+  updateFilters({ price_min: val || undefined })
+  emit('change')
+}
+
+function onPriceMaxChange(e: Event) {
+  const val = Number((e.target as HTMLInputElement).value)
+  updateFilters({ price_max: val || undefined })
+  emit('change')
+}
+
+function onBrandChange(e: Event) {
+  const val = (e.target as HTMLSelectElement).value
+  updateFilters({ brand: val || undefined })
+  emit('change')
+}
+
+function onYearMinChange(e: Event) {
+  const val = Number((e.target as HTMLInputElement).value)
+  updateFilters({ year_min: val || undefined })
+  emit('change')
+}
+
+function onYearMaxChange(e: Event) {
+  const val = Number((e.target as HTMLInputElement).value)
+  updateFilters({ year_max: val || undefined })
+  emit('change')
+}
+
+// Dynamic filter helpers
 function filterLabel(filter: FilterDefinition): string {
   if (locale.value === 'en' && filter.label_en) return filter.label_en
   return filter.label_es || filter.name
@@ -181,12 +311,8 @@ function getSliderStep(filter: FilterDefinition): number {
 
 function onSelectChange(name: string, event: Event) {
   const value = (event.target as HTMLSelectElement).value
-  if (value) {
-    setFilter(name, value)
-  }
-  else {
-    clearFilter(name)
-  }
+  if (value) setFilter(name, value)
+  else clearFilter(name)
   emit('change')
 }
 
@@ -195,12 +321,8 @@ function onCheckChange(name: string, option: string) {
   const index = current.indexOf(option)
   if (index >= 0) {
     const next = current.filter(v => v !== option)
-    if (next.length) {
-      setFilter(name, next)
-    }
-    else {
-      clearFilter(name)
-    }
+    if (next.length) setFilter(name, next)
+    else clearFilter(name)
   }
   else {
     setFilter(name, [...current, option])
@@ -214,12 +336,8 @@ function isChecked(name: string, option: string): boolean {
 }
 
 function onTickChange(name: string) {
-  if (activeFilters.value[name]) {
-    clearFilter(name)
-  }
-  else {
-    setFilter(name, true)
-  }
+  if (activeFilters.value[name]) clearFilter(name)
+  else setFilter(name, true)
   emit('change')
 }
 
@@ -231,17 +349,14 @@ function onSliderInput(name: string, event: Event) {
 
 function onTextInput(name: string, event: Event) {
   const value = (event.target as HTMLInputElement).value
-  if (value) {
-    setFilter(name, value)
-  }
-  else {
-    clearFilter(name)
-  }
+  if (value) setFilter(name, value)
+  else clearFilter(name)
   emit('change')
 }
 
 function handleClearAll() {
   clearAll()
+  updateFilters({ price_min: undefined, price_max: undefined, year_min: undefined, year_max: undefined, brand: undefined })
   emit('change')
 }
 
@@ -328,6 +443,35 @@ watch(open, (val) => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Static filters */
+.filter-static {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.filter-dual-range {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.filter-separator {
+  color: var(--text-auxiliary);
+  flex-shrink: 0;
+}
+
+.filter-input-sm {
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-divider {
+  height: 1px;
+  background: var(--border-color-light);
+  margin: var(--spacing-3) 0;
 }
 
 /* Filter items */
@@ -483,7 +627,7 @@ watch(open, (val) => {
   transform: translateY(100%);
 }
 
-/* Desktop: inline panel, no bottom sheet */
+/* Desktop: inline panel */
 @media (min-width: 1024px) {
   .filter-toggle {
     display: none;
@@ -503,6 +647,17 @@ watch(open, (val) => {
 
   .filter-close {
     display: none;
+  }
+
+  .filter-static {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+  }
+
+  .filter-static .filter-item {
+    flex: 1;
+    min-width: 180px;
   }
 
   .slide-up-enter-from,

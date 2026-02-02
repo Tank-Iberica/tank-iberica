@@ -27,6 +27,7 @@ export default defineNuxtConfig({
       { code: 'en', file: 'en.json', name: 'English' },
     ],
     defaultLocale: 'es',
+    // @ts-expect-error lazy is valid at runtime for @nuxtjs/i18n
     lazy: true,
     langDir: '../i18n',
     strategy: 'no_prefix',

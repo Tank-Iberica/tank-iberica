@@ -144,6 +144,14 @@ const hasSpecs = computed(() => {
   return Object.keys(vehicle.value.filters_json).length > 0
 })
 
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(price)
+}
+
 const shareText = computed(() => {
   if (!vehicle.value) return ''
   return `${vehicle.value.brand} ${vehicle.value.model} - Tank Iberica`
@@ -165,7 +173,7 @@ onMounted(async () => {
       ogTitle: title,
       ogDescription: desc,
       ogImage: image,
-      ogType: 'product',
+      ogType: 'website',
     })
   }
 })

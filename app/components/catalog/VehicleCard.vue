@@ -1,18 +1,27 @@
 <template>
-  <NuxtLink :to="`/vehiculo/${vehicle.slug}`" class="vehicle-card">
-    <div class="card-image">
-      <NuxtImg
-        v-if="mainImage"
-        provider="cloudinary"
-        :src="mainImage"
-        :alt="`${vehicle.brand} ${vehicle.model}`"
-        width="400"
-        height="300"
-        fit="cover"
-        loading="lazy"
-        format="webp"
-        class="card-img"
-      />
+  <NuxtLink :to="`/vehiculo/${vehicle.slug}`" class="product-card">
+    <div class="card-image" @click.prevent.stop="">
+      <!-- Images carousel -->
+      <template v-if="images.length">
+        <NuxtImg
+          v-if="images[currentImage]?.url?.includes('cloudinary.com')"
+          provider="cloudinary"
+          :src="cloudinaryPath(images[currentImage]!)"
+          :alt="`${vehicle.brand} ${vehicle.model}`"
+          width="400"
+          height="225"
+          fit="cover"
+          loading="lazy"
+          format="webp"
+          class="card-img"
+        />
+        <img
+          v-else
+          :src="images[currentImage]?.url"
+          :alt="`${vehicle.brand} ${vehicle.model}`"
+          class="card-img"
+        >
+      </template>
       <div v-else class="card-img-placeholder">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -20,26 +29,62 @@
           <path d="m21 15-5-5L5 21" />
         </svg>
       </div>
-      <span v-if="vehicle.featured" class="card-badge">
-        {{ $t('catalog.featured') }}
+
+      <!-- Nav arrows (only if multiple images) -->
+      <template v-if="images.length > 1">
+        <button class="img-nav img-nav-prev" aria-label="Previous" @click="prevImage">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <button class="img-nav img-nav-next" aria-label="Next" @click="nextImage">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </template>
+
+      <!-- Indicator dots -->
+      <div v-if="images.length > 1" class="image-indicators">
+        <span
+          v-for="(_, i) in images"
+          :key="i"
+          :class="['indicator', { active: i === currentImage }]"
+          @click="currentImage = i"
+        />
+      </div>
+
+      <!-- Price badge (top-right) -->
+      <span v-if="vehicle.price" class="badge-price">
+        {{ formatPrice(vehicle.price) }}
+      </span>
+
+      <!-- Category badge (bottom-left) -->
+      <span class="badge-category">
+        {{ $t(`catalog.${vehicle.category}`) }}
+      </span>
+
+      <!-- Location badge (bottom-right) -->
+      <span v-if="vehicle.location" class="badge-location">
+        {{ vehicle.location }}
       </span>
     </div>
-    <div class="card-body">
-      <h3 class="card-title">{{ vehicle.brand }} {{ vehicle.model }}</h3>
-      <div class="card-meta">
-        <span v-if="vehicle.year" class="card-year">{{ vehicle.year }}</span>
-        <span v-if="vehicle.location" class="card-location">{{ vehicle.location }}</span>
-      </div>
-      <div class="card-price">
-        <template v-if="vehicle.price">
-          {{ formatPrice(vehicle.price) }}
-        </template>
-        <template v-if="vehicle.rental_price">
-          <span class="card-rental">
+
+    <div class="product-info" @click.stop="">
+      <NuxtLink :to="`/vehiculo/${vehicle.slug}`" class="product-link">
+        <h3 class="product-title">{{ vehicle.brand }} {{ vehicle.model }}</h3>
+        <div class="product-meta">
+          <span v-if="vehicle.year">{{ vehicle.year }}</span>
+          <span v-if="vehicle.location">{{ vehicle.location }}</span>
+          <span v-if="vehicle.rental_price" class="rental-tag">
             {{ $t('catalog.from') }} {{ formatPrice(vehicle.rental_price) }}/{{ $t('catalog.month') }}
           </span>
-        </template>
-      </div>
+        </div>
+        <div v-if="vehicle.category === 'terceros'" class="terceros-disclaimer">
+          {{ $t('catalog.tercerosDisclaimer') }}
+        </div>
+        <span class="view-details-btn">{{ $t('catalog.viewDetails') }}</span>
+      </NuxtLink>
     </div>
   </NuxtLink>
 </template>
@@ -51,17 +96,26 @@ const props = defineProps<{
   vehicle: Vehicle
 }>()
 
-const mainImage = computed(() => {
-  if (!props.vehicle.vehicle_images?.length) return null
-  const sorted = [...props.vehicle.vehicle_images].sort((a, b) => a.position - b.position)
-  const img = sorted[0]
-  // Extract cloudinary path from full URL or use cloudinary_public_id
-  if (img.url?.includes('cloudinary.com')) {
-    const match = img.url.match(/\/upload\/(.+)$/)
-    if (match) return match[1]
-  }
-  return img.url
+const currentImage = ref(0)
+
+const images = computed(() => {
+  if (!props.vehicle.vehicle_images?.length) return []
+  return [...props.vehicle.vehicle_images].sort((a, b) => a.position - b.position)
 })
+
+function cloudinaryPath(img: { url?: string }): string {
+  if (!img.url) return ''
+  const match = img.url.match(/\/upload\/(.+)$/)
+  return match ? match[1]! : (img.url ?? '')
+}
+
+function prevImage() {
+  currentImage.value = currentImage.value <= 0 ? images.value.length - 1 : currentImage.value - 1
+}
+
+function nextImage() {
+  currentImage.value = currentImage.value >= images.value.length - 1 ? 0 : currentImage.value + 1
+}
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('es-ES', {
@@ -73,24 +127,27 @@ function formatPrice(price: number): string {
 </script>
 
 <style scoped>
-.vehicle-card {
-  display: block;
+.product-card {
+  display: flex;
+  flex-direction: column;
   background: var(--bg-primary);
-  border-radius: var(--border-radius-md);
+  border-radius: 16px;
   overflow: hidden;
-  border: 1px solid var(--border-color-light);
-  transition: box-shadow var(--transition-fast);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   color: inherit;
 }
 
-.vehicle-card:hover {
-  box-shadow: var(--shadow-md);
+.product-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 16px 40px rgba(15, 42, 46, 0.15);
 }
 
+/* Image area */
 .card-image {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background: var(--bg-secondary);
 }
@@ -99,6 +156,11 @@ function formatPrice(price: number): string {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .card-img {
+  transform: scale(1.08);
 }
 
 .card-img-placeholder {
@@ -110,60 +172,187 @@ function formatPrice(price: number): string {
   color: var(--text-auxiliary);
 }
 
-.card-badge {
+/* Navigation arrows */
+.img-nav {
   position: absolute;
-  top: var(--spacing-2);
-  left: var(--spacing-2);
-  background: var(--color-gold);
-  color: var(--color-white);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  padding: var(--spacing-1) var(--spacing-2);
-  border-radius: var(--border-radius-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.card-body {
-  padding: var(--spacing-3);
-}
-
-.card-title {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-primary);
-  margin-bottom: var(--spacing-1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+.product-card:hover .img-nav {
+  opacity: 1;
+}
+
+.img-nav-prev { left: 0.5rem; }
+.img-nav-next { right: 0.5rem; }
+
+/* Indicator dots */
+.image-indicators {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  z-index: 2;
+}
+
+.indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.indicator.active {
+  background: var(--color-white);
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Badges overlaid on image */
+.badge-price {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: var(--color-white);
+  padding: 0.6rem 1rem;
+  font-size: 14px;
+  font-weight: 700;
+  border-bottom-left-radius: 12px;
+  z-index: 1;
+}
+
+.badge-category {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-white);
+  padding: 0.5rem 0.9rem;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-top-right-radius: 12px;
+  z-index: 1;
+}
+
+.badge-location {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  color: var(--color-white);
+  padding: 0.5rem 0.9rem;
+  font-size: 12px;
+  border-top-left-radius: 12px;
+  z-index: 1;
+}
+
+/* Product info section */
+.product-info {
+  padding: 1rem 1.2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.product-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   line-height: var(--line-height-tight);
 }
 
-.card-meta {
+.product-meta {
   display: flex;
   gap: var(--spacing-2);
   font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
-  margin-bottom: var(--spacing-2);
 }
 
-.card-meta span::after {
+.product-meta span::after {
   content: '·';
   margin-left: var(--spacing-2);
 }
 
-.card-meta span:last-child::after {
+.product-meta span:last-child::after {
   content: '';
 }
 
-.card-price {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
+.rental-tag {
+  color: var(--text-secondary);
 }
 
-.card-rental {
-  display: block;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-normal);
-  color: var(--text-secondary);
-  margin-top: var(--spacing-1);
+.terceros-disclaimer {
+  margin-top: 0.25rem;
+  padding: 0.3rem 0.5rem;
+  background: #FEF3C7;
+  color: #92400E;
+  font-size: 10px;
+  border-radius: 4px;
+  line-height: 1.3;
+}
+
+.view-details-btn {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: var(--border-radius-full);
+  text-align: center;
+  transition: opacity 0.2s;
+}
+
+.view-details-btn:hover {
+  opacity: 0.9;
+}
+
+/* Mobile: always show nav arrows */
+@media (max-width: 767px) {
+  .img-nav {
+    opacity: 1;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (min-width: 768px) {
+  .product-title {
+    font-size: 18px;
+  }
 }
 </style>

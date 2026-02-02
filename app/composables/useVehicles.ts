@@ -1,3 +1,6 @@
+import { ref } from 'vue'
+import { useSupabaseClient } from '#imports'
+
 export interface VehicleImage {
   id: string
   url: string
@@ -189,12 +192,12 @@ export function useVehicles() {
   }
 
   return {
-    vehicles: readonly(vehicles),
-    loading: readonly(loading),
-    loadingMore: readonly(loadingMore),
-    error: readonly(error),
-    hasMore: readonly(hasMore),
-    total: readonly(total),
+    vehicles,
+    loading,
+    loadingMore,
+    error,
+    hasMore,
+    total,
     fetchVehicles,
     fetchMore,
     fetchBySlug,

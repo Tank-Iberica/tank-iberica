@@ -1,3 +1,6 @@
+import { ref, computed, readonly } from 'vue'
+import { useSupabaseClient } from '#imports'
+
 export interface FilterDefinition {
   id: string
   subcategory_id: string | null

@@ -1,15 +1,16 @@
 <template>
-  <nav class="category-bar" :aria-label="$t('catalog.title')">
-    <div class="category-scroll">
-      <button
-        v-for="cat in categories"
-        :key="cat"
-        class="category-btn"
-        :class="{ active: activeCategory === cat }"
-        @click="selectCategory(cat)"
-      >
-        {{ $t(`catalog.${cat}`) }}
-      </button>
+  <nav class="categories-section" :aria-label="$t('catalog.title')">
+    <div class="categories-wrapper">
+      <div ref="scrollContainer" class="categories">
+        <button
+          v-for="cat in displayCategories"
+          :key="cat.key"
+          :class="['category-btn', { active: cat.key === 'anunciate' ? false : activeCategories.has(cat.key) }]"
+          @click="handleClick(cat.key)"
+        >
+          {{ cat.key === 'anunciate' ? $t('catalog.anunciate') : $t(`catalog.${cat.key}`) }}
+        </button>
+      </div>
     </div>
   </nav>
 </template>
@@ -18,76 +19,135 @@
 import type { VehicleCategory } from '~/composables/useCatalogState'
 
 const emit = defineEmits<{
-  change: [category: VehicleCategory]
+  change: [categories: VehicleCategory[]]
+  openAdvertise: []
 }>()
 
-const { activeCategory, setCategory } = useCatalogState()
+const { activeCategory, setCategory, setCategories } = useCatalogState()
 
-const categories: VehicleCategory[] = ['alquiler', 'venta', 'terceros']
+const displayCategories = [
+  { key: 'alquiler' },
+  { key: 'venta' },
+  { key: 'terceros' },
+  { key: 'anunciate' },
+] as const
 
-// Default to first category if none active
+// Multi-select state
+const activeCategories = ref<Set<string>>(new Set(['alquiler']))
+
 onMounted(() => {
-  if (!activeCategory.value) {
-    selectCategory('alquiler')
+  if (activeCategory.value) {
+    activeCategories.value = new Set([activeCategory.value])
+  } else {
+    setCategory('alquiler')
   }
 })
 
-function selectCategory(cat: VehicleCategory) {
-  setCategory(cat)
-  emit('change', cat)
+function handleClick(key: string) {
+  if (key === 'anunciate') {
+    emit('openAdvertise')
+    return
+  }
+
+  const cat = key as VehicleCategory
+  const next = new Set(activeCategories.value)
+
+  if (next.has(cat)) {
+    next.delete(cat)
+    if (next.size === 0) next.add(cat) // At least one must be active
+  } else {
+    next.add(cat)
+  }
+
+  activeCategories.value = next
+  const arr = [...next] as VehicleCategory[]
+  setCategories(arr)
+  emit('change', arr)
 }
 </script>
 
 <style scoped>
-.category-bar {
-  width: 100%;
+.categories-section {
+  background: var(--bg-primary);
+  padding: 0.34rem 0;
+  position: relative;
   overflow: hidden;
 }
 
-.category-scroll {
-  display: flex;
-  gap: var(--spacing-2);
+.categories-wrapper {
   overflow-x: auto;
-  padding: var(--spacing-3) var(--spacing-4);
-  -webkit-overflow-scrolling: touch;
+  overflow-y: hidden;
   scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.category-scroll::-webkit-scrollbar {
+.categories-wrapper::-webkit-scrollbar {
   display: none;
 }
 
+.categories {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  min-width: 100%;
+}
+
 .category-btn {
-  flex-shrink: 0;
-  padding: var(--spacing-2) var(--spacing-4);
+  padding: 0.31rem 0.56rem;
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius-full);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--text-secondary);
   background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: 1.4;
   white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
   min-height: 44px;
-  min-width: 44px;
-  transition: all var(--transition-fast);
 }
 
-.category-btn.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-white);
-}
-
-.category-btn:not(.active):hover {
-  border-color: var(--color-primary);
+.category-btn:hover {
+  border-color: var(--color-primary-light);
+  background: var(--bg-secondary);
   color: var(--color-primary);
 }
 
+.category-btn.active {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+@media (max-width: 479px) {
+  .category-btn {
+    font-size: 9px;
+    padding: 0.2rem 0.36rem;
+    letter-spacing: 0.1px;
+  }
+}
+
+@media (min-width: 480px) {
+  .category-btn {
+    font-size: 10px;
+    padding: 0.3rem 0.5rem;
+  }
+}
+
 @media (min-width: 768px) {
-  .category-scroll {
+  .categories {
     justify-content: center;
-    overflow-x: visible;
     flex-wrap: wrap;
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .categories {
+    padding: 0 3rem;
   }
 }
 </style>

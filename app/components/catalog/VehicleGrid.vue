@@ -173,7 +173,7 @@ defineEmits<{
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .vehicle-grid {
     grid-template-columns: repeat(3, 1fr);
   }

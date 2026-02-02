@@ -92,9 +92,9 @@ const currentImage = computed(() => {
 function extractPath(img: VehicleImage): string {
   if (img.url?.includes('cloudinary.com')) {
     const match = img.url.match(/\/upload\/(.+)$/)
-    if (match) return match[1]
+    if (match) return match[1]!
   }
-  return img.url
+  return img.url || ''
 }
 
 function prev() {
@@ -110,11 +110,11 @@ function next() {
 }
 
 function onTouchStart(e: TouchEvent) {
-  touchStartX = e.touches[0].clientX
+  touchStartX = e.touches[0]?.clientX ?? 0
 }
 
 function onTouchEnd(e: TouchEvent) {
-  const diff = touchStartX - e.changedTouches[0].clientX
+  const diff = touchStartX - (e.changedTouches[0]?.clientX ?? 0)
   if (Math.abs(diff) > 50) {
     if (diff > 0) next()
     else prev()

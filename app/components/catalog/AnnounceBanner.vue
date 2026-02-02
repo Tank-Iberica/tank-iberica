@@ -24,7 +24,7 @@ onMounted(async () => {
     .single()
 
   if (data) {
-    bannerData.value = data.value as Record<string, unknown>
+    bannerData.value = (data as Record<string, unknown>).value as Record<string, unknown>
   }
 })
 </script>

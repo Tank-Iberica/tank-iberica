@@ -8,6 +8,15 @@
       <CatalogCategoryBar @change="onCategoryChange" />
       <CatalogSubcategoryBar @change="onSubcategoryChange" />
       <CatalogFilterBar @change="onFilterChange" />
+      <CatalogCatalogControls
+        :vehicle-count="vehicles.length"
+        @search="onSearchChange"
+        @sort="onSortChange"
+        @toggle-menu="menuVisible = !menuVisible"
+        @open-solicitar="() => {}"
+        @open-favorites="() => {}"
+        @view-change="() => {}"
+      />
 
       <CatalogVehicleGrid
         :vehicles="vehicles"
@@ -23,6 +32,7 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+const menuVisible = ref(true)
 const { vehicles, loading, loadingMore, hasMore, fetchVehicles, fetchMore } = useVehicles()
 const { filters, activeSubcategoryId, resetCatalog } = useCatalogState()
 const { fetchBySubcategory, clearAll: clearAllFilters, reset: resetFilters } = useFilters()
@@ -58,6 +68,14 @@ async function onFilterChange() {
   await loadVehicles()
 }
 
+async function onSearchChange() {
+  await loadVehicles()
+}
+
+async function onSortChange() {
+  await loadVehicles()
+}
+
 async function onLoadMore() {
   await fetchMore(filters.value)
 }
@@ -68,7 +86,7 @@ async function onClearFilters() {
   await fetchVehicles({})
 }
 
-defineOptions({ name: 'index' })
+defineOptions({ name: 'Index' })
 
 const { saveScrollPosition, scrollPosition } = useCatalogState()
 
