@@ -23,13 +23,13 @@ const authOpen = ref(false)
 
 .main-content {
   flex: 1;
-  padding-top: 57px;
+  padding-top: 64px;
   transition: padding-top 0.3s ease;
 }
 
 @media (min-width: 768px) {
   .main-content {
-    padding-top: var(--header-height);
+    padding-top: 60px;
   }
 }
 </style>
@@ -41,12 +41,12 @@ body.banner-visible .app-header {
 }
 
 body.banner-visible .main-content {
-  padding-top: calc(57px + var(--banner-height));
+  padding-top: calc(64px + var(--banner-height));
 }
 
 @media (min-width: 768px) {
   body.banner-visible .main-content {
-    padding-top: calc(var(--header-height) + var(--banner-height));
+    padding-top: calc(60px + var(--banner-height));
   }
 }
 </style>

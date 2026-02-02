@@ -1,33 +1,43 @@
 <template>
   <nav class="categories-section" :aria-label="$t('catalog.title')">
-    <div class="categories-wrapper">
+    <button
+      v-show="canScrollLeft"
+      class="scroll-btn scroll-btn-left"
+      aria-hidden="true"
+      @click="scrollLeft"
+    >
+      &#9664;
+    </button>
+
+    <div ref="scrollContainer" class="categories" @scroll="updateScrollButtons">
       <button
-        v-show="canScrollLeft"
-        class="scroll-btn scroll-btn-left"
-        aria-hidden="true"
-        @click="scrollLeft"
+        v-for="cat in mainCategories"
+        :key="cat.key"
+        :class="['category-btn', { active: activeCategories.has(cat.key) }]"
+        @click="handleClick(cat.key)"
       >
-        &#9664;
+        {{ $t(`catalog.${cat.key}`) }}
       </button>
-      <div ref="scrollContainer" class="categories">
-        <button
-          v-for="cat in displayCategories"
-          :key="cat.key"
-          :class="['category-btn', { active: cat.key === 'anunciate' ? false : activeCategories.has(cat.key) }]"
-          @click="handleClick(cat.key)"
-        >
-          {{ cat.key === 'anunciate' ? $t('catalog.anunciate') : $t(`catalog.${cat.key}`) }}
-        </button>
-      </div>
+
+      <!-- Spacer pushes anúnciate to the right -->
+      <span class="categories-spacer" />
+
       <button
-        v-show="canScrollRight"
-        class="scroll-btn scroll-btn-right"
-        aria-hidden="true"
-        @click="scrollRight"
+        class="category-btn anunciate-btn"
+        @click="emit('openAdvertise')"
       >
-        &#9654;
+        {{ $t('catalog.anunciate') }}
       </button>
     </div>
+
+    <button
+      v-show="canScrollRight"
+      class="scroll-btn scroll-btn-right"
+      aria-hidden="true"
+      @click="scrollRight"
+    >
+      &#9654;
+    </button>
   </nav>
 </template>
 
@@ -41,11 +51,10 @@ const emit = defineEmits<{
 
 const { setCategories } = useCatalogState()
 
-const displayCategories = [
+const mainCategories = [
   { key: 'alquiler' },
   { key: 'venta' },
   { key: 'terceros' },
-  { key: 'anunciate' },
 ] as const
 
 // Multi-select state — empty = show all (legacy behavior)
@@ -71,15 +80,9 @@ function scrollRight() {
 }
 
 function handleClick(key: string) {
-  if (key === 'anunciate') {
-    emit('openAdvertise')
-    return
-  }
-
   const cat = key as VehicleCategory
   const next = new Set(activeCategories.value)
 
-  // Toggle: no minimum — all can be deselected (legacy behavior)
   if (next.has(cat)) {
     next.delete(cat)
   }
@@ -97,7 +100,7 @@ onMounted(() => {
   const el = scrollContainer.value
   if (el) {
     el.addEventListener('scroll', updateScrollButtons, { passive: true })
-    updateScrollButtons()
+    nextTick(updateScrollButtons)
   }
 })
 
@@ -113,42 +116,45 @@ onUnmounted(() => {
 .categories-section {
   background: var(--bg-primary);
   padding: 0.28rem 0;
-  margin-top: 5px;
+  margin-top: 8px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
-.categories-wrapper {
+/* Scrollable row */
+.categories {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.5rem;
+  min-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  position: relative;
 }
 
-.categories-wrapper::-webkit-scrollbar {
+.categories::-webkit-scrollbar {
   display: none;
 }
 
-.categories {
-  display: flex;
-  justify-content: flex-start;
-  gap: 0.25rem;
-  padding: 0 1rem;
-  min-width: 100%;
+/* Spacer between main cats and anúnciate */
+.categories-spacer {
+  flex: 1;
+  min-width: 0.5rem;
 }
 
 /* ============================================
-   CATEGORY BUTTON — Base = smallest mobile
+   CATEGORY BUTTON — Base = mobile
    ============================================ */
 .category-btn {
-  padding: 0.16rem 0.28rem;
+  padding: 0.3rem 0.6rem;
   border: 2px solid var(--border-color);
   border-radius: 9999px;
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
   line-height: 1.4;
@@ -173,14 +179,28 @@ onUnmounted(() => {
   border-color: var(--color-primary);
 }
 
+/* Anúnciate: gold gradient, always visible */
+.anunciate-btn {
+  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+  color: var(--color-white);
+  border-color: var(--color-gold-dark);
+  font-weight: 600;
+}
+
+.anunciate-btn:hover {
+  background: linear-gradient(135deg, var(--color-gold-dark) 0%, var(--color-gold) 100%);
+  color: var(--color-white);
+  border-color: var(--color-gold);
+}
+
 /* ============================================
-   SCROLL ARROWS
+   SCROLL ARROWS — positioned on the section
    ============================================ */
 .scroll-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 2;
+  z-index: 3;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--border-color);
   border-radius: 50%;
@@ -212,11 +232,12 @@ onUnmounted(() => {
 @media (min-width: 480px) {
   .categories {
     gap: 0.4rem;
+    padding: 0 0.5rem;
   }
 
   .category-btn {
-    font-size: 9px;
-    padding: 0.2rem 0.36rem;
+    font-size: 11px;
+    padding: 0.25rem 0.45rem;
     letter-spacing: 0.1px;
   }
 }
@@ -227,7 +248,7 @@ onUnmounted(() => {
 @media (min-width: 768px) {
   .categories-section {
     padding: 0.34rem 0;
-    margin-top: 6px;
+    margin-top: 0;
   }
 
   .categories {
@@ -236,7 +257,7 @@ onUnmounted(() => {
   }
 
   .category-btn {
-    font-size: 10px;
+    font-size: 11px;
     padding: 0.3rem 0.5rem;
     letter-spacing: 0.2px;
   }

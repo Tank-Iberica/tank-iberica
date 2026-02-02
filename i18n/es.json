@@ -85,7 +85,8 @@
     "year": "Año",
     "resultsCount": "{count} vehículos",
     "viewDetails": "Ver detalles",
-    "tercerosDisclaimer": "Vehículo de terceros. Tank Iberica actúa como intermediario."
+    "tercerosDisclaimer": "Vehículo de terceros. Tank Iberica actúa como intermediario.",
+    "all": "Todos"
   },
   "vehicle": {
     "year": "Año",

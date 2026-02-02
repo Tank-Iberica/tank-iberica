@@ -85,7 +85,8 @@
     "year": "Year",
     "resultsCount": "{count} vehicles",
     "viewDetails": "View details",
-    "tercerosDisclaimer": "Third-party vehicle. Tank Iberica acts as intermediary."
+    "tercerosDisclaimer": "Third-party vehicle. Tank Iberica acts as intermediary.",
+    "all": "All"
   },
   "vehicle": {
     "year": "Year",

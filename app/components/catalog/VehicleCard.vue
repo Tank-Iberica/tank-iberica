@@ -140,8 +140,8 @@ function formatPrice(price: number): string {
 }
 
 .product-card:hover {
-  transform: translateY(-12px);
-  box-shadow: 0 16px 40px rgba(15, 42, 46, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(15, 42, 46, 0.12);
 }
 
 /* Image area */
@@ -341,16 +341,20 @@ function formatPrice(price: number): string {
   opacity: 0.9;
 }
 
-/* Mobile: always show nav arrows */
-@media (max-width: 767px) {
-  .img-nav {
-    opacity: 1;
-    width: 28px;
-    height: 28px;
-  }
+/* Base mobile: always show nav arrows */
+.img-nav {
+  opacity: 1;
+  width: 28px;
+  height: 28px;
 }
 
 @media (min-width: 768px) {
+  .img-nav {
+    opacity: 0;
+    width: 32px;
+    height: 32px;
+  }
+
   .product-title {
     font-size: 18px;
   }

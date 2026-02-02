@@ -1,45 +1,37 @@
 <template>
-  <nav v-if="subcategories.length" class="subcategory-bar" :aria-label="$t('catalog.subcategories')">
-    <div class="subcategory-wrapper">
-      <button
-        v-if="showScrollLeft"
-        class="scroll-btn scroll-left"
-        aria-label="Scroll left"
-        @click="scrollLeft"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
-      </button>
+  <section v-if="subcategories.length" class="subcategories-section" :aria-label="$t('catalog.subcategories')">
+    <button
+      v-show="canScrollLeft"
+      class="scroll-btn scroll-btn-left"
+      aria-hidden="true"
+      @click="scrollLeft"
+    >
+      &#9664;
+    </button>
 
-      <div ref="scrollContainer" class="subcategory-scroll" @scroll="updateScrollState">
-        <button
-          v-for="sub in subcategories"
-          :key="sub.id"
-          class="subcategory-chip"
-          :class="{
-            active: activeSubcategoryId === sub.id,
-            disabled: !isApplicable(sub),
-          }"
-          :disabled="!isApplicable(sub)"
-          @click="selectSubcategory(sub)"
-        >
-          {{ locale === 'en' && sub.name_en ? sub.name_en : sub.name_es }}
-        </button>
-      </div>
-
+    <div ref="scrollContainer" class="subcategories" @scroll="updateScrollState">
       <button
-        v-if="showScrollRight"
-        class="scroll-btn scroll-right"
-        aria-label="Scroll right"
-        @click="scrollRight"
+        v-for="sub in subcategories"
+        :key="sub.id"
+        :class="['subcategory-btn', {
+          active: activeSubcategoryId === sub.id,
+          disabled: !isApplicable(sub),
+        }]"
+        @click="selectSubcategory(sub)"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
+        {{ locale === 'en' && sub.name_en ? sub.name_en : sub.name_es }}
       </button>
     </div>
-  </nav>
+
+    <button
+      v-show="canScrollRight"
+      class="scroll-btn scroll-btn-right"
+      aria-hidden="true"
+      @click="scrollRight"
+    >
+      &#9654;
+    </button>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -62,8 +54,8 @@ const { activeCategories, activeSubcategoryId, setSubcategory } = useCatalogStat
 
 const subcategories = ref<SubcategoryRow[]>([])
 const scrollContainer = ref<HTMLElement | null>(null)
-const showScrollLeft = ref(false)
-const showScrollRight = ref(false)
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
 
 function isApplicable(sub: SubcategoryRow): boolean {
   if (!activeCategories.value.length) return true
@@ -82,6 +74,8 @@ async function fetchSubcategories() {
 }
 
 function selectSubcategory(sub: SubcategoryRow) {
+  if (!isApplicable(sub)) return
+
   if (activeSubcategoryId.value === sub.id) {
     setSubcategory(null, null)
     emit('change', null)
@@ -95,8 +89,8 @@ function selectSubcategory(sub: SubcategoryRow) {
 function updateScrollState() {
   const el = scrollContainer.value
   if (!el) return
-  showScrollLeft.value = el.scrollLeft > 4
-  showScrollRight.value = el.scrollLeft < el.scrollWidth - el.clientWidth - 4
+  canScrollLeft.value = el.scrollLeft > 0
+  canScrollRight.value = el.scrollLeft < el.scrollWidth - el.clientWidth - 1
 }
 
 function scrollLeft() {
@@ -118,113 +112,185 @@ watch(activeCategories, () => {
   }
 }, { deep: true })
 
-onMounted(fetchSubcategories)
+onMounted(() => {
+  fetchSubcategories()
+  const el = scrollContainer.value
+  if (el) {
+    el.addEventListener('scroll', updateScrollState, { passive: true })
+  }
+})
+
+onUnmounted(() => {
+  scrollContainer.value?.removeEventListener('scroll', updateScrollState)
+})
 </script>
 
 <style scoped>
-.subcategory-bar {
-  width: 100%;
-  overflow: hidden;
-}
-
-.subcategory-wrapper {
+/* ============================================
+   SUBCATEGORIES SECTION — Base = mobile (360px)
+   ============================================ */
+.subcategories-section {
+  background: var(--bg-primary);
+  padding: 0.28rem 0;
   position: relative;
-  display: flex;
-  align-items: center;
+  overflow: hidden;
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
-.subcategory-scroll {
+/* Scrollable row — directly on section, arrows on parent */
+.subcategories {
   display: flex;
-  gap: 0.5rem;
+  justify-content: flex-start;
+  gap: 0.3rem;
+  padding: 0 0.5rem;
+  min-width: 100%;
   overflow-x: auto;
-  padding: 0.25rem 1rem 0.5rem;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: hidden;
   scrollbar-width: none;
-  flex: 1;
+  -ms-overflow-style: none;
 }
 
-.subcategory-scroll::-webkit-scrollbar {
+.subcategories::-webkit-scrollbar {
   display: none;
 }
 
+/* ============================================
+   SUBCATEGORY BUTTON — Base = mobile
+   ============================================ */
+.subcategory-btn {
+  padding: 0.3rem 0.6rem;
+  border: 2px solid var(--border-color);
+  border-radius: 9999px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-height: auto;
+  min-width: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.subcategory-btn:focus {
+  outline: none;
+}
+
+.subcategory-btn:not(.disabled):not(.active):hover {
+  color: var(--color-primary);
+  background: var(--bg-secondary);
+  border-color: var(--color-primary-light);
+}
+
+.subcategory-btn:not(.disabled):active {
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent, #7FD1C8) 100%);
+  color: var(--color-white);
+  border-color: var(--color-primary-light);
+  transform: scale(0.98);
+}
+
+.subcategory-btn.active {
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent, #7FD1C8) 100%);
+  color: var(--color-white);
+  border-color: var(--color-primary-light);
+}
+
+.subcategory-btn.disabled {
+  color: var(--text-auxiliary, #9CA3AF);
+  cursor: not-allowed;
+  background: #F9FAFB;
+  border-color: var(--text-auxiliary, #9CA3AF);
+}
+
+.subcategory-btn.disabled:hover {
+  background: #F9FAFB;
+  color: var(--text-auxiliary, #9CA3AF);
+}
+
+/* ============================================
+   SCROLL ARROWS — positioned on the section
+   ============================================ */
 .scroll-btn {
   position: absolute;
-  z-index: 2;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--border-radius-full);
-  background: var(--bg-primary);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-sm);
+  font-size: 10px;
+  color: var(--text-primary);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.2s ease;
 }
 
-.scroll-left {
-  left: 0;
+.scroll-btn-left {
+  left: 2px;
 }
 
-.scroll-right {
-  right: 0;
+.scroll-btn-right {
+  right: 2px;
 }
 
-.subcategory-chip {
-  flex-shrink: 0;
-  padding: 0.25rem 0.75rem;
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--border-radius-full);
-  font-size: 12px;
-  color: var(--text-secondary);
-  background: var(--bg-secondary);
-  white-space: nowrap;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  transition: all 0.2s ease;
-}
-
-.subcategory-chip.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  color: var(--text-auxiliary);
-}
-
-.subcategory-chip:not(.active):not(.disabled):hover {
-  border-color: var(--color-primary);
-}
-
-.subcategory-chip.active {
-  background: var(--color-white, #fff);
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  font-weight: 600;
-}
-
-@media (max-width: 479px) {
-  .subcategory-chip {
-    font-size: 10px;
-    padding: 0.2rem 0.5rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .subcategory-scroll {
-    flex-wrap: wrap;
-    overflow-x: visible;
-    justify-content: center;
-    padding: 0.25rem 1.5rem 0.5rem;
+/* ============================================
+   RESPONSIVE: ≥480px (large mobile)
+   ============================================ */
+@media (min-width: 480px) {
+  .subcategories {
+    gap: 0.4rem;
+    padding: 0 0.5rem;
   }
 
-  .subcategory-chip {
-    text-transform: uppercase;
+  .subcategory-btn {
     font-size: 11px;
-    letter-spacing: 0.3px;
+    padding: 0.25rem 0.45rem;
+  }
+}
+
+/* ============================================
+   RESPONSIVE: ≥768px (tablet)
+   ============================================ */
+@media (min-width: 768px) {
+  .subcategories-section {
+    padding: 0.34rem 0;
   }
 
-  .scroll-btn {
-    display: none;
+  .subcategories {
+    padding: 0 1.5rem;
+    gap: 0.5rem;
+  }
+
+  .subcategory-btn {
+    font-size: 11px;
+    padding: 0.25rem 0.45rem;
+  }
+}
+
+/* ============================================
+   RESPONSIVE: ≥1024px (desktop)
+   ============================================ */
+@media (min-width: 1024px) {
+  .subcategories {
+    padding: 0 3rem;
+    gap: 0.75rem;
+  }
+
+  .subcategory-btn {
+    font-size: 12px;
+    padding: 0.27rem 0.56rem;
   }
 }
 </style>
