@@ -15,7 +15,10 @@
     "myAccount": "Mi cuenta",
     "admin": "Admin",
     "menu": "Menú",
-    "phone": "Teléfono"
+    "phone": "Teléfono",
+    "email": "info{'@'}tankiberica.com",
+    "phoneNumber": "+34911234567",
+    "whatsappNumber": "34911234567"
   },
   "footer": {
     "communications": "Comunicación",
@@ -101,6 +104,9 @@
     "backToCatalog": "Volver al catálogo",
     "notFound": "Vehículo no encontrado",
     "imageOf": "Imagen {current} de {total}"
+  },
+  "banner": {
+    "moreInfo": "Más información"
   },
   "common": {
     "loading": "Cargando...",

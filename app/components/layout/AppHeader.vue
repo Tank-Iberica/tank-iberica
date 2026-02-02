@@ -6,26 +6,25 @@
       <div class="header-right">
         <!-- Desktop: social links (5 icons) -->
         <nav class="social-links desktop-only" :aria-label="$t('nav.contact')">
-          <a href="mailto:info@tankiberica.com" class="contact-icon" :title="$t('nav.contact')">
+          <a :href="`mailto:${$t('nav.email')}`" class="contact-icon" :title="$t('nav.contact')">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
               <polyline points="22,6 12,13 2,6" />
             </svg>
           </a>
-          <a href="tel:+34600000000" class="contact-icon" :title="$t('nav.phone')">
+          <a :href="`tel:${$t('nav.phoneNumber')}`" class="contact-icon" :title="$t('nav.phone')">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
             </svg>
           </a>
-          <a href="https://wa.me/34600000000" target="_blank" rel="noopener" class="contact-icon" title="WhatsApp">
+          <a :href="`https://wa.me/${$t('nav.whatsappNumber')}`" target="_blank" rel="noopener" class="contact-icon" title="WhatsApp">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
-              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.119.553 4.11 1.519 5.838L.057 23.534l5.846-1.533A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-1.97 0-3.867-.53-5.526-1.533l-.396-.236-4.107 1.077 1.097-4.007-.259-.412A9.776 9.776 0 012.18 12c0-5.423 4.397-9.82 9.82-9.82 5.423 0 9.82 4.397 9.82 9.82 0 5.423-4.397 9.82-9.82 9.82z" />
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
             </svg>
           </a>
           <a href="https://linkedin.com/company/tankiberica" target="_blank" rel="noopener" class="contact-icon" title="LinkedIn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
             </svg>
           </a>
           <a href="https://facebook.com/tankiberica" target="_blank" rel="noopener" class="contact-icon" title="Facebook">
@@ -35,58 +34,83 @@
           </a>
         </nav>
 
-        <!-- Mobile: Contact dropdown (phone icon) -->
-        <div class="mobile-menu-group mobile-only" @click.stop="toggleMenu('contact')">
+        <!-- Mobile: Contact dropdown (smartphone icon with home button) -->
+        <div
+          :class="['mobile-menu-group', 'mobile-only', { active: openMenu === 'contact' }]"
+          @click.stop="toggleMenu('contact')"
+        >
           <button class="header-icon-btn mobile-trigger" :aria-label="$t('nav.phone')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-              <line x1="12" y1="18" x2="12.01" y2="18" />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="5" y="1" width="14" height="22" rx="3" ry="3" />
+              <line x1="9" y1="4" x2="15" y2="4" stroke-linecap="round" />
+              <rect x="7" y="6" width="10" height="11" rx="0.5" />
+              <circle cx="12" cy="20" r="1.5" fill="currentColor" />
             </svg>
           </button>
           <Transition name="dropdown">
             <div v-if="openMenu === 'contact'" class="mobile-menu-dropdown">
-              <a href="mailto:info@tankiberica.com" class="mobile-dropdown-item">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                Email
+              <a :href="`mailto:${$t('nav.email')}`" class="header-icon-btn" title="Email">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
               </a>
-              <a href="tel:+34600000000" class="mobile-dropdown-item">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" /></svg>
-                {{ $t('nav.phone') }}
+              <a :href="`tel:${$t('nav.phoneNumber')}`" class="header-icon-btn" :title="$t('nav.phone')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
               </a>
-              <a href="https://wa.me/34600000000" target="_blank" rel="noopener" class="mobile-dropdown-item">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" /><path d="M12 0C5.373 0 0 5.373 0 12c0 2.119.553 4.11 1.519 5.838L.057 23.534l5.846-1.533A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-1.97 0-3.867-.53-5.526-1.533l-.396-.236-4.107 1.077 1.097-4.007-.259-.412A9.776 9.776 0 012.18 12c0-5.423 4.397-9.82 9.82-9.82 5.423 0 9.82 4.397 9.82 9.82 0 5.423-4.397 9.82-9.82 9.82z" /></svg>
-                WhatsApp
+              <a :href="`https://wa.me/${$t('nav.whatsappNumber')}`" target="_blank" rel="noopener" class="header-icon-btn" title="WhatsApp">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
               </a>
             </div>
           </Transition>
         </div>
 
         <!-- Mobile: Social dropdown (globe icon) -->
-        <div class="mobile-menu-group mobile-only" @click.stop="toggleMenu('social')">
+        <div
+          :class="['mobile-menu-group', 'mobile-only', { active: openMenu === 'social' }]"
+          @click.stop="toggleMenu('social')"
+        >
           <button class="header-icon-btn mobile-trigger" aria-label="Social">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10" />
               <line x1="2" y1="12" x2="22" y2="12" />
-              <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
             </svg>
           </button>
           <Transition name="dropdown">
             <div v-if="openMenu === 'social'" class="mobile-menu-dropdown">
-              <a href="https://wa.me/34600000000" target="_blank" rel="noopener" class="mobile-dropdown-item">WhatsApp</a>
-              <a href="https://linkedin.com/company/tankiberica" target="_blank" rel="noopener" class="mobile-dropdown-item">LinkedIn</a>
-              <a href="https://facebook.com/tankiberica" target="_blank" rel="noopener" class="mobile-dropdown-item">Facebook</a>
+              <a :href="`https://wa.me/${$t('nav.whatsappNumber')}`" target="_blank" rel="noopener" class="header-icon-btn" title="WhatsApp">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+              </a>
+              <a href="https://linkedin.com/company/tankiberica" target="_blank" rel="noopener" class="header-icon-btn" title="LinkedIn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                </svg>
+              </a>
+              <a href="https://facebook.com/tankiberica" target="_blank" rel="noopener" class="header-icon-btn" title="Facebook">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+              </a>
             </div>
           </Transition>
         </div>
 
         <!-- Mobile: Language dropdown (flag) -->
-        <div class="mobile-menu-group mobile-only" @click.stop="toggleMenu('lang')">
+        <div
+          :class="['mobile-menu-group', 'mobile-only', { active: openMenu === 'lang' }]"
+          @click.stop="toggleMenu('lang')"
+        >
           <button class="header-icon-btn mobile-trigger lang-trigger">
             <img
               :src="`https://flagcdn.com/w40/${locale === 'es' ? 'es' : 'gb'}.png`"
               :alt="locale.toUpperCase()"
-              width="20"
-              height="15"
               class="lang-flag"
             >
           </button>
@@ -94,13 +118,11 @@
             <div v-if="openMenu === 'lang'" class="mobile-lang-dropdown">
               <button
                 class="header-icon-btn lang-option"
-                @click="setLocale(altLocale as 'es' | 'en'); openMenu = null"
+                @click.stop="setLocale(altLocale as 'es' | 'en'); openMenu = null"
               >
                 <img
                   :src="`https://flagcdn.com/w40/${locale === 'es' ? 'gb' : 'es'}.png`"
                   :alt="altLocale.toUpperCase()"
-                  width="20"
-                  height="15"
                   class="lang-flag"
                 >
               </button>
@@ -126,21 +148,21 @@
           class="account-btn"
           @click="$emit('openAuth')"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
-          <span class="account-text desktop-only">{{ $t('nav.login') }}</span>
+          <span class="account-text">{{ $t('nav.myAccount') }}</span>
         </button>
 
         <!-- Logged-in user -->
         <div v-else class="user-menu">
           <button class="account-btn logged-in" @click="toggleMenu('user')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
-            <span class="account-text desktop-only">{{ userDisplayName }}</span>
+            <span class="account-text">{{ userDisplayName }}</span>
           </button>
           <Transition name="fade">
             <div v-if="openMenu === 'user'" class="user-dropdown-backdrop" @click="openMenu = null" />
@@ -202,7 +224,7 @@ const availableLocales = computed(() =>
 )
 
 function onScroll() {
-  scrolled.value = window.scrollY > 50
+  scrolled.value = window.scrollY > 30
 }
 
 onMounted(() => {
@@ -217,6 +239,9 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* ============================================
+   HEADER — BASE = MOBILE (360px)
+   ============================================ */
 .app-header {
   position: fixed;
   top: 0;
@@ -226,214 +251,313 @@ onUnmounted(() => {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: var(--color-white);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-header);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Scrolled state — mobile */
+.app-header.scrolled {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.scrolled .header-content {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+}
+
+.scrolled .header-icon-btn {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+}
+
+.scrolled .header-icon-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.scrolled .account-btn {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+}
+
+.scrolled .account-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.scrolled .lang-flag {
+  width: 18px;
+  height: 18px;
+}
+
+.scrolled .logo {
+  font-size: 1rem;
+  letter-spacing: 0.3px;
 }
 
 .header-content {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0.8rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.6rem 1rem;
-  max-width: var(--container-max-width);
-  margin: 0 auto;
   gap: 0.5rem;
   transition: padding 0.4s ease;
 }
 
-/* Logo */
+/* ============================================
+   LOGO — Base = smallest mobile (<=360px)
+   Legacy: 300 weight, text-shadow, uppercase
+   ============================================ */
 .logo {
-  font-family: var(--font-family-logo);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 300;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   color: var(--color-white);
   text-decoration: none;
   text-transform: uppercase;
   white-space: nowrap;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
   transition: font-size 0.4s ease;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
-/* Contact icon buttons */
+/* ============================================
+   DESKTOP SOCIAL ICONS
+   ============================================ */
+.social-links {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .contact-icon {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.15);
-  border-radius: var(--border-radius-full);
+  border-radius: 50%;
   color: var(--color-white);
   text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .contact-icon:hover {
   background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px) scale(1.05);
 }
 
-.scrolled .contact-icon {
-  width: 28px;
-  height: 28px;
-}
+/* .scrolled .contact-icon — moved to ≥768px media query */
 
-.scrolled .contact-icon svg {
-  width: 14px;
-  height: 14px;
-}
-
-/* Social links container (desktop) */
-.social-links {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-/* Mobile menu groups */
+/* ============================================
+   MOBILE MENU GROUPS
+   ============================================ */
 .mobile-menu-group {
   position: relative;
 }
 
+/* Connection bridge between trigger and dropdown */
+.mobile-menu-group.active::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 15px;
+}
+
 .header-icon-btn {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.15);
-  border-radius: var(--border-radius-full);
+  border-radius: 50%;
   color: var(--color-white);
+  text-decoration: none;
+  transition: all 0.3s ease;
   backdrop-filter: blur(10px);
-  transition: all var(--transition-fast);
-  min-height: 32px;
-  min-width: 32px;
+  cursor: pointer;
+  flex-shrink: 0;
+  border: none;
 }
 
 .header-icon-btn:hover {
   background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
 }
 
-/* Mobile dropdowns */
+/* Active menu trigger indicator — glow */
+.mobile-menu-group.active > .header-icon-btn,
+.mobile-menu-group.active > .mobile-trigger {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+/* Mobile dropdowns — HORIZONTAL row, CENTERED under trigger */
 .mobile-menu-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  background: var(--color-primary-dark);
-  border-radius: var(--border-radius);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  min-width: 140px;
-  overflow: hidden;
-  z-index: 10;
-}
-
-.mobile-dropdown-item {
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(35, 66, 74, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  color: var(--text-on-dark-primary);
-  text-decoration: none;
-  font-size: var(--font-size-sm);
-  transition: background var(--transition-fast);
-  min-height: 44px;
-  white-space: nowrap;
-  border: none;
-  background: none;
-  width: 100%;
-  cursor: pointer;
+  flex-direction: row;
+  gap: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  padding: 8px;
+  z-index: 1000;
 }
 
-.mobile-dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+.mobile-menu-dropdown .header-icon-btn {
+  width: 36px;
+  height: 36px;
 }
 
-/* Mobile language dropdown */
-.mobile-lang-dropdown {
-  position: absolute;
-  top: calc(100% + 4px);
-  right: 0;
-  z-index: 10;
+.mobile-menu-dropdown .header-icon-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
+/* ============================================
+   LANGUAGE SELECTOR
+   ============================================ */
+
+/* Mobile: flag trigger */
 .lang-trigger {
   padding: 0.4rem;
+  overflow: hidden;
 }
 
 .lang-flag {
-  border-radius: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
   display: block;
 }
 
-.lang-option {
-  background: rgba(255, 255, 255, 0.2);
+/* Mobile lang dropdown — CIRCULAR like legacy */
+.mobile-lang-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(35, 66, 74, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: var(--border-radius-full);
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  padding: 4px;
+  z-index: 1000;
 }
 
-/* Desktop language switch */
+.lang-option {
+  cursor: pointer;
+}
+
+/* Desktop: ES/EN buttons */
 .lang-switch {
   display: flex;
-  gap: 0.25rem;
+  gap: 0.2rem;
   background: rgba(255, 255, 255, 0.15);
-  padding: 0.3rem;
-  border-radius: var(--border-radius-full);
+  padding: 3px;
+  border-radius: 19px;
   backdrop-filter: blur(10px);
+  flex-shrink: 0;
+  height: 38px;
+  align-items: center;
 }
 
 .lang-btn {
   background: none;
+  border: none;
   color: var(--color-white);
-  padding: 0.3rem 0.7rem;
-  border-radius: var(--border-radius-full);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-sm);
-  transition: all var(--transition-fast);
+  cursor: pointer;
+  padding: 0.15rem 0.7rem;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
   min-height: auto;
   min-width: auto;
+  height: 32px;
+  line-height: 1;
 }
 
 .lang-btn.active {
   background: var(--color-white);
   color: var(--color-primary);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Account button */
+/* ============================================
+   ACCOUNT BUTTON — Base = mobile (icon only, circle)
+   ============================================ */
 .account-btn {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 0.5rem;
-  border-radius: var(--border-radius-full);
-  backdrop-filter: blur(10px);
-  color: var(--color-white);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  transition: all var(--transition-fast);
-  min-width: 44px;
-  min-height: 44px;
   justify-content: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  color: var(--color-white);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .account-btn:hover {
   background: rgba(255, 255, 255, 0.25);
 }
 
-.account-text { white-space: nowrap; }
+.account-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Hidden on mobile — shown at desktop via media query */
+.account-text {
+  display: none;
+}
 
 .account-btn.logged-in {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* User dropdown */
+/* ============================================
+   USER DROPDOWN — mobile = bottom sheet
+   ============================================ */
 .user-menu { position: relative; }
 
 .user-dropdown {
@@ -479,7 +603,9 @@ onUnmounted(() => {
 
 .dropdown-item:hover { background: var(--bg-secondary); }
 
-/* Transitions */
+/* ============================================
+   TRANSITIONS
+   ============================================ */
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 
@@ -491,27 +617,32 @@ onUnmounted(() => {
 .dropdown-enter-from { opacity: 0; transform: translateY(-4px); }
 .dropdown-leave-to { opacity: 0; }
 
-/* Visibility helpers */
+/* ============================================
+   VISIBILITY — Base = mobile
+   ============================================ */
 .desktop-only { display: none; }
 .mobile-only { display: flex; }
 
-/* ---- Tablet (768px) ---- */
-@media (min-width: 768px) {
+/* ============================================
+   RESPONSIVE: MOBILE LARGE (≥480px)
+   Logo: 1.1rem → 1.3rem at tablet range
+   ============================================ */
+@media (min-width: 480px) {
   .header-content {
-    padding: 0.75rem 1.5rem;
-    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    gap: 0.5rem;
   }
 
   .logo {
-    font-size: 1.3rem;
-    letter-spacing: 1.5px;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
   }
-
-  .header-right { gap: 0.5rem; }
 }
 
-/* ---- Desktop (1024px) ---- */
-@media (min-width: 1024px) {
+/* ============================================
+   RESPONSIVE: TABLET (≥768px) — switch to desktop layout
+   ============================================ */
+@media (min-width: 768px) {
   .header-content {
     padding: 0.6rem 3rem;
     gap: 1.5rem;
@@ -522,6 +653,47 @@ onUnmounted(() => {
     letter-spacing: 3px;
   }
 
+  .header-right {
+    gap: 1.5rem;
+  }
+
+  .desktop-only { display: flex; }
+  .mobile-only { display: none !important; }
+
+  /* Account: show text, pill shape */
+  .account-btn {
+    width: auto;
+    height: auto;
+    min-width: auto;
+    min-height: 38px;
+    padding: 0.4rem 1rem;
+    border-radius: 24px;
+  }
+
+  .account-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .account-text {
+    display: inline;
+  }
+
+  /* Scrolled state compressions — desktop only */
+  .scrolled.app-header {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .scrolled .contact-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .scrolled .contact-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
   .scrolled .header-content {
     padding: 0.24rem 3rem;
   }
@@ -530,14 +702,27 @@ onUnmounted(() => {
     font-size: 1.2rem;
   }
 
-  .desktop-only { display: flex; }
-  .mobile-only { display: none; }
-
-  .account-btn {
-    padding: 0.4rem 1rem;
-    border-radius: 24px;
+  .scrolled .lang-btn {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
   }
 
+  .scrolled .account-btn {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .scrolled .account-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .scrolled .social-links svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* User dropdown: positioned dropdown instead of bottom sheet */
   .user-dropdown-backdrop { display: none; }
 
   .user-dropdown {

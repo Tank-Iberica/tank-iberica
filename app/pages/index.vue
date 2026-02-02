@@ -1,10 +1,6 @@
 <template>
   <div class="home">
-    <CatalogAnnounceBanner />
-
     <section class="catalog-section">
-      <h1 class="catalog-title">{{ $t('catalog.title') }}</h1>
-
       <CatalogCategoryBar @change="onCategoryChange" />
       <CatalogSubcategoryBar @change="onSubcategoryChange" />
       <CatalogFilterBar @change="onFilterChange" />
@@ -112,19 +108,5 @@ onDeactivated(() => {
 
 .catalog-section {
   padding-bottom: var(--spacing-8);
-}
-
-.catalog-title {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  text-align: center;
-  padding: var(--spacing-6) var(--spacing-4) var(--spacing-2);
-}
-
-@media (min-width: 768px) {
-  .catalog-title {
-    font-size: var(--font-size-3xl);
-  }
 }
 </style>
