@@ -1,5 +1,5 @@
 <template>
-  <section v-if="subcategories.length" class="subcategories-section" :aria-label="$t('catalog.subcategories')">
+  <section v-if="hasItems" class="subcategories-section" :aria-label="$t('catalog.subcategories')">
     <button
       v-show="canScrollLeft"
       class="scroll-btn scroll-btn-left"
@@ -10,17 +10,113 @@
     </button>
 
     <div ref="scrollContainer" class="subcategories" @scroll="updateScrollState">
-      <button
-        v-for="sub in subcategories"
-        :key="sub.id"
-        :class="['subcategory-btn', {
-          active: activeSubcategoryId === sub.id,
-          disabled: !isApplicable(sub),
-        }]"
-        @click="selectSubcategory(sub)"
-      >
-        {{ locale === 'en' && sub.name_en ? sub.name_en : sub.name_es }}
-      </button>
+      <!-- Level 1: Subcategories -->
+      <template v-if="!activeSubcategoryId">
+        <button
+          v-for="sub in visibleSubcategories"
+          :key="sub.id"
+          :class="['subcategory-btn', { disabled: !isApplicable(sub) }]"
+          @click="selectSubcategory(sub)"
+        >
+          {{ locale === 'en' && sub.name_en ? sub.name_en : sub.name_es }}
+        </button>
+      </template>
+
+      <!-- Level 2: Selected subcategory + Types (no type selected yet) -->
+      <template v-else-if="!activeTypeId">
+        <!-- Selected subcategory (clickable to go back) -->
+        <button
+          class="subcategory-btn active"
+          @click="clearSubcategory"
+        >
+          {{ selectedSubcategoryName }}
+        </button>
+
+        <!-- Separator -->
+        <span class="separator">&gt;</span>
+
+        <!-- Types belonging to this subcategory -->
+        <button
+          v-for="type in linkedTypes"
+          :key="type.id"
+          :class="['subcategory-btn type-btn', {
+            disabled: !isTypeApplicable(type),
+          }]"
+          @click="selectType(type)"
+        >
+          {{ locale === 'en' && type.name_en ? type.name_en : type.name_es }}
+        </button>
+      </template>
+
+      <!-- Level 3: Selected subcategory + Selected type (type selected) + Dynamic filters -->
+      <template v-else>
+        <!-- Selected subcategory (clickable to go back to subcategory selection) -->
+        <button
+          class="subcategory-btn active"
+          @click="clearSubcategory"
+        >
+          {{ selectedSubcategoryName }}
+        </button>
+
+        <!-- Separator -->
+        <span class="separator">&gt;</span>
+
+        <!-- Selected type only (clickable to go back to type selection) -->
+        <button
+          class="subcategory-btn type-btn active"
+          @click="clearType"
+        >
+          {{ selectedTypeName }}
+        </button>
+
+        <!-- Separator before dynamic filters -->
+        <span v-if="visibleFilters.length" class="separator">&gt;</span>
+
+        <!-- Dynamic filters inline -->
+        <template v-for="filter in visibleFilters" :key="filter.id">
+          <!-- Desplegable (select) -->
+          <div v-if="filter.type === 'desplegable'" class="filter-inline">
+            <span class="filter-label-inline">{{ filterLabel(filter) }}:</span>
+            <select class="filter-select-inline" :value="activeFilters[filter.name] || ''" @change="onSelectChange(filter.name, $event)">
+              <option value="">—</option>
+              <option v-for="opt in getOptions(filter)" :key="opt" :value="opt">{{ opt }}</option>
+            </select>
+          </div>
+
+          <!-- Desplegable tick (multi-select checkboxes) -->
+          <div v-else-if="filter.type === 'desplegable_tick'" class="filter-inline">
+            <span class="filter-label-inline">{{ filterLabel(filter) }}:</span>
+            <div class="filter-checks-inline">
+              <label v-for="opt in getOptions(filter)" :key="opt" class="filter-check-inline">
+                <input type="checkbox" :checked="isChecked(filter.name, opt)" @change="onCheckChange(filter.name, opt)">
+                <span>{{ opt }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Tick (single checkbox) -->
+          <label v-else-if="filter.type === 'tick'" class="filter-tick-inline">
+            <input type="checkbox" :checked="!!activeFilters[filter.name]" @change="onTickChange(filter.name)">
+            <span>{{ filterLabel(filter) }}</span>
+          </label>
+
+          <!-- Slider / Calc (range inputs) -->
+          <div v-else-if="filter.type === 'slider' || filter.type === 'calc'" class="filter-inline">
+            <span class="filter-label-inline">{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}:</span>
+            <div class="filter-range-inline">
+              <input type="number" class="filter-input-inline" :value="activeFilters[filter.name + '_min'] || ''" :min="getSliderMin(filter)" :max="getSliderMax(filter)" placeholder="Min" @change="onRangeChange(filter.name + '_min', $event)">
+              <span class="filter-dash">—</span>
+              <input type="number" class="filter-input-inline" :value="activeFilters[filter.name + '_max'] || ''" :min="getSliderMin(filter)" :max="getSliderMax(filter)" placeholder="Max" @change="onRangeChange(filter.name + '_max', $event)">
+            </div>
+          </div>
+
+          <!-- Caja (text input) -->
+          <div v-else-if="filter.type === 'caja'" class="filter-inline">
+            <span class="filter-label-inline">{{ filterLabel(filter) }}:</span>
+            <input type="text" class="filter-input-inline" :value="activeFilters[filter.name] || ''" :placeholder="filterLabel(filter)" @input="onTextInput(filter.name, $event)">
+          </div>
+        </template>
+      </template>
     </div>
 
     <button
@@ -44,24 +140,92 @@ interface SubcategoryRow {
   sort_order: number
 }
 
+interface TypeRow {
+  id: string
+  name_es: string
+  name_en: string | null
+  slug: string
+  applicable_categories: string[]
+  sort_order: number
+}
+
 const emit = defineEmits<{
-  change: [subcategoryId: string | null]
+  subcategoryChange: [subcategoryId: string | null]
+  typeChange: [typeId: string | null]
 }>()
 
 const supabase = useSupabaseClient()
 const { locale } = useI18n()
-const { activeCategories, activeSubcategoryId, setSubcategory } = useCatalogState()
+const {
+  activeCategories,
+  activeSubcategoryId,
+  activeTypeId,
+  setSubcategory,
+  setType,
+} = useCatalogState()
+const { visibleFilters, activeFilters, setFilter, clearFilter } = useFilters()
 
 const subcategories = ref<SubcategoryRow[]>([])
+const types = ref<TypeRow[]>([])
+const typeSubcategoryLinks = ref<Map<string, string[]>>(new Map())
 const scrollContainer = ref<HTMLElement | null>(null)
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
 
+// Check if subcategory is applicable for current categories
 function isApplicable(sub: SubcategoryRow): boolean {
   if (!activeCategories.value.length) return true
   return activeCategories.value.some(cat => sub.applicable_categories.includes(cat))
 }
 
+// Check if type is applicable for current categories
+function isTypeApplicable(type: TypeRow): boolean {
+  if (!activeCategories.value.length) return true
+  return activeCategories.value.some(cat => type.applicable_categories.includes(cat))
+}
+
+// Visible subcategories (filtered by category)
+const visibleSubcategories = computed(() => {
+  return subcategories.value.filter(isApplicable)
+})
+
+// Types linked to the currently selected subcategory
+const linkedTypes = computed(() => {
+  if (!activeSubcategoryId.value) return []
+
+  // Get type IDs linked to this subcategory
+  const linkedTypeIds = new Set<string>()
+  for (const [typeId, subcatIds] of typeSubcategoryLinks.value.entries()) {
+    if (subcatIds.includes(activeSubcategoryId.value)) {
+      linkedTypeIds.add(typeId)
+    }
+  }
+
+  return types.value
+    .filter(t => linkedTypeIds.has(t.id))
+    .sort((a, b) => a.sort_order - b.sort_order)
+})
+
+// Get the display name of the selected subcategory
+const selectedSubcategoryName = computed(() => {
+  const sub = subcategories.value.find(s => s.id === activeSubcategoryId.value)
+  if (!sub) return ''
+  return locale.value === 'en' && sub.name_en ? sub.name_en : sub.name_es
+})
+
+// Get the display name of the selected type
+const selectedTypeName = computed(() => {
+  const type = types.value.find(t => t.id === activeTypeId.value)
+  if (!type) return ''
+  return locale.value === 'en' && type.name_en ? type.name_en : type.name_es
+})
+
+// Check if we have items to display
+const hasItems = computed(() => {
+  return subcategories.value.length > 0 || types.value.length > 0
+})
+
+// Fetch subcategories from the subcategories table
 async function fetchSubcategories() {
   const { data } = await supabase
     .from('subcategories')
@@ -73,17 +237,60 @@ async function fetchSubcategories() {
   nextTick(updateScrollState)
 }
 
+// Fetch types from the types table
+async function fetchTypes() {
+  const { data } = await supabase
+    .from('types')
+    .select('*')
+    .eq('status', 'published')
+    .order('sort_order', { ascending: true })
+
+  types.value = (data as TypeRow[]) || []
+}
+
+// Fetch type-subcategory links from junction table
+async function fetchTypeSubcategoryLinks() {
+  const { data } = await supabase
+    .from('type_subcategories')
+    .select('type_id, subcategory_id')
+
+  const links = new Map<string, string[]>()
+  if (data) {
+    for (const link of data as { type_id: string; subcategory_id: string }[]) {
+      if (!links.has(link.type_id)) {
+        links.set(link.type_id, [])
+      }
+      links.get(link.type_id)!.push(link.subcategory_id)
+    }
+  }
+  typeSubcategoryLinks.value = links
+}
+
 function selectSubcategory(sub: SubcategoryRow) {
   if (!isApplicable(sub)) return
+  setSubcategory(sub.id, sub.slug)
+  emit('subcategoryChange', sub.id)
+  nextTick(updateScrollState)
+}
 
-  if (activeSubcategoryId.value === sub.id) {
-    setSubcategory(null, null)
-    emit('change', null)
-  }
-  else {
-    setSubcategory(sub.id, sub.slug)
-    emit('change', sub.id)
-  }
+function clearSubcategory() {
+  setSubcategory(null, null)
+  emit('subcategoryChange', null)
+  emit('typeChange', null)
+  nextTick(updateScrollState)
+}
+
+function clearType() {
+  setType(null, null)
+  emit('typeChange', null)
+  nextTick(updateScrollState)
+}
+
+function selectType(type: TypeRow) {
+  if (!isTypeApplicable(type)) return
+  setType(type.id, type.slug)
+  emit('typeChange', type.id)
+  nextTick(updateScrollState)
 }
 
 function updateScrollState() {
@@ -101,19 +308,85 @@ function scrollRight() {
   scrollContainer.value?.scrollBy({ left: 200, behavior: 'smooth' })
 }
 
-// When categories change, deselect subcategory if no longer applicable
+// Filter helpers for dynamic filters in Level 3
+function filterLabel(filter: { name: string; label_es: string | null; label_en: string | null }): string {
+  if (locale.value === 'en' && filter.label_en) return filter.label_en
+  return filter.label_es || filter.name
+}
+
+function getOptions(filter: { options: Record<string, unknown> }): string[] {
+  const opts = filter.options
+  if (Array.isArray(opts?.values)) return opts.values as string[]
+  if (Array.isArray(opts)) return opts as string[]
+  return []
+}
+
+function onSelectChange(name: string, event: Event) {
+  const value = (event.target as HTMLSelectElement).value
+  if (value) setFilter(name, value)
+  else clearFilter(name)
+}
+
+function onCheckChange(name: string, option: string) {
+  const current = (activeFilters.value[name] as string[]) || []
+  const index = current.indexOf(option)
+  if (index >= 0) {
+    const next = current.filter(v => v !== option)
+    if (next.length) setFilter(name, next)
+    else clearFilter(name)
+  }
+  else {
+    setFilter(name, [...current, option])
+  }
+}
+
+function isChecked(name: string, option: string): boolean {
+  const current = (activeFilters.value[name] as string[]) || []
+  return current.includes(option)
+}
+
+function onTickChange(name: string) {
+  if (activeFilters.value[name]) clearFilter(name)
+  else setFilter(name, true)
+}
+
+function getSliderMin(filter: { options: Record<string, unknown> }): number {
+  return (filter.options?.min as number) || 0
+}
+
+function getSliderMax(filter: { options: Record<string, unknown> }): number {
+  return (filter.options?.max as number) || 100
+}
+
+function onRangeChange(name: string, event: Event) {
+  const value = Number((event.target as HTMLInputElement).value)
+  if (value) setFilter(name, value)
+  else clearFilter(name)
+}
+
+function onTextInput(name: string, event: Event) {
+  const value = (event.target as HTMLInputElement).value
+  if (value) setFilter(name, value)
+  else clearFilter(name)
+}
+
+// When categories change, reset selections if no longer applicable
 watch(activeCategories, () => {
   if (activeSubcategoryId.value) {
     const current = subcategories.value.find(s => s.id === activeSubcategoryId.value)
     if (current && !isApplicable(current)) {
-      setSubcategory(null, null)
-      emit('change', null)
+      clearSubcategory()
     }
   }
 }, { deep: true })
 
-onMounted(() => {
-  fetchSubcategories()
+onMounted(async () => {
+  await Promise.all([
+    fetchSubcategories(),
+    fetchTypes(),
+    fetchTypeSubcategoryLinks(),
+  ])
+
   const el = scrollContainer.value
   if (el) {
     el.addEventListener('scroll', updateScrollState, { passive: true })
@@ -142,6 +415,7 @@ onUnmounted(() => {
 .subcategories {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
   gap: 0.3rem;
   padding: 0 0.5rem;
   min-width: 100%;
@@ -153,6 +427,17 @@ onUnmounted(() => {
 
 .subcategories::-webkit-scrollbar {
   display: none;
+}
+
+/* ============================================
+   SEPARATOR — ">" between subcategory and types
+   ============================================ */
+.separator {
+  color: var(--text-secondary, #6B7280);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 0.25rem;
+  flex-shrink: 0;
 }
 
 /* ============================================
@@ -212,6 +497,15 @@ onUnmounted(() => {
   color: var(--text-auxiliary, #9CA3AF);
 }
 
+/* Type button (level 2) - slightly different style */
+.type-btn {
+  border-style: dashed;
+}
+
+.type-btn.active {
+  border-style: solid;
+}
+
 /* ============================================
    SCROLL ARROWS — positioned on the section
    ============================================ */
@@ -246,7 +540,7 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: ≥480px (large mobile)
+   RESPONSIVE: >=480px (large mobile)
    ============================================ */
 @media (min-width: 480px) {
   .subcategories {
@@ -258,10 +552,15 @@ onUnmounted(() => {
     font-size: 11px;
     padding: 0.25rem 0.45rem;
   }
+
+  .separator {
+    font-size: 13px;
+    padding: 0 0.35rem;
+  }
 }
 
 /* ============================================
-   RESPONSIVE: ≥768px (tablet)
+   RESPONSIVE: >=768px (tablet)
    ============================================ */
 @media (min-width: 768px) {
   .subcategories-section {
@@ -274,13 +573,21 @@ onUnmounted(() => {
   }
 
   .subcategory-btn {
-    font-size: 11px;
-    padding: 0.25rem 0.45rem;
+    font-size: 12px;
+    padding: 0.4rem 0.6rem;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .separator {
+    font-size: 14px;
+    padding: 0 0.5rem;
   }
 }
 
 /* ============================================
-   RESPONSIVE: ≥1024px (desktop)
+   RESPONSIVE: >=1024px (desktop)
    ============================================ */
 @media (min-width: 1024px) {
   .subcategories {
@@ -290,7 +597,123 @@ onUnmounted(() => {
 
   .subcategory-btn {
     font-size: 12px;
-    padding: 0.27rem 0.56rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+/* ============================================
+   INLINE FILTERS — Dynamic filters in Level 3
+   ============================================ */
+.filter-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.filter-label-inline {
+  font-weight: 500;
+  color: var(--color-primary);
+  font-size: 10px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.filter-select-inline {
+  padding: 0.2rem 0.3rem;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 10px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  min-width: 60px;
+  min-height: auto;
+  cursor: pointer;
+}
+
+.filter-select-inline:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.filter-input-inline {
+  padding: 0.2rem 0.3rem;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 10px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  min-width: 45px;
+  max-width: 60px;
+  min-height: auto;
+}
+
+.filter-input-inline:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.filter-range-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.filter-dash {
+  color: var(--text-auxiliary);
+  font-size: 9px;
+  flex-shrink: 0;
+}
+
+.filter-checks-inline {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.filter-check-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 10px;
+  cursor: pointer;
+  min-height: auto;
+  min-width: auto;
+}
+
+.filter-check-inline input {
+  width: auto;
+  min-height: auto;
+  min-width: auto;
+  accent-color: var(--color-primary);
+}
+
+.filter-tick-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  min-height: auto;
+  min-width: auto;
+}
+
+.filter-tick-inline input {
+  width: auto;
+  min-height: auto;
+  min-width: auto;
+  accent-color: var(--color-primary);
+}
+
+/* Responsive adjustments for inline filters */
+@media (min-width: 768px) {
+  .filter-label-inline {
+    font-size: 11px;
+  }
+
+  .filter-select-inline,
+  .filter-input-inline {
+    font-size: 11px;
   }
 }
 </style>

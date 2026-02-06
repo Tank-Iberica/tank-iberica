@@ -54,6 +54,8 @@
     "title": "Vehicle catalog",
     "filters": "Filters",
     "noResults": "No vehicles found",
+    "advancedFilters": "Advanced filters",
+    "typeFilters": "Type filters",
     "clearFilters": "Clear filters",
     "comingSoon": "Coming soon",
     "alquiler": "Rental",
@@ -74,9 +76,15 @@
     "sortBrandAZ": "Brand A-Z",
     "sortBrandZA": "Brand Z-A",
     "anunciate": "Advertise",
+    "anunciateDesktop": "Advertise your products with us",
     "subcategories": "Subcategories",
+    "tipos": "Types",
     "solicitar": "Request",
+    "solicitarDesktop": "Can't find what you're looking for? Request it here",
+    "solicitarMobile": "Can't find it? We'll notify you",
+    "sortRecommended": "Recommended",
     "favorites": "Favorites",
+    "viewShow": "Show",
     "viewGrid": "Grid view",
     "viewList": "List view",
     "menuToggle": "Menu",
@@ -86,7 +94,30 @@
     "resultsCount": "{count} vehicles",
     "viewDetails": "View details",
     "tercerosDisclaimer": "Third-party vehicle. Tank Iberica acts as intermediary.",
-    "all": "All"
+    "all": "All",
+    "image": "Image",
+    "model": "Model",
+    "product": "Product",
+    "actions": "Actions",
+    "location": "Location",
+    "locationChange": "Change location",
+    "locationYours": "Your location",
+    "locationRange": "Search range",
+    "locationSelectCountry": "Select a country",
+    "locationSelectProvince": "Select a province",
+    "locationRestAlpha": "— Rest of Europe (A-Z) —",
+    "locationManual": "Enter location...",
+    "locationWorld": "Worldwide",
+    "locationLevel": {
+      "provincia": "My province",
+      "comunidad": "My region",
+      "limitrofes": "Neighboring regions",
+      "pais": "My country",
+      "vecinos": "Neighboring countries",
+      "union_europea": "European Union",
+      "europa": "Europe",
+      "mundo": "Worldwide"
+    }
   },
   "vehicle": {
     "year": "Year",
@@ -94,7 +125,7 @@
     "rentalPrice": "Rental price",
     "location": "Location",
     "category": "Category",
-    "subcategory": "Subcategory",
+    "subcategory": "Type",
     "description": "Description",
     "specifications": "Specifications",
     "contact": "Contact",
@@ -109,6 +140,38 @@
   "banner": {
     "moreInfo": "More info"
   },
+  "news": {
+    "title": "News",
+    "readMore": "Read more",
+    "backToNews": "Back to news",
+    "share": "Share",
+    "noResults": "No news available",
+    "loadMore": "Load more",
+    "publishedAt": "Published on",
+    "allCategories": "All",
+    "prensa": "Press",
+    "eventos": "Events",
+    "destacados": "Featured",
+    "general": "General"
+  },
+  "about": {
+    "title": "About us",
+    "whoWeAre": "Who we are",
+    "whoWeAreText": "Tank Iberica is a platform specialising in industrial vehicles operating in the Iberian and European market. We connect buyers and sellers of trucks, semi-trailers, vans and industrial machinery.",
+    "ourMission": "Our mission",
+    "ourMissionText": "To facilitate access to quality industrial vehicles through a transparent, efficient and trustworthy platform. We offer rental, sales and brokerage services for transport professionals.",
+    "team": "Team",
+    "teamText": "Our team combines experience in the industrial transport sector with technological expertise to deliver the best experience for our users."
+  },
+  "legal": {
+    "title": "Legal information",
+    "terms": "Terms and conditions",
+    "termsText": "These terms and conditions govern the use of the Tank Iberica platform. By accessing and using this website, you agree to comply with these terms. Tank Iberica reserves the right to modify these terms at any time.",
+    "privacy": "Privacy policy",
+    "privacyText": "At Tank Iberica we are committed to protecting your privacy. The personal data we collect is used exclusively to provide our services and improve your experience. We do not share your data with third parties without your consent.",
+    "cookies": "Cookie policy",
+    "cookiesText": "This website uses cookies to improve the user experience. Cookies are small text files stored on your device. You can configure your browser to reject cookies, although this may affect site functionality."
+  },
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",
@@ -118,5 +181,25 @@
     "edit": "Edit",
     "close": "Close",
     "back": "Back"
+  },
+  "admin": {
+    "subcategorias": {
+      "title": "Subcategories",
+      "new": "New subcategory",
+      "edit": "Edit subcategory",
+      "delete": "Delete subcategory",
+      "name_es": "Name (ES)",
+      "name_en": "Name (EN)",
+      "categories": "Applicable categories",
+      "filters": "Applicable filters",
+      "status": "Status",
+      "published": "Published",
+      "draft": "Draft",
+      "stock": "Stock",
+      "order": "Order"
+    },
+    "types": {
+      "subcategorias": "Subcategories"
+    }
   }
 }

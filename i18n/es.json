@@ -54,6 +54,8 @@
     "title": "Catálogo de vehículos",
     "filters": "Filtros",
     "noResults": "No se encontraron vehículos",
+    "advancedFilters": "Filtros avanzados",
+    "typeFilters": "Filtros de tipo",
     "clearFilters": "Limpiar filtros",
     "comingSoon": "Próximamente",
     "alquiler": "Alquiler",
@@ -74,9 +76,15 @@
     "sortBrandAZ": "Marca A-Z",
     "sortBrandZA": "Marca Z-A",
     "anunciate": "Anúnciate",
+    "anunciateDesktop": "Anuncie sus productos con nosotros",
     "subcategories": "Subcategorías",
+    "tipos": "Tipos",
     "solicitar": "Solicitar",
+    "solicitarDesktop": "¿No encuentra lo que busca? Solicítelo aquí",
+    "solicitarMobile": "¿No lo encuentra? Le avisamos",
+    "sortRecommended": "Recomendado",
     "favorites": "Favoritos",
+    "viewShow": "Mostrar",
     "viewGrid": "Vista cuadrícula",
     "viewList": "Vista lista",
     "menuToggle": "Menú",
@@ -86,7 +94,30 @@
     "resultsCount": "{count} vehículos",
     "viewDetails": "Ver detalles",
     "tercerosDisclaimer": "Vehículo de terceros. Tank Iberica actúa como intermediario.",
-    "all": "Todos"
+    "all": "Todos",
+    "image": "Imagen",
+    "model": "Modelo",
+    "product": "Producto",
+    "actions": "Acciones",
+    "location": "Ubicación",
+    "locationChange": "Cambiar ubicación",
+    "locationYours": "Tu localización",
+    "locationRange": "Rango de búsqueda",
+    "locationSelectCountry": "Selecciona un país",
+    "locationSelectProvince": "Selecciona una provincia",
+    "locationRestAlpha": "— Resto de Europa (A-Z) —",
+    "locationManual": "Introducir ubicación...",
+    "locationWorld": "Todo el mundo",
+    "locationLevel": {
+      "provincia": "Mi provincia",
+      "comunidad": "Mi comunidad",
+      "limitrofes": "Comunidades limítrofes",
+      "pais": "Mi país",
+      "vecinos": "Países vecinos",
+      "union_europea": "Unión Europea",
+      "europa": "Europa",
+      "mundo": "Todo el mundo"
+    }
   },
   "vehicle": {
     "year": "Año",
@@ -94,7 +125,7 @@
     "rentalPrice": "Precio alquiler",
     "location": "Ubicación",
     "category": "Categoría",
-    "subcategory": "Subcategoría",
+    "subcategory": "Tipo",
     "description": "Descripción",
     "specifications": "Especificaciones",
     "contact": "Contactar",
@@ -109,6 +140,38 @@
   "banner": {
     "moreInfo": "Más información"
   },
+  "news": {
+    "title": "Noticias",
+    "readMore": "Leer más",
+    "backToNews": "Volver a noticias",
+    "share": "Compartir",
+    "noResults": "No hay noticias disponibles",
+    "loadMore": "Cargar más",
+    "publishedAt": "Publicado el",
+    "allCategories": "Todas",
+    "prensa": "Prensa",
+    "eventos": "Eventos",
+    "destacados": "Destacados",
+    "general": "General"
+  },
+  "about": {
+    "title": "Sobre nosotros",
+    "whoWeAre": "Quiénes somos",
+    "whoWeAreText": "Tank Iberica es una plataforma especializada en vehículos industriales que opera en el mercado ibérico y europeo. Conectamos a compradores y vendedores de camiones, semirremolques, furgonetas y maquinaria industrial.",
+    "ourMission": "Nuestra misión",
+    "ourMissionText": "Facilitar el acceso a vehículos industriales de calidad mediante una plataforma transparente, eficiente y de confianza. Ofrecemos opciones de alquiler, venta y servicios de intermediación para profesionales del transporte.",
+    "team": "Equipo",
+    "teamText": "Nuestro equipo combina experiencia en el sector del transporte industrial con conocimiento tecnológico para ofrecer la mejor experiencia a nuestros usuarios."
+  },
+  "legal": {
+    "title": "Información legal",
+    "terms": "Términos y condiciones",
+    "termsText": "Estos términos y condiciones regulan el uso de la plataforma Tank Iberica. Al acceder y utilizar este sitio web, usted acepta cumplir con estos términos. Tank Iberica se reserva el derecho de modificar estos términos en cualquier momento.",
+    "privacy": "Política de privacidad",
+    "privacyText": "En Tank Iberica nos comprometemos a proteger su privacidad. Los datos personales que recopilamos se utilizan exclusivamente para prestar nuestros servicios y mejorar su experiencia. No compartimos sus datos con terceros sin su consentimiento.",
+    "cookies": "Política de cookies",
+    "cookiesText": "Este sitio web utiliza cookies para mejorar la experiencia del usuario. Las cookies son pequeños archivos de texto que se almacenan en su dispositivo. Puede configurar su navegador para rechazar cookies, aunque esto podría afectar la funcionalidad del sitio."
+  },
   "common": {
     "loading": "Cargando...",
     "error": "Ha ocurrido un error",
@@ -118,5 +181,25 @@
     "edit": "Editar",
     "close": "Cerrar",
     "back": "Volver"
+  },
+  "admin": {
+    "subcategorias": {
+      "title": "Subcategorías",
+      "new": "Nueva subcategoría",
+      "edit": "Editar subcategoría",
+      "delete": "Eliminar subcategoría",
+      "name_es": "Nombre (ES)",
+      "name_en": "Nombre (EN)",
+      "categories": "Categorías aplicables",
+      "filters": "Filtros aplicables",
+      "status": "Estado",
+      "published": "Publicado",
+      "draft": "Borrador",
+      "stock": "Stock",
+      "order": "Orden"
+    },
+    "types": {
+      "subcategorias": "Subcategorías"
+    }
   }
 }

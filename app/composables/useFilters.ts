@@ -1,9 +1,9 @@
-import { ref, computed, readonly } from 'vue'
-import { useSupabaseClient } from '#imports'
+import { computed } from 'vue'
+import { useSupabaseClient, useState } from '#imports'
 
 export interface FilterDefinition {
   id: string
-  subcategory_id: string | null
+  type_id: string | null
   name: string
   type: 'caja' | 'desplegable' | 'desplegable_tick' | 'tick' | 'slider' | 'calc'
   label_es: string | null
@@ -14,58 +14,160 @@ export interface FilterDefinition {
   is_hidden: boolean
   status: string
   sort_order: number
+  // Extended: track source for UI
+  source?: 'subcategory' | 'type'
 }
 
 export interface ActiveFilters {
   [filterName: string]: unknown
 }
 
+interface FiltersState {
+  definitions: FilterDefinition[]
+  subcategoryFilters: FilterDefinition[]
+  typeFilters: FilterDefinition[]
+  loading: boolean
+  error: string | null
+  activeFilters: ActiveFilters
+}
+
+const defaultState: FiltersState = {
+  definitions: [],
+  subcategoryFilters: [],
+  typeFilters: [],
+  loading: false,
+  error: null,
+  activeFilters: {},
+}
+
 export function useFilters() {
   const supabase = useSupabaseClient()
 
-  const definitions = ref<FilterDefinition[]>([])
-  const loading = ref(false)
-  const error = ref<string | null>(null)
-  const activeFilters = ref<ActiveFilters>({})
+  // Use shared state across all components
+  const state = useState<FiltersState>('filters', () => ({ ...defaultState }))
 
-  async function fetchBySubcategory(subcategoryId: string) {
-    loading.value = true
-    error.value = null
+  /**
+   * Fetch filters by type ID only (backward compatible)
+   */
+  async function fetchByType(typeId: string) {
+    state.value.loading = true
+    state.value.error = null
 
     try {
       const { data, error: err } = await supabase
         .from('filter_definitions')
         .select('*')
-        .eq('subcategory_id', subcategoryId)
+        .eq('type_id', typeId)
         .eq('status', 'published')
         .eq('is_hidden', false)
         .order('sort_order', { ascending: true })
 
       if (err) throw err
 
-      definitions.value = (data as FilterDefinition[]) || []
+      const filters = (data as FilterDefinition[]) || []
+      state.value.typeFilters = filters.map(f => ({ ...f, source: 'type' as const }))
+      state.value.subcategoryFilters = []
+      state.value.definitions = state.value.typeFilters
     }
     catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error fetching filters'
-      definitions.value = []
+      state.value.error = err instanceof Error ? err.message : 'Error fetching filters'
+      state.value.definitions = []
+      state.value.typeFilters = []
     }
     finally {
-      loading.value = false
+      state.value.loading = false
+    }
+  }
+
+  /**
+   * Fetch filters from both subcategory and type with deduplication.
+   * If the same filter exists on both levels, it only shows once.
+   */
+  async function fetchBySubcategoryAndType(subcategoryId: string | null, typeId: string | null) {
+    state.value.loading = true
+    state.value.error = null
+
+    try {
+      // Fetch subcategory-level filters (from subcategories.applicable_filters)
+      let subcatFilterIds: string[] = []
+      if (subcategoryId) {
+        const { data: subcatData } = await supabase
+          .from('subcategories')
+          .select('applicable_filters')
+          .eq('id', subcategoryId)
+          .single()
+
+        if (subcatData?.applicable_filters) {
+          subcatFilterIds = subcatData.applicable_filters as string[]
+        }
+      }
+
+      // Fetch filter definitions for subcategory filters
+      let subcatFilters: FilterDefinition[] = []
+      if (subcatFilterIds.length > 0) {
+        const { data: filterData } = await supabase
+          .from('filter_definitions')
+          .select('*')
+          .in('id', subcatFilterIds)
+          .eq('status', 'published')
+          .eq('is_hidden', false)
+          .order('sort_order', { ascending: true })
+
+        subcatFilters = ((filterData as FilterDefinition[]) || []).map(f => ({
+          ...f,
+          source: 'subcategory' as const,
+        }))
+      }
+
+      // Fetch type-level filters
+      let typeFiltersList: FilterDefinition[] = []
+      if (typeId) {
+        const { data: typeFilterData } = await supabase
+          .from('filter_definitions')
+          .select('*')
+          .eq('type_id', typeId)
+          .eq('status', 'published')
+          .eq('is_hidden', false)
+          .order('sort_order', { ascending: true })
+
+        typeFiltersList = ((typeFilterData as FilterDefinition[]) || []).map(f => ({
+          ...f,
+          source: 'type' as const,
+        }))
+      }
+
+      state.value.subcategoryFilters = subcatFilters
+      state.value.typeFilters = typeFiltersList
+
+      // Deduplicate: if same filter ID exists in both, keep only the subcategory one
+      const subcatIds = new Set(subcatFilters.map(f => f.id))
+      const dedupedTypeFilters = typeFiltersList.filter(f => !subcatIds.has(f.id))
+
+      state.value.definitions = [...subcatFilters, ...dedupedTypeFilters]
+    }
+    catch (err: unknown) {
+      state.value.error = err instanceof Error ? err.message : 'Error fetching filters'
+      state.value.definitions = []
+      state.value.subcategoryFilters = []
+      state.value.typeFilters = []
+    }
+    finally {
+      state.value.loading = false
     }
   }
 
   const visibleFilters = computed(() => {
     const activeTicks = new Set<string>()
 
-    for (const def of definitions.value) {
-      if (def.type === 'tick' && activeFilters.value[def.name]) {
+    for (const def of state.value.definitions) {
+      if (def.type === 'tick' && state.value.activeFilters[def.name]) {
         activeTicks.add(def.name)
       }
     }
 
-    return definitions.value.filter((def) => {
+    return state.value.definitions.filter((def) => {
       // Check if any active tick hides this filter
-      for (const tickDef of definitions.value) {
+      for (const tickDef of state.value.definitions) {
         if (tickDef.type !== 'tick' || !activeTicks.has(tickDef.name)) continue
         const hides = (tickDef.options?.hides as string[]) || []
         if (hides.includes(def.name)) return false
@@ -73,7 +175,7 @@ export function useFilters() {
 
       // If this filter is an extra, only show if its parent tick is active
       if (def.is_extra) {
-        for (const tickDef of definitions.value) {
+        for (const tickDef of state.value.definitions) {
           if (tickDef.type !== 'tick') continue
           const extras = (tickDef.options?.extra_filters as string[]) || []
           if (extras.includes(def.name)) {
@@ -88,31 +190,36 @@ export function useFilters() {
   })
 
   function setFilter(name: string, value: unknown) {
-    activeFilters.value = { ...activeFilters.value, [name]: value }
+    state.value.activeFilters = { ...state.value.activeFilters, [name]: value }
   }
 
   function clearFilter(name: string) {
-    const { [name]: _, ...rest } = activeFilters.value
-    activeFilters.value = rest
+    const { [name]: _, ...rest } = state.value.activeFilters
+    state.value.activeFilters = rest
   }
 
   function clearAll() {
-    activeFilters.value = {}
+    state.value.activeFilters = {}
   }
 
   function reset() {
-    definitions.value = []
-    activeFilters.value = {}
-    error.value = null
+    state.value.definitions = []
+    state.value.subcategoryFilters = []
+    state.value.typeFilters = []
+    state.value.activeFilters = {}
+    state.value.error = null
   }
 
   return {
-    definitions: readonly(definitions),
+    definitions: computed(() => state.value.definitions),
+    subcategoryFilters: computed(() => state.value.subcategoryFilters),
+    typeFilters: computed(() => state.value.typeFilters),
     visibleFilters,
-    activeFilters: readonly(activeFilters),
-    loading: readonly(loading),
-    error: readonly(error),
-    fetchBySubcategory,
+    activeFilters: computed(() => state.value.activeFilters),
+    loading: computed(() => state.value.loading),
+    error: computed(() => state.value.error),
+    fetchByType,
+    fetchBySubcategoryAndType,
     setFilter,
     clearFilter,
     clearAll,

@@ -1,16 +1,21 @@
 <template>
   <div class="home">
     <section class="catalog-section">
-      <CatalogCategoryBar @change="onCategoryChange" />
-      <CatalogSubcategoryBar @change="onSubcategoryChange" />
-      <CatalogFilterBar @change="onFilterChange" />
-      <CatalogCatalogControls
+      <CatalogCategoryBar v-show="menuVisible" @change="onCategoryChange" />
+      <CatalogSubcategoryBar
+        v-show="menuVisible"
+        @subcategory-change="onSubcategoryChange"
+        @type-change="onTypeChange"
+      />
+      <CatalogFilterBar v-show="menuVisible" :vehicles="vehicles" @change="onFilterChange" />
+      <CatalogControlsBar
         :vehicle-count="vehicles.length"
+        :menu-visible="menuVisible"
         @search="onSearchChange"
         @sort="onSortChange"
         @toggle-menu="menuVisible = !menuVisible"
         @open-solicitar="() => {}"
-        @open-favorites="() => {}"
+        @open-favorites="() => { /* favorites filter handled inside ControlsBar */ }"
         @view-change="() => {}"
       />
 
@@ -19,6 +24,7 @@
         :loading="loading"
         :loading-more="loadingMore"
         :has-more="hasMore"
+        :view-mode="viewMode"
         @load-more="onLoadMore"
         @clear-filters="onClearFilters"
       />
@@ -30,8 +36,8 @@
 const { t } = useI18n()
 const menuVisible = ref(true)
 const { vehicles, loading, loadingMore, hasMore, fetchVehicles, fetchMore } = useVehicles()
-const { filters, activeSubcategoryId, resetCatalog } = useCatalogState()
-const { fetchBySubcategory, clearAll: clearAllFilters, reset: resetFilters } = useFilters()
+const { filters, activeSubcategoryId, activeTypeId, sortBy, viewMode, resetCatalog } = useCatalogState()
+const { fetchBySubcategoryAndType, clearAll: clearAllFilters, reset: resetFilters } = useFilters()
 
 useSeoMeta({
   title: 'Tank Iberica',
@@ -41,7 +47,7 @@ useSeoMeta({
 })
 
 async function loadVehicles() {
-  await fetchVehicles(filters.value)
+  await fetchVehicles({ ...filters.value, sortBy: sortBy.value })
 }
 
 async function onCategoryChange() {
@@ -51,12 +57,13 @@ async function onCategoryChange() {
 
 async function onSubcategoryChange() {
   clearAllFilters()
-  if (activeSubcategoryId.value) {
-    await fetchBySubcategory(activeSubcategoryId.value)
-  }
-  else {
-    resetFilters()
-  }
+  await fetchBySubcategoryAndType(activeSubcategoryId.value, activeTypeId.value)
+  await loadVehicles()
+}
+
+async function onTypeChange() {
+  clearAllFilters()
+  await fetchBySubcategoryAndType(activeSubcategoryId.value, activeTypeId.value)
   await loadVehicles()
 }
 
@@ -64,8 +71,8 @@ async function onFilterChange() {
   await loadVehicles()
 }
 
-async function onSearchChange() {
-  await loadVehicles()
+function onSearchChange() {
+  // Search is client-side fuzzy — no refetch needed
 }
 
 async function onSortChange() {
@@ -73,7 +80,7 @@ async function onSortChange() {
 }
 
 async function onLoadMore() {
-  await fetchMore(filters.value)
+  await fetchMore({ ...filters.value, sortBy: sortBy.value })
 }
 
 async function onClearFilters() {
