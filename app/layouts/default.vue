@@ -1,6 +1,5 @@
 <template>
   <div class="layout">
-    <CatalogAnnounceBanner />
     <LayoutAppHeader @open-auth="authOpen = true" />
     <main class="main-content">
       <slot />
@@ -11,7 +10,22 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
 const authOpen = ref(false)
+
+// Auto-open auth modal if ?auth=login is in URL
+onMounted(() => {
+  if (route.query.auth === 'login') {
+    authOpen.value = true
+  }
+})
+
+// Watch for route changes (in case of client-side navigation)
+watch(() => route.query.auth, (auth) => {
+  if (auth === 'login') {
+    authOpen.value = true
+  }
+})
 </script>
 
 <style scoped>
@@ -34,19 +48,3 @@ const authOpen = ref(false)
 }
 </style>
 
-<!-- Global (unscoped) styles for banner-visible body class -->
-<style>
-body.banner-visible .app-header {
-  top: var(--banner-height);
-}
-
-body.banner-visible .main-content {
-  padding-top: calc(64px + var(--banner-height));
-}
-
-@media (min-width: 768px) {
-  body.banner-visible .main-content {
-    padding-top: calc(60px + var(--banner-height));
-  }
-}
-</style>

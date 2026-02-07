@@ -32,10 +32,10 @@
 
           <span class="filter-divider" />
 
-          <!-- Location (no label text, just icon) -->
+          <!-- Location -->
           <div class="filter-group filter-group-location">
             <span class="filter-label filter-label-icon-only">
-              <svg class="location-pin-icon" width="12" height="12" viewBox="0 0 24 24" fill="#C41E3A" stroke="#C41E3A" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" fill="white" /></svg>
+              <svg class="location-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="#C41E3A" stroke="#C41E3A" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" fill="white" /></svg>:
             </span>
             <div class="location-dropdown-wrapper">
               <button class="location-trigger" type="button" @click="locationDropdownOpen = !locationDropdownOpen">
@@ -83,9 +83,9 @@
             </div>
           </div>
 
-          <!-- Price (mobile: just € symbol) -->
+          <!-- Price -->
           <div class="filter-group">
-            <span class="filter-label filter-label-price-mobile">€</span>
+            <span class="filter-label filter-label-price">€:</span>
             <div class="filter-range-inputs">
               <input type="number" class="filter-input-inline" :value="priceMin" min="0" max="200000" step="100" placeholder="Min" @change="onPriceMinChange">
               <span class="filter-dash">—</span>
@@ -225,10 +225,10 @@
 
           <span class="filter-divider" />
 
-          <!-- Static: Location (no label text, just icon) -->
+          <!-- Static: Location -->
           <div class="filter-group filter-group-location">
             <span class="filter-label filter-label-icon-only">
-              <svg class="location-pin-icon" width="12" height="12" viewBox="0 0 24 24" fill="#C41E3A" stroke="#C41E3A" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" fill="white" /></svg>
+              <svg class="location-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="#C41E3A" stroke="#C41E3A" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" fill="white" /></svg>:
             </span>
             <div class="location-dropdown-wrapper">
               <button class="location-trigger" type="button" @click="locationDropdownOpen = !locationDropdownOpen">
@@ -278,7 +278,7 @@
 
           <!-- Static: Price -->
           <div class="filter-group">
-            <span class="filter-label">€</span>
+            <span class="filter-label filter-label-price">€:</span>
             <div class="filter-range-inputs">
               <input
                 type="number"
@@ -772,9 +772,10 @@ onUnmounted(() => {
 .filters-section {
   background: var(--bg-primary);
   position: relative;
-  z-index: 2;
+  z-index: 10;
   border-top: 1px solid var(--border-color);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  overflow: visible;
 }
 
 /* ============================================
@@ -786,6 +787,7 @@ onUnmounted(() => {
 
 .filters-mobile-container {
   position: relative;
+  overflow: visible;
 }
 
 .filters-mobile-wrapper {
@@ -1101,9 +1103,9 @@ onUnmounted(() => {
   gap: 0;
 }
 
-/* Mobile price label - just € symbol */
-.filter-label-price-mobile {
-  font-size: 12px;
+/* Price label - € symbol */
+.filter-label-price {
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -1372,6 +1374,20 @@ onUnmounted(() => {
 
   .filters-container {
     position: relative;
+  }
+
+  /* Slightly larger location icon and € on tablet+ */
+  .location-pin-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .filter-label {
+    font-size: 12px;
+  }
+
+  .filter-label-price {
+    font-size: 14px;
   }
 
   .filters-wrapper {
@@ -1658,12 +1674,22 @@ onUnmounted(() => {
   }
 
   .filter-label {
-    font-size: 10px;
+    font-size: 13px;
+  }
+
+  /* Larger location icon and € symbol on desktop */
+  .location-pin-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .filter-label-price {
+    font-size: 15px;
   }
 
   .filter-select-inline,
   .filter-input-inline {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .cb {

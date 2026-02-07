@@ -18,16 +18,6 @@
       >
         {{ $t(`catalog.${cat.key}`) }}
       </button>
-
-      <!-- Spacer pushes anúnciate to the right -->
-      <span class="categories-spacer" />
-
-      <button
-        class="category-btn anunciate-btn"
-        @click="emit('openAdvertise')"
-      >
-        {{ $t('catalog.anunciate') }}
-      </button>
     </div>
 
     <button
@@ -46,7 +36,6 @@ import type { VehicleCategory } from '~/composables/useCatalogState'
 
 const emit = defineEmits<{
   change: [categories: VehicleCategory[]]
-  openAdvertise: []
 }>()
 
 const { setCategories } = useCatalogState()
@@ -139,12 +128,6 @@ onUnmounted(() => {
   display: none;
 }
 
-/* Spacer between main cats and anúnciate */
-.categories-spacer {
-  flex: 1;
-  min-width: 0.5rem;
-}
-
 /* ============================================
    CATEGORY BUTTON — Base = mobile
    ============================================ */
@@ -177,20 +160,6 @@ onUnmounted(() => {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
   color: var(--color-white);
   border-color: var(--color-primary);
-}
-
-/* Anúnciate: gold gradient, always visible */
-.anunciate-btn {
-  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
-  color: var(--color-white);
-  border-color: var(--color-gold-dark);
-  font-weight: 600;
-}
-
-.anunciate-btn:hover {
-  background: linear-gradient(135deg, var(--color-gold-dark) 0%, var(--color-gold) 100%);
-  color: var(--color-white);
-  border-color: var(--color-gold);
 }
 
 /* ============================================
@@ -257,9 +226,12 @@ onUnmounted(() => {
   }
 
   .category-btn {
-    font-size: 11px;
-    padding: 0.3rem 0.5rem;
+    font-size: 12px;
+    padding: 0.4rem 0.6rem;
     letter-spacing: 0.2px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
   }
 }
 
@@ -274,7 +246,7 @@ onUnmounted(() => {
 
   .category-btn {
     font-size: 12px;
-    padding: 0.31rem 0.56rem;
+    padding: 0.4rem 0.6rem;
     letter-spacing: 0.3px;
   }
 }

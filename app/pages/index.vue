@@ -1,7 +1,6 @@
 <template>
   <div class="home">
     <section class="catalog-section">
-      <CatalogCategoryBar v-show="menuVisible" @change="onCategoryChange" />
       <CatalogSubcategoryBar
         v-show="menuVisible"
         @subcategory-change="onSubcategoryChange"
@@ -14,7 +13,7 @@
         @search="onSearchChange"
         @sort="onSortChange"
         @toggle-menu="menuVisible = !menuVisible"
-        @open-solicitar="() => {}"
+        @category-change="onCategoryChange"
         @open-favorites="() => { /* favorites filter handled inside ControlsBar */ }"
         @view-change="() => {}"
       />
