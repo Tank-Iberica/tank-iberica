@@ -30,14 +30,17 @@
         </NuxtLink>
       </div>
 
-      <!-- Gallery -->
-      <VehicleImageGallery
-        :images="vehicle.vehicle_images"
-        :alt="`${vehicle.brand} ${vehicle.model}`"
-      />
+      <div class="vehicle-content">
+        <!-- Gallery -->
+        <div class="vehicle-gallery-wrapper">
+          <VehicleImageGallery
+            :images="vehicle.vehicle_images"
+            :alt="`${vehicle.brand} ${vehicle.model}`"
+          />
+        </div>
 
-      <!-- Info section -->
-      <div class="vehicle-info">
+        <!-- Info section -->
+        <div class="vehicle-info">
         <div class="vehicle-header">
           <h1 class="vehicle-title">{{ vehicle.brand }} {{ vehicle.model }}</h1>
           <span v-if="vehicle.featured" class="vehicle-badge">
@@ -69,10 +72,10 @@
             <span class="meta-label">{{ $t('vehicle.category') }}</span>
             <span class="meta-value">{{ $t(`catalog.${vehicle.category}`) }}</span>
           </div>
-          <div v-if="vehicle.subcategories" class="meta-item">
+          <div v-if="vehicle.types" class="meta-item">
             <span class="meta-label">{{ $t('vehicle.subcategory') }}</span>
             <span class="meta-value">
-              {{ locale === 'en' && vehicle.subcategories.name_en ? vehicle.subcategories.name_en : vehicle.subcategories.name_es }}
+              {{ locale === 'en' && vehicle.types.name_en ? vehicle.types.name_en : vehicle.types.name_es }}
             </span>
           </div>
         </div>
@@ -98,6 +101,16 @@
         <div class="vehicle-contact">
           <h2>{{ $t('vehicle.contact') }}</h2>
           <div class="contact-buttons">
+            <a
+              :href="`mailto:info@tankiberica.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`"
+              class="contact-btn contact-email"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+              {{ $t('vehicle.email') }}
+            </a>
             <a href="tel:+34900000000" class="contact-btn contact-call">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
@@ -118,6 +131,7 @@
             </a>
           </div>
         </div>
+      </div>
       </div>
     </template>
   </div>
@@ -154,7 +168,29 @@ function formatPrice(price: number): string {
 
 const shareText = computed(() => {
   if (!vehicle.value) return ''
+  const v = vehicle.value
+  const parts = [`${v.brand} ${v.model}`]
+  if (v.year) parts.push(`(${v.year})`)
+  if (v.price) parts.push(`- ${formatPrice(v.price)}`)
+  if (import.meta.client) parts.push(`- ${window.location.href}`)
+  parts.push('- Tank Iberica')
+  return parts.join(' ')
+})
+
+const emailSubject = computed(() => {
+  if (!vehicle.value) return ''
   return `${vehicle.value.brand} ${vehicle.value.model} - Tank Iberica`
+})
+
+const emailBody = computed(() => {
+  if (!vehicle.value) return ''
+  const v = vehicle.value
+  const parts = [t('vehicle.emailInterest')]
+  parts.push(`${v.brand} ${v.model}`)
+  if (v.year) parts.push(`${t('vehicle.year')}: ${v.year}`)
+  if (v.price) parts.push(`${t('vehicle.price')}: ${formatPrice(v.price)}`)
+  if (import.meta.client) parts.push(`URL: ${window.location.href}`)
+  return parts.join('\n')
 })
 
 onMounted(async () => {
@@ -180,6 +216,9 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* ============================================
+   BASE = MOBILE (360px) — stacked layout
+   ============================================ */
 .vehicle-page {
   max-width: 1024px;
   margin: 0 auto;
@@ -413,8 +452,13 @@ onMounted(async () => {
   opacity: 0.9;
 }
 
-.contact-call {
+.contact-email {
   background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.contact-call {
+  background: #334155;
   color: var(--color-white);
 }
 
@@ -423,7 +467,9 @@ onMounted(async () => {
   color: var(--color-white);
 }
 
-/* Desktop layout */
+/* ============================================
+   TABLET (≥768px)
+   ============================================ */
 @media (min-width: 768px) {
   .vehicle-title {
     font-size: var(--font-size-3xl);
@@ -438,9 +484,78 @@ onMounted(async () => {
   }
 }
 
+/* ============================================
+   DESKTOP (≥1024px) — side-by-side, single screen
+   ============================================ */
 @media (min-width: 1024px) {
   .vehicle-page {
-    padding: var(--spacing-6);
+    max-width: 1400px;
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-4) var(--spacing-6);
+    padding-bottom: var(--spacing-4);
+    overflow: hidden;
+  }
+
+  .vehicle-back {
+    flex-shrink: 0;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .vehicle-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-6);
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Gallery fills left column */
+  .vehicle-gallery-wrapper {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .vehicle-gallery-wrapper :deep(.gallery) {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .vehicle-gallery-wrapper :deep(.gallery-main) {
+    aspect-ratio: unset;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .vehicle-gallery-wrapper :deep(.gallery-thumbs) {
+    flex-shrink: 0;
+  }
+
+  /* Info scrolls internally */
+  .vehicle-info {
+    margin-top: 0;
+    overflow-y: auto;
+    padding-right: var(--spacing-2);
+  }
+
+  /* Compact spacing for single-screen fit */
+  .vehicle-meta {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .vehicle-description {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .vehicle-specs {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .vehicle-contact {
+    padding-top: var(--spacing-4);
   }
 }
 </style>

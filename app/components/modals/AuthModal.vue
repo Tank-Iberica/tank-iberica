@@ -103,7 +103,14 @@ const emit = defineEmits<{
 }>()
 
 const supabase = useSupabaseClient()
+const route = useRoute()
 const { t } = useI18n()
+
+// Get redirect URL from query params (set by admin middleware)
+const redirectUrl = computed(() => {
+  const redirect = route.query.redirect as string | undefined
+  return redirect || null
+})
 
 const mode = ref<'login' | 'register'>('login')
 const email = ref('')
@@ -139,12 +146,21 @@ async function handleSubmit() {
       if (error) throw error
       close()
     } else {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: email.value,
         password: password.value,
       })
       if (error) throw error
-      close()
+
+      // Check if user is admin and redirect BEFORE closing modal
+      if (data.user) {
+        const redirected = await checkAdminAndRedirect(data.user.id)
+        if (!redirected) {
+          close()
+        }
+      } else {
+        close()
+      }
     }
   } catch (err: unknown) {
     errorMsg.value = err instanceof Error ? err.message : t('common.error')
@@ -153,10 +169,54 @@ async function handleSubmit() {
   }
 }
 
+async function checkAdminAndRedirect(userId: string): Promise<boolean> {
+  // Small delay to ensure session is fully established
+  await new Promise(resolve => setTimeout(resolve, 100))
+
+  // Check user role
+  const { data } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', userId)
+    .single<{ role: string }>()
+
+  const isAdmin = data?.role === 'admin'
+
+  // If there's a specific redirect URL, use it
+  if (redirectUrl.value) {
+    // For admin routes, verify user is admin first
+    if (redirectUrl.value.startsWith('/admin')) {
+      if (isAdmin) {
+        await navigateTo(redirectUrl.value)
+        return true
+      }
+      // If not admin, don't redirect to admin route
+      return false
+    } else {
+      // Non-admin redirect, just go there
+      await navigateTo(redirectUrl.value)
+      return true
+    }
+  }
+
+  // No redirect specified - redirect admins to admin panel
+  if (isAdmin) {
+    await navigateTo('/admin')
+    return true
+  }
+
+  return false
+}
+
 async function loginWithGoogle() {
+  // Include redirect URL in the OAuth callback
+  const callbackUrl = redirectUrl.value
+    ? `${window.location.origin}/confirm?redirect=${encodeURIComponent(redirectUrl.value)}`
+    : `${window.location.origin}/confirm`
+
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: `${window.location.origin}/confirm` },
+    options: { redirectTo: callbackUrl },
   })
   if (error) {
     errorMsg.value = error.message

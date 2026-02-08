@@ -138,39 +138,30 @@
         </button>
 
         <!-- Logged-in user -->
-        <div v-else class="user-menu">
-          <button class="account-btn logged-in" @click="toggleMenu('user')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            <span class="account-text">{{ userDisplayName }}</span>
-          </button>
-          <Transition name="fade">
-            <div v-if="openMenu === 'user'" class="user-dropdown-backdrop" @click="openMenu = null" />
-          </Transition>
-          <Transition name="slide-up">
-            <div v-if="openMenu === 'user'" class="user-dropdown">
-              <div class="dropdown-user-info">{{ userDisplayName }}</div>
-              <button class="dropdown-item" @click="handleLogout">
-                {{ $t('nav.logout') }}
-              </button>
-            </div>
-          </Transition>
-        </div>
+        <button
+          v-else
+          class="account-btn logged-in"
+          @click="emit('openUserPanel')"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <span class="account-text">{{ userDisplayName }}</span>
+        </button>
       </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-defineEmits<{
+const emit = defineEmits<{
   openAuth: []
   openAnunciate: []
+  openUserPanel: []
 }>()
 
 const user = useSupabaseUser()
-const supabase = useSupabaseClient()
 
 const { locale, setLocale, locales } = useI18n()
 const scrolled = ref(false)
@@ -195,11 +186,6 @@ function closeMenus(e: MouseEvent) {
   if (!target.closest('.mobile-menu-group') && !target.closest('.user-menu')) {
     openMenu.value = null
   }
-}
-
-async function handleLogout() {
-  openMenu.value = null
-  await supabase.auth.signOut()
 }
 
 const availableLocales = computed(() =>
@@ -356,11 +342,12 @@ onUnmounted(() => {
   display: none;
 }
 
-/* Scrolled state */
+/* Scrolled state — mobile: match other header buttons (28px) */
 .scrolled .anunciate-btn {
   height: 28px;
-  padding: 0 0.6rem;
-  font-size: 10px;
+  min-height: 28px;
+  padding: 0 0.5rem;
+  font-size: 9px;
 }
 
 /* ============================================
@@ -586,62 +573,8 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   USER DROPDOWN — mobile = bottom sheet
-   ============================================ */
-.user-menu { position: relative; }
-
-.user-dropdown {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #ffffff;
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
-  z-index: calc(var(--z-header) + 1);
-  overflow: hidden;
-}
-
-.user-dropdown-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: var(--z-header);
-}
-
-.dropdown-user-info {
-  padding: 12px 16px;
-  font-size: var(--font-size-sm);
-  color: var(--text-auxiliary);
-  border-bottom: 1px solid var(--border-color-light);
-  font-weight: var(--font-weight-medium);
-}
-
-.dropdown-item {
-  width: 100%;
-  padding: 12px 16px;
-  background: none;
-  color: var(--text-primary);
-  font-size: var(--font-size-sm);
-  text-align: left;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  transition: background 0.15s ease;
-  cursor: pointer;
-}
-
-.dropdown-item:hover { background: var(--bg-secondary); }
-
-/* ============================================
    TRANSITIONS
    ============================================ */
-.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
-
-.slide-up-enter-active, .slide-up-leave-active { transition: transform 0.25s ease; }
-.slide-up-enter-from, .slide-up-leave-to { transform: translateY(100%); }
-
 .dropdown-enter-active { transition: opacity 0.15s ease, transform 0.15s ease; }
 .dropdown-leave-active { transition: opacity 0.1s ease; }
 .dropdown-enter-from { opacity: 0; transform: translateY(-4px); }
@@ -777,30 +710,6 @@ onUnmounted(() => {
   .scrolled .social-links svg {
     width: 14px;
     height: 14px;
-  }
-
-  /* User dropdown: positioned dropdown instead of bottom sheet */
-  .user-dropdown-backdrop { display: none; }
-
-  .user-dropdown {
-    position: absolute;
-    bottom: auto;
-    left: auto;
-    top: calc(100% + 8px);
-    right: 0;
-    border-radius: 8px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-    min-width: 200px;
-    border: 1px solid var(--border-color-light);
-  }
-
-  .slide-up-enter-from, .slide-up-leave-to {
-    transform: none;
-    opacity: 0;
-  }
-
-  .slide-up-enter-active, .slide-up-leave-active {
-    transition: opacity 0.15s ease;
   }
 }
 </style>

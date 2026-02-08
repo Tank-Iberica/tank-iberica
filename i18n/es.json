@@ -109,14 +109,14 @@
     "locationManual": "Introducir ubicación...",
     "locationWorld": "Todo el mundo",
     "locationLevel": {
-      "provincia": "Mi provincia",
-      "comunidad": "Mi comunidad",
-      "limitrofes": "Comunidades limítrofes",
-      "pais": "Mi país",
-      "vecinos": "Países vecinos",
+      "provincia": "Provincia",
+      "comunidad": "Comunidad",
+      "limitrofes": "Limítrofes",
+      "nacional": "Nacional",
+      "suroeste_europeo": "Suroeste Europeo",
       "union_europea": "Unión Europea",
       "europa": "Europa",
-      "mundo": "Todo el mundo"
+      "mundo": "Mundo"
     }
   },
   "vehicle": {
@@ -133,6 +133,7 @@
     "whatsapp": "WhatsApp",
     "email": "Email",
     "share": "Compartir",
+    "emailInterest": "Me interesa este vehículo:",
     "backToCatalog": "Volver al catálogo",
     "notFound": "Vehículo no encontrado",
     "imageOf": "Imagen {current} de {total}"
@@ -173,7 +174,7 @@
     "cookiesText": "Este sitio web utiliza cookies para mejorar la experiencia del usuario. Las cookies son pequeños archivos de texto que se almacenan en su dispositivo. Puede configurar su navegador para rechazar cookies, aunque esto podría afectar la funcionalidad del sitio."
   },
   "common": {
-    "loading": "Cargando...",
+    "loading": "Cargando",
     "error": "Ha ocurrido un error",
     "save": "Guardar",
     "cancel": "Cancelar",
@@ -181,6 +182,47 @@
     "edit": "Editar",
     "close": "Cerrar",
     "back": "Volver"
+  },
+  "user": {
+    "profile": "Perfil",
+    "pseudonym": "Pseudonimo",
+    "fullName": "Nombre y apellidos",
+    "phone": "Telefono",
+    "email": "Email",
+    "notEditable": "No editable directamente",
+    "saveChanges": "Guardar cambios",
+    "profileSaved": "Perfil guardado correctamente",
+    "requestUpdate": "Solicitar actualizacion de datos",
+    "deleteAccount": "Eliminar cuenta",
+    "chat": "Chat",
+    "noMessages": "No hay mensajes todavia",
+    "writeMessage": "Escribe tu mensaje...",
+    "send": "Enviar",
+    "chatInfo": "Los mensajes seran respondidos en un maximo de 2 dias laborales.",
+    "favorites": "Favoritos",
+    "noFavorites": "No tienes favoritos todavia",
+    "vehiclesSaved": "vehiculos guardados",
+    "viewFavorites": "Ver mis favoritos",
+    "requests": "Solicitudes",
+    "requestsInfo": "Describe el vehiculo que buscas y te avisaremos cuando tengamos uno disponible.",
+    "noRequests": "No tienes solicitudes activas",
+    "newRequest": "Nueva solicitud",
+    "myAds": "Mis Anuncios",
+    "noAds": "No tienes anuncios publicados",
+    "invoices": "Facturas",
+    "noInvoices": "No tienes facturas",
+    "invoicesInfo": "Aqui apareceran las facturas de vehiculos comprados o vendidos a traves de Tank Iberica",
+    "subscriptions": "Suscripciones",
+    "receiveNotifications": "Recibir notificaciones de:",
+    "pressArea": "Area de Prensa",
+    "newsletters": "Boletines",
+    "featuredVehicles": "Vehiculos Destacados",
+    "events": "Eventos",
+    "name": "Nombre",
+    "surname": "Apellidos",
+    "webNotifications": "Notificaciones Web",
+    "csr": "Responsabilidad Social",
+    "logout": "Cerrar sesion"
   },
   "admin": {
     "subcategorias": {
@@ -201,5 +243,91 @@
     "types": {
       "subcategorias": "Subcategorías"
     }
+  },
+  "advertise": {
+    "title": "Anúnciate con nosotros",
+    "subtitle": "Publique su vehículo industrial",
+    "vehicleType": "Tipo de vehículo",
+    "brand": "Marca",
+    "model": "Modelo",
+    "year": "Año",
+    "kilometers": "Kilómetros",
+    "price": "Precio solicitado",
+    "location": "Ubicación",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Describa su vehículo: estado, extras, historial...",
+    "contactName": "Nombre de contacto",
+    "contactEmail": "Email de contacto",
+    "contactPhone": "Teléfono de contacto",
+    "contactPreference": "Preferencia de contacto",
+    "prefEmail": "Email",
+    "prefPhone": "Teléfono",
+    "prefWhatsApp": "WhatsApp",
+    "acceptTerms": "Acepto los términos y condiciones",
+    "photos": "Fotos del vehículo",
+    "addPhotos": "Añadir fotos",
+    "submit": "Enviar anuncio",
+    "sending": "Enviando...",
+    "successTitle": "¡Anuncio enviado!",
+    "successMessage": "Hemos recibido su anuncio. Nuestro equipo lo revisará y se pondrá en contacto con usted.",
+    "loginRequired": "Debe iniciar sesión para publicar un anuncio",
+    "login": "Iniciar sesión",
+    "types": {
+      "camion": "Camión",
+      "semirremolque": "Semirremolque",
+      "cabeza_tractora": "Cabeza Tractora",
+      "furgoneta": "Furgoneta",
+      "otro": "Otro"
+    }
+  },
+  "demand": {
+    "title": "Solicitar vehículo",
+    "subtitle": "Díganos qué vehículo busca",
+    "vehicleType": "Tipo de vehículo que busca",
+    "brandPreference": "Marca preferida",
+    "yearRange": "Rango de año",
+    "yearMin": "Desde",
+    "yearMax": "Hasta",
+    "priceRange": "Rango de precio",
+    "priceMin": "Mínimo",
+    "priceMax": "Máximo",
+    "specifications": "Especificaciones / requisitos",
+    "specificationsPlaceholder": "Describa lo que necesita: capacidad, ejes, tipo de carga...",
+    "contactName": "Nombre de contacto",
+    "contactEmail": "Email de contacto",
+    "contactPhone": "Teléfono de contacto",
+    "contactPreference": "Preferencia de contacto",
+    "prefEmail": "Email",
+    "prefPhone": "Teléfono",
+    "prefWhatsApp": "WhatsApp",
+    "acceptTerms": "Acepto los términos y condiciones",
+    "submit": "Enviar solicitud",
+    "sending": "Enviando...",
+    "successTitle": "¡Solicitud enviada!",
+    "successMessage": "Hemos recibido su solicitud. Nuestro equipo buscará opciones y se pondrá en contacto con usted.",
+    "loginRequired": "Debe iniciar sesión para enviar una solicitud",
+    "login": "Iniciar sesión"
+  },
+  "dev": {
+    "title": "En desarrollo",
+    "message": "Esta funcionalidad está siendo desarrollada y estará disponible próximamente.",
+    "featureMessage": "La funcionalidad \"{feature}\" está siendo desarrollada y estará disponible próximamente."
+  },
+  "subscribe": {
+    "title": "Suscríbete",
+    "subtitle": "Recibe noticias y novedades del sector de vehículos industriales.",
+    "selectPrefs": "Selecciona tus preferencias:",
+    "prefWeb": "Notificaciones Web",
+    "prefPress": "Área de Prensa",
+    "prefNewsletter": "Boletines",
+    "prefFeatured": "Vehículos Destacados",
+    "prefEvents": "Eventos",
+    "prefCsr": "Responsabilidad Social",
+    "submit": "Suscribirme",
+    "successTitle": "¡Suscripción completada!",
+    "successMessage": "Te hemos añadido a nuestra lista. Recibirás novedades según tus preferencias."
+  },
+  "controls": {
+    "solicitar": "Solicitar"
   }
 }

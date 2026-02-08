@@ -60,7 +60,7 @@ export function useCatalogState() {
     state.value.activeSubcategorySlug = null
     state.value.activeTypeId = null
     state.value.activeTypeSlug = null
-    state.value.filters = categories.length ? { category: categories[0] } : {}
+    state.value.filters = categories.length ? { categories } : {}
   }
 
   /**
@@ -144,7 +144,7 @@ export function useCatalogState() {
       return
     }
 
-    // For pais/vecinos/UE/europa: filter by countries
+    // For nacional/suroeste_europeo/union_europea/europa: filter by countries
     const countries = getCountriesForLevel(level, userCountry)
     if (countries) {
       state.value.filters = { ...rest, location_countries: countries }

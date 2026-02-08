@@ -1,17 +1,34 @@
 <template>
   <div class="layout">
-    <LayoutAppHeader @open-auth="authOpen = true" />
+    <LayoutAppHeader
+      @open-auth="authOpen = true"
+      @open-user-panel="userPanelOpen = true"
+      @open-anunciate="advertiseOpen = true"
+    />
     <main class="main-content">
       <slot />
     </main>
     <LayoutAppFooter />
     <ModalsAuthModal v-model="authOpen" />
+    <UserPanel v-model="userPanelOpen" />
+    <ModalsAdvertiseModal v-model="advertiseOpen" @open-auth="authOpen = true" />
+    <ModalsDemandModal v-model="demandOpen" @open-auth="authOpen = true" />
+    <ModalsSubscribeModal v-model="subscribeOpen" />
   </div>
 </template>
 
 <script setup lang="ts">
 const route = useRoute()
 const authOpen = ref(false)
+const userPanelOpen = ref(false)
+const advertiseOpen = ref(false)
+const demandOpen = ref(false)
+const subscribeOpen = ref(false)
+
+// Provide modal openers for child components
+provide('openDemandModal', () => { demandOpen.value = true })
+provide('openAuthModal', () => { authOpen.value = true })
+provide('openSubscribeModal', () => { subscribeOpen.value = true })
 
 // Auto-open auth modal if ?auth=login is in URL
 onMounted(() => {

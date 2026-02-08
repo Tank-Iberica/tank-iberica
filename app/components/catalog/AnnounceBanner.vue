@@ -105,7 +105,7 @@ onUnmounted(() => {
 
 <style scoped>
 .announcement-banner {
-  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+  background: linear-gradient(135deg, #BF6B52 0%, #A3523B 100%);
   color: var(--color-white);
   padding: 0.38rem 2rem;
   text-align: center;

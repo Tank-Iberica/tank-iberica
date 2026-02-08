@@ -9,7 +9,7 @@ export interface VehicleImage {
   alt_text: string | null
 }
 
-export interface Subcategory {
+export interface VehicleType {
   id: string
   name_es: string
   name_en: string | null
@@ -25,22 +25,26 @@ export interface Vehicle {
   price: number | null
   rental_price: number | null
   category: 'alquiler' | 'venta' | 'terceros'
-  subcategory_id: string | null
+  type_id: string | null
   location: string | null
   description_es: string | null
   description_en: string | null
   filters_json: Record<string, unknown>
+  location_country: string | null
+  location_province: string | null
+  location_region: string | null
   status: string
   featured: boolean
   created_at: string
   updated_at: string
   vehicle_images: VehicleImage[]
-  subcategories: Subcategory | null
+  types: VehicleType | null
 }
 
 export interface VehicleFilters {
   category?: 'alquiler' | 'venta' | 'terceros'
-  subcategory_id?: string
+  categories?: string[]
+  type_id?: string
   price_min?: number
   price_max?: number
   year_min?: number
@@ -48,6 +52,10 @@ export interface VehicleFilters {
   brand?: string
   search?: string
   featured?: boolean
+  sortBy?: string
+  location_countries?: string[]
+  location_regions?: string[]
+  location_province_eq?: string
   [key: string]: unknown
 }
 
@@ -67,17 +75,45 @@ export function useVehicles() {
   function buildQuery(filters: VehicleFilters) {
     let query = supabase
       .from('vehicles')
-      .select('*, vehicle_images(*), subcategories(*)', { count: 'exact' })
+      .select('*, vehicle_images(*), types(*)', { count: 'exact' })
       .eq('status', 'published')
-      .order('featured', { ascending: false })
-      .order('created_at', { ascending: false })
 
-    if (filters.category) {
+    // Dynamic sort — featured always first, then user-selected order
+    query = query.order('featured', { ascending: false })
+
+    switch (filters.sortBy) {
+      case 'price_asc':
+        query = query.order('price', { ascending: true, nullsFirst: false })
+        break
+      case 'price_desc':
+        query = query.order('price', { ascending: false, nullsFirst: false })
+        break
+      case 'year_asc':
+        query = query.order('year', { ascending: true, nullsFirst: false })
+        break
+      case 'year_desc':
+        query = query.order('year', { ascending: false, nullsFirst: false })
+        break
+      case 'brand_az':
+        query = query.order('brand', { ascending: true })
+        break
+      case 'brand_za':
+        query = query.order('brand', { ascending: false })
+        break
+      default:
+        // 'recommended' — just by created_at
+        query = query.order('created_at', { ascending: false })
+    }
+
+    if (filters.categories?.length) {
+      query = query.in('category', filters.categories)
+    }
+    else if (filters.category) {
       query = query.eq('category', filters.category)
     }
 
-    if (filters.subcategory_id) {
-      query = query.eq('subcategory_id', filters.subcategory_id)
+    if (filters.type_id) {
+      query = query.eq('type_id', filters.type_id)
     }
 
     if (filters.price_min !== undefined) {
@@ -100,10 +136,17 @@ export function useVehicles() {
       query = query.ilike('brand', `%${filters.brand}%`)
     }
 
-    if (filters.search) {
-      query = query.or(
-        `brand.ilike.%${filters.search}%,model.ilike.%${filters.search}%`,
-      )
+    // search is handled client-side with fuzzy matching (see VehicleGrid)
+
+    // Location filters (mutually exclusive, most specific wins)
+    if (filters.location_province_eq) {
+      query = query.eq('location_province', filters.location_province_eq)
+    }
+    else if (filters.location_regions?.length) {
+      query = query.in('location_region', filters.location_regions)
+    }
+    else if (filters.location_countries?.length) {
+      query = query.in('location_country', filters.location_countries)
     }
 
     if (filters.featured) {
@@ -169,7 +212,7 @@ export function useVehicles() {
   async function fetchBySlug(slug: string): Promise<Vehicle | null> {
     const { data, error: err } = await supabase
       .from('vehicles')
-      .select('*, vehicle_images(*), subcategories(*)')
+      .select('*, vehicle_images(*), types(*)')
       .eq('slug', slug)
       .eq('status', 'published')
       .order('position', { referencedTable: 'vehicle_images', ascending: true })

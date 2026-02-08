@@ -405,6 +405,7 @@ onUnmounted(() => {
 .subcategories-section {
   background: var(--bg-primary);
   padding: 0.28rem 0;
+  margin-top: 8px;
   position: relative;
   overflow: hidden;
   border-top: 1px solid var(--border-color);
@@ -565,6 +566,7 @@ onUnmounted(() => {
 @media (min-width: 768px) {
   .subcategories-section {
     padding: 0.34rem 0;
+    margin-top: 0;
   }
 
   .subcategories {

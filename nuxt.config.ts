@@ -14,10 +14,18 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/',
       callback: '/confirm',
-      exclude: ['/', '/vehiculo/*', '/noticias/*'],
+      exclude: ['/', '/vehiculo/*', '/noticias/*', '/admin', '/admin/*'],
     },
     cookieOptions: {
       secure: process.env.NODE_ENV === 'production',
+    },
+    clientOptions: {
+      auth: {
+        flowType: 'pkce',
+        detectSessionInUrl: true,
+        persistSession: true,
+        autoRefreshToken: true,
+      },
     },
   },
 

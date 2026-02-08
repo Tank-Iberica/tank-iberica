@@ -41,56 +41,63 @@
               <button class="location-trigger" type="button" @click="locationDropdownOpen = !locationDropdownOpen">
                 {{ $t(`catalog.locationLevel.${currentLevel}`) }}
               </button>
-              <div v-if="locationDropdownOpen" class="location-dropdown">
-                <span class="filter-sublabel">{{ $t('catalog.locationYours') }}</span>
-                <select class="filter-select-inline location-manual-input" :value="editCountry" @change="onCountrySelect($event)">
-                  <option value="">{{ $t('catalog.locationSelectCountry') }}</option>
-                  <option v-for="c in europeanCountriesData.priority" :key="c.code" :value="c.code">
-                    {{ c.flag }} {{ c.name }}
-                  </option>
-                  <option disabled>{{ $t('catalog.locationRestAlpha') }}</option>
-                  <option v-for="c in europeanCountriesData.rest" :key="c.code" :value="c.code">
-                    {{ c.flag }} {{ c.name }}
-                  </option>
-                </select>
-                <select
-                  v-if="editCountry === 'ES'"
-                  class="filter-select-inline location-manual-input"
-                  :value="editProvince"
-                  @change="onProvinceSelect($event)"
-                >
-                  <option value="">{{ $t('catalog.locationSelectProvince') }}</option>
-                  <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
-                </select>
-                <span class="filter-sublabel">{{ $t('catalog.locationRange') }}</span>
-                <div class="location-levels-desktop">
-                  <label
-                    v-for="level in availableLevels"
-                    :key="level"
-                    class="location-level-option-desktop"
-                  >
-                    <input
-                      type="radio"
-                      name="location-level-mobile-inline"
-                      :value="level"
-                      :checked="currentLevel === level"
-                      @change="onLevelChange(level); locationDropdownOpen = false"
+              <!-- Mobile: Teleport dropdown to body -->
+              <Teleport to="body">
+                <div v-if="locationDropdownOpen" class="location-dropdown-mobile" @click="locationDropdownOpen = false">
+                  <div class="location-dropdown-mobile-content" @click.stop>
+                    <div class="location-dropdown-mobile-header">
+                      <span>{{ $t('catalog.location') }}</span>
+                      <button type="button" class="location-dropdown-close" @click="locationDropdownOpen = false">✕</button>
+                    </div>
+                    <span class="filter-sublabel">{{ $t('catalog.locationYours') }}</span>
+                    <select class="filter-select-inline location-manual-input" :value="editCountry" @change="onCountrySelect($event)">
+                      <option value="">{{ $t('catalog.locationSelectCountry') }}</option>
+                      <option v-for="c in europeanCountriesData.priority" :key="c.code" :value="c.code">
+                        {{ c.flag }} {{ c.name }}
+                      </option>
+                      <option disabled>{{ $t('catalog.locationRestAlpha') }}</option>
+                      <option v-for="c in europeanCountriesData.rest" :key="c.code" :value="c.code">
+                        {{ c.flag }} {{ c.name }}
+                      </option>
+                    </select>
+                    <select
+                      v-if="editCountry === 'ES'"
+                      class="filter-select-inline location-manual-input"
+                      :value="editProvince"
+                      @change="onProvinceSelect($event)"
                     >
-                    <span>{{ $t(`catalog.locationLevel.${level}`) }}</span>
-                  </label>
+                      <option value="">{{ $t('catalog.locationSelectProvince') }}</option>
+                      <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
+                    </select>
+                    <span class="filter-sublabel">{{ $t('catalog.locationRange') }}</span>
+                    <select
+                      class="filter-select-inline location-range-select"
+                      :value="currentLevel"
+                      @change="onLevelChange(($event.target as HTMLSelectElement).value as LocationLevel)"
+                    >
+                      <option v-for="level in availableLevels" :key="level" :value="level">
+                        {{ $t(`catalog.locationLevel.${level}`) }}
+                      </option>
+                    </select>
+                  </div>
                 </div>
-              </div>
+              </Teleport>
             </div>
           </div>
 
           <!-- Price -->
-          <div class="filter-group">
+          <div class="filter-group filter-group-slider">
             <span class="filter-label filter-label-price">€:</span>
-            <div class="filter-range-inputs">
-              <input type="number" class="filter-input-inline" :value="priceMin" min="0" max="200000" step="100" placeholder="Min" @change="onPriceMinChange">
-              <span class="filter-dash">—</span>
-              <input type="number" class="filter-input-inline" :value="priceMax" min="0" max="200000" step="100" placeholder="Max" @change="onPriceMaxChange">
-            </div>
+            <UiRangeSlider
+              :min="0"
+              :max="200000"
+              :step="500"
+              :model-min="priceMin"
+              :model-max="priceMax"
+              :format-label="formatPriceLabel"
+              @update:model-min="onPriceSliderMin"
+              @update:model-max="onPriceSliderMax"
+            />
           </div>
 
           <!-- Brand -->
@@ -103,13 +110,17 @@
           </div>
 
           <!-- Year -->
-          <div class="filter-group">
+          <div class="filter-group filter-group-slider">
             <span class="filter-label">{{ $t('catalog.year') }}:</span>
-            <div class="filter-range-inputs">
-              <input type="number" class="filter-input-inline" :value="yearMin" min="1900" :max="currentYear" placeholder="Min" @change="onYearMinChange">
-              <span class="filter-dash">—</span>
-              <input type="number" class="filter-input-inline" :value="yearMax" min="1900" :max="currentYear" :placeholder="String(currentYear)" @change="onYearMaxChange">
-            </div>
+            <UiRangeSlider
+              :min="2000"
+              :max="currentYear"
+              :step="1"
+              :model-min="yearMin"
+              :model-max="yearMax"
+              @update:model-min="onYearSliderMin"
+              @update:model-max="onYearSliderMax"
+            />
           </div>
 
           <!-- Advanced filters button (only if dynamic filters exist for FilterBar) -->
@@ -256,52 +267,32 @@
                   <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
                 </select>
                 <span class="filter-sublabel">{{ $t('catalog.locationRange') }}</span>
-                <div class="location-levels-desktop">
-                  <label
-                    v-for="level in availableLevels"
-                    :key="level"
-                    class="location-level-option-desktop"
-                  >
-                    <input
-                      type="radio"
-                      name="location-level-desktop"
-                      :value="level"
-                      :checked="currentLevel === level"
-                      @change="onLevelChange(level); locationDropdownOpen = false"
-                    >
-                    <span>{{ $t(`catalog.locationLevel.${level}`) }}</span>
-                  </label>
-                </div>
+                <select
+                  class="filter-select-inline location-range-select"
+                  :value="currentLevel"
+                  @change="onLevelChange(($event.target as HTMLSelectElement).value as LocationLevel)"
+                >
+                  <option v-for="level in availableLevels" :key="level" :value="level">
+                    {{ $t(`catalog.locationLevel.${level}`) }}
+                  </option>
+                </select>
               </div>
             </div>
           </div>
 
           <!-- Static: Price -->
-          <div class="filter-group">
+          <div class="filter-group filter-group-slider">
             <span class="filter-label filter-label-price">€:</span>
-            <div class="filter-range-inputs">
-              <input
-                type="number"
-                class="filter-input-inline"
-                :value="priceMin"
-                min="0"
-                max="200000"
-                step="100"
-                placeholder="Min"
-                @change="onPriceMinChange"
-              >
-              <span class="filter-dash">-</span>
-              <input
-                type="number"
-                class="filter-input-inline"
-                :value="priceMax"
-                min="0"
-                max="200000"
-                step="100"
-                placeholder="Max"
-                @change="onPriceMaxChange"
-              >
-            </div>
+            <UiRangeSlider
+              :min="0"
+              :max="200000"
+              :step="500"
+              :model-min="priceMin"
+              :model-max="priceMax"
+              :format-label="formatPriceLabel"
+              @update:model-min="onPriceSliderMin"
+              @update:model-max="onPriceSliderMax"
+            />
           </div>
 
           <!-- Static: Brand -->
@@ -314,29 +305,17 @@
           </div>
 
           <!-- Static: Year -->
-          <div class="filter-group">
+          <div class="filter-group filter-group-slider">
             <span class="filter-label">{{ $t('catalog.year') }}:</span>
-            <div class="filter-range-inputs">
-              <input
-                type="number"
-                class="filter-input-inline"
-                :value="yearMin"
-                min="1900"
-                :max="currentYear"
-                placeholder="Min"
-                @change="onYearMinChange"
-              >
-              <span class="filter-dash">-</span>
-              <input
-                type="number"
-                class="filter-input-inline"
-                :value="yearMax"
-                min="1900"
-                :max="currentYear"
-                :placeholder="String(currentYear)"
-                @change="onYearMaxChange"
-              >
-            </div>
+            <UiRangeSlider
+              :min="2000"
+              :max="currentYear"
+              :step="1"
+              :model-min="yearMin"
+              :model-max="yearMax"
+              @update:model-min="onYearSliderMin"
+              @update:model-max="onYearSliderMax"
+            />
           </div>
 
           <!-- Dynamic filters (only subcategory filters when no type selected) -->
@@ -425,7 +404,7 @@
 import type { FilterDefinition } from '~/composables/useFilters'
 import type { Vehicle } from '~/composables/useVehicles'
 import type { LocationLevel } from '~/utils/geoData'
-import { getAvailableLevels, getSortedEuropeanCountries, getSortedProvinces, PROVINCE_TO_REGION } from '~/utils/geoData'
+import { getAvailableLevels, getDefaultLevel, getSortedEuropeanCountries, getSortedProvinces, PROVINCE_TO_REGION } from '~/utils/geoData'
 
 const props = defineProps<{
   vehicles?: readonly Vehicle[]
@@ -450,17 +429,19 @@ const availableLevels = computed(() =>
   getAvailableLevels(userLocation.value.country),
 )
 
-const selectedLevel = ref<LocationLevel>((locationLevel.value as LocationLevel) || 'mundo')
+// Initialize with stored level or default based on country
+const selectedLevel = ref<LocationLevel>((locationLevel.value as LocationLevel) || 'nacional')
 const currentLevel = computed(() => selectedLevel.value)
 
 function onLevelChange(level: LocationLevel) {
   selectedLevel.value = level
   setLocationLevel(
     level === 'mundo' ? null : level,
-    userLocation.value.country,
+    userLocation.value.country || 'ES',
     userLocation.value.province,
     userLocation.value.region,
   )
+  locationDropdownOpen.value = false
   emit('change')
 }
 
@@ -469,14 +450,34 @@ const editProvince = ref(userLocation.value.province || '')
 const europeanCountriesData = computed(() => getSortedEuropeanCountries(locale.value))
 const provinces = computed(() => getSortedProvinces())
 
+// Watch for location detection to update edit fields and set default level
+watch(() => userLocation.value, (newLoc) => {
+  if (newLoc.country && !editCountry.value) {
+    editCountry.value = newLoc.country
+  }
+  if (newLoc.province && !editProvince.value) {
+    editProvince.value = newLoc.province
+  }
+  // Set default level based on detected country (only if not manually changed)
+  if (newLoc.source && selectedLevel.value === 'nacional') {
+    const defaultLevel = getDefaultLevel(newLoc.country)
+    if (defaultLevel !== 'nacional') {
+      selectedLevel.value = defaultLevel
+      setLocationLevel(defaultLevel, newLoc.country, null, null)
+    }
+  }
+}, { deep: true })
+
 function onCountrySelect(e: Event) {
   const code = (e.target as HTMLSelectElement).value
   editCountry.value = code
   editProvince.value = ''
   if (code) {
     setManualLocation('', code)
-    selectedLevel.value = 'pais'
-    setLocationLevel('pais', code, null, null)
+    // Set default level based on selected country
+    const defaultLevel = getDefaultLevel(code)
+    selectedLevel.value = defaultLevel
+    setLocationLevel(defaultLevel, code, null, null)
     emit('change')
   }
 }
@@ -490,6 +491,15 @@ function onProvinceSelect(e: Event) {
     selectedLevel.value = 'provincia'
     setLocationLevel('provincia', 'ES', prov, region)
     emit('change')
+  }
+  else {
+    // Province deselected - if range is smaller than nacional, upgrade to nacional
+    const subNationalLevels: LocationLevel[] = ['provincia', 'comunidad', 'limitrofes']
+    if (subNationalLevels.includes(selectedLevel.value)) {
+      selectedLevel.value = 'nacional'
+      setLocationLevel('nacional', 'ES', null, null)
+      emit('change')
+    }
   }
 }
 
@@ -567,34 +577,36 @@ function scrollMobileRight() {
   mobileScrollContainer.value?.scrollBy({ left: 150, behavior: 'smooth' })
 }
 
-// Static filter handlers
-function onPriceMinChange(e: Event) {
-  const val = Number((e.target as HTMLInputElement).value)
-  updateFilters({ price_min: val || undefined })
+// Price/Year format label for slider
+function formatPriceLabel(n: number): string {
+  if (n >= 1000) return `${Math.round(n / 1000)}k`
+  return String(n)
+}
+
+// Slider handlers
+function onPriceSliderMin(val: number | null) {
+  updateFilters({ price_min: val ?? undefined })
   emit('change')
 }
 
-function onPriceMaxChange(e: Event) {
-  const val = Number((e.target as HTMLInputElement).value)
-  updateFilters({ price_max: val || undefined })
+function onPriceSliderMax(val: number | null) {
+  updateFilters({ price_max: val ?? undefined })
+  emit('change')
+}
+
+function onYearSliderMin(val: number | null) {
+  updateFilters({ year_min: val ?? undefined })
+  emit('change')
+}
+
+function onYearSliderMax(val: number | null) {
+  updateFilters({ year_max: val ?? undefined })
   emit('change')
 }
 
 function onBrandChange(e: Event) {
   const val = (e.target as HTMLSelectElement).value
   updateFilters({ brand: val || undefined })
-  emit('change')
-}
-
-function onYearMinChange(e: Event) {
-  const val = Number((e.target as HTMLInputElement).value)
-  updateFilters({ year_min: val || undefined })
-  emit('change')
-}
-
-function onYearMaxChange(e: Event) {
-  const val = Number((e.target as HTMLInputElement).value)
-  updateFilters({ year_max: val || undefined })
   emit('change')
 }
 
@@ -668,9 +680,10 @@ function onTextInput(name: string, event: Event) {
 function handleClearAll() {
   clearAll()
   updateFilters({ price_min: undefined, price_max: undefined, year_min: undefined, year_max: undefined, brand: undefined, location_countries: undefined, location_regions: undefined, location_province_eq: undefined })
-  setLocationLevel(null, null, null, null)
-  selectedLevel.value = 'mundo'
-  editCountry.value = ''
+  // Reset to Nacional (default for Spain)
+  setLocationLevel('nacional', 'ES', null, null)
+  selectedLevel.value = 'nacional'
+  editCountry.value = 'ES'
   editProvince.value = ''
   open.value = false
   locationDropdownOpen.value = false
@@ -772,7 +785,7 @@ onUnmounted(() => {
 .filters-section {
   background: var(--bg-primary);
   position: relative;
-  z-index: 10;
+  z-index: 100;
   border-top: 1px solid var(--border-color);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   overflow: visible;
@@ -811,6 +824,10 @@ onUnmounted(() => {
   align-items: center;
   gap: 0.3rem;
   flex-shrink: 0;
+}
+
+.filters-mobile-wrapper .filter-group-slider {
+  min-width: 140px;
 }
 
 .filters-mobile-wrapper .filter-range-inputs {
@@ -881,21 +898,6 @@ onUnmounted(() => {
   white-space: nowrap;
 }
 
-.filters-mobile-wrapper .location-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  background: var(--bg-primary);
-  border: 2px solid var(--color-primary);
-  border-radius: 8px;
-  padding: 0.5rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  z-index: 1100;
-  min-width: 220px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
 
 .filters-mobile-wrapper .location-manual-input {
   width: 100%;
@@ -904,29 +906,11 @@ onUnmounted(() => {
   box-sizing: border-box;
 }
 
-.filters-mobile-wrapper .location-levels-desktop {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.filters-mobile-wrapper .location-level-option-desktop {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  padding: 0.3rem 0.2rem;
-  cursor: pointer;
-  border-radius: 4px;
+.filters-mobile-wrapper .location-range-select {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  font-size: 13px;
   min-height: 44px;
-  min-width: auto;
-}
-
-.filters-mobile-wrapper .location-level-option-desktop input {
-  width: auto;
-  min-height: auto;
-  min-width: auto;
-  accent-color: var(--color-primary);
 }
 
 .filters-mobile-container .scroll-btn {
@@ -1419,6 +1403,10 @@ onUnmounted(() => {
     cursor: default;
   }
 
+  .filter-group-slider {
+    min-width: 160px;
+  }
+
   .filter-group:not(:last-child)::after {
     content: '|';
     color: var(--border-color);
@@ -1546,34 +1534,10 @@ onUnmounted(() => {
     box-sizing: border-box;
   }
 
-  .location-levels-desktop {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-
-  .location-level-option-desktop {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  .location-range-select {
+    width: 100%;
+    padding: 0.3rem 0.4rem;
     font-size: 11px;
-    padding: 0.3rem 0.2rem;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background 0.15s;
-    min-height: auto;
-    min-width: auto;
-  }
-
-  .location-level-option-desktop:hover {
-    background: rgba(35, 66, 74, 0.06);
-  }
-
-  .location-level-option-desktop input {
-    width: auto;
-    min-height: auto;
-    min-width: auto;
-    accent-color: var(--color-primary);
   }
 
   /* Type filter separator */
@@ -1714,6 +1678,93 @@ onUnmounted(() => {
 
   .scroll-btn-right {
     right: 6px;
+  }
+}
+</style>
+
+<!-- Non-scoped styles for teleported content -->
+<style>
+/* Mobile location dropdown - teleported to body */
+.location-dropdown-mobile {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 120px;
+}
+
+.location-dropdown-mobile-content {
+  background: #fff;
+  border: 2px solid #23424A;
+  border-radius: 12px;
+  padding: 1rem;
+  width: calc(100% - 2rem);
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.location-dropdown-mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #23424A;
+  margin-bottom: 0.25rem;
+  font-size: 14px;
+}
+
+.location-dropdown-close {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.location-dropdown-mobile .filter-sublabel {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.location-dropdown-mobile .location-manual-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  min-height: 44px;
+}
+
+.location-dropdown-mobile .location-range-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  min-height: 44px;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* Hide on desktop */
+@media (min-width: 768px) {
+  .location-dropdown-mobile {
+    display: none !important;
   }
 }
 </style>

@@ -1,5 +1,10 @@
 # Tank Iberica — Plataforma de Vehículos Industriales
 
+## Información del proyecto
+
+- **Email admin:** tankiberica@gmail.com
+- **Supabase Project ID:** gmnrfuzekbwyzkgsaftv
+
 ## Qué es este proyecto
 
 Migración de una web monolítica (22 archivos, 37.685 líneas) a una aplicación profesional con Nuxt 3 + Supabase + Cloudflare Pages + Cloudinary. Es una réplica visual y funcional del sitio actual, con arquitectura moderna por debajo.

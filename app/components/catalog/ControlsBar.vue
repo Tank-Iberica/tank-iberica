@@ -288,6 +288,7 @@ onUnmounted(() => {
   border-top: 1px solid var(--border-color);
   margin-bottom: 0.34rem;
   position: relative;
+  z-index: 50;
 }
 
 .controls-wrapper {

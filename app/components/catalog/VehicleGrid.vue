@@ -12,10 +12,13 @@
       </div>
     </div>
 
+    <!-- Vehicle table (list view) -->
+    <CatalogVehicleTable v-else-if="displayedVehicles.length && viewMode === 'list'" :vehicles="displayedVehicles" />
+
     <!-- Vehicle grid -->
-    <div v-else-if="vehicles.length" class="vehicle-grid">
+    <div v-else-if="displayedVehicles.length" class="vehicle-grid">
       <CatalogVehicleCard
-        v-for="vehicle in vehicles"
+        v-for="vehicle in displayedVehicles"
         :key="vehicle.id"
         :vehicle="vehicle"
       />
@@ -49,25 +52,58 @@
 <script setup lang="ts">
 import type { Vehicle } from '~/composables/useVehicles'
 
-defineProps<{
+const props = defineProps<{
   vehicles: readonly Vehicle[]
   loading: boolean
   loadingMore: boolean
   hasMore: boolean
+  viewMode?: 'grid' | 'list'
 }>()
 
 defineEmits<{
   loadMore: []
   clearFilters: []
 }>()
+
+const { favoritesOnly, isFavorite } = useFavorites()
+const { searchQuery } = useCatalogState()
+const { locale } = useI18n()
+
+const displayedVehicles = computed(() => {
+  let result = props.vehicles as Vehicle[]
+
+  // Filter by favorites
+  if (favoritesOnly.value) {
+    result = result.filter(v => isFavorite(v.id))
+  }
+
+  // Fuzzy search client-side
+  const q = searchQuery.value?.trim()
+  if (q) {
+    result = result.filter((v) => {
+      const description = locale.value === 'en' ? v.description_en : v.description_es
+      const searchable = [
+        v.brand,
+        v.model,
+        v.location,
+        description,
+        v.types?.name_es,
+        v.types?.name_en,
+      ].filter(Boolean).join(' ')
+      return fuzzyMatch(searchable, q)
+    })
+  }
+
+  return result
+})
 </script>
 
 <style scoped>
 .vehicle-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--spacing-4);
-  padding: 0 var(--spacing-4);
+  gap: 24px;
+  padding: 1rem 0.5rem;
 }
 
 /* Skeleton */
@@ -176,6 +212,13 @@ defineEmits<{
 @media (min-width: 768px) {
   .vehicle-grid {
     grid-template-columns: repeat(3, 1fr);
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .vehicle-grid {
+    padding: 1.5rem 3rem;
   }
 }
 
