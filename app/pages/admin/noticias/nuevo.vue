@@ -4,6 +4,7 @@ import {
   type NewsFormData,
 } from '~/composables/admin/useAdminNews'
 import { useSeoScore, type SeoInput } from '~/composables/admin/useSeoScore'
+import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
 
 definePageMeta({
   layout: 'admin',
@@ -12,6 +13,7 @@ definePageMeta({
 
 const router = useRouter()
 const { saving, error, createNews } = useAdminNews()
+const { upload: uploadToCloudinary, uploading: uploadingImage, progress: uploadProgress, error: uploadError } = useCloudinaryUpload()
 
 // Form data
 const formData = ref<NewsFormData>({
@@ -85,6 +87,35 @@ const titleLengthClass = computed(() => {
   if (len >= 20 && len <= 70) return 'count-warning'
   return len > 0 ? 'count-bad' : ''
 })
+
+// Image upload
+const imagePreviewUrl = ref<string | null>(null)
+
+async function handleImageFile(e: Event) {
+  const input = e.target as HTMLInputElement
+  if (!input.files?.length) return
+
+  const file = input.files[0] as File
+  imagePreviewUrl.value = URL.createObjectURL(file as Blob)
+
+  const result = await uploadToCloudinary(file)
+  if (result) {
+    formData.value.image_url = result.secure_url
+  }
+  else {
+    // Keep preview but no URL set
+  }
+
+  input.value = ''
+}
+
+function removeImage() {
+  formData.value.image_url = null
+  if (imagePreviewUrl.value) {
+    URL.revokeObjectURL(imagePreviewUrl.value)
+    imagePreviewUrl.value = null
+  }
+}
 
 // Save
 async function handleSave() {
@@ -221,8 +252,38 @@ function getLevelLabel(level: string): string {
         <!-- Image -->
         <div class="section">
           <div class="section-title">Imagen destacada</div>
+
+          <!-- Upload from file -->
+          <div class="image-upload-area">
+            <label class="upload-zone" :class="{ uploading: uploadingImage }">
+              <input
+                type="file"
+                accept="image/*"
+                class="file-input-hidden"
+                :disabled="uploadingImage"
+                @change="handleImageFile"
+              >
+              <template v-if="uploadingImage">
+                <div class="upload-progress-bar">
+                  <div class="upload-progress-fill" :style="{ width: uploadProgress + '%' }" />
+                </div>
+                <span class="upload-text">Subiendo... {{ uploadProgress }}%</span>
+              </template>
+              <template v-else>
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                <span class="upload-text">Seleccionar imagen</span>
+                <span class="upload-hint">JPG, PNG, WebP (max 10MB)</span>
+              </template>
+            </label>
+          </div>
+
+          <!-- Or URL -->
           <div class="field">
-            <label>URL de imagen</label>
+            <label>O pegar URL</label>
             <input
               v-model="formData.image_url"
               type="url"
@@ -230,8 +291,14 @@ function getLevelLabel(level: string): string {
               placeholder="https://res.cloudinary.com/..."
             >
           </div>
-          <div v-if="formData.image_url" class="image-preview">
-            <img :src="formData.image_url" alt="Preview" @error="($event.target as HTMLImageElement).style.display='none'">
+
+          <!-- Upload error -->
+          <div v-if="uploadError" class="upload-error">{{ uploadError }}</div>
+
+          <!-- Preview -->
+          <div v-if="formData.image_url || imagePreviewUrl" class="image-preview-container">
+            <img :src="formData.image_url || imagePreviewUrl || ''" alt="Preview" @error="($event.target as HTMLImageElement).style.display='none'">
+            <button class="remove-image-btn" title="Eliminar imagen" @click="removeImage">&times;</button>
           </div>
         </div>
 
@@ -612,21 +679,108 @@ function getLevelLabel(level: string): string {
   box-shadow: none !important;
 }
 
+/* Image upload */
+.image-upload-area {
+  margin-bottom: 12px;
+}
+
+.upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  border: 2px dashed #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.upload-zone:hover { border-color: var(--color-primary, #23424A); background: #f8fafc; }
+.upload-zone.uploading { cursor: default; border-color: #94a3b8; }
+
+.file-input-hidden { display: none; }
+
+.upload-icon {
+  width: 32px;
+  height: 32px;
+  color: #94a3b8;
+}
+
+.upload-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.upload-hint {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.upload-progress-bar {
+  width: 100%;
+  max-width: 200px;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.upload-progress-fill {
+  height: 100%;
+  background: var(--color-primary, #23424A);
+  border-radius: 3px;
+  transition: width 0.2s;
+}
+
+.upload-error {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
 /* Image preview */
-.image-preview {
+.image-preview-container {
   margin-top: 8px;
   border-radius: 8px;
   overflow: hidden;
   max-height: 200px;
+  position: relative;
 }
 
-.image-preview img {
+.image-preview-container img {
   width: 100%;
   height: auto;
   display: block;
   object-fit: cover;
   max-height: 200px;
 }
+
+.remove-image-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.remove-image-btn:hover { background: #dc2626; }
 
 /* Hashtags */
 .hashtag-input-row {

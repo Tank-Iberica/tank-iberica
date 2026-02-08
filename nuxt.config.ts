@@ -57,6 +57,13 @@ export default defineNuxtConfig({
     },
   },
 
+  runtimeConfig: {
+    public: {
+      cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || 'djhcqgyjr',
+      cloudinaryUploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET || '',
+    },
+  },
+
   css: ['@/assets/css/tokens.css'],
 
   app: {
