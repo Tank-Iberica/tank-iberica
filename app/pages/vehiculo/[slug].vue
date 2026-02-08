@@ -35,14 +35,14 @@
         <div class="vehicle-gallery-wrapper">
           <VehicleImageGallery
             :images="vehicle.vehicle_images"
-            :alt="`${vehicle.brand} ${vehicle.model}`"
+            :alt="buildProductName(vehicle, locale, true)"
           />
         </div>
 
         <!-- Info section -->
         <div class="vehicle-info">
         <div class="vehicle-header">
-          <h1 class="vehicle-title">{{ vehicle.brand }} {{ vehicle.model }}</h1>
+          <h1 class="vehicle-title">{{ buildProductName(vehicle, locale, true) }}</h1>
           <span v-if="vehicle.featured" class="vehicle-badge">
             {{ $t('catalog.featured') }}
           </span>
@@ -66,7 +66,7 @@
           </div>
           <div v-if="vehicle.location" class="meta-item">
             <span class="meta-label">{{ $t('vehicle.location') }}</span>
-            <span class="meta-value">{{ vehicle.location }}</span>
+            <span class="meta-value">{{ locale === 'en' && vehicle.location_en ? vehicle.location_en : vehicle.location }}</span>
           </div>
           <div class="meta-item">
             <span class="meta-label">{{ $t('vehicle.category') }}</span>
@@ -169,8 +169,7 @@ function formatPrice(price: number): string {
 const shareText = computed(() => {
   if (!vehicle.value) return ''
   const v = vehicle.value
-  const parts = [`${v.brand} ${v.model}`]
-  if (v.year) parts.push(`(${v.year})`)
+  const parts = [buildProductName(v, locale.value, true)]
   if (v.price) parts.push(`- ${formatPrice(v.price)}`)
   if (import.meta.client) parts.push(`- ${window.location.href}`)
   parts.push('- Tank Iberica')
@@ -179,14 +178,14 @@ const shareText = computed(() => {
 
 const emailSubject = computed(() => {
   if (!vehicle.value) return ''
-  return `${vehicle.value.brand} ${vehicle.value.model} - Tank Iberica`
+  return `${buildProductName(vehicle.value, locale.value, true)} - Tank Iberica`
 })
 
 const emailBody = computed(() => {
   if (!vehicle.value) return ''
   const v = vehicle.value
   const parts = [t('vehicle.emailInterest')]
-  parts.push(`${v.brand} ${v.model}`)
+  parts.push(buildProductName(v, locale.value, true))
   if (v.year) parts.push(`${t('vehicle.year')}: ${v.year}`)
   if (v.price) parts.push(`${t('vehicle.price')}: ${formatPrice(v.price)}`)
   if (import.meta.client) parts.push(`URL: ${window.location.href}`)
@@ -199,7 +198,7 @@ onMounted(async () => {
   loading.value = false
 
   if (vehicle.value) {
-    const title = `${vehicle.value.brand} ${vehicle.value.model} - Tank Iberica`
+    const title = `${buildProductName(vehicle.value, locale.value, true)} - Tank Iberica`
     const desc = description.value || t('site.description')
     const image = vehicle.value.vehicle_images?.[0]?.url || ''
 

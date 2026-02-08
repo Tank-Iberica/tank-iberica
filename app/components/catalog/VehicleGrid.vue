@@ -82,13 +82,16 @@ const displayedVehicles = computed(() => {
   if (q) {
     result = result.filter((v) => {
       const description = locale.value === 'en' ? v.description_en : v.description_es
+      const sub = v.types?.type_subcategories?.[0]?.subcategories
       const searchable = [
+        sub?.name_es,
+        sub?.name_en,
+        v.types?.name_es,
+        v.types?.name_en,
         v.brand,
         v.model,
         v.location,
         description,
-        v.types?.name_es,
-        v.types?.name_en,
       ].filter(Boolean).join(' ')
       return fuzzyMatch(searchable, q)
     })

@@ -7,7 +7,7 @@
           v-if="images[currentImage]?.url?.includes('cloudinary.com')"
           provider="cloudinary"
           :src="cloudinaryPath(images[currentImage]!)"
-          :alt="`${vehicle.brand} ${vehicle.model}`"
+          :alt="buildProductName(vehicle, locale, true)"
           width="400"
           height="300"
           fit="cover"
@@ -18,7 +18,7 @@
         <img
           v-else
           :src="images[currentImage]?.url"
-          :alt="`${vehicle.brand} ${vehicle.model}`"
+          :alt="buildProductName(vehicle, locale, true)"
           class="card-img"
         >
       </template>
@@ -90,7 +90,7 @@
       <div v-if="vehicle.category === 'terceros'" class="terceros-banner">
         {{ $t('catalog.tercerosDisclaimer') }}
       </div>
-      <h3 class="product-title">{{ vehicle.brand }} {{ vehicle.model }}</h3>
+      <h3 class="product-title">{{ buildProductName(vehicle, locale, true) }}</h3>
       <div v-if="hasSpecs" class="product-specs">
         <div v-if="vehicle.year" class="spec-item">
           <span class="spec-label">{{ $t('vehicle.year') }}</span>
@@ -116,7 +116,7 @@ const props = defineProps<{
   vehicle: Vehicle
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { toggle, isFavorite } = useFavorites()
 const user = useSupabaseUser()
 const openAuthModal = inject<(() => void) | undefined>('openAuthModal', undefined)
@@ -125,9 +125,11 @@ const currentImage = ref(0)
 const isFav = computed(() => isFavorite(props.vehicle.id))
 
 const locationText = computed(() => {
-  const city = props.vehicle.location?.split(',')[0]?.trim() || props.vehicle.location
+  const loc = locale.value === 'en' && props.vehicle.location_en
+    ? props.vehicle.location_en
+    : props.vehicle.location
   const flag = props.vehicle.location_country ? countryFlag(props.vehicle.location_country) : ''
-  return `${city} ${flag}`.trim()
+  return loc ? `${loc} ${flag}`.trim() : ''
 })
 
 function onToggleFav() {

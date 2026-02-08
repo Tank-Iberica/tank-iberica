@@ -9,11 +9,26 @@ export interface VehicleImage {
   alt_text: string | null
 }
 
+export interface Subcategory {
+  id: string
+  name_es: string
+  name_en: string | null
+  name_singular_es: string | null
+  name_singular_en: string | null
+}
+
+export interface TypeSubcategoryJunction {
+  subcategories: Subcategory
+}
+
 export interface VehicleType {
   id: string
   name_es: string
   name_en: string | null
+  name_singular_es: string | null
+  name_singular_en: string | null
   slug: string
+  type_subcategories?: TypeSubcategoryJunction[]
 }
 
 export interface Vehicle {
@@ -30,6 +45,7 @@ export interface Vehicle {
   description_es: string | null
   description_en: string | null
   filters_json: Record<string, unknown>
+  location_en: string | null
   location_country: string | null
   location_province: string | null
   location_region: string | null
@@ -75,7 +91,7 @@ export function useVehicles() {
   function buildQuery(filters: VehicleFilters) {
     let query = supabase
       .from('vehicles')
-      .select('*, vehicle_images(*), types(*)', { count: 'exact' })
+      .select('*, vehicle_images(*), types(*, type_subcategories(subcategories(id, name_es, name_en, name_singular_es, name_singular_en)))', { count: 'exact' })
       .eq('status', 'published')
 
     // Dynamic sort — featured always first, then user-selected order
@@ -212,7 +228,7 @@ export function useVehicles() {
   async function fetchBySlug(slug: string): Promise<Vehicle | null> {
     const { data, error: err } = await supabase
       .from('vehicles')
-      .select('*, vehicle_images(*), types(*)')
+      .select('*, vehicle_images(*), types(*, type_subcategories(subcategories(id, name_es, name_en, name_singular_es, name_singular_en)))')
       .eq('slug', slug)
       .eq('status', 'published')
       .order('position', { referencedTable: 'vehicle_images', ascending: true })

@@ -23,6 +23,7 @@ export interface VehicleFormData {
   categories?: string[] // Multiple categories support (legacy compatibility)
   type_id: string | null
   location: string | null
+  location_en: string | null
   location_country: string | null
   location_province: string | null
   location_region: string | null
@@ -110,6 +111,25 @@ export function useAdminVehicles() {
 
       if (filters.category) {
         query = query.eq('category', filters.category)
+      }
+
+      if (filters.subcategory_id) {
+        // Get type_ids linked to this subcategory via junction table
+        const { data: links } = await supabase
+          .from('type_subcategories')
+          .select('type_id')
+          .eq('subcategory_id', filters.subcategory_id)
+
+        if (links?.length) {
+          const typeIds = (links as { type_id: string }[]).map(l => l.type_id)
+          query = query.in('type_id', typeIds)
+        }
+        else {
+          vehicles.value = []
+          total.value = 0
+          loading.value = false
+          return
+        }
       }
 
       if (filters.type_id) {

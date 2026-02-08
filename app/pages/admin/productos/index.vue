@@ -64,7 +64,8 @@ const allColumns: ColumnDef[] = [
   { key: 'type', label: 'Tipo', width: '60px' },
   { key: 'brand', label: 'Marca', sortable: true },
   { key: 'model', label: 'Modelo', sortable: true },
-  { key: 'subcategory', label: 'Tipo' },
+  { key: 'subcategory', label: 'Subcat.' },
+  { key: 'typeName', label: 'Tipo' },
   { key: 'year', label: 'Año', width: '70px', sortable: true },
   { key: 'price', label: 'Precio', width: '100px', sortable: true },
   { key: 'plate', label: 'Matrícula', width: '100px', group: 'docs' },
@@ -79,7 +80,7 @@ const allColumns: ColumnDef[] = [
 ]
 
 const defaultColumnGroups: ColumnGroup[] = [
-  { id: 'base', name: 'Base', icon: '📋', columns: ['checkbox', 'image', 'type', 'brand', 'model', 'subcategory', 'year', 'price', 'category', 'status', 'actions'], active: true, required: true },
+  { id: 'base', name: 'Base', icon: '📋', columns: ['checkbox', 'image', 'type', 'brand', 'model', 'subcategory', 'typeName', 'year', 'price', 'category', 'status', 'actions'], active: true, required: true },
   { id: 'docs', name: 'Docs', icon: '📄', columns: ['plate', 'location'], active: false },
   { id: 'tecnico', name: 'Técnico', icon: '🔧', columns: ['description'], active: false },
   { id: 'cuentas', name: 'Cuentas', icon: '💰', columns: ['minPrice', 'cost'], active: false },
@@ -423,10 +424,19 @@ const categoryOptions = [
 // DATA LOADING
 // ============================================
 onMounted(async () => {
-  await Promise.all([fetchSubcategories(), fetchTypes(), loadVehicles()])
+  await Promise.all([fetchSubcategories(), fetchTypes(), fetchTypeSubcategoryLinks(), loadVehicles()])
 })
 
 watch([filters, onlineFilter], () => loadVehicles(), { deep: true })
+
+// When subcategory filter changes, reset type_id if not in filtered types
+watch(() => filters.value.subcategory_id, () => {
+  if (filters.value.subcategory_id && filters.value.type_id) {
+    if (!filteredTypes.value.some(t => t.id === filters.value.type_id)) {
+      filters.value.type_id = null
+    }
+  }
+})
 
 async function loadVehicles() {
   let isOnline: boolean | null = null
@@ -728,18 +738,34 @@ const hasActiveFilters = computed(() =>
   filters.value.status || filters.value.category || filters.value.type_id || filters.value.subcategory_id || filters.value.search || onlineFilter.value !== 'all',
 )
 
-// Get subcategory name helper
-function _getSubcategoryNameById(id: string | null): string {
-  if (!id) return '-'
-  return subcategories.value.find(s => s.id === id)?.name_es || '-'
+// Junction data: type ↔ subcategory links
+const typeSubcategoryLinks = ref<{ type_id: string; subcategory_id: string }[]>([])
+
+async function fetchTypeSubcategoryLinks() {
+  const supabase = useSupabaseClient()
+  const { data } = await supabase
+    .from('type_subcategories')
+    .select('type_id, subcategory_id')
+  typeSubcategoryLinks.value = (data as { type_id: string; subcategory_id: string }[]) || []
+}
+
+// Get subcategory name for a vehicle (via type → junction → subcategory)
+function getSubcategoryForVehicle(typeId: string | null): string {
+  if (!typeId) return '-'
+  const link = typeSubcategoryLinks.value.find(l => l.type_id === typeId)
+  if (!link) return '-'
+  return subcategories.value.find(s => s.id === link.subcategory_id)?.name_es || '-'
 }
 
 // Types filtered by selected subcategory
 const filteredTypes = computed(() => {
   if (!filters.value.subcategory_id) return types.value
-  // Get type IDs linked to this subcategory via junction table
-  // For now, show all types - the junction is checked at query time
-  return types.value
+  const linkedTypeIds = new Set(
+    typeSubcategoryLinks.value
+      .filter(l => l.subcategory_id === filters.value.subcategory_id)
+      .map(l => l.type_id)
+  )
+  return types.value.filter(t => linkedTypeIds.has(t.id))
 })
 
 // Get available columns for group editing (exclude base columns)
@@ -893,6 +919,7 @@ const availableColumnsForGroups = computed(() =>
             <th class="sortable" @click="toggleSort('model')">
               Modelo <span class="sort-icon" :class="{ active: isSortActive('model') }">{{ getSortIcon('model') }}</span>
             </th>
+            <th>Subcat.</th>
             <th>Tipo</th>
             <th class="sortable col-num" @click="toggleSort('year')">
               Año <span class="sort-icon" :class="{ active: isSortActive('year') }">{{ getSortIcon('year') }}</span>
@@ -952,6 +979,9 @@ const availableColumnsForGroups = computed(() =>
             </td>
             <td class="text-muted">
               {{ v.model }}
+            </td>
+            <td class="text-small">
+              {{ getSubcategoryForVehicle(v.type_id) }}
             </td>
             <td class="text-small">
               {{ getSubcategoryName(v.type_id) }}
@@ -1014,7 +1044,7 @@ const availableColumnsForGroups = computed(() =>
             </td>
           </tr>
           <tr v-if="sortedVehicles.length === 0">
-            <td :colspan="10 + (isGroupActive('docs') ? 2 : 0) + (isGroupActive('tecnico') ? 1 : 0) + (isGroupActive('cuentas') ? 2 : 0) + (isGroupActive('alquiler') ? 1 : 0)" class="empty-cell">
+            <td :colspan="11 + (isGroupActive('docs') ? 2 : 0) + (isGroupActive('tecnico') ? 1 : 0) + (isGroupActive('cuentas') ? 2 : 0) + (isGroupActive('alquiler') ? 1 : 0)" class="empty-cell">
               <div class="empty-state">
                 <span class="empty-icon">📦</span>
                 <p>No hay productos que coincidan con los filtros</p>

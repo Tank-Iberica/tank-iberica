@@ -42,6 +42,7 @@ const formData = ref<VehicleFormData>({
   categories: [],
   type_id: null,
   location: null,
+  location_en: null,
   location_country: null,
   location_province: null,
   location_region: null,
@@ -62,8 +63,7 @@ const formData = ref<VehicleFormData>({
   rental_records: [],
 })
 
-// Additional fields not in VehicleFormData
-const location_en = ref('')
+// Additional fields
 const characteristics = ref<CharacteristicEntry[]>([])
 const documents = ref<{ id: string; name: string; url: string }[]>([])
 
@@ -102,20 +102,68 @@ const publishedSubcategories = computed(() =>
   subcategories.value.filter(s => s.status === 'published'),
 )
 
-// Published types (filtered by selected subcategory if any)
+// Junction data: type ↔ subcategory links
+const typeSubcategoryLinks = ref<{ type_id: string; subcategory_id: string }[]>([])
+
+async function fetchTypeSubcategoryLinks() {
+  const supabase = useSupabaseClient()
+  const { data } = await supabase
+    .from('type_subcategories')
+    .select('type_id, subcategory_id')
+  typeSubcategoryLinks.value = (data as { type_id: string; subcategory_id: string }[]) || []
+}
+
+// Published types filtered by selected subcategory
 const publishedTypes = computed(() => {
   const all = types.value.filter(t => t.status === 'published')
-  // Note: Full filtering by subcategory would require fetching junction table
-  // For now, show all published types
-  return all
+  if (!selectedSubcategoryId.value) return all
+  const linkedTypeIds = new Set(
+    typeSubcategoryLinks.value
+      .filter(l => l.subcategory_id === selectedSubcategoryId.value)
+      .map(l => l.type_id)
+  )
+  return all.filter(t => linkedTypeIds.has(t.id))
+})
+
+// When subcategory changes, reset type_id if not in filtered types
+watch(selectedSubcategoryId, () => {
+  if (selectedSubcategoryId.value && formData.value.type_id) {
+    if (!publishedTypes.value.some(t => t.id === formData.value.type_id)) {
+      formData.value.type_id = null
+    }
+  }
 })
 
 // Show rental price only if Alquiler category is selected
 const showRentalPrice = computed(() => formData.value.categories?.includes('alquiler'))
 
+// Auto-detect location_country / province / region from location text
+// Prioritize ES field; fall back to EN if ES is empty
+// Uses local dictionary first, then Nominatim geocoding for unknown cities
+let locationDebounce: ReturnType<typeof setTimeout> | null = null
+watch([() => formData.value.location, () => formData.value.location_en], ([es, en]) => {
+  const text = es || en
+  // Instant: local dictionary
+  const parsed = parseLocationText(text)
+  formData.value.location_country = parsed.country
+  formData.value.location_province = parsed.province
+  formData.value.location_region = parsed.region
+
+  // Async fallback: geocode if province unknown or no country detected
+  if ((!parsed.province || !parsed.country) && text) {
+    if (locationDebounce) clearTimeout(locationDebounce)
+    locationDebounce = setTimeout(async () => {
+      const geo = await geocodeLocation(text)
+      formData.value.location_country = geo.country
+      formData.value.location_province = geo.province
+      formData.value.location_region = geo.region
+    }, 800)
+  }
+})
+
 // Load data
 onMounted(async () => {
-  await Promise.all([fetchSubcategories(), fetchTypes(), fetchFilters()])
+  await Promise.all([fetchSubcategories(), fetchTypes(), fetchFilters(), fetchTypeSubcategoryLinks()])
 })
 
 // Filter handlers
@@ -172,8 +220,8 @@ async function handleSave() {
     }
   }
 
-  // 3. Redirect to edit page
-  router.push(`/admin/productos/${vehicleId}`)
+  // 3. Redirect to products list
+  router.push('/admin/productos')
 }
 
 function handleCancel() {
@@ -522,10 +570,15 @@ function fmt(val: number | null | undefined): string {
           <div class="field">
             <label>Ubicación ES</label>
             <input v-model="formData.location" type="text" placeholder="Madrid, España">
+            <span v-if="formData.location_country" class="location-detected">
+              {{ countryFlag(formData.location_country) }} {{ formData.location_country }}
+              <template v-if="formData.location_province"> · {{ formData.location_province }}</template>
+              <template v-if="formData.location_region"> · {{ formData.location_region }}</template>
+            </span>
           </div>
           <div class="field">
             <label>Ubicación EN</label>
-            <input v-model="location_en" type="text" placeholder="Madrid, Spain">
+            <input v-model="formData.location_en" type="text" placeholder="Madrid, Spain">
           </div>
         </div>
       </div>
@@ -1175,5 +1228,13 @@ function fmt(val: number | null | undefined): string {
   .char-row { grid-template-columns: 1fr; }
   .records-table { font-size: 0.7rem; }
   .img-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.location-detected {
+  display: block;
+  font-size: 11px;
+  color: #10B981;
+  margin-top: 2px;
+  font-weight: 500;
 }
 </style>
