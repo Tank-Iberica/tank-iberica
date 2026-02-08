@@ -118,11 +118,18 @@ onMounted(async () => {
   loading.value = false
 
   if (article.value) {
+    const metaDesc = computed(() => {
+      if (!article.value) return ''
+      if (locale.value === 'en' && article.value.description_en) return article.value.description_en
+      if (article.value.description_es) return article.value.description_es
+      return title.value
+    })
+
     useSeoMeta({
       title: `${title.value} — Tank Iberica`,
-      description: title.value,
+      description: metaDesc.value,
       ogTitle: `${title.value} — Tank Iberica`,
-      ogDescription: title.value,
+      ogDescription: metaDesc.value,
       ogImage: article.value.image_url || '',
       ogType: 'article',
     })

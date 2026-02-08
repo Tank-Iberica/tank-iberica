@@ -22,6 +22,8 @@ const formData = ref<NewsFormData>({
   slug: '',
   category: 'general',
   image_url: null,
+  description_es: null,
+  description_en: null,
   content_es: '',
   content_en: null,
   hashtags: [],
@@ -43,6 +45,7 @@ const seoInput = computed<SeoInput>(() => ({
   title_es: formData.value.title_es,
   title_en: formData.value.title_en,
   slug: formData.value.slug,
+  description_es: formData.value.description_es,
   content_es: formData.value.content_es,
   content_en: formData.value.content_en,
   image_url: formData.value.image_url,
@@ -86,6 +89,26 @@ const titleLengthClass = computed(() => {
   if (len >= 30 && len <= 60) return 'count-good'
   if (len >= 20 && len <= 70) return 'count-warning'
   return len > 0 ? 'count-bad' : ''
+})
+
+const descLengthClass = computed(() => {
+  const len = (formData.value.description_es || '').length
+  if (len >= 120 && len <= 160) return 'count-good'
+  if (len >= 80 && len <= 200) return 'count-warning'
+  return len > 0 ? 'count-bad' : ''
+})
+
+// Word counter for content
+const contentWordCount = computed(() => {
+  const text = formData.value.content_es.trim()
+  if (!text) return 0
+  return text.split(/\s+/).filter(w => w.length > 0).length
+})
+
+const wordCountClass = computed(() => {
+  if (contentWordCount.value >= 300) return 'count-good'
+  if (contentWordCount.value >= 150) return 'count-warning'
+  return contentWordCount.value > 0 ? 'count-bad' : ''
 })
 
 // Image upload
@@ -302,6 +325,32 @@ function getLevelLabel(level: string): string {
           </div>
         </div>
 
+        <!-- Meta Description -->
+        <div class="section">
+          <div class="section-title">Meta Descripcion (SEO)</div>
+          <p class="section-hint">
+            Este texto aparece en los resultados de Google debajo del titulo. Debe ser un resumen atractivo que invite a hacer clic.
+          </p>
+          <div class="field">
+            <label>Descripcion (ES)</label>
+            <textarea
+              v-model="formData.description_es"
+              rows="3"
+              class="input textarea"
+              maxlength="200"
+              placeholder="Resumen atractivo de la noticia para Google (120-160 caracteres ideal)..."
+            />
+            <div class="count-row">
+              <span class="char-count" :class="descLengthClass">
+                {{ (formData.description_es || '').length }}/160 caracteres
+              </span>
+              <span v-if="(formData.description_es || '').length > 0" class="char-count" :class="descLengthClass">
+                {{ (formData.description_es || '').length >= 120 && (formData.description_es || '').length <= 160 ? 'Longitud ideal' : (formData.description_es || '').length < 120 ? 'Muy corta' : 'Larga' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
         <!-- Content ES -->
         <div class="section">
           <div class="section-title">Contenido (ES) *</div>
@@ -312,9 +361,15 @@ function getLevelLabel(level: string): string {
               class="input textarea"
               placeholder="Escribe el contenido de la noticia...&#10;&#10;Separa los parrafos con lineas en blanco para mejorar la estructura SEO."
             />
-            <span class="char-count">
-              {{ formData.content_es.length }} caracteres
-            </span>
+            <div class="count-row">
+              <span class="char-count">
+                {{ formData.content_es.length }} caracteres
+              </span>
+              <span class="char-count word-count" :class="wordCountClass">
+                {{ contentWordCount }} palabras
+                <span v-if="contentWordCount > 0 && contentWordCount < 300" class="word-target">/ 300 recomendadas</span>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -354,6 +409,16 @@ function getLevelLabel(level: string): string {
                 class="input"
                 placeholder="English title..."
               >
+            </div>
+            <div class="field">
+              <label>Meta Descripcion (EN)</label>
+              <textarea
+                v-model="formData.description_en"
+                rows="2"
+                class="input textarea"
+                maxlength="200"
+                placeholder="English meta description (120-160 chars)..."
+              />
             </div>
             <div class="field">
               <label>Contenido (EN)</label>
@@ -613,11 +678,35 @@ function getLevelLabel(level: string): string {
   .row-2 { grid-template-columns: 1fr; }
 }
 
+/* Section hint */
+.section-hint {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: -8px 0 12px;
+  line-height: 1.4;
+}
+
 /* Character count */
 .char-count {
   font-size: 0.7rem;
   color: #94a3b8;
   text-align: right;
+}
+
+.count-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.word-count {
+  font-weight: 500;
+}
+
+.word-target {
+  color: #94a3b8;
+  font-weight: 400;
 }
 
 .count-good { color: #22c55e; }

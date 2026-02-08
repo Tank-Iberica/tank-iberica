@@ -31,6 +31,7 @@ export interface SeoInput {
   title_es: string
   title_en: string | null
   slug: string
+  description_es: string | null
   content_es: string
   content_en: string | null
   image_url: string | null
@@ -206,30 +207,36 @@ function evaluateContentLength(content: string): SeoCriterion {
   }
 }
 
-function evaluateMetaDescription(content: string): SeoCriterion {
-  const firstParagraph = content.split(/\n\n|\r\n\r\n/)[0]?.trim() || ''
-  const len = firstParagraph.length
+function evaluateMetaDescription(descriptionEs: string | null): SeoCriterion {
+  const text = (descriptionEs || '').trim()
+  const len = text.length
 
   let score = 0
   let description = ''
 
-  if (len >= 100 && len <= 160) {
+  if (len === 0) {
+    score = 0
+    description = 'Sin meta descripcion. Escribe un resumen de 120-160 caracteres para Google'
+  }
+  else if (len >= 120 && len <= 160) {
     score = 100
-    description = `Perfecto: primer parrafo de ${len} chars, ideal como meta descripcion`
+    description = `Perfecto: ${len} caracteres. Longitud ideal para Google`
   }
-  else if (len >= 50 && len < 100) {
-    score = 50
-    description = `Mejorable: ${len} chars. El primer parrafo deberia tener 100-160 caracteres`
+  else if (len >= 80 && len < 120) {
+    score = 60
+    description = `Corta: ${len} chars. Intenta llegar a 120-160 para aprovechar todo el espacio en Google`
   }
-  else if (len > 160) {
+  else if (len > 160 && len <= 200) {
     score = 70
-    description = `Largo: ${len} chars. Google mostrara solo ~155 caracteres`
+    description = `Larga: ${len} chars. Google truncara a ~155. Intenta resumir a 120-160`
+  }
+  else if (len > 200) {
+    score = 40
+    description = `Muy larga: ${len} chars. Google solo muestra ~155. Reduce a 120-160`
   }
   else {
-    score = len > 0 ? 20 : 0
-    description = len === 0
-      ? 'Sin contenido para meta descripcion'
-      : `Muy corto: ${len} chars. El primer parrafo sera la meta descripcion (100-160 ideal)`
+    score = 30
+    description = `Muy corta: ${len} chars. Recomendado 120-160 caracteres`
   }
 
   return {
@@ -377,7 +384,7 @@ export function useSeoScore(input: Ref<SeoInput> | ComputedRef<SeoInput>) {
       evaluateTitleKeywords(data.title_es),
       evaluateSlugQuality(data.slug, data.title_es),
       evaluateContentLength(data.content_es),
-      evaluateMetaDescription(data.content_es),
+      evaluateMetaDescription(data.description_es),
       evaluateImage(data.image_url),
       evaluateHashtags(data.hashtags),
       evaluateBilingual(data.title_en, data.content_en),
@@ -390,11 +397,12 @@ export function useSeoScore(input: Ref<SeoInput> | ComputedRef<SeoInput>) {
 
     const level = getLevel(score)
 
-    const contentText = (data.content_es || '').replace(/\n+/g, ' ').trim()
+    const descText = (data.description_es || '').trim()
+    const snippetDescription = descText || truncate((data.content_es || '').replace(/\n+/g, ' ').trim(), 155)
     const snippetPreview: SeoSnippetPreview = {
       title: truncate(data.title_es || 'Sin titulo', 60),
       url: `tankiberica.com/noticias/${data.slug || 'sin-url'}`,
-      description: truncate(contentText, 155),
+      description: truncate(snippetDescription, 155),
     }
 
     return { score, level, criteria, snippetPreview }

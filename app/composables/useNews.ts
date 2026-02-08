@@ -8,6 +8,8 @@ export interface News {
   slug: string
   category: string
   image_url: string | null
+  description_es: string | null
+  description_en: string | null
   content_es: string
   content_en: string | null
   hashtags: string[]
