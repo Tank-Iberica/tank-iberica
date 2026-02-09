@@ -8,7 +8,6 @@
           <NuxtLink to="/noticias">{{ $t('footer.newsletters') }}</NuxtLink>
           <NuxtLink to="/noticias?cat=destacados">{{ $t('footer.featured') }}</NuxtLink>
           <NuxtLink to="/noticias?cat=eventos">{{ $t('footer.events') }}</NuxtLink>
-          <button class="footer-subscribe-btn" @click="openSubscribe">{{ $t('subscribe.title') }}</button>
         </div>
       </div>
 
@@ -49,11 +48,6 @@
 
 <script setup lang="ts">
 const year = new Date().getFullYear()
-const openSubscribeModal = inject<(() => void) | undefined>('openSubscribeModal', undefined)
-
-function openSubscribe() {
-  openSubscribeModal?.()
-}
 </script>
 
 <style scoped>
@@ -112,31 +106,6 @@ function openSubscribe() {
 .footer-links a:hover {
   color: var(--text-on-dark-primary, rgba(255, 255, 255, 0.95));
   padding-left: 0.5rem;
-}
-
-.footer-subscribe-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: var(--text-on-dark-secondary, rgba(255, 255, 255, 0.7));
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.2s;
-  display: none;
-}
-
-.footer-subscribe-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border-color: rgba(255, 255, 255, 0.6);
-}
-
-@media (min-width: 768px) {
-  .footer-subscribe-btn {
-    display: inline-block;
-  }
 }
 
 /* Kit Digital banner */

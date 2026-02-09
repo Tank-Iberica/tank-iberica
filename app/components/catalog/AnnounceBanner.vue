@@ -22,23 +22,35 @@ const { locale } = useI18n()
 
 interface BannerConfig {
   active?: boolean
+  enabled?: boolean
   text_es?: string
   text_en?: string
   link?: string
+  url?: string
   fecha_inicio?: string
   fecha_fin?: string
+  from_date?: string
+  to_date?: string
 }
 
 const bannerData = ref<BannerConfig | null>(null)
 const dismissed = ref(false)
 
-const bannerText = computed(() => {
-  if (!bannerData.value?.active) return null
-  if (locale.value === 'en' && bannerData.value.text_en) return bannerData.value.text_en
-  return bannerData.value.text_es || null
+const isActive = computed(() => {
+  if (!bannerData.value) return false
+  // 'enabled' (set by admin) takes priority; fallback to 'active' for backwards compat
+  if (bannerData.value.enabled !== undefined) return !!bannerData.value.enabled
+  if (bannerData.value.active !== undefined) return !!bannerData.value.active
+  return false
 })
 
-const bannerLink = computed(() => bannerData.value?.link || null)
+const bannerText = computed(() => {
+  if (!isActive.value) return null
+  if (locale.value === 'en' && bannerData.value?.text_en) return bannerData.value.text_en
+  return bannerData.value?.text_es || null
+})
+
+const bannerLink = computed(() => bannerData.value?.link || bannerData.value?.url || null)
 
 const isExternalLink = computed(() => {
   if (!bannerLink.value) return false
@@ -54,12 +66,14 @@ const isExternalLink = computed(() => {
 const isWithinSchedule = computed(() => {
   if (!bannerData.value) return false
   const now = new Date()
-  if (bannerData.value.fecha_inicio) {
-    const start = new Date(bannerData.value.fecha_inicio)
+  const startDate = bannerData.value.fecha_inicio || bannerData.value.from_date
+  const endDate = bannerData.value.fecha_fin || bannerData.value.to_date
+  if (startDate) {
+    const start = new Date(startDate)
     if (now < start) return false
   }
-  if (bannerData.value.fecha_fin) {
-    const end = new Date(bannerData.value.fecha_fin)
+  if (endDate) {
+    const end = new Date(endDate)
     if (now > end) return false
   }
   return true

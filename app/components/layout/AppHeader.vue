@@ -112,15 +112,21 @@
           </Transition>
         </div>
 
-        <!-- Desktop: Language switcher ES/EN -->
+        <!-- Desktop: Language switcher with flags -->
         <div class="lang-switch desktop-only">
           <button
-            v-for="loc in availableLocales"
-            :key="loc.code"
-            :class="['lang-btn', { active: locale === loc.code }]"
-            @click="setLocale(loc.code as 'es' | 'en')"
+            :class="['lang-flag-btn', { active: locale === 'es' }]"
+            @click="setLocale('es')"
+            title="Español"
           >
-            {{ loc.code.toUpperCase() }}
+            <img src="https://flagcdn.com/w40/es.png" alt="ES" class="lang-flag-desktop">
+          </button>
+          <button
+            :class="['lang-flag-btn', { active: locale === 'en' }]"
+            @click="setLocale('en')"
+            title="English"
+          >
+            <img src="https://flagcdn.com/w40/gb.png" alt="EN" class="lang-flag-desktop">
           </button>
         </div>
 
@@ -163,7 +169,7 @@ const emit = defineEmits<{
 
 const user = useSupabaseUser()
 
-const { locale, setLocale, locales } = useI18n()
+const { locale, setLocale } = useI18n()
 const scrolled = ref(false)
 const openMenu = ref<string | null>(null)
 
@@ -188,9 +194,6 @@ function closeMenus(e: MouseEvent) {
   }
 }
 
-const availableLocales = computed(() =>
-  (locales.value as Array<{ code: string; name: string }>),
-)
 
 function onScroll() {
   scrolled.value = window.scrollY > 30
@@ -467,9 +470,9 @@ onUnmounted(() => {
 }
 
 .lang-flag {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  width: 26px;
+  height: 18px;
+  border-radius: 9999px;
   object-fit: cover;
   display: block;
 }
@@ -492,40 +495,47 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
-/* Desktop: ES/EN buttons */
+/* Desktop: Flag buttons */
 .lang-switch {
   display: flex;
-  gap: 0.2rem;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 3px;
-  border-radius: 19px;
-  backdrop-filter: blur(10px);
+  gap: 0.3rem;
   flex-shrink: 0;
-  height: 38px;
   align-items: center;
 }
 
-.lang-btn {
-  background: none;
-  border: none;
-  color: var(--color-white);
+.lang-flag-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent !important;
+  border-radius: 9999px;
   cursor: pointer;
-  padding: 0.15rem 0.7rem;
-  border-radius: 16px;
+  padding: 3px;
   transition: all 0.3s ease;
-  font-weight: 600;
-  font-size: 0.8rem;
-  white-space: nowrap;
   min-height: auto;
   min-width: auto;
-  height: 32px;
-  line-height: 1;
+  opacity: 0.6;
 }
 
-.lang-btn.active {
-  background: var(--color-white);
-  color: var(--color-primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+.lang-flag-btn:hover {
+  opacity: 0.9;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lang-flag-btn.active {
+  opacity: 1;
+  border-color: var(--color-white) !important;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.lang-flag-desktop {
+  width: 28px;
+  height: 19px;
+  object-fit: cover;
+  border-radius: 9999px;
+  display: block;
 }
 
 /* ============================================
@@ -687,9 +697,13 @@ onUnmounted(() => {
     font-size: 1.2rem;
   }
 
-  .scrolled .lang-btn {
-    padding: 0.3rem 0.7rem;
-    font-size: 0.75rem;
+  .scrolled .lang-flag-btn {
+    padding: 2px;
+  }
+
+  .scrolled .lang-flag-desktop {
+    width: 22px;
+    height: 15px;
   }
 
   .scrolled .account-btn {

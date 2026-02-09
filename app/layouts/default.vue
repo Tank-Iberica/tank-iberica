@@ -1,8 +1,9 @@
 <template>
   <div class="layout">
+    <CatalogAnnounceBanner />
     <LayoutAppHeader
       @open-auth="authOpen = true"
-      @open-user-panel="userPanelOpen = true"
+      @open-user-panel="handleOpenUserPanel"
       @open-anunciate="advertiseOpen = true"
     />
     <main class="main-content">
@@ -24,6 +25,20 @@ const userPanelOpen = ref(false)
 const advertiseOpen = ref(false)
 const demandOpen = ref(false)
 const subscribeOpen = ref(false)
+
+// Prevent user panel from opening right after auth modal closes
+let authRecentlyClosed = false
+watch(authOpen, (newVal, oldVal) => {
+  if (!newVal && oldVal) {
+    authRecentlyClosed = true
+    setTimeout(() => { authRecentlyClosed = false }, 600)
+  }
+})
+
+function handleOpenUserPanel() {
+  if (authRecentlyClosed) return
+  userPanelOpen.value = true
+}
 
 // Provide modal openers for child components
 provide('openDemandModal', () => { demandOpen.value = true })
@@ -61,6 +76,23 @@ watch(() => route.query.auth, (auth) => {
 @media (min-width: 768px) {
   .main-content {
     padding-top: 60px;
+  }
+}
+</style>
+
+<!-- Global (non-scoped) styles for banner offset -->
+<style>
+body.banner-visible .app-header {
+  top: 32px;
+}
+
+body.banner-visible .main-content {
+  padding-top: 96px; /* 64px header + 32px banner */
+}
+
+@media (min-width: 768px) {
+  body.banner-visible .main-content {
+    padding-top: 92px; /* 60px header + 32px banner */
   }
 }
 </style>
