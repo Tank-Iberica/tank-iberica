@@ -146,7 +146,15 @@
     "emailInterest": "Me interesa este vehículo:",
     "backToCatalog": "Volver al catálogo",
     "notFound": "Vehículo no encontrado",
-    "imageOf": "Imagen {current} de {total}"
+    "imageOf": "Imagen {current} de {total}",
+    "consultar": "Consultar",
+    "disclaimer": "Este vehículo es ofrecido por un tercero. Tank Iberica actúa como intermediario y no es responsable directo de la operación.",
+    "cantFind": "¿No encuentra lo que busca? Solicítelo aquí",
+    "downloadPdf": "PDF",
+    "favorite": "Favorito",
+    "shareCopied": "Enlace copiado al portapapeles",
+    "perMonth": "/mes",
+    "characteristics": "Características"
   },
   "banner": {
     "moreInfo": "Más información"
