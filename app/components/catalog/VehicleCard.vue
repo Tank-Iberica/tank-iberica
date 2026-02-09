@@ -81,7 +81,13 @@
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
           <circle cx="12" cy="10" r="3" fill="white" />
         </svg>
-        <span>{{ locationText }}</span>
+        <span>{{ locationLabel }}</span>
+        <img
+          v-if="locationFlagCode"
+          :src="`https://flagcdn.com/w20/${locationFlagCode}.png`"
+          :alt="locationFlagCode"
+          class="location-flag"
+        >
       </span>
     </div>
 
@@ -90,15 +96,11 @@
       <div v-if="vehicle.category === 'terceros'" class="terceros-banner">
         {{ $t('catalog.tercerosDisclaimer') }}
       </div>
-      <h3 class="product-title">{{ buildProductName(vehicle, locale, true) }}</h3>
+      <h3 ref="titleRef" class="product-title">{{ buildProductName(vehicle, locale, true) }}</h3>
       <div v-if="hasSpecs" class="product-specs">
         <div v-if="vehicle.year" class="spec-item">
           <span class="spec-label">{{ $t('vehicle.year') }}</span>
           <span class="spec-value">{{ vehicle.year }}</span>
-        </div>
-        <div v-if="vehicle.location" class="spec-item">
-          <span class="spec-label">{{ $t('vehicle.location') }}</span>
-          <span class="spec-value">{{ vehicle.location }}</span>
         </div>
         <div v-if="vehicle.rental_price" class="spec-item">
           <span class="spec-label">{{ $t('vehicle.rentalPrice') }}</span>
@@ -118,18 +120,35 @@ const props = defineProps<{
 
 const { t, locale } = useI18n()
 const { toggle, isFavorite } = useFavorites()
+const { location: userLocation } = useUserLocation()
 const user = useSupabaseUser()
 const openAuthModal = inject<(() => void) | undefined>('openAuthModal', undefined)
 const currentImage = ref(0)
 
 const isFav = computed(() => isFavorite(props.vehicle.id))
 
-const locationText = computed(() => {
+const locationLabel = computed(() => {
   const loc = locale.value === 'en' && props.vehicle.location_en
     ? props.vehicle.location_en
     : props.vehicle.location
-  const flag = props.vehicle.location_country ? countryFlag(props.vehicle.location_country) : ''
-  return loc ? `${loc} ${flag}`.trim() : ''
+  if (!loc) return ''
+
+  const vehicleCountry = props.vehicle.location_country
+  const userCountry = userLocation.value.country
+  const bothInSpain = userCountry === 'ES' && vehicleCountry === 'ES'
+
+  if (bothInSpain) {
+    return loc.replace(/,?\s*(España|Spain)\s*$/i, '').trim()
+  }
+  return loc
+})
+
+const locationFlagCode = computed(() => {
+  const vehicleCountry = props.vehicle.location_country
+  if (!vehicleCountry) return null
+  const userCountry = userLocation.value.country
+  if (userCountry === 'ES' && vehicleCountry === 'ES') return null
+  return vehicleCountry.toLowerCase()
 })
 
 function onToggleFav() {
@@ -146,8 +165,29 @@ const images = computed(() => {
 })
 
 const hasSpecs = computed(() => {
-  return props.vehicle.year || props.vehicle.location || props.vehicle.rental_price
+  return props.vehicle.year || props.vehicle.rental_price
 })
+
+// Title auto-fit: measure rendered width and adjust font-size to fill the card
+const titleRef = ref<HTMLElement | null>(null)
+
+function adjustTitleSize() {
+  const el = titleRef.value
+  if (!el) return
+
+  // Start at max size and shrink until it fits
+  let size = 20
+  el.style.fontSize = `${size}px`
+
+  // Read layout (triggers synchronous reflow)
+  while (el.scrollWidth > el.clientWidth && size > 11) {
+    size--
+    el.style.fontSize = `${size}px`
+  }
+}
+
+onMounted(() => { nextTick(adjustTitleSize) })
+watch(() => [props.vehicle.id, locale.value], () => { nextTick(adjustTitleSize) })
 
 const priceText = computed(() => {
   if (props.vehicle.category === 'terceros') {
@@ -344,6 +384,14 @@ function formatPrice(price: number): string {
   z-index: 1;
 }
 
+.location-flag {
+  width: 18px;
+  height: 14px;
+  object-fit: cover;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
 /* Product info section */
 .product-info {
   padding: 1.2rem 1.3rem;
@@ -368,14 +416,13 @@ function formatPrice(price: number): string {
 }
 
 .product-title {
-  font-size: 16px;
   font-weight: 700;
   color: var(--color-primary);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
   max-width: 100%;
   line-height: 1.35;
+  font-size: 16px; /* default, overridden by JS adjustTitleSize */
 }
 
 /* Specs grid — 3 columns matching legacy */
@@ -418,7 +465,7 @@ function formatPrice(price: number): string {
   min-width: 32px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
-  border: none;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -472,9 +519,7 @@ function formatPrice(price: number): string {
     opacity: 1;
   }
 
-  .product-title {
-    font-size: 18px;
-  }
+  /* titleStyle computed handles font-size dynamically */
 
   .terceros-banner {
     font-size: 11px;

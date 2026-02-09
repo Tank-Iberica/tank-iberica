@@ -163,12 +163,33 @@ export function useUserLocation() {
           const city = res.address.city || res.address.town || res.address.village || null
           let province: string | null = null
           let region: string | null = null
-          if (countryCode === 'ES' && city) {
-            const resolved = resolveSpanishCity(city)
-            if (resolved) {
-              province = resolved.province
-              region = resolved.region
+          if (countryCode === 'ES') {
+            // Try local city → province mapping first
+            if (city) {
+              const resolved = resolveSpanishCity(city)
+              if (resolved) {
+                province = resolved.province
+                region = resolved.region
+              }
             }
+            // Fallback: use Nominatim's province/state fields
+            if (!province && res.address.province) {
+              province = res.address.province
+              region = PROVINCE_TO_REGION[province] || res.address.state || null
+            }
+            if (!province && res.address.state) {
+              // state = autonomous community, try to match as province
+              const resolved = resolveSpanishCity(res.address.state)
+              if (resolved) {
+                province = resolved.province
+                region = resolved.region
+              } else {
+                region = res.address.state
+              }
+            }
+          } else {
+            // Non-Spain: use Nominatim fields directly
+            province = res.address.province || res.address.state || null
           }
           location.value = { country: countryCode, province, region, city, source: 'geolocation' }
           return

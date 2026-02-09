@@ -138,7 +138,13 @@
                 <svg class="pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="#C41E3A" stroke="none">
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
                 </svg>
-                {{ locationText(vehicle) }}
+                {{ locationLabel(vehicle) }}
+                <img
+                  v-if="locationFlagCode(vehicle)"
+                  :src="`https://flagcdn.com/w20/${locationFlagCode(vehicle)}.png`"
+                  :alt="vehicle.location_country || ''"
+                  class="location-flag"
+                >
               </span>
             </td>
             <td class="col-actions" @click.stop>
@@ -243,6 +249,7 @@ const props = defineProps<{
 }>()
 
 const { t, locale } = useI18n()
+const { location: userLocation } = useUserLocation()
 const router = useRouter()
 const { toggle: toggleFav, isFavorite } = useFavorites()
 
@@ -388,12 +395,26 @@ function priceText(vehicle: Vehicle): string {
   return t('catalog.solicitar')
 }
 
-function locationText(vehicle: Vehicle): string {
+function locationLabel(vehicle: Vehicle): string {
   const loc = locale.value === 'en' && vehicle.location_en
     ? vehicle.location_en
     : vehicle.location
-  const flag = vehicle.location_country ? countryFlag(vehicle.location_country) : ''
-  return loc ? `${loc} ${flag}`.trim() : '—'
+  if (!loc) return '—'
+
+  const vehicleCountry = vehicle.location_country
+  const bothInSpain = userLocation.value.country === 'ES' && vehicleCountry === 'ES'
+
+  if (bothInSpain) {
+    return loc.replace(/,?\s*(España|Spain)\s*$/i, '').trim()
+  }
+  return loc
+}
+
+function locationFlagCode(vehicle: Vehicle): string | null {
+  const vehicleCountry = vehicle.location_country
+  if (!vehicleCountry) return null
+  if (userLocation.value.country === 'ES' && vehicleCountry === 'ES') return null
+  return vehicleCountry.toLowerCase()
 }
 
 function getVolume(v: Vehicle): number {
@@ -713,6 +734,14 @@ function onTouchEnd() {
 }
 
 .pin-icon {
+  flex-shrink: 0;
+}
+
+.location-flag {
+  width: 18px;
+  height: 14px;
+  border-radius: 9999px;
+  object-fit: cover;
   flex-shrink: 0;
 }
 
