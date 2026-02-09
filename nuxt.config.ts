@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/',
       callback: '/confirm',
-      exclude: ['/', '/vehiculo/*', '/noticias/*', '/admin', '/admin/*'],
+      exclude: ['/', '/vehiculo/*', '/noticias', '/noticias/*', '/sobre-nosotros', '/legal', '/agenda', '/admin', '/admin/*'],
     },
     cookieOptions: {
       secure: process.env.NODE_ENV === 'production',

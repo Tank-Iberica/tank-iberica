@@ -937,17 +937,17 @@ onUnmounted(() => {
   background: rgba(35, 66, 74, 0.8);
   border: none;
   color: white;
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  min-height: 24px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .filters-mobile-container .scroll-btn-left {

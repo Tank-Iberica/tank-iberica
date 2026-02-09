@@ -284,19 +284,15 @@
     "acceptTerms": "Acepto los términos y condiciones",
     "photos": "Fotos del vehículo",
     "addPhotos": "Añadir fotos",
+    "selectSubcategory": "Seleccione subcategoría",
+    "selectType": "Seleccione tipo",
+    "characteristics": "Características del vehículo",
     "submit": "Enviar anuncio",
     "sending": "Enviando...",
     "successTitle": "¡Anuncio enviado!",
     "successMessage": "Hemos recibido su anuncio. Nuestro equipo lo revisará y se pondrá en contacto con usted.",
     "loginRequired": "Debe iniciar sesión para publicar un anuncio",
-    "login": "Iniciar sesión",
-    "types": {
-      "camion": "Camión",
-      "semirremolque": "Semirremolque",
-      "cabeza_tractora": "Cabeza Tractora",
-      "furgoneta": "Furgoneta",
-      "otro": "Otro"
-    }
+    "login": "Iniciar sesión"
   },
   "demand": {
     "title": "Solicitar vehículo",
@@ -309,6 +305,10 @@
     "priceRange": "Rango de precio",
     "priceMin": "Mínimo",
     "priceMax": "Máximo",
+    "selectSubcategory": "Seleccione subcategoría",
+    "selectType": "Seleccione tipo",
+    "characteristics": "Características deseadas",
+    "brandPlaceholder": "Ej: Renault, Iveco, MAN...",
     "specifications": "Especificaciones / requisitos",
     "specificationsPlaceholder": "Describa lo que necesita: capacidad, ejes, tipo de carga...",
     "contactName": "Nombre de contacto",

@@ -64,6 +64,11 @@
 
     <!-- Main area -->
     <div class="admin-main">
+      <AdminLayoutAdminHeader
+        class="mobile-only-header"
+        @toggle-sidebar="sidebarOpen = !sidebarOpen"
+        @toggle-collapse="sidebarCollapsed = !sidebarCollapsed"
+      />
       <main class="admin-content">
         <slot />
       </main>
@@ -266,10 +271,6 @@ onMounted(() => {
   background: var(--bg-secondary);
 }
 
-.sidebar-overlay {
-  display: none;
-}
-
 .admin-main {
   flex: 1;
   min-width: 0;
@@ -279,35 +280,48 @@ onMounted(() => {
 
 .admin-content {
   flex: 1;
-  padding: var(--spacing-4);
   overflow-x: hidden;
 }
 
-/* Mobile: sidebar as overlay */
-@media (max-width: 767px) {
-  .sidebar-overlay {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: var(--z-modal-backdrop);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity var(--transition-normal), visibility var(--transition-normal);
-  }
+/* Header only on mobile */
+.mobile-only-header {
+  display: block;
+}
 
-  .sidebar-open .sidebar-overlay {
-    opacity: 1;
-    visibility: visible;
+@media (min-width: 768px) {
+  .mobile-only-header {
+    display: none;
   }
+}
 
-  .admin-content {
-    padding: var(--spacing-3);
-  }
+/* Mobile base: sidebar as overlay */
+.sidebar-overlay {
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-modal-backdrop);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.sidebar-open .sidebar-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+.admin-content {
+  padding: var(--spacing-3);
+  padding-top: calc(56px + var(--spacing-3));
 }
 
 /* Tablet+ */
 @media (min-width: 768px) {
+  .sidebar-overlay {
+    display: none;
+  }
+
   .admin-main {
     margin-left: var(--sidebar-width);
     transition: margin-left var(--transition-normal);

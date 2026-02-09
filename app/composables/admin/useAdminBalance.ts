@@ -142,7 +142,7 @@ export function useAdminBalance() {
       }
 
       if (filters.subcategory_id) {
-        query = query.eq('subcategory_id', filters.subcategory_id)
+        query = query.eq('type_id', filters.subcategory_id)
       }
 
       if (filters.type_id) {

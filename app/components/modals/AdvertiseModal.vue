@@ -12,9 +12,29 @@ const emit = defineEmits<{
   'open-auth': []
 }>()
 
-const { t: _t } = useI18n()
+const { t: _t, locale } = useI18n()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+
+const {
+  subcategories,
+  linkedTypes,
+  filterDefinitions,
+  selectedSubcategoryId,
+  selectedTypeId,
+  filterValues,
+  loading: selectorLoading,
+  filtersLoading,
+  fetchInitialData,
+  selectSubcategory,
+  selectType,
+  setFilterValue,
+  getFiltersJson,
+  getFilterLabel,
+  getFilterOptions,
+  getVehicleTypeLabel,
+  reset: resetSelector,
+} = useVehicleTypeSelector()
 
 const isSubmitting = ref(false)
 const isSuccess = ref(false)
@@ -25,7 +45,6 @@ const photoPreviews = ref<string[]>([])
 const MAX_PHOTOS = 6
 
 const formData = ref({
-  vehicleType: '',
   brand: '',
   model: '',
   year: null as number | null,
@@ -37,24 +56,21 @@ const formData = ref({
   contactEmail: '',
   contactPhone: '',
   contactPreference: 'email',
-  termsAccepted: false
+  termsAccepted: false,
 })
 
-const vehicleTypes = [
-  { value: 'camion', label: 'advertise.types.truck' },
-  { value: 'semirremolque', label: 'advertise.types.semitrailer' },
-  { value: 'cabeza-tractora', label: 'advertise.types.tractor' },
-  { value: 'furgoneta', label: 'advertise.types.van' },
-  { value: 'otro', label: 'advertise.types.other' }
-]
-
 const contactPreferences = [
-  { value: 'email', label: 'advertise.contact.email' },
-  { value: 'phone', label: 'advertise.contact.phone' },
-  { value: 'whatsapp', label: 'advertise.contact.whatsapp' }
+  { value: 'email', label: 'advertise.prefEmail' },
+  { value: 'phone', label: 'advertise.prefPhone' },
+  { value: 'whatsapp', label: 'advertise.prefWhatsApp' },
 ]
 
 const isAuthenticated = computed(() => !!user.value)
+
+// Localized name helpers
+function subcatName(sub: { name_es: string; name_en: string | null }) {
+  return locale.value === 'en' && sub.name_en ? sub.name_en : sub.name_es
+}
 
 const close = () => {
   emit('update:modelValue', false)
@@ -95,7 +111,7 @@ function handlePhotoSelect(e: Event) {
   if (!input.files) return
   const files = Array.from(input.files).slice(0, MAX_PHOTOS - photos.value.length)
   for (const file of files) {
-    if (file.size > 10 * 1024 * 1024) continue // max 10MB per file
+    if (file.size > 10 * 1024 * 1024) continue
     photos.value.push(file)
     photoPreviews.value.push(URL.createObjectURL(file))
   }
@@ -110,7 +126,6 @@ function removePhoto(index: number) {
 
 const resetForm = () => {
   formData.value = {
-    vehicleType: '',
     brand: '',
     model: '',
     year: null,
@@ -122,22 +137,18 @@ const resetForm = () => {
     contactEmail: '',
     contactPhone: '',
     contactPreference: 'email',
-    termsAccepted: false
+    termsAccepted: false,
   }
   photoPreviews.value.forEach(url => URL.revokeObjectURL(url))
   photos.value = []
   photoPreviews.value = []
   validationErrors.value = {}
+  resetSelector()
 }
 
 const handleSubmit = async () => {
-  if (!validateForm()) {
-    return
-  }
-
-  if (!isAuthenticated.value) {
-    return
-  }
+  if (!validateForm()) return
+  if (!isAuthenticated.value) return
 
   isSubmitting.value = true
 
@@ -146,7 +157,10 @@ const handleSubmit = async () => {
 
     const { error } = await supabase.from('advertisements').insert({
       user_id: user.value!.id,
-      vehicle_type: formData.value.vehicleType,
+      vehicle_type: getVehicleTypeLabel(locale.value),
+      subcategory_id: selectedSubcategoryId.value,
+      type_id: selectedTypeId.value,
+      filters_json: getFiltersJson(),
       brand: formData.value.brand,
       model: formData.value.model,
       year: formData.value.year,
@@ -159,7 +173,7 @@ const handleSubmit = async () => {
       contact_email: formData.value.contactEmail,
       contact_phone: formData.value.contactPhone,
       contact_preference: formData.value.contactPreference,
-      status: 'pending'
+      status: 'pending',
     })
 
     if (error) throw error
@@ -171,9 +185,11 @@ const handleSubmit = async () => {
       isSuccess.value = false
       close()
     }, 3000)
-  } catch (error) {
-    console.error('Error submitting advertisement:', error)
-  } finally {
+  }
+  catch (err) {
+    console.error('Error submitting advertisement:', err)
+  }
+  finally {
     isSubmitting.value = false
   }
 }
@@ -183,11 +199,25 @@ const handleLoginClick = () => {
   close()
 }
 
+// Handle subcategory change
+function handleSubcategoryChange(e: Event) {
+  const value = (e.target as HTMLSelectElement).value
+  selectSubcategory(value || null)
+}
+
+// Handle type change
+async function handleTypeChange(e: Event) {
+  const value = (e.target as HTMLSelectElement).value
+  await selectType(value || null)
+}
+
 watch(() => props.modelValue, (newValue) => {
   if (newValue) {
     document.body.style.overflow = 'hidden'
     document.addEventListener('keydown', handleKeyDown)
-  } else {
+    fetchInitialData()
+  }
+  else {
     document.body.style.overflow = ''
     document.removeEventListener('keydown', handleKeyDown)
     if (!isSuccess.value) {
@@ -237,24 +267,128 @@ watch(() => props.modelValue, (newValue) => {
 
           <form v-else class="modal-body" @submit.prevent="handleSubmit">
             <div class="form-grid">
+              <!-- Subcategory selector -->
               <div class="form-group full-width">
-                <label for="vehicleType">{{ $t('advertise.vehicleType') }}</label>
+                <label for="adv-subcategory">{{ $t('advertise.vehicleType') }}</label>
                 <select
-                  id="vehicleType"
-                  v-model="formData.vehicleType"
+                  id="adv-subcategory"
                   class="form-input"
+                  :value="selectedSubcategoryId || ''"
+                  :disabled="selectorLoading"
+                  @change="handleSubcategoryChange"
                 >
-                  <option value="">{{ $t('advertise.selectType') }}</option>
+                  <option value="">{{ $t('advertise.selectSubcategory') }}</option>
                   <option
-                    v-for="type in vehicleTypes"
-                    :key="type.value"
-                    :value="type.value"
+                    v-for="sub in subcategories"
+                    :key="sub.id"
+                    :value="sub.id"
                   >
-                    {{ $t(type.label) }}
+                    {{ subcatName(sub) }}
                   </option>
                 </select>
               </div>
 
+              <!-- Type selector (appears when subcategory selected) -->
+              <div v-if="selectedSubcategoryId && linkedTypes.length" class="form-group full-width">
+                <label for="adv-type">{{ $t('advertise.selectType') }}</label>
+                <select
+                  id="adv-type"
+                  class="form-input"
+                  :value="selectedTypeId || ''"
+                  @change="handleTypeChange"
+                >
+                  <option value="">{{ $t('advertise.selectType') }}</option>
+                  <option
+                    v-for="t in linkedTypes"
+                    :key="t.id"
+                    :value="t.id"
+                  >
+                    {{ subcatName(t) }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Dynamic filters (appear when type selected) -->
+              <template v-if="selectedTypeId && filterDefinitions.length">
+                <div class="form-group full-width section-label">
+                  <span class="section-title">{{ $t('advertise.characteristics') }}</span>
+                </div>
+                <template v-for="filter in filterDefinitions" :key="filter.id">
+                  <!-- Desplegable / Desplegable tick → select -->
+                  <div
+                    v-if="filter.type === 'desplegable' || filter.type === 'desplegable_tick'"
+                    class="form-group"
+                  >
+                    <label :for="`f-${filter.name}`">
+                      {{ getFilterLabel(filter, locale) }}
+                      <span v-if="filter.unit" class="unit-label">({{ filter.unit }})</span>
+                    </label>
+                    <select
+                      :id="`f-${filter.name}`"
+                      class="form-input"
+                      :value="filterValues[filter.name] || ''"
+                      @change="setFilterValue(filter.name, ($event.target as HTMLSelectElement).value)"
+                    >
+                      <option value="">-</option>
+                      <option v-for="opt in getFilterOptions(filter)" :key="opt" :value="opt">
+                        {{ opt }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <!-- Caja → text input -->
+                  <div v-else-if="filter.type === 'caja'" class="form-group">
+                    <label :for="`f-${filter.name}`">
+                      {{ getFilterLabel(filter, locale) }}
+                      <span v-if="filter.unit" class="unit-label">({{ filter.unit }})</span>
+                    </label>
+                    <input
+                      :id="`f-${filter.name}`"
+                      type="text"
+                      class="form-input"
+                      :value="filterValues[filter.name] || ''"
+                      @input="setFilterValue(filter.name, ($event.target as HTMLInputElement).value)"
+                    >
+                  </div>
+
+                  <!-- Slider / Calc → number input (single value for advertise) -->
+                  <div v-else-if="filter.type === 'slider' || filter.type === 'calc'" class="form-group">
+                    <label :for="`f-${filter.name}`">
+                      {{ getFilterLabel(filter, locale) }}
+                      <span v-if="filter.unit" class="unit-label">({{ filter.unit }})</span>
+                    </label>
+                    <input
+                      :id="`f-${filter.name}`"
+                      type="number"
+                      class="form-input"
+                      :min="(filter.options as Record<string, number>).min"
+                      :max="(filter.options as Record<string, number>).max"
+                      :step="(filter.options as Record<string, number>).step || 1"
+                      :value="filterValues[filter.name] ?? ''"
+                      @input="setFilterValue(filter.name, ($event.target as HTMLInputElement).value)"
+                    >
+                  </div>
+
+                  <!-- Tick → checkbox -->
+                  <div v-else-if="filter.type === 'tick'" class="form-group">
+                    <label class="checkbox-label">
+                      <input
+                        type="checkbox"
+                        class="checkbox-input"
+                        :checked="!!filterValues[filter.name]"
+                        @change="setFilterValue(filter.name, ($event.target as HTMLInputElement).checked)"
+                      >
+                      <span>{{ getFilterLabel(filter, locale) }}</span>
+                    </label>
+                  </div>
+                </template>
+              </template>
+
+              <div v-if="filtersLoading" class="form-group full-width">
+                <p class="loading-text">{{ $t('common.loading') }}...</p>
+              </div>
+
+              <!-- Vehicle details -->
               <div class="form-group">
                 <label for="brand">{{ $t('advertise.brand') }}</label>
                 <input
@@ -351,6 +485,7 @@ watch(() => props.modelValue, (newValue) => {
                 </label>
               </div>
 
+              <!-- Contact info -->
               <div class="form-group">
                 <label for="contactName">
                   {{ $t('advertise.contactName') }} *
@@ -414,7 +549,7 @@ watch(() => props.modelValue, (newValue) => {
                     class="checkbox-input"
                     :class="{ 'input-error': validationErrors.termsAccepted }"
                   >
-                  <span>{{ $t('advertise.termsAcceptance') }}</span>
+                  <span>{{ $t('advertise.acceptTerms') }}</span>
                 </label>
               </div>
             </div>
@@ -425,7 +560,7 @@ watch(() => props.modelValue, (newValue) => {
                 class="btn btn-primary btn-submit"
                 :disabled="isSubmitting"
               >
-                {{ isSubmitting ? $t('common.submitting') : $t('advertise.submit') }}
+                {{ isSubmitting ? $t('advertise.sending') : $t('advertise.submit') }}
               </button>
             </div>
           </form>
@@ -564,6 +699,30 @@ watch(() => props.modelValue, (newValue) => {
   margin-bottom: var(--spacing-8);
 }
 
+.unit-label {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.section-label {
+  margin-top: var(--spacing-8);
+  margin-bottom: calc(-1 * var(--spacing-8));
+}
+
+.section-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.loading-text {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
 .form-input {
   width: 100%;
   padding: var(--spacing-12);
@@ -578,6 +737,11 @@ watch(() => props.modelValue, (newValue) => {
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
+}
+
+.form-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .input-error {

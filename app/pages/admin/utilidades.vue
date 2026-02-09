@@ -874,8 +874,16 @@ const monthlyBreakdown = computed(() => {
 })
 
 // Export functions
-function exportBalance() {
-  const dataToExport = exportDataScope.value === 'all' ? entries.value : entries.value
+async function exportBalance() {
+  let dataToExport = [...entries.value]
+
+  if (exportDataScope.value === 'all') {
+    // Fetch all entries without filters for full export
+    await fetchEntries({})
+    dataToExport = [...entries.value]
+    // Re-fetch with current filters to restore the view
+    await fetchEntries(filters)
+  }
 
   if (exportFormat.value === 'excel') {
     exportToExcel(dataToExport)

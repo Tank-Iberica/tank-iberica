@@ -1,5 +1,8 @@
 import type { Vehicle } from '~/composables/useVehicles'
 
+// Logo URL — hosted on Cloudinary for reliability (originally from Google Drive)
+const LOGO_URL = 'https://lh3.googleusercontent.com/d/1LoKrBHe5pLXYdXDAhNdMTiP4Xkm_jDbD'
+
 interface PdfOptions {
   vehicle: Vehicle
   locale: string
@@ -48,18 +51,30 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
   const grayText: [number, number, number] = [74, 90, 90]      // #4A5A5A --text-secondary
   const accentColor: [number, number, number] = [127, 209, 200] // #7FD1C8 --color-accent
 
-  // Collect characteristics
+  // Collect characteristics from both sources (like legacy)
   const characteristics: { label: string, value: string }[] = []
-  if (vehicle.filters_json && typeof vehicle.filters_json === 'object') {
-    const excludeKeys = ['marca', 'modelo', 'año', 'brand', 'model', 'year']
-    for (const [key, value] of Object.entries(vehicle.filters_json)) {
-      if (!value || excludeKeys.includes(key.toLowerCase())) continue
-      const displayValue = typeof value === 'object' && value !== null
-        ? ((value as Record<string, string>)[locale] || (value as Record<string, string>).es || String(value))
-        : String(value)
+  const excludeKeys = ['marca', 'modelo', 'año', 'brand', 'model', 'year']
+  const seenKeys = new Set<string>()
+
+  function extractCharacteristics(source: Record<string, unknown> | null | undefined) {
+    if (!source || typeof source !== 'object') return
+    for (const [key, value] of Object.entries(source)) {
+      if (!value || excludeKeys.includes(key.toLowerCase()) || seenKeys.has(key)) continue
+      seenKeys.add(key)
+      let displayValue: string
+      if (typeof value === 'object' && value !== null) {
+        const obj = value as Record<string, string>
+        displayValue = obj[locale] || obj.es || obj.value || String(value)
+      }
+      else {
+        displayValue = String(value)
+      }
       if (displayValue) characteristics.push({ label: key, value: displayValue })
     }
   }
+
+  extractCharacteristics(vehicle.filters_json)
+  extractCharacteristics((vehicle as Record<string, unknown>).caracteristicas_json as Record<string, unknown>)
 
   const description = locale === 'en' && vehicle.description_en
     ? vehicle.description_en
@@ -95,16 +110,25 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
   doc.setFillColor(...petrolBlue)
   doc.rect(0, headerHeight / 2, pageWidth, headerHeight / 2, 'F')
 
-  doc.setTextColor(...white)
-  doc.setFontSize(20)
-  doc.setFont('helvetica', 'bold')
-  doc.text('TANK IBERICA', margin, 20)
+  // Logo image (fallback to text if load fails)
+  const logoBase64 = await loadImageAsBase64(LOGO_URL)
+  if (logoBase64) {
+    doc.addImage(logoBase64, 'PNG', margin, 5, 22, 22)
+  }
+  else {
+    doc.setTextColor(...white)
+    doc.setFontSize(20)
+    doc.setFont('helvetica', 'bold')
+    doc.text('TANK IBERICA', margin, 20)
+  }
 
   // Accent line under logo
   doc.setDrawColor(...accentColor)
   doc.setLineWidth(0.8)
-  doc.line(margin, 23, margin + 45, 23)
+  const accentStart = logoBase64 ? margin + 24 : margin
+  doc.line(accentStart, 23, accentStart + 45, 23)
 
+  doc.setTextColor(...white)
   doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
   const contactX = pageWidth - margin

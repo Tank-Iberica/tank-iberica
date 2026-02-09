@@ -286,7 +286,7 @@ function handleFavorite() {
 }
 
 async function handleShare() {
-  if (!vehicle.value) return
+  if (!vehicle.value || !import.meta.client) return
   const title = buildProductName(vehicle.value, locale.value, true)
   const text = description.value || ''
   const url = window.location.href
@@ -581,35 +581,64 @@ if (vehicle.value) {
   background: rgba(35, 66, 74, 0.05);
 }
 
-/* Mobile: contact btns on a separate row */
-@media (max-width: 479px) {
+/* Mobile base: contact btns on a separate row */
+.vehicle-actions-row {
+  flex-wrap: wrap;
+}
+
+.vehicle-pdf-btn {
+  order: 1;
+  flex-shrink: 0;
+}
+
+.vehicle-pdf-btn span {
+  display: none;
+}
+
+.vehicle-icon-btns {
+  order: 2;
+  margin-left: auto;
+}
+
+.vehicle-contact-btns {
+  order: 3;
+  flex-basis: 100%;
+}
+
+.contact-btn {
+  padding: 0.5rem 0.4rem;
+  font-size: 0.875rem;
+  gap: 0.25rem;
+}
+
+@media (min-width: 480px) {
   .vehicle-actions-row {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .vehicle-pdf-btn {
-    order: 1;
-    flex-shrink: 0;
+    order: unset;
+    flex-shrink: unset;
   }
 
   .vehicle-pdf-btn span {
-    display: none;
+    display: inline;
   }
 
   .vehicle-icon-btns {
-    order: 2;
-    margin-left: auto;
+    order: unset;
+    margin-left: 0;
   }
 
   .vehicle-contact-btns {
-    order: 3;
-    flex-basis: 100%;
+    order: unset;
+    flex-basis: auto;
   }
 
   .contact-btn {
-    padding: 0.5rem 0.4rem;
-    font-size: 11px;
-    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    gap: 0.4rem;
   }
 }
 

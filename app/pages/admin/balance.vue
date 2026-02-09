@@ -186,10 +186,14 @@ function toggleFullscreen() {
 }
 
 // Listen for fullscreen change
+function onFullscreenChange() {
+  isFullscreen.value = !!document.fullscreenElement
+}
 onMounted(() => {
-  document.addEventListener('fullscreenchange', () => {
-    isFullscreen.value = !!document.fullscreenElement
-  })
+  document.addEventListener('fullscreenchange', onFullscreenChange)
+})
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', onFullscreenChange)
 })
 
 // Modal actions

@@ -75,14 +75,17 @@
 </template>
 
 <script setup lang="ts">
-import type { News } from '~/composables/useNews'
-
 const route = useRoute()
 const { locale, t: _t } = useI18n()
 const { fetchBySlug } = useNews()
 
-const article = ref<News | null>(null)
-const loading = ref(true)
+// Fetch at setup level so SSR can render SEO meta
+const { data: article, status } = await useAsyncData(
+  `news-${route.params.slug}`,
+  () => fetchBySlug(route.params.slug as string),
+)
+
+const loading = computed(() => status.value === 'pending')
 
 const title = computed(() => {
   if (!article.value) return ''
@@ -96,12 +99,29 @@ const content = computed(() => {
   return article.value.content_es
 })
 
+const metaDesc = computed(() => {
+  if (!article.value) return ''
+  if (locale.value === 'en' && article.value.description_en) return article.value.description_en
+  if (article.value.description_es) return article.value.description_es
+  return title.value
+})
+
 const shareText = computed(() => {
   if (!article.value) return ''
   const parts = [title.value]
   if (import.meta.client) parts.push(window.location.href)
   parts.push('- Tank Iberica')
   return parts.join(' - ')
+})
+
+// SEO meta at setup level — works during SSR
+useSeoMeta({
+  title: () => article.value ? `${title.value} — Tank Iberica` : 'Tank Iberica',
+  description: () => metaDesc.value,
+  ogTitle: () => article.value ? `${title.value} — Tank Iberica` : 'Tank Iberica',
+  ogDescription: () => metaDesc.value,
+  ogImage: () => article.value?.image_url || '',
+  ogType: 'article',
 })
 
 function formatDate(date: string): string {
@@ -111,30 +131,6 @@ function formatDate(date: string): string {
     day: 'numeric',
   })
 }
-
-onMounted(async () => {
-  const slug = route.params.slug as string
-  article.value = await fetchBySlug(slug)
-  loading.value = false
-
-  if (article.value) {
-    const metaDesc = computed(() => {
-      if (!article.value) return ''
-      if (locale.value === 'en' && article.value.description_en) return article.value.description_en
-      if (article.value.description_es) return article.value.description_es
-      return title.value
-    })
-
-    useSeoMeta({
-      title: `${title.value} — Tank Iberica`,
-      description: metaDesc.value,
-      ogTitle: `${title.value} — Tank Iberica`,
-      ogDescription: metaDesc.value,
-      ogImage: article.value.image_url || '',
-      ogType: 'article',
-    })
-  }
-})
 </script>
 
 <style scoped>

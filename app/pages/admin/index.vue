@@ -809,37 +809,70 @@ onMounted(() => {
   font-weight: var(--font-weight-medium);
 }
 
-@media (max-width: 640px) {
+/* Mobile base: banner & quick actions stacked */
+.banner-status-card {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-3);
+}
+
+.banner-status-info {
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.banner-status-text {
+  justify-content: center;
+}
+
+.banner-actions {
+  justify-content: center;
+}
+
+.quick-actions-bar {
+  justify-content: center;
+}
+
+.quick-actions-bar .action-btn span {
+  display: none;
+}
+
+.quick-actions-bar .action-btn {
+  padding: var(--spacing-3);
+}
+
+@media (min-width: 640px) {
   .banner-status-card {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--spacing-3);
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-4);
   }
 
   .banner-status-info {
-    justify-content: center;
-    text-align: center;
-    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
+    flex-direction: row;
   }
 
   .banner-status-text {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .banner-actions {
-    justify-content: center;
+    justify-content: flex-end;
   }
 
   .quick-actions-bar {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .quick-actions-bar .action-btn span {
-    display: none;
+    display: inline;
   }
 
   .quick-actions-bar .action-btn {
-    padding: var(--spacing-3);
+    padding: var(--spacing-2) var(--spacing-4);
   }
 }
 
@@ -1022,7 +1055,7 @@ onMounted(() => {
 /* User stats grid */
 .user-stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-3);
 }
 
@@ -1331,9 +1364,14 @@ onMounted(() => {
   margin-top: var(--spacing-4);
 }
 
-@media (max-width: 640px) {
+/* Mobile base: hide collapsible summary */
+.collapsible-summary {
+  display: none;
+}
+
+@media (min-width: 640px) {
   .collapsible-summary {
-    display: none;
+    display: block;
   }
 }
 </style>

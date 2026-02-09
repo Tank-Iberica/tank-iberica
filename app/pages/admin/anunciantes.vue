@@ -224,7 +224,10 @@ function formatPrice(price: number | null): string {
                 </span>
                 <span v-else class="no-data">Sin especificar</span>
                 <span v-if="ad.year" class="vehicle-year">{{ ad.year }}</span>
-                <span v-if="ad.vehicle_type" class="vehicle-type">{{ ad.vehicle_type }}</span>
+                <span v-if="ad.subcategory || ad.type" class="vehicle-type">
+                  {{ ad.subcategory?.name_es || '' }}{{ ad.subcategory && ad.type ? ' > ' : '' }}{{ ad.type?.name_es || '' }}
+                </span>
+                <span v-else-if="ad.vehicle_type" class="vehicle-type">{{ ad.vehicle_type }}</span>
               </div>
             </td>
             <td class="text-right">
@@ -285,11 +288,28 @@ function formatPrice(price: number | null): string {
               <!-- Vehicle Info -->
               <div class="detail-section">
                 <h4>Vehículo</h4>
-                <p v-if="detailModal.advertisement.vehicle_type"><strong>Tipo:</strong> {{ detailModal.advertisement.vehicle_type }}</p>
+                <p v-if="detailModal.advertisement.subcategory || detailModal.advertisement.type">
+                  <strong>Clasificación:</strong>
+                  {{ detailModal.advertisement.subcategory?.name_es || '' }}{{ detailModal.advertisement.subcategory && detailModal.advertisement.type ? ' > ' : '' }}{{ detailModal.advertisement.type?.name_es || '' }}
+                </p>
+                <p v-else-if="detailModal.advertisement.vehicle_type"><strong>Tipo:</strong> {{ detailModal.advertisement.vehicle_type }}</p>
                 <p v-if="detailModal.advertisement.brand"><strong>Marca:</strong> {{ detailModal.advertisement.brand }}</p>
                 <p v-if="detailModal.advertisement.model"><strong>Modelo:</strong> {{ detailModal.advertisement.model }}</p>
                 <p v-if="detailModal.advertisement.year"><strong>Año:</strong> {{ detailModal.advertisement.year }}</p>
+                <p v-if="detailModal.advertisement.kilometers"><strong>Kilómetros:</strong> {{ detailModal.advertisement.kilometers.toLocaleString('es-ES') }} km</p>
                 <p v-if="detailModal.advertisement.price"><strong>Precio:</strong> {{ formatPrice(detailModal.advertisement.price) }}</p>
+                <p v-if="detailModal.advertisement.contact_preference"><strong>Preferencia contacto:</strong> {{ detailModal.advertisement.contact_preference }}</p>
+              </div>
+
+              <!-- Characteristics (filters_json) -->
+              <div v-if="detailModal.advertisement.filters_json && Object.keys(detailModal.advertisement.filters_json).length" class="detail-section full-width">
+                <h4>Características</h4>
+                <div class="characteristics-grid">
+                  <div v-for="(value, key) in detailModal.advertisement.filters_json" :key="key" class="characteristic-item">
+                    <span class="char-label">{{ key }}</span>
+                    <span class="char-value">{{ value }}</span>
+                  </div>
+                </div>
               </div>
 
               <!-- Description -->
@@ -386,6 +406,8 @@ function formatPrice(price: number | null): string {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 24px;
 }
 
@@ -712,6 +734,31 @@ function formatPrice(price: number | null): string {
 .description-text {
   white-space: pre-wrap;
   line-height: 1.5;
+}
+
+.characteristics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.characteristic-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.char-label {
+  color: #6b7280;
+  text-transform: capitalize;
+}
+
+.char-value {
+  font-weight: 500;
+  color: #111827;
 }
 
 .photos-grid {

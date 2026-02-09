@@ -237,28 +237,28 @@ onUnmounted(() => {
 }
 
 .scrolled .header-icon-btn {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
 }
 
 .scrolled .header-icon-btn svg {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
 }
 
 /* .scrolled .account-btn — mobile shrink handled here, desktop override at ≥768px */
 .scrolled .account-btn {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
 }
 
 .scrolled .account-btn svg {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
 }
 
 .scrolled .lang-flag {
@@ -345,12 +345,12 @@ onUnmounted(() => {
   display: none;
 }
 
-/* Scrolled state — mobile: match other header buttons (28px) */
+/* Scrolled state — mobile: match other header buttons (36px) */
 .scrolled .anunciate-btn {
-  height: 28px;
-  min-height: 28px;
-  padding: 0 0.5rem;
-  font-size: 9px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 0.6rem;
+  font-size: 10px;
 }
 
 /* ============================================

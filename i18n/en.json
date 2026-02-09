@@ -284,19 +284,15 @@
     "acceptTerms": "I accept the terms and conditions",
     "photos": "Vehicle photos",
     "addPhotos": "Add photos",
+    "selectSubcategory": "Select subcategory",
+    "selectType": "Select type",
+    "characteristics": "Vehicle characteristics",
     "submit": "Submit listing",
     "sending": "Sending...",
     "successTitle": "Listing submitted!",
     "successMessage": "We have received your listing. Our team will review it and contact you.",
     "loginRequired": "You must log in to post a listing",
-    "login": "Log in",
-    "types": {
-      "camion": "Truck",
-      "semirremolque": "Semi-trailer",
-      "cabeza_tractora": "Tractor Unit",
-      "furgoneta": "Van",
-      "otro": "Other"
-    }
+    "login": "Log in"
   },
   "demand": {
     "title": "Request a vehicle",
@@ -309,6 +305,10 @@
     "priceRange": "Price range",
     "priceMin": "Minimum",
     "priceMax": "Maximum",
+    "selectSubcategory": "Select subcategory",
+    "selectType": "Select type",
+    "characteristics": "Desired characteristics",
+    "brandPlaceholder": "E.g.: Renault, Iveco, MAN...",
     "specifications": "Specifications / requirements",
     "specificationsPlaceholder": "Describe what you need: capacity, axles, cargo type...",
     "contactName": "Contact name",

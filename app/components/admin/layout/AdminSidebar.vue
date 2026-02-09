@@ -136,6 +136,9 @@
           <NuxtLink to="/admin/cartera" class="nav-item sub" :class="{ active: isActive('/admin/cartera') }">
             <span class="nav-label">Cartera</span>
           </NuxtLink>
+          <NuxtLink to="/admin/agenda" class="nav-item sub" :class="{ active: isActive('/admin/agenda') }">
+            <span class="nav-label">Agenda</span>
+          </NuxtLink>
         </div>
       </div>
 
@@ -222,7 +225,7 @@
           </svg>
         </button>
         <div v-if="!collapsed" v-show="openGroups.users" class="nav-group-items">
-          <NuxtLink to="/admin/agenda" class="nav-item sub" :class="{ active: isActive('/admin/agenda') }">
+          <NuxtLink to="/admin/usuarios" class="nav-item sub" :class="{ active: isActive('/admin/usuarios') }">
             <span class="nav-label">Usuarios</span>
           </NuxtLink>
           <NuxtLink to="/admin/chats" class="nav-item sub" :class="{ active: isActive('/admin/chats') }">
@@ -336,10 +339,10 @@ function isActive(path: string, exact = false): boolean {
 function isActiveGroup(group: string): boolean {
   const groupPaths: Record<string, string[]> = {
     config: ['/admin/config'],
-    catalog: ['/admin/productos', '/admin/anunciantes', '/admin/solicitantes', '/admin/cartera'],
+    catalog: ['/admin/productos', '/admin/anunciantes', '/admin/solicitantes', '/admin/cartera', '/admin/agenda'],
     finance: ['/admin/balance', '/admin/registro', '/admin/historico', '/admin/utilidades'],
     communication: ['/admin/banner', '/admin/noticias', '/admin/comentarios'],
-    users: ['/admin/agenda', '/admin/chats', '/admin/suscripciones'],
+    users: ['/admin/usuarios', '/admin/chats', '/admin/suscripciones'],
   }
   return groupPaths[group]?.some(path => route.path.startsWith(path)) || false
 }
@@ -369,6 +372,7 @@ const popoverData: Record<string, { title: string; items: Array<{ to: string; la
       { to: '/admin/anunciantes', label: 'Anunciantes', badgeRef: 'pendingAnunciantes' },
       { to: '/admin/solicitantes', label: 'Solicitantes', badgeRef: 'pendingSolicitantes' },
       { to: '/admin/cartera', label: 'Cartera' },
+      { to: '/admin/agenda', label: 'Agenda' },
     ],
   },
   finance: {
@@ -391,7 +395,7 @@ const popoverData: Record<string, { title: string; items: Array<{ to: string; la
   users: {
     title: 'Comunidad',
     items: [
-      { to: '/admin/agenda', label: 'Usuarios' },
+      { to: '/admin/usuarios', label: 'Usuarios' },
       { to: '/admin/chats', label: 'Chats', badgeRef: 'pendingChats' },
       { to: '/admin/suscripciones', label: 'Suscripciones', badgeRef: 'pendingSuscripciones' },
     ],

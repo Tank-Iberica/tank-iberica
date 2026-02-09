@@ -1,30 +1,30 @@
 /**
- * Admin Advertisements Composable
- * Full CRUD operations for advertisements (anunciantes) in admin panel
+ * Admin Demands Composable
+ * Full CRUD operations for demands (solicitantes) in admin panel
  */
 
-export type AdvertisementStatus = 'pending' | 'contacted' | 'matched' | 'archived'
+export type DemandStatus = 'pending' | 'contacted' | 'matched' | 'archived'
 
-export interface AdminAdvertisement {
+export interface AdminDemand {
   id: string
   user_id: string | null
   vehicle_type: string | null
   subcategory_id: string | null
   type_id: string | null
   filters_json: Record<string, unknown>
-  brand: string | null
-  model: string | null
-  year: number | null
-  price: number | null
-  kilometers: number | null
+  brand_preference: string | null
+  year_min: number | null
+  year_max: number | null
+  price_min: number | null
+  price_max: number | null
+  specs: Record<string, unknown> | null
   location: string | null
   description: string | null
   contact_name: string
   contact_phone: string | null
   contact_email: string | null
   contact_preference: string | null
-  photos: string[]
-  status: AdvertisementStatus
+  status: DemandStatus
   match_vehicle_id: string | null
   admin_notes: string | null
   created_at: string
@@ -38,12 +38,12 @@ export interface AdminAdvertisement {
   } | null
 }
 
-export interface AdvertisementFilters {
-  status?: AdvertisementStatus | null
+export interface DemandFilters {
+  status?: DemandStatus | null
   search?: string
 }
 
-export const ADVERTISEMENT_STATUSES: { value: AdvertisementStatus; label: string; color: string }[] = [
+export const DEMAND_STATUSES: { value: DemandStatus; label: string; color: string }[] = [
   { value: 'pending', label: 'Pendiente', color: '#ef4444' },
   { value: 'contacted', label: 'Contactado', color: '#f59e0b' },
   { value: 'matched', label: 'Vinculado', color: '#10b981' },
@@ -52,25 +52,25 @@ export const ADVERTISEMENT_STATUSES: { value: AdvertisementStatus; label: string
 
 const PAGE_SIZE = 50
 
-export function useAdminAdvertisements() {
+export function useAdminDemands() {
   const supabase = useSupabaseClient()
 
-  const advertisements = ref<AdminAdvertisement[]>([])
+  const demands = ref<AdminDemand[]>([])
   const loading = ref(false)
   const saving = ref(false)
   const error = ref<string | null>(null)
   const total = ref(0)
 
   /**
-   * Fetch all advertisements with filters
+   * Fetch all demands with filters
    */
-  async function fetchAdvertisements(filters: AdvertisementFilters = {}) {
+  async function fetchDemands(filters: DemandFilters = {}) {
     loading.value = true
     error.value = null
 
     try {
       let query = supabase
-        .from('advertisements')
+        .from('demands')
         .select('*, subcategory:subcategory_id(name_es, name_en), type:type_id(name_es, name_en)', { count: 'exact' })
         .order('created_at', { ascending: false })
 
@@ -79,19 +79,19 @@ export function useAdminAdvertisements() {
       }
 
       if (filters.search) {
-        query = query.or(`contact_name.ilike.%${filters.search}%,brand.ilike.%${filters.search}%,model.ilike.%${filters.search}%`)
+        query = query.or(`contact_name.ilike.%${filters.search}%,brand_preference.ilike.%${filters.search}%,vehicle_type.ilike.%${filters.search}%`)
       }
 
       const { data, error: err, count } = await query.range(0, PAGE_SIZE - 1)
 
       if (err) throw err
 
-      advertisements.value = (data as unknown as AdminAdvertisement[]) || []
+      demands.value = (data as unknown as AdminDemand[]) || []
       total.value = count || 0
     }
     catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error fetching advertisements'
-      advertisements.value = []
+      error.value = err instanceof Error ? err.message : 'Error fetching demands'
+      demands.value = []
     }
     finally {
       loading.value = false
@@ -99,25 +99,25 @@ export function useAdminAdvertisements() {
   }
 
   /**
-   * Fetch single advertisement by ID
+   * Fetch single demand by ID
    */
-  async function fetchById(id: string): Promise<AdminAdvertisement | null> {
+  async function fetchById(id: string): Promise<AdminDemand | null> {
     loading.value = true
     error.value = null
 
     try {
       const { data, error: err } = await supabase
-        .from('advertisements')
+        .from('demands')
         .select('*, subcategory:subcategory_id(name_es, name_en), type:type_id(name_es, name_en)')
         .eq('id', id)
         .single()
 
       if (err) throw err
 
-      return data as unknown as AdminAdvertisement
+      return data as unknown as AdminDemand
     }
     catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error fetching advertisement'
+      error.value = err instanceof Error ? err.message : 'Error fetching demand'
       return null
     }
     finally {
@@ -126,24 +126,24 @@ export function useAdminAdvertisements() {
   }
 
   /**
-   * Update advertisement status
+   * Update demand status
    */
-  async function updateStatus(id: string, status: AdvertisementStatus): Promise<boolean> {
+  async function updateStatus(id: string, status: DemandStatus): Promise<boolean> {
     saving.value = true
     error.value = null
 
     try {
       const { error: err } = await supabase
-        .from('advertisements')
+        .from('demands')
         .update({ status, updated_at: new Date().toISOString() } as never)
         .eq('id', id)
 
       if (err) throw err
 
       // Update local list
-      const index = advertisements.value.findIndex(a => a.id === id)
+      const index = demands.value.findIndex(d => d.id === id)
       if (index !== -1) {
-        advertisements.value[index].status = status
+        demands.value[index].status = status
       }
 
       return true
@@ -166,16 +166,16 @@ export function useAdminAdvertisements() {
 
     try {
       const { error: err } = await supabase
-        .from('advertisements')
+        .from('demands')
         .update({ admin_notes: notes, updated_at: new Date().toISOString() } as never)
         .eq('id', id)
 
       if (err) throw err
 
       // Update local list
-      const index = advertisements.value.findIndex(a => a.id === id)
+      const index = demands.value.findIndex(d => d.id === id)
       if (index !== -1) {
-        advertisements.value[index].admin_notes = notes
+        demands.value[index].admin_notes = notes
       }
 
       return true
@@ -190,7 +190,7 @@ export function useAdminAdvertisements() {
   }
 
   /**
-   * Match advertisement with a vehicle
+   * Match demand with a vehicle
    */
   async function matchVehicle(id: string, vehicleId: string | null): Promise<boolean> {
     saving.value = true
@@ -202,13 +202,12 @@ export function useAdminAdvertisements() {
         updated_at: new Date().toISOString(),
       }
 
-      // If matching, also update status
       if (vehicleId) {
         updateData.status = 'matched'
       }
 
       const { error: err } = await supabase
-        .from('advertisements')
+        .from('demands')
         .update(updateData as never)
         .eq('id', id)
 
@@ -226,28 +225,28 @@ export function useAdminAdvertisements() {
   }
 
   /**
-   * Delete advertisement
+   * Delete demand
    */
-  async function deleteAdvertisement(id: string): Promise<boolean> {
+  async function deleteDemand(id: string): Promise<boolean> {
     saving.value = true
     error.value = null
 
     try {
       const { error: err } = await supabase
-        .from('advertisements')
+        .from('demands')
         .delete()
         .eq('id', id)
 
       if (err) throw err
 
       // Remove from local list
-      advertisements.value = advertisements.value.filter(a => a.id !== id)
+      demands.value = demands.value.filter(d => d.id !== id)
       total.value--
 
       return true
     }
     catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error deleting advertisement'
+      error.value = err instanceof Error ? err.message : 'Error deleting demand'
       return false
     }
     finally {
@@ -256,12 +255,12 @@ export function useAdminAdvertisements() {
   }
 
   /**
-   * Get count of pending advertisements
+   * Get count of pending demands
    */
   async function getPendingCount(): Promise<number> {
     try {
       const { count, error: err } = await supabase
-        .from('advertisements')
+        .from('demands')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'pending')
 
@@ -275,17 +274,17 @@ export function useAdminAdvertisements() {
   }
 
   return {
-    advertisements: readonly(advertisements),
+    demands: readonly(demands),
     loading: readonly(loading),
     saving: readonly(saving),
     error: readonly(error),
     total: readonly(total),
-    fetchAdvertisements,
+    fetchDemands,
     fetchById,
     updateStatus,
     updateNotes,
     matchVehicle,
-    deleteAdvertisement,
+    deleteDemand,
     getPendingCount,
   }
 }

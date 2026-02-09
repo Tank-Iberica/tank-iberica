@@ -342,6 +342,8 @@ function groupMessagesByDate(messages: ChatMessage[]) {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 16px;
   flex-shrink: 0;
 }

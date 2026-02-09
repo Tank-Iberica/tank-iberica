@@ -243,6 +243,7 @@
 
 <script setup lang="ts">
 import type { Vehicle } from '~/composables/useVehicles'
+import { generateVehiclePdf } from '~/utils/generatePdf'
 
 const props = defineProps<{
   vehicles: readonly Vehicle[]
@@ -279,18 +280,16 @@ function selectAll() {
   selectedIds.value = all
 }
 
-function confirmExportPdf() {
+async function confirmExportPdf() {
   showPdfModal.value = false
   const selected = sortedVehicles.value.filter(v => selectedIds.value.has(v.id))
   for (const vehicle of selected) {
-    const url = `/vehiculo/${vehicle.slug}?print=1`
-    const win = window.open(url, '_blank')
-    if (win) {
-      win.addEventListener('afterprint', () => win.close())
-      win.addEventListener('load', () => {
-        setTimeout(() => win.print(), 500)
-      })
-    }
+    await generateVehiclePdf({
+      vehicle,
+      locale: locale.value,
+      productName: buildProductName(vehicle, locale.value, true),
+      priceText: priceText(vehicle),
+    })
   }
 }
 
@@ -457,15 +456,13 @@ function compartmentsText(v: Vehicle): string {
   return val ? String(val) : '—'
 }
 
-function downloadBrochure(vehicle: Vehicle) {
-  const url = `/vehiculo/${vehicle.slug}?print=1`
-  const win = window.open(url, '_blank')
-  if (win) {
-    win.addEventListener('afterprint', () => win.close())
-    win.addEventListener('load', () => {
-      setTimeout(() => win.print(), 500)
-    })
-  }
+async function downloadBrochure(vehicle: Vehicle) {
+  await generateVehiclePdf({
+    vehicle,
+    locale: locale.value,
+    productName: buildProductName(vehicle, locale.value, true),
+    priceText: priceText(vehicle),
+  })
 }
 
 async function shareVehicle(vehicle: Vehicle) {

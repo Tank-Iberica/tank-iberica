@@ -215,9 +215,12 @@ export function useAdminConfig() {
   }
 }
 
-// Helper function to escape HTML
+// Helper function to escape HTML (SSR-safe)
 function escapeHtml(text: string): string {
-  const div = document.createElement('div')
-  div.textContent = text
-  return div.innerHTML
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
 }

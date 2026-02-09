@@ -579,7 +579,7 @@ async function exportToExcel(data: AdminVehicle[]) {
   const XLSX = await import('xlsx')
 
   const rows = data.map(v => ({
-    'Tipo': v.is_online ? 'Online' : 'Offline',
+    'Online': v.is_online ? 'Online' : 'Offline',
     'Marca': v.brand,
     'Modelo': v.model,
     'Tipo': getSubcategoryName(v.type_id),
@@ -677,7 +677,7 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
     ['Categoría', vehicle.category?.toUpperCase() || '-'],
     ['Tipo', getSubcategoryName(vehicle.type_id)],
     ['Estado', getStatusLabel(vehicle.status)],
-    ['Tipo', vehicle.is_online ? 'Online (Web)' : 'Offline (Intermediación)'],
+    ['Visibilidad', vehicle.is_online ? 'Online (Web)' : 'Offline (Intermediación)'],
   ]
 
   if (vehicle.location) details.push(['Ubicación', vehicle.location])
@@ -1416,6 +1416,8 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .header-left {
@@ -1489,7 +1491,8 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 /* Search */
 .search-box {
   position: relative;
-  width: 280px;
+  width: 100%;
+  max-width: 280px;
 }
 
 .search-box .search-icon {
@@ -2462,54 +2465,96 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 }
 
 /* ============================================
-   RESPONSIVE
+   RESPONSIVE — Mobile-first
    ============================================ */
-@media (max-width: 1024px) {
-  .toolbar-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
 
-  .search-box {
-    width: 100%;
-  }
-
-  .filter-group {
-    width: 100%;
-  }
-
-  .filter-group select {
-    flex: 1;
-  }
-
-  .toolbar-actions {
-    margin-left: 0;
-    justify-content: flex-end;
-  }
+/* Mobile base: stacked layouts */
+.page-header {
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
 }
 
-@media (max-width: 768px) {
-  .page-header {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-  }
+.toolbar-row {
+  flex-direction: column;
+  align-items: stretch;
+}
 
-  .column-toggles {
-    flex-wrap: wrap;
+.search-box {
+  max-width: none;
+}
+
+.filter-group {
+  width: 100%;
+}
+
+.filter-group select {
+  flex: 1;
+}
+
+.toolbar-actions {
+  margin-left: 0;
+  justify-content: flex-end;
+}
+
+.columns-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.form-group.half {
+  width: 100%;
+  margin-right: 0;
+}
+
+.modal {
+  margin: 10px;
+}
+
+@media (min-width: 768px) {
+  .page-header {
+    flex-direction: row;
+    gap: 0;
+    align-items: center;
   }
 
   .columns-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .form-group.half {
-    width: 100%;
+    width: calc(50% - 8px);
+    margin-right: 16px;
+  }
+
+  .form-group.half:last-child {
     margin-right: 0;
   }
 
   .modal {
-    margin: 10px;
+    margin: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .toolbar-row {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .search-box {
+    max-width: 280px;
+  }
+
+  .filter-group {
+    width: auto;
+  }
+
+  .filter-group select {
+    flex: none;
+  }
+
+  .toolbar-actions {
+    margin-left: auto;
   }
 }
 </style>

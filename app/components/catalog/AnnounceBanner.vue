@@ -148,10 +148,10 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: var(--color-white);
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   border-radius: 50%;
   cursor: pointer;
   font-size: 1.3rem;
