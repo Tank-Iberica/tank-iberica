@@ -416,7 +416,7 @@ const emit = defineEmits<{
 
 const { locale } = useI18n()
 const { visibleFilters, activeFilters, setFilter, clearFilter, clearAll } = useFilters()
-const { updateFilters, filters, locationLevel, setLocationLevel, activeTypeId } = useCatalogState()
+const { updateFilters, filters, locationLevel, setLocationLevel, activeTypeId, setSubcategory, setType } = useCatalogState()
 const { location: userLocation, detect: detectLocation, setManualLocation } = useUserLocation()
 
 const open = ref(false)
@@ -503,8 +503,15 @@ function onProvinceSelect(e: Event) {
   }
 }
 
-onMounted(() => {
-  detectLocation()
+onMounted(async () => {
+  await detectLocation()
+  // Update edit fields after detection completes
+  if (userLocation.value.country && !editCountry.value) {
+    editCountry.value = userLocation.value.country
+  }
+  if (userLocation.value.province && !editProvince.value) {
+    editProvince.value = userLocation.value.province
+  }
 })
 const currentYear = new Date().getFullYear()
 
@@ -679,7 +686,10 @@ function onTextInput(name: string, event: Event) {
 
 function handleClearAll() {
   clearAll()
-  updateFilters({ price_min: undefined, price_max: undefined, year_min: undefined, year_max: undefined, brand: undefined, location_countries: undefined, location_regions: undefined, location_province_eq: undefined })
+  // Clear subcategory and type selections
+  setSubcategory(null, null)
+  setType(null, null)
+  updateFilters({ price_min: undefined, price_max: undefined, year_min: undefined, year_max: undefined, brand: undefined, location_countries: undefined, location_regions: undefined, location_province_eq: undefined, subcategory_id: undefined, type_id: undefined })
   // Reset to Nacional (default for Spain)
   setLocationLevel('nacional', 'ES', null, null)
   selectedLevel.value = 'nacional'
@@ -824,6 +834,13 @@ onUnmounted(() => {
   align-items: center;
   gap: 0.3rem;
   flex-shrink: 0;
+  padding-right: 0.5rem;
+  border-right: 1px solid var(--border-color);
+}
+
+.filters-mobile-wrapper .filter-group:last-child {
+  border-right: none;
+  padding-right: 0;
 }
 
 .filters-mobile-wrapper .filter-group-slider {

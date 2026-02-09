@@ -21,6 +21,8 @@ export interface AdminFilter {
     min?: number              // For slider type
     max?: number              // For slider type
     choices?: string[]        // For desplegable type
+    choices_source?: ChoicesSource // For desplegable: where options come from
+    step?: number             // For calc type: increment/decrement step
     [key: string]: unknown
   }
   is_extra: boolean
@@ -30,6 +32,8 @@ export interface AdminFilter {
   created_at: string
   updated_at: string
 }
+
+export type ChoicesSource = 'manual' | 'auto' | 'both'
 
 export interface FilterFormData {
   name: string
@@ -43,6 +47,11 @@ export interface FilterFormData {
   status: FilterStatus
   is_extra: boolean
   is_hidden: boolean
+  // Desplegable / desplegable_tick
+  choices: string[]
+  choices_source: ChoicesSource
+  // Calc
+  step: number | null
 }
 
 export const FILTER_TYPES: { value: FilterType; label: string; description: string }[] = [
@@ -138,6 +147,13 @@ export function useAdminFilters() {
         if (formData.extra_filters.length) options.extra_filters = formData.extra_filters
         if (formData.hides.length) options.hides = formData.hides
       }
+      if (formData.type === 'desplegable' || formData.type === 'desplegable_tick') {
+        options.choices_source = formData.choices_source || 'manual'
+        if (formData.choices.length) options.choices = formData.choices
+      }
+      if (formData.type === 'calc') {
+        if (formData.step) options.step = formData.step
+      }
 
       const insertData = {
         name: formData.name,
@@ -187,10 +203,9 @@ export function useAdminFilters() {
 
       if (formData.name !== undefined) {
         updateData.name = formData.name
-        if (!formData.label_es) updateData.label_es = formData.name
+        updateData.label_es = formData.name
       }
       if (formData.type !== undefined) updateData.type = formData.type
-      if (formData.label_es !== undefined) updateData.label_es = formData.label_es
       if (formData.label_en !== undefined) updateData.label_en = formData.label_en
       if (formData.unit !== undefined) updateData.unit = formData.unit
       if (formData.is_extra !== undefined) updateData.is_extra = formData.is_extra
@@ -210,6 +225,19 @@ export function useAdminFilters() {
       if (formData.hides !== undefined) {
         if (formData.hides.length) options.hides = formData.hides
         else delete options.hides
+      }
+      // Desplegable options
+      if (formData.choices !== undefined) {
+        if (formData.choices.length) options.choices = formData.choices
+        else delete options.choices
+      }
+      if (formData.choices_source !== undefined) {
+        options.choices_source = formData.choices_source
+      }
+      // Calc step
+      if (formData.step !== undefined) {
+        if (formData.step) options.step = formData.step
+        else delete options.step
       }
       updateData.options = options
 

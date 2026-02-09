@@ -73,7 +73,10 @@
         <span v-if="visibleFilters.length" class="separator">&gt;</span>
 
         <!-- Dynamic filters inline -->
-        <template v-for="filter in visibleFilters" :key="filter.id">
+        <template v-for="(filter, idx) in visibleFilters" :key="filter.id">
+          <!-- Separator between filters -->
+          <span v-if="idx > 0" class="filter-divider" />
+
           <!-- Desplegable (select) -->
           <div v-if="filter.type === 'desplegable'" class="filter-inline">
             <span class="filter-label-inline">{{ filterLabel(filter) }}:</span>
@@ -100,13 +103,23 @@
             <span>{{ filterLabel(filter) }}</span>
           </label>
 
-          <!-- Slider / Calc (range inputs) -->
-          <div v-else-if="filter.type === 'slider' || filter.type === 'calc'" class="filter-inline">
+          <!-- Slider (range inputs with dynamic min/max from vehicle data) -->
+          <div v-else-if="filter.type === 'slider'" class="filter-inline">
             <span class="filter-label-inline">{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}:</span>
             <div class="filter-range-inline">
-              <input type="number" class="filter-input-inline" :value="activeFilters[filter.name + '_min'] || ''" :min="getSliderMin(filter)" :max="getSliderMax(filter)" placeholder="Min" @change="onRangeChange(filter.name + '_min', $event)">
+              <input type="number" class="filter-input-inline" :value="activeFilters[filter.name + '_min'] || ''" :min="getSliderMin(filter)" :max="getSliderMax(filter)" :placeholder="String(getSliderMin(filter))" @change="onRangeChange(filter.name + '_min', $event)">
               <span class="filter-dash">—</span>
-              <input type="number" class="filter-input-inline" :value="activeFilters[filter.name + '_max'] || ''" :min="getSliderMin(filter)" :max="getSliderMax(filter)" placeholder="Max" @change="onRangeChange(filter.name + '_max', $event)">
+              <input type="number" class="filter-input-inline" :value="activeFilters[filter.name + '_max'] || ''" :min="getSliderMin(filter)" :max="getSliderMax(filter)" :placeholder="String(getSliderMax(filter))" @change="onRangeChange(filter.name + '_max', $event)">
+            </div>
+          </div>
+
+          <!-- Calc (+/- buttons) -->
+          <div v-else-if="filter.type === 'calc'" class="filter-inline">
+            <span class="filter-label-inline">{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}:</span>
+            <div class="filter-calc-inline">
+              <button class="calc-btn" @click="onCalcDecrement(filter.name, getCalcStep(filter))">−</button>
+              <span class="calc-value">{{ activeFilters[filter.name] || 0 }}</span>
+              <button class="calc-btn" @click="onCalcIncrement(filter.name, getCalcStep(filter))">+</button>
             </div>
           </div>
 
@@ -131,6 +144,8 @@
 </template>
 
 <script setup lang="ts">
+import type { FilterDefinition } from '~/composables/useFilters'
+
 interface SubcategoryRow {
   id: string
   name_es: string
@@ -163,7 +178,7 @@ const {
   setSubcategory,
   setType,
 } = useCatalogState()
-const { visibleFilters, activeFilters, setFilter, clearFilter } = useFilters()
+const { visibleFilters, activeFilters, getFilterOptions, getSliderRange, setFilter, clearFilter } = useFilters()
 
 const subcategories = ref<SubcategoryRow[]>([])
 const types = ref<TypeRow[]>([])
@@ -314,11 +329,8 @@ function filterLabel(filter: { name: string; label_es: string | null; label_en: 
   return filter.label_es || filter.name
 }
 
-function getOptions(filter: { options: Record<string, unknown> }): string[] {
-  const opts = filter.options
-  if (Array.isArray(opts?.values)) return opts.values as string[]
-  if (Array.isArray(opts)) return opts as string[]
-  return []
+function getOptions(filter: FilterDefinition): string[] {
+  return getFilterOptions(filter)
 }
 
 function onSelectChange(name: string, event: Event) {
@@ -350,12 +362,30 @@ function onTickChange(name: string) {
   else setFilter(name, true)
 }
 
-function getSliderMin(filter: { options: Record<string, unknown> }): number {
-  return (filter.options?.min as number) || 0
+function getSliderMin(filter: FilterDefinition): number {
+  const range = getSliderRange(filter)
+  return range.min
 }
 
-function getSliderMax(filter: { options: Record<string, unknown> }): number {
-  return (filter.options?.max as number) || 100
+function getSliderMax(filter: FilterDefinition): number {
+  const range = getSliderRange(filter)
+  return range.max
+}
+
+function getCalcStep(filter: FilterDefinition): number {
+  return (filter.options?.step as number) || 1
+}
+
+function onCalcIncrement(name: string, step: number) {
+  const current = Number(activeFilters.value[name]) || 0
+  setFilter(name, current + step)
+}
+
+function onCalcDecrement(name: string, step: number) {
+  const current = Number(activeFilters.value[name]) || 0
+  const newVal = current - step
+  if (newVal <= 0) clearFilter(name)
+  else setFilter(name, newVal)
 }
 
 function onRangeChange(name: string, event: Event) {
@@ -498,6 +528,11 @@ onUnmounted(() => {
   color: var(--text-auxiliary, #9CA3AF);
 }
 
+/* Subcategory names in uppercase (not types) */
+.subcategory-btn:not(.type-btn) {
+  text-transform: uppercase;
+}
+
 /* Type button (level 2) - slightly different style */
 .type-btn {
   border-style: dashed;
@@ -604,6 +639,16 @@ onUnmounted(() => {
 }
 
 /* ============================================
+   FILTER DIVIDER — vertical bar between filters
+   ============================================ */
+.filter-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-color, #e5e7eb);
+  flex-shrink: 0;
+}
+
+/* ============================================
    INLINE FILTERS — Dynamic filters in Level 3
    ============================================ */
 .filter-inline {
@@ -705,6 +750,60 @@ onUnmounted(() => {
   min-height: auto;
   min-width: auto;
   accent-color: var(--color-primary);
+}
+
+/* Calc buttons */
+.filter-calc-inline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.calc-btn {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+
+.calc-btn:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.calc-btn:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.calc-btn:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.calc-value {
+  min-width: 28px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-top: 2px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
+  background: var(--bg-primary);
 }
 
 /* Responsive adjustments for inline filters */

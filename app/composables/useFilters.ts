@@ -22,6 +22,11 @@ export interface ActiveFilters {
   [filterName: string]: unknown
 }
 
+interface SliderRange {
+  min: number
+  max: number
+}
+
 interface FiltersState {
   definitions: FilterDefinition[]
   subcategoryFilters: FilterDefinition[]
@@ -29,6 +34,8 @@ interface FiltersState {
   loading: boolean
   error: string | null
   activeFilters: ActiveFilters
+  vehicleFilterValues: Record<string, string[]>
+  sliderRanges: Record<string, SliderRange>
 }
 
 const defaultState: FiltersState = {
@@ -38,6 +45,8 @@ const defaultState: FiltersState = {
   loading: false,
   error: null,
   activeFilters: {},
+  vehicleFilterValues: {},
+  sliderRanges: {},
 }
 
 export function useFilters() {
@@ -68,6 +77,7 @@ export function useFilters() {
       state.value.typeFilters = filters.map(f => ({ ...f, source: 'type' as const }))
       state.value.subcategoryFilters = []
       state.value.definitions = state.value.typeFilters
+      await fetchVehicleFilterValues(state.value.definitions)
     }
     catch (err: unknown) {
       state.value.error = err instanceof Error ? err.message : 'Error fetching filters'
@@ -97,8 +107,9 @@ export function useFilters() {
           .eq('id', subcategoryId)
           .single()
 
-        if (subcatData?.applicable_filters) {
-          subcatFilterIds = subcatData.applicable_filters as string[]
+        const row = subcatData as { applicable_filters: string[] | null } | null
+        if (row?.applicable_filters) {
+          subcatFilterIds = row.applicable_filters
         }
       }
 
@@ -119,21 +130,32 @@ export function useFilters() {
         }))
       }
 
-      // Fetch type-level filters
+      // Fetch type-level filters (from types.applicable_filters)
       let typeFiltersList: FilterDefinition[] = []
       if (typeId) {
-        const { data: typeFilterData } = await supabase
-          .from('filter_definitions')
-          .select('*')
-          .eq('type_id', typeId)
-          .eq('status', 'published')
-          .eq('is_hidden', false)
-          .order('sort_order', { ascending: true })
+        const { data: typeData } = await supabase
+          .from('types')
+          .select('applicable_filters')
+          .eq('id', typeId)
+          .single()
 
-        typeFiltersList = ((typeFilterData as FilterDefinition[]) || []).map(f => ({
-          ...f,
-          source: 'type' as const,
-        }))
+        const typeRow = typeData as { applicable_filters: string[] | null } | null
+        const typeFilterIds = typeRow?.applicable_filters || []
+
+        if (typeFilterIds.length > 0) {
+          const { data: typeFilterData } = await supabase
+            .from('filter_definitions')
+            .select('*')
+            .in('id', typeFilterIds)
+            .eq('status', 'published')
+            .eq('is_hidden', false)
+            .order('sort_order', { ascending: true })
+
+          typeFiltersList = ((typeFilterData as FilterDefinition[]) || []).map(f => ({
+            ...f,
+            source: 'type' as const,
+          }))
+        }
       }
 
       state.value.subcategoryFilters = subcatFilters
@@ -144,6 +166,7 @@ export function useFilters() {
       const dedupedTypeFilters = typeFiltersList.filter(f => !subcatIds.has(f.id))
 
       state.value.definitions = [...subcatFilters, ...dedupedTypeFilters]
+      await fetchVehicleFilterValues(state.value.definitions)
     }
     catch (err: unknown) {
       state.value.error = err instanceof Error ? err.message : 'Error fetching filters'
@@ -154,6 +177,84 @@ export function useFilters() {
     finally {
       state.value.loading = false
     }
+  }
+
+  /**
+   * Fetch unique filter values from published vehicles for dynamic options (desplegable)
+   * and compute slider ranges. Called after filter definitions are loaded.
+   */
+  async function fetchVehicleFilterValues(filterDefs: FilterDefinition[]) {
+    const needsValues = filterDefs.filter(f =>
+      (f.type === 'desplegable' || f.type === 'desplegable_tick') &&
+      ((f.options as Record<string, unknown>)?.choices_source === 'auto' ||
+       (f.options as Record<string, unknown>)?.choices_source === 'both'),
+    )
+    const needsRange = filterDefs.filter(f => f.type === 'slider')
+
+    if (!needsValues.length && !needsRange.length) return
+
+    // Fetch all published vehicles' filters_json
+    const { data } = await supabase
+      .from('vehicles')
+      .select('filters_json')
+      .eq('status', 'published')
+
+    if (!data) return
+
+    const vehicles = data as { filters_json: Record<string, unknown> | null }[]
+
+    // Extract unique values for desplegable filters
+    for (const filter of needsValues) {
+      const valuesSet = new Set<string>()
+      for (const v of vehicles) {
+        if (!v.filters_json) continue
+        const val = v.filters_json[filter.id] ?? v.filters_json[filter.name]
+        if (val !== null && val !== undefined && val !== '') {
+          valuesSet.add(String(val))
+        }
+      }
+      state.value.vehicleFilterValues[filter.name] = Array.from(valuesSet).sort()
+    }
+
+    // Compute slider ranges
+    for (const filter of needsRange) {
+      let min = Infinity
+      let max = -Infinity
+      for (const v of vehicles) {
+        if (!v.filters_json) continue
+        const val = v.filters_json[filter.id] ?? v.filters_json[filter.name]
+        const num = Number(val)
+        if (!Number.isNaN(num) && val !== null && val !== undefined && val !== '') {
+          if (num < min) min = num
+          if (num > max) max = num
+        }
+      }
+      if (min !== Infinity && max !== -Infinity) {
+        state.value.sliderRanges[filter.name] = { min, max }
+      }
+    }
+  }
+
+  /**
+   * Get merged options for a desplegable filter (manual choices + auto values)
+   */
+  function getFilterOptions(filter: FilterDefinition): string[] {
+    const opts = filter.options as Record<string, unknown>
+    const source = (opts?.choices_source as string) || 'manual'
+    const manual = (opts?.choices as string[]) || []
+    const auto = state.value.vehicleFilterValues[filter.name] || []
+
+    if (source === 'manual') return manual
+    if (source === 'auto') return auto
+    // 'both': merge and deduplicate
+    return [...new Set([...manual, ...auto])].sort()
+  }
+
+  /**
+   * Get slider range for a filter
+   */
+  function getSliderRange(filter: FilterDefinition): SliderRange {
+    return state.value.sliderRanges[filter.name] || { min: 0, max: 100 }
   }
 
   const visibleFilters = computed(() => {
@@ -218,8 +319,12 @@ export function useFilters() {
     activeFilters: computed(() => state.value.activeFilters),
     loading: computed(() => state.value.loading),
     error: computed(() => state.value.error),
+    vehicleFilterValues: computed(() => state.value.vehicleFilterValues),
+    sliderRanges: computed(() => state.value.sliderRanges),
     fetchByType,
     fetchBySubcategoryAndType,
+    getFilterOptions,
+    getSliderRange,
     setFilter,
     clearFilter,
     clearAll,
