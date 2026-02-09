@@ -7,7 +7,7 @@
       @touchend="onTouchEnd"
     >
       <NuxtImg
-        v-if="currentImage"
+        v-if="currentImage && isCloudinary(currentImageRaw)"
         provider="cloudinary"
         :src="currentImage"
         :alt="alt"
@@ -17,6 +17,12 @@
         format="webp"
         class="gallery-img"
       />
+      <img
+        v-else-if="currentImageRaw"
+        :src="currentImageRaw.url"
+        :alt="alt"
+        class="gallery-img"
+      >
       <div v-else class="gallery-placeholder">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -55,6 +61,7 @@
         @click="currentIndex = i"
       >
         <NuxtImg
+          v-if="isCloudinary(img)"
           provider="cloudinary"
           :src="extractPath(img)"
           :alt="`${alt} ${i + 1}`"
@@ -63,6 +70,11 @@
           fit="cover"
           format="webp"
         />
+        <img
+          v-else
+          :src="img.url"
+          :alt="`${alt} ${i + 1}`"
+        >
       </button>
     </div>
   </div>
@@ -83,11 +95,17 @@ const sortedImages = computed(() =>
   [...props.images].sort((a, b) => a.position - b.position),
 )
 
+const currentImageRaw = computed(() => sortedImages.value[currentIndex.value] || null)
+
 const currentImage = computed(() => {
-  const img = sortedImages.value[currentIndex.value]
+  const img = currentImageRaw.value
   if (!img) return null
   return extractPath(img)
 })
+
+function isCloudinary(img: VehicleImage | null): boolean {
+  return !!img?.url?.includes('cloudinary.com')
+}
 
 function extractPath(img: VehicleImage): string {
   if (img.url?.includes('cloudinary.com')) {
