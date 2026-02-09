@@ -202,7 +202,7 @@
         </div>
       </div>
 
-      <!-- 6. USUARIOS -->
+      <!-- 6. COMUNIDAD -->
       <div class="nav-group">
         <button
           class="nav-group-header"
@@ -214,7 +214,7 @@
             <circle cx="9" cy="7" r="4" />
             <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
           </svg>
-          <span v-if="!collapsed" class="nav-label">Usuarios</span>
+          <span v-if="!collapsed" class="nav-label">Comunidad</span>
           <span v-if="!collapsed && !openGroups.users && pendingUsuarios > 0" class="badge">{{ pendingUsuarios }}</span>
           <span v-if="collapsed && pendingUsuarios > 0" class="badge-dot" />
           <svg v-if="!collapsed" class="nav-chevron" :class="{ open: openGroups.users }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -223,7 +223,7 @@
         </button>
         <div v-if="!collapsed" v-show="openGroups.users" class="nav-group-items">
           <NuxtLink to="/admin/agenda" class="nav-item sub" :class="{ active: isActive('/admin/agenda') }">
-            <span class="nav-label">Agenda</span>
+            <span class="nav-label">Usuarios</span>
           </NuxtLink>
           <NuxtLink to="/admin/chats" class="nav-item sub" :class="{ active: isActive('/admin/chats') }">
             <span class="nav-label">Chats</span>
@@ -389,9 +389,9 @@ const popoverData: Record<string, { title: string; items: Array<{ to: string; la
     ],
   },
   users: {
-    title: 'Usuarios',
+    title: 'Comunidad',
     items: [
-      { to: '/admin/agenda', label: 'Agenda' },
+      { to: '/admin/agenda', label: 'Usuarios' },
       { to: '/admin/chats', label: 'Chats', badgeRef: 'pendingChats' },
       { to: '/admin/suscripciones', label: 'Suscripciones', badgeRef: 'pendingSuscripciones' },
     ],

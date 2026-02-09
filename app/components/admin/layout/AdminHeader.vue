@@ -124,7 +124,7 @@ const currentSection = computed(() => {
     '/admin/config/banner': 'Banner',
     '/admin/anunciantes': 'Anunciantes',
     '/admin/solicitantes': 'Solicitantes',
-    '/admin/usuarios': 'Usuarios',
+    '/admin/usuarios': 'Comunidad',
     '/admin/chat': 'Chat',
     '/admin/suscripciones': 'Suscripciones',
     '/admin/noticias': 'Noticias',

@@ -8,14 +8,14 @@ definePageMeta({
 <template>
   <div class="admin-section">
     <div class="section-header">
-      <h2>Agenda</h2>
+      <h2>Usuarios</h2>
     </div>
 
     <div class="placeholder-content">
       <div class="placeholder-icon">
         👥
       </div>
-      <h3>Agenda de Usuarios</h3>
+      <h3>Gestión de Usuarios</h3>
       <p>Gestión de usuarios registrados</p>
       <div class="placeholder-features">
         <span class="feature-tag">Lista usuarios</span>

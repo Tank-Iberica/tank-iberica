@@ -238,11 +238,11 @@
         </div>
       </div>
 
-      <!-- USUARIOS -->
+      <!-- COMUNIDAD -->
       <div class="collapsible-section" :class="{ open: sectionsOpen.users }">
         <button class="collapsible-header" @click="sectionsOpen.users = !sectionsOpen.users">
           <span class="collapsible-icon">👥</span>
-          <span class="collapsible-title">Usuarios</span>
+          <span class="collapsible-title">Comunidad</span>
           <span class="collapsible-summary">{{ userStats.registered }} registrados · {{ userStats.visits }} visitas</span>
           <svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M6 9l6 6 6-6" />
