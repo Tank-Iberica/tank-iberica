@@ -5,6 +5,7 @@ import {
   type FilterFormData,
   type FilterType,
   type FilterStatus,
+  type ChoicesSource,
   FILTER_TYPES,
   FILTER_STATUSES,
 } from '~/composables/admin/useAdminFilters'
@@ -43,7 +44,13 @@ const formData = ref<FilterFormData>({
   status: 'published',
   is_extra: false,
   is_hidden: false,
+  choices: [],
+  choices_source: 'manual',
+  step: null,
 })
+
+// Input for adding choices one by one
+const choiceInput = ref('')
 
 // Delete confirmation
 const deleteModal = ref({
@@ -83,7 +90,11 @@ function openNewModal() {
     status: 'published',
     is_extra: false,
     is_hidden: false,
+    choices: [],
+    choices_source: 'manual',
+    step: null,
   }
+  choiceInput.value = ''
   showModal.value = true
 }
 
@@ -101,7 +112,11 @@ function openEditModal(filter: AdminFilter) {
     status: filter.status,
     is_extra: filter.is_extra,
     is_hidden: filter.is_hidden,
+    choices: filter.options?.choices || [],
+    choices_source: (filter.options?.choices_source as ChoicesSource) || 'manual',
+    step: (filter.options?.step as number) || null,
   }
+  choiceInput.value = ''
   showModal.value = true
 }
 
@@ -200,6 +215,28 @@ function getHidesDisplay(filter: AdminFilter): string {
 
 // Show extra/hide fields only for tick type
 const showTickOptions = computed(() => formData.value.type === 'tick')
+// Show choices fields for desplegable types
+const showChoicesOptions = computed(() =>
+  formData.value.type === 'desplegable' || formData.value.type === 'desplegable_tick',
+)
+// Show step field for calc type
+const showCalcOptions = computed(() => formData.value.type === 'calc')
+// Show slider info
+const showSliderInfo = computed(() => formData.value.type === 'slider')
+
+// Add choice to list
+function addChoice() {
+  const val = choiceInput.value.trim()
+  if (val && !formData.value.choices.includes(val)) {
+    formData.value.choices = [...formData.value.choices, val]
+  }
+  choiceInput.value = ''
+}
+
+// Remove choice from list
+function removeChoice(index: number) {
+  formData.value.choices = formData.value.choices.filter((_, i) => i !== index)
+}
 </script>
 
 <template>
@@ -427,6 +464,89 @@ const showTickOptions = computed(() => formData.value.type === 'tick')
                 type="text"
                 placeholder="Opcional"
               >
+            </div>
+
+            <!-- Desplegable options -->
+            <div v-if="showChoicesOptions" class="type-options-section">
+              <h4 class="type-options-title">
+                Opciones del desplegable
+              </h4>
+
+              <!-- Source selector -->
+              <div class="form-group">
+                <label>Origen de las opciones</label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input v-model="formData.choices_source" type="radio" value="manual">
+                    <span>Manual</span>
+                    <small>Solo las opciones que definas aquí</small>
+                  </label>
+                  <label class="radio-label">
+                    <input v-model="formData.choices_source" type="radio" value="auto">
+                    <span>Automático</span>
+                    <small>Valores únicos de los vehículos del catálogo</small>
+                  </label>
+                  <label class="radio-label">
+                    <input v-model="formData.choices_source" type="radio" value="both">
+                    <span>Ambos</span>
+                    <small>Opciones manuales + valores de vehículos</small>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Manual choices input -->
+              <div v-if="formData.choices_source !== 'auto'" class="form-group">
+                <label>Opciones manuales</label>
+                <div class="choices-input-row">
+                  <input
+                    v-model="choiceInput"
+                    type="text"
+                    placeholder="Escribir opción y pulsar Añadir"
+                    @keydown.enter.prevent="addChoice"
+                  >
+                  <button type="button" class="btn-add-choice" @click="addChoice">
+                    Añadir
+                  </button>
+                </div>
+                <div v-if="formData.choices.length" class="choices-list">
+                  <span v-for="(choice, idx) in formData.choices" :key="idx" class="choice-chip">
+                    {{ choice }}
+                    <button type="button" class="choice-remove" @click="removeChoice(idx)">×</button>
+                  </span>
+                </div>
+                <p v-else class="text-muted">
+                  No hay opciones definidas.
+                </p>
+              </div>
+            </div>
+
+            <!-- Calc step -->
+            <div v-if="showCalcOptions" class="type-options-section">
+              <h4 class="type-options-title">
+                Configuración del calculador
+              </h4>
+              <div class="form-group">
+                <label for="step">Paso (incremento/decremento)</label>
+                <input
+                  id="step"
+                  v-model.number="formData.step"
+                  type="number"
+                  min="1"
+                  placeholder="1"
+                >
+              </div>
+            </div>
+
+            <!-- Slider info -->
+            <div v-if="showSliderInfo" class="type-options-section">
+              <h4 class="type-options-title">
+                Configuración del slider
+              </h4>
+              <p class="type-options-info">
+                El rango del slider se calcula automáticamente a partir de los valores
+                mínimo y máximo de los vehículos visibles en el catálogo.
+                No necesita configuración manual.
+              </p>
             </div>
 
             <!-- Status -->
@@ -858,6 +978,123 @@ const showTickOptions = computed(() => formData.value.type === 'tick')
   outline: none;
   border-color: var(--color-primary, #23424A);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+}
+
+/* Type-specific options sections */
+.type-options-section {
+  margin-top: 8px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.type-options-title {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.type-options-info {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* Radio group */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.radio-label input[type="radio"] {
+  margin-top: 3px;
+  width: auto;
+  min-height: auto;
+  min-width: auto;
+}
+
+.radio-label span {
+  font-weight: 500;
+}
+
+.radio-label small {
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* Choices input */
+.choices-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.choices-input-row input {
+  flex: 1;
+}
+
+.btn-add-choice {
+  background: var(--color-primary, #23424A);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.btn-add-choice:hover {
+  background: var(--color-primary-dark, #1a3238);
+}
+
+.choices-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.choice-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.choice-remove {
+  background: none;
+  border: none;
+  color: #1d4ed8;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 2px;
+  min-height: auto;
+  min-width: auto;
+}
+
+.choice-remove:hover {
+  color: #dc2626;
 }
 
 .tick-options {

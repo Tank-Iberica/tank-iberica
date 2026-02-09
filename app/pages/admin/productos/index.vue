@@ -6,6 +6,7 @@ import {
 } from '~/composables/admin/useAdminVehicles'
 import { useAdminTypes } from '~/composables/admin/useAdminTypes'
 import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories'
+import { useAdminFilters, type AdminFilter } from '~/composables/admin/useAdminFilters'
 
 definePageMeta({
   layout: 'admin',
@@ -24,6 +25,7 @@ const {
 
 const { types, fetchTypes } = useAdminTypes()
 const { subcategories, fetchSubcategories } = useAdminSubcategories()
+const { filters: adminFilterDefs, fetchFilters: fetchAdminFilters } = useAdminFilters()
 
 // Filters
 const filters = ref<AdminVehicleFilters>({
@@ -58,7 +60,7 @@ interface ColumnGroup {
   required?: boolean
 }
 
-const allColumns: ColumnDef[] = [
+const staticColumns: ColumnDef[] = [
   { key: 'checkbox', label: '', width: '40px' },
   { key: 'image', label: 'Img', width: '56px' },
   { key: 'type', label: 'Tipo', width: '60px' },
@@ -79,18 +81,47 @@ const allColumns: ColumnDef[] = [
   { key: 'actions', label: 'Acciones', width: '110px' },
 ]
 
+// Dynamic filter columns from filter_definitions
+const dynamicFilterColumns = computed<ColumnDef[]>(() => {
+  return (adminFilterDefs.value as AdminFilter[])
+    .filter(f => f.status !== 'archived')
+    .map(f => ({
+      key: `filter_${f.name}`,
+      label: f.label_es || f.name,
+      group: 'filtros',
+    }))
+})
+
+// All columns = static + dynamic
+const allColumns = computed<ColumnDef[]>(() => {
+  return [...staticColumns, ...dynamicFilterColumns.value]
+})
+
+// Active filter columns (non-archived, for template rendering)
+const activeFilterColumns = computed(() => {
+  return (adminFilterDefs.value as AdminFilter[])
+    .filter(f => f.status !== 'archived')
+    .map(f => ({
+      key: `filter_${f.name}`,
+      filterName: f.name,
+      label: f.label_es || f.name,
+      unit: f.unit,
+    }))
+})
+
 const defaultColumnGroups: ColumnGroup[] = [
   { id: 'base', name: 'Base', icon: '📋', columns: ['checkbox', 'image', 'type', 'brand', 'model', 'subcategory', 'typeName', 'year', 'price', 'category', 'status', 'actions'], active: true, required: true },
   { id: 'docs', name: 'Docs', icon: '📄', columns: ['plate', 'location'], active: false },
   { id: 'tecnico', name: 'Técnico', icon: '🔧', columns: ['description'], active: false },
   { id: 'cuentas', name: 'Cuentas', icon: '💰', columns: ['minPrice', 'cost'], active: false },
   { id: 'alquiler', name: 'Alquiler', icon: '📅', columns: ['rentalPrice'], active: false },
+  { id: 'filtros', name: 'Filtros', icon: '🔎', columns: [], active: false },
 ]
 
-const STORAGE_KEY = 'tank-admin-productos-config-v3'
+const STORAGE_KEY = 'tank-admin-productos-config-v4'
 
 const columnGroups = ref<ColumnGroup[]>(defaultColumnGroups.map(g => ({ ...g, columns: [...g.columns] })))
-const columnOrder = ref<string[]>(allColumns.map(c => c.key))
+const columnOrder = ref<string[]>(staticColumns.map(c => c.key))
 
 function loadConfig() {
   if (!import.meta.client) return
@@ -115,6 +146,47 @@ function saveConfig() {
     groups: columnGroups.value,
     order: columnOrder.value,
   }))
+}
+
+// Sync dynamic filter columns into "filtros" group and columnOrder when filters load
+function syncFilterColumns() {
+  const filterKeys = dynamicFilterColumns.value.map(c => c.key)
+
+  // Update "filtros" group columns
+  const filtrosGroup = columnGroups.value.find(g => g.id === 'filtros')
+  if (filtrosGroup) {
+    // Add new filter columns that aren't in the group yet
+    for (const key of filterKeys) {
+      if (!filtrosGroup.columns.includes(key)) {
+        filtrosGroup.columns.push(key)
+      }
+    }
+    // Remove filter columns that no longer exist
+    filtrosGroup.columns = filtrosGroup.columns.filter(
+      c => !c.startsWith('filter_') || filterKeys.includes(c),
+    )
+  }
+
+  // Add new filter columns to columnOrder if not present
+  for (const key of filterKeys) {
+    if (!columnOrder.value.includes(key)) {
+      // Insert before 'actions' if possible, otherwise at end
+      const actionsIdx = columnOrder.value.indexOf('actions')
+      if (actionsIdx >= 0) {
+        columnOrder.value.splice(actionsIdx, 0, key)
+      }
+      else {
+        columnOrder.value.push(key)
+      }
+    }
+  }
+
+  // Remove obsolete filter columns from order
+  columnOrder.value = columnOrder.value.filter(
+    k => !k.startsWith('filter_') || filterKeys.includes(k),
+  )
+
+  saveConfig()
 }
 
 onMounted(() => {
@@ -145,7 +217,7 @@ const _visibleColumns = computed(() => {
   // Return columns in order
   return columnOrder.value
     .filter(key => visibleKeys.has(key))
-    .map(key => allColumns.find(c => c.key === key)!)
+    .map(key => allColumns.value.find(c => c.key === key)!)
     .filter(Boolean)
 })
 
@@ -372,8 +444,8 @@ function deleteGroup(groupId: string) {
 
 function resetConfig() {
   columnGroups.value = defaultColumnGroups.map(g => ({ ...g, columns: [...g.columns] }))
-  columnOrder.value = allColumns.map(c => c.key)
-  saveConfig()
+  columnOrder.value = staticColumns.map(c => c.key)
+  syncFilterColumns()
 }
 
 // Drag and drop for column ordering
@@ -424,7 +496,8 @@ const categoryOptions = [
 // DATA LOADING
 // ============================================
 onMounted(async () => {
-  await Promise.all([fetchSubcategories(), fetchTypes(), fetchTypeSubcategoryLinks(), loadVehicles()])
+  await Promise.all([fetchSubcategories(), fetchTypes(), fetchTypeSubcategoryLinks(), loadVehicles(), fetchAdminFilters()])
+  syncFilterColumns()
 })
 
 watch([filters, onlineFilter], () => loadVehicles(), { deep: true })
@@ -770,8 +843,21 @@ const filteredTypes = computed(() => {
 
 // Get available columns for group editing (exclude base columns)
 const availableColumnsForGroups = computed(() =>
-  allColumns.filter(c => !['checkbox', 'actions'].includes(c.key)),
+  allColumns.value.filter(c => !['checkbox', 'actions'].includes(c.key)),
 )
+
+// Helper: get filter value from vehicle's filters_json
+function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
+  const json = vehicle.filters_json as Record<string, unknown> | null
+  if (!json) return '-'
+  const val = json[filterName]
+  if (val === null || val === undefined || val === '') return '-'
+  if (typeof val === 'object' && val !== null) {
+    const obj = val as { es?: string; en?: string }
+    return obj.es || obj.en || '-'
+  }
+  return String(val)
+}
 </script>
 
 <template>
@@ -946,6 +1032,10 @@ const availableColumnsForGroups = computed(() =>
             <th v-if="isGroupActive('alquiler')" class="col-num">
               P. Alq.
             </th>
+            <!-- Dynamic filter columns -->
+            <th v-for="fc in activeFilterColumns" v-show="isGroupActive('filtros')" :key="fc.key" class="col-filter">
+              {{ fc.label }}<span v-if="fc.unit" class="filter-unit">({{ fc.unit }})</span>
+            </th>
             <th>Cat.</th>
             <th class="sortable" @click="toggleSort('status')">
               Estado <span class="sort-icon" :class="{ active: isSortActive('status') }">{{ getSortIcon('status') }}</span>
@@ -1011,6 +1101,10 @@ const availableColumnsForGroups = computed(() =>
             <td v-if="isGroupActive('alquiler')" class="col-num">
               {{ formatPrice(v.rental_price) }}
             </td>
+            <!-- Dynamic filter columns -->
+            <td v-for="fc in activeFilterColumns" v-show="isGroupActive('filtros')" :key="fc.key" class="text-small col-filter">
+              {{ getFilterValue(v, fc.filterName) }}
+            </td>
             <td>
               <span class="cat-pill" :class="getCategoryClass(v.category)">{{ v.category }}</span>
             </td>
@@ -1044,7 +1138,7 @@ const availableColumnsForGroups = computed(() =>
             </td>
           </tr>
           <tr v-if="sortedVehicles.length === 0">
-            <td :colspan="11 + (isGroupActive('docs') ? 2 : 0) + (isGroupActive('tecnico') ? 1 : 0) + (isGroupActive('cuentas') ? 2 : 0) + (isGroupActive('alquiler') ? 1 : 0)" class="empty-cell">
+            <td :colspan="11 + (isGroupActive('docs') ? 2 : 0) + (isGroupActive('tecnico') ? 1 : 0) + (isGroupActive('cuentas') ? 2 : 0) + (isGroupActive('alquiler') ? 1 : 0) + (isGroupActive('filtros') ? activeFilterColumns.length : 0)" class="empty-cell">
               <div class="empty-state">
                 <span class="empty-icon">📦</span>
                 <p>No hay productos que coincidan con los filtros</p>
@@ -1279,7 +1373,8 @@ const availableColumnsForGroups = computed(() =>
                 >
                   <span class="drag-handle">⋮⋮</span>
                   <span class="col-name">{{ allColumns.find(c => c.key === key)?.label || key }}</span>
-                  <span v-if="allColumns.find(c => c.key === key)?.sortable" class="tag tag-blue">Ordenable</span>
+                  <span v-if="key.startsWith('filter_')" class="tag tag-green">Filtro</span>
+                  <span v-else-if="allColumns.find(c => c.key === key)?.sortable" class="tag tag-blue">Ordenable</span>
                 </div>
               </div>
             </div>
@@ -1668,7 +1763,14 @@ const availableColumnsForGroups = computed(() =>
 .col-type { width: 60px; }
 .col-num { text-align: right; font-variant-numeric: tabular-nums; }
 .col-desc { max-width: 140px; }
+.col-filter { max-width: 120px; white-space: nowrap; }
 .col-actions { width: 110px; }
+
+.filter-unit {
+  font-size: 10px;
+  color: #94a3b8;
+  margin-left: 2px;
+}
 
 .sortable {
   cursor: pointer;
@@ -2223,6 +2325,11 @@ const availableColumnsForGroups = computed(() =>
 .tag-blue {
   background: #dbeafe;
   color: #1d4ed8;
+}
+
+.tag-green {
+  background: #dcfce7;
+  color: #16a34a;
 }
 
 .group-actions {

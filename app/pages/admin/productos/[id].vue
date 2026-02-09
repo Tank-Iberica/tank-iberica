@@ -682,14 +682,23 @@ function fmt(val: number | null | undefined): string {
                   :value="getFilterValue(f.id)"
                   @input="updateFilterValue(f.id, ($event.target as HTMLInputElement).value)"
                 >
-                <select
-                  v-else-if="f.type === 'desplegable' || f.type === 'desplegable_tick'"
-                  :value="getFilterValue(f.id)"
-                  @change="updateFilterValue(f.id, ($event.target as HTMLSelectElement).value)"
-                >
-                  <option value="">—</option>
-                  <option v-for="c in (f.options?.choices || [])" :key="c" :value="c">{{ c }}</option>
-                </select>
+                <template v-else-if="f.type === 'desplegable' || f.type === 'desplegable_tick'">
+                  <select
+                    v-if="(f.options?.choices as string[] || []).length"
+                    :value="getFilterValue(f.id)"
+                    @change="updateFilterValue(f.id, ($event.target as HTMLSelectElement).value)"
+                  >
+                    <option value="">—</option>
+                    <option v-for="c in (f.options?.choices as string[] || [])" :key="c" :value="c">{{ c }}</option>
+                  </select>
+                  <input
+                    v-else
+                    type="text"
+                    :value="getFilterValue(f.id)"
+                    placeholder="Valor libre"
+                    @input="updateFilterValue(f.id, ($event.target as HTMLInputElement).value)"
+                  >
+                </template>
                 <label v-else-if="f.type === 'tick'" class="tick-inline">
                   <input
                     type="checkbox"

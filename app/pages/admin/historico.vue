@@ -209,22 +209,36 @@ function exportToExcel(data: HistoricoEntry[]) {
 }
 
 function exportToPDF(data: HistoricoEntry[]) {
-  let html = `<!DOCTYPE html><html><head><title>Histórico ${filters.year || 'Todos'}</title>
+  let html = `<!DOCTYPE html><html><head><title>Histórico de Ventas - Tank Iberica</title>
     <style>
-      body { font-family: Arial, sans-serif; font-size: 11px; margin: 20px; }
-      h1 { font-size: 16px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-      th, td { border: 1px solid #ccc; padding: 5px 6px; text-align: left; }
-      th { background: #f3f4f6; font-size: 10px; }
+      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 11px; margin: 0; color: #1F2A2A; }
+      .header { background: linear-gradient(135deg, #1A3238 0%, #23424A 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+      .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+      .header-accent { width: 45px; height: 2px; background: #7FD1C8; margin-top: 6px; }
+      .header-info { font-size: 9px; text-align: right; line-height: 1.8; opacity: 0.85; }
+      .content { padding: 20px 24px; }
+      .subtitle { font-size: 14px; color: #23424A; font-weight: 700; margin: 0 0 4px; }
+      .date { font-size: 11px; color: #4A5A5A; margin: 0 0 16px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+      th { background: #23424A; color: white; padding: 8px 8px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+      td { border-bottom: 1px solid #e5e7eb; padding: 6px 8px; font-size: 10px; }
+      tr:nth-child(even) td { background: #f9fafb; }
       .num { text-align: right; }
-      .positive { color: green; }
-      .negative { color: red; }
-      .summary { margin-top: 20px; padding: 10px; background: #f9fafb; }
-      @media print { body { margin: 0; } }
+      .positive { color: #059669; font-weight: 600; }
+      .negative { color: #dc2626; font-weight: 600; }
+      .summary { margin-top: 20px; padding: 14px; background: #f3f4f6; border-radius: 8px; }
+      .summary p { margin: 4px 0; font-size: 12px; }
+      .footer { background: #23424A; color: white; text-align: center; padding: 10px; font-size: 9px; margin-top: 24px; }
+      @media print { body { margin: 0; } .footer { position: fixed; bottom: 0; left: 0; right: 0; } }
     </style>
   </head><body>
-    <h1>Histórico de Ventas ${filters.year || 'Todos los años'}</h1>
-    <p>Generado: ${new Date().toLocaleDateString('es-ES')} | Total: ${data.length} ventas</p>
+    <div class="header">
+      <div><h1>TANK IBERICA</h1><div class="header-accent"></div></div>
+      <div class="header-info">TANKIBERICA.COM<br>info@tankiberica.com<br>+34 645 779 594</div>
+    </div>
+    <div class="content">
+    <p class="subtitle">Histórico de Ventas ${filters.year || 'Todos los años'}</p>
+    <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')} | Total: ${data.length} ventas</p>
     <table><thead><tr>
       <th>Marca</th><th>Modelo</th><th>Año</th><th>Categoría</th>
       <th>Fecha Venta</th><th>Precio Venta</th><th>Coste</th><th>Beneficio</th><th>%</th>
@@ -251,6 +265,8 @@ function exportToPDF(data: HistoricoEntry[]) {
       <p><strong>Total Beneficio:</strong> ${fmt(summary.value.totalBeneficio)}</p>
       <p><strong>Beneficio Medio:</strong> ${summary.value.avgBeneficioPercent}%</p>
     </div>
+    </div>
+    <div class="footer">TANKIBERICA.COM</div>
   </body></html>`
 
   printHTML(html)

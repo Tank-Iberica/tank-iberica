@@ -294,22 +294,36 @@ function exportToExcel(data: BalanceEntry[]) {
 }
 
 function exportToPDF(data: BalanceEntry[]) {
-  // Generate simple HTML table for printing
-  let html = `<!DOCTYPE html><html><head><title>Balance ${filters.year || 'Todos'}</title>
+  // Generate corporate-styled HTML table for printing
+  let html = `<!DOCTYPE html><html><head><title>Balance ${filters.year || 'Todos'} - Tank Iberica</title>
     <style>
-      body { font-family: Arial, sans-serif; font-size: 12px; margin: 20px; }
-      h1 { font-size: 18px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-      th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
-      th { background: #f3f4f6; }
-      .ingreso { color: green; }
-      .gasto { color: red; }
-      .totals { margin-top: 20px; }
-      @media print { body { margin: 0; } }
+      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
+      .header { background: linear-gradient(135deg, #1A3238 0%, #23424A 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+      .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+      .header-accent { width: 45px; height: 2px; background: #7FD1C8; margin-top: 6px; }
+      .header-info { font-size: 9px; text-align: right; line-height: 1.8; opacity: 0.85; }
+      .content { padding: 20px 24px; }
+      .subtitle { font-size: 14px; color: #23424A; font-weight: 700; margin: 0 0 4px; }
+      .date { font-size: 11px; color: #4A5A5A; margin: 0 0 16px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+      th { background: #23424A; color: white; padding: 8px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+      td { border-bottom: 1px solid #e5e7eb; padding: 7px 10px; text-align: left; font-size: 11px; }
+      tr:nth-child(even) td { background: #f9fafb; }
+      .ingreso { color: #059669; font-weight: 600; }
+      .gasto { color: #dc2626; font-weight: 600; }
+      .totals { margin-top: 20px; padding: 16px; background: #f3f4f6; border-radius: 8px; }
+      .totals p { margin: 4px 0; font-size: 12px; }
+      .footer { background: #23424A; color: white; text-align: center; padding: 10px; font-size: 9px; margin-top: 24px; }
+      @media print { body { margin: 0; } .footer { position: fixed; bottom: 0; left: 0; right: 0; } }
     </style>
   </head><body>
-    <h1>Balance ${filters.year || 'Todos los años'}</h1>
-    <p>Generado: ${new Date().toLocaleDateString('es-ES')}</p>
+    <div class="header">
+      <div><h1>TANK IBERICA</h1><div class="header-accent"></div></div>
+      <div class="header-info">TANKIBERICA.COM<br>info@tankiberica.com<br>+34 645 779 594</div>
+    </div>
+    <div class="content">
+    <p class="subtitle">Balance ${filters.year || 'Todos los años'}</p>
+    <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>
     <table><thead><tr>`
 
   if (exportColumns.tipo) html += '<th>Tipo</th>'
@@ -336,10 +350,12 @@ function exportToPDF(data: BalanceEntry[]) {
 
   html += `</tbody></table>
     <div class="totals">
-      <p><strong>Total Ingresos:</strong> +${summary.value.totalIngresos.toFixed(2)}€</p>
-      <p><strong>Total Gastos:</strong> -${summary.value.totalGastos.toFixed(2)}€</p>
-      <p><strong>Balance Neto:</strong> ${summary.value.balanceNeto.toFixed(2)}€</p>
+      <p><strong>Total Ingresos:</strong> <span class="ingreso">+${summary.value.totalIngresos.toFixed(2)}€</span></p>
+      <p><strong>Total Gastos:</strong> <span class="gasto">-${summary.value.totalGastos.toFixed(2)}€</span></p>
+      <p><strong>Balance Neto:</strong> <strong>${summary.value.balanceNeto.toFixed(2)}€</strong></p>
     </div>
+    </div>
+    <div class="footer">TANKIBERICA.COM</div>
   </body></html>`
 
   printHTML(html)
@@ -389,23 +405,35 @@ function exportResumenExcel() {
 }
 
 function exportResumenPDF() {
-  let html = `<!DOCTYPE html><html><head><title>Resumen Balance</title>
+  let html = `<!DOCTYPE html><html><head><title>Resumen Balance - Tank Iberica</title>
     <style>
-      body { font-family: Arial, sans-serif; font-size: 12px; margin: 20px; }
-      h1, h2 { margin-bottom: 10px; }
-      h1 { font-size: 18px; }
-      h2 { font-size: 14px; margin-top: 20px; }
+      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
+      .header { background: linear-gradient(135deg, #1A3238 0%, #23424A 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+      .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+      .header-accent { width: 45px; height: 2px; background: #7FD1C8; margin-top: 6px; }
+      .header-info { font-size: 9px; text-align: right; line-height: 1.8; opacity: 0.85; }
+      .content { padding: 20px 24px; }
+      .subtitle { font-size: 14px; color: #23424A; font-weight: 700; margin: 0 0 4px; }
+      .date { font-size: 11px; color: #4A5A5A; margin: 0 0 16px; }
+      h2 { font-size: 13px; color: #23424A; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
       table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-      th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: right; }
-      th { background: #f3f4f6; text-align: left; }
+      th { background: #23424A; color: white; padding: 8px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+      td { border-bottom: 1px solid #e5e7eb; padding: 7px 10px; text-align: right; font-size: 11px; }
       td:first-child { text-align: left; }
-      .positive { color: green; }
-      .negative { color: red; }
-      @media print { body { margin: 0; } }
+      tr:nth-child(even) td { background: #f9fafb; }
+      .positive { color: #059669; font-weight: 600; }
+      .negative { color: #dc2626; font-weight: 600; }
+      .footer { background: #23424A; color: white; text-align: center; padding: 10px; font-size: 9px; margin-top: 24px; }
+      @media print { body { margin: 0; } .footer { position: fixed; bottom: 0; left: 0; right: 0; } }
     </style>
   </head><body>
-    <h1>Resumen Balance ${filters.year || 'Todos los años'}</h1>
-    <p>Generado: ${new Date().toLocaleDateString('es-ES')}</p>`
+    <div class="header">
+      <div><h1>TANK IBERICA</h1><div class="header-accent"></div></div>
+      <div class="header-info">TANKIBERICA.COM<br>info@tankiberica.com<br>+34 645 779 594</div>
+    </div>
+    <div class="content">
+    <p class="subtitle">Resumen Balance ${filters.year || 'Todos los años'}</p>
+    <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>`
 
   if (resumenOptions.totales) {
     html += `<h2>Totales</h2>
@@ -439,7 +467,9 @@ function exportResumenPDF() {
     html += '</tbody></table>'
   }
 
-  html += '</body></html>'
+  html += `</div>
+    <div class="footer">TANKIBERICA.COM</div>
+  </body></html>`
 
   printHTML(html)
 }

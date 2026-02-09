@@ -290,26 +290,28 @@ function generateInvoicePDF() {
     <title>${txt.invoice} ${invoiceNumber.value}</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: Arial, sans-serif; font-size: 11px; color: #333; }
-      .header { background: #0F2A2E; color: white; padding: 20px; display: flex; justify-content: space-between; }
+      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 11px; color: #1F2A2A; }
+      .header { background: linear-gradient(135deg, #1A3238 0%, #23424A 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; }
       .header-left { flex: 1; }
       .header-right { text-align: right; }
-      .company-name { font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+      .company-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; letter-spacing: 1px; }
+      .header-accent { width: 45px; height: 2px; background: #7FD1C8; margin-bottom: 8px; }
       .invoice-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
-      .invoice-meta { font-size: 12px; }
-      .content { padding: 20px; }
+      .invoice-meta { font-size: 12px; opacity: 0.9; }
+      .content { padding: 20px 24px; }
       .client-section { margin-bottom: 20px; }
-      .section-title { font-size: 13px; font-weight: bold; color: #0F2A2E; margin-bottom: 8px; }
+      .section-title { font-size: 13px; font-weight: 700; color: #23424A; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
       table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-      th { background: #0F2A2E; color: white; padding: 10px 8px; text-align: left; font-size: 10px; }
+      th { background: #23424A; color: white; padding: 10px 8px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
       th.right { text-align: right; }
-      td { padding: 10px 8px; border-bottom: 1px solid #ddd; }
+      td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; }
       td.right { text-align: right; }
+      tr:nth-child(even) td { background: #f9fafb; }
       .totals { width: 300px; margin-left: auto; }
-      .totals tr td { border: none; padding: 6px 8px; }
+      .totals tr td { border: none; padding: 6px 8px; background: transparent; }
       .totals .total-row { font-size: 14px; font-weight: bold; background: #e8f5e9; }
-      .conditions { margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 4px; }
-      .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #0F2A2E; color: white; padding: 10px 20px; display: flex; justify-content: space-between; font-size: 10px; }
+      .conditions { margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 4px; font-size: 10px; }
+      .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #23424A; color: white; padding: 10px 20px; display: flex; justify-content: space-between; font-size: 10px; }
       @media print {
         body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         .footer { position: fixed; }
@@ -319,6 +321,7 @@ function generateInvoicePDF() {
     <div class="header">
       <div class="header-left">
         <div class="company-name">${companyName.value}</div>
+        <div class="header-accent"></div>
         <div>NIF: ${companyNIF.value}</div>
         <div>${companyAddress1.value}</div>
         <div>${companyAddress2.value}</div>
@@ -911,7 +914,7 @@ function exportToExcel(data: BalanceEntry[]) {
 function exportToPDF(data: BalanceEntry[]) {
   let html = `<!DOCTYPE html><html><head><title>Balance ${filters.year || 'Todos'}</title>
     <style>
-      body { font-family: Arial, sans-serif; font-size: 12px; margin: 20px; }
+      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
       h1 { font-size: 18px; }
       table { width: 100%; border-collapse: collapse; margin-top: 20px; }
       th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
@@ -1004,7 +1007,7 @@ function exportResumenExcel() {
 function exportResumenPDF() {
   let html = `<!DOCTYPE html><html><head><title>Resumen Balance</title>
     <style>
-      body { font-family: Arial, sans-serif; font-size: 12px; margin: 20px; }
+      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
       h1, h2 { margin-bottom: 10px; }
       h1 { font-size: 18px; }
       h2 { font-size: 14px; margin-top: 20px; }
