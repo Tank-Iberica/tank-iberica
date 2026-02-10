@@ -20,15 +20,7 @@
 
     <!-- Vehicle detail -->
     <template v-else>
-      <!-- Back button -->
-      <div class="vehicle-back">
-        <NuxtLink to="/" class="back-link">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          {{ $t('vehicle.backToCatalog') }}
-        </NuxtLink>
-      </div>
+      <UiBreadcrumbNav :items="breadcrumbItems" />
 
       <div class="vehicle-content">
         <!-- Gallery + Sticky notification -->
@@ -254,6 +246,14 @@ function resolveFilterValue(value: unknown): string {
   return String(value)
 }
 
+const breadcrumbItems = computed(() => {
+  if (!vehicle.value) return []
+  return [
+    { label: t('nav.home'), to: '/' },
+    { label: buildProductName(vehicle.value, locale.value, true) },
+  ]
+})
+
 const shareText = computed(() => {
   if (!vehicle.value) return ''
   const v = vehicle.value
@@ -387,22 +387,6 @@ if (vehicle.value) {
   margin: 0 auto;
   padding: var(--spacing-4);
   padding-bottom: var(--spacing-16);
-}
-
-/* Back */
-.vehicle-back {
-  margin-bottom: var(--spacing-4);
-}
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-1);
-  color: var(--color-primary);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  text-decoration: none;
-  min-height: 44px;
 }
 
 /* Loading skeleton */
@@ -874,11 +858,6 @@ if (vehicle.value) {
     padding: var(--spacing-4) var(--spacing-6);
     padding-bottom: var(--spacing-4);
     overflow: hidden;
-  }
-
-  .vehicle-back {
-    flex-shrink: 0;
-    margin-bottom: var(--spacing-3);
   }
 
   .vehicle-content {

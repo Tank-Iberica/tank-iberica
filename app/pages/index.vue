@@ -32,7 +32,9 @@
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n()
+import { buildProductName } from '~/utils/productName'
+
+const { t, locale } = useI18n()
 const menuVisible = ref(true)
 const { vehicles, loading, loadingMore, hasMore, fetchVehicles, fetchMore } = useVehicles()
 const { filters, activeSubcategoryId, activeTypeId, sortBy, viewMode, resetCatalog } = useCatalogState()
@@ -54,6 +56,34 @@ usePageSeo({
       'query-input': 'required name=search_term_string',
     },
   },
+})
+
+// ItemList JSON-LD — injected dynamically after vehicles load
+const itemListJsonLd = computed(() => {
+  if (!vehicles.value.length) return null
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    'name': t('seo.homeTitle'),
+    'numberOfItems': vehicles.value.length,
+    'itemListElement': vehicles.value.slice(0, 20).map((v, index) => ({
+      '@type': 'ListItem',
+      'position': index + 1,
+      'url': `https://tankiberica.com/vehiculo/${v.slug}`,
+      'name': buildProductName(v, locale.value, true),
+      ...(v.vehicle_images?.[0]?.url ? { image: v.vehicle_images[0].url } : {}),
+    })),
+  }
+})
+
+useHead({
+  script: computed(() => {
+    if (!itemListJsonLd.value) return []
+    return [{
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(itemListJsonLd.value),
+    }]
+  }),
 })
 
 async function loadVehicles() {

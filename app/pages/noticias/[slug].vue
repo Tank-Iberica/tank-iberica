@@ -20,12 +20,7 @@
     <!-- Article -->
     <template v-else>
       <div class="article-container">
-        <NuxtLink to="/noticias" class="back-link">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          {{ $t('news.backToNews') }}
-        </NuxtLink>
+        <UiBreadcrumbNav :items="breadcrumbItems" />
 
         <article class="article-content">
           <div class="article-meta">
@@ -76,7 +71,7 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { locale, t: _t } = useI18n()
+const { locale, t } = useI18n()
 const { fetchBySlug } = useNews()
 
 // Fetch at setup level so SSR can render SEO meta
@@ -104,6 +99,15 @@ const metaDesc = computed(() => {
   if (locale.value === 'en' && article.value.description_en) return article.value.description_en
   if (article.value.description_es) return article.value.description_es
   return title.value
+})
+
+const breadcrumbItems = computed(() => {
+  if (!article.value) return []
+  return [
+    { label: t('nav.home'), to: '/' },
+    { label: t('news.title'), to: '/noticias' },
+    { label: title.value },
+  ]
 })
 
 const shareText = computed(() => {
@@ -141,6 +145,21 @@ if (article.value) {
       'mainEntityOfPage': `https://tankiberica.com/noticias/${route.params.slug}`,
     },
   })
+
+  useHead({
+    script: [{
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+          { '@type': 'ListItem', 'position': 1, 'name': 'Tank Iberica', 'item': 'https://tankiberica.com' },
+          { '@type': 'ListItem', 'position': 2, 'name': t('news.title'), 'item': 'https://tankiberica.com/noticias' },
+          { '@type': 'ListItem', 'position': 3, 'name': title.value, 'item': `https://tankiberica.com/noticias/${route.params.slug}` },
+        ],
+      }),
+    }],
+  })
 }
 
 function formatDate(date: string): string {
@@ -157,18 +176,6 @@ function formatDate(date: string): string {
   max-width: 800px;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
-}
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--color-primary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: none;
-  min-height: 44px;
-  margin-bottom: 1rem;
 }
 
 /* Loading */
@@ -246,11 +253,14 @@ function formatDate(date: string): string {
   margin-bottom: 1.5rem;
   border-radius: 12px;
   overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: var(--bg-secondary, #f5f5f5);
 }
 
 .article-image img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
 

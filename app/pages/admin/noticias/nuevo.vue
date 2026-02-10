@@ -320,7 +320,7 @@ function getLevelLabel(level: string): string {
 
           <!-- Preview -->
           <div v-if="formData.image_url || imagePreviewUrl" class="image-preview-container">
-            <img :src="formData.image_url || imagePreviewUrl || ''" alt="Preview" @error="($event.target as HTMLImageElement).style.display='none'">
+            <img :src="formData.image_url || imagePreviewUrl || ''" :alt="formData.title_es || 'Vista previa'" @error="($event.target as HTMLImageElement).style.display='none'">
             <button class="remove-image-btn" title="Eliminar imagen" @click="removeImage">&times;</button>
           </div>
         </div>

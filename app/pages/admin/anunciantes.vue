@@ -326,7 +326,7 @@ function formatPrice(price: number | null): string {
                     v-for="(photo, index) in detailModal.advertisement.photos"
                     :key="index"
                     :src="photo"
-                    :alt="`Foto ${index + 1}`"
+                    :alt="`${detailModal.advertisement.brand || ''} ${detailModal.advertisement.model || ''} - Foto ${index + 1}`.trim()"
                   >
                 </div>
               </div>

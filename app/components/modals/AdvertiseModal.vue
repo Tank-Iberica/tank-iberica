@@ -469,7 +469,7 @@ watch(() => props.modelValue, (newValue) => {
                 <label>{{ $t('advertise.photos') }} ({{ photos.length }}/{{ MAX_PHOTOS }})</label>
                 <div v-if="photoPreviews.length" class="photo-grid">
                   <div v-for="(preview, i) in photoPreviews" :key="i" class="photo-thumb">
-                    <img :src="preview" alt="">
+                    <img :src="preview" :alt="$t('advertise.photos') + ' ' + (i + 1)">
                     <button type="button" class="photo-remove" @click="removePhoto(i)">&times;</button>
                   </div>
                 </div>
