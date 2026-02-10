@@ -101,12 +101,13 @@ export function useFilters() {
       // Fetch subcategory-level filters (from subcategories.applicable_filters)
       let subcatFilterIds: string[] = []
       if (subcategoryId) {
-        const { data: subcatData } = await supabase
+        const { data: subcatData, error: subcatErr } = await supabase
           .from('subcategories')
           .select('applicable_filters')
           .eq('id', subcategoryId)
           .single()
 
+        if (subcatErr) throw subcatErr
         const row = subcatData as { applicable_filters: string[] | null } | null
         if (row?.applicable_filters) {
           subcatFilterIds = row.applicable_filters
@@ -116,7 +117,7 @@ export function useFilters() {
       // Fetch filter definitions for subcategory filters
       let subcatFilters: FilterDefinition[] = []
       if (subcatFilterIds.length > 0) {
-        const { data: filterData } = await supabase
+        const { data: filterData, error: filterErr } = await supabase
           .from('filter_definitions')
           .select('*')
           .in('id', subcatFilterIds)
@@ -124,6 +125,7 @@ export function useFilters() {
           .eq('is_hidden', false)
           .order('sort_order', { ascending: true })
 
+        if (filterErr) throw filterErr
         subcatFilters = ((filterData as FilterDefinition[]) || []).map(f => ({
           ...f,
           source: 'subcategory' as const,
@@ -133,17 +135,18 @@ export function useFilters() {
       // Fetch type-level filters (from types.applicable_filters)
       let typeFiltersList: FilterDefinition[] = []
       if (typeId) {
-        const { data: typeData } = await supabase
+        const { data: typeData, error: typeErr } = await supabase
           .from('types')
           .select('applicable_filters')
           .eq('id', typeId)
           .single()
 
+        if (typeErr) throw typeErr
         const typeRow = typeData as { applicable_filters: string[] | null } | null
         const typeFilterIds = typeRow?.applicable_filters || []
 
         if (typeFilterIds.length > 0) {
-          const { data: typeFilterData } = await supabase
+          const { data: typeFilterData, error: typeFilterErr } = await supabase
             .from('filter_definitions')
             .select('*')
             .in('id', typeFilterIds)
@@ -151,6 +154,7 @@ export function useFilters() {
             .eq('is_hidden', false)
             .order('sort_order', { ascending: true })
 
+          if (typeFilterErr) throw typeFilterErr
           typeFiltersList = ((typeFilterData as FilterDefinition[]) || []).map(f => ({
             ...f,
             source: 'type' as const,
@@ -194,11 +198,12 @@ export function useFilters() {
     if (!needsValues.length && !needsRange.length) return
 
     // Fetch all published vehicles' filters_json
-    const { data } = await supabase
+    const { data, error: vehicleErr } = await supabase
       .from('vehicles')
       .select('filters_json')
       .eq('status', 'published')
 
+    if (vehicleErr) throw vehicleErr
     if (!data) return
 
     const vehicles = data as { filters_json: Record<string, unknown> | null }[]

@@ -22,6 +22,7 @@ export default defineNuxtConfig({
 
   sitemap: {
     exclude: ['/admin/**', '/confirm'],
+    sources: ['/api/__sitemap'],
     urls: [
       { loc: '/', changefreq: 'daily', priority: 1.0 },
       { loc: '/noticias', changefreq: 'daily', priority: 0.7 },
@@ -34,7 +35,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/',
       callback: '/confirm',
-      exclude: ['/', '/vehiculo/*', '/noticias', '/noticias/*', '/sobre-nosotros', '/legal', '/agenda', '/admin', '/admin/*'],
+      exclude: ['/**'],
     },
     cookieOptions: {
       secure: process.env.NODE_ENV === 'production',
