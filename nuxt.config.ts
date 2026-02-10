@@ -13,7 +13,22 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@vueuse/nuxt',
     '@nuxt/image',
+    '@nuxtjs/sitemap',
   ],
+
+  site: {
+    url: 'https://tankiberica.com',
+  },
+
+  sitemap: {
+    exclude: ['/admin/**', '/confirm'],
+    urls: [
+      { loc: '/', changefreq: 'daily', priority: 1.0 },
+      { loc: '/noticias', changefreq: 'daily', priority: 0.7 },
+      { loc: '/sobre-nosotros', changefreq: 'monthly', priority: 0.5 },
+      { loc: '/legal', changefreq: 'yearly', priority: 0.3 },
+    ],
+  },
 
   supabase: {
     redirectOptions: {
@@ -68,13 +83,18 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: { lang: 'es' },
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
       title: 'Tank Iberica',
       meta: [
-        { name: 'description', content: 'Plataforma de vehículos industriales' },
+        { name: 'description', content: 'Compra, venta y alquiler de vehículos industriales: semirremolques, cisternas, cabezas tractoras, camiones y más.' },
+        { property: 'og:site_name', content: 'Tank Iberica' },
+        { property: 'og:locale', content: 'es_ES' },
+        { property: 'og:locale:alternate', content: 'en_GB' },
       ],
       link: [
+        { rel: 'icon', href: '/favicon.ico' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' },

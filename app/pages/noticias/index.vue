@@ -115,11 +115,10 @@ function handleLoadMore() {
   fetchMore(activeCategory.value || undefined)
 }
 
-useSeoMeta({
-  title: `${t('news.title')} — Tank Iberica`,
-  ogTitle: `${t('news.title')} — Tank Iberica`,
-  description: 'Noticias del sector de vehículos industriales — Tank Iberica',
-  ogDescription: 'Noticias del sector de vehículos industriales — Tank Iberica',
+usePageSeo({
+  title: t('seo.newsTitle'),
+  description: t('seo.newsDescription'),
+  path: '/noticias',
 })
 
 onMounted(() => {

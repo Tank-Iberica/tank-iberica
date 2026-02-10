@@ -3,6 +3,18 @@
     "title": "Tank Iberica",
     "description": "Plataforma de vehículos industriales"
   },
+  "seo": {
+    "homeTitle": "Tank Iberica — Semirremolques, Cisternas, Cabezas Tractoras y Camiones",
+    "homeDescription": "Compra, venta y alquiler de vehículos industriales: semirremolques, cisternas, cabezas tractoras, camiones y más. Mercado ibérico y europeo.",
+    "newsTitle": "Noticias — Tank Iberica",
+    "newsDescription": "Noticias y actualidad del sector de vehículos industriales: transporte, logística y normativa.",
+    "aboutTitle": "Sobre Nosotros — Tank Iberica",
+    "aboutDescription": "Conoce Tank Iberica: plataforma de vehículos industriales — semirremolques, cisternas, cabezas tractoras y camiones en el mercado ibérico.",
+    "legalTitle": "Términos, Privacidad y Cookies — Tank Iberica",
+    "legalDescription": "Términos y condiciones, política de privacidad y política de cookies de Tank Iberica.",
+    "errorTitle": "Página no encontrada — Tank Iberica",
+    "errorDescription": "La página que buscas no existe o ha sido movida."
+  },
   "nav": {
     "home": "Inicio",
     "catalog": "Catálogo",

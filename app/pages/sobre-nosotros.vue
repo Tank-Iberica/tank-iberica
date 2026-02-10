@@ -22,11 +22,25 @@
 </template>
 
 <script setup lang="ts">
-useSeoMeta({
-  title: 'Sobre nosotros — Tank Iberica',
-  ogTitle: 'Sobre nosotros — Tank Iberica',
-  description: 'Conoce Tank Iberica: plataforma de vehículos industriales en el mercado ibérico y europeo.',
-  ogDescription: 'Conoce Tank Iberica: plataforma de vehículos industriales en el mercado ibérico y europeo.',
+const { t } = useI18n()
+
+usePageSeo({
+  title: t('seo.aboutTitle'),
+  description: t('seo.aboutDescription'),
+  path: '/sobre-nosotros',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    'name': 'Tank Iberica',
+    'url': 'https://tankiberica.com',
+    'description': t('seo.aboutDescription'),
+    'logo': 'https://tankiberica.com/og-default.png',
+    'contactPoint': {
+      '@type': 'ContactPoint',
+      'contactType': 'customer service',
+      'email': 'tankiberica@gmail.com',
+    },
+  },
 })
 </script>
 

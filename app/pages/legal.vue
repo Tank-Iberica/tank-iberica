@@ -22,11 +22,12 @@
 </template>
 
 <script setup lang="ts">
-useSeoMeta({
-  title: 'Legal — Tank Iberica',
-  ogTitle: 'Legal — Tank Iberica',
-  description: 'Términos y condiciones, política de privacidad y política de cookies de Tank Iberica.',
-  ogDescription: 'Términos y condiciones, política de privacidad y política de cookies de Tank Iberica.',
+const { t } = useI18n()
+
+usePageSeo({
+  title: t('seo.legalTitle'),
+  description: t('seo.legalDescription'),
+  path: '/legal',
 })
 </script>
 

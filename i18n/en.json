@@ -3,6 +3,18 @@
     "title": "Tank Iberica",
     "description": "Industrial vehicles platform"
   },
+  "seo": {
+    "homeTitle": "Tank Iberica — Semi-trailers, Tankers, Truck Tractors and Trucks",
+    "homeDescription": "Buy, sell and rent industrial vehicles: semi-trailers, tankers, truck tractors, trucks and more. Iberian and European market.",
+    "newsTitle": "News — Tank Iberica",
+    "newsDescription": "News and updates from the industrial vehicle sector: transport, logistics and regulations.",
+    "aboutTitle": "About Us — Tank Iberica",
+    "aboutDescription": "Learn about Tank Iberica: industrial vehicle platform — semi-trailers, tankers, truck tractors and trucks in the Iberian market.",
+    "legalTitle": "Terms, Privacy and Cookies — Tank Iberica",
+    "legalDescription": "Terms and conditions, privacy policy and cookie policy of Tank Iberica.",
+    "errorTitle": "Page not found — Tank Iberica",
+    "errorDescription": "The page you are looking for does not exist or has been moved."
+  },
   "nav": {
     "home": "Home",
     "catalog": "Catalog",

@@ -115,14 +115,33 @@ const shareText = computed(() => {
 })
 
 // SEO meta at setup level — works during SSR
-useSeoMeta({
-  title: () => article.value ? `${title.value} — Tank Iberica` : 'Tank Iberica',
-  description: () => metaDesc.value,
-  ogTitle: () => article.value ? `${title.value} — Tank Iberica` : 'Tank Iberica',
-  ogDescription: () => metaDesc.value,
-  ogImage: () => article.value?.image_url || '',
-  ogType: 'article',
-})
+if (article.value) {
+  const seoTitle = `${title.value} — Tank Iberica`
+
+  usePageSeo({
+    title: seoTitle,
+    description: metaDesc.value,
+    image: article.value.image_url || undefined,
+    type: 'article',
+    path: `/noticias/${route.params.slug}`,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'NewsArticle',
+      'headline': title.value,
+      'description': metaDesc.value,
+      'image': article.value.image_url || '',
+      'datePublished': article.value.published_at,
+      'dateModified': article.value.updated_at || article.value.published_at,
+      'author': { '@type': 'Organization', 'name': 'Tank Iberica' },
+      'publisher': {
+        '@type': 'Organization',
+        'name': 'Tank Iberica',
+        'logo': { '@type': 'ImageObject', 'url': 'https://tankiberica.com/og-default.png' },
+      },
+      'mainEntityOfPage': `https://tankiberica.com/noticias/${route.params.slug}`,
+    },
+  })
+}
 
 function formatDate(date: string): string {
   return new Date(date).toLocaleDateString(locale.value === 'en' ? 'en-GB' : 'es-ES', {

@@ -38,11 +38,22 @@ const { vehicles, loading, loadingMore, hasMore, fetchVehicles, fetchMore } = us
 const { filters, activeSubcategoryId, activeTypeId, sortBy, viewMode, resetCatalog } = useCatalogState()
 const { fetchBySubcategoryAndType, clearAll: clearAllFilters, reset: resetFilters } = useFilters()
 
-useSeoMeta({
-  title: 'Tank Iberica',
-  description: t('site.description'),
-  ogTitle: 'Tank Iberica',
-  ogDescription: t('site.description'),
+usePageSeo({
+  title: t('seo.homeTitle'),
+  description: t('seo.homeDescription'),
+  path: '/',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    'name': 'Tank Iberica',
+    'url': 'https://tankiberica.com',
+    'description': t('seo.homeDescription'),
+    'potentialAction': {
+      '@type': 'SearchAction',
+      'target': 'https://tankiberica.com/?search={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  },
 })
 
 async function loadVehicles() {

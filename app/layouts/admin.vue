@@ -77,6 +77,9 @@
 </template>
 
 <script setup lang="ts">
+// Prevent admin pages from being indexed by search engines
+useSeoMeta({ robots: 'noindex, nofollow' })
+
 const user = useSupabaseUser()
 const supabase = useSupabaseClient()
 

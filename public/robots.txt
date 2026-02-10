@@ -1,2 +1,5 @@
 User-Agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /confirm
+
+Sitemap: https://tankiberica.com/sitemap.xml

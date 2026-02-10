@@ -323,6 +323,7 @@ if (vehicle.value) {
   const seoDesc = description.value || t('site.description')
   const seoImage = vehicle.value.vehicle_images?.[0]?.url || ''
   const canonicalUrl = `https://tankiberica.com/vehiculo/${vehicle.value.slug}`
+  const productName = buildProductName(vehicle.value, locale.value, true)
 
   useSeoMeta({
     title: seoTitle,
@@ -330,8 +331,9 @@ if (vehicle.value) {
     ogTitle: seoTitle,
     ogDescription: seoDesc,
     ogImage: seoImage,
-    ogType: 'website',
+    ogType: 'product',
     ogUrl: canonicalUrl,
+    ogSiteName: 'Tank Iberica',
     twitterCard: 'summary_large_image',
     twitterTitle: seoTitle,
     twitterDescription: seoDesc,
@@ -346,7 +348,7 @@ if (vehicle.value) {
         innerHTML: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'Product',
-          'name': buildProductName(vehicle.value, locale.value, true),
+          'name': productName,
           'description': seoDesc,
           'image': seoImage,
           'brand': { '@type': 'Brand', 'name': vehicle.value.brand },
@@ -358,6 +360,17 @@ if (vehicle.value) {
             'seller': { '@type': 'Organization', 'name': 'Tank Iberica' },
           },
           'url': canonicalUrl,
+        }),
+      },
+      {
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Tank Iberica', 'item': 'https://tankiberica.com' },
+            { '@type': 'ListItem', 'position': 2, 'name': productName, 'item': canonicalUrl },
+          ],
         }),
       },
     ],

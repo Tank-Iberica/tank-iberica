@@ -63,7 +63,7 @@ interface ColumnGroup {
 const staticColumns: ColumnDef[] = [
   { key: 'checkbox', label: '', width: '40px' },
   { key: 'image', label: 'Img', width: '56px' },
-  { key: 'type', label: 'Tipo', width: '60px' },
+  { key: 'type', label: 'Online', width: '60px' },
   { key: 'brand', label: 'Marca', sortable: true },
   { key: 'model', label: 'Modelo', sortable: true },
   { key: 'subcategory', label: 'Subcat.' },
