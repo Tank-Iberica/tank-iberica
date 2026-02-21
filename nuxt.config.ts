@@ -157,6 +157,7 @@ export default defineNuxtConfig({
     '/subastas': { swr: 60 },
     '/subastas/**': { swr: 60 },
     '/admin/**': { ssr: false },
+    '/dashboard/**': { ssr: false },
     '/perfil/**': { ssr: false },
     '/api/**': { cors: true },
   },

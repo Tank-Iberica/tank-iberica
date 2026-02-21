@@ -1,0 +1,126 @@
+/**
+ * Generate SEO-optimized Vehicle Description using Claude Haiku
+ *
+ * POST /api/generate-description
+ * Body: { brand, model, year, km, category, subcategory, attributes }
+ *
+ * Returns: { description: string }
+ * Requires auth. Rate limiting should be enforced by the caller based on plan.
+ */
+import { serverSupabaseUser } from '#supabase/server'
+import { defineEventHandler, readBody, createError } from 'h3'
+
+interface GenerateDescriptionBody {
+  brand: string
+  model: string
+  year?: number
+  km?: number
+  category?: string
+  subcategory?: string
+  attributes?: Record<string, unknown>
+}
+
+interface GenerateDescriptionResponse {
+  description: string
+}
+
+export default defineEventHandler(async (event): Promise<GenerateDescriptionResponse> => {
+  // 1. Authenticate
+  const user = await serverSupabaseUser(event)
+  if (!user) {
+    throw createError({ statusCode: 401, message: 'Authentication required' })
+  }
+
+  // 2. Read and validate body
+  const body = await readBody<GenerateDescriptionBody>(event)
+
+  if (!body.brand || typeof body.brand !== 'string') {
+    throw createError({ statusCode: 400, message: 'brand is required' })
+  }
+
+  if (!body.model || typeof body.model !== 'string') {
+    throw createError({ statusCode: 400, message: 'model is required' })
+  }
+
+  // 3. Get API key
+  const config = useRuntimeConfig()
+  const apiKey = config.anthropicApiKey
+
+  if (!apiKey) {
+    throw createError({ statusCode: 500, message: 'Anthropic API key not configured' })
+  }
+
+  // 4. Build prompt
+  const vehicleInfo = [
+    `Marca: ${body.brand}`,
+    `Modelo: ${body.model}`,
+    body.year ? `Ano: ${body.year}` : null,
+    body.km ? `Kilometros: ${body.km.toLocaleString('es-ES')}` : null,
+    body.category ? `Categoria: ${body.category}` : null,
+    body.subcategory ? `Subcategoria: ${body.subcategory}` : null,
+  ]
+    .filter(Boolean)
+    .join('\n')
+
+  let attributesText = ''
+  if (body.attributes && Object.keys(body.attributes).length > 0) {
+    attributesText =
+      '\nAtributos adicionales:\n' +
+      Object.entries(body.attributes)
+        .map(([key, value]) => `- ${key}: ${value}`)
+        .join('\n')
+  }
+
+  const prompt = `Genera una descripcion SEO-optimizada en espanol para un vehiculo industrial que se vendera en un marketplace online (Tracciona). La descripcion debe:
+
+- Tener aproximadamente 150 palabras
+- Incluir palabras clave relevantes para SEO (vehiculo industrial, marca, tipo)
+- Ser profesional y persuasiva
+- Destacar los puntos fuertes tipicos de este vehiculo
+- Incluir un llamado a la accion sutil al final
+- NO usar emojis
+- NO inventar datos que no se proporcionan
+- Usar un tono profesional pero accesible
+
+Datos del vehiculo:
+${vehicleInfo}${attributesText}
+
+Responde SOLO con la descripcion, sin titulos ni encabezados.`
+
+  // 5. Call Claude Haiku API
+  try {
+    const response = await $fetch<{
+      content: Array<{ type: string; text: string }>
+    }>('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: {
+        model: 'claude-3-5-haiku-20241022',
+        max_tokens: 500,
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+      },
+    })
+
+    const text = response?.content?.[0]?.text
+    if (!text) {
+      throw new Error('Empty response from Claude')
+    }
+
+    return { description: text.trim() }
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'AI generation failed'
+    throw createError({
+      statusCode: 500,
+      message: `Description generation failed: ${message}`,
+    })
+  }
+})
