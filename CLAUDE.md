@@ -1,117 +1,120 @@
-# Tank Iberica — Plataforma de Vehículos Industriales
+# Tracciona.com — Marketplace de Vehículos Industriales
 
 ## Información del proyecto
 
 - **Email admin:** tankiberica@gmail.com
 - **Supabase Project ID:** gmnrfuzekbwyzkgsaftv
+- **Proyecto anterior:** Tank Ibérica (monolítico) → migración en curso a Tracciona (marketplace)
 
-## Qué es este proyecto
+## Documentación
 
-Migración de una web monolítica (22 archivos, 37.685 líneas) a una aplicación profesional con Nuxt 3 + Supabase + Cloudflare Pages + Cloudinary. Es una réplica visual y funcional del sitio actual, con arquitectura moderna por debajo.
+Toda la documentación de la migración está en `docs/tracciona-docs/`.
+
+**Si necesitas entender el proyecto:**
+
+1. Lee `docs/tracciona-docs/contexto-global.md` — Visión completa del ecosistema
+2. Lee `docs/tracciona-docs/README.md` — Estructura y reglas de ejecución
+
+**Si necesitas ejecutar un paso:**
+
+- Lee el archivo de migración correspondiente en `docs/tracciona-docs/migracion/`
+- Consulta los anexos que el paso referencia en `docs/tracciona-docs/anexos/`
+
+**Si necesitas ejecutar el proyecto:**
+
+- Lee `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Define las 35 sesiones de trabajo (12 pre-lanzamiento + 22 post-lanzamiento + 1 clonado de vertical). Las sesiones 16b, 16c, 16d son subsesiones del antiguo bloque post-lanzamiento Fase 3, en orden, con qué archivos leer en cada una. El usuario te dirá "ejecuta la sesión N".
+
+**Regla principal:** Ejecutar solo lo que dicen las INSTRUCCIONES-MAESTRAS. Los anexos son REFERENCIA, no tareas independientes.
+
+**Reglas críticas:**
+
+- LEE los archivos de la sesión ANTES de escribir código. Relee las reglas del inicio de INSTRUCCIONES-MAESTRAS.
+- Si no sabes cómo implementar algo, PREGUNTA al usuario. No improvises.
+- Mobile-first obligatorio. Multilenguaje ($t() + localizedField) en todo.
+- Si necesitas dashboards web (Supabase, Stripe, Cloudflare) → pregunta al usuario.
+
+**Acceso a herramientas:**
+
+- Tienes acceso completo al sistema de archivos y terminal (npm, supabase CLI, git).
+- Puedes leer y modificar .env / .env.local para configurar variables de entorno.
+- Puedes ejecutar `supabase db push`, `supabase gen types`, `npm install`, `npm run build` directamente.
+- NO tienes acceso a navegador web ni dashboards. Si necesitas crear algo en Stripe/Supabase/Cloudflare dashboard, pide al usuario que lo haga.
+
+**Documentación legacy (referencia del proyecto original):**
+
+- `docs/esquema-bd.md` — Esquema BD actual (pre-migración)
+- `docs/admin-funcionalidades.md` — Funcionalidades del admin actual
+- `docs/index-funcionalidades.md` — Funcionalidades del frontend actual
+- `docs/legacy/` — Documentación del sitio original
 
 ## Stack
 
 - **Frontend:** Nuxt 3 (Vue 3), TypeScript, Pinia, @nuxtjs/i18n
-- **Backend:** Supabase (PostgreSQL + Auth + Realtime + Edge Functions + Storage)
+- **Backend:** Supabase (PostgreSQL + Auth + RLS + Realtime + Edge Functions)
 - **Imágenes:** Cloudinary via @nuxt/image
 - **Deploy:** Cloudflare Pages (auto-deploy on push to main)
-- **Tests:** Vitest (unit), Vue Test Utils (component), Playwright (E2E)
-- **Calidad:** ESLint (@nuxt/eslint-config), Prettier, Husky
+- **i18n strategy:** prefix_except_default (español sin prefijo, /en/, /fr/, etc.)
 
 ## Comandos
 
 ```bash
-npm run dev          # Desarrollo local (http://localhost:3000)
-npm run build        # Build producción (Cloudflare Pages preset)
+npm run dev          # Dev server (http://localhost:3000)
+npm run build        # Build producción
 npm run lint         # ESLint
-npm run lint:fix     # ESLint con auto-fix
+npm run lint:fix     # ESLint auto-fix
 npm run typecheck    # nuxi typecheck
-npm run test         # Vitest (unit + component)
-npm run test:e2e     # Playwright E2E
-npx supabase gen types typescript --project-id <ID> > types/supabase.ts
+npm run test         # Vitest
+npx supabase db push # Aplicar migraciones
+npx supabase gen types typescript --project-id gmnrfuzekbwyzkgsaftv > types/supabase.ts
 ```
-
-## Tres requisitos no negociables
-
-1. **Mobile-first:** CSS base = 360px. Breakpoints con `min-width` (nunca max-width). Touch targets ≥ 44px. Cada componente se prueba en móvil ANTES que desktop.
-2. **Páginas reales:** Vehículos (`/vehiculo/[slug]`) y noticias (`/noticias/[slug]`) son páginas con URL propia, NO modales. El botón atrás del móvil debe funcionar siempre.
-3. **Extensible:** Categorías, subcategorías y filtros se leen de la BD. Añadir uno = insertar fila en la tabla, no tocar código.
 
 ## Estructura del proyecto
 
 ```
-pages/              → Rutas (index, vehiculo/[slug], noticias/[slug], admin/*)
-components/         → Vue SFCs organizados por dominio (catalog/, vehicle/, modals/, chat/, layout/, ui/)
-composables/        → Lógica reutilizable (useVehicles, useFilters, useFavorites, useChat, useCloudinary)
-stores/             → Pinia stores (catalog.ts, auth.ts, ui.ts)
-i18n/               → Traducciones (es.json, en.json)
-middleware/          → auth.ts, admin.ts
-assets/css/         → tokens.css (design system), global.css
-types/              → supabase.ts (auto-generated), index.d.ts
-server/             → Edge functions si es necesario
-supabase/           → migrations/ (SQL), seed.sql
-tests/              → unit/, component/, e2e/
-docs/               → Documentación de referencia del proyecto
+app/
+  pages/              → Rutas (index, vehiculo/[slug], noticias/[slug], admin/*)
+  components/         → SFCs por dominio (catalog/, vehicle/, modals/, layout/, ui/)
+  composables/        → Lógica reutilizable (useVehicles, useFilters, etc.)
+  layouts/            → Layouts (default, admin)
+  middleware/         → auth.ts, admin.ts
+  assets/css/         → tokens.css (design system), global.css
+i18n/                 → Traducciones (es.json, en.json)
+supabase/migrations/  → SQL (00001-00030 existentes, nuevas desde 00031)
+types/                → supabase.ts (auto-generated), index.d.ts
+docs/tracciona-docs/  → Documentación de migración (NO modificar)
 ```
 
 ## Convenciones de código
 
 - TypeScript estricto. No `any`.
-- Composables: `use` + PascalCase (useVehicles, useFilters).
-- Componentes: PascalCase, un archivo por componente.
-- CSS: scoped en componentes Vue. Variables globales en tokens.css.
-- Nunca innerHTML. Vue escapa por defecto. Si necesitas v-html, usa DOMPurify.
-- Nunca console.log en producción. Usa Sentry para errores.
-- Nunca hardcodear categorías, subcategorías ni filtros. Siempre leer de BD.
-- i18n: todo texto visible al usuario va en es.json/en.json, nunca hardcodeado.
-- Cada composable tiene su test unitario en tests/unit/.
-- Cada componente crítico tiene test en tests/component/.
+- Composables: `use` + PascalCase (useVehicles, useLocalized, useVerticalConfig)
+- Componentes: PascalCase, un archivo por componente
+- CSS: scoped en componentes Vue. Variables globales en tokens.css. Custom properties para tema (--primary, --accent)
+- Nunca innerHTML sin DOMPurify
+- Nunca console.log en producción
+- Nunca hardcodear categorías, subcategorías ni filtros — siempre leer de BD
+- Nunca hardcodear idiomas (\_es, \_en) — usar JSONB + localizedField()
+- i18n: todo texto de UI va en locales/\*.json
+- Migraciones en `supabase/migrations/` con numeración incremental (00031, 00032...)
+- RLS obligatorio en TODAS las tablas nuevas
+- JSONB para campos traducibles cortos (name, label, tagline)
+- Tabla content_translations para campos traducibles largos (description, content)
 
-## Base de datos (Supabase)
+## Tres reglas no negociables
 
-- 17 tablas PostgreSQL. Ver @docs/esquema-bd.md para esquema completo.
-- RLS activado en TODAS las tablas. Nunca desactivar RLS.
-- Enums: vehicle_status, vehicle_category, user_role, filter_type, msg_direction, balance_type.
-- Las tablas se crean progresivamente según la hoja de ruta, NO todas de golpe.
-
-## Seguridad
-
-- SUPABASE_URL y SUPABASE_ANON_KEY en .env (nunca hardcodeadas).
-- anon_key es segura (limitada por RLS). service_role_key SOLO en Edge Functions server-side.
-- Passwords gestionados por Supabase Auth (bcrypt). Nunca hash manual.
-- Sessions en cookies httpOnly/secure/sameSite (gestionadas por @nuxtjs/supabase).
+1. **Mobile-first:** CSS base = 360px. Breakpoints con `min-width`. Touch targets ≥ 44px.
+2. **Páginas reales:** Vehículos y artículos son páginas con URL propia, NO modales.
+3. **Extensible:** Categorías, subcategorías, filtros e idiomas se leen de la BD. Añadir uno = insertar fila, no tocar código.
 
 ## Design system
 
-- Color primario: #23424A (petrol blue). Ver @docs/DESIGN_SYSTEM.md
-- Tipografía: Inter (Google Fonts)
-- Breakpoints: 480px, 768px, 1024px, 1280px (mobile-first, min-width)
+- Color primario: #23424A (petrol blue) — cambiará a los colores de Tracciona vía vertical_config
+- Tipografía: Inter (Google Fonts) — configurable desde admin
+- Breakpoints: 480px, 768px, 1024px, 1280px (mobile-first)
 - Spacing: escala de 4px (4, 8, 12, 16, 24, 32, 48, 64)
-
-## Hoja de ruta
-
-El proyecto se implementa en 7 steps siguiendo vertical slicing. Ver @docs/hoja-de-ruta.md para detalle. Resumen:
-
-- **Step 0:** Emergencia seguridad (código actual, sin migración)
-- **Step 1:** Nuxt + Auth + Deploy (scaffold + primera página)
-- **Step 2:** Catálogo completo (BD + filtros dinámicos + /vehiculo/[slug])
-- **Step 3:** Interacción usuario (favoritos, anúnciate, solicitar)
-- **Step 4:** Noticias + Chat (páginas reales + Realtime)
-- **Step 5:** Admin completo (sustituye admin.html)
-- **Step 6:** Hardening (TypeScript, tests, PWA, Lighthouse, desmantelamiento)
 
 ## Git workflow
 
-- Branch principal: `main` (auto-deploy a Cloudflare Pages)
-- Cada step: crear branch `step-N/descripcion` (ej: `step-2/catalogo`)
-- Cada tarea: crear branch desde step `step-2/task-2.6-composable-vehicles`
+- Branch principal: `main`
 - Commits: conventional commits (feat:, fix:, refactor:, test:, docs:)
-- Antes de merge: lint + typecheck + tests deben pasar
-
-## Referencia del código actual
-
-Los archivos del sitio actual están en `docs/legacy/`. Usarlos como referencia visual y funcional para replicar comportamiento exacto:
-- `docs/legacy/index-funcionalidades.md` — Documentación funcional de index.html
-- `docs/legacy/admin-funcionalidades.md` — Documentación funcional de admin.html
-- `docs/legacy/DESIGN_SYSTEM.md` — Tokens de diseño
-- `docs/legacy/PARAMETROS_ADMIN_ORIGINAL.md` — IDs, funciones, secciones del admin
+- Antes de merge: lint + typecheck

@@ -1,7 +1,7 @@
 {
-  "name": "Tank Iberica",
-  "short_name": "Tank Iberica",
-  "description": "Compra, venta y alquiler de vehículos industriales: semirremolques, cisternas, cabezas tractoras y camiones",
+  "name": "Tracciona — Marketplace de Vehículos Industriales",
+  "short_name": "Tracciona",
+  "description": "Compra, venta y alquiler de vehículos industriales: semirremolques, cisternas, cabezas tractoras y camiones.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F3F4F6",
@@ -16,6 +16,12 @@
       "src": "/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

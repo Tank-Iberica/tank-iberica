@@ -1,11 +1,7 @@
 <template>
   <div class="gallery">
     <!-- Main image -->
-    <div
-      class="gallery-main"
-      @touchstart="onTouchStart"
-      @touchend="onTouchEnd"
-    >
+    <div class="gallery-main" @touchstart="onTouchStart" @touchend="onTouchEnd">
       <NuxtImg
         v-if="currentImage && isCloudinary(currentImageRaw)"
         provider="cloudinary"
@@ -15,16 +11,19 @@
         height="600"
         fit="cover"
         format="webp"
+        fetchpriority="high"
         class="gallery-img"
       />
-      <img
-        v-else-if="currentImageRaw"
-        :src="currentImageRaw.url"
-        :alt="alt"
-        class="gallery-img"
-      >
+      <img v-else-if="currentImageRaw" :src="currentImageRaw.url" :alt="alt" class="gallery-img" >
       <div v-else class="gallery-placeholder">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <svg
+          width="64"
+          height="64"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <circle cx="8.5" cy="8.5" r="1.5" />
           <path d="m21 15-5-5L5 21" />
@@ -34,12 +33,26 @@
       <!-- Navigation arrows -->
       <template v-if="images.length > 1">
         <button class="gallery-nav gallery-prev" :aria-label="'Previous'" @click="prev">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
         <button class="gallery-nav gallery-next" :aria-label="'Next'" @click="next">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
@@ -69,12 +82,9 @@
           height="75"
           fit="cover"
           format="webp"
+          loading="lazy"
         />
-        <img
-          v-else
-          :src="img.url"
-          :alt="`${alt} ${i + 1}`"
-        >
+        <img v-else :src="img.url" :alt="`${alt} ${i + 1}`" >
       </button>
     </div>
   </div>
@@ -91,9 +101,7 @@ const props = defineProps<{
 const currentIndex = ref(0)
 let touchStartX = 0
 
-const sortedImages = computed(() =>
-  [...props.images].sort((a, b) => a.position - b.position),
-)
+const sortedImages = computed(() => [...props.images].sort((a, b) => a.position - b.position))
 
 const currentImageRaw = computed(() => sortedImages.value[currentIndex.value] || null)
 
@@ -116,15 +124,13 @@ function extractPath(img: VehicleImage): string {
 }
 
 function prev() {
-  currentIndex.value = currentIndex.value > 0
-    ? currentIndex.value - 1
-    : sortedImages.value.length - 1
+  currentIndex.value =
+    currentIndex.value > 0 ? currentIndex.value - 1 : sortedImages.value.length - 1
 }
 
 function next() {
-  currentIndex.value = currentIndex.value < sortedImages.value.length - 1
-    ? currentIndex.value + 1
-    : 0
+  currentIndex.value =
+    currentIndex.value < sortedImages.value.length - 1 ? currentIndex.value + 1 : 0
 }
 
 function onTouchStart(e: TouchEvent) {
