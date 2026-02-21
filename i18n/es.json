@@ -291,7 +291,8 @@
     "delete": "Eliminar",
     "edit": "Editar",
     "close": "Cerrar",
-    "back": "Volver"
+    "back": "Volver",
+    "continue": "Continuar"
   },
   "user": {
     "profile": "Perfil",
@@ -1911,6 +1912,19 @@
       "won": "Ganado",
       "lost": "Perdido"
     },
+    "whatsapp": {
+      "title": "Publicar por WhatsApp",
+      "subtitle": "Envía fotos de tu vehículo y lo procesaremos con IA",
+      "step1": "Guarda el número de Tracciona",
+      "step2": "Envía fotos de tu vehículo",
+      "step3": "Procesamos las fotos con IA y creamos un borrador",
+      "phoneNumber": "Número de WhatsApp",
+      "pendingCount": "{count} envío pendiente | {count} envíos pendientes",
+      "viewDrafts": "Ver borradores",
+      "upgradeRequired": "Mejora a Basic para desbloquear",
+      "upgradeDesc": "La publicación por WhatsApp está disponible en el plan Basic y superior",
+      "upgradeCTA": "Mejorar plan"
+    },
     "vehicleStatus": {
       "published": "Publicado",
       "draft": "Borrador",
@@ -1962,7 +1976,116 @@
       "publish": "Publicar vehiculo",
       "published": "Vehiculo publicado correctamente",
       "saved": "Vehiculo guardado correctamente",
-      "requiredFields": "Marca y modelo son obligatorios"
+      "requiredFields": "Marca y modelo son obligatorios",
+      "sectionVerification": "Documentacion y verificacion"
+    },
+    "import": {
+      "title": "Importar vehiculos",
+      "subtitle": "Sube un archivo CSV para importar multiples vehiculos de una vez",
+      "uploadFile": "Subir archivo",
+      "downloadTemplate": "Descargar plantilla",
+      "supportedFormats": "Formatos soportados: CSV (separado por ; o ,)",
+      "chooseFile": "Elegir archivo CSV",
+      "preview": "Vista previa",
+      "rows": "filas",
+      "valid": "validas",
+      "invalid": "invalidas",
+      "status": "Estado",
+      "publish": "Publicar",
+      "publishDraft": "Publicar como borradores",
+      "publishAll": "Publicar todas",
+      "publishing": "Publicando vehiculos...",
+      "progress": "Progreso",
+      "success": "Importacion completada",
+      "successCount": "Publicados",
+      "errorCount": "Errores",
+      "back": "Volver",
+      "errors": {
+        "title": "Errores",
+        "requiredField": "Campo {field} obligatorio",
+        "invalidPrice": "Precio debe ser mayor a 0",
+        "invalidYear": "Ano invalido",
+        "xlsxNotSupported": "Los archivos Excel (.xlsx) no estan soportados. Guarda el archivo como CSV primero.",
+        "invalidFileType": "Tipo de archivo invalido. Solo se permiten archivos CSV.",
+        "emptyFile": "El archivo esta vacio o no tiene datos validos",
+        "fileReadError": "Error al leer el archivo",
+        "noValidRows": "No hay filas validas para importar"
+      }
+    },
+    "verification": {
+      "title": "Documentacion y verificacion",
+      "currentLevel": "Nivel actual",
+      "progress": "Progreso de verificacion",
+      "uploadDocument": "Subir documento",
+      "documentType": "Tipo de documento",
+      "selectFile": "Seleccionar archivo",
+      "upload": "Subir",
+      "uploading": "Subiendo...",
+      "nextLevel": "Proximo nivel",
+      "missingDocs": "Documentos necesarios para el proximo nivel",
+      "noDocuments": "Aun no has subido ningun documento",
+      "uploadedDocuments": "Documentos subidos",
+      "uploadSuccess": "Documento subido correctamente",
+      "selectDocType": "Selecciona el tipo de documento",
+      "selectFileFirst": "Selecciona un archivo primero",
+      "status": {
+        "pending": "Pendiente de revision",
+        "verified": "Aprobado",
+        "rejected": "Rechazado"
+      },
+      "level": {
+        "none": "Sin verificacion",
+        "verified": "Verificado",
+        "extended": "Verificado extendido",
+        "detailed": "Verificado detallado",
+        "audited": "Auditado",
+        "certified": "Certificado"
+      },
+      "docType": {
+        "ficha_tecnica": "Ficha tecnica",
+        "foto_km": "Foto kilometros",
+        "fotos_exteriores": "Fotos exteriores",
+        "placa_fabricante": "Placa fabricante",
+        "permiso_circulacion": "Permiso de circulacion",
+        "tarjeta_itv": "Tarjeta ITV",
+        "adr": "Certificado ADR",
+        "atp": "Certificado ATP",
+        "exolum": "Certificado Exolum",
+        "estanqueidad": "Certificado estanqueidad",
+        "dgt_report": "Informe DGT oficial",
+        "inspection_report": "Informe inspeccion mecanica",
+        "itv": "ITV",
+        "seguro": "Seguro",
+        "contrato": "Contrato",
+        "foto_bastidor": "Foto bastidor",
+        "other": "Otro"
+      }
+    },
+    "sold": {
+      "title": "Marcar como vendido",
+      "congratulations": "¡Enhorabuena por la venta!",
+      "soldViaTracciona": "¿Se vendió a través de Tracciona?",
+      "yes": "Sí",
+      "no": "No",
+      "crossSell": {
+        "title": "¿Necesitas ayuda con la venta?",
+        "subtitle": "Selecciona los servicios que te gustaría solicitar",
+        "transport": "Transporte",
+        "transportDesc": "Gestión de transporte nacional e internacional",
+        "transportPrice": "Precio cerrado por zona",
+        "transfer": "Gestión de transferencia",
+        "transferDesc": "Tramitación completa de la transferencia del vehículo",
+        "insurance": "Seguro",
+        "insuranceDesc": "Cotización personalizada en 24h",
+        "insurancePrice": "Cotización en 24h",
+        "contract": "Contrato de compraventa",
+        "contractDesc": "Contrato legal generado automáticamente",
+        "contractPrice": "GRATIS"
+      },
+      "publishAnother": "Publicar otro vehículo",
+      "confirm": "Confirmar",
+      "done": "¡Todo listo!",
+      "confirmationMessage": "Hemos recibido tu solicitud. Nuestro equipo se pondrá en contacto contigo pronto."
     },
     "leads": {
       "title": "Leads recibidos",
@@ -2061,6 +2184,33 @@
         "unknown": "Desconocido"
       }
     }
+  },
+  "billing": {
+    "title": "Facturación",
+    "exportCsv": "Exportar CSV",
+    "thisMonth": "Este mes",
+    "lastMonth": "Mes anterior",
+    "last3Months": "Últimos 3 meses",
+    "thisYear": "Este año",
+    "allTime": "Todo",
+    "totalRevenue": "Ingresos totales",
+    "totalTax": "IVA recaudado",
+    "tax": "IVA",
+    "paidInvoices": "Pagadas",
+    "pendingInvoices": "Pendientes",
+    "failedInvoices": "Fallidas",
+    "byType": "Por tipo de servicio",
+    "recentInvoices": "Facturas recientes",
+    "noInvoices": "No hay facturas en este periodo",
+    "statusPaid": "Pagada",
+    "statusPending": "Pendiente",
+    "statusFailed": "Fallida",
+    "statusRefunded": "Reembolsada",
+    "typeSubscription": "Suscripción",
+    "typeAuction": "Subasta",
+    "typeTransport": "Transporte",
+    "typeVerification": "Verificación",
+    "typeAd": "Publicidad"
   },
   "report": {
     "title": "Reportar contenido",
@@ -2163,5 +2313,25 @@
     "icoText": "You have the right to lodge a complaint with the UK Information Commissioner's Office (ICO) if you believe your data rights have been infringed. The ICO can be contacted at ico.org.uk.",
     "contactTitle": "Contact",
     "contactText": "For UK-specific legal enquiries, please contact us at legal{'@'}tracciona.com. For general enquiries, visit our Contact page."
+  },
+  "inspection": {
+    "title": "Solicitar inspección física",
+    "description": "Solicita una inspección física del vehículo realizada por un mecánico certificado. Recibirás un informe detallado del estado del vehículo.",
+    "name": "Nombre completo",
+    "namePlaceholder": "Tu nombre completo",
+    "email": "Email",
+    "emailPlaceholder": "tu{'@'}email.com",
+    "phone": "Teléfono",
+    "phonePlaceholder": "+34 600 000 000",
+    "preferredDate": "Fecha preferida",
+    "notes": "Notas adicionales",
+    "notesPlaceholder": "Información adicional que quieras compartir (opcional)",
+    "submit": "Enviar solicitud",
+    "submitting": "Enviando...",
+    "success": "¡Solicitud enviada!",
+    "successDesc": "Hemos recibido tu solicitud de inspección. Nos pondremos en contacto contigo en las próximas 24-48 horas para confirmar los detalles.",
+    "price": "Precio de la inspección: 150€ + IVA",
+    "requiredFields": "Por favor, rellena todos los campos obligatorios",
+    "errorSubmitting": "Error al enviar la solicitud. Por favor, inténtalo de nuevo."
   }
 }

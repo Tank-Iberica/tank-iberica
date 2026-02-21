@@ -7,25 +7,52 @@ import {
 import { useAdminTypes } from '~/composables/admin/useAdminTypes'
 import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories'
 import { useAdminFilters, type AdminFilter } from '~/composables/admin/useAdminFilters'
+import { useGoogleDrive } from '~/composables/admin/useGoogleDrive'
+import type { FileNamingData } from '~/utils/fileNaming'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
 })
 
-const {
-  vehicles,
-  loading,
-  error,
-  total,
-  fetchVehicles,
-  deleteVehicle,
-  updateStatus,
-} = useAdminVehicles()
+const { vehicles, loading, error, total, fetchVehicles, deleteVehicle, updateStatus } =
+  useAdminVehicles()
 
 const { types, fetchTypes } = useAdminTypes()
 const { subcategories, fetchSubcategories } = useAdminSubcategories()
 const { filters: adminFilterDefs, fetchFilters: fetchAdminFilters } = useAdminFilters()
+
+// Google Drive
+const {
+  connected: driveConnected,
+  loading: driveLoading,
+  connect: connectDrive,
+  openVehicleFolder,
+} = useGoogleDrive()
+
+function vehicleToNaming(v: AdminVehicle): FileNamingData {
+  const type = types.value.find((t) => t.id === v.type_id)
+  // Find subcategory via junction
+  const link = typeSubcategoryLinks.value.find((l) => l.type_id === v.type_id)
+  const subcat = link ? subcategories.value.find((s) => s.id === link.subcategory_id) : null
+  return {
+    id: v.internal_id || v.id,
+    brand: v.brand,
+    year: v.year,
+    plate: v.plate,
+    subcategory: subcat?.name_es || null,
+    type: type?.name_es || null,
+  }
+}
+
+async function openDriveFolder(v: AdminVehicle) {
+  if (!driveConnected.value) {
+    const ok = await connectDrive()
+    if (!ok) return
+  }
+  const section = v.is_online ? ('Vehiculos' as const) : ('Intermediacion' as const)
+  await openVehicleFolder(vehicleToNaming(v), section)
+}
 
 // Filters
 const filters = ref<AdminVehicleFilters>({
@@ -84,8 +111,8 @@ const staticColumns: ColumnDef[] = [
 // Dynamic filter columns from filter_definitions
 const dynamicFilterColumns = computed<ColumnDef[]>(() => {
   return (adminFilterDefs.value as AdminFilter[])
-    .filter(f => f.status !== 'archived')
-    .map(f => ({
+    .filter((f) => f.status !== 'archived')
+    .map((f) => ({
       key: `filter_${f.name}`,
       label: f.label_es || f.name,
       group: 'filtros',
@@ -100,8 +127,8 @@ const allColumns = computed<ColumnDef[]>(() => {
 // Active filter columns (non-archived, for template rendering)
 const activeFilterColumns = computed(() => {
   return (adminFilterDefs.value as AdminFilter[])
-    .filter(f => f.status !== 'archived')
-    .map(f => ({
+    .filter((f) => f.status !== 'archived')
+    .map((f) => ({
       key: `filter_${f.name}`,
       filterName: f.name,
       label: f.label_es || f.name,
@@ -110,7 +137,27 @@ const activeFilterColumns = computed(() => {
 })
 
 const defaultColumnGroups: ColumnGroup[] = [
-  { id: 'base', name: 'Base', icon: '📋', columns: ['checkbox', 'image', 'type', 'brand', 'model', 'subcategory', 'typeName', 'year', 'price', 'category', 'status', 'actions'], active: true, required: true },
+  {
+    id: 'base',
+    name: 'Base',
+    icon: '📋',
+    columns: [
+      'checkbox',
+      'image',
+      'type',
+      'brand',
+      'model',
+      'subcategory',
+      'typeName',
+      'year',
+      'price',
+      'category',
+      'status',
+      'actions',
+    ],
+    active: true,
+    required: true,
+  },
   { id: 'docs', name: 'Docs', icon: '📄', columns: ['plate', 'location'], active: false },
   { id: 'tecnico', name: 'Técnico', icon: '🔧', columns: ['description'], active: false },
   { id: 'cuentas', name: 'Cuentas', icon: '💰', columns: ['minPrice', 'cost'], active: false },
@@ -118,10 +165,12 @@ const defaultColumnGroups: ColumnGroup[] = [
   { id: 'filtros', name: 'Filtros', icon: '🔎', columns: [], active: false },
 ]
 
-const STORAGE_KEY = 'tank-admin-productos-config-v4'
+const STORAGE_KEY = 'tracciona-admin-productos-config-v4'
 
-const columnGroups = ref<ColumnGroup[]>(defaultColumnGroups.map(g => ({ ...g, columns: [...g.columns] })))
-const columnOrder = ref<string[]>(staticColumns.map(c => c.key))
+const columnGroups = ref<ColumnGroup[]>(
+  defaultColumnGroups.map((g) => ({ ...g, columns: [...g.columns] })),
+)
+const columnOrder = ref<string[]>(staticColumns.map((c) => c.key))
 
 function loadConfig() {
   if (!import.meta.client) return
@@ -136,24 +185,32 @@ function loadConfig() {
         columnOrder.value = parsed.order
       }
     }
+  } catch {
+    /* use defaults */
   }
-  catch { /* use defaults */ }
 }
 
 function saveConfig() {
   if (!import.meta.client) return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({
-    groups: columnGroups.value,
-    order: columnOrder.value,
-  }))
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        groups: columnGroups.value,
+        order: columnOrder.value,
+      }),
+    )
+  } catch {
+    // localStorage may be full or unavailable in private mode
+  }
 }
 
 // Sync dynamic filter columns into "filtros" group and columnOrder when filters load
 function syncFilterColumns() {
-  const filterKeys = dynamicFilterColumns.value.map(c => c.key)
+  const filterKeys = dynamicFilterColumns.value.map((c) => c.key)
 
   // Update "filtros" group columns
-  const filtrosGroup = columnGroups.value.find(g => g.id === 'filtros')
+  const filtrosGroup = columnGroups.value.find((g) => g.id === 'filtros')
   if (filtrosGroup) {
     // Add new filter columns that aren't in the group yet
     for (const key of filterKeys) {
@@ -163,7 +220,7 @@ function syncFilterColumns() {
     }
     // Remove filter columns that no longer exist
     filtrosGroup.columns = filtrosGroup.columns.filter(
-      c => !c.startsWith('filter_') || filterKeys.includes(c),
+      (c) => !c.startsWith('filter_') || filterKeys.includes(c),
     )
   }
 
@@ -174,8 +231,7 @@ function syncFilterColumns() {
       const actionsIdx = columnOrder.value.indexOf('actions')
       if (actionsIdx >= 0) {
         columnOrder.value.splice(actionsIdx, 0, key)
-      }
-      else {
+      } else {
         columnOrder.value.push(key)
       }
     }
@@ -183,7 +239,7 @@ function syncFilterColumns() {
 
   // Remove obsolete filter columns from order
   columnOrder.value = columnOrder.value.filter(
-    k => !k.startsWith('filter_') || filterKeys.includes(k),
+    (k) => !k.startsWith('filter_') || filterKeys.includes(k),
   )
 
   saveConfig()
@@ -194,7 +250,7 @@ onMounted(() => {
 })
 
 function toggleGroup(groupId: string) {
-  const group = columnGroups.value.find(g => g.id === groupId)
+  const group = columnGroups.value.find((g) => g.id === groupId)
   if (group && !group.required) {
     group.active = !group.active
     saveConfig()
@@ -202,22 +258,22 @@ function toggleGroup(groupId: string) {
 }
 
 function isGroupActive(groupId: string): boolean {
-  return columnGroups.value.find(g => g.id === groupId)?.active || false
+  return columnGroups.value.find((g) => g.id === groupId)?.active || false
 }
 
 // Visible columns based on active groups
 const _visibleColumns = computed(() => {
-  const _activeGroupIds = columnGroups.value.filter(g => g.active).map(g => g.id)
+  const _activeGroupIds = columnGroups.value.filter((g) => g.active).map((g) => g.id)
   const visibleKeys = new Set<string>()
 
   columnGroups.value
-    .filter(g => g.active || g.required)
-    .forEach(g => g.columns.forEach(c => visibleKeys.add(c)))
+    .filter((g) => g.active || g.required)
+    .forEach((g) => g.columns.forEach((c) => visibleKeys.add(c)))
 
   // Return columns in order
   return columnOrder.value
-    .filter(key => visibleKeys.has(key))
-    .map(key => allColumns.value.find(c => c.key === key)!)
+    .filter((key) => visibleKeys.has(key))
+    .map((key) => allColumns.value.find((c) => c.key === key)!)
     .filter(Boolean)
 })
 
@@ -232,8 +288,7 @@ const sortOrder = ref<SortOrder>('desc')
 function toggleSort(field: SortField) {
   if (sortField.value === field) {
     sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
-  }
-  else {
+  } else {
     sortField.value = field
     sortOrder.value = 'asc'
   }
@@ -305,12 +360,13 @@ function toggleFullscreen() {
 const selectedIds = ref<Set<string>>(new Set())
 
 const selectAll = computed({
-  get: () => sortedVehicles.value.length > 0 && sortedVehicles.value.every(v => selectedIds.value.has(v.id)),
+  get: () =>
+    sortedVehicles.value.length > 0 &&
+    sortedVehicles.value.every((v) => selectedIds.value.has(v.id)),
   set: (val: boolean) => {
     if (val) {
-      sortedVehicles.value.forEach(v => selectedIds.value.add(v.id))
-    }
-    else {
+      sortedVehicles.value.forEach((v) => selectedIds.value.add(v.id))
+    } else {
       selectedIds.value.clear()
     }
     selectedIds.value = new Set(selectedIds.value)
@@ -320,8 +376,7 @@ const selectAll = computed({
 function toggleSelection(id: string) {
   if (selectedIds.value.has(id)) {
     selectedIds.value.delete(id)
-  }
-  else {
+  } else {
     selectedIds.value.add(id)
   }
   selectedIds.value = new Set(selectedIds.value)
@@ -401,7 +456,7 @@ function cancelEditGroup() {
 
 function saveEditGroup() {
   if (!editingGroup.value) return
-  const idx = columnGroups.value.findIndex(g => g.id === editingGroup.value!.id)
+  const idx = columnGroups.value.findIndex((g) => g.id === editingGroup.value!.id)
   if (idx >= 0) {
     columnGroups.value[idx] = { ...editingGroup.value }
     saveConfig()
@@ -414,8 +469,7 @@ function toggleColumnInEdit(colKey: string) {
   const idx = editingGroup.value.columns.indexOf(colKey)
   if (idx >= 0) {
     editingGroup.value.columns.splice(idx, 1)
-  }
-  else {
+  } else {
     editingGroup.value.columns.push(colKey)
   }
 }
@@ -436,15 +490,15 @@ function createGroup() {
 }
 
 function deleteGroup(groupId: string) {
-  const group = columnGroups.value.find(g => g.id === groupId)
+  const group = columnGroups.value.find((g) => g.id === groupId)
   if (group?.required) return
-  columnGroups.value = columnGroups.value.filter(g => g.id !== groupId)
+  columnGroups.value = columnGroups.value.filter((g) => g.id !== groupId)
   saveConfig()
 }
 
 function resetConfig() {
-  columnGroups.value = defaultColumnGroups.map(g => ({ ...g, columns: [...g.columns] }))
-  columnOrder.value = staticColumns.map(c => c.key)
+  columnGroups.value = defaultColumnGroups.map((g) => ({ ...g, columns: [...g.columns] }))
+  columnOrder.value = staticColumns.map((c) => c.key)
   syncFilterColumns()
 }
 
@@ -496,20 +550,29 @@ const categoryOptions = [
 // DATA LOADING
 // ============================================
 onMounted(async () => {
-  await Promise.all([fetchSubcategories(), fetchTypes(), fetchTypeSubcategoryLinks(), loadVehicles(), fetchAdminFilters()])
+  await Promise.all([
+    fetchSubcategories(),
+    fetchTypes(),
+    fetchTypeSubcategoryLinks(),
+    loadVehicles(),
+    fetchAdminFilters(),
+  ])
   syncFilterColumns()
 })
 
 watch([filters, onlineFilter], () => loadVehicles(), { deep: true })
 
 // When subcategory filter changes, reset type_id if not in filtered types
-watch(() => filters.value.subcategory_id, () => {
-  if (filters.value.subcategory_id && filters.value.type_id) {
-    if (!filteredTypes.value.some(t => t.id === filters.value.type_id)) {
-      filters.value.type_id = null
+watch(
+  () => filters.value.subcategory_id,
+  () => {
+    if (filters.value.subcategory_id && filters.value.type_id) {
+      if (!filteredTypes.value.some((t) => t.id === filters.value.type_id)) {
+        filters.value.type_id = null
+      }
     }
-  }
-})
+  },
+)
 
 async function loadVehicles() {
   let isOnline: boolean | null = null
@@ -532,8 +595,7 @@ async function executeTransaction() {
 
   if (modalData.value.transactionType === 'rent') {
     await updateStatus(modalData.value.vehicle.id, 'rented')
-  }
-  else {
+  } else {
     await updateStatus(modalData.value.vehicle.id, 'sold')
   }
 
@@ -552,11 +614,9 @@ async function executeExport() {
   let dataToExport: AdminVehicle[]
   if (exportScope === 'all') {
     dataToExport = vehicles.value
-  }
-  else if (exportScope === 'selected') {
-    dataToExport = sortedVehicles.value.filter(v => selectedIds.value.has(v.id))
-  }
-  else {
+  } else if (exportScope === 'selected') {
+    dataToExport = sortedVehicles.value.filter((v) => selectedIds.value.has(v.id))
+  } else {
     dataToExport = sortedVehicles.value
   }
 
@@ -567,8 +627,7 @@ async function executeExport() {
 
   if (exportFormat === 'excel') {
     await exportToExcel(dataToExport)
-  }
-  else {
+  } else {
     await exportToPdf(dataToExport)
   }
 
@@ -578,19 +637,19 @@ async function executeExport() {
 async function exportToExcel(data: AdminVehicle[]) {
   const XLSX = await import('xlsx')
 
-  const rows = data.map(v => ({
-    'Online': v.is_online ? 'Online' : 'Offline',
-    'Marca': v.brand,
-    'Modelo': v.model,
-    'Tipo': getSubcategoryName(v.type_id),
-    'Año': v.year,
-    'Precio': v.price,
-    'Categoría': v.category,
-    'Estado': getStatusLabel(v.status),
-    'Matrícula': v.plate || '-',
-    'Ubicación': v.location || '-',
+  const rows = data.map((v) => ({
+    Online: v.is_online ? 'Online' : 'Offline',
+    Marca: v.brand,
+    Modelo: v.model,
+    Tipo: getSubcategoryName(v.type_id),
+    Año: v.year,
+    Precio: v.price,
+    Categoría: v.category,
+    Estado: getStatusLabel(v.status),
+    Matrícula: v.plate || '-',
+    Ubicación: v.location || '-',
     'Precio Mín.': v.min_price || '-',
-    'Coste': v.acquisition_cost || '-',
+    Coste: v.acquisition_cost || '-',
     'Precio Alquiler': v.rental_price || '-',
   }))
 
@@ -606,12 +665,12 @@ async function exportToPdf(data: AdminVehicle[]) {
 
   const doc = new jsPDF('l', 'mm', 'a4')
   doc.setFontSize(16)
-  doc.text('Tank Iberica - Productos', 14, 15)
+  doc.text('Tracciona - Productos', 14, 15)
   doc.setFontSize(10)
   doc.text(`Fecha: ${new Date().toLocaleDateString('es-ES')} · ${data.length} productos`, 14, 22)
 
   const headers = ['Online', 'Marca', 'Modelo', 'Tipo', 'Año', 'Precio', 'Cat.', 'Estado']
-  const rows = data.map(v => [
+  const rows = data.map((v) => [
     v.is_online ? 'ON' : 'OFF',
     v.brand || '-',
     v.model || '-',
@@ -644,7 +703,7 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
   doc.rect(0, 0, pageWidth, 40, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(24)
-  doc.text('Tank Iberica', 14, 20)
+  doc.text('Tracciona', 14, 20)
   doc.setFontSize(12)
   doc.text('Ficha de Producto', 14, 30)
 
@@ -682,7 +741,8 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
 
   if (vehicle.location) details.push(['Ubicación', vehicle.location])
   if (vehicle.plate) details.push(['Matrícula', vehicle.plate])
-  if (vehicle.rental_price) details.push(['Precio Alquiler', `${formatPrice(vehicle.rental_price)}/día`])
+  if (vehicle.rental_price)
+    details.push(['Precio Alquiler', `${formatPrice(vehicle.rental_price)}/día`])
 
   doc.setFontSize(14)
   doc.setTextColor(35, 66, 74)
@@ -739,7 +799,7 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
   // Footer
   doc.setFontSize(8)
   doc.setTextColor(150, 150, 150)
-  doc.text(`Generado: ${new Date().toLocaleDateString('es-ES')} · Tank Iberica`, 14, 285)
+  doc.text(`Generado: ${new Date().toLocaleDateString('es-ES')} · Tracciona`, 14, 285)
 
   doc.save(`ficha_${vehicle.brand}_${vehicle.model}_${vehicle.year || ''}.pdf`)
 }
@@ -770,7 +830,7 @@ function getStatusClass(status: string): string {
 }
 
 function getStatusLabel(status: string): string {
-  return statusOptions.find(s => s.value === status)?.label || status
+  return statusOptions.find((s) => s.value === status)?.label || status
 }
 
 function getCategoryClass(category: string): string {
@@ -793,7 +853,7 @@ function formatPrice(price: number | null | undefined): string {
 
 function getSubcategoryName(id: string | null): string {
   if (!id) return '-'
-  return types.value.find(s => s.id === id)?.name_es || '-'
+  return types.value.find((s) => s.id === id)?.name_es || '-'
 }
 
 function getThumbnail(vehicle: AdminVehicle): string | null {
@@ -803,12 +863,25 @@ function getThumbnail(vehicle: AdminVehicle): string | null {
 }
 
 function clearFilters() {
-  filters.value = { status: null, category: null, type_id: null, subcategory_id: null, search: '', is_online: null }
+  filters.value = {
+    status: null,
+    category: null,
+    type_id: null,
+    subcategory_id: null,
+    search: '',
+    is_online: null,
+  }
   onlineFilter.value = 'all'
 }
 
-const hasActiveFilters = computed(() =>
-  filters.value.status || filters.value.category || filters.value.type_id || filters.value.subcategory_id || filters.value.search || onlineFilter.value !== 'all',
+const hasActiveFilters = computed(
+  () =>
+    filters.value.status ||
+    filters.value.category ||
+    filters.value.type_id ||
+    filters.value.subcategory_id ||
+    filters.value.search ||
+    onlineFilter.value !== 'all',
 )
 
 // Junction data: type ↔ subcategory links
@@ -817,17 +890,17 @@ const typeSubcategoryLinks = ref<{ type_id: string; subcategory_id: string }[]>(
 async function fetchTypeSubcategoryLinks() {
   const supabase = useSupabaseClient()
   const { data } = await supabase
-    .from('type_subcategories')
-    .select('type_id, subcategory_id')
+    .from('subcategory_categories')
+    .select('subcategory_id, category_id')
   typeSubcategoryLinks.value = (data as { type_id: string; subcategory_id: string }[]) || []
 }
 
 // Get subcategory name for a vehicle (via type → junction → subcategory)
 function getSubcategoryForVehicle(typeId: string | null): string {
   if (!typeId) return '-'
-  const link = typeSubcategoryLinks.value.find(l => l.type_id === typeId)
+  const link = typeSubcategoryLinks.value.find((l) => l.type_id === typeId)
   if (!link) return '-'
-  return subcategories.value.find(s => s.id === link.subcategory_id)?.name_es || '-'
+  return subcategories.value.find((s) => s.id === link.subcategory_id)?.name_es || '-'
 }
 
 // Types filtered by selected subcategory
@@ -835,20 +908,20 @@ const filteredTypes = computed(() => {
   if (!filters.value.subcategory_id) return types.value
   const linkedTypeIds = new Set(
     typeSubcategoryLinks.value
-      .filter(l => l.subcategory_id === filters.value.subcategory_id)
-      .map(l => l.type_id)
+      .filter((l) => l.subcategory_id === filters.value.subcategory_id)
+      .map((l) => l.type_id),
   )
-  return types.value.filter(t => linkedTypeIds.has(t.id))
+  return types.value.filter((t) => linkedTypeIds.has(t.id))
 })
 
 // Get available columns for group editing (exclude base columns)
 const availableColumnsForGroups = computed(() =>
-  allColumns.value.filter(c => !['checkbox', 'actions'].includes(c.key)),
+  allColumns.value.filter((c) => !['checkbox', 'actions'].includes(c.key)),
 )
 
-// Helper: get filter value from vehicle's filters_json
+// Helper: get filter value from vehicle's attributes_json
 function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
-  const json = vehicle.filters_json as Record<string, unknown> | null
+  const json = vehicle.attributes_json as Record<string, unknown> | null
   if (!json) return '-'
   const val = json[filterName]
   if (val === null || val === undefined || val === '') return '-'
@@ -868,9 +941,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
         <h1>Productos</h1>
         <span class="count-badge">{{ total }}</span>
       </div>
-      <NuxtLink to="/admin/productos/nuevo" class="btn-primary">
-        + Nuevo Producto
-      </NuxtLink>
+      <NuxtLink to="/admin/productos/nuevo" class="btn-primary"> + Nuevo Producto </NuxtLink>
     </header>
 
     <!-- Toolbar -->
@@ -879,11 +950,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
       <div class="toolbar-row">
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input
-            v-model="filters.search"
-            type="text"
-            placeholder="Buscar marca, modelo..."
-          >
+          <input v-model="filters.search" type="text" placeholder="Buscar marca, modelo..." >
           <button v-if="filters.search" class="clear-btn" @click="filters.search = ''">×</button>
         </div>
 
@@ -891,7 +958,11 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
           <label class="filter-label">Tipo:</label>
           <div class="segment-control">
             <button
-              v-for="opt in [{ value: 'all', label: 'Todos' }, { value: 'online', label: 'Online' }, { value: 'offline', label: 'Offline' }]"
+              v-for="opt in [
+                { value: 'all', label: 'Todos' },
+                { value: 'online', label: 'Online' },
+                { value: 'offline', label: 'Offline' },
+              ]"
               :key="opt.value"
               :class="{ active: onlineFilter === opt.value }"
               @click="onlineFilter = opt.value as OnlineFilter"
@@ -949,7 +1020,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
         <div class="column-toggles">
           <span class="toggles-label">Columnas:</span>
           <button
-            v-for="group in columnGroups.filter(g => !g.required)"
+            v-for="group in columnGroups.filter((g) => !g.required)"
             :key="group.id"
             class="column-toggle"
             :class="{ active: group.active }"
@@ -960,6 +1031,14 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
         </div>
 
         <div class="toolbar-actions">
+          <button
+            class="btn-tool"
+            :class="{ 'drive-on': driveConnected }"
+            :disabled="driveLoading"
+            @click="driveConnected ? undefined : connectDrive()"
+          >
+            {{ driveConnected ? '🟢 Drive' : '🔗 Drive' }}
+          </button>
           <button class="btn-tool" title="Configurar tabla" @click="openConfigModal">
             ⚙️ Configurar
           </button>
@@ -967,7 +1046,11 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
             📥 Exportar
             <span v-if="selectedIds.size > 0" class="badge">{{ selectedIds.size }}</span>
           </button>
-          <button class="btn-tool" :title="isFullscreen ? 'Salir' : 'Pantalla completa'" @click="toggleFullscreen">
+          <button
+            class="btn-tool"
+            :title="isFullscreen ? 'Salir' : 'Pantalla completa'"
+            @click="toggleFullscreen"
+          >
             {{ isFullscreen ? '✕' : '⛶' }}
           </button>
         </div>
@@ -991,68 +1074,74 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
         <thead>
           <tr>
             <th class="col-checkbox">
-              <input v-model="selectAll" type="checkbox" title="Seleccionar todos">
+              <input v-model="selectAll" type="checkbox" title="Seleccionar todos" >
             </th>
-            <th class="col-img">
-              Img
-            </th>
-            <th class="col-type">
-              Tipo
-            </th>
+            <th class="col-img">Img</th>
+            <th class="col-type">Tipo</th>
             <th class="sortable" @click="toggleSort('brand')">
-              Marca <span class="sort-icon" :class="{ active: isSortActive('brand') }">{{ getSortIcon('brand') }}</span>
+              Marca
+              <span class="sort-icon" :class="{ active: isSortActive('brand') }">{{
+                getSortIcon('brand')
+              }}</span>
             </th>
             <th class="sortable" @click="toggleSort('model')">
-              Modelo <span class="sort-icon" :class="{ active: isSortActive('model') }">{{ getSortIcon('model') }}</span>
+              Modelo
+              <span class="sort-icon" :class="{ active: isSortActive('model') }">{{
+                getSortIcon('model')
+              }}</span>
             </th>
             <th>Subcat.</th>
             <th>Tipo</th>
             <th class="sortable col-num" @click="toggleSort('year')">
-              Año <span class="sort-icon" :class="{ active: isSortActive('year') }">{{ getSortIcon('year') }}</span>
+              Año
+              <span class="sort-icon" :class="{ active: isSortActive('year') }">{{
+                getSortIcon('year')
+              }}</span>
             </th>
             <th class="sortable col-num" @click="toggleSort('price')">
-              Precio <span class="sort-icon" :class="{ active: isSortActive('price') }">{{ getSortIcon('price') }}</span>
+              Precio
+              <span class="sort-icon" :class="{ active: isSortActive('price') }">{{
+                getSortIcon('price')
+              }}</span>
             </th>
             <!-- Optional columns -->
-            <th v-if="isGroupActive('docs')">
-              Matrícula
-            </th>
-            <th v-if="isGroupActive('docs')">
-              Ubicación
-            </th>
-            <th v-if="isGroupActive('tecnico')">
-              Descripción
-            </th>
-            <th v-if="isGroupActive('cuentas')" class="col-num">
-              P. Mín.
-            </th>
-            <th v-if="isGroupActive('cuentas')" class="col-num">
-              Coste
-            </th>
-            <th v-if="isGroupActive('alquiler')" class="col-num">
-              P. Alq.
-            </th>
+            <th v-if="isGroupActive('docs')">Matrícula</th>
+            <th v-if="isGroupActive('docs')">Ubicación</th>
+            <th v-if="isGroupActive('tecnico')">Descripción</th>
+            <th v-if="isGroupActive('cuentas')" class="col-num">P. Mín.</th>
+            <th v-if="isGroupActive('cuentas')" class="col-num">Coste</th>
+            <th v-if="isGroupActive('alquiler')" class="col-num">P. Alq.</th>
             <!-- Dynamic filter columns -->
-            <th v-for="fc in activeFilterColumns" v-show="isGroupActive('filtros')" :key="fc.key" class="col-filter">
+            <th
+              v-for="fc in activeFilterColumns"
+              v-show="isGroupActive('filtros')"
+              :key="fc.key"
+              class="col-filter"
+            >
               {{ fc.label }}<span v-if="fc.unit" class="filter-unit">({{ fc.unit }})</span>
             </th>
             <th>Cat.</th>
             <th class="sortable" @click="toggleSort('status')">
-              Estado <span class="sort-icon" :class="{ active: isSortActive('status') }">{{ getSortIcon('status') }}</span>
+              Estado
+              <span class="sort-icon" :class="{ active: isSortActive('status') }">{{
+                getSortIcon('status')
+              }}</span>
             </th>
-            <th class="col-actions">
-              Acciones
-            </th>
+            <th class="col-actions">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="v in sortedVehicles" :key="v.id" :class="{ selected: selectedIds.has(v.id) }">
             <td class="col-checkbox">
-              <input type="checkbox" :checked="selectedIds.has(v.id)" @change="toggleSelection(v.id)">
+              <input
+                type="checkbox"
+                :checked="selectedIds.has(v.id)"
+                @change="toggleSelection(v.id)"
+              >
             </td>
             <td class="col-img">
               <div class="thumb">
-                <img v-if="getThumbnail(v)" :src="getThumbnail(v)!" :alt="v.brand">
+                <img v-if="getThumbnail(v)" :src="getThumbnail(v)!" :alt="v.brand" >
                 <span v-else class="thumb-empty">📷</span>
               </div>
             </td>
@@ -1065,7 +1154,9 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
               <NuxtLink :to="`/admin/productos/${v.id}`" class="vehicle-link">
                 <strong>{{ v.brand }}</strong>
               </NuxtLink>
-              <span v-if="!v.is_online && v.owner_name" class="owner-tag">👤 {{ v.owner_name }}</span>
+              <span v-if="!v.is_online && v.owner_name" class="owner-tag"
+                >👤 {{ v.owner_name }}</span
+              >
             </td>
             <td class="text-muted">
               {{ v.model }}
@@ -1102,7 +1193,12 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
               {{ formatPrice(v.rental_price) }}
             </td>
             <!-- Dynamic filter columns -->
-            <td v-for="fc in activeFilterColumns" v-show="isGroupActive('filtros')" :key="fc.key" class="text-small col-filter">
+            <td
+              v-for="fc in activeFilterColumns"
+              v-show="isGroupActive('filtros')"
+              :key="fc.key"
+              class="text-small col-filter"
+            >
               {{ getFilterValue(v, fc.filterName) }}
             </td>
             <td>
@@ -1124,8 +1220,20 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
             </td>
             <td class="col-actions">
               <div class="row-actions">
-                <NuxtLink :to="`/admin/productos/${v.id}`" class="action-btn" title="Editar">✏️</NuxtLink>
-                <button class="action-btn" title="Exportar ficha" @click="exportVehicleFicha(v)">📄</button>
+                <NuxtLink :to="`/admin/productos/${v.id}`" class="action-btn" title="Editar"
+                  >✏️</NuxtLink
+                >
+                <button
+                  class="action-btn"
+                  title="Abrir en Drive"
+                  :disabled="driveLoading"
+                  @click="openDriveFolder(v)"
+                >
+                  📁
+                </button>
+                <button class="action-btn" title="Exportar ficha" @click="exportVehicleFicha(v)">
+                  📄
+                </button>
                 <button
                   class="action-btn"
                   :title="v.category === 'alquiler' ? 'Alquilar' : 'Vender'"
@@ -1133,16 +1241,30 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
                 >
                   💰
                 </button>
-                <button class="action-btn delete" title="Eliminar" @click="openDeleteModal(v)">🗑️</button>
+                <button class="action-btn delete" title="Eliminar" @click="openDeleteModal(v)">
+                  🗑️
+                </button>
               </div>
             </td>
           </tr>
           <tr v-if="sortedVehicles.length === 0">
-            <td :colspan="11 + (isGroupActive('docs') ? 2 : 0) + (isGroupActive('tecnico') ? 1 : 0) + (isGroupActive('cuentas') ? 2 : 0) + (isGroupActive('alquiler') ? 1 : 0) + (isGroupActive('filtros') ? activeFilterColumns.length : 0)" class="empty-cell">
+            <td
+              :colspan="
+                11 +
+                (isGroupActive('docs') ? 2 : 0) +
+                (isGroupActive('tecnico') ? 1 : 0) +
+                (isGroupActive('cuentas') ? 2 : 0) +
+                (isGroupActive('alquiler') ? 1 : 0) +
+                (isGroupActive('filtros') ? activeFilterColumns.length : 0)
+              "
+              class="empty-cell"
+            >
               <div class="empty-state">
                 <span class="empty-icon">📦</span>
                 <p>No hay productos que coincidan con los filtros</p>
-                <button v-if="hasActiveFilters" class="btn-secondary" @click="clearFilters">Limpiar filtros</button>
+                <button v-if="hasActiveFilters" class="btn-secondary" @click="clearFilters">
+                  Limpiar filtros
+                </button>
               </div>
             </td>
           </tr>
@@ -1159,16 +1281,33 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
             <button class="modal-close" @click="closeModal">×</button>
           </div>
           <div class="modal-body">
-            <p>¿Eliminar <strong>{{ modalData.vehicle?.brand }} {{ modalData.vehicle?.model }}</strong>?</p>
-            <p class="text-danger">Se eliminarán también las imágenes. Esta acción no se puede deshacer.</p>
+            <p>
+              ¿Eliminar
+              <strong>{{ modalData.vehicle?.brand }} {{ modalData.vehicle?.model }}</strong
+              >?
+            </p>
+            <p class="text-danger">
+              Se eliminarán también las imágenes. Esta acción no se puede deshacer.
+            </p>
             <div class="form-group">
               <label>Escribe <strong>borrar</strong> para confirmar:</label>
-              <input v-model="modalData.confirmText" type="text" placeholder="borrar" autocomplete="off">
+              <input
+                v-model="modalData.confirmText"
+                type="text"
+                placeholder="borrar"
+                autocomplete="off"
+              >
             </div>
           </div>
           <div class="modal-footer">
             <button class="btn-secondary" @click="closeModal">Cancelar</button>
-            <button class="btn-danger" :disabled="modalData.confirmText?.toLowerCase() !== 'borrar'" @click="executeDelete">Eliminar</button>
+            <button
+              class="btn-danger"
+              :disabled="modalData.confirmText?.toLowerCase() !== 'borrar'"
+              @click="executeDelete"
+            >
+              Eliminar
+            </button>
           </div>
         </div>
       </div>
@@ -1186,20 +1325,40 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
             <div class="form-group">
               <label>Formato</label>
               <div class="option-buttons">
-                <button :class="{ active: modalData.exportFormat === 'pdf' }" @click="modalData.exportFormat = 'pdf'">📄 PDF</button>
-                <button :class="{ active: modalData.exportFormat === 'excel' }" @click="modalData.exportFormat = 'excel'">📊 Excel</button>
+                <button
+                  :class="{ active: modalData.exportFormat === 'pdf' }"
+                  @click="modalData.exportFormat = 'pdf'"
+                >
+                  📄 PDF
+                </button>
+                <button
+                  :class="{ active: modalData.exportFormat === 'excel' }"
+                  @click="modalData.exportFormat = 'excel'"
+                >
+                  📊 Excel
+                </button>
               </div>
             </div>
             <div class="form-group">
               <label>Productos</label>
               <div class="option-buttons vertical">
-                <button :class="{ active: modalData.exportScope === 'filtered' }" @click="modalData.exportScope = 'filtered'">
+                <button
+                  :class="{ active: modalData.exportScope === 'filtered' }"
+                  @click="modalData.exportScope = 'filtered'"
+                >
                   Filtrados ({{ sortedVehicles.length }})
                 </button>
-                <button v-if="selectedIds.size > 0" :class="{ active: modalData.exportScope === 'selected' }" @click="modalData.exportScope = 'selected'">
+                <button
+                  v-if="selectedIds.size > 0"
+                  :class="{ active: modalData.exportScope === 'selected' }"
+                  @click="modalData.exportScope = 'selected'"
+                >
                   Seleccionados ({{ selectedIds.size }})
                 </button>
-                <button :class="{ active: modalData.exportScope === 'all' }" @click="modalData.exportScope = 'all'">
+                <button
+                  :class="{ active: modalData.exportScope === 'all' }"
+                  @click="modalData.exportScope = 'all'"
+                >
                   Todos ({{ total }})
                 </button>
               </div>
@@ -1218,7 +1377,9 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
       <div v-if="activeModal === 'transaction'" class="modal-overlay" @click.self="closeModal">
         <div class="modal modal-md">
           <div class="modal-header">
-            <h3>{{ modalData.transactionType === 'rent' ? 'Registrar alquiler' : 'Registrar venta' }}</h3>
+            <h3>
+              {{ modalData.transactionType === 'rent' ? 'Registrar alquiler' : 'Registrar venta' }}
+            </h3>
             <button class="modal-close" @click="closeModal">×</button>
           </div>
           <div class="modal-body">
@@ -1228,48 +1389,75 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
             </div>
 
             <div class="tab-buttons">
-              <button :class="{ active: modalData.transactionType === 'rent' }" @click="modalData.transactionType = 'rent'">🔑 Alquilar</button>
-              <button :class="{ active: modalData.transactionType === 'sell' }" @click="modalData.transactionType = 'sell'">💰 Vender</button>
+              <button
+                :class="{ active: modalData.transactionType === 'rent' }"
+                @click="modalData.transactionType = 'rent'"
+              >
+                🔑 Alquilar
+              </button>
+              <button
+                :class="{ active: modalData.transactionType === 'sell' }"
+                @click="modalData.transactionType = 'sell'"
+              >
+                💰 Vender
+              </button>
             </div>
 
             <div v-if="modalData.transactionType === 'rent'" class="form-grid">
               <div class="form-group half">
                 <label>Fecha desde</label>
-                <input v-model="modalData.rentFrom" type="date">
+                <input v-model="modalData.rentFrom" type="date" >
               </div>
               <div class="form-group half">
                 <label>Fecha hasta</label>
-                <input v-model="modalData.rentTo" type="date">
+                <input v-model="modalData.rentTo" type="date" >
               </div>
               <div class="form-group">
                 <label>Cliente</label>
-                <input v-model="modalData.rentClient" type="text" placeholder="Nombre del cliente">
+                <input
+                  v-model="modalData.rentClient"
+                  type="text"
+                  placeholder="Nombre del cliente"
+                >
               </div>
               <div class="form-group">
                 <label>Importe (€)</label>
-                <input v-model="modalData.rentAmount" type="number" step="0.01" placeholder="0.00">
+                <input
+                  v-model="modalData.rentAmount"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                >
               </div>
             </div>
 
             <div v-else class="form-grid">
               <div class="form-group">
                 <label>Fecha de venta</label>
-                <input v-model="modalData.sellDate" type="date">
+                <input v-model="modalData.sellDate" type="date" >
               </div>
               <div class="form-group">
                 <label>Comprador</label>
-                <input v-model="modalData.sellBuyer" type="text" placeholder="Nombre del comprador">
+                <input
+                  v-model="modalData.sellBuyer"
+                  type="text"
+                  placeholder="Nombre del comprador"
+                >
               </div>
               <div class="form-group">
                 <label>Precio de venta (€)</label>
-                <input v-model="modalData.sellPrice" type="number" step="0.01">
+                <input v-model="modalData.sellPrice" type="number" step="0.01" >
               </div>
-              <div class="info-warning">⚠️ Esto marcará el vehículo como vendido y lo moverá al histórico.</div>
+              <div class="info-warning">
+                ⚠️ Esto marcará el vehículo como vendido y lo moverá al histórico.
+              </div>
             </div>
           </div>
           <div class="modal-footer">
             <button class="btn-secondary" @click="closeModal">Cancelar</button>
-            <button class="btn-primary" @click="executeTransaction">{{ modalData.transactionType === 'rent' ? 'Registrar alquiler' : 'Registrar venta' }}</button>
+            <button class="btn-primary" @click="executeTransaction">
+              {{ modalData.transactionType === 'rent' ? 'Registrar alquiler' : 'Registrar venta' }}
+            </button>
           </div>
         </div>
       </div>
@@ -1301,13 +1489,25 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
                 <h4>Editando: {{ editingGroup.name }}</h4>
                 <div class="form-group">
                   <label>Nombre del grupo</label>
-                  <input v-model="editingGroup.name" type="text" :disabled="editingGroup.required">
+                  <input
+                    v-model="editingGroup.name"
+                    type="text"
+                    :disabled="editingGroup.required"
+                  >
                 </div>
                 <div class="form-group">
                   <label>Columnas incluidas</label>
                   <div class="columns-grid">
-                    <label v-for="col in availableColumnsForGroups" :key="col.key" class="column-checkbox">
-                      <input type="checkbox" :checked="editingGroup.columns.includes(col.key)" @change="toggleColumnInEdit(col.key)">
+                    <label
+                      v-for="col in availableColumnsForGroups"
+                      :key="col.key"
+                      class="column-checkbox"
+                    >
+                      <input
+                        type="checkbox"
+                        :checked="editingGroup.columns.includes(col.key)"
+                        @change="toggleColumnInEdit(col.key)"
+                      >
                       {{ col.label }}
                     </label>
                   </div>
@@ -1321,7 +1521,12 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
               <!-- Groups list -->
               <div v-else>
                 <div class="groups-list">
-                  <div v-for="group in columnGroups" :key="group.id" class="group-item" :class="{ required: group.required }">
+                  <div
+                    v-for="group in columnGroups"
+                    :key="group.id"
+                    class="group-item"
+                    :class="{ required: group.required }"
+                  >
                     <div class="group-info">
                       <span class="group-icon">{{ group.icon }}</span>
                       <span class="group-name">{{ group.name }}</span>
@@ -1330,7 +1535,13 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
                     </div>
                     <div class="group-actions">
                       <button class="btn-sm" @click="startEditGroup(group)">✏️</button>
-                      <button v-if="!group.required" class="btn-sm btn-danger-sm" @click="deleteGroup(group.id)">🗑️</button>
+                      <button
+                        v-if="!group.required"
+                        class="btn-sm btn-danger-sm"
+                        @click="deleteGroup(group.id)"
+                      >
+                        🗑️
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1339,18 +1550,26 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
                 <div class="new-group-form">
                   <h4>Crear nuevo grupo</h4>
                   <div class="form-row">
-                    <input v-model="newGroupName" type="text" placeholder="Nombre del grupo">
+                    <input v-model="newGroupName" type="text" placeholder="Nombre del grupo" >
                   </div>
                   <div class="form-group">
                     <label>Columnas</label>
                     <div class="columns-grid">
-                      <label v-for="col in availableColumnsForGroups" :key="col.key" class="column-checkbox">
-                        <input v-model="newGroupColumns" type="checkbox" :value="col.key">
+                      <label
+                        v-for="col in availableColumnsForGroups"
+                        :key="col.key"
+                        class="column-checkbox"
+                      >
+                        <input v-model="newGroupColumns" type="checkbox" :value="col.key" >
                         {{ col.label }}
                       </label>
                     </div>
                   </div>
-                  <button class="btn-primary" :disabled="!newGroupName.trim() || newGroupColumns.length === 0" @click="createGroup">
+                  <button
+                    class="btn-primary"
+                    :disabled="!newGroupName.trim() || newGroupColumns.length === 0"
+                    @click="createGroup"
+                  >
                     + Crear grupo
                   </button>
                 </div>
@@ -1372,9 +1591,15 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
                   @dragend="onDragEnd"
                 >
                   <span class="drag-handle">⋮⋮</span>
-                  <span class="col-name">{{ allColumns.find(c => c.key === key)?.label || key }}</span>
+                  <span class="col-name">{{
+                    allColumns.find((c) => c.key === key)?.label || key
+                  }}</span>
                   <span v-if="key.startsWith('filter_')" class="tag tag-green">Filtro</span>
-                  <span v-else-if="allColumns.find(c => c.key === key)?.sortable" class="tag tag-blue">Ordenable</span>
+                  <span
+                    v-else-if="allColumns.find((c) => c.key === key)?.sortable"
+                    class="tag tag-blue"
+                    >Ordenable</span
+                  >
                 </div>
               </div>
             </div>
@@ -1443,7 +1668,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -1514,7 +1739,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 
 .search-box input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -1558,7 +1783,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 
 .filter-group select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
 }
 
 .segment-control {
@@ -1584,7 +1809,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 }
 
 .segment-control button.active {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
 }
 
@@ -1675,7 +1900,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 }
 
 .btn-tool .badge {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   font-size: 0.7rem;
   padding: 2px 6px;
@@ -1707,13 +1932,15 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   width: 24px;
   height: 24px;
   border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424A);
+  border-top-color: var(--color-primary, #23424a);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .table-container {
@@ -1761,13 +1988,30 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   background: #eff6ff;
 }
 
-.col-checkbox { width: 40px; text-align: center; }
-.col-img { width: 56px; }
-.col-type { width: 60px; }
-.col-num { text-align: right; font-variant-numeric: tabular-nums; }
-.col-desc { max-width: 140px; }
-.col-filter { max-width: 120px; white-space: nowrap; }
-.col-actions { width: 110px; }
+.col-checkbox {
+  width: 40px;
+  text-align: center;
+}
+.col-img {
+  width: 56px;
+}
+.col-type {
+  width: 60px;
+}
+.col-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.col-desc {
+  max-width: 140px;
+}
+.col-filter {
+  max-width: 120px;
+  white-space: nowrap;
+}
+.col-actions {
+  width: 110px;
+}
 
 .filter-unit {
   font-size: 10px;
@@ -1792,7 +2036,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 
 .sort-icon.active {
   opacity: 1;
-  color: var(--color-primary, #23424A);
+  color: var(--color-primary, #23424a);
 }
 
 /* Cell styles */
@@ -1842,7 +2086,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 }
 
 .vehicle-link:hover {
-  color: var(--color-primary, #23424A);
+  color: var(--color-primary, #23424a);
   text-decoration: underline;
 }
 
@@ -1853,8 +2097,12 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   margin-top: 2px;
 }
 
-.text-muted { color: #64748b; }
-.text-small { font-size: 0.8rem; }
+.text-muted {
+  color: #64748b;
+}
+.text-small {
+  font-size: 0.8rem;
+}
 
 .truncate {
   display: block;
@@ -1873,9 +2121,18 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   text-transform: capitalize;
 }
 
-.cat-venta { background: #dbeafe; color: #1d4ed8; }
-.cat-alquiler { background: #fef3c7; color: #92400e; }
-.cat-terceros { background: #f3e8ff; color: #7c3aed; }
+.cat-venta {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.cat-alquiler {
+  background: #fef3c7;
+  color: #92400e;
+}
+.cat-terceros {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
 
 .status-select {
   padding: 5px 8px;
@@ -1887,11 +2144,26 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   width: 100%;
 }
 
-.status-select.status-published { background: #dcfce7; color: #16a34a; }
-.status-select.status-draft { background: #f1f5f9; color: #64748b; }
-.status-select.status-rented { background: #dbeafe; color: #1d4ed8; }
-.status-select.status-maintenance { background: #fee2e2; color: #dc2626; }
-.status-select.status-sold { background: #e2e8f0; color: #475569; }
+.status-select.status-published {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.status-select.status-draft {
+  background: #f1f5f9;
+  color: #64748b;
+}
+.status-select.status-rented {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.status-select.status-maintenance {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.status-select.status-sold {
+  background: #e2e8f0;
+  color: #475569;
+}
 
 .row-actions {
   display: flex;
@@ -1911,6 +2183,16 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 
 .action-btn:hover {
   background: #f8fafc;
+}
+.action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Drive connection indicator */
+.drive-on {
+  background: #f0fdf4 !important;
+  border-color: #22c55e !important;
 }
 
 .action-btn.delete:hover {
@@ -1965,13 +2247,25 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 }
 
 @keyframes modalIn {
-  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
-.modal-sm { max-width: 420px; }
-.modal-md { max-width: 520px; }
-.modal-lg { max-width: 700px; }
+.modal-sm {
+  max-width: 420px;
+}
+.modal-md {
+  max-width: 520px;
+}
+.modal-lg {
+  max-width: 700px;
+}
 
 .modal-header {
   display: flex;
@@ -2103,7 +2397,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -2170,9 +2464,9 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 }
 
 .option-buttons button.active {
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
   background: rgba(35, 66, 74, 0.05);
-  color: var(--color-primary, #23424A);
+  color: var(--color-primary, #23424a);
 }
 
 /* Tab buttons */
@@ -2197,7 +2491,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 }
 
 .tab-buttons button.active {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
 }
 
@@ -2250,8 +2544,8 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 }
 
 .config-tabs button.active {
-  color: var(--color-primary, #23424A);
-  border-bottom-color: var(--color-primary, #23424A);
+  color: var(--color-primary, #23424a);
+  border-bottom-color: var(--color-primary, #23424a);
 }
 
 .config-tabs button:hover:not(.active) {
@@ -2404,9 +2698,9 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 }
 
 .column-checkbox:has(input:checked) {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
 }
 
 /* New group form */

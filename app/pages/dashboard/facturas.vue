@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
- * Invoice History
- * Simple list of invoices/subscription payments.
+ * Dealer Invoice History
+ * Shows invoices from the invoices table with service type, amount, tax, and PDF download.
  */
 definePageMeta({
   layout: 'default',
@@ -9,69 +9,18 @@ definePageMeta({
 })
 
 const { t } = useI18n()
-const supabase = useSupabaseClient()
-const { userId } = useAuth()
+const { dealerProfile, loadDealer } = useDealerDashboard()
+const { invoices, loading, error, loadInvoices, formatAmount, totalAmount, totalTax } =
+  useInvoicing()
 
-interface Invoice {
-  id: string
-  plan: string
-  amount_cents: number
-  status: string
-  created_at: string
-}
-
-const invoices = ref<Invoice[]>([])
-const loading = ref(true)
-const error = ref<string | null>(null)
-
-async function loadInvoices(): Promise<void> {
-  if (!userId.value) return
-
-  loading.value = true
-  error.value = null
-
-  try {
-    // Try to fetch from subscriptions as invoices proxy
-    const { data, error: err } = await supabase
-      .from('subscriptions')
-      .select('id, plan, price_cents, status, created_at')
-      .eq('user_id', userId.value)
-      .order('created_at', { ascending: false })
-
-    if (err) throw err
-
-    invoices.value = (
-      (data || []) as Array<{
-        id: string
-        plan: string
-        price_cents: number | null
-        status: string
-        created_at: string
-      }>
-    ).map((row) => ({
-      id: row.id,
-      plan: row.plan,
-      amount_cents: row.price_cents || 0,
-      status: row.status || 'unknown',
-      created_at: row.created_at,
-    }))
-  } catch (err: unknown) {
-    error.value = err instanceof Error ? err.message : 'Error loading invoices'
-  } finally {
-    loading.value = false
+async function init(): Promise<void> {
+  const dealer = dealerProfile.value || (await loadDealer())
+  if (dealer) {
+    await loadInvoices(dealer.id)
   }
 }
 
-onMounted(loadInvoices)
-
-function formatAmount(cents: number): string {
-  if (!cents) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2,
-  }).format(cents / 100)
-}
+onMounted(init)
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('es-ES', {
@@ -83,17 +32,32 @@ function formatDate(dateStr: string): string {
 
 function getStatusClass(status: string): string {
   const map: Record<string, string> = {
-    active: 'status-active',
-    cancelled: 'status-cancelled',
-    expired: 'status-expired',
+    paid: 'status-paid',
+    pending: 'status-pending',
+    failed: 'status-failed',
+    refunded: 'status-refunded',
   }
   return map[status] || ''
+}
+
+function getServiceLabel(type: string): string {
+  const labels: Record<string, string> = {
+    subscription: t('billing.typeSubscription'),
+    auction_premium: t('billing.typeAuction'),
+    transport: t('billing.typeTransport'),
+    verification: t('billing.typeVerification'),
+    ad: t('billing.typeAd'),
+  }
+  return labels[type] || type
 }
 </script>
 
 <template>
   <div class="invoices-page">
     <header class="page-header">
+      <NuxtLink to="/dashboard" class="back-link">
+        {{ t('common.back') }}
+      </NuxtLink>
       <h1>{{ t('dashboard.invoices.title') }}</h1>
     </header>
 
@@ -103,25 +67,55 @@ function getStatusClass(status: string): string {
       <div class="spinner" />
     </div>
 
-    <div v-else-if="invoices.length === 0" class="empty-state">
-      <p>{{ t('dashboard.invoices.empty') }}</p>
-      <span>{{ t('dashboard.invoices.emptyDesc') }}</span>
-    </div>
-
-    <div v-else class="invoices-list">
-      <div v-for="invoice in invoices" :key="invoice.id" class="invoice-card">
-        <div class="invoice-top">
-          <span class="invoice-plan">{{ t(`dashboard.plans.${invoice.plan}`) }}</span>
-          <span class="invoice-amount">{{ formatAmount(invoice.amount_cents) }}</span>
+    <template v-else>
+      <!-- Summary cards -->
+      <div v-if="invoices.length > 0" class="summary-cards">
+        <div class="summary-card">
+          <span class="summary-label">{{ t('billing.totalRevenue') }}</span>
+          <span class="summary-value">{{ formatAmount(totalAmount) }}</span>
         </div>
-        <div class="invoice-bottom">
-          <span class="invoice-date">{{ formatDate(invoice.created_at) }}</span>
-          <span class="invoice-status" :class="getStatusClass(invoice.status)">
-            {{ t(`dashboard.invoices.status.${invoice.status}`) }}
-          </span>
+        <div class="summary-card">
+          <span class="summary-label">{{ t('billing.totalTax') }}</span>
+          <span class="summary-value summary-tax">{{ formatAmount(totalTax) }}</span>
         </div>
       </div>
-    </div>
+
+      <div v-if="invoices.length === 0" class="empty-state">
+        <p>{{ t('dashboard.invoices.empty') }}</p>
+        <span>{{ t('dashboard.invoices.emptyDesc') }}</span>
+      </div>
+
+      <div v-else class="invoices-list">
+        <div v-for="inv in invoices" :key="inv.id" class="invoice-card">
+          <div class="invoice-top">
+            <span class="invoice-type">{{ getServiceLabel(inv.service_type) }}</span>
+            <span class="invoice-amount">{{ formatAmount(inv.amount_cents) }}</span>
+          </div>
+          <div class="invoice-middle">
+            <span class="invoice-tax"
+              >{{ t('billing.tax') }}: {{ formatAmount(inv.tax_cents) }}</span
+            >
+          </div>
+          <div class="invoice-bottom">
+            <span class="invoice-date">{{ formatDate(inv.created_at) }}</span>
+            <div class="invoice-actions">
+              <span class="invoice-status" :class="getStatusClass(inv.status)">
+                {{ t(`billing.status${inv.status.charAt(0).toUpperCase()}${inv.status.slice(1)}`) }}
+              </span>
+              <a
+                v-if="inv.pdf_url"
+                :href="inv.pdf_url"
+                target="_blank"
+                rel="noopener"
+                class="invoice-pdf-link"
+              >
+                PDF
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -133,6 +127,22 @@ function getStatusClass(status: string): string {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.back-link {
+  color: var(--color-primary, #23424a);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .page-header h1 {
@@ -171,6 +181,40 @@ function getStatusClass(status: string): string {
   }
 }
 
+.summary-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+}
+
+.summary-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary, #23424a);
+}
+
+.summary-tax {
+  color: #3b82f6;
+}
+
 .empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -205,10 +249,10 @@ function getStatusClass(status: string): string {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
-.invoice-plan {
+.invoice-type {
   font-weight: 600;
   color: #1e293b;
   font-size: 0.95rem;
@@ -218,6 +262,15 @@ function getStatusClass(status: string): string {
   font-weight: 700;
   color: var(--color-primary, #23424a);
   font-size: 1rem;
+}
+
+.invoice-middle {
+  margin-bottom: 8px;
+}
+
+.invoice-tax {
+  font-size: 0.8rem;
+  color: #94a3b8;
 }
 
 .invoice-bottom {
@@ -231,6 +284,12 @@ function getStatusClass(status: string): string {
   color: #94a3b8;
 }
 
+.invoice-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .invoice-status {
   font-size: 0.8rem;
   font-weight: 600;
@@ -238,19 +297,42 @@ function getStatusClass(status: string): string {
   border-radius: 12px;
 }
 
-.status-active {
+.status-paid {
   background: #dcfce7;
   color: #16a34a;
 }
 
-.status-cancelled {
+.status-pending {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.status-failed {
   background: #fee2e2;
   color: #dc2626;
 }
 
-.status-expired {
+.status-refunded {
   background: #f1f5f9;
   color: #64748b;
+}
+
+.invoice-pdf-link {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary, #23424a);
+  text-decoration: none;
+  padding: 3px 10px;
+  border: 1px solid var(--color-primary, #23424a);
+  border-radius: 6px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.invoice-pdf-link:hover {
+  background: var(--color-primary, #23424a);
+  color: white;
 }
 
 @media (min-width: 768px) {

@@ -291,7 +291,8 @@
     "delete": "Delete",
     "edit": "Edit",
     "close": "Close",
-    "back": "Back"
+    "back": "Back",
+    "continue": "Continue"
   },
   "user": {
     "profile": "Profile",
@@ -1911,6 +1912,19 @@
       "won": "Won",
       "lost": "Lost"
     },
+    "whatsapp": {
+      "title": "Publish via WhatsApp",
+      "subtitle": "Send photos of your vehicle and we'll process them with AI",
+      "step1": "Save the Tracciona number",
+      "step2": "Send photos of your vehicle",
+      "step3": "We process the photos with AI and create a draft",
+      "phoneNumber": "WhatsApp number",
+      "pendingCount": "{count} pending submission | {count} pending submissions",
+      "viewDrafts": "View drafts",
+      "upgradeRequired": "Upgrade to Basic to unlock",
+      "upgradeDesc": "WhatsApp publishing is available on Basic plan and above",
+      "upgradeCTA": "Upgrade plan"
+    },
     "vehicleStatus": {
       "published": "Published",
       "draft": "Draft",
@@ -1962,7 +1976,116 @@
       "publish": "Publish vehicle",
       "published": "Vehicle published successfully",
       "saved": "Vehicle saved successfully",
-      "requiredFields": "Brand and model are required"
+      "requiredFields": "Brand and model are required",
+      "sectionVerification": "Documentation and Verification"
+    },
+    "import": {
+      "title": "Import vehicles",
+      "subtitle": "Upload a CSV file to import multiple vehicles at once",
+      "uploadFile": "Upload file",
+      "downloadTemplate": "Download template",
+      "supportedFormats": "Supported formats: CSV (separated by ; or ,)",
+      "chooseFile": "Choose CSV file",
+      "preview": "Preview",
+      "rows": "rows",
+      "valid": "valid",
+      "invalid": "invalid",
+      "status": "Status",
+      "publish": "Publish",
+      "publishDraft": "Publish as drafts",
+      "publishAll": "Publish all",
+      "publishing": "Publishing vehicles...",
+      "progress": "Progress",
+      "success": "Import completed",
+      "successCount": "Published",
+      "errorCount": "Errors",
+      "back": "Back",
+      "errors": {
+        "title": "Errors",
+        "requiredField": "{field} field is required",
+        "invalidPrice": "Price must be greater than 0",
+        "invalidYear": "Invalid year",
+        "xlsxNotSupported": "Excel files (.xlsx) are not supported. Please save the file as CSV first.",
+        "invalidFileType": "Invalid file type. Only CSV files are allowed.",
+        "emptyFile": "The file is empty or has no valid data",
+        "fileReadError": "Error reading file",
+        "noValidRows": "No valid rows to import"
+      }
+    },
+    "verification": {
+      "title": "Documentation and Verification",
+      "currentLevel": "Current level",
+      "progress": "Verification progress",
+      "uploadDocument": "Upload document",
+      "documentType": "Document type",
+      "selectFile": "Select file",
+      "upload": "Upload",
+      "uploading": "Uploading...",
+      "nextLevel": "Next level",
+      "missingDocs": "Documents needed for next level",
+      "noDocuments": "You haven't uploaded any documents yet",
+      "uploadedDocuments": "Uploaded documents",
+      "uploadSuccess": "Document uploaded successfully",
+      "selectDocType": "Select document type",
+      "selectFileFirst": "Select a file first",
+      "status": {
+        "pending": "Pending review",
+        "verified": "Approved",
+        "rejected": "Rejected"
+      },
+      "level": {
+        "none": "No verification",
+        "verified": "Verified",
+        "extended": "Extended verification",
+        "detailed": "Detailed verification",
+        "audited": "Audited",
+        "certified": "Certified"
+      },
+      "docType": {
+        "ficha_tecnica": "Technical sheet",
+        "foto_km": "Odometer photo",
+        "fotos_exteriores": "Exterior photos",
+        "placa_fabricante": "Manufacturer plate",
+        "permiso_circulacion": "Registration certificate",
+        "tarjeta_itv": "ITV card",
+        "adr": "ADR certificate",
+        "atp": "ATP certificate",
+        "exolum": "Exolum certificate",
+        "estanqueidad": "Tightness certificate",
+        "dgt_report": "Official DGT report",
+        "inspection_report": "Mechanical inspection report",
+        "itv": "ITV",
+        "seguro": "Insurance",
+        "contrato": "Contract",
+        "foto_bastidor": "VIN photo",
+        "other": "Other"
+      }
+    },
+    "sold": {
+      "title": "Mark as sold",
+      "congratulations": "Congratulations on the sale!",
+      "soldViaTracciona": "Was it sold through Tracciona?",
+      "yes": "Yes",
+      "no": "No",
+      "crossSell": {
+        "title": "Need help with the sale?",
+        "subtitle": "Select the services you would like to request",
+        "transport": "Transport",
+        "transportDesc": "National and international transport management",
+        "transportPrice": "Fixed price by zone",
+        "transfer": "Transfer management",
+        "transferDesc": "Complete vehicle transfer paperwork",
+        "insurance": "Insurance",
+        "insuranceDesc": "Personalized quote in 24h",
+        "insurancePrice": "Quote in 24h",
+        "contract": "Purchase contract",
+        "contractDesc": "Automatically generated legal contract",
+        "contractPrice": "FREE"
+      },
+      "publishAnother": "Publish another vehicle",
+      "confirm": "Confirm",
+      "done": "All set!",
+      "confirmationMessage": "We have received your request. Our team will contact you soon."
     },
     "leads": {
       "title": "Received leads",
@@ -2061,6 +2184,33 @@
         "unknown": "Unknown"
       }
     }
+  },
+  "billing": {
+    "title": "Billing",
+    "exportCsv": "Export CSV",
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "last3Months": "Last 3 months",
+    "thisYear": "This year",
+    "allTime": "All time",
+    "totalRevenue": "Total revenue",
+    "totalTax": "Tax collected",
+    "tax": "Tax",
+    "paidInvoices": "Paid",
+    "pendingInvoices": "Pending",
+    "failedInvoices": "Failed",
+    "byType": "By service type",
+    "recentInvoices": "Recent invoices",
+    "noInvoices": "No invoices in this period",
+    "statusPaid": "Paid",
+    "statusPending": "Pending",
+    "statusFailed": "Failed",
+    "statusRefunded": "Refunded",
+    "typeSubscription": "Subscription",
+    "typeAuction": "Auction",
+    "typeTransport": "Transport",
+    "typeVerification": "Verification",
+    "typeAd": "Advertising"
   },
   "report": {
     "title": "Report content",
@@ -2163,5 +2313,25 @@
     "icoText": "You have the right to lodge a complaint with the UK Information Commissioner's Office (ICO) if you believe your data rights have been infringed. The ICO can be contacted at ico.org.uk.",
     "contactTitle": "Contact",
     "contactText": "For UK-specific legal enquiries, please contact us at legal{'@'}tracciona.com. For general enquiries, visit our Contact page."
+  },
+  "inspection": {
+    "title": "Request physical inspection",
+    "description": "Request a physical inspection of the vehicle performed by a certified mechanic. You will receive a detailed report on the vehicle's condition.",
+    "name": "Full name",
+    "namePlaceholder": "Your full name",
+    "email": "Email",
+    "emailPlaceholder": "you{'@'}email.com",
+    "phone": "Phone",
+    "phonePlaceholder": "+34 600 000 000",
+    "preferredDate": "Preferred date",
+    "notes": "Additional notes",
+    "notesPlaceholder": "Any additional information you'd like to share (optional)",
+    "submit": "Submit request",
+    "submitting": "Submitting...",
+    "success": "Request submitted!",
+    "successDesc": "We have received your inspection request. We will contact you within the next 24-48 hours to confirm the details.",
+    "price": "Inspection price: €150 + VAT",
+    "requiredFields": "Please fill in all required fields",
+    "errorSubmitting": "Error submitting request. Please try again."
   }
 }

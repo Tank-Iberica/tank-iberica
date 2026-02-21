@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useSupabaseClient, useSupabaseUser } from '#imports'
+import { useSupabaseUser } from '#imports'
 
 const props = defineProps<{
   modelValue: boolean
@@ -12,27 +12,26 @@ const emit = defineEmits<{
   'open-auth': []
 }>()
 
-const { t: _t, locale } = useI18n()
-const supabase = useSupabaseClient()
+const { t, locale } = useI18n()
 const user = useSupabaseUser()
 
 const {
-  subcategories,
-  linkedTypes,
-  filterDefinitions,
+  categories,
+  linkedSubcategories,
+  attributes,
+  selectedCategoryId,
   selectedSubcategoryId,
-  selectedTypeId,
   filterValues,
   loading: selectorLoading,
   filtersLoading,
   fetchInitialData,
+  selectCategory,
   selectSubcategory,
-  selectType,
   setFilterValue,
-  getFiltersJson,
+  getAttributesJson,
   getFilterLabel,
   getFilterOptions,
-  getVehicleTypeLabel,
+  getVehicleSubcategoryLabel,
   reset: resetSelector,
 } = useVehicleTypeSelector()
 
@@ -43,6 +42,10 @@ const validationErrors = ref<Record<string, boolean>>({})
 const photos = ref<File[]>([])
 const photoPreviews = ref<string[]>([])
 const MAX_PHOTOS = 6
+const MIN_PHOTOS = 3
+
+const techSheet = ref<File | null>(null)
+const techSheetPreview = ref('')
 
 const formData = ref({
   brand: '',
@@ -67,9 +70,10 @@ const contactPreferences = [
 
 const isAuthenticated = computed(() => !!user.value)
 
-// Localized name helpers
-function subcatName(sub: { name_es: string; name_en: string | null }) {
-  return locale.value === 'en' && sub.name_en ? sub.name_en : sub.name_es
+const hasValidationErrors = computed(() => Object.keys(validationErrors.value).length > 0)
+
+function catName(item: { name_es: string; name_en: string | null }) {
+  return locale.value === 'en' && item.name_en ? item.name_en : item.name_es
 }
 
 const close = () => {
@@ -91,17 +95,18 @@ const handleKeyDown = (e: KeyboardEvent) => {
 const validateForm = (): boolean => {
   validationErrors.value = {}
 
-  if (!formData.value.contactName.trim()) {
-    validationErrors.value.contactName = true
-  }
-
-  if (!formData.value.contactEmail.trim()) {
-    validationErrors.value.contactEmail = true
-  }
-
-  if (!formData.value.termsAccepted) {
-    validationErrors.value.termsAccepted = true
-  }
+  if (!formData.value.brand.trim()) validationErrors.value.brand = true
+  if (!formData.value.model.trim()) validationErrors.value.model = true
+  if (!formData.value.year) validationErrors.value.year = true
+  if (!formData.value.price) validationErrors.value.price = true
+  if (!formData.value.location.trim()) validationErrors.value.location = true
+  if (!formData.value.description.trim()) validationErrors.value.description = true
+  if (!formData.value.contactName.trim()) validationErrors.value.contactName = true
+  if (!formData.value.contactEmail.trim()) validationErrors.value.contactEmail = true
+  if (!formData.value.contactPhone.trim()) validationErrors.value.contactPhone = true
+  if (photos.value.length < MIN_PHOTOS) validationErrors.value.photos = true
+  if (!techSheet.value) validationErrors.value.techSheet = true
+  if (!formData.value.termsAccepted) validationErrors.value.termsAccepted = true
 
   return Object.keys(validationErrors.value).length === 0
 }
@@ -116,12 +121,35 @@ function handlePhotoSelect(e: Event) {
     photoPreviews.value.push(URL.createObjectURL(file))
   }
   input.value = ''
+  if (validationErrors.value.photos && photos.value.length >= MIN_PHOTOS) {
+    delete validationErrors.value.photos
+  }
 }
 
 function removePhoto(index: number) {
   URL.revokeObjectURL(photoPreviews.value[index]!)
   photos.value.splice(index, 1)
   photoPreviews.value.splice(index, 1)
+}
+
+function handleTechSheetSelect(e: Event) {
+  const input = e.target as HTMLInputElement
+  if (!input.files || !input.files[0]) return
+  const file = input.files[0]
+  if (file.size > 10 * 1024 * 1024) return
+  if (techSheetPreview.value) URL.revokeObjectURL(techSheetPreview.value)
+  techSheet.value = file
+  techSheetPreview.value = URL.createObjectURL(file)
+  input.value = ''
+  if (validationErrors.value.techSheet) {
+    delete validationErrors.value.techSheet
+  }
+}
+
+function removeTechSheet() {
+  if (techSheetPreview.value) URL.revokeObjectURL(techSheetPreview.value)
+  techSheet.value = null
+  techSheetPreview.value = ''
 }
 
 const resetForm = () => {
@@ -139,9 +167,10 @@ const resetForm = () => {
     contactPreference: 'email',
     termsAccepted: false,
   }
-  photoPreviews.value.forEach(url => URL.revokeObjectURL(url))
+  photoPreviews.value.forEach((url) => URL.revokeObjectURL(url))
   photos.value = []
   photoPreviews.value = []
+  removeTechSheet()
   validationErrors.value = {}
   resetSelector()
 }
@@ -153,30 +182,28 @@ const handleSubmit = async () => {
   isSubmitting.value = true
 
   try {
-    const photoNames = photos.value.map(f => f.name)
-
-    const { error } = await supabase.from('advertisements').insert({
-      user_id: user.value!.id,
-      vehicle_type: getVehicleTypeLabel(locale.value),
-      subcategory_id: selectedSubcategoryId.value,
-      type_id: selectedTypeId.value,
-      filters_json: getFiltersJson(),
-      brand: formData.value.brand,
-      model: formData.value.model,
-      year: formData.value.year,
-      kilometers: formData.value.kilometers,
-      price: formData.value.price,
-      location: formData.value.location,
-      description: formData.value.description,
-      photos: photoNames,
-      contact_name: formData.value.contactName,
-      contact_email: formData.value.contactEmail,
-      contact_phone: formData.value.contactPhone,
-      contact_preference: formData.value.contactPreference,
-      status: 'pending',
+    await $fetch('/api/advertisements', {
+      method: 'POST',
+      body: {
+        vehicle_type: getVehicleSubcategoryLabel(locale.value),
+        category_id: selectedCategoryId.value,
+        subcategory_id: selectedSubcategoryId.value,
+        attributes_json: getAttributesJson(),
+        brand: formData.value.brand,
+        model: formData.value.model,
+        year: formData.value.year,
+        kilometers: formData.value.kilometers,
+        price: formData.value.price,
+        location: formData.value.location,
+        description: formData.value.description,
+        photos: photos.value.map((f) => f.name),
+        tech_sheet: techSheet.value?.name || null,
+        contact_name: formData.value.contactName,
+        contact_email: formData.value.contactEmail,
+        contact_phone: formData.value.contactPhone,
+        contact_preference: formData.value.contactPreference,
+      },
     })
-
-    if (error) throw error
 
     isSuccess.value = true
     resetForm()
@@ -185,11 +212,9 @@ const handleSubmit = async () => {
       isSuccess.value = false
       close()
     }, 3000)
-  }
-  catch (err) {
+  } catch (err) {
     console.error('Error submitting advertisement:', err)
-  }
-  finally {
+  } finally {
     isSubmitting.value = false
   }
 }
@@ -199,49 +224,48 @@ const handleLoginClick = () => {
   close()
 }
 
-// Handle subcategory change
-function handleSubcategoryChange(e: Event) {
+function handleCategoryChange(e: Event) {
   const value = (e.target as HTMLSelectElement).value
-  selectSubcategory(value || null)
+  selectCategory(value || null)
 }
 
-// Handle type change
-async function handleTypeChange(e: Event) {
+async function handleSubcategoryChange(e: Event) {
   const value = (e.target as HTMLSelectElement).value
-  await selectType(value || null)
+  await selectSubcategory(value || null)
 }
 
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    document.body.style.overflow = 'hidden'
-    document.addEventListener('keydown', handleKeyDown)
-    fetchInitialData()
-  }
-  else {
-    document.body.style.overflow = ''
-    document.removeEventListener('keydown', handleKeyDown)
-    if (!isSuccess.value) {
-      resetForm()
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      document.body.style.overflow = 'hidden'
+      document.addEventListener('keydown', handleKeyDown)
+      fetchInitialData()
+    } else {
+      document.body.style.overflow = ''
+      document.removeEventListener('keydown', handleKeyDown)
+      if (!isSuccess.value) {
+        resetForm()
+      }
     }
-  }
-})
+  },
+)
 </script>
 
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div
-        v-if="modelValue"
-        class="modal-backdrop"
-        @click="handleBackdropClick"
-      >
+      <div v-if="modelValue" class="modal-backdrop" @click="handleBackdropClick">
         <div class="modal-container">
           <div class="modal-header">
-            <h2 class="modal-title">{{ $t('advertise.title') }}</h2>
+            <div>
+              <h2 class="modal-title">{{ t('advertise.title') }}</h2>
+              <p class="modal-subtitle">{{ t('advertise.subtitle') }}</p>
+            </div>
             <button
               type="button"
               class="close-button"
-              :aria-label="$t('common.close')"
+              :aria-label="t('common.close')"
               @click="close"
             >
               <span aria-hidden="true">&times;</span>
@@ -249,318 +273,431 @@ watch(() => props.modelValue, (newValue) => {
           </div>
 
           <div v-if="!isAuthenticated" class="auth-required">
-            <p>{{ $t('advertise.loginRequired') }}</p>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="handleLoginClick"
-            >
-              {{ $t('auth.login') }}
+            <p>{{ t('advertise.loginRequired') }}</p>
+            <button type="button" class="btn btn-primary" @click="handleLoginClick">
+              {{ t('auth.login') }}
             </button>
           </div>
 
           <div v-else-if="isSuccess" class="success-message">
-            <div class="success-icon">✓</div>
-            <h3>{{ $t('advertise.successTitle') }}</h3>
-            <p>{{ $t('advertise.successMessage') }}</p>
+            <div class="success-icon">&#x2713;</div>
+            <h3>{{ t('advertise.successTitle') }}</h3>
+            <p>{{ t('advertise.successMessage') }}</p>
           </div>
 
           <form v-else class="modal-body" @submit.prevent="handleSubmit">
-            <div class="form-grid">
-              <!-- Subcategory selector -->
-              <div class="form-group full-width">
-                <label for="adv-subcategory">{{ $t('advertise.vehicleType') }}</label>
-                <select
-                  id="adv-subcategory"
-                  class="form-input"
-                  :value="selectedSubcategoryId || ''"
-                  :disabled="selectorLoading"
-                  @change="handleSubcategoryChange"
-                >
-                  <option value="">{{ $t('advertise.selectSubcategory') }}</option>
-                  <option
-                    v-for="sub in subcategories"
-                    :key="sub.id"
-                    :value="sub.id"
+            <!-- ═══ Section 1: Vehicle Type ═══ -->
+            <div class="form-section">
+              <h3 class="form-section-title">{{ t('advertise.sectionVehicleType') }}</h3>
+              <div class="section-fields">
+                <div class="form-group full-width">
+                  <label for="adv-category" class="required">{{
+                    t('advertise.vehicleType')
+                  }}</label>
+                  <select
+                    id="adv-category"
+                    class="form-input"
+                    :value="selectedCategoryId || ''"
+                    :disabled="selectorLoading"
+                    @change="handleCategoryChange"
                   >
-                    {{ subcatName(sub) }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- Type selector (appears when subcategory selected) -->
-              <div v-if="selectedSubcategoryId && linkedTypes.length" class="form-group full-width">
-                <label for="adv-type">{{ $t('advertise.selectType') }}</label>
-                <select
-                  id="adv-type"
-                  class="form-input"
-                  :value="selectedTypeId || ''"
-                  @change="handleTypeChange"
-                >
-                  <option value="">{{ $t('advertise.selectType') }}</option>
-                  <option
-                    v-for="t in linkedTypes"
-                    :key="t.id"
-                    :value="t.id"
-                  >
-                    {{ subcatName(t) }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- Dynamic filters (appear when type selected) -->
-              <template v-if="selectedTypeId && filterDefinitions.length">
-                <div class="form-group full-width section-label">
-                  <span class="section-title">{{ $t('advertise.characteristics') }}</span>
+                    <option value="">{{ t('advertise.selectCategory') }}</option>
+                    <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                      {{ catName(cat) }}
+                    </option>
+                  </select>
                 </div>
-                <template v-for="filter in filterDefinitions" :key="filter.id">
-                  <!-- Desplegable / Desplegable tick → select -->
-                  <div
-                    v-if="filter.type === 'desplegable' || filter.type === 'desplegable_tick'"
-                    class="form-group"
+
+                <div
+                  v-if="selectedCategoryId && linkedSubcategories.length"
+                  class="form-group full-width"
+                >
+                  <label for="adv-subcategory">{{ t('advertise.selectSubcategory') }}</label>
+                  <select
+                    id="adv-subcategory"
+                    class="form-input"
+                    :value="selectedSubcategoryId || ''"
+                    @change="handleSubcategoryChange"
                   >
-                    <label :for="`f-${filter.name}`">
-                      {{ getFilterLabel(filter, locale) }}
-                      <span v-if="filter.unit" class="unit-label">({{ filter.unit }})</span>
-                    </label>
-                    <select
-                      :id="`f-${filter.name}`"
-                      class="form-input"
-                      :value="filterValues[filter.name] || ''"
-                      @change="setFilterValue(filter.name, ($event.target as HTMLSelectElement).value)"
-                    >
-                      <option value="">-</option>
-                      <option v-for="opt in getFilterOptions(filter)" :key="opt" :value="opt">
-                        {{ opt }}
-                      </option>
-                    </select>
-                  </div>
+                    <option value="">{{ t('advertise.selectSubcategory') }}</option>
+                    <option v-for="sub in linkedSubcategories" :key="sub.id" :value="sub.id">
+                      {{ catName(sub) }}
+                    </option>
+                  </select>
+                </div>
 
-                  <!-- Caja → text input -->
-                  <div v-else-if="filter.type === 'caja'" class="form-group">
-                    <label :for="`f-${filter.name}`">
-                      {{ getFilterLabel(filter, locale) }}
-                      <span v-if="filter.unit" class="unit-label">({{ filter.unit }})</span>
-                    </label>
-                    <input
-                      :id="`f-${filter.name}`"
-                      type="text"
-                      class="form-input"
-                      :value="filterValues[filter.name] || ''"
-                      @input="setFilterValue(filter.name, ($event.target as HTMLInputElement).value)"
-                    >
+                <!-- Dynamic attributes -->
+                <template v-if="selectedSubcategoryId && attributes.length">
+                  <div class="form-group full-width filter-section-label">
+                    <span class="filter-title">{{ t('advertise.characteristics') }}</span>
                   </div>
-
-                  <!-- Slider / Calc → number input (single value for advertise) -->
-                  <div v-else-if="filter.type === 'slider' || filter.type === 'calc'" class="form-group">
-                    <label :for="`f-${filter.name}`">
-                      {{ getFilterLabel(filter, locale) }}
-                      <span v-if="filter.unit" class="unit-label">({{ filter.unit }})</span>
-                    </label>
-                    <input
-                      :id="`f-${filter.name}`"
-                      type="number"
-                      class="form-input"
-                      :min="(filter.options as Record<string, number>).min"
-                      :max="(filter.options as Record<string, number>).max"
-                      :step="(filter.options as Record<string, number>).step || 1"
-                      :value="filterValues[filter.name] ?? ''"
-                      @input="setFilterValue(filter.name, ($event.target as HTMLInputElement).value)"
+                  <template v-for="filter in attributes" :key="filter.id">
+                    <div
+                      v-if="filter.type === 'desplegable' || filter.type === 'desplegable_tick'"
+                      class="form-group"
                     >
-                  </div>
-
-                  <!-- Tick → checkbox -->
-                  <div v-else-if="filter.type === 'tick'" class="form-group">
-                    <label class="checkbox-label">
-                      <input
-                        type="checkbox"
-                        class="checkbox-input"
-                        :checked="!!filterValues[filter.name]"
-                        @change="setFilterValue(filter.name, ($event.target as HTMLInputElement).checked)"
+                      <label :for="`f-${filter.name}`">
+                        {{ getFilterLabel(filter, locale) }}
+                        <span v-if="filter.unit" class="unit-label">({{ filter.unit }})</span>
+                      </label>
+                      <select
+                        :id="`f-${filter.name}`"
+                        class="form-input"
+                        :value="filterValues[filter.name] || ''"
+                        @change="
+                          setFilterValue(filter.name, ($event.target as HTMLSelectElement).value)
+                        "
                       >
-                      <span>{{ getFilterLabel(filter, locale) }}</span>
-                    </label>
-                  </div>
+                        <option value="">-</option>
+                        <option v-for="opt in getFilterOptions(filter)" :key="opt" :value="opt">
+                          {{ opt }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div v-else-if="filter.type === 'caja'" class="form-group">
+                      <label :for="`f-${filter.name}`">
+                        {{ getFilterLabel(filter, locale) }}
+                        <span v-if="filter.unit" class="unit-label">({{ filter.unit }})</span>
+                      </label>
+                      <input
+                        :id="`f-${filter.name}`"
+                        type="text"
+                        class="form-input"
+                        :value="filterValues[filter.name] || ''"
+                        @input="
+                          setFilterValue(filter.name, ($event.target as HTMLInputElement).value)
+                        "
+                      >
+                    </div>
+
+                    <div
+                      v-else-if="filter.type === 'slider' || filter.type === 'calc'"
+                      class="form-group"
+                    >
+                      <label :for="`f-${filter.name}`">
+                        {{ getFilterLabel(filter, locale) }}
+                        <span v-if="filter.unit" class="unit-label">({{ filter.unit }})</span>
+                      </label>
+                      <input
+                        :id="`f-${filter.name}`"
+                        type="number"
+                        class="form-input"
+                        :min="(filter.options as Record<string, number>).min"
+                        :max="(filter.options as Record<string, number>).max"
+                        :step="(filter.options as Record<string, number>).step || 1"
+                        :value="filterValues[filter.name] ?? ''"
+                        @input="
+                          setFilterValue(filter.name, ($event.target as HTMLInputElement).value)
+                        "
+                      >
+                    </div>
+
+                    <div v-else-if="filter.type === 'tick'" class="form-group">
+                      <label class="checkbox-label">
+                        <input
+                          type="checkbox"
+                          class="checkbox-input"
+                          :checked="!!filterValues[filter.name]"
+                          @change="
+                            setFilterValue(filter.name, ($event.target as HTMLInputElement).checked)
+                          "
+                        >
+                        <span>{{ getFilterLabel(filter, locale) }}</span>
+                      </label>
+                    </div>
+                  </template>
                 </template>
-              </template>
 
-              <div v-if="filtersLoading" class="form-group full-width">
-                <p class="loading-text">{{ $t('common.loading') }}...</p>
-              </div>
-
-              <!-- Vehicle details -->
-              <div class="form-group">
-                <label for="brand">{{ $t('advertise.brand') }}</label>
-                <input
-                  id="brand"
-                  v-model="formData.brand"
-                  type="text"
-                  class="form-input"
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="model">{{ $t('advertise.model') }}</label>
-                <input
-                  id="model"
-                  v-model="formData.model"
-                  type="text"
-                  class="form-input"
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="year">{{ $t('advertise.year') }}</label>
-                <input
-                  id="year"
-                  v-model.number="formData.year"
-                  type="number"
-                  class="form-input"
-                  min="1980"
-                  :max="new Date().getFullYear() + 1"
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="kilometers">{{ $t('advertise.kilometers') }}</label>
-                <input
-                  id="kilometers"
-                  v-model.number="formData.kilometers"
-                  type="number"
-                  class="form-input"
-                  min="0"
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="price">{{ $t('advertise.price') }}</label>
-                <input
-                  id="price"
-                  v-model.number="formData.price"
-                  type="number"
-                  class="form-input"
-                  min="0"
-                  step="100"
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="location">{{ $t('advertise.location') }}</label>
-                <input
-                  id="location"
-                  v-model="formData.location"
-                  type="text"
-                  class="form-input"
-                >
-              </div>
-
-              <div class="form-group full-width">
-                <label for="description">{{ $t('advertise.description') }}</label>
-                <textarea
-                  id="description"
-                  v-model="formData.description"
-                  class="form-input"
-                  rows="4"
-                />
-              </div>
-
-              <!-- Photo upload -->
-              <div class="form-group full-width">
-                <label>{{ $t('advertise.photos') }} ({{ photos.length }}/{{ MAX_PHOTOS }})</label>
-                <div v-if="photoPreviews.length" class="photo-grid">
-                  <div v-for="(preview, i) in photoPreviews" :key="i" class="photo-thumb">
-                    <img :src="preview" :alt="$t('advertise.photos') + ' ' + (i + 1)">
-                    <button type="button" class="photo-remove" @click="removePhoto(i)">&times;</button>
-                  </div>
+                <div v-if="filtersLoading" class="form-group full-width">
+                  <p class="loading-text">{{ t('common.loading') }}...</p>
                 </div>
-                <label v-if="photos.length < MAX_PHOTOS" class="photo-upload-btn">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    class="photo-input"
-                    @change="handlePhotoSelect"
-                  >
-                  <span>{{ $t('advertise.addPhotos') }}</span>
-                </label>
-              </div>
-
-              <!-- Contact info -->
-              <div class="form-group">
-                <label for="contactName">
-                  {{ $t('advertise.contactName') }} *
-                </label>
-                <input
-                  id="contactName"
-                  v-model="formData.contactName"
-                  type="text"
-                  class="form-input"
-                  :class="{ 'input-error': validationErrors.contactName }"
-                  required
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="contactEmail">
-                  {{ $t('advertise.contactEmail') }} *
-                </label>
-                <input
-                  id="contactEmail"
-                  v-model="formData.contactEmail"
-                  type="email"
-                  class="form-input"
-                  :class="{ 'input-error': validationErrors.contactEmail }"
-                  required
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="contactPhone">{{ $t('advertise.contactPhone') }}</label>
-                <input
-                  id="contactPhone"
-                  v-model="formData.contactPhone"
-                  type="tel"
-                  class="form-input"
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="contactPreference">{{ $t('advertise.contactPreference') }}</label>
-                <select
-                  id="contactPreference"
-                  v-model="formData.contactPreference"
-                  class="form-input"
-                >
-                  <option
-                    v-for="pref in contactPreferences"
-                    :key="pref.value"
-                    :value="pref.value"
-                  >
-                    {{ $t(pref.label) }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="form-group full-width">
-                <label class="checkbox-label">
-                  <input
-                    v-model="formData.termsAccepted"
-                    type="checkbox"
-                    class="checkbox-input"
-                    :class="{ 'input-error': validationErrors.termsAccepted }"
-                  >
-                  <span>{{ $t('advertise.acceptTerms') }}</span>
-                </label>
               </div>
             </div>
 
+            <!-- ═══ Section 2: Vehicle Data ═══ -->
+            <div class="form-section">
+              <h3 class="form-section-title">{{ t('advertise.sectionVehicleData') }}</h3>
+              <div class="section-fields">
+                <div class="form-group">
+                  <label for="brand" class="required">{{ t('advertise.brand') }}</label>
+                  <input
+                    id="brand"
+                    v-model="formData.brand"
+                    type="text"
+                    class="form-input"
+                    :class="{ 'input-error': validationErrors.brand }"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="model" class="required">{{ t('advertise.model') }}</label>
+                  <input
+                    id="model"
+                    v-model="formData.model"
+                    type="text"
+                    class="form-input"
+                    :class="{ 'input-error': validationErrors.model }"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="year" class="required">{{ t('advertise.year') }}</label>
+                  <input
+                    id="year"
+                    v-model.number="formData.year"
+                    type="number"
+                    class="form-input"
+                    :class="{ 'input-error': validationErrors.year }"
+                    min="1980"
+                    :max="new Date().getFullYear() + 1"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="kilometers">{{ t('advertise.kilometers') }}</label>
+                  <input
+                    id="kilometers"
+                    v-model.number="formData.kilometers"
+                    type="number"
+                    class="form-input"
+                    min="0"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="price" class="required">{{ t('advertise.price') }}</label>
+                  <input
+                    id="price"
+                    v-model.number="formData.price"
+                    type="number"
+                    class="form-input"
+                    :class="{ 'input-error': validationErrors.price }"
+                    min="0"
+                    step="100"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="location" class="required">{{ t('advertise.location') }}</label>
+                  <input
+                    id="location"
+                    v-model="formData.location"
+                    type="text"
+                    class="form-input"
+                    :class="{ 'input-error': validationErrors.location }"
+                  >
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="description" class="required">{{ t('advertise.description') }}</label>
+                  <textarea
+                    id="description"
+                    v-model="formData.description"
+                    class="form-input"
+                    :class="{ 'input-error': validationErrors.description }"
+                    rows="3"
+                    :placeholder="t('advertise.descriptionPlaceholder')"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══ Section 3: Images ═══ -->
+            <div class="form-section">
+              <h3 class="form-section-title">{{ t('advertise.sectionImages') }}</h3>
+              <div class="section-fields section-fields--stacked">
+                <!-- Vehicle photos -->
+                <div class="upload-block">
+                  <label class="required">
+                    {{ t('advertise.photos') }}
+                    <span class="photos-count">({{ photos.length }}/{{ MAX_PHOTOS }})</span>
+                  </label>
+
+                  <label
+                    v-if="photos.length < MAX_PHOTOS"
+                    class="upload-area"
+                    :class="{ 'upload-error': validationErrors.photos }"
+                  >
+                    <svg
+                      class="upload-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                      />
+                      <circle cx="12" cy="13" r="4" />
+                    </svg>
+                    <span class="upload-main-text">{{ t('advertise.dragOrClick') }}</span>
+                    <strong class="upload-required-text">{{
+                      t('advertise.photosRequired')
+                    }}</strong>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      class="sr-only"
+                      @change="handlePhotoSelect"
+                    >
+                  </label>
+
+                  <div class="photo-recommendations">
+                    <strong>{{ t('advertise.photoRecommendations') }}</strong>
+                    <ul>
+                      <li>{{ t('advertise.photoRec1') }}</li>
+                      <li>{{ t('advertise.photoRec2') }}</li>
+                      <li>{{ t('advertise.photoRec3') }}</li>
+                      <li>{{ t('advertise.photoRec4') }}</li>
+                      <li>{{ t('advertise.photoRec5') }}</li>
+                    </ul>
+                  </div>
+
+                  <div v-if="photoPreviews.length" class="photo-grid">
+                    <div v-for="(preview, i) in photoPreviews" :key="i" class="photo-thumb">
+                      <img :src="preview" :alt="t('advertise.photos') + ' ' + (i + 1)" >
+                      <button type="button" class="photo-remove" @click="removePhoto(i)">
+                        &times;
+                      </button>
+                    </div>
+                  </div>
+
+                  <p v-if="validationErrors.photos" class="field-error">
+                    {{ t('advertise.minPhotosError') }}
+                  </p>
+                </div>
+
+                <!-- Technical sheet -->
+                <div class="upload-block">
+                  <label class="required">{{ t('advertise.techSheet') }}</label>
+
+                  <label
+                    v-if="!techSheet"
+                    class="upload-area upload-area--compact"
+                    :class="{ 'upload-error': validationErrors.techSheet }"
+                  >
+                    <svg
+                      class="upload-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                      <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                    <span class="upload-main-text">{{ t('advertise.dragOrClickSingle') }}</span>
+                    <strong class="upload-required-text">{{ t('advertise.techSheetHint') }}</strong>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      class="sr-only"
+                      @change="handleTechSheetSelect"
+                    >
+                  </label>
+
+                  <div v-if="techSheetPreview" class="tech-sheet-preview">
+                    <img :src="techSheetPreview" :alt="t('advertise.techSheet')" >
+                    <button type="button" class="photo-remove" @click="removeTechSheet">
+                      &times;
+                    </button>
+                  </div>
+
+                  <p class="privacy-note">{{ t('advertise.techSheetPrivacy') }}</p>
+                  <p v-if="validationErrors.techSheet" class="field-error">
+                    {{ t('advertise.techSheetError') }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══ Section 4: Contact ═══ -->
+            <div class="form-section">
+              <h3 class="form-section-title">{{ t('advertise.sectionContact') }}</h3>
+              <div class="section-fields">
+                <div class="form-group">
+                  <label for="contactName" class="required">{{ t('advertise.contactName') }}</label>
+                  <input
+                    id="contactName"
+                    v-model="formData.contactName"
+                    type="text"
+                    class="form-input"
+                    :class="{ 'input-error': validationErrors.contactName }"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="contactEmail" class="required">{{
+                    t('advertise.contactEmail')
+                  }}</label>
+                  <input
+                    id="contactEmail"
+                    v-model="formData.contactEmail"
+                    type="email"
+                    class="form-input"
+                    :class="{ 'input-error': validationErrors.contactEmail }"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="contactPhone" class="required">{{
+                    t('advertise.contactPhone')
+                  }}</label>
+                  <input
+                    id="contactPhone"
+                    v-model="formData.contactPhone"
+                    type="tel"
+                    class="form-input"
+                    :class="{ 'input-error': validationErrors.contactPhone }"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="contactPreference">{{ t('advertise.contactPreference') }}</label>
+                  <select
+                    id="contactPreference"
+                    v-model="formData.contactPreference"
+                    class="form-input"
+                  >
+                    <option
+                      v-for="pref in contactPreferences"
+                      :key="pref.value"
+                      :value="pref.value"
+                    >
+                      {{ t(pref.label) }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group full-width">
+                  <label
+                    class="checkbox-label"
+                    :class="{ 'input-error-text': validationErrors.termsAccepted }"
+                  >
+                    <input
+                      v-model="formData.termsAccepted"
+                      type="checkbox"
+                      class="checkbox-input"
+                    >
+                    <span>{{ t('advertise.acceptTermsFull') }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Validation summary -->
+            <p v-if="hasValidationErrors" class="validation-summary">
+              {{ t('advertise.requiredField') }}
+            </p>
+
             <div class="modal-footer">
-              <button
-                type="submit"
-                class="btn btn-primary btn-submit"
-                :disabled="isSubmitting"
-              >
-                {{ isSubmitting ? $t('advertise.sending') : $t('advertise.submit') }}
+              <button type="submit" class="btn btn-primary btn-submit" :disabled="isSubmitting">
+                {{ isSubmitting ? t('advertise.sending') : t('advertise.submit') }}
               </button>
             </div>
           </form>
@@ -571,6 +708,14 @@ watch(() => props.modelValue, (newValue) => {
 </template>
 
 <style scoped>
+/*
+  Spacing token reference (Tailwind multiplier naming):
+  --spacing-1 = 4px   --spacing-2 = 8px   --spacing-3 = 12px
+  --spacing-4 = 16px  --spacing-5 = 20px  --spacing-6 = 24px
+  --spacing-8 = 32px  --spacing-10 = 40px --spacing-12 = 48px
+*/
+
+/* ═══ Modal layout (mobile-first) ═══ */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -588,7 +733,7 @@ watch(() => props.modelValue, (newValue) => {
 .modal-container {
   background: white;
   width: 100%;
-  max-height: 90vh;
+  max-height: 92vh;
   overflow-y: auto;
   border-radius: 16px 16px 0 0;
   display: flex;
@@ -598,8 +743,8 @@ watch(() => props.modelValue, (newValue) => {
 .modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-16);
+  align-items: flex-start;
+  padding: var(--spacing-3) var(--spacing-4); /* 12px 16px */
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
@@ -614,10 +759,16 @@ watch(() => props.modelValue, (newValue) => {
   margin: 0;
 }
 
+.modal-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: var(--spacing-1) 0 0; /* 4px */
+}
+
 .close-button {
   background: none;
   border: none;
-  font-size: 32px;
+  font-size: 28px;
   line-height: 1;
   color: var(--color-text-secondary);
   cursor: pointer;
@@ -627,6 +778,7 @@ watch(() => props.modelValue, (newValue) => {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   transition: color 0.2s;
 }
 
@@ -634,23 +786,19 @@ watch(() => props.modelValue, (newValue) => {
   color: var(--color-text);
 }
 
-.modal-body {
-  padding: var(--spacing-16);
-  flex: 1;
-}
-
+/* ═══ Auth / Success states ═══ */
 .auth-required {
-  padding: var(--spacing-32);
+  padding: var(--spacing-8); /* 32px */
   text-align: center;
 }
 
 .auth-required p {
-  margin-bottom: var(--spacing-16);
+  margin-bottom: var(--spacing-4); /* 16px */
   color: var(--color-text-secondary);
 }
 
 .success-message {
-  padding: var(--spacing-48) var(--spacing-24);
+  padding: var(--spacing-12) var(--spacing-6); /* 48px 24px */
   text-align: center;
 }
 
@@ -664,12 +812,12 @@ watch(() => props.modelValue, (newValue) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--spacing-16);
+  margin: 0 auto var(--spacing-4); /* 16px */
 }
 
 .success-message h3 {
   font-size: var(--font-size-lg);
-  margin-bottom: var(--spacing-8);
+  margin-bottom: var(--spacing-2); /* 8px */
   color: var(--color-text);
 }
 
@@ -677,12 +825,45 @@ watch(() => props.modelValue, (newValue) => {
   color: var(--color-text-secondary);
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-16);
+/* ═══ Form body ═══ */
+.modal-body {
+  padding: var(--spacing-3); /* 12px */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3); /* 12px */
 }
 
+/* ═══ Section cards ═══ */
+.form-section {
+  background: #f9fafb;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3); /* 12px */
+}
+
+.form-section-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0 0 var(--spacing-3); /* 12px */
+  padding-bottom: var(--spacing-2); /* 8px */
+  border-bottom: 2px solid rgba(35, 66, 74, 0.2);
+}
+
+.section-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-2); /* 8px */
+}
+
+.section-fields--stacked {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3); /* 12px */
+}
+
+/* ═══ Form groups ═══ */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -692,11 +873,17 @@ watch(() => props.modelValue, (newValue) => {
   grid-column: 1 / -1;
 }
 
-.form-group label {
-  font-size: var(--font-size-sm);
+.form-group label,
+.upload-block > label {
+  font-size: 0.8rem;
   font-weight: 500;
   color: var(--color-text);
-  margin-bottom: var(--spacing-8);
+  margin-bottom: 2px;
+}
+
+.required::after {
+  content: ' *';
+  color: #ef4444;
 }
 
 .unit-label {
@@ -704,12 +891,12 @@ watch(() => props.modelValue, (newValue) => {
   color: var(--color-text-secondary);
 }
 
-.section-label {
-  margin-top: var(--spacing-8);
-  margin-bottom: calc(-1 * var(--spacing-8));
+/* ═══ Filter section label ═══ */
+.filter-section-label {
+  margin-top: var(--spacing-1); /* 4px */
 }
 
-.section-title {
+.filter-title {
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-primary);
@@ -723,20 +910,23 @@ watch(() => props.modelValue, (newValue) => {
   margin: 0;
 }
 
+/* ═══ Inputs ═══ */
 .form-input {
   width: 100%;
-  padding: var(--spacing-12);
-  border: 2px solid var(--border-color);
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-base);
+  padding: 0.4rem 0.5rem; /* ~6px 8px — compact inputs */
+  border: 1.5px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.875rem;
   font-family: inherit;
   transition: border-color 0.2s;
-  min-height: 44px;
+  min-height: 36px;
+  background: white;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
 .form-input:disabled {
@@ -745,27 +935,119 @@ watch(() => props.modelValue, (newValue) => {
 }
 
 .input-error {
-  border-color: #ef4444;
+  border-color: #ef4444 !important;
 }
 
 textarea.form-input {
   resize: vertical;
-  min-height: 100px;
+  min-height: 60px;
 }
 
-/* Photo upload */
+/* ═══ Upload areas ═══ */
+.upload-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2); /* 8px */
+}
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-4); /* 16px */
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius);
+  background: white;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+  text-align: center;
+  gap: 2px;
+}
+
+.upload-area:hover {
+  border-color: var(--color-primary);
+  background: #f0f4f5;
+}
+
+.upload-area--compact {
+  padding: var(--spacing-3); /* 12px */
+}
+
+.upload-error {
+  border-color: #ef4444;
+}
+
+.upload-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--color-primary);
+  margin-bottom: 2px;
+}
+
+.upload-main-text {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.upload-required-text {
+  font-size: 0.8rem;
+  color: var(--color-primary);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Photo recommendations */
+.photo-recommendations {
+  background: white;
+  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-3); /* 8px 12px */
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.photo-recommendations strong {
+  color: var(--color-text);
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.8rem;
+}
+
+.photo-recommendations ul {
+  margin: 0;
+  padding-left: var(--spacing-4); /* 16px */
+}
+
+.photo-recommendations li {
+  margin-bottom: 1px;
+}
+
+/* Photo previews */
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: var(--spacing-2); /* 8px */
 }
 
 .photo-thumb {
   position: relative;
   aspect-ratio: 1;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
+  border: 1px solid var(--border-color);
 }
 
 .photo-thumb img {
@@ -789,49 +1071,83 @@ textarea.form-input {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 24px;
+  min-height: 24px;
+  transition: background 0.2s;
 }
 
-.photo-upload-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  border: 2px dashed var(--border-color, #e5e7eb);
-  border-radius: 8px;
-  cursor: pointer;
-  color: var(--color-primary);
-  font-weight: 500;
-  font-size: 0.9rem;
-  min-height: 44px;
-  transition: border-color 0.2s;
+.photo-remove:hover {
+  background: rgba(239, 68, 68, 0.9);
 }
 
-.photo-upload-btn:hover {
-  border-color: var(--color-primary);
-}
-
-.photo-input {
-  display: none;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-8);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
+.photos-count {
+  font-weight: 400;
   color: var(--color-text-secondary);
 }
 
+/* Tech sheet preview */
+.tech-sheet-preview {
+  position: relative;
+  max-width: 160px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.tech-sheet-preview img {
+  width: 100%;
+  display: block;
+}
+
+.privacy-note {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin: 0;
+}
+
+/* ═══ Validation ═══ */
+.field-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin: 2px 0 0;
+}
+
+.input-error-text {
+  color: #ef4444;
+}
+
+.validation-summary {
+  font-size: 0.8rem;
+  color: #ef4444;
+  text-align: center;
+  margin: 0;
+  padding: var(--spacing-2); /* 8px */
+  background: #fef2f2;
+  border-radius: 6px;
+}
+
+/* ═══ Checkbox ═══ */
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2); /* 8px */
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
 .checkbox-input {
-  min-width: 20px;
-  min-height: 20px;
+  min-width: 18px;
+  min-height: 18px;
   margin-top: 2px;
   cursor: pointer;
 }
 
+/* ═══ Footer ═══ */
 .modal-footer {
-  padding: var(--spacing-16);
+  padding: var(--spacing-3) var(--spacing-4); /* 12px 16px */
   border-top: 1px solid var(--border-color);
   background: white;
   position: sticky;
@@ -842,31 +1158,34 @@ textarea.form-input {
   border: none;
   border-radius: var(--border-radius);
   font-size: var(--font-size-base);
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   min-height: 44px;
-  padding: var(--spacing-12) var(--spacing-24);
+  padding: var(--spacing-2) var(--spacing-6); /* 8px 24px */
 }
 
 .btn-primary {
-  background-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #2d5560 100%);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(35, 66, 74, 0.3);
 }
 
 .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-submit {
   width: 100%;
 }
 
+/* ═══ Transitions ═══ */
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.3s ease;
@@ -887,32 +1206,43 @@ textarea.form-input {
   transform: translateY(100%);
 }
 
+/* ═══ Desktop (768px+) ═══ */
 @media (min-width: 768px) {
   .modal-backdrop {
     align-items: center;
-    padding: var(--spacing-24);
+    padding: var(--spacing-6); /* 24px */
   }
 
   .modal-container {
-    max-width: 600px;
-    max-height: 85vh;
+    max-width: 700px;
+    max-height: 88vh;
     border-radius: var(--border-radius);
   }
 
   .modal-header {
-    padding: var(--spacing-24);
+    padding: var(--spacing-4) var(--spacing-5); /* 16px 20px */
   }
 
   .modal-body {
-    padding: var(--spacing-24);
+    padding: var(--spacing-4) var(--spacing-5); /* 16px 20px */
+    gap: var(--spacing-4); /* 16px */
   }
 
-  .form-grid {
+  .form-section {
+    padding: var(--spacing-4); /* 16px */
+  }
+
+  .section-fields {
     grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-3); /* 12px */
+  }
+
+  .photo-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 
   .modal-footer {
-    padding: var(--spacing-24);
+    padding: var(--spacing-4) var(--spacing-5); /* 16px 20px */
   }
 
   .btn-submit {
@@ -922,7 +1252,7 @@ textarea.form-input {
 
   .modal-enter-from .modal-container,
   .modal-leave-to .modal-container {
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
 }
 </style>

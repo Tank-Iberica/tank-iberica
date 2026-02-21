@@ -7,8 +7,8 @@ import type { Vehicle } from '~/composables/useVehicles'
 export interface AdminVehicleFilters {
   status?: string | null
   category?: string | null
-  type_id?: string | null
   subcategory_id?: string | null
+  category_id?: string | null
   search?: string
   is_online?: boolean | null // null = all, true = online, false = offline
 }
@@ -21,7 +21,7 @@ export interface VehicleFormData {
   rental_price: number | null
   category: 'alquiler' | 'venta' | 'terceros'
   categories?: string[] // Multiple categories support (legacy compatibility)
-  type_id: string | null
+  subcategory_id: string | null
   location: string | null
   location_en: string | null
   location_country: string | null
@@ -29,7 +29,7 @@ export interface VehicleFormData {
   location_region: string | null
   description_es: string | null
   description_en: string | null
-  filters_json: Record<string, unknown>
+  attributes_json: Record<string, unknown>
   status: string
   featured: boolean
   plate?: string | null
@@ -46,6 +46,8 @@ export interface VehicleFormData {
   // Maintenance and rental data (stored as JSONB)
   maintenance_records?: MaintenanceEntry[]
   rental_records?: RentalEntry[]
+  // Documents (stored as JSONB, files in Google Drive)
+  documents_json?: DocumentEntry[]
 }
 
 export interface AdminVehicle extends Vehicle {
@@ -63,6 +65,8 @@ export interface AdminVehicle extends Vehicle {
   owner_name?: string | null
   owner_contact?: string | null
   owner_notes?: string | null
+  // Documents
+  documents_json?: DocumentEntry[]
 }
 
 export interface MaintenanceEntry {
@@ -79,6 +83,15 @@ export interface RentalEntry {
   to_date: string
   amount: number
   notes?: string
+  invoice_url?: string
+}
+
+export interface DocumentEntry {
+  id: string
+  name: string
+  url: string
+  type: string
+  uploaded_at: string
 }
 
 const PAGE_SIZE = 50
@@ -102,7 +115,7 @@ export function useAdminVehicles() {
     try {
       let query = supabase
         .from('vehicles')
-        .select('*, vehicle_images(*), types(*)', { count: 'exact' })
+        .select('*, vehicle_images(*), subcategories(*)', { count: 'exact' })
         .order('created_at', { ascending: false })
 
       if (filters.status) {
@@ -113,18 +126,19 @@ export function useAdminVehicles() {
         query = query.eq('category', filters.category)
       }
 
-      if (filters.subcategory_id) {
-        // Get type_ids linked to this subcategory via junction table
+      if (filters.category_id) {
+        // Get subcategory_ids linked to this category via junction table
         const { data: links } = await supabase
-          .from('type_subcategories')
-          .select('type_id')
-          .eq('subcategory_id', filters.subcategory_id)
+          .from('subcategory_categories')
+          .select('subcategory_id')
+          .eq('category_id', filters.category_id)
 
         if (links?.length) {
-          const typeIds = (links as { type_id: string }[]).map(l => l.type_id)
-          query = query.in('type_id', typeIds)
-        }
-        else {
+          const subcategoryIds = (links as { subcategory_id: string }[]).map(
+            (l) => l.subcategory_id,
+          )
+          query = query.in('subcategory_id', subcategoryIds)
+        } else {
           vehicles.value = []
           total.value = 0
           loading.value = false
@@ -132,8 +146,8 @@ export function useAdminVehicles() {
         }
       }
 
-      if (filters.type_id) {
-        query = query.eq('type_id', filters.type_id)
+      if (filters.subcategory_id) {
+        query = query.eq('subcategory_id', filters.subcategory_id)
       }
 
       if (filters.search) {
@@ -150,13 +164,12 @@ export function useAdminVehicles() {
 
       vehicles.value = (data as unknown as AdminVehicle[]) || []
       total.value = count || 0
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error fetching vehicles')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error fetching vehicles')
       vehicles.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -171,7 +184,7 @@ export function useAdminVehicles() {
     try {
       const { data, error: err } = await supabase
         .from('vehicles')
-        .select('*, vehicle_images(*), types(*)')
+        .select('*, vehicle_images(*), subcategories(*)')
         .eq('id', id)
         .order('position', { referencedTable: 'vehicle_images', ascending: true })
         .single()
@@ -179,13 +192,12 @@ export function useAdminVehicles() {
       if (err) throw err
 
       return data as unknown as AdminVehicle
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error fetching vehicle')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error fetching vehicle')
       return null
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -201,9 +213,14 @@ export function useAdminVehicles() {
       // Generate slug from brand + model + year
       const slug = generateSlug(formData.brand, formData.model, formData.year)
 
-      const insertData = {
+      const insertData: Record<string, unknown> = {
         ...formData,
         slug,
+      }
+
+      // Flag for translation queue when publishing
+      if (formData.status === 'active') {
+        insertData.pending_translations = true
       }
 
       const { data, error: err } = await supabase
@@ -215,15 +232,14 @@ export function useAdminVehicles() {
       if (err) throw err
 
       return (data as { id: string } | null)?.id || null
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       // Supabase errors have a message property but aren't Error instances
       const supabaseError = err as { message?: string; details?: string; hint?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error creating vehicle')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error creating vehicle')
       console.error('Create vehicle error:', err)
       return null
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -236,9 +252,14 @@ export function useAdminVehicles() {
     error.value = null
 
     try {
-      const updateData = {
+      const updateData: Record<string, unknown> = {
         ...formData,
         updated_at: new Date().toISOString(),
+      }
+
+      // Flag for translation queue when publishing
+      if (formData.status === 'active') {
+        updateData.pending_translations = true
       }
 
       const { error: err } = await supabase
@@ -249,14 +270,13 @@ export function useAdminVehicles() {
       if (err) throw err
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string; details?: string; hint?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error updating vehicle')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error updating vehicle')
       console.error('Update vehicle error:', err)
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -269,26 +289,22 @@ export function useAdminVehicles() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('vehicles')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('vehicles').delete().eq('id', id)
 
       if (err) throw err
 
       // Remove from local list
-      vehicles.value = vehicles.value.filter(v => v.id !== id)
+      vehicles.value = vehicles.value.filter((v) => v.id !== id)
       total.value--
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error deleting vehicle')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error deleting vehicle')
       console.error('Delete vehicle error:', err)
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -317,7 +333,7 @@ export function useAdminVehicles() {
       sale_category: string
       buyer_name?: string
       buyer_contact?: string
-    }
+    },
   ): Promise<boolean> {
     saving.value = true
     error.value = null
@@ -333,7 +349,7 @@ export function useAdminVehicles() {
         brand: vehicle.brand,
         model: vehicle.model,
         year: vehicle.year,
-        type_id: vehicle.type_id,
+        subcategory_id: vehicle.subcategory_id,
         original_price: vehicle.price,
         sale_price: saleData.sale_price,
         sale_date: new Date().toISOString().split('T')[0],
@@ -343,9 +359,7 @@ export function useAdminVehicles() {
         vehicle_data: vehicle,
       }
 
-      const { error: insertErr } = await supabase
-        .from('historico')
-        .insert(historicoData as never)
+      const { error: insertErr } = await supabase.from('historico').insert(historicoData as never)
 
       if (insertErr) throw insertErr
 
@@ -358,14 +372,13 @@ export function useAdminVehicles() {
       if (updateErr) throw updateErr
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error archiving vehicle')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error archiving vehicle')
       console.error('Archive vehicle error:', err)
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -380,7 +393,7 @@ export function useAdminVehicles() {
       url: string
       thumbnail_url?: string
       alt_text?: string
-    }
+    },
   ): Promise<boolean> {
     try {
       // Get current max position
@@ -403,16 +416,14 @@ export function useAdminVehicles() {
         position: maxPosition + 1,
       }
 
-      const { error: err } = await supabase
-        .from('vehicle_images')
-        .insert(insertData as never)
+      const { error: err } = await supabase.from('vehicle_images').insert(insertData as never)
 
       if (err) throw err
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error adding image')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error adding image')
       return false
     }
   }
@@ -422,17 +433,14 @@ export function useAdminVehicles() {
    */
   async function deleteImage(imageId: string): Promise<boolean> {
     try {
-      const { error: err } = await supabase
-        .from('vehicle_images')
-        .delete()
-        .eq('id', imageId)
+      const { error: err } = await supabase.from('vehicle_images').delete().eq('id', imageId)
 
       if (err) throw err
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error deleting image')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error deleting image')
       return false
     }
   }
@@ -451,10 +459,10 @@ export function useAdminVehicles() {
         if (err) throw err
       }
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error reordering images')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error reordering images')
       return false
     }
   }

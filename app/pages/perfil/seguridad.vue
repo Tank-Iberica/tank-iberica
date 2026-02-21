@@ -66,6 +66,12 @@ async function onDeleteAccount() {
   }
 }
 
+function cancelDelete() {
+  showDeleteConfirm.value = false
+  deleteConfirmText.value = ''
+  deleteError.value = null
+}
+
 /** Export data (GDPR) */
 const exporting = ref(false)
 
@@ -191,14 +197,7 @@ useHead({
             <button class="btn-danger" :disabled="profileLoading" @click="onDeleteAccount">
               {{ profileLoading ? $t('common.loading') : $t('profile.security.confirmDelete') }}
             </button>
-            <button
-              class="btn-ghost"
-              @click="
-                showDeleteConfirm = false
-                deleteConfirmText = ''
-                deleteError = null
-              "
-            >
+            <button class="btn-ghost" @click="cancelDelete">
               {{ $t('common.cancel') }}
             </button>
           </div>

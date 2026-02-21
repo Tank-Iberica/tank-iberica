@@ -1,6 +1,7 @@
 /**
  * Cloudinary Upload Composable
  * Handles unsigned uploads to Cloudinary via their REST API
+ * Supports SEO-friendly public_id, contextual metadata, and tags
  */
 
 export interface CloudinaryUploadResult {
@@ -11,6 +12,17 @@ export interface CloudinaryUploadResult {
   height: number
   format: string
   bytes: number
+}
+
+export interface CloudinaryUploadOptions {
+  /** Cloudinary folder path (e.g. 'tank-iberica/vehicles') */
+  folder?: string
+  /** Custom public_id for SEO-friendly URLs (without folder prefix) */
+  publicId?: string
+  /** Pipe-separated context metadata (e.g. 'brand=Renault|year=2024') */
+  context?: string
+  /** Tags for Cloudinary Media Library organization */
+  tags?: string[]
 }
 
 export function useCloudinaryUpload() {
@@ -24,11 +36,33 @@ export function useCloudinaryUpload() {
 
   /**
    * Upload a file to Cloudinary using unsigned upload
-   * Requires CLOUDINARY_UPLOAD_PRESET env variable to be set
+   *
+   * @param file - Image file to upload
+   * @param folderOrOptions - Folder string (backward compat) or CloudinaryUploadOptions
+   *
+   * @example
+   * // Simple (backward compatible)
+   * await upload(file)
+   * await upload(file, 'tank-iberica/news')
+   *
+   * // With SEO options
+   * await upload(file, {
+   *   publicId: 'cisterna-alimentaria-renault-2024-v42',
+   *   folder: 'tank-iberica/vehicles',
+   *   context: 'brand=Renault|year=2024|subcategory=Cisterna',
+   *   tags: ['cisterna', 'renault', '2024'],
+   * })
    */
-  async function upload(file: File, folder = 'tank-iberica/news'): Promise<CloudinaryUploadResult | null> {
+  async function upload(
+    file: File,
+    folderOrOptions: string | CloudinaryUploadOptions = 'tank-iberica/news',
+  ): Promise<CloudinaryUploadResult | null> {
+    const options: CloudinaryUploadOptions =
+      typeof folderOrOptions === 'string' ? { folder: folderOrOptions } : folderOrOptions
+
     if (!uploadPreset) {
-      error.value = 'Cloudinary upload preset no configurado. Anade CLOUDINARY_UPLOAD_PRESET en .env'
+      error.value =
+        'Cloudinary upload preset no configurado. Anade CLOUDINARY_UPLOAD_PRESET en .env'
       return null
     }
 
@@ -51,7 +85,11 @@ export function useCloudinaryUpload() {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('upload_preset', uploadPreset)
-      formData.append('folder', folder)
+
+      if (options.folder) formData.append('folder', options.folder)
+      if (options.publicId) formData.append('public_id', options.publicId)
+      if (options.context) formData.append('context', options.context)
+      if (options.tags?.length) formData.append('tags', options.tags.join(','))
 
       const result = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
         const xhr = new XMLHttpRequest()
@@ -66,8 +104,7 @@ export function useCloudinaryUpload() {
         xhr.addEventListener('load', () => {
           if (xhr.status >= 200 && xhr.status < 300) {
             resolve(JSON.parse(xhr.responseText))
-          }
-          else {
+          } else {
             const errData = JSON.parse(xhr.responseText)
             reject(new Error(errData?.error?.message || `Upload failed (${xhr.status})`))
           }
@@ -80,12 +117,10 @@ export function useCloudinaryUpload() {
       })
 
       return result
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error subiendo imagen'
       return null
-    }
-    finally {
+    } finally {
       uploading.value = false
       progress.value = 0
     }

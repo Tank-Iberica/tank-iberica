@@ -148,8 +148,10 @@
               <button
                 class="header-icon-btn lang-option"
                 @click.stop="
-                  setLocale(altLocale as 'es' | 'en')
-                  openMenu = null
+                  () => {
+                    setLocale(altLocale as 'es' | 'en')
+                    openMenu = null
+                  }
                 "
               >
                 <img

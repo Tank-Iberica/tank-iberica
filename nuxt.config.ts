@@ -170,12 +170,22 @@ export default defineNuxtConfig({
     whatsappApiToken: process.env.WHATSAPP_API_TOKEN || '',
     whatsappPhoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID || '',
     whatsappVerifyToken: process.env.WHATSAPP_VERIFY_TOKEN || '',
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
+    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
+    quadernoApiKey: process.env.QUADERNO_API_KEY || '',
+    quadernoApiUrl: process.env.QUADERNO_API_URL || 'https://quadernoapp.com/api',
+    supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+    vapidPrivateKey: process.env.VAPID_PRIVATE_KEY || '',
+    vapidEmail: process.env.VAPID_EMAIL || '',
     public: {
       vertical: process.env.NUXT_PUBLIC_VERTICAL || 'tracciona',
       cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
       cloudinaryUploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET || '',
       googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+      googleAdsId: process.env.NUXT_PUBLIC_GOOGLE_ADS_ID || '',
       turnstileSiteKey: process.env.TURNSTILE_SITE_KEY || '',
+      sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
+      vapidPublicKey: process.env.NUXT_PUBLIC_VAPID_PUBLIC_KEY || '',
     },
   },
 
@@ -206,20 +216,8 @@ export default defineNuxtConfig({
         { rel: 'dns-prefetch', href: 'https://res.cloudinary.com' },
         { rel: 'dns-prefetch', href: 'https://gmnrfuzekbwyzkgsaftv.supabase.co' },
         { rel: 'dns-prefetch', href: 'https://flagcdn.com' },
+        { rel: 'dns-prefetch', href: 'https://www.googletagmanager.com' },
         { rel: 'preconnect', href: 'https://res.cloudinary.com', crossorigin: '' },
-      ],
-      script: [
-        ...(process.env.GOOGLE_ADS_ID
-          ? [
-              {
-                src: `https://www.googletagmanager.com/gtag/js?id=${process.env.GOOGLE_ADS_ID}`,
-                async: true,
-              },
-              {
-                children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${process.env.GOOGLE_ADS_ID}');`,
-              },
-            ]
-          : []),
       ],
     },
   },

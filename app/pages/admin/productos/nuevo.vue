@@ -8,6 +8,13 @@ import {
 import { useAdminTypes } from '~/composables/admin/useAdminTypes'
 import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories'
 import { useAdminFilters, type AdminFilter } from '~/composables/admin/useAdminFilters'
+import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
+import {
+  generateVehiclePublicId,
+  generateCloudinaryContext,
+  generateVehicleAltText,
+  type FileNamingData,
+} from '~/utils/fileNaming'
 
 definePageMeta({
   layout: 'admin',
@@ -16,10 +23,16 @@ definePageMeta({
 
 const router = useRouter()
 
-const { saving, error, createVehicle, addImage: _addImage } = useAdminVehicles()
+const { saving, error, createVehicle, addImage } = useAdminVehicles()
 const { types, fetchTypes } = useAdminTypes()
 const { subcategories, fetchSubcategories } = useAdminSubcategories()
 const { filters: allFilters, fetchFilters } = useAdminFilters()
+
+const {
+  upload: uploadToCloudinary,
+  uploading: cloudinaryUploading,
+  progress: cloudinaryProgress,
+} = useCloudinaryUpload()
 
 // Extended interfaces for additional fields
 interface CharacteristicEntry {
@@ -48,7 +61,7 @@ const formData = ref<VehicleFormData>({
   location_region: null,
   description_es: null,
   description_en: null,
-  filters_json: {},
+  attributes_json: {},
   status: 'draft',
   featured: false,
   plate: null,
@@ -88,18 +101,18 @@ const sections = reactive({
 // Dynamic filters
 const dynamicFilters = computed<AdminFilter[]>(() => {
   if (!formData.value.type_id) return []
-  const sub = types.value.find(s => s.id === formData.value.type_id)
+  const sub = types.value.find((s) => s.id === formData.value.type_id)
   if (!sub?.applicable_filters?.length) {
-    return allFilters.value.filter(f => f.status === 'published')
+    return allFilters.value.filter((f) => f.status === 'published')
   }
-  return allFilters.value.filter(f =>
-    sub.applicable_filters?.includes(f.id) && f.status !== 'archived',
+  return allFilters.value.filter(
+    (f) => sub.applicable_filters?.includes(f.id) && f.status !== 'archived',
   )
 })
 
 // Published subcategories
 const publishedSubcategories = computed(() =>
-  subcategories.value.filter(s => s.status === 'published'),
+  subcategories.value.filter((s) => s.status === 'published'),
 )
 
 // Junction data: type ↔ subcategory links
@@ -108,27 +121,42 @@ const typeSubcategoryLinks = ref<{ type_id: string; subcategory_id: string }[]>(
 async function fetchTypeSubcategoryLinks() {
   const supabase = useSupabaseClient()
   const { data } = await supabase
-    .from('type_subcategories')
-    .select('type_id, subcategory_id')
+    .from('subcategory_categories')
+    .select('subcategory_id, category_id')
   typeSubcategoryLinks.value = (data as { type_id: string; subcategory_id: string }[]) || []
 }
 
 // Published types filtered by selected subcategory
 const publishedTypes = computed(() => {
-  const all = types.value.filter(t => t.status === 'published')
+  const all = types.value.filter((t) => t.status === 'published')
   if (!selectedSubcategoryId.value) return all
   const linkedTypeIds = new Set(
     typeSubcategoryLinks.value
-      .filter(l => l.subcategory_id === selectedSubcategoryId.value)
-      .map(l => l.type_id)
+      .filter((l) => l.subcategory_id === selectedSubcategoryId.value)
+      .map((l) => l.type_id),
   )
-  return all.filter(t => linkedTypeIds.has(t.id))
+  return all.filter((t) => linkedTypeIds.has(t.id))
+})
+
+// File naming data for Cloudinary SEO
+const fileNamingData = computed<FileNamingData>(() => {
+  const type = types.value.find((t) => t.id === formData.value.type_id)
+  const subcatId = selectedSubcategoryId.value
+  const subcat = subcategories.value.find((s) => s.id === subcatId)
+  return {
+    id: 'new',
+    brand: formData.value.brand,
+    year: formData.value.year,
+    plate: formData.value.plate,
+    subcategory: subcat?.name_es || null,
+    type: type?.name_es || null,
+  }
 })
 
 // When subcategory changes, reset type_id if not in filtered types
 watch(selectedSubcategoryId, () => {
   if (selectedSubcategoryId.value && formData.value.type_id) {
-    if (!publishedTypes.value.some(t => t.id === formData.value.type_id)) {
+    if (!publishedTypes.value.some((t) => t.id === formData.value.type_id)) {
       formData.value.type_id = null
     }
   }
@@ -163,24 +191,31 @@ watch([() => formData.value.location, () => formData.value.location_en], ([es, e
 
 // Load data
 onMounted(async () => {
-  await Promise.all([fetchSubcategories(), fetchTypes(), fetchFilters(), fetchTypeSubcategoryLinks()])
+  await Promise.all([
+    fetchSubcategories(),
+    fetchTypes(),
+    fetchFilters(),
+    fetchTypeSubcategoryLinks(),
+  ])
 })
 
 // Filter handlers
 function updateFilterValue(id: string, value: string | number | boolean) {
-  formData.value.filters_json = { ...formData.value.filters_json, [id]: value }
+  formData.value.attributes_json = { ...formData.value.attributes_json, [id]: value }
 }
 
 function getFilterValue(id: string): string | number | boolean | undefined {
-  return formData.value.filters_json[id] as string | number | boolean | undefined
+  return formData.value.attributes_json[id] as string | number | boolean | undefined
 }
 
 // Validation
 const isValid = computed(() => {
-  return formData.value.brand.trim() &&
+  return (
+    formData.value.brand.trim() &&
     formData.value.model.trim() &&
     formData.value.type_id &&
     (formData.value.categories?.length || 0) > 0
+  )
 })
 
 // Save
@@ -194,30 +229,45 @@ async function handleSave() {
   const vehicleId = await createVehicle(formData.value)
   if (!vehicleId) return
 
-  // 2. Upload pending images if any
+  // 2. Upload pending images via Cloudinary
   if (pendingImages.value.length > 0) {
     uploadingImages.value = true
 
-    for (const img of pendingImages.value) {
-      // TODO: Replace with actual Cloudinary upload
-      // For now, we'll skip the upload and show a message
-      // In production, this would be:
-      // const cloudinaryResult = await uploadToCloudinary(img.file)
-      // await addImage(vehicleId, {
-      //   cloudinary_public_id: cloudinaryResult.public_id,
-      //   url: cloudinaryResult.secure_url,
-      //   thumbnail_url: cloudinaryResult.thumbnail_url,
-      // })
+    // Update fileNamingData with the real vehicle ID
+    const naming: FileNamingData = {
+      ...fileNamingData.value,
+      id: vehicleId,
+    }
 
-      // Clean up preview URL
+    for (let i = 0; i < pendingImages.value.length; i++) {
+      const img = pendingImages.value[i]
+      const imageIndex = i + 1
+      const publicId = generateVehiclePublicId(naming, imageIndex)
+      const context = generateCloudinaryContext(naming)
+      const altText = generateVehicleAltText(naming, imageIndex)
+
+      const result = await uploadToCloudinary(img.file, {
+        publicId,
+        context,
+        tags: [
+          naming.brand?.toLowerCase(),
+          naming.subcategory?.toLowerCase(),
+          naming.type?.toLowerCase(),
+        ].filter(Boolean) as string[],
+      })
+
+      if (result) {
+        await addImage(vehicleId, {
+          cloudinary_public_id: result.public_id,
+          url: result.secure_url,
+          alt_text: altText,
+        })
+      }
+
       URL.revokeObjectURL(img.previewUrl)
     }
 
     uploadingImages.value = false
-
-    if (pendingImages.value.length > 0) {
-      alert(`Vehículo creado. ${pendingImages.value.length} imagen(es) pendiente(s) de subir - configura Cloudinary para completar la subida.`)
-    }
   }
 
   // 3. Redirect to products list
@@ -233,7 +283,7 @@ function toggleCategory(cat: string) {
   const cats = formData.value.categories || []
   const idx = cats.indexOf(cat)
   if (idx === -1) formData.value.categories = [...cats, cat]
-  else formData.value.categories = cats.filter(c => c !== cat)
+  else formData.value.categories = cats.filter((c) => c !== cat)
   if (formData.value.categories?.length) {
     formData.value.category = formData.value.categories[0] as 'alquiler' | 'venta' | 'terceros'
   }
@@ -254,7 +304,7 @@ function addCharacteristic() {
 }
 
 function removeCharacteristic(id: string) {
-  characteristics.value = characteristics.value.filter(c => c.id !== id)
+  characteristics.value = characteristics.value.filter((c) => c.id !== id)
 }
 
 // Pending Images
@@ -287,10 +337,10 @@ function handleImageSelect(e: Event) {
 }
 
 function removePendingImage(id: string) {
-  const img = pendingImages.value.find(i => i.id === id)
+  const img = pendingImages.value.find((i) => i.id === id)
   if (img) {
     URL.revokeObjectURL(img.previewUrl)
-    pendingImages.value = pendingImages.value.filter(i => i.id !== id)
+    pendingImages.value = pendingImages.value.filter((i) => i.id !== id)
   }
 }
 
@@ -311,7 +361,7 @@ function handleDocUpload(e: Event) {
 }
 
 function removeDocument(id: string) {
-  documents.value = documents.value.filter(d => d.id !== id)
+  documents.value = documents.value.filter((d) => d.id !== id)
 }
 
 // Maintenance
@@ -329,13 +379,13 @@ function addMaint() {
 }
 
 function removeMaint(id: string) {
-  formData.value.maintenance_records = formData.value.maintenance_records?.filter(r => r.id !== id) || []
+  formData.value.maintenance_records =
+    formData.value.maintenance_records?.filter((r) => r.id !== id) || []
 }
 
 function updateMaint(id: string, field: keyof MaintenanceEntry, val: string | number) {
-  formData.value.maintenance_records = formData.value.maintenance_records?.map(r =>
-    r.id === id ? { ...r, [field]: val } : r,
-  ) || []
+  formData.value.maintenance_records =
+    formData.value.maintenance_records?.map((r) => (r.id === id ? { ...r, [field]: val } : r)) || []
 }
 
 const totalMaint = computed(() =>
@@ -358,13 +408,12 @@ function addRental() {
 }
 
 function removeRental(id: string) {
-  formData.value.rental_records = formData.value.rental_records?.filter(r => r.id !== id) || []
+  formData.value.rental_records = formData.value.rental_records?.filter((r) => r.id !== id) || []
 }
 
 function updateRental(id: string, field: keyof RentalEntry, val: string | number) {
-  formData.value.rental_records = formData.value.rental_records?.map(r =>
-    r.id === id ? { ...r, [field]: val } : r,
-  ) || []
+  formData.value.rental_records =
+    formData.value.rental_records?.map((r) => (r.id === id ? { ...r, [field]: val } : r)) || []
 }
 
 const totalRental = computed(() =>
@@ -372,13 +421,17 @@ const totalRental = computed(() =>
 )
 
 // Cost calculation (like original: Coste + Mant - Renta)
-const totalCost = computed(() =>
-  (formData.value.acquisition_cost || 0) + totalMaint.value - totalRental.value,
+const totalCost = computed(
+  () => (formData.value.acquisition_cost || 0) + totalMaint.value - totalRental.value,
 )
 
 function fmt(val: number | null | undefined): string {
   if (!val && val !== 0) return '—'
-  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }).format(val)
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+  }).format(val)
 }
 </script>
 
@@ -392,7 +445,11 @@ function fmt(val: number | null | undefined): string {
       </div>
       <div class="pf-right">
         <button class="btn" @click="handleCancel">Cancelar</button>
-        <button class="btn btn-primary" :disabled="saving || uploadingImages || !isValid" @click="handleSave">
+        <button
+          class="btn btn-primary"
+          :disabled="saving || uploadingImages || !isValid"
+          @click="handleSave"
+        >
           {{ uploadingImages ? 'Subiendo imágenes...' : saving ? 'Guardando...' : '💾 Guardar' }}
         </button>
       </div>
@@ -406,19 +463,19 @@ function fmt(val: number | null | undefined): string {
         <div class="section-title">Estado</div>
         <div class="estado-row">
           <label class="estado-opt" :class="{ active: formData.status === 'published' }">
-            <input v-model="formData.status" type="radio" value="published">
+            <input v-model="formData.status" type="radio" value="published" >
             <span class="dot green" />Publicado
           </label>
           <label class="estado-opt" :class="{ active: formData.status === 'draft' }">
-            <input v-model="formData.status" type="radio" value="draft">
+            <input v-model="formData.status" type="radio" value="draft" >
             <span class="dot gray" />Oculto
           </label>
           <label class="estado-opt" :class="{ active: formData.status === 'rented' }">
-            <input v-model="formData.status" type="radio" value="rented">
+            <input v-model="formData.status" type="radio" value="rented" >
             <span class="dot blue" />Alquilado
           </label>
           <label class="estado-opt" :class="{ active: formData.status === 'maintenance' }">
-            <input v-model="formData.status" type="radio" value="maintenance">
+            <input v-model="formData.status" type="radio" value="maintenance" >
             <span class="dot red" />En Taller
           </label>
         </div>
@@ -429,14 +486,14 @@ function fmt(val: number | null | undefined): string {
         <div class="section-title">Visibilidad</div>
         <div class="row-2">
           <label class="radio-card" :class="{ active: formData.is_online }">
-            <input v-model="formData.is_online" type="radio" :value="true">
+            <input v-model="formData.is_online" type="radio" :value="true" >
             <div class="radio-content">
               <strong>🌐 Web (Público)</strong>
               <span>Visible en la web pública</span>
             </div>
           </label>
           <label class="radio-card" :class="{ active: !formData.is_online }">
-            <input v-model="formData.is_online" type="radio" :value="false">
+            <input v-model="formData.is_online" type="radio" :value="false" >
             <div class="radio-content">
               <strong>🤝 Intermediación (Interno)</strong>
               <span>Solo visible para administradores</span>
@@ -448,15 +505,19 @@ function fmt(val: number | null | undefined): string {
           <div class="row-3">
             <div class="field">
               <label>Propietario</label>
-              <input v-model="formData.owner_name" type="text" placeholder="Nombre del propietario">
+              <input
+                v-model="formData.owner_name"
+                type="text"
+                placeholder="Nombre del propietario"
+              >
             </div>
             <div class="field">
               <label>Contacto</label>
-              <input v-model="formData.owner_contact" type="text" placeholder="Tel / Email">
+              <input v-model="formData.owner_contact" type="text" placeholder="Tel / Email" >
             </div>
             <div class="field">
               <label>Notas internas</label>
-              <input v-model="formData.owner_notes" type="text" placeholder="Notas...">
+              <input v-model="formData.owner_notes" type="text" placeholder="Notas..." >
             </div>
           </div>
         </div>
@@ -475,14 +536,44 @@ function fmt(val: number | null | undefined): string {
             @change="handleImageSelect"
           >
         </label>
+        <div v-if="cloudinaryUploading" class="upload-progress">
+          <div class="progress-bar" :style="{ width: cloudinaryProgress + '%' }" />
+          <span>{{ cloudinaryProgress }}%</span>
+        </div>
         <div v-if="pendingImages.length" class="img-grid">
-          <div v-for="(img, idx) in pendingImages" :key="img.id" class="img-item" :class="{ cover: idx === 0 }">
-            <img :src="img.previewUrl" :alt="`Imagen ${idx + 1}`">
+          <div
+            v-for="(img, idx) in pendingImages"
+            :key="img.id"
+            class="img-item"
+            :class="{ cover: idx === 0 }"
+          >
+            <img :src="img.previewUrl" :alt="`Imagen ${idx + 1}`" >
             <div class="img-overlay">
               <div class="img-actions">
-                <button v-if="idx > 0" type="button" title="Mover arriba" @click="movePendingImage(idx, 'up')">↑</button>
-                <button v-if="idx < pendingImages.length - 1" type="button" title="Mover abajo" @click="movePendingImage(idx, 'down')">↓</button>
-                <button type="button" class="del" title="Eliminar" @click="removePendingImage(img.id)">×</button>
+                <button
+                  v-if="idx > 0"
+                  type="button"
+                  title="Mover arriba"
+                  @click="movePendingImage(idx, 'up')"
+                >
+                  ↑
+                </button>
+                <button
+                  v-if="idx < pendingImages.length - 1"
+                  type="button"
+                  title="Mover abajo"
+                  @click="movePendingImage(idx, 'down')"
+                >
+                  ↓
+                </button>
+                <button
+                  type="button"
+                  class="del"
+                  title="Eliminar"
+                  @click="removePendingImage(img.id)"
+                >
+                  ×
+                </button>
               </div>
             </div>
             <span v-if="idx === 0" class="cover-badge">PORTADA</span>
@@ -498,19 +589,27 @@ function fmt(val: number | null | undefined): string {
         <div class="section-title">Categorías *</div>
         <div class="cat-row">
           <label class="cat-check" :class="{ active: hasCat('venta') }">
-            <input type="checkbox" :checked="hasCat('venta')" @change="toggleCategory('venta')">
+            <input type="checkbox" :checked="hasCat('venta')" @change="toggleCategory('venta')" >
             Venta
           </label>
           <label class="cat-check" :class="{ active: hasCat('alquiler') }">
-            <input type="checkbox" :checked="hasCat('alquiler')" @change="toggleCategory('alquiler')">
+            <input
+              type="checkbox"
+              :checked="hasCat('alquiler')"
+              @change="toggleCategory('alquiler')"
+            >
             Alquiler
           </label>
           <label class="cat-check" :class="{ active: hasCat('terceros') }">
-            <input type="checkbox" :checked="hasCat('terceros')" @change="toggleCategory('terceros')">
+            <input
+              type="checkbox"
+              :checked="hasCat('terceros')"
+              @change="toggleCategory('terceros')"
+            >
             Terceros
           </label>
           <label class="feat-check">
-            <input v-model="formData.featured" type="checkbox">
+            <input v-model="formData.featured" type="checkbox" >
             ★ Destacado
           </label>
         </div>
@@ -524,7 +623,9 @@ function fmt(val: number | null | undefined): string {
             <label>Subcategoría</label>
             <select v-model="selectedSubcategoryId">
               <option :value="null">Seleccionar...</option>
-              <option v-for="s in publishedSubcategories" :key="s.id" :value="s.id">{{ s.name_es }}</option>
+              <option v-for="s in publishedSubcategories" :key="s.id" :value="s.id">
+                {{ s.name_es }}
+              </option>
             </select>
           </div>
           <div class="field">
@@ -538,30 +639,34 @@ function fmt(val: number | null | undefined): string {
         <div class="row-4">
           <div class="field">
             <label>Marca *</label>
-            <input v-model="formData.brand" type="text" placeholder="Scania">
+            <input v-model="formData.brand" type="text" placeholder="Scania" >
           </div>
           <div class="field">
             <label>Modelo *</label>
-            <input v-model="formData.model" type="text" placeholder="R450">
+            <input v-model="formData.model" type="text" placeholder="R450" >
           </div>
           <div class="field">
             <label>Año *</label>
-            <input v-model.number="formData.year" type="number" placeholder="2023">
+            <input v-model.number="formData.year" type="number" placeholder="2023" >
           </div>
           <div class="field" />
         </div>
         <div class="row-4">
           <div class="field">
             <label>Matrícula</label>
-            <input v-model="formData.plate" type="text" placeholder="1234-ABC">
+            <input v-model="formData.plate" type="text" placeholder="1234-ABC" >
           </div>
           <div class="field">
             <label>Precio Venta €</label>
-            <input v-model.number="formData.price" type="number" placeholder="0 = Consultar">
+            <input v-model.number="formData.price" type="number" placeholder="0 = Consultar" >
           </div>
           <div v-if="showRentalPrice" class="field">
             <label>Precio Alquiler €/mes</label>
-            <input v-model.number="formData.rental_price" type="number" placeholder="0 = Consultar">
+            <input
+              v-model.number="formData.rental_price"
+              type="number"
+              placeholder="0 = Consultar"
+            >
           </div>
           <div v-else class="field" />
           <div class="field" />
@@ -569,16 +674,18 @@ function fmt(val: number | null | undefined): string {
         <div class="row-2">
           <div class="field">
             <label>Ubicación ES</label>
-            <input v-model="formData.location" type="text" placeholder="Madrid, España">
+            <input v-model="formData.location" type="text" placeholder="Madrid, España" >
             <span v-if="formData.location_country" class="location-detected">
               {{ countryFlag(formData.location_country) }} {{ formData.location_country }}
-              <template v-if="formData.location_province"> · {{ formData.location_province }}</template>
+              <template v-if="formData.location_province">
+                · {{ formData.location_province }}</template
+              >
               <template v-if="formData.location_region"> · {{ formData.location_region }}</template>
             </span>
           </div>
           <div class="field">
             <label>Ubicación EN</label>
-            <input v-model="formData.location_en" type="text" placeholder="Madrid, Spain">
+            <input v-model="formData.location_en" type="text" placeholder="Madrid, Spain" >
           </div>
         </div>
       </div>
@@ -593,12 +700,22 @@ function fmt(val: number | null | undefined): string {
           <div class="row-2">
             <div class="field">
               <label>Descripción ES</label>
-              <textarea v-model="formData.description_es" rows="3" maxlength="300" placeholder="Descripción en español..." />
+              <textarea
+                v-model="formData.description_es"
+                rows="3"
+                maxlength="300"
+                placeholder="Descripción en español..."
+              />
               <span class="char-count">{{ (formData.description_es || '').length }}/300</span>
             </div>
             <div class="field">
               <label>Descripción EN</label>
-              <textarea v-model="formData.description_en" rows="3" maxlength="300" placeholder="Description in English..." />
+              <textarea
+                v-model="formData.description_en"
+                rows="3"
+                maxlength="300"
+                placeholder="Description in English..."
+              />
               <span class="char-count">{{ (formData.description_en || '').length }}/300</span>
             </div>
           </div>
@@ -614,7 +731,10 @@ function fmt(val: number | null | undefined): string {
         <div v-if="sections.filters" class="section-content">
           <div class="filters-grid">
             <div v-for="f in dynamicFilters" :key="f.id" class="field-sm">
-              <label>{{ f.label_es || f.name }} <span v-if="f.unit" class="hint">({{ f.unit }})</span></label>
+              <label
+                >{{ f.label_es || f.name }}
+                <span v-if="f.unit" class="hint">({{ f.unit }})</span></label
+              >
               <input
                 v-if="f.type === 'caja'"
                 type="text"
@@ -623,12 +743,14 @@ function fmt(val: number | null | undefined): string {
               >
               <template v-else-if="f.type === 'desplegable' || f.type === 'desplegable_tick'">
                 <select
-                  v-if="(f.options?.choices as string[] || []).length"
+                  v-if="((f.options?.choices as string[]) || []).length"
                   :value="getFilterValue(f.id)"
                   @change="updateFilterValue(f.id, ($event.target as HTMLSelectElement).value)"
                 >
                   <option value="">—</option>
-                  <option v-for="c in (f.options?.choices as string[] || [])" :key="c" :value="c">{{ c }}</option>
+                  <option v-for="c in (f.options?.choices as string[]) || []" :key="c" :value="c">
+                    {{ c }}
+                  </option>
                 </select>
                 <input
                   v-else
@@ -643,7 +765,8 @@ function fmt(val: number | null | undefined): string {
                   type="checkbox"
                   :checked="!!getFilterValue(f.id)"
                   @change="updateFilterValue(f.id, ($event.target as HTMLInputElement).checked)"
-                > Sí
+                >
+                Sí
               </label>
               <input
                 v-else
@@ -658,7 +781,10 @@ function fmt(val: number | null | undefined): string {
 
       <!-- === SECTION: Características adicionales === -->
       <div class="section collapsible">
-        <button class="section-toggle" @click="sections.characteristics = !sections.characteristics">
+        <button
+          class="section-toggle"
+          @click="sections.characteristics = !sections.characteristics"
+        >
           <span>Características adicionales</span>
           <div class="toggle-actions">
             <button class="btn-add" @click.stop="addCharacteristic">+ Añadir</button>
@@ -670,9 +796,9 @@ function fmt(val: number | null | undefined): string {
             Sin características adicionales. Pulsa "+ Añadir" para crear una.
           </div>
           <div v-for="c in characteristics" :key="c.id" class="char-row">
-            <input v-model="c.key" type="text" placeholder="Nombre (ej: Motor)">
-            <input v-model="c.value_es" type="text" placeholder="Valor ES">
-            <input v-model="c.value_en" type="text" placeholder="Valor EN">
+            <input v-model="c.key" type="text" placeholder="Nombre (ej: Motor)" >
+            <input v-model="c.value_es" type="text" placeholder="Valor ES" >
+            <input v-model="c.value_en" type="text" placeholder="Valor EN" >
             <button class="btn-x" @click="removeCharacteristic(c.id)">×</button>
           </div>
         </div>
@@ -687,12 +813,7 @@ function fmt(val: number | null | undefined): string {
         <div v-if="sections.documents" class="section-content">
           <label for="doc-upload-input" class="upload-zone-label">
             📄 Subir documentos
-            <input
-              id="doc-upload-input"
-              type="file"
-              multiple
-              @change="handleDocUpload"
-            >
+            <input id="doc-upload-input" type="file" multiple @change="handleDocUpload" >
           </label>
           <div v-if="documents.length === 0" class="empty-msg">Sin documentos.</div>
           <div v-for="d in documents" :key="d.id" class="doc-row">
@@ -712,15 +833,23 @@ function fmt(val: number | null | undefined): string {
           <div class="row-3">
             <div class="field">
               <label>Precio mínimo €</label>
-              <input v-model.number="formData.min_price" type="number" placeholder="Precio mínimo aceptable">
+              <input
+                v-model.number="formData.min_price"
+                type="number"
+                placeholder="Precio mínimo aceptable"
+              >
             </div>
             <div class="field">
               <label>Coste adquisición €</label>
-              <input v-model.number="formData.acquisition_cost" type="number" placeholder="Coste de compra">
+              <input
+                v-model.number="formData.acquisition_cost"
+                type="number"
+                placeholder="Coste de compra"
+              >
             </div>
             <div class="field">
               <label>Fecha adquisición</label>
-              <input v-model="formData.acquisition_date" type="date">
+              <input v-model="formData.acquisition_date" type="date" >
             </div>
           </div>
 
@@ -742,17 +871,56 @@ function fmt(val: number | null | undefined): string {
               </thead>
               <tbody>
                 <tr v-for="r in formData.maintenance_records" :key="r.id">
-                  <td><input type="date" :value="r.date" @input="updateMaint(r.id, 'date', ($event.target as HTMLInputElement).value)"></td>
-                  <td><input type="text" :value="r.reason" placeholder="Razón" @input="updateMaint(r.id, 'reason', ($event.target as HTMLInputElement).value)"></td>
-                  <td><input type="number" :value="r.cost" placeholder="0" @input="updateMaint(r.id, 'cost', Number(($event.target as HTMLInputElement).value))"></td>
-                  <td><input type="text" :value="r.invoice_url" placeholder="URL factura" @input="updateMaint(r.id, 'invoice_url' as keyof MaintenanceEntry, ($event.target as HTMLInputElement).value)"></td>
+                  <td>
+                    <input
+                      type="date"
+                      :value="r.date"
+                      @input="updateMaint(r.id, 'date', ($event.target as HTMLInputElement).value)"
+                    >
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      :value="r.reason"
+                      placeholder="Razón"
+                      @input="
+                        updateMaint(r.id, 'reason', ($event.target as HTMLInputElement).value)
+                      "
+                    >
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      :value="r.cost"
+                      placeholder="0"
+                      @input="
+                        updateMaint(r.id, 'cost', Number(($event.target as HTMLInputElement).value))
+                      "
+                    >
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      :value="r.invoice_url"
+                      placeholder="URL factura"
+                      @input="
+                        updateMaint(
+                          r.id,
+                          'invoice_url' as keyof MaintenanceEntry,
+                          ($event.target as HTMLInputElement).value,
+                        )
+                      "
+                    >
+                  </td>
                   <td><button class="btn-x" @click="removeMaint(r.id)">×</button></td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr>
                   <td colspan="2" class="text-right">Total Mant:</td>
-                  <td colspan="3"><strong>{{ fmt(totalMaint) }}</strong></td>
+                  <td colspan="3">
+                    <strong>{{ fmt(totalMaint) }}</strong>
+                  </td>
                 </tr>
               </tfoot>
             </table>
@@ -777,17 +945,57 @@ function fmt(val: number | null | undefined): string {
               </thead>
               <tbody>
                 <tr v-for="r in formData.rental_records" :key="r.id">
-                  <td><input type="date" :value="r.from_date" @input="updateRental(r.id, 'from_date', ($event.target as HTMLInputElement).value)"></td>
-                  <td><input type="date" :value="r.to_date" @input="updateRental(r.id, 'to_date', ($event.target as HTMLInputElement).value)"></td>
-                  <td><input type="text" :value="r.notes" placeholder="Razón" @input="updateRental(r.id, 'notes', ($event.target as HTMLInputElement).value)"></td>
-                  <td><input type="number" :value="r.amount" placeholder="0" @input="updateRental(r.id, 'amount', Number(($event.target as HTMLInputElement).value))"></td>
+                  <td>
+                    <input
+                      type="date"
+                      :value="r.from_date"
+                      @input="
+                        updateRental(r.id, 'from_date', ($event.target as HTMLInputElement).value)
+                      "
+                    >
+                  </td>
+                  <td>
+                    <input
+                      type="date"
+                      :value="r.to_date"
+                      @input="
+                        updateRental(r.id, 'to_date', ($event.target as HTMLInputElement).value)
+                      "
+                    >
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      :value="r.notes"
+                      placeholder="Razón"
+                      @input="
+                        updateRental(r.id, 'notes', ($event.target as HTMLInputElement).value)
+                      "
+                    >
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      :value="r.amount"
+                      placeholder="0"
+                      @input="
+                        updateRental(
+                          r.id,
+                          'amount',
+                          Number(($event.target as HTMLInputElement).value),
+                        )
+                      "
+                    >
+                  </td>
                   <td><button class="btn-x" @click="removeRental(r.id)">×</button></td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr>
                   <td colspan="3" class="text-right">Total Renta:</td>
-                  <td colspan="2"><strong class="green">{{ fmt(totalRental) }}</strong></td>
+                  <td colspan="2">
+                    <strong class="green">{{ fmt(totalRental) }}</strong>
+                  </td>
                 </tr>
               </tfoot>
             </table>
@@ -796,10 +1004,18 @@ function fmt(val: number | null | undefined): string {
 
           <!-- Cost summary -->
           <div class="cost-summary">
-            <div class="cost-row"><span>Coste adquisición</span><span>{{ fmt(formData.acquisition_cost) }}</span></div>
-            <div class="cost-row"><span>+ Mantenimiento</span><span>{{ fmt(totalMaint) }}</span></div>
-            <div class="cost-row"><span>− Renta</span><span class="green">{{ fmt(totalRental) }}</span></div>
-            <div class="cost-row total"><span>COSTE TOTAL</span><span>{{ fmt(totalCost) }}</span></div>
+            <div class="cost-row">
+              <span>Coste adquisición</span><span>{{ fmt(formData.acquisition_cost) }}</span>
+            </div>
+            <div class="cost-row">
+              <span>+ Mantenimiento</span><span>{{ fmt(totalMaint) }}</span>
+            </div>
+            <div class="cost-row">
+              <span>− Renta</span><span class="green">{{ fmt(totalRental) }}</span>
+            </div>
+            <div class="cost-row total">
+              <span>COSTE TOTAL</span><span>{{ fmt(totalCost) }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -808,7 +1024,11 @@ function fmt(val: number | null | undefined): string {
 </template>
 
 <style scoped>
-.pf { max-width: 900px; margin: 0 auto; padding-bottom: 40px; }
+.pf {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
 
 /* Header */
 .pf-header {
@@ -823,12 +1043,24 @@ function fmt(val: number | null | undefined): string {
   background: #f9fafb;
   z-index: 50;
 }
-.pf-left { display: flex; align-items: center; gap: 10px; }
-.pf-left h1 { margin: 0; font-size: 1.1rem; font-weight: 600; }
-.pf-right { display: flex; gap: 8px; }
+.pf-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pf-left h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.pf-right {
+  display: flex;
+  gap: 8px;
+}
 
 .btn-icon {
-  width: 32px; height: 32px;
+  width: 32px;
+  height: 32px;
   border: 1px solid #d1d5db;
   background: #fff;
   border-radius: 6px;
@@ -842,8 +1074,15 @@ function fmt(val: number | null | undefined): string {
   font-size: 0.875rem;
   cursor: pointer;
 }
-.btn-primary { background: #23424A; color: #fff; border: none; }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary {
+  background: #23424a;
+  color: #fff;
+  border: none;
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 .error-msg {
   background: #fef2f2;
@@ -854,14 +1093,18 @@ function fmt(val: number | null | undefined): string {
 }
 
 /* Body */
-.pf-body { display: flex; flex-direction: column; gap: 12px; }
+.pf-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 /* Sections */
 .section {
   background: #fff;
   border-radius: 8px;
   padding: 12px 16px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 .section-title {
   font-size: 0.8rem;
@@ -873,7 +1116,9 @@ function fmt(val: number | null | undefined): string {
 }
 
 /* Collapsible */
-.collapsible { padding: 0; }
+.collapsible {
+  padding: 0;
+}
 .section-toggle {
   width: 100%;
   display: flex;
@@ -888,12 +1133,25 @@ function fmt(val: number | null | undefined): string {
   color: #374151;
   text-transform: uppercase;
 }
-.section-toggle:hover { background: #f9fafb; }
-.section-content { padding: 0 16px 16px; border-top: 1px solid #f3f4f6; }
-.toggle-actions { display: flex; align-items: center; gap: 10px; }
+.section-toggle:hover {
+  background: #f9fafb;
+}
+.section-content {
+  padding: 0 16px 16px;
+  border-top: 1px solid #f3f4f6;
+}
+.toggle-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
 /* Estado */
-.estado-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.estado-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .estado-opt {
   display: flex;
   align-items: center;
@@ -904,13 +1162,30 @@ function fmt(val: number | null | undefined): string {
   cursor: pointer;
   font-size: 0.85rem;
 }
-.estado-opt input { display: none; }
-.estado-opt.active { border-color: #23424A; background: #f0f9ff; }
-.dot { width: 10px; height: 10px; border-radius: 50%; }
-.dot.green { background: #22c55e; }
-.dot.gray { background: #9ca3af; }
-.dot.blue { background: #3b82f6; }
-.dot.red { background: #ef4444; }
+.estado-opt input {
+  display: none;
+}
+.estado-opt.active {
+  border-color: #23424a;
+  background: #f0f9ff;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.dot.green {
+  background: #22c55e;
+}
+.dot.gray {
+  background: #9ca3af;
+}
+.dot.blue {
+  background: #3b82f6;
+}
+.dot.red {
+  background: #ef4444;
+}
 
 /* Radio cards (Online/Offline) */
 .radio-card {
@@ -922,11 +1197,24 @@ function fmt(val: number | null | undefined): string {
   border-radius: 8px;
   cursor: pointer;
 }
-.radio-card input { margin-top: 2px; }
-.radio-card.active { border-color: #23424A; background: #f0f9ff; }
-.radio-content { display: flex; flex-direction: column; }
-.radio-content strong { font-size: 0.9rem; }
-.radio-content span { font-size: 0.75rem; color: #6b7280; }
+.radio-card input {
+  margin-top: 2px;
+}
+.radio-card.active {
+  border-color: #23424a;
+  background: #f0f9ff;
+}
+.radio-content {
+  display: flex;
+  flex-direction: column;
+}
+.radio-content strong {
+  font-size: 0.9rem;
+}
+.radio-content span {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
 .owner-fields {
   margin-top: 12px;
   padding-top: 12px;
@@ -938,7 +1226,12 @@ function fmt(val: number | null | undefined): string {
 }
 
 /* Categories */
-.cat-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.cat-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
 .cat-check {
   display: flex;
   align-items: center;
@@ -949,8 +1242,14 @@ function fmt(val: number | null | undefined): string {
   cursor: pointer;
   font-size: 0.85rem;
 }
-.cat-check input { margin: 0; }
-.cat-check.active { border-color: #23424A; background: #23424A; color: #fff; }
+.cat-check input {
+  margin: 0;
+}
+.cat-check.active {
+  border-color: #23424a;
+  background: #23424a;
+  color: #fff;
+}
 .feat-check {
   display: flex;
   align-items: center;
@@ -960,41 +1259,81 @@ function fmt(val: number | null | undefined): string {
   cursor: pointer;
   margin-left: auto;
 }
-.feat-check input { margin: 0; }
+.feat-check input {
+  margin: 0;
+}
 
 /* Rows */
-.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-.row-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+.row-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
 
 /* Fields */
-.field { display: flex; flex-direction: column; gap: 4px; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 .field label {
   font-size: 0.7rem;
   font-weight: 500;
   color: #6b7280;
   text-transform: uppercase;
 }
-.field input, .field select, .field textarea {
+.field input,
+.field select,
+.field textarea {
   padding: 8px 10px;
   border: 1px solid #e5e7eb;
   border-radius: 5px;
   font-size: 0.85rem;
 }
-.field input:focus, .field select:focus, .field textarea:focus {
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
   outline: none;
-  border-color: #23424A;
+  border-color: #23424a;
 }
-.field-sm { display: flex; flex-direction: column; gap: 3px; }
-.field-sm label { font-size: 0.65rem; font-weight: 500; color: #6b7280; text-transform: uppercase; }
-.field-sm input, .field-sm select {
+.field-sm {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.field-sm label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+.field-sm input,
+.field-sm select {
   padding: 6px 8px;
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   font-size: 0.8rem;
 }
-.hint { font-weight: normal; color: #9ca3af; }
-.char-count { font-size: 0.65rem; color: #9ca3af; text-align: right; }
+.hint {
+  font-weight: normal;
+  color: #9ca3af;
+}
+.char-count {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-align: right;
+}
 
 /* Filters grid */
 .filters-grid {
@@ -1003,7 +1342,13 @@ function fmt(val: number | null | undefined): string {
   gap: 10px;
   padding-top: 10px;
 }
-.tick-inline { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: pointer; }
+.tick-inline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
 
 /* Images placeholder */
 .img-placeholder {
@@ -1016,8 +1361,15 @@ function fmt(val: number | null | undefined): string {
   border-radius: 6px;
   text-align: center;
 }
-.img-placeholder span { font-size: 1.5rem; opacity: 0.4; }
-.img-placeholder p { margin: 6px 0 0; font-size: 0.8rem; color: #9ca3af; }
+.img-placeholder span {
+  font-size: 1.5rem;
+  opacity: 0.4;
+}
+.img-placeholder p {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
 
 /* Characteristics */
 .char-row {
@@ -1047,8 +1399,13 @@ function fmt(val: number | null | undefined): string {
   color: #6b7280;
   margin-bottom: 10px;
 }
-.upload-zone-label:hover { border-color: #23424A; background: #f3f4f6; }
-.upload-zone-label input[type="file"] { display: none; }
+.upload-zone-label:hover {
+  border-color: #23424a;
+  background: #f3f4f6;
+}
+.upload-zone-label input[type='file'] {
+  display: none;
+}
 
 /* Image grid */
 .img-grid {
@@ -1064,16 +1421,24 @@ function fmt(val: number | null | undefined): string {
   overflow: hidden;
   border: 2px solid transparent;
 }
-.img-item.cover { border-color: #23424A; }
-.img-item img { width: 100%; height: 100%; object-fit: cover; }
+.img-item.cover {
+  border-color: #23424a;
+}
+.img-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .img-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   opacity: 0;
   transition: opacity 0.2s;
 }
-.img-item:hover .img-overlay { opacity: 1; }
+.img-item:hover .img-overlay {
+  opacity: 1;
+}
 .img-actions {
   position: absolute;
   top: 50%;
@@ -1083,19 +1448,23 @@ function fmt(val: number | null | undefined): string {
   gap: 4px;
 }
 .img-actions button {
-  width: 26px; height: 26px;
+  width: 26px;
+  height: 26px;
   border: none;
   background: #fff;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.75rem;
 }
-.img-actions button.del { background: #fee2e2; color: #dc2626; }
+.img-actions button.del {
+  background: #fee2e2;
+  color: #dc2626;
+}
 .cover-badge {
   position: absolute;
   bottom: 4px;
   left: 4px;
-  background: #23424A;
+  background: #23424a;
   color: #fff;
   font-size: 0.6rem;
   padding: 2px 6px;
@@ -1123,7 +1492,7 @@ function fmt(val: number | null | undefined): string {
 /* Buttons */
 .btn-add {
   padding: 4px 10px;
-  background: #23424A;
+  background: #23424a;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -1131,7 +1500,8 @@ function fmt(val: number | null | undefined): string {
   cursor: pointer;
 }
 .btn-x {
-  width: 24px; height: 24px;
+  width: 24px;
+  height: 24px;
   border: none;
   background: #fee2e2;
   color: #dc2626;
@@ -1149,7 +1519,9 @@ function fmt(val: number | null | undefined): string {
 }
 
 /* Financial section */
-.financial { border: 1px solid #d1d5db; }
+.financial {
+  border: 1px solid #d1d5db;
+}
 .cost-badge {
   padding: 4px 10px;
   background: #fef3c7;
@@ -1201,7 +1573,9 @@ function fmt(val: number | null | undefined): string {
   padding-top: 8px;
   border: none;
 }
-.text-right { text-align: right; }
+.text-right {
+  text-align: right;
+}
 
 /* Cost summary */
 .cost-summary {
@@ -1225,25 +1599,66 @@ function fmt(val: number | null | undefined): string {
   font-size: 0.9rem;
   color: #374151;
 }
-.green { color: #16a34a; }
+.green {
+  color: #16a34a;
+}
 
 /* Mobile */
 @media (max-width: 768px) {
-  .row-2, .row-3, .row-4 { grid-template-columns: 1fr; }
-  .estado-row { flex-direction: column; }
-  .cat-row { flex-direction: column; align-items: flex-start; }
-  .feat-check { margin-left: 0; margin-top: 8px; }
-  .filters-grid { grid-template-columns: 1fr; }
-  .char-row { grid-template-columns: 1fr; }
-  .records-table { font-size: 0.7rem; }
-  .img-grid { grid-template-columns: repeat(3, 1fr); }
+  .row-2,
+  .row-3,
+  .row-4 {
+    grid-template-columns: 1fr;
+  }
+  .estado-row {
+    flex-direction: column;
+  }
+  .cat-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .feat-check {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+  .char-row {
+    grid-template-columns: 1fr;
+  }
+  .records-table {
+    font-size: 0.7rem;
+  }
+  .img-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .location-detected {
   display: block;
   font-size: 11px;
-  color: #10B981;
+  color: #10b981;
   margin-top: 2px;
   font-weight: 500;
+}
+
+/* Upload progress bar */
+.upload-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.upload-progress .progress-bar {
+  flex: 1;
+  height: 6px;
+  background: #23424a;
+  border-radius: 3px;
+  transition: width 0.2s;
+}
+.upload-progress span {
+  font-size: 0.7rem;
+  color: #6b7280;
 }
 </style>
