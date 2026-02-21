@@ -108,15 +108,20 @@ async function toggleStatus(vehicle: DealerVehicle): Promise<void> {
   }
 }
 
-async function markSold(vehicle: DealerVehicle): Promise<void> {
-  const { error: err } = await supabase
-    .from('vehicles')
-    .update({ status: 'sold' })
-    .eq('id', vehicle.id)
+const soldModalOpen = ref(false)
+const selectedVehicleForSale = ref<DealerVehicle | null>(null)
 
-  if (!err) {
-    vehicle.status = 'sold'
+function openSoldModal(vehicle: DealerVehicle) {
+  selectedVehicleForSale.value = vehicle
+  soldModalOpen.value = true
+}
+
+function handleVehicleSold() {
+  if (selectedVehicleForSale.value) {
+    selectedVehicleForSale.value.status = 'sold'
   }
+  soldModalOpen.value = false
+  selectedVehicleForSale.value = null
 }
 
 const deleteConfirmId = ref<string | null>(null)
@@ -141,12 +146,17 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
           {{ t(`dashboard.plans.${currentPlan}`) }}
         </span>
       </div>
-      <NuxtLink v-if="canPublishNew" to="/dashboard/vehiculos/nuevo" class="btn-primary">
-        {{ t('dashboard.vehicles.publishNew') }}
-      </NuxtLink>
-      <NuxtLink v-else to="/dashboard/suscripcion" class="btn-upgrade">
-        {{ t('dashboard.vehicles.upgradeToPub') }}
-      </NuxtLink>
+      <div class="header-actions">
+        <NuxtLink to="/dashboard/vehiculos/importar" class="btn-secondary">
+          {{ t('dashboard.import.title') }}
+        </NuxtLink>
+        <NuxtLink v-if="canPublishNew" to="/dashboard/vehiculos/nuevo" class="btn-primary">
+          {{ t('dashboard.vehicles.publishNew') }}
+        </NuxtLink>
+        <NuxtLink v-else to="/dashboard/suscripcion" class="btn-upgrade">
+          {{ t('dashboard.vehicles.upgradeToPub') }}
+        </NuxtLink>
+      </div>
     </header>
 
     <div v-if="error" class="alert-error">{{ error }}</div>
@@ -195,7 +205,7 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
                 : t('dashboard.vehicles.activate')
             }}
           </button>
-          <button v-if="v.status !== 'sold'" class="action-btn" @click="markSold(v)">
+          <button v-if="v.status !== 'sold'" class="action-btn" @click="openSoldModal(v)">
             {{ t('dashboard.vehicles.markSold') }}
           </button>
           <button
@@ -211,6 +221,15 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
         </div>
       </div>
     </div>
+
+    <!-- Sold Modal -->
+    <SoldModal
+      v-if="selectedVehicleForSale"
+      v-model="soldModalOpen"
+      :vehicle-id="selectedVehicleForSale.id"
+      :vehicle-title="`${selectedVehicleForSale.brand} ${selectedVehicleForSale.model}`"
+      @sold="handleVehicleSold"
+    />
   </div>
 </template>
 
@@ -235,6 +254,18 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-primary, #23424a);
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (min-width: 480px) {
+  .header-actions {
+    flex-direction: row;
+  }
 }
 
 .plan-indicator {

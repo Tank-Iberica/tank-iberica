@@ -25,6 +25,8 @@
     "@nuxtjs/i18n": "^10.2.1",
     "@nuxtjs/sitemap": "^7.6.0",
     "@nuxtjs/supabase": "^2.0.3",
+    "@sentry/nuxt": "^10.39.0",
+    "@sentry/vue": "^10.39.0",
     "@stripe/stripe-js": "^8.7.0",
     "@vite-pwa/nuxt": "^1.1.1",
     "@vueuse/nuxt": "^14.2.0",
@@ -37,6 +39,7 @@
     "stripe": "^20.3.1",
     "vue": "^3.5.27",
     "vue-router": "^4.6.4",
+    "web-push": "^3.6.7",
     "xlsx": "^0.18.5"
   },
   "lint-staged": {
@@ -48,6 +51,7 @@
     ]
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "@nuxt/eslint-config": "^1.13.0",
     "@nuxt/test-utils": "^4.0.0",
     "@playwright/test": "^1.48.0",

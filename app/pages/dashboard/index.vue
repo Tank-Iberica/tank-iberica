@@ -227,6 +227,9 @@ const onboardingProgress = computed(() => {
         </section>
       </div>
 
+      <!-- WhatsApp Publishing Widget -->
+      <DashboardWhatsAppPublishWidget />
+
       <!-- Quick Actions -->
       <div class="quick-actions">
         <NuxtLink to="/dashboard/vehiculos/nuevo" class="action-card">
