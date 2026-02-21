@@ -55,7 +55,8 @@
     "terms": "Términos y Condiciones",
     "privacy": "Política de Privacidad",
     "cookies": "Política de Cookies",
-    "allRights": "Todos los derechos reservados."
+    "allRights": "Todos los derechos reservados.",
+    "transparency": "Transparencia"
   },
   "auth": {
     "email": "Email",
@@ -220,7 +221,9 @@
     "favorite": "Favorito",
     "shareCopied": "Enlace copiado al portapapeles",
     "perMonth": "/mes",
-    "characteristics": "Características"
+    "characteristics": "Características",
+    "sellerInfo": "Información del vendedor",
+    "sellerCif": "CIF"
   },
   "banner": {
     "moreInfo": "Más información"
@@ -274,7 +277,11 @@
     "privacyText": "En Tracciona nos comprometemos a proteger su privacidad. Los datos personales que recopilamos se utilizan exclusivamente para prestar nuestros servicios y mejorar su experiencia. No compartimos sus datos con terceros sin su consentimiento.",
     "cookies": "Política de cookies",
     "cookiesText": "Este sitio web utiliza cookies para mejorar la experiencia del usuario. Las cookies son pequeños archivos de texto que se almacenan en su dispositivo. Puede configurar su navegador para rechazar cookies, aunque esto podría afectar la funcionalidad del sitio.",
-    "disclaimer": "Descargo de responsabilidad"
+    "disclaimer": "Descargo de responsabilidad",
+    "aiTitle": "Uso de inteligencia artificial",
+    "aiText": "Tracciona utiliza sistemas de inteligencia artificial para la traducción automática de contenidos a múltiples idiomas y para la generación asistida de descripciones de vehículos. Estos contenidos están identificados con un badge específico. El vendedor puede revisar y modificar cualquier contenido generado por IA antes de su publicación. En cumplimiento del Reglamento de IA de la UE (AI Act), informamos del uso de estos sistemas.",
+    "transparencyLink": "Informe de transparencia (DSA)",
+    "ukTermsLink": "UK Terms & Conditions"
   },
   "common": {
     "loading": "Cargando",
@@ -2054,5 +2061,107 @@
         "unknown": "Desconocido"
       }
     }
+  },
+  "report": {
+    "title": "Reportar contenido",
+    "description": "Si crees que este contenido infringe nuestras normas o la legislación vigente, envíanos un reporte. Revisaremos tu denuncia en un plazo máximo de 48 horas.",
+    "email": "Tu email",
+    "emailPlaceholder": "tu{'@'}email.com",
+    "reason": "Motivo del reporte",
+    "selectReason": "Selecciona un motivo",
+    "details": "Detalles adicionales",
+    "detailsPlaceholder": "Describe con más detalle el problema...",
+    "submit": "Enviar reporte",
+    "successMessage": "Tu reporte ha sido enviado correctamente. Lo revisaremos lo antes posible.",
+    "legalNote": "De acuerdo con el Reglamento de Servicios Digitales (DSA), procesaremos tu reporte y te informaremos del resultado.",
+    "reasonIllegal": "Contenido ilegal",
+    "reasonFraud": "Fraude / estafa",
+    "reasonMisleading": "Información engañosa",
+    "reasonStolen": "Vehículo robado",
+    "reasonCounterfeit": "Producto falsificado",
+    "reasonSpam": "Spam",
+    "reasonPrivacy": "Violación de privacidad",
+    "reasonOther": "Otro",
+    "admin": {
+      "title": "Reportes de contenido",
+      "noReports": "No hay reportes",
+      "noReportsFiltered": "No hay reportes con este filtro",
+      "noReportsYet": "No se han recibido reportes todavía",
+      "loading": "Cargando reportes...",
+      "filterAll": "Todos",
+      "filterPending": "Pendientes",
+      "filterReviewing": "En revisión",
+      "filterResolvedRemoved": "Eliminados",
+      "filterResolvedKept": "Mantenidos",
+      "statusPending": "Pendiente",
+      "statusReviewing": "En revisión",
+      "statusResolvedRemoved": "Eliminado",
+      "statusResolvedKept": "Mantenido",
+      "reporter": "Reportador",
+      "entityType": "Tipo de entidad",
+      "reason": "Motivo",
+      "details": "Detalles",
+      "resolvedAt": "Resuelto el",
+      "notes": "Notas del administrador",
+      "notesPlaceholder": "Añade notas sobre este reporte...",
+      "saveNotes": "Guardar notas",
+      "markReviewing": "Marcar en revisión",
+      "resolveRemove": "Resolver: Eliminar",
+      "resolveKeep": "Resolver: Mantener"
+    },
+    "reasons": {
+      "illegal_content": "Contenido ilegal",
+      "fraud_scam": "Fraude / estafa",
+      "misleading_info": "Información engañosa",
+      "stolen_vehicle": "Vehículo robado",
+      "counterfeit": "Producto falsificado",
+      "hate_speech": "Discurso de odio",
+      "spam": "Spam",
+      "privacy_violation": "Violación de privacidad",
+      "other": "Otro"
+    }
+  },
+  "transparency": {
+    "pageTitle": "Transparencia — Tracciona",
+    "title": "Informe de transparencia",
+    "subtitle": "En cumplimiento del Reglamento de Servicios Digitales (DSA) de la UE, publicamos información sobre nuestras prácticas de moderación de contenido.",
+    "contactTitle": "Punto de contacto único",
+    "contactDescription": "De acuerdo con el artículo 12 del DSA, ponemos a disposición un punto de contacto único para autoridades, usuarios y terceros.",
+    "contactEmail": "Email",
+    "contactForm": "Formulario",
+    "reportButton": "Botón 'Reportar' disponible en cada anuncio",
+    "moderationTitle": "Moderación de contenido",
+    "moderationDescription": "Nuestras medidas de moderación incluyen:",
+    "moderationItem1": "Revisión manual de anuncios reportados en un plazo máximo de 48 horas",
+    "moderationItem2": "Verificación de identidad de vendedores profesionales (NIF/CIF)",
+    "moderationItem3": "Eliminación de contenido ilegal, fraudulento o engañoso",
+    "moderationItem4": "Mecanismo de apelación para anuncios retirados",
+    "reportTitle": "Informe anual",
+    "reportDescription": "El informe anual de transparencia incluye estadísticas sobre reportes recibidos, acciones tomadas y tiempos de resolución.",
+    "reportComingSoon": "El primer informe anual estará disponible en enero del próximo año",
+    "aiTitle": "Uso de inteligencia artificial",
+    "aiDescription": "En cumplimiento del Reglamento de IA de la UE, informamos que utilizamos sistemas de IA para:",
+    "aiItem1": "Traducción automática de descripciones de vehículos a múltiples idiomas",
+    "aiItem2": "Generación asistida de descripciones de vehículos (siempre revisable por el vendedor)"
+  },
+  "ai": {
+    "badgeGenerated": "IA",
+    "badgeTranslated": "Traducido"
+  },
+  "legalUk": {
+    "pageTitle": "UK Terms & Conditions — Tracciona",
+    "title": "UK Terms & Conditions",
+    "scopeTitle": "Scope and Application",
+    "scopeText": "These terms apply specifically to users accessing Tracciona from the United Kingdom. They supplement our general Terms and Conditions and comply with the UK Online Safety Act 2023, the Data Protection Act 2018 (UK GDPR), and other applicable UK legislation.",
+    "safetyTitle": "Online Safety",
+    "safetyText": "Tracciona is committed to providing a safe platform for the trading of industrial vehicles. We conduct regular risk assessments of illegal content as required by the UK Online Safety Act 2023. We have measures in place to prevent the listing of stolen vehicles, fraudulent advertisements, and scam content. Users can report concerning content using the flag button on any listing.",
+    "reportingTitle": "Reporting Mechanisms",
+    "reportingText": "If you believe any content on Tracciona is illegal, fraudulent, or violates our terms, you can report it using the report button available on every vehicle listing. We will review your report within 48 hours and take appropriate action. You will be notified of the outcome. For urgent matters involving potential criminal activity, please also contact the relevant UK authorities.",
+    "dataTitle": "Data Protection (UK GDPR)",
+    "dataText": "We process your personal data in accordance with the UK GDPR (Data Protection Act 2018). Your data is stored securely within the EEA. We use appropriate safeguards for any international data transfers. You have the right to access, rectify, erase, and port your personal data. Contact legal{'@'}tracciona.com for any data protection requests.",
+    "icoTitle": "Information Commissioner's Office (ICO)",
+    "icoText": "You have the right to lodge a complaint with the UK Information Commissioner's Office (ICO) if you believe your data rights have been infringed. The ICO can be contacted at ico.org.uk.",
+    "contactTitle": "Contact",
+    "contactText": "For UK-specific legal enquiries, please contact us at legal{'@'}tracciona.com. For general enquiries, visit our Contact page."
   }
 }

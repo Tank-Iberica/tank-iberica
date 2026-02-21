@@ -23,24 +23,29 @@
       <div class="footer-section">
         <h3>{{ $t('footer.legal') }}</h3>
         <div class="footer-links">
+          <NuxtLink to="/legal#aviso-legal">{{ $t('footer.legalNotice') }}</NuxtLink>
           <NuxtLink to="/legal#terminos">{{ $t('footer.terms') }}</NuxtLink>
           <NuxtLink to="/legal#privacidad">{{ $t('footer.privacy') }}</NuxtLink>
           <NuxtLink to="/legal#cookies">{{ $t('footer.cookies') }}</NuxtLink>
+          <NuxtLink to="/transparencia">{{ $t('footer.transparency') }}</NuxtLink>
         </div>
       </div>
     </div>
+
+    <!-- Legal disclaimer -->
+    <DisclaimerFooter />
 
     <!-- Kit Digital banner -->
     <div class="footer-kit-digital">
       <img
         src="https://lh3.googleusercontent.com/d/13QhArniHSTlOWD1WmODl3b_AqwKhRGqY"
-        alt="Tank Iberica"
+        alt="Tracciona"
         loading="lazy"
       >
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; {{ year }} Tank Iberica. {{ $t('footer.allRights') }}</p>
+      <p>&copy; {{ year }} Tracciona. {{ $t('footer.allRights') }}</p>
       <NuxtLink to="/admin" class="admin-link">Admin</NuxtLink>
     </div>
   </footer>
@@ -58,7 +63,11 @@ const year = new Date().getFullYear()
    Desktop: full 3-column layout with links
    ============================================ */
 .app-footer {
-  background: linear-gradient(135deg, var(--color-primary-dark, #1A3A40) 0%, var(--color-primary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-dark, #1a3a40) 0%,
+    var(--color-primary) 100%
+  );
   color: var(--text-on-dark-primary, rgba(255, 255, 255, 0.95));
   padding: 48px 0 32px 0;
   margin-top: 64px;

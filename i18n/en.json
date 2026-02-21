@@ -55,7 +55,8 @@
     "terms": "Terms and Conditions",
     "privacy": "Privacy Policy",
     "cookies": "Cookie Policy",
-    "allRights": "All rights reserved."
+    "allRights": "All rights reserved.",
+    "transparency": "Transparency"
   },
   "auth": {
     "email": "Email",
@@ -220,7 +221,9 @@
     "favorite": "Favorite",
     "shareCopied": "Link copied to clipboard",
     "perMonth": "/month",
-    "characteristics": "Characteristics"
+    "characteristics": "Characteristics",
+    "sellerInfo": "Seller information",
+    "sellerCif": "Tax ID"
   },
   "banner": {
     "moreInfo": "More info"
@@ -274,7 +277,11 @@
     "privacyText": "At Tracciona we are committed to protecting your privacy. The personal data we collect is used exclusively to provide our services and improve your experience. We do not share your data with third parties without your consent.",
     "cookies": "Cookie policy",
     "cookiesText": "This website uses cookies to improve the user experience. Cookies are small text files stored on your device. You can configure your browser to reject cookies, although this may affect site functionality.",
-    "disclaimer": "Disclaimer"
+    "disclaimer": "Disclaimer",
+    "aiTitle": "Use of artificial intelligence",
+    "aiText": "Tracciona uses artificial intelligence systems for automatic translation of content into multiple languages and for AI-assisted generation of vehicle descriptions. This content is identified with a specific badge. Sellers can review and modify any AI-generated content before publication. In compliance with the EU AI Act, we inform users of the use of these systems.",
+    "transparencyLink": "Transparency report (DSA)",
+    "ukTermsLink": "UK Terms & Conditions"
   },
   "common": {
     "loading": "Loading...",
@@ -2054,5 +2061,107 @@
         "unknown": "Unknown"
       }
     }
+  },
+  "report": {
+    "title": "Report content",
+    "description": "If you believe this content violates our policies or applicable law, please submit a report. We will review your complaint within 48 hours.",
+    "email": "Your email",
+    "emailPlaceholder": "you{'@'}email.com",
+    "reason": "Reason for report",
+    "selectReason": "Select a reason",
+    "details": "Additional details",
+    "detailsPlaceholder": "Describe the issue in more detail...",
+    "submit": "Submit report",
+    "successMessage": "Your report has been submitted successfully. We will review it as soon as possible.",
+    "legalNote": "In accordance with the Digital Services Act (DSA), we will process your report and inform you of the outcome.",
+    "reasonIllegal": "Illegal content",
+    "reasonFraud": "Fraud / scam",
+    "reasonMisleading": "Misleading information",
+    "reasonStolen": "Stolen vehicle",
+    "reasonCounterfeit": "Counterfeit product",
+    "reasonSpam": "Spam",
+    "reasonPrivacy": "Privacy violation",
+    "reasonOther": "Other",
+    "admin": {
+      "title": "Content Reports",
+      "noReports": "No reports",
+      "noReportsFiltered": "No reports with this filter",
+      "noReportsYet": "No reports have been received yet",
+      "loading": "Loading reports...",
+      "filterAll": "All",
+      "filterPending": "Pending",
+      "filterReviewing": "Reviewing",
+      "filterResolvedRemoved": "Removed",
+      "filterResolvedKept": "Kept",
+      "statusPending": "Pending",
+      "statusReviewing": "Reviewing",
+      "statusResolvedRemoved": "Removed",
+      "statusResolvedKept": "Kept",
+      "reporter": "Reporter",
+      "entityType": "Entity Type",
+      "reason": "Reason",
+      "details": "Details",
+      "resolvedAt": "Resolved on",
+      "notes": "Admin notes",
+      "notesPlaceholder": "Add notes about this report...",
+      "saveNotes": "Save notes",
+      "markReviewing": "Mark reviewing",
+      "resolveRemove": "Resolve: Remove",
+      "resolveKeep": "Resolve: Keep"
+    },
+    "reasons": {
+      "illegal_content": "Illegal content",
+      "fraud_scam": "Fraud / scam",
+      "misleading_info": "Misleading information",
+      "stolen_vehicle": "Stolen vehicle",
+      "counterfeit": "Counterfeit product",
+      "hate_speech": "Hate speech",
+      "spam": "Spam",
+      "privacy_violation": "Privacy violation",
+      "other": "Other"
+    }
+  },
+  "transparency": {
+    "pageTitle": "Transparency — Tracciona",
+    "title": "Transparency Report",
+    "subtitle": "In compliance with the EU Digital Services Act (DSA), we publish information about our content moderation practices.",
+    "contactTitle": "Single point of contact",
+    "contactDescription": "In accordance with Article 12 of the DSA, we provide a single point of contact for authorities, users, and third parties.",
+    "contactEmail": "Email",
+    "contactForm": "Form",
+    "reportButton": "'Report' button available on every listing",
+    "moderationTitle": "Content moderation",
+    "moderationDescription": "Our moderation measures include:",
+    "moderationItem1": "Manual review of reported listings within 48 hours",
+    "moderationItem2": "Identity verification of professional sellers (Tax ID)",
+    "moderationItem3": "Removal of illegal, fraudulent, or misleading content",
+    "moderationItem4": "Appeal mechanism for removed listings",
+    "reportTitle": "Annual report",
+    "reportDescription": "The annual transparency report includes statistics on reports received, actions taken, and resolution times.",
+    "reportComingSoon": "The first annual report will be available in January next year",
+    "aiTitle": "Use of artificial intelligence",
+    "aiDescription": "In compliance with the EU AI Act, we inform that we use AI systems for:",
+    "aiItem1": "Automatic translation of vehicle descriptions into multiple languages",
+    "aiItem2": "AI-assisted generation of vehicle descriptions (always reviewable by the seller)"
+  },
+  "ai": {
+    "badgeGenerated": "AI",
+    "badgeTranslated": "Translated"
+  },
+  "legalUk": {
+    "pageTitle": "UK Terms & Conditions — Tracciona",
+    "title": "UK Terms & Conditions",
+    "scopeTitle": "Scope and Application",
+    "scopeText": "These terms apply specifically to users accessing Tracciona from the United Kingdom. They supplement our general Terms and Conditions and comply with the UK Online Safety Act 2023, the Data Protection Act 2018 (UK GDPR), and other applicable UK legislation.",
+    "safetyTitle": "Online Safety",
+    "safetyText": "Tracciona is committed to providing a safe platform for the trading of industrial vehicles. We conduct regular risk assessments of illegal content as required by the UK Online Safety Act 2023. We have measures in place to prevent the listing of stolen vehicles, fraudulent advertisements, and scam content. Users can report concerning content using the flag button on any listing.",
+    "reportingTitle": "Reporting Mechanisms",
+    "reportingText": "If you believe any content on Tracciona is illegal, fraudulent, or violates our terms, you can report it using the report button available on every vehicle listing. We will review your report within 48 hours and take appropriate action. You will be notified of the outcome. For urgent matters involving potential criminal activity, please also contact the relevant UK authorities.",
+    "dataTitle": "Data Protection (UK GDPR)",
+    "dataText": "We process your personal data in accordance with the UK GDPR (Data Protection Act 2018). Your data is stored securely within the EEA. We use appropriate safeguards for any international data transfers. You have the right to access, rectify, erase, and port your personal data. Contact legal{'@'}tracciona.com for any data protection requests.",
+    "icoTitle": "Information Commissioner's Office (ICO)",
+    "icoText": "You have the right to lodge a complaint with the UK Information Commissioner's Office (ICO) if you believe your data rights have been infringed. The ICO can be contacted at ico.org.uk.",
+    "contactTitle": "Contact",
+    "contactText": "For UK-specific legal enquiries, please contact us at legal{'@'}tracciona.com. For general enquiries, visit our Contact page."
   }
 }

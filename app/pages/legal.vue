@@ -3,6 +3,11 @@
     <div class="legal-container">
       <h1 class="legal-title">{{ $t('legal.title') }}</h1>
 
+      <section id="aviso-legal" class="legal-section">
+        <h2>{{ $t('legal.legalNotice') }}</h2>
+        <p>{{ $t('legal.legalNoticeText') }}</p>
+      </section>
+
       <section id="terminos" class="legal-section">
         <h2>{{ $t('legal.terms') }}</h2>
         <p>{{ $t('legal.termsText') }}</p>
@@ -17,6 +22,23 @@
         <h2>{{ $t('legal.cookies') }}</h2>
         <p>{{ $t('legal.cookiesText') }}</p>
       </section>
+
+      <section id="disclaimer" class="legal-section">
+        <h2>{{ $t('legal.disclaimer') }}</h2>
+        <p>{{ $t('disclaimer.footerText') }}</p>
+      </section>
+
+      <section id="ia" class="legal-section">
+        <h2>{{ $t('legal.aiTitle') }}</h2>
+        <p>{{ $t('legal.aiText') }}</p>
+      </section>
+
+      <div class="legal-links">
+        <NuxtLink to="/transparencia" class="legal-link">{{
+          $t('legal.transparencyLink')
+        }}</NuxtLink>
+        <NuxtLink to="/legal/uk" class="legal-link">{{ $t('legal.ukTermsLink') }}</NuxtLink>
+      </div>
     </div>
   </div>
 </template>
@@ -75,6 +97,33 @@ usePageSeo({
   .legal-container {
     padding: 0 1.5rem;
   }
+}
+
+.legal-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color-light, #e2e8f0);
+}
+
+.legal-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 16px;
+  background: var(--bg-secondary, #f8fafc);
+  color: var(--color-primary, #23424a);
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.legal-link:hover {
+  background: var(--border-color-light, #e2e8f0);
 }
 
 @media (min-width: 768px) {
