@@ -1,5 +1,53 @@
 <template>
   <div class="admin-dashboard">
+    <!-- KPI Summary Widget -->
+    <div class="kpi-summary-row">
+      <div class="kpi-mini-card">
+        <span class="kpi-mini-label">Ingresos mes</span>
+        <span class="kpi-mini-value">{{ formatKpiEuros(kpiSummary.monthlyRevenue.current) }}</span>
+        <span
+          class="kpi-mini-change"
+          :class="kpiChangeClass(kpiSummary.monthlyRevenue.changePercent)"
+        >
+          {{ kpiSummary.monthlyRevenue.changePercent > 0 ? '+' : ''
+          }}{{ kpiSummary.monthlyRevenue.changePercent }}%
+        </span>
+      </div>
+      <div class="kpi-mini-card">
+        <span class="kpi-mini-label">Vehiculos</span>
+        <span class="kpi-mini-value">{{ kpiSummary.activeVehicles.current }}</span>
+        <span
+          class="kpi-mini-change"
+          :class="kpiChangeClass(kpiSummary.activeVehicles.changePercent)"
+        >
+          {{ kpiSummary.activeVehicles.changePercent > 0 ? '+' : ''
+          }}{{ kpiSummary.activeVehicles.changePercent }}%
+        </span>
+      </div>
+      <div class="kpi-mini-card">
+        <span class="kpi-mini-label">Dealers</span>
+        <span class="kpi-mini-value">{{ kpiSummary.activeDealers.current }}</span>
+        <span
+          class="kpi-mini-change"
+          :class="kpiChangeClass(kpiSummary.activeDealers.changePercent)"
+        >
+          {{ kpiSummary.activeDealers.changePercent > 0 ? '+' : ''
+          }}{{ kpiSummary.activeDealers.changePercent }}%
+        </span>
+      </div>
+      <div class="kpi-mini-card">
+        <span class="kpi-mini-label">Leads mes</span>
+        <span class="kpi-mini-value">{{ kpiSummary.monthlyLeads.current }}</span>
+        <span
+          class="kpi-mini-change"
+          :class="kpiChangeClass(kpiSummary.monthlyLeads.changePercent)"
+        >
+          {{ kpiSummary.monthlyLeads.changePercent > 0 ? '+' : ''
+          }}{{ kpiSummary.monthlyLeads.changePercent }}%
+        </span>
+      </div>
+    </div>
+
     <!-- Banner Status Card -->
     <div class="banner-status-card" :class="{ active: bannerEnabled, inactive: !bannerEnabled }">
       <div class="banner-status-info">
@@ -21,9 +69,7 @@
         >
           {{ bannerEnabled ? 'Desactivar' : 'Activar' }}
         </button>
-        <NuxtLink to="/admin/banner" class="btn-banner-edit">
-          Editar
-        </NuxtLink>
+        <NuxtLink to="/admin/banner" class="btn-banner-edit"> Editar </NuxtLink>
       </div>
     </div>
 
@@ -68,7 +114,9 @@
           <span class="notification-label">Anunciantes</span>
           <span class="notification-value">{{ stats.anunciantes }}</span>
         </div>
-        <span v-if="stats.anunciantesPending > 0" class="notification-badge">{{ stats.anunciantesPending }}</span>
+        <span v-if="stats.anunciantesPending > 0" class="notification-badge">{{
+          stats.anunciantesPending
+        }}</span>
       </NuxtLink>
 
       <NuxtLink
@@ -81,7 +129,9 @@
           <span class="notification-label">Solicitantes</span>
           <span class="notification-value">{{ stats.solicitantes }}</span>
         </div>
-        <span v-if="stats.solicitantesPending > 0" class="notification-badge">{{ stats.solicitantesPending }}</span>
+        <span v-if="stats.solicitantesPending > 0" class="notification-badge">{{
+          stats.solicitantesPending
+        }}</span>
       </NuxtLink>
 
       <NuxtLink
@@ -94,7 +144,9 @@
           <span class="notification-label">Comentarios</span>
           <span class="notification-value">{{ stats.comentarios }}</span>
         </div>
-        <span v-if="stats.comentariosPending > 0" class="notification-badge">{{ stats.comentariosPending }}</span>
+        <span v-if="stats.comentariosPending > 0" class="notification-badge">{{
+          stats.comentariosPending
+        }}</span>
       </NuxtLink>
 
       <NuxtLink
@@ -120,7 +172,9 @@
           <span class="notification-label">Suscripciones</span>
           <span class="notification-value">{{ stats.suscripciones }}</span>
         </div>
-        <span v-if="stats.suscripcionesPending > 0" class="notification-badge">{{ stats.suscripcionesPending }}</span>
+        <span v-if="stats.suscripcionesPending > 0" class="notification-badge">{{
+          stats.suscripcionesPending
+        }}</span>
       </NuxtLink>
     </div>
 
@@ -133,24 +187,54 @@
           Pendientes
         </h2>
         <div class="pending-list">
-          <NuxtLink v-if="stats.anunciantesPending > 0" to="/admin/anunciantes" class="pending-item">
+          <NuxtLink
+            v-if="stats.anunciantesPending > 0"
+            to="/admin/anunciantes"
+            class="pending-item"
+          >
             <span class="pending-icon">📣</span>
-            <span class="pending-text">{{ stats.anunciantesPending }} anunciante{{ stats.anunciantesPending !== 1 ? 's' : '' }} por revisar</span>
+            <span class="pending-text"
+              >{{ stats.anunciantesPending }} anunciante{{
+                stats.anunciantesPending !== 1 ? 's' : ''
+              }}
+              por revisar</span
+            >
             <span class="pending-arrow">→</span>
           </NuxtLink>
-          <NuxtLink v-if="stats.solicitantesPending > 0" to="/admin/solicitantes" class="pending-item">
+          <NuxtLink
+            v-if="stats.solicitantesPending > 0"
+            to="/admin/solicitantes"
+            class="pending-item"
+          >
             <span class="pending-icon">🔍</span>
-            <span class="pending-text">{{ stats.solicitantesPending }} solicitante{{ stats.solicitantesPending !== 1 ? 's' : '' }} por revisar</span>
+            <span class="pending-text"
+              >{{ stats.solicitantesPending }} solicitante{{
+                stats.solicitantesPending !== 1 ? 's' : ''
+              }}
+              por revisar</span
+            >
             <span class="pending-arrow">→</span>
           </NuxtLink>
-          <NuxtLink v-if="stats.comentariosPending > 0" to="/admin/comentarios" class="pending-item">
+          <NuxtLink
+            v-if="stats.comentariosPending > 0"
+            to="/admin/comentarios"
+            class="pending-item"
+          >
             <span class="pending-icon">💬</span>
-            <span class="pending-text">{{ stats.comentariosPending }} comentario{{ stats.comentariosPending !== 1 ? 's' : '' }} por moderar</span>
+            <span class="pending-text"
+              >{{ stats.comentariosPending }} comentario{{
+                stats.comentariosPending !== 1 ? 's' : ''
+              }}
+              por moderar</span
+            >
             <span class="pending-arrow">→</span>
           </NuxtLink>
           <NuxtLink v-if="stats.chatsUnread > 0" to="/admin/chats" class="pending-item">
             <span class="pending-icon">📱</span>
-            <span class="pending-text">{{ stats.chatsUnread }} mensaje{{ stats.chatsUnread !== 1 ? 's' : '' }} sin leer</span>
+            <span class="pending-text"
+              >{{ stats.chatsUnread }} mensaje{{ stats.chatsUnread !== 1 ? 's' : '' }} sin
+              leer</span
+            >
             <span class="pending-arrow">→</span>
           </NuxtLink>
           <div v-if="totalPending === 0" class="pending-empty">
@@ -189,8 +273,16 @@
         <button class="collapsible-header" @click="sectionsOpen.products = !sectionsOpen.products">
           <span class="collapsible-icon">🚛</span>
           <span class="collapsible-title">Productos</span>
-          <span class="collapsible-summary">{{ productStats.total }} total · {{ productStats.published }} publicados</span>
-          <svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <span class="collapsible-summary"
+            >{{ productStats.total }} total · {{ productStats.published }} publicados</span
+          >
+          <svg
+            class="collapsible-chevron"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <path d="M6 9l6 6 6-6" />
           </svg>
         </button>
@@ -230,9 +322,7 @@
                 <span class="breakdown-label">{{ sub.name }}</span>
                 <span class="breakdown-value">{{ sub.count }}</span>
               </div>
-              <div v-if="productStats.byType.length === 0" class="breakdown-empty">
-                Sin datos
-              </div>
+              <div v-if="productStats.byType.length === 0" class="breakdown-empty">Sin datos</div>
             </div>
           </div>
         </div>
@@ -243,8 +333,16 @@
         <button class="collapsible-header" @click="sectionsOpen.users = !sectionsOpen.users">
           <span class="collapsible-icon">👥</span>
           <span class="collapsible-title">Comunidad</span>
-          <span class="collapsible-summary">{{ userStats.registered }} registrados · {{ userStats.visits }} visitas</span>
-          <svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <span class="collapsible-summary"
+            >{{ userStats.registered }} registrados · {{ userStats.visits }} visitas</span
+          >
+          <svg
+            class="collapsible-chevron"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <path d="M6 9l6 6 6-6" />
           </svg>
         </button>
@@ -310,6 +408,24 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 
+// KPI Summary from metrics composable
+const { kpiSummary, loadMetrics: loadKpiMetrics } = useAdminMetrics()
+
+function formatKpiEuros(cents: number): string {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(cents / 100)
+}
+
+function kpiChangeClass(pct: number): string {
+  if (pct > 0) return 'kpi-change-up'
+  if (pct < 0) return 'kpi-change-down'
+  return 'kpi-change-flat'
+}
+
 // Notification stats
 const stats = ref({
   anunciantes: 0,
@@ -357,36 +473,34 @@ const sectionsOpen = ref({
 })
 
 // Total pending
-const totalPending = computed(() =>
-  stats.value.anunciantesPending
-  + stats.value.solicitantesPending
-  + stats.value.comentariosPending
-  + stats.value.chatsUnread
+const totalPending = computed(
+  () =>
+    stats.value.anunciantesPending +
+    stats.value.solicitantesPending +
+    stats.value.comentariosPending +
+    stats.value.chatsUnread,
 )
 
 // Matches (coincidencias entre solicitantes y vehículos disponibles)
-const matches = ref<Array<{
-  id: string
-  type: 'demand' | 'vehicle'
-  typeLabel: string
-  description: string
-  link: string
-}>>([])
+const matches = ref<
+  Array<{
+    id: string
+    type: 'demand' | 'vehicle'
+    typeLabel: string
+    description: string
+    link: string
+  }>
+>([])
 
 async function loadBannerConfig() {
   try {
-    const { data } = await supabase
-      .from('config')
-      .select('value')
-      .eq('key', 'banner')
-      .single()
+    const { data } = await supabase.from('config').select('value').eq('key', 'banner').single()
 
     if (data?.value) {
       bannerEnabled.value = data.value.enabled || false
       bannerText.value = data.value.text_es || data.value.text || ''
     }
-  }
-  catch {
+  } catch {
     // Config not found
   }
 }
@@ -407,16 +521,13 @@ async function toggleBanner() {
       enabled: newEnabledState,
     }
 
-    const { error: err } = await supabase
-      .from('config')
-      .upsert({ key: 'banner', value: newValue })
+    const { error: err } = await supabase.from('config').upsert({ key: 'banner', value: newValue })
 
     if (err) throw err
 
     // Update local state on success
     bannerEnabled.value = newEnabledState
-  }
-  catch (err) {
+  } catch (err) {
     console.error('Error toggling banner:', err)
   }
 }
@@ -441,8 +552,7 @@ async function loadStats() {
       loadBannerConfig(),
       loadMatches(),
     ])
-  }
-  catch (err) {
+  } catch (err) {
     console.error('Error loading stats:', err)
   }
 }
@@ -455,59 +565,47 @@ async function loadAnunciantes() {
 
     stats.value.anunciantes = count || 0
     stats.value.anunciantesPending = (data || []).filter(
-      (a: { status: string }) => a.status === 'pending'
+      (a: { status: string }) => a.status === 'pending',
     ).length
-  }
-  catch {
+  } catch {
     // Table doesn't exist yet
   }
 }
 
 async function loadSolicitantes() {
   try {
-    const { data, count } = await supabase
-      .from('demands')
-      .select('status', { count: 'exact' })
+    const { data, count } = await supabase.from('demands').select('status', { count: 'exact' })
 
     stats.value.solicitantes = count || 0
     stats.value.solicitantesPending = (data || []).filter(
-      (s: { status: string }) => s.status === 'pending'
+      (s: { status: string }) => s.status === 'pending',
     ).length
-  }
-  catch {
+  } catch {
     // Table doesn't exist yet
   }
 }
 
 async function loadComentarios() {
   try {
-    const { data, count } = await supabase
-      .from('comments')
-      .select('status', { count: 'exact' })
+    const { data, count } = await supabase.from('comments').select('status', { count: 'exact' })
 
     stats.value.comentarios = count || 0
     stats.value.comentariosPending = (data || []).filter(
-      (c: { status: string }) => c.status === 'pending'
+      (c: { status: string }) => c.status === 'pending',
     ).length
-  }
-  catch {
+  } catch {
     // Table doesn't exist yet
   }
 }
 
 async function loadChats() {
   try {
-    const { data } = await supabase
-      .from('chat_messages')
-      .select('is_read, user_id')
+    const { data } = await supabase.from('chat_messages').select('is_read, user_id')
 
     const uniqueUsers = new Set((data || []).map((c: { user_id: string }) => c.user_id))
     stats.value.chats = uniqueUsers.size
-    stats.value.chatsUnread = (data || []).filter(
-      (c: { is_read: boolean }) => !c.is_read
-    ).length
-  }
-  catch {
+    stats.value.chatsUnread = (data || []).filter((c: { is_read: boolean }) => !c.is_read).length
+  } catch {
     // Table doesn't exist yet
   }
 }
@@ -521,8 +619,7 @@ async function loadSuscripciones() {
     stats.value.suscripciones = count || 0
     // For now, no pending status for subscriptions
     stats.value.suscripcionesPending = 0
-  }
-  catch {
+  } catch {
     // Table doesn't exist yet
   }
 }
@@ -530,14 +627,16 @@ async function loadSuscripciones() {
 async function loadProductStats() {
   try {
     // Total and by status
-    const { data: vehicles } = await supabase
-      .from('vehicles')
-      .select('status, category, type_id')
+    const { data: vehicles } = await supabase.from('vehicles').select('status, category, type_id')
 
     const all = vehicles || []
     productStats.value.total = all.length
-    productStats.value.published = all.filter((v: { status: string }) => v.status === 'published').length
-    productStats.value.unpublished = all.filter((v: { status: string }) => v.status !== 'published').length
+    productStats.value.published = all.filter(
+      (v: { status: string }) => v.status === 'published',
+    ).length
+    productStats.value.unpublished = all.filter(
+      (v: { status: string }) => v.status !== 'published',
+    ).length
 
     // By category
     const categoryMap = new Map<string, number>()
@@ -550,9 +649,7 @@ async function loadProductStats() {
       .sort((a, b) => b.count - a.count)
 
     // By type - need to join with types table
-    const { data: types } = await supabase
-      .from('types')
-      .select('id, name_es')
+    const { data: types } = await supabase.from('subcategories').select('id, name_es')
 
     const subMap = new Map<string, string>()
     ;(types || []).forEach((s: { id: string; name_es: string }) => {
@@ -569,8 +666,7 @@ async function loadProductStats() {
     productStats.value.byType = Array.from(typeCount.entries())
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
-  }
-  catch (err) {
+  } catch (err) {
     console.error('Error loading product stats:', err)
   }
 }
@@ -589,8 +685,7 @@ async function loadUserStats() {
       const { data: ads } = await supabase.from('advertisements').select('user_id')
       const uniqueAdvertisers = new Set((ads || []).map((a: { user_id: string }) => a.user_id))
       userStats.value.advertisers = uniqueAdvertisers.size
-    }
-    catch {
+    } catch {
       // Table doesn't exist
     }
 
@@ -600,8 +695,7 @@ async function loadUserStats() {
         .from('demands')
         .select('*', { count: 'exact', head: true })
       userStats.value.requests = demandsCount || 0
-    }
-    catch {
+    } catch {
       // Table doesn't exist
     }
 
@@ -611,8 +705,7 @@ async function loadUserStats() {
         .from('comments')
         .select('*', { count: 'exact', head: true })
       userStats.value.newsComments = commentsCount || 0
-    }
-    catch {
+    } catch {
       // Table doesn't exist
     }
 
@@ -623,8 +716,7 @@ async function loadUserStats() {
     userStats.value.newsVisits = 0
     userStats.value.buyers = 0
     userStats.value.renters = 0
-  }
-  catch (err) {
+  } catch (err) {
     console.error('Error loading user stats:', err)
   }
 }
@@ -641,6 +733,7 @@ function formatCategory(category: string): string {
 // Initial load
 onMounted(() => {
   loadStats()
+  loadKpiMetrics()
 })
 </script>
 
@@ -648,6 +741,66 @@ onMounted(() => {
 .admin-dashboard {
   max-width: 1400px;
   margin: 0 auto;
+}
+
+/* KPI Summary Widget */
+.kpi-summary-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+}
+
+.kpi-mini-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: var(--shadow-sm);
+}
+
+.kpi-mini-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-auxiliary);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.kpi-mini-value {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+}
+
+.kpi-mini-change {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.kpi-change-up {
+  color: #16a34a;
+}
+
+.kpi-change-down {
+  color: #dc2626;
+}
+
+.kpi-change-flat {
+  color: var(--text-auxiliary);
+}
+
+@media (min-width: 768px) {
+  .kpi-summary-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .kpi-mini-value {
+    font-size: var(--font-size-xl);
+  }
 }
 
 /* Banner Status Card */
@@ -697,7 +850,7 @@ onMounted(() => {
 }
 
 .banner-status-text strong {
-  color: #0F2A2E;
+  color: #0f2a2e;
 }
 
 .status-label {
@@ -1139,7 +1292,7 @@ onMounted(() => {
 
 .toggle-slider::before {
   position: absolute;
-  content: "";
+  content: '';
   height: 18px;
   width: 18px;
   left: 3px;
