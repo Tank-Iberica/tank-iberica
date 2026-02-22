@@ -15,9 +15,16 @@ const { userId } = useAuth()
 const { currentPlan, planLimits, fetchSubscription } = useSubscriptionPlan(
   userId.value || undefined,
 )
+const healthScore = ref<{ total: number } | null>(null)
 
 onMounted(async () => {
   await Promise.all([loadDashboardData(), fetchSubscription()])
+  // Calculate health score after dealer is loaded
+  if (dealerProfile.value?.id) {
+    const { score, calculateScore } = useDealerHealthScore(dealerProfile.value.id)
+    await calculateScore()
+    healthScore.value = score.value
+  }
 })
 
 function formatPrice(price: number | null | undefined): string {
@@ -55,17 +62,26 @@ const onboardingSteps = computed(() => {
   const dealer = dealerProfile.value
   if (!dealer) return []
   return [
-    { key: 'profile', done: !!dealer.company_name, label: t('dashboard.onboarding.profile') },
-    { key: 'logo', done: !!dealer.logo_url, label: t('dashboard.onboarding.logo') },
+    { key: 'email', done: true, label: t('dashboard.onboarding.verifyEmail') },
     {
-      key: 'contact',
-      done: !!(dealer.phone || dealer.email),
-      label: t('dashboard.onboarding.contact'),
+      key: 'profile',
+      done: !!(dealer.company_name && (dealer.phone || dealer.email)),
+      label: t('dashboard.onboarding.companyProfile'),
     },
     {
       key: 'vehicle',
       done: (stats.value.activeListings || 0) > 0,
-      label: t('dashboard.onboarding.vehicle'),
+      label: t('dashboard.onboarding.firstVehicle'),
+    },
+    {
+      key: 'portal',
+      done: !!(dealer.logo_url && dealer.theme_primary),
+      label: t('dashboard.onboarding.customizePortal'),
+    },
+    {
+      key: 'publish',
+      done: dealer.onboarding_completed ?? false,
+      label: t('dashboard.onboarding.publish'),
     },
   ]
 })
@@ -74,6 +90,13 @@ const onboardingProgress = computed(() => {
   const steps = onboardingSteps.value
   if (!steps.length) return 0
   return Math.round((steps.filter((s) => s.done).length / steps.length) * 100)
+})
+
+const healthScoreClass = computed(() => {
+  const total = healthScore.value?.total ?? 0
+  if (total >= 80) return 'score-high'
+  if (total >= 50) return 'score-mid'
+  return 'score-low'
 })
 </script>
 
@@ -230,19 +253,55 @@ const onboardingProgress = computed(() => {
       <!-- WhatsApp Publishing Widget -->
       <DashboardWhatsAppPublishWidget />
 
+      <!-- Health Score -->
+      <div v-if="healthScore" class="health-score-card">
+        <div class="health-score-header">
+          <h3>{{ t('dashboard.healthScore.title') }}</h3>
+          <span class="health-score-value" :class="healthScoreClass"
+            >{{ healthScore.total }}/100</span
+          >
+        </div>
+        <div class="health-bar">
+          <div
+            class="health-bar-fill"
+            :style="{ width: healthScore.total + '%' }"
+            :class="healthScoreClass"
+          />
+        </div>
+        <div v-if="healthScore.total >= 80" class="health-badge-eligible">
+          {{ t('dashboard.healthScore.badgeEligible') }}
+        </div>
+      </div>
+
       <!-- Quick Actions -->
       <div class="quick-actions">
         <NuxtLink to="/dashboard/vehiculos/nuevo" class="action-card">
           <span class="action-icon">+</span>
           <span>{{ t('dashboard.actions.publish') }}</span>
         </NuxtLink>
-        <NuxtLink to="/dashboard/portal" class="action-card">
-          <span class="action-icon">&#9881;</span>
-          <span>{{ t('dashboard.actions.portal') }}</span>
+        <NuxtLink to="/dashboard/crm" class="action-card">
+          <span class="action-icon">&#128210;</span>
+          <span>{{ t('dashboard.crm.title') }}</span>
+        </NuxtLink>
+        <NuxtLink to="/dashboard/pipeline" class="action-card">
+          <span class="action-icon">&#128200;</span>
+          <span>{{ t('dashboard.pipeline.title') }}</span>
+        </NuxtLink>
+        <NuxtLink to="/dashboard/historico" class="action-card">
+          <span class="action-icon">&#128220;</span>
+          <span>{{ t('dashboard.historico.title') }}</span>
+        </NuxtLink>
+        <NuxtLink to="/dashboard/observatorio" class="action-card">
+          <span class="action-icon">&#128065;</span>
+          <span>{{ t('dashboard.observatory.title') }}</span>
         </NuxtLink>
         <NuxtLink to="/dashboard/estadisticas" class="action-card">
           <span class="action-icon">&#9776;</span>
           <span>{{ t('dashboard.actions.stats') }}</span>
+        </NuxtLink>
+        <NuxtLink to="/dashboard/portal" class="action-card">
+          <span class="action-icon">&#9881;</span>
+          <span>{{ t('dashboard.actions.portal') }}</span>
         </NuxtLink>
         <NuxtLink to="/dashboard/suscripcion" class="action-card">
           <span class="action-icon">&#9733;</span>
@@ -670,6 +729,73 @@ const onboardingProgress = computed(() => {
 .action-icon {
   font-size: 1.5rem;
   color: var(--color-primary, #23424a);
+}
+
+/* Health Score */
+.health-score-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.health-score-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.health-score-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.health-score-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.health-score-value.score-high {
+  color: #16a34a;
+}
+.health-score-value.score-mid {
+  color: #f59e0b;
+}
+.health-score-value.score-low {
+  color: #dc2626;
+}
+
+.health-bar {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.health-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s;
+}
+
+.health-bar-fill.score-high {
+  background: #22c55e;
+}
+.health-bar-fill.score-mid {
+  background: #f59e0b;
+}
+.health-bar-fill.score-low {
+  background: #ef4444;
+}
+
+.health-badge-eligible {
+  font-size: 0.8rem;
+  color: #16a34a;
+  font-weight: 500;
 }
 
 /* Responsive */
