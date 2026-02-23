@@ -51,6 +51,7 @@ interface TopVehicle {
   price: number | null
   views: number
   leads: number
+  favorites: number
   status: string
 }
 
@@ -205,7 +206,7 @@ export function useDealerDashboard() {
       }))
 
       // Map top vehicles
-      topVehicles.value = (
+      const topVehiclesMapped = (
         (topVehiclesRes.data || []) as Array<{
           id: string
           brand: string
@@ -223,8 +224,30 @@ export function useDealerDashboard() {
         price: v.price,
         views: v.views || 0,
         leads: 0,
+        favorites: 0,
         status: v.status,
       }))
+
+      // Fetch favorites counts for top vehicles
+      const topVehicleIds = topVehiclesMapped.map((v) => v.id)
+      if (topVehicleIds.length > 0) {
+        const { data: favData } = await supabase
+          .from('favorites')
+          .select('vehicle_id')
+          .in('vehicle_id', topVehicleIds)
+
+        if (favData) {
+          const favCounts: Record<string, number> = {}
+          for (const row of favData as Array<{ vehicle_id: string }>) {
+            favCounts[row.vehicle_id] = (favCounts[row.vehicle_id] || 0) + 1
+          }
+          for (const v of topVehiclesMapped) {
+            v.favorites = favCounts[v.id] || 0
+          }
+        }
+      }
+
+      topVehicles.value = topVehiclesMapped
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error loading dashboard data'
     } finally {

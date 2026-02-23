@@ -155,6 +155,8 @@
     "viewGrid": "Grid view",
     "viewList": "List view",
     "menuToggle": "Menu",
+    "saveSearch": "Save search",
+    "saveSearchSuccess": "Search saved",
     "price": "Price",
     "brand": "Brand",
     "year": "Year",
@@ -194,7 +196,9 @@
       "union_europea": "EU",
       "europa": "Europe",
       "mundo": "Worldwide"
-    }
+    },
+    "searchSaved": "Search saved",
+    "saveSearchTooltip": "Get alerts when vehicles matching your filters are published"
   },
   "vehicle": {
     "year": "Year",
@@ -711,6 +715,9 @@
       "uploadDoc": "Upload document",
       "noVerifDocs": "No verification documents.",
       "viewDoc": "View"
+    },
+    "vehicles": {
+      "favorites": "Favorites"
     },
     "verificaciones": {
       "title": "Verifications",
@@ -1802,7 +1809,15 @@
       "noFilters": "No specific filters",
       "freq_instant": "Instant",
       "freq_daily": "Daily",
-      "freq_weekly": "Weekly"
+      "freq_weekly": "Weekly",
+      "editTitle": "Edit alert",
+      "frequency": "Frequency",
+      "filterBrand": "Brand",
+      "filterPriceMin": "Min price",
+      "filterPriceMax": "Max price",
+      "filterYearMin": "Min year",
+      "filterYearMax": "Max year",
+      "saveChanges": "Save changes"
     },
     "contacts": {
       "title": "Contacts sent",
@@ -1963,6 +1978,10 @@
       "upgradeDesc": "WhatsApp publishing is available on Basic plan and above",
       "upgradeCTA": "Upgrade plan"
     },
+    "vehicleDetail": {
+      "favorites": "interested",
+      "favoritesCount": "{count} interested"
+    },
     "vehicleStatus": {
       "published": "Published",
       "draft": "Draft",
@@ -2015,7 +2034,8 @@
       "published": "Vehicle published successfully",
       "saved": "Vehicle saved successfully",
       "requiredFields": "Brand and model are required",
-      "sectionVerification": "Documentation and Verification"
+      "sectionVerification": "Documentation and Verification",
+      "favoritesCount": "{count} interested | {count} interested"
     },
     "import": {
       "title": "Import vehicles",

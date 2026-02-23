@@ -54,6 +54,27 @@ async function openDriveFolder(v: AdminVehicle) {
   await openVehicleFolder(vehicleToNaming(v), section)
 }
 
+// Favorites counts
+const favCounts = ref<Record<string, number>>({})
+
+async function loadFavoriteCounts(vehicleIds: string[]): Promise<void> {
+  if (!vehicleIds.length) {
+    favCounts.value = {}
+    return
+  }
+  const supabase = useSupabaseClient()
+  const { data } = await supabase
+    .from('favorites')
+    .select('vehicle_id')
+    .in('vehicle_id', vehicleIds)
+
+  const counts: Record<string, number> = {}
+  for (const row of (data || []) as Array<{ vehicle_id: string }>) {
+    counts[row.vehicle_id] = (counts[row.vehicle_id] || 0) + 1
+  }
+  favCounts.value = counts
+}
+
 // Filters
 const filters = ref<AdminVehicleFilters>({
   status: null,
@@ -579,6 +600,7 @@ async function loadVehicles() {
   if (onlineFilter.value === 'online') isOnline = true
   if (onlineFilter.value === 'offline') isOnline = false
   await fetchVehicles({ ...filters.value, is_online: isOnline })
+  await loadFavoriteCounts(vehicles.value.map((v) => v.id))
 }
 
 // ============================================
@@ -1120,6 +1142,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
             >
               {{ fc.label }}<span v-if="fc.unit" class="filter-unit">({{ fc.unit }})</span>
             </th>
+            <th class="col-num col-favs">Favs</th>
             <th>Cat.</th>
             <th class="sortable" @click="toggleSort('status')">
               Estado
@@ -1201,6 +1224,10 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
             >
               {{ getFilterValue(v, fc.filterName) }}
             </td>
+            <td class="col-num col-favs">
+              <span v-if="favCounts[v.id]" class="fav-count">&#9829; {{ favCounts[v.id] }}</span>
+              <span v-else class="text-muted">-</span>
+            </td>
             <td>
               <span class="cat-pill" :class="getCategoryClass(v.category)">{{ v.category }}</span>
             </td>
@@ -1250,7 +1277,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
           <tr v-if="sortedVehicles.length === 0">
             <td
               :colspan="
-                11 +
+                12 +
                 (isGroupActive('docs') ? 2 : 0) +
                 (isGroupActive('tecnico') ? 1 : 0) +
                 (isGroupActive('cuentas') ? 2 : 0) +
@@ -2009,6 +2036,17 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   max-width: 120px;
   white-space: nowrap;
 }
+.col-favs {
+  width: 60px;
+}
+
+.fav-count {
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
 .col-actions {
   width: 110px;
 }

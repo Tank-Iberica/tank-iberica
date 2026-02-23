@@ -13,15 +13,38 @@
             <span class="menu-label">{{ $t('catalog.menuToggle') }}</span>
             <span class="eye-wrapper">
               <!-- Eye open (menu visible) -->
-              <svg v-if="props.menuVisible" class="eye-svg" width="18" height="18" viewBox="0 0 24 24">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" class="eye-shape" stroke-width="2" />
+              <svg
+                v-if="props.menuVisible"
+                class="eye-svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                  class="eye-shape"
+                  stroke-width="2"
+                />
                 <circle cx="12" cy="12" r="3" class="eye-pupil" />
               </svg>
               <!-- Eye closed (menu hidden) -->
               <svg v-else class="eye-svg" width="18" height="18" viewBox="0 0 24 24">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" fill="none" stroke="currentColor" stroke-width="2" />
+                <path
+                  d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
                 <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" />
-                <line x1="2" y1="2" x2="22" y2="22" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                <line
+                  x1="2"
+                  y1="2"
+                  x2="22"
+                  y2="22"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                />
               </svg>
             </span>
           </button>
@@ -29,7 +52,14 @@
           <!-- Mobile search: circular icon, expands to dropdown -->
           <div :class="['mobile-search-wrapper', { active: searchExpanded }]">
             <button class="search-btn-icon" @mousedown.prevent @click="toggleMobileSearch">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.35-4.35" />
               </svg>
@@ -62,12 +92,27 @@
               type="button"
               @click="clearSearch"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
-            <svg class="search-icon-right" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg
+              class="search-icon-right"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
@@ -79,7 +124,7 @@
           <button
             v-for="cat in mainCategories"
             :key="cat"
-            :class="['category-btn', { active: activeCategories.has(cat) }]"
+            :class="['category-btn', { active: activeActions.has(cat) }]"
             @click="handleCategoryClick(cat)"
           >
             {{ $t(`catalog.${cat}`) }}
@@ -95,7 +140,27 @@
             @click="onToggleFavorites"
           >
             <svg viewBox="0 0 24 24">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+              />
+            </svg>
+          </button>
+
+          <button
+            :class="['save-search-btn', { success: saveSearchSuccess }]"
+            :title="$t('catalog.saveSearch')"
+            @click="onSaveSearch"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
           </button>
 
@@ -129,8 +194,20 @@
           <div class="sort-wrapper">
             <span class="sort-label">{{ $t('catalog.sortLabel') }}</span>
             <div :class="['sort-dropdown-wrapper', { active: sortOpen }]">
-              <button class="sort-btn" :title="$t('catalog.sortLabel')" @click="sortOpen = !sortOpen">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <button
+                class="sort-btn"
+                :title="$t('catalog.sortLabel')"
+                @click="sortOpen = !sortOpen"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
                   <path d="M7 4v16" />
                   <path d="M7 4l-3 3" />
                   <path d="M7 4l3 3" />
@@ -171,25 +248,63 @@ const emit = defineEmits<{
   openFavorites: []
   viewChange: [mode: 'grid' | 'list']
   categoryChange: [categories: string[]]
+  saveSearchAuth: []
 }>()
 
-const { searchQuery, setSearch, sortBy, viewMode, setSort, setViewMode, setCategories } = useCatalogState()
+const {
+  searchQuery,
+  setSearch,
+  sortBy,
+  viewMode,
+  setSort,
+  setViewMode,
+  setActions,
+  filters: catalogFilters,
+} = useCatalogState()
 const { favoritesOnly, toggleFilter: toggleFavoritesFilter } = useFavorites()
 
-// Category buttons state
+const supabase = useSupabaseClient()
+const user = useSupabaseUser()
+const saveSearchSuccess = ref(false)
+
+async function onSaveSearch() {
+  if (!user.value) {
+    emit('saveSearchAuth')
+    return
+  }
+
+  try {
+    const { error: err } = await supabase.from('search_alerts').insert({
+      user_id: user.value.id,
+      filters: { ...toRaw(catalogFilters.value) },
+      frequency: 'daily',
+      active: true,
+    } as never)
+
+    if (err) throw err
+    saveSearchSuccess.value = true
+    setTimeout(() => {
+      saveSearchSuccess.value = false
+    }, 2000)
+  } catch {
+    // Silent fail
+  }
+}
+
+// Action buttons state
 const mainCategories = ['alquiler', 'venta', 'terceros'] as const
-const activeCategories = ref<Set<string>>(new Set())
+const activeActions = ref<Set<string>>(new Set())
 
 function handleCategoryClick(cat: string) {
-  const next = new Set(activeCategories.value)
+  const next = new Set(activeActions.value)
   if (next.has(cat)) {
     next.delete(cat)
   } else {
     next.add(cat)
   }
-  activeCategories.value = next
+  activeActions.value = next
   const arr = [...next]
-  setCategories(arr as import('~/composables/useCatalogState').VehicleCategory[])
+  setActions(arr as import('~/composables/useCatalogState').VehicleAction[])
   emit('categoryChange', arr)
 }
 
@@ -606,8 +721,8 @@ onUnmounted(() => {
 }
 
 .favorites-btn:hover svg {
-  fill: var(--color-gold, #F59E0B);
-  stroke: var(--color-gold, #F59E0B);
+  fill: var(--color-gold, #f59e0b);
+  stroke: var(--color-gold, #f59e0b);
 }
 
 .favorites-btn.active {
@@ -616,8 +731,50 @@ onUnmounted(() => {
 }
 
 .favorites-btn.active svg {
-  fill: var(--color-gold, #F59E0B);
-  stroke: var(--color-gold, #F59E0B);
+  fill: var(--color-gold, #f59e0b);
+  stroke: var(--color-gold, #f59e0b);
+}
+
+/* Save search: circular bell button */
+.save-search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 29px;
+  height: 29px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0;
+  background: var(--bg-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.save-search-btn svg {
+  width: 16px;
+  height: 16px;
+  transition: all 0.3s ease;
+}
+
+.save-search-btn:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.save-search-btn.success {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: var(--color-white);
+}
+
+.save-search-btn.success svg {
+  stroke: var(--color-white);
 }
 
 .view-label-desktop,
@@ -819,6 +976,19 @@ onUnmounted(() => {
     height: 20px;
   }
 
+  /* Save search: larger */
+  .save-search-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .save-search-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
   .view-label-desktop,
   .fav-label-desktop {
     display: inline;
@@ -902,4 +1072,3 @@ onUnmounted(() => {
   }
 }
 </style>
-

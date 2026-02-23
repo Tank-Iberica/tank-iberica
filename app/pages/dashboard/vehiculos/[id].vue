@@ -52,6 +52,7 @@ const saving = ref(false)
 const generatingDesc = ref(false)
 const error = ref<string | null>(null)
 const success = ref(false)
+const favoritesCount = ref(0)
 
 const form = ref({
   brand: '',
@@ -123,18 +124,24 @@ async function loadData(): Promise<void> {
       return
     }
 
-    const [vehicleRes, catRes, subRes] = await Promise.all([
+    const [vehicleRes, catRes, subRes, , , favRes] = await Promise.all([
       supabase.from('vehicles').select('*').eq('id', vehicleId).eq('dealer_id', dealer.id).single(),
       supabase.from('categories').select('id, name, slug').order('slug'),
       supabase.from('subcategories').select('id, name, slug, category_id').order('slug'),
       fetchSubscription(),
       fetchDocuments(),
+      supabase
+        .from('favorites')
+        .select('id', { count: 'exact', head: true })
+        .eq('vehicle_id', vehicleId),
     ])
 
     if (vehicleRes.error || !vehicleRes.data) {
       error.value = t('dashboard.vehicles.notFound')
       return
     }
+
+    favoritesCount.value = favRes.count || 0
 
     const v = vehicleRes.data as Record<string, unknown>
     form.value = {
@@ -301,7 +308,12 @@ async function handleUploadDocument(): Promise<void> {
       <NuxtLink to="/dashboard/vehiculos" class="back-link">
         {{ t('common.back') }}
       </NuxtLink>
-      <h1>{{ t('dashboard.vehicles.editTitle') }}</h1>
+      <div class="header-row">
+        <h1>{{ t('dashboard.vehicles.editTitle') }}</h1>
+        <span v-if="!loading && favoritesCount > 0" class="favorites-stat">
+          &#9829; {{ t('dashboard.vehicles.favoritesCount', { count: favoritesCount }) }}
+        </span>
+      </div>
     </header>
 
     <div v-if="loading" class="loading-state">
@@ -575,11 +587,31 @@ async function handleUploadDocument(): Promise<void> {
   align-items: center;
 }
 
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .page-header h1 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-primary, #23424a);
+}
+
+.favorites-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .loading-state {
