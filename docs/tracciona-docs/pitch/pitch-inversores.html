@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeBase — Investor Deck 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAFAF8;--surface:#fff;--surface2:#F3F2EE;--ink:#1A1A18;--ink2:#4A4A45;--ink3:#8A8A82;--accent:#2D5BFF;--accent2:#1A3DB8;--green:#0B8A4B;--green-bg:#E8F5EE;--orange:#D4760A;--orange-bg:#FFF3E0;--red:#C23A3A;--red-bg:#FDE8E8;--blue-bg:#EBF0FF;--rule:#E5E4E0;--serif:'Instrument Serif',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.65;-webkit-font-smoothing:antialiased}.slide{min-height:100vh;padding:80px 48px;display:flex;flex-direction:column;justify-content:center;max-width:1100px;margin:0 auto}.slide+.slide{border-top:1px solid var(--rule)}.slide-num{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:2px;text-transform:uppercase;margin-bottom:48px}.cover{text-align:center;align-items:center;padding-top:120px}.cover-badge{font-family:var(--mono);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);background:var(--blue-bg);padding:8px 20px;border-radius:100px;display:inline-block;margin-bottom:48px}.cover h1{font-family:var(--serif);font-size:clamp(48px,7vw,88px);font-weight:400;line-height:1.05;letter-spacing:-2px;margin-bottom:32px;max-width:800px}.cover h1 em{font-style:italic;color:var(--accent)}.cover-sub{font-size:20px;color:var(--ink2);max-width:600px;font-weight:400;margin-bottom:16px}.cover-meta{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:1px;margin-top:48px}h2{font-family:var(--serif);font-size:clamp(36px,5vw,56px);font-weight:400;line-height:1.1;letter-spacing:-1.5px;margin-bottom:24px}h2 em{font-style:italic;color:var(--accent)}h3{font-family:var(--sans);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--ink3);margin-bottom:16px}.lead{font-size:19px;color:var(--ink2);max-width:650px;margin-bottom:48px;line-height:1.7}.lead strong{color:var(--ink);font-weight:600}.insight{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:24px 32px;margin:32px 0;font-size:16px;color:var(--ink2);line-height:1.7;max-width:700px}.insight strong{color:var(--ink)}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin:40px 0}.metric{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:28px 24px}.metric-val{font-family:var(--serif);font-size:42px;font-weight:400;line-height:1;margin-bottom:8px;letter-spacing:-1px}.metric-val.blue{color:var(--accent)}.metric-val.green{color:var(--green)}.metric-val.orange{color:var(--orange)}.metric-label{font-size:14px;color:var(--ink3);font-weight:500}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin:40px 0}.table-wrap{margin:32px 0;border-radius:16px;overflow:hidden;border:1px solid var(--rule)}table{width:100%;border-collapse:collapse;font-size:14.5px}thead th{background:var(--surface2);padding:14px 20px;text-align:left;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);border-bottom:1px solid var(--rule)}tbody td{padding:14px 20px;border-bottom:1px solid var(--rule);vertical-align:top}tbody tr:last-child td{border-bottom:none}tbody tr:hover{background:var(--surface2)}.tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600}.tag-green{background:var(--green-bg);color:var(--green)}.tag-orange{background:var(--orange-bg);color:var(--orange)}.tag-red{background:var(--red-bg);color:var(--red)}.tag-blue{background:var(--blue-bg);color:var(--accent)}.check{color:var(--green);font-weight:700}.cross{color:var(--red);font-weight:700}.phase{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:32px;margin-bottom:20px}.phase-head{display:flex;align-items:center;gap:16px;margin-bottom:16px}.phase-num{font-family:var(--mono);font-size:12px;color:var(--accent);background:var(--blue-bg);padding:6px 14px;border-radius:8px;font-weight:600}.phase-title{font-size:20px;font-weight:700;letter-spacing:-.5px}.phase-body{color:var(--ink2);font-size:15px;line-height:1.7}.phase-revenue{font-family:var(--mono);font-size:14px;color:var(--green);margin-top:12px;font-weight:600}.tx-break{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:32px;margin:32px 0;max-width:500px}.tx-line{display:flex;justify-content:space-between;padding:8px 0;font-size:15px;border-bottom:1px solid var(--rule)}.tx-line:last-child{border-bottom:none}.tx-line.total{font-weight:700;font-size:18px;border-top:2px solid var(--ink);border-bottom:none;padding-top:16px;margin-top:8px}.tx-line.total .tx-val{color:var(--green)}.tx-val{font-family:var(--mono);font-weight:600}.faq{margin:32px 0}.faq-item{border-bottom:1px solid var(--rule);padding:24px 0}.faq-q{font-weight:700;font-size:17px;margin-bottom:12px;letter-spacing:-.3px}.faq-a{color:var(--ink2);font-size:15px;line-height:1.7;max-width:750px}.faq-a strong{color:var(--ink)}.cta-box{background:var(--ink);color:var(--bg);border-radius:24px;padding:64px 48px;text-align:center;margin:48px 0}.cta-box h2{color:#fff;margin-bottom:16px}.cta-box h2 em{color:#7BA4FF}.cta-box p{color:#aaa;font-size:18px;max-width:600px;margin:0 auto 32px}.footer{text-align:center;padding:48px;font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:1px}@media(max-width:768px){.slide{padding:60px 24px}.two-col{grid-template-columns:1fr;gap:24px}.cta-box{padding:48px 24px}.tx-break{max-width:100%}.cover{padding-top:80px}}
+</style>
+</head>
+<body>
+
+<section class="slide cover">
+  <span class="cover-badge">Ronda Pre-Seed · Febrero 2026</span>
+  <h1>Marketplaces B2B<br>para equipamiento <em>industrial</em></h1>
+  <p class="cover-sub">Ecosistema de verticales especializados con servicios de transacción integrados. Coste operativo 10× inferior a la competencia.</p>
+  <p class="cover-meta">TRADEBASE SL · CONFIDENCIAL · V2.0</p>
+</section>
+
+<!-- 01 PROBLEMA -->
+<section class="slide">
+  <span class="slide-num">01 · El problema</span>
+  <h2>200.000M€ en transacciones.<br><em>Infraestructura</em> de 2005.</h2>
+  <p class="lead">El mercado europeo de equipamiento profesional de segunda mano mueve cifras enormes con herramientas que no han cambiado en 20 años. Los compradores profesionales usan Milanuncios para comprar cisternas de 80.000€.</p>
+  <div class="metrics">
+    <div class="metric"><div class="metric-val blue">70%</div><div class="metric-label">de búsquedas B2B industriales empiezan en Google</div></div>
+    <div class="metric"><div class="metric-val orange">0</div><div class="metric-label">portales especializados con UX mobile-first en España</div></div>
+    <div class="metric"><div class="metric-val green">3</div><div class="metric-label">modalidades (venta, alquiler, subasta) — nadie las ofrece juntas</div></div>
+  </div>
+  <div class="insight">Un comprador de Lisboa interesado en una cisterna en Bilbao no tiene forma fiable de <strong>verificar el vehículo, comprobar embargos, gestionar la transferencia ni resolver el transporte</strong>. Cada paso es fricción que mata operaciones. El portal es solo la punta del iceberg — <strong>la transacción entera está rota</strong>.</div>
+</section>
+
+<!-- 02 SOLUCIÓN -->
+<section class="slide">
+  <span class="slide-num">02 · La solución</span>
+  <h2>Un marketplace que resuelve<br>la <em>transacción completa</em></h2>
+  <p class="lead">No vendemos anuncios. Construimos plataformas que cubren desde la búsqueda hasta la entrega, con servicios integrados de verificación, inspección, transporte y documentación.</p>
+  <div class="two-col">
+    <div>
+      <h3>Ventaja técnica</h3>
+      <div class="phase" style="margin-bottom:16px"><div class="phase-title" style="font-size:16px;margin-bottom:8px">Filtros en base de datos, no en código</div><div class="phase-body" style="font-size:14px">Lanzar un vertical nuevo = cambiar filas en una tabla. Añadir un filtro = insertar un registro. Sin tocar código.</div></div>
+      <div class="phase" style="margin-bottom:16px"><div class="phase-title" style="font-size:16px;margin-bottom:8px">Server-Side Rendering real</div><div class="phase-body" style="font-size:14px">Google indexa cada ficha, cada filtro, cada landing. Los competidores usan client-side: Google ve una página en blanco.</div></div>
+      <div class="phase"><div class="phase-title" style="font-size:16px;margin-bottom:8px">IA como equipo de ingeniería</div><div class="phase-body" style="font-size:14px">20-100€/mes vs 3.000-5.000€/mes por desarrollador senior. Código TypeScript estricto, documentado y mantenible por cualquiera.</div></div>
+    </div>
+    <div>
+      <h3>Ventaja de negocio</h3>
+      <div class="phase" style="margin-bottom:16px"><div class="phase-title" style="font-size:16px;margin-bottom:8px">Ecosistema de servicios integrado</div><div class="phase-body" style="font-size:14px">Informes DGT con score de fiabilidad por IA, inspecciones pre-venta, transporte con góndola propia, gestión documental completa.</div></div>
+      <div class="phase" style="margin-bottom:16px"><div class="phase-title" style="font-size:16px;margin-bottom:8px">Venta + Alquiler + Subasta</div><div class="phase-body" style="font-size:14px">Ningún competidor ofrece las tres modalidades. Subastas con anti-sniping, depósitos Stripe, y registro verificado de pujadores.</div></div>
+      <div class="phase"><div class="phase-title" style="font-size:16px;margin-bottom:8px">Multi-vertical por diseño</div><div class="phase-body" style="font-size:14px">7 verticales confirmados, 209 subcategorías definidas. Mismo código, diferente configuración. Un Shopify de marketplaces B2B.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 SERVICIOS -->
+<section class="slide">
+  <span class="slide-num">03 · Ecosistema de servicios</span>
+  <h2>El marketplace es la entrada.<br>Los servicios son el <em>negocio</em>.</h2>
+  <p class="lead">Cada servicio resuelve una fricción real de la transacción. Todo lo paga el comprador como valor añadido. El vendedor no paga nada por la venta.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Servicio</th><th>Qué resuelve</th><th>Coste</th><th>Precio</th><th>Margen</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Informe DGT + Km Score IA</strong></td><td>Km manipulados, embargos, titulares, ITV</td><td>9-15€</td><td>25-35€</td><td><span class="tag tag-green">60-70%</span></td></tr>
+        <tr><td><strong>Inspección pre-venta</strong></td><td>Comprador no puede desplazarse</td><td>100-150€</td><td>300-500€</td><td><span class="tag tag-green">50-70%</span></td></tr>
+        <tr><td><strong>Transporte puerta a puerta</strong></td><td>Vehículo en baja, no puede circular</td><td>Variable</td><td>250-1.200€</td><td><span class="tag tag-green">25-35%</span></td></tr>
+        <tr><td><strong>Documentación completa</strong></td><td>Transferencia, ITP, contrato, ITV</td><td>80-120€</td><td>200-300€</td><td><span class="tag tag-green">50-60%</span></td></tr>
+        <tr><td><strong>Valoración de mercado</strong></td><td>No existe referencia de precios</td><td>~0€</td><td>50-100€</td><td><span class="tag tag-green">95%+</span></td></tr>
+        <tr><td><strong>Subastas online</strong></td><td>Liquidación de stock parado</td><td>Infraestructura</td><td>8% buyer's premium</td><td><span class="tag tag-green">Alto</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>Ingreso por transacción tipo (cisterna 40.000€)</h3>
+  <div class="tx-break">
+    <div class="tx-line"><span>Intermediación (3%)</span><span class="tx-val">1.200€</span></div>
+    <div class="tx-line"><span>Transporte</span><span class="tx-val">700€</span></div>
+    <div class="tx-line"><span>Inspección pre-venta</span><span class="tx-val">350€</span></div>
+    <div class="tx-line"><span>Informe DGT + Km Score</span><span class="tx-val">25€</span></div>
+    <div class="tx-line"><span>Gestión transferencia</span><span class="tx-val">250€</span></div>
+    <div class="tx-line total"><span>Total por operación</span><span class="tx-val">2.525€</span></div>
+  </div>
+</section>
+
+<!-- 04 MODELO NEGOCIO -->
+<section class="slide">
+  <span class="slide-num">04 · Modelo de negocio</span>
+  <h2>16 fuentes de ingreso.<br><em>Tres fases</em> de activación.</h2>
+  <div class="phase"><div class="phase-head"><span class="phase-num">FASE 1</span><span class="phase-title">Marketplace — Meses 1-6</span></div><div class="phase-body">Anuncios destacados (30-50€/mes), publicidad directa geo-segmentada (100-400€/mes), alertas premium (5-15€/mes), AdSense como puente, Founding Dealers Program (10 primeros gratis para siempre → catálogo rápido + embajadores).</div><div class="phase-revenue">Proyección: 2.000-7.000€/mes</div></div>
+  <div class="phase"><div class="phase-head"><span class="phase-num">FASE 2</span><span class="phase-title">Servicios transaccionales — Meses 6-12</span></div><div class="phase-body">Suscripciones dealer (100-300€/mes), informes DGT, inspecciones, transporte a precio cerrado, documentación, subastas online con buyer's premium (8%), verificación tipo "Carfax" por vertical.</div><div class="phase-revenue">Proyección: 7.000-15.000€/mes</div></div>
+  <div class="phase"><div class="phase-head"><span class="phase-num">FASE 3</span><span class="phase-title">Datos + Financiación — Meses 12-18+</span></div><div class="phase-body">Escrow Stripe Connect, financiación BNPL (1-2%), informes de valoración sectorial para financieras (500-1.000€/trimestre), base de datos de precios propietaria, subastas presenciales en hub de León, servicio de liquidación integral de empresas.</div><div class="phase-revenue">Proyección: 12.000-25.000€/mes por vertical</div></div>
+</section>
+
+<!-- 05 DEALER TOOLKIT -->
+<section class="slide">
+  <span class="slide-num">05 · El foso competitivo</span>
+  <h2>Dealer Toolkit gratuito<br>que <em>se vende solo</em></h2>
+  <p class="lead">Cada dealer recibe gratis herramientas que ningún competidor ofrece. No se queda porque está atrapado — se queda porque irse significa perder valor. Coste para nosotros: <strong>~1,20€/dealer/año</strong>.</p>
+  <div class="two-col">
+    <div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Herramienta</th><th>Nosotros</th><th>Mascus</th></tr></thead>
+          <tbody>
+            <tr><td>Publicar gratis</td><td class="check">✓ Siempre</td><td class="cross">✗ 19-300€/mes</td></tr>
+            <tr><td>Homepage con catálogo</td><td class="check">✓ Automática</td><td class="cross">✗</td></tr>
+            <tr><td>QR dinámico trackeable</td><td class="check">✓ Gratis</td><td class="cross">✗</td></tr>
+            <tr><td>Tarjetas de visita PDF</td><td class="check">✓ Gratis</td><td class="cross">✗</td></tr>
+            <tr><td>Facturas + Contratos</td><td class="check">✓ Gratis</td><td class="cross">✗</td></tr>
+            <tr><td>Publicar vía WhatsApp</td><td class="check">✓ IA genera listado</td><td class="cross">✗</td></tr>
+            <tr><td>CRM básico de leads</td><td class="check">✓ Incluido</td><td class="cross">✗</td></tr>
+            <tr><td>Estadísticas de mercado</td><td class="check">✓ Premium</td><td class="cross">✗</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>Switching cost creciente</h3>
+      <div class="phase" style="margin-bottom:12px"><div class="phase-body" style="font-size:14px"><strong>Mes 1</strong> — Solo listados → Bajo</div></div>
+      <div class="phase" style="margin-bottom:12px"><div class="phase-body" style="font-size:14px"><strong>Mes 3</strong> — Tarjetas impresas, QR en furgoneta → Medio</div></div>
+      <div class="phase" style="margin-bottom:12px"><div class="phase-body" style="font-size:14px"><strong>Mes 6</strong> — Firma email, widget, reseñas, historial CRM → Alto</div></div>
+      <div class="phase"><div class="phase-body" style="font-size:14px"><strong>Mes 12</strong> — Identidad digital completa en URL Tracciona → <strong style="color:var(--accent)">Muy alto</strong></div></div>
+      <div class="insight" style="margin-top:24px"><strong>Modelo LinkedIn:</strong> Tu URL de perfil está en tu CV, firma de email, presentaciones. Cambiar de red = reconstruir tu identidad profesional. Nosotros hacemos lo mismo con dealers industriales.</div>
+      <div class="insight"><strong>Imposibilidad del competidor:</strong> Mascus cobra por publicar. Ofrecer un toolkit gratuito canibalizaría su única fuente de ingresos. Su modelo requiere dependencia del vendedor. El nuestro requiere empoderamiento. Arquitecturas incompatibles.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 VERTICALES -->
+<section class="slide">
+  <span class="slide-num">06 · Verticales</span>
+  <h2>Un build. <em>Siete</em> mercados.</h2>
+  <p class="lead">El clon de un vertical nuevo tarda 1-2 días. Misma base de código, diferente configuración. 209 subcategorías definidas.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Vertical</th><th>Mercado</th><th>Ticket</th><th>Competencia</th><th>Prioridad</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Tracciona.com</strong></td><td>Vehículos industriales</td><td>15K-80K€</td><td>Obsoleta</td><td><span class="tag tag-green">1º — Nuestro sector</span></td></tr>
+        <tr><td><strong>Municipiante.com</strong></td><td>Maquinaria municipal</td><td>30K-200K€</td><td>Nula</td><td><span class="tag tag-green">2º — Sinergia Gesturban</span></td></tr>
+        <tr><td><strong>CampoIndustrial.com</strong></td><td>Maquinaria agrícola</td><td>15K-80K€</td><td>Mediocre</td><td><span class="tag tag-orange">3º — León zona agrícola</span></td></tr>
+        <tr><td><strong>Horecaria.com</strong></td><td>Hostelería (300K+ bares)</td><td>200-20K€</td><td>Inexistente</td><td><span class="tag tag-orange">4º — Mayor volumen</span></td></tr>
+        <tr><td><strong>ReSolar.com</strong></td><td>Energía renovable</td><td>Lotes 50-500K€</td><td>Casi nula</td><td><span class="tag tag-blue">5º</span></td></tr>
+        <tr><td><strong>Clinistock.com</strong></td><td>Equipamiento médico</td><td>5K-200K€</td><td>Fragmentada</td><td><span class="tag tag-blue">6º</span></td></tr>
+        <tr><td><strong>BoxPort.com</strong></td><td>Contenedores marítimos</td><td>2K-15K€</td><td>Sin vertical</td><td><span class="tag tag-blue">7º</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight"><strong>3 verticales maduros</strong> con servicios pueden alcanzar 30.000-50.000€/mes combinados. Cada vertical añade ~150€/mes al OPEX pero puede generar 3.000-10.000€/mes.</div>
+  <div class="insight" style="border-left-color:var(--green)"><strong>Escalabilidad multi-idioma:</strong> El mismo catálogo, traducido automáticamente a 7 idiomas, visible en 7 mercados europeos. Coste de traducir 500 fichas a 7 idiomas: <strong>0,50€</strong>. Coste de traducir 2M fichas (Horecaria): <strong>790€</strong>. Añadir un idioma nuevo = 0 cambios en código.</div>
+</section>
+
+<!-- 07 AUTOMATIZACIÓN -->
+<section class="slide">
+  <span class="slide-num">07 · Automatización</span>
+  <h2>95% de procesos<br><em>sin intervención</em> humana</h2>
+  <div class="metrics">
+    <div class="metric"><div class="metric-val green">~150€</div><div class="metric-label">OPEX mensual total (todos los verticales)</div></div>
+    <div class="metric"><div class="metric-val blue">7</div><div class="metric-label">Idiomas activos (ES, EN, FR, DE, NL, PL, IT)</div></div>
+    <div class="metric"><div class="metric-val orange">0,001€</div><div class="metric-label">Coste de traducir una ficha a 7 idiomas</div></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Proceso</th><th>Automatización</th><th>Humano</th></tr></thead>
+      <tbody>
+        <tr><td>Publicación vía WhatsApp (Claude Vision)</td><td><span class="tag tag-green">95%</span></td><td>Quick review</td></tr>
+        <tr><td>Informes DGT / Km Score</td><td><span class="tag tag-green">100%</span></td><td>—</td></tr>
+        <tr><td>Traducción a 7 idiomas (GPT-4o mini)</td><td><span class="tag tag-green">100%</span></td><td>—</td></tr>
+        <tr><td>Contenido editorial SEO (8-10 artículos/mes)</td><td><span class="tag tag-green">90%</span></td><td>5 min revisión</td></tr>
+        <tr><td>Publicación programada (web + redes)</td><td><span class="tag tag-green">100%</span></td><td>Setup dominical</td></tr>
+        <tr><td>Facturación + contabilidad</td><td><span class="tag tag-green">100%</span></td><td>—</td></tr>
+        <tr><td>Social media (LinkedIn, FB, IG)</td><td><span class="tag tag-green">90%</span></td><td>1 clic aprobación</td></tr>
+        <tr><td>Scraping competidores → leads</td><td><span class="tag tag-orange">50%</span></td><td>Llamada</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 08 COMPETENCIA -->
+<section class="slide">
+  <span class="slide-num">08 · Competencia</span>
+  <h2>Lo que pueden copiar.<br>Lo que <em>no pueden</em>.</h2>
+  <div class="two-col">
+    <div>
+      <h3>Replicable (3-6 meses)</h3>
+      <div class="phase"><div class="phase-body">La tecnología (Nuxt + Supabase = open source). Los filtros dinámicos como concepto. El diseño visual. Un competidor con dinero y talento puede construir algo similar.</div></div>
+    </div>
+    <div>
+      <h3>No replicable</h3>
+      <div class="phase"><div class="phase-body">
+        <strong>SEO acumulado</strong> — 12-18 meses de contenido indexado no se compran. Artículos en 7 idiomas × 4 secciones = miles de URLs orgánicas.<br><br>
+        <strong>Multi-idioma nativo</strong> — Catálogo visible en ES/EN/FR/DE/NL/PL/IT desde el día 1. Traducción automática a 0,001€/ficha. Competidores trabajan solo en 1-2 idiomas.<br><br>
+        <strong>Relaciones con dealers</strong> — Personales, una a una. Founding Dealers = embajadores permanentes.<br><br>
+        <strong>OPEX 10×</strong> — Competidor con equipo humano no iguala 150€/mes.<br><br>
+        <strong>Ecosistema de servicios</strong> — Red inspectores + DGT + góndola propia + base de precios = años de construcción.<br><br>
+        <strong>Lock-in del Dealer Toolkit</strong> — URL en tarjetas, furgoneta, email. Cambiar = reimprimir todo.
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 NÚMEROS -->
+<section class="slide">
+  <span class="slide-num">09 · Los números</span>
+  <h2>Transparencia <em>radical</em></h2>
+  <div class="two-col">
+    <div>
+      <h3>Lo que ya existe</h3>
+      <div class="metrics" style="grid-template-columns:1fr">
+        <div class="metric"><div class="metric-val blue">&lt;5K€</div><div class="metric-label">Coste total de construcción de la plataforma</div></div>
+        <div class="metric"><div class="metric-val green">500K€</div><div class="metric-label">Facturación anual Tank Ibérica (empresa base, 0€ deuda)</div></div>
+        <div class="metric"><div class="metric-val orange">350K€</div><div class="metric-label">200K€ efectivo + 150K€ stock vehículos</div></div>
+      </div>
+    </div>
+    <div>
+      <h3>Lo que no existe (todavía)</h3>
+      <div class="metrics" style="grid-template-columns:1fr">
+        <div class="metric"><div class="metric-val" style="color:var(--red)">0</div><div class="metric-label">Listings, leads, ingresos del marketplace</div></div>
+      </div>
+      <div class="insight" style="margin-top:16px">Plataforma production-ready: 20+ tablas con RLS, SSR, i18n (7 idiomas, traducción automática), admin panel, PDFs, chat real-time, subastas, publicación programada. Falta contenido y tracción comercial — no tecnología.</div>
+    </div>
+  </div>
+  <h3 style="margin-top:48px">Hitos proyectados</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Mes</th><th>Hito</th><th>Métrica</th></tr></thead>
+      <tbody>
+        <tr><td>3</td><td>100+ vehículos, 10 Founding Dealers</td><td>100+ URLs indexadas</td></tr>
+        <tr><td>6</td><td>Primer ingreso (destacado o intermediación)</td><td>Facturación > 0€</td></tr>
+        <tr><td>9</td><td>Segundo vertical lanzado</td><td>50+ listings</td></tr>
+        <tr><td>12</td><td>Tráfico orgánico estable</td><td>200+ visitas/día</td></tr>
+        <tr><td>15</td><td>10+ dealers con suscripción</td><td>MRR > 1.000€</td></tr>
+        <tr><td>18</td><td>Breakeven operativo</td><td>Ingresos ≥ OPEX</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 10 PETICIÓN -->
+<section class="slide">
+  <span class="slide-num">10 · La petición</span>
+  <h2>15-25K€ para <em>acelerar</em><br>los primeros 18 meses</h2>
+  <p class="lead">El proyecto es viable sin inversión (OPEX 150€/mes). El capital adelanta el breakeven 6-12 meses.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Partida</th><th>Rango</th></tr></thead>
+      <tbody>
+        <tr><td>Google Ads (2 verticales, 12-18 meses)</td><td>6.000-9.000€</td></tr>
+        <tr><td>Infraestructura tech (24 meses)</td><td>2.400-3.600€</td></tr>
+        <tr><td>Legal (SL + contratos + LOPD)</td><td>1.000-1.500€</td></tr>
+        <tr><td>Contenido profesional</td><td>1.000-2.000€</td></tr>
+        <tr><td>IA + herramientas SEO (24 meses)</td><td>1.100-3.600€</td></tr>
+        <tr><td>Contingencia</td><td>2.000-4.000€</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>14.000-24.700€</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 11 DUE DILIGENCE -->
+<section class="slide">
+  <span class="slide-num">11 · Preguntas duras</span>
+  <h2>Lo que un inversor <em>preguntará</em></h2>
+  <div class="faq">
+    <div class="faq-item"><div class="faq-q">¿Cero ingresos — por qué invertir ahora?</div><div class="faq-a">Porque el riesgo técnico ya está eliminado. Plataforma construida y production-ready. Lo que falta es comercial. Invertir ahora = participar antes de la tracción, cuando la valoración es mínima. <strong>Coste de validar la hipótesis: 900€/año.</strong></div></div>
+    <div class="faq-item"><div class="faq-q">¿Y si alguien copia la idea?</div><div class="faq-a">Pueden copiar la idea, no la ejecución. Plataforma construida + ecosistema de servicios + OPEX 10× menor. <strong>El que quiera copiarnos invierte meses y decenas de miles de euros para llegar donde ya estamos.</strong></div></div>
+    <div class="faq-item"><div class="faq-q">¿No es arriesgado depender de IA?</div><div class="faq-a">Es nuestra mayor ventaja. Si Claude desaparece mañana, tenemos código limpio, documentado, TypeScript estricto, mantenible por cualquier dev mid-level. <strong>No hay dependencia, hay eficiencia.</strong></div></div>
+    <div class="faq-item"><div class="faq-q">¿150K€ de un competidor en ads?</div><div class="faq-a">Cuando dejan de pagar, tráfico = 0. Nuestro SEO acumula. Además, <strong>150K€ en ads sin producto que convierta = ROI terrible</strong>. Mascus invierte en ads y su conversión es baja porque la experiencia post-clic es mala.</div></div>
+    <div class="faq-item"><div class="faq-q">¿Mayor riesgo?</div><div class="faq-a"><strong>No conseguir tracción comercial en 6 meses.</strong> Mitigación: publicación gratuita (dealer no arriesga nada), Founding Dealers Program, y validar con primeros leads antes de cobrar. Si en 6 meses no hay 100+ vehículos y 5+ dealers, pivotamos a modelo licencia/SaaS.</div></div>
+    <div class="faq-item"><div class="faq-q">¿Por qué no un marketplace genérico?</div><div class="faq-a">Un hostelero no confía en un portal que vende camiones. Confianza B2B = especialización. Modelo Booking Holdings: <strong>marcas independientes, plataforma común</strong>.</div></div>
+    <div class="faq-item"><div class="faq-q">¿Cuántos verticales podéis operar?</div><div class="faq-a">Con 2 personas: 2 verticales. Con comercial + admin: 4-5. El cuello de botella no es técnico (clonar = 2 días) sino comercial. Plan: <strong>1 vertical mes 0-6, 2 verticales mes 6-12, 3 verticales mes 12-18</strong>.</div></div>
+  </div>
+</section>
+
+<!-- CIERRE -->
+<section class="slide" style="min-height:auto;padding-bottom:0">
+  <div class="cta-box">
+    <h2>No vendemos anuncios.<br>Vendemos <em>confianza</em> en transacciones<br>de alto valor.</h2>
+    <p>Los mercados B2B de segunda mano están donde estaba el e-commerce de consumo hace 15 años. La tecnología para transformarlos ya existe y ya la tenemos construida.</p>
+    <p style="color:#666;font-size:14px;margin-top:32px;font-style:italic">¿Hablamos?</p>
+  </div>
+</section>
+
+<footer class="footer">TRADEBASE SL · FEBRERO 2026 · CONFIDENCIAL</footer>
+</body>
+</html>

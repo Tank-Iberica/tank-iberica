@@ -1,0 +1,3592 @@
+# INSTRUCCIONES MAESTRAS DE EJECUCIÓN
+
+> **PARA CLAUDE CODE:** Este archivo define el orden exacto de ejecución, qué archivos leer en cada paso, y qué crear. El usuario te indicará "ejecuta la sesión N" y tú lees esta sección.
+
+## REGLAS OBLIGATORIAS DE EJECUCIÓN
+
+### Regla 1: LEE ANTES DE ESCRIBIR
+
+Antes de escribir UNA SOLA línea de código en cada sesión:
+
+1. Lee TODOS los archivos listados en "Leer" de esa sesión
+2. Lee los anexos referenciados
+3. Si una sesión dice "ya creado en sesión X", ve a verificar qué se creó antes de asumir
+4. Relee estas reglas al inicio de cada sesión
+
+### Regla 2: NO IMPROVISES — PREGUNTA
+
+Si no tienes datos suficientes para implementar algo, **PARA y pregunta al usuario**. Específicamente:
+
+- Si un anexo describe una funcionalidad pero no da detalle técnico suficiente → **PREGUNTA**
+- Si necesitas una API key, URL, credencial, o dato de configuración que no está en los archivos → **PREGUNTA**
+- Si hay ambigüedad entre dos formas de implementar algo → **PREGUNTA**
+- Si un componente depende de otro que no existe aún → **PREGUNTA** si debe crearlo o dejarlo como placeholder
+- Si tienes que elegir entre librerías/dependencias alternativas → **PREGUNTA**
+- NUNCA inventes datos de ejemplo, precios, textos de marketing, o lógica de negocio que no esté documentada
+- NUNCA asumas que "probablemente" funciona de cierta manera — si no está escrito, pregunta
+
+### Regla 3: MOBILE-FIRST + MULTILENGUAJE EN TODO
+
+Cada componente, página y layout que crees debe cumplir:
+
+- **Mobile-first obligatorio:** Diseñar primero para móvil (360px), luego tablet (768px), luego desktop (1024px+). El target principal es el transportista que mira su móvil. Los breakpoints de Tailwind (`sm:`, `md:`, `lg:`) se usan de menor a mayor.
+- **Touch-friendly:** Botones mínimo 44x44px, espaciado entre elementos táctiles suficiente, no depender de hover
+- **Multilenguaje nativo:** Todos los textos de UI usan `$t('key')` de @nuxtjs/i18n, NUNCA texto hardcodeado en español. Los datos dinámicos usan `localizedField(field, locale)` para leer JSONB. Las descripciones largas se leen de `content_translations`.
+- **RTL-ready:** Usar `gap`, `flex`, `grid` en vez de margin-left/right cuando sea posible. Esto no es urgente pero facilita expansión futura.
+
+### Regla 4: VERIFICAR ANTES DE CADA ACCIÓN
+
+Antes de crear un archivo, verifica que no existe ya. Antes de crear una tabla, verifica que no se creó en una sesión anterior. Antes de instalar un paquete npm, verifica que no está ya en package.json.
+
+### Regla 5: MOBILE-FIRST NO NEGOCIABLE (del proyecto original Tank Ibérica)
+
+> **Ningún componente se considera "terminado" hasta que funciona correctamente en un móvil de 360px con conexión lenta. Desktop es la adaptación, no al revés.**
+
+Reglas concretas heredadas del proyecto original:
+
+- **CSS base = móvil (360px).** Breakpoints con `min-width` (nunca `max-width`). Orden: base → `sm:` (480px) → `md:` (768px) → `lg:` (1024px) → `xl:` (1280px).
+- **Touch targets ≥ 44px** en todo elemento interactivo. Los botones del FilterBar, cards, iconos del header.
+- **Sin hover como trigger principal.** Hover no existe en móvil. Desplegables con tap, no hover. Tooltips como modal pequeño o bottom sheet.
+- **Bottom sheet en móvil para formularios y filtros:** AuthModal, FilterBar, AdvertiseModal, DemandModal → bottom sheet animado en `<768px`, modal centrado en desktop. Formularios largos → página completa en móvil (scroll vertical), no modal.
+- **Keep-alive + scroll preservation:** Al volver de `/vehiculo/[slug]` al catálogo, el scroll y los filtros se preservan. Usar `<NuxtPage keepalive>` + `useCatalogState` (ya implementado). Verificar en cada sesión que modifique navegación.
+- **Gestos nativos:** Swipe en galería de imágenes. El botón atrás del sistema funciona SIEMPRE.
+- **Rendimiento en 3G:** Lighthouse con throttling 3G debe dar >75. Imágenes lazy-load, code splitting, skeleton loaders.
+
+### Regla 6: REUTILIZAR CÓDIGO EXISTENTE
+
+Antes de implementar cualquier funcionalidad nueva, Claude Code debe:
+
+1. Buscar en `app/composables/`, `app/utils/`, `app/pages/admin/` si ya existe código funcional
+2. Si existe → adaptar a multivertical (añadir `vertical`, `dealer_id` donde aplique). NO reescribir.
+3. Consultar los Bloques D-BIS, D-TER y D-QUATER de esta misma sesión 2 para ver el inventario completo.
+
+Código existente crítico:
+
+- `useGoogleDrive` → integración Google Drive (herramienta opcional del dealer)
+- `useSeoScore` → cálculo SEO score (Sesión 11)
+- `useFavorites` → sistema favoritos (Sesión 29)
+- `useUserChat` → chat usuario (convive con leads)
+- `useAdminHistorico` → historial ventas (Sesión 28)
+- `generatePdf.ts` → fichas PDF vehículo (Sesión 31)
+- `fuzzyMatch.ts` → búsqueda difusa (buscador global)
+- `geoData.ts` + `parseLocation.ts` → geolocalización
+- `admin/utilidades.vue` → generador facturas/contratos (Sesión 31)
+
+### Regla 8: CREAR CLAUDE.md + COMMANDS + SKILLS PARA TRACCIONA
+
+El proyecto Tank Ibérica tenía `.claude/commands/` (5 comandos: next-task, status, fix-errors, mobile-check, verify) y `.claude/skills/` (2 skills: mobile-first, nuxt-supabase) que guían a Claude Code. Tracciona debe tener equivalentes.
+
+**En la primera sesión que modifique la raíz del proyecto (si no existen ya), crear:**
+
+1. `CLAUDE.md` en la raíz del proyecto con:
+   - Stack: Nuxt 3, Supabase, Cloudflare Pages, Cloudinary, Stripe
+   - Comandos: dev, build, lint, typecheck, test, test:e2e, supabase gen types
+   - Los 3 requisitos no negociables: mobile-first 360px, páginas reales (no modales), extensible (datos en BD no en código)
+   - Estructura de carpetas
+   - Convenciones: TS estricto, no `any`, composables `use` + PascalCase, i18n obligatorio, no innerHTML
+   - Referencia a INSTRUCCIONES-MAESTRAS.md para el orden de sesiones
+
+2. `.claude/commands/next-task.md` — Lee INSTRUCCIONES-MAESTRAS.md, identifica sesión actual, planifica, implementa, verifica (lint+typecheck+test), actualiza progreso, commit
+3. `.claude/commands/status.md` — Muestra resumen de sesiones completadas vs pendientes
+4. `.claude/commands/fix-errors.md` — Ejecuta lint+typecheck, corrige errores automáticamente
+5. `.claude/commands/mobile-check.md` — Audita componentes en 360px: touch targets, overflow, bottom sheets
+6. `.claude/commands/verify.md` — Verifica que la sesión actual cumple todos los criterios de paso
+7. `.claude/skills/mobile-first/SKILL.md` — Guía detallada de patrones mobile-first (bottom sheet, touch targets, breakpoints)
+8. `.claude/skills/nuxt-supabase/SKILL.md` — Patrones de Nuxt 3 + Supabase (composables, RLS, Realtime, Edge Functions)
+
+### Regla 9: HERRAMIENTAS EXTERNAS
+
+Claude Code tiene acceso a:
+
+- **Sistema de archivos completo** del proyecto (lectura y escritura)
+- **Terminal** para ejecutar comandos (npm, npx, supabase, git)
+- **Variables de entorno** en `.env` y `.env.local`
+- Si necesitas acceder a Supabase dashboard, Stripe dashboard, Cloudflare dashboard, Cloudinary dashboard u otra herramienta externa que requiera navegador → **PREGUNTA al usuario**, él te dará los datos o lo hará manualmente. No intentes abrir URLs de dashboards.
+- Si necesitas ejecutar `supabase db push`, `supabase gen types`, o cualquier comando de CLI de Supabase → hazlo directamente, tienes acceso.
+- Si necesitas instalar dependencias npm → hazlo directamente (`npm install X`).
+
+---
+
+---
+
+## SESIÓN 1 — Paso 0: Backup
+
+**Estado:** ✅ YA COMPLETADO (la carpeta Tracciona es la copia de tank-iberica)
+**Acción:** Saltar. Ir a sesión 2.
+
+---
+
+## SESIÓN 2 — Paso 1A: Migración SQL (renombrar tablas + i18n + tablas nuevas)
+
+**Leer ANTES de escribir código:**
+
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 1 (renombrar tablas)
+2. `docs/tracciona-docs/anexos/T-internacionalizacion-i18n.md` — Secciones T.2, T.3, T.4 (JSONB + content_translations)
+3. `docs/tracciona-docs/anexos/V-tablas-placeholder-capa2.md` — Todas las tablas placeholder
+4. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Secciones W.2 y W.9 (vertical_config + activity_logs)
+5. `docs/esquema-bd.md` — Esquema actual de la BD (ubicado en `docs/`, NO en `docs/tracciona-docs/`)
+
+**Crear una SOLA migración:** `supabase/migrations/00031_tracciona_migration.sql`
+
+**Esta migración debe hacer TODO esto en orden:**
+
+### Bloque A — Renombrar tablas (del Paso 1)
+
+- Crear tabla `actions` con campo `name JSONB` (NO name_es/name_en)
+- Renombrar `subcategories` → `categories`
+- Renombrar `types` → `subcategories`
+- Renombrar `type_subcategories` → `subcategory_categories` (y sus columnas)
+- Renombrar `filter_definitions` → `attributes`
+- Añadir columna `vertical` a categories, subcategories, attributes
+- Migrar `vehicles.category` (enum) → `vehicles.action_id` (UUID FK)
+- Renombrar `vehicles.subcategory_id` → `vehicles.category_id`
+- Renombrar `vehicles.filters_json` → `vehicles.attributes_json`
+- Renombrar `applicable_categories` → `applicable_actions` en categories y subcategories
+- Actualizar RLS policies con nombres nuevos
+- Recrear índices con nombres nuevos
+
+### Bloque B — Migrar columnas de idioma a JSONB (del Anexo T)
+
+- En TODAS las tablas que tengan `name_es`/`name_en`: crear columna `name JSONB`, migrar datos, (NO dropear columnas antiguas todavía — comentar el DROP)
+- Mismo para `name_singular_es`/`name_singular_en` → `name_singular JSONB`
+- Mismo para `description_es`/`description_en` en news → migrar a content_translations
+- Para vehicles: migrar `description_es`/`description_en` a content_translations, `location`/`location_en` a `location_data JSONB`
+
+### Bloque C — Crear tabla content_translations (del Anexo T.3)
+
+- CREATE TABLE content_translations con todos los campos e índices
+- Full-text search indexes por idioma (es, en)
+- RLS: lectura pública, escritura admin/owner
+
+### Bloque D — Crear tablas placeholder (del Anexo V + K + sesión 24)
+
+- dealers (con todos los campos del Anexo K.1 + W.4: slug, company_name, logo_url, cover_image_url, description, phone, whatsapp, email, website, location, tax_id, legal_name, badge, auto_reply_message, notification_preferences JSONB, total_listings, active_listings, total_leads, avg_response_time_hours, rating, status)
+- Columnas adicionales en vehicles (dealer_id, listing_type, verification_level, sold_at, pending_translations, location_data, auto_auction_after_days, auto_auction_starting_pct, ai_generated BOOLEAN, visible_from TIMESTAMPTZ — para sistema Pro 24h del Anexo E.2) del Anexo V.2
+- Columnas adicionales en users: user_type VARCHAR DEFAULT 'buyer' ('buyer'|'dealer'|'admin'), company_name, phone_verified BOOLEAN, onboarding_completed BOOLEAN, last_login_at TIMESTAMPTZ, login_count INT
+- leads (Anexo K.2: dealer_id, vehicle_id, buyer_user_id, buyer_name, buyer_phone, buyer_email, buyer_location, message, source, status 'new'→'viewed'→'contacted'→'negotiating'→'won'/'lost', dealer_notes, first_viewed_at, first_responded_at, closed_at, close_reason, sale_price_cents)
+- user_vehicle_views (user_id, vehicle_id, viewed_at, PRIMARY KEY(user_id, vehicle_id))
+- favorites (user_id, vehicle_id, created_at, UNIQUE(user_id, vehicle_id))
+- search_alerts (user_id, vertical, filters JSONB, frequency 'instant'|'daily'|'weekly', active BOOLEAN, last_sent_at)
+- subscriptions (Anexo E.2: user_id, vertical, plan, status, price_cents, started_at, expires_at, stripe_subscription_id)
+- dealer_stats (Anexo K.5: dealer_id, period_date, vehicle_views, profile_views, leads_received, leads_responded, favorites_added, conversion_rate, avg_response_minutes)
+- dealer_events (dealer_id, event_type, metadata JSONB, created_at)
+- dealer_stripe_accounts (dealer_id, stripe_account_id, onboarding_completed, charges_enabled)
+- dealer_fiscal_data (dealer_id, tax_id, tax_country, tax_address, verified)
+- dealer_leads (Anexo I.2: fuente captación, source, company_name, phone, email, status)
+- auctions, bids, auction_registrations del Anexo H
+- verification_documents del Anexo G.3 (vehicle_id, doc_type, file_url, verified_by, status)
+- advertisers (empresa anunciante: company_name, logo_url, contact_email, contact_phone, website, tax_id)
+- ads del Anexo F.3 expandido (advertiser_id FK, title, description, image_url, logo_url, link_url, phone, email, cta_text, countries[], regions[], provinces[], category_slugs[], action_slugs[], positions[], format, include_in_pdf, include_in_email, price_monthly_cents, starts_at, ends_at)
+- ad_events (ad_id, event_type, user_country, user_region, user_province, page_path)
+- geo_regions (country_code, region_level, region_slug, region_name JSONB, parent_slug, postal_code_pattern, lat/lng) + ejecutar seed desde `docs/tracciona-docs/seeds/geo_regions_spain.sql` (70 registros: 1 país + 17 CCAA + 52 provincias). Escala a nuevos mercados con solo INSERT.
+- transport_zones, transport_requests del Anexo G-BIS
+- service_requests (type, vehicle_id, user_id, status, partner_notified_at)
+- social_posts del Anexo I.3 (vehicle_id, platform, content, image_url, status)
+- invoices del Anexo I.4 (user_id, stripe_invoice_id, service_type, amount, tax, pdf_url)
+- consents (user_id, consent_type, granted, ip_address, timestamp)
+- analytics_events (sesión 32: event_type, vehicle_id, user_id, metadata JSONB)
+- merch_orders (sesión 31: dealer_id, product_type, quantity, design_pdf_url, stripe_payment_id, status)
+- dealer_invoices (sesión 31: facturas generadas POR el dealer, no DE Tracciona)
+
+### Bloque D-BIS — Preservar tablas legacy del código actual
+
+Estas tablas ya existen en el código viejo (Tank Ibérica). NO eliminar en la migración. Adaptar a multivertical añadiendo columna `vertical VARCHAR DEFAULT 'tracciona'` donde no exista.
+
+- **balance** (migr. 00017): Sistema de balance/saldo financiero. Mantener para Sesión 26 (facturación). Añadir columna `vertical`.
+- **chat_messages** (migr. 00021): Mensajería interna entre compradores y vendedores. Convive con el sistema de leads (Anexo K.2). Leads = primer contacto formal. Chat = conversación posterior. Añadir columna `vertical`.
+- **maintenance_records** (migr. 00016): Registros de mantenimiento de vehículos. Útil para dealers que gestionan su flota internamente. Integrar en Sesión 31 (herramientas dealer). Añadir `vertical`, `dealer_id`.
+- **rental_records** (migr. 00016): Registros de alquiler de vehículos. Misma lógica que maintenance. Integrar en Sesión 31. Añadir `vertical`, `dealer_id`.
+- **advertisements + demands** (migr. 00012, 00029): Clasificados y demandas ("busco cisterna alimentaria 2020+"). Las demands alimentan las alertas de match en subastas (Sesión 16) y el dashboard Premium (Sesión 27). Añadir `vertical`.
+- **filter_definitions** (migr. 00002): Los 6 tipos de filtro dinámico (caja, desplegable, desplegable_tick, tick, slider, calc) se preservan. Conviven con el sistema de `dimensions`/`dimension_values` (landing pages SEO). Las dimensions generan landing pages indexables; los filter_definitions controlan la UI de filtrado dentro de cada landing. NO son redundantes. Añadir `vertical`.
+
+> **NOTA para Claude Code**: En la migración 00031, NO hacer DROP de estas tablas. Solo ALTER TABLE ADD COLUMN vertical/dealer_id donde corresponda. Los datos existentes se preservan.
+
+### Bloque D-TER — Preservar código funcional del código actual
+
+Estos archivos ya existen y funcionan en Tank Ibérica. NO reescribir desde cero. Adaptar a multivertical.
+
+**Páginas admin que se preservan (renombrar ruta de `/admin/` a `/dashboard/` para dealers, mantener `/admin/` para superadmin):**
+
+- **admin/agenda.vue** → CRM de contactos del dealer (clientes, proveedores, transportistas). Mover a `/dashboard/crm` en Sesión 28. Ya funcional con CRUD completo.
+- **admin/cartera.vue** → Pipeline comercial (ojeados, negociando, cerrado). Mover a `/dashboard/pipeline` en Sesión 28. Es placeholder, implementar sobre la estructura existente.
+- **admin/comentarios.vue** → Moderación de comentarios en artículos. Mantener en `/admin/comentarios` (solo superadmin). Es placeholder, implementar en Sesión 11 (editorial).
+- **admin/historico.vue** → Historial de vehículos vendidos/archivados con estadísticas. Mover a `/dashboard/historico`. Ya funcional con `useAdminHistorico`.
+- **admin/productos/** → CRUD de vehículos de intermediación (terceros que piden a Tank Ibérica que publique por ellos). Adaptar como "publicar en nombre de" en `/dashboard/vehiculos` con flag `published_by_dealer_id != owner_dealer_id`. Integrar en Sesión 10 (portal dealer).
+- **admin/utilidades.vue** → Generador de facturas y contratos. Ya funcional. Base directa para Sesión 31 (herramientas dealer). Copiar lógica, no reescribir.
+
+**Composables que se preservan:**
+
+- **useGoogleDrive** → Integración Google Drive con OAuth, carpetas, subida. Mantener como herramienta opcional del dealer en Sesión 31. No todos los dealers la usarán pero Tank Ibérica sí. Documentos privados: Google Drive (si dealer lo conecta) O Supabase Storage (por defecto).
+- **useSeoScore** → Cálculo de SEO score. Ya existe, usarlo directamente en Sesión 11 (SEO Score Potentiator). No reimplementar.
+- **useUserChat** → Chat del usuario. Usar en combinación con el sistema de leads (leads = primer contacto, chat = conversación posterior).
+- **useFavorites** → Sistema de favoritos. Usar directamente en Sesión 29. Ya funcional.
+- **useAdminHistorico** → Historial completo. Integrar en dashboard dealer.
+
+**Utils que se preservan:**
+
+- **generatePdf.ts** → Generador de fichas PDF de vehículo (foto + specs + precio). Reutilizar en Sesión 31 (export catálogo PDF). Ya funciona.
+- **fileNaming.ts** → Nomenclatura: `V42_Renault_2024_1234ABC`. Mantener como opción de naming para Google Drive. UUID para BD, nombre legible para archivos.
+- **geoData.ts + parseLocation.ts + server/api/geo.get.ts** → Geolocalización. Complementa `geo_regions` (seeds). El parser ya funciona, usarlo.
+- **fuzzyMatch.ts** → Búsqueda difusa. Usar en autocomplete de buscador global y filtros.
+
+> **REGLA para Claude Code**: Antes de implementar una funcionalidad nueva, buscar en el código existente (`app/composables/`, `app/utils/`, `app/pages/admin/`) si ya existe algo funcional. Si existe, adaptar. No reescribir desde cero.
+
+### Bloque D-QUATER — Tareas pendientes del plan original (docs/plan-v3.md)
+
+El proyecto Tank Ibérica tenía un plan de profesionalización (46 tareas en 4 fases) del que varias tareas no se completaron. Las que aplican a Tracciona:
+
+**Ya cubiertas por sesiones existentes:**
+
+- Sentry → Sesión 19 (seguridad producción)
+- DOMPurify/XSS → Sesión 19
+- Security headers (\_headers CSP) → Sesión 19
+- Playwright E2E → Sesión 20 (testing)
+- PWA + Service Worker → Sesión 22
+- Lighthouse >90 → Sesión 22
+- Edge Functions → Múltiples sesiones (16, 18, 21, etc.)
+
+**NO cubiertas — añadir a sesiones:**
+
+1. **Pinia stores** → El código actual usa composables (patrón correcto para Nuxt 3) pero plan-v3 planificaba 3 stores centrales: `catalog.ts`, `auth.ts`, `ui.ts`. Decisión: **mantener composables** (ya funcionan), no migrar a Pinia salvo que el estado compartido lo requiera. Claude Code debe evaluar en Sesión 3.
+
+2. **Unit tests con Vitest** → Sesión 20 menciona E2E con Playwright pero no Vitest para composables. **Añadir a Sesión 20**: tests unitarios para `useVehicles`, `useFilters`, `useCatalogState`, `useSeoScore` con Vitest.
+
+3. **Husky pre-commit hooks** → ESLint existe (`eslint.config.mjs`) pero no hay Husky ni lint-staged. **Añadir a Sesión 19**: `npx husky init`, hook pre-commit con `lint-staged` (ESLint + Prettier).
+
+4. **GitHub Actions CI/CD** → No hay `.github/workflows/`. **Añadir a Sesión 19**: workflow básico `ci.yml` (lint + type-check + vitest en cada PR), workflow `deploy.yml` (build + deploy Cloudflare Pages en merge a main).
+
+5. **@nuxt/image con Cloudinary provider** → El módulo `@nuxt/image` está en nuxt.config.ts pero no hay evidencia de configuración del provider Cloudinary. **Verificar en Sesión 3**: que `<NuxtImg>` use Cloudinary provider con transformaciones automáticas.
+
+6. **localStorage audit** → plan-v3 identificó 21 usos inseguros de localStorage. Supabase Auth usa cookies httpOnly pero pueden quedar usos legacy. **Añadir a Sesión 19**: grep de `localStorage` en todo el código, migrar a composables con `useLocalStorage` de VueUse o eliminar.
+
+7. **ipapi.co eliminación** → `useUserLocation.ts` puede seguir usando servicios externos para geolocalización. **Verificar en Sesión 19**: que no envíe IPs a servicios externos sin consentimiento. Usar `navigator.language` + datos del perfil.
+
+8. **Intermediación (tabla del plan-v3)** → plan-v3 planificaba tabla `intermediation` para operaciones donde Tank Ibérica intermedia entre comprador y vendedor cobrando comisión. La tabla existe como `admin/productos/` (Bloque D-TER). **Ya cubierto** por la adaptación de productos a "publicar en nombre de" en Sesión 10.
+
+9. **Tabla `viewed_vehicles` (ojeados)** → plan-v3 planificaba tracking de vehículos vistos en otras plataformas (competencia). No es la misma que `user_vehicle_views` (analytics interno). **Añadir a Sesión 28** (CRM): herramienta para que el dealer registre vehículos de la competencia que ha observado (precio, contacto, plataforma, notas). Reutilizar concepto de `admin/cartera.vue`.
+
+### Bloque D-QUINQUIES — Funcionalidades del admin original no detalladas (docs/admin-funcionalidades.md + inventario-ui.md)
+
+El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 secciones) tiene funcionalidades detalladas que las sesiones de Tracciona mencionan pero sin suficiente profundidad. Se documentan aquí como referencia obligatoria para Claude Code:
+
+**A) Tabla `intermediation` + flujo de comisión** → Integrar en Sesión 10 (portal dealer).
+
+- Vehículos de intermediación (IDs con prefijo P) son vehículos que el dealer publica por cuenta de un tercero cobrando comisión
+- Campos específicos: propietario, contacto, comisión, gastos_json, ingresos_json
+- Cálculo automático de beneficio = ingresos - gastos - comisión
+- En Tracciona: crear tabla `intermediations` (dealer_id, vehicle_id, owner_name, owner_phone, owner_email, commission_pct, commission_amount, expenses JSONB, income JSONB, status, notes)
+- Vista en `/dashboard/intermediacion` con CRUD y cálculos
+- Plan mínimo: Básico
+
+**B) Flujo registrar transacción (venta/alquiler)** → Integrar en Sesión 31 (herramientas dealer).
+
+- Botón "Vender" en lista de vehículos abre modal con 2 tabs:
+  - Tab Alquilar: fechas desde/hasta, cliente, importe, factura → crea entrada en balance automáticamente, cambia estado a 'alquilado'
+  - Tab Vender: fecha, comprador, precio, flag exportación → mueve a histórico + crea entrada en balance
+- Este flujo conecta: vehicles → balance → history_log
+- En Tracciona: crear componente `<TransactionModal>` reutilizable en `/dashboard/vehiculos`
+
+**C) Sistema de exportación avanzado** → Integrar en Sesión 31.
+
+- 6 modales de exportación en el admin original:
+  1. Exportar vehículos (Excel/PDF, filtrados/todos, selección de columnas)
+  2. Exportar balance (Excel/PDF, por año/tipo/razón)
+  3. Exportar resumen financiero (totales + desglose por razón + mensual)
+  4. Exportar histórico (Excel/PDF, con datos de venta/beneficio)
+  5. Exportar intermediación
+  6. Exportar ojeados/competencia
+- En Tracciona: crear herramienta genérica de exportación en `/dashboard/herramientas/exportar` con selector de sección + formato + columnas. Usar SheetJS (xlsx) para Excel y jsPDF para PDF (ambos ya usados en el admin original)
+
+**D) Configuración de tabla dinámica (tabla_config)** → Integrar en Sesión 9 (panel admin).
+
+- Grupos de columnas que se activan/desactivan con toggle (DOCS, TÉCNICO, CUENTAS, ALQUILER, FILTROS)
+- Columnas con fallback (si volumen está vacío, mostrar capacidad)
+- Drag & drop para reordenar columnas
+- Configuración persistida en BD (tabla `table_config`: tipo, nombre, elementos, obligatorio, activo_defecto, orden, seccion)
+- En Tracciona: crear tabla `table_config` + componente `<ConfigurableTable>` reutilizable. Los dealers pueden personalizar qué columnas ven en su listado de vehículos
+
+**E) Cálculos financieros en histórico** → Integrar en Sesión 28 (historial de ventas).
+
+- Categoría de venta: venta directa, intermediación, exportación
+- Beneficio automático = precio_venta - coste_total (adquisición + mantenimiento - renta)
+- Cards resumen: total ventas, total ingresos, total beneficio, margen promedio %
+- Filtros por año, categoría venta, subcategoría, marca
+
+**F) Motor de matching demanda/oferta** → Integrar en Sesión 16 (subastas) + Sesión 27 (métricas).
+
+- Cruce automático: demands.specs vs vehicles.attributes_json
+- Campo `vehiculo_match_id` para vincular manualmente
+- Panel "Coincidencias" en dashboard con matches potenciales
+- Alertas: "Hay 3 solicitantes que buscan lo que tú vendes"
+- En Tracciona: Edge Function `match_demands()` que corre al publicar vehículo o crear demanda. Notifica por email al dealer/comprador.
+
+**G) Generador de contratos (detalle)** → Ampliar en Sesión 31.
+
+- Contrato de compraventa: datos vendedor/comprador, vehículo, precio, forma de pago, cláusulas (garantía, estado, responsabilidad), firmas
+- Contrato de arrendamiento: datos arrendador/arrendatario, vehículo, renta mensual, duración, fianza, opción de compra, valor residual, cláusulas (mantenimiento, seguro, devolución)
+- PDF con logo del dealer, datos legales, número de contrato auto-generado
+
+**H) Gráficos de balance** → Integrar en Sesión 27 (métricas).
+
+- Chart.js: gráfico de barras (ingresos vs gastos mensual) + gráfico circular (desglose por razón)
+- Toggle barras/circular
+- Desglose por razón: Venta, Alquiler, Exportación, Taller, Seguro, etc.
+- En Tracciona: usar Recharts (ya disponible en React artifacts) o Chart.js para dashboard del dealer
+
+**I) Referencia UI completa** → Para Claude Code.
+
+- El archivo `docs/legacy/inventario-ui.md` contiene 453 elementos UI documentados (212 públicos + 241 admin)
+- Usar como referencia al implementar componentes equivalentes en Tracciona
+- No reimplementar 1:1, pero verificar que ninguna funcionalidad se pierda
+
+> **REGLA para Claude Code**: Antes de cada sesión, consultar `docs/legacy/admin-funcionalidades.md` e `inventario-ui.md` del proyecto tank-iberica para verificar que no se pierde funcionalidad del admin original. Especial atención a las secciones de Balance, Histórico, Intermediación y Utilidades.
+
+### Bloque E — Crear tabla articles (del Anexo P.5 — definición canónica)
+
+- CREATE TABLE articles **exactamente como está en Anexo P.5** (copiar SQL literal). Incluye:
+  - id, slug (UNIQUE), vertical, section ('guias'|'noticias'|'normativa'|'comparativas')
+  - title JSONB, meta_description JSONB, excerpt JSONB (multiidioma)
+  - cover_image_url, author, tags TEXT[], related_categories TEXT[]
+  - faq_schema JSONB (para featured snippets)
+  - status ('draft'|'scheduled'|'published'|'archived'), scheduled_at, published_at, updated_at, expires_at
+  - seo_score INT, reading_time_minutes, views, pending_translations BOOLEAN
+  - target_markets TEXT[] DEFAULT '{all}'
+  - social_posted, social_post_text JSONB, social_scheduled_at
+- Índices: idx_articles_section, idx_articles_scheduled, idx_articles_market (todos definidos en P.5)
+- RLS: lectura pública si status='published', escritura solo admin
+- El contenido largo (body) va en content_translations (tabla del Bloque C), NO en esta tabla
+
+### Bloque F — Crear tablas de configuración (del Anexo W)
+
+- vertical_config con TODO el schema de W.2
+- activity_logs con schema de W.9
+- INSERT seed de vertical_config para 'tracciona'
+- RLS en ambas tablas
+
+### Bloque G — RLS para TODAS las tablas nuevas
+
+- Verificar que CADA tabla tiene RLS enabled y policies definidas
+
+**Al terminar:** Ejecutar `npx supabase db push` para aplicar. Si hay errores, corregir la migración.
+
+---
+
+## SESIÓN 3 — Paso 2: Actualizar frontend
+
+**Leer ANTES de escribir código:**
+
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 2
+2. `docs/tracciona-docs/anexos/T-internacionalizacion-i18n.md` — Secciones T.5 (localizedField), T.6 (config i18n)
+
+**Hacer:**
+
+- Crear composable `useLocalized.ts` con `localizedField()` y `fetchTranslation()` (código en Anexo T.5)
+- Crear composable `useVerticalConfig.ts` (código en Anexo W.3)
+- Actualizar TODOS los componentes que referencian nombres de tabla antiguos:
+  - `subcategory` → `category` (en queries, props, variables)
+  - `type` → `subcategory`
+  - `filter_definition` → `attribute`
+  - `filters_json` → `attributes_json`
+  - `.name_es` / `.name_en` → `localizedField(.name, locale)`
+- Actualizar `nuxt.config.ts`: cambiar i18n strategy a `prefix_except_default` (código en Anexo T.6)
+- Actualizar `useVehicles.ts`, `useFilters.ts`, `useCatalogState.ts`, `useVehicleTypeSelector.ts` con nuevos nombres
+- Verificar que la app compila sin errores: `npm run build`
+
+---
+
+## SESIÓN 4 — Paso 3: Landing pages SEO dinámicas
+
+**Leer ANTES de escribir código:**
+
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 3
+
+**Hacer:**
+
+- Crear migración `00032_active_landings.sql` (ya definida en Paso 3)
+- Implementar sistema de landings dinámicas
+- Normalizar marca y ubicación
+
+---
+
+## SESIÓN 5 — Paso 4: Routing + rutas editoriales
+
+**Leer ANTES de escribir código:**
+
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 4
+2. `docs/tracciona-docs/anexos/P-contenido-editorial.md` — Secciones P.1 (URLs) y P.3 (estructura)
+
+**Hacer:**
+
+- Actualizar routing para multi-vertical
+- Crear rutas editoriales (SIN `/comunicacion/` — decisión SEO del 17 Feb):
+  - `pages/guia/index.vue` → Índice de guías (/guia) — solo contenido evergreen
+  - `pages/guia/[slug].vue` → Guía individual (/guia/normativa-adr-cisternas)
+  - `pages/noticias/index.vue` → Índice de noticias (/noticias) — solo temporal relevante
+  - `pages/noticias/[slug].vue` → Noticia individual (/noticias/nuevo-reglamento-adr-2027)
+  - NOTA: Normativa y comparativas van en `/guia/` (son evergreen). No crear subsecciones separadas.
+  - NOTA: Noticias temporales de eventos van a LinkedIn/WhatsApp, NO a /noticias/. Solo publicar en /noticias/ si tiene valor SEO a 3+ meses.
+- Páginas placeholder con "Próximamente" es aceptable inicialmente
+
+---
+
+## SESIÓN 6 — Paso 5: Verificación
+
+**Leer:**
+
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 5
+
+**Hacer:**
+
+- Ejecutar TODAS las verificaciones del checklist
+- Confirmar que la BD, el frontend, el routing y las landings funcionan
+
+---
+
+## SESIÓN 7 — Paso 6: Mejoras pre-lanzamiento (ítems 1-10)
+
+**Leer:**
+
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 6, ítems 6.1 a 6.10
+
+**Hacer:**
+
+- Implementar las mejoras 6.1 a 6.10 (seguridad, SEO, cache, schema, sitemap)
+
+---
+
+## SESIÓN 8 — Paso 6: Mejoras pre-lanzamiento (ítems 11-20)
+
+**Leer:**
+
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 6, ítems 6.11 a 6.20
+2. `docs/tracciona-docs/anexos/R-marco-legal.md` — Para disclaimers
+
+**Hacer:**
+
+- Implementar las mejoras 6.11 a 6.20 (textos, PDFs, disclaimers, errores, filtros)
+- Crear componentes DisclaimerFooter.vue y DisclaimerBadge.vue
+- Crear páginas /legal, /privacidad, /cookies, /condiciones (placeholder OK)
+
+---
+
+## SESIÓN 9 — Panel admin: Configuración de vertical
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Completo
+
+**Hacer:**
+
+- Páginas de admin:
+  - `/admin/config/branding` (W.6.1)
+  - `/admin/config/navigation` (W.6.2)
+  - `/admin/config/homepage` (W.6.3)
+  - `/admin/config/catalog` (W.6.4) — CRUD categorías, subcategorías, atributos
+  - `/admin/config/languages` (W.6.5) — checkboxes idiomas, estado traducciones
+  - `/admin/config/pricing` (W.6.6)
+  - `/admin/config/integrations` (W.6.7)
+  - `/admin/config/emails` (W.6.8)
+  - `/admin/config/editorial` (W.6.9)
+  - `/admin/config/system` (W.6.10)
+
+---
+
+## SESIÓN 10 — Portal dealer personalizable
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Secciones W.4, W.5, W.7
+2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md` — Para contexto
+
+**Hacer:**
+
+- Composable `useDealerTheme.ts` (W.5)
+- Página `/admin/dealer/config` con toda la UI de W.7
+- Portal público del dealer: se resuelve por catch-all `[...slug].vue` → URL `tracciona.com/{dealer-slug}` (sin prefijo `/dealer/`)
+- Vista previa del portal del dealer
+
+---
+
+## SESIÓN 11 — Sistema editorial + SEO Score
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/P-contenido-editorial.md`
+2. `docs/tracciona-docs/anexos/U-publicacion-programada-calendario.md`
+
+**Hacer:**
+
+- Editor de artículos en admin con todos los campos (título JSONB, contenido, FAQ schema, excerpt, social_post_text)
+- SEO Score Potenciador: **REUTILIZAR** `composables/admin/useSeoScore.ts` existente (Bloque D-TER). Ampliar con 15+ checks, panel lateral en editor — Anexo U.6
+- Sistema de comentarios en artículos: **REUTILIZAR** placeholder `admin/comentarios.vue` existente. Crear tabla `comments` (article_id, user_id, content, status 'pending'|'approved'|'spam', created_at). Moderación en `/admin/comentarios`
+- Cron de auto-publish (cada 15 min) — Anexo U.2
+- Vista de artículos programados en admin
+- Schema JSON-LD para artículos y FAQ
+
+---
+
+## SESIÓN 12 — Sistema de traducción
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/T-internacionalizacion-i18n.md` — Sección T.7
+
+**Hacer:**
+
+- Dashboard de traducciones en `/admin/config/languages` (barra de progreso por idioma, cola pendientes)
+- Botón "Traducir todo ahora" que lanza traducción manual (fase lanzamiento: Claude Code)
+- Marcar fichas como `pending_translations=true` cuando se publican
+- Implementar fallback chain en las páginas de detalle (fetchTranslation con fallback)
+
+---
+
+---
+
+# POST-LANZAMIENTO (ejecutar después de completar sesiones 1-12)
+
+> Las siguientes sesiones implementan funcionalidades que NO son necesarias para el lanzamiento. Solo ejecutar cuando las sesiones 1-12 estén completas y el sitio esté en producción.
+
+---
+
+## SESIÓN 13 — Deuda técnica diferida
+
+**Leer:**
+
+1. `docs/tracciona-docs/migracion/02-deuda-tecnica-diferida.md`
+
+**Hacer:**
+
+- Los 5 ítems de deuda técnica (Nominatim fallback, refactor stores, etc.)
+
+### Deuda heredada de Tank Ibérica (Bloque D-QUINQUIES)
+
+Estos ítems estaban pendientes en el proyecto original (docs/progreso.md Step 2.5, 2.17, Steps 3-6 completos) y aplican a Tracciona:
+
+**1. Auditoría mobile-first retroactiva (sesiones 1-12):**
+
+- Recorrer TODAS las páginas y componentes creados en sesiones 1-12
+- Verificar en 360px: touch targets ≥44px, sin overflow horizontal, formularios usables
+- Corregir modales que no sean bottom sheet en móvil: AuthModal, FilterBar, AdvertiseModal, DemandModal, SubscribeModal
+- Patrón bottom sheet: `position: fixed; bottom: 0; border-radius: 16px 16px 0 0; max-height: 85vh; overflow-y: auto;` en `<768px`
+- Verificar que `<NuxtPage keepalive>` preserva scroll y filtros al navegar entre catálogo y fichas
+
+**2. Chat con Supabase Realtime:**
+
+- El `useUserChat` actual usa refresco manual (herencia del chat original de Tank Ibérica)
+- Migrar a Supabase Realtime: `supabase.channel('chat').on('postgres_changes', ...)` para mensajes instantáneos
+- Aplicar tanto al chat usuario→admin como al chat dealer→usuario (leads)
+
+**3. Migración de usuarios existentes de Tank Ibérica:**
+
+- Tank Ibérica tiene usuarios registrados con contraseñas SHA-256 sin salt (en Google Sheets, ya migrados a Supabase)
+- Estrategia: marcar todos como `password_reset_required = true`
+- Al primer login, forzar flujo de "Recuperar contraseña" → nuevo password con bcrypt
+- Script SQL: `UPDATE auth.users SET raw_user_meta_data = jsonb_set(raw_user_meta_data, '{force_password_reset}', 'true') WHERE migrated_from = 'tank-iberica';`
+- En AuthModal: detectar `force_password_reset` y redirigir a cambio de contraseña
+
+**4. Cloudinary provider para @nuxt/image:**
+
+- El módulo `@nuxt/image` está en nuxt.config.ts pero verificar que el provider Cloudinary esté configurado con transformaciones automáticas
+- Configurar: `image: { cloudinary: { baseURL: 'https://res.cloudinary.com/CLOUD_NAME/image/upload/' } }`
+- Verificar que `<NuxtImg>` genera WebP automático, lazy loading, y srcset responsive
+
+**5. Design system (tokens.css):**
+
+- Tank Ibérica tenía `DESIGN_SYSTEM.md` con paleta completa, tipografía, espaciado, breakpoints
+- Tracciona hace rebranding pero los tokens son útiles como estructura:
+  - Verificar que `assets/css/tokens.css` tiene variables CSS para: colores primario/secundario/acento, tipografía (Inter), spacing (escala 4px), breakpoints mobile-first, touch targets 44px
+  - Si no existe o está incompleto, crear basándose en el DESIGN_SYSTEM.md original pero con colores Tracciona
+  - Reset global: box-sizing border-box, font-size 18px base, line-height 1.6
+
+**6. Crear CLAUDE.md + .claude/commands/ + .claude/skills/ (Regla 8):**
+
+- Si no se han creado aún, esta sesión es el momento de hacerlo
+- Ver detalle en Regla 8 de las reglas obligatorias
+
+---
+
+## SESIÓN 14 — Post-lanzamiento Fase 1: Primeras semanas
+
+**Leer:**
+
+1. `docs/tracciona-docs/migracion/03-roadmap-post-lanzamiento.md` — Sección PASO 7
+2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md`
+3. `docs/tracciona-docs/anexos/E-sistema-pro.md`
+
+**Hacer:**
+
+- Dealer Toolkit básico (homepage dealer, QR dinámico, tarjetas PDF)
+- Sistema de suscripciones (Free/Basic/Premium/Founding)
+- Widget de WhatsApp publishing (si aplica)
+
+---
+
+## SESIÓN 15 — Verificación de vehículos, API DGT y Km Score
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/G-verificacion-carfax.md` — Completo
+2. `docs/tracciona-docs/anexos/R-marco-legal.md` — Sección R.1 (disclaimers de verificación)
+
+**Hacer:**
+
+### UI del dealer para subir documentos de verificación
+
+- En `/dashboard/vehiculos/[id].vue` (edición de vehículo):
+  - Sección "Documentación y verificación" con lista de documentos según el nivel objetivo
+  - Upload de documentos a Cloudinary (PDF/imagen)
+  - Cada documento tiene: tipo, archivo, estado (pending/approved/rejected)
+  - Mostrar nivel actual y qué falta para subir al siguiente nivel
+  - Barra de progreso visual: ✓ → ✓✓ → ✓✓✓ → ★ → 🛡
+
+### UI del admin para gestionar verificaciones
+
+- Página `/admin/verificaciones` con cola de documentos pendientes de revisión
+- Filtrar por estado, dealer, tipo de documento
+- Vista detalle: foto del documento + datos declarados del vehículo al lado
+- Botones: Aprobar / Rechazar (con motivo)
+- Al aprobar todos los docs de un nivel → auto-actualizar `vehicles.verification_level`
+
+### Análisis automático con Claude Vision (niveles ✓ automático)
+
+- Edge Function `/api/verify-document`
+- Recibe: imagen del documento + datos declarados del vehículo
+- Claude Vision extrae: marca, modelo, matrícula, km, MMA, ejes
+- Compara con datos declarados en el anuncio
+- Si coinciden → auto-approve (nivel ✓ sin intervención humana)
+- Si hay discrepancia → flag para revisión manual del admin
+- Composable `useVehicleVerification.ts` reutilizable para todos los verticales
+
+### Integración API DGT/InfoCar (nivel ★ Auditado)
+
+- Server route `/server/api/dgt-report.post.ts`
+- Proveedor recomendado: InfoCar (API REST, datos DGT directos, 2-4€/consulta)
+- Alternativa manual: consulta sede electrónica DGT con certificado digital (si <20 informes/mes)
+- Flujo: comprador/vendedor paga (Stripe one-time) → API consulta → Claude analiza → PDF generado
+- Datos obtenidos: primera matriculación, titulares, historial ITVs con km, cargas/embargos, seguro
+- Guardar informe en `verification_documents` + actualizar `verification_level` a 'audited'
+- **Patrón adaptable:** Server route acepta parámetro `provider` para poder cambiar de InfoCar a Carvertical u otro sin tocar el frontend
+
+### Km Score (algoritmo + visualización)
+
+- Función `analyzeKmReliability(itvHistory)`: analiza progresión de km entre ITVs
+  - Km que bajan → FRAUDE (0-20)
+  - Km suben demasiado rápido → SOSPECHOSO (30-50)
+  - Progresión lineal consistente → FIABLE (80-100)
+- Componente `<KmScoreBadge>` en ficha del vehículo: barra 0-100, label, explicación breve
+- Score gratuito como badge. Informe completo de pago (25-50€)
+- **Adaptable a otros verticales:** `analyzeUsageReliability(history, unit)` donde unit = 'km' | 'hours' | 'cycles'
+
+### Inspección física (🛡 Certificado)
+
+- Formulario de solicitud de inspección (comprador o vendedor)
+- Pago vía Stripe (200-500€ según vertical/tipo)
+- Admin recibe notificación → coordina con mecánico inspector
+- Checklist estándar de 30 puntos (configurable por vertical en admin)
+- Claude genera informe PDF desde checklist + fotos del inspector
+- Guardar en `verification_documents` + actualizar nivel
+
+### Disclaimers automáticos
+
+- Componente `<VerificationDisclaimer>` que se muestra junto a cada badge
+- Textos del Anexo R.1 integrados
+
+---
+
+## SESIÓN 16 — Subastas online
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/H-subastas.md` — Completo
+2. `docs/tracciona-docs/anexos/E-sistema-pro.md` — Sección E.5 (alertas Pro para subastas)
+
+**Hacer:**
+
+### Tablas SQL
+
+- Crear tabla `auctions` completa del Anexo H.3 (vertical, vehicle_id, starting_price, reserve_price, bid_increment, buyers_premium_pct, deposit, starts_at, ends_at, anti_snipe_seconds, extended_until, status, winner_id)
+- Crear tabla `bids` (auction_id, user_id, amount_cents, created_at)
+- Crear tabla `auction_registrations` del Anexo H.2 (user_id, auction_id, id_type, id_number, id_document_url, deposit via Stripe PaymentIntent manual capture)
+- RLS: subastas públicas de lectura, pujas solo propietario lee, admin todo
+- Trigger `validate_bid()` del Anexo H.3: valida que subasta está live, usuario registrado con depósito, puja > actual + incremento, anti-sniping
+- Añadir a vehicles: `auto_auction_after_days INT`, `auto_auction_starting_pct DECIMAL`
+
+### Páginas públicas
+
+- `/subastas` — Listado de subastas: programadas, en vivo, finalizadas
+- `/subastas/[id]` — Detalle de subasta con componente `<AuctionBidPanel>`
+  - Countdown en tiempo real (cada segundo)
+  - Puja actual, total pujas, pujadores
+  - Historial de pujas (Supabase Realtime: INSERT en bids)
+  - Extensión anti-sniping visual
+  - Botón "Regístrate para pujar" si no registrado
+  - Botones de puja rápida (mínima, +500€, +1000€)
+  - Buyer's premium visible: "Precio final = puja + 8%"
+  - Usuario no registrado ve panel en modo lectura
+
+### Registro de pujador
+
+- Formulario: DNI/CIF + foto documento + datos fiscales
+- Depósito vía Stripe PaymentIntent con `capture_method: 'manual'` (retiene sin cobrar)
+- Admin aprueba o auto-aprobación si DNI ya verificado
+- Post-subasta: ganador → capture, perdedores → cancel
+
+### Admin
+
+- `/admin/subastas` — CRUD de subastas (crear, editar, cancelar, adjudicar)
+- `/admin/subastas/[id]` — Detalle con lista de registrados, pujas, adjudicar manualmente si reserve no alcanzado
+
+### Flujo automático marketplace → subasta
+
+- Cron diario: vehículos con `auto_auction_after_days` expirado → crear subasta automáticamente
+- Notificar al vendedor + suscriptores Pro con demandas que matcheen
+
+### Disclaimers de subasta
+
+- Texto del Anexo R.1 ("los vehículos se venden tal cual")
+- Buyer's premium no reembolsable
+- Puja = compromiso vinculante
+
+---
+
+## SESIÓN 16b — Publicidad + AdSense + Sistema Pro 24h + Google Ads
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/F-publicidad-directa.md` — Completo
+2. `docs/tracciona-docs/anexos/J-adsense-google-ads.md` — Completo
+3. `docs/tracciona-docs/anexos/E-sistema-pro.md` — Secciones E.2 y E.4 (visible_from + UX conversión)
+
+**Hacer:**
+
+---
+
+### 1. TABLA DE ANUNCIANTES Y ANUNCIOS
+
+```sql
+CREATE TABLE advertisers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vertical VARCHAR NOT NULL DEFAULT 'tracciona',
+  company_name TEXT NOT NULL,
+  contact_name TEXT,
+  contact_email TEXT,
+  contact_phone TEXT,
+  logo_url TEXT,              -- Logo del anunciante (Cloudinary)
+  website TEXT,
+  tax_id VARCHAR,             -- CIF/NIF
+  billing_address TEXT,
+  status VARCHAR DEFAULT 'active',
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE ads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  advertiser_id UUID NOT NULL REFERENCES advertisers(id),
+  vertical VARCHAR NOT NULL DEFAULT 'tracciona',
+  -- Contenido del anuncio
+  title TEXT,                 -- "Taller García - Reparación de cisternas"
+  description TEXT,           -- 1-2 líneas
+  image_url TEXT,             -- Banner/imagen (Cloudinary)
+  logo_url TEXT,              -- Si NULL, hereda de advertisers.logo_url
+  link_url TEXT NOT NULL,
+  phone TEXT,                 -- Teléfono visible en el anuncio (opcional)
+  email TEXT,                 -- Email visible en el anuncio (opcional)
+  cta_text VARCHAR DEFAULT 'Más info',
+  -- Segmentación geográfica multinivel
+  countries TEXT[] DEFAULT '{ES}',    -- '{ES}', '{ES,PT}', '{all}'
+  regions TEXT[] DEFAULT '{}',        -- CCAA: '{aragon,cataluna}' o vacío=todas
+  provinces TEXT[] DEFAULT '{}',      -- '{zaragoza,huesca}' o vacío=todas
+  -- Segmentación por contenido
+  category_slugs TEXT[] DEFAULT '{}', -- '{cisternas,semirremolques}' o vacío=todas
+  action_slugs TEXT[] DEFAULT '{}',   -- '{venta,alquiler}' o vacío=todas
+  -- Posiciones
+  positions TEXT[] NOT NULL,          -- ver mapa de 10 posiciones abajo
+  format VARCHAR DEFAULT 'card',      -- 'card'|'banner'|'text'|'logo_strip'
+  -- Contrato
+  price_monthly_cents INT NOT NULL,
+  starts_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  ends_at TIMESTAMPTZ,
+  -- Canales extra
+  include_in_pdf BOOLEAN DEFAULT false,
+  include_in_email BOOLEAN DEFAULT false,
+  -- Estado
+  status VARCHAR DEFAULT 'active',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE ad_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ad_id UUID NOT NULL REFERENCES ads(id),
+  event_type VARCHAR NOT NULL, -- 'impression','click','phone_click','email_click','pdf_impression','email_impression'
+  user_country VARCHAR,
+  user_region VARCHAR,
+  user_province VARCHAR,
+  page_path TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX idx_ads_active ON ads(status, vertical) WHERE status = 'active';
+CREATE INDEX idx_ads_geo ON ads USING GIN(countries, regions, provinces);
+CREATE INDEX idx_ads_positions ON ads USING GIN(positions);
+CREATE INDEX idx_ad_events_ad ON ad_events(ad_id, event_type);
+CREATE INDEX idx_ad_events_date ON ad_events(created_at);
+```
+
+-- Sistema de regiones internacionales (escala a cualquier país)
+CREATE TABLE geo_regions (
+id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+country_code VARCHAR(2) NOT NULL, -- 'ES', 'PT', 'FR', 'DE', 'UK', etc.
+region_level VARCHAR NOT NULL, -- 'country', 'region', 'province' (o equivalente local)
+region_slug VARCHAR NOT NULL, -- 'aragon', 'ile_de_france', 'bayern'
+region_name JSONB NOT NULL, -- {"es": "Aragón", "en": "Aragon", "fr": "Aragon"}
+parent_slug VARCHAR, -- NULL para país, 'aragon' para provincia de Aragón
+postal_code_pattern VARCHAR, -- '50\_\_\_' para Zaragoza (para matching por CP)
+latitude DECIMAL(9,6),
+longitude DECIMAL(9,6),
+sort_order INT DEFAULT 0,
+UNIQUE(country_code, region_slug)
+);
+
+CREATE INDEX idx_geo_country ON geo_regions(country_code, region_level);
+CREATE INDEX idx_geo_parent ON geo_regions(parent_slug);
+
+-- Seed inicial: España (17 CCAA + 52 provincias)
+-- Cuando se active un nuevo mercado (ej: Francia), añadir:
+-- INSERT INTO geo_regions (country_code, region_level, region_slug, region_name, parent_slug)
+-- VALUES ('FR', 'region', 'ile_de_france', '{"es":"Isla de Francia","en":"Ile-de-France","fr":"Île-de-France"}', NULL),
+-- ('FR', 'province', 'paris', '{"es":"París","en":"Paris","fr":"Paris"}', 'ile_de_france');
+-- Esto habilita automáticamente publicidad geolocalizada en Francia
+-- sin tocar código — solo INSERT de datos.
+
+````
+
+> **NOTA:** Estas tablas (advertisers, ads, ad_events, geo_regions) deben añadirse al Bloque D de la sesión 2 si aún no existen.
+> El sistema geo_regions permite que al activar un nuevo mercado (Francia, Alemania, Portugal...) la publicidad geolocalizada funcione automáticamente: los anunciantes de ese país se segmentan por sus regiones/provincias nativas, y los anuncios se muestran a usuarios de esa zona. No requiere cambio de código, solo insertar las regiones del nuevo país.
+
+### 2. COMPOSABLE useAds.ts — LÓGICA DE MATCHING GEOLOCALIZADA
+
+```typescript
+// useAds(position: string, category?: string, action?: string, vehicleLocation?: string)
+//
+// Determinar geo del usuario (cascada de prioridad):
+//   1. Si se está viendo un vehículo → usar ubicación del vehículo (más relevante para el anunciante)
+//   2. Si el usuario está logueado con ubicación guardada → usar esa
+//   3. Cloudflare headers: CF-IPCountry + CF-IPCity → mapear a región/provincia
+//   4. Fallback: país=ES, región/provincia=vacío (recibe anuncios nacionales)
+//
+// Query: SELECT * FROM ads WHERE status='active'
+//   AND position @> ARRAY[props.position]
+//   AND (countries = '{all}' OR countries @> ARRAY[user_country])
+//   AND (regions = '{}' OR regions @> ARRAY[user_region])
+//   AND (provinces = '{}' OR provinces @> ARRAY[user_province])
+//   AND (category_slugs = '{}' OR category_slugs @> ARRAY[category])
+//   ORDER BY RANDOM() LIMIT maxAds
+//
+// Registrar impresión (INSERT ad_events type='impression')
+// Al clic en link: INSERT type='click' + navegar
+// Al clic en teléfono: INSERT type='phone_click' + tel: link
+// Al clic en email: INSERT type='email_click' + mailto: link
+````
+
+### 3. MAPA COMPLETO DE 10 POSICIONES DE ANUNCIO
+
+```
+POS  NOMBRE              DÓNDE                          FORMATO        MAX  ADENSE FALLBACK
+────────────────────────────────────────────────────────────────────────────────────────────
+ 1   pro_teaser          Catálogo: arriba del todo       banner/CTA     1    NO (es del sistema)
+ 2   catalog_inline      Catálogo: cada 8-10 resultados  card           1    SÍ
+ 3   sidebar             Landings + Artículos: derecha   card           2    SÍ
+ 4   search_top          Catálogo: arriba de resultados  card           1    NO (premium, 300-500€)
+ 5   vehicle_services    Ficha: bajo specs               card           2    NO (premium, 200-400€)
+ 6   dealer_portal       Portal dealer: cada 8 veh.      card           1    SÍ (si dealer no Premium)
+ 7   landing_sidebar     Landing SEO: derecha desktop    banner         2    SÍ
+ 8   article_inline      Artículos: entre párrafos 2-3   banner/text    1    SÍ
+ 9   email_footer        Emails alertas: antes footer    card           1    NO (no AdSense en email)
+10   pdf_footer          PDFs generados: pie página      logo_strip     1    NO (no AdSense en PDF)
+```
+
+**Reglas anti-intrusión:**
+
+- Máximo 2 anuncios visibles simultáneamente en cualquier vista
+- Posición 6 (portal dealer) NO aparece si el dealer tiene plan Premium o Founding
+- Posición 1 (pro_teaser) solo aparece si HAY vehículos ocultos en 24h para esa búsqueda
+- NUNCA anuncios en: botón de contacto, registro/login, formulario de publicación, panel admin, subasta en vivo, checkout/pago
+- En móvil: sidebar (pos 3, 7) se convierte en inline intercalado después del resultado 4
+
+### 4. MOCKUPS POR PÁGINA
+
+**CATÁLOGO PRINCIPAL (`/cisternas`, `/semirremolques`, etc.):**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Filtros [categoría] [precio] [año] [marca] [zona]          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│ POS 4: SEARCH_TOP (anuncio premium arriba de resultados)    │
+│ ┌───────────────────────────────────────────────────────┐ │
+│ │ Patrocinado · [Logo] Financiera ABC                      │ │
+│ │ Financiación de vehículos industriales desde 3,5% TAE    │ │
+│ │ 📞 900 123 456  [Solicitar info →]                       │ │
+│ └───────────────────────────────────────────────────────┘ │
+│                                                             │
+│ POS 1: PRO_TEASER (solo si hay vehículos ocultos en 24h)    │
+│ ┌───────────────────────────────────────────────────────┐ │
+│ │ 🔒 3 vehículos nuevos coinciden con tu búsqueda         │ │
+│ │ Los suscriptores Pro ya los están viendo              │ │
+│ │ [Hazte Pro — 29€/mes]  [Pase 72h — 9,99€]            │ │
+│ └───────────────────────────────────────────────────────┘ │
+│                                                             │
+│ [Vehículo 1] [Vehículo 2] [Vehículo 3] [Vehículo 4]       │
+│ [Vehículo 5] [Vehículo 6] [Vehículo 7] [Vehículo 8]       │
+│                                                             │
+│ POS 2: CATALOG_INLINE (cada 8-10 resultados)               │
+│ ┌───────────────────────────────────────────────────────┐ │
+│ │ Patrocinado · [Logo] Taller García                     │ │
+│ │ Reparación de cisternas en Zaragoza                   │ │
+│ │ 📞 976 123 456  ·  [Ver más →]                        │ │
+│ └───────────────────────────────────────────────────────┘ │
+│                                                             │
+│ [Vehículo 9] ... [Vehículo 16]                               │
+│                                                             │
+│ POS 3: SIDEBAR (desktop derecha, móvil=inline tras item 4)  │
+│ Máx 2 anuncios: logo + nombre + 1 línea + teléfono         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**FICHA DE VEHÍCULO (`/vehiculo/[slug]`):**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ [Galería de fotos]                                          │
+│ Cisterna Indox Alimentaria 3 ejes 2019                     │
+│ 42.000€ · Zaragoza · ✓✓ Verificado                          │
+│                                                             │
+│ [Especificaciones técnicas]                                 │
+│                                                             │
+│ ┌─ TARJETA DEL DEALER (NO es anuncio, es nativo) ────────┐  │
+│ │ [Logo] Transportes García  🏅 Founding Dealer           │  │
+│ │ [📞 Llamar]  [💬 WhatsApp]  [✉️ Contactar]             │  │
+│ └───────────────────────────────────────────────────────┘  │
+│                                                             │
+│ 🚛 Transporte puerta a puerta (componente, no anuncio)      │
+│ [Calcular transporte a tu zona]                             │
+│                                                             │
+│ POS 5: VEHICLE_SERVICES (anuncios premium geolocalizados)   │
+│ ┌───────────────────────────────────────────────────────┐ │
+│ │ Servicios recomendados en Aragón                        │ │
+│ │ [Logo] Seguros Martínez     [Logo] Taller ITV Plus     │ │
+│ │ Seguros industriales       ITV + reparación            │ │
+│ │ 📞 976 111 222              📞 976 333 444              │ │
+│ │ Patrocinado                Patrocinado                │ │
+│ └───────────────────────────────────────────────────────┘ │
+│                                                             │
+│ [Descripción] ... [Km Score] ... [Vehículos similares]      │
+│ 👥 3 personas han contactado · 12 en favoritos              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**PORTAL DEALER (`tracciona.com/{dealer-slug}` vía catch-all):**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ [Cover + Logo] Transportes García  🏅 Founding Dealer       │
+│ [V1] [V2] [V3] [V4] [V5] [V6] [V7] [V8]                  │
+│                                                             │
+│ POS 6: DEALER_PORTAL_INLINE (después de 8 vehículos)       │
+│ Solo 1 anuncio. NO si el dealer es Premium/Founding.        │
+│ Geo = ubicación del dealer (no del visitante)               │
+│ ┌───────────────────────────────────────────────────────┐ │
+│ │ Patrocinado · [Logo] Neumáticos Europa                  │ │
+│ │ Neumáticos para cisternas y remolques                  │ │
+│ │ 📞 976 555 666  ·  [Ver más →]                        │ │
+│ └───────────────────────────────────────────────────────┘ │
+│                                                             │
+│ [V9] [V10] ... más vehículos                                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**EMAILS ALERTA (sesión 18):**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Nuevos vehículos que coinciden con tu búsqueda:             │
+│ [Vehículo 1] [Vehículo 2] [Vehículo 3]                     │
+│                                                             │
+│ POS 9: EMAIL_FOOTER (antes del footer, 1 anuncio)           │
+│ ┌───────────────────────────────────────────────────────┐ │
+│ │ [Logo] Neumáticos Europa — Zaragoza                    │ │
+│ │ Neumáticos para cisternas · neumaticoseuropa.es        │ │
+│ │ 📞 976 555 666                                          │ │
+│ └───────────────────────────────────────────────────────┘ │
+│ La geo para el email = ubicación del usuario destinatario   │
+│ [Footer: desactivar alerta | preferencias]                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**PDFs GENERADOS (sesión 31: factura, presupuesto, catálogo, ficha):**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ [PDF ficha/catálogo/presupuesto]                             │
+│ Fotos + Specs + Precio + QR + Datos dealer                  │
+│                                                             │
+│ POS 10: PDF_FOOTER (pie de página, 1 anuncio logo_strip)    │
+│ ┌───────────────────────────────────────────────────────┐ │
+│ │ Partner: [Logo] Taller ITV Plus — Zaragoza — 976 333 444│ │
+│ └───────────────────────────────────────────────────────┘ │
+│ Geo del PDF = ubicación del vehículo (siempre conocida)      │
+│ Si el usuario está logueado, usar también su ubicación      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 5. SISTEMA PRO 24h EN EL CATÁLOGO (del Anexo E)
+
+Implementar `visible_from` en vehicles y la lógica de filtrado:
+
+- Al publicar vehículo: `visible_from = NOW() + INTERVAL '24 hours'`
+- Query catálogo público (usuario gratuito/anónimo):
+  - `WHERE status='published' AND visible_from <= NOW()`
+- Query catálogo Pro (usuario con suscripción activa):
+  - `WHERE status='published'` (sin filtro visible_from)
+- Sitemap: NO incluir vehículos en periodo exclusivo Pro (Google no debe indexar antes)
+
+**Componente `<ProTeaser>` (posición 1):**
+
+- Query: contar vehículos con `visible_from > NOW()` que matcheen los filtros actuales del catálogo
+- Si count > 0 y usuario NO es Pro:
+  ```
+  ┌───────────────────────────────────────────────────────┐
+  │ 🔒 {count} vehículos nuevos coinciden con tu búsqueda  │
+  │ Los suscriptores Pro ya los están viendo              │
+  │ [Hazte Pro — 29€/mes]  [Pase 72h — 9,99€]            │
+  └───────────────────────────────────────────────────────┘
+  ```
+- El count es REAL, no fake. Si no hay vehículos ocultos, no se muestra nada.
+- El count se filtra según los filtros activos del catálogo (categoría, precio, zona, marca). Ejemplo: si el usuario filtró "cisternas alimentarias en Aragón < 50.000€" y hay 2 cisternas alimentarias en Aragón < 50.000€ publicadas hace 12h, dice "2 vehículos".
+
+**Si el usuario llega por URL directa a un vehículo en periodo exclusivo:**
+
+- No mostrar la ficha
+- Mostrar:
+  ```
+  Este vehículo estará disponible en {horas}h
+  Los suscriptores Pro ya pueden verlo
+  [Ver ahora con Pase 72h — 9,99€]  [Suscribirme a Pro — 29€/mes]
+  ```
+- Si el usuario es Pro → mostrar la ficha normalmente
+
+### 6. COMPONENTES
+
+**`<AdSlot>` — Anuncio directo:**
+
+- Props: position, category, action, vehicleLocation, maxAds (default 1)
+- Usa useAds.ts para obtener anuncios geolocalizados
+- Renderiza según format: card (logo+title+desc+phone+CTA), banner (solo imagen), text (texto+link), logo_strip (logo pequeño+nombre+tel)
+- Badge "Patrocinado" siempre visible
+- Registra eventos (impression, click, phone_click, email_click)
+
+**`<AdSenseSlot>` — Con fallback:**
+
+- Props: position, category, format ('horizontal'|'vertical'|'rectangle'|'in-feed')
+- Lógica:
+  1. Llamar useAds() para esa posición
+  2. Si hay anuncio directo → renderizar `<AdSlot>` (prioridad SIEMPRE)
+  3. Si NO hay → renderizar bloque AdSense
+- Lazy loading con IntersectionObserver (cargar AdSense solo cuando entra en viewport)
+- AdSense NO en posiciones 1, 4, 5, 9, 10 (ver tabla de posiciones)
+
+**`<ProTeaser>` — Banner Pro 24h:**
+
+- Props: filters (los filtros activos del catálogo)
+- Query: COUNT vehicles WHERE visible_from > NOW() AND matchean filtros
+- Si count > 0 y usuario no Pro → mostrar banner
+- Si count = 0 o usuario Pro → no renderizar nada
+
+### 7. ADMIN DE PUBLICIDAD
+
+`/admin/publicidad`:
+
+- **Anunciantes:** CRUD con logo, datos contacto, datos fiscales
+- **Anuncios:** CRUD con preview de cómo se verá el anuncio en cada posición
+  - Mapa visual para configurar geo: seleccionar país → regiones → provincias
+  - Selector múltiple de posiciones con preview
+  - Selector de categorías
+  - Toggle include_in_pdf / include_in_email
+- **Dashboard:** Impresiones y clics por anunciante, por posición, por región
+  - Gráfico de rendimiento temporal
+  - CTR por posición (para pitch comercial: "tu anuncio en fichas de cisternas tiene 4,2% CTR")
+  - Exportar informe mensual PDF por anunciante (para enviar como justificación de pago)
+
+### 8. LÓGICA GEO PARA PDFs Y EMAILS
+
+**Para PDFs (posición 10):**
+
+- Server route de generación de PDF recibe `vehicleId` + opcionalmente `userId`
+- Geo primaria = ubicación del vehículo (siempre disponible)
+- Geo secundaria = ubicación del usuario (si logueado)
+- Query ads WHERE include_in_pdf=true AND geo matches
+- Si hay match → añadir al pie del PDF: logo + nombre + teléfono + web
+- Si no hay match → pie genérico de Tracciona
+- Registrar ad_event type='pdf_impression'
+
+**Para emails (posición 9):**
+
+- La Edge Function de envío de emails (sesión 18) recibe `userId`
+- Geo = ubicación del usuario destinatario
+- Query ads WHERE include_in_email=true AND geo matches
+- Insertar bloque HTML del anuncio antes del footer del email
+- Registrar ad_event type='email_impression'
+- El link del anuncio en email lleva UTM: `?utm_source=email&utm_medium=alert&utm_campaign=ad_{ad_id}`
+
+### 9. GOOGLE ADS + TRACKING
+
+- Instalar pixel Google Ads (gtag) en nuxt.config.ts
+- Configurar conversiones:
+  - `contact_dealer` → usuario contacta por teléfono/WhatsApp/formulario
+  - `request_transport` → solicita transporte
+  - `register` → se registra
+  - `subscribe_pro` → se suscribe a Pro
+  - `bid` → puja en subasta
+- Eventos gtag: view_item, search, generate_lead, begin_checkout
+- Audiencias de remarketing: visitors que vieron fichas sin contactar, visitors de subastas que no pujaron
+
+### 10. GOOGLE MERCHANT CENTER
+
+- Server route `/server/api/merchant-feed.get.ts` → feed XML
+- Campos: title, description, link, image_link, price, availability, condition='used'
+- Solo vehículos con visible_from <= NOW() (no incluir los que están en 24h Pro)
+- Registrar en Google Merchant Center para listados gratuitos en Shopping
+
+---
+
+## SESIÓN 16c — Transporte, flujo post-venta y frescura del catálogo
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/G-BIS-transporte.md` — Completo
+2. `docs/tracciona-docs/anexos/L-flujo-post-venta.md` — Completo
+
+**Hacer:**
+
+### Calculadora de transporte (Anexo G-BIS)
+
+- Tabla `transport_zones` (vertical, zone_name, zone_slug, price_cents, regions[])
+- Seed con zonas de Tracciona: local, norte, centro, sur, Portugal, Francia sur
+- Tabla `transport_requests` (vehicle_id, buyer_id, origin_zone, destination_zone, destination_postal_code, price_cents, status 'requested'|'confirmed'|'completed'|'cancelled', created_at)
+- Componente `<TransportCalculator>` en ficha de vehículo:
+  - Obtiene ubicación del vehículo (ya en vehicle.location)
+  - Input: "Tu código postal" (o auto-detect con useUserLocation)
+  - Calcula zona destino → muestra precio cerrado
+  - Botón "Solicitar transporte" → INSERT en transport_requests + notificar admin
+- Admin: vista de transport_requests en panel
+- Configurable por vertical en admin (zonas y precios editables)
+
+### Flujo post-venta (Anexo L)
+
+- Botón "Marcar como vendido" en `/dashboard/vehiculos`:
+  - Pantalla de felicitación: "🎉 ¡Enhorabuena!"
+  - Pregunta: "¿Se vendió a través de Tracciona?" (para métricas)
+  - Cross-sell de servicios con un solo clic:
+    - 🚛 Transporte (precio cerrado según zona)
+    - 📄 Gestión transferencia (250€)
+    - 🛡 Seguro (presupuesto en 24h)
+    - 📋 Contrato de compraventa (GRATIS, genera desde sesión 31)
+  - Sugerencia: "¿Tienes otro vehículo para publicar?"
+- Email automático al comprador (si hay lead vinculado) con servicios post-venta
+- Enlace compartible `/servicios-postventa?v=[slug]` para que el dealer envíe por WhatsApp
+
+### Frescura del catálogo (Anexo L)
+
+- Cron cada 30 días: para vehículos publicados sin edición:
+  - WhatsApp/email al dealer: "¿Tu [vehículo] sigue disponible?"
+  - Si responde SÍ → `updated_at = NOW()` (renueva frescura SEO)
+  - Si responde NO → `status = 'sold'` + trigger flujo post-venta
+  - Sin respuesta en 7 días → segundo aviso
+  - Sin respuesta en 14 días → `status = 'paused'`
+- Auto-despublicación: vehículos >90 días sin actualizar → `status = 'expired'`
+  - Notificar: "Lo hemos pausado. [Renovar] [Marcar vendido] [Pasar a subasta]"
+
+### Servicios de partners (derivación)
+
+- Tabla `service_requests` (type 'transfer'|'insurance'|'inspection'|'transport', vehicle_id, user_id, status, partner_notified_at)
+- Al solicitar servicio → notificar al partner correspondiente (email)
+- Comisión por derivación: seguros 15-25%, transferencias fijo 50-80€
+- Admin: vista de service_requests
+
+---
+
+## SESIÓN 16d — Automatización: scraping captación + auto-publicación redes sociales
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/I-automatizacion-ia.md` — Secciones I.2 y I.3
+
+**Hacer:**
+
+### Scraping de competidores para captación (Anexo I.2)
+
+- Script `/scripts/scrape-competitors.ts` (ejecutar manualmente o cron semanal)
+- Scrapear: Mascus.es, Europa-Camiones.com, Milanuncios (cat. vehículos industriales), Autoline.es
+- Para cada vendedor profesional detectado con >5 anuncios: extraer nombre, teléfono, email, ubicación, nº anuncios, tipos de vehículos
+- Tabla `dealer_leads` del Anexo I.2 (source, company_name, phone, email, status 'new'→'contacted'→'interested'→'onboarding'→'active'→'rejected')
+- Admin: `/admin/captacion` con lista de leads, asignar a persona, registrar notas de llamada
+- Deduplicación por nombre + fuente
+- **Nota legal:** Scraping de datos públicos está permitido en la UE (CJEU C-30/14). No scrapear datos personales sin legitimidad.
+
+### Auto-publicación en redes sociales (Anexo I.3)
+
+- Tabla `social_posts` del Anexo I.3 (vehicle_id, platform 'linkedin'|'facebook'|'instagram', content, image_url, status 'pending'|'approved'|'published', published_at)
+- Trigger post-INSERT en vehicles (status='published'):
+  1. Claude Haiku genera texto adaptado a cada plataforma
+  2. Selecciona mejor foto
+  3. INSERT en social_posts con status='pending'
+- Admin: `/admin/social` con cola de posts pendientes. Botón aprobar/editar/rechazar
+- Al aprobar: publicar vía API de cada plataforma
+  - **LinkedIn:** POST api.linkedin.com/v2/ugcPosts (OAuth2 de empresa)
+  - **Facebook:** POST graph.facebook.com/v18.0/{page_id}/feed (Page token)
+  - **Instagram:** vía Facebook Graph API (requiere cuenta business)
+- Composable `useSocialPublisher.ts` con método `publish(platform, content, imageUrl)`
+- **Patrón adaptable:** Cada plataforma tiene un adapter. Añadir nueva plataforma = crear nuevo adapter sin tocar el resto.
+- Configuración de OAuth tokens en `vertical_config.social_tokens` (JSONB)
+
+---
+
+## SESIÓN 17 — Pasarela de pago (Stripe)
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/E-sistema-pro.md` — Tiers de suscripción
+2. `docs/tracciona-docs/anexos/D-monetizacion.md` — 16 fuentes de ingreso
+3. `docs/tracciona-docs/anexos/H-subastas.md` — Buyer premium y depósitos
+
+**Hacer:**
+
+- Instalar `stripe` y `@stripe/stripe-js`
+- **NO crear tabla `subscriptions`** — ya creada en sesión 2 Bloque D (definición canónica en Anexo E.2: user_id, vertical, plan, status, price_cents, started_at, expires_at, stripe_subscription_id, stripe_customer_id). Solo verificar que existe y añadir `stripe_customer_id` si no está.
+- Crear tabla `payments` (id, user_id, vertical, type, amount_cents, stripe_payment_intent_id, status, created_at)
+- Implementar Stripe Checkout para suscripciones dealer (Free→Basic→Premium)
+- Implementar webhook `/api/stripe/webhook` para:
+  - `checkout.session.completed` → activar suscripción
+  - `invoice.payment_succeeded` → renovar
+  - `invoice.payment_failed` → notificar + grace period
+  - `customer.subscription.deleted` → downgrade a Free
+- Página `/precios` con comparativa de planes y botón "Suscribirse"
+- En admin dealer: ver estado de suscripción, facturas, cambiar plan
+- Para subastas: Stripe Payment Intents para depósitos + cobro buyer premium
+- Comisiones por verificación: cobro puntual via Stripe
+- **Stripe Connect** (para comisión de intermediación 3-5% del Anexo D):
+  - Modo "destination charges" (el más simple para marketplace)
+  - Server route `/server/api/stripe-connect-onboard.post.ts`: crea connected account para dealer
+  - Tabla `dealer_stripe_accounts` (dealer_id, stripe_account_id, onboarding_completed, charges_enabled)
+  - Cuando hay venta intermediada: cobrar al comprador, retener comisión, transferir resto al dealer
+  - El % de comisión se lee de `vertical_config` (adaptable por vertical)
+  - Dashboard admin: transacciones intermediadas, comisiones cobradas
+- En `/admin/config/pricing`: los precios de vertical_config se sincronizan con Stripe Products
+
+---
+
+## SESIÓN 18 — Sistema completo de emails automáticos
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Sección W.6.8 (templates de email)
+2. `docs/tracciona-docs/anexos/D-monetizacion.md` — Fuentes de ingreso que generan emails
+3. `docs/tracciona-docs/anexos/K-dealer-toolkit.md` — Comunicación dealer
+
+**Hacer:**
+
+### Infraestructura
+
+- Integrar Resend (3.000 emails/mes gratis, buen deliverability, API simple)
+- Crear Edge Function `/api/email/send` que:
+  - Lee el template de `vertical_config.email_templates`
+  - Sustituye variables ({{dealer_name}}, {{vehicle_title}}, {{vertical_name}}, etc.)
+  - Aplica colores del vertical al template HTML (desde vertical_config.theme)
+  - Envía via Resend API
+- Tabla `email_logs` (id, vertical, to, template_key, variables JSONB, status, sent_at, opened_at, clicked_at, error)
+- Tabla `email_preferences` (user_id, email_type, enabled BOOLEAN) — el usuario controla qué recibe
+- Tabla `search_alerts` (id, user_id, name, filters JSONB, frequency, last_sent_at, active)
+
+### Emails para DEALERS (B2B)
+
+1. **Bienvenida** — Al registrarse como dealer. Incluye: link a su portal, guía rápida, contacto soporte
+2. **Nuevo lead recibido** — Cuando un comprador contacta por un vehículo. Incluye: nombre, email, teléfono del interesado, vehículo concreto, link directo
+3. **Vehículo publicado** — Confirmación de que el vehículo está online. Incluye: link a la ficha, SEO score, sugerencias de mejora
+4. **Vehículo vendido** — Cuando se marca como vendido. Incluye: estadísticas (días publicado, visitas, leads recibidos)
+5. **Resumen semanal** — Cron dominical. Incluye: visitas totales, leads nuevos, vehículos más vistos, comparativa con semana anterior
+6. **Resumen mensual** — Cron primer día del mes. Incluye: métricas del mes, posición en ranking de dealers, ROI estimado
+7. **Suscripción activada/renovada** — Confirmación con factura adjunta
+8. **Suscripción por vencer** — 7 días antes de expirar. CTA para renovar
+9. **Pago fallido** — Intento de cobro falló. Link para actualizar tarjeta. Grace period de 7 días
+10. **Suscripción cancelada** — Confirmación + lo que pierden al bajar a Free
+11. **Verificación completada** — Informe listo. Link para ver/descargar
+12. **Subasta: registro confirmado** — Depósito recibido, detalles de la subasta
+13. **Subasta: comienza en 24h** — Recordatorio con link directo
+14. **Subasta: finalizada** — Resultado (vendido/no vendido), precio final, siguiente paso
+15. **Nuevo artículo publicado en tu sector** — Cuando se publica contenido editorial relevante para el dealer
+
+### Emails para COMPRADORES (B2B/B2C)
+
+16. **Bienvenida** — Al registrarse. Incluye: cómo buscar, cómo guardar favoritos, cómo activar alertas
+17. **Alerta de búsqueda** — Nuevos vehículos que coinciden con sus filtros guardados. Configurable: diario, semanal, inmediato
+18. **Favorito con cambio de precio** — Un vehículo en favoritos bajó de precio
+19. **Favorito vendido** — Un vehículo en favoritos se vendió. Sugerencia de similares
+20. **Solicitud de búsqueda confirmada** — "Estamos buscando lo que necesitas". Cuando publica una demanda
+21. **Match de búsqueda encontrado** — Un vehículo nuevo coincide con su demanda publicada
+22. **Subasta: puja superada** — Alguien pujó más. Link para pujar de nuevo
+23. **Subasta: ganaste** — Felicitación + instrucciones de pago + contacto del vendedor
+24. **Subasta: no ganaste** — Resultado + sugerencia de vehículos similares
+25. **Verificación disponible** — Un vehículo que sigue tiene verificación nueva
+
+### Emails del SISTEMA
+
+26. **Confirmar email** — Doble opt-in al registrarse
+27. **Resetear contraseña** — Link de recuperación
+28. **Cambio de email** — Confirmación del nuevo email
+29. **Cuenta eliminada** — Confirmación de eliminación + datos borrados (RGPD)
+30. **Actividad sospechosa** — Login desde nuevo dispositivo/ubicación
+
+### Alertas de búsqueda (motor)
+
+- El comprador guarda una búsqueda con filtros (categoría, precio, año, ubicación...)
+- Elige frecuencia: inmediata, diaria (09:00), semanal (lunes 09:00)
+- Cron compara `search_alerts.filters` con vehículos nuevos
+- Si hay matches → email con lista de vehículos nuevos que coinciden
+- Botón "Desactivar alerta" en cada email (un clic, sin login)
+- En perfil del usuario: gestionar alertas activas, editar filtros, cambiar frecuencia
+
+### Panel de admin para emails (`/admin/config/emails`)
+
+- CRUD de todos los templates (30 templates)
+- Editor visual con variables disponibles listadas
+- Vista previa renderizada con datos de ejemplo
+- Botón "Enviar test" a email del admin
+- Cada template es JSONB multi-idioma (se envía en el idioma del destinatario)
+- Estadísticas: enviados, abiertos, clicados, errores (por template)
+- Toggle on/off por template (ej: desactivar "resumen mensual" temporalmente)
+- Los templates heredan colores del vertical automáticamente
+
+### Preferencias del usuario
+
+- Página `/perfil/notificaciones` donde el usuario activa/desactiva cada tipo
+- Link "Gestionar preferencias" en el footer de cada email
+- Respetar opt-out inmediatamente (tabla email_preferences)
+- "Desuscribirse de todo" con un clic (excepto transaccionales obligatorios: confirmación email, reset password)
+
+---
+
+## SESIÓN 19 — Seguridad de producción
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/N-seguridad-mantenimiento.md`
+
+**Hacer:**
+
+### Cloudflare (configurar en dashboard)
+
+- Activar WAF (Web Application Firewall) con reglas managed
+- Activar Bot Fight Mode (protección anti-scraping básica)
+- Activar DDoS protection (incluido en free tier)
+- Configurar Page Rules: cache agresivo en assets, no cache en /admin/
+- Activar SSL/TLS en modo Full (Strict)
+- Configurar Rate Limiting: max 100 requests/min por IP en /api/
+
+### Supabase (configurar en dashboard)
+
+- Activar Rate Limiting en Auth: max 30 signups/hora, max 100 logins/hora
+- Verificar que service_role_key SOLO está en Edge Functions, NUNCA en frontend
+- Activar log de auth events para detectar fuerza bruta
+- Configurar backup automático diario (Supabase Pro lo incluye)
+- Revisar RLS de TODAS las tablas con test queries
+
+### Aplicación
+
+- Integrar Sentry para error monitoring: `@sentry/vue` + `@sentry/nuxt`
+- Configurar Sentry alerts para errores críticos (>5 mismos errores en 1h)
+- Implementar health check endpoint `/api/health` que verifica BD + servicios
+- Configurar UptimeRobot o similar (gratis) para monitorizar uptime cada 5 min
+- Sanitizar TODOS los inputs de usuario con DOMPurify antes de render
+- Verificar que no hay SQL injection posible (Supabase client lo previene, pero revisar custom queries)
+- Añadir CAPTCHA (hCaptcha o Turnstile de Cloudflare, gratis) en:
+  - Formulario de registro
+  - Formulario de contacto/lead
+  - Formulario de publicar vehículo
+- Implementar rate limiting en Edge Functions críticas:
+  - POST /api/lead: max 5/min por IP
+  - POST /api/vehicle: max 10/min por usuario
+  - POST /api/translate: max 50/hora
+- Content Security Policy estricto en \_headers de Cloudflare Pages
+- Añadir CORS restrictivo en Supabase (solo dominios propios)
+
+### Tareas pendientes del plan original (Bloque D-QUATER)
+
+- **Husky + lint-staged**: `npx husky init`, hook pre-commit con `lint-staged` (ESLint + Prettier). Rechazar commits con errores de lint.
+- **GitHub Actions CI/CD**: Crear `.github/workflows/ci.yml` (lint + type-check + vitest en cada PR) y `.github/workflows/deploy.yml` (build + deploy Cloudflare Pages en merge a main).
+- **localStorage audit**: `grep -r "localStorage" app/` — migrar usos inseguros a composables con `useLocalStorage` de VueUse o eliminar. Supabase Auth ya usa cookies httpOnly.
+- **ipapi.co eliminación**: Verificar `useUserLocation.ts` — no debe enviar IPs a servicios externos sin consentimiento. Usar `navigator.language` + datos del perfil de usuario.
+
+### RGPD/GDPR
+
+- Banner de cookies funcional (no solo visual) con Cookiebot o propio
+- Página de privacidad con datos del responsable (Tank Ibérica SL / nueva SL)
+- Botón "Eliminar mi cuenta" funcional en perfil de usuario
+- Exportar datos del usuario (derecho de portabilidad) — botón en perfil
+- Registro de consentimientos en BD (tabla `consents`)
+- DPA (Data Processing Agreement) con Supabase, Cloudflare, Stripe, Resend
+
+---
+
+## SESIÓN 20 — Testing y calidad
+
+**Hacer:**
+
+- Instalar Vitest: `npm install -D vitest @vue/test-utils happy-dom`
+- Tests unitarios para composables críticos (Vitest + happy-dom):
+  - `useLocalized.ts` (localizedField con todos los fallbacks)
+  - `useVerticalConfig.ts` (loadConfig, isSectionActive, isLocaleActive)
+  - `useSeoScore.ts` (cada check individual)
+  - `useVehicles.ts` (queries, filtrado, paginación)
+  - `useFilters.ts` (6 tipos de filtro, opciones dinámicas, rangos)
+  - `useCatalogState.ts` (estado, categorías, subcategorías)
+  - `fuzzyMatch.ts` (matching difuso con edge cases)
+- Tests de componentes para:
+  - Formulario de publicar vehículo (validación campos obligatorios)
+  - Filtros dinámicos (cambian según categoría seleccionada)
+  - SEO Score panel (muestra checks correctos)
+- Tests E2E con Playwright:
+  - Flujo completo: buscar → filtrar → ver ficha → contactar dealer
+  - Flujo admin: login → publicar vehículo → verificar en catálogo
+  - Flujo i18n: cambiar idioma → URLs correctas → contenido traducido
+  - Flujo dealer: registrar → personalizar portal → publicar vehículo
+- Lighthouse CI: verificar score >90 en Performance, SEO, Accessibility
+- Configurar GitHub Actions para run tests en cada PR
+
+---
+
+## SESIÓN 21 — WhatsApp publishing con IA
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/I-automatizacion-ia.md`
+
+**Hacer:**
+
+- Integrar WhatsApp Business API (via Twilio o Meta directamente)
+- Flujo: dealer envía fotos al número de Tracciona → webhook recibe → Claude Vision extrae datos → genera ficha → publica con status='draft' → notifica al dealer para aprobar
+- Edge Function `/api/whatsapp/webhook` para recibir mensajes
+- Edge Function `/api/whatsapp/process` para procesar con IA
+- Respuesta automática al dealer confirmando recepción
+- En admin: cola de vehículos recibidos por WhatsApp pendientes de aprobación
+
+---
+
+## SESIÓN 22 — PWA + Performance
+
+**Hacer:**
+
+- Configurar `@vite-pwa/nuxt` para Progressive Web App
+- Service worker para cache offline de páginas visitadas
+- Manifest.json con iconos, colores de tema (desde vertical_config)
+- Push notifications (opcional, requiere VAPID keys)
+- Lazy loading de imágenes con Cloudinary transformaciones automáticas
+- Preload de fuentes críticas
+- Verificar Core Web Vitals: LCP <2.5s, FID <100ms, CLS <0.1
+- ISR (Incremental Static Regeneration) para páginas de catálogo si Nuxt 3 lo soporta
+
+---
+
+## SESIÓN 23 — Clonar vertical nueva
+
+> Esta sesión se ejecuta cada vez que se lanza un vertical nuevo. Repetir para cada uno.
+
+**Leer:**
+
+1. `docs/tracciona-docs/contexto-global.md` — Sección 3 (los 7 verticales)
+2. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Sección W.8 (flujo de clonado)
+3. `docs/tracciona-docs/anexos/A-verticales-confirmados.md`
+4. `docs/tracciona-docs/anexos/B-verticales-futuros.md`
+
+**Hacer:**
+
+### Opción A — Mismo deploy, variable de entorno (recomendado para empezar)
+
+1. En `vertical_config` insertar nueva fila para el vertical (ej: 'horecaria')
+2. Configurar desde el panel admin (`/admin/config/*`): logo, colores, categorías, subcategorías, atributos, idiomas
+3. Crear nuevo deploy en Cloudflare Pages con variable de entorno `VERTICAL=horecaria`
+4. Apuntar dominio (ej: horecaria.com) al nuevo deploy
+5. El mismo código sirve — solo cambia la variable VERTICAL que filtra `vertical_config`
+
+### Opción B — Repositorio clonado (cuando los verticales divergen)
+
+1. Clonar el repo de Tracciona
+2. Cambiar la constante VERTICAL en `useVerticalConfig.ts`
+3. Personalizar desde admin (todo en BD, cero código)
+4. Deploy independiente
+
+**Para cada vertical nuevo, también:**
+
+- Generar archivo de UI (`locales/es.json`, `en.json`) con términos del sector (no 'vehículo' sino 'equipo', no 'cisterna' sino 'horno')
+- Generar las categorías y subcategorías del vertical (ver documento "Categorías y Subcategorías de Verticales")
+- Generar artículos editoriales iniciales adaptados al sector
+- Configurar `target_markets` según los mercados relevantes del vertical
+
+**Verticales previstos y su orden:**
+
+| #   | Vertical        | Dominio             | Cuándo                          |
+| --- | --------------- | ------------------- | ------------------------------- |
+| 1   | Tracciona       | tracciona.com       | Ahora (sesiones 1-12)           |
+| 2   | Horecaria       | horecaria.com       | Cuando Tracciona tenga tracción |
+| 3   | CampoIndustrial | campoindustrial.com | Después de Horecaria            |
+| 4   | Municipiante    | municipiante.com    | Según demanda                   |
+| 5   | ReSolar         | resolar.com         | Según demanda                   |
+| 6   | Clinistock      | clinistock.com      | Según demanda                   |
+| 7   | BoxPort         | boxport.com         | Según demanda                   |
+
+---
+
+## SESIÓN 24 — Zona de usuario: registro, login, perfil, roles
+
+> Prerequisito para sesiones 17, 18, 28, 29 y 31. Sin esto no hay usuarios registrados.
+> **NOTA:** Las tablas SQL (users.user_type, leads, favorites, user_vehicle_views, subscriptions, dealer_stats, dealer_events) ya fueron creadas en la sesión 2 (Bloque D). Esta sesión SOLO crea páginas, composables, middleware y lógica frontend.
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/E-sistema-pro.md` — Tipos de suscripción y sistema Pro
+2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md` — Funcionalidades del dealer (K.1 a K.6)
+3. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Sección W.4 (portal dealer)
+
+**Hacer:**
+
+### Verificar tablas (no crear, solo verificar que existen de sesión 2)
+
+- `users` tiene columnas: user_type, company_name, phone_verified, onboarding_completed, last_login_at, login_count
+- `leads`, `favorites`, `user_vehicle_views`, `subscriptions`, `dealer_stats`, `dealer_events` existen
+- Si alguna falta, crearla ahora (safety net)
+
+### Páginas de autenticación
+
+- `pages/auth/login.vue` — Login con email+password y login social (Google). Diseño limpio con branding del vertical
+- `pages/auth/registro.vue` — Registro con selección: "¿Eres comprador o profesional?"
+  - Comprador: nombre, email, password, teléfono (opcional)
+  - Dealer/profesional: nombre, email, password, nombre empresa, CIF, teléfono
+- `pages/auth/confirmar.vue` — Pantalla post-confirmación de email
+- `pages/auth/recuperar.vue` — Reset de contraseña
+- `pages/auth/nueva-password.vue` — Formulario de nueva contraseña (enlace del email)
+- Middleware `auth.ts`: redirige a `/auth/login` si no autenticado en rutas protegidas
+- Middleware `dealer.ts`: verifica que user_type='dealer' para rutas de `/dashboard/*`
+
+### Zona privada del COMPRADOR (`/perfil/*`)
+
+- `pages/perfil/index.vue` — Dashboard del comprador:
+  - Resumen: X favoritos, X alertas activas, X contactos enviados
+  - Últimos vehículos vistos (histórico)
+  - Vehículos recomendados (basado en búsquedas/favoritos)
+- `pages/perfil/datos.vue` — Editar datos personales (nombre, email, teléfono, idioma preferido, avatar)
+- `pages/perfil/favoritos.vue` — Grid de vehículos guardados (de sesión 28)
+- `pages/perfil/alertas.vue` — Alertas de búsqueda activas (de sesión 18/28)
+- `pages/perfil/contactos.vue` — Historial de leads enviados a dealers (estado: enviado, leído, respondido)
+- `pages/perfil/notificaciones.vue` — Preferencias de email (de sesión 18)
+- `pages/perfil/suscripcion.vue` — Plan actual (Free/Pro), historial de pagos, cambiar plan
+- `pages/perfil/seguridad.vue` — Cambiar contraseña, activar 2FA, sesiones activas, eliminar cuenta
+
+### Zona privada del DEALER (`/dashboard/*`)
+
+- `pages/dashboard/index.vue` — Dashboard del dealer:
+  - KPIs: vehículos activos, visitas totales, leads este mes, tasa de respuesta
+  - Gráfico de visitas últimos 30 días
+  - Leads recientes (nombre, vehículo, fecha, estado)
+  - Vehículos con más visitas
+  - Barra de progreso onboarding (si no completado)
+- `pages/dashboard/vehiculos/index.vue` — Mis vehículos publicados (grid con acciones: editar, pausar, marcar vendido, eliminar)
+- `pages/dashboard/vehiculos/nuevo.vue` — Publicar vehículo (formulario completo: fotos, datos, precio, descripción)
+- `pages/dashboard/vehiculos/[id].vue` — Editar vehículo existente
+- `pages/dashboard/leads/index.vue` — Todos los leads recibidos (filtrable por vehículo, fecha, estado)
+- `pages/dashboard/leads/[id].vue` — Detalle del lead (datos contacto, vehículo, historial de comunicación)
+- `pages/dashboard/portal.vue` — Configurar portal público (colores, bio, logo, contacto) — del Anexo W.7
+- `pages/dashboard/estadisticas.vue` — Analytics detallado (visitas por vehículo, leads por semana, conversión)
+- `pages/dashboard/facturas.vue` — Historial de facturas y suscripción (de sesión 25)
+- `pages/dashboard/suscripcion.vue` — Plan actual, cambiar plan, founding badge
+
+### Portal público del dealer (ya en sesión 10, pero conectar)
+
+- Se resuelve por el catch-all `pages/[...slug].vue` (NO existe ruta `/dealer/[slug]`)
+- URL pública: `tracciona.com/transportes-garcia` (sin prefijo, directo por slug)
+- Lógica en catch-all (Anexo K.9): 1º busca en active_landings, 2º busca en dealers WHERE slug = input
+- Carga tema del dealer (useDealerTheme)
+- Muestra: logo, bio, certificaciones, contacto, catálogo de sus vehículos
+- SEO: title = "[Nombre dealer] — Vehículos en Tracciona"
+
+> Las tablas `user_vehicle_views`, `leads`, `favorites`, `search_alerts` ya existen de sesión 2 (Bloque D). No crear aquí.
+
+### CRM de leads integrado en el dashboard del dealer
+
+La tabla `leads` del Anexo K.2 tiene campos de estado avanzados. Implementar la UI:
+
+- Estados del lead: `new` → `viewed` → `contacted` → `negotiating` → `won`/`lost`
+- Cambio de estado con dropdown en la lista de leads
+- Campo `dealer_notes` editable en el detalle del lead (notas privadas)
+- Campo `close_reason` obligatorio al marcar como `lost` (precio, no interesado, compró en otro sitio)
+- Campo `sale_price_cents` al marcar como `won` (para estadísticas)
+- Auto-reply configurable: `dealers.auto_reply_message` → se envía al comprador al recibir lead
+- Cálculo automático de `dealers.avg_response_time_hours` (cron diario desde leads)
+
+### Estadísticas pre-calculadas del dealer
+
+- Crear tabla `dealer_stats` del Anexo K.5 (métricas por día)
+- Edge Function cron diario: calcular vehicle_views, leads_received, leads_responded, conversion_rate por dealer
+- Métricas escalonadas por plan:
+  - Free: solo totales (visitas totales, leads totales)
+  - Básico: por vehículo (visitas, leads, favoritos) + gráfico mensual
+  - Premium/Founding: todo + comparativa con media del sector + demandas que matchean
+- Componente `<DealerStatsGate :requires="'basic'">` que muestra blur + CTA upgrade si el plan no lo incluye
+
+### Generación de descripción con IA
+
+En el formulario de publicación (`/dashboard/vehiculos/nuevo.vue`):
+
+- Botón "Generar descripción con IA" junto al campo de descripción
+- Edge Function `/api/generate-description` que recibe: marca, modelo, año, km, categoría, subcategoría, atributos
+- Claude Haiku genera descripción SEO optimizada en español (~150 palabras)
+- El dealer puede editar antes de publicar
+- Límite según plan: Free=3/mes, Básico=20/mes, Premium=ilimitado
+- Campo `ai_generated=true` en el vehículo (para badge AI Act)
+
+### Import masivo por Excel/CSV
+
+- Página `/dashboard/vehiculos/importar.vue`
+- Subir Excel/CSV con columnas estándar (marca, modelo, año, km, precio, categoría, descripción)
+- Vista previa de los vehículos parseados antes de publicar
+- Validación: campos obligatorios, precio >0, categoría válida
+- Publicación en batch (todos como draft o todos como published)
+- Template Excel descargable con columnas esperadas
+
+### Composables
+
+- `useAuth.ts` — login, register, logout, resetPassword, currentUser, isDealer, isBuyer, isAdmin
+- `useSubscription.ts` — **CRÍTICO para sistema Pro 24h y plan-gating:**
+  ```typescript
+  // Composable que resuelve el estado de suscripción del usuario actual
+  // Se usa en: catálogo (filtro visible_from), ficha (bloqueo Pro), herramientas dealer (plan-gate), stats (plan-gate)
+  //
+  // const { isPro, isDealer, dealerPlan, hasActiveSub, subscription, canAccess } = useSubscription()
+  //
+  // isPro: computed → true si tiene suscripción Pro activa (pro_monthly, pro_annual, pass_72h no expirado)
+  // isDealer: computed → true si user_type='dealer'
+  // dealerPlan: computed → 'free'|'basic'|'premium'|'founding' (para plan-gating de herramientas)
+  // hasActiveSub: computed → true si cualquier suscripción activa (Pro O dealer)
+  // canAccess(feature): método → verifica si el plan actual permite acceder a una feature específica
+  //
+  // Lógica interna:
+  // 1. Leer auth.uid() → query subscriptions WHERE user_id=uid AND status='active' AND (expires_at IS NULL OR expires_at > NOW())
+  // 2. Cachear resultado en useState (no re-query en cada página)
+  // 3. Para Stripe webhooks: cuando subscription.status cambia en BD, el composable se re-evalua automáticamente
+  //    vía Supabase Realtime subscription en tabla subscriptions
+  //
+  // Mapeo de features por plan (para canAccess):
+  // 'view_hidden_vehicles' → isPro (Pro mensual, anual, o pase 72h)
+  // 'instant_alerts' → isPro
+  // 'advanced_stats' → dealerPlan >= 'basic'
+  // 'ai_descriptions' → dealerPlan >= 'free' (con límites: free=3/mes, basic=20/mes, premium=unlimited)
+  // 'export_catalog' → dealerPlan >= 'basic'
+  // 'widget' → dealerPlan >= 'premium'
+  // 'sector_comparison' → dealerPlan >= 'premium'
+  ```
+- `useUserProfile.ts` — loadProfile, updateProfile, deleteAccount, exportData
+- `useDealerDashboard.ts` — loadStats, loadLeads, loadVehicles, markLeadRead, updateLeadStatus
+- `useBuyerDashboard.ts` — loadFavorites, loadAlerts, loadContactHistory, loadRecentViews
+- `useDealerStats.ts` — loadDailyStats, loadMonthlyStats, canAccessMetric(plan, metric)
+
+### Navegación dinámica según rol
+
+En el header:
+
+- Anónimo: botón "Iniciar sesión" + "Registrarse"
+- Comprador autenticado: avatar + dropdown (Mi perfil, Favoritos, Alertas, Cerrar sesión)
+- Dealer autenticado: avatar + dropdown (Mi panel, Mis vehículos, Leads, Publicar vehículo, Cerrar sesión)
+- Admin: acceso al panel admin además de todo lo anterior
+
+---
+
+## SESIÓN 25 — Compliance regulatorio (UE + UK)
+
+> Renumerado: antes era sesión 24.
+
+> Obligatorio legalmente para operar un marketplace en la UE y UK.
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/R-marco-legal.md`
+2. `docs/tracciona-docs/anexos/N-seguridad-mantenimiento.md`
+
+**Hacer:**
+
+### DSA (Digital Services Act — UE)
+
+- Formulario "Reportar anuncio" visible en cada ficha de vehículo (botón 🚩)
+- Tabla `reports` (id, reporter_email, entity_type, entity_id, reason, status, admin_notes, created_at, resolved_at)
+- Punto de contacto único visible en footer y página /legal (email + formulario)
+- Verificación de identidad del dealer al registrarse: NIF/CIF obligatorio, nombre legal, dirección
+- Datos del vendedor visibles para el comprador en cada ficha (nombre empresa, ubicación, CIF)
+- Página `/transparencia` con informe anual descargable (PDF generado desde admin)
+- Flujo admin para gestionar reports: pendientes → revisados → acción tomada (eliminar/mantener)
+
+### UK Online Safety Act 2023 + UK GDPR
+
+Si se activa el mercado británico (idioma EN con `.co.uk` o tráfico UK significativo):
+
+- **Risk assessment de contenido ilegal:** Evaluar riesgos de contenido ilegal en la plataforma (fraude, vehículos robados) y documentar medidas. Ofcom lo exige a todos los servicios con usuarios UK
+- **Mecanismo de denuncia:** El botón "Reportar" del DSA también cumple esta obligación, pero añadir categoría específica "fraud/scam" para UK
+- **Términos claros en inglés:** Los T&C deben ser "clear and accessible" — no vale solo traducir los españoles
+- **UK GDPR (Data Protection Act 2018):** Sustancialmente igual al RGPD de la UE, pero:
+  - Nombrar representante en UK si no tienes establecimiento allí (Art. 27 UK GDPR)
+  - Registrarse en el ICO (Information Commissioner's Office) — £40/año para pymes
+  - Política de privacidad específica UK (o sección dedicada en la existente)
+- **IVA UK:** Si vendes suscripciones digitales a dealers en UK, necesitas registrarte para VAT en HMRC o usar un intermediario de pago (Stripe hace esto automáticamente con Stripe Tax)
+- Añadir página `/legal/uk` con T&C específicos para UK si hay dealers británicos
+
+### DAC7 (intercambio fiscal — UE)
+
+- Recopilar datos fiscales de dealers: NIF, dirección fiscal, país de residencia fiscal
+- Tabla `dealer_fiscal_data` (dealer_id, tax_id, tax_country, tax_address, verified)
+- Cron anual (enero): generar informe DAC7 con dealers que superen umbrales (>30 operaciones o >2.000€)
+- Exportar en formato requerido por AEAT
+- **UK equivalente (DAC6/HMRC):** Si hay operaciones con UK, reportar según normativa HMRC equivalente
+
+### AI Act (UE, en vigor progresivo 2025-2027)
+
+- Badge "Traducido automáticamente" en content*translations donde source='auto*\*'
+- Badge "Descripción asistida por IA" si la descripción fue generada con IA
+- Campo `ai_generated BOOLEAN DEFAULT false` en vehicles y articles
+- Informar en T&C y política de privacidad que se usan sistemas de IA para traducciones y generación de contenido
+
+### RGPD / UK GDPR reforzado
+
+- Tabla `consents` (user_id, consent_type, granted, ip_address, timestamp)
+- Registro de consentimiento al aceptar cookies, términos, newsletter
+- Botón "Eliminar mi cuenta" funcional (borra datos personales, anonimiza vehículos)
+- Botón "Exportar mis datos" (genera JSON con todos los datos del usuario)
+- Política de privacidad con sección específica sobre comercialización de datos anonimizados (ver sesión 31)
+
+---
+
+## SESIÓN 26 — Facturación y contabilidad
+
+**Hacer:**
+
+- Integrar Quaderno (auto-calcula IVA por país UE, genera facturas legales españolas, se integra con Stripe)
+- Factura automática al cobrar suscripción, comisión o verificación
+- Tabla `invoices` (id, dealer_id, stripe_invoice_id, amount_cents, vat_pct, vat_country, pdf_url, status, created_at)
+- Portal de facturas para el dealer: `/admin/dealer/facturas` (lista, descarga PDF)
+- Exportación mensual CSV para la asesoría (todas las facturas emitidas)
+- Registro en OSS (One-Stop Shop) de AEAT si hay clientes fuera de España
+- En admin: vista de ingresos por mes, por tipo (suscripción/comisión/verificación), por vertical
+
+---
+
+## SESIÓN 27 — Dashboard de métricas y KPIs
+
+**Hacer:**
+
+- Página `/admin/dashboard` con gráficos (Recharts o Chart.js):
+  - MRR y ARR (de tabla subscriptions + invoices)
+  - Vehículos publicados/vendidos por mes
+  - Leads generados por mes (de tabla contacts)
+  - Top 10 dealers por actividad
+  - Top 10 vehículos por visitas
+  - Conversión: visitas → fichas vistas → leads → ventas
+  - Churn rate de dealers (cancelaciones/total)
+  - Desglose por vertical (cuando haya más de uno)
+- Widget resumen en home del admin (4 cards: ingresos mes, vehículos activos, dealers activos, leads mes)
+- Comparativa mes actual vs anterior (flechas ↑↓ con %)
+- Exportar a CSV/Excel (para asesoría e inversores)
+
+---
+
+## SESIÓN 28 — CRM de dealers + onboarding guiado
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/K-dealer-toolkit.md`
+
+**Hacer:**
+
+### Onboarding guiado
+
+- Wizard de 5 pasos al registrarse como dealer:
+  1. Verificar email
+  2. Completar perfil empresa (nombre, CIF, logo, ubicación)
+  3. Subir primer vehículo (formulario simplificado)
+  4. Personalizar portal (colores, bio)
+  5. Publicar
+- Barra de progreso visible (0-100%) hasta completar los 5 pasos
+- Checklist en dashboard del dealer: ✅/❌ por cada paso
+
+### Health score del dealer
+
+- Calculado automáticamente (cron diario o al consultar):
+  - Fotos de calidad (>3 por vehículo): +10
+  - Descripción completa: +10
+  - Responde leads <24h: +20
+  - Actualiza precios mensualmente: +10
+  - Perfil completo (logo, bio, contacto): +10
+  - Vehículos activos: +10 por cada 5
+  - Score 0-100
+- Visible en admin: lista de dealers ordenable por health score
+- Badge en portal público si score >80 ("Dealer activo")
+
+### CRM de contactos del dealer (`/dashboard/crm`)
+
+- **REUTILIZAR** `admin/agenda.vue` + `useAdminContacts` existentes (Bloque D-TER)
+- Adaptar: filtrar por `dealer_id`, añadir columna `vertical`
+- CRUD de contactos: clientes, proveedores, transportistas, otros
+- Campos: empresa, nombre, teléfono, email, notas, tipo, último contacto
+- Búsqueda y filtros por tipo
+- Plan mínimo: Básico
+
+### Pipeline comercial (`/dashboard/pipeline`)
+
+- **REUTILIZAR** estructura `admin/cartera.vue` existente (Bloque D-TER, es placeholder)
+- Kanban visual: Interesado → Contactado → Negociando → Cerrado/Perdido
+- Vinculado a leads + vehículos del dealer
+- Drag & drop para mover entre columnas
+- Valor estimado por columna (suma de precios de vehículos en negociación)
+- Plan mínimo: Premium
+
+### Historial de ventas (`/dashboard/historico`)
+
+- **REUTILIZAR** `admin/historico.vue` + `useAdminHistorico` existentes (Bloque D-TER)
+- Adaptar: filtrar por `dealer_id`
+- Vehículos vendidos/archivados con estadísticas, filtros por año/marca/tipo
+- Botón restaurar vehículo (re-publicar)
+- Plan mínimo: Free
+
+### Flujo completo de transacción: Alquilar / Vender (`/dashboard/vehiculos/[id]/transaccion`)
+
+- Origen: admin-funcionalidades.md §6.1.5 (modalTransaccion del proyecto original)
+- Modal/página con 2 pestañas: **Alquilar** y **Vender**
+- **Pestaña Alquilar:**
+  - Fechas desde/hasta, cliente, importe, subida de factura
+  - Al confirmar: crea entrada automática en `rental_records`, crea entrada en balance, cambia estado del vehículo a `rented`
+- **Pestaña Vender:**
+  - Fecha de venta, comprador, precio de venta, subida de factura, checkbox "Exportación"
+  - Al confirmar: crea entrada en balance, mueve vehículo a histórico (`sold_at = NOW()`, `status = 'sold'`), calcula beneficio automático (precio_venta - coste_total)
+  - Warning: "Esta acción mueve el vehículo al histórico"
+- Este flujo es crítico para Tank Ibérica y cualquier dealer que gestione flota
+- Plan mínimo: Free
+
+### Observatorio de competencia (`/dashboard/observatorio`)
+
+- Tabla `competitor_vehicles` (dealer_id, platform, url, brand, model, year, price, location, notes, status 'watching'|'sold'|'expired', created_at, updated_at)
+- El dealer registra vehículos que ha visto en otras plataformas (Milanuncios, Wallapop, etc.)
+- Campos: plataforma, enlace, marca/modelo/año/precio, ubicación, notas
+- Vista lista con filtros por plataforma y estado
+- Útil para inteligencia de mercado: ¿a qué precio vende la competencia?
+- Plan mínimo: Premium
+- Origen: tabla `viewed_vehicles`/"ojeados" del plan original Tank Ibérica
+- **Sistema de plataformas configurables** (herencia de admin-funcionalidades.md §6.3):
+  - Tabla `platforms` (id, name, url_base, icon, sort_order) o campo JSONB en config
+  - Panel desplegable con botón engranaje para añadir/eliminar plataformas dinámicamente
+  - Plataformas predefinidas: Milanuncios, Wallapop, Autoscout24, Mobile.de, TruckScout24, Mascus, Facebook Marketplace
+  - Opción "Otra" para plataformas puntuales
+  - Cada dealer configura SUS plataformas habituales
+
+### Reactivación automática
+
+- Emails automáticos (añadir a sesión 18):
+  - 7 días sin login → "Tienes leads sin responder"
+  - 30 días sin publicar → "Tu catálogo necesita actualización"
+  - 60 días inactivo → "¿Necesitas ayuda? Llámanos"
+- Tabla `dealer_events` (dealer_id, event_type, metadata JSONB, created_at)
+
+---
+
+## SESIÓN 29 — Favoritos y búsquedas guardadas
+
+**Hacer:**
+
+- Tabla `favorites` (user_id, vehicle_id, created_at, UNIQUE(user_id, vehicle_id))
+- Botón ❤️ en fichas y en grid del catálogo (toggle, instantáneo)
+- Página `/perfil/favoritos` con grid de vehículos guardados
+- Página `/perfil/alertas` con alertas activas (de tabla search_alerts de sesión 18)
+  - Editar filtros de la alerta
+  - Cambiar frecuencia (inmediata, diaria, semanal)
+  - Desactivar/activar
+- Notificación cuando un favorito baja de precio (email automático #18)
+- Notificación cuando un favorito se vende (email automático #19)
+- Contador de favoritos visible para el dealer: "Tu cisterna tiene 12 interesados" (motiva al dealer)
+- En admin: métricas de favoritos por vehículo (indica demanda real)
+- Botón "Guardar búsqueda" en la página de catálogo (captura filtros actuales como alerta)
+- RLS: cada usuario solo ve sus propios favoritos
+
+---
+
+## SESIÓN 30 — Resiliencia y plan B técnico
+
+**Hacer:**
+
+- Documentar procedimiento de migración:
+  - Supabase → PostgreSQL autoalojado (Railway, Neon, o VPS)
+  - Cloudflare Pages → Vercel o Netlify
+  - Cloudinary → Cloudflare Images o bunny.net
+  - Resend → SendGrid o Amazon SES
+  - Stripe → no hay alternativa real, pero documentar cómo exportar datos
+- Script de backup semanal completo:
+  - `pg_dump` de toda la BD (via Supabase CLI)
+  - Subir a Backblaze B2 o S3 (cifrado)
+  - Retención: 4 backups semanales + 3 mensuales
+- Script de restauración testeado: backup → nueva instancia PostgreSQL → verificar
+- Documentar todo en `docs/tracciona-docs/migracion/04-plan-contingencia.md`
+- GitHub como fuente de verdad (no OneDrive). Push diario obligatorio.
+
+---
+
+## SESIÓN 31 — Herramientas avanzadas del dealer
+
+> Genera retención y lock-in. Cada herramienta es una razón más para no irse de Tracciona.
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/M-herramientas-dealer.md` — Completo
+2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md` — Secciones K.7
+
+**Hacer:**
+
+### Generador de facturas (`/dashboard/herramientas/factura`)
+
+- Adaptar el generador existente en `/admin/utilidades.vue` para dealers
+- Datos del emisor pre-rellenados desde perfil del dealer (empresa, CIF, dirección, logo)
+- Seleccionar vehículo de SU catálogo (autocomplete)
+- Rellenar datos del comprador (nombre, CIF, dirección)
+- Líneas múltiples (venta, alquiler, servicio, transporte, transferencia)
+- Cálculo automático de IVA (21% o exento intracomunitario)
+- Número de factura auto-generado (prefijo dealer + secuencial)
+- Generar PDF profesional con logo del dealer
+- Guardar en tabla `dealer_invoices` para historial
+- Plan mínimo: Básico
+
+### Generador de contratos (`/dashboard/herramientas/contrato`)
+
+- **REUTILIZAR** lógica de `admin/utilidades.vue` tab "Contratos" (Bloque D-TER)
+- Dos tipos: compraventa y arrendamiento (del código existente)
+- Pre-rellenar datos del dealer y vehículo seleccionado
+- Cláusulas legales estándar incluidas
+- Arrendamiento: opción de compra, valor residual, fianza, duración
+- Compraventa: condiciones, garantía, forma de pago
+- PDF descargable
+- Plan mínimo: Básico
+
+### Plantilla de presupuesto (`/dashboard/herramientas/presupuesto`)
+
+- Documento pre-venta para enviar al comprador
+- Incluye: vehículo con foto, precio, servicios opcionales (transporte, transferencia, inspección, seguro)
+- Validez configurable (15 días por defecto)
+- Los servicios opcionales son cross-sell de Tracciona (IberHaul, Gesturban)
+- QR con enlace a la ficha del vehículo en Tracciona
+- PDF descargable
+- Plan mínimo: Free (es gancho para que use la plataforma)
+
+### Calculadora de rentabilidad de alquiler (`/dashboard/herramientas/calculadora`)
+
+- Inputs: precio compra, renta mensual, seguro, mantenimiento, impuestos
+- Outputs: ROI anual, meses para recuperar inversión, beneficio neto, punto de equilibrio, valor residual estimado
+- Gráfico de payback (línea temporal)
+- Útil para dealers que alquilan (como Tank Ibérica con cisternas)
+- Plan mínimo: Free
+
+### Generador de anuncios para otras plataformas (`/dashboard/herramientas/exportar-anuncio`)
+
+- Seleccionar vehículo → seleccionar plataforma destino
+- Plataformas: Milanuncios (4.000 chars), Wallapop (640 chars), Facebook Marketplace, LinkedIn, Instagram
+- Edge Function con Claude Haiku genera texto adaptado al formato y límites de cada plataforma
+- Siempre incluye backlink: "Más fotos y detalles en tracciona.com/vehiculo/[slug]"
+- Botón "Copiar al portapapeles"
+- Plan mínimo: Básico
+
+### Widget embebible (`/dashboard/herramientas/widget`)
+
+- Genera código iframe para que el dealer pegue en su propia web
+- Server route `/embed/[dealer-slug]` que renderiza HTML con CSS inline
+- Parámetros: limit (nº vehículos), theme (light/dark), category
+- Clic en vehículo → abre ficha en tracciona.com (nueva pestaña)
+- Vista previa del widget en la página de configuración
+- Plan mínimo: Premium/Founding
+
+### Export catálogo (`/dashboard/herramientas/exportar`)
+
+- CSV: para importar en otros portales o Excel
+- PDF catálogo: portada con logo + 1 vehículo por página (fotos, specs, precio) + pie con QR
+- Útil para ferias, visitas comerciales, enviar por email
+- Plan mínimo: Básico
+
+### Sistema de exportación completo (herencia de admin-funcionalidades.md §12)
+
+- Origen: Tank Ibérica tenía 6 modales de exportación independientes. Unificar en componente reutilizable `ExportModal.vue`:
+- **Componente genérico `ExportModal`:** recibe `dataSource` (vehículos/balance/histórico/etc.), `columns` (configurables), `format` (Excel/PDF)
+- Aplicar en:
+  - `/dashboard/vehiculos` → Exportar inventario activo (Excel/PDF, todos o filtrados, columnas seleccionables)
+  - `/dashboard/historico` → Exportar histórico de ventas (con datos financieros: coste, precio venta, beneficio, margen)
+  - `/dashboard/herramientas/alquileres` → Exportar alquileres activos/finalizados
+  - `/dashboard/herramientas/mantenimientos` → Exportar registros de mantenimiento
+  - `/dashboard/observatorio` → Exportar vehículos de competencia observados
+- En admin (Sesión 27): exportar balance, resumen financiero mensual, facturas emitidas
+- Usar SheetJS (xlsx) para Excel, jsPDF+autoTable para PDF (ya en dependencias originales)
+- Plan mínimo: Básico
+
+### Configuración de tabla con grupos de columnas (herencia de admin-funcionalidades.md §11)
+
+- Origen: Tank Ibérica tenía sistema sofisticado de grupos de columnas configurables (DOCS, TÉCNICO, CUENTAS, ALQUILER, FILTROS)
+- Componente reutilizable `ConfigurableTable.vue`:
+  - Grupos de columnas activables/desactivables (toggle chips encima de la tabla)
+  - Cada grupo contiene N columnas relacionadas
+  - Estado de visibilidad persistido en `localStorage` o `user_preferences`
+  - Botón "Configurar" abre modal con: reordenar grupos (drag-and-drop), añadir/editar grupos, marcar obligatorios
+- Aplicar en: `/dashboard/vehiculos` (lista), `/dashboard/historico`, admin: `/admin/vehiculos`
+- Plan mínimo: Básico
+
+### Intermediación como flujo completo (herencia de admin-funcionalidades.md §6.2)
+
+- Los vehículos con `published_by_dealer_id != owner_dealer_id` (Sesión 10) ya cubren el concepto básico
+- Añadir:
+  - IDs visuales con prefijo: vehículos propios = V42, intermediación = P3 (legacy de Tank Ibérica, usar `fileNaming.ts`)
+  - Estados propios para intermediación: Disponible, Reservado, En gestión, Vendido
+  - Campos del propietario real: nombre, contacto, notas (solo visibles para el dealer, NO público)
+  - Gastos e ingresos por vehículo intermediado (sub-balance por operación)
+  - Cálculo de beneficio: comisión pactada - gastos de gestión
+  - Fondo visual diferenciado en listas (amarillo claro para intermediación vs blanco para propios)
+- Plan mínimo: Básico
+
+### Merchandising para dealers (`/dashboard/herramientas/merchandising`)
+
+- Catálogo de productos físicos (tarjetas visita, imanes furgoneta, lona feria, pegatinas QR, roll-up)
+- Preview automático con logo del dealer, datos, QR dinámico y URL del portal
+- Pago vía Stripe one-time
+- Pedido se envía automáticamente a imprenta partner (email con datos + diseño PDF generado)
+- Cada producto físico lleva URL de Tracciona + QR trackeable → el dealer paga por hacer marketing de Tracciona
+- Plan mínimo: Free (es gancho)
+- Tabla `merch_orders` (dealer_id, product_type, quantity, design_pdf_url, stripe_payment_id, status, created_at)
+
+### Registro de mantenimientos (`/dashboard/herramientas/mantenimientos`)
+
+- Tabla legacy `maintenance_records` adaptada con `dealer_id` (Bloque D-BIS de migración)
+- CRUD básico: fecha, vehículo (de SU catálogo), tipo (preventivo/correctivo/ITV), descripción, coste, km
+- Historial por vehículo visible en la ficha interna del dealer
+- Exportar a CSV
+- Plan mínimo: Básico
+- Útil para dealers que gestionan flotas propias de alquiler (como Tank Ibérica)
+
+### Registro de alquileres (`/dashboard/herramientas/alquileres`)
+
+- Tabla legacy `rental_records` adaptada con `dealer_id` (Bloque D-BIS)
+- CRUD: vehículo, cliente, fecha inicio/fin, renta mensual, depósito, estado (activo/finalizado/mora)
+- Calendario visual de disponibilidad por vehículo
+- Alertas automáticas: fin de contrato en 30 días, vehículo disponible próximamente
+- Exportar a CSV
+- Plan mínimo: Básico
+
+### Navegación del dealer actualizada
+
+Añadir en sidebar/menú del dealer:
+
+```
+/dashboard               → Mi panel (dashboard)
+/dashboard/vehiculos     → Mis vehículos
+  ├ /dashboard/vehiculos/nuevo    → Publicar nuevo
+  ├ /dashboard/vehiculos/importar → Importar Excel
+  └ /dashboard/vehiculos          → Listado
+/dashboard/leads         → Leads
+/dashboard/estadisticas  → Estadísticas
+/dashboard/herramientas  → Herramientas
+  ├ /factura
+  ├ /contrato
+  ├ /presupuesto
+  ├ /calculadora
+  ├ /mantenimientos
+  ├ /alquileres
+  ├ /exportar-anuncio
+  ├ /widget
+  └ /exportar
+/dashboard/portal        → Mi portal
+/dashboard/suscripcion   → Suscripción
+/dashboard/facturas      → Facturas
+```
+
+---
+
+## SESIÓN 32 — Comercialización de datos (estilo Idealista)
+
+> Esta es la fuente de ingresos de mayor margen a largo plazo. Activar a partir del mes 12.
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/S-monetizacion-datos.md` — Completo
+2. `docs/tracciona-docs/anexos/R-marco-legal.md` — Sección RGPD
+
+**Hacer:**
+
+### Fase A — Infraestructura de datos (mes 6-12, antes de vender nada)
+
+#### Tablas y vistas materializadas
+
+```sql
+-- Vista materializada de mercado (cron diario a las 03:00)
+CREATE MATERIALIZED VIEW market_data AS
+SELECT
+  vertical, action, category, subcategory, brand,
+  location_province, location_country,
+  DATE_TRUNC('month', created_at) AS month,
+  COUNT(*) AS listings,
+  AVG(price_cents)/100.0 AS avg_price,
+  PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY price_cents)/100.0 AS median_price,
+  MIN(price_cents)/100.0 AS min_price,
+  MAX(price_cents)/100.0 AS max_price,
+  AVG(EXTRACT(EPOCH FROM (sold_at - created_at))/86400) AS avg_days_to_sell,
+  COUNT(*) FILTER (WHERE status = 'sold') AS sold_count
+FROM vehicles
+WHERE status IN ('published','sold','expired')
+GROUP BY vertical, action, category, subcategory, brand, location_province, location_country, month
+HAVING COUNT(*) >= 5;  -- Mínimo 5 para anonimización
+
+-- Vista de demanda (qué busca la gente)
+CREATE MATERIALIZED VIEW demand_data AS
+SELECT
+  vertical,
+  (filters->>'category')::text AS category,
+  (filters->>'subcategory')::text AS subcategory,
+  (filters->>'brand')::text AS brand,
+  (filters->>'province')::text AS province,
+  DATE_TRUNC('month', created_at) AS month,
+  COUNT(*) AS alert_count
+FROM search_alerts
+WHERE active = true
+GROUP BY vertical, category, subcategory, brand, province, month;
+
+-- Vista de precios históricos (para tendencias)
+CREATE MATERIALIZED VIEW price_history AS
+SELECT
+  vertical, category, subcategory, brand,
+  DATE_TRUNC('week', created_at) AS week,
+  AVG(price_cents)/100.0 AS avg_price,
+  COUNT(*) AS sample_size
+FROM vehicles
+WHERE price_cents > 0 AND status IN ('published','sold')
+GROUP BY vertical, category, subcategory, brand, week
+HAVING COUNT(*) >= 3;
+```
+
+#### Tracking de eventos para datos de demanda
+
+- Tabla `analytics_events` (id, vertical, event_type, entity_type, entity_id, metadata JSONB, session_id, created_at)
+- Eventos a trackear (además de GA4):
+  - `vehicle_view`: qué fichas se ven y desde dónde
+  - `search_performed`: qué filtros se aplican en el catálogo
+  - `lead_sent`: contactos enviados a dealers
+  - `favorite_added`: qué vehículos se guardan
+  - `price_change`: cuando un dealer cambia el precio (old_price, new_price)
+  - `vehicle_sold`: fecha de venta, días en catálogo, precio final vs inicial
+- Cron semanal: agregar eventos en `analytics_events` y actualizar vistas materializadas
+- RLS: solo admin puede leer analytics_events
+
+### Fase B — Datos para uso interno (mes 6-12, gratis, genera valor)
+
+#### Valoración automática en ficha del dealer
+
+Cuando un dealer publica un vehículo:
+
+- Comparar precio con `market_data` (misma categoría, subcategoría, marca, año similar, provincia)
+- Mostrar badge: "🟢 Precio competitivo", "🟡 Por encima del mercado (+12%)", "🔴 Muy por encima (+30%)"
+- Sugerir rango de precio recomendado
+- Esto genera confianza del comprador y motiva al dealer a poner precios realistas
+
+#### Índice de precios público (SEO + autoridad)
+
+- Página `/precios` (pública, indexable): "Índice de precios de vehículos industriales en España"
+- Grid de categorías con precio medio, tendencia (↑↓), volumen
+- Ejemplo: "Cisternas alimentarias: precio medio 35.000€ (↑12% vs trimestre anterior)"
+- Gráficos de tendencia de los últimos 12 meses por categoría
+- Esto es lo que hace Idealista con su índice de precios — genera backlinks, autoridad SEO, y posiciona a Tracciona como referencia del sector
+- Schema JSON-LD Dataset para que Google lo indexe como fuente de datos
+- Actualizar automáticamente cada mes (cron que regenera la página)
+
+#### Informe de mercado trimestral (PDF)
+
+- Generar PDF automáticamente desde `market_data`:
+  - Portada con branding Tracciona
+  - Resumen ejecutivo (2 párrafos)
+  - Precios medios por categoría con gráficos
+  - Top marcas por volumen
+  - Zonas geográficas más activas
+  - Tiempo medio de venta
+  - Tendencias (qué sube, qué baja)
+- Los primeros 2-3 informes: enviarlo GRATIS a financieras, asociaciones y fabricantes como gancho
+- Publicar versión resumida en `/guia/` como artículo evergreen (SEO)
+
+### Fase C — Productos de datos de pago (mes 12-18)
+
+#### 1. Informe de valoración individual (50-100€)
+
+- Página `/valoracion`: el usuario introduce marca, modelo, año, km, provincia
+- El sistema consulta `market_data` + `price_history` y genera:
+  - Precio estimado (rango min-max)
+  - Comparativa con mercado actual
+  - Tendencia de precio (subiendo/bajando)
+  - Tiempo estimado de venta
+  - Recomendación de precio
+- Versión básica: gratis (solo rango de precio, sin detalle)
+- Versión completa: 50-100€ (informe PDF detallado con gráficos)
+- Pago por Stripe (cobro único)
+- Añadir a tabla `invoices` como tipo 'valuation_report'
+
+#### 2. Suscripción a datos sectoriales (500-1.000€/trimestre)
+
+- Dashboard privado para suscriptores (financieras, aseguradoras, fabricantes):
+  - Acceso a `market_data` filtrable por categoría, zona, periodo
+  - Gráficos interactivos de tendencias
+  - Exportar a CSV/Excel
+  - Alertas automáticas: "Los precios de X han variado >10% este mes"
+- Página `/datos` con comparativa de planes:
+  - Básico (500€/trim): datos agregados por categoría, actualización mensual
+  - Premium (1.000€/trim): datos por subcategoría+marca+zona, actualización semanal, alertas
+  - Enterprise (a medida): API, dataset completo, soporte dedicado
+- Tabla `data_subscriptions` (id, company_name, plan, stripe_subscription_id, api_key, active)
+- Autenticación por API key para acceso programmático
+
+#### 3. API de valoración (1-5€/consulta)
+
+- Endpoint autenticado: `GET /api/v1/valuation?brand=indox&model=alimentaria&year=2019&km=120000`
+- Respuesta JSON:
+
+```json
+{
+  "estimated_price": { "min": 32000, "median": 35000, "max": 38000 },
+  "market_trend": "rising",
+  "trend_pct": 4.2,
+  "avg_days_to_sell": 45,
+  "sample_size": 23,
+  "confidence": "high",
+  "data_date": "2027-01-15"
+}
+```
+
+- Rate limiting: 100 consultas/día (básico), 1.000/día (premium), ilimitado (enterprise)
+- Documentación de API en `/api/docs` (Swagger/OpenAPI)
+- Tabla `api_usage` (api_key, endpoint, params JSONB, response_time_ms, created_at) para tracking
+
+#### 4. Dataset anualizado (2.000-5.000€)
+
+- CSV/JSON anonimizado con todos los datos del año:
+  - Precios por categoría/subcategoría/marca/zona/mes
+  - Volúmenes de oferta y demanda
+  - Tiempos de venta
+  - Tendencias
+- Generado automáticamente en enero (cron)
+- Entregado por email o descarga autenticada
+- Sin datos personales, sin IDs, sin posibilidad de re-identificación
+
+### Fase D — Escalado multi-vertical (mes 18+)
+
+Cuando haya 2+ verticales, los datos se multiplican:
+
+- "Índice de precios de equipamiento hostelero en España" (Horecaria)
+- "Índice de precios de maquinaria agrícola" (CampoIndustrial)
+- Cross-vertical insights: "La demanda de cisternas alimentarias sube cuando bajan las inversiones en hostelera" (análisis cruzado)
+- Cada vertical genera sus propias vistas materializadas con el mismo código (filtrado por `vertical`)
+
+### Compliance de datos
+
+- **Anonimización real:** Nunca vender datos de menos de 5 vehículos por grupo (cláusula HAVING >= 5)
+- **RGPD Art. 6.1.f:** Interés legítimo para datos anonimizados. Para datos agregados no personales, el RGPD no aplica
+- **Política de privacidad:** Sección explícita: "Tracciona utiliza datos anonimizados y agregados del marketplace para generar informes de mercado. Estos datos nunca permiten identificar a usuarios individuales."
+- **Términos del dealer:** Al registrarse, el dealer acepta que los precios de sus publicaciones se usen de forma anonimizada en informes de mercado
+- **UK Data Protection Act 2018:** Mismas garantías de anonimización aplican
+
+---
+
+## SESIÓN 33 — Monitorización de infraestructura, pipeline de imágenes híbrido y migración de clusters
+
+> Sistema de alertas proactivas para saber cuándo escalar, pipeline híbrido Cloudinary→CF Images para optimizar costes de imágenes, y herramientas de migración de clusters Supabase ejecutables desde el admin.
+
+**Leer:**
+
+1. `docs/tracciona-docs/anexos/N-seguridad-mantenimiento.md` — Arquitectura de seguridad por capas
+2. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Estructura de `vertical_config` y principios del admin
+3. `docs/tracciona-docs/anexos/X-integraciones-externas.md` — Integraciones actuales
+4. `app/pages/admin/index.vue` — Dashboard actual (patrón de KPIs y notificaciones)
+5. `app/components/admin/layout/AdminSidebar.vue` — Sidebar del admin (para añadir sección)
+6. `server/api/push/send.post.ts` — Sistema de push notifications existente
+7. `nuxt.config.ts` — Configuración actual (Cloudinary, runtime config)
+
+**Hacer:**
+
+### Parte A — Panel de monitorización de infraestructura
+
+#### A.1 Variables de entorno
+
+Añadir a `.env` y registrar en `nuxt.config.ts` → `runtimeConfig` (NO en `public`):
+
+```env
+# Cloudflare API
+CLOUDFLARE_API_TOKEN=           # Token con permisos de lectura de analytics
+CLOUDFLARE_ACCOUNT_ID=          # ID de la cuenta de Cloudflare
+CLOUDFLARE_IMAGES_ACCOUNT_HASH= # Hash de la cuenta para CF Images
+
+# Supabase Management API
+SUPABASE_PROJECT_REF=gmnrfuzekbwyzkgsaftv
+SUPABASE_MANAGEMENT_API_KEY=    # Token de la Management API
+
+# Sentry
+SENTRY_ORG_SLUG=
+SENTRY_AUTH_TOKEN=              # Token con scope project:read
+
+# Cloudflare Images
+CLOUDFLARE_IMAGES_API_TOKEN=
+CLOUDFLARE_IMAGES_DELIVERY_URL= # https://imagedelivery.net/{account_hash}
+
+# Pipeline config
+IMAGE_PIPELINE_MODE=hybrid       # 'cloudinary', 'hybrid', 'cf_images_only'
+
+# Umbrales de alerta
+INFRA_ALERT_THRESHOLD_WARNING=70
+INFRA_ALERT_THRESHOLD_CRITICAL=85
+INFRA_ALERT_THRESHOLD_EMERGENCY=95
+```
+
+#### A.2 Migración SQL — `supabase/migrations/00051_infra_monitoring.sql`
+
+3 tablas nuevas:
+
+**`infra_metrics`** — Snapshots horarios de métricas por componente:
+
+- `id` UUID PK, `vertical` VARCHAR DEFAULT 'global', `component` VARCHAR NOT NULL ('supabase', 'cloudflare', 'cloudinary', 'cf_images', 'resend', 'sentry')
+- `metric_name` VARCHAR NOT NULL ('db_size_bytes', 'connections_used', 'transformations_used', etc.)
+- `metric_value` NUMERIC NOT NULL, `metric_limit` NUMERIC (límite del plan actual)
+- `usage_percent` NUMERIC GENERATED ALWAYS AS (CASE WHEN metric_limit > 0 THEN ROUND((metric_value / metric_limit) \* 100, 1) ELSE NULL END) STORED
+- `recorded_at` TIMESTAMPTZ DEFAULT now(), `metadata` JSONB DEFAULT '{}'
+- Índices: por component+metric_name, por recorded_at DESC, por usage_percent DESC
+- RLS: solo admins pueden SELECT
+
+**`infra_alerts`** — Alertas generadas con cooldown anti-spam:
+
+- `id` UUID PK, `component` VARCHAR, `metric_name` VARCHAR, `alert_level` VARCHAR ('warning', 'critical', 'emergency')
+- `message` TEXT, `sent_at` TIMESTAMPTZ DEFAULT now()
+- `acknowledged_at` TIMESTAMPTZ (NULL = sin reconocer), `acknowledged_by` UUID REFERENCES users(id)
+- Índice: por acknowledged_at WHERE NULL
+- RLS: admins can ALL
+
+**`infra_clusters`** — Configuración de clusters Supabase:
+
+- `id` UUID PK, `name` VARCHAR, `supabase_url` TEXT, `supabase_anon_key` TEXT, `supabase_service_role_key` TEXT
+- `verticals` TEXT[] DEFAULT '{}', `weight_used` NUMERIC DEFAULT 0, `weight_limit` NUMERIC DEFAULT 4.0
+- `status` VARCHAR DEFAULT 'active' ('active', 'migrating', 'full')
+- `created_at` TIMESTAMPTZ, `metadata` JSONB
+- RLS: admins can ALL
+- Seed: INSERT cluster actual ('cluster-principal', URL actual, keys placeholder, ARRAY['tracciona'], weight 1.0)
+
+Además: `ALTER TABLE vertical_config ADD COLUMN IF NOT EXISTS infra_weight NUMERIC DEFAULT 1.0;`
+
+Pesos default por tipo de vertical:
+
+- 🔴 Pesada (1.0): tracciona, horecaria, campoindustrial
+- 🟡 Media (0.4): resolar
+- 🟢 Ligera (0.15): municipiante, clinistock, boxport
+
+#### A.3 Server routes de métricas
+
+**`server/api/cron/infra-metrics.post.ts`** — Cron horario (protegido por CRON_SECRET). Consulta APIs de cada componente y guarda snapshots:
+
+| Componente | Métrica              | API                                                 | Límite free/pro  |
+| ---------- | -------------------- | --------------------------------------------------- | ---------------- |
+| Supabase   | db_size_bytes        | Management API GET /v1/projects/{ref}/database/size | 500MB / 8GB      |
+| Supabase   | connections_active   | Query: SELECT count(\*) FROM pg_stat_activity       | 60 / 200         |
+| Cloudflare | workers_requests_day | CF Analytics API                                    | 100K / 10M       |
+| Cloudinary | transformations_used | Cloudinary Admin API GET /usage                     | 25K / 100K       |
+| Cloudinary | storage_used_bytes   | Cloudinary Admin API GET /usage                     | 25GB             |
+| CF Images  | images_stored        | CF Images API GET /accounts/{id}/images/v1/stats    | $5/100K          |
+| Resend     | emails_sent_today    | Resend API (contar)                                 | 100/day / 50K/mo |
+| Sentry     | events_month         | Sentry API GET /api/0/organizations/{org}/stats/    | 5K / 50K         |
+
+**IMPORTANTE:** Si una API key no está configurada, SALTAR ese componente (log warning, no error). El panel muestra "No configurado" en gris.
+
+Lógica de alertas con cooldown:
+
+- `emergency` (≥95%): email (Resend) + push + insertar alerta. Cooldown: 24h
+- `critical` (≥85%): solo insertar alerta visible en dashboard. Cooldown: 48h
+- `warning` (≥70%): solo insertar alerta. Cooldown: 7 días
+
+**`server/api/infra/metrics.get.ts`** — Requiere admin auth. Params: `?component=supabase&period=24h` (24h, 7d, 30d). Devuelve snapshots con tendencias.
+
+**`server/api/infra/alerts.get.ts`** — Alertas no reconocidas. Param `?all=true` para historial.
+
+**`server/api/infra/alerts/[id].patch.ts`** — Marcar alerta como reconocida.
+
+#### A.4 Notificaciones automáticas
+
+Cuando nivel `emergency`:
+
+1. **Email** via Resend → template `server/utils/email-templates/infra-alert.ts`
+   - Subject: `🔴 [Tracciona] Alerta infraestructura: {componente} al {usage}%`
+   - Body: métrica, valor vs límite, enlace a `/admin/infraestructura`
+2. **Push** via `server/api/push/send.post.ts` existente
+   - Title: `⚠️ Infraestructura: {componente}`
+   - URL: `/admin/infraestructura`
+
+#### A.5 Composables
+
+**`app/composables/useInfraMetrics.ts`** — Fetch y cache de métricas + alertas para la página admin.
+
+**`app/composables/useInfraRecommendations.ts`** — Mensajes de acción recomendada por componente y umbral:
+
+| Componente + umbral               | Recomendación                                           |
+| --------------------------------- | ------------------------------------------------------- |
+| Supabase cluster peso > 80%       | "Crear nuevo cluster y migrar verticales ligeras"       |
+| Cloudinary transformaciones > 70% | "Verificar pipeline híbrido (CF Images) activo"         |
+| Cloudinary transformaciones > 90% | "Upgrade a Plus ($89/mes) o activar pipeline híbrido"   |
+| CF Workers requests > 70%         | "Revisar SWR de routeRules"                             |
+| Resend emails > 80%               | "Upgrade a Resend Pro ($20/mes)"                        |
+| Sentry eventos > 80%              | "Upgrade a Sentry Team ($26/mes) o ajustar sample rate" |
+
+#### A.6 Página `/admin/infraestructura.vue`
+
+Página con 4 tabs:
+
+**Tab 1: Estado actual** — Grid de cards por componente. Cada card muestra métricas con barras de progreso, icono de estado (✅ verde <70%, ⚠️ amarillo 70-85%, 🔴 rojo >85%, ⚫ gris no configurado). Sección especial de capacidad de clusters con barra de peso y detalle de verticales.
+
+**Tab 2: Alertas** — Lista filtrable (todas / sin reconocer / por componente). Botón "Marcar como vista".
+
+**Tab 3: Historial** — Gráficos con Chart.js (ya instalado). Selector de periodo (24h, 7d, 30d). Un gráfico por componente.
+
+**Tab 4: Migración** — Vista de clusters + wizard de migración (ver Parte C).
+
+#### A.7 Sidebar del admin
+
+Añadir en `AdminSidebar.vue` un nuevo enlace al final, antes de Configuración:
+
+```
+🖥️ Infraestructura → /admin/infraestructura
+```
+
+Con badge-dot si hay alertas `critical`/`emergency` sin reconocer.
+
+---
+
+### Parte B — Pipeline híbrido Cloudinary → Cloudflare Images
+
+#### B.1 Server route `server/api/images/process.post.ts`
+
+Flujo del pipeline:
+
+```
+Recibe URL Cloudinary (tras upload del dealer)
+  ↓
+Pide 4 variantes procesadas a Cloudinary:
+  - thumb:   w_300,h_200,c_fill,g_auto,e_improve,q_auto,f_webp
+  - card:    w_600,h_400,c_fill,g_auto,e_improve,q_auto,f_webp
+  - gallery: w_1200,h_800,c_fill,g_auto,e_improve,q_auto,f_webp
+  - og:      w_1200,h_630,c_fill,g_auto,e_improve,q_auto,f_webp
+  ↓
+Descarga las 4 variantes como buffer
+  ↓
+Sube cada variante a CF Images vía API
+  ↓
+Devuelve URLs de CF Images
+  ↓
+(Opcional) Borra original de Cloudinary
+```
+
+Controlado por `IMAGE_PIPELINE_MODE`:
+
+- `cloudinary`: no hace nada, devuelve URLs Cloudinary (backward compatible)
+- `hybrid`: pipeline completo
+- `cf_images_only`: sube directo a CF Images sin Cloudinary (sin mejora de calidad)
+
+#### B.2 Setup de variantes en CF Images
+
+`server/api/infra/setup-cf-variants.post.ts` — Crea las 4 variantes (thumb, card, gallery, og) en CF Images via API. Ejecutar 1 sola vez. Admin auth.
+
+#### B.3 Composable `app/composables/useImageUrl.ts`
+
+Devuelve URL correcta según origen de la imagen:
+
+- Si URL contiene `imagedelivery.net` → `{url}/{variant}` (CF Images)
+- Si URL contiene `cloudinary.com` → insertar transformaciones en URL
+
+Todos los componentes que muestran imágenes deben usar este composable. Imágenes antiguas (Cloudinary) y nuevas (CF Images) conviven sin problemas.
+
+#### B.4 Migración batch de imágenes existentes
+
+`server/api/infra/migrate-images.post.ts` — Admin auth. Recibe `{ batchSize: 50 }`. Lee vehículos con imágenes en Cloudinary, ejecuta pipeline para cada una, actualiza URLs en BD. Devuelve progreso: `{ processed: 50, remaining: 234, errors: 2 }`. Ejecutable desde admin con botón "Migrar imágenes pendientes".
+
+#### B.5 Integrar pipeline en uploads existentes
+
+Buscar componentes de upload de imágenes en el proyecto. El flujo actual:
+
+```
+[Vue] → upload a Cloudinary → guardar URL en BD
+```
+
+Cambiar a:
+
+```
+[Vue] → upload a Cloudinary → POST /api/images/process → guardar URLs CF Images en BD
+```
+
+Solo se activa si `IMAGE_PIPELINE_MODE !== 'cloudinary'`.
+
+#### B.6 Sección "Imágenes" en admin/infraestructura
+
+Dentro de las cards de componentes, Cloudinary y CF Images muestran:
+
+- Pipeline activo: `hybrid` / `cloudinary` / `cf_images_only`
+- Imágenes en Cloudinary: X (pendientes de migrar)
+- Imágenes en CF Images: Y
+- Botón: "Migrar imágenes pendientes"
+- Botón: "Configurar variantes CF Images" (1 vez)
+- Toggle de modo pipeline (con instrucciones para cambiar env var en Cloudflare Pages)
+
+---
+
+### Parte C — Herramientas de migración de clusters Supabase
+
+#### C.1 Server routes de clusters
+
+- `server/api/infra/clusters/index.get.ts` — Listar clusters con verticales y peso
+- `server/api/infra/clusters/index.post.ts` — Crear cluster nuevo (nombre, URL, keys)
+- `server/api/infra/clusters/[id].patch.ts` — Actualizar cluster
+- `server/api/infra/clusters/[id]/prepare-migration.post.ts` — Generar plan de migración
+- `server/api/infra/clusters/[id]/execute-migration.post.ts` — Ejecutar migración
+- `server/api/infra/clusters/[id]/verify-migration.post.ts` — Verificar post-migración
+
+Todos protegidos por admin auth.
+
+#### C.2 Plan de migración
+
+El endpoint `prepare-migration` recibe `{ verticalToMigrate: 'horecaria', targetClusterId: 'uuid' }` y devuelve:
+
+- Lista de tablas a copiar con filtro por vertical y filas estimadas:
+  - vehicles, dealers, categories, subcategories, attributes, articles, content_translations, vertical_config, active_landings, geo_regions (shared)
+- Tablas que NO se copian: users, infra_metrics, infra_alerts
+- Variables de entorno a cambiar en Cloudflare Pages
+- Tiempo estimado, warnings (auth separado, imágenes no requieren migración)
+
+#### C.3 Ejecución de migración
+
+Lógica paso a paso:
+
+1. Status cluster origen → 'migrating'
+2. Para cada tabla: SELECT con filtro → INSERT en destino → verificar conteo
+3. Actualizar `infra_clusters`: quitar vertical del origen, añadir al destino, recalcular peso
+4. Status → 'active'
+5. Log en `activity_logs`
+
+**NO borra datos del origen.** Solo copia. Borrado manual después de verificar.
+
+#### C.4 Wizard de migración en admin (Tab 4)
+
+Vista de clusters con barra de peso visual. 5 pasos:
+
+1. **Seleccionar vertical** — Dropdown de verticales del cluster origen
+2. **Seleccionar destino** — Dropdown de clusters o "Crear nuevo"
+3. **Revisar plan** — Tablas, filas, warnings
+4. **Ejecutar** — Con checkbox de confirmación
+5. **Resultado** — Progreso, verificación, instrucciones para Cloudflare Pages
+
+Al crear nuevo cluster, mostrar instrucciones:
+
+1. Crear proyecto en supabase.com/dashboard
+2. Copiar URL, anon key, service role key
+3. Aplicar migraciones: `npx supabase db push --project-ref NUEVO_REF`
+4. Introducir datos en formulario
+
+---
+
+### Resumen de archivos a crear
+
+| Archivo                                                    | Tipo           |
+| ---------------------------------------------------------- | -------------- |
+| `supabase/migrations/00051_infra_monitoring.sql`           | Migración SQL  |
+| `server/api/infra/collect-metrics.post.ts`                 | Server route   |
+| `server/api/infra/metrics.get.ts`                          | Server route   |
+| `server/api/infra/alerts.get.ts`                           | Server route   |
+| `server/api/infra/alerts/[id].patch.ts`                    | Server route   |
+| `server/api/infra/setup-cf-variants.post.ts`               | Server route   |
+| `server/api/infra/migrate-images.post.ts`                  | Server route   |
+| `server/api/infra/clusters/index.get.ts`                   | Server route   |
+| `server/api/infra/clusters/index.post.ts`                  | Server route   |
+| `server/api/infra/clusters/[id].patch.ts`                  | Server route   |
+| `server/api/infra/clusters/[id]/prepare-migration.post.ts` | Server route   |
+| `server/api/infra/clusters/[id]/execute-migration.post.ts` | Server route   |
+| `server/api/infra/clusters/[id]/verify-migration.post.ts`  | Server route   |
+| `server/api/cron/infra-metrics.post.ts`                    | Cron job       |
+| `server/api/images/process.post.ts`                        | Server route   |
+| `server/utils/email-templates/infra-alert.ts`              | Email template |
+| `app/composables/useImageUrl.ts`                           | Composable     |
+| `app/composables/useInfraRecommendations.ts`               | Composable     |
+| `app/composables/useInfraMetrics.ts`                       | Composable     |
+| `app/pages/admin/infraestructura.vue`                      | Página admin   |
+
+### Archivos a modificar
+
+| Archivo                                        | Cambio                                                   |
+| ---------------------------------------------- | -------------------------------------------------------- |
+| `.env`                                         | Añadir variables de CF Images, Management APIs, umbrales |
+| `nuxt.config.ts`                               | Registrar nuevas variables en runtimeConfig              |
+| `app/components/admin/layout/AdminSidebar.vue` | Añadir enlace Infraestructura con badge                  |
+| Componentes de upload de imágenes              | Integrar pipeline híbrido                                |
+
+### Orden de ejecución
+
+1. Migración SQL (00051)
+2. Variables de entorno en .env y nuxt.config.ts
+3. Composables (useImageUrl, useInfraRecommendations, useInfraMetrics)
+4. Server routes de métricas + cron
+5. Server routes de imágenes + setup variantes
+6. Server routes de clusters + migración
+7. Página admin/infraestructura.vue (4 tabs)
+8. Sidebar: añadir enlace con badge
+9. Email template + integración push
+10. Integrar pipeline en uploads existentes
+
+### Preguntas para el usuario antes de implementar
+
+1. ¿Tienes cuenta de Cloudflare Images activa? Si no, activarla en CF dashboard ($5/mes).
+2. ¿Email de alertas: tankiberica@gmail.com u otro?
+3. ¿Puedes generar Supabase Management API Key? (supabase.com/dashboard/account/tokens, scope projects.read)
+4. ¿Tienes API key + secret de Cloudinary del dashboard actual?
+5. ¿Borrado de datos del cluster origen tras migración: manual (recomendado) o automático?
+
+---
+
+## SESIÓN 34 — Auditoría de seguridad: remediación completa
+
+> Correcciones de seguridad identificadas por auditoría externa. Ordenadas por criticidad. Todos los fixes deben aplicarse ANTES de lanzar a producción.
+
+**Leer:**
+
+1. `server/api/stripe/checkout.post.ts` — Endpoint sin auth
+2. `server/api/stripe/portal.post.ts` — Endpoint sin auth
+3. `server/api/stripe/webhook.post.ts` — Webhook sin verificación de firma obligatoria
+4. `server/api/stripe-connect-onboard.post.ts` — Endpoint sin auth
+5. `server/api/whatsapp/webhook.post.ts` — Webhook sin verificación de firma de Meta
+6. `server/api/email/send.post.ts` — Endpoint abierto con service role
+7. `server/api/cron/*.post.ts` — Crons que aceptan ejecución sin secreto
+8. `server/middleware/rate-limit.ts` + `server/utils/rateLimit.ts` — Rate limit en memoria
+9. `server/utils/verifyTurnstile.ts` — Falla abierto sin secreto
+10. `nuxt.config.ts` — devtools, CORS, encoding
+
+**Hacer:**
+
+### Parte A — CRÍTICOS (arreglar primero, sin excepción)
+
+#### A.1 Autenticación en endpoints de Stripe
+
+**Problema:** `checkout.post.ts`, `portal.post.ts` y `stripe-connect-onboard.post.ts` aceptan `userId`, `customerId` o `dealerId` del body sin verificar que el usuario autenticado es quien dice ser. Cualquiera puede crear sesiones de checkout o portales para otros usuarios.
+
+**Fix para `server/api/stripe/checkout.post.ts`:**
+
+Añadir `import { serverSupabaseUser } from '#supabase/server'` al inicio. Dentro del handler, antes de leer body: obtener `user` con `serverSupabaseUser(event)`, si no hay user → 401. Eliminar `userId` del body, usar `user.id` directamente. Validar `successUrl` y `cancelUrl` con `isAllowedUrl()` (util a crear).
+
+**Fix para `server/api/stripe/portal.post.ts`:**
+
+Mismo patrón de auth. Además, verificar que `customerId` del body pertenece al usuario autenticado consultando `subscriptions` donde `user_id = user.id AND stripe_customer_id = customerId`. Si no coincide → 403. Validar `returnUrl` con `isAllowedUrl()`.
+
+**Fix para `server/api/stripe-connect-onboard.post.ts`:**
+
+Mismo patrón de auth. Verificar que `dealerId` del body pertenece al usuario autenticado consultando `dealers` donde `id = dealerId AND user_id = user.id`. Si no coincide → 403. Validar `returnUrl` y `refreshUrl` con `isAllowedUrl()`.
+
+**Crear `server/utils/isAllowedUrl.ts`:**
+
+```typescript
+export function isAllowedUrl(url: string): boolean {
+  const ALLOWED_ORIGINS = [
+    'https://tracciona.com',
+    'https://www.tracciona.com',
+    process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '',
+  ].filter(Boolean)
+  try {
+    const parsed = new URL(url)
+    return ALLOWED_ORIGINS.some((origin) => parsed.origin === origin)
+  } catch {
+    return false
+  }
+}
+```
+
+#### A.2 Webhook de Stripe: fallo cerrado obligatorio
+
+**Problema:** Si `STRIPE_WEBHOOK_SECRET` no está configurado, el webhook procesa eventos sin verificación de firma.
+
+**Fix en `server/api/stripe/webhook.post.ts`:** Reemplazar el bloque if/else de verificación de firma. Si no hay `webhookSecret`: en producción → throw 500 "Webhook secret not configured"; en dev → warn y parsear sin firma. Si hay secreto pero falta header `stripe-signature` → throw 400. Si la firma no valida → throw 400.
+
+#### A.3 Webhook de WhatsApp: verificación de firma de Meta
+
+**Problema:** No se valida `X-Hub-Signature-256`. Cualquiera puede inyectar mensajes falsos.
+
+**Fix en `server/api/whatsapp/webhook.post.ts`:** Añadir verificación de firma al inicio del handler. En producción: leer `WHATSAPP_APP_SECRET`, leer header `x-hub-signature-256`, usar `readRawBody` + `createHmac('sha256', appSecret)` para calcular firma esperada `sha256=...`, comparar con la recibida. Si no coincide → return error. Parsear body desde raw. En dev: mantener `readBody` sin verificación.
+
+Nuevas variables: `.env`: `WHATSAPP_APP_SECRET=` | `nuxt.config.ts` → `runtimeConfig.whatsappAppSecret`
+
+---
+
+### Parte B — ALTOS (arreglar antes de lanzar)
+
+#### B.1 Email send: requiere autenticación
+
+**Problema:** `/api/email/send` está abierto con service role.
+
+**Fix en `server/api/email/send.post.ts`:** Doble vía de acceso: (1) llamadas internas con header `x-internal-secret` = CRON_SECRET, (2) usuarios autenticados con `serverSupabaseUser`. Si no es ninguna → 401. Si es usuario, forzar `body.userId = user.id` para impedir enviar emails como otro usuario. Buscar en el proyecto todos los callers de `/api/email/send` y añadir auth o internal secret según corresponda.
+
+#### B.2 Cron endpoints: fallo cerrado sin secreto
+
+**Problema:** `if (cronSecret && body?.secret !== cronSecret)` permite ejecución si cronSecret es falsy.
+
+**Crear `server/utils/verifyCronSecret.ts`:** Función que lee `CRON_SECRET`. Si no existe: en producción → throw 500; en dev → warn y continuar. Si existe y no coincide → throw 401.
+
+**Modificar TODOS los archivos en `server/api/cron/*.post.ts`:** Reemplazar el patrón actual de verificación por llamada a `verifyCronSecret(body?.secret)`. Archivos: auto-auction, dealer-weekly-stats, favorite-price-drop, favorite-sold, freshness-check, publish-scheduled, search-alerts, infra-metrics, y cualquier otro que exista.
+
+---
+
+### Parte C — MEDIOS (arreglar antes de lanzar, menor urgencia)
+
+#### C.1 Rate limiting: migrar a Cloudflare WAF
+
+**Problema:** Rate limit en memoria local no funciona en Workers/serverless.
+
+**Fix recomendado: Cloudflare WAF Rate Limiting (zero code).** El usuario configura en CF Dashboard → Security → WAF → Rate limiting rules:
+
+- `/api/email/send`: 10 req/min por IP
+- `/api/stripe/*`: 20 req/min por IP
+- `/api/account/delete`: 2 req/min por IP
+- `/api/lead*` POST: 5 req/min por IP
+- `/api/*` POST/PUT/PATCH/DELETE: 30 req/min por IP
+
+Tras configurar: ELIMINAR `server/middleware/rate-limit.ts` y `server/utils/rateLimit.ts`.
+
+**PREGUNTAR al usuario:** "¿Configuras las reglas de rate limiting en Cloudflare WAF o prefieres mantener el código actual con un comentario explicando su limitación?"
+
+#### C.2 CORS restrictivo
+
+**Fix en `nuxt.config.ts`:** Eliminar `'/api/**': { cors: true }`. Añadir CORS solo a rutas que lo necesitan: `merchant-feed*`, `__sitemap*`, `health*`. El resto de rutas `/api/*` no necesitan CORS.
+
+#### C.3 Devtools deshabilitado en producción
+
+**Fix en `nuxt.config.ts`:** `devtools: { enabled: process.env.NODE_ENV !== 'production' }`
+
+---
+
+### Parte D — BAJOS / CALIDAD
+
+#### D.1 Encoding roto en textos
+
+Verificar que `nuxt.config.ts` está en UTF-8 sin BOM. Si no, reconvertir con `iconv`. Buscar textos con mojibake y corregir.
+
+#### D.2 Turnstile: fallo cerrado en producción
+
+En `server/utils/verifyTurnstile.ts`: si no hay secreto Y `NODE_ENV === 'production'` → return `false` (fallo cerrado). En dev: return `true`.
+
+#### D.3 Logging sensible en WhatsApp webhook
+
+Reemplazar `console.warn` del payload completo por log mínimo (solo número de entries recibidas, no contenido).
+
+#### D.4 Service role encapsulado
+
+Crear `server/utils/supabaseAdmin.ts` con `useSupabaseAdmin(event)` (wrapper de `serverSupabaseServiceRole`) y `useSupabaseRest()` (helper REST con headers preconfigurados). Nuevos endpoints deben usar estos helpers. Refactorizar los existentes progresivamente.
+
+#### D.5 Protección CSRF
+
+Crear `server/utils/verifyCsrf.ts` que verifica header `x-requested-with: XMLHttpRequest`. Añadir a: `account/delete`, `stripe/checkout`, `stripe/portal`, `stripe-connect-onboard`. En frontend, añadir el header en las llamadas `$fetch`. NO añadir a webhooks (son server-to-server).
+
+#### D.6 .env.example
+
+Crear `.env.example` con todas las variables sin valores. Verificar `.gitignore` incluye `.env`. Verificar que nunca se ha commiteado con `git log`.
+
+---
+
+### Resumen de archivos
+
+**Crear:** `server/utils/verifyCronSecret.ts`, `server/utils/verifyCsrf.ts`, `server/utils/supabaseAdmin.ts`, `server/utils/isAllowedUrl.ts`, `.env.example`
+
+**Modificar:**
+
+| Archivo                                     | Cambio                        | Prioridad  |
+| ------------------------------------------- | ----------------------------- | ---------- |
+| `server/api/stripe/checkout.post.ts`        | Auth + URL validation + CSRF  | 🔴 Crítico |
+| `server/api/stripe/portal.post.ts`          | Auth + ownership check + CSRF | 🔴 Crítico |
+| `server/api/stripe-connect-onboard.post.ts` | Auth + ownership check + CSRF | 🔴 Crítico |
+| `server/api/stripe/webhook.post.ts`         | Fallo cerrado sin secreto     | 🔴 Crítico |
+| `server/api/whatsapp/webhook.post.ts`       | Firma Meta + log mínimo       | 🔴 Crítico |
+| `.env` + `nuxt.config.ts` runtimeConfig     | WHATSAPP_APP_SECRET           | 🔴 Crítico |
+| `server/api/email/send.post.ts`             | Auth requerida                | 🟠 Alto    |
+| `server/api/cron/*.post.ts` (todos)         | verifyCronSecret()            | 🟠 Alto    |
+| `nuxt.config.ts`                            | devtools + CORS + encoding    | 🟡 Medio   |
+| `server/middleware/rate-limit.ts`           | Eliminar (tras WAF)           | 🟡 Medio   |
+| `server/utils/rateLimit.ts`                 | Eliminar (tras WAF)           | 🟡 Medio   |
+| `server/utils/verifyTurnstile.ts`           | Fallo cerrado prod            | 🟢 Bajo    |
+| `server/api/account/delete.post.ts`         | CSRF                          | 🟢 Bajo    |
+
+### Orden de ejecución
+
+1. Crear utils (verifyCronSecret, isAllowedUrl, verifyCsrf, supabaseAdmin)
+2. Críticos A.1 — Auth en 3 endpoints Stripe
+3. Crítico A.2 — Fallo cerrado webhook Stripe
+4. Crítico A.3 — Firma Meta en webhook WhatsApp + env var
+5. Alto B.1 — Auth en email/send
+6. Alto B.2 — verifyCronSecret en todos los crons
+7. Medio C.1 — Rate limiting (preguntar WAF vs mantener)
+8. Medio C.2 — CORS granular
+9. Medio C.3 — Devtools
+10. Bajos D.1-D.6 — Encoding, Turnstile, logging, supabaseAdmin, CSRF, .env.example
+11. Verificar — `npm run build` + `npm run lint` + `npm run typecheck`
+
+### Tests mínimos post-remediación
+
+- [ ] checkout.post: sin auth → 401; successUrl de otro dominio → 400
+- [ ] portal.post: sin auth → 401; customerId de otro usuario → 403
+- [ ] stripe-connect-onboard: sin auth → 401; dealerId de otro usuario → 403
+- [ ] Webhook Stripe sin secreto en production → 500
+- [ ] Webhook Stripe con firma inválida → 400
+- [ ] Webhook WhatsApp sin firma en production → error
+- [ ] email/send sin auth ni internal secret → 401
+- [ ] Cron sin CRON_SECRET en production → 500
+- [ ] Cron con secreto incorrecto → 401
+- [ ] verifyTurnstile sin secret en production → false
+- [ ] Requests con CSRF sin header X-Requested-With → 403
+- [ ] npm run build compila sin errores
+
+---
+
+## SESIÓN 34b — Hardening, robustez y deuda técnica
+
+> Segunda pasada de la auditoría: idempotencia, Turnstile en servidor, sanitización de logs, batching de crons, ownership en endpoints, reintentos, colas y trazabilidad. Pulir todo antes de producción.
+
+**Leer:**
+
+1. `server/api/stripe/webhook.post.ts` — Falta idempotencia
+2. `server/utils/verifyTurnstile.ts` + `server/api/advertisements.post.ts` — Turnstile no verificado en servidor
+3. `server/api/error-report.post.ts` + `server/utils/whatsappApi.ts` — Logs con PII
+4. `server/api/cron/freshness-check.post.ts` — Patrón de cron sin batching
+5. `server/api/whatsapp/process.post.ts` — Proceso largo sin cola
+6. `app/plugins/error-handler.ts` — Trazabilidad actual
+7. Todos los `server/api/cron/*.post.ts` — Mismos problemas de batching
+
+**Hacer:**
+
+### Parte A — Idempotencia del webhook de Stripe [punto 4 auditoría]
+
+**Problema:** Si Stripe reenvía un evento (lo hace por diseño si no recibe 200 rápido), el código actual puede crear suscripciones, payments e invoices duplicados.
+
+**Fix en `server/api/stripe/webhook.post.ts`:**
+
+Añadir comprobación de idempotencia al inicio de cada case del switch, ANTES de ejecutar cualquier escritura:
+
+```typescript
+// Para checkout.session.completed:
+const sessionId = session.id as string
+// Comprobar si ya se procesó este checkout
+const existingPayment = await fetch(
+  `${supabaseUrl}/rest/v1/payments?stripe_checkout_session_id=eq.${sessionId}&status=eq.succeeded&select=id`,
+  { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+)
+const existingPaymentData = await existingPayment.json()
+if (existingPaymentData?.length > 0) {
+  // Ya procesado — return sin hacer nada
+  return { received: true, idempotent: true }
+}
+
+// Para invoice.payment_succeeded:
+// Comprobar si ya existe payment con stripe_subscription_id + event invoice.id
+const invoiceId = invoice.id as string
+const existingInvoicePayment = await fetch(
+  `${supabaseUrl}/rest/v1/payments?metadata->>event_invoice_id=eq.${invoiceId}&select=id`,
+  { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+)
+const existingInvoiceData = await existingInvoicePayment.json()
+if (existingInvoiceData?.length > 0) {
+  return { received: true, idempotent: true }
+}
+// Además, añadir event_invoice_id al metadata del payment insert:
+metadata: { event: 'invoice.payment_succeeded', event_invoice_id: invoiceId }
+
+// Para customer.subscription.deleted:
+// Comprobar si la suscripción ya está canceled
+const existingSub = await fetch(
+  `${supabaseUrl}/rest/v1/subscriptions?stripe_subscription_id=eq.${subscriptionId}&status=eq.canceled&select=id`,
+  { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+)
+const existingSubData = await existingSub.json()
+if (existingSubData?.length > 0) {
+  return { received: true, idempotent: true }
+}
+```
+
+Patrón general: antes de escribir, comprobar si el resultado ya existe. Si existe, devolver 200 sin hacer nada.
+
+---
+
+### Parte B — Turnstile verificado en servidor [puntos 2/16]
+
+**Problema:** `verifyTurnstile()` existe pero NO se llama desde ningún endpoint de formulario público. El CAPTCHA solo está en el componente Vue (cliente), que un bot ignora directamente.
+
+**Fix — Añadir verificación de Turnstile en todos los endpoints de formularios públicos:**
+
+Buscar todos los endpoints que reciben datos de formularios públicos (sin auth requerida). Como mínimo:
+
+- `server/api/advertisements.post.ts` — Publicar anuncio
+- Cualquier endpoint de contacto, solicitud o lead que acepte datos sin autenticación
+
+**Cambio en cada endpoint afectado:**
+
+```typescript
+import { getRequestIP } from 'h3'
+
+// Al inicio del handler, ANTES de procesar datos:
+const turnstileToken = body.turnstileToken
+if (!turnstileToken) {
+  throw createError({ statusCode: 400, message: 'CAPTCHA verification required' })
+}
+
+const ip = getRequestIP(event, { xForwardedFor: true }) || undefined
+const turnstileValid = await verifyTurnstile(turnstileToken, ip)
+if (!turnstileValid) {
+  throw createError({ statusCode: 403, message: 'CAPTCHA verification failed' })
+}
+```
+
+**Cambio en los componentes Vue que usan estos formularios:**
+
+Asegurar que `TurnstileWidget.vue` está incluido en cada formulario y que el token se envía en el body:
+
+```typescript
+const { data } = await $fetch('/api/advertisements', {
+  method: 'POST',
+  body: { ...formData, turnstileToken: turnstileToken.value },
+})
+```
+
+**Nota para Claude Code:** Buscar en `app/components/` y `app/pages/` todos los formularios que hacen POST a endpoints públicos y verificar que incluyen TurnstileWidget + envían el token. Los formularios que requieren auth (dashboard del dealer) NO necesitan Turnstile — ya están protegidos por sesión.
+
+---
+
+### Parte C — Sanitización de logs con PII [punto 7]
+
+**Problema:** Varios archivos loguean datos sensibles: números de teléfono, emails, payloads completos, IPs.
+
+**Fix en `server/api/error-report.post.ts`:**
+
+```typescript
+// REEMPLAZAR el log actual:
+console.error('[error-report]', JSON.stringify(report))
+
+// POR log sanitizado:
+const sanitizedReport = {
+  message: report.message,
+  url: report.url,
+  source: report.source,
+  component: report.component,
+  timestamp: report.timestamp,
+  // NO loguear: stack (puede contener datos de usuario), ip, userAgent completo
+}
+console.error('[error-report]', JSON.stringify(sanitizedReport))
+```
+
+**Fix en `server/utils/whatsappApi.ts`:**
+
+```typescript
+// REEMPLAZAR en sendWhatsAppMessage:
+console.warn(`[WhatsApp Dev] Would send to ${to}: ${text}`)
+// POR:
+console.warn(`[WhatsApp Dev] Would send message (${text.length} chars)`)
+
+// REEMPLAZAR en downloadWhatsAppMedia:
+console.warn(`[WhatsApp Dev] Would download media: ${mediaId}`)
+// POR:
+console.warn(`[WhatsApp Dev] Would download media (id redacted)`)
+
+// REEMPLAZAR logs de error que incluyen errorBody completo:
+console.error(`[WhatsApp] Failed to send message to ${to}:`, errorBody)
+// POR:
+console.error(`[WhatsApp] Failed to send message: ${response.status} ${response.statusText}`)
+// Solo loguear status code, no el body completo ni el número de teléfono
+```
+
+**Fix en `server/api/whatsapp/process.post.ts`:**
+
+Revisar todos los `console.error` y `console.warn`. Eliminar datos de usuario:
+
+- NO loguear `submission.phone_number`
+- NO loguear contenido de `text_content`
+- SÍ loguear IDs de submission, vehicle, y códigos de error
+
+**Crear `server/utils/sanitizeLog.ts` (opcional pero recomendado):**
+
+```typescript
+/**
+ * Redact sensitive fields from objects before logging.
+ * Replaces phone numbers, emails, and long text content.
+ */
+export function sanitizeForLog(obj: Record<string, unknown>): Record<string, unknown> {
+  const sensitive = [
+    'phone',
+    'phone_number',
+    'email',
+    'contact_email',
+    'text_content',
+    'stack',
+    'ip',
+  ]
+  const result = { ...obj }
+  for (const key of sensitive) {
+    if (key in result && result[key]) {
+      result[key] = '[REDACTED]'
+    }
+  }
+  return result
+}
+```
+
+---
+
+### Parte D — Batching en cron jobs [punto 9]
+
+**Problema:** Los crons hacen `SELECT *` sin límite y luego iteran uno a uno con PATCH individual. Con miles de vehículos, esto genera picos de carga en la BD y puede tardar más del timeout del Worker.
+
+**Fix — Patrón de batching para todos los crons:**
+
+Crear `server/utils/batchProcessor.ts`:
+
+```typescript
+/**
+ * Process items in batches with configurable size and delay.
+ * Prevents overloading DB with too many sequential requests.
+ */
+export async function processBatch<T>({
+  items,
+  batchSize = 50,
+  delayBetweenBatchesMs = 100,
+  processor,
+}: {
+  items: T[]
+  batchSize?: number
+  delayBetweenBatchesMs?: number
+  processor: (item: T) => Promise<void>
+}): Promise<{ processed: number; errors: number }> {
+  let processed = 0
+  let errors = 0
+
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize)
+
+    await Promise.allSettled(
+      batch.map(async (item) => {
+        try {
+          await processor(item)
+          processed++
+        } catch {
+          errors++
+        }
+      }),
+    )
+
+    // Delay between batches to avoid overloading
+    if (i + batchSize < items.length && delayBetweenBatchesMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, delayBetweenBatchesMs))
+    }
+  }
+
+  return { processed, errors }
+}
+```
+
+**Aplicar a `server/api/cron/freshness-check.post.ts`:**
+
+```typescript
+// Añadir LIMIT a los queries REST:
+const reminderUrl = `${supabaseUrl}/rest/v1/vehicles?${reminderQuery}&...&limit=200`
+
+// Reemplazar el for loop por processBatch:
+import { processBatch } from '../../utils/batchProcessor'
+
+const reminderResult = await processBatch({
+  items: vehiclesToRemind,
+  batchSize: 50,
+  processor: async (vehicle) => {
+    await fetch(`${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicle.id}`, {
+      method: 'PATCH', headers,
+      body: JSON.stringify({ freshness_reminded_at: now.toISOString(), ... }),
+    })
+  },
+})
+reminded = reminderResult.processed
+```
+
+**Aplicar el mismo patrón a TODOS los crons que iteran:**
+
+- `auto-auction.post.ts`
+- `freshness-check.post.ts` (3 loops)
+- `favorite-price-drop.post.ts`
+- `favorite-sold.post.ts`
+- `search-alerts.post.ts`
+- `dealer-weekly-stats.post.ts`
+
+El patrón es siempre el mismo: añadir `&limit=200` al query, usar `processBatch()`, y añadir delay entre batches.
+
+---
+
+### Parte E — Validación de ownership en endpoints con Service Role [punto 11]
+
+**Problema:** La sesión 34 corrigió los endpoints de Stripe, pero hay otros endpoints que usan service role sin validar que el usuario es dueño del recurso.
+
+**Fix — Auditar y corregir:**
+
+Claude Code debe buscar en `server/api/` todos los endpoints que:
+
+1. Reciben un `userId`, `dealerId`, `vehicleId` o similar en el body/params
+2. Usan `serverSupabaseServiceRole` para operar sobre esos datos
+3. NO verifican que el usuario autenticado es el dueño
+
+Comando de búsqueda:
+
+```bash
+grep -rn 'serverSupabaseServiceRole\|supabaseServiceRoleKey' server/api/ | grep -v 'cron\|webhook\|infra'
+```
+
+Para cada endpoint encontrado que NO sea cron, webhook o admin:
+
+- Añadir `serverSupabaseUser(event)` al inicio
+- Verificar ownership del recurso antes de operar
+- Si es un endpoint solo para admins, verificar `user.role === 'admin'`
+
+**Excluir de esta revisión:** crons (protegidos por secret), webhooks (protegidos por firma), y endpoints de admin (protegidos por middleware admin).
+
+---
+
+### Parte F — isAllowedUrl como patrón obligatorio [punto 15]
+
+**Problema:** `isAllowedUrl` se creó en la sesión 34 pero solo se usa en los endpoints de Stripe. Cualquier futuro endpoint que acepte URLs externas podría olvidarse de validar.
+
+**Fix — Documentar y auditar:**
+
+1. Buscar en `server/api/` todos los endpoints que reciben URLs en el body o params:
+
+```bash
+grep -rn 'Url\|url\|URL\|redirect\|return_url\|callback' server/api/ --include='*.ts'
+```
+
+2. Verificar que cada uno usa `isAllowedUrl()` si la URL se usa para redirección o se envía al cliente.
+
+3. Añadir comentario en `server/utils/isAllowedUrl.ts`:
+
+```typescript
+/**
+ * PATRÓN OBLIGATORIO: Todo endpoint que reciba URLs externas
+ * (successUrl, returnUrl, redirectUrl, callbackUrl, etc.)
+ * DEBE validarlas con esta función antes de usarlas.
+ * Ver sesión 34 de INSTRUCCIONES-MAESTRAS.md.
+ */
+```
+
+---
+
+### Parte G — Reintentos con backoff para Supabase REST [punto 17]
+
+**Problema:** Las llamadas REST a Supabase no tienen reintentos. Si Supabase devuelve 503 temporal o timeout, el endpoint falla directamente.
+
+**Crear `server/utils/fetchWithRetry.ts`:**
+
+```typescript
+/**
+ * Fetch with exponential backoff retry for transient errors.
+ * Retries on: 429 (rate limit), 500, 502, 503, 504, network errors.
+ * Does NOT retry on: 400, 401, 403, 404 (errores del cliente).
+ */
+export async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  { maxRetries = 3, baseDelayMs = 500 } = {},
+): Promise<Response> {
+  let lastError: Error | null = null
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options)
+
+      // No reintentar errores del cliente
+      if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+        return response
+      }
+
+      // Reintentar errores del servidor y rate limit
+      if (response.status >= 500 || response.status === 429) {
+        if (attempt < maxRetries) {
+          const delay = baseDelayMs * Math.pow(2, attempt)
+          await new Promise((resolve) => setTimeout(resolve, delay))
+          continue
+        }
+      }
+
+      return response
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err))
+      if (attempt < maxRetries) {
+        const delay = baseDelayMs * Math.pow(2, attempt)
+        await new Promise((resolve) => setTimeout(resolve, delay))
+      }
+    }
+  }
+
+  throw lastError || new Error('fetchWithRetry: all retries exhausted')
+}
+```
+
+Refactorizar progresivamente: los nuevos endpoints y los crons (que son los que más sufren por errores transitorios) deben usar `fetchWithRetry()` en vez de `fetch()` para las llamadas a Supabase REST. NO refactorizar todo de golpe — priorizar crons y webhook de Stripe.
+
+---
+
+### Parte H — Proceso WhatsApp con cola/retry [punto 18]
+
+**Problema:** `whatsapp/process.post.ts` es un proceso largo (descarga media, llama a Claude Vision, sube a Cloudinary, crea vehículo). Si falla a mitad, no hay retry automático.
+
+**Fix — Mecanismo de retry basado en status:**
+
+El sistema ya tiene `status: 'received' | 'processing' | 'processed' | 'failed'` en `whatsapp_submissions`. Añadir:
+
+1. **Campo `retry_count`** en `whatsapp_submissions`:
+
+```sql
+ALTER TABLE whatsapp_submissions ADD COLUMN IF NOT EXISTS retry_count INTEGER DEFAULT 0;
+ALTER TABLE whatsapp_submissions ADD COLUMN IF NOT EXISTS last_error TEXT;
+```
+
+2. **Lógica de retry en el cron de WhatsApp** (crear o añadir a un cron existente):
+
+Crear `server/api/cron/whatsapp-retry.post.ts`:
+
+```
+- Buscar submissions con status = 'failed' AND retry_count < 3
+- Para cada una: llamar a /api/whatsapp/process con submissionId
+- Incrementar retry_count
+- Si retry_count >= 3: marcar como 'permanently_failed' y notificar admin
+```
+
+3. **En `whatsapp/process.post.ts`:** Al marcar como failed, guardar también `retry_count` incrementado y `last_error`.
+
+4. **Timeout protection:** Cloudflare Workers tienen timeout de 30s (free) o 15min (paid). El proceso de WhatsApp puede tardar más de 30s (Claude Vision + Cloudinary). Si estáis en Workers Paid, estáis bien. Si no, considerar partir el proceso en pasos asíncronos.
+
+---
+
+### Parte I — Trazabilidad centralizada con request IDs [punto 19]
+
+**Problema:** Los logs usan `console.error` sin correlación entre requests. Si hay un error en producción, es difícil trazar qué request lo causó.
+
+**Fix — Middleware de request ID + logger:**
+
+Crear `server/middleware/request-id.ts`:
+
+```typescript
+import { defineEventHandler, setResponseHeader } from 'h3'
+import { randomUUID } from 'crypto'
+
+/**
+ * Assigns a unique request ID to every incoming request.
+ * Available via event.context.requestId in all handlers.
+ * Also sent back in X-Request-ID response header for debugging.
+ */
+export default defineEventHandler((event) => {
+  const requestId = (event.node.req.headers['x-request-id'] as string) || randomUUID().slice(0, 8)
+  event.context.requestId = requestId
+  setResponseHeader(event, 'x-request-id', requestId)
+})
+```
+
+Crear `server/utils/logger.ts`:
+
+```typescript
+import type { H3Event } from 'h3'
+
+/**
+ * Structured logger that includes request ID for traceability.
+ * Use this instead of console.log/error/warn in server routes.
+ */
+export function createLogger(event: H3Event) {
+  const reqId = event.context.requestId || 'no-id'
+  const path = event.path || 'unknown'
+
+  return {
+    info: (msg: string, data?: Record<string, unknown>) =>
+      console.info(JSON.stringify({ level: 'info', reqId, path, msg, ...data })),
+    warn: (msg: string, data?: Record<string, unknown>) =>
+      console.warn(JSON.stringify({ level: 'warn', reqId, path, msg, ...data })),
+    error: (msg: string, data?: Record<string, unknown>) =>
+      console.error(JSON.stringify({ level: 'error', reqId, path, msg, ...data })),
+  }
+}
+```
+
+Refactorizar progresivamente: los nuevos endpoints deben usar `createLogger(event)` en vez de `console.*`. Los existentes se migran gradualmente. Priorizar los endpoints críticos (webhooks, crons, pagos).
+
+**Integración con Sentry:** El plugin `error-handler.ts` ya envía errores a Sentry. Añadir el `requestId` como tag:
+
+```typescript
+Sentry.captureException(error, { tags: { requestId: event.context?.requestId } })
+```
+
+---
+
+### Parte J — TODOs pendientes [punto 20]
+
+**Problema:** Hay TODOs sin completar en áreas funcionales.
+
+Claude Code debe:
+
+```bash
+grep -rn 'TODO\|FIXME\|HACK\|XXX' server/ app/ --include='*.ts' --include='*.vue' | grep -v node_modules | grep -v .nuxt
+```
+
+Para cada TODO encontrado, decidir:
+
+1. **Implementar ahora** si es funcionalidad core (notificaciones de freshness, Cloudinary cleanup)
+2. **Crear issue/ticket** si es mejora futura (añadir como comentario con fecha y contexto)
+3. **Eliminar** si es obsoleto (ya implementado en otra sesión)
+
+TODOs conocidos que probablemente aparezcan:
+
+- `freshness-check.post.ts`: "TODO: Send reminder notification/email to dealer" — **Implementar:** llamar a `/api/email/send` con template `freshness_reminder` y header `x-internal-secret`
+- `auto-auction.post.ts`: TODOs de lógica de subasta — **Revisar** si la sesión 16 ya los resolvió
+- `admin/index.vue`: "TODO: Implementar lógica de coincidencias" — **Implementar o dejar como placeholder** con fecha
+- Cualquier TODO de Cloudinary — **Probablemente resuelto** por la sesión 33 (pipeline híbrido)
+
+---
+
+### Resumen de archivos
+
+**Crear:**
+
+| Archivo                                  | Tipo                               |
+| ---------------------------------------- | ---------------------------------- |
+| `server/utils/batchProcessor.ts`         | Util de procesamiento por lotes    |
+| `server/utils/fetchWithRetry.ts`         | Fetch con reintentos y backoff     |
+| `server/utils/sanitizeLog.ts`            | Sanitización de PII en logs        |
+| `server/utils/logger.ts`                 | Logger estructurado con request ID |
+| `server/middleware/request-id.ts`        | Middleware de request ID           |
+| `server/api/cron/whatsapp-retry.post.ts` | Cron de reintentos WhatsApp        |
+
+**Modificar:**
+
+| Archivo                                           | Cambio                                  |
+| ------------------------------------------------- | --------------------------------------- |
+| `server/api/stripe/webhook.post.ts`               | Idempotencia en cada case               |
+| `server/api/advertisements.post.ts`               | Añadir verifyTurnstile                  |
+| Otros endpoints de formularios públicos           | Añadir verifyTurnstile                  |
+| Componentes Vue con formularios públicos          | Añadir TurnstileWidget + enviar token   |
+| `server/api/error-report.post.ts`                 | Sanitizar logs                          |
+| `server/utils/whatsappApi.ts`                     | Sanitizar logs                          |
+| `server/api/whatsapp/process.post.ts`             | Sanitizar logs + retry_count            |
+| `server/api/cron/*.post.ts` (todos)               | Batching con processBatch() + LIMIT     |
+| `server/utils/isAllowedUrl.ts`                    | Añadir comentario de patrón obligatorio |
+| `app/plugins/error-handler.ts`                    | Añadir requestId a Sentry tags          |
+| Todos los endpoints con service role (auditarlos) | Ownership validation                    |
+| TODOs encontrados                                 | Implementar, crear ticket o eliminar    |
+
+**Migración SQL (añadir a 00052 o al final de 00051):**
+
+```sql
+ALTER TABLE whatsapp_submissions ADD COLUMN IF NOT EXISTS retry_count INTEGER DEFAULT 0;
+ALTER TABLE whatsapp_submissions ADD COLUMN IF NOT EXISTS last_error TEXT;
+```
+
+### Orden de ejecución
+
+1. Crear utils (batchProcessor, fetchWithRetry, sanitizeLog, logger)
+2. Crear middleware request-id
+3. Idempotencia webhook Stripe (Parte A)
+4. Turnstile en servidor (Parte B) — endpoints + componentes Vue
+5. Sanitización de logs (Parte C)
+6. Batching en crons (Parte D)
+7. Ownership audit (Parte E)
+8. isAllowedUrl pattern doc (Parte F)
+9. fetchWithRetry en crons y webhook (Parte G)
+10. WhatsApp retry cron + migración SQL (Parte H)
+11. Logger + request-id en endpoints críticos (Parte I)
+12. Resolver TODOs (Parte J)
+13. Verificar — `npm run build` + `npm run lint` + `npm run typecheck`
+
+### Tests mínimos
+
+- [ ] Webhook Stripe: enviar mismo evento 2 veces → solo 1 payment/invoice creado
+- [ ] advertisements.post sin turnstileToken → 400
+- [ ] advertisements.post con token inválido → 403
+- [ ] Logs no contienen teléfonos, emails ni payloads completos
+- [ ] Cron freshness-check con 500 vehículos → procesa en batches de 50
+- [ ] whatsapp-retry cron reintenta submissions fallidas
+- [ ] Response headers incluyen X-Request-ID
+- [ ] Todos los TODOs están resueltos o documentados
+- [ ] npm run build compila sin errores
+
+---
+
+## MAPA COMPLETO DE RUTAS (REFERENCIA CANÓNICA)
+
+> **Para Claude Code:** Este mapa es la fuente de verdad para la estructura de `pages/`. Cuando haya contradicción con cualquier otro documento, este mapa prevalece.
+
+```
+pages/
+│
+├── index.vue                              → Home (/)
+├── vehiculo/[slug].vue                    → Ficha de vehículo (/vehiculo/cisterna-indox-25000l)
+├── subastas/
+│   ├── index.vue                          → Listado subastas (/subastas)
+│   └── [id].vue                           → Detalle subasta (/subastas/abc123)
+├── guia/                                  → Contenido editorial EVERGREEN (decisión SEO 17 Feb)
+│   ├── index.vue                          → Índice de guías (/guia)
+│   └── [slug].vue                         → Guía individual (/guia/normativa-adr-cisternas)
+├── noticias/                              → Contenido temporal con valor SEO a 3+ meses
+│   ├── index.vue                          → Índice de noticias (/noticias)
+│   └── [slug].vue                         → Noticia individual (/noticias/nuevo-reglamento-adr-2027)
+├── precios.vue                            → Planes de suscripción (/precios) [sesión 17]
+├── datos.vue                              → Índice de precios de mercado público (/datos) [sesión 32]
+├── valoracion.vue                         → Valoración individual de vehículo (/valoracion) [sesión 32]
+├── transparencia.vue                      → Informe DSA anual (/transparencia) [sesión 25]
+├── servicios-postventa.vue                → Cross-sell post-venta (/servicios-postventa?v=slug) [sesión 16c]
+├── nosotros.vue                           → Sobre Tracciona (/nosotros)
+├── legal.vue                              → Aviso legal (/legal)
+├── privacidad.vue                         → Política de privacidad (/privacidad)
+├── cookies.vue                            → Política de cookies (/cookies)
+├── condiciones.vue                        → Términos y condiciones (/condiciones)
+├── auth/
+│   ├── login.vue                          → /auth/login
+│   ├── registro.vue                       → /auth/registro
+│   ├── confirmar.vue                      → /auth/confirmar
+│   ├── recuperar.vue                      → /auth/recuperar
+│   └── nueva-password.vue                 → /auth/nueva-password
+├── perfil/                                → Zona privada COMPRADOR (auth requerido)
+│   ├── index.vue                          → /perfil (dashboard comprador)
+│   ├── datos.vue                          → /perfil/datos
+│   ├── favoritos.vue                      → /perfil/favoritos
+│   ├── alertas.vue                        → /perfil/alertas
+│   ├── contactos.vue                      → /perfil/contactos
+│   ├── notificaciones.vue                 → /perfil/notificaciones
+│   ├── suscripcion.vue                    → /perfil/suscripcion
+│   └── seguridad.vue                      → /perfil/seguridad
+├── dashboard/                             → Zona privada DEALER (auth + user_type=dealer)
+│   ├── index.vue                          → /dashboard (panel dealer)
+│   ├── vehiculos/
+│   │   ├── index.vue                      → /dashboard/vehiculos
+│   │   ├── nuevo.vue                      → /dashboard/vehiculos/nuevo
+│   │   ├── importar.vue                   → /dashboard/vehiculos/importar
+│   │   └── [id].vue                       → /dashboard/vehiculos/:id (editar)
+│   ├── leads/
+│   │   ├── index.vue                      → /dashboard/leads
+│   │   └── [id].vue                       → /dashboard/leads/:id
+│   ├── estadisticas.vue                   → /dashboard/estadisticas
+│   ├── portal.vue                         → /dashboard/portal
+│   ├── herramientas/
+│   │   ├── factura.vue                    → /dashboard/herramientas/factura
+│   │   ├── contrato.vue                   → /dashboard/herramientas/contrato
+│   │   ├── presupuesto.vue                → /dashboard/herramientas/presupuesto
+│   │   ├── calculadora.vue                → /dashboard/herramientas/calculadora
+│   │   ├── exportar-anuncio.vue           → /dashboard/herramientas/exportar-anuncio
+│   │   ├── widget.vue                     → /dashboard/herramientas/widget
+│   │   ├── exportar.vue                   → /dashboard/herramientas/exportar
+│   │   └── merchandising.vue              → /dashboard/herramientas/merchandising
+│   ├── suscripcion.vue                    → /dashboard/suscripcion
+│   └── facturas.vue                       → /dashboard/facturas
+├── admin/                                 → Panel administración (auth + role=admin)
+│   ├── index.vue                          → /admin (dashboard métricas)
+│   ├── config/
+│   │   ├── branding.vue                   → /admin/config/branding
+│   │   ├── navigation.vue                 → /admin/config/navigation
+│   │   ├── homepage.vue                   → /admin/config/homepage
+│   │   ├── catalog.vue                    → /admin/config/catalog
+│   │   ├── languages.vue                  → /admin/config/languages
+│   │   ├── pricing.vue                    → /admin/config/pricing
+│   │   ├── integrations.vue               → /admin/config/integrations
+│   │   ├── emails.vue                     → /admin/config/emails
+│   │   ├── editorial.vue                  → /admin/config/editorial
+│   │   └── system.vue                     → /admin/config/system
+│   ├── verificaciones.vue                 → /admin/verificaciones [sesión 15]
+│   ├── subastas/                          → /admin/subastas [sesión 16]
+│   ├── publicidad.vue                     → /admin/publicidad [sesión 16b]
+│   ├── captacion.vue                      → /admin/captacion [sesión 16d]
+│   ├── social.vue                         → /admin/social [sesión 16d]
+│   ├── infraestructura.vue                → /admin/infraestructura [sesión 33]
+│   └── utilidades.vue                     → /admin/utilidades (ya existe)
+└── [...slug].vue                          → CATCH-ALL (ver lógica abajo)
+```
+
+### Lógica del catch-all `[...slug].vue`
+
+> **DECISIÓN SEO 17 Feb:** Landing pages con URLs flat (guión, primer nivel).
+> `/cisternas-alimentarias` NO `/cisternas/alimentarias`.
+> Landing solo se activa cuando: (a) 3+ vehículos reales Y (b) solapamiento con padre < umbral dinámico.
+> Umbral dinámico: 3-10 veh en padre → 40%, 11-30 → 50%, 31-50 → 60%, 50+ → 70%.
+> Ver 01-pasos-0-6-migracion.md Paso 3.1 para tabla y lógica.
+
+Orden de resolución (Anexo K.9):
+
+1. Buscar en `active_landings` WHERE slug = input AND is_active = true
+   → Si encuentra → renderizar landing de catálogo (/cisternas, /cisternas-alimentarias, /cisternas-alimentarias-indox)
+   NOTA: URLs flat con guión (decisión SEO 17 Feb). NUNCA /cisternas/alimentarias (nested)
+2. Si landing existe pero is_active = false → 302 redirect a parent_slug
+3. Buscar en `dealers` WHERE slug = input AND status = 'active'
+   → Si encuentra → renderizar portal público del dealer (tracciona.com/transportes-garcia)
+4. Nada encontrado → 404
+
+### Slugs reservados (no pueden ser usados por dealers ni landings)
+
+```typescript
+export const RESERVED_SLUGS = [
+  'admin',
+  'dashboard',
+  'perfil',
+  'auth',
+  'vehiculo',
+  'subastas',
+  'guia',
+  'noticias',
+  'precios',
+  'datos',
+  'valoracion',
+  'transparencia',
+  'servicios-postventa',
+  'nosotros',
+  'legal',
+  'privacidad',
+  'cookies',
+  'condiciones',
+  'api',
+  'embed',
+  'sitemap',
+  'robots',
+  'favicon',
+  'manifest',
+]
+```
+
+### Ejemplos de URLs públicas resueltas
+
+```
+tracciona.com/                                       → index.vue (Home)
+tracciona.com/cisternas                              → [...slug].vue → active_landings → Landing categoría
+tracciona.com/cisternas-alimentarias                 → [...slug].vue → active_landings → Landing subcategoría (flat)
+tracciona.com/cisternas-alimentarias-indox           → [...slug].vue → active_landings → Landing marca (flat)
+tracciona.com/alquiler-cisternas                     → [...slug].vue → active_landings → Landing acción+cat (flat)
+tracciona.com/cabezas-tractoras-renault              → [...slug].vue → active_landings → Landing cat+marca (flat)
+tracciona.com/vehiculo/cisterna-indox-25000l-2019     → vehiculo/[slug].vue → Ficha de vehículo
+tracciona.com/transportes-garcia                     → [...slug].vue → dealers → Portal público dealer
+tracciona.com/guia/como-elegir-cisterna                → guia/[slug].vue → Guía evergreen
+tracciona.com/noticias/nuevo-reglamento-adr-2027        → noticias/[slug].vue → Noticia temporal
+tracciona.com/subastas                               → subastas/index.vue → Listado subastas
+tracciona.com/precios                                → precios.vue → Planes suscripción
+tracciona.com/en/cisternas                           → i18n prefix + [...slug].vue → Landing EN
+tracciona.com/fr/vehiculo/citerne-indox-25000l       → i18n prefix + vehiculo/[slug].vue → Ficha FR
+```
+
+---
+
+## NOTAS GENERALES
+
+- **Cada sesión es independiente.** Si Claude Code pierde contexto, el usuario abre un nuevo chat y dice "ejecuta la sesión N" y Claude Code lee este archivo.
+- **Verificar después de cada sesión:** `npm run build` debe compilar sin errores.
+- **Si algo falla:** No seguir adelante. Corregir primero.
+- **Los anexos son referencia, no tareas.** Solo se leen cuando esta guía los indica.
+- **No implementar roadmap post-lanzamiento** (pasos 7-9) hasta completar todas las sesiones 1-12.
