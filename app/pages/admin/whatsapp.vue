@@ -383,7 +383,7 @@ function getStatusLabel(status: string): string {
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
         </span>
-        <input v-model="search" type="text" :placeholder="t('admin.whatsapp.searchPlaceholder')" />
+        <input v-model="search" type="text" :placeholder="t('admin.whatsapp.searchPlaceholder')" >
         <button v-if="search" class="clear-btn" @click="search = ''">
           <svg
             width="14"
@@ -590,7 +590,7 @@ function getStatusLabel(status: string): string {
                 rel="noopener noreferrer"
                 class="image-thumb"
               >
-                <img :src="url" :alt="`${t('admin.whatsapp.image')} ${idx + 1}`" />
+                <img :src="url" :alt="`${t('admin.whatsapp.image')} ${idx + 1}`" >
               </a>
             </div>
           </div>

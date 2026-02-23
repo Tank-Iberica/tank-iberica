@@ -34,6 +34,9 @@
       </section>
 
       <div class="legal-links">
+        <NuxtLink to="/legal/privacidad" class="legal-link">{{ $t('legal.privacyLink') }}</NuxtLink>
+        <NuxtLink to="/legal/cookies" class="legal-link">{{ $t('legal.cookiesLink') }}</NuxtLink>
+        <NuxtLink to="/legal/condiciones" class="legal-link">{{ $t('legal.termsLink') }}</NuxtLink>
         <NuxtLink to="/transparencia" class="legal-link">{{
           $t('legal.transparencyLink')
         }}</NuxtLink>

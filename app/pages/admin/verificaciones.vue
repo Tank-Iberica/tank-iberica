@@ -404,7 +404,7 @@ function isFileImage(url: string | null): boolean {
           v-model="search"
           type="text"
           :placeholder="t('admin.verificaciones.searchPlaceholder')"
-        />
+        >
         <button v-if="search" class="clear-btn" @click="search = ''">
           <svg
             width="14"
@@ -527,7 +527,7 @@ function isFileImage(url: string | null): boolean {
                   v-if="getVehicleThumbnail(doc.vehicles)"
                   :src="getVehicleThumbnail(doc.vehicles)!"
                   :alt="`${doc.vehicles.brand} ${doc.vehicles.model}`"
-                />
+                >
                 <span v-else class="thumb-placeholder">
                   <svg
                     width="20"
@@ -587,7 +587,7 @@ function isFileImage(url: string | null): boolean {
                     :src="doc.file_url"
                     :alt="getDocTypeLabel(doc.doc_type)"
                     class="preview-image"
-                  />
+                  >
                   <a
                     v-else
                     :href="doc.file_url"

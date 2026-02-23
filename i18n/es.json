@@ -285,7 +285,17 @@
     "aiTitle": "Uso de inteligencia artificial",
     "aiText": "Tracciona utiliza sistemas de inteligencia artificial para la traducción automática de contenidos a múltiples idiomas y para la generación asistida de descripciones de vehículos. Estos contenidos están identificados con un badge específico. El vendedor puede revisar y modificar cualquier contenido generado por IA antes de su publicación. En cumplimiento del Reglamento de IA de la UE (AI Act), informamos del uso de estos sistemas.",
     "transparencyLink": "Informe de transparencia (DSA)",
-    "ukTermsLink": "UK Terms & Conditions"
+    "ukTermsLink": "UK Terms & Conditions",
+    "backToLegal": "Volver a información legal",
+    "privacyLink": "Política de privacidad",
+    "cookiesLink": "Política de cookies",
+    "termsLink": "Términos y condiciones",
+    "privacySeoTitle": "Política de Privacidad — Tracciona",
+    "privacySeoDescription": "Política de privacidad de Tracciona. Cómo protegemos tus datos personales.",
+    "cookiesSeoTitle": "Política de Cookies — Tracciona",
+    "cookiesSeoDescription": "Política de cookies de Tracciona. Qué cookies utilizamos y cómo gestionarlas.",
+    "termsSeoTitle": "Términos y Condiciones — Tracciona",
+    "termsSeoDescription": "Términos y condiciones de uso de la plataforma Tracciona."
   },
   "common": {
     "loading": "Cargando",

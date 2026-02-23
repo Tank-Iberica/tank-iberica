@@ -285,7 +285,17 @@
     "aiTitle": "Use of artificial intelligence",
     "aiText": "Tracciona uses artificial intelligence systems for automatic translation of content into multiple languages and for AI-assisted generation of vehicle descriptions. This content is identified with a specific badge. Sellers can review and modify any AI-generated content before publication. In compliance with the EU AI Act, we inform users of the use of these systems.",
     "transparencyLink": "Transparency report (DSA)",
-    "ukTermsLink": "UK Terms & Conditions"
+    "ukTermsLink": "UK Terms & Conditions",
+    "backToLegal": "Back to legal information",
+    "privacyLink": "Privacy policy",
+    "cookiesLink": "Cookie policy",
+    "termsLink": "Terms and conditions",
+    "privacySeoTitle": "Privacy Policy — Tracciona",
+    "privacySeoDescription": "Tracciona's privacy policy. How we protect your personal data.",
+    "cookiesSeoTitle": "Cookie Policy — Tracciona",
+    "cookiesSeoDescription": "Tracciona's cookie policy. What cookies we use and how to manage them.",
+    "termsSeoTitle": "Terms and Conditions — Tracciona",
+    "termsSeoDescription": "Terms and conditions of use for the Tracciona platform."
   },
   "common": {
     "loading": "Loading...",

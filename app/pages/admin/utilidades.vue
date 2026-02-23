@@ -1248,18 +1248,18 @@ function fmt(val: number): string {
               min="0"
               max="10"
               @change="onNumVehiclesChange"
-            />
+            >
           </div>
           <div class="form-group">
             <label>Fecha</label>
-            <input v-model="invoiceDate" type="date" />
+            <input v-model="invoiceDate" type="date" >
           </div>
           <div class="form-group">
             <label>Condiciones</label>
-            <input v-model="invoiceConditions" type="text" placeholder="Pago a 30 días" />
+            <input v-model="invoiceConditions" type="text" placeholder="Pago a 30 días" >
           </div>
           <div class="form-group checkbox-inline">
-            <label><input v-model="invoiceInEnglish" type="checkbox" /> Emitir en Inglés</label>
+            <label><input v-model="invoiceInEnglish" type="checkbox" > Emitir en Inglés</label>
           </div>
         </div>
 
@@ -1284,30 +1284,30 @@ function fmt(val: number): string {
         <div class="form-row">
           <div class="form-group" style="max-width: 200px">
             <label>Nº Factura</label>
-            <input v-model="invoiceNumber" type="text" readonly class="readonly-input" />
+            <input v-model="invoiceNumber" type="text" readonly class="readonly-input" >
           </div>
         </div>
 
-        <hr class="divider" />
+        <hr class="divider" >
 
         <!-- Client Data -->
         <h4 class="section-subtitle">Facturado a:</h4>
         <div class="form-grid-3">
           <div class="form-group">
             <label>Nombre/Empresa</label>
-            <input v-model="clientName" type="text" />
+            <input v-model="clientName" type="text" >
           </div>
           <div class="form-group">
             <label>Dirección</label>
-            <input v-model="clientAddress1" type="text" />
+            <input v-model="clientAddress1" type="text" >
           </div>
           <div class="form-group">
             <label>CP + Ciudad</label>
-            <input v-model="clientAddress2" type="text" />
+            <input v-model="clientAddress2" type="text" >
           </div>
           <div class="form-group">
             <label>Provincia + País</label>
-            <input v-model="clientAddress3" type="text" />
+            <input v-model="clientAddress3" type="text" >
           </div>
           <div class="form-group">
             <label>Tipo Doc</label>
@@ -1320,11 +1320,11 @@ function fmt(val: number): string {
           </div>
           <div class="form-group">
             <label>Número Doc</label>
-            <input v-model="clientDocNumber" type="text" />
+            <input v-model="clientDocNumber" type="text" >
           </div>
         </div>
 
-        <hr class="divider" />
+        <hr class="divider" >
 
         <!-- Invoice Lines -->
         <div class="lines-header">
@@ -1351,27 +1351,27 @@ function fmt(val: number): string {
               <option>Reserva</option>
               <option>Otro</option>
             </select>
-            <input v-model="line.concepto" type="text" placeholder="Concepto" />
-            <input v-model.number="line.cantidad" type="number" min="1" class="right" />
-            <input v-model.number="line.precioUd" type="number" step="0.01" class="right" />
+            <input v-model="line.concepto" type="text" placeholder="Concepto" >
+            <input v-model.number="line.cantidad" type="number" min="1" class="right" >
+            <input v-model.number="line.precioUd" type="number" step="0.01" class="right" >
             <input
               :value="getLineImporte(line).toFixed(2) + ' €'"
               type="text"
               readonly
               class="right readonly-input"
-            />
-            <input v-model.number="line.iva" type="number" class="right" />
+            >
+            <input v-model.number="line.iva" type="number" class="right" >
             <input
               :value="getLineSubtotal(line).toFixed(2) + ' €'"
               type="text"
               readonly
               class="right readonly-input total-cell"
-            />
+            >
             <button class="btn-delete" @click="removeInvoiceLine(line.id)">×</button>
           </div>
         </div>
 
-        <hr class="divider" />
+        <hr class="divider" >
 
         <!-- Totals -->
         <div class="totals-section">
@@ -1386,7 +1386,7 @@ function fmt(val: number): string {
           </div>
         </div>
 
-        <hr class="divider" />
+        <hr class="divider" >
 
         <!-- Company Data (collapsible) -->
         <details class="company-details">
@@ -1394,39 +1394,39 @@ function fmt(val: number): string {
           <div class="form-grid-3">
             <div class="form-group">
               <label>Empresa</label>
-              <input v-model="companyName" type="text" />
+              <input v-model="companyName" type="text" >
             </div>
             <div class="form-group">
               <label>NIF</label>
-              <input v-model="companyNIF" type="text" />
+              <input v-model="companyNIF" type="text" >
             </div>
             <div class="form-group">
               <label>Dirección</label>
-              <input v-model="companyAddress1" type="text" />
+              <input v-model="companyAddress1" type="text" >
             </div>
             <div class="form-group">
               <label>CP + Ciudad</label>
-              <input v-model="companyAddress2" type="text" />
+              <input v-model="companyAddress2" type="text" >
             </div>
             <div class="form-group">
               <label>País</label>
-              <input v-model="companyAddress3" type="text" />
+              <input v-model="companyAddress3" type="text" >
             </div>
             <div class="form-group">
               <label>Teléfono</label>
-              <input v-model="companyPhone" type="text" />
+              <input v-model="companyPhone" type="text" >
             </div>
             <div class="form-group">
               <label>Email</label>
-              <input v-model="companyEmail" type="text" />
+              <input v-model="companyEmail" type="text" >
             </div>
             <div class="form-group">
               <label>Web</label>
-              <input v-model="companyWeb" type="text" />
+              <input v-model="companyWeb" type="text" >
             </div>
             <div class="form-group">
               <label>Logo (URL)</label>
-              <input v-model="companyLogoUrl" type="text" placeholder="https://..." />
+              <input v-model="companyLogoUrl" type="text" placeholder="https://..." >
             </div>
           </div>
         </details>
@@ -1454,12 +1454,12 @@ function fmt(val: number): string {
             <label>Tipo de Contrato</label>
             <div class="radio-group-inline">
               <label class="radio-card" :class="{ active: contractType === 'arrendamiento' }">
-                <input v-model="contractType" type="radio" value="arrendamiento" />
+                <input v-model="contractType" type="radio" value="arrendamiento" >
                 <span class="radio-icon">🔄</span>
                 <span class="radio-label">Arrendamiento</span>
               </label>
               <label class="radio-card" :class="{ active: contractType === 'venta' }">
-                <input v-model="contractType" type="radio" value="venta" />
+                <input v-model="contractType" type="radio" value="venta" >
                 <span class="radio-icon">💰</span>
                 <span class="radio-label">Compraventa</span>
               </label>
@@ -1467,11 +1467,11 @@ function fmt(val: number): string {
           </div>
           <div class="form-group">
             <label>Fecha</label>
-            <input v-model="contractDate" type="date" />
+            <input v-model="contractDate" type="date" >
           </div>
           <div class="form-group">
             <label>Lugar</label>
-            <input v-model="contractLocation" type="text" placeholder="León" />
+            <input v-model="contractLocation" type="text" placeholder="León" >
           </div>
         </div>
 
@@ -1492,15 +1492,15 @@ function fmt(val: number): string {
           </div>
           <div class="form-group">
             <label>Tipo de Vehículo</label>
-            <input v-model="contractVehicleType" type="text" placeholder="semirremolque cisterna" />
+            <input v-model="contractVehicleType" type="text" placeholder="semirremolque cisterna" >
           </div>
           <div class="form-group">
             <label>Matrícula</label>
-            <input v-model="contractVehiclePlate" type="text" placeholder="S02999R" />
+            <input v-model="contractVehiclePlate" type="text" placeholder="S02999R" >
           </div>
         </div>
 
-        <hr class="divider" />
+        <hr class="divider" >
 
         <!-- Lessor/Seller (Company) -->
         <details class="company-details" open>
@@ -1510,28 +1510,28 @@ function fmt(val: number): string {
           <div class="form-grid-3">
             <div class="form-group">
               <label>Empresa</label>
-              <input v-model="lessorCompany" type="text" />
+              <input v-model="lessorCompany" type="text" >
             </div>
             <div class="form-group">
               <label>CIF</label>
-              <input v-model="lessorCIF" type="text" />
+              <input v-model="lessorCIF" type="text" >
             </div>
             <div class="form-group">
               <label>Domicilio</label>
-              <input v-model="lessorAddress" type="text" />
+              <input v-model="lessorAddress" type="text" >
             </div>
             <div class="form-group">
               <label>Representante</label>
-              <input v-model="lessorRepresentative" type="text" />
+              <input v-model="lessorRepresentative" type="text" >
             </div>
             <div class="form-group">
               <label>DNI Representante</label>
-              <input v-model="lessorRepresentativeNIF" type="text" />
+              <input v-model="lessorRepresentativeNIF" type="text" >
             </div>
           </div>
         </details>
 
-        <hr class="divider" />
+        <hr class="divider" >
 
         <!-- Lessee/Buyer -->
         <h4 class="section-subtitle">
@@ -1543,10 +1543,10 @@ function fmt(val: number): string {
             <label>Tipo</label>
             <div class="radio-group-inline compact">
               <label :class="{ active: lesseeType === 'persona' }">
-                <input v-model="lesseeType" type="radio" value="persona" /> Persona física
+                <input v-model="lesseeType" type="radio" value="persona" > Persona física
               </label>
               <label :class="{ active: lesseeType === 'empresa' }">
-                <input v-model="lesseeType" type="radio" value="empresa" /> Empresa
+                <input v-model="lesseeType" type="radio" value="empresa" > Empresa
               </label>
             </div>
           </div>
@@ -1556,11 +1556,11 @@ function fmt(val: number): string {
         <div v-if="lesseeType === 'persona'" class="form-grid-3">
           <div class="form-group">
             <label>Nombre completo</label>
-            <input v-model="lesseeName" type="text" placeholder="JOSE MANUEL VAZQUEZ LEA" />
+            <input v-model="lesseeName" type="text" placeholder="JOSE MANUEL VAZQUEZ LEA" >
           </div>
           <div class="form-group">
             <label>NIF</label>
-            <input v-model="lesseeNIF" type="text" placeholder="78813316K" />
+            <input v-model="lesseeNIF" type="text" placeholder="78813316K" >
           </div>
           <div class="form-group" style="grid-column: 1 / -1">
             <label>Domicilio</label>
@@ -1568,7 +1568,7 @@ function fmt(val: number): string {
               v-model="lesseeAddress"
               type="text"
               placeholder="Lugar San Cristovo, 12 15310 San Cristovo, A Coruña, España"
-            />
+            >
           </div>
         </div>
 
@@ -1576,27 +1576,27 @@ function fmt(val: number): string {
         <div v-if="lesseeType === 'empresa'" class="form-grid-3">
           <div class="form-group">
             <label>Empresa</label>
-            <input v-model="lesseeCompany" type="text" />
+            <input v-model="lesseeCompany" type="text" >
           </div>
           <div class="form-group">
             <label>CIF</label>
-            <input v-model="lesseeCIF" type="text" />
+            <input v-model="lesseeCIF" type="text" >
           </div>
           <div class="form-group">
             <label>Representante</label>
-            <input v-model="lesseeRepresentative" type="text" />
+            <input v-model="lesseeRepresentative" type="text" >
           </div>
           <div class="form-group">
             <label>NIF Representante</label>
-            <input v-model="lesseeRepresentativeNIF" type="text" />
+            <input v-model="lesseeRepresentativeNIF" type="text" >
           </div>
           <div class="form-group" style="grid-column: span 2">
             <label>Domicilio</label>
-            <input v-model="lesseeAddress" type="text" />
+            <input v-model="lesseeAddress" type="text" >
           </div>
         </div>
 
-        <hr class="divider" />
+        <hr class="divider" >
 
         <!-- Rental Terms (only for arrendamiento) -->
         <div v-if="contractType === 'arrendamiento'">
@@ -1605,19 +1605,19 @@ function fmt(val: number): string {
           <div class="form-grid-3">
             <div class="form-group">
               <label>Renta mensual (€)</label>
-              <input v-model.number="contractMonthlyRent" type="number" step="100" />
+              <input v-model.number="contractMonthlyRent" type="number" step="100" >
             </div>
             <div class="form-group">
               <label>Fianza (€)</label>
-              <input v-model.number="contractDeposit" type="number" step="100" />
+              <input v-model.number="contractDeposit" type="number" step="100" >
             </div>
             <div class="form-group">
               <label>Plazo pago (días)</label>
-              <input v-model.number="contractPaymentDays" type="number" />
+              <input v-model.number="contractPaymentDays" type="number" >
             </div>
             <div class="form-group">
               <label>Duración</label>
-              <input v-model.number="contractDuration" type="number" />
+              <input v-model.number="contractDuration" type="number" >
             </div>
             <div class="form-group">
               <label>Unidad</label>
@@ -1628,14 +1628,14 @@ function fmt(val: number): string {
             </div>
             <div class="form-group">
               <label>Valor residual (€)</label>
-              <input v-model.number="contractVehicleResidualValue" type="number" step="1000" />
+              <input v-model.number="contractVehicleResidualValue" type="number" step="1000" >
             </div>
           </div>
 
           <!-- Purchase Option -->
           <div class="option-toggle">
             <label>
-              <input v-model="contractHasPurchaseOption" type="checkbox" />
+              <input v-model="contractHasPurchaseOption" type="checkbox" >
               <span>Incluir opción de compra</span>
             </label>
           </div>
@@ -1643,15 +1643,15 @@ function fmt(val: number): string {
           <div v-if="contractHasPurchaseOption" class="form-grid-3 purchase-options">
             <div class="form-group">
               <label>Precio de compra (€)</label>
-              <input v-model.number="contractPurchasePrice" type="number" step="1000" />
+              <input v-model.number="contractPurchasePrice" type="number" step="1000" >
             </div>
             <div class="form-group">
               <label>Preaviso (días)</label>
-              <input v-model.number="contractPurchaseNotice" type="number" />
+              <input v-model.number="contractPurchaseNotice" type="number" >
             </div>
             <div class="form-group">
               <label>Mensualidades a descontar</label>
-              <input v-model.number="contractRentMonthsToDiscount" type="number" />
+              <input v-model.number="contractRentMonthsToDiscount" type="number" >
             </div>
           </div>
         </div>
@@ -1663,7 +1663,7 @@ function fmt(val: number): string {
           <div class="form-grid-3">
             <div class="form-group">
               <label>Precio de venta (€)</label>
-              <input v-model.number="contractSalePrice" type="number" step="1000" />
+              <input v-model.number="contractSalePrice" type="number" step="1000" >
             </div>
             <div class="form-group">
               <label>Forma de pago</label>
@@ -1677,13 +1677,13 @@ function fmt(val: number): string {
           </div>
         </div>
 
-        <hr class="divider" />
+        <hr class="divider" >
 
         <!-- Jurisdiction -->
         <div class="form-row">
           <div class="form-group" style="max-width: 300px">
             <label>Jurisdicción (Tribunales de)</label>
-            <input v-model="contractJurisdiction" type="text" placeholder="León" />
+            <input v-model="contractJurisdiction" type="text" placeholder="León" >
           </div>
         </div>
 
@@ -1753,22 +1753,22 @@ function fmt(val: number): string {
             <label class="option-label">Formato:</label>
             <div class="radio-group horizontal">
               <label
-                ><input v-model="exportFormat" type="radio" value="pdf" /> PDF (Imprimir)</label
+                ><input v-model="exportFormat" type="radio" value="pdf" > PDF (Imprimir)</label
               >
-              <label><input v-model="exportFormat" type="radio" value="excel" /> Excel (CSV)</label>
+              <label><input v-model="exportFormat" type="radio" value="excel" > Excel (CSV)</label>
             </div>
           </div>
 
           <div class="option-group">
             <label class="option-label">Columnas a incluir:</label>
             <div class="checkbox-grid">
-              <label><input v-model="exportColumns.tipo" type="checkbox" /> Tipo</label>
-              <label><input v-model="exportColumns.fecha" type="checkbox" /> Fecha</label>
-              <label><input v-model="exportColumns.razon" type="checkbox" /> Razón</label>
-              <label><input v-model="exportColumns.detalle" type="checkbox" /> Detalle</label>
-              <label><input v-model="exportColumns.importe" type="checkbox" /> Importe</label>
-              <label><input v-model="exportColumns.estado" type="checkbox" /> Estado</label>
-              <label><input v-model="exportColumns.notas" type="checkbox" /> Notas</label>
+              <label><input v-model="exportColumns.tipo" type="checkbox" > Tipo</label>
+              <label><input v-model="exportColumns.fecha" type="checkbox" > Fecha</label>
+              <label><input v-model="exportColumns.razon" type="checkbox" > Razón</label>
+              <label><input v-model="exportColumns.detalle" type="checkbox" > Detalle</label>
+              <label><input v-model="exportColumns.importe" type="checkbox" > Importe</label>
+              <label><input v-model="exportColumns.estado" type="checkbox" > Estado</label>
+              <label><input v-model="exportColumns.notas" type="checkbox" > Notas</label>
             </div>
           </div>
 
@@ -1786,15 +1786,15 @@ function fmt(val: number): string {
             <label class="option-label">Incluir en el resumen:</label>
             <div class="checkbox-group">
               <label
-                ><input v-model="resumenOptions.totales" type="checkbox" /> Totales
+                ><input v-model="resumenOptions.totales" type="checkbox" > Totales
                 (Ingresos/Gastos/Balance)</label
               >
               <label
-                ><input v-model="resumenOptions.desglose" type="checkbox" /> Desglose por
+                ><input v-model="resumenOptions.desglose" type="checkbox" > Desglose por
                 Razón</label
               >
               <label
-                ><input v-model="resumenOptions.mensual" type="checkbox" /> Desglose Mensual</label
+                ><input v-model="resumenOptions.mensual" type="checkbox" > Desglose Mensual</label
               >
             </div>
           </div>
