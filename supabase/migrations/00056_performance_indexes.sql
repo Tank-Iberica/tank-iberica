@@ -20,5 +20,10 @@ CREATE INDEX IF NOT EXISTS idx_vehicles_visible_from ON public.vehicles (visible
 -- Invoice lookup by dealer + date
 CREATE INDEX IF NOT EXISTS idx_invoices_dealer_created ON public.invoices (dealer_id, created_at DESC);
 
--- Payment lookup by checkout session
-CREATE INDEX IF NOT EXISTS idx_payments_checkout_session ON public.payments (checkout_session_id) WHERE checkout_session_id IS NOT NULL;
+-- Payment lookup by checkout session (only if column exists)
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'payments' AND column_name = 'checkout_session_id') THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_payments_checkout_session ON public.payments (checkout_session_id) WHERE checkout_session_id IS NOT NULL';
+  END IF;
+END $$;

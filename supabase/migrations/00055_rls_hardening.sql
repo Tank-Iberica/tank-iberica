@@ -46,11 +46,13 @@ DROP POLICY IF EXISTS "auction_registrations_own_update" ON public.auction_regis
 CREATE POLICY "auction_registrations_own_update" ON public.auction_registrations
   FOR UPDATE USING (user_id = auth.uid());
 
--- 7. saved_searches: add UPDATE/DELETE for own searches
-DROP POLICY IF EXISTS "saved_searches_own_update" ON public.saved_searches;
-CREATE POLICY "saved_searches_own_update" ON public.saved_searches
-  FOR UPDATE USING (user_id = auth.uid());
-
-DROP POLICY IF EXISTS "saved_searches_own_delete" ON public.saved_searches;
-CREATE POLICY "saved_searches_own_delete" ON public.saved_searches
-  FOR DELETE USING (user_id = auth.uid());
+-- 7. saved_searches: add UPDATE/DELETE for own searches (only if table exists)
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'saved_searches') THEN
+    EXECUTE 'DROP POLICY IF EXISTS "saved_searches_own_update" ON public.saved_searches';
+    EXECUTE 'CREATE POLICY "saved_searches_own_update" ON public.saved_searches FOR UPDATE USING (user_id = auth.uid())';
+    EXECUTE 'DROP POLICY IF EXISTS "saved_searches_own_delete" ON public.saved_searches';
+    EXECUTE 'CREATE POLICY "saved_searches_own_delete" ON public.saved_searches FOR DELETE USING (user_id = auth.uid())';
+  END IF;
+END $$;
