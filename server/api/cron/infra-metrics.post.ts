@@ -8,8 +8,9 @@
  * Components: supabase (DB size, connections), cloudinary, resend, sentry.
  * Gracefully skips any component whose env vars are not configured.
  */
-import { createError, defineEventHandler, getHeader, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import { verifyCronSecret } from '../../utils/verifyCronSecret'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -70,25 +71,11 @@ const RESEND_DAILY_LIMIT = 100 // Free tier 100/day
 
 export default defineEventHandler(async (event) => {
   // ── Verify cron secret ────────────────────────────────────────────────────
-  const config = useRuntimeConfig()
-  const cronSecret = config.cronSecret || process.env.CRON_SECRET
-
-  if (cronSecret) {
-    const authHeader = getHeader(event, 'authorization')
-    const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
-    const headerSecret = getHeader(event, 'x-cron-secret')
-
-    const isAuthorized =
-      authHeader === `Bearer ${cronSecret}` ||
-      headerSecret === cronSecret ||
-      body?.secret === cronSecret
-
-    if (!isAuthorized) {
-      throw createError({ statusCode: 401, message: 'Unauthorized' })
-    }
-  }
+  const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
+  verifyCronSecret(event, body?.secret)
 
   const supabase = serverSupabaseServiceRole(event)
+  const _internalSecret = useRuntimeConfig().cronSecret || process.env.CRON_SECRET
   const collectedMetrics: MetricEntry[] = []
   const errors: string[] = []
 
@@ -324,6 +311,7 @@ export default defineEventHandler(async (event) => {
 
         await $fetch('/api/email/send', {
           method: 'POST',
+          headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
           body: {
             to: 'tankiberica@gmail.com',
             subject,

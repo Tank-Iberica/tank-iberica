@@ -5,20 +5,17 @@
         {{ error?.statusCode || 404 }}
       </h1>
       <h2 class="error-title">
-        {{ error?.statusCode === 500 ? 'Error del servidor' : 'Página no encontrada' }}
+        {{ error?.statusCode === 500 ? $t('error.serverError') : $t('error.notFound') }}
       </h2>
       <p class="error-message">
-        {{ error?.statusCode === 500
-          ? 'Ha ocurrido un error interno. Inténtalo de nuevo más tarde.'
-          : 'La página que buscas no existe o ha sido movida.'
-        }}
+        {{ error?.statusCode === 500 ? $t('error.serverMessage') : $t('error.notFoundMessage') }}
       </p>
       <div class="error-actions">
         <NuxtLink to="/" class="btn-primary">
-          Ver catálogo
+          {{ $t('error.backToCatalog') }}
         </NuxtLink>
         <NuxtLink to="/noticias" class="btn-secondary">
-          Noticias
+          {{ $t('error.news') }}
         </NuxtLink>
       </div>
     </div>
@@ -33,9 +30,15 @@ const props = defineProps<{
   }
 }>()
 
+const { t } = useI18n()
+
 useSeoMeta({
-  title: `${props.error?.statusCode || 404} — Tank Iberica`,
+  title: `${props.error?.statusCode || 404} — Tracciona`,
   robots: 'noindex, nofollow',
+})
+
+useHead({
+  htmlAttrs: { lang: t('error.lang') || 'es' },
 })
 </script>
 
@@ -58,7 +61,7 @@ useSeoMeta({
 .error-code {
   font-size: 6rem;
   font-weight: 800;
-  color: var(--color-primary, #23424A);
+  color: var(--color-primary, #23424a);
   line-height: 1;
   margin: 0 0 0.5rem;
 }
@@ -88,7 +91,7 @@ useSeoMeta({
   display: inline-flex;
   align-items: center;
   padding: 12px 24px;
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border-radius: 8px;
   font-weight: 600;
@@ -106,7 +109,7 @@ useSeoMeta({
   align-items: center;
   padding: 12px 24px;
   background: white;
-  color: var(--color-primary, #23424A);
+  color: var(--color-primary, #23424a);
   border: 1px solid #d1d5db;
   border-radius: 8px;
   font-weight: 600;
@@ -116,7 +119,7 @@ useSeoMeta({
 }
 
 .btn-secondary:hover {
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
 }
 
 @media (min-width: 480px) {

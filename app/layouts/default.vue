@@ -15,6 +15,7 @@
     <ModalsAdvertiseModal v-model="advertiseOpen" @open-auth="authOpen = true" />
     <ModalsDemandModal v-model="demandOpen" @open-auth="authOpen = true" />
     <ModalsSubscribeModal v-model="subscribeOpen" />
+    <LayoutCookieBanner />
   </div>
 </template>
 
@@ -31,7 +32,9 @@ let authRecentlyClosed = false
 watch(authOpen, (newVal, oldVal) => {
   if (!newVal && oldVal) {
     authRecentlyClosed = true
-    setTimeout(() => { authRecentlyClosed = false }, 600)
+    setTimeout(() => {
+      authRecentlyClosed = false
+    }, 600)
   }
 })
 
@@ -41,9 +44,15 @@ function handleOpenUserPanel() {
 }
 
 // Provide modal openers for child components
-provide('openDemandModal', () => { demandOpen.value = true })
-provide('openAuthModal', () => { authOpen.value = true })
-provide('openSubscribeModal', () => { subscribeOpen.value = true })
+provide('openDemandModal', () => {
+  demandOpen.value = true
+})
+provide('openAuthModal', () => {
+  authOpen.value = true
+})
+provide('openSubscribeModal', () => {
+  subscribeOpen.value = true
+})
 
 // Auto-open auth modal if ?auth=login is in URL
 onMounted(() => {
@@ -53,11 +62,14 @@ onMounted(() => {
 })
 
 // Watch for route changes (in case of client-side navigation)
-watch(() => route.query.auth, (auth) => {
-  if (auth === 'login') {
-    authOpen.value = true
-  }
-})
+watch(
+  () => route.query.auth,
+  (auth) => {
+    if (auth === 'login') {
+      authOpen.value = true
+    }
+  },
+)
 </script>
 
 <style scoped>
@@ -96,4 +108,3 @@ body.banner-visible .main-content {
   }
 }
 </style>
-

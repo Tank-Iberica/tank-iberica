@@ -53,13 +53,17 @@ onMounted(async () => {
 })
 
 // Watch filters
-watch(filters, () => {
-  fetchAdvertisements(filters.value)
-}, { deep: true })
+watch(
+  filters,
+  () => {
+    fetchAdvertisements(filters.value)
+  },
+  { deep: true },
+)
 
 // Status helpers
 function getStatusConfig(status: AdvertisementStatus) {
-  return ADVERTISEMENT_STATUSES.find(s => s.value === status) || ADVERTISEMENT_STATUSES[0]
+  return ADVERTISEMENT_STATUSES.find((s) => s.value === status) || ADVERTISEMENT_STATUSES[0]
 }
 
 // Quick status update
@@ -171,39 +175,41 @@ function formatPrice(price: number | null): string {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      Cargando anunciantes...
-    </div>
+    <div v-if="loading" class="loading-state">Cargando anunciantes...</div>
 
     <!-- Table -->
     <div v-else class="table-container">
       <table class="admin-table">
         <thead>
           <tr>
-            <th style="width: 100px">
-              Estado
-            </th>
+            <th style="width: 100px">Estado</th>
             <th>Contacto</th>
             <th>Vehículo</th>
-            <th style="width: 100px">
-              Precio
-            </th>
-            <th style="width: 100px">
-              Fecha
-            </th>
-            <th style="width: 130px">
-              Acciones
-            </th>
+            <th style="width: 100px">Precio</th>
+            <th style="width: 100px">Fecha</th>
+            <th style="width: 130px">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="ad in advertisements" :key="ad.id" :class="{ 'row-pending': ad.status === 'pending' }">
+          <tr
+            v-for="ad in advertisements"
+            :key="ad.id"
+            :class="{ 'row-pending': ad.status === 'pending' }"
+          >
             <td>
               <select
                 :value="ad.status"
                 class="status-select"
-                :style="{ borderColor: getStatusConfig(ad.status).color, color: getStatusConfig(ad.status).color }"
-                @change="handleStatusChange(ad, ($event.target as HTMLSelectElement).value as AdvertisementStatus)"
+                :style="{
+                  borderColor: getStatusConfig(ad.status).color,
+                  color: getStatusConfig(ad.status).color,
+                }"
+                @change="
+                  handleStatusChange(
+                    ad,
+                    ($event.target as HTMLSelectElement).value as AdvertisementStatus,
+                  )
+                "
               >
                 <option v-for="st in ADVERTISEMENT_STATUSES" :key="st.value" :value="st.value">
                   {{ st.label }}
@@ -213,8 +219,12 @@ function formatPrice(price: number | null): string {
             <td>
               <div class="contact-info">
                 <strong>{{ ad.contact_name }}</strong>
-                <span v-if="ad.contact_phone" class="contact-detail">📞 {{ ad.contact_phone }}</span>
-                <span v-if="ad.contact_email" class="contact-detail">📧 {{ ad.contact_email }}</span>
+                <span v-if="ad.contact_phone" class="contact-detail"
+                  >📞 {{ ad.contact_phone }}</span
+                >
+                <span v-if="ad.contact_email" class="contact-detail"
+                  >📧 {{ ad.contact_email }}</span
+                >
               </div>
             </td>
             <td>
@@ -225,7 +235,8 @@ function formatPrice(price: number | null): string {
                 <span v-else class="no-data">Sin especificar</span>
                 <span v-if="ad.year" class="vehicle-year">{{ ad.year }}</span>
                 <span v-if="ad.subcategory || ad.type" class="vehicle-type">
-                  {{ ad.subcategory?.name_es || '' }}{{ ad.subcategory && ad.type ? ' > ' : '' }}{{ ad.type?.name_es || '' }}
+                  {{ ad.subcategory?.name_es || '' }}{{ ad.subcategory && ad.type ? ' > ' : ''
+                  }}{{ ad.type?.name_es || '' }}
                 </span>
                 <span v-else-if="ad.vehicle_type" class="vehicle-type">{{ ad.vehicle_type }}</span>
               </div>
@@ -238,18 +249,10 @@ function formatPrice(price: number | null): string {
             </td>
             <td>
               <div class="action-buttons">
-                <button
-                  class="btn-icon btn-view"
-                  title="Ver detalles"
-                  @click="openDetail(ad)"
-                >
+                <button class="btn-icon btn-view" title="Ver detalles" @click="openDetail(ad)">
                   👁️
                 </button>
-                <button
-                  class="btn-icon btn-delete"
-                  title="Eliminar"
-                  @click="confirmDelete(ad)"
-                >
+                <button class="btn-icon btn-delete" title="Eliminar" @click="confirmDelete(ad)">
                   🗑️
                 </button>
               </div>
@@ -270,9 +273,7 @@ function formatPrice(price: number | null): string {
         <div class="modal-content modal-medium">
           <div class="modal-header">
             <h3>Detalles del Anunciante</h3>
-            <button class="modal-close" @click="closeDetail">
-              ×
-            </button>
+            <button class="modal-close" @click="closeDetail">×</button>
           </div>
           <div class="modal-body">
             <div v-if="detailModal.advertisement" class="detail-grid">
@@ -280,9 +281,15 @@ function formatPrice(price: number | null): string {
               <div class="detail-section">
                 <h4>Contacto</h4>
                 <p><strong>Nombre:</strong> {{ detailModal.advertisement.contact_name }}</p>
-                <p v-if="detailModal.advertisement.contact_phone"><strong>Teléfono:</strong> {{ detailModal.advertisement.contact_phone }}</p>
-                <p v-if="detailModal.advertisement.contact_email"><strong>Email:</strong> {{ detailModal.advertisement.contact_email }}</p>
-                <p v-if="detailModal.advertisement.location"><strong>Ubicación:</strong> {{ detailModal.advertisement.location }}</p>
+                <p v-if="detailModal.advertisement.contact_phone">
+                  <strong>Teléfono:</strong> {{ detailModal.advertisement.contact_phone }}
+                </p>
+                <p v-if="detailModal.advertisement.contact_email">
+                  <strong>Email:</strong> {{ detailModal.advertisement.contact_email }}
+                </p>
+                <p v-if="detailModal.advertisement.location">
+                  <strong>Ubicación:</strong> {{ detailModal.advertisement.location }}
+                </p>
               </div>
 
               <!-- Vehicle Info -->
@@ -290,22 +297,53 @@ function formatPrice(price: number | null): string {
                 <h4>Vehículo</h4>
                 <p v-if="detailModal.advertisement.subcategory || detailModal.advertisement.type">
                   <strong>Clasificación:</strong>
-                  {{ detailModal.advertisement.subcategory?.name_es || '' }}{{ detailModal.advertisement.subcategory && detailModal.advertisement.type ? ' > ' : '' }}{{ detailModal.advertisement.type?.name_es || '' }}
+                  {{ detailModal.advertisement.subcategory?.name_es || ''
+                  }}{{
+                    detailModal.advertisement.subcategory && detailModal.advertisement.type
+                      ? ' > '
+                      : ''
+                  }}{{ detailModal.advertisement.type?.name_es || '' }}
                 </p>
-                <p v-else-if="detailModal.advertisement.vehicle_type"><strong>Tipo:</strong> {{ detailModal.advertisement.vehicle_type }}</p>
-                <p v-if="detailModal.advertisement.brand"><strong>Marca:</strong> {{ detailModal.advertisement.brand }}</p>
-                <p v-if="detailModal.advertisement.model"><strong>Modelo:</strong> {{ detailModal.advertisement.model }}</p>
-                <p v-if="detailModal.advertisement.year"><strong>Año:</strong> {{ detailModal.advertisement.year }}</p>
-                <p v-if="detailModal.advertisement.kilometers"><strong>Kilómetros:</strong> {{ detailModal.advertisement.kilometers.toLocaleString('es-ES') }} km</p>
-                <p v-if="detailModal.advertisement.price"><strong>Precio:</strong> {{ formatPrice(detailModal.advertisement.price) }}</p>
-                <p v-if="detailModal.advertisement.contact_preference"><strong>Preferencia contacto:</strong> {{ detailModal.advertisement.contact_preference }}</p>
+                <p v-else-if="detailModal.advertisement.vehicle_type">
+                  <strong>Tipo:</strong> {{ detailModal.advertisement.vehicle_type }}
+                </p>
+                <p v-if="detailModal.advertisement.brand">
+                  <strong>Marca:</strong> {{ detailModal.advertisement.brand }}
+                </p>
+                <p v-if="detailModal.advertisement.model">
+                  <strong>Modelo:</strong> {{ detailModal.advertisement.model }}
+                </p>
+                <p v-if="detailModal.advertisement.year">
+                  <strong>Año:</strong> {{ detailModal.advertisement.year }}
+                </p>
+                <p v-if="detailModal.advertisement.kilometers">
+                  <strong>Kilómetros:</strong>
+                  {{ detailModal.advertisement.kilometers.toLocaleString('es-ES') }} km
+                </p>
+                <p v-if="detailModal.advertisement.price">
+                  <strong>Precio:</strong> {{ formatPrice(detailModal.advertisement.price) }}
+                </p>
+                <p v-if="detailModal.advertisement.contact_preference">
+                  <strong>Preferencia contacto:</strong>
+                  {{ detailModal.advertisement.contact_preference }}
+                </p>
               </div>
 
-              <!-- Characteristics (filters_json) -->
-              <div v-if="detailModal.advertisement.filters_json && Object.keys(detailModal.advertisement.filters_json).length" class="detail-section full-width">
+              <!-- Characteristics (attributes_json) -->
+              <div
+                v-if="
+                  detailModal.advertisement.attributes_json &&
+                  Object.keys(detailModal.advertisement.attributes_json).length
+                "
+                class="detail-section full-width"
+              >
                 <h4>Características</h4>
                 <div class="characteristics-grid">
-                  <div v-for="(value, key) in detailModal.advertisement.filters_json" :key="key" class="characteristic-item">
+                  <div
+                    v-for="(value, key) in detailModal.advertisement.attributes_json"
+                    :key="key"
+                    class="characteristic-item"
+                  >
                     <span class="char-label">{{ key }}</span>
                     <span class="char-value">{{ value }}</span>
                   </div>
@@ -319,14 +357,19 @@ function formatPrice(price: number | null): string {
               </div>
 
               <!-- Photos -->
-              <div v-if="detailModal.advertisement.photos?.length" class="detail-section full-width">
+              <div
+                v-if="detailModal.advertisement.photos?.length"
+                class="detail-section full-width"
+              >
                 <h4>Fotos ({{ detailModal.advertisement.photos.length }})</h4>
                 <div class="photos-grid">
                   <img
                     v-for="(photo, index) in detailModal.advertisement.photos"
                     :key="index"
                     :src="photo"
-                    :alt="`${detailModal.advertisement.brand || ''} ${detailModal.advertisement.model || ''} - Foto ${index + 1}`.trim()"
+                    :alt="
+                      `${detailModal.advertisement.brand || ''} ${detailModal.advertisement.model || ''} - Foto ${index + 1}`.trim()
+                    "
                   >
                 </div>
               </div>
@@ -343,9 +386,7 @@ function formatPrice(price: number | null): string {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-secondary" @click="closeDetail">
-              Cerrar
-            </button>
+            <button class="btn-secondary" @click="closeDetail">Cerrar</button>
             <button class="btn-primary" :disabled="saving" @click="saveNotes">
               {{ saving ? 'Guardando...' : 'Guardar Notas' }}
             </button>
@@ -360,14 +401,13 @@ function formatPrice(price: number | null): string {
         <div class="modal-content modal-small">
           <div class="modal-header">
             <h3>Confirmar eliminación</h3>
-            <button class="modal-close" @click="closeDeleteModal">
-              ×
-            </button>
+            <button class="modal-close" @click="closeDeleteModal">×</button>
           </div>
           <div class="modal-body">
             <p>
               ¿Estás seguro de eliminar el anunciante
-              <strong>{{ deleteModal.advertisement?.contact_name }}</strong>?
+              <strong>{{ deleteModal.advertisement?.contact_name }}</strong
+              >?
             </p>
             <div class="form-group delete-confirm-group">
               <label for="delete-confirm">Escribe <strong>Borrar</strong> para confirmar:</label>
@@ -384,9 +424,7 @@ function formatPrice(price: number | null): string {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-secondary" @click="closeDeleteModal">
-              Cancelar
-            </button>
+            <button class="btn-secondary" @click="closeDeleteModal">Cancelar</button>
             <button class="btn-danger" :disabled="!canDelete" @click="executeDelete">
               Eliminar
             </button>
@@ -463,7 +501,7 @@ function formatPrice(price: number | null): string {
 }
 
 .filter-btn.active {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
 }
 
@@ -482,7 +520,7 @@ function formatPrice(price: number | null): string {
 
 .filter-search:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
 }
 
 /* Error */
@@ -786,13 +824,13 @@ function formatPrice(price: number | null): string {
 
 .detail-section textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 /* Buttons */
 .btn-primary {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   padding: 10px 20px;

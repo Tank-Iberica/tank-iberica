@@ -1,4 +1,7 @@
 import { createError, defineEventHandler, readBody } from 'h3'
+import { serverSupabaseUser } from '#supabase/server'
+import { isAllowedUrl } from '../utils/isAllowedUrl'
+import { verifyCsrf } from '../utils/verifyCsrf'
 
 interface ConnectOnboardBody {
   dealerId: string
@@ -9,6 +12,13 @@ interface ConnectOnboardBody {
 export default defineEventHandler(async (event) => {
   const body = await readBody<ConnectOnboardBody>(event)
   const { dealerId, returnUrl, refreshUrl } = body
+
+  // CSRF + Auth check
+  verifyCsrf(event)
+  const user = await serverSupabaseUser(event)
+  if (!user) {
+    throw createError({ statusCode: 401, message: 'Authentication required' })
+  }
 
   if (!dealerId || !returnUrl || !refreshUrl) {
     throw createError({
@@ -39,6 +49,28 @@ export default defineEventHandler(async (event) => {
 
   if (!supabaseUrl || !supabaseKey) {
     throw createError({ statusCode: 500, message: 'Supabase not configured' })
+  }
+
+  // Verify dealer belongs to this user
+  const dealerCheckRes = await fetch(
+    `${supabaseUrl}/rest/v1/dealers?id=eq.${dealerId}&user_id=eq.${user.id}&select=id`,
+    {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+    },
+  )
+  const dealerCheckData = await dealerCheckRes.json()
+  if (!Array.isArray(dealerCheckData) || dealerCheckData.length === 0) {
+    throw createError({ statusCode: 403, message: 'Forbidden: dealer does not belong to user' })
+  }
+
+  if (!isAllowedUrl(returnUrl)) {
+    throw createError({ statusCode: 400, message: 'Invalid returnUrl' })
+  }
+  if (!isAllowedUrl(refreshUrl)) {
+    throw createError({ statusCode: 400, message: 'Invalid refreshUrl' })
   }
 
   // Check if dealer already has a Stripe Connect account

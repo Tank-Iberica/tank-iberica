@@ -9,6 +9,7 @@
  */
 import { createError, defineEventHandler, readBody } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import { verifyCronSecret } from '../../utils/verifyCronSecret'
 
 // -- Types --------------------------------------------------------------------
 
@@ -42,17 +43,10 @@ interface UserRow {
 export default defineEventHandler(async (event) => {
   // -- 1. Verify cron secret --------------------------------------------------
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
-  const config = useRuntimeConfig()
-  const cronSecret = config.cronSecret || process.env.CRON_SECRET
-
-  if (cronSecret && body.secret !== cronSecret) {
-    const headerSecret = event.node.req.headers['x-cron-secret']
-    if (headerSecret !== cronSecret) {
-      throw createError({ statusCode: 401, message: 'Unauthorized' })
-    }
-  }
+  verifyCronSecret(event, body?.secret)
 
   const supabase = serverSupabaseServiceRole(event)
+  const _internalSecret = useRuntimeConfig().cronSecret || process.env.CRON_SECRET
   const now = new Date()
   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
 
@@ -123,6 +117,7 @@ export default defineEventHandler(async (event) => {
       try {
         await $fetch('/api/email/send', {
           method: 'POST',
+          headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
           body: {
             templateKey: 'buyer_favorite_sold',
             to: user.email,

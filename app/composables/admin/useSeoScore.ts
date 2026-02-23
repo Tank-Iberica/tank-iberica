@@ -1,6 +1,6 @@
 /**
  * SEO Score Composable
- * Real-time SEO scoring with 9 criteria and Google snippet preview
+ * Real-time SEO scoring with 15 criteria and Google snippet preview
  */
 
 export type SeoLevel = 'good' | 'warning' | 'bad'
@@ -36,16 +36,63 @@ export interface SeoInput {
   content_en: string | null
   image_url: string | null
   hashtags: string[]
+  // New editorial fields
+  faq_schema: Array<{ question: string; answer: string }> | null
+  excerpt_es: string | null
+  related_categories: string[] | null
+  social_post_text: Record<string, string> | null
+  section: string | null
 }
 
 const STOPWORDS_ES = new Set([
-  'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas',
-  'de', 'del', 'en', 'con', 'por', 'para', 'que', 'es',
-  'y', 'o', 'a', 'al', 'se', 'su', 'no', 'lo', 'le',
-  'como', 'mas', 'pero', 'sus', 'este', 'esta', 'estos',
-  'ese', 'esa', 'esos', 'esas', 'aquel', 'aquella',
-  'ser', 'estar', 'haber', 'tener', 'hacer',
-  'muy', 'todo', 'toda', 'todos', 'todas',
+  'el',
+  'la',
+  'los',
+  'las',
+  'un',
+  'una',
+  'unos',
+  'unas',
+  'de',
+  'del',
+  'en',
+  'con',
+  'por',
+  'para',
+  'que',
+  'es',
+  'y',
+  'o',
+  'a',
+  'al',
+  'se',
+  'su',
+  'no',
+  'lo',
+  'le',
+  'como',
+  'mas',
+  'pero',
+  'sus',
+  'este',
+  'esta',
+  'estos',
+  'ese',
+  'esa',
+  'esos',
+  'esas',
+  'aquel',
+  'aquella',
+  'ser',
+  'estar',
+  'haber',
+  'tener',
+  'hacer',
+  'muy',
+  'todo',
+  'toda',
+  'todos',
+  'todas',
 ])
 
 function getLevel(score: number): SeoLevel {
@@ -60,9 +107,22 @@ function truncate(text: string, max: number): string {
 }
 
 function countWords(text: string): number {
-  return text.trim().split(/\s+/).filter(w => w.length > 0).length
+  return text
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w.length > 0).length
 }
 
+function extractKeywords(text: string): string[] {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036F]/g, '')
+    .split(/\s+/)
+    .filter((w) => w.length > 4 && !STOPWORDS_ES.has(w))
+}
+
+// ─── 1. Title length ───
 function evaluateTitleLength(title: string): SeoCriterion {
   const len = title.trim().length
   let score = 0
@@ -71,20 +131,20 @@ function evaluateTitleLength(title: string): SeoCriterion {
   if (len >= 30 && len <= 60) {
     score = 100
     description = `Perfecto: ${len} caracteres (recomendado 30-60)`
-  }
-  else if ((len >= 20 && len < 30) || (len > 60 && len <= 70)) {
+  } else if ((len >= 20 && len < 30) || (len > 60 && len <= 70)) {
     score = 50
-    description = len < 30
-      ? `Corto: ${len} caracteres. Intenta llegar a 30+`
-      : `Largo: ${len} caracteres. Google podria truncarlo`
-  }
-  else {
+    description =
+      len < 30
+        ? `Corto: ${len} caracteres. Intenta llegar a 30+`
+        : `Largo: ${len} caracteres. Google podria truncarlo`
+  } else {
     score = len > 0 ? 20 : 0
-    description = len === 0
-      ? 'El titulo esta vacio'
-      : len < 20
-        ? `Muy corto: ${len} caracteres. Minimo recomendado: 30`
-        : `Muy largo: ${len} caracteres. Google truncara a ~60`
+    description =
+      len === 0
+        ? 'El titulo esta vacio'
+        : len < 20
+          ? `Muy corto: ${len} caracteres. Minimo recomendado: 30`
+          : `Muy largo: ${len} caracteres. Google truncara a ~60`
   }
 
   return {
@@ -93,19 +153,20 @@ function evaluateTitleLength(title: string): SeoCriterion {
     description,
     score,
     level: getLevel(score),
-    weight: 0.15,
+    weight: 0.12,
   }
 }
 
+// ─── 2. Title keywords ───
 function evaluateTitleKeywords(title: string): SeoCriterion {
   const words = title
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036F]/g, '')
     .split(/\s+/)
-    .filter(w => w.length > 0)
+    .filter((w) => w.length > 0)
 
-  const keywords = words.filter(w => w.length > 4 && !STOPWORDS_ES.has(w))
+  const keywords = words.filter((w) => w.length > 4 && !STOPWORDS_ES.has(w))
   const ratio = words.length > 0 ? keywords.length / words.length : 0
 
   let score = 0
@@ -114,16 +175,15 @@ function evaluateTitleKeywords(title: string): SeoCriterion {
   if (keywords.length >= 2 && ratio >= 0.3) {
     score = 100
     description = `Bien: ${keywords.length} palabras clave relevantes`
-  }
-  else if (keywords.length >= 1) {
+  } else if (keywords.length >= 1) {
     score = 50
     description = `Mejorable: solo ${keywords.length} palabra(s) clave. Incluye terminos descriptivos`
-  }
-  else {
+  } else {
     score = words.length > 0 ? 20 : 0
-    description = words.length === 0
-      ? 'Sin titulo'
-      : 'Sin palabras clave significativas. Usa terminos que los usuarios buscarian'
+    description =
+      words.length === 0
+        ? 'Sin titulo'
+        : 'Sin palabras clave significativas. Usa terminos que los usuarios buscarian'
   }
 
   return {
@@ -132,12 +192,55 @@ function evaluateTitleKeywords(title: string): SeoCriterion {
     description,
     score,
     level: getLevel(score),
-    weight: 0.10,
+    weight: 0.08,
   }
 }
 
-function evaluateSlugQuality(slug: string, _title: string): SeoCriterion {
-  const parts = slug.split('-').filter(p => p.length > 0)
+// ─── 3. Keywords in URL ───
+function evaluateKeywordsInUrl(slug: string, title: string): SeoCriterion {
+  const titleKeywords = extractKeywords(title)
+  const slugParts = slug
+    .toLowerCase()
+    .split('-')
+    .filter((p) => p.length > 0)
+
+  let score = 0
+  let description = ''
+
+  if (!slug || titleKeywords.length === 0) {
+    score = 0
+    description = 'Sin slug o titulo para evaluar'
+  } else {
+    const matched = titleKeywords.filter((kw) =>
+      slugParts.some((part) => part.includes(kw) || kw.includes(part)),
+    )
+    const matchRatio = matched.length / titleKeywords.length
+
+    if (matchRatio >= 0.5) {
+      score = 100
+      description = `Excelente: ${matched.length}/${titleKeywords.length} palabras clave del titulo en la URL`
+    } else if (matched.length >= 1) {
+      score = 60
+      description = `Parcial: ${matched.length}/${titleKeywords.length} palabras clave en la URL. Anade mas`
+    } else {
+      score = 20
+      description = 'La URL no contiene palabras clave del titulo. Usa un slug basado en el titulo'
+    }
+  }
+
+  return {
+    id: 'keywords_in_url',
+    label: 'Palabras clave en URL',
+    description,
+    score,
+    level: getLevel(score),
+    weight: 0.05,
+  }
+}
+
+// ─── 4. Slug quality ───
+function evaluateSlugQuality(slug: string): SeoCriterion {
+  const parts = slug.split('-').filter((p) => p.length > 0)
   const wordCount = parts.length
 
   let score = 0
@@ -146,22 +249,19 @@ function evaluateSlugQuality(slug: string, _title: string): SeoCriterion {
   if (!slug || slug.trim().length === 0) {
     score = 0
     description = 'Slug vacio. Se generara automaticamente del titulo'
-  }
-  else if (slug.match(/^[0-9a-f]{8}-/)) {
+  } else if (slug.match(/^[0-9a-f]{8}-/)) {
     score = 10
     description = 'Parece un UUID. Usa un slug descriptivo basado en el titulo'
-  }
-  else if (wordCount >= 3 && wordCount <= 5) {
+  } else if (wordCount >= 3 && wordCount <= 5) {
     score = 100
     description = `Perfecto: ${wordCount} palabras, legible y descriptivo`
-  }
-  else if (wordCount >= 1 && wordCount <= 8) {
-    score = wordCount <= 2 ? 60 : 60
-    description = wordCount <= 2
-      ? `Corto: ${wordCount} palabra(s). Intenta 3-5 para mejor SEO`
-      : `Largo: ${wordCount} palabras. Intenta resumir a 3-5`
-  }
-  else {
+  } else if (wordCount >= 1 && wordCount <= 8) {
+    score = 60
+    description =
+      wordCount <= 2
+        ? `Corto: ${wordCount} palabra(s). Intenta 3-5 para mejor SEO`
+        : `Largo: ${wordCount} palabras. Intenta resumir a 3-5`
+  } else {
     score = 30
     description = `Demasiado largo: ${wordCount} palabras. Simplifica a 3-5`
   }
@@ -172,10 +272,11 @@ function evaluateSlugQuality(slug: string, _title: string): SeoCriterion {
     description,
     score,
     level: getLevel(score),
-    weight: 0.10,
+    weight: 0.07,
   }
 }
 
+// ─── 5. Content length ───
 function evaluateContentLength(content: string): SeoCriterion {
   const words = countWords(content)
 
@@ -185,16 +286,15 @@ function evaluateContentLength(content: string): SeoCriterion {
   if (words >= 300) {
     score = 100
     description = `Excelente: ${words} palabras. Contenido sustancial para SEO`
-  }
-  else if (words >= 150) {
+  } else if (words >= 150) {
     score = 50
     description = `Mejorable: ${words} palabras. Intenta llegar a 300+ para mejor posicionamiento`
-  }
-  else {
+  } else {
     score = words > 0 ? 20 : 0
-    description = words === 0
-      ? 'Sin contenido'
-      : `Corto: ${words} palabras. Google prefiere contenido de 300+ palabras`
+    description =
+      words === 0
+        ? 'Sin contenido'
+        : `Corto: ${words} palabras. Google prefiere contenido de 300+ palabras`
   }
 
   return {
@@ -203,10 +303,43 @@ function evaluateContentLength(content: string): SeoCriterion {
     description,
     score,
     level: getLevel(score),
-    weight: 0.20,
+    weight: 0.15,
   }
 }
 
+// ─── 6. Content structure ───
+function evaluateContentStructure(content: string): SeoCriterion {
+  const paragraphs = content.split(/\n\n|\r\n\r\n/).filter((p) => p.trim().length > 0)
+  const count = paragraphs.length
+
+  let score = 0
+  let description = ''
+
+  if (count >= 4) {
+    score = 100
+    description = `Bien estructurado: ${count} parrafos. Facilita la lectura y el SEO`
+  } else if (count >= 2) {
+    score = 50
+    description = `Mejorable: ${count} parrafos. Divide el contenido en mas secciones`
+  } else {
+    score = count > 0 ? 20 : 0
+    description =
+      count === 0
+        ? 'Sin contenido'
+        : 'Bloque unico de texto. Divide en parrafos para mejor legibilidad'
+  }
+
+  return {
+    id: 'content_structure',
+    label: 'Estructura del contenido',
+    description,
+    score,
+    level: getLevel(score),
+    weight: 0.08,
+  }
+}
+
+// ─── 7. Meta description ───
 function evaluateMetaDescription(descriptionEs: string | null): SeoCriterion {
   const text = (descriptionEs || '').trim()
   const len = text.length
@@ -217,24 +350,19 @@ function evaluateMetaDescription(descriptionEs: string | null): SeoCriterion {
   if (len === 0) {
     score = 0
     description = 'Sin meta descripcion. Escribe un resumen de 120-160 caracteres para Google'
-  }
-  else if (len >= 120 && len <= 160) {
+  } else if (len >= 120 && len <= 160) {
     score = 100
     description = `Perfecto: ${len} caracteres. Longitud ideal para Google`
-  }
-  else if (len >= 80 && len < 120) {
+  } else if (len >= 80 && len < 120) {
     score = 60
     description = `Corta: ${len} chars. Intenta llegar a 120-160 para aprovechar todo el espacio en Google`
-  }
-  else if (len > 160 && len <= 200) {
+  } else if (len > 160 && len <= 200) {
     score = 70
     description = `Larga: ${len} chars. Google truncara a ~155. Intenta resumir a 120-160`
-  }
-  else if (len > 200) {
+  } else if (len > 200) {
     score = 40
     description = `Muy larga: ${len} chars. Google solo muestra ~155. Reduce a 120-160`
-  }
-  else {
+  } else {
     score = 30
     description = `Muy corta: ${len} chars. Recomendado 120-160 caracteres`
   }
@@ -245,10 +373,50 @@ function evaluateMetaDescription(descriptionEs: string | null): SeoCriterion {
     description,
     score,
     level: getLevel(score),
-    weight: 0.10,
+    weight: 0.08,
   }
 }
 
+// ─── 8. Excerpt ───
+function evaluateExcerpt(excerptEs: string | null): SeoCriterion {
+  const text = (excerptEs || '').trim()
+  const len = text.length
+
+  let score = 0
+  let description = ''
+
+  if (len === 0) {
+    score = 0
+    description =
+      'Sin extracto. Anade un resumen de 120-200 caracteres para listados y redes sociales'
+  } else if (len >= 120 && len <= 200) {
+    score = 100
+    description = `Perfecto: ${len} caracteres. Ideal para vistas previas`
+  } else if (len >= 50 && len < 120) {
+    score = 60
+    description = `Corto: ${len} chars. Intenta 120-200 para una vista previa mas completa`
+  } else if (len > 200 && len <= 300) {
+    score = 60
+    description = `Largo: ${len} chars. Podria truncarse en listados. Intenta 120-200`
+  } else {
+    score = len > 300 ? 30 : 20
+    description =
+      len > 300
+        ? `Muy largo: ${len} chars. Reduce a 120-200`
+        : `Muy corto: ${len} chars. Amplía a 120-200`
+  }
+
+  return {
+    id: 'excerpt',
+    label: 'Extracto / resumen',
+    description,
+    score,
+    level: getLevel(score),
+    weight: 0.05,
+  }
+}
+
+// ─── 9. Image ───
 function evaluateImage(imageUrl: string | null): SeoCriterion {
   let score = 0
   let description = ''
@@ -257,13 +425,11 @@ function evaluateImage(imageUrl: string | null): SeoCriterion {
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       score = 100
       description = 'Imagen presente. Se usara como og:image en redes sociales'
-    }
-    else {
+    } else {
       score = 50
       description = 'URL de imagen no parece valida. Debe empezar con https://'
     }
-  }
-  else {
+  } else {
     score = 0
     description = 'Sin imagen. Las noticias con imagen tienen 2x mas clicks en redes sociales'
   }
@@ -274,10 +440,11 @@ function evaluateImage(imageUrl: string | null): SeoCriterion {
     description,
     score,
     level: getLevel(score),
-    weight: 0.10,
+    weight: 0.08,
   }
 }
 
+// ─── 10. Hashtags ───
 function evaluateHashtags(hashtags: string[]): SeoCriterion {
   const count = hashtags.length
 
@@ -287,18 +454,16 @@ function evaluateHashtags(hashtags: string[]): SeoCriterion {
   if (count >= 3 && count <= 6) {
     score = 100
     description = `Perfecto: ${count} etiquetas. Ideal para categorizacion`
-  }
-  else if ((count >= 1 && count < 3) || (count > 6 && count <= 10)) {
+  } else if ((count >= 1 && count < 3) || (count > 6 && count <= 10)) {
     score = 50
-    description = count < 3
-      ? `Pocas: ${count} etiqueta(s). Anade al menos 3 para mejor categorizacion`
-      : `Muchas: ${count} etiquetas. Recomendado 3-6 para no diluir relevancia`
-  }
-  else if (count === 0) {
+    description =
+      count < 3
+        ? `Pocas: ${count} etiqueta(s). Anade al menos 3 para mejor categorizacion`
+        : `Muchas: ${count} etiquetas. Recomendado 3-6 para no diluir relevancia`
+  } else if (count === 0) {
     score = 0
     description = 'Sin etiquetas. Anade 3-6 para mejorar la categorizacion y descubrimiento'
-  }
-  else {
+  } else {
     score = 30
     description = `Demasiadas: ${count} etiquetas. Reduce a 3-6 para mantener relevancia`
   }
@@ -309,10 +474,11 @@ function evaluateHashtags(hashtags: string[]): SeoCriterion {
     description,
     score,
     level: getLevel(score),
-    weight: 0.05,
+    weight: 0.04,
   }
 }
 
+// ─── 11. Bilingual ───
 function evaluateBilingual(titleEn: string | null, contentEn: string | null): SeoCriterion {
   const hasTitle = !!titleEn && titleEn.trim().length > 0
   const hasContent = !!contentEn && contentEn.trim().length > 0
@@ -323,12 +489,10 @@ function evaluateBilingual(titleEn: string | null, contentEn: string | null): Se
   if (hasTitle && hasContent) {
     score = 100
     description = 'Contenido bilingue completo. Duplica tu audiencia potencial'
-  }
-  else if (hasTitle) {
+  } else if (hasTitle) {
     score = 50
     description = 'Solo titulo en ingles. Anade el contenido para completar la version bilingue'
-  }
-  else {
+  } else {
     score = 0
     description = 'Sin version en ingles. El contenido bilingue amplía el alcance internacional'
   }
@@ -339,39 +503,128 @@ function evaluateBilingual(titleEn: string | null, contentEn: string | null): Se
     description,
     score,
     level: getLevel(score),
-    weight: 0.10,
+    weight: 0.07,
   }
 }
 
-function evaluateContentStructure(content: string): SeoCriterion {
-  const paragraphs = content.split(/\n\n|\r\n\r\n/).filter(p => p.trim().length > 0)
-  const count = paragraphs.length
+// ─── 12. FAQ schema ───
+function evaluateFaqSchema(
+  faqSchema: Array<{ question: string; answer: string }> | null,
+): SeoCriterion {
+  const items = faqSchema || []
+  const valid = items.filter((f) => f.question.trim().length > 10 && f.answer.trim().length > 20)
 
   let score = 0
   let description = ''
 
-  if (count >= 4) {
+  if (valid.length >= 3) {
     score = 100
-    description = `Bien estructurado: ${count} parrafos. Facilita la lectura y el SEO`
-  }
-  else if (count >= 2) {
+    description = `Excelente: ${valid.length} preguntas FAQ. Posibilidad de featured snippet en Google`
+  } else if (valid.length >= 1) {
     score = 50
-    description = `Mejorable: ${count} parrafos. Divide el contenido en mas secciones`
-  }
-  else {
-    score = count > 0 ? 20 : 0
-    description = count === 0
-      ? 'Sin contenido'
-      : 'Bloque unico de texto. Divide en parrafos para mejor legibilidad'
+    description = `${valid.length} pregunta(s) FAQ. Anade al menos 3 para optar a featured snippets`
+  } else {
+    score = 0
+    description = 'Sin FAQ. Anade 3+ preguntas frecuentes para destacar en resultados de Google'
   }
 
   return {
-    id: 'content_structure',
-    label: 'Estructura del contenido',
+    id: 'faq_schema',
+    label: 'FAQ schema',
     description,
     score,
     level: getLevel(score),
-    weight: 0.10,
+    weight: 0.05,
+  }
+}
+
+// ─── 13. Social post text ───
+function evaluateSocialText(socialPostText: Record<string, string> | null): SeoCriterion {
+  const texts = socialPostText || {}
+  const filled = Object.values(texts).filter((t) => t && t.trim().length > 0)
+
+  let score = 0
+  let description = ''
+
+  if (filled.length >= 2) {
+    score = 100
+    description = `Textos para ${filled.length} redes sociales preparados`
+  } else if (filled.length === 1) {
+    score = 50
+    description =
+      'Solo 1 red social. Anade textos para mas plataformas (twitter, linkedin, facebook)'
+  } else {
+    score = 0
+    description = 'Sin textos para redes sociales. Prepara posts para maximizar difusion'
+  }
+
+  return {
+    id: 'social_text',
+    label: 'Textos para redes',
+    description,
+    score,
+    level: getLevel(score),
+    weight: 0.03,
+  }
+}
+
+// ─── 14. Related categories ───
+function evaluateRelatedCategories(relatedCategories: string[] | null): SeoCriterion {
+  const cats = relatedCategories || []
+
+  let score = 0
+  let description = ''
+
+  if (cats.length >= 2) {
+    score = 100
+    description = `${cats.length} categorias enlazadas. Mejora el interlinking y la navegacion`
+  } else if (cats.length === 1) {
+    score = 60
+    description = '1 categoria enlazada. Anade al menos 2 para mejor interlinking'
+  } else {
+    score = 0
+    description = 'Sin categorias relacionadas. Enlaza a categorias para mejorar el SEO interno'
+  }
+
+  return {
+    id: 'related_categories',
+    label: 'Categorias relacionadas',
+    description,
+    score,
+    level: getLevel(score),
+    weight: 0.03,
+  }
+}
+
+// ─── 15. Reading time ───
+function evaluateReadingTime(content: string): SeoCriterion {
+  const words = countWords(content)
+  const minutes = Math.ceil(words / 200)
+
+  let score = 0
+  let description = ''
+
+  if (words === 0) {
+    score = 0
+    description = 'Sin contenido para estimar tiempo de lectura'
+  } else if (minutes >= 2 && minutes <= 8) {
+    score = 100
+    description = `~${minutes} min de lectura. Longitud ideal para engagement`
+  } else if (minutes === 1) {
+    score = 40
+    description = `~${minutes} min de lectura. Contenido muy breve. Considera ampliar a 2-8 min`
+  } else {
+    score = 60
+    description = `~${minutes} min de lectura. Contenido extenso. Considera dividirlo en partes`
+  }
+
+  return {
+    id: 'reading_time',
+    label: 'Tiempo de lectura',
+    description,
+    score,
+    level: getLevel(score),
+    weight: 0.02,
   }
 }
 
@@ -382,26 +635,32 @@ export function useSeoScore(input: Ref<SeoInput> | ComputedRef<SeoInput>) {
     const criteria: SeoCriterion[] = [
       evaluateTitleLength(data.title_es),
       evaluateTitleKeywords(data.title_es),
-      evaluateSlugQuality(data.slug, data.title_es),
+      evaluateKeywordsInUrl(data.slug, data.title_es),
+      evaluateSlugQuality(data.slug),
       evaluateContentLength(data.content_es),
+      evaluateContentStructure(data.content_es),
       evaluateMetaDescription(data.description_es),
+      evaluateExcerpt(data.excerpt_es),
       evaluateImage(data.image_url),
       evaluateHashtags(data.hashtags),
       evaluateBilingual(data.title_en, data.content_en),
-      evaluateContentStructure(data.content_es),
+      evaluateFaqSchema(data.faq_schema),
+      evaluateSocialText(data.social_post_text),
+      evaluateRelatedCategories(data.related_categories),
+      evaluateReadingTime(data.content_es),
     ]
 
-    const score = Math.round(
-      criteria.reduce((sum, c) => sum + c.score * c.weight, 0),
-    )
+    const score = Math.round(criteria.reduce((sum, c) => sum + c.score * c.weight, 0))
 
     const level = getLevel(score)
 
     const descText = (data.description_es || '').trim()
-    const snippetDescription = descText || truncate((data.content_es || '').replace(/\n+/g, ' ').trim(), 155)
+    const snippetDescription =
+      descText || truncate((data.content_es || '').replace(/\n+/g, ' ').trim(), 155)
+    const sectionPrefix = data.section === 'guia' ? 'guia' : 'noticias'
     const snippetPreview: SeoSnippetPreview = {
       title: truncate(data.title_es || 'Sin titulo', 60),
-      url: `tankiberica.com/noticias/${data.slug || 'sin-url'}`,
+      url: `tracciona.com/${sectionPrefix}/${data.slug || 'sin-url'}`,
       description: truncate(snippetDescription, 155),
     }
 
@@ -448,7 +707,7 @@ export function calculateMiniSeoScore(data: {
   total += 10
 
   // Slug (10%)
-  const slugWords = data.slug.split('-').filter(p => p.length > 0).length
+  const slugWords = data.slug.split('-').filter((p) => p.length > 0).length
   if (slugWords >= 3 && slugWords <= 5) score += 10
   else if (slugWords >= 1) score += 5
   total += 10

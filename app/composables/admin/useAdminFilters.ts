@@ -1,6 +1,6 @@
 /**
- * Admin Filters Composable
- * Full CRUD operations for filter definitions in admin panel
+ * Admin Filters Composable (migrated: filter_definitions table → attributes table)
+ * Full CRUD operations for attribute definitions (formerly "filter definitions") in admin panel
  */
 
 export type FilterType = 'caja' | 'desplegable' | 'desplegable_tick' | 'tick' | 'slider' | 'calc'
@@ -8,7 +8,7 @@ export type FilterStatus = 'published' | 'draft' | 'archived'
 
 export interface AdminFilter {
   id: string
-  type_id: string | null
+  subcategory_id: string | null
   name: string
   type: FilterType
   label_es: string | null
@@ -16,13 +16,13 @@ export interface AdminFilter {
   unit: string | null
   options: {
     default_value?: string | number
-    extra_filters?: string[]  // For tick type: filters that appear when active
-    hides?: string[]          // For tick type: filters that hide when active
-    min?: number              // For slider type
-    max?: number              // For slider type
-    choices?: string[]        // For desplegable type
+    extra_filters?: string[] // For tick type: filters that appear when active
+    hides?: string[] // For tick type: filters that hide when active
+    min?: number // For slider type
+    max?: number // For slider type
+    choices?: string[] // For desplegable type
     choices_source?: ChoicesSource // For desplegable: where options come from
-    step?: number             // For calc type: increment/decrement step
+    step?: number // For calc type: increment/decrement step
     [key: string]: unknown
   }
   is_extra: boolean
@@ -57,8 +57,16 @@ export interface FilterFormData {
 export const FILTER_TYPES: { value: FilterType; label: string; description: string }[] = [
   { value: 'caja', label: 'Caja (texto libre)', description: 'Input de texto para valores libres' },
   { value: 'desplegable', label: 'Desplegable', description: 'Select con opciones predefinidas' },
-  { value: 'desplegable_tick', label: 'Desplegable con ticks', description: 'Select con opciones múltiples' },
-  { value: 'tick', label: 'Tick (sí/no)', description: 'Checkbox que puede mostrar/ocultar otros filtros' },
+  {
+    value: 'desplegable_tick',
+    label: 'Desplegable con ticks',
+    description: 'Select con opciones múltiples',
+  },
+  {
+    value: 'tick',
+    label: 'Tick (sí/no)',
+    description: 'Checkbox que puede mostrar/ocultar otros filtros',
+  },
   { value: 'slider', label: 'Slider (rango)', description: 'Rango numérico con min/max' },
   { value: 'calc', label: 'Calc (+/-)', description: 'Botones incrementar/decrementar' },
 ]
@@ -86,19 +94,17 @@ export function useAdminFilters() {
 
     try {
       const { data, error: err } = await supabase
-        .from('filter_definitions')
+        .from('attributes')
         .select('*')
         .order('sort_order', { ascending: true })
 
       if (err) throw err
 
       filters.value = (data as unknown as AdminFilter[]) || []
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching filters'
       filters.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -112,7 +118,7 @@ export function useAdminFilters() {
 
     try {
       const { data, error: err } = await supabase
-        .from('filter_definitions')
+        .from('attributes')
         .select('*')
         .eq('id', id)
         .single()
@@ -120,12 +126,10 @@ export function useAdminFilters() {
       if (err) throw err
 
       return data as unknown as AdminFilter
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching filter'
       return null
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -169,7 +173,7 @@ export function useAdminFilters() {
       }
 
       const { data, error: err } = await supabase
-        .from('filter_definitions')
+        .from('attributes')
         .insert(insertData as never)
         .select('id')
         .single()
@@ -177,12 +181,10 @@ export function useAdminFilters() {
       if (err) throw err
 
       return (data as { id: string } | null)?.id || null
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error creating filter'
       return null
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -196,7 +198,7 @@ export function useAdminFilters() {
 
     try {
       // Get current filter to merge options
-      const current = filters.value.find(f => f.id === id)
+      const current = filters.value.find((f) => f.id === id)
       const currentOptions = current?.options || {}
 
       const updateData: Record<string, unknown> = {}
@@ -242,19 +244,17 @@ export function useAdminFilters() {
       updateData.options = options
 
       const { error: err } = await supabase
-        .from('filter_definitions')
+        .from('attributes')
         .update(updateData as never)
         .eq('id', id)
 
       if (err) throw err
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error updating filter'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -267,23 +267,18 @@ export function useAdminFilters() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('filter_definitions')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('attributes').delete().eq('id', id)
 
       if (err) throw err
 
       // Remove from local list
-      filters.value = filters.value.filter(f => f.id !== id)
+      filters.value = filters.value.filter((f) => f.id !== id)
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error deleting filter'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -292,7 +287,7 @@ export function useAdminFilters() {
    * Move filter up in order
    */
   async function moveUp(id: string): Promise<boolean> {
-    const index = filters.value.findIndex(f => f.id === id)
+    const index = filters.value.findIndex((f) => f.id === id)
     if (index <= 0) return false
 
     const current = filters.value[index]
@@ -302,23 +297,21 @@ export function useAdminFilters() {
     try {
       // Swap sort_order values
       await supabase
-        .from('filter_definitions')
+        .from('attributes')
         .update({ sort_order: previous.sort_order } as never)
         .eq('id', current.id)
 
       await supabase
-        .from('filter_definitions')
+        .from('attributes')
         .update({ sort_order: current.sort_order } as never)
         .eq('id', previous.id)
 
       await fetchFilters()
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error reordering filters'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -327,7 +320,7 @@ export function useAdminFilters() {
    * Move filter down in order
    */
   async function moveDown(id: string): Promise<boolean> {
-    const index = filters.value.findIndex(f => f.id === id)
+    const index = filters.value.findIndex((f) => f.id === id)
     if (index < 0 || index >= filters.value.length - 1) return false
 
     const current = filters.value[index]
@@ -337,23 +330,21 @@ export function useAdminFilters() {
     try {
       // Swap sort_order values
       await supabase
-        .from('filter_definitions')
+        .from('attributes')
         .update({ sort_order: next.sort_order } as never)
         .eq('id', current.id)
 
       await supabase
-        .from('filter_definitions')
+        .from('attributes')
         .update({ sort_order: current.sort_order } as never)
         .eq('id', next.id)
 
       await fetchFilters()
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error reordering filters'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -362,7 +353,7 @@ export function useAdminFilters() {
    * Get filters available for extra/hide selection (excluding current)
    */
   function getAvailableFilters(excludeId?: string) {
-    return filters.value.filter(f => f.id !== excludeId && f.status !== 'archived')
+    return filters.value.filter((f) => f.id !== excludeId && f.status !== 'archived')
   }
 
   return {

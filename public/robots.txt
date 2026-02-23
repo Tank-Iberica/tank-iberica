@@ -1,5 +1,7 @@
 User-Agent: *
 Disallow: /admin/
+Disallow: /dashboard/
 Disallow: /confirm
+Disallow: /api/
 
-Sitemap: https://tankiberica.com/sitemap.xml
+Sitemap: https://tracciona.com/sitemap.xml

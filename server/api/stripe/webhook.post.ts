@@ -26,13 +26,25 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, message: 'Supabase not configured' })
   }
 
-  // Verify webhook signature
+  // Verify webhook signature (fail-closed)
   const sig = event.node.req.headers['stripe-signature'] as string
   const webhookSecret = config.stripeWebhookSecret || process.env.STRIPE_WEBHOOK_SECRET
 
   let stripeEvent: { type: string; data: { object: Record<string, unknown> } }
 
-  if (webhookSecret) {
+  if (!webhookSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw createError({ statusCode: 500, message: 'Stripe webhook secret not configured' })
+    }
+    // Dev mode: warn and parse without signature verification
+    console.warn(
+      '[Stripe Webhook] No webhook secret configured — dev mode, processing without verification',
+    )
+    stripeEvent = JSON.parse(rawBody) as typeof stripeEvent
+  } else {
+    if (!sig) {
+      throw createError({ statusCode: 400, message: 'Missing stripe-signature header' })
+    }
     try {
       stripeEvent = stripe.webhooks.constructEvent(
         rawBody,
@@ -46,12 +58,6 @@ export default defineEventHandler(async (event) => {
         message: `Webhook signature verification failed: ${message}`,
       })
     }
-  } else {
-    // Dev mode: process without signature verification
-    console.warn(
-      '[Stripe Webhook] No webhook secret configured — processing without signature verification',
-    )
-    stripeEvent = JSON.parse(rawBody) as typeof stripeEvent
   }
 
   const obj = stripeEvent.data.object

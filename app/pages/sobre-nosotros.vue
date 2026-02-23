@@ -31,14 +31,14 @@ usePageSeo({
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    'name': 'Tank Iberica',
-    'url': 'https://tankiberica.com',
-    'description': t('seo.aboutDescription'),
-    'logo': 'https://tankiberica.com/og-default.png',
-    'contactPoint': {
+    name: 'Tracciona',
+    url: 'https://tracciona.com',
+    description: t('seo.aboutDescription'),
+    logo: 'https://tracciona.com/og-default.png',
+    contactPoint: {
       '@type': 'ContactPoint',
-      'contactType': 'customer service',
-      'email': 'tankiberica@gmail.com',
+      contactType: 'customer service',
+      email: 'tankiberica@gmail.com',
     },
   },
 })

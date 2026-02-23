@@ -5,8 +5,8 @@
  * substitutes variables, converts markdown to HTML, wraps in branded template,
  * checks user preferences, sends via Resend, and logs to email_logs.
  */
-import { createError, defineEventHandler, readBody } from 'h3'
-import { serverSupabaseServiceRole } from '#supabase/server'
+import { createError, defineEventHandler, getHeader, readBody } from 'h3'
+import { serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
 import { Resend } from 'resend'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -187,6 +187,23 @@ function buildEmailHtml(params: {
 export default defineEventHandler(async (event) => {
   const VERTICAL = process.env.NUXT_PUBLIC_VERTICAL || 'tracciona'
   const body = await readBody<SendEmailBody>(event)
+
+  // ── Auth check: internal secret OR authenticated user ───────────────────
+  const runtimeCfg = useRuntimeConfig()
+  const internalSecret = runtimeCfg.cronSecret || process.env.CRON_SECRET
+  const internalHeader = getHeader(event, 'x-internal-secret')
+  const isInternalCall = internalSecret && internalHeader === internalSecret
+
+  if (!isInternalCall) {
+    const user = await serverSupabaseUser(event)
+    if (!user) {
+      throw createError({ statusCode: 401, message: 'Authentication required' })
+    }
+    // Force userId to the authenticated user to prevent spoofing
+    if (body.userId && body.userId !== user.id) {
+      body.userId = user.id
+    }
+  }
 
   if (!body.templateKey || !body.to) {
     throw createError({ statusCode: 400, message: 'Missing required fields: templateKey and to' })

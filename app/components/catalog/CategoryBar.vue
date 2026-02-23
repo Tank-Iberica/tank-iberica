@@ -13,7 +13,7 @@
       <button
         v-for="cat in mainCategories"
         :key="cat.key"
-        :class="['category-btn', { active: activeCategories.has(cat.key) }]"
+        :class="['category-btn', { active: activeActions.has(cat.key) }]"
         @click="handleClick(cat.key)"
       >
         {{ $t(`catalog.${cat.key}`) }}
@@ -32,22 +32,18 @@
 </template>
 
 <script setup lang="ts">
-import type { VehicleCategory } from '~/composables/useCatalogState'
+import type { VehicleAction } from '~/composables/useCatalogState'
 
 const emit = defineEmits<{
-  change: [categories: VehicleCategory[]]
+  change: [actions: VehicleAction[]]
 }>()
 
-const { setCategories } = useCatalogState()
+const { setActions } = useCatalogState()
 
-const mainCategories = [
-  { key: 'alquiler' },
-  { key: 'venta' },
-  { key: 'terceros' },
-] as const
+const mainCategories = [{ key: 'alquiler' }, { key: 'venta' }, { key: 'terceros' }] as const
 
 // Multi-select state — empty = show all (legacy behavior)
-const activeCategories = ref<Set<string>>(new Set())
+const activeActions = ref<Set<string>>(new Set())
 
 const scrollContainer = ref<HTMLElement | null>(null)
 const canScrollLeft = ref(false)
@@ -69,19 +65,18 @@ function scrollRight() {
 }
 
 function handleClick(key: string) {
-  const cat = key as VehicleCategory
-  const next = new Set(activeCategories.value)
+  const action = key as VehicleAction
+  const next = new Set(activeActions.value)
 
-  if (next.has(cat)) {
-    next.delete(cat)
-  }
-  else {
-    next.add(cat)
+  if (next.has(action)) {
+    next.delete(action)
+  } else {
+    next.add(action)
   }
 
-  activeCategories.value = next
-  const arr = [...next] as VehicleCategory[]
-  setCategories(arr)
+  activeActions.value = next
+  const arr = [...next] as VehicleAction[]
+  setActions(arr)
   emit('change', arr)
 }
 

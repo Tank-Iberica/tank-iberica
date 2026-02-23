@@ -1,63 +1,63 @@
 /* ================================================
-   TANK IBERICA — Design System Tokens
+   TRACCIONA — Design System Tokens
    Mobile-first: base = 360px, breakpoints with min-width
    ================================================ */
 
 :root {
   /* ---- Colors: Base ---- */
-  --color-primary: #23424A;
-  --color-primary-dark: #1A3238;
-  --color-primary-light: #2D545E;
-  --color-white: #FFFFFF;
+  --color-primary: #23424a;
+  --color-primary-dark: #1a3238;
+  --color-primary-light: #2d545e;
+  --color-white: #ffffff;
 
   /* ---- Colors: Accent ---- */
-  --color-accent: #7FD1C8;
-  --color-accent-hover: #5FBFB4;
+  --color-accent: #7fd1c8;
+  --color-accent-hover: #5fbfb4;
 
   /* ---- Colors: Gold ---- */
-  --color-gold: #D4A017;
-  --color-gold-dark: #B8860B;
+  --color-gold: #d4a017;
+  --color-gold-dark: #b8860b;
 
   /* ---- Colors: States ---- */
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
-  --color-info: #3B82F6;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
 
   /* ---- Text on dark background ---- */
-  --text-on-dark-primary: #E6ECEC;
-  --text-on-dark-secondary: #C9D4D4;
-  --text-on-dark-auxiliary: #9FB1B1;
-  --text-on-dark-accent: #7FD1C8;
+  --text-on-dark-primary: #e6ecec;
+  --text-on-dark-secondary: #c9d4d4;
+  --text-on-dark-auxiliary: #9fb1b1;
+  --text-on-dark-accent: #7fd1c8;
 
   /* ---- Text on light background ---- */
-  --text-primary: #1F2A2A;
-  --text-secondary: #4A5A5A;
-  --text-auxiliary: #7A8A8A;
-  --text-disabled: #9CA3AF;
+  --text-primary: #1f2a2a;
+  --text-secondary: #4a5a5a;
+  --text-auxiliary: #7a8a8a;
+  --text-disabled: #9ca3af;
 
   /* ---- Backgrounds ---- */
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F3F4F6;
-  --bg-tertiary: #E5E7EB;
-  --bg-dark: #23424A;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f3f4f6;
+  --bg-tertiary: #e5e7eb;
+  --bg-dark: #23424a;
 
   /* ---- Grays ---- */
-  --color-gray-50: #F9FAFB;
-  --color-gray-100: #F3F4F6;
-  --color-gray-200: #E5E7EB;
-  --color-gray-300: #D1D5DB;
-  --color-gray-400: #9CA3AF;
-  --color-gray-500: #6B7280;
-  --color-gray-600: #4B5563;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
   --color-gray-700: #374151;
-  --color-gray-800: #1F2937;
+  --color-gray-800: #1f2937;
   --color-gray-900: #111827;
 
   /* ---- Borders ---- */
-  --border-color: #D1D5DB;
-  --border-color-light: #E5E7EB;
-  --border-color-dark: #9CA3AF;
+  --border-color: #d1d5db;
+  --border-color-light: #e5e7eb;
+  --border-color-dark: #9ca3af;
   --border-radius-sm: 4px;
   --border-radius: 8px;
   --border-radius-md: 12px;

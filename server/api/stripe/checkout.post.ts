@@ -1,9 +1,11 @@
 import { createError, defineEventHandler, readBody } from 'h3'
+import { serverSupabaseUser } from '#supabase/server'
+import { isAllowedUrl } from '../../utils/isAllowedUrl'
+import { verifyCsrf } from '../../utils/verifyCsrf'
 
 interface CheckoutBody {
   plan: 'basic' | 'premium'
   interval: 'month' | 'year'
-  userId: string
   successUrl: string
   cancelUrl: string
 }
@@ -20,13 +22,28 @@ const PLAN_NAMES: Record<string, string> = {
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<CheckoutBody>(event)
-  const { plan, interval, userId, successUrl, cancelUrl } = body
 
-  if (!plan || !interval || !userId || !successUrl || !cancelUrl) {
+  // CSRF + Auth check
+  verifyCsrf(event)
+  const user = await serverSupabaseUser(event)
+  if (!user) {
+    throw createError({ statusCode: 401, message: 'Authentication required' })
+  }
+
+  const { plan, interval, successUrl, cancelUrl } = body
+
+  if (!plan || !interval || !successUrl || !cancelUrl) {
     throw createError({
       statusCode: 400,
-      message: 'Missing required fields: plan, interval, userId, successUrl, cancelUrl',
+      message: 'Missing required fields: plan, interval, successUrl, cancelUrl',
     })
+  }
+
+  if (!isAllowedUrl(successUrl)) {
+    throw createError({ statusCode: 400, message: 'Invalid successUrl' })
+  }
+  if (!isAllowedUrl(cancelUrl)) {
+    throw createError({ statusCode: 400, message: 'Invalid cancelUrl' })
   }
 
   if (!['basic', 'premium'].includes(plan)) {
@@ -63,7 +80,7 @@ export default defineEventHandler(async (event) => {
 
   // Check if user already has a stripe_customer_id in subscriptions table
   const subRes = await fetch(
-    `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${userId}&select=stripe_customer_id`,
+    `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${user.id}&select=stripe_customer_id`,
     {
       headers: {
         apikey: supabaseKey,
@@ -98,7 +115,7 @@ export default defineEventHandler(async (event) => {
     success_url: successUrl.replace('{CHECKOUT_SESSION_ID}', '{CHECKOUT_SESSION_ID}'),
     cancel_url: cancelUrl,
     metadata: {
-      user_id: userId,
+      user_id: user.id,
       plan,
       vertical: process.env.NUXT_PUBLIC_VERTICAL || 'tracciona',
     },
@@ -122,7 +139,7 @@ export default defineEventHandler(async (event) => {
       Prefer: 'return=minimal',
     },
     body: JSON.stringify({
-      user_id: userId,
+      user_id: user.id,
       type: 'subscription',
       status: 'pending',
       amount_cents: unitAmount,

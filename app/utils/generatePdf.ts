@@ -1,7 +1,7 @@
 import type { Vehicle } from '~/composables/useVehicles'
 
-// Logo URL — hosted on Cloudinary for reliability (originally from Google Drive)
-const LOGO_URL = 'https://lh3.googleusercontent.com/d/1LoKrBHe5pLXYdXDAhNdMTiP4Xkm_jDbD'
+// Logo URL — local asset for reliability (avoids Google Drive hotlinking issues)
+const LOGO_URL = '/icon-512x512.png'
 
 interface PdfOptions {
   vehicle: Vehicle
@@ -19,12 +19,14 @@ async function loadImageAsBase64(url: string): Promise<string | null> {
       canvas.width = img.width
       canvas.height = img.height
       const ctx = canvas.getContext('2d')
-      if (!ctx) { resolve(null); return }
+      if (!ctx) {
+        resolve(null)
+        return
+      }
       ctx.drawImage(img, 0, 0)
       try {
         resolve(canvas.toDataURL('image/jpeg', 0.8))
-      }
-      catch {
+      } catch {
         resolve(null)
       }
     }
@@ -44,15 +46,15 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
   const contentWidth = pageWidth - margin * 2
 
   // Corporate colors from design system (tokens.css)
-  const petrolBlue: [number, number, number] = [35, 66, 74]   // #23424A --color-primary
-  const petrolDark: [number, number, number] = [26, 50, 56]    // #1A3238 --color-primary-dark
+  const petrolBlue: [number, number, number] = [35, 66, 74] // #23424A --color-primary
+  const petrolDark: [number, number, number] = [26, 50, 56] // #1A3238 --color-primary-dark
   const white: [number, number, number] = [255, 255, 255]
-  const darkText: [number, number, number] = [31, 42, 42]      // #1F2A2A --text-primary
-  const grayText: [number, number, number] = [74, 90, 90]      // #4A5A5A --text-secondary
+  const darkText: [number, number, number] = [31, 42, 42] // #1F2A2A --text-primary
+  const grayText: [number, number, number] = [74, 90, 90] // #4A5A5A --text-secondary
   const accentColor: [number, number, number] = [127, 209, 200] // #7FD1C8 --color-accent
 
   // Collect characteristics from both sources (like legacy)
-  const characteristics: { label: string, value: string }[] = []
+  const characteristics: { label: string; value: string }[] = []
   const excludeKeys = ['marca', 'modelo', 'año', 'brand', 'model', 'year']
   const seenKeys = new Set<string>()
 
@@ -65,20 +67,22 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
       if (typeof value === 'object' && value !== null) {
         const obj = value as Record<string, string>
         displayValue = obj[locale] || obj.es || obj.value || String(value)
-      }
-      else {
+      } else {
         displayValue = String(value)
       }
       if (displayValue) characteristics.push({ label: key, value: displayValue })
     }
   }
 
-  extractCharacteristics(vehicle.filters_json)
-  extractCharacteristics((vehicle as Record<string, unknown>).caracteristicas_json as Record<string, unknown>)
+  extractCharacteristics(vehicle.attributes_json)
+  extractCharacteristics(
+    (vehicle as Record<string, unknown>).caracteristicas_json as Record<string, unknown>,
+  )
 
-  const description = locale === 'en' && vehicle.description_en
-    ? vehicle.description_en
-    : vehicle.description_es || ''
+  const description =
+    locale === 'en' && vehicle.description_en
+      ? vehicle.description_en
+      : vehicle.description_es || ''
   const numImages = vehicle.vehicle_images?.length || 0
 
   // Layout calculations
@@ -97,8 +101,7 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
   if (galleryNeeded) {
     portadaHeight = Math.min(Math.max(availableForImages * 0.6, 50), 85)
     galleryHeight = Math.min(Math.max(availableForImages * 0.35, 25), 45)
-  }
-  else {
+  } else {
     portadaHeight = Math.min(Math.max(availableForImages * 0.9, 60), 100)
     galleryHeight = 0
   }
@@ -114,12 +117,11 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
   const logoBase64 = await loadImageAsBase64(LOGO_URL)
   if (logoBase64) {
     doc.addImage(logoBase64, 'PNG', margin, 5, 22, 22)
-  }
-  else {
+  } else {
     doc.setTextColor(...white)
     doc.setFontSize(20)
     doc.setFont('helvetica', 'bold')
-    doc.text('TANK IBERICA', margin, 20)
+    doc.text('TRACCIONA', margin, 20)
   }
 
   // Accent line under logo
@@ -132,8 +134,8 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
   doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
   const contactX = pageWidth - margin
-  doc.text('TANKIBERICA.COM', contactX, 12, { align: 'right' })
-  doc.text('info@tankiberica.com', contactX, 18, { align: 'right' })
+  doc.text('TRACCIONA.COM', contactX, 12, { align: 'right' })
+  doc.text('info@tracciona.com', contactX, 18, { align: 'right' })
   doc.text('+34 645 779 594', contactX, 24, { align: 'right' })
 
   let yPos = headerHeight + 8
@@ -154,8 +156,7 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
         doc.addImage(mainImg, 'JPEG', xOffset, yPos, imgWidth, imgHeight)
         yPos += imgHeight + 6
       }
-    }
-    catch {
+    } catch {
       yPos += 10
     }
   }
@@ -252,8 +253,9 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
             yPos += thumbHeight + 3
           }
         }
+      } catch {
+        /* skip failed images */
       }
-      catch { /* skip failed images */ }
     }
 
     if (thumbCount % maxThumbsPerRow !== 0) {
@@ -297,11 +299,18 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
   doc.setFillColor(...petrolBlue)
   doc.rect(0, footerY, pageWidth, footerHeight, 'F')
 
-  doc.setFontSize(8)
+  doc.setFontSize(7)
   doc.setTextColor(...white)
-  doc.text('TANKIBERICA.COM', pageWidth / 2, footerY + 8, { align: 'center' })
+  const vehicleUrl = `https://tracciona.com/vehiculo/${vehicle.slug}`
+  doc.text(vehicleUrl, margin, footerY + 5)
+  doc.text(
+    locale === 'es' ? 'Más vehículos en tracciona.com' : 'More vehicles at tracciona.com',
+    margin,
+    footerY + 10,
+  )
+  doc.text('TRACCIONA.COM', pageWidth - margin, footerY + 8, { align: 'right' })
 
   // ===== SAVE =====
-  const fileName = `TankIberica_${vehicle.brand || ''}_${vehicle.model || ''}`.replace(/\s+/g, '_')
+  const fileName = `Tracciona_${vehicle.brand || ''}_${vehicle.model || ''}`.replace(/\s+/g, '_')
   doc.save(`${fileName}.pdf`)
 }

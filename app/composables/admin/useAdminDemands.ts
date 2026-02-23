@@ -9,9 +9,9 @@ export interface AdminDemand {
   id: string
   user_id: string | null
   vehicle_type: string | null
+  category_id: string | null
   subcategory_id: string | null
-  type_id: string | null
-  filters_json: Record<string, unknown>
+  attributes_json: Record<string, unknown>
   brand_preference: string | null
   year_min: number | null
   year_max: number | null
@@ -30,8 +30,8 @@ export interface AdminDemand {
   created_at: string
   updated_at: string
   // Joined data
+  category?: { name_es: string; name_en: string | null } | null
   subcategory?: { name_es: string; name_en: string | null } | null
-  type?: { name_es: string; name_en: string | null } | null
   matched_vehicle?: {
     brand: string
     model: string
@@ -71,7 +71,10 @@ export function useAdminDemands() {
     try {
       let query = supabase
         .from('demands')
-        .select('*, subcategory:subcategory_id(name_es, name_en), type:type_id(name_es, name_en)', { count: 'exact' })
+        .select(
+          '*, category:category_id(name_es, name_en), subcategory:subcategory_id(name_es, name_en)',
+          { count: 'exact' },
+        )
         .order('created_at', { ascending: false })
 
       if (filters.status) {
@@ -79,7 +82,9 @@ export function useAdminDemands() {
       }
 
       if (filters.search) {
-        query = query.or(`contact_name.ilike.%${filters.search}%,brand_preference.ilike.%${filters.search}%,vehicle_type.ilike.%${filters.search}%`)
+        query = query.or(
+          `contact_name.ilike.%${filters.search}%,brand_preference.ilike.%${filters.search}%,vehicle_type.ilike.%${filters.search}%`,
+        )
       }
 
       const { data, error: err, count } = await query.range(0, PAGE_SIZE - 1)
@@ -88,12 +93,10 @@ export function useAdminDemands() {
 
       demands.value = (data as unknown as AdminDemand[]) || []
       total.value = count || 0
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching demands'
       demands.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -108,19 +111,19 @@ export function useAdminDemands() {
     try {
       const { data, error: err } = await supabase
         .from('demands')
-        .select('*, subcategory:subcategory_id(name_es, name_en), type:type_id(name_es, name_en)')
+        .select(
+          '*, category:category_id(name_es, name_en), subcategory:subcategory_id(name_es, name_en)',
+        )
         .eq('id', id)
         .single()
 
       if (err) throw err
 
       return data as unknown as AdminDemand
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching demand'
       return null
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -141,18 +144,16 @@ export function useAdminDemands() {
       if (err) throw err
 
       // Update local list
-      const index = demands.value.findIndex(d => d.id === id)
+      const index = demands.value.findIndex((d) => d.id === id)
       if (index !== -1) {
         demands.value[index].status = status
       }
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error updating status'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -173,18 +174,16 @@ export function useAdminDemands() {
       if (err) throw err
 
       // Update local list
-      const index = demands.value.findIndex(d => d.id === id)
+      const index = demands.value.findIndex((d) => d.id === id)
       if (index !== -1) {
         demands.value[index].admin_notes = notes
       }
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error updating notes'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -214,12 +213,10 @@ export function useAdminDemands() {
       if (err) throw err
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error matching vehicle'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -232,24 +229,19 @@ export function useAdminDemands() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('demands')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('demands').delete().eq('id', id)
 
       if (err) throw err
 
       // Remove from local list
-      demands.value = demands.value.filter(d => d.id !== id)
+      demands.value = demands.value.filter((d) => d.id !== id)
       total.value--
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error deleting demand'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -267,8 +259,7 @@ export function useAdminDemands() {
       if (err) throw err
 
       return count || 0
-    }
-    catch {
+    } catch {
       return 0
     }
   }

@@ -11,7 +11,11 @@
         <h1 class="page-title">{{ isNew ? 'Nuevo vehículo' : 'Editar vehículo' }}</h1>
       </div>
       <div class="header-actions">
-        <button v-if="!isNew" class="btn-secondary btn-rent" @click="openTransactionModal('alquiler')">
+        <button
+          v-if="!isNew"
+          class="btn-secondary btn-rent"
+          @click="openTransactionModal('alquiler')"
+        >
           Alquilar
         </button>
         <button v-if="!isNew" class="btn-secondary btn-sell" @click="openTransactionModal('venta')">
@@ -48,7 +52,7 @@
           </button>
         </div>
         <label class="featured-toggle">
-          <input v-model="form.featured" type="checkbox">
+          <input v-model="form.featured" type="checkbox" />
           <span>Destacado</span>
         </label>
       </section>
@@ -66,7 +70,7 @@
             @dragover.prevent
             @drop="handleDrop(index)"
           >
-            <img :src="image.thumbnail_url || image.url" :alt="`Imagen ${index + 1}`">
+            <img :src="image.thumbnail_url || image.url" :alt="`Imagen ${index + 1}`" />
             <button type="button" class="image-delete" @click="removeImage(index)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 6L6 18M6 6l12 12" />
@@ -75,7 +79,7 @@
             <span class="image-position">{{ index + 1 }}</span>
           </div>
           <label v-if="formImages.length < 10" class="image-upload">
-            <input type="file" accept="image/*" multiple @change="handleImageUpload">
+            <input type="file" accept="image/*" multiple @change="handleImageUpload" />
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
@@ -132,21 +136,27 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Marca *</label>
-            <input v-model="form.brand" type="text" class="form-input" required>
+            <input v-model="form.brand" type="text" class="form-input" required />
           </div>
           <div class="form-group">
             <label class="form-label">Modelo *</label>
-            <input v-model="form.model" type="text" class="form-input" required>
+            <input v-model="form.model" type="text" class="form-input" required />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Año</label>
-            <input v-model.number="form.year" type="number" class="form-input" min="1900" max="2100">
+            <input
+              v-model.number="form.year"
+              type="number"
+              class="form-input"
+              min="1900"
+              max="2100"
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Matrícula</label>
-            <input v-model="form.plate" type="text" class="form-input">
+            <input v-model="form.plate" type="text" class="form-input" />
           </div>
         </div>
       </section>
@@ -157,11 +167,23 @@
         <div class="form-row">
           <div v-if="form.category !== 'alquiler'" class="form-group">
             <label class="form-label">Precio venta (€)</label>
-            <input v-model.number="form.price" type="number" class="form-input" min="0" step="100">
+            <input
+              v-model.number="form.price"
+              type="number"
+              class="form-input"
+              min="0"
+              step="100"
+            />
           </div>
           <div v-if="form.category !== 'venta'" class="form-group">
             <label class="form-label">Precio alquiler (€/mes)</label>
-            <input v-model.number="form.rental_price" type="number" class="form-input" min="0" step="50">
+            <input
+              v-model.number="form.rental_price"
+              type="number"
+              class="form-input"
+              min="0"
+              step="50"
+            />
           </div>
         </div>
       </section>
@@ -182,17 +204,32 @@
           </div>
           <div class="form-group">
             <label class="form-label">Región</label>
-            <input v-model="form.location_region" type="text" class="form-input" placeholder="Ej: Andalucía">
+            <input
+              v-model="form.location_region"
+              type="text"
+              class="form-input"
+              placeholder="Ej: Andalucía"
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Provincia</label>
-            <input v-model="form.location_province" type="text" class="form-input" placeholder="Ej: Sevilla">
+            <input
+              v-model="form.location_province"
+              type="text"
+              class="form-input"
+              placeholder="Ej: Sevilla"
+            />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group full-width">
             <label class="form-label">Ubicación detallada</label>
-            <input v-model="form.location" type="text" class="form-input" placeholder="Ej: Polígono Industrial...">
+            <input
+              v-model="form.location"
+              type="text"
+              class="form-input"
+              placeholder="Ej: Polígono Industrial..."
+            />
           </div>
         </div>
       </section>
@@ -237,14 +274,14 @@
             <!-- Caja (text input) -->
             <input
               v-if="filter.type === 'caja'"
-              v-model="form.filters_json[filter.name]"
+              v-model="form.attributes_json[filter.name]"
               type="text"
               class="form-input"
-            >
+            />
             <!-- Desplegable (select) -->
             <select
               v-else-if="filter.type === 'desplegable'"
-              v-model="form.filters_json[filter.name]"
+              v-model="form.attributes_json[filter.name]"
               class="form-select"
             >
               <option value="">Seleccionar...</option>
@@ -252,25 +289,25 @@
             </select>
             <!-- Tick (checkbox) -->
             <label v-else-if="filter.type === 'tick'" class="checkbox-label">
-              <input v-model="form.filters_json[filter.name]" type="checkbox">
+              <input v-model="form.attributes_json[filter.name]" type="checkbox" />
               <span>Sí</span>
             </label>
             <!-- Slider (number) -->
             <input
               v-else-if="filter.type === 'slider'"
-              v-model.number="form.filters_json[filter.name]"
+              v-model.number="form.attributes_json[filter.name]"
               type="number"
               class="form-input"
               :min="getSliderMin(filter.options)"
               :max="getSliderMax(filter.options)"
-            >
+            />
             <!-- Default: text -->
             <input
               v-else
-              v-model="form.filters_json[filter.name]"
+              v-model="form.attributes_json[filter.name]"
               type="text"
               class="form-input"
-            >
+            />
           </div>
         </div>
       </section>
@@ -281,11 +318,23 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Coste adquisición (€)</label>
-            <input v-model.number="form.acquisition_cost" type="number" class="form-input" min="0" step="100">
+            <input
+              v-model.number="form.acquisition_cost"
+              type="number"
+              class="form-input"
+              min="0"
+              step="100"
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Precio mínimo (€)</label>
-            <input v-model.number="form.minimum_price" type="number" class="form-input" min="0" step="100">
+            <input
+              v-model.number="form.minimum_price"
+              type="number"
+              class="form-input"
+              min="0"
+              step="100"
+            />
           </div>
         </div>
       </section>
@@ -298,15 +347,15 @@
 
     <!-- Transaction modal (Venta / Alquiler) -->
     <Teleport to="body">
-      <div v-if="showTransactionModal" class="modal-backdrop" @click.self="showTransactionModal = false">
+      <div
+        v-if="showTransactionModal"
+        class="modal-backdrop"
+        @click.self="showTransactionModal = false"
+      >
         <div class="modal-content transaction-modal">
           <!-- Tabs -->
           <div class="tx-tabs">
-            <button
-              class="tx-tab"
-              :class="{ active: txTab === 'venta' }"
-              @click="txTab = 'venta'"
-            >
+            <button class="tx-tab" :class="{ active: txTab === 'venta' }" @click="txTab = 'venta'">
               Vender
             </button>
             <button
@@ -322,7 +371,13 @@
           <div v-if="txTab === 'venta'" class="tx-body">
             <div class="form-group">
               <label class="form-label">Precio de venta (€) *</label>
-              <input v-model.number="sellForm.sale_price" type="number" class="form-input" min="0" required>
+              <input
+                v-model.number="sellForm.sale_price"
+                type="number"
+                class="form-input"
+                min="0"
+                required
+              />
             </div>
             <div class="form-group">
               <label class="form-label">Categoría de venta *</label>
@@ -335,11 +390,11 @@
             </div>
             <div class="form-group">
               <label class="form-label">Nombre comprador</label>
-              <input v-model="sellForm.buyer_name" type="text" class="form-input">
+              <input v-model="sellForm.buyer_name" type="text" class="form-input" />
             </div>
             <div class="form-group">
               <label class="form-label">Contacto comprador</label>
-              <input v-model="sellForm.buyer_contact" type="text" class="form-input">
+              <input v-model="sellForm.buyer_contact" type="text" class="form-input" />
             </div>
             <!-- Auto-balance info -->
             <div v-if="sellForm.sale_price > 0" class="tx-preview">
@@ -352,7 +407,9 @@
               </span>
             </div>
             <div class="modal-actions">
-              <button type="button" class="btn-secondary" @click="showTransactionModal = false">Cancelar</button>
+              <button type="button" class="btn-secondary" @click="showTransactionModal = false">
+                Cancelar
+              </button>
               <button
                 type="button"
                 class="btn-primary btn-sell"
@@ -368,29 +425,40 @@
           <div v-if="txTab === 'alquiler'" class="tx-body">
             <div class="form-group">
               <label class="form-label">Precio alquiler (€/mes) *</label>
-              <input v-model.number="rentalForm.monthly_price" type="number" class="form-input" min="0" required>
+              <input
+                v-model.number="rentalForm.monthly_price"
+                type="number"
+                class="form-input"
+                min="0"
+                required
+              />
             </div>
             <div class="form-row-2">
               <div class="form-group">
                 <label class="form-label">Fecha inicio *</label>
-                <input v-model="rentalForm.start_date" type="date" class="form-input" required>
+                <input v-model="rentalForm.start_date" type="date" class="form-input" required />
               </div>
               <div class="form-group">
                 <label class="form-label">Fecha fin</label>
-                <input v-model="rentalForm.end_date" type="date" class="form-input">
+                <input v-model="rentalForm.end_date" type="date" class="form-input" />
               </div>
             </div>
             <div class="form-group">
               <label class="form-label">Nombre arrendatario</label>
-              <input v-model="rentalForm.renter_name" type="text" class="form-input">
+              <input v-model="rentalForm.renter_name" type="text" class="form-input" />
             </div>
             <div class="form-group">
               <label class="form-label">Contacto arrendatario</label>
-              <input v-model="rentalForm.renter_contact" type="text" class="form-input">
+              <input v-model="rentalForm.renter_contact" type="text" class="form-input" />
             </div>
             <div class="form-group">
               <label class="form-label">Notas</label>
-              <textarea v-model="rentalForm.notes" class="form-textarea" rows="2" placeholder="Condiciones, fianza..." />
+              <textarea
+                v-model="rentalForm.notes"
+                class="form-textarea"
+                rows="2"
+                placeholder="Condiciones, fianza..."
+              />
             </div>
             <!-- Auto-balance info -->
             <div v-if="rentalForm.monthly_price > 0" class="tx-preview">
@@ -400,7 +468,9 @@
               </span>
             </div>
             <div class="modal-actions">
-              <button type="button" class="btn-secondary" @click="showTransactionModal = false">Cancelar</button>
+              <button type="button" class="btn-secondary" @click="showTransactionModal = false">
+                Cancelar
+              </button>
               <button
                 type="button"
                 class="btn-primary btn-rent-action"
@@ -452,10 +522,16 @@ const saving = computed(() => composableSaving.value || localSaving.value)
 const error = computed(() => composableError.value || localError.value)
 
 const isNew = computed(() => route.params.id === 'new')
-const vehicleId = computed(() => isNew.value ? null : String(route.params.id))
+const vehicleId = computed(() => (isNew.value ? null : String(route.params.id)))
 
 // Form data
-const form = ref<VehicleFormData & { plate?: string; acquisition_cost?: number | null; minimum_price?: number | null }>({
+const form = ref<
+  VehicleFormData & {
+    plate?: string
+    acquisition_cost?: number | null
+    minimum_price?: number | null
+  }
+>({
   brand: '',
   model: '',
   year: null,
@@ -469,7 +545,7 @@ const form = ref<VehicleFormData & { plate?: string; acquisition_cost?: number |
   location_region: null,
   description_es: null,
   description_en: null,
-  filters_json: {},
+  attributes_json: {},
   status: 'draft',
   featured: false,
   plate: '',
@@ -551,19 +627,21 @@ const selectedSubcategoryId = ref<string | null>(null)
 const types = ref<Array<{ id: string; name_es: string; slug: string }>>([])
 
 // Filter definitions (load from DB based on type)
-const filterDefinitions = ref<Array<{
-  id: string
-  name: string
-  type: string
-  label_es: string
-  options?: string[] | { min?: number; max?: number }
-  type_id: string | null
-}>>([])
+const filterDefinitions = ref<
+  Array<{
+    id: string
+    name: string
+    type: string
+    label_es: string
+    options?: string[] | { min?: number; max?: number }
+    type_id: string | null
+  }>
+>([])
 
 const activeFilters = computed(() => {
   if (!form.value.type_id) return []
   return filterDefinitions.value.filter(
-    f => f.type_id === form.value.type_id || f.type_id === null
+    (f) => f.type_id === form.value.type_id || f.type_id === null,
   )
 })
 
@@ -598,7 +676,7 @@ async function loadSubcategories() {
 // Load types
 async function loadTypes() {
   const { data } = await supabase
-    .from('types')
+    .from('subcategories')
     .select('id, name_es, slug')
     .order('sort_order', { ascending: true })
 
@@ -606,9 +684,9 @@ async function loadTypes() {
 }
 
 // Load filter definitions
-async function loadFilterDefinitions() {
+async function loadAttributes() {
   const { data } = await supabase
-    .from('filter_definitions')
+    .from('attributes')
     .select('*')
     .eq('status', 'active')
     .order('sort_order', { ascending: true })
@@ -641,7 +719,7 @@ async function loadVehicle() {
     location_region: vehicle.location_region,
     description_es: vehicle.description_es,
     description_en: vehicle.description_en,
-    filters_json: vehicle.filters_json || {},
+    attributes_json: vehicle.attributes_json || {},
     status: vehicle.status,
     featured: vehicle.featured,
     acquisition_cost: vehicle.acquisition_cost,
@@ -649,11 +727,13 @@ async function loadVehicle() {
   }
 
   // Populate images
-  formImages.value = (vehicle.vehicle_images || []).map((img: { id: string; url: string; thumbnail_url?: string | null }) => ({
-    id: img.id,
-    url: img.url,
-    thumbnail_url: img.thumbnail_url,
-  }))
+  formImages.value = (vehicle.vehicle_images || []).map(
+    (img: { id: string; url: string; thumbnail_url?: string | null }) => ({
+      id: img.id,
+      url: img.url,
+      thumbnail_url: img.thumbnail_url,
+    }),
+  )
 }
 
 // Save handler
@@ -667,8 +747,7 @@ async function handleSave() {
     if (newId) {
       router.push(`/admin/vehiculos/${newId}`)
     }
-  }
-  else if (vehicleId.value) {
+  } else if (vehicleId.value) {
     const success = await updateVehicle(vehicleId.value, form.value)
     if (success) {
       // TODO: Show success toast
@@ -731,18 +810,21 @@ async function handleRent() {
       from_date: rentalForm.value.start_date,
       to_date: rentalForm.value.end_date || null,
       amount: rentalForm.value.monthly_price,
-      notes: [
-        rentalForm.value.renter_name ? `Arrendatario: ${rentalForm.value.renter_name}` : '',
-        rentalForm.value.renter_contact ? `Contacto: ${rentalForm.value.renter_contact}` : '',
-        rentalForm.value.notes || '',
-      ].filter(Boolean).join(' | ') || null,
+      notes:
+        [
+          rentalForm.value.renter_name ? `Arrendatario: ${rentalForm.value.renter_name}` : '',
+          rentalForm.value.renter_contact ? `Contacto: ${rentalForm.value.renter_contact}` : '',
+          rentalForm.value.notes || '',
+        ]
+          .filter(Boolean)
+          .join(' | ') || null,
     }
 
     const existingRecords = form.value.maintenance_records ? [] : [] // rental_records
     await supabase
       .from('vehicles')
       .update({
-        rental_records: [...(existingRecords), newRentalRecord],
+        rental_records: [...existingRecords, newRentalRecord],
       } as never)
       .eq('id', vehicleId.value)
 
@@ -781,12 +863,10 @@ async function handleRent() {
     // Reload to show updated status
     await loadVehicle()
     form.value.status = 'rented'
-  }
-  catch (err: unknown) {
+  } catch (err: unknown) {
     const supabaseError = err as { message?: string }
     localError.value = supabaseError?.message || 'Error processing rental'
-  }
-  finally {
+  } finally {
     localSaving.value = false
   }
 }
@@ -833,11 +913,7 @@ function handleDrop(targetIndex: number) {
 
 // Initialize
 onMounted(async () => {
-  await Promise.all([
-    loadSubcategories(),
-    loadTypes(),
-    loadFilterDefinitions(),
-  ])
+  await Promise.all([loadSubcategories(), loadTypes(), loadAttributes()])
 
   if (!isNew.value) {
     await loadVehicle()
@@ -964,7 +1040,9 @@ onMounted(async () => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Form */
@@ -1101,10 +1179,18 @@ onMounted(async () => {
   color: var(--text-primary);
 }
 
-.status-option.draft { color: var(--text-auxiliary); }
-.status-option.published { color: var(--color-success); }
-.status-option.rented { color: var(--color-info); }
-.status-option.workshop { color: var(--color-warning); }
+.status-option.draft {
+  color: var(--text-auxiliary);
+}
+.status-option.published {
+  color: var(--color-success);
+}
+.status-option.rented {
+  color: var(--color-info);
+}
+.status-option.workshop {
+  color: var(--color-warning);
+}
 
 .status-dot {
   width: 10px;
@@ -1352,8 +1438,8 @@ onMounted(async () => {
 }
 
 .tx-tab.active {
-  color: var(--color-primary, #23424A);
-  border-bottom-color: var(--color-primary, #23424A);
+  color: var(--color-primary, #23424a);
+  border-bottom-color: var(--color-primary, #23424a);
 }
 
 .tx-body {
@@ -1397,7 +1483,7 @@ onMounted(async () => {
 
 /* Button variants */
 .btn-sell {
-  background: var(--color-primary, #23424A) !important;
+  background: var(--color-primary, #23424a) !important;
 }
 
 .btn-rent {

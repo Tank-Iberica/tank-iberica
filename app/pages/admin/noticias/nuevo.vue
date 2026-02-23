@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import {
-  useAdminNews,
-  type NewsFormData,
-} from '~/composables/admin/useAdminNews'
+import { useAdminNews, type NewsFormData } from '~/composables/admin/useAdminNews'
 import { useSeoScore, type SeoInput } from '~/composables/admin/useSeoScore'
 import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
 
@@ -13,7 +10,12 @@ definePageMeta({
 
 const router = useRouter()
 const { saving, error, createNews } = useAdminNews()
-const { upload: uploadToCloudinary, uploading: uploadingImage, progress: uploadProgress, error: uploadError } = useCloudinaryUpload()
+const {
+  upload: uploadToCloudinary,
+  uploading: uploadingImage,
+  progress: uploadProgress,
+  error: uploadError,
+} = useCloudinaryUpload()
 
 // Form data
 const formData = ref<NewsFormData>({
@@ -29,6 +31,14 @@ const formData = ref<NewsFormData>({
   hashtags: [],
   status: 'draft',
   published_at: null,
+  section: 'noticias',
+  faq_schema: null,
+  excerpt_es: null,
+  excerpt_en: null,
+  scheduled_at: null,
+  social_post_text: null,
+  related_categories: null,
+  target_markets: null,
 })
 
 // Hashtag input
@@ -38,6 +48,8 @@ const hashtagInput = ref('')
 const sections = reactive({
   english: false,
   seoPanel: true,
+  faq: false,
+  social: false,
 })
 
 // SEO scoring
@@ -50,6 +62,11 @@ const seoInput = computed<SeoInput>(() => ({
   content_en: formData.value.content_en,
   image_url: formData.value.image_url,
   hashtags: formData.value.hashtags,
+  faq_schema: formData.value.faq_schema,
+  excerpt_es: formData.value.excerpt_es,
+  related_categories: formData.value.related_categories,
+  social_post_text: formData.value.social_post_text,
+  section: formData.value.section,
 }))
 
 const { analysis } = useSeoScore(seoInput)
@@ -69,18 +86,22 @@ function generateSlugFromTitle(title: string): string {
     .replace(/^-|-$/g, '')
 }
 
-watch(() => formData.value.title_es, (title) => {
-  if (!formData.value.slug || formData.value.slug === previousAutoSlug) {
-    formData.value.slug = generateSlugFromTitle(title)
-    previousAutoSlug = formData.value.slug
-  }
-})
+watch(
+  () => formData.value.title_es,
+  (title) => {
+    if (!formData.value.slug || formData.value.slug === previousAutoSlug) {
+      formData.value.slug = generateSlugFromTitle(title)
+      previousAutoSlug = formData.value.slug
+    }
+  },
+)
 
 // Validation
-const isValid = computed(() =>
-  formData.value.title_es.trim().length > 0
-  && formData.value.content_es.trim().length > 0
-  && formData.value.slug.trim().length > 0,
+const isValid = computed(
+  () =>
+    formData.value.title_es.trim().length > 0 &&
+    formData.value.content_es.trim().length > 0 &&
+    formData.value.slug.trim().length > 0,
 )
 
 // Character counts
@@ -102,7 +123,7 @@ const descLengthClass = computed(() => {
 const contentWordCount = computed(() => {
   const text = formData.value.content_es.trim()
   if (!text) return 0
-  return text.split(/\s+/).filter(w => w.length > 0).length
+  return text.split(/\s+/).filter((w) => w.length > 0).length
 })
 
 const wordCountClass = computed(() => {
@@ -110,6 +131,62 @@ const wordCountClass = computed(() => {
   if (contentWordCount.value >= 150) return 'count-warning'
   return contentWordCount.value > 0 ? 'count-bad' : ''
 })
+
+// Excerpt length class
+const excerptLengthClass = computed(() => {
+  const len = (formData.value.excerpt_es || '').length
+  if (len >= 120 && len <= 200) return 'count-good'
+  if (len >= 80 && len <= 250) return 'count-warning'
+  return len > 0 ? 'count-bad' : ''
+})
+
+// FAQ management
+function addFaqItem() {
+  const current = formData.value.faq_schema || []
+  formData.value.faq_schema = [...current, { question: '', answer: '' }]
+}
+
+function removeFaqItem(index: number) {
+  if (!formData.value.faq_schema) return
+  formData.value.faq_schema = formData.value.faq_schema.filter((_, i) => i !== index)
+  if (formData.value.faq_schema.length === 0) formData.value.faq_schema = null
+}
+
+// Social media helpers
+function ensureSocialPostText(): Record<string, string> {
+  if (!formData.value.social_post_text) {
+    formData.value.social_post_text = {}
+  }
+  return formData.value.social_post_text
+}
+
+function updateSocialField(platform: string, value: string) {
+  const social = ensureSocialPostText()
+  social[platform] = value
+}
+
+function getSocialField(platform: string): string {
+  return formData.value.social_post_text?.[platform] || ''
+}
+
+// Related categories management
+const relatedCategoryInput = ref('')
+
+function addRelatedCategory() {
+  const cat = relatedCategoryInput.value.trim().toLowerCase()
+  if (!cat) return
+  const current = formData.value.related_categories || []
+  if (!current.includes(cat)) {
+    formData.value.related_categories = [...current, cat]
+  }
+  relatedCategoryInput.value = ''
+}
+
+function removeRelatedCategory(cat: string) {
+  if (!formData.value.related_categories) return
+  formData.value.related_categories = formData.value.related_categories.filter((c) => c !== cat)
+  if (formData.value.related_categories.length === 0) formData.value.related_categories = null
+}
 
 // Image upload
 const imagePreviewUrl = ref<string | null>(null)
@@ -124,8 +201,7 @@ async function handleImageFile(e: Event) {
   const result = await uploadToCloudinary(file)
   if (result) {
     formData.value.image_url = result.secure_url
-  }
-  else {
+  } else {
     // Keep preview but no URL set
   }
 
@@ -162,16 +238,20 @@ function addHashtag() {
 }
 
 function removeHashtag(tag: string) {
-  formData.value.hashtags = formData.value.hashtags.filter(t => t !== tag)
+  formData.value.hashtags = formData.value.hashtags.filter((t) => t !== tag)
 }
 
 // SEO level labels
 function getLevelLabel(level: string): string {
   switch (level) {
-    case 'good': return 'Bueno'
-    case 'warning': return 'Mejorable'
-    case 'bad': return 'Necesita trabajo'
-    default: return ''
+    case 'good':
+      return 'Bueno'
+    case 'warning':
+      return 'Mejorable'
+    case 'bad':
+      return 'Necesita trabajo'
+    default:
+      return ''
   }
 }
 </script>
@@ -190,11 +270,7 @@ function getLevelLabel(level: string): string {
       </div>
       <div class="nf-right">
         <button class="btn" @click="handleCancel">Cancelar</button>
-        <button
-          class="btn btn-primary"
-          :disabled="saving || !isValid"
-          @click="handleSave"
-        >
+        <button class="btn btn-primary" :disabled="saving || !isValid" @click="handleSave">
           {{ saving ? 'Guardando...' : 'Guardar' }}
         </button>
       </div>
@@ -209,20 +285,37 @@ function getLevelLabel(level: string): string {
         <!-- Publication -->
         <div class="section">
           <div class="section-title">Publicacion</div>
+          <div class="field" style="margin-bottom: 12px">
+            <label>Seccion</label>
+            <div class="estado-row">
+              <label class="estado-opt" :class="{ active: formData.section === 'noticias' }">
+                <input v-model="formData.section" type="radio" value="noticias" >
+                Noticias
+              </label>
+              <label class="estado-opt" :class="{ active: formData.section === 'guia' }">
+                <input v-model="formData.section" type="radio" value="guia" >
+                Guia
+              </label>
+            </div>
+          </div>
           <div class="row-2">
             <div class="field">
               <label>Estado</label>
               <div class="estado-row">
                 <label class="estado-opt" :class="{ active: formData.status === 'draft' }">
-                  <input v-model="formData.status" type="radio" value="draft">
+                  <input v-model="formData.status" type="radio" value="draft" >
                   Borrador
                 </label>
                 <label class="estado-opt" :class="{ active: formData.status === 'published' }">
-                  <input v-model="formData.status" type="radio" value="published">
+                  <input v-model="formData.status" type="radio" value="published" >
                   Publicado
                 </label>
+                <label class="estado-opt" :class="{ active: formData.status === 'scheduled' }">
+                  <input v-model="formData.status" type="radio" value="scheduled" >
+                  Programado
+                </label>
                 <label class="estado-opt" :class="{ active: formData.status === 'archived' }">
-                  <input v-model="formData.status" type="radio" value="archived">
+                  <input v-model="formData.status" type="radio" value="archived" >
                   Archivado
                 </label>
               </div>
@@ -239,7 +332,12 @@ function getLevelLabel(level: string): string {
           </div>
           <div v-if="formData.status === 'published'" class="field">
             <label>Fecha de publicacion</label>
-            <input v-model="formData.published_at" type="datetime-local" class="input">
+            <input v-model="formData.published_at" type="datetime-local" class="input" >
+          </div>
+          <div v-if="formData.status === 'scheduled'" class="field">
+            <label>Fecha de publicacion programada</label>
+            <input v-model="formData.scheduled_at" type="datetime-local" class="input" >
+            <span class="char-count">El articulo se publicara automaticamente en esta fecha</span>
           </div>
         </div>
 
@@ -293,7 +391,13 @@ function getLevelLabel(level: string): string {
                 <span class="upload-text">Subiendo... {{ uploadProgress }}%</span>
               </template>
               <template v-else>
-                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg
+                  class="upload-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
@@ -320,8 +424,14 @@ function getLevelLabel(level: string): string {
 
           <!-- Preview -->
           <div v-if="formData.image_url || imagePreviewUrl" class="image-preview-container">
-            <img :src="formData.image_url || imagePreviewUrl || ''" :alt="formData.title_es || 'Vista previa'" @error="($event.target as HTMLImageElement).style.display='none'">
-            <button class="remove-image-btn" title="Eliminar imagen" @click="removeImage">&times;</button>
+            <img
+              :src="formData.image_url || imagePreviewUrl || ''"
+              :alt="formData.title_es || 'Vista previa'"
+              @error="($event.target as HTMLImageElement).style.display = 'none'"
+            >
+            <button class="remove-image-btn" title="Eliminar imagen" @click="removeImage">
+              &times;
+            </button>
           </div>
         </div>
 
@@ -329,7 +439,8 @@ function getLevelLabel(level: string): string {
         <div class="section">
           <div class="section-title">Meta Descripcion (SEO)</div>
           <p class="section-hint">
-            Este texto aparece en los resultados de Google debajo del titulo. Debe ser un resumen atractivo que invite a hacer clic.
+            Este texto aparece en los resultados de Google debajo del titulo. Debe ser un resumen
+            atractivo que invite a hacer clic.
           </p>
           <div class="field">
             <label>Descripcion (ES)</label>
@@ -344,10 +455,184 @@ function getLevelLabel(level: string): string {
               <span class="char-count" :class="descLengthClass">
                 {{ (formData.description_es || '').length }}/160 caracteres
               </span>
-              <span v-if="(formData.description_es || '').length > 0" class="char-count" :class="descLengthClass">
-                {{ (formData.description_es || '').length >= 120 && (formData.description_es || '').length <= 160 ? 'Longitud ideal' : (formData.description_es || '').length < 120 ? 'Muy corta' : 'Larga' }}
+              <span
+                v-if="(formData.description_es || '').length > 0"
+                class="char-count"
+                :class="descLengthClass"
+              >
+                {{
+                  (formData.description_es || '').length >= 120 &&
+                  (formData.description_es || '').length <= 160
+                    ? 'Longitud ideal'
+                    : (formData.description_es || '').length < 120
+                      ? 'Muy corta'
+                      : 'Larga'
+                }}
               </span>
             </div>
+          </div>
+        </div>
+
+        <!-- Excerpt -->
+        <div class="section">
+          <div class="section-title">Extracto</div>
+          <p class="section-hint">
+            Resumen corto del articulo que aparece en listados y tarjetas. Recomendado: 120-200
+            caracteres.
+          </p>
+          <div class="field">
+            <label>Extracto (ES)</label>
+            <textarea
+              v-model="formData.excerpt_es"
+              rows="3"
+              class="input textarea"
+              maxlength="300"
+              placeholder="Resumen breve del articulo para listados (120-200 caracteres recomendado)..."
+            />
+            <div class="count-row">
+              <span class="char-count" :class="excerptLengthClass">
+                {{ (formData.excerpt_es || '').length }}/300 caracteres
+              </span>
+              <span
+                v-if="(formData.excerpt_es || '').length > 0"
+                class="char-count"
+                :class="excerptLengthClass"
+              >
+                {{
+                  (formData.excerpt_es || '').length >= 120 &&
+                  (formData.excerpt_es || '').length <= 200
+                    ? 'Longitud ideal'
+                    : (formData.excerpt_es || '').length < 120
+                      ? 'Muy corto'
+                      : 'Largo'
+                }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ Schema -->
+        <div class="section">
+          <button class="section-toggle" @click="sections.faq = !sections.faq">
+            <span>FAQ Schema (Rich Snippets)</span>
+            <span class="toggle-icon">{{ sections.faq ? '−' : '+' }}</span>
+          </button>
+          <div v-if="sections.faq" class="section-body">
+            <p class="section-hint" style="margin: 0 0 8px">
+              Anade 3+ preguntas frecuentes para activar los featured snippets de Google.
+            </p>
+            <div v-for="(faq, index) in formData.faq_schema || []" :key="index" class="faq-item">
+              <div class="faq-item-header">
+                <span class="faq-item-number">{{ index + 1 }}</span>
+                <button
+                  class="btn-icon faq-remove"
+                  title="Eliminar pregunta"
+                  @click="removeFaqItem(index)"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+              <div class="field">
+                <label>Pregunta</label>
+                <input
+                  v-model="faq.question"
+                  type="text"
+                  class="input"
+                  placeholder="Ej: Que es un vehiculo industrial?"
+                >
+              </div>
+              <div class="field">
+                <label>Respuesta</label>
+                <textarea
+                  v-model="faq.answer"
+                  rows="3"
+                  class="input textarea"
+                  placeholder="Respuesta clara y concisa..."
+                />
+              </div>
+            </div>
+            <button class="btn btn-sm" @click="addFaqItem">+ Anadir pregunta</button>
+          </div>
+        </div>
+
+        <!-- Social Media -->
+        <div class="section">
+          <button class="section-toggle" @click="sections.social = !sections.social">
+            <span>Redes Sociales</span>
+            <span class="toggle-icon">{{ sections.social ? '−' : '+' }}</span>
+          </button>
+          <div v-if="sections.social" class="section-body">
+            <div class="field">
+              <label>Twitter / X (max 280)</label>
+              <textarea
+                :value="getSocialField('twitter')"
+                rows="3"
+                class="input textarea"
+                maxlength="280"
+                placeholder="Texto para compartir en Twitter..."
+                @input="updateSocialField('twitter', ($event.target as HTMLTextAreaElement).value)"
+              />
+              <span
+                class="char-count"
+                :class="
+                  getSocialField('twitter').length > 260
+                    ? 'count-warning'
+                    : getSocialField('twitter').length > 280
+                      ? 'count-bad'
+                      : ''
+                "
+              >
+                {{ getSocialField('twitter').length }}/280
+              </span>
+            </div>
+            <div class="field">
+              <label>LinkedIn (max 700)</label>
+              <textarea
+                :value="getSocialField('linkedin')"
+                rows="4"
+                class="input textarea"
+                maxlength="700"
+                placeholder="Texto para compartir en LinkedIn..."
+                @input="updateSocialField('linkedin', ($event.target as HTMLTextAreaElement).value)"
+              />
+              <span class="char-count"> {{ getSocialField('linkedin').length }}/700 </span>
+            </div>
+            <div class="field">
+              <label>Facebook (max 500)</label>
+              <textarea
+                :value="getSocialField('facebook')"
+                rows="3"
+                class="input textarea"
+                maxlength="500"
+                placeholder="Texto para compartir en Facebook..."
+                @input="updateSocialField('facebook', ($event.target as HTMLTextAreaElement).value)"
+              />
+              <span class="char-count"> {{ getSocialField('facebook').length }}/500 </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Related Categories -->
+        <div class="section">
+          <div class="section-title">Categorias relacionadas</div>
+          <div class="hashtag-input-row">
+            <input
+              v-model="relatedCategoryInput"
+              type="text"
+              class="input"
+              placeholder="Nombre de categoria y pulsa Enter"
+              @keydown.enter.prevent="addRelatedCategory"
+            >
+            <button class="btn btn-sm" @click="addRelatedCategory">+ Anadir</button>
+          </div>
+          <div v-if="(formData.related_categories || []).length > 0" class="hashtag-list">
+            <span v-for="cat in formData.related_categories" :key="cat" class="hashtag-chip">
+              {{ cat }}
+              <button class="chip-remove" @click="removeRelatedCategory(cat)">&times;</button>
+            </span>
           </div>
         </div>
 
@@ -362,12 +647,12 @@ function getLevelLabel(level: string): string {
               placeholder="Escribe el contenido de la noticia...&#10;&#10;Separa los parrafos con lineas en blanco para mejorar la estructura SEO."
             />
             <div class="count-row">
-              <span class="char-count">
-                {{ formData.content_es.length }} caracteres
-              </span>
+              <span class="char-count"> {{ formData.content_es.length }} caracteres </span>
               <span class="char-count word-count" :class="wordCountClass">
                 {{ contentWordCount }} palabras
-                <span v-if="contentWordCount > 0 && contentWordCount < 300" class="word-target">/ 300 recomendadas</span>
+                <span v-if="contentWordCount > 0 && contentWordCount < 300" class="word-target"
+                  >/ 300 recomendadas</span
+                >
               </span>
             </div>
           </div>
@@ -463,7 +748,9 @@ function getLevelLabel(level: string): string {
             <div class="snippet-box">
               <div class="snippet-title">{{ analysis.snippetPreview.title }}</div>
               <div class="snippet-url">{{ analysis.snippetPreview.url }}</div>
-              <div class="snippet-desc">{{ analysis.snippetPreview.description || 'Sin descripcion...' }}</div>
+              <div class="snippet-desc">
+                {{ analysis.snippetPreview.description || 'Sin descripcion...' }}
+              </div>
             </div>
           </div>
 
@@ -531,8 +818,14 @@ function getLevelLabel(level: string): string {
   cursor: pointer;
 }
 
-.btn-icon:hover { background: #f1f5f9; color: #1a1a1a; }
-.btn-icon svg { width: 20px; height: 20px; }
+.btn-icon:hover {
+  background: #f1f5f9;
+  color: #1a1a1a;
+}
+.btn-icon svg {
+  width: 20px;
+  height: 20px;
+}
 
 /* Buttons */
 .btn {
@@ -547,17 +840,27 @@ function getLevelLabel(level: string): string {
   transition: all 0.15s;
 }
 
-.btn:hover { background: #f8fafc; }
-
-.btn-primary {
-  background: var(--color-primary, #23424A);
-  color: white;
-  border-color: var(--color-primary, #23424A);
+.btn:hover {
+  background: #f8fafc;
 }
 
-.btn-primary:hover { opacity: 0.9; }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-sm { padding: 4px 12px; font-size: 0.8rem; }
+.btn-primary {
+  background: var(--color-primary, #23424a);
+  color: white;
+  border-color: var(--color-primary, #23424a);
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-sm {
+  padding: 4px 12px;
+  font-size: 0.8rem;
+}
 
 /* Error */
 .error-msg {
@@ -596,7 +899,7 @@ function getLevelLabel(level: string): string {
   background: white;
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .section-title {
@@ -659,7 +962,7 @@ function getLevelLabel(level: string): string {
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
 }
 
 .textarea {
@@ -675,7 +978,9 @@ function getLevelLabel(level: string): string {
 }
 
 @media (max-width: 600px) {
-  .row-2 { grid-template-columns: 1fr; }
+  .row-2 {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Section hint */
@@ -709,9 +1014,15 @@ function getLevelLabel(level: string): string {
   font-weight: 400;
 }
 
-.count-good { color: #22c55e; }
-.count-warning { color: #f59e0b; }
-.count-bad { color: #ef4444; }
+.count-good {
+  color: #22c55e;
+}
+.count-warning {
+  color: #f59e0b;
+}
+.count-bad {
+  color: #ef4444;
+}
 
 /* Status radio */
 .estado-row {
@@ -732,12 +1043,14 @@ function getLevelLabel(level: string): string {
   transition: all 0.15s;
 }
 
-.estado-opt input { display: none; }
+.estado-opt input {
+  display: none;
+}
 
 .estado-opt.active {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
 }
 
 /* Slug input */
@@ -787,10 +1100,18 @@ function getLevelLabel(level: string): string {
   text-align: center;
 }
 
-.upload-zone:hover { border-color: var(--color-primary, #23424A); background: #f8fafc; }
-.upload-zone.uploading { cursor: default; border-color: #94a3b8; }
+.upload-zone:hover {
+  border-color: var(--color-primary, #23424a);
+  background: #f8fafc;
+}
+.upload-zone.uploading {
+  cursor: default;
+  border-color: #94a3b8;
+}
 
-.file-input-hidden { display: none; }
+.file-input-hidden {
+  display: none;
+}
 
 .upload-icon {
   width: 32px;
@@ -820,7 +1141,7 @@ function getLevelLabel(level: string): string {
 
 .upload-progress-fill {
   height: 100%;
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   border-radius: 3px;
   transition: width 0.2s;
 }
@@ -858,7 +1179,7 @@ function getLevelLabel(level: string): string {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   color: white;
   border: none;
   font-size: 1.1rem;
@@ -869,7 +1190,9 @@ function getLevelLabel(level: string): string {
   line-height: 1;
 }
 
-.remove-image-btn:hover { background: #dc2626; }
+.remove-image-btn:hover {
+  background: #dc2626;
+}
 
 /* Hashtags */
 .hashtag-input-row {
@@ -915,13 +1238,56 @@ function getLevelLabel(level: string): string {
   line-height: 1;
 }
 
-.chip-remove:hover { color: #ef4444; }
+.chip-remove:hover {
+  color: #ef4444;
+}
+
+/* FAQ items */
+.faq-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faq-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-item-number {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  background: #e2e8f0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.faq-remove {
+  width: 28px;
+  height: 28px;
+  color: #94a3b8;
+}
+
+.faq-remove:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
 
 /* SEO Panel */
 .nf-seo {
   background: white;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 
@@ -963,16 +1329,27 @@ function getLevelLabel(level: string): string {
   margin-left: auto;
 }
 
-.seo-score-mini.good { background: #dcfce7; color: #166534; }
-.seo-score-mini.warning { background: #fef3c7; color: #92400e; }
-.seo-score-mini.bad { background: #fef2f2; color: #dc2626; }
+.seo-score-mini.good {
+  background: #dcfce7;
+  color: #166534;
+}
+.seo-score-mini.warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+.seo-score-mini.bad {
+  background: #fef2f2;
+  color: #dc2626;
+}
 
 .seo-panel {
   padding: 20px;
 }
 
 @media (min-width: 1024px) {
-  .seo-panel { padding-top: 20px; }
+  .seo-panel {
+    padding-top: 20px;
+  }
 }
 
 /* Score circle */
@@ -995,9 +1372,15 @@ function getLevelLabel(level: string): string {
   flex-shrink: 0;
 }
 
-.score-circle.good { border-color: #22c55e; }
-.score-circle.warning { border-color: #f59e0b; }
-.score-circle.bad { border-color: #ef4444; }
+.score-circle.good {
+  border-color: #22c55e;
+}
+.score-circle.warning {
+  border-color: #f59e0b;
+}
+.score-circle.bad {
+  border-color: #ef4444;
+}
 
 .score-number {
   font-size: 1.4rem;
@@ -1022,10 +1405,18 @@ function getLevelLabel(level: string): string {
   color: #1a1a1a;
 }
 
-.level-text { font-size: 0.8rem; }
-.level-good { color: #22c55e; }
-.level-warning { color: #f59e0b; }
-.level-bad { color: #ef4444; }
+.level-text {
+  font-size: 0.8rem;
+}
+.level-good {
+  color: #22c55e;
+}
+.level-warning {
+  color: #f59e0b;
+}
+.level-bad {
+  color: #ef4444;
+}
 
 /* Snippet preview */
 .snippet-preview {
@@ -1089,7 +1480,9 @@ function getLevelLabel(level: string): string {
   border-bottom: 1px solid #f8fafc;
 }
 
-.criterion-row:last-child { border-bottom: none; }
+.criterion-row:last-child {
+  border-bottom: none;
+}
 
 .criterion-header {
   display: flex;
@@ -1104,9 +1497,15 @@ function getLevelLabel(level: string): string {
   flex-shrink: 0;
 }
 
-.criterion-dot.good { background: #22c55e; }
-.criterion-dot.warning { background: #f59e0b; }
-.criterion-dot.bad { background: #ef4444; }
+.criterion-dot.good {
+  background: #22c55e;
+}
+.criterion-dot.warning {
+  background: #f59e0b;
+}
+.criterion-dot.bad {
+  background: #ef4444;
+}
 
 .criterion-label {
   flex: 1;

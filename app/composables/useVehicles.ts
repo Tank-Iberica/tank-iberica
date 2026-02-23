@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { useSupabaseClient } from '#imports'
+import { retryQuery } from '~/utils/retryQuery'
 
 export interface VehicleImage {
   id: string
@@ -9,26 +10,38 @@ export interface VehicleImage {
   alt_text: string | null
 }
 
-export interface Subcategory {
+export interface Category {
   id: string
+  name: Record<string, string> | null
+  name_singular: Record<string, string> | null
+  /** @deprecated Use JSONB `name` field instead */
   name_es: string
+  /** @deprecated Use JSONB `name` field instead */
   name_en: string | null
+  /** @deprecated Use JSONB `name_singular` field instead */
   name_singular_es: string | null
+  /** @deprecated Use JSONB `name_singular` field instead */
   name_singular_en: string | null
 }
 
-export interface TypeSubcategoryJunction {
-  subcategories: Subcategory
+export interface SubcategoryCategoryJunction {
+  categories: Category
 }
 
-export interface VehicleType {
+export interface VehicleSubcategory {
   id: string
+  name: Record<string, string> | null
+  name_singular: Record<string, string> | null
+  /** @deprecated Use JSONB `name` field instead */
   name_es: string
+  /** @deprecated Use JSONB `name` field instead */
   name_en: string | null
+  /** @deprecated Use JSONB `name_singular` field instead */
   name_singular_es: string | null
+  /** @deprecated Use JSONB `name_singular` field instead */
   name_singular_en: string | null
   slug: string
-  type_subcategories?: TypeSubcategoryJunction[]
+  subcategory_categories?: SubcategoryCategoryJunction[]
 }
 
 export interface Vehicle {
@@ -40,12 +53,16 @@ export interface Vehicle {
   price: number | null
   rental_price: number | null
   category: 'alquiler' | 'venta' | 'terceros'
-  type_id: string | null
+  action_id: string | null
+  category_id: string | null
   location: string | null
-  description_es: string | null
-  description_en: string | null
-  filters_json: Record<string, unknown>
   location_en: string | null
+  location_data: Record<string, string> | null
+  /** @deprecated Will use content_translations */
+  description_es: string | null
+  /** @deprecated Will use content_translations */
+  description_en: string | null
+  attributes_json: Record<string, unknown>
   location_country: string | null
   location_province: string | null
   location_region: string | null
@@ -54,13 +71,16 @@ export interface Vehicle {
   created_at: string
   updated_at: string
   vehicle_images: VehicleImage[]
-  types: VehicleType | null
+  subcategories: VehicleSubcategory | null
 }
 
 export interface VehicleFilters {
   category?: 'alquiler' | 'venta' | 'terceros'
+  action?: string
   categories?: string[]
-  type_id?: string
+  actions?: string[]
+  category_id?: string
+  subcategory_id?: string
   price_min?: number
   price_max?: number
   year_min?: number
@@ -91,11 +111,21 @@ export function useVehicles() {
   function buildQuery(filters: VehicleFilters) {
     let query = supabase
       .from('vehicles')
-      .select('*, vehicle_images(*), types(*, type_subcategories(subcategories(id, name_es, name_en, name_singular_es, name_singular_en)))', { count: 'exact' })
+      .select(
+        '*, vehicle_images(*), subcategories(*, subcategory_categories(categories(id, name_es, name_en, name, name_singular, name_singular_es, name_singular_en)))',
+        { count: 'exact' },
+      )
       .eq('status', 'published')
 
-    // Dynamic sort — featured always first, then user-selected order
+    // Pro 24h exclusive: non-Pro users only see vehicles past their visible_from date
+    // For now, always filter (Pro check will be added when subscription composable is wired)
+    query = query.or('visible_from.is.null,visible_from.lte.' + new Date().toISOString())
+
+    // Dynamic sort — featured always first, then sort_boost, then user-selected order
     query = query.order('featured', { ascending: false })
+
+    // Dealer subscription sort boost (Premium=3, Founding=2, Basic=1, Free=0)
+    query = query.order('sort_boost', { ascending: false, nullsFirst: false })
 
     switch (filters.sortBy) {
       case 'price_asc':
@@ -121,15 +151,14 @@ export function useVehicles() {
         query = query.order('created_at', { ascending: false })
     }
 
-    if (filters.categories?.length) {
-      query = query.in('category', filters.categories)
-    }
-    else if (filters.category) {
-      query = query.eq('category', filters.category)
+    if ((filters.actions || filters.categories)?.length) {
+      query = query.in('category', filters.actions || filters.categories!)
+    } else if (filters.action || filters.category) {
+      query = query.eq('category', filters.action || filters.category!)
     }
 
-    if (filters.type_id) {
-      query = query.eq('type_id', filters.type_id)
+    if (filters.category_id) {
+      query = query.eq('category_id', filters.category_id)
     }
 
     if (filters.price_min !== undefined) {
@@ -157,11 +186,9 @@ export function useVehicles() {
     // Location filters (mutually exclusive, most specific wins)
     if (filters.location_province_eq) {
       query = query.eq('location_province', filters.location_province_eq)
-    }
-    else if (filters.location_regions?.length) {
+    } else if (filters.location_regions?.length) {
       query = query.in('location_region', filters.location_regions)
-    }
-    else if (filters.location_countries?.length) {
+    } else if (filters.location_countries?.length) {
       query = query.in('location_country', filters.location_countries)
     }
 
@@ -181,19 +208,17 @@ export function useVehicles() {
       const from = 0
       const to = PAGE_SIZE - 1
 
-      const { data, error: err, count } = await buildQuery(filters).range(from, to)
+      const result = await retryQuery(() => buildQuery(filters).range(from, to))
 
-      if (err) throw err
+      if (result.error) throw result.error
 
-      vehicles.value = (data as Vehicle[]) || []
-      total.value = count || 0
+      vehicles.value = (result.data as Vehicle[]) || []
+      total.value = result.count || 0
       hasMore.value = vehicles.value.length < total.value
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching vehicles'
       vehicles.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -208,19 +233,17 @@ export function useVehicles() {
       const from = page.value * PAGE_SIZE
       const to = from + PAGE_SIZE - 1
 
-      const { data, error: err } = await buildQuery(filters).range(from, to)
+      const result = await retryQuery(() => buildQuery(filters).range(from, to))
 
-      if (err) throw err
+      if (result.error) throw result.error
 
-      const newVehicles = (data as Vehicle[]) || []
+      const newVehicles = (result.data as Vehicle[]) || []
       vehicles.value = [...vehicles.value, ...newVehicles]
       hasMore.value = vehicles.value.length < total.value
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching more vehicles'
       page.value--
-    }
-    finally {
+    } finally {
       loadingMore.value = false
     }
   }
@@ -228,7 +251,9 @@ export function useVehicles() {
   async function fetchBySlug(slug: string): Promise<Vehicle | null> {
     const { data, error: err } = await supabase
       .from('vehicles')
-      .select('*, vehicle_images(*), types(*, type_subcategories(subcategories(id, name_es, name_en, name_singular_es, name_singular_en)))')
+      .select(
+        '*, vehicle_images(*), subcategories(*, subcategory_categories(categories(id, name_es, name_en, name, name_singular, name_singular_es, name_singular_en)))',
+      )
       .eq('slug', slug)
       .eq('status', 'published')
       .order('position', { referencedTable: 'vehicle_images', ascending: true })

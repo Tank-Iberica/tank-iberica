@@ -1,15 +1,16 @@
 import { createError, defineEventHandler, readBody } from 'h3'
+import { verifyCronSecret } from '../../utils/verifyCronSecret'
+
+interface CronBody {
+  secret?: string
+}
 
 export default defineEventHandler(async (event) => {
   // Verify cron secret to prevent unauthorized calls
-  const body = await readBody(event).catch(() => ({}))
+  const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
+  verifyCronSecret(event, body?.secret)
+
   const config = useRuntimeConfig()
-  const cronSecret = config.cronSecret || process.env.CRON_SECRET
-
-  if (cronSecret && body?.secret !== cronSecret) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
-  }
-
   const supabaseUrl = config.public?.supabaseUrl || process.env.SUPABASE_URL
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
 

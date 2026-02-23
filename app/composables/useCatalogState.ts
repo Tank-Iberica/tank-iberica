@@ -4,20 +4,27 @@ import type { VehicleFilters } from './useVehicles'
 import type { LocationLevel } from '~/utils/geoData'
 import { getCountriesForLevel, getRegionsForLevel } from '~/utils/geoData'
 
-export type VehicleCategory = 'alquiler' | 'venta' | 'terceros'
+export type VehicleAction = 'alquiler' | 'venta' | 'terceros'
 
-export type SortOption = 'recommended' | 'price_asc' | 'price_desc' | 'year_asc' | 'year_desc' | 'brand_az' | 'brand_za'
+export type SortOption =
+  | 'recommended'
+  | 'price_asc'
+  | 'price_desc'
+  | 'year_asc'
+  | 'year_desc'
+  | 'brand_az'
+  | 'brand_za'
 export type ViewMode = 'grid' | 'list'
 
 export interface CatalogState {
-  activeCategory: VehicleCategory | null
-  activeCategories: VehicleCategory[]
-  // Subcategory: parent level (e.g., "Semirremolques", "Cabezas Tractoras")
+  activeAction: VehicleAction | null
+  activeActions: VehicleAction[]
+  // Category: parent level (e.g., "Semirremolques", "Cabezas Tractoras")
+  activeCategoryId: string | null
+  activeCategorySlug: string | null
+  // Subcategory: child level within category (e.g., "Cisternas", "Frigoríficos")
   activeSubcategoryId: string | null
   activeSubcategorySlug: string | null
-  // Type: child level within subcategory (e.g., "Cisternas", "Frigoríficos")
-  activeTypeId: string | null
-  activeTypeSlug: string | null
   filters: VehicleFilters
   scrollPosition: number
   searchQuery: string
@@ -27,12 +34,12 @@ export interface CatalogState {
 }
 
 const defaultState: CatalogState = {
-  activeCategory: null,
-  activeCategories: ['alquiler'],
+  activeAction: null,
+  activeActions: ['alquiler'],
+  activeCategoryId: null,
+  activeCategorySlug: null,
   activeSubcategoryId: null,
   activeSubcategorySlug: null,
-  activeTypeId: null,
-  activeTypeSlug: null,
   filters: {},
   scrollPosition: 0,
   searchQuery: '',
@@ -44,53 +51,53 @@ const defaultState: CatalogState = {
 export function useCatalogState() {
   const state = useState<CatalogState>('catalog', () => ({ ...defaultState }))
 
-  function setCategory(category: VehicleCategory | null) {
-    state.value.activeCategory = category
+  function setAction(action: VehicleAction | null) {
+    state.value.activeAction = action
+    state.value.activeCategoryId = null
+    state.value.activeCategorySlug = null
     state.value.activeSubcategoryId = null
     state.value.activeSubcategorySlug = null
-    state.value.activeTypeId = null
-    state.value.activeTypeSlug = null
-    state.value.filters = category ? { category } : {}
+    state.value.filters = action ? { action } : {}
   }
 
-  function setCategories(categories: VehicleCategory[]) {
-    state.value.activeCategories = categories
-    state.value.activeCategory = categories[0] || null
+  function setActions(actions: VehicleAction[]) {
+    state.value.activeActions = actions
+    state.value.activeAction = actions[0] || null
+    state.value.activeCategoryId = null
+    state.value.activeCategorySlug = null
     state.value.activeSubcategoryId = null
     state.value.activeSubcategorySlug = null
-    state.value.activeTypeId = null
-    state.value.activeTypeSlug = null
-    state.value.filters = categories.length ? { categories } : {}
+    state.value.filters = actions.length ? { actions } : {}
   }
 
   /**
-   * Set the active subcategory (parent level).
-   * Clears any selected type when subcategory changes.
+   * Set the active category (parent level).
+   * Clears any selected subcategory when category changes.
    */
-  function setSubcategory(id: string | null, slug: string | null) {
-    state.value.activeSubcategoryId = id
-    state.value.activeSubcategorySlug = slug
-    // Clear type selection when subcategory changes
-    state.value.activeTypeId = null
-    state.value.activeTypeSlug = null
-    // Update filters - subcategory filters will be handled in useFilters
-    const { type_id: _tid, ...restFilters } = state.value.filters
+  function setCategory(id: string | null, slug: string | null) {
+    state.value.activeCategoryId = id
+    state.value.activeCategorySlug = slug
+    // Clear subcategory selection when category changes
+    state.value.activeSubcategoryId = null
+    state.value.activeSubcategorySlug = null
+    // Update filters - category filters will be handled in useFilters
+    const { subcategory_id: _sid, ...restFilters } = state.value.filters
     state.value.filters = {
       ...restFilters,
-      subcategory_id: id || undefined,
+      category_id: id || undefined,
     }
   }
 
   /**
-   * Set the active type (child level within subcategory).
-   * Vehicles are filtered by type_id.
+   * Set the active subcategory (child level within category).
+   * Vehicles are filtered by subcategory_id.
    */
-  function setType(id: string | null, slug: string | null) {
-    state.value.activeTypeId = id
-    state.value.activeTypeSlug = slug
+  function setSubcategory(id: string | null, slug: string | null) {
+    state.value.activeSubcategoryId = id
+    state.value.activeSubcategorySlug = slug
     state.value.filters = {
       ...state.value.filters,
-      type_id: id || undefined,
+      subcategory_id: id || undefined,
     }
   }
 
@@ -124,7 +131,12 @@ export function useCatalogState() {
     state.value.locationLevel = level
 
     // Clear previous location filters
-    const { location_countries: _lc, location_regions: _lr, location_province_eq: _lp, ...rest } = state.value.filters
+    const {
+      location_countries: _lc,
+      location_regions: _lr,
+      location_province_eq: _lp,
+      ...rest
+    } = state.value.filters
 
     if (!level || level === 'mundo') {
       state.value.filters = rest
@@ -160,22 +172,22 @@ export function useCatalogState() {
 
   return {
     state: readonly(state),
-    activeCategory: computed(() => state.value.activeCategory),
-    activeCategories: computed(() => state.value.activeCategories),
+    activeAction: computed(() => state.value.activeAction),
+    activeActions: computed(() => state.value.activeActions),
+    activeCategoryId: computed(() => state.value.activeCategoryId),
+    activeCategorySlug: computed(() => state.value.activeCategorySlug),
     activeSubcategoryId: computed(() => state.value.activeSubcategoryId),
     activeSubcategorySlug: computed(() => state.value.activeSubcategorySlug),
-    activeTypeId: computed(() => state.value.activeTypeId),
-    activeTypeSlug: computed(() => state.value.activeTypeSlug),
     filters: computed(() => state.value.filters),
     scrollPosition: computed(() => state.value.scrollPosition),
     searchQuery: computed(() => state.value.searchQuery),
     sortBy: computed(() => state.value.sortBy),
     viewMode: computed(() => state.value.viewMode),
     locationLevel: computed(() => state.value.locationLevel),
+    setAction,
+    setActions,
     setCategory,
-    setCategories,
     setSubcategory,
-    setType,
     updateFilters,
     setSearch,
     setSort,

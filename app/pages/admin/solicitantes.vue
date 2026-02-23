@@ -53,13 +53,17 @@ onMounted(async () => {
 })
 
 // Watch filters
-watch(filters, () => {
-  fetchDemands(filters.value)
-}, { deep: true })
+watch(
+  filters,
+  () => {
+    fetchDemands(filters.value)
+  },
+  { deep: true },
+)
 
 // Status helpers
 function getStatusConfig(status: DemandStatus) {
-  return DEMAND_STATUSES.find(s => s.value === status) || DEMAND_STATUSES[0]
+  return DEMAND_STATUSES.find((s) => s.value === status) || DEMAND_STATUSES[0]
 }
 
 // Quick status update
@@ -187,7 +191,7 @@ function formatYearRange(min: number | null, max: number | null): string {
         type="text"
         placeholder="Buscar por nombre, marca, tipo..."
         class="filter-search"
-      >
+      />
     </div>
 
     <!-- Error -->
@@ -196,32 +200,20 @@ function formatYearRange(min: number | null, max: number | null): string {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      Cargando solicitantes...
-    </div>
+    <div v-if="loading" class="loading-state">Cargando solicitantes...</div>
 
     <!-- Table -->
     <div v-else class="table-container">
       <table class="admin-table">
         <thead>
           <tr>
-            <th style="width: 100px">
-              Estado
-            </th>
+            <th style="width: 100px">Estado</th>
             <th>Contacto</th>
             <th>Busca</th>
-            <th style="width: 110px">
-              Rango Precio
-            </th>
-            <th style="width: 90px">
-              Rango Año
-            </th>
-            <th style="width: 100px">
-              Fecha
-            </th>
-            <th style="width: 130px">
-              Acciones
-            </th>
+            <th style="width: 110px">Rango Precio</th>
+            <th style="width: 90px">Rango Año</th>
+            <th style="width: 100px">Fecha</th>
+            <th style="width: 130px">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -230,8 +222,13 @@ function formatYearRange(min: number | null, max: number | null): string {
               <select
                 :value="d.status"
                 class="status-select"
-                :style="{ borderColor: getStatusConfig(d.status).color, color: getStatusConfig(d.status).color }"
-                @change="handleStatusChange(d, ($event.target as HTMLSelectElement).value as DemandStatus)"
+                :style="{
+                  borderColor: getStatusConfig(d.status).color,
+                  color: getStatusConfig(d.status).color,
+                }"
+                @change="
+                  handleStatusChange(d, ($event.target as HTMLSelectElement).value as DemandStatus)
+                "
               >
                 <option v-for="st in DEMAND_STATUSES" :key="st.value" :value="st.value">
                   {{ st.label }}
@@ -248,7 +245,9 @@ function formatYearRange(min: number | null, max: number | null): string {
             <td>
               <div class="vehicle-info">
                 <span class="vehicle-type-label">{{ getTypeLabel(d) }}</span>
-                <span v-if="d.brand_preference" class="vehicle-brand">{{ d.brand_preference }}</span>
+                <span v-if="d.brand_preference" class="vehicle-brand">{{
+                  d.brand_preference
+                }}</span>
               </div>
             </td>
             <td class="text-right">
@@ -262,18 +261,10 @@ function formatYearRange(min: number | null, max: number | null): string {
             </td>
             <td>
               <div class="action-buttons">
-                <button
-                  class="btn-icon btn-view"
-                  title="Ver detalles"
-                  @click="openDetail(d)"
-                >
+                <button class="btn-icon btn-view" title="Ver detalles" @click="openDetail(d)">
                   👁️
                 </button>
-                <button
-                  class="btn-icon btn-delete"
-                  title="Eliminar"
-                  @click="confirmDelete(d)"
-                >
+                <button class="btn-icon btn-delete" title="Eliminar" @click="confirmDelete(d)">
                   🗑️
                 </button>
               </div>
@@ -294,9 +285,7 @@ function formatYearRange(min: number | null, max: number | null): string {
         <div class="modal-content modal-medium">
           <div class="modal-header">
             <h3>Detalles del Solicitante</h3>
-            <button class="modal-close" @click="closeDetail">
-              ×
-            </button>
+            <button class="modal-close" @click="closeDetail">×</button>
           </div>
           <div class="modal-body">
             <div v-if="detailModal.demand" class="detail-grid">
@@ -304,10 +293,18 @@ function formatYearRange(min: number | null, max: number | null): string {
               <div class="detail-section">
                 <h4>Contacto</h4>
                 <p><strong>Nombre:</strong> {{ detailModal.demand.contact_name }}</p>
-                <p v-if="detailModal.demand.contact_phone"><strong>Teléfono:</strong> {{ detailModal.demand.contact_phone }}</p>
-                <p v-if="detailModal.demand.contact_email"><strong>Email:</strong> {{ detailModal.demand.contact_email }}</p>
-                <p v-if="detailModal.demand.location"><strong>Ubicación:</strong> {{ detailModal.demand.location }}</p>
-                <p v-if="detailModal.demand.contact_preference"><strong>Preferencia:</strong> {{ detailModal.demand.contact_preference }}</p>
+                <p v-if="detailModal.demand.contact_phone">
+                  <strong>Teléfono:</strong> {{ detailModal.demand.contact_phone }}
+                </p>
+                <p v-if="detailModal.demand.contact_email">
+                  <strong>Email:</strong> {{ detailModal.demand.contact_email }}
+                </p>
+                <p v-if="detailModal.demand.location">
+                  <strong>Ubicación:</strong> {{ detailModal.demand.location }}
+                </p>
+                <p v-if="detailModal.demand.contact_preference">
+                  <strong>Preferencia:</strong> {{ detailModal.demand.contact_preference }}
+                </p>
               </div>
 
               <!-- Classification -->
@@ -319,16 +316,34 @@ function formatYearRange(min: number | null, max: number | null): string {
                 <p v-else-if="detailModal.demand.vehicle_type">
                   <strong>Tipo:</strong> {{ detailModal.demand.vehicle_type }}
                 </p>
-                <p v-if="detailModal.demand.brand_preference"><strong>Marca preferida:</strong> {{ detailModal.demand.brand_preference }}</p>
-                <p><strong>Rango año:</strong> {{ formatYearRange(detailModal.demand.year_min, detailModal.demand.year_max) }}</p>
-                <p><strong>Rango precio:</strong> {{ formatPriceRange(detailModal.demand.price_min, detailModal.demand.price_max) }}</p>
+                <p v-if="detailModal.demand.brand_preference">
+                  <strong>Marca preferida:</strong> {{ detailModal.demand.brand_preference }}
+                </p>
+                <p>
+                  <strong>Rango año:</strong>
+                  {{ formatYearRange(detailModal.demand.year_min, detailModal.demand.year_max) }}
+                </p>
+                <p>
+                  <strong>Rango precio:</strong>
+                  {{ formatPriceRange(detailModal.demand.price_min, detailModal.demand.price_max) }}
+                </p>
               </div>
 
-              <!-- Characteristics (filters_json) -->
-              <div v-if="detailModal.demand.filters_json && Object.keys(detailModal.demand.filters_json).length" class="detail-section full-width">
+              <!-- Characteristics (attributes_json) -->
+              <div
+                v-if="
+                  detailModal.demand.attributes_json &&
+                  Object.keys(detailModal.demand.attributes_json).length
+                "
+                class="detail-section full-width"
+              >
                 <h4>Características</h4>
                 <div class="characteristics-grid">
-                  <div v-for="(value, key) in detailModal.demand.filters_json" :key="key" class="characteristic-item">
+                  <div
+                    v-for="(value, key) in detailModal.demand.attributes_json"
+                    :key="key"
+                    class="characteristic-item"
+                  >
                     <span class="char-label">{{ key }}</span>
                     <span class="char-value">{{ value }}</span>
                   </div>
@@ -336,10 +351,17 @@ function formatYearRange(min: number | null, max: number | null): string {
               </div>
 
               <!-- Specs (legacy) -->
-              <div v-if="detailModal.demand.specs && Object.keys(detailModal.demand.specs).length" class="detail-section full-width">
+              <div
+                v-if="detailModal.demand.specs && Object.keys(detailModal.demand.specs).length"
+                class="detail-section full-width"
+              >
                 <h4>Especificaciones adicionales</h4>
                 <div class="characteristics-grid">
-                  <div v-for="(value, key) in detailModal.demand.specs" :key="key" class="characteristic-item">
+                  <div
+                    v-for="(value, key) in detailModal.demand.specs"
+                    :key="key"
+                    class="characteristic-item"
+                  >
                     <span class="char-label">{{ key }}</span>
                     <span class="char-value">{{ value }}</span>
                   </div>
@@ -364,9 +386,7 @@ function formatYearRange(min: number | null, max: number | null): string {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-secondary" @click="closeDetail">
-              Cerrar
-            </button>
+            <button class="btn-secondary" @click="closeDetail">Cerrar</button>
             <button class="btn-primary" :disabled="saving" @click="saveNotes">
               {{ saving ? 'Guardando...' : 'Guardar Notas' }}
             </button>
@@ -381,14 +401,13 @@ function formatYearRange(min: number | null, max: number | null): string {
         <div class="modal-content modal-small">
           <div class="modal-header">
             <h3>Confirmar eliminación</h3>
-            <button class="modal-close" @click="closeDeleteModal">
-              ×
-            </button>
+            <button class="modal-close" @click="closeDeleteModal">×</button>
           </div>
           <div class="modal-body">
             <p>
               ¿Estás seguro de eliminar el solicitante
-              <strong>{{ deleteModal.demand?.contact_name }}</strong>?
+              <strong>{{ deleteModal.demand?.contact_name }}</strong
+              >?
             </p>
             <div class="form-group delete-confirm-group">
               <label for="delete-confirm">Escribe <strong>Borrar</strong> para confirmar:</label>
@@ -398,16 +417,14 @@ function formatYearRange(min: number | null, max: number | null): string {
                 type="text"
                 placeholder="Borrar"
                 autocomplete="off"
-              >
+              />
               <p v-if="deleteModal.confirmText && !canDelete" class="text-error">
                 Escribe "Borrar" exactamente para continuar
               </p>
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-secondary" @click="closeDeleteModal">
-              Cancelar
-            </button>
+            <button class="btn-secondary" @click="closeDeleteModal">Cancelar</button>
             <button class="btn-danger" :disabled="!canDelete" @click="executeDelete">
               Eliminar
             </button>
@@ -484,7 +501,7 @@ function formatYearRange(min: number | null, max: number | null): string {
 }
 
 .filter-btn.active {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
 }
 
@@ -503,7 +520,7 @@ function formatYearRange(min: number | null, max: number | null): string {
 
 .filter-search:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
 }
 
 /* Error */
@@ -789,13 +806,13 @@ function formatYearRange(min: number | null, max: number | null): string {
 
 .detail-section textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 /* Buttons */
 .btn-primary {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   padding: 10px 20px;

@@ -17,22 +17,22 @@ const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 
 const {
-  subcategories,
-  linkedTypes,
-  filterDefinitions,
+  categories,
+  linkedSubcategories,
+  attributes,
+  selectedCategoryId,
   selectedSubcategoryId,
-  selectedTypeId,
   filterValues,
   loading: selectorLoading,
   filtersLoading,
   fetchInitialData,
+  selectCategory,
   selectSubcategory,
-  selectType,
   setFilterValue,
-  getFiltersJson,
+  getAttributesJson,
   getFilterLabel,
   getFilterOptions,
-  getVehicleTypeLabel,
+  getVehicleSubcategoryLabel,
   reset: resetSelector,
 } = useVehicleTypeSelector()
 
@@ -63,8 +63,8 @@ const contactPreferences = [
 const currentYear = new Date().getFullYear() + 1
 const isAuthenticated = computed(() => !!user.value)
 
-function subcatName(sub: { name_es: string; name_en: string | null }) {
-  return locale.value === 'en' && sub.name_en ? sub.name_en : sub.name_es
+function catName(item: { name_es: string; name_en: string | null }) {
+  return locale.value === 'en' && item.name_en ? item.name_en : item.name_es
 }
 
 function formatPrice(n: number): string {
@@ -142,10 +142,10 @@ const handleSubmit = async () => {
 
     const { error } = await supabase.from('demands').insert({
       user_id: user.value!.id,
-      vehicle_type: getVehicleTypeLabel(locale.value),
+      vehicle_type: getVehicleSubcategoryLabel(locale.value),
+      category_id: selectedCategoryId.value,
       subcategory_id: selectedSubcategoryId.value,
-      type_id: selectedTypeId.value,
-      filters_json: getFiltersJson(),
+      attributes_json: getAttributesJson(),
       year_min: formData.value.yearMin,
       year_max: formData.value.yearMax,
       price_min: formData.value.priceMin,
@@ -167,11 +167,9 @@ const handleSubmit = async () => {
       isSuccess.value = false
       close()
     }, 3000)
-  }
-  catch (err) {
+  } catch (err) {
     console.error('Error submitting demand:', err)
-  }
-  finally {
+  } finally {
     isSubmitting.value = false
   }
 }
@@ -181,40 +179,38 @@ const handleLoginClick = () => {
   close()
 }
 
-function handleSubcategoryChange(e: Event) {
+function handleCategoryChange(e: Event) {
   const value = (e.target as HTMLSelectElement).value
-  selectSubcategory(value || null)
+  selectCategory(value || null)
 }
 
-async function handleTypeChange(e: Event) {
+async function handleSubcategoryChange(e: Event) {
   const value = (e.target as HTMLSelectElement).value
-  await selectType(value || null)
+  await selectSubcategory(value || null)
 }
 
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    document.body.style.overflow = 'hidden'
-    document.addEventListener('keydown', handleKeyDown)
-    fetchInitialData()
-  }
-  else {
-    document.body.style.overflow = ''
-    document.removeEventListener('keydown', handleKeyDown)
-    if (!isSuccess.value) {
-      resetForm()
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      document.body.style.overflow = 'hidden'
+      document.addEventListener('keydown', handleKeyDown)
+      fetchInitialData()
+    } else {
+      document.body.style.overflow = ''
+      document.removeEventListener('keydown', handleKeyDown)
+      if (!isSuccess.value) {
+        resetForm()
+      }
     }
-  }
-})
+  },
+)
 </script>
 
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div
-        v-if="modelValue"
-        class="modal-backdrop"
-        @click="handleBackdropClick"
-      >
+      <div v-if="modelValue" class="modal-backdrop" @click="handleBackdropClick">
         <div class="modal-container">
           <div class="modal-header">
             <h2 class="modal-title">{{ $t('demand.title') }}</h2>
@@ -230,11 +226,7 @@ watch(() => props.modelValue, (newValue) => {
 
           <div v-if="!isAuthenticated" class="auth-required">
             <p>{{ $t('demand.loginRequired') }}</p>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="handleLoginClick"
-            >
+            <button type="button" class="btn btn-primary" @click="handleLoginClick">
               {{ $t('auth.login') }}
             </button>
           </div>
@@ -247,53 +239,48 @@ watch(() => props.modelValue, (newValue) => {
 
           <form v-else class="modal-body" @submit.prevent="handleSubmit">
             <div class="form-grid">
-              <!-- Subcategory selector -->
+              <!-- Category selector -->
               <div class="form-group full-width">
-                <label for="dem-subcategory">{{ $t('demand.vehicleType') }}</label>
+                <label for="dem-category">{{ $t('demand.vehicleType') }}</label>
+                <select
+                  id="dem-category"
+                  class="form-input"
+                  :value="selectedCategoryId || ''"
+                  :disabled="selectorLoading"
+                  @change="handleCategoryChange"
+                >
+                  <option value="">{{ $t('demand.selectCategory') }}</option>
+                  <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                    {{ catName(cat) }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Subcategory selector -->
+              <div
+                v-if="selectedCategoryId && linkedSubcategories.length"
+                class="form-group full-width"
+              >
+                <label for="dem-subcategory">{{ $t('demand.selectSubcategory') }}</label>
                 <select
                   id="dem-subcategory"
                   class="form-input"
                   :value="selectedSubcategoryId || ''"
-                  :disabled="selectorLoading"
                   @change="handleSubcategoryChange"
                 >
                   <option value="">{{ $t('demand.selectSubcategory') }}</option>
-                  <option
-                    v-for="sub in subcategories"
-                    :key="sub.id"
-                    :value="sub.id"
-                  >
-                    {{ subcatName(sub) }}
+                  <option v-for="sub in linkedSubcategories" :key="sub.id" :value="sub.id">
+                    {{ catName(sub) }}
                   </option>
                 </select>
               </div>
 
-              <!-- Type selector -->
-              <div v-if="selectedSubcategoryId && linkedTypes.length" class="form-group full-width">
-                <label for="dem-type">{{ $t('demand.selectType') }}</label>
-                <select
-                  id="dem-type"
-                  class="form-input"
-                  :value="selectedTypeId || ''"
-                  @change="handleTypeChange"
-                >
-                  <option value="">{{ $t('demand.selectType') }}</option>
-                  <option
-                    v-for="t in linkedTypes"
-                    :key="t.id"
-                    :value="t.id"
-                  >
-                    {{ subcatName(t) }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- Dynamic filters (demand mode: slider/calc = range) -->
-              <template v-if="selectedTypeId && filterDefinitions.length">
+              <!-- Dynamic attributes (demand mode: slider/calc = range) -->
+              <template v-if="selectedSubcategoryId && attributes.length">
                 <div class="form-group full-width section-label">
                   <span class="section-title">{{ $t('demand.characteristics') }}</span>
                 </div>
-                <template v-for="filter in filterDefinitions" :key="filter.id">
+                <template v-for="filter in attributes" :key="filter.id">
                   <!-- Desplegable / Desplegable tick → select -->
                   <div
                     v-if="filter.type === 'desplegable' || filter.type === 'desplegable_tick'"
@@ -307,7 +294,9 @@ watch(() => props.modelValue, (newValue) => {
                       :id="`f-${filter.name}`"
                       class="form-input"
                       :value="filterValues[filter.name] || ''"
-                      @change="setFilterValue(filter.name, ($event.target as HTMLSelectElement).value)"
+                      @change="
+                        setFilterValue(filter.name, ($event.target as HTMLSelectElement).value)
+                      "
                     >
                       <option value="">-</option>
                       <option v-for="opt in getFilterOptions(filter)" :key="opt" :value="opt">
@@ -327,12 +316,17 @@ watch(() => props.modelValue, (newValue) => {
                       type="text"
                       class="form-input"
                       :value="filterValues[filter.name] || ''"
-                      @input="setFilterValue(filter.name, ($event.target as HTMLInputElement).value)"
+                      @input="
+                        setFilterValue(filter.name, ($event.target as HTMLInputElement).value)
+                      "
                     >
                   </div>
 
                   <!-- Slider / Calc → text input (demand: single value preference) -->
-                  <div v-else-if="filter.type === 'slider' || filter.type === 'calc'" class="form-group">
+                  <div
+                    v-else-if="filter.type === 'slider' || filter.type === 'calc'"
+                    class="form-group"
+                  >
                     <label :for="`f-${filter.name}`">
                       {{ getFilterLabel(filter, locale) }}
                       <span v-if="filter.unit" class="unit-label">({{ filter.unit }})</span>
@@ -343,7 +337,9 @@ watch(() => props.modelValue, (newValue) => {
                       class="form-input"
                       :placeholder="$t('demand.specifications')"
                       :value="filterValues[filter.name] || ''"
-                      @input="setFilterValue(filter.name, ($event.target as HTMLInputElement).value)"
+                      @input="
+                        setFilterValue(filter.name, ($event.target as HTMLInputElement).value)
+                      "
                     >
                   </div>
 
@@ -354,7 +350,9 @@ watch(() => props.modelValue, (newValue) => {
                         type="checkbox"
                         class="checkbox-input"
                         :checked="!!filterValues[filter.name]"
-                        @change="setFilterValue(filter.name, ($event.target as HTMLInputElement).checked)"
+                        @change="
+                          setFilterValue(filter.name, ($event.target as HTMLInputElement).checked)
+                        "
                       >
                       <span>{{ getFilterLabel(filter, locale) }}</span>
                     </label>
@@ -421,9 +419,7 @@ watch(() => props.modelValue, (newValue) => {
 
               <!-- Contact info -->
               <div class="form-group">
-                <label for="contactName">
-                  {{ $t('demand.contactName') }} *
-                </label>
+                <label for="contactName"> {{ $t('demand.contactName') }} * </label>
                 <input
                   id="contactName"
                   v-model="formData.contactName"
@@ -435,9 +431,7 @@ watch(() => props.modelValue, (newValue) => {
               </div>
 
               <div class="form-group">
-                <label for="contactEmail">
-                  {{ $t('demand.contactEmail') }} *
-                </label>
+                <label for="contactEmail"> {{ $t('demand.contactEmail') }} * </label>
                 <input
                   id="contactEmail"
                   v-model="formData.contactEmail"
@@ -465,11 +459,7 @@ watch(() => props.modelValue, (newValue) => {
                   v-model="formData.contactPreference"
                   class="form-input"
                 >
-                  <option
-                    v-for="pref in contactPreferences"
-                    :key="pref.value"
-                    :value="pref.value"
-                  >
+                  <option v-for="pref in contactPreferences" :key="pref.value" :value="pref.value">
                     {{ $t(pref.label) }}
                   </option>
                 </select>
@@ -489,11 +479,7 @@ watch(() => props.modelValue, (newValue) => {
             </div>
 
             <div class="modal-footer">
-              <button
-                type="submit"
-                class="btn btn-primary btn-submit"
-                :disabled="isSubmitting"
-              >
+              <button type="submit" class="btn btn-primary btn-submit" :disabled="isSubmitting">
                 {{ isSubmitting ? $t('demand.sending') : $t('demand.submit') }}
               </button>
             </div>

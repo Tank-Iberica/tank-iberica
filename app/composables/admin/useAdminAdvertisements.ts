@@ -9,9 +9,9 @@ export interface AdminAdvertisement {
   id: string
   user_id: string | null
   vehicle_type: string | null
+  category_id: string | null
   subcategory_id: string | null
-  type_id: string | null
-  filters_json: Record<string, unknown>
+  attributes_json: Record<string, unknown>
   brand: string | null
   model: string | null
   year: number | null
@@ -30,8 +30,8 @@ export interface AdminAdvertisement {
   created_at: string
   updated_at: string
   // Joined data
+  category?: { name_es: string; name_en: string | null } | null
   subcategory?: { name_es: string; name_en: string | null } | null
-  type?: { name_es: string; name_en: string | null } | null
   matched_vehicle?: {
     brand: string
     model: string
@@ -43,7 +43,11 @@ export interface AdvertisementFilters {
   search?: string
 }
 
-export const ADVERTISEMENT_STATUSES: { value: AdvertisementStatus; label: string; color: string }[] = [
+export const ADVERTISEMENT_STATUSES: {
+  value: AdvertisementStatus
+  label: string
+  color: string
+}[] = [
   { value: 'pending', label: 'Pendiente', color: '#ef4444' },
   { value: 'contacted', label: 'Contactado', color: '#f59e0b' },
   { value: 'matched', label: 'Vinculado', color: '#10b981' },
@@ -71,7 +75,10 @@ export function useAdminAdvertisements() {
     try {
       let query = supabase
         .from('advertisements')
-        .select('*, subcategory:subcategory_id(name_es, name_en), type:type_id(name_es, name_en)', { count: 'exact' })
+        .select(
+          '*, category:category_id(name_es, name_en), subcategory:subcategory_id(name_es, name_en)',
+          { count: 'exact' },
+        )
         .order('created_at', { ascending: false })
 
       if (filters.status) {
@@ -79,7 +86,9 @@ export function useAdminAdvertisements() {
       }
 
       if (filters.search) {
-        query = query.or(`contact_name.ilike.%${filters.search}%,brand.ilike.%${filters.search}%,model.ilike.%${filters.search}%`)
+        query = query.or(
+          `contact_name.ilike.%${filters.search}%,brand.ilike.%${filters.search}%,model.ilike.%${filters.search}%`,
+        )
       }
 
       const { data, error: err, count } = await query.range(0, PAGE_SIZE - 1)
@@ -88,12 +97,10 @@ export function useAdminAdvertisements() {
 
       advertisements.value = (data as unknown as AdminAdvertisement[]) || []
       total.value = count || 0
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching advertisements'
       advertisements.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -108,19 +115,19 @@ export function useAdminAdvertisements() {
     try {
       const { data, error: err } = await supabase
         .from('advertisements')
-        .select('*, subcategory:subcategory_id(name_es, name_en), type:type_id(name_es, name_en)')
+        .select(
+          '*, category:category_id(name_es, name_en), subcategory:subcategory_id(name_es, name_en)',
+        )
         .eq('id', id)
         .single()
 
       if (err) throw err
 
       return data as unknown as AdminAdvertisement
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching advertisement'
       return null
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -141,18 +148,16 @@ export function useAdminAdvertisements() {
       if (err) throw err
 
       // Update local list
-      const index = advertisements.value.findIndex(a => a.id === id)
+      const index = advertisements.value.findIndex((a) => a.id === id)
       if (index !== -1) {
         advertisements.value[index].status = status
       }
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error updating status'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -173,18 +178,16 @@ export function useAdminAdvertisements() {
       if (err) throw err
 
       // Update local list
-      const index = advertisements.value.findIndex(a => a.id === id)
+      const index = advertisements.value.findIndex((a) => a.id === id)
       if (index !== -1) {
         advertisements.value[index].admin_notes = notes
       }
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error updating notes'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -215,12 +218,10 @@ export function useAdminAdvertisements() {
       if (err) throw err
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error matching vehicle'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -233,24 +234,19 @@ export function useAdminAdvertisements() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('advertisements')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('advertisements').delete().eq('id', id)
 
       if (err) throw err
 
       // Remove from local list
-      advertisements.value = advertisements.value.filter(a => a.id !== id)
+      advertisements.value = advertisements.value.filter((a) => a.id !== id)
       total.value--
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error deleting advertisement'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -268,8 +264,7 @@ export function useAdminAdvertisements() {
       if (err) throw err
 
       return count || 0
-    }
-    catch {
+    } catch {
       return 0
     }
   }

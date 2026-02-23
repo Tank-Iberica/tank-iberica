@@ -1,6 +1,6 @@
 /**
- * Admin Types Composable
- * Full CRUD operations for vehicle types in admin panel
+ * Admin Types Composable (migrated: types table → subcategories table)
+ * Full CRUD operations for vehicle subcategories (formerly "types") in admin panel
  */
 
 export interface AdminType {
@@ -44,7 +44,7 @@ export function useAdminTypes() {
 
     try {
       const { data, error: err } = await supabase
-        .from('types')
+        .from('subcategories')
         .select('*')
         .order('sort_order', { ascending: true })
 
@@ -53,32 +53,30 @@ export function useAdminTypes() {
       // Calculate stock for each type
       const typesData = (data as unknown as AdminType[]) || []
 
-      // Get vehicle counts per type
+      // Get vehicle counts per subcategory (formerly type)
       const { data: vehicleCounts } = await supabase
         .from('vehicles')
-        .select('type_id')
+        .select('subcategory_id')
         .eq('status', 'published')
 
       const countMap = new Map<string, number>()
       if (vehicleCounts) {
-        for (const v of vehicleCounts as { type_id: string | null }[]) {
-          if (v.type_id) {
-            countMap.set(v.type_id, (countMap.get(v.type_id) || 0) + 1)
+        for (const v of vehicleCounts as { subcategory_id: string | null }[]) {
+          if (v.subcategory_id) {
+            countMap.set(v.subcategory_id, (countMap.get(v.subcategory_id) || 0) + 1)
           }
         }
       }
 
       // Merge stock counts
-      types.value = typesData.map(t => ({
+      types.value = typesData.map((t) => ({
         ...t,
         stock_count: countMap.get(t.id) || 0,
       }))
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching types'
       types.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -92,7 +90,7 @@ export function useAdminTypes() {
 
     try {
       const { data, error: err } = await supabase
-        .from('types')
+        .from('subcategories')
         .select('*')
         .eq('id', id)
         .single()
@@ -100,12 +98,10 @@ export function useAdminTypes() {
       if (err) throw err
 
       return data as unknown as AdminType
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching type'
       return null
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -129,7 +125,7 @@ export function useAdminTypes() {
       }
 
       const { data, error: err } = await supabase
-        .from('types')
+        .from('subcategories')
         .insert(insertData as never)
         .select('id')
         .single()
@@ -137,12 +133,10 @@ export function useAdminTypes() {
       if (err) throw err
 
       return (data as { id: string } | null)?.id || null
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error creating type'
       return null
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -160,25 +154,25 @@ export function useAdminTypes() {
       if (formData.name_es !== undefined) updateData.name_es = formData.name_es
       if (formData.name_en !== undefined) updateData.name_en = formData.name_en || null
       if (formData.slug !== undefined) updateData.slug = formData.slug
-      if (formData.applicable_categories !== undefined) updateData.applicable_categories = formData.applicable_categories
-      if (formData.applicable_filters !== undefined) updateData.applicable_filters = formData.applicable_filters
+      if (formData.applicable_categories !== undefined)
+        updateData.applicable_categories = formData.applicable_categories
+      if (formData.applicable_filters !== undefined)
+        updateData.applicable_filters = formData.applicable_filters
       if (formData.status !== undefined) updateData.status = formData.status
       if (formData.sort_order !== undefined) updateData.sort_order = formData.sort_order
 
       const { error: err } = await supabase
-        .from('types')
+        .from('subcategories')
         .update(updateData as never)
         .eq('id', id)
 
       if (err) throw err
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error updating type'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -191,23 +185,18 @@ export function useAdminTypes() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('types')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('subcategories').delete().eq('id', id)
 
       if (err) throw err
 
       // Remove from local list
-      types.value = types.value.filter(t => t.id !== id)
+      types.value = types.value.filter((t) => t.id !== id)
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error deleting type'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -229,7 +218,7 @@ export function useAdminTypes() {
     try {
       for (const item of items) {
         const { error: err } = await supabase
-          .from('types')
+          .from('subcategories')
           .update({ sort_order: item.sort_order } as never)
           .eq('id', item.id)
 
@@ -237,12 +226,10 @@ export function useAdminTypes() {
       }
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error reordering types'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -251,7 +238,7 @@ export function useAdminTypes() {
    * Move type up in order
    */
   async function moveUp(id: string): Promise<boolean> {
-    const index = types.value.findIndex(t => t.id === id)
+    const index = types.value.findIndex((t) => t.id === id)
     if (index <= 0) return false
 
     const current = types.value[index]
@@ -273,7 +260,7 @@ export function useAdminTypes() {
    * Move type down in order
    */
   async function moveDown(id: string): Promise<boolean> {
-    const index = types.value.findIndex(t => t.id === id)
+    const index = types.value.findIndex((t) => t.id === id)
     if (index < 0 || index >= types.value.length - 1) return false
 
     const current = types.value[index]

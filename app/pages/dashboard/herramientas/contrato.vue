@@ -984,7 +984,7 @@ onMounted(init)
               <label>{{ t('dashboard.tools.contract.contractType') }}</label>
               <div class="radio-group-inline">
                 <label class="radio-card" :class="{ active: contractType === 'arrendamiento' }">
-                  <input v-model="contractType" type="radio" value="arrendamiento" >
+                  <input v-model="contractType" type="radio" value="arrendamiento" />
                   <span class="radio-icon-svg">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1006,7 +1006,7 @@ onMounted(init)
                   <span class="radio-label">{{ t('dashboard.tools.contract.typeRental') }}</span>
                 </label>
                 <label class="radio-card" :class="{ active: contractType === 'compraventa' }">
-                  <input v-model="contractType" type="radio" value="compraventa" >
+                  <input v-model="contractType" type="radio" value="compraventa" />
                   <span class="radio-icon-svg">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1029,11 +1029,11 @@ onMounted(init)
             </div>
             <div class="form-group">
               <label>{{ t('dashboard.tools.contract.date') }}</label>
-              <input v-model="contractDate" type="date" >
+              <input v-model="contractDate" type="date" />
             </div>
             <div class="form-group">
               <label>{{ t('dashboard.tools.contract.location') }}</label>
-              <input v-model="contractLocation" type="text" >
+              <input v-model="contractLocation" type="text" />
             </div>
           </div>
 
@@ -1054,15 +1054,15 @@ onMounted(init)
             </div>
             <div class="form-group">
               <label>{{ t('dashboard.tools.contract.vehicleType') }}</label>
-              <input v-model="contractVehicleType" type="text" >
+              <input v-model="contractVehicleType" type="text" />
             </div>
             <div class="form-group">
               <label>{{ t('dashboard.tools.contract.plate') }}</label>
-              <input v-model="contractVehiclePlate" type="text" >
+              <input v-model="contractVehiclePlate" type="text" />
             </div>
           </div>
 
-          <hr class="divider" >
+          <hr class="divider" />
 
           <!-- Lessor / Seller Data -->
           <details class="company-details" open>
@@ -1076,28 +1076,28 @@ onMounted(init)
             <div class="form-grid-3">
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.company') }}</label>
-                <input v-model="lessorCompany" type="text" >
+                <input v-model="lessorCompany" type="text" />
               </div>
               <div class="form-group">
                 <label>CIF</label>
-                <input v-model="lessorCIF" type="text" >
+                <input v-model="lessorCIF" type="text" />
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.address') }}</label>
-                <input v-model="lessorAddress" type="text" >
+                <input v-model="lessorAddress" type="text" />
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.representative') }}</label>
-                <input v-model="lessorRepresentative" type="text" >
+                <input v-model="lessorRepresentative" type="text" />
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.representativeNIF') }}</label>
-                <input v-model="lessorRepresentativeNIF" type="text" >
+                <input v-model="lessorRepresentativeNIF" type="text" />
               </div>
             </div>
           </details>
 
-          <hr class="divider" >
+          <hr class="divider" />
 
           <!-- Client / Buyer Data -->
           <h4 class="section-subtitle">
@@ -1113,11 +1113,11 @@ onMounted(init)
               <label>{{ t('dashboard.tools.contract.clientTypeLabel') }}</label>
               <div class="radio-group-inline compact">
                 <label :class="{ active: clientType === 'persona' }">
-                  <input v-model="clientType" type="radio" value="persona" >
+                  <input v-model="clientType" type="radio" value="persona" />
                   {{ t('dashboard.tools.contract.clientPerson') }}
                 </label>
                 <label :class="{ active: clientType === 'empresa' }">
-                  <input v-model="clientType" type="radio" value="empresa" >
+                  <input v-model="clientType" type="radio" value="empresa" />
                   {{ t('dashboard.tools.contract.clientCompany') }}
                 </label>
               </div>
@@ -1128,15 +1128,15 @@ onMounted(init)
           <div v-if="clientType === 'persona'" class="form-grid-3">
             <div class="form-group">
               <label>{{ t('dashboard.tools.contract.fullName') }}</label>
-              <input v-model="clientName" type="text" >
+              <input v-model="clientName" type="text" />
             </div>
             <div class="form-group">
               <label>NIF</label>
-              <input v-model="clientNIF" type="text" >
+              <input v-model="clientNIF" type="text" />
             </div>
             <div class="form-group" style="grid-column: 1 / -1">
               <label>{{ t('dashboard.tools.contract.address') }}</label>
-              <input v-model="clientAddress" type="text" >
+              <input v-model="clientAddress" type="text" />
             </div>
           </div>
 
@@ -1144,27 +1144,27 @@ onMounted(init)
           <div v-if="clientType === 'empresa'" class="form-grid-3">
             <div class="form-group">
               <label>{{ t('dashboard.tools.contract.company') }}</label>
-              <input v-model="clientCompany" type="text" >
+              <input v-model="clientCompany" type="text" />
             </div>
             <div class="form-group">
               <label>CIF</label>
-              <input v-model="clientCIF" type="text" >
+              <input v-model="clientCIF" type="text" />
             </div>
             <div class="form-group">
               <label>{{ t('dashboard.tools.contract.representative') }}</label>
-              <input v-model="clientRepresentative" type="text" >
+              <input v-model="clientRepresentative" type="text" />
             </div>
             <div class="form-group">
               <label>{{ t('dashboard.tools.contract.representativeNIF') }}</label>
-              <input v-model="clientRepresentativeNIF" type="text" >
+              <input v-model="clientRepresentativeNIF" type="text" />
             </div>
             <div class="form-group" style="grid-column: span 2">
               <label>{{ t('dashboard.tools.contract.address') }}</label>
-              <input v-model="clientAddress" type="text" >
+              <input v-model="clientAddress" type="text" />
             </div>
           </div>
 
-          <hr class="divider" >
+          <hr class="divider" />
 
           <!-- Rental Terms -->
           <div v-if="contractType === 'arrendamiento'">
@@ -1173,19 +1173,19 @@ onMounted(init)
             <div class="form-grid-3">
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.monthlyRent') }}</label>
-                <input v-model.number="contractMonthlyRent" type="number" step="100" >
+                <input v-model.number="contractMonthlyRent" type="number" step="100" />
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.deposit') }}</label>
-                <input v-model.number="contractDeposit" type="number" step="100" >
+                <input v-model.number="contractDeposit" type="number" step="100" />
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.paymentDays') }}</label>
-                <input v-model.number="contractPaymentDays" type="number" >
+                <input v-model.number="contractPaymentDays" type="number" />
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.duration') }}</label>
-                <input v-model.number="contractDuration" type="number" >
+                <input v-model.number="contractDuration" type="number" />
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.durationUnit') }}</label>
@@ -1196,14 +1196,14 @@ onMounted(init)
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.residualValue') }}</label>
-                <input v-model.number="contractVehicleResidualValue" type="number" step="1000" >
+                <input v-model.number="contractVehicleResidualValue" type="number" step="1000" />
               </div>
             </div>
 
             <!-- Purchase Option Toggle -->
             <div class="option-toggle">
               <label>
-                <input v-model="contractHasPurchaseOption" type="checkbox" >
+                <input v-model="contractHasPurchaseOption" type="checkbox" />
                 <span>{{ t('dashboard.tools.contract.includePurchaseOption') }}</span>
               </label>
             </div>
@@ -1211,15 +1211,15 @@ onMounted(init)
             <div v-if="contractHasPurchaseOption" class="form-grid-3 purchase-options">
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.purchasePrice') }}</label>
-                <input v-model.number="contractPurchasePrice" type="number" step="1000" >
+                <input v-model.number="contractPurchasePrice" type="number" step="1000" />
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.purchaseNotice') }}</label>
-                <input v-model.number="contractPurchaseNotice" type="number" >
+                <input v-model.number="contractPurchaseNotice" type="number" />
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.rentMonthsDiscount') }}</label>
-                <input v-model.number="contractRentMonthsToDiscount" type="number" >
+                <input v-model.number="contractRentMonthsToDiscount" type="number" />
               </div>
             </div>
           </div>
@@ -1231,7 +1231,7 @@ onMounted(init)
             <div class="form-grid-3">
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.salePrice') }}</label>
-                <input v-model.number="contractSalePrice" type="number" step="1000" >
+                <input v-model.number="contractSalePrice" type="number" step="1000" />
               </div>
               <div class="form-group">
                 <label>{{ t('dashboard.tools.contract.paymentMethod') }}</label>
@@ -1248,7 +1248,7 @@ onMounted(init)
                   v-model="contractSaleDeliveryConditions"
                   type="text"
                   :placeholder="t('dashboard.tools.contract.deliveryPlaceholder')"
-                >
+                />
               </div>
               <div class="form-group" style="grid-column: 1 / -1">
                 <label>{{ t('dashboard.tools.contract.warranty') }}</label>
@@ -1256,18 +1256,18 @@ onMounted(init)
                   v-model="contractSaleWarranty"
                   type="text"
                   :placeholder="t('dashboard.tools.contract.warrantyPlaceholder')"
-                >
+                />
               </div>
             </div>
           </div>
 
-          <hr class="divider" >
+          <hr class="divider" />
 
           <!-- Jurisdiction -->
           <div class="form-row">
             <div class="form-group" style="max-width: 300px">
               <label>{{ t('dashboard.tools.contract.jurisdiction') }}</label>
-              <input v-model="contractJurisdiction" type="text" >
+              <input v-model="contractJurisdiction" type="text" />
             </div>
           </div>
 

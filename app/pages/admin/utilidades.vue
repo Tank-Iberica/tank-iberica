@@ -14,13 +14,7 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 
-const {
-  entries,
-  loading,
-  availableYears,
-  summary,
-  fetchEntries,
-} = useAdminBalance()
+const { entries, loading, availableYears, summary, fetchEntries } = useAdminBalance()
 
 // Filters for balance export
 const filters = reactive<BalanceFilters>({
@@ -89,14 +83,14 @@ const clientDocType = ref<'NIF' | 'DNI' | 'Pasaporte' | 'CIF'>('NIF')
 const clientDocNumber = ref('')
 
 // Company data (with defaults)
-const companyName = ref('TANK IBÉRICA S.L.')
+const companyName = ref('TRACCIONA S.L.')
 const companyNIF = ref('B12345678')
 const companyAddress1 = ref('Calle Principal 123')
 const companyAddress2 = ref('28001 Madrid')
 const companyAddress3 = ref('España')
 const companyPhone = ref('+34 900 000 000')
-const companyEmail = ref('info@tankiberica.com')
-const companyWeb = ref('TANKIBERICA.COM')
+const companyEmail = ref('info@tracciona.com')
+const companyWeb = ref('TRACCIONA.COM')
 const companyLogoUrl = ref('')
 
 // Available vehicles for selection
@@ -114,15 +108,15 @@ async function loadVehicleOptions() {
       .order('brand')
 
     // Load historical vehicles if table exists
-    let historico: { id: string; brand: string; model: string; plate?: string; year?: number }[] = []
+    let historico: { id: string; brand: string; model: string; plate?: string; year?: number }[] =
+      []
     try {
       const { data } = await supabase
         .from('historico')
         .select('id, brand, model, plate, year')
         .order('brand')
       if (data) historico = data
-    }
-    catch {
+    } catch {
       // Table might not exist yet
     }
 
@@ -147,8 +141,7 @@ async function loadVehicleOptions() {
     }
 
     vehicleOptions.value = options
-  }
-  finally {
+  } finally {
     loadingVehicles.value = false
   }
 }
@@ -157,8 +150,8 @@ async function loadVehicleOptions() {
 function updateInvoiceNumber() {
   const year = new Date().getFullYear()
   const ids = selectedVehicles.value
-    .filter(v => v)
-    .map(v => v.split('-')[1])
+    .filter((v) => v)
+    .map((v) => v.split('-')[1])
     .join('-')
   invoiceNumber.value = ids ? `${year}/${ids}` : `${year}/000`
 }
@@ -196,7 +189,7 @@ function addInvoiceLine() {
 
 // Remove invoice line
 function removeInvoiceLine(id: number) {
-  invoiceLines.value = invoiceLines.value.filter(l => l.id !== id)
+  invoiceLines.value = invoiceLines.value.filter((l) => l.id !== id)
 }
 
 // Calculate line totals
@@ -206,7 +199,7 @@ function getLineImporte(line: InvoiceLine): number {
 
 function getLineSubtotal(line: InvoiceLine): number {
   const importe = getLineImporte(line)
-  return importe + (importe * line.iva / 100)
+  return importe + (importe * line.iva) / 100
 }
 
 // Calculate invoice totals
@@ -217,7 +210,7 @@ const invoiceSubtotal = computed(() => {
 const invoiceTotalIva = computed(() => {
   return invoiceLines.value.reduce((sum, line) => {
     const importe = getLineImporte(line)
-    return sum + (importe * line.iva / 100)
+    return sum + (importe * line.iva) / 100
   }, 0)
 })
 
@@ -230,7 +223,7 @@ function onVehicleSelected(index: number) {
   const vehicleId = selectedVehicles.value[index]
   if (!vehicleId) return
 
-  const vehicle = vehicleOptions.value.find(v => v.id === vehicleId)
+  const vehicle = vehicleOptions.value.find((v) => v.id === vehicleId)
   if (vehicle && invoiceLines.value[index]) {
     invoiceLines.value[index].concepto = vehicle.label
   }
@@ -467,7 +460,7 @@ function onContractVehicleSelected() {
   const vehicleId = contractVehicle.value
   if (!vehicleId) return
 
-  const vehicle = vehicleOptions.value.find(v => v.id === vehicleId)
+  const vehicle = vehicleOptions.value.find((v) => v.id === vehicleId)
   if (vehicle) {
     // Extract plate from label (format: "Brand Model (PLATE) - Year")
     const plateMatch = vehicle.label.match(/\(([^)]+)\)/)
@@ -478,17 +471,13 @@ function onContractVehicleSelected() {
     const labelLower = vehicle.label.toLowerCase()
     if (labelLower.includes('cisterna')) {
       contractVehicleType.value = 'semirremolque cisterna'
-    }
-    else if (labelLower.includes('semirremolque')) {
+    } else if (labelLower.includes('semirremolque')) {
       contractVehicleType.value = 'semirremolque'
-    }
-    else if (labelLower.includes('trailer')) {
+    } else if (labelLower.includes('trailer')) {
       contractVehicleType.value = 'trailer'
-    }
-    else if (labelLower.includes('tractora')) {
+    } else if (labelLower.includes('tractora')) {
       contractVehicleType.value = 'cabeza tractora'
-    }
-    else {
+    } else {
       contractVehicleType.value = 'vehículo'
     }
   }
@@ -496,9 +485,52 @@ function onContractVehicleSelected() {
 
 // Format number as words (Spanish)
 function numberToWords(n: number): string {
-  const units = ['', 'UN', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE', 'DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISEIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE']
-  const tens = ['', '', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA', 'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA']
-  const hundreds = ['', 'CIEN', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS', 'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS']
+  const units = [
+    '',
+    'UN',
+    'DOS',
+    'TRES',
+    'CUATRO',
+    'CINCO',
+    'SEIS',
+    'SIETE',
+    'OCHO',
+    'NUEVE',
+    'DIEZ',
+    'ONCE',
+    'DOCE',
+    'TRECE',
+    'CATORCE',
+    'QUINCE',
+    'DIECISEIS',
+    'DIECISIETE',
+    'DIECIOCHO',
+    'DIECINUEVE',
+  ]
+  const tens = [
+    '',
+    '',
+    'VEINTE',
+    'TREINTA',
+    'CUARENTA',
+    'CINCUENTA',
+    'SESENTA',
+    'SETENTA',
+    'OCHENTA',
+    'NOVENTA',
+  ]
+  const hundreds = [
+    '',
+    'CIEN',
+    'DOSCIENTOS',
+    'TRESCIENTOS',
+    'CUATROCIENTOS',
+    'QUINIENTOS',
+    'SEISCIENTOS',
+    'SETECIENTOS',
+    'OCHOCIENTOS',
+    'NOVECIENTOS',
+  ]
 
   if (n === 0) return 'CERO'
   if (n < 20) return units[n]
@@ -526,7 +558,20 @@ function numberToWords(n: number): string {
 
 // Format date in Spanish
 function formatDateSpanish(dateStr: string): string {
-  const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+  const months = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ]
   const d = new Date(dateStr)
   return `${d.getDate()} de ${months[d.getMonth()]} de ${d.getFullYear()}`
 }
@@ -546,8 +591,7 @@ function generateRentalContract(): string {
   let lesseeSection = ''
   if (lesseeType.value === 'persona') {
     lesseeSection = `De otra parte D. ${lesseeName.value.toUpperCase()}, mayor de edad, con NIF ${lesseeNIF.value}, con domicilio en ${lesseeAddress.value}, en adelante arrendatario.`
-  }
-  else {
+  } else {
     lesseeSection = `De otra parte D. ${lesseeRepresentative.value}, mayor de edad, con NIF ${lesseeRepresentativeNIF.value}, en nombre y representación de la mercantil ${lesseeCompany.value.toUpperCase()}, con CIF ${lesseeCIF.value}, con domicilio en ${lesseeAddress.value}, en adelante arrendatario.`
   }
 
@@ -665,13 +709,13 @@ function generateRentalContract(): string {
   }
 
   // Signatures
-  const lesseeSignatureName = lesseeType.value === 'persona'
-    ? lesseeName.value.toUpperCase()
-    : `${lesseeCompany.value.toUpperCase()}<br>D. ${lesseeRepresentative.value}`
+  const lesseeSignatureName =
+    lesseeType.value === 'persona'
+      ? lesseeName.value.toUpperCase()
+      : `${lesseeCompany.value.toUpperCase()}<br>D. ${lesseeRepresentative.value}`
 
-  const lesseeSignatureDoc = lesseeType.value === 'persona'
-    ? `NIF: ${lesseeNIF.value}`
-    : `CIF: ${lesseeCIF.value}`
+  const lesseeSignatureDoc =
+    lesseeType.value === 'persona' ? `NIF: ${lesseeNIF.value}` : `CIF: ${lesseeCIF.value}`
 
   contract += `
   <p style="margin-top: 40px;">Y en prueba de conformidad con el presente Contrato, las partes lo firman por duplicado y a un solo efecto, en el lugar y fecha indicados en el encabezamiento.</p>
@@ -708,18 +752,17 @@ function generateSaleContract(): string {
   let buyerSection = ''
   if (lesseeType.value === 'persona') {
     buyerSection = `De otra parte D. ${lesseeName.value.toUpperCase()}, mayor de edad, con NIF ${lesseeNIF.value}, con domicilio en ${lesseeAddress.value}, en adelante comprador.`
-  }
-  else {
+  } else {
     buyerSection = `De otra parte D. ${lesseeRepresentative.value}, mayor de edad, con NIF ${lesseeRepresentativeNIF.value}, en nombre y representación de la mercantil ${lesseeCompany.value.toUpperCase()}, con CIF ${lesseeCIF.value}, con domicilio en ${lesseeAddress.value}, en adelante comprador.`
   }
 
-  const buyerSignatureName = lesseeType.value === 'persona'
-    ? lesseeName.value.toUpperCase()
-    : `${lesseeCompany.value.toUpperCase()}<br>D. ${lesseeRepresentative.value}`
+  const buyerSignatureName =
+    lesseeType.value === 'persona'
+      ? lesseeName.value.toUpperCase()
+      : `${lesseeCompany.value.toUpperCase()}<br>D. ${lesseeRepresentative.value}`
 
-  const buyerSignatureDoc = lesseeType.value === 'persona'
-    ? `NIF: ${lesseeNIF.value}`
-    : `CIF: ${lesseeCIF.value}`
+  const buyerSignatureDoc =
+    lesseeType.value === 'persona' ? `NIF: ${lesseeNIF.value}` : `CIF: ${lesseeCIF.value}`
 
   return `
 <!DOCTYPE html>
@@ -810,9 +853,8 @@ function generateSaleContract(): string {
 
 // Generate contract PDF
 function generateContractPDF() {
-  const html = contractType.value === 'arrendamiento'
-    ? generateRentalContract()
-    : generateSaleContract()
+  const html =
+    contractType.value === 'arrendamiento' ? generateRentalContract() : generateSaleContract()
 
   printHTML(html)
 }
@@ -851,9 +893,13 @@ onMounted(async () => {
 })
 
 // Watch filters
-watch(filters, () => {
-  fetchEntries(filters)
-}, { deep: true })
+watch(
+  filters,
+  () => {
+    fetchEntries(filters)
+  },
+  { deep: true },
+)
 
 // Monthly breakdown for export
 const monthlyBreakdown = computed(() => {
@@ -865,8 +911,7 @@ const monthlyBreakdown = computed(() => {
     }
     if (e.tipo === 'ingreso') {
       months[month].ingresos += e.importe
-    }
-    else {
+    } else {
       months[month].gastos += e.importe
     }
   }
@@ -887,8 +932,7 @@ async function exportBalance() {
 
   if (exportFormat.value === 'excel') {
     exportToExcel(dataToExport)
-  }
-  else {
+  } else {
     exportToPDF(dataToExport)
   }
 }
@@ -909,13 +953,14 @@ function exportToExcel(data: BalanceEntry[]) {
     if (exportColumns.fecha) row.push(e.fecha)
     if (exportColumns.razon) row.push(BALANCE_REASONS[e.razon])
     if (exportColumns.detalle) row.push(e.detalle || '')
-    if (exportColumns.importe) row.push(`${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€`)
+    if (exportColumns.importe)
+      row.push(`${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€`)
     if (exportColumns.estado) row.push(BALANCE_STATUS_LABELS[e.estado])
     if (exportColumns.notas) row.push(e.notas || '')
     return row
   })
 
-  const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n')
+  const csv = [headers.join(';'), ...rows.map((r) => r.join(';'))].join('\n')
   downloadFile(csv, `balance_${filters.year || 'todos'}.csv`, 'text/csv')
 }
 
@@ -953,7 +998,8 @@ function exportToPDF(data: BalanceEntry[]) {
     if (exportColumns.fecha) html += `<td>${e.fecha}</td>`
     if (exportColumns.razon) html += `<td>${BALANCE_REASONS[e.razon]}</td>`
     if (exportColumns.detalle) html += `<td>${e.detalle || ''}</td>`
-    if (exportColumns.importe) html += `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€</td>`
+    if (exportColumns.importe)
+      html += `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€</td>`
     if (exportColumns.estado) html += `<td>${BALANCE_STATUS_LABELS[e.estado]}</td>`
     if (exportColumns.notas) html += `<td>${e.notas || ''}</td>`
     html += '</tr>'
@@ -973,8 +1019,7 @@ function exportToPDF(data: BalanceEntry[]) {
 function exportResumen() {
   if (exportFormat.value === 'excel') {
     exportResumenExcel()
-  }
-  else {
+  } else {
     exportResumenPDF()
   }
 }
@@ -995,7 +1040,9 @@ function exportResumenExcel() {
       const data = summary.value.byReason[key]
       if (data) {
         const neto = (data.ingresos || 0) - (data.gastos || 0)
-        lines.push(`${label};+${(data.ingresos || 0).toFixed(2)}€;-${(data.gastos || 0).toFixed(2)}€;${neto.toFixed(2)}€`)
+        lines.push(
+          `${label};+${(data.ingresos || 0).toFixed(2)}€;-${(data.gastos || 0).toFixed(2)}€;${neto.toFixed(2)}€`,
+        )
       }
     }
     lines.push('')
@@ -1005,7 +1052,9 @@ function exportResumenExcel() {
     lines.push('DESGLOSE MENSUAL;;;')
     for (const [month, data] of monthlyBreakdown.value) {
       const neto = data.ingresos - data.gastos
-      lines.push(`${month};+${data.ingresos.toFixed(2)}€;-${data.gastos.toFixed(2)}€;${neto.toFixed(2)}€`)
+      lines.push(
+        `${month};+${data.ingresos.toFixed(2)}€;-${data.gastos.toFixed(2)}€;${neto.toFixed(2)}€`,
+      )
     }
   }
 
@@ -1093,8 +1142,7 @@ function printHTML(html: string) {
     try {
       iframe.contentWindow?.focus()
       iframe.contentWindow?.print()
-    }
-    catch {
+    } catch {
       const win = window.open('', '_blank')
       if (win) {
         win.document.write(html)
@@ -1137,7 +1185,14 @@ function fmt(val: number): string {
     <!-- Tool Cards -->
     <div class="tools-grid">
       <!-- Generador de Facturas -->
-      <div class="tool-card" :class="{ active: activeTool === 'facturas' }" @click="activeTool = 'facturas'; loadVehicleOptions()">
+      <div
+        class="tool-card"
+        :class="{ active: activeTool === 'facturas' }"
+        @click="
+          activeTool = 'facturas'
+          loadVehicleOptions()
+        "
+      >
         <div class="tool-icon">🧾</div>
         <div class="tool-info">
           <h3>Generador de Facturas</h3>
@@ -1146,7 +1201,14 @@ function fmt(val: number): string {
       </div>
 
       <!-- Generador de Contratos -->
-      <div class="tool-card" :class="{ active: activeTool === 'contratos' }" @click="activeTool = 'contratos'; loadVehicleOptions()">
+      <div
+        class="tool-card"
+        :class="{ active: activeTool === 'contratos' }"
+        @click="
+          activeTool = 'contratos'
+          loadVehicleOptions()
+        "
+      >
         <div class="tool-icon">📝</div>
         <div class="tool-info">
           <h3>Generador de Contratos</h3>
@@ -1155,7 +1217,11 @@ function fmt(val: number): string {
       </div>
 
       <!-- Exportar Balance -->
-      <div class="tool-card" :class="{ active: activeTool === 'exportar' }" @click="activeTool = 'exportar'">
+      <div
+        class="tool-card"
+        :class="{ active: activeTool === 'exportar' }"
+        @click="activeTool = 'exportar'"
+      >
         <div class="tool-icon">📊</div>
         <div class="tool-info">
           <h3>Exportar Balance</h3>
@@ -1176,18 +1242,24 @@ function fmt(val: number): string {
         <div class="form-row">
           <div class="form-group">
             <label>Nº Vehículos</label>
-            <input v-model.number="numVehicles" type="number" min="0" max="10" @change="onNumVehiclesChange">
+            <input
+              v-model.number="numVehicles"
+              type="number"
+              min="0"
+              max="10"
+              @change="onNumVehiclesChange"
+            />
           </div>
           <div class="form-group">
             <label>Fecha</label>
-            <input v-model="invoiceDate" type="date">
+            <input v-model="invoiceDate" type="date" />
           </div>
           <div class="form-group">
             <label>Condiciones</label>
-            <input v-model="invoiceConditions" type="text" placeholder="Pago a 30 días">
+            <input v-model="invoiceConditions" type="text" placeholder="Pago a 30 días" />
           </div>
           <div class="form-group checkbox-inline">
-            <label><input v-model="invoiceInEnglish" type="checkbox"> Emitir en Inglés</label>
+            <label><input v-model="invoiceInEnglish" type="checkbox" /> Emitir en Inglés</label>
           </div>
         </div>
 
@@ -1195,7 +1267,11 @@ function fmt(val: number): string {
         <div v-if="numVehicles > 0" class="vehicles-grid">
           <div v-for="(_, idx) in selectedVehicles" :key="idx" class="form-group">
             <label>Vehículo {{ idx + 1 }}</label>
-            <select v-model="selectedVehicles[idx]" :disabled="loadingVehicles" @change="onVehicleSelected(idx)">
+            <select
+              v-model="selectedVehicles[idx]"
+              :disabled="loadingVehicles"
+              @change="onVehicleSelected(idx)"
+            >
               <option value="">-- Seleccionar --</option>
               <option v-for="veh in vehicleOptions" :key="veh.id" :value="veh.id">
                 {{ veh.label }}
@@ -1206,32 +1282,32 @@ function fmt(val: number): string {
 
         <!-- Invoice Number -->
         <div class="form-row">
-          <div class="form-group" style="max-width: 200px;">
+          <div class="form-group" style="max-width: 200px">
             <label>Nº Factura</label>
-            <input v-model="invoiceNumber" type="text" readonly class="readonly-input">
+            <input v-model="invoiceNumber" type="text" readonly class="readonly-input" />
           </div>
         </div>
 
-        <hr class="divider">
+        <hr class="divider" />
 
         <!-- Client Data -->
         <h4 class="section-subtitle">Facturado a:</h4>
         <div class="form-grid-3">
           <div class="form-group">
             <label>Nombre/Empresa</label>
-            <input v-model="clientName" type="text">
+            <input v-model="clientName" type="text" />
           </div>
           <div class="form-group">
             <label>Dirección</label>
-            <input v-model="clientAddress1" type="text">
+            <input v-model="clientAddress1" type="text" />
           </div>
           <div class="form-group">
             <label>CP + Ciudad</label>
-            <input v-model="clientAddress2" type="text">
+            <input v-model="clientAddress2" type="text" />
           </div>
           <div class="form-group">
             <label>Provincia + País</label>
-            <input v-model="clientAddress3" type="text">
+            <input v-model="clientAddress3" type="text" />
           </div>
           <div class="form-group">
             <label>Tipo Doc</label>
@@ -1244,11 +1320,11 @@ function fmt(val: number): string {
           </div>
           <div class="form-group">
             <label>Número Doc</label>
-            <input v-model="clientDocNumber" type="text">
+            <input v-model="clientDocNumber" type="text" />
           </div>
         </div>
 
-        <hr class="divider">
+        <hr class="divider" />
 
         <!-- Invoice Lines -->
         <div class="lines-header">
@@ -1265,7 +1341,7 @@ function fmt(val: number): string {
             <span class="right">Importe</span>
             <span class="right">IVA%</span>
             <span class="right">Subtotal</span>
-            <span/>
+            <span />
           </div>
           <div v-for="line in invoiceLines" :key="line.id" class="line-row">
             <select v-model="line.tipo">
@@ -1275,26 +1351,42 @@ function fmt(val: number): string {
               <option>Reserva</option>
               <option>Otro</option>
             </select>
-            <input v-model="line.concepto" type="text" placeholder="Concepto">
-            <input v-model.number="line.cantidad" type="number" min="1" class="right">
-            <input v-model.number="line.precioUd" type="number" step="0.01" class="right">
-            <input :value="getLineImporte(line).toFixed(2) + ' €'" type="text" readonly class="right readonly-input">
-            <input v-model.number="line.iva" type="number" class="right">
-            <input :value="getLineSubtotal(line).toFixed(2) + ' €'" type="text" readonly class="right readonly-input total-cell">
+            <input v-model="line.concepto" type="text" placeholder="Concepto" />
+            <input v-model.number="line.cantidad" type="number" min="1" class="right" />
+            <input v-model.number="line.precioUd" type="number" step="0.01" class="right" />
+            <input
+              :value="getLineImporte(line).toFixed(2) + ' €'"
+              type="text"
+              readonly
+              class="right readonly-input"
+            />
+            <input v-model.number="line.iva" type="number" class="right" />
+            <input
+              :value="getLineSubtotal(line).toFixed(2) + ' €'"
+              type="text"
+              readonly
+              class="right readonly-input total-cell"
+            />
             <button class="btn-delete" @click="removeInvoiceLine(line.id)">×</button>
           </div>
         </div>
 
-        <hr class="divider">
+        <hr class="divider" />
 
         <!-- Totals -->
         <div class="totals-section">
-          <div class="totals-row"><span>Base Imponible:</span><span>{{ invoiceSubtotal.toFixed(2) }} €</span></div>
-          <div class="totals-row"><span>Total IVA:</span><span>{{ invoiceTotalIva.toFixed(2) }} €</span></div>
-          <div class="totals-row total"><span>TOTAL:</span><span>{{ invoiceTotal.toFixed(2) }} €</span></div>
+          <div class="totals-row">
+            <span>Base Imponible:</span><span>{{ invoiceSubtotal.toFixed(2) }} €</span>
+          </div>
+          <div class="totals-row">
+            <span>Total IVA:</span><span>{{ invoiceTotalIva.toFixed(2) }} €</span>
+          </div>
+          <div class="totals-row total">
+            <span>TOTAL:</span><span>{{ invoiceTotal.toFixed(2) }} €</span>
+          </div>
         </div>
 
-        <hr class="divider">
+        <hr class="divider" />
 
         <!-- Company Data (collapsible) -->
         <details class="company-details">
@@ -1302,39 +1394,39 @@ function fmt(val: number): string {
           <div class="form-grid-3">
             <div class="form-group">
               <label>Empresa</label>
-              <input v-model="companyName" type="text">
+              <input v-model="companyName" type="text" />
             </div>
             <div class="form-group">
               <label>NIF</label>
-              <input v-model="companyNIF" type="text">
+              <input v-model="companyNIF" type="text" />
             </div>
             <div class="form-group">
               <label>Dirección</label>
-              <input v-model="companyAddress1" type="text">
+              <input v-model="companyAddress1" type="text" />
             </div>
             <div class="form-group">
               <label>CP + Ciudad</label>
-              <input v-model="companyAddress2" type="text">
+              <input v-model="companyAddress2" type="text" />
             </div>
             <div class="form-group">
               <label>País</label>
-              <input v-model="companyAddress3" type="text">
+              <input v-model="companyAddress3" type="text" />
             </div>
             <div class="form-group">
               <label>Teléfono</label>
-              <input v-model="companyPhone" type="text">
+              <input v-model="companyPhone" type="text" />
             </div>
             <div class="form-group">
               <label>Email</label>
-              <input v-model="companyEmail" type="text">
+              <input v-model="companyEmail" type="text" />
             </div>
             <div class="form-group">
               <label>Web</label>
-              <input v-model="companyWeb" type="text">
+              <input v-model="companyWeb" type="text" />
             </div>
             <div class="form-group">
               <label>Logo (URL)</label>
-              <input v-model="companyLogoUrl" type="text" placeholder="https://...">
+              <input v-model="companyLogoUrl" type="text" placeholder="https://..." />
             </div>
           </div>
         </details>
@@ -1358,16 +1450,16 @@ function fmt(val: number): string {
       <div class="contract-form">
         <!-- Contract Type -->
         <div class="form-row">
-          <div class="form-group" style="flex: 2;">
+          <div class="form-group" style="flex: 2">
             <label>Tipo de Contrato</label>
             <div class="radio-group-inline">
               <label class="radio-card" :class="{ active: contractType === 'arrendamiento' }">
-                <input v-model="contractType" type="radio" value="arrendamiento">
+                <input v-model="contractType" type="radio" value="arrendamiento" />
                 <span class="radio-icon">🔄</span>
                 <span class="radio-label">Arrendamiento</span>
               </label>
               <label class="radio-card" :class="{ active: contractType === 'venta' }">
-                <input v-model="contractType" type="radio" value="venta">
+                <input v-model="contractType" type="radio" value="venta" />
                 <span class="radio-icon">💰</span>
                 <span class="radio-label">Compraventa</span>
               </label>
@@ -1375,19 +1467,23 @@ function fmt(val: number): string {
           </div>
           <div class="form-group">
             <label>Fecha</label>
-            <input v-model="contractDate" type="date">
+            <input v-model="contractDate" type="date" />
           </div>
           <div class="form-group">
             <label>Lugar</label>
-            <input v-model="contractLocation" type="text" placeholder="León">
+            <input v-model="contractLocation" type="text" placeholder="León" />
           </div>
         </div>
 
         <!-- Vehicle Selection -->
         <div class="form-row">
-          <div class="form-group" style="flex: 2;">
+          <div class="form-group" style="flex: 2">
             <label>Vehículo</label>
-            <select v-model="contractVehicle" :disabled="loadingVehicles" @change="onContractVehicleSelected">
+            <select
+              v-model="contractVehicle"
+              :disabled="loadingVehicles"
+              @change="onContractVehicleSelected"
+            >
               <option value="">-- Seleccionar del catálogo --</option>
               <option v-for="veh in vehicleOptions" :key="veh.id" :value="veh.id">
                 {{ veh.label }}
@@ -1396,57 +1492,61 @@ function fmt(val: number): string {
           </div>
           <div class="form-group">
             <label>Tipo de Vehículo</label>
-            <input v-model="contractVehicleType" type="text" placeholder="semirremolque cisterna">
+            <input v-model="contractVehicleType" type="text" placeholder="semirremolque cisterna" />
           </div>
           <div class="form-group">
             <label>Matrícula</label>
-            <input v-model="contractVehiclePlate" type="text" placeholder="S02999R">
+            <input v-model="contractVehiclePlate" type="text" placeholder="S02999R" />
           </div>
         </div>
 
-        <hr class="divider">
+        <hr class="divider" />
 
         <!-- Lessor/Seller (Company) -->
         <details class="company-details" open>
-          <summary>Datos del {{ contractType === 'arrendamiento' ? 'Arrendador' : 'Vendedor' }} (Empresa)</summary>
+          <summary>
+            Datos del {{ contractType === 'arrendamiento' ? 'Arrendador' : 'Vendedor' }} (Empresa)
+          </summary>
           <div class="form-grid-3">
             <div class="form-group">
               <label>Empresa</label>
-              <input v-model="lessorCompany" type="text">
+              <input v-model="lessorCompany" type="text" />
             </div>
             <div class="form-group">
               <label>CIF</label>
-              <input v-model="lessorCIF" type="text">
+              <input v-model="lessorCIF" type="text" />
             </div>
             <div class="form-group">
               <label>Domicilio</label>
-              <input v-model="lessorAddress" type="text">
+              <input v-model="lessorAddress" type="text" />
             </div>
             <div class="form-group">
               <label>Representante</label>
-              <input v-model="lessorRepresentative" type="text">
+              <input v-model="lessorRepresentative" type="text" />
             </div>
             <div class="form-group">
               <label>DNI Representante</label>
-              <input v-model="lessorRepresentativeNIF" type="text">
+              <input v-model="lessorRepresentativeNIF" type="text" />
             </div>
           </div>
         </details>
 
-        <hr class="divider">
+        <hr class="divider" />
 
         <!-- Lessee/Buyer -->
-        <h4 class="section-subtitle">{{ contractType === 'arrendamiento' ? 'Arrendatario' : 'Comprador' }}</h4>
+        <h4 class="section-subtitle">
+          {{ contractType === 'arrendamiento' ? 'Arrendatario' : 'Comprador' }}
+        </h4>
 
         <div class="form-row">
           <div class="form-group">
             <label>Tipo</label>
             <div class="radio-group-inline compact">
               <label :class="{ active: lesseeType === 'persona' }">
-                <input v-model="lesseeType" type="radio" value="persona"> Persona física
+                <input v-model="lesseeType" type="radio" value="persona" /> Persona física
               </label>
               <label :class="{ active: lesseeType === 'empresa' }">
-                <input v-model="lesseeType" type="radio" value="empresa"> Empresa
+                <input v-model="lesseeType" type="radio" value="empresa" /> Empresa
               </label>
             </div>
           </div>
@@ -1456,15 +1556,19 @@ function fmt(val: number): string {
         <div v-if="lesseeType === 'persona'" class="form-grid-3">
           <div class="form-group">
             <label>Nombre completo</label>
-            <input v-model="lesseeName" type="text" placeholder="JOSE MANUEL VAZQUEZ LEA">
+            <input v-model="lesseeName" type="text" placeholder="JOSE MANUEL VAZQUEZ LEA" />
           </div>
           <div class="form-group">
             <label>NIF</label>
-            <input v-model="lesseeNIF" type="text" placeholder="78813316K">
+            <input v-model="lesseeNIF" type="text" placeholder="78813316K" />
           </div>
-          <div class="form-group" style="grid-column: 1 / -1;">
+          <div class="form-group" style="grid-column: 1 / -1">
             <label>Domicilio</label>
-            <input v-model="lesseeAddress" type="text" placeholder="Lugar San Cristovo, 12 15310 San Cristovo, A Coruña, España">
+            <input
+              v-model="lesseeAddress"
+              type="text"
+              placeholder="Lugar San Cristovo, 12 15310 San Cristovo, A Coruña, España"
+            />
           </div>
         </div>
 
@@ -1472,27 +1576,27 @@ function fmt(val: number): string {
         <div v-if="lesseeType === 'empresa'" class="form-grid-3">
           <div class="form-group">
             <label>Empresa</label>
-            <input v-model="lesseeCompany" type="text">
+            <input v-model="lesseeCompany" type="text" />
           </div>
           <div class="form-group">
             <label>CIF</label>
-            <input v-model="lesseeCIF" type="text">
+            <input v-model="lesseeCIF" type="text" />
           </div>
           <div class="form-group">
             <label>Representante</label>
-            <input v-model="lesseeRepresentative" type="text">
+            <input v-model="lesseeRepresentative" type="text" />
           </div>
           <div class="form-group">
             <label>NIF Representante</label>
-            <input v-model="lesseeRepresentativeNIF" type="text">
+            <input v-model="lesseeRepresentativeNIF" type="text" />
           </div>
-          <div class="form-group" style="grid-column: span 2;">
+          <div class="form-group" style="grid-column: span 2">
             <label>Domicilio</label>
-            <input v-model="lesseeAddress" type="text">
+            <input v-model="lesseeAddress" type="text" />
           </div>
         </div>
 
-        <hr class="divider">
+        <hr class="divider" />
 
         <!-- Rental Terms (only for arrendamiento) -->
         <div v-if="contractType === 'arrendamiento'">
@@ -1501,19 +1605,19 @@ function fmt(val: number): string {
           <div class="form-grid-3">
             <div class="form-group">
               <label>Renta mensual (€)</label>
-              <input v-model.number="contractMonthlyRent" type="number" step="100">
+              <input v-model.number="contractMonthlyRent" type="number" step="100" />
             </div>
             <div class="form-group">
               <label>Fianza (€)</label>
-              <input v-model.number="contractDeposit" type="number" step="100">
+              <input v-model.number="contractDeposit" type="number" step="100" />
             </div>
             <div class="form-group">
               <label>Plazo pago (días)</label>
-              <input v-model.number="contractPaymentDays" type="number">
+              <input v-model.number="contractPaymentDays" type="number" />
             </div>
             <div class="form-group">
               <label>Duración</label>
-              <input v-model.number="contractDuration" type="number">
+              <input v-model.number="contractDuration" type="number" />
             </div>
             <div class="form-group">
               <label>Unidad</label>
@@ -1524,14 +1628,14 @@ function fmt(val: number): string {
             </div>
             <div class="form-group">
               <label>Valor residual (€)</label>
-              <input v-model.number="contractVehicleResidualValue" type="number" step="1000">
+              <input v-model.number="contractVehicleResidualValue" type="number" step="1000" />
             </div>
           </div>
 
           <!-- Purchase Option -->
           <div class="option-toggle">
             <label>
-              <input v-model="contractHasPurchaseOption" type="checkbox">
+              <input v-model="contractHasPurchaseOption" type="checkbox" />
               <span>Incluir opción de compra</span>
             </label>
           </div>
@@ -1539,15 +1643,15 @@ function fmt(val: number): string {
           <div v-if="contractHasPurchaseOption" class="form-grid-3 purchase-options">
             <div class="form-group">
               <label>Precio de compra (€)</label>
-              <input v-model.number="contractPurchasePrice" type="number" step="1000">
+              <input v-model.number="contractPurchasePrice" type="number" step="1000" />
             </div>
             <div class="form-group">
               <label>Preaviso (días)</label>
-              <input v-model.number="contractPurchaseNotice" type="number">
+              <input v-model.number="contractPurchaseNotice" type="number" />
             </div>
             <div class="form-group">
               <label>Mensualidades a descontar</label>
-              <input v-model.number="contractRentMonthsToDiscount" type="number">
+              <input v-model.number="contractRentMonthsToDiscount" type="number" />
             </div>
           </div>
         </div>
@@ -1559,7 +1663,7 @@ function fmt(val: number): string {
           <div class="form-grid-3">
             <div class="form-group">
               <label>Precio de venta (€)</label>
-              <input v-model.number="contractSalePrice" type="number" step="1000">
+              <input v-model.number="contractSalePrice" type="number" step="1000" />
             </div>
             <div class="form-group">
               <label>Forma de pago</label>
@@ -1573,13 +1677,13 @@ function fmt(val: number): string {
           </div>
         </div>
 
-        <hr class="divider">
+        <hr class="divider" />
 
         <!-- Jurisdiction -->
         <div class="form-row">
-          <div class="form-group" style="max-width: 300px;">
+          <div class="form-group" style="max-width: 300px">
             <label>Jurisdicción (Tribunales de)</label>
-            <input v-model="contractJurisdiction" type="text" placeholder="León">
+            <input v-model="contractJurisdiction" type="text" placeholder="León" />
           </div>
         </div>
 
@@ -1648,21 +1752,23 @@ function fmt(val: number): string {
           <div class="option-group">
             <label class="option-label">Formato:</label>
             <div class="radio-group horizontal">
-              <label><input v-model="exportFormat" type="radio" value="pdf"> PDF (Imprimir)</label>
-              <label><input v-model="exportFormat" type="radio" value="excel"> Excel (CSV)</label>
+              <label
+                ><input v-model="exportFormat" type="radio" value="pdf" /> PDF (Imprimir)</label
+              >
+              <label><input v-model="exportFormat" type="radio" value="excel" /> Excel (CSV)</label>
             </div>
           </div>
 
           <div class="option-group">
             <label class="option-label">Columnas a incluir:</label>
             <div class="checkbox-grid">
-              <label><input v-model="exportColumns.tipo" type="checkbox"> Tipo</label>
-              <label><input v-model="exportColumns.fecha" type="checkbox"> Fecha</label>
-              <label><input v-model="exportColumns.razon" type="checkbox"> Razón</label>
-              <label><input v-model="exportColumns.detalle" type="checkbox"> Detalle</label>
-              <label><input v-model="exportColumns.importe" type="checkbox"> Importe</label>
-              <label><input v-model="exportColumns.estado" type="checkbox"> Estado</label>
-              <label><input v-model="exportColumns.notas" type="checkbox"> Notas</label>
+              <label><input v-model="exportColumns.tipo" type="checkbox" /> Tipo</label>
+              <label><input v-model="exportColumns.fecha" type="checkbox" /> Fecha</label>
+              <label><input v-model="exportColumns.razon" type="checkbox" /> Razón</label>
+              <label><input v-model="exportColumns.detalle" type="checkbox" /> Detalle</label>
+              <label><input v-model="exportColumns.importe" type="checkbox" /> Importe</label>
+              <label><input v-model="exportColumns.estado" type="checkbox" /> Estado</label>
+              <label><input v-model="exportColumns.notas" type="checkbox" /> Notas</label>
             </div>
           </div>
 
@@ -1679,9 +1785,17 @@ function fmt(val: number): string {
           <div class="option-group">
             <label class="option-label">Incluir en el resumen:</label>
             <div class="checkbox-group">
-              <label><input v-model="resumenOptions.totales" type="checkbox"> Totales (Ingresos/Gastos/Balance)</label>
-              <label><input v-model="resumenOptions.desglose" type="checkbox"> Desglose por Razón</label>
-              <label><input v-model="resumenOptions.mensual" type="checkbox"> Desglose Mensual</label>
+              <label
+                ><input v-model="resumenOptions.totales" type="checkbox" /> Totales
+                (Ingresos/Gastos/Balance)</label
+              >
+              <label
+                ><input v-model="resumenOptions.desglose" type="checkbox" /> Desglose por
+                Razón</label
+              >
+              <label
+                ><input v-model="resumenOptions.mensual" type="checkbox" /> Desglose Mensual</label
+              >
             </div>
           </div>
 
@@ -1737,12 +1851,12 @@ function fmt(val: number): string {
 }
 
 .tool-card:hover:not(.disabled) {
-  border-color: #23424A;
+  border-color: #23424a;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .tool-card.active {
-  border-color: #23424A;
+  border-color: #23424a;
   background: #f0f9ff;
 }
 
@@ -1826,7 +1940,7 @@ function fmt(val: number): string {
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #23424A;
+  border-color: #23424a;
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
@@ -1866,7 +1980,7 @@ function fmt(val: number): string {
 
 .divider {
   border: none;
-  border-top: 2px solid #0F2A2E;
+  border-top: 2px solid #0f2a2e;
   margin: 20px 0;
 }
 
@@ -1874,7 +1988,7 @@ function fmt(val: number): string {
   margin: 0 0 12px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0F2A2E;
+  color: #0f2a2e;
 }
 
 .lines-header {
@@ -2152,7 +2266,7 @@ function fmt(val: number): string {
 }
 
 .btn-primary {
-  background: #23424A;
+  background: #23424a;
   color: #fff;
   border: none;
 }
@@ -2245,7 +2359,7 @@ function fmt(val: number): string {
     grid-column: 1 / -1;
   }
 
-  .line-row input[type="text"] {
+  .line-row input[type='text'] {
     grid-column: 1 / -1;
   }
 
@@ -2304,7 +2418,7 @@ function fmt(val: number): string {
 }
 
 .radio-group-inline.compact label.active {
-  color: #23424A;
+  color: #23424a;
   font-weight: 500;
 }
 
@@ -2322,11 +2436,11 @@ function fmt(val: number): string {
 }
 
 .radio-card:hover {
-  border-color: #23424A;
+  border-color: #23424a;
 }
 
 .radio-card.active {
-  border-color: #23424A;
+  border-color: #23424a;
   background: #f0f9ff;
 }
 

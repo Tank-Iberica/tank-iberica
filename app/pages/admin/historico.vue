@@ -80,9 +80,13 @@ onMounted(async () => {
 })
 
 // Watch filters
-watch(filters, () => {
-  fetchEntries(filters)
-}, { deep: true })
+watch(
+  filters,
+  () => {
+    fetchEntries(filters)
+  },
+  { deep: true },
+)
 
 // Sorted entries
 const sortedEntries = computed(() => {
@@ -111,8 +115,7 @@ const sortedEntries = computed(() => {
 function toggleSort(col: 'sale_date' | 'sale_price' | 'benefit' | 'brand') {
   if (sortCol.value === col) {
     sortAsc.value = !sortAsc.value
-  }
-  else {
+  } else {
     sortCol.value = col
     sortAsc.value = false
   }
@@ -128,8 +131,7 @@ function toggleFullscreen() {
   if (!document.fullscreenElement) {
     historicoSection.value?.requestFullscreen()
     isFullscreen.value = true
-  }
-  else {
+  } else {
     document.exitFullscreen()
     isFullscreen.value = false
   }
@@ -187,16 +189,25 @@ function exportHistorico() {
 
   if (exportFormat.value === 'excel') {
     exportToExcel(dataToExport)
-  }
-  else {
+  } else {
     exportToPDF(dataToExport)
   }
   showExportModal.value = false
 }
 
 function exportToExcel(data: HistoricoEntry[]) {
-  const headers = ['Marca', 'Modelo', 'Año', 'Categoría', 'Fecha Venta', 'Precio Venta', 'Coste Total', 'Beneficio', '%']
-  const rows = data.map(e => [
+  const headers = [
+    'Marca',
+    'Modelo',
+    'Año',
+    'Categoría',
+    'Fecha Venta',
+    'Precio Venta',
+    'Coste Total',
+    'Beneficio',
+    '%',
+  ]
+  const rows = data.map((e) => [
     e.brand,
     e.model,
     e.year || '',
@@ -208,12 +219,12 @@ function exportToExcel(data: HistoricoEntry[]) {
     e.benefit_percent ? `${e.benefit_percent}%` : '',
   ])
 
-  const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n')
+  const csv = [headers.join(';'), ...rows.map((r) => r.join(';'))].join('\n')
   downloadFile(csv, `historico_${filters.year || 'todos'}.csv`, 'text/csv')
 }
 
 function exportToPDF(data: HistoricoEntry[]) {
-  let html = `<!DOCTYPE html><html><head><title>Histórico de Ventas - Tank Iberica</title>
+  let html = `<!DOCTYPE html><html><head><title>Histórico de Ventas - Tracciona</title>
     <style>
       body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 11px; margin: 0; color: #1F2A2A; }
       .header { background: linear-gradient(135deg, #1A3238 0%, #23424A 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
@@ -237,8 +248,8 @@ function exportToPDF(data: HistoricoEntry[]) {
     </style>
   </head><body>
     <div class="header">
-      <div><h1>TANK IBERICA</h1><div class="header-accent"></div></div>
-      <div class="header-info">TANKIBERICA.COM<br>info@tankiberica.com<br>+34 645 779 594</div>
+      <div><h1>TRACCIONA</h1><div class="header-accent"></div></div>
+      <div class="header-info">TRACCIONA.COM<br>info@tracciona.com<br>+34 645 779 594</div>
     </div>
     <div class="content">
     <p class="subtitle">Histórico de Ventas ${filters.year || 'Todos los años'}</p>
@@ -270,7 +281,7 @@ function exportToPDF(data: HistoricoEntry[]) {
       <p><strong>Beneficio Medio:</strong> ${summary.value.avgBeneficioPercent}%</p>
     </div>
     </div>
-    <div class="footer">TANKIBERICA.COM</div>
+    <div class="footer">TRACCIONA.COM</div>
   </body></html>`
 
   printHTML(html)
@@ -350,9 +361,7 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
         <button class="btn btn-icon-only" title="Pantalla completa" @click="toggleFullscreen">
           ⛶
         </button>
-        <button class="btn" @click="showExportModal = true">
-          📥 Exportar
-        </button>
+        <button class="btn" @click="showExportModal = true">📥 Exportar</button>
       </div>
     </header>
 
@@ -369,7 +378,10 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
         <span class="label">Total Ingresos</span>
         <span class="value">{{ fmt(summary.totalIngresos) }}</span>
       </div>
-      <div class="summary-card beneficio" :class="summary.totalBeneficio >= 0 ? 'positive' : 'negative'">
+      <div
+        class="summary-card beneficio"
+        :class="summary.totalBeneficio >= 0 ? 'positive' : 'negative'"
+      >
         <span class="label">Total Beneficio</span>
         <span class="value">{{ fmt(summary.totalBeneficio) }}</span>
       </div>
@@ -389,7 +401,9 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
 
         <select v-model="filters.sale_category">
           <option :value="null">Todas las categorías</option>
-          <option v-for="[key, label] in categoryOptions" :key="key" :value="key">{{ label }}</option>
+          <option v-for="[key, label] in categoryOptions" :key="key" :value="key">
+            {{ label }}
+          </option>
         </select>
 
         <select v-model="filters.subcategory_id">
@@ -409,12 +423,7 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
       </div>
 
       <div class="filter-group">
-        <input
-          v-model="filters.search"
-          type="text"
-          placeholder="Buscar..."
-          class="search-input"
-        >
+        <input v-model="filters.search" type="text" placeholder="Buscar..." class="search-input" >
         <button class="btn btn-sm" @click="clearFilters">Limpiar</button>
       </div>
     </div>
@@ -422,15 +431,15 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
     <!-- Column Groups Toggle -->
     <div class="column-toggles">
       <label class="toggle-check">
-        <input v-model="showDocs" type="checkbox">
+        <input v-model="showDocs" type="checkbox" >
         DOCS
       </label>
       <label class="toggle-check">
-        <input v-model="showTecnico" type="checkbox">
+        <input v-model="showTecnico" type="checkbox" >
         TÉCNICO
       </label>
       <label class="toggle-check">
-        <input v-model="showAlquiler" type="checkbox">
+        <input v-model="showAlquiler" type="checkbox" >
         ALQUILER
       </label>
       <span class="count">{{ total }} registros</span>
@@ -443,14 +452,22 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
       <table v-else class="historico-table">
         <thead>
           <tr>
-            <th class="sortable" @click="toggleSort('brand')">Vehículo {{ getSortIcon('brand') }}</th>
+            <th class="sortable" @click="toggleSort('brand')">
+              Vehículo {{ getSortIcon('brand') }}
+            </th>
             <th>Tipo</th>
-            <th class="sortable" @click="toggleSort('sale_date')">Fecha {{ getSortIcon('sale_date') }}</th>
+            <th class="sortable" @click="toggleSort('sale_date')">
+              Fecha {{ getSortIcon('sale_date') }}
+            </th>
             <th>Categoría</th>
             <th>Comprador</th>
-            <th class="sortable num" @click="toggleSort('sale_price')">Precio Venta {{ getSortIcon('sale_price') }}</th>
+            <th class="sortable num" @click="toggleSort('sale_price')">
+              Precio Venta {{ getSortIcon('sale_price') }}
+            </th>
             <th class="num">Coste</th>
-            <th class="sortable num" @click="toggleSort('benefit')">Beneficio {{ getSortIcon('benefit') }}</th>
+            <th class="sortable num" @click="toggleSort('benefit')">
+              Beneficio {{ getSortIcon('benefit') }}
+            </th>
             <th class="num">%</th>
             <!-- DOCS group -->
             <template v-if="showDocs">
@@ -470,7 +487,10 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
         </thead>
         <tbody>
           <tr v-if="sortedEntries.length === 0">
-            <td :colspan="9 + (showDocs ? 1 : 0) + (showTecnico ? 2 : 0) + (showAlquiler ? 1 : 0) + 1" class="empty">
+            <td
+              :colspan="9 + (showDocs ? 1 : 0) + (showTecnico ? 2 : 0) + (showAlquiler ? 1 : 0) + 1"
+              class="empty"
+            >
               No hay registros en el histórico
             </td>
           </tr>
@@ -514,7 +534,9 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
             </template>
             <td class="actions">
               <button class="btn-icon" title="Ver detalles" @click="openDetailModal(e)">👁</button>
-              <button class="btn-icon restore" title="Restaurar" @click="openRestoreModal(e)">🔄</button>
+              <button class="btn-icon restore" title="Restaurar" @click="openRestoreModal(e)">
+                🔄
+              </button>
               <button class="btn-icon del" title="Eliminar" @click="openDeleteModal(e)">🗑️</button>
             </td>
           </tr>
@@ -524,7 +546,11 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
 
     <!-- Detail Modal -->
     <Teleport to="body">
-      <div v-if="showDetailModal && detailEntry" class="modal-bg" @click.self="showDetailModal = false">
+      <div
+        v-if="showDetailModal && detailEntry"
+        class="modal-bg"
+        @click.self="showDetailModal = false"
+      >
         <div class="modal modal-lg">
           <div class="modal-head">
             <span>📜 {{ detailEntry.brand }} {{ detailEntry.model }} ({{ detailEntry.year }})</span>
@@ -651,16 +677,21 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
               ({{ restoreTarget?.year }})
             </p>
             <p class="warning">
-              ⚠️ El vehículo se restaurará como <strong>borrador</strong> y se eliminará la entrada del balance asociada.
+              ⚠️ El vehículo se restaurará como <strong>borrador</strong> y se eliminará la entrada
+              del balance asociada.
             </p>
             <div class="field">
               <label>Escribe <strong>Restaurar</strong> para confirmar:</label>
-              <input v-model="restoreConfirm" type="text" placeholder="Restaurar">
+              <input v-model="restoreConfirm" type="text" placeholder="Restaurar" >
             </div>
           </div>
           <div class="modal-foot">
             <button class="btn" @click="showRestoreModal = false">Cancelar</button>
-            <button class="btn btn-primary" :disabled="!canRestore || saving" @click="handleRestore">
+            <button
+              class="btn btn-primary"
+              :disabled="!canRestore || saving"
+              @click="handleRestore"
+            >
               🔄 Restaurar
             </button>
           </div>
@@ -685,7 +716,7 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
             <p class="warning">⚠️ Esta acción no se puede deshacer.</p>
             <div class="field">
               <label>Escribe <strong>Borrar</strong> para confirmar:</label>
-              <input v-model="deleteConfirm" type="text" placeholder="Borrar">
+              <input v-model="deleteConfirm" type="text" placeholder="Borrar" >
             </div>
           </div>
           <div class="modal-foot">
@@ -710,16 +741,23 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
             <div class="field">
               <label>Formato</label>
               <div class="radio-group">
-                <label><input v-model="exportFormat" type="radio" value="excel"> Excel (CSV)</label>
-                <label><input v-model="exportFormat" type="radio" value="pdf"> PDF (Imprimir)</label>
+                <label
+                  ><input v-model="exportFormat" type="radio" value="excel" > Excel (CSV)</label
+                >
+                <label
+                  ><input v-model="exportFormat" type="radio" value="pdf" > PDF (Imprimir)</label
+                >
               </div>
             </div>
 
             <div class="field">
               <label>Datos</label>
               <div class="radio-group">
-                <label><input v-model="exportDataScope" type="radio" value="filtered"> Solo filtrados</label>
-                <label><input v-model="exportDataScope" type="radio" value="all"> Todos</label>
+                <label
+                  ><input v-model="exportDataScope" type="radio" value="filtered" > Solo
+                  filtrados</label
+                >
+                <label><input v-model="exportDataScope" type="radio" value="all" > Todos</label>
               </div>
             </div>
           </div>
@@ -734,7 +772,10 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
 </template>
 
 <style scoped>
-.historico-page { max-width: 1400px; margin: 0 auto; }
+.historico-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
 .historico-page.fullscreen {
   max-width: none;
   padding: 20px;
@@ -751,8 +792,15 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   flex-wrap: wrap;
   gap: 12px;
 }
-.page-header h1 { margin: 0; font-size: 1.5rem; }
-.header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
 /* Buttons */
 .btn {
@@ -763,13 +811,31 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   font-size: 0.875rem;
   cursor: pointer;
 }
-.btn-primary { background: #23424A; color: #fff; border: none; }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-danger { background: #dc2626; color: #fff; border: none; }
-.btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+.btn-primary {
+  background: #23424a;
+  color: #fff;
+  border: none;
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+}
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
 .btn-icon-only {
-  width: 36px; height: 36px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -777,16 +843,23 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   font-size: 1.1rem;
 }
 .btn-icon {
-  width: 28px; height: 28px;
+  width: 28px;
+  height: 28px;
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: 0.9rem;
   border-radius: 4px;
 }
-.btn-icon:hover { background: #f3f4f6; }
-.btn-icon.del:hover { background: #fee2e2; }
-.btn-icon.restore:hover { background: #dcfce7; }
+.btn-icon:hover {
+  background: #f3f4f6;
+}
+.btn-icon.del:hover {
+  background: #fee2e2;
+}
+.btn-icon.restore:hover {
+  background: #dcfce7;
+}
 
 /* Error */
 .error-msg {
@@ -811,13 +884,35 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   flex-direction: column;
   gap: 4px;
 }
-.summary-card .label { font-size: 0.8rem; font-weight: 500; opacity: 0.8; }
-.summary-card .value { font-size: 1.5rem; font-weight: 700; }
-.summary-card.ventas { background: #e0e7ff; color: #3730a3; }
-.summary-card.ingresos { background: #dbeafe; color: #1e40af; }
-.summary-card.beneficio { background: #dcfce7; color: #166534; }
-.summary-card.beneficio.negative { background: #fee2e2; color: #991b1b; }
-.summary-card.percent { background: #f3e8ff; color: #7c3aed; }
+.summary-card .label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+.summary-card .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.summary-card.ventas {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+.summary-card.ingresos {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.summary-card.beneficio {
+  background: #dcfce7;
+  color: #166534;
+}
+.summary-card.beneficio.negative {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.summary-card.percent {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
 
 /* Filters */
 .filters-bar {
@@ -829,7 +924,7 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   padding: 12px 16px;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .filter-group {
   display: flex;
@@ -837,14 +932,17 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   gap: 8px;
   align-items: center;
 }
-.filters-bar select, .search-input {
+.filters-bar select,
+.search-input {
   padding: 8px 12px;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   font-size: 0.85rem;
   min-width: 140px;
 }
-.search-input { min-width: 180px; }
+.search-input {
+  min-width: 180px;
+}
 
 /* Column toggles */
 .column-toggles {
@@ -864,17 +962,26 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   border-radius: 4px;
   font-weight: 500;
 }
-.toggle-check input { margin: 0; }
-.count { margin-left: auto; color: #6b7280; }
+.toggle-check input {
+  margin: 0;
+}
+.count {
+  margin-left: auto;
+  color: #6b7280;
+}
 
 /* Table */
 .table-container {
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
 }
-.loading { padding: 40px; text-align: center; color: #6b7280; }
+.loading {
+  padding: 40px;
+  text-align: center;
+  color: #6b7280;
+}
 .historico-table {
   width: 100%;
   border-collapse: collapse;
@@ -891,20 +998,45 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   border-bottom: 1px solid #e5e7eb;
   white-space: nowrap;
 }
-.historico-table th.sortable { cursor: pointer; }
-.historico-table th.sortable:hover { background: #f3f4f6; }
-.historico-table th.num, .historico-table td.num { text-align: right; }
-.historico-table th.actions { text-align: center; width: 100px; }
+.historico-table th.sortable {
+  cursor: pointer;
+}
+.historico-table th.sortable:hover {
+  background: #f3f4f6;
+}
+.historico-table th.num,
+.historico-table td.num {
+  text-align: right;
+}
+.historico-table th.actions {
+  text-align: center;
+  width: 100px;
+}
 .historico-table td {
   padding: 10px;
   border-bottom: 1px solid #f3f4f6;
   vertical-align: middle;
 }
-.historico-table td.empty { text-align: center; color: #9ca3af; padding: 40px; }
-.historico-table td.vehiculo { font-weight: 500; }
-.historico-table td.buyer { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.historico-table td.muted { color: #9ca3af; }
-.historico-table td.actions { text-align: center; }
+.historico-table td.empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 40px;
+}
+.historico-table td.vehiculo {
+  font-weight: 500;
+}
+.historico-table td.buyer {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.historico-table td.muted {
+  color: #9ca3af;
+}
+.historico-table td.actions {
+  text-align: center;
+}
 
 /* Category badges */
 .cat-badge {
@@ -913,22 +1045,39 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   font-size: 0.7rem;
   font-weight: 500;
 }
-.cat-badge.venta { background: #dbeafe; color: #1e40af; }
-.cat-badge.terceros { background: #f3e8ff; color: #7c3aed; }
-.cat-badge.exportacion { background: #fef3c7; color: #92400e; }
+.cat-badge.venta {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.cat-badge.terceros {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+.cat-badge.exportacion {
+  background: #fef3c7;
+  color: #92400e;
+}
 
 /* Profit colors */
-.profit-pos { color: #16a34a; font-weight: 600; }
-.profit-neg { color: #dc2626; font-weight: 600; }
+.profit-pos {
+  color: #16a34a;
+  font-weight: 600;
+}
+.profit-neg {
+  color: #dc2626;
+  font-weight: 600;
+}
 
 /* Doc badge */
-.doc-badge { font-size: 1rem; }
+.doc-badge {
+  font-size: 1rem;
+}
 
 /* Modal */
 .modal-bg {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -940,11 +1089,13 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   border-radius: 10px;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
   overflow-y: auto;
 }
-.modal-lg { max-width: 700px; }
+.modal-lg {
+  max-width: 700px;
+}
 .modal-head {
   display: flex;
   justify-content: space-between;
@@ -963,7 +1114,9 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   cursor: pointer;
   color: #9ca3af;
 }
-.modal-body { padding: 16px; }
+.modal-body {
+  padding: 16px;
+}
 .modal-foot {
   display: flex;
   justify-content: flex-end;
@@ -983,7 +1136,9 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   gap: 20px;
   margin-bottom: 20px;
 }
-.detail-section { margin-bottom: 16px; }
+.detail-section {
+  margin-bottom: 16px;
+}
 .detail-section h4 {
   margin: 0 0 12px;
   font-size: 0.9rem;
@@ -997,9 +1152,19 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   padding: 6px 0;
   font-size: 0.85rem;
 }
-.detail-row .label { color: #6b7280; }
-.detail-row.total { border-top: 1px solid #e5e7eb; margin-top: 8px; padding-top: 10px; font-weight: 600; }
-.detail-row .highlight { font-weight: 700; color: #1e40af; }
+.detail-row .label {
+  color: #6b7280;
+}
+.detail-row.total {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 8px;
+  padding-top: 10px;
+  font-weight: 600;
+}
+.detail-row .highlight {
+  font-weight: 700;
+  color: #1e40af;
+}
 
 /* Mini table */
 .mini-table {
@@ -1007,15 +1172,24 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   border-collapse: collapse;
   font-size: 0.8rem;
 }
-.mini-table th, .mini-table td {
+.mini-table th,
+.mini-table td {
   padding: 6px 8px;
   border: 1px solid #e5e7eb;
   text-align: left;
 }
-.mini-table th { background: #f9fafb; font-weight: 600; }
+.mini-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
 
 /* Form fields */
-.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
 .field label {
   font-size: 0.8rem;
   font-weight: 500;
@@ -1029,7 +1203,7 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
 }
 .field input:focus {
   outline: none;
-  border-color: #23424A;
+  border-color: #23424a;
 }
 
 /* Radio groups */
@@ -1047,10 +1221,13 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
   font-weight: normal;
   color: #374151;
 }
-.radio-group input { margin: 0; }
+.radio-group input {
+  margin: 0;
+}
 
 /* Info boxes */
-.restore-info, .delete-info {
+.restore-info,
+.delete-info {
   padding: 12px;
   background: #f3f4f6;
   border-radius: 6px;
@@ -1068,14 +1245,36 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
 
 /* Mobile */
 @media (max-width: 768px) {
-  .summary-cards { grid-template-columns: repeat(2, 1fr); }
-  .filters-bar { flex-direction: column; }
-  .filter-group { width: 100%; }
-  .filters-bar select, .search-input { flex: 1; min-width: 0; }
-  .column-toggles { flex-wrap: wrap; }
-  .historico-table { font-size: 0.75rem; }
-  .historico-table th, .historico-table td { padding: 8px 6px; }
-  .detail-grid { grid-template-columns: 1fr; }
-  .header-actions { width: 100%; justify-content: flex-end; }
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .filters-bar {
+    flex-direction: column;
+  }
+  .filter-group {
+    width: 100%;
+  }
+  .filters-bar select,
+  .search-input {
+    flex: 1;
+    min-width: 0;
+  }
+  .column-toggles {
+    flex-wrap: wrap;
+  }
+  .historico-table {
+    font-size: 0.75rem;
+  }
+  .historico-table th,
+  .historico-table td {
+    padding: 8px 6px;
+  }
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 </style>

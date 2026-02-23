@@ -1,10 +1,10 @@
 <template>
   <div class="home">
     <section class="catalog-section">
-      <CatalogSubcategoryBar
+      <CatalogCategoryBar
         v-show="menuVisible"
+        @category-change="onCategoryChange"
         @subcategory-change="onSubcategoryChange"
-        @type-change="onTypeChange"
       />
       <CatalogFilterBar v-show="menuVisible" :vehicles="vehicles" @change="onFilterChange" />
       <CatalogControlsBar
@@ -13,8 +13,12 @@
         @search="onSearchChange"
         @sort="onSortChange"
         @toggle-menu="menuVisible = !menuVisible"
-        @category-change="onCategoryChange"
-        @open-favorites="() => { /* favorites filter handled inside ControlsBar */ }"
+        @action-change="onActionChange"
+        @open-favorites="
+          () => {
+            /* favorites filter handled inside ControlsBar */
+          }
+        "
         @view-change="() => {}"
       />
 
@@ -37,8 +41,13 @@ import { buildProductName } from '~/utils/productName'
 const { t, locale } = useI18n()
 const menuVisible = ref(true)
 const { vehicles, loading, loadingMore, hasMore, fetchVehicles, fetchMore } = useVehicles()
-const { filters, activeSubcategoryId, activeTypeId, sortBy, viewMode, resetCatalog } = useCatalogState()
-const { fetchBySubcategoryAndType, clearAll: clearAllFilters, reset: resetFilters } = useFilters()
+const { filters, activeCategoryId, activeSubcategoryId, sortBy, viewMode, resetCatalog } =
+  useCatalogState()
+const {
+  fetchByCategoryAndSubcategory,
+  clearAll: clearAllFilters,
+  reset: resetFilters,
+} = useFilters()
 
 usePageSeo({
   title: t('seo.homeTitle'),
@@ -47,12 +56,12 @@ usePageSeo({
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    'name': 'Tank Iberica',
-    'url': 'https://tankiberica.com',
-    'description': t('seo.homeDescription'),
-    'potentialAction': {
+    name: 'Tracciona',
+    url: 'https://tracciona.com',
+    description: t('seo.homeDescription'),
+    potentialAction: {
       '@type': 'SearchAction',
-      'target': 'https://tankiberica.com/?search={search_term_string}',
+      target: 'https://tracciona.com/?search={search_term_string}',
       'query-input': 'required name=search_term_string',
     },
   },
@@ -64,13 +73,13 @@ const itemListJsonLd = computed(() => {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    'name': t('seo.homeTitle'),
-    'numberOfItems': vehicles.value.length,
-    'itemListElement': vehicles.value.slice(0, 20).map((v, index) => ({
+    name: t('seo.homeTitle'),
+    numberOfItems: vehicles.value.length,
+    itemListElement: vehicles.value.slice(0, 20).map((v, index) => ({
       '@type': 'ListItem',
-      'position': index + 1,
-      'url': `https://tankiberica.com/vehiculo/${v.slug}`,
-      'name': buildProductName(v, locale.value, true),
+      position: index + 1,
+      url: `https://tracciona.com/vehiculo/${v.slug}`,
+      name: buildProductName(v, locale.value, true),
       ...(v.vehicle_images?.[0]?.url ? { image: v.vehicle_images[0].url } : {}),
     })),
   }
@@ -79,10 +88,12 @@ const itemListJsonLd = computed(() => {
 useHead({
   script: computed(() => {
     if (!itemListJsonLd.value) return []
-    return [{
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify(itemListJsonLd.value),
-    }]
+    return [
+      {
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify(itemListJsonLd.value),
+      },
+    ]
   }),
 })
 
@@ -90,20 +101,20 @@ async function loadVehicles() {
   await fetchVehicles({ ...filters.value, sortBy: sortBy.value })
 }
 
-async function onCategoryChange() {
+async function onActionChange() {
   resetFilters()
+  await loadVehicles()
+}
+
+async function onCategoryChange() {
+  clearAllFilters()
+  await fetchByCategoryAndSubcategory(activeCategoryId.value, activeSubcategoryId.value)
   await loadVehicles()
 }
 
 async function onSubcategoryChange() {
   clearAllFilters()
-  await fetchBySubcategoryAndType(activeSubcategoryId.value, activeTypeId.value)
-  await loadVehicles()
-}
-
-async function onTypeChange() {
-  clearAllFilters()
-  await fetchBySubcategoryAndType(activeSubcategoryId.value, activeTypeId.value)
+  await fetchByCategoryAndSubcategory(activeCategoryId.value, activeSubcategoryId.value)
   await loadVehicles()
 }
 

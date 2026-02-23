@@ -23,6 +23,14 @@ export interface NewsFormData {
   hashtags: string[]
   status: string
   published_at: string | null
+  section: string
+  faq_schema: Array<{ question: string; answer: string }> | null
+  excerpt_es: string | null
+  excerpt_en: string | null
+  scheduled_at: string | null
+  social_post_text: Record<string, string> | null
+  related_categories: string[] | null
+  target_markets: string[] | null
 }
 
 const PAGE_SIZE = 50
@@ -67,13 +75,12 @@ export function useAdminNews() {
 
       news.value = (data as unknown as News[]) || []
       total.value = count || 0
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error fetching news')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error fetching news')
       news.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -86,22 +93,17 @@ export function useAdminNews() {
     error.value = null
 
     try {
-      const { data, error: err } = await supabase
-        .from('news')
-        .select('*')
-        .eq('id', id)
-        .single()
+      const { data, error: err } = await supabase.from('news').select('*').eq('id', id).single()
 
       if (err) throw err
 
       return data as unknown as News
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error fetching article')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error fetching article')
       return null
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -119,9 +121,10 @@ export function useAdminNews() {
       const insertData = {
         ...formData,
         slug,
-        published_at: formData.status === 'published' && !formData.published_at
-          ? new Date().toISOString()
-          : formData.published_at,
+        published_at:
+          formData.status === 'published' && !formData.published_at
+            ? new Date().toISOString()
+            : formData.published_at,
       }
 
       const { data, error: err } = await supabase
@@ -133,14 +136,13 @@ export function useAdminNews() {
       if (err) throw err
 
       return (data as { id: string } | null)?.id || null
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string; details?: string; hint?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error creating article')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error creating article')
       console.error('Create news error:', err)
       return null
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -163,6 +165,11 @@ export function useAdminNews() {
         updateData.published_at = new Date().toISOString()
       }
 
+      // Flag for translation queue when publishing
+      if (formData.status === 'published' || formData.status === 'scheduled') {
+        updateData.pending_translations = true
+      }
+
       const { error: err } = await supabase
         .from('news')
         .update(updateData as never)
@@ -171,14 +178,13 @@ export function useAdminNews() {
       if (err) throw err
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string; details?: string; hint?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error updating article')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error updating article')
       console.error('Update news error:', err)
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -191,25 +197,21 @@ export function useAdminNews() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('news')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('news').delete().eq('id', id)
 
       if (err) throw err
 
-      news.value = news.value.filter(n => n.id !== id)
+      news.value = news.value.filter((n) => n.id !== id)
       total.value--
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error deleting article')
+      error.value =
+        supabaseError?.message || (err instanceof Error ? err.message : 'Error deleting article')
       console.error('Delete news error:', err)
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }

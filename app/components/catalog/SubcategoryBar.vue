@@ -10,63 +10,57 @@
     </button>
 
     <div ref="scrollContainer" class="subcategories" @scroll="updateScrollState">
-      <!-- Level 1: Subcategories -->
-      <template v-if="!activeSubcategoryId">
+      <!-- Level 1: Categories -->
+      <template v-if="!activeCategoryId">
         <button
-          v-for="sub in visibleSubcategories"
+          v-for="cat in visibleCategories"
+          :key="cat.id"
+          :class="['subcategory-btn', { disabled: !isApplicable(cat) }]"
+          @click="selectCategory(cat)"
+        >
+          {{ localizedName(cat) }}
+        </button>
+      </template>
+
+      <!-- Level 2: Selected category + Subcategories (no subcategory selected yet) -->
+      <template v-else-if="!activeSubcategoryId">
+        <!-- Selected category (clickable to go back) -->
+        <button class="subcategory-btn active" @click="clearCategory">
+          {{ selectedCategoryName }}
+        </button>
+
+        <!-- Separator -->
+        <span class="separator">&gt;</span>
+
+        <!-- Subcategories belonging to this category -->
+        <button
+          v-for="sub in linkedSubcategories"
           :key="sub.id"
-          :class="['subcategory-btn', { disabled: !isApplicable(sub) }]"
+          :class="[
+            'subcategory-btn type-btn',
+            {
+              disabled: !isSubcategoryApplicable(sub),
+            },
+          ]"
           @click="selectSubcategory(sub)"
         >
-          {{ locale === 'en' && sub.name_en ? sub.name_en : sub.name_es }}
+          {{ localizedName(sub) }}
         </button>
       </template>
 
-      <!-- Level 2: Selected subcategory + Types (no type selected yet) -->
-      <template v-else-if="!activeTypeId">
-        <!-- Selected subcategory (clickable to go back) -->
-        <button
-          class="subcategory-btn active"
-          @click="clearSubcategory"
-        >
-          {{ selectedSubcategoryName }}
-        </button>
-
-        <!-- Separator -->
-        <span class="separator">&gt;</span>
-
-        <!-- Types belonging to this subcategory -->
-        <button
-          v-for="type in linkedTypes"
-          :key="type.id"
-          :class="['subcategory-btn type-btn', {
-            disabled: !isTypeApplicable(type),
-          }]"
-          @click="selectType(type)"
-        >
-          {{ locale === 'en' && type.name_en ? type.name_en : type.name_es }}
-        </button>
-      </template>
-
-      <!-- Level 3: Selected subcategory + Selected type (type selected) + Dynamic filters -->
+      <!-- Level 3: Selected category + Selected subcategory + Dynamic filters -->
       <template v-else>
-        <!-- Selected subcategory (clickable to go back to subcategory selection) -->
-        <button
-          class="subcategory-btn active"
-          @click="clearSubcategory"
-        >
-          {{ selectedSubcategoryName }}
+        <!-- Selected category (clickable to go back to category selection) -->
+        <button class="subcategory-btn active" @click="clearCategory">
+          {{ selectedCategoryName }}
         </button>
 
         <!-- Separator -->
         <span class="separator">&gt;</span>
 
-        <!-- Selected type only (clickable to go back to type selection) -->
-        <button
-          class="subcategory-btn type-btn active"
-          @click="clearType"
-        >
-          {{ selectedTypeName }}
+        <!-- Selected subcategory only (clickable to go back to subcategory selection) -->
+        <button class="subcategory-btn type-btn active" @click="clearSubcategory">
+          {{ selectedSubcategoryName }}
         </button>
 
         <!-- Separator before dynamic filters -->
@@ -80,7 +74,11 @@
           <!-- Desplegable (select) -->
           <div v-if="filter.type === 'desplegable'" class="filter-inline">
             <span class="filter-label-inline">{{ filterLabel(filter) }}:</span>
-            <select class="filter-select-inline" :value="activeFilters[filter.name] || ''" @change="onSelectChange(filter.name, $event)">
+            <select
+              class="filter-select-inline"
+              :value="activeFilters[filter.name] || ''"
+              @change="onSelectChange(filter.name, $event)"
+            >
               <option value="">—</option>
               <option v-for="opt in getOptions(filter)" :key="opt" :value="opt">{{ opt }}</option>
             </select>
@@ -91,7 +89,11 @@
             <span class="filter-label-inline">{{ filterLabel(filter) }}:</span>
             <div class="filter-checks-inline">
               <label v-for="opt in getOptions(filter)" :key="opt" class="filter-check-inline">
-                <input type="checkbox" :checked="isChecked(filter.name, opt)" @change="onCheckChange(filter.name, opt)">
+                <input
+                  type="checkbox"
+                  :checked="isChecked(filter.name, opt)"
+                  @change="onCheckChange(filter.name, opt)"
+                >
                 <span>{{ opt }}</span>
               </label>
             </div>
@@ -99,34 +101,68 @@
 
           <!-- Tick (single checkbox) -->
           <label v-else-if="filter.type === 'tick'" class="filter-tick-inline">
-            <input type="checkbox" :checked="!!activeFilters[filter.name]" @change="onTickChange(filter.name)">
+            <input
+              type="checkbox"
+              :checked="!!activeFilters[filter.name]"
+              @change="onTickChange(filter.name)"
+            >
             <span>{{ filterLabel(filter) }}</span>
           </label>
 
           <!-- Slider (range inputs with dynamic min/max from vehicle data) -->
           <div v-else-if="filter.type === 'slider'" class="filter-inline">
-            <span class="filter-label-inline">{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}:</span>
+            <span class="filter-label-inline"
+              >{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}:</span
+            >
             <div class="filter-range-inline">
-              <input type="number" class="filter-input-inline" :value="activeFilters[filter.name + '_min'] || ''" :min="getSliderMin(filter)" :max="getSliderMax(filter)" :placeholder="String(getSliderMin(filter))" @change="onRangeChange(filter.name + '_min', $event)">
+              <input
+                type="number"
+                class="filter-input-inline"
+                :value="activeFilters[filter.name + '_min'] || ''"
+                :min="getSliderMin(filter)"
+                :max="getSliderMax(filter)"
+                :placeholder="String(getSliderMin(filter))"
+                @change="onRangeChange(filter.name + '_min', $event)"
+              >
               <span class="filter-dash">—</span>
-              <input type="number" class="filter-input-inline" :value="activeFilters[filter.name + '_max'] || ''" :min="getSliderMin(filter)" :max="getSliderMax(filter)" :placeholder="String(getSliderMax(filter))" @change="onRangeChange(filter.name + '_max', $event)">
+              <input
+                type="number"
+                class="filter-input-inline"
+                :value="activeFilters[filter.name + '_max'] || ''"
+                :min="getSliderMin(filter)"
+                :max="getSliderMax(filter)"
+                :placeholder="String(getSliderMax(filter))"
+                @change="onRangeChange(filter.name + '_max', $event)"
+              >
             </div>
           </div>
 
           <!-- Calc (+/- buttons) -->
           <div v-else-if="filter.type === 'calc'" class="filter-inline">
-            <span class="filter-label-inline">{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}:</span>
+            <span class="filter-label-inline"
+              >{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}:</span
+            >
             <div class="filter-calc-inline">
-              <button class="calc-btn" @click="onCalcDecrement(filter.name, getCalcStep(filter))">−</button>
+              <button class="calc-btn" @click="onCalcDecrement(filter.name, getCalcStep(filter))">
+                −
+              </button>
               <span class="calc-value">{{ activeFilters[filter.name] || 0 }}</span>
-              <button class="calc-btn" @click="onCalcIncrement(filter.name, getCalcStep(filter))">+</button>
+              <button class="calc-btn" @click="onCalcIncrement(filter.name, getCalcStep(filter))">
+                +
+              </button>
             </div>
           </div>
 
           <!-- Caja (text input) -->
           <div v-else-if="filter.type === 'caja'" class="filter-inline">
             <span class="filter-label-inline">{{ filterLabel(filter) }}:</span>
-            <input type="text" class="filter-input-inline" :value="activeFilters[filter.name] || ''" :placeholder="filterLabel(filter)" @input="onTextInput(filter.name, $event)">
+            <input
+              type="text"
+              class="filter-input-inline"
+              :value="activeFilters[filter.name] || ''"
+              :placeholder="filterLabel(filter)"
+              @input="onTextInput(filter.name, $event)"
+            >
           </div>
         </template>
       </template>
@@ -144,101 +180,120 @@
 </template>
 
 <script setup lang="ts">
-import type { FilterDefinition } from '~/composables/useFilters'
+import type { AttributeDefinition } from '~/composables/useFilters'
+import { localizedField as localizedJsonField } from '~/composables/useLocalized'
+
+interface CategoryRow {
+  id: string
+  name_es: string
+  name_en: string | null
+  slug: string
+  applicable_actions: string[]
+  sort_order: number
+}
 
 interface SubcategoryRow {
   id: string
   name_es: string
   name_en: string | null
   slug: string
-  applicable_categories: string[]
-  sort_order: number
-}
-
-interface TypeRow {
-  id: string
-  name_es: string
-  name_en: string | null
-  slug: string
-  applicable_categories: string[]
+  applicable_actions: string[]
   sort_order: number
 }
 
 const emit = defineEmits<{
+  categoryChange: [categoryId: string | null]
   subcategoryChange: [subcategoryId: string | null]
-  typeChange: [typeId: string | null]
 }>()
 
 const supabase = useSupabaseClient()
 const { locale } = useI18n()
-const {
-  activeCategories,
-  activeSubcategoryId,
-  activeTypeId,
-  setSubcategory,
-  setType,
-} = useCatalogState()
-const { visibleFilters, activeFilters, getFilterOptions, getSliderRange, setFilter, clearFilter } = useFilters()
 
+/** Helper to display a localized column-based field (name_es, name_en) */
+function localizedName(row: { name_es: string; name_en: string | null }): string {
+  return localizedJsonField({ es: row.name_es, en: row.name_en || '' }, locale.value)
+}
+
+/** Helper to display a localized label field (label_es, label_en) */
+function localizedLabel(row: { label_es: string | null; label_en: string | null }): string {
+  return localizedJsonField({ es: row.label_es || '', en: row.label_en || '' }, locale.value)
+}
+const { activeActions, activeCategoryId, activeSubcategoryId, setCategory, setSubcategory } =
+  useCatalogState()
+const { visibleFilters, activeFilters, getFilterOptions, getSliderRange, setFilter, clearFilter } =
+  useFilters()
+
+const categories = ref<CategoryRow[]>([])
 const subcategories = ref<SubcategoryRow[]>([])
-const types = ref<TypeRow[]>([])
-const typeSubcategoryLinks = ref<Map<string, string[]>>(new Map())
+const subcategoryCategoryLinks = ref<Map<string, string[]>>(new Map())
 const scrollContainer = ref<HTMLElement | null>(null)
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
 
-// Check if subcategory is applicable for current categories
-function isApplicable(sub: SubcategoryRow): boolean {
-  if (!activeCategories.value.length) return true
-  return activeCategories.value.some(cat => sub.applicable_categories.includes(cat))
+// Check if category is applicable for current actions
+function isApplicable(cat: CategoryRow): boolean {
+  if (!activeActions.value.length) return true
+  return activeActions.value.some((action) => cat.applicable_actions.includes(action))
 }
 
-// Check if type is applicable for current categories
-function isTypeApplicable(type: TypeRow): boolean {
-  if (!activeCategories.value.length) return true
-  return activeCategories.value.some(cat => type.applicable_categories.includes(cat))
+// Check if subcategory is applicable for current actions
+function isSubcategoryApplicable(sub: SubcategoryRow): boolean {
+  if (!activeActions.value.length) return true
+  return activeActions.value.some((action) => sub.applicable_actions.includes(action))
 }
 
-// Visible subcategories (filtered by category)
-const visibleSubcategories = computed(() => {
-  return subcategories.value.filter(isApplicable)
+// Visible categories (filtered by action)
+const visibleCategories = computed(() => {
+  return categories.value.filter(isApplicable)
 })
 
-// Types linked to the currently selected subcategory
-const linkedTypes = computed(() => {
-  if (!activeSubcategoryId.value) return []
+// Subcategories linked to the currently selected category
+const linkedSubcategories = computed(() => {
+  if (!activeCategoryId.value) return []
 
-  // Get type IDs linked to this subcategory
-  const linkedTypeIds = new Set<string>()
-  for (const [typeId, subcatIds] of typeSubcategoryLinks.value.entries()) {
-    if (subcatIds.includes(activeSubcategoryId.value)) {
-      linkedTypeIds.add(typeId)
+  // Get subcategory IDs linked to this category
+  const linkedSubcategoryIds = new Set<string>()
+  for (const [subcategoryId, catIds] of subcategoryCategoryLinks.value.entries()) {
+    if (catIds.includes(activeCategoryId.value)) {
+      linkedSubcategoryIds.add(subcategoryId)
     }
   }
 
-  return types.value
-    .filter(t => linkedTypeIds.has(t.id))
+  return subcategories.value
+    .filter((s) => linkedSubcategoryIds.has(s.id))
     .sort((a, b) => a.sort_order - b.sort_order)
+})
+
+// Get the display name of the selected category
+const selectedCategoryName = computed(() => {
+  const cat = categories.value.find((c) => c.id === activeCategoryId.value)
+  if (!cat) return ''
+  return localizedName(cat)
 })
 
 // Get the display name of the selected subcategory
 const selectedSubcategoryName = computed(() => {
-  const sub = subcategories.value.find(s => s.id === activeSubcategoryId.value)
+  const sub = subcategories.value.find((s) => s.id === activeSubcategoryId.value)
   if (!sub) return ''
-  return locale.value === 'en' && sub.name_en ? sub.name_en : sub.name_es
-})
-
-// Get the display name of the selected type
-const selectedTypeName = computed(() => {
-  const type = types.value.find(t => t.id === activeTypeId.value)
-  if (!type) return ''
-  return locale.value === 'en' && type.name_en ? type.name_en : type.name_es
+  return localizedName(sub)
 })
 
 // Check if we have items to display
 const hasItems = computed(() => {
-  return subcategories.value.length > 0 || types.value.length > 0
+  return categories.value.length > 0 || subcategories.value.length > 0
 })
+
+// Fetch categories from the categories table
+async function fetchCategories() {
+  const { data } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('status', 'published')
+    .order('sort_order', { ascending: true })
+
+  categories.value = (data as CategoryRow[]) || []
+  nextTick(updateScrollState)
+}
 
 // Fetch subcategories from the subcategories table
 async function fetchSubcategories() {
@@ -249,62 +304,50 @@ async function fetchSubcategories() {
     .order('sort_order', { ascending: true })
 
   subcategories.value = (data as SubcategoryRow[]) || []
-  nextTick(updateScrollState)
 }
 
-// Fetch types from the types table
-async function fetchTypes() {
+// Fetch subcategory-category links from junction table
+async function fetchSubcategoryCategoryLinks() {
   const { data } = await supabase
-    .from('types')
-    .select('*')
-    .eq('status', 'published')
-    .order('sort_order', { ascending: true })
-
-  types.value = (data as TypeRow[]) || []
-}
-
-// Fetch type-subcategory links from junction table
-async function fetchTypeSubcategoryLinks() {
-  const { data } = await supabase
-    .from('type_subcategories')
-    .select('type_id, subcategory_id')
+    .from('subcategory_categories')
+    .select('subcategory_id, category_id')
 
   const links = new Map<string, string[]>()
   if (data) {
-    for (const link of data as { type_id: string; subcategory_id: string }[]) {
-      if (!links.has(link.type_id)) {
-        links.set(link.type_id, [])
+    for (const link of data as { subcategory_id: string; category_id: string }[]) {
+      if (!links.has(link.subcategory_id)) {
+        links.set(link.subcategory_id, [])
       }
-      links.get(link.type_id)!.push(link.subcategory_id)
+      links.get(link.subcategory_id)!.push(link.category_id)
     }
   }
-  typeSubcategoryLinks.value = links
+  subcategoryCategoryLinks.value = links
 }
 
-function selectSubcategory(sub: SubcategoryRow) {
-  if (!isApplicable(sub)) return
-  setSubcategory(sub.id, sub.slug)
-  emit('subcategoryChange', sub.id)
+function selectCategory(cat: CategoryRow) {
+  if (!isApplicable(cat)) return
+  setCategory(cat.id, cat.slug)
+  emit('categoryChange', cat.id)
+  nextTick(updateScrollState)
+}
+
+function clearCategory() {
+  setCategory(null, null)
+  emit('categoryChange', null)
+  emit('subcategoryChange', null)
   nextTick(updateScrollState)
 }
 
 function clearSubcategory() {
   setSubcategory(null, null)
   emit('subcategoryChange', null)
-  emit('typeChange', null)
   nextTick(updateScrollState)
 }
 
-function clearType() {
-  setType(null, null)
-  emit('typeChange', null)
-  nextTick(updateScrollState)
-}
-
-function selectType(type: TypeRow) {
-  if (!isTypeApplicable(type)) return
-  setType(type.id, type.slug)
-  emit('typeChange', type.id)
+function selectSubcategory(sub: SubcategoryRow) {
+  if (!isSubcategoryApplicable(sub)) return
+  setSubcategory(sub.id, sub.slug)
+  emit('subcategoryChange', sub.id)
   nextTick(updateScrollState)
 }
 
@@ -324,12 +367,15 @@ function scrollRight() {
 }
 
 // Filter helpers for dynamic filters in Level 3
-function filterLabel(filter: { name: string; label_es: string | null; label_en: string | null }): string {
-  if (locale.value === 'en' && filter.label_en) return filter.label_en
-  return filter.label_es || filter.name
+function filterLabel(filter: {
+  name: string
+  label_es: string | null
+  label_en: string | null
+}): string {
+  return localizedLabel(filter) || filter.name
 }
 
-function getOptions(filter: FilterDefinition): string[] {
+function getOptions(filter: AttributeDefinition): string[] {
   return getFilterOptions(filter)
 }
 
@@ -343,11 +389,10 @@ function onCheckChange(name: string, option: string) {
   const current = (activeFilters.value[name] as string[]) || []
   const index = current.indexOf(option)
   if (index >= 0) {
-    const next = current.filter(v => v !== option)
+    const next = current.filter((v) => v !== option)
     if (next.length) setFilter(name, next)
     else clearFilter(name)
-  }
-  else {
+  } else {
     setFilter(name, [...current, option])
   }
 }
@@ -362,17 +407,17 @@ function onTickChange(name: string) {
   else setFilter(name, true)
 }
 
-function getSliderMin(filter: FilterDefinition): number {
+function getSliderMin(filter: AttributeDefinition): number {
   const range = getSliderRange(filter)
   return range.min
 }
 
-function getSliderMax(filter: FilterDefinition): number {
+function getSliderMax(filter: AttributeDefinition): number {
   const range = getSliderRange(filter)
   return range.max
 }
 
-function getCalcStep(filter: FilterDefinition): number {
+function getCalcStep(filter: AttributeDefinition): number {
   return (filter.options?.step as number) || 1
 }
 
@@ -400,22 +445,22 @@ function onTextInput(name: string, event: Event) {
   else clearFilter(name)
 }
 
-// When categories change, reset selections if no longer applicable
-watch(activeCategories, () => {
-  if (activeSubcategoryId.value) {
-    const current = subcategories.value.find(s => s.id === activeSubcategoryId.value)
-    if (current && !isApplicable(current)) {
-      clearSubcategory()
+// When actions change, reset selections if no longer applicable
+watch(
+  activeActions,
+  () => {
+    if (activeCategoryId.value) {
+      const current = categories.value.find((c) => c.id === activeCategoryId.value)
+      if (current && !isApplicable(current)) {
+        clearCategory()
+      }
     }
-  }
-}, { deep: true })
+  },
+  { deep: true },
+)
 
 onMounted(async () => {
-  await Promise.all([
-    fetchSubcategories(),
-    fetchTypes(),
-    fetchTypeSubcategoryLinks(),
-  ])
+  await Promise.all([fetchCategories(), fetchSubcategories(), fetchSubcategoryCategoryLinks()])
 
   const el = scrollContainer.value
   if (el) {
@@ -464,7 +509,7 @@ onUnmounted(() => {
    SEPARATOR — ">" between subcategory and types
    ============================================ */
 .separator {
-  color: var(--text-secondary, #6B7280);
+  color: var(--text-secondary, #6b7280);
   font-size: 12px;
   font-weight: 600;
   padding: 0 0.25rem;
@@ -504,28 +549,36 @@ onUnmounted(() => {
 }
 
 .subcategory-btn:not(.disabled):active {
-  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent, #7FD1C8) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-light) 0%,
+    var(--color-accent, #7fd1c8) 100%
+  );
   color: var(--color-white);
   border-color: var(--color-primary-light);
   transform: scale(0.98);
 }
 
 .subcategory-btn.active {
-  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent, #7FD1C8) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-light) 0%,
+    var(--color-accent, #7fd1c8) 100%
+  );
   color: var(--color-white);
   border-color: var(--color-primary-light);
 }
 
 .subcategory-btn.disabled {
-  color: var(--text-auxiliary, #9CA3AF);
+  color: var(--text-auxiliary, #9ca3af);
   cursor: not-allowed;
-  background: #F9FAFB;
-  border-color: var(--text-auxiliary, #9CA3AF);
+  background: #f9fafb;
+  border-color: var(--text-auxiliary, #9ca3af);
 }
 
 .subcategory-btn.disabled:hover {
-  background: #F9FAFB;
-  color: var(--text-auxiliary, #9CA3AF);
+  background: #f9fafb;
+  color: var(--text-auxiliary, #9ca3af);
 }
 
 /* Subcategory names in uppercase (not types) */

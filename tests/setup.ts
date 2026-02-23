@@ -10,63 +10,39 @@ vi.stubGlobal('useState', (key: string, init?: () => unknown) => {
   return stateStore.get(key)!
 })
 
-// Mock useSupabaseClient
-vi.stubGlobal('useSupabaseClient', () => ({
-  from: () => ({
-    select: () => ({
-      eq: () => ({
-        single: () => Promise.resolve({ data: null, error: null }),
-        limit: () => Promise.resolve({ data: [], error: null }),
-        order: () => ({
-          range: () => Promise.resolve({ data: [], error: null, count: 0 }),
-        }),
-        in: () => ({
-          order: () => ({
-            range: () => Promise.resolve({ data: [], error: null, count: 0 }),
-          }),
-        }),
+// Mock useSupabaseClient with full chainable query builder
+vi.stubGlobal('useSupabaseClient', () => {
+  // Create a chainable query builder mock that supports all methods
+  const createChainableMock = (): Record<string, unknown> => {
+    const chain: Record<string, unknown> = {}
+    const methods = ['eq', 'or', 'in', 'order', 'gte', 'lte', 'ilike', 'select']
+
+    methods.forEach((method) => {
+      chain[method] = (..._args: unknown[]) => createChainableMock()
+    })
+
+    // Terminal methods that return promises
+    chain.range = () => Promise.resolve({ data: [], error: null, count: 0 })
+    chain.single = () => Promise.resolve({ data: null, error: null })
+    chain.limit = () => Promise.resolve({ data: [], error: null })
+
+    return chain
+  }
+
+  return {
+    from: () => ({
+      select: () => createChainableMock(),
+      upsert: () => Promise.resolve({ data: null, error: null }),
+      insert: () => Promise.resolve({ data: null, error: null }),
+      update: () => ({
+        eq: () => Promise.resolve({ data: null, error: null }),
       }),
-      in: () => ({
-        eq: () => ({
-          order: () => ({
-            range: () => Promise.resolve({ data: [], error: null, count: 0 }),
-          }),
-        }),
-      }),
-      neq: () => ({
-        eq: () => ({
-          order: () => ({
-            range: () => Promise.resolve({ data: [], error: null, count: 0 }),
-          }),
-        }),
-      }),
-      order: () => ({
-        range: () => Promise.resolve({ data: [], error: null, count: 0 }),
-        limit: () => Promise.resolve({ data: [], error: null }),
-      }),
-      ilike: () => ({
-        order: () => ({
-          range: () => Promise.resolve({ data: [], error: null, count: 0 }),
-        }),
-      }),
-      gte: () => ({
-        lte: () => ({
-          order: () => ({
-            range: () => Promise.resolve({ data: [], error: null, count: 0 }),
-          }),
-        }),
+      delete: () => ({
+        eq: () => Promise.resolve({ data: null, error: null }),
       }),
     }),
-    upsert: () => Promise.resolve({ data: null, error: null }),
-    insert: () => Promise.resolve({ data: null, error: null }),
-    update: () => ({
-      eq: () => Promise.resolve({ data: null, error: null }),
-    }),
-    delete: () => ({
-      eq: () => Promise.resolve({ data: null, error: null }),
-    }),
-  }),
-}))
+  }
+})
 
 // Mock useSupabaseUser
 vi.stubGlobal('useSupabaseUser', () => ({

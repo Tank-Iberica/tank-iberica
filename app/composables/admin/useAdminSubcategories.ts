@@ -1,7 +1,7 @@
 /**
- * Admin Subcategories Composable
- * Full CRUD operations for vehicle subcategories in admin panel
- * Subcategories are the parent level above types
+ * Admin Subcategories Composable (migrated: subcategories table → categories table)
+ * Full CRUD operations for vehicle categories (formerly "subcategories") in admin panel
+ * Categories are the parent level above subcategories (formerly "types")
  */
 
 export interface AdminSubcategory {
@@ -45,7 +45,7 @@ export function useAdminSubcategories() {
 
     try {
       const { data, error: err } = await supabase
-        .from('subcategories')
+        .from('categories')
         .select('*')
         .order('sort_order', { ascending: true })
 
@@ -53,53 +53,51 @@ export function useAdminSubcategories() {
 
       const subcategoriesData = (data as unknown as AdminSubcategory[]) || []
 
-      // Get vehicle counts per subcategory via type_subcategories junction
-      // First, get all type-subcategory links
-      const { data: typeLinks } = await supabase
-        .from('type_subcategories')
-        .select('type_id, subcategory_id')
+      // Get vehicle counts per category via subcategory_categories junction
+      // First, get all subcategory-category links
+      const { data: subcatLinks } = await supabase
+        .from('subcategory_categories')
+        .select('subcategory_id, category_id')
 
-      // Get all vehicle type_ids
+      // Get all vehicle subcategory_ids
       const { data: vehicleCounts } = await supabase
         .from('vehicles')
-        .select('type_id')
+        .select('subcategory_id')
         .eq('status', 'published')
 
-      // Build a map: subcategory_id -> count of vehicles
+      // Build a map: category_id -> count of vehicles
       const countMap = new Map<string, number>()
 
-      if (typeLinks && vehicleCounts) {
-        // Build type_id -> subcategory_ids map
-        const typeToSubcategories = new Map<string, string[]>()
-        for (const link of typeLinks as { type_id: string; subcategory_id: string }[]) {
-          if (!typeToSubcategories.has(link.type_id)) {
-            typeToSubcategories.set(link.type_id, [])
+      if (subcatLinks && vehicleCounts) {
+        // Build subcategory_id -> category_ids map
+        const subcatToCategories = new Map<string, string[]>()
+        for (const link of subcatLinks as { subcategory_id: string; category_id: string }[]) {
+          if (!subcatToCategories.has(link.subcategory_id)) {
+            subcatToCategories.set(link.subcategory_id, [])
           }
-          typeToSubcategories.get(link.type_id)!.push(link.subcategory_id)
+          subcatToCategories.get(link.subcategory_id)!.push(link.category_id)
         }
 
-        // Count vehicles per subcategory
-        for (const v of vehicleCounts as { type_id: string | null }[]) {
-          if (v.type_id && typeToSubcategories.has(v.type_id)) {
-            const subcatIds = typeToSubcategories.get(v.type_id)!
-            for (const subcatId of subcatIds) {
-              countMap.set(subcatId, (countMap.get(subcatId) || 0) + 1)
+        // Count vehicles per category
+        for (const v of vehicleCounts as { subcategory_id: string | null }[]) {
+          if (v.subcategory_id && subcatToCategories.has(v.subcategory_id)) {
+            const catIds = subcatToCategories.get(v.subcategory_id)!
+            for (const catId of catIds) {
+              countMap.set(catId, (countMap.get(catId) || 0) + 1)
             }
           }
         }
       }
 
       // Merge stock counts
-      subcategories.value = subcategoriesData.map(s => ({
+      subcategories.value = subcategoriesData.map((s) => ({
         ...s,
         stock_count: countMap.get(s.id) || 0,
       }))
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching subcategories'
       subcategories.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -113,7 +111,7 @@ export function useAdminSubcategories() {
 
     try {
       const { data, error: err } = await supabase
-        .from('subcategories')
+        .from('categories')
         .select('*')
         .eq('id', id)
         .single()
@@ -121,12 +119,10 @@ export function useAdminSubcategories() {
       if (err) throw err
 
       return data as unknown as AdminSubcategory
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching subcategory'
       return null
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -150,7 +146,7 @@ export function useAdminSubcategories() {
       }
 
       const { data, error: err } = await supabase
-        .from('subcategories')
+        .from('categories')
         .insert(insertData as never)
         .select('id')
         .single()
@@ -158,14 +154,19 @@ export function useAdminSubcategories() {
       if (err) throw err
 
       return (data as { id: string } | null)?.id || null
-    }
-    catch (err: unknown) {
-      const supabaseError = err as { message?: string; details?: string; hint?: string; code?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error creating subcategory')
+    } catch (err: unknown) {
+      const supabaseError = err as {
+        message?: string
+        details?: string
+        hint?: string
+        code?: string
+      }
+      error.value =
+        supabaseError?.message ||
+        (err instanceof Error ? err.message : 'Error creating subcategory')
       console.error('Create subcategory error:', err)
       return null
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -173,7 +174,10 @@ export function useAdminSubcategories() {
   /**
    * Update existing subcategory
    */
-  async function updateSubcategory(id: string, formData: Partial<SubcategoryFormData>): Promise<boolean> {
+  async function updateSubcategory(
+    id: string,
+    formData: Partial<SubcategoryFormData>,
+  ): Promise<boolean> {
     saving.value = true
     error.value = null
 
@@ -183,27 +187,34 @@ export function useAdminSubcategories() {
       if (formData.name_es !== undefined) updateData.name_es = formData.name_es
       if (formData.name_en !== undefined) updateData.name_en = formData.name_en || null
       if (formData.slug !== undefined) updateData.slug = formData.slug
-      if (formData.applicable_categories !== undefined) updateData.applicable_categories = formData.applicable_categories
-      if (formData.applicable_filters !== undefined) updateData.applicable_filters = formData.applicable_filters
+      if (formData.applicable_categories !== undefined)
+        updateData.applicable_categories = formData.applicable_categories
+      if (formData.applicable_filters !== undefined)
+        updateData.applicable_filters = formData.applicable_filters
       if (formData.status !== undefined) updateData.status = formData.status
       if (formData.sort_order !== undefined) updateData.sort_order = formData.sort_order
 
       const { error: err } = await supabase
-        .from('subcategories')
+        .from('categories')
         .update(updateData as never)
         .eq('id', id)
 
       if (err) throw err
 
       return true
-    }
-    catch (err: unknown) {
-      const supabaseError = err as { message?: string; details?: string; hint?: string; code?: string }
-      error.value = supabaseError?.message || (err instanceof Error ? err.message : 'Error updating subcategory')
+    } catch (err: unknown) {
+      const supabaseError = err as {
+        message?: string
+        details?: string
+        hint?: string
+        code?: string
+      }
+      error.value =
+        supabaseError?.message ||
+        (err instanceof Error ? err.message : 'Error updating subcategory')
       console.error('Update subcategory error:', err)
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -216,23 +227,18 @@ export function useAdminSubcategories() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('subcategories')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('categories').delete().eq('id', id)
 
       if (err) throw err
 
       // Remove from local list
-      subcategories.value = subcategories.value.filter(s => s.id !== id)
+      subcategories.value = subcategories.value.filter((s) => s.id !== id)
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error deleting subcategory'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -254,7 +260,7 @@ export function useAdminSubcategories() {
     try {
       for (const item of items) {
         const { error: err } = await supabase
-          .from('subcategories')
+          .from('categories')
           .update({ sort_order: item.sort_order } as never)
           .eq('id', item.id)
 
@@ -262,12 +268,10 @@ export function useAdminSubcategories() {
       }
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error reordering subcategories'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -276,7 +280,7 @@ export function useAdminSubcategories() {
    * Move subcategory up in order
    */
   async function moveUp(id: string): Promise<boolean> {
-    const index = subcategories.value.findIndex(s => s.id === id)
+    const index = subcategories.value.findIndex((s) => s.id === id)
     if (index <= 0) return false
 
     const current = subcategories.value[index]
@@ -298,7 +302,7 @@ export function useAdminSubcategories() {
    * Move subcategory down in order
    */
   async function moveDown(id: string): Promise<boolean> {
-    const index = subcategories.value.findIndex(s => s.id === id)
+    const index = subcategories.value.findIndex((s) => s.id === id)
     if (index < 0 || index >= subcategories.value.length - 1) return false
 
     const current = subcategories.value[index]
@@ -317,20 +321,19 @@ export function useAdminSubcategories() {
   }
 
   /**
-   * Get types linked to a subcategory
+   * Get subcategories linked to a category (formerly: types linked to a subcategory)
    */
-  async function getLinkedTypes(subcategoryId: string): Promise<string[]> {
+  async function getLinkedSubcategories(categoryId: string): Promise<string[]> {
     try {
       const { data, error: err } = await supabase
-        .from('type_subcategories')
-        .select('type_id')
-        .eq('subcategory_id', subcategoryId)
+        .from('subcategory_categories')
+        .select('subcategory_id')
+        .eq('category_id', categoryId)
 
       if (err) throw err
 
-      return (data as { type_id: string }[] || []).map(d => d.type_id)
-    }
-    catch {
+      return ((data as { subcategory_id: string }[]) || []).map((d) => d.subcategory_id)
+    } catch {
       return []
     }
   }
@@ -352,7 +355,7 @@ export function useAdminSubcategories() {
     toggleStatus,
     moveUp,
     moveDown,
-    getLinkedTypes,
+    getLinkedSubcategories,
     clearError,
   }
 }

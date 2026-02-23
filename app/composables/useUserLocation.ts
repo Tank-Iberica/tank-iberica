@@ -10,93 +10,97 @@ export interface UserLocation {
   source: 'geolocation' | 'ip' | 'manual' | null
 }
 
-const STORAGE_KEY = 'tank_user_location'
+const STORAGE_KEY = 'tracciona_user_location'
 
 // Major Spanish cities → province mapping (for manual input resolution)
 const CITY_TO_PROVINCE: Record<string, string> = {
-  'madrid': 'Madrid',
-  'barcelona': 'Barcelona',
-  'valencia': 'Valencia',
-  'sevilla': 'Sevilla',
-  'zaragoza': 'Zaragoza',
-  'málaga': 'Málaga',
-  'malaga': 'Málaga',
-  'murcia': 'Murcia',
-  'palma': 'Baleares',
-  'bilbao': 'Vizcaya',
-  'alicante': 'Alicante',
-  'córdoba': 'Córdoba',
-  'cordoba': 'Córdoba',
-  'valladolid': 'Valladolid',
-  'vigo': 'Pontevedra',
-  'gijón': 'Asturias',
-  'gijon': 'Asturias',
-  'hospitalet': 'Barcelona',
-  'vitoria': 'Álava',
-  'granada': 'Granada',
-  'elche': 'Alicante',
-  'oviedo': 'Asturias',
-  'santander': 'Cantabria',
-  'pamplona': 'Navarra',
+  madrid: 'Madrid',
+  barcelona: 'Barcelona',
+  valencia: 'Valencia',
+  sevilla: 'Sevilla',
+  zaragoza: 'Zaragoza',
+  málaga: 'Málaga',
+  malaga: 'Málaga',
+  murcia: 'Murcia',
+  palma: 'Baleares',
+  bilbao: 'Vizcaya',
+  alicante: 'Alicante',
+  córdoba: 'Córdoba',
+  cordoba: 'Córdoba',
+  valladolid: 'Valladolid',
+  vigo: 'Pontevedra',
+  gijón: 'Asturias',
+  gijon: 'Asturias',
+  hospitalet: 'Barcelona',
+  vitoria: 'Álava',
+  granada: 'Granada',
+  elche: 'Alicante',
+  oviedo: 'Asturias',
+  santander: 'Cantabria',
+  pamplona: 'Navarra',
   'san sebastián': 'Guipúzcoa',
   'san sebastian': 'Guipúzcoa',
-  'donostia': 'Guipúzcoa',
-  'salamanca': 'Salamanca',
-  'burgos': 'Burgos',
-  'cádiz': 'Cádiz',
-  'cadiz': 'Cádiz',
-  'logroño': 'La Rioja',
-  'logrono': 'La Rioja',
-  'toledo': 'Toledo',
-  'lleida': 'Lérida',
-  'lérida': 'Lérida',
-  'lerida': 'Lérida',
-  'girona': 'Gerona',
-  'gerona': 'Gerona',
-  'tarragona': 'Tarragona',
-  'huelva': 'Huelva',
-  'jaén': 'Jaén',
-  'jaen': 'Jaén',
-  'almería': 'Almería',
-  'almeria': 'Almería',
-  'castellón': 'Castellón',
-  'castellon': 'Castellón',
-  'león': 'León',
-  'leon': 'León',
-  'cáceres': 'Cáceres',
-  'caceres': 'Cáceres',
-  'badajoz': 'Badajoz',
-  'lugo': 'Lugo',
-  'ourense': 'Ourense',
-  'huesca': 'Huesca',
-  'teruel': 'Teruel',
-  'soria': 'Soria',
-  'segovia': 'Segovia',
-  'ávila': 'Ávila',
-  'avila': 'Ávila',
-  'palencia': 'Palencia',
-  'zamora': 'Zamora',
-  'cuenca': 'Cuenca',
-  'guadalajara': 'Guadalajara',
+  donostia: 'Guipúzcoa',
+  salamanca: 'Salamanca',
+  burgos: 'Burgos',
+  cádiz: 'Cádiz',
+  cadiz: 'Cádiz',
+  logroño: 'La Rioja',
+  logrono: 'La Rioja',
+  toledo: 'Toledo',
+  lleida: 'Lérida',
+  lérida: 'Lérida',
+  lerida: 'Lérida',
+  girona: 'Gerona',
+  gerona: 'Gerona',
+  tarragona: 'Tarragona',
+  huelva: 'Huelva',
+  jaén: 'Jaén',
+  jaen: 'Jaén',
+  almería: 'Almería',
+  almeria: 'Almería',
+  castellón: 'Castellón',
+  castellon: 'Castellón',
+  león: 'León',
+  leon: 'León',
+  cáceres: 'Cáceres',
+  caceres: 'Cáceres',
+  badajoz: 'Badajoz',
+  lugo: 'Lugo',
+  ourense: 'Ourense',
+  huesca: 'Huesca',
+  teruel: 'Teruel',
+  soria: 'Soria',
+  segovia: 'Segovia',
+  ávila: 'Ávila',
+  avila: 'Ávila',
+  palencia: 'Palencia',
+  zamora: 'Zamora',
+  cuenca: 'Cuenca',
+  guadalajara: 'Guadalajara',
   'ciudad real': 'Ciudad Real',
-  'albacete': 'Albacete',
+  albacete: 'Albacete',
   'a coruña': 'A Coruña',
-  'coruña': 'A Coruña',
+  coruña: 'A Coruña',
   'las palmas': 'Las Palmas',
   'santa cruz de tenerife': 'Santa Cruz de Tenerife',
-  'tenerife': 'Santa Cruz de Tenerife',
-  'ceuta': 'Ceuta',
-  'melilla': 'Melilla',
+  tenerife: 'Santa Cruz de Tenerife',
+  ceuta: 'Ceuta',
+  melilla: 'Melilla',
 }
 
 function normalize(str: string): string {
-  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036F]/g, '').trim()
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036F]/g, '')
+    .trim()
 }
 
 /**
  * Resolve a city name to Spanish province/region if possible.
  */
-function resolveSpanishCity(city: string): { province: string, region: string } | null {
+function resolveSpanishCity(city: string): { province: string; region: string } | null {
   const norm = normalize(city)
   // Try direct city lookup
   for (const [key, province] of Object.entries(CITY_TO_PROVINCE)) {
@@ -115,6 +119,7 @@ function resolveSpanishCity(city: string): { province: string, region: string } 
 }
 
 export function useUserLocation() {
+  const supabase = useSupabaseClient()
   const location = useState<UserLocation>('userLocation', () => ({
     country: null,
     province: null,
@@ -140,8 +145,9 @@ export function useUserLocation() {
             return
           }
         }
+      } catch {
+        /* ignore */
       }
-      catch { /* ignore */ }
     }
 
     // 2. Try navigator.geolocation → reverse geocode
@@ -154,9 +160,43 @@ export function useUserLocation() {
           })
         })
         const { latitude, longitude } = pos.coords
-        const res = await $fetch<{ address?: { country_code?: string, city?: string, town?: string, village?: string, state?: string, province?: string } }>(
+
+        // Round coordinates to 2 decimal places (~1km precision) for cache lookup
+        const latRounded = Math.round(latitude * 100) / 100
+        const lngRounded = Math.round(longitude * 100) / 100
+
+        // Check Supabase geocoding cache first
+        const { data: cached } = await supabase
+          .from('geocoding_cache')
+          .select('country_code, city, province, region')
+          .eq('lat_rounded', latRounded)
+          .eq('lng_rounded', lngRounded)
+          .single()
+
+        if (cached) {
+          location.value = {
+            country: cached.country_code,
+            province: cached.province,
+            region: cached.region,
+            city: cached.city,
+            source: 'geolocation',
+          }
+          return
+        }
+
+        // No cache hit — call Nominatim
+        const res = await $fetch<{
+          address?: {
+            country_code?: string
+            city?: string
+            town?: string
+            village?: string
+            state?: string
+            province?: string
+          }
+        }>(
           `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=es`,
-          { headers: { 'User-Agent': 'TankIberica/1.0' } },
+          { headers: { 'User-Agent': 'Tracciona/1.0' } },
         )
         if (res.address) {
           const countryCode = res.address.country_code?.toUpperCase() || null
@@ -192,10 +232,27 @@ export function useUserLocation() {
             province = res.address.province || res.address.state || null
           }
           location.value = { country: countryCode, province, region, city, source: 'geolocation' }
+
+          // Fire-and-forget: store result in geocoding cache
+          supabase
+            .from('geocoding_cache')
+            .upsert({
+              lat_rounded: latRounded,
+              lng_rounded: lngRounded,
+              country_code: countryCode,
+              city,
+              province,
+              region,
+              raw_response: res,
+            })
+            .select()
+            .single()
+
           return
         }
+      } catch {
+        /* geolocation denied or failed, continue to IP fallback */
       }
-      catch { /* geolocation denied or failed, continue to IP fallback */ }
     }
 
     // 3. Fallback: IP country via server route
@@ -211,8 +268,9 @@ export function useUserLocation() {
         }
         return
       }
+    } catch {
+      /* server route failed */
     }
-    catch { /* server route failed */ }
 
     // 4. No location detected
     location.value = { country: null, province: null, region: null, city: null, source: null }
@@ -239,7 +297,11 @@ export function useUserLocation() {
     }
 
     if (import.meta.client) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(location.value))
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(location.value))
+      } catch {
+        // localStorage may be full or unavailable in private mode
+      }
     }
   }
 

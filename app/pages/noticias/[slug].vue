@@ -33,7 +33,7 @@
           <h1 class="article-title">{{ title }}</h1>
 
           <div v-if="article.image_url" class="article-image">
-            <img :src="article.image_url" :alt="title">
+            <img :src="article.image_url" :alt="title" >
           </div>
 
           <div class="article-body">
@@ -41,9 +41,7 @@
           </div>
 
           <div v-if="article.hashtags?.length" class="article-tags">
-            <span v-for="tag in article.hashtags" :key="tag" class="tag">
-              #{{ tag }}
-            </span>
+            <span v-for="tag in article.hashtags" :key="tag" class="tag"> #{{ tag }} </span>
           </div>
 
           <!-- Share -->
@@ -70,36 +68,74 @@
 </template>
 
 <script setup lang="ts">
+import { fetchTranslation } from '~/composables/useLocalized'
+
 const route = useRoute()
 const { locale, t } = useI18n()
 const { fetchBySlug } = useNews()
 
 // Fetch at setup level so SSR can render SEO meta
-const { data: article, status } = await useAsyncData(
-  `news-${route.params.slug}`,
-  () => fetchBySlug(route.params.slug as string),
+const { data: article, status } = await useAsyncData(`news-${route.params.slug}`, () =>
+  fetchBySlug(route.params.slug as string),
 )
 
 const loading = computed(() => status.value === 'pending')
 
-const title = computed(() => {
+// Column-based getters for es/en (primary languages)
+function getColumnTitle(): string {
   if (!article.value) return ''
   if (locale.value === 'en' && article.value.title_en) return article.value.title_en
   return article.value.title_es
-})
+}
 
-const content = computed(() => {
+function getColumnContent(): string {
   if (!article.value) return ''
   if (locale.value === 'en' && article.value.content_en) return article.value.content_en
   return article.value.content_es
-})
+}
 
-const metaDesc = computed(() => {
+function getColumnMetaDesc(): string {
   if (!article.value) return ''
   if (locale.value === 'en' && article.value.description_en) return article.value.description_en
   if (article.value.description_es) return article.value.description_es
-  return title.value
-})
+  return getColumnTitle()
+}
+
+// Refs initialized with column data for SSR compatibility
+const title = ref<string>(getColumnTitle())
+const content = ref<string>(getColumnContent())
+const metaDesc = ref<string>(getColumnMetaDesc())
+
+// Watch locale changes to fetch translations for non-primary locales
+watch(
+  [locale, () => article.value?.id],
+  async ([newLocale, articleId]) => {
+    if (!article.value) {
+      title.value = ''
+      content.value = ''
+      metaDesc.value = ''
+      return
+    }
+    // Primary languages: read directly from columns
+    if (newLocale === 'es' || newLocale === 'en') {
+      title.value = getColumnTitle()
+      content.value = getColumnContent()
+      metaDesc.value = getColumnMetaDesc()
+      return
+    }
+    // Other locales: fetch all 3 fields in parallel from content_translations
+    const id = String(articleId)
+    const [translatedTitle, translatedContent, translatedDesc] = await Promise.all([
+      fetchTranslation('article', id, 'title', newLocale),
+      fetchTranslation('article', id, 'content', newLocale),
+      fetchTranslation('article', id, 'description', newLocale),
+    ])
+    title.value = translatedTitle || getColumnTitle()
+    content.value = translatedContent || getColumnContent()
+    metaDesc.value = translatedDesc || getColumnMetaDesc()
+  },
+  { immediate: true },
+)
 
 const breadcrumbItems = computed(() => {
   if (!article.value) return []
@@ -114,51 +150,112 @@ const shareText = computed(() => {
   if (!article.value) return ''
   const parts = [title.value]
   if (import.meta.client) parts.push(window.location.href)
-  parts.push('- Tank Iberica')
+  parts.push('- Tracciona')
   return parts.join(' - ')
 })
 
 // SEO meta at setup level — works during SSR
 if (article.value) {
-  const seoTitle = `${title.value} — Tank Iberica`
+  const seoTitle = `${title.value} — Tracciona`
+  const articleSlug = route.params.slug as string
+
+  // Build enhanced NewsArticle JSON-LD
+  const articleJsonLd: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: title.value,
+    description: metaDesc.value || undefined,
+    image: article.value.image_url || undefined,
+    datePublished: article.value.published_at || article.value.created_at,
+    dateModified: article.value.updated_at,
+    author: {
+      '@type': 'Organization',
+      name: 'Tracciona',
+      url: 'https://tracciona.com',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Tracciona',
+      url: 'https://tracciona.com',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://tracciona.com/logo.png',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://tracciona.com/noticias/${articleSlug}`,
+    },
+  }
 
   usePageSeo({
     title: seoTitle,
     description: metaDesc.value,
     image: article.value.image_url || undefined,
     type: 'article',
-    path: `/noticias/${route.params.slug}`,
-    jsonLd: {
-      '@context': 'https://schema.org',
-      '@type': 'NewsArticle',
-      'headline': title.value,
-      'description': metaDesc.value,
-      'image': article.value.image_url || '',
-      'datePublished': article.value.published_at,
-      'dateModified': article.value.updated_at || article.value.published_at,
-      'author': { '@type': 'Organization', 'name': 'Tank Iberica' },
-      'publisher': {
-        '@type': 'Organization',
-        'name': 'Tank Iberica',
-        'logo': { '@type': 'ImageObject', 'url': 'https://tankiberica.com/og-default.png' },
-      },
-      'mainEntityOfPage': `https://tankiberica.com/noticias/${route.params.slug}`,
-    },
+    path: `/noticias/${articleSlug}`,
+    jsonLd: articleJsonLd,
   })
 
+  // Build FAQ JSON-LD from faq_schema JSONB column (if present)
+  const faqData = (article.value as Record<string, unknown>)?.faq_schema as
+    | Array<{ question: string; answer: string }>
+    | null
+    | undefined
+
+  const faqJsonLd =
+    faqData && faqData.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqData.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.answer,
+            },
+          })),
+        }
+      : null
+
+  // Breadcrumb JSON-LD
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Tracciona', item: 'https://tracciona.com' },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: t('news.title'),
+        item: 'https://tracciona.com/noticias',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: title.value,
+        item: `https://tracciona.com/noticias/${articleSlug}`,
+      },
+    ],
+  }
+
+  // Inject BreadcrumbList + optional FAQ JSON-LD
   useHead({
-    script: [{
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'BreadcrumbList',
-        'itemListElement': [
-          { '@type': 'ListItem', 'position': 1, 'name': 'Tank Iberica', 'item': 'https://tankiberica.com' },
-          { '@type': 'ListItem', 'position': 2, 'name': t('news.title'), 'item': 'https://tankiberica.com/noticias' },
-          { '@type': 'ListItem', 'position': 3, 'name': title.value, 'item': `https://tankiberica.com/noticias/${route.params.slug}` },
-        ],
-      }),
-    }],
+    script: [
+      {
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify(breadcrumbJsonLd),
+      },
+      ...(faqJsonLd
+        ? [
+            {
+              type: 'application/ld+json',
+              innerHTML: JSON.stringify(faqJsonLd),
+            },
+          ]
+        : []),
+    ],
   })
 }
 
@@ -199,12 +296,21 @@ function formatDate(date: string): string {
   animation: pulse 1.5s ease-in-out infinite;
 }
 
-.skeleton-line.wide { width: 80%; }
-.skeleton-line.medium { width: 55%; }
+.skeleton-line.wide {
+  width: 80%;
+}
+.skeleton-line.medium {
+  width: 55%;
+}
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Not found */
@@ -314,7 +420,7 @@ function formatDate(date: string): string {
 }
 
 .share-whatsapp {
-  background: #25D366;
+  background: #25d366;
   color: white;
 }
 

@@ -2,8 +2,7 @@
  * Admin middleware - Protects /admin/* routes
  * Only users with role='admin' can access admin pages
  *
- * Unlike other protected routes, admin shows its own login UI
- * instead of redirecting to the main site
+ * Uses cached role check to avoid querying DB on every navigation
  */
 export default defineNuxtRouteMiddleware(async () => {
   const user = useSupabaseUser()
@@ -13,15 +12,11 @@ export default defineNuxtRouteMiddleware(async () => {
     return
   }
 
-  // Check admin role in users table
-  const supabase = useSupabaseClient()
-  const { data, error } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.value.id)
-    .single<{ role: string }>()
+  // Check admin role with cache (5min TTL)
+  const { checkAdmin } = useAdminRole()
+  const isAdmin = await checkAdmin(user.value.id)
 
-  if (error || data?.role !== 'admin') {
+  if (!isAdmin) {
     // Authenticated but not admin - redirect to home
     return navigateTo('/')
   }

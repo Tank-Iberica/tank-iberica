@@ -54,15 +54,14 @@ const deleteModal = ref({
 // Available filters for checkboxes (excluding core filters)
 const availableFilters = computed(() => {
   const coreFilters = ['precio', 'marca', 'año', 'ubicacion', 'price', 'brand', 'year', 'location']
-  return allFilters.value.filter(f =>
-    f.status !== 'archived' &&
-    !coreFilters.includes(f.name.toLowerCase()),
+  return allFilters.value.filter(
+    (f) => f.status !== 'archived' && !coreFilters.includes(f.name.toLowerCase()),
   )
 })
 
 // Available subcategories for checkboxes
 const availableSubcategories = computed(() => {
-  return allSubcategories.value.filter(s => s.status !== 'archived')
+  return allSubcategories.value.filter((s) => s.status !== 'archived')
 })
 
 // Load data
@@ -75,21 +74,20 @@ onMounted(async () => {
 async function loadAllTypeSubcategoryLinks() {
   try {
     const { data } = await supabase
-      .from('type_subcategories')
-      .select('type_id, subcategory_id')
+      .from('subcategory_categories')
+      .select('subcategory_id, category_id')
 
     const links = new Map<string, string[]>()
     if (data) {
-      for (const link of data as { type_id: string, subcategory_id: string }[]) {
-        if (!links.has(link.type_id)) {
-          links.set(link.type_id, [])
+      for (const link of data as { subcategory_id: string; category_id: string }[]) {
+        if (!links.has(link.subcategory_id)) {
+          links.set(link.subcategory_id, [])
         }
-        links.get(link.type_id)!.push(link.subcategory_id)
+        links.get(link.subcategory_id)!.push(link.category_id)
       }
     }
     typeSubcategoryLinks.value = links
-  }
-  catch {
+  } catch {
     // Silently fail - links will just show as empty
   }
 }
@@ -100,7 +98,7 @@ function getSubcategoryNames(typeId: string): string {
   if (!subcatIds?.length) return '-'
   const names = subcatIds
     .map((id) => {
-      const subcat = allSubcategories.value.find(s => s.id === id)
+      const subcat = allSubcategories.value.find((s) => s.id === id)
       return subcat?.name_es || null
     })
     .filter(Boolean)
@@ -130,15 +128,14 @@ async function openEditModal(type: AdminType) {
   let subcatIds: string[] = []
   try {
     const { data } = await supabase
-      .from('type_subcategories')
-      .select('subcategory_id')
-      .eq('type_id', type.id)
+      .from('subcategory_categories')
+      .select('category_id')
+      .eq('subcategory_id', type.id)
 
     if (data) {
-      subcatIds = (data as { subcategory_id: string }[]).map(d => d.subcategory_id)
+      subcatIds = (data as { category_id: string }[]).map((d) => d.category_id)
     }
-  }
-  catch {
+  } catch {
     // Use empty array on error
   }
 
@@ -195,8 +192,7 @@ async function saveType() {
   if (editingId.value) {
     success = await updateType(editingId.value, typeData)
     typeId = editingId.value
-  }
-  else {
+  } else {
     // createType returns the new ID on success
     typeId = await createType(typeData)
     success = !!typeId
@@ -216,24 +212,18 @@ async function saveType() {
 async function updateTypeSubcategoryLinks(typeId: string, subcategoryIds: string[]) {
   try {
     // Delete existing links for this type
-    await supabase
-      .from('type_subcategories')
-      .delete()
-      .eq('type_id', typeId)
+    await supabase.from('subcategory_categories').delete().eq('subcategory_id', typeId)
 
     // Insert new links
     if (subcategoryIds.length > 0) {
-      const links = subcategoryIds.map(subcatId => ({
-        type_id: typeId,
-        subcategory_id: subcatId,
+      const links = subcategoryIds.map((subcatId) => ({
+        subcategory_id: typeId,
+        category_id: subcatId,
       }))
 
-      await supabase
-        .from('type_subcategories')
-        .insert(links as never)
+      await supabase.from('subcategory_categories').insert(links as never)
     }
-  }
-  catch (err) {
+  } catch (err) {
     console.error('Error updating subcategory links:', err)
   }
 }
@@ -263,7 +253,7 @@ function getFilterNames(filterIds: string[] | undefined): string {
   if (!filterIds?.length) return '-'
   const names = filterIds
     .map((id) => {
-      const filter = allFilters.value.find(f => f.id === id)
+      const filter = allFilters.value.find((f) => f.id === id)
       return filter?.label_es || filter?.name || null
     })
     .filter(Boolean)
@@ -292,9 +282,7 @@ async function handleMoveDown(id: string) {
     <!-- Header -->
     <div class="section-header">
       <h2>Tipos</h2>
-      <button class="btn-primary" @click="openNewModal">
-        + Nuevo
-      </button>
+      <button class="btn-primary" @click="openNewModal">+ Nuevo</button>
     </div>
 
     <!-- Error message -->
@@ -303,30 +291,20 @@ async function handleMoveDown(id: string) {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      Cargando tipos...
-    </div>
+    <div v-if="loading" class="loading-state">Cargando tipos...</div>
 
     <!-- Table -->
     <div v-else class="table-container">
       <table class="admin-table">
         <thead>
           <tr>
-            <th style="width: 50px">
-              Orden
-            </th>
+            <th style="width: 50px">Orden</th>
             <th>Nombre</th>
             <th>Subcategorias</th>
             <th>Filtros aplicables</th>
-            <th style="width: 80px">
-              Stock
-            </th>
-            <th style="width: 100px">
-              Estado
-            </th>
-            <th style="width: 120px">
-              Acciones
-            </th>
+            <th style="width: 80px">Stock</th>
+            <th style="width: 100px">Estado</th>
+            <th style="width: 120px">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -378,27 +356,17 @@ async function handleMoveDown(id: string) {
             </td>
             <td>
               <div class="action-buttons">
-                <button
-                  class="btn-icon btn-edit"
-                  title="Editar"
-                  @click="openEditModal(type)"
-                >
+                <button class="btn-icon btn-edit" title="Editar" @click="openEditModal(type)">
                   ✏️
                 </button>
-                <button
-                  class="btn-icon btn-delete"
-                  title="Eliminar"
-                  @click="confirmDelete(type)"
-                >
+                <button class="btn-icon btn-delete" title="Eliminar" @click="confirmDelete(type)">
                   🗑️
                 </button>
               </div>
             </td>
           </tr>
           <tr v-if="!types.length">
-            <td colspan="7" class="empty-state">
-              No hay tipos. Crea el primero.
-            </td>
+            <td colspan="7" class="empty-state">No hay tipos. Crea el primero.</td>
           </tr>
         </tbody>
       </table>
@@ -410,9 +378,7 @@ async function handleMoveDown(id: string) {
         <div class="modal-content">
           <div class="modal-header">
             <h3>{{ editingId ? 'Editar Tipo' : 'Nuevo Tipo' }}</h3>
-            <button class="modal-close" @click="closeModal">
-              ×
-            </button>
+            <button class="modal-close" @click="closeModal">×</button>
           </div>
 
           <div class="modal-body">
@@ -442,17 +408,15 @@ async function handleMoveDown(id: string) {
             <!-- Subcategories -->
             <div class="form-group">
               <label>Subcategorias</label>
-              <p class="form-hint">
-                Selecciona a qué subcategorias pertenece este tipo.
-              </p>
+              <p class="form-hint">Selecciona a qué subcategorias pertenece este tipo.</p>
               <div class="subcategories-checkbox-grid">
                 <template v-if="availableSubcategories.length">
-                  <label v-for="subcat in availableSubcategories" :key="subcat.id" class="checkbox-label">
-                    <input
-                      v-model="formData.subcategory_ids"
-                      type="checkbox"
-                      :value="subcat.id"
-                    >
+                  <label
+                    v-for="subcat in availableSubcategories"
+                    :key="subcat.id"
+                    class="checkbox-label"
+                  >
+                    <input v-model="formData.subcategory_ids" type="checkbox" :value="subcat.id" >
                     <span>{{ subcat.name_es }}</span>
                   </label>
                 </template>
@@ -465,9 +429,7 @@ async function handleMoveDown(id: string) {
             <!-- Filters -->
             <div class="form-group">
               <label>Filtros aplicables</label>
-              <p class="form-hint">
-                Precio, Marca, Año y Ubicación siempre están activos.
-              </p>
+              <p class="form-hint">Precio, Marca, Año y Ubicación siempre están activos.</p>
               <div class="filters-checkbox-grid">
                 <template v-if="availableFilters.length">
                   <label v-for="filter in availableFilters" :key="filter.id" class="checkbox-label">
@@ -479,9 +441,7 @@ async function handleMoveDown(id: string) {
                     <span>{{ filter.label_es || filter.name }}</span>
                   </label>
                 </template>
-                <p v-else class="text-muted">
-                  No hay filtros creados. Crea filtros primero.
-                </p>
+                <p v-else class="text-muted">No hay filtros creados. Crea filtros primero.</p>
               </div>
             </div>
 
@@ -500,9 +460,7 @@ async function handleMoveDown(id: string) {
           </div>
 
           <div class="modal-footer">
-            <button class="btn-secondary" @click="closeModal">
-              Cancelar
-            </button>
+            <button class="btn-secondary" @click="closeModal">Cancelar</button>
             <button class="btn-primary" :disabled="saving" @click="saveType">
               {{ saving ? 'Guardando...' : 'Guardar' }}
             </button>
@@ -517,18 +475,15 @@ async function handleMoveDown(id: string) {
         <div class="modal-content modal-small">
           <div class="modal-header">
             <h3>Confirmar eliminación</h3>
-            <button class="modal-close" @click="closeDeleteModal">
-              ×
-            </button>
+            <button class="modal-close" @click="closeDeleteModal">×</button>
           </div>
           <div class="modal-body">
             <p>
               ¿Estás seguro de eliminar el tipo
-              <strong>{{ deleteModal.type?.name_es }}</strong>?
+              <strong>{{ deleteModal.type?.name_es }}</strong
+              >?
             </p>
-            <p class="text-warning">
-              Los vehículos de este tipo quedarán sin clasificar.
-            </p>
+            <p class="text-warning">Los vehículos de este tipo quedarán sin clasificar.</p>
             <div class="form-group delete-confirm-group">
               <label for="delete-confirm">Escribe <strong>Borrar</strong> para confirmar:</label>
               <input
@@ -544,9 +499,7 @@ async function handleMoveDown(id: string) {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-secondary" @click="closeDeleteModal">
-              Cancelar
-            </button>
+            <button class="btn-secondary" @click="closeDeleteModal">Cancelar</button>
             <button class="btn-danger" :disabled="saving || !canDelete" @click="executeDelete">
               {{ saving ? 'Eliminando...' : 'Eliminar' }}
             </button>
@@ -578,7 +531,7 @@ async function handleMoveDown(id: string) {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -899,7 +852,7 @@ async function handleMoveDown(id: string) {
   color: #374151;
 }
 
-.form-group input[type="text"] {
+.form-group input[type='text'] {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #d1d5db;
@@ -909,7 +862,7 @@ async function handleMoveDown(id: string) {
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 

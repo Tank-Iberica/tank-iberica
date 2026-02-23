@@ -33,12 +33,12 @@ export interface BalanceEntry {
   factura_url: string | null
   coste_asociado: number | null
   vehicle_id: string | null
-  type_id: string | null
+  subcategory_id: string | null
   created_at: string
   updated_at: string
   // Joined data
   vehicles?: { brand: string; model: string; year: number } | null
-  types?: { name_es: string } | null
+  subcategories?: { name_es: string } | null
 }
 
 export interface BalanceFormData {
@@ -52,7 +52,7 @@ export interface BalanceFormData {
   factura_url: string | null
   coste_asociado: number | null
   vehicle_id: string | null
-  type_id: string | null
+  subcategory_id: string | null
 }
 
 export interface BalanceFilters {
@@ -60,8 +60,8 @@ export interface BalanceFilters {
   tipo?: BalanceType | null
   razon?: BalanceReason | null
   estado?: BalanceStatus | null
+  category_id?: string | null
   subcategory_id?: string | null
-  type_id?: string | null
   search?: string
 }
 
@@ -119,7 +119,7 @@ export function useAdminBalance() {
     try {
       let query = supabase
         .from('balance')
-        .select('*, vehicles(brand, model, year), types(name_es)', { count: 'exact' })
+        .select('*, vehicles(brand, model, year), subcategories(name_es)', { count: 'exact' })
         .order('fecha', { ascending: false })
 
       // Apply filters
@@ -141,12 +141,12 @@ export function useAdminBalance() {
         query = query.eq('estado', filters.estado)
       }
 
-      if (filters.subcategory_id) {
-        query = query.eq('type_id', filters.subcategory_id)
+      if (filters.category_id) {
+        query = query.eq('subcategory_id', filters.category_id)
       }
 
-      if (filters.type_id) {
-        query = query.eq('type_id', filters.type_id)
+      if (filters.subcategory_id) {
+        query = query.eq('subcategory_id', filters.subcategory_id)
       }
 
       if (filters.search) {
@@ -162,13 +162,11 @@ export function useAdminBalance() {
 
       // Extract available years
       await fetchAvailableYears()
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
       error.value = supabaseError?.message || 'Error fetching balance entries'
       entries.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -197,8 +195,7 @@ export function useAdminBalance() {
           availableYears.value.unshift(currentYear)
         }
       }
-    }
-    catch {
+    } catch {
       // Ignore errors, just use current year
       availableYears.value = [new Date().getFullYear()]
     }
@@ -214,20 +211,18 @@ export function useAdminBalance() {
     try {
       const { data, error: err } = await supabase
         .from('balance')
-        .select('*, vehicles(brand, model, year), types(name_es)')
+        .select('*, vehicles(brand, model, year), subcategories(name_es)')
         .eq('id', id)
         .single()
 
       if (err) throw err
 
       return data as unknown as BalanceEntry
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
       error.value = supabaseError?.message || 'Error fetching entry'
       return null
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -249,13 +244,11 @@ export function useAdminBalance() {
       if (err) throw err
 
       return (data as { id: string } | null)?.id || null
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
       error.value = supabaseError?.message || 'Error creating entry'
       return null
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -281,13 +274,11 @@ export function useAdminBalance() {
       if (err) throw err
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
       error.value = supabaseError?.message || 'Error updating entry'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -300,24 +291,19 @@ export function useAdminBalance() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('balance')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('balance').delete().eq('id', id)
 
       if (err) throw err
 
-      entries.value = entries.value.filter(e => e.id !== id)
+      entries.value = entries.value.filter((e) => e.id !== id)
       total.value--
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       const supabaseError = err as { message?: string }
       error.value = supabaseError?.message || 'Error deleting entry'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -329,15 +315,17 @@ export function useAdminBalance() {
     let totalIngresos = 0
     let totalGastos = 0
     const byReason: Record<string, { ingresos: number; gastos: number }> = {}
-    const byType: Record<string, { ingresos: number; gastos: number; coste: number; beneficio: number }> = {}
+    const byType: Record<
+      string,
+      { ingresos: number; gastos: number; coste: number; beneficio: number }
+    > = {}
 
     for (const entry of entries.value) {
       const amount = entry.importe || 0
 
       if (entry.tipo === 'ingreso') {
         totalIngresos += amount
-      }
-      else {
+      } else {
         totalGastos += amount
       }
 
@@ -347,22 +335,20 @@ export function useAdminBalance() {
       }
       if (entry.tipo === 'ingreso') {
         byReason[entry.razon].ingresos += amount
-      }
-      else {
+      } else {
         byReason[entry.razon].gastos += amount
       }
 
-      // By type (for profit analysis)
-      if (entry.type_id && entry.types) {
-        const subcatName = entry.types.name_es
+      // By subcategory (for profit analysis)
+      if (entry.subcategory_id && entry.subcategories) {
+        const subcatName = entry.subcategories.name_es
         if (!byType[subcatName]) {
           byType[subcatName] = { ingresos: 0, gastos: 0, coste: 0, beneficio: 0 }
         }
         if (entry.tipo === 'ingreso') {
           byType[subcatName].ingresos += amount
           byType[subcatName].coste += entry.coste_asociado || 0
-        }
-        else {
+        } else {
           byType[subcatName].gastos += amount
         }
       }

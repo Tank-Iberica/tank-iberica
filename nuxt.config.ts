@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: process.env.NODE_ENV !== 'production' },
 
   devServer: {
     port: 3000,
@@ -159,7 +159,9 @@ export default defineNuxtConfig({
     '/admin/**': { ssr: false },
     '/dashboard/**': { ssr: false },
     '/perfil/**': { ssr: false },
-    '/api/**': { cors: true },
+    '/api/__sitemap**': { cors: true },
+    '/api/merchant-feed**': { cors: true },
+    '/api/health**': { cors: true },
   },
 
   runtimeConfig: {
@@ -170,6 +172,7 @@ export default defineNuxtConfig({
     whatsappApiToken: process.env.WHATSAPP_API_TOKEN || '',
     whatsappPhoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID || '',
     whatsappVerifyToken: process.env.WHATSAPP_VERIFY_TOKEN || '',
+    whatsappAppSecret: process.env.WHATSAPP_APP_SECRET || '',
     stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
     stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
     quadernoApiKey: process.env.QUADERNO_API_KEY || '',

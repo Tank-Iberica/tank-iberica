@@ -24,7 +24,16 @@
             :title="$t('catalog.clearFilters')"
             @click="handleClearAll"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
               <path d="M3 3v5h5" />
             </svg>
@@ -35,24 +44,57 @@
           <!-- Location -->
           <div class="filter-group filter-group-location">
             <span class="filter-label filter-label-icon-only">
-              <svg class="location-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="#C41E3A" stroke="#C41E3A" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" fill="white" /></svg>:
+              <svg
+                class="location-pin-icon"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="#C41E3A"
+                stroke="#C41E3A"
+                stroke-width="2"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" fill="white" /></svg
+              >:
             </span>
             <div class="location-dropdown-wrapper">
-              <button class="location-trigger" type="button" @click="locationDropdownOpen = !locationDropdownOpen">
+              <button
+                class="location-trigger"
+                type="button"
+                @click="locationDropdownOpen = !locationDropdownOpen"
+              >
                 {{ $t(`catalog.locationLevel.${currentLevel}`) }}
               </button>
               <!-- Mobile: Teleport dropdown to body -->
               <Teleport to="body">
-                <div v-if="locationDropdownOpen" class="location-dropdown-mobile" @click="locationDropdownOpen = false">
+                <div
+                  v-if="locationDropdownOpen"
+                  class="location-dropdown-mobile"
+                  @click="locationDropdownOpen = false"
+                >
                   <div class="location-dropdown-mobile-content" @click.stop>
                     <div class="location-dropdown-mobile-header">
                       <span>{{ $t('catalog.location') }}</span>
-                      <button type="button" class="location-dropdown-close" @click="locationDropdownOpen = false">✕</button>
+                      <button
+                        type="button"
+                        class="location-dropdown-close"
+                        @click="locationDropdownOpen = false"
+                      >
+                        ✕
+                      </button>
                     </div>
                     <span class="filter-sublabel">{{ $t('catalog.locationYours') }}</span>
-                    <select class="filter-select-inline location-manual-input" :value="editCountry" @change="onCountrySelect($event)">
+                    <select
+                      class="filter-select-inline location-manual-input"
+                      :value="editCountry"
+                      @change="onCountrySelect($event)"
+                    >
                       <option value="">{{ $t('catalog.locationSelectCountry') }}</option>
-                      <option v-for="c in europeanCountriesData.priority" :key="c.code" :value="c.code">
+                      <option
+                        v-for="c in europeanCountriesData.priority"
+                        :key="c.code"
+                        :value="c.code"
+                      >
                         {{ c.flag }} {{ c.name }}
                       </option>
                       <option disabled>{{ $t('catalog.locationRestAlpha') }}</option>
@@ -73,7 +115,9 @@
                     <select
                       class="filter-select-inline location-range-select"
                       :value="currentLevel"
-                      @change="onLevelChange(($event.target as HTMLSelectElement).value as LocationLevel)"
+                      @change="
+                        onLevelChange(($event.target as HTMLSelectElement).value as LocationLevel)
+                      "
                     >
                       <option v-for="level in availableLevels" :key="level" :value="level">
                         {{ $t(`catalog.locationLevel.${level}`) }}
@@ -85,19 +129,16 @@
             </div>
           </div>
 
-          <!-- Price -->
-          <div class="filter-group filter-group-slider">
+          <!-- Price (button → popover) -->
+          <div class="filter-group filter-group-range-trigger">
             <span class="filter-label filter-label-price">€:</span>
-            <UiRangeSlider
-              :min="0"
-              :max="200000"
-              :step="500"
-              :model-min="priceMin"
-              :model-max="priceMax"
-              :format-label="formatPriceLabel"
-              @update:model-min="onPriceSliderMin"
-              @update:model-max="onPriceSliderMax"
-            />
+            <button
+              class="range-trigger"
+              type="button"
+              @click="pricePopoverOpen = !pricePopoverOpen"
+            >
+              {{ formatPriceLabel(priceMin ?? 0) }} – {{ formatPriceLabel(priceMax ?? 200000) }}
+            </button>
           </div>
 
           <!-- Brand -->
@@ -109,23 +150,28 @@
             </select>
           </div>
 
-          <!-- Year -->
-          <div class="filter-group filter-group-slider">
+          <!-- Year (button → popover) -->
+          <div class="filter-group filter-group-range-trigger">
             <span class="filter-label">{{ $t('catalog.year') }}:</span>
-            <UiRangeSlider
-              :min="2000"
-              :max="currentYear"
-              :step="1"
-              :model-min="yearMin"
-              :model-max="yearMax"
-              @update:model-min="onYearSliderMin"
-              @update:model-max="onYearSliderMax"
-            />
+            <button class="range-trigger" type="button" @click="yearPopoverOpen = !yearPopoverOpen">
+              {{ yearMin ?? 2000 }} – {{ yearMax ?? currentYear }}
+            </button>
           </div>
 
           <!-- Advanced filters button (only if dynamic filters exist for FilterBar) -->
-          <button v-if="filtersForFilterBar.length" class="filter-advanced-btn" @click="open = !open">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button
+            v-if="filtersForFilterBar.length"
+            class="filter-advanced-btn"
+            @click="open = !open"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <line x1="4" y1="6" x2="20" y2="6" />
               <line x1="4" y1="12" x2="16" y2="12" />
               <line x1="4" y1="18" x2="12" y2="18" />
@@ -145,6 +191,61 @@
       </div>
     </div>
 
+    <!-- MOBILE: Price popover (teleported to body) -->
+    <Teleport to="body">
+      <div v-if="pricePopoverOpen" class="range-dropdown-mobile" @click="pricePopoverOpen = false">
+        <div class="range-dropdown-mobile-content" @click.stop>
+          <div class="range-dropdown-mobile-header">
+            <span>{{ $t('catalog.priceRange') }}</span>
+            <button type="button" class="range-dropdown-close" @click="pricePopoverOpen = false">
+              &#10005;
+            </button>
+          </div>
+          <UiRangeSlider
+            :min="0"
+            :max="200000"
+            :step="500"
+            :model-min="priceMin"
+            :model-max="priceMax"
+            :format-label="formatPriceLabel"
+            @update:model-min="onPriceSliderMin"
+            @update:model-max="onPriceSliderMax"
+          />
+          <div class="range-dropdown-values">
+            <span>{{ formatPriceLabel(priceMin ?? 0) }}</span>
+            <span>{{ formatPriceLabel(priceMax ?? 200000) }}</span>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- MOBILE: Year popover (teleported to body) -->
+    <Teleport to="body">
+      <div v-if="yearPopoverOpen" class="range-dropdown-mobile" @click="yearPopoverOpen = false">
+        <div class="range-dropdown-mobile-content" @click.stop>
+          <div class="range-dropdown-mobile-header">
+            <span>{{ $t('catalog.yearRange') }}</span>
+            <button type="button" class="range-dropdown-close" @click="yearPopoverOpen = false">
+              &#10005;
+            </button>
+          </div>
+          <UiRangeSlider
+            :min="2000"
+            :max="currentYear"
+            :step="1"
+            :model-min="yearMin"
+            :model-max="yearMax"
+            @update:model-min="onYearSliderMin"
+            @update:model-max="onYearSliderMax"
+          />
+          <div class="range-dropdown-values">
+            <span>{{ yearMin ?? 2000 }}</span>
+            <span>{{ yearMax ?? currentYear }}</span>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <!-- MOBILE: Bottom sheet for dynamic/advanced filters -->
     <Transition name="fade">
       <div v-if="open" class="filter-backdrop" @click="open = false" />
@@ -160,9 +261,15 @@
             <div class="filter-sheet-item">
               <template v-if="filter.type === 'desplegable'">
                 <label class="filter-label">{{ filterLabel(filter) }}</label>
-                <select class="filter-select-mobile" :value="activeFilters[filter.name] || ''" @change="onSelectChange(filter.name, $event)">
+                <select
+                  class="filter-select-mobile"
+                  :value="activeFilters[filter.name] || ''"
+                  @change="onSelectChange(filter.name, $event)"
+                >
                   <option value="">—</option>
-                  <option v-for="opt in getOptions(filter)" :key="opt" :value="opt">{{ opt }}</option>
+                  <option v-for="opt in getOptions(filter)" :key="opt" :value="opt">
+                    {{ opt }}
+                  </option>
                 </select>
               </template>
 
@@ -170,7 +277,11 @@
                 <label class="filter-label">{{ filterLabel(filter) }}</label>
                 <div class="filter-checks">
                   <label v-for="opt in getOptions(filter)" :key="opt" class="filter-check">
-                    <input type="checkbox" :checked="isChecked(filter.name, opt)" @change="onCheckChange(filter.name, opt)">
+                    <input
+                      type="checkbox"
+                      :checked="isChecked(filter.name, opt)"
+                      @change="onCheckChange(filter.name, opt)"
+                    >
                     <span>{{ opt }}</span>
                   </label>
                 </div>
@@ -178,23 +289,51 @@
 
               <template v-else-if="filter.type === 'tick'">
                 <label class="filter-tick">
-                  <input type="checkbox" :checked="!!activeFilters[filter.name]" @change="onTickChange(filter.name)">
+                  <input
+                    type="checkbox"
+                    :checked="!!activeFilters[filter.name]"
+                    @change="onTickChange(filter.name)"
+                  >
                   <span>{{ filterLabel(filter) }}</span>
                 </label>
               </template>
 
               <template v-else-if="filter.type === 'slider' || filter.type === 'calc'">
-                <label class="filter-label">{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}</label>
+                <label class="filter-label"
+                  >{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}</label
+                >
                 <div class="filter-dual-range">
-                  <input type="number" class="filter-input-sm" :value="activeFilters[filter.name + '_min'] || ''" :min="getSliderMin(filter)" :max="getSliderMax(filter)" placeholder="Min" @change="onRangeChange(filter.name + '_min', $event)">
+                  <input
+                    type="number"
+                    class="filter-input-sm"
+                    :value="activeFilters[filter.name + '_min'] || ''"
+                    :min="getSliderMin(filter)"
+                    :max="getSliderMax(filter)"
+                    placeholder="Min"
+                    @change="onRangeChange(filter.name + '_min', $event)"
+                  >
                   <span class="filter-sep">—</span>
-                  <input type="number" class="filter-input-sm" :value="activeFilters[filter.name + '_max'] || ''" :min="getSliderMin(filter)" :max="getSliderMax(filter)" placeholder="Max" @change="onRangeChange(filter.name + '_max', $event)">
+                  <input
+                    type="number"
+                    class="filter-input-sm"
+                    :value="activeFilters[filter.name + '_max'] || ''"
+                    :min="getSliderMin(filter)"
+                    :max="getSliderMax(filter)"
+                    placeholder="Max"
+                    @change="onRangeChange(filter.name + '_max', $event)"
+                  >
                 </div>
               </template>
 
               <template v-else-if="filter.type === 'caja'">
                 <label class="filter-label">{{ filterLabel(filter) }}</label>
-                <input type="text" class="filter-input-mobile" :value="activeFilters[filter.name] || ''" :placeholder="filterLabel(filter)" @input="onTextInput(filter.name, $event)">
+                <input
+                  type="text"
+                  class="filter-input-mobile"
+                  :value="activeFilters[filter.name] || ''"
+                  :placeholder="filterLabel(filter)"
+                  @input="onTextInput(filter.name, $event)"
+                >
               </template>
             </div>
           </template>
@@ -228,7 +367,16 @@
             :title="$t('catalog.clearFilters')"
             @click="handleClearAll"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
               <path d="M3 3v5h5" />
             </svg>
@@ -239,15 +387,34 @@
           <!-- Static: Location -->
           <div class="filter-group filter-group-location">
             <span class="filter-label filter-label-icon-only">
-              <svg class="location-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="#C41E3A" stroke="#C41E3A" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" fill="white" /></svg>:
+              <svg
+                class="location-pin-icon"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="#C41E3A"
+                stroke="#C41E3A"
+                stroke-width="2"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" fill="white" /></svg
+              >:
             </span>
             <div class="location-dropdown-wrapper">
-              <button class="location-trigger" type="button" @click="locationDropdownOpen = !locationDropdownOpen">
+              <button
+                class="location-trigger"
+                type="button"
+                @click="locationDropdownOpen = !locationDropdownOpen"
+              >
                 {{ $t(`catalog.locationLevel.${currentLevel}`) }}
               </button>
               <div v-if="locationDropdownOpen" class="location-dropdown">
                 <span class="filter-sublabel">{{ $t('catalog.locationYours') }}</span>
-                <select class="filter-select-inline location-manual-input" :value="editCountry" @change="onCountrySelect($event)">
+                <select
+                  class="filter-select-inline location-manual-input"
+                  :value="editCountry"
+                  @change="onCountrySelect($event)"
+                >
                   <option value="">{{ $t('catalog.locationSelectCountry') }}</option>
                   <option v-for="c in europeanCountriesData.priority" :key="c.code" :value="c.code">
                     {{ c.flag }} {{ c.name }}
@@ -270,7 +437,9 @@
                 <select
                   class="filter-select-inline location-range-select"
                   :value="currentLevel"
-                  @change="onLevelChange(($event.target as HTMLSelectElement).value as LocationLevel)"
+                  @change="
+                    onLevelChange(($event.target as HTMLSelectElement).value as LocationLevel)
+                  "
                 >
                   <option v-for="level in availableLevels" :key="level" :value="level">
                     {{ $t(`catalog.locationLevel.${level}`) }}
@@ -318,14 +487,20 @@
             />
           </div>
 
-          <!-- Dynamic filters (only subcategory filters when no type selected) -->
+          <!-- Dynamic filters (only category filters when no subcategory selected) -->
           <template v-for="filter in filtersForFilterBar" :key="filter.id">
             <div class="filter-group">
               <template v-if="filter.type === 'desplegable'">
                 <span class="filter-label">{{ filterLabel(filter) }}:</span>
-                <select class="filter-select-inline" :value="activeFilters[filter.name] || ''" @change="onSelectChange(filter.name, $event)">
+                <select
+                  class="filter-select-inline"
+                  :value="activeFilters[filter.name] || ''"
+                  @change="onSelectChange(filter.name, $event)"
+                >
                   <option value="">—</option>
-                  <option v-for="opt in getOptions(filter)" :key="opt" :value="opt">{{ opt }}</option>
+                  <option v-for="opt in getOptions(filter)" :key="opt" :value="opt">
+                    {{ opt }}
+                  </option>
                 </select>
               </template>
 
@@ -333,7 +508,11 @@
                 <span class="filter-label">{{ filterLabel(filter) }}:</span>
                 <div class="filter-checks-inline">
                   <label v-for="opt in getOptions(filter)" :key="opt" class="cb">
-                    <input type="checkbox" :checked="isChecked(filter.name, opt)" @change="onCheckChange(filter.name, opt)">
+                    <input
+                      type="checkbox"
+                      :checked="isChecked(filter.name, opt)"
+                      @change="onCheckChange(filter.name, opt)"
+                    >
                     <span>{{ opt }}</span>
                   </label>
                 </div>
@@ -341,13 +520,19 @@
 
               <template v-else-if="filter.type === 'tick'">
                 <label class="cb">
-                  <input type="checkbox" :checked="!!activeFilters[filter.name]" @change="onTickChange(filter.name)">
+                  <input
+                    type="checkbox"
+                    :checked="!!activeFilters[filter.name]"
+                    @change="onTickChange(filter.name)"
+                  >
                   <span>{{ filterLabel(filter) }}</span>
                 </label>
               </template>
 
               <template v-else-if="filter.type === 'slider' || filter.type === 'calc'">
-                <span class="filter-label">{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}:</span>
+                <span class="filter-label"
+                  >{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}:</span
+                >
                 <div class="filter-range-inputs">
                   <input
                     type="number"
@@ -401,10 +586,16 @@
 </template>
 
 <script setup lang="ts">
-import type { FilterDefinition } from '~/composables/useFilters'
+import type { AttributeDefinition } from '~/composables/useFilters'
 import type { Vehicle } from '~/composables/useVehicles'
 import type { LocationLevel } from '~/utils/geoData'
-import { getAvailableLevels, getDefaultLevel, getSortedEuropeanCountries, getSortedProvinces, PROVINCE_TO_REGION } from '~/utils/geoData'
+import {
+  getAvailableLevels,
+  getDefaultLevel,
+  getSortedEuropeanCountries,
+  getSortedProvinces,
+  PROVINCE_TO_REGION,
+} from '~/utils/geoData'
 
 const props = defineProps<{
   vehicles?: readonly Vehicle[]
@@ -416,18 +607,25 @@ const emit = defineEmits<{
 
 const { locale } = useI18n()
 const { visibleFilters, activeFilters, setFilter, clearFilter, clearAll } = useFilters()
-const { updateFilters, filters, locationLevel, setLocationLevel, activeTypeId, setSubcategory, setType } = useCatalogState()
+const {
+  updateFilters,
+  filters,
+  locationLevel,
+  setLocationLevel,
+  activeSubcategoryId,
+  setCategory,
+  setSubcategory,
+} = useCatalogState()
 const { location: userLocation, detect: detectLocation, setManualLocation } = useUserLocation()
 
 const open = ref(false)
 const locationDropdownOpen = ref(false)
+const pricePopoverOpen = ref(false)
+const yearPopoverOpen = ref(false)
 
 // Location
 
-
-const availableLevels = computed(() =>
-  getAvailableLevels(userLocation.value.country),
-)
+const availableLevels = computed(() => getAvailableLevels(userLocation.value.country))
 
 // Initialize with stored level or default based on country
 const selectedLevel = ref<LocationLevel>((locationLevel.value as LocationLevel) || 'nacional')
@@ -451,22 +649,26 @@ const europeanCountriesData = computed(() => getSortedEuropeanCountries(locale.v
 const provinces = computed(() => getSortedProvinces())
 
 // Watch for location detection to update edit fields and set default level
-watch(() => userLocation.value, (newLoc) => {
-  if (newLoc.country && !editCountry.value) {
-    editCountry.value = newLoc.country
-  }
-  if (newLoc.province && !editProvince.value) {
-    editProvince.value = newLoc.province
-  }
-  // Set default level based on detected country (only if not manually changed)
-  if (newLoc.source && selectedLevel.value === 'nacional') {
-    const defaultLevel = getDefaultLevel(newLoc.country)
-    if (defaultLevel !== 'nacional') {
-      selectedLevel.value = defaultLevel
-      setLocationLevel(defaultLevel, newLoc.country, null, null)
+watch(
+  () => userLocation.value,
+  (newLoc) => {
+    if (newLoc.country && !editCountry.value) {
+      editCountry.value = newLoc.country
     }
-  }
-}, { deep: true })
+    if (newLoc.province && !editProvince.value) {
+      editProvince.value = newLoc.province
+    }
+    // Set default level based on detected country (only if not manually changed)
+    if (newLoc.source && selectedLevel.value === 'nacional') {
+      const defaultLevel = getDefaultLevel(newLoc.country)
+      if (defaultLevel !== 'nacional') {
+        selectedLevel.value = defaultLevel
+        setLocationLevel(defaultLevel, newLoc.country, null, null)
+      }
+    }
+  },
+  { deep: true },
+)
 
 function onCountrySelect(e: Event) {
   const code = (e.target as HTMLSelectElement).value
@@ -491,8 +693,7 @@ function onProvinceSelect(e: Event) {
     selectedLevel.value = 'provincia'
     setLocationLevel('provincia', 'ES', prov, region)
     emit('change')
-  }
-  else {
+  } else {
     // Province deselected - if range is smaller than nacional, upgrade to nacional
     const subNationalLevels: LocationLevel[] = ['provincia', 'comunidad', 'limitrofes']
     if (subNationalLevels.includes(selectedLevel.value)) {
@@ -551,18 +752,18 @@ const totalActiveCount = computed(() => {
 
 const dynamicActiveCount = computed(() => Object.keys(activeFilters.value).length)
 
-// Filters to show in FilterBar: only when NO type is selected
-// When type is selected, filters go in SubcategoryBar
+// Filters to show in FilterBar: only when NO subcategory is selected
+// When subcategory is selected, filters go in SubcategoryBar
 const filtersForFilterBar = computed(() => {
-  if (activeTypeId.value) {
-    // Type is selected → filters are shown in SubcategoryBar, not here
+  if (activeSubcategoryId.value) {
+    // Subcategory is selected → filters are shown in SubcategoryBar, not here
     return []
   }
-  // Only subcategory selected (or nothing) → show subcategory filters here (without separator)
-  return visibleFilters.value.filter(f => f.source === 'subcategory')
+  // Only category selected (or nothing) → show category filters here (without separator)
+  return visibleFilters.value.filter((f) => f.source === 'category')
 })
 
-// Note: firstTypeFilterIndex removed - type filters now go in SubcategoryBar
+// Note: firstSubcategoryFilterIndex removed - subcategory filters now go in SubcategoryBar
 
 // Mobile scroll
 const mobileScrollContainer = ref<HTMLElement | null>(null)
@@ -618,23 +819,23 @@ function onBrandChange(e: Event) {
 }
 
 // Dynamic filter helpers
-function filterLabel(filter: FilterDefinition): string {
+function filterLabel(filter: AttributeDefinition): string {
   if (locale.value === 'en' && filter.label_en) return filter.label_en
   return filter.label_es || filter.name
 }
 
-function getOptions(filter: FilterDefinition): string[] {
+function getOptions(filter: AttributeDefinition): string[] {
   const opts = filter.options
   if (Array.isArray(opts?.values)) return opts.values as string[]
   if (Array.isArray(opts)) return opts as string[]
   return []
 }
 
-function getSliderMin(filter: FilterDefinition): number {
+function getSliderMin(filter: AttributeDefinition): number {
   return (filter.options?.min as number) || 0
 }
 
-function getSliderMax(filter: FilterDefinition): number {
+function getSliderMax(filter: AttributeDefinition): number {
   return (filter.options?.max as number) || 100
 }
 
@@ -649,11 +850,10 @@ function onCheckChange(name: string, option: string) {
   const current = (activeFilters.value[name] as string[]) || []
   const index = current.indexOf(option)
   if (index >= 0) {
-    const next = current.filter(v => v !== option)
+    const next = current.filter((v) => v !== option)
     if (next.length) setFilter(name, next)
     else clearFilter(name)
-  }
-  else {
+  } else {
     setFilter(name, [...current, option])
   }
   emit('change')
@@ -686,10 +886,21 @@ function onTextInput(name: string, event: Event) {
 
 function handleClearAll() {
   clearAll()
-  // Clear subcategory and type selections
+  // Clear category and subcategory selections
+  setCategory(null, null)
   setSubcategory(null, null)
-  setType(null, null)
-  updateFilters({ price_min: undefined, price_max: undefined, year_min: undefined, year_max: undefined, brand: undefined, location_countries: undefined, location_regions: undefined, location_province_eq: undefined, subcategory_id: undefined, type_id: undefined })
+  updateFilters({
+    price_min: undefined,
+    price_max: undefined,
+    year_min: undefined,
+    year_max: undefined,
+    brand: undefined,
+    location_countries: undefined,
+    location_regions: undefined,
+    location_province_eq: undefined,
+    category_id: undefined,
+    subcategory_id: undefined,
+  })
   // Reset to Nacional (default for Spain)
   setLocationLevel('nacional', 'ES', null, null)
   selectedLevel.value = 'nacional'
@@ -756,8 +967,7 @@ function onGrabEnd() {
 watch(open, (val) => {
   if (val) {
     document.body.style.overflow = 'hidden'
-  }
-  else {
+  } else {
     document.body.style.overflow = ''
   }
 })
@@ -847,6 +1057,33 @@ onUnmounted(() => {
   min-width: 140px;
 }
 
+.filters-mobile-wrapper .filter-group-range-trigger {
+  min-width: auto;
+}
+
+.range-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.4rem;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-height: auto;
+  min-width: auto;
+}
+
+.range-trigger:hover,
+.range-trigger:focus {
+  border-color: var(--color-primary);
+}
+
 .filters-mobile-wrapper .filter-range-inputs {
   display: flex;
   align-items: center;
@@ -914,7 +1151,6 @@ onUnmounted(() => {
   min-width: auto;
   white-space: nowrap;
 }
-
 
 .filters-mobile-wrapper .location-manual-input {
   width: 100%;
@@ -1070,7 +1306,7 @@ onUnmounted(() => {
 }
 
 .type-filter-separator-mobile span:first-child {
-  color: var(--text-secondary, #6B7280);
+  color: var(--text-secondary, #6b7280);
   font-size: 14px;
   font-weight: 600;
 }
@@ -1559,7 +1795,7 @@ onUnmounted(() => {
 
   /* Type filter separator */
   .type-filter-separator {
-    color: var(--text-secondary, #6B7280);
+    color: var(--text-secondary, #6b7280);
     font-size: 14px;
     font-weight: 600;
     padding: 0 0.5rem;
@@ -1715,7 +1951,7 @@ onUnmounted(() => {
 
 .location-dropdown-mobile-content {
   background: #fff;
-  border: 2px solid #23424A;
+  border: 2px solid #23424a;
   border-radius: 12px;
   padding: 1rem;
   width: calc(100% - 2rem);
@@ -1731,7 +1967,7 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
-  color: #23424A;
+  color: #23424a;
   margin-bottom: 0.25rem;
   font-size: 14px;
 }
@@ -1778,9 +2014,87 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
+/* Mobile range popovers — teleported to body */
+.range-dropdown-mobile {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 120px;
+}
+
+.range-dropdown-mobile-content {
+  background: #fff;
+  border: 2px solid #23424a;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  width: calc(100% - 2rem);
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.range-dropdown-mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #23424a;
+  margin-bottom: 0.25rem;
+  font-size: 14px;
+}
+
+.range-dropdown-close {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.range-dropdown-values {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  color: #23424a;
+  padding: 0.25rem 0;
+}
+
+/* Larger slider inside popover for touch comfort */
+.range-dropdown-mobile-content .range-slider {
+  padding: 0.5rem 0;
+}
+
+.range-dropdown-mobile-content .range-slider__track-container {
+  height: 40px;
+}
+
+.range-dropdown-mobile-content .range-slider__val {
+  font-size: 0;
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
 /* Hide on desktop */
 @media (min-width: 768px) {
   .location-dropdown-mobile {
+    display: none !important;
+  }
+  .range-dropdown-mobile {
     display: none !important;
   }
 }

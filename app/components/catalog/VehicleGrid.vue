@@ -13,7 +13,10 @@
     </div>
 
     <!-- Vehicle table (list view) -->
-    <CatalogVehicleTable v-else-if="displayedVehicles.length && viewMode === 'list'" :vehicles="displayedVehicles" />
+    <CatalogVehicleTable
+      v-else-if="displayedVehicles.length && viewMode === 'list'"
+      :vehicles="displayedVehicles"
+    />
 
     <!-- Vehicle grid -->
     <div v-else-if="displayedVehicles.length" class="vehicle-grid">
@@ -26,7 +29,14 @@
 
     <!-- Empty state -->
     <div v-else class="empty-state">
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <svg
+        width="64"
+        height="64"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+      >
         <circle cx="11" cy="11" r="8" />
         <line x1="21" y1="21" x2="16.65" y2="16.65" />
       </svg>
@@ -38,11 +48,7 @@
 
     <!-- Load more -->
     <div v-if="hasMore && vehicles.length" class="load-more">
-      <button
-        class="load-more-btn"
-        :disabled="loadingMore"
-        @click="$emit('loadMore')"
-      >
+      <button class="load-more-btn" :disabled="loadingMore" @click="$emit('loadMore')">
         {{ loadingMore ? $t('common.loading') : $t('catalog.loadMore') }}
       </button>
     </div>
@@ -74,7 +80,7 @@ const displayedVehicles = computed(() => {
 
   // Filter by favorites
   if (favoritesOnly.value) {
-    result = result.filter(v => isFavorite(v.id))
+    result = result.filter((v) => isFavorite(v.id))
   }
 
   // Fuzzy search client-side
@@ -82,17 +88,19 @@ const displayedVehicles = computed(() => {
   if (q) {
     result = result.filter((v) => {
       const description = locale.value === 'en' ? v.description_en : v.description_es
-      const sub = v.types?.type_subcategories?.[0]?.subcategories
+      const cat = v.subcategories?.subcategory_categories?.[0]?.categories
       const searchable = [
-        sub?.name_es,
-        sub?.name_en,
-        v.types?.name_es,
-        v.types?.name_en,
+        cat?.name_es,
+        cat?.name_en,
+        v.subcategories?.name_es,
+        v.subcategories?.name_en,
         v.brand,
         v.model,
         v.location,
         description,
-      ].filter(Boolean).join(' ')
+      ]
+        .filter(Boolean)
+        .join(' ')
       return fuzzyMatch(searchable, q)
     })
   }
@@ -137,13 +145,24 @@ const displayedVehicles = computed(() => {
   animation: pulse 1.5s ease-in-out infinite;
 }
 
-.skeleton-line.wide { width: 80%; }
-.skeleton-line.medium { width: 50%; }
-.skeleton-line.short { width: 30%; }
+.skeleton-line.wide {
+  width: 80%;
+}
+.skeleton-line.medium {
+  width: 50%;
+}
+.skeleton-line.short {
+  width: 30%;
+}
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Empty state */

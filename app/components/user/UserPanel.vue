@@ -46,8 +46,12 @@ const profileSaving = ref(false)
 const profileMessage = ref<{ type: 'success' | 'error'; text: string } | null>(null)
 
 // User's demands & advertisements
-const userDemands = ref<Array<{ id: string; vehicle_type: string; status: string; created_at: string }>>([])
-const userAds = ref<Array<{ id: string; brand: string; model: string; status: string; created_at: string }>>([])
+const userDemands = ref<
+  Array<{ id: string; vehicle_type: string; status: string; created_at: string }>
+>([])
+const userAds = ref<
+  Array<{ id: string; brand: string; model: string; status: string; created_at: string }>
+>([])
 const demandsLoading = ref(false)
 const adsLoading = ref(false)
 
@@ -58,10 +62,12 @@ const chatContainer = ref<HTMLElement | null>(null)
 // User display info
 const userDisplayName = computed(() => {
   if (!user.value) return ''
-  return user.value.user_metadata?.pseudonimo
-    || user.value.user_metadata?.name
-    || user.value.email?.split('@')[0]
-    || ''
+  return (
+    user.value.user_metadata?.pseudonimo ||
+    user.value.user_metadata?.name ||
+    user.value.email?.split('@')[0] ||
+    ''
+  )
 })
 
 const userEmail = computed(() => user.value?.email || '')
@@ -111,8 +117,11 @@ async function loadDemands() {
       .eq('user_id', user.value.id)
       .order('created_at', { ascending: false })
     userDemands.value = data || []
-  } catch { /* ignore */ }
-  finally { demandsLoading.value = false }
+  } catch {
+    /* ignore */
+  } finally {
+    demandsLoading.value = false
+  }
 }
 
 // Load user's advertisements
@@ -126,8 +135,11 @@ async function loadAds() {
       .eq('user_id', user.value.id)
       .order('created_at', { ascending: false })
     userAds.value = data || []
-  } catch { /* ignore */ }
-  finally { adsLoading.value = false }
+  } catch {
+    /* ignore */
+  } finally {
+    adsLoading.value = false
+  }
 }
 
 // Scroll chat to bottom
@@ -170,14 +182,12 @@ async function saveProfile() {
     if (error) throw error
 
     profileMessage.value = { type: 'success', text: t('user.profileSaved') }
-  }
-  catch (err) {
+  } catch (err) {
     profileMessage.value = {
       type: 'error',
       text: err instanceof Error ? err.message : 'Error',
     }
-  }
-  finally {
+  } finally {
     profileSaving.value = false
   }
 }
@@ -187,20 +197,80 @@ async function saveSubscriptions() {
   if (!user.value) return
 
   try {
-    await supabase
-      .from('subscriptions')
-      .upsert({
-        email: user.value.email,
-        pref_web: subscriptions.value.web,
-        pref_press: subscriptions.value.prensa,
-        pref_newsletter: subscriptions.value.boletines,
-        pref_featured: subscriptions.value.destacados,
-        pref_events: subscriptions.value.eventos,
-        pref_csr: subscriptions.value.rsc,
-      })
-  }
-  catch (err) {
+    await supabase.from('subscriptions').upsert({
+      email: user.value.email,
+      pref_web: subscriptions.value.web,
+      pref_press: subscriptions.value.prensa,
+      pref_newsletter: subscriptions.value.boletines,
+      pref_featured: subscriptions.value.destacados,
+      pref_events: subscriptions.value.eventos,
+      pref_csr: subscriptions.value.rsc,
+    })
+  } catch (err) {
     console.error('Error saving subscriptions:', err)
+  }
+}
+
+// ── GDPR: Data export & Account deletion ─────────────────────────────────────
+const exportLoading = ref(false)
+const deleteModalOpen = ref(false)
+const deleteConfirmText = ref('')
+const deleteLoading = ref(false)
+const deleteError = ref<string | null>(null)
+
+/** Export all user data as JSON download */
+async function handleExportData() {
+  if (exportLoading.value) return
+  exportLoading.value = true
+  try {
+    const response = await $fetch<Blob>('/api/account/export', {
+      method: 'GET',
+      responseType: 'blob',
+    })
+    const url = URL.createObjectURL(response)
+    const link = document.createElement('a')
+    const dateStr = new Date().toISOString().slice(0, 10)
+    link.href = url
+    link.download = `tracciona-data-export-${dateStr}.json`
+    link.click()
+    URL.revokeObjectURL(url)
+  } catch {
+    // Silently fail — the user will see no download
+  } finally {
+    exportLoading.value = false
+  }
+}
+
+/** Open the delete account confirmation modal */
+function openDeleteModal() {
+  deleteConfirmText.value = ''
+  deleteError.value = null
+  deleteModalOpen.value = true
+}
+
+/** Handle account deletion after confirmation */
+async function handleDeleteAccount() {
+  if (deleteConfirmText.value !== 'ELIMINAR') {
+    deleteError.value = t('gdpr.deleteConfirmError')
+    return
+  }
+
+  deleteLoading.value = true
+  deleteError.value = null
+
+  try {
+    await $fetch('/api/account/delete', {
+      method: 'POST',
+      headers: { 'x-requested-with': 'XMLHttpRequest' },
+    })
+    deleteModalOpen.value = false
+    emit('update:modelValue', false)
+    // Force reload to clear any cached session state
+    window.location.href = '/'
+  } catch {
+    deleteError.value = t('gdpr.deleteError')
+  } finally {
+    deleteLoading.value = false
   }
 }
 
@@ -211,42 +281,45 @@ async function handleLogout() {
 }
 
 // Load profile data when panel opens
-watch(() => props.modelValue, async (isOpen) => {
-  if (isOpen && user.value) {
-    // Load user profile
-    const { data } = await supabase
-      .from('users')
-      .select('pseudonimo, name, apellidos, phone, email')
-      .eq('id', user.value.id)
-      .single()
+watch(
+  () => props.modelValue,
+  async (isOpen) => {
+    if (isOpen && user.value) {
+      // Load user profile
+      const { data } = await supabase
+        .from('users')
+        .select('pseudonimo, name, apellidos, phone, email')
+        .eq('id', user.value.id)
+        .single()
 
-    if (data) {
-      profileForm.value.pseudonimo = data.pseudonimo || ''
-      profileForm.value.name = data.name || ''
-      profileForm.value.apellidos = data.apellidos || ''
-      profileForm.value.telefono = data.phone || ''
-      profileForm.value.email = data.email || user.value.email || ''
-    }
+      if (data) {
+        profileForm.value.pseudonimo = data.pseudonimo || ''
+        profileForm.value.name = data.name || ''
+        profileForm.value.apellidos = data.apellidos || ''
+        profileForm.value.telefono = data.phone || ''
+        profileForm.value.email = data.email || user.value.email || ''
+      }
 
-    // Load subscriptions
-    const { data: subData } = await supabase
-      .from('subscriptions')
-      .select('pref_web, pref_press, pref_newsletter, pref_featured, pref_events, pref_csr')
-      .eq('email', user.value.email)
-      .single()
+      // Load subscriptions
+      const { data: subData } = await supabase
+        .from('subscriptions')
+        .select('pref_web, pref_press, pref_newsletter, pref_featured, pref_events, pref_csr')
+        .eq('email', user.value.email)
+        .single()
 
-    if (subData) {
-      subscriptions.value = {
-        web: subData.pref_web || false,
-        prensa: subData.pref_press || false,
-        boletines: subData.pref_newsletter || false,
-        destacados: subData.pref_featured || false,
-        eventos: subData.pref_events || false,
-        rsc: subData.pref_csr || false,
+      if (subData) {
+        subscriptions.value = {
+          web: subData.pref_web || false,
+          prensa: subData.pref_press || false,
+          boletines: subData.pref_newsletter || false,
+          destacados: subData.pref_featured || false,
+          eventos: subData.pref_events || false,
+          rsc: subData.pref_csr || false,
+        }
       }
     }
-  }
-})
+  },
+)
 
 // Close on escape
 function handleKeydown(e: KeyboardEvent) {
@@ -274,9 +347,7 @@ onUnmounted(() => {
         <!-- Panel -->
         <aside class="user-panel">
           <!-- Close button -->
-          <button class="panel-close" @click="emit('update:modelValue', false)">
-            &times;
-          </button>
+          <button class="panel-close" @click="emit('update:modelValue', false)">&times;</button>
 
           <!-- Header -->
           <div class="panel-header">
@@ -305,28 +376,32 @@ onUnmounted(() => {
                 <div v-if="activeSection === 'perfil'" class="section-content">
                   <div class="form-field">
                     <label>{{ t('user.pseudonym') }}</label>
-                    <input v-model="profileForm.pseudonimo" type="text">
+                    <input v-model="profileForm.pseudonimo" type="text" >
                   </div>
                   <div class="form-field">
                     <label>{{ t('user.fullName') }}</label>
                     <div class="form-row">
-                      <input v-model="profileForm.name" type="text" :placeholder="t('user.name')">
-                      <input v-model="profileForm.apellidos" type="text" :placeholder="t('user.surname')">
+                      <input v-model="profileForm.name" type="text" :placeholder="t('user.name')" >
+                      <input
+                        v-model="profileForm.apellidos"
+                        type="text"
+                        :placeholder="t('user.surname')"
+                      >
                     </div>
                   </div>
                   <div class="form-field">
                     <label>{{ t('user.phone') }}</label>
-                    <input v-model="profileForm.telefono" type="tel" placeholder="+34 600 000 000">
+                    <input
+                      v-model="profileForm.telefono"
+                      type="tel"
+                      placeholder="+34 600 000 000"
+                    >
                   </div>
                   <div class="form-field">
                     <label>{{ t('user.email') }}</label>
-                    <input v-model="profileForm.email" type="email">
+                    <input v-model="profileForm.email" type="email" >
                   </div>
-                  <button
-                    class="btn-primary"
-                    :disabled="profileSaving"
-                    @click="saveProfile"
-                  >
+                  <button class="btn-primary" :disabled="profileSaving" @click="saveProfile">
                     {{ profileSaving ? '...' : t('user.saveChanges') }}
                   </button>
                   <div v-if="profileMessage" :class="['form-message', profileMessage.type]">
@@ -352,9 +427,7 @@ onUnmounted(() => {
               <Transition name="accordion">
                 <div v-if="activeSection === 'chat'" class="section-content">
                   <div ref="chatContainer" class="chat-messages">
-                    <div v-if="chatLoading" class="chat-loading">
-                      {{ t('common.loading') }}...
-                    </div>
+                    <div v-if="chatLoading" class="chat-loading">{{ t('common.loading') }}...</div>
                     <div v-else-if="chatMessages.length === 0" class="chat-empty">
                       {{ t('user.noMessages') }}
                     </div>
@@ -362,7 +435,10 @@ onUnmounted(() => {
                       <div
                         v-for="msg in chatMessages"
                         :key="msg.id"
-                        :class="['chat-message', msg.direction === 'user_to_admin' ? 'sent' : 'received']"
+                        :class="[
+                          'chat-message',
+                          msg.direction === 'user_to_admin' ? 'sent' : 'received',
+                        ]"
                       >
                         <div class="message-content">
                           {{ msg.content }}
@@ -454,7 +530,9 @@ onUnmounted(() => {
                     <div v-for="demand in userDemands" :key="demand.id" class="item-card">
                       <div class="item-info">
                         <span class="item-title">{{ demand.vehicle_type }}</span>
-                        <span class="item-date">{{ new Date(demand.created_at).toLocaleDateString() }}</span>
+                        <span class="item-date">{{
+                          new Date(demand.created_at).toLocaleDateString()
+                        }}</span>
                       </div>
                       <span :class="['status-badge', demand.status]">{{ demand.status }}</span>
                     </div>
@@ -485,7 +563,9 @@ onUnmounted(() => {
                     <div v-for="ad in userAds" :key="ad.id" class="item-card">
                       <div class="item-info">
                         <span class="item-title">{{ ad.brand }} {{ ad.model }}</span>
-                        <span class="item-date">{{ new Date(ad.created_at).toLocaleDateString() }}</span>
+                        <span class="item-date">{{
+                          new Date(ad.created_at).toLocaleDateString()
+                        }}</span>
                       </div>
                       <span :class="['status-badge', ad.status]">{{ ad.status }}</span>
                     </div>
@@ -524,7 +604,9 @@ onUnmounted(() => {
                 @click="toggleSection('suscripciones')"
               >
                 <span>{{ t('user.subscriptions') }}</span>
-                <span class="section-arrow">{{ activeSection === 'suscripciones' ? '▲' : '▼' }}</span>
+                <span class="section-arrow">{{
+                  activeSection === 'suscripciones' ? '▲' : '▼'
+                }}</span>
               </button>
               <Transition name="accordion">
                 <div v-if="activeSection === 'suscripciones'" class="section-content">
@@ -580,6 +662,40 @@ onUnmounted(() => {
                 </div>
               </Transition>
             </div>
+
+            <!-- GDPR: DANGER ZONE -->
+            <div class="panel-section panel-section--danger">
+              <button
+                class="section-header section-header--danger"
+                :class="{ active: activeSection === 'danger' }"
+                @click="toggleSection('danger')"
+              >
+                <span>{{ t('gdpr.dangerZone') }}</span>
+                <span class="section-arrow">{{
+                  activeSection === 'danger' ? '&#9650;' : '&#9660;'
+                }}</span>
+              </button>
+              <Transition name="accordion">
+                <div
+                  v-if="activeSection === 'danger'"
+                  class="section-content section-content--danger"
+                >
+                  <p class="section-info">
+                    {{ t('gdpr.dangerZoneDesc') }}
+                  </p>
+
+                  <!-- Export data -->
+                  <button class="btn-export" :disabled="exportLoading" @click="handleExportData">
+                    {{ exportLoading ? t('common.loading') : t('gdpr.exportData') }}
+                  </button>
+
+                  <!-- Delete account -->
+                  <button class="btn-delete-account" @click="openDeleteModal">
+                    {{ t('gdpr.deleteAccount') }}
+                  </button>
+                </div>
+              </Transition>
+            </div>
           </div>
 
           <!-- Footer -->
@@ -589,6 +705,49 @@ onUnmounted(() => {
             </button>
           </div>
         </aside>
+
+        <!-- Delete Account Confirmation Modal -->
+        <Transition name="modal-fade">
+          <div
+            v-if="deleteModalOpen"
+            class="delete-modal-overlay"
+            @click.self="deleteModalOpen = false"
+          >
+            <div class="delete-modal" role="dialog" :aria-label="t('gdpr.deleteAccountTitle')">
+              <h3 class="delete-modal__title">{{ t('gdpr.deleteAccountTitle') }}</h3>
+              <p class="delete-modal__warning">{{ t('gdpr.deleteAccountWarning') }}</p>
+              <p class="delete-modal__instruction">{{ t('gdpr.deleteConfirmInstruction') }}</p>
+
+              <input
+                v-model="deleteConfirmText"
+                type="text"
+                class="delete-modal__input"
+                placeholder="ELIMINAR"
+                autocomplete="off"
+              >
+
+              <div v-if="deleteError" class="delete-modal__error">
+                {{ deleteError }}
+              </div>
+
+              <div class="delete-modal__actions">
+                <button
+                  class="delete-modal__btn delete-modal__btn--cancel"
+                  @click="deleteModalOpen = false"
+                >
+                  {{ t('common.cancel') }}
+                </button>
+                <button
+                  class="delete-modal__btn delete-modal__btn--confirm"
+                  :disabled="deleteLoading || deleteConfirmText !== 'ELIMINAR'"
+                  @click="handleDeleteAccount"
+                >
+                  {{ deleteLoading ? t('common.loading') : t('gdpr.confirmDelete') }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </Transition>
       </div>
     </Transition>
   </Teleport>
@@ -651,7 +810,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 16px;
   padding: 24px 20px;
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
 }
 
@@ -857,7 +1016,7 @@ onUnmounted(() => {
 
 .btn-send {
   padding: 10px 16px;
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   border-radius: 8px;
@@ -974,7 +1133,7 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
-.checkbox-label input[type="checkbox"] {
+.checkbox-label input[type='checkbox'] {
   width: 18px;
   height: 18px;
   cursor: pointer;
@@ -984,7 +1143,7 @@ onUnmounted(() => {
 .btn-primary {
   width: 100%;
   padding: 12px;
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   border-radius: 8px;
@@ -1067,6 +1226,174 @@ onUnmounted(() => {
   max-height: 0;
   padding-top: 0;
   padding-bottom: 0;
+}
+
+/* ---- GDPR Danger Zone ---- */
+.panel-section--danger {
+  border-bottom: none;
+}
+
+.section-header--danger {
+  color: #dc2626;
+}
+
+.section-header--danger:hover {
+  background: #fef2f2;
+}
+
+.section-content--danger {
+  background: #fef2f2;
+  border-top: 1px solid #fecaca;
+}
+
+.btn-export {
+  width: 100%;
+  padding: 12px;
+  background: var(--color-primary, #23424a);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 8px;
+  min-height: 44px;
+}
+
+.btn-export:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-delete-account {
+  width: 100%;
+  padding: 12px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 44px;
+  transition: background 0.15s;
+}
+
+.btn-delete-account:hover {
+  background: #b91c1c;
+}
+
+/* ---- Delete Confirmation Modal ---- */
+.delete-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 16px;
+}
+
+.delete-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+.delete-modal__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #dc2626;
+  margin: 0 0 12px 0;
+}
+
+.delete-modal__warning {
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.delete-modal__instruction {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 0 12px 0;
+}
+
+.delete-modal__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  min-height: 44px;
+}
+
+.delete-modal__input:focus {
+  outline: none;
+  border-color: #dc2626;
+}
+
+.delete-modal__error {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.delete-modal__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.delete-modal__btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 44px;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.delete-modal__btn--cancel {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.delete-modal__btn--cancel:hover {
+  background: #e0e0e0;
+}
+
+.delete-modal__btn--confirm {
+  background: #dc2626;
+  color: white;
+}
+
+.delete-modal__btn--confirm:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.delete-modal__btn--confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Modal transitions */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
 }
 
 /* Mobile */

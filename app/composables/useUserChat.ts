@@ -52,13 +52,11 @@ export function useUserChat() {
 
       // Count unread messages from admin
       unreadCount.value = messages.value.filter(
-        m => m.direction === 'admin_to_user' && !m.is_read
+        (m) => m.direction === 'admin_to_user' && !m.is_read,
       ).length
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error loading messages'
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -91,12 +89,10 @@ export function useUserChat() {
       }
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error sending message'
       return false
-    }
-    finally {
+    } finally {
       sending.value = false
     }
   }
@@ -122,9 +118,8 @@ export function useUserChat() {
         }
       }
       unreadCount.value = 0
-    }
-    catch (err) {
-      console.error('Error marking messages as read:', err)
+    } catch {
+      // Silently handle — non-critical operation
     }
   }
 
@@ -150,7 +145,7 @@ export function useUserChat() {
           const newMessage = payload.new as ChatMessage
 
           // Avoid duplicates
-          if (!messages.value.find(m => m.id === newMessage.id)) {
+          if (!messages.value.find((m) => m.id === newMessage.id)) {
             messages.value.push(newMessage)
 
             if (newMessage.direction === 'admin_to_user' && !newMessage.is_read) {
@@ -183,14 +178,11 @@ export function useUserChat() {
 
     if (diffDays === 0) {
       return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-    }
-    else if (diffDays === 1) {
+    } else if (diffDays === 1) {
       return 'Ayer'
-    }
-    else if (diffDays < 7) {
+    } else if (diffDays < 7) {
       return date.toLocaleDateString('es-ES', { weekday: 'short' })
-    }
-    else {
+    } else {
       return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })
     }
   }

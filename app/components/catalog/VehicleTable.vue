@@ -20,7 +20,14 @@
                 :title="$t('catalog.exportPdf')"
                 @click="onPdfHeaderClick"
               >
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="7 10 12 15 17 10" />
                   <line x1="12" y1="15" x2="12" y2="3" />
@@ -35,11 +42,7 @@
             >
               {{ $t('vehicle.category') }}
             </th>
-            <th
-              class="col-price sortable"
-              :class="sortClass('price')"
-              @click="toggleSort('price')"
-            >
+            <th class="col-price sortable" :class="sortClass('price')" @click="toggleSort('price')">
               {{ $t('catalog.price') }}
             </th>
             <th
@@ -49,11 +52,7 @@
             >
               {{ $t('catalog.product') }}
             </th>
-            <th
-              class="col-year sortable"
-              :class="sortClass('year')"
-              @click="toggleSort('year')"
-            >
+            <th class="col-year sortable" :class="sortClass('year')" @click="toggleSort('year')">
               {{ $t('catalog.year') }}
             </th>
             <th
@@ -113,7 +112,14 @@
                 class="table-image"
               >
               <div v-else class="table-image-placeholder">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                >
                   <rect x="3" y="3" width="18" height="18" rx="2" />
                   <circle cx="8.5" cy="8.5" r="1.5" />
                   <path d="m21 15-5-5L5 21" />
@@ -131,12 +137,23 @@
             <td class="col-product">{{ buildProductName(vehicle, locale) }}</td>
             <td class="col-year">{{ vehicle.year ?? '—' }}</td>
             <td v-if="showVolumeCol" class="col-volume">{{ volumeText(vehicle) }}</td>
-            <td v-if="showCompartmentsCol" class="col-compartments">{{ compartmentsText(vehicle) }}</td>
+            <td v-if="showCompartmentsCol" class="col-compartments">
+              {{ compartmentsText(vehicle) }}
+            </td>
             <td v-if="showPowerCol" class="col-power">{{ powerText(vehicle) }}</td>
             <td class="col-location">
               <span class="location-cell">
-                <svg class="pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="#C41E3A" stroke="none">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+                <svg
+                  class="pin-icon"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="#C41E3A"
+                  stroke="none"
+                >
+                  <path
+                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"
+                  />
                 </svg>
                 {{ locationLabel(vehicle) }}
                 <img
@@ -154,7 +171,14 @@
                   class="action-icon-btn view-btn"
                   :title="$t('catalog.viewDetails')"
                 >
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
@@ -165,7 +189,9 @@
                   @click="toggleFav(vehicle.id)"
                 >
                   <svg viewBox="0 0 24 24" width="16" height="16">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                    />
                   </svg>
                 </button>
                 <button
@@ -173,7 +199,14 @@
                   :title="$t('vehicle.share')"
                   @click="shareVehicle(vehicle)"
                 >
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
                     <circle cx="18" cy="5" r="3" />
                     <circle cx="6" cy="12" r="3" />
                     <circle cx="18" cy="19" r="3" />
@@ -186,7 +219,14 @@
                   :title="$t('catalog.downloadBrochure')"
                   @click="downloadBrochure(vehicle)"
                 >
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="7 10 12 15 17 10" />
                     <line x1="12" y1="15" x2="12" y2="3" />
@@ -207,7 +247,14 @@
       <div v-if="showPdfModal" class="pdf-modal-overlay" @click.self="showPdfModal = false">
         <div class="pdf-modal">
           <div class="pdf-modal-icon">
-            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#C41E3A" stroke-width="1.5">
+            <svg
+              viewBox="0 0 24 24"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="#C41E3A"
+              stroke-width="1.5"
+            >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
@@ -217,9 +264,7 @@
           <p class="pdf-modal-message">
             {{ $t('catalog.exportPdfMessage') }}
           </p>
-          <p class="pdf-modal-count">
-            {{ selectedIds.size }} / {{ sortedVehicles.length }}
-          </p>
+          <p class="pdf-modal-count">{{ selectedIds.size }} / {{ sortedVehicles.length }}</p>
           <div class="pdf-modal-actions">
             <button class="pdf-btn pdf-btn-back" @click="showPdfModal = false">
               {{ $t('catalog.back') }}
@@ -282,7 +327,7 @@ function selectAll() {
 
 async function confirmExportPdf() {
   showPdfModal.value = false
-  const selected = sortedVehicles.value.filter(v => selectedIds.value.has(v.id))
+  const selected = sortedVehicles.value.filter((v) => selectedIds.value.has(v.id))
   for (const vehicle of selected) {
     await generateVehiclePdf({
       vehicle,
@@ -294,7 +339,17 @@ async function confirmExportPdf() {
 }
 
 // --- Sorting ---
-type SortCol = 'category' | 'price' | 'product' | 'brand' | 'model' | 'year' | 'volume' | 'compartments' | 'power' | 'location'
+type SortCol =
+  | 'category'
+  | 'price'
+  | 'product'
+  | 'brand'
+  | 'model'
+  | 'year'
+  | 'volume'
+  | 'compartments'
+  | 'power'
+  | 'location'
 const sortColumn = ref<SortCol | null>(null)
 const sortDir = ref<'asc' | 'desc'>('asc')
 
@@ -313,18 +368,24 @@ function sortClass(col: SortCol): string {
 }
 
 // --- Dynamic columns detection ---
-const showVolumeCol = computed(() => props.vehicles.some(v => {
-  const fj = v.filters_json
-  return fj && (fj.volume || fj.capacity || fj.volumen || fj.capacidad)
-}))
-const showCompartmentsCol = computed(() => props.vehicles.some(v => {
-  const fj = v.filters_json
-  return fj && (fj.compartments || fj.compartimentos)
-}))
-const showPowerCol = computed(() => props.vehicles.some(v => {
-  const fj = v.filters_json
-  return fj && (fj.power || fj.potencia || fj.cv)
-}))
+const showVolumeCol = computed(() =>
+  props.vehicles.some((v) => {
+    const fj = v.attributes_json
+    return fj && (fj.volume || fj.capacity || fj.volumen || fj.capacidad)
+  }),
+)
+const showCompartmentsCol = computed(() =>
+  props.vehicles.some((v) => {
+    const fj = v.attributes_json
+    return fj && (fj.compartments || fj.compartimentos)
+  }),
+)
+const showPowerCol = computed(() =>
+  props.vehicles.some((v) => {
+    const fj = v.attributes_json
+    return fj && (fj.power || fj.potencia || fj.cv)
+  }),
+)
 
 // --- Sorted vehicles ---
 const sortedVehicles = computed(() => {
@@ -339,16 +400,46 @@ const sortedVehicles = computed(() => {
     let vb: string | number = ''
 
     switch (col) {
-      case 'category': va = a.category; vb = b.category; break
-      case 'price': va = getPrice(a); vb = getPrice(b); break
-      case 'product': va = buildProductName(a, locale.value); vb = buildProductName(b, locale.value); break
-      case 'brand': va = a.brand; vb = b.brand; break
-      case 'model': va = a.model; vb = b.model; break
-      case 'year': va = a.year ?? 0; vb = b.year ?? 0; break
-      case 'volume': va = getVolume(a); vb = getVolume(b); break
-      case 'compartments': va = getCompartments(a); vb = getCompartments(b); break
-      case 'power': va = getPower(a); vb = getPower(b); break
-      case 'location': va = a.location ?? ''; vb = b.location ?? ''; break
+      case 'category':
+        va = a.category
+        vb = b.category
+        break
+      case 'price':
+        va = getPrice(a)
+        vb = getPrice(b)
+        break
+      case 'product':
+        va = buildProductName(a, locale.value)
+        vb = buildProductName(b, locale.value)
+        break
+      case 'brand':
+        va = a.brand
+        vb = b.brand
+        break
+      case 'model':
+        va = a.model
+        vb = b.model
+        break
+      case 'year':
+        va = a.year ?? 0
+        vb = b.year ?? 0
+        break
+      case 'volume':
+        va = getVolume(a)
+        vb = getVolume(b)
+        break
+      case 'compartments':
+        va = getCompartments(a)
+        vb = getCompartments(b)
+        break
+      case 'power':
+        va = getPower(a)
+        vb = getPower(b)
+        break
+      case 'location':
+        va = a.location ?? ''
+        vb = b.location ?? ''
+        break
     }
 
     if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir
@@ -395,9 +486,7 @@ function priceText(vehicle: Vehicle): string {
 }
 
 function locationLabel(vehicle: Vehicle): string {
-  const loc = locale.value === 'en' && vehicle.location_en
-    ? vehicle.location_en
-    : vehicle.location
+  const loc = locale.value === 'en' && vehicle.location_en ? vehicle.location_en : vehicle.location
   if (!loc) return '—'
 
   const vehicleCountry = vehicle.location_country
@@ -417,13 +506,13 @@ function locationFlagCode(vehicle: Vehicle): string | null {
 }
 
 function getVolume(v: Vehicle): number {
-  const fj = v.filters_json
+  const fj = v.attributes_json
   if (!fj) return 0
   return Number(fj.volume || fj.volumen || fj.capacity || fj.capacidad || 0)
 }
 
 function volumeText(v: Vehicle): string {
-  const fj = v.filters_json
+  const fj = v.attributes_json
   if (!fj) return '—'
   if (fj.volume || fj.volumen) return `${fj.volume || fj.volumen} L`
   if (fj.capacity || fj.capacidad) return `${fj.capacity || fj.capacidad} kg`
@@ -431,26 +520,26 @@ function volumeText(v: Vehicle): string {
 }
 
 function getPower(v: Vehicle): number {
-  const fj = v.filters_json
+  const fj = v.attributes_json
   if (!fj) return 0
   return Number(fj.power || fj.potencia || fj.cv || 0)
 }
 
 function powerText(v: Vehicle): string {
-  const fj = v.filters_json
+  const fj = v.attributes_json
   if (!fj) return '—'
   const val = fj.power || fj.potencia || fj.cv
   return val ? `${val} CV` : '—'
 }
 
 function getCompartments(v: Vehicle): number {
-  const fj = v.filters_json
+  const fj = v.attributes_json
   if (!fj) return 0
   return Number(fj.compartments || fj.compartimentos || 0)
 }
 
 function compartmentsText(v: Vehicle): string {
-  const fj = v.filters_json
+  const fj = v.attributes_json
   if (!fj) return '—'
   const val = fj.compartments || fj.compartimentos
   return val ? String(val) : '—'
@@ -579,7 +668,11 @@ function onTouchEnd() {
 
 /* Header */
 .catalog-table thead {
-  background: linear-gradient(135deg, var(--color-primary, #0F2A2E) 0%, var(--color-primary-dark, #1A4248) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary, #0f2a2e) 0%,
+    var(--color-primary-dark, #1a4248) 100%
+  );
   color: white;
 }
 
@@ -632,7 +725,7 @@ function onTouchEnd() {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: var(--color-primary, #23424A);
+  accent-color: var(--color-primary, #23424a);
 }
 
 /* Sortable headers */
@@ -708,7 +801,7 @@ function onTouchEnd() {
   text-transform: uppercase;
   letter-spacing: 0.3px;
   color: white;
-  background: linear-gradient(135deg, #0F2A2E 0%, #1A4248 100%);
+  background: linear-gradient(135deg, #0f2a2e 0%, #1a4248 100%);
   white-space: nowrap;
 }
 
@@ -716,7 +809,7 @@ function onTouchEnd() {
 .table-price {
   font-weight: 700;
   white-space: nowrap;
-  background: linear-gradient(135deg, #10B981, #059669);
+  background: linear-gradient(135deg, #10b981, #059669);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -809,8 +902,8 @@ function onTouchEnd() {
 
 /* Download button */
 .download-btn:hover {
-  border-color: #C41E3A;
-  color: #C41E3A;
+  border-color: #c41e3a;
+  color: #c41e3a;
 }
 
 /* ============================================
@@ -845,7 +938,7 @@ function onTouchEnd() {
 .pdf-modal-title {
   font-size: 18px;
   font-weight: 700;
-  color: var(--color-primary, #23424A);
+  color: var(--color-primary, #23424a);
   margin: 0 0 0.5rem;
 }
 
@@ -859,7 +952,7 @@ function onTouchEnd() {
 .pdf-modal-count {
   font-size: 20px;
   font-weight: 700;
-  color: var(--color-primary, #23424A);
+  color: var(--color-primary, #23424a);
   margin: 0 0 1.5rem;
 }
 
@@ -893,8 +986,8 @@ function onTouchEnd() {
 
 .pdf-btn-select-all {
   background: transparent;
-  border-color: var(--color-primary, #23424A);
-  color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
+  color: var(--color-primary, #23424a);
 }
 
 .pdf-btn-select-all:hover {
@@ -902,7 +995,7 @@ function onTouchEnd() {
 }
 
 .pdf-btn-confirm {
-  background: linear-gradient(135deg, #C41E3A 0%, #a01830 100%);
+  background: linear-gradient(135deg, #c41e3a 0%, #a01830 100%);
   color: white;
   border-color: transparent;
 }

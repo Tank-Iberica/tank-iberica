@@ -96,9 +96,13 @@ onMounted(async () => {
 })
 
 // Watch filters
-watch(filters, () => {
-  fetchEntries(filters)
-}, { deep: true })
+watch(
+  filters,
+  () => {
+    fetchEntries(filters)
+  },
+  { deep: true },
+)
 
 function getEmptyForm(): BalanceFormData {
   return {
@@ -150,8 +154,7 @@ const monthlyBreakdown = computed(() => {
     }
     if (e.tipo === 'ingreso') {
       months[month].ingresos += e.importe
-    }
-    else {
+    } else {
       months[month].gastos += e.importe
     }
   }
@@ -161,8 +164,7 @@ const monthlyBreakdown = computed(() => {
 function toggleSort(col: 'fecha' | 'importe' | 'tipo' | 'razon') {
   if (sortCol.value === col) {
     sortAsc.value = !sortAsc.value
-  }
-  else {
+  } else {
     sortCol.value = col
     sortAsc.value = false
   }
@@ -178,8 +180,7 @@ function toggleFullscreen() {
   if (!document.fullscreenElement) {
     balanceSection.value?.requestFullscreen()
     isFullscreen.value = true
-  }
-  else {
+  } else {
     document.exitFullscreen()
     isFullscreen.value = false
   }
@@ -230,8 +231,7 @@ async function handleSave() {
   let success = false
   if (editingId.value) {
     success = await updateEntry(editingId.value, formData.value)
-  }
-  else {
+  } else {
     const id = await createEntry(formData.value)
     success = !!id
   }
@@ -263,8 +263,7 @@ function exportBalance() {
 
   if (exportFormat.value === 'excel') {
     exportToExcel(dataToExport)
-  }
-  else {
+  } else {
     exportToPDF(dataToExport)
   }
   showExportModal.value = false
@@ -287,19 +286,20 @@ function exportToExcel(data: BalanceEntry[]) {
     if (exportColumns.fecha) row.push(e.fecha)
     if (exportColumns.razon) row.push(BALANCE_REASONS[e.razon])
     if (exportColumns.detalle) row.push(e.detalle || '')
-    if (exportColumns.importe) row.push(`${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€`)
+    if (exportColumns.importe)
+      row.push(`${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€`)
     if (exportColumns.estado) row.push(BALANCE_STATUS_LABELS[e.estado])
     if (exportColumns.notas) row.push(e.notas || '')
     return row
   })
 
-  const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n')
+  const csv = [headers.join(';'), ...rows.map((r) => r.join(';'))].join('\n')
   downloadFile(csv, `balance_${filters.year || 'todos'}.csv`, 'text/csv')
 }
 
 function exportToPDF(data: BalanceEntry[]) {
   // Generate corporate-styled HTML table for printing
-  let html = `<!DOCTYPE html><html><head><title>Balance ${filters.year || 'Todos'} - Tank Iberica</title>
+  let html = `<!DOCTYPE html><html><head><title>Balance ${filters.year || 'Todos'} - Tracciona</title>
     <style>
       body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
       .header { background: linear-gradient(135deg, #1A3238 0%, #23424A 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
@@ -322,8 +322,8 @@ function exportToPDF(data: BalanceEntry[]) {
     </style>
   </head><body>
     <div class="header">
-      <div><h1>TANK IBERICA</h1><div class="header-accent"></div></div>
-      <div class="header-info">TANKIBERICA.COM<br>info@tankiberica.com<br>+34 645 779 594</div>
+      <div><h1>TRACCIONA</h1><div class="header-accent"></div></div>
+      <div class="header-info">TRACCIONA.COM<br>info@tracciona.com<br>+34 645 779 594</div>
     </div>
     <div class="content">
     <p class="subtitle">Balance ${filters.year || 'Todos los años'}</p>
@@ -346,7 +346,8 @@ function exportToPDF(data: BalanceEntry[]) {
     if (exportColumns.fecha) html += `<td>${e.fecha}</td>`
     if (exportColumns.razon) html += `<td>${BALANCE_REASONS[e.razon]}</td>`
     if (exportColumns.detalle) html += `<td>${e.detalle || ''}</td>`
-    if (exportColumns.importe) html += `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€</td>`
+    if (exportColumns.importe)
+      html += `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€</td>`
     if (exportColumns.estado) html += `<td>${BALANCE_STATUS_LABELS[e.estado]}</td>`
     if (exportColumns.notas) html += `<td>${e.notas || ''}</td>`
     html += '</tr>'
@@ -359,7 +360,7 @@ function exportToPDF(data: BalanceEntry[]) {
       <p><strong>Balance Neto:</strong> <strong>${summary.value.balanceNeto.toFixed(2)}€</strong></p>
     </div>
     </div>
-    <div class="footer">TANKIBERICA.COM</div>
+    <div class="footer">TRACCIONA.COM</div>
   </body></html>`
 
   printHTML(html)
@@ -368,8 +369,7 @@ function exportToPDF(data: BalanceEntry[]) {
 function exportResumen() {
   if (exportFormat.value === 'excel') {
     exportResumenExcel()
-  }
-  else {
+  } else {
     exportResumenPDF()
   }
   showExportResumenModal.value = false
@@ -391,7 +391,9 @@ function exportResumenExcel() {
       const data = summary.value.byReason[key]
       if (data) {
         const neto = (data.ingresos || 0) - (data.gastos || 0)
-        lines.push(`${label};+${(data.ingresos || 0).toFixed(2)}€;-${(data.gastos || 0).toFixed(2)}€;${neto.toFixed(2)}€`)
+        lines.push(
+          `${label};+${(data.ingresos || 0).toFixed(2)}€;-${(data.gastos || 0).toFixed(2)}€;${neto.toFixed(2)}€`,
+        )
       }
     }
     lines.push('')
@@ -401,7 +403,9 @@ function exportResumenExcel() {
     lines.push('DESGLOSE MENSUAL;;;')
     for (const [month, data] of monthlyBreakdown.value) {
       const neto = data.ingresos - data.gastos
-      lines.push(`${month};+${data.ingresos.toFixed(2)}€;-${data.gastos.toFixed(2)}€;${neto.toFixed(2)}€`)
+      lines.push(
+        `${month};+${data.ingresos.toFixed(2)}€;-${data.gastos.toFixed(2)}€;${neto.toFixed(2)}€`,
+      )
     }
   }
 
@@ -409,7 +413,7 @@ function exportResumenExcel() {
 }
 
 function exportResumenPDF() {
-  let html = `<!DOCTYPE html><html><head><title>Resumen Balance - Tank Iberica</title>
+  let html = `<!DOCTYPE html><html><head><title>Resumen Balance - Tracciona</title>
     <style>
       body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
       .header { background: linear-gradient(135deg, #1A3238 0%, #23424A 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
@@ -432,8 +436,8 @@ function exportResumenPDF() {
     </style>
   </head><body>
     <div class="header">
-      <div><h1>TANK IBERICA</h1><div class="header-accent"></div></div>
-      <div class="header-info">TANKIBERICA.COM<br>info@tankiberica.com<br>+34 645 779 594</div>
+      <div><h1>TRACCIONA</h1><div class="header-accent"></div></div>
+      <div class="header-info">TRACCIONA.COM<br>info@tracciona.com<br>+34 645 779 594</div>
     </div>
     <div class="content">
     <p class="subtitle">Resumen Balance ${filters.year || 'Todos los años'}</p>
@@ -472,7 +476,7 @@ function exportResumenPDF() {
   }
 
   html += `</div>
-    <div class="footer">TANKIBERICA.COM</div>
+    <div class="footer">TRACCIONA.COM</div>
   </body></html>`
 
   printHTML(html)
@@ -510,8 +514,7 @@ function printHTML(html: string) {
     try {
       iframe.contentWindow?.focus()
       iframe.contentWindow?.print()
-    }
-    catch {
+    } catch {
       // Fallback: try window.open
       const win = window.open('', '_blank')
       if (win) {
@@ -519,9 +522,10 @@ function printHTML(html: string) {
         win.document.close()
         win.focus()
         win.print()
-      }
-      else {
-        alert('No se pudo abrir la ventana de impresión. Por favor, desactiva el bloqueador de popups.')
+      } else {
+        alert(
+          'No se pudo abrir la ventana de impresión. Por favor, desactiva el bloqueador de popups.',
+        )
       }
     }
   }
@@ -531,8 +535,7 @@ function printHTML(html: string) {
     try {
       iframe.contentWindow?.focus()
       iframe.contentWindow?.print()
-    }
-    catch {
+    } catch {
       // Silent fail - onload will handle it
     }
   }, 100)
@@ -627,15 +630,9 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
         <button class="btn btn-icon-only" title="Pantalla completa" @click="toggleFullscreen">
           {{ isFullscreen ? '⛶' : '⛶' }}
         </button>
-        <button class="btn" @click="showExportResumenModal = true">
-          📊 Exportar Resumen
-        </button>
-        <button class="btn" @click="showExportModal = true">
-          📥 Exportar
-        </button>
-        <button class="btn btn-primary" @click="openNewModal">
-          + Nueva Transacción
-        </button>
+        <button class="btn" @click="showExportResumenModal = true">📊 Exportar Resumen</button>
+        <button class="btn" @click="showExportModal = true">📥 Exportar</button>
+        <button class="btn btn-primary" @click="openNewModal">+ Nueva Transacción</button>
       </div>
     </header>
 
@@ -707,11 +704,11 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
     <!-- View Toggles -->
     <div class="view-toggles">
       <label class="toggle-check">
-        <input v-model="showDesglose" type="checkbox">
+        <input v-model="showDesglose" type="checkbox" >
         Desglose por razón
       </label>
       <label class="toggle-check">
-        <input v-model="showCharts" type="checkbox">
+        <input v-model="showCharts" type="checkbox" >
         Gráficos
       </label>
       <select v-if="showCharts" v-model="chartType" class="chart-type-select">
@@ -744,13 +741,17 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
               <div class="bars">
                 <div
                   class="bar ingreso"
-                  :style="{ width: `${Math.min(100, (chartRazonData.ingresos[idx] / Math.max(...chartRazonData.ingresos, 1)) * 100)}%` }"
+                  :style="{
+                    width: `${Math.min(100, (chartRazonData.ingresos[idx] / Math.max(...chartRazonData.ingresos, 1)) * 100)}%`,
+                  }"
                 >
                   {{ fmt(chartRazonData.ingresos[idx]) }}
                 </div>
                 <div
                   class="bar gasto"
-                  :style="{ width: `${Math.min(100, (chartRazonData.gastos[idx] / Math.max(...chartRazonData.gastos, 1)) * 100)}%` }"
+                  :style="{
+                    width: `${Math.min(100, (chartRazonData.gastos[idx] / Math.max(...chartRazonData.gastos, 1)) * 100)}%`,
+                  }"
                 >
                   {{ fmt(chartRazonData.gastos[idx]) }}
                 </div>
@@ -761,7 +762,9 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
             <div v-for="(label, idx) in chartRazonData.labels" :key="label" class="pie-item">
               <span class="pie-color" :style="{ background: `hsl(${idx * 25}, 70%, 50%)` }" />
               <span class="pie-label">{{ label }}</span>
-              <span class="pie-value">{{ fmt((chartRazonData.ingresos[idx] || 0) - (chartRazonData.gastos[idx] || 0)) }}</span>
+              <span class="pie-value">{{
+                fmt((chartRazonData.ingresos[idx] || 0) - (chartRazonData.gastos[idx] || 0))
+              }}</span>
             </div>
           </div>
         </div>
@@ -788,9 +791,18 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
           </div>
           <div v-else class="chart-pie">
             <div v-for="(label, idx) in chartSubcatData.labels" :key="label" class="pie-item">
-              <span class="pie-color" :style="{ background: chartSubcatData.beneficios[idx] >= 0 ? '#22c55e' : '#ef4444' }" />
+              <span
+                class="pie-color"
+                :style="{
+                  background: chartSubcatData.beneficios[idx] >= 0 ? '#22c55e' : '#ef4444',
+                }"
+              />
               <span class="pie-label">{{ label }}</span>
-              <span class="pie-value" :class="chartSubcatData.beneficios[idx] >= 0 ? 'positive' : 'negative'">{{ chartSubcatData.beneficios[idx] }}%</span>
+              <span
+                class="pie-value"
+                :class="chartSubcatData.beneficios[idx] >= 0 ? 'positive' : 'negative'"
+                >{{ chartSubcatData.beneficios[idx] }}%</span
+              >
             </div>
           </div>
         </div>
@@ -810,7 +822,9 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
             <th>Detalle</th>
             <th>Vehículo</th>
             <th>Tipo</th>
-            <th class="sortable num" @click="toggleSort('importe')">Importe {{ getSortIcon('importe') }}</th>
+            <th class="sortable num" @click="toggleSort('importe')">
+              Importe {{ getSortIcon('importe') }}
+            </th>
             <th class="num">Ben.%</th>
             <th>Factura</th>
             <th>Estado</th>
@@ -841,17 +855,26 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
               <strong>{{ fmt(e.importe) }}</strong>
             </td>
             <td class="num">
-              <span v-if="e.tipo === 'ingreso' && e.coste_asociado" :class="calculateProfit(e.importe, e.coste_asociado)! >= 0 ? 'profit-pos' : 'profit-neg'">
+              <span
+                v-if="e.tipo === 'ingreso' && e.coste_asociado"
+                :class="
+                  calculateProfit(e.importe, e.coste_asociado)! >= 0 ? 'profit-pos' : 'profit-neg'
+                "
+              >
                 {{ fmtPercent(calculateProfit(e.importe, e.coste_asociado)) }}
               </span>
               <span v-else>—</span>
             </td>
             <td>
-              <a v-if="e.factura_url" :href="e.factura_url" target="_blank" class="factura-link">Ver</a>
+              <a v-if="e.factura_url" :href="e.factura_url" target="_blank" class="factura-link"
+                >Ver</a
+              >
               <span v-else>—</span>
             </td>
             <td>
-              <span class="estado-badge" :class="e.estado">{{ BALANCE_STATUS_LABELS[e.estado] }}</span>
+              <span class="estado-badge" :class="e.estado">{{
+                BALANCE_STATUS_LABELS[e.estado]
+              }}</span>
             </td>
             <td class="actions">
               <button class="btn-icon" title="Editar" @click="openEditModal(e)">✏️</button>
@@ -874,11 +897,11 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
             <!-- Tipo -->
             <div class="tipo-selector">
               <label :class="{ active: formData.tipo === 'ingreso' }">
-                <input v-model="formData.tipo" type="radio" value="ingreso">
+                <input v-model="formData.tipo" type="radio" value="ingreso" >
                 <span class="tipo-card ingreso">↑ Ingreso</span>
               </label>
               <label :class="{ active: formData.tipo === 'gasto' }">
-                <input v-model="formData.tipo" type="radio" value="gasto">
+                <input v-model="formData.tipo" type="radio" value="gasto" >
                 <span class="tipo-card gasto">↓ Gasto</span>
               </label>
             </div>
@@ -886,18 +909,22 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
             <div class="row-3">
               <div class="field">
                 <label>Fecha *</label>
-                <input v-model="formData.fecha" type="date">
+                <input v-model="formData.fecha" type="date" >
               </div>
               <div class="field">
                 <label>Razón *</label>
                 <select v-model="formData.razon">
-                  <option v-for="[key, label] in reasonOptions" :key="key" :value="key">{{ label }}</option>
+                  <option v-for="[key, label] in reasonOptions" :key="key" :value="key">
+                    {{ label }}
+                  </option>
                 </select>
               </div>
               <div class="field">
                 <label>Estado *</label>
                 <select v-model="formData.estado">
-                  <option v-for="[key, label] in statusOptions" :key="key" :value="key">{{ label }}</option>
+                  <option v-for="[key, label] in statusOptions" :key="key" :value="key">
+                    {{ label }}
+                  </option>
                 </select>
               </div>
             </div>
@@ -905,11 +932,23 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
             <div class="row-2">
               <div class="field">
                 <label>Importe € *</label>
-                <input v-model.number="formData.importe" type="number" step="0.01" min="0" placeholder="0.00">
+                <input
+                  v-model.number="formData.importe"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                >
               </div>
               <div v-if="formData.tipo === 'ingreso'" class="field">
                 <label>Coste asociado € (para % beneficio)</label>
-                <input v-model.number="formData.coste_asociado" type="number" step="0.01" min="0" placeholder="0.00">
+                <input
+                  v-model.number="formData.coste_asociado"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                >
               </div>
               <div v-else class="field" />
             </div>
@@ -926,7 +965,11 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
 
             <div class="field">
               <label>Detalle</label>
-              <input v-model="formData.detalle" type="text" placeholder="Ej: Cisterna MAN 1234ABC (2020)">
+              <input
+                v-model="formData.detalle"
+                type="text"
+                placeholder="Ej: Cisterna MAN 1234ABC (2020)"
+              >
             </div>
 
             <div class="row-2">
@@ -939,7 +982,7 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
               </div>
               <div class="field">
                 <label>URL Factura/Recibo</label>
-                <input v-model="formData.factura_url" type="url" placeholder="https://...">
+                <input v-model="formData.factura_url" type="url" placeholder="https://..." >
               </div>
             </div>
 
@@ -949,9 +992,18 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
             </div>
 
             <!-- Profit preview -->
-            <div v-if="formData.tipo === 'ingreso' && formData.coste_asociado && formData.importe" class="profit-preview">
+            <div
+              v-if="formData.tipo === 'ingreso' && formData.coste_asociado && formData.importe"
+              class="profit-preview"
+            >
               <span>Beneficio estimado:</span>
-              <strong :class="calculateProfit(formData.importe, formData.coste_asociado)! >= 0 ? 'profit-pos' : 'profit-neg'">
+              <strong
+                :class="
+                  calculateProfit(formData.importe, formData.coste_asociado)! >= 0
+                    ? 'profit-pos'
+                    : 'profit-neg'
+                "
+              >
                 {{ fmtPercent(calculateProfit(formData.importe, formData.coste_asociado)) }}
               </strong>
             </div>
@@ -977,11 +1029,12 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
           <div class="modal-body">
             <p>¿Eliminar esta transacción?</p>
             <p class="delete-info">
-              <strong>{{ BALANCE_REASONS[deleteTarget?.razon || 'otros'] }}</strong> — {{ fmt(deleteTarget?.importe) }}
+              <strong>{{ BALANCE_REASONS[deleteTarget?.razon || 'otros'] }}</strong> —
+              {{ fmt(deleteTarget?.importe) }}
             </p>
             <div class="field">
               <label>Escribe <strong>Borrar</strong> para confirmar:</label>
-              <input v-model="deleteConfirm" type="text" placeholder="Borrar">
+              <input v-model="deleteConfirm" type="text" placeholder="Borrar" >
             </div>
           </div>
           <div class="modal-foot">
@@ -1006,29 +1059,36 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
             <div class="field">
               <label>Formato</label>
               <div class="radio-group">
-                <label><input v-model="exportFormat" type="radio" value="excel"> Excel (CSV)</label>
-                <label><input v-model="exportFormat" type="radio" value="pdf"> PDF (Imprimir)</label>
+                <label
+                  ><input v-model="exportFormat" type="radio" value="excel" > Excel (CSV)</label
+                >
+                <label
+                  ><input v-model="exportFormat" type="radio" value="pdf" > PDF (Imprimir)</label
+                >
               </div>
             </div>
 
             <div class="field">
               <label>Datos</label>
               <div class="radio-group">
-                <label><input v-model="exportDataScope" type="radio" value="filtered"> Solo filtrados</label>
-                <label><input v-model="exportDataScope" type="radio" value="all"> Todos</label>
+                <label
+                  ><input v-model="exportDataScope" type="radio" value="filtered" > Solo
+                  filtrados</label
+                >
+                <label><input v-model="exportDataScope" type="radio" value="all" > Todos</label>
               </div>
             </div>
 
             <div class="field">
               <label>Columnas a incluir</label>
               <div class="checkbox-group">
-                <label><input v-model="exportColumns.tipo" type="checkbox"> Tipo</label>
-                <label><input v-model="exportColumns.fecha" type="checkbox"> Fecha</label>
-                <label><input v-model="exportColumns.razon" type="checkbox"> Razón</label>
-                <label><input v-model="exportColumns.detalle" type="checkbox"> Detalle</label>
-                <label><input v-model="exportColumns.importe" type="checkbox"> Importe</label>
-                <label><input v-model="exportColumns.estado" type="checkbox"> Estado</label>
-                <label><input v-model="exportColumns.notas" type="checkbox"> Notas</label>
+                <label><input v-model="exportColumns.tipo" type="checkbox" > Tipo</label>
+                <label><input v-model="exportColumns.fecha" type="checkbox" > Fecha</label>
+                <label><input v-model="exportColumns.razon" type="checkbox" > Razón</label>
+                <label><input v-model="exportColumns.detalle" type="checkbox" > Detalle</label>
+                <label><input v-model="exportColumns.importe" type="checkbox" > Importe</label>
+                <label><input v-model="exportColumns.estado" type="checkbox" > Estado</label>
+                <label><input v-model="exportColumns.notas" type="checkbox" > Notas</label>
               </div>
             </div>
           </div>
@@ -1042,7 +1102,11 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
 
     <!-- Export Resumen Modal -->
     <Teleport to="body">
-      <div v-if="showExportResumenModal" class="modal-bg" @click.self="showExportResumenModal = false">
+      <div
+        v-if="showExportResumenModal"
+        class="modal-bg"
+        @click.self="showExportResumenModal = false"
+      >
         <div class="modal">
           <div class="modal-head">
             <span>📊 Exportar Resumen</span>
@@ -1052,17 +1116,30 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
             <div class="field">
               <label>Formato</label>
               <div class="radio-group">
-                <label><input v-model="exportFormat" type="radio" value="excel"> Excel (CSV)</label>
-                <label><input v-model="exportFormat" type="radio" value="pdf"> PDF (Imprimir)</label>
+                <label
+                  ><input v-model="exportFormat" type="radio" value="excel" > Excel (CSV)</label
+                >
+                <label
+                  ><input v-model="exportFormat" type="radio" value="pdf" > PDF (Imprimir)</label
+                >
               </div>
             </div>
 
             <div class="field">
               <label>Incluir</label>
               <div class="checkbox-group">
-                <label><input v-model="resumenOptions.totales" type="checkbox"> Totales (Ingresos/Gastos/Neto)</label>
-                <label><input v-model="resumenOptions.desglose" type="checkbox"> Desglose por Razón</label>
-                <label><input v-model="resumenOptions.mensual" type="checkbox"> Desglose Mensual</label>
+                <label
+                  ><input v-model="resumenOptions.totales" type="checkbox" > Totales
+                  (Ingresos/Gastos/Neto)</label
+                >
+                <label
+                  ><input v-model="resumenOptions.desglose" type="checkbox" > Desglose por
+                  Razón</label
+                >
+                <label
+                  ><input v-model="resumenOptions.mensual" type="checkbox" > Desglose
+                  Mensual</label
+                >
               </div>
             </div>
           </div>
@@ -1077,7 +1154,10 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
 </template>
 
 <style scoped>
-.balance-page { max-width: 1200px; margin: 0 auto; }
+.balance-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
 .balance-page.fullscreen {
   max-width: none;
   padding: 20px;
@@ -1094,8 +1174,15 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   flex-wrap: wrap;
   gap: 12px;
 }
-.page-header h1 { margin: 0; font-size: 1.5rem; }
-.header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
 /* Buttons */
 .btn {
@@ -1106,13 +1193,31 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   font-size: 0.875rem;
   cursor: pointer;
 }
-.btn-primary { background: #23424A; color: #fff; border: none; }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-danger { background: #dc2626; color: #fff; border: none; }
-.btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+.btn-primary {
+  background: #23424a;
+  color: #fff;
+  border: none;
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+}
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
 .btn-icon-only {
-  width: 36px; height: 36px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -1120,15 +1225,20 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   font-size: 1.1rem;
 }
 .btn-icon {
-  width: 28px; height: 28px;
+  width: 28px;
+  height: 28px;
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: 0.9rem;
   border-radius: 4px;
 }
-.btn-icon:hover { background: #f3f4f6; }
-.btn-icon.del:hover { background: #fee2e2; }
+.btn-icon:hover {
+  background: #f3f4f6;
+}
+.btn-icon.del:hover {
+  background: #fee2e2;
+}
 
 /* Error */
 .error-msg {
@@ -1153,13 +1263,35 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   flex-direction: column;
   gap: 4px;
 }
-.summary-card .label { font-size: 0.8rem; font-weight: 500; opacity: 0.8; }
-.summary-card .value { font-size: 1.5rem; font-weight: 700; }
-.summary-card.ingresos { background: #dcfce7; color: #166534; }
-.summary-card.gastos { background: #fee2e2; color: #991b1b; }
-.summary-card.neto { background: #dbeafe; color: #1e40af; }
-.summary-card.neto.positive { background: #dcfce7; color: #166534; }
-.summary-card.neto.negative { background: #fee2e2; color: #991b1b; }
+.summary-card .label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+.summary-card .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.summary-card.ingresos {
+  background: #dcfce7;
+  color: #166534;
+}
+.summary-card.gastos {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.summary-card.neto {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.summary-card.neto.positive {
+  background: #dcfce7;
+  color: #166534;
+}
+.summary-card.neto.negative {
+  background: #fee2e2;
+  color: #991b1b;
+}
 
 /* Filters */
 .filters-bar {
@@ -1171,7 +1303,7 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   padding: 12px 16px;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .filter-group {
   display: flex;
@@ -1179,14 +1311,17 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   gap: 8px;
   align-items: center;
 }
-.filters-bar select, .search-input {
+.filters-bar select,
+.search-input {
   padding: 8px 12px;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   font-size: 0.85rem;
   min-width: 140px;
 }
-.search-input { min-width: 200px; }
+.search-input {
+  min-width: 200px;
+}
 
 /* View toggles */
 .view-toggles {
@@ -1202,14 +1337,19 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   gap: 6px;
   cursor: pointer;
 }
-.toggle-check input { margin: 0; }
+.toggle-check input {
+  margin: 0;
+}
 .chart-type-select {
   padding: 4px 8px;
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   font-size: 0.8rem;
 }
-.count { margin-left: auto; color: #6b7280; }
+.count {
+  margin-left: auto;
+  color: #6b7280;
+}
 
 /* Desglose */
 .desglose-grid {
@@ -1222,15 +1362,31 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   padding: 10px 14px;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.desglose-label { font-size: 0.8rem; font-weight: 600; color: #374151; display: block; margin-bottom: 6px; }
-.desglose-values { display: flex; gap: 12px; font-size: 0.8rem; }
-.desglose-values .ing { color: #16a34a; }
-.desglose-values .gas { color: #dc2626; }
+.desglose-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  display: block;
+  margin-bottom: 6px;
+}
+.desglose-values {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+}
+.desglose-values .ing {
+  color: #16a34a;
+}
+.desglose-values .gas {
+  color: #dc2626;
+}
 
 /* Charts */
-.charts-section { margin-bottom: 20px; }
+.charts-section {
+  margin-bottom: 20px;
+}
 .charts-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1240,16 +1396,44 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   background: #fff;
   border-radius: 10px;
   padding: 16px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.chart-box h3 { margin: 0 0 12px; font-size: 0.9rem; color: #374151; }
-.chart-empty { color: #9ca3af; text-align: center; padding: 20px; font-size: 0.85rem; }
+.chart-box h3 {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: #374151;
+}
+.chart-empty {
+  color: #9ca3af;
+  text-align: center;
+  padding: 20px;
+  font-size: 0.85rem;
+}
 
 /* Bar chart */
-.chart-bars { display: flex; flex-direction: column; gap: 8px; }
-.bar-group { display: flex; align-items: center; gap: 10px; }
-.bar-label { width: 80px; font-size: 0.75rem; color: #6b7280; text-align: right; flex-shrink: 0; }
-.bars { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.chart-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bar-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bar-label {
+  width: 80px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: right;
+  flex-shrink: 0;
+}
+.bars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 .bar {
   height: 18px;
   border-radius: 3px;
@@ -1260,26 +1444,55 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   align-items: center;
   min-width: 40px;
 }
-.bar.ingreso { background: #22c55e; }
-.bar.gasto { background: #ef4444; }
+.bar.ingreso {
+  background: #22c55e;
+}
+.bar.gasto {
+  background: #ef4444;
+}
 
 /* Pie chart (list) */
-.chart-pie { display: flex; flex-direction: column; gap: 6px; }
-.pie-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
-.pie-color { width: 12px; height: 12px; border-radius: 2px; }
-.pie-label { flex: 1; }
-.pie-value { font-weight: 600; }
-.pie-value.positive { color: #16a34a; }
-.pie-value.negative { color: #dc2626; }
+.chart-pie {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pie-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+.pie-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+.pie-label {
+  flex: 1;
+}
+.pie-value {
+  font-weight: 600;
+}
+.pie-value.positive {
+  color: #16a34a;
+}
+.pie-value.negative {
+  color: #dc2626;
+}
 
 /* Table */
 .table-container {
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
 }
-.loading { padding: 40px; text-align: center; color: #6b7280; }
+.loading {
+  padding: 40px;
+  text-align: center;
+  color: #6b7280;
+}
 .balance-table {
   width: 100%;
   border-collapse: collapse;
@@ -1296,30 +1509,58 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   border-bottom: 1px solid #e5e7eb;
   white-space: nowrap;
 }
-.balance-table th.sortable { cursor: pointer; }
-.balance-table th.sortable:hover { background: #f3f4f6; }
-.balance-table th.num, .balance-table td.num { text-align: right; }
-.balance-table th.actions { text-align: center; width: 80px; }
+.balance-table th.sortable {
+  cursor: pointer;
+}
+.balance-table th.sortable:hover {
+  background: #f3f4f6;
+}
+.balance-table th.num,
+.balance-table td.num {
+  text-align: right;
+}
+.balance-table th.actions {
+  text-align: center;
+  width: 80px;
+}
 .balance-table td {
   padding: 10px;
   border-bottom: 1px solid #f3f4f6;
   vertical-align: middle;
 }
-.balance-table td.empty { text-align: center; color: #9ca3af; padding: 40px; }
-.balance-table td.detalle { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.balance-table td.actions { text-align: center; }
+.balance-table td.empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 40px;
+}
+.balance-table td.detalle {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.balance-table td.actions {
+  text-align: center;
+}
 
 /* Badges */
 .tipo-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px; height: 26px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   font-weight: 700;
 }
-.tipo-badge.ingreso { background: #dcfce7; color: #16a34a; }
-.tipo-badge.gasto { background: #fee2e2; color: #dc2626; }
+.tipo-badge.ingreso {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.tipo-badge.gasto {
+  background: #fee2e2;
+  color: #dc2626;
+}
 
 .estado-badge {
   padding: 3px 8px;
@@ -1327,12 +1568,23 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
   font-size: 0.7rem;
   font-weight: 500;
 }
-.estado-badge.pendiente { background: #fef3c7; color: #92400e; }
-.estado-badge.pagado { background: #dbeafe; color: #1e40af; }
-.estado-badge.cobrado { background: #dcfce7; color: #166534; }
+.estado-badge.pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+.estado-badge.pagado {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.estado-badge.cobrado {
+  background: #dcfce7;
+  color: #166534;
+}
 
 /* Vehicle column */
-.balance-table td.vehiculo { max-width: 160px; }
+.balance-table td.vehiculo {
+  max-width: 160px;
+}
 .vehiculo-badge {
   display: inline-block;
   padding: 3px 8px;
@@ -1347,15 +1599,27 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
 }
 
 /* Vehicle select in form */
-.vehicle-select { width: 100%; }
+.vehicle-select {
+  width: 100%;
+}
 
 /* Amount colors */
-td.ingreso strong { color: #16a34a; }
-td.gasto strong { color: #dc2626; }
+td.ingreso strong {
+  color: #16a34a;
+}
+td.gasto strong {
+  color: #dc2626;
+}
 
 /* Profit */
-.profit-pos { color: #16a34a; font-weight: 600; }
-.profit-neg { color: #dc2626; font-weight: 600; }
+.profit-pos {
+  color: #16a34a;
+  font-weight: 600;
+}
+.profit-neg {
+  color: #dc2626;
+  font-weight: 600;
+}
 
 /* Factura link */
 .factura-link {
@@ -1363,13 +1627,15 @@ td.gasto strong { color: #dc2626; }
   text-decoration: none;
   font-size: 0.8rem;
 }
-.factura-link:hover { text-decoration: underline; }
+.factura-link:hover {
+  text-decoration: underline;
+}
 
 /* Modal */
 .modal-bg {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1381,11 +1647,13 @@ td.gasto strong { color: #dc2626; }
   border-radius: 10px;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
   overflow-y: auto;
 }
-.modal-lg { max-width: 560px; }
+.modal-lg {
+  max-width: 560px;
+}
 .modal-head {
   display: flex;
   justify-content: space-between;
@@ -1404,7 +1672,9 @@ td.gasto strong { color: #dc2626; }
   cursor: pointer;
   color: #9ca3af;
 }
-.modal-body { padding: 16px; }
+.modal-body {
+  padding: 16px;
+}
 .modal-foot {
   display: flex;
   justify-content: flex-end;
@@ -1424,8 +1694,12 @@ td.gasto strong { color: #dc2626; }
   gap: 12px;
   margin-bottom: 16px;
 }
-.tipo-selector label { cursor: pointer; }
-.tipo-selector input { display: none; }
+.tipo-selector label {
+  cursor: pointer;
+}
+.tipo-selector input {
+  display: none;
+}
 .tipo-card {
   display: block;
   padding: 14px;
@@ -1436,37 +1710,64 @@ td.gasto strong { color: #dc2626; }
   font-size: 1rem;
   transition: all 0.15s;
 }
-.tipo-selector label.active .tipo-card.ingreso { border-color: #16a34a; background: #dcfce7; }
-.tipo-selector label.active .tipo-card.gasto { border-color: #dc2626; background: #fee2e2; }
+.tipo-selector label.active .tipo-card.ingreso {
+  border-color: #16a34a;
+  background: #dcfce7;
+}
+.tipo-selector label.active .tipo-card.gasto {
+  border-color: #dc2626;
+  background: #fee2e2;
+}
 
 /* Form fields */
-.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-.row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
 .field label {
   font-size: 0.7rem;
   font-weight: 500;
   color: #6b7280;
   text-transform: uppercase;
 }
-.field input, .field select, .field textarea {
+.field input,
+.field select,
+.field textarea {
   padding: 8px 10px;
   border: 1px solid #e5e7eb;
   border-radius: 5px;
   font-size: 0.85rem;
 }
-.field input:focus, .field select:focus, .field textarea:focus {
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
   outline: none;
-  border-color: #23424A;
+  border-color: #23424a;
 }
 
 /* Radio/Checkbox groups */
-.radio-group, .checkbox-group {
+.radio-group,
+.checkbox-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.radio-group label, .checkbox-group label {
+.radio-group label,
+.checkbox-group label {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1476,7 +1777,10 @@ td.gasto strong { color: #dc2626; }
   font-weight: normal;
   color: #374151;
 }
-.radio-group input, .checkbox-group input { margin: 0; }
+.radio-group input,
+.checkbox-group input {
+  margin: 0;
+}
 
 /* Profit preview */
 .profit-preview {
@@ -1488,7 +1792,9 @@ td.gasto strong { color: #dc2626; }
   border-radius: 6px;
   font-size: 0.9rem;
 }
-.profit-preview strong { font-size: 1.1rem; }
+.profit-preview strong {
+  font-size: 1.1rem;
+}
 
 /* Delete info */
 .delete-info {
@@ -1501,16 +1807,43 @@ td.gasto strong { color: #dc2626; }
 
 /* Mobile */
 @media (max-width: 768px) {
-  .summary-cards { grid-template-columns: 1fr; }
-  .filters-bar { flex-direction: column; }
-  .filter-group { width: 100%; }
-  .filters-bar select, .search-input { flex: 1; min-width: 0; }
-  .row-2, .row-3 { grid-template-columns: 1fr; }
-  .tipo-selector { grid-template-columns: 1fr; }
-  .balance-table { font-size: 0.75rem; }
-  .balance-table th, .balance-table td { padding: 8px 6px; }
-  .desglose-grid { grid-template-columns: 1fr 1fr; }
-  .charts-grid { grid-template-columns: 1fr; }
-  .header-actions { width: 100%; justify-content: flex-end; }
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+  .filters-bar {
+    flex-direction: column;
+  }
+  .filter-group {
+    width: 100%;
+  }
+  .filters-bar select,
+  .search-input {
+    flex: 1;
+    min-width: 0;
+  }
+  .row-2,
+  .row-3 {
+    grid-template-columns: 1fr;
+  }
+  .tipo-selector {
+    grid-template-columns: 1fr;
+  }
+  .balance-table {
+    font-size: 0.75rem;
+  }
+  .balance-table th,
+  .balance-table td {
+    padding: 8px 6px;
+  }
+  .desglose-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 </style>
