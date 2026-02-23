@@ -487,6 +487,28 @@
           </NuxtLink>
         </div>
       </div>
+
+      <!-- 7. INFRAESTRUCTURA -->
+      <NuxtLink
+        to="/admin/infraestructura"
+        class="nav-item"
+        :class="{ active: isActive('/admin/infraestructura') }"
+      >
+        <svg
+          class="nav-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <rect x="2" y="2" width="20" height="8" rx="2" />
+          <rect x="2" y="14" width="20" height="8" rx="2" />
+          <line x1="6" y1="6" x2="6.01" y2="6" />
+          <line x1="6" y1="18" x2="6.01" y2="18" />
+        </svg>
+        <span v-if="!collapsed" class="nav-label">Infraestructura</span>
+        <span v-if="infraAlertCount > 0" class="badge-dot" />
+      </NuxtLink>
     </nav>
 
     <!-- Popover for collapsed state -->
@@ -566,6 +588,7 @@ const pendingSolicitantes = ref(0)
 const pendingComentarios = ref(0)
 const pendingChats = ref(0)
 const pendingSuscripciones = ref(0)
+const infraAlertCount = ref(0)
 
 // Totales por sección
 const pendingCatalog = computed(() => pendingAnunciantes.value + pendingSolicitantes.value)
@@ -697,6 +720,19 @@ function openPopover(group: string, event: MouseEvent) {
 function closePopover() {
   popover.value.show = false
 }
+
+async function fetchInfraAlerts() {
+  const { count } = await supabase
+    .from('infra_alerts')
+    .select('*', { count: 'exact', head: true })
+    .is('acknowledged_at', null)
+    .in('alert_level', ['critical', 'emergency'])
+  infraAlertCount.value = count ?? 0
+}
+
+onMounted(() => {
+  fetchInfraAlerts()
+})
 
 async function handleLogout() {
   showDropdown.value = false
