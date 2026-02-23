@@ -10,6 +10,7 @@
 import { createError, defineEventHandler, readBody } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
+import { processBatch } from '../../utils/batchProcessor'
 
 // -- Types --------------------------------------------------------------------
 
@@ -60,6 +61,7 @@ export default defineEventHandler(async (event) => {
     .eq('status', 'sold')
     .not('sold_at', 'is', null)
     .gte('sold_at', twentyFourHoursAgo)
+    .limit(200)
 
   if (vehiclesError) {
     throw createError({
@@ -76,68 +78,73 @@ export default defineEventHandler(async (event) => {
   soldVehicles = typedVehicles.length
 
   // -- 3. For each sold vehicle, find users who favorited it ------------------
-  for (const vehicle of typedVehicles) {
-    const { data: favorites, error: favsError } = await supabase
-      .from('favorites')
-      .select('user_id, users(id, email, name, lang)')
-      .eq('vehicle_id', vehicle.id)
+  const result = await processBatch({
+    items: typedVehicles,
+    batchSize: 50,
+    processor: async (vehicle: SoldVehicle) => {
+      const { data: favorites, error: favsError } = await supabase
+        .from('favorites')
+        .select('user_id, users(id, email, name, lang)')
+        .eq('vehicle_id', vehicle.id)
 
-    if (favsError) {
-      console.error(
-        `[favorite-sold] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`,
-      )
-      continue
-    }
-
-    if (!favorites || favorites.length === 0) {
-      continue
-    }
-
-    const typedFavorites = favorites as unknown as FavoriteWithUser[]
-    const vehicleTitle = `${vehicle.brand} ${vehicle.model}`
-
-    // Build a URL to similar vehicles based on the same category
-    const similarParams = vehicle.category_id ? `?category=${vehicle.category_id}` : ''
-    const similarUrl = `https://tracciona.com/catalogo${similarParams}`
-
-    // -- 4. Send notification to each user who favorited ----------------------
-    for (const fav of typedFavorites) {
-      const user = fav.users
-      if (!user || !user.email) {
-        continue
+      if (favsError) {
+        console.error(
+          `[favorite-sold] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`,
+        )
+        return
       }
 
-      const locale = user.lang ?? 'es'
-      const variables: Record<string, string> = {
-        name: user.name ?? user.email,
-        vehicleTitle,
-        similarUrl,
+      if (!favorites || favorites.length === 0) {
+        return
       }
 
-      try {
-        await $fetch('/api/email/send', {
-          method: 'POST',
-          headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
-          body: {
-            templateKey: 'buyer_favorite_sold',
-            to: user.email,
-            userId: user.id,
-            variables,
-            locale,
-          },
-        })
+      const typedFavorites = favorites as unknown as FavoriteWithUser[]
+      const vehicleTitle = `${vehicle.brand} ${vehicle.model}`
 
-        notificationsSent++
-      } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-        console.error(`[favorite-sold] Failed to send email to ${user.email}: ${errorMessage}`)
+      // Build a URL to similar vehicles based on the same category
+      const similarParams = vehicle.category_id ? `?category=${vehicle.category_id}` : ''
+      const similarUrl = `https://tracciona.com/catalogo${similarParams}`
+
+      // -- 4. Send notification to each user who favorited ----------------------
+      for (const fav of typedFavorites) {
+        const user = fav.users
+        if (!user || !user.email) {
+          continue
+        }
+
+        const locale = user.lang ?? 'es'
+        const variables: Record<string, string> = {
+          name: user.name ?? user.email,
+          vehicleTitle,
+          similarUrl,
+        }
+
+        try {
+          await $fetch('/api/email/send', {
+            method: 'POST',
+            headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
+            body: {
+              templateKey: 'buyer_favorite_sold',
+              to: user.email,
+              userId: user.id,
+              variables,
+              locale,
+            },
+          })
+
+          notificationsSent++
+        } catch (err: unknown) {
+          const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+          console.error(`[favorite-sold] Failed to send email to ${user.email}: ${errorMessage}`)
+        }
       }
-    }
-  }
+    },
+  })
 
   return {
     soldVehicles,
     notificationsSent,
+    batchResult: { processed: result.processed, errors: result.errors },
     timestamp: now.toISOString(),
   }
 })

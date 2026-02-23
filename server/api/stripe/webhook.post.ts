@@ -97,6 +97,17 @@ export default defineEventHandler(async (event) => {
       const userId = metadata?.user_id
       const plan = metadata?.plan
 
+      // Idempotency check: skip if this checkout was already processed
+      const sessionId = session.id as string
+      const existingPaymentRes = await fetch(
+        `${supabaseUrl}/rest/v1/payments?stripe_checkout_session_id=eq.${sessionId}&status=eq.succeeded&select=id`,
+        { headers: { apikey: supabaseKey as string, Authorization: `Bearer ${supabaseKey}` } },
+      )
+      const existingPaymentData = await existingPaymentRes.json()
+      if (Array.isArray(existingPaymentData) && existingPaymentData.length > 0) {
+        return { received: true, idempotent: true, event: 'checkout.session.completed' }
+      }
+
       if (userId && plan) {
         const customerId = session.customer as string
         const subscriptionId = session.subscription as string
@@ -144,7 +155,6 @@ export default defineEventHandler(async (event) => {
         }
 
         // Update payment status
-        const sessionId = session.id as string
         await supabasePatch('payments', `stripe_checkout_session_id=eq.${sessionId}`, {
           status: 'succeeded',
         })
@@ -186,6 +196,17 @@ export default defineEventHandler(async (event) => {
       const customerId = invoice.customer as string
       const amountPaid = invoice.amount_paid as number
 
+      // Idempotency check: skip if this invoice was already processed
+      const invoiceId = invoice.id as string
+      const existingInvoiceRes = await fetch(
+        `${supabaseUrl}/rest/v1/payments?metadata->>event_invoice_id=eq.${invoiceId}&select=id`,
+        { headers: { apikey: supabaseKey as string, Authorization: `Bearer ${supabaseKey}` } },
+      )
+      const existingInvoiceData = await existingInvoiceRes.json()
+      if (Array.isArray(existingInvoiceData) && existingInvoiceData.length > 0) {
+        return { received: true, idempotent: true, event: 'invoice.payment_succeeded' }
+      }
+
       if (subscriptionId) {
         // Renew subscription: update status and extend expires_at
         const newExpiry = new Date()
@@ -204,7 +225,7 @@ export default defineEventHandler(async (event) => {
           currency: 'eur',
           stripe_customer_id: customerId,
           stripe_subscription_id: subscriptionId,
-          metadata: { event: 'invoice.payment_succeeded' },
+          metadata: { event: 'invoice.payment_succeeded', event_invoice_id: invoiceId },
         })
 
         // Auto-create invoice for renewal payment
@@ -256,6 +277,17 @@ export default defineEventHandler(async (event) => {
       const customerId = invoice.customer as string
       const amountDue = invoice.amount_due as number
 
+      // Idempotency: skip if already recorded this failed invoice
+      const failedInvoiceId = invoice.id as string
+      const existingFailedRes = await fetch(
+        `${supabaseUrl}/rest/v1/payments?metadata->>event_invoice_id=eq.${failedInvoiceId}&status=eq.failed&select=id`,
+        { headers: { apikey: supabaseKey as string, Authorization: `Bearer ${supabaseKey}` } },
+      )
+      const existingFailedData = await existingFailedRes.json()
+      if (Array.isArray(existingFailedData) && existingFailedData.length > 0) {
+        return { received: true, idempotent: true, event: 'invoice.payment_failed' }
+      }
+
       if (subscriptionId) {
         // Mark subscription as past_due
         await supabasePatch('subscriptions', `stripe_subscription_id=eq.${subscriptionId}`, {
@@ -270,7 +302,7 @@ export default defineEventHandler(async (event) => {
           currency: 'eur',
           stripe_customer_id: customerId,
           stripe_subscription_id: subscriptionId,
-          metadata: { event: 'invoice.payment_failed' },
+          metadata: { event: 'invoice.payment_failed', event_invoice_id: failedInvoiceId },
         })
       }
       break
@@ -279,6 +311,16 @@ export default defineEventHandler(async (event) => {
     case 'customer.subscription.deleted': {
       const subscription = obj as Record<string, unknown>
       const subscriptionId = subscription.id as string
+
+      // Idempotency: skip if subscription is already canceled
+      const existingSubRes = await fetch(
+        `${supabaseUrl}/rest/v1/subscriptions?stripe_subscription_id=eq.${subscriptionId}&status=eq.canceled&select=id`,
+        { headers: { apikey: supabaseKey as string, Authorization: `Bearer ${supabaseKey}` } },
+      )
+      const existingSubData = await existingSubRes.json()
+      if (Array.isArray(existingSubData) && existingSubData.length > 0) {
+        return { received: true, idempotent: true, event: 'customer.subscription.deleted' }
+      }
 
       if (subscriptionId) {
         await supabasePatch('subscriptions', `stripe_subscription_id=eq.${subscriptionId}`, {

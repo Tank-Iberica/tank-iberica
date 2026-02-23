@@ -156,8 +156,10 @@ async function uploadToCloudinary(
   })
 
   if (!response.ok) {
-    const errorText = await response.text()
-    console.error('[WhatsApp Process] Cloudinary upload failed:', errorText)
+    await response.text()
+    console.error(
+      `[WhatsApp Process] Cloudinary upload failed: ${response.status} ${response.statusText}`,
+    )
     return null
   }
 
@@ -322,7 +324,7 @@ export default defineEventHandler(async (event) => {
         }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Unknown error'
-        console.error(`[WhatsApp Process] Failed to download media ${mediaId}:`, message)
+        console.error(`[WhatsApp Process] Failed to download media (id redacted):`, message)
       }
     }
 

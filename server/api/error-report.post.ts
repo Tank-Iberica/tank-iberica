@@ -103,7 +103,15 @@ export default defineEventHandler(async (event) => {
 
     // In production, this goes to Cloudflare Pages logs (console.error)
     // In dev, it also helps with debugging
-    console.error('[error-report]', JSON.stringify(report))
+    // Sanitize: remove stack, ip, and userAgent (PII) before logging
+    const sanitizedReport = {
+      message: report.message,
+      url: report.url,
+      source: report.source,
+      component: report.component,
+      timestamp: report.timestamp,
+    }
+    console.error('[error-report]', JSON.stringify(sanitizedReport))
   } catch {
     // Swallow all errors — this endpoint must never fail visibly
   }

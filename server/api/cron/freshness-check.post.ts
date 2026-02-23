@@ -1,5 +1,7 @@
 import { createError, defineEventHandler, readBody } from 'h3'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
+import { processBatch } from '../../utils/batchProcessor'
+import { fetchWithRetry } from '../../utils/fetchWithRetry'
 
 interface CronBody {
   secret?: string
@@ -45,27 +47,33 @@ export default defineEventHandler(async (event) => {
 
   // We need to handle the OR condition for freshness_reminded_at (NULL or older than 30 days)
   // Using PostgREST OR syntax
-  const reminderUrl = `${supabaseUrl}/rest/v1/vehicles?${reminderQuery}&or=(freshness_reminded_at.is.null,freshness_reminded_at.lt.${thirtyDaysAgo})`
+  const reminderUrl = `${supabaseUrl}/rest/v1/vehicles?${reminderQuery}&or=(freshness_reminded_at.is.null,freshness_reminded_at.lt.${thirtyDaysAgo})&limit=200`
 
-  const reminderRes = await fetch(reminderUrl, { headers })
+  const reminderRes = await fetchWithRetry(reminderUrl, { headers })
   const vehiclesToRemind = await reminderRes.json()
 
   if (Array.isArray(vehiclesToRemind)) {
-    for (const vehicle of vehiclesToRemind) {
-      const updateRes = await fetch(`${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicle.id}`, {
-        method: 'PATCH',
-        headers,
-        body: JSON.stringify({
-          freshness_reminded_at: now.toISOString(),
-          freshness_reminder_count: (vehicle.freshness_reminder_count || 0) + 1,
-        }),
-      })
-
-      if (updateRes.ok) {
-        reminded++
-        // TODO: Send reminder notification/email to dealer
-      }
-    }
+    const result = await processBatch({
+      items: vehiclesToRemind,
+      batchSize: 50,
+      processor: async (vehicle: Record<string, unknown>) => {
+        const updateRes = await fetchWithRetry(
+          `${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicle.id}`,
+          {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({
+              freshness_reminded_at: now.toISOString(),
+              freshness_reminder_count: ((vehicle.freshness_reminder_count as number) || 0) + 1,
+            }),
+          },
+        )
+        if (!updateRes.ok) throw new Error('Update failed')
+        // TODO(2026-02): Implement email notification once dealer email is available in the query
+        // Call: $fetch('/api/email/send', { method: 'POST', headers: { 'x-internal-secret': internalSecret }, body: { to: dealer.email, subject: 'Freshness reminder', templateKey: 'freshness_reminder', vehicleId: vehicle.id } })
+      },
+    })
+    reminded = result.processed
   }
 
   // ============================================
@@ -85,9 +93,9 @@ export default defineEventHandler(async (event) => {
   // Vehicles where freshness_reminded_at < 14 days ago AND updated_at < freshness_reminded_at
   // PostgREST doesn't support column-to-column comparison directly,
   // so we fetch candidates and filter in code
-  const pauseCandidatesUrl = `${supabaseUrl}/rest/v1/vehicles?${pauseQuery}&freshness_reminded_at=lt.${fourteenDaysAgo}`
+  const pauseCandidatesUrl = `${supabaseUrl}/rest/v1/vehicles?${pauseQuery}&freshness_reminded_at=lt.${fourteenDaysAgo}&limit=200`
 
-  const pauseCandidatesRes = await fetch(
+  const pauseCandidatesRes = await fetchWithRetry(
     `${pauseCandidatesUrl}&select=id,updated_at,freshness_reminded_at`,
     { headers },
   )
@@ -100,17 +108,22 @@ export default defineEventHandler(async (event) => {
       },
     )
 
-    for (const vehicle of toPause) {
-      const updateRes = await fetch(`${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicle.id}`, {
-        method: 'PATCH',
-        headers,
-        body: JSON.stringify({ status: 'paused' }),
-      })
-
-      if (updateRes.ok) {
-        paused++
-      }
-    }
+    const pauseResult = await processBatch({
+      items: toPause,
+      batchSize: 50,
+      processor: async (vehicle: Record<string, unknown>) => {
+        const updateRes = await fetchWithRetry(
+          `${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicle.id}`,
+          {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ status: 'paused' }),
+          },
+        )
+        if (!updateRes.ok) throw new Error('Update failed')
+      },
+    })
+    paused = pauseResult.processed
   }
 
   // ============================================
@@ -119,23 +132,28 @@ export default defineEventHandler(async (event) => {
   // ============================================
   const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString()
 
-  const expireUrl = `${supabaseUrl}/rest/v1/vehicles?status=eq.published&updated_at=lt.${ninetyDaysAgo}&select=id`
+  const expireUrl = `${supabaseUrl}/rest/v1/vehicles?status=eq.published&updated_at=lt.${ninetyDaysAgo}&select=id&limit=200`
 
-  const expireCandidatesRes = await fetch(expireUrl, { headers })
+  const expireCandidatesRes = await fetchWithRetry(expireUrl, { headers })
   const expireCandidates = await expireCandidatesRes.json()
 
   if (Array.isArray(expireCandidates)) {
-    for (const vehicle of expireCandidates) {
-      const updateRes = await fetch(`${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicle.id}`, {
-        method: 'PATCH',
-        headers,
-        body: JSON.stringify({ status: 'expired' }),
-      })
-
-      if (updateRes.ok) {
-        expired++
-      }
-    }
+    const expireResult = await processBatch({
+      items: expireCandidates,
+      batchSize: 50,
+      processor: async (vehicle: Record<string, unknown>) => {
+        const updateRes = await fetchWithRetry(
+          `${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicle.id}`,
+          {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ status: 'expired' }),
+          },
+        )
+        if (!updateRes.ok) throw new Error('Update failed')
+      },
+    })
+    expired = expireResult.processed
   }
 
   return {

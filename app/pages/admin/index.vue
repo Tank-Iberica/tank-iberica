@@ -533,7 +533,7 @@ async function toggleBanner() {
 }
 
 async function loadMatches() {
-  // TODO: Implementar lógica de coincidencias entre solicitantes y vehículos
+  // TODO(2026-02): Implementar lógica de coincidencias entre solicitantes y vehículos (requiere tabla de demandas cruzadas)
   // Por ahora solo mostramos un placeholder
   matches.value = []
 }

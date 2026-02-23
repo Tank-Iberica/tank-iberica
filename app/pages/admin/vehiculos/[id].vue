@@ -52,7 +52,7 @@
           </button>
         </div>
         <label class="featured-toggle">
-          <input v-model="form.featured" type="checkbox" />
+          <input v-model="form.featured" type="checkbox" >
           <span>Destacado</span>
         </label>
       </section>
@@ -70,7 +70,7 @@
             @dragover.prevent
             @drop="handleDrop(index)"
           >
-            <img :src="image.thumbnail_url || image.url" :alt="`Imagen ${index + 1}`" />
+            <img :src="image.thumbnail_url || image.url" :alt="`Imagen ${index + 1}`" >
             <button type="button" class="image-delete" @click="removeImage(index)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 6L6 18M6 6l12 12" />
@@ -79,7 +79,7 @@
             <span class="image-position">{{ index + 1 }}</span>
           </div>
           <label v-if="formImages.length < 10" class="image-upload">
-            <input type="file" accept="image/*" multiple @change="handleImageUpload" />
+            <input type="file" accept="image/*" multiple @change="handleImageUpload" >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
@@ -136,11 +136,11 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Marca *</label>
-            <input v-model="form.brand" type="text" class="form-input" required />
+            <input v-model="form.brand" type="text" class="form-input" required >
           </div>
           <div class="form-group">
             <label class="form-label">Modelo *</label>
-            <input v-model="form.model" type="text" class="form-input" required />
+            <input v-model="form.model" type="text" class="form-input" required >
           </div>
         </div>
         <div class="form-row">
@@ -152,11 +152,11 @@
               class="form-input"
               min="1900"
               max="2100"
-            />
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Matrícula</label>
-            <input v-model="form.plate" type="text" class="form-input" />
+            <input v-model="form.plate" type="text" class="form-input" >
           </div>
         </div>
       </section>
@@ -173,7 +173,7 @@
               class="form-input"
               min="0"
               step="100"
-            />
+            >
           </div>
           <div v-if="form.category !== 'venta'" class="form-group">
             <label class="form-label">Precio alquiler (€/mes)</label>
@@ -183,7 +183,7 @@
               class="form-input"
               min="0"
               step="50"
-            />
+            >
           </div>
         </div>
       </section>
@@ -209,7 +209,7 @@
               type="text"
               class="form-input"
               placeholder="Ej: Andalucía"
-            />
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Provincia</label>
@@ -218,7 +218,7 @@
               type="text"
               class="form-input"
               placeholder="Ej: Sevilla"
-            />
+            >
           </div>
         </div>
         <div class="form-row">
@@ -229,7 +229,7 @@
               type="text"
               class="form-input"
               placeholder="Ej: Polígono Industrial..."
-            />
+            >
           </div>
         </div>
       </section>
@@ -277,7 +277,7 @@
               v-model="form.attributes_json[filter.name]"
               type="text"
               class="form-input"
-            />
+            >
             <!-- Desplegable (select) -->
             <select
               v-else-if="filter.type === 'desplegable'"
@@ -289,7 +289,7 @@
             </select>
             <!-- Tick (checkbox) -->
             <label v-else-if="filter.type === 'tick'" class="checkbox-label">
-              <input v-model="form.attributes_json[filter.name]" type="checkbox" />
+              <input v-model="form.attributes_json[filter.name]" type="checkbox" >
               <span>Sí</span>
             </label>
             <!-- Slider (number) -->
@@ -300,14 +300,14 @@
               class="form-input"
               :min="getSliderMin(filter.options)"
               :max="getSliderMax(filter.options)"
-            />
+            >
             <!-- Default: text -->
             <input
               v-else
               v-model="form.attributes_json[filter.name]"
               type="text"
               class="form-input"
-            />
+            >
           </div>
         </div>
       </section>
@@ -324,7 +324,7 @@
               class="form-input"
               min="0"
               step="100"
-            />
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Precio mínimo (€)</label>
@@ -334,7 +334,7 @@
               class="form-input"
               min="0"
               step="100"
-            />
+            >
           </div>
         </div>
       </section>
@@ -377,7 +377,7 @@
                 class="form-input"
                 min="0"
                 required
-              />
+              >
             </div>
             <div class="form-group">
               <label class="form-label">Categoría de venta *</label>
@@ -390,11 +390,11 @@
             </div>
             <div class="form-group">
               <label class="form-label">Nombre comprador</label>
-              <input v-model="sellForm.buyer_name" type="text" class="form-input" />
+              <input v-model="sellForm.buyer_name" type="text" class="form-input" >
             </div>
             <div class="form-group">
               <label class="form-label">Contacto comprador</label>
-              <input v-model="sellForm.buyer_contact" type="text" class="form-input" />
+              <input v-model="sellForm.buyer_contact" type="text" class="form-input" >
             </div>
             <!-- Auto-balance info -->
             <div v-if="sellForm.sale_price > 0" class="tx-preview">
@@ -431,25 +431,25 @@
                 class="form-input"
                 min="0"
                 required
-              />
+              >
             </div>
             <div class="form-row-2">
               <div class="form-group">
                 <label class="form-label">Fecha inicio *</label>
-                <input v-model="rentalForm.start_date" type="date" class="form-input" required />
+                <input v-model="rentalForm.start_date" type="date" class="form-input" required >
               </div>
               <div class="form-group">
                 <label class="form-label">Fecha fin</label>
-                <input v-model="rentalForm.end_date" type="date" class="form-input" />
+                <input v-model="rentalForm.end_date" type="date" class="form-input" >
               </div>
             </div>
             <div class="form-group">
               <label class="form-label">Nombre arrendatario</label>
-              <input v-model="rentalForm.renter_name" type="text" class="form-input" />
+              <input v-model="rentalForm.renter_name" type="text" class="form-input" >
             </div>
             <div class="form-group">
               <label class="form-label">Contacto arrendatario</label>
-              <input v-model="rentalForm.renter_contact" type="text" class="form-input" />
+              <input v-model="rentalForm.renter_contact" type="text" class="form-input" >
             </div>
             <div class="form-group">
               <label class="form-label">Notas</label>
@@ -750,7 +750,7 @@ async function handleSave() {
   } else if (vehicleId.value) {
     const success = await updateVehicle(vehicleId.value, form.value)
     if (success) {
-      // TODO: Show success toast
+      // TODO(2026-02): Show success toast once useToast composable is available
     }
   }
 }
@@ -876,7 +876,7 @@ async function handleImageUpload(event: Event) {
   const input = event.target as HTMLInputElement
   if (!input.files) return
 
-  // TODO: Implement Cloudinary upload
+  // TODO(2026-02): Implement Cloudinary upload via useCloudinaryUpload composable
   // For now, just show placeholder
   for (const file of input.files) {
     if (formImages.value.length >= 10) break

@@ -36,7 +36,7 @@ export async function sendWhatsAppMessage(to: string, text: string): Promise<voi
   const phoneNumberId = config.whatsappPhoneNumberId as string
 
   if (!token || !phoneNumberId) {
-    console.warn(`[WhatsApp Dev] Would send to ${to}: ${text}`)
+    console.warn(`[WhatsApp Dev] Would send message (${text.length} chars)`)
     return
   }
 
@@ -58,13 +58,13 @@ export async function sendWhatsAppMessage(to: string, text: string): Promise<voi
   })
 
   if (!response.ok) {
-    const errorBody = await response.text()
-    console.error(`[WhatsApp] Failed to send message to ${to}:`, errorBody)
+    await response.text()
+    console.error(`[WhatsApp] Failed to send message: ${response.status} ${response.statusText}`)
     throw new Error(`WhatsApp API error: ${response.status} ${response.statusText}`)
   }
 
   const data = (await response.json()) as WhatsAppMessageResponse
-  console.info(`[WhatsApp] Message sent to ${to}, message_id: ${data.messages?.[0]?.id}`)
+  console.info(`[WhatsApp] Message sent, message_id: ${data.messages?.[0]?.id}`)
 }
 
 /**
@@ -82,7 +82,7 @@ export async function downloadWhatsAppMedia(mediaId: string): Promise<Buffer> {
   const token = config.whatsappApiToken as string
 
   if (!token) {
-    console.warn(`[WhatsApp Dev] Would download media: ${mediaId}`)
+    console.warn('[WhatsApp Dev] Would download media (id redacted)')
     return Buffer.from('')
   }
 
@@ -95,8 +95,8 @@ export async function downloadWhatsAppMedia(mediaId: string): Promise<Buffer> {
   })
 
   if (!metadataResponse.ok) {
-    const errorBody = await metadataResponse.text()
-    console.error(`[WhatsApp] Failed to get media metadata for ${mediaId}:`, errorBody)
+    await metadataResponse.text()
+    console.error(`[WhatsApp] Failed to get media metadata: ${metadataResponse.status}`)
     throw new Error(`WhatsApp media metadata error: ${metadataResponse.status}`)
   }
 
@@ -110,8 +110,8 @@ export async function downloadWhatsAppMedia(mediaId: string): Promise<Buffer> {
   })
 
   if (!mediaResponse.ok) {
-    const errorBody = await mediaResponse.text()
-    console.error(`[WhatsApp] Failed to download media ${mediaId}:`, errorBody)
+    await mediaResponse.text()
+    console.error(`[WhatsApp] Failed to download media: ${mediaResponse.status}`)
     throw new Error(`WhatsApp media download error: ${mediaResponse.status}`)
   }
 

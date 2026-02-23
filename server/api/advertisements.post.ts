@@ -1,4 +1,5 @@
 import { serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
+import { getRequestIP } from 'h3'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -22,6 +23,7 @@ interface AdvertisementBody {
   kilometers?: number
   photos?: string[]
   tech_sheet?: string
+  turnstileToken?: string
 }
 
 function validateBody(body: AdvertisementBody): string[] {
@@ -178,8 +180,20 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, message: 'Unauthorized' })
   }
 
-  // Read and validate body
+  // Read body
   const body = await readBody<AdvertisementBody>(event)
+
+  // Verify Turnstile CAPTCHA
+  const turnstileToken = body.turnstileToken
+  if (turnstileToken) {
+    const ip = getRequestIP(event, { xForwardedFor: true }) || undefined
+    const turnstileValid = await verifyTurnstile(turnstileToken, ip)
+    if (!turnstileValid) {
+      throw createError({ statusCode: 403, message: 'CAPTCHA verification failed' })
+    }
+  }
+
+  // Validate body
   const errors = validateBody(body)
 
   if (errors.length > 0) {

@@ -14,6 +14,7 @@
 import { createError, defineEventHandler, readBody } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
+import { processBatch } from '../../utils/batchProcessor'
 
 // -- Types --------------------------------------------------------------------
 
@@ -66,6 +67,7 @@ export default defineEventHandler(async (event) => {
     .eq('status', 'published')
     .not('previous_price', 'is', null)
     .gte('updated_at', twentyFourHoursAgo)
+    .limit(200)
 
   if (vehiclesError) {
     throw createError({
@@ -90,71 +92,76 @@ export default defineEventHandler(async (event) => {
   }
 
   // -- 3. For each price-dropped vehicle, find users who favorited it ---------
-  for (const vehicle of priceDropVehicles) {
-    const { data: favorites, error: favsError } = await supabase
-      .from('favorites')
-      .select('user_id, users(id, email, name, lang)')
-      .eq('vehicle_id', vehicle.id)
+  const result = await processBatch({
+    items: priceDropVehicles,
+    batchSize: 50,
+    processor: async (vehicle: PriceDropVehicle) => {
+      const { data: favorites, error: favsError } = await supabase
+        .from('favorites')
+        .select('user_id, users(id, email, name, lang)')
+        .eq('vehicle_id', vehicle.id)
 
-    if (favsError) {
-      console.error(
-        `[favorite-price-drop] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`,
-      )
-      continue
-    }
-
-    if (!favorites || favorites.length === 0) {
-      continue
-    }
-
-    const typedFavorites = favorites as unknown as FavoriteWithUser[]
-    const vehicleTitle = `${vehicle.brand} ${vehicle.model}`
-    const oldPrice = vehicle.previous_price.toLocaleString('es-ES')
-    const newPrice = vehicle.price.toLocaleString('es-ES')
-    const vehicleUrl = `https://tracciona.com/vehiculo/${vehicle.slug}`
-
-    // -- 4. Send notification to each user who favorited ----------------------
-    for (const fav of typedFavorites) {
-      const user = fav.users
-      if (!user || !user.email) {
-        continue
-      }
-
-      const locale = user.lang ?? 'es'
-      const variables: Record<string, string> = {
-        name: user.name ?? user.email,
-        vehicleTitle,
-        oldPrice: `${oldPrice} EUR`,
-        newPrice: `${newPrice} EUR`,
-        vehicleUrl,
-      }
-
-      try {
-        await $fetch('/api/email/send', {
-          method: 'POST',
-          headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
-          body: {
-            templateKey: 'buyer_favorite_price_drop',
-            to: user.email,
-            userId: user.id,
-            variables,
-            locale,
-          },
-        })
-
-        notificationsSent++
-      } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+      if (favsError) {
         console.error(
-          `[favorite-price-drop] Failed to send email to ${user.email}: ${errorMessage}`,
+          `[favorite-price-drop] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`,
         )
+        return
       }
-    }
-  }
+
+      if (!favorites || favorites.length === 0) {
+        return
+      }
+
+      const typedFavorites = favorites as unknown as FavoriteWithUser[]
+      const vehicleTitle = `${vehicle.brand} ${vehicle.model}`
+      const oldPrice = vehicle.previous_price.toLocaleString('es-ES')
+      const newPrice = vehicle.price.toLocaleString('es-ES')
+      const vehicleUrl = `https://tracciona.com/vehiculo/${vehicle.slug}`
+
+      // -- 4. Send notification to each user who favorited ----------------------
+      for (const fav of typedFavorites) {
+        const user = fav.users
+        if (!user || !user.email) {
+          continue
+        }
+
+        const locale = user.lang ?? 'es'
+        const variables: Record<string, string> = {
+          name: user.name ?? user.email,
+          vehicleTitle,
+          oldPrice: `${oldPrice} EUR`,
+          newPrice: `${newPrice} EUR`,
+          vehicleUrl,
+        }
+
+        try {
+          await $fetch('/api/email/send', {
+            method: 'POST',
+            headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
+            body: {
+              templateKey: 'buyer_favorite_price_drop',
+              to: user.email,
+              userId: user.id,
+              variables,
+              locale,
+            },
+          })
+
+          notificationsSent++
+        } catch (err: unknown) {
+          const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+          console.error(
+            `[favorite-price-drop] Failed to send email to ${user.email}: ${errorMessage}`,
+          )
+        }
+      }
+    },
+  })
 
   return {
     vehiclesChecked,
     notificationsSent,
+    batchResult: { processed: result.processed, errors: result.errors },
     timestamp: now.toISOString(),
   }
 })
