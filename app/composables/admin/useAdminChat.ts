@@ -70,7 +70,8 @@ export function useAdminChat() {
       // Fetch all messages with user info
       const { data: messages, error: msgErr } = await supabase
         .from('chat_messages')
-        .select(`
+        .select(
+          `
           *,
           users:user_id (
             id,
@@ -79,7 +80,8 @@ export function useAdminChat() {
             apellidos,
             avatar_url
           )
-        `)
+        `,
+        )
         .order('created_at', { ascending: true })
 
       if (msgErr) throw msgErr
@@ -124,11 +126,9 @@ export function useAdminChat() {
       }
 
       conversations.value = convMap
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching conversations'
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -198,9 +198,8 @@ export function useAdminChat() {
           msg.is_read = true
         }
       }
-    }
-    catch (err: unknown) {
-      console.error('Error marking messages as read:', err)
+    } catch (err: unknown) {
+      if (import.meta.dev) console.error('Error marking messages as read:', err)
     }
   }
 
@@ -245,12 +244,10 @@ export function useAdminChat() {
       }
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error sending message'
       return false
-    }
-    finally {
+    } finally {
       sending.value = false
     }
   }
@@ -301,14 +298,13 @@ export function useAdminChat() {
 
             // Increment unread if from user and not currently active
             if (
-              newMessage.direction === 'user_to_admin'
-              && activeUserId.value !== newMessage.user_id
+              newMessage.direction === 'user_to_admin' &&
+              activeUserId.value !== newMessage.user_id
             ) {
               conv.unreadCount++
-            }
-            else if (
-              newMessage.direction === 'user_to_admin'
-              && activeUserId.value === newMessage.user_id
+            } else if (
+              newMessage.direction === 'user_to_admin' &&
+              activeUserId.value === newMessage.user_id
             ) {
               // Auto-mark as read if viewing this conversation
               markConversationAsRead(newMessage.user_id)
@@ -354,14 +350,11 @@ export function useAdminChat() {
 
     if (diffDays === 0) {
       return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-    }
-    else if (diffDays === 1) {
+    } else if (diffDays === 1) {
       return 'Ayer'
-    }
-    else if (diffDays < 7) {
+    } else if (diffDays < 7) {
       return date.toLocaleDateString('es-ES', { weekday: 'short' })
-    }
-    else {
+    } else {
       return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })
     }
   }

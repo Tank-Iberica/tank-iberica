@@ -3424,6 +3424,258 @@ ALTER TABLE whatsapp_submissions ADD COLUMN IF NOT EXISTS last_error TEXT;
 
 ---
 
+## SESIÓN 35 — Auditoría integral: 10/10 en todas las áreas
+
+> Resultado de cruzar 3 auditorías externas con auditoría propia. Objetivo: que la próxima auditoría arroje 10/10 en seguridad, código, escalabilidad, SEO y CI. Incluye hallazgos nuevos no cubiertos por sesiones 34/34b.
+
+**Leer:**
+
+1. `server/api/invoicing/create-invoice.post.ts` — Sin auth, IDOR
+2. `server/api/invoicing/export-csv.get.ts` — Sin auth, expone todas las facturas
+3. `server/api/auction-deposit.post.ts` — Sin auth, crea PaymentIntents para cualquiera
+4. `server/api/images/process.post.ts` — Sin auth, validación URL débil (SSRF)
+5. `server/api/social/generate-posts.post.ts` — Auth pero sin ownership del vehículo
+6. `server/api/verify-document.post.ts` — Auth pero sin ownership del vehículo
+7. `server/api/market-report.get.ts` — Carga datos completos sin cache
+8. `server/api/v1/valuation.get.ts` — Bug: nombre incorrecto de config key
+9. `nuxt.config.ts` — Falta CSP, @vueuse/nuxt sin usar
+10. `package.json` — Dependencias sin usar, xlsx vulnerable
+11. Migraciones SQL — RLS policies con gaps críticos
+12. Todos los `.vue` con `v-html` — Buscar y sanitizar
+
+**Hacer:**
+
+### Parte A — CRÍTICOS DE SEGURIDAD
+
+#### A.1 Invoicing: auth + ownership + filtrado
+
+**`server/api/invoicing/create-invoice.post.ts`:** Sin auth. Añadir `serverSupabaseUser(event)` → 401 si no hay user. Verificar que `dealerId` pertenece al usuario autenticado consultando `dealers` donde `user_id = user.id AND id = dealerId`. Si no coincide → 403. Eliminar `body.userId`, usar `user.id`.
+
+**`server/api/invoicing/export-csv.get.ts`:** Sin auth, exporta TODAS las facturas. Añadir auth. Si el usuario es admin, puede exportar todas. Si es dealer, filtrar por `dealer_id=eq.{userDealerId}` en el query REST.
+
+#### A.2 Auction deposit: auth + ownership
+
+**`server/api/auction-deposit.post.ts`:** Sin auth. Añadir `serverSupabaseUser(event)` → 401. Verificar que `registrationId` pertenece al usuario consultando `auction_registrations` donde `id = registrationId AND user_id = user.id`. Si no coincide → 403.
+
+#### A.3 Images process: auth + validación URL estricta (anti-SSRF)
+
+**`server/api/images/process.post.ts`:** Sin auth. Añadir `serverSupabaseUser(event)` → 401. Reemplazar validación débil `includes('cloudinary.com')` por validación estricta con `new URL(url)` verificando que `hostname.endsWith('.cloudinary.com')` y `protocol === 'https:'`. La validación actual permite URLs como `https://evil.com/path?q=cloudinary.com`.
+
+#### A.4 Social generate-posts: ownership del vehículo
+
+Ya tiene auth, pero no verifica que el vehículo pertenece al dealer del usuario. Añadir `dealer_id` al select del vehículo, luego verificar que coincide con el dealer del usuario autenticado. Admins pueden operar sobre cualquier vehículo.
+
+#### A.5 Verify-document: ownership del vehículo
+
+Ya verifica que el documento pertenece al vehículo, pero NO que el vehículo pertenece al dealer del usuario. Añadir verificación de ownership (misma lógica que A.4). Admins exentos.
+
+#### A.6 Bug en valuation.get.ts
+
+Usa `config.supabaseServiceKey` que no existe en runtimeConfig. El nombre correcto es `config.supabaseServiceRoleKey`. Fix: renombrar la referencia.
+
+---
+
+### Parte B — RLS POLICIES EN SUPABASE
+
+**Crear migración `00052_rls_hardening.sql`:**
+
+1. `advertisements`: cambiar INSERT de público a `authenticated` con `auth.uid() IS NOT NULL`
+2. `demands`: idem
+3. `payments`: añadir política INSERT con `user_id = auth.uid()`
+4. `config`: evaluar si contiene secretos. Si sí → restringir SELECT a `authenticated`. Si no → dejar público.
+5. `auction_bids`: añadir UPDATE/DELETE con `user_id = auth.uid()`
+6. `auction_registrations`: añadir UPDATE con `user_id = auth.uid()`
+7. `saved_searches`: añadir UPDATE/DELETE con `user_id = auth.uid()`
+8. Crear función `is_admin()` reutilizable para estandarizar verificación de admin en policies
+
+**ANTES de aplicar:** Verificar políticas existentes con `SELECT tablename, policyname, cmd, qual FROM pg_policies WHERE schemaname = 'public'` para evitar conflictos.
+
+---
+
+### Parte C — SEO: hreflang + subastas
+
+#### C.1 Hreflang tags
+
+Añadir generación automática de hreflang en el composable de SEO principal. Para cada página pública, generar `<link rel="alternate" hreflang="es" href="...">`, `hreflang="en"`, y `hreflang="x-default"` apuntando a la versión española.
+
+#### C.2 SEO para subastas
+
+Añadir `useHead()` con title y description en `subastas/index.vue` y `subastas/[id].vue`. Añadir structured data JSON-LD tipo `Event` para cada subasta. Añadir subastas activas al sitemap en `server/api/__sitemap.ts`.
+
+---
+
+### Parte D — SECURITY HEADERS (CSP + otros)
+
+Crear `server/middleware/security-headers.ts` que añada a respuestas HTML (no APIs):
+
+- `Content-Security-Policy` con directivas para self, cloudinary, supabase, stripe, cloudflare
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy: camera=(), microphone=(), geolocation=(self)`
+
+Tras aplicar, verificar que no hay errores de CSP en la consola del navegador. Si los hay, añadir los dominios necesarios.
+
+**Alternativa:** Configurar estos headers en Cloudflare Dashboard → Rules → Transform Rules (zero code).
+
+---
+
+### Parte E — BUILD/CI: typecheck, dependencias, v-html
+
+#### E.1 Generar database.types.ts
+
+```bash
+npx supabase gen types typescript --project-id gmnrfuzekbwyzkgsaftv > app/types/database.types.ts
+```
+
+Tras generar, ejecutar `npm run typecheck` y corregir errores restantes. NO usar `any`.
+
+#### E.2 Eliminar dependencias sin usar
+
+- `@stripe/stripe-js` → eliminar (se usa stripe server-side)
+- `@vueuse/nuxt` → eliminar del package.json Y de modules en nuxt.config.ts
+- `@sentry/nuxt` → eliminar (se usa @sentry/vue directamente)
+- `xlsx` → reemplazar por `exceljs` (xlsx@0.18.5 sin parches desde 2022)
+- Añadir `@types/web-push` en devDependencies
+
+#### E.3 v-html + DOMPurify
+
+Buscar todas las instancias de `v-html` en `app/`. Instalar `dompurify` + `@types/dompurify`. Crear `app/composables/useSanitize.ts`. Envolver todo contenido de BD renderizado con v-html en `sanitize()`.
+
+#### E.4 Eliminar console.\* del código cliente
+
+Buscar `console.error/log/warn` en `app/` (excluyendo plugins). Eliminar o envolver en `if (import.meta.dev)`.
+
+#### E.5 Reemplazar alert() por toast + i18n
+
+Buscar `alert(` en `app/`. Crear `useToast()` composable si no existe. Reemplazar cada alert por toast con texto internacionalizado.
+
+---
+
+### Parte F — ESCALABILIDAD: índices, cache, queries
+
+#### F.1 Índices de BD
+
+**Migración `00053_performance_indexes.sql`:**
+
+- `idx_vehicles_location_province`
+- `idx_vehicles_location_region`
+- `idx_vehicles_location_country`
+- `idx_vehicles_brand_trgm` (requiere `pg_trgm`)
+- `idx_vehicles_status_created` (status + created_at DESC)
+- `idx_vehicles_visible_from`
+- `idx_invoices_dealer_created`
+- `idx_payments_checkout_session`
+
+#### F.2 .limit() en queries sin límite
+
+Buscar queries con `.select()` que devuelven listas sin `.limit()`. Añadir `.limit(1000)` como máximo, especialmente en market-report y crons.
+
+#### F.3 Cache para market-report
+
+Añadir `'/api/market-report': { swr: 60 * 60 * 6 }` en routeRules de nuxt.config.ts (cache 6 horas).
+
+---
+
+### Parte G — CALIDAD DE CÓDIGO
+
+#### G.1 Páginas >800 líneas
+
+Buscar con `wc -l`. Para cada página >800 líneas, extraer tabs/secciones en sub-componentes. Criterio: ninguna página >500 líneas.
+
+#### G.2 Push send: limpiar import
+
+Eliminar `createSupabaseServerClient` helper innecesario. Usar import directo de `serverSupabaseServiceRole`.
+
+#### G.3 WhatsApp process: lectura doble del body
+
+Si hay lectura doble de `readBody`, refactorizar para leer una sola vez.
+
+---
+
+### Parte H — DEPENDENCIAS
+
+#### H.1 Reemplazar xlsx por exceljs
+
+Buscar todos los imports de `xlsx`, reemplazar por `exceljs`. La API difiere pero ambas manejan Excel.
+
+#### H.2 npm audit
+
+Ejecutar `npm audit` y corregir vulnerabilidades.
+
+---
+
+### Resumen de archivos
+
+**Crear:**
+
+| Archivo                                   | Tipo                                     |
+| ----------------------------------------- | ---------------------------------------- |
+| `server/middleware/security-headers.ts`   | Middleware CSP + headers                 |
+| `app/composables/useSanitize.ts`          | Wrapper DOMPurify                        |
+| `app/composables/useToast.ts`             | Sistema de notificaciones (si no existe) |
+| `app/types/database.types.ts`             | Tipos generados de Supabase              |
+| Migración `00052_rls_hardening.sql`       | RLS policies                             |
+| Migración `00053_performance_indexes.sql` | Índices de BD                            |
+
+**Modificar:**
+
+| Archivo                                       | Cambio                           | Prioridad  |
+| --------------------------------------------- | -------------------------------- | ---------- |
+| `server/api/invoicing/create-invoice.post.ts` | Auth + ownership                 | 🔴 Crítico |
+| `server/api/invoicing/export-csv.get.ts`      | Auth + filtro por dealer         | 🔴 Crítico |
+| `server/api/auction-deposit.post.ts`          | Auth + ownership                 | 🔴 Crítico |
+| `server/api/images/process.post.ts`           | Auth + URL estricta              | 🔴 Crítico |
+| `server/api/social/generate-posts.post.ts`    | Ownership vehículo               | 🟠 Alto    |
+| `server/api/verify-document.post.ts`          | Ownership vehículo               | 🟠 Alto    |
+| `server/api/v1/valuation.get.ts`              | Fix config key name              | 🟠 Alto    |
+| `server/api/market-report.get.ts`             | Cache + limit                    | 🟡 Medio   |
+| `nuxt.config.ts`                              | Quitar @vueuse/nuxt, body size   | 🟡 Medio   |
+| `package.json`                                | Deps sin usar, xlsx→exceljs      | 🟡 Medio   |
+| Páginas con v-html                            | Sanitizar con DOMPurify          | 🟡 Medio   |
+| Páginas con alert()                           | Toast + i18n                     | 🟢 Bajo    |
+| Páginas con console.\*                        | Eliminar/condicionar             | 🟢 Bajo    |
+| Composable SEO                                | hreflang                         | 🟡 Medio   |
+| Subastas index + [id]                         | Meta + structured data + sitemap | 🟡 Medio   |
+
+### Orden de ejecución
+
+1. Migraciones SQL (00052 RLS + 00053 índices)
+2. Críticos A.1-A.3 (auth en invoicing, auction-deposit, images/process)
+3. Altos A.4-A.6 (ownership social/verify, fix valuation bug)
+4. Security headers middleware
+5. Dependencias (eliminar sin usar, xlsx→exceljs, generar database.types.ts)
+6. v-html + DOMPurify
+7. SEO (hreflang + subastas)
+8. Escalabilidad (.limit, cache, índices)
+9. Calidad (console.\*, alert(), páginas grandes)
+10. RLS policies en BD
+11. Verificar — `npm run build` + `npm run lint` + `npm run typecheck`
+
+### Tests mínimos
+
+- [ ] invoicing/create-invoice sin auth → 401; dealerId de otro → 403
+- [ ] invoicing/export-csv sin auth → 401; dealer solo ve sus facturas
+- [ ] auction-deposit sin auth → 401; registration de otro → 403
+- [ ] images/process sin auth → 401; URL no-cloudinary → 400; URL `evil.com/cloudinary.com` → 400
+- [ ] social/generate-posts con vehículo de otro dealer → 403
+- [ ] verify-document con vehículo de otro dealer → 403
+- [ ] Response headers incluyen CSP, X-Content-Type-Options, X-Frame-Options
+- [ ] hreflang tags en páginas públicas
+- [ ] Subastas tienen meta tags y structured data
+- [ ] v-html no permite inyección de script
+- [ ] npm run typecheck pasa (0 errores)
+- [ ] npm run build compila sin errores
+- [ ] npm audit sin vulnerabilidades críticas
+
+### Decisiones tomadas (sesión de planificación 23 Feb 2026)
+
+1. **Tabla `config` (RLS):** La tabla `vertical_config` contiene datos de UI/tema, NO secretos (los secretos van en `.env`). **Decisión: dejar SELECT público.** Claude Code debe verificar antes de aplicar la migración 00052 ejecutando `SELECT * FROM config LIMIT 5` — si encuentra API keys o tokens, cambiar a `authenticated` y avisar al usuario. Si solo hay configuración de UI → mantener público.
+2. **CSP:** Implementar via **middleware Nitro** (`server/middleware/security-headers.ts`). Queda versionado en git, Claude Code lo gestiona directamente. Si en el futuro se quiere mover a Cloudflare Dashboard, basta con eliminar el middleware y crear Transform Rules equivalentes.
+3. **Sub-componentes >800 líneas:** Hacer **ahora**, dentro de esta sesión 35. Criterio: ningún `.vue` supere 500 líneas. Extraer tabs/secciones en sub-componentes. Esto evita arrastrar deuda técnica a cada vertical futura.
+
+---
+
 ## MAPA COMPLETO DE RUTAS (REFERENCIA CANÓNICA)
 
 > **Para Claude Code:** Este mapa es la fuente de verdad para la estructura de `pages/`. Cuando haya contradicción con cualquier otro documento, este mapa prevalece.

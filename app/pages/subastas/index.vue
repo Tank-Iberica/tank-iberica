@@ -264,8 +264,49 @@ const emptyMessage = computed(() => {
   return map[activeTab.value]
 })
 
-useHead({
-  title: () => t('auction.pageTitle'),
+// SEO with structured data
+const route = useRoute()
+const currentPath = computed(() => route.fullPath)
+
+// Generate ItemList JSON-LD for active auctions
+const itemListJsonLd = computed(() => {
+  if (!auctions.value || auctions.value.length === 0) return null
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: t('auction.seoTitle'),
+    description: t('auction.seoDescription'),
+    numberOfItems: auctions.value.length,
+    itemListElement: auctions.value.map((auction, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Product',
+        name: auction.title || `${auction.vehicle?.brand} ${auction.vehicle?.model}`,
+        url: `https://tracciona.com/subastas/${auction.id}`,
+        offers: {
+          '@type': 'Offer',
+          price:
+            auction.current_bid_cents > 0
+              ? (auction.current_bid_cents / 100).toString()
+              : (auction.start_price_cents / 100).toString(),
+          priceCurrency: 'EUR',
+          availability:
+            auction.status === 'active'
+              ? 'https://schema.org/InStock'
+              : 'https://schema.org/OutOfStock',
+        },
+      },
+    })),
+  }
+})
+
+usePageSeo({
+  title: t('auction.seoTitle'),
+  description: t('auction.seoDescription'),
+  path: currentPath.value,
+  jsonLd: itemListJsonLd.value || undefined,
 })
 </script>
 

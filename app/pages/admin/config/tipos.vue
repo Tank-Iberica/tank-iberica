@@ -8,6 +8,8 @@ definePageMeta({
   middleware: 'admin',
 })
 
+const { t } = useI18n()
+const toast = useToast()
 const supabase = useSupabaseClient()
 
 const {
@@ -159,7 +161,7 @@ function closeModal() {
 
 async function saveType() {
   if (!formData.value.name_es.trim()) {
-    alert('El nombre es obligatorio')
+    toast.warning(t('toast.nameRequired'))
     return
   }
 
@@ -224,7 +226,7 @@ async function updateTypeSubcategoryLinks(typeId: string, subcategoryIds: string
       await supabase.from('subcategory_categories').insert(links as never)
     }
   } catch (err) {
-    console.error('Error updating subcategory links:', err)
+    if (import.meta.dev) console.error('Error updating subcategory links:', err)
   }
 }
 

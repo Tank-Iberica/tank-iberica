@@ -207,7 +207,7 @@ async function saveSubscriptions() {
       pref_csr: subscriptions.value.rsc,
     })
   } catch (err) {
-    console.error('Error saving subscriptions:', err)
+    if (import.meta.dev) console.error('Error saving subscriptions:', err)
   }
 }
 

@@ -287,6 +287,20 @@ Detalle completo en Anexo D.
 | 32     | Comercialización de datos (estilo Idealista: índice de precios, API, informes)            |
 | 33     | Monitorización infra, pipeline imágenes híbrido, migración clusters                       |
 | 34     | Auditoría de seguridad: remediación completa (críticos + altos + medios + bajos)          |
+| 34b    | Hardening y robustez: idempotencia webhook, Turnstile servidor, PII logs, batching crons  |
+| 35     | Auditoría integral 10/10: auth invoicing/auction/images, RLS, CSP, hreflang, typecheck    |
+
+---
+
+## 8b. DOCUMENTO DE ESCALABILIDAD
+
+> **Referencia obligatoria para auditores y Claude Code sobre decisiones de arquitectura.**
+
+| Documento                         | Ubicación                                                      |
+| --------------------------------- | -------------------------------------------------------------- |
+| **ARQUITECTURA-ESCALABILIDAD.md** | `docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md` |
+
+Explica: sistema de multi-cluster Supabase, pipeline híbrido de imágenes (Cloudinary→CF Images), capa de cache SWR en Cloudflare edge, modelo de peso por vertical, umbrales de migración, costes proyectados ($34→$600/mes para 1→20 verticales), planes B/C de contingencia, y respuestas a preguntas frecuentes de auditores.
 
 ---
 
@@ -352,8 +366,10 @@ Detalle completo en Anexo D.
 | 32  | Datos                   | Vistas materializadas, índice precios, informes, API valoración                                   |
 | 33  | Infraestructura         | Monitorización de componentes, pipeline híbrido Cloudinary→CF Images, migración clusters Supabase |
 | 34  | Seguridad               | Remediación auditoría: auth Stripe, firmas webhooks, CSRF, fallo cerrado, rate limit WAF          |
+| 34b | Seguridad + Robustez    | Idempotencia webhook Stripe, Turnstile servidor, PII logs, batching crons, request IDs, TODOs     |
+| 35  | Auditoría integral      | Auth invoicing/auction/images, RLS hardening, CSP headers, hreflang, typecheck, deps, DOMPurify   |
 
 ---
 
 _Documento creado: 18 de febrero de 2026_
-_Última actualización: 18 de febrero de 2026_
+_Última actualización: 23 de febrero de 2026_

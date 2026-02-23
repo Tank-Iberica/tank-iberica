@@ -66,9 +66,7 @@ export default defineNuxtPlugin(() => {
 
       gtagLoaded = true
 
-      if (import.meta.dev) {
-        console.info('[gtag] Google Ads tracking loaded:', adsId)
-      }
+      if (import.meta.dev) console.info('[gtag] Google Ads tracking loaded:', adsId)
     } catch (error) {
       if (import.meta.dev) {
         console.error('[gtag] Failed to load gtag.js:', error)
@@ -95,9 +93,7 @@ export default defineNuxtPlugin(() => {
 
       gtagLoaded = false
 
-      if (import.meta.dev) {
-        console.info('[gtag] Google Ads tracking unloaded')
-      }
+      if (import.meta.dev) console.info('[gtag] Google Ads tracking unloaded')
     } catch (error) {
       if (import.meta.dev) {
         console.error('[gtag] Failed to unload gtag.js:', error)

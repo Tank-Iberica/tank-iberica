@@ -10,6 +10,7 @@
  *   - cf_images_only   → upload directly to CF Images without Cloudinary processing
  */
 import { defineEventHandler, readBody, createError } from 'h3'
+import { serverSupabaseUser } from '#supabase/server'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -116,6 +117,12 @@ async function uploadToCfImages(
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event): Promise<ProcessImageResponse> => {
+  // Auth: verify user is logged in
+  const user = await serverSupabaseUser(event)
+  if (!user) {
+    throw createError({ statusCode: 401, message: 'Unauthorized' })
+  }
+
   // 1. Read and validate body
   const body = await readBody<ProcessImageBody>(event)
 
@@ -123,8 +130,15 @@ export default defineEventHandler(async (event): Promise<ProcessImageResponse> =
     throw createError({ statusCode: 400, message: 'cloudinaryUrl is required' })
   }
 
-  if (!body.cloudinaryUrl.includes('cloudinary.com')) {
-    throw createError({ statusCode: 400, message: 'Invalid Cloudinary URL' })
+  // Strict URL validation (anti-SSRF)
+  let parsedUrl: URL
+  try {
+    parsedUrl = new URL(body.cloudinaryUrl)
+  } catch {
+    throw createError({ statusCode: 400, message: 'Invalid URL' })
+  }
+  if (parsedUrl.protocol !== 'https:' || !parsedUrl.hostname.endsWith('.cloudinary.com')) {
+    throw createError({ statusCode: 400, message: 'URL must be a valid Cloudinary HTTPS URL' })
   }
 
   // 2. Read runtime config

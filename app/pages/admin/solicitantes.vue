@@ -191,7 +191,7 @@ function formatYearRange(min: number | null, max: number | null): string {
         type="text"
         placeholder="Buscar por nombre, marca, tipo..."
         class="filter-search"
-      />
+      >
     </div>
 
     <!-- Error -->
@@ -417,7 +417,7 @@ function formatYearRange(min: number | null, max: number | null): string {
                 type="text"
                 placeholder="Borrar"
                 autocomplete="off"
-              />
+              >
               <p v-if="deleteModal.confirmText && !canDelete" class="text-error">
                 Escribe "Borrar" exactamente para continuar
               </p>

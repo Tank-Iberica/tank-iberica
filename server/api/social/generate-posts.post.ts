@@ -23,6 +23,7 @@ interface VehicleData {
   price: number | null
   location: string | null
   slug: string
+  dealer_id: string
   subcategories: { name: Record<string, string> | null } | null
   vehicle_images: { url: string; position: number }[]
 }
@@ -185,7 +186,7 @@ export default defineEventHandler(async (event): Promise<GeneratePostsResponse> 
   const { data: vehicleRaw, error: vehicleErr } = await supabase
     .from('vehicles')
     .select(
-      'id, brand, model, year, price, location, slug, subcategories(name), vehicle_images(url, position)',
+      'id, brand, model, year, price, location, slug, dealer_id, subcategories(name), vehicle_images(url, position)',
     )
     .eq('id', vehicleId)
     .order('position', { referencedTable: 'vehicle_images', ascending: true })
@@ -200,10 +201,48 @@ export default defineEventHandler(async (event): Promise<GeneratePostsResponse> 
 
   const vehicle = vehicleRaw as unknown as VehicleData
 
-  // 5. Select best image (first by position)
+  // 5. Verify vehicle ownership
+  const { data: userDealer, error: dealerErr } = await supabase
+    .from('dealers')
+    .select('id')
+    .eq('user_id', user.id)
+    .single()
+
+  if (dealerErr || !userDealer) {
+    // Check if user is admin
+    const { data: userData, error: userErr } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr || !userData || userData.role !== 'admin') {
+      throw createError({
+        statusCode: 403,
+        message: 'You do not have permission to generate posts for this vehicle',
+      })
+    }
+  } else if (vehicle.dealer_id !== userDealer.id) {
+    // User has a dealer account but doesn't own this vehicle
+    // Check if they're admin
+    const { data: userData, error: userErr } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr || !userData || userData.role !== 'admin') {
+      throw createError({
+        statusCode: 403,
+        message: 'You do not have permission to generate posts for this vehicle',
+      })
+    }
+  }
+
+  // 6. Select best image (first by position)
   const bestImage = vehicle.vehicle_images?.[0]?.url || null
 
-  // 6. Generate content per platform
+  // 7. Generate content per platform
   const baseUrl = 'https://tracciona.com'
   const vehicleUrl = `${baseUrl}/vehiculo/${vehicle.slug}`
 
@@ -214,7 +253,7 @@ export default defineEventHandler(async (event): Promise<GeneratePostsResponse> 
     { platform: 'x', content: generateX(vehicle, vehicleUrl) },
   ]
 
-  // 7. Insert social_posts rows
+  // 8. Insert social_posts rows
   const inserts = platforms.map(({ platform, content }) => ({
     vehicle_id: vehicleId,
     article_id: null,

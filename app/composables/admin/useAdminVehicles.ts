@@ -132,6 +132,7 @@ export function useAdminVehicles() {
           .from('subcategory_categories')
           .select('subcategory_id')
           .eq('category_id', filters.category_id)
+          .limit(1000)
 
         if (links?.length) {
           const subcategoryIds = (links as { subcategory_id: string }[]).map(
@@ -237,7 +238,7 @@ export function useAdminVehicles() {
       const supabaseError = err as { message?: string; details?: string; hint?: string }
       error.value =
         supabaseError?.message || (err instanceof Error ? err.message : 'Error creating vehicle')
-      console.error('Create vehicle error:', err)
+      if (import.meta.dev) console.error('Create vehicle error:', err)
       return null
     } finally {
       saving.value = false
@@ -274,7 +275,7 @@ export function useAdminVehicles() {
       const supabaseError = err as { message?: string; details?: string; hint?: string }
       error.value =
         supabaseError?.message || (err instanceof Error ? err.message : 'Error updating vehicle')
-      console.error('Update vehicle error:', err)
+      if (import.meta.dev) console.error('Update vehicle error:', err)
       return false
     } finally {
       saving.value = false
@@ -302,7 +303,7 @@ export function useAdminVehicles() {
       const supabaseError = err as { message?: string }
       error.value =
         supabaseError?.message || (err instanceof Error ? err.message : 'Error deleting vehicle')
-      console.error('Delete vehicle error:', err)
+      if (import.meta.dev) console.error('Delete vehicle error:', err)
       return false
     } finally {
       saving.value = false
@@ -376,7 +377,7 @@ export function useAdminVehicles() {
       const supabaseError = err as { message?: string }
       error.value =
         supabaseError?.message || (err instanceof Error ? err.message : 'Error archiving vehicle')
-      console.error('Archive vehicle error:', err)
+      if (import.meta.dev) console.error('Archive vehicle error:', err)
       return false
     } finally {
       saving.value = false

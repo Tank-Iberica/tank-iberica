@@ -15,6 +15,9 @@ definePageMeta({
   middleware: 'admin',
 })
 
+const { t } = useI18n()
+const toast = useToast()
+
 const {
   filters,
   loading,
@@ -127,11 +130,11 @@ function closeModal() {
 
 async function saveFilter() {
   if (!formData.value.name.trim()) {
-    alert('El nombre es obligatorio')
+    toast.warning(t('toast.nameRequired'))
     return
   }
   if (!formData.value.type) {
-    alert('El tipo es obligatorio')
+    toast.warning(t('toast.typeRequired'))
     return
   }
 
@@ -143,8 +146,7 @@ async function saveFilter() {
   let success: boolean | string | null
   if (editingId.value) {
     success = await updateFilter(editingId.value, formData.value)
-  }
-  else {
+  } else {
     success = await createFilter(formData.value)
   }
 
@@ -179,45 +181,53 @@ async function handleMoveDown(id: string) {
 
 // Helpers
 function getTypeLabel(type: FilterType): string {
-  return FILTER_TYPES.find(t => t.value === type)?.label || type
+  return FILTER_TYPES.find((t) => t.value === type)?.label || type
 }
 
 function getStatusClass(status: FilterStatus): string {
   switch (status) {
-    case 'published': return 'status-published'
-    case 'draft': return 'status-draft'
-    case 'archived': return 'status-archived'
-    default: return ''
+    case 'published':
+      return 'status-published'
+    case 'draft':
+      return 'status-draft'
+    case 'archived':
+      return 'status-archived'
+    default:
+      return ''
   }
 }
 
 function getStatusLabel(status: FilterStatus): string {
-  return FILTER_STATUSES.find(s => s.value === status)?.label || status
+  return FILTER_STATUSES.find((s) => s.value === status)?.label || status
 }
 
 function getExtraFiltersDisplay(filter: AdminFilter): string {
   const extras = filter.options?.extra_filters || []
   if (!extras.length) return '-'
-  return extras.map((id) => {
-    const f = filters.value.find(x => x.id === id || x.name === id)
-    return f?.label_es || f?.name || id
-  }).join(', ')
+  return extras
+    .map((id) => {
+      const f = filters.value.find((x) => x.id === id || x.name === id)
+      return f?.label_es || f?.name || id
+    })
+    .join(', ')
 }
 
 function getHidesDisplay(filter: AdminFilter): string {
   const hides = filter.options?.hides || []
   if (!hides.length) return '-'
-  return hides.map((id) => {
-    const f = filters.value.find(x => x.id === id || x.name === id)
-    return f?.label_es || f?.name || id
-  }).join(', ')
+  return hides
+    .map((id) => {
+      const f = filters.value.find((x) => x.id === id || x.name === id)
+      return f?.label_es || f?.name || id
+    })
+    .join(', ')
 }
 
 // Show extra/hide fields only for tick type
 const showTickOptions = computed(() => formData.value.type === 'tick')
 // Show choices fields for desplegable types
-const showChoicesOptions = computed(() =>
-  formData.value.type === 'desplegable' || formData.value.type === 'desplegable_tick',
+const showChoicesOptions = computed(
+  () => formData.value.type === 'desplegable' || formData.value.type === 'desplegable_tick',
 )
 // Show step field for calc type
 const showCalcOptions = computed(() => formData.value.type === 'calc')
@@ -244,9 +254,7 @@ function removeChoice(index: number) {
     <!-- Header -->
     <div class="section-header">
       <h2>Características</h2>
-      <button class="btn-primary" @click="openNewModal">
-        + Nueva
-      </button>
+      <button class="btn-primary" @click="openNewModal">+ Nueva</button>
     </div>
 
     <!-- Error message -->
@@ -255,28 +263,20 @@ function removeChoice(index: number) {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      Cargando características...
-    </div>
+    <div v-if="loading" class="loading-state">Cargando características...</div>
 
     <!-- Table -->
     <div v-else class="table-container">
       <table class="admin-table">
         <thead>
           <tr>
-            <th style="width: 50px">
-              Orden
-            </th>
+            <th style="width: 50px">Orden</th>
             <th>Nombre</th>
             <th>Tipo</th>
             <th>Extra</th>
             <th>Ocultar</th>
-            <th style="width: 100px">
-              Estado
-            </th>
-            <th style="width: 100px">
-              Acciones
-            </th>
+            <th style="width: 100px">Estado</th>
+            <th style="width: 100px">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -330,27 +330,17 @@ function removeChoice(index: number) {
             </td>
             <td>
               <div class="action-buttons">
-                <button
-                  class="btn-icon btn-edit"
-                  title="Editar"
-                  @click="openEditModal(filter)"
-                >
+                <button class="btn-icon btn-edit" title="Editar" @click="openEditModal(filter)">
                   ✏️
                 </button>
-                <button
-                  class="btn-icon btn-delete"
-                  title="Eliminar"
-                  @click="confirmDelete(filter)"
-                >
+                <button class="btn-icon btn-delete" title="Eliminar" @click="confirmDelete(filter)">
                   🗑️
                 </button>
               </div>
             </td>
           </tr>
           <tr v-if="!filters.length">
-            <td colspan="7" class="empty-state">
-              No hay características. Crea la primera.
-            </td>
+            <td colspan="7" class="empty-state">No hay características. Crea la primera.</td>
           </tr>
         </tbody>
       </table>
@@ -362,9 +352,7 @@ function removeChoice(index: number) {
         <div class="modal-content">
           <div class="modal-header">
             <h3>{{ editingId ? 'Editar Característica' : 'Nueva Característica' }}</h3>
-            <button class="modal-close" @click="closeModal">
-              ×
-            </button>
+            <button class="modal-close" @click="closeModal">×</button>
           </div>
 
           <div class="modal-body">
@@ -396,11 +384,13 @@ function removeChoice(index: number) {
               <div class="form-group">
                 <label for="type">Tipo *</label>
                 <select id="type" v-model="formData.type" required>
-                  <option value="" disabled>
-                    Seleccionar
-                  </option>
-                  <option v-for="t in FILTER_TYPES" :key="t.value" :value="t.value">
-                    {{ t.label }}
+                  <option value="" disabled>Seleccionar</option>
+                  <option
+                    v-for="filterType in FILTER_TYPES"
+                    :key="filterType.value"
+                    :value="filterType.value"
+                  >
+                    {{ filterType.label }}
                   </option>
                 </select>
               </div>
@@ -420,18 +410,16 @@ function removeChoice(index: number) {
               <label>Extra características (aparecen cuando este tick está activo)</label>
               <div class="checkbox-grid extra-grid">
                 <template v-if="availableFiltersForSelection.length">
-                  <label v-for="f in availableFiltersForSelection" :key="f.id" class="checkbox-label">
-                    <input
-                      v-model="formData.extra_filters"
-                      type="checkbox"
-                      :value="f.id"
-                    >
+                  <label
+                    v-for="f in availableFiltersForSelection"
+                    :key="f.id"
+                    class="checkbox-label"
+                  >
+                    <input v-model="formData.extra_filters" type="checkbox" :value="f.id" >
                     <span>{{ f.label_es || f.name }}</span>
                   </label>
                 </template>
-                <p v-else class="text-muted">
-                  No hay otras características disponibles.
-                </p>
+                <p v-else class="text-muted">No hay otras características disponibles.</p>
               </div>
             </div>
 
@@ -440,18 +428,16 @@ function removeChoice(index: number) {
               <label>Ocultar características (se ocultan cuando este tick está activo)</label>
               <div class="checkbox-grid hide-grid">
                 <template v-if="availableFiltersForSelection.length">
-                  <label v-for="f in availableFiltersForSelection" :key="f.id" class="checkbox-label">
-                    <input
-                      v-model="formData.hides"
-                      type="checkbox"
-                      :value="f.id"
-                    >
+                  <label
+                    v-for="f in availableFiltersForSelection"
+                    :key="f.id"
+                    class="checkbox-label"
+                  >
+                    <input v-model="formData.hides" type="checkbox" :value="f.id" >
                     <span>{{ f.label_es || f.name }}</span>
                   </label>
                 </template>
-                <p v-else class="text-muted">
-                  No hay otras características disponibles.
-                </p>
+                <p v-else class="text-muted">No hay otras características disponibles.</p>
               </div>
             </div>
 
@@ -468,26 +454,24 @@ function removeChoice(index: number) {
 
             <!-- Desplegable options -->
             <div v-if="showChoicesOptions" class="type-options-section">
-              <h4 class="type-options-title">
-                Opciones del desplegable
-              </h4>
+              <h4 class="type-options-title">Opciones del desplegable</h4>
 
               <!-- Source selector -->
               <div class="form-group">
                 <label>Origen de las opciones</label>
                 <div class="radio-group">
                   <label class="radio-label">
-                    <input v-model="formData.choices_source" type="radio" value="manual">
+                    <input v-model="formData.choices_source" type="radio" value="manual" >
                     <span>Manual</span>
                     <small>Solo las opciones que definas aquí</small>
                   </label>
                   <label class="radio-label">
-                    <input v-model="formData.choices_source" type="radio" value="auto">
+                    <input v-model="formData.choices_source" type="radio" value="auto" >
                     <span>Automático</span>
                     <small>Valores únicos de los vehículos del catálogo</small>
                   </label>
                   <label class="radio-label">
-                    <input v-model="formData.choices_source" type="radio" value="both">
+                    <input v-model="formData.choices_source" type="radio" value="both" >
                     <span>Ambos</span>
                     <small>Opciones manuales + valores de vehículos</small>
                   </label>
@@ -504,27 +488,23 @@ function removeChoice(index: number) {
                     placeholder="Escribir opción y pulsar Añadir"
                     @keydown.enter.prevent="addChoice"
                   >
-                  <button type="button" class="btn-add-choice" @click="addChoice">
-                    Añadir
-                  </button>
+                  <button type="button" class="btn-add-choice" @click="addChoice">Añadir</button>
                 </div>
                 <div v-if="formData.choices.length" class="choices-list">
                   <span v-for="(choice, idx) in formData.choices" :key="idx" class="choice-chip">
                     {{ choice }}
-                    <button type="button" class="choice-remove" @click="removeChoice(idx)">×</button>
+                    <button type="button" class="choice-remove" @click="removeChoice(idx)">
+                      ×
+                    </button>
                   </span>
                 </div>
-                <p v-else class="text-muted">
-                  No hay opciones definidas.
-                </p>
+                <p v-else class="text-muted">No hay opciones definidas.</p>
               </div>
             </div>
 
             <!-- Calc step -->
             <div v-if="showCalcOptions" class="type-options-section">
-              <h4 class="type-options-title">
-                Configuración del calculador
-              </h4>
+              <h4 class="type-options-title">Configuración del calculador</h4>
               <div class="form-group">
                 <label for="step">Paso (incremento/decremento)</label>
                 <input
@@ -539,13 +519,10 @@ function removeChoice(index: number) {
 
             <!-- Slider info -->
             <div v-if="showSliderInfo" class="type-options-section">
-              <h4 class="type-options-title">
-                Configuración del slider
-              </h4>
+              <h4 class="type-options-title">Configuración del slider</h4>
               <p class="type-options-info">
-                El rango del slider se calcula automáticamente a partir de los valores
-                mínimo y máximo de los vehículos visibles en el catálogo.
-                No necesita configuración manual.
+                El rango del slider se calcula automáticamente a partir de los valores mínimo y
+                máximo de los vehículos visibles en el catálogo. No necesita configuración manual.
               </p>
             </div>
 
@@ -561,9 +538,7 @@ function removeChoice(index: number) {
           </div>
 
           <div class="modal-footer">
-            <button class="btn-secondary" @click="closeModal">
-              Cancelar
-            </button>
+            <button class="btn-secondary" @click="closeModal">Cancelar</button>
             <button class="btn-primary" :disabled="saving" @click="saveFilter">
               {{ saving ? 'Guardando...' : 'Guardar' }}
             </button>
@@ -578,14 +553,13 @@ function removeChoice(index: number) {
         <div class="modal-content modal-small">
           <div class="modal-header">
             <h3>Confirmar eliminación</h3>
-            <button class="modal-close" @click="closeDeleteModal">
-              ×
-            </button>
+            <button class="modal-close" @click="closeDeleteModal">×</button>
           </div>
           <div class="modal-body">
             <p>
               ¿Estás seguro de eliminar la característica
-              <strong>{{ deleteModal.filter?.label_es || deleteModal.filter?.name }}</strong>?
+              <strong>{{ deleteModal.filter?.label_es || deleteModal.filter?.name }}</strong
+              >?
             </p>
             <p class="text-warning">
               Esta característica se eliminará de todos los tipos y vehículos.
@@ -605,9 +579,7 @@ function removeChoice(index: number) {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-secondary" @click="closeDeleteModal">
-              Cancelar
-            </button>
+            <button class="btn-secondary" @click="closeDeleteModal">Cancelar</button>
             <button class="btn-danger" :disabled="saving || !canDelete" @click="executeDelete">
               {{ saving ? 'Eliminando...' : 'Eliminar' }}
             </button>
@@ -639,7 +611,7 @@ function removeChoice(index: number) {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -966,7 +938,7 @@ function removeChoice(index: number) {
   color: #374151;
 }
 
-.form-group input[type="text"],
+.form-group input[type='text'],
 .form-group select {
   width: 100%;
   padding: 10px 12px;
@@ -978,7 +950,7 @@ function removeChoice(index: number) {
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -1021,7 +993,7 @@ function removeChoice(index: number) {
   font-size: 0.9rem;
 }
 
-.radio-label input[type="radio"] {
+.radio-label input[type='radio'] {
   margin-top: 3px;
   width: auto;
   min-height: auto;
@@ -1050,7 +1022,7 @@ function removeChoice(index: number) {
 }
 
 .btn-add-choice {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   padding: 8px 16px;

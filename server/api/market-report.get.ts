@@ -873,6 +873,7 @@ export default defineEventHandler(async (event) => {
     .eq('vertical', 'tracciona')
     .gte('month', threeMonthsAgo.toISOString())
     .order('month', { ascending: false })
+    .limit(5000)
 
   if (marketError) {
     throw createError({
@@ -891,6 +892,7 @@ export default defineEventHandler(async (event) => {
     .eq('vertical', 'tracciona')
     .gte('week', yearAgo.toISOString())
     .order('week', { ascending: true })
+    .limit(5000)
 
   if (historyError) {
     throw createError({

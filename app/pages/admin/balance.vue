@@ -12,6 +12,7 @@ import {
 import { useAdminTypes } from '~/composables/admin/useAdminTypes'
 import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories'
 import { useAdminVehicles } from '~/composables/admin/useAdminVehicles'
+import { useToast } from '~/composables/useToast'
 
 definePageMeta({
   layout: 'admin',
@@ -222,9 +223,11 @@ function openEditModal(entry: BalanceEntry) {
   showModal.value = true
 }
 
+const toast = useToast()
+
 async function handleSave() {
   if (!formData.value.importe || formData.value.importe <= 0) {
-    alert('El importe debe ser mayor que 0')
+    toast.error('toast.amountRequired')
     return
   }
 
@@ -501,7 +504,7 @@ function printHTML(html: string) {
   // Write content to iframe
   const doc = iframe.contentDocument || iframe.contentWindow?.document
   if (!doc) {
-    alert('No se pudo abrir la ventana de impresión. Por favor, desactiva el bloqueador de popups.')
+    toast.error('toast.printBlocked')
     return
   }
 
@@ -523,9 +526,7 @@ function printHTML(html: string) {
         win.focus()
         win.print()
       } else {
-        alert(
-          'No se pudo abrir la ventana de impresión. Por favor, desactiva el bloqueador de popups.',
-        )
+        toast.error('toast.printBlocked')
       }
     }
   }

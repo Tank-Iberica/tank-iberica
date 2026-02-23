@@ -232,12 +232,14 @@ export default defineEventHandler(async (event) => {
   const internalHeader = getHeader(event, 'x-internal-secret')
   const isInternalCall = internalSecret && internalHeader === internalSecret
 
+  // Read body once at the start
+  const body = await readBody<ProcessBody & { turnstileToken?: string }>(event)
+
   if (!isInternalCall) {
     // External call — require Turnstile token
-    const bodyPeek = await readBody<ProcessBody & { turnstileToken?: string }>(event)
-    if (bodyPeek.turnstileToken) {
+    if (body.turnstileToken) {
       const ip = getRequestIP(event, { xForwardedFor: true }) || undefined
-      const turnstileValid = await verifyTurnstile(bodyPeek.turnstileToken, ip)
+      const turnstileValid = await verifyTurnstile(body.turnstileToken, ip)
       if (!turnstileValid) {
         throw createError({ statusCode: 403, message: 'CAPTCHA verification failed' })
       }
@@ -251,7 +253,6 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '') as string
 
   // 1. Validate input
-  const body = await readBody<ProcessBody>(event)
 
   if (!body.submissionId || !UUID_REGEX.test(body.submissionId)) {
     throw createError({ statusCode: 400, message: 'submissionId must be a valid UUID' })

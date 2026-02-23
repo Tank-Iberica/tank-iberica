@@ -164,7 +164,7 @@ export function useAdminSubcategories() {
       error.value =
         supabaseError?.message ||
         (err instanceof Error ? err.message : 'Error creating subcategory')
-      console.error('Create subcategory error:', err)
+      if (import.meta.dev) console.error('Create subcategory error:', err)
       return null
     } finally {
       saving.value = false
@@ -212,7 +212,7 @@ export function useAdminSubcategories() {
       error.value =
         supabaseError?.message ||
         (err instanceof Error ? err.message : 'Error updating subcategory')
-      console.error('Update subcategory error:', err)
+      if (import.meta.dev) console.error('Update subcategory error:', err)
       return false
     } finally {
       saving.value = false

@@ -11,7 +11,6 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/supabase',
     '@nuxtjs/i18n',
-    '@vueuse/nuxt',
     '@nuxt/image',
     '@nuxtjs/sitemap',
     '@nuxtjs/google-fonts',
@@ -38,6 +37,7 @@ export default defineNuxtConfig({
       { loc: '/', changefreq: 'daily', priority: 1.0 },
       { loc: '/guia', changefreq: 'weekly', priority: 0.7 },
       { loc: '/noticias', changefreq: 'daily', priority: 0.7 },
+      { loc: '/subastas', changefreq: 'daily', priority: 0.7 },
       { loc: '/sobre-nosotros', changefreq: 'monthly', priority: 0.5 },
       { loc: '/legal', changefreq: 'yearly', priority: 0.3 },
     ],
@@ -162,6 +162,7 @@ export default defineNuxtConfig({
     '/api/__sitemap**': { cors: true },
     '/api/merchant-feed**': { cors: true },
     '/api/health**': { cors: true },
+    '/api/market-report': { swr: 60 * 60 * 6 },
   },
 
   runtimeConfig: {

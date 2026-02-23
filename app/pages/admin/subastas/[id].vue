@@ -425,7 +425,7 @@ function goBack() {
                   v-if="getVehicleThumbnail()"
                   :src="getVehicleThumbnail()!"
                   :alt="getVehicleLabel()"
-                />
+                >
                 <span v-else class="thumb-placeholder">&#128247;</span>
               </div>
               <div class="vehicle-info">

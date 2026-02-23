@@ -66,7 +66,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
   const config = useRuntimeConfig()
   const supabase = createClient(
     config.public.supabaseUrl as string,
-    config.supabaseServiceKey as string,
+    config.supabaseServiceRoleKey as string,
   )
 
   // Validate API key

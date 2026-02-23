@@ -528,7 +528,7 @@ async function toggleBanner() {
     // Update local state on success
     bannerEnabled.value = newEnabledState
   } catch (err) {
-    console.error('Error toggling banner:', err)
+    if (import.meta.dev) console.error('Error toggling banner:', err)
   }
 }
 
@@ -553,7 +553,7 @@ async function loadStats() {
       loadMatches(),
     ])
   } catch (err) {
-    console.error('Error loading stats:', err)
+    if (import.meta.dev) console.error('Error loading stats:', err)
   }
 }
 
@@ -667,7 +667,7 @@ async function loadProductStats() {
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
   } catch (err) {
-    console.error('Error loading product stats:', err)
+    if (import.meta.dev) console.error('Error loading product stats:', err)
   }
 }
 
@@ -717,7 +717,7 @@ async function loadUserStats() {
     userStats.value.buyers = 0
     userStats.value.renters = 0
   } catch (err) {
-    console.error('Error loading user stats:', err)
+    if (import.meta.dev) console.error('Error loading user stats:', err)
   }
 }
 

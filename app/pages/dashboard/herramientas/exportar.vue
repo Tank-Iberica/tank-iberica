@@ -180,22 +180,40 @@ async function exportCSV() {
   exporting.value = true
 
   try {
-    const XLSX = await import('xlsx')
+    const ExcelJS = await import('exceljs')
 
     const enabledCols = csvColumns.value.filter((c) => c.enabled)
-    const headers = enabledCols.map((c) => getColumnLabel(c.key))
+    const workbook = new ExcelJS.Workbook()
+    const worksheet = workbook.addWorksheet('Catalog')
 
-    const rows = filteredVehicles.value.map((v) => enabledCols.map((c) => getCellValue(v, c.key)))
+    // Set columns with headers
+    worksheet.columns = enabledCols.map((c) => ({
+      header: getColumnLabel(c.key),
+      key: c.key,
+      width: 15,
+    }))
 
-    const wsData = [headers, ...rows]
-    const ws = XLSX.utils.aoa_to_sheet(wsData)
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'Catalog')
+    // Add data rows
+    filteredVehicles.value.forEach((v) => {
+      const rowData: Record<string, string> = {}
+      enabledCols.forEach((c) => {
+        rowData[c.key] = getCellValue(v, c.key)
+      })
+      worksheet.addRow(rowData)
+    })
 
     const companyName = dealerProfile.value?.company_name || 'catalog'
     const fileName = `${companyName.replace(/\s+/g, '_')}_catalog_${new Date().toISOString().split('T')[0]}.csv`
 
-    XLSX.writeFile(wb, fileName, { bookType: 'csv' })
+    // Generate CSV buffer and download
+    const buffer = await workbook.csv.writeBuffer()
+    const blob = new Blob([buffer], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = fileName
+    link.click()
+    URL.revokeObjectURL(url)
   } catch (err: unknown) {
     error.value = err instanceof Error ? err.message : t('dashboard.tools.export.errorExport')
   } finally {

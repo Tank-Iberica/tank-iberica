@@ -43,9 +43,7 @@ export function useGtag() {
     try {
       window.gtag!('event', eventName, params)
     } catch (error) {
-      if (import.meta.dev) {
-        console.warn('[gtag] Failed to track event:', eventName, error)
-      }
+      if (import.meta.dev) console.warn('[gtag] Failed to track event:', eventName, error)
     }
   }
 

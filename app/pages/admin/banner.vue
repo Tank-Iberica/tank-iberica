@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import { useAdminConfig, type BannerConfig } from '~/composables/admin/useAdminConfig'
+import { useToast } from '~/composables/useToast'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
 })
 
-const {
-  loading,
-  saving,
-  error,
-  banner,
-  fetchBanner,
-  saveBanner,
-  getBannerPreviewHtml,
-} = useAdminConfig()
+const { sanitize } = useSanitize()
+const toast = useToast()
+
+const { loading, saving, error, banner, fetchBanner, saveBanner, getBannerPreviewHtml } =
+  useAdminConfig()
 
 // Form state
 const formData = ref<BannerConfig>({
@@ -84,17 +81,21 @@ onMounted(async () => {
 })
 
 // Watch for changes in banner from store
-watch(banner, (newBanner) => {
-  if (!saving.value) {
-    formData.value = { ...newBanner }
-  }
-}, { deep: true })
+watch(
+  banner,
+  (newBanner) => {
+    if (!saving.value) {
+      formData.value = { ...newBanner }
+    }
+  },
+  { deep: true },
+)
 
 // Save banner
 async function handleSave() {
   const success = await saveBanner(formData.value)
   if (success) {
-    alert('Banner guardado correctamente')
+    toast.success('toast.bannerSaved')
   }
 }
 
@@ -219,9 +220,7 @@ const statusClass = computed(() => {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      Cargando configuración...
-    </div>
+    <div v-if="loading" class="loading-state">Cargando configuración...</div>
 
     <!-- Form -->
     <div v-else class="banner-form">
@@ -299,12 +298,7 @@ const statusClass = computed(() => {
         <!-- URL -->
         <div class="form-group">
           <label for="bannerUrl">URL enlace (opcional)</label>
-          <input
-            id="bannerUrl"
-            v-model="formData.url"
-            type="url"
-            placeholder="https://..."
-          >
+          <input id="bannerUrl" v-model="formData.url" type="url" placeholder="https://..." >
           <p class="form-hint">
             Si añades URL, aparecerá "Más información" / "More info" al final del texto
           </p>
@@ -318,11 +312,11 @@ const statusClass = computed(() => {
               id="bannerDesde"
               type="datetime-local"
               :value="formatDatetimeLocal(formData.from_date)"
-              @input="formData.from_date = parseDatetimeLocal(($event.target as HTMLInputElement).value)"
+              @input="
+                formData.from_date = parseDatetimeLocal(($event.target as HTMLInputElement).value)
+              "
             >
-            <p class="form-hint">
-              Vacío = activo inmediatamente
-            </p>
+            <p class="form-hint">Vacío = activo inmediatamente</p>
           </div>
           <div class="form-group">
             <label for="bannerHasta">Publicar hasta (opcional)</label>
@@ -330,22 +324,18 @@ const statusClass = computed(() => {
               id="bannerHasta"
               type="datetime-local"
               :value="formatDatetimeLocal(formData.to_date)"
-              @input="formData.to_date = parseDatetimeLocal(($event.target as HTMLInputElement).value)"
+              @input="
+                formData.to_date = parseDatetimeLocal(($event.target as HTMLInputElement).value)
+              "
             >
-            <p class="form-hint">
-              Vacío = sin fecha de fin
-            </p>
+            <p class="form-hint">Vacío = sin fecha de fin</p>
           </div>
         </div>
 
         <!-- Active Toggle -->
         <div class="form-group">
           <label class="checkbox-label toggle-label">
-            <input
-              v-model="formData.active"
-              type="checkbox"
-              class="toggle-input"
-            >
+            <input v-model="formData.active" type="checkbox" class="toggle-input" >
             <span class="toggle-switch" />
             <span class="toggle-text">Banner activo</span>
           </label>
@@ -368,25 +358,18 @@ const statusClass = computed(() => {
           <div class="preview-header">
             <h4>Vista previa</h4>
             <div class="preview-lang-toggle">
-              <button
-                :class="{ active: previewLang === 'es' }"
-                @click="previewLang = 'es'"
-              >
+              <button :class="{ active: previewLang === 'es' }" @click="previewLang = 'es'">
                 ES
               </button>
-              <button
-                :class="{ active: previewLang === 'en' }"
-                @click="previewLang = 'en'"
-              >
+              <button :class="{ active: previewLang === 'en' }" @click="previewLang = 'en'">
                 EN
               </button>
             </div>
           </div>
           <div class="preview-content">
-            <div v-if="previewHtml" class="banner-preview" v-html="previewHtml" />
-            <div v-else class="preview-empty">
-              Sin texto configurado para este idioma
-            </div>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="previewHtml" class="banner-preview" v-html="sanitize(previewHtml)" />
+            <div v-else class="preview-empty">Sin texto configurado para este idioma</div>
           </div>
         </div>
       </Transition>
@@ -399,9 +382,7 @@ const statusClass = computed(() => {
           <div class="emoji-picker-modal">
             <div class="emoji-picker-header">
               <span>Seleccionar emoji</span>
-              <button class="btn-close-picker" type="button" @click="closeEmojiPicker">
-                ×
-              </button>
+              <button class="btn-close-picker" type="button" @click="closeEmojiPicker">×</button>
             </div>
             <div class="emoji-picker-body">
               <div v-for="category in emojiCategories" :key="category.name" class="emoji-category">
@@ -511,9 +492,9 @@ const statusClass = computed(() => {
   color: #374151;
 }
 
-.form-group input[type="text"],
-.form-group input[type="url"],
-.form-group input[type="datetime-local"] {
+.form-group input[type='text'],
+.form-group input[type='url'],
+.form-group input[type='datetime-local'] {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #d1d5db;
@@ -523,7 +504,7 @@ const statusClass = computed(() => {
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -767,7 +748,7 @@ const statusClass = computed(() => {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -844,9 +825,9 @@ const statusClass = computed(() => {
 }
 
 .preview-lang-toggle button.active {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
 }
 
 .preview-content {
@@ -857,14 +838,14 @@ const statusClass = computed(() => {
 
 .banner-preview {
   background: #fbbf24;
-  color: #1F2A2A;
+  color: #1f2a2a;
   padding: 12px 20px;
   text-align: center;
   font-size: 14px;
 }
 
 .banner-preview :deep(a) {
-  color: #0F2A2E;
+  color: #0f2a2e;
   font-weight: 600;
   text-decoration: underline;
 }

@@ -432,7 +432,7 @@ function getStatusLabel(status: string): string {
       >
         <!-- Image -->
         <div class="post-image">
-          <img v-if="post.image_url" :src="post.image_url" :alt="getVehicleTitle(post)" />
+          <img v-if="post.image_url" :src="post.image_url" :alt="getVehicleTitle(post)" >
           <div v-else class="post-image-placeholder">
             <svg
               width="32"
@@ -594,7 +594,7 @@ function getStatusLabel(status: string): string {
 
               <!-- Image preview -->
               <div v-if="selectedPost.image_url" class="modal-image">
-                <img :src="selectedPost.image_url" :alt="getVehicleTitle(selectedPost)" />
+                <img :src="selectedPost.image_url" :alt="getVehicleTitle(selectedPost)" >
               </div>
 
               <!-- Locale tabs -->
@@ -666,7 +666,7 @@ function getStatusLabel(status: string): string {
                   v-model="rejectionReason"
                   type="text"
                   :placeholder="t('admin.social.rejectionReasonPlaceholder')"
-                />
+                >
               </div>
             </div>
 
@@ -754,7 +754,7 @@ function getStatusLabel(status: string): string {
                   :placeholder="t('admin.social.vehicleSearchPlaceholder')"
                   class="search-input"
                   @input="searchVehicles"
-                />
+                >
               </div>
 
               <!-- Vehicle results -->
@@ -771,7 +771,7 @@ function getStatusLabel(status: string): string {
                     :src="v.vehicle_images[0].url"
                     :alt="`${v.brand} ${v.model}`"
                     class="vehicle-thumb"
-                  />
+                  >
                   <div v-else class="vehicle-thumb-placeholder" />
                   <div class="vehicle-info">
                     <strong>{{ v.brand }} {{ v.model }}</strong>

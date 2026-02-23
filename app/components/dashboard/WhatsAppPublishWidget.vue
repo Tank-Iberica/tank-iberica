@@ -93,7 +93,8 @@ async function fetchPendingSubmissions() {
       }
     }
   } catch (err) {
-    console.error('[WhatsAppPublishWidget] Failed to fetch pending submissions:', err)
+    if (import.meta.dev)
+      console.error('[WhatsAppPublishWidget] Failed to fetch pending submissions:', err)
   } finally {
     loading.value = false
   }

@@ -499,7 +499,7 @@ async function adjudicateAuction(auctionId: string) {
                 v-model="formData.title"
                 type="text"
                 :placeholder="t('admin.subastas.form.titlePlaceholder')"
-              />
+              >
             </div>
             <div class="form-group">
               <label>{{ t('admin.subastas.form.description') }}</label>
@@ -519,7 +519,7 @@ async function adjudicateAuction(auctionId: string) {
                   type="number"
                   min="0"
                   step="100"
-                />
+                >
                 <span class="form-hint">{{ formatCents(formData.start_price_cents) }}</span>
               </div>
               <div class="form-group">
@@ -529,7 +529,7 @@ async function adjudicateAuction(auctionId: string) {
                   type="number"
                   min="0"
                   step="100"
-                />
+                >
                 <span class="form-hint">{{ formatCents(formData.reserve_price_cents) }}</span>
               </div>
             </div>
@@ -542,12 +542,12 @@ async function adjudicateAuction(auctionId: string) {
                   type="number"
                   min="100"
                   step="100"
-                />
+                >
                 <span class="form-hint">{{ formatCents(formData.bid_increment_cents) }}</span>
               </div>
               <div class="form-group">
                 <label>{{ t('admin.subastas.form.deposit') }} (cents)</label>
-                <input v-model.number="formData.deposit_cents" type="number" min="0" step="100" />
+                <input v-model.number="formData.deposit_cents" type="number" min="0" step="100" >
                 <span class="form-hint">{{ formatCents(formData.deposit_cents) }}</span>
               </div>
             </div>
@@ -561,7 +561,7 @@ async function adjudicateAuction(auctionId: string) {
                   min="0"
                   max="100"
                   step="0.5"
-                />
+                >
               </div>
               <div class="form-group">
                 <label>{{ t('admin.subastas.form.antiSnipe') }} (s)</label>
@@ -570,7 +570,7 @@ async function adjudicateAuction(auctionId: string) {
                   type="number"
                   min="0"
                   step="30"
-                />
+                >
               </div>
             </div>
 
@@ -578,11 +578,11 @@ async function adjudicateAuction(auctionId: string) {
             <div class="form-grid-2">
               <div class="form-group">
                 <label>{{ t('admin.subastas.form.startsAt') }} *</label>
-                <input v-model="formData.starts_at" type="datetime-local" />
+                <input v-model="formData.starts_at" type="datetime-local" >
               </div>
               <div class="form-group">
                 <label>{{ t('admin.subastas.form.endsAt') }} *</label>
-                <input v-model="formData.ends_at" type="datetime-local" />
+                <input v-model="formData.ends_at" type="datetime-local" >
               </div>
             </div>
           </div>

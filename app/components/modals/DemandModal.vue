@@ -168,7 +168,7 @@ const handleSubmit = async () => {
       close()
     }, 3000)
   } catch (err) {
-    console.error('Error submitting demand:', err)
+    if (import.meta.dev) console.error('Error submitting demand:', err)
   } finally {
     isSubmitting.value = false
   }

@@ -353,6 +353,7 @@ definePageMeta({ layout: 'default' })
 
 const route = useRoute()
 const { t, locale } = useI18n()
+const toast = useToast()
 const auctionId = computed(() => route.params.id as string)
 
 const {
@@ -410,7 +411,7 @@ onMounted(async () => {
 
 async function handlePlaceBid(amountCents: number) {
   const ok = await placeBid(auctionId.value, amountCents)
-  if (!ok) alert(error.value || 'Error')
+  if (!ok) toast.error(error.value || t('toast.errorGeneric'))
 }
 
 function handleRequestRegistration() {
@@ -446,7 +447,7 @@ async function handleSubmitRegistration() {
     const clientSecret = await initiateDeposit()
     if (clientSecret) {
       // In a real implementation, we'd open Stripe Elements here
-      alert(t('auction.depositInitiated'))
+      toast.success(t('toast.depositInitiated'))
     }
   }
 }
@@ -483,11 +484,76 @@ function formatPrice(price: number): string {
   }).format(price)
 }
 
-useHead({
-  title: () =>
-    auction.value
-      ? `${t('auction.pageTitle')} - ${auction.value.vehicle?.brand} ${auction.value.vehicle?.model}`
-      : t('auction.pageTitle'),
+// SEO with Event structured data
+const currentPath = computed(() => route.fullPath)
+
+const auctionTitle = computed(() => {
+  if (!auction.value) return t('auction.pageTitle')
+  return (
+    auction.value.title ||
+    `${auction.value.vehicle?.brand || ''} ${auction.value.vehicle?.model || ''}`.trim()
+  )
+})
+
+const seoTitle = computed(() => {
+  if (!auction.value) return t('auction.seoTitle')
+  return t('auction.seoDetailTitle', { title: auctionTitle.value })
+})
+
+const seoDescription = computed(() => {
+  if (!auction.value) return t('auction.seoDescription')
+  return t('auction.seoDetailDescription', {
+    title: auctionTitle.value,
+    startDate: formatDate(auction.value.starts_at),
+    price: formatCents(auction.value.start_price_cents),
+  })
+})
+
+// Generate Event JSON-LD for the auction
+const eventJsonLd = computed(() => {
+  if (!auction.value) return null
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: `${t('auction.pageTitle')}: ${auctionTitle.value}`,
+    description: auction.value.description || seoDescription.value,
+    startDate: auction.value.starts_at,
+    endDate: auction.value.extended_until || auction.value.ends_at,
+    eventStatus:
+      auction.value.status === 'active'
+        ? 'https://schema.org/EventScheduled'
+        : auction.value.status === 'ended'
+          ? 'https://schema.org/EventCompleted'
+          : 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+    location: {
+      '@type': 'VirtualLocation',
+      url: `https://tracciona.com/subastas/${auction.value.id}`,
+    },
+    organizer: {
+      '@type': 'Organization',
+      name: 'Tracciona',
+      url: 'https://tracciona.com',
+    },
+    offers: {
+      '@type': 'Offer',
+      price: (auction.value.start_price_cents / 100).toString(),
+      priceCurrency: 'EUR',
+      availability:
+        auction.value.status === 'active'
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+    },
+  }
+})
+
+usePageSeo({
+  title: seoTitle.value,
+  description: seoDescription.value,
+  path: currentPath.value,
+  image: primaryImage.value || undefined,
+  jsonLd: eventJsonLd.value || undefined,
 })
 </script>
 

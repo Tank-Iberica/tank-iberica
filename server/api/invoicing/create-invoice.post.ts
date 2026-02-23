@@ -1,4 +1,5 @@
 import { createError, defineEventHandler, readBody } from 'h3'
+import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 
 interface InvoiceRequest {
   dealerId: string
@@ -47,6 +48,15 @@ const EU_VAT_RATES: Record<string, number> = {
 export default defineEventHandler(async (event) => {
   const body = await readBody<InvoiceRequest>(event)
 
+  // Authentication check
+  const user = await serverSupabaseUser(event)
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      message: 'Unauthorized: Authentication required',
+    })
+  }
+
   if (!body.dealerId || !body.serviceType || !body.amountCents) {
     throw createError({ statusCode: 400, message: 'Missing required fields' })
   }
@@ -57,6 +67,22 @@ export default defineEventHandler(async (event) => {
 
   if (!supabaseUrl || !supabaseKey) {
     throw createError({ statusCode: 500, message: 'Supabase not configured' })
+  }
+
+  // Ownership validation: Verify dealerId belongs to authenticated user
+  const supabase = serverSupabaseServiceRole(event)
+  const { data: dealer, error: dealerError } = await supabase
+    .from('dealers')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('id', body.dealerId)
+    .single()
+
+  if (dealerError || !dealer) {
+    throw createError({
+      statusCode: 403,
+      message: 'Forbidden: You do not have access to this dealer',
+    })
   }
 
   // Fetch dealer fiscal data for VAT calculation
@@ -114,7 +140,7 @@ export default defineEventHandler(async (event) => {
   // Insert into local invoices table
   const invoiceData = {
     dealer_id: body.dealerId,
-    user_id: body.userId,
+    user_id: user.id,
     stripe_invoice_id: body.stripeInvoiceId || null,
     service_type: body.serviceType,
     amount_cents: body.amountCents,

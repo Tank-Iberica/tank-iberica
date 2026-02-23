@@ -164,7 +164,7 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
   // 5. Verify the vehicle exists
   const { data: vehicle, error: vehicleError } = await supabase
     .from('vehicles')
-    .select('id, brand, model, year')
+    .select('id, brand, model, year, dealer_id')
     .eq('id', vehicleId)
     .single()
 
@@ -175,7 +175,45 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
     })
   }
 
-  // 6. Call Claude Vision API for document analysis
+  // 6. Verify vehicle ownership
+  const { data: userDealer, error: dealerErr } = await supabase
+    .from('dealers')
+    .select('id')
+    .eq('user_id', user.id)
+    .single()
+
+  if (dealerErr || !userDealer) {
+    // Check if user is admin
+    const { data: userData, error: userErr } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr || !userData || userData.role !== 'admin') {
+      throw createError({
+        statusCode: 403,
+        message: 'You do not have permission to verify documents for this vehicle',
+      })
+    }
+  } else if (vehicle.dealer_id !== userDealer.id) {
+    // User has a dealer account but doesn't own this vehicle
+    // Check if they're admin
+    const { data: userData, error: userErr } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (userErr || !userData || userData.role !== 'admin') {
+      throw createError({
+        statusCode: 403,
+        message: 'You do not have permission to verify documents for this vehicle',
+      })
+    }
+  }
+
+  // 7. Call Claude Vision API for document analysis
   // ---------------------------------------------------------------
   // PLACEHOLDER: Replace this block with the actual Claude Vision API
   // call when API keys are configured.
@@ -231,7 +269,7 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
     vin: null,
   }
 
-  // 7. Compare extracted data with declared data
+  // 8. Compare extracted data with declared data
   const discrepancies: string[] = []
 
   if (
@@ -278,7 +316,7 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
   const newStatus: 'verified' | 'pending' = isMatch ? 'verified' : 'pending'
   const now = new Date().toISOString()
 
-  // 8. Update the verification document based on the result
+  // 9. Update the verification document based on the result
   const updatePayload: Record<string, unknown> = {
     status: newStatus,
     data: {
@@ -308,7 +346,7 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
     })
   }
 
-  // 9. If mismatch, flag the document for manual review by adding a note to the data
+  // 10. If mismatch, flag the document for manual review by adding a note to the data
   if (!isMatch) {
     // The document stays as 'pending' — admin will see it in the
     // verification dashboard with discrepancies listed for manual review.

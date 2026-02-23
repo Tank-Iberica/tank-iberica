@@ -269,6 +269,7 @@
 <script setup lang="ts">
 import { generateVehiclePdf } from '~/utils/generatePdf'
 import { fetchTranslation } from '~/composables/useLocalized'
+import { useToast } from '~/composables/useToast'
 
 const route = useRoute()
 const { locale, t } = useI18n()
@@ -277,6 +278,7 @@ const { toggle, isFavorite } = useFavorites()
 const { location: userLocation } = useUserLocation()
 const openDemandModal = inject<() => void>('openDemandModal', () => {})
 const supabase = useSupabaseClient()
+const toast = useToast()
 
 const showReport = ref(false)
 
@@ -461,7 +463,7 @@ async function handleShare() {
     }
   } else {
     await navigator.clipboard.writeText(url)
-    alert(t('vehicle.shareCopied'))
+    toast.success('toast.shareCopied')
   }
 }
 

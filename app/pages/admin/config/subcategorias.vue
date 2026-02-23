@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { useAdminSubcategories, type AdminSubcategory, type SubcategoryFormData } from '~/composables/admin/useAdminSubcategories'
+import {
+  useAdminSubcategories,
+  type AdminSubcategory,
+  type SubcategoryFormData,
+} from '~/composables/admin/useAdminSubcategories'
 import { useAdminFilters } from '~/composables/admin/useAdminFilters'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
 })
+
+const { t } = useI18n()
+const toast = useToast()
 
 const {
   subcategories,
@@ -47,9 +54,8 @@ const deleteModal = ref({
 // Available filters for checkboxes (excluding core filters)
 const availableFilters = computed(() => {
   const coreFilters = ['precio', 'marca', 'año', 'ubicacion', 'price', 'brand', 'year', 'location']
-  return allFilters.value.filter(f =>
-    f.status !== 'archived' &&
-    !coreFilters.includes(f.name.toLowerCase()),
+  return allFilters.value.filter(
+    (f) => f.status !== 'archived' && !coreFilters.includes(f.name.toLowerCase()),
   )
 })
 
@@ -103,7 +109,7 @@ function closeModal() {
 
 async function saveSubcategory() {
   if (!formData.value.name_es.trim()) {
-    alert('El nombre es obligatorio')
+    toast.warning(t('toast.nameRequired'))
     return
   }
 
@@ -121,18 +127,16 @@ async function saveSubcategory() {
   let success: boolean | string | null
   if (editingId.value) {
     success = await updateSubcategory(editingId.value, formData.value)
-  }
-  else {
+  } else {
     success = await createSubcategory(formData.value)
   }
 
   if (success) {
     closeModal()
     await fetchSubcategories()
-  }
-  else if (error.value) {
+  } else if (error.value) {
     // Error is already set in the composable and displayed via the error banner
-    console.error('Save subcategory failed:', error.value)
+    if (import.meta.dev) console.error('Save subcategory failed:', error.value)
   }
 }
 
@@ -161,7 +165,7 @@ function getFilterNames(filterIds: string[] | undefined): string {
   if (!filterIds?.length) return '-'
   const names = filterIds
     .map((id) => {
-      const filter = allFilters.value.find(f => f.id === id)
+      const filter = allFilters.value.find((f) => f.id === id)
       return filter?.label_es || filter?.name || null
     })
     .filter(Boolean)
@@ -173,7 +177,7 @@ function getCategoryLabels(categoryIds: string[] | undefined): string {
   if (!categoryIds?.length) return '-'
   const labels = categoryIds
     .map((id) => {
-      const cat = vehicleCategories.find(c => c.id === id)
+      const cat = vehicleCategories.find((c) => c.id === id)
       return cat?.label || null
     })
     .filter(Boolean)
@@ -202,9 +206,7 @@ async function handleMoveDown(id: string) {
     <!-- Header -->
     <div class="section-header">
       <h2>Subcategorias</h2>
-      <button class="btn-primary" @click="openNewModal">
-        + Nueva
-      </button>
+      <button class="btn-primary" @click="openNewModal">+ Nueva</button>
     </div>
 
     <!-- Error message -->
@@ -213,30 +215,20 @@ async function handleMoveDown(id: string) {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      Cargando subcategorias...
-    </div>
+    <div v-if="loading" class="loading-state">Cargando subcategorias...</div>
 
     <!-- Table -->
     <div v-else class="table-container">
       <table class="admin-table">
         <thead>
           <tr>
-            <th style="width: 50px">
-              Orden
-            </th>
+            <th style="width: 50px">Orden</th>
             <th>Nombre</th>
             <th>Categorias</th>
             <th>Filtros aplicables</th>
-            <th style="width: 80px">
-              Stock
-            </th>
-            <th style="width: 100px">
-              Estado
-            </th>
-            <th style="width: 120px">
-              Acciones
-            </th>
+            <th style="width: 80px">Stock</th>
+            <th style="width: 100px">Estado</th>
+            <th style="width: 120px">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -268,7 +260,9 @@ async function handleMoveDown(id: string) {
               </div>
             </td>
             <td class="categories-cell">
-              <span class="categories-list">{{ getCategoryLabels(subcategory.applicable_categories) }}</span>
+              <span class="categories-list">{{
+                getCategoryLabels(subcategory.applicable_categories)
+              }}</span>
             </td>
             <td class="filters-cell">
               <span class="filters-list">{{ getFilterNames(subcategory.applicable_filters) }}</span>
@@ -306,9 +300,7 @@ async function handleMoveDown(id: string) {
             </td>
           </tr>
           <tr v-if="!subcategories.length">
-            <td colspan="7" class="empty-state">
-              No hay subcategorias. Crea la primera.
-            </td>
+            <td colspan="7" class="empty-state">No hay subcategorias. Crea la primera.</td>
           </tr>
         </tbody>
       </table>
@@ -320,9 +312,7 @@ async function handleMoveDown(id: string) {
         <div class="modal-content">
           <div class="modal-header">
             <h3>{{ editingId ? 'Editar Subcategoria' : 'Nueva Subcategoria' }}</h3>
-            <button class="modal-close" @click="closeModal">
-              ×
-            </button>
+            <button class="modal-close" @click="closeModal">×</button>
           </div>
 
           <div class="modal-body">
@@ -357,16 +347,10 @@ async function handleMoveDown(id: string) {
             <!-- Categories -->
             <div class="form-group">
               <label>Categorias aplicables</label>
-              <p class="form-hint">
-                Define en que categorias aparece esta subcategoria.
-              </p>
+              <p class="form-hint">Define en que categorias aparece esta subcategoria.</p>
               <div class="categories-checkbox-grid">
                 <label v-for="cat in vehicleCategories" :key="cat.id" class="checkbox-label">
-                  <input
-                    v-model="formData.applicable_categories"
-                    type="checkbox"
-                    :value="cat.id"
-                  >
+                  <input v-model="formData.applicable_categories" type="checkbox" :value="cat.id" >
                   <span>{{ cat.label }}</span>
                 </label>
               </div>
@@ -376,7 +360,8 @@ async function handleMoveDown(id: string) {
             <div class="form-group">
               <label>Filtros aplicables</label>
               <p class="form-hint">
-                Filtros que aplican a nivel de subcategoria. Precio, Marca, Año y Ubicación siempre están activos.
+                Filtros que aplican a nivel de subcategoria. Precio, Marca, Año y Ubicación siempre
+                están activos.
               </p>
               <div class="filters-checkbox-grid">
                 <template v-if="availableFilters.length">
@@ -389,9 +374,7 @@ async function handleMoveDown(id: string) {
                     <span>{{ filter.label_es || filter.name }}</span>
                   </label>
                 </template>
-                <p v-else class="text-muted">
-                  No hay filtros creados. Crea filtros primero.
-                </p>
+                <p v-else class="text-muted">No hay filtros creados. Crea filtros primero.</p>
               </div>
             </div>
 
@@ -410,9 +393,7 @@ async function handleMoveDown(id: string) {
           </div>
 
           <div class="modal-footer">
-            <button class="btn-secondary" @click="closeModal">
-              Cancelar
-            </button>
+            <button class="btn-secondary" @click="closeModal">Cancelar</button>
             <button class="btn-primary" :disabled="saving" @click="saveSubcategory">
               {{ saving ? 'Guardando...' : 'Guardar' }}
             </button>
@@ -427,14 +408,13 @@ async function handleMoveDown(id: string) {
         <div class="modal-content modal-small">
           <div class="modal-header">
             <h3>Confirmar eliminación</h3>
-            <button class="modal-close" @click="closeDeleteModal">
-              ×
-            </button>
+            <button class="modal-close" @click="closeDeleteModal">×</button>
           </div>
           <div class="modal-body">
             <p>
               ¿Estás seguro de eliminar la subcategoria
-              <strong>{{ deleteModal.subcategory?.name_es }}</strong>?
+              <strong>{{ deleteModal.subcategory?.name_es }}</strong
+              >?
             </p>
             <p class="text-warning">
               Los tipos vinculados a esta subcategoria perderán esa asociación.
@@ -454,9 +434,7 @@ async function handleMoveDown(id: string) {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-secondary" @click="closeDeleteModal">
-              Cancelar
-            </button>
+            <button class="btn-secondary" @click="closeDeleteModal">Cancelar</button>
             <button class="btn-danger" :disabled="saving || !canDelete" @click="executeDelete">
               {{ saving ? 'Eliminando...' : 'Eliminar' }}
             </button>
@@ -488,7 +466,7 @@ async function handleMoveDown(id: string) {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -821,7 +799,7 @@ async function handleMoveDown(id: string) {
   color: #374151;
 }
 
-.form-group input[type="text"] {
+.form-group input[type='text'] {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #d1d5db;
@@ -831,7 +809,7 @@ async function handleMoveDown(id: string) {
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424A);
+  border-color: var(--color-primary, #23424a);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 

@@ -15,6 +15,9 @@ definePageMeta({
   middleware: 'admin',
 })
 
+const { t } = useI18n()
+const toast = useToast()
+
 const { vehicles, loading, error, total, fetchVehicles, deleteVehicle, updateStatus } =
   useAdminVehicles()
 
@@ -32,7 +35,6 @@ const {
 
 function vehicleToNaming(v: AdminVehicle): FileNamingData {
   const type = types.value.find((t) => t.id === v.type_id)
-  // Find subcategory via junction
   const link = typeSubcategoryLinks.value.find((l) => l.type_id === v.type_id)
   const subcat = link ? subcategories.value.find((s) => s.id === link.subcategory_id) : null
   return {
@@ -88,9 +90,7 @@ const filters = ref<AdminVehicleFilters>({
 type OnlineFilter = 'all' | 'online' | 'offline'
 const onlineFilter = ref<OnlineFilter>('all')
 
-// ============================================
-// COLUMN CONFIGURATION
-// ============================================
+// Column Configuration
 interface ColumnDef {
   key: string
   label: string
@@ -129,7 +129,6 @@ const staticColumns: ColumnDef[] = [
   { key: 'actions', label: 'Acciones', width: '110px' },
 ]
 
-// Dynamic filter columns from filter_definitions
 const dynamicFilterColumns = computed<ColumnDef[]>(() => {
   return (adminFilterDefs.value as AdminFilter[])
     .filter((f) => f.status !== 'archived')
@@ -140,12 +139,10 @@ const dynamicFilterColumns = computed<ColumnDef[]>(() => {
     }))
 })
 
-// All columns = static + dynamic
 const allColumns = computed<ColumnDef[]>(() => {
   return [...staticColumns, ...dynamicFilterColumns.value]
 })
 
-// Active filter columns (non-archived, for template rendering)
 const activeFilterColumns = computed(() => {
   return (adminFilterDefs.value as AdminFilter[])
     .filter((f) => f.status !== 'archived')
@@ -222,33 +219,25 @@ function saveConfig() {
       }),
     )
   } catch {
-    // localStorage may be full or unavailable in private mode
+    // localStorage may be full or unavailable
   }
 }
 
-// Sync dynamic filter columns into "filtros" group and columnOrder when filters load
 function syncFilterColumns() {
   const filterKeys = dynamicFilterColumns.value.map((c) => c.key)
-
-  // Update "filtros" group columns
   const filtrosGroup = columnGroups.value.find((g) => g.id === 'filtros')
   if (filtrosGroup) {
-    // Add new filter columns that aren't in the group yet
     for (const key of filterKeys) {
       if (!filtrosGroup.columns.includes(key)) {
         filtrosGroup.columns.push(key)
       }
     }
-    // Remove filter columns that no longer exist
     filtrosGroup.columns = filtrosGroup.columns.filter(
       (c) => !c.startsWith('filter_') || filterKeys.includes(c),
     )
   }
-
-  // Add new filter columns to columnOrder if not present
   for (const key of filterKeys) {
     if (!columnOrder.value.includes(key)) {
-      // Insert before 'actions' if possible, otherwise at end
       const actionsIdx = columnOrder.value.indexOf('actions')
       if (actionsIdx >= 0) {
         columnOrder.value.splice(actionsIdx, 0, key)
@@ -257,12 +246,9 @@ function syncFilterColumns() {
       }
     }
   }
-
-  // Remove obsolete filter columns from order
   columnOrder.value = columnOrder.value.filter(
     (k) => !k.startsWith('filter_') || filterKeys.includes(k),
   )
-
   saveConfig()
 }
 
@@ -282,25 +268,7 @@ function isGroupActive(groupId: string): boolean {
   return columnGroups.value.find((g) => g.id === groupId)?.active || false
 }
 
-// Visible columns based on active groups
-const _visibleColumns = computed(() => {
-  const _activeGroupIds = columnGroups.value.filter((g) => g.active).map((g) => g.id)
-  const visibleKeys = new Set<string>()
-
-  columnGroups.value
-    .filter((g) => g.active || g.required)
-    .forEach((g) => g.columns.forEach((c) => visibleKeys.add(c)))
-
-  // Return columns in order
-  return columnOrder.value
-    .filter((key) => visibleKeys.has(key))
-    .map((key) => allColumns.value.find((c) => c.key === key)!)
-    .filter(Boolean)
-})
-
-// ============================================
-// SORTING
-// ============================================
+// Sorting
 type SortField = 'brand' | 'model' | 'year' | 'price' | 'status' | 'created_at'
 type SortOrder = 'asc' | 'desc'
 const sortField = ref<SortField>('created_at')
@@ -313,15 +281,6 @@ function toggleSort(field: SortField) {
     sortField.value = field
     sortOrder.value = 'asc'
   }
-}
-
-function getSortIcon(field: string): string {
-  if (sortField.value !== field) return '⇅'
-  return sortOrder.value === 'asc' ? '↑' : '↓'
-}
-
-function isSortActive(field: string): boolean {
-  return sortField.value === field
 }
 
 const sortedVehicles = computed(() => {
@@ -365,9 +324,7 @@ const sortedVehicles = computed(() => {
   return list
 })
 
-// ============================================
-// VIEW STATE
-// ============================================
+// View State
 const isFullscreen = ref(false)
 
 function toggleFullscreen() {
@@ -375,24 +332,8 @@ function toggleFullscreen() {
   document.body.style.overflow = isFullscreen.value ? 'hidden' : ''
 }
 
-// ============================================
-// SELECTION
-// ============================================
+// Selection
 const selectedIds = ref<Set<string>>(new Set())
-
-const selectAll = computed({
-  get: () =>
-    sortedVehicles.value.length > 0 &&
-    sortedVehicles.value.every((v) => selectedIds.value.has(v.id)),
-  set: (val: boolean) => {
-    if (val) {
-      sortedVehicles.value.forEach((v) => selectedIds.value.add(v.id))
-    } else {
-      selectedIds.value.clear()
-    }
-    selectedIds.value = new Set(selectedIds.value)
-  },
-})
 
 function toggleSelection(id: string) {
   if (selectedIds.value.has(id)) {
@@ -403,11 +344,17 @@ function toggleSelection(id: string) {
   selectedIds.value = new Set(selectedIds.value)
 }
 
-// ============================================
-// MODALS
-// ============================================
+function updateSelectAll(val: boolean) {
+  if (val) {
+    sortedVehicles.value.forEach((v) => selectedIds.value.add(v.id))
+  } else {
+    selectedIds.value.clear()
+  }
+  selectedIds.value = new Set(selectedIds.value)
+}
+
+// Modals
 const activeModal = ref<'delete' | 'export' | 'transaction' | 'config' | null>(null)
-const configTab = ref<'grupos' | 'ordenar'>('grupos')
 
 const modalData = ref<{
   vehicle?: AdminVehicle
@@ -453,7 +400,6 @@ function openTransactionModal(vehicle: AdminVehicle, type: 'rent' | 'sell') {
 }
 
 function openConfigModal() {
-  configTab.value = 'grupos'
   activeModal.value = 'config'
 }
 
@@ -462,51 +408,16 @@ function closeModal() {
   modalData.value = {}
 }
 
-// Editing group in config modal
-const editingGroup = ref<ColumnGroup | null>(null)
-const newGroupName = ref('')
-const newGroupColumns = ref<string[]>([])
-
-function startEditGroup(group: ColumnGroup) {
-  editingGroup.value = { ...group, columns: [...group.columns] }
-}
-
-function cancelEditGroup() {
-  editingGroup.value = null
-}
-
-function saveEditGroup() {
-  if (!editingGroup.value) return
-  const idx = columnGroups.value.findIndex((g) => g.id === editingGroup.value!.id)
-  if (idx >= 0) {
-    columnGroups.value[idx] = { ...editingGroup.value }
-    saveConfig()
-  }
-  editingGroup.value = null
-}
-
-function toggleColumnInEdit(colKey: string) {
-  if (!editingGroup.value) return
-  const idx = editingGroup.value.columns.indexOf(colKey)
-  if (idx >= 0) {
-    editingGroup.value.columns.splice(idx, 1)
-  } else {
-    editingGroup.value.columns.push(colKey)
-  }
-}
-
-function createGroup() {
-  if (!newGroupName.value.trim() || newGroupColumns.value.length === 0) return
+// Config Modal - Group Editing
+function createGroup(name: string, columns: string[]) {
   const newGroup: ColumnGroup = {
     id: `custom_${Date.now()}`,
-    name: newGroupName.value.trim(),
+    name,
     icon: '📁',
-    columns: [...newGroupColumns.value],
+    columns: [...columns],
     active: false,
   }
   columnGroups.value.push(newGroup)
-  newGroupName.value = ''
-  newGroupColumns.value = []
   saveConfig()
 }
 
@@ -548,28 +459,7 @@ function onDragEnd() {
   saveConfig()
 }
 
-// ============================================
-// OPTIONS
-// ============================================
-const statusOptions = [
-  { value: null, label: 'Todos' },
-  { value: 'published', label: 'Publicado' },
-  { value: 'draft', label: 'Oculto' },
-  { value: 'rented', label: 'Alquilado' },
-  { value: 'maintenance', label: 'Taller' },
-  { value: 'sold', label: 'Vendido' },
-]
-
-const categoryOptions = [
-  { value: null, label: 'Todas' },
-  { value: 'venta', label: 'Venta' },
-  { value: 'alquiler', label: 'Alquiler' },
-  { value: 'terceros', label: 'Terceros' },
-]
-
-// ============================================
-// DATA LOADING
-// ============================================
+// Data Loading
 onMounted(async () => {
   await Promise.all([
     fetchSubcategories(),
@@ -583,7 +473,6 @@ onMounted(async () => {
 
 watch([filters, onlineFilter], () => loadVehicles(), { deep: true })
 
-// When subcategory filter changes, reset type_id if not in filtered types
 watch(
   () => filters.value.subcategory_id,
   () => {
@@ -603,9 +492,7 @@ async function loadVehicles() {
   await loadFavoriteCounts(vehicles.value.map((v) => v.id))
 }
 
-// ============================================
-// ACTIONS
-// ============================================
+// Actions
 async function executeDelete() {
   if (!modalData.value.vehicle || modalData.value.confirmText?.toLowerCase() !== 'borrar') return
   const success = await deleteVehicle(modalData.value.vehicle.id)
@@ -643,7 +530,7 @@ async function executeExport() {
   }
 
   if (dataToExport.length === 0) {
-    alert('No hay vehículos para exportar')
+    toast.warning(t('toast.noVehiclesToExport'))
     return
   }
 
@@ -657,28 +544,62 @@ async function executeExport() {
 }
 
 async function exportToExcel(data: AdminVehicle[]) {
-  const XLSX = await import('xlsx')
+  const ExcelJS = await import('exceljs')
 
-  const rows = data.map((v) => ({
-    Online: v.is_online ? 'Online' : 'Offline',
-    Marca: v.brand,
-    Modelo: v.model,
-    Tipo: getSubcategoryName(v.type_id),
-    Año: v.year,
-    Precio: v.price,
-    Categoría: v.category,
-    Estado: getStatusLabel(v.status),
-    Matrícula: v.plate || '-',
-    Ubicación: v.location || '-',
-    'Precio Mín.': v.min_price || '-',
-    Coste: v.acquisition_cost || '-',
-    'Precio Alquiler': v.rental_price || '-',
-  }))
+  const workbook = new ExcelJS.Workbook()
+  const worksheet = workbook.addWorksheet('Productos')
 
-  const ws = XLSX.utils.json_to_sheet(rows)
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, 'Productos')
-  XLSX.writeFile(wb, `productos_${new Date().toISOString().split('T')[0]}.xlsx`)
+  worksheet.columns = [
+    { header: 'Online', key: 'online', width: 10 },
+    { header: 'Marca', key: 'brand', width: 15 },
+    { header: 'Modelo', key: 'model', width: 20 },
+    { header: 'Tipo', key: 'type', width: 20 },
+    { header: 'Año', key: 'year', width: 10 },
+    { header: 'Precio', key: 'price', width: 12 },
+    { header: 'Categoría', key: 'category', width: 15 },
+    { header: 'Estado', key: 'status', width: 12 },
+    { header: 'Matrícula', key: 'plate', width: 12 },
+    { header: 'Ubicación', key: 'location', width: 15 },
+    { header: 'Precio Mín.', key: 'min_price', width: 12 },
+    { header: 'Coste', key: 'acquisition_cost', width: 12 },
+    { header: 'Precio Alquiler', key: 'rental_price', width: 15 },
+  ]
+
+  data.forEach((v) => {
+    worksheet.addRow({
+      online: v.is_online ? 'Online' : 'Offline',
+      brand: v.brand,
+      model: v.model,
+      type: getSubcategoryName(v.type_id),
+      year: v.year,
+      price: v.price,
+      category: v.category,
+      status: getStatusLabel(v.status),
+      plate: v.plate || '-',
+      location: v.location || '-',
+      min_price: v.min_price || '-',
+      acquisition_cost: v.acquisition_cost || '-',
+      rental_price: v.rental_price || '-',
+    })
+  })
+
+  worksheet.getRow(1).font = { bold: true }
+  worksheet.getRow(1).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FFE5E7EB' },
+  }
+
+  const buffer = await workbook.xlsx.writeBuffer()
+  const blob = new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `productos_${new Date().toISOString().split('T')[0]}.xlsx`
+  link.click()
+  URL.revokeObjectURL(url)
 }
 
 async function exportToPdf(data: AdminVehicle[]) {
@@ -720,7 +641,6 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
   const doc = new jsPDF('p', 'mm', 'a4')
   const pageWidth = doc.internal.pageSize.getWidth()
 
-  // Header
   doc.setFillColor(35, 66, 74)
   doc.rect(0, 0, pageWidth, 40, 'F')
   doc.setTextColor(255, 255, 255)
@@ -729,7 +649,6 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
   doc.setFontSize(12)
   doc.text('Ficha de Producto', 14, 30)
 
-  // Vehicle title
   doc.setTextColor(35, 66, 74)
   doc.setFontSize(20)
   doc.text(`${vehicle.brand} ${vehicle.model}`, 14, 55)
@@ -740,7 +659,6 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
     doc.text(`Año: ${vehicle.year}`, 14, 63)
   }
 
-  // Price box
   if (vehicle.price) {
     doc.setFillColor(240, 249, 255)
     doc.roundedRect(pageWidth - 80, 45, 66, 25, 3, 3, 'F')
@@ -749,7 +667,6 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
     doc.text(formatPrice(vehicle.price), pageWidth - 75, 60)
   }
 
-  // Details section
   let yPos = 80
   doc.setFontSize(12)
   doc.setTextColor(50, 50, 50)
@@ -780,7 +697,6 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
     yPos += 7
   }
 
-  // Description
   if (vehicle.description_es) {
     yPos += 10
     doc.setFontSize(14)
@@ -794,7 +710,6 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
     yPos += descLines.length * 5
   }
 
-  // Financial info (admin only section)
   if (vehicle.acquisition_cost || vehicle.min_price) {
     yPos += 15
     doc.setFillColor(255, 251, 235)
@@ -818,7 +733,6 @@ async function exportVehicleFicha(vehicle: AdminVehicle) {
     }
   }
 
-  // Footer
   doc.setFontSize(8)
   doc.setTextColor(150, 150, 150)
   doc.text(`Generado: ${new Date().toLocaleDateString('es-ES')} · Tracciona`, 14, 285)
@@ -837,9 +751,7 @@ onUnmounted(() => {
   document.body.style.overflow = ''
 })
 
-// ============================================
-// HELPERS
-// ============================================
+// Helpers
 function getStatusClass(status: string): string {
   const classes: Record<string, string> = {
     published: 'status-published',
@@ -852,6 +764,13 @@ function getStatusClass(status: string): string {
 }
 
 function getStatusLabel(status: string): string {
+  const statusOptions = [
+    { value: 'published', label: 'Publicado' },
+    { value: 'draft', label: 'Oculto' },
+    { value: 'rented', label: 'Alquilado' },
+    { value: 'maintenance', label: 'Taller' },
+    { value: 'sold', label: 'Vendido' },
+  ]
   return statusOptions.find((s) => s.value === status)?.label || status
 }
 
@@ -917,7 +836,6 @@ async function fetchTypeSubcategoryLinks() {
   typeSubcategoryLinks.value = (data as { type_id: string; subcategory_id: string }[]) || []
 }
 
-// Get subcategory name for a vehicle (via type → junction → subcategory)
 function getSubcategoryForVehicle(typeId: string | null): string {
   if (!typeId) return '-'
   const link = typeSubcategoryLinks.value.find((l) => l.type_id === typeId)
@@ -925,7 +843,6 @@ function getSubcategoryForVehicle(typeId: string | null): string {
   return subcategories.value.find((s) => s.id === link.subcategory_id)?.name_es || '-'
 }
 
-// Types filtered by selected subcategory
 const filteredTypes = computed(() => {
   if (!filters.value.subcategory_id) return types.value
   const linkedTypeIds = new Set(
@@ -936,12 +853,10 @@ const filteredTypes = computed(() => {
   return types.value.filter((t) => linkedTypeIds.has(t.id))
 })
 
-// Get available columns for group editing (exclude base columns)
 const availableColumnsForGroups = computed(() =>
   allColumns.value.filter((c) => !['checkbox', 'actions'].includes(c.key)),
 )
 
-// Helper: get filter value from vehicle's attributes_json
 function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   const json = vehicle.attributes_json as Record<string, unknown> | null
   if (!json) return '-'
@@ -968,115 +883,29 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
 
     <!-- Toolbar -->
     <div class="toolbar">
-      <!-- Row 1: Search + Filters -->
-      <div class="toolbar-row">
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input v-model="filters.search" type="text" placeholder="Buscar marca, modelo..." >
-          <button v-if="filters.search" class="clear-btn" @click="filters.search = ''">×</button>
-        </div>
+      <!-- Filters -->
+      <AdminProductosFilters
+        v-model:filters="filters"
+        v-model:online-filter="onlineFilter"
+        :subcategories="subcategories"
+        :filtered-types="filteredTypes"
+        :has-active-filters="hasActiveFilters"
+        @clear="clearFilters"
+      />
 
-        <div class="filter-group">
-          <label class="filter-label">Tipo:</label>
-          <div class="segment-control">
-            <button
-              v-for="opt in [
-                { value: 'all', label: 'Todos' },
-                { value: 'online', label: 'Online' },
-                { value: 'offline', label: 'Offline' },
-              ]"
-              :key="opt.value"
-              :class="{ active: onlineFilter === opt.value }"
-              @click="onlineFilter = opt.value as OnlineFilter"
-            >
-              {{ opt.label }}
-            </button>
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Categoría:</label>
-          <select v-model="filters.category">
-            <option v-for="opt in categoryOptions" :key="String(opt.value)" :value="opt.value">
-              {{ opt.label }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Estado:</label>
-          <select v-model="filters.status">
-            <option v-for="opt in statusOptions" :key="String(opt.value)" :value="opt.value">
-              {{ opt.label }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Subcat.:</label>
-          <select v-model="filters.subcategory_id">
-            <option :value="null">Todas</option>
-            <option v-for="sub in subcategories" :key="sub.id" :value="sub.id">
-              {{ sub.name_es }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Tipo:</label>
-          <select v-model="filters.type_id">
-            <option :value="null">Todos</option>
-            <option v-for="t in filteredTypes" :key="t.id" :value="t.id">
-              {{ t.name_es }}
-            </option>
-          </select>
-        </div>
-
-        <button v-if="hasActiveFilters" class="btn-text-danger" @click="clearFilters">
-          ✕ Limpiar
-        </button>
-      </div>
-
-      <!-- Row 2: Column groups + Actions -->
-      <div class="toolbar-row toolbar-row-secondary">
-        <div class="column-toggles">
-          <span class="toggles-label">Columnas:</span>
-          <button
-            v-for="group in columnGroups.filter((g) => !g.required)"
-            :key="group.id"
-            class="column-toggle"
-            :class="{ active: group.active }"
-            @click="toggleGroup(group.id)"
-          >
-            {{ group.name }}
-          </button>
-        </div>
-
-        <div class="toolbar-actions">
-          <button
-            class="btn-tool"
-            :class="{ 'drive-on': driveConnected }"
-            :disabled="driveLoading"
-            @click="driveConnected ? undefined : connectDrive()"
-          >
-            {{ driveConnected ? '🟢 Drive' : '🔗 Drive' }}
-          </button>
-          <button class="btn-tool" title="Configurar tabla" @click="openConfigModal">
-            ⚙️ Configurar
-          </button>
-          <button class="btn-tool" title="Exportar" @click="openExportModal">
-            📥 Exportar
-            <span v-if="selectedIds.size > 0" class="badge">{{ selectedIds.size }}</span>
-          </button>
-          <button
-            class="btn-tool"
-            :title="isFullscreen ? 'Salir' : 'Pantalla completa'"
-            @click="toggleFullscreen"
-          >
-            {{ isFullscreen ? '✕' : '⛶' }}
-          </button>
-        </div>
-      </div>
+      <!-- Toolbar Actions -->
+      <AdminProductosToolbar
+        :column-groups="columnGroups"
+        :drive-connected="driveConnected"
+        :drive-loading="driveLoading"
+        :selected-count="selectedIds.size"
+        :is-fullscreen="isFullscreen"
+        @toggle-group="toggleGroup"
+        @connect-drive="connectDrive"
+        @open-config="openConfigModal"
+        @open-export="openExportModal"
+        @toggle-fullscreen="toggleFullscreen"
+      />
     </div>
 
     <!-- Error -->
@@ -1091,560 +920,106 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
     </div>
 
     <!-- Table -->
-    <div v-else class="table-container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th class="col-checkbox">
-              <input v-model="selectAll" type="checkbox" title="Seleccionar todos" >
-            </th>
-            <th class="col-img">Img</th>
-            <th class="col-type">Tipo</th>
-            <th class="sortable" @click="toggleSort('brand')">
-              Marca
-              <span class="sort-icon" :class="{ active: isSortActive('brand') }">{{
-                getSortIcon('brand')
-              }}</span>
-            </th>
-            <th class="sortable" @click="toggleSort('model')">
-              Modelo
-              <span class="sort-icon" :class="{ active: isSortActive('model') }">{{
-                getSortIcon('model')
-              }}</span>
-            </th>
-            <th>Subcat.</th>
-            <th>Tipo</th>
-            <th class="sortable col-num" @click="toggleSort('year')">
-              Año
-              <span class="sort-icon" :class="{ active: isSortActive('year') }">{{
-                getSortIcon('year')
-              }}</span>
-            </th>
-            <th class="sortable col-num" @click="toggleSort('price')">
-              Precio
-              <span class="sort-icon" :class="{ active: isSortActive('price') }">{{
-                getSortIcon('price')
-              }}</span>
-            </th>
-            <!-- Optional columns -->
-            <th v-if="isGroupActive('docs')">Matrícula</th>
-            <th v-if="isGroupActive('docs')">Ubicación</th>
-            <th v-if="isGroupActive('tecnico')">Descripción</th>
-            <th v-if="isGroupActive('cuentas')" class="col-num">P. Mín.</th>
-            <th v-if="isGroupActive('cuentas')" class="col-num">Coste</th>
-            <th v-if="isGroupActive('alquiler')" class="col-num">P. Alq.</th>
-            <!-- Dynamic filter columns -->
-            <th
-              v-for="fc in activeFilterColumns"
-              v-show="isGroupActive('filtros')"
-              :key="fc.key"
-              class="col-filter"
-            >
-              {{ fc.label }}<span v-if="fc.unit" class="filter-unit">({{ fc.unit }})</span>
-            </th>
-            <th class="col-num col-favs">Favs</th>
-            <th>Cat.</th>
-            <th class="sortable" @click="toggleSort('status')">
-              Estado
-              <span class="sort-icon" :class="{ active: isSortActive('status') }">{{
-                getSortIcon('status')
-              }}</span>
-            </th>
-            <th class="col-actions">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="v in sortedVehicles" :key="v.id" :class="{ selected: selectedIds.has(v.id) }">
-            <td class="col-checkbox">
-              <input
-                type="checkbox"
-                :checked="selectedIds.has(v.id)"
-                @change="toggleSelection(v.id)"
-              >
-            </td>
-            <td class="col-img">
-              <div class="thumb">
-                <img v-if="getThumbnail(v)" :src="getThumbnail(v)!" :alt="v.brand" >
-                <span v-else class="thumb-empty">📷</span>
-              </div>
-            </td>
-            <td class="col-type">
-              <span class="type-pill" :class="v.is_online ? 'online' : 'offline'">
-                {{ v.is_online ? 'ON' : 'OFF' }}
-              </span>
-            </td>
-            <td>
-              <NuxtLink :to="`/admin/productos/${v.id}`" class="vehicle-link">
-                <strong>{{ v.brand }}</strong>
-              </NuxtLink>
-              <span v-if="!v.is_online && v.owner_name" class="owner-tag"
-                >👤 {{ v.owner_name }}</span
-              >
-            </td>
-            <td class="text-muted">
-              {{ v.model }}
-            </td>
-            <td class="text-small">
-              {{ getSubcategoryForVehicle(v.type_id) }}
-            </td>
-            <td class="text-small">
-              {{ getSubcategoryName(v.type_id) }}
-            </td>
-            <td class="col-num">
-              {{ v.year || '-' }}
-            </td>
-            <td class="col-num">
-              <strong>{{ formatPrice(v.price) }}</strong>
-            </td>
-            <!-- Optional columns -->
-            <td v-if="isGroupActive('docs')">
-              {{ v.plate || '-' }}
-            </td>
-            <td v-if="isGroupActive('docs')" class="text-small">
-              {{ v.location || '-' }}
-            </td>
-            <td v-if="isGroupActive('tecnico')" class="col-desc">
-              <span class="truncate">{{ v.description_es || '-' }}</span>
-            </td>
-            <td v-if="isGroupActive('cuentas')" class="col-num text-muted">
-              {{ formatPrice(v.min_price) }}
-            </td>
-            <td v-if="isGroupActive('cuentas')" class="col-num text-muted">
-              {{ formatPrice(v.acquisition_cost) }}
-            </td>
-            <td v-if="isGroupActive('alquiler')" class="col-num">
-              {{ formatPrice(v.rental_price) }}
-            </td>
-            <!-- Dynamic filter columns -->
-            <td
-              v-for="fc in activeFilterColumns"
-              v-show="isGroupActive('filtros')"
-              :key="fc.key"
-              class="text-small col-filter"
-            >
-              {{ getFilterValue(v, fc.filterName) }}
-            </td>
-            <td class="col-num col-favs">
-              <span v-if="favCounts[v.id]" class="fav-count">&#9829; {{ favCounts[v.id] }}</span>
-              <span v-else class="text-muted">-</span>
-            </td>
-            <td>
-              <span class="cat-pill" :class="getCategoryClass(v.category)">{{ v.category }}</span>
-            </td>
-            <td>
-              <select
-                :value="v.status"
-                class="status-select"
-                :class="getStatusClass(v.status)"
-                @change="handleStatusChange(v, ($event.target as HTMLSelectElement).value)"
-              >
-                <option value="published">Publicado</option>
-                <option value="draft">Oculto</option>
-                <option value="rented">Alquilado</option>
-                <option value="maintenance">Taller</option>
-                <option value="sold">Vendido</option>
-              </select>
-            </td>
-            <td class="col-actions">
-              <div class="row-actions">
-                <NuxtLink :to="`/admin/productos/${v.id}`" class="action-btn" title="Editar"
-                  >✏️</NuxtLink
-                >
-                <button
-                  class="action-btn"
-                  title="Abrir en Drive"
-                  :disabled="driveLoading"
-                  @click="openDriveFolder(v)"
-                >
-                  📁
-                </button>
-                <button class="action-btn" title="Exportar ficha" @click="exportVehicleFicha(v)">
-                  📄
-                </button>
-                <button
-                  class="action-btn"
-                  :title="v.category === 'alquiler' ? 'Alquilar' : 'Vender'"
-                  @click="openTransactionModal(v, v.category === 'alquiler' ? 'rent' : 'sell')"
-                >
-                  💰
-                </button>
-                <button class="action-btn delete" title="Eliminar" @click="openDeleteModal(v)">
-                  🗑️
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr v-if="sortedVehicles.length === 0">
-            <td
-              :colspan="
-                12 +
-                (isGroupActive('docs') ? 2 : 0) +
-                (isGroupActive('tecnico') ? 1 : 0) +
-                (isGroupActive('cuentas') ? 2 : 0) +
-                (isGroupActive('alquiler') ? 1 : 0) +
-                (isGroupActive('filtros') ? activeFilterColumns.length : 0)
-              "
-              class="empty-cell"
-            >
-              <div class="empty-state">
-                <span class="empty-icon">📦</span>
-                <p>No hay productos que coincidan con los filtros</p>
-                <button v-if="hasActiveFilters" class="btn-secondary" @click="clearFilters">
-                  Limpiar filtros
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <AdminProductosTable
+      v-else
+      :vehicles="sortedVehicles"
+      :selected-ids="selectedIds"
+      :sort-field="sortField"
+      :sort-order="sortOrder"
+      :is-group-active="isGroupActive"
+      :active-filter-columns="activeFilterColumns"
+      :fav-counts="favCounts"
+      :has-active-filters="hasActiveFilters"
+      :drive-loading="driveLoading"
+      :get-subcategory-for-vehicle="getSubcategoryForVehicle"
+      :get-subcategory-name="getSubcategoryName"
+      :format-price="formatPrice"
+      :get-filter-value="getFilterValue"
+      :get-status-class="getStatusClass"
+      :get-category-class="getCategoryClass"
+      :get-thumbnail="getThumbnail"
+      @update:select-all="updateSelectAll"
+      @toggle-selection="toggleSelection"
+      @toggle-sort="toggleSort"
+      @status-change="handleStatusChange"
+      @delete="openDeleteModal"
+      @export-ficha="exportVehicleFicha"
+      @transaction="openTransactionModal"
+      @open-drive-folder="openDriveFolder"
+      @clear-filters="clearFilters"
+    />
 
     <!-- Delete Modal -->
-    <Teleport to="body">
-      <div v-if="activeModal === 'delete'" class="modal-overlay" @click.self="closeModal">
-        <div class="modal modal-sm">
-          <div class="modal-header danger">
-            <h3>Eliminar producto</h3>
-            <button class="modal-close" @click="closeModal">×</button>
-          </div>
-          <div class="modal-body">
-            <p>
-              ¿Eliminar
-              <strong>{{ modalData.vehicle?.brand }} {{ modalData.vehicle?.model }}</strong
-              >?
-            </p>
-            <p class="text-danger">
-              Se eliminarán también las imágenes. Esta acción no se puede deshacer.
-            </p>
-            <div class="form-group">
-              <label>Escribe <strong>borrar</strong> para confirmar:</label>
-              <input
-                v-model="modalData.confirmText"
-                type="text"
-                placeholder="borrar"
-                autocomplete="off"
-              >
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn-secondary" @click="closeModal">Cancelar</button>
-            <button
-              class="btn-danger"
-              :disabled="modalData.confirmText?.toLowerCase() !== 'borrar'"
-              @click="executeDelete"
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <AdminProductosDeleteModal
+      :show="activeModal === 'delete'"
+      :vehicle="modalData.vehicle || null"
+      :confirm-text="modalData.confirmText || ''"
+      @update:confirm-text="(v) => (modalData.confirmText = v)"
+      @close="closeModal"
+      @confirm="executeDelete"
+    />
 
     <!-- Export Modal -->
-    <Teleport to="body">
-      <div v-if="activeModal === 'export'" class="modal-overlay" @click.self="closeModal">
-        <div class="modal modal-sm">
-          <div class="modal-header">
-            <h3>Exportar productos</h3>
-            <button class="modal-close" @click="closeModal">×</button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label>Formato</label>
-              <div class="option-buttons">
-                <button
-                  :class="{ active: modalData.exportFormat === 'pdf' }"
-                  @click="modalData.exportFormat = 'pdf'"
-                >
-                  📄 PDF
-                </button>
-                <button
-                  :class="{ active: modalData.exportFormat === 'excel' }"
-                  @click="modalData.exportFormat = 'excel'"
-                >
-                  📊 Excel
-                </button>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Productos</label>
-              <div class="option-buttons vertical">
-                <button
-                  :class="{ active: modalData.exportScope === 'filtered' }"
-                  @click="modalData.exportScope = 'filtered'"
-                >
-                  Filtrados ({{ sortedVehicles.length }})
-                </button>
-                <button
-                  v-if="selectedIds.size > 0"
-                  :class="{ active: modalData.exportScope === 'selected' }"
-                  @click="modalData.exportScope = 'selected'"
-                >
-                  Seleccionados ({{ selectedIds.size }})
-                </button>
-                <button
-                  :class="{ active: modalData.exportScope === 'all' }"
-                  @click="modalData.exportScope = 'all'"
-                >
-                  Todos ({{ total }})
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn-secondary" @click="closeModal">Cancelar</button>
-            <button class="btn-primary" @click="executeExport">Exportar</button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <AdminProductosExportModal
+      :show="activeModal === 'export'"
+      :export-format="modalData.exportFormat || 'pdf'"
+      :export-scope="modalData.exportScope || 'filtered'"
+      :filtered-count="sortedVehicles.length"
+      :selected-count="selectedIds.size"
+      :total-count="total"
+      @update:export-format="(v) => (modalData.exportFormat = v)"
+      @update:export-scope="(v) => (modalData.exportScope = v)"
+      @close="closeModal"
+      @confirm="executeExport"
+    />
 
     <!-- Transaction Modal -->
-    <Teleport to="body">
-      <div v-if="activeModal === 'transaction'" class="modal-overlay" @click.self="closeModal">
-        <div class="modal modal-md">
-          <div class="modal-header">
-            <h3>
-              {{ modalData.transactionType === 'rent' ? 'Registrar alquiler' : 'Registrar venta' }}
-            </h3>
-            <button class="modal-close" @click="closeModal">×</button>
-          </div>
-          <div class="modal-body">
-            <div class="vehicle-badge">
-              <strong>{{ modalData.vehicle?.brand }} {{ modalData.vehicle?.model }}</strong>
-              <span>{{ modalData.vehicle?.year }}</span>
-            </div>
-
-            <div class="tab-buttons">
-              <button
-                :class="{ active: modalData.transactionType === 'rent' }"
-                @click="modalData.transactionType = 'rent'"
-              >
-                🔑 Alquilar
-              </button>
-              <button
-                :class="{ active: modalData.transactionType === 'sell' }"
-                @click="modalData.transactionType = 'sell'"
-              >
-                💰 Vender
-              </button>
-            </div>
-
-            <div v-if="modalData.transactionType === 'rent'" class="form-grid">
-              <div class="form-group half">
-                <label>Fecha desde</label>
-                <input v-model="modalData.rentFrom" type="date" >
-              </div>
-              <div class="form-group half">
-                <label>Fecha hasta</label>
-                <input v-model="modalData.rentTo" type="date" >
-              </div>
-              <div class="form-group">
-                <label>Cliente</label>
-                <input
-                  v-model="modalData.rentClient"
-                  type="text"
-                  placeholder="Nombre del cliente"
-                >
-              </div>
-              <div class="form-group">
-                <label>Importe (€)</label>
-                <input
-                  v-model="modalData.rentAmount"
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                >
-              </div>
-            </div>
-
-            <div v-else class="form-grid">
-              <div class="form-group">
-                <label>Fecha de venta</label>
-                <input v-model="modalData.sellDate" type="date" >
-              </div>
-              <div class="form-group">
-                <label>Comprador</label>
-                <input
-                  v-model="modalData.sellBuyer"
-                  type="text"
-                  placeholder="Nombre del comprador"
-                >
-              </div>
-              <div class="form-group">
-                <label>Precio de venta (€)</label>
-                <input v-model="modalData.sellPrice" type="number" step="0.01" >
-              </div>
-              <div class="info-warning">
-                ⚠️ Esto marcará el vehículo como vendido y lo moverá al histórico.
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn-secondary" @click="closeModal">Cancelar</button>
-            <button class="btn-primary" @click="executeTransaction">
-              {{ modalData.transactionType === 'rent' ? 'Registrar alquiler' : 'Registrar venta' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <AdminProductosTransactionModal
+      :show="activeModal === 'transaction'"
+      :vehicle="modalData.vehicle || null"
+      :transaction-type="modalData.transactionType || 'rent'"
+      :rent-from="modalData.rentFrom || ''"
+      :rent-to="modalData.rentTo || ''"
+      :rent-client="modalData.rentClient || ''"
+      :rent-amount="modalData.rentAmount || ''"
+      :sell-date="modalData.sellDate || ''"
+      :sell-buyer="modalData.sellBuyer || ''"
+      :sell-price="modalData.sellPrice || ''"
+      @update:transaction-type="(v) => (modalData.transactionType = v)"
+      @update:rent-from="(v) => (modalData.rentFrom = v)"
+      @update:rent-to="(v) => (modalData.rentTo = v)"
+      @update:rent-client="(v) => (modalData.rentClient = v)"
+      @update:rent-amount="(v) => (modalData.rentAmount = v)"
+      @update:sell-date="(v) => (modalData.sellDate = v)"
+      @update:sell-buyer="(v) => (modalData.sellBuyer = v)"
+      @update:sell-price="(v) => (modalData.sellPrice = v)"
+      @close="closeModal"
+      @confirm="executeTransaction"
+    />
 
     <!-- Config Modal -->
-    <Teleport to="body">
-      <div v-if="activeModal === 'config'" class="modal-overlay" @click.self="closeModal">
-        <div class="modal modal-lg">
-          <div class="modal-header">
-            <h3>⚙️ Configurar tabla</h3>
-            <button class="modal-close" @click="closeModal">×</button>
-          </div>
-          <div class="modal-body config-body">
-            <!-- Tabs -->
-            <div class="config-tabs">
-              <button :class="{ active: configTab === 'grupos' }" @click="configTab = 'grupos'">
-                📁 Grupos de columnas
-              </button>
-              <button :class="{ active: configTab === 'ordenar' }" @click="configTab = 'ordenar'">
-                📊 Ordenar tabla
-              </button>
-            </div>
-
-            <!-- Groups Tab -->
-            <div v-if="configTab === 'grupos'" class="config-section">
-              <!-- Editing a group -->
-              <div v-if="editingGroup" class="edit-group-panel">
-                <h4>Editando: {{ editingGroup.name }}</h4>
-                <div class="form-group">
-                  <label>Nombre del grupo</label>
-                  <input
-                    v-model="editingGroup.name"
-                    type="text"
-                    :disabled="editingGroup.required"
-                  >
-                </div>
-                <div class="form-group">
-                  <label>Columnas incluidas</label>
-                  <div class="columns-grid">
-                    <label
-                      v-for="col in availableColumnsForGroups"
-                      :key="col.key"
-                      class="column-checkbox"
-                    >
-                      <input
-                        type="checkbox"
-                        :checked="editingGroup.columns.includes(col.key)"
-                        @change="toggleColumnInEdit(col.key)"
-                      >
-                      {{ col.label }}
-                    </label>
-                  </div>
-                </div>
-                <div class="edit-group-actions">
-                  <button class="btn-secondary" @click="cancelEditGroup">Cancelar</button>
-                  <button class="btn-primary" @click="saveEditGroup">Guardar</button>
-                </div>
-              </div>
-
-              <!-- Groups list -->
-              <div v-else>
-                <div class="groups-list">
-                  <div
-                    v-for="group in columnGroups"
-                    :key="group.id"
-                    class="group-item"
-                    :class="{ required: group.required }"
-                  >
-                    <div class="group-info">
-                      <span class="group-icon">{{ group.icon }}</span>
-                      <span class="group-name">{{ group.name }}</span>
-                      <span class="group-count">{{ group.columns.length }} col.</span>
-                      <span v-if="group.required" class="tag tag-gray">Obligatorio</span>
-                    </div>
-                    <div class="group-actions">
-                      <button class="btn-sm" @click="startEditGroup(group)">✏️</button>
-                      <button
-                        v-if="!group.required"
-                        class="btn-sm btn-danger-sm"
-                        @click="deleteGroup(group.id)"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Create new group -->
-                <div class="new-group-form">
-                  <h4>Crear nuevo grupo</h4>
-                  <div class="form-row">
-                    <input v-model="newGroupName" type="text" placeholder="Nombre del grupo" >
-                  </div>
-                  <div class="form-group">
-                    <label>Columnas</label>
-                    <div class="columns-grid">
-                      <label
-                        v-for="col in availableColumnsForGroups"
-                        :key="col.key"
-                        class="column-checkbox"
-                      >
-                        <input v-model="newGroupColumns" type="checkbox" :value="col.key" >
-                        {{ col.label }}
-                      </label>
-                    </div>
-                  </div>
-                  <button
-                    class="btn-primary"
-                    :disabled="!newGroupName.trim() || newGroupColumns.length === 0"
-                    @click="createGroup"
-                  >
-                    + Crear grupo
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Ordenar Tab -->
-            <div v-if="configTab === 'ordenar'" class="config-section">
-              <p class="hint">Arrastra las columnas para cambiar su orden en la tabla.</p>
-              <div class="sortable-list">
-                <div
-                  v-for="key in columnOrder"
-                  :key="key"
-                  class="sortable-item"
-                  :class="{ dragging: draggedColumn === key }"
-                  draggable="true"
-                  @dragstart="onDragStart(key)"
-                  @dragover="(e) => onDragOver(e, key)"
-                  @dragend="onDragEnd"
-                >
-                  <span class="drag-handle">⋮⋮</span>
-                  <span class="col-name">{{
-                    allColumns.find((c) => c.key === key)?.label || key
-                  }}</span>
-                  <span v-if="key.startsWith('filter_')" class="tag tag-green">Filtro</span>
-                  <span
-                    v-else-if="allColumns.find((c) => c.key === key)?.sortable"
-                    class="tag tag-blue"
-                    >Ordenable</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn-danger-outline" @click="resetConfig">Restaurar valores</button>
-            <button class="btn-primary" @click="closeModal">Cerrar</button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <AdminProductosConfigModal
+      :show="activeModal === 'config'"
+      :column-groups="columnGroups"
+      :column-order="columnOrder"
+      :all-columns="allColumns"
+      :available-columns-for-groups="availableColumnsForGroups"
+      :dragged-column="draggedColumn"
+      @update:column-groups="(v) => (columnGroups = v)"
+      @update:column-order="(v) => (columnOrder = v)"
+      @drag-start="onDragStart"
+      @drag-over="onDragOver"
+      @drag-end="onDragEnd"
+      @create-group="createGroup"
+      @delete-group="deleteGroup"
+      @reset-config="resetConfig"
+      @close="closeModal"
+    />
   </div>
 </template>
 
 <style scoped>
-/* ============================================
-   BASE LAYOUT
-   ============================================ */
+/* Base Layout */
 .productos-page {
   display: flex;
   flex-direction: column;
@@ -1661,9 +1036,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   overflow: auto;
 }
 
-/* ============================================
-   HEADER
-   ============================================ */
+/* Header */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -1710,14 +1083,7 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   background: #1a3238;
 }
 
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ============================================
-   TOOLBAR
-   ============================================ */
+/* Toolbar */
 .toolbar {
   display: flex;
   flex-direction: column;
@@ -1728,237 +1094,32 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.toolbar-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-}
-
-.toolbar-row-secondary {
-  padding-top: 12px;
-  border-top: 1px solid #e2e8f0;
-}
-
-/* Search */
-.search-box {
-  position: relative;
-  width: 100%;
-  max-width: 280px;
-}
-
-.search-box .search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 14px;
-  opacity: 0.5;
-}
-
-.search-box input {
-  width: 100%;
-  padding: 8px 32px 8px 36px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 0.9rem;
-}
-
-.search-box input:focus {
-  outline: none;
-  border-color: var(--color-primary, #23424a);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
-}
-
-.search-box .clear-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #e2e8f0;
-  border: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 12px;
-  line-height: 1;
-}
-
-/* Filters */
-.filter-group {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.filter-label {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #64748b;
-  white-space: nowrap;
-}
-
-.filter-group select {
-  padding: 7px 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  background: white;
-  cursor: pointer;
-}
-
-.filter-group select:focus {
-  outline: none;
-  border-color: var(--color-primary, #23424a);
-}
-
-.segment-control {
-  display: flex;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.segment-control button {
-  padding: 7px 12px;
-  border: none;
-  background: white;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.segment-control button:not(:last-child) {
-  border-right: 1px solid #e2e8f0;
-}
-
-.segment-control button.active {
-  background: var(--color-primary, #23424a);
-  color: white;
-}
-
-.segment-control button:hover:not(.active) {
-  background: #f8fafc;
-}
-
-.btn-text-danger {
-  background: none;
-  border: none;
-  color: #dc2626;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 7px 12px;
-  border-radius: 6px;
-}
-
-.btn-text-danger:hover {
-  background: #fef2f2;
-}
-
-/* Column toggles */
-.column-toggles {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.toggles-label {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #64748b;
-}
-
-.column-toggle {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  background: white;
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #64748b;
-  transition: all 0.15s;
-}
-
-.column-toggle:hover {
-  background: #f8fafc;
-}
-
-.column-toggle.active {
-  background: #f0f9ff;
-  border-color: #0ea5e9;
-  color: #0369a1;
-}
-
-.toolbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-}
-
-.btn-tool {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: white;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #475569;
-  transition: all 0.15s;
-  position: relative;
-}
-
-.btn-tool:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-}
-
-.btn-tool .badge {
-  background: var(--color-primary, #23424a);
-  color: white;
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin-left: 4px;
-}
-
-/* ============================================
-   TABLE
-   ============================================ */
+/* Error */
 .alert-error {
-  padding: 12px 16px;
+  padding: 16px;
   background: #fef2f2;
   border: 1px solid #fecaca;
   border-radius: 8px;
   color: #dc2626;
+  font-size: 14px;
 }
 
+/* Loading */
 .loading-state {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
-  color: #64748b;
+  gap: 16px;
+  padding: 48px;
+  background: white;
+  border-radius: 12px;
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid #e2e8f0;
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e2e8f0;
   border-top-color: var(--color-primary, #23424a);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -1970,923 +1131,8 @@ function getFilterValue(vehicle: AdminVehicle, filterName: string): string {
   }
 }
 
-.table-container {
-  flex: 1;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  overflow: auto;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 900px;
-}
-
-.data-table th {
-  position: sticky;
-  top: 0;
-  background: #f8fafc;
-  padding: 12px 14px;
-  text-align: left;
-  font-weight: 600;
-  font-size: 0.8rem;
-  color: #475569;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  border-bottom: 2px solid #e2e8f0;
-  white-space: nowrap;
-  z-index: 10;
-}
-
-.data-table td {
-  padding: 10px 14px;
-  border-bottom: 1px solid #f1f5f9;
-  font-size: 0.9rem;
-  color: #334155;
-}
-
-.data-table tr:hover {
-  background: #f8fafc;
-}
-
-.data-table tr.selected {
-  background: #eff6ff;
-}
-
-.col-checkbox {
-  width: 40px;
-  text-align: center;
-}
-.col-img {
-  width: 56px;
-}
-.col-type {
-  width: 60px;
-}
-.col-num {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.col-desc {
-  max-width: 140px;
-}
-.col-filter {
-  max-width: 120px;
-  white-space: nowrap;
-}
-.col-favs {
-  width: 60px;
-}
-
-.fav-count {
-  color: #dc2626;
-  font-weight: 600;
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
-
-.col-actions {
-  width: 110px;
-}
-
-.filter-unit {
-  font-size: 10px;
-  color: #94a3b8;
-  margin-left: 2px;
-}
-
-.sortable {
-  cursor: pointer;
-  user-select: none;
-}
-
-.sortable:hover {
-  background: #f1f5f9;
-}
-
-.sort-icon {
-  margin-left: 4px;
-  opacity: 0.3;
-  font-size: 0.75rem;
-}
-
-.sort-icon.active {
-  opacity: 1;
-  color: var(--color-primary, #23424a);
-}
-
-/* Cell styles */
-.thumb {
-  width: 44px;
-  height: 44px;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #f1f5f9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.thumb-empty {
-  font-size: 18px;
-  opacity: 0.4;
-}
-
-.type-pill {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-
-.type-pill.online {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.type-pill.offline {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.vehicle-link {
-  color: #1e293b;
-  text-decoration: none;
-}
-
-.vehicle-link:hover {
-  color: var(--color-primary, #23424a);
-  text-decoration: underline;
-}
-
-.owner-tag {
-  display: block;
-  font-size: 0.75rem;
-  color: #94a3b8;
-  margin-top: 2px;
-}
-
-.text-muted {
+.loading-state span {
   color: #64748b;
-}
-.text-small {
-  font-size: 0.8rem;
-}
-
-.truncate {
-  display: block;
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.cat-pill {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: capitalize;
-}
-
-.cat-venta {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-.cat-alquiler {
-  background: #fef3c7;
-  color: #92400e;
-}
-.cat-terceros {
-  background: #f3e8ff;
-  color: #7c3aed;
-}
-
-.status-select {
-  padding: 5px 8px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  width: 100%;
-}
-
-.status-select.status-published {
-  background: #dcfce7;
-  color: #16a34a;
-}
-.status-select.status-draft {
-  background: #f1f5f9;
-  color: #64748b;
-}
-.status-select.status-rented {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-.status-select.status-maintenance {
-  background: #fee2e2;
-  color: #dc2626;
-}
-.status-select.status-sold {
-  background: #e2e8f0;
-  color: #475569;
-}
-
-.row-actions {
-  display: flex;
-  gap: 4px;
-}
-
-.action-btn {
-  padding: 6px 8px;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  background: white;
-  cursor: pointer;
-  font-size: 14px;
-  text-decoration: none;
-  transition: all 0.15s;
-}
-
-.action-btn:hover {
-  background: #f8fafc;
-}
-.action-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* Drive connection indicator */
-.drive-on {
-  background: #f0fdf4 !important;
-  border-color: #22c55e !important;
-}
-
-.action-btn.delete:hover {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-
-.empty-cell {
-  text-align: center;
-}
-
-.empty-state {
-  padding: 60px 20px;
-  color: #64748b;
-}
-
-.empty-icon {
-  font-size: 48px;
-  opacity: 0.3;
-  display: block;
-  margin-bottom: 12px;
-}
-
-.empty-state p {
-  margin: 0 0 16px 0;
-}
-
-/* ============================================
-   MODALS
-   ============================================ */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1100;
-  padding: 20px;
-  backdrop-filter: blur(2px);
-}
-
-.modal {
-  background: white;
-  border-radius: 16px;
-  width: 100%;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  animation: modalIn 0.2s ease-out;
-  max-height: calc(100vh - 40px);
-  display: flex;
-  flex-direction: column;
-}
-
-@keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.modal-sm {
-  max-width: 420px;
-}
-.modal-md {
-  max-width: 520px;
-}
-.modal-lg {
-  max-width: 700px;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
-  flex-shrink: 0;
-}
-
-.modal-header.danger {
-  background: #fef2f2;
-  border-color: #fecaca;
-}
-
-.modal-header.danger h3 {
-  color: #dc2626;
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #94a3b8;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-}
-
-.modal-close:hover {
-  color: #475569;
-}
-
-.modal-body {
-  padding: 24px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
-  border-radius: 0 0 16px 16px;
-  flex-shrink: 0;
-}
-
-/* Buttons */
-.btn-secondary {
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-}
-
-.btn-danger {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-danger:hover {
-  background: #b91c1c;
-}
-
-.btn-danger:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-danger-outline {
-  background: white;
-  color: #dc2626;
-  border: 1px solid #dc2626;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-danger-outline:hover {
-  background: #fef2f2;
-}
-
-/* Form elements */
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #475569;
-  margin-bottom: 6px;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 0.95rem;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: var(--color-primary, #23424a);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
-}
-
-.form-group.half {
-  display: inline-block;
-  width: calc(50% - 8px);
-  margin-right: 16px;
-}
-
-.form-group.half:last-child {
-  margin-right: 0;
-}
-
-.form-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.form-row {
-  display: flex;
-  gap: 12px;
-}
-
-.text-danger {
-  color: #dc2626;
-  font-size: 0.875rem;
-}
-
-.info-warning {
-  padding: 12px 16px;
-  background: #fef3c7;
-  color: #92400e;
-  border-radius: 8px;
-  font-size: 0.875rem;
-}
-
-/* Option buttons */
-.option-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.option-buttons.vertical {
-  flex-direction: column;
-}
-
-.option-buttons button {
-  flex: 1;
-  padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  background: white;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #475569;
-  transition: all 0.15s;
-}
-
-.option-buttons button:hover {
-  border-color: #cbd5e1;
-  background: #f8fafc;
-}
-
-.option-buttons button.active {
-  border-color: var(--color-primary, #23424a);
-  background: rgba(35, 66, 74, 0.05);
-  color: var(--color-primary, #23424a);
-}
-
-/* Tab buttons */
-.tab-buttons {
-  display: flex;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
-
-.tab-buttons button {
-  flex: 1;
-  padding: 12px 16px;
-  border: none;
-  background: white;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #64748b;
-  transition: all 0.15s;
-}
-
-.tab-buttons button.active {
-  background: var(--color-primary, #23424a);
-  color: white;
-}
-
-.tab-buttons button:not(.active):hover {
-  background: #f8fafc;
-}
-
-.vehicle-badge {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #f8fafc;
-  border-radius: 10px;
-  margin-bottom: 16px;
-}
-
-.vehicle-badge strong {
-  font-size: 1rem;
-}
-
-.vehicle-badge span {
-  color: #64748b;
-}
-
-/* ============================================
-   CONFIG MODAL
-   ============================================ */
-.config-body {
-  padding: 0;
-}
-
-.config-tabs {
-  display: flex;
-  border-bottom: 2px solid #e2e8f0;
-}
-
-.config-tabs button {
-  flex: 1;
-  padding: 16px 20px;
-  border: none;
-  background: white;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #64748b;
-  transition: all 0.15s;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
-}
-
-.config-tabs button.active {
-  color: var(--color-primary, #23424a);
-  border-bottom-color: var(--color-primary, #23424a);
-}
-
-.config-tabs button:hover:not(.active) {
-  background: #f8fafc;
-}
-
-.config-section {
-  padding: 24px;
-}
-
-.hint {
-  font-size: 0.875rem;
-  color: #64748b;
-  margin: 0 0 16px 0;
-  padding: 12px;
-  background: #f8fafc;
-  border-radius: 8px;
-}
-
-/* Groups list */
-.groups-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 24px;
-}
-
-.group-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-}
-
-.group-item.required {
-  background: #f8fafc;
-}
-
-.group-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.group-icon {
   font-size: 16px;
-}
-
-.group-name {
-  font-weight: 600;
-  color: #334155;
-}
-
-.group-count {
-  font-size: 0.8rem;
-  color: #94a3b8;
-}
-
-.tag {
-  font-size: 0.7rem;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: 500;
-}
-
-.tag-gray {
-  background: #e2e8f0;
-  color: #64748b;
-}
-
-.tag-blue {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.tag-green {
-  background: #dcfce7;
-  color: #16a34a;
-}
-
-.group-actions {
-  display: flex;
-  gap: 6px;
-}
-
-.btn-sm {
-  padding: 4px 8px;
-  border: 1px solid #e2e8f0;
-  border-radius: 4px;
-  background: white;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.btn-sm:hover {
-  background: #f8fafc;
-}
-
-.btn-danger-sm:hover {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-
-/* Edit group panel */
-.edit-group-panel {
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.edit-group-panel h4 {
-  margin: 0 0 16px 0;
-  font-size: 1rem;
-  color: #334155;
-}
-
-.edit-group-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
-}
-
-.columns-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.column-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 10px;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.15s;
-}
-
-.column-checkbox:hover {
-  background: #f8fafc;
-}
-
-.column-checkbox:has(input:checked) {
-  background: var(--color-primary, #23424a);
-  color: white;
-  border-color: var(--color-primary, #23424a);
-}
-
-/* New group form */
-.new-group-form {
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 8px;
-  border: 2px dashed #e2e8f0;
-}
-
-.new-group-form h4 {
-  margin: 0 0 16px 0;
-  font-size: 0.95rem;
-  color: #64748b;
-}
-
-/* Sortable list */
-.sortable-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.sortable-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  cursor: grab;
-  transition: all 0.15s;
-}
-
-.sortable-item:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.sortable-item.dragging {
-  opacity: 0.5;
-  background: #dbeafe;
-}
-
-.drag-handle {
-  color: #94a3b8;
-  font-size: 14px;
-  letter-spacing: -2px;
-}
-
-.col-name {
-  flex: 1;
-  font-weight: 500;
-  color: #334155;
-}
-
-/* ============================================
-   RESPONSIVE — Mobile-first
-   ============================================ */
-
-/* Mobile base: stacked layouts */
-.page-header {
-  flex-direction: column;
-  gap: 12px;
-  align-items: stretch;
-}
-
-.toolbar-row {
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.search-box {
-  max-width: none;
-}
-
-.filter-group {
-  width: 100%;
-}
-
-.filter-group select {
-  flex: 1;
-}
-
-.toolbar-actions {
-  margin-left: 0;
-  justify-content: flex-end;
-}
-
-.columns-grid {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.form-group.half {
-  width: 100%;
-  margin-right: 0;
-}
-
-.modal {
-  margin: 10px;
-}
-
-@media (min-width: 768px) {
-  .page-header {
-    flex-direction: row;
-    gap: 0;
-    align-items: center;
-  }
-
-  .columns-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .form-group.half {
-    width: calc(50% - 8px);
-    margin-right: 16px;
-  }
-
-  .form-group.half:last-child {
-    margin-right: 0;
-  }
-
-  .modal {
-    margin: 0;
-  }
-}
-
-@media (min-width: 1024px) {
-  .toolbar-row {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .search-box {
-    max-width: 280px;
-  }
-
-  .filter-group {
-    width: auto;
-  }
-
-  .filter-group select {
-    flex: none;
-  }
-
-  .toolbar-actions {
-    margin-left: auto;
-  }
 }
 </style>

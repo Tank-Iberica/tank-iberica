@@ -213,7 +213,7 @@ const handleSubmit = async () => {
       close()
     }, 3000)
   } catch (err) {
-    console.error('Error submitting advertisement:', err)
+    if (import.meta.dev) console.error('Error submitting advertisement:', err)
   } finally {
     isSubmitting.value = false
   }

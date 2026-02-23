@@ -1,6 +1,6 @@
 /**
  * Centralized SEO composable for all public pages
- * Handles: useSeoMeta, canonical URL, Twitter Cards, JSON-LD
+ * Handles: useSeoMeta, canonical URL, Twitter Cards, JSON-LD, hreflang
  */
 export function usePageSeo(options: {
   title: string
@@ -30,11 +30,21 @@ export function usePageSeo(options: {
     twitterImage: options.image || DEFAULT_IMAGE,
   })
 
+  // Remove any existing locale prefix from path to get the base path
+  const basePath = options.path.replace(/^\/(en|es)\//, '/').replace(/^\/(en|es)$/, '/')
+  const cleanPath = basePath.startsWith('/') ? basePath : `/${basePath}`
+
   const headConfig: {
-    link: { rel: string; href: string }[]
+    link: { rel: string; href: string; hreflang?: string }[]
     script?: { type: string; innerHTML: string }[]
   } = {
-    link: [{ rel: 'canonical', href: canonicalUrl }],
+    link: [
+      { rel: 'canonical', href: canonicalUrl },
+      // Hreflang tags
+      { rel: 'alternate', hreflang: 'es', href: `${SITE_URL}${cleanPath}` },
+      { rel: 'alternate', hreflang: 'en', href: `${SITE_URL}/en${cleanPath}` },
+      { rel: 'alternate', hreflang: 'x-default', href: `${SITE_URL}${cleanPath}` },
+    ],
   }
 
   if (options.jsonLd) {

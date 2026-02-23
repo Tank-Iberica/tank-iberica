@@ -55,7 +55,7 @@ export function usePushNotifications() {
         isSubscribed.value = false
       }
     } catch (err: unknown) {
-      console.error('Error checking push subscription:', err)
+      if (import.meta.dev) console.error('Error checking push subscription:', err)
       isSubscribed.value = false
     }
   }
@@ -137,7 +137,7 @@ export function usePushNotifications() {
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Error subscribing to notifications'
       error.value = errorMessage
-      console.error('Push subscription error:', err)
+      if (import.meta.dev) console.error('Push subscription error:', err)
       return false
     } finally {
       loading.value = false
@@ -180,7 +180,7 @@ export function usePushNotifications() {
       const errorMessage =
         err instanceof Error ? err.message : 'Error unsubscribing from notifications'
       error.value = errorMessage
-      console.error('Push unsubscribe error:', err)
+      if (import.meta.dev) console.error('Push unsubscribe error:', err)
       return false
     } finally {
       loading.value = false

@@ -76,5 +76,23 @@ export default defineSitemapEventHandler(async () => {
     }
   }
 
+  // Fetch active auctions
+  const { data: auctions } = await supabase
+    .from('auctions')
+    .select('id, title, starts_at, ends_at, updated_at')
+    .in('status', ['scheduled', 'active'])
+    .order('starts_at', { ascending: false })
+
+  if (auctions) {
+    for (const a of auctions) {
+      urls.push({
+        loc: `/subastas/${a.id}`,
+        lastmod: a.updated_at || a.starts_at,
+        priority: 0.7,
+        changefreq: 'daily',
+      })
+    }
+  }
+
   return urls
 })

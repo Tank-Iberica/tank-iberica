@@ -21,6 +21,8 @@ definePageMeta({
   middleware: 'admin',
 })
 
+const { t } = useI18n()
+const toast = useToast()
 const router = useRouter()
 
 const { saving, error, createVehicle, addImage } = useAdminVehicles()
@@ -221,7 +223,7 @@ const isValid = computed(() => {
 // Save
 async function handleSave() {
   if (!isValid.value) {
-    alert('Completa: Marca, Modelo, Categoría y Tipo')
+    toast.warning(t('toast.completeRequired'))
     return
   }
 
@@ -317,7 +319,7 @@ function handleImageSelect(e: Event) {
   const availableSlots = maxImages - currentCount
 
   if (availableSlots <= 0) {
-    alert('Máximo 10 imágenes permitidas')
+    toast.warning(t('toast.maxImagesReached'))
     input.value = ''
     return
   }
@@ -356,7 +358,7 @@ function movePendingImage(index: number, direction: 'up' | 'down') {
 function handleDocUpload(e: Event) {
   const input = e.target as HTMLInputElement
   if (!input.files?.length) return
-  alert('La subida de documentos requiere configuración del almacenamiento.')
+  toast.info(t('toast.documentsRequireConfig'))
   input.value = ''
 }
 
@@ -632,7 +634,9 @@ function fmt(val: number | null | undefined): string {
             <label>Tipo *</label>
             <select v-model="formData.type_id">
               <option :value="null" disabled>Seleccionar...</option>
-              <option v-for="t in publishedTypes" :key="t.id" :value="t.id">{{ t.name_es }}</option>
+              <option v-for="tipo in publishedTypes" :key="tipo.id" :value="tipo.id">
+                {{ tipo.name_es }}
+              </option>
             </select>
           </div>
         </div>

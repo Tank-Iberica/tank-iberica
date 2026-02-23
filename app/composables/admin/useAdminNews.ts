@@ -140,7 +140,7 @@ export function useAdminNews() {
       const supabaseError = err as { message?: string; details?: string; hint?: string }
       error.value =
         supabaseError?.message || (err instanceof Error ? err.message : 'Error creating article')
-      console.error('Create news error:', err)
+      if (import.meta.dev) console.error('Create news error:', err)
       return null
     } finally {
       saving.value = false
@@ -182,7 +182,7 @@ export function useAdminNews() {
       const supabaseError = err as { message?: string; details?: string; hint?: string }
       error.value =
         supabaseError?.message || (err instanceof Error ? err.message : 'Error updating article')
-      console.error('Update news error:', err)
+      if (import.meta.dev) console.error('Update news error:', err)
       return false
     } finally {
       saving.value = false
@@ -209,7 +209,7 @@ export function useAdminNews() {
       const supabaseError = err as { message?: string }
       error.value =
         supabaseError?.message || (err instanceof Error ? err.message : 'Error deleting article')
-      console.error('Delete news error:', err)
+      if (import.meta.dev) console.error('Delete news error:', err)
       return false
     } finally {
       saving.value = false

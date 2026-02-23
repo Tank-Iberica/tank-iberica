@@ -6,7 +6,7 @@
  */
 
 import webpush from 'web-push'
-import type { H3Event } from 'h3'
+import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
   webpush.setVapidDetails(`mailto:${vapidEmail}`, vapidPublicKey, vapidPrivateKey)
 
   // Get user's push subscriptions from Supabase
-  const supabase = await createSupabaseServerClient(event)
+  const supabase = serverSupabaseServiceRole(event)
 
   const { data: subscriptions, error: fetchError } = await supabase
     .from('push_subscriptions')
@@ -112,9 +112,3 @@ export default defineEventHandler(async (event) => {
     results,
   }
 })
-
-// Helper function to create Supabase server client
-async function createSupabaseServerClient(event: H3Event) {
-  const { serverSupabaseServiceRole } = await import('#supabase/server')
-  return serverSupabaseServiceRole(event)
-}

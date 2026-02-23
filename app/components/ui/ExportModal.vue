@@ -96,37 +96,59 @@ function formatDate(date: Date): string {
 }
 
 async function generateExcel() {
-  const XLSX = await import('xlsx')
+  const ExcelJS = await import('exceljs')
   const selectedCols = enabledColumns.value
 
-  const headers = selectedCols.map((col) => col.label)
-  const rows = props.data.map((row) =>
-    selectedCols.map((col) => {
+  const workbook = new ExcelJS.Workbook()
+  const worksheet = workbook.addWorksheet('Data')
+
+  // Set columns with headers
+  worksheet.columns = selectedCols.map((col) => {
+    // Calculate optimal width
+    const headerWidth = col.label.length
+    const dataWidths = props.data.map((row) => {
       const val = row[col.key]
-      if (val === null || val === undefined) return ''
-      return String(val)
-    }),
-  )
+      if (val === null || val === undefined) return 0
+      return String(val).length
+    })
+    const maxWidth = Math.max(headerWidth, ...dataWidths)
 
-  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
-
-  // Auto-fit column widths based on content
-  const colWidths = selectedCols.map((col, i) => {
-    const maxLen = Math.max(
-      col.label.length,
-      ...rows.map((r) => {
-        const cell = r[i]
-        return cell ? cell.length : 0
-      }),
-    )
-    return { wch: Math.min(maxLen + 2, 50) }
+    return {
+      header: col.label,
+      key: col.key,
+      width: Math.min(maxWidth + 2, 50),
+    }
   })
-  worksheet['!cols'] = colWidths
 
-  const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Data')
+  // Add data rows
+  props.data.forEach((row) => {
+    const rowData: Record<string, unknown> = {}
+    selectedCols.forEach((col) => {
+      const val = row[col.key]
+      rowData[col.key] = val === null || val === undefined ? '' : val
+    })
+    worksheet.addRow(rowData)
+  })
 
-  XLSX.writeFile(workbook, `${props.fileName}.xlsx`)
+  // Style header row
+  worksheet.getRow(1).font = { bold: true }
+  worksheet.getRow(1).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FFE5E7EB' },
+  }
+
+  // Generate and download file
+  const buffer = await workbook.xlsx.writeBuffer()
+  const blob = new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `${props.fileName}.xlsx`
+  link.click()
+  URL.revokeObjectURL(url)
 }
 
 async function generatePdf() {

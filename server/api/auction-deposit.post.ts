@@ -1,4 +1,5 @@
 import { createError, defineEventHandler, readBody } from 'h3'
+import { serverSupabaseUser } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -6,6 +7,12 @@ export default defineEventHandler(async (event) => {
 
   if (!auctionId || !registrationId) {
     throw createError({ statusCode: 400, message: 'Missing auctionId or registrationId' })
+  }
+
+  // Auth: verify user is logged in
+  const user = await serverSupabaseUser(event)
+  if (!user) {
+    throw createError({ statusCode: 401, message: 'Unauthorized' })
   }
 
   // Get Supabase client (server-side, service role)
@@ -31,6 +38,24 @@ export default defineEventHandler(async (event) => {
 
   if (!supabaseUrl || !supabaseKey) {
     throw createError({ statusCode: 500, message: 'Supabase not configured' })
+  }
+
+  // Verify registrationId belongs to the authenticated user
+  const registrationRes = await fetch(
+    `${supabaseUrl}/rest/v1/auction_registrations?id=eq.${registrationId}&user_id=eq.${user.id}&select=id`,
+    {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+    },
+  )
+  const registrationData = await registrationRes.json()
+  if (!registrationData?.length) {
+    throw createError({
+      statusCode: 403,
+      message: 'Registration not found or does not belong to user',
+    })
   }
 
   // Fetch auction deposit_cents

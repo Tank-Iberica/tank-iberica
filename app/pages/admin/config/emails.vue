@@ -6,6 +6,7 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
+const { sanitize } = useSanitize()
 const { t } = useI18n()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
@@ -1071,7 +1072,7 @@ async function sendTest() {
             </div>
             <div class="modal-body">
               <!-- eslint-disable-next-line vue/no-v-html -->
-              <div class="preview-container" v-html="previewHtml" />
+              <div class="preview-container" v-html="sanitize(previewHtml)" />
             </div>
             <div class="modal-footer">
               <button class="btn-secondary" @click="showPreview = false">

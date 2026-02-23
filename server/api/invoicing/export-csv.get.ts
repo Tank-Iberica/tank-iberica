@@ -1,4 +1,5 @@
 import { createError, defineEventHandler, getQuery } from 'h3'
+import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
@@ -7,6 +8,49 @@ export default defineEventHandler(async (event) => {
 
   if (!supabaseUrl || !supabaseKey) {
     throw createError({ statusCode: 500, message: 'Supabase not configured' })
+  }
+
+  // Authentication check
+  const user = await serverSupabaseUser(event)
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      message: 'Unauthorized: Authentication required',
+    })
+  }
+
+  // Authorization check: Get user role and dealer_id if applicable
+  const supabase = serverSupabaseServiceRole(event)
+  const { data: userData, error: userError } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (userError || !userData) {
+    throw createError({
+      statusCode: 403,
+      message: 'Forbidden: Unable to verify user permissions',
+    })
+  }
+
+  let dealerFilter = ''
+  if (userData.role !== 'admin') {
+    // Non-admin users can only export their own dealer's invoices
+    const { data: dealerData, error: dealerError } = await supabase
+      .from('dealers')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
+
+    if (dealerError || !dealerData) {
+      throw createError({
+        statusCode: 403,
+        message: 'Forbidden: No dealer associated with this user',
+      })
+    }
+
+    dealerFilter = `&dealer_id=eq.${dealerData.id}`
   }
 
   const query = getQuery(event)
@@ -24,7 +68,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const res = await fetch(
-    `${supabaseUrl}/rest/v1/invoices?select=id,dealer_id,user_id,stripe_invoice_id,service_type,amount_cents,tax_cents,currency,status,created_at&order=created_at.desc${dateFilter}`,
+    `${supabaseUrl}/rest/v1/invoices?select=id,dealer_id,user_id,stripe_invoice_id,service_type,amount_cents,tax_cents,currency,status,created_at&order=created_at.desc${dateFilter}${dealerFilter}`,
     {
       headers: {
         apikey: supabaseKey,
