@@ -47,6 +47,10 @@ const resumenOptions = reactive({
 
 // Active tool
 const activeTool = ref<'facturas' | 'contratos' | 'exportar' | null>('facturas')
+function selectTool(tool: 'facturas' | 'contratos' | 'exportar') {
+  activeTool.value = tool
+  loadVehicleOptions()
+}
 
 // ============ INVOICE GENERATOR ============
 interface InvoiceLine {
@@ -1188,10 +1192,7 @@ function fmt(val: number): string {
       <div
         class="tool-card"
         :class="{ active: activeTool === 'facturas' }"
-        @click="
-          activeTool = 'facturas'
-          loadVehicleOptions()
-        "
+        @click="selectTool('facturas')"
       >
         <div class="tool-icon">🧾</div>
         <div class="tool-info">
@@ -1204,10 +1205,7 @@ function fmt(val: number): string {
       <div
         class="tool-card"
         :class="{ active: activeTool === 'contratos' }"
-        @click="
-          activeTool = 'contratos'
-          loadVehicleOptions()
-        "
+        @click="selectTool('contratos')"
       >
         <div class="tool-icon">📝</div>
         <div class="tool-info">

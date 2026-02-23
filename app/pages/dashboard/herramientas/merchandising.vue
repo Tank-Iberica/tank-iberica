@@ -254,6 +254,10 @@ function openPreview(product: MerchProduct) {
 function closePreview() {
   previewProduct.value = null
 }
+function addToCartAndClose(product: MerchProduct) {
+  addToCart(product)
+  closePreview()
+}
 
 // ---------- Orders ----------
 
@@ -526,13 +530,7 @@ onMounted(async () => {
             <button class="btn" @click="closePreview">
               {{ t('dashboard.tools.merch.close') }}
             </button>
-            <button
-              class="btn btn-primary"
-              @click="
-                addToCart(previewProduct)
-                closePreview()
-              "
-            >
+            <button class="btn btn-primary" @click="addToCartAndClose(previewProduct)">
               {{ t('dashboard.tools.merch.addToCart') }}
             </button>
           </div>

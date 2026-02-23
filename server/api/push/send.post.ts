@@ -10,6 +10,14 @@ import type { H3Event } from 'h3'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
+
+  // ── Auth: internal-only (called by other server routes) ──
+  const internalSecret = config.cronSecret || process.env.CRON_SECRET
+  const internalHeader = getHeader(event, 'x-internal-secret')
+  if (!internalSecret || internalHeader !== internalSecret) {
+    throw createError({ statusCode: 401, message: 'Unauthorized' })
+  }
+
   const body = await readBody(event)
 
   const { userId, title, body: messageBody, url } = body

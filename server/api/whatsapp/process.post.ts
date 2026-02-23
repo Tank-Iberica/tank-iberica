@@ -12,7 +12,7 @@
  * Body: { submissionId: string }
  */
 import { serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody, createError, getHeader, getRequestIP } from 'h3'
 import Anthropic from '@anthropic-ai/sdk'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -226,6 +226,25 @@ function parseClaudeResponse(text: string): ClaudeVehicleAnalysis {
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const supabase = serverSupabaseServiceRole(event)
+
+  // ── Auth: internal secret (cron/retry) OR Turnstile (external caller) ──
+  const internalSecret = config.cronSecret || process.env.CRON_SECRET
+  const internalHeader = getHeader(event, 'x-internal-secret')
+  const isInternalCall = internalSecret && internalHeader === internalSecret
+
+  if (!isInternalCall) {
+    // External call — require Turnstile token
+    const bodyPeek = await readBody<ProcessBody & { turnstileToken?: string }>(event)
+    if (bodyPeek.turnstileToken) {
+      const ip = getRequestIP(event, { xForwardedFor: true }) || undefined
+      const turnstileValid = await verifyTurnstile(bodyPeek.turnstileToken, ip)
+      if (!turnstileValid) {
+        throw createError({ statusCode: 403, message: 'CAPTCHA verification failed' })
+      }
+    } else {
+      throw createError({ statusCode: 401, message: 'Unauthorized' })
+    }
+  }
 
   // Supabase REST credentials for whatsapp_submissions (not yet in generated types)
   const supabaseUrl = (process.env.SUPABASE_URL || '') as string

@@ -62,6 +62,10 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const search = ref('')
 const statusFilter = ref<StatusFilter>('all')
+function clearFilters() {
+  statusFilter.value = 'all'
+  search.value = ''
+}
 const expandedDocId = ref<string | null>(null)
 const rejectionReason = ref('')
 const actionLoading = ref(false)
@@ -462,14 +466,7 @@ function isFileImage(url: string | null): boolean {
         </svg>
       </div>
       <p>{{ t('admin.verificaciones.empty') }}</p>
-      <button
-        v-if="statusFilter !== 'all' || search"
-        class="btn-secondary"
-        @click="
-          statusFilter = 'all'
-          search = ''
-        "
-      >
+      <button v-if="statusFilter !== 'all' || search" class="btn-secondary" @click="clearFilters()">
         {{ t('admin.verificaciones.clearFilters') }}
       </button>
     </div>

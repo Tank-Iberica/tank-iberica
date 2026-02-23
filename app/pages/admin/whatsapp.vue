@@ -42,6 +42,10 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const statusFilter = ref<StatusFilter>('all')
 const search = ref('')
+function clearFilters() {
+  statusFilter.value = 'all'
+  search.value = ''
+}
 const expandedId = ref<string | null>(null)
 const actionLoading = ref(false)
 const successMessage = ref<string | null>(null)
@@ -448,14 +452,7 @@ function getStatusLabel(status: string): string {
         </svg>
       </div>
       <p>{{ t('admin.whatsapp.empty') }}</p>
-      <button
-        v-if="statusFilter !== 'all' || search"
-        class="btn-secondary"
-        @click="
-          statusFilter = 'all'
-          search = ''
-        "
-      >
+      <button v-if="statusFilter !== 'all' || search" class="btn-secondary" @click="clearFilters()">
         {{ t('admin.whatsapp.clearFilters') }}
       </button>
     </div>

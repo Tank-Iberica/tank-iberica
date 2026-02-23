@@ -67,6 +67,10 @@ interface ContractRow {
 // ---------------------------------------------------------------------------
 
 const activeTab = ref<ActiveTab>('nuevo')
+function showHistory() {
+  activeTab.value = 'historial'
+  loadContractHistory()
+}
 const loading = ref(true)
 const saving = ref(false)
 const saveError = ref<string | null>(null)
@@ -955,14 +959,7 @@ onMounted(init)
         <button class="tab" :class="{ active: activeTab === 'nuevo' }" @click="activeTab = 'nuevo'">
           {{ t('dashboard.tools.contract.tabNew') }}
         </button>
-        <button
-          class="tab"
-          :class="{ active: activeTab === 'historial' }"
-          @click="
-            activeTab = 'historial'
-            loadContractHistory()
-          "
-        >
+        <button class="tab" :class="{ active: activeTab === 'historial' }" @click="showHistory()">
           {{ t('dashboard.tools.contract.tabHistory') }}
           <span v-if="contracts.length" class="tab-count">{{ contracts.length }}</span>
         </button>
