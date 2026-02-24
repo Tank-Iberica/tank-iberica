@@ -148,13 +148,13 @@ Todos los modulos planificados tienen al menos infraestructura creada.
 
 ## Deuda Tecnica Conocida
 
-1. **i18n parcial**: 47 archivos aun usan `.name_es/.name_en` directo en lugar de `localizedField()`. La infraestructura esta lista (JSONB columns + useLocalized.ts), pero la migracion del display layer no esta completa.
+1. **i18n parcial**: Template displays migrados a `localizedName()` (sesion 36b). Quedan ~35 referencias a `.name_es` en archivos Vue, pero son: form bindings de config CRUD (correcto), interfaces/types (esquema BD), y helpers de busqueda/export con fallback (correcto). Los selects y tablas de admin ahora usan `localizedName()`.
 
-2. **Duplicacion admin/dashboard**: ~1,600 lineas de logica duplicada entre composables admin y dashboard. Principales pares: useAdminAdvertisements/useAdminDemands (92%), useAdminChat/useUserChat (85%), useAdminVehicles/useVehicles (65%).
+2. **Duplicacion admin/dashboard**: ~1,600 lineas de logica duplicada entre composables admin y dashboard. Principales pares: useAdminVehicles/dashboard vehiculos (65% overlap en CRUD), useAdminMetrics/useDealerDashboard (stats duplicados). Prioridad baja: no bloquea lanzamiento.
 
-3. **Chart.js en pagina publica**: `/datos` importa chart.js estaticamente (+15 KB en bundle publico). Deberia usar lazy-loading.
+3. **Chart.js lazy-loaded**: (corregido sesion 36b) `/datos`, admin/dashboard, calculadora, InfraHistory ahora usan `defineAsyncComponent()` con dynamic import. Chart.js ya no se incluye en el bundle inicial.
 
-4. **Dependencias no usadas**: exceljs, jspdf, jspdf-autotable, qrcode en package.json pero sin importar en ningun componente (~115 KB potencialmente eliminables).
+4. **Dependencias no usadas**: exceljs, jspdf, jspdf-autotable, qrcode en package.json pero lazy-loaded con `await import()` (no en bundle inicial).
 
 ---
 

@@ -1,12 +1,18 @@
 <script setup lang="ts">
+import { localizedName } from '~/composables/useLocalized'
+
+const { locale } = useI18n()
+
 interface Subcategory {
   id: string
+  name?: Record<string, string> | null
   name_es: string
   status: string
 }
 
 interface Type {
   id: string
+  name?: Record<string, string> | null
   name_es: string
   status: string
 }
@@ -129,7 +135,7 @@ function countryFlag(country: string): string {
           >
             <option :value="null">Seleccionar...</option>
             <option v-for="s in subcategories" :key="s.id" :value="s.id">
-              {{ s.name_es }}
+              {{ localizedName(s, locale) }}
             </option>
           </select>
         </div>
@@ -141,7 +147,7 @@ function countryFlag(country: string): string {
           >
             <option :value="null" disabled>Seleccionar...</option>
             <option v-for="t in types" :key="t.id" :value="t.id">
-              {{ t.name_es }}
+              {{ localizedName(t, locale) }}
             </option>
           </select>
         </div>

@@ -1,26 +1,31 @@
 <script setup lang="ts">
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title as ChartTitle,
-  Tooltip,
-  Legend,
-  Filler,
-} from 'chart.js'
-import { Line } from 'vue-chartjs'
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  ChartTitle,
-  Tooltip,
-  Legend,
-  Filler,
+// Lazy-load Chart.js — only imported when chart section is visible
+const LazyLine = defineAsyncComponent(() =>
+  import('chart.js').then(
+    ({
+      Chart,
+      CategoryScale,
+      LinearScale,
+      PointElement,
+      LineElement,
+      Title,
+      Tooltip,
+      Legend,
+      Filler,
+    }) => {
+      Chart.register(
+        CategoryScale,
+        LinearScale,
+        PointElement,
+        LineElement,
+        Title,
+        Tooltip,
+        Legend,
+        Filler,
+      )
+      return import('vue-chartjs').then((m) => m.Line)
+    },
+  ),
 )
 
 definePageMeta({ layout: 'default' })
@@ -645,7 +650,7 @@ usePageSeo({
             {{ $t('data.priceTrends') }} &mdash; {{ $t('data.last12Months') }}
           </h2>
           <div class="chart-container">
-            <Line :data="chartData" :options="chartOptions" />
+            <LazyLine :data="chartData" :options="chartOptions" />
           </div>
         </section>
 

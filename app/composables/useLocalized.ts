@@ -19,6 +19,26 @@ export function localizedField(
 }
 
 /**
+ * Read a localized name from an entity that may have both JSONB `name` and legacy `name_es`/`name_en` columns.
+ * Tries JSONB first, then falls back to legacy columns.
+ */
+export function localizedName(
+  item:
+    | { name?: Record<string, string> | null; name_es?: string; name_en?: string | null }
+    | null
+    | undefined,
+  locale: string,
+): string {
+  if (!item) return ''
+  // Try JSONB column first
+  const fromJsonb = localizedField(item.name, locale)
+  if (fromJsonb) return fromJsonb
+  // Fallback to legacy columns
+  if (locale === 'en' && item.name_en) return item.name_en
+  return item.name_es || ''
+}
+
+/**
  * Read a long translation from content_translations table.
  * Used in detail pages (vehicle detail, article). NOT used in listings.
  */

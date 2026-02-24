@@ -114,7 +114,7 @@
             <select v-model="selectedSubcategoryId" class="form-select">
               <option :value="null">Seleccionar...</option>
               <option v-for="sub in subcategories" :key="sub.id" :value="sub.id">
-                {{ sub.name_es }}
+                {{ localizedName(sub, locale) }}
               </option>
             </select>
           </div>
@@ -123,7 +123,7 @@
             <select v-model="form.type_id" class="form-select" required>
               <option value="">Seleccionar...</option>
               <option v-for="t in types" :key="t.id" :value="t.id">
-                {{ t.name_es }}
+                {{ localizedName(t, locale) }}
               </option>
             </select>
           </div>
@@ -490,12 +490,14 @@
 <script setup lang="ts">
 import type { VehicleFormData } from '~/composables/admin/useAdminVehicles'
 import { useAdminVehicles } from '~/composables/admin/useAdminVehicles'
+import { localizedName } from '~/composables/useLocalized'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
 })
 
+const { locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const supabase = useSupabaseClient()

@@ -6,6 +6,9 @@ import {
   type DemandStatus,
   type DemandFilters,
 } from '~/composables/admin/useAdminDemands'
+import { localizedName } from '~/composables/useLocalized'
+
+const { locale } = useI18n()
 
 definePageMeta({
   layout: 'admin',
@@ -114,8 +117,10 @@ async function executeDelete() {
 function getTypeLabel(demand: AdminDemand): string {
   if (demand.subcategory || demand.type) {
     const parts: string[] = []
-    if (demand.subcategory?.name_es) parts.push(demand.subcategory.name_es)
-    if (demand.type?.name_es) parts.push(demand.type.name_es)
+    const subcatLabel = localizedName(demand.subcategory, locale.value)
+    const typeLabel = localizedName(demand.type, locale.value)
+    if (subcatLabel) parts.push(subcatLabel)
+    if (typeLabel) parts.push(typeLabel)
     return parts.join(' > ')
   }
   return demand.vehicle_type || '-'

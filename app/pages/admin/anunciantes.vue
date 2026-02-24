@@ -6,6 +6,9 @@ import {
   type AdvertisementStatus,
   type AdvertisementFilters,
 } from '~/composables/admin/useAdminAdvertisements'
+import { localizedName } from '~/composables/useLocalized'
+
+const { locale } = useI18n()
 
 definePageMeta({
   layout: 'admin',
@@ -235,8 +238,9 @@ function formatPrice(price: number | null): string {
                 <span v-else class="no-data">Sin especificar</span>
                 <span v-if="ad.year" class="vehicle-year">{{ ad.year }}</span>
                 <span v-if="ad.subcategory || ad.type" class="vehicle-type">
-                  {{ ad.subcategory?.name_es || '' }}{{ ad.subcategory && ad.type ? ' > ' : ''
-                  }}{{ ad.type?.name_es || '' }}
+                  {{ localizedName(ad.subcategory, locale) || ''
+                  }}{{ ad.subcategory && ad.type ? ' > ' : ''
+                  }}{{ localizedName(ad.type, locale) || '' }}
                 </span>
                 <span v-else-if="ad.vehicle_type" class="vehicle-type">{{ ad.vehicle_type }}</span>
               </div>
@@ -297,12 +301,12 @@ function formatPrice(price: number | null): string {
                 <h4>Vehículo</h4>
                 <p v-if="detailModal.advertisement.subcategory || detailModal.advertisement.type">
                   <strong>Clasificación:</strong>
-                  {{ detailModal.advertisement.subcategory?.name_es || ''
+                  {{ localizedName(detailModal.advertisement.subcategory, locale) || ''
                   }}{{
                     detailModal.advertisement.subcategory && detailModal.advertisement.type
                       ? ' > '
                       : ''
-                  }}{{ detailModal.advertisement.type?.name_es || '' }}
+                  }}{{ localizedName(detailModal.advertisement.type, locale) || '' }}
                 </p>
                 <p v-else-if="detailModal.advertisement.vehicle_type">
                   <strong>Tipo:</strong> {{ detailModal.advertisement.vehicle_type }}

@@ -10,9 +10,12 @@ import {
   BALANCE_STATUS_LABELS,
 } from '~/composables/admin/useAdminBalance'
 import { useAdminTypes } from '~/composables/admin/useAdminTypes'
+import { localizedName } from '~/composables/useLocalized'
 import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories'
 import { useAdminVehicles } from '~/composables/admin/useAdminVehicles'
 import { useToast } from '~/composables/useToast'
+
+const { locale } = useI18n()
 
 definePageMeta({
   layout: 'admin',
@@ -682,12 +685,16 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
 
         <select v-model="filters.subcategory_id">
           <option :value="null">Todas las subcat.</option>
-          <option v-for="s in subcategories" :key="s.id" :value="s.id">{{ s.name_es }}</option>
+          <option v-for="s in subcategories" :key="s.id" :value="s.id">
+            {{ localizedName(s, locale) }}
+          </option>
         </select>
 
         <select v-model="filters.type_id">
           <option :value="null">Todos los tipos</option>
-          <option v-for="t in types" :key="t.id" :value="t.id">{{ t.name_es }}</option>
+          <option v-for="t in types" :key="t.id" :value="t.id">
+            {{ localizedName(t, locale) }}
+          </option>
         </select>
       </div>
 
@@ -851,7 +858,7 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
               </span>
               <span v-else>—</span>
             </td>
-            <td>{{ e.types?.name_es || '—' }}</td>
+            <td>{{ localizedName(e.types, locale) || '—' }}</td>
             <td class="num" :class="e.tipo">
               <strong>{{ fmt(e.importe) }}</strong>
             </td>
@@ -978,7 +985,9 @@ const statusOptions = Object.entries(BALANCE_STATUS_LABELS) as [BalanceStatus, s
                 <label>Tipo</label>
                 <select v-model="formData.type_id">
                   <option :value="null">— Sin tipo —</option>
-                  <option v-for="s in types" :key="s.id" :value="s.id">{{ s.name_es }}</option>
+                  <option v-for="s in types" :key="s.id" :value="s.id">
+                    {{ localizedName(s, locale) }}
+                  </option>
                 </select>
               </div>
               <div class="field">

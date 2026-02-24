@@ -7,6 +7,9 @@ import {
 } from '~/composables/admin/useAdminHistorico'
 import { useAdminTypes } from '~/composables/admin/useAdminTypes'
 import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories'
+import { localizedName } from '~/composables/useLocalized'
+
+const { locale } = useI18n()
 
 definePageMeta({
   layout: 'admin',
@@ -408,12 +411,16 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
 
         <select v-model="filters.subcategory_id">
           <option :value="null">Todas las subcat.</option>
-          <option v-for="s in subcategories" :key="s.id" :value="s.id">{{ s.name_es }}</option>
+          <option v-for="s in subcategories" :key="s.id" :value="s.id">
+            {{ localizedName(s, locale) }}
+          </option>
         </select>
 
         <select v-model="filters.type_id">
           <option :value="null">Todos los tipos</option>
-          <option v-for="t in types" :key="t.id" :value="t.id">{{ t.name_es }}</option>
+          <option v-for="t in types" :key="t.id" :value="t.id">
+            {{ localizedName(t, locale) }}
+          </option>
         </select>
 
         <select v-model="filters.brand">
@@ -498,7 +505,7 @@ const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
             <td class="vehiculo">
               <strong>{{ e.brand }}</strong> {{ e.model }}
             </td>
-            <td>{{ e.types?.name_es || '—' }}</td>
+            <td>{{ localizedName(e.types, locale) || '—' }}</td>
             <td>{{ e.sale_date ? fmtDate(e.sale_date) : '—' }}</td>
             <td>
               <span class="cat-badge" :class="e.sale_category">

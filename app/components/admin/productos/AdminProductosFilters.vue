@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import type { AdminVehicleFilters } from '~/composables/admin/useAdminVehicles'
+import { localizedName } from '~/composables/useLocalized'
+
+const { locale } = useI18n()
 
 interface SubcategoryOption {
   id: string
+  name?: Record<string, string> | null
   name_es: string
 }
 
 interface TypeOption {
   id: string
+  name?: Record<string, string> | null
   name_es: string
 }
 
@@ -110,7 +115,7 @@ const localOnlineFilter = computed({
       <select v-model="localFilters.subcategory_id">
         <option :value="null">Todas</option>
         <option v-for="sub in subcategories" :key="sub.id" :value="sub.id">
-          {{ sub.name_es }}
+          {{ localizedName(sub, locale) }}
         </option>
       </select>
     </div>
@@ -121,7 +126,7 @@ const localOnlineFilter = computed({
       <select v-model="localFilters.type_id">
         <option :value="null">Todos</option>
         <option v-for="t in filteredTypes" :key="t.id" :value="t.id">
-          {{ t.name_es }}
+          {{ localizedName(t, locale) }}
         </option>
       </select>
     </div>

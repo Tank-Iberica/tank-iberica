@@ -33,7 +33,7 @@
       <div v-for="chart in historyChartDataSets" :key="chart.component" class="chart-card">
         <h3 class="chart-title">{{ chart.label }}</h3>
         <div class="chart-container">
-          <Line :data="chart.chartData" :options="chartOptions" />
+          <LazyLine :data="chart.chartData" :options="chartOptions" />
         </div>
       </div>
     </div>
@@ -41,8 +41,36 @@
 </template>
 
 <script setup lang="ts">
-import { Line } from 'vue-chartjs'
 import type { ChartData, ChartOptions } from 'chart.js'
+
+// Lazy-load Chart.js + Line component
+const LazyLine = defineAsyncComponent(() =>
+  import('chart.js').then(
+    ({
+      Chart,
+      CategoryScale,
+      LinearScale,
+      PointElement,
+      LineElement,
+      Title,
+      Tooltip,
+      Legend,
+      Filler,
+    }) => {
+      Chart.register(
+        CategoryScale,
+        LinearScale,
+        PointElement,
+        LineElement,
+        Title,
+        Tooltip,
+        Legend,
+        Filler,
+      )
+      return import('vue-chartjs').then((m) => m.Line)
+    },
+  ),
+)
 
 type PeriodValue = '24h' | '7d' | '30d'
 

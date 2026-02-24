@@ -1,31 +1,76 @@
 <script setup lang="ts">
-import { Bar, Line, Doughnut } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-} from 'chart.js'
 import type { ChartOptions } from 'chart.js'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
+// Lazy-load Chart.js components — admin dashboard is SSR: false
+const chartReady = ref(false)
+const LazyBar = defineAsyncComponent(() =>
+  import('chart.js').then(
+    ({
+      Chart,
+      CategoryScale,
+      LinearScale,
+      BarElement,
+      PointElement,
+      LineElement,
+      ArcElement,
+      Title,
+      Tooltip,
+      Legend,
+      Filler,
+    }) => {
+      Chart.register(
+        CategoryScale,
+        LinearScale,
+        BarElement,
+        PointElement,
+        LineElement,
+        ArcElement,
+        Title,
+        Tooltip,
+        Legend,
+        Filler,
+      )
+      chartReady.value = true
+      return import('vue-chartjs').then((m) => m.Bar)
+    },
+  ),
+)
+const LazyLine = defineAsyncComponent(() =>
+  chartReady.value
+    ? import('vue-chartjs').then((m) => m.Line)
+    : import('chart.js').then(
+        ({
+          Chart,
+          CategoryScale,
+          LinearScale,
+          PointElement,
+          LineElement,
+          Title,
+          Tooltip,
+          Legend,
+          Filler,
+        }) => {
+          Chart.register(
+            CategoryScale,
+            LinearScale,
+            PointElement,
+            LineElement,
+            Title,
+            Tooltip,
+            Legend,
+            Filler,
+          )
+          return import('vue-chartjs').then((m) => m.Line)
+        },
+      ),
+)
+const LazyDoughnut = defineAsyncComponent(() =>
+  chartReady.value
+    ? import('vue-chartjs').then((m) => m.Doughnut)
+    : import('chart.js').then(({ Chart, ArcElement, Tooltip, Legend }) => {
+        Chart.register(ArcElement, Tooltip, Legend)
+        return import('vue-chartjs').then((m) => m.Doughnut)
+      }),
 )
 
 definePageMeta({
@@ -436,7 +481,7 @@ const doughnutChartOptions = computed<ChartOptions<'doughnut'>>(() => ({
             <div v-if="!revenueSeries?.length" class="chart-card__empty">
               {{ $t('admin.metrics.noData') }}
             </div>
-            <Bar v-else :data="revenueChartData" :options="barChartOptions" />
+            <LazyBar v-else :data="revenueChartData" :options="barChartOptions" />
           </div>
         </div>
 
@@ -447,7 +492,7 @@ const doughnutChartOptions = computed<ChartOptions<'doughnut'>>(() => ({
             <div v-if="!vehicleActivity?.length" class="chart-card__empty">
               {{ $t('admin.metrics.noData') }}
             </div>
-            <Line v-else :data="vehiclesChartData" :options="lineChartOptions" />
+            <LazyLine v-else :data="vehiclesChartData" :options="lineChartOptions" />
           </div>
         </div>
 
@@ -458,7 +503,7 @@ const doughnutChartOptions = computed<ChartOptions<'doughnut'>>(() => ({
             <div v-if="!leadsSeries?.length" class="chart-card__empty">
               {{ $t('admin.metrics.noData') }}
             </div>
-            <Bar v-else :data="leadsChartData" :options="barChartOptions" />
+            <LazyBar v-else :data="leadsChartData" :options="barChartOptions" />
           </div>
         </div>
 
@@ -469,7 +514,7 @@ const doughnutChartOptions = computed<ChartOptions<'doughnut'>>(() => ({
             <div v-if="!conversionFunnel" class="chart-card__empty">
               {{ $t('admin.metrics.noData') }}
             </div>
-            <Doughnut v-else :data="funnelChartData" :options="doughnutChartOptions" />
+            <LazyDoughnut v-else :data="funnelChartData" :options="doughnutChartOptions" />
           </div>
         </div>
       </section>

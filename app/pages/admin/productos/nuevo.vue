@@ -15,13 +15,14 @@ import {
   generateVehicleAltText,
   type FileNamingData,
 } from '~/utils/fileNaming'
+import { localizedName } from '~/composables/useLocalized'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
 })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
 const router = useRouter()
 
@@ -626,7 +627,7 @@ function fmt(val: number | null | undefined): string {
             <select v-model="selectedSubcategoryId">
               <option :value="null">Seleccionar...</option>
               <option v-for="s in publishedSubcategories" :key="s.id" :value="s.id">
-                {{ s.name_es }}
+                {{ localizedName(s, locale) }}
               </option>
             </select>
           </div>
@@ -635,7 +636,7 @@ function fmt(val: number | null | undefined): string {
             <select v-model="formData.type_id">
               <option :value="null" disabled>Seleccionar...</option>
               <option v-for="tipo in publishedTypes" :key="tipo.id" :value="tipo.id">
-                {{ tipo.name_es }}
+                {{ localizedName(tipo, locale) }}
               </option>
             </select>
           </div>

@@ -218,7 +218,7 @@ async function handleCopyCode(): Promise<void> {
               <select v-model="selectedCategory" class="form-select">
                 <option value="">{{ t('dashboard.widget.allCategories') }}</option>
                 <option v-for="cat in categories" :key="cat.id" :value="cat.slug">
-                  {{ cat.name_es }}
+                  {{ cat.name?.es || cat.name_es || '' }}
                 </option>
               </select>
             </div>
