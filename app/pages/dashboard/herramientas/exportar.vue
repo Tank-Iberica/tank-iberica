@@ -30,7 +30,11 @@ interface ExportVehicle {
   description_es: string | null
   description_en: string | null
   vehicle_images: { url: string; position: number }[]
-  subcategories: { name_es: string; name_en: string | null } | null
+  subcategories: {
+    name?: Record<string, string> | null
+    name_es: string
+    name_en: string | null
+  } | null
 }
 
 type CsvColumn = 'brand' | 'model' | 'year' | 'km' | 'price' | 'category' | 'location' | 'status'
@@ -111,7 +115,7 @@ async function loadVehicles() {
     const { data, error: err } = await supabase
       .from('vehicles')
       .select(
-        'id, brand, model, year, price, category, location, status, description_es, description_en, vehicle_images(url, position), subcategories(name_es, name_en)',
+        'id, brand, model, year, price, category, location, status, description_es, description_en, vehicle_images(url, position), subcategories(name, name_es, name_en)',
       )
       .eq('dealer_id', dealer.id)
       .order('created_at', { ascending: false })
@@ -163,10 +167,15 @@ function getCellValue(vehicle: ExportVehicle, key: CsvColumn): string {
     case 'price':
       return vehicle.price ? vehicle.price.toFixed(2) : ''
     case 'category':
-      return vehicle.subcategories
-        ? (locale.value === 'en' ? vehicle.subcategories.name_en : vehicle.subcategories.name_es) ||
-            vehicle.category
-        : vehicle.category
+      if (vehicle.subcategories) {
+        const jsonb = vehicle.subcategories.name?.[locale.value]
+        if (jsonb) return jsonb
+        return (
+          (locale.value === 'en' ? vehicle.subcategories.name_en : vehicle.subcategories.name_es) ||
+          vehicle.category
+        )
+      }
+      return vehicle.category
     case 'location':
       return vehicle.location || ''
     case 'status':
@@ -352,11 +361,16 @@ async function exportPDF() {
       const specs: Array<{ label: string; value: string }> = []
 
       if (vehicle.category) {
-        const catLabel = vehicle.subcategories
-          ? (locale.value === 'en'
+        let catLabel = vehicle.category
+        if (vehicle.subcategories) {
+          const jsonb = vehicle.subcategories.name?.[locale.value]
+          catLabel =
+            jsonb ||
+            (locale.value === 'en'
               ? vehicle.subcategories.name_en
-              : vehicle.subcategories.name_es) || vehicle.category
-          : vehicle.category
+              : vehicle.subcategories.name_es) ||
+            vehicle.category
+        }
         specs.push({ label: t('dashboard.tools.export.columns.category'), value: catLabel })
       }
       if (vehicle.year) {

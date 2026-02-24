@@ -57,6 +57,7 @@
 
 <script setup lang="ts">
 import type { Vehicle } from '~/composables/useVehicles'
+import { localizedName } from '~/composables/useLocalized'
 
 const props = defineProps<{
   vehicles: readonly Vehicle[]
@@ -90,10 +91,8 @@ const displayedVehicles = computed(() => {
       const description = locale.value === 'en' ? v.description_en : v.description_es
       const cat = v.subcategories?.subcategory_categories?.[0]?.categories
       const searchable = [
-        cat?.name_es,
-        cat?.name_en,
-        v.subcategories?.name_es,
-        v.subcategories?.name_en,
+        localizedName(cat, locale.value),
+        localizedName(v.subcategories, locale.value),
         v.brand,
         v.model,
         v.location,

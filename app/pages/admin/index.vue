@@ -407,6 +407,7 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient()
+const { locale } = useI18n()
 
 // KPI Summary from metrics composable
 const { kpiSummary, loadMetrics: loadKpiMetrics } = useAdminMetrics()
@@ -649,12 +650,15 @@ async function loadProductStats() {
       .sort((a, b) => b.count - a.count)
 
     // By type - need to join with types table
-    const { data: types } = await supabase.from('subcategories').select('id, name_es')
+    const { data: types } = await supabase.from('subcategories').select('id, name, name_es')
 
     const subMap = new Map<string, string>()
-    ;(types || []).forEach((s: { id: string; name_es: string }) => {
-      subMap.set(s.id, s.name_es)
-    })
+    ;(types || []).forEach(
+      (s: { id: string; name?: Record<string, string> | null; name_es: string }) => {
+        const label = (s.name && s.name[locale.value]) || s.name_es
+        subMap.set(s.id, label)
+      },
+    )
 
     const typeCount = new Map<string, number>()
     all.forEach((v: { type_id: string | null }) => {
