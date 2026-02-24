@@ -1,10 +1,11 @@
 import type { Vehicle } from '~/composables/useVehicles'
+import { localizedField } from '~/composables/useLocalized'
 
 /**
  * Build the product display name for a vehicle.
  * Format: Category + Subcategory + Brand + Model [+ (Year)]
- * Uses singular names (name_singular_es/en) for product context,
- * falling back to plural (name_es/en) if singular is not set.
+ * Uses singular names (JSONB name_singular) for product context,
+ * falling back to plural (JSONB name) then legacy columns.
  */
 export function buildProductName(vehicle: Vehicle, locale: string, includeYear = false): string {
   const parts: string[] = []
@@ -13,22 +14,20 @@ export function buildProductName(vehicle: Vehicle, locale: string, includeYear =
   const cat = vehicle.subcategories?.subcategory_categories?.[0]?.categories
   if (cat) {
     const name =
-      locale === 'en'
-        ? cat.name_singular_en || cat.name_singular_es || cat.name_en || cat.name_es
-        : cat.name_singular_es || cat.name_es
-    parts.push(name)
+      localizedField(cat.name_singular, locale) ||
+      localizedField(cat.name, locale) ||
+      (locale === 'en' ? cat.name_en || cat.name_es : cat.name_es)
+    if (name) parts.push(name)
   }
 
   // Subcategory — singular for product names
   if (vehicle.subcategories) {
+    const sub = vehicle.subcategories
     const name =
-      locale === 'en'
-        ? vehicle.subcategories.name_singular_en ||
-          vehicle.subcategories.name_singular_es ||
-          vehicle.subcategories.name_en ||
-          vehicle.subcategories.name_es
-        : vehicle.subcategories.name_singular_es || vehicle.subcategories.name_es
-    parts.push(name)
+      localizedField(sub.name_singular, locale) ||
+      localizedField(sub.name, locale) ||
+      (locale === 'en' ? sub.name_en || sub.name_es : sub.name_es)
+    if (name) parts.push(name)
   }
 
   // Brand + Model

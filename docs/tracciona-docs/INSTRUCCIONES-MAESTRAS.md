@@ -3676,6 +3676,428 @@ Ejecutar `npm audit` y corregir vulnerabilidades.
 
 ---
 
+## SESIÓN 36 — Auditoría cruzada: gaps residuales + alineación docs/realidad
+
+> Resultado de cruzar la 4ª auditoría externa (auditoría de 10 puntos, 24 Feb 2026) con las sesiones 34, 34b y 35. Verificación rigurosa de cada hallazgo. Solo incluye lo que NO estaba cubierto o estaba incompleto.
+
+**Contexto:** Se verificó línea por línea que las sesiones 34 (auth Stripe, webhooks, crons, rate limit), 34b (idempotencia, Turnstile, PII logs, batching, ownership, reintentos, request IDs) y 35 (auth invoicing/auction/images, RLS hardening, CSP, índices, DOMPurify, hreflang, dependencias, typecheck) cubren los hallazgos técnicos de las 4 auditorías. Los hallazgos ya cubiertos NO se repiten aquí.
+
+**Resultado de la verificación:**
+
+| Hallazgo auditoría 4                      | ¿Cubierto? | Dónde                                                                                |
+| ----------------------------------------- | ---------- | ------------------------------------------------------------------------------------ |
+| Service role sin ownership (punto 10)     | ✅ Sí      | Sesión 34 A.1-A.3, 34b E, 35 A.1-A.5                                                 |
+| Crons sin secreto (punto 3)               | ✅ Sí      | Sesión 34 B.2 (verifyCronSecret)                                                     |
+| Endpoints sin cache (punto 5.2)           | ✅ Sí      | Sesión 35 F.3 (market-report SWR 6h)                                                 |
+| RLS gaps (punto 10.2)                     | ✅ Sí      | Sesión 35 B (migración 00052)                                                        |
+| Tests IDOR (punto 10.3)                   | ✅ Sí      | Sesión 35 tests mínimos (13 checks)                                                  |
+| Subastas capture/cancel (punto 7.1)       | ✅ Sí      | Sesión 16 línea 732: ganador→capture, perdedores→cancel                              |
+| Verificación end-to-end (punto 7.1)       | ✅ Sí      | Sesión 15 completa (Claude Vision + DGT + niveles)                                   |
+| Pro enforcement catálogo (punto 7.1)      | ✅ Sí      | Sesión 16b + 24 (visible_from + useSubscription)                                     |
+| CI/CD (punto 6)                           | ✅ Sí      | Sesión 19 (GitHub Actions ci.yml + deploy.yml)                                       |
+| Índices vehicles(status,created_at)       | ✅ Sí      | Sesión 35 F.1 (idx_vehicles_status_created)                                          |
+| Índices location                          | ✅ Sí      | Sesión 35 F.1 (province, region, country)                                            |
+| Infra endpoints protegidos                | ✅ Sí      | Sesión 33 especifica "Admin auth" en cada GET, CRON_SECRET en cron                   |
+| Cron endpoints protegidos                 | ✅ Sí      | Sesión 34 B.2: verifyCronSecret en TODOS los cron/\*.post.ts                         |
+| Webhook Stripe/WhatsApp                   | ✅ Sí      | Sesión 34 A.2 (firma Stripe) + A.3 (firma Meta HMAC)                                 |
+| Cache market-report                       | ✅ Sí      | Sesión 35 F.3 (SWR 6h en routeRules)                                                 |
+| **Cache merchant-feed + sitemap**         | ❌ No      | Sesión 35 solo cubre market-report                                                   |
+| **Índice vehicles(category_id)**          | ❌ No      | Falta en migración 00053                                                             |
+| **Índice auction_bids(auction_id)**       | ❌ No      | Falta en migración 00053                                                             |
+| **Índice articles(status, published_at)** | ⚠️ Parcial | Sesión 2 define idx_articles_scheduled pero no es exactamente (status, published_at) |
+| **account/\* auth explícita**             | ⚠️ Parcial | Sesión 34 D.5 añade CSRF pero no verifica auth explícitamente                        |
+| **dgt-report auth**                       | ❌ No      | Sesión 15 describe el flujo pero no especifica auth check                            |
+| **push/send auth**                        | ❌ No      | Sesión 35 G.2 limpia imports pero no añade auth                                      |
+| **market-report auth**                    | ⚠️ Parcial | Sesión 35 F.3 añade cache pero no auth (¿debería ser público?)                       |
+| **Desalineación docs/realidad**           | ❌ No      | Ninguna sesión actualiza progreso.md                                                 |
+| **Diagrama flujos operativos**            | ❌ No      | No existe en ningún documento                                                        |
+| **Duplicación admin/dashboard**           | ❌ No      | Ninguna sesión la aborda                                                             |
+| **i18n convivencia \_es/\_en + JSONB**    | ⚠️ Parcial | Sesión 2 describe migración pero no verifica completitud                             |
+| **Lazy-load rutas admin**                 | ❌ No      | Ninguna sesión lo especifica                                                         |
+| **Inventario formal de endpoints**        | ❌ No      | No existe documento de referencia                                                    |
+| **Separar crons (punto 8.2)**             | ✅ N/A     | Los crons YA son Workers en CF Pages, no hay "runtime principal" separado            |
+
+**Leer:**
+
+1. `docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md` — Contexto de arquitectura
+2. `docs/progreso.md` — Estado actual (desactualizado)
+3. `app/pages/admin/` — Verificar duplicación con dashboard
+4. `server/api/` — Endpoints a auditar
+
+**Hacer:**
+
+### Parte A — ÍNDICES FALTANTES (añadir a migración 00053)
+
+La migración `00053_performance_indexes.sql` de la sesión 35 tiene 8 índices. Faltan 3 que la auditoría identifica correctamente:
+
+```sql
+-- Añadir al final de 00053_performance_indexes.sql:
+
+-- Filtrado por categoría en catálogo (query frecuente)
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_vehicles_category_id ON vehicles (category_id);
+
+-- Pujas por subasta (consulta constante durante subasta en vivo)
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_auction_bids_auction_id ON auction_bids (auction_id, created_at DESC);
+
+-- Artículos publicados por fecha (listado público de noticias/guías)
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_articles_status_published ON articles (status, published_at DESC) WHERE status = 'published';
+```
+
+**Total índices migración 00053: 11** (8 originales + 3 nuevos).
+
+---
+
+### Parte A-BIS — CACHE CDN PARA ENDPOINTS PÚBLICOS PESADOS
+
+La sesión 35 F.3 añade SWR 6h a market-report. Pero la auditoría 4 (punto 5.3) también pide cache CDN para `merchant-feed` y `sitemap`, que son endpoints públicos que regeneran datos completos en cada request.
+
+**Fix — Añadir a `routeRules` en `nuxt.config.ts`:**
+
+```typescript
+routeRules: {
+  // Ya existente (sesión 35):
+  '/api/market-report': { swr: 60 * 60 * 6 },      // 6 horas
+  // NUEVOS (sesión 36):
+  '/api/merchant-feed*': { swr: 60 * 60 * 12 },     // 12 horas (Google re-crawlea ~1/día)
+  '/api/__sitemap*': { swr: 60 * 60 * 6 },           // 6 horas
+}
+```
+
+**Justificación:** merchant-feed genera XML completo de todos los vehículos públicos. Sitemap idem. Ambos son costosos y cambian lentamente (nuevo vehículo cada horas, no cada segundo). SWR los sirve desde cache y regenera en background.
+
+---
+
+### Parte B — AUTH EN ENDPOINTS RESIDUALES
+
+La sesión 35 cubrió invoicing, auction-deposit, images/process, social/generate-posts, verify-document. Pero la auditoría 4 (punto 10.1) lista endpoints adicionales con service role que ninguna sesión anterior audita explícitamente.
+
+#### B.1 dgt-report.post.ts: añadir auth
+
+**Problema:** La sesión 15 describe el flujo (pago Stripe → consulta DGT → PDF) pero no especifica verificación de autenticación en el endpoint.
+
+**Fix:** Añadir `serverSupabaseUser(event)` → 401. Verificar que el vehículo existe. Si el usuario es dealer, verificar ownership del vehículo. Si es comprador, verificar que tiene un lead activo para ese vehículo O que ha pagado la consulta.
+
+#### B.2 push/send.post.ts: añadir auth
+
+**Problema:** La sesión 35 G.2 limpia el import innecesario, pero no añade auth. Este endpoint permite enviar push notifications.
+
+**Fix:** Doble vía (mismo patrón que email/send de sesión 34 B.1): (1) header `x-internal-secret` = CRON_SECRET para llamadas internas, (2) admin auth para llamadas desde el panel. Si no es ninguna → 401.
+
+#### B.3 account/\* endpoints: verificar auth completa
+
+**Problema:** La sesión 34 D.5 añade CSRF a `account/delete`, pero no verifica que TODOS los endpoints de `account/*` tengan auth.
+
+**Fix:** Claude Code debe ejecutar:
+
+```bash
+ls server/api/account/
+```
+
+Para cada endpoint encontrado, verificar que tiene `serverSupabaseUser(event)` al inicio y que opera sobre `user.id` (no acepta userId del body). Si alguno no lo tiene → añadir.
+
+#### B.4 market-report.get.ts: decisión de acceso
+
+**Problema:** La sesión 35 F.3 añade cache SWR 6h pero no especifica auth. La auditoría lo lista como endpoint con service role.
+
+**Decisión:** market-report es un endpoint que genera un informe HTML del mercado. Puede ser:
+
+- Público (si es el índice de precios de la sesión 32) → dejar sin auth, con cache agresivo
+- Privado (si es informe detallado para admins) → añadir admin auth
+
+Claude Code debe leer el contenido del archivo para determinar qué hace. Si genera datos agregados públicos → mantener sin auth + cache. Si accede a datos sensibles o individuales → añadir admin auth.
+
+---
+
+### Parte C — ESTADO REAL DEL PRODUCTO (docs/progreso.md)
+
+**Problema (punto 1.4-1.5 auditoría):** `docs/progreso.md` dice "Step 2 en progreso" pero el código ya tiene subastas, pagos Stripe, WhatsApp pipeline, sistema de ads, panel de infraestructura, etc. Esto puede llevar a decisiones erróneas y a reescribir código que ya existe.
+
+Este es el hallazgo más valioso de la 4ª auditoría y ninguna sesión anterior lo aborda.
+
+**Fix — Crear `docs/ESTADO-REAL-PRODUCTO.md`:**
+
+Claude Code debe generar este documento ejecutando análisis del código real:
+
+```bash
+# Verificar qué módulos existen realmente
+ls app/pages/
+ls app/pages/admin/
+ls app/pages/dashboard/
+ls app/pages/subastas/
+ls app/pages/perfil/
+ls server/api/
+ls server/api/stripe/
+ls server/api/whatsapp/
+ls server/api/cron/
+ls server/api/infra/
+ls server/api/invoicing/
+ls supabase/migrations/
+```
+
+Para cada módulo, documentar:
+
+| Módulo           | Estado                     | Archivos clave                                    | Sesión que lo completa |
+| ---------------- | -------------------------- | ------------------------------------------------- | ---------------------- |
+| Catálogo público | ✅ Operativo               | pages/index.vue, composables/useVehicles          | Sesión 3               |
+| Fichas vehículo  | ✅ Operativo               | pages/vehiculo/[slug].vue                         | Sesión 3               |
+| Subastas         | ✅ UI+BD completa          | pages/subastas/\*, composables/useAuction         | Sesión 16              |
+| Pagos Stripe     | ✅ Checkout+Portal+Webhook | server/api/stripe/\*                              | Sesión 17              |
+| WhatsApp         | ✅ Pipeline completo       | server/api/whatsapp/\*                            | Sesión 21              |
+| Ads/Publicidad   | ✅ CRUD+Matching           | pages/admin/publicidad, composables/useAds        | Sesión 16b             |
+| Infra monitoring | ✅ Panel+Crons             | pages/admin/infraestructura, server/api/infra/\*  | Sesión 33              |
+| Dashboard dealer | ⚠️ Parcial                 | pages/dashboard/\* (verificar qué páginas faltan) | Sesión 24              |
+| Editorial        | ⚠️ Parcial                 | pages/guia/_, pages/noticias/_                    | Sesión 11              |
+| Verificación     | ⚠️ Parcial                 | componentes existen, flujo no cerrado             | Sesión 15              |
+| Multi-vertical   | ⚠️ Conceptual              | vertical_config existe, pipeline de clonado no    | Sesión 23              |
+| CI/CD            | ❌ No existe               | Sin .github/workflows/                            | Sesión 19              |
+
+El documento debe reflejar la REALIDAD del código, no las aspiraciones de las sesiones.
+
+**Además:** Actualizar `docs/progreso.md` para que apunte a `ESTADO-REAL-PRODUCTO.md` como fuente de verdad.
+
+---
+
+### Parte D — DIAGRAMA DE FLUJOS OPERATIVOS
+
+**Problema (punto 2.4 auditoría):** No existe diagrama operativo formal que muestre los flujos de usuario/dealer/admin. Dificulta onboarding de nuevos miembros del equipo y de Claude Code en sesiones nuevas.
+
+**Fix — Crear `docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md`:**
+
+Documento con diagramas ASCII (interpretables por Claude Code) de los 3 flujos principales:
+
+**Flujo 1: Comprador**
+
+```
+SEO/Directo → Catálogo → Filtros → Ficha vehículo
+                                      ↓
+                              [Contactar dealer]
+                              ├── Teléfono
+                              ├── WhatsApp
+                              └── Formulario → INSERT lead → Email dealer
+                                      ↓
+                              [Favoritos / Alertas]
+                              ├── ❤️ Guardar → INSERT favorites
+                              └── 🔔 Alerta → INSERT search_alerts → Cron diario
+                                      ↓
+                              [Subastas]
+                              └── Registro → Docs + Depósito Stripe → Pujas RT → Resultado
+```
+
+**Flujo 2: Dealer**
+
+```
+Registro → Onboarding (5 pasos) → Dashboard
+                                      ↓
+                              [Publicar vehículo]
+                              ├── Manual (formulario)
+                              ├── WhatsApp (fotos → IA → ficha)
+                              └── Excel (import masivo)
+                                      ↓
+                              [Gestionar]
+                              ├── Leads → CRM (new→viewed→contacted→won/lost)
+                              ├── Estadísticas → visitas, leads, conversión
+                              ├── Herramientas → facturas, contratos, presupuestos
+                              └── Portal público → personalizar colores/bio
+                                      ↓
+                              [Vender]
+                              └── Marcar vendido → Post-venta (transporte, seguro, contrato)
+```
+
+**Flujo 3: Admin**
+
+```
+Login admin → Dashboard métricas
+                    ↓
+            [Gestión]
+            ├── Vehículos → aprobar, editar, eliminar
+            ├── Dealers → verificar, activar, desactivar
+            ├── Subastas → crear, adjudicar, cancelar
+            ├── Verificaciones → cola de docs pendientes
+            ├── Publicidad → CRUD anunciantes + anuncios
+            ├── Captación → leads de competidores
+            ├── Social → cola de posts pendientes
+            └── Infraestructura → métricas, alertas, clusters
+                    ↓
+            [Configuración]
+            ├── Branding, navegación, homepage, catálogo
+            ├── Idiomas, precios, integraciones
+            ├── Emails (30 templates), editorial
+            └── Sistema (mantenimiento, logs)
+```
+
+---
+
+### Parte E — VERIFICACIÓN i18n: completar migración \_es/\_en → JSONB
+
+**Problema (punto 3 auditoría):** La sesión 2 Bloque B describe la migración de columnas `_es/_en` a JSONB, pero incluye la nota "NO dropear columnas antiguas todavía — comentar el DROP". Esto significa que en el código pueden convivir ambos patrones.
+
+**Fix:** Claude Code debe verificar:
+
+```bash
+# 1. ¿Existen todavía columnas _es/_en en la BD?
+grep -rn 'name_es\|name_en\|description_es\|description_en\|location_en' server/api/ app/composables/ app/pages/ --include='*.ts' --include='*.vue' | grep -v node_modules | grep -v '.nuxt'
+
+# 2. ¿Se usa localizedField() consistentemente?
+grep -rn 'localizedField' app/ --include='*.ts' --include='*.vue' | wc -l
+
+# 3. ¿Quedan accesos directos a .name_es o .name_en?
+grep -rn '\.name_es\|\.name_en' app/ --include='*.ts' --include='*.vue' | grep -v node_modules
+```
+
+Si se encuentran accesos directos a `_es/_en`:
+
+- Reemplazar TODOS por `localizedField(item.name, locale)`
+- Si la columna JSONB `name` no existe en esa tabla → la migración de sesión 2 no se completó → completarla
+
+Si todos los accesos usan `localizedField()`, la migración está completa y este punto se cierra.
+
+---
+
+### Parte F — CONSOLIDACIÓN ADMIN/DASHBOARD (deuda técnica)
+
+**Problema (punto 4.2 auditoría):** Hay lógica y UI duplicada entre `/admin/*` y `/dashboard/*`. Operaciones similares se implementan dos veces.
+
+**Fix — Crear módulos compartidos:**
+
+Claude Code debe identificar la duplicación:
+
+```bash
+# Buscar composables duplicados o similares
+ls app/composables/admin/
+ls app/composables/
+# Comparar funciones similares (ej: useAdminVehicles vs useDealerVehicles)
+```
+
+Patrón de consolidación:
+
+1. Crear `app/composables/shared/useVehicleOperations.ts` con lógica común (CRUD, filtros, estados)
+2. `useAdminVehicles` y `useDealerVehicles` importan de `shared/` y añaden permisos específicos
+3. Crear `app/components/shared/VehicleTable.vue`, `LeadsList.vue`, etc. — componentes reutilizables con prop `role: 'admin' | 'dealer'` que controla qué columnas/acciones se muestran
+
+**Prioridad:** 🟢 Baja. No bloquea lanzamiento. Pero hacerlo ahora evita que la duplicación se multiplique ×20 con las verticales.
+
+Claude Code debe:
+
+1. Listar pares de archivos duplicados (admin vs dashboard)
+2. Para cada par, extraer lógica común a `shared/`
+3. Refactorizar ambos para importar de `shared/`
+
+---
+
+### Parte G — LAZY-LOAD DE RUTAS ADMIN
+
+**Problema (punto 5.2 auditoría):** Bundle grande en admin/dashboard. Las rutas admin se cargan aunque el usuario sea comprador.
+
+**Fix en `nuxt.config.ts`:**
+
+Nuxt 3 ya hace code-splitting por ruta automáticamente, pero verificar que:
+
+1. Las dependencias pesadas de admin (Chart.js, SheetJS/ExcelJS, editores) no se importan globalmente:
+
+```bash
+grep -rn "import.*Chart\|import.*xlsx\|import.*exceljs\|import.*editor" app/pages/ app/components/ --include='*.vue' --include='*.ts' | grep -v node_modules
+```
+
+2. Si alguna se importa de forma estática en un composable global → moverla a `defineAsyncComponent` o `import()` dinámico
+
+3. Añadir experimentación de prefetch selectivo:
+
+```typescript
+// nuxt.config.ts
+experimental: {
+  payloadExtraction: true, // Extrae payload de datos para caching
+}
+```
+
+4. Verificar con:
+
+```bash
+npx nuxi analyze
+```
+
+Que las rutas `/admin/*` y `/dashboard/*` están en chunks separados del bundle público.
+
+---
+
+### Parte H — INVENTARIO FORMAL DE ENDPOINTS
+
+**Problema (punto 3 auditoría, prioridad baja):** No existe un documento que liste todos los endpoints del servidor con su auth, método, y propósito.
+
+**Fix — Generar `docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md`:**
+
+Claude Code debe generar automáticamente:
+
+```bash
+find server/api/ -name '*.ts' | sort
+```
+
+Para cada endpoint, documentar:
+
+| Ruta                      | Método | Auth                     | Propósito           | Sesión |
+| ------------------------- | ------ | ------------------------ | ------------------- | ------ |
+| /api/stripe/checkout      | POST   | User (sesión 34)         | Crear sesión Stripe | 17     |
+| /api/stripe/webhook       | POST   | Firma Stripe (sesión 34) | Procesar eventos    | 17     |
+| /api/cron/freshness-check | POST   | CRON_SECRET (sesión 34)  | Verificar frescura  | 16c    |
+| ...                       | ...    | ...                      | ...                 | ...    |
+
+Este inventario sirve como checklist para futuras auditorías y para Claude Code al añadir nuevos endpoints.
+
+---
+
+### Resumen de archivos
+
+**Crear:**
+
+| Archivo                                                  | Tipo                                              |
+| -------------------------------------------------------- | ------------------------------------------------- |
+| `docs/ESTADO-REAL-PRODUCTO.md`                           | Estado real de cada módulo vs docs                |
+| `docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md`    | Diagramas ASCII de flujos usuario/dealer/admin    |
+| `docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md` | Tabla de todos los endpoints con auth y propósito |
+
+**Modificar:**
+
+| Archivo                                   | Cambio                                                | Prioridad |
+| ----------------------------------------- | ----------------------------------------------------- | --------- |
+| Migración `00053_performance_indexes.sql` | Añadir 3 índices: category_id, auction_bids, articles | 🟡 Medio  |
+| `nuxt.config.ts` routeRules               | Añadir SWR merchant-feed (12h) + sitemap (6h)         | 🟡 Medio  |
+| `server/api/dgt-report.post.ts`           | Añadir auth + ownership                               | 🟠 Alto   |
+| `server/api/push/send.post.ts`            | Añadir auth (internal secret o admin)                 | 🟠 Alto   |
+| `server/api/account/*.ts`                 | Verificar auth completa en todos                      | 🟠 Alto   |
+| `server/api/market-report.get.ts`         | Decidir auth según contenido (público vs admin)       | 🟡 Medio  |
+| `docs/progreso.md`                        | Apuntar a ESTADO-REAL-PRODUCTO.md                     | 🟡 Medio  |
+| Archivos con `.name_es`/`.name_en`        | Migrar a `localizedField()` si quedan                 | 🟡 Medio  |
+| Composables admin+dashboard               | Extraer lógica común a `shared/`                      | 🟢 Bajo   |
+| `nuxt.config.ts`                          | Verificar code-splitting admin                        | 🟢 Bajo   |
+
+### Orden de ejecución
+
+1. Índices faltantes (añadir a 00053)
+2. Cache SWR para merchant-feed + sitemap (añadir a routeRules)
+3. Auth en dgt-report, push/send, account/\*
+4. Decisión market-report (leer archivo, decidir)
+5. Verificar i18n (\_es/\_en vs JSONB)
+6. Crear ESTADO-REAL-PRODUCTO.md (análisis del código real)
+7. Crear FLUJOS-OPERATIVOS.md
+8. Crear INVENTARIO-ENDPOINTS.md
+9. Consolidación admin/dashboard (shared/)
+10. Lazy-load admin (verificar + nuxi analyze)
+11. Actualizar progreso.md
+12. Verificar — `npm run build` + `npm run lint`
+
+### Tests mínimos
+
+- [ ] dgt-report sin auth → 401
+- [ ] push/send sin auth ni internal secret → 401
+- [ ] account/delete sin auth → 401
+- [ ] Todos los endpoints de account/\* tienen auth
+- [ ] npm run build compila sin errores
+- [ ] nuxi analyze muestra chunks separados para admin/dashboard
+- [ ] grep `.name_es` en app/ devuelve 0 resultados
+- [ ] ESTADO-REAL-PRODUCTO.md refleja código real
+- [ ] INVENTARIO-ENDPOINTS.md lista todos los endpoints
+
+---
+
 ## MAPA COMPLETO DE RUTAS (REFERENCIA CANÓNICA)
 
 > **Para Claude Code:** Este mapa es la fuente de verdad para la estructura de `pages/`. Cuando haya contradicción con cualquier otro documento, este mapa prevalece.

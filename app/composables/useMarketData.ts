@@ -8,6 +8,9 @@
 // Types
 // ---------------------------------------------------------------------------
 
+// pctChange imported from shared helpers
+import { pctChange } from '~/composables/shared/dateHelpers'
+
 export interface MarketDataRow {
   vertical: string
   action: string
@@ -114,12 +117,6 @@ function getWeekCutoff(weeksAgo: number): string {
   const dayOfYear = Math.floor((d.getTime() - jan1.getTime()) / 86400000) + 1
   const week = Math.ceil(dayOfYear / 7)
   return `${y}-W${String(week).padStart(2, '0')}`
-}
-
-/** Compute percent change; returns 0 when previous is 0. */
-function pctChange(current: number, previous: number): number {
-  if (previous === 0) return current > 0 ? 100 : 0
-  return Math.round(((current - previous) / previous) * 100)
 }
 
 /** Determine confidence level based on sample size. */

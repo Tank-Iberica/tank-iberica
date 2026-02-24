@@ -11,6 +11,18 @@
 // Types
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Helpers (shared with useDealerStats, useDealerDashboard, useMarketData)
+// ---------------------------------------------------------------------------
+
+import {
+  getMonthLabel,
+  getMonthsRange,
+  monthStart,
+  monthEnd,
+  pctChange,
+} from '~/composables/shared/dateHelpers'
+
 export interface KpiValue {
   current: number
   previousMonth: number
@@ -65,44 +77,6 @@ export interface ChurnRate {
   totalDealers: number
   cancelledDealers: number
   churnRate: number
-}
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/** Returns 'YYYY-MM' label for a given date. */
-function getMonthLabel(date: Date): string {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  return `${y}-${m}`
-}
-
-/** Returns an array of first-of-month Date objects for the last `count` months (most recent last). */
-function getMonthsRange(count: number): Date[] {
-  const months: Date[] = []
-  const now = new Date()
-  for (let i = count - 1; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    months.push(d)
-  }
-  return months
-}
-
-/** First millisecond of a given month. */
-function monthStart(date: Date): string {
-  return new Date(date.getFullYear(), date.getMonth(), 1).toISOString()
-}
-
-/** First millisecond of the month AFTER the given month. */
-function monthEnd(date: Date): string {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 1).toISOString()
-}
-
-/** Compute percent change; returns 0 when previous is 0. */
-function pctChange(current: number, previous: number): number {
-  if (previous === 0) return current > 0 ? 100 : 0
-  return Math.round(((current - previous) / previous) * 100)
 }
 
 // ---------------------------------------------------------------------------

@@ -159,8 +159,8 @@ export default defineNuxtConfig({
     '/admin/**': { ssr: false },
     '/dashboard/**': { ssr: false },
     '/perfil/**': { ssr: false },
-    '/api/__sitemap**': { cors: true },
-    '/api/merchant-feed**': { cors: true },
+    '/api/__sitemap**': { cors: true, swr: 60 * 60 * 6 },
+    '/api/merchant-feed**': { cors: true, swr: 60 * 60 * 12 },
     '/api/health**': { cors: true },
     '/api/market-report': { swr: 60 * 60 * 6 },
   },
@@ -207,6 +207,10 @@ export default defineNuxtConfig({
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
       vapidPublicKey: process.env.NUXT_PUBLIC_VAPID_PUBLIC_KEY || '',
     },
+  },
+
+  experimental: {
+    payloadExtraction: true,
   },
 
   css: ['@/assets/css/tokens.css'],

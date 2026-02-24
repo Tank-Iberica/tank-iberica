@@ -2,6 +2,7 @@
 import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSupabaseUser } from '#imports'
+import { localizedField } from '~/composables/useLocalized'
 
 const props = defineProps<{
   modelValue: boolean
@@ -72,8 +73,15 @@ const isAuthenticated = computed(() => !!user.value)
 
 const hasValidationErrors = computed(() => Object.keys(validationErrors.value).length > 0)
 
-function catName(item: { name_es: string; name_en: string | null }) {
-  return locale.value === 'en' && item.name_en ? item.name_en : item.name_es
+function catName(item: {
+  name_es: string
+  name_en: string | null
+  name?: Record<string, string> | null
+}) {
+  return (
+    localizedField(item.name, locale.value) ||
+    (locale.value === 'en' && item.name_en ? item.name_en : item.name_es)
+  )
 }
 
 const close = () => {

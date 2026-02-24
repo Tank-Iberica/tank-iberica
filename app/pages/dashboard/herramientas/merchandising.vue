@@ -408,6 +408,7 @@ onMounted(async () => {
         <div v-for="product in products" :key="product.id" class="product-card">
           <!-- Image placeholder -->
           <div class="product-image" @click="openPreview(product)">
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <span class="placeholder-icon" v-html="getPlaceholderIcon(product.image_placeholder)" />
             <span class="preview-hint">{{ t('dashboard.tools.merch.preview') }}</span>
           </div>

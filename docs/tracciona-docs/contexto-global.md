@@ -339,37 +339,38 @@ Explica: sistema de multi-cluster Supabase, pipeline híbrido de imágenes (Clou
 
 ### Post-lanzamiento (sesiones 13-32)
 
-| #   | Sesión                  | Qué hace                                                                                          |
-| --- | ----------------------- | ------------------------------------------------------------------------------------------------- |
-| 13  | Deuda técnica           | Nominatim fallback, refactor stores, 5 ítems                                                      |
-| 14  | Dealer Toolkit básico   | Homepage dealer, QR, tarjetas PDF, suscripciones                                                  |
-| 15  | Verificación            | API DGT/InfoCar, Km Score, Claude Vision auto-verify, inspecciones                                |
-| 16  | Subastas                | Online con anti-sniping, depósitos Stripe, buyer's premium 8%                                     |
-| 16b | Publicidad + Pro        | 10 posiciones ad, geo multinivel, AdSense fallback, sistema Pro 24h, Google Ads                   |
-| 16c | Transporte + post-venta | Calculadora transporte, flujo post-venta, frescura catálogo                                       |
-| 16d | Automatización          | Scraping competidores, auto-publicación redes sociales                                            |
-| 17  | Stripe                  | Suscripciones, webhooks, Stripe Connect 3-5%                                                      |
-| 18  | Emails                  | 30 templates, alertas búsqueda, preferencias usuario                                              |
-| 19  | Seguridad               | Cloudflare WAF, Sentry, CAPTCHA, rate limiting, CSP                                               |
-| 20  | Testing                 | Unit + E2E (Playwright) + Lighthouse CI                                                           |
-| 21  | WhatsApp                | WhatsApp Business API → Claude Vision → ficha auto                                                |
-| 22  | PWA                     | Service worker, manifest, push notifications, Core Web Vitals                                     |
-| 23  | Clonar vertical         | Script para lanzar nuevo vertical en 2-4h                                                         |
-| 24  | Zona usuario            | Auth, perfil comprador, zona dealer, CRM leads, useSubscription                                   |
-| 25  | Compliance              | DSA, DAC7, AI Act, UK Online Safety Act, RGPD reforzado                                           |
-| 26  | Facturación             | Quaderno + facturas automáticas + OSS                                                             |
-| 27  | Dashboard métricas      | MRR, ARR, conversión, churn, top dealers                                                          |
-| 28  | CRM dealers             | Onboarding wizard, health score, reactivación automática                                          |
-| 29  | Favoritos               | Favoritos, búsquedas guardadas, alertas precio                                                    |
-| 30  | Resiliencia             | Backup semanal, plan migración Supabase→PostgreSQL, plan B                                        |
-| 31  | Herramientas dealer     | Facturas, contratos, presupuestos, calculadora, widget, merchandising                             |
-| 32  | Datos                   | Vistas materializadas, índice precios, informes, API valoración                                   |
-| 33  | Infraestructura         | Monitorización de componentes, pipeline híbrido Cloudinary→CF Images, migración clusters Supabase |
-| 34  | Seguridad               | Remediación auditoría: auth Stripe, firmas webhooks, CSRF, fallo cerrado, rate limit WAF          |
-| 34b | Seguridad + Robustez    | Idempotencia webhook Stripe, Turnstile servidor, PII logs, batching crons, request IDs, TODOs     |
-| 35  | Auditoría integral      | Auth invoicing/auction/images, RLS hardening, CSP headers, hreflang, typecheck, deps, DOMPurify   |
+| #   | Sesión                  | Qué hace                                                                                                                                                                                                                          |
+| --- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 13  | Deuda técnica           | Nominatim fallback, refactor stores, 5 ítems                                                                                                                                                                                      |
+| 14  | Dealer Toolkit básico   | Homepage dealer, QR, tarjetas PDF, suscripciones                                                                                                                                                                                  |
+| 15  | Verificación            | API DGT/InfoCar, Km Score, Claude Vision auto-verify, inspecciones                                                                                                                                                                |
+| 16  | Subastas                | Online con anti-sniping, depósitos Stripe, buyer's premium 8%                                                                                                                                                                     |
+| 16b | Publicidad + Pro        | 10 posiciones ad, geo multinivel, AdSense fallback, sistema Pro 24h, Google Ads                                                                                                                                                   |
+| 16c | Transporte + post-venta | Calculadora transporte, flujo post-venta, frescura catálogo                                                                                                                                                                       |
+| 16d | Automatización          | Scraping competidores, auto-publicación redes sociales                                                                                                                                                                            |
+| 17  | Stripe                  | Suscripciones, webhooks, Stripe Connect 3-5%                                                                                                                                                                                      |
+| 18  | Emails                  | 30 templates, alertas búsqueda, preferencias usuario                                                                                                                                                                              |
+| 19  | Seguridad               | Cloudflare WAF, Sentry, CAPTCHA, rate limiting, CSP                                                                                                                                                                               |
+| 20  | Testing                 | Unit + E2E (Playwright) + Lighthouse CI                                                                                                                                                                                           |
+| 21  | WhatsApp                | WhatsApp Business API → Claude Vision → ficha auto                                                                                                                                                                                |
+| 22  | PWA                     | Service worker, manifest, push notifications, Core Web Vitals                                                                                                                                                                     |
+| 23  | Clonar vertical         | Script para lanzar nuevo vertical en 2-4h                                                                                                                                                                                         |
+| 24  | Zona usuario            | Auth, perfil comprador, zona dealer, CRM leads, useSubscription                                                                                                                                                                   |
+| 25  | Compliance              | DSA, DAC7, AI Act, UK Online Safety Act, RGPD reforzado                                                                                                                                                                           |
+| 26  | Facturación             | Quaderno + facturas automáticas + OSS                                                                                                                                                                                             |
+| 27  | Dashboard métricas      | MRR, ARR, conversión, churn, top dealers                                                                                                                                                                                          |
+| 28  | CRM dealers             | Onboarding wizard, health score, reactivación automática                                                                                                                                                                          |
+| 29  | Favoritos               | Favoritos, búsquedas guardadas, alertas precio                                                                                                                                                                                    |
+| 30  | Resiliencia             | Backup semanal, plan migración Supabase→PostgreSQL, plan B                                                                                                                                                                        |
+| 31  | Herramientas dealer     | Facturas, contratos, presupuestos, calculadora, widget, merchandising                                                                                                                                                             |
+| 32  | Datos                   | Vistas materializadas, índice precios, informes, API valoración                                                                                                                                                                   |
+| 33  | Infraestructura         | Monitorización de componentes, pipeline híbrido Cloudinary→CF Images, migración clusters Supabase                                                                                                                                 |
+| 34  | Seguridad               | Remediación auditoría: auth Stripe, firmas webhooks, CSRF, fallo cerrado, rate limit WAF                                                                                                                                          |
+| 34b | Seguridad + Robustez    | Idempotencia webhook Stripe, Turnstile servidor, PII logs, batching crons, request IDs, TODOs                                                                                                                                     |
+| 35  | Auditoría integral      | Auth invoicing/auction/images, RLS hardening, CSP headers, hreflang, typecheck, deps, DOMPurify                                                                                                                                   |
+| 36  | Auditoría cruzada       | Gaps residuales 4ª auditoría: 3 índices, auth dgt-report/push/account, cache merchant-feed/sitemap, i18n verificación, ESTADO-REAL-PRODUCTO.md, flujos operativos, inventario endpoints, consolidación admin/dashboard, lazy-load |
 
 ---
 
 _Documento creado: 18 de febrero de 2026_
-_Última actualización: 23 de febrero de 2026_
+_Última actualización: 24 de febrero de 2026_

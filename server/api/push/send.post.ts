@@ -6,16 +6,31 @@
  */
 
 import webpush from 'web-push'
-import { serverSupabaseServiceRole } from '#supabase/server'
+import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
 
-  // ── Auth: internal-only (called by other server routes) ──
+  // ── Auth: internal secret OR admin user ──
   const internalSecret = config.cronSecret || process.env.CRON_SECRET
   const internalHeader = getHeader(event, 'x-internal-secret')
-  if (!internalSecret || internalHeader !== internalSecret) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+  const isInternal = internalSecret && internalHeader === internalSecret
+
+  if (!isInternal) {
+    // Fallback: admin authentication for calls from admin panel
+    const user = await serverSupabaseUser(event)
+    if (!user) {
+      throw createError({ statusCode: 401, message: 'Unauthorized' })
+    }
+    const supabaseAuth = serverSupabaseServiceRole(event)
+    const { data: profile } = await supabaseAuth
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    if (!profile || (profile as { role: string }).role !== 'admin') {
+      throw createError({ statusCode: 403, message: 'Admin access required' })
+    }
   }
 
   const body = await readBody(event)

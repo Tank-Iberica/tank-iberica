@@ -2,6 +2,7 @@
 import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSupabaseClient, useSupabaseUser } from '#imports'
+import { localizedField } from '~/composables/useLocalized'
 
 const props = defineProps<{
   modelValue: boolean
@@ -63,8 +64,15 @@ const contactPreferences = [
 const currentYear = new Date().getFullYear() + 1
 const isAuthenticated = computed(() => !!user.value)
 
-function catName(item: { name_es: string; name_en: string | null }) {
-  return locale.value === 'en' && item.name_en ? item.name_en : item.name_es
+function catName(item: {
+  name_es: string
+  name_en: string | null
+  name?: Record<string, string> | null
+}) {
+  return (
+    localizedField(item.name, locale.value) ||
+    (locale.value === 'en' && item.name_en ? item.name_en : item.name_es)
+  )
 }
 
 function formatPrice(n: number): string {
