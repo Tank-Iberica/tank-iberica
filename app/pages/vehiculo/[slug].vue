@@ -511,7 +511,7 @@ if (vehicle.value) {
         type: 'application/ld+json',
         innerHTML: JSON.stringify({
           '@context': 'https://schema.org',
-          '@type': 'Vehicle',
+          '@type': ['Vehicle', 'Product'],
           name: productName,
           description: seoDesc,
           image: seoImage,
@@ -522,6 +522,7 @@ if (vehicle.value) {
             (vehicle.value.attributes_json as Record<string, unknown>)?.ejes || undefined,
           fuelType:
             (vehicle.value.attributes_json as Record<string, unknown>)?.combustible || undefined,
+          sku: vehicle.value.slug,
           offers: {
             '@type': 'Offer',
             priceCurrency: 'EUR',
@@ -529,6 +530,7 @@ if (vehicle.value) {
             availability: 'https://schema.org/InStock',
             url: canonicalUrl,
             seller: { '@type': 'Organization', name: 'Tracciona' },
+            itemCondition: 'https://schema.org/UsedCondition',
           },
           url: canonicalUrl,
           availableAtOrFrom: vehicle.value.location

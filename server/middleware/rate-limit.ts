@@ -1,9 +1,22 @@
 /**
- * IMPORTANT: This in-memory rate limiter does NOT work in serverless/Workers environments
- * (Cloudflare Pages, Vercel, etc.) where each request may run in a different isolate.
- * For production, configure rate limiting rules in Cloudflare WAF Dashboard:
- *   Security → WAF → Rate limiting rules
- * Once WAF is configured, this middleware can be removed.
+ * In-memory rate limiter — DISABLED by default in production.
+ *
+ * This does NOT work in Cloudflare Workers / Pages where each request may
+ * run in a different isolate with its own memory. The in-memory Map resets
+ * on every cold start, making rate limiting ineffective.
+ *
+ * For production rate limiting, configure Cloudflare WAF:
+ *   1. Go to Cloudflare Dashboard → Security → WAF → Rate limiting rules
+ *   2. Create rules for:
+ *      - /api/email/send: 10 req/min per IP
+ *      - /api/lead*: 5 req/min per IP (POST only)
+ *      - /api/stripe*: 20 req/min per IP
+ *      - /api/account/delete: 2 req/min per IP
+ *      - /api/* (POST/PUT/PATCH/DELETE): 30 req/min per IP
+ *      - /api/* (GET): 200 req/min per IP
+ *   3. Action: Block with 429 response for 60 seconds
+ *
+ * Set ENABLE_MEMORY_RATE_LIMIT=true in .env to enable this for local dev.
  */
 import { defineEventHandler, getMethod, createError } from 'h3'
 import { checkRateLimit, getRateLimitKey, getRetryAfterSeconds } from '../utils/rateLimit'
@@ -45,6 +58,10 @@ const DEFAULT_POST_CONFIG: RateLimitConfig = { windowMs: 60_000, max: 30 }
 const DEFAULT_GET_CONFIG: RateLimitConfig = { windowMs: 60_000, max: 200 }
 
 export default defineEventHandler((event) => {
+  // Skip rate limiting in production (use Cloudflare WAF instead)
+  const enableMemoryRateLimit = process.env.ENABLE_MEMORY_RATE_LIMIT === 'true'
+  if (!enableMemoryRateLimit) return
+
   const path = event.path || ''
   const method = getMethod(event).toUpperCase()
 
