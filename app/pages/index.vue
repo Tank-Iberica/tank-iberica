@@ -22,6 +22,8 @@
         @view-change="() => {}"
       />
 
+      <CatalogActiveFilters @change="onFilterChange" />
+
       <CatalogVehicleGrid
         :vehicles="vehicles"
         :loading="loading"

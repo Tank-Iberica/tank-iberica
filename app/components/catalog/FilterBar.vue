@@ -63,7 +63,7 @@
                 type="button"
                 @click="locationDropdownOpen = !locationDropdownOpen"
               >
-                {{ $t(`catalog.locationLevel.${currentLevel}`) }}
+                {{ locationTriggerText }}
               </button>
               <!-- Mobile: Teleport dropdown to body -->
               <Teleport to="body">
@@ -110,18 +110,6 @@
                     >
                       <option value="">{{ $t('catalog.locationSelectProvince') }}</option>
                       <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
-                    </select>
-                    <span class="filter-sublabel">{{ $t('catalog.locationRange') }}</span>
-                    <select
-                      class="filter-select-inline location-range-select"
-                      :value="currentLevel"
-                      @change="
-                        onLevelChange(($event.target as HTMLSelectElement).value as LocationLevel)
-                      "
-                    >
-                      <option v-for="level in availableLevels" :key="level" :value="level">
-                        {{ $t(`catalog.locationLevel.${level}`) }}
-                      </option>
                     </select>
                   </div>
                 </div>
@@ -406,7 +394,7 @@
                 type="button"
                 @click="locationDropdownOpen = !locationDropdownOpen"
               >
-                {{ $t(`catalog.locationLevel.${currentLevel}`) }}
+                {{ locationTriggerText }}
               </button>
               <div v-if="locationDropdownOpen" class="location-dropdown">
                 <span class="filter-sublabel">{{ $t('catalog.locationYours') }}</span>
@@ -432,18 +420,6 @@
                 >
                   <option value="">{{ $t('catalog.locationSelectProvince') }}</option>
                   <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
-                </select>
-                <span class="filter-sublabel">{{ $t('catalog.locationRange') }}</span>
-                <select
-                  class="filter-select-inline location-range-select"
-                  :value="currentLevel"
-                  @change="
-                    onLevelChange(($event.target as HTMLSelectElement).value as LocationLevel)
-                  "
-                >
-                  <option v-for="level in availableLevels" :key="level" :value="level">
-                    {{ $t(`catalog.locationLevel.${level}`) }}
-                  </option>
                 </select>
               </div>
             </div>
@@ -487,89 +463,27 @@
             />
           </div>
 
-          <!-- Dynamic filters (only category filters when no subcategory selected) -->
-          <template v-for="filter in filtersForFilterBar" :key="filter.id">
-            <div class="filter-group">
-              <template v-if="filter.type === 'desplegable'">
-                <span class="filter-label">{{ filterLabel(filter) }}:</span>
-                <select
-                  class="filter-select-inline"
-                  :value="activeFilters[filter.name] || ''"
-                  @change="onSelectChange(filter.name, $event)"
-                >
-                  <option value="">—</option>
-                  <option v-for="opt in getOptions(filter)" :key="opt" :value="opt">
-                    {{ opt }}
-                  </option>
-                </select>
-              </template>
-
-              <template v-else-if="filter.type === 'desplegable_tick'">
-                <span class="filter-label">{{ filterLabel(filter) }}:</span>
-                <div class="filter-checks-inline">
-                  <label v-for="opt in getOptions(filter)" :key="opt" class="cb">
-                    <input
-                      type="checkbox"
-                      :checked="isChecked(filter.name, opt)"
-                      @change="onCheckChange(filter.name, opt)"
-                    >
-                    <span>{{ opt }}</span>
-                  </label>
-                </div>
-              </template>
-
-              <template v-else-if="filter.type === 'tick'">
-                <label class="cb">
-                  <input
-                    type="checkbox"
-                    :checked="!!activeFilters[filter.name]"
-                    @change="onTickChange(filter.name)"
-                  >
-                  <span>{{ filterLabel(filter) }}</span>
-                </label>
-              </template>
-
-              <template v-else-if="filter.type === 'slider' || filter.type === 'calc'">
-                <span class="filter-label"
-                  >{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}:</span
-                >
-                <div class="filter-range-inputs">
-                  <input
-                    type="number"
-                    class="filter-input-inline"
-                    :value="activeFilters[filter.name + '_min'] || ''"
-                    :min="getSliderMin(filter)"
-                    :max="getSliderMax(filter)"
-                    placeholder="Min"
-                    @change="onRangeChange(filter.name + '_min', $event)"
-                  >
-                  <span class="filter-dash">-</span>
-                  <input
-                    type="number"
-                    class="filter-input-inline"
-                    :value="activeFilters[filter.name + '_max'] || ''"
-                    :min="getSliderMin(filter)"
-                    :max="getSliderMax(filter)"
-                    placeholder="Max"
-                    @change="onRangeChange(filter.name + '_max', $event)"
-                  >
-                </div>
-              </template>
-
-              <template v-else-if="filter.type === 'caja'">
-                <span class="filter-label">{{ filterLabel(filter) }}:</span>
-                <input
-                  type="text"
-                  class="filter-input-inline"
-                  :value="activeFilters[filter.name] || ''"
-                  :placeholder="filterLabel(filter)"
-                  @input="onTextInput(filter.name, $event)"
-                >
-              </template>
-            </div>
-          </template>
-
-          <!-- Clear filters inline -->
+          <!-- Advanced filters button (desktop) -->
+          <button
+            v-if="filtersForFilterBar.length"
+            class="filter-advanced-btn-desktop"
+            @click="advancedOpen = !advancedOpen"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="4" y1="12" x2="16" y2="12" />
+              <line x1="4" y1="18" x2="12" y2="18" />
+            </svg>
+            {{ $t('catalog.advancedFilters') }}
+            <span v-if="dynamicActiveCount" class="filter-badge">{{ dynamicActiveCount }}</span>
+          </button>
         </div>
 
         <button
@@ -581,6 +495,94 @@
           &#9654;
         </button>
       </div>
+
+      <!-- DESKTOP: Collapsible advanced filters panel -->
+      <Transition name="slide-down">
+        <div v-if="advancedOpen && filtersForFilterBar.length" class="advanced-panel">
+          <div class="advanced-panel-grid">
+            <template v-for="filter in filtersForFilterBar" :key="filter.id">
+              <div class="advanced-panel-item">
+                <template v-if="filter.type === 'desplegable'">
+                  <label class="filter-label">{{ filterLabel(filter) }}</label>
+                  <select
+                    class="filter-select-desktop"
+                    :value="activeFilters[filter.name] || ''"
+                    @change="onSelectChange(filter.name, $event)"
+                  >
+                    <option value="">—</option>
+                    <option v-for="opt in getOptions(filter)" :key="opt" :value="opt">
+                      {{ opt }}
+                    </option>
+                  </select>
+                </template>
+
+                <template v-else-if="filter.type === 'desplegable_tick'">
+                  <label class="filter-label">{{ filterLabel(filter) }}</label>
+                  <div class="filter-checks">
+                    <label v-for="opt in getOptions(filter)" :key="opt" class="filter-check">
+                      <input
+                        type="checkbox"
+                        :checked="isChecked(filter.name, opt)"
+                        @change="onCheckChange(filter.name, opt)"
+                      >
+                      <span>{{ opt }}</span>
+                    </label>
+                  </div>
+                </template>
+
+                <template v-else-if="filter.type === 'tick'">
+                  <label class="filter-tick">
+                    <input
+                      type="checkbox"
+                      :checked="!!activeFilters[filter.name]"
+                      @change="onTickChange(filter.name)"
+                    >
+                    <span>{{ filterLabel(filter) }}</span>
+                  </label>
+                </template>
+
+                <template v-else-if="filter.type === 'slider' || filter.type === 'calc'">
+                  <label class="filter-label"
+                    >{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}</label
+                  >
+                  <div class="filter-dual-range">
+                    <input
+                      type="number"
+                      class="filter-input-sm"
+                      :value="activeFilters[filter.name + '_min'] || ''"
+                      :min="getSliderMin(filter)"
+                      :max="getSliderMax(filter)"
+                      placeholder="Min"
+                      @change="onRangeChange(filter.name + '_min', $event)"
+                    >
+                    <span class="filter-sep">—</span>
+                    <input
+                      type="number"
+                      class="filter-input-sm"
+                      :value="activeFilters[filter.name + '_max'] || ''"
+                      :min="getSliderMin(filter)"
+                      :max="getSliderMax(filter)"
+                      placeholder="Max"
+                      @change="onRangeChange(filter.name + '_max', $event)"
+                    >
+                  </div>
+                </template>
+
+                <template v-else-if="filter.type === 'caja'">
+                  <label class="filter-label">{{ filterLabel(filter) }}</label>
+                  <input
+                    type="text"
+                    class="filter-input-desktop"
+                    :value="activeFilters[filter.name] || ''"
+                    :placeholder="filterLabel(filter)"
+                    @input="onTextInput(filter.name, $event)"
+                  >
+                </template>
+              </div>
+            </template>
+          </div>
+        </div>
+      </Transition>
     </div>
   </section>
 </template>
@@ -588,14 +590,7 @@
 <script setup lang="ts">
 import type { AttributeDefinition } from '~/composables/useFilters'
 import type { Vehicle } from '~/composables/useVehicles'
-import type { LocationLevel } from '~/utils/geoData'
-import {
-  getAvailableLevels,
-  getDefaultLevel,
-  getSortedEuropeanCountries,
-  getSortedProvinces,
-  PROVINCE_TO_REGION,
-} from '~/utils/geoData'
+import { getSortedEuropeanCountries, getSortedProvinces } from '~/utils/geoData'
 
 const props = defineProps<{
   vehicles?: readonly Vehicle[]
@@ -605,66 +600,47 @@ const emit = defineEmits<{
   change: []
 }>()
 
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 const { visibleFilters, activeFilters, setFilter, clearFilter, clearAll } = useFilters()
-const {
-  updateFilters,
-  filters,
-  locationLevel,
-  setLocationLevel,
-  activeSubcategoryId,
-  setCategory,
-  setSubcategory,
-} = useCatalogState()
+const { updateFilters, filters, locationLevel, setLocationLevel, setCategory, setSubcategory } =
+  useCatalogState()
 const { location: userLocation, detect: detectLocation, setManualLocation } = useUserLocation()
 
 const open = ref(false)
+const advancedOpen = ref(false)
 const locationDropdownOpen = ref(false)
 const pricePopoverOpen = ref(false)
 const yearPopoverOpen = ref(false)
 
-// Location
-
-const availableLevels = computed(() => getAvailableLevels(userLocation.value.country))
-
-// Initialize with stored level or default based on country
-const selectedLevel = ref<LocationLevel>((locationLevel.value as LocationLevel) || 'nacional')
-const currentLevel = computed(() => selectedLevel.value)
-
-function onLevelChange(level: LocationLevel) {
-  selectedLevel.value = level
-  setLocationLevel(
-    level === 'mundo' ? null : level,
-    userLocation.value.country || 'ES',
-    userLocation.value.province,
-    userLocation.value.region,
-  )
-  locationDropdownOpen.value = false
-  emit('change')
-}
+// Location — simplified: country + province only
 
 const editCountry = ref(userLocation.value.country || '')
 const editProvince = ref(userLocation.value.province || '')
 const europeanCountriesData = computed(() => getSortedEuropeanCountries(locale.value))
 const provinces = computed(() => getSortedProvinces())
 
-// Watch for location detection to update edit fields and set default level
+// Location trigger text: show selected country/province name
+const locationTriggerText = computed(() => {
+  if (editProvince.value) return editProvince.value
+  if (editCountry.value) {
+    const all = [...europeanCountriesData.value.priority, ...europeanCountriesData.value.rest]
+    const country = all.find((c) => c.code === editCountry.value)
+    return country ? `${country.flag} ${country.name}` : editCountry.value
+  }
+  return t('catalog.locationAll')
+})
+
+// Watch for location detection to update edit fields
 watch(
   () => userLocation.value,
   (newLoc) => {
     if (newLoc.country && !editCountry.value) {
       editCountry.value = newLoc.country
+      // Auto-apply detected country as filter
+      setLocationLevel('nacional', newLoc.country, null, null)
     }
     if (newLoc.province && !editProvince.value) {
       editProvince.value = newLoc.province
-    }
-    // Set default level based on detected country (only if not manually changed)
-    if (newLoc.source && selectedLevel.value === 'nacional') {
-      const defaultLevel = getDefaultLevel(newLoc.country)
-      if (defaultLevel !== 'nacional') {
-        selectedLevel.value = defaultLevel
-        setLocationLevel(defaultLevel, newLoc.country, null, null)
-      }
     }
   },
   { deep: true },
@@ -676,37 +652,31 @@ function onCountrySelect(e: Event) {
   editProvince.value = ''
   if (code) {
     setManualLocation('', code)
-    // Set default level based on selected country
-    const defaultLevel = getDefaultLevel(code)
-    selectedLevel.value = defaultLevel
-    setLocationLevel(defaultLevel, code, null, null)
-    emit('change')
+    setLocationLevel('nacional', code, null, null)
+  } else {
+    // Clear location filters
+    setLocationLevel(null, '', null, null)
   }
+  locationDropdownOpen.value = false
+  emit('change')
 }
 
 function onProvinceSelect(e: Event) {
   const prov = (e.target as HTMLSelectElement).value
   editProvince.value = prov
   if (prov) {
-    const region = PROVINCE_TO_REGION[prov] ?? null
-    setManualLocation(prov, 'ES', prov, region ?? undefined)
-    selectedLevel.value = 'provincia'
-    setLocationLevel('provincia', 'ES', prov, region)
-    emit('change')
+    setManualLocation(prov, 'ES', prov)
+    setLocationLevel('provincia', 'ES', prov, null)
   } else {
-    // Province deselected - if range is smaller than nacional, upgrade to nacional
-    const subNationalLevels: LocationLevel[] = ['provincia', 'comunidad', 'limitrofes']
-    if (subNationalLevels.includes(selectedLevel.value)) {
-      selectedLevel.value = 'nacional'
-      setLocationLevel('nacional', 'ES', null, null)
-      emit('change')
-    }
+    // Province cleared → fall back to country
+    setLocationLevel('nacional', 'ES', null, null)
   }
+  locationDropdownOpen.value = false
+  emit('change')
 }
 
 onMounted(async () => {
   await detectLocation()
-  // Update edit fields after detection completes
   if (userLocation.value.country && !editCountry.value) {
     editCountry.value = userLocation.value.country
   }
@@ -752,18 +722,8 @@ const totalActiveCount = computed(() => {
 
 const dynamicActiveCount = computed(() => Object.keys(activeFilters.value).length)
 
-// Filters to show in FilterBar: only when NO subcategory is selected
-// When subcategory is selected, filters go in SubcategoryBar
-const filtersForFilterBar = computed(() => {
-  if (activeSubcategoryId.value) {
-    // Subcategory is selected → filters are shown in SubcategoryBar, not here
-    return []
-  }
-  // Only category selected (or nothing) → show category filters here (without separator)
-  return visibleFilters.value.filter((f) => f.source === 'category')
-})
-
-// Note: firstSubcategoryFilterIndex removed - subcategory filters now go in SubcategoryBar
+// Dynamic filters always shown in FilterBar (never in SubcategoryBar)
+const filtersForFilterBar = computed(() => visibleFilters.value)
 
 // Mobile scroll
 const mobileScrollContainer = ref<HTMLElement | null>(null)
@@ -1566,6 +1526,23 @@ onUnmounted(() => {
   transform: translateY(100%);
 }
 
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 200ms ease;
+  overflow: hidden;
+}
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.slide-down-enter-to,
+.slide-down-leave-from {
+  max-height: 500px;
+}
+
 /* ============================================
    RESPONSIVE: ≥480px
    ============================================ */
@@ -1879,6 +1856,83 @@ onUnmounted(() => {
 
   .scroll-btn-right {
     right: 4px;
+  }
+
+  /* Desktop advanced filters button */
+  .filter-advanced-btn-desktop {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: auto;
+    min-width: auto;
+    transition: all 0.2s ease;
+  }
+
+  .filter-advanced-btn-desktop:hover {
+    border-color: var(--color-primary);
+    background: var(--bg-secondary);
+  }
+
+  /* Desktop collapsible advanced panel */
+  .advanced-panel {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+  }
+
+  .advanced-panel-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    align-items: flex-start;
+  }
+
+  .advanced-panel-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 120px;
+  }
+
+  .filter-select-desktop {
+    padding: 0.3rem 0.4rem;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    cursor: pointer;
+    min-height: auto;
+  }
+
+  .filter-select-desktop:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+
+  .filter-input-desktop {
+    padding: 0.3rem 0.4rem;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    min-height: auto;
+  }
+
+  .filter-input-desktop:focus {
+    outline: none;
+    border-color: var(--color-primary);
   }
 }
 
