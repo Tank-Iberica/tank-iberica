@@ -1,0 +1,209 @@
+name: DAST Security Scan
+
+on:
+  schedule:
+    - cron: '0 4 * * 0'   # Domingos a las 04:00 UTC (baseline semanal)
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Scan type'
+        required: false
+        default: 'baseline'
+        type: choice
+        options: [baseline, full]
+      target_url:
+        description: 'Target URL'
+        required: false
+        default: 'https://tracciona.com'
+        type: string
+
+env:
+  TARGET_URL: ${{ inputs.target_url || 'https://tracciona.com' }}
+  SCAN_TYPE: ${{ inputs.scan_type || 'baseline' }}
+
+jobs:
+  # ── OWASP ZAP ──
+  zap-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ZAP Baseline Scan
+        if: env.SCAN_TYPE == 'baseline'
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: ${{ env.TARGET_URL }}
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a -j'
+          allow_issue_writing: false
+
+      - name: ZAP Full Scan
+        if: env.SCAN_TYPE == 'full'
+        uses: zaproxy/action-full-scan@v0.12.0
+        with:
+          target: ${{ env.TARGET_URL }}
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a -j'
+          allow_issue_writing: false
+
+      - name: Upload ZAP Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report-${{ github.run_number }}
+          path: |
+            report_html.html
+            report_json.json
+          retention-days: 90
+
+  # ── Nuclei ──
+  nuclei-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nuclei
+        run: |
+          go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      - name: Run Nuclei
+        run: |
+          nuclei \
+            -u ${{ env.TARGET_URL }} \
+            -t cves/ \
+            -t vulnerabilities/ \
+            -t misconfiguration/ \
+            -t exposures/ \
+            -t technologies/ \
+            -t ssl/ \
+            -t dns/ \
+            -severity critical,high,medium \
+            -json-export nuclei-results.json \
+            -markdown-export nuclei-report.md \
+            -silent \
+            || true
+
+      - name: Upload Nuclei Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuclei-report-${{ github.run_number }}
+          path: |
+            nuclei-results.json
+            nuclei-report.md
+          retention-days: 90
+
+  # ── SSL/TLS Check ──
+  ssl-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check SSL/TLS configuration
+        run: |
+          DOMAIN=$(echo "${{ env.TARGET_URL }}" | sed 's|https://||' | sed 's|/.*||')
+          echo "=== SSL/TLS Report for ${{ env.TARGET_URL }} ===" > ssl-report.txt
+
+          # Check certificate expiry
+          echo "## Certificate Info:" >> ssl-report.txt
+          echo | openssl s_client -servername "$DOMAIN" -connect "$DOMAIN:443" 2>/dev/null \
+            | openssl x509 -noout -dates -subject -issuer >> ssl-report.txt 2>&1
+
+          # Check supported protocols
+          echo "" >> ssl-report.txt
+          echo "## Protocol Support:" >> ssl-report.txt
+          for proto in tls1 tls1_1 tls1_2 tls1_3; do
+            result=$(echo | openssl s_client -"$proto" -connect "$DOMAIN:443" 2>&1)
+            if echo "$result" | grep -q "CONNECTED"; then
+              echo "  $proto: SUPPORTED" >> ssl-report.txt
+            else
+              echo "  $proto: NOT SUPPORTED" >> ssl-report.txt
+            fi
+          done
+
+          # Check HSTS
+          echo "" >> ssl-report.txt
+          echo "## HSTS Header:" >> ssl-report.txt
+          curl -sI "https://$DOMAIN" | grep -i strict-transport >> ssl-report.txt 2>&1 \
+            || echo "  HSTS: NOT FOUND" >> ssl-report.txt
+
+          cat ssl-report.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ssl-report-${{ github.run_number }}
+          path: ssl-report.txt
+          retention-days: 90
+
+  # ── Consolidar y alertar ──
+  report:
+    runs-on: ubuntu-latest
+    needs: [zap-scan, nuclei-scan, ssl-check]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dast-artifacts/
+
+      - name: Analyze results
+        id: analyze
+        run: |
+          echo "=== DAST Scan Summary ===" > dast-summary.txt
+          echo "Date: $(date -u)" >> dast-summary.txt
+          echo "Target: ${{ env.TARGET_URL }}" >> dast-summary.txt
+          echo "Scan type: ${{ env.SCAN_TYPE }}" >> dast-summary.txt
+          echo "" >> dast-summary.txt
+
+          # Count ZAP alerts by risk
+          if ls dast-artifacts/zap-report-*/report_json.json 1>/dev/null 2>&1; then
+            echo "## ZAP Results:" >> dast-summary.txt
+            HIGH=$(cat dast-artifacts/zap-report-*/report_json.json | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          alerts = data.get('site', [{}])[0].get('alerts', []) if data.get('site') else []
+          print(sum(1 for a in alerts if a.get('riskcode') == '3'))" 2>/dev/null || echo 0)
+            MEDIUM=$(cat dast-artifacts/zap-report-*/report_json.json | python3 -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          alerts = data.get('site', [{}])[0].get('alerts', []) if data.get('site') else []
+          print(sum(1 for a in alerts if a.get('riskcode') == '2'))" 2>/dev/null || echo 0)
+            echo "  High: $HIGH" >> dast-summary.txt
+            echo "  Medium: $MEDIUM" >> dast-summary.txt
+          fi
+
+          # Count Nuclei findings
+          if ls dast-artifacts/nuclei-report-*/nuclei-results.json 1>/dev/null 2>&1; then
+            echo "" >> dast-summary.txt
+            echo "## Nuclei Results:" >> dast-summary.txt
+            CRITICAL=$(grep -c '"critical"' dast-artifacts/nuclei-report-*/nuclei-results.json 2>/dev/null || echo 0)
+            HIGH_N=$(grep -c '"high"' dast-artifacts/nuclei-report-*/nuclei-results.json 2>/dev/null || echo 0)
+            echo "  Critical: $CRITICAL" >> dast-summary.txt
+            echo "  High: $HIGH_N" >> dast-summary.txt
+          fi
+
+          cat dast-summary.txt
+
+          # Set flag if critical/high issues found
+          if [ "${HIGH:-0}" -gt 0 ] || [ "${CRITICAL:-0}" -gt 0 ] || [ "${HIGH_N:-0}" -gt 0 ]; then
+            echo "HAS_CRITICAL=true" >> $GITHUB_ENV
+          fi
+
+      - name: Alert on critical findings
+        if: env.HAS_CRITICAL == 'true'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.INFRA_ALERT_EMAIL }}
+        run: |
+          SUMMARY=$(cat dast-summary.txt)
+          curl -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"from\":\"security@tracciona.com\",\"to\":\"$ALERT_EMAIL\",\"subject\":\"DAST: Critical vulnerabilities found\",\"text\":\"$SUMMARY\\n\\nCheck GitHub Actions for full reports.\"}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dast-summary-${{ github.run_number }}
+          path: dast-summary.txt
+          retention-days: 90

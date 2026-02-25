@@ -1,0 +1,24 @@
+# ZAP Rules Configuration for Tracciona
+# Format: rule_id	action (IGNORE, WARN, FAIL)
+# See: https://www.zaproxy.org/docs/docker/baseline-scan/#rules-file
+
+# Ignorar: Nuxt inyecta inline scripts/styles por diseño (documentado en security-headers.ts)
+10055	WARN	# CSP: unsafe-inline — known Nuxt 3 requirement
+10098	WARN	# Cross-Domain Misconfiguration — Supabase/Stripe are expected
+
+# Escalar a FAIL: estas son críticas
+40012	FAIL	# XSS (Reflected)
+40014	FAIL	# XSS (Persistent)
+40018	FAIL	# SQL Injection
+40019	FAIL	# SQL Injection (MySQL)
+40020	FAIL	# SQL Injection (Hypersonic)
+40021	FAIL	# SQL Injection (Oracle)
+40022	FAIL	# SQL Injection (PostgreSQL)
+90021	FAIL	# XPath Injection
+90023	FAIL	# XML External Entity Attack
+40003	FAIL	# CRLF Injection
+40008	FAIL	# Parameter Tampering
+40009	FAIL	# Server Side Include
+40028	FAIL	# ELMAH Information Leak
+40032	FAIL	# .htaccess Information Leak
+90019	FAIL	# Server Side Code Injection
