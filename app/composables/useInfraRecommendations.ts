@@ -132,6 +132,42 @@ const rules: RecommendationRule[] = [
     message: 'Eventos Sentry al 80%',
     action: 'Upgrade a Sentry Team ($26/mes) o ajustar sample rate',
   },
+  // Supabase: connection pooling
+  {
+    component: 'supabase',
+    metric: 'connections_active',
+    threshold: 70,
+    level: 'warning',
+    message: 'Conexiones activas al 70% del límite',
+    action: 'Revisar connection pooling o considerar upgrade',
+  },
+  // CF Images: storage duplicates
+  {
+    component: 'cf_images',
+    metric: 'storage_used_bytes',
+    threshold: 80,
+    level: 'warning',
+    message: 'Almacenamiento CF Images al 80%',
+    action: 'Verificar que no se están duplicando imágenes',
+  },
+  // Stripe: high volume — negotiate custom rate (threshold at 80% of 100K = 80K)
+  {
+    component: 'stripe',
+    metric: 'monthly_volume_cents',
+    threshold: 80,
+    level: 'warning',
+    message: 'Volumen mensual Stripe acercándose a 100K€',
+    action: 'Negociar tarifa personalizada con Stripe',
+  },
+  // Supabase: realtime connections (200 limit → 75% = 150)
+  {
+    component: 'supabase',
+    metric: 'realtime_connections',
+    threshold: 75,
+    level: 'warning',
+    message: 'Conexiones Realtime al 75% del límite (≈150)',
+    action: 'Optimizar subastas o considerar Durable Objects',
+  },
 ]
 
 export function useInfraRecommendations() {

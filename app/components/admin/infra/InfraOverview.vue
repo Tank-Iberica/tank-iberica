@@ -1,5 +1,58 @@
 <template>
   <div class="infra-overview">
+    <!-- Stack Summary Table -->
+    <div class="stack-summary">
+      <h2 class="section-heading">
+        {{ $t('admin.infra.stackStatus', 'Estado del stack') }}
+      </h2>
+      <div class="summary-table-wrapper">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>{{ $t('admin.infra.col.service', 'Servicio') }}</th>
+              <th>{{ $t('admin.infra.col.plan', 'Plan actual') }}</th>
+              <th>{{ $t('admin.infra.col.usage', 'Uso %') }}</th>
+              <th>{{ $t('admin.infra.col.nextStep', 'Próximo paso') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in stackSummaryRows" :key="row.key">
+              <td class="col-service">
+                <span class="service-dot" :class="'status-' + row.status" />
+                {{ row.name }}
+              </td>
+              <td class="col-plan">{{ row.plan }}</td>
+              <td class="col-usage">
+                <template v-if="row.usagePercent !== null">
+                  <div class="usage-cell">
+                    <div class="mini-bar-bg">
+                      <div
+                        class="mini-bar-fill"
+                        :class="'progress-' + row.status"
+                        :style="{ width: Math.min(row.usagePercent, 100) + '%' }"
+                      />
+                    </div>
+                    <span class="usage-label" :class="'usage-' + row.status">
+                      {{ row.usagePercent.toFixed(0) }}%
+                    </span>
+                  </div>
+                </template>
+                <template v-else>
+                  <span class="usage-na">—</span>
+                </template>
+              </td>
+              <td class="col-next">
+                <span v-if="row.nextStep === 'OK'" class="next-ok">OK</span>
+                <span v-else class="next-action" :class="'next-' + row.status">
+                  {{ row.nextStep }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <h2 class="section-heading">
       {{ $t('admin.infra.componentStatus', 'Estado de componentes') }}
     </h2>
@@ -117,7 +170,7 @@ interface Props {
   getStatusColor: (percent: number | null) => 'green' | 'yellow' | 'red' | 'gray'
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 defineEmits<{
   'migrate-images': []
@@ -125,6 +178,76 @@ defineEmits<{
 }>()
 
 const { t: $t } = useI18n()
+
+// ---------------------------------------------------------------------------
+// Stack Summary Table
+// ---------------------------------------------------------------------------
+
+interface StackSummaryRow {
+  key: string
+  name: string
+  plan: string
+  usagePercent: number | null
+  status: 'green' | 'yellow' | 'red' | 'gray'
+  nextStep: string
+}
+
+// Static plan labels for all tracked services
+const SERVICE_PLANS: Record<string, string> = {
+  supabase: 'Free (500 MB / 50K MAU)',
+  cloudinary: 'Free (25K transf/mes)',
+  cf_images: 'Images Free (100K)',
+  resend: 'Free (100/día)',
+  sentry: 'Free (5K ev/mes)',
+  cloudflare: 'Workers Free (100K/día)',
+  stripe: 'Pay-as-you-go',
+  github_actions: 'Free (2K min/mes)',
+}
+
+// Services that do not have live metrics yet
+const STATIC_SERVICES: StackSummaryRow[] = [
+  {
+    key: 'stripe',
+    name: 'Stripe',
+    plan: SERVICE_PLANS.stripe,
+    usagePercent: null,
+    status: 'gray',
+    nextStep: 'OK',
+  },
+  {
+    key: 'github_actions',
+    name: 'GitHub Actions',
+    plan: SERVICE_PLANS.github_actions,
+    usagePercent: null,
+    status: 'gray',
+    nextStep: 'OK',
+  },
+]
+
+const stackSummaryRows = computed<StackSummaryRow[]>(() => {
+  // Build rows from live componentCards (preserves order)
+  const liveRows: StackSummaryRow[] = props.componentCards.map((card) => {
+    // Worst usage percent across all metrics of this card
+    const percents = card.metrics.map((m) => m.percent).filter((p): p is number => p !== null)
+    const worstPercent = percents.length > 0 ? Math.max(...percents) : null
+
+    // Worst recommendation message (first non-null, cards are already worst-status-first)
+    const firstRec = card.metrics.find((m) => m.recommendation !== null)?.recommendation ?? null
+    const nextStep = firstRec ? firstRec.action : 'OK'
+
+    return {
+      key: card.key,
+      name: card.name,
+      plan: SERVICE_PLANS[card.key] ?? '—',
+      usagePercent: worstPercent,
+      status: card.overallStatus,
+      nextStep,
+    }
+  })
+
+  // Append static services that have no live metrics
+  return [...liveRows, ...STATIC_SERVICES]
+})
 
 function statusLabel(status: string): string {
   switch (status) {
@@ -159,6 +282,159 @@ function formatMetricValue(value: number): string {
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
   margin: 0;
+}
+
+/* ── Stack Summary Table ─────────────────────────────────────────── */
+
+.stack-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.summary-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  min-width: 480px;
+}
+
+.summary-table thead {
+  background: var(--bg-secondary);
+}
+
+.summary-table th {
+  padding: var(--spacing-3) var(--spacing-4);
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-auxiliary);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.summary-table td {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.summary-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.summary-table tbody tr:hover {
+  background: var(--bg-secondary);
+}
+
+.col-service {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.service-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.col-plan {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.col-usage {
+  min-width: 100px;
+}
+
+.usage-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.mini-bar-bg {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 48px;
+}
+
+.mini-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.usage-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  min-width: 34px;
+  text-align: right;
+}
+
+.usage-green {
+  color: var(--color-success);
+}
+.usage-yellow {
+  color: var(--color-warning);
+}
+.usage-red {
+  color: var(--color-error);
+}
+.usage-gray {
+  color: var(--text-auxiliary);
+}
+
+.usage-na {
+  color: var(--text-auxiliary);
+  font-size: var(--font-size-xs);
+}
+
+.col-next {
+  max-width: 260px;
+}
+
+.next-ok {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: #dcfce7;
+  color: #15803d;
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.next-action {
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+}
+
+.next-yellow {
+  color: #92400e;
+}
+.next-red {
+  color: #991b1b;
+}
+.next-gray {
+  color: var(--text-auxiliary);
 }
 
 .component-grid {
