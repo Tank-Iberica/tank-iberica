@@ -174,8 +174,16 @@ function exportCsv() {
   URL.revokeObjectURL(url)
 }
 
-onMounted(loadInvoices)
-watch(selectedPeriod, loadInvoices)
+// Revenue metrics
+const { channelRevenue, mrr, arr, leadMetrics, loadAll: loadRevenueMetrics } = useRevenueMetrics()
+
+async function loadAllData() {
+  const range = getDateRange(selectedPeriod.value)
+  await Promise.all([loadInvoices(), loadRevenueMetrics(range.from, range.to)])
+}
+
+onMounted(loadAllData)
+watch(selectedPeriod, loadAllData)
 </script>
 
 <template>
@@ -234,7 +242,44 @@ watch(selectedPeriod, loadInvoices)
         </div>
       </div>
 
-      <!-- Revenue by Type -->
+      <!-- MRR / ARR / Lead Value -->
+      <div class="stats-row stats-row--secondary">
+        <div class="stat-card stat-mrr">
+          <span class="stat-label">MRR</span>
+          <span class="stat-value">{{ formatAmount(mrr) }}</span>
+        </div>
+        <div class="stat-card stat-arr">
+          <span class="stat-label">ARR</span>
+          <span class="stat-value">{{ formatAmount(arr) }}</span>
+        </div>
+        <div class="stat-card stat-leads">
+          <span class="stat-label">{{ t('billing.leadsThisMonth') }}</span>
+          <span class="stat-value">{{ leadMetrics.totalLeads }}</span>
+        </div>
+        <div class="stat-card stat-lead-value">
+          <span class="stat-label">{{ t('billing.leadValueGenerated') }}</span>
+          <span class="stat-value">{{ formatAmount(leadMetrics.totalValue * 100) }}</span>
+        </div>
+      </div>
+
+      <!-- Revenue by Channel (from payments) -->
+      <div v-if="channelRevenue.some((c) => c.amount > 0)" class="section-card">
+        <h2 class="section-title">{{ t('billing.revenueByChannel') }}</h2>
+        <div class="type-list">
+          <div v-for="ch in channelRevenue" :key="ch.key" class="type-row">
+            <div class="type-info">
+              <span class="type-label">{{ ch.label }}</span>
+              <span class="type-amount">{{ formatAmount(ch.amount) }}</span>
+            </div>
+            <div class="type-bar-bg">
+              <div class="type-bar-fill" :style="{ width: `${ch.percentage}%` }" />
+            </div>
+            <span class="type-pct">{{ ch.percentage.toFixed(1) }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue by Type (from invoices) -->
       <div v-if="revenueByType.length > 0" class="section-card">
         <h2 class="section-title">{{ t('billing.byType') }}</h2>
         <div class="type-list">
@@ -438,6 +483,26 @@ watch(selectedPeriod, loadInvoices)
 
 .stat-card.stat-failed {
   border-left-color: var(--color-error, #ef4444);
+}
+
+.stat-card.stat-mrr {
+  border-left-color: var(--color-primary, #23424a);
+}
+
+.stat-card.stat-arr {
+  border-left-color: var(--color-info, #3b82f6);
+}
+
+.stat-card.stat-leads {
+  border-left-color: var(--color-success, #10b981);
+}
+
+.stat-card.stat-lead-value {
+  border-left-color: var(--color-warning, #f59e0b);
+}
+
+.stats-row--secondary {
+  margin-top: var(--spacing-2, 8px);
 }
 
 .stat-label {
