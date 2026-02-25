@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
   // ── Parse query params ────────────────────────────────────────────────────
   const query = getQuery(event) as MetricsQuery
   const period = query.period && PERIOD_MS[query.period] ? query.period : '24h'
-  const sinceDate = new Date(Date.now() - PERIOD_MS[period]).toISOString()
+  const sinceDate = new Date(Date.now() - (PERIOD_MS[period] ?? 0)).toISOString()
 
   // ── Build query ───────────────────────────────────────────────────────────
   let dbQuery = supabase
@@ -70,7 +70,7 @@ export default defineEventHandler(async (event) => {
   const { data: metrics, error } = await dbQuery
 
   if (error) {
-    throw createError({ statusCode: 500, message: `Failed to fetch metrics: ${error.message}` })
+    throw safeError(500, `Failed to fetch metrics: ${error.message}`)
   }
 
   return {

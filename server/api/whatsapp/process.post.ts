@@ -536,6 +536,6 @@ export default defineEventHandler(async (event) => {
       console.error('[WhatsApp Process] Failed to send error notification')
     }
 
-    throw createError({ statusCode: 500, message: `Processing failed: ${message}` })
+    throw safeError(500, `Processing failed: ${message}`)
   }
 })

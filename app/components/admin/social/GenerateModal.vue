@@ -28,10 +28,7 @@
                 type="text"
                 :placeholder="t('admin.social.vehicleSearchPlaceholder')"
                 class="search-input"
-                @input="
-                  $emit('update:vehicleSearch', ($event.target as HTMLInputElement).value)
-                  $emit('search')
-                "
+                @input="handleSearchInput"
               >
             </div>
 
@@ -102,6 +99,19 @@ import type { VehicleSearchResult } from '~/composables/admin/useSocialAdminUI'
 
 const { t } = useI18n()
 
+const emit = defineEmits<{
+  close: []
+  'update:vehicleSearch': [value: string]
+  search: []
+  selectVehicle: [vehicle: VehicleSearchResult]
+  generate: []
+}>()
+
+function handleSearchInput(e: Event) {
+  emit('update:vehicleSearch', (e.target as HTMLInputElement).value)
+  emit('search')
+}
+
 defineProps<{
   show: boolean
   vehicleSearch: string
@@ -110,14 +120,6 @@ defineProps<{
   hasSelectedVehicle: boolean
   vehicleSearchLoading: boolean
   actionLoading: boolean
-}>()
-
-defineEmits<{
-  close: []
-  'update:vehicleSearch': [value: string]
-  search: []
-  selectVehicle: [vehicle: VehicleSearchResult]
-  generate: []
 }>()
 </script>
 

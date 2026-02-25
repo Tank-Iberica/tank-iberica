@@ -1,6 +1,16 @@
 /**
  * Security headers middleware
  * Adds CSP and other security headers to HTML responses (not API routes).
+ *
+ * CSP audit (Sesión 37):
+ * - unsafe-inline in script-src: REQUIRED by Nuxt 3 SSR hydration. Nuxt injects
+ *   inline <script> for payload and state hydration. Removing it breaks the app.
+ *   Ref: https://github.com/nuxt/nuxt/issues/13223
+ * - unsafe-eval in script-src: REQUIRED by Chart.js (used in admin dashboards)
+ *   for its internal expression parser. Only affects admin pages.
+ *   TODO: Consider nonce-based CSP when Nuxt 4 supports it natively.
+ * - unsafe-inline in style-src: REQUIRED by Vue's scoped styles and Nuxt SSR
+ *   which injects inline <style> blocks during hydration.
  */
 export default defineEventHandler((event) => {
   // Only apply to non-API routes (HTML pages)
@@ -14,7 +24,9 @@ export default defineEventHandler((event) => {
   // Content-Security-Policy
   const csp = [
     "default-src 'self'",
+    // unsafe-inline: Nuxt SSR hydration; unsafe-eval: Chart.js in admin (see file header)
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://challenges.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com",
+    // unsafe-inline: Vue scoped styles + Nuxt SSR inline styles
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: blob: https://res.cloudinary.com https://*.supabase.co https://flagcdn.com https://www.google-analytics.com https://www.googletagmanager.com",
     "font-src 'self' https://fonts.gstatic.com",

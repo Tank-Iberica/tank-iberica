@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
   const { data: alerts, error } = await dbQuery
 
   if (error) {
-    throw createError({ statusCode: 500, message: `Failed to fetch alerts: ${error.message}` })
+    throw safeError(500, `Failed to fetch alerts: ${error.message}`)
   }
 
   return {

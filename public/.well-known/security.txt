@@ -1,0 +1,5 @@
+Contact: mailto:security@tracciona.com
+Expires: 2027-02-24T00:00:00.000Z
+Preferred-Languages: es, en
+Canonical: https://tracciona.com/.well-known/security.txt
+Policy: https://tracciona.com/seguridad/politica-divulgacion

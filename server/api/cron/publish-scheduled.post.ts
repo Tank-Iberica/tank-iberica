@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     .lte('scheduled_at', now)
 
   if (fetchErr) {
-    throw createError({ statusCode: 500, message: fetchErr.message })
+    throw safeError(500, `Fetch scheduled articles failed: ${fetchErr.message}`)
   }
 
   if (!articles || articles.length === 0) {
@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
     .in('id', ids)
 
   if (updateErr) {
-    throw createError({ statusCode: 500, message: updateErr.message })
+    throw safeError(500, `Update scheduled articles failed: ${updateErr.message}`)
   }
 
   return {

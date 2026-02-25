@@ -371,7 +371,7 @@ export default defineEventHandler(async (event) => {
           sent_at: new Date().toISOString(),
         })
 
-        throw createError({ statusCode: 500, message: `Resend error: ${result.error.message}` })
+        throw safeError(500, `Resend error: ${result.error.message}`)
       }
 
       resendId = result.data?.id ?? ''
@@ -394,7 +394,7 @@ export default defineEventHandler(async (event) => {
         sent_at: new Date().toISOString(),
       })
 
-      throw createError({ statusCode: 500, message: `Email send failed: ${errorMessage}` })
+      throw safeError(500, `Email send failed: ${errorMessage}`)
     }
   }
 
