@@ -1,4 +1,13 @@
 import { createError, defineEventHandler, readRawBody } from 'h3'
+import {
+  supabaseRestPatch,
+  supabaseRestInsert,
+  supabaseRestGet,
+  getSubscriptionUserInfo,
+  sendDunningEmail,
+  createAutoInvoice,
+  type SupabaseRestConfig,
+} from '../../services/billing'
 
 export default defineEventHandler(async (event) => {
   const rawBody = await readRawBody(event)
@@ -25,6 +34,8 @@ export default defineEventHandler(async (event) => {
   if (!supabaseUrl || !supabaseKey) {
     throw createError({ statusCode: 500, message: 'Supabase not configured' })
   }
+
+  const sbConfig: SupabaseRestConfig = { url: supabaseUrl, serviceRoleKey: supabaseKey }
 
   // Verify webhook signature (fail-closed)
   const sig = event.node.req.headers['stripe-signature'] as string
@@ -62,95 +73,11 @@ export default defineEventHandler(async (event) => {
 
   const obj = stripeEvent.data.object
 
-  // Helper: Supabase REST PATCH
-  async function supabasePatch(table: string, filter: string, data: Record<string, unknown>) {
-    await fetch(`${supabaseUrl}/rest/v1/${table}?${filter}`, {
-      method: 'PATCH',
-      headers: {
-        apikey: supabaseKey as string,
-        Authorization: `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-        Prefer: 'return=minimal',
-      },
-      body: JSON.stringify(data),
-    })
-  }
-
-  // Helper: Supabase REST POST
-  async function supabaseInsert(table: string, data: Record<string, unknown>) {
-    await fetch(`${supabaseUrl}/rest/v1/${table}`, {
-      method: 'POST',
-      headers: {
-        apikey: supabaseKey as string,
-        Authorization: `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-        Prefer: 'return=minimal',
-      },
-      body: JSON.stringify(data),
-    })
-  }
-
-  // Helper: look up user info from a Stripe subscription ID
-  async function getSubscriptionUserInfo(
-    stripeSubId: string,
-  ): Promise<{ userId: string; email: string; name: string; plan: string } | null> {
-    const subRes = await fetch(
-      `${supabaseUrl}/rest/v1/subscriptions?stripe_subscription_id=eq.${stripeSubId}&select=user_id,plan`,
-      {
-        headers: {
-          apikey: supabaseKey as string,
-          Authorization: `Bearer ${supabaseKey}`,
-        },
-      },
-    )
-    const subData = (await subRes.json()) as Array<{ user_id: string; plan: string }> | null
-    const userId = subData?.[0]?.user_id
-    const plan = subData?.[0]?.plan || 'basic'
-    if (!userId) return null
-
-    const userRes = await fetch(
-      `${supabaseUrl}/rest/v1/users?id=eq.${userId}&select=email,raw_user_meta_data`,
-      {
-        headers: {
-          apikey: supabaseKey as string,
-          Authorization: `Bearer ${supabaseKey}`,
-        },
-      },
-    )
-    const userData = (await userRes.json()) as Array<{
-      email: string
-      raw_user_meta_data: { display_name?: string; full_name?: string } | null
-    }> | null
-    const email = userData?.[0]?.email
-    if (!email) return null
-
-    const meta = userData?.[0]?.raw_user_meta_data
-    const name = meta?.display_name || meta?.full_name || email.split('@')[0] || ''
-    return { userId, email, name, plan }
-  }
-
-  // Helper: send email via internal API (best-effort)
-  async function sendDunningEmail(
-    templateKey: string,
-    to: string,
-    userId: string,
-    variables: Record<string, string>,
-  ): Promise<void> {
-    const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
-    const internalSecret = config.cronSecret || process.env.CRON_SECRET
-    if (!internalSecret) return
-
-    await fetch(`${baseUrl}/api/email/send`, {
-      method: 'POST',
-      headers: {
-        'x-internal-secret': internalSecret,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ templateKey, to, userId, variables }),
-    }).catch(() => {
-      // Best-effort: dunning email should not block webhook processing
-    })
-  }
+  // Shorthand helpers bound to this request's config
+  const patch = (table: string, filter: string, data: Record<string, unknown>) =>
+    supabaseRestPatch(sbConfig, table, filter, data)
+  const insert = (table: string, data: Record<string, unknown>) =>
+    supabaseRestInsert(sbConfig, table, data)
 
   switch (stripeEvent.type) {
     case 'checkout.session.completed': {
@@ -161,12 +88,13 @@ export default defineEventHandler(async (event) => {
 
       // Idempotency check: skip if this checkout was already processed
       const sessionId = session.id as string
-      const existingPaymentRes = await fetch(
-        `${supabaseUrl}/rest/v1/payments?stripe_checkout_session_id=eq.${sessionId}&status=eq.succeeded&select=id`,
-        { headers: { apikey: supabaseKey as string, Authorization: `Bearer ${supabaseKey}` } },
+      const existingPaymentData = await supabaseRestGet<{ id: string }>(
+        sbConfig,
+        'payments',
+        `stripe_checkout_session_id=eq.${sessionId}&status=eq.succeeded`,
+        'id',
       )
-      const existingPaymentData = await existingPaymentRes.json()
-      if (Array.isArray(existingPaymentData) && existingPaymentData.length > 0) {
+      if (existingPaymentData.length > 0) {
         return { received: true, idempotent: true, event: 'checkout.session.completed' }
       }
 
@@ -181,21 +109,16 @@ export default defineEventHandler(async (event) => {
         expiresAt.setMonth(expiresAt.getMonth() + 1)
 
         // Upsert subscription via Supabase REST
-        // First check if subscription exists
-        const existingRes = await fetch(
-          `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${userId}&select=id`,
-          {
-            headers: {
-              apikey: supabaseKey,
-              Authorization: `Bearer ${supabaseKey}`,
-            },
-          },
+        const existingData = await supabaseRestGet<{ id: string }>(
+          sbConfig,
+          'subscriptions',
+          `user_id=eq.${userId}`,
+          'id',
         )
-        const existingData = await existingRes.json()
 
-        if (existingData?.length) {
+        if (existingData.length > 0) {
           // Update existing subscription
-          await supabasePatch('subscriptions', `user_id=eq.${userId}`, {
+          await patch('subscriptions', `user_id=eq.${userId}`, {
             plan,
             status: 'active',
             stripe_subscription_id: subscriptionId,
@@ -205,7 +128,7 @@ export default defineEventHandler(async (event) => {
           })
         } else {
           // Insert new subscription
-          await supabaseInsert('subscriptions', {
+          await insert('subscriptions', {
             user_id: userId,
             plan,
             status: 'active',
@@ -217,35 +140,17 @@ export default defineEventHandler(async (event) => {
         }
 
         // Update payment status
-        await supabasePatch('payments', `stripe_checkout_session_id=eq.${sessionId}`, {
+        await patch('payments', `stripe_checkout_session_id=eq.${sessionId}`, {
           status: 'succeeded',
         })
 
         // Auto-create invoice for the subscription payment
         const amountTotal = session.amount_total as number
         if (amountTotal) {
-          // Find dealer_id from users table
-          const dealerRes = await fetch(
-            `${supabaseUrl}/rest/v1/dealers?user_id=eq.${userId}&select=id`,
-            {
-              headers: {
-                apikey: supabaseKey as string,
-                Authorization: `Bearer ${supabaseKey}`,
-              },
-            },
-          )
-          const dealerData = await dealerRes.json()
-          const dealerId = dealerData?.[0]?.id
-
-          await supabaseInsert('invoices', {
-            user_id: userId,
-            dealer_id: dealerId || null,
-            stripe_invoice_id: subscriptionId,
-            service_type: 'subscription',
-            amount_cents: amountTotal,
-            tax_cents: Math.round((amountTotal * 21) / 121),
-            currency: 'eur',
-            status: 'paid',
+          await createAutoInvoice(sbConfig, {
+            userId,
+            stripeInvoiceId: subscriptionId,
+            amountCents: amountTotal,
           })
         }
       }
@@ -260,12 +165,13 @@ export default defineEventHandler(async (event) => {
 
       // Idempotency check: skip if this invoice was already processed
       const invoiceId = invoice.id as string
-      const existingInvoiceRes = await fetch(
-        `${supabaseUrl}/rest/v1/payments?metadata->>event_invoice_id=eq.${invoiceId}&select=id`,
-        { headers: { apikey: supabaseKey as string, Authorization: `Bearer ${supabaseKey}` } },
+      const existingInvoiceData = await supabaseRestGet<{ id: string }>(
+        sbConfig,
+        'payments',
+        `metadata->>event_invoice_id=eq.${invoiceId}`,
+        'id',
       )
-      const existingInvoiceData = await existingInvoiceRes.json()
-      if (Array.isArray(existingInvoiceData) && existingInvoiceData.length > 0) {
+      if (existingInvoiceData.length > 0) {
         return { received: true, idempotent: true, event: 'invoice.payment_succeeded' }
       }
 
@@ -274,13 +180,13 @@ export default defineEventHandler(async (event) => {
         const newExpiry = new Date()
         newExpiry.setMonth(newExpiry.getMonth() + 1)
 
-        await supabasePatch('subscriptions', `stripe_subscription_id=eq.${subscriptionId}`, {
+        await patch('subscriptions', `stripe_subscription_id=eq.${subscriptionId}`, {
           status: 'active',
           expires_at: newExpiry.toISOString(),
         })
 
         // Insert payment record
-        await supabaseInsert('payments', {
+        await insert('payments', {
           type: 'subscription',
           status: 'succeeded',
           amount_cents: amountPaid || 0,
@@ -292,40 +198,19 @@ export default defineEventHandler(async (event) => {
 
         // Auto-create invoice for renewal payment
         if (amountPaid) {
-          // Find user_id and dealer_id from subscription
-          const subRes = await fetch(
-            `${supabaseUrl}/rest/v1/subscriptions?stripe_subscription_id=eq.${subscriptionId}&select=user_id`,
-            {
-              headers: {
-                apikey: supabaseKey as string,
-                Authorization: `Bearer ${supabaseKey}`,
-              },
-            },
+          const subData = await supabaseRestGet<{ user_id: string }>(
+            sbConfig,
+            'subscriptions',
+            `stripe_subscription_id=eq.${subscriptionId}`,
+            'user_id',
           )
-          const subData = await subRes.json()
-          const subUserId = subData?.[0]?.user_id
+          const subUserId = subData[0]?.user_id
 
           if (subUserId) {
-            const dealerRes = await fetch(
-              `${supabaseUrl}/rest/v1/dealers?user_id=eq.${subUserId}&select=id`,
-              {
-                headers: {
-                  apikey: supabaseKey as string,
-                  Authorization: `Bearer ${supabaseKey}`,
-                },
-              },
-            )
-            const dealerData = await dealerRes.json()
-
-            await supabaseInsert('invoices', {
-              user_id: subUserId,
-              dealer_id: dealerData?.[0]?.id || null,
-              stripe_invoice_id: (invoice.id as string) || null,
-              service_type: 'subscription',
-              amount_cents: amountPaid,
-              tax_cents: Math.round((amountPaid * 21) / 121),
-              currency: 'eur',
-              status: 'paid',
+            await createAutoInvoice(sbConfig, {
+              userId: subUserId,
+              stripeInvoiceId: (invoice.id as string) || null,
+              amountCents: amountPaid,
             })
           }
         }
@@ -341,23 +226,24 @@ export default defineEventHandler(async (event) => {
 
       // Idempotency: skip if already recorded this failed invoice
       const failedInvoiceId = invoice.id as string
-      const existingFailedRes = await fetch(
-        `${supabaseUrl}/rest/v1/payments?metadata->>event_invoice_id=eq.${failedInvoiceId}&status=eq.failed&select=id`,
-        { headers: { apikey: supabaseKey as string, Authorization: `Bearer ${supabaseKey}` } },
+      const existingFailedData = await supabaseRestGet<{ id: string }>(
+        sbConfig,
+        'payments',
+        `metadata->>event_invoice_id=eq.${failedInvoiceId}&status=eq.failed`,
+        'id',
       )
-      const existingFailedData = await existingFailedRes.json()
-      if (Array.isArray(existingFailedData) && existingFailedData.length > 0) {
+      if (existingFailedData.length > 0) {
         return { received: true, idempotent: true, event: 'invoice.payment_failed' }
       }
 
       if (subscriptionId) {
         // Mark subscription as past_due
-        await supabasePatch('subscriptions', `stripe_subscription_id=eq.${subscriptionId}`, {
+        await patch('subscriptions', `stripe_subscription_id=eq.${subscriptionId}`, {
           status: 'past_due',
         })
 
         // Insert failed payment record
-        await supabaseInsert('payments', {
+        await insert('payments', {
           type: 'subscription',
           status: 'failed',
           amount_cents: amountDue || 0,
@@ -369,15 +255,24 @@ export default defineEventHandler(async (event) => {
 
         // Send dunning email based on attempt count
         const attemptCount = (invoice.attempt_count as number) || 1
-        const userInfo = await getSubscriptionUserInfo(subscriptionId)
+        const userInfo = await getSubscriptionUserInfo(sbConfig, subscriptionId)
         if (userInfo) {
           const graceDays = attemptCount <= 1 ? 14 : attemptCount <= 2 ? 7 : 3
-          await sendDunningEmail('dealer_payment_failed', userInfo.email, userInfo.userId, {
-            name: userInfo.name,
-            plan: userInfo.plan,
-            updateCardUrl: 'https://tracciona.com/dashboard/suscripcion',
-            gracePeriodDays: String(graceDays),
-          })
+          const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
+          const internalSecret = config.cronSecret || process.env.CRON_SECRET
+          await sendDunningEmail(
+            baseUrl,
+            internalSecret,
+            'dealer_payment_failed',
+            userInfo.email,
+            userInfo.userId,
+            {
+              name: userInfo.name,
+              plan: userInfo.plan,
+              updateCardUrl: 'https://tracciona.com/dashboard/suscripcion',
+              gracePeriodDays: String(graceDays),
+            },
+          )
         }
       }
       break
@@ -388,27 +283,32 @@ export default defineEventHandler(async (event) => {
       const subscriptionId = subscription.id as string
 
       // Idempotency: skip if subscription is already canceled
-      const existingSubRes = await fetch(
-        `${supabaseUrl}/rest/v1/subscriptions?stripe_subscription_id=eq.${subscriptionId}&status=eq.canceled&select=id`,
-        { headers: { apikey: supabaseKey as string, Authorization: `Bearer ${supabaseKey}` } },
+      const existingSubData = await supabaseRestGet<{ id: string }>(
+        sbConfig,
+        'subscriptions',
+        `stripe_subscription_id=eq.${subscriptionId}&status=eq.canceled`,
+        'id',
       )
-      const existingSubData = await existingSubRes.json()
-      if (Array.isArray(existingSubData) && existingSubData.length > 0) {
+      if (existingSubData.length > 0) {
         return { received: true, idempotent: true, event: 'customer.subscription.deleted' }
       }
 
       if (subscriptionId) {
         // Get user info BEFORE downgrading (to capture previous plan name)
-        const cancelledUserInfo = await getSubscriptionUserInfo(subscriptionId)
+        const cancelledUserInfo = await getSubscriptionUserInfo(sbConfig, subscriptionId)
 
-        await supabasePatch('subscriptions', `stripe_subscription_id=eq.${subscriptionId}`, {
+        await patch('subscriptions', `stripe_subscription_id=eq.${subscriptionId}`, {
           status: 'canceled',
           plan: 'free',
         })
 
         // Send cancellation email
         if (cancelledUserInfo) {
+          const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
+          const internalSecret = config.cronSecret || process.env.CRON_SECRET
           await sendDunningEmail(
+            baseUrl,
+            internalSecret,
             'dealer_subscription_cancelled',
             cancelledUserInfo.email,
             cancelledUserInfo.userId,
