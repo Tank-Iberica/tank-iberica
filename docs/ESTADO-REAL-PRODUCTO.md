@@ -1,6 +1,6 @@
 # Estado real del producto
 
-_Generado automaticamente: 2026-02-25 11:45_
+_Generado automaticamente: 2026-02-25 11:48_
 
 ## Paginas
 
@@ -348,6 +348,13 @@ app/middleware/auth.ts
 app/middleware/dealer.ts
 ```
 
+## Services
+
+```
+server/services/billing.ts
+server/services/marketReport.ts
+```
+
 ## Utils
 
 ```
@@ -366,7 +373,25 @@ server/utils/verifyTurnstile.ts
 server/utils/whatsappApi.ts
 ```
 
+## Tests E2E
+
+```
+tests/e2e/admin-flow.spec.ts
+tests/e2e/catalog-flow.spec.ts
+tests/e2e/i18n-flow.spec.ts
+tests/e2e/journeys/admin-approve.spec.ts
+tests/e2e/journeys/anonymous-browse.spec.ts
+tests/e2e/journeys/auction-flow.spec.ts
+tests/e2e/journeys/buyer-contact.spec.ts
+tests/e2e/journeys/buyer-register.spec.ts
+tests/e2e/journeys/dealer-manage.spec.ts
+tests/e2e/journeys/dealer-publish.spec.ts
+tests/e2e/journeys/seo-landing.spec.ts
+```
+
 Total paginas: 122
 Total composables: 79
 Total endpoints: 54
+Total services: 2
 Total migraciones: 60
+Total tests E2E: 11
