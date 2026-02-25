@@ -4,7 +4,7 @@
 > de cada modulo, consultar **[docs/ESTADO-REAL-PRODUCTO.md](./ESTADO-REAL-PRODUCTO.md)**
 > que se genera analizando el codigo fuente real.
 
-## Estado actual: Sesion 48 completada — Produccion
+## Estado actual: Sesion 50 completada — Produccion
 
 _Ultima actualizacion: 2026-02-25_
 
@@ -58,6 +58,8 @@ _Ultima actualizacion: 2026-02-25_
 | 46      | Completada | Pentest automatizado DAST: OWASP ZAP + Nuclei + tests seguridad ampliados                 |
 | 47      | Completada | Hallazgos críticos: vertical vehicles, tests reales, cleanup, AI social posts             |
 | 48      | Completada | Modularización: whatsapp refactor (550→75 líneas), callAI multimodal, verify-document     |
+| 49      | Completada | DAST + Tests seguridad (ya implementado en sesión 46, verificado como duplicado)          |
+| 50      | Completada | Seguridad: HSTS, CORS middleware, WAF config docs, secrets rotation guide                 |
 
 ### Modulos implementados
 
