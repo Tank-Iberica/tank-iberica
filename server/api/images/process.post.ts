@@ -214,6 +214,10 @@ export default defineEventHandler(async (event): Promise<ProcessImageResponse> =
       // Build the delivery URL with the variant name
       const imageId = cfResult.result.id
       urls[variant] = `${cfDeliveryUrl}/${imageId}/${variant}`
+      // TODO: After all variants are successfully uploaded to CF Images, delete the original
+      // Cloudinary asset to avoid paying for duplicate storage. Use the Cloudinary Admin API:
+      // DELETE https://api.cloudinary.com/v1_1/{cloud}/resources/image/upload?public_ids[]={public_id}
+      // This should be done once per image (not per variant) after the loop completes.
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unknown error'
       errors.push(`${variant}: ${message}`)

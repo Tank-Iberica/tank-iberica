@@ -167,6 +167,7 @@ export default defineNuxtConfig({
     '/api/merchant-feed**': { cors: true, swr: 60 * 60 * 12 },
     '/api/health**': { cors: true },
     '/api/market-report': { swr: 60 * 60 * 6 },
+    '/images/**': { headers: { 'Cache-Control': 'public, max-age=2592000, immutable' } },
   },
 
   runtimeConfig: {

@@ -43,5 +43,18 @@ export function useImageUrl() {
     return url
   }
 
-  return { getImageUrl }
+  /**
+   * Append a `?v=` cache-busting parameter to any image URL.
+   * The CDNs (Cloudinary, CF Images) handle long-term caching automatically,
+   * so this function is only needed for manual invalidation (e.g., after an image is replaced).
+   *
+   * Usage: getVersionedUrl(getImageUrl(url, 'card'), vehicle.updated_at)
+   */
+  function getVersionedUrl(url: string, version: string | number): string {
+    if (!url || url === '/placeholder-vehicle.svg') return url
+    const separator = url.includes('?') ? '&' : '?'
+    return `${url}${separator}v=${encodeURIComponent(version)}`
+  }
+
+  return { getImageUrl, getVersionedUrl }
 }
