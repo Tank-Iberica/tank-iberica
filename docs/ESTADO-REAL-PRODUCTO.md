@@ -395,3 +395,51 @@ Total endpoints: 54
 Total services: 2
 Total migraciones: 60
 Total tests E2E: 11
+
+## Decisiones sobre modulos parciales (sesiones 41-43)
+
+### 1. Landing pages builder avanzado
+
+**Decision: POSPONER.**
+
+Las landing pages SEO dinamicas de la sesion 4 cubren el caso de uso principal (paginas por subcategoria, marca, ubicacion con contenido generado). Un builder visual tipo Webflow es excesivo para la fase actual del producto. Se reconsiderara si los dealers lo solicitan activamente.
+
+**Alternativa actual:** Los dealers pueden personalizar su pagina de vendedor (`/vendedor/[slug]`) con logo, bio, tema de colores, y redes sociales. Para necesidades mas avanzadas, la configuracion de branding en `/admin/config/branding` permite personalizar colores y tipografia del vertical completo.
+
+### 2. OAuth social (Google, Facebook login)
+
+**Decision: IMPLEMENTAR MINIMO.**
+
+- **Google Login:** Ya implementado en sesion 24 via Supabase Auth (provider: google).
+- **Facebook Login:** Pospuesto. El uso de Facebook Login en B2B industrial es bajo. Si se necesita, Supabase Auth lo soporta con 2 lineas de configuracion en el dashboard de Supabase + las credenciales de Meta Developer.
+- **Apple Login:** No prioritario. El publico objetivo (profesionales B2B) accede mayoritariamente desde desktop/Android.
+
+**Razon:** El registro con email + contrasena y Google Login cubren >95% de los casos de uso del publico objetivo.
+
+### 3. Prebid demand partners
+
+**Decision: PLACEHOLDER.**
+
+El composable `usePrebid.ts` esta implementado con la estructura completa de Prebid.js (bid requests, auction lifecycle, ad rendering). Sin embargo, los IDs de partners (AppNexus, Rubicon, etc.) no estan configurados con cuentas reales.
+
+**Para activar:** Registrarse en los SSPs deseados, obtener placement IDs, y configurarlos en el composable. No requiere cambios de codigo, solo configuracion.
+
+### 4. Capa de servicios (server/services/)
+
+**Decision: IMPLEMENTADA (sesion 41).**
+
+Se extrajeron los endpoints con >200 lineas a servicios reutilizables:
+
+- `server/services/marketReport.ts` — Logica de generacion de informes de mercado (912 lineas extraidas)
+- `server/services/billing.ts` — Helpers REST compartidos, lookup de suscripciones, dunning, facturas automaticas
+
+Los endpoints quedan como orquestadores ligeros: validan input, llaman al servicio, devuelven respuesta.
+
+**Endpoints pendientes de refactorizar** (>200 lineas, baja prioridad):
+
+| Endpoint                   | Lineas | Prioridad                      |
+| -------------------------- | ------ | ------------------------------ |
+| whatsapp/process.post.ts   | 541    | Media (complejo por IA)        |
+| email/send.post.ts         | 415    | Baja (template engine)         |
+| verify-document.post.ts    | 365    | Baja (IA + verificacion)       |
+| cron/infra-metrics.post.ts | 337    | Baja (metricas autocontenidas) |
