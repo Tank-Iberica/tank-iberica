@@ -1,0 +1,413 @@
+/* Shared styles for admin/social sub-components */
+
+/* ============================================
+   STATS GRID
+   ============================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+  text-align: center;
+}
+
+.stat-pending .stat-value {
+  color: #d97706;
+}
+.stat-approved .stat-value {
+  color: #2563eb;
+}
+.stat-posted .stat-value {
+  color: #16a34a;
+}
+.stat-failed .stat-value {
+  color: #ea580c;
+}
+
+/* ============================================
+   FILTERS BAR / STATUS PILLS
+   ============================================ */
+.filters-bar {
+  padding: 12px 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+.status-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  min-width: max-content;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
+  transition: all 0.15s;
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.status-pill:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.status-pill.active {
+  background: var(--color-primary, #23424a);
+  color: white;
+  border-color: var(--color-primary, #23424a);
+}
+
+.pill-count {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.status-pill.active .pill-count {
+  opacity: 0.9;
+}
+
+/* ============================================
+   PLATFORM BADGES
+   ============================================ */
+.platform-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.platform-badge.large {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+.platform-linkedin {
+  background: #0a66c2;
+}
+
+.platform-facebook {
+  background: #1877f2;
+}
+
+.platform-instagram {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.platform-x {
+  background: #000;
+}
+
+/* ============================================
+   STATUS BADGES
+   ============================================ */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-approved {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-posted {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.status-rejected {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status-failed {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+/* ============================================
+   MODAL (shared base)
+   ============================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 9000;
+  padding: 0;
+}
+
+.modal-panel {
+  background: white;
+  width: 100%;
+  max-height: 90vh;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+}
+
+.modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* ============================================
+   MODAL BUTTONS
+   ============================================ */
+.btn-save,
+.btn-approve-lg,
+.btn-reject-lg,
+.btn-publish-lg,
+.btn-generate-confirm,
+.btn-cancel {
+  flex: 1;
+  min-width: 100px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
+}
+
+.btn-save {
+  background: #475569;
+  color: white;
+}
+
+.btn-save:hover {
+  background: #334155;
+}
+
+.btn-approve-lg {
+  background: #16a34a;
+  color: white;
+}
+
+.btn-approve-lg:hover {
+  background: #15803d;
+}
+
+.btn-reject-lg {
+  background: #dc2626;
+  color: white;
+}
+
+.btn-reject-lg:hover {
+  background: #b91c1c;
+}
+
+.btn-publish-lg {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-publish-lg:hover {
+  background: #1d4ed8;
+}
+
+.btn-generate-confirm {
+  background: var(--color-primary, #23424a);
+  color: white;
+}
+
+.btn-generate-confirm:hover {
+  background: #1a3238;
+}
+
+.btn-cancel {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-cancel:hover {
+  background: #e2e8f0;
+}
+
+.btn-save:disabled,
+.btn-approve-lg:disabled,
+.btn-reject-lg:disabled,
+.btn-publish-lg:disabled,
+.btn-generate-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   MODAL TRANSITIONS
+   ============================================ */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.modal-enter-active .modal-panel,
+.modal-leave-active .modal-panel {
+  transition: transform 0.25s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modal-panel {
+  transform: translateY(100%);
+}
+
+.modal-leave-to .modal-panel {
+  transform: translateY(100%);
+}
+
+/* ============================================
+   SPINNER
+   ============================================ */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e2e8f0;
+  border-top-color: var(--color-primary, #23424a);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner.small {
+  width: 18px;
+  height: 18px;
+  border-width: 2px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   RESPONSIVE — Mobile-first, breakpoints up
+   ============================================ */
+
+/* 480px+ */
+@media (min-width: 480px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 768px+ : Tablet */
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  /* Modal: centered */
+  .modal-overlay {
+    align-items: center;
+    padding: 20px;
+  }
+
+  .modal-panel {
+    border-radius: 16px;
+    max-width: 600px;
+  }
+}
+
+/* 1024px+ : Desktop */
+@media (min-width: 1024px) {
+  .modal-panel {
+    max-width: 680px;
+  }
+}
