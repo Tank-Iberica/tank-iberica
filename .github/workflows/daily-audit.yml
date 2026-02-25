@@ -1,0 +1,121 @@
+name: Daily Audit
+on:
+  schedule:
+    - cron: '0 5 * * *' # Todos los días a las 05:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  # ── Seguridad ──
+  semgrep:
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+      - run: semgrep scan --config auto --config p/typescript --config p/nodejs --config p/owasp-top-ten --json --output semgrep-results.json . || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-results
+          path: semgrep-results.json
+
+  npm-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: npm ci
+      - run: npm audit --audit-level=moderate --json > npm-audit.json 2>&1 || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-results
+          path: npm-audit.json
+
+  # ── Calidad de código ──
+  lint-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: npm }
+      - run: npm ci
+      - run: npm run lint -- --format json --output-file eslint-report.json 2>&1 || true
+      - run: npm run typecheck 2>&1 | tee typecheck.log || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lint-typecheck
+          path: |
+            eslint-report.json
+            typecheck.log
+
+  # ── Extensibilidad (hardcoded values) ──
+  extensibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check hardcoded values
+        run: |
+          echo "=== Extensibility Audit ===" > extensibility-report.txt
+
+          echo "## Hardcoded categories in code:" >> extensibility-report.txt
+          grep -rn "cisternas\|cabezas.tractoras\|semirremolques\|camiones\|furgonetas" app/ server/ --include='*.ts' --include='*.vue' \
+            | grep -v node_modules | grep -v '.nuxt' | grep -v 'i18n' | grep -v 'locales/' | grep -v 'migrations' \
+            | grep -v '\.spec\.' | grep -v 'test' >> extensibility-report.txt 2>&1 || echo "  None found ✓" >> extensibility-report.txt
+
+          echo "" >> extensibility-report.txt
+          echo "## Hardcoded domain 'tracciona' in code (outside config):" >> extensibility-report.txt
+          grep -rn "tracciona\.com\|tracciona\.es" app/ server/ --include='*.ts' --include='*.vue' \
+            | grep -v node_modules | grep -v '.nuxt' | grep -v nuxt.config | grep -v CLAUDE.md | grep -v README \
+            | grep -v '\.spec\.' >> extensibility-report.txt 2>&1 || echo "  None found ✓" >> extensibility-report.txt
+
+          echo "" >> extensibility-report.txt
+          echo "## Hardcoded vertical slug 'tracciona' outside getVerticalSlug():" >> extensibility-report.txt
+          grep -rn "'tracciona'" app/ server/ --include='*.ts' --include='*.vue' \
+            | grep -v node_modules | grep -v '.nuxt' | grep -v useVerticalConfig | grep -v nuxt.config \
+            | grep -v getVerticalSlug >> extensibility-report.txt 2>&1 || echo "  None found ✓" >> extensibility-report.txt
+
+          echo "" >> extensibility-report.txt
+          echo "## Hardcoded AI model strings:" >> extensibility-report.txt
+          grep -rn "claude-3\|claude-sonnet\|claude-haiku\|gpt-4o" server/ --include='*.ts' \
+            | grep -v node_modules | grep -v aiConfig.ts >> extensibility-report.txt 2>&1 || echo "  None found ✓" >> extensibility-report.txt
+
+          cat extensibility-report.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extensibility-report
+          path: extensibility-report.txt
+
+  # ── Build sanity ──
+  build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: npm }
+      - run: npm ci
+      - run: npm run build 2>&1 | tee build.log
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: build-failure-log
+          path: build.log
+
+  # ── Consolidar y notificar ──
+  report:
+    runs-on: ubuntu-latest
+    needs: [semgrep, npm-audit, lint-typecheck, extensibility, build-check]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: audit-artifacts/
+      - name: Generate consolidated report
+        run: node scripts/audit-report.mjs
+      - name: Notify if issues found
+        if: env.AUDIT_HAS_ISSUES == 'true'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.INFRA_ALERT_EMAIL }}
+        run: node scripts/send-audit-alert.mjs
