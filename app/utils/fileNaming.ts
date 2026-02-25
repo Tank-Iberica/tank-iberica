@@ -37,11 +37,12 @@ function sanitize(text: string): string {
 
 // ---------------------------------------------------------------------------
 // Cloudinary (SEO-friendly public_id for image URLs)
+// NOTE: Legacy images (pre-Feb 2026) may exist under 'tank-iberica/' folder in Cloudinary.
 // ---------------------------------------------------------------------------
 
 /**
  * Generate Cloudinary public_id for vehicle images
- * URL result: res.cloudinary.com/.../tank-iberica/vehicles/cisterna-alimentaria-renault-2024-v42.jpg
+ * URL result: res.cloudinary.com/.../tracciona/vehicles/cisterna-alimentaria-renault-2024-v42.jpg
  * Note: model excluded per project convention
  */
 export function generateVehiclePublicId(vehicle: FileNamingData, imageIndex: number = 1): string {
@@ -53,15 +54,15 @@ export function generateVehiclePublicId(vehicle: FileNamingData, imageIndex: num
   parts.push(`v${vehicle.id}`)
   if (imageIndex > 1) parts.push(String(imageIndex))
 
-  return `tank-iberica/vehicles/${parts.join('-')}`
+  return `tracciona/vehicles/${parts.join('-')}`
 }
 
 /**
  * Generate Cloudinary public_id for news images
- * URL result: res.cloudinary.com/.../tank-iberica/news/normativa-euro-7.jpg
+ * URL result: res.cloudinary.com/.../tracciona/news/normativa-euro-7.jpg
  */
 export function generateNewsPublicId(slug: string): string {
-  return `tank-iberica/news/${slugify(slug)}`
+  return `tracciona/news/${slugify(slug)}`
 }
 
 /**

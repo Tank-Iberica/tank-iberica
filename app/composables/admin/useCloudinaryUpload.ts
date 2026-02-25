@@ -15,7 +15,7 @@ export interface CloudinaryUploadResult {
 }
 
 export interface CloudinaryUploadOptions {
-  /** Cloudinary folder path (e.g. 'tank-iberica/vehicles') */
+  /** Cloudinary folder path (e.g. 'tracciona/vehicles') */
   folder?: string
   /** Custom public_id for SEO-friendly URLs (without folder prefix) */
   publicId?: string
@@ -43,19 +43,19 @@ export function useCloudinaryUpload() {
    * @example
    * // Simple (backward compatible)
    * await upload(file)
-   * await upload(file, 'tank-iberica/news')
+   * await upload(file, 'tracciona/news')
    *
    * // With SEO options
    * await upload(file, {
    *   publicId: 'cisterna-alimentaria-renault-2024-v42',
-   *   folder: 'tank-iberica/vehicles',
+   *   folder: 'tracciona/vehicles',
    *   context: 'brand=Renault|year=2024|subcategory=Cisterna',
    *   tags: ['cisterna', 'renault', '2024'],
    * })
    */
   async function upload(
     file: File,
-    folderOrOptions: string | CloudinaryUploadOptions = 'tank-iberica/news',
+    folderOrOptions: string | CloudinaryUploadOptions = 'tracciona/news',
   ): Promise<CloudinaryUploadResult | null> {
     const options: CloudinaryUploadOptions =
       typeof folderOrOptions === 'string' ? { folder: folderOrOptions } : folderOrOptions
