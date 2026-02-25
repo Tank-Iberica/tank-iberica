@@ -4,6 +4,8 @@
  * Generates professional PDF quotes with dealer branding, vehicle info,
  * optional services, and saves to dealer_quotes table.
  */
+import { formatPrice } from '~/composables/shared/useListingUtils'
+
 definePageMeta({
   layout: 'default',
   middleware: ['auth', 'dealer'],
@@ -164,14 +166,6 @@ function selectVehicle(vehicle: DealerVehicleOption): void {
 function clearVehicle(): void {
   selectedVehicle.value = null
   searchQuery.value = ''
-}
-
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-  }).format(price)
 }
 
 function formatDate(date: Date): string {

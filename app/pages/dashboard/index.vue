@@ -3,6 +3,8 @@
  * Dealer Dashboard Home
  * Shows KPI cards, recent leads, top vehicles, and onboarding progress.
  */
+import { formatPrice } from '~/composables/shared/useListingUtils'
+
 definePageMeta({
   layout: 'default',
   middleware: ['auth', 'dealer'],
@@ -26,15 +28,6 @@ onMounted(async () => {
     healthScore.value = score.value
   }
 })
-
-function formatPrice(price: number | null | undefined): string {
-  if (!price) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-  }).format(price)
-}
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return '-'

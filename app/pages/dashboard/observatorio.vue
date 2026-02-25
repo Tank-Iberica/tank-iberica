@@ -4,6 +4,8 @@
  * Premium/Founding plan only. Dealers can track competitor vehicle listings
  * across platforms they configure.
  */
+import { formatPrice } from '~/composables/shared/useListingUtils'
+
 definePageMeta({
   layout: 'default',
   middleware: ['auth', 'dealer'],
@@ -460,16 +462,6 @@ async function togglePlatform(platformId: string): Promise<void> {
   } else {
     await addPlatform(platformId)
   }
-}
-
-// Format price
-function formatPrice(price: number | null): string {
-  if (price === null || price === undefined) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(price)
 }
 
 // ---------------------------------------------------------------------------

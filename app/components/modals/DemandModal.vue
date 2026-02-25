@@ -3,7 +3,6 @@ import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSupabaseClient, useSupabaseUser } from '#imports'
 import { localizedField } from '~/composables/useLocalized'
-
 const props = defineProps<{
   modelValue: boolean
 }>()

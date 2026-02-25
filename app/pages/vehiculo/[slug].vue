@@ -328,6 +328,7 @@ import { generateVehiclePdf } from '~/utils/generatePdf'
 import { fetchTranslation } from '~/composables/useLocalized'
 import { useToast } from '~/composables/useToast'
 import { useVehicleComparator } from '~/composables/useVehicleComparator'
+import { formatPrice } from '~/composables/shared/useListingUtils'
 
 const route = useRoute()
 const { locale, t } = useI18n()
@@ -449,14 +450,6 @@ async function loadSellerInfo() {
 
 if (import.meta.client && vehicle.value?.dealer_id) {
   loadSellerInfo()
-}
-
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(price)
 }
 
 function resolveFilterLabel(key: string): string {

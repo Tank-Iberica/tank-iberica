@@ -78,7 +78,7 @@
           class="chart-tooltip"
           :style="tooltipStyle"
         >
-          <span class="tooltip-price">{{ formatPrice(chartData[hoveredIndex].price) }}</span>
+          <span class="tooltip-price">{{ formatPriceCents(chartData[hoveredIndex].price) }}</span>
           <span class="tooltip-date">{{ formatDate(chartData[hoveredIndex].date) }}</span>
         </div>
       </div>
@@ -88,6 +88,7 @@
 
 <script setup lang="ts">
 import { usePriceHistory } from '~/composables/usePriceHistory'
+import { formatPriceCents } from '~/composables/shared/useListingUtils'
 
 const props = defineProps<{
   vehicleId: string
@@ -154,7 +155,7 @@ const yLabels = computed(() => {
   for (let i = 0; i <= steps; i++) {
     const price = minPrice.value + (priceRange.value * i) / steps
     const y = PADDING_TOP + CHART_HEIGHT - (CHART_HEIGHT * i) / steps
-    labels.push({ text: formatPrice(price), y })
+    labels.push({ text: formatPriceCents(price), y })
   }
 
   return labels
@@ -188,14 +189,6 @@ const tooltipStyle = computed(() => {
     transform: 'translate(-50%, -120%)',
   }
 })
-
-function formatPrice(cents: number): string {
-  const euros = cents / 100
-  if (euros >= 1000) {
-    return `${Math.round(euros / 1000)}k`
-  }
-  return `${Math.round(euros)}`
-}
 
 function formatDate(dateStr: string): string {
   const parts = dateStr.split('-')

@@ -3,6 +3,8 @@
  * Dealer Vehicles List
  * Grid of dealer's vehicles with actions: edit, pause, mark sold, delete.
  */
+import { formatPrice } from '~/composables/shared/useListingUtils'
+
 definePageMeta({
   layout: 'default',
   middleware: ['auth', 'dealer'],
@@ -69,15 +71,6 @@ const canPublishNew = computed(() => canPublish(activeCount.value))
 function getThumbnail(vehicle: DealerVehicle): string | null {
   if (!vehicle.vehicle_images?.length) return null
   return [...vehicle.vehicle_images].sort((a, b) => a.position - b.position)[0]?.url || null
-}
-
-function formatPrice(price: number | null): string {
-  if (!price) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-  }).format(price)
 }
 
 function getStatusClass(status: string): string {

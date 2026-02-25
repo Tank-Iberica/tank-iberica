@@ -114,15 +114,6 @@ function getEmptyAdForm() {
 }
 
 // ─── Format helpers ──────────────────────────────────────────
-export function formatPrice(cents: number | null): string {
-  if (!cents) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2,
-  }).format(cents / 100)
-}
-
 export function formatDate(dateStr: string | null): string {
   if (!dateStr) return '-'
   return new Date(dateStr).toLocaleDateString('es-ES', {

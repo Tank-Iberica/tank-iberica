@@ -348,6 +348,7 @@ import {
   type IdType,
 } from '~/composables/useAuctionRegistration'
 import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
+import { formatPrice } from '~/composables/shared/useListingUtils'
 
 definePageMeta({ layout: 'default' })
 
@@ -473,15 +474,6 @@ function formatDate(dateStr: string): string {
     hour: '2-digit',
     minute: '2-digit',
   })
-}
-
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(price)
 }
 
 // SEO with Event structured data

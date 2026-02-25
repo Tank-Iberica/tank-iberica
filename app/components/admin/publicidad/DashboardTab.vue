@@ -71,12 +71,14 @@
       </div>
       <div class="stat-card">
         <span class="stat-value" style="color: #059669">{{
-          formatPrice(summary.estimatedRevenue)
+          formatPriceCents(summary.estimatedRevenue)
         }}</span>
         <span class="stat-label">{{ t('admin.publicidad.estimatedRevenue') }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" style="color: #0891b2">{{ formatPrice(summary.avgEcpm) }}</span>
+        <span class="stat-value" style="color: #0891b2">{{
+          formatPriceCents(summary.avgEcpm)
+        }}</span>
         <span class="stat-label">{{ t('admin.publicidad.avgEcpm') }}</span>
       </div>
       <div class="stat-card">
@@ -105,8 +107,8 @@
           <tr v-for="row in revenueBySource" :key="row.source">
             <td>{{ t(`admin.publicidad.src_${row.source}`) }}</td>
             <td class="text-right">{{ formatNumber(row.impressions) }}</td>
-            <td class="text-right">{{ formatPrice(row.revenue) }}</td>
-            <td class="text-right">{{ formatPrice(row.ecpm) }}</td>
+            <td class="text-right">{{ formatPriceCents(row.revenue) }}</td>
+            <td class="text-right">{{ formatPriceCents(row.ecpm) }}</td>
           </tr>
           <tr v-if="!revenueBySource.length">
             <td colspan="4" class="empty-state">{{ t('admin.publicidad.noEvents') }}</td>
@@ -136,7 +138,7 @@
             <td class="text-right">{{ formatNumber(row.clicks) }}</td>
             <td class="text-right">{{ row.ctr }}</td>
             <td class="text-right">{{ row.viewabilityRate }}</td>
-            <td class="text-right">{{ formatPrice(row.revenue) }}</td>
+            <td class="text-right">{{ formatPriceCents(row.revenue) }}</td>
           </tr>
         </tbody>
       </table>
@@ -221,7 +223,8 @@
 </template>
 
 <script setup lang="ts">
-import { formatPrice, formatNumber } from '~/composables/admin/useAdminPublicidad'
+import { formatPriceCents } from '~/composables/shared/useListingUtils'
+import { formatNumber } from '~/composables/admin/useAdminPublicidad'
 
 const { t } = useI18n()
 

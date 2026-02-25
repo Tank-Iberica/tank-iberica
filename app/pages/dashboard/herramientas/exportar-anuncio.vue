@@ -4,6 +4,8 @@
  * Generates optimized ad text for Milanuncios, Wallapop, Facebook, LinkedIn, Instagram.
  * Plan gate: Basic+ (catalogExport).
  */
+import { formatPrice } from '~/composables/shared/useListingUtils'
+
 definePageMeta({
   layout: 'default',
   middleware: ['auth', 'dealer'],
@@ -110,14 +112,6 @@ async function loadVehicles(): Promise<void> {
 onMounted(async () => {
   await Promise.all([loadVehicles(), fetchSubscription()])
 })
-
-function formatPrice(price: number | null | undefined): string {
-  if (!price) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(price)
-}
 
 function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text
@@ -293,7 +287,7 @@ watch(selectedPlatform, () => {
             </option>
             <option v-for="v in vehicles" :key="v.id" :value="v.id">
               {{ v.brand }} {{ v.model }}{{ v.year ? ` (${v.year})` : '' }}
-              {{ v.price ? ` — ${formatPrice(v.price)}€` : '' }}
+              {{ v.price ? ` — ${formatPrice(v.price)}` : '' }}
             </option>
           </select>
         </section>
@@ -318,7 +312,7 @@ watch(selectedPlatform, () => {
                   {{ selectedVehicle.year }}
                 </span>
                 <span v-if="selectedVehicle.price" class="spec-price">
-                  {{ formatPrice(selectedVehicle.price) }}&euro;
+                  {{ formatPrice(selectedVehicle.price) }}
                 </span>
                 <span v-if="selectedVehicle.location" class="spec-item">
                   {{ selectedVehicle.location }}

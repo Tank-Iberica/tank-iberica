@@ -23,7 +23,14 @@
         >
       </template>
       <div v-else class="card-img-placeholder">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <svg
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <circle cx="8.5" cy="8.5" r="1.5" />
           <path d="m21 15-5-5L5 21" />
@@ -33,12 +40,26 @@
       <!-- Nav arrows (only if multiple images) -->
       <template v-if="images.length > 1">
         <button class="img-nav img-nav-prev" aria-label="Previous" @click.prevent.stop="prevImage">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
         <button class="img-nav img-nav-next" aria-label="Next" @click.prevent.stop="nextImage">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
@@ -61,7 +82,9 @@
         @click.prevent.stop="onToggleFav"
       >
         <svg width="16" height="16" viewBox="0 0 24 24">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          <polygon
+            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+          />
         </svg>
       </button>
 
@@ -77,7 +100,14 @@
 
       <!-- Location badge (bottom-right) with pin icon + flag -->
       <span v-if="vehicle.location" class="badge-location">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="#C41E3A" stroke="#C41E3A" stroke-width="2">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="#C41E3A"
+          stroke="#C41E3A"
+          stroke-width="2"
+        >
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
           <circle cx="12" cy="10" r="3" fill="white" />
         </svg>
@@ -104,7 +134,9 @@
         </div>
         <div v-if="vehicle.rental_price" class="spec-item">
           <span class="spec-label">{{ $t('vehicle.rentalPrice') }}</span>
-          <span class="spec-value">{{ formatPrice(vehicle.rental_price) }}/{{ $t('catalog.month') }}</span>
+          <span class="spec-value"
+            >{{ formatPrice(vehicle.rental_price) }}/{{ $t('catalog.month') }}</span
+          >
         </div>
       </div>
     </div>
@@ -113,6 +145,7 @@
 
 <script setup lang="ts">
 import type { Vehicle } from '~/composables/useVehicles'
+import { formatPrice } from '~/composables/shared/useListingUtils'
 
 const props = defineProps<{
   vehicle: Vehicle
@@ -128,9 +161,10 @@ const currentImage = ref(0)
 const isFav = computed(() => isFavorite(props.vehicle.id))
 
 const locationLabel = computed(() => {
-  const loc = locale.value === 'en' && props.vehicle.location_en
-    ? props.vehicle.location_en
-    : props.vehicle.location
+  const loc =
+    locale.value === 'en' && props.vehicle.location_en
+      ? props.vehicle.location_en
+      : props.vehicle.location
   if (!loc) return ''
 
   const vehicleCountry = props.vehicle.location_country
@@ -186,8 +220,15 @@ function adjustTitleSize() {
   }
 }
 
-onMounted(() => { nextTick(adjustTitleSize) })
-watch(() => [props.vehicle.id, locale.value], () => { nextTick(adjustTitleSize) })
+onMounted(() => {
+  nextTick(adjustTitleSize)
+})
+watch(
+  () => [props.vehicle.id, locale.value],
+  () => {
+    nextTick(adjustTitleSize)
+  },
+)
 
 const priceText = computed(() => {
   if (props.vehicle.category === 'terceros') {
@@ -211,14 +252,6 @@ function prevImage() {
 
 function nextImage() {
   currentImage.value = currentImage.value >= images.value.length - 1 ? 0 : currentImage.value + 1
-}
-
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(price)
 }
 </script>
 
@@ -252,7 +285,7 @@ function formatPrice(price: number): string {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-color, #E5E7EB) 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-color, #e5e7eb) 100%);
 }
 
 .card-img {
@@ -290,7 +323,7 @@ function formatPrice(price: number): string {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-primary, #23424A);
+  color: var(--color-primary, #23424a);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   opacity: 1;
   transition: all 0.3s ease;
@@ -304,8 +337,12 @@ function formatPrice(price: number): string {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-.img-nav-prev { left: 0.5rem; }
-.img-nav-next { right: 0.5rem; }
+.img-nav-prev {
+  left: 0.5rem;
+}
+.img-nav-next {
+  right: 0.5rem;
+}
 
 /* Indicator dots */
 .image-indicators {
@@ -342,7 +379,7 @@ function formatPrice(price: number): string {
   position: absolute;
   top: 0;
   right: 0;
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: var(--color-white);
   padding: 0.6rem 1rem;
   font-size: 14px;
@@ -356,7 +393,11 @@ function formatPrice(price: number): string {
   position: absolute;
   bottom: 0;
   left: 0;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark, #1A4248) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark, #1a4248) 100%
+  );
   color: var(--color-white);
   padding: 0.5rem 0.9rem;
   font-size: 12px;
@@ -403,12 +444,12 @@ function formatPrice(price: number): string {
 
 /* Terceros banner — yellow-pastel with gold left border */
 .terceros-banner {
-  background: #FFFEF0;
-  border-left: 3px solid #F5D547;
+  background: #fffef0;
+  border-left: 3px solid #f5d547;
   padding: 0.3rem 0.5rem;
   font-size: 9px;
   line-height: 1.3;
-  color: #5A5A3D;
+  color: #5a5a3d;
   border-radius: 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -483,13 +524,13 @@ function formatPrice(price: number): string {
 }
 
 .fav-btn:hover svg {
-  fill: var(--color-gold, #F59E0B);
-  stroke: var(--color-gold, #F59E0B);
+  fill: var(--color-gold, #f59e0b);
+  stroke: var(--color-gold, #f59e0b);
 }
 
 .fav-btn.active svg {
-  fill: var(--color-gold, #F59E0B);
-  stroke: var(--color-gold, #F59E0B);
+  fill: var(--color-gold, #f59e0b);
+  stroke: var(--color-gold, #f59e0b);
 }
 
 /* ============================================
