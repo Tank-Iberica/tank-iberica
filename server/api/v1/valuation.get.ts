@@ -51,6 +51,13 @@ async function logUsage(
 }
 
 export default defineEventHandler(async (event): Promise<ValuationResponse> => {
+  // POSPUESTO — Activar cuando haya ≥500 transacciones históricas
+  // Ver FLUJOS-OPERATIVOS §15 para criterios de activación
+  throw createError({
+    statusCode: 503,
+    message: 'Valuation API coming soon. Insufficient market data for reliable estimates.',
+  })
+
   const query = getQuery(event)
   const authHeader = getHeader(event, 'authorization')
 

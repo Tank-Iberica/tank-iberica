@@ -443,3 +443,11 @@ Los endpoints quedan como orquestadores ligeros: validan input, llaman al servic
 | email/send.post.ts         | 415    | Baja (template engine)         |
 | verify-document.post.ts    | 365    | Baja (IA + verificacion)       |
 | cron/infra-metrics.post.ts | 337    | Baja (metricas autocontenidas) |
+
+## Módulos pospuestos
+
+- **API valoración de pago** (`/api/v1/valuation`): Pospuesto hasta ≥500 transacciones históricas (FLUJOS-OPERATIVOS §15). Endpoint devuelve 503.
+- **Suscripción datos sectoriales**: Pospuesto hasta ≥1.000 vehículos en catálogo
+- **Dataset anualizado**: Pospuesto hasta ≥12 meses de datos acumulados
+- **Merchandising completo** (cart, pago, PDF): Simplificado a formulario de interés (FLUJOS-OPERATIVOS §11). Reactivar cuando haya demanda medida.
+- **Idiomas 3-7** (fr, de, nl, pl, it): Arquitectura lista. Activar bajo demanda real (FLUJOS-OPERATIVOS §7).
