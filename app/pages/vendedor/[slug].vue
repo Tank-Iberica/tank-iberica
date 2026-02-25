@@ -218,6 +218,9 @@ onMounted(async () => {
                   />
                 </svg>
               </span>
+              <span v-if="profile.badge === 'founding'" class="founding-badge">
+                {{ $t('dealer.foundingBadge') }}
+              </span>
             </h1>
 
             <p v-if="sellerLocation" class="seller-header__location">
@@ -506,6 +509,20 @@ onMounted(async () => {
   color: var(--color-info);
   display: inline-flex;
   flex-shrink: 0;
+}
+
+.founding-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #f5d547 0%, #d4a017 100%);
+  color: #5a4500;
 }
 
 .seller-header__location {

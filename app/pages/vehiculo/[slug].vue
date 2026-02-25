@@ -244,7 +244,7 @@
           </div>
 
           <!-- AI Badge (AI Act compliance) -->
-          <UiAiBadge v-if="vehicle.ai_generated" type="generated" />
+          <UiAiBadge v-if="(vehicle as Record<string, unknown>).ai_generated" type="generated" />
 
           <!-- Seller Info (DSA compliance) -->
           <div v-if="sellerInfo" class="vehicle-seller-info">
@@ -303,6 +303,13 @@
           <div v-if="description" class="vehicle-description">
             <h2>{{ $t('vehicle.description') }}</h2>
             <p>{{ description }}</p>
+            <div class="vehicle-description-badges">
+              <UiAiDisclosureBadge
+                v-if="(vehicle as Record<string, unknown>).ai_generated"
+                type="generated"
+              />
+              <UiAiDisclosureBadge v-if="locale !== 'es'" type="translated" />
+            </div>
           </div>
           <!-- Price History -->
           <div v-if="vehicle.id" class="vehicle-price-history">
@@ -1114,6 +1121,13 @@ if (vehicle.value) {
   color: var(--text-secondary);
   line-height: var(--line-height-relaxed);
   white-space: pre-line;
+}
+
+.vehicle-description-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--spacing-3);
 }
 
 /* ============================================

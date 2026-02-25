@@ -57,6 +57,19 @@ export interface AuctionBid {
   created_at: string
 }
 
+/**
+ * Format cents to a EUR currency string (0 decimal places).
+ * Exported standalone so display components can import without calling useAuction().
+ */
+export function formatCents(cents: number): string {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(cents / 100)
+}
+
 export function useAuction() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient<any>()
@@ -168,6 +181,31 @@ export function useAuction() {
       })
 
       if (insertErr) throw insertErr
+
+      // --- Anti-snipe: extend auction if bid lands within the snipe window ---
+      if (auction.value) {
+        const now = Date.now()
+        const effectiveEnd = new Date(
+          auction.value.extended_until || auction.value.ends_at,
+        ).getTime()
+        const windowMs = auction.value.anti_snipe_seconds * 1000
+
+        if (effectiveEnd - now <= windowMs) {
+          // New deadline = now + anti_snipe_seconds
+          const newExtendedUntil = new Date(now + windowMs).toISOString()
+
+          const { error: updateErr } = await supabase
+            .from('auctions')
+            .update({ extended_until: newExtendedUntil })
+            .eq('id', auctionId)
+
+          if (!updateErr) {
+            // Reflect extension locally so the countdown updates immediately
+            auction.value.extended_until = newExtendedUntil
+          }
+        }
+      }
+
       return true
     } catch (e: unknown) {
       error.value = e instanceof Error ? e.message : 'Error placing bid'
@@ -266,18 +304,6 @@ export function useAuction() {
       return a.current_bid_cents + a.bid_increment_cents
     }
     return a.start_price_cents
-  }
-
-  /**
-   * Format cents to a currency string (EUR)
-   */
-  function formatCents(cents: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(cents / 100)
   }
 
   // Cleanup on unmount

@@ -141,6 +141,7 @@
 </template>
 
 <script setup lang="ts">
+import { formatCents } from '~/composables/useAuction'
 import type { Auction, AuctionBid } from '~/composables/useAuction'
 
 const props = defineProps<{
@@ -240,15 +241,6 @@ function isOwnBid(bid: AuctionBid): boolean {
 
 function anonymizeUser(userId: string): string {
   return userId.substring(0, 4) + '****'
-}
-
-function formatCents(cents: number): string {
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(cents / 100)
 }
 
 function relativeTime(dateStr: string): string {

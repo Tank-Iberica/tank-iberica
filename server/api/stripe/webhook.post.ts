@@ -73,6 +73,16 @@ export default defineEventHandler(async (event) => {
 
   const obj = stripeEvent.data.object
 
+  // Plan listing limits for vehicle pause/reactivation
+  const PLAN_LIMITS: Record<string, number> = {
+    free: 3,
+    basic: 20,
+    premium: Infinity,
+    founding: Infinity,
+  }
+  let vehiclesPaused = 0
+  let vehiclesReactivated = 0
+
   // Shorthand helpers bound to this request's config
   const patch = (table: string, filter: string, data: Record<string, unknown>) =>
     supabaseRestPatch(sbConfig, table, filter, data)
@@ -143,6 +153,57 @@ export default defineEventHandler(async (event) => {
         await patch('payments', `stripe_checkout_session_id=eq.${sessionId}`, {
           status: 'succeeded',
         })
+
+        // Mark trial usage if this checkout started a trial
+        const paymentStatus = session.payment_status as string
+        if (paymentStatus === 'no_payment_required') {
+          await patch('subscriptions', `user_id=eq.${userId}`, {
+            has_had_trial: true,
+          }).catch(() => null) // best-effort
+        }
+
+        // Reactivate paused vehicles up to the new plan limit
+        try {
+          const newLimit = PLAN_LIMITS[plan] ?? 3
+          const dealerData = await supabaseRestGet<{ id: string }>(
+            sbConfig,
+            'dealers',
+            `user_id=eq.${userId}`,
+            'id',
+          )
+          const dealerId = dealerData[0]?.id
+          if (dealerId) {
+            const publishedData = await supabaseRestGet<{ id: string }>(
+              sbConfig,
+              'vehicles',
+              `dealer_id=eq.${dealerId}&status=eq.published`,
+              'id',
+            )
+            const currentPublished = publishedData.length
+            const slotsAvailable = Number.isFinite(newLimit)
+              ? newLimit - currentPublished
+              : Infinity
+
+            if (slotsAvailable > 0) {
+              const pausedData = await supabaseRestGet<{ id: string }>(
+                sbConfig,
+                'vehicles',
+                `dealer_id=eq.${dealerId}&status=eq.paused&order=created_at.asc`,
+                'id',
+              )
+              const toReactivate = Number.isFinite(slotsAvailable)
+                ? pausedData.slice(0, slotsAvailable)
+                : pausedData
+              if (toReactivate.length > 0) {
+                const ids = toReactivate.map((v) => v.id).join(',')
+                await patch('vehicles', `id=in.(${ids})`, { status: 'published' })
+                vehiclesReactivated = toReactivate.length
+              }
+            }
+          }
+        } catch {
+          /* best-effort vehicle reactivation */
+        }
 
         // Auto-create invoice for the subscription payment
         const amountTotal = session.amount_total as number
@@ -302,6 +363,36 @@ export default defineEventHandler(async (event) => {
           plan: 'free',
         })
 
+        // Pause vehicles exceeding free plan limit (3)
+        if (cancelledUserInfo) {
+          try {
+            const dealerData = await supabaseRestGet<{ id: string }>(
+              sbConfig,
+              'dealers',
+              `user_id=eq.${cancelledUserInfo.userId}`,
+              'id',
+            )
+            const dealerId = dealerData[0]?.id
+            if (dealerId) {
+              const publishedData = await supabaseRestGet<{ id: string }>(
+                sbConfig,
+                'vehicles',
+                `dealer_id=eq.${dealerId}&status=eq.published&order=created_at.asc`,
+                'id',
+              )
+              const freeLimit = PLAN_LIMITS.free
+              if (publishedData.length > freeLimit) {
+                const toPause = publishedData.slice(freeLimit)
+                const ids = toPause.map((v) => v.id).join(',')
+                await patch('vehicles', `id=in.(${ids})`, { status: 'paused' })
+                vehiclesPaused = toPause.length
+              }
+            }
+          } catch {
+            /* best-effort vehicle pausing */
+          }
+        }
+
         // Send cancellation email
         if (cancelledUserInfo) {
           const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
@@ -324,5 +415,5 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  return { received: true }
+  return { received: true, vehiclesPaused, vehiclesReactivated }
 })

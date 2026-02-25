@@ -45,6 +45,8 @@ interface FavoriteRow {
 interface Notification {
   userId: string
   email: string
+  userName: string | null
+  locale: string
   vehicleTitle: string
   vehicleSlug: string
   oldPriceCents: number
@@ -60,6 +62,7 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event, body?.secret)
 
   const supabase = serverSupabaseServiceRole(event)
+  const _internalSecret = useRuntimeConfig().cronSecret || process.env.CRON_SECRET
   const now = new Date()
   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
 
@@ -149,6 +152,8 @@ export default defineEventHandler(async (event) => {
       notifications.push({
         userId: user.id,
         email: user.email,
+        userName: user.name,
+        locale: user.lang ?? 'es',
         vehicleTitle,
         vehicleSlug: vehicle.slug,
         oldPriceCents: drop.previous_price_cents,
@@ -158,22 +163,65 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // 5. Log notifications (email sending infrastructure handles actual delivery)
-  if (notifications.length > 0) {
-    console.info(
-      `[price-drop-alert] ${notifications.length} notification(s) to send for ${vehicleIds.length} vehicle(s)`,
-    )
-    for (const n of notifications) {
-      console.info(
-        `[price-drop-alert] -> user ${n.userId}: ${n.vehicleTitle} dropped ${n.dropPercent}%`,
+  // 5. Group notifications by userId so each user gets ONE email with all their drops
+  const byUser = new Map<string, Notification[]>()
+  for (const n of notifications) {
+    const existing = byUser.get(n.userId)
+    if (existing) {
+      existing.push(n)
+    } else {
+      byUser.set(n.userId, [n])
+    }
+  }
+
+  // 6. Send one email per user with all their price-dropped favorites
+  let emailsSent = 0
+
+  for (const [, userNotifications] of byUser) {
+    if (!userNotifications.length) continue
+    const first = userNotifications[0]!
+
+    const vehicles = userNotifications.map((n) => ({
+      title: n.vehicleTitle,
+      slug: n.vehicleSlug,
+      oldPrice: n.oldPriceCents,
+      newPrice: n.newPriceCents,
+      dropPercent: n.dropPercent,
+    }))
+
+    try {
+      await $fetch('/api/email/send', {
+        method: 'POST',
+        headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
+        body: {
+          templateKey: 'favorite_price_drop',
+          to: first.email,
+          userId: first.userId,
+          locale: first.locale,
+          variables: {
+            userName: first.userName ?? first.email,
+            vehicles,
+          },
+        },
+      })
+
+      emailsSent++
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+      console.error(
+        `[price-drop-alert] Failed to send email to user ${first.userId}: ${errorMessage}`,
       )
     }
   }
 
+  console.info(
+    `[price-drop-alert] ${emailsSent} email(s) sent for ${vehicleIds.length} vehicle(s) with price drops`,
+  )
+
   return {
     checked: drops.length,
-    sent: notifications.length,
-    notifications,
+    sent: emailsSent,
+    usersNotified: byUser.size,
     timestamp: now.toISOString(),
   }
 })

@@ -80,7 +80,7 @@ export default defineEventHandler(async (event) => {
 
   // Check if user already has a subscription (for stripe_customer_id + trial eligibility)
   const subRes = await fetch(
-    `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${user.id}&select=id,stripe_customer_id`,
+    `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${user.id}&select=id,stripe_customer_id,has_had_trial`,
     {
       headers: {
         apikey: supabaseKey,
@@ -90,7 +90,8 @@ export default defineEventHandler(async (event) => {
   )
   const subData = await subRes.json()
   const existingCustomerId = subData?.[0]?.stripe_customer_id || null
-  const isFirstSubscription = !Array.isArray(subData) || subData.length === 0
+  const hasHadTrial = subData?.[0]?.has_had_trial === true
+  const isFirstSubscription = (!Array.isArray(subData) || subData.length === 0) && !hasHadTrial
 
   // Determine price
   const unitAmount = PRICES[plan][interval]
