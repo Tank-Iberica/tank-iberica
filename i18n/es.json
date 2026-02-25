@@ -301,6 +301,21 @@
     "termsSeoTitle": "Términos y Condiciones — Tracciona",
     "termsSeoDescription": "Términos y condiciones de uso de la plataforma Tracciona."
   },
+  "shared": {
+    "status": {
+      "published": "Publicado",
+      "draft": "Borrador",
+      "paused": "Pausado",
+      "rented": "Alquilado",
+      "workshop": "En taller",
+      "maintenance": "En taller",
+      "sold": "Vendido"
+    },
+    "deleteModal": {
+      "typeToConfirm": "Escribe \"{word}\" para confirmar:",
+      "irreversible": "Esta accion no se puede deshacer."
+    }
+  },
   "common": {
     "loading": "Cargando",
     "error": "Ha ocurrido un error",

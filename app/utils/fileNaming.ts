@@ -13,13 +13,21 @@ export interface FileNamingData {
 }
 
 /**
- * Convert text to URL-safe slug
+ * Convert text to URL-safe slug.
+ * Accepts a single string or multiple parts (joined with '-').
+ * @example slugify('Volvo FH16') → 'volvo-fh16'
+ * @example slugify('Volvo', 'FH16', 2024) → 'volvo-fh16-2024'
  */
-export function slugify(text: string): string {
-  return text
+export function slugify(...parts: (string | number | null | undefined)[]): string {
+  const joined = parts
+    .filter((p): p is string | number => p != null && p !== '')
+    .map(String)
+    .join(' ')
+  return joined
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036F]/g, '')
+    .trim()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 }

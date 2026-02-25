@@ -301,6 +301,21 @@
     "termsSeoTitle": "Terms and Conditions — Tracciona",
     "termsSeoDescription": "Terms and conditions of use for the Tracciona platform."
   },
+  "shared": {
+    "status": {
+      "published": "Published",
+      "draft": "Draft",
+      "paused": "Paused",
+      "rented": "Rented",
+      "workshop": "In workshop",
+      "maintenance": "In workshop",
+      "sold": "Sold"
+    },
+    "deleteModal": {
+      "typeToConfirm": "Type \"{word}\" to confirm:",
+      "irreversible": "This action cannot be undone."
+    }
+  },
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",
