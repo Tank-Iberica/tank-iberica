@@ -3601,5 +3601,16 @@
       "legalNotice": "Aviso legal",
       "legalText": "No se tomaran acciones legales contra investigadores de seguridad que actuen de buena fe, respeten esta politica y no causen dano a los usuarios ni a la plataforma."
     }
+  },
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Introduce un email válido",
+    "passwordTooShort": "Mínimo 6 caracteres",
+    "passwordMismatch": "Las contraseñas no coinciden"
+  },
+  "offline": {
+    "title": "Sin conexión",
+    "message": "No tienes conexión a internet. Comprueba tu conexión e inténtalo de nuevo.",
+    "retry": "Reintentar"
   }
 }

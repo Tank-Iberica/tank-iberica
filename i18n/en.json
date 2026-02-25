@@ -3596,5 +3596,16 @@
       "legalNotice": "Legal notice",
       "legalText": "No legal action will be taken against security researchers who act in good faith, respect this policy, and do not cause harm to users or the platform."
     }
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email",
+    "passwordTooShort": "Minimum 6 characters",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "offline": {
+    "title": "You are offline",
+    "message": "You don't have an internet connection. Check your connection and try again.",
+    "retry": "Retry"
   }
 }

@@ -164,7 +164,12 @@
               required
               autocomplete="email"
               :placeholder="$t('auth.emailPlaceholder')"
+              :aria-invalid="!!errors.email || undefined"
+              :aria-describedby="errors.email ? 'error-reg-email' : undefined"
             >
+            <p v-if="errors.email" id="error-reg-email" class="field-error" role="alert">
+              {{ errors.email }}
+            </p>
           </div>
 
           <div class="field">
@@ -177,8 +182,13 @@
               autocomplete="new-password"
               :placeholder="$t('auth.passwordPlaceholder')"
               minlength="6"
+              :aria-invalid="!!errors.password || undefined"
+              :aria-describedby="errors.password ? 'error-reg-password' : undefined"
             >
-            <span class="field-hint">{{ $t('auth.passwordHint') }}</span>
+            <p v-if="errors.password" id="error-reg-password" class="field-error" role="alert">
+              {{ errors.password }}
+            </p>
+            <span v-else class="field-hint">{{ $t('auth.passwordHint') }}</span>
           </div>
 
           <div class="field">
@@ -191,10 +201,20 @@
               autocomplete="new-password"
               :placeholder="$t('auth.confirmPasswordPlaceholder')"
               minlength="6"
+              :aria-invalid="!!errors.confirmPassword || undefined"
+              :aria-describedby="errors.confirmPassword ? 'error-reg-confirm' : undefined"
             >
+            <p
+              v-if="errors.confirmPassword"
+              id="error-reg-confirm"
+              class="field-error"
+              role="alert"
+            >
+              {{ errors.confirmPassword }}
+            </p>
           </div>
 
-          <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
+          <p v-if="errorMsg" class="error-msg" role="alert">{{ errorMsg }}</p>
 
           <button type="submit" class="btn-primary" :disabled="loading">
             <span v-if="loading" class="spinner" />
@@ -238,6 +258,46 @@ const form = reactive({
   password: '',
   confirmPassword: '',
 })
+
+const errors = reactive({ email: '', password: '', confirmPassword: '' })
+
+watch(
+  () => form.email,
+  (val) => {
+    if (val && !val.includes('@')) {
+      errors.email = t('validation.invalidEmail')
+    } else {
+      errors.email = ''
+    }
+  },
+)
+
+watch(
+  () => form.password,
+  (val) => {
+    if (val && val.length > 0 && val.length < 6) {
+      errors.password = t('validation.passwordTooShort')
+    } else {
+      errors.password = ''
+    }
+    if (form.confirmPassword && val !== form.confirmPassword) {
+      errors.confirmPassword = t('validation.passwordMismatch')
+    } else {
+      errors.confirmPassword = ''
+    }
+  },
+)
+
+watch(
+  () => form.confirmPassword,
+  (val) => {
+    if (val && val !== form.password) {
+      errors.confirmPassword = t('validation.passwordMismatch')
+    } else {
+      errors.confirmPassword = ''
+    }
+  },
+)
 
 function selectType(type: UserType) {
   selectedType.value = type
@@ -395,6 +455,12 @@ useHead({
   display: block;
   font-size: var(--font-size-xs);
   color: var(--text-auxiliary);
+  margin-top: var(--spacing-1);
+}
+
+.field-error {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
   margin-top: var(--spacing-1);
 }
 

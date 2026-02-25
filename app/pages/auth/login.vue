@@ -42,7 +42,12 @@
             required
             autocomplete="email"
             :placeholder="$t('auth.emailPlaceholder')"
+            :aria-invalid="!!errors.email || undefined"
+            :aria-describedby="errors.email ? 'error-login-email' : undefined"
           >
+          <p v-if="errors.email" id="error-login-email" class="field-error" role="alert">
+            {{ errors.email }}
+          </p>
         </div>
 
         <div class="field">
@@ -55,10 +60,15 @@
             autocomplete="current-password"
             :placeholder="$t('auth.passwordPlaceholder')"
             minlength="6"
+            :aria-invalid="!!errors.password || undefined"
+            :aria-describedby="errors.password ? 'error-login-password' : undefined"
           >
+          <p v-if="errors.password" id="error-login-password" class="field-error" role="alert">
+            {{ errors.password }}
+          </p>
         </div>
 
-        <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
+        <p v-if="errorMsg" class="error-msg" role="alert">{{ errorMsg }}</p>
 
         <button type="submit" class="btn-primary" :disabled="loading">
           <span v-if="loading" class="spinner" />
@@ -92,6 +102,23 @@ const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const errorMsg = ref('')
+const errors = reactive({ email: '', password: '' })
+
+watch(email, (val) => {
+  if (val && !val.includes('@')) {
+    errors.email = t('validation.invalidEmail')
+  } else {
+    errors.email = ''
+  }
+})
+
+watch(password, (val) => {
+  if (val && val.length > 0 && val.length < 6) {
+    errors.password = t('validation.passwordTooShort')
+  } else {
+    errors.password = ''
+  }
+})
 
 async function handleLogin() {
   errorMsg.value = ''
@@ -213,6 +240,12 @@ useHead({
 
 .field input {
   width: 100%;
+}
+
+.field-error {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-1);
 }
 
 .error-msg {
