@@ -74,10 +74,50 @@ const emojiCategories = [
 // Quick emojis shown below input (most common)
 const quickEmojis = ['🔔', '📢', '⚠️', '🎉', '🚛', '✅']
 
+// User panel banner state
+const userPanelForm = ref({
+  text_es: '',
+  text_en: '',
+  url: '',
+  active: false,
+  from_date: null as string | null,
+  to_date: null as string | null,
+})
+const userPanelSaving = ref(false)
+
+async function fetchUserPanelBanner() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient<any>()
+  const { data } = await supabase
+    .from('config')
+    .select('value')
+    .eq('key', 'user_panel_banner')
+    .single()
+  if (data?.value) {
+    const config = typeof data.value === 'string' ? JSON.parse(data.value) : data.value
+    Object.assign(userPanelForm.value, config)
+  }
+}
+
+async function saveUserPanelBanner() {
+  userPanelSaving.value = true
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const supabase = useSupabaseClient<any>()
+    await supabase.from('config').upsert({ key: 'user_panel_banner', value: userPanelForm.value })
+    toast.success('admin.banner.saved')
+  } catch {
+    toast.error('admin.banner.saveError')
+  } finally {
+    userPanelSaving.value = false
+  }
+}
+
 // Load data
 onMounted(async () => {
   await fetchBanner()
   formData.value = { ...banner.value }
+  await fetchUserPanelBanner()
 })
 
 // Watch for changes in banner from store
@@ -373,6 +413,51 @@ const statusClass = computed(() => {
           </div>
         </div>
       </Transition>
+    </div>
+
+    <!-- User Panel Banner -->
+    <div class="user-panel-banner-section">
+      <div class="section-header">
+        <h2>{{ $t('admin.banner.userPanelTitle') }}</h2>
+      </div>
+      <p class="admin-hint">{{ $t('admin.banner.userPanelHint') }}</p>
+
+      <div class="form-card">
+        <div class="form-group">
+          <label>{{ $t('admin.banner.textEs') }}</label>
+          <input v-model="userPanelForm.text_es" type="text" class="form-input" >
+        </div>
+        <div class="form-group">
+          <label>{{ $t('admin.banner.textEn') }}</label>
+          <input v-model="userPanelForm.text_en" type="text" class="form-input" >
+        </div>
+        <div class="form-group">
+          <label>{{ $t('admin.banner.url') }}</label>
+          <input v-model="userPanelForm.url" type="url" class="form-input" >
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>{{ $t('admin.banner.fromDate') }}</label>
+            <input v-model="userPanelForm.from_date" type="date" class="form-input" >
+          </div>
+          <div class="form-group">
+            <label>{{ $t('admin.banner.toDate') }}</label>
+            <input v-model="userPanelForm.to_date" type="date" class="form-input" >
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="toggle-label">
+            <input v-model="userPanelForm.active" type="checkbox" class="toggle-input" >
+            <span class="toggle-switch" />
+            <span class="toggle-text">{{ $t('admin.banner.active') }}</span>
+          </label>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" :disabled="userPanelSaving" @click="saveUserPanelBanner">
+            {{ userPanelSaving ? $t('common.saving') : $t('common.save') }}
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Emoji Picker Modal -->
@@ -867,6 +952,33 @@ const statusClass = computed(() => {
 .slide-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+/* User Panel Banner Section */
+.user-panel-banner-section {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 2px solid #e5e7eb;
+}
+
+.admin-hint {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary, #23424a);
+  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 /* Mobile responsive */

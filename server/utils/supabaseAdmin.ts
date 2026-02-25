@@ -15,8 +15,9 @@ export function useSupabaseAdmin(event: H3Event) {
  */
 export function useSupabaseRestHeaders(): { url: string; headers: Record<string, string> } | null {
   const config = useRuntimeConfig()
-  const supabaseUrl = config.public?.supabaseUrl || process.env.SUPABASE_URL
-  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabaseUrl = (config.public?.supabaseUrl as string | undefined) || process.env.SUPABASE_URL
+  const supabaseKey =
+    (config.supabaseServiceRoleKey as string | undefined) || process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !supabaseKey) return null
 

@@ -4098,6 +4098,1529 @@ Este inventario sirve como checklist para futuras auditorías y para Claude Code
 
 ---
 
+## SESIÓN 37 — Seguridad CI: Semgrep + Snyk + tests de seguridad automatizados + mensajes error
+
+> Cierra las brechas de seguridad que las sesiones 34/34b/35 dejaron como manuales: automatizar tests de seguridad en CI, añadir análisis estático (Semgrep CE) y monitorizar dependencias (Snyk free). También sanitiza mensajes de error en producción.
+> **Origen:** Recomendaciones 100 puntos §1 (seguridad) + Semgrep CE + Snyk free.
+
+**Leer:**
+
+1. `.github/workflows/ci.yml` — CI actual
+2. `server/api/` — Endpoints a analizar
+3. `server/middleware/security-headers.ts` — CSP actual
+4. `package.json` — Dependencias
+
+**Hacer:**
+
+### Parte A — SEMGREP CE EN CI
+
+Añadir Semgrep Community Edition como paso del CI. Es gratuito, sin límites, open source.
+
+**Crear `.github/workflows/security.yml`:**
+
+```yaml
+name: Security Scan
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1' # Cada lunes a las 6am
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+      - run: semgrep scan --config auto --config p/typescript --config p/nodejs --config p/owasp-top-ten --error --json --output semgrep-results.json .
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-results
+          path: semgrep-results.json
+
+  npm-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm audit --audit-level=high
+```
+
+**Reglas Semgrep seleccionadas:**
+
+- `auto` — reglas recomendadas por Semgrep para el lenguaje detectado
+- `p/typescript` — patrones inseguros específicos de TypeScript
+- `p/nodejs` — problemas de Node.js (path traversal, exec, etc.)
+- `p/owasp-top-ten` — las 10 vulnerabilidades más comunes
+
+`--error` hace que el CI falle si encuentra algo crítico.
+
+---
+
+### Parte B — SNYK FREE: MONITORIZAR DEPENDENCIAS
+
+Snyk free permite 400 tests/mes de Open Source. Suficiente para 1 repo.
+
+**Opción 1 (recomendada): Conectar via web**
+
+1. Ir a https://app.snyk.io/org/ → Settings → Integrations → GitHub
+2. Autorizar el repo Tracciona
+3. Snyk escanea `package.json` y `package-lock.json` automáticamente
+4. Abre PRs automáticas si encuentra vulnerabilidades
+
+**Opción 2: Añadir a CI (más control)**
+
+Añadir al workflow `security.yml`:
+
+```yaml
+snyk:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - run: npm ci
+    - uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+```
+
+Para obtener `SNYK_TOKEN`: crear cuenta en snyk.io → Account Settings → API Token → añadir como GitHub Secret.
+
+**Nota:** Snyk free es suficiente para 1-3 developers. No escala por usuarios de la web sino por committers.
+
+---
+
+### Parte C — TESTS DE SEGURIDAD AUTOMATIZADOS
+
+La sesión 35 define 13 checks manuales. Convertirlos en tests ejecutables con Vitest.
+
+**Crear `tests/security/auth-endpoints.test.ts`:**
+
+```typescript
+import { describe, it, expect } from 'vitest'
+
+const BASE = process.env.TEST_BASE_URL || 'http://localhost:3000'
+
+// Helpers
+async function fetchAPI(path: string, options?: RequestInit) {
+  return fetch(`${BASE}${path}`, {
+    ...options,
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+  })
+}
+
+describe('Auth: endpoints requieren autenticación', () => {
+  const protectedEndpoints = [
+    {
+      path: '/api/invoicing/create-invoice',
+      method: 'POST',
+      body: { dealerId: 'fake', serviceType: 'subscription', amountCents: 100 },
+    },
+    { path: '/api/invoicing/export-csv', method: 'GET' },
+    {
+      path: '/api/auction-deposit',
+      method: 'POST',
+      body: { auctionId: 'fake', registrationId: 'fake' },
+    },
+    { path: '/api/images/process', method: 'POST', body: { url: 'https://example.com/img.jpg' } },
+    { path: '/api/social/generate-posts', method: 'POST', body: { vehicleId: 'fake' } },
+    { path: '/api/verify-document', method: 'POST', body: { vehicleId: 'fake' } },
+    { path: '/api/dgt-report', method: 'POST', body: { vehicleId: 'fake' } },
+    { path: '/api/stripe/checkout', method: 'POST', body: { plan: 'basic', interval: 'month' } },
+    { path: '/api/stripe/portal', method: 'POST', body: {} },
+    { path: '/api/account/delete', method: 'POST', body: {} },
+  ]
+
+  for (const ep of protectedEndpoints) {
+    it(`${ep.method} ${ep.path} sin auth → 401`, async () => {
+      const res = await fetchAPI(ep.path, {
+        method: ep.method,
+        body: ep.body ? JSON.stringify(ep.body) : undefined,
+      })
+      expect(res.status).toBe(401)
+    })
+  }
+})
+
+describe('Webhooks: rechazan sin firma', () => {
+  it('Stripe webhook sin firma → 400', async () => {
+    const res = await fetchAPI('/api/stripe/webhook', {
+      method: 'POST',
+      body: JSON.stringify({ type: 'test' }),
+    })
+    expect([400, 500]).toContain(res.status) // 400 si falta firma, 500 si falta config
+  })
+
+  it('WhatsApp webhook sin firma → rechazado', async () => {
+    const res = await fetchAPI('/api/whatsapp/webhook', {
+      method: 'POST',
+      body: JSON.stringify({ object: 'whatsapp_business_account' }),
+    })
+    // En producción rechaza; en dev puede pasar (warn)
+    expect(res.status).toBeLessThan(500)
+  })
+})
+
+describe('Crons: rechazan sin CRON_SECRET', () => {
+  const crons = [
+    '/api/cron/freshness-check',
+    '/api/cron/search-alerts',
+    '/api/cron/publish-scheduled',
+    '/api/cron/favorite-price-drop',
+    '/api/cron/dealer-weekly-stats',
+  ]
+
+  for (const path of crons) {
+    it(`${path} sin secret → 401`, async () => {
+      const res = await fetchAPI(path, { method: 'POST', body: '{}' })
+      expect(res.status).toBe(401)
+    })
+  }
+})
+
+describe('Security headers', () => {
+  it('Página pública tiene CSP y X-Frame-Options', async () => {
+    const res = await fetch(`${BASE}/`)
+    expect(res.headers.get('x-frame-options')).toBeTruthy()
+    expect(res.headers.get('x-content-type-options')).toBe('nosniff')
+  })
+})
+```
+
+**Añadir al CI (`ci.yml`):**
+
+```yaml
+security-tests:
+  runs-on: ubuntu-latest
+  needs: [build]
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+    - run: npm ci
+    - run: npm run build
+    - run: npx nuxi preview &
+    - run: sleep 5
+    - run: TEST_BASE_URL=http://localhost:3000 npx vitest run tests/security/
+```
+
+---
+
+### Parte D — MENSAJES DE ERROR GENÉRICOS EN PRODUCCIÓN
+
+Revisar todos los `createError` del proyecto. En producción, los mensajes no deben filtrar información interna.
+
+**Crear `server/utils/safeError.ts`:**
+
+```typescript
+import { createError } from 'h3'
+
+const isProd = process.env.NODE_ENV === 'production'
+
+const GENERIC_MESSAGES: Record<number, string> = {
+  400: 'Solicitud inválida',
+  401: 'Autenticación requerida',
+  403: 'Operación no permitida',
+  404: 'Recurso no encontrado',
+  429: 'Demasiadas solicitudes',
+  500: 'Error interno del servidor',
+}
+
+export function safeError(statusCode: number, devMessage: string) {
+  return createError({
+    statusCode,
+    message: isProd ? GENERIC_MESSAGES[statusCode] || 'Error' : devMessage,
+  })
+}
+```
+
+**Instrucción para Claude Code:** Buscar todos los `createError` en `server/api/` que contengan mensajes detallados (nombres de tabla, nombres de columna, stack traces, o detalles de queries). Reemplazar por `safeError()` importándolo de `../../utils/safeError`. NO cambiar los 401/403 que ya tienen mensajes genéricos.
+
+```bash
+grep -rn 'createError.*message.*table\|createError.*message.*column\|createError.*message.*query\|createError.*message.*supabase\|createError.*message.*SQL' server/api/ --include='*.ts'
+```
+
+---
+
+### Parte E — SECURITY.TXT + POLÍTICA DE DIVULGACIÓN
+
+Alternativa gratuita a bug bounty. Investigadores de seguridad buscan este archivo.
+
+**Crear `public/.well-known/security.txt`:**
+
+```
+Contact: mailto:security@tracciona.com
+Expires: 2027-02-24T00:00:00.000Z
+Preferred-Languages: es, en
+Canonical: https://tracciona.com/.well-known/security.txt
+Policy: https://tracciona.com/seguridad/politica-divulgacion
+```
+
+**Crear página `/seguridad/politica-divulgacion`** (puede ser una página estática):
+
+- Qué reportar y qué no
+- Cómo reportar (email security@)
+- Compromiso de respuesta (72h acuse, 30d resolución)
+- Hall of fame para quienes reporten
+- NO se tomarán acciones legales contra investigadores de buena fe
+
+---
+
+### Parte F — REVISIÓN CSP: ELIMINAR UNSAFE-INLINE/EVAL
+
+Revisar `server/middleware/security-headers.ts` y verificar que la Content Security Policy NO permita `unsafe-inline` ni `unsafe-eval` donde no sea estrictamente necesario.
+
+```bash
+# Ver CSP actual
+grep -A 20 'content-security-policy\|Content-Security-Policy' server/middleware/security-headers.ts
+```
+
+**Si encuentra `unsafe-inline` en `script-src`:**
+
+- Reemplazar por nonces o hashes si es posible. Nuxt 3 soporta `useHead` con nonces.
+- Si Nuxt requiere `unsafe-inline` para hidración (común en SSR): documentar en comentario POR QUÉ es necesario y que es una limitación conocida de Nuxt.
+- Si hay `unsafe-eval`: eliminar. Solo Chart.js podría necesitarlo en admin; en ese caso, aplicar CSP diferente para `/admin/*` vs rutas públicas.
+
+**Si la CSP es restrictiva y funciona:** Documentar en ARQUITECTURA-ESCALABILIDAD.md sección "Seguridad" que la CSP está endurecida.
+
+---
+
+### Parte G — .ENV.EXAMPLE DOCUMENTADO
+
+El `.env.example` debe documentar CADA variable con comentario explicativo:
+
+```bash
+# Verificar que existe y tiene todas las variables
+diff <(grep -oP '^[A-Z_]+=' .env.example | sort) <(grep -oP '^[A-Z_]+=' .env | sort)
+```
+
+**Claude Code debe:**
+
+1. Leer `.env` actual (sin valores sensibles)
+2. Verificar que `.env.example` tiene TODAS las variables con placeholder y comentario
+3. Formato esperado:
+
+```
+# Supabase — URL del proyecto (Dashboard → Settings → API)
+SUPABASE_URL=https://xxxxx.supabase.co
+# Supabase — Anon key (público, seguro para frontend)
+SUPABASE_KEY=eyJ...
+# Supabase — Service role key (NUNCA exponer en frontend)
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+# Stripe — Clave secreta (Dashboard → Developers → API keys)
+STRIPE_SECRET_KEY=sk_test_...
+```
+
+---
+
+### Resumen archivos sesión 37
+
+| Archivo                                 | Tipo                                |
+| --------------------------------------- | ----------------------------------- |
+| `.github/workflows/security.yml`        | CI: Semgrep CE + npm audit + Snyk   |
+| `tests/security/auth-endpoints.test.ts` | Tests automatizados de seguridad    |
+| `server/utils/safeError.ts`             | Mensajes de error genéricos en prod |
+| `public/.well-known/security.txt`       | Política de divulgación             |
+| `server/middleware/security-headers.ts` | Revisión CSP (unsafe-inline/eval)   |
+| `.env.example`                          | Documentar todas las variables      |
+
+### Orden de ejecución
+
+1. Crear `safeError.ts` y reemplazar `createError` detallados
+2. Crear `tests/security/auth-endpoints.test.ts`
+3. Ejecutar tests localmente: `npx vitest run tests/security/`
+4. Crear `.github/workflows/security.yml` (Semgrep + npm audit)
+5. Configurar Snyk free (web o CI)
+6. Crear `security.txt`
+7. Revisar CSP en security-headers.ts (unsafe-inline/eval)
+8. Documentar .env.example con comentarios
+9. Verificar — `npm run build` + todos los tests pasan
+
+### Tests mínimos
+
+- [ ] Todos los endpoints protegidos devuelven 401 sin auth
+- [ ] Webhooks rechazan sin firma
+- [ ] Crons rechazan sin CRON_SECRET
+- [ ] Semgrep no reporta críticos en el código
+- [ ] npm audit sin vulnerabilidades high/critical
+- [ ] security.txt accesible en `/.well-known/security.txt`
+- [ ] CSP en security-headers.ts no tiene unsafe-inline/eval innecesario (o documentado por qué)
+- [ ] .env.example tiene TODAS las variables con comentario explicativo
+
+---
+
+## SESIÓN 38 — Claridad documental: single source of truth + onboarding + convenciones
+
+> Unifica la documentación fragmentada en un punto de entrada único, clasifica docs como vivos vs históricos, crea guía de onboarding y documenta convenciones de código.
+> **Origen:** Recomendaciones 100 puntos §6 (claridad) + §2d (convenciones) + §5a (nombre package).
+
+**Leer:**
+
+1. `docs/` — Estructura actual de documentación
+2. `docs/progreso.md` — Estado de progreso
+3. `CLAUDE.md` — Instrucciones para Claude Code
+4. `package.json` — Name actual
+
+**Hacer:**
+
+### Parte A — FIX TRIVIAL: NOMBRE PACKAGE.JSON
+
+```bash
+# Cambiar "tank-iberica" a "tracciona" en package.json
+sed -i 's/"name": "tank-iberica"/"name": "tracciona"/' package.json
+```
+
+Verificar que no hay otras referencias a "tank-iberica" en el código (excepto migraciones históricas que no se tocan):
+
+```bash
+grep -rn 'tank-iberica' --include='*.ts' --include='*.vue' --include='*.json' --include='*.md' . | grep -v node_modules | grep -v .git | grep -v migrations
+```
+
+---
+
+### Parte B — README-PROYECTO.md (SINGLE SOURCE OF TRUTH)
+
+**Crear `README-PROYECTO.md`** en la raíz del proyecto. Este es el PUNTO DE ENTRADA para cualquier persona (o IA) que llegue al proyecto.
+
+```markdown
+# Tracciona
+
+> Grupo de marketplaces B2B verticales. Mismo código, N verticales.
+
+## Qué es
+
+Plataforma multi-vertical de compraventa profesional. Cada vertical (vehículos, maquinaria, hostelería...) comparte el mismo código base, configurado por `vertical_config` en BD.
+
+## Estado actual
+
+Ver [`docs/ESTADO-REAL-PRODUCTO.md`](docs/ESTADO-REAL-PRODUCTO.md) para el estado real de cada módulo.
+
+## Cómo empezar
+
+Ver [Guía de onboarding](#guía-de-onboarding) más abajo.
+
+## Stack
+
+- **Frontend:** Nuxt 3 + TypeScript + Tailwind (tokens.css)
+- **Backend:** Server routes Nuxt (Nitro) → Cloudflare Workers
+- **BD:** Supabase (PostgreSQL + RLS + Realtime)
+- **Pagos:** Stripe (suscripciones, depósitos, checkout)
+- **Imágenes:** Cloudinary → CF Images (pipeline híbrido)
+- **Email:** Resend + templates en BD
+- **WhatsApp:** Meta Cloud API + Claude Vision
+- **CI/CD:** GitHub Actions → Cloudflare Pages
+- **Seguridad CI:** Semgrep CE + Snyk free + npm audit
+
+## Documentación
+
+### Documentos VIVOS (fuente de verdad)
+
+| Documento                                                                                       | Qué contiene                                     |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [`INSTRUCCIONES-MAESTRAS.md`](docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md)                    | Sesiones de ejecución (1-38+) para Claude Code   |
+| [`ESTADO-REAL-PRODUCTO.md`](docs/ESTADO-REAL-PRODUCTO.md)                                       | Estado real de cada módulo (generado del código) |
+| [`contexto-global.md`](docs/tracciona-docs/contexto-global.md)                                  | Mapa del proyecto para Claude Code               |
+| [`CLAUDE.md`](CLAUDE.md)                                                                        | Instrucciones rápidas para Claude Code           |
+| [`INVENTARIO-ENDPOINTS.md`](docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)             | Todos los endpoints con auth y propósito         |
+| [`ARQUITECTURA-ESCALABILIDAD.md`](docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md) | Diseño multi-cluster, costes, decisiones         |
+
+### Documentos HISTÓRICOS (referencia, no modificar)
+
+| Documento                | Por qué existe                                        |
+| ------------------------ | ----------------------------------------------------- |
+| `docs/plan-v3/`          | Diseño original pre-implementación                    |
+| `docs/hoja-de-ruta/`     | Roadmap inicial (superado por INSTRUCCIONES-MAESTRAS) |
+| `docs/guia-claude-code/` | Guía original para IA (superado por CLAUDE.md)        |
+| `docs/legacy/`           | Documentos de la versión anterior                     |
+
+### Anexos (referencia técnica)
+
+| Carpeta                           | Contenido                                             |
+| --------------------------------- | ----------------------------------------------------- |
+| `docs/tracciona-docs/anexos/`     | Anexos A-X: especificaciones detalladas por módulo    |
+| `docs/tracciona-docs/referencia/` | FLUJOS-OPERATIVOS, INVENTARIO-ENDPOINTS, ARQUITECTURA |
+
+## Guía de onboarding
+
+### Para Claude Code
+
+1. Leer `CLAUDE.md` (instrucciones rápidas)
+2. Leer `contexto-global.md` (mapa completo)
+3. Si te piden ejecutar una sesión: leer `INSTRUCCIONES-MAESTRAS.md` → sesión N
+
+### Para un desarrollador humano
+
+1. Clonar el repo
+2. `cp .env.example .env` y rellenar variables
+3. `npm install`
+4. `npm run dev`
+5. Leer este README y luego `ESTADO-REAL-PRODUCTO.md`
+6. Para entender una funcionalidad: buscar en `INSTRUCCIONES-MAESTRAS.md` la sesión correspondiente
+
+### Comandos útiles
+
+| Comando                          | Qué hace               |
+| -------------------------------- | ---------------------- |
+| `npm run dev`                    | Servidor de desarrollo |
+| `npm run build`                  | Build de producción    |
+| `npm run lint`                   | Lint                   |
+| `npm run typecheck`              | TypeScript check       |
+| `npx vitest run`                 | Tests unitarios        |
+| `npx vitest run tests/security/` | Tests de seguridad     |
+| `npx playwright test`            | Tests E2E              |
+| `npx nuxi analyze`               | Analizar bundle        |
+```
+
+---
+
+### Parte C — MARCAR DOCS HISTÓRICOS
+
+Claude Code debe añadir un banner al inicio de cada documento histórico:
+
+```bash
+for dir in "docs/plan-v3" "docs/hoja-de-ruta" "docs/guia-claude-code" "docs/legacy"; do
+  find "$dir" -name '*.md' -exec sed -i '1i\> ⚠️ **DOCUMENTO HISTÓRICO.** Este documento es referencia del diseño original. La fuente de verdad actual es [`README-PROYECTO.md`](../../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](../tracciona-docs/INSTRUCCIONES-MAESTRAS.md).\n' {} \;
+done
+```
+
+---
+
+### Parte D — CONVENCIONES DE CÓDIGO (CONTRIBUTING.md)
+
+**Crear `CONTRIBUTING.md`:**
+
+```markdown
+# Convenciones de código
+
+## Tamaño de archivos
+
+- Componentes Vue: máximo 500 líneas. Si crece, extraer sub-componentes.
+- Server routes: máximo 200 líneas. Si crece, extraer lógica a `server/utils/` o `server/services/`.
+
+## Composables
+
+- Un composable por dominio: `useVehicles`, `useAuction`, `useAuth`.
+- Si necesitas compartir entre admin y dashboard: `composables/shared/`.
+- NO crear composables genéricos tipo `useHelper` o `useUtils`.
+
+## Componentes
+
+- Específicos de admin: `components/admin/`
+- Específicos de dashboard: `components/dashboard/`
+- Compartidos: `components/shared/`
+- Genéricos (UI): `components/ui/`
+
+## Server routes
+
+- Auth: siempre `serverSupabaseUser(event)` al inicio.
+- Service role: solo cuando RLS no es suficiente. Verificar ownership después.
+- Errores: usar `safeError()` para mensajes genéricos en producción.
+
+## i18n
+
+- Textos UI: siempre `$t('key')`, nunca texto hardcodeado.
+- Datos dinámicos: `localizedField(item.name, locale)`.
+- NUNCA acceder a `.name_es` o `.name_en` directamente.
+
+## Tests
+
+- Seguridad: `tests/security/` — se ejecutan en CI
+- Unitarios: `tests/unit/` — Vitest
+- E2E: `tests/e2e/` — Playwright
+```
+
+---
+
+### Parte E — SCRIPT GENERADOR DE ESTADO-REAL-PRODUCTO
+
+Script que genera automáticamente el documento de estado del producto a partir del código.
+
+**Crear `scripts/generate-estado-real.sh`:**
+
+````bash
+#!/bin/bash
+# Genera docs/ESTADO-REAL-PRODUCTO.md a partir del código real
+OUTPUT="docs/ESTADO-REAL-PRODUCTO.md"
+
+echo "# Estado real del producto" > $OUTPUT
+echo "" >> $OUTPUT
+echo "_Generado automáticamente: $(date '+%Y-%m-%d %H:%M')_" >> $OUTPUT
+echo "" >> $OUTPUT
+
+echo "## Páginas" >> $OUTPUT
+echo '```' >> $OUTPUT
+find app/pages -name '*.vue' | sort >> $OUTPUT
+echo '```' >> $OUTPUT
+echo "" >> $OUTPUT
+
+echo "## Composables" >> $OUTPUT
+echo '```' >> $OUTPUT
+find app/composables -name '*.ts' | sort >> $OUTPUT
+echo '```' >> $OUTPUT
+echo "" >> $OUTPUT
+
+echo "## Server API" >> $OUTPUT
+echo '```' >> $OUTPUT
+find server/api -name '*.ts' | sort >> $OUTPUT
+echo '```' >> $OUTPUT
+echo "" >> $OUTPUT
+
+echo "## Migraciones BD" >> $OUTPUT
+echo '```' >> $OUTPUT
+ls supabase/migrations/ >> $OUTPUT
+echo '```' >> $OUTPUT
+echo "" >> $OUTPUT
+
+echo "## Middlewares" >> $OUTPUT
+echo '```' >> $OUTPUT
+find server/middleware -name '*.ts' | sort >> $OUTPUT
+find app/middleware -name '*.ts' | sort >> $OUTPUT
+echo '```' >> $OUTPUT
+echo "" >> $OUTPUT
+
+echo "## Utils" >> $OUTPUT
+echo '```' >> $OUTPUT
+find server/utils -name '*.ts' | sort >> $OUTPUT
+echo '```' >> $OUTPUT
+echo "" >> $OUTPUT
+
+echo "Total páginas: $(find app/pages -name '*.vue' | wc -l)" >> $OUTPUT
+echo "Total composables: $(find app/composables -name '*.ts' | wc -l)" >> $OUTPUT
+echo "Total endpoints: $(find server/api -name '*.ts' | wc -l)" >> $OUTPUT
+echo "Total migraciones: $(ls supabase/migrations/ | wc -l)" >> $OUTPUT
+````
+
+Hacerlo ejecutable: `chmod +x scripts/generate-estado-real.sh`
+
+Puede añadirse como paso opcional en CI o ejecutarse manualmente antes de releases.
+
+---
+
+### Resumen archivos sesión 38
+
+| Archivo                           | Tipo                           |
+| --------------------------------- | ------------------------------ |
+| `README-PROYECTO.md`              | Single source of truth         |
+| `CONTRIBUTING.md`                 | Convenciones de código         |
+| `scripts/generate-estado-real.sh` | Generador automático de estado |
+| `package.json`                    | Fix nombre a "tracciona"       |
+| Docs históricos                   | Banner "⚠️ HISTÓRICO"          |
+
+### Orden de ejecución
+
+1. Fix nombre package.json
+2. Crear README-PROYECTO.md
+3. Marcar docs históricos con banner
+4. Crear CONTRIBUTING.md
+5. Crear script generador de estado
+6. Ejecutar script: `bash scripts/generate-estado-real.sh`
+7. Verificar — `npm run build`
+
+---
+
+## SESIÓN 39 — UX: accesibilidad, Core Web Vitals, formularios y code-splitting
+
+> Auditoría de accesibilidad, medición de Core Web Vitals, revisión de formularios críticos, y code-splitting agresivo para reducir bundles.
+> **Origen:** Recomendaciones 100 puntos §7 (UX) + §3a (chunks <500KB).
+
+**Leer:**
+
+1. `app/pages/index.vue` — Home (ruta crítica para LCP)
+2. `app/pages/vehiculo/[slug].vue` — Ficha (ruta crítica)
+3. `app/pages/auth/login.vue` — Login (formulario crítico)
+4. `nuxt.config.ts` — Configuración actual
+5. `.lighthouserc.js` — Config Lighthouse existente
+
+**Hacer:**
+
+### Parte A — AUDITORÍA DE ACCESIBILIDAD
+
+Ejecutar Lighthouse en modo accesibilidad para las 5 rutas críticas:
+
+```bash
+# Asegurar que lighthouse está instalado
+npm install -g lighthouse
+
+# Ejecutar en las rutas principales (requiere servidor corriendo)
+for route in "/" "/vehiculo/ejemplo-slug" "/subastas" "/auth/login" "/dashboard"; do
+  lighthouse "http://localhost:3000$route" \
+    --only-categories=accessibility \
+    --output=json \
+    --output-path="./lighthouse-a11y-$(echo $route | tr '/' '-').json" \
+    --chrome-flags='--headless'
+done
+```
+
+**Errores comunes a corregir:**
+
+1. **Imágenes sin alt:** Buscar `<img` y `<NuxtImg` sin `alt` o con `alt=""`
+
+```bash
+grep -rn '<img\|<NuxtImg' app/ --include='*.vue' | grep -v 'alt=' | head -20
+```
+
+Fix: añadir `alt` descriptivo o `alt=""` + `aria-hidden="true"` si es decorativa.
+
+2. **Formularios sin labels:** Buscar `<input` sin `<label>` asociado o sin `aria-label`
+
+```bash
+grep -rn '<input' app/ --include='*.vue' | grep -v 'aria-label\|id=' | head -20
+```
+
+3. **Contraste insuficiente:** Verificar en tokens.css que los colores de texto sobre fondo cumplen ratio 4.5:1 (AA).
+
+4. **Focus visible:** Verificar que al navegar con Tab, los elementos interactivos muestran outline visible.
+
+```css
+/* Añadir a tokens.css si no existe */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+```
+
+---
+
+### Parte B — CODE-SPLITTING: CHUNKS < 500KB
+
+Objetivo: que el chunk inicial (home, catálogo) sea < 250KB y ningún chunk supere 500KB.
+
+**Paso 1: Analizar bundle actual**
+
+```bash
+npx nuxi analyze
+```
+
+**Paso 2: Identificar imports pesados en rutas públicas**
+
+```bash
+# Buscar imports estáticos de librerías pesadas en páginas públicas
+grep -rn "import.*Chart\|import.*xlsx\|import.*exceljs\|import.*mapbox\|import.*leaflet\|import.*editor\|import.*dompurify" app/pages/ --include='*.vue' | grep -v admin | grep -v dashboard
+```
+
+**Paso 3: Configurar manual chunks en nuxt.config.ts**
+
+```typescript
+// nuxt.config.ts
+vite: {
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // Separar dependencias pesadas de admin
+          if (id.includes('chart.js') || id.includes('Chart')) return 'vendor-charts'
+          if (id.includes('exceljs') || id.includes('xlsx')) return 'vendor-excel'
+          if (id.includes('dompurify')) return 'vendor-sanitize'
+          // Separar Stripe
+          if (id.includes('@stripe')) return 'vendor-stripe'
+        }
+      }
+    }
+  }
+}
+```
+
+**Paso 4: Lazy imports para componentes pesados de admin**
+
+En páginas admin que usan Chart.js o editores pesados:
+
+```vue
+<script setup>
+const AdminChart = defineAsyncComponent(() => import('~/components/admin/AdminChart.vue'))
+</script>
+```
+
+**Paso 5: Verificar resultado**
+
+```bash
+npx nuxi analyze
+# Comparar con resultados del paso 1
+```
+
+---
+
+### Parte C — FORMULARIOS CRÍTICOS: VALIDACIÓN Y ERRORES
+
+**Formularios a revisar (por prioridad):**
+
+1. Login (`app/pages/auth/login.vue`)
+2. Registro (`app/pages/auth/register.vue`)
+3. Contacto/Lead (`app/components/vehicle/VehicleContactForm.vue` o similar)
+4. Alta de vehículo (`app/pages/dashboard/vehiculos/nuevo.vue`)
+5. Checkout Stripe
+
+**Para cada formulario, verificar:**
+
+- [ ] Validación en tiempo real (no solo al submit)
+- [ ] Mensajes de error en el idioma del usuario (`$t('validation.required')`)
+- [ ] No se pierden datos si falla el submit (el formulario mantiene los valores)
+- [ ] Botón de submit deshabilitado mientras se envía (evitar doble envío)
+- [ ] Feedback visual de carga (spinner o skeleton)
+- [ ] `aria-invalid="true"` en campos con error
+- [ ] `aria-describedby` apuntando al mensaje de error
+
+**Patrón recomendado:**
+
+```vue
+<div class="form-field">
+  <label :for="'field-email'">{{ $t('form.email') }}</label>
+  <input
+    id="field-email"
+    v-model="form.email"
+    type="email"
+    :aria-invalid="!!errors.email"
+    :aria-describedby="errors.email ? 'error-email' : undefined"
+  />
+  <p v-if="errors.email" id="error-email" class="error" role="alert">
+    {{ errors.email }}
+  </p>
+</div>
+```
+
+---
+
+### Parte D — CORE WEB VITALS: MEDICIÓN Y OBJETIVOS
+
+Definir objetivos y medir:
+
+| Métrica | Objetivo | Ruta crítica                        |
+| ------- | -------- | ----------------------------------- |
+| LCP     | < 2.5s   | Home, catálogo, ficha               |
+| INP     | < 200ms  | Catálogo (filtros), ficha (galería) |
+| CLS     | < 0.1    | Home, ficha                         |
+
+**Añadir medición en producción:**
+
+Si no existe, crear `app/plugins/web-vitals.client.ts`:
+
+```typescript
+import { onCLS, onINP, onLCP } from 'web-vitals'
+
+export default defineNuxtPlugin(() => {
+  if (process.env.NODE_ENV === 'production') {
+    onCLS(console.log)
+    onINP(console.log)
+    onLCP(console.log)
+    // Opcionalmente enviar a Sentry o analytics
+  }
+})
+```
+
+Instalar: `npm install web-vitals`
+
+**Añadir a Lighthouse CI (`.lighthouserc.js`):**
+
+```javascript
+assert: {
+  assertions: {
+    'largest-contentful-paint': ['warn', { maxNumericValue: 2500 }],
+    'cumulative-layout-shift': ['warn', { maxNumericValue: 0.1 }],
+    'interactive': ['warn', { maxNumericValue: 3500 }],
+  }
+}
+```
+
+---
+
+### Parte E — TOUCH Y MÓVIL: VERIFICACIÓN
+
+```bash
+# Buscar elementos interactivos que podrían ser pequeños
+grep -rn 'class=.*btn.*sm\|class=.*text-xs.*cursor\|padding:.*2px' app/ --include='*.vue' | head -20
+```
+
+Verificar manualmente en Chrome DevTools (360px viewport):
+
+- [ ] No hay overflow horizontal en ninguna página pública
+- [ ] Filtros del catálogo son usables (bottom sheet o fullscreen en móvil)
+- [ ] Galería de imágenes funciona con swipe
+- [ ] Botones de contacto (WhatsApp, tel) tienen área ≥ 44px
+
+---
+
+### Parte F — DIVIDIR COMPONENTES VUE > 500 LÍNEAS
+
+Las recomendaciones de modulabilidad piden archivos < 400 líneas. Identificar y dividir.
+
+```bash
+# Identificar componentes/páginas Vue de más de 500 líneas
+find app/pages app/components -name '*.vue' -exec sh -c 'lines=$(wc -l < "$1"); if [ $lines -gt 500 ]; then echo "$lines $1"; fi' _ {} \; | sort -rn
+```
+
+**Para cada archivo >500 líneas:**
+
+1. Identificar bloques lógicos (tabs, secciones, modales, formularios)
+2. Extraer cada bloque a un subcomponente: `ComponenteSeccionX.vue`
+3. La página original queda como "orquestador" que importa subcomponentes
+4. Mantener props/emits mínimos; usar composables para estado compartido
+
+**NO dividir si:**
+
+- El archivo es largo solo por tipos/interfaces → extraer tipos a `types/`
+- El archivo es largo por template repetitivo → extraer a componente reutilizable
+- Dividir rompería la cohesión lógica (todo el contenido está íntimamente relacionado)
+
+---
+
+### Parte G — PWA: MENSAJE OFFLINE AMIGABLE
+
+Cuando no hay conexión, la PWA debe mostrar un mensaje amigable en lugar de error genérico del navegador.
+
+**Verificar si existe `app/pages/offline.vue`:**
+
+```bash
+ls app/pages/offline.vue 2>/dev/null || echo "NO EXISTE"
+```
+
+**Si no existe, crear `app/pages/offline.vue`:**
+
+```vue
+<template>
+  <div class="offline-page">
+    <h1>{{ $t('offline.title') }}</h1>
+    <p>{{ $t('offline.message') }}</p>
+    <button @click="retry">{{ $t('offline.retry') }}</button>
+  </div>
+</template>
+
+<script setup>
+const retry = () => window.location.reload()
+</script>
+```
+
+**Añadir a `i18n/es.json`:**
+
+```json
+"offline": {
+  "title": "Sin conexión",
+  "message": "No tienes conexión a internet. Comprueba tu conexión e inténtalo de nuevo.",
+  "retry": "Reintentar"
+}
+```
+
+**Verificar en `nuxt.config.ts`** que el service worker (workbox) tiene fallback a esta página para navegaciones offline.
+
+**Prioridad:** 🟢 Baja. Solo mejora UX en escenarios edge.
+
+---
+
+### Resumen archivos sesión 39
+
+| Archivo                            | Tipo                                  |
+| ---------------------------------- | ------------------------------------- |
+| `app/plugins/web-vitals.client.ts` | Métricas de rendimiento en producción |
+| `nuxt.config.ts`                   | manualChunks para code-splitting      |
+| `.lighthouserc.js`                 | Umbrales de Core Web Vitals           |
+| `app/assets/css/tokens.css`        | Fix focus-visible si falta            |
+| Formularios críticos               | Validación + aria + feedback          |
+| Imágenes                           | alt text                              |
+| Componentes Vue >500 líneas        | Dividir en subcomponentes             |
+| `app/pages/offline.vue`            | Mensaje offline PWA                   |
+
+### Orden de ejecución
+
+1. Instalar web-vitals: `npm install web-vitals`
+2. Crear plugin web-vitals
+3. Ejecutar `npx nuxi analyze` (baseline)
+4. Configurar manualChunks en nuxt.config.ts
+5. Lazy-load componentes pesados de admin
+6. Ejecutar `npx nuxi analyze` (verificar mejora)
+7. Identificar y dividir componentes Vue >500 líneas
+8. Auditoría Lighthouse accesibilidad en 5 rutas
+9. Corregir errores de a11y (alt, labels, contraste, focus)
+10. Revisar formularios críticos
+11. Verificar touch/móvil en 360px
+12. Crear página offline.vue para PWA
+13. Verificar — `npm run build` + Lighthouse score ≥ 90 en a11y
+
+---
+
+## SESIÓN 40 — Monetización avanzada: trials, dunning, métricas por canal y canales nuevos
+
+> Completa los flujos de monetización: trial periods, dunning (reintentos de pago), métricas de ingresos por canal, y cierra al menos 2 canales de ingreso adicionales.
+> **Origen:** Recomendaciones 100 puntos §4 (monetización).
+
+**Leer:**
+
+1. `server/api/stripe/` — Flujos Stripe actuales
+2. `server/api/stripe/webhook.post.ts` — Eventos de pago
+3. `docs/tracciona-docs/anexos/E-sistema-pro.md` — Sistema Pro
+4. `app/pages/admin/facturacion.vue` — Panel actual
+5. Sesión 17 (Stripe) y sesión 27 (Métricas) en INSTRUCCIONES-MAESTRAS
+
+**Hacer:**
+
+### Parte A — TRIAL PERIOD PARA SUSCRIPCIONES
+
+Añadir trial de 14 días para nuevos dealers.
+
+**Modificar `server/api/stripe/checkout.post.ts`:**
+
+Añadir `subscription_data.trial_period_days: 14` al crear la sesión de checkout SI el dealer no ha tenido nunca una suscripción antes.
+
+```typescript
+// Verificar si es primer trial
+const { data: existingSub } = await supabase
+  .from('subscriptions')
+  .select('id')
+  .eq('dealer_id', dealerId)
+  .limit(1)
+  .single()
+
+const sessionParams: any = {
+  mode: 'subscription',
+  // ... resto de params
+}
+
+if (!existingSub) {
+  sessionParams.subscription_data = {
+    trial_period_days: 14,
+    metadata: { dealer_id: dealerId },
+  }
+}
+```
+
+**UI:** En la página de precios, mostrar "14 días gratis" solo si el dealer no ha tenido trial.
+
+---
+
+### Parte B — DUNNING: FLUJO DE REINTENTOS DE PAGO
+
+Stripe ya hace reintentos automáticos (hasta 4 intentos en 3 semanas). Lo que falta es reaccionar a esos eventos.
+
+**Añadir handlers en `stripe/webhook.post.ts`:**
+
+```typescript
+case 'invoice.payment_failed': {
+  const invoice = stripeEvent.data.object
+  const dealerId = invoice.subscription_details?.metadata?.dealer_id
+  const attemptCount = invoice.attempt_count
+
+  if (attemptCount === 1) {
+    // Primer fallo: email amable
+    await sendEmail(dealerId, 'payment-failed-soft')
+  } else if (attemptCount === 3) {
+    // Tercer fallo: email urgente + banner en dashboard
+    await sendEmail(dealerId, 'payment-failed-urgent')
+    await supabase.from('dealers').update({ payment_warning: true }).eq('id', dealerId)
+  }
+  break
+}
+
+case 'customer.subscription.deleted': {
+  // Suscripción cancelada (tras agotar reintentos o cancelación manual)
+  const sub = stripeEvent.data.object
+  const dealerId = sub.metadata?.dealer_id
+
+  // Downgrade: mantener datos, quitar acceso premium
+  await supabase.from('dealers').update({
+    plan: 'free',
+    plan_expires_at: new Date().toISOString(),
+    payment_warning: false,
+  }).eq('id', dealerId)
+
+  // Ocultar vehículos que excedan límite free
+  // (NO eliminar, solo cambiar status)
+  await sendEmail(dealerId, 'subscription-cancelled')
+  break
+}
+```
+
+**Crear 2 templates de email:**
+
+- `payment-failed-soft` — "Tu pago no se ha procesado. Actualiza tu método de pago."
+- `payment-failed-urgent` — "Tu suscripción se cancelará pronto. Actualiza ahora."
+
+---
+
+### Parte C — MÉTRICAS DE MONETIZACIÓN POR CANAL
+
+Ampliar el dashboard de métricas (sesión 27) con desglose por canal de ingresos.
+
+**Añadir a la página de admin de métricas:**
+
+```typescript
+// Composable useRevenueMetrics()
+const channels = [
+  {
+    key: 'subscriptions',
+    label: 'Suscripciones',
+    query: supabase.from('payments').select('amount_cents').eq('type', 'subscription'),
+  },
+  {
+    key: 'auction_premium',
+    label: 'Comisión subastas',
+    query: supabase.from('payments').select('amount_cents').eq('type', 'auction_premium'),
+  },
+  {
+    key: 'ads',
+    label: 'Publicidad',
+    query: supabase.from('payments').select('amount_cents').eq('type', 'ad'),
+  },
+  {
+    key: 'verification',
+    label: 'Verificaciones DGT',
+    query: supabase.from('payments').select('amount_cents').eq('type', 'verification'),
+  },
+  {
+    key: 'transport',
+    label: 'Transporte',
+    query: supabase.from('payments').select('amount_cents').eq('type', 'transport'),
+  },
+]
+
+// Calcular MRR, ARR por canal
+```
+
+**Mostrar en admin:** Tabla con MRR por canal + gráfico de evolución mensual (Chart.js ya disponible).
+
+---
+
+### Parte D — 2 CANALES NUEVOS: API VALORACIÓN + WIDGET EMBEBIBLE
+
+**Canal 1: API de valoración (cerrar modelo de precios)**
+
+El endpoint `server/api/v1/valuation.get.ts` ya existe. Falta:
+
+1. Crear tabla `api_keys` (dealer_id, key, plan, requests_this_month, max_requests)
+2. Middleware de API key: verificar header `x-api-key`, contar requests
+3. Planes: Free (50 consultas/mes), Basic (€29/mes, 500), Premium (€99/mes, 5000)
+4. Endpoint `server/api/v1/valuation.get.ts` verifica API key en lugar de auth de usuario
+5. Página en dashboard dealer para gestionar su API key
+
+**Canal 2: Widget embebible para dealers**
+
+1. Crear `server/api/widget/[dealerId].get.ts` — devuelve HTML+CSS+JS embebible
+2. El widget muestra los últimos 6 vehículos del dealer como grid responsive
+3. Cada vehículo enlaza a la ficha en Tracciona (con UTM para tracking)
+4. Página en dashboard con código de embed: `<iframe src="https://tracciona.com/api/widget/DEALER_ID" />`
+5. Plan gratuito: con "Powered by Tracciona". Plan premium: sin marca.
+
+---
+
+### Parte E — CUANTIFICACIÓN DE LEAD GEN
+
+Añadir tracking de acciones de contacto para cuantificar el valor de la plataforma para dealers.
+
+**1. Eventos a trackear (añadir a analytics/composable existente):**
+
+```typescript
+// app/composables/useLeadTracking.ts
+export function useLeadTracking() {
+  const track = (event: string, data: Record<string, unknown>) => {
+    const supabase = useSupabaseClient()
+    supabase.from('activity_logs').insert({
+      action: event,
+      metadata: data,
+      created_at: new Date().toISOString(),
+    })
+  }
+
+  return {
+    trackContactClick: (
+      vehicleId: string,
+      dealerId: string,
+      method: 'phone' | 'whatsapp' | 'form',
+    ) => track('contact_click', { vehicle_id: vehicleId, dealer_id: dealerId, method }),
+    trackFichaView: (vehicleId: string, dealerId: string) =>
+      track('ficha_view', { vehicle_id: vehicleId, dealer_id: dealerId }),
+    trackFavorite: (vehicleId: string) => track('favorite_add', { vehicle_id: vehicleId }),
+  }
+}
+```
+
+**2. Métricas para dashboard dealer (ampliar `useDealerDashboard`):**
+
+- Total contactos recibidos (phone + whatsapp + form) este mes
+- Fichas vistas este mes
+- Ratio contacto/vista (conversión)
+- Comparativa con mes anterior
+
+**3. Métricas para admin (ampliar `useRevenueMetrics` de Parte C):**
+
+- Leads totales generados por la plataforma
+- Valor estimado por lead (configurable en admin, ej: €15/lead)
+- Valor total generado para dealers = leads × valor/lead
+
+Esto permite decir a dealers "Tracciona te generó 47 contactos este mes, valor estimado: €705".
+
+---
+
+### Resumen archivos sesión 40
+
+| Archivo                                | Tipo                                       |
+| -------------------------------------- | ------------------------------------------ |
+| `server/api/stripe/checkout.post.ts`   | Añadir trial_period_days                   |
+| `server/api/stripe/webhook.post.ts`    | Handlers dunning                           |
+| Templates email                        | payment-failed-soft, payment-failed-urgent |
+| `app/composables/useRevenueMetrics.ts` | Métricas por canal                         |
+| `app/composables/useLeadTracking.ts`   | Tracking de contactos y valor lead         |
+| `server/api/v1/valuation.get.ts`       | Cerrar con API key                         |
+| `server/api/widget/[dealerId].get.ts`  | Widget embebible                           |
+| Migración `00058_api_keys.sql`         | Tabla api_keys                             |
+
+### Orden de ejecución
+
+1. Trial period en checkout
+2. Handlers dunning en webhook
+3. Templates de email de pago fallido
+4. Métricas de ingresos por canal
+5. API de valoración con API keys
+6. Widget embebible
+7. Verificar — `npm run build` + tests
+
+---
+
+## SESIÓN 41 — Arquitectura: capa de servicios, diagrama técnico, umbrales y refactors
+
+> Introduce capa de servicios para endpoints largos, crea diagrama de arquitectura técnico, define umbrales de alertas, y verifica extensibilidad del sistema multi-vertical.
+> **Origen:** Recomendaciones 100 puntos §5 (arquitectura) + §3d-e (escalabilidad operativa, umbrales) + §8e (extensibilidad).
+
+**Leer:**
+
+1. `server/api/market-report.get.ts` — Endpoint largo a refactorizar
+2. `docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md` — Ampliar
+3. Sesión 33 (infraestructura) en INSTRUCCIONES-MAESTRAS
+
+**Hacer:**
+
+### Parte A — CAPA DE SERVICIOS (server/services/)
+
+Para endpoints con >200 líneas de lógica, extraer a servicios por dominio.
+
+**Crear `server/services/` con:**
+
+```
+server/services/
+  marketReport.ts    ← Lógica extraída de market-report.get.ts
+  billing.ts         ← Lógica compartida de invoicing/checkout/webhook
+  vehicles.ts        ← Queries comunes de vehículos (si se repiten)
+```
+
+**Patrón:**
+
+```typescript
+// server/services/marketReport.ts
+export async function generateMarketReport(supabase: any, options: ReportOptions) {
+  // Toda la lógica pesada aquí
+  return reportData
+}
+
+// server/api/market-report.get.ts (refactorizado)
+import { generateMarketReport } from '../services/marketReport'
+
+export default defineEventHandler(async (event) => {
+  // Solo: validar, llamar servicio, devolver
+  const options = getQuery(event)
+  const supabase = serverSupabaseServiceRole(event)
+  return generateMarketReport(supabase, options)
+})
+```
+
+Claude Code debe identificar endpoints >200 líneas:
+
+```bash
+find server/api/ -name '*.ts' -exec sh -c 'lines=$(wc -l < "$1"); if [ $lines -gt 200 ]; then echo "$lines $1"; fi' _ {} \; | sort -rn
+```
+
+---
+
+### Parte B — DIAGRAMA DE ARQUITECTURA TÉCNICO
+
+Añadir al final de `ARQUITECTURA-ESCALABILIDAD.md`:
+
+```
+## Diagrama de flujo de datos
+
+┌───────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│   Usuario     │─────│  Cloudflare CDN   │─────│  Cloudflare Pages │
+│  (navegador)  │     │  (cache + WAF)    │     │  (Nuxt 3 SSR)    │
+└───────────────┘     └──────────────────┘     └────────┬─────────┘
+                                                       │
+                    ┌─────────────────┬─────────┴─────────┬─────────────────┐
+                    │                 │                   │                 │
+              ┌─────┴───────┐ ┌────┴───────────┐ ┌───┴─────────┐ ┌───┴─────────┐
+              │  Supabase   │ │    Stripe      │ │  Cloudinary  │ │   Resend     │
+              │  (BD+RLS+   │ │ (pagos+webhook)│ │  → CF Images │ │  (emails)    │
+              │  Realtime)  │ │               │ │             │ │             │
+              └─────────────┘ └───────────────┘ └─────────────┘ └─────────────┘
+                                    │
+                    ┌─────────────┴──────────────┐
+                    │   WhatsApp Meta Cloud API  │
+                    │   + Claude Vision (IA)      │
+                    └─────────────────────────────┘
+
+Crons (Workers CF):
+  freshness-check, search-alerts, publish-scheduled,
+  favorite-price-drop, dealer-weekly-stats, auto-auction,
+  whatsapp-retry, infra-metrics
+
+Seguridad CI:
+  Semgrep CE → análisis estático
+  Snyk free → dependencias
+  npm audit → vulnerabilidades
+  Vitest → tests de auth/IDOR
+```
+
+---
+
+### Parte C — UMBRALES Y ALERTAS FORMALES
+
+Ampliar la sección de monitorización de sesión 33 con umbrales concretos.
+
+**Añadir a la tabla de config de `infra_thresholds` (o a vertical_config):**
+
+| Métrica                         | Umbral warning  | Umbral crítico | Acción         |
+| ------------------------------- | --------------- | -------------- | -------------- |
+| Supabase DB size                | 80% del plan    | 90%            | Email admin    |
+| Supabase API requests/min       | 500             | 800            | Email + Sentry |
+| Cloudinary transformaciones/mes | 80% del plan    | 95%            | Email admin    |
+| CF Images stored                | 80%             | 95%            | Email admin    |
+| Error rate (Sentry)             | >1% de requests | >5%            | Sentry alert   |
+| Stripe webhook failures         | 3 consecutivos  | 5              | Email + Sentry |
+| Build time CI                   | >5 min          | >10 min        | Warning en PR  |
+| Bundle size (mayor chunk)       | >500KB          | >800KB         | Warning en PR  |
+
+**Implementación:** El cron `infra-metrics.post.ts` (sesión 33) ya recopila métricas. Añadir comparación contra umbrales y envío de alerta si se superan.
+
+---
+
+### Parte C-BIS — DOCUMENTAR RATE LIMIT Y WAF EN ARQUITECTURA-ESCALABILIDAD
+
+La sesión 34 implementó rate limiting en middleware pero no se documentó en el documento de referencia de escalabilidad.
+
+**Añadir sección a `ARQUITECTURA-ESCALABILIDAD.md`:**
+
+```markdown
+## Rate Limiting y WAF
+
+### Middleware de rate limiting (server/middleware/rate-limit.ts)
+
+- Implementado en sesión 34
+- Basado en IP para rutas públicas
+- Límites por tipo de ruta:
+  | Ruta | Límite | Ventana |
+  |---|---|---|
+  | /api/auth/_ | 10 req | 1 min |
+  | /api/stripe/checkout | 5 req | 1 min |
+  | /api/email/send | 3 req | 1 min |
+  | /api/_ (general) | 60 req | 1 min |
+  | Páginas públicas | Sin límite | — (cache CDN) |
+
+### Cloudflare WAF (configuración recomendada)
+
+- Bot Fight Mode: activado
+- Security Level: Medium
+- Rate Limiting Rules (CF Dashboard):
+  - /api/auth/\*: 20 req/min por IP → Challenge
+  - /api/stripe/\*: 10 req/min por IP → Block
+  - /api/cron/\*: Solo IPs de Cloudflare Workers → Block resto
+- Nota: El rate limiting del middleware es la primera línea; CF WAF es la segunda.
+```
+
+---
+
+### Parte D — VERIFICACIÓN DE EXTENSIBILIDAD
+
+Script que verifica que añadir una nueva categoría, idioma o mercado es "solo datos".
+
+**Crear `scripts/verify-extensibility.sh`:**
+
+```bash
+#!/bin/bash
+echo "=== Verificación de extensibilidad ==="
+echo ""
+
+# 1. ¿Hay categorías hardcodeadas en el código?
+echo "1. Categorías hardcodeadas:"
+grep -rn 'vehiculos\|maquinaria\|hosteleria\|horecaria' app/ server/ --include='*.ts' --include='*.vue' | grep -v node_modules | grep -v '.nuxt' | grep -v 'i18n' | grep -v 'migrations' | head -10
+echo ""
+
+# 2. ¿Hay idiomas hardcodeados (que no sean config)?
+echo "2. Idiomas hardcodeados fuera de config:"
+grep -rn "'es'\|'en'\|'fr'" app/ --include='*.ts' --include='*.vue' | grep -v 'i18n' | grep -v 'locale' | grep -v 'node_modules' | grep -v '.nuxt' | head -10
+echo ""
+
+# 3. ¿Hay URLs/dominios hardcodeados?
+echo "3. Dominios hardcodeados:"
+grep -rn 'tracciona\.com\|tank-iberica\.com' app/ server/ --include='*.ts' --include='*.vue' | grep -v node_modules | head -10
+echo ""
+
+echo "Si alguna sección muestra resultados, hay acoplamiento que corregir."
+```
+
+---
+
+### Parte E — DECISIONES SOBRE MÓDULOS PARCIALES
+
+La valoración identifica 2 módulos parciales. Documentar decisiones:
+
+**1. Landing pages builder avanzado:**
+Decisión: POSPONER. Las landing pages SEO dinámicas de la sesión 4 cubren el caso de uso principal. Un builder visual tipo Webflow es excesivo para la fase actual. Se reconsiderará si dealers lo piden.
+
+**2. OAuth social (Google, Facebook login):**
+Decisión: IMPLEMENTAR MÍNIMO. Google Login ya está en la sesión 24. Facebook Login se pospone (bajo uso en B2B). Si se necesita, Supabase Auth lo soporta con 2 líneas de config.
+
+Documentar en ESTADO-REAL-PRODUCTO.md.
+
+---
+
+### Resumen archivos sesión 41
+
+| Archivo                                 | Tipo                                             |
+| --------------------------------------- | ------------------------------------------------ |
+| `server/services/marketReport.ts`       | Refactor de endpoint largo                       |
+| `server/services/billing.ts`            | Lógica compartida de pagos                       |
+| `ARQUITECTURA-ESCALABILIDAD.md`         | Diagrama + umbrales + rate limit/WAF documentado |
+| `scripts/verify-extensibility.sh`       | Check de extensibilidad                          |
+| `server/api/cron/infra-metrics.post.ts` | Comparación contra umbrales                      |
+| `ESTADO-REAL-PRODUCTO.md`               | Decisiones sobre módulos parciales               |
+
+### Orden de ejecución
+
+1. Identificar endpoints >200 líneas
+2. Crear server/services/ y refactorizar
+3. Añadir diagrama a ARQUITECTURA-ESCALABILIDAD.md
+4. Definir umbrales y añadir alertas a infra-metrics
+5. Crear script verify-extensibility.sh y ejecutar
+6. Documentar decisiones sobre módulos parciales
+7. Verificar — `npm run build` + tests
+
+---
+
+## SESIÓN 42 — Testing E2E: user journeys + flujos de punta a punta con Playwright
+
+> Define y ejecuta 8 user journeys completos con Playwright. Estos tests verifican que los flujos críticos funcionan de extremo a extremo, no solo endpoints individuales.
+> **Origen:** Recomendaciones 100 puntos §7c (flujos de punta a punta) + §8a (sesiones pendientes).
+
+**Leer:**
+
+1. `playwright.config.ts` — Configuración actual
+2. `tests/e2e/` — Tests E2E existentes (si los hay)
+3. Sesión 20 (Testing) en INSTRUCCIONES-MAESTRAS
+
+**Hacer:**
+
+### Parte A — DEFINIR 8 USER JOURNEYS
+
+Cada journey es un test E2E completo que simula un usuario real. Se ejecutan con Playwright contra servidor de preview.
+
+**Crear `tests/e2e/journeys/`:**
+
+| #   | Journey              | Archivo                    | Flujo                                                                |
+| --- | -------------------- | -------------------------- | -------------------------------------------------------------------- |
+| 1   | Comprador anónimo    | `anonymous-browse.spec.ts` | Home → catálogo → filtrar → ver ficha → ver galería → volver         |
+| 2   | Comprador registrado | `buyer-register.spec.ts`   | Registro → confirmar email → login → favorito → alerta búsqueda      |
+| 3   | Comprador contacta   | `buyer-contact.spec.ts`    | Login → ficha → clic WhatsApp/teléfono → formulario contacto         |
+| 4   | Dealer publica       | `dealer-publish.spec.ts`   | Login dealer → dashboard → nuevo vehículo → rellenar → publicar      |
+| 5   | Dealer gestiona      | `dealer-manage.spec.ts`    | Login dealer → dashboard → editar vehículo → pausar → marcar vendido |
+| 6   | Admin aprueba        | `admin-approve.spec.ts`    | Login admin → productos → cambiar estado → verificar                 |
+| 7   | Subasta básica       | `auction-flow.spec.ts`     | Login → subastas → inscribirse → pujar (mock)                        |
+| 8   | SEO landing          | `seo-landing.spec.ts`      | Visitar landing SEO → verificar h1, meta, schema.org, enlaces        |
+
+### Parte B — IMPLEMENTACIÓN PATRÓN
+
+```typescript
+// tests/e2e/journeys/anonymous-browse.spec.ts
+import { test, expect } from '@playwright/test'
+
+test.describe('Journey: Comprador anónimo navega catálogo', () => {
+  test('Home → catálogo → filtrar → ficha → galería', async ({ page }) => {
+    // 1. Home
+    await page.goto('/')
+    await expect(page).toHaveTitle(/Tracciona/)
+
+    // 2. Navegar a catálogo (clic en CTA o enlace)
+    await page.click('text=Ver cat\u00e1logo') // Ajustar selector real
+    await expect(page.url()).toContain('/')
+
+    // 3. Clic en primer vehículo
+    await page.click('[data-testid="vehicle-card"]:first-child')
+    await expect(page.url()).toContain('/vehiculo/')
+
+    // 4. Verificar ficha cargada
+    await expect(page.locator('h1')).toBeVisible()
+
+    // 5. Galería de imágenes
+    const gallery = page.locator('[data-testid="vehicle-gallery"]')
+    if (await gallery.isVisible()) {
+      await gallery.click()
+    }
+  })
+})
+```
+
+**Nota para Claude Code:** Los selectores exactos dependen del código real. Claude Code debe:
+
+1. Leer las páginas reales para encontrar selectores correctos
+2. Añadir `data-testid` donde falten para selectores estables
+3. Usar `page.waitForLoadState('networkidle')` después de navegaciones
+
+### Parte C — INTEGRACIÓN EN CI
+
+Añadir a `.github/workflows/ci.yml`:
+
+```yaml
+e2e-journeys:
+  runs-on: ubuntu-latest
+  needs: [build]
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+    - run: npm ci
+    - run: npx playwright install --with-deps chromium
+    - run: npm run build
+    - run: npx nuxi preview &
+    - run: sleep 10
+    - run: BASE_URL=http://localhost:3000 npx playwright test tests/e2e/journeys/
+    - uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: playwright-report
+        path: playwright-report/
+```
+
+---
+
+### Resumen archivos sesión 42
+
+| Archivo                        | Tipo                              |
+| ------------------------------ | --------------------------------- |
+| `tests/e2e/journeys/*.spec.ts` | 8 user journeys E2E               |
+| `.github/workflows/ci.yml`     | Job e2e-journeys                  |
+| Páginas/componentes            | Añadir `data-testid` donde falten |
+
+### Orden de ejecución
+
+1. Crear carpeta `tests/e2e/journeys/`
+2. Implementar journey 1 (anónimo) como prueba de concepto
+3. Ejecutar localmente: `npx playwright test tests/e2e/journeys/anonymous-browse.spec.ts`
+4. Ajustar selectores hasta que pase
+5. Implementar journeys 2-8
+6. Añadir `data-testid` a elementos críticos donde falten
+7. Integrar en CI
+8. Verificar — todos los journeys pasan
+
+### Tests mínimos
+
+- [ ] Los 8 journeys pasan en local con Playwright
+- [ ] CI ejecuta journeys sin fallos
+- [ ] Cada journey tarda < 30 segundos
+- [ ] Si falla, genera screenshot y video para debug
+
+---
+
 ## MAPA COMPLETO DE RUTAS (REFERENCIA CANÓNICA)
 
 > **Para Claude Code:** Este mapa es la fuente de verdad para la estructura de `pages/`. Cuando haya contradicción con cualquier otro documento, este mapa prevalece.

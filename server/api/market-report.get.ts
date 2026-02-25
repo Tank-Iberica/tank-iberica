@@ -318,7 +318,7 @@ function generateReportHTML(
   const overallAvgPrice =
     allAvgPrices.length > 0 ? allAvgPrices.reduce((s, v) => s + v, 0) / allAvgPrices.length : 0
 
-  const topCategory = subcategoryStats.length > 0 ? subcategoryStats[0].subcategory : 'N/A'
+  const topCategory = subcategoryStats.length > 0 ? subcategoryStats[0]!.subcategory : 'N/A'
 
   // Price change summary
   const risingCount = trends.filter((t) => t.direction === 'rising').length
@@ -393,7 +393,7 @@ function generateReportHTML(
           </div>
         </div>
         <div class="summary-text">
-          <p><strong>Categoria principal:</strong> ${escapeHtml(topCategory)} (${formatNumber(subcategoryStats[0].totalListings)} anuncios)</p>
+          <p><strong>Categoria principal:</strong> ${escapeHtml(topCategory)} (${formatNumber(subcategoryStats[0]!.totalListings)} anuncios)</p>
           <p><strong>Tendencia de precios:</strong> ${escapeHtml(priceChangeSummary)}</p>
         </div>
         `

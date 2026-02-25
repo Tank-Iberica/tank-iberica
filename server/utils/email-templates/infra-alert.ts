@@ -77,7 +77,7 @@ function formatValue(metric: string, value: number): string {
 // ── Email HTML generator ───────────────────────────────────────────────────────
 
 export function infraAlertEmailHtml(opts: InfraAlertEmailOptions): string {
-  const levelStyle = LEVEL_COLORS[opts.level] ?? LEVEL_COLORS.warning
+  const levelStyle = (LEVEL_COLORS[opts.level] ?? LEVEL_COLORS.warning)!
   const metricLabel = METRIC_LABELS[opts.metric] ?? opts.metric
   const componentLabel = COMPONENT_LABELS[opts.component] ?? opts.component
   const formattedValue = formatValue(opts.metric, opts.value)

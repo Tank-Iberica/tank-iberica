@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { createHash } from 'node:crypto'
 
 /**
  * Google Merchant Center feed.
@@ -58,7 +59,7 @@ export default defineEventHandler(async (event) => {
       const link = `${siteUrl}/vehiculo/${v.slug}`
       const images = (v.vehicle_images as Array<{ url: string; position: number }>) || []
       const sortedImages = [...images].sort((a, b) => a.position - b.position)
-      const imageLink = sortedImages.length > 0 ? escapeXml(sortedImages[0].url) : ''
+      const imageLink = sortedImages.length > 0 ? escapeXml(sortedImages[0]!.url) : ''
       const price = v.price ? `${v.price.toFixed(2)} EUR` : ''
 
       if (!imageLink || !price) return ''
@@ -87,6 +88,19 @@ export default defineEventHandler(async (event) => {
 ${items}
   </channel>
 </rss>`
+
+  // Add Cache-Control and ETag headers
+  const etag = createHash('md5').update(xml).digest('hex')
+
+  setResponseHeader(event, 'Cache-Control', 'public, max-age=43200, s-maxage=43200') // 12h
+  setResponseHeader(event, 'ETag', `"${etag}"`)
+
+  // Check If-None-Match for conditional requests
+  const ifNoneMatch = getRequestHeader(event, 'if-none-match')
+  if (ifNoneMatch === `"${etag}"`) {
+    setResponseStatus(event, 304)
+    return ''
+  }
 
   setResponseHeader(event, 'content-type', 'application/xml; charset=utf-8')
   return xml

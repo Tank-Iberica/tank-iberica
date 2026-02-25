@@ -56,7 +56,7 @@ export default defineEventHandler(async (event) => {
 
   // Dynamic import to avoid build errors if stripe is not installed
   const { default: Stripe } = await import('stripe')
-  const stripe = new Stripe(stripeKey, { apiVersion: '2024-04-10' })
+  const stripe = new Stripe(stripeKey)
 
   // Create Stripe Customer Portal session
   const session = await stripe.billingPortal.sessions.create({

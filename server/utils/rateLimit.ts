@@ -78,7 +78,7 @@ export function getRetryAfterSeconds(key: string, config: RateLimitConfig): numb
 
   const now = Date.now()
   const oldestInWindow = entry.timestamps[0]
-  const expiresAt = oldestInWindow + config.windowMs
+  const expiresAt = oldestInWindow! + config.windowMs
   const secondsRemaining = Math.ceil((expiresAt - now) / 1000)
 
   return Math.max(1, secondsRemaining)

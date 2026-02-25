@@ -33,6 +33,7 @@ export interface Ad {
   action_slugs: string[]
   include_in_pdf: boolean
   include_in_email: boolean
+  target_segments: string[]
 }
 
 interface UserGeo {
@@ -48,6 +49,7 @@ export function useAds(
     action?: string
     vehicleLocation?: string
     maxAds?: number
+    userSegments?: string[]
   },
 ) {
   const supabase = useSupabaseClient()
@@ -115,6 +117,16 @@ export function useAds(
         const matchProvince =
           ad.provinces.length === 0 || (geo.province && ad.provinces.includes(geo.province))
 
+        // Segment matching: if ad targets specific segments, check user segments
+        if (ad.target_segments && ad.target_segments.length > 0) {
+          const userSegs = options?.userSegments || []
+          if (userSegs.length > 0) {
+            const hasMatch = ad.target_segments.some((s) => userSegs.includes(s))
+            if (!hasMatch) return false
+          }
+          // If no user segments available, show segment-targeted ads anyway
+        }
+
         return (
           matchCountry &&
           (matchRegion || ad.regions.length === 0) &&
@@ -138,7 +150,12 @@ export function useAds(
   }
 
   // Register ad event
-  async function registerEvent(adId: string, eventType: string, geo?: UserGeo) {
+  async function registerEvent(
+    adId: string,
+    eventType: string,
+    geo?: UserGeo,
+    source?: 'direct' | 'prebid' | 'adsense',
+  ) {
     const g = geo || detectGeo()
     const route = useRoute()
     await supabase.from('ad_events').insert({
@@ -148,6 +165,27 @@ export function useAds(
       user_region: g.region,
       user_province: g.province,
       page_path: route.fullPath,
+      source: source || 'direct',
+    })
+  }
+
+  // Register viewable impression (IAB standard: 50% visible for 1+ second)
+  async function registerViewableImpression(
+    adId: string,
+    timeInViewMs: number,
+    source: 'direct' | 'prebid' | 'adsense' = 'direct',
+  ) {
+    const g = detectGeo()
+    const route = useRoute()
+    await supabase.from('ad_events').insert({
+      ad_id: adId,
+      event_type: 'viewable_impression',
+      user_country: g.country,
+      user_region: g.region,
+      user_province: g.province,
+      page_path: route.fullPath,
+      source,
+      metadata: { time_in_view_ms: timeInViewMs },
     })
   }
 
@@ -184,5 +222,6 @@ export function useAds(
     handlePhoneClick,
     handleEmailClick,
     registerEvent,
+    registerViewableImpression,
   }
 }

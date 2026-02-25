@@ -29,9 +29,9 @@ interface DataSubscription {
 function computeMedian(sorted: number[]): number {
   const mid = Math.floor(sorted.length / 2)
   if (sorted.length % 2 === 0) {
-    return Math.round((sorted[mid - 1] + sorted[mid]) / 2)
+    return Math.round((sorted[mid - 1]! + sorted[mid]!) / 2)
   }
-  return Math.round(sorted[mid])
+  return Math.round(sorted[mid]!)
 }
 
 async function logUsage(
@@ -228,6 +228,6 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
     avg_days_to_sell: avgDaysToSell,
     sample_size: sampleSize,
     confidence,
-    data_date: now.toISOString().split('T')[0],
+    data_date: now.toISOString().split('T')[0] ?? '',
   }
 })

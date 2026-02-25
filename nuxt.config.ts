@@ -84,7 +84,7 @@ export default defineNuxtConfig({
       baseURL: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME || ''}/image/upload/`,
     },
     quality: 80,
-    format: 'webp',
+    format: ['webp'],
   },
 
   pwa: {
@@ -159,6 +159,10 @@ export default defineNuxtConfig({
     '/admin/**': { ssr: false },
     '/dashboard/**': { ssr: false },
     '/perfil/**': { ssr: false },
+    '/vendedor/**': { swr: 60 * 10 },
+    '/perfil/comparador': { ssr: false },
+    '/perfil/mensajes': { ssr: false },
+    '/perfil/reservas': { ssr: false },
     '/api/__sitemap**': { cors: true, swr: 60 * 60 * 6 },
     '/api/merchant-feed**': { cors: true, swr: 60 * 60 * 12 },
     '/api/health**': { cors: true },
@@ -206,6 +210,10 @@ export default defineNuxtConfig({
       turnstileSiteKey: process.env.TURNSTILE_SITE_KEY || '',
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
       vapidPublicKey: process.env.NUXT_PUBLIC_VAPID_PUBLIC_KEY || '',
+      adsenseId: process.env.NUXT_PUBLIC_ADSENSE_ID || '',
+      adsenseSlotId: process.env.NUXT_PUBLIC_ADSENSE_SLOT_ID || '',
+      prebidEnabled: process.env.NUXT_PUBLIC_PREBID_ENABLED === 'true',
+      prebidTimeout: Number.parseInt(process.env.NUXT_PUBLIC_PREBID_TIMEOUT || '1500'),
     },
   },
 

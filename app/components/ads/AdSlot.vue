@@ -1,5 +1,5 @@
 <template>
-  <div v-if="ads.length > 0" class="ad-slot" :class="`ad-slot--${position}`">
+  <div v-if="ads.length > 0" ref="adSlotRef" class="ad-slot" :class="`ad-slot--${position}`">
     <div v-for="ad in ads" :key="ad.id" class="ad-item" :class="`ad-item--${ad.format}`">
       <!-- Card format -->
       <div v-if="ad.format === 'card'" class="ad-card" @click="handleClick(ad)">
@@ -104,6 +104,8 @@
 
 <script setup lang="ts">
 import type { AdPosition, Ad } from '~/composables/useAds'
+import { useAdViewability } from '~/composables/useAdViewability'
+import { useAudienceSegmentation } from '~/composables/useAudienceSegmentation'
 
 const props = withDefaults(
   defineProps<{
@@ -121,14 +123,22 @@ const props = withDefaults(
   },
 )
 
+const adSlotRef = ref<HTMLElement | null>(null)
+
 const { locale } = useI18n()
+const { segments } = useAudienceSegmentation()
 
 const { ads, handleClick, handlePhoneClick } = useAds(props.position, {
   category: props.category,
   action: props.action,
   vehicleLocation: props.vehicleLocation,
   maxAds: props.maxAds,
+  userSegments: segments.value,
 })
+
+const firstAdId = computed(() => ads.value[0]?.id || '')
+
+useAdViewability(adSlotRef, firstAdId, { source: 'direct', position: props.position })
 
 function ctaText(ad: Ad): string {
   if (ad.cta_text) {

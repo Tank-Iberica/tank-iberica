@@ -1,7 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 import { defineSitemapEventHandler } from '#imports'
 
-export default defineSitemapEventHandler(async () => {
+export default defineSitemapEventHandler(async (event) => {
+  setResponseHeader(event, 'Cache-Control', 'public, max-age=21600, s-maxage=21600') // 6h
+
   const supabaseUrl = process.env.SUPABASE_URL || ''
   const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || ''
 
@@ -90,6 +92,23 @@ export default defineSitemapEventHandler(async () => {
         lastmod: a.updated_at || a.starts_at,
         priority: 0.7,
         changefreq: 'daily',
+      })
+    }
+  }
+
+  // Dealer profile URLs
+  const { data: dealers } = await supabase
+    .from('dealers')
+    .select('slug, updated_at')
+    .not('slug', 'is', null)
+
+  if (dealers) {
+    for (const dealer of dealers) {
+      urls.push({
+        loc: `/vendedor/${dealer.slug}`,
+        lastmod: dealer.updated_at || new Date().toISOString(),
+        changefreq: 'weekly',
+        priority: 0.6,
       })
     }
   }

@@ -30,6 +30,9 @@ interface SubcategoryOption {
   category_id: string
 }
 
+const showWizard = ref(true)
+const draftVehicleId = ref<string | undefined>(undefined)
+
 const categories = ref<CategoryOption[]>([])
 const subcategories = ref<SubcategoryOption[]>([])
 const activeListingsCount = ref(0)
@@ -174,169 +177,172 @@ async function submitVehicle(): Promise<void> {
 </script>
 
 <template>
-  <div class="publish-page">
-    <header class="page-header">
-      <NuxtLink to="/dashboard/vehiculos" class="back-link">
-        {{ t('common.back') }}
-      </NuxtLink>
-      <h1>{{ t('dashboard.vehicles.publishNew') }}</h1>
-    </header>
-
-    <!-- Plan limit reached -->
-    <div v-if="!canPublishVehicle" class="limit-banner">
-      <p>{{ t('dashboard.vehicles.limitReached') }}</p>
-      <p>
-        {{ activeListingsCount }}/{{
-          planLimits.maxActiveListings === Infinity ? '&infin;' : planLimits.maxActiveListings
-        }}
-        {{ t('dashboard.vehicles.used') }}
-      </p>
-      <NuxtLink to="/dashboard/suscripcion" class="btn-upgrade">
-        {{ t('dashboard.vehicles.upgradePlan') }}
-      </NuxtLink>
-    </div>
-
-    <form v-else class="vehicle-form" @submit.prevent="submitVehicle">
-      <div v-if="error" class="alert-error">{{ error }}</div>
-      <div v-if="success" class="alert-success">{{ t('dashboard.vehicles.published') }}</div>
-
-      <!-- Basic Info -->
-      <section class="form-section">
-        <h2>{{ t('dashboard.vehicles.sectionBasic') }}</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="brand">{{ t('dashboard.vehicles.brand') }} *</label>
-            <input
-              id="brand"
-              v-model="form.brand"
-              type="text"
-              required
-              :placeholder="t('dashboard.vehicles.brandPlaceholder')"
-            >
-          </div>
-          <div class="form-group">
-            <label for="model">{{ t('dashboard.vehicles.model') }} *</label>
-            <input
-              id="model"
-              v-model="form.model"
-              type="text"
-              required
-              :placeholder="t('dashboard.vehicles.modelPlaceholder')"
-            >
-          </div>
-          <div class="form-group">
-            <label for="year">{{ t('dashboard.vehicles.year') }}</label>
-            <input
-              id="year"
-              v-model.number="form.year"
-              type="number"
-              min="1950"
-              :max="new Date().getFullYear() + 1"
-            >
-          </div>
-          <div class="form-group">
-            <label for="km">{{ t('dashboard.vehicles.km') }}</label>
-            <input id="km" v-model.number="form.km" type="number" min="0" >
-          </div>
-          <div class="form-group">
-            <label for="price">{{ t('dashboard.vehicles.price') }}</label>
-            <input id="price" v-model.number="form.price" type="number" min="0" step="100" >
-          </div>
-          <div class="form-group">
-            <label for="location">{{ t('dashboard.vehicles.location') }}</label>
-            <input
-              id="location"
-              v-model="form.location"
-              type="text"
-              :placeholder="t('dashboard.vehicles.locationPlaceholder')"
-            >
-          </div>
-        </div>
-      </section>
-
-      <!-- Category -->
-      <section class="form-section">
-        <h2>{{ t('dashboard.vehicles.sectionCategory') }}</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="category">{{ t('dashboard.vehicles.category') }}</label>
-            <select id="category" v-model="form.category_id">
-              <option value="">{{ t('dashboard.vehicles.selectCategory') }}</option>
-              <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-                {{ cat.name.es || cat.slug }}
-              </option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="subcategory">{{ t('dashboard.vehicles.subcategory') }}</label>
-            <select id="subcategory" v-model="form.subcategory_id">
-              <option value="">{{ t('dashboard.vehicles.selectSubcategory') }}</option>
-              <option v-for="sub in filteredSubcategories" :key="sub.id" :value="sub.id">
-                {{ sub.name.es || sub.slug }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </section>
-
-      <!-- Description -->
-      <section class="form-section">
-        <h2>{{ t('dashboard.vehicles.sectionDescription') }}</h2>
-        <div class="form-group">
-          <div class="label-row">
-            <label for="description_es">{{ t('dashboard.vehicles.descriptionEs') }}</label>
-            <button
-              type="button"
-              class="btn-ai"
-              :disabled="generatingDesc"
-              @click="generateDescription"
-            >
-              {{
-                generatingDesc
-                  ? t('dashboard.vehicles.generating')
-                  : t('dashboard.vehicles.generateAI')
-              }}
-            </button>
-          </div>
-          <textarea
-            id="description_es"
-            v-model="form.description_es"
-            rows="6"
-            :placeholder="t('dashboard.vehicles.descriptionPlaceholder')"
-          />
-        </div>
-        <div class="form-group">
-          <label for="description_en">{{ t('dashboard.vehicles.descriptionEn') }}</label>
-          <textarea
-            id="description_en"
-            v-model="form.description_en"
-            rows="4"
-            :placeholder="t('dashboard.vehicles.descriptionEnPlaceholder')"
-          />
-        </div>
-      </section>
-
-      <!-- Photos Placeholder -->
-      <section class="form-section">
-        <h2>{{ t('dashboard.vehicles.sectionPhotos') }}</h2>
-        <div class="photo-placeholder">
-          <p>{{ t('dashboard.vehicles.photosComingSoon') }}</p>
-          <span class="photo-limit">{{
-            t('dashboard.vehicles.maxPhotos', { max: maxPhotos })
-          }}</span>
-        </div>
-      </section>
-
-      <!-- Submit -->
-      <div class="form-actions">
-        <NuxtLink to="/dashboard/vehiculos" class="btn-secondary">
-          {{ t('common.cancel') }}
+  <div>
+    <OnboardingVehicleUploadWizard v-if="showWizard" :vehicle-id="draftVehicleId" />
+    <div class="publish-page">
+      <header class="page-header">
+        <NuxtLink to="/dashboard/vehiculos" class="back-link">
+          {{ t('common.back') }}
         </NuxtLink>
-        <button type="submit" class="btn-primary" :disabled="saving">
-          {{ saving ? t('common.loading') : t('dashboard.vehicles.publish') }}
-        </button>
+        <h1>{{ t('dashboard.vehicles.publishNew') }}</h1>
+      </header>
+
+      <!-- Plan limit reached -->
+      <div v-if="!canPublishVehicle" class="limit-banner">
+        <p>{{ t('dashboard.vehicles.limitReached') }}</p>
+        <p>
+          {{ activeListingsCount }}/{{
+            planLimits.maxActiveListings === Infinity ? '&infin;' : planLimits.maxActiveListings
+          }}
+          {{ t('dashboard.vehicles.used') }}
+        </p>
+        <NuxtLink to="/dashboard/suscripcion" class="btn-upgrade">
+          {{ t('dashboard.vehicles.upgradePlan') }}
+        </NuxtLink>
       </div>
-    </form>
+
+      <form v-else class="vehicle-form" @submit.prevent="submitVehicle">
+        <div v-if="error" class="alert-error">{{ error }}</div>
+        <div v-if="success" class="alert-success">{{ t('dashboard.vehicles.published') }}</div>
+
+        <!-- Basic Info -->
+        <section class="form-section">
+          <h2>{{ t('dashboard.vehicles.sectionBasic') }}</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="brand">{{ t('dashboard.vehicles.brand') }} *</label>
+              <input
+                id="brand"
+                v-model="form.brand"
+                type="text"
+                required
+                :placeholder="t('dashboard.vehicles.brandPlaceholder')"
+              >
+            </div>
+            <div class="form-group">
+              <label for="model">{{ t('dashboard.vehicles.model') }} *</label>
+              <input
+                id="model"
+                v-model="form.model"
+                type="text"
+                required
+                :placeholder="t('dashboard.vehicles.modelPlaceholder')"
+              >
+            </div>
+            <div class="form-group">
+              <label for="year">{{ t('dashboard.vehicles.year') }}</label>
+              <input
+                id="year"
+                v-model.number="form.year"
+                type="number"
+                min="1950"
+                :max="new Date().getFullYear() + 1"
+              >
+            </div>
+            <div class="form-group">
+              <label for="km">{{ t('dashboard.vehicles.km') }}</label>
+              <input id="km" v-model.number="form.km" type="number" min="0" >
+            </div>
+            <div class="form-group">
+              <label for="price">{{ t('dashboard.vehicles.price') }}</label>
+              <input id="price" v-model.number="form.price" type="number" min="0" step="100" >
+            </div>
+            <div class="form-group">
+              <label for="location">{{ t('dashboard.vehicles.location') }}</label>
+              <input
+                id="location"
+                v-model="form.location"
+                type="text"
+                :placeholder="t('dashboard.vehicles.locationPlaceholder')"
+              >
+            </div>
+          </div>
+        </section>
+
+        <!-- Category -->
+        <section class="form-section">
+          <h2>{{ t('dashboard.vehicles.sectionCategory') }}</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="category">{{ t('dashboard.vehicles.category') }}</label>
+              <select id="category" v-model="form.category_id">
+                <option value="">{{ t('dashboard.vehicles.selectCategory') }}</option>
+                <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                  {{ cat.name.es || cat.slug }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="subcategory">{{ t('dashboard.vehicles.subcategory') }}</label>
+              <select id="subcategory" v-model="form.subcategory_id">
+                <option value="">{{ t('dashboard.vehicles.selectSubcategory') }}</option>
+                <option v-for="sub in filteredSubcategories" :key="sub.id" :value="sub.id">
+                  {{ sub.name.es || sub.slug }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Description -->
+        <section class="form-section">
+          <h2>{{ t('dashboard.vehicles.sectionDescription') }}</h2>
+          <div class="form-group">
+            <div class="label-row">
+              <label for="description_es">{{ t('dashboard.vehicles.descriptionEs') }}</label>
+              <button
+                type="button"
+                class="btn-ai"
+                :disabled="generatingDesc"
+                @click="generateDescription"
+              >
+                {{
+                  generatingDesc
+                    ? t('dashboard.vehicles.generating')
+                    : t('dashboard.vehicles.generateAI')
+                }}
+              </button>
+            </div>
+            <textarea
+              id="description_es"
+              v-model="form.description_es"
+              rows="6"
+              :placeholder="t('dashboard.vehicles.descriptionPlaceholder')"
+            />
+          </div>
+          <div class="form-group">
+            <label for="description_en">{{ t('dashboard.vehicles.descriptionEn') }}</label>
+            <textarea
+              id="description_en"
+              v-model="form.description_en"
+              rows="4"
+              :placeholder="t('dashboard.vehicles.descriptionEnPlaceholder')"
+            />
+          </div>
+        </section>
+
+        <!-- Photos Placeholder -->
+        <section class="form-section">
+          <h2>{{ t('dashboard.vehicles.sectionPhotos') }}</h2>
+          <div class="photo-placeholder">
+            <p>{{ t('dashboard.vehicles.photosComingSoon') }}</p>
+            <span class="photo-limit">{{
+              t('dashboard.vehicles.maxPhotos', { max: maxPhotos })
+            }}</span>
+          </div>
+        </section>
+
+        <!-- Submit -->
+        <div class="form-actions">
+          <NuxtLink to="/dashboard/vehiculos" class="btn-secondary">
+            {{ t('common.cancel') }}
+          </NuxtLink>
+          <button type="submit" class="btn-primary" :disabled="saving">
+            {{ saving ? t('common.loading') : t('dashboard.vehicles.publish') }}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 

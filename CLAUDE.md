@@ -22,7 +22,7 @@ Toda la documentación de la migración está en `docs/tracciona-docs/`.
 
 **Si necesitas ejecutar el proyecto:**
 
-- Lee `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Define las 35 sesiones de trabajo (12 pre-lanzamiento + 22 post-lanzamiento + 1 clonado de vertical). Las sesiones 16b, 16c, 16d son subsesiones del antiguo bloque post-lanzamiento Fase 3, en orden, con qué archivos leer en cada una. El usuario te dirá "ejecuta la sesión N".
+- Lee `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Define las 42 sesiones de trabajo. Sesiones 1-35 ya ejecutadas. Sesiones 36-42 pendientes (auditoría cruzada, seguridad CI, claridad, UX, monetización, arquitectura, testing E2E). El usuario te dirá "ejecuta la sesión N".
 
 **Regla principal:** Ejecutar solo lo que dicen las INSTRUCCIONES-MAESTRAS. Los anexos son REFERENCIA, no tareas independientes.
 

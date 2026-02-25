@@ -645,7 +645,7 @@ watch(activeFilter, fetchAuctions)
                 v-model="auctionModal.form.title"
                 type="text"
                 :placeholder="t('admin.subastas.form.titlePlaceholder')"
-              />
+              >
             </div>
 
             <!-- Prices -->
@@ -661,7 +661,7 @@ watch(activeFilter, fetchAuctions)
                   min="0"
                   step="100"
                   required
-                />
+                >
               </div>
               <div class="form-group">
                 <label for="auction-reserve-price"
@@ -673,7 +673,7 @@ watch(activeFilter, fetchAuctions)
                   type="number"
                   min="0"
                   step="100"
-                />
+                >
               </div>
             </div>
 
@@ -689,7 +689,7 @@ watch(activeFilter, fetchAuctions)
                   min="1"
                   step="100"
                   required
-                />
+                >
               </div>
               <div class="form-group">
                 <label for="auction-deposit">{{ t('admin.subastas.form.deposit') }} (€) *</label>
@@ -700,7 +700,7 @@ watch(activeFilter, fetchAuctions)
                   min="0"
                   step="100"
                   required
-                />
+                >
               </div>
             </div>
 
@@ -717,7 +717,7 @@ watch(activeFilter, fetchAuctions)
                   max="100"
                   step="0.1"
                   required
-                />
+                >
               </div>
               <div class="form-group">
                 <label for="auction-anti-snipe"
@@ -730,7 +730,7 @@ watch(activeFilter, fetchAuctions)
                   min="0"
                   step="1"
                   required
-                />
+                >
               </div>
             </div>
 
@@ -743,7 +743,7 @@ watch(activeFilter, fetchAuctions)
                   v-model="auctionModal.form.starts_at"
                   type="datetime-local"
                   required
-                />
+                >
               </div>
               <div class="form-group">
                 <label for="auction-ends">{{ t('admin.subastas.form.endsAt') }} *</label>
@@ -752,7 +752,7 @@ watch(activeFilter, fetchAuctions)
                   v-model="auctionModal.form.ends_at"
                   type="datetime-local"
                   required
-                />
+                >
               </div>
             </div>
 

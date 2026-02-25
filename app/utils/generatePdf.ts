@@ -1,4 +1,5 @@
 import type { Vehicle } from '~/composables/useVehicles'
+import { generateVehicleQR } from '~/utils/generateQR'
 
 // Logo URL — local asset for reliability (avoids Google Drive hotlinking issues)
 const LOGO_URL = '/icon-512x512.png'
@@ -296,12 +297,37 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
 
   // ===== FOOTER =====
   const footerY = pageHeight - footerHeight
+
+  // Generate QR code
+  const vehicleUrl = `https://tracciona.com/vehiculo/${vehicle.slug}`
+  let qrDataUrl: string | null = null
+  try {
+    qrDataUrl = await generateVehicleQR(vehicle.slug, 128)
+  } catch {
+    // QR generation failed, continue without it
+  }
+
+  // Draw QR in footer area (above the footer bar)
+  if (qrDataUrl) {
+    const qrSize = 18
+    const qrX = pageWidth - margin - qrSize
+    const qrY = footerY - qrSize - 3
+    doc.addImage(qrDataUrl, 'PNG', qrX, qrY, qrSize, qrSize)
+    doc.setFontSize(6)
+    doc.setTextColor(...grayText)
+    doc.text(
+      locale === 'es' ? 'Escanea para ver online' : 'Scan to view online',
+      qrX + qrSize / 2,
+      qrY + qrSize + 3,
+      { align: 'center' },
+    )
+  }
+
   doc.setFillColor(...petrolBlue)
   doc.rect(0, footerY, pageWidth, footerHeight, 'F')
 
   doc.setFontSize(7)
   doc.setTextColor(...white)
-  const vehicleUrl = `https://tracciona.com/vehiculo/${vehicle.slug}`
   doc.text(vehicleUrl, margin, footerY + 5)
   doc.text(
     locale === 'es' ? 'Más vehículos en tracciona.com' : 'More vehicles at tracciona.com',

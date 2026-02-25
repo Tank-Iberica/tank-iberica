@@ -163,6 +163,24 @@
                   <line x1="4" y1="22" x2="4" y2="15" />
                 </svg>
               </button>
+              <button
+                :class="['vehicle-icon-btn', 'compare-btn', { active: inComparison }]"
+                :title="$t('comparator.addToCompare')"
+                @click="handleCompare"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <line x1="18" y1="20" x2="18" y2="10" />
+                  <line x1="12" y1="20" x2="12" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="14" />
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -182,6 +200,13 @@
             {{ $t('catalog.from') }} {{ formatPrice(vehicle.rental_price)
             }}{{ $t('vehicle.perMonth') }}
           </p>
+
+          <!-- Fair price indicator -->
+          <VehicleFairPriceBadge
+            v-if="vehicle.price && vehicle.id"
+            :vehicle-id="vehicle.id"
+            :current-price="vehicle.price"
+          />
 
           <!-- Meta row: category badge + location badge -->
           <div class="vehicle-meta-row">
@@ -227,6 +252,25 @@
             </div>
           </div>
 
+          <!-- Seller profile link -->
+          <NuxtLink
+            v-if="sellerInfo && vehicle.dealer_id"
+            :to="`/vendedor/${vehicle.dealer_slug || vehicle.dealer_id}`"
+            class="seller-profile-link"
+          >
+            {{ $t('vehicle.viewSellerProfile') }}
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </NuxtLink>
+
           <!-- Disclaimer for terceros -->
           <div v-if="vehicle.category === 'terceros'" class="vehicle-disclaimer">
             {{ $t('vehicle.disclaimer') }}
@@ -252,6 +296,11 @@
             <h2>{{ $t('vehicle.description') }}</h2>
             <p>{{ description }}</p>
           </div>
+          <!-- Price History -->
+          <div v-if="vehicle.id" class="vehicle-price-history">
+            <h2>{{ $t('priceHistory.title') }}</h2>
+            <VehiclePriceHistoryChart :vehicle-id="vehicle.id" />
+          </div>
         </div>
       </div>
       <!-- Report Modal (DSA compliance) -->
@@ -270,6 +319,7 @@
 import { generateVehiclePdf } from '~/utils/generatePdf'
 import { fetchTranslation } from '~/composables/useLocalized'
 import { useToast } from '~/composables/useToast'
+import { useVehicleComparator } from '~/composables/useVehicleComparator'
 
 const route = useRoute()
 const { locale, t } = useI18n()
@@ -279,6 +329,9 @@ const { location: userLocation } = useUserLocation()
 const openDemandModal = inject<() => void>('openDemandModal', () => {})
 const supabase = useSupabaseClient()
 const toast = useToast()
+
+const { isInComparison, addToComparison, removeFromComparison } = useVehicleComparator()
+const inComparison = computed(() => (vehicle.value ? isInComparison(vehicle.value.id) : false))
 
 const showReport = ref(false)
 
@@ -479,6 +532,15 @@ async function handlePdf() {
 
 function handleOpenDemand() {
   openDemandModal()
+}
+
+function handleCompare() {
+  if (!vehicle.value) return
+  if (inComparison.value) {
+    removeFromComparison(vehicle.value.id)
+  } else {
+    addToComparison(vehicle.value.id)
+  }
 }
 
 // SEO meta tags — runs during SSR so crawlers and social previews see them
@@ -1142,5 +1204,44 @@ if (vehicle.value) {
   .vehicle-description {
     margin-bottom: var(--spacing-4);
   }
+}
+
+/* Compare button */
+.compare-btn.active {
+  border-color: var(--color-primary) !important;
+  background: rgba(35, 66, 74, 0.1);
+  color: var(--color-primary);
+}
+
+/* Price history section */
+.vehicle-price-history {
+  margin-bottom: var(--spacing-6);
+}
+
+.vehicle-price-history h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Seller profile link */
+.seller-profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: var(--spacing-2);
+  min-height: 44px;
+  transition: color var(--transition-fast);
+}
+
+.seller-profile-link:hover {
+  color: var(--color-primary-dark);
 }
 </style>

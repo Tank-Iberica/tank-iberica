@@ -172,7 +172,7 @@ export default defineEventHandler(async (event) => {
       // Get first image sorted by position
       const images = v.vehicle_images || []
       const sorted = [...images].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-      const imageUrl = sorted.length > 0 ? sorted[0].url : ''
+      const imageUrl = sorted.length > 0 ? sorted[0]!.url : ''
 
       const imagePart = imageUrl
         ? `<div style="width:100%;height:180px;overflow:hidden;border-radius:8px 8px 0 0;">

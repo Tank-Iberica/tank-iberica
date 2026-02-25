@@ -97,8 +97,8 @@ export default defineEventHandler(async (event) => {
       const pushSubscription = {
         endpoint: sub.endpoint,
         keys: {
-          p256dh: sub.keys.p256dh,
-          auth: sub.keys.auth,
+          p256dh: (sub.keys as Record<string, string>)?.p256dh ?? '',
+          auth: (sub.keys as Record<string, string>)?.auth ?? '',
         },
       }
 

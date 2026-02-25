@@ -68,7 +68,7 @@ export default defineEventHandler(async (event) => {
 
   // Dynamic import to avoid build errors if stripe is not installed
   const { default: Stripe } = await import('stripe')
-  const stripe = new Stripe(stripeKey, { apiVersion: '2024-04-10' })
+  const stripe = new Stripe(stripeKey)
 
   // Supabase REST API config
   const supabaseUrl = config.public?.supabaseUrl || process.env.SUPABASE_URL
@@ -149,5 +149,5 @@ export default defineEventHandler(async (event) => {
     }),
   })
 
-  return { url: session.url, sessionId: session.id }
+  return { url: session.url ?? '', sessionId: session.id }
 })

@@ -10,7 +10,7 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const user = useSupabaseUser()
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const supabase = useSupabaseClient<any>()
@@ -321,6 +321,36 @@ watch(
   },
 )
 
+// User panel banner
+const panelBanner = ref<{
+  text_es: string
+  text_en: string
+  url: string
+  active: boolean
+  from_date: string | null
+  to_date: string | null
+} | null>(null)
+
+async function loadPanelBanner() {
+  try {
+    const { data } = await supabase
+      .from('config')
+      .select('value')
+      .eq('key', 'user_panel_banner')
+      .single()
+    if (data?.value) {
+      const config = typeof data.value === 'string' ? JSON.parse(data.value) : data.value
+      if (!config.active) return
+      const now = new Date()
+      if (config.from_date && new Date(config.from_date) > now) return
+      if (config.to_date && new Date(config.to_date) < now) return
+      panelBanner.value = config
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 // Close on escape
 function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') {
@@ -330,6 +360,7 @@ function handleKeydown(e: KeyboardEvent) {
 
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
+  loadPanelBanner()
 })
 
 onUnmounted(() => {
@@ -348,6 +379,17 @@ onUnmounted(() => {
         <aside class="user-panel">
           <!-- Close button -->
           <button class="panel-close" @click="emit('update:modelValue', false)">&times;</button>
+
+          <!-- Configurable banner -->
+          <a
+            v-if="panelBanner"
+            :href="panelBanner.url || undefined"
+            class="panel-banner"
+            :target="panelBanner.url ? '_blank' : undefined"
+            :rel="panelBanner.url ? 'noopener' : undefined"
+          >
+            {{ locale === 'en' ? panelBanner.text_en : panelBanner.text_es }}
+          </a>
 
           <!-- Header -->
           <div class="panel-header">
@@ -778,6 +820,26 @@ onUnmounted(() => {
   flex-direction: column;
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
   overflow: hidden;
+}
+
+.panel-banner {
+  display: flex;
+  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary, #23424a) 0%,
+    var(--color-primary-dark, #1a3238) 100%
+  );
+  color: var(--color-white, #fff);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--border-radius, 8px);
+  margin: 12px 12px 0;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
 }
 
 .panel-close {

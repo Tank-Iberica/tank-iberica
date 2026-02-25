@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
   let dateFilter = ''
   if (month) {
     const startDate = `${month}-01`
-    const [y, m] = month.split('-').map(Number)
+    const [y = 0, m = 0] = month.split('-').map(Number)
     const endDate = new Date(y, m, 1).toISOString().split('T')[0]
     dateFilter = `&created_at=gte.${startDate}&created_at=lt.${endDate}`
   } else if (year) {
