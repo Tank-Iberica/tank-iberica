@@ -335,9 +335,7 @@ export default defineEventHandler(async (event) => {
 
   if (!resendApiKey) {
     // Dev mode — log and return mock
-    console.warn(
-      `[email/send] RESEND_API_KEY not set. Mock sending email to ${body.to} with template "${body.templateKey}"`,
-    )
+    console.warn(`[email/send] RESEND_API_KEY not set. Mock sending template "${body.templateKey}"`)
     console.warn(`[email/send] Subject: ${subject}`)
     resendId = `mock_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
   } else {

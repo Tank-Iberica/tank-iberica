@@ -165,7 +165,7 @@ export default defineEventHandler(async (event) => {
     )
     for (const n of notifications) {
       console.info(
-        `[price-drop-alert] -> ${n.email}: ${n.vehicleTitle} dropped ${n.dropPercent}% (${n.oldPriceCents} -> ${n.newPriceCents} cents)`,
+        `[price-drop-alert] -> user ${n.userId}: ${n.vehicleTitle} dropped ${n.dropPercent}%`,
       )
     }
   }

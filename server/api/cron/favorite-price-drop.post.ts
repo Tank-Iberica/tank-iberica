@@ -151,7 +151,7 @@ export default defineEventHandler(async (event) => {
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : 'Unknown error'
           console.error(
-            `[favorite-price-drop] Failed to send email to ${user.email}: ${errorMessage}`,
+            `[favorite-price-drop] Failed to send email to user ${user.id}: ${errorMessage}`,
           )
         }
       }

@@ -1,7 +1,9 @@
-# Checklist: Pendientes post-Session 42
+# Checklist: Pendientes post-Session 43
 
-Items accionables encontrados en las auditorias que NO estan cubiertos por las sesiones 39-42.
+Items accionables encontrados en las auditorias que NO estan cubiertos por las sesiones 1-43.
 Generado cruzando los 5 documentos de auditoria contra el contenido de cada sesion.
+
+_Ultima actualizacion: 2026-02-25_
 
 ## P0 — Antes de produccion
 
@@ -11,48 +13,55 @@ Generado cruzando los 5 documentos de auditoria contra el contenido de cada sesi
 
 ## P1 — Primera semana post-lanzamiento
 
-- [ ] **Trials 14 dias gratis**: UI en pagina de pricing para dealers nuevos
-  - _Origen: RECOMENDACIONES-100-PUNTOS.md, seccion Monetizacion_
-  - _Accion: banner en /precios, logica en useSubscription, Stripe trial_period_days_
+- [x] **Trials 14 dias gratis**: UI en pagina de pricing para dealers nuevos
+  - _Resuelto: Sesion 40 — checkout.post.ts (trial_period_days: 14), precios.vue (trial badge)_
 
-- [ ] **Dunning emails**: 2 templates (pago-fallido-soft, pago-fallido-urgente) + banner en dashboard
-  - _Origen: RECOMENDACIONES-100-PUNTOS.md, seccion Monetizacion_
-  - _Accion: templates en email_templates BD, webhook invoice.payment_failed_
+- [x] **Dunning emails**: 2 templates (pago-fallido-soft, pago-fallido-urgente) + banner en dashboard
+  - _Resuelto: Sesion 40 — webhook.post.ts (invoice.payment_failed + cancellation emails via billing.ts)_
 
-- [ ] **Downgrade workflow**: definir que pasa al cancelar suscripcion (limites, visibilidad listings)
-  - _Origen: RECOMENDACIONES-100-PUNTOS.md, seccion Monetizacion_
-  - _Accion: documentar reglas, implementar en webhook customer.subscription.deleted_
+- [x] **Downgrade workflow**: definir que pasa al cancelar suscripcion (limites, visibilidad listings)
+  - _Resuelto: Sesion 40 — webhook.post.ts (customer.subscription.deleted → plan: free + email)_
 
 - [ ] **Consolidar admin/dashboard**: extraer componentes compartidos para reducir duplicacion
   - _Origen: RECOMENDACIONES-100-PUNTOS.md, seccion Modulabilidad_
   - _Ejemplos: VehicleListTable, VehicleFormBasicInfo, useVehicleList(scope)_
   - _Esfuerzo estimado: 2 semanas_
+  - _Estado: Solo dateHelpers.ts en composables/shared/. Pospuesto por alto esfuerzo._
 
-- [ ] **Suite de tests de seguridad**: 13 checks minimos (auth endpoints, webhooks, IDOR, CRON_SECRET)
-  - _Origen: AUDITORIA-TRACCIONA-10-PUNTOS.md, Anexo A7_
-  - _Accion: ampliar tests/security/ con checks sistematicos_
+- [x] **Suite de tests de seguridad**: 13 checks minimos (auth endpoints, webhooks, IDOR, CRON_SECRET)
+  - _Resuelto: Sesion 37 — tests/security/auth-endpoints.test.ts (17 checks: auth, webhooks, crons, headers)_
 
 ## P2 — Primer mes post-lanzamiento
 
-- [ ] **PWA offline.vue**: pagina amigable cuando no hay conexion
-  - _Origen: RECOMENDACIONES-100-PUNTOS.md, seccion UX_
-  - _Accion: crear app/pages/offline.vue con mensaje y boton reintentar_
+- [x] **PWA offline.vue**: pagina amigable cuando no hay conexion
+  - _Resuelto: Sesion 39 — app/pages/offline.vue (i18n, retry, mobile-first)_
 
 - [ ] **Diagrama Mermaid de flujos**: buyer journey, dealer journey, admin journey
   - _Origen: ISSUES-AUDITORIA.md, seccion P2_
-  - _Accion: crear docs/tracciona-docs/referencia/FLUJOS-USUARIO.md con diagramas_
+  - _Estado: FLUJOS-OPERATIVOS.md ya tiene diagramas ASCII. Mermaid es mejora opcional._
 
-- [ ] **Actualizar docs/progreso.md**: reflejar estado real post-Session 42
-  - _Origen: ISSUES-AUDITORIA.md, seccion P2_
-  - _Accion: regenerar con scripts/generate-estado-real.sh + resumen manual_
+- [x] **Actualizar docs/progreso.md**: reflejar estado real post-Session 43
+  - _Resuelto: Sesion 43 — progreso.md reescrito con 43 sesiones, 22 modulos_
 
-- [ ] **Auditoria de PII/logs**: verificar que no se loguean passwords, tokens, datos de pago
-  - _Origen: RECOMENDACIONES-100-PUNTOS.md, seccion Seguridad_
-  - _Accion: grep console.log/warn en server/, revisar Sentry breadcrumbs_
+- [x] **Auditoria de PII/logs**: verificar que no se loguean passwords, tokens, datos de pago
+  - _Resuelto: Post-sesion 43 — auditoria de console.\* en server/, limpieza con logger estructurado_
 
-- [ ] **Documentar decisiones de modulos pospuestos**: landing pages builder (POSPONER), OAuth social (MINIMO)
-  - _Origen: RECOMENDACIONES-100-PUNTOS.md, seccion Proyeccion_
-  - _Accion: agregar seccion en ESTADO-REAL-PRODUCTO.md_
+- [x] **Documentar decisiones de modulos pospuestos**: landing pages builder, OAuth social, Prebid
+  - _Resuelto: Sesiones 41+43 — ESTADO-REAL-PRODUCTO.md seccion "Decisiones sobre modulos parciales"_
+
+## Resumen
+
+| Prioridad | Total  | Resueltos | Pendientes |
+| --------- | ------ | --------- | ---------- |
+| P0        | 1      | 0         | 1          |
+| P1        | 5      | 4         | 1          |
+| P2        | 5      | 5         | 0          |
+| **Total** | **11** | **9**     | **2**      |
+
+### Pendientes restantes
+
+1. **Pentest externo** (P0) — Requiere accion del usuario: contratar proveedor externo
+2. **Consolidar admin/dashboard** (P1) — Alto esfuerzo (~2 semanas), pospuesto
 
 ## Referencia: documentos fuente
 

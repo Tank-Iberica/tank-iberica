@@ -135,7 +135,7 @@ export default defineEventHandler(async (event) => {
           notificationsSent++
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-          console.error(`[favorite-sold] Failed to send email to ${user.email}: ${errorMessage}`)
+          console.error(`[favorite-sold] Failed to send email to user ${user.id}: ${errorMessage}`)
         }
       }
     },
