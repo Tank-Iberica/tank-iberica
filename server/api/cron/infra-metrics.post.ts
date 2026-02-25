@@ -53,6 +53,7 @@ const THRESHOLDS: Record<string, ThresholdConfig> = {
   cloudinary_credits: { warning: 70, critical: 85, emergency: 95 },
   cloudinary_storage: { warning: 70, critical: 85, emergency: 95 },
   resend_emails_today: { warning: 70, critical: 85, emergency: 95 },
+  stripe_webhook_failures: { warning: 50, critical: 70, emergency: 90 },
 }
 
 // Alert cooldown periods in hours
@@ -215,6 +216,33 @@ export default defineEventHandler(async (event) => {
   if (sentryToken) {
     // Sentry API integration can be added here when needed
     // For now, just acknowledge the token exists but don't collect metrics
+  }
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // 6. Stripe — Count recent webhook failures (from payments table)
+  // ═════════════════════════════════════════════════════════════════════════
+  try {
+    const last24h = new Date(Date.now() - 24 * 3600000).toISOString()
+
+    const { count: failedWebhookCount, error: webhookError } = await supabase
+      .from('payments')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'failed')
+      .gte('created_at', last24h)
+
+    if (!webhookError && failedWebhookCount !== null) {
+      // Treat 5 failures as 100% (emergency threshold ceiling)
+      const maxFailures = 5
+      collectedMetrics.push({
+        component: 'stripe',
+        metric_name: 'stripe_webhook_failures',
+        metric_value: failedWebhookCount,
+        metric_limit: maxFailures,
+        metadata: { source: 'payments_table', since: last24h },
+      })
+    }
+  } catch {
+    errors.push('stripe: failed to count webhook failures')
   }
 
   // ═════════════════════════════════════════════════════════════════════════
