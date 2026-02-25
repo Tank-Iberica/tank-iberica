@@ -22,11 +22,9 @@ _Ultima actualizacion: 2026-02-25_
 - [x] **Downgrade workflow**: definir que pasa al cancelar suscripcion (limites, visibilidad listings)
   - _Resuelto: Sesion 40 — webhook.post.ts (customer.subscription.deleted → plan: free + email)_
 
-- [ ] **Consolidar admin/dashboard**: extraer componentes compartidos para reducir duplicacion
+- [x] **Consolidar admin/dashboard**: extraer componentes compartidos para reducir duplicacion
   - _Origen: RECOMENDACIONES-100-PUNTOS.md, seccion Modulabilidad_
-  - _Ejemplos: VehicleListTable, VehicleFormBasicInfo, useVehicleList(scope)_
-  - _Esfuerzo estimado: 2 semanas_
-  - _Estado: Solo dateHelpers.ts en composables/shared/. Pospuesto por alto esfuerzo._
+  - _Resuelto: Post-sesion 43 — shared composable useListingUtils (formatPrice, formatPriceCents, getStatusConfig), shared components (StatusBadge, ConfirmDeleteModal, PriceDisplay), slugify variadic en fileNaming.ts. 25+ formatPrice duplicados eliminados, 6 generateSlug eliminados. 25 archivos refactorizados._
 
 - [x] **Suite de tests de seguridad**: 13 checks minimos (auth endpoints, webhooks, IDOR, CRON_SECRET)
   - _Resuelto: Sesion 37 — tests/security/auth-endpoints.test.ts (17 checks: auth, webhooks, crons, headers)_
@@ -54,14 +52,13 @@ _Ultima actualizacion: 2026-02-25_
 | Prioridad | Total  | Resueltos | Pendientes |
 | --------- | ------ | --------- | ---------- |
 | P0        | 1      | 0         | 1          |
-| P1        | 5      | 4         | 1          |
+| P1        | 5      | 5         | 0          |
 | P2        | 5      | 5         | 0          |
-| **Total** | **11** | **9**     | **2**      |
+| **Total** | **11** | **10**    | **1**      |
 
 ### Pendientes restantes
 
 1. **Pentest externo** (P0) — Requiere accion del usuario: contratar proveedor externo
-2. **Consolidar admin/dashboard** (P1) — Alto esfuerzo (~2 semanas), pospuesto
 
 ## Referencia: documentos fuente
 
