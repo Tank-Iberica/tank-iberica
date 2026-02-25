@@ -5780,6 +5780,62 @@ tracciona.com/fr/vehiculo/citerne-indox-25000l       → i18n prefix + vehiculo/
 
 ---
 
+## SESIÓN 43 — Cierre: actualizar estado real del producto y progreso
+
+> Actualizar toda la documentación de estado para reflejar el trabajo completado en las sesiones 1-42.
+> **Origen:** Checklist post-sesiones (docs/auditorias/CHECKLIST-POST-SESIONES.md).
+
+**Leer:**
+
+1. `docs/progreso.md` — Estado actual (desactualizado)
+2. `docs/ESTADO-REAL-PRODUCTO.md` — Generado automáticamente
+3. `docs/auditorias/CHECKLIST-POST-SESIONES.md` — Pendientes post-sesiones
+4. `scripts/generate-estado-real.sh` — Script generador
+
+**Hacer:**
+
+### Parte A — REGENERAR ESTADO-REAL-PRODUCTO
+
+```bash
+bash scripts/generate-estado-real.sh
+```
+
+Verificar que el output refleja todas las páginas, composables, endpoints y migraciones actuales.
+
+### Parte B — ACTUALIZAR PROGRESO.MD
+
+Reescribir `docs/progreso.md` con:
+
+1. Lista de sesiones 1-42 con estado (completada / parcial / pendiente)
+2. Resumen de módulos implementados vs pendientes
+3. Referencia al checklist de pendientes post-sesiones
+4. Fecha de última actualización
+
+### Parte C — DOCUMENTAR MÓDULOS POSPUESTOS
+
+Añadir sección en `docs/ESTADO-REAL-PRODUCTO.md`:
+
+- **Landing pages builder** → POSPUESTO (diseño en anexos, no implementado)
+- **OAuth social** → MÍNIMO (solo email+password activo, Google OAuth preparado pero no activado)
+- **Prebid demand partners** → PLACEHOLDER (IDs de partners no configurados)
+
+### Parte D — VERIFICAR COHERENCIA DOCUMENTAL
+
+1. README-PROYECTO.md apunta a docs correctos
+2. CLAUDE.md refleja estado actual (sesiones 1-42 completadas)
+3. contexto-global.md actualizado con nuevos módulos (conversación, reservas, comparador, etc.)
+
+### Resumen archivos sesión 43
+
+| Archivo                        | Tipo                   |
+| ------------------------------ | ---------------------- |
+| `docs/ESTADO-REAL-PRODUCTO.md` | Regenerado             |
+| `docs/progreso.md`             | Reescrito completo     |
+| `README-PROYECTO.md`           | Verificado/actualizado |
+| `CLAUDE.md`                    | Verificado/actualizado |
+
+---
+
 ## NOTAS GENERALES
 
 - **Cada sesión es independiente.** Si Claude Code pierde contexto, el usuario abre un nuevo chat y dice "ejecuta la sesión N" y Claude Code lee este archivo.
