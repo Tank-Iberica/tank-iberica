@@ -58,7 +58,7 @@
                 {{ t(`admin.publicidad.statusLabels.${ad.status}`) }}
               </span>
             </td>
-            <td class="text-right">{{ formatPrice(ad.price_monthly_cents) }}</td>
+            <td class="text-right">{{ formatPriceCents(ad.price_monthly_cents) }}</td>
             <td class="text-right">{{ formatNumber(ad.impressions) }}</td>
             <td class="text-right">{{ formatNumber(ad.clicks) }}</td>
             <td class="text-right">{{ calcCTR(ad.impressions, ad.clicks) }}</td>
@@ -98,9 +98,9 @@
 
 <script setup lang="ts">
 import type { Ad } from '~/composables/admin/useAdminPublicidad'
+import { formatPriceCents } from '~/composables/shared/useListingUtils'
 import {
   getStatusColor,
-  formatPrice,
   formatDate,
   formatNumber,
   calcCTR,
