@@ -12,11 +12,8 @@ function getVerticalSlug(): string {
 }
 
 export function vehiclesQuery(supabase: SupabaseClient, vertical?: string) {
-  // NOTE: vehicles table does not currently have a 'vertical' column.
-  // This helper is prepared for when the column is added.
-  // For now, it returns an unfiltered select.
-  const _v = vertical || getVerticalSlug()
-  return supabase.from('vehicles').select('*')
+  const v = vertical || getVerticalSlug()
+  return supabase.from('vehicles').select('*').eq('vertical', v)
 }
 
 export function dealersQuery(supabase: SupabaseClient, vertical?: string) {

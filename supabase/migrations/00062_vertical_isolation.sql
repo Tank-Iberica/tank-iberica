@@ -3,8 +3,7 @@
 -- Composite indexes for efficient vertical-scoped queries + RLS enhancement
 -- =============================================================================
 
--- NOTE: vehicles and advertisements tables do NOT have a 'vertical' column,
--- so indexes for those tables are intentionally skipped.
+-- NOTE: vehicles and advertisements vertical columns are added in migration 00063.
 
 -- Composite indexes for vertical-scoped queries
 -- idx_dealers_vertical already exists (from 00031) but IF NOT EXISTS keeps it safe
