@@ -78,9 +78,9 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, message: 'Supabase not configured' })
   }
 
-  // Check if user already has a stripe_customer_id in subscriptions table
+  // Check if user already has a subscription (for stripe_customer_id + trial eligibility)
   const subRes = await fetch(
-    `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${user.id}&select=stripe_customer_id`,
+    `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${user.id}&select=id,stripe_customer_id`,
     {
       headers: {
         apikey: supabaseKey,
@@ -90,6 +90,7 @@ export default defineEventHandler(async (event) => {
   )
   const subData = await subRes.json()
   const existingCustomerId = subData?.[0]?.stripe_customer_id || null
+  const isFirstSubscription = !Array.isArray(subData) || subData.length === 0
 
   // Determine price
   const unitAmount = PRICES[plan][interval]
@@ -123,6 +124,18 @@ export default defineEventHandler(async (event) => {
 
   if (existingCustomerId) {
     sessionParams.customer = existingCustomerId
+  }
+
+  // Add 14-day trial for first-time subscribers
+  if (isFirstSubscription) {
+    sessionParams.subscription_data = {
+      trial_period_days: 14,
+      metadata: {
+        user_id: user.id,
+        plan,
+        vertical: process.env.NUXT_PUBLIC_VERTICAL || 'tracciona',
+      },
+    }
   }
 
   const session = await stripe.checkout.sessions.create(

@@ -3,11 +3,30 @@ import type { PlanType } from '~/composables/useSubscriptionPlan'
 
 const { t } = useI18n()
 const user = useSupabaseUser()
+const supabase = useSupabaseClient()
 const localePath = useLocalePath()
 
 const billingInterval = ref<'month' | 'year'>('month')
 const loading = ref(false)
 const checkoutError = ref('')
+const isTrialEligible = ref(false)
+
+// Check if the logged-in user is eligible for a trial (no existing subscription)
+async function checkTrialEligibility() {
+  if (!user.value) {
+    isTrialEligible.value = true // Show trial badge for non-logged-in users too
+    return
+  }
+  const { data } = await supabase
+    .from('subscriptions')
+    .select('id')
+    .eq('user_id', user.value.id)
+    .limit(1)
+  isTrialEligible.value = !data || data.length === 0
+}
+
+onMounted(checkTrialEligibility)
+watch(user, checkTrialEligibility)
 
 useHead({
   title: t('pricing.seoTitle'),
@@ -262,6 +281,9 @@ function handleCta(plan: PlanType) {
         </button>
       </div>
 
+      <!-- Trial note -->
+      <p v-if="isTrialEligible" class="trial-note">{{ $t('pricing.trialNote') }}</p>
+
       <!-- Error -->
       <p v-if="checkoutError" class="checkout-error">{{ checkoutError }}</p>
 
@@ -282,6 +304,14 @@ function handleCta(plan: PlanType) {
           <!-- Popular badge -->
           <span v-if="card.highlighted" class="popular-badge">
             {{ $t('pricing.popular') }}
+          </span>
+
+          <!-- Trial badge -->
+          <span
+            v-if="isTrialEligible && (card.plan === 'basic' || card.plan === 'premium')"
+            class="trial-badge"
+          >
+            {{ $t('pricing.trialBadge') }}
           </span>
 
           <!-- Founding label -->
@@ -530,6 +560,26 @@ function handleCta(plan: PlanType) {
   padding: var(--spacing-1) var(--spacing-3);
   border-radius: var(--border-radius-full);
   letter-spacing: 0.02em;
+}
+
+/* ---- Trial badge ---- */
+.trial-badge {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-success);
+  background: rgba(16, 185, 129, 0.1);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-full);
+  margin-bottom: var(--spacing-2);
+  align-self: flex-start;
+}
+
+.trial-note {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-success);
+  margin-bottom: var(--spacing-4);
 }
 
 /* ---- Founding label ---- */
