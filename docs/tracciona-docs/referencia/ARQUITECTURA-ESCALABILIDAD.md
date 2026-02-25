@@ -699,7 +699,122 @@ Con la capa de cache SWR + Cloudflare edge:
 
 ---
 
-## 15. REFERENCIAS
+## 15. DIAGRAMA DE FLUJO DE DATOS (sesión 41)
+
+```
+┌───────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│   Usuario     │─────│  Cloudflare CDN   │─────│  Cloudflare Pages │
+│  (navegador)  │     │  (cache + WAF)    │     │  (Nuxt 3 SSR)    │
+└───────────────┘     └──────────────────┘     └────────┬─────────┘
+                                                        │
+                    ┌─────────────────┬─────────┴─────────┬─────────────────┐
+                    │                 │                   │                 │
+              ┌─────┴───────┐ ┌──────┴──────────┐ ┌─────┴───────┐ ┌─────┴───────┐
+              │  Supabase   │ │    Stripe       │ │  Cloudinary  │ │   Resend     │
+              │  (BD+RLS+   │ │ (pagos+webhook) │ │  → CF Images │ │  (emails)    │
+              │  Realtime)  │ │                 │ │              │ │              │
+              └─────────────┘ └─────────────────┘ └─────────────┘ └─────────────┘
+                                    │
+                    ┌───────────────┴───────────────┐
+                    │   WhatsApp Meta Cloud API     │
+                    │   + Claude Vision (IA)         │
+                    └───────────────────────────────┘
+
+Crons (Workers CF):
+  freshness-check, search-alerts, publish-scheduled,
+  favorite-price-drop, dealer-weekly-stats, auto-auction,
+  whatsapp-retry, infra-metrics
+
+Seguridad CI:
+  Semgrep CE → análisis estático
+  Snyk free → dependencias
+  npm audit → vulnerabilidades
+  Vitest → tests de auth/IDOR
+```
+
+### 15.1 Capa de servicios (server/services/)
+
+Sesión 41 introduce una capa de servicios para endpoints con >200 líneas de lógica:
+
+| Servicio          | Archivo                           | Responsabilidad                                         |
+| ----------------- | --------------------------------- | ------------------------------------------------------- |
+| `marketReport.ts` | `server/services/marketReport.ts` | Computación de stats + generación de HTML para reportes |
+| `billing.ts`      | `server/services/billing.ts`      | REST helpers, lookup de usuario, dunning, facturas auto |
+
+Los endpoints quedan como orquestadores: validan, llaman al servicio, devuelven resultado.
+
+---
+
+## 16. UMBRALES Y ALERTAS FORMALES (sesión 41)
+
+El cron `infra-metrics.post.ts` (sesión 33) recopila métricas horarias. Los umbrales definen cuándo generar alertas:
+
+| Métrica                         | Umbral warning  | Umbral crítico | Acción         |
+| ------------------------------- | --------------- | -------------- | -------------- |
+| Supabase DB size                | 80% del plan    | 90%            | Email admin    |
+| Supabase API requests/min       | 500             | 800            | Email + Sentry |
+| Cloudinary transformaciones/mes | 80% del plan    | 95%            | Email admin    |
+| CF Images stored                | 80%             | 95%            | Email admin    |
+| Error rate (Sentry)             | >1% de requests | >5%            | Sentry alert   |
+| Stripe webhook failures         | 3 consecutivos  | 5              | Email + Sentry |
+| Build time CI                   | >5 min          | >10 min        | Warning en PR  |
+| Bundle size (mayor chunk)       | >500KB          | >800KB         | Warning en PR  |
+
+### Configuración actual en infra-metrics.post.ts
+
+```typescript
+const THRESHOLDS = {
+  db_size_bytes: { warning: 70, critical: 85, emergency: 95 },
+  connections_used: { warning: 70, critical: 85, emergency: 95 },
+  cloudinary_credits: { warning: 70, critical: 85, emergency: 95 },
+  cloudinary_storage: { warning: 70, critical: 85, emergency: 95 },
+  resend_emails_today: { warning: 70, critical: 85, emergency: 95 },
+  stripe_webhook_failures: { warning: 50, critical: 70, emergency: 90 },
+}
+```
+
+### Cooldown de alertas
+
+| Nivel     | Cooldown | Canal                |
+| --------- | -------- | -------------------- |
+| Emergency | 24h      | Email + push + BD    |
+| Critical  | 48h      | Dashboard alert + BD |
+| Warning   | 7 días   | Solo BD              |
+
+---
+
+## 17. RATE LIMITING Y WAF (sesión 34 + 41)
+
+### Middleware de rate limiting (server/middleware/rate-limit.ts)
+
+- Implementado en sesión 34
+- Basado en IP para rutas públicas
+- Desactivado en producción por defecto (in-memory Map no funciona en Workers)
+- Activable con `ENABLE_MEMORY_RATE_LIMIT=true` para desarrollo local
+
+| Ruta                  | Límite     | Ventana       |
+| --------------------- | ---------- | ------------- |
+| `/api/email/send`     | 10 req     | 1 min         |
+| `/api/lead*`          | 5 req      | 1 min         |
+| `/api/stripe*`        | 20 req     | 1 min         |
+| `/api/account/delete` | 2 req      | 1 min         |
+| `/api/*` (POST/PUT)   | 30 req     | 1 min         |
+| `/api/*` (GET)        | 200 req    | 1 min         |
+| Páginas públicas      | Sin límite | — (cache CDN) |
+
+### Cloudflare WAF (configuración recomendada)
+
+- Bot Fight Mode: activado
+- Security Level: Medium
+- Rate Limiting Rules (CF Dashboard):
+  - `/api/auth/*`: 20 req/min por IP → Challenge
+  - `/api/stripe/*`: 10 req/min por IP → Block
+  - `/api/cron/*`: Solo IPs de Cloudflare Workers → Block resto
+- Nota: El rate limiting del middleware es la primera línea; CF WAF es la segunda.
+
+---
+
+## 18. REFERENCIAS
 
 | Documento                                           | Contenido                                                           |
 | --------------------------------------------------- | ------------------------------------------------------------------- |
@@ -712,9 +827,12 @@ Con la capa de cache SWR + Cloudflare edge:
 | `server/api/cron/infra-metrics.post.ts`             | Cron de recolección de métricas                                     |
 | `server/api/images/process.post.ts`                 | Pipeline híbrido de imágenes                                        |
 | `app/pages/admin/infraestructura.vue`               | Panel de monitorización                                             |
+| `server/services/marketReport.ts`                   | Servicio de generación de informes de mercado                       |
+| `server/services/billing.ts`                        | Servicio compartido de facturación y pagos                          |
+| `server/middleware/rate-limit.ts`                   | Rate limiting middleware (sesión 34)                                |
 
 ---
 
 > **Para Claude Code:** Este documento es referencia, no una sesión ejecutable. Cuando un auditor pregunte "¿cómo escala?", apunta aquí. Cuando necesites tomar una decisión de arquitectura, consulta este documento para mantener coherencia.
 >
-> **Para auditores:** Si desea verificar cualquier afirmación de este documento, las fuentes de código están listadas en la sección 15. El proyecto es open-source internamente y todas las configuraciones son auditables.
+> **Para auditores:** Si desea verificar cualquier afirmación de este documento, las fuentes de código están listadas en la sección 18. El proyecto es open-source internamente y todas las configuraciones son auditables.
