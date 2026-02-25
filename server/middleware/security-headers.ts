@@ -39,6 +39,7 @@ export default defineEventHandler((event) => {
   ].join('; ')
 
   headers.setHeader('Content-Security-Policy', csp)
+  headers.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
   headers.setHeader('X-Content-Type-Options', 'nosniff')
   headers.setHeader('X-Frame-Options', 'DENY')
   headers.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
