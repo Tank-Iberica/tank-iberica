@@ -1,3 +1,5 @@
+> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
+
 # Guía: Cómo usar Claude Code con Tracciona
 
 ## Setup inicial (hacer una sola vez)

@@ -1,3 +1,5 @@
+> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
+
 **TANK IBERICA**
 
 Plataforma de Vehículos Industriales
@@ -64,81 +66,85 @@ Este documento define el plan completo para transformar Tank Iberica de un proto
 
 2.1 Archivos del Proyecto (22 archivos)
 
-  ------------------------------ ------------ ------------------------------------------------------------------------------------------------------
-  **Archivo**                    **Líneas**   **Descripción y Problemas**
+---
 
-  index.html                     12.787       Web pública principal. Monolito con CSS+HTML+JS embebido. Carga 4 JS externos.
+**Archivo** **Líneas** **Descripción y Problemas**
 
-  admin.html                     8.859        Panel admin. Monolito independiente con CSS+JS embebido. Carga Chart.js, jsPDF, xlsx.
+index.html 12.787 Web pública principal. Monolito con CSS+HTML+JS embebido. Carga 4 JS externos.
 
-  auth-system.js                 777          Sistema de auth actual: email+contraseña. Genera modal dinámicamente. Textos bilingües.
+admin.html 8.859 Panel admin. Monolito independiente con CSS+JS embebido. Carga Chart.js, jsPDF, xlsx.
 
-  user-panel-functions.js        522          Funciones del panel Mi Cuenta: chat, favoritos, suscripciones, eliminación de cuenta.
+auth-system.js 777 Sistema de auth actual: email+contraseña. Genera modal dinámicamente. Textos bilingües.
 
-  admin-users.js                 470          Gestión de usuarios desde admin. CRUD, filtros, exportación CSV. URL Apps Script diferente.
+user-panel-functions.js 522 Funciones del panel Mi Cuenta: chat, favoritos, suscripciones, eliminación de cuenta.
 
-  main.js                        465          Core del frontend: carga datos Sheets, filtros, renderizado. Duplica CONFIG de google-sheets-api.js.
+admin-users.js 470 Gestión de usuarios desde admin. CRUD, filtros, exportación CSV. URL Apps Script diferente.
 
-  google-sheets-api.js           213          Wrapper de Sheets API. Define CONFIG con API_KEY y SPREADSHEET_ID. Funciones de lectura.
+main.js 465 Core del frontend: carga datos Sheets, filtros, renderizado. Duplica CONFIG de google-sheets-api.js.
 
-  user-panel.js                  191          Panel Mi Cuenta básico: abrir/cerrar, mostrar datos, cargar favoritos.
+google-sheets-api.js 213 Wrapper de Sheets API. Define CONFIG con API_KEY y SPREADSHEET_ID. Funciones de lectura.
 
-  AppsScript.gs                  627          Apps Script ACTUAL: auth email+contraseña, SHA-256, recuperación, perfil, appendRow.
+user-panel.js 191 Panel Mi Cuenta básico: abrir/cerrar, mostrar datos, cargar favoritos.
 
-  apps-script-completo.js        506          Apps Script ANTIGUO: auth por OTP email, 6 dígitos, activación. URL diferente.
+AppsScript.gs 627 Apps Script ACTUAL: auth email+contraseña, SHA-256, recuperación, perfil, appendRow.
 
-  styles.css                     5.675        CSS completo del sitio público. Duplicación parcial del CSS embebido en index.html.
+apps-script-completo.js 506 Apps Script ANTIGUO: auth por OTP email, 6 dígitos, activación. URL diferente.
 
-  main.css                       5.077        Otra versión del CSS público. Mismos design tokens que styles.css.
+styles.css 5.675 CSS completo del sitio público. Duplicación parcial del CSS embebido en index.html.
 
-  auth-user-panel.css            888          Estilos específicos para modal auth y panel de usuario.
+main.css 5.077 Otra versión del CSS público. Mismos design tokens que styles.css.
 
-  admin.css                      628          Estilos específicos del panel admin (independiente de admin.html embebido).
+auth-user-panel.css 888 Estilos específicos para modal auth y panel de usuario.
 
-  DESIGN_SYSTEM.md               359          Design tokens: colores, tipografía, espaciado, breakpoints, componentes.
+admin.css 628 Estilos específicos del panel admin (independiente de admin.html embebido).
 
-  PARAMETROS_ADMIN_ORIGINAL.md   307          Referencia: 404 IDs, 261 funciones, 16 secciones, 15+ modales del admin.
+DESIGN_SYSTEM.md 359 Design tokens: colores, tipografía, espaciado, breakpoints, componentes.
 
-  README.md                      195          Instrucciones de instalación del sistema de usuarios OTP (desactualizado).
+PARAMETROS_ADMIN_ORIGINAL.md 307 Referencia: 404 IDs, 261 funciones, 16 secciones, 15+ modales del admin.
 
-  INSTRUCCIONES_AUTH.md          144          Guía de migración OTP → email+contraseña (parcialmente completada).
+README.md 195 Instrucciones de instalación del sistema de usuarios OTP (desactualizado).
 
-  Keys.txt                       6            TODAS las credenciales en texto plano: API_KEY, SHEET_ID, Apps Script URL, CLIENT_ID.
+INSTRUCCIONES_AUTH.md 144 Guía de migración OTP → email+contraseña (parcialmente completada).
 
-  generate-png-icons.html        95           Generador de iconos PWA en canvas.
-  ------------------------------ ------------ ------------------------------------------------------------------------------------------------------
+Keys.txt 6 TODAS las credenciales en texto plano: API_KEY, SHEET_ID, Apps Script URL, CLIENT_ID.
+
+generate-png-icons.html 95 Generador de iconos PWA en canvas.
+
+---
 
 2.2 Totales por Tipo
 
-  ------------------------ ----------------- ------------ --------------------------------------------------------
-  **Tipo**                 **Cantidad**      **Líneas**   **Notas**
+---
 
-  HTML (monolitos)         2 archivos        21.646       index.html + admin.html con CSS+JS embebido
+**Tipo** **Cantidad** **Líneas** **Notas**
 
-  JavaScript externo       6 archivos        2.638        auth, panel, main, admin-users, sheets-api, user-panel
+HTML (monolitos) 2 archivos 21.646 index.html + admin.html con CSS+JS embebido
 
-  CSS externo              4 archivos        12.268       styles.css + main.css (duplicados) + auth + admin
+JavaScript externo 6 archivos 2.638 auth, panel, main, admin-users, sheets-api, user-panel
 
-  Apps Script (servidor)   2 archivos        1.133        Dos versiones incompatibles (OTP vs password)
+CSS externo 4 archivos 12.268 styles.css + main.css (duplicados) + auth + admin
 
-  Documentación            5 archivos        ---          Design system, readme, instrucciones, params, keys
+Apps Script (servidor) 2 archivos 1.133 Dos versiones incompatibles (OTP vs password)
 
-  Utilidades               1 archivo         95           Generador de iconos PWA
+Documentación 5 archivos --- Design system, readme, instrucciones, params, keys
 
-  **TOTAL**                **22 archivos**   **37.685**   
-  ------------------------ ----------------- ------------ --------------------------------------------------------
+Utilidades 1 archivo 95 Generador de iconos PWA
+
+**TOTAL** **22 archivos** **37.685**
+
+---
 
 2.3 Problemas Estructurales Detectados
 
--   **Duplicación de código:** CONFIG con API_KEY y SPREADSHEET_ID se define en google-sheets-api.js, main.js, user-panel-functions.js E index.html. Cualquier cambio exige editar 4 archivos.
+- **Duplicación de código:** CONFIG con API_KEY y SPREADSHEET_ID se define en google-sheets-api.js, main.js, user-panel-functions.js E index.html. Cualquier cambio exige editar 4 archivos.
 
--   **Dos sistemas de auth incompatibles:** apps-script-completo.js usa OTP por email (6 dígitos, sin contraseña). AppsScript.gs usa email+contraseña con SHA-256. Dos URLs de Apps Script diferentes. README.md documenta el sistema antiguo.
+- **Dos sistemas de auth incompatibles:** apps-script-completo.js usa OTP por email (6 dígitos, sin contraseña). AppsScript.gs usa email+contraseña con SHA-256. Dos URLs de Apps Script diferentes. README.md documenta el sistema antiguo.
 
--   **CSS duplicado:** styles.css (5.675 líneas) y main.css (5.077 líneas) comparten los mismos design tokens y gran parte del código. Además, index.html tiene \~6.000 líneas de CSS embebido.
+- **CSS duplicado:** styles.css (5.675 líneas) y main.css (5.077 líneas) comparten los mismos design tokens y gran parte del código. Además, index.html tiene \~6.000 líneas de CSS embebido.
 
--   **Admin aislado:** admin.html no comparte código con index.html: tiene su propia copia de readSheetData(), auth, y estilos. Duplica 100% de la lógica de conexión a Sheets.
+- **Admin aislado:** admin.html no comparte código con index.html: tiene su propia copia de readSheetData(), auth, y estilos. Duplica 100% de la lógica de conexión a Sheets.
 
--   **Documentación desactualizada:** README.md describe el sistema OTP, pero auth-system.js usa contraseñas. INSTRUCCIONES_AUTH.md describe una migración parcial.
+- **Documentación desactualizada:** README.md describe el sistema OTP, pero auth-system.js usa contraseñas. INSTRUCCIONES_AUTH.md describe una migración parcial.
 
 3\. Auditoría de Seguridad
 
@@ -146,95 +152,103 @@ Análisis de los 22 archivos del proyecto. Se encontraron vulnerabilidades crít
 
 3.1 Credenciales Expuestas
 
-  ------------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  **Credencial**      **Exposición**   **Detalle**
+---
 
-  API_KEY de Google   5 archivos       google-sheets-api.js, main.js, user-panel-functions.js, index.html, Keys.txt. Permite a cualquiera leer TODAS las hojas de Sheets.
+**Credencial** **Exposición** **Detalle**
 
-  SPREADSHEET_ID      9 archivos       Los 5 anteriores + admin-users.js, admin.html, README.md, Keys.txt. Identifica la BD exacta.
+API_KEY de Google 5 archivos google-sheets-api.js, main.js, user-panel-functions.js, index.html, Keys.txt. Permite a cualquiera leer TODAS las hojas de Sheets.
 
-  Apps Script URL     8 archivos       auth-system.js, user-panel.js, user-panel-functions.js, admin-users.js, admin.html, Keys.txt, README.md, INSTRUCCIONES_AUTH.md. Permite enviar requests al backend.
+SPREADSHEET_ID 9 archivos Los 5 anteriores + admin-users.js, admin.html, README.md, Keys.txt. Identifica la BD exacta.
 
-  OAuth CLIENT_ID     2 archivos       admin.html (línea embebida), Keys.txt. Permite suplantar la app en flujos OAuth.
+Apps Script URL 8 archivos auth-system.js, user-panel.js, user-panel-functions.js, admin-users.js, admin.html, Keys.txt, README.md, INSTRUCCIONES_AUTH.md. Permite enviar requests al backend.
 
-  Keys.txt            1 archivo        Contiene TODAS las credenciales en texto plano. Si llega a un repo público, exposición total e inmediata.
-  ------------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+OAuth CLIENT_ID 2 archivos admin.html (línea embebida), Keys.txt. Permite suplantar la app en flujos OAuth.
+
+Keys.txt 1 archivo Contiene TODAS las credenciales en texto plano. Si llega a un repo público, exposición total e inmediata.
+
+---
 
 3.2 Vulnerabilidades por Severidad
 
-  --------------- ---------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------
-  **Severidad**   **Vulnerabilidad**                                                     **Impacto**
+---
 
-  **CRÍTICO**     API_KEY expuesta en 5 archivos cliente                                 Cualquiera lee datos personales (emails, teléfonos, direcciones) de todas las hojas
+**Severidad** **Vulnerabilidad** **Impacto**
 
-  **CRÍTICO**     163 innerHTML sin sanitizar (38 index + 101 admin + 24 JS)             XSS: inyección de código malicioso vía datos de Sheets o inputs de usuario
+**CRÍTICO** API_KEY expuesta en 5 archivos cliente Cualquiera lee datos personales (emails, teléfonos, direcciones) de todas las hojas
 
-  **CRÍTICO**     Contraseñas enviadas sin hash desde el frontend                        auth-system.js envía password en texto plano vía FormData al Apps Script
+**CRÍTICO** 163 innerHTML sin sanitizar (38 index + 101 admin + 24 JS) XSS: inyección de código malicioso vía datos de Sheets o inputs de usuario
 
-  **CRÍTICO**     Sesión y datos de usuario en localStorage (21 usos en 4 archivos JS)   XSS puede robar token, datos personales, y suplantar al usuario
+**CRÍTICO** Contraseñas enviadas sin hash desde el frontend auth-system.js envía password en texto plano vía FormData al Apps Script
 
-  **CRÍTICO**     Keys.txt con todas las credenciales en texto plano                     Si se sube a Git, exposición total inmediata de todo el sistema
+**CRÍTICO** Sesión y datos de usuario en localStorage (21 usos en 4 archivos JS) XSS puede robar token, datos personales, y suplantar al usuario
 
-  **ALTO**        Dos sistemas de auth incompatibles en paralelo                         OTP (apps-script-completo.js) y password (AppsScript.gs) con URLs diferentes. Confusión y superficie de ataque doble
+**CRÍTICO** Keys.txt con todas las credenciales en texto plano Si se sube a Git, exposición total inmediata de todo el sistema
 
-  **ALTO**        SHA-256 sin salt para hash de contraseñas                              AppsScript.gs usa Utilities.computeDigest(SHA_256, password) sin salt. Vulnerable a rainbow tables
+**ALTO** Dos sistemas de auth incompatibles en paralelo OTP (apps-script-completo.js) y password (AppsScript.gs) con URLs diferentes. Confusión y superficie de ataque doble
 
-  **ALTO**        admin-users.js usa una URL de Apps Script DIFERENTE                    Dos backends independientes, posible inconsistencia de datos. URL: AKfycbwKvLd\... vs AKfycbzvweS\...
+**ALTO** SHA-256 sin salt para hash de contraseñas AppsScript.gs usa Utilities.computeDigest(SHA_256, password) sin salt. Vulnerable a rainbow tables
 
-  **ALTO**        37.685 líneas en archivos sin modularizar                              Inmantenible: cambios simples requieren editar múltiples archivos
+**ALTO** admin-users.js usa una URL de Apps Script DIFERENTE Dos backends independientes, posible inconsistencia de datos. URL: AKfycbwKvLd\... vs AKfycbzvweS\...
 
-  **ALTO**        221 console.log/warn/error en producción                               Fuga de información: estructura de datos, errores internos, flujos de auth visibles en consola
+**ALTO** 37.685 líneas en archivos sin modularizar Inmantenible: cambios simples requieren editar múltiples archivos
 
-  **MEDIO**       CSS duplicado: styles.css y main.css casi idénticos (10.752 líneas)    Confusión sobre cuál es el activo. Cambios de estilo pueden no reflejarse
+**ALTO** 221 console.log/warn/error en producción Fuga de información: estructura de datos, errores internos, flujos de auth visibles en consola
 
-  **MEDIO**       Sin validación de input en formularios del frontend                    Datos malformados llegan al backend y a Sheets sin filtrar
+**MEDIO** CSS duplicado: styles.css y main.css casi idénticos (10.752 líneas) Confusión sobre cuál es el activo. Cambios de estilo pueden no reflejarse
 
-  **MEDIO**       ipapi.co/json/ en main.js para detectar idioma                         Envía IP del usuario a servicio externo sin consentimiento
-  --------------- ---------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------
+**MEDIO** Sin validación de input en formularios del frontend Datos malformados llegan al backend y a Sheets sin filtrar
+
+**MEDIO** ipapi.co/json/ en main.js para detectar idioma Envía IP del usuario a servicio externo sin consentimiento
+
+---
 
 3.3 Mapa de Credenciales por Archivo
 
-  ------------------------- ------------- -------------- ---------------- --------------- --------------- -----------
-  **Archivo**               **API_KEY**   **SHEET_ID**   **Script URL**   **CLIENT_ID**   **Passwords**   **Total**
+---
 
-  index.html                ✔             ✔              ---              ---             ---             2
+**Archivo** **API_KEY** **SHEET_ID** **Script URL** **CLIENT_ID** **Passwords** **Total**
 
-  google-sheets-api.js      ✔             ✔              ---              ---             ---             2
+index.html ✔ ✔ --- --- --- 2
 
-  main.js                   ✔             ✔              ---              ---             ---             2
+google-sheets-api.js ✔ ✔ --- --- --- 2
 
-  user-panel-functions.js   ✔             ✔              ✔                ---             ---             3
+main.js ✔ ✔ --- --- --- 2
 
-  auth-system.js            ---           ---            ✔                ---             ✔ cleartext     2
+user-panel-functions.js ✔ ✔ ✔ --- --- 3
 
-  user-panel.js             ---           ---            ✔                ---             ---             1
+auth-system.js --- --- ✔ --- ✔ cleartext 2
 
-  admin-users.js            ---           ✔              ✔ (diferente)    ---             ---             2
+user-panel.js --- --- ✔ --- --- 1
 
-  admin.html                ✔             ✔              ✔                ✔               ✔ token         5
+admin-users.js --- ✔ ✔ (diferente) --- --- 2
 
-  Keys.txt                  ✔             ✔              ✔                ✔               ---             4
-  ------------------------- ------------- -------------- ---------------- --------------- --------------- -----------
+admin.html ✔ ✔ ✔ ✔ ✔ token 5
+
+Keys.txt ✔ ✔ ✔ ✔ --- 4
+
+---
 
 4\. Stack Elegido y Límites Gratuitos
 
 4.1 Componentes del Stack
 
-  ------------------ ------------------------------------------ ------------------------------------------------------------- -------------------------------------------------------
-  **Servicio**       **Función**                                **Límite Gratuito**                                           **Qué Reemplaza**
+---
 
-  Supabase           Backend + BD + Auth + Storage + Realtime   500MB PostgreSQL, 50K MAU, 1GB storage, 500K Edge Functions   Sustituye Google Sheets + OAuth + Apps Script (ambos)
+**Servicio** **Función** **Límite Gratuito** **Qué Reemplaza**
 
-  Nuxt 3             Framework frontend (Vue 3)                 Open source, sin límites                                      Sustituye index.html (12.787 lín.) + 6 JS + 4 CSS
+Supabase Backend + BD + Auth + Storage + Realtime 500MB PostgreSQL, 50K MAU, 1GB storage, 500K Edge Functions Sustituye Google Sheets + OAuth + Apps Script (ambos)
 
-  Cloudflare Pages   Hosting + CDN + DNS + SSL + DDoS           Ancho de banda ilimitado, 500 builds/mes                      Hosting con rendimiento global
+Nuxt 3 Framework frontend (Vue 3) Open source, sin límites Sustituye index.html (12.787 lín.) + 6 JS + 4 CSS
 
-  Cloudinary         Imágenes CDN + transformación              25 créditos/mes (10GB storage, 20GB BW)                       Sustituye Google Drive para fotos
+Cloudflare Pages Hosting + CDN + DNS + SSL + DDoS Ancho de banda ilimitado, 500 builds/mes Hosting con rendimiento global
 
-  GitHub Actions     Repositorio + CI/CD                        2.000 min/mes (privados), ilimitado (públicos)                Código fuente + deploy automático
+Cloudinary Imágenes CDN + transformación 25 créditos/mes (10GB storage, 20GB BW) Sustituye Google Drive para fotos
 
-  Sentry             Monitoring errores                         5K errores/mes                                                Sustituye los 221 console.log/error
-  ------------------ ------------------------------------------ ------------------------------------------------------------- -------------------------------------------------------
+GitHub Actions Repositorio + CI/CD 2.000 min/mes (privados), ilimitado (públicos) Código fuente + deploy automático
+
+Sentry Monitoring errores 5K errores/mes Sustituye los 221 console.log/error
+
+---
 
 4.2 Coste Total
 
@@ -244,25 +258,27 @@ Análisis de los 22 archivos del proyecto. Se encontraron vulnerabilidades crít
 
 5.1 Antes vs Después
 
-  ----------------------------------------------------------- ------------------------------------------------------------
-  **Actual**                                                  **Propuesto**
+---
 
-  Navegador → Google Sheets API (directo, API_KEY expuesta)   Navegador → Supabase API (anon_key segura, RLS)
+**Actual** **Propuesto**
 
-  22 archivos sueltos sin estructura                          Proyecto Nuxt modular con \~35 componentes
+Navegador → Google Sheets API (directo, API_KEY expuesta) Navegador → Supabase API (anon_key segura, RLS)
 
-  2 Apps Script como «backend» (incompatibles entre sí)       1 backend unificado: Supabase (PostgREST + Edge Functions)
+22 archivos sueltos sin estructura Proyecto Nuxt modular con \~35 componentes
 
-  Google Sheets como BD (sin tipos, sin FK, sin índices)      PostgreSQL con tipos, FK, índices, enums, RLS
+2 Apps Script como «backend» (incompatibles entre sí) 1 backend unificado: Supabase (PostgREST + Edge Functions)
 
-  Imágenes en Google Drive (sin optimizar, sin CDN)           Imágenes en Cloudinary (WebP auto, resize, CDN global)
+Google Sheets como BD (sin tipos, sin FK, sin índices) PostgreSQL con tipos, FK, índices, enums, RLS
 
-  CSS duplicado en 3 sitios (embebido + 2 archivos)           1 design system en CSS Modules / tokens.css
+Imágenes en Google Drive (sin optimizar, sin CDN) Imágenes en Cloudinary (WebP auto, resize, CDN global)
 
-  Auth: password cleartext → SHA-256 sin salt en Sheets       Auth: Supabase Auth (bcrypt, httpOnly cookies, OAuth)
+CSS duplicado en 3 sitios (embebido + 2 archivos) 1 design system en CSS Modules / tokens.css
 
-  Deploy manual: copiar archivos al servidor                  Deploy automático: push a main → Cloudflare Pages
-  ----------------------------------------------------------- ------------------------------------------------------------
+Auth: password cleartext → SHA-256 sin salt en Sheets Auth: Supabase Auth (bcrypt, httpOnly cookies, OAuth)
+
+Deploy manual: copiar archivos al servidor Deploy automático: push a main → Cloudflare Pages
+
+---
 
 5.2 Flujo de Datos
 
@@ -312,43 +328,45 @@ Migración de las 17 hojas de Google Sheets a tablas PostgreSQL relacionales con
 
 6.1 Tablas Principales
 
-  ---------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -----------------------------------
-  **Tabla PostgreSQL**   **Columnas Principales**                                                                                                                                                                                                         **Origen Sheets**
+---
 
-  vehicles               id (uuid PK), slug (unique), brand, model, year (int), price (numeric), rental_price, category (enum), subcategory_id (FK), location, description_es/en, filters_json (jsonb), status (enum), featured, created_at, updated_at   vehiculos
+**Tabla PostgreSQL** **Columnas Principales** **Origen Sheets**
 
-  vehicle_images         id (uuid PK), vehicle_id (FK CASCADE), cloudinary_public_id, url, thumbnail_url, position (int), alt_text                                                                                                                        URLs en vehiculos
+vehicles id (uuid PK), slug (unique), brand, model, year (int), price (numeric), rental_price, category (enum), subcategory_id (FK), location, description_es/en, filters_json (jsonb), status (enum), featured, created_at, updated_at vehiculos
 
-  subcategories          id (uuid PK), name_es, name_en, slug (unique), applicable_categories (text\[\]), stock_count, status (enum), sort_order                                                                                                          subcategorias
+vehicle_images id (uuid PK), vehicle_id (FK CASCADE), cloudinary_public_id, url, thumbnail_url, position (int), alt_text URLs en vehiculos
 
-  filter_definitions     id (uuid PK), subcategory_id (FK), name, type (enum), label_es/en, unit, options (jsonb), is_extra, is_hidden, status, sort_order                                                                                                filtros
+subcategories id (uuid PK), name_es, name_en, slug (unique), applicable_categories (text\[\]), stock_count, status (enum), sort_order subcategorias
 
-  users                  id (uuid PK, = auth.users.id), email (unique), pseudonimo, name, apellidos, avatar_url, provider, role (enum), phone, lang, created_at                                                                                           usuarios + admins
+filter_definitions id (uuid PK), subcategory_id (FK), name, type (enum), label_es/en, unit, options (jsonb), is_extra, is_hidden, status, sort_order filtros
 
-  favorites              user_id (FK), vehicle_id (FK), created_at --- PK compuesta                                                                                                                                                                       favoritos_usuarios + localStorage
+users id (uuid PK, = auth.users.id), email (unique), pseudonimo, name, apellidos, avatar_url, provider, role (enum), phone, lang, created_at usuarios + admins
 
-  advertisements         id (uuid PK), user_id (FK), vehicle_type, brand, model, year, price, location, description, photos, contact\_\*, status (enum), created_at                                                                                       anunciantes
+favorites user_id (FK), vehicle_id (FK), created_at --- PK compuesta favoritos_usuarios + localStorage
 
-  demands                id (uuid PK), user_id (FK), vehicle_type, year_min/max, price_min/max, specs (jsonb), contact\_\*, status (enum), created_at                                                                                                     solicitantes
+advertisements id (uuid PK), user_id (FK), vehicle_type, brand, model, year, price, location, description, photos, contact\_\*, status (enum), created_at anunciantes
 
-  subscriptions          id (uuid PK), email (unique), pref_web, pref_press, pref_newsletter, pref_featured, pref_events, pref_csr, created_at                                                                                                            subscripciones
+demands id (uuid PK), user_id (FK), vehicle_type, year_min/max, price_min/max, specs (jsonb), contact\_\*, status (enum), created_at solicitantes
 
-  news                   id (uuid PK), title_es/en, slug, category (enum), image_url, content_es/en, hashtags, views, status, published_at                                                                                                                noticias
+subscriptions id (uuid PK), email (unique), pref_web, pref_press, pref_newsletter, pref_featured, pref_events, pref_csr, created_at subscripciones
 
-  comments               id (uuid PK), news_id (FK), user_id (FK), parent_id (FK self-ref), content, status, likes, created_at                                                                                                                            comentarios
+news id (uuid PK), title_es/en, slug, category (enum), image_url, content_es/en, hashtags, views, status, published_at noticias
 
-  chat_messages          id (uuid PK), user_id (FK), content, direction (enum), is_read, created_at                                                                                                                                                       chat
+comments id (uuid PK), news_id (FK), user_id (FK), parent_id (FK self-ref), content, status, likes, created_at comentarios
 
-  config                 key (text PK), value (jsonb)                                                                                                                                                                                                     config + tabla_config
+chat_messages id (uuid PK), user_id (FK), content, direction (enum), is_read, created_at chat
 
-  balance                id (uuid PK), vehicle_id (FK nullable), concept, amount (numeric), invoice_url, date, type (enum)                                                                                                                                balance
+config key (text PK), value (jsonb) config + tabla_config
 
-  intermediation         id (uuid PK), vehicle_id (FK), buyer, seller, commission, status, notes, created_at                                                                                                                                              intermediacion
+balance id (uuid PK), vehicle_id (FK nullable), concept, amount (numeric), invoice_url, date, type (enum) balance
 
-  history_log            id (uuid PK), vehicle_id (FK), action (enum), details (jsonb), performed_by (FK), created_at                                                                                                                                     historico
+intermediation id (uuid PK), vehicle_id (FK), buyer, seller, commission, status, notes, created_at intermediacion
 
-  viewed_vehicles        id (uuid PK), vehicle_id (FK), viewer_ip (inet), user_id (FK nullable), viewed_at                                                                                                                                                ojeados
-  ---------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -----------------------------------
+history_log id (uuid PK), vehicle_id (FK), action (enum), details (jsonb), performed_by (FK), created_at historico
+
+viewed_vehicles id (uuid PK), vehicle_id (FK), viewer_ip (inet), user_id (FK nullable), viewed_at ojeados
+
+---
 
 6.2 Enums PostgreSQL
 
@@ -388,47 +406,49 @@ Supabase genera automáticamente una API REST para cada tabla. Esto reemplaza ta
 
 7.2 Row Level Security (RLS)
 
-  -------------------------- ------------------------------- ----------------------------------------------------
-  **Tabla**                  **Operación**                   **Política RLS**
+---
 
-  vehicles                   SELECT                          Público: solo status = \'published\'. Admin: todos
+**Tabla** **Operación** **Política RLS**
 
-  vehicles                   INSERT/UPDATE/DELETE            Solo admin (role = \'admin\')
+vehicles SELECT Público: solo status = \'published\'. Admin: todos
 
-  favorites                  SELECT/INSERT/DELETE            Solo el propio usuario (auth.uid() = user_id)
+vehicles INSERT/UPDATE/DELETE Solo admin (role = \'admin\')
 
-  advertisements             INSERT                          Cualquier usuario autenticado
+favorites SELECT/INSERT/DELETE Solo el propio usuario (auth.uid() = user_id)
 
-  advertisements             SELECT                          Propio usuario: las suyas. Admin: todas
+advertisements INSERT Cualquier usuario autenticado
 
-  demands                    INSERT/SELECT                   Mismo patrón que advertisements
+advertisements SELECT Propio usuario: las suyas. Admin: todas
 
-  chat_messages              SELECT                          Propio usuario: sus mensajes. Admin: todos
+demands INSERT/SELECT Mismo patrón que advertisements
 
-  chat_messages              INSERT                          Autenticado (dirección user_to_admin)
+chat_messages SELECT Propio usuario: sus mensajes. Admin: todos
 
-  subscriptions              INSERT                          Público (no requiere auth)
+chat_messages INSERT Autenticado (dirección user_to_admin)
 
-  users                      SELECT/UPDATE (propio)          Cada usuario solo ve/edita su perfil
+subscriptions INSERT Público (no requiere auth)
 
-  balance / intermediation   ALL                             Solo admin
+users SELECT/UPDATE (propio) Cada usuario solo ve/edita su perfil
 
-  config                     SELECT público / UPDATE admin   Lectura libre, escritura solo admin
-  -------------------------- ------------------------------- ----------------------------------------------------
+balance / intermediation ALL Solo admin
+
+config SELECT público / UPDATE admin Lectura libre, escritura solo admin
+
+---
 
 7.3 Edge Functions
 
 Lógica servidor que no se resuelve solo con RLS:
 
--   Email de bienvenida al registrarse (sustituye enviarEmailBienvenida() de AppsScript.gs)
+- Email de bienvenida al registrarse (sustituye enviarEmailBienvenida() de AppsScript.gs)
 
--   Email de recuperación de contraseña (sustituye enviarEmailRecuperacion() de AppsScript.gs)
+- Email de recuperación de contraseña (sustituye enviarEmailRecuperacion() de AppsScript.gs)
 
--   Notificar admin de nuevo anúnciate/solicitante
+- Notificar admin de nuevo anúnciate/solicitante
 
--   Validar y subir fotos a Cloudinary (sustituye uploadFileToDrive() de admin.html)
+- Validar y subir fotos a Cloudinary (sustituye uploadFileToDrive() de admin.html)
 
--   Generar PDF de folleto del vehículo server-side
+- Generar PDF de folleto del vehículo server-side
 
 8\. Estructura del Proyecto Nuxt 3
 
@@ -514,53 +534,57 @@ Un solo proyecto que unifica index.html + admin.html + 6 JS + 4 CSS en una estru
 
 8.1 Módulos Nuxt
 
-  ---------------------- --------------------------------------------------------------------------------------------------------
-  **Módulo**             **Función**
+---
 
-  \@nuxtjs/supabase      Cliente Supabase inyectado, middleware de auth, composables useSupabaseClient() y useSupabaseUser()
+**Módulo** **Función**
 
-  \@nuxtjs/i18n          Traducciones JSON, switcher, detección automática idioma, SEO hreflang. Sustituye detectLanguageByIP()
+\@nuxtjs/supabase Cliente Supabase inyectado, middleware de auth, composables useSupabaseClient() y useSupabaseUser()
 
-  \@pinia/nuxt           State management tipado. Sustituye las \~20 variables globales + localStorage manual
+\@nuxtjs/i18n Traducciones JSON, switcher, detección automática idioma, SEO hreflang. Sustituye detectLanguageByIP()
 
-  \@nuxt/image           Integración con Cloudinary, lazy loading nativo, srcset automático
+\@pinia/nuxt State management tipado. Sustituye las \~20 variables globales + localStorage manual
 
-  \@vueuse/nuxt          useInfiniteScroll, useLocalStorage, useDebounceFn, useBreakpoints
+\@nuxt/image Integración con Cloudinary, lazy loading nativo, srcset automático
 
-  \@nuxtjs/seo           Meta tags, sitemap, robots.txt, Open Graph automáticos
-  ---------------------- --------------------------------------------------------------------------------------------------------
+\@vueuse/nuxt useInfiniteScroll, useLocalStorage, useDebounceFn, useBreakpoints
+
+\@nuxtjs/seo Meta tags, sitemap, robots.txt, Open Graph automáticos
+
+---
 
 9\. Componentes Frontend
 
-  --------------------------- ------------------------------------------------------------ -------------------------- --------------------------------------------
-  **Componente**              **Sub-componentes**                                          **Notas**                  **Sustituye**
+---
 
-  AppHeader                   Logo, ContactDropdown, LangSwitcher, AccountBtn              Fijo, responsive           Líneas 6087-6450 de index.html
+**Componente** **Sub-componentes** **Notas** **Sustituye**
 
-  AnnounceBanner              BannerText, CloseBtn                                         Dinámico desde config BD   initBanner() de main.js
+AppHeader Logo, ContactDropdown, LangSwitcher, AccountBtn Fijo, responsive Líneas 6087-6450 de index.html
 
-  CategoryBar                 CategoryButton ×4, AnunciateBtn                              Multi-select               selectCategory() de main.js
+AnnounceBanner BannerText, CloseBtn Dinámico desde config BD initBanner() de main.js
 
-  SubcategoryBar              SubcategoryButton ×N                                         Dinámico desde BD          renderSubcategories() de main.js
+CategoryBar CategoryButton ×4, AnunciateBtn Multi-select selectCategory() de main.js
 
-  FilterBar                   PriceSlider, BrandSelect, YearSlider, DynamicFilter          6 tipos dinámicos          renderFilters/Filtro() de main.js
+SubcategoryBar SubcategoryButton ×N Dinámico desde BD renderSubcategories() de main.js
 
-  VehicleGrid + VehicleCard   Grid/Lista, paginación infinita, carrusel, badge, favorito   Lazy loading               renderProducts() de main.js
+FilterBar PriceSlider, BrandSelect, YearSlider, DynamicFilter 6 tipos dinámicos renderFilters/Filtro() de main.js
 
-  ImageGallery                MainImage, ThumbnailStrip, NavArrows                         Full-screen, swipe         Modal detalle index.html
+VehicleGrid + VehicleCard Grid/Lista, paginación infinita, carrusel, badge, favorito Lazy loading renderProducts() de main.js
 
-  AuthModal                   LoginForm, RegisterForm, ForgotForm, ProviderButtons         Bilingüe                   auth-system.js (777 líneas) completo
+ImageGallery MainImage, ThumbnailStrip, NavArrows Full-screen, swipe Modal detalle index.html
 
-  UserPanel                   Perfil, Favoritos, Chat, Suscripciones, Facturas             Panel lateral              user-panel.js + user-panel-functions.js
+AuthModal LoginForm, RegisterForm, ForgotForm, ProviderButtons Bilingüe auth-system.js (777 líneas) completo
 
-  ChatWidget                  MessageList, SendInput, EmojiPicker                          Supabase Realtime          enviarMensajeChat() + cargarMensajesChat()
+UserPanel Perfil, Favoritos, Chat, Suscripciones, Facturas Panel lateral user-panel.js + user-panel-functions.js
 
-  AdvertiseModal              15+ campos, PhotoUpload                                      4-col responsive           Modal anúnciate index.html
+ChatWidget MessageList, SendInput, EmojiPicker Supabase Realtime enviarMensajeChat() + cargarMensajesChat()
 
-  DemandModal                 12+ campos, DualSliders                                      4-col responsive           Modal solicitar index.html
+AdvertiseModal 15+ campos, PhotoUpload 4-col responsive Modal anúnciate index.html
 
-  AppFooter                   Links, Social, Newsletter, Copyright                         Stacked en móvil           Footer index.html
-  --------------------------- ------------------------------------------------------------ -------------------------- --------------------------------------------
+DemandModal 12+ campos, DualSliders 4-col responsive Modal solicitar index.html
+
+AppFooter Links, Social, Newsletter, Copyright Stacked en móvil Footer index.html
+
+---
 
 10\. Autenticación (Supabase Auth)
 
@@ -568,51 +592,55 @@ Un solo proyecto que unifica index.html + admin.html + 6 JS + 4 CSS en una estru
 
 Supabase Auth unifica y reemplaza 4 archivos y 2 backends:
 
--   auth-system.js (777 líneas): modal de login, registro, recuperación, textos bilingües
+- auth-system.js (777 líneas): modal de login, registro, recuperación, textos bilingües
 
--   AppsScript.gs (627 líneas): handleLogin, handleRegistrar, handleRecuperarPassword, hashPassword (SHA-256 sin salt)
+- AppsScript.gs (627 líneas): handleLogin, handleRegistrar, handleRecuperarPassword, hashPassword (SHA-256 sin salt)
 
--   apps-script-completo.js (506 líneas): handleEnviarOTP, handleValidarOTP, handleActivarCuenta (sistema OTP obsoleto)
+- apps-script-completo.js (506 líneas): handleEnviarOTP, handleValidarOTP, handleActivarCuenta (sistema OTP obsoleto)
 
--   Parte de user-panel.js (191 líneas): guardarSesion, verificarSesionActiva, localStorage manual
+- Parte de user-panel.js (191 líneas): guardarSesion, verificarSesionActiva, localStorage manual
 
 10.2 Comparativa de Seguridad
 
-  ------------------------------------------------------------- -----------------------------------------------------------
-  **Sistema Actual (Inseguro)**                                 **Supabase Auth (Seguro)**
+---
 
-  Contraseña enviada en texto plano vía FormData                Contraseña hasheada con bcrypt server-side por Supabase
+**Sistema Actual (Inseguro)** **Supabase Auth (Seguro)**
 
-  SHA-256 sin salt (rainbow tables vulnerable)                  bcrypt con salt automático (estándar industria)
+Contraseña enviada en texto plano vía FormData Contraseña hasheada con bcrypt server-side por Supabase
 
-  Token UUID en localStorage (robable vía XSS)                  Sesión en cookie httpOnly/secure/sameSite
+SHA-256 sin salt (rainbow tables vulnerable) bcrypt con salt automático (estándar industria)
 
-  Dos URLs de Apps Script como backend                          Un backend unificado con API REST + RLS
+Token UUID en localStorage (robable vía XSS) Sesión en cookie httpOnly/secure/sameSite
 
-  Sin rate limiting en login                                    Rate limiting incluido en Supabase Auth
+Dos URLs de Apps Script como backend Un backend unificado con API REST + RLS
 
-  Recuperación por email sin verificar expiración server-side   Tokens de recuperación firmados con expiración automática
+Sin rate limiting en login Rate limiting incluido en Supabase Auth
 
-  CLIENT_ID expuesto en admin.html                              Credenciales OAuth en variables de entorno de Supabase
-  ------------------------------------------------------------- -----------------------------------------------------------
+Recuperación por email sin verificar expiración server-side Tokens de recuperación firmados con expiración automática
+
+CLIENT_ID expuesto en admin.html Credenciales OAuth en variables de entorno de Supabase
+
+---
 
 11\. Gestión de Imágenes (Cloudinary)
 
 11.1 Transformaciones por Contexto
 
-  -------------------- ---------------------------------- -------------------------------
-  **Uso**              **Transformación**                 **Resultado**
+---
 
-  Thumbnail catálogo   w_400,h_300,c_fill,q_auto,f_auto   400×300, recortada, WebP auto
+**Uso** **Transformación** **Resultado**
 
-  Carrusel detalle     w_800,h_600,c_fit,q_auto,f_auto    800×600, sin recorte
+Thumbnail catálogo w_400,h_300,c_fill,q_auto,f_auto 400×300, recortada, WebP auto
 
-  Miniatura            w_100,h_75,c_fill,q_60,f_auto      Carga instantánea
+Carrusel detalle w_800,h_600,c_fit,q_auto,f_auto 800×600, sin recorte
 
-  Full-screen          w_1200,q_auto,f_auto               Máx 1200px ancho
+Miniatura w_100,h_75,c_fill,q_60,f_auto Carga instantánea
 
-  Placeholder blur     w_40,h_30,e_blur:1000,q_10         LQIP ultra-comprimido
-  -------------------- ---------------------------------- -------------------------------
+Full-screen w_1200,q_auto,f_auto Máx 1200px ancho
+
+Placeholder blur w_40,h_30,e_blur:1000,q_10 LQIP ultra-comprimido
+
+---
 
 12\. Despliegue en Cloudflare Pages
 
@@ -630,115 +658,121 @@ Supabase Auth unifica y reemplaza 4 archivos y 2 backends:
 
 12.2 Flujo
 
--   Push a main → deploy automático a producción
+- Push a main → deploy automático a producción
 
--   Push a rama → preview URL única
+- Push a rama → preview URL única
 
--   Rollback instantáneo desde dashboard
+- Rollback instantáneo desde dashboard
 
--   Ancho de banda ilimitado (crítico para catálogo con fotos)
+- Ancho de banda ilimitado (crítico para catálogo con fotos)
 
 13\. Herramientas de Calidad
 
-  ----------------- -----------------------------------------------------------------------------------------------------------------------------------------------
-  **Herramienta**   **Función**
+---
 
-  TypeScript        Tipado estático. Nuxt 3 nativo. supabase gen types genera tipos de las tablas. Previene los errores de undefined que plagan el código actual.
+**Herramienta** **Función**
 
-  ESLint            Análisis estático. Detectaría los 163 innerHTML, variables no usadas, imports faltantes. \@nuxt/eslint-config.
+TypeScript Tipado estático. Nuxt 3 nativo. supabase gen types genera tipos de las tablas. Previene los errores de undefined que plagan el código actual.
 
-  Prettier          Formateo automático. Elimina inconsistencias de estilo entre los 22 archivos actuales.
+ESLint Análisis estático. Detectaría los 163 innerHTML, variables no usadas, imports faltantes. \@nuxt/eslint-config.
 
-  Husky             Pre-commit hooks: lint + format + tests. Rechaza commits con errores.
+Prettier Formateo automático. Elimina inconsistencias de estilo entre los 22 archivos actuales.
 
-  Vitest            Tests unitarios para composables (useFilters, useVehicles) y lógica de negocio.
+Husky Pre-commit hooks: lint + format + tests. Rechaza commits con errores.
 
-  Vue Test Utils    Tests de componentes: VehicleCard, FilterBar, AuthModal.
+Vitest Tests unitarios para composables (useFilters, useVehicles) y lógica de negocio.
 
-  Playwright        E2E: buscar → filtrar → ver detalle → favorito → formulario.
+Vue Test Utils Tests de componentes: VehicleCard, FilterBar, AuthModal.
 
-  GitHub Actions    CI/CD: lint + type-check + tests en PR. Build + deploy en merge a main.
+Playwright E2E: buscar → filtrar → ver detalle → favorito → formulario.
 
-  Sentry            Monitoring producción. Sustituye los 221 console.log/warn/error.
-  ----------------- -----------------------------------------------------------------------------------------------------------------------------------------------
+GitHub Actions CI/CD: lint + type-check + tests en PR. Build + deploy en merge a main.
+
+Sentry Monitoring producción. Sustituye los 221 console.log/warn/error.
+
+---
 
 14\. Seguridad Integral
 
 14.1 Resolución de Cada Vulnerabilidad
 
-  ----------------------------------------- --------------------------------------------------------
-  **Problema Actual**                       **Solución en Nuevo Stack**
+---
 
-  API_KEY expuesta en 5 archivos            Eliminada. Supabase anon_key (limitada por RLS)
+**Problema Actual** **Solución en Nuevo Stack**
 
-  SPREADSHEET_ID en 9 archivos              Eliminado. PostgreSQL accesible solo vía API
+API_KEY expuesta en 5 archivos Eliminada. Supabase anon_key (limitada por RLS)
 
-  Apps Script URL en 8 archivos             Eliminada. Supabase como único backend
+SPREADSHEET_ID en 9 archivos Eliminado. PostgreSQL accesible solo vía API
 
-  CLIENT_ID en admin.html y Keys.txt        Movido a variables de entorno de Supabase
+Apps Script URL en 8 archivos Eliminada. Supabase como único backend
 
-  163 innerHTML sin sanitizar               Vue escapa HTML por defecto. v-html solo con DOMPurify
+CLIENT_ID en admin.html y Keys.txt Movido a variables de entorno de Supabase
 
-  Passwords en texto plano desde frontend   Supabase Auth gestiona hashing con bcrypt
+163 innerHTML sin sanitizar Vue escapa HTML por defecto. v-html solo con DOMPurify
 
-  SHA-256 sin salt en AppsScript.gs         bcrypt con salt automático en Supabase
+Passwords en texto plano desde frontend Supabase Auth gestiona hashing con bcrypt
 
-  localStorage para tokens (21 usos)        Cookies httpOnly/secure/sameSite
+SHA-256 sin salt en AppsScript.gs bcrypt con salt automático en Supabase
 
-  Keys.txt con todas las credenciales       Eliminado. .env + .gitignore + secretos en CI
+localStorage para tokens (21 usos) Cookies httpOnly/secure/sameSite
 
-  221 console.log en producción             Sentry + strip-console en build producción
+Keys.txt con todas las credenciales Eliminado. .env + .gitignore + secretos en CI
 
-  ipapi.co envía IP a tercero               navigator.language + \@nuxtjs/i18n
+221 console.log en producción Sentry + strip-console en build producción
 
-  Dos Apps Scripts incompatibles            Un único backend Supabase
+ipapi.co envía IP a tercero navigator.language + \@nuxtjs/i18n
 
-  Sin CORS, sin CSP, sin rate limiting      Supabase CORS auto + Cloudflare \_headers + rate limit
+Dos Apps Scripts incompatibles Un único backend Supabase
 
-  Sin validación server-side de inputs      Zod schemas en Edge Functions + constraints PostgreSQL
-  ----------------------------------------- --------------------------------------------------------
+Sin CORS, sin CSP, sin rate limiting Supabase CORS auto + Cloudflare \_headers + rate limit
+
+Sin validación server-side de inputs Zod schemas en Edge Functions + constraints PostgreSQL
+
+---
 
 15\. Migración de Datos
 
 15.1 Mapeo Completo de Hojas a Tablas
 
-  -------------------- --------------------------- --------------- -------------------------------------------------------
-  **Hoja Sheets**      **Tabla PostgreSQL**        **Usado en**    **Transformaciones**
+---
 
-  vehiculos            vehicles + vehicle_images   index + admin   Separar imágenes, parsear filtros_json
+**Hoja Sheets** **Tabla PostgreSQL** **Usado en** **Transformaciones**
 
-  subcategorias        subcategories               index + admin   Añadir slug, sort_order
+vehiculos vehicles + vehicle_images index + admin Separar imágenes, parsear filtros_json
 
-  filtros              filter_definitions          index + admin   Normalizar estado (pub/ocul/inact)
+subcategorias subcategories index + admin Añadir slug, sort_order
 
-  config               config                      index + admin   Merge con tabla_config
+filtros filter_definitions index + admin Normalizar estado (pub/ocul/inact)
 
-  noticias             news                        index + admin   Añadir slug, separar \_es/\_en
+config config index + admin Merge con tabla_config
 
-  comentarios          comments                    index + admin   Añadir parent_id para hilos
+noticias news index + admin Añadir slug, separar \_es/\_en
 
-  anunciantes          advertisements              admin           Asociar a user_id
+comentarios comments index + admin Añadir parent_id para hilos
 
-  solicitantes         demands                     admin           Asociar a user_id
+anunciantes advertisements admin Asociar a user_id
 
-  usuarios             users                       admin + auth    Unificar con admins, migrar passwords a Supabase Auth
+solicitantes demands admin Asociar a user_id
 
-  admins               users (role=admin)          admin           Merge: campo role en users
+usuarios users admin + auth Unificar con admins, migrar passwords a Supabase Auth
 
-  subscripciones       subscriptions               admin           Deduplicar por email
+admins users (role=admin) admin Merge: campo role en users
 
-  favoritos_usuarios   favorites                   panel usuario   Migrar de localStorage a tabla relacional
+subscripciones subscriptions admin Deduplicar por email
 
-  chat                 chat_messages               panel + admin   Añadir Realtime, limpiar chatUserId temp
+favoritos_usuarios favorites panel usuario Migrar de localStorage a tabla relacional
 
-  balance              balance                     admin           Añadir tipo enum
+chat chat_messages panel + admin Añadir Realtime, limpiar chatUserId temp
 
-  historico            history_log                 admin           Vincular a vehicle_id
+balance balance admin Añadir tipo enum
 
-  intermediacion       intermediation              admin           Vincular a vehicle_id
+historico history_log admin Vincular a vehicle_id
 
-  ojeados              viewed_vehicles             admin           Índice por vehicle_id
-  -------------------- --------------------------- --------------- -------------------------------------------------------
+intermediacion intermediation admin Vincular a vehicle_id
+
+ojeados viewed_vehicles admin Índice por vehicle_id
+
+---
 
 15.2 Migración de Usuarios (Especial)
 
@@ -762,31 +796,33 @@ admin.html (8.859 líneas, 484 KB, 404 IDs, 261 funciones, 16 secciones, 15+ mod
 
 16.2 Páginas Admin
 
-  ----------------------- -------------------------------------------------------------------------------------------------
-  **Página**              **Funcionalidad**
+---
 
-  /admin (Dashboard)      Resumen: vehículos activos, anuncios pendientes, solicitudes, mensajes sin leer, balance
+**Página** **Funcionalidad**
 
-  /admin/vehiculos        CRUD: crear, editar, publicar, archivar, drag & drop fotos a Cloudinary. Mantenimiento y renta.
+/admin (Dashboard) Resumen: vehículos activos, anuncios pendientes, solicitudes, mensajes sin leer, balance
 
-  /admin/intermediacion   CRUD intermediación: comprador, vendedor, comisión, características, documentos
+/admin/vehiculos CRUD: crear, editar, publicar, archivar, drag & drop fotos a Cloudinary. Mantenimiento y renta.
 
-  /admin/ojeados          Vehículos observados en otras plataformas: precio, contacto, notas, estado negociación
+/admin/intermediacion CRUD intermediación: comprador, vendedor, comisión, características, documentos
 
-  /admin/anunciantes      Aprobar/rechazar solicitudes Anúnciate. Match con vehículos.
+/admin/ojeados Vehículos observados en otras plataformas: precio, contacto, notas, estado negociación
 
-  /admin/solicitantes     Aprobar/rechazar solicitudes Solicitar. Match con catálogo.
+/admin/anunciantes Aprobar/rechazar solicitudes Anúnciate. Match con vehículos.
 
-  /admin/noticias         CRUD noticias: editor contenido, categorías, hashtags, moderación comentarios
+/admin/solicitantes Aprobar/rechazar solicitudes Solicitar. Match con catálogo.
 
-  /admin/usuarios         Lista usuarios, cambiar roles, ver actividad. Sustituye admin-users.js (470 lín.)
+/admin/noticias CRUD noticias: editor contenido, categorías, hashtags, moderación comentarios
 
-  /admin/chat             Todas las conversaciones. Supabase Realtime. Sustituye chat en admin.html.
+/admin/usuarios Lista usuarios, cambiar roles, ver actividad. Sustituye admin-users.js (470 lín.)
 
-  /admin/balance          Ingresos, gastos, facturas, gráficos (Chart.js), exportar CSV/PDF
+/admin/chat Todas las conversaciones. Supabase Realtime. Sustituye chat en admin.html.
 
-  /admin/config           Banner, subcategorías, filtros, ajustes sitio
-  ----------------------- -------------------------------------------------------------------------------------------------
+/admin/balance Ingresos, gastos, facturas, gráficos (Chart.js), exportar CSV/PDF
+
+/admin/config Banner, subcategorías, filtros, ajustes sitio
+
+---
 
 17\. Hoja de Ruta por Fases
 
@@ -794,212 +830,228 @@ Fase 0 --- Emergencia de Seguridad (1--2 semanas)
 
 **Objetivo:** Neutralizar vulnerabilidades críticas del sistema actual ANTES de cualquier migración.
 
-  -------- ----------------------------------------------------------------------------------------- -------------------------------------------------------------------
-  **\#**   **Tarea**                                                                                 **Resultado**
+---
 
-  0.1      Revocar API_KEY actual en Google Cloud Console y crear nueva con restricción de dominio   Los 5 archivos que la exponen dejan de funcionar sin autorización
+**\#** **Tarea** **Resultado**
 
-  0.2      Eliminar Keys.txt del proyecto y añadir al .gitignore                                     Credenciales fuera del repositorio
+0.1 Revocar API_KEY actual en Google Cloud Console y crear nueva con restricción de dominio Los 5 archivos que la exponen dejan de funcionar sin autorización
 
-  0.3      Crear Apps Script web app como proxy temporal (mover API_KEY al servidor)                 API_KEY sale del código cliente
+0.2 Eliminar Keys.txt del proyecto y añadir al .gitignore Credenciales fuera del repositorio
 
-  0.4      Reemplazar los 163 innerHTML críticos por textContent o DOMPurify                         Elimina vectores XSS
+0.3 Crear Apps Script web app como proxy temporal (mover API_KEY al servidor) API_KEY sale del código cliente
 
-  0.5      Migrar localStorage de sesiones a sessionStorage con expiración                           Reduce ventana de ataque
+0.4 Reemplazar los 163 innerHTML críticos por textContent o DOMPurify Elimina vectores XSS
 
-  0.6      Desactivar el Apps Script OTP antiguo (apps-script-completo.js URL)                       Elimina backend duplicado
+0.5 Migrar localStorage de sesiones a sessionStorage con expiración Reduce ventana de ataque
 
-  0.7      Eliminar ipapi.co, usar navigator.language                                                Deja de enviar IPs a terceros
-  -------- ----------------------------------------------------------------------------------------- -------------------------------------------------------------------
+0.6 Desactivar el Apps Script OTP antiguo (apps-script-completo.js URL) Elimina backend duplicado
+
+0.7 Eliminar ipapi.co, usar navigator.language Deja de enviar IPs a terceros
+
+---
 
 Fase 1 --- Supabase: Backend + BD + Auth (3--4 semanas)
 
 **Objetivo:** Infraestructura backend completa y migración de todos los datos.
 
-  -------- ------------------------------------------------------------------------------ ------------------------------
-  **\#**   **Tarea**                                                                      **Resultado**
+---
 
-  1.1      Crear proyecto Supabase (región: eu-west)                                      Backend listo
+**\#** **Tarea** **Resultado**
 
-  1.2      Ejecutar SQL: 17 tablas + enums + índices + FKs                                Esquema completo
+1.1 Crear proyecto Supabase (región: eu-west) Backend listo
 
-  1.3      Configurar RLS en todas las tablas                                             Seguridad a nivel de BD
+1.2 Ejecutar SQL: 17 tablas + enums + índices + FKs Esquema completo
 
-  1.4      Configurar Auth: Google, Apple, Email+Password                                 Auth funcional
+1.3 Configurar RLS en todas las tablas Seguridad a nivel de BD
 
-  1.5      Exportar 17 hojas de Sheets como CSV                                           Datos raw listos
+1.4 Configurar Auth: Google, Apple, Email+Password Auth funcional
 
-  1.6      Script migración: CSVs → PostgreSQL (normalizar, parsear JSON, vincular FKs)   Datos migrados
+1.5 Exportar 17 hojas de Sheets como CSV Datos raw listos
 
-  1.7      Migrar usuarios: forzar password reset para transición SHA-256 → bcrypt        Usuarios en Supabase Auth
+1.6 Script migración: CSVs → PostgreSQL (normalizar, parsear JSON, vincular FKs) Datos migrados
 
-  1.8      Crear cuenta Cloudinary + migrar imágenes desde Google Drive                   Imágenes migradas
+1.7 Migrar usuarios: forzar password reset para transición SHA-256 → bcrypt Usuarios en Supabase Auth
 
-  1.9      Crear Edge Functions: emails, notificaciones, upload fotos                     Lógica servidor
+1.8 Crear cuenta Cloudinary + migrar imágenes desde Google Drive Imágenes migradas
 
-  1.10     Tests integridad: conteos, checksums, verificar relaciones                     Migración validada
-  -------- ------------------------------------------------------------------------------ ------------------------------
+1.9 Crear Edge Functions: emails, notificaciones, upload fotos Lógica servidor
+
+1.10 Tests integridad: conteos, checksums, verificar relaciones Migración validada
+
+---
 
 Fase 2 --- Nuxt 3: Frontend Modular (6--8 semanas)
 
 **Objetivo:** Reemplazar index.html + 6 JS + 4 CSS por una SPA modular.
 
-  -------- ---------------------------------------------------------------------------- -----------------------------------------------
-  **\#**   **Tarea**                                                                    **Resultado**
+---
 
-  2.1      Inicializar proyecto Nuxt 3 con módulos                                      Proyecto base configurado
+**\#** **Tarea** **Resultado**
 
-  2.2      Migrar design system: tokens.css desde DESIGN_SYSTEM.md                      Estilos base (sustituye 3 CSS)
+2.1 Inicializar proyecto Nuxt 3 con módulos Proyecto base configurado
 
-  2.3      Crear stores Pinia: catalog, auth, ui                                        Estado centralizado (sustituye \~20 globales)
+2.2 Migrar design system: tokens.css desde DESIGN_SYSTEM.md Estilos base (sustituye 3 CSS)
 
-  2.4      Crear composables: useVehicles, useFilters, useFavorites, useChat            Lógica reutilizable
+2.3 Crear stores Pinia: catalog, auth, ui Estado centralizado (sustituye \~20 globales)
 
-  2.5      Componentes layout: AppHeader, AppFooter, AnnounceBanner                     Estructura base
+2.4 Crear composables: useVehicles, useFilters, useFavorites, useChat Lógica reutilizable
 
-  2.6      Catálogo: CategoryBar, SubcategoryBar, FilterBar, VehicleGrid, VehicleCard   Catálogo funcional
+2.5 Componentes layout: AppHeader, AppFooter, AnnounceBanner Estructura base
 
-  2.7      Detalle: ImageGallery, VehicleInfo, ContactOptions                           Detalle funcional
+2.6 Catálogo: CategoryBar, SubcategoryBar, FilterBar, VehicleGrid, VehicleCard Catálogo funcional
 
-  2.8      Modales: AuthModal (sustituye auth-system.js), AdvertiseModal, DemandModal   Formularios funcionales
+2.7 Detalle: ImageGallery, VehicleInfo, ContactOptions Detalle funcional
 
-  2.9      Panel usuario: perfil, favoritos, chat (sustituye user-panel\*.js)           Panel funcional
+2.8 Modales: AuthModal (sustituye auth-system.js), AdvertiseModal, DemandModal Formularios funcionales
 
-  2.10     i18n: extraer data-es/data-en + AUTH_TEXTS a es.json y en.json               Bilingüe completo
+2.9 Panel usuario: perfil, favoritos, chat (sustituye user-panel\*.js) Panel funcional
 
-  2.11     Routing + middleware: auth.ts, admin.ts                                      Navegación segura
+2.10 i18n: extraer data-es/data-en + AUTH_TEXTS a es.json y en.json Bilingüe completo
 
-  2.12     \@nuxt/image con Cloudinary provider                                         Imágenes optimizadas
+2.11 Routing + middleware: auth.ts, admin.ts Navegación segura
 
-  2.13     Responsive: verificar 360/480/768/1024 en todos los componentes              Mobile-first OK
-  -------- ---------------------------------------------------------------------------- -----------------------------------------------
+2.12 \@nuxt/image con Cloudinary provider Imágenes optimizadas
+
+2.13 Responsive: verificar 360/480/768/1024 en todos los componentes Mobile-first OK
+
+---
 
 Fase 3 --- Admin + Calidad (4--5 semanas, paralela a Fase 2)
 
 **Objetivo:** Integrar admin y establecer estándares de calidad.
 
-  -------- -------------------------------------------------------------------------------- ---------------------------------------------------
-  **\#**   **Tarea**                                                                        **Resultado**
+---
 
-  3.1      Migrar admin: /admin/\* (Dashboard, Vehículos, Balance, etc. --- 16 secciones)   Admin integrado (sustituye admin.html 8.859 lín.)
+**\#** **Tarea** **Resultado**
 
-  3.2      Migrar admin-users.js a /admin/usuarios.vue                                      Gestión usuarios integrada
+3.1 Migrar admin: /admin/\* (Dashboard, Vehículos, Balance, etc. --- 16 secciones) Admin integrado (sustituye admin.html 8.859 lín.)
 
-  3.3      Configurar TypeScript estricto + supabase gen types                              Tipado completo
+3.2 Migrar admin-users.js a /admin/usuarios.vue Gestión usuarios integrada
 
-  3.4      ESLint + Prettier + Husky                                                        Calidad automática en commits
+3.3 Configurar TypeScript estricto + supabase gen types Tipado completo
 
-  3.5      Unit tests (Vitest) para composables y lógica filtrado                           Lógica testeada
+3.4 ESLint + Prettier + Husky Calidad automática en commits
 
-  3.6      Component tests para VehicleCard, FilterBar, AuthModal                           UI testeada
+3.5 Unit tests (Vitest) para composables y lógica filtrado Lógica testeada
 
-  3.7      GitHub Actions: lint + type-check + tests en cada PR                             CI operativo
-  -------- -------------------------------------------------------------------------------- ---------------------------------------------------
+3.6 Component tests para VehicleCard, FilterBar, AuthModal UI testeada
+
+3.7 GitHub Actions: lint + type-check + tests en cada PR CI operativo
+
+---
 
 Fase 4 --- Despliegue + Optimización (2--3 semanas)
 
 **Objetivo:** Producción y rendimiento óptimo.
 
-  -------- ------------------------------------------------------------ ------------------------------
-  **\#**   **Tarea**                                                    **Resultado**
+---
 
-  4.1      Cloudflare Pages: conectar repo, build, env vars, dominio    Deploy automático activo
+**\#** **Tarea** **Resultado**
 
-  4.2      Security headers: \_headers con CSP, X-Frame-Options, etc.   Headers seguros
+4.1 Cloudflare Pages: conectar repo, build, env vars, dominio Deploy automático activo
 
-  4.3      Sentry: \@sentry/vue integrado                               Monitoring activo
+4.2 Security headers: \_headers con CSP, X-Frame-Options, etc. Headers seguros
 
-  4.4      PWA: service worker, offline mode, push notifications        PWA completa
+4.3 Sentry: \@sentry/vue integrado Monitoring activo
 
-  4.5      E2E tests con Playwright: 5-10 flujos críticos               E2E verificados
+4.4 PWA: service worker, offline mode, push notifications PWA completa
 
-  4.6      Lighthouse audit \> 90 en las 4 categorías                   Rendimiento óptimo
+4.5 E2E tests con Playwright: 5-10 flujos críticos E2E verificados
 
-  4.7      Completar secciones: Noticias, Sobre Nosotros, Legal         Contenido completo
+4.6 Lighthouse audit \> 90 en las 4 categorías Rendimiento óptimo
 
-  4.8      Desactivar Google Sheets API_KEY definitivamente             Migración completada
+4.7 Completar secciones: Noticias, Sobre Nosotros, Legal Contenido completo
 
-  4.9      Eliminar los 2 Apps Scripts y revocar permisos               Backend antiguo desmantelado
-  -------- ------------------------------------------------------------ ------------------------------
+4.8 Desactivar Google Sheets API_KEY definitivamente Migración completada
+
+4.9 Eliminar los 2 Apps Scripts y revocar permisos Backend antiguo desmantelado
+
+---
 
 18\. Estimación de Esfuerzo y Costes
 
 18.1 Tiempos por Fase
 
-  ------------------------------- -------------------- --------------- ------------------------------------------------------
-  **Fase**                        **Duración**         **Tareas**      **Notas**
+---
 
-  Fase 0: Emergencia Seguridad    1--2 semanas         7 tareas        Sobre el código actual, sin migración
+**Fase** **Duración** **Tareas** **Notas**
 
-  Fase 1: Supabase Backend        3--4 semanas         10 tareas       Migración completa de 17 hojas + imágenes + usuarios
+Fase 0: Emergencia Seguridad 1--2 semanas 7 tareas Sobre el código actual, sin migración
 
-  Fase 2: Nuxt 3 Frontend         6--8 semanas         13 tareas       \~35 componentes + stores + i18n
+Fase 1: Supabase Backend 3--4 semanas 10 tareas Migración completa de 17 hojas + imágenes + usuarios
 
-  Fase 3: Admin + Calidad         4--5 semanas         7 tareas        Paralela a Fase 2. admin.html completo
+Fase 2: Nuxt 3 Frontend 6--8 semanas 13 tareas \~35 componentes + stores + i18n
 
-  Fase 4: Deploy + Optimización   2--3 semanas         9 tareas        Puesta en producción + PWA + Lighthouse
+Fase 3: Admin + Calidad 4--5 semanas 7 tareas Paralela a Fase 2. admin.html completo
 
-  **TOTAL**                       **16--22 semanas**   **46 tareas**   **4--5.5 meses con 1 developer full-time**
-  ------------------------------- -------------------- --------------- ------------------------------------------------------
+Fase 4: Deploy + Optimización 2--3 semanas 9 tareas Puesta en producción + PWA + Lighthouse
+
+**TOTAL** **16--22 semanas** **46 tareas** **4--5.5 meses con 1 developer full-time**
+
+---
 
 18.2 Archivos que se Eliminan
 
 Al completar la migración, los 22 archivos actuales se reemplazan por el proyecto Nuxt:
 
-  -------------------------------- -------------- --------------------------------------------------------------
-  **Archivo**                      **Estado**     **Reemplazo**
+---
 
-  index.html (12.787 lín.)         ✔ Eliminado    Sustituido por pages/ + components/ + composables/
+**Archivo** **Estado** **Reemplazo**
 
-  admin.html (8.859 lín.)          ✔ Eliminado    Sustituido por pages/admin/\*.vue
+index.html (12.787 lín.) ✔ Eliminado Sustituido por pages/ + components/ + composables/
 
-  auth-system.js (777)             ✔ Eliminado    Sustituido por Supabase Auth + AuthModal.vue
+admin.html (8.859 lín.) ✔ Eliminado Sustituido por pages/admin/\*.vue
 
-  user-panel-functions.js (522)    ✔ Eliminado    Sustituido por composables/ + ChatWidget.vue
+auth-system.js (777) ✔ Eliminado Sustituido por Supabase Auth + AuthModal.vue
 
-  admin-users.js (470)             ✔ Eliminado    Sustituido por pages/admin/usuarios.vue
+user-panel-functions.js (522) ✔ Eliminado Sustituido por composables/ + ChatWidget.vue
 
-  main.js (465)                    ✔ Eliminado    Sustituido por composables/ + stores/
+admin-users.js (470) ✔ Eliminado Sustituido por pages/admin/usuarios.vue
 
-  google-sheets-api.js (213)       ✔ Eliminado    Sustituido por Supabase SDK
+main.js (465) ✔ Eliminado Sustituido por composables/ + stores/
 
-  user-panel.js (191)              ✔ Eliminado    Sustituido por UserPanel.vue + composables/
+google-sheets-api.js (213) ✔ Eliminado Sustituido por Supabase SDK
 
-  AppsScript.gs (627)              ✔ Eliminado    Sustituido por Supabase Auth + Edge Functions
+user-panel.js (191) ✔ Eliminado Sustituido por UserPanel.vue + composables/
 
-  apps-script-completo.js (506)    ✔ Eliminado    Sistema OTP obsoleto, ya inactivo
+AppsScript.gs (627) ✔ Eliminado Sustituido por Supabase Auth + Edge Functions
 
-  styles.css + main.css (10.752)   ✔ Eliminados   Sustituidos por assets/css/tokens.css + scoped styles
+apps-script-completo.js (506) ✔ Eliminado Sistema OTP obsoleto, ya inactivo
 
-  auth-user-panel.css (888)        ✔ Eliminado    Estilos scoped en componentes Vue
+styles.css + main.css (10.752) ✔ Eliminados Sustituidos por assets/css/tokens.css + scoped styles
 
-  admin.css (628)                  ✔ Eliminado    Estilos scoped en pages/admin/
+auth-user-panel.css (888) ✔ Eliminado Estilos scoped en componentes Vue
 
-  Keys.txt (6)                     ✔ Eliminado    .env + variables de entorno en CI/CD
+admin.css (628) ✔ Eliminado Estilos scoped en pages/admin/
 
-  **37.685 líneas eliminadas**                    **\~4.000-5.000 líneas de código limpio, tipado y testeado**
-  -------------------------------- -------------- --------------------------------------------------------------
+Keys.txt (6) ✔ Eliminado .env + variables de entorno en CI/CD
+
+**37.685 líneas eliminadas** **\~4.000-5.000 líneas de código limpio, tipado y testeado**
+
+---
 
 18.3 Costes Mensuales
 
-  ------------------ ------------------ ----------------- ----------------------------------------------
-  **Servicio**       **Fase Inicial**   **Escalado**      **Cuándo Pagar**
+---
 
-  Supabase           0 €                25 € (Pro)        Upgrade cuando \> 500MB BD o \> 50K MAU
+**Servicio** **Fase Inicial** **Escalado** **Cuándo Pagar**
 
-  Cloudflare Pages   0 €                0 €               BW ilimitado, sin necesidad de upgrade
+Supabase 0 € 25 € (Pro) Upgrade cuando \> 500MB BD o \> 50K MAU
 
-  Cloudinary         0 €                89 € (Plus)       Upgrade cuando \> 25 créditos/mes
+Cloudflare Pages 0 € 0 € BW ilimitado, sin necesidad de upgrade
 
-  GitHub             0 €                0 €               Gratuito para equipo pequeño
+Cloudinary 0 € 89 € (Plus) Upgrade cuando \> 25 créditos/mes
 
-  Sentry             0 €                26 € (Team)       Upgrade cuando \> 5K errores/mes
+GitHub 0 € 0 € Gratuito para equipo pequeño
 
-  Dominio (.com)     \~1 €/mes          \~1 €/mes         Coste fijo (\~12€/año)
+Sentry 0 € 26 € (Team) Upgrade cuando \> 5K errores/mes
 
-  **TOTAL**          **\~1 €/mes**      **\~141 €/mes**   **El salto se da gradualmente según creces**
-  ------------------ ------------------ ----------------- ----------------------------------------------
+Dominio (.com) \~1 €/mes \~1 €/mes Coste fijo (\~12€/año)
 
-*Fin del documento --- Tank Iberica --- Plan de Profesionalización v3*
+**TOTAL** **\~1 €/mes** **\~141 €/mes** **El salto se da gradualmente según creces**
 
-*Supabase + Nuxt 3 + Cloudflare Pages + Cloudinary*
+---
+
+_Fin del documento --- Tank Iberica --- Plan de Profesionalización v3_
+
+_Supabase + Nuxt 3 + Cloudflare Pages + Cloudinary_

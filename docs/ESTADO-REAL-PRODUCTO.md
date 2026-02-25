@@ -1,161 +1,365 @@
-# Estado Real del Producto — Tracciona
+# Estado real del producto
 
-> Documento generado automaticamente analizando el codigo fuente. Refleja el estado REAL del producto, no las aspiraciones de la documentacion.
-> Ultima actualizacion: Sesion 36 (Feb 2026).
+_Generado automaticamente: 2026-02-25 01:17_
 
----
+## Paginas
 
-## Resumen Ejecutivo
+```
+app/pages/[...slug].vue
+app/pages/admin/agenda.vue
+app/pages/admin/anunciantes.vue
+app/pages/admin/balance.vue
+app/pages/admin/banner.vue
+app/pages/admin/captacion.vue
+app/pages/admin/cartera.vue
+app/pages/admin/chats.vue
+app/pages/admin/comentarios.vue
+app/pages/admin/config/branding.vue
+app/pages/admin/config/caracteristicas.vue
+app/pages/admin/config/catalog.vue
+app/pages/admin/config/editorial.vue
+app/pages/admin/config/emails.vue
+app/pages/admin/config/homepage.vue
+app/pages/admin/config/index.vue
+app/pages/admin/config/integrations.vue
+app/pages/admin/config/languages.vue
+app/pages/admin/config/navigation.vue
+app/pages/admin/config/pricing.vue
+app/pages/admin/config/subcategorias.vue
+app/pages/admin/config/system.vue
+app/pages/admin/config/tipos.vue
+app/pages/admin/dashboard.vue
+app/pages/admin/dealer/config.vue
+app/pages/admin/dealers/suscripciones.vue
+app/pages/admin/facturacion.vue
+app/pages/admin/historico.vue
+app/pages/admin/index.vue
+app/pages/admin/infraestructura.vue
+app/pages/admin/noticias/[id].vue
+app/pages/admin/noticias/index.vue
+app/pages/admin/noticias/nuevo.vue
+app/pages/admin/pagos.vue
+app/pages/admin/productos/[id].vue
+app/pages/admin/productos/index.vue
+app/pages/admin/productos/nuevo.vue
+app/pages/admin/publicidad.vue
+app/pages/admin/registro.vue
+app/pages/admin/reportes.vue
+app/pages/admin/servicios.vue
+app/pages/admin/social.vue
+app/pages/admin/solicitantes.vue
+app/pages/admin/subastas.vue
+app/pages/admin/subastas/[id].vue
+app/pages/admin/subastas/index.vue
+app/pages/admin/suscripciones.vue
+app/pages/admin/transporte.vue
+app/pages/admin/usuarios.vue
+app/pages/admin/utilidades.vue
+app/pages/admin/vehiculos/[id].vue
+app/pages/admin/vehiculos/index.vue
+app/pages/admin/verificaciones.vue
+app/pages/admin/whatsapp.vue
+app/pages/auth/confirmar.vue
+app/pages/auth/login.vue
+app/pages/auth/nueva-password.vue
+app/pages/auth/recuperar.vue
+app/pages/auth/registro.vue
+app/pages/confirm.vue
+app/pages/dashboard/crm.vue
+app/pages/dashboard/estadisticas.vue
+app/pages/dashboard/facturas.vue
+app/pages/dashboard/herramientas/alquileres.vue
+app/pages/dashboard/herramientas/calculadora.vue
+app/pages/dashboard/herramientas/contrato.vue
+app/pages/dashboard/herramientas/exportar-anuncio.vue
+app/pages/dashboard/herramientas/exportar.vue
+app/pages/dashboard/herramientas/factura.vue
+app/pages/dashboard/herramientas/index.vue
+app/pages/dashboard/herramientas/mantenimientos.vue
+app/pages/dashboard/herramientas/merchandising.vue
+app/pages/dashboard/herramientas/presupuesto.vue
+app/pages/dashboard/herramientas/visitas.vue
+app/pages/dashboard/herramientas/widget.vue
+app/pages/dashboard/historico.vue
+app/pages/dashboard/index.vue
+app/pages/dashboard/leads/[id].vue
+app/pages/dashboard/leads/index.vue
+app/pages/dashboard/observatorio.vue
+app/pages/dashboard/pipeline.vue
+app/pages/dashboard/portal.vue
+app/pages/dashboard/suscripcion.vue
+app/pages/dashboard/vehiculos/[id].vue
+app/pages/dashboard/vehiculos/[id]/transaccion.vue
+app/pages/dashboard/vehiculos/importar.vue
+app/pages/dashboard/vehiculos/index.vue
+app/pages/dashboard/vehiculos/nuevo.vue
+app/pages/datos.vue
+app/pages/guia/[slug].vue
+app/pages/guia/index.vue
+app/pages/index.vue
+app/pages/legal.vue
+app/pages/legal/condiciones.vue
+app/pages/legal/cookies.vue
+app/pages/legal/privacidad.vue
+app/pages/legal/uk.vue
+app/pages/noticias/[slug].vue
+app/pages/noticias/index.vue
+app/pages/perfil/alertas.vue
+app/pages/perfil/comparador.vue
+app/pages/perfil/contactos.vue
+app/pages/perfil/datos.vue
+app/pages/perfil/favoritos.vue
+app/pages/perfil/index.vue
+app/pages/perfil/mensajes.vue
+app/pages/perfil/notificaciones.vue
+app/pages/perfil/reservas.vue
+app/pages/perfil/seguridad.vue
+app/pages/perfil/suscripcion.vue
+app/pages/precios.vue
+app/pages/seguridad/politica-divulgacion.vue
+app/pages/servicios-postventa.vue
+app/pages/sobre-nosotros.vue
+app/pages/subastas/[id].vue
+app/pages/subastas/index.vue
+app/pages/transparencia.vue
+app/pages/valoracion.vue
+app/pages/vehiculo/[slug].vue
+app/pages/vendedor/[slug].vue
+```
 
-| Metrica            | Valor          |
-| ------------------ | -------------- |
-| Paginas Vue        | 114            |
-| Endpoints API      | 45             |
-| Composables        | 61             |
-| Componentes        | 76             |
-| Migraciones BD     | 58             |
-| Tablas BD          | 45+            |
-| Cron jobs          | 9              |
-| Idiomas            | 3 (ES, EN, FR) |
-| Modulos operativos | 18/20 (90%)    |
-| Modulos parciales  | 2/20 (10%)     |
+## Composables
 
----
+```
+app/composables/admin/useAdminAdDashboard.ts
+app/composables/admin/useAdminAdvertisements.ts
+app/composables/admin/useAdminBalance.ts
+app/composables/admin/useAdminBalanceUI.ts
+app/composables/admin/useAdminChat.ts
+app/composables/admin/useAdminConfig.ts
+app/composables/admin/useAdminContacts.ts
+app/composables/admin/useAdminDemands.ts
+app/composables/admin/useAdminFilters.ts
+app/composables/admin/useAdminHistorico.ts
+app/composables/admin/useAdminMetrics.ts
+app/composables/admin/useAdminNews.ts
+app/composables/admin/useAdminPublicidad.ts
+app/composables/admin/useAdminSubcategories.ts
+app/composables/admin/useAdminSubscriptions.ts
+app/composables/admin/useAdminTypes.ts
+app/composables/admin/useAdminUsers.ts
+app/composables/admin/useAdminVehicles.ts
+app/composables/admin/useAdminVerticalConfig.ts
+app/composables/admin/useCloudinaryUpload.ts
+app/composables/admin/useContractForm.ts
+app/composables/admin/useGoogleDrive.ts
+app/composables/admin/useSeoScore.ts
+app/composables/admin/useSocialAdminUI.ts
+app/composables/dashboard/useInvoice.ts
+app/composables/shared/dateHelpers.ts
+app/composables/useAdViewability.ts
+app/composables/useAdminRole.ts
+app/composables/useAds.ts
+app/composables/useAnalyticsTracking.ts
+app/composables/useAuction.ts
+app/composables/useAuctionRegistration.ts
+app/composables/useAudienceSegmentation.ts
+app/composables/useAuth.ts
+app/composables/useBuyerDashboard.ts
+app/composables/useCatalogState.ts
+app/composables/useConsent.ts
+app/composables/useConversation.ts
+app/composables/useDealerDashboard.ts
+app/composables/useDealerHealthScore.ts
+app/composables/useDealerLeads.ts
+app/composables/useDealerStats.ts
+app/composables/useDealerTheme.ts
+app/composables/useEmailPreferences.ts
+app/composables/useFavorites.ts
+app/composables/useFilters.ts
+app/composables/useFinanceCalculator.ts
+app/composables/useGtag.ts
+app/composables/useHreflang.ts
+app/composables/useImageUrl.ts
+app/composables/useInfraMetrics.ts
+app/composables/useInfraRecommendations.ts
+app/composables/useInvoicing.ts
+app/composables/useLocalized.ts
+app/composables/useMarketData.ts
+app/composables/useNews.ts
+app/composables/useOnboarding.ts
+app/composables/usePageSeo.ts
+app/composables/usePrebid.ts
+app/composables/usePriceHistory.ts
+app/composables/usePushNotifications.ts
+app/composables/useReports.ts
+app/composables/useReservation.ts
+app/composables/useSanitize.ts
+app/composables/useSellerProfile.ts
+app/composables/useSocialPublisher.ts
+app/composables/useSubscriptionPlan.ts
+app/composables/useToast.ts
+app/composables/useTransport.ts
+app/composables/useUserChat.ts
+app/composables/useUserLocation.ts
+app/composables/useUserProfile.ts
+app/composables/useVehicleComparator.ts
+app/composables/useVehicleTypeSelector.ts
+app/composables/useVehicleVerification.ts
+app/composables/useVehicles.ts
+app/composables/useVerticalConfig.ts
+```
 
-## Modulos por Estado
+## Server API
 
-### Operativos (18)
+```
+server/api/__sitemap.ts
+server/api/account/delete.post.ts
+server/api/account/export.get.ts
+server/api/advertisements.post.ts
+server/api/auction-deposit.post.ts
+server/api/cron/auto-auction.post.ts
+server/api/cron/dealer-weekly-stats.post.ts
+server/api/cron/favorite-price-drop.post.ts
+server/api/cron/favorite-sold.post.ts
+server/api/cron/freshness-check.post.ts
+server/api/cron/infra-metrics.post.ts
+server/api/cron/price-drop-alert.post.ts
+server/api/cron/publish-scheduled.post.ts
+server/api/cron/reservation-expiry.post.ts
+server/api/cron/search-alerts.post.ts
+server/api/cron/whatsapp-retry.post.ts
+server/api/dgt-report.post.ts
+server/api/email/send.post.ts
+server/api/email/unsubscribe.get.ts
+server/api/error-report.post.ts
+server/api/generate-description.post.ts
+server/api/geo.get.ts
+server/api/health.get.ts
+server/api/images/process.post.ts
+server/api/infra/alerts.get.ts
+server/api/infra/alerts/[id].patch.ts
+server/api/infra/clusters/[id].patch.ts
+server/api/infra/clusters/[id]/execute-migration.post.ts
+server/api/infra/clusters/[id]/prepare-migration.post.ts
+server/api/infra/clusters/index.get.ts
+server/api/infra/clusters/index.post.ts
+server/api/infra/metrics.get.ts
+server/api/infra/migrate-images.post.ts
+server/api/infra/setup-cf-variants.post.ts
+server/api/invoicing/create-invoice.post.ts
+server/api/invoicing/export-csv.get.ts
+server/api/market-report.get.ts
+server/api/merchant-feed.get.ts
+server/api/push/send.post.ts
+server/api/reservations/create.post.ts
+server/api/reservations/respond.post.ts
+server/api/social/generate-posts.post.ts
+server/api/stripe-connect-onboard.post.ts
+server/api/stripe/checkout.post.ts
+server/api/stripe/portal.post.ts
+server/api/stripe/webhook.post.ts
+server/api/v1/valuation.get.ts
+server/api/verify-document.post.ts
+server/api/whatsapp/process.post.ts
+server/api/whatsapp/webhook.get.ts
+server/api/whatsapp/webhook.post.ts
+```
 
-| Modulo              | Archivos clave                                                        | Sesion |
-| ------------------- | --------------------------------------------------------------------- | ------ |
-| Catalogo publico    | pages/index.vue, composables/useVehicles.ts                           | 3      |
-| Fichas vehiculo     | pages/vehiculo/[slug].vue                                             | 3      |
-| Subastas            | pages/subastas/\*, composables/useAuction.ts                          | 16     |
-| Pagos Stripe        | server/api/stripe/\* (checkout, portal, webhook)                      | 17     |
-| WhatsApp pipeline   | server/api/whatsapp/\* (webhook, process)                             | 21     |
-| Ads/Publicidad      | pages/admin/publicidad.vue, composables/useAds.ts                     | 16b    |
-| Infra monitoring    | pages/admin/infraestructura.vue, server/api/infra/\* (10 endpoints)   | 33     |
-| Dashboard dealer    | pages/dashboard/\* (index, vehiculos, leads, estadisticas)            | 24     |
-| Editorial           | pages/noticias/_, pages/guia/_                                        | 11     |
-| Verificacion        | pages/admin/verificaciones.vue, server/api/verify-document.post.ts    | 15     |
-| Multi-vertical      | composables/useVerticalConfig.ts, vertical_config table               | 23     |
-| CI/CD               | .github/workflows/ci.yml, backup.yml                                  | 19     |
-| CRM leads           | pages/dashboard/leads/\*, composables/useDealerLeads.ts               | 28     |
-| Herramientas dealer | pages/dashboard/herramientas/\* (11 herramientas)                     | 31     |
-| Auth flow           | pages/auth/\* (login, registro, recuperar, confirmar, nueva-password) | 2      |
-| Perfil comprador    | pages/perfil/\* (datos, favoritos, alertas, contactos, seguridad)     | 24     |
-| Config admin        | pages/admin/config/\* (14 paginas de configuracion)                   | 6      |
-| Gestion productos   | pages/admin/productos/\* + 20 componentes de edicion                  | 3      |
+## Migraciones BD
 
-### Parciales (2)
+```
+00001_create_users.sql
+00002_catalog_tables.sql
+00003_catalog_rls.sql
+00004_fix_rls_recursion.sql
+00005_vehicle_location_fields.sql
+00006_news_table.sql
+00007_admin_tables.sql
+00008_fix_admin_user_sync.sql
+00009_add_applicable_filters_to_subcategories.sql
+00010_fix_rls_jwt_based.sql
+00011_add_online_offline_fields.sql
+00012_advertisements_demands_tables.sql
+00013_fix_admin_tables_rls_jwt.sql
+00014_add_vehicle_financial_fields.sql
+00015_consolidate_vehicle_fields.sql
+00016_maintenance_rental_records.sql
+00017_balance_table.sql
+00018_rename_subcategories_to_types.sql
+00019_subcategories_and_junction.sql
+00020_fix_subcategories_rls.sql
+00021_chat_messages_table.sql
+00022_add_location_en_column.sql
+00023_add_singular_name_columns.sql
+00024_fix_news_rls_admin_select.sql
+00025_add_news_description_fields.sql
+00026_seed_subcategories_and_filters.sql
+00027_seed_types_and_filters.sql
+00028_contacts_table.sql
+00029_ads_demands_dynamic_types.sql
+00030_subscriptions_users_admin.sql
+00031_tracciona_migration.sql
+00032_active_landings.sql
+00033_landing_intro_text.sql
+00034_activity_logs.sql
+00035_editorial_enhancements.sql
+00036_tech_debt_tables.sql
+00037_dealer_sort_boost.sql
+00038_verification_schema_updates.sql
+00039_auction_schema_updates.sql
+00040_transport_postventa_freshness.sql
+00041_dealer_leads_social_posts_upgrade.sql
+00042_payments_table.sql
+00043_email_system.sql
+00044_whatsapp_submissions.sql
+00045_horecaria_vertical.sql
+00046_reports_table.sql
+00047_seed_email_templates.sql
+00048_push_subscriptions.sql
+00049_tank_iberica_migration.sql
+00050_dealer_crm_session28.sql
+00051_dealer_tools_session31.sql
+00052_data_commercialization_session32.sql
+00053_infra_monitoring_session33.sql
+00054_whatsapp_retry_columns.sql
+00055_rls_hardening.sql
+00056_performance_indexes.sql
+00057_rls_standardization.sql
+00058_missing_indexes.sql
+00059_ads_enhancement.sql
+00060_buyer_experience.sql
+```
 
-| Modulo            | Estado                                              | Falta                                                               |
-| ----------------- | --------------------------------------------------- | ------------------------------------------------------------------- |
-| Landing pages     | Framework presente, catch-all funcional             | Builder avanzado de secciones, biblioteca de templates, A/B testing |
-| Social publishing | Infraestructura lista, endpoint genera posts con IA | OAuth flow real a Instagram/Facebook/LinkedIn/TikTok                |
+## Middlewares
 
-### No existe (0)
+```
+server/middleware/rate-limit.ts
+server/middleware/request-id.ts
+server/middleware/security-headers.ts
+app/middleware/admin.ts
+app/middleware/auth.ts
+app/middleware/dealer.ts
+```
 
-Todos los modulos planificados tienen al menos infraestructura creada.
+## Utils
 
----
+```
+server/utils/batchProcessor.ts
+server/utils/email-templates/infra-alert.ts
+server/utils/fetchWithRetry.ts
+server/utils/isAllowedUrl.ts
+server/utils/logger.ts
+server/utils/rateLimit.ts
+server/utils/safeError.ts
+server/utils/sanitizeLog.ts
+server/utils/supabaseAdmin.ts
+server/utils/verifyCronSecret.ts
+server/utils/verifyCsrf.ts
+server/utils/verifyTurnstile.ts
+server/utils/whatsappApi.ts
+```
 
-## Endpoints API (45 total)
-
-### Por dominio
-
-| Dominio           | Endpoints | Auth                      |
-| ----------------- | --------- | ------------------------- |
-| /api/stripe/\*    | 3         | User + Stripe signature   |
-| /api/whatsapp/\*  | 3         | Public/WhatsApp signature |
-| /api/infra/\*     | 10        | Admin                     |
-| /api/cron/\*      | 9         | CRON_SECRET               |
-| /api/email/\*     | 2         | Internal/Public           |
-| /api/account/\*   | 2         | User                      |
-| /api/invoicing/\* | 2         | User                      |
-| /api/push/\*      | 1         | Internal/Admin            |
-| /api/social/\*    | 1         | User                      |
-| /api/images/\*    | 1         | User                      |
-| /api/v1/\*        | 1         | Public                    |
-| Raiz /api/        | 10        | Mixto                     |
-
-### Por tipo de auth
-
-| Auth                            | Endpoints |
-| ------------------------------- | --------- |
-| Admin                           | 12        |
-| User (autenticado)              | 11        |
-| CRON_SECRET                     | 9         |
-| Public                          | 7         |
-| Internal secret                 | 3         |
-| Firma externa (Stripe/WhatsApp) | 3         |
-
----
-
-## Base de Datos
-
-### Migraciones: 58 archivos SQL
-
-- 00001-00030: Fundacion (usuarios, catalogo, categorias, filtros, subastas, noticias, ads, pagos, suscripciones)
-- 00031: Migracion Tracciona consolidada (vertical_config, dealers, buyers, SEO)
-- 00032-00044: Features (landings, editorial, leads, pagos, email, WhatsApp)
-- 00045-00053: Expansiones (verticales, reports, push, CRM, dealer tools, data, infra)
-- 00054-00058: Hardening (retry columns, RLS, indexes, standardization)
-
-### Seguridad RLS
-
-- Todas las tablas con RLS habilitado (migraciones 00055, 00057)
-- Funcion is_admin() centralizada
-- Politicas estandarizadas: admin-only, owner-or-admin, authenticated
-
----
-
-## Composables (61 total)
-
-| Categoria           | Cantidad | Ejemplos                                          |
-| ------------------- | -------- | ------------------------------------------------- |
-| Admin               | 20       | useAdminVehicles, useAdminConfig, useAdminMetrics |
-| Catalogo/Navegacion | 5        | useVehicles, useFilters, useCatalogState          |
-| Comprador           | 6        | useFavorites, useSavedSearches, useUserProfile    |
-| Dealer              | 8        | useDealerDashboard, useDealerLeads, useInvoicing  |
-| Subastas            | 2        | useAuction, useAuctionRegistration                |
-| Infra               | 2        | useInfraMetrics, useInfraRecommendations          |
-| Vertical            | 2        | useVerticalConfig, useAdminVerticalConfig         |
-| Utilidades          | 6        | useLocalized, useAuth, useHreflang, usePageSeo    |
-| Marketing           | 2        | useAds, useSocialPublisher                        |
-| Otros               | 8        | useNews, useReports, useTransport, etc.           |
-
----
-
-## Stack Tecnologico (verificado)
-
-| Componente | Tecnologia                                             | Estado      |
-| ---------- | ------------------------------------------------------ | ----------- |
-| Frontend   | Nuxt 3 + Vue 3 + TypeScript                            | Operativo   |
-| Backend    | Supabase (PostgreSQL + Auth + Realtime)                | Operativo   |
-| Imagenes   | Cloudinary + CF Images                                 | Operativo   |
-| Pagos      | Stripe (Checkout + Connect + Webhooks)                 | Operativo   |
-| Email      | Resend (30 templates)                                  | Operativo   |
-| Push       | Web Push (VAPID)                                       | Operativo   |
-| WhatsApp   | Meta Business API                                      | Operativo   |
-| IA         | Anthropic Claude (descripciones, verificacion, social) | Operativo   |
-| Deploy     | Cloudflare Pages (auto-deploy on push)                 | Operativo   |
-| CI/CD      | GitHub Actions (lint, typecheck, build, test, e2e)     | Operativo   |
-| Testing    | Vitest + Playwright                                    | Configurado |
-| Monitoring | Custom infra API (metricas, alertas, clusters)         | Operativo   |
-
----
-
-## Deuda Tecnica Conocida
-
-1. **i18n parcial**: Template displays migrados a `localizedName()` (sesion 36b). Quedan ~35 referencias a `.name_es` en archivos Vue, pero son: form bindings de config CRUD (correcto), interfaces/types (esquema BD), y helpers de busqueda/export con fallback (correcto). Los selects y tablas de admin ahora usan `localizedName()`.
-
-2. **Duplicacion admin/dashboard**: ~1,600 lineas de logica duplicada entre composables admin y dashboard. Principales pares: useAdminVehicles/dashboard vehiculos (65% overlap en CRUD), useAdminMetrics/useDealerDashboard (stats duplicados). Prioridad baja: no bloquea lanzamiento.
-
-3. **Chart.js lazy-loaded**: (corregido sesion 36b) `/datos`, admin/dashboard, calculadora, InfraHistory ahora usan `defineAsyncComponent()` con dynamic import. Chart.js ya no se incluye en el bundle inicial.
-
-4. **Dependencias no usadas**: exceljs, jspdf, jspdf-autotable, qrcode en package.json pero lazy-loaded con `await import()` (no en bundle inicial).
-
----
-
-_Este documento reemplaza a docs/progreso.md como fuente de verdad del estado del producto._
+Total paginas: 120
+Total composables: 77
+Total endpoints: 51
+Total migraciones: 60
