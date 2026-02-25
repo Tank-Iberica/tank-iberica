@@ -217,6 +217,22 @@ export default defineNuxtConfig({
     },
   },
 
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id: string) {
+            if (id.includes('chart.js') || id.includes('vue-chartjs')) return 'vendor-charts'
+            if (id.includes('jspdf')) return 'vendor-pdf'
+            if (id.includes('dompurify') || id.includes('isomorphic-dompurify'))
+              return 'vendor-sanitize'
+            if (id.includes('@stripe')) return 'vendor-stripe'
+          },
+        },
+      },
+    },
+  },
+
   experimental: {
     payloadExtraction: true,
   },
