@@ -252,87 +252,16 @@
           <button class="filter-close" @click="open = false">&#215;</button>
         </div>
         <div class="filter-sheet-body">
-          <template v-for="filter in filtersForFilterBar" :key="filter.id">
-            <div class="filter-sheet-item">
-              <template v-if="filter.type === 'desplegable'">
-                <label class="filter-label">{{ filterLabel(filter) }}</label>
-                <select
-                  class="filter-select-mobile"
-                  :value="activeFilters[filter.name] || ''"
-                  :aria-label="filterLabel(filter)"
-                  @change="onSelectChange(filter.name, $event)"
-                >
-                  <option value="">—</option>
-                  <option v-for="opt in getOptions(filter)" :key="opt" :value="opt">
-                    {{ opt }}
-                  </option>
-                </select>
-              </template>
-
-              <template v-else-if="filter.type === 'desplegable_tick'">
-                <label class="filter-label">{{ filterLabel(filter) }}</label>
-                <div class="filter-checks">
-                  <label v-for="opt in getOptions(filter)" :key="opt" class="filter-check">
-                    <input
-                      type="checkbox"
-                      :checked="isChecked(filter.name, opt)"
-                      @change="onCheckChange(filter.name, opt)"
-                    >
-                    <span>{{ opt }}</span>
-                  </label>
-                </div>
-              </template>
-
-              <template v-else-if="filter.type === 'tick'">
-                <label class="filter-tick">
-                  <input
-                    type="checkbox"
-                    :checked="!!activeFilters[filter.name]"
-                    @change="onTickChange(filter.name)"
-                  >
-                  <span>{{ filterLabel(filter) }}</span>
-                </label>
-              </template>
-
-              <template v-else-if="filter.type === 'slider' || filter.type === 'calc'">
-                <label class="filter-label"
-                  >{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}</label
-                >
-                <div class="filter-dual-range">
-                  <input
-                    type="number"
-                    class="filter-input-sm"
-                    :value="activeFilters[filter.name + '_min'] || ''"
-                    :min="getSliderMin(filter)"
-                    :max="getSliderMax(filter)"
-                    placeholder="Min"
-                    @change="onRangeChange(filter.name + '_min', $event)"
-                  >
-                  <span class="filter-sep">—</span>
-                  <input
-                    type="number"
-                    class="filter-input-sm"
-                    :value="activeFilters[filter.name + '_max'] || ''"
-                    :min="getSliderMin(filter)"
-                    :max="getSliderMax(filter)"
-                    placeholder="Max"
-                    @change="onRangeChange(filter.name + '_max', $event)"
-                  >
-                </div>
-              </template>
-
-              <template v-else-if="filter.type === 'caja'">
-                <label class="filter-label">{{ filterLabel(filter) }}</label>
-                <input
-                  type="text"
-                  class="filter-input-mobile"
-                  :value="activeFilters[filter.name] || ''"
-                  :placeholder="filterLabel(filter)"
-                  @input="onTextInput(filter.name, $event)"
-                >
-              </template>
-            </div>
-          </template>
+          <CatalogFilterBarDynamicFilters
+            :filters="filtersForFilterBar"
+            :active-filters="activeFilters"
+            variant="mobile"
+            @select="onDynamicSelect"
+            @check="onDynamicCheck"
+            @tick="onDynamicTick"
+            @range="onDynamicRange"
+            @text="onDynamicText"
+          />
         </div>
       </div>
     </Transition>
@@ -515,87 +444,16 @@
       <Transition name="slide-down">
         <div v-if="advancedOpen && filtersForFilterBar.length" class="advanced-panel">
           <div class="advanced-panel-grid">
-            <template v-for="filter in filtersForFilterBar" :key="filter.id">
-              <div class="advanced-panel-item">
-                <template v-if="filter.type === 'desplegable'">
-                  <label class="filter-label">{{ filterLabel(filter) }}</label>
-                  <select
-                    class="filter-select-desktop"
-                    :value="activeFilters[filter.name] || ''"
-                    :aria-label="filterLabel(filter)"
-                    @change="onSelectChange(filter.name, $event)"
-                  >
-                    <option value="">—</option>
-                    <option v-for="opt in getOptions(filter)" :key="opt" :value="opt">
-                      {{ opt }}
-                    </option>
-                  </select>
-                </template>
-
-                <template v-else-if="filter.type === 'desplegable_tick'">
-                  <label class="filter-label">{{ filterLabel(filter) }}</label>
-                  <div class="filter-checks">
-                    <label v-for="opt in getOptions(filter)" :key="opt" class="filter-check">
-                      <input
-                        type="checkbox"
-                        :checked="isChecked(filter.name, opt)"
-                        @change="onCheckChange(filter.name, opt)"
-                      >
-                      <span>{{ opt }}</span>
-                    </label>
-                  </div>
-                </template>
-
-                <template v-else-if="filter.type === 'tick'">
-                  <label class="filter-tick">
-                    <input
-                      type="checkbox"
-                      :checked="!!activeFilters[filter.name]"
-                      @change="onTickChange(filter.name)"
-                    >
-                    <span>{{ filterLabel(filter) }}</span>
-                  </label>
-                </template>
-
-                <template v-else-if="filter.type === 'slider' || filter.type === 'calc'">
-                  <label class="filter-label"
-                    >{{ filterLabel(filter) }}{{ filter.unit ? ` (${filter.unit})` : '' }}</label
-                  >
-                  <div class="filter-dual-range">
-                    <input
-                      type="number"
-                      class="filter-input-sm"
-                      :value="activeFilters[filter.name + '_min'] || ''"
-                      :min="getSliderMin(filter)"
-                      :max="getSliderMax(filter)"
-                      placeholder="Min"
-                      @change="onRangeChange(filter.name + '_min', $event)"
-                    >
-                    <span class="filter-sep">—</span>
-                    <input
-                      type="number"
-                      class="filter-input-sm"
-                      :value="activeFilters[filter.name + '_max'] || ''"
-                      :min="getSliderMin(filter)"
-                      :max="getSliderMax(filter)"
-                      placeholder="Max"
-                      @change="onRangeChange(filter.name + '_max', $event)"
-                    >
-                  </div>
-                </template>
-
-                <template v-else-if="filter.type === 'caja'">
-                  <label class="filter-label">{{ filterLabel(filter) }}</label>
-                  <input
-                    type="text"
-                    class="filter-input-desktop"
-                    :value="activeFilters[filter.name] || ''"
-                    :placeholder="filterLabel(filter)"
-                    @input="onTextInput(filter.name, $event)"
-                  >
-                </template>
-              </div>
-            </template>
+            <CatalogFilterBarDynamicFilters
+              :filters="filtersForFilterBar"
+              :active-filters="activeFilters"
+              variant="desktop"
+              @select="onDynamicSelect"
+              @check="onDynamicCheck"
+              @tick="onDynamicTick"
+              @range="onDynamicRange"
+              @text="onDynamicText"
+            />
           </div>
         </div>
       </Transition>
@@ -604,7 +462,6 @@
 </template>
 
 <script setup lang="ts">
-import type { AttributeDefinition } from '~/composables/useFilters'
 import type { Vehicle } from '~/composables/useVehicles'
 import { getSortedEuropeanCountries, getSortedProvinces } from '~/utils/geoData'
 
@@ -794,35 +651,14 @@ function onBrandChange(e: Event) {
   emit('change')
 }
 
-// Dynamic filter helpers
-function filterLabel(filter: AttributeDefinition): string {
-  if (locale.value === 'en' && filter.label_en) return filter.label_en
-  return filter.label_es || filter.name
-}
-
-function getOptions(filter: AttributeDefinition): string[] {
-  const opts = filter.options
-  if (Array.isArray(opts?.values)) return opts.values as string[]
-  if (Array.isArray(opts)) return opts as string[]
-  return []
-}
-
-function getSliderMin(filter: AttributeDefinition): number {
-  return (filter.options?.min as number) || 0
-}
-
-function getSliderMax(filter: AttributeDefinition): number {
-  return (filter.options?.max as number) || 100
-}
-
-function onSelectChange(name: string, event: Event) {
-  const value = (event.target as HTMLSelectElement).value
+// Dynamic filter event handlers (delegated from FilterBarDynamicFilters)
+function onDynamicSelect(name: string, value: string) {
   if (value) setFilter(name, value)
   else clearFilter(name)
   emit('change')
 }
 
-function onCheckChange(name: string, option: string) {
+function onDynamicCheck(name: string, option: string) {
   const current = (activeFilters.value[name] as string[]) || []
   const index = current.indexOf(option)
   if (index >= 0) {
@@ -835,26 +671,19 @@ function onCheckChange(name: string, option: string) {
   emit('change')
 }
 
-function isChecked(name: string, option: string): boolean {
-  const current = (activeFilters.value[name] as string[]) || []
-  return current.includes(option)
-}
-
-function onTickChange(name: string) {
+function onDynamicTick(name: string) {
   if (activeFilters.value[name]) clearFilter(name)
   else setFilter(name, true)
   emit('change')
 }
 
-function onRangeChange(name: string, event: Event) {
-  const value = Number((event.target as HTMLInputElement).value)
+function onDynamicRange(name: string, value: number | null) {
   if (value) setFilter(name, value)
   else clearFilter(name)
   emit('change')
 }
 
-function onTextInput(name: string, event: Event) {
-  const value = (event.target as HTMLInputElement).value
+function onDynamicText(name: string, value: string) {
   if (value) setFilter(name, value)
   else clearFilter(name)
   emit('change')
@@ -879,7 +708,6 @@ function handleClearAll() {
   })
   // Reset to Nacional (default for Spain)
   setLocationLevel('nacional', 'ES', null, null)
-  selectedLevel.value = 'nacional'
   editCountry.value = 'ES'
   editProvince.value = ''
   open.value = false
