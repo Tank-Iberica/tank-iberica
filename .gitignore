@@ -25,3 +25,13 @@ logs
 
 # Backup files
 *.backup
+
+# Development/debugging artifacts
+_*.b64
+_*.cjs
+_*.mjs
+gen_types_error.txt
+*.new-template.txt
+
+# Supabase CLI temp
+supabase/.temp/
