@@ -48,6 +48,16 @@ Ver [Guia de onboarding](#guia-de-onboarding) mas abajo.
 | `docs/guia-claude-code.md` | Guia original para IA (superado por CLAUDE.md)        |
 | `docs/legacy/`             | Documentos de la version anterior                     |
 
+### Auditorias (checklist de pendientes)
+
+| Documento                                                                        | Contenido                                              |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [`CHECKLIST-POST-SESIONES.md`](docs/auditorias/CHECKLIST-POST-SESIONES.md)       | Pendientes accionables no cubiertos por sesiones 39-42 |
+| [`RECOMENDACIONES-100-PUNTOS.md`](docs/auditorias/RECOMENDACIONES-100-PUNTOS.md) | 100 recomendaciones priorizadas por area               |
+| [`VALORACION-PROYECTO-1-100.md`](docs/auditorias/VALORACION-PROYECTO-1-100.md)   | Puntuacion del proyecto por dimension                  |
+| [`AUDITORIA-INTEGRAL-2026-02.md`](docs/auditorias/AUDITORIA-INTEGRAL-2026-02.md) | Auditoria tecnica completa (feb 2026)                  |
+| [`ISSUES-AUDITORIA.md`](docs/auditorias/ISSUES-AUDITORIA.md)                     | Issues especificos con prioridad                       |
+
 ### Anexos (referencia tecnica)
 
 | Carpeta                           | Contenido                                             |
