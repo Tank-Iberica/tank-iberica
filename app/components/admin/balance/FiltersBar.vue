@@ -3,6 +3,7 @@
     <div class="filter-group">
       <select
         :value="filters.year"
+        aria-label="Filtrar por año"
         @change="
           $emit('update:filters', {
             ...filters,
@@ -19,6 +20,7 @@
 
       <select
         :value="filters.tipo || ''"
+        aria-label="Filtrar por tipo"
         @change="
           $emit('update:filters', {
             ...filters,
@@ -33,6 +35,7 @@
 
       <select
         :value="filters.razon || ''"
+        aria-label="Filtrar por razón"
         @change="
           $emit('update:filters', {
             ...filters,
@@ -46,6 +49,7 @@
 
       <select
         :value="filters.estado || ''"
+        aria-label="Filtrar por estado"
         @change="
           $emit('update:filters', {
             ...filters,
@@ -59,6 +63,7 @@
 
       <select
         :value="filters.subcategory_id || ''"
+        aria-label="Filtrar por subcategoría"
         @change="
           $emit('update:filters', {
             ...filters,
@@ -74,6 +79,7 @@
 
       <select
         :value="filters.type_id || ''"
+        aria-label="Filtrar por tipo de transacción"
         @change="
           $emit('update:filters', {
             ...filters,
@@ -94,6 +100,7 @@
         type="text"
         placeholder="Buscar en detalle/notas..."
         class="search-input"
+        aria-label="Buscar en detalle o notas"
         @input="
           $emit('update:filters', { ...filters, search: ($event.target as HTMLInputElement).value })
         "

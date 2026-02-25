@@ -87,6 +87,7 @@
                     <select
                       class="filter-select-inline location-manual-input"
                       :value="editCountry"
+                      :aria-label="$t('catalog.locationSelectCountry')"
                       @change="onCountrySelect($event)"
                     >
                       <option value="">{{ $t('catalog.locationSelectCountry') }}</option>
@@ -106,6 +107,7 @@
                       v-if="editCountry === 'ES'"
                       class="filter-select-inline location-manual-input"
                       :value="editProvince"
+                      :aria-label="$t('catalog.locationSelectProvince')"
                       @change="onProvinceSelect($event)"
                     >
                       <option value="">{{ $t('catalog.locationSelectProvince') }}</option>
@@ -132,7 +134,12 @@
           <!-- Brand -->
           <div class="filter-group">
             <span class="filter-label">{{ $t('catalog.brand') }}:</span>
-            <select class="filter-select-inline" :value="selectedBrand" @change="onBrandChange">
+            <select
+              class="filter-select-inline"
+              :value="selectedBrand"
+              :aria-label="$t('catalog.brand')"
+              @change="onBrandChange"
+            >
               <option value="">{{ $t('catalog.all') || '—' }}</option>
               <option v-for="b in brands" :key="b" :value="b">{{ b }}</option>
             </select>
@@ -252,6 +259,7 @@
                 <select
                   class="filter-select-mobile"
                   :value="activeFilters[filter.name] || ''"
+                  :aria-label="filterLabel(filter)"
                   @change="onSelectChange(filter.name, $event)"
                 >
                   <option value="">—</option>
@@ -401,6 +409,7 @@
                 <select
                   class="filter-select-inline location-manual-input"
                   :value="editCountry"
+                  :aria-label="$t('catalog.locationSelectCountry')"
                   @change="onCountrySelect($event)"
                 >
                   <option value="">{{ $t('catalog.locationSelectCountry') }}</option>
@@ -416,6 +425,7 @@
                   v-if="editCountry === 'ES'"
                   class="filter-select-inline location-manual-input"
                   :value="editProvince"
+                  :aria-label="$t('catalog.locationSelectProvince')"
                   @change="onProvinceSelect($event)"
                 >
                   <option value="">{{ $t('catalog.locationSelectProvince') }}</option>
@@ -443,7 +453,12 @@
           <!-- Static: Brand -->
           <div class="filter-group">
             <span class="filter-label">{{ $t('catalog.brand') }}:</span>
-            <select class="filter-select-inline" :value="selectedBrand" @change="onBrandChange">
+            <select
+              class="filter-select-inline"
+              :value="selectedBrand"
+              :aria-label="$t('catalog.brand')"
+              @change="onBrandChange"
+            >
               <option value="">{{ $t('catalog.all') || '—' }}</option>
               <option v-for="b in brands" :key="b" :value="b">{{ b }}</option>
             </select>
@@ -507,6 +522,7 @@
                   <select
                     class="filter-select-desktop"
                     :value="activeFilters[filter.name] || ''"
+                    :aria-label="filterLabel(filter)"
                     @change="onSelectChange(filter.name, $event)"
                   >
                     <option value="">—</option>

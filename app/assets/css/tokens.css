@@ -205,3 +205,16 @@ textarea:focus {
    1024px — desktop
    1280px — large desktop
    ================================================ */
+
+/* ================================================
+   Focus-visible: keyboard navigation indicator
+   ================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}

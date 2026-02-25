@@ -20,6 +20,7 @@
       v-if="showCharts"
       :value="chartType"
       class="chart-type-select"
+      aria-label="Tipo de gráfico"
       @change="$emit('update:chartType', ($event.target as HTMLSelectElement).value)"
     >
       <option value="bar">Barras</option>

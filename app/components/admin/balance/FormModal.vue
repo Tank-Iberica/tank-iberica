@@ -21,20 +21,20 @@
 
           <div class="row-3">
             <div class="field">
-              <label>Fecha *</label>
-              <input v-model="formData.fecha" type="date" >
+              <label for="form-fecha">Fecha *</label>
+              <input id="form-fecha" v-model="formData.fecha" type="date" >
             </div>
             <div class="field">
-              <label>Razon *</label>
-              <select v-model="formData.razon">
+              <label for="form-razon">Razon *</label>
+              <select id="form-razon" v-model="formData.razon">
                 <option v-for="[key, label] in reasonOptions" :key="key" :value="key">
                   {{ label }}
                 </option>
               </select>
             </div>
             <div class="field">
-              <label>Estado *</label>
-              <select v-model="formData.estado">
+              <label for="form-estado">Estado *</label>
+              <select id="form-estado" v-model="formData.estado">
                 <option v-for="[key, label] in statusOptions" :key="key" :value="key">
                   {{ label }}
                 </option>
@@ -44,8 +44,9 @@
 
           <div class="row-2">
             <div class="field">
-              <label>Importe &euro; *</label>
+              <label for="form-importe">Importe &euro; *</label>
               <input
+                id="form-importe"
                 v-model.number="formData.importe"
                 type="number"
                 step="0.01"
@@ -54,8 +55,9 @@
               >
             </div>
             <div v-if="formData.tipo === 'ingreso'" class="field">
-              <label>Coste asociado &euro; (para % beneficio)</label>
+              <label for="form-coste">Coste asociado &euro; (para % beneficio)</label>
               <input
+                id="form-coste"
                 v-model.number="formData.coste_asociado"
                 type="number"
                 step="0.01"
@@ -67,8 +69,8 @@
           </div>
 
           <div class="field">
-            <label>Vehiculo relacionado</label>
-            <select v-model="formData.vehicle_id" class="vehicle-select">
+            <label for="form-vehicle">Vehiculo relacionado</label>
+            <select id="form-vehicle" v-model="formData.vehicle_id" class="vehicle-select">
               <option :value="null">&mdash; Sin vehiculo &mdash;</option>
               <option v-for="v in vehicles" :key="v.id" :value="v.id">
                 {{ v.brand }} {{ v.model }} ({{ v.year }}) {{ v.plate ? `- ${v.plate}` : '' }}
@@ -77,8 +79,9 @@
           </div>
 
           <div class="field">
-            <label>Detalle</label>
+            <label for="form-detalle">Detalle</label>
             <input
+              id="form-detalle"
               v-model="formData.detalle"
               type="text"
               placeholder="Ej: Cisterna MAN 1234ABC (2020)"
@@ -87,8 +90,8 @@
 
           <div class="row-2">
             <div class="field">
-              <label>Tipo</label>
-              <select v-model="typeId">
+              <label for="form-type">Tipo</label>
+              <select id="form-type" v-model="typeId">
                 <option :value="null">&mdash; Sin tipo &mdash;</option>
                 <option v-for="s in types" :key="s.id" :value="s.id">
                   {{ localizedName(s, locale) }}
@@ -96,14 +99,24 @@
               </select>
             </div>
             <div class="field">
-              <label>URL Factura/Recibo</label>
-              <input v-model="formData.factura_url" type="url" placeholder="https://..." >
+              <label for="form-factura-url">URL Factura/Recibo</label>
+              <input
+                id="form-factura-url"
+                v-model="formData.factura_url"
+                type="url"
+                placeholder="https://..."
+              >
             </div>
           </div>
 
           <div class="field">
-            <label>Notas</label>
-            <textarea v-model="formData.notas" rows="2" placeholder="Notas adicionales..." />
+            <label for="form-notas">Notas</label>
+            <textarea
+              id="form-notas"
+              v-model="formData.notas"
+              rows="2"
+              placeholder="Notas adicionales..."
+            />
           </div>
 
           <!-- Profit preview -->

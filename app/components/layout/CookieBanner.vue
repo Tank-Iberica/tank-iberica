@@ -122,7 +122,13 @@ function toggleCustomize() {
                   <span class="cookie-category__desc">{{ $t('gdpr.categoryNecessaryDesc') }}</span>
                 </div>
                 <label class="cookie-toggle cookie-toggle--disabled">
-                  <input type="checkbox" checked disabled >
+                  <input
+                    id="cookie-necessary"
+                    type="checkbox"
+                    checked
+                    disabled
+                    :aria-label="$t('gdpr.categoryNecessary')"
+                  >
                   <span class="cookie-toggle__slider" />
                 </label>
               </div>
@@ -137,7 +143,12 @@ function toggleCustomize() {
                   class="cookie-toggle"
                   :class="{ 'cookie-toggle--active': localConsent.analytics }"
                 >
-                  <input v-model="localConsent.analytics" type="checkbox" >
+                  <input
+                    id="cookie-analytics"
+                    v-model="localConsent.analytics"
+                    type="checkbox"
+                    :aria-label="$t('gdpr.categoryAnalytics')"
+                  >
                   <span class="cookie-toggle__slider" />
                 </label>
               </div>
@@ -152,7 +163,12 @@ function toggleCustomize() {
                   class="cookie-toggle"
                   :class="{ 'cookie-toggle--active': localConsent.marketing }"
                 >
-                  <input v-model="localConsent.marketing" type="checkbox" >
+                  <input
+                    id="cookie-marketing"
+                    v-model="localConsent.marketing"
+                    type="checkbox"
+                    :aria-label="$t('gdpr.categoryMarketing')"
+                  >
                   <span class="cookie-toggle__slider" />
                 </label>
               </div>

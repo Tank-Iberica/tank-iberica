@@ -13,8 +13,11 @@
             {{ fmt(deleteTarget?.importe) }}
           </p>
           <div class="field">
-            <label>Escribe <strong>Borrar</strong> para confirmar:</label>
+            <label for="delete-confirm-input"
+              >Escribe <strong>Borrar</strong> para confirmar:</label
+            >
             <input
+              id="delete-confirm-input"
               :value="deleteConfirm"
               type="text"
               placeholder="Borrar"

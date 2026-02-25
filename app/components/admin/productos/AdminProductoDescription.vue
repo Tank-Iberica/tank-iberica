@@ -25,8 +25,9 @@ const emit = defineEmits<Emits>()
     <div v-if="open" class="section-content">
       <div class="row-2">
         <div class="field">
-          <label>Descripción ES</label>
+          <label for="desc-es">Descripción ES</label>
           <textarea
+            id="desc-es"
             :value="descriptionEs"
             rows="3"
             maxlength="300"
@@ -38,8 +39,9 @@ const emit = defineEmits<Emits>()
           <span class="char-count">{{ (descriptionEs || '').length }}/300</span>
         </div>
         <div class="field">
-          <label>Descripción EN</label>
+          <label for="desc-en">Descripción EN</label>
           <textarea
+            id="desc-en"
             :value="descriptionEn"
             rows="3"
             maxlength="300"
