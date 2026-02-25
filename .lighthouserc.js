@@ -19,6 +19,9 @@ module.exports = {
         'categories:accessibility': ['error', { minScore: 0.9 }],
         'categories:best-practices': ['error', { minScore: 0.85 }],
         'categories:seo': ['error', { minScore: 0.9 }],
+        'largest-contentful-paint': ['warn', { maxNumericValue: 2500 }],
+        'cumulative-layout-shift': ['warn', { maxNumericValue: 0.1 }],
+        'interactive': ['warn', { maxNumericValue: 3500 }],
       },
     },
     upload: {
