@@ -10,8 +10,18 @@ interface HealthResponse {
 
 const APP_VERSION = process.env.APP_VERSION || '1.0.0'
 const DB_TIMEOUT_MS = 500
+const HEALTH_TOKEN = process.env.HEALTH_CHECK_TOKEN || ''
 
 export default defineEventHandler(async (event): Promise<HealthResponse> => {
+  // Protect health endpoint: require token if configured
+  if (HEALTH_TOKEN) {
+    const authHeader = getRequestHeader(event, 'authorization')
+    const token = authHeader?.replace('Bearer ', '')
+    if (token !== HEALTH_TOKEN) {
+      throw createError({ statusCode: 403, message: 'Forbidden' })
+    }
+  }
+
   const timestamp = new Date().toISOString()
 
   try {
@@ -41,6 +51,7 @@ export default defineEventHandler(async (event): Promise<HealthResponse> => {
     }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown database error'
+    console.error('[health] DB check failed:', message)
 
     setResponseStatus(event, 503)
     return {
@@ -48,7 +59,6 @@ export default defineEventHandler(async (event): Promise<HealthResponse> => {
       timestamp,
       db: 'error',
       version: APP_VERSION,
-      error: message,
     }
   }
 })
