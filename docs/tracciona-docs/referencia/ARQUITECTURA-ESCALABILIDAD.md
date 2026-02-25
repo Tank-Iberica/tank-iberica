@@ -161,6 +161,21 @@ La tabla `infra_clusters` y el cron `infra-metrics` monitorizan el peso de cada 
 
 El código fuente NO cambia. Solo cambia la variable de entorno que apunta al cluster correcto.
 
+## Dependencias reales de Supabase
+
+Supabase proporciona 4 servicios críticos simultáneos:
+
+| Servicio      | Qué usamos                              | Alternativa si falla     | Tiempo migración real     |
+| ------------- | --------------------------------------- | ------------------------ | ------------------------- |
+| PostgreSQL    | BD completa, RLS, vistas materializadas | Neon, Railway, VPS       | 4-8h                      |
+| GoTrue (Auth) | Login, tokens, sesiones, PKCE           | Auth.js, Clerk           | 24-48h (sesiones activas) |
+| Realtime      | Subastas en vivo (websockets)           | CF Durable Objects, Ably | 8-16h                     |
+| Vault         | Secretos (si se usa)                    | Variables de entorno CF  | 1h                        |
+
+**Riesgo:** Si Supabase cae o cambia precios, las 4 capas se afectan simultáneamente.
+
+**Mitigación:** Cuando se cree un 2º cluster, considerar Neon o Railway (solo PostgreSQL) para empezar a diversificar vendor lock-in. Auth y Realtime seguirían en cluster principal Supabase.
+
 ### 3.6 Por qué NO necesitamos Supabase Dedicated
 
 Las auditorías externas sugieren Supabase Dedicated ($2,000/mes) para 10M usuarios. Esto asume:

@@ -121,3 +121,13 @@ docs/tracciona-docs/  → Documentación de migración (NO modificar)
 - Branch principal: `main`
 - Commits: conventional commits (feat:, fix:, refactor:, test:, docs:)
 - Antes de merge: lint + typecheck
+
+## Decisiones estratégicas (25 Feb 2026)
+
+- Idiomas activos: ES + EN. Resto pospuesto (ver FLUJOS-OPERATIVOS §7)
+- Pipeline imágenes: Cloudinary transforma, CF Images almacena. Cache immutable 30d
+- Merchandising: solo formulario de interés, no flujo completo
+- API valoración de pago: pospuesta hasta volumen suficiente
+- Scraping: solo script manual, NUNCA cron en producción
+- 2º cluster BD: considerar Neon/Railway para diversificar
+- Métricas infra: tag vertical en infra_metrics desde día 1

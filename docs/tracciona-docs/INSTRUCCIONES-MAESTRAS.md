@@ -5836,6 +5836,1931 @@ Añadir sección en `docs/ESTADO-REAL-PRODUCTO.md`:
 
 ---
 
+## SESIÓN 44 — Alineación con decisiones estratégicas de FLUJOS-OPERATIVOS (25 Feb 2026)
+
+> Aplicar las 12 decisiones estratégicas documentadas en `docs/tracciona-docs/FLUJOS-OPERATIVOS-TRACCIONA.md §30` al código, configuración y documentación del proyecto. Estas decisiones provienen de una auditoría externa del stack técnico y fueron validadas por el fundador.
+
+**Leer ANTES de escribir código:**
+
+1. `docs/tracciona-docs/FLUJOS-OPERATIVOS-TRACCIONA.md` — Secciones §1, §2, §7, §11, §13, §15, §18, §30 (buscar marcas ⚠️ DECISIÓN)
+2. `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Sesiones 3 (i18n), 16b (publicidad), 16d (scraping), 18 (emails), 31 (merchandising/herramientas), 32 (datos), 33 (infra)
+3. `nuxt.config.ts` — Configuración actual de i18n (locales activos)
+4. `server/api/cron/infra-metrics.post.ts` — Cron de monitorización actual
+
+**Esta sesión aplica los cambios derivados de 12 decisiones estratégicas. Ejecutar en orden:**
+
+---
+
+### Parte A — i18n: Reducir a ES+EN al lanzamiento
+
+**Decisión §7:** Lanzar con español + inglés únicamente. La arquitectura sigue preparada para N idiomas (JSONB, content_translations, fallback chain). Los demás idiomas se activan cuando haya demanda real.
+
+**Cambios en código:**
+
+1. **`nuxt.config.ts`** — Comentar (NO eliminar) los locales de fr, de, nl, pl, it. Dejar solo:
+
+   ```typescript
+   i18n: {
+     strategy: 'prefix_except_default',
+     locales: [
+       { code: 'es', file: 'es.json', name: 'Español' },
+       { code: 'en', file: 'en.json', name: 'English' },
+       // POSPUESTOS — activar bajo demanda (ver FLUJOS-OPERATIVOS §7)
+       // { code: 'fr', file: 'fr.json', name: 'Français' },
+       // { code: 'de', file: 'de.json', name: 'Deutsch' },
+       // { code: 'nl', file: 'nl.json', name: 'Nederlands' },
+       // { code: 'pl', file: 'pl.json', name: 'Polski' },
+       // { code: 'it', file: 'it.json', name: 'Italiano' },
+     ],
+     defaultLocale: 'es',
+   }
+   ```
+
+2. **NO eliminar** los archivos `locales/fr.json`, `locales/de.json`, etc. Se quedan en el repo listos para reactivar.
+
+3. **`server/api/cron/translate-pending.post.ts`** (o equivalente) — Si existe un job de traducción batch, verificar que solo traduzca a idiomas activos (leer de `nuxt.config.ts` o de `vertical_config.active_languages`). NO traducir a 7 idiomas si solo 2 están activos.
+
+4. **Sitemap y hreflang** — Verificar que `@nuxtjs/sitemap` solo genera URLs para idiomas activos. Si genera `/fr/`, `/de/` etc., esas URLs 404 perjudican SEO.
+
+5. **Workflow dominical de contenido** — Actualizar instrucciones: traducir artículos a EN únicamente al lanzamiento, no a 7 idiomas.
+
+6. **`vertical_config`** — Si la tabla tiene campo `active_languages`, verificar que el seed de Tracciona tenga `['es', 'en']`, no `['es', 'en', 'fr', 'de', 'nl', 'pl', 'it']`.
+
+**Tests:**
+
+- [ ] `npm run build` compila sin errores
+- [ ] Navegar a `/en/` funciona
+- [ ] Navegar a `/fr/` devuelve 404 (no redirect roto)
+- [ ] Sitemap no contiene URLs con `/fr/`, `/de/`, etc.
+
+---
+
+### Parte B — Pipeline de imágenes: cache immutable + Cloudinary no retiene
+
+**Decisión §1:** Cloudinary transforma, CF Images almacena y sirve. Cloudinary NO retiene las imágenes. Cache agresivo de 30 días en imágenes.
+
+**Cambios en código:**
+
+1. **`server/middleware/security-headers.ts`** o **`nuxt.config.ts` routeRules** — Añadir header de cache para URLs de imagen:
+
+   ```typescript
+   // En routeRules o en middleware, para rutas de imagen:
+   // Imágenes servidas desde CF Images (imagedelivery.net) o Cloudinary (res.cloudinary.com)
+   // ya son servidas por sus CDNs con cache propio.
+   // Pero para imágenes proxied o servidas desde nuestro dominio:
+   routeRules: {
+     // ... reglas existentes ...
+     '/images/**': { headers: { 'Cache-Control': 'public, max-age=2592000, immutable' } },
+   }
+   ```
+
+2. **`server/api/images/process.post.ts`** (pipeline híbrido, si existe) — Verificar que tras subir a CF Images, el endpoint **NO conserva** la imagen en Cloudinary. Añadir paso de cleanup:
+
+   ```typescript
+   // Después de confirmar upload a CF Images:
+   // await cloudinary.uploader.destroy(publicId) // Eliminar de Cloudinary
+   ```
+
+   Si el endpoint no existe aún (fase 1), documentar este paso como TODO para cuando se active el pipeline híbrido.
+
+3. **`app/composables/useImageUrl.ts`** — Verificar que el composable añade version query param o hash a las URLs para permitir invalidación de cache:
+   ```typescript
+   // Si la URL no tiene query params de versión, añadir ?v=timestamp_upload
+   ```
+
+**Tests:**
+
+- [ ] Respuestas de imagen incluyen `Cache-Control: public, max-age=2592000, immutable`
+- [ ] `npm run build` compila sin errores
+
+---
+
+### Parte C — Supabase: documentar dependencias reales
+
+**Decisión §2:** Documentar que Supabase proporciona 4 servicios críticos (PostgreSQL, GoTrue/Auth, Realtime, Vault) y que migrar no es solo "mover la BD". Cuando llegue el 2º cluster, considerar Neon/Railway para diversificar.
+
+**Cambios en documentación (NO en código):**
+
+1. **`docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md`** — Añadir sección "Dependencias reales de Supabase":
+
+   ```markdown
+   ## Dependencias reales de Supabase
+
+   Supabase proporciona 4 servicios críticos simultáneos:
+
+   | Servicio      | Qué usamos                              | Alternativa si falla     | Tiempo migración real     |
+   | ------------- | --------------------------------------- | ------------------------ | ------------------------- |
+   | PostgreSQL    | BD completa, RLS, vistas materializadas | Neon, Railway, VPS       | 4-8h                      |
+   | GoTrue (Auth) | Login, tokens, sesiones, PKCE           | Auth.js, Clerk           | 24-48h (sesiones activas) |
+   | Realtime      | Subastas en vivo (websockets)           | CF Durable Objects, Ably | 8-16h                     |
+   | Vault         | Secretos (si se usa)                    | Variables de entorno CF  | 1h                        |
+
+   **Riesgo:** Si Supabase cae o cambia precios, las 4 capas se afectan.
+   **Mitigación:** Cuando se cree un 2º cluster, considerar Neon o Railway
+   (solo PostgreSQL) para empezar a diversificar vendor lock-in.
+   Auth y Realtime seguirían en cluster principal Supabase.
+   ```
+
+2. **`CLAUDE.md`** — Añadir en sección de decisiones/notas:
+   ```
+   NOTA: El segundo cluster de BD (cuando se necesite) debe considerar
+   Neon o Railway como alternativa a Supabase para diversificar dependencias.
+   Ver ARQUITECTURA-ESCALABILIDAD.md §Dependencias reales de Supabase.
+   ```
+
+---
+
+### Parte D — Monitorización: ampliar recomendaciones + vista estado del stack + métricas por vertical
+
+**Decisión §13:** Ampliar tabla de recomendaciones automáticas, crear vista "Estado del stack" en admin, y añadir tag `vertical` a `infra_metrics`.
+
+**Cambios en código:**
+
+1. **`server/api/cron/infra-metrics.post.ts`** — Ampliar las recomendaciones automáticas. La tabla actual tiene recomendaciones básicas. Añadir las siguientes (si no existen):
+
+   ```typescript
+   const RECOMMENDATIONS = [
+     // ... existentes ...
+     {
+       condition: 'supabase_connections_pct > 70',
+       message: 'Revisar connection pooling o considerar upgrade',
+     },
+     {
+       condition: 'cf_images_storage_pct > 80',
+       message: 'Verificar que no se están duplicando imágenes',
+     },
+     {
+       condition: 'resend_emails_pct > 80 && plan === "free"',
+       message: 'Upgrade a Resend Pro ($20/mes, 50K/mes)',
+     },
+     { condition: 'stripe_volume > 100000', message: 'Negociar tarifa personalizada con Stripe' },
+     {
+       condition: 'supabase_realtime_connections > 150',
+       message: 'Optimizar subastas o considerar Durable Objects para Realtime',
+     },
+   ]
+   ```
+
+2. **Tabla `infra_metrics`** — Añadir columna `vertical VARCHAR DEFAULT NULL` si no existe:
+
+   ```sql
+   -- Migración 000XX_infra_metrics_vertical.sql
+   ALTER TABLE infra_metrics ADD COLUMN IF NOT EXISTS vertical VARCHAR DEFAULT NULL;
+   COMMENT ON COLUMN infra_metrics.vertical IS 'NULL = global metric, otherwise per-vertical metric for cost allocation';
+   ```
+
+3. **`server/api/cron/infra-metrics.post.ts`** — Al insertar métricas, añadir desglose por vertical cuando sea posible:
+
+   ```typescript
+   // Tras insertar métrica global (vertical = null):
+   // Si la métrica es desglosable (ej: storage por vertical), insertar también por vertical:
+   // INSERT INTO infra_metrics (metric, value, vertical) VALUES ('db_size_bytes', X, 'tracciona')
+   ```
+
+4. **`app/pages/admin/infraestructura.vue`** — Añadir pestaña/sección "Estado del stack" con tabla resumen de todos los servicios:
+   - Columnas: Servicio, Plan actual, Uso %, Próximo paso
+   - Cada fila con botón "Ver detalle" que muestra historial y proyección
+   - Los datos vienen de `infra_metrics` (último registro por servicio)
+   - Si la pestaña ya existe, verificar que incluye TODOS los servicios (Supabase, Cloudinary, CF Images, Resend, Sentry, CF Workers, Stripe, GitHub Actions)
+
+**Tests:**
+
+- [ ] Migración aplica sin errores
+- [ ] Cron infra-metrics inserta métricas con vertical = NULL (global) y con vertical específica
+- [ ] Admin infraestructura muestra tabla de estado del stack
+- [ ] `npm run build` compila sin errores
+
+---
+
+### Parte E — Merchandising: convertir a formulario de interés
+
+**Decisión §11:** No implementar flujo completo de merchandising (imprenta, PDF, Stripe). En su lugar, mostrar opción visual atractiva con formulario que mide demanda real.
+
+**Cambios en código:**
+
+1. **`app/pages/dashboard/herramientas/merchandising.vue`** — Si existe el flujo completo con catálogo de productos, pago Stripe y generación de PDF, **reemplazar** por versión simplificada:
+
+   ```vue
+   <!-- Versión simplificada: banner + catálogo visual + formulario de interés -->
+   <!-- NO: integración con imprenta, NO: pago Stripe, NO: generación PDF diseño -->
+   <!-- SÍ: preview de productos con logo del dealer (mockup estático) -->
+   <!-- SÍ: formulario con campos: producto_interesado, cantidad_estimada, email -->
+   <!-- SÍ: INSERT en service_requests (type='merchandising', metadata JSONB) -->
+   ```
+
+   Si NO existe aún (solo placeholder), crear la versión simplificada directamente.
+
+2. **`server/api/service-requests.post.ts`** (o equivalente) — Verificar que acepta `type='merchandising'` y guarda `metadata` con producto y cantidad.
+
+3. **Eliminar** (si existen) dependencias o código relacionado con:
+   - Generación de PDF de diseño para imprenta
+   - Integración con servicio de imprenta
+   - Stripe checkout para pedidos de merchandising
+   - Tabla `merch_orders` — **NO eliminar la tabla**, pero marcar como no utilizada por ahora con comentario en migración o en ESTADO-REAL-PRODUCTO.md
+
+**Tests:**
+
+- [ ] La página de merchandising muestra banner atractivo + formulario
+- [ ] El formulario envía correctamente a service_requests
+- [ ] No hay código de pago Stripe asociado a merchandising
+- [ ] `npm run build` compila sin errores
+
+---
+
+### Parte F — Datos de pago: posponer API de valoración y productos de pago
+
+**Decisión §15:** El índice de precios público gratuito (`/precios`) se mantiene (SEO). Pero la API de valoración de pago, suscripciones de datos sectoriales, y datasets anualizados se posponen hasta tener volumen estadístico.
+
+**Cambios en código:**
+
+1. **`server/api/v1/valuation.get.ts`** (si existe) — Añadir early return con mensaje:
+
+   ```typescript
+   // POSPUESTO — Activar cuando haya ≥500 transacciones históricas
+   // Ver FLUJOS-OPERATIVOS §15 para criterios de activación
+   throw createError({
+     statusCode: 503,
+     message: 'Valuation API coming soon. Insufficient market data.',
+   })
+   ```
+
+   Si NO existe, no crearlo.
+
+2. **`app/pages/datos.vue`** (índice de precios público) — Se mantiene tal cual. Es gratuito y genera autoridad SEO.
+
+3. **`app/pages/admin/config/pricing.vue`** o equivalente — Si hay opciones de pricing para "API valoración" o "dataset anualizado", marcarlas como deshabilitadas o eliminarlas de la UI.
+
+4. **Documentar** en `docs/ESTADO-REAL-PRODUCTO.md`:
+   ```markdown
+   ## Módulos pospuestos
+
+   - **API valoración de pago**: Pospuesto hasta ≥500 transacciones históricas (FLUJOS-OPERATIVOS §15)
+   - **Suscripción datos sectoriales**: Pospuesto hasta ≥1.000 vehículos en catálogo
+   - **Dataset anualizado**: Pospuesto hasta ≥12 meses de datos acumulados
+   ```
+
+**Tests:**
+
+- [ ] `/precios` (índice público) sigue funcionando
+- [ ] Si `/api/v1/valuation` existe, devuelve 503
+- [ ] `npm run build` compila sin errores
+
+---
+
+### Parte G — Scraping: convertir cron a script manual
+
+**Decisión §18:** El script de scraping de competidores NO debe ejecutarse como cron automatizado en producción. Debe ser un script CLI ejecutable manualmente.
+
+**Cambios en código:**
+
+1. **Si existe `server/api/cron/scrape-competitors.post.ts`** — Eliminar el archivo. El scraping NO es un endpoint de servidor.
+
+2. **Crear o verificar `scripts/scrape-competitors.ts`** — Script CLI ejecutable con Node:
+
+   ```typescript
+   #!/usr/bin/env npx tsx
+   // USO: npx tsx scripts/scrape-competitors.ts --source=mascus --min-ads=5
+   // IMPORTANTE: Ejecutar MANUALMENTE desde terminal local.
+   // NUNCA como cron en servidor de producción.
+   // El contacto con dealers es SIEMPRE manual y humano.
+   ```
+
+3. **Si hay referencia en `.github/workflows/`** o en cualquier cron schedule a scraping — Eliminarla.
+
+4. **Si hay referencia en `admin/captacion.vue`** a un botón "Ejecutar scraping" que llama a un endpoint del servidor — Eliminarlo. El admin solo ve el pipeline de leads (new → contacted → interested → onboarding → active → rejected), NO dispara scraping.
+
+**Tests:**
+
+- [ ] No existe endpoint `/api/cron/scrape*` ni `/api/scrape*`
+- [ ] El script `scripts/scrape-competitors.ts` existe y se ejecuta con `npx tsx`
+- [ ] No hay referencia a scraping en cron schedules ni en CI
+- [ ] `npm run build` compila sin errores
+
+---
+
+### Parte H — Actualizar documentación de referencia
+
+**Aplicar cambios de las decisiones §30 a documentos de referencia:**
+
+1. **`CLAUDE.md`** — Añadir sección al final:
+
+   ```markdown
+   ## Decisiones estratégicas (25 Feb 2026)
+
+   - Idiomas activos: ES + EN. Resto pospuesto (ver FLUJOS-OPERATIVOS §7)
+   - Pipeline imágenes: Cloudinary transforma, CF Images almacena. Cache immutable 30d
+   - Merchandising: solo formulario de interés, no flujo completo
+   - API valoración de pago: pospuesta hasta volumen suficiente
+   - Scraping: solo script manual, NUNCA cron en producción
+   - 2º cluster BD: considerar Neon/Railway para diversificar
+   - Métricas infra: tag vertical en infra_metrics desde día 1
+   ```
+
+2. **`docs/tracciona-docs/contexto-global.md`** — Añadir sección "Decisiones estratégicas activas" con tabla de las 12 decisiones de §30.
+
+3. **`docs/progreso.md`** — Añadir sesión 44 como pendiente/completada según corresponda.
+
+4. **`docs/ESTADO-REAL-PRODUCTO.md`** — Si existe, añadir módulos pospuestos (merchandising completo, API valoración, idiomas 3-7).
+
+---
+
+### Resumen archivos sesión 44
+
+| Archivo                                                        | Acción                                          |
+| -------------------------------------------------------------- | ----------------------------------------------- |
+| `nuxt.config.ts`                                               | Comentar locales fr/de/nl/pl/it                 |
+| `nuxt.config.ts` routeRules                                    | Añadir cache immutable para imágenes            |
+| `vertical_config` seed                                         | Verificar active_languages = ['es', 'en']       |
+| `server/api/cron/infra-metrics.post.ts`                        | Ampliar recomendaciones + desglose por vertical |
+| `supabase/migrations/000XX_infra_metrics_vertical.sql`         | ALTER TABLE infra_metrics ADD vertical          |
+| `app/pages/admin/infraestructura.vue`                          | Añadir/ampliar vista "Estado del stack"         |
+| `app/pages/dashboard/herramientas/merchandising.vue`           | Simplificar a formulario de interés             |
+| `server/api/v1/valuation.get.ts`                               | Posponer con 503 (si existe)                    |
+| `server/api/cron/scrape-competitors.post.ts`                   | ELIMINAR (si existe)                            |
+| `scripts/scrape-competitors.ts`                                | Verificar que es script CLI manual              |
+| `CLAUDE.md`                                                    | Añadir decisiones estratégicas                  |
+| `docs/tracciona-docs/contexto-global.md`                       | Añadir sección decisiones                       |
+| `docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md` | Añadir dependencias Supabase                    |
+| `docs/ESTADO-REAL-PRODUCTO.md`                                 | Añadir módulos pospuestos                       |
+| `docs/progreso.md`                                             | Añadir sesión 44                                |
+
+### Orden de ejecución
+
+1. Parte A — i18n (cambio más impactante, afecta build y sitemap)
+2. Parte B — Cache imágenes (cambio simple en config)
+3. Parte D — Monitorización (migración SQL + código + UI)
+4. Parte E — Merchandising (simplificación de página)
+5. Parte F — API valoración (posponer)
+6. Parte G — Scraping (eliminar cron)
+7. Parte C — Documentación Supabase (solo docs)
+8. Parte H — Documentación general (solo docs)
+9. Verificar: `npm run build` + `npm run typecheck` + `npm run lint`
+
+### Tests mínimos de la sesión
+
+- [ ] Build compila sin errores con solo 2 idiomas activos
+- [ ] Sitemap solo contiene URLs en `/` (español) y `/en/` (inglés)
+- [ ] Admin infraestructura muestra tabla de estado del stack con todos los servicios
+- [ ] Página merchandising muestra formulario de interés, no flujo de pago
+- [ ] No existe endpoint de scraping en servidor
+- [ ] Script de scraping existe en `scripts/` y se ejecuta manualmente
+- [ ] Documentación actualizada refleja las 12 decisiones
+
+---
+
+## SESIÓN 45 — Auditoría continua, backups multi-capa, aislamiento vertical, desacoplamiento, modularización y failover de IA
+
+> 6 mejoras transversales de resiliencia, calidad y preparación multi-vertical.
+> Origen: requisitos del fundador (25 Feb 2026).
+> Prioridad: ALTA — afectan a la supervivencia del negocio si algo falla.
+
+**Leer ANTES de escribir código:**
+
+1. `.github/workflows/ci.yml` — CI actual
+2. `.github/workflows/security.yml` — Escaneo de seguridad actual
+3. `.github/workflows/backup.yml` — Backup semanal actual
+4. `scripts/backup-weekly.sh` — Script de backup actual
+5. `scripts/verify-extensibility.sh` — Script de extensibilidad actual
+6. `server/utils/fetchWithRetry.ts` — Retry actual
+7. `server/api/generate-description.post.ts` — Patrón actual de llamada a IA
+8. `server/api/whatsapp/process.post.ts` — Patrón actual de llamada a IA (Vision)
+9. `server/api/verify-document.post.ts` — Patrón actual (placeholder Vision)
+10. `app/composables/useVerticalConfig.ts` — Config de vertical actual
+
+---
+
+### Parte A — Auditoría continua automatizada
+
+**Problema:** Hoy la auditoría de código, seguridad y calidad es manual o reactiva (solo en PRs). No hay forma de detectar regresiones de seguridad, acoplamientos nuevos, o degradación de performance entre PRs.
+
+**Solución: GitHub Actions scheduled + informe consolidado con alerta por email**
+
+#### A1. Crear `.github/workflows/daily-audit.yml` — auditoría diaria
+
+```yaml
+name: Daily Audit
+on:
+  schedule:
+    - cron: '0 5 * * *' # Todos los días a las 05:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  # ── Seguridad ──
+  semgrep:
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+      - run: semgrep scan --config auto --config p/typescript --config p/nodejs --config p/owasp-top-ten --json --output semgrep-results.json . || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-results
+          path: semgrep-results.json
+
+  npm-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: npm ci
+      - run: npm audit --audit-level=moderate --json > npm-audit.json 2>&1 || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-results
+          path: npm-audit.json
+
+  # ── Calidad de código ──
+  lint-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: npm }
+      - run: npm ci
+      - run: npm run lint -- --format json --output-file eslint-report.json 2>&1 || true
+      - run: npm run typecheck 2>&1 | tee typecheck.log || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lint-typecheck
+          path: |
+            eslint-report.json
+            typecheck.log
+
+  # ── Extensibilidad (hardcoded values) ──
+  extensibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check hardcoded values
+        run: |
+          echo "=== Extensibility Audit ===" > extensibility-report.txt
+
+          echo "## Hardcoded categories in code:" >> extensibility-report.txt
+          grep -rn "cisternas\|cabezas.tractoras\|semirremolques\|camiones\|furgonetas" app/ server/ --include='*.ts' --include='*.vue' \
+            | grep -v node_modules | grep -v '.nuxt' | grep -v 'i18n' | grep -v 'locales/' | grep -v 'migrations' \
+            | grep -v '\.spec\.' | grep -v 'test' >> extensibility-report.txt 2>&1 || echo "  None found ✓" >> extensibility-report.txt
+
+          echo "" >> extensibility-report.txt
+          echo "## Hardcoded domain 'tracciona' in code (outside config):" >> extensibility-report.txt
+          grep -rn "tracciona\.com\|tracciona\.es" app/ server/ --include='*.ts' --include='*.vue' \
+            | grep -v node_modules | grep -v '.nuxt' | grep -v nuxt.config | grep -v CLAUDE.md | grep -v README \
+            | grep -v '\.spec\.' >> extensibility-report.txt 2>&1 || echo "  None found ✓" >> extensibility-report.txt
+
+          echo "" >> extensibility-report.txt
+          echo "## Hardcoded vertical slug 'tracciona' outside getVerticalSlug():" >> extensibility-report.txt
+          grep -rn "'tracciona'" app/ server/ --include='*.ts' --include='*.vue' \
+            | grep -v node_modules | grep -v '.nuxt' | grep -v useVerticalConfig | grep -v nuxt.config \
+            | grep -v getVerticalSlug >> extensibility-report.txt 2>&1 || echo "  None found ✓" >> extensibility-report.txt
+
+          echo "" >> extensibility-report.txt
+          echo "## Hardcoded AI model strings:" >> extensibility-report.txt
+          grep -rn "claude-3\|claude-sonnet\|claude-haiku\|gpt-4o" server/ --include='*.ts' \
+            | grep -v node_modules | grep -v aiConfig.ts >> extensibility-report.txt 2>&1 || echo "  None found ✓" >> extensibility-report.txt
+
+          cat extensibility-report.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extensibility-report
+          path: extensibility-report.txt
+
+  # ── Build sanity ──
+  build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: npm }
+      - run: npm ci
+      - run: npm run build 2>&1 | tee build.log
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: build-failure-log
+          path: build.log
+
+  # ── Consolidar y notificar ──
+  report:
+    runs-on: ubuntu-latest
+    needs: [semgrep, npm-audit, lint-typecheck, extensibility, build-check]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: audit-artifacts/
+      - name: Generate consolidated report
+        run: node scripts/audit-report.mjs
+      - name: Notify if issues found
+        if: env.AUDIT_HAS_ISSUES == 'true'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.INFRA_ALERT_EMAIL }}
+        run: node scripts/send-audit-alert.mjs
+```
+
+#### A2. Crear `scripts/audit-report.mjs`
+
+Script que lee los artefactos descargados y genera un resumen consolidado:
+
+```javascript
+// scripts/audit-report.mjs
+// Lee semgrep-results.json, npm-audit.json, eslint-report.json, extensibility-report.txt
+// Genera audit-summary.json con:
+//   { date, semgrep: { errors, warnings }, npm: { critical, high, moderate },
+//     eslint: { errors, warnings }, extensibility: { hardcoded_count },
+//     build: 'pass' | 'fail', overall: 'green' | 'yellow' | 'red' }
+// Escribe AUDIT_HAS_ISSUES=true en $GITHUB_ENV si overall != 'green'
+```
+
+Implementar la lectura de cada JSON, contar issues por severidad, y escribir el resumen.
+
+#### A3. Crear `scripts/send-audit-alert.mjs`
+
+Envía email via Resend con el resumen de la auditoría cuando hay issues críticos:
+
+```javascript
+// scripts/send-audit-alert.mjs
+// Lee audit-summary.json
+// Envía email con Resend API con el resumen
+// Solo si overall == 'red' (critical issues) o si hay semgrep errors
+```
+
+#### A4. Lighthouse scheduled (performance)
+
+Añadir al daily audit o como job semanal separado:
+
+```yaml
+lighthouse:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with: { node-version: '20', cache: npm }
+    - run: npm ci && npm run build
+    - run: npx lhci autorun --collect.url=https://tracciona.com --collect.url=https://tracciona.com/en/
+```
+
+**Resultado:** Cada mañana a las 05:00 UTC tienes un informe de seguridad, calidad, extensibilidad y build. Si hay algo crítico, recibes email. Los artefactos quedan en GitHub Actions 90 días para auditoría.
+
+**Coste:** 0€. GitHub Actions free tier da 2.000 minutos/mes. Esta auditoría usa ~15 min/día = ~450 min/mes. Sobra.
+
+---
+
+### Parte B — Backups multi-capa (24h + 72h + semanal)
+
+**Problema:** Hoy solo hay backup semanal (domingos 03:00). Si la BD se corrompe un viernes, pierdes hasta 6 días de datos de dealers, compradores y transacciones.
+
+**Solución: 3 capas de backup complementarias**
+
+#### B1. Capa 1 — Supabase PITR (Point-in-Time Recovery) — RPO 0 minutos
+
+Supabase Pro incluye PITR. Esto ya está activo si estás en Pro ($25/mes). Permite restaurar a CUALQUIER segundo de las últimas 24-72 horas (dependiendo del plan).
+
+**Verificar:** Entrar en dashboard.supabase.com → Settings → Database → Backups → confirmar que PITR está habilitado. Si no lo está, activarlo. Es la protección más valiosa y ya la estás pagando.
+
+**Documentar en `docs/tracciona-docs/referencia/DISASTER-RECOVERY.md`:**
+
+```markdown
+## Capa 1: Supabase PITR (incluido en Pro)
+
+- RPO: 0 minutos (restaura a cualquier segundo)
+- Retención: 7 días (Pro) / 28 días (Team)
+- Cómo restaurar: Dashboard → Database → Backups → Point in Time Recovery
+- Tiempo de restauración: 5-30 minutos según tamaño de BD
+- LIMITACIÓN: Solo restaura la BD de Supabase, NO archivos en Cloudflare/Cloudinary
+```
+
+#### B2. Capa 2 — Backup diario automatizado a B2 — RPO 24 horas
+
+Reemplazar el workflow de backup actual para ejecutar diariamente:
+
+```yaml
+# .github/workflows/backup.yml — REEMPLAZAR el actual
+name: Database Backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Diario a las 02:00 UTC
+  workflow_dispatch:
+    inputs:
+      backup_type:
+        description: 'Backup type'
+        required: false
+        default: 'daily'
+        type: choice
+        options: [daily, manual]
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Install tools
+        run: |
+          npm i -g supabase
+          pip install b2
+      - name: Run backup
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+          B2_APPLICATION_KEY_ID: ${{ secrets.B2_APPLICATION_KEY_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+        run: bash scripts/backup-multi-tier.sh
+      - name: Alert on failure
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.INFRA_ALERT_EMAIL }}
+        run: |
+          curl -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"from\":\"backups@tracciona.com\",\"to\":\"$ALERT_EMAIL\",\"subject\":\"⚠️ Backup FAILED $(date +%Y-%m-%d)\",\"text\":\"Daily backup failed. Check GitHub Actions.\"}"
+```
+
+#### B3. Crear `scripts/backup-multi-tier.sh`
+
+Evolución de `backup-weekly.sh` con retención multi-capa:
+
+```bash
+#!/usr/bin/env bash
+# Retención:
+#   daily/   → últimos 7 backups (1 semana)
+#   weekly/  → últimos 4 backups (1 mes) — se guarda si es domingo
+#   monthly/ → últimos 6 backups (6 meses) — se guarda si es día 1-7 del mes
+#
+# Estructura en B2:
+#   tracciona-backups/
+#     daily/tracciona_20260225_020000.sql.enc
+#     weekly/tracciona_20260223_020000.sql.enc
+#     monthly/tracciona_202602.sql.enc
+```
+
+Modificaciones respecto al script actual:
+
+1. Cambiar `WEEKLY_RETENTION=4` a `DAILY_RETENTION=7`
+2. Subir SIEMPRE a `daily/`
+3. Si es domingo (`DAY_OF_WEEK == 7`), copiar también a `weekly/` (retención 4)
+4. Si es primer domingo del mes (`DAY_OF_MONTH <= 7`), copiar también a `monthly/` (retención 6)
+5. Cleanup por cada tier independiente
+
+**RPO resultante:**
+
+| Escenario                              | Capa que te salva      | Datos perdidos (máximo) |
+| -------------------------------------- | ---------------------- | ----------------------- |
+| Error hace 2 horas                     | PITR de Supabase       | 0 minutos               |
+| Error hace 12 horas                    | PITR de Supabase       | 0 minutos               |
+| Supabase borra tu proyecto             | Backup diario en B2    | 24 horas                |
+| Corrupción detectada 3 días después    | Backup diario (hay 7)  | 0-24 horas              |
+| Corrupción detectada 2 semanas después | Backup semanal (hay 4) | 0-7 días                |
+| Desastre mayor hace 3 meses            | Backup mensual (hay 6) | 0-30 días               |
+
+#### B4. Script de restauración mejorado — `scripts/backup-restore.sh`
+
+El script actual existe pero verificar que incluye:
+
+1. Descargar de B2 (elegir tier: daily/weekly/monthly, elegir fecha)
+2. Descifrar con la key
+3. Restaurar en nueva instancia PostgreSQL (Railway/Neon como destino temporal)
+4. Verificar conteos de tablas clave (vehicles, dealers, users, subscriptions)
+5. Imprimir resumen de verificación
+
+**Test:** Ejecutar restauración de prueba 1x/trimestre (añadir recordatorio en PLAN-AUDITORIA).
+
+**Coste adicional:** 0€. B2 cobra $0.005/GB/mes. Con una BD de 500MB, 7 dailies + 4 weeklies + 6 monthlies ≈ 8.5GB = $0.04/mes.
+
+---
+
+### Parte C — Aislamiento entre verticales
+
+**Problema:** Hoy todas las verticales comparten el mismo cluster Supabase. Si un bug en Horecaria corrompe datos, podría afectar a Tracciona.
+
+**Solución: Aislamiento por capas (datos, config, deploy)**
+
+#### C1. RLS por vertical — ya parcialmente implementado
+
+Verificar que TODAS las tablas con datos de vertical tienen RLS policy que incluye filtro por vertical:
+
+```sql
+-- Verificar en cada tabla que tiene columna vertical o dealer.vertical:
+-- vehicles, dealers, categories, subcategories, articles, advertisements,
+-- active_landings, transport_zones, auction_events, etc.
+
+-- Ejemplo de policy correcta:
+CREATE POLICY "vehicles_by_vertical" ON vehicles
+  FOR ALL USING (
+    vertical = current_setting('app.current_vertical', true)
+    OR current_setting('app.current_vertical', true) IS NULL  -- admin sin filtro
+  );
+```
+
+Si las policies actuales no filtran por vertical, AÑADIRLAS. Esto es la primera línea de defensa.
+
+#### C2. Middleware de vertical — aislar contexto en cada request
+
+Crear `server/middleware/vertical-context.ts`:
+
+```typescript
+// En cada request, setear el contexto de vertical para que RLS y queries lo usen
+export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig()
+  const vertical = config.public.vertical || 'tracciona'
+
+  // Setear en el contexto del evento para que los endpoints lo lean
+  event.context.vertical = vertical
+
+  // Si usamos Supabase con session variables para RLS:
+  // SET LOCAL app.current_vertical = 'tracciona'
+  // Esto se haría en cada query con el service role client
+})
+```
+
+#### C3. Variables de entorno por deploy — ya implementado
+
+Cada deploy de Cloudflare Pages ya tiene `NUXT_PUBLIC_VERTICAL`. Verificar que NO hay cross-contamination: un deploy de Horecaria NUNCA debe poder leer datos de Tracciona.
+
+#### C4. Migración 000XX — índice compuesto para aislamiento
+
+```sql
+-- Si no existe ya, crear índice compuesto en tablas principales:
+CREATE INDEX IF NOT EXISTS idx_vehicles_vertical_status ON vehicles(vertical, status);
+CREATE INDEX IF NOT EXISTS idx_dealers_vertical ON dealers(vertical);
+CREATE INDEX IF NOT EXISTS idx_articles_vertical ON articles(vertical);
+-- Esto acelera las queries filtradas por vertical Y previene scans completos
+```
+
+#### C5. Test de aislamiento
+
+Crear `tests/security/vertical-isolation.test.ts`:
+
+```typescript
+// Test que verifica que con NUXT_PUBLIC_VERTICAL=tracciona
+// las queries NO devuelven datos de vertical='horecaria'
+// Requiere datos de test en ambas verticales
+```
+
+---
+
+### Parte D — Deshardcodear todo lo posible
+
+**Problema detectado en el código actual:**
+
+1. `generate-description.post.ts` tiene hardcoded `claude-3-5-haiku-20241022`
+2. `whatsapp/process.post.ts` tiene hardcoded `claude-sonnet-4-5-20250929`
+3. `verify-document.post.ts` tiene hardcoded `claude-sonnet-4-20250514` (en comentario)
+4. `nuxt.config.ts` tiene hardcoded `tracciona.com` en site.url, meta, dns-prefetch
+5. `nuxt.config.ts` tiene hardcoded `gmnrfuzekbwyzkgsaftv` como project ref
+6. `whatsapp/process.post.ts` tiene hardcoded `tracciona.com` en el mensaje al dealer
+7. `whatsapp/process.post.ts` tiene hardcoded categorías en español en el prompt de Claude
+8. `backup.yml` tiene hardcoded `gmnrfuzekbwyzkgsaftv`
+
+#### D1. Crear `server/utils/aiConfig.ts` — Centralizar modelos de IA
+
+```typescript
+// server/utils/aiConfig.ts
+export const AI_MODELS = {
+  // Modelo para tareas rápidas y baratas (descripciones, traducciones)
+  fast: process.env.AI_MODEL_FAST || 'claude-3-5-haiku-20241022',
+  // Modelo para tareas complejas (visión, análisis de documentos)
+  vision: process.env.AI_MODEL_VISION || 'claude-sonnet-4-5-20250929',
+  // Modelo para generación de contenido largo (artículos, informes)
+  content: process.env.AI_MODEL_CONTENT || 'claude-sonnet-4-5-20250929',
+} as const
+
+export type AIModelRole = keyof typeof AI_MODELS
+```
+
+Actualizar `generate-description.post.ts`, `whatsapp/process.post.ts`, `verify-document.post.ts` y `social/generate-posts.post.ts` para usar `AI_MODELS.fast`, `AI_MODELS.vision`, etc. en vez de strings hardcodeados.
+
+#### D2. Centralizar URLs de dominio
+
+```typescript
+// server/utils/siteConfig.ts
+export function getSiteUrl(): string {
+  return process.env.SITE_URL || process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
+}
+
+export function getSiteName(): string {
+  return process.env.SITE_NAME || 'Tracciona'
+}
+```
+
+Actualizar `whatsapp/process.post.ts` línea del mensaje:
+
+```typescript
+// ANTES:
+;`Enlace: https://tracciona.com/vehiculo/${vehicleResult.slug}`
+// DESPUÉS:
+`Enlace: ${getSiteUrl()}/vehiculo/${vehicleResult.slug}`
+```
+
+Actualizar `nuxt.config.ts`:
+
+```typescript
+site: {
+  url: process.env.SITE_URL || 'https://tracciona.com',
+},
+```
+
+#### D3. Mover Supabase project ref a secret
+
+En `backup.yml`, cambiar:
+
+```yaml
+# ANTES:
+SUPABASE_PROJECT_REF: gmnrfuzekbwyzkgsaftv
+# DESPUÉS:
+SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+```
+
+En `nuxt.config.ts`, ya usa `process.env.SUPABASE_PROJECT_REF` con fallback. Eliminar el fallback hardcodeado:
+
+```typescript
+// ANTES:
+supabaseProjectRef: process.env.SUPABASE_PROJECT_REF || 'gmnrfuzekbwyzkgsaftv',
+// DESPUÉS:
+supabaseProjectRef: process.env.SUPABASE_PROJECT_REF || '',
+```
+
+#### D4. Externalizar categorías del prompt de Claude
+
+En `whatsapp/process.post.ts`, el prompt de Claude tiene hardcodeado:
+
+```
+"category_name_es": "one of 'Cabezas tractoras', 'Camiones', 'Semirremolques', ..."
+```
+
+Cambiar para que las categorías se lean de la BD:
+
+```typescript
+// En whatsapp/process.post.ts, antes de llamar a Claude:
+const { data: categories } = await supabase
+  .from('categories')
+  .select('name_es, slug')
+  .eq('vertical', event.context.vertical || 'tracciona')
+
+const categoryList =
+  categories?.map((c) => c.name_es).join("', '") ||
+  'Sin categorías'
+  // Usar categoryList en el prompt:
+  `"category_name_es": "string -- one of '${categoryList}'"`
+```
+
+Esto hace que cuando se clone a otra vertical, el prompt se adapte automáticamente a las categorías de esa vertical.
+
+#### D5. Actualizar `scripts/verify-extensibility.sh`
+
+Añadir verificaciones para los nuevos patrones:
+
+```bash
+echo "## Hardcoded AI model strings:"
+grep -rn "claude-3\|claude-sonnet\|claude-haiku\|gpt-4o" server/ --include='*.ts' \
+  | grep -v node_modules | grep -v aiConfig.ts | head -10
+
+echo "## Hardcoded Supabase project ref:"
+grep -rn "gmnrfuzekbwyzkgsaftv" . --include='*.ts' --include='*.yml' --include='*.yaml' \
+  | grep -v node_modules | head -10
+```
+
+---
+
+### Parte E — Modularización
+
+**Problema:** Algunos endpoints son demasiado largos y mezclan responsabilidades. `whatsapp/process.post.ts` tiene 350+ líneas con lógica de descarga, IA, upload, BD y notificación todo junto.
+
+#### E1. Extraer servicios de los endpoints largos
+
+**Regla existente (sesión 28):** endpoint >200 líneas → extraer a `server/services/`.
+
+Crear estos servicios:
+
+```
+server/services/
+  aiProvider.ts        ← NUEVO: wrapper de llamadas a IA con failover (ver Parte F)
+  vehicleCreator.ts    ← NUEVO: lógica de crear vehículo desde datos extraídos
+  imageUploader.ts     ← NUEVO: upload a Cloudinary/CF Images
+  whatsappProcessor.ts ← NUEVO: orquestación del flujo WhatsApp
+  billing.ts           ← EXISTE
+  marketReport.ts      ← EXISTE
+  vehicles.ts          ← CREAR: queries comunes de vehículos
+  notifications.ts     ← NUEVO: envío de WhatsApp + email + push unificado
+```
+
+**Ejemplo: refactor de `whatsapp/process.post.ts`**
+
+El endpoint actual de 350+ líneas se convierte en:
+
+```typescript
+// server/api/whatsapp/process.post.ts — DESPUÉS del refactor
+export default defineEventHandler(async (event) => {
+  // 1. Auth (10 líneas)
+  // 2. Validar input (5 líneas)
+  // 3. Orquestar
+  const result = await processWhatsAppSubmission(event, body.submissionId)
+  return result
+})
+```
+
+Y `server/services/whatsappProcessor.ts` contiene la lógica real, que a su vez llama a `aiProvider`, `imageUploader`, `vehicleCreator` y `notifications`.
+
+#### E2. Unificar patrón de notificaciones
+
+Hoy hay 3 formas distintas de enviar notificaciones en el código:
+
+- WhatsApp: `sendWhatsAppMessage()` directo
+- Email: `$fetch('/api/email/send')` o Resend directo
+- Push: `$fetch('/api/push/send')`
+
+Crear `server/services/notifications.ts`:
+
+```typescript
+// server/services/notifications.ts
+export async function notify(
+  userId: string,
+  opts: {
+    type: 'lead' | 'vehicle_sold' | 'payment_failed' | 'verification' | string
+    channels?: ('email' | 'whatsapp' | 'push')[] // default: según preferencias del usuario
+    data: Record<string, unknown>
+  },
+) {
+  // 1. Leer preferencias del usuario (email_preferences)
+  // 2. Para cada canal habilitado, enviar
+  // 3. Log en tabla notification_log
+}
+```
+
+#### E3. Crear `server/utils/supabaseQuery.ts` — helpers tipados
+
+```typescript
+// Helpers que inyectan automáticamente el filtro de vertical
+export function vehiclesQuery(supabase: SupabaseClient, vertical?: string) {
+  const v = vertical || getVerticalSlug()
+  return supabase.from('vehicles').select('*').eq('vertical', v)
+}
+```
+
+Esto evita olvidar el `WHERE vertical = X` en queries manuales.
+
+---
+
+### Parte F — Failover de proveedores de IA
+
+**Problema:** Si la API de Anthropic cae, las funciones que usan IA fallan sin plan B:
+
+- `generate-description.post.ts` → dealer no puede generar descripción
+- `whatsapp/process.post.ts` → vehículos WhatsApp no se procesan
+- `verify-document.post.ts` → verificaciones se paran
+- `social/generate-posts.post.ts` → posts no se generan
+
+Cada función tiene criticidad diferente:
+
+- **Experiencia en vivo** (descripción mientras el dealer espera): timeout corto, failover rápido
+- **Background** (WhatsApp, social): puede reintentar, timeout más largo
+- **No crítico** (verificación): puede esperar horas
+
+#### F1. Crear `server/services/aiProvider.ts`
+
+```typescript
+// server/services/aiProvider.ts
+import { fetchWithRetry } from '~/server/utils/fetchWithRetry'
+
+interface AIProviderConfig {
+  /** Tiempo máximo de espera antes de intentar fallback */
+  timeoutMs: number
+  /** Prioridad de proveedores a intentar */
+  providers: AIProvider[]
+  /** Número máximo de reintentos por proveedor */
+  maxRetries: number
+}
+
+interface AIProvider {
+  name: 'anthropic' | 'openai'
+  model: string
+  apiKey: string
+  endpoint: string
+}
+
+interface AIRequest {
+  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: unknown }>
+  maxTokens: number
+  system?: string
+}
+
+interface AIResponse {
+  text: string
+  provider: string
+  model: string
+  latencyMs: number
+}
+
+// Presets por criticidad
+export const AI_PRESETS = {
+  /** Dealer esperando en UI — timeout corto, failover inmediato */
+  realtime: {
+    timeoutMs: 8_000,
+    maxRetries: 1,
+  },
+  /** Procesamiento en background — puede esperar más */
+  background: {
+    timeoutMs: 30_000,
+    maxRetries: 2,
+  },
+  /** No crítico — puede fallar y reintentar en el próximo cron */
+  deferred: {
+    timeoutMs: 60_000,
+    maxRetries: 3,
+  },
+} as const
+
+export async function callAI(
+  request: AIRequest,
+  preset: keyof typeof AI_PRESETS = 'background',
+  modelRole: 'fast' | 'vision' | 'content' = 'fast',
+): Promise<AIResponse> {
+  const config = useRuntimeConfig()
+  const presetConfig = AI_PRESETS[preset]
+
+  // Construir lista de proveedores por orden de preferencia
+  const providers: AIProvider[] = []
+
+  // Proveedor principal: Anthropic
+  if (config.anthropicApiKey) {
+    providers.push({
+      name: 'anthropic',
+      model: AI_MODELS[modelRole],
+      apiKey: config.anthropicApiKey as string,
+      endpoint: 'https://api.anthropic.com/v1/messages',
+    })
+  }
+
+  // Fallback: OpenAI (si configurado)
+  const openaiKey = process.env.OPENAI_API_KEY
+  if (openaiKey) {
+    const openaiModels = {
+      fast: process.env.AI_FALLBACK_MODEL_FAST || 'gpt-4o-mini',
+      vision: process.env.AI_FALLBACK_MODEL_VISION || 'gpt-4o',
+      content: process.env.AI_FALLBACK_MODEL_CONTENT || 'gpt-4o',
+    }
+    providers.push({
+      name: 'openai',
+      model: openaiModels[modelRole],
+      apiKey: openaiKey,
+      endpoint: 'https://api.openai.com/v1/chat/completions',
+    })
+  }
+
+  if (providers.length === 0) {
+    throw new Error('No AI providers configured')
+  }
+
+  // Intentar cada proveedor en orden
+  const errors: string[] = []
+
+  for (const provider of providers) {
+    const start = Date.now()
+
+    try {
+      const text = await callProvider(provider, request, {
+        timeoutMs: presetConfig.timeoutMs,
+        maxRetries: presetConfig.maxRetries,
+      })
+
+      return {
+        text,
+        provider: provider.name,
+        model: provider.model,
+        latencyMs: Date.now() - start,
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      errors.push(`${provider.name}/${provider.model}: ${message}`)
+      console.warn(`[aiProvider] ${provider.name} failed, trying next...`, message)
+    }
+  }
+
+  throw new Error(`All AI providers failed:\n${errors.join('\n')}`)
+}
+
+async function callProvider(
+  provider: AIProvider,
+  request: AIRequest,
+  opts: { timeoutMs: number; maxRetries: number },
+): Promise<string> {
+  if (provider.name === 'anthropic') {
+    return callAnthropic(provider, request, opts)
+  } else if (provider.name === 'openai') {
+    return callOpenAI(provider, request, opts)
+  }
+  throw new Error(`Unknown provider: ${provider.name}`)
+}
+
+async function callAnthropic(
+  provider: AIProvider,
+  request: AIRequest,
+  opts: { timeoutMs: number; maxRetries: number },
+): Promise<string> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), opts.timeoutMs)
+
+  try {
+    const response = await fetchWithRetry(
+      provider.endpoint,
+      {
+        method: 'POST',
+        headers: {
+          'x-api-key': provider.apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: provider.model,
+          max_tokens: request.maxTokens,
+          system: request.system,
+          messages: request.messages,
+        }),
+        signal: controller.signal,
+      },
+      { maxRetries: opts.maxRetries, baseDelayMs: 500 },
+    )
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Anthropic ${response.status}: ${errorText.slice(0, 200)}`)
+    }
+
+    const data = (await response.json()) as { content: Array<{ type: string; text: string }> }
+    const text = data.content?.find((b) => b.type === 'text')?.text
+    if (!text) throw new Error('Empty response from Anthropic')
+    return text
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+async function callOpenAI(
+  provider: AIProvider,
+  request: AIRequest,
+  opts: { timeoutMs: number; maxRetries: number },
+): Promise<string> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), opts.timeoutMs)
+
+  try {
+    // Convertir formato Anthropic → OpenAI
+    const openaiMessages = []
+    if (request.system) {
+      openaiMessages.push({ role: 'system', content: request.system })
+    }
+    for (const msg of request.messages) {
+      openaiMessages.push({ role: msg.role, content: msg.content })
+    }
+
+    const response = await fetchWithRetry(
+      provider.endpoint,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${provider.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: provider.model,
+          max_tokens: request.maxTokens,
+          messages: openaiMessages,
+        }),
+        signal: controller.signal,
+      },
+      { maxRetries: opts.maxRetries, baseDelayMs: 500 },
+    )
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`OpenAI ${response.status}: ${errorText.slice(0, 200)}`)
+    }
+
+    const data = (await response.json()) as { choices: Array<{ message: { content: string } }> }
+    const text = data.choices?.[0]?.message?.content
+    if (!text) throw new Error('Empty response from OpenAI')
+    return text
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+```
+
+#### F2. Actualizar endpoints para usar `callAI`
+
+**`generate-description.post.ts`** (experiencia en vivo del dealer):
+
+```typescript
+// ANTES: llamada directa a Anthropic con $fetch
+// DESPUÉS:
+import { callAI } from '~/server/services/aiProvider'
+
+const response = await callAI(
+  { messages: [{ role: 'user', content: prompt }], maxTokens: 500 },
+  'realtime', // timeout 8s, failover rápido
+  'fast', // modelo barato
+)
+return { description: response.text.trim() }
+```
+
+**`whatsapp/process.post.ts`** (background, no hay usuario esperando):
+
+```typescript
+// El refactor es más complejo por las imágenes Vision
+// Pero el patrón es el mismo:
+import { callAI } from '~/server/services/aiProvider'
+
+const response = await callAI(
+  {
+    system: buildClaudePrompt(submission.text_content),
+    messages: [{ role: 'user', content: userContent }],
+    maxTokens: 4096,
+  },
+  'background', // timeout 30s, más reintentos
+  'vision', // modelo con capacidad de visión
+)
+```
+
+**Nota sobre Vision fallback:** GPT-4o también tiene Vision. El formato de imagen (base64) es compatible. El `callOpenAI` necesitaría adaptar el formato de contenido multimodal. Implementar como segunda iteración si se necesita — para MVP del failover, que la descripción de texto funcione con fallback es suficiente.
+
+**`social/generate-posts.post.ts`** (no crítico, puede fallar):
+
+```typescript
+const response = await callAI(
+  { messages: [{ role: 'user', content: prompt }], maxTokens: 1000 },
+  'deferred', // timeout 60s, 3 reintentos — si falla, el post no se genera y ya
+  'fast',
+)
+```
+
+#### F3. Variables de entorno nuevas
+
+Añadir a `.env.example`:
+
+```bash
+# AI Provider Configuration
+AI_MODEL_FAST=claude-3-5-haiku-20241022
+AI_MODEL_VISION=claude-sonnet-4-5-20250929
+AI_MODEL_CONTENT=claude-sonnet-4-5-20250929
+
+# Fallback: OpenAI (opcional — activar para tener failover)
+OPENAI_API_KEY=
+AI_FALLBACK_MODEL_FAST=gpt-4o-mini
+AI_FALLBACK_MODEL_VISION=gpt-4o
+AI_FALLBACK_MODEL_CONTENT=gpt-4o
+```
+
+**Coste del failover:** 0€ si OpenAI no se usa. Solo se activa si Anthropic falla. GPT-4o mini es comparable en precio a Haiku. Es un seguro, no un gasto recurrente.
+
+#### F4. Logging de failover
+
+En `callAI`, registrar cada failover en `infra_metrics` o en logs:
+
+```typescript
+// Si se usó fallback, loguearlo para monitorización
+if (response.provider !== 'anthropic') {
+  console.warn(
+    `[aiProvider] Used fallback ${response.provider}/${response.model} (${response.latencyMs}ms)`,
+  )
+  // Opcionalmente: INSERT en infra_alerts si hay muchos failovers en 1 hora
+}
+```
+
+---
+
+### Resumen archivos sesión 45
+
+| Archivo                                               | Acción                                           |
+| ----------------------------------------------------- | ------------------------------------------------ |
+| `.github/workflows/daily-audit.yml`                   | CREAR — auditoría diaria automatizada            |
+| `.github/workflows/backup.yml`                        | REEMPLAZAR — backup diario multi-capa            |
+| `scripts/backup-multi-tier.sh`                        | CREAR — evolución de backup-weekly.sh            |
+| `scripts/audit-report.mjs`                            | CREAR — consolidador de informes de auditoría    |
+| `scripts/send-audit-alert.mjs`                        | CREAR — envío de alertas por email               |
+| `scripts/verify-extensibility.sh`                     | AMPLIAR — nuevas verificaciones                  |
+| `server/utils/aiConfig.ts`                            | CREAR — modelos de IA centralizados              |
+| `server/utils/siteConfig.ts`                          | CREAR — URLs y nombres de sitio centralizados    |
+| `server/services/aiProvider.ts`                       | CREAR — wrapper con failover multi-proveedor     |
+| `server/services/whatsappProcessor.ts`                | CREAR — lógica extraída de endpoint              |
+| `server/services/imageUploader.ts`                    | CREAR — upload a Cloudinary/CF Images            |
+| `server/services/vehicleCreator.ts`                   | CREAR — crear vehículo desde datos extraídos     |
+| `server/services/notifications.ts`                    | CREAR — envío unificado de notificaciones        |
+| `server/services/vehicles.ts`                         | CREAR — queries comunes con filtro vertical      |
+| `server/middleware/vertical-context.ts`               | CREAR — inyectar vertical en cada request        |
+| `server/api/generate-description.post.ts`             | REFACTOR — usar callAI + aiConfig                |
+| `server/api/whatsapp/process.post.ts`                 | REFACTOR — usar servicios extraídos              |
+| `server/api/verify-document.post.ts`                  | REFACTOR — usar callAI cuando se active Vision   |
+| `server/api/social/generate-posts.post.ts`            | REFACTOR — usar callAI                           |
+| `nuxt.config.ts`                                      | EDITAR — eliminar hardcoded domain y project ref |
+| `supabase/migrations/000XX_vertical_isolation.sql`    | CREAR — índices + RLS por vertical               |
+| `tests/security/vertical-isolation.test.ts`           | CREAR — test de aislamiento                      |
+| `docs/tracciona-docs/referencia/DISASTER-RECOVERY.md` | CREAR — documentación de backup y recovery       |
+| `.env.example`                                        | AMPLIAR — nuevas variables de IA y backup        |
+
+### Orden de ejecución
+
+1. **Parte D** — Deshardcodear primero (crea `aiConfig.ts`, `siteConfig.ts`)
+2. **Parte F** — Failover de IA (crea `aiProvider.ts`, depende de aiConfig)
+3. **Parte E** — Modularización (extrae servicios, refactoriza endpoints)
+4. **Parte C** — Aislamiento vertical (migración SQL, middleware, tests)
+5. **Parte B** — Backups multi-capa (nuevo workflow + script)
+6. **Parte A** — Auditoría diaria (nuevo workflow + scripts)
+7. Verificar: `npm run build` + `npm run typecheck` + `npm run test`
+
+### Tests mínimos de la sesión
+
+- [ ] Build compila sin errores
+- [ ] `generate-description.post.ts` funciona con `callAI` (test manual o unit test)
+- [ ] Si se quita `ANTHROPIC_API_KEY` y se pone `OPENAI_API_KEY`, el failover funciona
+- [ ] `verify-extensibility.sh` no reporta nuevos hardcoded values
+- [ ] Backup diario se ejecuta correctamente (workflow_dispatch manual)
+- [ ] Auditoría diaria genera artefactos correctos (workflow_dispatch manual)
+- [ ] Test de aislamiento vertical pasa
+- [ ] No hay modelos de IA hardcodeados en endpoints (todos usan `AI_MODELS`)
+- [ ] No hay `tracciona.com` hardcodeado en server/ (todos usan `getSiteUrl()`)
+
+---
+
+## SESIÓN 46 — Pentest automatizado (DAST): OWASP ZAP + Nuclei contra producción
+
+> Escaneo dinámico de seguridad contra la app desplegada. Reemplaza el 70-80% de un pentest externo básico.
+> Origen: requisito P0 de pentest externo (25 Feb 2026). Automatización como primera capa.
+> Prioridad: ALTA — detecta vulnerabilidades reales en producción que el análisis estático (Semgrep) no puede ver.
+> Coste: 0€/mes.
+
+**Leer ANTES de escribir código:**
+
+1. `.github/workflows/security.yml` — Escaneo estático actual (Semgrep + npm audit)
+2. `server/middleware/security-headers.ts` — Headers CSP actuales
+3. `tests/security/auth-endpoints.test.ts` — Tests de seguridad existentes
+4. `nuxt.config.ts` — Configuración del sitio (URL, módulos)
+
+**Qué cubre esto vs. un pentest humano:**
+
+| Área                                        | DAST automatizado (esta sesión) | Pentest humano (futuro) |
+| ------------------------------------------- | ------------------------------- | ----------------------- |
+| OWASP Top 10 (XSS, SQLi, CSRF, etc.)        | ✅ Completo                     | ✅ Completo             |
+| Headers de seguridad mal configurados       | ✅ Completo                     | ✅ Completo             |
+| Puertos/servicios expuestos                 | ✅ Nuclei                       | ✅ Completo             |
+| SSL/TLS mal configurado                     | ✅ Nuclei                       | ✅ Completo             |
+| Información sensible expuesta               | ✅ Parcial                      | ✅ Completo             |
+| Lógica de negocio (dealer ve datos de otro) | ❌ No cubre                     | ✅ Sí                   |
+| Escalación de privilegios creativa          | ❌ No cubre                     | ✅ Sí                   |
+| Ataques encadenados con contexto            | ❌ No cubre                     | ✅ Sí                   |
+| Ingeniería social                           | ❌ No cubre                     | ✅ Sí                   |
+
+**Recomendación:** Automatizar DAST ahora. Contratar pentest humano puntual (~1.500-3.000€) cuando haya clientes pagando.
+
+---
+
+### Parte A — OWASP ZAP (escaneo DAST principal)
+
+**Qué es:** OWASP ZAP es el escáner de seguridad web más usado del mundo. Navega tu app como un atacante, prueba formularios, busca inyecciones, analiza headers, y genera un informe con vulnerabilidades clasificadas por severidad.
+
+**Dos modos:**
+
+- **Baseline scan** (~5 min): escaneo pasivo, solo analiza lo que encuentra navegando. Ideal para CI semanal.
+- **Full scan** (~30-60 min): escaneo activo, intenta inyecciones reales. Ideal para mensual.
+
+#### A1. Crear `.github/workflows/dast-scan.yml`
+
+```yaml
+name: DAST Security Scan
+
+on:
+  schedule:
+    - cron: '0 4 * * 0'   # Domingos a las 04:00 UTC (baseline semanal)
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Scan type'
+        required: false
+        default: 'baseline'
+        type: choice
+        options: [baseline, full]
+      target_url:
+        description: 'Target URL'
+        required: false
+        default: 'https://tracciona.com'
+        type: string
+
+env:
+  TARGET_URL: ${{ inputs.target_url || 'https://tracciona.com' }}
+  SCAN_TYPE: ${{ inputs.scan_type || 'baseline' }}
+
+jobs:
+  # ── OWASP ZAP ──
+  zap-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ZAP Baseline Scan
+        if: env.SCAN_TYPE == 'baseline'
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: ${{ env.TARGET_URL }}
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a -j'
+          allow_issue_writing: false
+
+      - name: ZAP Full Scan
+        if: env.SCAN_TYPE == 'full'
+        uses: zaproxy/action-full-scan@v0.12.0
+        with:
+          target: ${{ env.TARGET_URL }}
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a -j'
+          allow_issue_writing: false
+
+      - name: Upload ZAP Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report-${{ github.run_number }}
+          path: |
+            report_html.html
+            report_json.json
+          retention-days: 90
+
+  # ── Nuclei ──
+  nuclei-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nuclei
+        run: |
+          go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      - name: Run Nuclei
+        run: |
+          nuclei \
+            -u ${{ env.TARGET_URL }} \
+            -t cves/ \
+            -t vulnerabilities/ \
+            -t misconfiguration/ \
+            -t exposures/ \
+            -t technologies/ \
+            -t ssl/ \
+            -t dns/ \
+            -severity critical,high,medium \
+            -json-export nuclei-results.json \
+            -markdown-export nuclei-report.md \
+            -silent \
+            || true
+
+      - name: Upload Nuclei Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuclei-report-${{ github.run_number }}
+          path: |
+            nuclei-results.json
+            nuclei-report.md
+          retention-days: 90
+
+  # ── SSL/TLS Check ──
+  ssl-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check SSL/TLS configuration
+        run: |
+          echo "=== SSL/TLS Report for ${{ env.TARGET_URL }} ===" > ssl-report.txt
+
+          # Check certificate expiry
+          echo "## Certificate Info:" >> ssl-report.txt
+          echo | openssl s_client -servername tracciona.com -connect tracciona.com:443 2>/dev/null \
+            | openssl x509 -noout -dates -subject -issuer >> ssl-report.txt 2>&1
+
+          # Check supported protocols
+          echo "" >> ssl-report.txt
+          echo "## Protocol Support:" >> ssl-report.txt
+          for proto in tls1 tls1_1 tls1_2 tls1_3; do
+            result=$(echo | openssl s_client -$proto -connect tracciona.com:443 2>&1)
+            if echo "$result" | grep -q "CONNECTED"; then
+              echo "  $proto: SUPPORTED" >> ssl-report.txt
+            else
+              echo "  $proto: NOT SUPPORTED" >> ssl-report.txt
+            fi
+          done
+
+          # Check HSTS
+          echo "" >> ssl-report.txt
+          echo "## HSTS Header:" >> ssl-report.txt
+          curl -sI https://tracciona.com | grep -i strict-transport >> ssl-report.txt 2>&1 \
+            || echo "  HSTS: NOT FOUND ⚠️" >> ssl-report.txt
+
+          cat ssl-report.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ssl-report-${{ github.run_number }}
+          path: ssl-report.txt
+          retention-days: 90
+
+  # ── Consolidar y alertar ──
+  report:
+    runs-on: ubuntu-latest
+    needs: [zap-scan, nuclei-scan, ssl-check]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dast-artifacts/
+
+      - name: Analyze results
+        id: analyze
+        run: |
+          echo "=== DAST Scan Summary ===" > dast-summary.txt
+          echo "Date: $(date -u)" >> dast-summary.txt
+          echo "Target: ${{ env.TARGET_URL }}" >> dast-summary.txt
+          echo "Scan type: ${{ env.SCAN_TYPE }}" >> dast-summary.txt
+          echo "" >> dast-summary.txt
+
+          # Count ZAP alerts by risk
+          if [ -f dast-artifacts/zap-report-*/report_json.json ]; then
+            echo "## ZAP Results:" >> dast-summary.txt
+            HIGH=$(cat dast-artifacts/zap-report-*/report_json.json | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+alerts = data.get('site', [{}])[0].get('alerts', []) if data.get('site') else []
+print(sum(1 for a in alerts if a.get('riskcode') == '3'))" 2>/dev/null || echo 0)
+            MEDIUM=$(cat dast-artifacts/zap-report-*/report_json.json | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+alerts = data.get('site', [{}])[0].get('alerts', []) if data.get('site') else []
+print(sum(1 for a in alerts if a.get('riskcode') == '2'))" 2>/dev/null || echo 0)
+            echo "  High: $HIGH" >> dast-summary.txt
+            echo "  Medium: $MEDIUM" >> dast-summary.txt
+          fi
+
+          # Count Nuclei findings
+          if [ -f dast-artifacts/nuclei-report-*/nuclei-results.json ]; then
+            echo "" >> dast-summary.txt
+            echo "## Nuclei Results:" >> dast-summary.txt
+            CRITICAL=$(grep -c '"critical"' dast-artifacts/nuclei-report-*/nuclei-results.json 2>/dev/null || echo 0)
+            HIGH_N=$(grep -c '"high"' dast-artifacts/nuclei-report-*/nuclei-results.json 2>/dev/null || echo 0)
+            echo "  Critical: $CRITICAL" >> dast-summary.txt
+            echo "  High: $HIGH_N" >> dast-summary.txt
+          fi
+
+          cat dast-summary.txt
+
+          # Set flag if critical/high issues found
+          if [ "${HIGH:-0}" -gt 0 ] || [ "${CRITICAL:-0}" -gt 0 ] || [ "${HIGH_N:-0}" -gt 0 ]; then
+            echo "HAS_CRITICAL=true" >> $GITHUB_ENV
+          fi
+
+      - name: Alert on critical findings
+        if: env.HAS_CRITICAL == 'true'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.INFRA_ALERT_EMAIL }}
+        run: |
+          SUMMARY=$(cat dast-summary.txt)
+          curl -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"from\":\"security@tracciona.com\",\"to\":\"$ALERT_EMAIL\",\"subject\":\"🔴 DAST: Critical vulnerabilities found\",\"text\":\"$SUMMARY\\n\\nCheck GitHub Actions for full reports.\"}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dast-summary-${{ github.run_number }}
+          path: dast-summary.txt
+          retention-days: 90
+```
+
+#### A2. Crear `.zap/rules.tsv` — Personalizar reglas de ZAP
+
+Este archivo controla qué alertas ignorar (falsos positivos conocidos) y cuáles escalar:
+
+```tsv
+# ZAP Rules Configuration for Tracciona
+# Format: rule_id\taction (IGNORE, WARN, FAIL)
+# See: https://www.zaproxy.org/docs/docker/baseline-scan/#rules-file
+
+# Ignorar: Nuxt inyecta inline scripts/styles por diseño (documentado en security-headers.ts)
+10055	WARN	# CSP: unsafe-inline — known Nuxt 3 requirement
+10098	WARN	# Cross-Domain Misconfiguration — Supabase/Stripe are expected
+
+# Escalar a FAIL: estas son críticas
+40012	FAIL	# XSS (Reflected)
+40014	FAIL	# XSS (Persistent)
+40018	FAIL	# SQL Injection
+40019	FAIL	# SQL Injection (MySQL)
+40020	FAIL	# SQL Injection (Hypersonic)
+40021	FAIL	# SQL Injection (Oracle)
+40022	FAIL	# SQL Injection (PostgreSQL)
+90021	FAIL	# XPath Injection
+90023	FAIL	# XML External Entity Attack
+40003	FAIL	# CRLF Injection
+40008	FAIL	# Parameter Tampering
+40009	FAIL	# Server Side Include
+40028	FAIL	# ELMAH Information Leak
+40032	FAIL	# .htaccess Information Leak
+90019	FAIL	# Server Side Code Injection
+```
+
+---
+
+### Parte B — Tests de seguridad ampliados (complemento a DAST)
+
+ZAP y Nuclei escanean desde fuera. Pero hay vulnerabilidades de lógica de negocio que solo se detectan con tests internos. Ampliar `tests/security/` con tests que simulan ataques de lógica.
+
+#### B1. Crear `tests/security/idor-protection.test.ts` — Insecure Direct Object Reference
+
+```typescript
+// tests/security/idor-protection.test.ts
+import { describe, it, expect } from 'vitest'
+
+const BASE = process.env.TEST_BASE_URL || 'http://localhost:3000'
+
+describe('IDOR: endpoints no exponen datos de otros dealers', () => {
+  // Estos tests verifican que las APIs que aceptan IDs
+  // NO devuelven datos si el ID pertenece a otro dealer/vertical
+
+  it('GET /api/vehicles/[id] con ID de otro dealer → 403 o datos filtrados', async () => {
+    // Requiere: crear 2 dealers de test en distintas verticales
+    // Intentar acceder a vehículo del dealer B con token del dealer A
+    // Verificar que devuelve 403 o que los campos sensibles no están
+  })
+
+  it('POST /api/generate-description con vehicleId de otro dealer → 403', async () => {
+    // Intentar generar descripción para vehículo ajeno
+  })
+
+  it('GET /api/invoicing/export-csv no incluye facturas de otro dealer', async () => {
+    // Exportar CSV y verificar que solo contiene facturas propias
+  })
+})
+
+describe('IDOR: rutas públicas no exponen datos sensibles', () => {
+  it('GET /api/vehicles/public/[slug] no incluye dealer.email ni dealer.phone', async () => {
+    // La vista pública de un vehículo NO debe exponer datos del dealer
+    // que no estén explícitamente marcados como públicos
+  })
+
+  it('Sitemap no contiene rutas de admin', async () => {
+    const res = await fetch(`${BASE}/sitemap.xml`)
+    const text = await res.text()
+    expect(text).not.toContain('/admin')
+    expect(text).not.toContain('/api/')
+  })
+})
+```
+
+#### B2. Crear `tests/security/rate-limiting.test.ts`
+
+```typescript
+// tests/security/rate-limiting.test.ts
+import { describe, it, expect } from 'vitest'
+
+const BASE = process.env.TEST_BASE_URL || 'http://localhost:3000'
+
+describe('Rate limiting: endpoints sensibles limitan requests', () => {
+  it('POST /api/generate-description × 20 rápidos → 429 en algún momento', async () => {
+    const results = []
+    for (let i = 0; i < 20; i++) {
+      const res = await fetch(`${BASE}/api/generate-description`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vehicleId: 'test', text: 'test' }),
+      })
+      results.push(res.status)
+    }
+    // Al menos alguno debería ser 429 (rate limited) o 401 (no auth)
+    // Si todos son 200, no hay rate limiting y es un problema
+    const hasProtection = results.some((s) => s === 429 || s === 401)
+    expect(hasProtection).toBe(true)
+  })
+
+  it('POST /api/stripe/webhook × 50 sin firma → no causa DoS', async () => {
+    const start = Date.now()
+    const promises = Array.from({ length: 50 }, () =>
+      fetch(`${BASE}/api/stripe/webhook`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'test' }),
+      }),
+    )
+    await Promise.all(promises)
+    const elapsed = Date.now() - start
+    // Si 50 requests tardan >10s, posible DoS vulnerability
+    expect(elapsed).toBeLessThan(10_000)
+  })
+})
+```
+
+#### B3. Crear `tests/security/information-leakage.test.ts`
+
+```typescript
+// tests/security/information-leakage.test.ts
+import { describe, it, expect } from 'vitest'
+
+const BASE = process.env.TEST_BASE_URL || 'http://localhost:3000'
+
+describe('Information leakage: la app no expone datos internos', () => {
+  it('Errores 500 no exponen stack traces', async () => {
+    // Provocar un error enviando datos malformados
+    const res = await fetch(`${BASE}/api/generate-description`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{malformed json!!!',
+    })
+    const text = await res.text()
+    expect(text).not.toContain('node_modules')
+    expect(text).not.toContain('at Object.')
+    expect(text).not.toContain('server/api/')
+    expect(text).not.toContain('ANTHROPIC_API_KEY')
+    expect(text).not.toContain('SUPABASE')
+  })
+
+  it('/.env no es accesible', async () => {
+    const res = await fetch(`${BASE}/.env`)
+    expect(res.status).toBeGreaterThanOrEqual(400)
+  })
+
+  it('/.git no es accesible', async () => {
+    const res = await fetch(`${BASE}/.git/config`)
+    expect(res.status).toBeGreaterThanOrEqual(400)
+  })
+
+  it('/api/__sitemap no expone rutas internas', async () => {
+    const res = await fetch(`${BASE}/api/__sitemap`)
+    if (res.ok) {
+      const text = await res.text()
+      expect(text).not.toContain('/admin')
+    }
+  })
+
+  const sensitiveFiles = [
+    '/.env',
+    '/.env.local',
+    '/.env.production',
+    '/package.json',
+    '/nuxt.config.ts',
+    '/tsconfig.json',
+    '/.git/HEAD',
+    '/.git/config',
+    '/server/utils/aiConfig.ts',
+    '/server/services/aiProvider.ts',
+  ]
+
+  for (const file of sensitiveFiles) {
+    it(`${file} no es accesible públicamente`, async () => {
+      const res = await fetch(`${BASE}${file}`)
+      // Should be 404 or 403, not 200
+      expect(res.status).not.toBe(200)
+    })
+  }
+})
+
+describe('Headers de seguridad en producción', () => {
+  it('No expone X-Powered-By', async () => {
+    const res = await fetch(`${BASE}/`)
+    expect(res.headers.get('x-powered-by')).toBeNull()
+  })
+
+  it('Tiene Referrer-Policy', async () => {
+    const res = await fetch(`${BASE}/`)
+    expect(res.headers.get('referrer-policy')).toBeTruthy()
+  })
+
+  it('Tiene Permissions-Policy', async () => {
+    const res = await fetch(`${BASE}/`)
+    expect(res.headers.get('permissions-policy')).toBeTruthy()
+  })
+
+  it('No tiene HSTS con max-age < 1 año', async () => {
+    const res = await fetch(`${BASE}/`)
+    const hsts = res.headers.get('strict-transport-security')
+    if (hsts) {
+      const maxAge = parseInt(hsts.match(/max-age=(\d+)/)?.[1] || '0')
+      expect(maxAge).toBeGreaterThanOrEqual(31536000) // 1 año
+    }
+    // Si no tiene HSTS, ZAP lo detectará — no fail aquí porque Cloudflare puede manejarlo
+  })
+})
+```
+
+---
+
+### Parte C — Integrar DAST en el pipeline existente
+
+#### C1. Actualizar `.github/workflows/security.yml` para referenciar DAST
+
+No modificar el workflow existente (que corre en PRs y push), pero añadir un comentario que indique la existencia del DAST:
+
+```yaml
+# Nota: Este workflow hace análisis ESTÁTICO (SAST).
+# Para análisis DINÁMICO contra producción, ver .github/workflows/dast-scan.yml
+# SAST: Semgrep + npm audit (en cada PR y push a main)
+# DAST: ZAP + Nuclei (semanal contra producción)
+```
+
+#### C2. Crear `docs/tracciona-docs/referencia/SECURITY-TESTING.md`
+
+```markdown
+# Security Testing Strategy
+
+## Capas de seguridad
+
+| Capa              | Herramienta           | Frecuencia                  | Qué detecta                         |
+| ----------------- | --------------------- | --------------------------- | ----------------------------------- |
+| SAST (código)     | Semgrep               | Cada PR + diario            | Patrones inseguros en código fuente |
+| Dependencias      | npm audit             | Cada PR + diario            | Vulnerabilidades en dependencias    |
+| DAST (producción) | OWASP ZAP             | Semanal (baseline)          | XSS, SQLi, CSRF, headers, cookies   |
+| Infraestructura   | Nuclei                | Semanal                     | CVEs, misconfigs, exposiciones, SSL |
+| Lógica de negocio | Vitest security tests | Cada PR                     | IDOR, rate limiting, info leakage   |
+| Pentest humano    | Externo               | Anual (cuando haya revenue) | Ataques creativos, lógica compleja  |
+
+## Cómo ejecutar
+
+### Escaneo DAST manual (full scan)
+
+GitHub Actions → dast-scan.yml → Run workflow → scan_type: full
+
+### Interpretar resultados de ZAP
+
+- **High** (rojo): Vulnerabilidad explotable. Corregir ANTES de seguir.
+- **Medium** (naranja): Vulnerabilidad potencial. Corregir en la siguiente sesión.
+- **Low** (amarillo): Mejora de seguridad. Planificar.
+- **Informational** (azul): Solo información. Revisar si es relevante.
+
+Los informes HTML se descargan de GitHub Actions → Artifacts.
+
+### Interpretar resultados de Nuclei
+
+- **Critical/High**: Acción inmediata.
+- **Medium**: Planificar corrección.
+- **Info**: Templates que detectaron la tecnología (normal).
+
+## Falsos positivos conocidos
+
+Ver `.zap/rules.tsv` para la lista de reglas ignoradas/rebajadas con justificación.
+
+## Cuándo contratar pentest humano
+
+Cuando se cumplan 2 de estos 3:
+
+1. Revenue mensual > 1.000€
+2. > 50 dealers activos con datos reales
+3. Procesamiento de pagos activo (Stripe live mode)
+
+Proveedores recomendados: Cobalt (~3.000€), HackerOne (~2.000€ bug bounty), freelance senior (~1.500€).
+```
+
+---
+
+### Resumen archivos sesión 46
+
+| Archivo                                              | Acción                                       |
+| ---------------------------------------------------- | -------------------------------------------- |
+| `.github/workflows/dast-scan.yml`                    | CREAR — ZAP + Nuclei + SSL semanal           |
+| `.zap/rules.tsv`                                     | CREAR — Reglas de falsos positivos           |
+| `tests/security/idor-protection.test.ts`             | CREAR — Tests de IDOR                        |
+| `tests/security/rate-limiting.test.ts`               | CREAR — Tests de rate limiting               |
+| `tests/security/information-leakage.test.ts`         | CREAR — Tests de info leakage                |
+| `docs/tracciona-docs/referencia/SECURITY-TESTING.md` | CREAR — Documentación de estrategia          |
+| `.github/workflows/security.yml`                     | EDITAR — Añadir comentario referencia a DAST |
+
+### Orden de ejecución
+
+1. **Parte A** — Crear workflow DAST + reglas ZAP (lo más importante)
+2. **Parte B** — Crear tests de seguridad ampliados
+3. **Parte C** — Documentación + integración con pipeline existente
+4. Verificar: ejecutar `workflow_dispatch` del DAST y revisar artefactos
+5. Verificar: `npm run build` + `npx vitest run tests/security/`
+
+### Tests mínimos de la sesión
+
+- [ ] DAST workflow se ejecuta sin errores (workflow_dispatch manual, baseline)
+- [ ] ZAP genera informe HTML descargable en artefactos
+- [ ] Nuclei genera informe JSON/MD descargable en artefactos
+- [ ] SSL check reporta TLS 1.2+ y certificado válido
+- [ ] Si hay findings High/Critical, se envía email de alerta
+- [ ] Tests de information-leakage pasan (no se exponen .env, .git, stack traces)
+- [ ] Tests de auth-endpoints siguen pasando (no se rompió nada)
+- [ ] `.zap/rules.tsv` tiene documentados los falsos positivos conocidos
+- [ ] Build compila sin errores
+
+---
+
 ## NOTAS GENERALES
 
 - **Cada sesión es independiente.** Si Claude Code pierde contexto, el usuario abre un nuevo chat y dice "ejecuta la sesión N" y Claude Code lee este archivo.

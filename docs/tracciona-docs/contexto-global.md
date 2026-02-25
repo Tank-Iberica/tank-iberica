@@ -187,3 +187,22 @@ Ver `docs/progreso.md` para el listado completo con estados.
 | RECOMENDACIONES-100-PUNTOS.md | docs/                           | Recomendaciones para llegar a 100/100    |
 | VALORACION-PROYECTO-1-100.md  | docs/                           | Puntuación actual por dimensión (77/100) |
 | Anexos A-X                    | docs/tracciona-docs/anexos/     | Especificaciones detalladas por módulo   |
+
+---
+
+## Decisiones estratégicas activas (25 Feb 2026)
+
+| #   | Decisión                    | Detalle                                                 |
+| --- | --------------------------- | ------------------------------------------------------- |
+| 1   | Idiomas: ES+EN al lanzar    | Arquitectura lista para N idiomas, activar bajo demanda |
+| 2   | 30 emails automáticos       | Se mantienen todos desde día 1                          |
+| 3   | PWA + push notifications    | Se mantiene                                             |
+| 4   | Wizard migración clusters   | Se mantiene                                             |
+| 5   | Subastas Realtime           | Websockets, no polling                                  |
+| 6   | Pipeline imágenes           | Cloudinary transforma, CF Images almacena               |
+| 7   | Merchandising               | Solo formulario de interés, medir demanda               |
+| 8   | API valoración de pago      | Pospuesta hasta volumen suficiente                      |
+| 9   | Scraping                    | Script manual, NUNCA cron en producción                 |
+| 10  | Supabase diversificación    | 2º cluster considerar Neon/Railway                      |
+| 11  | Cache imágenes              | immutable 30 días                                       |
+| 12  | Métricas coste por vertical | Tag vertical en infra_metrics                           |
