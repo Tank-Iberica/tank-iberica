@@ -90,6 +90,68 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // Helper: look up user info from a Stripe subscription ID
+  async function getSubscriptionUserInfo(
+    stripeSubId: string,
+  ): Promise<{ userId: string; email: string; name: string; plan: string } | null> {
+    const subRes = await fetch(
+      `${supabaseUrl}/rest/v1/subscriptions?stripe_subscription_id=eq.${stripeSubId}&select=user_id,plan`,
+      {
+        headers: {
+          apikey: supabaseKey as string,
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+      },
+    )
+    const subData = (await subRes.json()) as Array<{ user_id: string; plan: string }> | null
+    const userId = subData?.[0]?.user_id
+    const plan = subData?.[0]?.plan || 'basic'
+    if (!userId) return null
+
+    const userRes = await fetch(
+      `${supabaseUrl}/rest/v1/users?id=eq.${userId}&select=email,raw_user_meta_data`,
+      {
+        headers: {
+          apikey: supabaseKey as string,
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+      },
+    )
+    const userData = (await userRes.json()) as Array<{
+      email: string
+      raw_user_meta_data: { display_name?: string; full_name?: string } | null
+    }> | null
+    const email = userData?.[0]?.email
+    if (!email) return null
+
+    const meta = userData?.[0]?.raw_user_meta_data
+    const name = meta?.display_name || meta?.full_name || email.split('@')[0] || ''
+    return { userId, email, name, plan }
+  }
+
+  // Helper: send email via internal API (best-effort)
+  async function sendDunningEmail(
+    templateKey: string,
+    to: string,
+    userId: string,
+    variables: Record<string, string>,
+  ): Promise<void> {
+    const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
+    const internalSecret = config.cronSecret || process.env.CRON_SECRET
+    if (!internalSecret) return
+
+    await fetch(`${baseUrl}/api/email/send`, {
+      method: 'POST',
+      headers: {
+        'x-internal-secret': internalSecret,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ templateKey, to, userId, variables }),
+    }).catch(() => {
+      // Best-effort: dunning email should not block webhook processing
+    })
+  }
+
   switch (stripeEvent.type) {
     case 'checkout.session.completed': {
       const session = obj as Record<string, unknown>
@@ -304,6 +366,19 @@ export default defineEventHandler(async (event) => {
           stripe_subscription_id: subscriptionId,
           metadata: { event: 'invoice.payment_failed', event_invoice_id: failedInvoiceId },
         })
+
+        // Send dunning email based on attempt count
+        const attemptCount = (invoice.attempt_count as number) || 1
+        const userInfo = await getSubscriptionUserInfo(subscriptionId)
+        if (userInfo) {
+          const graceDays = attemptCount <= 1 ? 14 : attemptCount <= 2 ? 7 : 3
+          await sendDunningEmail('dealer_payment_failed', userInfo.email, userInfo.userId, {
+            name: userInfo.name,
+            plan: userInfo.plan,
+            updateCardUrl: 'https://tracciona.com/dashboard/suscripcion',
+            gracePeriodDays: String(graceDays),
+          })
+        }
       }
       break
     }
@@ -323,10 +398,27 @@ export default defineEventHandler(async (event) => {
       }
 
       if (subscriptionId) {
+        // Get user info BEFORE downgrading (to capture previous plan name)
+        const cancelledUserInfo = await getSubscriptionUserInfo(subscriptionId)
+
         await supabasePatch('subscriptions', `stripe_subscription_id=eq.${subscriptionId}`, {
           status: 'canceled',
           plan: 'free',
         })
+
+        // Send cancellation email
+        if (cancelledUserInfo) {
+          await sendDunningEmail(
+            'dealer_subscription_cancelled',
+            cancelledUserInfo.email,
+            cancelledUserInfo.userId,
+            {
+              name: cancelledUserInfo.name,
+              plan: cancelledUserInfo.plan,
+              resubscribeUrl: 'https://tracciona.com/precios',
+            },
+          )
+        }
       }
       break
     }
