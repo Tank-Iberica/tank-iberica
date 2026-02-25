@@ -1,4 +1,8 @@
 name: Security Scan
+# Nota: Este workflow hace análisis ESTÁTICO (SAST).
+# Para análisis DINÁMICO contra producción, ver .github/workflows/dast-scan.yml
+# SAST: Semgrep + npm audit (en cada PR y push a main)
+# DAST: ZAP + Nuclei (semanal contra producción)
 on:
   pull_request:
     branches: [main]
