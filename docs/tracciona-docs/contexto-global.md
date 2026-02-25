@@ -1,6 +1,6 @@
 # Contexto global — Tracciona
 
-> Última actualización: 24 febrero 2026
+> Última actualización: 25 febrero 2026
 > Este documento es el MAPA del proyecto para Claude Code. Lee esto primero.
 
 ---
@@ -22,24 +22,16 @@ Grupo de marketplaces B2B verticales. Un solo código base, N verticales (vehíc
 | 1-13        | Migración base, catálogo, admin, editorial, i18n, deuda técnica                   | ✅ Ejecutadas |
 | 14-33       | Post-lanzamiento: verificación, subastas, pagos, WhatsApp, PWA, CRM, datos, infra | ✅ Ejecutadas |
 | 34, 34b, 35 | Auditoría de seguridad: auth, RLS, webhooks, CSP, DOMPurify, índices              | ✅ Ejecutadas |
+| 36-43       | Auditoría cruzada, seguridad CI, UX, monetización, arquitectura, E2E, cierre      | ✅ Ejecutadas |
 
-### Sesiones pendientes de ejecución (especificadas en INSTRUCCIONES-MAESTRAS.md)
+### Todas las sesiones completadas
 
-| Sesión | Título                                                                  | Origen                           | Prioridad |
-| ------ | ----------------------------------------------------------------------- | -------------------------------- | --------- |
-| **36** | Auditoría cruzada: gaps residuales + alineación docs/realidad           | 4ª auditoría externa             | 🔴 Alta   |
-| **37** | Seguridad CI: Semgrep CE + Snyk + tests automatizados + mensajes error  | Recomendaciones 100pts §1        | 🔴 Alta   |
-| **38** | Claridad documental: single source of truth + onboarding + convenciones | Recomendaciones 100pts §6        | 🔴 Alta   |
-| **39** | UX: accesibilidad, Core Web Vitals, formularios y code-splitting        | Recomendaciones 100pts §7 + §3a  | 🟡 Media  |
-| **40** | Monetización avanzada: trials, dunning, métricas, canales nuevos        | Recomendaciones 100pts §4        | 🟡 Media  |
-| **41** | Arquitectura: capa servicios, diagrama técnico, umbrales, refactors     | Recomendaciones 100pts §5 + §3   | 🟡 Media  |
-| **42** | Testing E2E: 8 user journeys con Playwright                             | Recomendaciones 100pts §7c + §8a | 🟡 Media  |
-
-**Orden de ejecución recomendado:** 36 → 37 → 38 → 39 → 40 → 41 → 42
+Las 43 sesiones definidas en INSTRUCCIONES-MAESTRAS.md han sido ejecutadas.
+Ver `docs/progreso.md` para el listado completo con estados.
 
 ---
 
-## Mapa de sesiones 36-42 (detalle)
+## Mapa de sesiones 36-43 (detalle — todas completadas)
 
 ### Sesión 36 — Gaps residuales (8 partes)
 
@@ -104,6 +96,13 @@ Grupo de marketplaces B2B verticales. Un solo código base, N verticales (vehíc
 - B: Implementación con Playwright (tests/e2e/journeys/)
 - C: Integración en CI (GitHub Actions)
 
+### Sesión 43 — Cierre documental (4 partes)
+
+- A: Regenerar ESTADO-REAL-PRODUCTO.md con secciones services + E2E
+- B: Reescribir progreso.md con sesiones 1-43 completadas
+- C: Documentar módulos pospuestos (landing builder, OAuth, Prebid)
+- D: Verificar coherencia CLAUDE.md, contexto-global.md, progreso.md
+
 ---
 
 ## Auditorías realizadas
@@ -120,13 +119,14 @@ Grupo de marketplaces B2B verticales. Un solo código base, N verticales (vehíc
 
 ## Migraciones BD (últimas relevantes)
 
-| Migración                      | Sesión | Contenido                            |
-| ------------------------------ | ------ | ------------------------------------ |
-| 00055_rls_hardening.sql        | 35     | is_admin(), RLS endurecido           |
-| 00056_performance_indexes.sql  | 35     | 8 índices de rendimiento             |
-| 00057_rls_standardization.sql  | 35     | Estandarización RLS todas las tablas |
-| (pendiente) Añadir a 00056     | 36-A   | 3 índices faltantes                  |
-| (pendiente) 00058_api_keys.sql | 40-D   | Tabla api_keys para API valoración   |
+| Migración                     | Sesión | Contenido                            |
+| ----------------------------- | ------ | ------------------------------------ |
+| 00055_rls_hardening.sql       | 35     | is_admin(), RLS endurecido           |
+| 00056_performance_indexes.sql | 35     | 8 índices de rendimiento             |
+| 00057_rls_standardization.sql | 35     | Estandarización RLS todas las tablas |
+| 00058_missing_indexes.sql     | 36     | 3 índices faltantes                  |
+| 00059_ads_enhancement.sql     | 36     | Mejoras publicidad                   |
+| 00060_buyer_experience.sql    | 36     | Experiencia comprador                |
 
 ---
 
@@ -149,7 +149,7 @@ Grupo de marketplaces B2B verticales. Un solo código base, N verticales (vehíc
 
 ---
 
-## Herramientas de seguridad CI (sesión 37, pendiente)
+## Herramientas de seguridad CI (sesión 37, completada)
 
 | Herramienta               | Coste                 | Qué hace                                     |
 | ------------------------- | --------------------- | -------------------------------------------- |
@@ -179,7 +179,7 @@ Grupo de marketplaces B2B verticales. Un solo código base, N verticales (vehíc
 
 | Documento                     | Ubicación                       | Propósito                                |
 | ----------------------------- | ------------------------------- | ---------------------------------------- |
-| INSTRUCCIONES-MAESTRAS.md     | docs/tracciona-docs/            | Sesiones 1-42 completas                  |
+| INSTRUCCIONES-MAESTRAS.md     | docs/tracciona-docs/            | Sesiones 1-43 completas                  |
 | CLAUDE.md                     | raíz                            | Instrucciones rápidas para Claude Code   |
 | contexto-global.md            | docs/tracciona-docs/            | **Este archivo** — mapa del proyecto     |
 | ARQUITECTURA-ESCALABILIDAD.md | docs/tracciona-docs/referencia/ | Diseño multi-cluster, costes             |

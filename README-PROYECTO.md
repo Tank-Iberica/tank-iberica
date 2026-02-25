@@ -32,7 +32,7 @@ Ver [Guia de onboarding](#guia-de-onboarding) mas abajo.
 
 | Documento                                                                                       | Que contiene                                     |
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [`INSTRUCCIONES-MAESTRAS.md`](docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md)                    | Sesiones de ejecucion (1-42) para Claude Code    |
+| [`INSTRUCCIONES-MAESTRAS.md`](docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md)                    | Sesiones de ejecucion (1-43, todas completadas)  |
 | [`ESTADO-REAL-PRODUCTO.md`](docs/ESTADO-REAL-PRODUCTO.md)                                       | Estado real de cada modulo (generado del codigo) |
 | [`contexto-global.md`](docs/tracciona-docs/contexto-global.md)                                  | Mapa del proyecto para Claude Code               |
 | [`CLAUDE.md`](CLAUDE.md)                                                                        | Instrucciones rapidas para Claude Code           |
@@ -50,13 +50,13 @@ Ver [Guia de onboarding](#guia-de-onboarding) mas abajo.
 
 ### Auditorias (checklist de pendientes)
 
-| Documento                                                                        | Contenido                                              |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| [`CHECKLIST-POST-SESIONES.md`](docs/auditorias/CHECKLIST-POST-SESIONES.md)       | Pendientes accionables no cubiertos por sesiones 39-42 |
-| [`RECOMENDACIONES-100-PUNTOS.md`](docs/auditorias/RECOMENDACIONES-100-PUNTOS.md) | 100 recomendaciones priorizadas por area               |
-| [`VALORACION-PROYECTO-1-100.md`](docs/auditorias/VALORACION-PROYECTO-1-100.md)   | Puntuacion del proyecto por dimension                  |
-| [`AUDITORIA-INTEGRAL-2026-02.md`](docs/auditorias/AUDITORIA-INTEGRAL-2026-02.md) | Auditoria tecnica completa (feb 2026)                  |
-| [`ISSUES-AUDITORIA.md`](docs/auditorias/ISSUES-AUDITORIA.md)                     | Issues especificos con prioridad                       |
+| Documento                                                                        | Contenido                                             |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| [`CHECKLIST-POST-SESIONES.md`](docs/auditorias/CHECKLIST-POST-SESIONES.md)       | Pendientes accionables no cubiertos por sesiones 1-43 |
+| [`RECOMENDACIONES-100-PUNTOS.md`](docs/auditorias/RECOMENDACIONES-100-PUNTOS.md) | 100 recomendaciones priorizadas por area              |
+| [`VALORACION-PROYECTO-1-100.md`](docs/auditorias/VALORACION-PROYECTO-1-100.md)   | Puntuacion del proyecto por dimension                 |
+| [`AUDITORIA-INTEGRAL-2026-02.md`](docs/auditorias/AUDITORIA-INTEGRAL-2026-02.md) | Auditoria tecnica completa (feb 2026)                 |
+| [`ISSUES-AUDITORIA.md`](docs/auditorias/ISSUES-AUDITORIA.md)                     | Issues especificos con prioridad                      |
 
 ### Anexos (referencia tecnica)
 

@@ -22,7 +22,7 @@ Toda la documentación de la migración está en `docs/tracciona-docs/`.
 
 **Si necesitas ejecutar el proyecto:**
 
-- Lee `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Define las 42 sesiones de trabajo. Sesiones 1-35 ya ejecutadas. Sesiones 36-42 pendientes (auditoría cruzada, seguridad CI, claridad, UX, monetización, arquitectura, testing E2E). El usuario te dirá "ejecuta la sesión N".
+- Lee `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Define las 43 sesiones de trabajo. Sesiones 1-43 completadas. El usuario puede pedir "ejecuta la sesión N" para re-ejecutar o verificar cualquier sesión.
 
 **Regla principal:** Ejecutar solo lo que dicen las INSTRUCCIONES-MAESTRAS. Los anexos son REFERENCIA, no tareas independientes.
 
@@ -78,9 +78,12 @@ app/
   layouts/            → Layouts (default, admin)
   middleware/         → auth.ts, admin.ts
   assets/css/         → tokens.css (design system), global.css
+server/
+  services/           → Lógica de negocio extraída (billing, marketReport)
 i18n/                 → Traducciones (es.json, en.json)
-supabase/migrations/  → SQL (00001-00030 existentes, nuevas desde 00031)
+supabase/migrations/  → SQL (00001-00060, nuevas desde 00061)
 types/                → supabase.ts (auto-generated), index.d.ts
+tests/e2e/            → Tests Playwright (3 base + 8 journeys)
 docs/tracciona-docs/  → Documentación de migración (NO modificar)
 ```
 
