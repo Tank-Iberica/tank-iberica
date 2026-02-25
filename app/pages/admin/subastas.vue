@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatPriceCents } from '~/composables/shared/useListingUtils'
 import type { Database } from '~/types/supabase'
 import type { AuctionStatus } from '~/composables/useAuction'
 import type { RegistrationStatus, DepositStatus } from '~/composables/useAuctionRegistration'
@@ -377,15 +378,6 @@ async function rejectRegistration(regId: string) {
 }
 
 // ─── Helpers ─────────────────────────────────────────────────
-function formatPrice(cents: number | null): string {
-  if (!cents) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-  }).format(cents / 100)
-}
-
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return '-'
   return new Date(dateStr).toLocaleDateString('es-ES', {
@@ -501,25 +493,25 @@ watch(activeFilter, fetchAuctions)
           <div class="info-grid">
             <div class="info-item">
               <span class="info-label">{{ t('admin.subastas.columns.startPrice') }}</span>
-              <span class="info-value">{{ formatPrice(auction.start_price_cents) }}</span>
+              <span class="info-value">{{ formatPriceCents(auction.start_price_cents) }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">{{ t('admin.subastas.columns.currentBid') }}</span>
               <span class="info-value current-bid">
                 {{
                   auction.current_bid_cents > 0
-                    ? formatPrice(auction.current_bid_cents)
+                    ? formatPriceCents(auction.current_bid_cents)
                     : t('admin.subastas.errors.noBids')
                 }}
               </span>
             </div>
             <div class="info-item">
               <span class="info-label">{{ t('admin.subastas.form.reservePrice') }}</span>
-              <span class="info-value">{{ formatPrice(auction.reserve_price_cents) }}</span>
+              <span class="info-value">{{ formatPriceCents(auction.reserve_price_cents) }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">{{ t('admin.subastas.form.deposit') }}</span>
-              <span class="info-value">{{ formatPrice(auction.deposit_cents) }}</span>
+              <span class="info-value">{{ formatPriceCents(auction.deposit_cents) }}</span>
             </div>
           </div>
 

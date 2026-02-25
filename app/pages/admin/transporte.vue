@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatPriceCents } from '~/composables/shared/useListingUtils'
+
 definePageMeta({
   layout: 'admin',
   middleware: ['auth', 'admin'],
@@ -186,11 +188,6 @@ async function updateStatus(requestId: string, newStatus: string) {
 // ============================================
 // HELPERS
 // ============================================
-function formatPrice(cents: number | null): string {
-  if (cents === null || cents === undefined) return '-'
-  return (cents / 100).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })
-}
-
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return '-'
   return new Date(dateStr).toLocaleDateString()
@@ -317,7 +314,7 @@ function getStatusLabel(status: string): string {
               <td class="cell-requester">{{ req.user_id?.slice(0, 8) }}...</td>
               <td>{{ req.origin || '-' }}</td>
               <td>{{ req.destination_postal_code || '-' }}</td>
-              <td>{{ formatPrice(req.estimated_price_cents) }}</td>
+              <td>{{ formatPriceCents(req.estimated_price_cents) }}</td>
               <td>
                 <span class="status-badge" :class="getStatusClass(req.status)">
                   {{ getStatusLabel(req.status) }}
@@ -390,7 +387,7 @@ function getStatusLabel(status: string): string {
             </div>
             <div class="card-detail">
               <span class="detail-label">{{ t('admin.transporte.colPrice') }}</span>
-              <span class="detail-value">{{ formatPrice(req.estimated_price_cents) }}</span>
+              <span class="detail-value">{{ formatPriceCents(req.estimated_price_cents) }}</span>
             </div>
             <div class="card-detail">
               <span class="detail-label">{{ t('admin.transporte.colDate') }}</span>

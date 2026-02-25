@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { localizedField } from '~/composables/useLocalized'
+import { formatPrice } from '~/composables/shared/useListingUtils'
 
 definePageMeta({
   layout: 'admin',
@@ -260,15 +261,6 @@ function formatDate(dateStr: string | null): string {
     month: '2-digit',
     year: 'numeric',
   })
-}
-
-function formatPrice(price: number | null): string {
-  if (!price) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-  }).format(price)
 }
 
 function getDocTypeLabel(docType: string): string {

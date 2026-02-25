@@ -22,6 +22,7 @@
  */
 
 import { localizedField } from '~/composables/useLocalized'
+import { formatPriceCents } from '~/composables/shared/useListingUtils'
 
 definePageMeta({
   layout: 'admin',
@@ -431,15 +432,6 @@ function formatDate(dateStr: string | null): string {
   })
 }
 
-function formatPrice(cents: number | null): string {
-  if (cents === null || cents === undefined) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2,
-  }).format(cents / 100)
-}
-
 function isExpired(expiresAt: string | null): boolean {
   if (!expiresAt) return false
   return new Date(expiresAt) < new Date()
@@ -639,7 +631,7 @@ onMounted(async () => {
               {{ formatDate(sub.expires_at) }}
             </td>
             <td class="text-right">
-              {{ formatPrice(sub.price_cents) }}
+              {{ formatPriceCents(sub.price_cents) }}
             </td>
             <td>
               <div class="action-buttons">
@@ -926,7 +918,7 @@ onMounted(async () => {
                 step="100"
                 class="form-input"
               >
-              <span class="price-preview">= {{ formatPrice(newModal.priceCents) }}</span>
+              <span class="price-preview">= {{ formatPriceCents(newModal.priceCents) }}</span>
             </div>
           </div>
           <div class="modal-footer">

@@ -3,6 +3,7 @@
  * Full CRUD operations for vehicle categories (formerly "subcategories") in admin panel
  * Categories are the parent level above subcategories (formerly "types")
  */
+import { slugify } from '~/utils/fileNaming'
 
 export interface AdminSubcategory {
   id: string
@@ -138,7 +139,7 @@ export function useAdminSubcategories() {
       const insertData = {
         name_es: formData.name_es,
         name_en: formData.name_en || null,
-        slug: formData.slug || generateSlug(formData.name_es),
+        slug: formData.slug || slugify(formData.name_es),
         applicable_categories: formData.applicable_categories || [],
         applicable_filters: formData.applicable_filters || [],
         status: formData.status,
@@ -358,15 +359,4 @@ export function useAdminSubcategories() {
     getLinkedSubcategories,
     clearError,
   }
-}
-
-// Helper function to generate URL-friendly slug
-function generateSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9-]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
 }

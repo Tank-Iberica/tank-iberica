@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatPrice } from '~/composables/shared/useListingUtils'
 import {
   useAdminVehicles,
   type AdminVehicle,
@@ -781,15 +782,6 @@ function getCategoryClass(category: string): string {
     terceros: 'cat-terceros',
   }
   return classes[category] || ''
-}
-
-function formatPrice(price: number | null | undefined): string {
-  if (!price) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-  }).format(price)
 }
 
 function getSubcategoryName(id: string | null): string {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatPrice } from '~/composables/shared/useListingUtils'
 import {
   useAdminDemands,
   DEMAND_STATUSES,
@@ -133,15 +134,6 @@ function formatDate(dateStr: string): string {
     month: '2-digit',
     year: 'numeric',
   })
-}
-
-function formatPrice(price: number | null): string {
-  if (!price) return '-'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-  }).format(price)
 }
 
 function formatPriceRange(min: number | null, max: number | null): string {

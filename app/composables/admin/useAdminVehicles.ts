@@ -2,6 +2,7 @@
  * Admin Vehicles Composable
  * Full CRUD operations for vehicles in admin panel
  */
+import { slugify } from '~/utils/fileNaming'
 import type { Vehicle } from '~/composables/useVehicles'
 
 export interface AdminVehicleFilters {
@@ -212,7 +213,7 @@ export function useAdminVehicles() {
 
     try {
       // Generate slug from brand + model + year
-      const slug = generateSlug(formData.brand, formData.model, formData.year)
+      const slug = slugify(formData.brand, formData.model, formData.year)
 
       const insertData: Record<string, unknown> = {
         ...formData,
@@ -486,19 +487,4 @@ export function useAdminVehicles() {
     deleteImage,
     reorderImages,
   }
-}
-
-// Helper function to generate URL-friendly slug
-function generateSlug(brand: string, model: string, year: number | null): string {
-  const parts = [brand, model]
-  if (year) parts.push(String(year))
-
-  return parts
-    .join('-')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9-]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
 }

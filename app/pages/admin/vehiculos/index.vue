@@ -135,7 +135,12 @@
                     <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
                   </svg>
                 </NuxtLink>
-                <NuxtLink :to="`/vehiculo/${vehicle.slug}`" class="action-btn" target="_blank" title="Ver en web">
+                <NuxtLink
+                  :to="`/vehiculo/${vehicle.slug}`"
+                  class="action-btn"
+                  target="_blank"
+                  title="Ver en web"
+                >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
                     <path d="M15 3h6v6" />
@@ -144,7 +149,9 @@
                 </NuxtLink>
                 <button class="action-btn danger" title="Eliminar" @click="confirmDelete(vehicle)">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                    <path
+                      d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
+                    />
                   </svg>
                 </button>
               </div>
@@ -160,8 +167,9 @@
         <div class="modal-content">
           <h3 class="modal-title">Eliminar vehículo</h3>
           <p class="modal-text">
-            ¿Estás seguro de que quieres eliminar <strong>{{ deleteModal.vehicle?.brand }} {{ deleteModal.vehicle?.model }}</strong>?
-            Esta acción no se puede deshacer.
+            ¿Estás seguro de que quieres eliminar
+            <strong>{{ deleteModal.vehicle?.brand }} {{ deleteModal.vehicle?.model }}</strong
+            >? Esta acción no se puede deshacer.
           </p>
           <div class="modal-actions">
             <button class="btn-secondary" @click="deleteModal.show = false">Cancelar</button>
@@ -177,6 +185,7 @@
 
 <script setup lang="ts">
 import { useAdminVehicles } from '~/composables/admin/useAdminVehicles'
+import { formatPrice } from '~/composables/shared/useListingUtils'
 
 definePageMeta({
   layout: 'admin',
@@ -248,15 +257,6 @@ async function handleDelete() {
   if (success) {
     deleteModal.value = { show: false, vehicle: null }
   }
-}
-
-// Format price
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(price)
 }
 
 // Initial load
@@ -400,7 +400,9 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-state svg {
@@ -467,12 +469,24 @@ onMounted(() => {
 }
 
 /* Column widths */
-.col-image { width: 80px; }
-.col-vehicle { min-width: 200px; }
-.col-category { width: 100px; }
-.col-price { width: 120px; }
-.col-status { width: 120px; }
-.col-actions { width: 120px; }
+.col-image {
+  width: 80px;
+}
+.col-vehicle {
+  min-width: 200px;
+}
+.col-category {
+  width: 100px;
+}
+.col-price {
+  width: 120px;
+}
+.col-status {
+  width: 120px;
+}
+.col-actions {
+  width: 120px;
+}
 
 /* Vehicle thumbnail */
 .vehicle-thumbnail {

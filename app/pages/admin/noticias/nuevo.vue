@@ -2,6 +2,7 @@
 import { useAdminNews, type NewsFormData } from '~/composables/admin/useAdminNews'
 import { useSeoScore, type SeoInput } from '~/composables/admin/useSeoScore'
 import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
+import { slugify } from '~/utils/fileNaming'
 
 definePageMeta({
   layout: 'admin',
@@ -75,15 +76,7 @@ const { analysis } = useSeoScore(seoInput)
 let previousAutoSlug = ''
 
 function generateSlugFromTitle(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
+  return slugify(title)
 }
 
 watch(

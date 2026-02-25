@@ -2,6 +2,7 @@
  * Admin News Composable
  * Full CRUD operations for news articles in admin panel
  */
+import { slugify } from '~/utils/fileNaming'
 import type { News } from '~/composables/useNews'
 
 export interface AdminNewsFilters {
@@ -116,7 +117,7 @@ export function useAdminNews() {
     error.value = null
 
     try {
-      const slug = formData.slug.trim() || generateSlug(formData.title_es)
+      const slug = formData.slug.trim() || slugify(formData.title_es)
 
       const insertData = {
         ...formData,
@@ -236,16 +237,4 @@ export function useAdminNews() {
     deleteNews,
     updateStatus,
   }
-}
-
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
 }
