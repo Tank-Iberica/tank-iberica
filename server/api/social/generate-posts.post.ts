@@ -5,12 +5,13 @@
  * Body: { vehicleId: string }
  *
  * Creates social_posts rows with status='pending' for each platform
- * (LinkedIn, Facebook, Instagram, X) using template strings.
- * In production, content generation could be enhanced with Claude Haiku.
+ * (LinkedIn, Facebook, Instagram, X). Tries AI generation via callAI first,
+ * falling back to static templates if AI is unavailable or fails.
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { defineEventHandler, readBody, createError } from 'h3'
 import { getSiteUrl } from '~/server/utils/siteConfig'
+import { callAI } from '~/server/services/aiProvider'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -157,6 +158,70 @@ function generateX(v: VehicleData, url: string): Record<string, string> {
 }
 
 // ============================================
+// AI GENERATION WITH TEMPLATE FALLBACK
+// ============================================
+
+async function generateWithAI(
+  vehicle: VehicleData,
+  vehicleUrl: string,
+): Promise<Record<Platform, Record<string, string>> | null> {
+  try {
+    const title = getVehicleTitle(vehicle)
+    const location = vehicle.location || 'España'
+    const priceEs = vehicle.price ? formatPrice(vehicle.price) : 'Consultar'
+
+    const prompt = `Generate social media posts for an industrial vehicle listing.
+
+Vehicle: ${title}
+Location: ${location}
+Price: ${priceEs}
+URL: ${vehicleUrl}
+
+Generate posts for 4 platforms in JSON format. Each post should have "es" (Spanish) and "en" (English) versions.
+Return ONLY valid JSON, no markdown:
+{
+  "linkedin": { "es": "...", "en": "..." },
+  "facebook": { "es": "...", "en": "..." },
+  "instagram": { "es": "...", "en": "..." },
+  "x": { "es": "...", "en": "..." }
+}
+
+Rules:
+- LinkedIn: professional tone, 3-4 lines with emojis
+- Facebook: casual, engaging, include link
+- Instagram: include hashtags, no link (bio link)
+- X: max 280 chars including URL
+- Include vehicle emoji 🚛 in all posts`
+
+    const response = await callAI(
+      { messages: [{ role: 'user', content: prompt }], maxTokens: 1000 },
+      'deferred',
+      'fast',
+    )
+
+    // Parse the AI response
+    let cleaned = response.text.trim()
+    if (cleaned.startsWith('```')) {
+      cleaned = cleaned.replace(/^```(?:json)?\s*/, '').replace(/\n?```\s*$/, '')
+    }
+
+    const parsed = JSON.parse(cleaned) as Record<Platform, Record<string, string>>
+
+    // Validate the structure
+    const platforms: Platform[] = ['linkedin', 'facebook', 'instagram', 'x']
+    for (const p of platforms) {
+      if (!parsed[p]?.es || !parsed[p]?.en) return null
+    }
+
+    return parsed
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.warn(`[social/generate-posts] AI generation failed, using templates: ${message}`)
+    return null
+  }
+}
+
+// ============================================
 // HANDLER
 // ============================================
 
@@ -243,16 +308,32 @@ export default defineEventHandler(async (event): Promise<GeneratePostsResponse> 
   // 6. Select best image (first by position)
   const bestImage = vehicle.vehicle_images?.[0]?.url || null
 
-  // 7. Generate content per platform
+  // 7. Build vehicle URL
   const baseUrl = getSiteUrl()
   const vehicleUrl = `${baseUrl}/vehiculo/${vehicle.slug}`
 
-  const platforms: { platform: Platform; content: Record<string, string> }[] = [
-    { platform: 'linkedin', content: generateLinkedIn(vehicle, vehicleUrl) },
-    { platform: 'facebook', content: generateFacebook(vehicle, vehicleUrl) },
-    { platform: 'instagram', content: generateInstagram(vehicle) },
-    { platform: 'x', content: generateX(vehicle, vehicleUrl) },
-  ]
+  // 7b. Try AI generation first, fall back to templates
+  let platformContents: Record<Platform, Record<string, string>> | null = null
+
+  try {
+    platformContents = await generateWithAI(vehicle, vehicleUrl)
+  } catch {
+    // AI failed, will use templates
+  }
+
+  const platforms: { platform: Platform; content: Record<string, string> }[] = platformContents
+    ? [
+        { platform: 'linkedin' as Platform, content: platformContents.linkedin },
+        { platform: 'facebook' as Platform, content: platformContents.facebook },
+        { platform: 'instagram' as Platform, content: platformContents.instagram },
+        { platform: 'x' as Platform, content: platformContents.x },
+      ]
+    : [
+        { platform: 'linkedin' as Platform, content: generateLinkedIn(vehicle, vehicleUrl) },
+        { platform: 'facebook' as Platform, content: generateFacebook(vehicle, vehicleUrl) },
+        { platform: 'instagram' as Platform, content: generateInstagram(vehicle) },
+        { platform: 'x' as Platform, content: generateX(vehicle, vehicleUrl) },
+      ]
 
   // 8. Insert social_posts rows
   const inserts = platforms.map(({ platform, content }) => ({
