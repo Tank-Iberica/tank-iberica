@@ -1,3 +1,5 @@
+// DEPRECATED: Manual scraping only (session 44). Kept for reference.
+
 /**
  * Tracciona — Competitor Scraper for Dealer Lead Generation
  *
