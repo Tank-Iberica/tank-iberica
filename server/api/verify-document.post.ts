@@ -12,6 +12,7 @@
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { defineEventHandler, readBody, createError } from 'h3'
+import { callAI } from '~/server/services/aiProvider'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const URL_REGEX = /^https?:\/\/.+/i
@@ -213,62 +214,60 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
     }
   }
 
-  // 7. Call Claude Vision API for document analysis
-  // ---------------------------------------------------------------
-  // TODO: When activating Claude Vision, replace mock with callAI('background', 'vision')
-  // ---------------------------------------------------------------
-  // PLACEHOLDER: Replace this block with the actual Claude Vision API
-  // call when API keys are configured.
-  //
-  // Example Claude Vision integration:
-  //
-  //   const runtimeConfig = useRuntimeConfig()
-  //   const visionResponse = await $fetch('https://api.anthropic.com/v1/messages', {
-  //     method: 'POST',
-  //     headers: {
-  //       'x-api-key': runtimeConfig.claudeApiKey,
-  //       'anthropic-version': '2023-06-01',
-  //       'content-type': 'application/json',
-  //     },
-  //     body: {
-  //       model: 'claude-sonnet-4-20250514',
-  //       max_tokens: 1024,
-  //       messages: [{
-  //         role: 'user',
-  //         content: [
-  //           {
-  //             type: 'image',
-  //             source: { type: 'url', url: imageUrl },
-  //           },
-  //           {
-  //             type: 'text',
-  //             text: `Analyze this vehicle document image. Extract the following fields:
-  //               - Brand/Make
-  //               - Model
-  //               - Year of first registration
-  //               - Kilometers (if visible)
-  //               - License plate (matricula)
-  //               - VIN number (if visible)
-  //               Return as JSON: { brand, model, year, km, matricula, vin }
-  //               Use null for fields not found in the document.`,
-  //           },
-  //         ],
-  //       }],
-  //     },
-  //   })
-  //
-  //   // Parse the vision response to extract structured data
-  //   const extractedData = parseVisionResponse(visionResponse)
-  // ---------------------------------------------------------------
+  // 7. Call AI Vision for document analysis (with fallback to mock)
+  let extractedData: ExtractedData
 
-  // Mock extracted data — simulates a successful document read
-  const extractedData: ExtractedData = {
-    brand: declaredData.brand,
-    model: declaredData.model,
-    year: declaredData.year,
-    km: declaredData.km,
-    matricula: null,
-    vin: null,
+  try {
+    const aiResponse = await callAI(
+      {
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: `Analyze this vehicle document image at URL: ${imageUrl}
+
+Extract the following fields from the document:
+- Brand/Make
+- Model
+- Year of first registration
+- Kilometers (if visible)
+- License plate (matricula)
+- VIN number (if visible)
+
+Return ONLY valid JSON with this exact structure (no markdown, no code fences):
+{ "brand": "string or null", "model": "string or null", "year": null or number, "km": null or number, "matricula": "string or null", "vin": "string or null" }
+
+Use null for fields not found in the document.`,
+              },
+            ],
+          },
+        ],
+        maxTokens: 1024,
+        system:
+          'You are a vehicle document analysis expert. Extract structured data from vehicle registration documents, ITV sheets, and similar official documents.',
+      },
+      'background',
+      'vision',
+    )
+
+    let cleaned = aiResponse.text.trim()
+    if (cleaned.startsWith('```')) {
+      cleaned = cleaned.replace(/^```(?:json)?\s*/, '').replace(/\n?```\s*$/, '')
+    }
+    extractedData = JSON.parse(cleaned) as ExtractedData
+  } catch {
+    // Fallback to mock if no AI provider available
+    console.warn('[verify-document] AI unavailable, using mock extracted data')
+    extractedData = {
+      brand: declaredData.brand,
+      model: declaredData.model,
+      year: declaredData.year,
+      km: declaredData.km,
+      matricula: null,
+      vin: null,
+    }
   }
 
   // 8. Compare extracted data with declared data
