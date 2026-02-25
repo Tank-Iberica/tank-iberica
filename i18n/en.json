@@ -2105,6 +2105,9 @@
       "totalViews": "Total views",
       "leadsMonth": "Leads this month",
       "responseRate": "Response rate",
+      "contactsThisMonth": "Contacts this month",
+      "fichaViews": "Listing views",
+      "conversionRate": "Conversion rate",
       "planLimit": "plan limit"
     },
     "actions": {

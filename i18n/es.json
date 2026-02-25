@@ -2105,6 +2105,9 @@
       "totalViews": "Visitas totales",
       "leadsMonth": "Leads este mes",
       "responseRate": "Tasa de respuesta",
+      "contactsThisMonth": "Contactos este mes",
+      "fichaViews": "Fichas vistas",
+      "conversionRate": "Tasa de conversión",
       "planLimit": "del plan"
     },
     "actions": {

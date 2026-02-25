@@ -60,6 +60,7 @@
               <a
                 :href="`mailto:info@tracciona.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`"
                 class="contact-btn contact-email"
+                @click="vehicle && trackContactClick(vehicle.id, vehicle.dealer_id || '', 'form')"
               >
                 <svg
                   width="16"
@@ -76,7 +77,11 @@
                 </svg>
                 <span>{{ $t('vehicle.email') }}</span>
               </a>
-              <a :href="`tel:${$t('nav.phoneNumber')}`" class="contact-btn contact-call">
+              <a
+                :href="`tel:${$t('nav.phoneNumber')}`"
+                class="contact-btn contact-call"
+                @click="vehicle && trackContactClick(vehicle.id, vehicle.dealer_id || '', 'phone')"
+              >
                 <svg
                   width="16"
                   height="16"
@@ -96,6 +101,9 @@
                 target="_blank"
                 rel="noopener"
                 class="contact-btn contact-whatsapp"
+                @click="
+                  vehicle && trackContactClick(vehicle.id, vehicle.dealer_id || '', 'whatsapp')
+                "
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path
@@ -332,6 +340,7 @@ const toast = useToast()
 
 const { isInComparison, addToComparison, removeFromComparison } = useVehicleComparator()
 const inComparison = computed(() => (vehicle.value ? isInComparison(vehicle.value.id) : false))
+const { trackFichaView, trackContactClick, trackFavorite: trackFav } = useLeadTracking()
 
 const showReport = ref(false)
 
@@ -497,9 +506,17 @@ const emailBody = computed(() => {
   return parts.join('\n')
 })
 
+// Track ficha view on client-side mount
+onMounted(() => {
+  if (vehicle.value) {
+    trackFichaView(vehicle.value.id, vehicle.value.dealer_id || '')
+  }
+})
+
 function handleFavorite() {
   if (!vehicle.value) return
   toggle(vehicle.value.id)
+  trackFav(vehicle.value.id)
 }
 
 async function handleShare() {

@@ -29,6 +29,9 @@ interface DashboardStats {
   totalViews: number
   leadsThisMonth: number
   responseRate: number
+  contactsThisMonth: number
+  fichaViewsThisMonth: number
+  conversionRate: number
 }
 
 interface RecentLead {
@@ -66,6 +69,9 @@ export function useDealerDashboard() {
     totalViews: 0,
     leadsThisMonth: 0,
     responseRate: 0,
+    contactsThisMonth: 0,
+    fichaViewsThisMonth: 0,
+    conversionRate: 0,
   })
   const recentLeads = ref<RecentLead[]>([])
   const topVehicles = ref<TopVehicle[]>([])
@@ -173,12 +179,38 @@ export function useDealerDashboard() {
         responseRate = respondedCount ? Math.round((respondedCount / totalLeadsRes.count) * 100) : 0
       }
 
+      // Lead tracking metrics from analytics_events
+      const [contactClicksRes, fichaViewsRes] = await Promise.all([
+        supabase
+          .from('analytics_events')
+          .select('*', { count: 'exact', head: true })
+          .eq('event_type', 'contact_click')
+          .contains('metadata', { dealer_id: dealer.id })
+          .gte('created_at', monthStart),
+        supabase
+          .from('analytics_events')
+          .select('*', { count: 'exact', head: true })
+          .eq('event_type', 'ficha_view')
+          .contains('metadata', { dealer_id: dealer.id })
+          .gte('created_at', monthStart),
+      ])
+
+      const contactsThisMonth = contactClicksRes.count || 0
+      const fichaViewsThisMonth = fichaViewsRes.count || 0
+      const conversionRate =
+        fichaViewsThisMonth > 0
+          ? Math.round((contactsThisMonth / fichaViewsThisMonth) * 1000) / 10
+          : 0
+
       stats.value = {
         activeListings: activeListingsRes.count || 0,
         totalLeads: totalLeadsRes.count || 0,
         totalViews: (viewsRes.data as { total_views: number } | null)?.total_views || 0,
         leadsThisMonth: monthLeadsRes.count || 0,
         responseRate,
+        contactsThisMonth,
+        fichaViewsThisMonth,
+        conversionRate,
       }
 
       // Map recent leads with vehicle info
