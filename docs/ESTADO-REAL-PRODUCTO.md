@@ -1,6 +1,6 @@
 # Estado real del producto
 
-_Generado automaticamente: 2026-02-25 01:17_
+_Generado automaticamente: 2026-02-25 11:45_
 
 ## Paginas
 
@@ -69,6 +69,7 @@ app/pages/dashboard/crm.vue
 app/pages/dashboard/estadisticas.vue
 app/pages/dashboard/facturas.vue
 app/pages/dashboard/herramientas/alquileres.vue
+app/pages/dashboard/herramientas/api.vue
 app/pages/dashboard/herramientas/calculadora.vue
 app/pages/dashboard/herramientas/contrato.vue
 app/pages/dashboard/herramientas/exportar-anuncio.vue
@@ -104,6 +105,7 @@ app/pages/legal/privacidad.vue
 app/pages/legal/uk.vue
 app/pages/noticias/[slug].vue
 app/pages/noticias/index.vue
+app/pages/offline.vue
 app/pages/perfil/alertas.vue
 app/pages/perfil/comparador.vue
 app/pages/perfil/contactos.vue
@@ -183,6 +185,7 @@ app/composables/useImageUrl.ts
 app/composables/useInfraMetrics.ts
 app/composables/useInfraRecommendations.ts
 app/composables/useInvoicing.ts
+app/composables/useLeadTracking.ts
 app/composables/useLocalized.ts
 app/composables/useMarketData.ts
 app/composables/useNews.ts
@@ -193,6 +196,7 @@ app/composables/usePriceHistory.ts
 app/composables/usePushNotifications.ts
 app/composables/useReports.ts
 app/composables/useReservation.ts
+app/composables/useRevenueMetrics.ts
 app/composables/useSanitize.ts
 app/composables/useSellerProfile.ts
 app/composables/useSocialPublisher.ts
@@ -228,6 +232,8 @@ server/api/cron/publish-scheduled.post.ts
 server/api/cron/reservation-expiry.post.ts
 server/api/cron/search-alerts.post.ts
 server/api/cron/whatsapp-retry.post.ts
+server/api/dealer/api-key.get.ts
+server/api/dealer/api-key.post.ts
 server/api/dgt-report.post.ts
 server/api/email/send.post.ts
 server/api/email/unsubscribe.get.ts
@@ -263,6 +269,7 @@ server/api/verify-document.post.ts
 server/api/whatsapp/process.post.ts
 server/api/whatsapp/webhook.get.ts
 server/api/whatsapp/webhook.post.ts
+server/api/widget/[dealerId].get.ts
 ```
 
 ## Migraciones BD
@@ -359,47 +366,7 @@ server/utils/verifyTurnstile.ts
 server/utils/whatsappApi.ts
 ```
 
-Total paginas: 120
-Total composables: 77
-Total endpoints: 51
+Total paginas: 122
+Total composables: 79
+Total endpoints: 54
 Total migraciones: 60
-
-## Decisiones sobre modulos parciales (sesion 41)
-
-### 1. Landing pages builder avanzado
-
-**Decision: POSPONER.**
-
-Las landing pages SEO dinamicas de la sesion 4 cubren el caso de uso principal (paginas por subcategoria, marca, ubicacion con contenido generado). Un builder visual tipo Webflow es excesivo para la fase actual del producto. Se reconsiderara si los dealers lo solicitan activamente.
-
-**Alternativa actual:** Los dealers pueden personalizar su pagina de vendedor (`/vendedor/[slug]`) con logo, bio, tema de colores, y redes sociales. Para necesidades mas avanzadas, la configuracion de branding en `/admin/config/branding` permite personalizar colores y tipografia del vertical completo.
-
-### 2. OAuth social (Google, Facebook login)
-
-**Decision: IMPLEMENTAR MINIMO.**
-
-- **Google Login:** Ya implementado en sesion 24 via Supabase Auth (provider: google).
-- **Facebook Login:** Pospuesto. El uso de Facebook Login en B2B industrial es bajo. Si se necesita, Supabase Auth lo soporta con 2 lineas de configuracion en el dashboard de Supabase + las credenciales de Meta Developer.
-- **Apple Login:** No prioritario. El publico objetivo (profesionales B2B) accede mayoritariamente desde desktop/Android.
-
-**Razon:** El registro con email + contrasena y Google Login cubren >95% de los casos de uso del publico objetivo.
-
-### 3. Capa de servicios (server/services/)
-
-**Decision: IMPLEMENTADA (sesion 41).**
-
-Se extrajeron los endpoints con >200 lineas a servicios reutilizables:
-
-- `server/services/marketReport.ts` — Logica de generacion de informes de mercado (912 lineas extraidas)
-- `server/services/billing.ts` — Helpers REST compartidos, lookup de suscripciones, dunning, facturas automaticas
-
-Los endpoints quedan como orquestadores ligeros: validan input, llaman al servicio, devuelven respuesta.
-
-**Endpoints pendientes de refactorizar** (>200 lineas, baja prioridad):
-
-| Endpoint                   | Lineas | Prioridad                      |
-| -------------------------- | ------ | ------------------------------ |
-| whatsapp/process.post.ts   | 541    | Media (complejo por IA)        |
-| email/send.post.ts         | 415    | Baja (template engine)         |
-| verify-document.post.ts    | 365    | Baja (IA + verificacion)       |
-| cron/infra-metrics.post.ts | 337    | Baja (metricas autocontenidas) |

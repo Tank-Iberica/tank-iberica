@@ -38,13 +38,27 @@ find app/middleware -name '*.ts' | sort >> $OUTPUT
 echo '```' >> $OUTPUT
 echo "" >> $OUTPUT
 
+echo "## Services" >> $OUTPUT
+echo '```' >> $OUTPUT
+find server/services -name '*.ts' 2>/dev/null | sort >> $OUTPUT
+echo '```' >> $OUTPUT
+echo "" >> $OUTPUT
+
 echo "## Utils" >> $OUTPUT
 echo '```' >> $OUTPUT
 find server/utils -name '*.ts' | sort >> $OUTPUT
 echo '```' >> $OUTPUT
 echo "" >> $OUTPUT
 
+echo "## Tests E2E" >> $OUTPUT
+echo '```' >> $OUTPUT
+find tests -name '*.spec.ts' 2>/dev/null | sort >> $OUTPUT
+echo '```' >> $OUTPUT
+echo "" >> $OUTPUT
+
 echo "Total paginas: $(find app/pages -name '*.vue' | wc -l)" >> $OUTPUT
 echo "Total composables: $(find app/composables -name '*.ts' | wc -l)" >> $OUTPUT
 echo "Total endpoints: $(find server/api -name '*.ts' | wc -l)" >> $OUTPUT
+echo "Total services: $(find server/services -name '*.ts' 2>/dev/null | wc -l)" >> $OUTPUT
 echo "Total migraciones: $(ls supabase/migrations/ | wc -l)" >> $OUTPUT
+echo "Total tests E2E: $(find tests -name '*.spec.ts' 2>/dev/null | wc -l)" >> $OUTPUT

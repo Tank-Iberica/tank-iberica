@@ -1,3 +1,5 @@
+> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
+
 # Tank Iberica — Guía de Configuración para Claude Code
 
 ## Qué es esto
@@ -24,6 +26,7 @@ npm install -g @anthropic-ai/claude-code
 ```
 
 Verifica que funciona:
+
 ```bash
 claude --version
 ```
@@ -78,12 +81,12 @@ tank-iberica/
 
 Los 4 documentos que ya tienes van en `docs/`:
 
-| Documento | Destino | Para qué |
-|-----------|---------|----------|
-| Documentación funcional index.html | `docs/legacy/index-funcionalidades.md` | Referencia para replicar funcionalidades |
-| Documentación funcional admin.html | `docs/legacy/admin-funcionalidades.md` | Referencia para replicar admin |
-| Plan Profesionalización v3 | `docs/plan-v3.md` + extraer esquema BD a `docs/esquema-bd.md` | Esquema BD, RLS, stack completo |
-| Hoja de Ruta Optimizada v2 | `docs/hoja-de-ruta.md` | Orden de implementación paso a paso |
+| Documento                          | Destino                                                       | Para qué                                 |
+| ---------------------------------- | ------------------------------------------------------------- | ---------------------------------------- |
+| Documentación funcional index.html | `docs/legacy/index-funcionalidades.md`                        | Referencia para replicar funcionalidades |
+| Documentación funcional admin.html | `docs/legacy/admin-funcionalidades.md`                        | Referencia para replicar admin           |
+| Plan Profesionalización v3         | `docs/plan-v3.md` + extraer esquema BD a `docs/esquema-bd.md` | Esquema BD, RLS, stack completo          |
+| Hoja de Ruta Optimizada v2         | `docs/hoja-de-ruta.md`                                        | Orden de implementación paso a paso      |
 
 También copia del proyecto actual:
 | Archivo | Destino |
@@ -122,6 +125,7 @@ Claude leerá automáticamente CLAUDE.md y tendrá contexto completo del proyect
 ```
 
 Claude:
+
 1. Lee la hoja de ruta y el progreso
 2. Identifica la siguiente tarea pendiente
 3. Te muestra un plan y espera tu aprobación
@@ -162,16 +166,16 @@ Claude Code puede hacer la mayor parte del trabajo, pero hay cosas que necesitan
 
 ### Cosas que Claude Code NO puede hacer
 
-| Acción | Por qué | Qué hacer tú |
-|--------|---------|---------------|
-| Crear proyecto Supabase | Requiere login en navegador | Crear en supabase.com, dar las credenciales a Claude |
-| Configurar OAuth providers | Requiere consoles de Google/Apple | Configurar en Google Cloud Console, dar Client ID/Secret a Claude |
-| Crear cuenta Cloudflare Pages | Requiere login en navegador | Crear en cloudflare.com, conectar repo GitHub |
-| Crear cuenta Cloudinary | Requiere login en navegador | Crear en cloudinary.com, dar cloud name a Claude |
-| Revocar API_KEY de Google (Step 0) | Requiere acceso a Google Cloud Console | Hacerlo tú en console.cloud.google.com |
-| Test en móvil real | Requiere dispositivo físico | Probar en tu móvil y reportar problemas a Claude |
-| Migrar imágenes a Cloudinary (Step 2) | Requiere subir archivos desde Drive | Exportar de Drive, subir a Cloudinary (Claude te guía) |
-| Configurar dominio DNS | Requiere acceso al registrador | Apuntar DNS a Cloudflare |
+| Acción                                | Por qué                                | Qué hacer tú                                                      |
+| ------------------------------------- | -------------------------------------- | ----------------------------------------------------------------- |
+| Crear proyecto Supabase               | Requiere login en navegador            | Crear en supabase.com, dar las credenciales a Claude              |
+| Configurar OAuth providers            | Requiere consoles de Google/Apple      | Configurar en Google Cloud Console, dar Client ID/Secret a Claude |
+| Crear cuenta Cloudflare Pages         | Requiere login en navegador            | Crear en cloudflare.com, conectar repo GitHub                     |
+| Crear cuenta Cloudinary               | Requiere login en navegador            | Crear en cloudinary.com, dar cloud name a Claude                  |
+| Revocar API_KEY de Google (Step 0)    | Requiere acceso a Google Cloud Console | Hacerlo tú en console.cloud.google.com                            |
+| Test en móvil real                    | Requiere dispositivo físico            | Probar en tu móvil y reportar problemas a Claude                  |
+| Migrar imágenes a Cloudinary (Step 2) | Requiere subir archivos desde Drive    | Exportar de Drive, subir a Cloudinary (Claude te guía)            |
+| Configurar dominio DNS                | Requiere acceso al registrador         | Apuntar DNS a Cloudflare                                          |
 
 ### Cosas que Claude Code SÍ hace solo
 

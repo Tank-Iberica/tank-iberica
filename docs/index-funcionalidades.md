@@ -1,3 +1,5 @@
+> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
+
 **TANK IBERICA**
 
 Plataforma Pública de Vehículos
@@ -70,25 +72,27 @@ index.html es la aplicación pública (Single Page Application) de Tank Iberica,
 
 La aplicación permite a los usuarios navegar, filtrar y buscar vehículos industriales disponibles para alquiler, venta o de terceros. También ofrece formularios para anunciantes y solicitantes, sistema de favoritos, chat con administrador y soporte bilingüe completo español/inglés.
 
-  ------------------------- -------------------------------------------------------------------------------
-  **Elemento**              **Detalle**
+---
 
-  Tecnología                Vanilla JavaScript (ES6+), CSS Grid/Flexbox, HTML5
+**Elemento** **Detalle**
 
-  Líneas de código          12.788 líneas (HTML + CSS + JS en un solo archivo)
+Tecnología Vanilla JavaScript (ES6+), CSS Grid/Flexbox, HTML5
 
-  Backend                   Google Sheets API v4 (SHEET_ID: 1GdmirqWFKVt39QvEJxdMH3zW0-itl64YuqYEsOAkF30)
+Líneas de código 12.788 líneas (HTML + CSS + JS en un solo archivo)
 
-  Almacenamiento imágenes   Google Drive API v3
+Backend Google Sheets API v4 (SHEET_ID: 1GdmirqWFKVt39QvEJxdMH3zW0-itl64YuqYEsOAkF30)
 
-  Autenticación             Google OAuth 2.0 (CLIENT_ID: 928575\...0a)
+Almacenamiento imágenes Google Drive API v3
 
-  PWA                       Manifest.json, service worker compatible, instalable
+Autenticación Google OAuth 2.0 (CLIENT_ID: 928575\...0a)
 
-  Responsivo                Mobile-first con breakpoints: 360, 480, 768, 1024 px
+PWA Manifest.json, service worker compatible, instalable
 
-  Idiomas                   Español (ES) e Inglés (EN) con cambio dinámico
-  ------------------------- -------------------------------------------------------------------------------
+Responsivo Mobile-first con breakpoints: 360, 480, 768, 1024 px
+
+Idiomas Español (ES) e Inglés (EN) con cambio dinámico
+
+---
 
 2\. Arquitectura Técnica
 
@@ -96,49 +100,51 @@ La aplicación permite a los usuarios navegar, filtrar y buscar vehículos indus
 
 Todo el código reside en un único archivo index.html organizado en tres bloques principales:
 
--   Líneas 1--6086: Estilos CSS (incluyendo media queries responsivas)
+- Líneas 1--6086: Estilos CSS (incluyendo media queries responsivas)
 
--   Líneas 6087--7200: Estructura HTML (header, main, modales, footer)
+- Líneas 6087--7200: Estructura HTML (header, main, modales, footer)
 
--   Líneas 7200--12788: JavaScript (lógica de negocio, APIs, eventos)
+- Líneas 7200--12788: JavaScript (lógica de negocio, APIs, eventos)
 
 2.2 Fuentes de Datos (Google Sheets)
 
 La aplicación consume datos de múltiples hojas de un mismo libro de Google Sheets:
 
-  ------------------ ------------------------------------ --------------------------------------
-  **Hoja**           **Contenido**                        **Uso**
+---
 
-  vehiculos          Inventario de vehículos              Catlogo principal, filtrado, detalle
+**Hoja** **Contenido** **Uso**
 
-  subcategorias      Definiciones de subcategorías        Navegación por tipo de vehículo
+vehiculos Inventario de vehículos Catlogo principal, filtrado, detalle
 
-  filtros            Configuración de filtros dinámicos   Filtros avanzados por subcategoría
+subcategorias Definiciones de subcategorías Navegación por tipo de vehículo
 
-  anunciantes        Envíos del formulario Anúnciate      Recepción de anuncios de terceros
+filtros Configuración de filtros dinámicos Filtros avanzados por subcategoría
 
-  solicitantes       Envíos del formulario Solicitar      Demandas de compradores
+anunciantes Envíos del formulario Anúnciate Recepción de anuncios de terceros
 
-  usuarios           Cuentas de usuario                   Autenticación y perfil
+solicitantes Envíos del formulario Solicitar Demandas de compradores
 
-  suscripciones      Suscripciones a newsletter           Gestión de boletines
+usuarios Cuentas de usuario Autenticación y perfil
 
-  noticias           Artículos de noticias                Sección de noticias (en desarrollo)
+suscripciones Suscripciones a newsletter Gestión de boletines
 
-  comentarios        Comentarios de usuarios              Sistema de comentarios en noticias
-  ------------------ ------------------------------------ --------------------------------------
+noticias Artículos de noticias Sección de noticias (en desarrollo)
+
+comentarios Comentarios de usuarios Sistema de comentarios en noticias
+
+---
 
 2.3 Almacenamiento Local
 
 Se utiliza localStorage para persistir preferencias del usuario entre sesiones:
 
--   Idioma seleccionado (ES/EN)
+- Idioma seleccionado (ES/EN)
 
--   Lista de favoritos (requiere autenticación para persistencia server-side)
+- Lista de favoritos (requiere autenticación para persistencia server-side)
 
--   Preferencia de vista (grid/lista)
+- Preferencia de vista (grid/lista)
 
--   Estado de sesión del usuario
+- Estado de sesión del usuario
 
 3\. Sistema de Diseño (Design Tokens)
 
@@ -146,43 +152,47 @@ El sistema de diseño se basa en custom properties CSS documentadas en DESIGN_SY
 
 3.1 Paleta de Colores
 
-  ---------------------------- -------------------------- ------------------------------------------------
-  **Token**                    **Valor**                  **Uso**
+---
 
-  \--ds-petrol-blue            #0F2A2E                    Color primario, fondos header, botones activos
+**Token** **Valor** **Uso**
 
-  \--ds-white                  #FFFFFF                    Fondo principal, texto sobre oscuro
+\--ds-petrol-blue #0F2A2E Color primario, fondos header, botones activos
 
-  \--ds-text-dark-primary      #E6ECEC                    Texto principal sobre fondo oscuro
+\--ds-white #FFFFFF Fondo principal, texto sobre oscuro
 
-  \--ds-text-dark-secondary    #C9D4D4                    Texto secundario sobre fondo oscuro
+\--ds-text-dark-primary #E6ECEC Texto principal sobre fondo oscuro
 
-  \--ds-text-dark-auxiliary    #9FB1B1                    Texto auxiliar sobre fondo oscuro
+\--ds-text-dark-secondary #C9D4D4 Texto secundario sobre fondo oscuro
 
-  \--ds-text-dark-accent       #7FD1C8                    Acentos sobre fondo oscuro
+\--ds-text-dark-auxiliary #9FB1B1 Texto auxiliar sobre fondo oscuro
 
-  \--ds-text-light-primary     #1F2A2A                    Texto principal sobre fondo claro
+\--ds-text-dark-accent #7FD1C8 Acentos sobre fondo oscuro
 
-  \--ds-text-light-secondary   #4A5A5A                    Texto secundario sobre fondo claro
+\--ds-text-light-primary #1F2A2A Texto principal sobre fondo claro
 
-  \--ds-text-light-accent      #0F2A2E                    Acentos sobre fondo claro
-  ---------------------------- -------------------------- ------------------------------------------------
+\--ds-text-light-secondary #4A5A5A Texto secundario sobre fondo claro
+
+\--ds-text-light-accent #0F2A2E Acentos sobre fondo claro
+
+---
 
 3.2 Tipografía
 
-  ---------------------- ------------------------------------------------
-  **Elemento**           **Detalle**
+---
 
-  Familia                Inter (Google Fonts)
+**Elemento** **Detalle**
 
-  Tamaño base            18px (1rem)
+Familia Inter (Google Fonts)
 
-  Peso por defecto       400 (Regular)
+Tamaño base 18px (1rem)
 
-  Interlineado           1.6
+Peso por defecto 400 (Regular)
 
-  Escalas heading        H1: 36pt, H2: 28pt, H3: 24pt
-  ---------------------- ------------------------------------------------
+Interlineado 1.6
+
+Escalas heading H1: 36pt, H2: 28pt, H3: 24pt
+
+---
 
 4\. Header (Cabecera Fija)
 
@@ -190,19 +200,21 @@ El header es un elemento fijo (position: fixed) con z-index 1000, siempre visibl
 
 4.1 Estructura del Header
 
-  ---------------------- -----------------------------------------------------
-  **Elemento**           **Detalle**
+---
 
-  Posición               Fixed, top: 0, z-index: 1000
+**Elemento** **Detalle**
 
-  Fondo                  Petrol blue (#0F2A2E)
+Posición Fixed, top: 0, z-index: 1000
 
-  Logo                   \"TANK IBERICA\" (clickable, vuelve al catálogo)
+Fondo Petrol blue (#0F2A2E)
 
-  Estado scroll          Reduce padding y tamaño de iconos al hacer scroll
+Logo \"TANK IBERICA\" (clickable, vuelve al catálogo)
 
-  Banner-aware           Ajusta top cuando el banner de anuncios está activo
-  ---------------------- -----------------------------------------------------
+Estado scroll Reduce padding y tamaño de iconos al hacer scroll
+
+Banner-aware Ajusta top cuando el banner de anuncios está activo
+
+---
 
 4.2 Contacto y Redes (Desktop)
 
@@ -212,15 +224,15 @@ En escritorio, el header muestra iconos directos para cada canal de contacto: Em
 
 En móvil, los iconos se agrupan en dos menús desplegables:
 
--   Icono Smartphone: despliega Email, Teléfono, WhatsApp
+- Icono Smartphone: despliega Email, Teléfono, WhatsApp
 
--   Icono Globo: despliega WhatsApp, LinkedIn, Facebook
+- Icono Globo: despliega WhatsApp, LinkedIn, Facebook
 
 4.4 Selector de Idioma
 
--   Desktop: botones ES/EN con clase active
+- Desktop: botones ES/EN con clase active
 
--   Móvil: bandera del idioma actual, despliega la alternativa con flagcdn.com
+- Móvil: bandera del idioma actual, despliega la alternativa con flagcdn.com
 
 4.5 Botón de Cuenta
 
@@ -230,21 +242,23 @@ Botón \"Mi cuenta\" / \"My account\" con icono de usuario SVG. Al pulsar, abre 
 
 Banner opcional que aparece debajo del header con un gradiente dorado (#D4A017 a #B8860B). Controlado desde el panel de administración.
 
-  ---------------------- ------------------------------------------------
-  **Elemento**           **Detalle**
+---
 
-  Z-index                1001 (por encima del header)
+**Elemento** **Detalle**
 
-  Fondo                  Gradiente dorado (#D4A017 → #B8860B)
+Z-index 1001 (por encima del header)
 
-  Contenido              Texto bilingüe con URL opcional
+Fondo Gradiente dorado (#D4A017 → #B8860B)
 
-  Cierre                 Botón ×, descartable por el usuario
+Contenido Texto bilingüe con URL opcional
 
-  Programación           Campos desde/hasta para activación temporal
+Cierre Botón ×, descartable por el usuario
 
-  Efecto en layout       Ajusta padding del body y posición del header
-  ---------------------- ------------------------------------------------
+Programación Campos desde/hasta para activación temporal
+
+Efecto en layout Ajusta padding del body y posición del header
+
+---
 
 6\. Categorías
 
@@ -252,29 +266,31 @@ Barra horizontal de selección múltiple con scroll. Permite filtrar el catálog
 
 6.1 Categorías Disponibles
 
-  ------------------ -------------------------- --------------------------
-  **Categoría**      **Texto ES**               **Texto EN**
+---
 
-  alquiler           Alquiler                   Rental
+**Categoría** **Texto ES** **Texto EN**
 
-  venta              Venta                      Sale
+alquiler Alquiler Rental
 
-  terceros           Terceros                   Third Party
+venta Venta Sale
 
-  anunciate          Anúnciate                  Advertise
-  ------------------ -------------------------- --------------------------
+terceros Terceros Third Party
+
+anunciate Anúnciate Advertise
+
+---
 
 6.2 Comportamiento
 
--   Multi-selección: se pueden activar Alquiler, Venta y Terceros simultáneamente
+- Multi-selección: se pueden activar Alquiler, Venta y Terceros simultáneamente
 
--   Estado activo: fondo petrol-blue, texto blanco
+- Estado activo: fondo petrol-blue, texto blanco
 
--   \"Anúnciate\" abre el modal de formulario del anunciante (no filtra el catálogo)
+- \"Anúnciate\" abre el modal de formulario del anunciante (no filtra el catálogo)
 
--   Botones de scroll (◀ ▶) aparecen cuando hay overflow horizontal
+- Botones de scroll (◀ ▶) aparecen cuando hay overflow horizontal
 
--   En móvil: todas visibles en formato compacto
+- En móvil: todas visibles en formato compacto
 
 7\. Subcategorías
 
@@ -282,19 +298,19 @@ Barra dinámica de subcategorías cargada desde la hoja \'subcategorias\' de Goo
 
 7.1 Características
 
--   Contenido dinámico: subcategorías cargadas desde Google Sheets
+- Contenido dinámico: subcategorías cargadas desde Google Sheets
 
--   Filtrado por categorías activas
+- Filtrado por categorías activas
 
--   Selección única dentro del contexto de categoría
+- Selección única dentro del contexto de categoría
 
--   Estado activo: fondo blanco, texto petrol-blue
+- Estado activo: fondo blanco, texto petrol-blue
 
--   Texto en mayúsculas (desktop), normal (móvil)
+- Texto en mayúsculas (desktop), normal (móvil)
 
--   Botones de scroll para overflow
+- Botones de scroll para overflow
 
--   Al seleccionar, actualiza filtros dinámicos y el catálogo
+- Al seleccionar, actualiza filtros dinámicos y el catálogo
 
 8\. Sistema de Filtros
 
@@ -302,49 +318,53 @@ El sistema de filtros combina filtros estáticos (siempre visibles) con filtros 
 
 8.1 Filtros Estáticos
 
-  ------------------ -------------------------- ---------------------------------------------------
-  **Filtro**         **Tipo**                   **Rango / Opciones**
+---
 
-  Precio             Dual-range slider          0€ -- 200.000€ (paso: 100€)
+**Filtro** **Tipo** **Rango / Opciones**
 
-  Marca              Dropdown                   Scania, Volvo, Mercedes, MAN, DAF, Iveco, Renault
+Precio Dual-range slider 0€ -- 200.000€ (paso: 100€)
 
-  Año                Dual-range slider          1900 -- 2024
-  ------------------ -------------------------- ---------------------------------------------------
+Marca Dropdown Scania, Volvo, Mercedes, MAN, DAF, Iveco, Renault
+
+Año Dual-range slider 1900 -- 2024
+
+---
 
 8.2 Filtros Dinámicos
 
 Cargados desde la hoja \'filtros\' de Google Sheets. Solo se muestran los que tienen estado \"publicado\" y corresponden a la subcategoría activa. Soportan etiquetas bilingües y unidades de medida.
 
-  ------------------ -------------------------- ---------------------------------
-  **Tipo**           **Componente UI**          **Descripción**
+---
 
-  caja               Input de texto             Campo de texto libre
+**Tipo** **Componente UI** **Descripción**
 
-  desplegable        Select dropdown            Lista de opciones únicas
+caja Input de texto Campo de texto libre
 
-  desplegable_tick   Dropdown con checkboxes    Selección múltiple en dropdown
+desplegable Select dropdown Lista de opciones únicas
 
-  tick               Grupo de checkboxes        Opciones de marcado múltiple
+desplegable_tick Dropdown con checkboxes Selección múltiple en dropdown
 
-  slider             Range slider               Valor numérico con rango
+tick Grupo de checkboxes Opciones de marcado múltiple
 
-  calc               Campo calculado            Valor derivado de otros filtros
-  ------------------ -------------------------- ---------------------------------
+slider Range slider Valor numérico con rango
+
+calc Campo calculado Valor derivado de otros filtros
+
+---
 
 8.3 Filtros Extra y Ocultos
 
--   Filtros Extra: visibilidad condicional basada en otras selecciones
+- Filtros Extra: visibilidad condicional basada en otras selecciones
 
--   Filtros Ocultar: ocultos en la vista principal del usuario
+- Filtros Ocultar: ocultos en la vista principal del usuario
 
--   Ambos tipos se controlan mediante campos específicos en la hoja de Google Sheets
+- Ambos tipos se controlan mediante campos específicos en la hoja de Google Sheets
 
 8.4 Indicadores Visuales
 
--   Fade en los bordes cuando hay contenido fuera de vista (scroll)
+- Fade en los bordes cuando hay contenido fuera de vista (scroll)
 
--   Alineación responsiva con el padding del header
+- Alineación responsiva con el padding del header
 
 9\. Controles del Catálogo
 
@@ -352,41 +372,43 @@ Barra sticky de controles que permanece visible al hacer scroll. Permite gestion
 
 9.1 Grupo Izquierdo
 
--   Botón Menú: toggle de visibilidad de categorías, subcategorías y filtros. Desktop muestra texto \"Menú\" + icono ojo; móvil solo icono.
+- Botón Menú: toggle de visibilidad de categorías, subcategorías y filtros. Desktop muestra texto \"Menú\" + icono ojo; móvil solo icono.
 
--   Buscador: input de texto en desktop; icono + dropdown en móvil. Búsqueda en marca, modelo y descripción. Tiempo real, case-insensitive.
+- Buscador: input de texto en desktop; icono + dropdown en móvil. Búsqueda en marca, modelo y descripción. Tiempo real, case-insensitive.
 
 9.2 Grupo Central
 
--   Contador de resultados: \"X vehículos\" / \"X vehicles\"
+- Contador de resultados: \"X vehículos\" / \"X vehicles\"
 
--   Botón Solicitar: abre el modal de demanda del comprador
+- Botón Solicitar: abre el modal de demanda del comprador
 
 9.3 Grupo Derecho
 
--   Favoritos: icono corazón con badge contador
+- Favoritos: icono corazón con badge contador
 
--   Vista: toggle grid/lista
+- Vista: toggle grid/lista
 
--   Ordenar: dropdown con 6 opciones
+- Ordenar: dropdown con 6 opciones
 
 9.4 Opciones de Ordenación
 
-  ---------------------- ------------------------------------------------
-  **Elemento**           **Detalle**
+---
 
-  Precio ↑               Precio ascendente (menor a mayor)
+**Elemento** **Detalle**
 
-  Precio ↓               Precio descendente (mayor a menor)
+Precio ↑ Precio ascendente (menor a mayor)
 
-  Año ↑                  Año ascendente (más antiguo primero)
+Precio ↓ Precio descendente (mayor a menor)
 
-  Año ↓                  Año descendente (más nuevo primero)
+Año ↑ Año ascendente (más antiguo primero)
 
-  Marca A-Z              Marca alfabética ascendente
+Año ↓ Año descendente (más nuevo primero)
 
-  Marca Z-A              Marca alfabética descendente
-  ---------------------- ------------------------------------------------
+Marca A-Z Marca alfabética ascendente
+
+Marca Z-A Marca alfabética descendente
+
+---
 
 10\. Catálogo / Rejilla de Vehículos
 
@@ -394,37 +416,39 @@ Barra sticky de controles que permanece visible al hacer scroll. Permite gestion
 
 Distribución responsiva de tarjetas en cuadrícula:
 
-  ------------------------- ------------------------------------------------
-  **Elemento**              **Detalle**
+---
 
-  Desktop (\>1024px)        4 columnas
+**Elemento** **Detalle**
 
-  Tablet (768--1024px)      3 columnas
+Desktop (\>1024px) 4 columnas
 
-  Móvil (480--768px)        2 columnas
+Tablet (768--1024px) 3 columnas
 
-  Móvil pequeño (\<480px)   1 columna
-  ------------------------- ------------------------------------------------
+Móvil (480--768px) 2 columnas
+
+Móvil pequeño (\<480px) 1 columna
+
+---
 
 10.2 Componentes de la Tarjeta
 
--   Carrusel de imágenes con indicadores (dots)
+- Carrusel de imágenes con indicadores (dots)
 
--   Badges de categoría (Alquiler/Venta/Terceros)
+- Badges de categoría (Alquiler/Venta/Terceros)
 
--   Título: marca + modelo
+- Título: marca + modelo
 
--   Año y ubicación
+- Año y ubicación
 
--   Precio (venta o alquiler/mes)
+- Precio (venta o alquiler/mes)
 
--   Botón favorito (corazón)
+- Botón favorito (corazón)
 
--   Botón \"Ver detalles\"
+- Botón \"Ver detalles\"
 
--   Hover: elevación y sombra
+- Hover: elevación y sombra
 
--   Lazy loading para imágenes
+- Lazy loading para imágenes
 
 10.3 Vista Lista
 
@@ -432,17 +456,17 @@ Formato de tabla con columnas ordenables: Imagen, Marca, Modelo, Año, Precio, U
 
 10.4 Lógica de Filtrado
 
--   Multi-categoría: muestra vehículos que coincidan con CUALQUIER categoría activa (OR)
+- Multi-categoría: muestra vehículos que coincidan con CUALQUIER categoría activa (OR)
 
--   Subcategoría: filtra dentro de categorías activas
+- Subcategoría: filtra dentro de categorías activas
 
--   Precio/Año: filtrado por rango
+- Precio/Año: filtrado por rango
 
--   Marca: coincidencia exacta
+- Marca: coincidencia exacta
 
--   Filtros dinámicos: lógica específica por tipo
+- Filtros dinámicos: lógica específica por tipo
 
--   Modo \"Solo Alquiler\": manejo especial para vista exclusiva de alquiler
+- Modo \"Solo Alquiler\": manejo especial para vista exclusiva de alquiler
 
 11\. Modal de Detalle del Vehículo
 
@@ -450,53 +474,55 @@ Superposición a pantalla completa (overlay) con dos secciones principales: gale
 
 11.1 Galería (Izquierda / Superior)
 
--   Imagen principal grande
+- Imagen principal grande
 
--   Tira de miniaturas (scroll horizontal)
+- Tira de miniaturas (scroll horizontal)
 
--   Flechas de navegación (← →)
+- Flechas de navegación (← →)
 
--   Indicadores (dots) de imagen actual
+- Indicadores (dots) de imagen actual
 
--   Click en miniatura cambia imagen principal
+- Click en miniatura cambia imagen principal
 
 11.2 Panel de Información (Derecha / Inferior)
 
--   Título + Precio (misma línea)
+- Título + Precio (misma línea)
 
--   Badge de categoría + Ubicación
+- Badge de categoría + Ubicación
 
--   Disclaimer para categoría \"Terceros\"
+- Disclaimer para categoría \"Terceros\"
 
--   Grid de características (3 columnas, responsivo)
+- Grid de características (3 columnas, responsivo)
 
--   Descripción bilingüe
+- Descripción bilingüe
 
--   Botón Contactar (abre modal contacto)
+- Botón Contactar (abre modal contacto)
 
--   Botón Favorito
+- Botón Favorito
 
--   Botón Compartir (copia URL al portapapeles)
+- Botón Compartir (copia URL al portapapeles)
 
 11.3 Cierre y Layout
 
--   Botón ×: esquina superior derecha (desktop), centro superior (móvil)
+- Botón ×: esquina superior derecha (desktop), centro superior (móvil)
 
--   Contenido scrollable con scrollbar oculta
+- Contenido scrollable con scrollbar oculta
 
 12\. Modal de Contacto
 
 Modal con 3 opciones de contacto directo, cada una con icono SVG grande y datos de contacto.
 
-  ---------------------- ---------------------------------------------------------------------------
-  **Elemento**           **Detalle**
+---
 
-  Email                  Enlace mailto con referencia del vehículo en asunto/cuerpo
+**Elemento** **Detalle**
 
-  Teléfono               Enlace tel: para llamada directa
+Email Enlace mailto con referencia del vehículo en asunto/cuerpo
 
-  WhatsApp               Enlace wa.me con mensaje pre-rellenado incluyendo referencia del vehículo
-  ---------------------- ---------------------------------------------------------------------------
+Teléfono Enlace tel: para llamada directa
+
+WhatsApp Enlace wa.me con mensaje pre-rellenado incluyendo referencia del vehículo
+
+---
 
 Efectos hover y botón de cierre (×).
 
@@ -506,29 +532,31 @@ Título: \"Accede o Regístrate\" / \"Log In or Register\". Ofrece 5 proveedores
 
 13.1 Proveedores
 
-  ------------------ ---------------------------- --------------------------
-  **Proveedor**      **Icono**                    **Método**
+---
 
-  Google             Logo coloreado (4 colores)   OAuth 2.0
+**Proveedor** **Icono** **Método**
 
-  Apple              Logo negro                   Sign in with Apple
+Google Logo coloreado (4 colores) OAuth 2.0
 
-  Microsoft          Logo Windows                 Microsoft Identity
+Apple Logo negro Sign in with Apple
 
-  Teléfono           Icono teléfono               SMS/OTP
+Microsoft Logo Windows Microsoft Identity
 
-  Email              Icono sobre                  Enlace mágico / código
-  ------------------ ---------------------------- --------------------------
+Teléfono Icono teléfono SMS/OTP
+
+Email Icono sobre Enlace mágico / código
+
+---
 
 13.2 Layout
 
--   Grid: 5 columnas (desktop) → 3 (tablet) → 2 (móvil)
+- Grid: 5 columnas (desktop) → 3 (tablet) → 2 (móvil)
 
--   Hover: elevación, escala, cambio de color de borde
+- Hover: elevación, escala, cambio de color de borde
 
--   Divisor: \"o continúa con\" / \"or continue with\"
+- Divisor: \"o continúa con\" / \"or continue with\"
 
--   Campos de input (ocultos hasta seleccionar proveedor)
+- Campos de input (ocultos hasta seleccionar proveedor)
 
 14\. Modal Anúnciate (Formulario del Anunciante)
 
@@ -536,47 +564,49 @@ Formulario extenso en grid de 4 columnas (responsivo: 2 tablet, 1 móvil) para q
 
 14.1 Secciones del Formulario
 
-  -------------------------- ---------------------------------------------------------------
-  **Elemento**               **Detalle**
+---
 
-  Información del Vehículo   Marca, modelo, año, matrícula, km, precio
+**Elemento** **Detalle**
 
-  Ubicación                  Provincia, localidad
+Información del Vehículo Marca, modelo, año, matrícula, km, precio
 
-  Características            Subcategoría, combustible, potencia, ejes, capacidad
+Ubicación Provincia, localidad
 
-  Fotos                      Upload area (máx 10), drag-drop, preview grid, botón eliminar
+Características Subcategoría, combustible, potencia, ejes, capacidad
 
-  Contacto                   Nombre, email, teléfono, preferencia de contacto
+Fotos Upload area (máx 10), drag-drop, preview grid, botón eliminar
 
-  Aceptación                 Checkbox de términos y condiciones
-  -------------------------- ---------------------------------------------------------------
+Contacto Nombre, email, teléfono, preferencia de contacto
+
+Aceptación Checkbox de términos y condiciones
+
+---
 
 14.2 Subida de Fotos
 
--   Area de carga con borde punteado
+- Area de carga con borde punteado
 
--   Icono + texto de instrucciones
+- Icono + texto de instrucciones
 
--   Recomendaciones: formato, tamaño, calidad
+- Recomendaciones: formato, tamaño, calidad
 
--   Preview grid con botón de eliminar individual
+- Preview grid con botón de eliminar individual
 
--   Selección múltiple de archivos
+- Selección múltiple de archivos
 
--   Máximo 10 fotos por anuncio
+- Máximo 10 fotos por anuncio
 
 14.3 Validación
 
--   Campos obligatorios marcados con \*
+- Campos obligatorios marcados con \*
 
--   Validación de formato email
+- Validación de formato email
 
--   Validación de formato teléfono
+- Validación de formato teléfono
 
--   Aceptación de términos requerida
+- Aceptación de términos requerida
 
--   Botón submit centrado, max-width 300px
+- Botón submit centrado, max-width 300px
 
 15\. Modal Solicitar (Formulario de Demanda)
 
@@ -584,23 +614,25 @@ Formulario para compradores que buscan vehículos específicos. Grid de 4 column
 
 15.1 Secciones
 
-  -------------------------- ------------------------------------------------------------------------
-  **Elemento**               **Detalle**
+---
 
-  Tipo de Vehículo           Subcategoría, marca preferida
+**Elemento** **Detalle**
 
-  Especificaciones           Año (dual slider 1900--2024), precio (dual slider 0--200k€), km máximo
+Tipo de Vehículo Subcategoría, marca preferida
 
-  Características Deseadas   Combustible, potencia, ejes, capacidad (opcionales)
+Especificaciones Año (dual slider 1900--2024), precio (dual slider 0--200k€), km máximo
 
-  Uso Previsto               Textarea para descripción libre
+Características Deseadas Combustible, potencia, ejes, capacidad (opcionales)
 
-  Contacto                   Nombre, email, teléfono
+Uso Previsto Textarea para descripción libre
 
-  Preferencia de Contacto    Checkboxes: Email, Teléfono, WhatsApp
+Contacto Nombre, email, teléfono
 
-  Aceptación                 Checkbox de términos
-  -------------------------- ------------------------------------------------------------------------
+Preferencia de Contacto Checkboxes: Email, Teléfono, WhatsApp
+
+Aceptación Checkbox de términos
+
+---
 
 15.2 Dual-Range Sliders
 
@@ -612,41 +644,45 @@ Modal informativo para funcionalidades en desarrollo. Muestra el título \"Funci
 
 17\. Sistema de Favoritos
 
-  ---------------------- -----------------------------------------------------------------------
-  **Elemento**           **Detalle**
+---
 
-  Icono                  Corazón en tarjetas del catálogo y modal de detalle
+**Elemento** **Detalle**
 
-  Contador               Badge numérico en el botón de favoritos del toolbar
+Icono Corazón en tarjetas del catálogo y modal de detalle
 
-  Almacenamiento         localStorage (persistencia server-side requiere autenticación)
+Contador Badge numérico en el botón de favoritos del toolbar
 
-  Toggle                 Click alterna añadir/quitar
+Almacenamiento localStorage (persistencia server-side requiere autenticación)
 
-  Sin sesión             Muestra notificación: \"Debes iniciar sesión para guardar favoritos\"
+Toggle Click alterna añadir/quitar
 
-  Acción notif.          Botón Login que abre modal de cuenta
-  ---------------------- -----------------------------------------------------------------------
+Sin sesión Muestra notificación: \"Debes iniciar sesión para guardar favoritos\"
+
+Acción notif. Botón Login que abre modal de cuenta
+
+---
 
 18\. Footer
 
 Pie de página con información corporativa, enlaces de navegación y redes sociales. Declarado en JavaScript a partir de la línea \~10395.
 
-  ---------------------- ------------------------------------------------
-  **Elemento**           **Detalle**
+---
 
-  Empresa                Tank Iberica S.L.
+**Elemento** **Detalle**
 
-  Enlaces                Noticias, Sobre Nosotros, Legal, Contacto
+Empresa Tank Iberica S.L.
 
-  Redes Sociales         Iconos SVG con enlaces externos
+Enlaces Noticias, Sobre Nosotros, Legal, Contacto
 
-  Newsletter             Formulario de suscripción
+Redes Sociales Iconos SVG con enlaces externos
 
-  Copyright              Aviso legal de derechos
+Newsletter Formulario de suscripción
 
-  Responsivo             Layout apilado en móvil
-  ---------------------- ------------------------------------------------
+Copyright Aviso legal de derechos
+
+Responsivo Layout apilado en móvil
+
+---
 
 19\. Secciones Noticias, Sobre Nosotros, Legal
 
@@ -654,31 +690,31 @@ Tres secciones con estructura similar: overlay a página completa, activadas des
 
 19.1 Noticias
 
--   Activada vía enlace del footer
+- Activada vía enlace del footer
 
--   Header con botón atrás + título
+- Header con botón atrás + título
 
--   Estado: \"En desarrollo\" (placeholder)
+- Estado: \"En desarrollo\" (placeholder)
 
--   Estructura de datos preparada: id, title, date, category, image, content, hashtags
+- Estructura de datos preparada: id, title, date, category, image, content, hashtags
 
--   Sistema de comentarios con respuestas anidadas
+- Sistema de comentarios con respuestas anidadas
 
--   Filtrado por hashtags
+- Filtrado por hashtags
 
--   Modal de detalle de noticia
+- Modal de detalle de noticia
 
 19.2 Sobre Nosotros
 
--   Placeholder: \"Información sobre Tank Iberica\"
+- Placeholder: \"Información sobre Tank Iberica\"
 
--   Estructura básica con header y contenido
+- Estructura básica con header y contenido
 
 19.3 Legal
 
--   Placeholder: \"Información legal\"
+- Placeholder: \"Información legal\"
 
--   Misma estructura que Sobre Nosotros
+- Misma estructura que Sobre Nosotros
 
 20\. Modal de Suscripción
 
@@ -686,17 +722,17 @@ Formulario de suscripción a newsletter con campo email y checkboxes de preferen
 
 Preferencias Disponibles
 
--   Web
+- Web
 
--   Prensa
+- Prensa
 
--   Boletín
+- Boletín
 
--   Destacados
+- Destacados
 
--   Eventos
+- Eventos
 
--   Responsabilidad
+- Responsabilidad
 
 Botón de envío y cierre (×).
 
@@ -704,21 +740,23 @@ Botón de envío y cierre (×).
 
 Sistema de mensajería integrado para comunicación directa con el administrador. Declarado a partir de la línea \~11977.
 
-  ---------------------- ------------------------------------------------
-  **Elemento**           **Detalle**
+---
 
-  Ubicación              Botón flotante esquina inferior derecha
+**Elemento** **Detalle**
 
-  Ventana                Lista de conversaciones + vista de mensajes
+Ubicación Botón flotante esquina inferior derecha
 
-  Envío                  Campo de texto + botón enviar
+Ventana Lista de conversaciones + vista de mensajes
 
-  Indicadores            Mensajes no leídos
+Envío Campo de texto + botón enviar
 
-  Actualización          Manual (refresh) --- tiempo real pendiente
+Indicadores Mensajes no leídos
 
-  Requisito              Autenticación de usuario requerida
-  ---------------------- ------------------------------------------------
+Actualización Manual (refresh) --- tiempo real pendiente
+
+Requisito Autenticación de usuario requerida
+
+---
 
 22\. Sistema Bilingüe (ES/EN)
 
@@ -726,27 +764,27 @@ Todos los elementos de texto utilizan atributos data-es y data-en para almacenar
 
 22.1 Mecanismo
 
--   Atributos HTML: data-es=\"texto español\" data-en=\"english text\"
+- Atributos HTML: data-es=\"texto español\" data-en=\"english text\"
 
--   Función de traducción recorre todos los elementos con estos atributos
+- Función de traducción recorre todos los elementos con estos atributos
 
--   Idioma almacenado en localStorage
+- Idioma almacenado en localStorage
 
--   Selector de idioma en header (desktop: botones, móvil: banderas)
+- Selector de idioma en header (desktop: botones, móvil: banderas)
 
 22.2 Alcance
 
--   Labels, botones, placeholders de formularios
+- Labels, botones, placeholders de formularios
 
--   Títulos de modales y secciones
+- Títulos de modales y secciones
 
--   Mensajes de sistema y notificaciones
+- Mensajes de sistema y notificaciones
 
--   Categorías y subcategorías
+- Categorías y subcategorías
 
--   Opciones de filtros
+- Opciones de filtros
 
--   Descripciones de vehículos
+- Descripciones de vehículos
 
 23\. Diseño Responsivo
 
@@ -754,33 +792,35 @@ Enfoque mobile-first con 4 breakpoints principales. Requisito crítico P0-01: si
 
 23.1 Breakpoints
 
-  ---------------- ------------------ ------------------- ---------------------------------------
-  **Breakpoint**   **Dispositivo**    **Columnas Grid**   **Adaptaciones Clave**
+---
 
-  360px            Móvil crítico      1                   Sin scroll horizontal, padding mínimo
+**Breakpoint** **Dispositivo** **Columnas Grid** **Adaptaciones Clave**
 
-  480px            Móvil pequeño      1--2                Botones 28px, fuentes reducidas
+360px Móvil crítico 1 Sin scroll horizontal, padding mínimo
 
-  768px            Tablet             2--3                Formularios 2 col, menús dropdown
+480px Móvil pequeño 1--2 Botones 28px, fuentes reducidas
 
-  1024px           Desktop            3--4                Layout completo, texto + iconos
-  ---------------- ------------------ ------------------- ---------------------------------------
+768px Tablet 2--3 Formularios 2 col, menús dropdown
+
+1024px Desktop 3--4 Layout completo, texto + iconos
+
+---
 
 23.2 Adaptaciones Principales
 
--   Header: iconos colapsados en menús desplegables; logo más pequeño
+- Header: iconos colapsados en menús desplegables; logo más pequeño
 
--   Controles catálogo: solo iconos sin texto; botones 28--32px
+- Controles catálogo: solo iconos sin texto; botones 28--32px
 
--   Tarjetas: columnas reducidas progresivamente
+- Tarjetas: columnas reducidas progresivamente
 
--   Modales: full-width en móvil; formularios 1 columna
+- Modales: full-width en móvil; formularios 1 columna
 
--   Filtros: scroll horizontal con fade indicators
+- Filtros: scroll horizontal con fade indicators
 
--   Touch targets: mínimo 32×32px
+- Touch targets: mínimo 32×32px
 
--   Detail modal: galería full-width arriba, info abajo
+- Detail modal: galería full-width arriba, info abajo
 
 24\. Integraciones y Fuentes de Datos
 
@@ -798,64 +838,70 @@ Autenticación de usuarios. CLIENT_ID configurado: 928575372421-rlq17ptufeppbkqs
 
 24.4 Servicios Externos
 
-  ---------------------- ------------------------------------------------
-  **Elemento**           **Detalle**
+---
 
-  flagcdn.com            Imágenes de banderas para selector de idioma
+**Elemento** **Detalle**
 
-  wa.me                  Links directos a WhatsApp
+flagcdn.com Imágenes de banderas para selector de idioma
 
-  mailto:                Composición de emails con datos del vehículo
+wa.me Links directos a WhatsApp
 
-  tel:                   Llamadas directas
-  ---------------------- ------------------------------------------------
+mailto: Composición de emails con datos del vehículo
+
+tel: Llamadas directas
+
+---
 
 25\. Resumen de Modales
 
 La aplicación utiliza un sistema de modales con overlay (rgba(0,0,0,0.7)), z-index 2000+, cierre con botón × y contenido scrollable.
 
-  ------------------ -------------------- --------------------------------------- -------------------------------------
-  **Modal**          **ID**               **Contenido**                           **Trigger**
+---
 
-  Detalle Vehículo   vehicleDetailModal   Galería + info completa del vehículo    Click \"Ver detalles\" / fila lista
+**Modal** **ID** **Contenido** **Trigger**
 
-  Contacto           contactModal         3 opciones: Email, Teléfono, WhatsApp   Botón contactar en detalle
+Detalle Vehículo vehicleDetailModal Galería + info completa del vehículo Click \"Ver detalles\" / fila lista
 
-  Cuenta             accountModal         5 proveedores de autenticación          Botón \"Mi cuenta\"
+Contacto contactModal 3 opciones: Email, Teléfono, WhatsApp Botón contactar en detalle
 
-  Anúnciate          advertiseModal       Formulario completo para anunciantes    Categoría \"Anúnciate\"
+Cuenta accountModal 5 proveedores de autenticación Botón \"Mi cuenta\"
 
-  Solicitar          demandModal          Formulario de demanda del comprador     Botón \"Solicitar\"
+Anúnciate advertiseModal Formulario completo para anunciantes Categoría \"Anúnciate\"
 
-  Dev                devModal             Info de funcionalidad en desarrollo     Funciones no implementadas
+Solicitar demandModal Formulario de demanda del comprador Botón \"Solicitar\"
 
-  Favoritos          favNotification      Aviso para iniciar sesión               Favorito sin autenticación
+Dev devModal Info de funcionalidad en desarrollo Funciones no implementadas
 
-  Suscripción        subscribeModal       Newsletter con preferencias             Enlace en footer
-  ------------------ -------------------- --------------------------------------- -------------------------------------
+Favoritos favNotification Aviso para iniciar sesión Favorito sin autenticación
+
+Suscripción subscribeModal Newsletter con preferencias Enlace en footer
+
+---
 
 26\. Funcionalidades Pendientes
 
 Las siguientes funcionalidades están preparadas estructuralmente pero aún no están completamente implementadas:
 
-  --------------------------- -------------------------------------------------------------------------------------------------
-  **Elemento**                **Detalle**
+---
 
-  Sección de Noticias         Marcada \"En desarrollo\". Estructura de datos preparada con sistema de comentarios y hashtags.
+**Elemento** **Detalle**
 
-  Sección Sobre Nosotros      Placeholder con contenido pendiente.
+Sección de Noticias Marcada \"En desarrollo\". Estructura de datos preparada con sistema de comentarios y hashtags.
 
-  Sección Legal               Placeholder con contenido pendiente.
+Sección Sobre Nosotros Placeholder con contenido pendiente.
 
-  Chat tiempo real            Actualmente con refresco manual. Falta implementación WebSocket/polling.
+Sección Legal Placeholder con contenido pendiente.
 
-  Service Worker              Referenciado en manifest pero no implementado aún.
+Chat tiempo real Actualmente con refresco manual. Falta implementación WebSocket/polling.
 
-  Modo Offline                PWA preparada pero requiere service worker funcional.
+Service Worker Referenciado en manifest pero no implementado aún.
 
-  Notificaciones Push         Infraestructura lista, implementación pendiente.
+Modo Offline PWA preparada pero requiere service worker funcional.
 
-  Moderación de comentarios   Solo accesible desde panel admin, no desde interfaz pública.
-  --------------------------- -------------------------------------------------------------------------------------------------
+Notificaciones Push Infraestructura lista, implementación pendiente.
 
-*Fin del documento --- Tank Iberica --- Documentación Funcional index.html*
+Moderación de comentarios Solo accesible desde panel admin, no desde interfaz pública.
+
+---
+
+_Fin del documento --- Tank Iberica --- Documentación Funcional index.html_

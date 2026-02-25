@@ -1,3 +1,5 @@
+> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
+
 # Tank Iberica — Inventario completo de elementos UI
 
 ## PARTE 1: WEB PUBLICA
