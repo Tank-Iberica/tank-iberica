@@ -24,8 +24,20 @@ export interface AIProvider {
   endpoint: string
 }
 
+export interface AIImageBlock {
+  type: 'image'
+  source: { type: 'base64'; media_type: string; data: string }
+}
+
+export interface AITextBlock {
+  type: 'text'
+  text: string
+}
+
+export type AIContentBlock = AIImageBlock | AITextBlock
+
 export interface AIRequest {
-  messages: Array<{ role: string; content: string }>
+  messages: Array<{ role: string; content: string | AIContentBlock[] }>
   maxTokens: number
   system?: string
 }
@@ -125,14 +137,31 @@ async function callOpenAI(
 
   try {
     // Convert Anthropic format to OpenAI format
-    const messages: Array<{ role: string; content: string }> = []
+    const messages: Array<{ role: string; content: string | unknown[] }> = []
 
     if (request.system) {
       messages.push({ role: 'system', content: request.system })
     }
 
     for (const msg of request.messages) {
-      messages.push({ role: msg.role, content: msg.content })
+      if (typeof msg.content === 'string') {
+        messages.push({ role: msg.role, content: msg.content })
+      } else {
+        // Convert multimodal blocks to OpenAI format
+        const parts: unknown[] = msg.content.map((block) => {
+          if (block.type === 'text') {
+            return { type: 'text', text: block.text }
+          }
+          // image block → OpenAI image_url format
+          return {
+            type: 'image_url',
+            image_url: {
+              url: `data:${block.source.media_type};base64,${block.source.data}`,
+            },
+          }
+        })
+        messages.push({ role: msg.role, content: parts })
+      }
     }
 
     const response = await fetchWithRetry(
