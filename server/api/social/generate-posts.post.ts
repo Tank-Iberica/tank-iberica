@@ -10,6 +10,7 @@
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { defineEventHandler, readBody, createError } from 'h3'
+import { getSiteUrl } from '~/server/utils/siteConfig'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -243,7 +244,7 @@ export default defineEventHandler(async (event): Promise<GeneratePostsResponse> 
   const bestImage = vehicle.vehicle_images?.[0]?.url || null
 
   // 7. Generate content per platform
-  const baseUrl = 'https://tracciona.com'
+  const baseUrl = getSiteUrl()
   const vehicleUrl = `${baseUrl}/vehiculo/${vehicle.slug}`
 
   const platforms: { platform: Platform; content: Record<string, string> }[] = [

@@ -9,6 +9,7 @@
  */
 import { serverSupabaseUser } from '#supabase/server'
 import { defineEventHandler, readBody, createError } from 'h3'
+import { callAI } from '~/server/services/aiProvider'
 
 interface GenerateDescriptionBody {
   brand: string
@@ -42,15 +43,7 @@ export default defineEventHandler(async (event): Promise<GenerateDescriptionResp
     throw createError({ statusCode: 400, message: 'model is required' })
   }
 
-  // 3. Get API key
-  const config = useRuntimeConfig()
-  const apiKey = config.anthropicApiKey
-
-  if (!apiKey) {
-    throw createError({ statusCode: 500, message: 'Anthropic API key not configured' })
-  }
-
-  // 4. Build prompt
+  // 3. Build prompt
   const vehicleInfo = [
     `Marca: ${body.brand}`,
     `Modelo: ${body.model}`,
@@ -87,35 +80,14 @@ ${vehicleInfo}${attributesText}
 
 Responde SOLO con la descripcion, sin titulos ni encabezados.`
 
-  // 5. Call Claude Haiku API
+  // 4. Call AI with failover (Anthropic primary, OpenAI fallback)
   try {
-    const response = await $fetch<{
-      content: Array<{ type: string; text: string }>
-    }>('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
-      body: {
-        model: 'claude-3-5-haiku-20241022',
-        max_tokens: 500,
-        messages: [
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-      },
-    })
-
-    const text = response?.content?.[0]?.text
-    if (!text) {
-      throw new Error('Empty response from Claude')
-    }
-
-    return { description: text.trim() }
+    const response = await callAI(
+      { messages: [{ role: 'user', content: prompt }], maxTokens: 500 },
+      'realtime',
+      'fast',
+    )
+    return { description: response.text.trim() }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'AI generation failed'
     throw createError({

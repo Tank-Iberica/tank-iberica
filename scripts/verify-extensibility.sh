@@ -17,4 +17,12 @@ echo "3. Dominios hardcodeados:"
 grep -rn 'tracciona\.com\|tank-iberica\.com' app/ server/ --include='*.ts' --include='*.vue' | grep -v node_modules | head -10
 echo ""
 
+echo "4. Hardcoded AI model strings:"
+grep -rn "claude-3\|claude-sonnet\|claude-haiku\|gpt-4o" server/ --include='*.ts' | grep -v node_modules | grep -v aiConfig.ts | head -10
+echo ""
+
+echo "5. Hardcoded Supabase project ref:"
+grep -rn "gmnrfuzekbwyzkgsaftv" . --include='*.ts' --include='*.yml' --include='*.yaml' | grep -v node_modules | head -10
+echo ""
+
 echo "Si alguna seccion muestra resultados, hay acoplamiento que corregir."

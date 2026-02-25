@@ -215,6 +215,8 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
 
   // 7. Call Claude Vision API for document analysis
   // ---------------------------------------------------------------
+  // TODO: When activating Claude Vision, replace mock with callAI('background', 'vision')
+  // ---------------------------------------------------------------
   // PLACEHOLDER: Replace this block with the actual Claude Vision API
   // call when API keys are configured.
   //

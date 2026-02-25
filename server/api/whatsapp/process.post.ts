@@ -14,6 +14,8 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { defineEventHandler, readBody, createError, getHeader, getRequestIP } from 'h3'
 import Anthropic from '@anthropic-ai/sdk'
+import { AI_MODELS } from '~/server/utils/aiConfig'
+import { getSiteUrl } from '~/server/utils/siteConfig'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -167,7 +169,11 @@ async function uploadToCloudinary(
 }
 
 /** Build the Claude Vision prompt */
-function buildClaudePrompt(textContent: string | null): string {
+function buildClaudePrompt(textContent: string | null, categoryList?: string): string {
+  const cats =
+    categoryList ||
+    "'Cabezas tractoras', 'Camiones', 'Semirremolques', 'Remolques', 'Cisternas', 'Furgonetas', 'Otros'"
+
   const textSection = textContent
     ? `\n\nThe dealer also sent this text message with the images:\n"${textContent}"\n\nUse this text to supplement your analysis — it may contain brand, model, year, plate, or other details.`
     : ''
@@ -181,7 +187,7 @@ Return a JSON object with EXACTLY this structure (no markdown, no code fences, j
   "brand": "string -- vehicle manufacturer (e.g. Renault, Volvo, Scania, MAN, DAF, Mercedes-Benz)",
   "model": "string -- specific model name/number",
   "year": null or number,
-  "category_name_es": "string -- main category in Spanish: one of 'Cabezas tractoras', 'Camiones', 'Semirremolques', 'Remolques', 'Cisternas', 'Furgonetas', 'Otros'",
+  "category_name_es": "string -- main category in Spanish: one of ${cats}",
   "subcategory_name_es": "string or null -- subcategory in Spanish if identifiable",
   "license_plate": "string or null -- license plate if visible in any image",
   "title_es": "string -- SEO title in Spanish (brand + model + key feature, max 70 chars)",
@@ -371,10 +377,16 @@ export default defineEventHandler(async (event) => {
       },
     ]
 
+    // Fetch category names from DB to pass to the prompt
+    const { data: categoryNamesRaw } = await supabase.from('categories').select('name_es')
+    const categoryNames = (categoryNamesRaw ?? []) as unknown as { name_es: string }[]
+    const categoryList =
+      categoryNames.length > 0 ? categoryNames.map((c) => `'${c.name_es}'`).join(', ') : undefined
+
     const claudeResponse = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
+      model: AI_MODELS.vision,
       max_tokens: 4096,
-      system: buildClaudePrompt(submission.text_content),
+      system: buildClaudePrompt(submission.text_content, categoryList),
       messages: [
         {
           role: 'user',
@@ -507,7 +519,7 @@ export default defineEventHandler(async (event) => {
     const title = analysis.title_es || `${analysis.brand} ${analysis.model}`
     await sendWhatsAppMessage(
       submission.phone_number,
-      `\u2705 Tu veh\u00EDculo ha sido procesado: ${title}. Un admin lo revisar\u00E1 pronto. Enlace: https://tracciona.com/vehiculo/${vehicleResult.slug}`,
+      `\u2705 Tu veh\u00EDculo ha sido procesado: ${title}. Un admin lo revisar\u00E1 pronto. Enlace: ${getSiteUrl()}/vehiculo/${vehicleResult.slug}`,
     )
 
     return {

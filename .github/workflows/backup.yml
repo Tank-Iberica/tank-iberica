@@ -1,52 +1,45 @@
-name: Weekly DB Backup
+name: Database Backup
 
 on:
   schedule:
-    # Every Sunday at 03:00 UTC
-    - cron: '0 3 * * 0'
+    - cron: '0 2 * * *' # Diario a las 02:00 UTC
   workflow_dispatch:
     inputs:
       backup_type:
         description: 'Backup type'
         required: false
-        default: 'weekly'
+        default: 'daily'
         type: choice
-        options:
-          - weekly
-          - manual
+        options: [daily, manual]
 
 jobs:
   backup:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Supabase CLI
-        run: npm i -g supabase
-
-      - name: Install B2 CLI
-        run: pip install b2
-
-      - name: Run weekly backup
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Install tools
+        run: |
+          npm i -g supabase
+          pip install b2
+      - name: Run backup
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_REF: gmnrfuzekbwyzkgsaftv
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
           BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
           B2_APPLICATION_KEY_ID: ${{ secrets.B2_APPLICATION_KEY_ID }}
           B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
-        run: bash scripts/backup-weekly.sh
-
-      - name: Report status
+        run: bash scripts/backup-multi-tier.sh
+      - name: Alert on failure
         if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.INFRA_ALERT_EMAIL }}
         run: |
-          echo "::error::Weekly backup failed! Check the logs above."
-          echo "Consider running a manual backup via workflow_dispatch."
+          curl -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"from\":\"backups@tracciona.com\",\"to\":\"$ALERT_EMAIL\",\"subject\":\"⚠️ Backup FAILED $(date +%Y-%m-%d)\",\"text\":\"Daily backup failed. Check GitHub Actions.\"}"

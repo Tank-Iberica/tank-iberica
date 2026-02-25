@@ -27,7 +27,7 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: 'https://tracciona.com',
+    url: process.env.SITE_URL || 'https://tracciona.com',
   },
 
   sitemap: {
@@ -191,7 +191,7 @@ export default defineNuxtConfig({
     cloudflareImagesApiToken: process.env.CLOUDFLARE_IMAGES_API_TOKEN || '',
     cloudflareImagesAccountHash: process.env.CLOUDFLARE_IMAGES_ACCOUNT_HASH || '',
     cloudflareImagesDeliveryUrl: process.env.CLOUDFLARE_IMAGES_DELIVERY_URL || '',
-    supabaseProjectRef: process.env.SUPABASE_PROJECT_REF || 'gmnrfuzekbwyzkgsaftv',
+    supabaseProjectRef: process.env.SUPABASE_PROJECT_REF || '',
     supabaseManagementApiKey: process.env.SUPABASE_MANAGEMENT_API_KEY || '',
     sentryOrgSlug: process.env.SENTRY_ORG_SLUG || '',
     sentryAuthToken: process.env.SENTRY_AUTH_TOKEN || '',
