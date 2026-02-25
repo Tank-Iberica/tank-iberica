@@ -575,6 +575,7 @@
     "since": "desde",
     "rating": "estrellas",
     "badgeFounding": "Founding Dealer",
+    "foundingBadge": "Founding Dealer 🏆",
     "badgePremium": "Premium Dealer",
     "badgeVerified": "Dealer Verificado",
     "call": "Llamar",
@@ -3175,7 +3176,28 @@
         "rollUp": "Roll-up",
         "addToCart": "Anadir",
         "order": "Realizar pedido",
-        "orderHistory": "Historial de pedidos"
+        "orderHistory": "Historial de pedidos",
+        "badge": "Nuevo servicio",
+        "heroDesc": "Dale visibilidad a tu empresa con productos de marca profesionales. Tarjetas, lonas, imanes y mas — todos personalizados con tu logo y datos.",
+        "catalogTitle": "Catalogo de productos",
+        "catalogDesc": "Selecciona el producto que te interesa y cuéntanos tus necesidades. Te contactaremos con presupuesto personalizado.",
+        "formTitle": "Solicitar informacion",
+        "formDesc": "Dinos que te interesa y nos pondremos en contacto contigo con un presupuesto a medida.",
+        "fieldProduct": "Producto de interes",
+        "productPlaceholder": "Selecciona un producto...",
+        "fieldQuantity": "Cantidad estimada",
+        "quantityPlaceholder": "Ej: 500 unidades, 2 sets...",
+        "fieldEmail": "Tu email de contacto",
+        "emailPlaceholder": "tu{'@'}empresa.com",
+        "fieldNotes": "Notas adicionales",
+        "notesPlaceholder": "Describe tus necesidades, colores preferidos, fecha estimada, etc.",
+        "submitBtn": "Enviar solicitud",
+        "successTitle": "Solicitud recibida",
+        "successDesc": "Hemos registrado tu interes. Nos pondremos en contacto contigo en un plazo de 1-2 dias habiles con un presupuesto personalizado.",
+        "sendAnother": "Enviar otra solicitud",
+        "formNote": "Sin compromiso. Te enviaremos un presupuesto sin coste.",
+        "errorRequired": "Por favor selecciona un producto e indica tu email.",
+        "errorSubmit": "Error al enviar la solicitud. Por favor intentalo de nuevo."
       },
       "upgrade": "Disponible con plan {plan}",
       "free": "Gratis",
@@ -3301,7 +3323,13 @@
   },
   "ai": {
     "badgeGenerated": "IA",
-    "badgeTranslated": "Traducido"
+    "badgeTranslated": "Traducido",
+    "disclosure": {
+      "translated": "Traducido automáticamente",
+      "generated": "Generado por IA",
+      "assisted": "Asistido por IA",
+      "tooltip": "Este contenido ha sido {type} usando inteligencia artificial"
+    }
   },
   "legalUk": {
     "pageTitle": "UK Terms & Conditions — Tracciona",

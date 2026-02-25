@@ -575,6 +575,7 @@
     "since": "since",
     "rating": "stars",
     "badgeFounding": "Founding Dealer",
+    "foundingBadge": "Founding Dealer 🏆",
     "badgePremium": "Premium Dealer",
     "badgeVerified": "Verified Dealer",
     "call": "Call",
@@ -3175,7 +3176,28 @@
         "rollUp": "Roll-up",
         "addToCart": "Add",
         "order": "Place order",
-        "orderHistory": "Order history"
+        "orderHistory": "Order history",
+        "badge": "New service",
+        "heroDesc": "Give your company visibility with professional branded products. Business cards, banners, magnets and more — all personalised with your logo and details.",
+        "catalogTitle": "Product catalog",
+        "catalogDesc": "Select the product you are interested in and tell us your needs. We will contact you with a personalised quote.",
+        "formTitle": "Request information",
+        "formDesc": "Tell us what you are interested in and we will get back to you with a tailored quote.",
+        "fieldProduct": "Product of interest",
+        "productPlaceholder": "Select a product...",
+        "fieldQuantity": "Estimated quantity",
+        "quantityPlaceholder": "E.g. 500 units, 2 sets...",
+        "fieldEmail": "Your contact email",
+        "emailPlaceholder": "you{'@'}company.com",
+        "fieldNotes": "Additional notes",
+        "notesPlaceholder": "Describe your needs, preferred colours, estimated date, etc.",
+        "submitBtn": "Send request",
+        "successTitle": "Request received",
+        "successDesc": "We have recorded your interest. We will contact you within 1-2 business days with a personalised quote.",
+        "sendAnother": "Send another request",
+        "formNote": "No commitment. We will send you a quote free of charge.",
+        "errorRequired": "Please select a product and provide your email.",
+        "errorSubmit": "Error sending the request. Please try again."
       },
       "upgrade": "Available with {plan} plan",
       "free": "Free",
@@ -3301,7 +3323,13 @@
   },
   "ai": {
     "badgeGenerated": "AI",
-    "badgeTranslated": "Translated"
+    "badgeTranslated": "Translated",
+    "disclosure": {
+      "translated": "Auto-translated",
+      "generated": "AI-generated",
+      "assisted": "AI-assisted",
+      "tooltip": "This content was {type} using artificial intelligence"
+    }
   },
   "legalUk": {
     "pageTitle": "UK Terms & Conditions — Tracciona",

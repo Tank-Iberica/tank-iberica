@@ -1,8 +1,9 @@
 <script setup lang="ts">
 /**
- * Merchandising Orders Tool
- * Browse merch catalog, preview with dealer branding, place orders.
- * Plan: Free (hook to attract engagement)
+ * Merchandising Interest Page
+ * Visual showcase of branded products + interest form.
+ * Inserts into service_requests with type='merchandising'.
+ * No cart, no payments — measures real demand first.
  */
 definePageMeta({
   layout: 'default',
@@ -11,6 +12,7 @@ definePageMeta({
 
 const { t, locale } = useI18n()
 const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 const { dealerProfile, loadDealer } = useDealerDashboard()
 
 // ---------- Types ----------
@@ -21,30 +23,13 @@ interface MerchProduct {
   name_en: string
   description_es: string
   description_en: string
-  price: number
   unit_es: string
   unit_en: string
-  image_placeholder: string
+  icon: string
+  color: string
 }
 
-interface CartItem {
-  product: MerchProduct
-  quantity: number
-}
-
-type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'
-
-interface MerchOrder {
-  id: string
-  dealer_id: string
-  items: Array<{ product_id: string; product_name: string; quantity: number; unit_price: number }>
-  total: number
-  status: OrderStatus
-  notes: string | null
-  created_at: string
-}
-
-// ---------- Product catalog (hardcoded) ----------
+// ---------- Product catalog ----------
 
 const products: MerchProduct[] = [
   {
@@ -55,94 +40,76 @@ const products: MerchProduct[] = [
       '500 unidades, papel premium 350g, barniz UV selectivo. Incluye logo, datos de contacto y QR a tu perfil.',
     description_en:
       '500 units, premium 350g paper, selective UV varnish. Includes logo, contact info and QR to your profile.',
-    price: 49,
     unit_es: '500 uds',
     unit_en: '500 pcs',
-    image_placeholder: 'business-cards',
+    icon: '🪪',
+    color: '#dbeafe',
   },
   {
     id: 'imanes-furgoneta',
     name_es: 'Imanes para furgoneta',
     name_en: 'Van magnets',
     description_es:
-      '2 unidades, 60x30cm cada uno. Resistentes a lluvia y sol. Incluyen logo, nombre y telefono.',
+      '2 unidades, 60×30 cm cada uno. Resistentes a lluvia y sol. Incluyen logo, nombre y teléfono.',
     description_en:
-      '2 units, 60x30cm each. Weather resistant. Include logo, company name and phone.',
-    price: 79,
-    unit_es: '2 uds',
-    unit_en: '2 pcs',
-    image_placeholder: 'van-magnets',
+      '2 units, 60×30 cm each. Weather resistant. Include logo, company name and phone.',
+    unit_es: '2 uds · 60×30 cm',
+    unit_en: '2 pcs · 60×30 cm',
+    icon: '🚐',
+    color: '#dcfce7',
   },
   {
     id: 'lona-feria',
     name_es: 'Lona para feria',
     name_en: 'Fair banner',
     description_es:
-      '1 unidad, 200x100cm. PVC resistente con ojales. Incluye logo, nombre, telefono y URL del perfil.',
+      '1 unidad, 200×100 cm. PVC resistente con ojales. Incluye logo, nombre, teléfono y URL del perfil.',
     description_en:
-      '1 unit, 200x100cm. Durable PVC with eyelets. Includes logo, name, phone and profile URL.',
-    price: 149,
-    unit_es: '1 ud (200x100cm)',
-    unit_en: '1 pc (200x100cm)',
-    image_placeholder: 'fair-banner',
+      '1 unit, 200×100 cm. Durable PVC with eyelets. Includes logo, name, phone and profile URL.',
+    unit_es: '1 ud · 200×100 cm',
+    unit_en: '1 pc · 200×100 cm',
+    icon: '🏳️',
+    color: '#fef9c3',
   },
   {
     id: 'pegatinas-qr',
     name_es: 'Pegatinas QR',
     name_en: 'QR stickers',
     description_es:
-      '50 unidades, 5x5cm. Vinilo resistente. QR personalizado que enlaza a tu perfil en Tracciona.',
-    description_en: '50 units, 5x5cm. Durable vinyl. Custom QR linking to your Tracciona profile.',
-    price: 29,
-    unit_es: '50 uds',
-    unit_en: '50 pcs',
-    image_placeholder: 'qr-stickers',
+      '50 unidades, 5×5 cm. Vinilo resistente. QR personalizado que enlaza a tu perfil en Tracciona.',
+    description_en: '50 units, 5×5 cm. Durable vinyl. Custom QR linking to your Tracciona profile.',
+    unit_es: '50 uds · 5×5 cm',
+    unit_en: '50 pcs · 5×5 cm',
+    icon: '📱',
+    color: '#f3e8ff',
   },
   {
     id: 'roll-up',
     name_es: 'Roll-up expositor',
     name_en: 'Roll-up display',
     description_es:
-      '1 unidad, 200x85cm. Estructura de aluminio con bolsa de transporte. Incluye logo, nombre y catalogo destacado.',
+      '1 unidad, 200×85 cm. Estructura de aluminio con bolsa de transporte. Incluye logo, nombre y catálogo destacado.',
     description_en:
-      '1 unit, 200x85cm. Aluminum structure with carrying bag. Includes logo, name and featured catalog.',
-    price: 89,
-    unit_es: '1 ud (200x85cm)',
-    unit_en: '1 pc (200x85cm)',
-    image_placeholder: 'roll-up',
+      '1 unit, 200×85 cm. Aluminum structure with carrying bag. Includes logo, name and featured catalog.',
+    unit_es: '1 ud · 200×85 cm',
+    unit_en: '1 pc · 200×85 cm',
+    icon: '📋',
+    color: '#ffe4e6',
   },
 ]
 
 // ---------- State ----------
 
-const loading = ref(false)
-const saving = ref(false)
-const error = ref<string | null>(null)
-const successMsg = ref<string | null>(null)
+const pageLoading = ref(false)
+const submitting = ref(false)
+const submitted = ref(false)
+const submitError = ref<string | null>(null)
 
-// Cart
-const cart = ref<CartItem[]>([])
-
-// Preview
-const previewProduct = ref<MerchProduct | null>(null)
-
-// Orders
-const orders = ref<MerchOrder[]>([])
-const showOrderHistory = ref(false)
-
-// ---------- Computed ----------
-
-const cartTotal = computed(() =>
-  cart.value.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
-)
-
-const cartItemCount = computed(() => cart.value.reduce((sum, item) => sum + item.quantity, 0))
-
-const dealerCompanyName = computed(() => dealerProfile.value?.company_name || 'Mi Empresa')
-const dealerPhone = computed(() => dealerProfile.value?.phone || '+34 600 000 000')
-const dealerProfileUrl = computed(() => {
-  const slug = dealerProfile.value?.slug
-  return slug ? `https://tracciona.com/dealer/${slug}` : 'https://tracciona.com'
+const form = ref({
+  product: '',
+  quantity: '',
+  email: '',
+  notes: '',
 })
 
 // ---------- Helpers ----------
@@ -159,514 +126,264 @@ function getProductUnit(product: MerchProduct): string {
   return locale.value === 'en' ? product.unit_en : product.unit_es
 }
 
-function fmt(val: number): string {
-  return new Intl.NumberFormat(locale.value === 'en' ? 'en-GB' : 'es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(val)
-}
+// ---------- Submit ----------
 
-function fmtDate(date: string): string {
-  return new Date(date).toLocaleDateString(locale.value === 'en' ? 'en-GB' : 'es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
-}
+async function submitInterest() {
+  submitError.value = null
 
-function getStatusClass(status: OrderStatus): string {
-  switch (status) {
-    case 'pending':
-      return 'order-pending'
-    case 'confirmed':
-      return 'order-confirmed'
-    case 'shipped':
-      return 'order-shipped'
-    case 'delivered':
-      return 'order-delivered'
-    case 'cancelled':
-      return 'order-cancelled'
-    default:
-      return ''
+  if (!form.value.product || !form.value.email) {
+    submitError.value = t('dashboard.tools.merchandising.errorRequired')
+    return
   }
-}
 
-function getPlaceholderIcon(type: string): string {
-  switch (type) {
-    case 'business-cards':
-      return '&#127183;'
-    case 'van-magnets':
-      return '&#128666;'
-    case 'fair-banner':
-      return '&#127988;'
-    case 'qr-stickers':
-      return '&#128242;'
-    case 'roll-up':
-      return '&#128220;'
-    default:
-      return '&#128230;'
-  }
-}
-
-// ---------- Cart operations ----------
-
-function addToCart(product: MerchProduct) {
-  const existing = cart.value.find((item) => item.product.id === product.id)
-  if (existing) {
-    existing.quantity++
-  } else {
-    cart.value.push({ product, quantity: 1 })
-  }
-  successMsg.value = null
-}
-
-function updateQuantity(productId: string, delta: number) {
-  const item = cart.value.find((i) => i.product.id === productId)
-  if (!item) return
-
-  item.quantity += delta
-  if (item.quantity <= 0) {
-    cart.value = cart.value.filter((i) => i.product.id !== productId)
-  }
-}
-
-function removeFromCart(productId: string) {
-  cart.value = cart.value.filter((i) => i.product.id !== productId)
-}
-
-function clearCart() {
-  cart.value = []
-}
-
-function getCartQuantity(productId: string): number {
-  const item = cart.value.find((i) => i.product.id === productId)
-  return item?.quantity || 0
-}
-
-// ---------- Preview ----------
-
-function openPreview(product: MerchProduct) {
-  previewProduct.value = product
-}
-
-function closePreview() {
-  previewProduct.value = null
-}
-function addToCartAndClose(product: MerchProduct) {
-  addToCart(product)
-  closePreview()
-}
-
-// ---------- Orders ----------
-
-async function loadOrders() {
-  const dealer = dealerProfile.value
-  if (!dealer) return
-
+  submitting.value = true
   try {
-    const { data, error: err } = await supabase
-      .from('merch_orders')
-      .select('*')
-      .eq('dealer_id', dealer.id)
-      .order('created_at', { ascending: false })
+    const selectedProduct = products.find((p) => p.id === form.value.product)
 
-    if (err) throw err
+    const { error: insertError } = await supabase.from('service_requests').insert({
+      type: 'merchandising',
+      user_id: user.value?.id ?? null,
+      status: 'requested',
+      details: {
+        product_id: form.value.product,
+        product_name_es: selectedProduct?.name_es ?? form.value.product,
+        product_name_en: selectedProduct?.name_en ?? form.value.product,
+        estimated_quantity: form.value.quantity || null,
+        contact_email: form.value.email,
+        notes: form.value.notes || null,
+        dealer_company: dealerProfile.value?.company_name ?? null,
+        requested_at: new Date().toISOString(),
+      },
+    })
 
-    orders.value = (data || []) as MerchOrder[]
+    if (insertError) throw insertError
+
+    submitted.value = true
+    form.value = { product: '', quantity: '', email: '', notes: '' }
   } catch (err: unknown) {
-    const supabaseError = err as { message?: string }
-    error.value = supabaseError?.message || t('dashboard.tools.merch.errorLoadingOrders')
-  }
-}
-
-async function placeOrder() {
-  if (cart.value.length === 0) return
-  saving.value = true
-  error.value = null
-  successMsg.value = null
-
-  try {
-    const dealer = dealerProfile.value
-    if (!dealer) throw new Error('Dealer not found')
-
-    const orderItems = cart.value.map((item) => ({
-      product_id: item.product.id,
-      product_name: getProductName(item.product),
-      quantity: item.quantity,
-      unit_price: item.product.price,
-    }))
-
-    const orderData = {
-      dealer_id: dealer.id,
-      items: orderItems,
-      total: cartTotal.value,
-      status: 'pending',
-      dealer_name: dealer.company_name,
-      dealer_email: dealer.email,
-      dealer_phone: dealer.phone,
-    }
-
-    const { error: err } = await supabase.from('merch_orders').insert(orderData as never)
-
-    if (err) throw err
-
-    successMsg.value = t('dashboard.tools.merch.orderPlaced')
-    clearCart()
-    await loadOrders()
-  } catch (err: unknown) {
-    const supabaseError = err as { message?: string }
-    error.value = supabaseError?.message || t('dashboard.tools.merch.errorPlacingOrder')
+    const e = err as { message?: string }
+    submitError.value = e?.message ?? t('dashboard.tools.merchandising.errorSubmit')
   } finally {
-    saving.value = false
+    submitting.value = false
   }
 }
 
 // ---------- Lifecycle ----------
 
 onMounted(async () => {
-  loading.value = true
+  pageLoading.value = true
   try {
     await loadDealer()
-    await loadOrders()
+    // Pre-fill email from dealer profile or auth user
+    const email = dealerProfile.value?.email ?? user.value?.email ?? ''
+    if (email) form.value.email = email
   } finally {
-    loading.value = false
+    pageLoading.value = false
   }
 })
 </script>
 
 <template>
   <div class="merch-page">
-    <!-- Header -->
-    <header class="page-header">
-      <div>
-        <h1>{{ t('dashboard.tools.merch.title') }}</h1>
-        <p class="subtitle">{{ t('dashboard.tools.merch.subtitle') }}</p>
+    <!-- Header banner -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <div class="hero-badge">{{ t('dashboard.tools.merchandising.badge') }}</div>
+        <h1>{{ t('dashboard.tools.merchandising.title') }}</h1>
+        <p class="hero-desc">{{ t('dashboard.tools.merchandising.heroDesc') }}</p>
       </div>
-      <button class="btn-secondary" @click="showOrderHistory = !showOrderHistory">
-        {{
-          showOrderHistory
-            ? t('dashboard.tools.merch.viewCatalog')
-            : t('dashboard.tools.merch.viewOrders')
-        }}
-        <span v-if="orders.length > 0" class="order-count-badge">{{ orders.length }}</span>
-      </button>
-    </header>
-
-    <!-- Success -->
-    <div v-if="successMsg" class="alert-success">{{ successMsg }}</div>
-
-    <!-- Error -->
-    <div v-if="error" class="alert-error">{{ error }}</div>
+      <div class="hero-icon" aria-hidden="true">🎁</div>
+    </section>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
+    <div v-if="pageLoading" class="loading-state">
       <div class="spinner" />
       <span>{{ t('common.loading') }}...</span>
     </div>
 
-    <!-- Order History View -->
-    <template v-else-if="showOrderHistory">
-      <div class="order-history">
-        <h2>{{ t('dashboard.tools.merch.orderHistory') }}</h2>
-
-        <div v-if="orders.length === 0" class="empty-state">
-          <p>{{ t('dashboard.tools.merch.noOrders') }}</p>
-        </div>
-
-        <div v-else class="orders-list">
-          <div v-for="order in orders" :key="order.id" class="order-card">
-            <div class="order-header">
-              <div class="order-meta">
-                <span class="order-date">{{ fmtDate(order.created_at) }}</span>
-                <span class="order-id">#{{ order.id.slice(0, 8) }}</span>
-              </div>
-              <span class="order-status-badge" :class="getStatusClass(order.status)">
-                {{ t(`dashboard.tools.merch.orderStatuses.${order.status}`) }}
-              </span>
-            </div>
-            <div class="order-items">
-              <div v-for="(item, idx) in order.items" :key="idx" class="order-item">
-                <span>{{ item.product_name }} x{{ item.quantity }}</span>
-                <span>{{ fmt(item.unit_price * item.quantity) }}</span>
-              </div>
-            </div>
-            <div class="order-total">
-              <strong>{{ t('dashboard.tools.merch.total') }}:</strong>
-              <strong>{{ fmt(order.total) }}</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <!-- Catalog View -->
     <template v-else>
-      <!-- Product Grid -->
-      <div class="product-grid">
-        <div v-for="product in products" :key="product.id" class="product-card">
-          <!-- Image placeholder -->
-          <div class="product-image" @click="openPreview(product)">
-            <!-- eslint-disable-next-line vue/no-v-html -->
-            <span class="placeholder-icon" v-html="getPlaceholderIcon(product.image_placeholder)" />
-            <span class="preview-hint">{{ t('dashboard.tools.merch.preview') }}</span>
-          </div>
+      <!-- Product showcase -->
+      <section class="section">
+        <h2 class="section-title">{{ t('dashboard.tools.merchandising.catalogTitle') }}</h2>
+        <p class="section-desc">{{ t('dashboard.tools.merchandising.catalogDesc') }}</p>
 
-          <!-- Info -->
-          <div class="product-info">
-            <h3>{{ getProductName(product) }}</h3>
-            <p class="product-desc">{{ getProductDescription(product) }}</p>
-            <div class="product-unit">{{ getProductUnit(product) }}</div>
-          </div>
-
-          <!-- Price & cart -->
-          <div class="product-footer">
-            <span class="product-price">{{ fmt(product.price) }}</span>
-
-            <div v-if="getCartQuantity(product.id) > 0" class="quantity-controls">
-              <button class="qty-btn" @click="updateQuantity(product.id, -1)">-</button>
-              <span class="qty-value">{{ getCartQuantity(product.id) }}</span>
-              <button class="qty-btn" @click="updateQuantity(product.id, 1)">+</button>
+        <div class="product-grid">
+          <article
+            v-for="product in products"
+            :key="product.id"
+            class="product-card"
+            :style="{ '--card-bg': product.color }"
+          >
+            <div class="product-icon-wrap">
+              <span class="product-icon" aria-hidden="true">{{ product.icon }}</span>
             </div>
-            <button v-else class="btn-add-cart" @click="addToCart(product)">
-              {{ t('dashboard.tools.merch.addToCart') }}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Cart Summary -->
-      <div v-if="cart.length > 0" class="cart-summary">
-        <h2>{{ t('dashboard.tools.merch.cart') }} ({{ cartItemCount }})</h2>
-
-        <div class="cart-items">
-          <div v-for="item in cart" :key="item.product.id" class="cart-item">
-            <div class="cart-item-info">
-              <span class="cart-item-name">{{ getProductName(item.product) }}</span>
-              <span class="cart-item-qty">x{{ item.quantity }}</span>
+            <div class="product-body">
+              <h3 class="product-name">{{ getProductName(product) }}</h3>
+              <p class="product-desc">{{ getProductDescription(product) }}</p>
+              <span class="product-unit">{{ getProductUnit(product) }}</span>
             </div>
-            <div class="cart-item-right">
-              <span class="cart-item-price">{{ fmt(item.product.price * item.quantity) }}</span>
-              <button class="btn-remove" @click="removeFromCart(item.product.id)">&times;</button>
-            </div>
-          </div>
+          </article>
         </div>
+      </section>
 
-        <div class="cart-total">
-          <span>{{ t('dashboard.tools.merch.total') }}</span>
-          <strong>{{ fmt(cartTotal) }}</strong>
-        </div>
+      <!-- Interest form -->
+      <section class="section form-section">
+        <h2 class="section-title">{{ t('dashboard.tools.merchandising.formTitle') }}</h2>
+        <p class="section-desc">{{ t('dashboard.tools.merchandising.formDesc') }}</p>
 
-        <div class="cart-actions">
-          <button class="btn-secondary" @click="clearCart">
-            {{ t('dashboard.tools.merch.clearCart') }}
-          </button>
-          <button class="btn-primary" :disabled="saving || cart.length === 0" @click="placeOrder">
-            <span v-if="saving" class="spinner-sm" />
-            {{ t('dashboard.tools.merch.placeOrder') }}
+        <!-- Success state -->
+        <div v-if="submitted" class="alert-success">
+          <strong>{{ t('dashboard.tools.merchandising.successTitle') }}</strong>
+          <p>{{ t('dashboard.tools.merchandising.successDesc') }}</p>
+          <button class="btn-reset" @click="submitted = false">
+            {{ t('dashboard.tools.merchandising.sendAnother') }}
           </button>
         </div>
 
-        <p class="cart-note">{{ t('dashboard.tools.merch.orderNote') }}</p>
-      </div>
-    </template>
+        <!-- Form -->
+        <form v-else class="interest-form" novalidate @submit.prevent="submitInterest">
+          <!-- Product select -->
+          <div class="field">
+            <label class="field-label" for="merch-product">
+              {{ t('dashboard.tools.merchandising.fieldProduct') }}
+              <span class="required" aria-hidden="true">*</span>
+            </label>
+            <select id="merch-product" v-model="form.product" class="field-input" required>
+              <option value="" disabled>
+                {{ t('dashboard.tools.merchandising.productPlaceholder') }}
+              </option>
+              <option v-for="product in products" :key="product.id" :value="product.id">
+                {{ getProductName(product) }}
+              </option>
+            </select>
+          </div>
 
-    <!-- Preview Modal -->
-    <Teleport to="body">
-      <div v-if="previewProduct" class="modal-bg" @click.self="closePreview">
-        <div class="modal modal-lg">
-          <div class="modal-head">
-            <span
-              >{{ t('dashboard.tools.merch.previewTitle') }}:
-              {{ getProductName(previewProduct) }}</span
+          <!-- Estimated quantity -->
+          <div class="field">
+            <label class="field-label" for="merch-quantity">
+              {{ t('dashboard.tools.merchandising.fieldQuantity') }}
+            </label>
+            <input
+              id="merch-quantity"
+              v-model="form.quantity"
+              type="text"
+              class="field-input"
+              :placeholder="t('dashboard.tools.merchandising.quantityPlaceholder')"
             >
-            <button @click="closePreview">&times;</button>
           </div>
-          <div class="modal-body">
-            <p class="preview-subtitle">{{ t('dashboard.tools.merch.previewDesc') }}</p>
 
-            <!-- Preview mockup -->
-            <div class="preview-mockup">
-              <div class="mockup-header">
-                <div class="mockup-logo">
-                  <span v-if="dealerProfile?.logo_url" class="logo-indicator">[Logo]</span>
-                  <span v-else class="logo-placeholder">{{ dealerCompanyName.charAt(0) }}</span>
-                </div>
-                <div class="mockup-company">
-                  <strong>{{ dealerCompanyName }}</strong>
-                </div>
-              </div>
-
-              <div class="mockup-body">
-                <div class="mockup-detail">
-                  <span class="mockup-label">{{ t('dashboard.tools.merch.previewCompany') }}:</span>
-                  <span>{{ dealerCompanyName }}</span>
-                </div>
-                <div class="mockup-detail">
-                  <span class="mockup-label">{{ t('dashboard.tools.merch.previewPhone') }}:</span>
-                  <span>{{ dealerPhone }}</span>
-                </div>
-                <div class="mockup-detail">
-                  <span class="mockup-label">{{ t('dashboard.tools.merch.previewQR') }}:</span>
-                  <span class="qr-url">{{ dealerProfileUrl }}</span>
-                </div>
-              </div>
-
-              <div class="mockup-qr">
-                <div class="qr-placeholder">
-                  <span>QR</span>
-                </div>
-                <span class="qr-label">{{ dealerProfileUrl }}</span>
-              </div>
-            </div>
-
-            <div class="preview-product-info">
-              <h3>{{ getProductName(previewProduct) }}</h3>
-              <p>{{ getProductDescription(previewProduct) }}</p>
-              <div class="preview-price">{{ fmt(previewProduct.price) }}</div>
-            </div>
+          <!-- Email -->
+          <div class="field">
+            <label class="field-label" for="merch-email">
+              {{ t('dashboard.tools.merchandising.fieldEmail') }}
+              <span class="required" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="merch-email"
+              v-model="form.email"
+              type="email"
+              class="field-input"
+              :placeholder="t('dashboard.tools.merchandising.emailPlaceholder')"
+              required
+            >
           </div>
-          <div class="modal-foot">
-            <button class="btn" @click="closePreview">
-              {{ t('dashboard.tools.merch.close') }}
-            </button>
-            <button class="btn btn-primary" @click="addToCartAndClose(previewProduct)">
-              {{ t('dashboard.tools.merch.addToCart') }}
-            </button>
+
+          <!-- Notes -->
+          <div class="field">
+            <label class="field-label" for="merch-notes">
+              {{ t('dashboard.tools.merchandising.fieldNotes') }}
+            </label>
+            <textarea
+              id="merch-notes"
+              v-model="form.notes"
+              class="field-input field-textarea"
+              rows="3"
+              :placeholder="t('dashboard.tools.merchandising.notesPlaceholder')"
+            />
           </div>
-        </div>
-      </div>
-    </Teleport>
+
+          <!-- Error -->
+          <div v-if="submitError" class="alert-error">{{ submitError }}</div>
+
+          <button type="submit" class="btn-submit" :disabled="submitting">
+            <span v-if="submitting" class="spinner-sm" aria-hidden="true" />
+            {{ submitting ? t('common.saving') : t('dashboard.tools.merchandising.submitBtn') }}
+          </button>
+
+          <p class="form-note">{{ t('dashboard.tools.merchandising.formNote') }}</p>
+        </form>
+      </section>
+    </template>
   </div>
 </template>
 
 <style scoped>
 .merch-page {
-  max-width: 1200px;
+  max-width: 1024px;
   margin: 0 auto;
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 32px;
 }
 
-.page-header {
+/* Hero banner */
+.hero-banner {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.page-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-primary, #23424a);
-}
-
-.subtitle {
-  margin: 0;
-  color: #64748b;
-  font-size: 0.9rem;
-}
-
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 10px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.btn:hover {
-  background: #f8fafc;
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
-  background: var(--color-primary, #23424a);
+  background: linear-gradient(135deg, #23424a 0%, #1a5f6e 100%);
+  border-radius: 16px;
+  padding: 24px 20px;
   color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 0.2s;
-  gap: 6px;
+  position: relative;
+  overflow: hidden;
 }
 
-.btn-primary:hover {
-  background: #1a3238;
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 10px 16px;
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  cursor: pointer;
+.hero-content {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
+  max-width: 560px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   align-self: flex-start;
 }
 
-.btn-secondary:hover {
-  background: #f8fafc;
-}
-
-.order-count-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  background: var(--color-primary, #23424a);
-  color: white;
-  border-radius: 50%;
-  font-size: 0.7rem;
+.hero-banner h1 {
+  margin: 0;
+  font-size: 1.5rem;
   font-weight: 700;
+  line-height: 1.2;
 }
 
-/* Alerts */
-.alert-error {
-  padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  color: #dc2626;
+.hero-desc {
+  margin: 0;
   font-size: 0.9rem;
+  opacity: 0.85;
+  line-height: 1.5;
 }
 
-.alert-success {
-  padding: 12px 16px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 8px;
-  color: #16a34a;
-  font-size: 0.9rem;
+.hero-icon {
+  font-size: 3rem;
+  line-height: 1;
+  align-self: flex-end;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 /* Loading */
@@ -677,6 +394,7 @@ onMounted(async () => {
   gap: 12px;
   padding: 60px 20px;
   color: #64748b;
+  font-size: 0.95rem;
 }
 
 .spinner {
@@ -686,16 +404,17 @@ onMounted(async () => {
   border-top-color: var(--color-primary, #23424a);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
 }
 
 .spinner-sm {
+  display: inline-block;
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-  display: inline-block;
 }
 
 @keyframes spin {
@@ -704,566 +423,255 @@ onMounted(async () => {
   }
 }
 
-/* Product Grid */
-.product-grid {
-  display: grid;
-  grid-template-columns: 1fr;
+/* Section */
+.section {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
 }
 
+.section-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.section-desc {
+  margin: -8px 0 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Product grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
 .product-card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+  padding: 16px;
+  transition: box-shadow 0.15s;
+  border: 1px solid #f1f5f9;
 }
 
-.product-image {
-  height: 140px;
-  background: linear-gradient(135deg, #f0f9ff, #e0e7ff);
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.product-icon-wrap {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--card-bg, #f1f5f9);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-  position: relative;
 }
 
-.product-image:hover {
-  background: linear-gradient(135deg, #dbeafe, #c7d2fe);
+.product-icon {
+  font-size: 1.6rem;
+  line-height: 1;
 }
 
-.placeholder-icon {
-  font-size: 3rem;
+.product-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
-.preview-hint {
-  font-size: 0.75rem;
-  color: #6366f1;
-  font-weight: 500;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.product-image:hover .preview-hint {
-  opacity: 1;
-}
-
-.product-info {
-  padding: 16px;
-  flex: 1;
-}
-
-.product-info h3 {
-  margin: 0 0 8px;
-  font-size: 1rem;
+.product-name {
+  margin: 0;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #1e293b;
 }
 
 .product-desc {
-  margin: 0 0 8px;
-  font-size: 0.85rem;
+  margin: 0;
+  font-size: 0.82rem;
   color: #64748b;
   line-height: 1.4;
 }
 
 .product-unit {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: #94a3b8;
   font-weight: 500;
 }
 
-.product-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  border-top: 1px solid #f1f5f9;
-}
-
-.product-price {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-primary, #23424a);
-}
-
-.btn-add-cart {
-  min-height: 44px;
-  padding: 10px 16px;
-  background: var(--color-primary, #23424a);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-add-cart:hover {
-  background: #1a3238;
-}
-
-/* Quantity controls */
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.qty-btn {
-  width: 44px;
-  height: 44px;
-  border: none;
+/* Form section */
+.form-section {
   background: white;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--color-primary, #23424a);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 16px;
+  padding: 24px 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e2e8f0;
 }
 
-.qty-btn:hover {
-  background: #f1f5f9;
-}
-
-.qty-value {
-  min-width: 36px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #1e293b;
-}
-
-/* Cart Summary */
-.cart-summary {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 2px solid var(--color-primary, #23424a);
-}
-
-.cart-summary h2 {
-  margin: 0 0 16px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.cart-items {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.cart-item:last-child {
-  border-bottom: none;
-}
-
-.cart-item-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.cart-item-name {
-  font-size: 0.9rem;
-  color: #374151;
-}
-
-.cart-item-qty {
-  font-size: 0.8rem;
-  color: #9ca3af;
-}
-
-.cart-item-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.cart-item-price {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #1e293b;
-}
-
-.btn-remove {
-  width: 44px;
-  height: 44px;
-  border: none;
-  background: transparent;
-  font-size: 1.2rem;
-  color: #9ca3af;
-  cursor: pointer;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-remove:hover {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-.cart-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 0 12px;
-  border-top: 2px solid #e5e7eb;
-  font-size: 1.1rem;
-}
-
-.cart-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.cart-note {
-  margin: 12px 0 0;
-  font-size: 0.8rem;
-  color: #9ca3af;
-  font-style: italic;
-}
-
-/* Order History */
-.order-history h2 {
-  margin: 0 0 16px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.orders-list {
+.interest-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.order-card {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.order-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.order-meta {
+/* Fields */
+.field {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
 }
 
-.order-date {
-  font-size: 0.9rem;
+.field-label {
+  font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
 }
 
-.order-id {
-  font-size: 0.75rem;
-  color: #9ca3af;
-  font-family: monospace;
+.required {
+  color: #ef4444;
+  margin-left: 2px;
 }
 
-.order-status-badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.order-pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.order-confirmed {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.order-shipped {
-  background: #e0e7ff;
-  color: #4338ca;
-}
-
-.order-delivered {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.order-cancelled {
-  background: #f1f5f9;
-  color: #64748b;
-}
-
-.order-items {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 12px;
-}
-
-.order-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  color: #64748b;
-  padding: 4px 0;
-}
-
-.order-total {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 8px;
-  border-top: 1px solid #f1f5f9;
-  font-size: 0.95rem;
-}
-
-/* Empty state */
-.empty-state {
-  padding: 48px 20px;
-  text-align: center;
-  color: #64748b;
-  font-size: 0.95rem;
-}
-
-.empty-state p {
-  margin: 0;
-}
-
-/* Modal */
-.modal-bg {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 16px;
-}
-
-.modal {
-  background: #fff;
-  border-radius: 12px;
+.field-input {
   width: 100%;
-  max-width: 520px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-lg {
-  max-width: 600px;
-}
-
-.modal-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid #e5e7eb;
-  font-weight: 600;
-  position: sticky;
-  top: 0;
-  background: #fff;
-  border-radius: 12px 12px 0 0;
-}
-
-.modal-head button {
-  background: none;
-  border: none;
-  font-size: 1.4rem;
-  cursor: pointer;
-  color: #9ca3af;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-}
-
-.modal-head button:hover {
-  background: #f3f4f6;
-}
-
-.modal-body {
-  padding: 16px;
-}
-
-.modal-foot {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
-  border-radius: 0 0 12px 12px;
-  position: sticky;
-  bottom: 0;
-}
-
-/* Preview mockup */
-.preview-subtitle {
-  margin: 0 0 16px;
-  font-size: 0.85rem;
-  color: #64748b;
-}
-
-.preview-mockup {
-  background: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.mockup-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.mockup-logo {
-  width: 48px;
-  height: 48px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  background: var(--color-primary, #23424a);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.logo-indicator {
-  font-size: 0.65rem;
-  font-weight: 500;
-}
-
-.mockup-company {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   color: #1e293b;
+  background: white;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
-.mockup-body {
+.field-input:focus {
+  outline: none;
+  border-color: var(--color-primary, #23424a);
+  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.12);
+}
+
+.field-textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+/* Alerts */
+.alert-error {
+  padding: 12px 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+.alert-success {
+  padding: 20px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  color: #15803d;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 16px;
 }
 
-.mockup-detail {
-  display: flex;
-  gap: 8px;
-  font-size: 0.85rem;
+.alert-success strong {
+  font-size: 1rem;
+  font-weight: 700;
 }
 
-.mockup-label {
-  color: #9ca3af;
-  min-width: 80px;
+.alert-success p {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.9;
 }
 
-.qr-url {
-  color: var(--color-primary, #23424a);
-  font-weight: 500;
-  word-break: break-all;
-}
-
-.mockup-qr {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #f8fafc;
-  border-radius: 8px;
-}
-
-.qr-placeholder {
-  width: 60px;
-  height: 60px;
-  background: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 4px;
-  display: flex;
+/* Submit button */
+.btn-submit {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 24px;
+  background: var(--color-primary, #23424a);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
+  width: 100%;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #1a3238;
+}
+
+.btn-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Reset button */
+.btn-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 16px;
+  background: transparent;
+  color: #15803d;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.15s;
+}
+
+.btn-reset:hover {
+  background: #dcfce7;
+}
+
+.form-note {
+  margin: 0;
+  font-size: 0.78rem;
   color: #9ca3af;
-  font-weight: 700;
-}
-
-.qr-label {
-  font-size: 0.8rem;
-  color: #6b7280;
-  word-break: break-all;
-}
-
-.preview-product-info {
-  border-top: 1px solid #e5e7eb;
-  padding-top: 16px;
-}
-
-.preview-product-info h3 {
-  margin: 0 0 8px;
-  font-size: 1rem;
-  color: #1e293b;
-}
-
-.preview-product-info p {
-  margin: 0 0 8px;
-  font-size: 0.85rem;
-  color: #64748b;
-}
-
-.preview-price {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-primary, #23424a);
+  text-align: center;
+  font-style: italic;
 }
 
 /* Responsive */
 @media (min-width: 480px) {
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .btn-submit {
+    width: auto;
+    align-self: flex-start;
   }
 }
 
@@ -1272,26 +680,32 @@ onMounted(async () => {
     padding: 24px;
   }
 
-  .page-header {
+  .hero-banner {
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    padding: 32px 32px;
+  }
+
+  .hero-icon {
+    position: static;
+    transform: none;
+    opacity: 0.5;
+    font-size: 5rem;
+    margin-left: auto;
+  }
+
+  .hero-banner h1 {
+    font-size: 1.75rem;
+  }
+
+  .form-section {
+    padding: 32px;
   }
 }
 
 @media (min-width: 1024px) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 479px) {
-  .product-image {
-    height: 100px;
-  }
-
-  .placeholder-icon {
-    font-size: 2rem;
   }
 }
 </style>
