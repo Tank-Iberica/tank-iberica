@@ -124,6 +124,25 @@ useHead({
         })
       }),
     },
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() => {
+        if (!sellerName.value) return ''
+        return JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://tracciona.com' },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: sellerName.value,
+              item: `https://tracciona.com/vendedor/${route.params.slug}`,
+            },
+          ],
+        })
+      }),
+    },
   ],
 })
 
@@ -203,6 +222,7 @@ onMounted(async () => {
 
     <!-- Seller profile -->
     <template v-else>
+      <BreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: sellerName || '' }]" />
       <!-- Header -->
       <section class="seller-header">
         <div class="seller-header__inner">
