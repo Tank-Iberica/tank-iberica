@@ -4,7 +4,7 @@
 > de cada modulo, consultar **[docs/ESTADO-REAL-PRODUCTO.md](./ESTADO-REAL-PRODUCTO.md)**
 > que se genera analizando el codigo fuente real.
 
-## Estado actual: Sesion 50 completada — Produccion
+## Estado actual: Sesion 55 completada — Produccion
 
 _Ultima actualizacion: 2026-02-25_
 
@@ -60,6 +60,11 @@ _Ultima actualizacion: 2026-02-25_
 | 48      | Completada | Modularización: whatsapp refactor (550→75 líneas), callAI multimodal, verify-document     |
 | 49      | Completada | DAST + Tests seguridad (ya implementado en sesión 46, verificado como duplicado)          |
 | 50      | Completada | Seguridad: HSTS, CORS middleware, WAF config docs, secrets rotation guide                 |
+| 51      | Completada | Testing: 20 unit tests server, coverage gate CI (composables y E2E existentes)            |
+| 52      | Completada | Rendimiento: Lighthouse CI workflow, Web Vitals GA4, tests accesibilidad                  |
+| 53      | Completada | Base de datos: integrity check, ERD, data retention, slow queries endpoint                |
+| 54      | Completada | Documentación: CHANGELOG.md, CRON-JOBS.md con templates de scheduler                      |
+| 55      | Completada | Resiliencia: test-restore script, Bitbucket mirror, third-party dependencies              |
 
 ### Modulos implementados
 
