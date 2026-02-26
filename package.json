@@ -16,7 +16,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:inspect": "bash sonar/db-inspect.sh"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",

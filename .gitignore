@@ -35,3 +35,6 @@ gen_types_error.txt
 
 # Supabase CLI temp
 supabase/.temp/
+
+# SonarQube local
+.scannerwork/
