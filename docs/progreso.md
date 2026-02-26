@@ -4,7 +4,7 @@
 > de cada modulo, consultar **[docs/ESTADO-REAL-PRODUCTO.md](./ESTADO-REAL-PRODUCTO.md)**
 > que se genera analizando el codigo fuente real.
 
-## Estado actual: Sesion 57 completada — Produccion
+## Estado actual: Sesion 58 completada — Produccion
 
 _Ultima actualizacion: 2026-02-26_
 
@@ -68,6 +68,7 @@ _Ultima actualizacion: 2026-02-26_
 | 55      | Completada | Resiliencia: test-restore script, Bitbucket mirror, third-party dependencies              |
 | 56      | Completada | Escalabilidad: event bus, feature flags, multi-tenant verification                        |
 | 57      | Completada | Producto: demo mode IA, widget embebible, importador stock dealer                         |
+| 58      | Completada | Market Intelligence, valoración pública, editorial IA automatizado                        |
 
 ### Modulos implementados
 
