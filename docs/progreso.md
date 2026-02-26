@@ -4,7 +4,7 @@
 > de cada modulo, consultar **[docs/ESTADO-REAL-PRODUCTO.md](./ESTADO-REAL-PRODUCTO.md)**
 > que se genera analizando el codigo fuente real.
 
-## Estado actual: Sesion 60 completada — Produccion
+## Estado actual: Sesion 61 completada — Produccion
 
 _Ultima actualizacion: 2026-02-26_
 
@@ -71,6 +71,7 @@ _Ultima actualizacion: 2026-02-26_
 | 58      | Completada | Market Intelligence, valoración pública, editorial IA automatizado                        |
 | 59      | Completada | CSP avanzado, auditoría licencias, documentación API pública                              |
 | 60      | Completada | Nonce CSP descartado (documentado), PWA verification completa                             |
+| 61      | Completada | SEO: robots.txt, OG/Twitter tags, hreflang, canonical, breadcrumbs vendedor               |
 
 ### Modulos implementados
 
