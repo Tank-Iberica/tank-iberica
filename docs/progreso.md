@@ -4,14 +4,14 @@
 > de cada modulo, consultar **[docs/ESTADO-REAL-PRODUCTO.md](./ESTADO-REAL-PRODUCTO.md)**
 > que se genera analizando el codigo fuente real.
 
-## Estado actual: Sesion 56 completada — Produccion
+## Estado actual: Sesion 57 completada — Produccion
 
 _Ultima actualizacion: 2026-02-26_
 
 ### Resumen
 
 - **22 modulos** implementados (20 operativos, 2 parciales)
-- **122 paginas Vue**, **54 endpoints API**, **80 composables**, **2 servicios**
+- **125 paginas Vue**, **56 endpoints API**, **80 composables**, **2 servicios**
 - **64 migraciones** de base de datos con RLS completo
 - **11 tests E2E** (3 de flujo base + 8 user journeys)
 - **CI/CD** configurado con GitHub Actions (lint, typecheck, build, e2e, lighthouse)
@@ -67,6 +67,7 @@ _Ultima actualizacion: 2026-02-26_
 | 54      | Completada | Documentación: CHANGELOG.md, CRON-JOBS.md con templates de scheduler                      |
 | 55      | Completada | Resiliencia: test-restore script, Bitbucket mirror, third-party dependencies              |
 | 56      | Completada | Escalabilidad: event bus, feature flags, multi-tenant verification                        |
+| 57      | Completada | Producto: demo mode IA, widget embebible, importador stock dealer                         |
 
 ### Modulos implementados
 
