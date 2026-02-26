@@ -229,6 +229,113 @@ if (existsSync('app/components/ui/ShareButtons.vue')) {
 }
 console.log('')
 
+// ── 9. Image alt text audit ──
+console.log('9. Image alt text audit:')
+const imgIssues = []
+for (const file of publicPages) {
+  const content = readFileSync(file, 'utf-8')
+  const rel = relative('app/pages', file).replace(/\\/g, '/')
+
+  // Find <img> and <NuxtImg> tags without alt attribute
+  // Use a regex that handles > inside attribute values (e.g. v-if="x > 0")
+  const templateMatch = content.match(/<template>([\s\S]*?)<\/template>/)
+  if (templateMatch) {
+    const template = templateMatch[1]
+
+    // Match img/NuxtImg opening tags, accounting for > in attribute values
+    const tagRegex = /<(img|NuxtImg)\b(?:\s+(?:[^>"']*|"[^"]*"|'[^']*'))*\s*\/?>/gs
+    let match
+    while ((match = tagRegex.exec(template)) !== null) {
+      const tag = match[0]
+      if (!tag.includes('alt=') && !tag.includes(':alt=')) {
+        const tagType = match[1] === 'NuxtImg' ? ` (${match[1]})` : ''
+        imgIssues.push(`${rel}${tagType}`)
+        break
+      }
+    }
+  }
+}
+
+if (imgIssues.length === 0) {
+  ok('All public page images have alt attributes')
+} else {
+  for (const f of imgIssues) {
+    error(`Missing alt attribute in: ${f}`)
+  }
+}
+console.log('')
+
+// ── 10. Single <h1> per page ──
+console.log('10. Single <h1> per page:')
+const h1Issues = []
+for (const file of publicPages) {
+  const content = readFileSync(file, 'utf-8')
+  const rel = relative('app/pages', file).replace(/\\/g, '/')
+  if (rel === 'offline.vue' || rel === 'confirm.vue') continue
+
+  const templateMatch = content.match(/<template>([\s\S]*?)<\/template>/)
+  if (templateMatch) {
+    const template = templateMatch[1]
+    const h1Count = (template.match(/<h1[\s>]/g) || []).length
+    if (h1Count > 1) {
+      h1Issues.push({ file: rel, count: h1Count })
+    }
+  }
+}
+
+if (h1Issues.length === 0) {
+  ok('All public pages have at most one <h1>')
+} else {
+  for (const { file, count } of h1Issues) {
+    warning(`${file}: ${count} <h1> tags found (should be 1)`)
+  }
+}
+console.log('')
+
+// ── 11. Links without href ──
+console.log('11. Links without href:')
+const hrefIssues = []
+for (const file of publicPages) {
+  const content = readFileSync(file, 'utf-8')
+  const rel = relative('app/pages', file).replace(/\\/g, '/')
+
+  const templateMatch = content.match(/<template>([\s\S]*?)<\/template>/)
+  if (templateMatch) {
+    const template = templateMatch[1]
+    // Find <a> tags without href or :href
+    const aTags = template.match(/<a\b[^>]*>/gs) || []
+    for (const a of aTags) {
+      if (!a.includes('href=') && !a.includes(':href=')) {
+        hrefIssues.push(rel)
+        break
+      }
+    }
+  }
+}
+
+if (hrefIssues.length === 0) {
+  ok('All <a> tags have href attributes')
+} else {
+  for (const f of hrefIssues) {
+    error(`<a> without href in: ${f}`)
+  }
+}
+console.log('')
+
+// ── 12. Internal linking components ──
+console.log('12. Internal linking:')
+if (existsSync('app/components/vehicle/RelatedVehicles.vue')) {
+  ok('RelatedVehicles component exists')
+} else {
+  warning('RelatedVehicles component missing')
+}
+if (existsSync('app/components/vehicle/CategoryLinks.vue')) {
+  ok('CategoryLinks component exists')
+} else {
+  warning('CategoryLinks component missing')
+}
+console.log('')
+
 // ── Summary ──
 console.log('════════════════════════════════════════')
 console.log(`Results: ${GREEN}${pass} passed${NC}, ${YELLOW}${warn} warnings${NC}, ${RED}${fail} failed${NC}`)
