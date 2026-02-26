@@ -54,12 +54,12 @@ CREATE INDEX IF NOT EXISTS idx_subscriptions_founding
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS price_history_trends AS
 SELECT
-  v.vertical,
+  COALESCE(c.vertical, 'tracciona') AS vertical,
   v.category_id,
-  sc.slug AS subcategory_slug,
-  sc.name AS subcategory_name,
+  c.slug AS subcategory_slug,
+  c.name_es AS subcategory_name,
   v.brand,
-  date_trunc('week', ph.changed_at) AS week,
+  date_trunc('week', ph.created_at) AS week,
   COUNT(*) AS sample_size,
   AVG(ph.price_cents) AS avg_price_cents,
   PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY ph.price_cents) AS median_price_cents,
@@ -67,9 +67,9 @@ SELECT
   MAX(ph.price_cents) AS max_price_cents
 FROM price_history ph
 JOIN vehicles v ON ph.vehicle_id = v.id
-LEFT JOIN subcategories sc ON v.subcategory_id = sc.id
+LEFT JOIN categories c ON v.category_id = c.id
 WHERE ph.price_cents > 0
-GROUP BY v.vertical, v.category_id, sc.slug, sc.name, v.brand, date_trunc('week', ph.changed_at)
+GROUP BY COALESCE(c.vertical, 'tracciona'), v.category_id, c.slug, c.name_es, v.brand, date_trunc('week', ph.created_at)
 HAVING COUNT(*) >= 3
 WITH NO DATA;
 
@@ -101,7 +101,13 @@ RETURNS void AS $$
 BEGIN
   REFRESH MATERIALIZED VIEW CONCURRENTLY market_data;
   REFRESH MATERIALIZED VIEW CONCURRENTLY demand_data;
-  REFRESH MATERIALIZED VIEW CONCURRENTLY price_history_trends;
+  -- price_history_trends: try CONCURRENTLY first; if it fails (empty/no unique index),
+  -- fall back to a regular refresh which always works.
+  BEGIN
+    REFRESH MATERIALIZED VIEW CONCURRENTLY price_history_trends;
+  EXCEPTION WHEN OTHERS THEN
+    REFRESH MATERIALIZED VIEW price_history_trends;
+  END;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
