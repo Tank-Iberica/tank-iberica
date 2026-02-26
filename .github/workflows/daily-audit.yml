@@ -100,6 +100,20 @@ jobs:
           name: extensibility-report
           path: extensibility-report.txt
 
+  # ── SEO check ──
+  seo-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: node scripts/seo-check.mjs || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seo-check
+          path: seo-check.log
+        if: always()
+
   # ── Build sanity ──
   build-check:
     runs-on: ubuntu-latest
@@ -118,7 +132,7 @@ jobs:
   # ── Consolidar y notificar ──
   report:
     runs-on: ubuntu-latest
-    needs: [semgrep, npm-audit, license-audit, lint-typecheck, extensibility, build-check]
+    needs: [semgrep, npm-audit, license-audit, lint-typecheck, extensibility, seo-check, build-check]
     if: always()
     steps:
       - uses: actions/checkout@v4
