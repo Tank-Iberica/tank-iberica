@@ -3798,8 +3798,16 @@
   "validation": {
     "required": "This field is required",
     "invalidEmail": "Please enter a valid email",
+    "emailInvalid": "Please enter a valid email",
     "passwordTooShort": "Minimum 6 characters",
-    "passwordMismatch": "Passwords do not match"
+    "passwordMin": "Minimum 6 characters",
+    "passwordMismatch": "Passwords do not match",
+    "passwordsMismatch": "Passwords do not match",
+    "phoneInvalid": "Please enter a valid phone number",
+    "yearMin": "Minimum year: 1970",
+    "yearMax": "Maximum year exceeded",
+    "termsRequired": "You must accept the terms and conditions",
+    "deleteConfirmation": "Type ELIMINAR to confirm"
   },
   "offline": {
     "title": "You are offline",

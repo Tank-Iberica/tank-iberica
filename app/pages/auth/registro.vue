@@ -104,17 +104,20 @@
           {{ selectedType === 'buyer' ? $t('auth.registerAsBuyer') : $t('auth.registerAsDealer') }}
         </h1>
 
-        <form @submit.prevent="handleRegister">
+        <form @submit="onSubmit">
           <div class="field">
             <label for="reg-name">{{ $t('auth.fullName') }}</label>
             <input
               id="reg-name"
-              v-model="form.name"
+              v-model="fullName"
               type="text"
-              required
               autocomplete="name"
               :placeholder="$t('auth.fullNamePlaceholder')"
+              :aria-invalid="!!translatedErrors.fullName || undefined"
             >
+            <p v-if="translatedErrors.fullName" class="field-error" role="alert">
+              {{ translatedErrors.fullName }}
+            </p>
           </div>
 
           <!-- Dealer-only fields -->
@@ -123,9 +126,8 @@
               <label for="reg-company">{{ $t('auth.companyName') }}</label>
               <input
                 id="reg-company"
-                v-model="form.companyName"
+                v-model="companyName"
                 type="text"
-                required
                 autocomplete="organization"
                 :placeholder="$t('auth.companyNamePlaceholder')"
               >
@@ -135,9 +137,8 @@
               <label for="reg-cif">{{ $t('auth.taxId') }}</label>
               <input
                 id="reg-cif"
-                v-model="form.taxId"
+                v-model="taxId"
                 type="text"
-                required
                 :placeholder="$t('auth.taxIdPlaceholder')"
               >
             </div>
@@ -146,12 +147,15 @@
               <label for="reg-phone">{{ $t('auth.phone') }}</label>
               <input
                 id="reg-phone"
-                v-model="form.phone"
+                v-model="phone"
                 type="tel"
-                required
                 autocomplete="tel"
                 :placeholder="$t('auth.phonePlaceholder')"
+                :aria-invalid="!!translatedErrors.phone || undefined"
               >
+              <p v-if="translatedErrors.phone" class="field-error" role="alert">
+                {{ translatedErrors.phone }}
+              </p>
             </div>
           </template>
 
@@ -159,16 +163,15 @@
             <label for="reg-email">{{ $t('auth.email') }}</label>
             <input
               id="reg-email"
-              v-model="form.email"
+              v-model="regEmail"
               type="email"
-              required
               autocomplete="email"
               :placeholder="$t('auth.emailPlaceholder')"
-              :aria-invalid="!!errors.email || undefined"
-              :aria-describedby="errors.email ? 'error-reg-email' : undefined"
+              :aria-invalid="!!translatedErrors.email || undefined"
+              :aria-describedby="translatedErrors.email ? 'error-reg-email' : undefined"
             >
-            <p v-if="errors.email" id="error-reg-email" class="field-error" role="alert">
-              {{ errors.email }}
+            <p v-if="translatedErrors.email" id="error-reg-email" class="field-error" role="alert">
+              {{ translatedErrors.email }}
             </p>
           </div>
 
@@ -176,17 +179,20 @@
             <label for="reg-password">{{ $t('auth.password') }}</label>
             <input
               id="reg-password"
-              v-model="form.password"
+              v-model="regPassword"
               type="password"
-              required
               autocomplete="new-password"
               :placeholder="$t('auth.passwordPlaceholder')"
-              minlength="6"
-              :aria-invalid="!!errors.password || undefined"
-              :aria-describedby="errors.password ? 'error-reg-password' : undefined"
+              :aria-invalid="!!translatedErrors.password || undefined"
+              :aria-describedby="translatedErrors.password ? 'error-reg-password' : undefined"
             >
-            <p v-if="errors.password" id="error-reg-password" class="field-error" role="alert">
-              {{ errors.password }}
+            <p
+              v-if="translatedErrors.password"
+              id="error-reg-password"
+              class="field-error"
+              role="alert"
+            >
+              {{ translatedErrors.password }}
             </p>
             <span v-else class="field-hint">{{ $t('auth.passwordHint') }}</span>
           </div>
@@ -195,30 +201,28 @@
             <label for="reg-confirm">{{ $t('auth.confirmPassword') }}</label>
             <input
               id="reg-confirm"
-              v-model="form.confirmPassword"
+              v-model="confirmPassword"
               type="password"
-              required
               autocomplete="new-password"
               :placeholder="$t('auth.confirmPasswordPlaceholder')"
-              minlength="6"
-              :aria-invalid="!!errors.confirmPassword || undefined"
-              :aria-describedby="errors.confirmPassword ? 'error-reg-confirm' : undefined"
+              :aria-invalid="!!translatedErrors.confirmPassword || undefined"
+              :aria-describedby="translatedErrors.confirmPassword ? 'error-reg-confirm' : undefined"
             >
             <p
-              v-if="errors.confirmPassword"
+              v-if="translatedErrors.confirmPassword"
               id="error-reg-confirm"
               class="field-error"
               role="alert"
             >
-              {{ errors.confirmPassword }}
+              {{ translatedErrors.confirmPassword }}
             </p>
           </div>
 
           <p v-if="errorMsg" class="error-msg" role="alert">{{ errorMsg }}</p>
 
-          <button type="submit" class="btn-primary" :disabled="loading">
-            <span v-if="loading" class="spinner" />
-            {{ loading ? $t('common.loading') : $t('auth.register') }}
+          <button type="submit" class="btn-primary" :disabled="isSubmitting">
+            <span v-if="isSubmitting" class="spinner" />
+            {{ isSubmitting ? $t('common.loading') : $t('auth.register') }}
           </button>
         </form>
 
@@ -235,6 +239,7 @@
 
 <script setup lang="ts">
 import type { UserType } from '~/composables/useAuth'
+import { registerSchema } from '~/utils/schemas'
 
 definePageMeta({
   layout: 'default',
@@ -246,92 +251,48 @@ const auth = useAuth()
 const step = ref(1)
 const selectedType = ref<UserType>('buyer')
 const success = ref(false)
-const loading = ref(false)
 const errorMsg = ref('')
 
-const form = reactive({
-  name: '',
-  companyName: '',
-  taxId: '',
-  phone: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-})
-
-const errors = reactive({ email: '', password: '', confirmPassword: '' })
-
-watch(
-  () => form.email,
-  (val) => {
-    if (val && !val.includes('@')) {
-      errors.email = t('validation.invalidEmail')
-    } else {
-      errors.email = ''
-    }
+const { defineField, translatedErrors, isSubmitting, onSubmit } = useFormValidation(
+  registerSchema,
+  {
+    initialValues: {
+      fullName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      companyName: '',
+      taxId: '',
+      phone: '',
+    },
+    onSubmit: async (values) => {
+      errorMsg.value = ''
+      try {
+        await auth.register(values.email, values.password, {
+          full_name: values.fullName,
+          user_type: selectedType.value,
+          company_name: selectedType.value === 'dealer' ? values.companyName : undefined,
+          phone: selectedType.value === 'dealer' ? values.phone : undefined,
+        })
+        success.value = true
+      } catch (err: unknown) {
+        errorMsg.value = err instanceof Error ? err.message : t('common.error')
+      }
+    },
   },
 )
 
-watch(
-  () => form.password,
-  (val) => {
-    if (val && val.length > 0 && val.length < 6) {
-      errors.password = t('validation.passwordTooShort')
-    } else {
-      errors.password = ''
-    }
-    if (form.confirmPassword && val !== form.confirmPassword) {
-      errors.confirmPassword = t('validation.passwordMismatch')
-    } else {
-      errors.confirmPassword = ''
-    }
-  },
-)
-
-watch(
-  () => form.confirmPassword,
-  (val) => {
-    if (val && val !== form.password) {
-      errors.confirmPassword = t('validation.passwordMismatch')
-    } else {
-      errors.confirmPassword = ''
-    }
-  },
-)
+const [fullName] = defineField('fullName')
+const [regEmail] = defineField('email')
+const [regPassword] = defineField('password')
+const [confirmPassword] = defineField('confirmPassword')
+const [companyName] = defineField('companyName')
+const [taxId] = defineField('taxId')
+const [phone] = defineField('phone')
 
 function selectType(type: UserType) {
   selectedType.value = type
   step.value = 2
-}
-
-async function handleRegister() {
-  errorMsg.value = ''
-
-  if (form.password !== form.confirmPassword) {
-    errorMsg.value = t('auth.passwordMismatch')
-    return
-  }
-
-  if (form.password.length < 6) {
-    errorMsg.value = t('auth.passwordTooShort')
-    return
-  }
-
-  loading.value = true
-
-  try {
-    await auth.register(form.email, form.password, {
-      full_name: form.name,
-      user_type: selectedType.value,
-      company_name: selectedType.value === 'dealer' ? form.companyName : undefined,
-      phone: selectedType.value === 'dealer' ? form.phone : undefined,
-    })
-    success.value = true
-  } catch (err: unknown) {
-    errorMsg.value = err instanceof Error ? err.message : t('common.error')
-  } finally {
-    loading.value = false
-  }
 }
 
 useHead({

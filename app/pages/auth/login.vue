@@ -32,21 +32,20 @@
       </div>
 
       <!-- Email form -->
-      <form @submit.prevent="handleLogin">
+      <form @submit="onSubmit">
         <div class="field">
           <label for="login-email">{{ $t('auth.email') }}</label>
           <input
             id="login-email"
             v-model="email"
             type="email"
-            required
             autocomplete="email"
             :placeholder="$t('auth.emailPlaceholder')"
-            :aria-invalid="!!errors.email || undefined"
-            :aria-describedby="errors.email ? 'error-login-email' : undefined"
+            :aria-invalid="!!translatedErrors.email || undefined"
+            :aria-describedby="translatedErrors.email ? 'error-login-email' : undefined"
           >
-          <p v-if="errors.email" id="error-login-email" class="field-error" role="alert">
-            {{ errors.email }}
+          <p v-if="translatedErrors.email" id="error-login-email" class="field-error" role="alert">
+            {{ translatedErrors.email }}
           </p>
         </div>
 
@@ -56,23 +55,26 @@
             id="login-password"
             v-model="password"
             type="password"
-            required
             autocomplete="current-password"
             :placeholder="$t('auth.passwordPlaceholder')"
-            minlength="6"
-            :aria-invalid="!!errors.password || undefined"
-            :aria-describedby="errors.password ? 'error-login-password' : undefined"
+            :aria-invalid="!!translatedErrors.password || undefined"
+            :aria-describedby="translatedErrors.password ? 'error-login-password' : undefined"
           >
-          <p v-if="errors.password" id="error-login-password" class="field-error" role="alert">
-            {{ errors.password }}
+          <p
+            v-if="translatedErrors.password"
+            id="error-login-password"
+            class="field-error"
+            role="alert"
+          >
+            {{ translatedErrors.password }}
           </p>
         </div>
 
         <p v-if="errorMsg" class="error-msg" role="alert">{{ errorMsg }}</p>
 
-        <button type="submit" class="btn-primary" :disabled="loading">
-          <span v-if="loading" class="spinner" />
-          {{ loading ? $t('common.loading') : $t('auth.login') }}
+        <button type="submit" class="btn-primary" :disabled="isSubmitting">
+          <span v-if="isSubmitting" class="spinner" />
+          {{ isSubmitting ? $t('common.loading') : $t('auth.login') }}
         </button>
       </form>
 
@@ -91,57 +93,40 @@
 </template>
 
 <script setup lang="ts">
+import { loginSchema } from '~/utils/schemas'
+
 definePageMeta({
   layout: 'default',
 })
 
 const { t } = useI18n()
 const auth = useAuth()
-
-const email = ref('')
-const password = ref('')
-const loading = ref(false)
 const errorMsg = ref('')
-const errors = reactive({ email: '', password: '' })
 
-watch(email, (val) => {
-  if (val && !val.includes('@')) {
-    errors.email = t('validation.invalidEmail')
-  } else {
-    errors.email = ''
-  }
-})
+const { defineField, translatedErrors, isSubmitting, onSubmit } = useFormValidation(loginSchema, {
+  initialValues: { email: '', password: '' },
+  onSubmit: async (values) => {
+    errorMsg.value = ''
+    try {
+      await auth.login(values.email, values.password)
+      await auth.fetchProfile()
 
-watch(password, (val) => {
-  if (val && val.length > 0 && val.length < 6) {
-    errors.password = t('validation.passwordTooShort')
-  } else {
-    errors.password = ''
-  }
-})
-
-async function handleLogin() {
-  errorMsg.value = ''
-  loading.value = true
-
-  try {
-    await auth.login(email.value, password.value)
-    await auth.fetchProfile()
-
-    const userType = auth.userType.value
-    if (userType === 'admin') {
-      await navigateTo('/admin')
-    } else if (userType === 'dealer') {
-      await navigateTo('/dashboard')
-    } else {
-      await navigateTo('/')
+      const userType = auth.userType.value
+      if (userType === 'admin') {
+        await navigateTo('/admin')
+      } else if (userType === 'dealer') {
+        await navigateTo('/dashboard')
+      } else {
+        await navigateTo('/')
+      }
+    } catch (err: unknown) {
+      errorMsg.value = err instanceof Error ? err.message : t('common.error')
     }
-  } catch (err: unknown) {
-    errorMsg.value = err instanceof Error ? err.message : t('common.error')
-  } finally {
-    loading.value = false
-  }
-}
+  },
+})
+
+const [email] = defineField('email')
+const [password] = defineField('password')
 
 async function handleGoogleLogin() {
   await auth.loginWithGoogle()

@@ -3803,8 +3803,16 @@
   "validation": {
     "required": "Este campo es obligatorio",
     "invalidEmail": "Introduce un email válido",
+    "emailInvalid": "Introduce un email válido",
     "passwordTooShort": "Mínimo 6 caracteres",
-    "passwordMismatch": "Las contraseñas no coinciden"
+    "passwordMin": "Mínimo 6 caracteres",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "passwordsMismatch": "Las contraseñas no coinciden",
+    "phoneInvalid": "Introduce un teléfono válido",
+    "yearMin": "Año mínimo: 1970",
+    "yearMax": "Año máximo superado",
+    "termsRequired": "Debes aceptar los términos y condiciones",
+    "deleteConfirmation": "Escribe ELIMINAR para confirmar"
   },
   "offline": {
     "title": "Sin conexión",
