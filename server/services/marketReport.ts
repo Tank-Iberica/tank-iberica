@@ -825,6 +825,174 @@ ${fullReportSections.join('\n')}
 }
 
 /* ------------------------------------------------------------------ */
+/*  Dealer Market Intelligence                                         */
+/* ------------------------------------------------------------------ */
+
+export interface DealerVehicleInsight {
+  vehicleId: string
+  brand: string
+  model: string
+  dealerPrice: number
+  marketAvg: number
+  marketMin: number
+  marketMax: number
+  pricePosition: 'below' | 'average' | 'above'
+  priceDeviationPercent: number
+  avgDaysOnMarket: number
+  suggestion: string
+}
+
+export interface DealerIntelligenceReport {
+  dealerId: string
+  totalVehicles: number
+  insights: DealerVehicleInsight[]
+  summary: {
+    belowMarket: number
+    atMarket: number
+    aboveMarket: number
+    averageDeviation: number
+  }
+}
+
+export async function generateDealerIntelligence(
+  supabase: SupabaseClient,
+  dealerId: string,
+): Promise<DealerIntelligenceReport> {
+  // Get dealer's active vehicles
+  const { data: vehicles } = await supabase
+    .from('vehicles')
+    .select('id, brand, model, price, subcategory_id, year')
+    .eq('dealer_id', dealerId)
+    .eq('status', 'published')
+    .not('price', 'is', null)
+    .limit(100)
+
+  const vehicleList = (vehicles || []) as Array<{
+    id: string
+    brand: string
+    model: string
+    price: number
+    subcategory_id: string | null
+    year: number | null
+  }>
+
+  if (vehicleList.length === 0) {
+    return {
+      dealerId,
+      totalVehicles: 0,
+      insights: [],
+      summary: { belowMarket: 0, atMarket: 0, aboveMarket: 0, averageDeviation: 0 },
+    }
+  }
+
+  // Get market data for comparison
+  const { data: marketData } = await supabase
+    .from('vehicles')
+    .select('brand, model, price, subcategory_id')
+    .eq('status', 'published')
+    .not('price', 'is', null)
+    .neq('dealer_id', dealerId)
+    .limit(5000)
+
+  const allVehicles = (marketData || []) as Array<{
+    brand: string
+    model: string
+    price: number
+    subcategory_id: string | null
+  }>
+
+  // Group market vehicles by brand+model for comparison
+  const marketPrices = new Map<string, number[]>()
+  for (const v of allVehicles) {
+    const key = `${v.brand}:${v.model}`.toLowerCase()
+    const prices = marketPrices.get(key) || []
+    prices.push(v.price)
+    marketPrices.set(key, prices)
+  }
+
+  // Also group by brand only as fallback
+  const brandPrices = new Map<string, number[]>()
+  for (const v of allVehicles) {
+    const key = v.brand.toLowerCase()
+    const prices = brandPrices.get(key) || []
+    prices.push(v.price)
+    brandPrices.set(key, prices)
+  }
+
+  const insights: DealerVehicleInsight[] = []
+
+  for (const vehicle of vehicleList) {
+    const exactKey = `${vehicle.brand}:${vehicle.model}`.toLowerCase()
+    const brandKey = vehicle.brand.toLowerCase()
+
+    // Try exact match first, then brand fallback
+    let comparePrices = marketPrices.get(exactKey)
+    if (!comparePrices || comparePrices.length < 3) {
+      comparePrices = brandPrices.get(brandKey)
+    }
+
+    if (!comparePrices || comparePrices.length < 2) {
+      continue // Not enough data to compare
+    }
+
+    const sorted = [...comparePrices].sort((a, b) => a - b)
+    const marketAvg = sorted.reduce((s, v) => s + v, 0) / sorted.length
+    const marketMin = sorted[0]!
+    const marketMax = sorted[sorted.length - 1]!
+
+    const deviation = ((vehicle.price - marketAvg) / marketAvg) * 100
+    let pricePosition: 'below' | 'average' | 'above' = 'average'
+    if (deviation > 10) pricePosition = 'above'
+    else if (deviation < -10) pricePosition = 'below'
+
+    let suggestion = ''
+    if (pricePosition === 'above') {
+      suggestion = `Tu ${vehicle.brand} ${vehicle.model} está un ${Math.abs(Math.round(deviation))}% por encima del mercado. Considera ajustar el precio.`
+    } else if (pricePosition === 'below') {
+      suggestion = `Tu ${vehicle.brand} ${vehicle.model} tiene buen precio, un ${Math.abs(Math.round(deviation))}% por debajo de la media.`
+    } else {
+      suggestion = `Tu ${vehicle.brand} ${vehicle.model} está en línea con el mercado.`
+    }
+
+    insights.push({
+      vehicleId: vehicle.id,
+      brand: vehicle.brand,
+      model: vehicle.model,
+      dealerPrice: vehicle.price,
+      marketAvg: Math.round(marketAvg),
+      marketMin,
+      marketMax,
+      pricePosition,
+      priceDeviationPercent: Math.round(deviation * 10) / 10,
+      avgDaysOnMarket: 0, // Would need sold_at tracking
+      suggestion,
+    })
+  }
+
+  const belowMarket = insights.filter((i) => i.pricePosition === 'below').length
+  const atMarket = insights.filter((i) => i.pricePosition === 'average').length
+  const aboveMarket = insights.filter((i) => i.pricePosition === 'above').length
+  const avgDeviation =
+    insights.length > 0
+      ? insights.reduce((s, i) => s + i.priceDeviationPercent, 0) / insights.length
+      : 0
+
+  return {
+    dealerId,
+    totalVehicles: vehicleList.length,
+    insights: insights.sort(
+      (a, b) => Math.abs(b.priceDeviationPercent) - Math.abs(a.priceDeviationPercent),
+    ),
+    summary: {
+      belowMarket,
+      atMarket,
+      aboveMarket,
+      averageDeviation: Math.round(avgDeviation * 10) / 10,
+    },
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /*  Main service function                                              */
 /* ------------------------------------------------------------------ */
 
