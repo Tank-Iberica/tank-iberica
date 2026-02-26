@@ -1,440 +1,87 @@
 <script setup lang="ts">
-import {
-  useAdminVehicles,
-  type VehicleFormData,
-  type MaintenanceEntry,
-  type RentalEntry,
-} from '~/composables/admin/useAdminVehicles'
-import { useAdminTypes } from '~/composables/admin/useAdminTypes'
-import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories'
-import { useAdminFilters, type AdminFilter } from '~/composables/admin/useAdminFilters'
-import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
-import {
-  generateVehiclePublicId,
-  generateCloudinaryContext,
-  generateVehicleAltText,
-  type FileNamingData,
-} from '~/utils/fileNaming'
-import { localizedName } from '~/composables/useLocalized'
+import type { MaintenanceEntry, RentalEntry } from '~/composables/admin/useAdminVehicles'
+import { useAdminProductForm } from '~/composables/admin/useAdminProductForm'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
 })
 
-const { t, locale } = useI18n()
-const toast = useToast()
-const router = useRouter()
-
-const { saving, error, createVehicle, addImage } = useAdminVehicles()
-const { types, fetchTypes } = useAdminTypes()
-const { subcategories, fetchSubcategories } = useAdminSubcategories()
-const { filters: allFilters, fetchFilters } = useAdminFilters()
-
 const {
-  upload: uploadToCloudinary,
-  uploading: cloudinaryUploading,
-  progress: cloudinaryProgress,
-} = useCloudinaryUpload()
+  // External state
+  saving,
+  error,
+  cloudinaryUploading,
+  cloudinaryProgress,
+  locale,
 
-// Extended interfaces for additional fields
-interface CharacteristicEntry {
-  id: string
-  key: string
-  value_es: string
-  value_en: string
-}
+  // Refs
+  selectedSubcategoryId,
+  formData,
+  characteristics,
+  documents,
+  pendingImages,
+  uploadingImages,
+  sections,
 
-// Form data
-const selectedSubcategoryId = ref<string | null>(null)
+  // Computed
+  dynamicFilters,
+  publishedSubcategories,
+  publishedTypes,
+  showRentalPrice,
+  isValid,
+  totalMaint,
+  totalRental,
+  totalCost,
 
-const formData = ref<VehicleFormData>({
-  brand: '',
-  model: '',
-  year: null,
-  price: null,
-  rental_price: null,
-  category: 'venta',
-  categories: [],
-  type_id: null,
-  location: null,
-  location_en: null,
-  location_country: null,
-  location_province: null,
-  location_region: null,
-  description_es: null,
-  description_en: null,
-  attributes_json: {},
-  status: 'draft',
-  featured: false,
-  plate: null,
-  acquisition_cost: null,
-  acquisition_date: null,
-  min_price: null,
-  is_online: true,
-  owner_name: null,
-  owner_contact: null,
-  owner_notes: null,
-  maintenance_records: [],
-  rental_records: [],
-})
+  // Functions
+  init,
+  updateFilterValue,
+  getFilterValue,
+  toggleCategory,
+  hasCat,
+  addCharacteristic,
+  removeCharacteristic,
+  handleImageSelect,
+  removePendingImage,
+  movePendingImage,
+  handleDocUpload,
+  removeDocument,
+  addMaint,
+  removeMaint,
+  updateMaint,
+  addRental,
+  removeRental,
+  updateRental,
+  handleSave,
+  handleCancel,
+  fmt,
 
-// Additional fields
-const characteristics = ref<CharacteristicEntry[]>([])
-const documents = ref<{ id: string; name: string; url: string }[]>([])
+  // Re-exports
+  localizedName,
+  countryFlag,
+} = useAdminProductForm()
 
-// Pending images (selected but not yet uploaded)
-interface PendingImage {
-  id: string
-  file: File
-  previewUrl: string
-}
-const pendingImages = ref<PendingImage[]>([])
-const uploadingImages = ref(false)
-
-// Collapsible sections
-const sections = reactive({
-  description: false,
-  filters: true,
-  characteristics: false,
-  documents: false,
-  financial: false,
-})
-
-// Dynamic filters
-const dynamicFilters = computed<AdminFilter[]>(() => {
-  if (!formData.value.type_id) return []
-  const sub = types.value.find((s) => s.id === formData.value.type_id)
-  if (!sub?.applicable_filters?.length) {
-    return allFilters.value.filter((f) => f.status === 'published')
-  }
-  return allFilters.value.filter(
-    (f) => sub.applicable_filters?.includes(f.id) && f.status !== 'archived',
-  )
-})
-
-// Published subcategories
-const publishedSubcategories = computed(() =>
-  subcategories.value.filter((s) => s.status === 'published'),
-)
-
-// Junction data: type ↔ subcategory links
-const typeSubcategoryLinks = ref<{ type_id: string; subcategory_id: string }[]>([])
-
-async function fetchTypeSubcategoryLinks() {
-  const supabase = useSupabaseClient()
-  const { data } = await supabase
-    .from('subcategory_categories')
-    .select('subcategory_id, category_id')
-  typeSubcategoryLinks.value = (data as { type_id: string; subcategory_id: string }[]) || []
-}
-
-// Published types filtered by selected subcategory
-const publishedTypes = computed(() => {
-  const all = types.value.filter((t) => t.status === 'published')
-  if (!selectedSubcategoryId.value) return all
-  const linkedTypeIds = new Set(
-    typeSubcategoryLinks.value
-      .filter((l) => l.subcategory_id === selectedSubcategoryId.value)
-      .map((l) => l.type_id),
-  )
-  return all.filter((t) => linkedTypeIds.has(t.id))
-})
-
-// File naming data for Cloudinary SEO
-const fileNamingData = computed<FileNamingData>(() => {
-  const type = types.value.find((t) => t.id === formData.value.type_id)
-  const subcatId = selectedSubcategoryId.value
-  const subcat = subcategories.value.find((s) => s.id === subcatId)
-  return {
-    id: 'new',
-    brand: formData.value.brand,
-    year: formData.value.year,
-    plate: formData.value.plate,
-    subcategory: subcat?.name_es || null,
-    type: type?.name_es || null,
-  }
-})
-
-// When subcategory changes, reset type_id if not in filtered types
-watch(selectedSubcategoryId, () => {
-  if (selectedSubcategoryId.value && formData.value.type_id) {
-    if (!publishedTypes.value.some((t) => t.id === formData.value.type_id)) {
-      formData.value.type_id = null
-    }
-  }
-})
-
-// Show rental price only if Alquiler category is selected
-const showRentalPrice = computed(() => formData.value.categories?.includes('alquiler'))
-
-// Auto-detect location_country / province / region from location text
-// Prioritize ES field; fall back to EN if ES is empty
-// Uses local dictionary first, then Nominatim geocoding for unknown cities
-let locationDebounce: ReturnType<typeof setTimeout> | null = null
-watch([() => formData.value.location, () => formData.value.location_en], ([es, en]) => {
-  const text = es || en
-  // Instant: local dictionary
-  const parsed = parseLocationText(text)
-  formData.value.location_country = parsed.country
-  formData.value.location_province = parsed.province
-  formData.value.location_region = parsed.region
-
-  // Async fallback: geocode if province unknown or no country detected
-  if ((!parsed.province || !parsed.country) && text) {
-    if (locationDebounce) clearTimeout(locationDebounce)
-    locationDebounce = setTimeout(async () => {
-      const geo = await geocodeLocation(text)
-      formData.value.location_country = geo.country
-      formData.value.location_province = geo.province
-      formData.value.location_region = geo.region
-    }, 800)
-  }
-})
-
-// Load data
+// Lifecycle — init data fetching
 onMounted(async () => {
-  await Promise.all([
-    fetchSubcategories(),
-    fetchTypes(),
-    fetchFilters(),
-    fetchTypeSubcategoryLinks(),
-  ])
+  await init()
 })
 
-// Filter handlers
-function updateFilterValue(id: string, value: string | number | boolean) {
-  formData.value.attributes_json = { ...formData.value.attributes_json, [id]: value }
+// Financial section event handlers that bridge emits to composable
+function onUpdateMinPrice(val: number | null) {
+  formData.value.min_price = val
 }
-
-function getFilterValue(id: string): string | number | boolean | undefined {
-  return formData.value.attributes_json[id] as string | number | boolean | undefined
+function onUpdateAcquisitionCost(val: number | null) {
+  formData.value.acquisition_cost = val
 }
-
-// Validation
-const isValid = computed(() => {
-  return (
-    formData.value.brand.trim() &&
-    formData.value.model.trim() &&
-    formData.value.type_id &&
-    (formData.value.categories?.length || 0) > 0
-  )
-})
-
-// Save
-async function handleSave() {
-  if (!isValid.value) {
-    toast.warning(t('toast.completeRequired'))
-    return
-  }
-
-  // 1. Create vehicle first
-  const vehicleId = await createVehicle(formData.value)
-  if (!vehicleId) return
-
-  // 2. Upload pending images via Cloudinary
-  if (pendingImages.value.length > 0) {
-    uploadingImages.value = true
-
-    // Update fileNamingData with the real vehicle ID
-    const naming: FileNamingData = {
-      ...fileNamingData.value,
-      id: vehicleId,
-    }
-
-    for (let i = 0; i < pendingImages.value.length; i++) {
-      const img = pendingImages.value[i]
-      const imageIndex = i + 1
-      const publicId = generateVehiclePublicId(naming, imageIndex)
-      const context = generateCloudinaryContext(naming)
-      const altText = generateVehicleAltText(naming, imageIndex)
-
-      const result = await uploadToCloudinary(img.file, {
-        publicId,
-        context,
-        tags: [
-          naming.brand?.toLowerCase(),
-          naming.subcategory?.toLowerCase(),
-          naming.type?.toLowerCase(),
-        ].filter(Boolean) as string[],
-      })
-
-      if (result) {
-        await addImage(vehicleId, {
-          cloudinary_public_id: result.public_id,
-          url: result.secure_url,
-          alt_text: altText,
-        })
-      }
-
-      URL.revokeObjectURL(img.previewUrl)
-    }
-
-    uploadingImages.value = false
-  }
-
-  // 3. Redirect to products list
-  router.push('/admin/productos')
+function onUpdateAcquisitionDate(val: string | null) {
+  formData.value.acquisition_date = val
 }
-
-function handleCancel() {
-  router.push('/admin/productos')
+function onUpdateMaint(id: string, field: keyof MaintenanceEntry, val: string | number) {
+  updateMaint(id, field, val)
 }
-
-// Categories
-function toggleCategory(cat: string) {
-  const cats = formData.value.categories || []
-  const idx = cats.indexOf(cat)
-  if (idx === -1) formData.value.categories = [...cats, cat]
-  else formData.value.categories = cats.filter((c) => c !== cat)
-  if (formData.value.categories?.length) {
-    formData.value.category = formData.value.categories[0] as 'alquiler' | 'venta' | 'terceros'
-  }
-}
-
-function hasCat(cat: string): boolean {
-  return formData.value.categories?.includes(cat) || false
-}
-
-// Characteristics
-function addCharacteristic() {
-  characteristics.value.push({
-    id: crypto.randomUUID(),
-    key: '',
-    value_es: '',
-    value_en: '',
-  })
-}
-
-function removeCharacteristic(id: string) {
-  characteristics.value = characteristics.value.filter((c) => c.id !== id)
-}
-
-// Pending Images
-function handleImageSelect(e: Event) {
-  const input = e.target as HTMLInputElement
-  if (!input.files?.length) return
-
-  const maxImages = 10
-  const currentCount = pendingImages.value.length
-  const availableSlots = maxImages - currentCount
-
-  if (availableSlots <= 0) {
-    toast.warning(t('toast.maxImagesReached'))
-    input.value = ''
-    return
-  }
-
-  const filesToAdd = Array.from(input.files).slice(0, availableSlots)
-
-  for (const file of filesToAdd) {
-    const previewUrl = URL.createObjectURL(file)
-    pendingImages.value.push({
-      id: crypto.randomUUID(),
-      file,
-      previewUrl,
-    })
-  }
-
-  input.value = ''
-}
-
-function removePendingImage(id: string) {
-  const img = pendingImages.value.find((i) => i.id === id)
-  if (img) {
-    URL.revokeObjectURL(img.previewUrl)
-    pendingImages.value = pendingImages.value.filter((i) => i.id !== id)
-  }
-}
-
-function movePendingImage(index: number, direction: 'up' | 'down') {
-  const newIndex = direction === 'up' ? index - 1 : index + 1
-  if (newIndex < 0 || newIndex >= pendingImages.value.length) return
-  const arr = [...pendingImages.value]
-  ;[arr[index], arr[newIndex]] = [arr[newIndex], arr[index]]
-  pendingImages.value = arr
-}
-
-// Documents
-function handleDocUpload(e: Event) {
-  const input = e.target as HTMLInputElement
-  if (!input.files?.length) return
-  toast.info(t('toast.documentsRequireConfig'))
-  input.value = ''
-}
-
-function removeDocument(id: string) {
-  documents.value = documents.value.filter((d) => d.id !== id)
-}
-
-// Maintenance
-function addMaint() {
-  formData.value.maintenance_records = [
-    ...(formData.value.maintenance_records || []),
-    {
-      id: crypto.randomUUID(),
-      date: new Date().toISOString().split('T')[0],
-      reason: '',
-      cost: 0,
-      invoice_url: undefined,
-    },
-  ]
-}
-
-function removeMaint(id: string) {
-  formData.value.maintenance_records =
-    formData.value.maintenance_records?.filter((r) => r.id !== id) || []
-}
-
-function updateMaint(id: string, field: keyof MaintenanceEntry, val: string | number) {
-  formData.value.maintenance_records =
-    formData.value.maintenance_records?.map((r) => (r.id === id ? { ...r, [field]: val } : r)) || []
-}
-
-const totalMaint = computed(() =>
-  (formData.value.maintenance_records || []).reduce((s, r) => s + (r.cost || 0), 0),
-)
-
-// Rentals
-function addRental() {
-  const today = new Date().toISOString().split('T')[0]
-  formData.value.rental_records = [
-    ...(formData.value.rental_records || []),
-    {
-      id: crypto.randomUUID(),
-      from_date: today,
-      to_date: today,
-      amount: 0,
-      notes: '',
-    },
-  ]
-}
-
-function removeRental(id: string) {
-  formData.value.rental_records = formData.value.rental_records?.filter((r) => r.id !== id) || []
-}
-
-function updateRental(id: string, field: keyof RentalEntry, val: string | number) {
-  formData.value.rental_records =
-    formData.value.rental_records?.map((r) => (r.id === id ? { ...r, [field]: val } : r)) || []
-}
-
-const totalRental = computed(() =>
-  (formData.value.rental_records || []).reduce((s, r) => s + (r.amount || 0), 0),
-)
-
-// Cost calculation (like original: Coste + Mant - Renta)
-const totalCost = computed(
-  () => (formData.value.acquisition_cost || 0) + totalMaint.value - totalRental.value,
-)
-
-function fmt(val: number | null | undefined): string {
-  if (!val && val !== 0) return '—'
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-  }).format(val)
+function onUpdateRental(id: string, field: keyof RentalEntry, val: string | number) {
+  updateRental(id, field, val)
 }
 </script>
 
@@ -527,65 +174,15 @@ function fmt(val: number | null | undefined): string {
       </div>
 
       <!-- === SECTION: Imágenes === -->
-      <div class="section">
-        <div class="section-title">Imágenes ({{ pendingImages.length }}/10)</div>
-        <label for="image-upload-input" class="upload-zone-label">
-          📷 Seleccionar imágenes
-          <input
-            id="image-upload-input"
-            type="file"
-            accept="image/*"
-            multiple
-            @change="handleImageSelect"
-          >
-        </label>
-        <div v-if="cloudinaryUploading" class="upload-progress">
-          <div class="progress-bar" :style="{ width: cloudinaryProgress + '%' }" />
-          <span>{{ cloudinaryProgress }}%</span>
-        </div>
-        <div v-if="pendingImages.length" class="img-grid">
-          <div
-            v-for="(img, idx) in pendingImages"
-            :key="img.id"
-            class="img-item"
-            :class="{ cover: idx === 0 }"
-          >
-            <img :src="img.previewUrl" :alt="`Imagen ${idx + 1}`" >
-            <div class="img-overlay">
-              <div class="img-actions">
-                <button
-                  v-if="idx > 0"
-                  type="button"
-                  title="Mover arriba"
-                  @click="movePendingImage(idx, 'up')"
-                >
-                  ↑
-                </button>
-                <button
-                  v-if="idx < pendingImages.length - 1"
-                  type="button"
-                  title="Mover abajo"
-                  @click="movePendingImage(idx, 'down')"
-                >
-                  ↓
-                </button>
-                <button
-                  type="button"
-                  class="del"
-                  title="Eliminar"
-                  @click="removePendingImage(img.id)"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
-            <span v-if="idx === 0" class="cover-badge">PORTADA</span>
-          </div>
-        </div>
-        <p v-if="pendingImages.length" class="img-hint">
-          Las imágenes se subirán al guardar el vehículo
-        </p>
-      </div>
+      <AdminProductImageSection
+        :pending-images="pendingImages"
+        :uploading-images="uploadingImages"
+        :cloudinary-uploading="cloudinaryUploading"
+        :cloudinary-progress="cloudinaryProgress"
+        @select="handleImageSelect"
+        @remove="removePendingImage"
+        @move="movePendingImage"
+      />
 
       <!-- === SECTION: Categorías === -->
       <div class="section">
@@ -734,53 +331,11 @@ function fmt(val: number | null | undefined): string {
           <span>{{ sections.filters ? '−' : '+' }}</span>
         </button>
         <div v-if="sections.filters" class="section-content">
-          <div class="filters-grid">
-            <div v-for="f in dynamicFilters" :key="f.id" class="field-sm">
-              <label
-                >{{ f.label_es || f.name }}
-                <span v-if="f.unit" class="hint">({{ f.unit }})</span></label
-              >
-              <input
-                v-if="f.type === 'caja'"
-                type="text"
-                :value="getFilterValue(f.id)"
-                @input="updateFilterValue(f.id, ($event.target as HTMLInputElement).value)"
-              >
-              <template v-else-if="f.type === 'desplegable' || f.type === 'desplegable_tick'">
-                <select
-                  v-if="((f.options?.choices as string[]) || []).length"
-                  :value="getFilterValue(f.id)"
-                  @change="updateFilterValue(f.id, ($event.target as HTMLSelectElement).value)"
-                >
-                  <option value="">—</option>
-                  <option v-for="c in (f.options?.choices as string[]) || []" :key="c" :value="c">
-                    {{ c }}
-                  </option>
-                </select>
-                <input
-                  v-else
-                  type="text"
-                  :value="getFilterValue(f.id)"
-                  placeholder="Valor libre"
-                  @input="updateFilterValue(f.id, ($event.target as HTMLInputElement).value)"
-                >
-              </template>
-              <label v-else-if="f.type === 'tick'" class="tick-inline">
-                <input
-                  type="checkbox"
-                  :checked="!!getFilterValue(f.id)"
-                  @change="updateFilterValue(f.id, ($event.target as HTMLInputElement).checked)"
-                >
-                Sí
-              </label>
-              <input
-                v-else
-                type="number"
-                :value="getFilterValue(f.id)"
-                @input="updateFilterValue(f.id, Number(($event.target as HTMLInputElement).value))"
-              >
-            </div>
-          </div>
+          <AdminProductDynamicFilters
+            :dynamic-filters="dynamicFilters"
+            :get-filter-value="getFilterValue"
+            @update-filter="updateFilterValue"
+          />
         </div>
       </div>
 
@@ -796,17 +351,12 @@ function fmt(val: number | null | undefined): string {
             <span>{{ sections.characteristics ? '−' : '+' }}</span>
           </div>
         </button>
-        <div v-if="sections.characteristics" class="section-content">
-          <div v-if="characteristics.length === 0" class="empty-msg">
-            Sin características adicionales. Pulsa "+ Añadir" para crear una.
-          </div>
-          <div v-for="c in characteristics" :key="c.id" class="char-row">
-            <input v-model="c.key" type="text" placeholder="Nombre (ej: Motor)" >
-            <input v-model="c.value_es" type="text" placeholder="Valor ES" >
-            <input v-model="c.value_en" type="text" placeholder="Valor EN" >
-            <button class="btn-x" @click="removeCharacteristic(c.id)">×</button>
-          </div>
-        </div>
+        <AdminProductCharacteristics
+          v-if="sections.characteristics"
+          :characteristics="characteristics"
+          @add="addCharacteristic"
+          @remove="removeCharacteristic"
+        />
       </div>
 
       <!-- === SECTION: Documentos === -->
@@ -834,195 +384,27 @@ function fmt(val: number | null | undefined): string {
           <span>💰 Cuentas</span>
           <span class="cost-badge">COSTE TOTAL: {{ fmt(totalCost) }}</span>
         </button>
-        <div v-if="sections.financial" class="section-content">
-          <div class="row-3">
-            <div class="field">
-              <label>Precio mínimo €</label>
-              <input
-                v-model.number="formData.min_price"
-                type="number"
-                placeholder="Precio mínimo aceptable"
-              >
-            </div>
-            <div class="field">
-              <label>Coste adquisición €</label>
-              <input
-                v-model.number="formData.acquisition_cost"
-                type="number"
-                placeholder="Coste de compra"
-              >
-            </div>
-            <div class="field">
-              <label>Fecha adquisición</label>
-              <input v-model="formData.acquisition_date" type="date" >
-            </div>
-          </div>
-
-          <!-- Maintenance table -->
-          <div class="records-block">
-            <div class="records-header">
-              <span>🔧 Mantenimiento (suma)</span>
-              <button class="btn-add" @click="addMaint">+ Añadir</button>
-            </div>
-            <table v-if="formData.maintenance_records?.length" class="records-table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Razón</th>
-                  <th>Coste €</th>
-                  <th>Factura</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="r in formData.maintenance_records" :key="r.id">
-                  <td>
-                    <input
-                      type="date"
-                      :value="r.date"
-                      @input="updateMaint(r.id, 'date', ($event.target as HTMLInputElement).value)"
-                    >
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      :value="r.reason"
-                      placeholder="Razón"
-                      @input="
-                        updateMaint(r.id, 'reason', ($event.target as HTMLInputElement).value)
-                      "
-                    >
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      :value="r.cost"
-                      placeholder="0"
-                      @input="
-                        updateMaint(r.id, 'cost', Number(($event.target as HTMLInputElement).value))
-                      "
-                    >
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      :value="r.invoice_url"
-                      placeholder="URL factura"
-                      @input="
-                        updateMaint(
-                          r.id,
-                          'invoice_url' as keyof MaintenanceEntry,
-                          ($event.target as HTMLInputElement).value,
-                        )
-                      "
-                    >
-                  </td>
-                  <td><button class="btn-x" @click="removeMaint(r.id)">×</button></td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colspan="2" class="text-right">Total Mant:</td>
-                  <td colspan="3">
-                    <strong>{{ fmt(totalMaint) }}</strong>
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-            <div v-else class="empty-msg">Sin registros de mantenimiento.</div>
-          </div>
-
-          <!-- Rental income table -->
-          <div class="records-block">
-            <div class="records-header">
-              <span>📅 Renta (resta)</span>
-              <button class="btn-add" @click="addRental">+ Añadir</button>
-            </div>
-            <table v-if="formData.rental_records?.length" class="records-table">
-              <thead>
-                <tr>
-                  <th>Desde</th>
-                  <th>Hasta</th>
-                  <th>Razón</th>
-                  <th>Importe €</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="r in formData.rental_records" :key="r.id">
-                  <td>
-                    <input
-                      type="date"
-                      :value="r.from_date"
-                      @input="
-                        updateRental(r.id, 'from_date', ($event.target as HTMLInputElement).value)
-                      "
-                    >
-                  </td>
-                  <td>
-                    <input
-                      type="date"
-                      :value="r.to_date"
-                      @input="
-                        updateRental(r.id, 'to_date', ($event.target as HTMLInputElement).value)
-                      "
-                    >
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      :value="r.notes"
-                      placeholder="Razón"
-                      @input="
-                        updateRental(r.id, 'notes', ($event.target as HTMLInputElement).value)
-                      "
-                    >
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      :value="r.amount"
-                      placeholder="0"
-                      @input="
-                        updateRental(
-                          r.id,
-                          'amount',
-                          Number(($event.target as HTMLInputElement).value),
-                        )
-                      "
-                    >
-                  </td>
-                  <td><button class="btn-x" @click="removeRental(r.id)">×</button></td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colspan="3" class="text-right">Total Renta:</td>
-                  <td colspan="2">
-                    <strong class="green">{{ fmt(totalRental) }}</strong>
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-            <div v-else class="empty-msg">Sin registros de alquiler.</div>
-          </div>
-
-          <!-- Cost summary -->
-          <div class="cost-summary">
-            <div class="cost-row">
-              <span>Coste adquisición</span><span>{{ fmt(formData.acquisition_cost) }}</span>
-            </div>
-            <div class="cost-row">
-              <span>+ Mantenimiento</span><span>{{ fmt(totalMaint) }}</span>
-            </div>
-            <div class="cost-row">
-              <span>− Renta</span><span class="green">{{ fmt(totalRental) }}</span>
-            </div>
-            <div class="cost-row total">
-              <span>COSTE TOTAL</span><span>{{ fmt(totalCost) }}</span>
-            </div>
-          </div>
-        </div>
+        <AdminProductFinancialSection
+          v-if="sections.financial"
+          :min-price="formData.min_price"
+          :acquisition-cost="formData.acquisition_cost"
+          :acquisition-date="formData.acquisition_date"
+          :maintenance-records="formData.maintenance_records || []"
+          :rental-records="formData.rental_records || []"
+          :total-maint="totalMaint"
+          :total-rental="totalRental"
+          :total-cost="totalCost"
+          :fmt="fmt"
+          @add-maint="addMaint"
+          @remove-maint="removeMaint"
+          @update-maint="onUpdateMaint"
+          @add-rental="addRental"
+          @remove-rental="removeRental"
+          @update-rental="onUpdateRental"
+          @update:min-price="onUpdateMinPrice"
+          @update:acquisition-cost="onUpdateAcquisitionCost"
+          @update:acquisition-date="onUpdateAcquisitionDate"
+        />
       </div>
     </div>
   </div>
@@ -1312,82 +694,10 @@ function fmt(val: number | null | undefined): string {
   outline: none;
   border-color: #23424a;
 }
-.field-sm {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.field-sm label {
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: #6b7280;
-  text-transform: uppercase;
-}
-.field-sm input,
-.field-sm select {
-  padding: 6px 8px;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  font-size: 0.8rem;
-}
-.hint {
-  font-weight: normal;
-  color: #9ca3af;
-}
 .char-count {
   font-size: 0.65rem;
   color: #9ca3af;
   text-align: right;
-}
-
-/* Filters grid */
-.filters-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding-top: 10px;
-}
-.tick-inline {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-/* Images placeholder */
-.img-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px;
-  background: #f9fafb;
-  border: 2px dashed #e5e7eb;
-  border-radius: 6px;
-  text-align: center;
-}
-.img-placeholder span {
-  font-size: 1.5rem;
-  opacity: 0.4;
-}
-.img-placeholder p {
-  margin: 6px 0 0;
-  font-size: 0.8rem;
-  color: #9ca3af;
-}
-
-/* Characteristics */
-.char-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 32px;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.char-row input {
-  padding: 6px 8px;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  font-size: 0.8rem;
 }
 
 /* Documents & Upload */
@@ -1410,77 +720,6 @@ function fmt(val: number | null | undefined): string {
 }
 .upload-zone-label input[type='file'] {
   display: none;
-}
-
-/* Image grid */
-.img-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  margin-top: 12px;
-}
-.img-item {
-  position: relative;
-  aspect-ratio: 4/3;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 2px solid transparent;
-}
-.img-item.cover {
-  border-color: #23424a;
-}
-.img-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.img-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.img-item:hover .img-overlay {
-  opacity: 1;
-}
-.img-actions {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  gap: 4px;
-}
-.img-actions button {
-  width: 26px;
-  height: 26px;
-  border: none;
-  background: #fff;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.75rem;
-}
-.img-actions button.del {
-  background: #fee2e2;
-  color: #dc2626;
-}
-.cover-badge {
-  position: absolute;
-  bottom: 4px;
-  left: 4px;
-  background: #23424a;
-  color: #fff;
-  font-size: 0.6rem;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-weight: 600;
-}
-.img-hint {
-  margin-top: 8px;
-  font-size: 0.75rem;
-  color: #6b7280;
-  text-align: center;
 }
 
 .doc-row {
@@ -1536,76 +775,12 @@ function fmt(val: number | null | undefined): string {
   font-weight: 600;
 }
 
-/* Records table */
-.records-block {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
-}
-.records-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-.records-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8rem;
-}
-.records-table th {
-  text-align: left;
-  padding: 6px 8px;
-  background: #f3f4f6;
+.location-detected {
+  display: block;
+  font-size: 11px;
+  color: #10b981;
+  margin-top: 2px;
   font-weight: 500;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-}
-.records-table td {
-  padding: 4px 8px;
-  border-bottom: 1px solid #f3f4f6;
-}
-.records-table input {
-  width: 100%;
-  padding: 4px 6px;
-  border: 1px solid #e5e7eb;
-  border-radius: 3px;
-  font-size: 0.75rem;
-}
-.records-table tfoot td {
-  padding-top: 8px;
-  border: none;
-}
-.text-right {
-  text-align: right;
-}
-
-/* Cost summary */
-.cost-summary {
-  margin-top: 16px;
-  padding: 12px;
-  background: #f9fafb;
-  border-radius: 6px;
-}
-.cost-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  color: #6b7280;
-  padding: 4px 0;
-}
-.cost-row.total {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #e5e7eb;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: #374151;
-}
-.green {
-  color: #16a34a;
 }
 
 /* Mobile */
@@ -1626,44 +801,5 @@ function fmt(val: number | null | undefined): string {
     margin-left: 0;
     margin-top: 8px;
   }
-  .filters-grid {
-    grid-template-columns: 1fr;
-  }
-  .char-row {
-    grid-template-columns: 1fr;
-  }
-  .records-table {
-    font-size: 0.7rem;
-  }
-  .img-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.location-detected {
-  display: block;
-  font-size: 11px;
-  color: #10b981;
-  margin-top: 2px;
-  font-weight: 500;
-}
-
-/* Upload progress bar */
-.upload-progress {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-.upload-progress .progress-bar {
-  flex: 1;
-  height: 6px;
-  background: #23424a;
-  border-radius: 3px;
-  transition: width 0.2s;
-}
-.upload-progress span {
-  font-size: 0.7rem;
-  color: #6b7280;
 }
 </style>
