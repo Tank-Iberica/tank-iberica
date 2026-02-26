@@ -8,7 +8,11 @@
  *   Ref: https://github.com/nuxt/nuxt/issues/13223
  * - unsafe-eval in script-src: REQUIRED by Chart.js (used in admin dashboards)
  *   for its internal expression parser. Only affects admin pages.
- *   TODO: Consider nonce-based CSP when Nuxt 4 supports it natively.
+ *   Nonce-based CSP: Nuxt 4 supports nonces via the `nuxt-security` module,
+ *   but adopting it requires replacing this custom middleware entirely.
+ *   Current decision (Session 59): keep custom middleware + report-uri to
+ *   monitor violations. Revisit when migrating to nuxt-security module.
+ *   Chart.js unsafe-eval can be mitigated by lazy-loading Chart.js only in admin.
  * - unsafe-inline in style-src: REQUIRED by Vue's scoped styles and Nuxt SSR
  *   which injects inline <style> blocks during hydration.
  */
@@ -36,6 +40,7 @@ export default defineEventHandler((event) => {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
+    'report-uri /api/infra/csp-report',
   ].join('; ')
 
   headers.setHeader('Content-Security-Policy', csp)
