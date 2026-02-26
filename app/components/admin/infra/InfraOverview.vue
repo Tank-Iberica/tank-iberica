@@ -238,10 +238,10 @@ const stackSummaryRows = computed<StackSummaryRow[]>(() => {
     return {
       key: card.key,
       name: card.name,
-      plan: SERVICE_PLANS[card.key] ?? '—',
+      plan: SERVICE_PLANS[card.key as keyof typeof SERVICE_PLANS] ?? '—',
       usagePercent: worstPercent,
       status: card.overallStatus,
-      nextStep,
+      nextStep: nextStep ?? 'OK',
     }
   })
 

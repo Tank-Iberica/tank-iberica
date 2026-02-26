@@ -3,7 +3,14 @@
     <div v-if="show" class="modal-bg" @click.self="$emit('close')">
       <div class="modal modal-lg">
         <div class="modal-head">
-          <span>{{ editingId ? '&#x270F;&#xFE0F; Editar' : '&#x2795; Nueva' }} Transaccion</span>
+          <span
+            >{{
+              editingId
+                ? '&#x270F;&#xFE0F; ' + $t('admin.balance.editTransaction')
+                : '&#x2795; ' + $t('admin.balance.newTransaction')
+            }}
+            {{ $t('admin.balance.transaction') }}</span
+          >
           <button @click="$emit('close')">&times;</button>
         </div>
         <div class="modal-body">
@@ -11,21 +18,21 @@
           <div class="tipo-selector">
             <label :class="{ active: formData.tipo === 'ingreso' }">
               <input v-model="formData.tipo" type="radio" value="ingreso" >
-              <span class="tipo-card ingreso">&uarr; Ingreso</span>
+              <span class="tipo-card ingreso">&uarr; {{ $t('admin.balance.incomeType') }}</span>
             </label>
             <label :class="{ active: formData.tipo === 'gasto' }">
               <input v-model="formData.tipo" type="radio" value="gasto" >
-              <span class="tipo-card gasto">&darr; Gasto</span>
+              <span class="tipo-card gasto">&darr; {{ $t('admin.balance.expenseType') }}</span>
             </label>
           </div>
 
           <div class="row-3">
             <div class="field">
-              <label for="form-fecha">Fecha *</label>
+              <label for="form-fecha">{{ $t('admin.balance.dateRequired') }}</label>
               <input id="form-fecha" v-model="formData.fecha" type="date" >
             </div>
             <div class="field">
-              <label for="form-razon">Razon *</label>
+              <label for="form-razon">{{ $t('admin.balance.reasonRequired') }}</label>
               <select id="form-razon" v-model="formData.razon">
                 <option v-for="[key, label] in reasonOptions" :key="key" :value="key">
                   {{ label }}
@@ -33,7 +40,7 @@
               </select>
             </div>
             <div class="field">
-              <label for="form-estado">Estado *</label>
+              <label for="form-estado">{{ $t('admin.balance.statusRequired') }}</label>
               <select id="form-estado" v-model="formData.estado">
                 <option v-for="[key, label] in statusOptions" :key="key" :value="key">
                   {{ label }}
@@ -44,7 +51,7 @@
 
           <div class="row-2">
             <div class="field">
-              <label for="form-importe">Importe &euro; *</label>
+              <label for="form-importe">{{ $t('admin.balance.amountEur') }}</label>
               <input
                 id="form-importe"
                 v-model.number="formData.importe"
@@ -55,7 +62,7 @@
               >
             </div>
             <div v-if="formData.tipo === 'ingreso'" class="field">
-              <label for="form-coste">Coste asociado &euro; (para % beneficio)</label>
+              <label for="form-coste">{{ $t('admin.balance.associatedCostEur') }}</label>
               <input
                 id="form-coste"
                 v-model.number="formData.coste_asociado"
@@ -69,17 +76,17 @@
           </div>
 
           <div class="field">
-            <label for="form-vehicle">Vehiculo relacionado</label>
+            <label for="form-vehicle">{{ $t('admin.balance.relatedVehicle') }}</label>
             <select id="form-vehicle" v-model="formData.vehicle_id" class="vehicle-select">
-              <option :value="null">&mdash; Sin vehiculo &mdash;</option>
-              <option v-for="v in vehicles" :key="v.id" :value="v.id">
+              <option :value="null">&mdash; {{ $t('admin.balance.noVehicle') }} &mdash;</option>
+              <option v-for="v in vehicles" :key="String(v.id)" :value="v.id">
                 {{ v.brand }} {{ v.model }} ({{ v.year }}) {{ v.plate ? `- ${v.plate}` : '' }}
               </option>
             </select>
           </div>
 
           <div class="field">
-            <label for="form-detalle">Detalle</label>
+            <label for="form-detalle">{{ $t('admin.balance.detail') }}</label>
             <input
               id="form-detalle"
               v-model="formData.detalle"
@@ -90,16 +97,16 @@
 
           <div class="row-2">
             <div class="field">
-              <label for="form-type">Tipo</label>
+              <label for="form-type">{{ $t('admin.balance.type') }}</label>
               <select id="form-type" v-model="typeId">
-                <option :value="null">&mdash; Sin tipo &mdash;</option>
+                <option :value="null">&mdash; {{ $t('admin.balance.noType') }} &mdash;</option>
                 <option v-for="s in types" :key="s.id" :value="s.id">
                   {{ localizedName(s, locale) }}
                 </option>
               </select>
             </div>
             <div class="field">
-              <label for="form-factura-url">URL Factura/Recibo</label>
+              <label for="form-factura-url">{{ $t('admin.balance.invoiceUrl') }}</label>
               <input
                 id="form-factura-url"
                 v-model="formData.factura_url"
@@ -110,12 +117,12 @@
           </div>
 
           <div class="field">
-            <label for="form-notas">Notas</label>
+            <label for="form-notas">{{ $t('admin.balance.notes') }}</label>
             <textarea
               id="form-notas"
               v-model="formData.notas"
               rows="2"
-              placeholder="Notas adicionales..."
+              :placeholder="$t('admin.balance.notesPlaceholder')"
             />
           </div>
 
@@ -124,7 +131,7 @@
             v-if="formData.tipo === 'ingreso' && formData.coste_asociado && formData.importe"
             class="profit-preview"
           >
-            <span>Beneficio estimado:</span>
+            <span>{{ $t('admin.balance.estimatedProfit') }}</span>
             <strong
               :class="
                 calculateProfit(formData.importe, formData.coste_asociado)! >= 0
@@ -137,9 +144,9 @@
           </div>
         </div>
         <div class="modal-foot">
-          <button class="btn" @click="$emit('close')">Cancelar</button>
+          <button class="btn" @click="$emit('close')">{{ $t('admin.balance.cancel') }}</button>
           <button class="btn btn-primary" :disabled="saving" @click="$emit('save')">
-            {{ saving ? 'Guardando...' : 'Guardar' }}
+            {{ saving ? $t('admin.balance.saving') : $t('admin.balance.save') }}
           </button>
         </div>
       </div>
@@ -159,9 +166,9 @@ import { localizedName } from '~/composables/useLocalized'
 const formData = defineModel<BalanceFormData>('formData', { required: true })
 
 const typeId = computed({
-  get: () => (formData.value as Record<string, unknown>).type_id as string | null,
+  get: () => formData.value.type_id ?? null,
   set: (v: string | null) => {
-    ;(formData.value as Record<string, unknown>).type_id = v
+    formData.value.type_id = v
   },
 })
 
@@ -171,8 +178,14 @@ defineProps<{
   saving: boolean
   reasonOptions: [BalanceReason, string][]
   statusOptions: [BalanceStatus, string][]
-  vehicles: Array<Record<string, unknown>>
-  types: Array<Record<string, unknown>>
+  vehicles: readonly Record<string, unknown>[]
+  types: readonly {
+    id: string
+    name?: Record<string, string> | null
+    name_es?: string
+    name_en?: string | null
+    [key: string]: unknown
+  }[]
   locale: string
   calculateProfit: (importe: number, coste: number | null) => number | null
 }>()

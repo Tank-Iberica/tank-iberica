@@ -2,7 +2,7 @@
 import type { AdminVehicleFilters } from '~/composables/admin/useAdminVehicles'
 import { localizedName } from '~/composables/useLocalized'
 
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 
 interface SubcategoryOption {
   id: string
@@ -32,21 +32,21 @@ const emit = defineEmits<{
   clear: []
 }>()
 
-const statusOptions = [
-  { value: null, label: 'Todos' },
-  { value: 'published', label: 'Publicado' },
-  { value: 'draft', label: 'Oculto' },
-  { value: 'rented', label: 'Alquilado' },
-  { value: 'maintenance', label: 'Taller' },
-  { value: 'sold', label: 'Vendido' },
-]
+const statusOptions = computed(() => [
+  { value: null, label: t('admin.productos.all') },
+  { value: 'published', label: t('admin.productos.published') },
+  { value: 'draft', label: t('admin.productos.hidden') },
+  { value: 'rented', label: t('admin.productos.rented') },
+  { value: 'maintenance', label: t('admin.productos.maintenance') },
+  { value: 'sold', label: t('admin.productos.sold') },
+])
 
-const categoryOptions = [
-  { value: null, label: 'Todas' },
-  { value: 'venta', label: 'Venta' },
-  { value: 'alquiler', label: 'Alquiler' },
-  { value: 'terceros', label: 'Terceros' },
-]
+const categoryOptions = computed(() => [
+  { value: null, label: t('admin.productos.allCategories') },
+  { value: 'venta', label: t('admin.productos.sale') },
+  { value: 'alquiler', label: t('admin.productos.rental') },
+  { value: 'terceros', label: t('admin.productos.thirdParty') },
+])
 
 const localFilters = computed({
   get: () => props.filters,
@@ -64,7 +64,11 @@ const localOnlineFilter = computed({
     <!-- Search -->
     <div class="search-box">
       <span class="search-icon">🔍</span>
-      <input v-model="localFilters.search" type="text" placeholder="Buscar marca, modelo..." >
+      <input
+        v-model="localFilters.search"
+        type="text"
+        :placeholder="t('admin.productos.searchPlaceholder')"
+      >
       <button v-if="localFilters.search" class="clear-btn" @click="localFilters.search = ''">
         ×
       </button>
@@ -72,13 +76,13 @@ const localOnlineFilter = computed({
 
     <!-- Online/Offline Filter -->
     <div class="filter-group">
-      <label class="filter-label">Tipo:</label>
+      <label class="filter-label">{{ t('admin.productos.typeLabel') }}</label>
       <div class="segment-control">
         <button
           v-for="opt in [
-            { value: 'all', label: 'Todos' },
-            { value: 'online', label: 'Online' },
-            { value: 'offline', label: 'Offline' },
+            { value: 'all', label: t('admin.productos.all') },
+            { value: 'online', label: t('admin.productos.online') },
+            { value: 'offline', label: t('admin.productos.offline') },
           ]"
           :key="opt.value"
           :class="{ active: localOnlineFilter === opt.value }"
@@ -91,7 +95,7 @@ const localOnlineFilter = computed({
 
     <!-- Category Filter -->
     <div class="filter-group">
-      <label class="filter-label">Categoría:</label>
+      <label class="filter-label">{{ t('admin.productos.categoryLabel') }}</label>
       <select v-model="localFilters.category">
         <option v-for="opt in categoryOptions" :key="String(opt.value)" :value="opt.value">
           {{ opt.label }}
@@ -101,7 +105,7 @@ const localOnlineFilter = computed({
 
     <!-- Status Filter -->
     <div class="filter-group">
-      <label class="filter-label">Estado:</label>
+      <label class="filter-label">{{ t('admin.productos.statusLabel') }}</label>
       <select v-model="localFilters.status">
         <option v-for="opt in statusOptions" :key="String(opt.value)" :value="opt.value">
           {{ opt.label }}
@@ -111,9 +115,9 @@ const localOnlineFilter = computed({
 
     <!-- Subcategory Filter -->
     <div class="filter-group">
-      <label class="filter-label">Subcat.:</label>
+      <label class="filter-label">{{ t('admin.productos.subcategoryLabel') }}</label>
       <select v-model="localFilters.subcategory_id">
-        <option :value="null">Todas</option>
+        <option :value="null">{{ t('admin.productos.allCategories') }}</option>
         <option v-for="sub in subcategories" :key="sub.id" :value="sub.id">
           {{ localizedName(sub, locale) }}
         </option>
@@ -122,18 +126,18 @@ const localOnlineFilter = computed({
 
     <!-- Type Filter -->
     <div class="filter-group">
-      <label class="filter-label">Tipo:</label>
+      <label class="filter-label">{{ t('admin.productos.typeLabel') }}</label>
       <select v-model="localFilters.type_id">
-        <option :value="null">Todos</option>
-        <option v-for="t in filteredTypes" :key="t.id" :value="t.id">
-          {{ localizedName(t, locale) }}
+        <option :value="null">{{ t('admin.productos.all') }}</option>
+        <option v-for="tp in filteredTypes" :key="tp.id" :value="tp.id">
+          {{ localizedName(tp, locale) }}
         </option>
       </select>
     </div>
 
     <!-- Clear Button -->
     <button v-if="hasActiveFilters" class="btn-text-danger" @click="emit('clear')">
-      ✕ Limpiar
+      ✕ {{ t('admin.productos.clear') }}
     </button>
   </div>
 </template>

@@ -53,6 +53,8 @@ export interface BalanceFormData {
   coste_asociado: number | null
   vehicle_id: string | null
   subcategory_id: string | null
+  type_id?: string | null
+  [key: string]: unknown
 }
 
 export interface BalanceFilters {

@@ -10,7 +10,7 @@ interface ActiveFilterColumn {
   unit?: string
 }
 
-defineProps<{
+const props = defineProps<{
   vehicles: AdminVehicle[]
   selectedIds: Set<string>
   sortField: SortField
@@ -20,8 +20,8 @@ defineProps<{
   favCounts: Record<string, number>
   hasActiveFilters: boolean
   driveLoading: boolean
-  getSubcategoryForVehicle: (typeId: string | null) => string
-  getSubcategoryName: (id: string | null) => string
+  getSubcategoryForVehicle: (typeId: string | null | undefined) => string
+  getSubcategoryName: (id: string | null | undefined) => string
   formatPrice: (price: number | null | undefined) => string
   getFilterValue: (vehicle: AdminVehicle, filterName: string) => string
   getStatusClass: (status: string) => string

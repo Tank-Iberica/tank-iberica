@@ -6,7 +6,7 @@
         type="checkbox"
         @change="$emit('update:showDesglose', ($event.target as HTMLInputElement).checked)"
       >
-      Desglose por raz&oacute;n
+      {{ $t('admin.balance.breakdownByReason') }}
     </label>
     <label class="toggle-check">
       <input
@@ -14,19 +14,21 @@
         type="checkbox"
         @change="$emit('update:showCharts', ($event.target as HTMLInputElement).checked)"
       >
-      Gr&aacute;ficos
+      {{ $t('admin.balance.charts') }}
     </label>
     <select
       v-if="showCharts"
       :value="chartType"
       class="chart-type-select"
-      aria-label="Tipo de gráfico"
-      @change="$emit('update:chartType', ($event.target as HTMLSelectElement).value)"
+      :aria-label="$t('admin.balance.chartTypeLabel')"
+      @change="
+        $emit('update:chartType', ($event.target as HTMLSelectElement).value as 'bar' | 'pie')
+      "
     >
-      <option value="bar">Barras</option>
-      <option value="pie">Circular</option>
+      <option value="bar">{{ $t('admin.balance.barChart') }}</option>
+      <option value="pie">{{ $t('admin.balance.pieChart') }}</option>
     </select>
-    <span class="count">{{ total }} transacciones</span>
+    <span class="count">{{ total }} {{ $t('admin.balance.transactions') }}</span>
   </div>
 </template>
 

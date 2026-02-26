@@ -1,34 +1,34 @@
 <template>
   <div class="table-container">
-    <div v-if="loading" class="loading">Cargando...</div>
+    <div v-if="loading" class="loading">{{ $t('admin.balance.loading') }}</div>
 
     <table v-else class="balance-table">
       <thead>
         <tr>
           <th class="sortable" @click="$emit('toggleSort', 'tipo')">
-            Tipo {{ getSortIcon('tipo') }}
+            {{ $t('admin.balance.colType') }} {{ getSortIcon('tipo') }}
           </th>
           <th class="sortable" @click="$emit('toggleSort', 'fecha')">
-            Fecha {{ getSortIcon('fecha') }}
+            {{ $t('admin.balance.colDate') }} {{ getSortIcon('fecha') }}
           </th>
           <th class="sortable" @click="$emit('toggleSort', 'razon')">
-            Razon {{ getSortIcon('razon') }}
+            {{ $t('admin.balance.colReason') }} {{ getSortIcon('razon') }}
           </th>
-          <th>Detalle</th>
-          <th>Vehiculo</th>
-          <th>Tipo</th>
+          <th>{{ $t('admin.balance.colDetail') }}</th>
+          <th>{{ $t('admin.balance.colVehicle') }}</th>
+          <th>{{ $t('admin.balance.colSubtype') }}</th>
           <th class="sortable num" @click="$emit('toggleSort', 'importe')">
-            Importe {{ getSortIcon('importe') }}
+            {{ $t('admin.balance.colAmount') }} {{ getSortIcon('importe') }}
           </th>
-          <th class="num">Ben.%</th>
-          <th>Factura</th>
-          <th>Estado</th>
-          <th class="actions">Acc.</th>
+          <th class="num">{{ $t('admin.balance.colProfit') }}</th>
+          <th>{{ $t('admin.balance.colInvoice') }}</th>
+          <th>{{ $t('admin.balance.colStatus') }}</th>
+          <th class="actions">{{ $t('admin.balance.colActions') }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-if="sortedEntries.length === 0">
-          <td colspan="11" class="empty">No hay transacciones</td>
+          <td colspan="11" class="empty">{{ $t('admin.balance.noTransactions') }}</td>
         </tr>
         <tr v-for="e in sortedEntries" :key="e.id">
           <td>
@@ -61,9 +61,9 @@
             <span v-else>&mdash;</span>
           </td>
           <td>
-            <a v-if="e.factura_url" :href="e.factura_url" target="_blank" class="factura-link"
-              >Ver</a
-            >
+            <a v-if="e.factura_url" :href="e.factura_url" target="_blank" class="factura-link">{{
+              $t('admin.balance.view')
+            }}</a>
             <span v-else>&mdash;</span>
           </td>
           <td>
@@ -72,10 +72,14 @@
             }}</span>
           </td>
           <td class="actions">
-            <button class="btn-icon" title="Editar" @click="$emit('edit', e)">
+            <button class="btn-icon" :title="$t('admin.balance.edit')" @click="$emit('edit', e)">
               &#x270F;&#xFE0F;
             </button>
-            <button class="btn-icon del" title="Eliminar" @click="$emit('delete', e)">
+            <button
+              class="btn-icon del"
+              :title="$t('admin.balance.delete')"
+              @click="$emit('delete', e)"
+            >
               &#x1F5D1;&#xFE0F;
             </button>
           </td>
@@ -103,8 +107,12 @@ const props = defineProps<{
 }>()
 
 function getEntryType(e: BalanceEntry): string {
-  const rec = e as Record<string, unknown>
-  return localizedName(rec.types, props.locale) || '\u2014'
+  const rec = e as unknown as Record<string, unknown>
+  const types = rec.types as
+    | { name?: Record<string, string> | null; name_es?: string; name_en?: string | null }
+    | null
+    | undefined
+  return localizedName(types, props.locale) || '\u2014'
 }
 
 defineEmits<{

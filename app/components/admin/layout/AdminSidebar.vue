@@ -722,7 +722,17 @@ function closePopover() {
 }
 
 async function fetchInfraAlerts() {
-  const { count } = await supabase
+  // infra_alerts may not be in generated types yet — use untyped query
+  const client = supabase as unknown as {
+    from: (table: string) => {
+      select: (...args: unknown[]) => {
+        is: (...args: unknown[]) => {
+          in: (...args: unknown[]) => Promise<{ count: number | null }>
+        }
+      }
+    }
+  }
+  const { count } = await client
     .from('infra_alerts')
     .select('*', { count: 'exact', head: true })
     .is('acknowledged_at', null)

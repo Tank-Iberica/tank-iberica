@@ -10,6 +10,7 @@ export interface AdminVehicleFilters {
   category?: string | null
   subcategory_id?: string | null
   category_id?: string | null
+  type_id?: string | null
   search?: string
   is_online?: boolean | null // null = all, true = online, false = offline
 }
@@ -57,6 +58,7 @@ export interface AdminVehicle extends Vehicle {
   min_price?: number | null
   plate?: string | null
   internal_id?: number
+  type_id?: string | null
   categories?: string[] // Multiple categories support
   maintenance_records?: MaintenanceEntry[]
   rental_records?: RentalEntry[]

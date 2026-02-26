@@ -8805,6 +8805,507 @@ Si la investigación de sesión 59A confirma que Nuxt 4 soporta nonces:
 
 ---
 
+## SESIÓN 61 — SEO Quick Wins: meta tags, sitemap, robots, OG, breadcrumbs
+
+> **Objetivo:** Cubrir los fundamentos SEO técnicos que más impactan posicionamiento
+> **Estimación:** 2-3 horas Claude Code
+> **Dependencias:** Ninguna
+> **Referencia:** CHECKLIST-SEO-UX-TECNICO.md — secciones 3, 4, 5, 6
+
+### Parte A — Sitemap XML dinámico
+
+**Verificar si `/sitemap.xml` existe y es dinámico.** Si no:
+
+1. Instalar `@nuxtjs/sitemap` (o usar `nuxt-simple-sitemap`)
+2. Configurar en `nuxt.config.ts`:
+   - Incluir todas las rutas públicas: `/`, `/vehiculos`, `/vehiculos/[slug]`, `/dealers`, `/dealers/[slug]`, páginas legales, blog (cuando exista)
+   - Excluir: `/admin/*`, `/api/*`, `/auth/*`
+   - URLs dinámicas: generar desde BD (vehículos activos, dealers públicos)
+   - Frecuencia de actualización: vehículos `weekly`, home `daily`, legales `monthly`
+3. Verificar que se regenera automáticamente en cada deploy
+4. Registrar en Google Search Console (fundadores — DOC2)
+
+### Parte B — robots.txt
+
+**Verificar/crear `/public/robots.txt`:**
+
+```
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /auth/
+Disallow: /dashboard/
+Sitemap: https://tracciona.com/sitemap.xml
+```
+
+**Verificar que no bloquea:** CSS, JS, imágenes (Google necesita renderizar la página).
+
+### Parte C — Meta tags únicos por página
+
+**Auditar y corregir `useSeoMeta()` / `useHead()` en cada layout y página:**
+
+1. **Home:** title "Tracciona — Marketplace de vehículos industriales" + description
+2. **Listado vehículos:** title "Camiones y vehículos industriales en venta — Tracciona" + description con filtros activos
+3. **Detalle vehículo:** title "[Marca] [Modelo] [Año] — Tracciona" + description generada por IA
+4. **Detalle dealer:** title "[Nombre dealer] — Vehículos industriales — Tracciona"
+5. **Páginas legales:** titles específicos
+6. **404:** title "Página no encontrada — Tracciona"
+
+**Cada página debe tener:**
+
+- `<title>` único (50-60 chars)
+- `<meta name="description">` único (120-160 chars)
+- `<link rel="canonical">` apuntando a URL limpia
+- NO títulos duplicados entre páginas
+
+### Parte D — Open Graph + Twitter Cards
+
+**Configurar en `useSeoMeta()` para cada tipo de página:**
+
+```typescript
+// Ejemplo para detalle de vehículo
+useSeoMeta({
+  ogTitle: `${vehicle.brand} ${vehicle.model} ${vehicle.year}`,
+  ogDescription: vehicle.aiDescription?.substring(0, 160),
+  ogImage: vehicle.images?.[0]?.url,
+  ogType: 'product',
+  ogUrl: `https://tracciona.com/vehiculos/${vehicle.slug}`,
+  ogLocale: 'es_ES',
+  ogLocaleAlternate: ['en_GB'],
+  ogSiteName: 'Tracciona',
+  twitterCard: 'summary_large_image',
+  twitterTitle: `${vehicle.brand} ${vehicle.model} ${vehicle.year}`,
+  twitterDescription: vehicle.aiDescription?.substring(0, 160),
+  twitterImage: vehicle.images?.[0]?.url,
+})
+```
+
+**Verificar con:** https://developers.facebook.com/tools/debug/ y https://cards-dev.twitter.com/validator
+
+### Parte E — Hreflang tags
+
+**Configurar alternates para i18n:**
+
+```html
+<link rel="alternate" hreflang="es" href="https://tracciona.com/vehiculos/camion-xyz" />
+<link rel="alternate" hreflang="en" href="https://tracciona.com/en/vehicles/truck-xyz" />
+<link rel="alternate" hreflang="x-default" href="https://tracciona.com/vehiculos/camion-xyz" />
+```
+
+Verificar que `@nuxtjs/i18n` genera esto automáticamente. Si no, configurar en `i18n` options de nuxt.config.
+
+### Parte F — Canonical tags
+
+**Verificar que cada página tiene canonical:**
+
+- Detalle vehículo: canonical = URL limpia sin parámetros de tracking
+- Listado con filtros: canonical = URL sin filtros (o con filtros si son páginas indexables)
+- Paginación: canonical de cada página a sí misma, NO a la primera página
+
+### Parte G — Breadcrumbs
+
+**Crear componente `components/ui/Breadcrumbs.vue`:**
+
+```
+Home > Vehículos > Camiones > Mercedes-Benz > Actros 1845
+Home > Dealers > Mesplet Trucks
+Home > Blog > Título del artículo
+```
+
+- Schema.org BreadcrumbList (JSON-LD)
+- Responsive: en móvil, truncar niveles intermedios con `...`
+- Integrar en layouts de detalle de vehículo, dealer, y futuro blog
+
+### Tests mínimos de la sesión
+
+- [ ] DAST workflow se ejecuta sin errores (workflow_dispatch manual, baseline)
+- [ ] ZAP genera informe HTML descargable en artefactos
+- [ ] Nuclei genera informe JSON/MD descargable en artefactos
+- [ ] SSL check reporta TLS 1.2+ y certificado válido
+- [ ] Si hay findings High/Critical, se envía email de alerta
+- [ ] Tests de information-leakage pasan (no se exponen .env, .git, stack traces)
+- [ ] Tests de auth-endpoints siguen pasando (no se rompió nada)
+- [ ] `.zap/rules.tsv` tiene documentados los falsos positivos conocidos
+- [ ] Build compila sin errores
+
+---
+
+## SESIÓN 62 — Página 404, error pages, y auditoría semántica
+
+> **Objetivo:** Gestión correcta de errores + HTML semántico + accesibilidad básica
+> **Estimación:** 2 horas Claude Code
+> **Dependencias:** Ninguna
+> **Referencia:** CHECKLIST-SEO-UX-TECNICO.md — secciones 1.3, 5, 7
+
+### Parte A — Página 404 personalizada
+
+**Crear `error.vue` (Nuxt error page):**
+
+Debe incluir:
+
+1. Branding Tracciona (logo, colores)
+2. Mensaje amigable bilingüe: "Esta página no existe o se ha movido"
+3. Buscador de vehículos inline
+4. Enlaces sugeridos: vehículos populares, categorías principales, contacto
+5. CTA: "Volver al inicio" / "Buscar vehículos"
+6. HTTP status 404 correcto (no soft 404)
+7. Meta noindex para que Google no indexe la 404
+
+**Diferenciación por tipo:**
+
+- Si URL parece un vehículo eliminado: "Este vehículo ya no está disponible. Mira vehículos similares:"
+- Si URL parece dealer: "Este dealer ya no está activo."
+- Otros: mensaje genérico
+
+### Parte B — Páginas de error 500/503
+
+**Crear error handling para errores del servidor:**
+
+- Error 500: "Algo salió mal. Estamos trabajando en ello."
+- Error 503: "Tracciona está en mantenimiento. Volvemos enseguida."
+- Con branding, sin información técnica al usuario
+- Log del error real en servidor/Sentry
+
+### Parte C — Redirecciones 301
+
+**Crear `server/middleware/redirects.ts`:**
+
+- Mapa de redirecciones para URLs que cambien de estructura
+- Patrón: si se renombra `/vehiculos/[id]` a `/vehiculos/[slug]`, redirigir con 301
+- Incluir redirección www → non-www (verificar que Cloudflare lo hace)
+- Log de 404s frecuentes para identificar URLs que necesitan redirección
+
+### Parte D — Auditoría de HTML semántico
+
+**Verificar y corregir estructura semántica en layouts:**
+
+```html
+<!-- Estructura esperada -->
+<header>
+  <!-- Nav principal -->
+  <nav>
+    <!-- Menú -->
+    <main>
+      <!-- Contenido principal (uno por página) -->
+      <article>
+        <!-- En páginas de detalle -->
+        <section>
+          <!-- Agrupaciones lógicas -->
+          <aside>
+            <!-- Sidebars, filtros -->
+            <footer><!-- Pie de página --></footer>
+          </aside>
+        </section>
+      </article>
+    </main>
+  </nav>
+</header>
+```
+
+**Verificar:**
+
+- Solo un `<h1>` por página
+- Jerarquía H1 > H2 > H3 sin saltos
+- `<nav>` en menú principal y breadcrumbs
+- `<main>` envolviendo contenido principal
+- `<article>` en fichas de vehículo y entradas de blog
+- Labels en todos los `<input>` y `<select>`
+
+### Parte E — Skip to content + focus management
+
+**Añadir al layout principal:**
+
+```html
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute ...">
+  Saltar al contenido
+</a>
+<!-- ... header/nav ... -->
+<main id="main-content"></main>
+```
+
+**Verificar focus rings:** Tailwind `ring` classes visibles en todos los elementos interactivos.
+
+### Parte F — Alt text audit
+
+**Script de auditoría: buscar todas las `<img>` y `<NuxtImg>` sin alt:**
+
+```bash
+grep -rn '<img\|<NuxtImg\|<nuxt-img' components/ pages/ --include="*.vue" | grep -v 'alt='
+```
+
+**Corregir:** Añadir alt descriptivo. Para imágenes de vehículos: `alt="${brand} ${model} ${year} - vista ${index}"`. Para iconos decorativos: `alt=""` + `aria-hidden="true"`.
+
+### Tests mínimos de la sesión
+
+- [ ] DAST workflow se ejecuta sin errores (workflow_dispatch manual, baseline)
+- [ ] ZAP genera informe HTML descargable en artefactos
+- [ ] Nuclei genera informe JSON/MD descargable en artefactos
+- [ ] SSL check reporta TLS 1.2+ y certificado válido
+- [ ] Si hay findings High/Critical, se envía email de alerta
+- [ ] Tests de information-leakage pasan (no se exponen .env, .git, stack traces)
+- [ ] Tests de auth-endpoints siguen pasando (no se rompió nada)
+- [ ] `.zap/rules.tsv` tiene documentados los falsos positivos conocidos
+- [ ] Build compila sin errores
+
+---
+
+## SESIÓN 63 — Schema.org (datos estructurados) + compartir en redes
+
+> **Objetivo:** Rich snippets en Google + compartibilidad social
+> **Estimación:** 2-3 horas Claude Code
+> **Dependencias:** Sesión 61 (meta tags y OG deben existir)
+> **Referencia:** CHECKLIST-SEO-UX-TECNICO.md — secciones 4.5, 6
+
+### Parte A — Schema.org para vehículos (Product + Vehicle)
+
+**Crear composable `composables/useStructuredData.ts`:**
+
+```typescript
+// Para detalle de vehículo
+export function useVehicleSchema(vehicle: Vehicle) {
+  useHead({
+    script: [
+      {
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Vehicle',
+          name: `${vehicle.brand} ${vehicle.model}`,
+          description: vehicle.aiDescription,
+          image: vehicle.images?.map((i) => i.url),
+          brand: { '@type': 'Brand', name: vehicle.brand },
+          model: vehicle.model,
+          vehicleModelDate: vehicle.year?.toString(),
+          mileageFromOdometer: vehicle.km
+            ? {
+                '@type': 'QuantitativeValue',
+                value: vehicle.km,
+                unitCode: 'KMT',
+              }
+            : undefined,
+          fuelType: vehicle.fuelType,
+          offers: {
+            '@type': 'Offer',
+            price: vehicle.price,
+            priceCurrency: 'EUR',
+            availability: 'https://schema.org/InStock',
+            seller: {
+              '@type': 'Organization',
+              name: vehicle.dealer?.name,
+            },
+          },
+        }),
+      },
+    ],
+  })
+}
+```
+
+### Parte B — Schema.org Organization
+
+**En layout principal o `app.vue`:**
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Tracciona",
+  "url": "https://tracciona.com",
+  "logo": "https://tracciona.com/logo.png",
+  "description": "Marketplace de vehículos industriales con IA",
+  "foundingDate": "2024",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "email": "info@tracciona.com"
+  },
+  "sameAs": []
+}
+```
+
+### Parte C — Schema.org BreadcrumbList
+
+**Integrar con componente Breadcrumbs de sesión 61G:**
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://tracciona.com" },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Camiones",
+      "item": "https://tracciona.com/vehiculos?type=camion"
+    },
+    { "@type": "ListItem", "position": 3, "name": "Mercedes-Benz Actros 1845" }
+  ]
+}
+```
+
+### Parte D — Schema.org WebSite (SearchAction)
+
+**Para que Google muestre sitelinks searchbox:**
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": "https://tracciona.com",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://tracciona.com/vehiculos?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+```
+
+### Parte E — Botones de compartir en redes
+
+**Crear componente `components/ui/ShareButtons.vue`:**
+
+Botones para compartir ficha de vehículo en:
+
+- WhatsApp (prioritario — B2B industrial usa mucho WhatsApp)
+- LinkedIn (profesional)
+- Email
+- Copiar enlace
+
+**Sin SDKs externos** (privacidad): usar URLs de intención directas:
+
+```
+WhatsApp: https://wa.me/?text={url}
+LinkedIn: https://www.linkedin.com/sharing/share-offsite/?url={url}
+Email: mailto:?subject={title}&body={url}
+```
+
+### Parte F — Verificación con herramientas
+
+**Añadir a `scripts/seo-check.mjs`:**
+
+1. Validar JSON-LD con Schema.org Validator API
+2. Verificar que cada página de vehículo genera schema Vehicle válido
+3. Verificar que OG tags existen en cada tipo de página
+4. Integrar en daily-audit o CI
+
+### Tests mínimos de la sesión
+
+- [ ] DAST workflow se ejecuta sin errores (workflow_dispatch manual, baseline)
+- [ ] ZAP genera informe HTML descargable en artefactos
+- [ ] Nuclei genera informe JSON/MD descargable en artefactos
+- [ ] SSL check reporta TLS 1.2+ y certificado válido
+- [ ] Si hay findings High/Critical, se envía email de alerta
+- [ ] Tests de information-leakage pasan (no se exponen .env, .git, stack traces)
+- [ ] Tests de auth-endpoints siguen pasando (no se rompió nada)
+- [ ] `.zap/rules.tsv` tiene documentados los falsos positivos conocidos
+- [ ] Build compila sin errores
+
+---
+
+## SESIÓN 64 — URLs limpias (slugs SEO) + internal linking + SEO audit CI
+
+> **Objetivo:** URLs descriptivas para vehículos + estrategia de enlaces internos + gate SEO automático
+> **Estimación:** 2-3 horas Claude Code
+> **Dependencias:** Sesión 47 (migración vehicles vertical)
+> **Referencia:** CHECKLIST-SEO-UX-TECNICO.md — sección 4.4, 3.5
+
+### Parte A — Slugs SEO para vehículos
+
+**Problema actual:** URLs tipo `/vehiculos/12345` (ID numérico) no son descriptivas.
+
+**Solución:**
+
+1. Migración: añadir columna `slug` a `vehicles`:
+
+```sql
+ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS slug text UNIQUE;
+CREATE INDEX IF NOT EXISTS idx_vehicles_slug ON vehicles(slug);
+```
+
+2. Generar slugs automáticamente al crear/actualizar vehículo:
+
+```typescript
+// utils/generateSlug.ts
+function generateVehicleSlug(v: Vehicle): string {
+  const base = [v.brand, v.model, v.year, v.id?.toString().slice(-4)]
+    .filter(Boolean)
+    .join('-')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-')
+  return base // e.g. "mercedes-benz-actros-1845-a7f3"
+}
+```
+
+3. Actualizar rutas Nuxt: `/vehiculos/[slug]` en vez de `/vehiculos/[id]`
+4. Redirección 301 de `/vehiculos/[id]` a `/vehiculos/[slug]` para URLs existentes
+5. Script para generar slugs a todos los vehículos existentes
+
+### Parte B — Internal linking strategy
+
+**Crear componente `components/vehicle/RelatedVehicles.vue`:**
+
+- Al final de ficha de vehículo: "Vehículos similares" (misma marca, categoría, o rango de precio)
+- Query: `vehicles WHERE brand = X AND id != current ORDER BY created_at DESC LIMIT 4`
+
+**Crear componente `components/vehicle/CategoryLinks.vue`:**
+
+- En listado: links a categorías populares ("Camiones Mercedes", "Furgonetas Ford", etc.)
+- Mejora crawlability y distribución de PageRank
+
+**En páginas de dealer:**
+
+- Link a todos sus vehículos activos
+- Link a vehículos similares de otros dealers (cuidado con UX)
+
+### Parte C — SEO audit automático en CI
+
+**Crear `.github/workflows/seo-audit.yml`:**
+
+```yaml
+name: SEO Audit
+on:
+  push:
+    branches: [main]
+    paths: ['pages/**', 'components/**', 'layouts/**']
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: node scripts/seo-check.mjs
+```
+
+**`scripts/seo-check.mjs` verifica:**
+
+1. Todas las páginas en `pages/` tienen `useSeoMeta()` o `useHead()` con title y description
+2. Todas las `<img>` tienen `alt`
+3. Solo un `<h1>` por página
+4. JSON-LD válido en páginas de detalle
+5. No hay `<a>` sin `href`
+6. Sitemap incluye todas las rutas públicas
+
+**Output:** Reporte en CI, fail si hay errores críticos (falta title, falta alt en imágenes principales).
+
+### Tests mínimos de la sesión
+
+- [ ] DAST workflow se ejecuta sin errores (workflow_dispatch manual, baseline)
+- [ ] ZAP genera informe HTML descargable en artefactos
+- [ ] Nuclei genera informe JSON/MD descargable en artefactos
+- [ ] SSL check reporta TLS 1.2+ y certificado válido
+- [ ] Si hay findings High/Critical, se envía email de alerta
+- [ ] Tests de information-leakage pasan (no se exponen .env, .git, stack traces)
+- [ ] Tests de auth-endpoints siguen pasando (no se rompió nada)
+- [ ] `.zap/rules.tsv` tiene documentados los falsos positivos conocidos
+- [ ] Build compila sin errores
+
+---
+
 ## NOTAS GENERALES
 
 - **Cada sesión es independiente.** Si Claude Code pierde contexto, el usuario abre un nuevo chat y dice "ejecuta la sesión N" y Claude Code lee este archivo.
