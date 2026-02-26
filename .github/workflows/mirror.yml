@@ -1,0 +1,21 @@
+name: Mirror to Bitbucket
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 3 * * 0' # Weekly Sunday 03:00 UTC
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.BITBUCKET_USER != '' && secrets.BITBUCKET_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Push to Bitbucket mirror
+        run: |
+          git remote add mirror "https://${{ secrets.BITBUCKET_USER }}:${{ secrets.BITBUCKET_TOKEN }}@bitbucket.org/tracciona/tracciona.git" || true
+          git push mirror --all --force
+          git push mirror --tags --force
