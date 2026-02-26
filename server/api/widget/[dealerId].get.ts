@@ -35,6 +35,7 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const limit = Math.min(Number(query.limit) || 6, 12)
   const theme = query.theme === 'dark' ? 'dark' : 'light'
+  const layout = query.layout === 'list' ? 'list' : 'grid'
 
   const config = useRuntimeConfig()
   const supabaseUrl = config.public?.supabaseUrl || process.env.SUPABASE_URL
@@ -129,7 +130,8 @@ export default defineEventHandler(async (event) => {
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: Inter, system-ui, -apple-system, sans-serif; background: ${bg}; padding: 16px; }
-  .trk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .trk-grid { display: grid; grid-template-columns: ${layout === 'list' ? '1fr' : 'repeat(auto-fill, minmax(240px, 1fr))'}; gap: 16px; }
+  ${layout === 'list' ? '.trk-card { display: flex; flex-direction: row; } .trk-img { width: 200px; height: 140px; flex-shrink: 0; } .trk-info { display: flex; flex-direction: column; justify-content: center; }' : ''}
   .trk-card { display: block; background: ${cardBg}; border: 1px solid ${borderColor}; border-radius: 8px; overflow: hidden; text-decoration: none; color: ${textColor}; transition: box-shadow 0.2s, transform 0.2s; }
   .trk-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
   .trk-img { width: 100%; height: 180px; object-fit: cover; display: block; background: ${borderColor}; }
