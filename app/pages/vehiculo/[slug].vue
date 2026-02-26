@@ -22,7 +22,7 @@
     <template v-else>
       <UiBreadcrumbNav :items="breadcrumbItems" />
 
-      <div class="vehicle-content">
+      <article class="vehicle-content">
         <!-- Gallery + Sticky notification -->
         <div class="vehicle-gallery-wrapper">
           <VehicleImageGallery
@@ -317,7 +317,7 @@
             <VehiclePriceHistoryChart :vehicle-id="vehicle.id" />
           </div>
         </div>
-      </div>
+      </article>
       <!-- Report Modal (DSA compliance) -->
       <ModalsReportModal
         v-if="vehicle"

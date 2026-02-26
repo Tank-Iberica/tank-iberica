@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <h1 class="sr-only">{{ $t('seo.homeH1') }}</h1>
     <section class="catalog-section">
       <CatalogCategoryBar
         v-show="menuVisible"
