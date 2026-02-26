@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { useAdminNews, type NewsFormData } from '~/composables/admin/useAdminNews'
-import { useSeoScore, type SeoInput } from '~/composables/admin/useSeoScore'
-import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
-import type { News } from '~/composables/useNews'
+import { useAdminNewsForm } from '~/composables/admin/useAdminNewsForm'
 
 definePageMeta({
   layout: 'admin',
@@ -10,312 +7,51 @@ definePageMeta({
 })
 
 const route = useRoute()
-const router = useRouter()
 const newsId = computed(() => route.params.id as string)
 
-const { loading, saving, error, fetchById, updateNews, deleteNews } = useAdminNews()
 const {
-  upload: uploadToCloudinary,
-  uploading: uploadingImage,
-  progress: uploadProgress,
-  error: uploadError,
-} = useCloudinaryUpload()
+  // State
+  loading,
+  saving,
+  error,
+  article,
+  formData,
+  hashtagInput,
+  relatedCategoryInput,
+  sections,
+  analysis,
+  isValid,
+  imagePreviewUrl,
+  uploadingImage,
+  uploadProgress,
+  uploadError,
+  deleteModal,
+  deleteConfirmText,
 
-// Original article data
-const article = ref<News | null>(null)
+  // Computed
+  titleLengthClass,
+  descLengthClass,
+  contentWordCount,
+  wordCountClass,
+  excerptLengthClass,
 
-// Form data
-const formData = ref<NewsFormData>({
-  title_es: '',
-  title_en: null,
-  slug: '',
-  category: 'general',
-  image_url: null,
-  description_es: null,
-  description_en: null,
-  content_es: '',
-  content_en: null,
-  hashtags: [],
-  status: 'draft',
-  published_at: null,
-  section: 'noticias',
-  faq_schema: null,
-  excerpt_es: null,
-  excerpt_en: null,
-  scheduled_at: null,
-  social_post_text: null,
-  related_categories: null,
-  target_markets: null,
-})
-
-// Hashtag input
-const hashtagInput = ref('')
-
-// Collapsible sections
-const sections = reactive({
-  english: false,
-  seoPanel: true,
-  info: false,
-  faq: false,
-  social: false,
-})
-
-// SEO scoring
-const seoInput = computed<SeoInput>(() => ({
-  title_es: formData.value.title_es,
-  title_en: formData.value.title_en,
-  slug: formData.value.slug,
-  description_es: formData.value.description_es,
-  content_es: formData.value.content_es,
-  content_en: formData.value.content_en,
-  image_url: formData.value.image_url,
-  hashtags: formData.value.hashtags,
-  faq_schema: formData.value.faq_schema,
-  excerpt_es: formData.value.excerpt_es,
-  related_categories: formData.value.related_categories,
-  social_post_text: formData.value.social_post_text,
-  section: formData.value.section,
-}))
-
-const { analysis } = useSeoScore(seoInput)
-
-// Character counts
-const titleLengthClass = computed(() => {
-  const len = formData.value.title_es.length
-  if (len >= 30 && len <= 60) return 'count-good'
-  if (len >= 20 && len <= 70) return 'count-warning'
-  return len > 0 ? 'count-bad' : ''
-})
-
-const descLengthClass = computed(() => {
-  const len = (formData.value.description_es || '').length
-  if (len >= 120 && len <= 160) return 'count-good'
-  if (len >= 80 && len <= 200) return 'count-warning'
-  return len > 0 ? 'count-bad' : ''
-})
-
-// Word counter for content
-const contentWordCount = computed(() => {
-  const text = formData.value.content_es.trim()
-  if (!text) return 0
-  return text.split(/\s+/).filter((w) => w.length > 0).length
-})
-
-const wordCountClass = computed(() => {
-  if (contentWordCount.value >= 300) return 'count-good'
-  if (contentWordCount.value >= 150) return 'count-warning'
-  return contentWordCount.value > 0 ? 'count-bad' : ''
-})
-
-// Excerpt length class
-const excerptLengthClass = computed(() => {
-  const len = (formData.value.excerpt_es || '').length
-  if (len >= 120 && len <= 200) return 'count-good'
-  if (len >= 80 && len <= 250) return 'count-warning'
-  return len > 0 ? 'count-bad' : ''
-})
-
-// FAQ management
-function addFaqItem() {
-  const current = formData.value.faq_schema || []
-  formData.value.faq_schema = [...current, { question: '', answer: '' }]
-}
-
-function removeFaqItem(index: number) {
-  if (!formData.value.faq_schema) return
-  formData.value.faq_schema = formData.value.faq_schema.filter((_, i) => i !== index)
-  if (formData.value.faq_schema.length === 0) formData.value.faq_schema = null
-}
-
-// Social media helpers
-function ensureSocialPostText(): Record<string, string> {
-  if (!formData.value.social_post_text) {
-    formData.value.social_post_text = {}
-  }
-  return formData.value.social_post_text
-}
-
-function updateSocialField(platform: string, value: string) {
-  const social = ensureSocialPostText()
-  social[platform] = value
-}
-
-function getSocialField(platform: string): string {
-  return formData.value.social_post_text?.[platform] || ''
-}
-
-// Related categories management
-const relatedCategoryInput = ref('')
-
-function addRelatedCategory() {
-  const cat = relatedCategoryInput.value.trim().toLowerCase()
-  if (!cat) return
-  const current = formData.value.related_categories || []
-  if (!current.includes(cat)) {
-    formData.value.related_categories = [...current, cat]
-  }
-  relatedCategoryInput.value = ''
-}
-
-function removeRelatedCategory(cat: string) {
-  if (!formData.value.related_categories) return
-  formData.value.related_categories = formData.value.related_categories.filter((c) => c !== cat)
-  if (formData.value.related_categories.length === 0) formData.value.related_categories = null
-}
-
-// Validation
-const isValid = computed(
-  () =>
-    formData.value.title_es.trim().length > 0 &&
-    formData.value.content_es.trim().length > 0 &&
-    formData.value.slug.trim().length > 0,
-)
-
-// Load article
-onMounted(async () => {
-  const data = await fetchById(newsId.value)
-  if (!data) {
-    router.push('/admin/noticias')
-    return
-  }
-  article.value = data
-  const raw = data as unknown as Record<string, unknown>
-  formData.value = {
-    title_es: data.title_es,
-    title_en: data.title_en,
-    slug: data.slug,
-    category: data.category,
-    image_url: data.image_url,
-    description_es: data.description_es || null,
-    description_en: data.description_en || null,
-    content_es: data.content_es,
-    content_en: data.content_en,
-    hashtags: data.hashtags || [],
-    status: data.status,
-    published_at: data.published_at,
-    section: (raw.section as string) || 'noticias',
-    faq_schema: (raw.faq_schema as Array<{ question: string; answer: string }>) || null,
-    excerpt_es: (raw.excerpt_es as string) || null,
-    excerpt_en: (raw.excerpt_en as string) || null,
-    scheduled_at: (raw.scheduled_at as string) || null,
-    social_post_text: (raw.social_post_text as Record<string, string>) || null,
-    related_categories: (raw.related_categories as string[]) || null,
-    target_markets: (raw.target_markets as string[]) || null,
-  }
-
-  // Open English section if content exists
-  if (data.title_en || data.content_en) {
-    sections.english = true
-  }
-
-  // Open FAQ section if FAQ data exists
-  if (formData.value.faq_schema && formData.value.faq_schema.length > 0) {
-    sections.faq = true
-  }
-
-  // Open social section if social data exists
-  if (formData.value.social_post_text && Object.keys(formData.value.social_post_text).length > 0) {
-    sections.social = true
-  }
-})
-
-// Image upload
-const imagePreviewUrl = ref<string | null>(null)
-
-async function handleImageFile(e: Event) {
-  const input = e.target as HTMLInputElement
-  if (!input.files?.length) return
-
-  const file = input.files[0] as File
-  imagePreviewUrl.value = URL.createObjectURL(file as Blob)
-
-  const result = await uploadToCloudinary(file)
-  if (result) {
-    formData.value.image_url = result.secure_url
-  }
-
-  input.value = ''
-}
-
-function removeImage() {
-  formData.value.image_url = null
-  if (imagePreviewUrl.value) {
-    URL.revokeObjectURL(imagePreviewUrl.value)
-    imagePreviewUrl.value = null
-  }
-}
-
-// Save
-async function handleSave() {
-  if (!isValid.value) return
-  const ok = await updateNews(newsId.value, formData.value)
-  if (ok) router.push('/admin/noticias')
-}
-
-function handleCancel() {
-  router.push('/admin/noticias')
-}
-
-// Delete modal
-const deleteModal = ref(false)
-const deleteConfirmText = ref('')
-
-function openDeleteModal() {
-  deleteConfirmText.value = ''
-  deleteModal.value = true
-}
-
-function closeDeleteModal() {
-  deleteModal.value = false
-  deleteConfirmText.value = ''
-}
-
-async function executeDelete() {
-  if (deleteConfirmText.value !== 'borrar') return
-  const ok = await deleteNews(newsId.value)
-  if (ok) router.push('/admin/noticias')
-  closeDeleteModal()
-}
-
-// Hashtag management
-function addHashtag() {
-  const tag = hashtagInput.value.trim().replace(/^#/, '').toLowerCase()
-  if (!tag) return
-  if (!formData.value.hashtags.includes(tag)) {
-    formData.value.hashtags = [...formData.value.hashtags, tag]
-  }
-  hashtagInput.value = ''
-}
-
-function removeHashtag(tag: string) {
-  formData.value.hashtags = formData.value.hashtags.filter((t) => t !== tag)
-}
-
-// Format date
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleString('es-ES', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
-// SEO level labels
-function getLevelLabel(level: string): string {
-  switch (level) {
-    case 'good':
-      return 'Bueno'
-    case 'warning':
-      return 'Mejorable'
-    case 'bad':
-      return 'Necesita trabajo'
-    default:
-      return ''
-  }
-}
+  // Methods
+  addFaqItem,
+  removeFaqItem,
+  addRelatedCategory,
+  removeRelatedCategory,
+  addHashtag,
+  removeHashtag,
+  handleImageFile,
+  removeImage,
+  openDeleteModal,
+  closeDeleteModal,
+  executeDelete,
+  handleSave,
+  handleCancel,
+  formatDate,
+  getLevelLabel,
+} = useAdminNewsForm(newsId)
 </script>
 
 <template>
@@ -455,69 +191,16 @@ function getLevelLabel(level: string): string {
           </div>
 
           <!-- Image -->
-          <div class="section">
-            <div class="section-title">Imagen destacada</div>
-
-            <!-- Upload from file -->
-            <div class="image-upload-area">
-              <label class="upload-zone" :class="{ uploading: uploadingImage }">
-                <input
-                  type="file"
-                  accept="image/*"
-                  class="file-input-hidden"
-                  :disabled="uploadingImage"
-                  @change="handleImageFile"
-                >
-                <template v-if="uploadingImage">
-                  <div class="upload-progress-bar">
-                    <div class="upload-progress-fill" :style="{ width: uploadProgress + '%' }" />
-                  </div>
-                  <span class="upload-text">Subiendo... {{ uploadProgress }}%</span>
-                </template>
-                <template v-else>
-                  <svg
-                    class="upload-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                    <polyline points="17 8 12 3 7 8" />
-                    <line x1="12" y1="3" x2="12" y2="15" />
-                  </svg>
-                  <span class="upload-text">Seleccionar imagen</span>
-                  <span class="upload-hint">JPG, PNG, WebP (max 10MB)</span>
-                </template>
-              </label>
-            </div>
-
-            <!-- Or URL -->
-            <div class="field">
-              <label>O pegar URL</label>
-              <input
-                v-model="formData.image_url"
-                type="url"
-                class="input"
-                placeholder="https://res.cloudinary.com/..."
-              >
-            </div>
-
-            <!-- Upload error -->
-            <div v-if="uploadError" class="upload-error">{{ uploadError }}</div>
-
-            <!-- Preview -->
-            <div v-if="formData.image_url || imagePreviewUrl" class="image-preview-container">
-              <img
-                :src="formData.image_url || imagePreviewUrl || ''"
-                alt="Preview"
-                @error="($event.target as HTMLImageElement).style.display = 'none'"
-              >
-              <button class="remove-image-btn" title="Eliminar imagen" @click="removeImage">
-                &times;
-              </button>
-            </div>
-          </div>
+          <AdminNewsImageUpload
+            :image-url="formData.image_url"
+            :image-preview-url="imagePreviewUrl"
+            :uploading-image="uploadingImage"
+            :upload-progress="uploadProgress"
+            :upload-error="uploadError"
+            @file-change="handleImageFile"
+            @remove-image="removeImage"
+            @update:image-url="formData.image_url = $event"
+          />
 
           <!-- Meta Description -->
           <div class="section">
@@ -596,114 +279,22 @@ function getLevelLabel(level: string): string {
           </div>
 
           <!-- FAQ Schema -->
-          <div class="section">
-            <button class="section-toggle" @click="sections.faq = !sections.faq">
-              <span>FAQ Schema (Rich Snippets)</span>
-              <span class="toggle-icon">{{ sections.faq ? '−' : '+' }}</span>
-            </button>
-            <div v-if="sections.faq" class="section-body">
-              <p class="section-hint" style="margin: 0 0 8px">
-                Anade 3+ preguntas frecuentes para activar los featured snippets de Google.
-              </p>
-              <div v-for="(faq, index) in formData.faq_schema || []" :key="index" class="faq-item">
-                <div class="faq-item-header">
-                  <span class="faq-item-number">{{ index + 1 }}</span>
-                  <button
-                    class="btn-icon faq-remove"
-                    title="Eliminar pregunta"
-                    @click="removeFaqItem(index)"
-                  >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
-                </div>
-                <div class="field">
-                  <label>Pregunta</label>
-                  <input
-                    v-model="faq.question"
-                    type="text"
-                    class="input"
-                    placeholder="Ej: Que es un vehiculo industrial?"
-                  >
-                </div>
-                <div class="field">
-                  <label>Respuesta</label>
-                  <textarea
-                    v-model="faq.answer"
-                    rows="3"
-                    class="input textarea"
-                    placeholder="Respuesta clara y concisa..."
-                  />
-                </div>
-              </div>
-              <button class="btn btn-sm" @click="addFaqItem">+ Anadir pregunta</button>
-            </div>
-          </div>
+          <AdminNewsFaqSection
+            :faq-schema="formData.faq_schema"
+            :open="sections.faq"
+            @update:open="sections.faq = $event"
+            @add="addFaqItem"
+            @remove="removeFaqItem"
+            @update:faq-schema="formData.faq_schema = $event"
+          />
 
           <!-- Social Media -->
-          <div class="section">
-            <button class="section-toggle" @click="sections.social = !sections.social">
-              <span>Redes Sociales</span>
-              <span class="toggle-icon">{{ sections.social ? '−' : '+' }}</span>
-            </button>
-            <div v-if="sections.social" class="section-body">
-              <div class="field">
-                <label>Twitter / X (max 280)</label>
-                <textarea
-                  :value="getSocialField('twitter')"
-                  rows="3"
-                  class="input textarea"
-                  maxlength="280"
-                  placeholder="Texto para compartir en Twitter..."
-                  @input="
-                    updateSocialField('twitter', ($event.target as HTMLTextAreaElement).value)
-                  "
-                />
-                <span
-                  class="char-count"
-                  :class="
-                    getSocialField('twitter').length > 260
-                      ? 'count-warning'
-                      : getSocialField('twitter').length > 280
-                        ? 'count-bad'
-                        : ''
-                  "
-                >
-                  {{ getSocialField('twitter').length }}/280
-                </span>
-              </div>
-              <div class="field">
-                <label>LinkedIn (max 700)</label>
-                <textarea
-                  :value="getSocialField('linkedin')"
-                  rows="4"
-                  class="input textarea"
-                  maxlength="700"
-                  placeholder="Texto para compartir en LinkedIn..."
-                  @input="
-                    updateSocialField('linkedin', ($event.target as HTMLTextAreaElement).value)
-                  "
-                />
-                <span class="char-count"> {{ getSocialField('linkedin').length }}/700 </span>
-              </div>
-              <div class="field">
-                <label>Facebook (max 500)</label>
-                <textarea
-                  :value="getSocialField('facebook')"
-                  rows="3"
-                  class="input textarea"
-                  maxlength="500"
-                  placeholder="Texto para compartir en Facebook..."
-                  @input="
-                    updateSocialField('facebook', ($event.target as HTMLTextAreaElement).value)
-                  "
-                />
-                <span class="char-count"> {{ getSocialField('facebook').length }}/500 </span>
-              </div>
-            </div>
-          </div>
+          <AdminNewsSocialSection
+            :social-post-text="formData.social_post_text"
+            :open="sections.social"
+            @update:open="sections.social = $event"
+            @update:social-post-text="formData.social_post_text = $event"
+          />
 
           <!-- Related Categories -->
           <div class="section">
@@ -808,87 +399,21 @@ function getLevelLabel(level: string): string {
           </div>
 
           <!-- Info (collapsible) -->
-          <div class="section">
-            <button class="section-toggle" @click="sections.info = !sections.info">
-              <span>Informacion del articulo</span>
-              <span class="toggle-icon">{{ sections.info ? '−' : '+' }}</span>
-            </button>
-            <div v-if="sections.info" class="section-body">
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="info-label">Creado</span>
-                  <span class="info-value">{{ formatDate(article.created_at) }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">Actualizado</span>
-                  <span class="info-value">{{ formatDate(article.updated_at) }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">Publicado</span>
-                  <span class="info-value">{{ formatDate(article.published_at) }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">Visitas</span>
-                  <span class="info-value">{{ article.views || 0 }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="info-label">ID</span>
-                  <span class="info-value info-mono">{{ article.id }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <AdminNewsArticleInfo
+            :article="article"
+            :open="sections.info"
+            :format-date="formatDate"
+            @update:open="sections.info = $event"
+          />
         </div>
 
         <!-- RIGHT: SEO Panel -->
-        <div class="nf-seo">
-          <!-- Mobile toggle -->
-          <button class="seo-toggle-mobile" @click="sections.seoPanel = !sections.seoPanel">
-            <span>Panel SEO</span>
-            <span class="seo-score-mini" :class="analysis.level">{{ analysis.score }}</span>
-            <span class="toggle-icon">{{ sections.seoPanel ? '−' : '+' }}</span>
-          </button>
-
-          <div v-show="sections.seoPanel" class="seo-panel">
-            <!-- Score -->
-            <div class="seo-score-header">
-              <div class="score-circle" :class="analysis.level">
-                <span class="score-number">{{ analysis.score }}</span>
-                <span class="score-label">/100</span>
-              </div>
-              <div class="score-text">
-                <strong>Puntuacion SEO</strong>
-                <span class="level-text" :class="'level-' + analysis.level">
-                  {{ getLevelLabel(analysis.level) }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Google Snippet Preview -->
-            <div class="snippet-preview">
-              <div class="snippet-label">Vista previa en Google</div>
-              <div class="snippet-box">
-                <div class="snippet-title">{{ analysis.snippetPreview.title }}</div>
-                <div class="snippet-url">{{ analysis.snippetPreview.url }}</div>
-                <div class="snippet-desc">
-                  {{ analysis.snippetPreview.description || 'Sin descripcion...' }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Criteria -->
-            <div class="seo-criteria">
-              <div v-for="c in analysis.criteria" :key="c.id" class="criterion-row">
-                <div class="criterion-header">
-                  <span class="criterion-dot" :class="c.level" />
-                  <span class="criterion-label">{{ c.label }}</span>
-                  <span class="criterion-score">{{ c.score }}</span>
-                </div>
-                <p class="criterion-desc">{{ c.description }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AdminNewsSeoPanel
+          :analysis="analysis"
+          :seo-panel="sections.seoPanel"
+          :get-level-label="getLevelLabel"
+          @update:seo-panel="sections.seoPanel = $event"
+        />
       </div>
     </template>
 
@@ -1292,119 +817,6 @@ function getLevelLabel(level: string): string {
   box-shadow: none !important;
 }
 
-/* Image upload */
-.image-upload-area {
-  margin-bottom: 12px;
-}
-
-.upload-zone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 24px;
-  border: 2px dashed #e2e8f0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-align: center;
-}
-
-.upload-zone:hover {
-  border-color: var(--color-primary, #23424a);
-  background: #f8fafc;
-}
-.upload-zone.uploading {
-  cursor: default;
-  border-color: #94a3b8;
-}
-
-.file-input-hidden {
-  display: none;
-}
-
-.upload-icon {
-  width: 32px;
-  height: 32px;
-  color: #94a3b8;
-}
-
-.upload-text {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #64748b;
-}
-
-.upload-hint {
-  font-size: 0.7rem;
-  color: #94a3b8;
-}
-
-.upload-progress-bar {
-  width: 100%;
-  max-width: 200px;
-  height: 6px;
-  background: #e2e8f0;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.upload-progress-fill {
-  height: 100%;
-  background: var(--color-primary, #23424a);
-  border-radius: 3px;
-  transition: width 0.2s;
-}
-
-.upload-error {
-  margin-top: 8px;
-  padding: 8px 12px;
-  background: #fef2f2;
-  color: #dc2626;
-  border-radius: 6px;
-  font-size: 0.8rem;
-}
-
-/* Image preview */
-.image-preview-container {
-  margin-top: 8px;
-  border-radius: 8px;
-  overflow: hidden;
-  max-height: 200px;
-  position: relative;
-}
-
-.image-preview-container img {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-  max-height: 200px;
-}
-
-.remove-image-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  border: none;
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
-
-.remove-image-btn:hover {
-  background: #dc2626;
-}
-
 /* Hashtags */
 .hashtag-input-row {
   display: flex;
@@ -1451,329 +863,6 @@ function getLevelLabel(level: string): string {
 
 .chip-remove:hover {
   color: #ef4444;
-}
-
-/* FAQ items */
-.faq-item {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.faq-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.faq-item-number {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #94a3b8;
-  background: #e2e8f0;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.faq-remove {
-  width: 28px;
-  height: 28px;
-  color: #94a3b8;
-}
-
-.faq-remove:hover {
-  color: #ef4444;
-  background: #fef2f2;
-}
-
-/* Info grid */
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-@media (max-width: 600px) {
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.info-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #94a3b8;
-  text-transform: uppercase;
-}
-
-.info-value {
-  font-size: 0.85rem;
-  color: #374151;
-}
-
-.info-mono {
-  font-family: monospace;
-  font-size: 0.75rem;
-  word-break: break-all;
-}
-
-/* SEO Panel */
-.nf-seo {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-@media (min-width: 1024px) {
-  .nf-seo {
-    position: sticky;
-    top: 80px;
-  }
-
-  .seo-toggle-mobile {
-    display: none;
-  }
-}
-
-.seo-toggle-mobile {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 16px 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #374151;
-  cursor: pointer;
-  border: none;
-  background: none;
-  gap: 8px;
-}
-
-.seo-score-mini {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 22px;
-  border-radius: 11px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  margin-left: auto;
-}
-
-.seo-score-mini.good {
-  background: #dcfce7;
-  color: #166534;
-}
-.seo-score-mini.warning {
-  background: #fef3c7;
-  color: #92400e;
-}
-.seo-score-mini.bad {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.seo-panel {
-  padding: 20px;
-}
-
-@media (min-width: 1024px) {
-  .seo-panel {
-    padding-top: 20px;
-  }
-}
-
-/* Score circle */
-.seo-score-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.score-circle {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  border: 5px solid;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.score-circle.good {
-  border-color: #22c55e;
-}
-.score-circle.warning {
-  border-color: #f59e0b;
-}
-.score-circle.bad {
-  border-color: #ef4444;
-}
-
-.score-number {
-  font-size: 1.4rem;
-  font-weight: 700;
-  line-height: 1;
-  color: #1a1a1a;
-}
-
-.score-label {
-  font-size: 0.6rem;
-  color: #94a3b8;
-}
-
-.score-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.score-text strong {
-  font-size: 0.9rem;
-  color: #1a1a1a;
-}
-
-.level-text {
-  font-size: 0.8rem;
-}
-.level-good {
-  color: #22c55e;
-}
-.level-warning {
-  color: #f59e0b;
-}
-.level-bad {
-  color: #ef4444;
-}
-
-/* Snippet preview */
-.snippet-preview {
-  margin-bottom: 20px;
-}
-
-.snippet-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
-}
-
-.snippet-box {
-  background: #fafafa;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 14px;
-  font-family: Arial, sans-serif;
-}
-
-.snippet-title {
-  color: #1a0dab;
-  font-size: 16px;
-  line-height: 1.3;
-  margin-bottom: 2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.snippet-url {
-  color: #006621;
-  font-size: 12px;
-  margin-bottom: 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.snippet-desc {
-  color: #545454;
-  font-size: 12px;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Criteria */
-.seo-criteria {
-  border-top: 1px solid #f1f5f9;
-  padding-top: 12px;
-}
-
-.criterion-row {
-  padding: 8px 0;
-  border-bottom: 1px solid #f8fafc;
-}
-
-.criterion-row:last-child {
-  border-bottom: none;
-}
-
-.criterion-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.criterion-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.criterion-dot.good {
-  background: #22c55e;
-}
-.criterion-dot.warning {
-  background: #f59e0b;
-}
-.criterion-dot.bad {
-  background: #ef4444;
-}
-
-.criterion-label {
-  flex: 1;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #374151;
-}
-
-.criterion-score {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #94a3b8;
-}
-
-.criterion-desc {
-  font-size: 0.7rem;
-  color: #94a3b8;
-  margin: 3px 0 0;
-  padding-left: 16px;
-  line-height: 1.4;
 }
 
 /* Delete Modal */
