@@ -2,19 +2,33 @@
  * Security headers middleware
  * Adds CSP and other security headers to HTML responses (not API routes).
  *
- * CSP audit (Sesión 37):
- * - unsafe-inline in script-src: REQUIRED by Nuxt 3 SSR hydration. Nuxt injects
- *   inline <script> for payload and state hydration. Removing it breaks the app.
- *   Ref: https://github.com/nuxt/nuxt/issues/13223
- * - unsafe-eval in script-src: REQUIRED by Chart.js (used in admin dashboards)
- *   for its internal expression parser. Only affects admin pages.
- *   Nonce-based CSP: Nuxt 4 supports nonces via the `nuxt-security` module,
- *   but adopting it requires replacing this custom middleware entirely.
- *   Current decision (Session 59): keep custom middleware + report-uri to
- *   monitor violations. Revisit when migrating to nuxt-security module.
- *   Chart.js unsafe-eval can be mitigated by lazy-loading Chart.js only in admin.
- * - unsafe-inline in style-src: REQUIRED by Vue's scoped styles and Nuxt SSR
- *   which injects inline <style> blocks during hydration.
+ * ## Nonce-based CSP assessment (Sessions 59-60):
+ *
+ * Nuxt 4 supports nonce-based CSP via the `nuxt-security` module, which would
+ * allow removing `unsafe-inline` from script-src. However, adopting it requires:
+ *   1. Installing `nuxt-security` module
+ *   2. Removing this custom middleware entirely (nuxt-security manages its own)
+ *   3. Configuring all CSP directives through nuxt.config.ts
+ *   4. Testing every page for hydration breakage
+ *
+ * **Decision (Session 60):** NOT VIABLE at this time. Reasons:
+ *   - Migration risk: replacing a working middleware with a module dependency
+ *   - Chart.js still requires `unsafe-eval` regardless of nonces
+ *   - Vue scoped styles still inject inline <style> (unsafe-inline in style-src)
+ *   - Current CSP + report-uri provides adequate monitoring for violations
+ *
+ * **Mitigation in place:**
+ *   - report-uri sends violations to /api/infra/csp-report for monitoring
+ *   - ZAP rule 10055 set to WARN (not FAIL) for unsafe-inline
+ *   - All other XSS/injection rules set to FAIL in DAST scan
+ *
+ * **Revisit when:** nuxt-security module reaches stable v2+ and Chart.js
+ *   drops eval requirement, or when migrating to Nuxt 5.
+ *
+ * ## Current CSP directives rationale:
+ * - unsafe-inline in script-src: REQUIRED by Nuxt SSR hydration inline scripts
+ * - unsafe-eval in script-src: REQUIRED by Chart.js expression parser (admin only)
+ * - unsafe-inline in style-src: REQUIRED by Vue scoped styles + SSR inline styles
  */
 export default defineEventHandler((event) => {
   // Only apply to non-API routes (HTML pages)
@@ -49,4 +63,7 @@ export default defineEventHandler((event) => {
   headers.setHeader('X-Frame-Options', 'DENY')
   headers.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
   headers.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)')
+  // Cross-Origin headers for additional isolation
+  headers.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
+  headers.setHeader('Cross-Origin-Resource-Policy', 'same-origin')
 })
