@@ -242,7 +242,10 @@
     "characteristics": "Características",
     "sellerInfo": "Información del vendedor",
     "sellerCif": "CIF",
-    "viewSellerProfile": "Ver perfil del vendedor"
+    "viewSellerProfile": "Ver perfil del vendedor",
+    "relatedVehicles": "Vehículos similares",
+    "browseCategories": "Explorar por categoría",
+    "moreBrand": "Más de"
   },
   "banner": {
     "moreInfo": "Más información"

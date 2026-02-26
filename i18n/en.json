@@ -242,7 +242,10 @@
     "characteristics": "Characteristics",
     "sellerInfo": "Seller information",
     "sellerCif": "Tax ID",
-    "viewSellerProfile": "View seller profile"
+    "viewSellerProfile": "View seller profile",
+    "relatedVehicles": "Similar vehicles",
+    "browseCategories": "Browse by category",
+    "moreBrand": "More from"
   },
   "banner": {
     "moreInfo": "More info"

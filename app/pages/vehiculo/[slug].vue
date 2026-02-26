@@ -324,6 +324,15 @@
           </div>
         </div>
       </article>
+      <!-- Related vehicles (internal linking) -->
+      <VehicleRelatedVehicles :vehicle="vehicle" />
+
+      <!-- Category navigation links (crawlability) -->
+      <VehicleCategoryLinks
+        :current-brand="vehicle.brand"
+        :current-category-id="vehicle.category_id"
+      />
+
       <!-- Report Modal (DSA compliance) -->
       <ModalsReportModal
         v-if="vehicle"
