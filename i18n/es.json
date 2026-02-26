@@ -21,6 +21,13 @@
   "a11y": {
     "skipToContent": "Saltar al contenido"
   },
+  "share": {
+    "label": "Compartir",
+    "whatsapp": "Compartir en WhatsApp",
+    "linkedin": "Compartir en LinkedIn",
+    "email": "Compartir por email",
+    "copyLink": "Copiar enlace"
+  },
   "nav": {
     "home": "Inicio",
     "catalog": "Catálogo",

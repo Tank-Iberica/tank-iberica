@@ -246,6 +246,12 @@
           <!-- AI Badge (AI Act compliance) -->
           <UiAiBadge v-if="(vehicle as Record<string, unknown>).ai_generated" type="generated" />
 
+          <!-- Share buttons -->
+          <UiShareButtons
+            :url="`https://tracciona.com/vehiculo/${vehicle.slug}`"
+            :title="buildProductName(vehicle, locale, true)"
+          />
+
           <!-- Seller Info (DSA compliance) -->
           <div v-if="sellerInfo" class="vehicle-seller-info">
             <h3>{{ $t('vehicle.sellerInfo') }}</h3>
