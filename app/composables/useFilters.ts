@@ -201,8 +201,12 @@ export function useFilters() {
 
     if (!needsValues.length && !needsRange.length) return
 
-    // Fetch published vehicles' attributes_json, filtered by category if provided
-    let query = supabase.from('vehicles').select('attributes_json').eq('status', 'published')
+    // Fetch published vehicles' attributes_json, filtered by category and vertical
+    let query = supabase
+      .from('vehicles')
+      .select('attributes_json')
+      .eq('status', 'published')
+      .eq('vertical', getVerticalSlug())
     if (categoryId) {
       query = query.eq('category_id', categoryId)
     }

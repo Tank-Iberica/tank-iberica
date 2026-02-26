@@ -1,37 +1,127 @@
-# Convenciones de codigo
+# Contributing to Tracciona
 
-## Tamano de archivos
+## Quick Start
 
-- Componentes Vue: maximo 500 lineas. Si crece, extraer sub-componentes.
-- Server routes: maximo 200 lineas. Si crece, extraer logica a `server/utils/` o `server/services/`.
+```bash
+git clone <repo-url>
+cp .env.example .env.local   # Fill in your Supabase/Cloudinary/Stripe keys
+npm install
+npm run dev                   # http://localhost:3000
+```
 
-## Composables
+## Stack
 
-- Un composable por dominio: `useVehicles`, `useAuction`, `useAuth`.
-- Si necesitas compartir entre admin y dashboard: `composables/shared/`.
-- NO crear composables genericos tipo `useHelper` o `useUtils`.
+- **Frontend:** Nuxt 3 (Vue 3), TypeScript
+- **Backend:** Supabase (PostgreSQL + Auth + RLS + Edge Functions)
+- **Images:** Cloudinary via @nuxt/image
+- **Deploy:** Cloudflare Pages (auto-deploy on push to main)
+- **i18n:** @nuxtjs/i18n (ES + EN)
 
-## Componentes
+## Project Structure
 
-- Especificos de admin: `components/admin/`
-- Especificos de dashboard: `components/dashboard/`
-- Compartidos: `components/shared/`
-- Genericos (UI): `components/ui/`
+```
+app/
+  pages/          # Nuxt routes
+  components/     # Vue SFCs by domain (catalog/, vehicle/, modals/, layout/, ui/)
+  composables/    # Reusable logic (useVehicles, useFilters, etc.)
+  layouts/        # default, admin
+  middleware/     # auth.ts, admin.ts
+  assets/css/     # tokens.css (design system), global.css
+server/
+  api/            # API endpoints
+  middleware/     # Security headers, CORS, rate limiting
+  services/       # Business logic (billing, marketReport)
+  utils/          # Shared server utilities
+i18n/             # es.json, en.json
+supabase/migrations/  # SQL migrations (numbered 00001+)
+types/            # supabase.ts (auto-generated), index.d.ts
+tests/            # Unit tests (Vitest) + E2E (Playwright)
+```
 
-## Server routes
+## Non-Negotiable Rules
 
-- Auth: siempre `serverSupabaseUser(event)` al inicio.
-- Service role: solo cuando RLS no es suficiente. Verificar ownership despues.
-- Errores: usar `safeError()` para mensajes genericos en produccion.
+1. **Mobile-first:** CSS base = 360px. Breakpoints with `min-width`. Touch targets >= 44px.
+2. **Real pages:** Vehicles and articles are pages with their own URL, NOT modals.
+3. **Extensible:** Categories, subcategories, filters, and languages come from DB. Adding one = inserting a row, not touching code.
+4. **Vertical isolation:** All vehicle/ad queries must include `.eq('vertical', getVerticalSlug())`.
+5. **RLS mandatory:** Every new Supabase table must have Row Level Security policies.
+6. **No hardcoded values:** Categories, subcategories, filters, brands — always from DB.
+7. **No `innerHTML`:** Use `textContent` or Vue template binding. If unavoidable, use DOMPurify.
+8. **No `console.log`:** Use proper error handling or Sentry in production code.
 
-## i18n
+## Code Conventions
 
-- Textos UI: siempre `$t('key')`, nunca texto hardcodeado.
-- Datos dinamicos: `localizedField(item.name, locale)`.
-- NUNCA acceder a `.name_es` o `.name_en` directamente.
+### File size limits
+
+- Components Vue: max 500 lines. If it grows, extract sub-components.
+- Server routes: max 200 lines. If it grows, extract logic to `server/utils/` or `server/services/`.
+
+### Composables
+
+- One composable per domain: `useVehicles`, `useAuction`, `useAuth`.
+- Shared between admin and dashboard: `composables/shared/`.
+- NO generic composables like `useHelper` or `useUtils`.
+
+### Components
+
+- Admin-specific: `components/admin/`
+- Dashboard-specific: `components/dashboard/`
+- Shared: `components/shared/`
+- Generic UI: `components/ui/`
+
+### Server routes
+
+- Auth: always `serverSupabaseUser(event)` at the start.
+- Service role: only when RLS is not enough. Verify ownership afterwards.
+- Errors: use `safeError()` for generic messages in production.
+
+### i18n
+
+- UI text: always `$t('key')`, never hardcoded text.
+- Dynamic data: `localizedField(item.name, locale)`.
+- NEVER access `.name_es` or `.name_en` directly.
+
+### TypeScript
+
+- Strict mode. No `any`.
+- Composables: `use` + PascalCase (e.g., `useVehicles`, `useLocalized`)
+- Components: PascalCase, one file per component
+
+### CSS
+
+- Scoped in Vue components. Global variables in `tokens.css`.
+- Design tokens: `--color-primary`, `--text-primary`, `--bg-secondary`, etc.
+- Breakpoints: 480px, 768px, 1024px, 1280px (always `min-width`).
+
+### Migrations
+
+- Incremental numbering in `supabase/migrations/` (00065, 00066...).
+- Apply with `npx supabase db push`.
+- Regenerate types: `npx supabase gen types typescript --project-id <id> > types/supabase.ts`.
 
 ## Tests
 
-- Seguridad: `tests/security/` — se ejecutan en CI
-- Unitarios: `tests/unit/` — Vitest
+- Security: `tests/security/` — integration tests (require running server for some)
+- Unit: `tests/unit/` — Vitest
 - E2E: `tests/e2e/` — Playwright
+
+## Before Submitting
+
+```bash
+npm run lint        # Must pass
+npm run typecheck   # Must pass
+npm run test        # Must pass
+npm run build       # Must compile without errors
+```
+
+## Git
+
+- Branch: `main`
+- Commits: conventional commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`)
+- Always lint + typecheck before merging
+
+## Key Documentation
+
+- `docs/tracciona-docs/contexto-global.md` — Full project vision
+- `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Session-based implementation guide
+- `CLAUDE.md` — AI assistant instructions and project conventions

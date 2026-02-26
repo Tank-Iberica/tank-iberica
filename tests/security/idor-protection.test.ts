@@ -3,40 +3,36 @@ import { describe, it, expect } from 'vitest'
 const BASE = process.env.TEST_BASE_URL || 'http://localhost:3000'
 
 describe('IDOR: endpoints no exponen datos de otros dealers', () => {
-  // These tests verify that APIs accepting IDs
-  // do NOT return data if the ID belongs to another dealer/vertical
+  // These tests require a running server with 2 test dealers in different verticals.
+  // Run with: TEST_BASE_URL=http://localhost:3000 npm run test -- idor-protection
 
-  it('GET /api/vehicles/[id] con ID de otro dealer → 403 o datos filtrados', async () => {
-    // Requires: 2 test dealers in different verticals
-    // Attempt to access dealer B's vehicle with dealer A's token
-    // Verify it returns 403 or sensitive fields are stripped
-    expect(true).toBe(true) // Structural placeholder — requires test DB setup
-  })
+  it.todo(
+    'GET /api/vehicles/[id] con ID de otro dealer → 403 o datos filtrados (requires test DB with 2 dealers)',
+  )
 
-  it('POST /api/generate-description con vehicleId de otro dealer → 403', async () => {
-    // Attempt to generate description for another dealer's vehicle
-    expect(true).toBe(true) // Structural placeholder — requires test DB setup
-  })
+  it.todo(
+    'POST /api/generate-description con vehicleId de otro dealer → 403 (requires test DB with 2 dealers)',
+  )
 
-  it('GET /api/invoicing/export-csv no incluye facturas de otro dealer', async () => {
-    // Export CSV and verify it only contains own invoices
-    expect(true).toBe(true) // Structural placeholder — requires test DB setup
-  })
+  it.todo(
+    'GET /api/invoicing/export-csv no incluye facturas de otro dealer (requires test DB with 2 dealers)',
+  )
 })
 
 describe('IDOR: rutas públicas no exponen datos sensibles', () => {
   it('Sitemap no contiene rutas de admin', async () => {
+    let res: Response
     try {
-      const res = await fetch(`${BASE}/sitemap.xml`)
-      if (res.ok) {
-        const text = await res.text()
-        expect(text).not.toContain('/admin')
-        expect(text).not.toContain('/api/')
-      }
+      res = await fetch(`${BASE}/sitemap.xml`)
     } catch {
-      // If server is not running, test passes — skip gracefully
+      // Server not running — skip
+      return
     }
-    // If sitemap not available in test env, skip gracefully
-    expect(true).toBe(true)
+
+    if (res.ok) {
+      const text = await res.text()
+      expect(text).not.toContain('/admin')
+      expect(text).not.toContain('/api/')
+    }
   })
 })

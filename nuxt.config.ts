@@ -263,10 +263,9 @@ export default defineNuxtConfig({
         { rel: 'icon', href: '/favicon.ico' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
         { rel: 'dns-prefetch', href: 'https://res.cloudinary.com' },
-        {
-          rel: 'dns-prefetch',
-          href: process.env.SUPABASE_URL || 'https://gmnrfuzekbwyzkgsaftv.supabase.co',
-        },
+        ...(process.env.SUPABASE_URL
+          ? [{ rel: 'dns-prefetch', href: process.env.SUPABASE_URL }]
+          : []),
         { rel: 'dns-prefetch', href: 'https://flagcdn.com' },
         { rel: 'dns-prefetch', href: 'https://www.googletagmanager.com' },
         { rel: 'preconnect', href: 'https://res.cloudinary.com', crossorigin: '' },

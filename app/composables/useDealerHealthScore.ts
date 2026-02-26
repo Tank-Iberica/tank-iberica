@@ -185,7 +185,8 @@ export function useDealerHealthScore(dealerId: string) {
           .from('vehicles')
           .select('id, description_es, description_en, updated_at, status')
           .eq('dealer_id', dealerId)
-          .eq('status', 'published'),
+          .eq('status', 'published')
+          .eq('vertical', getVerticalSlug()),
 
         // Count of images across all dealer vehicles
         supabase

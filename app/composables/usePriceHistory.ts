@@ -154,6 +154,7 @@ export function usePriceHistory(vehicleId: string) {
         .select('price')
         .eq('category_id', categoryId)
         .eq('status', 'published')
+        .eq('vertical', getVerticalSlug())
         .neq('id', vehicleId)
         .not('price', 'is', null)
 

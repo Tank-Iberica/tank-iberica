@@ -125,7 +125,8 @@ export function useDealerDashboard() {
           .from('vehicles')
           .select('id', { count: 'exact', head: true })
           .eq('dealer_id', dealer.id)
-          .eq('status', 'published'),
+          .eq('status', 'published')
+          .eq('vertical', getVerticalSlug()),
 
         // Total leads count
         supabase
@@ -163,6 +164,7 @@ export function useDealerDashboard() {
           .select('id, brand, model, year, price, views, status')
           .eq('dealer_id', dealer.id)
           .eq('status', 'published')
+          .eq('vertical', getVerticalSlug())
           .order('views', { ascending: false })
           .limit(5),
       ])

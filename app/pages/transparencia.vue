@@ -43,22 +43,25 @@ useHead({ title: t('transparency.pageTitle') })
     <section class="transparency-section">
       <h2>{{ t('transparency.reportTitle') }}</h2>
       <p>{{ t('transparency.reportDescription') }}</p>
-      <div class="report-placeholder">
-        <svg
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
-          <line x1="16" y1="13" x2="8" y2="13" />
-          <line x1="16" y1="17" x2="8" y2="17" />
-        </svg>
-        <p>{{ t('transparency.reportComingSoon') }}</p>
+      <div class="report-categories">
+        <div class="report-category-item">
+          <strong>{{ t('transparency.reportCatReports') }}</strong>
+          <span class="report-category-desc">{{ t('transparency.reportCatReportsDesc') }}</span>
+        </div>
+        <div class="report-category-item">
+          <strong>{{ t('transparency.reportCatActions') }}</strong>
+          <span class="report-category-desc">{{ t('transparency.reportCatActionsDesc') }}</span>
+        </div>
+        <div class="report-category-item">
+          <strong>{{ t('transparency.reportCatTimes') }}</strong>
+          <span class="report-category-desc">{{ t('transparency.reportCatTimesDesc') }}</span>
+        </div>
+        <div class="report-category-item">
+          <strong>{{ t('transparency.reportCatAppeals') }}</strong>
+          <span class="report-category-desc">{{ t('transparency.reportCatAppealsDesc') }}</span>
+        </div>
       </div>
+      <p class="report-next-date">{{ t('transparency.reportNextDate') }}</p>
     </section>
 
     <!-- AI Usage -->
@@ -144,21 +147,37 @@ useHead({ title: t('transparency.pageTitle') })
   margin-bottom: 4px;
 }
 
-.report-placeholder {
+.report-categories {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
-  padding: 32px;
-  border: 2px dashed var(--border-color, #e2e8f0);
-  border-radius: 8px;
-  color: var(--text-auxiliary, #94a3b8);
-  text-align: center;
+  margin-top: 12px;
 }
 
-.report-placeholder p {
+.report-category-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  background: var(--bg-secondary, #f8fafc);
+  border-radius: 8px;
+}
+
+.report-category-item strong {
+  font-size: 0.9rem;
+  color: var(--text-primary, #1e293b);
+}
+
+.report-category-desc {
+  font-size: 0.8rem;
   color: var(--text-auxiliary, #94a3b8);
-  margin: 0;
+}
+
+.report-next-date {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--text-auxiliary, #94a3b8);
 }
 
 @media (min-width: 768px) {
