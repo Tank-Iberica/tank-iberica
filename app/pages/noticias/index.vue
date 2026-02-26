@@ -40,19 +40,21 @@
           class="news-card"
         >
           <div class="news-card-image">
-            <img
-              v-if="item.image_url"
-              :src="item.image_url"
-              :alt="getTitle(item)"
-              loading="lazy"
-            >
+            <img v-if="item.image_url" :src="item.image_url" :alt="getTitle(item)" loading="lazy" >
             <div v-else class="news-card-placeholder">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
                 <rect x="3" y="3" width="18" height="18" rx="2" />
                 <path d="m21 15-5-5L5 21" />
               </svg>
             </div>
-            <span class="news-card-category">{{ item.category }}</span>
+            <span class="news-card-category">{{ $t(`news.${item.category}`) }}</span>
           </div>
           <div class="news-card-content">
             <h2 class="news-card-title">{{ getTitle(item) }}</h2>
@@ -65,11 +67,7 @@
 
       <!-- Load more -->
       <div v-if="hasMore && !loading" class="news-load-more">
-        <button
-          class="btn-load-more"
-          :disabled="loadingMore"
-          @click="handleLoadMore"
-        >
+        <button class="btn-load-more" :disabled="loadingMore" @click="handleLoadMore">
           {{ loadingMore ? $t('common.loading') : $t('news.loadMore') }}
         </button>
       </div>
@@ -191,7 +189,9 @@ onMounted(() => {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .news-card:hover {
@@ -289,12 +289,21 @@ onMounted(() => {
   animation: pulse 1.5s ease-in-out infinite;
 }
 
-.skeleton-line.wide { width: 80%; }
-.skeleton-line.medium { width: 50%; }
+.skeleton-line.wide {
+  width: 80%;
+}
+.skeleton-line.medium {
+  width: 50%;
+}
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Empty */

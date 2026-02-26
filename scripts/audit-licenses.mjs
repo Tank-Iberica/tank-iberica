@@ -8,8 +8,8 @@
  * Usage: node scripts/audit-licenses.mjs
  */
 
-import { execSync } from 'child_process'
-import { writeFileSync } from 'fs'
+import { execSync } from 'node:child_process'
+import { writeFileSync } from 'node:fs'
 
 console.log('=== License Audit ===')
 console.log(`Date: ${new Date().toISOString()}`)

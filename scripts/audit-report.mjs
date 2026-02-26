@@ -3,8 +3,8 @@
  * Audit Report Consolidator
  * Reads artifacts from the daily audit workflow and generates a summary.
  */
-import { readFileSync, writeFileSync, existsSync, appendFileSync } from 'fs'
-import { join } from 'path'
+import { readFileSync, writeFileSync, existsSync, appendFileSync } from 'node:fs'
+import { join } from 'node:path'
 
 const ARTIFACTS_DIR = 'audit-artifacts'
 

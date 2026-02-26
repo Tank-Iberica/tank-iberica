@@ -628,7 +628,7 @@ usePageSeo({
             <table class="brand-table">
               <thead>
                 <tr>
-                  <th class="brand-table__th--left">Brand</th>
+                  <th class="brand-table__th--left">{{ $t('data.brand') }}</th>
                   <th>{{ $t('data.avgPrice') }}</th>
                   <th>{{ $t('data.volume') }}</th>
                 </tr>

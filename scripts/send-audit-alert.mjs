@@ -3,7 +3,7 @@
  * Send audit alert email via Resend API.
  * Only sends if overall status is 'red' or there are semgrep errors.
  */
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const ALERT_EMAIL = process.env.ALERT_EMAIL

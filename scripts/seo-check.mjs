@@ -12,13 +12,13 @@
  * Usage: node scripts/seo-check.mjs
  */
 
-import { readFileSync, existsSync, readdirSync, statSync } from 'fs'
-import { join, relative } from 'path'
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs'
+import { join, relative } from 'node:path'
 
-const RED = '\x1b[31m'
-const GREEN = '\x1b[32m'
-const YELLOW = '\x1b[33m'
-const NC = '\x1b[0m'
+const RED = '\x1B[31m'
+const GREEN = '\x1B[32m'
+const YELLOW = '\x1B[33m'
+const NC = '\x1B[0m'
 
 let pass = 0
 let warn = 0
@@ -97,7 +97,6 @@ for (const file of publicPages) {
   // Check for SEO meta
   const hasUseSeoMeta = content.includes('useSeoMeta')
   const hasUsePageSeo = content.includes('usePageSeo')
-  const hasUseHead = content.includes('useHead')
 
   if (!hasUseSeoMeta && !hasUsePageSeo) {
     issues.push('no useSeoMeta/usePageSeo')
@@ -237,19 +236,31 @@ for (const file of publicPages) {
   const rel = relative('app/pages', file).replace(/\\/g, '/')
 
   // Find <img> and <NuxtImg> tags without alt attribute
-  // Use a regex that handles > inside attribute values (e.g. v-if="x > 0")
+  // Extract full tag text by tracking quote state to handle > inside attributes
   const templateMatch = content.match(/<template>([\s\S]*?)<\/template>/)
   if (templateMatch) {
-    const template = templateMatch[1]
+    const tmpl = templateMatch[1]
+    const tagStarts = [...tmpl.matchAll(/<(img|NuxtImg)\b/g)]
 
-    // Match img/NuxtImg opening tags, accounting for > in attribute values
-    const tagRegex = /<(img|NuxtImg)\b(?:\s+(?:[^>"']*|"[^"]*"|'[^']*'))*\s*\/?>/gs
-    let match
-    while ((match = tagRegex.exec(template)) !== null) {
-      const tag = match[0]
-      if (!tag.includes('alt=') && !tag.includes(':alt=')) {
-        const tagType = match[1] === 'NuxtImg' ? ` (${match[1]})` : ''
-        imgIssues.push(`${rel}${tagType}`)
+    for (const start of tagStarts) {
+      let pos = start.index + start[0].length
+      let inQuote = ''
+      // Walk forward to find the real closing > (not inside quotes)
+      while (pos < tmpl.length) {
+        const ch = tmpl[pos]
+        if (inQuote) {
+          if (ch === inQuote) inQuote = ''
+        } else if (ch === '"' || ch === "'") {
+          inQuote = ch
+        } else if (ch === '>') {
+          break
+        }
+        pos++
+      }
+      const fullTag = tmpl.slice(start.index, pos + 1)
+      if (!fullTag.includes('alt=') && !fullTag.includes(':alt=')) {
+        const suffix = start[1] === 'NuxtImg' ? ` (${start[1]})` : ''
+        imgIssues.push(`${rel}${suffix}`)
         break
       }
     }
@@ -303,7 +314,7 @@ for (const file of publicPages) {
   if (templateMatch) {
     const template = templateMatch[1]
     // Find <a> tags without href or :href
-    const aTags = template.match(/<a\b[^>]*>/gs) || []
+    const aTags = template.match(/<a\b[^>]*>/g) || []
     for (const a of aTags) {
       if (!a.includes('href=') && !a.includes(':href=')) {
         hrefIssues.push(rel)
