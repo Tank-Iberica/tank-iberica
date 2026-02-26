@@ -576,6 +576,8 @@ if (vehicle.value) {
     ogImage: seoImage,
     ogType: 'product',
     ogUrl: canonicalUrl,
+    ogLocale: 'es_ES',
+    ogLocaleAlternate: ['en_GB'],
     ogSiteName: 'Tracciona',
     twitterCard: 'summary_large_image',
     twitterTitle: seoTitle,
@@ -584,7 +586,16 @@ if (vehicle.value) {
   })
 
   useHead({
-    link: [{ rel: 'canonical', href: canonicalUrl }],
+    link: [
+      { rel: 'canonical', href: canonicalUrl },
+      { rel: 'alternate', hreflang: 'es', href: canonicalUrl },
+      {
+        rel: 'alternate',
+        hreflang: 'en',
+        href: `https://tracciona.com/en/vehiculo/${vehicle.value.slug}`,
+      },
+      { rel: 'alternate', hreflang: 'x-default', href: canonicalUrl },
+    ],
     script: [
       {
         type: 'application/ld+json',

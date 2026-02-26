@@ -1,7 +1,10 @@
-User-Agent: *
+User-agent: *
+Allow: /
 Disallow: /admin/
+Disallow: /api/
+Disallow: /auth/
 Disallow: /dashboard/
 Disallow: /confirm
-Disallow: /api/
+Disallow: /perfil/
 
 Sitemap: https://tracciona.com/sitemap.xml

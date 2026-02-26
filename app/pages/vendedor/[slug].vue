@@ -71,9 +71,27 @@ useSeoMeta({
   description: () => sellerBio.value || t('seller.seoDefaultDescription'),
   ogDescription: () => sellerBio.value || t('seller.seoDefaultDescription'),
   ogImage: () => profile.value?.logo_url || '/og-default.png',
+  ogType: 'profile',
+  ogLocale: 'es_ES',
+  ogLocaleAlternate: ['en_GB'],
+  ogSiteName: 'Tracciona',
+  twitterCard: 'summary_large_image',
+  twitterTitle: () => sellerName.value || 'Tracciona',
+  twitterDescription: () => sellerBio.value || t('seller.seoDefaultDescription'),
+  twitterImage: () => profile.value?.logo_url || '/og-default.png',
 })
 
 useHead({
+  link: computed(() => {
+    const slug = route.params.slug as string
+    const path = `/vendedor/${slug}`
+    return [
+      { rel: 'canonical', href: `https://tracciona.com${path}` },
+      { rel: 'alternate', hreflang: 'es', href: `https://tracciona.com${path}` },
+      { rel: 'alternate', hreflang: 'en', href: `https://tracciona.com/en${path}` },
+      { rel: 'alternate', hreflang: 'x-default', href: `https://tracciona.com${path}` },
+    ]
+  }),
   script: [
     {
       type: 'application/ld+json',
