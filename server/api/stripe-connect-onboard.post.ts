@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
     return {
       url: `${returnUrl}?connect=mock`,
       accountId: `acct_mock_${Date.now()}`,
-      message: 'Stripe not configured — mock Connect onboarding created',
+      message: 'Service not configured',
     }
   }
 
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Supabase not configured' })
+    throw createError({ statusCode: 500, message: 'Service not configured' })
   }
 
   // Verify dealer belongs to this user

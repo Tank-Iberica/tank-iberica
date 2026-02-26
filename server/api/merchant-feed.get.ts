@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
   if (!supabaseUrl || !supabaseServiceKey) {
     setResponseStatus(event, 500)
-    return 'Missing Supabase configuration'
+    return 'Missing service configuration'
   }
 
   const supabase = createClient(supabaseUrl, supabaseServiceKey)

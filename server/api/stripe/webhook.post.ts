@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
 
   const stripeKey = config.stripeSecretKey || process.env.STRIPE_SECRET_KEY
   if (!stripeKey) {
-    throw createError({ statusCode: 500, message: 'Stripe not configured' })
+    throw createError({ statusCode: 500, message: 'Service not configured' })
   }
 
   // Dynamic import to avoid build errors if stripe is not installed
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Supabase not configured' })
+    throw createError({ statusCode: 500, message: 'Service not configured' })
   }
 
   const sbConfig: SupabaseRestConfig = { url: supabaseUrl, serviceRoleKey: supabaseKey }
@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
 
   if (!webhookSecret) {
     if (process.env.NODE_ENV === 'production') {
-      throw createError({ statusCode: 500, message: 'Stripe webhook secret not configured' })
+      throw createError({ statusCode: 500, message: 'Webhook secret not configured' })
     }
     // Dev mode: warn and parse without signature verification
     console.warn(

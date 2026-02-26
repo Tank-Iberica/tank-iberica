@@ -65,63 +65,22 @@
               >
                 {{ locationTriggerText }}
               </button>
-              <!-- Mobile: Teleport dropdown to body -->
-              <Teleport to="body">
-                <div
-                  v-if="locationDropdownOpen"
-                  class="location-dropdown-mobile"
-                  @click="locationDropdownOpen = false"
-                >
-                  <div class="location-dropdown-mobile-content" @click.stop>
-                    <div class="location-dropdown-mobile-header">
-                      <span>{{ $t('catalog.location') }}</span>
-                      <button
-                        type="button"
-                        class="location-dropdown-close"
-                        @click="locationDropdownOpen = false"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                    <span class="filter-sublabel">{{ $t('catalog.locationYours') }}</span>
-                    <select
-                      class="filter-select-inline location-manual-input"
-                      :value="editCountry"
-                      :aria-label="$t('catalog.locationSelectCountry')"
-                      @change="onCountrySelect($event)"
-                    >
-                      <option value="">{{ $t('catalog.locationSelectCountry') }}</option>
-                      <option
-                        v-for="c in europeanCountriesData.priority"
-                        :key="c.code"
-                        :value="c.code"
-                      >
-                        {{ c.flag }} {{ c.name }}
-                      </option>
-                      <option disabled>{{ $t('catalog.locationRestAlpha') }}</option>
-                      <option v-for="c in europeanCountriesData.rest" :key="c.code" :value="c.code">
-                        {{ c.flag }} {{ c.name }}
-                      </option>
-                    </select>
-                    <select
-                      v-if="editCountry === 'ES'"
-                      class="filter-select-inline location-manual-input"
-                      :value="editProvince"
-                      :aria-label="$t('catalog.locationSelectProvince')"
-                      @change="onProvinceSelect($event)"
-                    >
-                      <option value="">{{ $t('catalog.locationSelectProvince') }}</option>
-                      <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
-                    </select>
-                  </div>
-                </div>
-              </Teleport>
+              <CatalogFilterBarLocationPicker
+                :open="locationDropdownOpen"
+                :edit-country="editCountry"
+                :edit-province="editProvince"
+                :european-countries="europeanCountriesData"
+                :provinces="provinces"
+                @update:open="locationDropdownOpen = $event"
+                @country-select="onCountrySelect"
+                @province-select="onProvinceSelect"
+              />
             </div>
           </div>
 
-          <!-- Price (button → popover) -->
+          <!-- Price (button -> popover) -->
           <div class="filter-group filter-group-range-trigger">
-            <span class="filter-label filter-label-price">€:</span>
+            <span class="filter-label filter-label-price">&#8364;:</span>
             <button
               class="range-trigger"
               type="button"
@@ -145,7 +104,7 @@
             </select>
           </div>
 
-          <!-- Year (button → popover) -->
+          <!-- Year (button -> popover) -->
           <div class="filter-group filter-group-range-trigger">
             <span class="filter-label">{{ $t('catalog.year') }}:</span>
             <button class="range-trigger" type="button" @click="yearPopoverOpen = !yearPopoverOpen">
@@ -153,7 +112,7 @@
             </button>
           </div>
 
-          <!-- Advanced filters button (only if dynamic filters exist for FilterBar) -->
+          <!-- Advanced filters button (only if dynamic filters exist) -->
           <button
             v-if="filtersForFilterBar.length"
             class="filter-advanced-btn"
@@ -186,87 +145,50 @@
       </div>
     </div>
 
-    <!-- MOBILE: Price popover (teleported to body) -->
-    <Teleport to="body">
-      <div v-if="pricePopoverOpen" class="range-dropdown-mobile" @click="pricePopoverOpen = false">
-        <div class="range-dropdown-mobile-content" @click.stop>
-          <div class="range-dropdown-mobile-header">
-            <span>{{ $t('catalog.priceRange') }}</span>
-            <button type="button" class="range-dropdown-close" @click="pricePopoverOpen = false">
-              &#10005;
-            </button>
-          </div>
-          <UiRangeSlider
-            :min="0"
-            :max="200000"
-            :step="500"
-            :model-min="priceMin"
-            :model-max="priceMax"
-            :format-label="formatPriceLabel"
-            @update:model-min="onPriceSliderMin"
-            @update:model-max="onPriceSliderMax"
-          />
-          <div class="range-dropdown-values">
-            <span>{{ formatPriceLabel(priceMin ?? 0) }}</span>
-            <span>{{ formatPriceLabel(priceMax ?? 200000) }}</span>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <!-- MOBILE: Price popover -->
+    <CatalogFilterBarRangePopover
+      :open="pricePopoverOpen"
+      :title="$t('catalog.priceRange')"
+      :min="0"
+      :max="200000"
+      :step="500"
+      :model-min="priceMin"
+      :model-max="priceMax"
+      :format-label="formatPriceLabel"
+      @update:open="pricePopoverOpen = $event"
+      @update:model-min="onPriceSliderMin"
+      @update:model-max="onPriceSliderMax"
+    />
 
-    <!-- MOBILE: Year popover (teleported to body) -->
-    <Teleport to="body">
-      <div v-if="yearPopoverOpen" class="range-dropdown-mobile" @click="yearPopoverOpen = false">
-        <div class="range-dropdown-mobile-content" @click.stop>
-          <div class="range-dropdown-mobile-header">
-            <span>{{ $t('catalog.yearRange') }}</span>
-            <button type="button" class="range-dropdown-close" @click="yearPopoverOpen = false">
-              &#10005;
-            </button>
-          </div>
-          <UiRangeSlider
-            :min="2000"
-            :max="currentYear"
-            :step="1"
-            :model-min="yearMin"
-            :model-max="yearMax"
-            @update:model-min="onYearSliderMin"
-            @update:model-max="onYearSliderMax"
-          />
-          <div class="range-dropdown-values">
-            <span>{{ yearMin ?? 2000 }}</span>
-            <span>{{ yearMax ?? currentYear }}</span>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <!-- MOBILE: Year popover -->
+    <CatalogFilterBarRangePopover
+      :open="yearPopoverOpen"
+      :title="$t('catalog.yearRange')"
+      :min="2000"
+      :max="currentYear"
+      :step="1"
+      :model-min="yearMin"
+      :model-max="yearMax"
+      @update:open="yearPopoverOpen = $event"
+      @update:model-min="onYearSliderMin"
+      @update:model-max="onYearSliderMax"
+    />
 
-    <!-- MOBILE: Bottom sheet for dynamic/advanced filters -->
-    <Transition name="fade">
-      <div v-if="open" class="filter-backdrop" @click="open = false" />
-    </Transition>
-    <Transition name="slide-up">
-      <div v-if="open" class="filter-sheet">
-        <div class="filter-sheet-header">
-          <h3>{{ $t('catalog.advancedFilters') }}</h3>
-          <button class="filter-close" @click="open = false">&#215;</button>
-        </div>
-        <div class="filter-sheet-body">
-          <CatalogFilterBarDynamicFilters
-            :filters="filtersForFilterBar"
-            :active-filters="activeFilters"
-            variant="mobile"
-            @select="onDynamicSelect"
-            @check="onDynamicCheck"
-            @tick="onDynamicTick"
-            @range="onDynamicRange"
-            @text="onDynamicText"
-          />
-        </div>
-      </div>
-    </Transition>
+    <!-- Advanced filters (mobile bottom sheet + desktop panel) -->
+    <CatalogFilterBarAdvancedPanel
+      :mobile-open="open"
+      :desktop-open="advancedOpen"
+      :filters="filtersForFilterBar"
+      :active-filters="activeFilters"
+      @update:mobile-open="open = $event"
+      @select="onDynamicSelect"
+      @check="onDynamicCheck"
+      @tick="onDynamicTick"
+      @range="onDynamicRange"
+      @text="onDynamicText"
+    />
 
-    <!-- DESKTOP: Inline horizontal scrollable bar (≥ 768px) -->
+    <!-- DESKTOP: Inline horizontal scrollable bar (>= 768px) -->
     <div class="filters-desktop">
       <div class="filters-container">
         <button
@@ -333,40 +255,22 @@
               >
                 {{ locationTriggerText }}
               </button>
-              <div v-if="locationDropdownOpen" class="location-dropdown">
-                <span class="filter-sublabel">{{ $t('catalog.locationYours') }}</span>
-                <select
-                  class="filter-select-inline location-manual-input"
-                  :value="editCountry"
-                  :aria-label="$t('catalog.locationSelectCountry')"
-                  @change="onCountrySelect($event)"
-                >
-                  <option value="">{{ $t('catalog.locationSelectCountry') }}</option>
-                  <option v-for="c in europeanCountriesData.priority" :key="c.code" :value="c.code">
-                    {{ c.flag }} {{ c.name }}
-                  </option>
-                  <option disabled>{{ $t('catalog.locationRestAlpha') }}</option>
-                  <option v-for="c in europeanCountriesData.rest" :key="c.code" :value="c.code">
-                    {{ c.flag }} {{ c.name }}
-                  </option>
-                </select>
-                <select
-                  v-if="editCountry === 'ES'"
-                  class="filter-select-inline location-manual-input"
-                  :value="editProvince"
-                  :aria-label="$t('catalog.locationSelectProvince')"
-                  @change="onProvinceSelect($event)"
-                >
-                  <option value="">{{ $t('catalog.locationSelectProvince') }}</option>
-                  <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
-                </select>
-              </div>
+              <CatalogFilterBarLocationPicker
+                :open="locationDropdownOpen"
+                :edit-country="editCountry"
+                :edit-province="editProvince"
+                :european-countries="europeanCountriesData"
+                :provinces="provinces"
+                @update:open="locationDropdownOpen = $event"
+                @country-select="onCountrySelect"
+                @province-select="onProvinceSelect"
+              />
             </div>
           </div>
 
           <!-- Static: Price -->
           <div class="filter-group filter-group-slider">
-            <span class="filter-label filter-label-price">€:</span>
+            <span class="filter-label filter-label-price">&#8364;:</span>
             <UiRangeSlider
               :min="0"
               :max="200000"
@@ -439,24 +343,6 @@
           &#9654;
         </button>
       </div>
-
-      <!-- DESKTOP: Collapsible advanced filters panel -->
-      <Transition name="slide-down">
-        <div v-if="advancedOpen && filtersForFilterBar.length" class="advanced-panel">
-          <div class="advanced-panel-grid">
-            <CatalogFilterBarDynamicFilters
-              :filters="filtersForFilterBar"
-              :active-filters="activeFilters"
-              variant="desktop"
-              @select="onDynamicSelect"
-              @check="onDynamicCheck"
-              @tick="onDynamicTick"
-              @range="onDynamicRange"
-              @text="onDynamicText"
-            />
-          </div>
-        </div>
-      </Transition>
     </div>
   </section>
 </template>
@@ -486,13 +372,11 @@ const pricePopoverOpen = ref(false)
 const yearPopoverOpen = ref(false)
 
 // Location — simplified: country + province only
-
 const editCountry = ref(userLocation.value.country || '')
 const editProvince = ref(userLocation.value.province || '')
 const europeanCountriesData = computed(() => getSortedEuropeanCountries(locale.value))
 const provinces = computed(() => getSortedProvinces())
 
-// Location trigger text: show selected country/province name
 const locationTriggerText = computed(() => {
   if (editProvince.value) return editProvince.value
   if (editCountry.value) {
@@ -503,13 +387,11 @@ const locationTriggerText = computed(() => {
   return t('catalog.locationAll')
 })
 
-// Watch for location detection to update edit fields
 watch(
   () => userLocation.value,
   (newLoc) => {
     if (newLoc.country && !editCountry.value) {
       editCountry.value = newLoc.country
-      // Auto-apply detected country as filter
       setLocationLevel('nacional', newLoc.country, null, null)
     }
     if (newLoc.province && !editProvince.value) {
@@ -527,7 +409,6 @@ function onCountrySelect(e: Event) {
     setManualLocation('', code)
     setLocationLevel('nacional', code, null, null)
   } else {
-    // Clear location filters
     setLocationLevel(null, '', null, null)
   }
   locationDropdownOpen.value = false
@@ -541,7 +422,6 @@ function onProvinceSelect(e: Event) {
     setManualLocation(prov, 'ES', prov)
     setLocationLevel('provincia', 'ES', prov, null)
   } else {
-    // Province cleared → fall back to country
     setLocationLevel('nacional', 'ES', null, null)
   }
   locationDropdownOpen.value = false
@@ -557,13 +437,11 @@ onMounted(async () => {
     editProvince.value = userLocation.value.province
   }
 })
-const currentYear = new Date().getFullYear()
 
+const currentYear = new Date().getFullYear()
 const scrollContainer = ref<HTMLElement | null>(null)
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
-
-// Always show if there's at least static filters (price, brand, year)
 const hasFilters = computed(() => true)
 
 // Static filter values
@@ -573,7 +451,6 @@ const yearMin = computed(() => filters.value.year_min ?? null)
 const yearMax = computed(() => filters.value.year_max ?? null)
 const selectedBrand = computed(() => filters.value.brand ?? '')
 
-// Brand list — extracted dynamically from loaded vehicles
 const brands = computed(() => {
   const set = new Set<string>()
   for (const v of props.vehicles ?? []) {
@@ -594,8 +471,6 @@ const totalActiveCount = computed(() => {
 })
 
 const dynamicActiveCount = computed(() => Object.keys(activeFilters.value).length)
-
-// Dynamic filters always shown in FilterBar (never in SubcategoryBar)
 const filtersForFilterBar = computed(() => visibleFilters.value)
 
 // Mobile scroll
@@ -618,7 +493,6 @@ function scrollMobileRight() {
   mobileScrollContainer.value?.scrollBy({ left: 150, behavior: 'smooth' })
 }
 
-// Price/Year format label for slider
 function formatPriceLabel(n: number): string {
   if (n >= 1000) return `${Math.round(n / 1000)}k`
   return String(n)
@@ -651,7 +525,7 @@ function onBrandChange(e: Event) {
   emit('change')
 }
 
-// Dynamic filter event handlers (delegated from FilterBarDynamicFilters)
+// Dynamic filter event handlers
 function onDynamicSelect(name: string, value: string) {
   if (value) setFilter(name, value)
   else clearFilter(name)
@@ -691,7 +565,6 @@ function onDynamicText(name: string, value: string) {
 
 function handleClearAll() {
   clearAll()
-  // Clear category and subcategory selections
   setCategory(null, null)
   setSubcategory(null, null)
   updateFilters({
@@ -706,7 +579,6 @@ function handleClearAll() {
     category_id: undefined,
     subcategory_id: undefined,
   })
-  // Reset to Nacional (default for Spain)
   setLocationLevel('nacional', 'ES', null, null)
   editCountry.value = 'ES'
   editProvince.value = ''
@@ -715,7 +587,7 @@ function handleClearAll() {
   emit('change')
 }
 
-// Scroll management
+// Desktop scroll management
 function updateScrollState() {
   const el = scrollContainer.value
   if (!el) return
@@ -739,7 +611,6 @@ let scrollLeftStart = 0
 function onGrabStart(e: MouseEvent) {
   const el = scrollContainer.value
   if (!el) return
-  // Don't grab if clicking on an input/select/button
   const tag = (e.target as HTMLElement).tagName
   if (['INPUT', 'SELECT', 'BUTTON', 'LABEL'].includes(tag)) return
   isGrabbing = true
@@ -769,11 +640,7 @@ function onGrabEnd() {
 
 // Body scroll lock for mobile sheet
 watch(open, (val) => {
-  if (val) {
-    document.body.style.overflow = 'hidden'
-  } else {
-    document.body.style.overflow = ''
-  }
+  document.body.style.overflow = val ? 'hidden' : ''
 })
 
 function onDocClickLocation(e: MouseEvent) {
@@ -857,10 +724,6 @@ onUnmounted(() => {
   padding-right: 0;
 }
 
-.filters-mobile-wrapper .filter-group-slider {
-  min-width: 140px;
-}
-
 .filters-mobile-wrapper .filter-group-range-trigger {
   min-width: auto;
 }
@@ -888,30 +751,6 @@ onUnmounted(() => {
   border-color: var(--color-primary);
 }
 
-.filters-mobile-wrapper .filter-range-inputs {
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-
-.filters-mobile-wrapper .filter-input-inline {
-  padding: 0.2rem 0.3rem;
-  border: 2px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 10px;
-  line-height: 1.4;
-  color: var(--text-primary);
-  background: var(--bg-primary);
-  min-width: 45px;
-  max-width: 60px;
-  min-height: auto;
-}
-
-.filters-mobile-wrapper .filter-input-inline:focus {
-  outline: none;
-  border-color: var(--color-primary);
-}
-
 .filters-mobile-wrapper .filter-select-inline {
   padding: 0.2rem 0.3rem;
   border: 2px solid var(--border-color);
@@ -923,12 +762,6 @@ onUnmounted(() => {
   min-width: 60px;
   min-height: auto;
   cursor: pointer;
-}
-
-.filters-mobile-wrapper .filter-dash {
-  color: var(--text-auxiliary);
-  font-size: 9px;
-  flex-shrink: 0;
 }
 
 .filters-mobile-wrapper .filter-group-location {
@@ -954,20 +787,6 @@ onUnmounted(() => {
   min-height: auto;
   min-width: auto;
   white-space: nowrap;
-}
-
-.filters-mobile-wrapper .location-manual-input {
-  width: 100%;
-  max-width: none;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.filters-mobile-wrapper .location-range-select {
-  width: 100%;
-  padding: 0.4rem 0.5rem;
-  font-size: 13px;
-  min-height: 44px;
 }
 
 .filters-mobile-container .scroll-btn {
@@ -1037,93 +856,6 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   MOBILE: Bottom sheet
-   ============================================ */
-.filter-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal-backdrop);
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.filter-sheet {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: var(--z-modal);
-  background: var(--bg-primary);
-  border-radius: 16px 16px 0 0;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.filter-sheet-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-color-light);
-  position: sticky;
-  top: 0;
-  background: var(--bg-primary);
-  z-index: 1;
-}
-
-.filter-sheet-header h3 {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.filter-close {
-  font-size: 18px;
-  color: var(--text-auxiliary);
-  min-height: 32px;
-  min-width: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.filter-sheet-body {
-  padding: 0.75rem 1rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.filter-sheet-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-/* Type filter separator (mobile) */
-.type-filter-separator-mobile {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0;
-  border-top: 1px dashed var(--border-color);
-  margin-top: 0.25rem;
-}
-
-.type-filter-separator-mobile span:first-child {
-  color: var(--text-secondary, #6b7280);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.type-filter-separator-mobile .separator-label {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--text-auxiliary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* ============================================
    SHARED: Labels & inputs
    ============================================ */
 .filter-label {
@@ -1139,93 +871,13 @@ onUnmounted(() => {
   white-space: nowrap;
 }
 
-/* Icon-only label (no text) */
 .filter-label-icon-only {
   gap: 0;
 }
 
-/* Price label - € symbol */
 .filter-label-price {
   font-size: 13px;
   font-weight: 600;
-}
-
-.filter-dual-range {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.filter-sep {
-  color: var(--text-auxiliary);
-  font-size: 9px;
-  flex-shrink: 0;
-}
-
-.filter-input-sm {
-  flex: 1;
-  min-width: 0;
-  padding: 0.25rem 0.4rem;
-  border: 2px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 10px;
-  line-height: 1.4;
-  color: var(--text-primary);
-  background: var(--bg-primary);
-  min-height: auto;
-}
-
-.filter-input-sm:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
-}
-
-.filter-select-mobile {
-  padding: 0.3rem 0.4rem;
-  border: 2px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 10px;
-  line-height: 1.4;
-  color: var(--text-primary);
-  background: var(--bg-primary);
-  min-height: auto;
-  width: 100%;
-}
-
-.filter-input-mobile {
-  padding: 0.3rem 0.4rem;
-  border: 2px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 10px;
-  line-height: 1.4;
-  color: var(--text-primary);
-  background: var(--bg-primary);
-  min-height: auto;
-  width: 100%;
-}
-
-/* ============================================
-   LOCATION FILTER
-   ============================================ */
-.location-current {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-primary);
-  padding: 0.2rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.filter-sublabel {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-auxiliary);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  padding: 0.3rem 0 0.1rem;
 }
 
 .reset-filters-btn {
@@ -1263,85 +915,6 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.location-levels {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.location-level-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--text-primary);
-  cursor: pointer;
-  min-height: 44px;
-  padding: 0 0.25rem;
-}
-
-.location-level-option input {
-  width: auto;
-  min-height: auto;
-  min-width: auto;
-  accent-color: var(--color-primary);
-}
-
-/* ============================================
-   MOBILE: Ticks & checks
-   ============================================ */
-.filter-checks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.filter-check {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  cursor: pointer;
-  min-height: auto;
-  min-width: auto;
-}
-
-.filter-check input {
-  width: auto;
-  min-height: auto;
-  min-width: auto;
-}
-
-.filter-tick {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  min-height: auto;
-  min-width: auto;
-}
-
-.filter-tick input {
-  width: auto;
-  min-height: auto;
-  min-width: auto;
-  accent-color: var(--color-primary);
-}
-
-.btn-clear-filters-mobile {
-  margin-top: 0.5rem;
-  padding: 8px 16px;
-  background: none;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  color: var(--text-auxiliary);
-  min-height: auto;
-  min-width: auto;
-}
-
 /* ============================================
    DESKTOP: Inline horizontal bar (hidden on mobile)
    ============================================ */
@@ -1350,76 +923,20 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   TRANSITIONS
-   ============================================ */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 150ms ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 300ms ease;
-}
-.slide-up-enter-from,
-.slide-up-leave-to {
-  transform: translateY(100%);
-}
-
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: all 200ms ease;
-  overflow: hidden;
-}
-.slide-down-enter-from,
-.slide-down-leave-to {
-  opacity: 0;
-  max-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-.slide-down-enter-to,
-.slide-down-leave-from {
-  max-height: 500px;
-}
-
-/* ============================================
-   RESPONSIVE: ≥480px
+   RESPONSIVE: >=480px
    ============================================ */
 @media (min-width: 480px) {
-  .filter-toggle {
-    font-size: 11px;
-  }
-
   .filter-label {
     font-size: 11px;
   }
-
-  .filter-input-sm,
-  .filter-select-mobile,
-  .filter-input-mobile {
-    font-size: 11px;
-  }
 }
 
 /* ============================================
-   RESPONSIVE: ≥768px — Switch to desktop inline bar
+   RESPONSIVE: >=768px
    ============================================ */
 @media (min-width: 768px) {
   .filters-mobile {
     display: none;
-  }
-
-  .filter-backdrop {
-    display: none !important;
-  }
-
-  .filter-sheet {
-    display: none !important;
   }
 
   .filters-section {
@@ -1434,7 +951,6 @@ onUnmounted(() => {
     position: relative;
   }
 
-  /* Slightly larger location icon and € on tablet+ */
   .location-pin-icon {
     width: 16px;
     height: 16px;
@@ -1468,7 +984,6 @@ onUnmounted(() => {
     cursor: grabbing;
   }
 
-  /* Filter group with pipe separator */
   .filter-group {
     display: flex;
     align-items: center;
@@ -1488,7 +1003,6 @@ onUnmounted(() => {
     font-weight: 300;
   }
 
-  /* Inline select */
   .filter-select-inline {
     padding: 0.2rem 0.3rem;
     border: 2px solid var(--border-color);
@@ -1510,40 +1024,6 @@ onUnmounted(() => {
     box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
   }
 
-  /* Inline number/text inputs */
-  .filter-input-inline {
-    padding: 0.2rem 0.3rem;
-    border: 2px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 10px;
-    line-height: 1.4;
-    color: var(--text-primary);
-    background: var(--bg-primary);
-    min-width: 50px;
-    max-width: 70px;
-    min-height: auto;
-    transition: all 0.3s ease;
-  }
-
-  .filter-input-inline:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
-  }
-
-  .filter-range-inputs {
-    display: flex;
-    align-items: center;
-    gap: 0.2rem;
-  }
-
-  .filter-dash {
-    color: var(--text-auxiliary);
-    font-size: 9px;
-    flex-shrink: 0;
-  }
-
-  /* Location dropdown (desktop) */
   .filter-group-location {
     position: relative;
   }
@@ -1575,100 +1055,6 @@ onUnmounted(() => {
     border-color: var(--color-primary);
   }
 
-  .location-level-badge {
-    font-size: 8px;
-    font-weight: 600;
-    background: var(--color-primary);
-    color: var(--color-white);
-    padding: 1px 4px;
-    border-radius: 3px;
-    text-transform: uppercase;
-  }
-
-  .location-dropdown {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    background: var(--bg-primary);
-    border: 2px solid var(--color-primary);
-    border-radius: 8px;
-    padding: 0.5rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    z-index: 1100;
-    min-width: 220px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .location-manual-input {
-    width: 100%;
-    max-width: none;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-
-  .location-range-select {
-    width: 100%;
-    padding: 0.3rem 0.4rem;
-    font-size: 11px;
-  }
-
-  /* Type filter separator */
-  .type-filter-separator {
-    color: var(--text-secondary, #6b7280);
-    font-size: 14px;
-    font-weight: 600;
-    padding: 0 0.5rem;
-    flex-shrink: 0;
-  }
-
-  /* Inline checkbox groups */
-  .filter-checks-inline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .cb {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 10px;
-    cursor: pointer;
-    min-height: auto;
-    min-width: auto;
-  }
-
-  .cb input {
-    width: auto;
-    min-height: auto;
-    min-width: auto;
-    accent-color: var(--color-primary);
-  }
-
-  /* Clear button inline */
-  .btn-clear-filters {
-    padding: 0.2rem 0.5rem;
-    background: none;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 10px;
-    cursor: pointer;
-    color: var(--text-auxiliary);
-    white-space: nowrap;
-    flex-shrink: 0;
-    min-height: auto;
-    min-width: auto;
-    transition: all 0.2s ease;
-  }
-
-  .btn-clear-filters:hover {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-  }
-
-  /* Scroll arrows */
   .scroll-btn {
     position: absolute;
     top: 50%;
@@ -1702,7 +1088,6 @@ onUnmounted(() => {
     right: 4px;
   }
 
-  /* Desktop advanced filters button */
   .filter-advanced-btn-desktop {
     display: inline-flex;
     align-items: center;
@@ -1726,62 +1111,10 @@ onUnmounted(() => {
     border-color: var(--color-primary);
     background: var(--bg-secondary);
   }
-
-  /* Desktop collapsible advanced panel */
-  .advanced-panel {
-    background: var(--bg-secondary);
-    border-top: 1px solid var(--border-color);
-    padding: 0.75rem 1.5rem;
-  }
-
-  .advanced-panel-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.5rem;
-    align-items: flex-start;
-  }
-
-  .advanced-panel-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    min-width: 120px;
-  }
-
-  .filter-select-desktop {
-    padding: 0.3rem 0.4rem;
-    border: 2px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 11px;
-    color: var(--text-primary);
-    background: var(--bg-primary);
-    cursor: pointer;
-    min-height: auto;
-  }
-
-  .filter-select-desktop:focus {
-    outline: none;
-    border-color: var(--color-primary);
-  }
-
-  .filter-input-desktop {
-    padding: 0.3rem 0.4rem;
-    border: 2px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 11px;
-    color: var(--text-primary);
-    background: var(--bg-primary);
-    min-height: auto;
-  }
-
-  .filter-input-desktop:focus {
-    outline: none;
-    border-color: var(--color-primary);
-  }
 }
 
 /* ============================================
-   RESPONSIVE: ≥1024px (desktop)
+   RESPONSIVE: >=1024px (desktop)
    ============================================ */
 @media (min-width: 1024px) {
   .filters-wrapper {
@@ -1792,7 +1125,6 @@ onUnmounted(() => {
     font-size: 13px;
   }
 
-  /* Larger location icon and € symbol on desktop */
   .location-pin-icon {
     width: 18px;
     height: 18px;
@@ -1802,17 +1134,8 @@ onUnmounted(() => {
     font-size: 15px;
   }
 
-  .filter-select-inline,
-  .filter-input-inline {
+  .filter-select-inline {
     font-size: 11px;
-  }
-
-  .cb {
-    font-size: 10px;
-  }
-
-  .btn-clear-filters {
-    font-size: 10px;
   }
 
   .scroll-btn {
@@ -1829,171 +1152,6 @@ onUnmounted(() => {
 
   .scroll-btn-right {
     right: 6px;
-  }
-}
-</style>
-
-<!-- Non-scoped styles for teleported content -->
-<style>
-/* Mobile location dropdown - teleported to body */
-.location-dropdown-mobile {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 120px;
-}
-
-.location-dropdown-mobile-content {
-  background: #fff;
-  border: 2px solid #23424a;
-  border-radius: 12px;
-  padding: 1rem;
-  width: calc(100% - 2rem);
-  max-width: 280px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.location-dropdown-mobile-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  color: #23424a;
-  margin-bottom: 0.25rem;
-  font-size: 14px;
-}
-
-.location-dropdown-close {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
-  border-radius: 50%;
-  background: #f3f4f6;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.location-dropdown-mobile .filter-sublabel {
-  font-size: 11px;
-  color: #6b7280;
-  font-weight: 500;
-  margin-top: 0.25rem;
-}
-
-.location-dropdown-mobile .location-manual-input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 2px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  min-height: 44px;
-}
-
-.location-dropdown-mobile .location-range-select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 2px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  min-height: 44px;
-  background: #fff;
-  cursor: pointer;
-}
-
-/* Mobile range popovers — teleported to body */
-.range-dropdown-mobile {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 120px;
-}
-
-.range-dropdown-mobile-content {
-  background: #fff;
-  border: 2px solid #23424a;
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  width: calc(100% - 2rem);
-  max-width: 320px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.range-dropdown-mobile-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  color: #23424a;
-  margin-bottom: 0.25rem;
-  font-size: 14px;
-}
-
-.range-dropdown-close {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
-  border-radius: 50%;
-  background: #f3f4f6;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.range-dropdown-values {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  font-weight: 600;
-  color: #23424a;
-  padding: 0.25rem 0;
-}
-
-/* Larger slider inside popover for touch comfort */
-.range-dropdown-mobile-content .range-slider {
-  padding: 0.5rem 0;
-}
-
-.range-dropdown-mobile-content .range-slider__track-container {
-  height: 40px;
-}
-
-.range-dropdown-mobile-content .range-slider__val {
-  font-size: 0;
-  width: 0;
-  min-width: 0;
-  overflow: hidden;
-}
-
-/* Hide on desktop */
-@media (min-width: 768px) {
-  .location-dropdown-mobile {
-    display: none !important;
-  }
-  .range-dropdown-mobile {
-    display: none !important;
   }
 }
 </style>

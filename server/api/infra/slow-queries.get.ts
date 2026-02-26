@@ -30,9 +30,8 @@ export default defineEventHandler(async (event) => {
     if (statsError) {
       return {
         available: false,
-        message:
-          'pg_stat_statements not available. Enable it in Supabase Dashboard > Database > Extensions.',
-        hint: 'Alternatively, check slow query logs in Supabase Dashboard > Logs > Postgres.',
+        message: 'Query statistics extension not available',
+        hint: 'Enable the pg_stat_statements extension and check slow query logs.',
       }
     }
 

@@ -235,7 +235,7 @@ export default defineEventHandler(async (event) => {
   if (error) {
     throw createError({
       statusCode: 500,
-      message: `Database error: ${error.message}`,
+      message: 'An error occurred while processing your request',
     })
   }
 

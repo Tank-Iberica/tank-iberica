@@ -90,7 +90,7 @@ export default defineEventHandler(async (event): Promise<MigrateImagesResponse> 
   if (queryError) {
     throw createError({
       statusCode: 500,
-      message: `Database query failed: ${queryError.message}`,
+      message: 'An error occurred while processing your request',
     })
   }
 

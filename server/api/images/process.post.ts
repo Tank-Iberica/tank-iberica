@@ -138,7 +138,7 @@ export default defineEventHandler(async (event): Promise<ProcessImageResponse> =
     throw createError({ statusCode: 400, message: 'Invalid URL' })
   }
   if (parsedUrl.protocol !== 'https:' || !parsedUrl.hostname.endsWith('.cloudinary.com')) {
-    throw createError({ statusCode: 400, message: 'URL must be a valid Cloudinary HTTPS URL' })
+    throw createError({ statusCode: 400, message: 'URL must be a valid HTTPS image URL' })
   }
 
   // 2. Read runtime config

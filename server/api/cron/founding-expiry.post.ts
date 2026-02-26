@@ -64,7 +64,7 @@ export default defineEventHandler(async (event) => {
   const _internalSecret = config.cronSecret || process.env.CRON_SECRET
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Supabase not configured' })
+    throw createError({ statusCode: 500, message: 'Service not configured' })
   }
 
   const headers = {

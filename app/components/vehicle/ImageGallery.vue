@@ -12,6 +12,7 @@
         fit="cover"
         format="webp"
         fetchpriority="high"
+        sizes="100vw"
         class="gallery-img"
       />
       <img v-else-if="currentImageRaw" :src="currentImageRaw.url" :alt="alt" class="gallery-img" >
@@ -83,6 +84,7 @@
           fit="cover"
           format="webp"
           loading="lazy"
+          sizes="80px"
         />
         <img v-else :src="img.url" :alt="`${alt} ${i + 1}`" >
       </button>

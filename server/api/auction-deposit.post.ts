@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
     // Return a mock response for development
     return {
       clientSecret: `pi_mock_${Date.now()}_secret_mock`,
-      message: 'Stripe not configured — mock deposit created',
+      message: 'Service not configured',
     }
   }
 
@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Supabase not configured' })
+    throw createError({ statusCode: 500, message: 'Service not configured' })
   }
 
   // Verify registrationId belongs to the authenticated user

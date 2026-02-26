@@ -13,6 +13,7 @@
           fit="cover"
           loading="lazy"
           format="webp"
+          sizes="(max-width: 479px) calc(100vw - 32px), (max-width: 768px) calc(50vw - 24px), (max-width: 1024px) calc(33vw - 24px), 25vw"
           class="card-img"
         />
         <img

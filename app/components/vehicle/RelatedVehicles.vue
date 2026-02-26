@@ -14,6 +14,7 @@
             fit="cover"
             loading="lazy"
             format="webp"
+            sizes="(max-width: 479px) 50vw, 25vw"
             class="related-img"
           />
           <img

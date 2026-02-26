@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
   if (!stripeKey) {
     return {
       url: `${returnUrl}?portal=mock`,
-      message: 'Stripe not configured — mock portal session created',
+      message: 'Service not configured',
     }
   }
 
