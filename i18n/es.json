@@ -18,6 +18,9 @@
     "errorTitle": "Página no encontrada — Tracciona",
     "errorDescription": "La página que buscas no existe o ha sido movida."
   },
+  "a11y": {
+    "skipToContent": "Saltar al contenido"
+  },
   "nav": {
     "home": "Inicio",
     "catalog": "Catálogo",

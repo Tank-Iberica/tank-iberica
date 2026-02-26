@@ -1,12 +1,15 @@
 <template>
   <div class="layout">
+    <a href="#main-content" class="skip-link">
+      {{ $t('a11y.skipToContent') }}
+    </a>
     <CatalogAnnounceBanner />
     <LayoutAppHeader
       @open-auth="authOpen = true"
       @open-user-panel="handleOpenUserPanel"
       @open-anunciate="advertiseOpen = true"
     />
-    <main class="main-content">
+    <main id="main-content" class="main-content">
       <slot />
     </main>
     <LayoutAppFooter />
@@ -73,6 +76,25 @@ watch(
 </script>
 
 <style scoped>
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 10000;
+  padding: 12px 24px;
+  background: var(--color-primary, #23424a);
+  color: white;
+  border-radius: 0 0 8px 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 .layout {
   min-height: 100vh;
   display: flex;
