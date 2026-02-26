@@ -5,8 +5,8 @@
  * Automatically retries and falls back between providers
  * based on the selected preset (realtime, background, deferred).
  */
-import { fetchWithRetry } from '~/server/utils/fetchWithRetry'
-import { AI_MODELS, type AIModelRole } from '~/server/utils/aiConfig'
+import { fetchWithRetry } from '~~/server/utils/fetchWithRetry'
+import { AI_MODELS, type AIModelRole } from '~~/server/utils/aiConfig'
 
 // ---------------------------------------------------------------------------
 // Interfaces
@@ -249,7 +249,7 @@ export async function callAI(
   const errors: string[] = []
 
   for (let i = 0; i < providers.length; i++) {
-    const provider = providers[i]
+    const provider = providers[i]!
     const start = Date.now()
 
     try {

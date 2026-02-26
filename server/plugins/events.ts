@@ -4,8 +4,8 @@
  * Events are emitted from server routes and services.
  * Handlers here keep the business logic decoupled from the API layer.
  */
-import { on } from '~/server/utils/eventBus'
-import { notifyAdmin } from '~/server/services/notifications'
+import { on } from '~~/server/utils/eventBus'
+import { notifyAdmin } from '~~/server/services/notifications'
 
 // ── Event payload types ──
 
@@ -38,7 +38,7 @@ interface SubscriptionChangedPayload {
 
 export default defineNitroPlugin(() => {
   // ── vehicle:created ──
-  on('vehicle:created', async (_payload) => {
+  on('vehicle:created', async (_payload: unknown) => {
     const payload = _payload as VehicleCreatedPayload
     console.info(`[events] vehicle:created — ${payload.title} (dealer: ${payload.dealerId})`)
 
@@ -51,7 +51,7 @@ export default defineNitroPlugin(() => {
   })
 
   // ── vehicle:sold ──
-  on('vehicle:sold', async (_payload) => {
+  on('vehicle:sold', async (_payload: unknown) => {
     const payload = _payload as VehicleSoldPayload
     console.info(`[events] vehicle:sold — ${payload.title} (dealer: ${payload.dealerId})`)
 
@@ -64,7 +64,7 @@ export default defineNitroPlugin(() => {
   })
 
   // ── dealer:registered ──
-  on('dealer:registered', async (_payload) => {
+  on('dealer:registered', async (_payload: unknown) => {
     const payload = _payload as DealerRegisteredPayload
     console.info(`[events] dealer:registered — ${payload.companyName}`)
 
@@ -76,7 +76,7 @@ export default defineNitroPlugin(() => {
   })
 
   // ── subscription:changed ──
-  on('subscription:changed', async (_payload) => {
+  on('subscription:changed', async (_payload: unknown) => {
     const payload = _payload as SubscriptionChangedPayload
     console.info(`[events] subscription:changed — dealer ${payload.dealerId}: ${payload.action}`)
 

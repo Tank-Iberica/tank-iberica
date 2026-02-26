@@ -10,8 +10,8 @@
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { defineEventHandler, readBody, createError } from 'h3'
-import { getSiteUrl } from '~/server/utils/siteConfig'
-import { callAI } from '~/server/services/aiProvider'
+import { getSiteUrl } from '~~/server/utils/siteConfig'
+import { callAI } from '~~/server/services/aiProvider'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 

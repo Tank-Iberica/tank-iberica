@@ -9,7 +9,7 @@
  */
 import { serverSupabaseUser } from '#supabase/server'
 import { defineEventHandler, readBody, createError } from 'h3'
-import { callAI } from '~/server/services/aiProvider'
+import { callAI } from '~~/server/services/aiProvider'
 
 interface GenerateDescriptionBody {
   brand: string

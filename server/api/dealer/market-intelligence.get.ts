@@ -8,7 +8,7 @@
  */
 import { defineEventHandler, getQuery, createError } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { generateDealerIntelligence } from '~/server/services/marketReport'
+import { generateDealerIntelligence } from '~~/server/services/marketReport'
 
 export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)

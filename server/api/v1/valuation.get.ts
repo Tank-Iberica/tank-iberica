@@ -36,7 +36,7 @@ function computeMedian(sorted: number[]): number {
 
 async function logUsage(
   supabase: SupabaseClient,
-  apiKey: string,
+  apiKey: string | undefined,
   params: Record<string, unknown>,
   responseTimeMs: number,
   statusCode: number,
@@ -53,10 +53,13 @@ async function logUsage(
 export default defineEventHandler(async (event): Promise<ValuationResponse> => {
   // POSPUESTO — Activar cuando haya ≥500 transacciones históricas
   // Ver FLUJOS-OPERATIVOS §15 para criterios de activación
-  throw createError({
-    statusCode: 503,
-    message: 'Valuation API coming soon. Insufficient market data for reliable estimates.',
-  })
+  const VALUATION_API_ENABLED = false
+  if (!VALUATION_API_ENABLED) {
+    throw createError({
+      statusCode: 503,
+      message: 'Valuation API coming soon. Insufficient market data for reliable estimates.',
+    })
+  }
 
   const query = getQuery(event)
   const authHeader = getHeader(event, 'authorization')
@@ -97,7 +100,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
     .eq('api_key', apiKey)
     .gte('created_at', today + 'T00:00:00Z')
 
-  if ((count ?? 0) >= sub.rate_limit_daily) {
+  if ((count ?? 0) >= sub!.rate_limit_daily) {
     await logUsage(supabase, apiKey, query as Record<string, unknown>, Date.now() - startTime, 429)
     throw createError({ statusCode: 429, message: 'Daily rate limit exceeded' })
   }
@@ -117,10 +120,10 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
     .ilike('brand', brand)
 
   if (query.subcategory) {
-    marketQuery = marketQuery.eq('subcategory', query.subcategory as string)
+    marketQuery = marketQuery.eq('subcategory', String(query.subcategory))
   }
   if (query.province) {
-    marketQuery = marketQuery.ilike('location_province', query.province as string)
+    marketQuery = marketQuery.ilike('location_province', String(query.province))
   }
 
   const { data: rows, error: marketError } = await marketQuery
@@ -235,6 +238,6 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
     avg_days_to_sell: avgDaysToSell,
     sample_size: sampleSize,
     confidence,
-    data_date: now.toISOString().split('T')[0] ?? '',
+    data_date: now.toISOString().split('T')[0]!,
   }
 })

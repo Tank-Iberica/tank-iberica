@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
     return 'Service unavailable'
   }
 
-  const supabase = createClient(supabaseUrl, supabaseKey)
+  const supabase = createClient(supabaseUrl as string, supabaseKey as string)
 
   // Get dealer info
   const { data: dealer } = await supabase

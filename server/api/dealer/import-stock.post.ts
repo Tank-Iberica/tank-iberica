@@ -9,8 +9,8 @@
  */
 import { defineEventHandler, readBody, createError } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { callAI } from '~/server/services/aiProvider'
-import { checkRateLimit, getRateLimitKey, getRetryAfterSeconds } from '~/server/utils/rateLimit'
+import { callAI } from '~~/server/services/aiProvider'
+import { checkRateLimit, getRateLimitKey, getRetryAfterSeconds } from '~~/server/utils/rateLimit'
 
 interface ImportRequest {
   url: string

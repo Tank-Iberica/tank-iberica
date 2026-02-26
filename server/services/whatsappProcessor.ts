@@ -11,7 +11,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { callAI, type AIContentBlock } from './aiProvider'
 import { uploadImage } from './imageUploader'
 import { sanitizeSlug, createVehicleFromAI, type ClaudeVehicleAnalysis } from './vehicleCreator'
-import { getSiteUrl } from '~/server/utils/siteConfig'
+import { getSiteUrl } from '~~/server/utils/siteConfig'
 
 // Re-export for convenience
 export { uploadImage } from './imageUploader'

@@ -13,7 +13,7 @@
  */
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { defineEventHandler, readBody, createError, getHeader, getRequestIP } from 'h3'
-import { processWhatsAppSubmission, sanitizeSlug } from '~/server/services/whatsappProcessor'
+import { processWhatsAppSubmission, sanitizeSlug } from '~~/server/services/whatsappProcessor'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 

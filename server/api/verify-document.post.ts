@@ -12,7 +12,7 @@
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { defineEventHandler, readBody, createError } from 'h3'
-import { callAI } from '~/server/services/aiProvider'
+import { callAI } from '~~/server/services/aiProvider'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const URL_REGEX = /^https?:\/\/.+/i

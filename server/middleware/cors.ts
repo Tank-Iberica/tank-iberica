@@ -11,7 +11,7 @@
  * This middleware adds explicit CORS headers for /api/* routes.
  */
 import { defineEventHandler, getHeader, getMethod, setResponseHeaders } from 'h3'
-import { getSiteUrl } from '~/server/utils/siteConfig'
+import { getSiteUrl } from '~~/server/utils/siteConfig'
 
 export default defineEventHandler((event) => {
   const path = event.path || ''

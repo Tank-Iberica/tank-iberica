@@ -8,8 +8,8 @@
  * POST /api/demo/try-vehicle
  */
 import { defineEventHandler, readBody, createError } from 'h3'
-import { callAI, type AIContentBlock } from '~/server/services/aiProvider'
-import { checkRateLimit, getRateLimitKey, getRetryAfterSeconds } from '~/server/utils/rateLimit'
+import { callAI, type AIContentBlock } from '~~/server/services/aiProvider'
+import { checkRateLimit, getRateLimitKey, getRetryAfterSeconds } from '~~/server/utils/rateLimit'
 
 interface DemoRequestBody {
   images: Array<{ data: string; mediaType: string }>

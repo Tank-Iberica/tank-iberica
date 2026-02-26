@@ -9,8 +9,8 @@
  */
 import { defineEventHandler } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
-import { callAI } from '~/server/services/aiProvider'
-import { isFeatureEnabled } from '~/server/utils/featureFlags'
+import { callAI } from '~~/server/services/aiProvider'
+import { isFeatureEnabled } from '~~/server/utils/featureFlags'
 
 interface GeneratedArticle {
   title: string
