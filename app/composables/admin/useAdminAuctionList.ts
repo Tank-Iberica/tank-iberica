@@ -65,16 +65,23 @@ export interface AuctionForm {
   status: AuctionStatus
 }
 
+export interface CancelModal {
+  show: boolean
+  auctionId: string
+  reason: string
+}
+
 // ─── Constants ───────────────────────────────────────────────
-export const STATUS_FILTERS: Array<{ value: AuctionStatus | 'all'; labelKey: string }> = [
+export const STATUS_TABS: Array<{ value: AuctionStatus | 'all'; labelKey: string }> = [
   { value: 'all', labelKey: 'admin.subastas.tabs.all' },
-  { value: 'draft', labelKey: 'admin.subastas.status.draft' },
-  { value: 'scheduled', labelKey: 'admin.subastas.status.scheduled' },
-  { value: 'active', labelKey: 'admin.subastas.status.active' },
-  { value: 'ended', labelKey: 'admin.subastas.status.ended' },
-  { value: 'adjudicated', labelKey: 'admin.subastas.status.adjudicated' },
-  { value: 'cancelled', labelKey: 'admin.subastas.status.cancelled' },
+  { value: 'scheduled', labelKey: 'admin.subastas.tabs.scheduled' },
+  { value: 'active', labelKey: 'admin.subastas.tabs.active' },
+  { value: 'ended', labelKey: 'admin.subastas.tabs.ended' },
+  { value: 'cancelled', labelKey: 'admin.subastas.tabs.cancelled' },
 ]
+
+/** @deprecated Use STATUS_TABS instead */
+export const STATUS_FILTERS = STATUS_TABS
 
 export const STATUS_COLORS: Record<AuctionStatus, string> = {
   draft: '#6b7280',
@@ -115,9 +122,27 @@ export function useAdminAuctionList() {
     loading: false,
   })
 
+  // Cancel modal
+  const cancelModal = ref<CancelModal>({
+    show: false,
+    auctionId: '',
+    reason: '',
+  })
+
   // Vehicles for dropdown
   const vehicles = ref<AuctionListVehicle[]>([])
   const vehiclesLoading = ref(false)
+
+  // ─── Filtered auctions (client-side) ──────────────────────
+  const filteredAuctions = computed<AuctionWithVehicle[]>(() => {
+    if (activeFilter.value === 'all') return auctions.value
+    if (activeFilter.value === 'ended') {
+      return auctions.value.filter(
+        (a) => a.status === 'ended' || a.status === 'adjudicated' || a.status === 'no_sale',
+      )
+    }
+    return auctions.value.filter((a) => a.status === activeFilter.value)
+  })
 
   // ─── Empty form ──────────────────────────────────────────
   function getEmptyForm(): AuctionForm {
@@ -142,7 +167,7 @@ export function useAdminAuctionList() {
     loading.value = true
     error.value = ''
     try {
-      let query = supabase
+      const query = supabase
         .from('auctions')
         .select(
           `
@@ -151,10 +176,6 @@ export function useAdminAuctionList() {
         `,
         )
         .order('created_at', { ascending: false })
-
-      if (activeFilter.value !== 'all') {
-        query = query.eq('status', activeFilter.value)
-      }
 
       const { data, error: err } = await query
       if (err) throw err
@@ -253,11 +274,11 @@ export function useAdminAuctionList() {
       if (auctionModal.value.editing) {
         const { error: err } = await supabase
           .from('auctions')
-          .update(payload)
+          .update(payload as never)
           .eq('id', auctionModal.value.editing.id)
         if (err) throw err
       } else {
-        const { error: err } = await supabase.from('auctions').insert(payload)
+        const { error: err } = await supabase.from('auctions').insert(payload as never)
         if (err) throw err
       }
 
@@ -270,7 +291,35 @@ export function useAdminAuctionList() {
     }
   }
 
-  // ─── Cancel auction ─────────────────────────────────────
+  // ─── Cancel modal ───────────────────────────────────────
+  function openCancelModal(auctionId: string) {
+    cancelModal.value = { show: true, auctionId, reason: '' }
+  }
+
+  function closeCancelModal() {
+    cancelModal.value = { show: false, auctionId: '', reason: '' }
+  }
+
+  async function confirmCancelAuction() {
+    if (!cancelModal.value.auctionId) return
+    saving.value = true
+    error.value = ''
+    try {
+      const { error: err } = await supabase
+        .from('auctions')
+        .update({ status: 'cancelled' })
+        .eq('id', cancelModal.value.auctionId)
+      if (err) throw err
+      closeCancelModal()
+      await fetchAuctions()
+    } catch (e: unknown) {
+      error.value = e instanceof Error ? e.message : String(e)
+    } finally {
+      saving.value = false
+    }
+  }
+
+  /** @deprecated Use openCancelModal + confirmCancelAuction instead */
   async function cancelAuction(auctionId: string) {
     if (!confirm(t('admin.subastas.cancelConfirm'))) return
     saving.value = true
@@ -289,17 +338,41 @@ export function useAdminAuctionList() {
     }
   }
 
-  // ─── Adjudicate manually ────────────────────────────────
+  // ─── Adjudicate manually (with bid check) ────────────────
   async function adjudicateAuction(auctionId: string) {
-    if (!confirm(t('admin.subastas.detail.adjudicate'))) return
-    saving.value = true
     error.value = ''
+    saving.value = true
     try {
+      // Fetch highest bid
+      const { data: topBid, error: bidErr } = await supabase
+        .from('auction_bids')
+        .select('*')
+        .eq('auction_id', auctionId)
+        .order('amount_cents', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (bidErr) throw bidErr
+
+      if (!topBid) {
+        error.value = t('admin.subastas.errors.noBids')
+        return
+      }
+
       const { error: err } = await supabase
         .from('auctions')
-        .update({ status: 'adjudicated' })
+        .update({
+          status: 'adjudicated',
+          winner_id: topBid.user_id,
+          winning_bid_cents: topBid.amount_cents,
+        })
         .eq('id', auctionId)
+
       if (err) throw err
+
+      // Mark winning bid
+      await supabase.from('auction_bids').update({ is_winning: true }).eq('id', topBid.id)
+
       await fetchAuctions()
     } catch (e: unknown) {
       error.value = e instanceof Error ? e.message : String(e)
@@ -330,7 +403,7 @@ export function useAdminAuctionList() {
         .eq('auction_id', auction.id)
         .order('registered_at', { ascending: false })
 
-      registrationsPanel.value.registrations = (data || []) as AuctionRegistrationRow[]
+      registrationsPanel.value.registrations = (data || []) as unknown as AuctionRegistrationRow[]
     } catch {
       // Silent fail
     } finally {
@@ -416,24 +489,44 @@ export function useAdminAuctionList() {
   }
 
   function canCancel(auction: AuctionWithVehicle): boolean {
-    return auction.status !== 'ended' && auction.status !== 'cancelled'
+    return (
+      auction.status !== 'cancelled' &&
+      auction.status !== 'adjudicated' &&
+      auction.status !== 'no_sale'
+    )
+  }
+
+  function getStatusClass(status: AuctionStatus): string {
+    const classes: Record<string, string> = {
+      draft: 'status-draft',
+      scheduled: 'status-scheduled',
+      active: 'status-active',
+      ended: 'status-ended',
+      adjudicated: 'status-adjudicated',
+      cancelled: 'status-cancelled',
+      no_sale: 'status-no-sale',
+    }
+    return classes[status] || ''
+  }
+
+  function getStatusLabel(status: AuctionStatus): string {
+    return t(`admin.subastas.status.${status}`)
   }
 
   function canAdjudicate(auction: AuctionWithVehicle): boolean {
     return auction.status === 'ended'
   }
 
-  // ─── Watch ──────────────────────────────────────────────
-  watch(activeFilter, fetchAuctions)
-
   return {
     // State
     activeFilter,
     auctions,
+    filteredAuctions,
     loading,
     saving,
     error,
     auctionModal,
+    cancelModal,
     registrationsPanel,
     vehicles,
     vehiclesLoading,
@@ -446,6 +539,9 @@ export function useAdminAuctionList() {
     closeAuctionModal,
     saveAuction,
     cancelAuction,
+    openCancelModal,
+    closeCancelModal,
+    confirmCancelAuction,
     adjudicateAuction,
     openRegistrationsPanel,
     closeRegistrationsPanel,
@@ -455,6 +551,8 @@ export function useAdminAuctionList() {
     // Helpers
     formatDate,
     getStatusColor,
+    getStatusClass,
+    getStatusLabel,
     getVehicleTitle,
     canEdit,
     canCancel,
