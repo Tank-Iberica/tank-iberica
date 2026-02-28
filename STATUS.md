@@ -1,7 +1,7 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-02-28 23:45 (DealerPortal completado — catálogo + OG + formulario + working hours)
-**Sesiones completadas:** 0–64 + iteraciones de auditoría 1–14 + tareas Haiku + sesión 28-feb (tarde)
+**Última actualización:** 2026-03-01 — dealer portal route refactor (/vendedor/[slug] → /[slug])
+**Sesiones completadas:** 0–64 + iteraciones de auditoría 1–15 + tareas Haiku + sesiones 28-feb + fix admin + sesión 01-mar
 **Puntuación global (auditoría 26-feb):** 79/100
 
 ---
@@ -212,6 +212,38 @@ Commits iter 15: `c13676f`, `145a7c5`, `1f93765`, `a613249`, `7dde04a`
 
 - `2e89a83` feat: implement dealer catalog with state isolation
 - `965af9f` feat: complete dealer portal with SEO, working hours, contact form
+
+---
+
+## Fix admin access (2026-03-01) — commit `30ed7d5`
+
+**Bug:** Admin link invisible en header y redirect post-login incorrecto.
+**Causa:** `useAuth.ts` usaba `user_type` para `isAdmin`, pero los admins tienen `role='admin'` y `user_type='buyer'`.
+
+✅ Corregido:
+
+- `useAuth.ts` — `isAdmin` ahora usa `profile.role === 'admin'` + `role` añadido al select
+- `middleware/dealer.ts` — ahora permite `role='admin'` además de `user_type='dealer'`
+- `pages/auth/login.vue` — redirect post-login usa `auth.isAdmin.value`
+
+---
+
+## Sesión 01-mar — Refactor ruta portal dealer
+
+✅ Implementado:
+
+- Ruta del portal dealer cambiada de `/vendedor/[slug]` a `/[slug]` (raíz plana, URL limpia)
+- `app/pages/vendedor/[slug].vue` → `app/pages/[slug].vue` (rename)
+- `nuxt.config.ts` — route rule `'/vendedor/**'` → `'/:slug'` (SWR 10min)
+- `server/api/__sitemap.ts` — URLs de dealers en sitemap actualizadas
+- `app/composables/useVendedorDetail.ts` — canonical, hreflang y JSON-LD breadcrumb actualizados
+- `app/components/vehicle/DetailSeller.vue` — NuxtLink al perfil del dealer actualizado
+- `app/error.vue` — eliminadas detecciones de `/vendedor/` (sin prefijo ya no detectables)
+- `docs/ESTADO-REAL-PRODUCTO.md` — referencias actualizadas
+
+✅ Commits:
+
+- `93eb6bb` refactor: move dealer portal from /vendedor/[slug] to /[slug]
 
 ---
 
