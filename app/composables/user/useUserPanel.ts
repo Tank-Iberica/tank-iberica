@@ -43,7 +43,6 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   const { t } = useI18n()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient<any>()
-  const user = useSupabaseUser()
 
   // Favorites
   const { count: favoritesCount } = useFavorites()
@@ -102,17 +101,35 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   // Computed
   // ---------------------------------------------------------------------------
 
+  // Session-based user state — avoids useSupabaseUser() which is reset on every
+  // page:start by @nuxtjs/supabase ≤2.0.4 when using HS256 JWTs
+  const sessionUser = ref<{
+    id: string
+    email?: string
+    user_metadata?: Record<string, unknown>
+  } | null>(null)
+
+  onMounted(async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    sessionUser.value = session?.user || null
+    supabase.auth.onAuthStateChange((_event, session) => {
+      sessionUser.value = session?.user || null
+    })
+  })
+
   const userDisplayName = computed(() => {
-    if (!user.value) return ''
+    if (!sessionUser.value) return ''
     return (
-      user.value.user_metadata?.pseudonimo ||
-      user.value.user_metadata?.name ||
-      user.value.email?.split('@')[0] ||
+      (sessionUser.value.user_metadata?.pseudonimo as string) ||
+      (sessionUser.value.user_metadata?.name as string) ||
+      sessionUser.value.email?.split('@')[0] ||
       ''
     )
   })
 
-  const userEmail = computed(() => user.value?.email || '')
+  const userEmail = computed(() => sessionUser.value?.email || '')
 
   const userInitial = computed(() => {
     const name = userDisplayName.value
@@ -140,13 +157,13 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   // ---------------------------------------------------------------------------
 
   async function loadDemands() {
-    if (!user.value || demandsLoading.value) return
+    if (!sessionUser.value || demandsLoading.value) return
     demandsLoading.value = true
     try {
       const { data } = await supabase
         .from('demands')
         .select('id, vehicle_type, status, created_at')
-        .eq('user_id', user.value.id)
+        .eq('user_id', sessionUser.value.id)
         .order('created_at', { ascending: false })
       userDemands.value = data || []
     } catch {
@@ -157,13 +174,13 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   }
 
   async function loadAds() {
-    if (!user.value || adsLoading.value) return
+    if (!sessionUser.value || adsLoading.value) return
     adsLoading.value = true
     try {
       const { data } = await supabase
         .from('advertisements')
         .select('id, brand, model, status, created_at')
-        .eq('user_id', user.value.id)
+        .eq('user_id', sessionUser.value.id)
         .order('created_at', { ascending: false })
       userAds.value = data || []
     } catch {
@@ -198,7 +215,7 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   // ---------------------------------------------------------------------------
 
   async function saveProfile(data: ProfileFormData) {
-    if (!user.value) return
+    if (!sessionUser.value) return
     profileSaving.value = true
     profileMessage.value = null
     try {
@@ -211,7 +228,7 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
           phone: data.telefono,
           email: data.email,
         })
-        .eq('id', user.value.id)
+        .eq('id', sessionUser.value.id)
       if (error) throw error
       profileMessage.value = { type: 'success', text: t('user.profileSaved') }
     } catch (err) {
@@ -229,10 +246,10 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   // ---------------------------------------------------------------------------
 
   async function saveSubscriptions() {
-    if (!user.value) return
+    if (!sessionUser.value) return
     try {
       await supabase.from('subscriptions').upsert({
-        email: user.value.email,
+        email: sessionUser.value.email,
         pref_web: subscriptions.value.web,
         pref_press: subscriptions.value.prensa,
         pref_newsletter: subscriptions.value.boletines,
@@ -315,11 +332,20 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   // ---------------------------------------------------------------------------
 
   watch(isOpen, async (open) => {
-    if (open && user.value) {
+    if (open) {
+      // Get fresh session in case sessionUser hasn't been set yet (async onMounted)
+      if (!sessionUser.value) {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+        sessionUser.value = session?.user || null
+      }
+      if (!sessionUser.value) return
+
       const { data } = await supabase
         .from('users')
         .select('pseudonimo, name, apellidos, phone, email')
-        .eq('id', user.value.id)
+        .eq('id', sessionUser.value.id)
         .single()
 
       if (data) {
@@ -328,14 +354,14 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
           name: data.name || '',
           apellidos: data.apellidos || '',
           telefono: data.phone || '',
-          email: data.email || user.value.email || '',
+          email: data.email || sessionUser.value.email || '',
         }
       }
 
       const { data: subData } = await supabase
         .from('subscriptions')
         .select('pref_web, pref_press, pref_newsletter, pref_featured, pref_events, pref_csr')
-        .eq('email', user.value.email)
+        .eq('email', sessionUser.value.email)
         .single()
 
       if (subData) {
@@ -366,7 +392,6 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
 
   return {
     // User
-    user,
     userDisplayName,
     userEmail,
     userInitial,

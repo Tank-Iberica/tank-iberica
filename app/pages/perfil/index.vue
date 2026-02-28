@@ -25,7 +25,10 @@ const recentViews = ref<
 const loading = ref(true)
 
 async function loadDashboardData() {
-  if (!userId.value) return
+  if (!userId.value) {
+    loading.value = false
+    return
+  }
 
   loading.value = true
 
