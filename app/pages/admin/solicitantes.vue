@@ -51,7 +51,7 @@ function onUpdateConfirmText(value: string) {
   <div class="admin-solicitantes">
     <!-- Header -->
     <div class="section-header">
-      <h2>Solicitantes</h2>
+      <h2>{{ $t('admin.solicitantes.title') }}</h2>
       <span class="total-badge">{{ total }} registros</span>
     </div>
 

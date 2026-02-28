@@ -46,7 +46,7 @@ onMounted(() => {
   <div class="admin-banner">
     <!-- Header -->
     <div class="section-header">
-      <h2>Banner</h2>
+      <h2>{{ $t('admin.banner.title') }}</h2>
       <div class="header-status" :class="statusClass">
         {{ statusText }}
       </div>

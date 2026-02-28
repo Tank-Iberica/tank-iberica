@@ -92,7 +92,7 @@ onMounted(() => {
     <!-- Header -->
     <div class="page-header">
       <div>
-        <h2>Configuracion del portal de dealer</h2>
+        <h2>{{ $t('admin.dealerConfig.title') }}</h2>
         <p class="page-subtitle">
           Personaliza tu perfil publico, contacto, catalogo y notificaciones
         </p>
@@ -104,15 +104,15 @@ onMounted(() => {
     <div v-if="error" class="feedback-banner error-banner">
       {{ error }}
     </div>
-    <div v-if="saved" class="feedback-banner success-banner">Cambios guardados correctamente</div>
+    <div v-if="saved" class="feedback-banner success-banner">{{ $t('admin.common.savedOk') }}</div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">Cargando perfil de dealer...</div>
+    <div v-if="loading" class="loading-state">{{ $t('admin.common.loadingConfig') }}</div>
 
     <!-- No dealer profile -->
     <div v-else-if="!dealerExists" class="empty-state">
       <div class="empty-state-icon">!</div>
-      <p>No tienes un perfil de dealer</p>
+      <p>{{ $t('admin.dealerConfig.noDealer') }}</p>
       <span class="empty-state-hint">
         Contacta con el administrador para crear tu perfil de dealer.
       </span>
@@ -176,7 +176,7 @@ onMounted(() => {
           Ver portal publico
         </NuxtLink>
         <button class="btn-primary" :disabled="saving" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.saveChanges') }}
         </button>
       </div>
     </template>

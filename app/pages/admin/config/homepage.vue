@@ -41,7 +41,7 @@ onMounted(() => {
   <div class="admin-homepage">
     <div class="section-header">
       <div>
-        <h2>Pagina de inicio</h2>
+        <h2>{{ $t('admin.configHomepage.title') }}</h2>
         <p class="section-subtitle">
           Configura el hero, las secciones visibles y los banners promocionales
         </p>
@@ -56,7 +56,7 @@ onMounted(() => {
     <div v-if="saved" class="feedback-banner success-banner">Cambios guardados correctamente</div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">Cargando configuracion...</div>
+    <div v-if="loading" class="loading-state">{{ $t('admin.common.loadingConfig') }}</div>
 
     <template v-else-if="config">
       <!-- Hero section -->
@@ -91,7 +91,7 @@ onMounted(() => {
       <!-- Save button -->
       <div class="save-bar">
         <button class="btn-primary" :disabled="saving" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.saveChanges') }}
         </button>
       </div>
     </template>

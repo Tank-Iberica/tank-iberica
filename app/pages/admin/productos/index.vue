@@ -79,7 +79,7 @@ onUnmounted(() => cleanup())
     <!-- Header -->
     <header class="page-header">
       <div class="header-left">
-        <h1>Productos</h1>
+        <h1>{{ $t('admin.productos.title') }}</h1>
         <span class="count-badge">{{ total }}</span>
       </div>
       <NuxtLink to="/admin/productos/nuevo" class="btn-primary"> + Nuevo Producto </NuxtLink>
@@ -120,7 +120,7 @@ onUnmounted(() => cleanup())
     <!-- Loading -->
     <div v-if="loading" class="loading-state">
       <div class="spinner" />
-      <span>Cargando productos...</span>
+      <span>{{ $t('admin.productos.loading') }}</span>
     </div>
 
     <!-- Table -->

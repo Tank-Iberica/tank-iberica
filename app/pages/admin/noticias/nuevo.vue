@@ -65,12 +65,12 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1>Nueva Noticia</h1>
+        <h1>{{ $t('admin.noticias.newTitle') }}</h1>
       </div>
       <div class="nf-right">
         <button class="btn" @click="handleCancel">Cancelar</button>
         <button class="btn btn-primary" :disabled="saving || !isValid" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.save') }}
         </button>
       </div>
     </header>

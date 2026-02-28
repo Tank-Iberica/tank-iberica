@@ -108,7 +108,7 @@ function updateFilters(newFilters: BalanceFilters & { type_id?: string | null })
   <div ref="balanceSection" class="balance-page" :class="{ fullscreen: isFullscreen }">
     <!-- Header -->
     <header class="page-header">
-      <h1>Balance</h1>
+      <h1>{{ $t('admin.balance.title') }}</h1>
       <div class="header-actions">
         <button class="btn btn-icon-only" title="Pantalla completa" @click="toggleFullscreen">
           &#x26F6;

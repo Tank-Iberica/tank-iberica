@@ -62,7 +62,7 @@ function handleExport() {
   <div class="admin-suscripciones">
     <div class="section-header">
       <div class="header-left">
-        <h2>Suscripciones</h2>
+        <h2>{{ $t('admin.suscripciones.title') }}</h2>
         <span class="total-badge">{{ total }} registros</span>
       </div>
       <button class="btn-export" @click="handleExport">Exportar CSV</button>

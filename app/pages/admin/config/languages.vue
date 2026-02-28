@@ -39,14 +39,14 @@ onMounted(() => {
 <template>
   <div class="admin-config-languages">
     <div class="section-header">
-      <h2>Idiomas</h2>
+      <h2>{{ $t('admin.configLanguages.title') }}</h2>
       <p class="section-subtitle">
         Configura los idiomas activos y el motor de traduccion automatica.
       </p>
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">Cargando configuracion...</div>
+    <div v-if="loading" class="loading-state">{{ $t('admin.common.loadingConfig') }}</div>
 
     <template v-else>
       <!-- Error banner -->
@@ -109,7 +109,7 @@ onMounted(() => {
       <!-- Save Button -->
       <div class="save-section">
         <button class="btn-primary" :disabled="saving || !hasChanges" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.saveChanges') }}
         </button>
       </div>
     </template>

@@ -26,18 +26,17 @@ async function loadVehicleOptions() {
     // Load active vehicles
     const { data: vehicles } = await supabase
       .from('vehicles')
-      .select('id, brand, model, plate, year')
+      .select('id, brand, model, year')
       .order('brand')
 
     // Load historical vehicles if table exists
-    let historico: { id: string; brand: string; model: string; plate?: string; year?: number }[] =
-      []
+    let historico: { id: string; brand: string; model: string; year?: number }[] = []
     try {
       const { data } = await supabase
         .from('historico')
-        .select('id, brand, model, plate, year')
+        .select('id, brand, model, year')
         .order('brand')
-      if (data) historico = data
+      if (data) historico = data as unknown as typeof historico
     } catch {
       // Table might not exist yet
     }
@@ -48,7 +47,7 @@ async function loadVehicleOptions() {
       for (const v of vehicles) {
         options.push({
           id: `V-${v.id}`,
-          label: `${v.brand || ''} ${v.model || ''} (${v.plate || ''}) - ${v.year || ''}`,
+          label: `${v.brand || ''} ${v.model || ''} - ${v.year || ''}`,
           source: 'vehicles',
         })
       }
@@ -57,7 +56,7 @@ async function loadVehicleOptions() {
     for (const h of historico) {
       options.push({
         id: `H-${h.id}`,
-        label: `${h.brand || ''} ${h.model || ''} (${h.plate || ''}) [H]`,
+        label: `${h.brand || ''} ${h.model || ''} [H]`,
         source: 'historico',
       })
     }
@@ -97,8 +96,8 @@ onMounted(async () => {
       >
         <div class="tool-icon">🧾</div>
         <div class="tool-info">
-          <h3>Generador de Facturas</h3>
-          <p>Crear facturas comerciales con datos de cliente y vehículos</p>
+          <h3>{{ $t('admin.utilidades.invoiceTitle') }}</h3>
+          <p>{{ $t('admin.utilidades.invoiceDesc') }}</p>
         </div>
       </div>
 
@@ -110,8 +109,8 @@ onMounted(async () => {
       >
         <div class="tool-icon">📝</div>
         <div class="tool-info">
-          <h3>Generador de Contratos</h3>
-          <p>Crear contratos de arrendamiento o compraventa</p>
+          <h3>{{ $t('admin.utilidades.contractTitle') }}</h3>
+          <p>{{ $t('admin.utilidades.contractDesc') }}</p>
         </div>
       </div>
 
@@ -123,8 +122,8 @@ onMounted(async () => {
       >
         <div class="tool-icon">📊</div>
         <div class="tool-info">
-          <h3>Exportar Balance</h3>
-          <p>Exportar transacciones y resúmenes a PDF o Excel</p>
+          <h3>{{ $t('admin.utilidades.exportTitle') }}</h3>
+          <p>{{ $t('admin.utilidades.exportDesc') }}</p>
         </div>
       </div>
     </div>

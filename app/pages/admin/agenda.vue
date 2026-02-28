@@ -38,7 +38,7 @@ onMounted(() => init())
     <!-- Header -->
     <header class="page-header">
       <div class="header-left">
-        <h1>Agenda</h1>
+        <h1>{{ $t('admin.agenda.title') }}</h1>
         <span class="count-badge">{{ total }}</span>
       </div>
       <button class="btn-primary" @click="openCreateModal">+ Nuevo contacto</button>
@@ -60,7 +60,7 @@ onMounted(() => init())
     <!-- Loading -->
     <div v-if="loading" class="loading-state">
       <div class="spinner" />
-      <span>Cargando contactos...</span>
+      <span>{{ $t('admin.agenda.loadingContacts') }}</span>
     </div>
 
     <!-- Table -->

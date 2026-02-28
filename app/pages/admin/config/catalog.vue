@@ -62,14 +62,12 @@ async function handleSave() {
 <template>
   <div class="admin-config-catalog">
     <div class="section-header">
-      <h2>Catalogo</h2>
-      <p class="section-subtitle">
-        Configura las acciones activas y gestiona la estructura del catalogo.
-      </p>
+      <h2>{{ $t('admin.configCatalog.title') }}</h2>
+      <p class="section-subtitle">{{ $t('admin.configCatalog.subtitle') }}</p>
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">Cargando configuracion...</div>
+    <div v-if="loading" class="loading-state">{{ $t('admin.common.loadingConfig') }}</div>
 
     <template v-else>
       <!-- Error banner -->
@@ -78,7 +76,7 @@ async function handleSave() {
       </div>
 
       <!-- Success banner -->
-      <div v-if="saved" class="success-banner">Cambios guardados correctamente.</div>
+      <div v-if="saved" class="success-banner">{{ $t('admin.common.savedOk') }}</div>
 
       <!-- Active Actions Section -->
       <div class="config-card">
@@ -97,7 +95,7 @@ async function handleSave() {
       <!-- Save Button -->
       <div class="save-section">
         <button class="btn-primary" :disabled="saving || !hasChanges" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.saveChanges') }}
         </button>
       </div>
 

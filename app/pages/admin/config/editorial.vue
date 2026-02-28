@@ -40,30 +40,30 @@ async function handleSave() {
 <template>
   <div class="admin-editorial">
     <div class="section-header">
-      <h2>Editorial</h2>
-      <p class="section-subtitle">Opciones de publicacion de articulos y redes sociales.</p>
+      <h2>{{ $t('admin.configEditorial.title') }}</h2>
+      <p class="section-subtitle">{{ $t('admin.configEditorial.subtitle') }}</p>
     </div>
 
-    <div v-if="loading" class="loading-state">Cargando configuracion...</div>
+    <div v-if="loading" class="loading-state">{{ $t('admin.common.loadingConfig') }}</div>
 
     <template v-else>
       <!-- Success / Error feedback -->
-      <div v-if="saved" class="success-banner">Cambios guardados correctamente.</div>
+      <div v-if="saved" class="success-banner">{{ $t('admin.common.savedOk') }}</div>
       <div v-if="error" class="error-banner">
         {{ error }}
       </div>
 
       <!-- Publicacion section -->
       <div class="config-card">
-        <h3 class="card-title">Publicacion</h3>
-        <p class="card-description">Controla el flujo de publicacion de contenido editorial.</p>
+        <h3 class="card-title">{{ $t('admin.configEditorial.publicationSection') }}</h3>
+        <p class="card-description">{{ $t('admin.configEditorial.publicationDesc') }}</p>
 
         <div class="toggle-group">
           <label class="toggle-label">
             <input v-model="form.require_article_approval" type="checkbox" >
             <span class="toggle-text">
-              <strong>Requerir aprobacion de articulos</strong>
-              <small>Los articulos nuevos necesitaran revision antes de publicarse.</small>
+              <strong>{{ $t('admin.configEditorial.requireArticleApproval') }}</strong>
+              <small>{{ $t('admin.configEditorial.requireArticleApprovalDesc') }}</small>
             </span>
           </label>
         </div>
@@ -72,11 +72,8 @@ async function handleSave() {
           <label class="toggle-label">
             <input v-model="form.auto_publish_social" type="checkbox" >
             <span class="toggle-text">
-              <strong>Auto-publicar en redes sociales</strong>
-              <small
-                >Los articulos publicados se compartiran automaticamente en las redes
-                configuradas.</small
-              >
+              <strong>{{ $t('admin.configEditorial.autoPublishSocial') }}</strong>
+              <small>{{ $t('admin.configEditorial.autoPublishSocialDesc') }}</small>
             </span>
           </label>
         </div>
@@ -84,13 +81,13 @@ async function handleSave() {
 
       <!-- Articulos section -->
       <div class="config-card">
-        <h3 class="card-title">Articulos</h3>
-        <p class="card-description">Gestiona los articulos del blog y noticias del sitio.</p>
+        <h3 class="card-title">{{ $t('admin.configEditorial.articlesSection') }}</h3>
+        <p class="card-description">{{ $t('admin.configEditorial.articlesSectionDesc') }}</p>
 
         <NuxtLink to="/admin/noticias" class="link-card">
           <div class="link-card-content">
-            <strong>Gestionar articulos</strong>
-            <small>Crear, editar y publicar articulos del blog</small>
+            <strong>{{ $t('admin.configEditorial.manageArticles') }}</strong>
+            <small>{{ $t('admin.configEditorial.manageArticlesDesc') }}</small>
           </div>
           <span class="link-card-arrow">&rarr;</span>
         </NuxtLink>
@@ -98,13 +95,12 @@ async function handleSave() {
 
       <!-- Calendario placeholder -->
       <div class="config-card config-card--muted">
-        <h3 class="card-title">Calendario editorial</h3>
-        <p class="card-description">Planifica y programa la publicacion de contenido.</p>
+        <h3 class="card-title">{{ $t('admin.configEditorial.calendarSection') }}</h3>
+        <p class="card-description">{{ $t('admin.configEditorial.calendarDesc') }}</p>
         <div class="placeholder-box">
-          <span class="placeholder-text">Proximamente</span>
+          <span class="placeholder-text">{{ $t('admin.configEditorial.comingSoon') }}</span>
           <p class="placeholder-description">
-            El calendario editorial permitira programar articulos, gestionar borradores y coordinar
-            la publicacion de contenido en el sitio y redes sociales.
+            {{ $t('admin.configEditorial.calendarComingSoonDesc') }}
           </p>
         </div>
       </div>
@@ -112,7 +108,7 @@ async function handleSave() {
       <!-- Save button -->
       <div class="actions-bar">
         <button class="btn-primary" :disabled="saving" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.saveChanges') }}
         </button>
       </div>
     </template>

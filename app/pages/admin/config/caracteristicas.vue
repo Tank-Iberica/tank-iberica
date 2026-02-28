@@ -66,7 +66,7 @@ onMounted(async () => {
   <div class="admin-caracteristicas">
     <!-- Header -->
     <div class="section-header">
-      <h2>Caracteristicas</h2>
+      <h2>{{ $t('admin.configCaracteristicas.title') }}</h2>
       <button class="btn-primary" @click="openNewModal">+ Nueva</button>
     </div>
 

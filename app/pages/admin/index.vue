@@ -23,7 +23,7 @@
           <circle cx="5.5" cy="18.5" r="2.5" />
           <circle cx="18.5" cy="18.5" r="2.5" />
         </svg>
-        <span>Vehiculo</span>
+        <span>{{ $t('admin.index.quickVehicle') }}</span>
       </NuxtLink>
       <NuxtLink to="/admin/noticias" class="action-btn" title="Nueva Noticia">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -32,14 +32,14 @@
           <line x1="16" y1="13" x2="8" y2="13" />
           <line x1="16" y1="17" x2="8" y2="17" />
         </svg>
-        <span>Noticia</span>
+        <span>{{ $t('admin.index.quickNews') }}</span>
       </NuxtLink>
       <NuxtLink to="/admin/balance" class="action-btn" title="Balance">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="1" x2="12" y2="23" />
           <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
         </svg>
-        <span>Balance</span>
+        <span>{{ $t('admin.index.quickBalance') }}</span>
       </NuxtLink>
     </div>
 

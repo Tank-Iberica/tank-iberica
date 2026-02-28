@@ -38,6 +38,8 @@ onMounted(async () => {
   await fetchLogs()
 })
 
+const { t } = useI18n()
+
 async function fetchLogs() {
   logsLoading.value = true
   logsError.value = null
@@ -51,7 +53,7 @@ async function fetchLogs() {
     if (err) throw err
     logs.value = (data as ActivityLog[]) || []
   } catch (err: unknown) {
-    logsError.value = err instanceof Error ? err.message : 'Error cargando logs'
+    logsError.value = err instanceof Error ? err.message : t('admin.configSystem.logsError')
   } finally {
     logsLoading.value = false
   }
@@ -96,35 +98,30 @@ function formatDetails(details: Record<string, unknown> | null): string {
 <template>
   <div class="admin-system">
     <div class="section-header">
-      <h2>Sistema</h2>
-      <p class="section-subtitle">Moderacion de contenido y registro de actividad del sistema.</p>
+      <h2>{{ $t('admin.configSystem.title') }}</h2>
+      <p class="section-subtitle">{{ $t('admin.configSystem.subtitle') }}</p>
     </div>
 
-    <div v-if="loading" class="loading-state">Cargando configuracion...</div>
+    <div v-if="loading" class="loading-state">{{ $t('admin.common.loadingConfig') }}</div>
 
     <template v-else>
       <!-- Success / Error feedback -->
-      <div v-if="saved" class="success-banner">Cambios guardados correctamente.</div>
+      <div v-if="saved" class="success-banner">{{ $t('admin.common.savedOk') }}</div>
       <div v-if="error" class="error-banner">
         {{ error }}
       </div>
 
       <!-- Moderacion section -->
       <div class="config-card">
-        <h3 class="card-title">Moderacion</h3>
-        <p class="card-description">
-          Controla si el contenido requiere revision antes de publicarse.
-        </p>
+        <h3 class="card-title">{{ $t('admin.configSystem.moderationSection') }}</h3>
+        <p class="card-description">{{ $t('admin.configSystem.moderationDesc') }}</p>
 
         <div class="toggle-group">
           <label class="toggle-label">
             <input v-model="form.require_vehicle_approval" type="checkbox" >
             <span class="toggle-text">
-              <strong>Requerir aprobacion de vehiculos</strong>
-              <small
-                >Los vehiculos nuevos necesitaran revision de un administrador antes de ser
-                visibles.</small
-              >
+              <strong>{{ $t('admin.configSystem.requireVehicleApproval') }}</strong>
+              <small>{{ $t('admin.configSystem.requireVehicleApprovalDesc') }}</small>
             </span>
           </label>
         </div>
@@ -133,8 +130,8 @@ function formatDetails(details: Record<string, unknown> | null): string {
           <label class="toggle-label">
             <input v-model="form.require_article_approval" type="checkbox" >
             <span class="toggle-text">
-              <strong>Requerir aprobacion de articulos</strong>
-              <small>Los articulos nuevos necesitaran revision antes de publicarse.</small>
+              <strong>{{ $t('admin.configSystem.requireArticleApproval') }}</strong>
+              <small>{{ $t('admin.configSystem.requireArticleApprovalDesc') }}</small>
             </span>
           </label>
         </div>
@@ -143,37 +140,41 @@ function formatDetails(details: Record<string, unknown> | null): string {
       <!-- Save button -->
       <div class="actions-bar">
         <button class="btn-primary" :disabled="saving" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.saveChanges') }}
         </button>
       </div>
 
       <!-- Activity Logs section -->
       <div class="config-card logs-card">
         <div class="logs-header">
-          <h3 class="card-title">Logs de Actividad</h3>
+          <h3 class="card-title">{{ $t('admin.configSystem.logsSection') }}</h3>
           <button class="btn-refresh" :disabled="logsLoading" @click="fetchLogs">
-            {{ logsLoading ? 'Cargando...' : 'Actualizar' }}
+            {{ logsLoading ? $t('admin.common.loading') : $t('admin.common.refresh') }}
           </button>
         </div>
-        <p class="card-description">Ultimas 20 acciones registradas en el sistema.</p>
+        <p class="card-description">{{ $t('admin.configSystem.logsDesc') }}</p>
 
         <div v-if="logsError" class="error-banner">
           {{ logsError }}
         </div>
 
-        <div v-if="logsLoading && !logs.length" class="loading-state">Cargando logs...</div>
+        <div v-if="logsLoading && !logs.length" class="loading-state">
+          {{ $t('admin.configSystem.logsLoading') }}
+        </div>
 
-        <div v-else-if="!logs.length" class="empty-state">No hay logs recientes.</div>
+        <div v-else-if="!logs.length" class="empty-state">
+          {{ $t('admin.configSystem.logsEmpty') }}
+        </div>
 
         <div v-else class="table-container">
           <table class="logs-table">
             <thead>
               <tr>
-                <th>Fecha</th>
-                <th>Actor</th>
-                <th>Accion</th>
-                <th>Entidad</th>
-                <th class="details-col">Detalles</th>
+                <th>{{ $t('admin.configSystem.colDate') }}</th>
+                <th>{{ $t('admin.configSystem.colActor') }}</th>
+                <th>{{ $t('admin.configSystem.colAction') }}</th>
+                <th>{{ $t('admin.configSystem.colEntity') }}</th>
+                <th class="details-col">{{ $t('admin.configSystem.colDetails') }}</th>
               </tr>
             </thead>
             <tbody>

@@ -43,7 +43,7 @@ onMounted(() => init())
   <div class="admin-tipos">
     <!-- Header -->
     <div class="section-header">
-      <h2>Tipos</h2>
+      <h2>{{ $t('admin.configTipos.title') }}</h2>
       <button class="btn-primary" @click="openNewModal">+ Nuevo</button>
     </div>
 

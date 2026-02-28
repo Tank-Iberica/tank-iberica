@@ -44,7 +44,7 @@ onMounted(() => {
     <!-- Header -->
     <div class="section-header">
       <div class="header-left">
-        <h2>Comentarios</h2>
+        <h2>{{ $t('admin.comentarios.title') }}</h2>
         <span class="total-badge">{{ totalCount }} total</span>
       </div>
     </div>
@@ -90,7 +90,7 @@ onMounted(() => {
       <!-- Load more -->
       <div v-if="hasMore && !searchQuery.trim()" class="load-more-container">
         <button class="btn-load-more" :disabled="loadingMore" @click="loadMore">
-          {{ loadingMore ? 'Cargando...' : 'Cargar mas comentarios' }}
+          {{ loadingMore ? $t('admin.comentarios.loadingMore') : $t('admin.comentarios.loadMore') }}
         </button>
       </div>
     </div>

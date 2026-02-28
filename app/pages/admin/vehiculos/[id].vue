@@ -8,7 +8,11 @@
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </NuxtLink>
-        <h1 class="page-title">{{ isNew ? 'Nuevo vehículo' : 'Editar vehículo' }}</h1>
+        <h1 class="page-title">
+          {{
+            isNew ? $t('admin.vehiculosIndex.newVehicle') : $t('admin.vehiculosIndex.editVehicle')
+          }}
+        </h1>
       </div>
       <div class="header-actions">
         <button
@@ -22,7 +26,7 @@
           Vender
         </button>
         <button class="btn-primary" :disabled="saving" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.save') }}
         </button>
       </div>
     </div>
@@ -30,7 +34,7 @@
     <!-- Loading state -->
     <div v-if="loading" class="loading-state">
       <div class="spinner" />
-      <span>Cargando vehículo...</span>
+      <span>{{ $t('admin.vehiculosIndex.loadingDetail') }}</span>
     </div>
 
     <!-- Form -->

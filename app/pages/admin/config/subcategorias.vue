@@ -45,7 +45,7 @@ onMounted(() => init())
   <div class="admin-subcategorias">
     <!-- Header -->
     <div class="section-header">
-      <h2>Subcategorias</h2>
+      <h2>{{ $t('admin.configCatalog.title') }}</h2>
       <button class="btn-primary" @click="openNewModal">+ Nueva</button>
     </div>
 

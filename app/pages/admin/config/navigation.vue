@@ -54,7 +54,7 @@ onMounted(() => {
   <div class="admin-navigation">
     <div class="section-header">
       <div>
-        <h2>Navegacion</h2>
+        <h2>{{ $t('admin.configNavigation.title') }}</h2>
         <p class="section-subtitle">Configura los enlaces del header, footer y redes sociales</p>
       </div>
       <NuxtLink to="/admin/config" class="btn-back"> Volver </NuxtLink>
@@ -67,7 +67,7 @@ onMounted(() => {
     <div v-if="saved" class="feedback-banner success-banner">Cambios guardados correctamente</div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">Cargando configuracion...</div>
+    <div v-if="loading" class="loading-state">{{ $t('admin.common.loadingConfig') }}</div>
 
     <template v-else-if="config">
       <!-- Header Links -->
@@ -99,7 +99,7 @@ onMounted(() => {
       <!-- Save button -->
       <div class="save-bar">
         <button class="btn-primary" :disabled="saving" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.saveChanges') }}
         </button>
       </div>
     </template>

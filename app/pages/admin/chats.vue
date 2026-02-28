@@ -45,7 +45,7 @@ function onUpdateMessagesContainerRef(el: HTMLElement | null) {
   <div class="admin-chat">
     <!-- Header -->
     <div class="section-header">
-      <h2>Chats</h2>
+      <h2>{{ $t('admin.chats.title') }}</h2>
       <div v-if="totalUnreadCount > 0" class="unread-badge-header">
         {{ totalUnreadCount }} sin leer
       </div>

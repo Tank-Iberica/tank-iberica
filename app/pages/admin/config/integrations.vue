@@ -50,28 +50,26 @@ async function handleSave() {
 <template>
   <div class="admin-integrations">
     <div class="section-header">
-      <h2>SEO e Integraciones</h2>
-      <p class="section-subtitle">
-        Configura las integraciones con servicios externos de Google y Cloudinary.
-      </p>
+      <h2>{{ $t('admin.configIntegrations.title') }}</h2>
+      <p class="section-subtitle">{{ $t('admin.configIntegrations.subtitle') }}</p>
     </div>
 
-    <div v-if="loading" class="loading-state">Cargando configuracion...</div>
+    <div v-if="loading" class="loading-state">{{ $t('admin.common.loadingConfig') }}</div>
 
     <template v-else>
       <!-- Success / Error feedback -->
-      <div v-if="saved" class="success-banner">Cambios guardados correctamente.</div>
+      <div v-if="saved" class="success-banner">{{ $t('admin.common.savedOk') }}</div>
       <div v-if="error" class="error-banner">
         {{ error }}
       </div>
 
       <!-- Google section -->
       <div class="config-card">
-        <h3 class="card-title">Google</h3>
-        <p class="card-description">Identificadores para Analytics, Search Console y AdSense.</p>
+        <h3 class="card-title">{{ $t('admin.configIntegrations.googleSection') }}</h3>
+        <p class="card-description">{{ $t('admin.configIntegrations.googleDesc') }}</p>
 
         <div class="form-group">
-          <label for="ga-id">Google Analytics ID</label>
+          <label for="ga-id">{{ $t('admin.configIntegrations.gaId') }}</label>
           <input
             id="ga-id"
             v-model="form.google_analytics_id"
@@ -81,7 +79,7 @@ async function handleSave() {
         </div>
 
         <div class="form-group">
-          <label for="gsc">Google Search Console</label>
+          <label for="gsc">{{ $t('admin.configIntegrations.gsc') }}</label>
           <input
             id="gsc"
             v-model="form.google_search_console"
@@ -91,7 +89,7 @@ async function handleSave() {
         </div>
 
         <div class="form-group">
-          <label for="adsense">Google AdSense ID</label>
+          <label for="adsense">{{ $t('admin.configIntegrations.adsenseId') }}</label>
           <input
             id="adsense"
             v-model="form.google_adsense_id"
@@ -103,11 +101,11 @@ async function handleSave() {
 
       <!-- Cloudinary section -->
       <div class="config-card">
-        <h3 class="card-title">Cloudinary</h3>
-        <p class="card-description">Servicio de gestion y optimizacion de imagenes.</p>
+        <h3 class="card-title">{{ $t('admin.configIntegrations.cloudinarySection') }}</h3>
+        <p class="card-description">{{ $t('admin.configIntegrations.cloudinaryDesc') }}</p>
 
         <div class="form-group">
-          <label for="cloudinary">Cloud Name</label>
+          <label for="cloudinary">{{ $t('admin.configIntegrations.cloudName') }}</label>
           <input
             id="cloudinary"
             v-model="form.cloudinary_cloud_name"
@@ -120,7 +118,7 @@ async function handleSave() {
       <!-- Save button -->
       <div class="actions-bar">
         <button class="btn-primary" :disabled="saving" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.saveChanges') }}
         </button>
       </div>
     </template>

@@ -1,13 +1,13 @@
 <template>
   <div class="admin-vehicles">
     <div class="page-header">
-      <h1 class="page-title">Vehículos</h1>
+      <h1 class="page-title">{{ $t('vehicles.vehicles') }}</h1>
       <NuxtLink to="/admin/vehiculos/new" class="btn-primary">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19" />
           <line x1="5" y1="12" x2="19" y2="12" />
         </svg>
-        Nuevo vehículo
+        {{ $t('admin.vehiculosIndex.newVehicle') }}
       </NuxtLink>
     </div>
 
@@ -24,7 +24,7 @@
 
     <div v-if="loading" class="loading-state">
       <div class="spinner" />
-      <span>Cargando vehículos...</span>
+      <span>{{ $t('admin.vehiculosIndex.loadingVehicles') }}</span>
     </div>
 
     <div v-else-if="error" class="error-state">
@@ -39,7 +39,7 @@
         <circle cx="5.5" cy="18.5" r="2.5" />
         <circle cx="18.5" cy="18.5" r="2.5" />
       </svg>
-      <p>No hay vehículos que coincidan con los filtros</p>
+      <p>{{ $t('admin.vehiculosIndex.empty') }}</p>
       <NuxtLink to="/admin/vehiculos/new" class="btn-primary">Crear vehículo</NuxtLink>
     </div>
 

@@ -111,7 +111,7 @@ const iconPaths: Record<string, string> = {
 <template>
   <div class="admin-config-index">
     <div class="section-header">
-      <h2>Configuración</h2>
+      <h2>{{ $t('admin.configIndex.title') }}</h2>
       <p class="section-subtitle">Gestiona todas las opciones de la plataforma</p>
     </div>
 

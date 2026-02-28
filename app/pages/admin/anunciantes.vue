@@ -54,7 +54,7 @@ onMounted(() => {
   <div class="admin-anunciantes">
     <!-- Header -->
     <div class="section-header">
-      <h2>Anunciantes</h2>
+      <h2>{{ $t('admin.anunciantes.title') }}</h2>
       <span class="total-badge">{{ total }} registros</span>
     </div>
 

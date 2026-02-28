@@ -105,7 +105,7 @@ async function handleSave() {
   <div class="admin-branding">
     <div class="section-header">
       <div>
-        <h2>Identidad de marca</h2>
+        <h2>{{ $t('admin.configBranding.title') }}</h2>
         <p class="section-subtitle">
           Configura el nombre, logotipo, tipografia y colores del sitio
         </p>
@@ -114,9 +114,9 @@ async function handleSave() {
     </div>
 
     <div v-if="error" class="feedback-banner error-banner">{{ error }}</div>
-    <div v-if="saved" class="feedback-banner success-banner">Cambios guardados correctamente</div>
+    <div v-if="saved" class="feedback-banner success-banner">{{ $t('admin.common.savedOk') }}</div>
 
-    <div v-if="loading" class="loading-state">Cargando configuracion...</div>
+    <div v-if="loading" class="loading-state">{{ $t('admin.common.loadingConfig') }}</div>
 
     <template v-else-if="config">
       <BrandingIdentityCard
@@ -135,7 +135,7 @@ async function handleSave() {
 
       <div class="save-bar">
         <button class="btn-primary" :disabled="saving" @click="handleSave">
-          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+          {{ saving ? $t('admin.common.saving') : $t('admin.common.saveChanges') }}
         </button>
       </div>
     </template>
