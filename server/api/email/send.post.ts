@@ -238,7 +238,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const template = templates[body.templateKey]
+  const template = templates[body.templateKey]!
 
   // ── 2. Check user email preferences ───────────────────────────────────────
   if (body.userId) {
@@ -315,7 +315,7 @@ export default defineEventHandler(async (event) => {
     es: `Este correo fue enviado por ${siteName}. Si no deseas recibir estos correos, puedes cancelar tu suscripcion.`,
     en: `This email was sent by ${siteName}. If you no longer wish to receive these emails, you can unsubscribe.`,
   }
-  const footerText = footerTextMap[locale] ?? footerTextMap.es
+  const footerText: string = footerTextMap[locale] ?? footerTextMap.es ?? ''
 
   const html = buildEmailHtml({
     bodyHtml,

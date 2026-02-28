@@ -44,7 +44,7 @@ export default defineEventHandler(async (event): Promise<DeleteAccountResponse> 
       .from('vehicles')
       .update({ status: 'archived' })
       .eq('dealer_id', dealerId)
-      .in('status', ['published', 'draft', 'reserved'])
+      .in('status', ['published', 'draft', 'paused'])
 
     // Anonymize dealer profile
     await supabase

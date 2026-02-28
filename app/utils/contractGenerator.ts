@@ -56,18 +56,18 @@ export function numberToWords(n: number): string {
   ]
 
   if (n === 0) return 'CERO'
-  if (n < 20) return units[n]
+  if (n < 20) return units[n] ?? ''
   if (n < 100) {
     const tIdx = Math.floor(n / 10)
     const u = n % 10
-    if (tIdx === 2 && u > 0) return `VEINTI${units[u]}`
-    return u > 0 ? `${tens[tIdx]} Y ${units[u]}` : tens[tIdx]
+    if (tIdx === 2 && u > 0) return `VEINTI${units[u] ?? ''}`
+    return u > 0 ? `${tens[tIdx] ?? ''} Y ${units[u] ?? ''}` : (tens[tIdx] ?? '')
   }
   if (n < 1000) {
     const h = Math.floor(n / 100)
     const rest = n % 100
     if (n === 100) return 'CIEN'
-    return rest > 0 ? `${hundreds[h]} ${numberToWords(rest)}` : hundreds[h]
+    return rest > 0 ? `${hundreds[h] ?? ''} ${numberToWords(rest)}` : (hundreds[h] ?? '')
   }
   if (n < 10000) {
     const th = Math.floor(n / 1000)

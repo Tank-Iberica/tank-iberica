@@ -69,21 +69,22 @@ async function loadStats(): Promise<void> {
     if (statsLevel.value !== 'basic') {
       const { data: vehiclesData } = await supabase
         .from('vehicles')
-        .select('id, brand, model, year, views')
+        .select('id, brand, model, year')
         .eq('dealer_id', dealer.id)
         .eq('status', 'published')
-        .order('views', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(20)
 
-      vehicleStats.value = (
-        (vehiclesData || []) as Array<{
-          id: string
-          brand: string
-          model: string
-          year: number | null
-          views: number
-        }>
-      ).map((v) => ({
+      type VehicleStat = {
+        id: string
+        brand: string
+        model: string
+        year: number | null
+        views: number
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const rawVehicles = (vehiclesData || []) as any as VehicleStat[]
+      vehicleStats.value = rawVehicles.map((v) => ({
         id: v.id,
         brand: v.brand,
         model: v.model,

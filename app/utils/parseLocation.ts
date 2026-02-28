@@ -2,83 +2,87 @@ import { PROVINCE_TO_REGION, COUNTRY_NAMES } from '~/utils/geoData'
 
 // Major Spanish cities → province mapping (instant resolution)
 const CITY_TO_PROVINCE: Record<string, string> = {
-  'madrid': 'Madrid',
-  'barcelona': 'Barcelona',
-  'valencia': 'Valencia',
-  'sevilla': 'Sevilla',
-  'zaragoza': 'Zaragoza',
-  'málaga': 'Málaga',
-  'malaga': 'Málaga',
-  'murcia': 'Murcia',
-  'palma': 'Baleares',
-  'bilbao': 'Vizcaya',
-  'alicante': 'Alicante',
-  'córdoba': 'Córdoba',
-  'cordoba': 'Córdoba',
-  'valladolid': 'Valladolid',
-  'vigo': 'Pontevedra',
-  'gijón': 'Asturias',
-  'gijon': 'Asturias',
-  'hospitalet': 'Barcelona',
-  'vitoria': 'Álava',
-  'granada': 'Granada',
-  'elche': 'Alicante',
-  'oviedo': 'Asturias',
-  'santander': 'Cantabria',
-  'pamplona': 'Navarra',
+  madrid: 'Madrid',
+  barcelona: 'Barcelona',
+  valencia: 'Valencia',
+  sevilla: 'Sevilla',
+  zaragoza: 'Zaragoza',
+  málaga: 'Málaga',
+  malaga: 'Málaga',
+  murcia: 'Murcia',
+  palma: 'Baleares',
+  bilbao: 'Vizcaya',
+  alicante: 'Alicante',
+  córdoba: 'Córdoba',
+  cordoba: 'Córdoba',
+  valladolid: 'Valladolid',
+  vigo: 'Pontevedra',
+  gijón: 'Asturias',
+  gijon: 'Asturias',
+  hospitalet: 'Barcelona',
+  vitoria: 'Álava',
+  granada: 'Granada',
+  elche: 'Alicante',
+  oviedo: 'Asturias',
+  santander: 'Cantabria',
+  pamplona: 'Navarra',
   'san sebastián': 'Guipúzcoa',
   'san sebastian': 'Guipúzcoa',
-  'donostia': 'Guipúzcoa',
-  'salamanca': 'Salamanca',
-  'burgos': 'Burgos',
-  'cádiz': 'Cádiz',
-  'cadiz': 'Cádiz',
-  'logroño': 'La Rioja',
-  'logrono': 'La Rioja',
-  'toledo': 'Toledo',
-  'lleida': 'Lérida',
-  'lérida': 'Lérida',
-  'lerida': 'Lérida',
-  'girona': 'Gerona',
-  'gerona': 'Gerona',
-  'tarragona': 'Tarragona',
-  'huelva': 'Huelva',
-  'jaén': 'Jaén',
-  'jaen': 'Jaén',
-  'almería': 'Almería',
-  'almeria': 'Almería',
-  'castellón': 'Castellón',
-  'castellon': 'Castellón',
-  'león': 'León',
-  'leon': 'León',
-  'cáceres': 'Cáceres',
-  'caceres': 'Cáceres',
-  'badajoz': 'Badajoz',
-  'lugo': 'Lugo',
-  'ourense': 'Ourense',
-  'huesca': 'Huesca',
-  'teruel': 'Teruel',
-  'soria': 'Soria',
-  'segovia': 'Segovia',
-  'ávila': 'Ávila',
-  'avila': 'Ávila',
-  'palencia': 'Palencia',
-  'zamora': 'Zamora',
-  'cuenca': 'Cuenca',
-  'guadalajara': 'Guadalajara',
+  donostia: 'Guipúzcoa',
+  salamanca: 'Salamanca',
+  burgos: 'Burgos',
+  cádiz: 'Cádiz',
+  cadiz: 'Cádiz',
+  logroño: 'La Rioja',
+  logrono: 'La Rioja',
+  toledo: 'Toledo',
+  lleida: 'Lérida',
+  lérida: 'Lérida',
+  lerida: 'Lérida',
+  girona: 'Gerona',
+  gerona: 'Gerona',
+  tarragona: 'Tarragona',
+  huelva: 'Huelva',
+  jaén: 'Jaén',
+  jaen: 'Jaén',
+  almería: 'Almería',
+  almeria: 'Almería',
+  castellón: 'Castellón',
+  castellon: 'Castellón',
+  león: 'León',
+  leon: 'León',
+  cáceres: 'Cáceres',
+  caceres: 'Cáceres',
+  badajoz: 'Badajoz',
+  lugo: 'Lugo',
+  ourense: 'Ourense',
+  huesca: 'Huesca',
+  teruel: 'Teruel',
+  soria: 'Soria',
+  segovia: 'Segovia',
+  ávila: 'Ávila',
+  avila: 'Ávila',
+  palencia: 'Palencia',
+  zamora: 'Zamora',
+  cuenca: 'Cuenca',
+  guadalajara: 'Guadalajara',
   'ciudad real': 'Ciudad Real',
-  'albacete': 'Albacete',
+  albacete: 'Albacete',
   'a coruña': 'A Coruña',
-  'coruña': 'A Coruña',
+  coruña: 'A Coruña',
   'las palmas': 'Las Palmas',
   'santa cruz de tenerife': 'Santa Cruz de Tenerife',
-  'tenerife': 'Santa Cruz de Tenerife',
-  'ceuta': 'Ceuta',
-  'melilla': 'Melilla',
+  tenerife: 'Santa Cruz de Tenerife',
+  ceuta: 'Ceuta',
+  melilla: 'Melilla',
 }
 
 function normalize(str: string): string {
-  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036F]/g, '').trim()
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036F]/g, '')
+    .trim()
 }
 
 // Build reverse map: country name (normalized) → ISO code
@@ -103,7 +107,7 @@ export function parseLocationText(text: string | null): ParsedLocation {
     return { country: null, province: null, region: null }
   }
 
-  const parts = text.split(',').map(p => p.trim())
+  const parts = text.split(',').map((p) => p.trim())
   const cityPart = parts[0] || ''
   const countryPart = parts.length > 1 ? parts[parts.length - 1] : ''
 
@@ -112,7 +116,7 @@ export function parseLocationText(text: string | null): ParsedLocation {
 
   if (countryPart) {
     const upper = countryPart.toUpperCase()
-    if (upper.length === 2 && COUNTRY_NAMES.es[upper]) {
+    if (upper.length === 2 && COUNTRY_NAMES.es?.[upper]) {
       countryCode = upper
     }
     if (!countryCode) {
@@ -123,8 +127,8 @@ export function parseLocationText(text: string | null): ParsedLocation {
   // 2. If no country found from suffix, check if the city hints at Spain
   if (!countryCode && cityPart) {
     const norm = normalize(cityPart)
-    const isSpanishCity = Object.keys(CITY_TO_PROVINCE).some(k => normalize(k) === norm)
-    const isSpanishProvince = Object.keys(PROVINCE_TO_REGION).some(k => normalize(k) === norm)
+    const isSpanishCity = Object.keys(CITY_TO_PROVINCE).some((k) => normalize(k) === norm)
+    const isSpanishProvince = Object.keys(PROVINCE_TO_REGION).some((k) => normalize(k) === norm)
     if (isSpanishCity || isSpanishProvince) {
       countryCode = 'ES'
     }
@@ -178,19 +182,24 @@ export async function geocodeLocation(text: string | null): Promise<ParsedLocati
   // Geocode if: (a) country detected but no province, or (b) no country detected at all
   try {
     const query = encodeURIComponent(text.trim())
-    const res = await $fetch<Array<{
-      address?: {
-        country_code?: string
-        province?: string
-        state?: string
-        county?: string
-        city?: string
-        town?: string
-        village?: string
-      }
-    }>>(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=1&accept-language=es`, {
-      headers: { 'User-Agent': 'TankIberica/1.0' },
-    })
+    const res = await $fetch<
+      Array<{
+        address?: {
+          country_code?: string
+          province?: string
+          state?: string
+          county?: string
+          city?: string
+          town?: string
+          village?: string
+        }
+      }>
+    >(
+      `https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=1&accept-language=es`,
+      {
+        headers: { 'User-Agent': 'TankIberica/1.0' },
+      },
+    )
 
     if (res?.[0]?.address) {
       const addr = res[0].address
@@ -222,8 +231,7 @@ export async function geocodeLocation(text: string | null): Promise<ParsedLocati
 
       return { country: countryCode, province: null, region: null }
     }
-  }
-  catch {
+  } catch {
     // Geocoding failed, return local result
   }
 

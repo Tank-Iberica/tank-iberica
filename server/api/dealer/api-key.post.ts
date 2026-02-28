@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
   await supabase
     .from('data_subscriptions')
     .update({ active: false })
-    .eq('contact_email', user.email)
+    .eq('contact_email', user.email ?? '')
 
   // Insert new subscription with API key
   const companyName =

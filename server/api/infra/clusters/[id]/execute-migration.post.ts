@@ -103,7 +103,8 @@ export default defineEventHandler(async (event): Promise<MigrationResult> => {
   // ── Step 1: Set source cluster status to 'migrating' ───────────────────
   const { error: statusError } = await supabase
     .from('infra_clusters')
-    .update({ status: 'migrating' } as never)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .update({ status: 'migrating' } as any)
     .eq('id', sourceClusterId)
 
   if (statusError) {
@@ -185,7 +186,8 @@ export default defineEventHandler(async (event): Promise<MigrationResult> => {
     // Revert status on failure
     await supabase
       .from('infra_clusters')
-      .update({ status: 'active' } as never)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .update({ status: 'active' } as any)
       .eq('id', sourceClusterId)
 
     const message = exportError instanceof Error ? exportError.message : 'Unknown export error'
@@ -196,21 +198,20 @@ export default defineEventHandler(async (event): Promise<MigrationResult> => {
   }
 
   // ── Step 3: Update cluster verticals arrays ────────────────────────────
-  const sourceVerticals = Array.isArray(sourceCluster.verticals)
-    ? (sourceCluster.verticals as string[]).filter((v: string) => v !== vertical)
+  type ClusterExt = { verticals: string[] | null; weight_used: number | null }
+  const src = sourceCluster as unknown as ClusterExt
+  const tgt = targetCluster as unknown as ClusterExt
+
+  const sourceVerticals = Array.isArray(src.verticals)
+    ? src.verticals.filter((v: string) => v !== vertical)
     : []
 
-  const targetVerticals = Array.isArray(targetCluster.verticals)
-    ? [...(targetCluster.verticals as string[]), vertical]
-    : [vertical]
+  const targetVerticals = Array.isArray(tgt.verticals) ? [...tgt.verticals, vertical] : [vertical]
 
   // ── Step 4: Recalculate weight_used ────────────────────────────────────
   const totalMigratedRows = tablesMigrated.reduce((sum, t) => sum + t.rows, 0)
-  const sourceWeightUsed = Math.max(
-    0,
-    Number(sourceCluster.weight_used ?? 0) - totalMigratedRows * 0.001,
-  )
-  const targetWeightUsed = Number(targetCluster.weight_used ?? 0) + totalMigratedRows * 0.001
+  const sourceWeightUsed = Math.max(0, Number(src.weight_used ?? 0) - totalMigratedRows * 0.001)
+  const targetWeightUsed = Number(tgt.weight_used ?? 0) + totalMigratedRows * 0.001
 
   // Update source cluster
   const { error: sourceUpdateError } = await supabase
@@ -218,7 +219,8 @@ export default defineEventHandler(async (event): Promise<MigrationResult> => {
     .update({
       verticals: sourceVerticals,
       weight_used: Math.round(sourceWeightUsed * 100) / 100,
-    } as never)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
     .eq('id', sourceClusterId)
 
   if (sourceUpdateError) {
@@ -234,7 +236,8 @@ export default defineEventHandler(async (event): Promise<MigrationResult> => {
     .update({
       verticals: targetVerticals,
       weight_used: Math.round(targetWeightUsed * 100) / 100,
-    } as never)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
     .eq('id', body.targetClusterId)
 
   if (targetUpdateError) {
@@ -247,7 +250,8 @@ export default defineEventHandler(async (event): Promise<MigrationResult> => {
   // ── Step 5: Set status back to 'active' ────────────────────────────────
   await supabase
     .from('infra_clusters')
-    .update({ status: 'active' } as never)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .update({ status: 'active' } as any)
     .eq('id', sourceClusterId)
 
   // ── Step 6: Log to activity_logs ───────────────────────────────────────
@@ -261,7 +265,8 @@ export default defineEventHandler(async (event): Promise<MigrationResult> => {
       tables_migrated: tablesMigrated,
       total_rows: totalMigratedRows,
     },
-  } as never)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any)
 
   // ── Return results ─────────────────────────────────────────────────────
   return {

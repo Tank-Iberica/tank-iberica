@@ -164,10 +164,12 @@ export function useSubastasIndex() {
     }
   }
 
+  const castAuctions = computed((): Auction[] => auctions.value as unknown as Auction[])
+
   return {
     // State
     activeTab,
-    auctions,
+    auctions: castAuctions,
     loading,
     error,
     now,

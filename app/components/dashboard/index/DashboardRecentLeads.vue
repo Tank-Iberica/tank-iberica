@@ -2,7 +2,7 @@
 import type { DashboardLead } from '~/composables/dashboard/useDashboardIndex'
 
 defineProps<{
-  leads: DashboardLead[]
+  leads: readonly DashboardLead[]
   getStatusColor: (status: string) => string
   formatDate: (dateStr: string | null) => string
 }>()

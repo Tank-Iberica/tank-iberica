@@ -17,12 +17,15 @@ export default defineEventHandler(async (event) => {
   const supabase = serverSupabaseServiceRole(event)
 
   // Try pg_stat_statements (requires Supabase Pro/Team)
-  const { data: slowQueries, error } = await supabase.rpc('get_slow_queries').limit(10)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: slowQueries, error } = await (supabase.rpc as any)('get_slow_queries').limit(10)
 
   if (error) {
     // Fallback: return basic table stats instead
-    const { data: tableStats, error: statsError } = await supabase
-      .from('pg_stat_user_tables' as string)
+    const { data: tableStats, error: statsError } = await (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      supabase.from as any
+    )('pg_stat_user_tables')
       .select('relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_live_tup')
       .order('seq_scan', { ascending: false })
       .limit(10)

@@ -68,21 +68,37 @@
 </template>
 
 <script setup lang="ts">
+interface GuideArticle {
+  id: string
+  title_es: string | null
+  title_en: string | null
+  content_es: string | null
+  content_en: string | null
+  description_es: string | null
+  description_en: string | null
+  image_url: string | null
+  published_at: string | null
+  updated_at: string | null
+  category: string | null
+  hashtags: string[] | null
+  slug: string | null
+}
+
 const route = useRoute()
 const { locale, t } = useI18n()
 const supabase = useSupabaseClient()
 
-async function fetchGuideBySlug(slug: string) {
+async function fetchGuideBySlug(slug: string): Promise<GuideArticle | null> {
   const { data, error } = await supabase
     .from('news')
     .select('*')
     .eq('slug', slug)
     .eq('status', 'published')
-    .eq('article_type', 'guia')
+    .eq('section', 'guia')
     .single()
 
   if (error) return null
-  return data as Record<string, unknown>
+  return data as unknown as GuideArticle
 }
 
 const { data: article, status } = await useAsyncData(`guide-${route.params.slug}`, () =>
@@ -93,21 +109,20 @@ const loading = computed(() => status.value === 'pending')
 
 const title = computed(() => {
   if (!article.value) return ''
-  if (locale.value === 'en' && article.value.title_en) return article.value.title_en as string
-  return (article.value.title_es as string) || ''
+  if (locale.value === 'en' && article.value.title_en) return article.value.title_en
+  return article.value.title_es || ''
 })
 
 const content = computed(() => {
   if (!article.value) return ''
-  if (locale.value === 'en' && article.value.content_en) return article.value.content_en as string
-  return (article.value.content_es as string) || ''
+  if (locale.value === 'en' && article.value.content_en) return article.value.content_en
+  return article.value.content_es || ''
 })
 
 const metaDesc = computed(() => {
   if (!article.value) return ''
-  if (locale.value === 'en' && article.value.description_en)
-    return article.value.description_en as string
-  if (article.value.description_es) return article.value.description_es as string
+  if (locale.value === 'en' && article.value.description_en) return article.value.description_en
+  if (article.value.description_es) return article.value.description_es
   return title.value
 })
 
@@ -134,7 +149,7 @@ if (article.value) {
   usePageSeo({
     title: seoTitle,
     description: metaDesc.value,
-    image: (article.value.image_url as string) || undefined,
+    image: article.value.image_url || undefined,
     type: 'article',
     path: `/guia/${route.params.slug}`,
     jsonLd: {
@@ -142,7 +157,7 @@ if (article.value) {
       '@type': 'Article',
       headline: title.value,
       description: metaDesc.value,
-      image: (article.value.image_url as string) || '',
+      image: article.value.image_url || '',
       datePublished: article.value.published_at,
       dateModified: article.value.updated_at || article.value.published_at,
       author: { '@type': 'Organization', name: 'Tracciona' },
@@ -184,7 +199,8 @@ if (article.value) {
   })
 }
 
-function formatDate(date: string): string {
+function formatDate(date: string | null): string {
+  if (!date) return ''
   return new Date(date).toLocaleDateString(locale.value === 'en' ? 'en-GB' : 'es-ES', {
     year: 'numeric',
     month: 'long',

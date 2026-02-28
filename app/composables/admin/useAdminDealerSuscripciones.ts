@@ -417,12 +417,20 @@ export function useAdminDealerSuscripciones() {
   }
 
   // ---------- Helpers ----------
-  function getPlanConfig(plan: string) {
-    return PLANS.find((p) => p.value === plan) || PLANS[0]
+  function getPlanConfig(plan: string): { value: string; label: string; color: string } {
+    return (PLANS.find((p) => p.value === plan) ?? PLANS[0]) as {
+      value: string
+      label: string
+      color: string
+    }
   }
 
-  function getStatusConfig(status: string | null) {
-    return STATUSES.find((s) => s.value === status) || STATUSES[0]
+  function getStatusConfig(status: string | null): { value: string; label: string; color: string } {
+    return (STATUSES.find((s) => s.value === status) ?? STATUSES[0]) as {
+      value: string
+      label: string
+      color: string
+    }
   }
 
   function getDealerName(sub: DealerSubscription): string {

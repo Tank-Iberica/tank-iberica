@@ -240,11 +240,11 @@ export function useAdminProductoDetail() {
     if (!formData.value.type_id) return []
     const sub = types.value.find((s) => s.id === formData.value.type_id)
     if (!sub?.applicable_filters?.length) {
-      return allFilters.value.filter((f) => f.status === 'published')
+      return allFilters.value.filter((f) => f.status === 'published') as AdminFilter[]
     }
     return allFilters.value.filter(
       (f) => sub.applicable_filters?.includes(f.id) && f.status !== 'archived',
-    )
+    ) as AdminFilter[]
   })
 
   // --- Subcategory / type filtering ---

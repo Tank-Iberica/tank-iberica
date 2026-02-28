@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   // Get recent market context for topic generation
   const { data: recentVehicles } = await supabase
     .from('vehicles')
-    .select('brand, model, subcategory_id')
+    .select('brand, model')
     .eq('status', 'published')
     .order('created_at', { ascending: false })
     .limit(20)
@@ -134,16 +134,16 @@ Return as a JSON array of 2 articles.`,
           .replace(/-+/g, '-')
           .replace(/^-|-$/g, '')
 
-      const { error: insertError } = await supabase.from('articles').insert({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: insertError } = await (supabase.from('articles') as any).insert({
         title: { es: article.title },
         slug: `${slug}-${Date.now()}`,
         excerpt: { es: article.excerpt || '' },
-        content: { es: article.content },
-        category: article.category || 'guias',
+        content_es: article.content,
+        section: article.category || 'guias',
         tags: article.tags || [],
         status: 'draft',
         author: 'AI Assistant',
-        ai_generated: true,
       })
 
       if (!insertError) generated++

@@ -3,7 +3,7 @@ import type { DashboardVehicle } from '~/composables/dashboard/useDashboardIndex
 import { formatPrice } from '~/composables/dashboard/useDashboardIndex'
 
 defineProps<{
-  vehicles: DashboardVehicle[]
+  vehicles: readonly DashboardVehicle[]
 }>()
 
 const { t } = useI18n()

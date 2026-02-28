@@ -171,8 +171,11 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
   }
 
   // 7. Save report to verification_documents
-  const { data: document, error: insertError } = await supabase
-    .from('verification_documents')
+  const { data: document, error: insertError } = await (
+    supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .from('verification_documents') as any
+  )
     .insert({
       vehicle_id: vehicleId,
       doc_type: 'dgt_report',
@@ -181,7 +184,7 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
       file_url: mockReportData.reportUrl,
       generated_at: now,
       verified_by: user.id,
-      data: mockReportData as unknown as Record<string, unknown>,
+      data: mockReportData,
     })
     .select('id')
     .single()
@@ -194,12 +197,12 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
   }
 
   // 8. Update vehicle verification_level to audited (level 3) if currently lower
-  const currentLevel = vehicle.verification_level ?? 0
+  const currentLevel = Number(vehicle.verification_level ?? 0)
   if (currentLevel < 3) {
     const { error: updateError } = await supabase
       .from('vehicles')
       .update({
-        verification_level: 3,
+        verification_level: '3',
         updated_at: now,
       })
       .eq('id', vehicleId)

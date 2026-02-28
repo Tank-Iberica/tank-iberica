@@ -119,8 +119,10 @@ export default defineEventHandler(async (event): Promise<MigrationPlan> => {
   const vertical = body.verticalToMigrate
 
   // ── Count rows for each table ──────────────────────────────────────────
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sbAny = supabase as any
   // Dealers filtered by vertical
-  const dealerCount = await countRows(supabase, 'dealers', 'vertical', vertical)
+  const dealerCount = await countRows(sbAny, 'dealers', 'vertical', vertical)
 
   // Vehicles: filtered via dealer join — get dealer IDs first, then count vehicles
   let vehicleCount = 0
@@ -138,18 +140,18 @@ export default defineEventHandler(async (event): Promise<MigrationPlan> => {
 
   // Categories and subcategories — shared, copy all
   const [categoryCount, subcategoryCount] = await Promise.all([
-    countAllRows(supabase, 'categories'),
-    countAllRows(supabase, 'subcategories'),
+    countAllRows(sbAny, 'categories'),
+    countAllRows(sbAny, 'subcategories'),
   ])
 
   // vertical_config filtered by slug
-  const verticalConfigCount = await countRows(supabase, 'vertical_config', 'slug', vertical)
+  const verticalConfigCount = await countRows(sbAny, 'vertical_config', 'slug', vertical)
 
   // active_landings filtered by vertical
-  const activeLandingsCount = await countRows(supabase, 'active_landings', 'vertical', vertical)
+  const activeLandingsCount = await countRows(sbAny, 'active_landings', 'vertical', vertical)
 
   // articles filtered by vertical
-  const articlesCount = await countRows(supabase, 'articles', 'vertical', vertical)
+  const articlesCount = await countRows(sbAny, 'articles', 'vertical', vertical)
 
   // ── Build migration plan ───────────────────────────────────────────────
   const tables: TablePlan[] = [

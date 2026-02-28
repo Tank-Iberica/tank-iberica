@@ -1,8 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { createHash } from 'node:crypto'
-import { defineSitemapEventHandler } from '#imports'
 
-export default defineSitemapEventHandler(async (event) => {
+export default defineEventHandler(async (event) => {
   setResponseHeader(event, 'Cache-Control', 'public, max-age=21600, s-maxage=21600') // 6h
 
   const supabaseUrl = process.env.SUPABASE_URL || ''
@@ -17,7 +16,7 @@ export default defineSitemapEventHandler(async (event) => {
     loc: string
     lastmod?: string
     priority?: number
-    changefreq?: string
+    changefreq?: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never'
     images?: { loc: string; title?: string; caption?: string }[]
   }[] = []
 
@@ -47,12 +46,12 @@ export default defineSitemapEventHandler(async (event) => {
   // Fetch published news
   const { data: news } = await supabase
     .from('news')
-    .select('slug, updated_at, published_at, article_type')
+    .select('slug, updated_at, published_at, section')
     .eq('status', 'published')
 
   if (news) {
     for (const n of news) {
-      const prefix = n.article_type === 'guia' ? '/guia' : '/noticias'
+      const prefix = n.section === 'guia' ? '/guia' : '/noticias'
       urls.push({
         loc: `${prefix}/${n.slug}`,
         lastmod: n.updated_at || n.published_at,

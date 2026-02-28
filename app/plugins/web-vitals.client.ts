@@ -12,7 +12,7 @@ export default defineNuxtPlugin(() => {
 
     // Send to Google Analytics 4 if available
     if (typeof window !== 'undefined' && 'gtag' in window) {
-      const gtag = (window as Record<string, unknown>).gtag as (
+      const gtag = (window as unknown as Record<string, unknown>).gtag as (
         command: string,
         name: string,
         params: Record<string, unknown>,

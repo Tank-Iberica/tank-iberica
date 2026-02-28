@@ -44,17 +44,21 @@ export default defineEventHandler(async (event) => {
   }
 
   // ── Check alert exists and is not already acknowledged ────────────────────
-  const { data: existingAlert, error: fetchError } = await supabase
+  const { data: existingAlertRaw, error: fetchError } = await supabase
     .from('infra_alerts')
-    .select('id, acknowledged_at')
+    .select('id, acknowledged')
     .eq('id', id)
     .single()
+  const existingAlert = existingAlertRaw as unknown as {
+    id: string
+    acknowledged: boolean | null
+  } | null
 
   if (fetchError || !existingAlert) {
     throw createError({ statusCode: 404, message: 'Alert not found' })
   }
 
-  if (existingAlert.acknowledged_at) {
+  if (existingAlert.acknowledged) {
     return {
       success: true,
       message: 'Alert was already acknowledged',

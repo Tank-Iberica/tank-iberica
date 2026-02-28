@@ -79,10 +79,22 @@
 </template>
 
 <script setup lang="ts">
+interface GuideItem {
+  id: string
+  slug: string | null
+  title_es: string | null
+  title_en: string | null
+  description_es: string | null
+  description_en: string | null
+  image_url: string | null
+  published_at: string | null
+  category: string | null
+}
+
 const { locale, t } = useI18n()
 const supabase = useSupabaseClient()
 
-const guides = ref<Record<string, unknown>[]>([])
+const guides = ref<GuideItem[]>([])
 const loading = ref(false)
 const loadingMore = ref(false)
 const hasMore = ref(true)
@@ -98,14 +110,14 @@ const categories = [
   { value: 'compra', label: 'guide.compra' },
 ]
 
-function getTitle(item: Record<string, unknown>): string {
-  if (locale.value === 'en' && item.title_en) return item.title_en as string
-  return (item.title_es as string) || ''
+function getTitle(item: GuideItem): string {
+  if (locale.value === 'en' && item.title_en) return item.title_en
+  return item.title_es || ''
 }
 
-function getDescription(item: Record<string, unknown>): string {
-  if (locale.value === 'en' && item.description_en) return item.description_en as string
-  return (item.description_es as string) || ''
+function getDescription(item: GuideItem): string {
+  if (locale.value === 'en' && item.description_en) return item.description_en
+  return item.description_es || ''
 }
 
 function formatDate(date: string): string {
@@ -116,12 +128,13 @@ function formatDate(date: string): string {
   })
 }
 
-function buildQuery(category?: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildQuery(category?: string): any {
   let query = supabase
     .from('news')
     .select('*', { count: 'exact' })
     .eq('status', 'published')
-    .eq('article_type', 'guia')
+    .eq('section', 'guia')
     .order('published_at', { ascending: false })
 
   if (category) {
@@ -138,7 +151,7 @@ async function fetchGuides(category?: string) {
   try {
     const { data, error, count } = await buildQuery(category).range(0, PAGE_SIZE - 1)
     if (error) throw error
-    guides.value = (data as Record<string, unknown>[]) || []
+    guides.value = (data as unknown as GuideItem[]) || []
     total.value = count || 0
     hasMore.value = guides.value.length < total.value
   } catch {
@@ -158,7 +171,7 @@ async function handleLoadMore() {
     const to = from + PAGE_SIZE - 1
     const { data, error } = await buildQuery(activeCategory.value || undefined).range(from, to)
     if (error) throw error
-    const newItems = (data as Record<string, unknown>[]) || []
+    const newItems = (data as unknown as GuideItem[]) || []
     guides.value = [...guides.value, ...newItems]
     hasMore.value = guides.value.length < total.value
   } catch {

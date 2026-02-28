@@ -187,16 +187,16 @@ ${truncatedHtml}`,
         .replace(/[^a-z0-9-]/g, '-')
         .replace(/-+/g, '-')
 
-      const { error: insertError } = await supabase.from('vehicles').insert({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: insertError } = await (supabase.from('vehicles') as any).insert({
         dealer_id: dealer.id,
         brand: v.brand,
         model: v.model || '',
         year: v.year,
         price: v.price,
-        description: { es: v.description || '' },
+        description_es: v.description || '',
         slug,
         status: 'draft',
-        images: v.imageUrls?.slice(0, 10) || [],
         import_source: hostname,
       })
 

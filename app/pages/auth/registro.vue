@@ -30,8 +30,8 @@
         v-else-if="step === 1"
         :selected-type="selectedType"
         @select="
-          (type) => {
-            selectedType = type
+          (t: 'buyer' | 'dealer') => {
+            selectedType = t
             step = 2
           }
         "

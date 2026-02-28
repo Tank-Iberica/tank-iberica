@@ -77,7 +77,7 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
 
   extractCharacteristics(vehicle.attributes_json)
   extractCharacteristics(
-    (vehicle as Record<string, unknown>).caracteristicas_json as Record<string, unknown>,
+    (vehicle as unknown as Record<string, unknown>).caracteristicas_json as Record<string, unknown>,
   )
 
   const description =

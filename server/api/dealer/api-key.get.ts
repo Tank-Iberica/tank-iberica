@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
   const { data: sub } = await supabase
     .from('data_subscriptions')
     .select('api_key, rate_limit_daily, active')
-    .eq('contact_email', user.email)
+    .eq('contact_email', user.email ?? '')
     .eq('active', true)
     .maybeSingle()
 

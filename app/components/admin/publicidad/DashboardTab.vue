@@ -265,7 +265,7 @@ defineProps<{
 }>()
 
 defineEmits<{
-  'update:dateRange': [value: string]
+  'update:dateRange': [value: '7d' | '30d' | 'custom' | '90d']
   'update:customFrom': [value: string]
   'update:customTo': [value: string]
   refresh: []

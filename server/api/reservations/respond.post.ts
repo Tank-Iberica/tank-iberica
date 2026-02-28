@@ -81,7 +81,7 @@ export default defineEventHandler(async (event): Promise<RespondResponse> => {
   }
 
   // Ensure reservation is in a respondable state
-  if (!['pending', 'active'].includes(reservation.status)) {
+  if (!['pending', 'active'].includes(reservation.status as string)) {
     throw createError({
       statusCode: 409,
       message: `Cannot respond to a reservation with status "${reservation.status}"`,

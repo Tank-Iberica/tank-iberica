@@ -139,7 +139,7 @@ export function generateDocFileName(
   const parts = [sanitize(docType), sanitize(vehicle.brand)]
   if (vehicle.year) parts.push(String(vehicle.year))
   if (vehicle.plate) parts.push(vehicle.plate.replace(/\s+/g, ''))
-  parts.push(date || new Date().toISOString().split('T')[0])
+  parts.push(date || (new Date().toISOString().split('T')[0] ?? ''))
 
   return `${parts.join('_')}.${originalExt || 'pdf'}`
 }

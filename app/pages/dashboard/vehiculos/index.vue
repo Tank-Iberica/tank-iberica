@@ -33,13 +33,14 @@ async function loadVehicles(): Promise<void> {
     const { data, error: err } = await supabase
       .from('vehicles')
       .select(
-        'id, brand, model, year, price, status, views, slug, created_at, vehicle_images(url, position)',
+        'id, brand, model, year, price, status, slug, created_at, vehicle_images(url, position)',
       )
       .eq('dealer_id', dealer.id)
       .order('created_at', { ascending: false })
 
     if (err) throw err
-    vehicles.value = (data || []) as DealerVehicle[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vehicles.value = (data || []) as any as DealerVehicle[]
   } catch (err: unknown) {
     error.value = err instanceof Error ? err.message : 'Error loading vehicles'
   } finally {

@@ -198,7 +198,7 @@ if (article.value) {
   })
 
   // Build FAQ JSON-LD from faq_schema JSONB column (if present)
-  const faqData = (article.value as Record<string, unknown>)?.faq_schema as
+  const faqData = (article.value as unknown as Record<string, unknown>)?.faq_schema as
     | Array<{ question: string; answer: string }>
     | null
     | undefined

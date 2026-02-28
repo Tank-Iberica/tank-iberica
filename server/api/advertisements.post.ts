@@ -224,7 +224,8 @@ export default defineEventHandler(async (event) => {
       vehicle_type: body.vehicle_type || null,
       category_id: body.category_id || null,
       subcategory_id: body.subcategory_id || null,
-      attributes_json: body.attributes_json || null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      attributes_json: (body.attributes_json || null) as any,
       kilometers: body.kilometers ?? null,
       photos: body.photos || null,
       tech_sheet: body.tech_sheet || null,

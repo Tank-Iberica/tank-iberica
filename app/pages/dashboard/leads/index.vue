@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { LeadFilters, LeadStatus } from '~/composables/useDealerLeads'
+
 /**
  * All Leads - Filterable list of received leads.
  * Tabs: all, new, viewed, contacted, negotiating, won, lost
@@ -12,6 +14,7 @@ const { t } = useI18n()
 const { dealerProfile, loadDealer } = useDealerDashboard()
 
 const dealerId = computed(() => dealerProfile.value?.id || null)
+
 const { leads, loading, error, total, loadLeads } = useDealerLeads(dealerId)
 
 type StatusTab = 'all' | 'new' | 'viewed' | 'contacted' | 'negotiating' | 'won' | 'lost'
@@ -24,10 +27,10 @@ async function fetchData(): Promise<void> {
   const dealer = dealerProfile.value || (await loadDealer())
   if (!dealer) return
 
-  const filters: { status: string | null; search: string } = {
-    status: activeTab.value === 'all' ? null : activeTab.value,
+  const filters: Partial<LeadFilters> = {
+    status: activeTab.value === 'all' ? null : (activeTab.value as LeadStatus),
     search: searchQuery.value,
-  }
+  } as Partial<LeadFilters>
 
   await loadLeads(filters)
 }

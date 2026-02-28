@@ -281,9 +281,13 @@ export function useInvoice() {
     if (!dealer) return
 
     try {
-      const { data, error: rpcError } = await supabase.rpc('generate_dealer_invoice_number', {
-        p_dealer_id: dealer.id,
-      })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error: rpcError } = await (supabase.rpc as any)(
+        'generate_dealer_invoice_number',
+        {
+          p_dealer_id: dealer.id,
+        },
+      )
 
       if (rpcError || !data) {
         // Fallback: prefix + year + sequence
@@ -322,7 +326,7 @@ export function useInvoice() {
         .limit(50)
 
       if (fetchError) throw fetchError
-      invoiceHistory.value = (data || []) as DealerInvoiceRow[]
+      invoiceHistory.value = (data || []) as unknown as DealerInvoiceRow[]
     } catch (err: unknown) {
       errorMessage.value =
         err instanceof Error ? err.message : t('dashboard.tools.invoice.errorLoading')
@@ -508,7 +512,7 @@ export function useInvoice() {
         <div class="invoice-title">${txt.invoice}</div>
         <div class="invoice-meta">
           <div>${txt.num} ${invoiceNumber.value}</div>
-          <div>${txt.date} ${formatDateDMY(invoiceDate.value)}</div>
+          <div>${txt.date} ${formatDateDMY(invoiceDate.value || '')}</div>
         </div>
       </div>
     </div>

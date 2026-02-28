@@ -76,7 +76,8 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event, body?.secret)
 
   const supabase = serverSupabaseServiceRole(event)
-  const _internalSecret = useRuntimeConfig().cronSecret || process.env.CRON_SECRET
+  const config = useRuntimeConfig()
+  const _internalSecret = config.cronSecret || process.env.CRON_SECRET
   const collectedMetrics: MetricEntry[] = []
   const errors: string[] = []
 
@@ -84,7 +85,10 @@ export default defineEventHandler(async (event) => {
   // 1. Supabase — Database size
   // ═════════════════════════════════════════════════════════════════════════
   try {
-    const { data: dbSizeData, error: dbSizeError } = await supabase.rpc('get_pg_database_size')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: dbSizeData, error: dbSizeError } = await (supabase.rpc as any)(
+      'get_pg_database_size',
+    )
 
     if (!dbSizeError && dbSizeData !== null && dbSizeData !== undefined) {
       const sizeBytes = typeof dbSizeData === 'number' ? dbSizeData : Number(dbSizeData)
@@ -109,7 +113,10 @@ export default defineEventHandler(async (event) => {
   // 2. Supabase — Active connections
   // ═════════════════════════════════════════════════════════════════════════
   try {
-    const { data: connData, error: connError } = await supabase.rpc('get_pg_stat_activity_count')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: connData, error: connError } = await (supabase.rpc as any)(
+      'get_pg_stat_activity_count',
+    )
 
     if (!connError && connData !== null && connData !== undefined) {
       const connections = typeof connData === 'number' ? connData : Number(connData)

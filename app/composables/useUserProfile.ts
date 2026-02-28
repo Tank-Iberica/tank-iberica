@@ -84,7 +84,8 @@ export function useUserProfile() {
 
     try {
       // Attempt RPC-based account deletion (server-side function)
-      const { error: rpcErr } = await supabase.rpc('delete_own_account')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: rpcErr } = await (supabase.rpc as any)('delete_own_account')
 
       if (rpcErr) throw rpcErr
 

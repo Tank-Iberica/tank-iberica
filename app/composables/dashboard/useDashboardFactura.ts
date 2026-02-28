@@ -141,7 +141,7 @@ export function useDashboardFactura() {
   function updateSettingsField(field: SettingsField, value: string): void {
     const map: Record<SettingsField, Ref<string>> = {
       invoiceNumber,
-      invoiceDate,
+      invoiceDate: invoiceDate as Ref<string>,
       invoiceLanguage: invoiceLanguage as unknown as Ref<string>,
       invoiceConditions,
       vehicleSearch,
