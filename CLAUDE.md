@@ -6,6 +6,13 @@
 
 **REGLA ABSOLUTA:** Los pasos 1-3 son SOLO texto. Está PROHIBIDO llamar a cualquier herramienta (Read, Glob, Grep, Bash, Task, etc.) hasta que el usuario haya confirmado TANTO la tarea (paso 2) COMO el modelo (paso 3). El único mensaje que puedes enviar antes de ambas confirmaciones es texto plano al usuario. Si violas esto, estás violando el protocolo.
 
+### Opus al inicio y nuevas órdenes
+
+- **Al inicio de sesión:** Cambia a Opus para leer CLAUDE.md, STATUS.md y PROYECTO-CONTEXTO.md. Entender contexto profundo requiere mejor modelo.
+- **Al recibir orden nueva** (excepto "continuar tarea"): Cambia a Opus para los Pasos 1–2 (analizar y resumir). Opus entiende mejor órdenes complejas y ambiguas.
+- **Después de resumir (Paso 2):** El flujo normal continúa. Recomienda modelo para la ejecución (Haiku/Sonnet/Opus según complejidad de la tarea).
+- **"Continuar tarea":** No es nueva orden, es reanudación. No cambiar modelo innecesariamente; si estabas en Haiku, continúa en Haiku.
+
 ### Paso 1 — Analiza la orden
 
 Antes de escribir nada, evalúa mentalmente:
