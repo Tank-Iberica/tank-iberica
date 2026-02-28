@@ -124,42 +124,21 @@
 > Fuente: `docs/auditorias/AUDITORIA-26-FEBRERO.md` — Dimensión 2 (Código y arquitectura, 74/100)
 > Issue específico: "32 archivos >500 líneas, FilterBar.vue con 1.999 líneas"
 
-**Estado:** Iteraciones 1–14 completas · último commit `67f62d4`
+**Estado:** Iteraciones 1–15 completas ✅ · último commit `7dde04a`
 
-### Lo que se hizo (iter 14, esta sesión)
+### Iteración 15 — composables grandes (completado 28-feb)
 
-10 componentes procesados — 8 refactorizados, 2 excluidos (dominados por CSS):
+5 composables refactorizados. Typecheck 0 errores en todos los commits.
 
-| Componente                                          | Antes | Después | Resultado                                         |
-| --------------------------------------------------- | ----- | ------- | ------------------------------------------------- |
-| `components/user/UserPanel.vue`                     | 1467  | ~300    | Composable extraído (sesión anterior)             |
-| `components/modals/AdvertiseModal.vue`              | 1266  | ~400    | Composable extraído (sesión anterior)             |
-| `components/admin/layout/AdminSidebar.vue`          | 1193  | ~300    | Composable extraído (sesión anterior)             |
-| `components/catalog/FilterBar.vue`                  | 1157  | ~200    | Split en 2 subcomponentes + composable            |
-| `components/catalog/VehicleTable.vue`               | 1132  | ~700    | `useVehicleTable.ts` + `VehicleTablePdfModal.vue` |
-| `components/catalog/ControlsBar.vue`                | 1074  | ~350    | Composable extraído (sesión anterior)             |
-| `components/admin/utilidades/ContractGenerator.vue` | 1051  | ~565    | `useContractGenerator.ts`                         |
-| `components/admin/utilidades/InvoiceGenerator.vue`  | 900   | ~565    | `useInvoiceGenerator.ts`                          |
-| `components/layout/AppHeader.vue`                   | 896   | —       | **Excluido** — CSS = 583 líneas; no reducible     |
-| `components/DealerPortal.vue`                       | 875   | —       | **Excluido** — CSS = 461 líneas; no reducible     |
+| Composable (antes)                            | Antes | Después | Archivos extraídos                                                                                                     |
+| --------------------------------------------- | ----- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `composables/admin/useAdminProductosPage.ts`  | 974   | 475     | `useAdminProductosColumns.ts`, `useAdminProductosSort.ts`, `utils/adminProductosExport.ts`                             |
+| `composables/admin/useAdminEmails.ts`         | 902   | 305     | `utils/adminEmailTemplates.ts`                                                                                         |
+| `composables/admin/useAdminMetrics.ts`        | 854   | 124     | `useAdminMetricsRevenue.ts`, `useAdminMetricsActivity.ts`, `utils/adminMetricsExport.ts`, `utils/adminMetricsTypes.ts` |
+| `composables/admin/useAdminProductoDetail.ts` | 779   | 419     | `useAdminProductoDetailVerif.ts`, `useAdminProductoDetailImages.ts`, `useAdminProductoDetailRecords.ts`                |
+| `composables/dashboard/useInvoice.ts`         | 728   | 486     | `utils/invoiceTypes.ts`, `utils/invoicePdf.ts`, `utils/invoiceFormatters.ts`                                           |
 
-Commits: `172104e` (refactoring) · `67f62d4` (minor type fixes)
-
-### Pendiente — Iteración 15 (siguiente sesión, opcional)
-
-Composables grandes que superan 500 líneas:
-
-| Composable                                    | Líneas |
-| --------------------------------------------- | ------ |
-| `composables/admin/useAdminProductosPage.ts`  | ~968   |
-| `composables/admin/useAdminEmails.ts`         | ~902   |
-| `composables/admin/useAdminMetrics.ts`        | ~854   |
-| `composables/admin/useAdminProductoDetail.ts` | ~779   |
-| `composables/useInvoice.ts`                   | ~724   |
-
-**Prompt para retomar:**
-
-> "Lee CLAUDE.md y STATUS.md antes de hacer nada. Cuando estés listo, continúa con el Punto #7 Iteración 15 — composables grandes, empieza por `useAdminProductosPage.ts`."
+Commits iter 15: `c13676f`, `145a7c5`, `1f93765`, `a613249`, `7dde04a`
 
 ---
 
@@ -241,4 +220,4 @@ Composables grandes que superan 500 líneas:
 1. ~~**P0-1 + P0-2:** Resueltos — commit `891edf1`~~
 2. **P0-3:** Configurar Cloudflare WAF rules → activa rate limiting en producción
 3. **P2-2:** Extraer ~115 strings sin i18n del panel admin (opcional, bajo impacto)
-4. **Auditoría #7 Iteración 15** → refactoring composables grandes (`useAdminProductosPage.ts`, `useAdminEmails.ts`, etc.)
+4. ~~**Auditoría #7 Iteración 15**~~ → ✅ Completo — 5 composables grandes refactorizados
