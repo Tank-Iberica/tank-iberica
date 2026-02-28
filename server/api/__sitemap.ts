@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { createHash } from 'node:crypto'
 import { defineSitemapEventHandler } from '#imports'
 
 export default defineSitemapEventHandler(async (event) => {
@@ -111,6 +112,17 @@ export default defineSitemapEventHandler(async (event) => {
         priority: 0.6,
       })
     }
+  }
+
+  // Generate ETag for conditional requests (304 Not Modified)
+  const etag = createHash('md5').update(JSON.stringify(urls)).digest('hex')
+  setResponseHeader(event, 'ETag', `"${etag}"`)
+
+  // Check If-None-Match for conditional requests
+  const ifNoneMatch = getRequestHeader(event, 'if-none-match')
+  if (ifNoneMatch === `"${etag}"`) {
+    setResponseStatus(event, 304)
+    return []
   }
 
   return urls
