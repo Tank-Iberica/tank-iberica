@@ -112,6 +112,10 @@ export function useFavorites() {
   // Fire-and-forget Supabase sync
   syncWithSupabase()
 
+  /**
+   * Toggle a vehicle as favorite/unfavorite.
+   * Updates localStorage immediately and syncs to Supabase if authenticated.
+   */
   function toggle(vehicleId: string) {
     const next = new Set(favoriteIds.value)
     if (next.has(vehicleId)) {
@@ -134,14 +138,17 @@ export function useFavorites() {
     }
   }
 
+  /** Returns true if the given vehicle is in the favorites list. */
   function isFavorite(vehicleId: string): boolean {
     return favoriteIds.value.has(vehicleId)
   }
 
+  /** Toggle the "show favorites only" filter in the catalog. */
   function toggleFilter() {
     favoritesOnly.value = !favoritesOnly.value
   }
 
+  /** Returns the total number of favorited vehicles. */
   function count(): number {
     return favoriteIds.value.size
   }

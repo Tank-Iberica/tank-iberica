@@ -136,7 +136,7 @@ export function useReservation() {
     await nextTick()
 
     const plan = currentPlan.value
-    const tier = DEPOSIT_BY_PLAN[plan] ?? DEPOSIT_BY_PLAN.free
+    const tier = (DEPOSIT_BY_PLAN[plan] ?? DEPOSIT_BY_PLAN['free'])!
 
     if (tier.free_per_month === 0) {
       return {
@@ -229,7 +229,7 @@ export function useReservation() {
     const idx = reservations.value.findIndex((r) => r.id === reservationId)
     if (idx !== -1) {
       reservations.value[idx] = {
-        ...reservations.value[idx],
+        ...reservations.value[idx]!,
         status: 'seller_responded',
         seller_response: message,
         seller_responded_at: new Date().toISOString(),
@@ -259,7 +259,7 @@ export function useReservation() {
     const idx = reservations.value.findIndex((r) => r.id === reservationId)
     if (idx !== -1) {
       reservations.value[idx] = {
-        ...reservations.value[idx],
+        ...reservations.value[idx]!,
         status: 'refunded',
       }
     }
@@ -290,7 +290,7 @@ export function useReservation() {
     const idx = reservations.value.findIndex((r) => r.id === reservationId)
     if (idx !== -1) {
       reservations.value[idx] = {
-        ...reservations.value[idx],
+        ...reservations.value[idx]!,
         status: 'completed',
         buyer_confirmed_at: new Date().toISOString(),
       }

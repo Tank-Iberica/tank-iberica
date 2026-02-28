@@ -190,8 +190,8 @@ export function useGoogleDrive() {
     )
 
     if (search.files?.length) {
-      folderCache.set(cacheKey, search.files[0].id)
-      return search.files[0].id
+      folderCache.set(cacheKey, search.files[0]!.id)
+      return search.files[0]!.id
     }
 
     // Create folder
@@ -403,7 +403,7 @@ export function useGoogleDrive() {
         return false
       }
 
-      const folderId = search.files[0].id
+      const folderId = search.files[0]!.id
 
       // Move: add Historico as parent, remove current parent
       await fetch(

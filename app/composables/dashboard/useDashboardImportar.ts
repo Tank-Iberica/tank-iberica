@@ -90,7 +90,7 @@ export function useDashboardImportar() {
     ])
 
     categories.value = (catRes.data || []) as CategoryOption[]
-    subcategories.value = (subRes.data || []) as SubcategoryOption[]
+    subcategories.value = (subRes.data || []) as unknown as SubcategoryOption[]
     activeListingsCount.value = countRes.count || 0
   }
 
@@ -135,13 +135,13 @@ export function useDashboardImportar() {
       }
 
       // Parse header
-      const headerLine = lines[0]
+      const headerLine = lines[0]!
       const separator = headerLine.includes(';') ? ';' : ','
 
       // Parse rows
       const rows: ParsedRow[] = []
       for (let i = 1; i < lines.length; i++) {
-        const line = lines[i].trim()
+        const line = lines[i]!.trim()
         if (!line) continue
 
         const cols = line.split(separator).map((col) => col.trim().replace(/^"|"$/g, ''))
@@ -221,7 +221,7 @@ export function useDashboardImportar() {
     step.value = 3
 
     for (let i = 0; i < validRows.length; i++) {
-      const row = validRows[i]
+      const row = validRows[i]!
 
       try {
         // Find category and subcategory IDs
@@ -268,7 +268,7 @@ export function useDashboardImportar() {
           views: 0,
           is_online: true,
           vertical: getVerticalSlug(),
-        })
+        } as never)
 
         if (err) {
           errorCount.value++

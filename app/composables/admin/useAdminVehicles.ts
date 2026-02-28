@@ -24,6 +24,7 @@ export interface VehicleFormData {
   category: 'alquiler' | 'venta' | 'terceros'
   categories?: string[] // Multiple categories support (legacy compatibility)
   subcategory_id: string | null
+  type_id?: string | null
   location: string | null
   location_en: string | null
   location_country: string | null
@@ -122,11 +123,11 @@ export function useAdminVehicles() {
         .order('created_at', { ascending: false })
 
       if (filters.status) {
-        query = query.eq('status', filters.status)
+        query = query.eq('status', filters.status as never)
       }
 
       if (filters.category) {
-        query = query.eq('category', filters.category)
+        query = query.eq('category', filters.category as never)
       }
 
       if (filters.category_id) {
@@ -353,7 +354,7 @@ export function useAdminVehicles() {
         brand: vehicle.brand,
         model: vehicle.model,
         year: vehicle.year,
-        subcategory_id: vehicle.subcategory_id,
+        subcategory_id: vehicle.category_id,
         original_price: vehicle.price,
         sale_price: saleData.sale_price,
         sale_date: new Date().toISOString().split('T')[0],

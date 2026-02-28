@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # Resumen Exhaustivo — Auditoría y Análisis SEO de Tank Ibérica / Tracciona
 
 > **Fuente:** Conversación de 2,165 páginas con Claude (extraída el 25/02/2026)

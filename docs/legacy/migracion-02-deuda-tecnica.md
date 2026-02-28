@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 ## PASO 6B: DEUDA TÉCNICA DIFERIDA (NO hacer durante migración — referencia)
 
 Estos problemas están identificados pero NO deben resolverse durante la migración. Requieren más trabajo o tienen dependencias externas. Se documentan aquí para no olvidarlos.

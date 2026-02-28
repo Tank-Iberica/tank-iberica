@@ -1,9 +1,11 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 ## PASO 0: BACKUP (HACER PRIMERO, ANTES DE CUALQUIER CAMBIO)
 
 1. Copiar TODO el proyecto actual a una nueva carpeta:
 
 ```
-Origen:  C:\Users\j_m_g\OneDrive\Documentos\tank-iberica\
+Origen:  C:\Users\j_m_g\OneDrive\Documentos	ank-iberica\
 Destino: C:\Users\j_m_g\OneDrive\Documentos\Tracciona\
 ```
 
@@ -19,6 +21,6 @@ Destino: C:\Users\j_m_g\OneDrive\Documentos\Tracciona\
 3. Verificar que la copia está completa antes de continuar.
 
 **A PARTIR DE AQUÍ, TODOS LOS CAMBIOS SE HACEN SOLO EN C:\Users\j_m_g\OneDrive\Documentos\Tracciona\*\*
-**NUNCA MODIFICAR NADA EN C:\Users\j_m_g\OneDrive\Documentos\tank-iberica\*\*
+**NUNCA MODIFICAR NADA EN C:\Users\j_m_g\OneDrive\Documentos ank-iberica\*\*
 
 ---

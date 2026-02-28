@@ -62,7 +62,7 @@ export function useAdminTypes() {
 
       const countMap = new Map<string, number>()
       if (vehicleCounts) {
-        for (const v of vehicleCounts as { subcategory_id: string | null }[]) {
+        for (const v of vehicleCounts as unknown as { subcategory_id: string | null }[]) {
           if (v.subcategory_id) {
             countMap.set(v.subcategory_id, (countMap.get(v.subcategory_id) || 0) + 1)
           }
@@ -242,8 +242,8 @@ export function useAdminTypes() {
     const index = types.value.findIndex((t) => t.id === id)
     if (index <= 0) return false
 
-    const current = types.value[index]
-    const previous = types.value[index - 1]
+    const current = types.value[index]!
+    const previous = types.value[index - 1]!
 
     const success = await reorder([
       { id: current.id, sort_order: previous.sort_order },
@@ -264,8 +264,8 @@ export function useAdminTypes() {
     const index = types.value.findIndex((t) => t.id === id)
     if (index < 0 || index >= types.value.length - 1) return false
 
-    const current = types.value[index]
-    const next = types.value[index + 1]
+    const current = types.value[index]!
+    const next = types.value[index + 1]!
 
     const success = await reorder([
       { id: current.id, sort_order: next.sort_order },

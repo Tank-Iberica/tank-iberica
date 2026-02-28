@@ -9,6 +9,7 @@
  */
 import { serverSupabaseUser } from '#supabase/server'
 import { defineEventHandler, readBody, createError } from 'h3'
+import { safeError } from '~~/server/utils/safeError'
 import { callAI } from '~~/server/services/aiProvider'
 
 interface GenerateDescriptionBody {
@@ -90,9 +91,6 @@ Responde SOLO con la descripcion, sin titulos ni encabezados.`
     return { description: response.text.trim() }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'AI generation failed'
-    throw createError({
-      statusCode: 500,
-      message: `Description generation failed: ${message}`,
-    })
+    throw safeError(500, `Description generation failed: ${message}`)
   }
 })

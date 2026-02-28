@@ -152,9 +152,9 @@ export function useVehicles() {
     }
 
     if ((filters.actions || filters.categories)?.length) {
-      query = query.in('category', filters.actions || filters.categories!)
+      query = query.in('category', (filters.actions || filters.categories!) as never)
     } else if (filters.action || filters.category) {
-      query = query.eq('category', filters.action || filters.category!)
+      query = query.eq('category', (filters.action || filters.category!) as never)
     }
 
     if (filters.category_id) {
@@ -208,7 +208,7 @@ export function useVehicles() {
       const from = 0
       const to = PAGE_SIZE - 1
 
-      const result = await retryQuery(() => buildQuery(filters).range(from, to))
+      const result = await retryQuery(async () => await buildQuery(filters).range(from, to))
 
       if (result.error) throw result.error
 
@@ -233,7 +233,7 @@ export function useVehicles() {
       const from = page.value * PAGE_SIZE
       const to = from + PAGE_SIZE - 1
 
-      const result = await retryQuery(() => buildQuery(filters).range(from, to))
+      const result = await retryQuery(async () => await buildQuery(filters).range(from, to))
 
       if (result.error) throw result.error
 

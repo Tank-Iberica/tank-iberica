@@ -164,7 +164,7 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
 
   const rentalForm = ref<RentalFormData>({
     monthly_price: 0,
-    start_date: new Date().toISOString().split('T')[0],
+    start_date: new Date().toISOString().split('T')[0] ?? '',
     end_date: '',
     renter_name: '',
     renter_contact: '',
@@ -264,7 +264,7 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
     const { data } = await supabase
       .from('attributes')
       .select('*')
-      .eq('status', 'active')
+      .eq('status', 'active' as never)
       .order('sort_order', { ascending: true })
 
     filterDefinitions.value = (data as FilterDefinition[] | null) || []
@@ -287,7 +287,7 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
       price: vehicle.price,
       rental_price: vehicle.rental_price,
       category: vehicle.category,
-      subcategory_id: vehicle.subcategory_id ?? null,
+      subcategory_id: vehicle.category_id ?? null,
       type_id: vehicle.type_id,
       is_online: vehicle.is_online ?? true,
       location: vehicle.location,

@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # ADDENDUM — Plan Operativo Tracciona
 
 ## Tareas adicionales no incluidas en el plan original (16 Feb 2026)

@@ -1,8 +1,59 @@
+<script setup lang="ts">
+import { useAdminSidebar } from '~/composables/admin/useAdminSidebar'
+
+defineProps<{
+  collapsed: boolean
+  open: boolean
+}>()
+
+defineEmits<{
+  'toggle-collapse': []
+  close: []
+}>()
+
+const {
+  showDropdown,
+  toggleDropdown,
+  openGroups,
+  toggleGroup,
+  pendingCatalog,
+  pendingComunicacion,
+  pendingUsuarios,
+  infraAlertCount,
+  isActive,
+  isActiveGroup,
+  configItems,
+  catalogItems,
+  financeItems,
+  communicationItems,
+  usersItems,
+  popover,
+  openPopover,
+  closePopover,
+  handleLogout,
+} = useAdminSidebar()
+
+function onConfigPopover(e: MouseEvent) {
+  openPopover('config', e)
+}
+function onCatalogPopover(e: MouseEvent) {
+  openPopover('catalog', e)
+}
+function onFinancePopover(e: MouseEvent) {
+  openPopover('finance', e)
+}
+function onCommunicationPopover(e: MouseEvent) {
+  openPopover('communication', e)
+}
+function onUsersPopover(e: MouseEvent) {
+  openPopover('users', e)
+}
+</script>
+
 <template>
   <aside class="admin-sidebar" :class="{ collapsed, open }">
-    <!-- Header with company name and dropdown -->
+    <!-- Header -->
     <div class="sidebar-header">
-      <!-- Company name row -->
       <div class="header-top">
         <div v-if="!collapsed" class="company-dropdown" :class="{ 'dropdown-open': showDropdown }">
           <button class="company-btn" @click="toggleDropdown">
@@ -18,8 +69,6 @@
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
-
-          <!-- Dropdown menu -->
           <Transition name="dropdown">
             <div v-if="showDropdown" class="dropdown-menu">
               <button class="dropdown-item" @click="handleLogout">
@@ -34,10 +83,8 @@
           </Transition>
         </div>
 
-        <!-- Collapsed: just logo -->
         <span v-else class="logo-icon">TI</span>
 
-        <!-- Mobile close button -->
         <button
           v-if="!collapsed"
           class="close-btn-mobile"
@@ -57,9 +104,8 @@
         </button>
       </div>
 
-      <!-- Action buttons row (always visible) -->
       <div class="header-actions">
-        <a href="/" target="_blank" class="header-btn" :title="collapsed ? '' : 'Abrir sitio'">
+        <a href="/" target="_blank" class="header-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
             <polyline points="15 3 21 3 21 9" />
@@ -67,11 +113,7 @@
           </svg>
           <span v-if="!collapsed" class="btn-label">Abrir sitio</span>
         </a>
-        <button
-          class="header-btn"
-          :title="collapsed ? '' : collapsed ? 'Expandir' : 'Plegar'"
-          @click="$emit('toggle-collapse')"
-        >
+        <button class="header-btn" @click="$emit('toggle-collapse')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path v-if="collapsed" d="M9 18l6-6-6-6" />
             <path v-else d="M15 18l-6-6 6-6" />
@@ -83,7 +125,7 @@
 
     <!-- Navigation -->
     <nav class="sidebar-nav">
-      <!-- 1. DASHBOARD -->
+      <!-- Dashboard -->
       <NuxtLink to="/admin" class="nav-item" :class="{ active: isActive('/admin', true) }">
         <svg
           class="nav-icon"
@@ -100,7 +142,7 @@
         <span v-if="!collapsed" class="nav-label">Dashboard</span>
       </NuxtLink>
 
-      <!-- 1b. METRICS -->
+      <!-- Métricas -->
       <NuxtLink
         to="/admin/dashboard"
         class="nav-item"
@@ -120,13 +162,19 @@
         <span v-if="!collapsed" class="nav-label">Metricas</span>
       </NuxtLink>
 
-      <!-- 2. CONFIGURACIÓN -->
-      <div class="nav-group">
-        <button
-          class="nav-group-header"
-          :class="{ 'has-badge': false, active: isActiveGroup('config') }"
-          @click="collapsed ? openPopover('config', $event) : toggleGroup('config')"
-        >
+      <!-- Configuración -->
+      <AdminSidebarNavGroup
+        label="Configuración"
+        :collapsed="collapsed"
+        :is-open="openGroups.config"
+        :badge="0"
+        :is-active-group="isActiveGroup('config')"
+        :items="configItems"
+        :is-active-fn="isActive"
+        @toggle="toggleGroup('config')"
+        @open-popover="onConfigPopover"
+      >
+        <template #icon>
           <svg
             class="nav-icon"
             viewBox="0 0 24 24"
@@ -139,100 +187,22 @@
               d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"
             />
           </svg>
-          <span v-if="!collapsed" class="nav-label">Configuración</span>
-          <svg
-            v-if="!collapsed"
-            class="nav-chevron"
-            :class="{ open: openGroups.config }"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </button>
-        <div v-if="!collapsed" v-show="openGroups.config" class="nav-group-items">
-          <NuxtLink
-            to="/admin/config/branding"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/config/branding') }"
-          >
-            <span class="nav-label">Identidad</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/config/navigation"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/config/navigation') }"
-          >
-            <span class="nav-label">Navegación</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/config/homepage"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/config/homepage') }"
-          >
-            <span class="nav-label">Homepage</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/config/catalog"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/config/catalog') }"
-          >
-            <span class="nav-label">Catálogo</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/config/languages"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/config/languages') }"
-          >
-            <span class="nav-label">Idiomas</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/config/pricing"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/config/pricing') }"
-          >
-            <span class="nav-label">Precios</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/config/integrations"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/config/integrations') }"
-          >
-            <span class="nav-label">Integraciones</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/config/emails"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/config/emails') }"
-          >
-            <span class="nav-label">Emails</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/config/editorial"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/config/editorial') }"
-          >
-            <span class="nav-label">Editorial</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/config/system"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/config/system') }"
-          >
-            <span class="nav-label">Sistema</span>
-          </NuxtLink>
-        </div>
-      </div>
+        </template>
+      </AdminSidebarNavGroup>
 
-      <!-- 3. CATÁLOGO -->
-      <div class="nav-group">
-        <button
-          class="nav-group-header"
-          :class="{ 'has-badge': pendingCatalog > 0, active: isActiveGroup('catalog') }"
-          @click="collapsed ? openPopover('catalog', $event) : toggleGroup('catalog')"
-        >
+      <!-- Catálogo -->
+      <AdminSidebarNavGroup
+        label="Catálogo"
+        :collapsed="collapsed"
+        :is-open="openGroups.catalog"
+        :badge="pendingCatalog"
+        :is-active-group="isActiveGroup('catalog')"
+        :items="catalogItems"
+        :is-active-fn="isActive"
+        @toggle="toggleGroup('catalog')"
+        @open-popover="onCatalogPopover"
+      >
+        <template #icon>
           <svg
             class="nav-icon"
             viewBox="0 0 24 24"
@@ -245,71 +215,22 @@
             <circle cx="5.5" cy="18.5" r="2.5" />
             <circle cx="18.5" cy="18.5" r="2.5" />
           </svg>
-          <span v-if="!collapsed" class="nav-label">Catálogo</span>
-          <span v-if="!collapsed && !openGroups.catalog && pendingCatalog > 0" class="badge">{{
-            pendingCatalog
-          }}</span>
-          <span v-if="collapsed && pendingCatalog > 0" class="badge-dot" />
-          <svg
-            v-if="!collapsed"
-            class="nav-chevron"
-            :class="{ open: openGroups.catalog }"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </button>
-        <div v-if="!collapsed" v-show="openGroups.catalog" class="nav-group-items">
-          <NuxtLink
-            to="/admin/productos"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/productos') }"
-          >
-            <span class="nav-label">Productos</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/anunciantes"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/anunciantes') }"
-          >
-            <span class="nav-label">Anunciantes</span>
-            <span v-if="pendingAnunciantes > 0" class="badge">{{ pendingAnunciantes }}</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/solicitantes"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/solicitantes') }"
-          >
-            <span class="nav-label">Solicitantes</span>
-            <span v-if="pendingSolicitantes > 0" class="badge">{{ pendingSolicitantes }}</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/cartera"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/cartera') }"
-          >
-            <span class="nav-label">Cartera</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/agenda"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/agenda') }"
-          >
-            <span class="nav-label">Agenda</span>
-          </NuxtLink>
-        </div>
-      </div>
+        </template>
+      </AdminSidebarNavGroup>
 
-      <!-- 4. FINANZAS -->
-      <div class="nav-group">
-        <button
-          class="nav-group-header"
-          :class="{ active: isActiveGroup('finance') }"
-          @click="collapsed ? openPopover('finance', $event) : toggleGroup('finance')"
-        >
+      <!-- Finanzas -->
+      <AdminSidebarNavGroup
+        label="Finanzas"
+        :collapsed="collapsed"
+        :is-open="openGroups.finance"
+        :badge="0"
+        :is-active-group="isActiveGroup('finance')"
+        :items="financeItems"
+        :is-active-fn="isActive"
+        @toggle="toggleGroup('finance')"
+        @open-popover="onFinancePopover"
+      >
+        <template #icon>
           <svg
             class="nav-icon"
             viewBox="0 0 24 24"
@@ -320,58 +241,22 @@
             <line x1="12" y1="1" x2="12" y2="23" />
             <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
           </svg>
-          <span v-if="!collapsed" class="nav-label">Finanzas</span>
-          <svg
-            v-if="!collapsed"
-            class="nav-chevron"
-            :class="{ open: openGroups.finance }"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </button>
-        <div v-if="!collapsed" v-show="openGroups.finance" class="nav-group-items">
-          <NuxtLink
-            to="/admin/balance"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/balance') }"
-          >
-            <span class="nav-label">Balance</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/registro"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/registro') }"
-          >
-            <span class="nav-label">Registro</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/historico"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/historico') }"
-          >
-            <span class="nav-label">Histórico</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/utilidades"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/utilidades') }"
-          >
-            <span class="nav-label">Utilidades</span>
-          </NuxtLink>
-        </div>
-      </div>
+        </template>
+      </AdminSidebarNavGroup>
 
-      <!-- 5. COMUNICACIÓN -->
-      <div class="nav-group">
-        <button
-          class="nav-group-header"
-          :class="{ 'has-badge': pendingComunicacion > 0, active: isActiveGroup('communication') }"
-          @click="collapsed ? openPopover('communication', $event) : toggleGroup('communication')"
-        >
+      <!-- Comunicación -->
+      <AdminSidebarNavGroup
+        label="Comunicación"
+        :collapsed="collapsed"
+        :is-open="openGroups.communication"
+        :badge="pendingComunicacion"
+        :is-active-group="isActiveGroup('communication')"
+        :items="communicationItems"
+        :is-active-fn="isActive"
+        @toggle="toggleGroup('communication')"
+        @open-popover="onCommunicationPopover"
+      >
+        <template #icon>
           <svg
             class="nav-icon"
             viewBox="0 0 24 24"
@@ -381,58 +266,22 @@
           >
             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
           </svg>
-          <span v-if="!collapsed" class="nav-label">Comunicación</span>
-          <span
-            v-if="!collapsed && !openGroups.communication && pendingComunicacion > 0"
-            class="badge"
-            >{{ pendingComunicacion }}</span
-          >
-          <span v-if="collapsed && pendingComunicacion > 0" class="badge-dot" />
-          <svg
-            v-if="!collapsed"
-            class="nav-chevron"
-            :class="{ open: openGroups.communication }"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </button>
-        <div v-if="!collapsed" v-show="openGroups.communication" class="nav-group-items">
-          <NuxtLink
-            to="/admin/banner"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/banner') }"
-          >
-            <span class="nav-label">Banner</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/noticias"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/noticias') }"
-          >
-            <span class="nav-label">Noticias</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/comentarios"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/comentarios') }"
-          >
-            <span class="nav-label">Comentarios</span>
-            <span v-if="pendingComentarios > 0" class="badge">{{ pendingComentarios }}</span>
-          </NuxtLink>
-        </div>
-      </div>
+        </template>
+      </AdminSidebarNavGroup>
 
-      <!-- 6. COMUNIDAD -->
-      <div class="nav-group">
-        <button
-          class="nav-group-header"
-          :class="{ 'has-badge': pendingUsuarios > 0, active: isActiveGroup('users') }"
-          @click="collapsed ? openPopover('users', $event) : toggleGroup('users')"
-        >
+      <!-- Comunidad -->
+      <AdminSidebarNavGroup
+        label="Comunidad"
+        :collapsed="collapsed"
+        :is-open="openGroups.users"
+        :badge="pendingUsuarios"
+        :is-active-group="isActiveGroup('users')"
+        :items="usersItems"
+        :is-active-fn="isActive"
+        @toggle="toggleGroup('users')"
+        @open-popover="onUsersPopover"
+      >
+        <template #icon>
           <svg
             class="nav-icon"
             viewBox="0 0 24 24"
@@ -444,51 +293,10 @@
             <circle cx="9" cy="7" r="4" />
             <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
           </svg>
-          <span v-if="!collapsed" class="nav-label">Comunidad</span>
-          <span v-if="!collapsed && !openGroups.users && pendingUsuarios > 0" class="badge">{{
-            pendingUsuarios
-          }}</span>
-          <span v-if="collapsed && pendingUsuarios > 0" class="badge-dot" />
-          <svg
-            v-if="!collapsed"
-            class="nav-chevron"
-            :class="{ open: openGroups.users }"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </button>
-        <div v-if="!collapsed" v-show="openGroups.users" class="nav-group-items">
-          <NuxtLink
-            to="/admin/usuarios"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/usuarios') }"
-          >
-            <span class="nav-label">Usuarios</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/chats"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/chats') }"
-          >
-            <span class="nav-label">Chats</span>
-            <span v-if="pendingChats > 0" class="badge">{{ pendingChats }}</span>
-          </NuxtLink>
-          <NuxtLink
-            to="/admin/suscripciones"
-            class="nav-item sub"
-            :class="{ active: isActive('/admin/suscripciones') }"
-          >
-            <span class="nav-label">Suscripciones</span>
-            <span v-if="pendingSuscripciones > 0" class="badge">{{ pendingSuscripciones }}</span>
-          </NuxtLink>
-        </div>
-      </div>
+        </template>
+      </AdminSidebarNavGroup>
 
-      <!-- 7. INFRAESTRUCTURA -->
+      <!-- Infraestructura -->
       <NuxtLink
         to="/admin/infraestructura"
         class="nav-item"
@@ -511,245 +319,10 @@
       </NuxtLink>
     </nav>
 
-    <!-- Popover for collapsed state -->
-    <Teleport to="body">
-      <Transition name="popover">
-        <div
-          v-if="popover.show"
-          class="nav-popover"
-          :style="{ top: popover.top + 'px', left: popover.left + 'px' }"
-          @mouseleave="closePopover"
-        >
-          <div class="popover-title">{{ popover.title }}</div>
-          <NuxtLink
-            v-for="item in popover.items"
-            :key="item.to"
-            :to="item.to"
-            class="popover-item"
-            :class="{ active: isActive(item.to) }"
-            @click="closePopover"
-          >
-            {{ item.label }}
-            <span v-if="item.badge" class="badge">{{ item.badge }}</span>
-          </NuxtLink>
-        </div>
-      </Transition>
-    </Teleport>
+    <!-- Popover (collapsed sidebar) -->
+    <AdminSidebarPopover :popover="popover" :is-active-fn="isActive" @close="closePopover" />
   </aside>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-  collapsed: boolean
-  open: boolean
-}>()
-
-defineEmits<{
-  'toggle-collapse': []
-  close: []
-}>()
-
-const route = useRoute()
-const supabase = useSupabaseClient()
-
-// Dropdown state
-const showDropdown = ref(false)
-
-function toggleDropdown() {
-  showDropdown.value = !showDropdown.value
-}
-
-// Close dropdown when clicking outside
-onMounted(() => {
-  const handleClickOutside = (e: MouseEvent) => {
-    const target = e.target as HTMLElement
-    if (!target.closest('.company-dropdown')) {
-      showDropdown.value = false
-    }
-  }
-  document.addEventListener('click', handleClickOutside)
-  onUnmounted(() => {
-    document.removeEventListener('click', handleClickOutside)
-  })
-})
-
-// Secciones abiertas/cerradas - Persiste durante la sesión con useState
-const openGroups = useState('admin-sidebar-groups', () => ({
-  config: false,
-  catalog: true,
-  finance: false,
-  communication: false,
-  users: false,
-}))
-
-// Contadores de acciones pendientes (se conectarán a Supabase)
-const pendingAnunciantes = ref(0)
-const pendingSolicitantes = ref(0)
-const pendingComentarios = ref(0)
-const pendingChats = ref(0)
-const pendingSuscripciones = ref(0)
-const infraAlertCount = ref(0)
-
-// Totales por sección
-const pendingCatalog = computed(() => pendingAnunciantes.value + pendingSolicitantes.value)
-const pendingComunicacion = computed(() => pendingComentarios.value)
-const pendingUsuarios = computed(() => pendingChats.value + pendingSuscripciones.value)
-
-function toggleGroup(group: keyof typeof openGroups.value) {
-  openGroups.value[group] = !openGroups.value[group]
-}
-
-function isActive(path: string, exact = false): boolean {
-  if (exact) {
-    return route.path === path
-  }
-  return route.path.startsWith(path)
-}
-
-// Check if any item in a group is active
-function isActiveGroup(group: string): boolean {
-  const groupPaths: Record<string, string[]> = {
-    config: ['/admin/config'],
-    catalog: [
-      '/admin/productos',
-      '/admin/anunciantes',
-      '/admin/solicitantes',
-      '/admin/cartera',
-      '/admin/agenda',
-    ],
-    finance: ['/admin/balance', '/admin/registro', '/admin/historico', '/admin/utilidades'],
-    communication: ['/admin/banner', '/admin/noticias', '/admin/comentarios'],
-    users: ['/admin/usuarios', '/admin/chats', '/admin/suscripciones'],
-  }
-  return groupPaths[group]?.some((path) => route.path.startsWith(path)) || false
-}
-
-// Popover state for collapsed sidebar
-const popover = ref({
-  show: false,
-  top: 0,
-  left: 0,
-  title: '',
-  items: [] as Array<{ to: string; label: string; badge?: number }>,
-})
-
-const popoverData: Record<
-  string,
-  { title: string; items: Array<{ to: string; label: string; badgeRef?: string }> }
-> = {
-  config: {
-    title: 'Configuración',
-    items: [
-      { to: '/admin/config/branding', label: 'Identidad' },
-      { to: '/admin/config/navigation', label: 'Navegación' },
-      { to: '/admin/config/homepage', label: 'Homepage' },
-      { to: '/admin/config/catalog', label: 'Catálogo' },
-      { to: '/admin/config/languages', label: 'Idiomas' },
-      { to: '/admin/config/pricing', label: 'Precios' },
-      { to: '/admin/config/integrations', label: 'Integraciones' },
-      { to: '/admin/config/emails', label: 'Emails' },
-      { to: '/admin/config/editorial', label: 'Editorial' },
-      { to: '/admin/config/system', label: 'Sistema' },
-    ],
-  },
-  catalog: {
-    title: 'Catálogo',
-    items: [
-      { to: '/admin/productos', label: 'Productos' },
-      { to: '/admin/anunciantes', label: 'Anunciantes', badgeRef: 'pendingAnunciantes' },
-      { to: '/admin/solicitantes', label: 'Solicitantes', badgeRef: 'pendingSolicitantes' },
-      { to: '/admin/cartera', label: 'Cartera' },
-      { to: '/admin/agenda', label: 'Agenda' },
-    ],
-  },
-  finance: {
-    title: 'Finanzas',
-    items: [
-      { to: '/admin/balance', label: 'Balance' },
-      { to: '/admin/registro', label: 'Registro' },
-      { to: '/admin/historico', label: 'Histórico' },
-      { to: '/admin/utilidades', label: 'Utilidades' },
-    ],
-  },
-  communication: {
-    title: 'Comunicación',
-    items: [
-      { to: '/admin/banner', label: 'Banner' },
-      { to: '/admin/noticias', label: 'Noticias' },
-      { to: '/admin/comentarios', label: 'Comentarios', badgeRef: 'pendingComentarios' },
-    ],
-  },
-  users: {
-    title: 'Comunidad',
-    items: [
-      { to: '/admin/usuarios', label: 'Usuarios' },
-      { to: '/admin/chats', label: 'Chats', badgeRef: 'pendingChats' },
-      { to: '/admin/suscripciones', label: 'Suscripciones', badgeRef: 'pendingSuscripciones' },
-    ],
-  },
-}
-
-const badgeRefs: Record<string, Ref<number>> = {
-  pendingAnunciantes,
-  pendingSolicitantes,
-  pendingComentarios,
-  pendingChats,
-  pendingSuscripciones,
-}
-
-function openPopover(group: string, event: MouseEvent) {
-  const data = popoverData[group]
-  if (!data) return
-
-  const target = event.currentTarget as HTMLElement
-  const rect = target.getBoundingClientRect()
-
-  popover.value = {
-    show: true,
-    top: rect.top,
-    left: rect.right + 8,
-    title: data.title,
-    items: data.items.map((item) => ({
-      to: item.to,
-      label: item.label,
-      badge: item.badgeRef ? badgeRefs[item.badgeRef]?.value : undefined,
-    })),
-  }
-}
-
-function closePopover() {
-  popover.value.show = false
-}
-
-async function fetchInfraAlerts() {
-  // infra_alerts may not be in generated types yet — use untyped query
-  const client = supabase as unknown as {
-    from: (table: string) => {
-      select: (...args: unknown[]) => {
-        is: (...args: unknown[]) => {
-          in: (...args: unknown[]) => Promise<{ count: number | null }>
-        }
-      }
-    }
-  }
-  const { count } = await client
-    .from('infra_alerts')
-    .select('*', { count: 'exact', head: true })
-    .is('acknowledged_at', null)
-    .in('alert_level', ['critical', 'emergency'])
-  infraAlertCount.value = count ?? 0
-}
-
-onMounted(() => {
-  fetchInfraAlerts()
-})
-
-async function handleLogout() {
-  showDropdown.value = false
-  await supabase.auth.signOut()
-  navigateTo('/')
-}
-</script>
 
 <style scoped>
 .admin-sidebar {
@@ -808,7 +381,6 @@ async function handleLogout() {
   align-items: center;
 }
 
-/* Header top row */
 .header-top {
   display: flex;
   align-items: center;
@@ -880,7 +452,6 @@ async function handleLogout() {
   transform: rotate(180deg);
 }
 
-/* Dropdown menu */
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -915,7 +486,6 @@ async function handleLogout() {
   height: 18px;
 }
 
-/* Dropdown transitions */
 .dropdown-enter-active,
 .dropdown-leave-active {
   transition: all 0.2s ease;
@@ -996,6 +566,10 @@ async function handleLogout() {
   padding: var(--spacing-3);
 }
 
+.collapsed .sidebar-nav {
+  overflow-y: visible;
+}
+
 .nav-item {
   display: flex;
   align-items: center;
@@ -1020,15 +594,6 @@ async function handleLogout() {
   color: var(--color-accent);
 }
 
-.nav-item.sub {
-  padding-left: var(--spacing-8);
-}
-
-.collapsed .nav-item.sub {
-  padding-left: var(--spacing-3);
-  justify-content: center;
-}
-
 .nav-icon {
   width: 20px;
   height: 20px;
@@ -1042,83 +607,6 @@ async function handleLogout() {
   flex: 1;
 }
 
-.nav-abbr {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-}
-
-/* Badge */
-.badge {
-  background: #ef4444;
-  color: white;
-  font-size: 11px;
-  font-weight: var(--font-weight-bold);
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto;
-}
-
-/* Nav groups */
-.nav-group {
-  margin-bottom: var(--spacing-1);
-}
-
-.nav-group-header {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  width: 100%;
-  padding: var(--spacing-3);
-  border-radius: var(--border-radius);
-  color: var(--text-on-dark-secondary);
-  text-align: left;
-  transition:
-    background var(--transition-fast),
-    color var(--transition-fast);
-  min-height: 44px;
-}
-
-.nav-group-header:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-on-dark-primary);
-}
-
-.nav-chevron {
-  width: 16px;
-  height: 16px;
-  margin-left: auto;
-  transition: transform var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.nav-chevron.open {
-  transform: rotate(180deg);
-}
-
-.nav-group-items {
-  margin-top: var(--spacing-1);
-}
-
-/* Collapsed state styles */
-.collapsed .nav-group-header {
-  justify-content: center;
-  position: relative;
-}
-
-.collapsed .nav-group-header .nav-icon {
-  margin: 0;
-}
-
-.collapsed .sidebar-nav {
-  overflow-y: visible;
-}
-
-/* Badge dot for collapsed state */
 .badge-dot {
   position: absolute;
   top: 8px;
@@ -1127,67 +615,5 @@ async function handleLogout() {
   height: 8px;
   background: #ef4444;
   border-radius: 50%;
-}
-
-/* Active state for group headers */
-.nav-group-header.active {
-  background: rgba(127, 209, 200, 0.2);
-  color: var(--color-accent);
-}
-
-/* Popover menu for collapsed state */
-.nav-popover {
-  position: fixed;
-  background: var(--color-primary);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  min-width: 180px;
-  z-index: 9999;
-  overflow: hidden;
-}
-
-.popover-title {
-  padding: var(--spacing-3) var(--spacing-4);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-on-dark-secondary);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.popover-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-3) var(--spacing-4);
-  color: var(--text-on-dark-primary);
-  text-decoration: none;
-  transition: background var(--transition-fast);
-}
-
-.popover-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.popover-item.active {
-  background: rgba(127, 209, 200, 0.2);
-  color: var(--color-accent);
-}
-
-.popover-item .badge {
-  margin-left: var(--spacing-2);
-}
-
-/* Popover transitions */
-.popover-enter-active,
-.popover-leave-active {
-  transition: all 0.15s ease;
-}
-
-.popover-enter-from,
-.popover-leave-to {
-  opacity: 0;
-  transform: translateX(-8px);
 }
 </style>

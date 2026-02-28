@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 ## PASO 7: MEJORAS POST-LANZAMIENTO — FASE 1 (Primeras semanas)
 
 Estas mejoras requieren que el dominio esté activo y/o que haya contenido real cargado. NO hacerlas durante la migración técnica, sino inmediatamente después del primer deploy.

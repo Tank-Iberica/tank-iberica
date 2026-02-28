@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # ADDENDUM — Business Bible TradeBase
 
 ## Actualizaciones posteriores a la versión original (13-14 Feb 2026)

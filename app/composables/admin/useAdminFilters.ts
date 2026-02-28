@@ -323,8 +323,8 @@ export function useAdminFilters() {
     const index = filters.value.findIndex((f) => f.id === id)
     if (index < 0 || index >= filters.value.length - 1) return false
 
-    const current = filters.value[index]
-    const next = filters.value[index + 1]
+    const current = filters.value[index]!
+    const next = filters.value[index + 1]!
 
     saving.value = true
     try {

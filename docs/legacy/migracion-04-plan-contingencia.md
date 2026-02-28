@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # Plan de Contingencia y Resiliencia Técnica
 
 > Última actualización: Sesión 30

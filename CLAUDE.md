@@ -1,8 +1,28 @@
 # Tracciona.com — Marketplace de Vehículos Industriales
 
-## ANTES DE HACER NADA — Selección de modelo (OBLIGATORIO)
+## ANTES DE HACER NADA — Protocolo obligatorio (SIEMPRE, SIN EXCEPCIONES)
 
-**STOP. Tu PRIMER mensaje en CADA tarea DEBE ser la recomendación de modelo. NO ejecutes ni una sola acción antes.**
+**STOP. Antes de ejecutar cualquier tarea, sigue estos 4 pasos en orden. NO hay excepciones.**
+
+### Paso 1 — Analiza la orden
+
+Antes de escribir nada, evalúa mentalmente:
+
+- ¿Es una tarea o varias? Si son varias, sepáralas y pregunta el orden.
+- ¿Falta información clave? (archivo concreto, error exacto, resultado esperado). Si falta, pregunta.
+- ¿La orden describe un proceso o un resultado? Si describe un proceso, pregunta qué resultado final se espera.
+- ¿Puede afectar a otros módulos? Si es así, avisa antes de continuar.
+- ¿Hay forma de hacer esto consumiendo menos tokens? (menos archivos que leer, tarea más acotada). Si la hay, proponla.
+
+### Paso 2 — Resume y confirma la tarea
+
+Tu primer mensaje es UN RESUMEN DE UNA LÍNEA de lo que vas a hacer, seguido de "¿Es correcto?".
+
+**ESPERA confirmación del usuario. NO ejecutes nada todavía.**
+
+### Paso 3 — Recomienda modelo y espera confirmación
+
+Con la tarea ya clara, recomienda el modelo adecuado:
 
 | Tipo de tarea | Modelo     | Ejemplos                                                                          |
 | ------------- | ---------- | --------------------------------------------------------------------------------- |
@@ -10,14 +30,24 @@
 | Intermedia    | **Sonnet** | Crear componentes, resolver bugs, refactoring, implementar features               |
 | Compleja      | **Opus**   | Auditorias, arquitectura, migraciones grandes, analisis profundo                  |
 
-**Protocolo:**
+Tu mensaje es EXACTAMENTE: "Para esta tarea recomiendo **[modelo]** porque [razón]. ¿Cambio con /model o mantengo el actual?"
 
-1. Tu primer mensaje SIEMPRE es: "Para esta tarea recomiendo **[modelo]** porque [razon]. ¿Cambio con /model o mantengo el actual?"
-2. ESPERA confirmacion del usuario. NO empieces a trabajar.
-3. Si durante la tarea el tipo de trabajo cambia, PARA y di: "Esta parte requiere **[otro modelo]**. ¿Cambio?"
-4. Si el usuario te pide algo y ya estas en el modelo correcto, confirma: "Estamos en [modelo], correcto para esta tarea."
+**ESPERA confirmación del usuario. NO ejecutes herramientas, NO leas archivos, NO corras comandos.**
 
-**Razon:** El usuario paga por tokens. Opus en una tarea simple = desperdicio. Haiku en una tarea compleja = resultado pobre.
+El mensaje debe contener SOLO la recomendación de modelo y NADA MÁS. Cualquier acción antes de recibir confirmación es una violación del protocolo.
+
+### Paso 4 — Ejecuta
+
+Solo tras confirmar tarea (paso 2) Y modelo (paso 3), empieza a trabajar.
+
+---
+
+**Durante la tarea:**
+
+- Si el tipo de trabajo cambia, PARA y di: "Esta parte requiere **[otro modelo]**. ¿Cambio?"
+- Si ya estás en el modelo correcto, confirma: "Estamos en [modelo], correcto para esta tarea."
+
+**Razón:** El usuario paga por tokens. Opus en una tarea simple = desperdicio. Haiku en una tarea compleja = resultado pobre. Una orden mal entendida = trabajo tirado.
 
 ---
 
@@ -38,7 +68,7 @@ Toda la documentación activa está en `docs/tracciona-docs/`.
 
 **Si necesitas ejecutar el proyecto:**
 
-- Lee `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Define las 43 sesiones de trabajo. Sesiones 1-43 completadas. El usuario puede pedir "ejecuta la sesión N" para re-ejecutar o verificar cualquier sesión.
+- Lee `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Define las sesiones de trabajo. Sesiones 0-64 completadas. El usuario puede pedir "ejecuta la sesión N" para re-ejecutar o verificar cualquier sesión.
 - Consulta los anexos en `docs/tracciona-docs/anexos/` cuando una sesión los referencia.
 
 **Regla principal:** Ejecutar solo lo que dicen las INSTRUCCIONES-MAESTRAS. Los anexos son REFERENCIA, no tareas independientes.
@@ -90,6 +120,16 @@ Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de cód
 
 - Trabajar siempre de forma secuencial, sin subagentes paralelos
 - Priorizar eficiencia de tokens sobre velocidad
+
+## Mantenimiento de procesos
+
+Antes de ejecutar `npm run dev`, `npm run build` o cualquier comando que lance Node, ejecuta primero:
+
+```
+taskkill /F /IM node.exe 2>nul
+```
+
+Esto evita acumulación de procesos Node huérfanos que saturan la RAM.
 
 ## Gestión de límites
 

@@ -89,7 +89,7 @@ export function useDealerDashboard() {
         .single()
 
       if (err) throw err
-      dealerProfile.value = data as DealerProfile
+      dealerProfile.value = data as unknown as DealerProfile
       return dealerProfile.value
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error loading dealer profile'
@@ -241,7 +241,7 @@ export function useDealerDashboard() {
 
       // Map top vehicles
       const topVehiclesMapped = (
-        (topVehiclesRes.data || []) as Array<{
+        (topVehiclesRes.data || []) as unknown as Array<{
           id: string
           brand: string
           model: string

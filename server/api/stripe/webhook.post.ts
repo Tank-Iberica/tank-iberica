@@ -1,4 +1,5 @@
 import { createError, defineEventHandler, readRawBody } from 'h3'
+import { safeError } from '../../utils/safeError'
 import {
   supabaseRestPatch,
   supabaseRestInsert,
@@ -35,7 +36,10 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, message: 'Service not configured' })
   }
 
-  const sbConfig: SupabaseRestConfig = { url: supabaseUrl, serviceRoleKey: supabaseKey }
+  const sbConfig: SupabaseRestConfig = {
+    url: supabaseUrl as string,
+    serviceRoleKey: supabaseKey as string,
+  }
 
   // Verify webhook signature (fail-closed)
   const sig = event.node.req.headers['stripe-signature'] as string
@@ -64,10 +68,7 @@ export default defineEventHandler(async (event) => {
       ) as unknown as typeof stripeEvent
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unknown error'
-      throw createError({
-        statusCode: 400,
-        message: `Webhook signature verification failed: ${message}`,
-      })
+      throw safeError(400, `Webhook signature verification failed: ${message}`)
     }
   }
 
@@ -380,7 +381,7 @@ export default defineEventHandler(async (event) => {
                 `dealer_id=eq.${dealerId}&status=eq.published&order=created_at.asc`,
                 'id',
               )
-              const freeLimit = PLAN_LIMITS.free
+              const freeLimit = PLAN_LIMITS['free'] ?? 3
               if (publishedData.length > freeLimit) {
                 const toPause = publishedData.slice(freeLimit)
                 const ids = toPause.map((v) => v.id).join(',')

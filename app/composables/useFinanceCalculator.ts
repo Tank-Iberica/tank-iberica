@@ -191,7 +191,8 @@ export function useFinanceCalculator() {
       totalByYear.push(cumulativeTotal)
     }
 
-    const grandTotal = years > 0 ? totalByYear[years - 1] : price + transferTax
+    const grandTotal =
+      years > 0 ? (totalByYear[years - 1] ?? price + transferTax) : price + transferTax
 
     return {
       purchasePrice: price,
@@ -273,8 +274,8 @@ export function useFinanceCalculator() {
   function formatCurrency(cents: number): string {
     const euros = cents / 100
     const parts = euros.toFixed(2).split('.')
-    const integerPart = parts[0]
-    const decimalPart = parts[1]
+    const integerPart = parts[0] ?? '0'
+    const decimalPart = parts[1] ?? '00'
 
     // Add thousand separators with dots
     const formatted = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.')

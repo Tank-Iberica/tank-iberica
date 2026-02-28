@@ -100,7 +100,7 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
       if (err) throw err
 
       leads.value = (
-        (data || []) as Array<{
+        (data || []) as unknown as Array<{
           id: string
           dealer_id: string
           vehicle_id: string | null
@@ -162,7 +162,7 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
 
       if (err) throw err
 
-      const lead = data as {
+      const lead = data as unknown as {
         id: string
         dealer_id: string
         vehicle_id: string | null
@@ -248,11 +248,11 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
       const idx = leads.value.findIndex((l) => l.id === leadId)
       if (idx >= 0) {
         leads.value[idx] = {
-          ...leads.value[idx],
+          ...leads.value[idx]!,
           status: newStatus,
           updated_at: updateData.updated_at as string,
           status_history: updateData.status_history as StatusChange[],
-          dealer_notes: (notes || leads.value[idx].dealer_notes) as string | null,
+          dealer_notes: (notes || leads.value[idx]!.dealer_notes) as string | null,
         }
       }
 
@@ -290,7 +290,7 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
       // Update local state
       const idx = leads.value.findIndex((l) => l.id === leadId)
       if (idx >= 0) {
-        leads.value[idx] = { ...leads.value[idx], dealer_notes: dealerNotes }
+        leads.value[idx] = { ...leads.value[idx]!, dealer_notes: dealerNotes }
       }
 
       if (currentLead.value?.id === leadId) {

@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # Valoración del proyecto Tracciona — 1 a 100 puntos
 
 **Fecha:** 24 febrero 2026  

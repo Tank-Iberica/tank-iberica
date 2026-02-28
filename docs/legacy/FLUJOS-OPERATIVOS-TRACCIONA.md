@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # Flujos Operativos y Evolución por Fases — Tracciona / TradeBase
 
 > **INSTRUCCIÓN:** Este documento complementa a CONTEXTO-COMPLETO-TRACCIONA.md (visión general) y resumen_tank_iberica.md (detalle técnico/SEO). Aquellos explican QUÉ es cada sistema. Este explica CÓMO funciona por dentro y CÓMO escala de fase 1 a fase 4.

@@ -94,7 +94,7 @@ export default defineEventHandler(async (event) => {
   const isFirstSubscription = (!Array.isArray(subData) || subData.length === 0) && !hasHadTrial
 
   // Determine price
-  const unitAmount = PRICES[plan][interval]
+  const unitAmount = PRICES[plan]?.[interval] ?? 0
 
   // Create Stripe Checkout Session
   const sessionParams: Record<string, unknown> = {

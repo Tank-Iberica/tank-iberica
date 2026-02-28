@@ -36,22 +36,21 @@ jobs:
       - run: npm ci
       - run: npm audit --audit-level=high
 
-  # Snyk: Opción recomendada es conectar via web (snyk.io → GitHub integration).
-  # Si prefieres CI, descomenta el job de abajo y configura SNYK_TOKEN como GitHub Secret.
-  #
-  # snyk:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: '20'
-  #     - run: npm ci
-  #     - uses: snyk/actions/node@master
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-  #       with:
-  #         args: --severity-threshold=high
+  # Requiere: configurar SNYK_TOKEN como GitHub Secret (snyk.io → Settings → API token)
+  snyk:
+    runs-on: ubuntu-latest
+    continue-on-error: true # No bloquea CI si SNYK_TOKEN no está configurado
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
 
   security-tests:
     runs-on: ubuntu-latest

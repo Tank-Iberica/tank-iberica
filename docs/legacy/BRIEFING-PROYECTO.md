@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # BRIEFING COMPLETO DEL PROYECTO — Para cualquier sesión de Claude
 
 > **Propósito de este documento:** Que cualquier sesión de Claude (Code, chat, o lo que sea) entienda al 100% qué es este proyecto, dónde está, qué queda por hacer, y cómo continuar. No es un resumen — es la fuente de verdad comprimida.

@@ -93,19 +93,18 @@ export default defineEventHandler(async (event): Promise<CreateReservationRespon
   // ── 6. Determine deposit based on subscription tier ───────────────────────
   const { data: sub } = await supabase
     .from('subscriptions')
-    .select('plan, freebies_used_this_month')
+    .select('plan')
     .eq('user_id', user.id)
     .eq('status', 'active')
     .single()
 
   let depositCents = 5000 // Default: 50 EUR
-  let isFreebie = false
+  const isFreebie = false
   const plan = sub?.plan || 'free'
 
-  if (plan === 'premium' && (sub?.freebies_used_this_month || 0) < 3) {
+  if (plan === 'premium') {
     depositCents = 1000 // 10 EUR discounted
-    isFreebie = false // Still charges but discounted
-  } else if (plan === 'basic' && (sub?.freebies_used_this_month || 0) < 1) {
+  } else if (plan === 'basic') {
     depositCents = 2500 // 25 EUR discounted
   }
 

@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # DOCUMENTO 2 — Tareas que debemos hacer nosotros (Claude Code no puede)
 
 **Generado:** 25 febrero 2026

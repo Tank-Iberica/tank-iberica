@@ -41,6 +41,19 @@ export function useToast() {
 
     toasts.value.push(toast)
 
+    // Announce to screen readers via ARIA live regions
+    if (import.meta.client) {
+      const regionId = type === 'error' ? 'aria-live-assertive' : 'aria-live-region'
+      const region = document.getElementById(regionId)
+      if (region) {
+        region.textContent = translatedMessage
+        // Clear after announcement so the same message can be re-announced
+        setTimeout(() => {
+          region.textContent = ''
+        }, 1000)
+      }
+    }
+
     // Auto-remove after duration
     if (duration > 0) {
       setTimeout(() => {

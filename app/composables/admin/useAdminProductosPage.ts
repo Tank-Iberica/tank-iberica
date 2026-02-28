@@ -200,12 +200,14 @@ export function useAdminProductosPage() {
 
   const hasActiveFilters = computed(
     () =>
-      filters.value.status ||
-      filters.value.category ||
-      filters.value.type_id ||
-      filters.value.subcategory_id ||
-      filters.value.search ||
-      onlineFilter.value !== 'all',
+      !!(
+        filters.value.status ||
+        filters.value.category ||
+        filters.value.type_id ||
+        filters.value.subcategory_id ||
+        filters.value.search ||
+        onlineFilter.value !== 'all'
+      ),
   )
 
   function clearFilters() {
@@ -229,10 +231,11 @@ export function useAdminProductosPage() {
     const { data } = await supabase
       .from('subcategory_categories')
       .select('subcategory_id, category_id')
-    typeSubcategoryLinks.value = (data as { type_id: string; subcategory_id: string }[]) || []
+    typeSubcategoryLinks.value =
+      (data as unknown as { type_id: string; subcategory_id: string }[]) || []
   }
 
-  function getSubcategoryForVehicle(typeId: string | null): string {
+  function getSubcategoryForVehicle(typeId: string | null | undefined): string {
     if (!typeId) return '-'
     const link = typeSubcategoryLinks.value.find((l) => l.type_id === typeId)
     if (!link) return '-'
@@ -272,7 +275,7 @@ export function useAdminProductosPage() {
         key: `filter_${f.name}`,
         filterName: f.name,
         label: f.label_es || f.name,
-        unit: f.unit,
+        unit: f.unit ?? undefined,
       }))
   })
 
@@ -584,9 +587,11 @@ export function useAdminProductosPage() {
     if (exportScope === 'all') {
       dataToExport = vehicles.value as AdminVehicle[]
     } else if (exportScope === 'selected') {
-      dataToExport = sortedVehicles.value.filter((v) => selectedIds.value.has(v.id))
+      dataToExport = sortedVehicles.value.filter((v) =>
+        selectedIds.value.has(v.id),
+      ) as AdminVehicle[]
     } else {
-      dataToExport = sortedVehicles.value
+      dataToExport = sortedVehicles.value as AdminVehicle[]
     }
 
     if (dataToExport.length === 0) {

@@ -45,6 +45,10 @@ export function useAuth() {
     return userEmail.value.split('@')[0] || ''
   })
 
+  /**
+   * Fetch the user profile from the database.
+   * Cached for 5 minutes to avoid redundant DB calls.
+   */
   async function fetchProfile(): Promise<UserProfile | null> {
     if (!supabaseUser.value?.id) {
       profile.value = null
@@ -80,6 +84,7 @@ export function useAuth() {
     }
   }
 
+  /** Sign in with email and password. Throws on failure. */
   async function login(email: string, password: string) {
     loading.value = true
     error.value = null
@@ -95,6 +100,7 @@ export function useAuth() {
     }
   }
 
+  /** Register a new user with email, password and optional profile metadata. Throws on failure. */
   async function register(
     email: string,
     password: string,
@@ -123,6 +129,7 @@ export function useAuth() {
     }
   }
 
+  /** Initiate Google OAuth flow. Optional redirectPath is encoded in the callback URL. */
   async function loginWithGoogle(redirectPath?: string) {
     const callbackUrl = redirectPath
       ? `${window.location.origin}/confirm?redirect=${encodeURIComponent(redirectPath)}`
@@ -137,6 +144,7 @@ export function useAuth() {
     }
   }
 
+  /** Sign out and redirect to home page. Clears local profile cache. */
   async function logout() {
     await supabase.auth.signOut()
     profile.value = null
@@ -144,6 +152,7 @@ export function useAuth() {
     await navigateTo('/')
   }
 
+  /** Send a password-reset email. Throws on failure. */
   async function resetPassword(email: string) {
     loading.value = true
     error.value = null
@@ -160,6 +169,7 @@ export function useAuth() {
     }
   }
 
+  /** Update the current user's password. Throws on failure. */
   async function updatePassword(newPassword: string) {
     loading.value = true
     error.value = null
@@ -174,6 +184,7 @@ export function useAuth() {
     }
   }
 
+  /** Invalidate the local profile cache (forces next fetchProfile to hit the DB). */
   function clearCache() {
     profile.value = null
     lastFetched.value = 0

@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # CONTEXTO COMPLETO — TRACCIONA / TRADEBASE
 
 > **INSTRUCCIÓN:** Si estás leyendo esto, eres un Claude nuevo. Este documento contiene TODO lo que necesitas saber sobre el proyecto. Léelo entero antes de responder. No hay otro documento que necesites leer primero.

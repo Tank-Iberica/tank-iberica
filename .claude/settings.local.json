@@ -110,7 +110,10 @@
       "Bash(git:*)",
       "Bash(cd:*)",
       "Bash(diffstat:*)",
-      "mcp__supabase__execute_sql"
+      "mcp__supabase__execute_sql",
+      "Bash(tail:*)",
+      "Bash(echo Exit: $?:*)",
+      "Bash(sort:*)"
     ]
   },
   "mcpServers": {

@@ -163,7 +163,9 @@ export type Database = {
           created_at: string | null
           event_type: string
           id: string
+          metadata: Json | null
           page_path: string | null
+          source: string | null
           user_country: string | null
           user_id: string | null
           user_province: string | null
@@ -174,7 +176,9 @@ export type Database = {
           created_at?: string | null
           event_type: string
           id?: string
+          metadata?: Json | null
           page_path?: string | null
+          source?: string | null
           user_country?: string | null
           user_id?: string | null
           user_province?: string | null
@@ -185,7 +189,9 @@ export type Database = {
           created_at?: string | null
           event_type?: string
           id?: string
+          metadata?: Json | null
           page_path?: string | null
+          source?: string | null
           user_country?: string | null
           user_id?: string | null
           user_province?: string | null
@@ -204,6 +210,83 @@ export type Database = {
             columns: ['user_id']
             isOneToOne: false
             referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      ad_floor_prices: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          floor_cpm_cents: number
+          id: string
+          position: string
+          updated_at: string | null
+          vertical: string
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          floor_cpm_cents?: number
+          id?: string
+          position: string
+          updated_at?: string | null
+          vertical?: string
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          floor_cpm_cents?: number
+          id?: string
+          position?: string
+          updated_at?: string | null
+          vertical?: string
+        }
+        Relationships: []
+      }
+      ad_revenue_log: {
+        Row: {
+          ad_id: string | null
+          bidder: string | null
+          cpm_cents: number
+          created_at: string | null
+          currency: string | null
+          id: string
+          page_path: string | null
+          position: string
+          source: string
+          user_country: string | null
+        }
+        Insert: {
+          ad_id?: string | null
+          bidder?: string | null
+          cpm_cents?: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          page_path?: string | null
+          position: string
+          source: string
+          user_country?: string | null
+        }
+        Update: {
+          ad_id?: string | null
+          bidder?: string | null
+          cpm_cents?: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          page_path?: string | null
+          position?: string
+          source?: string
+          user_country?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'ad_revenue_log_ad_id_fkey'
+            columns: ['ad_id']
+            isOneToOne: false
+            referencedRelation: 'ads'
             referencedColumns: ['id']
           },
         ]
@@ -235,6 +318,7 @@ export type Database = {
           regions: string[] | null
           starts_at: string | null
           status: string | null
+          target_segments: string[] | null
           title: string | null
           updated_at: string | null
           vertical: string
@@ -265,6 +349,7 @@ export type Database = {
           regions?: string[] | null
           starts_at?: string | null
           status?: string | null
+          target_segments?: string[] | null
           title?: string | null
           updated_at?: string | null
           vertical?: string
@@ -295,6 +380,7 @@ export type Database = {
           regions?: string[] | null
           starts_at?: string | null
           status?: string | null
+          target_segments?: string[] | null
           title?: string | null
           updated_at?: string | null
           vertical?: string
@@ -333,6 +419,7 @@ export type Database = {
           updated_at: string | null
           user_id: string | null
           vehicle_type: string | null
+          vertical: string
           year: number | null
         }
         Insert: {
@@ -358,6 +445,7 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           vehicle_type?: string | null
+          vertical?: string
           year?: number | null
         }
         Update: {
@@ -383,6 +471,7 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           vehicle_type?: string | null
+          vertical?: string
           year?: number | null
         }
         Relationships: [
@@ -499,6 +588,36 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      api_usage: {
+        Row: {
+          api_key: string | null
+          created_at: string | null
+          endpoint: string | null
+          id: string
+          params: Json | null
+          response_time_ms: number | null
+          status_code: number | null
+        }
+        Insert: {
+          api_key?: string | null
+          created_at?: string | null
+          endpoint?: string | null
+          id?: string
+          params?: Json | null
+          response_time_ms?: number | null
+          status_code?: number | null
+        }
+        Update: {
+          api_key?: string | null
+          created_at?: string | null
+          endpoint?: string | null
+          id?: string
+          params?: Json | null
+          response_time_ms?: number | null
+          status_code?: number | null
+        }
+        Relationships: []
       }
       articles: {
         Row: {
@@ -1118,6 +1237,112 @@ export type Database = {
           },
         ]
       }
+      comparison_notes: {
+        Row: {
+          comparison_id: string | null
+          created_at: string | null
+          id: string
+          note: string
+          rating: number | null
+          updated_at: string | null
+          user_id: string
+          vehicle_id: string
+        }
+        Insert: {
+          comparison_id?: string | null
+          created_at?: string | null
+          id?: string
+          note?: string
+          rating?: number | null
+          updated_at?: string | null
+          user_id: string
+          vehicle_id: string
+        }
+        Update: {
+          comparison_id?: string | null
+          created_at?: string | null
+          id?: string
+          note?: string
+          rating?: number | null
+          updated_at?: string | null
+          user_id?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'comparison_notes_comparison_id_fkey'
+            columns: ['comparison_id']
+            isOneToOne: false
+            referencedRelation: 'vehicle_comparisons'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comparison_notes_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comparison_notes_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      competitor_vehicles: {
+        Row: {
+          brand: string | null
+          created_at: string | null
+          dealer_id: string | null
+          hours: number | null
+          id: string
+          km: number | null
+          model: string | null
+          platform: string | null
+          platform_id: string | null
+          price: number | null
+          scraped_at: string | null
+          source: string | null
+          url: string | null
+          year: number | null
+        }
+        Insert: {
+          brand?: string | null
+          created_at?: string | null
+          dealer_id?: string | null
+          hours?: number | null
+          id?: string
+          km?: number | null
+          model?: string | null
+          platform?: string | null
+          platform_id?: string | null
+          price?: number | null
+          scraped_at?: string | null
+          source?: string | null
+          url?: string | null
+          year?: number | null
+        }
+        Update: {
+          brand?: string | null
+          created_at?: string | null
+          dealer_id?: string | null
+          hours?: number | null
+          id?: string
+          km?: number | null
+          model?: string | null
+          platform?: string | null
+          platform_id?: string | null
+          price?: number | null
+          scraped_at?: string | null
+          source?: string | null
+          url?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
       config: {
         Row: {
           key: string
@@ -1251,6 +1476,198 @@ export type Database = {
           value?: string
         }
         Relationships: []
+      }
+      conversation_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          is_system: boolean | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          is_system?: boolean | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          is_system?: boolean | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'conversation_messages_conversation_id_fkey'
+            columns: ['conversation_id']
+            isOneToOne: false
+            referencedRelation: 'conversations'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'conversation_messages_sender_id_fkey'
+            columns: ['sender_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          buyer_accepted_share: boolean | null
+          buyer_id: string
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          seller_accepted_share: boolean | null
+          seller_id: string
+          status: string | null
+          vehicle_id: string
+        }
+        Insert: {
+          buyer_accepted_share?: boolean | null
+          buyer_id: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          seller_accepted_share?: boolean | null
+          seller_id: string
+          status?: string | null
+          vehicle_id: string
+        }
+        Update: {
+          buyer_accepted_share?: boolean | null
+          buyer_id?: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          seller_accepted_share?: boolean | null
+          seller_id?: string
+          status?: string | null
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'conversations_buyer_id_fkey'
+            columns: ['buyer_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'conversations_seller_id_fkey'
+            columns: ['seller_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'conversations_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      data_subscriptions: {
+        Row: {
+          active: boolean | null
+          api_key: string | null
+          company_name: string | null
+          contact_email: string | null
+          created_at: string | null
+          id: string
+          plan: string | null
+          rate_limit_daily: number | null
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          api_key?: string | null
+          company_name?: string | null
+          contact_email?: string | null
+          created_at?: string | null
+          id?: string
+          plan?: string | null
+          rate_limit_daily?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          api_key?: string | null
+          company_name?: string | null
+          contact_email?: string | null
+          created_at?: string | null
+          id?: string
+          plan?: string | null
+          rate_limit_daily?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      dealer_contracts: {
+        Row: {
+          buyer_name: string | null
+          buyer_nif: string | null
+          created_at: string | null
+          dealer_id: string
+          id: string
+          pdf_url: string | null
+          signed_at: string | null
+          status: string | null
+          template: string | null
+          terms: Json | null
+          type: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          buyer_name?: string | null
+          buyer_nif?: string | null
+          created_at?: string | null
+          dealer_id: string
+          id?: string
+          pdf_url?: string | null
+          signed_at?: string | null
+          status?: string | null
+          template?: string | null
+          terms?: Json | null
+          type?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          buyer_name?: string | null
+          buyer_nif?: string | null
+          created_at?: string | null
+          dealer_id?: string
+          id?: string
+          pdf_url?: string | null
+          signed_at?: string | null
+          status?: string | null
+          template?: string | null
+          terms?: Json | null
+          type?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'dealer_contracts_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+        ]
       }
       dealer_events: {
         Row: {
@@ -1465,6 +1882,107 @@ export type Database = {
           },
         ]
       }
+      dealer_platforms: {
+        Row: {
+          created_at: string | null
+          dealer_id: string
+          id: string
+          platform: string | null
+          platform_id: string | null
+          status: string | null
+          synced_at: string | null
+          url: string | null
+          vehicle_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          dealer_id: string
+          id?: string
+          platform?: string | null
+          platform_id?: string | null
+          status?: string | null
+          synced_at?: string | null
+          url?: string | null
+          vehicle_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          dealer_id?: string
+          id?: string
+          platform?: string | null
+          platform_id?: string | null
+          status?: string | null
+          synced_at?: string | null
+          url?: string | null
+          vehicle_count?: number | null
+        }
+        Relationships: []
+      }
+      dealer_quotes: {
+        Row: {
+          amount: number | null
+          client_email: string | null
+          client_name: string | null
+          client_phone: string | null
+          created_at: string | null
+          dealer_id: string
+          discount_percent: number | null
+          id: string
+          notes: string | null
+          optional_services: Json | null
+          pdf_url: string | null
+          status: string | null
+          tax_percent: number | null
+          total: number | null
+          valid_until: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          client_email?: string | null
+          client_name?: string | null
+          client_phone?: string | null
+          created_at?: string | null
+          dealer_id: string
+          discount_percent?: number | null
+          id?: string
+          notes?: string | null
+          optional_services?: Json | null
+          pdf_url?: string | null
+          status?: string | null
+          tax_percent?: number | null
+          total?: number | null
+          valid_until?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          client_email?: string | null
+          client_name?: string | null
+          client_phone?: string | null
+          created_at?: string | null
+          dealer_id?: string
+          discount_percent?: number | null
+          id?: string
+          notes?: string | null
+          optional_services?: Json | null
+          pdf_url?: string | null
+          status?: string | null
+          tax_percent?: number | null
+          total?: number | null
+          valid_until?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'dealer_quotes_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       dealer_stats: {
         Row: {
           avg_response_minutes: number | null
@@ -1557,6 +2075,7 @@ export type Database = {
         Row: {
           active_listings: number | null
           auto_reply_message: Json | null
+          avg_response_minutes: number | null
           avg_response_time_hours: number | null
           badge: string | null
           bio: Json | null
@@ -1579,6 +2098,7 @@ export type Database = {
           phone: string | null
           pinned_vehicles: string[] | null
           rating: number | null
+          response_rate_pct: number | null
           slug: string
           social_links: Json | null
           sort_boost: number | null
@@ -1588,16 +2108,19 @@ export type Database = {
           theme: Json | null
           total_leads: number | null
           total_listings: number | null
+          total_reviews: number | null
           updated_at: string | null
           user_id: string | null
           verified: boolean | null
           vertical: string
+          visits_enabled: boolean | null
           website: string | null
           whatsapp: string | null
         }
         Insert: {
           active_listings?: number | null
           auto_reply_message?: Json | null
+          avg_response_minutes?: number | null
           avg_response_time_hours?: number | null
           badge?: string | null
           bio?: Json | null
@@ -1620,6 +2143,7 @@ export type Database = {
           phone?: string | null
           pinned_vehicles?: string[] | null
           rating?: number | null
+          response_rate_pct?: number | null
           slug: string
           social_links?: Json | null
           sort_boost?: number | null
@@ -1629,16 +2153,19 @@ export type Database = {
           theme?: Json | null
           total_leads?: number | null
           total_listings?: number | null
+          total_reviews?: number | null
           updated_at?: string | null
           user_id?: string | null
           verified?: boolean | null
           vertical?: string
+          visits_enabled?: boolean | null
           website?: string | null
           whatsapp?: string | null
         }
         Update: {
           active_listings?: number | null
           auto_reply_message?: Json | null
+          avg_response_minutes?: number | null
           avg_response_time_hours?: number | null
           badge?: string | null
           bio?: Json | null
@@ -1661,6 +2188,7 @@ export type Database = {
           phone?: string | null
           pinned_vehicles?: string[] | null
           rating?: number | null
+          response_rate_pct?: number | null
           slug?: string
           social_links?: Json | null
           sort_boost?: number | null
@@ -1670,10 +2198,12 @@ export type Database = {
           theme?: Json | null
           total_leads?: number | null
           total_listings?: number | null
+          total_reviews?: number | null
           updated_at?: string | null
           user_id?: string | null
           verified?: boolean | null
           vertical?: string
+          visits_enabled?: boolean | null
           website?: string | null
           whatsapp?: string | null
         }
@@ -1686,6 +2216,42 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      demand_data: {
+        Row: {
+          brand: string | null
+          category: string | null
+          created_at: string | null
+          demand_score: number | null
+          id: string
+          period: string | null
+          region: string | null
+          search_volume: number | null
+          trend: string | null
+        }
+        Insert: {
+          brand?: string | null
+          category?: string | null
+          created_at?: string | null
+          demand_score?: number | null
+          id?: string
+          period?: string | null
+          region?: string | null
+          search_volume?: number | null
+          trend?: string | null
+        }
+        Update: {
+          brand?: string | null
+          category?: string | null
+          created_at?: string | null
+          demand_score?: number | null
+          id?: string
+          period?: string | null
+          region?: string | null
+          search_volume?: number | null
+          trend?: string | null
+        }
+        Relationships: []
       }
       demands: {
         Row: {
@@ -1921,6 +2487,36 @@ export type Database = {
           },
         ]
       }
+      feature_flags: {
+        Row: {
+          allowed_dealers: string[] | null
+          created_at: string | null
+          description: string | null
+          enabled: boolean
+          key: string
+          percentage: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          allowed_dealers?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          enabled?: boolean
+          key: string
+          percentage?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          allowed_dealers?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          enabled?: boolean
+          key?: string
+          percentage?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       geo_regions: {
         Row: {
           country_code: string
@@ -1995,6 +2591,278 @@ export type Database = {
           region?: string | null
         }
         Relationships: []
+      }
+      historico: {
+        Row: {
+          action: string | null
+          brand: string | null
+          buyer_country: string | null
+          buyer_type: string | null
+          category_id: string | null
+          created_at: string | null
+          dealer_id: string
+          hours: number | null
+          id: string
+          km: number | null
+          maintenance_history: Json | null
+          model: string | null
+          notes: string | null
+          original_price: number | null
+          original_vehicle_id: string | null
+          payment_method: string | null
+          rental_history: Json | null
+          sale_date: string | null
+          sale_price: number | null
+          transport_included: boolean | null
+          vehicle_data: Json | null
+          vehicle_id: string | null
+          year: number | null
+        }
+        Insert: {
+          action?: string | null
+          brand?: string | null
+          buyer_country?: string | null
+          buyer_type?: string | null
+          category_id?: string | null
+          created_at?: string | null
+          dealer_id: string
+          hours?: number | null
+          id?: string
+          km?: number | null
+          maintenance_history?: Json | null
+          model?: string | null
+          notes?: string | null
+          original_price?: number | null
+          original_vehicle_id?: string | null
+          payment_method?: string | null
+          rental_history?: Json | null
+          sale_date?: string | null
+          sale_price?: number | null
+          transport_included?: boolean | null
+          vehicle_data?: Json | null
+          vehicle_id?: string | null
+          year?: number | null
+        }
+        Update: {
+          action?: string | null
+          brand?: string | null
+          buyer_country?: string | null
+          buyer_type?: string | null
+          category_id?: string | null
+          created_at?: string | null
+          dealer_id?: string
+          hours?: number | null
+          id?: string
+          km?: number | null
+          maintenance_history?: Json | null
+          model?: string | null
+          notes?: string | null
+          original_price?: number | null
+          original_vehicle_id?: string | null
+          payment_method?: string | null
+          rental_history?: Json | null
+          sale_date?: string | null
+          sale_price?: number | null
+          transport_included?: boolean | null
+          vehicle_data?: Json | null
+          vehicle_id?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'historico_category_id_fkey'
+            columns: ['category_id']
+            isOneToOne: false
+            referencedRelation: 'subcategories'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'historico_original_vehicle_id_fkey'
+            columns: ['original_vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'historico_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      infra_alerts: {
+        Row: {
+          acknowledged: boolean | null
+          cluster_id: string | null
+          created_at: string | null
+          id: string
+          message: string | null
+          resolved: boolean | null
+          resolved_at: string | null
+          severity: string | null
+          type: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          cluster_id?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          severity?: string | null
+          type: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          cluster_id?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          severity?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'infra_alerts_cluster_id_fkey'
+            columns: ['cluster_id']
+            isOneToOne: false
+            referencedRelation: 'infra_clusters'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      infra_clusters: {
+        Row: {
+          connection_string_encrypted: string | null
+          created_at: string | null
+          database: string | null
+          host: string | null
+          id: string
+          is_primary: boolean | null
+          max_connections: number | null
+          metadata: Json | null
+          name: string
+          port: number | null
+          provider: string | null
+          region: string | null
+          status: string | null
+          storage_gb: number | null
+          supabase_anon_key: string | null
+          supabase_service_role_key: string | null
+          supabase_url: string | null
+          updated_at: string | null
+          version: string | null
+          vertical: string | null
+        }
+        Insert: {
+          connection_string_encrypted?: string | null
+          created_at?: string | null
+          database?: string | null
+          host?: string | null
+          id?: string
+          is_primary?: boolean | null
+          max_connections?: number | null
+          metadata?: Json | null
+          name: string
+          port?: number | null
+          provider?: string | null
+          region?: string | null
+          status?: string | null
+          storage_gb?: number | null
+          supabase_anon_key?: string | null
+          supabase_service_role_key?: string | null
+          supabase_url?: string | null
+          updated_at?: string | null
+          version?: string | null
+          vertical?: string | null
+        }
+        Update: {
+          connection_string_encrypted?: string | null
+          created_at?: string | null
+          database?: string | null
+          host?: string | null
+          id?: string
+          is_primary?: boolean | null
+          max_connections?: number | null
+          metadata?: Json | null
+          name?: string
+          port?: number | null
+          provider?: string | null
+          region?: string | null
+          status?: string | null
+          storage_gb?: number | null
+          supabase_anon_key?: string | null
+          supabase_service_role_key?: string | null
+          supabase_url?: string | null
+          updated_at?: string | null
+          version?: string | null
+          vertical?: string | null
+        }
+        Relationships: []
+      }
+      infra_metrics: {
+        Row: {
+          cache_hit_ratio: number | null
+          cluster_id: string | null
+          connections_active: number | null
+          connections_idle: number | null
+          cpu_percent: number | null
+          created_at: string | null
+          db_size_mb: number | null
+          disk_percent: number | null
+          id: string
+          memory_percent: number | null
+          metadata: Json | null
+          replication_lag_ms: number | null
+          transactions_per_sec: number | null
+          vertical: string | null
+        }
+        Insert: {
+          cache_hit_ratio?: number | null
+          cluster_id?: string | null
+          connections_active?: number | null
+          connections_idle?: number | null
+          cpu_percent?: number | null
+          created_at?: string | null
+          db_size_mb?: number | null
+          disk_percent?: number | null
+          id?: string
+          memory_percent?: number | null
+          metadata?: Json | null
+          replication_lag_ms?: number | null
+          transactions_per_sec?: number | null
+          vertical?: string | null
+        }
+        Update: {
+          cache_hit_ratio?: number | null
+          cluster_id?: string | null
+          connections_active?: number | null
+          connections_idle?: number | null
+          cpu_percent?: number | null
+          created_at?: string | null
+          db_size_mb?: number | null
+          disk_percent?: number | null
+          id?: string
+          memory_percent?: number | null
+          metadata?: Json | null
+          replication_lag_ms?: number | null
+          transactions_per_sec?: number | null
+          vertical?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'infra_metrics_cluster_id_fkey'
+            columns: ['cluster_id']
+            isOneToOne: false
+            referencedRelation: 'infra_clusters'
+            referencedColumns: ['id']
+          },
+        ]
       }
       invoices: {
         Row: {
@@ -2181,6 +3049,113 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      maintenance_records: {
+        Row: {
+          cost: number | null
+          created_at: string | null
+          date: string | null
+          dealer_id: string
+          description: string | null
+          id: string
+          invoice_url: string | null
+          km_at_maintenance: number | null
+          provider_name: string | null
+          type: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string | null
+          date?: string | null
+          dealer_id: string
+          description?: string | null
+          id?: string
+          invoice_url?: string | null
+          km_at_maintenance?: number | null
+          provider_name?: string | null
+          type?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string | null
+          date?: string | null
+          dealer_id?: string
+          description?: string | null
+          id?: string
+          invoice_url?: string | null
+          km_at_maintenance?: number | null
+          provider_name?: string | null
+          type?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'maintenance_records_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      market_data: {
+        Row: {
+          action: string | null
+          avg_days_to_sell: number | null
+          avg_price: number | null
+          brand: string | null
+          category: string | null
+          created_at: string | null
+          id: string
+          listings: number | null
+          location_province: string | null
+          max_price: number | null
+          min_price: number | null
+          model: string | null
+          period: string | null
+          sample_size: number | null
+          subcategory: string | null
+          vertical: string | null
+        }
+        Insert: {
+          action?: string | null
+          avg_days_to_sell?: number | null
+          avg_price?: number | null
+          brand?: string | null
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          listings?: number | null
+          location_province?: string | null
+          max_price?: number | null
+          min_price?: number | null
+          model?: string | null
+          period?: string | null
+          sample_size?: number | null
+          subcategory?: string | null
+          vertical?: string | null
+        }
+        Update: {
+          action?: string | null
+          avg_days_to_sell?: number | null
+          avg_price?: number | null
+          brand?: string | null
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          listings?: number | null
+          location_province?: string | null
+          max_price?: number | null
+          min_price?: number | null
+          model?: string | null
+          period?: string | null
+          sample_size?: number | null
+          subcategory?: string | null
+          vertical?: string | null
+        }
+        Relationships: []
       }
       merch_orders: {
         Row: {
@@ -2429,6 +3404,176 @@ export type Database = {
           },
         ]
       }
+      pipeline_items: {
+        Row: {
+          amount: number | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string | null
+          dealer_id: string
+          expected_close_date: string | null
+          id: string
+          notes: string | null
+          probability: number | null
+          source: string | null
+          stage: string | null
+          updated_at: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          dealer_id: string
+          expected_close_date?: string | null
+          id?: string
+          notes?: string | null
+          probability?: number | null
+          source?: string | null
+          stage?: string | null
+          updated_at?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          dealer_id?: string
+          expected_close_date?: string | null
+          id?: string
+          notes?: string | null
+          probability?: number | null
+          source?: string | null
+          stage?: string | null
+          updated_at?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'pipeline_items_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      platforms: {
+        Row: {
+          created_at: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          slug: string | null
+          type: string | null
+          url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          slug?: string | null
+          type?: string | null
+          url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          slug?: string | null
+          type?: string | null
+          url?: string | null
+        }
+        Relationships: []
+      }
+      price_history: {
+        Row: {
+          change_type: string | null
+          changed_by: string | null
+          created_at: string | null
+          id: string
+          previous_price_cents: number | null
+          price_cents: number
+          vehicle_id: string
+        }
+        Insert: {
+          change_type?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          previous_price_cents?: number | null
+          price_cents: number
+          vehicle_id: string
+        }
+        Update: {
+          change_type?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          previous_price_cents?: number | null
+          price_cents?: number
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'price_history_changed_by_fkey'
+            columns: ['changed_by']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'price_history_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          locale: string | null
+          phone: string | null
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          locale?: string | null
+          phone?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          locale?: string | null
+          phone?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           created_at: string | null
@@ -2455,6 +3600,68 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      rental_records: {
+        Row: {
+          contract_url: string | null
+          created_at: string | null
+          dealer_id: string
+          deposit: number | null
+          end_date: string | null
+          id: string
+          monthly_price: number | null
+          notes: string | null
+          start_date: string | null
+          status: string | null
+          tenant_email: string | null
+          tenant_name: string | null
+          tenant_nif: string | null
+          tenant_phone: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          contract_url?: string | null
+          created_at?: string | null
+          dealer_id: string
+          deposit?: number | null
+          end_date?: string | null
+          id?: string
+          monthly_price?: number | null
+          notes?: string | null
+          start_date?: string | null
+          status?: string | null
+          tenant_email?: string | null
+          tenant_name?: string | null
+          tenant_nif?: string | null
+          tenant_phone?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          contract_url?: string | null
+          created_at?: string | null
+          dealer_id?: string
+          deposit?: number | null
+          end_date?: string | null
+          id?: string
+          monthly_price?: number | null
+          notes?: string | null
+          start_date?: string | null
+          status?: string | null
+          tenant_email?: string | null
+          tenant_name?: string | null
+          tenant_nif?: string | null
+          tenant_phone?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'rental_records_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+        ]
       }
       reports: {
         Row: {
@@ -2498,6 +3705,79 @@ export type Database = {
         }
         Relationships: []
       }
+      reservations: {
+        Row: {
+          buyer_confirmed_at: string | null
+          buyer_id: string
+          created_at: string | null
+          deposit_cents: number
+          expires_at: string
+          id: string
+          seller_id: string
+          seller_responded_at: string | null
+          seller_response: string | null
+          status: string | null
+          stripe_payment_intent_id: string | null
+          subscription_freebie: boolean | null
+          updated_at: string | null
+          vehicle_id: string
+        }
+        Insert: {
+          buyer_confirmed_at?: string | null
+          buyer_id: string
+          created_at?: string | null
+          deposit_cents?: number
+          expires_at: string
+          id?: string
+          seller_id: string
+          seller_responded_at?: string | null
+          seller_response?: string | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          subscription_freebie?: boolean | null
+          updated_at?: string | null
+          vehicle_id: string
+        }
+        Update: {
+          buyer_confirmed_at?: string | null
+          buyer_id?: string
+          created_at?: string | null
+          deposit_cents?: number
+          expires_at?: string
+          id?: string
+          seller_id?: string
+          seller_responded_at?: string | null
+          seller_response?: string | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          subscription_freebie?: boolean | null
+          updated_at?: string | null
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'reservations_buyer_id_fkey'
+            columns: ['buyer_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reservations_seller_id_fkey'
+            columns: ['seller_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reservations_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       search_alerts: {
         Row: {
           active: boolean | null
@@ -2538,6 +3818,100 @@ export type Database = {
             columns: ['user_id']
             isOneToOne: false
             referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      search_logs: {
+        Row: {
+          created_at: string | null
+          filters: Json | null
+          id: string
+          query: string | null
+          results_count: number | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          filters?: Json | null
+          id?: string
+          query?: string | null
+          results_count?: number | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          filters?: Json | null
+          id?: string
+          query?: string | null
+          results_count?: number | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      seller_reviews: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          rating: number
+          reviewer_id: string
+          seller_id: string
+          status: string | null
+          title: string | null
+          updated_at: string | null
+          vehicle_id: string | null
+          verified_purchase: boolean | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          rating: number
+          reviewer_id: string
+          seller_id: string
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          vehicle_id?: string | null
+          verified_purchase?: boolean | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          rating?: number
+          reviewer_id?: string
+          seller_id?: string
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          vehicle_id?: string | null
+          verified_purchase?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'seller_reviews_reviewer_id_fkey'
+            columns: ['reviewer_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'seller_reviews_seller_id_fkey'
+            columns: ['seller_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'seller_reviews_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
             referencedColumns: ['id']
           },
         ]
@@ -2769,6 +4143,9 @@ export type Database = {
         Row: {
           created_at: string | null
           expires_at: string | null
+          founding_badge_permanent: boolean | null
+          founding_started_at: string | null
+          has_had_trial: boolean | null
           id: string
           plan: string
           price_cents: number | null
@@ -2783,6 +4160,9 @@ export type Database = {
         Insert: {
           created_at?: string | null
           expires_at?: string | null
+          founding_badge_permanent?: boolean | null
+          founding_started_at?: string | null
+          has_had_trial?: boolean | null
           id?: string
           plan?: string
           price_cents?: number | null
@@ -2797,6 +4177,9 @@ export type Database = {
         Update: {
           created_at?: string | null
           expires_at?: string | null
+          founding_badge_permanent?: boolean | null
+          founding_started_at?: string | null
+          has_had_trial?: boolean | null
           id?: string
           plan?: string
           price_cents?: number | null
@@ -2965,6 +4348,57 @@ export type Database = {
         }
         Relationships: []
       }
+      user_ad_profiles: {
+        Row: {
+          brands_searched: string[] | null
+          categories_viewed: string[] | null
+          created_at: string | null
+          geo_country: string | null
+          geo_region: string | null
+          id: string
+          last_active_at: string | null
+          page_views: number | null
+          price_range_max: number | null
+          price_range_min: number | null
+          segments: string[] | null
+          session_id: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          brands_searched?: string[] | null
+          categories_viewed?: string[] | null
+          created_at?: string | null
+          geo_country?: string | null
+          geo_region?: string | null
+          id?: string
+          last_active_at?: string | null
+          page_views?: number | null
+          price_range_max?: number | null
+          price_range_min?: number | null
+          segments?: string[] | null
+          session_id: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          brands_searched?: string[] | null
+          categories_viewed?: string[] | null
+          created_at?: string | null
+          geo_country?: string | null
+          geo_region?: string | null
+          id?: string
+          last_active_at?: string | null
+          page_views?: number | null
+          price_range_max?: number | null
+          price_range_min?: number | null
+          segments?: string[] | null
+          session_id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_vehicle_views: {
         Row: {
           user_id: string
@@ -3064,6 +4498,41 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicle_comparisons: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string | null
+          updated_at: string | null
+          user_id: string
+          vehicle_ids: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+          updated_at?: string | null
+          user_id: string
+          vehicle_ids?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+          updated_at?: string | null
+          user_id?: string
+          vehicle_ids?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'vehicle_comparisons_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       vehicle_images: {
         Row: {
           alt_text: string | null
@@ -3124,6 +4593,7 @@ export type Database = {
           description_en: string | null
           description_es: string | null
           documents_json: Json | null
+          fair_price_cents: number | null
           featured: boolean | null
           freshness_reminded_at: string | null
           freshness_reminder_count: number | null
@@ -3147,6 +4617,7 @@ export type Database = {
           pending_translations: boolean | null
           plate: string | null
           price: number | null
+          price_trend: string | null
           rental_price: number | null
           rental_records: Json | null
           slug: string
@@ -3157,6 +4628,7 @@ export type Database = {
           status: Database['public']['Enums']['vehicle_status'] | null
           updated_at: string | null
           verification_level: string | null
+          vertical: string
           visible_from: string | null
           year: number | null
         }
@@ -3178,6 +4650,7 @@ export type Database = {
           description_en?: string | null
           description_es?: string | null
           documents_json?: Json | null
+          fair_price_cents?: number | null
           featured?: boolean | null
           freshness_reminded_at?: string | null
           freshness_reminder_count?: number | null
@@ -3201,6 +4674,7 @@ export type Database = {
           pending_translations?: boolean | null
           plate?: string | null
           price?: number | null
+          price_trend?: string | null
           rental_price?: number | null
           rental_records?: Json | null
           slug: string
@@ -3211,6 +4685,7 @@ export type Database = {
           status?: Database['public']['Enums']['vehicle_status'] | null
           updated_at?: string | null
           verification_level?: string | null
+          vertical?: string
           visible_from?: string | null
           year?: number | null
         }
@@ -3232,6 +4707,7 @@ export type Database = {
           description_en?: string | null
           description_es?: string | null
           documents_json?: Json | null
+          fair_price_cents?: number | null
           featured?: boolean | null
           freshness_reminded_at?: string | null
           freshness_reminder_count?: number | null
@@ -3255,6 +4731,7 @@ export type Database = {
           pending_translations?: boolean | null
           plate?: string | null
           price?: number | null
+          price_trend?: string | null
           rental_price?: number | null
           rental_records?: Json | null
           slug?: string
@@ -3265,6 +4742,7 @@ export type Database = {
           status?: Database['public']['Enums']['vehicle_status'] | null
           updated_at?: string | null
           verification_level?: string | null
+          vertical?: string
           visible_from?: string | null
           year?: number | null
         }
@@ -3501,6 +4979,121 @@ export type Database = {
         }
         Relationships: []
       }
+      visit_bookings: {
+        Row: {
+          buyer_id: string
+          created_at: string | null
+          dealer_id: string
+          end_time: string
+          id: string
+          notes: string | null
+          start_time: string
+          status: string | null
+          updated_at: string | null
+          vehicle_id: string
+          visit_date: string
+          visit_slot_id: string | null
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string | null
+          dealer_id: string
+          end_time: string
+          id?: string
+          notes?: string | null
+          start_time: string
+          status?: string | null
+          updated_at?: string | null
+          vehicle_id: string
+          visit_date: string
+          visit_slot_id?: string | null
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string | null
+          dealer_id?: string
+          end_time?: string
+          id?: string
+          notes?: string | null
+          start_time?: string
+          status?: string | null
+          updated_at?: string | null
+          vehicle_id?: string
+          visit_date?: string
+          visit_slot_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'visit_bookings_buyer_id_fkey'
+            columns: ['buyer_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'visit_bookings_dealer_id_fkey'
+            columns: ['dealer_id']
+            isOneToOne: false
+            referencedRelation: 'dealers'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'visit_bookings_vehicle_id_fkey'
+            columns: ['vehicle_id']
+            isOneToOne: false
+            referencedRelation: 'vehicles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'visit_bookings_visit_slot_id_fkey'
+            columns: ['visit_slot_id']
+            isOneToOne: false
+            referencedRelation: 'visit_slots'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      visit_slots: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          day_of_week: number
+          dealer_id: string
+          end_time: string
+          id: string
+          max_visitors: number | null
+          start_time: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          day_of_week: number
+          dealer_id: string
+          end_time: string
+          id?: string
+          max_visitors?: number | null
+          start_time: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          day_of_week?: number
+          dealer_id?: string
+          end_time?: string
+          id?: string
+          max_visitors?: number | null
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'visit_slots_dealer_id_fkey'
+            columns: ['dealer_id']
+            isOneToOne: false
+            referencedRelation: 'dealers'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       whatsapp_submissions: {
         Row: {
           claude_response: Json | null
@@ -3566,7 +5159,53 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      founding_expiry_check: {
+        Row: {
+          company_name: Json | null
+          dealer_email: string | null
+          expires_at: string | null
+          expiry_status: string | null
+          founding_badge_permanent: boolean | null
+          founding_started_at: string | null
+          plan: string | null
+          subscription_id: string | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'subscriptions_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      price_history_trends: {
+        Row: {
+          avg_price_cents: number | null
+          brand: string | null
+          category_id: string | null
+          max_price_cents: number | null
+          median_price_cents: number | null
+          min_price_cents: number | null
+          sample_size: number | null
+          subcategory_name: string | null
+          subcategory_slug: string | null
+          vertical: string | null
+          week: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'vehicles_subcategory_id_fkey'
+            columns: ['category_id']
+            isOneToOne: false
+            referencedRelation: 'subcategories'
+            referencedColumns: ['id']
+          },
+        ]
+      }
     }
     Functions: {
       calculate_balance_profit: {
@@ -3582,6 +5221,10 @@ export type Database = {
         Args: { p_landing_id: string; p_locale?: string }
         Returns: string
       }
+      is_admin: { Args: never; Returns: boolean }
+      refresh_all_materialized_views: { Args: never; Returns: undefined }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { '': string }; Returns: string[] }
     }
     Enums: {
       balance_reason:

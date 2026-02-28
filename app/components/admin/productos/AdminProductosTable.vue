@@ -11,12 +11,12 @@ interface ActiveFilterColumn {
 }
 
 const props = defineProps<{
-  vehicles: AdminVehicle[]
+  vehicles: readonly AdminVehicle[]
   selectedIds: Set<string>
   sortField: SortField
   sortOrder: 'asc' | 'desc'
   isGroupActive: (groupId: string) => boolean
-  activeFilterColumns: ActiveFilterColumn[]
+  activeFilterColumns: readonly ActiveFilterColumn[]
   favCounts: Record<string, number>
   hasActiveFilters: boolean
   driveLoading: boolean

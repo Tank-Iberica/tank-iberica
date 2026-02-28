@@ -21,8 +21,8 @@ type OnlineFilter = 'all' | 'online' | 'offline'
 const props = defineProps<{
   filters: AdminVehicleFilters
   onlineFilter: OnlineFilter
-  subcategories: SubcategoryOption[]
-  filteredTypes: TypeOption[]
+  subcategories: readonly SubcategoryOption[]
+  filteredTypes: readonly TypeOption[]
   hasActiveFilters: boolean
 }>()
 

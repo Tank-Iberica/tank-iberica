@@ -7,6 +7,7 @@
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { defineEventHandler, readBody, createError } from 'h3'
+import { safeError } from '../../utils/safeError'
 
 // -- Types ------------------------------------------------------------------
 
@@ -98,10 +99,7 @@ export default defineEventHandler(async (event): Promise<RespondResponse> => {
     .eq('id', reservationId)
 
   if (updateError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to update reservation: ${updateError.message}`,
-    })
+    throw safeError(500, `Failed to update reservation: ${updateError.message}`)
   }
 
   // ── 6. Return success ─────────────────────────────────────────────────────

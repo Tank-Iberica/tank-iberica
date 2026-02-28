@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 ## PASO 1: RENOMBRAR TABLAS Y NOMENCLATURA
 
 ### 1.1 Contexto del esquema actual

@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # DOCUMENTO 3 — Documento de apoyo: estrategia, negocio y recomendaciones
 
 **Generado:** 25 febrero 2026

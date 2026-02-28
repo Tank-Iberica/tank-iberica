@@ -83,7 +83,7 @@ export function useInfraMetrics() {
         return
       }
 
-      metrics.value = (data ?? []) as InfraMetric[]
+      metrics.value = (data ?? []) as unknown as InfraMetric[]
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Error fetching metrics'
     } finally {
@@ -112,7 +112,7 @@ export function useInfraMetrics() {
         return
       }
 
-      alerts.value = (data ?? []) as InfraAlert[]
+      alerts.value = (data ?? []) as unknown as InfraAlert[]
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Error fetching alerts'
     } finally {
@@ -167,7 +167,7 @@ export function useInfraMetrics() {
         return
       }
 
-      clusters.value = (data ?? []) as InfraCluster[]
+      clusters.value = (data ?? []) as unknown as InfraCluster[]
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Error fetching clusters'
     } finally {

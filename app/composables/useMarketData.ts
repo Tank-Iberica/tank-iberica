@@ -138,9 +138,9 @@ function computeMedian(sorted: number[]): number {
   if (sorted.length === 0) return 0
   const mid = Math.floor(sorted.length / 2)
   if (sorted.length % 2 === 0) {
-    return (sorted[mid - 1] + sorted[mid]) / 2
+    return (sorted[mid - 1]! + sorted[mid]!) / 2
   }
-  return sorted[mid]
+  return sorted[mid]!
 }
 
 // ---------------------------------------------------------------------------
@@ -190,7 +190,7 @@ export function useMarketData() {
 
       if (err) throw err
 
-      marketData.value = (data || []) as MarketDataRow[]
+      marketData.value = (data || []) as unknown as MarketDataRow[]
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching market data'
       marketData.value = []
@@ -228,7 +228,7 @@ export function useMarketData() {
 
       if (err) throw err
 
-      priceHistory.value = (data || []) as PriceHistoryRow[]
+      priceHistory.value = (data || []) as unknown as PriceHistoryRow[]
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching price history'
       priceHistory.value = []
@@ -262,7 +262,7 @@ export function useMarketData() {
 
       if (err) throw err
 
-      demandData.value = (data || []) as DemandDataRow[]
+      demandData.value = (data || []) as unknown as DemandDataRow[]
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching demand data'
       demandData.value = []
@@ -298,7 +298,7 @@ export function useMarketData() {
 
       if (mErr) throw mErr
 
-      const rows = (mData || []) as MarketDataRow[]
+      const rows = (mData || []) as unknown as MarketDataRow[]
 
       if (rows.length === 0) {
         error.value = 'No market data found for the given parameters'
@@ -310,9 +310,9 @@ export function useMarketData() {
       prices.sort((a, b) => a - b)
 
       const totalSample = rows.reduce((sum, r) => sum + r.listings, 0)
-      const baseMin = prices.length > 0 ? prices[0] : 0
+      const baseMin = prices.length > 0 ? prices[0]! : 0
       const baseMedian = computeMedian(prices)
-      const baseMax = prices.length > 0 ? prices[prices.length - 1] : 0
+      const baseMax = prices.length > 0 ? prices[prices.length - 1]! : 0
 
       // --- Compute avg_days_to_sell ---
       const daysValues = rows
@@ -394,7 +394,7 @@ export function useMarketData() {
 
       if (err) throw err
 
-      const rows = (data || []) as MarketDataRow[]
+      const rows = (data || []) as unknown as MarketDataRow[]
 
       if (rows.length === 0) return []
 
@@ -503,7 +503,10 @@ export function useMarketData() {
 
       if (err) throw err
 
-      const rows = (data || []) as Pick<MarketDataRow, 'month' | 'avg_price' | 'listings'>[]
+      const rows = (data || []) as unknown as Pick<
+        MarketDataRow,
+        'month' | 'avg_price' | 'listings'
+      >[]
 
       if (rows.length === 0) return 0
 

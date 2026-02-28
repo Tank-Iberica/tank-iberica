@@ -80,7 +80,7 @@ export function useAdminSubcategories() {
         }
 
         // Count vehicles per category
-        for (const v of vehicleCounts as { subcategory_id: string | null }[]) {
+        for (const v of vehicleCounts as unknown as { subcategory_id: string | null }[]) {
           if (v.subcategory_id && subcatToCategories.has(v.subcategory_id)) {
             const catIds = subcatToCategories.get(v.subcategory_id)!
             for (const catId of catIds) {
@@ -284,8 +284,8 @@ export function useAdminSubcategories() {
     const index = subcategories.value.findIndex((s) => s.id === id)
     if (index <= 0) return false
 
-    const current = subcategories.value[index]
-    const previous = subcategories.value[index - 1]
+    const current = subcategories.value[index]!
+    const previous = subcategories.value[index - 1]!
 
     const success = await reorder([
       { id: current.id, sort_order: previous.sort_order },
@@ -306,8 +306,8 @@ export function useAdminSubcategories() {
     const index = subcategories.value.findIndex((s) => s.id === id)
     if (index < 0 || index >= subcategories.value.length - 1) return false
 
-    const current = subcategories.value[index]
-    const next = subcategories.value[index + 1]
+    const current = subcategories.value[index]!
+    const next = subcategories.value[index + 1]!
 
     const success = await reorder([
       { id: current.id, sort_order: next.sort_order },

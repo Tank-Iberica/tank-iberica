@@ -1,3 +1,5 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+
 # DOCUMENTO 1 — Sesiones para Claude Code
 
 **Generado:** 25 febrero 2026
@@ -1260,7 +1262,7 @@ function generateVehicleSlug(v: Vehicle): string {
     .join('-')
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\u0300-\u036F]/g, '')
     .replace(/[^a-z0-9-]/g, '-')
     .replace(/-+/g, '-')
   return base // e.g. "mercedes-benz-actros-1845-a7f3"

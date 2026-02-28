@@ -228,6 +228,7 @@ export default defineNuxtConfig({
             if (id.includes('dompurify') || id.includes('isomorphic-dompurify'))
               return 'vendor-sanitize'
             if (id.includes('@stripe')) return 'vendor-stripe'
+            if (id.includes('exceljs')) return 'vendor-excel'
           },
         },
       },

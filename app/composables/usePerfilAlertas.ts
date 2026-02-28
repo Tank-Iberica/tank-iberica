@@ -33,7 +33,7 @@ export function usePerfilAlertas() {
         .eq('user_id', userId.value)
         .order('created_at', { ascending: false })
       if (err) throw err
-      alerts.value = (data ?? []) as SearchAlert[]
+      alerts.value = (data ?? []) as unknown as SearchAlert[]
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error loading alerts'
     } finally {
@@ -121,8 +121,8 @@ export function usePerfilAlertas() {
       if (err) throw err
       const idx = alerts.value.findIndex((a) => a.id === editingAlert.value!.id)
       if (idx !== -1) {
-        alerts.value[idx].frequency = editForm.value.frequency as SearchAlert['frequency']
-        alerts.value[idx].filters = { ...editForm.value.filters }
+        alerts.value[idx]!.frequency = editForm.value.frequency as SearchAlert['frequency']
+        alerts.value[idx]!.filters = { ...editForm.value.filters }
       }
       editingAlert.value = null
     } catch {

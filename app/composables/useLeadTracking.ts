@@ -9,17 +9,13 @@ export function useLeadTracking() {
   const supabase = useSupabaseClient()
 
   function track(eventType: string, data: Record<string, unknown>): void {
-    supabase
-      .from('analytics_events')
-      .insert({
-        event_type: eventType,
-        entity_type: eventType.includes('view') ? 'vehicle' : 'lead',
-        entity_id: (data.vehicle_id as string) || null,
-        metadata: data,
-        created_at: new Date().toISOString(),
-      })
-      .then(() => {})
-      .catch(() => {})
+    void supabase.from('analytics_events').insert({
+      event_type: eventType,
+      entity_type: eventType.includes('view') ? 'vehicle' : 'lead',
+      entity_id: (data.vehicle_id as string) || null,
+      metadata: data as never,
+      created_at: new Date().toISOString(),
+    })
   }
 
   function trackContactClick(

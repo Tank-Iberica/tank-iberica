@@ -111,10 +111,10 @@ export function useDatos() {
     ])
 
     if (marketResult.data) {
-      marketRows.value = marketResult.data as MarketRow[]
+      marketRows.value = marketResult.data as unknown as MarketRow[]
     }
     if (historyResult.data) {
-      historyRows.value = historyResult.data as PriceHistoryRow[]
+      historyRows.value = historyResult.data as unknown as PriceHistoryRow[]
     }
 
     loading.value = false
@@ -150,7 +150,7 @@ export function useDatos() {
       const months = Array.from(byMonth.keys()).sort().reverse()
       if (!months.length) continue
 
-      const latestMonth = months[0]
+      const latestMonth = months[0]!
       const latestRows = byMonth.get(latestMonth) ?? []
 
       const totalListings = latestRows.reduce((sum, r) => sum + r.listing_count, 0)
@@ -174,7 +174,7 @@ export function useDatos() {
       let trendDirection: 'rising' | 'falling' | 'stable' = 'stable'
 
       if (months.length > 1) {
-        const prevMonth = months[1]
+        const prevMonth = months[1]!
         const prevRows = byMonth.get(prevMonth) ?? []
         const prevTotalListings = prevRows.reduce((sum, r) => sum + r.listing_count, 0)
         const prevWeightedAvg =
@@ -234,7 +234,7 @@ export function useDatos() {
 
     for (const [brand, brandRows] of byBrand) {
       const sorted = brandRows.sort((a, b) => b.month.localeCompare(a.month))
-      const latest = sorted[0]
+      const latest = sorted[0]!
       result.push({
         brand,
         avgPrice: Math.round(latest.avg_price),

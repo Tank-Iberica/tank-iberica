@@ -131,7 +131,7 @@ export function useAdminProductoDetail() {
   const sellData = ref({
     sale_price: 0,
     buyer: '',
-    sale_date: new Date().toISOString().split('T')[0],
+    sale_date: new Date().toISOString().split('T')[0] ?? '',
     commission: 0,
     notes: '',
   })
@@ -176,7 +176,7 @@ export function useAdminProductoDetail() {
     verifComposable = useVehicleVerification(vehicleId.value)
     verifLoading.value = true
     await verifComposable.fetchDocuments()
-    verifDocs.value = verifComposable.documents.value
+    verifDocs.value = verifComposable.documents.value as VerificationDocument[]
     verifCurrentLevel.value = verifComposable.currentLevel.value
     verifLoading.value = false
     verifError.value = verifComposable.error.value
@@ -195,7 +195,7 @@ export function useAdminProductoDetail() {
 
     if (result) {
       await verifComposable.uploadDocument(verifDocType.value, result.secure_url)
-      verifDocs.value = verifComposable.documents.value
+      verifDocs.value = verifComposable.documents.value as VerificationDocument[]
       verifCurrentLevel.value = verifComposable.currentLevel.value
       verifError.value = verifComposable.error.value
     }
@@ -258,7 +258,8 @@ export function useAdminProductoDetail() {
     const { data } = await supabase
       .from('subcategory_categories')
       .select('subcategory_id, category_id')
-    typeSubcategoryLinks.value = (data as { type_id: string; subcategory_id: string }[]) || []
+    typeSubcategoryLinks.value =
+      (data as unknown as { type_id: string; subcategory_id: string }[]) || []
   }
 
   const publishedTypes = computed(() => {
@@ -419,7 +420,7 @@ export function useAdminProductoDetail() {
     const filesToUpload = files.slice(0, availableSlots)
 
     for (let i = 0; i < filesToUpload.length; i++) {
-      const file = filesToUpload[i]
+      const file = filesToUpload[i]!
       const imageIndex = currentCount + i + 1
       const naming = fileNamingData.value
       const publicId = generateVehiclePublicId(naming, imageIndex)
@@ -466,7 +467,7 @@ export function useAdminProductoDetail() {
   async function setAsPortada(index: number) {
     if (index === 0) return
     const arr = [...images.value]
-    const img = arr.splice(index, 1)[0]
+    const img = arr.splice(index, 1)[0]!
     arr.unshift(img)
     const updates = arr.map((img, i) => ({ id: img.id, position: i }))
     const ok = await reorderImages(updates)
@@ -477,7 +478,9 @@ export function useAdminProductoDetail() {
     const newIdx = dir === 'up' ? index - 1 : index + 1
     if (newIdx < 0 || newIdx >= images.value.length) return
     const arr = [...images.value]
-    ;[arr[index], arr[newIdx]] = [arr[newIdx], arr[index]]
+    const tmp = arr[index]!
+    arr[index] = arr[newIdx]!
+    arr[newIdx] = tmp
     const updates = arr.map((img, i) => ({ id: img.id, position: i }))
     const ok = await reorderImages(updates)
     if (ok) images.value = arr.map((img, i) => ({ ...img, position: i }))
@@ -555,7 +558,7 @@ export function useAdminProductoDetail() {
       }
     }
 
-    const file = input.files[0]
+    const file = input.files[0]!
     const maint = formData.value.maintenance_records?.find((r) => r.id === maintId)
     try {
       const result = await driveUploadInvoice(
@@ -585,7 +588,7 @@ export function useAdminProductoDetail() {
       }
     }
 
-    const file = input.files[0]
+    const file = input.files[0]!
     const rental = formData.value.rental_records?.find((r) => r.id === rentalId)
     try {
       const result = await driveUploadInvoice(
@@ -608,7 +611,7 @@ export function useAdminProductoDetail() {
       ...(formData.value.maintenance_records || []),
       {
         id: crypto.randomUUID(),
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString().split('T')[0] ?? '',
         reason: '',
         cost: 0,
         invoice_url: undefined,
@@ -633,7 +636,7 @@ export function useAdminProductoDetail() {
 
   // --- Rental records ---
   function addRental() {
-    const today = new Date().toISOString().split('T')[0]
+    const today = new Date().toISOString().split('T')[0] ?? ''
     formData.value.rental_records = [
       ...(formData.value.rental_records || []),
       {

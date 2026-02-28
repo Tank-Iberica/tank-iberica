@@ -101,7 +101,7 @@ export function useBuyerDashboard() {
       if (err) throw err
 
       favorites.value = (
-        (data || []) as Array<{
+        (data || []) as unknown as Array<{
           id: string
           vehicle_id: string
           created_at: string | null
@@ -249,7 +249,7 @@ export function useBuyerDashboard() {
       if (err) throw err
 
       recentViews.value = (
-        (data || []) as Array<{
+        (data || []) as unknown as Array<{
           vehicle_id: string
           viewed_at: string | null
           view_count: number | null

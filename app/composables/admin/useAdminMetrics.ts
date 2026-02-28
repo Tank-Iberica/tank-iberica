@@ -281,8 +281,8 @@ export function useAdminMetrics() {
     }))
 
     try {
-      const rangeStart = monthStart(months[0])
-      const rangeEnd = monthEnd(months[months.length - 1])
+      const rangeStart = monthStart(months[0]!)
+      const rangeEnd = monthEnd(months[months.length - 1]!)
 
       const { data } = await supabase
         .from('invoices')
@@ -326,8 +326,8 @@ export function useAdminMetrics() {
     }))
 
     try {
-      const rangeStart = monthStart(months[0])
-      const rangeEnd = monthEnd(months[months.length - 1])
+      const rangeStart = monthStart(months[0]!)
+      const rangeEnd = monthEnd(months[months.length - 1]!)
 
       // Published = vehicles created in that month
       const { data: createdData } = await supabase
@@ -380,8 +380,8 @@ export function useAdminMetrics() {
     }))
 
     try {
-      const rangeStart = monthStart(months[0])
-      const rangeEnd = monthEnd(months[months.length - 1])
+      const rangeStart = monthStart(months[0]!)
+      const rangeEnd = monthEnd(months[months.length - 1]!)
 
       const { data } = await supabase
         .from('contacts')

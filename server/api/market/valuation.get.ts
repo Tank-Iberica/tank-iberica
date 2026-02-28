@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
     return { error: 'Service unavailable' }
   }
 
-  const supabase = createClient(supabaseUrl, supabaseKey)
+  const supabase = createClient(supabaseUrl as string, supabaseKey as string)
 
   // Build query for similar vehicles
   let queryBuilder = supabase
