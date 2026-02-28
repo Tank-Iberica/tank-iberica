@@ -131,9 +131,7 @@
                 {{ $t(`catalog.${vehicle.category}`) }}
               </span>
             </td>
-            <td class="col-price table-price">
-              {{ priceText(vehicle) }}
-            </td>
+            <td class="col-price table-price">{{ priceText(vehicle) }}</td>
             <td class="col-product">{{ buildProductName(vehicle, locale) }}</td>
             <td class="col-year">{{ vehicle.year ?? '—' }}</td>
             <td v-if="showVolumeCol" class="col-volume">{{ volumeText(vehicle) }}</td>
@@ -242,331 +240,52 @@
       &larr; {{ $t('catalog.scrollHint') }} &rarr;
     </p>
 
-    <!-- PDF Export confirmation modal -->
-    <Teleport to="body">
-      <div v-if="showPdfModal" class="pdf-modal-overlay" @click.self="showPdfModal = false">
-        <div class="pdf-modal">
-          <div class="pdf-modal-icon">
-            <svg
-              viewBox="0 0 24 24"
-              width="40"
-              height="40"
-              fill="none"
-              stroke="#C41E3A"
-              stroke-width="1.5"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-          </div>
-          <h3 class="pdf-modal-title">{{ $t('catalog.exportPdf') }}</h3>
-          <p class="pdf-modal-message">
-            {{ $t('catalog.exportPdfMessage') }}
-          </p>
-          <p class="pdf-modal-count">{{ selectedIds.size }} / {{ sortedVehicles.length }}</p>
-          <div class="pdf-modal-actions">
-            <button class="pdf-btn pdf-btn-back" @click="showPdfModal = false">
-              {{ $t('catalog.back') }}
-            </button>
-            <button class="pdf-btn pdf-btn-select-all" @click="selectAll">
-              {{ $t('catalog.selectAll') }}
-            </button>
-            <button
-              class="pdf-btn pdf-btn-confirm"
-              :disabled="selectedIds.size === 0"
-              @click="confirmExportPdf"
-            >
-              {{ $t('catalog.confirm') }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <CatalogVehicleTablePdfModal
+      :open="showPdfModal"
+      :selected-count="selectedIds.size"
+      :total-count="sortedVehicles.length"
+      @close="showPdfModal = false"
+      @select-all="selectAll"
+      @confirm="confirmExportPdf"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Vehicle } from '~/composables/useVehicles'
-import { generateVehiclePdf } from '~/utils/generatePdf'
+import { useVehicleTable } from '~/composables/catalog/useVehicleTable'
 
 const props = defineProps<{
   vehicles: readonly Vehicle[]
 }>()
 
-const { t, locale } = useI18n()
-const { location: userLocation } = useUserLocation()
-const router = useRouter()
-const { toggle: toggleFav, isFavorite } = useFavorites()
-
-// --- Selection for PDF export ---
-const selectedIds = ref<Set<string>>(new Set())
-const showPdfModal = ref(false)
-
-function toggleSelect(id: string) {
-  const next = new Set(selectedIds.value)
-  if (next.has(id)) {
-    next.delete(id)
-  } else {
-    next.add(id)
-  }
-  selectedIds.value = next
-}
-
-function onPdfHeaderClick() {
-  showPdfModal.value = true
-}
-
-function selectAll() {
-  const all = new Set<string>()
-  for (const v of sortedVehicles.value) {
-    all.add(v.id)
-  }
-  selectedIds.value = all
-}
-
-async function confirmExportPdf() {
-  showPdfModal.value = false
-  const selected = sortedVehicles.value.filter((v) => selectedIds.value.has(v.id))
-  for (const vehicle of selected) {
-    await generateVehiclePdf({
-      vehicle,
-      locale: locale.value,
-      productName: buildProductName(vehicle, locale.value, true),
-      priceText: priceText(vehicle),
-    })
-  }
-}
-
-// --- Sorting ---
-type SortCol =
-  | 'category'
-  | 'price'
-  | 'product'
-  | 'brand'
-  | 'model'
-  | 'year'
-  | 'volume'
-  | 'compartments'
-  | 'power'
-  | 'location'
-const sortColumn = ref<SortCol | null>(null)
-const sortDir = ref<'asc' | 'desc'>('asc')
-
-function toggleSort(col: SortCol) {
-  if (sortColumn.value === col) {
-    sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc'
-  } else {
-    sortColumn.value = col
-    sortDir.value = 'asc'
-  }
-}
-
-function sortClass(col: SortCol): string {
-  if (sortColumn.value !== col) return ''
-  return sortDir.value === 'asc' ? 'sorted-asc' : 'sorted-desc'
-}
-
-// --- Dynamic columns detection ---
-const showVolumeCol = computed(() =>
-  props.vehicles.some((v) => {
-    const fj = v.attributes_json
-    return fj && (fj.volume || fj.capacity || fj.volumen || fj.capacidad)
-  }),
-)
-const showCompartmentsCol = computed(() =>
-  props.vehicles.some((v) => {
-    const fj = v.attributes_json
-    return fj && (fj.compartments || fj.compartimentos)
-  }),
-)
-const showPowerCol = computed(() =>
-  props.vehicles.some((v) => {
-    const fj = v.attributes_json
-    return fj && (fj.power || fj.potencia || fj.cv)
-  }),
-)
-
-// --- Sorted vehicles ---
-const sortedVehicles = computed(() => {
-  const list = [...props.vehicles]
-  if (!sortColumn.value) return list
-
-  const col = sortColumn.value
-  const dir = sortDir.value === 'asc' ? 1 : -1
-
-  list.sort((a, b) => {
-    let va: string | number = ''
-    let vb: string | number = ''
-
-    switch (col) {
-      case 'category':
-        va = a.category
-        vb = b.category
-        break
-      case 'price':
-        va = getPrice(a)
-        vb = getPrice(b)
-        break
-      case 'product':
-        va = buildProductName(a, locale.value)
-        vb = buildProductName(b, locale.value)
-        break
-      case 'brand':
-        va = a.brand
-        vb = b.brand
-        break
-      case 'model':
-        va = a.model
-        vb = b.model
-        break
-      case 'year':
-        va = a.year ?? 0
-        vb = b.year ?? 0
-        break
-      case 'volume':
-        va = getVolume(a)
-        vb = getVolume(b)
-        break
-      case 'compartments':
-        va = getCompartments(a)
-        vb = getCompartments(b)
-        break
-      case 'power':
-        va = getPower(a)
-        vb = getPower(b)
-        break
-      case 'location':
-        va = a.location ?? ''
-        vb = b.location ?? ''
-        break
-    }
-
-    if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir
-    return String(va).localeCompare(String(vb)) * dir
-  })
-
-  return list
-})
-
-// --- Helpers ---
-function navigateTo(slug: string) {
-  router.push(`/vehiculo/${slug}`)
-}
-
-function firstImage(vehicle: Vehicle): string | undefined {
-  if (!vehicle.vehicle_images?.length) return undefined
-  const sorted = [...vehicle.vehicle_images].sort((a, b) => a.position - b.position)
-  return sorted[0]?.thumbnail_url || sorted[0]?.url || undefined
-}
-
-function getPrice(v: Vehicle): number {
-  if (v.category === 'alquiler' && v.rental_price) return v.rental_price
-  return v.price ?? 0
-}
-
-function priceText(vehicle: Vehicle): string {
-  if (vehicle.category === 'terceros') return t('catalog.solicitar')
-  if (vehicle.category === 'alquiler' && vehicle.rental_price) {
-    const formatted = new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0,
-    }).format(vehicle.rental_price)
-    return `${formatted}/${t('catalog.month')}`
-  }
-  if (vehicle.price) {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0,
-    }).format(vehicle.price)
-  }
-  return t('catalog.solicitar')
-}
-
-function locationLabel(vehicle: Vehicle): string {
-  const loc = locale.value === 'en' && vehicle.location_en ? vehicle.location_en : vehicle.location
-  if (!loc) return '—'
-
-  const vehicleCountry = vehicle.location_country
-  const bothInSpain = userLocation.value.country === 'ES' && vehicleCountry === 'ES'
-
-  if (bothInSpain) {
-    return loc.replace(/,?\s*(España|Spain)\s*$/i, '').trim()
-  }
-  return loc
-}
-
-function locationFlagCode(vehicle: Vehicle): string | null {
-  const vehicleCountry = vehicle.location_country
-  if (!vehicleCountry) return null
-  if (userLocation.value.country === 'ES' && vehicleCountry === 'ES') return null
-  return vehicleCountry.toLowerCase()
-}
-
-function getVolume(v: Vehicle): number {
-  const fj = v.attributes_json
-  if (!fj) return 0
-  return Number(fj.volume || fj.volumen || fj.capacity || fj.capacidad || 0)
-}
-
-function volumeText(v: Vehicle): string {
-  const fj = v.attributes_json
-  if (!fj) return '—'
-  if (fj.volume || fj.volumen) return `${fj.volume || fj.volumen} L`
-  if (fj.capacity || fj.capacidad) return `${fj.capacity || fj.capacidad} kg`
-  return '—'
-}
-
-function getPower(v: Vehicle): number {
-  const fj = v.attributes_json
-  if (!fj) return 0
-  return Number(fj.power || fj.potencia || fj.cv || 0)
-}
-
-function powerText(v: Vehicle): string {
-  const fj = v.attributes_json
-  if (!fj) return '—'
-  const val = fj.power || fj.potencia || fj.cv
-  return val ? `${val} CV` : '—'
-}
-
-function getCompartments(v: Vehicle): number {
-  const fj = v.attributes_json
-  if (!fj) return 0
-  return Number(fj.compartments || fj.compartimentos || 0)
-}
-
-function compartmentsText(v: Vehicle): string {
-  const fj = v.attributes_json
-  if (!fj) return '—'
-  const val = fj.compartments || fj.compartimentos
-  return val ? String(val) : '—'
-}
-
-async function downloadBrochure(vehicle: Vehicle) {
-  await generateVehiclePdf({
-    vehicle,
-    locale: locale.value,
-    productName: buildProductName(vehicle, locale.value, true),
-    priceText: priceText(vehicle),
-  })
-}
-
-async function shareVehicle(vehicle: Vehicle) {
-  const url = `${window.location.origin}/vehiculo/${vehicle.slug}`
-  const title = buildProductName(vehicle, locale.value)
-  if (navigator.share) {
-    try {
-      await navigator.share({ title, url })
-    } catch {
-      // User cancelled
-    }
-  } else {
-    await navigator.clipboard.writeText(url)
-  }
-}
+const {
+  locale,
+  selectedIds,
+  showPdfModal,
+  toggleSelect,
+  onPdfHeaderClick,
+  selectAll,
+  confirmExportPdf,
+  sortClass,
+  toggleSort,
+  showVolumeCol,
+  showCompartmentsCol,
+  showPowerCol,
+  sortedVehicles,
+  navigateTo,
+  firstImage,
+  priceText,
+  locationLabel,
+  locationFlagCode,
+  volumeText,
+  powerText,
+  compartmentsText,
+  downloadBrochure,
+  shareVehicle,
+  toggleFav,
+  isFavorite,
+} = useVehicleTable(() => props.vehicles)
 
 // --- Drag to scroll ---
 const wrapperRef = ref<HTMLElement | null>(null)
@@ -594,7 +313,6 @@ function onMouseUp() {
   isDragging.value = false
 }
 
-// --- Touch drag ---
 let touchStartX = 0
 let touchScrollLeft = 0
 
@@ -906,110 +624,6 @@ function onTouchEnd() {
   color: #c41e3a;
 }
 
-/* ============================================
-   PDF Export Modal
-   ============================================ */
-.pdf-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-
-.pdf-modal {
-  background: var(--bg-primary, white);
-  border-radius: 16px;
-  padding: 2rem;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-}
-
-.pdf-modal-icon {
-  margin-bottom: 1rem;
-}
-
-.pdf-modal-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--color-primary, #23424a);
-  margin: 0 0 0.5rem;
-}
-
-.pdf-modal-message {
-  font-size: 14px;
-  color: var(--text-secondary, #6b7280);
-  margin: 0 0 0.5rem;
-  line-height: 1.5;
-}
-
-.pdf-modal-count {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--color-primary, #23424a);
-  margin: 0 0 1.5rem;
-}
-
-.pdf-modal-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.pdf-btn {
-  flex: 1;
-  padding: 0.75rem 0.5rem;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1.5px solid transparent;
-  transition: all 0.2s;
-  min-height: 44px;
-}
-
-.pdf-btn-back {
-  background: transparent;
-  border-color: var(--border-color, #d1d5db);
-  color: var(--text-secondary, #6b7280);
-}
-
-.pdf-btn-back:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.pdf-btn-select-all {
-  background: transparent;
-  border-color: var(--color-primary, #23424a);
-  color: var(--color-primary, #23424a);
-}
-
-.pdf-btn-select-all:hover {
-  background: rgba(35, 66, 74, 0.05);
-}
-
-.pdf-btn-confirm {
-  background: linear-gradient(135deg, #c41e3a 0%, #a01830 100%);
-  color: white;
-  border-color: transparent;
-}
-
-.pdf-btn-confirm:hover:not(:disabled) {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.pdf-btn-confirm:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
 /* Scroll hint */
 .scroll-hint {
   text-align: center;
@@ -1060,14 +674,6 @@ function onTouchEnd() {
   .action-icon-btn svg {
     width: 14px;
     height: 14px;
-  }
-
-  .pdf-modal {
-    padding: 1.5rem;
-  }
-
-  .pdf-modal-actions {
-    flex-direction: column;
   }
 }
 
