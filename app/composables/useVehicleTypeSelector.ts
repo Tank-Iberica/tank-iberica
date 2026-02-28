@@ -244,6 +244,7 @@ export function useVehicleTypeSelector() {
     selectSubcategory,
     setFilterValue,
     getFiltersJson,
+    getAttributesJson: getFiltersJson,
     getFilterLabel,
     getFilterOptions,
     getVehicleSubcategoryLabel,

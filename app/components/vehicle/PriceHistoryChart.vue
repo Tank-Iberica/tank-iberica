@@ -78,8 +78,12 @@
           class="chart-tooltip"
           :style="tooltipStyle"
         >
-          <span class="tooltip-price">{{ formatPriceCents(chartData[hoveredIndex].price) }}</span>
-          <span class="tooltip-date">{{ formatDate(chartData[hoveredIndex].date) }}</span>
+          <span class="tooltip-price">{{
+            formatPriceCents(chartData[hoveredIndex ?? 0]?.price ?? 0)
+          }}</span>
+          <span class="tooltip-date">{{
+            formatDate(chartData[hoveredIndex ?? 0]?.date ?? '')
+          }}</span>
         </div>
       </div>
     </div>
@@ -145,7 +149,7 @@ const areaPoints = computed(() => {
   const first = scaledPoints.value[0]
   const last = scaledPoints.value[scaledPoints.value.length - 1]
   const bottom = PADDING_TOP + CHART_HEIGHT
-  return `${first.x},${bottom} ${polylinePoints.value} ${last.x},${bottom}`
+  return `${first?.x ?? 0},${bottom} ${polylinePoints.value} ${last?.x ?? 0},${bottom}`
 })
 
 const yLabels = computed(() => {
@@ -171,7 +175,7 @@ const xLabels = computed(() => {
 
   return indices.map((idx) => ({
     x: scaledPoints.value[idx]?.x ?? 0,
-    text: formatDate(data[idx].date),
+    text: formatDate(data[idx]?.date ?? ''),
   }))
 })
 

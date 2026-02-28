@@ -172,14 +172,14 @@ const currentStepIndex = computed(() => steps.value.findIndex((s) => s.id === cu
 function goToPrevious(): void {
   const idx = currentStepIndex.value
   if (idx > 0) {
-    goToStep(steps.value[idx - 1].id as StepId)
+    goToStep(steps.value[idx - 1]!.id as StepId)
   }
 }
 
 function goToNext(): void {
   const idx = currentStepIndex.value
   if (idx < steps.value.length - 1) {
-    goToStep(steps.value[idx + 1].id as StepId)
+    goToStep(steps.value[idx + 1]!.id as StepId)
   }
 }
 
@@ -187,7 +187,7 @@ function goToNext(): void {
 const CONFETTI_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
 
 function confettiStyle(n: number): Record<string, string> {
-  const color = CONFETTI_COLORS[n % CONFETTI_COLORS.length]
+  const color = CONFETTI_COLORS[n % CONFETTI_COLORS.length] ?? '#10b981'
   const left = `${(n * 17 + 5) % 100}%`
   const delay = `${(n * 0.15) % 2}s`
   const duration = `${1.5 + (n % 3) * 0.5}s`

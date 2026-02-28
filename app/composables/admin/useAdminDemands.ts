@@ -146,7 +146,7 @@ export function useAdminDemands() {
       // Update local list
       const index = demands.value.findIndex((d) => d.id === id)
       if (index !== -1) {
-        demands.value[index].status = status
+        demands.value[index]!.status = status
       }
 
       return true
@@ -176,7 +176,7 @@ export function useAdminDemands() {
       // Update local list
       const index = demands.value.findIndex((d) => d.id === id)
       if (index !== -1) {
-        demands.value[index].admin_notes = notes
+        demands.value[index]!.admin_notes = notes
       }
 
       return true

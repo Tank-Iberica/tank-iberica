@@ -138,7 +138,7 @@ const { ads, handleClick, handlePhoneClick } = useAds(props.position, {
 
 const firstAdId = computed(() => ads.value[0]?.id || '')
 
-useAdViewability(adSlotRef, firstAdId, { source: 'direct', position: props.position })
+useAdViewability(adSlotRef, firstAdId.value || null, { source: 'direct', position: props.position })
 
 function ctaText(ad: Ad): string {
   if (ad.cta_text) {

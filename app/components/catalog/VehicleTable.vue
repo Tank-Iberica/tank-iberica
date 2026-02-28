@@ -602,13 +602,13 @@ function onTouchStart(e: TouchEvent) {
   if ((e.target as HTMLElement).closest('.col-actions, .col-select')) return
   if (!wrapperRef.value || !e.touches.length) return
   isDragging.value = true
-  touchStartX = e.touches[0].pageX
+  touchStartX = e.touches[0]!.pageX
   touchScrollLeft = wrapperRef.value.scrollLeft
 }
 
 function onTouchMove(e: TouchEvent) {
   if (!isDragging.value || !wrapperRef.value || !e.touches.length) return
-  const x = e.touches[0].pageX
+  const x = e.touches[0]!.pageX
   const walk = touchStartX - x
   wrapperRef.value.scrollLeft = touchScrollLeft + walk
 }

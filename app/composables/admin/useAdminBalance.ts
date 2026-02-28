@@ -34,6 +34,7 @@ export interface BalanceEntry {
   coste_asociado: number | null
   vehicle_id: string | null
   subcategory_id: string | null
+  type_id?: string | null
   created_at: string
   updated_at: string
   // Joined data
@@ -64,6 +65,7 @@ export interface BalanceFilters {
   estado?: BalanceStatus | null
   category_id?: string | null
   subcategory_id?: string | null
+  type_id?: string | null
   search?: string
 }
 
@@ -336,9 +338,9 @@ export function useAdminBalance() {
         byReason[entry.razon] = { ingresos: 0, gastos: 0 }
       }
       if (entry.tipo === 'ingreso') {
-        byReason[entry.razon].ingresos += amount
+        byReason[entry.razon]!.ingresos += amount
       } else {
-        byReason[entry.razon].gastos += amount
+        byReason[entry.razon]!.gastos += amount
       }
 
       // By subcategory (for profit analysis)
@@ -359,7 +361,7 @@ export function useAdminBalance() {
     // Calculate profit percentage by type
     for (const key of Object.keys(byType)) {
       const sub = byType[key]
-      if (sub.coste > 0) {
+      if (sub && sub.coste > 0) {
         sub.beneficio = Math.round(((sub.ingresos - sub.coste) / sub.coste) * 100)
       }
     }

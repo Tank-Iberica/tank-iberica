@@ -80,7 +80,7 @@ const {
 // Viewability tracking for the whole slot
 const adSenseSlotRef = ref<HTMLElement | null>(null)
 const slotAdId = computed(() => {
-  if (ads.value.length > 0) return ads.value[0].id
+  if (ads.value.length > 0) return ads.value[0]?.id ?? ''
   return prebidWon.value ? `prebid-${props.position}` : ''
 })
 const adSource = computed<'direct' | 'prebid' | 'adsense'>(() => {
@@ -88,7 +88,7 @@ const adSource = computed<'direct' | 'prebid' | 'adsense'>(() => {
   if (prebidWon.value) return 'prebid'
   return 'adsense'
 })
-useAdViewability(adSenseSlotRef, slotAdId, {
+useAdViewability(adSenseSlotRef, slotAdId.value || null, {
   source: adSource.value,
   position: props.position,
 })
@@ -143,7 +143,7 @@ function setupAdSenseObserver() {
           isVisible.value = true
           nextTick(() => {
             try {
-              const w = window as Record<string, unknown>
+              const w = window as unknown as Record<string, unknown>
               const adsbygoogle = (w.adsbygoogle || []) as unknown[]
               adsbygoogle.push({})
               w.adsbygoogle = adsbygoogle

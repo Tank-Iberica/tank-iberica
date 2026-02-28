@@ -58,7 +58,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
                   min="0"
                   step="0.01"
                   class="price-input"
-                  :value="subscriptionPrices[plan.key].monthly"
+                  :value="subscriptionPrices[plan.key]?.monthly ?? 0"
                   @input="onInput(plan.key, 'monthly', $event)"
                 >
                 <span class="euro-symbol">&euro;/{{ t('admin.configPricing.month') }}</span>
@@ -72,7 +72,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
                   min="0"
                   step="0.01"
                   class="price-input"
-                  :value="subscriptionPrices[plan.key].annual"
+                  :value="subscriptionPrices[plan.key]?.annual ?? 0"
                   @input="onInput(plan.key, 'annual', $event)"
                 >
                 <span class="euro-symbol">&euro;/{{ t('admin.configPricing.year') }}</span>

@@ -1,5 +1,5 @@
 import { formatPriceCents } from '~/composables/shared/useListingUtils'
-import type { Database } from '~/types/supabase'
+import type { Database } from '~~/types/supabase'
 import type { AuctionStatus } from '~/composables/useAuction'
 import type { RegistrationStatus, DepositStatus } from '~/composables/useAuctionRegistration'
 
@@ -433,7 +433,7 @@ export function useAdminAuctionList() {
       // Update locally
       const idx = registrationsPanel.value.registrations.findIndex((r) => r.id === regId)
       if (idx !== -1) {
-        registrationsPanel.value.registrations[idx].status = 'approved'
+        registrationsPanel.value.registrations[idx]!.status = 'approved'
       }
     } catch {
       toast.error(t('toast.approveError'))
@@ -454,7 +454,7 @@ export function useAdminAuctionList() {
       // Update locally
       const idx = registrationsPanel.value.registrations.findIndex((r) => r.id === regId)
       if (idx !== -1) {
-        registrationsPanel.value.registrations[idx].status = 'rejected'
+        registrationsPanel.value.registrations[idx]!.status = 'rejected'
       }
     } catch {
       toast.error(t('toast.rejectError'))

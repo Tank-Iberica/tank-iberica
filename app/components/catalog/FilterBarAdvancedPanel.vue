@@ -44,21 +44,12 @@
 </template>
 
 <script setup lang="ts">
-interface FilterDef {
-  name: string
-  type: string
-  label: string
-  options?: { value: string; label: string }[]
-  min?: number
-  max?: number
-  step?: number
-  [key: string]: unknown
-}
+import type { AttributeDefinition } from '~/composables/useFilters'
 
 defineProps<{
   mobileOpen: boolean
   desktopOpen: boolean
-  filters: FilterDef[]
+  filters: AttributeDefinition[]
   activeFilters: Record<string, unknown>
 }>()
 

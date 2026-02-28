@@ -3,7 +3,7 @@
  * Dealer Vehicles List
  * Grid of dealer's vehicles with actions: edit, pause, mark sold, delete.
  */
-import { formatPrice } from '~/composables/shared/useListingUtils'
+import type { DealerVehicle } from '~/components/dashboard/vehiculos/DealerVehicleCard.vue'
 
 definePageMeta({
   layout: 'default',
@@ -17,19 +17,6 @@ const { dealerProfile, loadDealer } = useDealerDashboard()
 const { currentPlan, planLimits, canPublish, fetchSubscription } = useSubscriptionPlan(
   userId.value || undefined,
 )
-
-interface DealerVehicle {
-  id: string
-  brand: string
-  model: string
-  year: number | null
-  price: number | null
-  status: string
-  views: number
-  slug: string | null
-  created_at: string | null
-  vehicle_images: { url: string; position: number }[]
-}
 
 const vehicles = ref<DealerVehicle[]>([])
 const loading = ref(false)
@@ -67,21 +54,6 @@ onMounted(async () => {
 const activeCount = computed(() => vehicles.value.filter((v) => v.status === 'published').length)
 const maxListings = computed(() => planLimits.value.maxActiveListings)
 const canPublishNew = computed(() => canPublish(activeCount.value))
-
-function getThumbnail(vehicle: DealerVehicle): string | null {
-  if (!vehicle.vehicle_images?.length) return null
-  return [...vehicle.vehicle_images].sort((a, b) => a.position - b.position)[0]?.url || null
-}
-
-function getStatusClass(status: string): string {
-  const map: Record<string, string> = {
-    published: 'status-published',
-    draft: 'status-draft',
-    paused: 'status-paused',
-    sold: 'status-sold',
-  }
-  return map[status] || 'status-draft'
-}
 
 async function toggleStatus(vehicle: DealerVehicle): Promise<void> {
   const newStatus = vehicle.status === 'published' ? 'draft' : 'published'
@@ -167,52 +139,16 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
     </div>
 
     <div v-else class="vehicles-grid">
-      <div v-for="v in vehicles" :key="v.id" class="vehicle-card">
-        <div class="card-image">
-          <img v-if="getThumbnail(v)" :src="getThumbnail(v)!" :alt="`${v.brand} ${v.model}`" >
-          <div v-else class="image-placeholder">
-            <span>{{ t('dashboard.vehicles.noImage') }}</span>
-          </div>
-          <span class="status-pill" :class="getStatusClass(v.status)">
-            {{ t(`dashboard.vehicleStatus.${v.status}`) }}
-          </span>
-        </div>
-        <div class="card-body">
-          <h3>{{ v.brand }} {{ v.model }}</h3>
-          <div class="card-meta">
-            <span v-if="v.year" class="meta-item">{{ v.year }}</span>
-            <span class="meta-price">{{ formatPrice(v.price) }}</span>
-          </div>
-          <div class="card-stats">
-            <span>{{ v.views || 0 }} {{ t('dashboard.views') }}</span>
-          </div>
-        </div>
-        <div class="card-actions">
-          <NuxtLink :to="`/dashboard/vehiculos/${v.id}`" class="action-btn">
-            {{ t('common.edit') }}
-          </NuxtLink>
-          <button v-if="v.status !== 'sold'" class="action-btn" @click="toggleStatus(v)">
-            {{
-              v.status === 'published'
-                ? t('dashboard.vehicles.pause')
-                : t('dashboard.vehicles.activate')
-            }}
-          </button>
-          <button v-if="v.status !== 'sold'" class="action-btn" @click="openSoldModal(v)">
-            {{ t('dashboard.vehicles.markSold') }}
-          </button>
-          <button
-            v-if="deleteConfirmId !== v.id"
-            class="action-btn action-delete"
-            @click="deleteConfirmId = v.id"
-          >
-            {{ t('common.delete') }}
-          </button>
-          <button v-else class="action-btn action-delete-confirm" @click="deleteVehicle(v.id)">
-            {{ t('dashboard.vehicles.confirmDelete') }}
-          </button>
-        </div>
-      </div>
+      <DealerVehicleCard
+        v-for="v in vehicles"
+        :key="v.id"
+        :vehicle="v"
+        :delete-confirm-id="deleteConfirmId"
+        @toggle-status="toggleStatus"
+        @open-sold-modal="openSoldModal"
+        @set-delete-confirm="deleteConfirmId = $event"
+        @delete-vehicle="deleteVehicle"
+      />
     </div>
 
     <!-- Sold Modal -->
@@ -342,141 +278,10 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
   margin: 0 0 16px 0;
 }
 
-/* Vehicles Grid */
 .vehicles-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-}
-
-.vehicle-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.card-image {
-  position: relative;
-  height: 180px;
-  background: #f1f5f9;
-}
-
-.card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.image-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #94a3b8;
-  font-size: 0.85rem;
-}
-
-.status-pill {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.status-published {
-  background: #dcfce7;
-  color: #16a34a;
-}
-.status-draft {
-  background: #f1f5f9;
-  color: #64748b;
-}
-.status-paused {
-  background: #fef3c7;
-  color: #92400e;
-}
-.status-sold {
-  background: #e2e8f0;
-  color: #475569;
-}
-
-.card-body {
-  padding: 16px;
-}
-
-.card-body h3 {
-  margin: 0 0 8px 0;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.card-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.meta-item {
-  font-size: 0.85rem;
-  color: #64748b;
-}
-
-.meta-price {
-  font-weight: 700;
-  color: var(--color-primary, #23424a);
-}
-
-.card-stats {
-  font-size: 0.8rem;
-  color: #94a3b8;
-}
-
-.card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid #f1f5f9;
-}
-
-.action-btn {
-  min-height: 44px;
-  padding: 8px 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  background: white;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #475569;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-}
-
-.action-btn:hover {
-  background: #f8fafc;
-}
-
-.action-delete {
-  color: #dc2626;
-  border-color: #fecaca;
-}
-.action-delete:hover {
-  background: #fef2f2;
-}
-
-.action-delete-confirm {
-  color: white;
-  background: #dc2626;
-  border-color: #dc2626;
 }
 
 @media (min-width: 480px) {

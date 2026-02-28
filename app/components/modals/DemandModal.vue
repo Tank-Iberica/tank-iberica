@@ -152,7 +152,7 @@ const handleSubmit = async () => {
       vehicle_type: getVehicleSubcategoryLabel(locale.value),
       category_id: selectedCategoryId.value,
       subcategory_id: selectedSubcategoryId.value,
-      attributes_json: getAttributesJson(),
+      attributes_json: getAttributesJson() as never,
       year_min: formData.value.yearMin,
       year_max: formData.value.yearMax,
       price_min: formData.value.priceMin,

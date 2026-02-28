@@ -64,7 +64,7 @@ const related = ref<Vehicle[]>([])
 function cloudinaryPath(img: VehicleImage): string {
   const url = img.url
   const match = url.match(/\/upload\/(?:v\d+\/)?(.+)$/)
-  return match ? match[1] : url
+  return match ? (match[1] ?? url) : url
 }
 
 async function fetchRelated() {

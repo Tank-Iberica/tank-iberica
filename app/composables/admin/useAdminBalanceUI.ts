@@ -277,9 +277,9 @@ export function useAdminBalanceUI() {
     const dataToExport = exportDataScope.value === 'all' ? entries.value : sortedEntries.value
 
     if (exportFormat.value === 'excel') {
-      exportToExcel(dataToExport)
+      exportToExcel(dataToExport as BalanceEntry[])
     } else {
-      exportToPDF(dataToExport)
+      exportToPDF(dataToExport as BalanceEntry[])
     }
     showExportModal.value = false
   }

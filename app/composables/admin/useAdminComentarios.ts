@@ -170,7 +170,7 @@ export function useAdminComentarios() {
       // Update locally
       const idx = comments.value.findIndex((c) => c.id === commentId)
       if (idx !== -1) {
-        comments.value[idx] = { ...comments.value[idx], status: newStatus }
+        comments.value[idx] = { ...comments.value[idx]!, status: newStatus }
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error al actualizar estado'

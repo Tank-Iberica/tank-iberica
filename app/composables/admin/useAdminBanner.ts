@@ -243,12 +243,10 @@ export function useAdminBanner() {
     userPanelSaving.value = true
     try {
       const supabase = useSupabaseClient()
-      await (supabase
-        .from('config')
-        .upsert({
-          key: 'user_panel_banner',
-          value: userPanelForm.value,
-        }) as never as Promise<unknown>)
+      await (supabase.from('config').upsert({
+        key: 'user_panel_banner',
+        value: userPanelForm.value,
+      }) as never as Promise<unknown>)
       toast.success('admin.banner.saved')
     } catch {
       toast.error('admin.banner.saveError')
@@ -323,7 +321,7 @@ export function useAdminBanner() {
     if (key === 'active') {
       formData.value[key] = value as boolean
     } else {
-      formData.value[key] = value as string | null
+      ;(formData.value as Record<string, string | boolean | null>)[key] = value
     }
   }
 

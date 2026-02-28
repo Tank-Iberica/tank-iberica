@@ -1,4 +1,4 @@
-import type { Database } from '~/types/supabase'
+import type { Database } from '~~/types/supabase'
 import { useAdminAdDashboard } from '~/composables/admin/useAdminAdDashboard'
 
 // ─── Types ───────────────────────────────────────────────────

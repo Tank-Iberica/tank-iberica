@@ -226,7 +226,7 @@ function generateInvoicePDF() {
         <div class="invoice-title">${txt.invoice}</div>
         <div class="invoice-meta">
           <div>${txt.num} ${invoiceNumber.value}</div>
-          <div>${txt.date} ${formatDateDMY(invoiceDate.value)}</div>
+          <div>${txt.date} ${formatDateDMY(invoiceDate.value ?? '')}</div>
         </div>
       </div>
     </div>

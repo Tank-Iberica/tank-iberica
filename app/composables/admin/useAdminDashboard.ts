@@ -70,7 +70,6 @@ export interface SectionsOpenState {
 
 export function useAdminDashboard() {
   const supabase = useSupabaseClient()
-  const { locale } = useI18n()
 
   // Re-export KPI data from useAdminMetrics
   const { kpiSummary, loadMetrics: loadKpiMetrics } = useAdminMetrics()
@@ -213,7 +212,7 @@ export function useAdminDashboard() {
 
       stats.value.anunciantes = count || 0
       stats.value.anunciantesPending = (data || []).filter(
-        (a: { status: string }) => a.status === 'pending',
+        (a: { status: string | null }) => a.status === 'pending',
       ).length
     } catch {
       // Table doesn't exist yet
@@ -226,7 +225,7 @@ export function useAdminDashboard() {
 
       stats.value.solicitantes = count || 0
       stats.value.solicitantesPending = (data || []).filter(
-        (s: { status: string }) => s.status === 'pending',
+        (s: { status: string | null }) => s.status === 'pending',
       ).length
     } catch {
       // Table doesn't exist yet
@@ -250,9 +249,11 @@ export function useAdminDashboard() {
     try {
       const { data } = await supabase.from('chat_messages').select('is_read, user_id')
 
-      const uniqueUsers = new Set((data || []).map((c: { user_id: string }) => c.user_id))
+      const uniqueUsers = new Set((data || []).map((c: { user_id: string | null }) => c.user_id))
       stats.value.chats = uniqueUsers.size
-      stats.value.chatsUnread = (data || []).filter((c: { is_read: boolean }) => !c.is_read).length
+      stats.value.chatsUnread = (data || []).filter(
+        (c: { is_read: boolean | null }) => !c.is_read,
+      ).length
     } catch {
       // Table doesn't exist yet
     }
@@ -273,20 +274,20 @@ export function useAdminDashboard() {
 
   async function loadProductStats(): Promise<void> {
     try {
-      const { data: vehicles } = await supabase.from('vehicles').select('status, category, type_id')
+      const { data: vehicles } = await supabase.from('vehicles').select('status, category')
 
       const all = vehicles || []
       productStats.value.total = all.length
       productStats.value.published = all.filter(
-        (v: { status: string }) => v.status === 'published',
+        (v: { status: string | null }) => v.status === 'published',
       ).length
       productStats.value.unpublished = all.filter(
-        (v: { status: string }) => v.status !== 'published',
+        (v: { status: string | null }) => v.status !== 'published',
       ).length
 
       // By category
       const categoryMap = new Map<string, number>()
-      all.forEach((v: { category: string }) => {
+      all.forEach((v: { category: string | null }) => {
         const cat = v.category || 'Sin categoria'
         categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1)
       })
@@ -294,26 +295,7 @@ export function useAdminDashboard() {
         .map(([name, count]) => ({ name: formatCategory(name), count }))
         .sort((a, b) => b.count - a.count)
 
-      // By type - join with subcategories table
-      const { data: types } = await supabase.from('subcategories').select('id, name, name_es')
-
-      const subMap = new Map<string, string>()
-      ;(types || []).forEach((s: Record<string, unknown>) => {
-        const nameObj = s.name as Record<string, string> | null
-        const label = (nameObj && nameObj[locale.value]) || (s.name_es as string)
-        subMap.set(s.id as string, label)
-      })
-
-      const typeCount = new Map<string, number>()
-      all.forEach((v: { type_id: string | null }) => {
-        if (v.type_id) {
-          const name = subMap.get(v.type_id) || 'Desconocida'
-          typeCount.set(name, (typeCount.get(name) || 0) + 1)
-        }
-      })
-      productStats.value.byType = Array.from(typeCount.entries())
-        .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count)
+      productStats.value.byType = []
     } catch (err) {
       if (import.meta.dev) console.error('Error loading product stats:', err)
     }
@@ -330,7 +312,9 @@ export function useAdminDashboard() {
       // Advertisers
       try {
         const { data: ads } = await supabase.from('advertisements').select('user_id')
-        const uniqueAdvertisers = new Set((ads || []).map((a: { user_id: string }) => a.user_id))
+        const uniqueAdvertisers = new Set(
+          (ads || []).map((a: { user_id: string | null }) => a.user_id),
+        )
         userStats.value.advertisers = uniqueAdvertisers.size
       } catch {
         // Table doesn't exist

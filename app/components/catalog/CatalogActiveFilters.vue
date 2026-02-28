@@ -67,7 +67,7 @@ const chips = computed<Chip[]>(() => {
       if (countries.length === 1) {
         const all = [...europeanCountriesData.value.priority, ...europeanCountriesData.value.rest]
         const c = all.find((cc) => cc.code === countries[0])
-        label = c ? `${c.flag} ${c.name}` : countries[0]
+        label = c ? `${c.flag} ${c.name}` : (countries[0] ?? '')
       } else {
         label = `${countries.length} ${t('catalog.countries')}`
       }

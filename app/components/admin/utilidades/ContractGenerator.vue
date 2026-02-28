@@ -70,7 +70,7 @@ function onContractVehicleSelected() {
     // Extract plate from label (format: "Brand Model (PLATE) - Year")
     const plateMatch = vehicle.label.match(/\(([^)]+)\)/)
     if (plateMatch) {
-      contractVehiclePlate.value = plateMatch[1]
+      contractVehiclePlate.value = plateMatch[1] ?? ''
     }
     // Try to detect vehicle type from label
     const labelLower = vehicle.label.toLowerCase()
@@ -138,18 +138,18 @@ function numberToWords(n: number): string {
   ]
 
   if (n === 0) return 'CERO'
-  if (n < 20) return units[n]
+  if (n < 20) return units[n] ?? ''
   if (n < 100) {
     const t = Math.floor(n / 10)
     const u = n % 10
-    if (t === 2 && u > 0) return `VEINTI${units[u]}`
-    return u > 0 ? `${tens[t]} Y ${units[u]}` : tens[t]
+    if (t === 2 && u > 0) return `VEINTI${units[u] ?? ''}`
+    return u > 0 ? `${tens[t] ?? ''} Y ${units[u] ?? ''}` : (tens[t] ?? '')
   }
   if (n < 1000) {
     const h = Math.floor(n / 100)
     const rest = n % 100
     if (n === 100) return 'CIEN'
-    return rest > 0 ? `${hundreds[h]} ${numberToWords(rest)}` : hundreds[h]
+    return rest > 0 ? `${hundreds[h] ?? ''} ${numberToWords(rest)}` : (hundreds[h] ?? '')
   }
   if (n < 10000) {
     const th = Math.floor(n / 1000)
@@ -183,7 +183,7 @@ function formatDateSpanish(dateStr: string): string {
 
 // Generate rental contract
 function generateRentalContract(): string {
-  const date = formatDateSpanish(contractDate.value)
+  const date = formatDateSpanish(contractDate.value ?? '')
   const monthlyRentWords = numberToWords(contractMonthlyRent.value)
   const depositWords = numberToWords(contractDeposit.value)
   const durationWords = numberToWords(contractDuration.value)
@@ -350,7 +350,7 @@ function generateRentalContract(): string {
 
 // Generate sale contract
 function generateSaleContract(): string {
-  const date = formatDateSpanish(contractDate.value)
+  const date = formatDateSpanish(contractDate.value ?? '')
   const salePriceWords = numberToWords(contractSalePrice.value)
 
   // Build seller and buyer sections

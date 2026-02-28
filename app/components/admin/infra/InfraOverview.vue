@@ -209,7 +209,7 @@ const STATIC_SERVICES: StackSummaryRow[] = [
   {
     key: 'stripe',
     name: 'Stripe',
-    plan: SERVICE_PLANS.stripe,
+    plan: SERVICE_PLANS['stripe'] ?? '—',
     usagePercent: null,
     status: 'gray',
     nextStep: 'OK',
@@ -217,7 +217,7 @@ const STATIC_SERVICES: StackSummaryRow[] = [
   {
     key: 'github_actions',
     name: 'GitHub Actions',
-    plan: SERVICE_PLANS.github_actions,
+    plan: SERVICE_PLANS['github_actions'] ?? '—',
     usagePercent: null,
     status: 'gray',
     nextStep: 'OK',

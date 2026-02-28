@@ -3,7 +3,7 @@
  * Plan-gated access to metrics with daily and monthly aggregations.
  */
 
-import type { Database } from '~/types/supabase'
+import type { Database } from '~~/types/supabase'
 
 type DealerStatsRow = Database['public']['Tables']['dealer_stats']['Row']
 

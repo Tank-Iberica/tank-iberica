@@ -13,6 +13,7 @@
  */
 
 import type { ChartData, ChartOptions } from 'chart.js'
+import { useAdminMetrics } from './useAdminMetrics'
 
 // ---------------------------------------------------------------------------
 // Types (module-local)
@@ -200,7 +201,7 @@ export function useAdminDashboardPage() {
       tooltip: {
         callbacks: {
           label(ctx) {
-            const val = ctx.parsed.y
+            const val = ctx.parsed.y ?? 0
             return `${ctx.dataset.label}: ${new Intl.NumberFormat('es-ES').format(val)}`
           },
         },
@@ -238,7 +239,7 @@ export function useAdminDashboardPage() {
       tooltip: {
         callbacks: {
           label(ctx) {
-            const val = ctx.parsed.y
+            const val = ctx.parsed.y ?? 0
             return `${ctx.dataset.label}: ${new Intl.NumberFormat('es-ES').format(val)}`
           },
         },

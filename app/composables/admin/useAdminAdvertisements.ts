@@ -32,6 +32,7 @@ export interface AdminAdvertisement {
   // Joined data
   category?: { name_es: string; name_en: string | null } | null
   subcategory?: { name_es: string; name_en: string | null } | null
+  type?: { name_es: string; name_en: string | null } | null
   matched_vehicle?: {
     brand: string
     model: string
@@ -150,7 +151,7 @@ export function useAdminAdvertisements() {
       // Update local list
       const index = advertisements.value.findIndex((a) => a.id === id)
       if (index !== -1) {
-        advertisements.value[index].status = status
+        advertisements.value[index]!.status = status
       }
 
       return true
@@ -180,7 +181,7 @@ export function useAdminAdvertisements() {
       // Update local list
       const index = advertisements.value.findIndex((a) => a.id === id)
       if (index !== -1) {
-        advertisements.value[index].admin_notes = notes
+        advertisements.value[index]!.admin_notes = notes
       }
 
       return true

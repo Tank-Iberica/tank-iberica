@@ -38,7 +38,7 @@ async function fetchCategoryLinks() {
   if (categories) {
     for (const cat of categories) {
       const name =
-        localizedField(cat.name, locale.value) ||
+        localizedField(cat.name as Record<string, string> | null, locale.value) ||
         (locale.value === 'en' ? cat.name_en : cat.name_es) ||
         ''
       if (name) {

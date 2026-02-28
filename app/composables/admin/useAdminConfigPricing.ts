@@ -139,8 +139,8 @@ export function useAdminConfigPricing() {
       for (const plan of planDefinitions) {
         const localPlan = subscriptionPrices.value[plan.key]
         pricesPayload[plan.key] = {
-          monthly_cents: plan.readonly ? 0 : eurosToCents(localPlan.monthly),
-          annual_cents: plan.readonly ? 0 : eurosToCents(localPlan.annual),
+          monthly_cents: plan.readonly ? 0 : eurosToCents(localPlan?.monthly ?? 0),
+          annual_cents: plan.readonly ? 0 : eurosToCents(localPlan?.annual ?? 0),
         }
       }
       const { error: updateError } = await supabase
@@ -171,8 +171,8 @@ export function useAdminConfigPricing() {
       for (const def of commissionDefinitions) {
         ratesPayload[def.key] =
           def.type === 'cents'
-            ? eurosToCents(commissionRates.value[def.key])
-            : commissionRates.value[def.key]
+            ? eurosToCents(commissionRates.value[def.key] ?? 0)
+            : (commissionRates.value[def.key] ?? 0)
       }
       const { error: updateError } = await supabase
         .from('vertical_config')
@@ -194,7 +194,7 @@ export function useAdminConfigPricing() {
   }
 
   function updatePrice(planKey: string, field: 'monthly' | 'annual', value: number) {
-    subscriptionPrices.value[planKey][field] = value
+    subscriptionPrices.value[planKey]![field] = value
   }
 
   function updateRate(rateKey: string, value: number) {

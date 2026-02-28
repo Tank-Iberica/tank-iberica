@@ -272,9 +272,9 @@ export function useAdminAdDashboard() {
       const adAgg: Record<string, { impressions: number; clicks: number; viewable: number }> = {}
       for (const ev of events) {
         if (!adAgg[ev.ad_id]) adAgg[ev.ad_id] = { impressions: 0, clicks: 0, viewable: 0 }
-        if (ev.event_type === 'impression') adAgg[ev.ad_id].impressions++
-        else if (ev.event_type === 'click') adAgg[ev.ad_id].clicks++
-        else if (ev.event_type === 'viewable_impression') adAgg[ev.ad_id].viewable++
+        if (ev.event_type === 'impression') adAgg[ev.ad_id]!.impressions++
+        else if (ev.event_type === 'click') adAgg[ev.ad_id]!.clicks++
+        else if (ev.event_type === 'viewable_impression') adAgg[ev.ad_id]!.viewable++
       }
 
       const topAdIds = Object.entries(adAgg)
@@ -298,7 +298,7 @@ export function useAdminAdDashboard() {
         }
 
         topAds.value = topAdIds.map((id) => {
-          const agg = adAgg[id]
+          const agg = adAgg[id]!
           const info = adInfoMap[id] || { title: id, advertiser: '-', format: '-' }
           return {
             adId: id,
@@ -321,8 +321,8 @@ export function useAdminAdDashboard() {
           const info = adInfoMap[id]
           if (!info) continue
           if (!formatAgg[info.format]) formatAgg[info.format] = { impressions: 0, clicks: 0 }
-          formatAgg[info.format].impressions += agg.impressions
-          formatAgg[info.format].clicks += agg.clicks
+          formatAgg[info.format]!.impressions += agg.impressions
+          formatAgg[info.format]!.clicks += agg.clicks
         }
         ctrByFormat.value = Object.entries(formatAgg).map(([format, agg]) => ({
           format,
