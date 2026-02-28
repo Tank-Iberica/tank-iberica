@@ -6,6 +6,7 @@ const props = defineProps<{
   label: string
   folder: string
   recommendations: string[]
+  /** CSS class applied to the preview box: logo-preview | logo-dark-preview | favicon-preview | cover-preview | og-preview */
   previewClass?: string
 }>()
 
@@ -30,7 +31,6 @@ async function onFileChange(e: Event) {
   } else {
     localError.value = uploadError.value
   }
-  // Reset input so same file can be re-uploaded
   if (fileInput.value) fileInput.value.value = ''
 }
 
@@ -78,7 +78,6 @@ function removeImage() {
       @change="onFileChange"
     >
 
-    <!-- Error -->
     <p v-if="localError" class="uploader-error">{{ localError }}</p>
   </div>
 </template>
@@ -136,9 +135,13 @@ function removeImage() {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 80px;
 }
 
-.preview-box.logo-preview {
+/* Dark logo preview uses dark bg */
+.preview-box.logo-dark-preview {
+  background: #1f2937;
+  border-color: #374151;
   min-height: 80px;
 }
 
@@ -146,8 +149,9 @@ function removeImage() {
   min-height: 56px;
 }
 
-.preview-box.cover-preview {
-  min-height: 120px;
+.preview-box.cover-preview,
+.preview-box.og-preview {
+  min-height: 140px;
 }
 
 .preview-img {
@@ -155,7 +159,8 @@ function removeImage() {
   object-fit: contain;
 }
 
-.preview-box.logo-preview .preview-img {
+.preview-box.logo-preview .preview-img,
+.preview-box.logo-dark-preview .preview-img {
   max-height: 56px;
 }
 
@@ -164,8 +169,9 @@ function removeImage() {
   max-width: 32px;
 }
 
-.preview-box.cover-preview .preview-img {
-  max-height: 120px;
+.preview-box.cover-preview .preview-img,
+.preview-box.og-preview .preview-img {
+  max-height: 140px;
   width: 100%;
   object-fit: cover;
   border-radius: 6px;

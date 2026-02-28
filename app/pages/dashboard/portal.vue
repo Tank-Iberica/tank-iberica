@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useDealerPortal } from '~/composables/dashboard/useDealerPortal'
-import DealerImageUploader from '~/components/dashboard/portal/DealerImageUploader.vue'
 
 definePageMeta({
   layout: 'default',
@@ -127,7 +126,7 @@ const coverRecommendations = [
         </div>
 
         <!-- Logo upload -->
-        <DealerImageUploader
+        <SharedImageUploader
           v-model="logoUrl"
           :label="t('dashboard.portal.logo')"
           folder="tracciona/dealers/logos"
@@ -136,7 +135,7 @@ const coverRecommendations = [
         />
 
         <!-- Favicon upload -->
-        <DealerImageUploader
+        <SharedImageUploader
           v-model="faviconUrl"
           :label="t('dashboard.portal.favicon')"
           folder="tracciona/dealers/favicons"
@@ -145,7 +144,7 @@ const coverRecommendations = [
         />
 
         <!-- Cover image upload -->
-        <DealerImageUploader
+        <SharedImageUploader
           v-model="coverImageUrl"
           :label="t('dashboard.portal.coverImage')"
           folder="tracciona/dealers/covers"
