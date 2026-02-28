@@ -9,25 +9,45 @@
 ### Opus al inicio y nuevas órdenes
 
 - **Al inicio de sesión:** Cambia a Opus para leer CLAUDE.md, STATUS.md y PROYECTO-CONTEXTO.md. Entender contexto profundo requiere mejor modelo.
-- **Al recibir orden nueva** (excepto "continuar tarea"): Cambia a Opus para los Pasos 1–2 (analizar y resumir). Opus entiende mejor órdenes complejas y ambiguas.
+- **Al recibir orden nueva** (excepto "continuar tarea"): Cambia a Opus para los Pasos 0–2 (verificar modelo, analizar y resumir). Opus entiende mejor órdenes complejas y ambiguas.
 - **Después de resumir (Paso 2):** El flujo normal continúa. Recomienda modelo para la ejecución (Haiku/Sonnet/Opus según complejidad de la tarea).
 - **"Continuar tarea":** No es nueva orden, es reanudación. No cambiar modelo innecesariamente; si estabas en Haiku, continúa en Haiku.
 
+### Excepción — Lectura de contexto al inicio de sesión
+
+**Lectura de contexto de inicio (CLAUDE.md, STATUS.md, PROYECTO-CONTEXTO.md) NO es una tarea — no requiere protocolo.** Ejecuta Read tools directamente para cargar contexto. Cualquier otra orden SÍ requiere protocolo.
+
+### Paso 0 — Verifica el modelo
+
+**Si NO estás en Opus**, tu ÚNICO mensaje debe ser:
+
+> "Necesito Opus para analizar esta orden. ¿Cambias con `/model opus`?"
+
+No analices, no resumas, no hagas nada más — solo pide el cambio. Una vez en Opus, continúa con Paso 1.
+
+**Si ya estás en Opus**, salta al Paso 1.
+
 ### Paso 1 — Analiza la orden
 
-Antes de escribir nada, evalúa mentalmente:
+Evalúa estos 5 puntos (output verificable):
 
-- ¿Es una tarea o varias? Si son varias, sepáralas y pregunta el orden.
-- ¿Falta información clave? (archivo concreto, error exacto, resultado esperado). Si falta, pregunta.
-- ¿La orden describe un proceso o un resultado? Si describe un proceso, pregunta qué resultado final se espera.
-- ¿Puede afectar a otros módulos? Si es así, avisa antes de continuar.
-- ¿Hay forma de hacer esto consumiendo menos tokens? (menos archivos que leer, tarea más acotada). Si la hay, proponla.
+1. ¿Es una tarea o varias? (Si varias, listar numeradas y preguntar orden)
+2. ¿Falta información clave? (Si falta, preguntar explícitamente)
+3. ¿Proceso o resultado? (Si proceso ambiguo, preguntar qué resultado final se espera)
+4. ¿Afecta otros módulos? (Si sí, avisar)
+5. ¿Optimización de tokens posible? (Si hay, proponerla)
+
+**NO publiques este análisis.** Úsalo para tu Paso 2.
 
 ### Paso 2 — Resume y confirma la tarea
 
-Tu primer mensaje es UN RESUMEN DE UNA LÍNEA de lo que vas a hacer, seguido de "¿Es correcto?".
+Tu mensaje es UN RESUMEN DE UNA LÍNEA de lo que vas a hacer, **incluyendo brevemente tus conclusiones del Paso 1** (ej: "Es 1 tarea, info completa, sin afectar otros módulos, no hay optimización de tokens"). Termina con "¿Es correcto?".
 
 **ESPERA confirmación del usuario. NO ejecutes nada todavía.**
+
+---
+
+**Si el usuario da múltiples tareas en un mensaje:** Listarlas numeradas, preguntar orden de ejecución, y luego aplicar este protocolo a CADA tarea individualmente.
 
 ### Paso 3 — Recomienda modelo y espera confirmación
 
@@ -48,6 +68,14 @@ El mensaje debe contener SOLO la recomendación de modelo y NADA MÁS. Cualquier
 ### Paso 4 — Ejecuta
 
 Solo tras confirmar tarea (paso 2) Y modelo (paso 3), empieza a trabajar.
+
+---
+
+### Skills — Clasificación por protocolo
+
+- **Sin protocolo (ejecuta directamente):** `/commit`, `/status`, `/review` — tareas simples de diagnóstico.
+- **Con protocolo (Pasos 0–4):** `/build`, `/session`, `/db`, `/verify`, `/debug` — tareas complejas que alteran estado.
+- **Clarificación:** Si no sabes qué skill invocar, pregunta al usuario en lugar de asumir.
 
 ---
 
@@ -92,6 +120,7 @@ Toda la documentación activa está en `docs/tracciona-docs/`.
 - LEE los archivos de la sesión ANTES de escribir código. Relee las reglas del inicio de INSTRUCCIONES-MAESTRAS.
 - Si no sabes cómo implementar algo, PREGUNTA al usuario. No improvises.
 - Si necesitas dashboards web (Supabase, Stripe, Cloudflare) → pregunta al usuario.
+- **NUNCA hacer commit sin que el usuario lo pida explícitamente.** Ni siquiera commits "pequeños" o "lógicos".
 
 **Acceso a herramientas:**
 
