@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-03
+**Última actualización:** 2026-03-04
 **Sesiones completadas:** 0–64 + Iter 1–15 auditoría + sesiones ad-hoc hasta 03-mar
 **Puntuación global:** 79/100 (auditoría 26-feb) · Historial completo: `git log STATUS.md`
 
@@ -84,17 +84,18 @@ Iter 1–15 completas ✅ (commit `7dde04a`). **Pendiente:** FilterBar.vue (1.99
 
 ## Changelog de sesiones
 
-| Fecha  | Resumen                                                                                                                            |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| 03-mar | CLAUDE.md: 5 reglas no negociables, Stack añadido, secciones fusionadas; STATUS.md comprimido 294→110 líneas; CLAUDE2.md eliminado |
-| 03-mar | Hook condicional: solo mata proceso Node del puerto 3000 si STATUS.md contiene CLOSING_SESSION                                     |
-| 02-mar | Hook PostToolUse automático para limpieza Node.js al actualizar STATUS.md                                                          |
-| 01-mar | Fix admin: `isAdmin` usa `role='admin'`; refactor ruta dealer `/vendedor/[slug]` → `/[slug]`                                       |
-| 28-feb | Dealer portal completo: catálogo filtrado, SEO, working hours, contacto                                                            |
-| 28-feb | `docs/PROYECTO-CONTEXTO.md` creado (530 líneas, documento maestro de contexto)                                                     |
-| 28-feb | Hallazgos menores: JSDoc, ARIA, CHECK constraints, Snyk CI, legacy banner, excel chunks                                            |
-| 28-feb | Auditoría #7 Iter 1–15: 5 composables grandes refactorizados, typecheck 0 errores                                                  |
-| 26-feb | Auditoría global 79/100. 12 errores P0/P1/P2 identificados y resueltos (menos P0-3)                                                |
+| Fecha  | Resumen                                                                                                                                |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 04-mar | Fix crítico auth: middlewares usan `getSession()` en vez de `useSupabaseUser()` (bug HS256 en @nuxtjs/supabase ≤2.0.3); módulo → 2.0.4 |
+| 03-mar | CLAUDE.md: 5 reglas no negociables, Stack añadido, secciones fusionadas; STATUS.md comprimido 294→110 líneas; CLAUDE2.md eliminado     |
+| 03-mar | Hook condicional: solo mata proceso Node del puerto 3000 si STATUS.md contiene CLOSING_SESSION                                         |
+| 02-mar | Hook PostToolUse automático para limpieza Node.js al actualizar STATUS.md                                                              |
+| 01-mar | Fix admin: `isAdmin` usa `role='admin'`; refactor ruta dealer `/vendedor/[slug]` → `/[slug]`                                           |
+| 28-feb | Dealer portal completo: catálogo filtrado, SEO, working hours, contacto                                                                |
+| 28-feb | `docs/PROYECTO-CONTEXTO.md` creado (530 líneas, documento maestro de contexto)                                                         |
+| 28-feb | Hallazgos menores: JSDoc, ARIA, CHECK constraints, Snyk CI, legacy banner, excel chunks                                                |
+| 28-feb | Auditoría #7 Iter 1–15: 5 composables grandes refactorizados, typecheck 0 errores                                                      |
+| 26-feb | Auditoría global 79/100. 12 errores P0/P1/P2 identificados y resueltos (menos P0-3)                                                    |
 
 ---
 

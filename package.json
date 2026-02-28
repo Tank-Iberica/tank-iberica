@@ -25,7 +25,7 @@
     "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/i18n": "^10.2.1",
     "@nuxtjs/sitemap": "^7.6.0",
-    "@nuxtjs/supabase": "^2.0.3",
+    "@nuxtjs/supabase": "^2.0.4",
     "@sentry/vue": "^10.39.0",
     "@vee-validate/zod": "^4.15.1",
     "@vite-pwa/nuxt": "^1.1.1",
