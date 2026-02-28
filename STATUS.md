@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-02-28 18:30 (P1-2 completa: types regenerados; P1-3, P2-1, P2-3 verificados como ya resueltos)
+**Última actualización:** 2026-02-28 19:30 (P2-2 completo: ~115 strings admin extraídos a i18n)
 **Sesiones completadas:** 0–64 + iteraciones de auditoría 1–14 + tareas Haiku
 **Puntuación global (auditoría 26-feb):** 79/100
 
@@ -80,11 +80,11 @@
 
 ### 🟡 P2 — Funcionalidad degradada (no rompe pero impacta)
 
-| ID       | Problema                                                                                                                                  | Archivo(s)                                                               | Acción                                    |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------- |
-| ~~P2-1~~ | ~~**`/api/merchant-feed` y `/__sitemap` sin cache CDN**~~ — **VERIFICADO** Ambos endpoints tienen `Cache-Control` + `ETag` implementados. | `server/api/merchant-feed.get.ts:95-96`, `server/api/__sitemap.ts:5,118` | ✅ Completo                               |
-| P2-2     | **~115 strings sin i18n en admin** — panel admin en español fijo                                                                          | Múltiples archivos `app/pages/admin/`                                    | Extraer a `i18n/es.json` y `i18n/en.json` |
-| ~~P2-3~~ | ~~**Faltan índices**: `vehicles(category_id)` y `auction_bids(auction_id)`~~ — **VERIFICADO** Migración 00066 ya creada.                  | `supabase/migrations/00066_missing_indexes.sql`                          | ✅ Completo                               |
+| ID       | Problema                                                                                                                                                                                                                         | Archivo(s)                                                               | Acción      |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------- |
+| ~~P2-1~~ | ~~**`/api/merchant-feed` y `/__sitemap` sin cache CDN**~~ — **VERIFICADO** Ambos endpoints tienen `Cache-Control` + `ETag` implementados.                                                                                        | `server/api/merchant-feed.get.ts:95-96`, `server/api/__sitemap.ts:5,118` | ✅ Completo |
+| ~~P2-2~~ | ~~**~115 strings sin i18n en admin**~~ — **RESUELTO** 29 archivos actualizados, 24 nuevos sub-namespaces. 0 hardcoded en templates. Arrays estáticos en `<script>` (branding colors, catalog actions) pendientes — bajo impacto. | `i18n/es.json`, `i18n/en.json`, `app/pages/admin/**`                     | ✅ Completo |
+| ~~P2-3~~ | ~~**Faltan índices**: `vehicles(category_id)` y `auction_bids(auction_id)`~~ — **VERIFICADO** Migración 00066 ya creada.                                                                                                         | `supabase/migrations/00066_missing_indexes.sql`                          | ✅ Completo |
 
 ### Resueltos (verificados en código)
 
@@ -185,6 +185,17 @@ Composables grandes que superan 500 líneas:
 
 - `CLAUDE2.md` creado con versión pulida del protocolo
 - **Decidir:** ¿reemplazar `CLAUDE.md` con `CLAUDE2.md`, quedarse con el original, o hacer una mezcla?
+
+---
+
+## Sesión 28-feb (2ª) — Documento maestro de contexto
+
+✅ Implementado:
+
+- Leídos 83 archivos de documentación (.md, .txt, .pdf) en `docs/` y subcarpetas
+- Creado `docs/PROYECTO-CONTEXTO.md` — documento maestro (~370 líneas) que sintetiza visión TradeBase, modelo de negocio, arquitectura, decisiones y criterios de código
+- Actualizado `CLAUDE.md`: referencia a PROYECTO-CONTEXTO.md como lectura obligatoria + regla explícita contra Task paralelos
+- Actualizado `MEMORY.md`: regla crítica de no usar agentes paralelos
 
 ---
 
