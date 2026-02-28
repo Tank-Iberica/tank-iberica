@@ -94,7 +94,10 @@ export function useAdminDemands() {
       demands.value = (data as unknown as AdminDemand[]) || []
       total.value = count || 0
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error fetching demands'
+      error.value =
+        err instanceof Error
+          ? err.message
+          : ((err as { message?: string })?.message ?? 'Error fetching demands')
       demands.value = []
     } finally {
       loading.value = false
