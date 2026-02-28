@@ -332,7 +332,8 @@ git push → GitHub Actions CI (lint → typecheck → build → E2E → Lightho
 - Calculadora ROI de alquiler
 - Exportador cross-platform (Milanuncios, Wallapop formato CSV) — caballo de Troya estratégico
 - Widget embeddable para web del dealer
-- Portal público del dealer con perfil y listado
+- Portal público del dealer con perfil y listado (`/[dealer-slug]`)
+- **Ficha de vehículo en contexto dealer** (`/[dealer-slug]/[vehicle-slug]`): misma ficha pero con branding del dealer (logo, colores). `noindex` + canonical → `/vehiculo/[slug]`. Lock-in: el dealer comparte links propios desde Tracciona.
 - Onboarding funnel diseñado: día 0-30
 
 ### 5.3 Subastas
@@ -455,24 +456,27 @@ Ya existen como tablas y código. **No reconstruir de cero** — verificar que e
 
 ## 7. Decisiones Estratégicas Tomadas (no reimplementar sin validación)
 
-| Decisión                            | Detalle                                                                            |
-| ----------------------------------- | ---------------------------------------------------------------------------------- |
-| **Publicar es gratis**              | Vendedores nunca pagan por listar. Compradores nunca pagan por buscar o contactar. |
-| **Solo ES + EN por ahora**          | Resto de idiomas activar cuando haya demanda medida                                |
-| **Cloudinary + CF Images (fase 2)** | No migrar a fase 3 sin instrucción. Cache immutable 30d                            |
-| **Merchandising = solo formulario** | Sin flujo de compra completo. Solo formulario de interés                           |
-| **API valoración pospuesta**        | No activar hasta ≥500 transacciones históricas                                     |
-| **Scraping = solo manual**          | NUNCA cron en producción                                                           |
-| **i18n JSONB + tabla**              | No columnas `_es`/`_en` (no escala)                                                |
-| **prefix_except_default**           | URLs limpias ES, prefijo para otros idiomas                                        |
-| **GPT-4o mini para traducción**     | 30× más barato, calidad suficiente para texto técnico                              |
-| **Claude Code como ingeniero**      | Contratar humano cuando revenue > 2-3K€/mes                                        |
-| **Dominio único .com**              | Abandonados dominios regionales. Hreflang en .com                                  |
-| **URLs planas**                     | `/cisternas-indox` no `/cisternas/alimentarias` (anti-canibalización SEO)          |
-| **No dependencias extras**          | No Tailwind, no ORM, no UI framework. CSS custom + Supabase directo                |
-| **No microservices**                | Monolito deliberado. 2 personas no justifican la complejidad                       |
-| **Documentación legacy intocable**  | `docs/legacy/` = referencia histórica, no modificar                                |
-| **Admin panel solo español (P2)**   | Solo 2 personas lo usan. Lo que ve el usuario final va primero                     |
+| Decisión                                    | Detalle                                                                                                                      |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Publicar es gratis**                      | Vendedores nunca pagan por listar. Compradores nunca pagan por buscar o contactar.                                           |
+| **Solo ES + EN por ahora**                  | Resto de idiomas activar cuando haya demanda medida                                                                          |
+| **Cloudinary + CF Images (fase 2)**         | No migrar a fase 3 sin instrucción. Cache immutable 30d                                                                      |
+| **Merchandising = solo formulario**         | Sin flujo de compra completo. Solo formulario de interés                                                                     |
+| **API valoración pospuesta**                | No activar hasta ≥500 transacciones históricas                                                                               |
+| **Scraping = solo manual**                  | NUNCA cron en producción                                                                                                     |
+| **i18n JSONB + tabla**                      | No columnas `_es`/`_en` (no escala)                                                                                          |
+| **prefix_except_default**                   | URLs limpias ES, prefijo para otros idiomas                                                                                  |
+| **GPT-4o mini para traducción**             | 30× más barato, calidad suficiente para texto técnico                                                                        |
+| **Claude Code como ingeniero**              | Contratar humano cuando revenue > 2-3K€/mes                                                                                  |
+| **Dominio único .com**                      | Abandonados dominios regionales. Hreflang en .com                                                                            |
+| **URLs planas**                             | `/cisternas-indox` no `/cisternas/alimentarias` (anti-canibalización SEO)                                                    |
+| **No dependencias extras**                  | No Tailwind, no ORM, no UI framework. CSS custom + Supabase directo                                                          |
+| **No microservices**                        | Monolito deliberado. 2 personas no justifican la complejidad                                                                 |
+| **Documentación legacy intocable**          | `docs/legacy/` = referencia histórica, no modificar                                                                          |
+| **Admin panel solo español (P2)**           | Solo 2 personas lo usan. Lo que ve el usuario final va primero                                                               |
+| **Doble URL por vehículo**                  | `/vehiculo/[slug]` = canonical (marketplace). `/[dealer]/[slug]` = portal dealer (noindex). Misma ficha, branding diferente. |
+| **Branding dealer en portal: gratis**       | Logo, colores y header del dealer en su contexto de ficha son gratuitos en launch. Monetizar en futuro si hay demanda.       |
+| **Dominio custom para dealers: descartado** | Complejidad operativa no justificada en fase de captación. Reevaluar tras masa crítica.                                      |
 
 ---
 

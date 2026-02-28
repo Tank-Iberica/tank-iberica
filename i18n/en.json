@@ -2586,7 +2586,8 @@
       "phone": "Phone",
       "email": "Email",
       "website": "Website",
-      "sectionSocial": "Social media"
+      "sectionSocial": "Social media",
+      "viewAllVehicles": "View all vehicles"
     },
     "stats": {
       "title": "Analytics",

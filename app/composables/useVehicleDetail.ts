@@ -36,7 +36,7 @@ export interface VehicleDetail extends Vehicle {
 // Composable
 // ---------------------------------------------------------------------------
 
-export async function useVehicleDetail(slug: Ref<string>) {
+export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?: string }) {
   const route = useRoute()
   const { locale, t } = useI18n()
   const { fetchBySlug } = useVehicles()
@@ -52,9 +52,8 @@ export async function useVehicleDetail(slug: Ref<string>) {
   const showReport = ref(false)
 
   // SSR-compatible data fetching -- runs on server AND client
-  const { data: vehicle, status } = await useAsyncData(`vehicle-${route.params.slug}`, () =>
-    fetchBySlug(slug.value),
-  )
+  const asyncKey = options?.cacheKey ?? `vehicle-${route.params.slug}`
+  const { data: vehicle, status } = await useAsyncData(asyncKey, () => fetchBySlug(slug.value))
 
   const loading = computed(() => status.value === 'pending')
 

@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-04 — optimización documentación (CLAUDE.md + STATUS.md) — CLOSING_SESSION
+**Última actualización:** 2026-02-28 — doble URL dealer/vehículo + branding gratis
 **Sesiones completadas:** 0–64 + Iter 1–15 auditoría + sesiones ad-hoc hasta 03-mar
 **Puntuación global:** 79/100 (auditoría 26-feb) · Historial completo: `git log STATUS.md`
 
@@ -10,7 +10,7 @@
 
 | Módulo           | Real (verificado 28-feb)                         |
 | ---------------- | ------------------------------------------------ |
-| Páginas Vue      | 124                                              |
+| Páginas Vue      | 125                                              |
 | Componentes Vue  | 418                                              |
 | Composables      | 147                                              |
 | Endpoints API    | 62                                               |
@@ -86,6 +86,7 @@ Iter 1–15 completas ✅ (commit `7dde04a`). **Pendiente:** FilterBar.vue (1.99
 
 | Fecha  | Resumen                                                                                                                                |
 | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 28-feb | Doble URL por vehículo: `/vehiculo/[slug]` (marketplace, canonical) + `/[dealer]/[slug]` (portal dealer, branding gratis, noindex)     |
 | 04-mar | Fix crítico auth: middlewares usan `getSession()` en vez de `useSupabaseUser()` (bug HS256 en @nuxtjs/supabase ≤2.0.3); módulo → 2.0.4 |
 | 03-mar | CLAUDE.md: 5 reglas no negociables, Stack añadido, secciones fusionadas; STATUS.md comprimido 294→110 líneas; CLAUDE2.md eliminado     |
 | 03-mar | Hook condicional: solo mata proceso Node del puerto 3000 si STATUS.md contiene CLOSING_SESSION                                         |
