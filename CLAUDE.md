@@ -1,5 +1,26 @@
 # Tracciona.com — Marketplace de Vehículos Industriales
 
+## ANTES DE HACER NADA — Selección de modelo (OBLIGATORIO)
+
+**STOP. Tu PRIMER mensaje en CADA tarea DEBE ser la recomendación de modelo. NO ejecutes ni una sola acción antes.**
+
+| Tipo de tarea | Modelo     | Ejemplos                                                                          |
+| ------------- | ---------- | --------------------------------------------------------------------------------- |
+| Simple        | **Haiku**  | Correcciones, listar archivos, actualizar STATUS.md, renombrar, consultas rapidas |
+| Intermedia    | **Sonnet** | Crear componentes, resolver bugs, refactoring, implementar features               |
+| Compleja      | **Opus**   | Auditorias, arquitectura, migraciones grandes, analisis profundo                  |
+
+**Protocolo:**
+
+1. Tu primer mensaje SIEMPRE es: "Para esta tarea recomiendo **[modelo]** porque [razon]. ¿Cambio con /model o mantengo el actual?"
+2. ESPERA confirmacion del usuario. NO empieces a trabajar.
+3. Si durante la tarea el tipo de trabajo cambia, PARA y di: "Esta parte requiere **[otro modelo]**. ¿Cambio?"
+4. Si el usuario te pide algo y ya estas en el modelo correcto, confirma: "Estamos en [modelo], correcto para esta tarea."
+
+**Razon:** El usuario paga por tokens. Opus en una tarea simple = desperdicio. Haiku en una tarea compleja = resultado pobre.
+
+---
+
 ## Información del proyecto
 
 - **Email admin:** tankiberica@gmail.com
@@ -70,14 +91,6 @@ Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de cód
 - Trabajar siempre de forma secuencial, sin subagentes paralelos
 - Priorizar eficiencia de tokens sobre velocidad
 
-## Modelo según tarea
-
-- Tareas simples (cambios, correcciones, actualizar STATUS.md): usar Haiku
-- Tareas intermedias (crear componentes, resolver bugs): usar Sonnet
-- Tareas complejas (auditorías, arquitectura): usar Opus
-- SIEMPRE, antes de empezar cualquier tarea, indica qué modelo usarías y espera confirmación de que he cambiado el modelo con /model o que mantengo el actual.
-- Si durante la tarea el tipo de trabajo cambia o requiere otro modelo, sobretodo para evitar gasto innecesario de tokens, iindícame qué modelo necesitas ahora y espera confirmación antes de continuar.
-
 ## Gestión de límites
 
 Cuando estimes que quedan pocos tokens en la sesión:
@@ -85,3 +98,13 @@ Cuando estimes que quedan pocos tokens en la sesión:
 1. Avísame con: "⚠️ Tokens bajos - guardando estado"
 2. Actualiza STATUS.md con lo que hemos hecho y qué queda pendiente
 3. Indica exactamente con qué prompt continuar en la siguiente sesión
+
+## Gestión de sesiones
+
+Al terminar cualquier tarea:
+
+1. Pregunta: "¿Hay algo más relacionado con esta tarea o módulo antes de cerrar sesión?"
+2. Si la respuesta es no, actualiza STATUS.md con lo realizado y avisa:
+   "✅ Sesión lista para cerrar. Cuando abras la siguiente, empieza con:
+   Lee CLAUDE.md y STATUS.md antes de hacer nada."
+3. No continúes con nada más hasta recibir respuesta.
