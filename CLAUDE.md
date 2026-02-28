@@ -137,6 +137,20 @@ taskkill /F /IM node.exe 2>nul
 
 Esto evita acumulación de procesos Node huérfanos que saturan la RAM.
 
+**Automatización:** Cada vez que se actualiza `STATUS.md`, se ejecuta automáticamente `taskkill /F /IM node.exe 2>nul` vía hook PostToolUse. Esto asegura limpieza de procesos al cierre de sesión (cuando se actualiza STATUS.md por última vez). El hook está configurado en `.claude/settings.json` y ejecuta `.claude/cleanup-node.bat`.
+
+## Mantenimiento de STATUS.md (prevenir crecimiento descontrolado)
+
+Reglas al actualizar STATUS.md (máximo ~120 líneas):
+
+- **Errores resueltos:** ELIMINAR inmediatamente (nunca tachar con `~~`). Git preserva el historial.
+- **Sesión nueva:** Añadir 1 línea al changelog, sin detalle. No escribir párrafos completos.
+- **Changelog:** Si supera 10 entradas, comprimir las más antiguas en una línea con descripción breve.
+- **Duplicados:** NO repetir tablas que ya están en `PROYECTO-CONTEXTO.md` (módulos pospuestos, métricas de arquitectura).
+- **Fuente de verdad:** STATUS.md = estado actual. Git (`git log STATUS.md`) = historial completo.
+
+Esto evita que STATUS.md vuelva a crecer innecesariamente y mantiene eficiencia de tokens.
+
 ## Gestión de límites
 
 Cuando estimes que quedan pocos tokens en la sesión:
