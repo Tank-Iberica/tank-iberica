@@ -235,7 +235,7 @@ export function useAdminPublicidad() {
         .select('*, advertiser:advertisers(id, company_name)')
         .order('created_at', { ascending: false })
       if (err) throw err
-      ads.value = (data || []) as Ad[]
+      ads.value = (data || []) as unknown as Ad[]
     } catch (e: unknown) {
       error.value = e instanceof Error ? e.message : String(e)
     } finally {

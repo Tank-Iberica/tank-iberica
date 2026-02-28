@@ -174,7 +174,7 @@ export function useSocialAdminUI() {
         .from('vehicles')
         .select('id, brand, model, slug, price, location, vehicle_images(url)')
         .or(`brand.ilike.%${vehicleSearch.value}%,model.ilike.%${vehicleSearch.value}%`)
-        .eq('status', 'active')
+        .eq('status', 'published')
         .order('created_at', { ascending: false })
         .limit(10)
 

@@ -208,7 +208,7 @@ export function useAdminPagos() {
         return
       }
 
-      payments.value = (data as Payment[]) || []
+      payments.value = (data as unknown as Payment[]) || []
     } catch (err) {
       error.value = err instanceof Error ? err.message : String(err)
     } finally {

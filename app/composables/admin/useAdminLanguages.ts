@@ -105,7 +105,7 @@ export function useAdminLanguages() {
       const { count: vehicleCount } = await supabase
         .from('vehicles')
         .select('id', { count: 'exact', head: true })
-        .eq('status', 'active')
+        .eq('status', 'published')
 
       // Count published articles
       const { count: articleCount } = await supabase

@@ -182,7 +182,7 @@ export function useAdminWhatsApp() {
     try {
       const { error: updateError } = await supabase
         .from('vehicles')
-        .update({ status: 'active' })
+        .update({ status: 'published' })
         .eq('id', submission.vehicle_id)
 
       if (updateError) {
