@@ -62,10 +62,10 @@ _Ultima actualizacion: 2026-02-25_
 
 ## Referencia: documentos fuente
 
-| Documento                                                            | Contenido                                |
-| -------------------------------------------------------------------- | ---------------------------------------- |
-| [RECOMENDACIONES-100-PUNTOS.md](RECOMENDACIONES-100-PUNTOS.md)       | 100 recomendaciones priorizadas por area |
-| [VALORACION-PROYECTO-1-100.md](VALORACION-PROYECTO-1-100.md)         | Puntuacion del proyecto por dimension    |
-| [AUDITORIA-INTEGRAL-2026-02.md](AUDITORIA-INTEGRAL-2026-02.md)       | Auditoria tecnica completa (feb 2026)    |
-| [ISSUES-AUDITORIA.md](ISSUES-AUDITORIA.md)                           | Issues especificos con prioridad         |
-| [AUDITORIA-TRACCIONA-10-PUNTOS.md](AUDITORIA-TRACCIONA-10-PUNTOS.md) | Auditoria resumida 10 puntos             |
+| Documento                                                                      | Contenido                                        |
+| ------------------------------------------------------------------------------ | ------------------------------------------------ |
+| [RECOMENDACIONES-100-PUNTOS.md](RECOMENDACIONES-100-PUNTOS.md)                 | 100 recomendaciones priorizadas por area         |
+| [VALORACION-PROYECTO-1-100.md](../legacy/VALORACION-PROYECTO-1-100.md)         | Puntuacion del proyecto por dimension _(legacy)_ |
+| [AUDITORIA-INTEGRAL-2026-02.md](../legacy/AUDITORIA-INTEGRAL-2026-02.md)       | Auditoria tecnica completa feb 2026 _(legacy)_   |
+| [ISSUES-AUDITORIA.md](ISSUES-AUDITORIA.md)                                     | Issues especificos con prioridad                 |
+| [AUDITORIA-TRACCIONA-10-PUNTOS.md](../legacy/AUDITORIA-TRACCIONA-10-PUNTOS.md) | Auditoria resumida 10 puntos _(legacy)_          |

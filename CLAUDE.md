@@ -4,25 +4,21 @@
 
 - **Email admin:** tankiberica@gmail.com
 - **Supabase Project ID:** gmnrfuzekbwyzkgsaftv
-- **Proyecto anterior:** Tank Ibérica (monolítico) → migración en curso a Tracciona (marketplace)
+- **Proyecto anterior:** Tank Ibérica (monolítico) → migración y evolución en curso a Tracciona (marketplace)
 
 ## Documentación
 
-Toda la documentación de la migración está en `docs/tracciona-docs/`.
+Toda la documentación activa está en `docs/tracciona-docs/`.
 
 **Si necesitas entender el proyecto:**
 
 1. Lee `docs/tracciona-docs/contexto-global.md` — Visión completa del ecosistema
 2. Lee `docs/tracciona-docs/README.md` — Estructura y reglas de ejecución
 
-**Si necesitas ejecutar un paso:**
-
-- Lee el archivo de migración correspondiente en `docs/tracciona-docs/migracion/`
-- Consulta los anexos que el paso referencia en `docs/tracciona-docs/anexos/`
-
 **Si necesitas ejecutar el proyecto:**
 
 - Lee `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Define las 43 sesiones de trabajo. Sesiones 1-43 completadas. El usuario puede pedir "ejecuta la sesión N" para re-ejecutar o verificar cualquier sesión.
+- Consulta los anexos en `docs/tracciona-docs/anexos/` cuando una sesión los referencia.
 
 **Regla principal:** Ejecutar solo lo que dicen las INSTRUCCIONES-MAESTRAS. Los anexos son REFERENCIA, no tareas independientes.
 
@@ -40,68 +36,11 @@ Toda la documentación de la migración está en `docs/tracciona-docs/`.
 - Puedes ejecutar `supabase db push`, `supabase gen types`, `npm install`, `npm run build` directamente.
 - NO tienes acceso a navegador web ni dashboards. Si necesitas crear algo en Stripe/Supabase/Cloudflare dashboard, pide al usuario que lo haga.
 
-**Documentación legacy (referencia del proyecto original):**
+**Documentación legacy:** Todo en `docs/legacy/` (30+ archivos del sistema anterior, no modificar).
 
-- `docs/esquema-bd.md` — Esquema BD actual (pre-migración)
-- `docs/admin-funcionalidades.md` — Funcionalidades del admin actual
-- `docs/index-funcionalidades.md` — Funcionalidades del frontend actual
-- `docs/legacy/` — Documentación del sitio original
+## Convenciones y estructura
 
-## Stack
-
-- **Frontend:** Nuxt 3 (Vue 3), TypeScript, Pinia, @nuxtjs/i18n
-- **Backend:** Supabase (PostgreSQL + Auth + RLS + Realtime + Edge Functions)
-- **Imágenes:** Cloudinary via @nuxt/image
-- **Deploy:** Cloudflare Pages (auto-deploy on push to main)
-- **i18n strategy:** prefix_except_default (español sin prefijo, /en/, /fr/, etc.)
-
-## Comandos
-
-```bash
-npm run dev          # Dev server (http://localhost:3000)
-npm run build        # Build producción
-npm run lint         # ESLint
-npm run lint:fix     # ESLint auto-fix
-npm run typecheck    # nuxi typecheck
-npm run test         # Vitest
-npx supabase db push # Aplicar migraciones
-npx supabase gen types typescript --project-id gmnrfuzekbwyzkgsaftv > types/supabase.ts
-```
-
-## Estructura del proyecto
-
-```
-app/
-  pages/              → Rutas (index, vehiculo/[slug], noticias/[slug], admin/*)
-  components/         → SFCs por dominio (catalog/, vehicle/, modals/, layout/, ui/)
-  composables/        → Lógica reutilizable (useVehicles, useFilters, etc.)
-  layouts/            → Layouts (default, admin)
-  middleware/         → auth.ts, admin.ts
-  assets/css/         → tokens.css (design system), global.css
-server/
-  services/           → Lógica de negocio extraída (billing, marketReport)
-i18n/                 → Traducciones (es.json, en.json)
-supabase/migrations/  → SQL (00001-00060, nuevas desde 00061)
-types/                → supabase.ts (auto-generated), index.d.ts
-tests/e2e/            → Tests Playwright (3 base + 8 journeys)
-docs/tracciona-docs/  → Documentación de migración (NO modificar)
-```
-
-## Convenciones de código
-
-- TypeScript estricto. No `any`.
-- Composables: `use` + PascalCase (useVehicles, useLocalized, useVerticalConfig)
-- Componentes: PascalCase, un archivo por componente
-- CSS: scoped en componentes Vue. Variables globales en tokens.css. Custom properties para tema (--primary, --accent)
-- Nunca innerHTML sin DOMPurify
-- Nunca console.log en producción
-- Nunca hardcodear categorías, subcategorías ni filtros — siempre leer de BD
-- Nunca hardcodear idiomas (\_es, \_en) — usar JSONB + localizedField()
-- i18n: todo texto de UI va en locales/\*.json
-- Migraciones en `supabase/migrations/` con numeración incremental (00031, 00032...)
-- RLS obligatorio en TODAS las tablas nuevas
-- JSONB para campos traducibles cortos (name, label, tagline)
-- Tabla content_translations para campos traducibles largos (description, content)
+Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de código, comandos, tests y git workflow.
 
 ## Tres reglas no negociables
 
@@ -116,12 +55,6 @@ docs/tracciona-docs/  → Documentación de migración (NO modificar)
 - Breakpoints: 480px, 768px, 1024px, 1280px (mobile-first)
 - Spacing: escala de 4px (4, 8, 12, 16, 24, 32, 48, 64)
 
-## Git workflow
-
-- Branch principal: `main`
-- Commits: conventional commits (feat:, fix:, refactor:, test:, docs:)
-- Antes de merge: lint + typecheck
-
 ## Decisiones estratégicas (25 Feb 2026)
 
 - Idiomas activos: ES + EN. Resto pospuesto (ver FLUJOS-OPERATIVOS §7)
@@ -131,3 +64,24 @@ docs/tracciona-docs/  → Documentación de migración (NO modificar)
 - Scraping: solo script manual, NUNCA cron en producción
 - 2º cluster BD: considerar Neon/Railway para diversificar
 - Métricas infra: tag vertical en infra_metrics desde día 1
+
+## Instrucciones de trabajo
+
+- Trabajar siempre de forma secuencial, sin subagentes paralelos
+- Priorizar eficiencia de tokens sobre velocidad
+
+## Modelo según tarea
+
+- Tareas simples (cambios, correcciones, actualizar STATUS.md): usar Haiku
+- Tareas intermedias (crear componentes, resolver bugs): usar Sonnet
+- Tareas complejas (auditorías, arquitectura): usar Opus
+- SIEMPRE, antes de empezar cualquier tarea, indica qué modelo usarías y espera confirmación de que he cambiado el modelo con /model o que mantengo el actual.
+- Si durante la tarea el tipo de trabajo cambia o requiere otro modelo, sobretodo para evitar gasto innecesario de tokens, iindícame qué modelo necesitas ahora y espera confirmación antes de continuar.
+
+## Gestión de límites
+
+Cuando estimes que quedan pocos tokens en la sesión:
+
+1. Avísame con: "⚠️ Tokens bajos - guardando estado"
+2. Actualiza STATUS.md con lo que hemos hecho y qué queda pendiente
+3. Indica exactamente con qué prompt continuar en la siguiente sesión

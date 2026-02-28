@@ -1,4 +1,4 @@
-> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
+> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](../tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
 
 **TANK IBERICA**
 
@@ -600,7 +600,7 @@ Supabase Auth unifica y reemplaza 4 archivos y 2 backends:
 
 - Parte de user-panel.js (191 líneas): guardarSesion, verificarSesionActiva, localStorage manual
 
-10.2 Comparativa de Seguridad
+  10.2 Comparativa de Seguridad
 
 ---
 

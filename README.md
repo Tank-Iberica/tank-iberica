@@ -2,6 +2,14 @@
 
 > Grupo de marketplaces B2B verticales. Mismo codigo, N verticales.
 
+| Fuente de verdad | Documento                                                      |
+| ---------------- | -------------------------------------------------------------- |
+| Estado real      | [`docs/ESTADO-REAL-PRODUCTO.md`](docs/ESTADO-REAL-PRODUCTO.md) |
+| Progreso         | [`docs/progreso.md`](docs/progreso.md)                         |
+| Contribucion     | [`CONTRIBUTING.md`](CONTRIBUTING.md)                           |
+| Instrucciones IA | [`CLAUDE.md`](CLAUDE.md)                                       |
+| Indice completo  | [`README-PROYECTO.md`](README-PROYECTO.md)                     |
+
 ## Que es
 
 Plataforma multi-vertical de compraventa profesional. Cada vertical (vehiculos industriales, maquinaria, hosteleria...) comparte el mismo codigo base, configurado por `vertical_config` en BD.

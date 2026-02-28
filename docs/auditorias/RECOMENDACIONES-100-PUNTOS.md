@@ -1,6 +1,6 @@
 # Recomendaciones para alcanzar 100/100 en cada dimensión
 
-**Referencia:** [VALORACION-PROYECTO-1-100.md](./VALORACION-PROYECTO-1-100.md)  
+**Referencia:** [VALORACION-PROYECTO-1-100.md](../legacy/VALORACION-PROYECTO-1-100.md) _(movido a legacy)_
 **Objetivo:** Acciones concretas para cerrar la brecha entre la puntuación actual y 100 en cada apartado.
 
 ---

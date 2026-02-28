@@ -1,4 +1,4 @@
-> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
+> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](../tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
 
 **TANK IBERICA**
 
@@ -48,7 +48,7 @@ Fuente Google Fonts (Inter) Tipografía de la interfaz
 
 - **Apps Script URL:** AKfycbzvweSBncWu0sXaZspE6tQ6ZMJIIcmk9dKlpXgjdSdU0LJZUzLOsE3LdeuSkP86H337sw
 
-1.3 Hojas de Google Sheets
+  1.3 Hojas de Google Sheets
 
 Todas las hojas que componen la base de datos:
 
@@ -108,13 +108,13 @@ El sistema implementa un flujo de autenticación basado en Google OAuth 2.0 con 
 
 - Foto y nombre del usuario mostrados en el sidebar (.admin-user)
 
-2.2 Scopes Requeridos
+  2.2 Scopes Requeridos
 
 - https://www.googleapis.com/auth/spreadsheets (lectura/escritura de datos)
 
 - https://www.googleapis.com/auth/drive.file (gestión de archivos en Drive)
 
-2.3 Logout
+  2.3 Logout
 
 La función logout() limpia el token de localStorage y recarga la página, mostrando nuevamente la pantalla de login.
 
@@ -132,7 +132,7 @@ El sidebar (.admin-sidebar) es el elemento principal de navegación con las sigu
 
 - **Badges:** Contadores en tiempo real sobre elementos pendientes (rojo para urgentes, verde/turquesa para información)
 
-3.2 Secciones Principales
+  3.2 Secciones Principales
 
 ---
 
@@ -262,7 +262,7 @@ Calculadora calc Botones +/- para incrementar/decrementar
 
 - **Orden:** Reordenable con botones arriba/abajo
 
-5.3 Banner
+  5.3 Banner
 
 Configuración del banner de notificación que aparece en la web pública:
 
@@ -296,7 +296,7 @@ Es la sección más compleja del panel, gestionando el inventario completo de ve
 
 - **Botón de configuración:** Acceso al modal de configuración de tabla
 
-6.1.2 Tabla de Vehículos
+  6.1.2 Tabla de Vehículos
 
 La tabla es completamente configurable a través del sistema de \'grupos\':
 
@@ -312,7 +312,7 @@ La tabla es completamente configurable a través del sistema de \'grupos\':
 
 - **Pantalla completa:** Botón para expandir la tabla a toda la pantalla
 
-6.1.3 Modal de Vehículo (modalVehiculo)
+  6.1.3 Modal de Vehículo (modalVehiculo)
 
 El formulario de creación/edición de vehículos es el más extenso del sistema. Contiene las siguientes secciones:
 
@@ -412,7 +412,7 @@ El formulario de creación/edición de vehículos es el más extenso del sistema
 
 - Mostrado en caja destacada (.coste-total-box) con gradiente oscuro
 
-6.1.4 Sistema de IDs
+  6.1.4 Sistema de IDs
 
 Los vehículos usan IDs numéricos secuenciales (1, 2, 3\...) con un sistema de reutilización que rellena huecos dejados por vehículos eliminados, evitando así saltos en la numeración.
 
@@ -450,7 +450,7 @@ Se abre al pulsar el botón \'Vender\' en un vehículo. Tiene dos pestañas:
 
 - Crea entrada en el balance y mueve el vehículo a la hoja \'historico\'
 
-6.2 Intermediación
+  6.2 Intermediación
 
 Gestiona vehículos que no pertenecen a Tank Ibérica pero que la empresa intermedia. No se publican en la web pública.
 
@@ -468,7 +468,7 @@ Gestiona vehículos que no pertenecen a Tank Ibérica pero que la empresa interm
 
 - **Cálculo de beneficio:** Ingresos - Gastos mostrado en el modal
 
-6.2.2 Tabla Configurable
+  6.2.2 Tabla Configurable
 
 Tiene su propio sistema de grupos de columnas, independiente del de vehículos. La configuración se almacena en tabla_config con el campo sección=\'intermediacion\' o \'ambos\'.
 
@@ -486,7 +486,7 @@ Sección para rastrear productos vistos en plataformas de la competencia (Milanu
 
 - Opción \'Otra\' para plataformas puntuales
 
-6.3.2 Campos del Ojeado
+  6.3.2 Campos del Ojeado
 
 - **Producto:** Descripción del vehículo/producto visto
 
@@ -502,7 +502,7 @@ Sección para rastrear productos vistos en plataformas de la competencia (Milanu
 
 - **Notas:** Observaciones libres
 
-6.4 Anunciantes
+  6.4 Anunciantes
 
 Personas que contactan a Tank Ibérica para vender sus vehículos.
 
@@ -516,7 +516,7 @@ Personas que contactan a Tank Ibérica para vender sus vehículos.
 
 - Badge en navegación para anunciantes con estado \'nuevo\'
 
-6.5 Solicitantes
+  6.5 Solicitantes
 
 Personas que buscan comprar un tipo específico de vehículo.
 
@@ -554,7 +554,7 @@ Gasto Compra, Taller, Documentación, Servicios, Salario, Seguro, Almacenamiento
 
 - Cobrado: ingreso recibido (badge verde)
 
-7.3 Filtros
+  7.3 Filtros
 
 - Año: filtra por año de la transacción
 
@@ -568,7 +568,7 @@ Gasto Compra, Taller, Documentación, Servicios, Salario, Seguro, Almacenamiento
 
 - Búsqueda de texto: en detalle y notas
 
-7.4 Resumen Financiero
+  7.4 Resumen Financiero
 
 Panel inferior (.balance-summary) con tres tarjetas:
 
@@ -624,7 +624,7 @@ Archivo de vehículos que han sido vendidos. Se puebla automáticamente cuando s
 
 - beneficio: cálculo automático (precio_venta - coste_total)
 
-8.2 Filtros
+  8.2 Filtros
 
 - Año de venta
 
@@ -634,7 +634,7 @@ Archivo de vehículos que han sido vendidos. Se puebla automáticamente cuando s
 
 - Marca
 
-8.3 Grupos de Columnas Opcionales
+  8.3 Grupos de Columnas Opcionales
 
 - DOCS: columnas de documentación
 
@@ -642,7 +642,7 @@ Archivo de vehículos que han sido vendidos. Se puebla automáticamente cuando s
 
 - ALQUILER: historial de alquiler previo a la venta
 
-8.4 Restauración
+  8.4 Restauración
 
 Opción de restaurar un vehículo del histórico al catálogo activo. Requiere escribir \'Restaurar\' como confirmación. Elimina la entrada del balance asociada si existe.
 
@@ -676,7 +676,7 @@ Administración de cuentas de usuarios registrados en la web pública:
 
 - Acciones: ver, editar, eliminar
 
-10.2 Chat
+  10.2 Chat
 
 Sistema de mensajería entre administradores y usuarios:
 
@@ -692,7 +692,7 @@ Sistema de mensajería entre administradores y usuarios:
 
 - **Badge:** Contador de chats con mensajes sin leer en la navegación
 
-10.3 Suscripciones
+  10.3 Suscripciones
 
 Gestión de suscriptores al newsletter:
 
@@ -722,7 +722,7 @@ Los grupos son agrupaciones lógicas de columnas que pueden activarse/desactivar
 
 - **Orden:** Reordenable con drag-and-drop
 
-11.2 Columnas
+  11.2 Columnas
 
 Cada columna tiene configuración avanzada:
 
@@ -734,7 +734,7 @@ Cada columna tiene configuración avanzada:
 
 - **Reordenable:** Drag-and-drop para cambiar el orden
 
-11.3 Modal de Configuración (modalConfigTabla)
+  11.3 Modal de Configuración (modalConfigTabla)
 
 Interfaz con sidebar de tres secciones: Grupos, Columnas Vehículos, Columnas Intermediación. Cada sección muestra una lista de items arrastrables (.sortable-item) con handles de arrastre y botones de acción.
 
@@ -752,7 +752,7 @@ Múltiples modales de exportación para diferentes secciones:
 
 - Excluir columnas específicas: ID, Imagen, Categoría, Subcategoría, Precio, Estado, Acciones
 
-12.2 Exportar Balance (modalExportarBalance)
+  12.2 Exportar Balance (modalExportarBalance)
 
 - Formato: Excel o PDF
 
@@ -760,7 +760,7 @@ Múltiples modales de exportación para diferentes secciones:
 
 - Selección de columnas
 
-12.3 Exportar Resumen (modalExportarResumen)
+  12.3 Exportar Resumen (modalExportarResumen)
 
 - Formato: Excel o PDF
 
@@ -768,7 +768,7 @@ Múltiples modales de exportación para diferentes secciones:
 
 - Incluir: totales, desglose por razón, desglose mensual
 
-12.4 Exportar Histórico (modalExportarHistorico)
+  12.4 Exportar Histórico (modalExportarHistorico)
 
 - Formato: Excel o PDF
 
@@ -776,7 +776,7 @@ Múltiples modales de exportación para diferentes secciones:
 
 - Selección extensa de columnas (básicas, documentación, técnicas, financieras)
 
-12.5 Exportar Intermediación y Ojeados
+  12.5 Exportar Intermediación y Ojeados
 
 Cada sección tiene su propio modal de exportación con opciones de formato, datos y columnas.
 
@@ -797,7 +797,7 @@ Los archivos se organizan en una estructura de carpetas jerárquica:
 
 - Tickets/ \> \[Año\]/ \> Ingresos/Facturas/ y Gastos/Recibos/
 
-13.1 Funciones de Subida
+  13.1 Funciones de Subida
 
 - **uploadImg():** Sube imágenes de vehículos a la carpeta Fotos
 
@@ -825,7 +825,7 @@ Contadores visuales en la navegación que se actualizan al cargar datos:
 
 - Las tarjetas del dashboard cambian de estilo cuando hay pendientes
 
-14.3 Notificaciones Toast
+  14.3 Notificaciones Toast
 
 Sistema de notificaciones temporales en la esquina inferior derecha:
 
@@ -845,7 +845,7 @@ Animación de entrada slideIn y desaparición automática.
 
 - Validación de fila (row \>= 2) antes de cualquier eliminación para proteger cabeceras
 
-14.5 Normalización de Estados
+  14.5 Normalización de Estados
 
 Función que normaliza abreviaturas de estado: \'pub\' → publicado, \'ocul\' → oculto, \'inact\' → inactivo, etc.
 
@@ -859,7 +859,7 @@ Función que normaliza abreviaturas de estado: \'pub\' → publicado, \'ocul\' �
 
 - **Moneda:** Formato con símbolo €
 
-14.7 Caché Local
+  14.7 Caché Local
 
 Objeto cache global que almacena arrays para todas las hojas (vehiculos, subcategorias, filtros, anunciantes, solicitantes, noticias, comentarios, usuarios, suscripciones, historico, balance, intermediacion, ojeados, tabla_config). Los datos se cargan al inicio y se actualizan tras cada operación.
 

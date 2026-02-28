@@ -1,4 +1,4 @@
-> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
+> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README-PROYECTO.md`](../../README-PROYECTO.md) y [`INSTRUCCIONES-MAESTRAS.md`](../tracciona-docs/INSTRUCCIONES-MAESTRAS.md).
 
 **TANK IBERICA**
 
@@ -106,7 +106,7 @@ Todo el código reside en un único archivo index.html organizado en tres bloque
 
 - Líneas 7200--12788: JavaScript (lógica de negocio, APIs, eventos)
 
-2.2 Fuentes de Datos (Google Sheets)
+  2.2 Fuentes de Datos (Google Sheets)
 
 La aplicación consume datos de múltiples hojas de un mismo libro de Google Sheets:
 
@@ -228,13 +228,13 @@ En móvil, los iconos se agrupan en dos menús desplegables:
 
 - Icono Globo: despliega WhatsApp, LinkedIn, Facebook
 
-4.4 Selector de Idioma
+  4.4 Selector de Idioma
 
 - Desktop: botones ES/EN con clase active
 
 - Móvil: bandera del idioma actual, despliega la alternativa con flagcdn.com
 
-4.5 Botón de Cuenta
+  4.5 Botón de Cuenta
 
 Botón \"Mi cuenta\" / \"My account\" con icono de usuario SVG. Al pulsar, abre el modal de autenticación. Si el usuario ya está autenticado, muestra su nombre.
 
@@ -360,7 +360,7 @@ calc Campo calculado Valor derivado de otros filtros
 
 - Ambos tipos se controlan mediante campos específicos en la hoja de Google Sheets
 
-8.4 Indicadores Visuales
+  8.4 Indicadores Visuales
 
 - Fade en los bordes cuando hay contenido fuera de vista (scroll)
 
@@ -376,13 +376,13 @@ Barra sticky de controles que permanece visible al hacer scroll. Permite gestion
 
 - Buscador: input de texto en desktop; icono + dropdown en móvil. Búsqueda en marca, modelo y descripción. Tiempo real, case-insensitive.
 
-9.2 Grupo Central
+  9.2 Grupo Central
 
 - Contador de resultados: \"X vehículos\" / \"X vehicles\"
 
 - Botón Solicitar: abre el modal de demanda del comprador
 
-9.3 Grupo Derecho
+  9.3 Grupo Derecho
 
 - Favoritos: icono corazón con badge contador
 
@@ -390,7 +390,7 @@ Barra sticky de controles que permanece visible al hacer scroll. Permite gestion
 
 - Ordenar: dropdown con 6 opciones
 
-9.4 Opciones de Ordenación
+  9.4 Opciones de Ordenación
 
 ---
 
@@ -450,7 +450,7 @@ Móvil pequeño (\<480px) 1 columna
 
 - Lazy loading para imágenes
 
-10.3 Vista Lista
+  10.3 Vista Lista
 
 Formato de tabla con columnas ordenables: Imagen, Marca, Modelo, Año, Precio, Ubicación, Categoría y Acciones. Click en fila abre el modal de detalle. Scroll horizontal en móvil.
 
@@ -484,7 +484,7 @@ Superposición a pantalla completa (overlay) con dos secciones principales: gale
 
 - Click en miniatura cambia imagen principal
 
-11.2 Panel de Información (Derecha / Inferior)
+  11.2 Panel de Información (Derecha / Inferior)
 
 - Título + Precio (misma línea)
 
@@ -502,7 +502,7 @@ Superposición a pantalla completa (overlay) con dos secciones principales: gale
 
 - Botón Compartir (copia URL al portapapeles)
 
-11.3 Cierre y Layout
+  11.3 Cierre y Layout
 
 - Botón ×: esquina superior derecha (desktop), centro superior (móvil)
 
@@ -596,7 +596,7 @@ Aceptación Checkbox de términos y condiciones
 
 - Máximo 10 fotos por anuncio
 
-14.3 Validación
+  14.3 Validación
 
 - Campos obligatorios marcados con \*
 
@@ -704,13 +704,13 @@ Tres secciones con estructura similar: overlay a página completa, activadas des
 
 - Modal de detalle de noticia
 
-19.2 Sobre Nosotros
+  19.2 Sobre Nosotros
 
 - Placeholder: \"Información sobre Tank Iberica\"
 
 - Estructura básica con header y contenido
 
-19.3 Legal
+  19.3 Legal
 
 - Placeholder: \"Información legal\"
 
@@ -772,7 +772,7 @@ Todos los elementos de texto utilizan atributos data-es y data-en para almacenar
 
 - Selector de idioma en header (desktop: botones, móvil: banderas)
 
-22.2 Alcance
+  22.2 Alcance
 
 - Labels, botones, placeholders de formularios
 
