@@ -42,12 +42,16 @@ Solo tras confirmar tarea (paso 2) Y modelo (paso 3), empieza a trabajar.
 
 ---
 
-**Durante la tarea:**
+**Durante la tarea — Cambio de modelo en subtareas:**
 
+- Si la tarea tiene **múltiples subtareas con distintos niveles de complejidad**, evalúa cada una:
+  - Subtareas **simples** (ediciones, bash scripts, actualizaciones de ficheros) → **Cambia a Haiku**
+  - Subtareas **intermedias/complejas** → **Cambia a Sonnet** si estabas en Haiku
+  - Ejemplo: "Hallazgos menores #16-22" = 6 subtareas, 4 de ellas Haiku, 2 Sonnet → Cambiar entre ellas
 - Si el tipo de trabajo cambia, PARA y di: "Esta parte requiere **[otro modelo]**. ¿Cambio?"
 - Si ya estás en el modelo correcto, confirma: "Estamos en [modelo], correcto para esta tarea."
 
-**Razón:** El usuario paga por tokens. Opus en una tarea simple = desperdicio. Haiku en una tarea compleja = resultado pobre. Una orden mal entendida = trabajo tirado.
+**Razón:** El usuario paga por tokens. Opus en una tarea simple = desperdicio. Haiku en una tarea compleja = resultado pobre. Una orden mal entendida = trabajo tirado. **Cambiar de modelo entre subtareas maximiza eficiencia sin sacrificar calidad.**
 
 ---
 
