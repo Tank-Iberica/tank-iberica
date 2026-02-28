@@ -1,7 +1,7 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-02-28 (Auditoría #7 Iteración 14 completa)
-**Sesiones completadas:** 0–64 + iteraciones de auditoría 1–14
+**Última actualización:** 2026-02-28 18:30 (P1-2 completa: types regenerados; P1-3, P2-1, P2-3 verificados como ya resueltos)
+**Sesiones completadas:** 0–64 + iteraciones de auditoría 1–14 + tareas Haiku
 **Puntuación global (auditoría 26-feb):** 79/100
 
 ---
@@ -72,19 +72,19 @@
 
 ### 🟠 P1 — Errores que bloquean CI o exponen información
 
-| ID   | Problema                                                                                                                                 | Archivo(s)                                                                                                                          | Acción                                                                                             |
-| ---- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| P1-1 | **50 errores TypeScript** en componentes admin — `npm run typecheck` falla. Bloquea CI si se activa como gate.                           | `components/admin/balance/*.vue`, `components/admin/infra/InfraOverview.vue`                                                        | Fix tipos e interfaces                                                                             |
-| P1-2 | **`types/supabase.ts` desactualizado** — las 18 tablas de migración 00065 no están en los tipos generados. Genera errores TS en cascada. | `types/supabase.ts`                                                                                                                 | Ejecutar `npx supabase gen types typescript --project-id gmnrfuzekbwyzkgsaftv > types/supabase.ts` |
-| P1-3 | **3 endpoints exponen mensajes de error internos** — revelan nombres de servicio (Supabase, AI provider) al usuario final.               | `server/api/stripe/webhook.post.ts:69`, `server/api/generate-description.post.ts:95`, `server/api/reservations/respond.post.ts:103` | Usar `safeError()` en lugar de exponer `error.message`                                             |
+| ID       | Problema                                                                                                                                          | Archivo(s)                                                                                                                          | Acción      |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| ~~P1-1~~ | ~~**281 errores TypeScript**~~ — **RESUELTO** `npm run typecheck` pasa con 0 errores (281→0, 28-feb).                                             | —                                                                                                                                   | ✅ Completo |
+| ~~P1-2~~ | ~~**`types/supabase.ts` desactualizado**~~ — **RESUELTO** Regenerados con `npx supabase gen types` (28-feb 18:30). Todas las 89 tablas incluidas. | `types/supabase.ts`                                                                                                                 | ✅ Completo |
+| ~~P1-3~~ | ~~**3 endpoints exponen errores internos**~~ — **VERIFICADO** Todos usan `safeError()` correctamente.                                             | `server/api/stripe/webhook.post.ts:71`, `server/api/generate-description.post.ts:94`, `server/api/reservations/respond.post.ts:102` | ✅ Completo |
 
 ### 🟡 P2 — Funcionalidad degradada (no rompe pero impacta)
 
-| ID   | Problema                                                                             | Archivo(s)                                                   | Acción                                    |
-| ---- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------ | ----------------------------------------- |
-| P2-1 | **`/api/merchant-feed` y `/__sitemap` sin cache CDN** — se regeneran en cada request | `server/api/merchant-feed.get.ts`, `server/api/__sitemap.ts` | Añadir `Cache-Control` + ETag             |
-| P2-2 | **~115 strings sin i18n en admin** — panel admin en español fijo                     | Múltiples archivos `app/pages/admin/`                        | Extraer a `i18n/es.json` y `i18n/en.json` |
-| P2-3 | **Faltan índices**: `vehicles(category_id)` y `auction_bids(auction_id)`             | —                                                            | Nueva migración                           |
+| ID       | Problema                                                                                                                                  | Archivo(s)                                                               | Acción                                    |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------- |
+| ~~P2-1~~ | ~~**`/api/merchant-feed` y `/__sitemap` sin cache CDN**~~ — **VERIFICADO** Ambos endpoints tienen `Cache-Control` + `ETag` implementados. | `server/api/merchant-feed.get.ts:95-96`, `server/api/__sitemap.ts:5,118` | ✅ Completo                               |
+| P2-2     | **~115 strings sin i18n en admin** — panel admin en español fijo                                                                          | Múltiples archivos `app/pages/admin/`                                    | Extraer a `i18n/es.json` y `i18n/en.json` |
+| ~~P2-3~~ | ~~**Faltan índices**: `vehicles(category_id)` y `auction_bids(auction_id)`~~ — **VERIFICADO** Migración 00066 ya creada.                  | `supabase/migrations/00066_missing_indexes.sql`                          | ✅ Completo                               |
 
 ### Resueltos (verificados en código)
 
@@ -181,9 +181,17 @@ Composables grandes que superan 500 líneas:
 - `374b82a` fix: correct status value 'active' → 'published' in admin composables
 - `2c449f2` docs: add model-switching rule for mixed-complexity subtasks
 
+## Pendiente — Decisión CLAUDE.md
+
+- `CLAUDE2.md` creado con versión pulida del protocolo
+- **Decidir:** ¿reemplazar `CLAUDE.md` con `CLAUDE2.md`, quedarse con el original, o hacer una mezcla?
+
+---
+
 ## Próxima acción recomendada
 
-1. **Auditoría #7 Iteración 15** → composables grandes (`useAdminProductosPage.ts`, etc.)
-2. Ejecutar `npx supabase gen types` → corrige errores TS en cascada (P1-2)
-3. Configurar Cloudflare WAF rules → activa rate limiting en producción (P0-3)
-4. Migración índices faltantes → performance catálogo y subastas (P2-3)
+1. **P0-1:** Aplicar migración 00065 (`npx supabase db push` — supervisa fallos potenciales de BD)
+2. **P0-2:** Corregir RLS en migración 00065 (policies: usar subquery `dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())`)
+3. **P0-3:** Configurar Cloudflare WAF rules → activa rate limiting en producción
+4. **P2-2:** Extraer ~115 strings sin i18n del panel admin (opcional, bajo impacto)
+5. **Auditoría #7 Iteración 15** → refactoring composables grandes (`useAdminProductosPage.ts`, `useAdminEmails.ts`, etc.)
