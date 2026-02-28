@@ -390,11 +390,19 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   // Return
   // ---------------------------------------------------------------------------
 
+  // ---------------------------------------------------------------------------
+  // Role awareness (from useAuth shared state)
+  // ---------------------------------------------------------------------------
+
+  const { isDealer, isAdmin } = useAuth()
+
   return {
     // User
     userDisplayName,
     userEmail,
     userInitial,
+    isDealer,
+    isAdmin,
 
     // Favorites
     favoritesCount,

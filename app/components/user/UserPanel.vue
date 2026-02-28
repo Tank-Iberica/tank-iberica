@@ -16,6 +16,8 @@ const {
   userDisplayName,
   userEmail,
   userInitial,
+  isDealer,
+  isAdmin,
   favoritesCount,
   chatMessages,
   chatLoading,
@@ -96,6 +98,60 @@ const adItems = computed(() =>
               <p>{{ userEmail }}</p>
             </div>
           </div>
+
+          <!-- Quick nav links by role -->
+          <nav class="panel-nav">
+            <NuxtLink to="/perfil" class="panel-nav-item" @click="emit('update:modelValue', false)">
+              {{ $t('nav.myProfile') }}
+            </NuxtLink>
+            <NuxtLink
+              to="/perfil/favoritos"
+              class="panel-nav-item"
+              @click="emit('update:modelValue', false)"
+            >
+              {{ $t('nav.favorites') }}
+            </NuxtLink>
+
+            <!-- Dealer links -->
+            <template v-if="isDealer || isAdmin">
+              <div class="panel-nav-divider" />
+              <span class="panel-nav-label">{{ $t('nav.dealerPanel') }}</span>
+              <NuxtLink
+                to="/dashboard"
+                class="panel-nav-item"
+                @click="emit('update:modelValue', false)"
+              >
+                Dashboard
+              </NuxtLink>
+              <NuxtLink
+                to="/dashboard/vehiculos"
+                class="panel-nav-item"
+                @click="emit('update:modelValue', false)"
+              >
+                {{ $t('nav.myVehicles') }}
+              </NuxtLink>
+              <NuxtLink
+                to="/dashboard/leads"
+                class="panel-nav-item"
+                @click="emit('update:modelValue', false)"
+              >
+                {{ $t('nav.leads') }}
+              </NuxtLink>
+            </template>
+
+            <!-- Admin links -->
+            <template v-if="isAdmin">
+              <div class="panel-nav-divider" />
+              <span class="panel-nav-label">{{ $t('nav.adminPanel') }}</span>
+              <NuxtLink
+                to="/admin"
+                class="panel-nav-item"
+                @click="emit('update:modelValue', false)"
+              >
+                {{ $t('nav.adminPanel') }}
+              </NuxtLink>
+            </template>
+          </nav>
 
           <div class="panel-menu">
             <!-- PERFIL -->
@@ -369,6 +425,46 @@ const adItems = computed(() =>
   margin: 4px 0 0;
   font-size: 0.85rem;
   opacity: 0.8;
+}
+
+/* Quick nav */
+.panel-nav {
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-bottom: 1px solid #eee;
+}
+
+.panel-nav-item {
+  display: block;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  color: #1e293b;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.15s;
+  min-height: 44px;
+  line-height: 24px;
+}
+
+.panel-nav-item:hover {
+  background: #f1f5f9;
+}
+
+.panel-nav-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 4px 0;
+}
+
+.panel-nav-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #94a3b8;
+  padding: 4px 12px 0;
+  letter-spacing: 0.05em;
 }
 
 .panel-menu {

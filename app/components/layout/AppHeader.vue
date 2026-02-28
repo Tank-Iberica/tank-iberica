@@ -195,59 +195,14 @@
           <span class="account-text">{{ $t('nav.myAccount') }}</span>
         </button>
 
-        <!-- Logged-in user with dropdown -->
-        <div
-          v-else
-          :class="['mobile-menu-group', 'user-menu', { active: openMenu === 'user' }]"
-          @click.stop="toggleMenu('user')"
-        >
-          <button class="account-btn logged-in">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            <span class="account-text">{{ userDisplayName }}</span>
-          </button>
-          <Transition name="dropdown">
-            <div v-if="openMenu === 'user'" class="user-dropdown">
-              <!-- Buyer links -->
-              <NuxtLink to="/perfil" class="user-dropdown-item" @click="openMenu = null">
-                {{ $t('nav.myProfile') }}
-              </NuxtLink>
-              <NuxtLink to="/perfil/favoritos" class="user-dropdown-item" @click="openMenu = null">
-                {{ $t('nav.favorites') }}
-              </NuxtLink>
-              <!-- Dealer links -->
-              <template v-if="authState.isDealer.value || authState.isAdmin.value">
-                <div class="user-dropdown-divider" />
-                <NuxtLink to="/dashboard" class="user-dropdown-item" @click="openMenu = null">
-                  {{ $t('nav.dealerPanel') }}
-                </NuxtLink>
-                <NuxtLink
-                  to="/dashboard/vehiculos"
-                  class="user-dropdown-item"
-                  @click="openMenu = null"
-                >
-                  {{ $t('nav.myVehicles') }}
-                </NuxtLink>
-                <NuxtLink to="/dashboard/leads" class="user-dropdown-item" @click="openMenu = null">
-                  {{ $t('nav.leads') }}
-                </NuxtLink>
-              </template>
-              <!-- Admin link -->
-              <template v-if="authState.isAdmin.value">
-                <div class="user-dropdown-divider" />
-                <NuxtLink to="/admin" class="user-dropdown-item" @click="openMenu = null">
-                  {{ $t('nav.adminPanel') }}
-                </NuxtLink>
-              </template>
-              <div class="user-dropdown-divider" />
-              <button class="user-dropdown-item user-dropdown-logout" @click="handleLogout">
-                {{ $t('nav.logout') }}
-              </button>
-            </div>
-          </Transition>
-        </div>
+        <!-- Logged-in user — opens UserPanel -->
+        <button v-else class="account-btn logged-in" @click="$emit('openUserPanel')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <span class="account-text">{{ userDisplayName }}</span>
+        </button>
       </div>
     </div>
   </header>
@@ -289,11 +244,6 @@ function closeMenus(e: MouseEvent) {
   if (!target.closest('.mobile-menu-group') && !target.closest('.user-menu')) {
     openMenu.value = null
   }
-}
-
-async function handleLogout() {
-  openMenu.value = null
-  await authState.logout()
 }
 
 function onScroll() {
@@ -683,54 +633,6 @@ onUnmounted(() => {
 
 .account-btn.logged-in {
   background: rgba(255, 255, 255, 0.25);
-}
-
-/* User dropdown menu */
-.user-menu {
-  position: relative;
-}
-
-.user-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  min-width: 200px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  padding: 6px 0;
-  z-index: 100;
-}
-
-.user-dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 10px 16px;
-  font-size: 0.9rem;
-  color: #1e293b;
-  text-decoration: none;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s;
-  min-height: 44px;
-  line-height: 24px;
-}
-
-.user-dropdown-item:hover {
-  background: #f1f5f9;
-}
-
-.user-dropdown-divider {
-  height: 1px;
-  background: #e2e8f0;
-  margin: 4px 0;
-}
-
-.user-dropdown-logout {
-  color: #dc2626;
-  font-weight: 500;
 }
 
 /* ============================================
