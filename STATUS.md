@@ -79,7 +79,6 @@ Iter 1–15 completas ✅ (commit `7dde04a`). **Pendiente:** FilterBar.vue (1.99
 - [ ] `docs/ESTADO-REAL-PRODUCTO.md` desactualizado (generado 25-feb)
 - [ ] `README.md` raíz es template genérico de Nuxt — reemplazar con contenido real
 - [ ] RAT (Registro Actividades de Tratamiento) GDPR no formalizado como documento legal
-- [ ] Decidir: ¿reemplazar `CLAUDE.md` con `CLAUDE2.md`? (ver git para el archivo)
 
 ---
 
