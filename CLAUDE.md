@@ -49,6 +49,8 @@ Tu mensaje es UN RESUMEN DE UNA LÍNEA de lo que vas a hacer, **incluyendo breve
 
 **Si el usuario da múltiples tareas en un mensaje:** Listarlas numeradas, preguntar orden de ejecución, y luego aplicar este protocolo a CADA tarea individualmente.
 
+**Si el usuario interrumpe a medio camino (nueva orden diferente):** Abandona la tarea anterior, reinicia el protocolo desde Paso 0 para la nueva orden.
+
 ### Paso 3 — Recomienda modelo y espera confirmación
 
 Con la tarea ya clara, recomienda el modelo adecuado:
@@ -81,14 +83,36 @@ Solo tras confirmar tarea (paso 2) Y modelo (paso 3), empieza a trabajar.
 
 **Durante la tarea — Cambio de modelo en subtareas:**
 
+**Umbral:** Solo proponer cambio si la diferencia es SIGNIFICATIVA:
+
+- **Diferencia 2 niveles** (Haiku ↔ Opus) → Propón cambio.
+- **Diferencia 1 nivel** (Haiku ↔ Sonnet) → Solo si la subtarea es **sustancialmente diferente** (análisis profundo, arquitectura, debugging complejo).
+- **Misma familia de complejidad** → NO proponer cambio (ej: editar componente Vue vs editar otro componente = ambos Sonnet, no cambiar a Haiku).
+
+**Procedimiento:**
+
 - Si la tarea tiene **múltiples subtareas con distintos niveles de complejidad**, evalúa cada una:
-  - Subtareas **simples** (ediciones, bash scripts, actualizaciones de ficheros) → **Cambia a Haiku**
-  - Subtareas **intermedias/complejas** → **Cambia a Sonnet** si estabas en Haiku
-  - Ejemplo: "Hallazgos menores #16-22" = 6 subtareas, 4 de ellas Haiku, 2 Sonnet → Cambiar entre ellas
-- Si el tipo de trabajo cambia, PARA y di: "Esta parte requiere **[otro modelo]**. ¿Cambio?"
+  - Subtareas **simples** (ediciones, bash scripts, actualizaciones de ficheros) → **Cambia a Haiku** (si estabas en Opus/Sonnet)
+  - Subtareas **intermedias/complejas** → **Cambia a Sonnet** (si estabas en Haiku y el cambio es sustancial)
+  - Ejemplo: "Hallazgos menores #16-22" = 6 subtareas simples → cambiar a Haiku una sola vez al inicio.
+- Si el tipo de trabajo cambia significativamente, PARA y di: "Esta parte requiere **[otro modelo]**. ¿Cambio?"
 - Si ya estás en el modelo correcto, confirma: "Estamos en [modelo], correcto para esta tarea."
 
-**Razón:** El usuario paga por tokens. Opus en una tarea simple = desperdicio. Haiku en una tarea compleja = resultado pobre. Una orden mal entendida = trabajo tirado. **Cambiar de modelo entre subtareas maximiza eficiencia sin sacrificar calidad.**
+**Razón:** El usuario paga por tokens. Opus en una tarea simple = desperdicio. Haiku en una tarea compleja = resultado pobre. Una orden mal entendida = trabajo tirado. **Cambiar de modelo entre subtareas maximiza eficiencia, pero propuestas excesivas = ruido.**
+
+---
+
+### Auto-verificación — Antes de cada respuesta
+
+Antes de enviar cualquier respuesta, verifica mentalmente:
+
+1. ¿Seguí el protocolo (Pasos 0–4)?
+2. ¿Confirmé tarea (Paso 2) y modelo (Paso 3) antes de ejecutar?
+3. ¿Estoy en el modelo correcto para esta tarea?
+4. ¿Hay múltiples tareas? ¿Pregunté orden de ejecución?
+5. ¿Hice commit sin que lo pidiera el usuario? (Si sí → REVERTIR)
+
+Si alguna respuesta es "no" o "sí pero violé X", PARA y corrige antes de responder.
 
 ---
 
