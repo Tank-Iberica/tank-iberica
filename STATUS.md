@@ -1,7 +1,7 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-02-28 (hallazgos menores auditoría 26-feb + CLAUDE.md actualizado)
-**Sesiones completadas:** 0–64 + iteraciones de auditoría 1–13
+**Última actualización:** 2026-02-28 (Auditoría #7 Iteración 14 completa)
+**Sesiones completadas:** 0–64 + iteraciones de auditoría 1–14
 **Puntuación global (auditoría 26-feb):** 79/100
 
 ---
@@ -124,47 +124,42 @@
 > Fuente: `docs/auditorias/AUDITORIA-26-FEBRERO.md` — Dimensión 2 (Código y arquitectura, 74/100)
 > Issue específico: "32 archivos >500 líneas, FilterBar.vue con 1.999 líneas"
 
-**Estado:** Iteraciones 1–13 completas · commit `b0916e0`
+**Estado:** Iteraciones 1–14 completas · último commit `67f62d4`
 
-### Lo que se hizo (iter 13, última sesión)
+### Lo que se hizo (iter 14, esta sesión)
 
-9 páginas refactorizadas, 19 componentes nuevos, 2 composables nuevos:
+10 componentes procesados — 8 refactorizados, 2 excluidos (dominados por CSS):
 
-| Página                              | Antes | Después | Componentes extraídos                                                               |
-| ----------------------------------- | ----- | ------- | ----------------------------------------------------------------------------------- |
-| `admin/vehiculos/index.vue`         | 706   | ~200    | AdminVehiclesFilters, AdminVehiclesTable, AdminVehicleDeleteModal                   |
-| `dashboard/herramientas/widget.vue` | 692   | ~160    | WidgetConfigCard, WidgetPreviewCard, WidgetEmbedSection + useDashboardWidget        |
-| `admin/config/branding.vue`         | 625   | ~160    | BrandingIdentityCard, BrandingLogosCard, BrandingTypographyCard, BrandingColorsCard |
-| `dashboard/herramientas/index.vue`  | 615   | ~250    | ToolCard                                                                            |
-| `dashboard/vehiculos/nuevo.vue`     | 580   | ~420    | useDashboardNuevoVehiculo                                                           |
-| `dashboard/vehiculos/index.vue`     | 505   | ~320    | DealerVehicleCard                                                                   |
-| `perfil/notificaciones.vue`         | 555   | ~175    | NotificationCategoryCard                                                            |
-| `auth/registro.vue`                 | 539   | ~425    | RegistroTypeSelector                                                                |
-| `admin/suscripciones.vue`           | 511   | ~220    | AdminSubscriptionsTable, AdminSubscriptionsDeleteModal                              |
+| Componente                                          | Antes | Después | Resultado                                         |
+| --------------------------------------------------- | ----- | ------- | ------------------------------------------------- |
+| `components/user/UserPanel.vue`                     | 1467  | ~300    | Composable extraído (sesión anterior)             |
+| `components/modals/AdvertiseModal.vue`              | 1266  | ~400    | Composable extraído (sesión anterior)             |
+| `components/admin/layout/AdminSidebar.vue`          | 1193  | ~300    | Composable extraído (sesión anterior)             |
+| `components/catalog/FilterBar.vue`                  | 1157  | ~200    | Split en 2 subcomponentes + composable            |
+| `components/catalog/VehicleTable.vue`               | 1132  | ~700    | `useVehicleTable.ts` + `VehicleTablePdfModal.vue` |
+| `components/catalog/ControlsBar.vue`                | 1074  | ~350    | Composable extraído (sesión anterior)             |
+| `components/admin/utilidades/ContractGenerator.vue` | 1051  | ~565    | `useContractGenerator.ts`                         |
+| `components/admin/utilidades/InvoiceGenerator.vue`  | 900   | ~565    | `useInvoiceGenerator.ts`                          |
+| `components/layout/AppHeader.vue`                   | 896   | —       | **Excluido** — CSS = 583 líneas; no reducible     |
+| `components/DealerPortal.vue`                       | 875   | —       | **Excluido** — CSS = 461 líneas; no reducible     |
 
-### Pendiente — Iteración 14 (próxima sesión)
+Commits: `172104e` (refactoring) · `67f62d4` (minor type fixes)
 
-**39 componentes `.vue` siguen sobre 500 líneas.** Empezar por los más grandes:
+### Pendiente — Iteración 15 (siguiente sesión, opcional)
 
-| Archivo                                             | Líneas | Estrategia                                    |
-| --------------------------------------------------- | ------ | --------------------------------------------- |
-| `components/user/UserPanel.vue`                     | 1467   | Extraer composable + tabs como subcomponentes |
-| `components/modals/AdvertiseModal.vue`              | 1266   | Extraer composable + pasos del wizard         |
-| `components/admin/layout/AdminSidebar.vue`          | 1193   | Extraer grupos de nav como subcomponentes     |
-| `components/catalog/FilterBar.vue`                  | 1157   | Extraer paneles de filtro por tipo            |
-| `components/catalog/VehicleTable.vue`               | 1132   | Extraer fila + header + toolbar               |
-| `components/catalog/ControlsBar.vue`                | 1074   | Extraer secciones de controles                |
-| `components/admin/utilidades/ContractGenerator.vue` | 1051   | Extraer composable + secciones del contrato   |
-| `components/admin/utilidades/InvoiceGenerator.vue`  | 900    | Extraer composable + secciones de factura     |
-| `components/layout/AppHeader.vue`                   | 896    | Extraer nav, mobile menu, user menu           |
-| `components/DealerPortal.vue`                       | 875    | Extraer tabs como subcomponentes              |
+Composables grandes que superan 500 líneas:
 
-También hay composables grandes pendientes:
-`useAdminProductosPage.ts` (968), `useAdminEmails.ts` (902), `useAdminMetrics.ts` (854), `useAdminProductoDetail.ts` (779), `useInvoice.ts` (724)
+| Composable                                    | Líneas |
+| --------------------------------------------- | ------ |
+| `composables/admin/useAdminProductosPage.ts`  | ~968   |
+| `composables/admin/useAdminEmails.ts`         | ~902   |
+| `composables/admin/useAdminMetrics.ts`        | ~854   |
+| `composables/admin/useAdminProductoDetail.ts` | ~779   |
+| `composables/useInvoice.ts`                   | ~724   |
 
 **Prompt para retomar:**
 
-> "Lee CLAUDE.md y STATUS.md antes de hacer nada. Cuando estés listo, continúa con el Punto #7 Iteración 14 de la auditoría — empieza por `UserPanel.vue` (1467 líneas)."
+> "Lee CLAUDE.md y STATUS.md antes de hacer nada. Cuando estés listo, continúa con el Punto #7 Iteración 15 — composables grandes, empieza por `useAdminProductosPage.ts`."
 
 ---
 
@@ -188,7 +183,7 @@ También hay composables grandes pendientes:
 
 ## Próxima acción recomendada
 
-1. **Auditoría #7 Iteración 14** → refactorizar los 10 componentes más grandes (ver tabla arriba)
+1. **Auditoría #7 Iteración 15** → composables grandes (`useAdminProductosPage.ts`, etc.)
 2. Ejecutar `npx supabase gen types` → corrige errores TS en cascada (P1-2)
 3. Configurar Cloudflare WAF rules → activa rate limiting en producción (P0-3)
 4. Migración índices faltantes → performance catálogo y subastas (P2-3)
