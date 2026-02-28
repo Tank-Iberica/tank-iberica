@@ -113,7 +113,11 @@
       "mcp__supabase__execute_sql",
       "Bash(tail:*)",
       "Bash(echo Exit: $?:*)",
-      "Bash(sort:*)"
+      "Bash(sort:*)",
+      "Bash(grep AdminSidebar\\\\|Sidebar:*)",
+      "Bash(tee:*)",
+      "Bash(cd /c/TradeBase/Tracciona && npx prettier --write app/pages/dashboard/estadisticas.vue 2>&1 && npx eslint app/pages/dashboard/estadisticas.vue --max-warnings=0 2>&1)",
+      "mcp__supabase__apply_migration"
     ]
   },
   "mcpServers": {

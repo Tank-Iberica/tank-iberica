@@ -4,6 +4,8 @@
 
 **STOP. Antes de ejecutar cualquier tarea, sigue estos 4 pasos en orden. NO hay excepciones.**
 
+**REGLA ABSOLUTA:** Los pasos 1-3 son SOLO texto. Está PROHIBIDO llamar a cualquier herramienta (Read, Glob, Grep, Bash, Task, etc.) hasta que el usuario haya confirmado TANTO la tarea (paso 2) COMO el modelo (paso 3). El único mensaje que puedes enviar antes de ambas confirmaciones es texto plano al usuario. Si violas esto, estás violando el protocolo.
+
 ### Paso 1 — Analiza la orden
 
 Antes de escribir nada, evalúa mentalmente:
@@ -67,8 +69,8 @@ Toda la documentación activa está en `docs/tracciona-docs/`.
 
 **Si necesitas entender el proyecto:**
 
-1. Lee `docs/tracciona-docs/contexto-global.md` — Visión completa del ecosistema
-2. Lee `docs/tracciona-docs/README.md` — Estructura y reglas de ejecución
+1. Lee `docs/PROYECTO-CONTEXTO.md` — **Documento maestro.** Visión TradeBase, modelo de negocio, arquitectura, decisiones tomadas y criterios para tomar decisiones de código. Leer SIEMPRE antes de cualquier tarea.
+2. Lee `docs/tracciona-docs/README.md` — Estructura de la documentación y reglas de ejecución
 
 **Si necesitas ejecutar el proyecto:**
 
@@ -122,7 +124,7 @@ Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de cód
 
 ## Instrucciones de trabajo
 
-- Trabajar siempre de forma secuencial, sin subagentes paralelos
+- **PROHIBIDO usar la herramienta Task con múltiples llamadas en paralelo.** Ejecutar siempre de forma secuencial: una llamada Task a la vez, esperar resultado, luego la siguiente. Esto aplica incluso cuando las tareas son independientes entre sí. Sin excepciones.
 - Priorizar eficiencia de tokens sobre velocidad
 
 ## Mantenimiento de procesos
