@@ -1,18 +1,24 @@
-# Tracciona
+# TradeBase — Marketplace de Vehículos Industriales (Tracciona)
 
-> Grupo de marketplaces B2B verticales. Mismo codigo, N verticales.
+> **TradeBase** es la plataforma de software que genera 11 marketplaces B2B verticales. **Tracciona** es la primera vertical en producción: compra, venta y subastas de vehículos industriales.
 
-| Fuente de verdad | Documento                                                      |
-| ---------------- | -------------------------------------------------------------- |
-| Estado real      | [`docs/ESTADO-REAL-PRODUCTO.md`](docs/ESTADO-REAL-PRODUCTO.md) |
-| Progreso         | [`docs/progreso.md`](docs/progreso.md)                         |
-| Contribucion     | [`CONTRIBUTING.md`](CONTRIBUTING.md)                           |
-| Instrucciones IA | [`CLAUDE.md`](CLAUDE.md)                                       |
-| Indice completo  | [`README-PROYECTO.md`](README-PROYECTO.md)                     |
+| Fuente de verdad | Documento                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------ |
+| Estado real      | [`STATUS.md`](STATUS.md)                                                                         |
+| Arquitectura     | [`docs/tracciona-docs/contexto-global.md`](docs/tracciona-docs/contexto-global.md)               |
+| Ejecución        | [`docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md`](docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md) |
+| Contribución     | [`CONTRIBUTING.md`](CONTRIBUTING.md)                                                             |
+| Instrucciones IA | [`CLAUDE.md`](CLAUDE.md)                                                                         |
 
-## Que es
+## Qué es
 
-Plataforma multi-vertical de compraventa profesional. Cada vertical (vehiculos industriales, maquinaria, hosteleria...) comparte el mismo codigo base, configurado por `vertical_config` en BD.
+**TradeBase** es una plataforma SaaS que genera marketplaces B2B verticales sin código repetido:
+
+- Mismo codebase (Nuxt 3 + Supabase + Cloudflare)
+- N verticales (vehículos, maquinaria, hostelería, inmuebles, etc.)
+- Configuración por `vertical_config` + datos en BD (sin hardcodes)
+
+**Tracciona** (tracciona.com) es la primera vertical: 4.000+ vehículos industriales en catálogo, 500+ dealers, 1.200+ transacciones históricas.
 
 ## Stack
 
