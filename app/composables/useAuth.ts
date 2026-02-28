@@ -10,6 +10,7 @@ interface UserProfile {
   email: string
   full_name: string | null
   user_type: UserType
+  role: string | null
   company_name: string | null
   phone: string | null
   phone_verified: boolean
@@ -35,7 +36,7 @@ export function useAuth() {
   const userType = computed<UserType>(() => profile.value?.user_type || 'buyer')
   const isDealer = computed(() => userType.value === 'dealer')
   const isBuyer = computed(() => userType.value === 'buyer')
-  const isAdmin = computed(() => userType.value === 'admin')
+  const isAdmin = computed(() => profile.value?.role === 'admin')
 
   const displayName = computed(() => {
     if (profile.value?.full_name) return profile.value.full_name
@@ -67,7 +68,7 @@ export function useAuth() {
       const { data, error: err } = await supabase
         .from('users')
         .select(
-          'id, email, full_name, user_type, company_name, phone, phone_verified, onboarding_completed, avatar_url, preferred_locale, last_login_at, login_count',
+          'id, email, full_name, user_type, role, company_name, phone, phone_verified, onboarding_completed, avatar_url, preferred_locale, last_login_at, login_count',
         )
         .eq('id', supabaseUser.value.id)
         .single()

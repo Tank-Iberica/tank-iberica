@@ -12,11 +12,11 @@ export default defineNuxtRouteMiddleware(async () => {
   const supabase = useSupabaseClient()
   const { data } = await supabase
     .from('users')
-    .select('user_type')
+    .select('user_type, role')
     .eq('id', user.value.id)
-    .single<{ user_type: string }>()
+    .single<{ user_type: string; role: string }>()
 
-  if (!data || (data.user_type !== 'dealer' && data.user_type !== 'admin')) {
+  if (!data || (data.user_type !== 'dealer' && data.role !== 'admin')) {
     return navigateTo('/')
   }
 })

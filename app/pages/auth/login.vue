@@ -111,10 +111,9 @@ const { defineField, translatedErrors, isSubmitting, onSubmit } = useFormValidat
       await auth.login(values.email, values.password)
       await auth.fetchProfile()
 
-      const userType = auth.userType.value
-      if (userType === 'admin') {
+      if (auth.isAdmin.value) {
         await navigateTo('/admin')
-      } else if (userType === 'dealer') {
+      } else if (auth.userType.value === 'dealer') {
         await navigateTo('/dashboard')
       } else {
         await navigateTo('/')
