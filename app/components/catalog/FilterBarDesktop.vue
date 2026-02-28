@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { AttributeDefinition, EuropeanCountriesData } from '~/composables/catalog/useFilterBar'
+import { useHorizontalScroll } from '~/composables/catalog/useHorizontalScroll'
 
 defineProps<{
   editCountry: string
@@ -33,60 +34,17 @@ const emit = defineEmits<{
   toggleAdvanced: []
 }>()
 
-// Internal scroll + grab state
-const scrollContainer = ref<HTMLElement | null>(null)
-const canScrollLeft = ref(false)
-const canScrollRight = ref(false)
+const {
+  scrollContainer,
+  canScrollLeft,
+  canScrollRight,
+  updateScrollState,
+  scrollLeftBy,
+  scrollRightBy,
+  onGrabStart,
+} = useHorizontalScroll()
+
 const locationDropdownOpen = ref(false)
-
-function updateScrollState() {
-  const el = scrollContainer.value
-  if (!el) return
-  canScrollLeft.value = el.scrollLeft > 0
-  canScrollRight.value = el.scrollLeft < el.scrollWidth - el.clientWidth - 1
-}
-
-function scrollLeft() {
-  scrollContainer.value?.scrollBy({ left: -200, behavior: 'smooth' })
-}
-
-function scrollRight() {
-  scrollContainer.value?.scrollBy({ left: 200, behavior: 'smooth' })
-}
-
-let isGrabbing = false
-let startX = 0
-let scrollLeftStart = 0
-
-function onGrabStart(e: MouseEvent) {
-  const el = scrollContainer.value
-  if (!el) return
-  const tag = (e.target as HTMLElement).tagName
-  if (['INPUT', 'SELECT', 'BUTTON', 'LABEL'].includes(tag)) return
-  isGrabbing = true
-  startX = e.pageX - el.offsetLeft
-  scrollLeftStart = el.scrollLeft
-  el.style.cursor = 'grabbing'
-  document.addEventListener('mousemove', onGrabMove)
-  document.addEventListener('mouseup', onGrabEnd)
-}
-
-function onGrabMove(e: MouseEvent) {
-  if (!isGrabbing) return
-  const el = scrollContainer.value
-  if (!el) return
-  e.preventDefault()
-  const x = e.pageX - el.offsetLeft
-  el.scrollLeft = scrollLeftStart - (x - startX)
-}
-
-function onGrabEnd() {
-  isGrabbing = false
-  const el = scrollContainer.value
-  if (el) el.style.cursor = 'grab'
-  document.removeEventListener('mousemove', onGrabMove)
-  document.removeEventListener('mouseup', onGrabEnd)
-}
 
 function onDocClickLocation(e: MouseEvent) {
   const target = e.target as HTMLElement
@@ -96,18 +54,10 @@ function onDocClickLocation(e: MouseEvent) {
 }
 
 onMounted(() => {
-  const el = scrollContainer.value
-  if (el) {
-    el.addEventListener('scroll', updateScrollState, { passive: true })
-    nextTick(updateScrollState)
-  }
   document.addEventListener('click', onDocClickLocation)
 })
 
 onUnmounted(() => {
-  scrollContainer.value?.removeEventListener('scroll', updateScrollState)
-  document.removeEventListener('mousemove', onGrabMove)
-  document.removeEventListener('mouseup', onGrabEnd)
   document.removeEventListener('click', onDocClickLocation)
 })
 </script>
@@ -119,7 +69,7 @@ onUnmounted(() => {
         v-show="canScrollLeft"
         class="scroll-btn scroll-btn-left"
         aria-hidden="true"
-        @click="scrollLeft"
+        @click="scrollLeftBy"
       >
         &#9664;
       </button>
@@ -262,7 +212,7 @@ onUnmounted(() => {
         v-show="canScrollRight"
         class="scroll-btn scroll-btn-right"
         aria-hidden="true"
-        @click="scrollRight"
+        @click="scrollRightBy"
       >
         &#9654;
       </button>
@@ -270,82 +220,46 @@ onUnmounted(() => {
   </div>
 </template>
 
+<style src="~/assets/css/filter-bar-shared.css"></style>
+
 <style scoped>
-/* Desktop bar: hidden on mobile, shown on >=768px */
 .filters-desktop {
   display: none;
 }
 
-/* Shared labels / controls (needed since this component is isolated) */
-.filter-label {
-  font-weight: 500;
-  color: var(--color-primary);
-  font-size: 10px;
-  line-height: 1.4;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  letter-spacing: 0.15px;
-  white-space: nowrap;
-}
-
-.filter-label-icon-only {
-  gap: 0;
-}
-
-.filter-label-price {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.reset-filters-btn {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(35, 66, 74, 0.8);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
   border-radius: 50%;
-  border: 2px solid var(--color-primary);
-  background: var(--bg-primary);
-  color: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.reset-filters-btn:hover:not(:disabled) {
-  background: var(--color-primary);
-  color: var(--color-white);
-}
-
-.reset-filters-btn:disabled,
-.reset-filters-btn.disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.filter-divider {
-  width: 1px;
-  height: 24px;
-  background: var(--border-color, #e5e7eb);
-  flex-shrink: 0;
-}
-
-.filter-badge {
-  background: var(--color-primary);
-  color: var(--color-white);
-  font-size: 9px;
-  font-weight: 600;
-  min-width: 18px;
-  height: 18px;
-  border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  z-index: 10;
+  transition: all 0.3s ease;
+  font-size: 10px;
+}
+
+@media (hover: hover) {
+  .scroll-btn:hover {
+    background: var(--color-primary);
+  }
+}
+
+.scroll-btn-left {
+  left: 4px;
+}
+
+.scroll-btn-right {
+  right: 4px;
 }
 
 @media (min-width: 768px) {
@@ -461,39 +375,6 @@ onUnmounted(() => {
     border-color: var(--color-primary);
   }
 
-  .scroll-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(35, 66, 74, 0.8);
-    border: none;
-    color: white;
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    min-height: 28px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    transition: all 0.3s ease;
-    font-size: 10px;
-  }
-
-  .scroll-btn:hover {
-    background: var(--color-primary);
-  }
-
-  .scroll-btn-left {
-    left: 4px;
-  }
-
-  .scroll-btn-right {
-    right: 4px;
-  }
-
   .filter-advanced-btn-desktop {
     display: inline-flex;
     align-items: center;
@@ -513,9 +394,11 @@ onUnmounted(() => {
     transition: all 0.2s ease;
   }
 
-  .filter-advanced-btn-desktop:hover {
-    border-color: var(--color-primary);
-    background: var(--bg-secondary);
+  @media (hover: hover) {
+    .filter-advanced-btn-desktop:hover {
+      border-color: var(--color-primary);
+      background: var(--bg-secondary);
+    }
   }
 }
 

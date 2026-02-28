@@ -210,6 +210,8 @@ onUnmounted(() => {
   </div>
 </template>
 
+<style src="~/assets/css/filter-bar-shared.css"></style>
+
 <style scoped>
 /* Mobile: Inline scrollable bar (< 768px) */
 .filters-mobile {
@@ -366,78 +368,6 @@ onUnmounted(() => {
 .filter-advanced-btn:hover {
   background: var(--color-primary);
   color: var(--color-white);
-}
-
-/* Shared */
-.filter-badge {
-  background: var(--color-primary);
-  color: var(--color-white);
-  font-size: 9px;
-  font-weight: 600;
-  min-width: 18px;
-  height: 18px;
-  border-radius: 9999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-}
-
-.filter-label {
-  font-weight: 500;
-  color: var(--color-primary);
-  font-size: 10px;
-  line-height: 1.4;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  letter-spacing: 0.15px;
-  white-space: nowrap;
-}
-
-.filter-label-icon-only {
-  gap: 0;
-}
-
-.filter-label-price {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.reset-filters-btn {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
-  border-radius: 50%;
-  border: 2px solid var(--color-primary);
-  background: var(--bg-primary);
-  color: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.reset-filters-btn:hover:not(:disabled) {
-  background: var(--color-primary);
-  color: var(--color-white);
-}
-
-.reset-filters-btn:disabled,
-.reset-filters-btn.disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.filter-divider {
-  width: 1px;
-  height: 24px;
-  background: var(--border-color, #e5e7eb);
-  flex-shrink: 0;
 }
 
 @media (min-width: 480px) {
