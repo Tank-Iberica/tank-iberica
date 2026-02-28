@@ -105,7 +105,7 @@ export default defineEventHandler(async (event) => {
   if (dealers) {
     for (const dealer of dealers) {
       urls.push({
-        loc: `/vendedor/${dealer.slug}`,
+        loc: `/${dealer.slug}`,
         lastmod: dealer.updated_at || new Date().toISOString(),
         changefreq: 'weekly',
         priority: 0.6,

@@ -169,7 +169,7 @@ export function useVendedorDetail() {
           '@type': 'ListItem',
           position: 2,
           name: sellerName.value,
-          item: `https://tracciona.com/vendedor/${route.params.slug}`,
+          item: `https://tracciona.com/${route.params.slug}`,
         },
       ],
     })
@@ -177,7 +177,7 @@ export function useVendedorDetail() {
 
   const hrefLinks = computed(() => {
     const s = route.params.slug as string
-    const path = `/vendedor/${s}`
+    const path = `/${s}`
     return [
       { rel: 'canonical', href: `https://tracciona.com${path}` },
       { rel: 'alternate', hreflang: 'es', href: `https://tracciona.com${path}` },

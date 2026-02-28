@@ -17,7 +17,7 @@
     <!-- Seller profile link -->
     <NuxtLink
       v-if="sellerInfo && dealerId"
-      :to="`/vendedor/${dealerSlug || dealerId}`"
+      :to="`/${dealerSlug || dealerId}`"
       class="seller-profile-link"
     >
       {{ $t('vehicle.viewSellerProfile') }}

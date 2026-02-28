@@ -146,7 +146,7 @@ app/pages/subastas/index.vue
 app/pages/transparencia.vue
 app/pages/valoracion.vue
 app/pages/vehiculo/[slug].vue
-app/pages/vendedor/[slug].vue
+app/pages/[slug].vue
 ```
 
 ## Composables
@@ -424,7 +424,7 @@ Total tests E2E: 11
 
 Las landing pages SEO dinamicas de la sesion 4 cubren el caso de uso principal (paginas por subcategoria, marca, ubicacion con contenido generado). Un builder visual tipo Webflow es excesivo para la fase actual del producto. Se reconsiderara si los dealers lo solicitan activamente.
 
-**Alternativa actual:** Los dealers pueden personalizar su pagina de vendedor (`/vendedor/[slug]`) con logo, bio, tema de colores, y redes sociales. Para necesidades mas avanzadas, la configuracion de branding en `/admin/config/branding` permite personalizar colores y tipografia del vertical completo.
+**Alternativa actual:** Los dealers pueden personalizar su pagina de vendedor (`/[slug]`) con logo, bio, tema de colores, y redes sociales. Para necesidades mas avanzadas, la configuracion de branding en `/admin/config/branding` permite personalizar colores y tipografia del vertical completo.
 
 ### 2. OAuth social (Google, Facebook login)
 

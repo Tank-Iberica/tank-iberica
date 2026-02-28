@@ -91,7 +91,6 @@ const errorTitle = computed(() => {
 
   // 404 — context-aware
   if (url.includes('/vehiculo/')) return t('error.vehicleNotFound')
-  if (url.includes('/vendedor/')) return t('error.dealerNotFound')
   return t('error.notFound')
 })
 
@@ -103,7 +102,6 @@ const errorMessage = computed(() => {
   if (code === 500) return t('error.serverMessage')
 
   if (url.includes('/vehiculo/')) return t('error.vehicleNotFoundMessage')
-  if (url.includes('/vendedor/')) return t('error.dealerNotFoundMessage')
   return t('error.notFoundMessage')
 })
 

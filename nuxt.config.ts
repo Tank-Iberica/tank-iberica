@@ -159,7 +159,7 @@ export default defineNuxtConfig({
     '/admin/**': { ssr: false },
     '/dashboard/**': { ssr: false },
     '/perfil/**': { ssr: false },
-    '/vendedor/**': { swr: 60 * 10 },
+    '/:slug': { swr: 60 * 10 },
     '/perfil/comparador': { ssr: false },
     '/perfil/mensajes': { ssr: false },
     '/perfil/reservas': { ssr: false },
