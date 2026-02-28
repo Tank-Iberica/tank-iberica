@@ -92,6 +92,7 @@ export interface VehicleFilters {
   location_countries?: string[]
   location_regions?: string[]
   location_province_eq?: string
+  dealer_id?: string
   [key: string]: unknown
 }
 
@@ -194,6 +195,10 @@ export function useVehicles() {
 
     if (filters.featured) {
       query = query.eq('featured', true)
+    }
+
+    if (filters.dealer_id) {
+      query = query.eq('dealer_id', filters.dealer_id)
     }
 
     return query

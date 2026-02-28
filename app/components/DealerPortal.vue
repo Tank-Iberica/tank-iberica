@@ -180,24 +180,30 @@
     </section>
 
     <!-- 6. Vehicle catalog section -->
-    <section class="dealer-section">
-      <h2 class="section-title">
+    <section class="dealer-catalog">
+      <h2 class="dealer-catalog-title">
         {{ t('dealer.ourCatalog', { count: dealer.active_listings }) }}
       </h2>
-      <div class="catalog-placeholder">
-        <svg
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <rect x="2" y="3" width="20" height="14" rx="2" />
-          <path d="M8 21h8M12 17v4" />
-        </svg>
-        <p class="placeholder-text">{{ t('dealer.catalogComingSoon') }}</p>
-      </div>
+      <CatalogControlsBar
+        :vehicle-count="vehicles.length"
+        :menu-visible="menuVisible"
+        @search="onSearchChange"
+        @sort="onSortChange"
+        @toggle-menu="menuVisible = !menuVisible"
+        @action-change="onActionChange"
+        @open-favorites="() => {}"
+        @view-change="() => {}"
+      />
+      <CatalogActiveFilters @change="onFilterChange" />
+      <CatalogVehicleGrid
+        :vehicles="vehicles"
+        :loading="loading"
+        :loading-more="loadingMore"
+        :has-more="hasMore"
+        :view-mode="viewMode"
+        @load-more="onLoadMore"
+        @clear-filters="onClearFilters"
+      />
     </section>
 
     <!-- 7. Social links -->
@@ -316,6 +322,7 @@
 <script setup lang="ts">
 import { localizedField } from '~/composables/useLocalized'
 import { useDealerTheme } from '~/composables/useDealerTheme'
+import type { SortOption } from '~/composables/useCatalogState'
 
 interface DealerProfile {
   id: string
@@ -349,9 +356,51 @@ const props = defineProps<{
 const { t, locale } = useI18n()
 const { applyDealerTheme, restoreVerticalTheme } = useDealerTheme()
 
+// Aislamos el estado del catálogo del dealer del catálogo global
+provide('catalogScope', `dealer-${props.dealer.id}`)
+
+// Catalog state + vehicles — instancia propia, no comparte estado con catálogo principal
+const { vehicles, loading, loadingMore, hasMore, fetchVehicles, fetchMore, reset } = useVehicles()
+const { filters, sortBy, viewMode, resetCatalog } = useCatalogState()
+const { reset: resetFilters } = useFilters()
+const menuVisible = ref(false)
+
+// Filtros base del dealer (siempre fijos, no se pueden eliminar)
+const dealerFilters = computed(() => ({ ...filters.value, dealer_id: props.dealer.id }))
+
+async function loadVehicles() {
+  await fetchVehicles({ ...dealerFilters.value, sortBy: sortBy.value })
+}
+
+async function onActionChange() {
+  resetFilters()
+  await loadVehicles()
+}
+
+async function onFilterChange() {
+  await loadVehicles()
+}
+
+function onSearchChange() {
+  // búsqueda fuzzy client-side, no requiere refetch
+}
+
+async function onSortChange() {
+  await loadVehicles()
+}
+
+async function onLoadMore() {
+  await fetchMore({ ...dealerFilters.value, sortBy: sortBy.value })
+}
+
+async function onClearFilters() {
+  resetCatalog()
+  resetFilters()
+  await fetchVehicles({ dealer_id: props.dealer.id })
+}
+
 // Localized fields
 const companyName = computed(() => localizedField(props.dealer.company_name, locale.value))
-
 const bioText = computed(() => localizedField(props.dealer.bio, locale.value))
 
 // Badge display
@@ -402,12 +451,20 @@ useHead({
 })
 
 // Apply dealer theme on mount, restore on unmount
-onMounted(() => {
+onMounted(async () => {
   applyDealerTheme(props.dealer.theme)
+  // Inicializar sort por defecto según configuración del dealer
+  const { setSort } = useCatalogState()
+  if (props.dealer.catalog_sort) {
+    setSort(props.dealer.catalog_sort as SortOption)
+  }
+  await loadVehicles()
 })
 
 onUnmounted(() => {
   restoreVerticalTheme()
+  reset()
+  resetCatalog()
 })
 </script>
 
@@ -739,6 +796,31 @@ onUnmounted(() => {
   color: var(--color-white);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+/* Dealer catalog */
+.dealer-catalog {
+  margin-top: var(--spacing-3);
+}
+
+.dealer-catalog-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  padding: var(--spacing-5) var(--spacing-4) var(--spacing-2);
+}
+
+@media (min-width: 480px) {
+  .dealer-catalog-title {
+    padding: var(--spacing-5) var(--spacing-6) var(--spacing-2);
+  }
+}
+
+@media (min-width: 768px) {
+  .dealer-catalog-title {
+    padding: var(--spacing-5) var(--spacing-8) var(--spacing-2);
+    font-size: var(--font-size-xl);
+  }
 }
 
 /* Website link */

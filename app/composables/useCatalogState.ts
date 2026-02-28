@@ -1,4 +1,4 @@
-import { computed, readonly } from 'vue'
+import { computed, inject, readonly } from 'vue'
 import { useState } from '#imports'
 import type { VehicleFilters } from './useVehicles'
 import type { LocationLevel } from '~/utils/geoData'
@@ -49,7 +49,8 @@ const defaultState: CatalogState = {
 }
 
 export function useCatalogState() {
-  const state = useState<CatalogState>('catalog', () => ({ ...defaultState }))
+  const scope = inject<string>('catalogScope', 'global')
+  const state = useState<CatalogState>(`catalog-${scope}`, () => ({ ...defaultState }))
 
   function setAction(action: VehicleAction | null) {
     state.value.activeAction = action
