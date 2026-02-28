@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-04 — fix auth bugs + UserPanel role-aware (reemplaza dropdown header)
+**Última actualización:** 2026-03-04 — creado perfil PowerShell con alias `curro`
 **Sesiones completadas:** 0–64 + Iter 1–15 auditoría + sesiones ad-hoc hasta 04-mar
 **Puntuación global:** 79/100 (auditoría 26-feb) · Historial completo: `git log STATUS.md`
 
@@ -74,32 +74,35 @@ Iter 1–15 completas ✅ (commit `7dde04a`). **Pendiente:** FilterBar.vue (1.99
 
 ---
 
-## Pendientes documentación
+## Pendientes documentación y infra
 
 - [ ] `docs/ESTADO-REAL-PRODUCTO.md` desactualizado (generado 25-feb)
 - [ ] `README.md` raíz es template genérico de Nuxt — reemplazar con contenido real
 - [ ] RAT (Registro Actividades de Tratamiento) GDPR no formalizado como documento legal
+- [ ] **Script infra_metrics:** Crear script manual (nunca cron) que recolecte métricas de Supabase/Cloudflare/Cloudinary e inserte en `infra_metrics`. Llamar periódicamente (ej: GitHub Actions workflow manual o cron-job.org)
 
 ---
 
 ## Changelog de sesiones
 
-| Fecha  | Resumen                                                                                                                                |
-| ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| 04-mar | Fix 4 bugs auth: AdminSidebar component names, fetchProfile DB columns (full_name→name, preferred_locale→lang), plugin timing          |
-| 04-mar | UserPanel role-aware: reemplaza dropdown header; nav condicional buyer/dealer/admin; eliminado dropdown + CSS muerto de AppHeader      |
-| 28-feb | CLAUDE.md: auditoría (13 debilidades) + 9 mejoras (6 recomendadas + 3 opcionales) + auto-detección modelo + reestructura cierre sesión |
-| 28-feb | Doble URL por vehículo: `/vehiculo/[slug]` (marketplace, canonical) + `/[dealer]/[slug]` (portal dealer, branding gratis, noindex)     |
-| 04-mar | Fix crítico auth: middlewares usan `getSession()` en vez de `useSupabaseUser()` (bug HS256 en @nuxtjs/supabase ≤2.0.3); módulo → 2.0.4 |
-| 03-mar | CLAUDE.md: 5 reglas no negociables, Stack añadido, secciones fusionadas; STATUS.md comprimido 294→110 líneas; CLAUDE2.md eliminado     |
-| 03-mar | Hook condicional: solo mata proceso Node del puerto 3000 si STATUS.md contiene CLOSING_SESSION                                         |
-| 02-mar | Hook PostToolUse automático para limpieza Node.js al actualizar STATUS.md                                                              |
-| 01-mar | Fix admin: `isAdmin` usa `role='admin'`; refactor ruta dealer `/vendedor/[slug]` → `/[slug]`                                           |
-| 28-feb | Dealer portal completo: catálogo filtrado, SEO, working hours, contacto                                                                |
-| 28-feb | `docs/PROYECTO-CONTEXTO.md` creado (530 líneas, documento maestro de contexto)                                                         |
-| 28-feb | Hallazgos menores: JSDoc, ARIA, CHECK constraints, Snyk CI, legacy banner, excel chunks                                                |
-| 28-feb | Auditoría #7 Iter 1–15: 5 composables grandes refactorizados, typecheck 0 errores                                                      |
-| 26-feb | Auditoría global 79/100. 12 errores P0/P1/P2 identificados y resueltos (menos P0-3)                                                    |
+| Fecha  | Resumen                                                                                                                                 |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 04-mar | Alias `curro`: cambio a `--prompt "inicio"` para auto-trigger sin input del usuario                                                     |
+| 04-mar | Alias `curro` creado en perfil PowerShell (--model opus + auto-lectura 3 docs); regla PROYECTO-CONTEXTO.md actualización en tiempo real |
+| 04-mar | Fix 4 bugs auth: AdminSidebar component names, fetchProfile DB columns (full_name→name, preferred_locale→lang), plugin timing           |
+| 04-mar | UserPanel role-aware: reemplaza dropdown header; nav condicional buyer/dealer/admin; eliminado dropdown + CSS muerto de AppHeader       |
+| 28-feb | CLAUDE.md: auditoría (13 debilidades) + 9 mejoras (6 recomendadas + 3 opcionales) + auto-detección modelo + reestructura cierre sesión  |
+| 28-feb | Doble URL por vehículo: `/vehiculo/[slug]` (marketplace, canonical) + `/[dealer]/[slug]` (portal dealer, branding gratis, noindex)      |
+| 04-mar | Fix crítico auth: middlewares usan `getSession()` en vez de `useSupabaseUser()` (bug HS256 en @nuxtjs/supabase ≤2.0.3); módulo → 2.0.4  |
+| 03-mar | CLAUDE.md: 5 reglas no negociables, Stack añadido, secciones fusionadas; STATUS.md comprimido 294→110 líneas; CLAUDE2.md eliminado      |
+| 03-mar | Hook condicional: solo mata proceso Node del puerto 3000 si STATUS.md contiene CLOSING_SESSION                                          |
+| 02-mar | Hook PostToolUse automático para limpieza Node.js al actualizar STATUS.md                                                               |
+| 01-mar | Fix admin: `isAdmin` usa `role='admin'`; refactor ruta dealer `/vendedor/[slug]` → `/[slug]`                                            |
+| 28-feb | Dealer portal completo: catálogo filtrado, SEO, working hours, contacto                                                                 |
+| 28-feb | `docs/PROYECTO-CONTEXTO.md` creado (530 líneas, documento maestro de contexto)                                                          |
+| 28-feb | Hallazgos menores: JSDoc, ARIA, CHECK constraints, Snyk CI, legacy banner, excel chunks                                                 |
+| 28-feb | Auditoría #7 Iter 1–15: 5 composables grandes refactorizados, typecheck 0 errores                                                       |
+| 26-feb | Auditoría global 79/100. 12 errores P0/P1/P2 identificados y resueltos (menos P0-3)                                                     |
 
 ---
 
@@ -110,5 +113,7 @@ Iter 1–15 completas ✅ (commit `7dde04a`). **Pendiente:** FilterBar.vue (1.99
 3. **Founding Dealers:** Contactar primeros 10 (tarea de negocio, no código)
 
 ---
+
+CLOSING_SESSION
 
 CLOSING_SESSION
