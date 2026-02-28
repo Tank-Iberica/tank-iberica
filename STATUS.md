@@ -1,7 +1,7 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-02-28 22:30 (P0-1 + P0-2 resueltos — migration 00067 aplicada)
-**Sesiones completadas:** 0–64 + iteraciones de auditoría 1–14 + tareas Haiku
+**Última actualización:** 2026-02-28 23:45 (DealerPortal completado — catálogo + OG + formulario + working hours)
+**Sesiones completadas:** 0–64 + iteraciones de auditoría 1–14 + tareas Haiku + sesión 28-feb (tarde)
 **Puntuación global (auditoría 26-feb):** 79/100
 
 ---
@@ -197,6 +197,42 @@ Composables grandes que superan 500 líneas:
 - Actualizado `CLAUDE.md`: referencia a PROYECTO-CONTEXTO.md como lectura obligatoria + regla explícita contra Task paralelos
 - Actualizado `MEMORY.md`: regla crítica de no usar agentes paralelos
 - **Pendiente:** Definir qué hace Gesturban (marcado como `[Pendiente de definición por fundadores]` en el documento)
+
+---
+
+## Sesión 28-feb (3ª) — DealerPortal: catálogo + SEO + contacto
+
+✅ Implementado:
+
+**Setup dealer inicial:**
+
+- Creado perfil dealer Tank Ibérica para usuario juanmagoti
+
+**DealerPortal.vue — refactoring mayor (~875 → completado):**
+
+- ✅ Implementado catálogo filtrado por dealer_id (exactamente igual al de la página principal, pero solo vehículos del dealer)
+- ✅ State isolation: useCatalogState con `inject('catalogScope')` — cada dealer portal tiene su propio estado de filtros sin contaminar el catálogo global
+- ✅ Reemplazado placeholder por componentes reales: ControlsBar, ActiveFilters, VehicleGrid
+- ✅ SEO completo: Open Graph (og:image, og:title, og:description, og:url), LocalBusiness JSON-LD, canonical link
+- ✅ Sección working hours: display localizado (ES/EN) con horarios del dealer desde contact_config.hours
+- ✅ Formulario de contacto: campos name/phone/message, submit a tabla leads con dealer_id + source='dealer_portal'
+- ✅ Lógica de contact_config: respeta flags showEmail, showPhone, showWebsite
+- ✅ Badge inteligente: fallback a subscription_type si badge es null
+
+**i18n updates:**
+
+- Añadidos 7 keys nuevas para formulario contacto en ES/EN
+- i18n/es.json + i18n/en.json actualizadas
+
+**Datos preparados:**
+
+- [...slug].vue: select query ampliado con subscription_type, address
+- DealerProfile interface: incluye subscription_type
+
+✅ Commits:
+
+- `2e89a83` feat: implement dealer catalog with state isolation
+- `965af9f` feat: complete dealer portal with SEO, working hours, contact form
 
 ---
 
