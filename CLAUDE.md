@@ -4,12 +4,14 @@
 
 **AL ABRIR SESIÓN, ANTES DE CUALQUIER OTRA COSA:**
 
-1. Asegúrate de estar en **Opus**. Si no, cambia con `/model opus`.
-2. Lee **CLAUDE.md** (este archivo) — protocolo, reglas, arquitectura decisiones.
-3. Lee **STATUS.md** — estado actual del proyecto, cambios recientes, pendientes.
-4. Lee **PROYECTO-CONTEXTO.md** — visión, modelo de negocio, arquitectura, decisiones estratégicas.
+1. **Detecta tu modelo** del system context. Si estás en Opus → salta al paso 2. Si estás en otro modelo → tu ÚNICO mensaje es: "Estoy en [modelo]. Para cargar contexto necesito Opus. ¿Cambias con `/model opus`?" Luego espera respuesta del usuario.
 
-Solo después de leer estos 3 archivos, estás listo para recibir órdenes del usuario.
+2. **Una vez en Opus**, automáticamente lee:
+   - **CLAUDE.md** — protocolo, reglas, decisiones arquitectónicas
+   - **STATUS.md** — estado actual, cambios recientes, pendientes
+   - **PROYECTO-CONTEXTO.md** — visión, modelo de negocio, arquitectura estratégica
+
+3. Solo después de leer los 3 archivos, estás listo para recibir órdenes del usuario.
 
 ---
 
@@ -19,26 +21,36 @@ Solo después de leer estos 3 archivos, estás listo para recibir órdenes del u
 
 **REGLA ABSOLUTA:** Los pasos 1-3 son SOLO texto. Está PROHIBIDO llamar a cualquier herramienta (Read, Glob, Grep, Bash, Task, etc.) hasta que el usuario haya confirmado TANTO la tarea (paso 2) COMO el modelo (paso 3). El único mensaje que puedes enviar antes de ambas confirmaciones es texto plano al usuario. Si violas esto, estás violando el protocolo.
 
-### Opus al inicio y nuevas órdenes
+### Opus al inicio y nuevas órdenes — Auto-detección
 
-- **Al inicio de sesión:** Cambia a Opus para leer CLAUDE.md, STATUS.md y PROYECTO-CONTEXTO.md. Entender contexto profundo requiere mejor modelo.
-- **Al recibir orden nueva** (excepto "continuar tarea"): Cambia a Opus para los Pasos 0–2 (verificar modelo, analizar y resumir). Opus entiende mejor órdenes complejas y ambiguas.
+**Cómo funciona la detección automática:**
+
+Puedes leer tu modelo actual del system context (`claude-haiku-4-5-20251001`, `claude-sonnet-4-6`, `claude-opus-4-6`).
+
+- **Al inicio de sesión:** Detecta tu modelo. Si NO estás en Opus → pide cambio. Si estás en Opus → automáticamente lee CLAUDE.md, STATUS.md, PROYECTO-CONTEXTO.md.
+- **Al recibir orden nueva** (excepto "continuar tarea"): Detecta tu modelo. Si NO estás en Opus → tu ÚNICO mensaje es pedir cambio. Si estás en Opus → continúa con Pasos 1–2 (analizar y resumir).
 - **Después de resumir (Paso 2):** El flujo normal continúa. Recomienda modelo para la ejecución (Haiku/Sonnet/Opus según complejidad de la tarea).
-- **"Continuar tarea":** No es nueva orden, es reanudación. No cambiar modelo innecesariamente; si estabas en Haiku, continúa en Haiku.
+- **"Continuar tarea":** No es nueva orden, es reanudación. Detecta tu modelo y continúa donde estabas sin cambios innecesarios.
 
 ### Excepción — Lectura de contexto al inicio de sesión
 
 **Lectura de contexto de inicio (CLAUDE.md, STATUS.md, PROYECTO-CONTEXTO.md) NO es una tarea — no requiere protocolo.** Ejecuta Read tools directamente para cargar contexto. Cualquier otra orden SÍ requiere protocolo.
 
-### Paso 0 — Verifica el modelo
+### Paso 0 — Verifica el modelo (Auto-detección)
+
+**Detecta tu modelo actual** leyendo el system context:
+
+- `claude-haiku-4-5-20251001` = Haiku
+- `claude-sonnet-4-6` = Sonnet
+- `claude-opus-4-6` = Opus
 
 **Si NO estás en Opus**, tu ÚNICO mensaje debe ser:
 
-> "Necesito Opus para analizar esta orden. ¿Cambias con `/model opus`?"
+> "Estoy en [Haiku/Sonnet]. Necesito Opus para analizar esta orden. ¿Cambias con `/model opus`?"
 
 No analices, no resumas, no hagas nada más — solo pide el cambio. Una vez en Opus, continúa con Paso 1.
 
-**Si ya estás en Opus**, salta al Paso 1.
+**Si ya estás en Opus**, salta directamente al Paso 1.
 
 ### Paso 1 — Analiza la orden
 
