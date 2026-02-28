@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-02-28 — doble URL dealer/vehículo + branding gratis
+**Última actualización:** 2026-02-28 — CLAUDE.md: auditoría protocolo + 9 mejoras (Pasos 0-4, skills, multitarea, cierre sesión, auto-detección modelo)
 **Sesiones completadas:** 0–64 + Iter 1–15 auditoría + sesiones ad-hoc hasta 03-mar
 **Puntuación global:** 79/100 (auditoría 26-feb) · Historial completo: `git log STATUS.md`
 
@@ -86,6 +86,7 @@ Iter 1–15 completas ✅ (commit `7dde04a`). **Pendiente:** FilterBar.vue (1.99
 
 | Fecha  | Resumen                                                                                                                                |
 | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 28-feb | CLAUDE.md: auditoría (13 debilidades) + 9 mejoras (6 recomendadas + 3 opcionales) + auto-detección modelo + reestructura cierre sesión |
 | 28-feb | Doble URL por vehículo: `/vehiculo/[slug]` (marketplace, canonical) + `/[dealer]/[slug]` (portal dealer, branding gratis, noindex)     |
 | 04-mar | Fix crítico auth: middlewares usan `getSession()` en vez de `useSupabaseUser()` (bug HS256 en @nuxtjs/supabase ≤2.0.3); módulo → 2.0.4 |
 | 03-mar | CLAUDE.md: 5 reglas no negociables, Stack añadido, secciones fusionadas; STATUS.md comprimido 294→110 líneas; CLAUDE2.md eliminado     |
@@ -105,3 +106,7 @@ Iter 1–15 completas ✅ (commit `7dde04a`). **Pendiente:** FilterBar.vue (1.99
 1. **P0-3:** Configurar Cloudflare WAF — activa rate limiting en producción
 2. **FilterBar.vue (1.999 líneas):** Auditoría #7 iteración 16
 3. **Founding Dealers:** Contactar primeros 10 (tarea de negocio, no código)
+
+---
+
+CLOSING_SESSION
