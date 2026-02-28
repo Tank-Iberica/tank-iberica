@@ -1,255 +1,105 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-01 — dealer portal route refactor (/vendedor/[slug] → /[slug])
-**Sesiones completadas:** 0–64 + iteraciones de auditoría 1–15 + tareas Haiku + sesiones 28-feb + fix admin + sesión 01-mar
-**Puntuación global (auditoría 26-feb):** 79/100
+**Última actualización:** 2026-03-03
+**Sesiones completadas:** 0–64 + Iter 1–15 auditoría + sesiones ad-hoc hasta 03-mar
+**Puntuación global:** 79/100 (auditoría 26-feb) · Historial completo: `git log STATUS.md`
 
 ---
 
 ## Métricas reales del proyecto
 
-| Módulo           | Documentado | Real (verificado 28-feb)                                          |
-| ---------------- | ----------- | ----------------------------------------------------------------- |
-| Páginas Vue      | 122         | **124**                                                           |
-| Componentes Vue  | —           | **418**                                                           |
-| Composables      | 79          | **147**                                                           |
-| Endpoints API    | 54          | **62**                                                            |
-| Servicios server | 2           | **8**                                                             |
-| Migraciones SQL  | 60          | **65**                                                            |
-| Tablas BD        | 89          | 89                                                                |
-| Tests totales    | 11 E2E      | **34** (12 E2E + 5 seguridad + 11 unit + 3 componentes + 3 setup) |
-| CI/CD workflows  | 7           | 7                                                                 |
+| Módulo           | Real (verificado 28-feb)                         |
+| ---------------- | ------------------------------------------------ |
+| Páginas Vue      | 124                                              |
+| Componentes Vue  | 418                                              |
+| Composables      | 147                                              |
+| Endpoints API    | 62                                               |
+| Servicios server | 8                                                |
+| Migraciones SQL  | 65                                               |
+| Tablas BD        | 89                                               |
+| Tests totales    | 34 (12 E2E + 5 seg + 11 unit + 3 comp + 3 setup) |
+| CI/CD workflows  | 7                                                |
 
 ---
 
 ## Estado por módulo
 
-| Módulo                    | Estado         | Notas                                                              |
-| ------------------------- | -------------- | ------------------------------------------------------------------ |
-| Catálogo + filtros        | ✅ Completo    | FilterBar.vue tiene 1.999 líneas — refactoring pendiente           |
-| Fichas de vehículo        | ✅ Completo    | SEO, JSON-LD, OG, hreflang, breadcrumbs                            |
-| Auth + perfiles           | ✅ Completo    | Supabase Auth, Google Login, Turnstile CAPTCHA                     |
-| Admin panel               | ✅ Completo    | ~115 strings sin i18n (hardcodeados en español)                    |
-| Noticias y guías          | ✅ Completo    |                                                                    |
-| Legal / GDPR              | ✅ Completo    | RAT (Registro de Actividades de Tratamiento) no formalizado        |
-| Verificación vehículos    | ✅ Completo    | Ownership check en `/api/verify-document` **pendiente** (P0)       |
-| Subastas                  | ✅ Completo    | Falta índice `auction_bids(auction_id)`                            |
-| Publicidad + ads          | ✅ Completo    |                                                                    |
-| Pagos Stripe              | ✅ Completo    | Webhooks verificados con firma HMAC                                |
-| PWA + offline             | ✅ Completo    |                                                                    |
-| CI/CD                     | ✅ Completo    | 7 workflows: lint, typecheck, build, E2E, Lighthouse, DAST, backup |
-| WhatsApp pipeline         | ✅ Completo    | Refactorizado de 550 → 75 líneas                                   |
-| Multi-vertical            | ✅ Completo    | Columna `vertical` en tablas clave, middleware de aislamiento      |
-| Dashboard dealer          | ✅ Completo    |                                                                    |
-| Transparencia DSA         | ✅ Completo    |                                                                    |
-| Admin KPI + métricas      | ✅ Completo    | Typecheck 0 errores (28-feb)                                       |
-| Alertas y favoritos       | ✅ Completo    |                                                                    |
-| Herramientas dealer       | ✅ Completo    |                                                                    |
-| Datos mercado público     | ✅ Completo    |                                                                    |
-| Infra monitoring          | ✅ Completo    | Types regenerados, incluye infra_alerts/clusters/metrics           |
-| Monetización avanzada     | ✅ Completo    | Trials 14d, dunning, API keys dealers                              |
-| Event bus + feature flags | ✅ Completo    |                                                                    |
-| SEO avanzado              | ✅ Completo    | Schema.org, hreflang, canonical, sitemap dinámico                  |
-| Páginas de error          | ✅ Completo    | 404/500/503 con contexto                                           |
-| Seguridad                 | ⚠️ Parcial     | Rate limiting **deshabilitado en producción** — requiere CF WAF    |
-| Landing pages builder     | 🔵 Pospuesto   | Se reconsiderará si dealers lo solicitan activamente               |
-| Prebid demand partners    | 🔵 Placeholder | Estructura lista, sin cuentas reales configuradas                  |
-| API valoración (/v1)      | 🔵 Pospuesto   | Devuelve 503 hasta ≥500 transacciones históricas                   |
+| Módulo                    | Estado         | Notas                                                           |
+| ------------------------- | -------------- | --------------------------------------------------------------- |
+| Catálogo + filtros        | ✅ Completo    | FilterBar.vue 1.999 líneas — refactoring pendiente              |
+| Fichas de vehículo        | ✅ Completo    | SEO, JSON-LD, OG, hreflang, breadcrumbs                         |
+| Auth + perfiles           | ✅ Completo    | Supabase Auth, Google Login, Turnstile CAPTCHA                  |
+| Admin panel               | ✅ Completo    | ~115 strings sin i18n (bajo impacto, solo 2 personas)           |
+| Noticias y guías          | ✅ Completo    |                                                                 |
+| Legal / GDPR              | ✅ Completo    | RAT no formalizado                                              |
+| Verificación vehículos    | ✅ Completo    |                                                                 |
+| Subastas                  | ✅ Completo    |                                                                 |
+| Publicidad + ads          | ✅ Completo    |                                                                 |
+| Pagos Stripe              | ✅ Completo    | Webhooks con firma HMAC                                         |
+| PWA + offline             | ✅ Completo    |                                                                 |
+| CI/CD                     | ✅ Completo    | lint, typecheck, build, E2E, Lighthouse, DAST, backup           |
+| WhatsApp pipeline         | ✅ Completo    |                                                                 |
+| Multi-vertical            | ✅ Completo    | Columna `vertical` en tablas clave                              |
+| Dashboard dealer          | ✅ Completo    |                                                                 |
+| Transparencia DSA         | ✅ Completo    |                                                                 |
+| Admin KPI + métricas      | ✅ Completo    |                                                                 |
+| Alertas y favoritos       | ✅ Completo    |                                                                 |
+| Herramientas dealer       | ✅ Completo    |                                                                 |
+| Datos mercado público     | ✅ Completo    |                                                                 |
+| Infra monitoring          | ✅ Completo    |                                                                 |
+| Monetización avanzada     | ✅ Completo    | Trials 14d, dunning, API keys dealers                           |
+| Event bus + feature flags | ✅ Completo    |                                                                 |
+| SEO avanzado              | ✅ Completo    | Schema.org, hreflang, canonical, sitemap dinámico               |
+| Páginas de error          | ✅ Completo    | 404/500/503 con contexto                                        |
+| Seguridad                 | ⚠️ Parcial     | Rate limiting **deshabilitado en producción** — requiere CF WAF |
+| Landing pages builder     | 🔵 Pospuesto   | Solo si dealers lo solicitan activamente                        |
+| Prebid demand partners    | 🔵 Placeholder | Estructura lista, sin cuentas reales                            |
+| API valoración (/v1)      | 🔵 Pospuesto   | Devuelve 503 hasta ≥500 transacciones históricas                |
 
 ---
 
-## Errores críticos conocidos
+## Errores activos
 
-> Fuente: Auditoría 26-febrero-2026 + análisis de código 28-febrero-2026
+| ID   | Severidad | Problema                                                                                  | Acción                                |
+| ---- | --------- | ----------------------------------------------------------------------------------------- | ------------------------------------- |
+| P0-3 | 🔴 P0     | Rate limiting deshabilitado en producción (in-memory no funciona en CF Workers stateless) | Configurar reglas CF WAF (fundadores) |
 
-### 🔴 P0 — Pueden romper funcionalidad en producción
+> Todos los demás errores (P0-1/2, P1-1/2/3, P2-1/2/3, S-01, S-03) resueltos. Ver `git log STATUS.md`.
 
-| ID       | Problema                                                                                                                                          | Archivo(s)                                              | Acción                                                    |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------- |
-| ~~P0-1~~ | ~~**Migración 00065 sin aplicar**~~ — **RESUELTO** Las 18 tablas ya existían en BD (migración aplicada manualmente). Confirmado via Supabase MCP. | —                                                       | ✅ Completo                                               |
-| ~~P0-2~~ | ~~**RLS incorrecto en migración 00065**~~ — **RESUELTO** Migration 00067 corrige 8 policies con subquery correcto. Commit `891edf1`.              | `supabase/migrations/00067_fix_rls_dealer_policies.sql` | ✅ Completo                                               |
-| P0-3     | **Rate limiting deshabilitado en producción** — el middleware in-memory no funciona en CF Workers (stateless). No hay protección contra abuso.    | `server/middleware/rate-limit.ts`                       | Configurar reglas en Cloudflare WAF (requiere fundadores) |
+---
 
-### 🟠 P1 — Errores que bloquean CI o exponen información
+## Auditoría #7 — Archivos >500 líneas
 
-| ID       | Problema                                                                                                                                          | Archivo(s)                                                                                                                          | Acción      |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| ~~P1-1~~ | ~~**676→80→0 errores TypeScript**~~ — **RESUELTO** Regenerados types (5440 líneas), corregidos 42 archivos. Commit `6cc7611`.                     | —                                                                                                                                   | ✅ Completo |
-| ~~P1-2~~ | ~~**`types/supabase.ts` desactualizado**~~ — **RESUELTO** Regenerados con `npx supabase gen types` (28-feb 18:30). Todas las 89 tablas incluidas. | `types/supabase.ts`                                                                                                                 | ✅ Completo |
-| ~~P1-3~~ | ~~**3 endpoints exponen errores internos**~~ — **VERIFICADO** Todos usan `safeError()` correctamente.                                             | `server/api/stripe/webhook.post.ts:71`, `server/api/generate-description.post.ts:94`, `server/api/reservations/respond.post.ts:102` | ✅ Completo |
-
-### 🟡 P2 — Funcionalidad degradada (no rompe pero impacta)
-
-| ID       | Problema                                                                                                                                                                                                                         | Archivo(s)                                                               | Acción      |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------- |
-| ~~P2-1~~ | ~~**`/api/merchant-feed` y `/__sitemap` sin cache CDN**~~ — **VERIFICADO** Ambos endpoints tienen `Cache-Control` + `ETag` implementados.                                                                                        | `server/api/merchant-feed.get.ts:95-96`, `server/api/__sitemap.ts:5,118` | ✅ Completo |
-| ~~P2-2~~ | ~~**~115 strings sin i18n en admin**~~ — **RESUELTO** 29 archivos actualizados, 24 nuevos sub-namespaces. 0 hardcoded en templates. Arrays estáticos en `<script>` (branding colors, catalog actions) pendientes — bajo impacto. | `i18n/es.json`, `i18n/en.json`, `app/pages/admin/**`                     | ✅ Completo |
-| ~~P2-3~~ | ~~**Faltan índices**: `vehicles(category_id)` y `auction_bids(auction_id)`~~ — **VERIFICADO** Migración 00066 ya creada.                                                                                                         | `supabase/migrations/00066_missing_indexes.sql`                          | ✅ Completo |
-
-### Resueltos (verificados en código)
-
-| ID original             | Problema                                   | Estado                                                                |
-| ----------------------- | ------------------------------------------ | --------------------------------------------------------------------- |
-| S-01 (ISSUES-AUDITORIA) | `/api/verify-document` sin ownership check | **RESUELTO** — ownership check en líneas 180-215                      |
-| S-03 (ISSUES-AUDITORIA) | `/api/health` expuesto públicamente        | **MITIGADO** — soporta HEALTH_CHECK_TOKEN (protegido si se configura) |
-| —                       | Cron endpoints sin verificación de secret  | **OK** — los 13 endpoints usan `verifyCronSecret()`                   |
-| —                       | Stripe webhook sin verificación de firma   | **OK** — usa `constructEvent()` + fail-closed en producción           |
+Iter 1–15 completas ✅ (commit `7dde04a`). **Pendiente:** FilterBar.vue (1.999 líneas).
 
 ---
 
 ## Pendientes documentación
 
-- [x] `types/supabase.ts` regenerado (65 migraciones, 89 tablas, 5440 líneas → commit `6cc7611`)
-- [ ] `docs/ESTADO-REAL-PRODUCTO.md` desactualizado (generado 25-feb, cifras han cambiado)
-- [ ] `README.md` raíz es el template genérico de Nuxt (reemplazar con contenido real)
-- [ ] RAT (Registro de Actividades de Tratamiento) GDPR no formalizado como documento legal
+- [ ] `docs/ESTADO-REAL-PRODUCTO.md` desactualizado (generado 25-feb)
+- [ ] `README.md` raíz es template genérico de Nuxt — reemplazar con contenido real
+- [ ] RAT (Registro Actividades de Tratamiento) GDPR no formalizado como documento legal
+- [ ] Decidir: ¿reemplazar `CLAUDE.md` con `CLAUDE2.md`? (ver git para el archivo)
 
 ---
 
-## Módulos pospuestos (no implementar sin validación de negocio)
+## Changelog de sesiones
 
-| Módulo                           | Condición de activación          |
-| -------------------------------- | -------------------------------- |
-| API valoración `/v1/valuation`   | ≥500 transacciones históricas    |
-| Suscripción datos sectoriales    | ≥1.000 vehículos en catálogo     |
-| Dataset anualizado               | ≥12 meses de datos               |
-| Merchandising completo           | Demanda medida                   |
-| Idiomas 3-7 (fr, de, nl, pl, it) | Demanda real                     |
-| Prebid demand partners           | Registro en SSPs + placement IDs |
-
----
-
-## Auditoría Punto #7 — Archivos >500 líneas
-
-> Fuente: `docs/auditorias/AUDITORIA-26-FEBRERO.md` — Dimensión 2 (Código y arquitectura, 74/100)
-> Issue específico: "32 archivos >500 líneas, FilterBar.vue con 1.999 líneas"
-
-**Estado:** Iteraciones 1–15 completas ✅ · último commit `7dde04a`
-
-### Iteración 15 — composables grandes (completado 28-feb)
-
-5 composables refactorizados. Typecheck 0 errores en todos los commits.
-
-| Composable (antes)                            | Antes | Después | Archivos extraídos                                                                                                     |
-| --------------------------------------------- | ----- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `composables/admin/useAdminProductosPage.ts`  | 974   | 475     | `useAdminProductosColumns.ts`, `useAdminProductosSort.ts`, `utils/adminProductosExport.ts`                             |
-| `composables/admin/useAdminEmails.ts`         | 902   | 305     | `utils/adminEmailTemplates.ts`                                                                                         |
-| `composables/admin/useAdminMetrics.ts`        | 854   | 124     | `useAdminMetricsRevenue.ts`, `useAdminMetricsActivity.ts`, `utils/adminMetricsExport.ts`, `utils/adminMetricsTypes.ts` |
-| `composables/admin/useAdminProductoDetail.ts` | 779   | 419     | `useAdminProductoDetailVerif.ts`, `useAdminProductoDetailImages.ts`, `useAdminProductoDetailRecords.ts`                |
-| `composables/dashboard/useInvoice.ts`         | 728   | 486     | `utils/invoiceTypes.ts`, `utils/invoicePdf.ts`, `utils/invoiceFormatters.ts`                                           |
-
-Commits iter 15: `c13676f`, `145a7c5`, `1f93765`, `a613249`, `7dde04a`
+| Fecha  | Resumen                                                                                        |
+| ------ | ---------------------------------------------------------------------------------------------- |
+| 03-mar | Hook condicional: solo mata proceso Node del puerto 3000 si STATUS.md contiene CLOSING_SESSION |
+| 02-mar | Hook PostToolUse automático para limpieza Node.js al actualizar STATUS.md                      |
+| 01-mar | Fix admin: `isAdmin` usa `role='admin'`; refactor ruta dealer `/vendedor/[slug]` → `/[slug]`   |
+| 28-feb | Dealer portal completo: catálogo filtrado, SEO, working hours, contacto                        |
+| 28-feb | `docs/PROYECTO-CONTEXTO.md` creado (530 líneas, documento maestro de contexto)                 |
+| 28-feb | Hallazgos menores: JSDoc, ARIA, CHECK constraints, Snyk CI, legacy banner, excel chunks        |
+| 28-feb | Auditoría #7 Iter 1–15: 5 composables grandes refactorizados, typecheck 0 errores              |
+| 26-feb | Auditoría global 79/100. 12 errores P0/P1/P2 identificados y resueltos (menos P0-3)            |
 
 ---
 
-## Sesión 28-feb — Hallazgos menores (completado)
+## Próximas acciones
 
-✅ Implementados:
-
-- #16 JSDoc: docs en useAuth.ts y useFavorites.ts
-- #17 ARIA live regions: containers polite + assertive en default.vue; useToast anuncia a screen readers
-- #18 CHECK constraints: migración 00067 (payments, auction_bids, balance)
-- #19 Snyk CI: descomentado en security.yml con continue-on-error
-- #20 Legacy banner: [LEGACY] header en todos los 30 docs/legacy
-- #22 exceljs chunks: vendor-excel en nuxt.config.ts
-- **BONUS:** CLAUDE.md actualizado con regla de model-switching en subtareas mixtas
-
-✅ Commits:
-
-- `4e92bc5` fix: resolve minor audit findings + AdminSidebar refactor + type regen
-- `374b82a` fix: correct status value 'active' → 'published' in admin composables
-- `2c449f2` docs: add model-switching rule for mixed-complexity subtasks
-
-## Pendiente — Decisión CLAUDE.md
-
-- `CLAUDE2.md` creado con versión pulida del protocolo
-- **Decidir:** ¿reemplazar `CLAUDE.md` con `CLAUDE2.md`, quedarse con el original, o hacer una mezcla?
-
----
-
-## Sesión 28-feb (2ª) — Documento maestro de contexto
-
-✅ Implementado:
-
-- Leídos 83 archivos de documentación (.md, .txt, .pdf) en `docs/` y subcarpetas
-- Creado `docs/PROYECTO-CONTEXTO.md` — documento maestro (~530 líneas, 15 secciones, 56 puntos de contexto integrados temáticamente): visión TradeBase, modelo de negocio, crecimiento/GTM, arquitectura, funcionalidades, i18n, decisiones, target demográfico, criterios de código, integraciones, crons, legal, estado, roadmap, referencia de archivos
-- Actualizado `CLAUDE.md`: referencia a PROYECTO-CONTEXTO.md como lectura obligatoria + regla explícita contra Task paralelos
-- Actualizado `MEMORY.md`: regla crítica de no usar agentes paralelos
-- **Pendiente:** Definir qué hace Gesturban (marcado como `[Pendiente de definición por fundadores]` en el documento)
-
----
-
-## Sesión 28-feb (3ª) — DealerPortal: catálogo + SEO + contacto
-
-✅ Implementado:
-
-**Setup dealer inicial:**
-
-- Creado perfil dealer Tank Ibérica para usuario juanmagoti
-
-**DealerPortal.vue — refactoring mayor (~875 → completado):**
-
-- ✅ Implementado catálogo filtrado por dealer_id (exactamente igual al de la página principal, pero solo vehículos del dealer)
-- ✅ State isolation: useCatalogState con `inject('catalogScope')` — cada dealer portal tiene su propio estado de filtros sin contaminar el catálogo global
-- ✅ Reemplazado placeholder por componentes reales: ControlsBar, ActiveFilters, VehicleGrid
-- ✅ SEO completo: Open Graph (og:image, og:title, og:description, og:url), LocalBusiness JSON-LD, canonical link
-- ✅ Sección working hours: display localizado (ES/EN) con horarios del dealer desde contact_config.hours
-- ✅ Formulario de contacto: campos name/phone/message, submit a tabla leads con dealer_id + source='dealer_portal'
-- ✅ Lógica de contact_config: respeta flags showEmail, showPhone, showWebsite
-- ✅ Badge inteligente: fallback a subscription_type si badge es null
-
-**i18n updates:**
-
-- Añadidos 7 keys nuevas para formulario contacto en ES/EN
-- i18n/es.json + i18n/en.json actualizadas
-
-**Datos preparados:**
-
-- [...slug].vue: select query ampliado con subscription_type, address
-- DealerProfile interface: incluye subscription_type
-
-✅ Commits:
-
-- `2e89a83` feat: implement dealer catalog with state isolation
-- `965af9f` feat: complete dealer portal with SEO, working hours, contact form
-
----
-
-## Fix admin access (2026-03-01) — commit `30ed7d5`
-
-**Bug:** Admin link invisible en header y redirect post-login incorrecto.
-**Causa:** `useAuth.ts` usaba `user_type` para `isAdmin`, pero los admins tienen `role='admin'` y `user_type='buyer'`.
-
-✅ Corregido:
-
-- `useAuth.ts` — `isAdmin` ahora usa `profile.role === 'admin'` + `role` añadido al select
-- `middleware/dealer.ts` — ahora permite `role='admin'` además de `user_type='dealer'`
-- `pages/auth/login.vue` — redirect post-login usa `auth.isAdmin.value`
-
----
-
-## Sesión 01-mar — Refactor ruta portal dealer
-
-✅ Implementado:
-
-- Ruta del portal dealer cambiada de `/vendedor/[slug]` a `/[slug]` (raíz plana, URL limpia)
-- `app/pages/vendedor/[slug].vue` → `app/pages/[slug].vue` (rename)
-- `nuxt.config.ts` — route rule `'/vendedor/**'` → `'/:slug'` (SWR 10min)
-- `server/api/__sitemap.ts` — URLs de dealers en sitemap actualizadas
-- `app/composables/useVendedorDetail.ts` — canonical, hreflang y JSON-LD breadcrumb actualizados
-- `app/components/vehicle/DetailSeller.vue` — NuxtLink al perfil del dealer actualizado
-- `app/error.vue` — eliminadas detecciones de `/vendedor/` (sin prefijo ya no detectables)
-- `docs/ESTADO-REAL-PRODUCTO.md` — referencias actualizadas
-
-✅ Commits:
-
-- `93eb6bb` refactor: move dealer portal from /vendedor/[slug] to /[slug]
-
----
-
-## Próxima acción recomendada
-
-1. ~~**P0-1 + P0-2:** Resueltos — commit `891edf1`~~
-2. **P0-3:** Configurar Cloudflare WAF rules → activa rate limiting en producción
-3. **P2-2:** Extraer ~115 strings sin i18n del panel admin (opcional, bajo impacto)
-4. ~~**Auditoría #7 Iteración 15**~~ → ✅ Completo — 5 composables grandes refactorizados
+1. **P0-3:** Configurar Cloudflare WAF — activa rate limiting en producción
+2. **FilterBar.vue (1.999 líneas):** Auditoría #7 iteración 16
+3. **Founding Dealers:** Contactar primeros 10 (tarea de negocio, no código)
