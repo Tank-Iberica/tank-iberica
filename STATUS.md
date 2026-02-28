@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-04 — creado perfil PowerShell con alias `curro`
+**Última actualización:** 2026-03-04 — chat buyer-seller completo y funcional
 **Sesiones completadas:** 0–64 + Iter 1–15 auditoría + sesiones ad-hoc hasta 04-mar
 **Puntuación global:** 79/100 (auditoría 26-feb) · Historial completo: `git log STATUS.md`
 
@@ -87,6 +87,7 @@ Iter 1–15 completas ✅ (commit `7dde04a`). **Pendiente:** FilterBar.vue (1.99
 
 | Fecha  | Resumen                                                                                                                                                                                                                                             |
 | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 04-mar | Chat buyer-seller: botón "Contactar vendedor" en ficha vehículo → modal → conversación; resuelto `other_party_name` (JOIN users); preview último mensaje; badge unread en header; fix RLS `markAsRead`; 15 keys i18n añadidas.                      |
 | 04-mar | Fix crítico RLS: 96 políticas admin cambio `FROM auth.users au` → `is_admin()` SECURITY DEFINER (causa raíz "permission denied for table users"). Clarificado scraping vs scheduled tasks en PROYECTO-CONTEXTO.md. Pendiente: script infra_metrics. |
 | 04-mar | Alias `curro`: cambio a `--prompt "inicio"` para auto-trigger sin input del usuario                                                                                                                                                                 |
 | 04-mar | Alias `curro` creado en perfil PowerShell (--model opus + auto-lectura 3 docs); regla PROYECTO-CONTEXTO.md actualización en tiempo real                                                                                                             |

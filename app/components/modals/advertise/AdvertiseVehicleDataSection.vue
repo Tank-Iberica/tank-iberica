@@ -4,7 +4,7 @@ import type { AdvertiseFormData } from '~/composables/modals/useAdvertiseModal'
 const form = defineModel<AdvertiseFormData>('form', { required: true })
 
 defineProps<{
-  errors: Record<string, boolean>
+  errors: Record<string, string>
 }>()
 
 const { t } = useI18n()
@@ -20,7 +20,12 @@ const { t } = useI18n()
         type="text"
         class="form-input"
         :class="{ 'input-error': errors.brand }"
+        :aria-invalid="!!errors.brand || undefined"
+        :aria-describedby="errors.brand ? 'err-adv-brand' : undefined"
       >
+      <p v-if="errors.brand" id="err-adv-brand" class="field-error" role="alert">
+        {{ errors.brand }}
+      </p>
     </div>
 
     <div class="form-group">
@@ -31,7 +36,12 @@ const { t } = useI18n()
         type="text"
         class="form-input"
         :class="{ 'input-error': errors.model }"
+        :aria-invalid="!!errors.model || undefined"
+        :aria-describedby="errors.model ? 'err-adv-model' : undefined"
       >
+      <p v-if="errors.model" id="err-adv-model" class="field-error" role="alert">
+        {{ errors.model }}
+      </p>
     </div>
 
     <div class="form-group">
@@ -42,9 +52,12 @@ const { t } = useI18n()
         type="number"
         class="form-input"
         :class="{ 'input-error': errors.year }"
+        :aria-invalid="!!errors.year || undefined"
+        :aria-describedby="errors.year ? 'err-adv-year' : undefined"
         min="1980"
         :max="new Date().getFullYear() + 1"
       >
+      <p v-if="errors.year" id="err-adv-year" class="field-error" role="alert">{{ errors.year }}</p>
     </div>
 
     <div class="form-group">
@@ -66,9 +79,14 @@ const { t } = useI18n()
         type="number"
         class="form-input"
         :class="{ 'input-error': errors.price }"
+        :aria-invalid="!!errors.price || undefined"
+        :aria-describedby="errors.price ? 'err-adv-price' : undefined"
         min="0"
         step="100"
       >
+      <p v-if="errors.price" id="err-adv-price" class="field-error" role="alert">
+        {{ errors.price }}
+      </p>
     </div>
 
     <div class="form-group">
@@ -79,7 +97,12 @@ const { t } = useI18n()
         type="text"
         class="form-input"
         :class="{ 'input-error': errors.location }"
+        :aria-invalid="!!errors.location || undefined"
+        :aria-describedby="errors.location ? 'err-adv-location' : undefined"
       >
+      <p v-if="errors.location" id="err-adv-location" class="field-error" role="alert">
+        {{ errors.location }}
+      </p>
     </div>
 
     <div class="form-group full-width">
@@ -89,9 +112,14 @@ const { t } = useI18n()
         v-model="form.description"
         class="form-input"
         :class="{ 'input-error': errors.description }"
+        :aria-invalid="!!errors.description || undefined"
+        :aria-describedby="errors.description ? 'err-adv-desc' : undefined"
         rows="3"
         :placeholder="t('advertise.descriptionPlaceholder')"
       />
+      <p v-if="errors.description" id="err-adv-desc" class="field-error" role="alert">
+        {{ errors.description }}
+      </p>
     </div>
   </div>
 </template>
@@ -140,6 +168,12 @@ const { t } = useI18n()
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+}
+
+.field-error {
+  font-size: 0.75rem;
+  color: #dc2626;
+  margin-top: 2px;
 }
 
 .input-error {

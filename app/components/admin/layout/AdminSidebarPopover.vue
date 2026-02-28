@@ -74,8 +74,10 @@ defineEmits<{
   transition: background var(--transition-fast);
 }
 
-.popover-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+@media (hover: hover) {
+  .popover-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
 }
 
 .popover-item.active {

@@ -15,16 +15,32 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="adv-name">{{ t('admin.publicidad.companyName') }} *</label>
-            <input id="adv-name" v-model="modal.form.company_name" type="text" required >
+            <input
+              id="adv-name"
+              v-model="modal.form.company_name"
+              type="text"
+              autocomplete="organization"
+              required
+            >
           </div>
           <div class="form-row">
             <div class="form-group">
               <label for="adv-email">{{ t('admin.publicidad.contactEmail') }}</label>
-              <input id="adv-email" v-model="modal.form.contact_email" type="email" >
+              <input
+                id="adv-email"
+                v-model="modal.form.contact_email"
+                type="email"
+                autocomplete="email"
+              >
             </div>
             <div class="form-group">
               <label for="adv-phone">{{ t('admin.publicidad.contactPhone') }}</label>
-              <input id="adv-phone" v-model="modal.form.contact_phone" type="tel" >
+              <input
+                id="adv-phone"
+                v-model="modal.form.contact_phone"
+                type="tel"
+                autocomplete="tel"
+              >
             </div>
           </div>
           <div class="form-row">

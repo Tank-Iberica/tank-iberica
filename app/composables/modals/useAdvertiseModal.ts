@@ -34,7 +34,7 @@ export function useAdvertiseModal(
   onClose: () => void,
   onOpenAuth: () => void,
 ) {
-  const { locale } = useI18n()
+  const { t, locale } = useI18n()
   const user = useSupabaseUser()
 
   const {
@@ -63,7 +63,7 @@ export function useAdvertiseModal(
 
   const isSubmitting = ref(false)
   const isSuccess = ref(false)
-  const validationErrors = ref<Record<string, boolean>>({})
+  const validationErrors = ref<Record<string, string>>({})
 
   const photos = ref<File[]>([])
   const photoPreviews = ref<string[]>([])
@@ -130,18 +130,24 @@ export function useAdvertiseModal(
 
   function validateForm(): boolean {
     validationErrors.value = {}
-    if (!formData.value.brand.trim()) validationErrors.value.brand = true
-    if (!formData.value.model.trim()) validationErrors.value.model = true
-    if (!formData.value.year) validationErrors.value.year = true
-    if (!formData.value.price) validationErrors.value.price = true
-    if (!formData.value.location.trim()) validationErrors.value.location = true
-    if (!formData.value.description.trim()) validationErrors.value.description = true
-    if (!formData.value.contactName.trim()) validationErrors.value.contactName = true
-    if (!formData.value.contactEmail.trim()) validationErrors.value.contactEmail = true
-    if (!formData.value.contactPhone.trim()) validationErrors.value.contactPhone = true
-    if (photos.value.length < MIN_PHOTOS) validationErrors.value.photos = true
-    if (!techSheet.value) validationErrors.value.techSheet = true
-    if (!formData.value.termsAccepted) validationErrors.value.termsAccepted = true
+    const req = t('validation.required')
+    if (!formData.value.brand.trim()) validationErrors.value.brand = req
+    if (!formData.value.model.trim()) validationErrors.value.model = req
+    if (!formData.value.year) validationErrors.value.year = req
+    if (!formData.value.price) validationErrors.value.price = req
+    if (!formData.value.location.trim()) validationErrors.value.location = req
+    if (!formData.value.description.trim()) validationErrors.value.description = req
+    if (!formData.value.contactName.trim()) validationErrors.value.contactName = req
+    if (!formData.value.contactEmail.trim()) {
+      validationErrors.value.contactEmail = req
+    } else if (!/^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(formData.value.contactEmail)) {
+      validationErrors.value.contactEmail = t('validation.invalidEmail')
+    }
+    if (!formData.value.contactPhone.trim()) validationErrors.value.contactPhone = req
+    if (photos.value.length < MIN_PHOTOS) validationErrors.value.photos = req
+    if (!techSheet.value) validationErrors.value.techSheet = req
+    if (!formData.value.termsAccepted)
+      validationErrors.value.termsAccepted = t('validation.termsRequired')
     return Object.keys(validationErrors.value).length === 0
   }
 

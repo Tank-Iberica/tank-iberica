@@ -66,6 +66,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
             id="rent-client"
             :value="props.clientName"
             type="text"
+            autocomplete="name"
             required
             @input="onStringInput('client_name', $event)"
           >
@@ -76,6 +77,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
             id="rent-contact"
             :value="props.clientContact"
             type="text"
+            autocomplete="off"
             @input="onStringInput('client_contact', $event)"
           >
         </div>

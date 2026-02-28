@@ -1,0 +1,69 @@
+/* ================================================
+   TRACCIONA — Interaction Patterns
+   Touch & keyboard accessibility layer
+   Mobile-first: touch is the default, hover is the enhancement
+   ================================================ */
+
+/* ---- Touch tap feedback ----------------------------------------
+ * On touch devices, :active is the primary visual response to taps.
+ * Applied globally so ALL buttons and links give feedback on touch
+ * without needing to touch scoped component styles.
+ *
+ * Note: transform is excluded from disabled state via :not(:disabled).
+ * The scale(0.98) gives a subtle "press" feel on mobile.
+ * ---------------------------------------------------------------- */
+
+button:active:not(:disabled),
+[role='button']:active:not([aria-disabled='true']),
+summary:active {
+  opacity: 0.85;
+  transform: scale(0.98);
+}
+
+a:active {
+  opacity: 0.8;
+}
+
+/* ---- Hover: only on pointer devices (mouse / trackpad) ---------
+ * Component-level hover styles MUST be wrapped in @media (hover: hover).
+ * This prevents hover states from "sticking" on touch after a tap.
+ *
+ * Pattern for all Vue components:
+ *   @media (hover: hover) {
+ *     .element:hover { ... }
+ *   }
+ *
+ * Utility classes below follow this pattern.
+ * ---------------------------------------------------------------- */
+
+/* Card hover lift — use class="card-hover" on interactive cards */
+@media (hover: hover) {
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    transition:
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+}
+
+/* Link underline on hover — use class="link-hover" */
+@media (hover: hover) {
+  .link-hover:hover {
+    text-decoration: underline;
+  }
+}
+
+/* ---- Reduced motion -------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  button:active,
+  [role='button']:active,
+  a:active {
+    transform: none;
+  }
+
+  .card-hover:hover {
+    transform: none;
+  }
+}

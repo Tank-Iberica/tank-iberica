@@ -16,8 +16,19 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { getImageUrl } = useImageUrl()
 
-function getLastMessagePreview(_conv: { id: string }): string {
-  return t('messages.tapToOpen')
+function getLastMessagePreview(conv: Conversation): string {
+  return conv.last_message_preview ?? t('messages.tapToOpen')
+}
+
+const statusKeyMap: Record<Conversation['status'], string> = {
+  active: 'messages.statusActive',
+  data_shared: 'messages.statusDataShared',
+  closed: 'messages.statusClosed',
+  reported: 'messages.statusReported',
+}
+
+function getStatusLabel(status: Conversation['status']): string {
+  return t(statusKeyMap[status])
 }
 </script>
 
@@ -80,6 +91,9 @@ function getLastMessagePreview(_conv: { id: string }): string {
         </span>
         <span class="conv-item__preview">
           {{ getLastMessagePreview(conv) }}
+        </span>
+        <span v-if="conv.status !== 'active'" class="conv-item__status-badge">
+          {{ getStatusLabel(conv.status) }}
         </span>
       </div>
 
@@ -215,6 +229,15 @@ function getLastMessagePreview(_conv: { id: string }): string {
 
 .conv-item__time {
   font-size: var(--font-size-xs);
+  color: var(--text-auxiliary);
+  white-space: nowrap;
+}
+
+.conv-item__status-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: var(--border-radius-full);
+  background: var(--bg-tertiary);
   color: var(--text-auxiliary);
   white-space: nowrap;
 }

@@ -33,6 +33,7 @@
             <VehicleDetailActions
               :vehicle-id="vehicle.id"
               :dealer-id="vehicleDetail?.dealer_id || ''"
+              :seller-user-id="null"
               :email-subject="emailSubject"
               :email-body="emailBody"
               :share-text="shareText"

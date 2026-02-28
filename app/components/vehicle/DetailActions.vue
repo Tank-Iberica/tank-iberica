@@ -19,6 +19,19 @@
     </button>
 
     <div class="vehicle-contact-btns">
+      <button v-if="sellerUserId" class="contact-btn contact-chat" @click="$emit('start-chat')">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        <span>{{ $t('messages.contactSeller') }}</span>
+      </button>
       <a
         :href="`mailto:info@tracciona.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`"
         class="contact-btn contact-email"
@@ -155,6 +168,7 @@
 defineProps<{
   vehicleId: string
   dealerId: string
+  sellerUserId: string | null
   emailSubject: string
   emailBody: string
   shareText: string
@@ -163,7 +177,7 @@ defineProps<{
 }>()
 
 defineEmits<{
-  (e: 'pdf' | 'favorite' | 'share' | 'report' | 'compare'): void
+  (e: 'pdf' | 'favorite' | 'share' | 'report' | 'compare' | 'start-chat'): void
   (
     e: 'contact-click',
     vehicleId: string,
@@ -231,9 +245,17 @@ defineEmits<{
   transform: translateY(-1px);
 }
 
+.contact-chat {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+}
+
 .contact-email {
   background: var(--color-primary);
   color: var(--color-white);
+  opacity: 0.75;
 }
 
 .contact-call {

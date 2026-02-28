@@ -54,6 +54,7 @@ function updateCtaTextLang(lang: string, value: string) {
           id="dealer-phone"
           :value="phone"
           type="tel"
+          autocomplete="tel"
           placeholder="+34 600 000 000"
           @input="emit('update:phone', ($event.target as HTMLInputElement).value)"
         >
@@ -64,6 +65,7 @@ function updateCtaTextLang(lang: string, value: string) {
           id="dealer-whatsapp"
           :value="whatsapp"
           type="tel"
+          autocomplete="off"
           placeholder="+34 600 000 000"
           @input="emit('update:whatsapp', ($event.target as HTMLInputElement).value)"
         >
@@ -77,6 +79,7 @@ function updateCtaTextLang(lang: string, value: string) {
           id="dealer-email"
           :value="email"
           type="email"
+          autocomplete="email"
           placeholder="info@empresa.com"
           @input="emit('update:email', ($event.target as HTMLInputElement).value)"
         >
@@ -99,6 +102,7 @@ function updateCtaTextLang(lang: string, value: string) {
         id="dealer-address"
         :value="address"
         type="text"
+        autocomplete="street-address"
         placeholder="Calle Ejemplo 123, Madrid, Espana"
         @input="emit('update:address', ($event.target as HTMLInputElement).value)"
       >

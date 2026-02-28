@@ -40,6 +40,7 @@
               v-model="localForm.id_number"
               type="text"
               class="form-input"
+              autocomplete="off"
               :placeholder="$t('auction.idNumberPlaceholder')"
               required
             >
@@ -83,6 +84,7 @@
               v-model="localForm.company_name"
               type="text"
               class="form-input"
+              autocomplete="organization"
               :placeholder="$t('auction.companyNamePlaceholder')"
             >
           </div>

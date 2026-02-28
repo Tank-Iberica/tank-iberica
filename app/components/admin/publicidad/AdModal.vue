@@ -49,13 +49,13 @@
             </div>
             <div class="form-group">
               <label for="ad-phone">{{ t('admin.publicidad.phone') }}</label>
-              <input id="ad-phone" v-model="modal.form.phone" type="tel" >
+              <input id="ad-phone" v-model="modal.form.phone" type="tel" autocomplete="tel" >
             </div>
           </div>
 
           <div class="form-group">
             <label for="ad-email">{{ t('admin.publicidad.email') }}</label>
-            <input id="ad-email" v-model="modal.form.email" type="email" >
+            <input id="ad-email" v-model="modal.form.email" type="email" autocomplete="email" >
           </div>
 
           <!-- Format -->

@@ -240,9 +240,15 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
   min-height: 44px;
 }
 
-.tool-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .tool-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .tool-card.locked:hover {
+    opacity: 0.85;
+  }
 }
 
 .tool-card:active {
@@ -251,10 +257,6 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
 
 .tool-card.locked {
   opacity: 0.7;
-}
-
-.tool-card.locked:hover {
-  opacity: 0.85;
 }
 
 .tool-icon {

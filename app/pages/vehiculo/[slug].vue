@@ -27,6 +27,7 @@
           <VehicleDetailActions
             :vehicle-id="vehicle.id"
             :dealer-id="vehicleDetail?.dealer_id || ''"
+            :seller-user-id="sellerUserId"
             :email-subject="emailSubject"
             :email-body="emailBody"
             :share-text="shareText"
@@ -38,6 +39,7 @@
             @report="showReport = true"
             @compare="handleCompare"
             @contact-click="trackContactClick"
+            @start-chat="showChatModal = true"
           />
 
           <VehicleDetailHeader
@@ -93,6 +95,16 @@
         :entity-id="vehicle.id"
         @close="showReport = false"
       />
+
+      <!-- Contact seller chat modal -->
+      <VehicleContactSellerModal
+        v-if="sellerUserId"
+        :visible="showChatModal"
+        :vehicle-id="vehicle.id"
+        :vehicle-title="buildProductName(vehicle, locale, true)"
+        :seller-user-id="sellerUserId"
+        @close="showChatModal = false"
+      />
     </template>
   </div>
 </template>
@@ -110,6 +122,7 @@ const {
   loading,
   description,
   sellerInfo,
+  sellerUserId,
   showReport,
   hasSpecs,
   vehicleLocation,
@@ -129,6 +142,8 @@ const {
   trackFichaView,
   trackContactClick,
 } = await useVehicleDetail(slug)
+
+const showChatModal = ref(false)
 
 // Track ficha view on client-side mount
 onMounted(() => {

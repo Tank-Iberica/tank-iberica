@@ -182,17 +182,19 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
   // ------------------------------------------------------------------
 
   const sellerInfo = ref<SellerInfo | null>(null)
+  const sellerUserId = ref<string | null>(null)
 
   async function loadSellerInfo() {
     const detail = vehicleDetail.value
     if (!detail?.dealer_id) return
     const { data } = await supabase
       .from('dealers')
-      .select('company_name, location, cif')
+      .select('company_name, location, cif, user_id')
       .eq('id', detail.dealer_id)
       .single()
     if (data) {
       sellerInfo.value = data as unknown as SellerInfo
+      sellerUserId.value = (data as unknown as { user_id: string | null }).user_id ?? null
     }
   }
 
@@ -275,6 +277,7 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
     loading,
     description,
     sellerInfo,
+    sellerUserId,
     showReport,
 
     // Computed

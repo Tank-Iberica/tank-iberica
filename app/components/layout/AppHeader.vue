@@ -197,10 +197,19 @@
 
         <!-- Logged-in user — opens UserPanel -->
         <button v-else class="account-btn logged-in" @click="$emit('openUserPanel')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
+          <span class="account-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <span
+              v-if="unreadMessages > 0"
+              class="account-unread-badge"
+              aria-label="`${unreadMessages} mensajes no leídos`"
+            >
+              {{ unreadMessages > 9 ? '9+' : unreadMessages }}
+            </span>
+          </span>
           <span class="account-text">{{ userDisplayName }}</span>
         </button>
       </div>
@@ -217,6 +226,7 @@ defineEmits<{
 
 const user = useSupabaseUser()
 const authState = useAuth()
+const { unreadCount: unreadMessages } = useUnreadMessages()
 
 const { locale, setLocale } = useI18n()
 const scrolled = ref(false)
@@ -624,6 +634,30 @@ onUnmounted(() => {
   width: 18px;
   height: 18px;
   flex-shrink: 0;
+}
+
+.account-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.account-unread-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 999px;
+  min-width: 16px;
+  text-align: center;
+  pointer-events: none;
 }
 
 /* Hidden on mobile — shown at desktop via media query */

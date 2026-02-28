@@ -68,8 +68,10 @@ const { t } = useI18n()
   min-height: 44px;
 }
 
-.action-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+@media (hover: hover) {
+  .action-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
 }
 
 .action-icon {

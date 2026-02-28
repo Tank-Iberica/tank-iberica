@@ -89,6 +89,7 @@ function onChange(field: keyof MerchForm, event: Event) {
           id="merch-email"
           type="email"
           class="field-input"
+          autocomplete="email"
           :value="form.email"
           :placeholder="$t('dashboard.tools.merchandising.emailPlaceholder')"
           required

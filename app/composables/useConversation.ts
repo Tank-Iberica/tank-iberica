@@ -19,6 +19,7 @@ export interface Conversation {
   vehicle_title?: string
   vehicle_image?: string
   other_party_name?: string
+  last_message_preview?: string
 }
 
 export interface ConversationMessage {
@@ -74,7 +75,7 @@ export function useConversation() {
   // ---------------------------------------------------------------------------
 
   /**
-   * Loads all conversations for the current user, enriched with vehicle info.
+   * Loads all conversations for the current user, enriched with vehicle and party info.
    */
   async function fetchConversations(): Promise<void> {
     if (!user.value) return
@@ -89,13 +90,22 @@ export function useConversation() {
         .select(
           `
           *,
-          vehicles:vehicle_id ( title, images )
+          vehicles:vehicle_id ( title, images ),
+          buyer:buyer_id ( name, apellidos, pseudonimo, company_name ),
+          seller:seller_id ( name, apellidos, pseudonimo, company_name )
         `,
         )
         .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
         .order('last_message_at', { ascending: false })
 
       if (fetchErr) throw fetchErr
+
+      interface UserRow {
+        name: string | null
+        apellidos: string | null
+        pseudonimo: string | null
+        company_name: string | null
+      }
 
       interface ConversationRow {
         id: string
@@ -108,13 +118,19 @@ export function useConversation() {
         last_message_at: string
         created_at: string
         vehicles: { title: string; images: string[] } | null
+        buyer: UserRow | null
+        seller: UserRow | null
       }
 
-      conversations.value = ((data ?? []) as ConversationRow[]).map((row) => {
+      const mapped = ((data ?? []) as ConversationRow[]).map((row) => {
         const firstImage =
           row.vehicles?.images && row.vehicles.images.length > 0
             ? row.vehicles.images[0]
             : undefined
+
+        const isBuyer = row.buyer_id === userId
+        const otherParty = isBuyer ? row.seller : row.buyer
+        const otherPartyName = resolveUserName(otherParty)
 
         return {
           id: row.id,
@@ -128,11 +144,61 @@ export function useConversation() {
           created_at: row.created_at,
           vehicle_title: row.vehicles?.title,
           vehicle_image: firstImage,
+          other_party_name: otherPartyName,
         } satisfies Conversation
       })
+
+      // Fetch last message preview for each conversation
+      if (mapped.length > 0) {
+        const convIds = mapped.map((c) => c.id)
+        const { data: lastMsgs } = await supabase
+          .from('conversation_messages')
+          .select('conversation_id, content, is_system')
+          .in('conversation_id', convIds)
+          .eq('is_system', false)
+          .order('created_at', { ascending: false })
+
+        const previewMap: Record<string, string> = {}
+        if (lastMsgs) {
+          for (const msg of lastMsgs as {
+            conversation_id: string
+            content: string
+            is_system: boolean
+          }[]) {
+            if (!previewMap[msg.conversation_id]) {
+              previewMap[msg.conversation_id] = msg.content.slice(0, 80)
+            }
+          }
+        }
+        conversations.value = mapped.map((c) => ({
+          ...c,
+          last_message_preview: previewMap[c.id],
+        }))
+      } else {
+        conversations.value = mapped
+      }
     } finally {
       loading.value = false
     }
+  }
+
+  /**
+   * Resolves a display name from a user row.
+   * Priority: pseudonimo > company_name > name + apellidos > first part of name
+   */
+  function resolveUserName(
+    u: {
+      name: string | null
+      apellidos: string | null
+      pseudonimo: string | null
+      company_name: string | null
+    } | null,
+  ): string | undefined {
+    if (!u) return undefined
+    if (u.pseudonimo) return u.pseudonimo
+    if (u.company_name) return u.company_name
+    const parts = [u.name, u.apellidos].filter(Boolean)
+    return parts.length > 0 ? parts.join(' ') : undefined
   }
 
   // ---------------------------------------------------------------------------

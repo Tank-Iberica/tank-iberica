@@ -42,17 +42,15 @@ async function handleSubmit() {
   errorMsg.value = ''
 
   try {
-    const { error } = await supabase
-      .from('subscriptions')
-      .upsert({
-        email: email.value.trim(),
-        pref_web: prefs.value.web,
-        pref_press: prefs.value.press,
-        pref_newsletter: prefs.value.newsletter,
-        pref_featured: prefs.value.featured,
-        pref_events: prefs.value.events,
-        pref_csr: prefs.value.csr,
-      })
+    const { error } = await supabase.from('subscriptions').upsert({
+      email: email.value.trim(),
+      pref_web: prefs.value.web,
+      pref_press: prefs.value.press,
+      pref_newsletter: prefs.value.newsletter,
+      pref_featured: prefs.value.featured,
+      pref_events: prefs.value.events,
+      pref_csr: prefs.value.csr,
+    })
 
     if (error) throw error
 
@@ -68,29 +66,33 @@ async function handleSubmit() {
   }
 }
 
-watch(() => props.modelValue, (val) => {
-  if (val) {
-    document.body.style.overflow = 'hidden'
-    document.addEventListener('keydown', handleKeyDown)
-  } else {
-    document.body.style.overflow = ''
-    document.removeEventListener('keydown', handleKeyDown)
-  }
-})
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (val) {
+      document.body.style.overflow = 'hidden'
+      document.addEventListener('keydown', handleKeyDown)
+    } else {
+      document.body.style.overflow = ''
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  },
+)
 </script>
 
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div
-        v-if="modelValue"
-        class="modal-backdrop"
-        @click="handleBackdrop"
-      >
+      <div v-if="modelValue" class="modal-backdrop" @click="handleBackdrop">
         <div class="modal-container">
           <div class="modal-header">
             <h2 class="modal-title">{{ $t('subscribe.title') }}</h2>
-            <button type="button" class="close-button" :aria-label="$t('common.close')" @click="close">
+            <button
+              type="button"
+              class="close-button"
+              :aria-label="$t('common.close')"
+              @click="close"
+            >
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -111,6 +113,7 @@ watch(() => props.modelValue, (val) => {
                 v-model="email"
                 type="email"
                 class="form-input"
+                autocomplete="email"
                 required
                 placeholder="tu@email.com"
               >
@@ -119,38 +122,34 @@ watch(() => props.modelValue, (val) => {
             <div class="prefs-group">
               <h3>{{ $t('subscribe.selectPrefs') }}</h3>
               <label class="checkbox-label">
-                <input v-model="prefs.web" type="checkbox">
+                <input v-model="prefs.web" type="checkbox" >
                 <span>{{ $t('subscribe.prefWeb') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.press" type="checkbox">
+                <input v-model="prefs.press" type="checkbox" >
                 <span>{{ $t('subscribe.prefPress') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.newsletter" type="checkbox">
+                <input v-model="prefs.newsletter" type="checkbox" >
                 <span>{{ $t('subscribe.prefNewsletter') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.featured" type="checkbox">
+                <input v-model="prefs.featured" type="checkbox" >
                 <span>{{ $t('subscribe.prefFeatured') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.events" type="checkbox">
+                <input v-model="prefs.events" type="checkbox" >
                 <span>{{ $t('subscribe.prefEvents') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.csr" type="checkbox">
+                <input v-model="prefs.csr" type="checkbox" >
                 <span>{{ $t('subscribe.prefCsr') }}</span>
               </label>
             </div>
 
             <p v-if="errorMsg" class="error-text">{{ errorMsg }}</p>
 
-            <button
-              type="submit"
-              class="btn-submit"
-              :disabled="isSubmitting || !email.trim()"
-            >
+            <button type="submit" class="btn-submit" :disabled="isSubmitting || !email.trim()">
               {{ isSubmitting ? $t('common.loading') : $t('subscribe.submit') }}
             </button>
           </form>
@@ -282,7 +281,7 @@ watch(() => props.modelValue, (val) => {
 .btn-submit {
   width: 100%;
   padding: 14px;
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary, #23424a);
   color: white;
   border: none;
   border-radius: 8px;

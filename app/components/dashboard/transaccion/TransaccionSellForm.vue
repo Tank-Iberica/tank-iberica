@@ -82,6 +82,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
             id="sell-buyer"
             :value="props.buyerName"
             type="text"
+            autocomplete="name"
             required
             @input="onStringInput('buyer_name', $event)"
           >
@@ -92,6 +93,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
             id="sell-contact"
             :value="props.buyerContact"
             type="text"
+            autocomplete="off"
             @input="onStringInput('buyer_contact', $event)"
           >
         </div>

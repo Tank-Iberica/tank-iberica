@@ -38,7 +38,7 @@ const {
 
 const isSubmitting = ref(false)
 const isSuccess = ref(false)
-const validationErrors = ref<Record<string, boolean>>({})
+const validationErrors = ref<Record<string, string>>({})
 
 const formData = ref({
   brandPreference: '',
@@ -99,15 +99,17 @@ const validateForm = (): boolean => {
   validationErrors.value = {}
 
   if (!formData.value.contactName.trim()) {
-    validationErrors.value.contactName = true
+    validationErrors.value.contactName = _t('validation.required')
   }
 
   if (!formData.value.contactEmail.trim()) {
-    validationErrors.value.contactEmail = true
+    validationErrors.value.contactEmail = _t('validation.required')
+  } else if (!/^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(formData.value.contactEmail)) {
+    validationErrors.value.contactEmail = _t('validation.invalidEmail')
   }
 
   if (!formData.value.termsAccepted) {
-    validationErrors.value.termsAccepted = true
+    validationErrors.value.termsAccepted = _t('validation.termsRequired')
   }
 
   return Object.keys(validationErrors.value).length === 0
@@ -433,8 +435,19 @@ watch(
                   type="text"
                   class="form-input"
                   :class="{ 'input-error': validationErrors.contactName }"
+                  :aria-invalid="!!validationErrors.contactName || undefined"
+                  :aria-describedby="validationErrors.contactName ? 'err-demand-name' : undefined"
+                  autocomplete="name"
                   required
                 >
+                <p
+                  v-if="validationErrors.contactName"
+                  id="err-demand-name"
+                  class="field-error"
+                  role="alert"
+                >
+                  {{ validationErrors.contactName }}
+                </p>
               </div>
 
               <div class="form-group">
@@ -445,8 +458,19 @@ watch(
                   type="email"
                   class="form-input"
                   :class="{ 'input-error': validationErrors.contactEmail }"
+                  :aria-invalid="!!validationErrors.contactEmail || undefined"
+                  :aria-describedby="validationErrors.contactEmail ? 'err-demand-email' : undefined"
+                  autocomplete="email"
                   required
                 >
+                <p
+                  v-if="validationErrors.contactEmail"
+                  id="err-demand-email"
+                  class="field-error"
+                  role="alert"
+                >
+                  {{ validationErrors.contactEmail }}
+                </p>
               </div>
 
               <div class="form-group">
@@ -456,6 +480,7 @@ watch(
                   v-model="formData.contactPhone"
                   type="tel"
                   class="form-input"
+                  autocomplete="tel"
                 >
               </div>
 
@@ -479,9 +504,21 @@ watch(
                     type="checkbox"
                     class="checkbox-input"
                     :class="{ 'input-error': validationErrors.termsAccepted }"
+                    :aria-invalid="!!validationErrors.termsAccepted || undefined"
+                    :aria-describedby="
+                      validationErrors.termsAccepted ? 'err-demand-terms' : undefined
+                    "
                   >
                   <span>{{ $t('demand.acceptTerms') }}</span>
                 </label>
+                <p
+                  v-if="validationErrors.termsAccepted"
+                  id="err-demand-terms"
+                  class="field-error"
+                  role="alert"
+                >
+                  {{ validationErrors.termsAccepted }}
+                </p>
               </div>
             </div>
 
@@ -673,6 +710,12 @@ watch(
 
 .input-error {
   border-color: #ef4444;
+}
+
+.field-error {
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-error, #dc2626);
+  margin-top: var(--spacing-1, 4px);
 }
 
 textarea.form-input {

@@ -137,8 +137,10 @@ const { t } = useI18n()
   color: #334155;
 }
 
-.data-table tr:hover {
-  background: #f8fafc;
+@media (hover: hover) {
+  .data-table tr:hover {
+    background: #f8fafc;
+  }
 }
 
 .col-type {
@@ -175,8 +177,10 @@ const { t } = useI18n()
   text-decoration: none;
 }
 
-.link:hover {
-  text-decoration: underline;
+@media (hover: hover) {
+  .link:hover {
+    text-decoration: underline;
+  }
 }
 
 .row-actions {
@@ -199,12 +203,15 @@ const { t } = useI18n()
   justify-content: center;
 }
 
-.action-btn:hover {
-  background: #f8fafc;
-}
-.action-btn.delete:hover {
-  background: #fee2e2;
-  border-color: #fca5a5;
+@media (hover: hover) {
+  .action-btn:hover {
+    background: #f8fafc;
+  }
+
+  .action-btn.delete:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+  }
 }
 
 .empty-cell {

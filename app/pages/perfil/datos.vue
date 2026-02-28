@@ -16,6 +16,7 @@ const form = reactive({
 
 const email = ref('')
 const saved = ref(false)
+const fieldErrors = reactive({ phone: '' })
 let savedTimer: ReturnType<typeof setTimeout> | null = null
 
 /** Populate form from profile */
@@ -30,7 +31,13 @@ function syncForm() {
 
 async function onSave() {
   saved.value = false
+  fieldErrors.phone = ''
   if (savedTimer) clearTimeout(savedTimer)
+
+  if (form.phone.trim() && !/^[+\d\s\-().]{6,20}$/.test(form.phone.trim())) {
+    fieldErrors.phone = t('validation.phoneInvalid')
+    return
+  }
 
   const success = await updateProfile({
     name: form.name.trim() || undefined,
@@ -134,9 +141,15 @@ onMounted(async () => {
             v-model="form.phone"
             type="tel"
             class="form-input"
+            :class="{ 'form-input--error': fieldErrors.phone }"
+            :aria-invalid="!!fieldErrors.phone || undefined"
+            :aria-describedby="fieldErrors.phone ? 'err-profile-phone' : undefined"
             :placeholder="$t('profile.data.phonePlaceholder')"
             autocomplete="tel"
           >
+          <p v-if="fieldErrors.phone" id="err-profile-phone" class="field-error" role="alert">
+            {{ fieldErrors.phone }}
+          </p>
         </div>
 
         <!-- Preferred locale -->
@@ -278,6 +291,16 @@ onMounted(async () => {
 .form-hint {
   font-size: var(--font-size-xs);
   color: var(--text-auxiliary);
+}
+
+.form-input--error {
+  border-color: var(--color-error, #dc2626);
+}
+
+.field-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-error, #dc2626);
+  margin-top: var(--spacing-1, 4px);
 }
 
 .form-error {

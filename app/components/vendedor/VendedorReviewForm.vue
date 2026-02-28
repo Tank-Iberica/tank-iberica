@@ -79,7 +79,7 @@ const emit = defineEmits<{
       </div>
 
       <!-- Error -->
-      <p v-if="submitError" class="form-error">{{ submitError }}</p>
+      <p v-if="submitError" class="form-error" role="alert">{{ submitError }}</p>
 
       <!-- Submit -->
       <button type="submit" class="btn-primary" :disabled="submitting">
@@ -195,6 +195,10 @@ const emit = defineEmits<{
 .form-error {
   font-size: var(--font-size-sm);
   color: var(--color-error);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3) var(--spacing-4);
   margin-bottom: var(--spacing-3);
 }
 

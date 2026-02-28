@@ -43,6 +43,7 @@ function onSelectChange(event: Event) {
             <label>Empresa</label>
             <input
               type="text"
+              autocomplete="organization"
               :value="formData.company"
               placeholder="Nombre de la empresa"
               @input="onInput('company', $event)"
@@ -52,6 +53,7 @@ function onSelectChange(event: Event) {
             <label>Nombre de contacto *</label>
             <input
               type="text"
+              autocomplete="name"
               :value="formData.contact_name"
               placeholder="Nombre y apellidos"
               @input="onInput('contact_name', $event)"
@@ -62,6 +64,7 @@ function onSelectChange(event: Event) {
               <label>Telefono</label>
               <input
                 type="tel"
+                autocomplete="tel"
                 :value="formData.phone"
                 placeholder="+34 600 000 000"
                 @input="onInput('phone', $event)"
@@ -71,6 +74,7 @@ function onSelectChange(event: Event) {
               <label>Email</label>
               <input
                 type="email"
+                autocomplete="email"
                 :value="formData.email"
                 placeholder="email@empresa.com"
                 @input="onInput('email', $event)"
@@ -190,8 +194,10 @@ function onSelectChange(event: Event) {
   justify-content: center;
 }
 
-.modal-close:hover {
-  color: #475569;
+@media (hover: hover) {
+  .modal-close:hover {
+    color: #475569;
+  }
 }
 
 .modal-body {
@@ -281,8 +287,10 @@ function onSelectChange(event: Event) {
   white-space: nowrap;
 }
 
-.btn-primary:hover {
-  background: #1a3238;
+@media (hover: hover) {
+  .btn-primary:hover {
+    background: #1a3238;
+  }
 }
 .btn-primary:disabled {
   opacity: 0.5;
@@ -299,8 +307,10 @@ function onSelectChange(event: Event) {
   cursor: pointer;
 }
 
-.btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+@media (hover: hover) {
+  .btn-secondary:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
 }
 </style>

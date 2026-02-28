@@ -30,6 +30,7 @@ const formData = ref({
 const loading = ref(false)
 const submitted = ref(false)
 const error = ref<string | null>(null)
+const fieldErrors = ref<Record<string, string>>({})
 
 // Pre-fill user data if authenticated
 watchEffect(() => {
@@ -49,12 +50,21 @@ watchEffect(() => {
 
 async function submitRequest() {
   error.value = null
+  fieldErrors.value = {}
 
-  // Basic validation
-  if (!formData.value.name || !formData.value.email || !formData.value.phone) {
-    error.value = t('inspection.requiredFields')
-    return
+  if (!formData.value.name.trim()) {
+    fieldErrors.value.name = t('validation.required')
   }
+  if (!formData.value.email.trim()) {
+    fieldErrors.value.email = t('validation.required')
+  } else if (!/^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(formData.value.email)) {
+    fieldErrors.value.email = t('validation.invalidEmail')
+  }
+  if (!formData.value.phone.trim()) {
+    fieldErrors.value.phone = t('validation.required')
+  }
+
+  if (Object.keys(fieldErrors.value).length > 0) return
 
   loading.value = true
 
@@ -125,9 +135,14 @@ function resetForm() {
           id="name"
           v-model="formData.name"
           type="text"
-          required
+          autocomplete="name"
+          :aria-invalid="!!fieldErrors.name || undefined"
+          :aria-describedby="fieldErrors.name ? 'err-insp-name' : undefined"
           :placeholder="$t('inspection.namePlaceholder')"
         >
+        <p v-if="fieldErrors.name" id="err-insp-name" class="field-error" role="alert">
+          {{ fieldErrors.name }}
+        </p>
       </div>
 
       <div class="form-group">
@@ -136,9 +151,14 @@ function resetForm() {
           id="email"
           v-model="formData.email"
           type="email"
-          required
+          autocomplete="email"
+          :aria-invalid="!!fieldErrors.email || undefined"
+          :aria-describedby="fieldErrors.email ? 'err-insp-email' : undefined"
           :placeholder="$t('inspection.emailPlaceholder')"
         >
+        <p v-if="fieldErrors.email" id="err-insp-email" class="field-error" role="alert">
+          {{ fieldErrors.email }}
+        </p>
       </div>
 
       <div class="form-group">
@@ -147,9 +167,14 @@ function resetForm() {
           id="phone"
           v-model="formData.phone"
           type="tel"
-          required
+          autocomplete="tel"
+          :aria-invalid="!!fieldErrors.phone || undefined"
+          :aria-describedby="fieldErrors.phone ? 'err-insp-phone' : undefined"
           :placeholder="$t('inspection.phonePlaceholder')"
         >
+        <p v-if="fieldErrors.phone" id="err-insp-phone" class="field-error" role="alert">
+          {{ fieldErrors.phone }}
+        </p>
       </div>
 
       <div class="form-group">
@@ -208,6 +233,12 @@ function resetForm() {
 
 .form-group {
   margin-bottom: 20px;
+}
+
+.field-error {
+  font-size: 0.8125rem;
+  color: var(--color-error, #dc2626);
+  margin-top: 4px;
 }
 
 .form-group label {

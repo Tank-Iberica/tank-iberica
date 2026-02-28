@@ -6,7 +6,7 @@ defineProps<{
   photoPreviews: string[]
   techSheet: File | null
   techSheetPreview: string
-  errors: Record<string, boolean>
+  errors: Record<string, string>
 }>()
 
 const emit = defineEmits<{

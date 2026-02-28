@@ -34,16 +34,27 @@ const localForm = computed(() => props.form)
         <input
           v-model="localForm.company_name"
           type="text"
+          autocomplete="organization"
           :placeholder="t('admin.captacion.companyName')"
         >
       </div>
       <div class="form-field">
         <label>{{ t('admin.captacion.phone') }}</label>
-        <input v-model="localForm.phone" type="tel" :placeholder="t('admin.captacion.phone')" >
+        <input
+          v-model="localForm.phone"
+          type="tel"
+          autocomplete="tel"
+          :placeholder="t('admin.captacion.phone')"
+        >
       </div>
       <div class="form-field">
         <label>{{ t('admin.captacion.email') }}</label>
-        <input v-model="localForm.email" type="email" :placeholder="t('admin.captacion.email')" >
+        <input
+          v-model="localForm.email"
+          type="email"
+          autocomplete="email"
+          :placeholder="t('admin.captacion.email')"
+        >
       </div>
       <div class="form-field">
         <label>{{ t('admin.captacion.location') }}</label>
@@ -152,9 +163,11 @@ const localForm = computed(() => props.form)
   min-height: 44px;
 }
 
-.btn-cancel:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+@media (hover: hover) {
+  .btn-cancel:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
 }
 
 .btn-save {
@@ -170,8 +183,10 @@ const localForm = computed(() => props.form)
   min-height: 44px;
 }
 
-.btn-save:hover {
-  background: #1a3238;
+@media (hover: hover) {
+  .btn-save:hover {
+    background: #1a3238;
+  }
 }
 
 .btn-save:disabled {

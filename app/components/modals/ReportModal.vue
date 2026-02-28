@@ -112,6 +112,7 @@ watch(
               id="report-email"
               v-model="email"
               type="email"
+              autocomplete="email"
               required
               :placeholder="t('report.emailPlaceholder')"
             >

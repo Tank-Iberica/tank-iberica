@@ -155,8 +155,10 @@ const statusLabels: Record<string, string> = {
   border-bottom: none;
 }
 
-.vehicles-table tr:hover {
-  background: var(--bg-secondary);
+@media (hover: hover) {
+  .vehicles-table tr:hover {
+    background: var(--bg-secondary);
+  }
 }
 
 .col-image {
@@ -291,16 +293,18 @@ const statusLabels: Record<string, string> = {
   text-decoration: none;
 }
 
-.action-btn:hover {
-  background: var(--bg-secondary);
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
+@media (hover: hover) {
+  .action-btn:hover {
+    background: var(--bg-secondary);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
 
-.action-btn.danger:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--color-error);
-  border-color: var(--color-error);
+  .action-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--color-error);
+    border-color: var(--color-error);
+  }
 }
 
 .action-btn svg {

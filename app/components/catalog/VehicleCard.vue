@@ -275,10 +275,12 @@ function nextImage() {
   cursor: pointer;
 }
 
-.product-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(15, 42, 46, 0.12);
-  border-color: var(--color-primary-light);
+@media (hover: hover) {
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(15, 42, 46, 0.12);
+    border-color: var(--color-primary-light);
+  }
 }
 
 /* Image area — 4:3 aspect ratio matching legacy */
@@ -296,8 +298,10 @@ function nextImage() {
   transition: transform 0.5s ease;
 }
 
-.product-card:hover .card-img {
-  transform: scale(1.08);
+@media (hover: hover) {
+  .product-card:hover .card-img {
+    transform: scale(1.08);
+  }
 }
 
 .card-img-placeholder {
@@ -333,9 +337,11 @@ function nextImage() {
   font-weight: bold;
 }
 
-.img-nav:hover {
-  transform: translateY(-50%) scale(1.15);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+@media (hover: hover) {
+  .img-nav:hover {
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .img-nav-prev {
@@ -524,9 +530,11 @@ function nextImage() {
   transition: all 0.2s ease;
 }
 
-.fav-btn:hover svg {
-  fill: var(--color-gold, #f59e0b);
-  stroke: var(--color-gold, #f59e0b);
+@media (hover: hover) {
+  .fav-btn:hover svg {
+    fill: var(--color-gold, #f59e0b);
+    stroke: var(--color-gold, #f59e0b);
+  }
 }
 
 .fav-btn.active svg {
@@ -548,19 +556,27 @@ function nextImage() {
    RESPONSIVE: ≥768px (tablet/desktop)
    ============================================ */
 @media (min-width: 768px) {
-  /* Nav arrows: hidden until hover, larger */
+  /* Nav arrows: larger at tablet+ */
   .img-nav {
-    opacity: 0;
     width: 38px;
     height: 38px;
     min-width: 38px;
     min-height: 38px;
   }
+}
+
+/* On pointer devices: hide arrows until card hover */
+@media (hover: hover) and (min-width: 768px) {
+  .img-nav {
+    opacity: 0;
+  }
 
   .product-card:hover .img-nav {
     opacity: 1;
   }
+}
 
+@media (min-width: 768px) {
   /* titleStyle computed handles font-size dynamically */
 
   .terceros-banner {

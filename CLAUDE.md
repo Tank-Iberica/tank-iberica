@@ -199,6 +199,13 @@ Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de cód
 - Breakpoints: 480px, 768px, 1024px, 1280px (mobile-first)
 - Spacing: escala de 4px (4, 8, 12, 16, 24, 32, 48, 64)
 
+## UX — Formularios y touch
+
+- Errores claros: mensaje descriptivo + cómo corregir (no solo borde rojo)
+- `autocomplete` en todos los inputs de formulario
+- Validación amable: no castigar, guiar al usuario
+- Interacciones: nunca depender solo de `:hover` — siempre alternativa touch/focus
+
 ## Decisiones estratégicas (25 Feb 2026)
 
 - Idiomas activos: ES + EN. Resto pospuesto (ver FLUJOS-OPERATIVOS §7)
@@ -208,6 +215,14 @@ Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de cód
 - Scraping: solo script manual, NUNCA cron en producción
 - 2º cluster BD: considerar Neon/Railway para diversificar
 - Métricas infra: tag vertical en infra_metrics desde día 1
+
+### Actualización de PROYECTO-CONTEXTO.md — En tiempo real
+
+**Si durante una sesión se toma una decisión estratégica, cambio de rumbo, o nueva dirección del proyecto:**
+
+1. PARA y pregunta: "Esta decisión afecta PROYECTO-CONTEXTO.md. ¿Actualizo el documento?"
+2. Solo tras confirmación del usuario, actualiza la sección correspondiente en `docs/PROYECTO-CONTEXTO.md`
+3. Actualiza también la sección "Decisiones estratégicas" de este CLAUDE.md si aplica
 
 ## Gestión de sesión
 

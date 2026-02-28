@@ -239,7 +239,7 @@ export default defineNuxtConfig({
     payloadExtraction: true,
   },
 
-  css: ['@/assets/css/tokens.css'],
+  css: ['@/assets/css/tokens.css', '@/assets/css/interactions.css'],
 
   app: {
     head: {
