@@ -186,13 +186,16 @@ Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de cód
 
 ## Gestión de sesión
 
-### Antes de lanzar Node
+### Antes de lanzar Node (automático)
+
+**SIEMPRE** encadena la limpieza antes de cualquier comando que lance Node:
 
 ```bash
-taskkill /F /IM node.exe 2>nul
+taskkill /F /IM node.exe 2>nul; npm run dev
+taskkill /F /IM node.exe 2>nul; npm run build
 ```
 
-Ejecutar antes de `npm run dev`, `npm run build` o cualquier comando que lance Node. **Automatización:** el hook PostToolUse detecta CLOSING_SESSION en STATUS.md y mata solo el proceso del puerto 3000. Configurado en `.claude/settings.json` + `.claude/cleanup-node.bat`.
+Esto es una convención obligatoria. NUNCA ejecutes `npm run dev`, `npm run build`, o cualquier comando que lance Node sin el `taskkill` previo en el mismo comando.
 
 ### Mantenimiento de STATUS.md (máximo ~120 líneas)
 
@@ -211,7 +214,19 @@ Ejecutar antes de `npm run dev`, `npm run build` o cualquier comando que lance N
 ### Al terminar cualquier tarea
 
 1. Pregunta: "¿Hay algo más relacionado con esta tarea o módulo antes de cerrar sesión?"
-2. Si la respuesta es no, actualiza STATUS.md con lo realizado y avisa:
-   "✅ Sesión lista para cerrar. Cuando abras la siguiente, empieza con:
-   Lee CLAUDE.md y STATUS.md antes de hacer nada."
+2. Si la respuesta es no → sigue el procedimiento de **"Al cerrar sesión"** abajo.
 3. No continúes con nada más hasta recibir respuesta.
+
+### Al cerrar sesión (automático)
+
+Cuando el usuario confirma que no hay más tareas o pide cerrar sesión, ejecutar EN ESTE ORDEN:
+
+1. **Limpieza Node:** Ejecutar `taskkill /F /IM node.exe 2>nul` para matar todos los procesos Node
+2. **Actualizar STATUS.md:**
+   - Añadir lo realizado en la sesión
+   - **Si hay tarea incompleta:** Documentar claramente qué queda pendiente y el prompt exacto para retomar en la siguiente sesión (ej: "Continúa con [descripción de lo que falta]. El último paso completado fue [X].")
+   - Escribir `CLOSING_SESSION` al final del archivo (dispara el hook automático vía `.claude/cleanup-node.bat`)
+3. **Mensaje de cierre:** "✅ Sesión lista para cerrar. Cuando abras la siguiente, empieza con: Lee CLAUDE.md y STATUS.md antes de hacer nada."
+4. **STOP:** No continúes con nada más.
+
+**Hooks configurados:** `.claude/settings.json` → PostToolUse detecta `CLOSING_SESSION` en STATUS.md → ejecuta `.claude/check-closing-and-cleanup.sh` → `.claude/cleanup-node.bat` (mata puerto 3000).
