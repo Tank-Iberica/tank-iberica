@@ -61,6 +61,7 @@ Solo tras confirmar tarea (paso 2) Y modelo (paso 3), empieza a trabajar.
 
 - **Email admin:** tankiberica@gmail.com
 - **Supabase Project ID:** gmnrfuzekbwyzkgsaftv
+- **Stack:** Nuxt 3 + Supabase + Cloudflare Pages
 - **Proyecto anterior:** Tank Ibérica (monolítico) → migración y evolución en curso a Tracciona (marketplace)
 
 ## Documentación
@@ -83,7 +84,6 @@ Toda la documentación activa está en `docs/tracciona-docs/`.
 
 - LEE los archivos de la sesión ANTES de escribir código. Relee las reglas del inicio de INSTRUCCIONES-MAESTRAS.
 - Si no sabes cómo implementar algo, PREGUNTA al usuario. No improvises.
-- Mobile-first obligatorio. Multilenguaje ($t() + localizedField) en todo.
 - Si necesitas dashboards web (Supabase, Stripe, Cloudflare) → pregunta al usuario.
 
 **Acceso a herramientas:**
@@ -99,11 +99,13 @@ Toda la documentación activa está en `docs/tracciona-docs/`.
 
 Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de código, comandos, tests y git workflow.
 
-## Tres reglas no negociables
+## Cinco reglas no negociables
 
 1. **Mobile-first:** CSS base = 360px. Breakpoints con `min-width`. Touch targets ≥ 44px.
 2. **Páginas reales:** Vehículos y artículos son páginas con URL propia, NO modales.
 3. **Extensible:** Categorías, subcategorías, filtros e idiomas se leen de la BD. Añadir uno = insertar fila, no tocar código.
+4. **Multilenguaje:** `$t()` + `localizedField()` en todo el código visible al usuario. Sin excepciones.
+5. **Secuencial:** No usar subagentes paralelos (Task). Una llamada Task a la vez, esperar resultado, luego la siguiente.
 
 ## Design system
 
@@ -122,46 +124,31 @@ Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de cód
 - 2º cluster BD: considerar Neon/Railway para diversificar
 - Métricas infra: tag vertical en infra_metrics desde día 1
 
-## Instrucciones de trabajo
+## Gestión de sesión
 
-- **PROHIBIDO usar la herramienta Task con múltiples llamadas en paralelo.** Ejecutar siempre de forma secuencial: una llamada Task a la vez, esperar resultado, luego la siguiente. Esto aplica incluso cuando las tareas son independientes entre sí. Sin excepciones.
-- Priorizar eficiencia de tokens sobre velocidad
+### Antes de lanzar Node
 
-## Mantenimiento de procesos
-
-Antes de ejecutar `npm run dev`, `npm run build` o cualquier comando que lance Node, ejecuta primero:
-
-```
+```bash
 taskkill /F /IM node.exe 2>nul
 ```
 
-Esto evita acumulación de procesos Node huérfanos que saturan la RAM.
+Ejecutar antes de `npm run dev`, `npm run build` o cualquier comando que lance Node. **Automatización:** el hook PostToolUse detecta CLOSING_SESSION en STATUS.md y mata solo el proceso del puerto 3000. Configurado en `.claude/settings.json` + `.claude/cleanup-node.bat`.
 
-**Automatización:** Cada vez que se actualiza `STATUS.md`, se ejecuta automáticamente `taskkill /F /IM node.exe 2>nul` vía hook PostToolUse. Esto asegura limpieza de procesos al cierre de sesión (cuando se actualiza STATUS.md por última vez). El hook está configurado en `.claude/settings.json` y ejecuta `.claude/cleanup-node.bat`.
-
-## Mantenimiento de STATUS.md (prevenir crecimiento descontrolado)
-
-Reglas al actualizar STATUS.md (máximo ~120 líneas):
+### Mantenimiento de STATUS.md (máximo ~120 líneas)
 
 - **Errores resueltos:** ELIMINAR inmediatamente (nunca tachar con `~~`). Git preserva el historial.
-- **Sesión nueva:** Añadir 1 línea al changelog, sin detalle. No escribir párrafos completos.
-- **Changelog:** Si supera 10 entradas, comprimir las más antiguas en una línea con descripción breve.
-- **Duplicados:** NO repetir tablas que ya están en `PROYECTO-CONTEXTO.md` (módulos pospuestos, métricas de arquitectura).
-- **Fuente de verdad:** STATUS.md = estado actual. Git (`git log STATUS.md`) = historial completo.
+- **Sesión nueva:** Añadir 1 línea al changelog. No escribir párrafos completos.
+- **Changelog:** Si supera 10 entradas, comprimir las más antiguas.
+- **Duplicados:** NO repetir tablas que ya están en `PROYECTO-CONTEXTO.md`.
+- **Fuente de verdad:** STATUS.md = estado actual. Git (`git log STATUS.md`) = historial.
 
-Esto evita que STATUS.md vuelva a crecer innecesariamente y mantiene eficiencia de tokens.
+### Tokens bajos
 
-## Gestión de límites
+1. Avisa: "⚠️ Tokens bajos — guardando estado"
+2. Actualiza `STATUS.md` con lo hecho y lo pendiente
+3. Indica el prompt exacto para continuar en la siguiente sesión
 
-Cuando estimes que quedan pocos tokens en la sesión:
-
-1. Avísame con: "⚠️ Tokens bajos - guardando estado"
-2. Actualiza STATUS.md con lo que hemos hecho y qué queda pendiente
-3. Indica exactamente con qué prompt continuar en la siguiente sesión
-
-## Gestión de sesiones
-
-Al terminar cualquier tarea:
+### Al terminar cualquier tarea
 
 1. Pregunta: "¿Hay algo más relacionado con esta tarea o módulo antes de cerrar sesión?"
 2. Si la respuesta es no, actualiza STATUS.md con lo realizado y avisa:
