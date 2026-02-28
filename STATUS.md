@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-04
+**Última actualización:** 2026-03-04 — optimización documentación (CLAUDE.md + STATUS.md) — CLOSING_SESSION
 **Sesiones completadas:** 0–64 + Iter 1–15 auditoría + sesiones ad-hoc hasta 03-mar
 **Puntuación global:** 79/100 (auditoría 26-feb) · Historial completo: `git log STATUS.md`
 
