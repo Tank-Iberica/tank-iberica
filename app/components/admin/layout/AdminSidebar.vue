@@ -163,7 +163,7 @@ function onUsersPopover(e: MouseEvent) {
       </NuxtLink>
 
       <!-- Configuración -->
-      <AdminSidebarNavGroup
+      <AdminLayoutAdminSidebarNavGroup
         label="Configuración"
         :collapsed="collapsed"
         :is-open="openGroups.config"
@@ -188,10 +188,10 @@ function onUsersPopover(e: MouseEvent) {
             />
           </svg>
         </template>
-      </AdminSidebarNavGroup>
+      </AdminLayoutAdminSidebarNavGroup>
 
       <!-- Catálogo -->
-      <AdminSidebarNavGroup
+      <AdminLayoutAdminSidebarNavGroup
         label="Catálogo"
         :collapsed="collapsed"
         :is-open="openGroups.catalog"
@@ -216,10 +216,10 @@ function onUsersPopover(e: MouseEvent) {
             <circle cx="18.5" cy="18.5" r="2.5" />
           </svg>
         </template>
-      </AdminSidebarNavGroup>
+      </AdminLayoutAdminSidebarNavGroup>
 
       <!-- Finanzas -->
-      <AdminSidebarNavGroup
+      <AdminLayoutAdminSidebarNavGroup
         label="Finanzas"
         :collapsed="collapsed"
         :is-open="openGroups.finance"
@@ -242,10 +242,10 @@ function onUsersPopover(e: MouseEvent) {
             <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
           </svg>
         </template>
-      </AdminSidebarNavGroup>
+      </AdminLayoutAdminSidebarNavGroup>
 
       <!-- Comunicación -->
-      <AdminSidebarNavGroup
+      <AdminLayoutAdminSidebarNavGroup
         label="Comunicación"
         :collapsed="collapsed"
         :is-open="openGroups.communication"
@@ -267,10 +267,10 @@ function onUsersPopover(e: MouseEvent) {
             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
           </svg>
         </template>
-      </AdminSidebarNavGroup>
+      </AdminLayoutAdminSidebarNavGroup>
 
       <!-- Comunidad -->
-      <AdminSidebarNavGroup
+      <AdminLayoutAdminSidebarNavGroup
         label="Comunidad"
         :collapsed="collapsed"
         :is-open="openGroups.users"
@@ -294,7 +294,7 @@ function onUsersPopover(e: MouseEvent) {
             <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
           </svg>
         </template>
-      </AdminSidebarNavGroup>
+      </AdminLayoutAdminSidebarNavGroup>
 
       <!-- Infraestructura -->
       <NuxtLink
@@ -320,7 +320,11 @@ function onUsersPopover(e: MouseEvent) {
     </nav>
 
     <!-- Popover (collapsed sidebar) -->
-    <AdminSidebarPopover :popover="popover" :is-active-fn="isActive" @close="closePopover" />
+    <AdminLayoutAdminSidebarPopover
+      :popover="popover"
+      :is-active-fn="isActive"
+      @close="closePopover"
+    />
   </aside>
 </template>
 
