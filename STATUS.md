@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-02-28 (hallazgos menores auditoría 26-feb)
+**Última actualización:** 2026-02-28 (hallazgos menores auditoría 26-feb + CLAUDE.md actualizado)
 **Sesiones completadas:** 0–64 + iteraciones de auditoría 1–13
 **Puntuación global (auditoría 26-feb):** 79/100
 
@@ -167,6 +167,24 @@ También hay composables grandes pendientes:
 > "Lee CLAUDE.md y STATUS.md antes de hacer nada. Cuando estés listo, continúa con el Punto #7 Iteración 14 de la auditoría — empieza por `UserPanel.vue` (1467 líneas)."
 
 ---
+
+## Sesión 28-feb — Hallazgos menores (completado)
+
+✅ Implementados:
+
+- #16 JSDoc: docs en useAuth.ts y useFavorites.ts
+- #17 ARIA live regions: containers polite + assertive en default.vue; useToast anuncia a screen readers
+- #18 CHECK constraints: migración 00067 (payments, auction_bids, balance)
+- #19 Snyk CI: descomentado en security.yml con continue-on-error
+- #20 Legacy banner: [LEGACY] header en todos los 30 docs/legacy
+- #22 exceljs chunks: vendor-excel en nuxt.config.ts
+- **BONUS:** CLAUDE.md actualizado con regla de model-switching en subtareas mixtas
+
+✅ Commits:
+
+- `4e92bc5` fix: resolve minor audit findings + AdminSidebar refactor + type regen
+- `374b82a` fix: correct status value 'active' → 'published' in admin composables
+- `2c449f2` docs: add model-switching rule for mixed-complexity subtasks
 
 ## Próxima acción recomendada
 
