@@ -8,7 +8,8 @@ export type UserType = 'buyer' | 'dealer' | 'admin'
 interface UserProfile {
   id: string
   email: string
-  full_name: string | null
+  pseudonimo: string | null
+  name: string | null
   user_type: UserType
   role: string | null
   company_name: string | null
@@ -16,7 +17,7 @@ interface UserProfile {
   phone_verified: boolean
   onboarding_completed: boolean
   avatar_url: string | null
-  preferred_locale: string | null
+  lang: string | null
   last_login_at: string | null
   login_count: number
 }
@@ -39,7 +40,8 @@ export function useAuth() {
   const isAdmin = computed(() => profile.value?.role === 'admin')
 
   const displayName = computed(() => {
-    if (profile.value?.full_name) return profile.value.full_name
+    if (profile.value?.pseudonimo) return profile.value.pseudonimo
+    if (profile.value?.name) return profile.value.name
     if (supabaseUser.value?.user_metadata?.pseudonimo)
       return supabaseUser.value.user_metadata.pseudonimo
     if (supabaseUser.value?.user_metadata?.name) return supabaseUser.value.user_metadata.name
@@ -75,7 +77,7 @@ export function useAuth() {
       const { data, error: err } = await supabase
         .from('users')
         .select(
-          'id, email, full_name, user_type, role, company_name, phone, phone_verified, onboarding_completed, avatar_url, preferred_locale, last_login_at, login_count',
+          'id, email, pseudonimo, name, user_type, role, company_name, phone, phone_verified, onboarding_completed, avatar_url, lang, last_login_at, login_count',
         )
         .eq('id', uid)
         .single()

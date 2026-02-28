@@ -9,9 +9,9 @@ const { profile, fetchProfile } = useAuth()
 const { updateProfile, loading, error } = useUserProfile()
 
 const form = reactive({
-  full_name: '',
+  name: '',
   phone: '',
-  preferred_locale: '',
+  lang: '',
 })
 
 const email = ref('')
@@ -21,9 +21,9 @@ let savedTimer: ReturnType<typeof setTimeout> | null = null
 /** Populate form from profile */
 function syncForm() {
   if (profile.value) {
-    form.full_name = profile.value.full_name ?? ''
+    form.name = profile.value.name ?? ''
     form.phone = profile.value.phone ?? ''
-    form.preferred_locale = profile.value.preferred_locale ?? locale.value
+    form.lang = profile.value.lang ?? locale.value
     email.value = profile.value.email ?? ''
   }
 }
@@ -33,9 +33,9 @@ async function onSave() {
   if (savedTimer) clearTimeout(savedTimer)
 
   const success = await updateProfile({
-    full_name: form.full_name.trim() || undefined,
+    name: form.name.trim() || undefined,
     phone: form.phone.trim() || undefined,
-    preferred_locale: form.preferred_locale || undefined,
+    lang: form.lang || undefined,
   })
 
   if (success) {
@@ -50,7 +50,7 @@ async function onSave() {
 
 /** Compute avatar initials from name or email */
 const initials = computed(() => {
-  const name = form.full_name || email.value
+  const name = form.name || email.value
   if (!name) return '?'
   const parts = name.split(/[\s@]+/)
   if (parts.length >= 2) {
@@ -101,10 +101,10 @@ onMounted(async () => {
       <form class="profile-form" @submit.prevent="onSave">
         <!-- Full name -->
         <div class="form-group">
-          <label for="full_name" class="form-label">{{ $t('profile.data.fullName') }}</label>
+          <label for="name" class="form-label">{{ $t('profile.data.fullName') }}</label>
           <input
-            id="full_name"
-            v-model="form.full_name"
+            id="name"
+            v-model="form.name"
             type="text"
             class="form-input"
             :placeholder="$t('profile.data.fullNamePlaceholder')"
@@ -141,14 +141,8 @@ onMounted(async () => {
 
         <!-- Preferred locale -->
         <div class="form-group">
-          <label for="preferred_locale" class="form-label">{{
-            $t('profile.data.preferredLocale')
-          }}</label>
-          <select
-            id="preferred_locale"
-            v-model="form.preferred_locale"
-            class="form-input form-select"
-          >
+          <label for="lang" class="form-label">{{ $t('profile.data.preferredLocale') }}</label>
+          <select id="lang" v-model="form.lang" class="form-input form-select">
             <option v-for="loc in availableLocales" :key="loc.code" :value="loc.code">
               {{ loc.name }}
             </option>

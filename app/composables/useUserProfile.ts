@@ -4,9 +4,9 @@
  */
 
 interface ProfileFields {
-  full_name?: string
+  name?: string
   phone?: string
-  preferred_locale?: string
+  lang?: string
   avatar_url?: string
 }
 
