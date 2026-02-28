@@ -1,7 +1,7 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-02-28 — CLAUDE.md: auditoría protocolo + 9 mejoras (Pasos 0-4, skills, multitarea, cierre sesión, auto-detección modelo)
-**Sesiones completadas:** 0–64 + Iter 1–15 auditoría + sesiones ad-hoc hasta 03-mar
+**Última actualización:** 2026-03-04 — fix auth bugs + UserPanel role-aware (reemplaza dropdown header)
+**Sesiones completadas:** 0–64 + Iter 1–15 auditoría + sesiones ad-hoc hasta 04-mar
 **Puntuación global:** 79/100 (auditoría 26-feb) · Historial completo: `git log STATUS.md`
 
 ---
@@ -86,6 +86,8 @@ Iter 1–15 completas ✅ (commit `7dde04a`). **Pendiente:** FilterBar.vue (1.99
 
 | Fecha  | Resumen                                                                                                                                |
 | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 04-mar | Fix 4 bugs auth: AdminSidebar component names, fetchProfile DB columns (full_name→name, preferred_locale→lang), plugin timing          |
+| 04-mar | UserPanel role-aware: reemplaza dropdown header; nav condicional buyer/dealer/admin; eliminado dropdown + CSS muerto de AppHeader      |
 | 28-feb | CLAUDE.md: auditoría (13 debilidades) + 9 mejoras (6 recomendadas + 3 opcionales) + auto-detección modelo + reestructura cierre sesión |
 | 28-feb | Doble URL por vehículo: `/vehiculo/[slug]` (marketplace, canonical) + `/[dealer]/[slug]` (portal dealer, branding gratis, noindex)     |
 | 04-mar | Fix crítico auth: middlewares usan `getSession()` en vez de `useSupabaseUser()` (bug HS256 en @nuxtjs/supabase ≤2.0.3); módulo → 2.0.4 |
