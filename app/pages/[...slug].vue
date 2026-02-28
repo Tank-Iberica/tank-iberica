@@ -107,6 +107,7 @@ interface DealerProfile {
   location_data: Record<string, unknown> | null
   address: string | null
   badge: string | null
+  subscription_type: string | null
   social_links: Record<string, string> | null
   certifications: Array<{ label: Record<string, string>; icon: string; verified: boolean }> | null
   pinned_vehicles: string[] | null
@@ -142,7 +143,7 @@ async function resolveSlug(): Promise<
     const { data: dealerData } = await supabase
       .from('dealers')
       .select(
-        'id, slug, company_name, logo_url, cover_image_url, theme, bio, phone, whatsapp, email, website, location_data, badge, social_links, certifications, pinned_vehicles, catalog_sort, contact_config, active_listings, total_leads, rating, created_at',
+        'id, slug, company_name, logo_url, cover_image_url, theme, bio, phone, whatsapp, email, website, location_data, address, badge, subscription_type, social_links, certifications, pinned_vehicles, catalog_sort, contact_config, active_listings, total_leads, rating, created_at',
       )
       .eq('slug', fullSlug.value)
       .eq('status', 'active')

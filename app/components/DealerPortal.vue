@@ -40,7 +40,7 @@
         <div class="header-info">
           <div class="name-badge-row">
             <h1 class="dealer-name">{{ companyName }}</h1>
-            <span v-if="badgeLabel" :class="['dealer-badge', `badge-${dealer.badge}`]">
+            <span v-if="badgeLabel" :class="['dealer-badge', `badge-${badgeKey}`]">
               {{ badgeLabel }}
             </span>
           </div>
@@ -122,7 +122,11 @@
         <span>{{ t('dealer.whatsapp') }}</span>
       </a>
 
-      <a v-if="dealer.email" :href="`mailto:${dealer.email}`" class="contact-btn contact-email">
+      <a
+        v-if="showEmail && dealer.email"
+        :href="`mailto:${dealer.email}`"
+        class="contact-btn contact-email"
+      >
         <svg
           width="18"
           height="18"
@@ -136,6 +140,22 @@
         </svg>
         <span>{{ t('dealer.contact') }}</span>
       </a>
+    </div>
+
+    <!-- 3b. Working hours -->
+    <div v-if="workingHours" class="dealer-working-hours">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+      <span>{{ workingHours }}</span>
     </div>
 
     <!-- 4. About section -->
@@ -179,7 +199,60 @@
       </div>
     </section>
 
-    <!-- 6. Vehicle catalog section -->
+    <!-- 6. Contact form -->
+    <section class="dealer-section">
+      <h2 class="section-title">{{ t('dealer.contactFormTitle') }}</h2>
+      <form class="contact-form" @submit.prevent="submitContactForm">
+        <div v-if="formSent" class="form-success">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <span>{{ t('dealer.contactFormSent') }}</span>
+        </div>
+        <template v-else>
+          <div class="form-row">
+            <input
+              v-model="form.name"
+              type="text"
+              :placeholder="t('dealer.contactFormName')"
+              class="form-input"
+              required
+              maxlength="100"
+            >
+            <input
+              v-model="form.phone"
+              type="tel"
+              :placeholder="t('dealer.contactFormPhone')"
+              class="form-input"
+              maxlength="30"
+            >
+          </div>
+          <textarea
+            v-model="form.message"
+            :placeholder="t('dealer.contactFormMessage')"
+            class="form-textarea"
+            rows="3"
+            required
+            maxlength="1000"
+          />
+          <p v-if="formError" class="form-error">{{ t('dealer.contactFormError') }}</p>
+          <button type="submit" class="form-submit" :disabled="formLoading">
+            <span v-if="formLoading">...</span>
+            <span v-else>{{ t('dealer.contactFormSend') }}</span>
+          </button>
+        </template>
+      </form>
+    </section>
+
+    <!-- 7. Vehicle catalog section -->
     <section class="dealer-catalog">
       <h2 class="dealer-catalog-title">
         {{ t('dealer.ourCatalog', { count: dealer.active_listings }) }}
@@ -297,7 +370,7 @@
     </section>
 
     <!-- Website link -->
-    <div v-if="dealer.website" class="dealer-website">
+    <div v-if="showWebsite && dealer.website" class="dealer-website">
       <a :href="dealer.website" target="_blank" rel="noopener noreferrer" class="website-link">
         <svg
           width="16"
@@ -338,6 +411,7 @@ interface DealerProfile {
   website: string | null
   address: string | null
   badge: string | null
+  subscription_type: string | null
   social_links: Record<string, string> | null
   certifications: Array<{ label: Record<string, string>; icon: string; verified: boolean }> | null
   pinned_vehicles: string[] | null
@@ -403,17 +477,24 @@ async function onClearFilters() {
 const companyName = computed(() => localizedField(props.dealer.company_name, locale.value))
 const bioText = computed(() => localizedField(props.dealer.bio, locale.value))
 
-// Badge display
+// Badge: explicit badge field takes priority, fallback to subscription_type
+const badgeKey = computed(() => {
+  if (props.dealer.badge && props.dealer.badge !== 'none') return props.dealer.badge
+  const sub = props.dealer.subscription_type
+  if (sub === 'founding') return 'founding'
+  if (sub === 'premium') return 'premium'
+  return null
+})
 const badgeLabel = computed(() => {
-  const badge = props.dealer.badge
-  if (!badge || badge === 'none') return ''
-  const badgeKeys: Record<string, string> = {
+  const key = badgeKey.value
+  if (!key) return ''
+  const i18nKeys: Record<string, string> = {
     founding: 'dealer.badgeFounding',
     premium: 'dealer.badgePremium',
     verified: 'dealer.badgeVerified',
   }
-  const key = badgeKeys[badge]
-  return key ? t(key) : ''
+  const i18nKey = i18nKeys[key]
+  return i18nKey ? t(i18nKey) : ''
 })
 
 // "Since" year from created_at
@@ -422,13 +503,20 @@ const sinceYear = computed(() => {
   return new Date(props.dealer.created_at).getFullYear().toString()
 })
 
-// Phone mode from contact_config
+// contact_config flags
+const contactConfig = computed(() => props.dealer.contact_config ?? {})
 const showPhone = computed(() => {
-  const config = props.dealer.contact_config
-  if (!config) return true
-  const mode = config.phone_mode as string | undefined
-  if (mode === 'hidden') return false
-  return true
+  const mode = contactConfig.value.phone_mode as string | undefined
+  return mode !== 'hidden'
+})
+const showEmail = computed(() => contactConfig.value.show_email !== false)
+const showWebsite = computed(() => contactConfig.value.show_website !== false)
+
+// Working hours (localized)
+const workingHours = computed(() => {
+  const wh = contactConfig.value.working_hours as Record<string, string> | undefined
+  if (!wh) return ''
+  return wh[locale.value] || wh['es'] || ''
 })
 
 // Social links presence check
@@ -437,17 +525,67 @@ const hasSocialLinks = computed(() => {
   return links && Object.keys(links).length > 0
 })
 
-// SEO
+// Contact form state
+const supabase = useSupabaseClient()
+const form = reactive({ name: '', phone: '', message: '' })
+const formLoading = ref(false)
+const formSent = ref(false)
+const formError = ref(false)
+
+async function submitContactForm() {
+  formLoading.value = true
+  formError.value = false
+  const { error } = await supabase.from('leads').insert({
+    dealer_id: props.dealer.id,
+    buyer_name: form.name,
+    buyer_phone: form.phone || null,
+    message: form.message,
+    source: 'dealer_portal',
+    source_url: typeof window !== 'undefined' ? window.location.href : null,
+  })
+  formLoading.value = false
+  if (error) {
+    formError.value = true
+  } else {
+    formSent.value = true
+  }
+}
+
+// SEO — OG + JSON-LD
+const seoDescription = props.dealer.address
+  ? t('dealer.seoDescription', { name: companyName.value, location: props.dealer.address })
+  : t('dealer.seoDescriptionNoLocation', { name: companyName.value })
+
+const canonicalUrl = `https://tracciona.com/${props.dealer.slug}`
+const ogImage = props.dealer.cover_image_url || props.dealer.logo_url || null
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: companyName.value,
+  description: seoDescription,
+  url: canonicalUrl,
+  ...(ogImage ? { image: ogImage } : {}),
+  ...(props.dealer.phone ? { telephone: props.dealer.phone } : {}),
+  ...(props.dealer.email ? { email: props.dealer.email } : {}),
+  ...(props.dealer.address
+    ? { address: { '@type': 'PostalAddress', streetAddress: props.dealer.address } }
+    : {}),
+  ...(props.dealer.website ? { sameAs: [props.dealer.website] } : {}),
+}
+
 useHead({
   title: `${companyName.value} — ${t('dealer.seoSuffix')}`,
   meta: [
-    {
-      name: 'description',
-      content: props.dealer.address
-        ? t('dealer.seoDescription', { name: companyName.value, location: props.dealer.address })
-        : t('dealer.seoDescriptionNoLocation', { name: companyName.value }),
-    },
+    { name: 'description', content: seoDescription },
+    { property: 'og:title', content: `${companyName.value} — ${t('dealer.seoSuffix')}` },
+    { property: 'og:description', content: seoDescription },
+    { property: 'og:url', content: canonicalUrl },
+    { property: 'og:type', content: 'website' },
+    ...(ogImage ? [{ property: 'og:image', content: ogImage }] : []),
   ],
+  link: [{ rel: 'canonical', href: canonicalUrl }],
+  script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(jsonLd) }],
 })
 
 // Apply dealer theme on mount, restore on unmount
@@ -796,6 +934,117 @@ onUnmounted(() => {
   color: var(--color-white);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+/* Working hours */
+.dealer-working-hours {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color-light);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.dealer-working-hours svg {
+  flex-shrink: 0;
+  stroke: var(--color-success);
+}
+
+/* Contact form */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  transition: border-color var(--transition-fast);
+  font-family: inherit;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-submit {
+  min-height: 44px;
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  align-self: flex-start;
+}
+
+.form-submit:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.form-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-success {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid var(--color-success);
+  border-radius: var(--border-radius);
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.form-error {
+  font-size: var(--font-size-sm);
+  color: var(--color-error, #ef4444);
+}
+
+@media (min-width: 480px) {
+  .form-row {
+    flex-direction: row;
+  }
+
+  .dealer-working-hours {
+    padding: var(--spacing-3) var(--spacing-6);
+  }
+}
+
+@media (min-width: 768px) {
+  .dealer-working-hours {
+    padding: var(--spacing-3) var(--spacing-8);
+  }
 }
 
 /* Dealer catalog */
