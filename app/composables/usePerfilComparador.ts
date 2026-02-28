@@ -47,7 +47,7 @@ export function usePerfilComparador() {
       .select('id, slug, brand, model, year, price, category, location, main_image_url')
       .in('id', ids)
     if (!error && data) {
-      vehicles.value = (data as Array<Record<string, unknown>>).map((row) => ({
+      vehicles.value = (data as unknown as Array<Record<string, unknown>>).map((row) => ({
         id: row.id as string,
         slug: (row.slug as string) ?? '',
         brand: (row.brand as string) ?? '',

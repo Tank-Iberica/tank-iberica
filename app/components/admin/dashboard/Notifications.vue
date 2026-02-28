@@ -172,7 +172,7 @@ import type { NotificationStats, MatchItem } from '~/composables/admin/useAdminD
 defineProps<{
   stats: NotificationStats
   totalPending: number
-  matches: MatchItem[]
+  matches: readonly MatchItem[]
 }>()
 </script>
 

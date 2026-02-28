@@ -46,9 +46,9 @@ export function useAdminUsers() {
     const all = users.value
     return {
       total: total.value,
-      visitors: all.filter(u => u.role === 'visitor').length,
-      users: all.filter(u => u.role === 'user').length,
-      admins: all.filter(u => u.role === 'admin').length,
+      visitors: all.filter((u) => u.role === 'visitor').length,
+      users: all.filter((u) => u.role === 'user').length,
+      admins: all.filter((u) => u.role === 'admin').length,
     }
   })
 
@@ -62,7 +62,10 @@ export function useAdminUsers() {
     try {
       let query = supabase
         .from('users')
-        .select('id, email, pseudonimo, name, apellidos, avatar_url, provider, role, phone, lang, created_at', { count: 'exact' })
+        .select(
+          'id, email, pseudonimo, name, apellidos, avatar_url, provider, role, phone, lang, created_at',
+          { count: 'exact' },
+        )
         .order('created_at', { ascending: false })
 
       if (filters.role) {
@@ -70,7 +73,9 @@ export function useAdminUsers() {
       }
 
       if (filters.search) {
-        query = query.or(`email.ilike.%${filters.search}%,pseudonimo.ilike.%${filters.search}%,name.ilike.%${filters.search}%,apellidos.ilike.%${filters.search}%`)
+        query = query.or(
+          `email.ilike.%${filters.search}%,pseudonimo.ilike.%${filters.search}%,name.ilike.%${filters.search}%,apellidos.ilike.%${filters.search}%`,
+        )
       }
 
       const { data, error: err, count } = await query.range(0, PAGE_SIZE - 1)
@@ -79,12 +84,10 @@ export function useAdminUsers() {
 
       users.value = (data as unknown as AdminUser[]) || []
       total.value = count || 0
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching users'
       users.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -105,18 +108,16 @@ export function useAdminUsers() {
       if (err) throw err
 
       // Update local list
-      const index = users.value.findIndex(u => u.id === id)
+      const index = users.value.findIndex((u) => u.id === id)
       if (index !== -1) {
-        users.value[index].role = role
+        users.value[index]!.role = role
       }
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error updating role'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -129,24 +130,19 @@ export function useAdminUsers() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('users').delete().eq('id', id)
 
       if (err) throw err
 
       // Remove from local list
-      users.value = users.value.filter(u => u.id !== id)
+      users.value = users.value.filter((u) => u.id !== id)
       total.value--
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error deleting user'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -157,8 +153,18 @@ export function useAdminUsers() {
   function exportCSV(userList: AdminUser[]) {
     if (userList.length === 0) return
 
-    const headers = ['Email', 'Pseudónimo', 'Nombre', 'Apellidos', 'Teléfono', 'Proveedor', 'Rol', 'Idioma', 'Fecha registro']
-    const rows = userList.map(u => [
+    const headers = [
+      'Email',
+      'Pseudónimo',
+      'Nombre',
+      'Apellidos',
+      'Teléfono',
+      'Proveedor',
+      'Rol',
+      'Idioma',
+      'Fecha registro',
+    ]
+    const rows = userList.map((u) => [
       u.email,
       u.pseudonimo || '',
       u.name || '',
@@ -170,7 +176,10 @@ export function useAdminUsers() {
       new Date(u.created_at).toLocaleDateString('es-ES'),
     ])
 
-    const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))].join('\n')
+    const csv = [
+      headers.join(','),
+      ...rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')),
+    ].join('\n')
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')

@@ -3,8 +3,8 @@ import type { TopDealer, TopVehicle } from '~/composables/admin/useAdminMetrics'
 import { formatNumber } from '~/composables/admin/useAdminDashboardPage'
 
 defineProps<{
-  topDealers: TopDealer[]
-  topVehicles: TopVehicle[]
+  topDealers: readonly TopDealer[]
+  topVehicles: readonly TopVehicle[]
 }>()
 </script>
 

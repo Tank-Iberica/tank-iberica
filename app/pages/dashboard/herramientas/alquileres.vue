@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useDashboardAlquileres } from '~/composables/dashboard/useDashboardAlquileres'
+
 /**
  * Rental Records Tool
  * CRUD for rental_records table scoped to dealer.

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reportFilters } from '~/composables/admin/useAdminReportes'
+import { reportFilters, useAdminReportes } from '~/composables/admin/useAdminReportes'
 
 definePageMeta({
   layout: 'admin',

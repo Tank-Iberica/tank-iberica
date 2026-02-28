@@ -333,7 +333,7 @@ export function useAdminVerificaciones() {
         cssClass: 'level-certified',
       },
     }
-    return levels[level || 'none'] || levels.none
+    return levels[level || 'none'] || levels.none!
   }
 
   function isFileImage(url: string | null): boolean {

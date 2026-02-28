@@ -114,11 +114,16 @@ export function useVehicleComparator() {
       if (compError) return
 
       const typedRemote: Comparison[] = (remoteComparisons ?? []).map(
-        (row: { id: string; name: string; vehicle_ids: string[]; created_at: string }) => ({
+        (row: {
+          id: string
+          name: string | null
+          vehicle_ids: string[] | null
+          created_at: string | null
+        }) => ({
           id: row.id,
-          name: row.name,
+          name: row.name ?? '',
           vehicle_ids: row.vehicle_ids ?? [],
-          created_at: row.created_at,
+          created_at: row.created_at ?? '',
         }),
       )
 

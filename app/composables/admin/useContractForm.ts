@@ -142,7 +142,7 @@ export function useContractForm() {
           : dealer.company_name &&
               typeof dealer.company_name === 'object' &&
               'es' in (dealer.company_name as Record<string, string>)
-            ? (dealer.company_name as Record<string, string>).es
+            ? ((dealer.company_name as Record<string, string>).es ?? '')
             : ''
 
     lessorCIF.value = typeof dealer.cif_nif === 'string' ? dealer.cif_nif : ''

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useDashboardIndex } from '~/composables/dashboard/useDashboardIndex'
+
 /**
  * Dealer Dashboard Home
  * Shows KPI cards, recent leads, top vehicles, and onboarding progress.

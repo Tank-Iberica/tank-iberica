@@ -36,7 +36,7 @@ export interface StatusConfigEntry {
 // --- Pure utility functions (exported for subcomponents) ---
 
 export function getStatusConfig(status: DemandStatus): StatusConfigEntry {
-  return DEMAND_STATUSES.find((s) => s.value === status) || DEMAND_STATUSES[0]
+  return DEMAND_STATUSES.find((s) => s.value === status) || DEMAND_STATUSES[0]!
 }
 
 export function getTypeLabel(demand: AdminDemand, locale: string): string {

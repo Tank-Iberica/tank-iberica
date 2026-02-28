@@ -21,7 +21,7 @@ export function usePageSeo(options: {
     ogTitle: options.title,
     ogDescription: options.description,
     ogImage: options.image || DEFAULT_IMAGE,
-    ogType: options.type || 'website',
+    ogType: (options.type || 'website') as 'website',
     ogUrl: canonicalUrl,
     ogSiteName: 'Tracciona',
     twitterCard: 'summary_large_image',

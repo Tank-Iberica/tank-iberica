@@ -130,7 +130,7 @@ export function useAdminReportes() {
     // Update locally
     const idx = reports.value.findIndex((r) => r.id === reportId)
     if (idx !== -1) {
-      reports.value[idx] = { ...reports.value[idx], admin_notes: notes }
+      reports.value[idx] = { ...reports.value[idx]!, admin_notes: notes }
     }
     savingId.value = null
   }

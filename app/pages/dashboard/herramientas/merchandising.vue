@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useDashboardMerchandising } from '~/composables/dashboard/useDashboardMerchandising'
+
 definePageMeta({
   layout: 'default',
   middleware: ['auth', 'dealer'],

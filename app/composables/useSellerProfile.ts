@@ -154,7 +154,7 @@ export function useSellerProfile(dealerSlug?: string) {
         .range(from, to)
 
       if (error) throw error
-      reviews.value = (data ?? []) as SellerReview[]
+      reviews.value = (data ?? []) as unknown as SellerReview[]
     } catch (err) {
       console.error('[useSellerProfile] fetchReviews failed:', err)
       reviews.value = []
@@ -176,7 +176,7 @@ export function useSellerProfile(dealerSlug?: string) {
         .limit(12)
 
       if (error) throw error
-      activeVehicles.value = (data ?? []) as ActiveVehicle[]
+      activeVehicles.value = (data ?? []) as unknown as ActiveVehicle[]
     } catch (err) {
       console.error('[useSellerProfile] fetchActiveVehicles failed:', err)
       activeVehicles.value = []

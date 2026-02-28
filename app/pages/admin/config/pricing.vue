@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { planDefinitions, commissionDefinitions } from '~/composables/admin/useAdminConfigPricing'
+import {
+  planDefinitions,
+  commissionDefinitions,
+  useAdminConfigPricing,
+} from '~/composables/admin/useAdminConfigPricing'
 
 definePageMeta({
   layout: 'admin',

@@ -42,7 +42,7 @@ export interface RoleConfig {
 // ── Pure helper functions (importable by subcomponents) ──────────────
 
 export function getRoleConfig(role: UserRole): RoleConfig {
-  return USER_ROLES.find((r) => r.value === role) || USER_ROLES[0]
+  return USER_ROLES.find((r) => r.value === role) || USER_ROLES[0]!
 }
 
 export function formatDate(dateStr: string): string {

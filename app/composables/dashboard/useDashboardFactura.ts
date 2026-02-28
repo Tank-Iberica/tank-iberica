@@ -8,6 +8,7 @@
  * The composable does NOT call onMounted — lifecycle stays in the page.
  */
 
+import { useInvoice } from '~/composables/dashboard/useInvoice'
 import type { VehicleOption } from '~/composables/dashboard/useInvoice'
 
 export type {

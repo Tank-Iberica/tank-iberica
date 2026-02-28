@@ -162,7 +162,7 @@ export function useConsent() {
     // Also remove cookies that start with _ga_ (GA4 measurement IDs)
     const allCookies = document.cookie.split(';')
     for (const cookie of allCookies) {
-      const cookieName = cookie.split('=')[0].trim()
+      const cookieName = (cookie.split('=')[0] ?? '').trim()
       if (cookieName.startsWith('_ga_')) {
         for (const domain of domains) {
           document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`

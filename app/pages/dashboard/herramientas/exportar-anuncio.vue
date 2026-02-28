@@ -4,7 +4,10 @@
  * Generates optimized ad text for Milanuncios, Wallapop, Facebook, LinkedIn, Instagram.
  * Plan gate: Basic+ (catalogExport).
  */
-import { PLATFORMS } from '~/composables/dashboard/useDashboardExportarAnuncio'
+import {
+  PLATFORMS,
+  useDashboardExportarAnuncio,
+} from '~/composables/dashboard/useDashboardExportarAnuncio'
 import type { PlatformKey } from '~/composables/dashboard/useDashboardExportarAnuncio'
 
 definePageMeta({

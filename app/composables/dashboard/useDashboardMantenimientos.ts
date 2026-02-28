@@ -70,7 +70,7 @@ export function useDashboardMantenimientos() {
   const editingId = ref<string | null>(null)
   const form = reactive<MaintenanceFormData>({
     vehicle_id: '',
-    date: new Date().toISOString().split('T')[0],
+    date: new Date().toISOString().split('T')[0] ?? '',
     type: 'preventivo',
     description: '',
     cost: null,
@@ -181,7 +181,7 @@ export function useDashboardMantenimientos() {
       if (rErr) throw rErr
 
       records.value = (
-        (recordsData || []) as Array<{
+        (recordsData || []) as unknown as Array<{
           id: string
           dealer_id: string
           vehicle_id: string
@@ -220,7 +220,7 @@ export function useDashboardMantenimientos() {
   function openCreateForm() {
     editingId.value = null
     form.vehicle_id = vehicleOptions.value[0]?.id || ''
-    form.date = new Date().toISOString().split('T')[0]
+    form.date = new Date().toISOString().split('T')[0] ?? ''
     form.type = 'preventivo'
     form.description = ''
     form.cost = null

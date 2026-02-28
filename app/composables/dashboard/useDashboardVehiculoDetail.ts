@@ -176,7 +176,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
       }
 
       categories.value = (catRes.data || []) as CategoryOption[]
-      subcategories.value = (subRes.data || []) as SubcategoryOption[]
+      subcategories.value = (subRes.data || []) as unknown as SubcategoryOption[]
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error loading vehicle'
     } finally {
@@ -260,7 +260,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
   function handleFileSelect(event: Event): void {
     const target = event.target as HTMLInputElement
     if (target.files && target.files.length > 0) {
-      uploadForm.value.file = target.files[0]
+      uploadForm.value.file = target.files[0] ?? null
     }
   }
 

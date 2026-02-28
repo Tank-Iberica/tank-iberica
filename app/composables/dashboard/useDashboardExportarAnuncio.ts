@@ -76,7 +76,7 @@ export function useDashboardExportarAnuncio() {
   })
 
   const currentPlatformConfig = computed<PlatformConfig>(() => {
-    return PLATFORMS.find((p) => p.key === selectedPlatform.value) || PLATFORMS[0]
+    return PLATFORMS.find((p) => p.key === selectedPlatform.value) || PLATFORMS[0]!
   })
 
   const charCount = computed<number>(() => generatedText.value.length)

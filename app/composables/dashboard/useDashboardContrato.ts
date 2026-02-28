@@ -391,9 +391,7 @@ export function useDashboardContrato() {
         status: 'draft' as const,
       }
 
-      const { error: err } = (await supabase
-        .from('dealer_contracts')
-        .insert(insertData)) as never as { error: { message: string } | null }
+      const { error: err } = await supabase.from('dealer_contracts').insert(insertData as never)
 
       if (err) throw new Error(err.message)
 

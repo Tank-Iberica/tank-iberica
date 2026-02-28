@@ -73,7 +73,7 @@ export function useDashboardAlquileres() {
     vehicle_id: '',
     client_name: '',
     client_contact: '',
-    start_date: new Date().toISOString().split('T')[0],
+    start_date: new Date().toISOString().split('T')[0] ?? '',
     end_date: '',
     monthly_rent: null,
     deposit: null,
@@ -161,7 +161,7 @@ export function useDashboardAlquileres() {
       if (rErr) throw rErr
 
       records.value = (
-        (rentalsData || []) as Array<{
+        (rentalsData || []) as unknown as Array<{
           id: string
           dealer_id: string
           vehicle_id: string
@@ -223,7 +223,7 @@ export function useDashboardAlquileres() {
     form.vehicle_id = vehicleOptions.value[0]?.id || ''
     form.client_name = ''
     form.client_contact = ''
-    form.start_date = new Date().toISOString().split('T')[0]
+    form.start_date = new Date().toISOString().split('T')[0] ?? ''
     form.end_date = ''
     form.monthly_rent = null
     form.deposit = null

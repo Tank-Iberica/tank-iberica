@@ -49,9 +49,9 @@ export function useSocialAdminUI() {
   const vehicleSearchLoading = ref(false)
 
   // ─── Computed ────────────────────────────────────────────
-  const filteredPosts = computed(() => {
-    if (statusFilter.value === 'all') return posts.value
-    return posts.value.filter((p) => p.status === statusFilter.value)
+  const filteredPosts = computed((): SocialPostWithVehicle[] => {
+    if (statusFilter.value === 'all') return posts.value as SocialPostWithVehicle[]
+    return posts.value.filter((p) => p.status === statusFilter.value) as SocialPostWithVehicle[]
   })
 
   const statusCounts = computed(() => {

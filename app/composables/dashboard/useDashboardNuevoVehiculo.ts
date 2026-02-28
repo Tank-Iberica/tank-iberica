@@ -66,7 +66,7 @@ export function useDashboardNuevoVehiculo() {
     ])
 
     categories.value = (catRes.data || []) as CategoryOption[]
-    subcategories.value = (subRes.data || []) as SubcategoryOption[]
+    subcategories.value = (subRes.data || []) as unknown as SubcategoryOption[]
     activeListingsCount.value = countRes.count || 0
   }
 
@@ -136,7 +136,6 @@ export function useDashboardNuevoVehiculo() {
         km: form.value.km || null,
         price: form.value.price || null,
         category_id: form.value.category_id || null,
-        subcategory_id: form.value.subcategory_id || null,
         description_es: form.value.description_es || null,
         description_en: form.value.description_en || null,
         location: form.value.location || null,
@@ -145,7 +144,7 @@ export function useDashboardNuevoVehiculo() {
         views: 0,
         is_online: true,
         vertical: getVerticalSlug(),
-      })
+      } as never)
 
       if (err) throw err
 

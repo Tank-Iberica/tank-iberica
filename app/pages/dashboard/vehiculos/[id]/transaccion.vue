@@ -4,6 +4,7 @@
  * Critical business flow for fleet dealers.
  * Two tabs: Rent (register a rental) and Sell (archive vehicle with sale).
  */
+import { useDashboardTransaccion } from '~/composables/dashboard/useDashboardTransaccion'
 import type { RentFormField, SellFormField } from '~/composables/dashboard/useDashboardTransaccion'
 
 definePageMeta({

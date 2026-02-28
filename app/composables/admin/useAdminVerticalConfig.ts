@@ -85,7 +85,7 @@ export function useAdminVerticalConfig() {
     try {
       const { error: err } = await supabase
         .from('vertical_config')
-        .update(fields)
+        .update(fields as never)
         .eq('id', config.value.id)
       if (err) throw err
       Object.assign(config.value, fields)

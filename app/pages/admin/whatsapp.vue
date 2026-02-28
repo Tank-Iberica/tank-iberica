@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useAdminWhatsApp } from '~/composables/admin/useAdminWhatsApp'
+
 definePageMeta({
   layout: 'admin',
   middleware: ['auth', 'admin'],

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useSocialAdminUI } from '~/composables/admin/useSocialAdminUI'
+
 definePageMeta({
   layout: 'admin',
   middleware: ['auth', 'admin'],

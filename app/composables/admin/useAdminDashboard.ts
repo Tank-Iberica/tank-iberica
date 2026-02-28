@@ -35,8 +35,8 @@ export interface ProductStats {
   total: number
   published: number
   unpublished: number
-  byCategory: ProductCategoryCount[]
-  byType: ProductCategoryCount[]
+  byCategory: readonly ProductCategoryCount[]
+  byType: readonly ProductCategoryCount[]
 }
 
 export interface UserStats {

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useDashboardImportar } from '~/composables/dashboard/useDashboardImportar'
+
 /**
  * Bulk Vehicle Import
  * Allows dealers to import multiple vehicles via CSV file.

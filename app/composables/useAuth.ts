@@ -73,7 +73,7 @@ export function useAuth() {
         .single()
 
       if (err) throw err
-      profile.value = data as UserProfile
+      profile.value = data as unknown as UserProfile
       lastFetched.value = Date.now()
       return profile.value
     } catch (err: unknown) {

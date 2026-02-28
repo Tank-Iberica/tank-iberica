@@ -137,7 +137,7 @@ export function useDashboardVisitas() {
       if (bErr) throw bErr
 
       bookings.value = (
-        (bookingsData || []) as Array<{
+        (bookingsData || []) as unknown as Array<{
           id: string
           dealer_id: string
           slot_id: string | null

@@ -429,8 +429,8 @@ export function useAdminProductosPage() {
     }
   }
 
-  const sortedVehicles = computed(() => {
-    const list = [...vehicles.value]
+  const sortedVehicles = computed((): AdminVehicle[] => {
+    const list = [...vehicles.value] as AdminVehicle[]
     list.sort((a, b) => {
       let aVal: string | number | null = null
       let bVal: string | number | null = null

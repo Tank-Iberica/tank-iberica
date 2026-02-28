@@ -102,6 +102,8 @@
 </template>
 
 <script setup lang="ts">
+import { useAdminInfrastructura } from '~/composables/admin/useAdminInfrastructura'
+
 definePageMeta({
   layout: 'admin',
   middleware: ['auth', 'admin'],

@@ -63,15 +63,7 @@ export function useAnalyticsTracking() {
       vertical: 'tracciona',
     }
 
-    supabase
-      .from('analytics_events')
-      .insert(row as never)
-      .then(() => {
-        // success — no action needed
-      })
-      .catch(() => {
-        // silently ignore tracking errors
-      })
+    void supabase.from('analytics_events').insert(row as never)
   }
 
   /**

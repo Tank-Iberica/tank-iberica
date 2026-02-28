@@ -93,6 +93,7 @@ export function useAdminProductoDetail() {
     rental_price: null,
     category: 'venta',
     categories: [],
+    subcategory_id: null,
     type_id: null,
     location: null,
     location_en: null,
@@ -319,6 +320,8 @@ export function useAdminProductoDetail() {
       rental_price: data.rental_price || null,
       category: data.category as 'alquiler' | 'venta' | 'terceros',
       categories: data.categories || [data.category],
+      subcategory_id:
+        (data as unknown as { subcategory_id?: string | null }).subcategory_id ?? null,
       type_id: data.type_id || null,
       location: data.location || null,
       location_en: data.location_en || null,

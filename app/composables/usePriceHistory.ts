@@ -114,8 +114,8 @@ export function usePriceHistory(vehicleId: string) {
         throw new Error(`Failed to fetch price history: ${error.message}`)
       }
 
-      history.value = (data ?? []) as PricePoint[]
-      currentPrice.value = history.value.length > 0 ? history.value[0].price_cents : null
+      history.value = (data ?? []) as unknown as PricePoint[]
+      currentPrice.value = history.value.length > 0 ? history.value[0]!.price_cents : null
     } finally {
       loading.value = false
     }
