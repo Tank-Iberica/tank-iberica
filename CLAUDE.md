@@ -1,5 +1,18 @@
 # Tracciona.com — Marketplace de Vehículos Industriales
 
+## Inicio de sesión — Requisito obligatorio
+
+**AL ABRIR SESIÓN, ANTES DE CUALQUIER OTRA COSA:**
+
+1. Asegúrate de estar en **Opus**. Si no, cambia con `/model opus`.
+2. Lee **CLAUDE.md** (este archivo) — protocolo, reglas, arquitectura decisiones.
+3. Lee **STATUS.md** — estado actual del proyecto, cambios recientes, pendientes.
+4. Lee **PROYECTO-CONTEXTO.md** — visión, modelo de negocio, arquitectura, decisiones estratégicas.
+
+Solo después de leer estos 3 archivos, estás listo para recibir órdenes del usuario.
+
+---
+
 ## ANTES DE HACER NADA — Protocolo obligatorio (SIEMPRE, SIN EXCEPCIONES)
 
 **STOP. Antes de ejecutar cualquier tarea, sigue estos 4 pasos en orden. NO hay excepciones.**
