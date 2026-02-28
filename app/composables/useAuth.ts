@@ -30,8 +30,8 @@ export function useAuth() {
   const lastFetched = useState<number>('auth-profile-ts', () => 0)
   const TTL = 5 * 60 * 1000 // 5 min cache
 
-  const isAuthenticated = computed(() => !!supabaseUser.value)
-  const userId = computed(() => supabaseUser.value?.id || null)
+  const isAuthenticated = computed(() => !!supabaseUser.value || !!profile.value?.id)
+  const userId = computed(() => supabaseUser.value?.id || profile.value?.id || null)
   const userEmail = computed(() => supabaseUser.value?.email || '')
   const userType = computed<UserType>(() => profile.value?.user_type || 'buyer')
   const isDealer = computed(() => userType.value === 'dealer')
@@ -51,7 +51,14 @@ export function useAuth() {
    * Cached for 5 minutes to avoid redundant DB calls.
    */
   async function fetchProfile(): Promise<UserProfile | null> {
-    if (!supabaseUser.value?.id) {
+    let uid = supabaseUser.value?.id
+    if (!uid) {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      uid = session?.user?.id || null
+    }
+    if (!uid) {
       profile.value = null
       return null
     }
@@ -70,7 +77,7 @@ export function useAuth() {
         .select(
           'id, email, full_name, user_type, role, company_name, phone, phone_verified, onboarding_completed, avatar_url, preferred_locale, last_login_at, login_count',
         )
-        .eq('id', supabaseUser.value.id)
+        .eq('id', uid)
         .single()
 
       if (err) throw err

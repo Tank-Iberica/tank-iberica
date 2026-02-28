@@ -1,6 +1,6 @@
 <template>
   <!-- Login screen for unauthenticated users -->
-  <div v-if="!user" class="admin-login">
+  <div v-if="!hasSession" class="admin-login">
     <div class="login-card">
       <div class="login-logo">
         <span class="logo-icon">TI</span>
@@ -94,7 +94,6 @@
 // Prevent admin pages from being indexed by search engines
 useSeoMeta({ robots: 'noindex, nofollow' })
 
-const user = useSupabaseUser()
 const supabase = useSupabaseClient()
 
 const sidebarCollapsed = ref(false)
@@ -103,16 +102,10 @@ const loading = ref(false)
 const errorMsg = ref('')
 const checkingAdmin = ref(true)
 const isAdmin = ref(false)
+const hasSession = ref(false)
 
-// Check if user is admin
-async function checkAdminRole() {
-  const uid = userId.value
-  if (!uid) {
-    checkingAdmin.value = false
-    isAdmin.value = false
-    return
-  }
-
+// Check if user is admin using their ID directly (avoids useSupabaseUser() race condition)
+async function checkAdminRole(uid: string) {
   try {
     const { data } = await supabase
       .from('users')
@@ -128,23 +121,32 @@ async function checkAdminRole() {
   }
 }
 
-// Get user ID from either 'id' or 'sub' field (Supabase returns 'sub' in JWT)
-const userId = computed(() => user.value?.id || user.value?.sub)
+// Initialize from session directly — avoids useSupabaseUser() which is reset to null
+// on every page:start by @nuxtjs/supabase ≤2.0.4 when using HS256 JWTs
+onMounted(async () => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  if (session?.user?.id) {
+    hasSession.value = true
+    checkingAdmin.value = true
+    await checkAdminRole(session.user.id)
+  } else {
+    checkingAdmin.value = false
+    isAdmin.value = false
+  }
 
-// Watch for user changes and check admin role
-watch(
-  user,
-  () => {
-    if (userId.value) {
-      checkingAdmin.value = true
-      checkAdminRole()
+  // Keep in sync with real auth changes (login/logout)
+  supabase.auth.onAuthStateChange((_event, session) => {
+    if (session?.user?.id) {
+      hasSession.value = true
+      checkAdminRole(session.user.id)
     } else {
-      checkingAdmin.value = false
+      hasSession.value = false
       isAdmin.value = false
     }
-  },
-  { immediate: true },
-)
+  })
+})
 
 // Login with Google
 async function loginWithGoogle() {
