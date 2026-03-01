@@ -87,8 +87,8 @@ El paywall está en herramientas y servicios opcionales, nunca en la comunicaci�
 
 | Pagador                  | Cómo paga                                                                                                                                                                                                                                                                                     |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Compradores**          | Suscripción Pro (acceso anticipado 24h), buyer's premium en subastas (8%), informes de valoración, verificación                                                                                                                                                                               |
-| **Vendedores / Dealers** | Anuncios destacados, suscripciones dealer (herramientas/CRM/stats), generación IA de fichas, comisión por venta                                                                                                                                                                               |
+| **Compradores**          | Suscripciones (Classic €19/Premium €39), créditos (reserva prioritaria, desbloquear ocultos, informes DGT), buyer's premium en subastas (8%), informes de valoración                                                                                                                          |
+| **Vendedores / Dealers** | Créditos (destacar, renovar, anuncio protegido, color/marco, exportar), suscripciones dealer (herramientas/CRM/stats), generación IA de fichas, comisión por venta                                                                                                                            |
 | **Anunciantes locales**  | Publicidad geolocalizada: gestorías, talleres, aseguradoras, financieras, empresas de transporte, proveedores de repuestos. Adaptada por vertical (ej: en Tracciona → talleres de semirremolques, ITVs industriales; en Horecaria → servicios de mantenimiento hostelero, proveedores de gas) |
 | **Compradores de datos** | Informes de valoración, índice de mercado sectorial, datasets anualizados, API de datos                                                                                                                                                                                                       |
 
@@ -102,6 +102,129 @@ Acumular datos de mercado (precios, tiempos de venta, volumen por zona) y vender
 2. **Dealer SaaS** — Revenue recurrente de herramientas (free / basic €29 / premium €79 / founding gratis forever)
 3. **Servicios transaccionales** — Alto margen por operación (transporte, verificación, docs, seguros, subastas)
 4. **Productos de datos** — Valor a largo plazo (API valoración, informes sectoriales, datasets). Activar tras masa crítica.
+
+### 2.4.1 Créditos y Suscripciones
+
+_(Definido 06-mar-2026)_
+
+#### Suscripciones de usuario (compradores y vendedores)
+
+Basic = usuario registrado gratuito. Precios en lanzamiento (subirán a €29/€59 estándar).
+
+|                    | **Basic** | **Classic**         | **Premium**         |
+| ------------------ | --------- | ------------------- | ------------------- |
+| **Precio mensual** | Gratis    | €19/mes             | €39/mes             |
+| **Precio anual**   | —         | €149/año (~€12/mes) | €299/año (~€25/mes) |
+
+#### Funcionalidades por tier
+
+**✔️ Incluido · ✖️ No incluido · ◯ Créditos**
+
+**Alertas:**
+
+| Función               | Basic | Classic | Premium |
+| --------------------- | ----- | ------- | ------- |
+| Alertas semanales     | ✔️    | ✔️      | ✔️      |
+| Alertas diarias       | ✖️    | ✔️      | ✔️      |
+| Alertas inmediatas    | ✖️    | ✖️      | ✔️      |
+| Price Down semanales  | ✔️    | ✔️      | ✔️      |
+| Price Down diarias    | ✖️    | ✔️      | ✔️      |
+| Price Down inmediatas | ✖️    | ✖️      | ✔️      |
+
+**Gestión de anuncios:**
+
+| Función                                               | Basic | Classic | Premium      |
+| ----------------------------------------------------- | ----- | ------- | ------------ |
+| Ver anuncios en segmento oculto                       | 24h   | 12h     | ✔️ Inmediato |
+| Anuncio protegido (inmunidad + visibilidad inmediata) | ◯     | ◯       | ✔️           |
+| Reserva Prioritaria (48h)                             | ◯     | ◯       | ◯            |
+| Desbloquear ocultos (batch, 1 uso)                    | ◯     | ◯       | ✔️           |
+
+**Promoción y visibilidad:**
+
+| Función                                          | Basic | Classic | Premium |
+| ------------------------------------------------ | ----- | ------- | ------- |
+| Destacar anuncio                                 | ◯     | ✔️      | ✔️      |
+| Renovar anuncio                                  | ◯     | ✔️      | ✔️      |
+| Auto-renovar (toggle, descuenta 1 cr/ejecución)  | ◯     | ◯       | ✔️      |
+| Auto-destacar (toggle, descuenta 1 cr/ejecución) | ◯     | ◯       | ✔️      |
+| Color / Fondo / Marco especial                   | ◯     | ◯       | ✔️      |
+
+**Publicación:**
+
+| Función           | Basic | Classic | Premium |
+| ----------------- | ----- | ------- | ------- |
+| Exportar catálogo | ◯     | ◯       | ✔️      |
+
+**Informes:**
+
+| Función              | Basic | Classic | Premium |
+| -------------------- | ----- | ------- | ------- |
+| Informe DGT básico   | ◯     | ◯       | ◯       |
+| Informe DGT avanzado | ◯     | ◯       | ◯       |
+
+> Ningún plan incluye informes DGT: siempre de pago con créditos.
+
+#### Reserva Prioritaria — Definición
+
+Función de créditos que permite al comprador **bloquear un anuncio durante 48 horas**, garantizando prioridad frente a otros compradores.
+
+1. El comprador paga 2 créditos. El anuncio queda **pausado** (máximo 48h).
+2. Se abre chat interno con **mensaje obligatorio** del comprador.
+3. **Si el vendedor responde:** anuncio se reactiva, comprador NO recupera créditos, obtiene prioridad como primer interesado.
+4. **Si el vendedor NO responde en 48h:** anuncio se reactiva, comprador **recupera créditos**, reserva marcada como fallida por inacción.
+
+**Reglas:** 1 reserva activa por anuncio. No extensible. No cancelable. Anuncios Premium son **inmunes** (no pueden recibir Reserva Prioritaria). Basic/Classic pueden comprar Anuncio protegido para obtener esa inmunidad.
+
+#### Anuncio protegido — Definición
+
+Pago único por anuncio (2 créditos). Doble beneficio:
+
+1. **Inmunidad a Reserva Prioritaria** — nadie puede pausar tu anuncio.
+2. **Visibilidad inmediata** — salta el periodo oculto (24h Basic / 12h Classic).
+   Dura mientras el anuncio esté publicado.
+
+#### Coste en créditos por función
+
+| Créditos | Funciones                                                                                                             |
+| -------- | --------------------------------------------------------------------------------------------------------------------- |
+| **1**    | Renovar (manual o auto), Destacar (manual o auto), Exportar catálogo, Informe DGT básico, Desbloquear ocultos (batch) |
+| **2**    | Reserva Prioritaria, Color/Marco, Anuncio protegido                                                                   |
+| **3**    | Informe DGT avanzado                                                                                                  |
+
+#### Packs de créditos
+
+Compra via Stripe Checkout (one-time payment). Los créditos **no caducan**. Balance en `user_credits`, historial en `credit_transactions`. Visibles en `/precios#creditos`.
+
+| Pack         | Pagas | Bonus      | **Recibes** | Precio | €/cr real |
+| ------------ | ----- | ---------- | ----------- | ------ | --------- |
+| Recarga      | 1     | —          | **1**       | €5     | €5,00     |
+| Básico       | 3     | —          | **3**       | €9,90  | €3,30     |
+| **Estándar** | 10    | +1 gratis  | **11**      | €19,90 | €1,81     |
+| Pro          | 25    | +3 gratis  | **28**      | €39,90 | €1,43     |
+| Empresa      | 50    | +10 gratis | **60**      | €64,90 | €1,08     |
+
+**Psicología de packs:** Recarga y Básico sin bonus (entrada baja). Estándar marcado como "Más popular" en UI — salto de descuento agresivo de €3,30→€1,81/cr. Sin pack de 5 créditos para forzar salto 3→10. Créditos sobrantes = retención (usuario vuelve a la plataforma).
+
+**Pricing de suscripciones:** €19/€39 redondos (B2B profesional, sin ",90"). Packs de créditos sí usan ",90" (compra puntual e-commerce). Precios de lanzamiento; subirán a €29/€59 tras los primeros 6 meses.
+
+#### A definir — Monetización adicional de compradores y vendedores
+
+**Del comprador:**
+
+1. **Alerta premium personalizada** — Configuración granular (marca, modelo, año, km, zona, precio máximo). Solo Classic/Premium o créditos para Basic.
+2. **Informe de valoración de mercado** — Dato interno: "Este vehículo vale €X según nuestro histórico. Está un 12% por encima/debajo de mercado." Monetiza Capa 4 de datos.
+3. **Comparador de vehículos premium** — Comparar 2-3 vehículos con métricas de mercado (precio medio, tiempo de venta, fiabilidad km). Básico gratis (specs), avanzado con datos de mercado por créditos.
+4. **Historial de precio de un vehículo** — "Este camión empezó a €55K, bajó a €48K en 3 meses." Dato de `price_history`. Gratis para Premium, créditos para el resto.
+5. **Alertas de bajada con umbral** — "Avísame cuando ESTE vehículo baje de €40K." Más específico que Price Down general.
+
+**Del vendedor:**
+
+6. **Generación IA de ficha** — WhatsApp → fotos → ficha bilingüe profesional. 1 crédito. Diferenciador clave del producto.
+7. **Estadísticas de rendimiento del anuncio** — Vistas, contactos, CTR. Básico gratis; detallado (comparativa mercado, recomendaciones precio) por créditos o Classic/Premium.
+8. **Recomendación de precio IA** — "Basándonos en 230 vehículos similares, el precio óptimo es €42K–€46K." Monetiza datos + IA. Por créditos.
+9. **Exportar anuncio a otras plataformas** — Texto optimizado para Milanuncios/Wallapop/AutoScout24 desde ficha Tracciona. Lock-in + créditos.
+10. **Certificado de publicación** — PDF con QR verificable: "Vehículo publicado en Tracciona el [fecha] con [X] fotos verificadas." 1 crédito.
 
 ### 2.5 Revenue stacking por transacción
 
@@ -127,12 +250,9 @@ Un vehículo de €40K puede generar €2.650-3.785 sumando canales: destacado +
 
 Más fichas → más compradores → más dealers quieren publicar → más fichas. Efecto de red clásico de marketplace bilateral. Publicar gratis es lo que arranca el flywheel. Los ingresos vienen de servicios, no de frenar la rueda.
 
-### 2.8 Sistema Pro
+### 2.8 Programa Founding Dealer
 
-- Acceso anticipado 24h a nuevos anuncios (`visible_from` en BD)
-- Alertas de búsqueda con prioridad
-- 3 planes: Pass €9.99 (puntual), Mensual €29, Anual €249
-- **Programa Founding Dealer:** primeros 10 dealers = gratis de por vida (lock-in estratégico). Estos dealers se convierten en evangelistas y casos de éxito para la segunda ola.
+Primeros 10 dealers = suscripción dealer gratis de por vida (lock-in estratégico). Estos dealers se convierten en evangelistas y casos de éxito para la segunda ola.
 
 ### 2.9 Sistema de verificación (6 niveles)
 
@@ -152,6 +272,344 @@ Cada vertical tiene sus propios documentos requeridos por nivel. Claude Vision s
 1. **Herramientas como coste de cambio:** El dealer que usa facturas, contratos, CRM, export y widget de Tracciona no se va. El repositioning estratégico es "herramienta de gestión de stock", no "portal de anuncios".
 2. **Merchandising físico:** Tarjetas, imanes y banners con QR que apuntan al perfil del dealer en Tracciona. El dealer paga por materiales que promocionan la URL de Tracciona. Lock-in disfrazado de servicio.
 3. **Export cross-platform como caballo de Troya:** Los dealers exportan fichas DESDE Tracciona HACIA Milanuncios/Wallapop. Tracciona se convierte en el hub de gestión; los competidores pasan a ser canales de distribución.
+
+### 2.11 Estrategia de acumulación de datos (Capa 4)
+
+El moat estratégico de Tracciona no es el código, la UI ni las herramientas. Es **la base de datos de mercado que solo nosotros poseemos.** Cada transacción, cada búsqueda, cada consulta que pasa por la plataforma es un dato que nuestros competidores nunca verán.
+
+#### 2.11.1 Datos que YA recopilamos
+
+| Tabla                 | Dato capturado                                                                   | Valor para monetizar                |
+| --------------------- | -------------------------------------------------------------------------------- | ----------------------------------- |
+| `vehicles`            | Precio, categoría, marca, modelo, año, km, provincia                             | Core del dataset                    |
+| `price_history`       | Historial de bajadas de precio por vehículo                                      | Evolución temporal                  |
+| `market_data` (vista) | Media, mediana, mín, máx, días hasta venta, volumen por mes/categoría/marca/zona | Listo para vender a financieras     |
+| `demand_data`         | Alertas creadas por categoría/marca/zona                                         | Demanda latente del mercado         |
+| `user_vehicle_views`  | Qué vehículos mira cada usuario + view_count                                     | Popularidad y engagement            |
+| `search_alerts`       | Filtros guardados                                                                | Demanda insatisfecha                |
+| `favorites`           | Vehículos guardados por usuario                                                  | Intención de compra                 |
+| `leads`               | Contactos buyer→dealer, con `sale_price_cents`                                   | **Precio real de venta (oro puro)** |
+| `analytics_events`    | page_view, vehicle_view, search, filter, contact_click                           | Comportamiento del usuario completo |
+| `search_logs`         | Búsquedas realizadas                                                             | Qué busca el mercado                |
+| `dealer_stats`        | Vistas, leads, conversión, tiempo respuesta por dealer/día                       | Rendimiento por dealer              |
+| `ad_events`           | Impressions, clicks, conversiones de anuncios                                    | Rendimiento publicitario            |
+
+#### 2.11.2 Datos que deberíamos capturar (10+ gaps de alto valor)
+
+| #   | Dato faltante                       | Cómo capturarlo                                                                                                                                           | Valor de venta                                                                   |
+| --- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| 1   | **Precio real de venta**            | Cuando dealer marca "vendido", hacer obligatorio introducir precio final. Incentivo: "Danos el precio final → desbloqueamos tu informe de mercado gratis" | Diferencia publicado vs venta real = márgenes del mercado. **DATO MÁS VALIOSO**  |
+| 2   | **Precio negociado / descuento**    | Campo en lead al cerrar: "¿a cuánto se cerró?"                                                                                                            | Ratio descuento. Ningún competidor lo tiene                                      |
+| 3   | **Motivo de no-venta**              | Al retirar un vehículo: "¿por qué lo retiras?" (precio alto, mal estado, cambió planes, vendido fuera)                                                    | Entender por qué NO se vende = tan valioso como saber por qué sí                 |
+| 4   | **Origen geográfico del comprador** | `buyer_location` existe pero es opcional. Hacerlo obligatorio o inferir de IP                                                                             | Flujos comerciales: "Los compradores de Madrid compran cisternas de Zaragoza"    |
+| 5   | **Tiempo en página por vehículo**   | `analytics_events` con metadata `{duration_seconds: N}` cuando el usuario sale                                                                            | Interés real (no solo clicks). Qué tipo de vehículo genera más engagement        |
+| 6   | **Comparaciones**                   | Trackear cuando un usuario ve 2+ vehículos similares en la misma sesión                                                                                   | Competencia directa entre modelos/marcas                                         |
+| 7   | **Búsquedas sin resultados**        | Loguear en `search_logs` cuando `results_count = 0`                                                                                                       | Demanda insatisfecha: "300 personas buscaron grúas hidráulicas y no hay ninguna" |
+| 8   | **Estacionalidad por categoría**    | Ya implícito en `market_data` por mes, pero no lo explotamos                                                                                              | "Los quitanieves se buscan un 400% más en octubre-noviembre"                     |
+| 9   | **Rotación de stock**               | Calcular por mes: vehículos nuevos publicados vs retirados                                                                                                | Velocidad de reemplazo de flotas. Fabricantes pagarían por esto                  |
+| 10  | **Financiación solicitada**         | Cuando se implemente BNPL: qué % pide financiación, ticket medio                                                                                          | Dato que bancos pagarían por tener                                               |
+| 11  | **Historial de precios del dealer** | Tracks: cuántos de sus vehículos baja precio, patrones de negociación                                                                                     | Perfil comercial del dealer                                                      |
+| 12  | **Conversión lead → venta**         | Si el lead pasa por tu chat/formulario, ¿se cierra?                                                                                                       | Solo Tracciona sabe esto                                                         |
+
+#### 2.11.3 El MOAT: datos que solo nosotros podemos tener
+
+Ningún competidor (Mascus, Autoline, TruckScout24) puede recopilar esto porque no controlan ambos extremos de la transacción:
+
+| Dato exclusivo                                         | Por qué es moat                                                                                    |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| **Precio real de venta** (`leads.sale_price_cents`)    | Mascus solo ve el precio publicado. Solo nosotros vemos lo que realmente se pagó                   |
+| **Tiempo real hasta venta** (`created_at` → `sold_at`) | Controlamos inicio y fin. El competidor solo ve una foto de un punto en el tiempo                  |
+| **Demanda vs oferta por zona**                         | Búsquedas (demanda) vs listings (oferta) cruzados. Ningún marketplace solo de venta lo puede medir |
+| **Tasa de respuesta del dealer**                       | Solo la plataforma que media la comunicación lo sabe                                               |
+| **Conversión lead → venta**                            | Si el lead entra por tu chat, sabes si convierte                                                   |
+| **Flujos geográficos**                                 | "El comprador de Barcelona compra camiones de Zaragoza". Solo lo sabe el intermediario             |
+| **Historial de negociación real**                      | Múltiples ofertas, contrapropuestas. Solo pasa por la plataforma                                   |
+
+Estos datos no existen en ningún dataset público. Los acumulas desde el día 1, a los 2 años tienes 2 años de datos irreplicables.
+
+#### 2.11.4 Tres acciones concretas (Prioridad P0-P1)
+
+**P0 — Mes actual:**
+
+1. **Hacer obligatorio el precio de venta al marcar "vendido"**
+   - Campo en modal: "¿A cuánto se cerró finalmente?" con validación €
+   - Incentivo: "Danos el precio real → desbloqueamos tu informe de mercado personalizado (libre, para siempre)"
+   - Impacto: Convierte `leads.sale_price_cents` (actualmente opcional) en el dato más rico de Tracciona
+   - Timeline: 1h implementación, se activa hoy
+
+**P1 — Próximas 2 semanas:** 2. **Loguear búsquedas sin resultados**
+
+- Tabla `search_logs` necesita campo `results_count INT`
+- Cuando `results_count = 0`, registrar los filtros exactos
+- Dashboard admin: "Top 20 búsquedas sin resultados" → oportunidades de stock
+- Impacto: Demanda insatisfecha = mina de oro para fabricantes y dealers
+- Timeline: 30 min SQL, integración en search endpoint
+
+3. **Trackear duración de sesión por vehículo**
+   - `analytics_events` con metadata `{page_duration_seconds: N}` cuando el usuario sale de ficha
+   - Calcular: promedio de segundos en ficha por categoría/marca
+   - Resultado: "Las cisternas alimentarias generan 120s promedio; las grúas solo 45s" = interés desigual
+   - Timeline: 20 min frontend, importante para valoraciones futuras
+
+**Resultado esperado tras estas 3 acciones:** En 3 meses tendrás un dataset que ningún competidor posee. Con 500-1000 transacciones con precio real, la API de valoración (`/api/v1/valuation`) puede activarse sin riesgo.
+
+#### 2.11.5 Datos adicionales de alto ROI (Capa de reputación + inteligencia de mercado)
+
+Más allá de los datos básicos de precios, existen **3 vectores de datos que tienen 10x ROI** y deberías implementar en paralelo al roadmap:
+
+##### A. Sistema de reviews/ratings (Capa de reputación) — P0-1
+
+**Implementación:** Tabla `seller_reviews` (ya existe en BD desde migración 00060)
+
+```sql
+CREATE TABLE IF NOT EXISTS seller_reviews (
+  id UUID PRIMARY KEY,
+  seller_id UUID REFERENCES dealers(id),
+  buyer_id UUID REFERENCES users(id),
+  transaction_id UUID,
+  rating INT CHECK (rating >= 1 AND rating <= 5),
+  title VARCHAR(100),
+  body TEXT,
+  dimensions JSONB, -- {communication: 5, accuracy: 4, condition: 5, logistics: 4}
+  nps INT CHECK (nps >= 0 AND nps <= 10),
+  verified_purchase BOOLEAN,
+  created_at TIMESTAMPTZ
+);
+```
+
+**Qué monetizar:**
+
+| Monetización                              | Precio                        | Modelo                                                                    |
+| ----------------------------------------- | ----------------------------- | ------------------------------------------------------------------------- |
+| **Dealer "Top-Rated" badge** (⭐⭐⭐⭐⭐) | €50-100/mes                   | Filtrable en búsqueda. Aparece en ficha dealer. Aumento de CTR comprobado |
+| **Review Analytics para dealers**         | Incluido en Premium (€79/mes) | Dashboard: "Qué dicen los compradores de ti" + puntos de mejora           |
+| **Public scoreboard**                     | Gratis + premium              | "Top 100 dealers by rating" → gamificación, aspiracional                  |
+| **Trust Badge API**                       | €1-5/consulta                 | Otros marketplaces integran "Este dealer tiene ⭐⭐⭐⭐⭐ en Tracciona"   |
+
+**Por qué es ORO:**
+
+1. **Lock-in de reputación:** Un dealer con 500 reviews positivos no se va (costo de cambio altísimo)
+2. **SEO trust signals:** Google valida testimonios en schema.org → featured snippets
+3. **Volumen exponencial:** Month 4: 50 reviews/mes. Month 12: 2000 reviews/mes = dataset estadístico
+4. **Defensiva:** Mascus/Autoline NO tienen reviews verificadas. Esta es tu arma
+5. **Única en el sector:** Ningún marketplace industrial tiene reviews. Diferencial absoluto
+
+**Timeline:** 2-3 semanas. Se activa en month 4-5 cuando haya suficientes transacciones (threshold: 100 transacciones cerradas mínimo).
+
+---
+
+##### B. Compliance tracking + DGT alliance — P0-2 (estratégico)
+
+**Qué recoger** (sin infraestructura nueva, solo recolección):
+
+| Campo                            | Fuente                                 | Valor                                                     |
+| -------------------------------- | -------------------------------------- | --------------------------------------------------------- |
+| **Euro standard** (Euro IV/V/VI) | DGT vía API + OCR de documento técnico | Aseguradoras: "Euro VI cuesta 15% menos póliza"           |
+| **ITV status**                   | Integración DGT AEAT (OAuth)           | 300K€/año de valor: aseguradoras + talleres + transportes |
+| **Cargas máximas vs publicadas** | Parsing documento técnico + OCR        | Detección de fraude. Transporte legal                     |
+| **Origen/destino de operación**  | Form opcional en publicación           | Rutas de transporte. IberHaul planifica logística         |
+
+**Monetización indirecta (no directa = delicado):**
+
+1. **Alianza DGT:** Tracciona = fuente oficial de compliance del mercado. DGT paga por datos agregados (2000-5000€/mes)
+2. **Aseguradoras:** "Mostrad vehículos Euro VI" = versión premium de búsqueda. Ellos son los compradores
+3. **Talleres/STT:** Alertas: "3 cisterna en tu zona con ITV vencida" = lead generation (€100-500/mes)
+4. **Transporte:** IberHaul prioriza vehículos con documentación limpia = operativa más eficiente
+
+**Marco legal:**
+
+- Todo es información PÚBLICA (DGT, ITV, fichas técnicas)
+- Solo agrupar y analizar, nunca vender datos individuales
+- RGPD: la placa del vehículo NO es dato personal (es vehículo, no persona)
+- Avisar en privacidad: "Recolectamos datos técnicos públicos para mejorar buscar"
+
+**Timeline:** 4-6 semanas (incluye negociación DGT). Se activa en month 6-8.
+
+---
+
+##### C. Network graph + supply chain intelligence — P1-1
+
+**Qué recoger:**
+
+```
+Transacción:
+  dealer_id: UUID
+  buyer_company_type: ENUM (individual, dealer, distributor, fleet_manager, leasing_company)
+  buyer_vertical_segment: ENUM (dentro del mismo vertical, para anonimización)
+  category + subcategory
+  created_at
+  [anonimizar: solo permitir agregación, nunca individual]
+```
+
+**Análisis que genera:**
+
+| Pregunta que responde                                                 | Valor                                |
+| --------------------------------------------------------------------- | ------------------------------------ |
+| "¿Cuáles son los principales distribuidores de cisternas en España?"  | €2-5K/informe para fabricantes       |
+| "¿Hay cuellos de botella geográficos en la distribución?"             | €1-3K/análisis para consultoras      |
+| "¿Cuál es el flujo: fábrica → distribuidor → dealer → usuario final?" | €5-10K/mapa de cadena para fondos VC |
+| "¿Qué dealers tienen poder de negociación (muchos compradores)?"      | €500-1K/ranking para asociaciones    |
+
+**Monetización:**
+
+1. **Mapa de distribución vertical** (€2-5K/vertical/año): "Cómo se distribuye [categoría] en [país]"
+2. **Benchmark comparativo** (€1-2K/trimestre): "Tu dealer está en top 15% de distribuidores"
+3. **Supply chain optimization** (€3-5K/proyecto): Identificar oportunidades de direct-to-consumer
+
+**Framework legal:**
+
+- Todo ANONIMIZADO: dealer A → dealer B, sin nombres identificables
+- Agregación mínima de 5 observaciones (GDPR)
+- No linkear con datos personales del dealer
+- Avisar en privacidad: "Analizamos flujos comerciales agregados"
+
+**Timeline:** 3-4 semanas implementación. Se activa en month 5-6 (necesita volumen mínimo: 500+ transacciones).
+
+---
+
+**Resumen de prioridades (todos + rápido que P2):**
+
+| Ranking     | Dato                                | ROI anual esperado | Timeline  | Esfuerzo       |
+| ----------- | ----------------------------------- | ------------------ | --------- | -------------- |
+| 🔴 **P0-1** | Reviews + badges (reputación)       | €20-50K            | Month 4-5 | 2-3 sem        |
+| 🔴 **P0-2** | Compliance tracking (DGT alliance)  | €100-300K          | Month 6-8 | 4-6 sem + nego |
+| 🟡 **P1-1** | Supply chain network (inteligencia) | €50-100K           | Month 5-6 | 3-4 sem        |
+
+Con estos 3 vectores **en month 8-12 tendrás ingresos recurentes de €200-500K/año solo de datos**, sin comprometer la experiencia del usuario. El moat es irreplicable porque solo tú ves ambos lados de cada transacción.
+
+---
+
+#### 2.11.6 Datos comportamentales avanzados (Capa de inteligencia de producto)
+
+Más allá de precios y transacciones, el **comportamiento del usuario dentro de la plataforma** genera datos de altísimo valor para optimización interna y monetización externa.
+
+| #   | Dato                            | Cómo recogerlo                                                          | Valor estratégico                                                                           |
+| --- | ------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 1   | **UTM attribution**             | `utm_source/medium/campaign` en `analytics_events.metadata`             | Saber qué canal trae compradores que compran (no solo visitan). ROI de marketing real       |
+| 2   | **Form abandonment**            | Evento `form_abandon` con `step_reached` y `time_spent`                 | Detectar fricción: "El 60% abandona en paso 3 del contacto" → optimizar UX                  |
+| 3   | **Scroll depth en ficha**       | Evento `scroll_depth` con porcentaje (25/50/75/100)                     | "Las fichas con vídeo se scrollean un 40% más" → incentivar vídeo a dealers                 |
+| 4   | **Fotos vs velocidad de venta** | Correlacionar `vehicle_images.count` con `sold_at - created_at`         | "Vehículos con 8+ fotos se venden 3x más rápido" → dato para dealers, upsell fotógrafo      |
+| 5   | **Descripción vs leads**        | Correlacionar longitud/calidad de descripción con `leads.count`         | "Descripciones AI bilingual generan 2x más leads" → validar diferencial AI                  |
+| 6   | **Precio relativo al mercado**  | `vehicle.price / market_data.avg_price` por categoría/zona              | "Este vehículo está un 15% por debajo del mercado" → alerta al comprador, urgencia          |
+| 7   | **Compradores cross-vertical**  | Trackear `user_id` que visita múltiples verticales TradeBase            | "El 30% de compradores de tractores también buscan remolques" → cross-sell entre verticales |
+| 8   | **Device/platform**             | `navigator.userAgent` o `navigator.userAgentData` en eventos            | "El 70% de compradores busca en móvil pero contacta en desktop" → optimizar flujos móvil    |
+| 9   | **AI photo quality scoring**    | Puntuación automática de calidad de fotos (fondo, iluminación, ángulos) | Gamificación: "Tu puntuación de fotos es 6/10, mejora para más leads"                       |
+| 10  | **Análisis de temas en chat**   | NLP sobre mensajes (anonimizado, solo categorías)                       | "El 40% de chats pregunta por financiación" → activar módulo de financiación                |
+| 11  | **Velocidad de onboarding**     | Tiempo desde registro hasta primera publicación                         | "Dealers que publican en <24h tienen 5x más retención" → optimizar onboarding               |
+| 12  | **Gaps geográficos de precio**  | Diferencia de precio por categoría entre provincias/regiones            | "Las cisternas cuestan 20% más en Cataluña que en Andalucía" → oportunidad de arbitraje     |
+
+**Priorización:** Los puntos 1-3 y 6 son P0 (implementables en <1 semana con eventos en `analytics_events`). Los puntos 4-5 requieren volumen (month 3+). Los puntos 7-12 son P1 (month 6+).
+
+**Monetización directa:** Los datos 4, 5, 6 y 12 se empaquetan en informes para dealers (incluido en Premium). Los datos 7 y 10 se venden a fabricantes y financieras. El dato 9 se ofrece como servicio de mejora (upsell fotógrafo profesional).
+
+---
+
+### 2.12 Silent Safety — Estrategia anti-fraude sin fricción
+
+**Filosofía:** Proteger al usuario sin castigar al vendedor. Cero fricción al entrar, protección invisible de fondo, incentivos positivos (badges) en lugar de restricciones. Un autónomo con su NIF debe poder publicar tan fácil como una gran empresa.
+
+#### 2.12.1 Principios fundamentales
+
+1. **Entrada libre, vigilancia silenciosa:** Cualquiera puede registrarse y publicar. No hay barreras de entrada. La verificación es un incentivo, no un requisito.
+2. **No penalizar, incentivar:** En lugar de bloquear dealers sin verificar, se premia a los verificados con badges visibles y mejor posición.
+3. **Escalar la respuesta:** La intervención humana solo se activa cuando las señales automáticas superan un umbral. El 99% de los casos se resuelven solos.
+4. **Fleet companies ≠ fraude:** Una empresa que renueva flota puede publicar 200 vehículos de golpe. El sistema debe distinguir volumen legítimo de spam.
+
+#### 2.12.2 Capa 1 — Verificación pasiva (automática, invisible)
+
+| Check                     | Qué hace                                                            | Cuándo                                |
+| ------------------------- | ------------------------------------------------------------------- | ------------------------------------- |
+| **Email verification**    | Confirmar email real (ya implementado con Supabase Auth)            | Al registrarse                        |
+| **Phone verification**    | SMS OTP para dealers (ya planificado)                               | Al crear primera publicación          |
+| **DMARC/SPF en dominio**  | Proteger `@tracciona.com` contra spoofing                           | Configuración DNS única en Cloudflare |
+| **Rate limiting**         | Max 30 publicaciones/hora por dealer (excepto importación CSV bulk) | En endpoint de creación               |
+| **Duplicate detection**   | Hash de imágenes + similitud de título para detectar duplicados     | Al publicar                           |
+| **IP/device fingerprint** | Detectar múltiples cuentas desde mismo dispositivo                  | Background, sin bloquear              |
+
+**Excepción fleet companies:** Si un dealer tiene `subscription_tier >= 'basic'` O ha sido verificado manualmente, el rate limit sube a 500/hora para permitir cargas masivas de flota.
+
+#### 2.12.3 Capa 2 — Trust Score interno (solo visible para admin)
+
+**Puntuación interna 0-100** que calcula la confiabilidad de cada dealer. El dealer NUNCA ve su puntuación numérica — solo ve los badges positivos que ha ganado.
+
+| Factor                            | Puntos | Detalle                                                                            |
+| --------------------------------- | ------ | ---------------------------------------------------------------------------------- |
+| Email verificado                  | +10    | Automático                                                                         |
+| Teléfono verificado               | +15    | SMS OTP                                                                            |
+| Documentación fiscal (NIF/CIF)    | +20    | Upload opcional, verificación manual o automática (VIES para CIF intracomunitario) |
+| Antigüedad >3 meses               | +10    | Automático                                                                         |
+| ≥5 vehículos publicados           | +5     | Actividad real                                                                     |
+| ≥1 transacción cerrada            | +15    | Prueba de legitimidad                                                              |
+| Reviews positivas (≥4⭐ promedio) | +10    | Reputación                                                                         |
+| Responde en <24h                  | +10    | Profesionalismo                                                                    |
+| Sin reportes válidos              | +5     | Historial limpio                                                                   |
+
+**Umbrales de acción:**
+
+| Score     | Acción                                                                                   |
+| --------- | ---------------------------------------------------------------------------------------- |
+| **<20**   | Alerta admin: revisión manual. Los anuncios se publican pero no aparecen en "destacados" |
+| **20-59** | Normal: sin restricciones, sin badges                                                    |
+| **60-79** | Badge "Dealer Verificado" 🟢 visible en ficha y búsqueda                                 |
+| **≥80**   | Badge "Top Dealer" 🔵 + prioridad en resultados (sort_boost +1)                          |
+
+**Nota autónomos:** Se acepta NIF (no solo CIF). No se exige Registro Mercantil ni web corporativa. Un autónomo con NIF verificado + teléfono + antigüedad puede llegar a 60 puntos (badge verde) sin ningún requisito empresarial.
+
+#### 2.12.4 Capa 3 — Badge público con sistema de colores
+
+El badge de confianza es **público y visible** en la ficha del dealer y en los resultados de búsqueda. Funciona como incentivo positivo.
+
+| Badge                 | Color    | Requisito   | Visual                                                  |
+| --------------------- | -------- | ----------- | ------------------------------------------------------- |
+| Sin badge             | —        | Score <60   | Nada visible (no se penaliza, simplemente no hay badge) |
+| **Dealer Verificado** | 🟢 Verde | Score 60-79 | Icono check + "Verificado"                              |
+| **Top Dealer**        | 🔵 Azul  | Score ≥80   | Icono estrella + "Top Dealer"                           |
+
+**Interacción del badge:**
+
+- **Hover (desktop):** Tooltip explicando qué significa: "Este dealer ha verificado su identidad, responde rápido y tiene buenas valoraciones"
+- **Click/tap (móvil):** Modal con desglose: "Identidad verificada ✓ | Respuesta rápida ✓ | Buenas valoraciones ✓"
+
+**Guía de mejora para dealers:** Desde el dashboard del dealer, una sección "Mejora tu puntuación" muestra:
+
+- Qué criterios ya cumple (✓ verde)
+- Qué le falta para el siguiente badge (con instrucciones claras)
+- Ejemplo: "Te faltan 15 puntos para 'Dealer Verificado'. Sube tu NIF/CIF (+20 puntos) o verifica tu teléfono (+15 puntos)"
+
+#### 2.12.5 Capa 4 — Alertas contextuales al comprador
+
+En lugar de bloquear vendedores, se informa al comprador de forma sutil y contextual:
+
+| Situación                              | Alerta                                                                                                                              |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Dealer sin verificar + precio muy bajo | Banner suave: "Este vendedor aún no ha verificado su identidad. Te recomendamos solicitar documentación antes de transferir dinero" |
+| Cuenta creada hace <7 días             | Info discreta: "Vendedor nuevo en Tracciona" (neutro, no negativo)                                                                  |
+| Vehículo con pocas fotos               | Sugerencia: "Pide más fotos al vendedor antes de decidir"                                                                           |
+| Precio >30% bajo mercado               | Info: "Este precio está significativamente por debajo de la media del mercado"                                                      |
+
+**Principio:** Nunca decir "cuidado con este vendedor". Siempre informar de forma neutral y ofrecer una acción constructiva.
+
+#### 2.12.6 Protección de infraestructura
+
+| Medida                 | Estado              | Detalle                                                                      |
+| ---------------------- | ------------------- | ---------------------------------------------------------------------------- |
+| **DMARC + SPF + DKIM** | Pendiente DNS       | Protege contra phishing desde `@tracciona.com`. Configurar en Cloudflare DNS |
+| **Cloudflare WAF**     | Activo (Pages)      | Rate limiting, bot detection, DDoS protection ya incluidos                   |
+| **Supabase RLS**       | Activo              | Cada dealer solo ve/edita sus propios vehículos                              |
+| **CSP headers**        | Configurado en Nuxt | Previene XSS y script injection                                              |
+| **Audit log**          | Implementado        | Todas las acciones admin quedan registradas                                  |
+
+#### 2.12.7 Timeline de implementación
+
+| Fase       | Qué                                           | Cuándo    | Esfuerzo    |
+| ---------- | --------------------------------------------- | --------- | ----------- |
+| **Fase 0** | DMARC DNS + rate limiting básico              | Inmediato | 1 día       |
+| **Fase 1** | Trust score interno + badges visuales         | Month 2-3 | 1-2 semanas |
+| **Fase 2** | Guía de mejora en dashboard dealer            | Month 3-4 | 3-5 días    |
+| **Fase 3** | Alertas contextuales al comprador             | Month 4-5 | 1 semana    |
+| **Fase 4** | Duplicate detection + fleet company exception | Month 5-6 | 1 semana    |
+
+**Resultado:** Una plataforma donde los dealers legítimos se sienten bienvenidos (no interrogados), los compradores están informados (no asustados), y el fraude se detecta sin fricción visible. El sistema escala sin intervención humana al 99%.
 
 ---
 
@@ -185,6 +643,27 @@ No se empieza con paid ads. El funnel es: contenido editorial → tráfico orgá
 - **Calendario social:** LinkedIn (lunes, miércoles, viernes) + Instagram (martes, jueves)
 - **Gate de calidad:** SEO Score ≥50 para publicar. 15 checks ponderados (keyword en título, longitud, links internos, FAQ schema, imágenes con alt, excerpt, traducciones, etc.)
 - **Schema.org implementados:** Product (vehículos), Organization (dealers), Article (editorial), FAQ (artículos), BreadcrumbList, WebSite → rich snippets en Google
+
+### 3.4.1 Contenido de inteligencia de mercado (guías compra/venta)
+
+**Concepto:** Artículos y guías que posicionan a Tracciona como asesor de confianza del sector, respaldados con datos reales de la plataforma. Cada tema tiene versión comprador y versión vendedor (simetría = nadie se siente atacado).
+
+**Framing:** Nunca "trucos para regatear". Siempre "inteligencia de mercado para tomar mejores decisiones".
+
+| Para compradores                                         | Para vendedores                                               |
+| -------------------------------------------------------- | ------------------------------------------------------------- |
+| Cómo evaluar si un precio es justo (con datos Tracciona) | Cómo fijar el precio correcto para vender rápido              |
+| Qué preguntar antes de comprar una cisterna usada        | Las 5 fotos que triplican tus contactos                       |
+| Checklist de inspección: 20 puntos que revisar           | Por qué responder en <2h te da un 40% más de leads            |
+| Cuándo es mejor comprar (estacionalidad real)            | Cuándo es mejor publicar (estacionalidad real)                |
+| Financiación vs pago al contado: qué conviene            | Cómo negociar sin perder margen                               |
+| Guía de transporte: costes y opciones por zona           | Cómo preparar un vehículo para la venta (ITV, limpieza, docs) |
+
+**Diferencial clave:** Cada artículo se respalda con datos propios — "Según 500 transacciones en Tracciona, las cisternas con ITV al día se venden un 25% más rápido". Ningún competidor puede hacer esto.
+
+**Monetización:** Tips básicos = gratis (SEO). Guías avanzadas + datos de mercado = Pro (paywall suave). Informes sectoriales = venta directa a empresas.
+
+**SEO:** Palabras clave como "cómo comprar camión usado", "precio justo grúa autocargante" no tienen contenido de calidad en el sector. Oportunidad de dominar SERPs con contenido experto.
 
 ### 3.5 Google Ads (lado gasto)
 
