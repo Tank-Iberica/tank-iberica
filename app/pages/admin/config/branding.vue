@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAdminVerticalConfig } from '~/composables/admin/useAdminVerticalConfig'
+import type { LogoTextSettings } from '~/components/shared/LogoTextConfig.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -8,6 +9,14 @@ definePageMeta({
 
 const { config, loading, saving, error, saved, loadConfig, saveFields } = useAdminVerticalConfig()
 
+const DEFAULT_LOGO_TEXT: LogoTextSettings = {
+  font_family: 'Inter',
+  font_weight: '700',
+  letter_spacing: '0em',
+  italic: false,
+  uppercase: false,
+}
+
 const name = ref<Record<string, string>>({ es: '', en: '' })
 const tagline = ref<Record<string, string>>({ es: '', en: '' })
 const metaDescription = ref<Record<string, string>>({ es: '', en: '' })
@@ -15,6 +24,7 @@ const logoUrl = ref('')
 const logoDarkUrl = ref('')
 const faviconUrl = ref('')
 const ogImageUrl = ref('')
+const logoTextConfig = ref<LogoTextSettings>({ ...DEFAULT_LOGO_TEXT })
 const fontPreset = ref('default')
 const theme = ref<Record<string, string>>({
   primary: '#23424A',
@@ -62,6 +72,10 @@ function populateForm() {
   logoDarkUrl.value = config.value.logo_dark_url || ''
   faviconUrl.value = config.value.favicon_url || ''
   ogImageUrl.value = config.value.og_image_url || ''
+  logoTextConfig.value = {
+    ...DEFAULT_LOGO_TEXT,
+    ...((config.value.logo_text_config as Partial<LogoTextSettings>) || {}),
+  }
   fontPreset.value = config.value.font_preset || 'default'
   theme.value = {
     primary: '#23424A',
@@ -94,6 +108,7 @@ async function handleSave() {
     logo_dark_url: logoDarkUrl.value || null,
     favicon_url: faviconUrl.value || null,
     og_image_url: ogImageUrl.value || null,
+    logo_text_config: logoTextConfig.value,
     font_preset: fontPreset.value,
     theme: theme.value,
   }
@@ -129,6 +144,8 @@ async function handleSave() {
         v-model:logo-dark-url="logoDarkUrl"
         v-model:favicon-url="faviconUrl"
         v-model:og-image-url="ogImageUrl"
+        v-model:logo-text-config="logoTextConfig"
+        :vertical-name="name.es || name.en"
       />
       <BrandingTypographyCard v-model:font-preset="fontPreset" :font-presets="fontPresets" />
       <BrandingColorsCard v-model:theme="theme" :color-labels="themeColorLabels" />

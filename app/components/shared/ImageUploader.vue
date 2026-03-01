@@ -8,6 +8,8 @@ const props = defineProps<{
   recommendations: string[]
   /** CSS class applied to the preview box: logo-preview | logo-dark-preview | favicon-preview | cover-preview | og-preview */
   previewClass?: string
+  /** Show "Eliminar fondo" button after upload (uses Cloudinary e_background_removal) */
+  enableBgRemoval?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -17,6 +19,7 @@ const emit = defineEmits<{
 const { upload, uploading, progress, error: uploadError } = useCloudinaryUpload()
 const localError = ref<string | null>(null)
 const fileInput = ref<HTMLInputElement | null>(null)
+const bgRemoving = ref(false)
 
 const currentUrl = computed(() => props.modelValue)
 
@@ -37,6 +40,30 @@ async function onFileChange(e: Event) {
 function removeImage() {
   emit('update:modelValue', '')
 }
+
+/**
+ * Apply Cloudinary e_background_removal transformation.
+ * Inserts the transformation after /upload/ in the URL.
+ * Requires the Background Removal add-on enabled on the Cloudinary account.
+ */
+async function removeBg() {
+  if (!currentUrl.value) return
+  bgRemoving.value = true
+  localError.value = null
+
+  try {
+    const transformedUrl = currentUrl.value.replace('/upload/', '/upload/e_background_removal/')
+    // Pre-fetch so Cloudinary processes the transformation before we save
+    const res = await fetch(transformedUrl, { method: 'HEAD' })
+    if (!res.ok)
+      throw new Error('La eliminación de fondo no está disponible en tu cuenta de Cloudinary')
+    emit('update:modelValue', transformedUrl)
+  } catch (err: unknown) {
+    localError.value = err instanceof Error ? err.message : 'Error eliminando fondo'
+  } finally {
+    bgRemoving.value = false
+  }
+}
 </script>
 
 <template>
@@ -53,7 +80,18 @@ function removeImage() {
       <div class="preview-box" :class="previewClass">
         <img :src="currentUrl" :alt="label" class="preview-img" >
       </div>
-      <button type="button" class="btn-remove" @click="removeImage">Eliminar imagen</button>
+      <div class="preview-actions">
+        <button
+          v-if="enableBgRemoval"
+          type="button"
+          class="btn-bg-removal"
+          :disabled="bgRemoving"
+          @click="removeBg"
+        >
+          {{ bgRemoving ? 'Procesando...' : '✦ Eliminar fondo' }}
+        </button>
+        <button type="button" class="btn-remove" @click="removeImage">Eliminar imagen</button>
+      </div>
     </div>
 
     <!-- Upload zone -->
@@ -177,8 +215,41 @@ function removeImage() {
   border-radius: 6px;
 }
 
+.preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-bg-removal {
+  background: none;
+  border: 1px solid #7c3aed;
+  color: #7c3aed;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  min-height: 32px;
+}
+
+.btn-bg-removal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .btn-bg-removal:not(:disabled):hover {
+    background: #7c3aed;
+    color: white;
+  }
+}
+
 .btn-remove {
-  align-self: flex-start;
   background: none;
   border: none;
   color: #ef4444;

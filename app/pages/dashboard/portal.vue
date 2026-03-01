@@ -18,6 +18,7 @@ const {
   logoUrl,
   faviconUrl,
   coverImageUrl,
+  logoTextConfig,
   themePrimary,
   themeAccent,
   bio,
@@ -132,6 +133,7 @@ const coverRecommendations = [
           folder="tracciona/dealers/logos"
           preview-class="logo-preview"
           :recommendations="logoRecommendations"
+          enable-bg-removal
         />
 
         <!-- Favicon upload -->
@@ -150,6 +152,18 @@ const coverRecommendations = [
           folder="tracciona/dealers/covers"
           preview-class="cover-preview"
           :recommendations="coverRecommendations"
+        />
+      </section>
+
+      <!-- ── 1b. NOMBRE COMO LOGO ──────────────────────────── -->
+      <section class="form-section">
+        <h2>Nombre como logo</h2>
+        <p class="section-desc">
+          Tipografía que se usa cuando no hay logo — también visible como alternativa accesible
+        </p>
+        <SharedLogoTextConfig
+          v-model="logoTextConfig"
+          :preview-name="companyName.es || companyName.en || ''"
         />
       </section>
 

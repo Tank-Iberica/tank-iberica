@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import type { LogoTextSettings } from '~/components/shared/LogoTextConfig.vue'
+
 defineProps<{
   logoUrl: string
   logoDarkUrl: string
   faviconUrl: string
   ogImageUrl: string
+  logoTextConfig: LogoTextSettings
+  verticalName: string
 }>()
 
 const emit = defineEmits<{
@@ -11,6 +15,7 @@ const emit = defineEmits<{
     e: 'update:logoUrl' | 'update:logoDarkUrl' | 'update:faviconUrl' | 'update:ogImageUrl',
     value: string,
   ): void
+  (e: 'update:logoTextConfig', value: LogoTextSettings): void
 }>()
 
 const logoRecommendations = [
@@ -50,6 +55,7 @@ const ogRecommendations = [
         folder="tracciona/vertical/logos"
         preview-class="logo-preview"
         :recommendations="logoRecommendations"
+        enable-bg-removal
         @update:model-value="emit('update:logoUrl', $event)"
       />
 
@@ -59,6 +65,7 @@ const ogRecommendations = [
         folder="tracciona/vertical/logos"
         preview-class="logo-dark-preview"
         :recommendations="logoDarkRecommendations"
+        enable-bg-removal
         @update:model-value="emit('update:logoDarkUrl', $event)"
       />
 
@@ -78,6 +85,19 @@ const ogRecommendations = [
         preview-class="og-preview"
         :recommendations="ogRecommendations"
         @update:model-value="emit('update:ogImageUrl', $event)"
+      />
+    </div>
+
+    <!-- Logo text fallback -->
+    <div class="logo-text-section">
+      <h4 class="subsection-title">Nombre de la vertical como logo</h4>
+      <p class="subsection-desc">
+        Tipografía usada cuando no hay logo, y como fallback accesible en todo el sitio
+      </p>
+      <SharedLogoTextConfig
+        :model-value="logoTextConfig"
+        :preview-name="verticalName"
+        @update:model-value="emit('update:logoTextConfig', $event)"
       />
     </div>
   </div>
@@ -108,11 +128,30 @@ const ogRecommendations = [
   display: grid;
   grid-template-columns: 1fr;
   gap: 28px;
+  margin-bottom: 32px;
 }
 
 @media (min-width: 768px) {
   .uploaders-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+.logo-text-section {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 24px;
+}
+
+.subsection-title {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.subsection-desc {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+  color: #6b7280;
 }
 </style>

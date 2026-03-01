@@ -3,9 +3,18 @@
  * Full self-service portal configuration for dealers.
  * Mirrors useAdminDealerConfig but scoped to the authenticated dealer's own record.
  */
+import type { LogoTextSettings } from '~/components/shared/LogoTextConfig.vue'
 
 export type PhoneMode = 'visible' | 'click_to_reveal' | 'form_only'
 export type CatalogSortOption = 'newest' | 'price_asc' | 'price_desc' | 'featured_first'
+
+const DEFAULT_LOGO_TEXT: LogoTextSettings = {
+  font_family: 'Inter',
+  font_weight: '700',
+  letter_spacing: '0em',
+  italic: false,
+  uppercase: false,
+}
 
 export interface DealerCertification {
   id: string
@@ -31,6 +40,7 @@ export function useDealerPortal() {
   const logoUrl = ref('')
   const faviconUrl = ref('')
   const coverImageUrl = ref('')
+  const logoTextConfig = ref<LogoTextSettings>({ ...DEFAULT_LOGO_TEXT })
 
   // Theme
   const themePrimary = ref('#23424A')
@@ -98,6 +108,8 @@ export function useDealerPortal() {
     logoUrl.value = (data.logo_url as string) || ''
     faviconUrl.value = (data.favicon_url as string) || ''
     coverImageUrl.value = (data.cover_image_url as string) || ''
+    const ltc = (data.logo_text_config as Partial<LogoTextSettings>) || {}
+    logoTextConfig.value = { ...DEFAULT_LOGO_TEXT, ...ltc }
 
     // Theme
     const th = (data.theme as Record<string, string>) || {}
@@ -219,6 +231,7 @@ export function useDealerPortal() {
       logo_url: logoUrl.value || null,
       favicon_url: faviconUrl.value || null,
       cover_image_url: coverImageUrl.value || null,
+      logo_text_config: logoTextConfig.value,
       theme: { primary: themePrimary.value, accent: themeAccent.value },
       bio: bio.value,
       phone: phone.value || null,
@@ -283,6 +296,7 @@ export function useDealerPortal() {
     logoUrl,
     faviconUrl,
     coverImageUrl,
+    logoTextConfig,
     // Theme
     themePrimary,
     themeAccent,
