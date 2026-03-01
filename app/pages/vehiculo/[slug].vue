@@ -111,6 +111,7 @@
 
 <script setup lang="ts">
 import { useVehicleDetail } from '~/composables/useVehicleDetail'
+import { useAnalyticsTracking } from '~/composables/useAnalyticsTracking'
 
 const route = useRoute()
 const { locale, t } = useI18n()
@@ -145,10 +146,22 @@ const {
 
 const showChatModal = ref(false)
 
-// Track ficha view on client-side mount
+// Duration tracking
+const { trackVehicleDuration } = useAnalyticsTracking()
+const pageStartedAt = ref(0)
+
+// Track ficha view + record start time on client-side mount
 onMounted(() => {
+  pageStartedAt.value = Date.now()
   if (vehicle.value) {
     trackFichaView(vehicle.value.id, vehicleDetail.value?.dealer_id || '')
+  }
+})
+
+// Track duration when leaving the page
+onBeforeUnmount(() => {
+  if (vehicle.value && pageStartedAt.value > 0) {
+    trackVehicleDuration(vehicle.value.id, pageStartedAt.value)
   }
 })
 

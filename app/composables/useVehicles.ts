@@ -220,6 +220,16 @@ export function useVehicles() {
       vehicles.value = (result.data as Vehicle[]) || []
       total.value = result.count || 0
       hasMore.value = vehicles.value.length < total.value
+
+      // Log zero-result searches to surface unmet demand
+      if (import.meta.client && total.value === 0) {
+        void supabase.from('search_logs').insert({
+          query: (filters as Record<string, unknown>).q ?? null,
+          filters: filters as never,
+          results_count: 0,
+          session_id: sessionStorage.getItem('analytics_session_id') ?? null,
+        } as never)
+      }
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching vehicles'
       vehicles.value = []

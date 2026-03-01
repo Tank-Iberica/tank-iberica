@@ -24,6 +24,7 @@ const { userId } = useAuth()
 
 const step = ref(1)
 const soldViaTracciona = ref<boolean | null>(null)
+const salePrice = ref<number | null>(null)
 const selectedServices = ref<string[]>([])
 const submitting = ref(false)
 const error = ref<string | null>(null)
@@ -55,8 +56,12 @@ function close() {
   emit('update:modelValue', false)
 }
 
+const canProceedToStep2 = computed(
+  () => soldViaTracciona.value !== null && salePrice.value !== null && salePrice.value > 0,
+)
+
 function goToStep2() {
-  if (soldViaTracciona.value === null) return
+  if (!canProceedToStep2.value) return
   step.value = 2
 }
 
@@ -80,12 +85,14 @@ async function confirm() {
   error.value = null
 
   try {
-    // 1. Update vehicle status to sold and set sold_via_tracciona
+    // 1. Update vehicle status to sold, set sold_via_tracciona and real sale price
     const { error: updateError } = await supabase
       .from('vehicles')
       .update({
         status: 'sold',
         sold_via_tracciona: soldViaTracciona.value,
+        sold_price_cents: salePrice.value ? Math.round(salePrice.value * 100) : null,
+        sold_at: new Date().toISOString(),
       })
       .eq('id', props.vehicleId)
 
@@ -124,6 +131,7 @@ function done() {
 function resetState() {
   step.value = 1
   soldViaTracciona.value = null
+  salePrice.value = null
   selectedServices.value = []
   error.value = null
 }
@@ -154,6 +162,26 @@ watch(
             </div>
 
             <div class="question-section">
+              <label class="question-label" for="sold-modal-price">
+                {{ t('dashboard.sold.salePrice') }}
+              </label>
+              <div class="price-input-wrapper">
+                <span class="price-currency">€</span>
+                <input
+                  id="sold-modal-price"
+                  v-model.number="salePrice"
+                  type="number"
+                  min="1"
+                  step="100"
+                  class="price-input"
+                  autocomplete="off"
+                  :placeholder="t('dashboard.sold.salePricePlaceholder')"
+                >
+              </div>
+              <p class="price-incentive">{{ t('dashboard.sold.salePriceIncentive') }}</p>
+            </div>
+
+            <div class="question-section">
               <p class="question-label">{{ t('dashboard.sold.soldViaTracciona') }}</p>
               <div class="radio-group">
                 <label class="radio-option">
@@ -177,7 +205,7 @@ watch(
               </div>
             </div>
 
-            <button class="btn-primary" :disabled="soldViaTracciona === null" @click="goToStep2">
+            <button class="btn-primary" :disabled="!canProceedToStep2" @click="goToStep2">
               {{ t('common.continue') }}
             </button>
           </div>
@@ -332,6 +360,55 @@ watch(
   font-weight: 600;
   color: #1e293b;
   margin: 0;
+}
+
+.price-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 48px;
+}
+
+.price-input-wrapper:focus-within {
+  border-color: var(--color-primary, #23424a);
+}
+
+.price-currency {
+  padding: 0 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.price-input {
+  flex: 1;
+  border: none;
+  padding: 12px 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  background: transparent;
+  outline: none;
+  min-width: 0;
+}
+
+.price-input::placeholder {
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.price-incentive {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #16a34a;
+  font-style: italic;
 }
 
 .radio-group {

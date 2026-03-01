@@ -2513,6 +2513,9 @@
     "sold": {
       "title": "Marcar como vendido",
       "congratulations": "¡Enhorabuena por la venta!",
+      "salePrice": "¿A cuánto se vendió finalmente?",
+      "salePricePlaceholder": "Precio final de venta",
+      "salePriceIncentive": "Dándonos el precio real mejoramos las valoraciones de mercado para ti y para todos.",
       "soldViaTracciona": "¿Se vendió a través de Tracciona?",
       "yes": "Sí",
       "no": "No",

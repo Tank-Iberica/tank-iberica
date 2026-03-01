@@ -2513,6 +2513,9 @@
     "sold": {
       "title": "Mark as sold",
       "congratulations": "Congratulations on the sale!",
+      "salePrice": "What was the final sale price?",
+      "salePricePlaceholder": "Final sale price",
+      "salePriceIncentive": "Sharing the real price helps us improve market valuations for you and everyone.",
       "soldViaTracciona": "Was it sold through Tracciona?",
       "yes": "Yes",
       "no": "No",

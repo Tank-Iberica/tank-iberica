@@ -111,11 +111,28 @@ export function useAnalyticsTracking() {
     })
   }
 
+  /**
+   * Track how long a user spent on a vehicle detail page.
+   * Call on page unmount with the timestamp recorded on mount.
+   * Minimum 3s to filter accidental clicks / bounces.
+   */
+  function trackVehicleDuration(vehicleId: string, startedAt: number): void {
+    const durationSeconds = Math.round((Date.now() - startedAt) / 1000)
+    if (durationSeconds < 3) return
+    trackEvent({
+      event_type: 'vehicle_duration',
+      entity_type: 'vehicle',
+      entity_id: vehicleId,
+      metadata: { duration_seconds: durationSeconds },
+    })
+  }
+
   return {
     trackEvent,
     trackVehicleView,
     trackSearch,
     trackLeadSent,
     trackFavoriteAdded,
+    trackVehicleDuration,
   }
 }
