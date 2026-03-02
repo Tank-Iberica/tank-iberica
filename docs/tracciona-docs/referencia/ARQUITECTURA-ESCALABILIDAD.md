@@ -833,9 +833,9 @@ const THRESHOLDS = {
 
 | Documento                                           | Contenido                                                           |
 | --------------------------------------------------- | ------------------------------------------------------------------- |
-| `INSTRUCCIONES-MAESTRAS.md` sesión 33               | Implementación del sistema de monitorización y pipeline de imágenes |
-| `INSTRUCCIONES-MAESTRAS.md` sesión 35               | Auditoría integral: índices, RLS, CSP, dependencias                 |
-| `contexto-global.md` sección 3                      | Los 7 verticales y su taxonomía                                     |
+| `docs/legacy/INSTRUCCIONES-MAESTRAS.md` sesión 33   | Implementación del sistema de monitorización y pipeline de imágenes |
+| `docs/legacy/INSTRUCCIONES-MAESTRAS.md` sesión 35   | Auditoría integral: índices, RLS, CSP, dependencias                 |
+| `PROYECTO-CONTEXTO.md` §1                           | Los 7 verticales y su taxonomía                                     |
 | `nuxt.config.ts`                                    | routeRules (SWR), runtimeConfig, modules                            |
 | `supabase/migrations/00051_infra_monitoring.sql`    | Tablas de monitorización y clusters                                 |
 | `supabase/migrations/00053_performance_indexes.sql` | Índices estratégicos                                                |

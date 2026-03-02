@@ -31,7 +31,7 @@ if [ -z "${TEST_RESTORE_DB_URL:-}" ]; then
   echo "  3. Copy the connection string"
   echo "  4. Add as GitHub Secret: TEST_RESTORE_DB_URL"
   echo ""
-  echo "See INSTRUCCIONES-MAESTRAS.md Session 55 prerequisites for details."
+  echo "See BACKLOG.md item R2 for details."
   exit 0
 fi
 

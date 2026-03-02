@@ -3,7 +3,7 @@ Trabaja en la base de datos de Tracciona (Supabase PostgreSQL).
 **ANTES de hacer cambios:**
 
 1. Lee el schema actual: revisa las últimas migraciones en supabase/migrations/
-2. Consulta contexto-global.md para ver migraciones recientes
+2. Consulta PROYECTO-CONTEXTO.md para ver migraciones recientes
 3. La próxima migración debe ser numerada incrementalmente (00058, 00059...)
 
 **Reglas Supabase:**

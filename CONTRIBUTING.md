@@ -122,6 +122,6 @@ npm run build       # Must compile without errors
 
 ## Key Documentation
 
-- `docs/tracciona-docs/contexto-global.md` — Full project vision
-- `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Session-based implementation guide
+- `docs/PROYECTO-CONTEXTO.md` — Full project vision and architecture
+- `docs/tracciona-docs/BACKLOG.md` — Technical backlog (planned improvements)
 - `CLAUDE.md` — AI assistant instructions and project conventions

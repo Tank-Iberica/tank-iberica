@@ -151,7 +151,7 @@ El proyecto se ejecuta por **sesiones numeradas** definidas en `docs/tracciona-d
 | 34, 34b, 35 | Auditoría seguridad: auth endpoints, RLS hardening, CSP, DOMPurify, índices BD                        | ✅ Ejecutadas |
 | **36**      | Gaps residuales: 3 índices faltantes, cache CDN, auth endpoints restantes, docs estado real           | 📋 Pendiente  |
 | **37**      | Seguridad CI: Semgrep CE + Snyk + tests automatizados + safeError + security.txt                      | 📋 Pendiente  |
-| **38**      | Claridad: README-PROYECTO.md (single source of truth) + CONTRIBUTING.md + convenciones                | 📋 Pendiente  |
+| **38**      | Claridad: README.md (single source of truth) + CONTRIBUTING.md + convenciones                         | 📋 Pendiente  |
 | **39**      | UX: accesibilidad Lighthouse, code-splitting <500KB, formularios, Core Web Vitals, PWA offline        | 📋 Pendiente  |
 | **40**      | Monetización: trial 14d, dunning, métricas MRR/canal, API valoración, widget embebible, lead tracking | 📋 Pendiente  |
 | **41**      | Arquitectura: server/services/, diagrama técnico, umbrales alertas, extensibilidad, rate limit docs   | 📋 Pendiente  |

@@ -418,7 +418,7 @@ Este plan no es un ejercicio burocrático. Nace de una realidad concreta: dos he
 
 ### 10.1 Checklist trimestral
 
-- [ ] **Single source of truth:** `README-PROYECTO.md` actualizado y refleja el estado real.
+- [ ] **Single source of truth:** `README.md` actualizado y refleja el estado real.
 - [ ] **INSTRUCCIONES-MAESTRAS.md:** ¿Las sesiones pendientes siguen siendo relevantes? ¿Hay que añadir nuevas?
 - [ ] **CLAUDE.md:** Instrucciones para Claude Code siguen siendo correctas.
 - [ ] **ESTADO-REAL-PRODUCTO.md:** Generado con script y refleja código actual.

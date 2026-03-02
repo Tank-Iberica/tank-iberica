@@ -2,14 +2,6 @@
 
 > **TradeBase** es la plataforma de software que genera 11 marketplaces B2B verticales. **Tracciona** es la primera vertical en producción: compra, venta y subastas de vehículos industriales.
 
-| Fuente de verdad | Documento                                                                                        |
-| ---------------- | ------------------------------------------------------------------------------------------------ |
-| Estado real      | [`STATUS.md`](STATUS.md)                                                                         |
-| Arquitectura     | [`docs/tracciona-docs/contexto-global.md`](docs/tracciona-docs/contexto-global.md)               |
-| Ejecución        | [`docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md`](docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md) |
-| Contribución     | [`CONTRIBUTING.md`](CONTRIBUTING.md)                                                             |
-| Instrucciones IA | [`CLAUDE.md`](CLAUDE.md)                                                                         |
-
 ## Qué es
 
 **TradeBase** es una plataforma SaaS que genera marketplaces B2B verticales sin código repetido:
@@ -72,17 +64,6 @@ tests/                # Vitest + Playwright
 docs/                 # Documentacion del proyecto
 ```
 
-## Documentacion
-
-| Documento                                                                                       | Contenido                      |
-| ----------------------------------------------------------------------------------------------- | ------------------------------ |
-| [`CLAUDE.md`](CLAUDE.md)                                                                        | Instrucciones para Claude Code |
-| [`INSTRUCCIONES-MAESTRAS.md`](docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md)                    | Sesiones de ejecucion          |
-| [`ESTADO-REAL-PRODUCTO.md`](docs/ESTADO-REAL-PRODUCTO.md)                                       | Estado real de cada modulo     |
-| [`contexto-global.md`](docs/tracciona-docs/contexto-global.md)                                  | Mapa del proyecto              |
-| [`INVENTARIO-ENDPOINTS.md`](docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)             | Endpoints con auth y proposito |
-| [`ARQUITECTURA-ESCALABILIDAD.md`](docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md) | Arquitectura multi-cluster     |
-
 ## Comandos
 
 | Comando                                                                                   | Que hace                 |
@@ -95,6 +76,53 @@ docs/                 # Documentacion del proyecto
 | `npx playwright test`                                                                     | Tests E2E                |
 | `npx supabase db push`                                                                    | Aplicar migraciones      |
 | `npx supabase gen types typescript --project-id gmnrfuzekbwyzkgsaftv > types/supabase.ts` | Regenerar tipos BD       |
+
+## Documentacion
+
+### Fuentes de verdad (SSOT)
+
+| Que                         | Donde                                                              |
+| --------------------------- | ------------------------------------------------------------------ |
+| Estado actual               | [`STATUS.md`](STATUS.md)                                           |
+| Vision y arquitectura       | [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md)           |
+| Estrategia de negocio       | [`docs/ESTRATEGIA-NEGOCIO.md`](docs/ESTRATEGIA-NEGOCIO.md)         |
+| Ideas pendientes            | [`docs/IDEAS-A-REVISAR.md`](docs/IDEAS-A-REVISAR.md)               |
+| Backlog tecnico             | [`docs/tracciona-docs/BACKLOG.md`](docs/tracciona-docs/BACKLOG.md) |
+| Instrucciones para IA       | [`CLAUDE.md`](CLAUDE.md)                                           |
+| Contribucion y convenciones | [`CONTRIBUTING.md`](CONTRIBUTING.md)                               |
+
+### Documentacion tecnica
+
+| Documento                                                                                       | Que contiene                                       |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| [`INVENTARIO-ENDPOINTS.md`](docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)             | Todos los endpoints con auth y proposito           |
+| [`ARQUITECTURA-ESCALABILIDAD.md`](docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md) | Diseno multi-cluster, costes, decisiones           |
+| [`FLUJOS-OPERATIVOS.md`](docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md)                   | Diagramas ASCII de flujos principales              |
+| [`ERD.md`](docs/tracciona-docs/referencia/ERD.md)                                               | Diagrama entidad-relacion (Mermaid)                |
+| `docs/tracciona-docs/referencia/`                                                               | Seguridad, WAF, cron jobs, disaster recovery, etc. |
+| `docs/tracciona-docs/anexos/`                                                                   | Anexos A-Y: especificaciones por modulo            |
+
+### Legal
+
+| Documento                                       | Contenido                             |
+| ----------------------------------------------- | ------------------------------------- |
+| [`RAT-BORRADOR.md`](docs/legal/RAT-BORRADOR.md) | Registro Actividades Tratamiento GDPR |
+
+### Auditorias
+
+| Documento                                                                        | Contenido                                |
+| -------------------------------------------------------------------------------- | ---------------------------------------- |
+| [`AUDITORIA-26-FEBRERO.md`](docs/auditorias/AUDITORIA-26-FEBRERO.md)             | Auditoria mas reciente (12 dimensiones)  |
+| [`CHECKLIST-POST-SESIONES.md`](docs/auditorias/CHECKLIST-POST-SESIONES.md)       | Pendientes accionables                   |
+| [`RECOMENDACIONES-100-PUNTOS.md`](docs/auditorias/RECOMENDACIONES-100-PUNTOS.md) | 100 recomendaciones priorizadas          |
+| [`ISSUES-AUDITORIA.md`](docs/auditorias/ISSUES-AUDITORIA.md)                     | Issues tecnicos con prioridad            |
+| `docs/auditorias/externa/`                                                       | Auditoria externa profunda (25 feb 2026) |
+
+### Historico
+
+| Carpeta        | Contenido                                            |
+| -------------- | ---------------------------------------------------- |
+| `docs/legacy/` | 30+ documentos obsoletos o superseded (no modificar) |
 
 ## Contribuir
 

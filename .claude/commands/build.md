@@ -3,10 +3,10 @@ Implementa la siguiente feature en Tracciona.
 **ANTES de escribir código:**
 
 1. Lee CLAUDE.md
-2. Lee docs/tracciona-docs/contexto-global.md
-3. Busca en INSTRUCCIONES-MAESTRAS.md si ya hay una sesión que cubra esto
+2. Lee docs/PROYECTO-CONTEXTO.md
+3. Busca en BACKLOG.md si ya hay un item que cubra esto
 
-**Stack:** Nuxt 3 + TypeScript + Supabase (RLS) + Tailwind (tokens.css) + Cloudflare Pages
+**Stack:** Nuxt 3 + TypeScript + Supabase (RLS) + CSS custom (tokens.css) + Cloudflare Pages
 
 **Reglas obligatorias:**
 

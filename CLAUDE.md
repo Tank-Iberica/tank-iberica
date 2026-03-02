@@ -155,18 +155,16 @@ Toda la documentación activa está en `docs/tracciona-docs/`.
 **Si necesitas entender el proyecto:**
 
 1. Lee `docs/PROYECTO-CONTEXTO.md` — **Documento maestro.** Visión TradeBase, modelo de negocio, arquitectura, decisiones tomadas y criterios para tomar decisiones de código. Leer SIEMPRE antes de cualquier tarea.
-2. Lee `docs/tracciona-docs/README.md` — Estructura de la documentación y reglas de ejecución
+2. Lee `README.md` — Stack, estructura del proyecto, índice completo de documentación
 
-**Si necesitas ejecutar el proyecto:**
+**Si necesitas ver el backlog técnico:**
 
-- Lee `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Define las sesiones de trabajo. Sesiones 0-64 completadas. El usuario puede pedir "ejecuta la sesión N" para re-ejecutar o verificar cualquier sesión.
-- Consulta los anexos en `docs/tracciona-docs/anexos/` cuando una sesión los referencia.
-
-**Regla principal:** Ejecutar solo lo que dicen las INSTRUCCIONES-MAESTRAS. Los anexos son REFERENCIA, no tareas independientes.
+- Lee `docs/tracciona-docs/BACKLOG.md` — Mejoras planificadas no ejecutadas (seguridad, resiliencia, arquitectura, SEO, etc.)
+- Sesiones históricas (1-64, ya ejecutadas): `docs/legacy/INSTRUCCIONES-MAESTRAS.md` (solo referencia)
+- Anexos en `docs/tracciona-docs/anexos/` son REFERENCIA, no tareas independientes.
 
 **Reglas críticas:**
 
-- LEE los archivos de la sesión ANTES de escribir código. Relee las reglas del inicio de INSTRUCCIONES-MAESTRAS.
 - Si no sabes cómo implementar algo, PREGUNTA al usuario. No improvises.
 - Si necesitas dashboards web (Supabase, Stripe, Cloudflare) → pregunta al usuario.
 - **NUNCA hacer commit sin que el usuario lo pida explícitamente.** Ni siquiera commits "pequeños" o "lógicos".
@@ -205,6 +203,36 @@ Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de cód
 - `autocomplete` en todos los inputs de formulario
 - Validación amable: no castigar, guiar al usuario
 - Interacciones: nunca depender solo de `:hover` — siempre alternativa touch/focus
+
+## Principios de diseño y construcción
+
+### Accesibilidad visual
+
+- **Modos de color:** La web se construye soportando 3 modos (claro/oscuro/alto contraste). Todos los colores deben funcionar en los 3. Usar CSS custom properties (`--color-*`, `--bg-*`, `--text-*`) que cambian por modo.
+- **Tamaño de fuente ajustable:** El usuario puede agrandar o empequeñecer la fuente desde el navegador. Usar `rem` (no `px`), base 16px. Nunca fijar tamaños que rompan con zoom.
+
+### Escalabilidad internacional
+
+- **Expansión de idiomas:** Hoy ES + EN. Mañana FR, DE, NL, etc. Todos los textos visibles → `$t('key')`. Datos de BD → `localizedField(jsonField, locale)`. Nunca hardcodear frases.
+- **Localizaciones múltiples:** País, provincia, moneda, formato de fecha → todo de BD o config. Que abrir una nueva vertical no implique tocar código UI.
+
+### Reutilización y migración
+
+- **Zero hardcoding:** Categorías, subcategorías, filtros, atributos, acciones → en BD. Agregar uno = INSERT, no ALTER código.
+- **Datos extensibles:** Usar JSONB para campos multi-idioma/multi-valor que crecerán. Permite N idiomas sin migrar columnas.
+- **Migración fluida:** Cuando una nueva vertical (ej: maquinaria) use este codebase, debe ser clonación + `vertical_config`. Cero cambios de código.
+
+### Dispositivos y rendimiento
+
+- **Mobile/tablet first:** La mayoría de usuarios navegan en móvil/tablet. Diseña base para 360px. Desktop es mejora, no base.
+- **Touch-friendly:** Botones ≥ 44px, spacing generoso, sin hover-only interacciones, scroll horizontal evitado.
+
+### Filosofía de construcción
+
+- **Simplicidad:** Menos código, más claridad. No abstracciones prematuras. Una característica = lo mínimo viable bien.
+- **Elegancia:** La solución obvia pero refinada. No trucos, no complejidad sin propósito. Código que otros entienden al primer vistazo.
+- **Pragmatismo:** Perfecto es enemigo de lanzado. Mejor imperfecto hoy que perfecto nunca. Deuda técnica se paga después, si hace falta.
+- **Anticipar problemas:** Cuando diseñes una feature, pregúntate: ¿qué puede salir mal? ¿Dónde se atascará el usuario? Resuelve eso ANTES del lanzamiento, no después. La mejor UX es la que nunca da problemas.
 
 ## Decisiones estratégicas (25 Feb 2026)
 

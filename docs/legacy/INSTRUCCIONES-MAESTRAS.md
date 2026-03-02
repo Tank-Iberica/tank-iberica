@@ -1,3 +1,6 @@
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad.
+> Sesiones 1-64 ya ejecutadas. Backlog futuro extraído a `docs/tracciona-docs/BACKLOG.md`.
+
 # INSTRUCCIONES MAESTRAS DE EJECUCIÓN
 
 > **PARA CLAUDE CODE:** Este archivo define el orden exacto de ejecución, qué archivos leer en cada paso, y qué crear. El usuario te indicará "ejecuta la sesión N" y tú lees esta sección.

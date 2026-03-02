@@ -1,10 +1,10 @@
 Actúa como arquitecto senior de Tracciona (Nuxt 3 + Supabase + Cloudflare).
 
-Lee CLAUDE.md y docs/tracciona-docs/contexto-global.md para entender el proyecto.
+Lee CLAUDE.md y docs/PROYECTO-CONTEXTO.md para entender el proyecto.
 
 Analiza la feature que te pido y genera un plan:
 
-1. **Sesiones relacionadas**: ¿Hay alguna sesión en INSTRUCCIONES-MAESTRAS.md que ya cubra esto?
+1. **Backlog relacionado**: ¿Hay algún item en BACKLOG.md que ya cubra esto?
 2. **Schema BD**: ¿Necesita migración SQL? ¿Qué tablas, columnas, RLS policies?
 3. **Server routes**: ¿Qué endpoints en server/api/ crear o modificar?
 4. **Composables**: ¿Qué composables en app/composables/ necesitas?

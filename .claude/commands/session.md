@@ -1,23 +1,23 @@
-Ejecuta una sesión de INSTRUCCIONES-MAESTRAS.md.
+Ejecuta un item del backlog técnico de Tracciona.
 
 **Procedimiento:**
 
-1. Lee docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md
-2. Busca "## SESIÓN $ARGUMENTS"
-3. Lee la sección "Leer" → abre esos archivos
-4. Ejecuta la sección "Hacer" parte por parte, en orden
-5. Después de cada parte, haz commit con mensaje descriptivo
-6. Al terminar TODA la sesión, ejecuta:
+1. Lee docs/tracciona-docs/BACKLOG.md
+2. Busca el item "$ARGUMENTS" (ej: "S1", "A2", "SEO1")
+3. Lee los archivos relacionados del proyecto para entender el estado actual
+4. Planifica la implementación basándote en el objetivo y entregables del item
+5. Ejecuta parte por parte, en orden
+6. Al terminar, ejecuta:
    - `npm run build` (debe compilar sin errores)
-   - Verifica los "Tests mínimos" si la sesión los tiene
+   - Tests relevantes si los hay
 7. Reporta: qué se hizo, qué archivos se crearon/modificaron, si hubo problemas
+8. Elimina el item completado del BACKLOG.md
 
 **Reglas:**
 
-- Sigue EXACTAMENTE lo que dice la sesión. No improvises.
+- Sigue el objetivo del item. Lee el código actual antes de implementar.
 - Si algo no está claro, PREGUNTA antes de actuar.
-- Si un archivo que debes leer no existe, avísame.
+- Si un archivo que necesitas no existe, avísame.
 - Usa context7 para verificar APIs actualizadas.
-- Usa Sequential Thinking si encuentras un problema complejo.
 
-Sesión a ejecutar: $ARGUMENTS
+Item del backlog a ejecutar: $ARGUMENTS
