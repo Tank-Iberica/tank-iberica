@@ -9,18 +9,18 @@
  */
 
 declare global {
-  interface Window {
-    pbjs?: {
-      que: Array<() => void>
-      setConfig?: (config: Record<string, unknown>) => void
-      addAdUnits?: (units: unknown[]) => void
-      requestBids?: (config: Record<string, unknown>) => void
-      renderAd?: (doc: Document, adId: string) => void
-      removeAdUnit?: (code: string) => void
-      getBidResponses?: () => Record<string, unknown>
-      getHighestCpmBids?: (adUnitCode?: string) => unknown[]
-    }
-  }
+  var pbjs:
+    | {
+        que: Array<() => void>
+        setConfig?: (config: Record<string, unknown>) => void
+        addAdUnits?: (units: unknown[]) => void
+        requestBids?: (config: Record<string, unknown>) => void
+        renderAd?: (doc: Document, adId: string) => void
+        removeAdUnit?: (code: string) => void
+        getBidResponses?: () => Record<string, unknown>
+        getHighestCpmBids?: (adUnitCode?: string) => unknown[]
+      }
+    | undefined
 }
 
 export default defineNuxtPlugin(() => {
@@ -51,7 +51,7 @@ export default defineNuxtPlugin(() => {
     }
 
     try {
-      window.pbjs = window.pbjs || { que: [] }
+      globalThis.pbjs = globalThis.pbjs ?? { que: [] }
 
       prebidScript = document.createElement('script')
       prebidScript.async = true
@@ -80,7 +80,7 @@ export default defineNuxtPlugin(() => {
         prebidScript = null
       }
 
-      delete window.pbjs
+      globalThis.pbjs = undefined
 
       prebidLoaded = false
 

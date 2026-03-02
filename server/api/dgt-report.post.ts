@@ -53,15 +53,15 @@ function validateBody(body: DgtReportBody): string[] {
   }
 
   // matricula — required, must look like a Spanish plate
-  if (!body.matricula || typeof body.matricula !== 'string') {
-    errors.push('matricula is required')
-  } else {
+  if (body.matricula && typeof body.matricula === 'string') {
     const cleaned = body.matricula.trim()
     if (cleaned.length === 0) {
       errors.push('matricula cannot be empty')
     } else if (!MATRICULA_REGEX.test(cleaned)) {
       errors.push('matricula format is invalid')
     }
+  } else {
+    errors.push('matricula is required')
   }
 
   // provider — optional, must be one of the allowed values

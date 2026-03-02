@@ -238,7 +238,7 @@ export function useAdminComentarios() {
 
   // Get article display
   function getArticleTitle(comment: Comment): string {
-    if (comment.news && comment.news.title_es) {
+    if (comment.news?.title_es) {
       return comment.news.title_es
     }
     return 'Articulo eliminado'

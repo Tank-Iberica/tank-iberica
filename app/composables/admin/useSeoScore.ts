@@ -207,10 +207,7 @@ function evaluateKeywordsInUrl(slug: string, title: string): SeoCriterion {
   let score = 0
   let description = ''
 
-  if (!slug || titleKeywords.length === 0) {
-    score = 0
-    description = 'Sin slug o titulo para evaluar'
-  } else {
+  if (slug && titleKeywords.length > 0) {
     const matched = titleKeywords.filter((kw) =>
       slugParts.some((part) => part.includes(kw) || kw.includes(part)),
     )
@@ -226,6 +223,9 @@ function evaluateKeywordsInUrl(slug: string, title: string): SeoCriterion {
       score = 20
       description = 'La URL no contiene palabras clave del titulo. Usa un slug basado en el titulo'
     }
+  } else {
+    score = 0
+    description = 'Sin slug o titulo para evaluar'
   }
 
   return {
@@ -698,7 +698,7 @@ export function calculateMiniSeoScore(data: {
   total += 30
 
   // Image (20%)
-  if (data.image_url && data.image_url.startsWith('http')) score += 20
+  if (data.image_url?.startsWith('http')) score += 20
   total += 20
 
   // Hashtags (10%)

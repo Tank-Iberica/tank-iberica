@@ -20,9 +20,7 @@ interface TurnstileInstance {
 }
 
 declare global {
-  interface Window {
-    turnstile?: TurnstileInstance
-  }
+  var turnstile: TurnstileInstance | undefined
 }
 
 const props = withDefaults(defineProps<TurnstileWidgetProps>(), {
@@ -45,7 +43,7 @@ const resolvedSiteKey = computed(() => props.siteKey || (config.public.turnstile
 
 function loadScript(): Promise<void> {
   return new Promise((resolve, reject) => {
-    if (window.turnstile) {
+    if (globalThis.turnstile) {
       scriptLoaded.value = true
       resolve()
       return
@@ -79,12 +77,12 @@ function loadScript(): Promise<void> {
 }
 
 function renderWidget() {
-  if (!window.turnstile || !containerRef.value || !resolvedSiteKey.value) return
+  if (!globalThis.turnstile || !containerRef.value || !resolvedSiteKey.value) return
 
   // Clean up existing widget
   if (widgetId.value !== null) {
     try {
-      window.turnstile.remove(widgetId.value)
+      globalThis.turnstile.remove(widgetId.value)
     } catch {
       // Widget may already be removed
     }
@@ -106,12 +104,12 @@ function renderWidget() {
     params.action = props.action
   }
 
-  widgetId.value = window.turnstile.render(containerRef.value, params)
+  widgetId.value = globalThis.turnstile.render(containerRef.value, params)
 }
 
 function reset() {
-  if (window.turnstile && widgetId.value !== null) {
-    window.turnstile.reset(widgetId.value)
+  if (globalThis.turnstile && widgetId.value !== null) {
+    globalThis.turnstile.reset(widgetId.value)
   }
 }
 
@@ -126,9 +124,9 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  if (window.turnstile && widgetId.value !== null) {
+  if (globalThis.turnstile && widgetId.value !== null) {
     try {
-      window.turnstile.remove(widgetId.value)
+      globalThis.turnstile.remove(widgetId.value)
     } catch {
       // Widget may already be removed
     }

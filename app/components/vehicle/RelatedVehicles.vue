@@ -82,7 +82,7 @@ async function fetchRelated() {
     .order('created_at', { ascending: false })
     .limit(4)
 
-  if (data && data.length > 0) {
+  if (data != null && data.length > 0) {
     related.value = data as unknown as Vehicle[]
     return
   }

@@ -184,8 +184,9 @@ export function useInfraRecommendations() {
     if (matchingRules.length === 0) return null
 
     // Return the rule with the highest threshold (most severe match)
-    const bestMatch = matchingRules.reduce((best, current) =>
-      current.threshold > best.threshold ? current : best,
+    const bestMatch = matchingRules.reduce(
+      (best, current) => (current.threshold > best.threshold ? current : best),
+      matchingRules[0]!,
     )
 
     return {

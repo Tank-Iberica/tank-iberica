@@ -87,7 +87,7 @@ async function fetchPendingSubmissions() {
       const countHeader = response.headers.get('Content-Range')
       if (countHeader) {
         const match = countHeader.match(/\/(\d+)$/)
-        if (match && match[1]) {
+        if (match?.[1]) {
           pendingCount.value = Number.parseInt(match[1], 10)
         }
       }

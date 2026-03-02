@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
   const rateLimit = planLimits[plan] || 500
 
   // Generate new API key
-  const apiKey = `trk_${randomUUID().replace(/-/g, '')}`
+  const apiKey = `trk_${randomUUID().replaceAll('-', '')}`
 
   // Deactivate any existing keys for this email
   await supabase

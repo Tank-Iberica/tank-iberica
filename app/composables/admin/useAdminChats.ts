@@ -119,7 +119,7 @@ export function useAdminChats() {
         groups.push({ date: msgDate, messages: [] })
       }
 
-      const lastGroup = groups[groups.length - 1]
+      const lastGroup = groups.at(-1)
       if (lastGroup) {
         lastGroup.messages.push(msg)
       }

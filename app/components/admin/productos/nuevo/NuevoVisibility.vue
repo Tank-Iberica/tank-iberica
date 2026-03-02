@@ -122,8 +122,6 @@ const emit = defineEmits<{
   color: #6b7280;
 }
 .owner-fields {
-  margin-top: 12px;
-  padding-top: 12px;
   border-top: 1px dashed var(--color-warning);
   background: #fffbeb;
   margin: 12px -16px -12px;

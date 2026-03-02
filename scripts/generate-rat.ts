@@ -103,7 +103,7 @@ function parseSupabaseTypes(): TablePII[] {
 
       const isPII = PII_PATTERNS.some((p) => p.test(colName))
       if (isPII) {
-        piiCols.push({ col: colName, type: colType.replace(/\|/g, '/').trim() })
+        piiCols.push({ col: colName, type: colType.replaceAll('|', '/').trim() })
       }
     }
 

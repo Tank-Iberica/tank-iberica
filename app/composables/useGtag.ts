@@ -9,14 +9,14 @@
  * Type-safe gtag function (globally injected by gtag.js)
  */
 declare global {
-  interface Window {
-    gtag?: (
-      command: 'config' | 'event' | 'js' | 'set',
-      targetIdOrEventName: string | Date,
-      params?: Record<string, unknown>,
-    ) => void
-    dataLayer?: unknown[]
-  }
+  var gtag:
+    | ((
+        command: 'config' | 'event' | 'js' | 'set',
+        targetIdOrEventName: string | Date,
+        params?: Record<string, unknown>,
+      ) => void)
+    | undefined
+  var dataLayer: unknown[] | undefined
 }
 
 export function useGtag() {
@@ -30,7 +30,7 @@ export function useGtag() {
     if (import.meta.server) return false
     if (!config.public.googleAdsId) return false
     if (!hasConsent('marketing')) return false
-    return typeof window.gtag === 'function'
+    return typeof globalThis.gtag === 'function'
   }
 
   /**
@@ -41,7 +41,7 @@ export function useGtag() {
     if (!canTrack()) return
 
     try {
-      window.gtag!('event', eventName, params)
+      globalThis.gtag!('event', eventName, params)
     } catch (error) {
       if (import.meta.dev) console.warn('[gtag] Failed to track event:', eventName, error)
     }

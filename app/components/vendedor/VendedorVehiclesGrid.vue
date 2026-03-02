@@ -21,7 +21,7 @@ const { getImageUrl } = useImageUrl()
       >
         <div class="vehicle-card__image">
           <img
-            v-if="vehicle.images_json && vehicle.images_json.length > 0"
+            v-if="vehicle.images_json?.length > 0"
             :src="getImageUrl(String(vehicle.images_json[0]), 'thumb')"
             :alt="`${vehicle.brand} ${vehicle.model}`"
             loading="lazy"

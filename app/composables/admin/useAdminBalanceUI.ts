@@ -192,12 +192,12 @@ export function useAdminBalanceUI() {
 
   // ─── Fullscreen ──────────────────────────────────────────
   function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      balanceSection.value?.requestFullscreen()
-      isFullscreen.value = true
-    } else {
+    if (document.fullscreenElement) {
       document.exitFullscreen()
       isFullscreen.value = false
+    } else {
+      balanceSection.value?.requestFullscreen()
+      isFullscreen.value = true
     }
   }
 

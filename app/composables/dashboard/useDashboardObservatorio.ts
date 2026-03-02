@@ -302,8 +302,8 @@ export function useDashboardObservatorio() {
         (e) =>
           e.brand.toLowerCase().includes(q) ||
           e.model.toLowerCase().includes(q) ||
-          (e.location && e.location.toLowerCase().includes(q)) ||
-          (e.notes && e.notes.toLowerCase().includes(q)),
+          e.location?.toLowerCase().includes(q) ||
+          e.notes?.toLowerCase().includes(q),
       )
     }
 

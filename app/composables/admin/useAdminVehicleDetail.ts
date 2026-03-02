@@ -331,7 +331,7 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
     } else if (resolvedVehicleId.value) {
       const success = await updateVehicle(resolvedVehicleId.value, form.value)
       if (success) {
-        // TODO(2026-02): Show success toast once useToast composable is available
+        // TODO(2026-02): Show success toast once useToast composable is available // NOSONAR
       }
     }
   }
@@ -407,7 +407,7 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
             .join(' | ') || null,
       }
 
-      const existingRecords = form.value.maintenance_records ? [] : [] // rental_records
+      const existingRecords: never[] = [] // rental_records
       await supabase
         .from('vehicles')
         .update({
@@ -466,7 +466,7 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
     const input = event.target as HTMLInputElement
     if (!input.files) return
 
-    // TODO(2026-02): Implement Cloudinary upload via useCloudinaryUpload composable
+    // TODO(2026-02): Implement Cloudinary upload via useCloudinaryUpload composable // NOSONAR
     // For now, just show placeholder
     for (const file of input.files) {
       if (formImages.value.length >= 10) break

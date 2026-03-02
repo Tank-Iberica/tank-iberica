@@ -97,18 +97,17 @@ export function useGeoFallback() {
     }
   }
 
-  // Escalate the catalog to the next geo level and return the new filters
-  function escalateToNextLevel(): VehicleFilters | null {
+  // Escalate the catalog to the next geo level
+  function escalateToNextLevel(): void {
     const current = locationLevel.value
     const next = getNextLevel(current)
-    if (!next) return null
+    if (!next) return
 
     const country = userLocation.value?.country ?? 'ES'
     const province = userLocation.value?.province ?? null
     const region = userLocation.value?.region ?? null
 
     setLocationLevel(next, country, province, region)
-    return null
   }
 
   // Human-readable label for a level, injecting province/region names where relevant

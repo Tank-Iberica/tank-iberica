@@ -188,7 +188,7 @@ export function useAdminMetricsRevenue() {
 
     try {
       const rangeStart = monthStart(months[0]!)
-      const rangeEnd = monthEnd(months[months.length - 1]!)
+      const rangeEnd = monthEnd(months.at(-1)!)
 
       const { data } = await supabase
         .from('invoices')
@@ -232,7 +232,7 @@ export function useAdminMetricsRevenue() {
 
     try {
       const rangeStart = monthStart(months[0]!)
-      const rangeEnd = monthEnd(months[months.length - 1]!)
+      const rangeEnd = monthEnd(months.at(-1)!)
 
       const { data } = await supabase
         .from('contacts')

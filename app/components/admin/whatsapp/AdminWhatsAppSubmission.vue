@@ -144,7 +144,10 @@ const { t } = useI18n()
       </div>
 
       <!-- Image thumbnails -->
-      <div v-if="submission.image_urls && submission.image_urls.length > 0" class="detail-section">
+      <div
+        v-if="submission.image_urls != null && submission.image_urls.length > 0"
+        class="detail-section"
+      >
         <h4>{{ t('admin.whatsapp.images') }} ({{ submission.image_urls.length }})</h4>
         <div class="image-grid">
           <a

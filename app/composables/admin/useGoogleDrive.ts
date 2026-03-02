@@ -23,19 +23,19 @@ import type { FileNamingData } from '~/utils/fileNaming'
 
 // Google Identity Services types (loaded dynamically)
 declare global {
-  interface Window {
-    google?: {
-      accounts: {
-        oauth2: {
-          initTokenClient(config: {
-            client_id: string
-            scope: string
-            callback: (response: { access_token?: string; error?: string }) => void
-          }): { requestAccessToken(): void }
+  var google:
+    | {
+        accounts: {
+          oauth2: {
+            initTokenClient(config: {
+              client_id: string
+              scope: string
+              callback: (response: { access_token?: string; error?: string }) => void
+            }): { requestAccessToken(): void }
+          }
         }
       }
-    }
-  }
+    | undefined
 }
 
 export type DriveSection = 'Vehiculos' | 'Intermediacion'
@@ -67,7 +67,7 @@ export function useGoogleDrive() {
   // -------------------------------------------------------------------------
 
   async function loadGis(): Promise<void> {
-    if (window.google?.accounts?.oauth2) return
+    if (globalThis.google?.accounts?.oauth2) return
 
     return new Promise((resolve, reject) => {
       const script = document.createElement('script')
@@ -92,7 +92,7 @@ export function useGoogleDrive() {
       await loadGis()
 
       return new Promise((resolve) => {
-        const tokenClient = window.google!.accounts.oauth2.initTokenClient({
+        const tokenClient = globalThis.google!.accounts.oauth2.initTokenClient({
           client_id: clientId,
           scope: SCOPES,
           callback: (response) => {

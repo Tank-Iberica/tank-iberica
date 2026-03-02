@@ -42,17 +42,17 @@ export default defineNuxtPlugin(() => {
 
     try {
       // Initialize dataLayer
-      window.dataLayer = window.dataLayer || []
-      window.gtag = function gtag() {
+      globalThis.dataLayer = globalThis.dataLayer ?? []
+      globalThis.gtag = function gtag() {
         // eslint-disable-next-line prefer-rest-params
-        window.dataLayer!.push(arguments)
+        globalThis.dataLayer!.push(arguments)
       }
 
       // Set initial timestamp
-      window.gtag('js', new Date())
+      globalThis.gtag('js', new Date())
 
       // Configure Google Ads
-      window.gtag('config', adsId, {
+      globalThis.gtag('config', adsId, {
         send_page_view: true,
         anonymize_ip: true,
         cookie_flags: 'SameSite=None;Secure',
@@ -82,14 +82,14 @@ export default defineNuxtPlugin(() => {
 
     try {
       // Remove script tag
-      if (gtagScript && gtagScript.parentNode) {
+      if (gtagScript?.parentNode) {
         gtagScript.parentNode.removeChild(gtagScript)
         gtagScript = null
       }
 
       // Clear dataLayer and gtag function
-      delete window.dataLayer
-      delete window.gtag
+      globalThis.dataLayer = undefined
+      globalThis.gtag = undefined
 
       gtagLoaded = false
 

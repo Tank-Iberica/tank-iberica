@@ -175,7 +175,7 @@ if (!loading.value && !resolved.value && !isReserved.value) {
 const landingTitle = computed(() => {
   if (!landing.value) return ''
   if (locale.value === 'en' && landing.value.meta_title_en) return landing.value.meta_title_en
-  return landing.value.meta_title_es || landing.value.slug.replace(/-/g, ' ')
+  return landing.value.meta_title_es || landing.value.slug.replaceAll('-', ' ')
 })
 
 const landingDescription = computed(() => {

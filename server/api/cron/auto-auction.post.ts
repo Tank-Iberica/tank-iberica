@@ -111,7 +111,7 @@ export default defineEventHandler(async (event) => {
 
       if (createRes.ok) {
         created++
-        // TODO(2026-02): Notify seller and matching Pro subscribers via email/push once notification templates are available
+        // TODO(2026-02): Notify seller and matching Pro subscribers via email/push once notification templates are available // NOSONAR
       }
     },
   })

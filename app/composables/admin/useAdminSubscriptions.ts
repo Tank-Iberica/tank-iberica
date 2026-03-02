@@ -19,14 +19,15 @@ export interface SubscriptionFilters {
   search?: string
 }
 
-export const SUBSCRIPTION_PREFS: { key: keyof AdminSubscription; label: string; color: string }[] = [
-  { key: 'pref_web', label: 'Web', color: '#3b82f6' },
-  { key: 'pref_press', label: 'Prensa', color: '#8b5cf6' },
-  { key: 'pref_newsletter', label: 'Boletines', color: '#10b981' },
-  { key: 'pref_featured', label: 'Destacados', color: '#f59e0b' },
-  { key: 'pref_events', label: 'Eventos', color: '#ef4444' },
-  { key: 'pref_csr', label: 'RSC', color: '#06b6d4' },
-]
+export const SUBSCRIPTION_PREFS: { key: keyof AdminSubscription; label: string; color: string }[] =
+  [
+    { key: 'pref_web', label: 'Web', color: '#3b82f6' },
+    { key: 'pref_press', label: 'Prensa', color: '#8b5cf6' },
+    { key: 'pref_newsletter', label: 'Boletines', color: '#10b981' },
+    { key: 'pref_featured', label: 'Destacados', color: '#f59e0b' },
+    { key: 'pref_events', label: 'Eventos', color: '#ef4444' },
+    { key: 'pref_csr', label: 'RSC', color: '#06b6d4' },
+  ]
 
 const PAGE_SIZE = 100
 
@@ -62,12 +63,10 @@ export function useAdminSubscriptions() {
 
       subscriptions.value = (data as unknown as AdminSubscription[]) || []
       total.value = count || 0
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching subscriptions'
       subscriptions.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -80,23 +79,18 @@ export function useAdminSubscriptions() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('subscriptions')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('subscriptions').delete().eq('id', id)
 
       if (err) throw err
 
-      subscriptions.value = subscriptions.value.filter(s => s.id !== id)
+      subscriptions.value = subscriptions.value.filter((s) => s.id !== id)
       total.value--
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error deleting subscription'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -108,7 +102,7 @@ export function useAdminSubscriptions() {
     if (subList.length === 0) return
 
     const headers = ['Email', 'Web', 'Prensa', 'Boletines', 'Destacados', 'Eventos', 'RSC', 'Fecha']
-    const rows = subList.map(s => [
+    const rows = subList.map((s) => [
       s.email,
       s.pref_web ? 'Sí' : 'No',
       s.pref_press ? 'Sí' : 'No',
@@ -119,7 +113,10 @@ export function useAdminSubscriptions() {
       new Date(s.created_at).toLocaleDateString('es-ES'),
     ])
 
-    const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))].join('\n')
+    const csv = [
+      headers.join(','),
+      ...rows.map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(',')),
+    ].join('\n')
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')

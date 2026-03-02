@@ -33,9 +33,7 @@ export function useAdminConfig() {
     error.value = null
 
     try {
-      const { data, error: err } = await supabase
-        .from('config')
-        .select('key, value')
+      const { data, error: err } = await supabase.from('config').select('key, value')
 
       if (err) throw err
 
@@ -46,12 +44,10 @@ export function useAdminConfig() {
         result[item.key] = item.value
       }
       config.value = result
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching config'
       config.value = {}
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -73,12 +69,10 @@ export function useAdminConfig() {
       if (err && err.code !== 'PGRST116') throw err // PGRST116 = not found
 
       return (data as { value: T } | null)?.value || null
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching config'
       return null
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -91,9 +85,7 @@ export function useAdminConfig() {
     error.value = null
 
     try {
-      const { error: err } = await supabase
-        .from('config')
-        .upsert({ key, value } as never)
+      const { error: err } = await supabase.from('config').upsert({ key, value } as never)
 
       if (err) throw err
 
@@ -101,12 +93,10 @@ export function useAdminConfig() {
       config.value = { ...config.value, [key]: value }
 
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error saving config'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -218,9 +208,9 @@ export function useAdminConfig() {
 // Helper function to escape HTML (SSR-safe)
 function escapeHtml(text: string): string {
   return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;')
 }

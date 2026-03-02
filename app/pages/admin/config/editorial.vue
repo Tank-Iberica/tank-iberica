@@ -296,7 +296,6 @@ async function handleSave() {
 }
 
 .placeholder-description {
-  margin: 0;
   color: var(--text-disabled);
   font-size: 0.85rem;
   max-width: 400px;

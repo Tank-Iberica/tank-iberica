@@ -66,7 +66,7 @@ export function useVerticalConfig() {
     if (!import.meta.client) return
     const root = document.documentElement
     Object.entries(theme).forEach(([key, value]) => {
-      root.style.setProperty(`--${key.replace(/_/g, '-')}`, value)
+      root.style.setProperty(`--${key.replaceAll('_', '-')}`, value)
     })
   }
 

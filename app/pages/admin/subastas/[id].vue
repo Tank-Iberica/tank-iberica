@@ -169,7 +169,6 @@ function goBack() {
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   flex-wrap: wrap;
   gap: 12px;
   flex-direction: column;
@@ -203,8 +202,6 @@ function goBack() {
 
 .header-info {
   display: flex;
-  align-items: center;
-  gap: 12px;
   flex-wrap: wrap;
   flex-direction: column;
   gap: 6px;

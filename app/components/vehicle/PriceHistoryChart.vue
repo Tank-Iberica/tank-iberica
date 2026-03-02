@@ -147,7 +147,7 @@ const polylinePoints = computed(() => scaledPoints.value.map((p) => `${p.x},${p.
 const areaPoints = computed(() => {
   if (scaledPoints.value.length === 0) return ''
   const first = scaledPoints.value[0]
-  const last = scaledPoints.value[scaledPoints.value.length - 1]
+  const last = scaledPoints.value.at(-1)
   const bottom = PADDING_TOP + CHART_HEIGHT
   return `${first?.x ?? 0},${bottom} ${polylinePoints.value} ${last?.x ?? 0},${bottom}`
 })

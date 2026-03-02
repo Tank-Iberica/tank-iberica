@@ -95,8 +95,8 @@ export function useAdminEmails() {
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color:#23424A;">$1</a>')
       .replace(/^- (.*)$/gm, '<li>$1</li>')
       .replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`)
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/\n/g, '<br>')
+      .replaceAll('\n\n', '</p><p>')
+      .replaceAll('\n', '<br>')
 
     html = `<p>${html}</p>`
 

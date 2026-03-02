@@ -69,7 +69,7 @@ export default defineEventHandler(async (event) => {
           },
         )
         if (!updateRes.ok) throw new Error('Update failed')
-        // TODO(2026-02): Implement email notification once dealer email is available in the query
+        // TODO(2026-02): Implement email notification once dealer email is available in the query // NOSONAR
         // Call: $fetch('/api/email/send', { method: 'POST', headers: { 'x-internal-secret': internalSecret }, body: { to: dealer.email, subject: 'Freshness reminder', templateKey: 'freshness_reminder', vehicleId: vehicle.id } })
       },
     })

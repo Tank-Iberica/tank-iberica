@@ -126,11 +126,11 @@ useHead({
       </section>
       <section v-else-if="vehicle" class="vehicle-info-card">
         <img
-          v-if="vehicle.images && vehicle.images.length"
+          v-if="vehicle.images?.length"
           :src="vehicle.images[0]"
           :alt="vehicle.title"
           class="vehicle-thumb"
-        />
+        >
         <div class="vehicle-info-text">
           <h2 class="vehicle-info-title">{{ vehicle.title }}</h2>
         </div>

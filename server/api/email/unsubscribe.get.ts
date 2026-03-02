@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
   event.node.res.setHeader('Content-Type', 'text/html; charset=utf-8')
 
   const displayName = typedUser.name ?? typedUser.email
-  const emailTypeLabel = emailType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  const emailTypeLabel = emailType.replaceAll('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 
   return buildHtmlPage({
     title: 'Suscripcion cancelada',

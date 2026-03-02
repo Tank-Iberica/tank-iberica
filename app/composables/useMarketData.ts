@@ -312,7 +312,7 @@ export function useMarketData() {
       const totalSample = rows.reduce((sum, r) => sum + r.listings, 0)
       const baseMin = prices.length > 0 ? prices[0]! : 0
       const baseMedian = computeMedian(prices)
-      const baseMax = prices.length > 0 ? prices[prices.length - 1]! : 0
+      const baseMax = prices.length > 0 ? prices.at(-1)! : 0
 
       // --- Compute avg_days_to_sell ---
       const daysValues = rows
@@ -452,7 +452,7 @@ export function useMarketData() {
 
         let trendPct = 0
         const prev = prevSubcategoryMap.get(subcategory)
-        if (prev && prev.totalListings > 0) {
+        if (prev != null && prev.totalListings > 0) {
           const prevAvgPrice = Math.round(prev.totalPrice / prev.totalListings)
           trendPct = pctChange(avgPrice, prevAvgPrice)
         }

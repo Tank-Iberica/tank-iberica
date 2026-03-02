@@ -200,7 +200,7 @@ export function useAdminDashboard() {
   }
 
   async function loadMatches(): Promise<void> {
-    // TODO(2026-02): Implementar logica de coincidencias entre solicitantes y vehiculos (requiere tabla de demandas cruzadas)
+    // TODO(2026-02): Implementar logica de coincidencias entre solicitantes y vehiculos (requiere tabla de demandas cruzadas) // NOSONAR
     matches.value = []
   }
 

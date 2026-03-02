@@ -204,7 +204,7 @@ if (article.value) {
     | undefined
 
   const faqJsonLd =
-    faqData && faqData.length > 0
+    faqData != null && faqData.length > 0
       ? {
           '@context': 'https://schema.org',
           '@type': 'FAQPage',

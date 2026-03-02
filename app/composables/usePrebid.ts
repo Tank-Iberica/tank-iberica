@@ -152,7 +152,7 @@ export function usePrebid(
    * Returns the winning bid or null if no bids beat the floor.
    */
   async function requestBids(): Promise<PrebidBidResponse | null> {
-    if (!isEnabled.value || !window.pbjs?.requestBids) return null
+    if (!isEnabled.value || !globalThis.pbjs?.requestBids) return null
 
     loading.value = true
     const floors = await getFloorPrices()
@@ -165,36 +165,39 @@ export function usePrebid(
         resolve(null)
       }, timeout.value)
 
-      window.pbjs!.que.push(() => {
-        window.pbjs!.removeAdUnit?.(elementId)
-        window.pbjs!.addAdUnits?.([adUnit])
+      function handleBidResponse(bidResponses: Record<string, { bids: PrebidBidResponse[] }>) {
+        clearTimeout(timeoutId)
+        loading.value = false
+
+        const unitBids = bidResponses[elementId]?.bids || []
+        if (unitBids.length === 0) {
+          resolve(null)
+          return
+        }
+
+        // Sort by CPM descending, take highest
+        const best = unitBids.sort((a, b) => b.cpm - a.cpm)[0]!
+
+        // Check against floor price
+        if (floorPrice > 0 && best.cpm < floorPrice) {
+          resolve(null)
+          return
+        }
+
+        winningBid.value = best
+        prebidWon.value = true
+        resolve(best)
+      }
+
+      globalThis.pbjs!.que.push(() => {
+        globalThis.pbjs!.removeAdUnit?.(elementId)
+        globalThis.pbjs!.addAdUnits?.([adUnit])
 
         // Integration point: useAudienceSegmentation can provide
         // first-party data via getSegmentsForPrebid()
 
-        window.pbjs!.requestBids?.({
-          bidsBackHandler: (bidResponses: Record<string, { bids: PrebidBidResponse[] }>) => {
-            clearTimeout(timeoutId)
-            loading.value = false
-
-            const unitBids = bidResponses[elementId]?.bids || []
-            if (unitBids.length > 0) {
-              // Sort by CPM descending, take highest
-              const best = unitBids.sort((a, b) => b.cpm - a.cpm)[0]!
-
-              // Check against floor price
-              if (floorPrice > 0 && best.cpm < floorPrice) {
-                resolve(null)
-                return
-              }
-
-              winningBid.value = best
-              prebidWon.value = true
-              resolve(best)
-            } else {
-              resolve(null)
-            }
-          },
+        globalThis.pbjs!.requestBids?.({
+          bidsBackHandler: handleBidResponse,
           timeout: timeout.value,
         })
       })
@@ -205,8 +208,8 @@ export function usePrebid(
    * Render the winning Prebid ad into a document (typically an iframe).
    */
   function renderWinningAd(doc: Document) {
-    if (winningBid.value && window.pbjs?.renderAd) {
-      window.pbjs.renderAd(doc, winningBid.value.adId)
+    if (winningBid.value && globalThis.pbjs?.renderAd) {
+      globalThis.pbjs.renderAd(doc, winningBid.value.adId)
     }
   }
 

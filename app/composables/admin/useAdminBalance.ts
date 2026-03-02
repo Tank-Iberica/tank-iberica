@@ -361,7 +361,7 @@ export function useAdminBalance() {
     // Calculate profit percentage by type
     for (const key of Object.keys(byType)) {
       const sub = byType[key]
-      if (sub && sub.coste > 0) {
+      if (sub != null && sub.coste > 0) {
         sub.beneficio = Math.round(((sub.ingresos - sub.coste) / sub.coste) * 100)
       }
     }

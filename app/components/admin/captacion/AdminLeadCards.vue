@@ -153,7 +153,7 @@ const { t } = useI18n()
         </div>
 
         <!-- Vehicle types -->
-        <div v-if="lead.vehicle_types && lead.vehicle_types.length > 0" class="expanded-field">
+        <div v-if="lead.vehicle_types?.length > 0" class="expanded-field">
           <label>{{ t('admin.captacion.vehicleTypes') }}</label>
           <span>{{ formatVehicleTypes(lead.vehicle_types) }}</span>
         </div>

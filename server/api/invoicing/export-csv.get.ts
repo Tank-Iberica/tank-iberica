@@ -112,7 +112,7 @@ export default defineEventHandler(async (event) => {
   const csv = [
     headers.join(';'),
     ...rows.map((row: unknown[]) =>
-      row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(';'),
+      row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(';'),
     ),
   ].join('\n')
 

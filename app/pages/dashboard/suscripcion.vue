@@ -150,7 +150,7 @@ function formatListings(count: number): string {
 
       <!-- Cancel Option -->
       <div
-        v-if="subscription && subscription.status === 'active' && currentPlan !== 'free'"
+        v-if="subscription?.status === 'active' && currentPlan !== 'free'"
         class="cancel-section"
       >
         <p>{{ t('dashboard.subscription.cancelInfo') }}</p>

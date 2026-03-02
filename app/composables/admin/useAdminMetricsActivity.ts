@@ -40,7 +40,7 @@ export function useAdminMetricsActivity() {
 
     try {
       const rangeStart = monthStart(months[0]!)
-      const rangeEnd = monthEnd(months[months.length - 1]!)
+      const rangeEnd = monthEnd(months.at(-1)!)
 
       const { data: createdData } = await supabase
         .from('vehicles')

@@ -165,7 +165,7 @@
     </section>
 
     <!-- 5. Certifications -->
-    <section v-if="dealer.certifications && dealer.certifications.length" class="dealer-section">
+    <section v-if="dealer.certifications?.length" class="dealer-section">
       <h2 class="section-title">{{ t('dealer.certifications') }}</h2>
       <div class="certifications-list">
         <span

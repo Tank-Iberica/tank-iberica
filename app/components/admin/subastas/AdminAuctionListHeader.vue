@@ -24,7 +24,6 @@ const { t } = useI18n()
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   flex-wrap: wrap;
   gap: 12px;
   flex-direction: column;

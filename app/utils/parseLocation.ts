@@ -109,7 +109,7 @@ export function parseLocationText(text: string | null): ParsedLocation {
 
   const parts = text.split(',').map((p) => p.trim())
   const cityPart = parts[0] || ''
-  const countryPart = parts.length > 1 ? parts[parts.length - 1] : ''
+  const countryPart = parts.length > 1 ? parts.at(-1) : ''
 
   // 1. Detect country from text
   let countryCode: string | null = null

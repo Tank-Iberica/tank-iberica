@@ -106,10 +106,10 @@ function validateBody(body: VerifyDocumentBody): string[] {
   }
 
   // declaredData — required object with nested validation
-  if (!body.declaredData) {
-    errors.push('declaredData is required')
-  } else {
+  if (body.declaredData) {
     errors.push(...validateDeclaredData(body.declaredData))
+  } else {
+    errors.push('declaredData is required')
   }
 
   return errors

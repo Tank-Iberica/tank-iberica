@@ -360,11 +360,34 @@ Bloque 8 (WhatsApp funnel)
 
 ---
 
+## Auditoría SonarQube 100%
+
+**Documento completo:** `docs/tracciona-docs/AUDITORIA-SONARQUBE-100.md`
+
+**Estado:** 805 issues abiertos (13 bugs + 792 code smells + 21 hotspots)
+
+**Objetivo:** Quality Gate "Sonar way" en PASSED (0 violations, ≥80% coverage, ≤3% duplicados)
+
+**Fases:** 10 fases, 16-24 sesiones, ~80-110 horas, sin hacks ni atajos
+
+**Orden recomendado:**
+
+1. Fase 1-2 (Bugs + Blockers, 4h)
+2. Fase 4 (Mechanical fixes, 6-9h)
+3. Fase 3 (Cognitive complexity, 15-20h)
+4. Fases 5-9 (Quality + coverage + tests, 40-50h)
+5. Fase 10 (Final verification, 2h)
+
+**Próximo paso:** Mandar mensaje "auditoría SonarQube fase 1" para empezar.
+
+---
+
 ## Como usar este backlog
 
 1. **Al inicio de sesion:** Dime "siguiente bloque" o "bloque X" y trabajamos en orden
 2. **Cada item completado:** Lo marco como hecho aqui y en STATUS.md
 3. **Si cambian prioridades:** Reordeno bloques sin perder items
 4. **Founder tasks:** Las haces tu fuera de sesion, me avisas cuando esten hechas para actualizar
+5. **Auditoría SonarQube:** Paralela al backlog normal. Mandar "auditoría fase X" cuando quieras empezar
 
 > Este documento es la **unica fuente de verdad** para trabajo pendiente (excepto IDEAS-A-REVISAR.md que es banco de ideas separado).

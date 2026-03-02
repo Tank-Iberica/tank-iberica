@@ -27,7 +27,7 @@ export function useDealerTheme() {
     const theme = mergedTheme(dealerTheme)
     const root = document.documentElement
     Object.entries(theme).forEach(([key, value]) => {
-      root.style.setProperty(`--${key.replace(/_/g, '-')}`, value)
+      root.style.setProperty(`--${key.replaceAll('_', '-')}`, value)
     })
   }
 
@@ -39,7 +39,7 @@ export function useDealerTheme() {
     const base = (verticalConfig.value?.theme as Record<string, string>) || {}
     const root = document.documentElement
     Object.entries(base).forEach(([key, value]) => {
-      root.style.setProperty(`--${key.replace(/_/g, '-')}`, value)
+      root.style.setProperty(`--${key.replaceAll('_', '-')}`, value)
     })
   }
 

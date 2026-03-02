@@ -165,7 +165,7 @@ export function useDashboardExportarAnuncio() {
 
       case 'wallapop': {
         const shortDesc = description
-          ? description.substring(0, 200).replace(/\n/g, ' ').trim()
+          ? description.substring(0, 200).replaceAll('\n', ' ').trim()
           : ''
         const parts = [`${brand} ${model}`, year ? year : '', price ? `${price}\u20AC` : '']
           .filter(Boolean)

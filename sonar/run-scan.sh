@@ -6,7 +6,11 @@
 
 set -e
 
+# Resolve project dir — use Windows path on MSYS/Git Bash to avoid path mangling
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+if [ -n "$MSYSTEM" ] || uname -s | grep -qi mingw; then
+  PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd -W)"
+fi
 SONAR_URL="http://localhost:9000"
 SONAR_TOKEN="${SONAR_TOKEN:-}"
 
@@ -33,11 +37,12 @@ if [ -n "$SONAR_TOKEN" ]; then
 fi
 
 # Run scanner via Docker (no install needed)
+# MSYS_NO_PATHCONV prevents Git Bash from mangling /usr/src → C:/Program Files/Git/usr/src
 echo ">> Running SonarScanner..."
-docker run --rm \
+MSYS_NO_PATHCONV=1 docker run --rm \
   --network="host" \
   -v "$PROJECT_DIR:/usr/src" \
-  -w /usr/src \
+  -w //usr/src \
   sonarsource/sonar-scanner-cli:latest \
   -Dsonar.host.url="$SONAR_URL" \
   $TOKEN_FLAG

@@ -111,7 +111,7 @@ export function useVehicles() {
 
   // Applies catalog filters (location, category, price, year, brand) to any query.
   // Used by both buildQuery (full select) and fetchCount (head-only).
-   
+
   function applyFilters<T extends ReturnType<typeof supabase.from>>(
     query: T,
     filters: VehicleFilters,
@@ -199,7 +199,7 @@ export function useVehicles() {
       .eq('status', 'published')
 
     const query = applyFilters(base, filters)
-    const { count } = await query
+    const { count } = await query // NOSONAR: Supabase builders implement PromiseLike but are not native Promises
     return count ?? 0
   }
 

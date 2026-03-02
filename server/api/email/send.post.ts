@@ -87,9 +87,9 @@ function substituteVariables(text: string, variables: Record<string, string>): s
 function markdownToEmailHtml(md: string): string {
   let html = md
     // Escape HTML special chars (except what we'll generate)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
 
   // Bold: **text**
   html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -107,7 +107,7 @@ function markdownToEmailHtml(md: string): string {
       const trimmed = p.trim()
       if (!trimmed) return ''
       // Convert single newlines to <br> within a paragraph
-      const withBreaks = trimmed.replace(/\n/g, '<br>')
+      const withBreaks = trimmed.replaceAll('\n', '<br>')
       return `<p style="margin: 0 0 16px 0; line-height: 1.6;">${withBreaks}</p>`
     })
     .filter(Boolean)

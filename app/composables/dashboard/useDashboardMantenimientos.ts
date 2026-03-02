@@ -348,7 +348,7 @@ export function useDashboardMantenimientos() {
       `${r.vehicle_brand} ${r.vehicle_model}`,
       r.date,
       r.type,
-      `"${r.description.replace(/"/g, '""')}"`,
+      `"${r.description.replaceAll('"', '""')}"`,
       r.cost.toFixed(2),
       r.km ? String(r.km) : '',
     ])

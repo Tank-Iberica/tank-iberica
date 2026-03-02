@@ -111,12 +111,12 @@ export function useAdminHistoricoPage() {
   const historicoSection = ref<HTMLElement | null>(null)
 
   function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      historicoSection.value?.requestFullscreen()
-      isFullscreen.value = true
-    } else {
+    if (document.fullscreenElement) {
       document.exitFullscreen()
       isFullscreen.value = false
+    } else {
+      historicoSection.value?.requestFullscreen()
+      isFullscreen.value = true
     }
   }
 

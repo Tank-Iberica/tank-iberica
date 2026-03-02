@@ -153,7 +153,7 @@ export function analyzeUsageReliability(
     score,
     sorted.length,
     sorted[0]!.date,
-    sorted[sorted.length - 1]!.date,
+    sorted.at(-1)!.date,
     avgPerYear,
     config.unitLabel,
     anomalies,

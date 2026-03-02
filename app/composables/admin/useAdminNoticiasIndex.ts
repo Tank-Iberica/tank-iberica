@@ -147,10 +147,10 @@ export function useAdminNoticiasIndex() {
     const select = event.target as HTMLSelectElement
     const newStatus = select.value
     const ok = await updateStatus(item.id, newStatus)
-    if (!ok) {
-      select.value = item.status
-    } else {
+    if (ok) {
       await fetchNews(filters.value)
+    } else {
+      select.value = item.status
     }
   }
 

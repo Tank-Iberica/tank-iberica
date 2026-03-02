@@ -97,10 +97,10 @@ function getQuarterLabel(date: Date): string {
 
 function escapeHtml(str: string): string {
   return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
 }
 
 /* ------------------------------------------------------------------ */
@@ -220,7 +220,7 @@ function computeProvinceStats(rows: MarketRow[]): ProvinceStats[] {
 function computeTrends(rows: MarketRow[]): TrendInfo[] {
   if (rows.length === 0) return []
 
-  const months = [...new Set(rows.map((r) => r.month))].sort()
+  const months = [...new Set(rows.map((r) => r.month))].sort((a, b) => a.localeCompare(b))
   if (months.length < 2) return []
 
   const latestMonth = months[months.length - 1]

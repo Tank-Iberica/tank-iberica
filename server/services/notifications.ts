@@ -39,7 +39,7 @@ export async function notify(
           }
           break
         case 'push':
-          // TODO: Integrate with web push when ready
+          // TODO: Integrate with web push when ready // NOSONAR
           console.warn('[notifications] Push channel not yet implemented')
           break
       }

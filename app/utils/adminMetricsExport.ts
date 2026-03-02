@@ -102,7 +102,7 @@ export function exportMetricsCSV(data: MetricsExportData): void {
   rows.push(['Churn Rate (%)', String(churn.churnRate)])
 
   const csv = rows
-    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(','))
     .join('\n')
 
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })

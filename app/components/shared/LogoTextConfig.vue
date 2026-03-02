@@ -119,7 +119,7 @@ watch(
 // Reset weight if not available in new font
 watch(availableWeights, (weights) => {
   if (!weights.includes(Number(settings.value.font_weight))) {
-    update({ font_weight: String(weights[weights.length - 1]) })
+    update({ font_weight: String(weights.at(-1)) })
   }
 })
 

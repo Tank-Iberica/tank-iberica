@@ -350,7 +350,7 @@ export function useDashboardAlquileres() {
       r.monthly_rent.toFixed(2),
       r.deposit ? r.deposit.toFixed(2) : '',
       r.status,
-      `"${(r.notes || '').replace(/"/g, '""')}"`,
+      `"${(r.notes || '').replaceAll('"', '""')}"`,
     ])
 
     const csv = [headers.join(';'), ...rows.map((r) => r.join(';'))].join('\n')

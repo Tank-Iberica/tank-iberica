@@ -178,7 +178,7 @@ export function useAdminUsers() {
 
     const csv = [
       headers.join(','),
-      ...rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')),
+      ...rows.map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(',')),
     ].join('\n')
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)

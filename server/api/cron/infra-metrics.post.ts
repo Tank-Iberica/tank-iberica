@@ -269,10 +269,10 @@ export default defineEventHandler(async (event) => {
 
     const { error: insertError } = await supabase.from('infra_metrics').insert(rows as never)
 
-    if (!insertError) {
-      metricsInserted = rows.length
-    } else {
+    if (insertError) {
       errors.push(`infra_metrics insert: ${insertError.message}`)
+    } else {
+      metricsInserted = rows.length
     }
   }
 
