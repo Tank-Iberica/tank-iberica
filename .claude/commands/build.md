@@ -4,7 +4,7 @@ Implementa la siguiente feature en Tracciona.
 
 1. Lee CLAUDE.md
 2. Lee docs/PROYECTO-CONTEXTO.md
-3. Busca en BACKLOG.md si ya hay un item que cubra esto
+3. Busca en BACKLOG-EJECUTABLE.md si ya hay un item que cubra esto
 
 **Stack:** Nuxt 3 + TypeScript + Supabase (RLS) + CSS custom (tokens.css) + Cloudflare Pages
 

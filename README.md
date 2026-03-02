@@ -81,16 +81,16 @@ docs/                 # Documentacion del proyecto
 
 ### Fuentes de verdad (SSOT)
 
-| Que                         | Donde                                                              |
-| --------------------------- | ------------------------------------------------------------------ |
-| Estado actual               | [`STATUS.md`](STATUS.md)                                           |
-| Vision y arquitectura       | [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md)           |
-| Estrategia de negocio       | [`docs/ESTRATEGIA-NEGOCIO.md`](docs/ESTRATEGIA-NEGOCIO.md)         |
-| Ideas pendientes            | [`docs/IDEAS-A-REVISAR.md`](docs/IDEAS-A-REVISAR.md)               |
-| Backlog tecnico             | [`docs/tracciona-docs/BACKLOG.md`](docs/tracciona-docs/BACKLOG.md) |
-| Instrucciones para IA       | [`CLAUDE.md`](CLAUDE.md)                                           |
-| Contribucion y convenciones | [`CONTRIBUTING.md`](CONTRIBUTING.md)                               |
-| Historial de cambios        | [`CHANGELOG.md`](CHANGELOG.md)                                     |
+| Que                         | Donde                                                                                    |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| Estado actual               | [`STATUS.md`](STATUS.md)                                                                 |
+| Vision y arquitectura       | [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md)                                 |
+| Estrategia de negocio       | [`docs/ESTRATEGIA-NEGOCIO.md`](docs/ESTRATEGIA-NEGOCIO.md)                               |
+| Ideas pendientes            | [`docs/IDEAS-A-REVISAR.md`](docs/IDEAS-A-REVISAR.md)                                     |
+| Backlog ejecutable          | [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) |
+| Instrucciones para IA       | [`CLAUDE.md`](CLAUDE.md)                                                                 |
+| Contribucion y convenciones | [`CONTRIBUTING.md`](CONTRIBUTING.md)                                                     |
+| Historial de cambios        | [`CHANGELOG.md`](CHANGELOG.md)                                                           |
 
 ### Documentacion tecnica
 

@@ -1,5 +1,7 @@
 # Manual Corporativo y Operativo — TradeBase
 
+> **SNAPSHOT:** Documento de referencia corporativa generado en marzo 2026. No se mantiene sesión a sesión. Para estado actual ver `STATUS.md`. Para arquitectura y visión ver `docs/PROYECTO-CONTEXTO.md`. Para estrategia ver `docs/ESTRATEGIA-NEGOCIO.md`. Regenerar este documento cuando se necesite (ej: reunión con inversores).
+
 **Versión:** 1.0
 **Fecha:** Marzo 2026
 **Clasificación:** Confidencial — Uso interno
@@ -781,14 +783,14 @@ Acumular datos de mercado (precios reales de venta, tiempos de venta, volumen po
 
 ### 4.2 Gobernanza
 
-| Aspecto       | Implementación                                                   |
-| ------------- | ---------------------------------------------------------------- |
-| Activity logs | Tabla `activity_logs` registra todas las acciones admin          |
-| Feature flags | Tabla `feature_flags` para activar/desactivar funcionalidades    |
-| Auditoría     | Framework de 12 dimensiones, puntuación actual ~83/100           |
-| Documentación | SSOT (Single Source of Truth) por tema, no documentos duplicados |
-| Decisiones    | Registradas en `docs/PROYECTO-CONTEXTO.md`                       |
-| Backlog       | `docs/tracciona-docs/BACKLOG.md` (20 items técnicos pendientes)  |
+| Aspecto       | Implementación                                                      |
+| ------------- | ------------------------------------------------------------------- |
+| Activity logs | Tabla `activity_logs` registra todas las acciones admin             |
+| Feature flags | Tabla `feature_flags` para activar/desactivar funcionalidades       |
+| Auditoría     | Framework de 12 dimensiones, puntuación actual ~83/100              |
+| Documentación | SSOT (Single Source of Truth) por tema, no documentos duplicados    |
+| Decisiones    | Registradas en `docs/PROYECTO-CONTEXTO.md`                          |
+| Backlog       | `docs/tracciona-docs/BACKLOG-EJECUTABLE.md` (116 items priorizados) |
 
 ### 4.3 Toma de decisiones
 
@@ -2116,20 +2118,20 @@ Ver `CONTRIBUTING.md` para reglas completas. Resumen:
 
 ### 15.5 Documentación del proyecto
 
-| Documento                         | Propósito                                   |
-| --------------------------------- | ------------------------------------------- |
-| `CLAUDE.md`                       | Instrucciones para IA                       |
-| `STATUS.md`                       | Estado actual del proyecto                  |
-| `docs/PROYECTO-CONTEXTO.md`       | Visión y arquitectura (documento maestro)   |
-| `docs/ESTRATEGIA-NEGOCIO.md`      | Monetización y GTM                          |
-| `docs/IDEAS-A-REVISAR.md`         | Banco de ideas (92+)                        |
-| `docs/tracciona-docs/BACKLOG.md`  | Backlog técnico (20 items)                  |
-| `CONTRIBUTING.md`                 | Convenciones de código                      |
-| `CHANGELOG.md`                    | Historial de cambios                        |
-| `docs/tracciona-docs/referencia/` | Docs técnicos (ERD, endpoints, crons, etc.) |
-| `docs/auditorias/`                | Auditorías (12 dimensiones)                 |
-| `docs/legal/`                     | RAT GDPR (borrador)                         |
-| `docs/legacy/`                    | 18 documentos históricos (solo referencia)  |
+| Documento                                   | Propósito                                   |
+| ------------------------------------------- | ------------------------------------------- |
+| `CLAUDE.md`                                 | Instrucciones para IA                       |
+| `STATUS.md`                                 | Estado actual del proyecto                  |
+| `docs/PROYECTO-CONTEXTO.md`                 | Visión y arquitectura (documento maestro)   |
+| `docs/ESTRATEGIA-NEGOCIO.md`                | Monetización y GTM                          |
+| `docs/IDEAS-A-REVISAR.md`                   | Banco de ideas (92+)                        |
+| `docs/tracciona-docs/BACKLOG-EJECUTABLE.md` | Backlog ejecutable (116 items)              |
+| `CONTRIBUTING.md`                           | Convenciones de código                      |
+| `CHANGELOG.md`                              | Historial de cambios                        |
+| `docs/tracciona-docs/referencia/`           | Docs técnicos (ERD, endpoints, crons, etc.) |
+| `docs/auditorias/`                          | Auditorías (12 dimensiones)                 |
+| `docs/legal/`                               | RAT GDPR (borrador)                         |
+| `docs/legacy/`                              | 18 documentos históricos (solo referencia)  |
 
 ---
 

@@ -123,7 +123,7 @@ Para verificar estado del proyecto rápidamente:
 
 ## Cómo ejecutar una auditoría completa
 
-1. **Preparación:** Lee STATUS.md, PROYECTO-CONTEXTO.md, BACKLOG.md
+1. **Preparación:** Lee STATUS.md, PROYECTO-CONTEXTO.md, BACKLOG-EJECUTABLE.md
 2. **Por cada dimensión:**
    - Verifica contra código real (no documentación)
    - Ejecuta los comandos de verificación aplicables

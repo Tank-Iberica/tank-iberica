@@ -123,5 +123,5 @@ npm run build       # Must compile without errors
 ## Key Documentation
 
 - `docs/PROYECTO-CONTEXTO.md` — Full project vision and architecture
-- `docs/tracciona-docs/BACKLOG.md` — Technical backlog (planned improvements)
+- `docs/tracciona-docs/BACKLOG-EJECUTABLE.md` — Executable backlog (116 items, prioritized)
 - `CLAUDE.md` — AI assistant instructions and project conventions

@@ -101,25 +101,9 @@ Acumular datos de mercado (precios, tiempos de venta, volumen por zona) y vender
 3. **Servicios transaccionales** — Alto margen por operación (transporte, verificación, docs, seguros, subastas)
 4. **Productos de datos** — Valor a largo plazo (API valoración, informes sectoriales, datasets). Activar tras masa crítica.
 
-### 2.4.1 Créditos y Suscripciones (resumen)
+### 2.4.1 Créditos y Suscripciones
 
-> **Detalle completo:** Ver `docs/ESTRATEGIA-NEGOCIO.md` §2.4.1
-
-**3 tiers de suscripción:** Basic (gratis) · Classic (€19/mes, €149/año) · Premium (€39/mes, €299/año). Precios de lanzamiento — subirán a €29/€59 tras 6 meses.
-
-**Diferencias clave entre tiers:**
-
-- **Alertas:** Basic=semanales · Classic=diarias · Premium=inmediatas
-- **Early access:** Basic=24h delay · Classic=12h · Premium=inmediato
-- **Promoción:** Basic=solo créditos · Classic=destacar+renovar incluidos · Premium=auto-renovar/destacar+color/marco
-
-**Créditos:** 5 packs (1→€5, 3→€9.90, 10+1→€19.90, 25+3→€39.90, 50+10→€64.90). No caducan. Compra via Stripe Checkout.
-
-**Costes:** 1 cr = renovar/destacar/exportar/DGT básico/desbloquear ocultos · 2 cr = reserva prioritaria/color-marco/anuncio protegido · 3 cr = DGT avanzado
-
-**Reserva Prioritaria:** 2 cr → pausa anuncio 48h → comprador tiene prioridad. Si vendedor no responde → refund. Anuncios Premium son inmunes.
-
-**Anuncio protegido:** 2 cr → inmunidad a reserva + visibilidad inmediata (salta delay oculto).
+> Ver `docs/ESTRATEGIA-NEGOCIO.md` §2.4.1 para detalle completo (tiers, packs, costes, reserva prioritaria, anuncio protegido).
 
 ### 2.7 Flywheel del marketplace
 
@@ -492,7 +476,7 @@ Todos protegidos con `verifyCronSecret()`. Scheduler recomendado: GitHub Actions
 | Entender el proyecto completo        | Este documento                                                 |
 | Estrategia de negocio y monetización | `docs/ESTRATEGIA-NEGOCIO.md`                                   |
 | Ideas no implementadas (103)         | `docs/IDEAS-A-REVISAR.md`                                      |
-| Backlog técnico pendiente            | `docs/tracciona-docs/BACKLOG.md`                               |
+| Backlog ejecutable (116 items)       | `docs/tracciona-docs/BACKLOG-EJECUTABLE.md`                    |
 | Estado actual y errores              | `STATUS.md` (raíz)                                             |
 | Convenciones de código               | `CONTRIBUTING.md`                                              |
 | Esquema de BD                        | `docs/tracciona-docs/referencia/ERD.md`                        |

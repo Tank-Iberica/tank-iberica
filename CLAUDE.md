@@ -8,10 +8,9 @@
 
 2. **Una vez en Opus**, automáticamente lee:
    - **CLAUDE.md** — protocolo, reglas, decisiones arquitectónicas
-   - **STATUS.md** — estado actual, cambios recientes, pendientes
-   - **PROYECTO-CONTEXTO.md** — visión, modelo de negocio, arquitectura estratégica
+   - **STATUS.md** — estado actual, errores activos, changelog reciente
 
-3. Solo después de leer los 3 archivos, estás listo para recibir órdenes del usuario.
+3. Solo después de leer estos 2 archivos, estás listo para recibir órdenes del usuario. **NO leas PROYECTO-CONTEXTO.md al inicio** — se lee bajo demanda según el tipo de tarea (ver tabla de Contexto por Tipo de Tarea).
 
 ---
 
@@ -27,14 +26,14 @@
 
 Puedes leer tu modelo actual del system context (`claude-haiku-4-5-20251001`, `claude-sonnet-4-6`, `claude-opus-4-6`).
 
-- **Al inicio de sesión:** Detecta tu modelo. Si NO estás en Opus → pide cambio. Si estás en Opus → automáticamente lee CLAUDE.md, STATUS.md, PROYECTO-CONTEXTO.md.
+- **Al inicio de sesión:** Detecta tu modelo. Si NO estás en Opus → pide cambio. Si estás en Opus → automáticamente lee CLAUDE.md y STATUS.md.
 - **Al recibir orden nueva** (excepto "continuar tarea"): Detecta tu modelo. Si NO estás en Opus → tu ÚNICO mensaje es pedir cambio. Si estás en Opus → continúa con Pasos 1–2 (analizar y resumir).
 - **Después de resumir (Paso 2):** El flujo normal continúa. Recomienda modelo para la ejecución (Haiku/Sonnet/Opus según complejidad de la tarea).
 - **"Continuar tarea":** No es nueva orden, es reanudación. Detecta tu modelo y continúa donde estabas sin cambios innecesarios.
 
 ### Excepción — Lectura de contexto al inicio de sesión
 
-**Lectura de contexto de inicio (CLAUDE.md, STATUS.md, PROYECTO-CONTEXTO.md) NO es una tarea — no requiere protocolo.** Ejecuta Read tools directamente para cargar contexto. Cualquier otra orden SÍ requiere protocolo.
+**Lectura de contexto de inicio (CLAUDE.md, STATUS.md) NO es una tarea — no requiere protocolo.** Ejecuta Read tools directamente para cargar contexto. La lectura adicional según tipo de tarea (ver tabla abajo) tampoco requiere protocolo — se ejecuta automáticamente tras confirmar la tarea en Paso 2. Cualquier otra orden SÍ requiere protocolo.
 
 ### Paso 0 — Verifica el modelo (Auto-detección)
 
@@ -148,31 +147,46 @@ Si alguna respuesta es "no" o "sí pero violé X", PARA y corrige antes de respo
 - **Stack:** Nuxt 3 + Supabase + Cloudflare Pages
 - **Proyecto anterior:** Tank Ibérica (monolítico) → migración y evolución en curso a Tracciona (marketplace)
 
-## Documentación
+## Contexto por Tipo de Tarea — Lectura inteligente
 
-Toda la documentación activa está en `docs/` y `docs/tracciona-docs/`.
+**Regla:** STATUS.md se lee SIEMPRE al inicio de sesión. El resto se lee bajo demanda según la tarea, **automáticamente tras confirmar la tarea en Paso 2** (no requiere protocolo adicional). Esto asegura que siempre entiendas la dirección y visión de la empresa para esa área sin desperdiciar tokens en documentos irrelevantes.
 
-**Si necesitas entender el proyecto:**
+**REGLA ABSOLUTA DE LECTURA:** Cuando se lee un documento, se lee **ENTERO e ÍNTEGRO**. Sin muestras, sin "primeras N líneas", sin resúmenes parciales. Si el archivo es grande, usa múltiples llamadas Read con offset/limit hasta leerlo completo. Un documento leído a medias es peor que no leerlo — lleva a decisiones basadas en información incompleta.
 
-1. Lee `docs/PROYECTO-CONTEXTO.md` — **Documento maestro.** Visión TradeBase, modelo de negocio, arquitectura, decisiones tomadas y criterios para tomar decisiones de código. Leer SIEMPRE antes de cualquier tarea.
-2. Lee `README.md` — Stack, estructura del proyecto, índice completo de documentación
+| Tipo de tarea                     | Lee también (además de STATUS.md)                                                    |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| **Bug fix / error**               | Código relevante                                                                     |
+| **Feature de monetización**       | `ESTRATEGIA-NEGOCIO.md` + `BACKLOG-EJECUTABLE.md` (bloque relevante)                 |
+| **Componente / página nueva**     | `PROYECTO-CONTEXTO.md` §4 (arquitectura) + `CONTRIBUTING.md`                         |
+| **Migración / BD**                | `referencia/ERD.md` + `referencia/INVENTARIO-ENDPOINTS.md`                           |
+| **SEO / landings**                | `PROYECTO-CONTEXTO.md` §5.1 + `BACKLOG-EJECUTABLE.md` Bloque 3                       |
+| **Anti-fraude / seguridad**       | `ESTRATEGIA-NEGOCIO.md` §2.12 + `referencia/SECURITY-TESTING.md`                     |
+| **Marketing / contenido**         | `ESTRATEGIA-NEGOCIO.md` §3 + `BACKLOG-EJECUTABLE.md` Bloque 7                        |
+| **Arquitectura / multi-vertical** | `PROYECTO-CONTEXTO.md` (completo) + `referencia/ARQUITECTURA-ESCALABILIDAD.md`       |
+| **Auditoría**                     | `auditorias/AUDITORIA-26-FEBRERO.md` + `referencia/AUDIT-METHODOLOGY.md`             |
+| **Estrategia / dirección**        | `PROYECTO-CONTEXTO.md` + `ESTRATEGIA-NEGOCIO.md`                                     |
+| **Backlog / planificación**       | `BACKLOG-EJECUTABLE.md`                                                              |
+| **Infra / DR / secrets**          | `referencia/DISASTER-RECOVERY.md`, `SECRETS-ROTATION.md`, `CLOUDFLARE-WAF-CONFIG.md` |
+| **GDPR / legal**                  | `legal/RAT-BORRADOR.md` + `referencia/DATA-RETENTION.md`                             |
+| **No sé qué tipo es**             | `PROYECTO-CONTEXTO.md` (completo) — documento maestro                                |
 
-**Si necesitas ver estrategia, ideas o backlog:**
+## Documentación — Índice
 
-- `docs/ESTRATEGIA-NEGOCIO.md` — Monetización, pricing, go-to-market, captación dealers, datos, anti-fraude
-- `docs/IDEAS-A-REVISAR.md` — Banco de 103 ideas no implementadas en 13 categorías
-- `docs/tracciona-docs/BACKLOG.md` — Mejoras técnicas planificadas no ejecutadas (seguridad, resiliencia, arquitectura, SEO, etc.)
-- Sesiones históricas (1-64, ya ejecutadas): `docs/legacy/INSTRUCCIONES-MAESTRAS.md` (solo referencia)
-- Anexos en `docs/tracciona-docs/anexos/` son REFERENCIA, no tareas independientes.
-
-**Si necesitas referencia técnica:**
-
-- `docs/tracciona-docs/referencia/` — ERD, endpoints, crons, seguridad, DR, WAF, secrets, datos, API pública, metodología de auditoría
-
-**Auditorías:**
-
-- `docs/auditorias/AUDITORIA-26-FEBRERO.md` — Auditoría canónica (12 dimensiones, ~83/100)
-- `docs/tracciona-docs/referencia/AUDIT-METHODOLOGY.md` — Framework y checklists para auditorías
+| Documento                                   | Función                                                                        |
+| ------------------------------------------- | ------------------------------------------------------------------------------ |
+| `STATUS.md`                                 | Estado actual: métricas, errores activos, changelog                            |
+| `docs/PROYECTO-CONTEXTO.md`                 | Documento maestro: visión, arquitectura, decisiones estratégicas               |
+| `docs/ESTRATEGIA-NEGOCIO.md`                | Monetización, pricing, go-to-market, datos, anti-fraude                        |
+| `docs/IDEAS-A-REVISAR.md`                   | Banco de 103+ ideas no implementadas (brainstorming, NO backlog)               |
+| `docs/tracciona-docs/BACKLOG-EJECUTABLE.md` | **Única fuente de verdad** de trabajo pendiente (116 items, 6 fases)           |
+| `docs/MANUAL-CORPORATIVO-Y-OPERATIVO.md`    | Snapshot corporativo para inversores (no se mantiene sesión a sesión)          |
+| `docs/auditorias/AUDITORIA-26-FEBRERO.md`   | Auditoría canónica (~83/100) — snapshot histórico                              |
+| `docs/legal/RAT-BORRADOR.md`                | Borrador GDPR RAT                                                              |
+| `docs/tracciona-docs/referencia/`           | Docs técnicos: ERD, endpoints, crons, seguridad, DR, WAF, secrets, API pública |
+| `README.md`                                 | Stack, estructura, comandos, índice docs                                       |
+| `CONTRIBUTING.md`                           | Convenciones de código, workflow git                                           |
+| `CHANGELOG.md`                              | Historial de versiones                                                         |
+| `docs/legacy/`                              | 30+ documentos obsoletos (no modificar, solo referencia histórica)             |
 
 **Reglas críticas:**
 

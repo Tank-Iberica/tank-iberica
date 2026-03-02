@@ -2,8 +2,8 @@ Ejecuta un item del backlog técnico de Tracciona.
 
 **Procedimiento:**
 
-1. Lee docs/tracciona-docs/BACKLOG.md
-2. Busca el item "$ARGUMENTS" (ej: "S1", "A2", "SEO1")
+1. Lee docs/tracciona-docs/BACKLOG-EJECUTABLE.md
+2. Busca el item "$ARGUMENTS" (ej: "#74", "Bloque 2", "Trust Score")
 3. Lee los archivos relacionados del proyecto para entender el estado actual
 4. Planifica la implementación basándote en el objetivo y entregables del item
 5. Ejecuta parte por parte, en orden
@@ -11,7 +11,7 @@ Ejecuta un item del backlog técnico de Tracciona.
    - `npm run build` (debe compilar sin errores)
    - Tests relevantes si los hay
 7. Reporta: qué se hizo, qué archivos se crearon/modificaron, si hubo problemas
-8. Elimina el item completado del BACKLOG.md
+8. Marca el item como completado en BACKLOG-EJECUTABLE.md (tachar o eliminar)
 
 **Reglas:**
 
