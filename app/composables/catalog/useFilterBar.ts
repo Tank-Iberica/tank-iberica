@@ -82,6 +82,22 @@ export function useFilterBar(
     if (userLocation.value.province && !editProvince.value) {
       editProvince.value = userLocation.value.province
     }
+
+    // If the user has a preferred location level saved in their profile, honour it
+    // (overrides the default 'nacional' detection)
+    const { profile } = useAuth()
+    const prefLevel = profile.value?.preferred_location_level as
+      | import('~/utils/geoData').LocationLevel
+      | null
+      | undefined
+    if (prefLevel) {
+      setLocationLevel(
+        prefLevel,
+        userLocation.value.country || 'ES',
+        userLocation.value.province || null,
+        userLocation.value.region || null,
+      )
+    }
   })
 
   const currentYear = new Date().getFullYear()

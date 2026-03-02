@@ -360,22 +360,14 @@ onUnmounted(() => {
 }
 
 .subcategory-btn:not(.disabled):active {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary-light) 0%,
-    var(--color-accent, #7fd1c8) 100%
-  );
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent) 100%);
   color: var(--color-white);
   border-color: var(--color-primary-light);
   transform: scale(0.98);
 }
 
 .subcategory-btn.active {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary-light) 0%,
-    var(--color-accent, #7fd1c8) 100%
-  );
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent) 100%);
   color: var(--color-white);
   border-color: var(--color-primary-light);
 }

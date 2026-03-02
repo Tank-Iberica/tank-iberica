@@ -71,8 +71,8 @@ const displayMax = computed(() =>
 }
 
 .range-dropdown-mobile-content {
-  background: #fff;
-  border: 2px solid #23424a;
+  background: var(--bg-primary);
+  border: 2px solid var(--color-primary);
   border-radius: 12px;
   padding: 1rem 1.25rem;
   width: calc(100% - 2rem);
@@ -88,7 +88,7 @@ const displayMax = computed(() =>
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
-  color: #23424a;
+  color: var(--color-primary);
   margin-bottom: 0.25rem;
   font-size: 14px;
 }
@@ -99,7 +99,7 @@ const displayMax = computed(() =>
   min-width: 28px;
   min-height: 28px;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border: none;
   cursor: pointer;
   font-size: 14px;
@@ -113,7 +113,7 @@ const displayMax = computed(() =>
   justify-content: space-between;
   font-size: 13px;
   font-weight: 600;
-  color: #23424a;
+  color: var(--color-primary);
   padding: 0.25rem 0;
 }
 

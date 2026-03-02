@@ -83,7 +83,7 @@ const emit = defineEmits<{
 .pdf-modal-title {
   font-size: 18px;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   margin: 0 0 0.5rem;
 }
 
@@ -97,7 +97,7 @@ const emit = defineEmits<{
 .pdf-modal-count {
   font-size: 20px;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   margin: 0 0 1.5rem;
 }
 
@@ -131,8 +131,8 @@ const emit = defineEmits<{
 
 .pdf-btn-select-all {
   background: transparent;
-  border-color: var(--color-primary, #23424a);
-  color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .pdf-btn-select-all:hover {

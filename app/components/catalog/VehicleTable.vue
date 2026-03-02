@@ -443,7 +443,7 @@ function onTouchEnd() {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 /* Sortable headers */
@@ -527,7 +527,7 @@ function onTouchEnd() {
 .table-price {
   font-weight: 700;
   white-space: nowrap;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--color-success), #059669);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -597,13 +597,13 @@ function onTouchEnd() {
 }
 
 .fav-btn.active {
-  border-color: #f59e0b;
-  color: #f59e0b;
+  border-color: var(--color-warning);
+  color: var(--color-warning);
 }
 
 .fav-btn.active svg {
-  fill: #f59e0b;
-  stroke: #f59e0b;
+  fill: var(--color-warning);
+  stroke: var(--color-warning);
 }
 
 /* Share button */

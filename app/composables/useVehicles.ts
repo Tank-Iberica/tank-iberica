@@ -109,6 +109,46 @@ export function useVehicles() {
   const page = ref(0)
   const total = ref(0)
 
+  // Applies catalog filters (location, category, price, year, brand) to any query.
+  // Used by both buildQuery (full select) and fetchCount (head-only).
+   
+  function applyFilters<T extends ReturnType<typeof supabase.from>>(
+    query: T,
+    filters: VehicleFilters,
+  ): T {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let q = query as any
+
+    q = q.or('visible_from.is.null,visible_from.lte.' + new Date().toISOString())
+
+    if ((filters.actions || filters.categories)?.length) {
+      q = q.in('category', (filters.actions || filters.categories!) as never)
+    } else if (filters.action || filters.category) {
+      q = q.eq('category', (filters.action || filters.category!) as never)
+    }
+
+    if (filters.category_id) q = q.eq('category_id', filters.category_id)
+    if (filters.price_min !== undefined) q = q.gte('price', filters.price_min)
+    if (filters.price_max !== undefined) q = q.lte('price', filters.price_max)
+    if (filters.year_min !== undefined) q = q.gte('year', filters.year_min)
+    if (filters.year_max !== undefined) q = q.lte('year', filters.year_max)
+    if (filters.brand) q = q.ilike('brand', `%${filters.brand}%`)
+
+    // Location filters (mutually exclusive, most specific wins)
+    if (filters.location_province_eq) {
+      q = q.eq('location_province', filters.location_province_eq)
+    } else if (filters.location_regions?.length) {
+      q = q.in('location_region', filters.location_regions)
+    } else if (filters.location_countries?.length) {
+      q = q.in('location_country', filters.location_countries)
+    }
+
+    if (filters.featured) q = q.eq('featured', true)
+    if (filters.dealer_id) q = q.eq('dealer_id', filters.dealer_id)
+
+    return q as T
+  }
+
   function buildQuery(filters: VehicleFilters) {
     let query = supabase
       .from('vehicles')
@@ -118,14 +158,10 @@ export function useVehicles() {
       )
       .eq('status', 'published')
 
-    // Pro 24h exclusive: non-Pro users only see vehicles past their visible_from date
-    // For now, always filter (Pro check will be added when subscription composable is wired)
-    query = query.or('visible_from.is.null,visible_from.lte.' + new Date().toISOString())
+    query = applyFilters(query, filters)
 
     // Dynamic sort — featured always first, then sort_boost, then user-selected order
     query = query.order('featured', { ascending: false })
-
-    // Dealer subscription sort boost (Premium=3, Founding=2, Basic=1, Free=0)
     query = query.order('sort_boost', { ascending: false, nullsFirst: false })
 
     switch (filters.sortBy) {
@@ -148,60 +184,23 @@ export function useVehicles() {
         query = query.order('brand', { ascending: false })
         break
       default:
-        // 'recommended' — just by created_at
         query = query.order('created_at', { ascending: false })
     }
 
-    if ((filters.actions || filters.categories)?.length) {
-      query = query.in('category', (filters.actions || filters.categories!) as never)
-    } else if (filters.action || filters.category) {
-      query = query.eq('category', (filters.action || filters.category!) as never)
-    }
-
-    if (filters.category_id) {
-      query = query.eq('category_id', filters.category_id)
-    }
-
-    if (filters.price_min !== undefined) {
-      query = query.gte('price', filters.price_min)
-    }
-
-    if (filters.price_max !== undefined) {
-      query = query.lte('price', filters.price_max)
-    }
-
-    if (filters.year_min !== undefined) {
-      query = query.gte('year', filters.year_min)
-    }
-
-    if (filters.year_max !== undefined) {
-      query = query.lte('year', filters.year_max)
-    }
-
-    if (filters.brand) {
-      query = query.ilike('brand', `%${filters.brand}%`)
-    }
-
-    // search is handled client-side with fuzzy matching (see VehicleGrid)
-
-    // Location filters (mutually exclusive, most specific wins)
-    if (filters.location_province_eq) {
-      query = query.eq('location_province', filters.location_province_eq)
-    } else if (filters.location_regions?.length) {
-      query = query.in('location_region', filters.location_regions)
-    } else if (filters.location_countries?.length) {
-      query = query.in('location_country', filters.location_countries)
-    }
-
-    if (filters.featured) {
-      query = query.eq('featured', true)
-    }
-
-    if (filters.dealer_id) {
-      query = query.eq('dealer_id', filters.dealer_id)
-    }
-
     return query
+  }
+
+  // Lightweight count-only query — no data returned, no pagination, no sorting.
+  // Used by useGeoFallback and useSimilarSearches to pre-fetch counts for next-level hints.
+  async function fetchCount(filters: VehicleFilters): Promise<number> {
+    const base = supabase
+      .from('vehicles')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'published')
+
+    const query = applyFilters(base, filters)
+    const { count } = await query
+    return count ?? 0
   }
 
   async function fetchVehicles(filters: VehicleFilters = {}) {
@@ -300,6 +299,7 @@ export function useVehicles() {
     fetchVehicles,
     fetchMore,
     fetchBySlug,
+    fetchCount,
     reset,
   }
 }

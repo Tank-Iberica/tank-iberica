@@ -328,7 +328,7 @@ function nextImage() {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   opacity: 1;
   transition: all 0.3s ease;
@@ -386,7 +386,7 @@ function nextImage() {
   position: absolute;
   top: 0;
   right: 0;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--color-success) 0%, #059669 100%);
   color: var(--color-white);
   padding: 0.6rem 1rem;
   font-size: 14px;
@@ -532,14 +532,14 @@ function nextImage() {
 
 @media (hover: hover) {
   .fav-btn:hover svg {
-    fill: var(--color-gold, #f59e0b);
-    stroke: var(--color-gold, #f59e0b);
+    fill: var(--color-gold, var(--color-warning));
+    stroke: var(--color-gold, var(--color-warning));
   }
 }
 
 .fav-btn.active svg {
-  fill: var(--color-gold, #f59e0b);
-  stroke: var(--color-gold, #f59e0b);
+  fill: var(--color-gold, var(--color-warning));
+  stroke: var(--color-gold, var(--color-warning));
 }
 
 /* ============================================

@@ -587,7 +587,7 @@ onUnmounted(() => {
 }
 
 .search-box .search-input::placeholder {
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 
 .search-box .search-input:focus {
@@ -721,8 +721,8 @@ onUnmounted(() => {
 }
 
 .favorites-btn:hover svg {
-  fill: var(--color-gold, #f59e0b);
-  stroke: var(--color-gold, #f59e0b);
+  fill: var(--color-gold, var(--color-warning));
+  stroke: var(--color-gold, var(--color-warning));
 }
 
 .favorites-btn.active {
@@ -731,8 +731,8 @@ onUnmounted(() => {
 }
 
 .favorites-btn.active svg {
-  fill: var(--color-gold, #f59e0b);
-  stroke: var(--color-gold, #f59e0b);
+  fill: var(--color-gold, var(--color-warning));
+  stroke: var(--color-gold, var(--color-warning));
 }
 
 /* Save search: circular bell button */
@@ -768,8 +768,8 @@ onUnmounted(() => {
 }
 
 .save-search-btn.success {
-  background: #16a34a;
-  border-color: #16a34a;
+  background: var(--color-success);
+  border-color: var(--color-success);
   color: var(--color-white);
 }
 

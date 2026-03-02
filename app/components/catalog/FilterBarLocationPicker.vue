@@ -13,6 +13,13 @@
             &#10005;
           </button>
         </div>
+        <!-- Location level pills inside mobile modal -->
+        <CatalogLocationLevelPills
+          v-if="locationLevel || userLocation?.country"
+          :current-level="locationLevel"
+          :user-country="userLocation?.country"
+          @change="onPillChange"
+        />
         <CatalogFilterBarLocationSelects
           :edit-country="editCountry"
           :edit-province="editProvince"
@@ -29,6 +36,13 @@
   <!-- DESKTOP: Inline dropdown (positioned absolute below trigger) -->
   <div v-if="open && !isMobile" class="location-dropdown">
     <span class="filter-sublabel">{{ $t('catalog.locationYours') }}</span>
+    <!-- Location level pills inside desktop dropdown -->
+    <CatalogLocationLevelPills
+      v-if="locationLevel || userLocation?.country"
+      :current-level="locationLevel"
+      :user-country="userLocation?.country"
+      @change="onPillChange"
+    />
     <CatalogFilterBarLocationSelects
       :edit-country="editCountry"
       :edit-province="editProvince"
@@ -42,6 +56,8 @@
 </template>
 
 <script setup lang="ts">
+import type { LocationLevel } from '~/utils/geoData'
+
 interface CountryItem {
   code: string
   flag: string
@@ -61,6 +77,14 @@ defineEmits<{
   'country-select': [event: Event]
   'province-select': [event: Event]
 }>()
+
+const { locationLevel } = useCatalogState()
+const { location: userLocation } = useUserLocation()
+const onLevelChangeFn = inject<(level: LocationLevel) => void>('onLevelChange', () => {})
+
+function onPillChange(level: LocationLevel) {
+  onLevelChangeFn(level)
+}
 
 const isMobile = ref(true)
 
@@ -103,6 +127,12 @@ onUnmounted(() => {
   letter-spacing: 0.3px;
   padding: 0.3rem 0 0.1rem;
 }
+
+/* Pills nav inside dropdown: neutralize outer padding/border */
+.location-dropdown :deep(.level-pills-nav) {
+  padding: 0;
+  margin: 0 -0.25rem;
+}
 </style>
 
 <!-- Non-scoped: teleported to body -->
@@ -119,8 +149,8 @@ onUnmounted(() => {
 }
 
 .location-dropdown-mobile-content {
-  background: #fff;
-  border: 2px solid #23424a;
+  background: var(--bg-primary);
+  border: 2px solid var(--color-primary);
   border-radius: 12px;
   padding: 1rem;
   width: calc(100% - 2rem);
@@ -136,7 +166,7 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
-  color: #23424a;
+  color: var(--color-primary);
   margin-bottom: 0.25rem;
   font-size: 14px;
 }
@@ -147,7 +177,7 @@ onUnmounted(() => {
   min-width: 28px;
   min-height: 28px;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border: none;
   cursor: pointer;
   font-size: 14px;
@@ -166,7 +196,7 @@ onUnmounted(() => {
 .location-dropdown-mobile .location-manual-input {
   width: 100%;
   padding: 0.5rem;
-  border: 2px solid #d1d5db;
+  border: 2px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   min-height: 44px;
@@ -175,11 +205,11 @@ onUnmounted(() => {
 .location-dropdown-mobile .location-range-select {
   width: 100%;
   padding: 0.5rem;
-  border: 2px solid #d1d5db;
+  border: 2px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   min-height: 44px;
-  background: #fff;
+  background: var(--bg-primary);
   cursor: pointer;
 }
 
@@ -187,5 +217,13 @@ onUnmounted(() => {
   .location-dropdown-mobile {
     display: none !important;
   }
+}
+
+/* Pills inside mobile modal: neutralize outer padding/border */
+.location-dropdown-mobile-content .level-pills-nav {
+  padding: 0;
+  margin: 0;
+  border-radius: 6px;
+  overflow: hidden;
 }
 </style>
