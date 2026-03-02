@@ -6,8 +6,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "file=\"$TOOL_INPUT_path\"; if echo \"$file\" | grep -qE '\\.(vue|ts|js)$'; then npx eslint --no-error-on-unmatched-pattern \"$file\" 2>/dev/null || echo '{\"feedback\": \"⚠️ ESLint warnings/errors found. Run /project:fix-errors to resolve.\"}'; fi",
+            "command": "file=\"$TOOL_INPUT_path\"; if echo \"$file\" | grep -qE '\\.(vue|ts|js)$'; then npx eslint --no-error-on-unmatched-pattern \"$file\" 2>/dev/null || echo 'ESLint warnings found'; fi",
             "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/check-closing-and-cleanup.sh \"$TOOL_INPUT_path\"",
+            "timeout": 5,
+            "async": true,
+            "statusMessage": "Checking for session close..."
           }
         ]
       }

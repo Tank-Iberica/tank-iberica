@@ -109,6 +109,64 @@ export default defineEventHandler(async (event) => {
         return { received: true, idempotent: true, event: 'checkout.session.completed' }
       }
 
+      const paymentType = metadata?.type
+
+      // Branch: credit purchase (one-time)
+      if (userId && paymentType === 'credits') {
+        const credits = Number.parseInt(metadata?.credits ?? '0', 10)
+        const packId = metadata?.pack_id ?? null
+
+        await patch('payments', `stripe_checkout_session_id=eq.${sessionId}`, {
+          status: 'succeeded',
+        })
+
+        if (credits > 0) {
+          // Upsert user_credits balance
+          const existingCredits = await supabaseRestGet<{
+            balance: number
+            total_purchased: number
+          }>(sbConfig, 'user_credits', `user_id=eq.${userId}`, 'balance,total_purchased')
+          const currentBalance = existingCredits[0]?.balance ?? 0
+          const currentTotal = existingCredits[0]?.total_purchased ?? 0
+          const newBalance = currentBalance + credits
+
+          if (existingCredits.length > 0) {
+            await patch('user_credits', `user_id=eq.${userId}`, {
+              balance: newBalance,
+              total_purchased: currentTotal + credits,
+            })
+          } else {
+            await insert('user_credits', {
+              user_id: userId,
+              balance: newBalance,
+              total_purchased: credits,
+            })
+          }
+
+          // Log transaction
+          await insert('credit_transactions', {
+            user_id: userId,
+            type: 'purchase',
+            credits,
+            balance_after: newBalance,
+            pack_id: packId,
+            reference: sessionId,
+            metadata: { pack_slug: metadata?.pack_slug, vertical: metadata?.vertical },
+          })
+
+          // Auto-invoice
+          const amountForCredits = session.amount_total as number
+          if (amountForCredits) {
+            await createAutoInvoice(sbConfig, {
+              userId,
+              stripeInvoiceId: sessionId,
+              amountCents: amountForCredits,
+            })
+          }
+        }
+        break
+      }
+
       if (userId && plan) {
         const customerId = session.customer as string
         const subscriptionId = session.subscription as string

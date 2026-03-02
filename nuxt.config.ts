@@ -15,7 +15,15 @@ export default defineNuxtConfig({
     '@nuxtjs/sitemap',
     '@nuxtjs/google-fonts',
     '@vite-pwa/nuxt',
+    '@nuxtjs/color-mode',
   ],
+
+  colorMode: {
+    preference: 'system',
+    fallback: 'light',
+    classSuffix: '-mode',
+    storageKey: 'tracciona_color_mode',
+  },
 
   googleFonts: {
     families: {
@@ -239,7 +247,7 @@ export default defineNuxtConfig({
     payloadExtraction: true,
   },
 
-  css: ['@/assets/css/tokens.css', '@/assets/css/interactions.css'],
+  css: ['@/assets/css/tokens.css', '@/assets/css/interactions.css', '@/assets/css/themes.css'],
 
   app: {
     head: {

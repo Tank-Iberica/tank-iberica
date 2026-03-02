@@ -117,7 +117,19 @@
       "Bash(grep AdminSidebar\\\\|Sidebar:*)",
       "Bash(tee:*)",
       "Bash(cd /c/TradeBase/Tracciona && npx prettier --write app/pages/dashboard/estadisticas.vue 2>&1 && npx eslint app/pages/dashboard/estadisticas.vue --max-warnings=0 2>&1)",
-      "mcp__supabase__apply_migration"
+      "mcp__supabase__apply_migration",
+      "Bash(tasklist:*)",
+      "mcp__supabase__get_logs",
+      "Bash(tr ,:*)",
+      "Bash(npm view:*)",
+      "Bash(echo '' >> ~/.bashrc && echo '# Curro - Claude Code con arranque automático para Tracciona' >> ~/.bashrc && echo 'alias curro='\"'\"'claude --model opus --append-system-prompt \"INSTRUCCIÓN CRÍTICA: Tu PRIMERA acción al iniciar sesión es SIEMPRE leer STATUS.md y docs/PROYECTO-CONTEXTO.md con Read tool. No saludes, no esperes instrucciones. Ejecuta el protocolo de inicio de CLAUDE.md inmediatamente.\"'\"'\"'' >> ~/.bashrc)",
+      "Bash(pwsh:*)",
+      "Bash(file:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_wait_for",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:autoline.info)"
     ]
   },
   "mcpServers": {
