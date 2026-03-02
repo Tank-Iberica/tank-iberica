@@ -2,6 +2,7 @@
 
 > All cron endpoints require `x-internal-secret: <CRON_SECRET>` header.
 > They should be scheduled via an external scheduler (GitHub Actions, cron-job.org, or Cloudflare Workers Cron Triggers).
+> Last updated: Mar 2026 (13 crons verified against server/api/cron/).
 
 ## Cron Endpoints
 
@@ -11,14 +12,15 @@
 | `/api/cron/search-alerts`       | Send email to users with saved searches matching new vehicles | Daily              | High     |
 | `/api/cron/favorite-price-drop` | Notify users when a favorited vehicle's price drops           | Daily              | High     |
 | `/api/cron/favorite-sold`       | Notify users when a favorited vehicle is sold                 | Daily              | Medium   |
-| `/api/cron/price-drop-alert`    | General price drop notifications                              | Daily              | Medium   |
+| `/api/cron/price-drop-alert`    | General price drop notifications (all users)                  | Daily              | Medium   |
 | `/api/cron/reservation-expiry`  | Expire reservations past their hold date                      | Daily              | High     |
-| `/api/cron/publish-scheduled`   | Publish vehicles scheduled for future publication             | Daily              | High     |
+| `/api/cron/publish-scheduled`   | Publish vehicles and articles scheduled for future dates      | Daily              | High     |
+| `/api/cron/founding-expiry`     | Handle founding member subscription expirations               | Daily              | Low      |
+| `/api/cron/generate-editorial`  | Generate editorial content automatically with AI              | Daily/Weekly       | Low      |
 | `/api/cron/auto-auction`        | Process auction end times, determine winners                  | Every 5 min        | High     |
+| `/api/cron/infra-metrics`       | Collect infrastructure metrics (DB size, cache, etc.)         | Every 5 min        | Low      |
 | `/api/cron/whatsapp-retry`      | Retry failed WhatsApp submissions                             | Every 15 min       | Medium   |
 | `/api/cron/dealer-weekly-stats` | Send weekly performance digest to dealers                     | Weekly (Mon 09:00) | Medium   |
-| `/api/cron/founding-expiry`     | Handle founding member subscription expirations               | Daily              | Low      |
-| `/api/cron/infra-metrics`       | Collect infrastructure metrics (DB size, cache, etc.)         | Every 5 min        | Low      |
 
 ## Scheduler Configuration
 
@@ -41,7 +43,8 @@ jobs:
     steps:
       - run: |
           for endpoint in freshness-check search-alerts favorite-price-drop favorite-sold \
-                          price-drop-alert reservation-expiry publish-scheduled founding-expiry; do
+                          price-drop-alert reservation-expiry publish-scheduled \
+                          founding-expiry generate-editorial; do
             curl -s -X POST "https://tracciona.com/api/cron/$endpoint" \
               -H "x-internal-secret: ${{ secrets.CRON_SECRET }}" || true
           done
@@ -55,6 +58,17 @@ jobs:
             -H "x-internal-secret: ${{ secrets.CRON_SECRET }}" || true
           curl -s -X POST "https://tracciona.com/api/cron/infra-metrics" \
             -H "x-internal-secret: ${{ secrets.CRON_SECRET }}" || true
+
+  whatsapp-retry:
+    if: github.event.schedule == '*/5 * * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          # Only run every 15 min (skip if minute % 15 != 0)
+          if [ $(( $(date +%M) % 15 )) -eq 0 ]; then
+            curl -s -X POST "https://tracciona.com/api/cron/whatsapp-retry" \
+              -H "x-internal-secret: ${{ secrets.CRON_SECRET }}" || true
+          fi
 
   weekly:
     if: github.event.schedule == '0 9 * * 1'

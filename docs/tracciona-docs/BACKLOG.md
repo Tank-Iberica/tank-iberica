@@ -28,12 +28,12 @@
 - **Dependencias:** Ninguna
 - **Origen:** Sesión 50
 
-### S4 — Tests de seguridad expandidos
+### S4 — Tests de seguridad expandidos + rate limiting rules
 
-- **Qué:** Tests de IDOR (dealer no ve datos de otro), rate limiting (429 en endpoints sensibles), information leakage (no stack traces, no .env/.git accesibles)
-- **Entregables:** `tests/security/idor-protection.test.ts`, `rate-limiting.test.ts`, `information-leakage.test.ts`
+- **Qué:** Tests de IDOR (dealer no ve datos de otro), rate limiting (429 en endpoints sensibles), information leakage (no stack traces, no .env/.git accesibles). Documentar e implementar reglas de rate limiting por endpoint: login 5/min, register 3/min, contact 10/min, API general 30/min, upload 5/min (ref: Cloudflare WAF o server middleware)
+- **Entregables:** `tests/security/idor-protection.test.ts`, `rate-limiting.test.ts`, `information-leakage.test.ts`, `referencia/RATE-LIMITING-RULES.md`
 - **Dependencias:** Ninguna
-- **Origen:** Sesiones 46B, 49B
+- **Origen:** Sesiones 46B, 49B + legacy DOC2-TAREAS-FUNDADORES
 
 ### S5 — CSP avanzado + auditoría de licencias
 
@@ -59,13 +59,6 @@
 - **Entregables:** `scripts/test-restore.sh` (ampliar), `.github/workflows/mirror.yml`, `THIRD-PARTY-DEPENDENCIES.md`
 - **Prerrequisitos humanos:** Crear cuenta Neon, cuenta Bitbucket, configurar GitHub Secrets
 - **Origen:** Sesión 55
-
-### R3 — Failover de proveedores de IA
-
-- **Qué:** Wrapper `callAI()` con timeout por criticidad (realtime 8s, background 30s, deferred 60s) + fallback Anthropic → OpenAI
-- **Entregables:** `server/services/aiProvider.ts`, `server/utils/aiConfig.ts`, refactorizar endpoints que llaman a IA
-- **Dependencias:** Ninguna
-- **Origen:** Sesiones 45D, 45F
 
 ---
 
@@ -148,7 +141,7 @@
 
 - **Qué:** Página `/demo` donde un dealer prueba la generación IA de listado sin registrarse. Rate limited 3/día por IP. No guarda en BD
 - **Entregables:** `server/api/demo/try-vehicle.post.ts`, `app/pages/demo.vue`
-- **Dependencias:** R3 (callAI)
+- **Dependencias:** Ninguna (callAI ya implementado)
 - **Origen:** Sesión 57A
 
 ### PR2 — Widget embebible
@@ -185,10 +178,10 @@
 
 ### SEO3 — Schema.org + compartir
 
-- **Qué:** JSON-LD para Vehicle, Organization, BreadcrumbList, WebSite SearchAction. Botones compartir (WhatsApp, LinkedIn, email, copiar enlace) sin SDKs externos
+- **Qué:** JSON-LD para Vehicle, Organization, BreadcrumbList, WebSite SearchAction. Botones compartir (WhatsApp, LinkedIn, email, copiar enlace) sin SDKs externos. Incluye Schema FAQPage en landing pages y Schema ItemList en catálogo/home (ideas S6, S7 de IDEAS-A-REVISAR)
 - **Entregables:** `composables/useStructuredData.ts`, `components/ui/ShareButtons.vue`
 - **Dependencias:** SEO1
-- **Origen:** Sesión 63
+- **Origen:** Sesión 63 + legacy migracion-03-roadmap-post
 
 ### SEO4 — Slugs SEO + internal linking
 

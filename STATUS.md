@@ -2,7 +2,7 @@
 
 **Última actualización:** 2026-03-10 — INSTRUCCIONES-MAESTRAS.md (9.316L) → legacy + BACKLOG.md (200L). Total sesión: ~11.700 líneas eliminadas/movidas a legacy
 **Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc hasta 08-mar
-**Puntuación global:** 79/100 (auditoría 26-feb) · Historial completo: `git log STATUS.md`
+**Puntuación global:** ~83/100 (auditoría corregida mar-26) · Historial completo: `git log STATUS.md`
 
 ---
 
@@ -15,8 +15,8 @@
 | Composables      | 147                                              |
 | Endpoints API    | 62                                               |
 | Servicios server | 8                                                |
-| Migraciones SQL  | 65                                               |
-| Tablas BD        | 89                                               |
+| Migraciones SQL  | 80 (00001-00066 + 14 timestamped)                |
+| Tablas BD        | 92                                               |
 | Tests totales    | 34 (12 E2E + 5 seg + 11 unit + 3 comp + 3 setup) |
 | CI/CD workflows  | 7                                                |
 
@@ -60,11 +60,16 @@
 
 ## Errores activos
 
-| ID   | Severidad | Problema                                                                                  | Acción                                |
-| ---- | --------- | ----------------------------------------------------------------------------------------- | ------------------------------------- |
-| P0-3 | 🔴 P0     | Rate limiting deshabilitado en producción (in-memory no funciona en CF Workers stateless) | Configurar reglas CF WAF (fundadores) |
+| ID   | Severidad | Problema                                                                                  | Acción                                              |
+| ---- | --------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| P0-3 | 🔴 P0     | Rate limiting deshabilitado en producción (in-memory no funciona en CF Workers stateless) | Configurar reglas CF WAF (fundadores)               |
+| P0-4 | 🟠 P1     | `/api/verify-document` sin validación de ownership (dealer puede ver docs de otro)        | Añadir check `dealer_id === session.user.dealer_id` |
+| P0-5 | 🟠 P1     | 5 server routes exponen nombres de servicio en mensajes de error                          | Sanitizar errores con `safeError()`                 |
+| P1-4 | 🟡 P2     | 10 errores TypeScript restantes (CatalogEmptyState, VehicleGrid, useVehicles, etc.)       | Corregir tipos                                      |
+| P1-5 | 🟡 P2     | 2 test stubs en `useVehicles.test.ts:264,278` (`expect(true).toBe(true)`)                 | Implementar tests reales o `it.skip()`              |
+| P1-6 | 🟡 P2     | `exceljs` no incluido en `manualChunks` de nuxt.config.ts                                 | Añadir chunk `vendor-excel`                         |
 
-> Todos los demás errores (P0-1/2, P1-1/2/3, P2-1/2/3, S-01, S-03) resueltos. Ver `git log STATUS.md`.
+> Errores anteriores (P0-1/2, P1-1/2/3, P2-1/2/3, S-01, S-03) resueltos. Ver `git log STATUS.md`.
 
 ---
 

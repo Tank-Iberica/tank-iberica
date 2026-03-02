@@ -587,35 +587,71 @@ El proyecto Tracciona se encuentra en un estado **sólido y producción-ready** 
 
 ## Métricas clave
 
-| KPI                               | Valor      |
-| --------------------------------- | ---------- |
-| Archivos Vue (pages + components) | 164        |
-| Composables                       | 60         |
-| Server endpoints                  | 45+        |
-| Migraciones BD                    | 64         |
-| Tablas BD                         | 89         |
-| Tests (unit + E2E + security)     | 20         |
-| CI/CD workflows                   | 7          |
-| Docs markdown                     | 85         |
-| Variables de entorno              | 53         |
-| Errores TypeScript                | 50         |
-| Archivos >500 líneas              | 32         |
-| Strings sin i18n (admin)          | ~115       |
-| Puntuación media 12 dimensiones   | **79/100** |
+| KPI                               | Valor                                   |
+| --------------------------------- | --------------------------------------- |
+| Archivos Vue (pages + components) | 164                                     |
+| Composables                       | 60                                      |
+| Server endpoints                  | 45+                                     |
+| Migraciones BD                    | 64                                      |
+| Tablas BD                         | 89                                      |
+| Tests (unit + E2E + security)     | 20                                      |
+| CI/CD workflows                   | 7                                       |
+| Docs markdown                     | 85                                      |
+| Variables de entorno              | 53                                      |
+| Errores TypeScript                | 50 → 10 (mar-26)                        |
+| Archivos >500 líneas              | 32 → 0 (mar-26)                         |
+| Strings sin i18n (admin)          | ~115                                    |
+| Puntuación media 12 dimensiones   | **79/100 → ~83/100 (corregida mar-26)** |
+
+---
+
+## Verificación cruzada (marzo 2026)
+
+Auditoría externa (25-feb) verificada contra código real el 26-feb y re-verificada en marzo 2026. Puntuación corregida: **~83/100** (vs 71/100 externa, 79/100 interna).
+
+### Hallazgos resueltos desde la auditoría
+
+- **C4 (Legal):** 7 páginas legales + compliance DSA/GDPR completos (la externa estaba equivocada)
+- **C5 (Features legacy):** 12/13 implementadas (la externa estaba equivocada)
+- **H3 (Rate limiting):** Implementado en Cloudflare WAF (no in-memory) — correcto por diseño
+- **H4 (Lighthouse CI):** Workflow configurado y funcional
+- **H5 (Code splitting):** Manual chunks en nuxt.config.ts
+- **H7 (.env.example):** 127 líneas bien documentadas
+- **UX #3 (404):** error.vue existe con UX completa
+- **UX #4 (Touch targets):** tokens.css define 44px globalmente
+- Errores TypeScript: 50 → 10 restantes
+- Archivos >500 líneas: 32 → 0 (auditoría #7 iter 1-16 completada)
+
+### Pendientes confirmados (movidos a STATUS.md y BACKLOG.md)
+
+- **P0-3:** Rate limiting en producción — requiere configurar reglas CF WAF (fundadores)
+- **P0-4:** Ownership validation en /api/verify-document
+- **P0-5:** 5 routes exponen nombres de servicio en errores
+- **P1-4:** 10 errores TypeScript restantes
+- **P1-5:** 2 test stubs en useVehicles.test.ts
+- **P1-6:** exceljs no en manual chunks
+- **C3 (Marca OEPM):** Tarea de negocio → IDEAS-A-REVISAR.md N4
+
+### Documentos consolidados (marzo 2026)
+
+- Metodología de auditoría: `docs/tracciona-docs/referencia/AUDIT-METHODOLOGY.md`
+- Items de fundadores: `docs/IDEAS-A-REVISAR.md` (N4-N11)
+- Errores pendientes: `STATUS.md` sección "Errores activos"
+- Archivos de auditoría externa y auxiliares eliminados (valor extraído y consolidado)
 
 ---
 
 ## Próxima auditoría
 
 - **Tipo:** Mensual (Negocio + Infra + Código)
-- **Fecha:** Marzo 2026
+- **Fecha:** Abril 2026
 - **Foco especial:**
-  - Verificar resolución de los 5 hallazgos críticos
-  - Verificar configuración de Cloudflare WAF (rate limiting)
-  - Re-run `npm run typecheck` — objetivo: 0 errores
-  - Verificar registro de marca Tracciona
+  - Verificar resolución de P0-4 y P0-5
+  - Re-run `npx nuxi typecheck` — objetivo: 0 errores
+  - Verificar registro de marca Tracciona (OEPM)
+  - Verificar Google Search Console configurado
 
 ---
 
-_Informe generado el 26 de febrero de 2026 siguiendo el PLAN-AUDITORIA-TRACCIONA.md v1.0_
+_Informe original: 26 febrero 2026. Actualizado: marzo 2026 (verificación cruzada)._
 _Archivado en: `docs/auditorias/AUDITORIA-26-FEBRERO.md`_
