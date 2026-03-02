@@ -59,18 +59,18 @@ const { t } = useI18n()
 }
 
 .summary-card.active-rentals {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 
 .summary-card.monthly-income {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 
 .summary-card.available-soon {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 @media (max-width: 767px) {

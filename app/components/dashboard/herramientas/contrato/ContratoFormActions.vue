@@ -93,7 +93,7 @@ const { t } = useI18n()
 
 .form-group input {
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.9rem;
   min-height: 44px;
@@ -101,7 +101,7 @@ const { t } = useI18n()
 
 .form-group input:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
@@ -113,21 +113,21 @@ const { t } = useI18n()
 }
 
 .alert-error {
-  background: #fef2f2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
+  border: 1px solid var(--color-error-border);
 }
 
 .alert-success {
-  background: #f0fdf4;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
-  border: 1px solid #bbf7d0;
+  border: 1px solid var(--color-success-border);
 }
 
 .btn {
   padding: 10px 20px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.9rem;
   cursor: pointer;
@@ -145,13 +145,13 @@ const { t } = useI18n()
 }
 
 .btn-primary {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-lg {

@@ -249,7 +249,7 @@ const services = computed(() => [
                 :value="shareUrl"
                 readonly
                 @focus="($event.target as HTMLInputElement)?.select()"
-              >
+              />
               <button class="btn-copy" @click="copyLink">
                 {{ linkCopied ? $t('postSale.linkCopied') : $t('postSale.copyLink') }}
               </button>
@@ -333,7 +333,7 @@ const services = computed(() => [
 }
 
 .sold-error {
-  color: var(--color-error, #ef4444);
+  color: var(--color-error);
   font-size: var(--font-size-sm, 0.875rem);
   margin-bottom: var(--spacing-4, 1rem);
 }
@@ -358,7 +358,7 @@ const services = computed(() => [
 .btn-primary {
   width: 100%;
   padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: var(--color-white, #fff);
   border: none;
   border-radius: var(--border-radius, 8px);
@@ -370,7 +370,7 @@ const services = computed(() => [
 }
 
 .btn-primary:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -438,13 +438,13 @@ const services = computed(() => [
 .service-price {
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .btn-service {
   align-self: flex-start;
   padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: var(--color-white, #fff);
   border: none;
   border-radius: var(--border-radius, 8px);
@@ -456,7 +456,7 @@ const services = computed(() => [
 }
 
 .btn-service:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-service:disabled {
@@ -464,11 +464,11 @@ const services = computed(() => [
 }
 
 .btn-service--done {
-  background: var(--color-success, #10b981);
+  background: var(--color-success);
 }
 
 .btn-service--done:hover {
-  background: var(--color-success, #10b981);
+  background: var(--color-success);
 }
 
 /* ---- Skip link ---- */
@@ -513,7 +513,7 @@ const services = computed(() => [
 
 .btn-copy {
   padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: var(--color-white, #fff);
   border: none;
   border-radius: var(--border-radius, 8px);
@@ -526,7 +526,7 @@ const services = computed(() => [
 }
 
 .btn-copy:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-finish {

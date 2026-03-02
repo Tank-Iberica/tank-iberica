@@ -43,7 +43,7 @@ const { t } = useI18n()
             v-if="props.getVehicleThumbnail(doc.vehicles)"
             :src="props.getVehicleThumbnail(doc.vehicles)!"
             :alt="`${doc.vehicles.brand} ${doc.vehicles.model}`"
-          >
+          />
           <span v-else class="thumb-placeholder">
             <svg
               width="20"
@@ -103,7 +103,7 @@ const { t } = useI18n()
               :src="doc.file_url"
               :alt="props.getDocTypeLabel(doc.doc_type)"
               class="preview-image"
-            >
+            />
             <a
               v-else
               :href="doc.file_url"
@@ -284,7 +284,7 @@ const { t } = useI18n()
    DOCUMENT ITEM
    ============================================ */
 .doc-item {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -315,7 +315,7 @@ const { t } = useI18n()
 }
 
 .doc-row:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 /* Vehicle info cell */
@@ -331,7 +331,7 @@ const { t } = useI18n()
   height: 44px;
   border-radius: 6px;
   overflow: hidden;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -348,7 +348,7 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .doc-vehicle-info {
@@ -359,7 +359,7 @@ const { t } = useI18n()
 
 .doc-vehicle-info strong {
   font-size: 0.9rem;
-  color: #1e293b;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -367,7 +367,7 @@ const { t } = useI18n()
 
 .doc-dealer {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -381,8 +381,8 @@ const { t } = useI18n()
 .doc-type-badge {
   display: inline-block;
   padding: 4px 10px;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
   border-radius: 6px;
   font-size: 0.8rem;
   font-weight: 500;
@@ -393,7 +393,7 @@ const { t } = useI18n()
 .doc-date-cell {
   display: none;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   white-space: nowrap;
 }
 
@@ -413,25 +413,25 @@ const { t } = useI18n()
 }
 
 .status-badge.status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .status-badge.status-verified {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .status-badge.status-rejected {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 /* Expand icon */
 .doc-expand-icon {
   display: flex;
   align-items: center;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .doc-expand-icon svg {
@@ -447,7 +447,7 @@ const { t } = useI18n()
    ============================================ */
 .doc-detail {
   padding: 0 16px 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
 }
 
 .detail-grid {
@@ -463,13 +463,13 @@ const { t } = useI18n()
   margin: 0 0 12px 0;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
 
 .preview-container {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -480,7 +480,7 @@ const { t } = useI18n()
   max-height: 320px;
   object-fit: contain;
   display: block;
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .preview-link {
@@ -489,21 +489,21 @@ const { t } = useI18n()
   justify-content: center;
   gap: 8px;
   padding: 32px;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
   font-size: 0.9rem;
 }
 
 .preview-link:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .no-file {
   padding: 32px;
   text-align: center;
-  color: #94a3b8;
-  background: #f8fafc;
+  color: var(--text-disabled);
+  background: var(--bg-secondary);
   border-radius: 8px;
   font-size: 0.9rem;
   margin-bottom: 16px;
@@ -524,7 +524,7 @@ const { t } = useI18n()
 .progress-bar-container {
   flex: 1;
   height: 6px;
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -541,16 +541,16 @@ const { t } = useI18n()
 }
 
 .progress-bar-fill.level-none {
-  background: #94a3b8;
+  background: var(--color-gray-400);
   width: 0;
 }
 
 .progress-bar-fill.level-verified {
-  background: #22c55e;
+  background: var(--color-success);
 }
 
 .progress-bar-fill.level-extended {
-  background: #3b82f6;
+  background: var(--color-info);
 }
 
 .progress-bar-fill.level-detailed {
@@ -558,7 +558,7 @@ const { t } = useI18n()
 }
 
 .progress-bar-fill.level-audited {
-  background: #f59e0b;
+  background: var(--color-warning);
 }
 
 .progress-bar-fill.level-certified {
@@ -572,10 +572,10 @@ const { t } = useI18n()
 }
 
 .level-label.level-none {
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 .level-label.level-verified {
-  color: #16a34a;
+  color: var(--color-success);
 }
 .level-label.level-extended {
   color: #2563eb;
@@ -584,7 +584,7 @@ const { t } = useI18n()
   color: #7c3aed;
 }
 .level-label.level-audited {
-  color: #d97706;
+  color: var(--color-warning);
 }
 .level-label.level-certified {
   color: #0d9488;
@@ -596,7 +596,7 @@ const { t } = useI18n()
 
 .other-docs-label {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   display: block;
   margin-bottom: 6px;
 }
@@ -616,18 +616,18 @@ const { t } = useI18n()
 }
 
 .other-doc-chip.status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .other-doc-chip.status-verified {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .other-doc-chip.status-rejected {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 /* Vehicle data section */
@@ -643,7 +643,7 @@ const { t } = useI18n()
   justify-content: space-between;
   align-items: flex-start;
   padding: 8px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .data-row:last-child {
@@ -653,14 +653,14 @@ const { t } = useI18n()
 .data-row dt {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   flex-shrink: 0;
 }
 
 .data-row dd {
   margin: 0;
   font-size: 0.9rem;
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 500;
   text-align: right;
 }
@@ -676,18 +676,18 @@ const { t } = useI18n()
 }
 
 .data-row.rejection dt {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .data-row.rejection dd {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 /* Actions section */
 .detail-actions {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .rejection-input {
@@ -698,14 +698,14 @@ const { t } = useI18n()
   display: block;
   font-size: 0.8rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 
 .rejection-input textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.9rem;
   font-family: inherit;
@@ -715,7 +715,7 @@ const { t } = useI18n()
 
 .rejection-input textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -744,7 +744,7 @@ const { t } = useI18n()
 }
 
 .btn-approve {
-  background: #16a34a;
+  background: var(--color-success);
   color: white;
 }
 
@@ -753,12 +753,12 @@ const { t } = useI18n()
 }
 
 .btn-reject {
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
 }
 
 .btn-reject:hover {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 .btn-approve:disabled,
@@ -771,7 +771,7 @@ const { t } = useI18n()
 .detail-reviewed {
   margin-top: 16px;
   padding: 12px 16px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -788,18 +788,18 @@ const { t } = useI18n()
 }
 
 .reviewed-badge.status-verified {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .reviewed-badge.status-rejected {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .reviewed-reason {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-style: italic;
 }
 

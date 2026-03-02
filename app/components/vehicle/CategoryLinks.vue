@@ -76,7 +76,7 @@ onMounted(() => {
 .category-links h3 {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--text-secondary, #475569);
+  color: var(--text-secondary, var(--color-gray-600));
   margin-bottom: var(--spacing-3);
 }
 
@@ -92,7 +92,7 @@ onMounted(() => {
   padding: 0.4rem 0.8rem;
   font-size: var(--font-size-sm);
   font-weight: 500;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   background: var(--bg-secondary, #f3f4f6);
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 20px;
@@ -102,8 +102,8 @@ onMounted(() => {
 }
 
 .category-link-chip:hover {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: var(--color-white, #fff);
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 </style>

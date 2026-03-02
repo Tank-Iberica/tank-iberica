@@ -289,7 +289,7 @@ watch(
 
 .modal-container {
   position: relative;
-  background: white;
+  background: var(--bg-primary);
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
@@ -304,19 +304,19 @@ watch(
   width: 44px;
   height: 44px;
   border: none;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border-radius: 50%;
   font-size: 1.2rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: var(--text-auxiliary);
   z-index: 10;
 }
 
 .modal-close:hover {
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
 }
 
 .modal-content {
@@ -340,13 +340,13 @@ watch(
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .vehicle-title {
   margin: 8px 0 0 0;
   font-size: 1rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .question-section {
@@ -358,30 +358,30 @@ watch(
 .question-label {
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .price-input-wrapper {
   display: flex;
   align-items: center;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-gray-200);
   border-radius: 8px;
   overflow: hidden;
   min-height: 48px;
 }
 
 .price-input-wrapper:focus-within {
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .price-currency {
   padding: 0 12px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #64748b;
-  background: #f8fafc;
-  border-right: 1px solid #e2e8f0;
+  color: var(--text-auxiliary);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--color-gray-200);
   height: 100%;
   display: flex;
   align-items: center;
@@ -393,7 +393,7 @@ watch(
   padding: 12px 16px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   background: transparent;
   outline: none;
   min-width: 0;
@@ -401,13 +401,13 @@ watch(
 
 .price-input::placeholder {
   font-weight: 400;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .price-incentive {
   margin: 0;
   font-size: 0.8rem;
-  color: #16a34a;
+  color: var(--color-success);
   font-style: italic;
 }
 
@@ -422,15 +422,15 @@ watch(
   align-items: center;
   gap: 12px;
   padding: 16px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-gray-200);
   border-radius: 8px;
   cursor: pointer;
   min-height: 44px;
 }
 
 .radio-option:has(input:checked) {
-  border-color: var(--color-primary, #23424a);
-  background: #f8fafc;
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
 }
 
 .radio-option input[type='radio'] {
@@ -442,12 +442,12 @@ watch(
 .radio-option span {
   font-size: 1rem;
   font-weight: 500;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .subtitle {
   margin: -12px 0 0 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 
@@ -463,7 +463,7 @@ watch(
   flex-direction: column;
   gap: 8px;
   padding: 16px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-gray-200);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s;
@@ -479,8 +479,8 @@ watch(
 }
 
 .service-card.selected {
-  border-color: var(--color-primary, #23424a);
-  background: #f8fafc;
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
 }
 
 .service-icon {
@@ -491,28 +491,28 @@ watch(
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .service-desc {
   margin: 0;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   line-height: 1.4;
 }
 
 .service-price {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 
@@ -538,12 +538,12 @@ watch(
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -552,18 +552,18 @@ watch(
 }
 
 .btn-secondary {
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gray-200);
+  color: var(--text-secondary);
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .confirmation-text {
   text-align: center;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 1rem;
   margin: 0;
 }

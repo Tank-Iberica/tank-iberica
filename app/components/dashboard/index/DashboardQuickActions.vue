@@ -56,7 +56,7 @@ const { t } = useI18n()
   align-items: center;
   gap: 8px;
   padding: 20px 12px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   text-decoration: none;
@@ -76,7 +76,7 @@ const { t } = useI18n()
 
 .action-icon {
   font-size: 1.5rem;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 @media (min-width: 768px) {

@@ -1,15 +1,34 @@
 <script setup lang="ts">
-defineProps<{
+const { t } = useI18n()
+
+const props = defineProps<{
   vehicleTitle: string
   otherPartyName: string
   statusLabel: string
   statusClass: string
   isClosed: boolean
+  sellerAvgResponseMinutes?: number | null
+  isBuyer?: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'back' | 'close'): void
 }>()
+
+const sellerResponseLabel = computed<string>(() => {
+  if (!props.isBuyer || props.sellerAvgResponseMinutes == null) return ''
+  const m = props.sellerAvgResponseMinutes
+  let timeStr: string
+  if (m < 60) {
+    timeStr = `~${m} min`
+  } else if (m < 1440) {
+    timeStr = `~${Math.round(m / 60)}h`
+  } else {
+    const days = Math.round(m / 1440)
+    timeStr = `~${days} ${days === 1 ? t('messages.sellerResponseDay') : t('messages.sellerResponseDays')}`
+  }
+  return `${t('messages.sellerResponseHint')} ${timeStr}`
+})
 </script>
 
 <template>
@@ -30,6 +49,9 @@ const emit = defineEmits<{
         {{ vehicleTitle || $t('messages.unknownVehicle') }}
       </span>
       <span class="conv-header__party">{{ otherPartyName }}</span>
+      <span v-if="sellerResponseLabel" class="conv-header__response-time">
+        {{ sellerResponseLabel }}
+      </span>
     </div>
 
     <span class="conv-header__status" :class="statusClass">
@@ -111,6 +133,15 @@ const emit = defineEmits<{
   color: var(--text-secondary);
 }
 
+.conv-header__response-time {
+  font-size: 10px;
+  color: var(--color-primary);
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .conv-header__status {
   flex-shrink: 0;
   padding: 2px var(--spacing-2);
@@ -125,7 +156,7 @@ const emit = defineEmits<{
 }
 
 .conv-status--shared {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 
@@ -135,8 +166,8 @@ const emit = defineEmits<{
 }
 
 .conv-status--reported {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .conv-header__close-btn {

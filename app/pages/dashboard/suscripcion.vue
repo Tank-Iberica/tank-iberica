@@ -176,7 +176,7 @@ function formatListings(count: number): string {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .loading-state {
@@ -188,8 +188,8 @@ function formatListings(count: number): string {
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -202,7 +202,7 @@ function formatListings(count: number): string {
 
 /* Current Plan Card */
 .current-plan-card {
-  background: linear-gradient(135deg, var(--color-primary, #23424a), #1a3238);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   color: white;
   border-radius: 12px;
   padding: 24px;
@@ -246,7 +246,7 @@ function formatListings(count: number): string {
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .plans-grid {
@@ -256,8 +256,8 @@ function formatListings(count: number): string {
 }
 
 .plan-card {
-  background: white;
-  border: 2px solid #e2e8f0;
+  background: var(--bg-primary);
+  border: 2px solid var(--color-gray-200);
   border-radius: 12px;
   padding: 24px;
   position: relative;
@@ -267,11 +267,11 @@ function formatListings(count: number): string {
 }
 
 .plan-card.current {
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .plan-card.featured {
-  border-color: #3b82f6;
+  border-color: var(--color-info);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
@@ -279,7 +279,7 @@ function formatListings(count: number): string {
   position: absolute;
   top: -12px;
   right: 16px;
-  background: #3b82f6;
+  background: var(--color-info);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -291,7 +291,7 @@ function formatListings(count: number): string {
   margin: 0;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .plan-price {
@@ -303,12 +303,12 @@ function formatListings(count: number): string {
 .price-amount {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .price-period {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .plan-features {
@@ -322,7 +322,7 @@ function formatListings(count: number): string {
 
 .plan-features li {
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--text-secondary);
   padding-left: 20px;
   position: relative;
 }
@@ -331,18 +331,18 @@ function formatListings(count: number): string {
   content: '\2713';
   position: absolute;
   left: 0;
-  color: #22c55e;
+  color: var(--color-success);
   font-weight: 700;
 }
 
 .current-badge {
   padding: 10px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: 8px;
   text-align: center;
   font-weight: 600;
-  color: #16a34a;
+  color: var(--color-success);
   font-size: 0.9rem;
 }
 
@@ -352,10 +352,10 @@ function formatListings(count: number): string {
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-gray-200);
   border-radius: 8px;
-  background: white;
-  color: #475569;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -363,23 +363,23 @@ function formatListings(count: number): string {
 }
 
 .btn-plan:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-plan.primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .btn-plan.primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .cancel-section {
   text-align: center;
   padding: 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
@@ -388,7 +388,7 @@ function formatListings(count: number): string {
 }
 
 .btn-text {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
   min-height: 44px;

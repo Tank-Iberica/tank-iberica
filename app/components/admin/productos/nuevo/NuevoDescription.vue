@@ -55,7 +55,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -101,18 +101,18 @@ const emit = defineEmits<{
 }
 .field textarea {
   padding: 8px 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 5px;
   font-size: 0.85rem;
   resize: vertical;
 }
 .field textarea:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
 }
 .char-count {
   font-size: 0.65rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
   text-align: right;
 }
 

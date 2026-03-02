@@ -111,7 +111,7 @@ function onStatusChange(demand: AdminDemand, event: Event) {
 
 <style scoped>
 .table-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -143,11 +143,11 @@ function onStatusChange(demand: AdminDemand, event: Event) {
 }
 
 .admin-table tr.row-pending {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .admin-table tr.row-pending:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .status-select {
@@ -157,7 +157,7 @@ function onStatusChange(demand: AdminDemand, event: Event) {
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .contact-info {
@@ -207,7 +207,7 @@ function onStatusChange(demand: AdminDemand, event: Event) {
 
 .btn-icon {
   background: none;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
@@ -216,15 +216,15 @@ function onStatusChange(demand: AdminDemand, event: Event) {
 }
 
 .btn-icon:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .btn-view:hover {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
 }
 
 .btn-delete:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .empty-state {

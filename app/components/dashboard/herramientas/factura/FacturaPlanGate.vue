@@ -31,26 +31,26 @@ const { t } = useI18n()
 .plan-gate {
   text-align: center;
   padding: 3rem 1.5rem;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 12px;
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--color-gray-300);
   margin-top: 2rem;
 }
 
 .plan-gate__icon {
-  color: #94a3b8;
+  color: var(--text-disabled);
   margin-bottom: 1rem;
 }
 
 .plan-gate__title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
   margin-bottom: 0.5rem;
 }
 
 .plan-gate__text {
-  color: #64748b;
+  color: var(--text-auxiliary);
   margin-bottom: 1.5rem;
   max-width: 400px;
   margin-left: auto;
@@ -63,7 +63,7 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 44px;
   padding: 0.75rem 2rem;
-  background: var(--primary, #23424a);
+  background: var(--primary, var(--color-primary));
   color: white;
   border-radius: 8px;
   font-weight: 600;

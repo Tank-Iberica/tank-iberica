@@ -49,7 +49,7 @@ function onSelectChange(event: Event): void {
 
 <style scoped>
 .card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 20px;
@@ -59,13 +59,13 @@ function onSelectChange(event: Event): void {
   margin: 0 0 16px 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .empty-state {
   text-align: center;
   padding: 24px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .empty-state p {
@@ -76,17 +76,17 @@ function onSelectChange(event: Event): void {
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
-  color: #1e293b;
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   cursor: pointer;
 }
 
 .select-vehicle:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
 }
 
@@ -96,7 +96,7 @@ function onSelectChange(event: Event): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -106,6 +106,6 @@ function onSelectChange(event: Event): void {
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 </style>

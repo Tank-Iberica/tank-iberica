@@ -137,7 +137,7 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
 
 <style scoped>
 .table-container {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
@@ -167,7 +167,7 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
   cursor: pointer;
 }
 .historico-table th.sortable:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 .historico-table th.num,
 .historico-table td.num {
@@ -184,7 +184,7 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
 }
 .historico-table td.empty {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   padding: 40px;
 }
 .historico-table td.vehiculo {
@@ -197,7 +197,7 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
   white-space: nowrap;
 }
 .historico-table td.muted {
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 .historico-table td.actions {
   text-align: center;
@@ -211,7 +211,7 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
   font-weight: 500;
 }
 .cat-badge.venta {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 .cat-badge.terceros {
@@ -219,17 +219,17 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
   color: #7c3aed;
 }
 .cat-badge.exportacion {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 /* Profit colors */
 .profit-pos {
-  color: #16a34a;
+  color: var(--color-success);
   font-weight: 600;
 }
 .profit-neg {
-  color: #dc2626;
+  color: var(--color-error);
   font-weight: 600;
 }
 
@@ -249,13 +249,13 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
   border-radius: 4px;
 }
 .btn-icon:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 .btn-icon.del:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 .btn-icon.restore:hover {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
 }
 
 @media (max-width: 768px) {

@@ -61,7 +61,7 @@ const { t } = useI18n()
 }
 
 .plan-badge {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   color: #374151;
   padding: 4px 12px;
   border-radius: 20px;
@@ -71,8 +71,8 @@ const { t } = useI18n()
 }
 
 .upgrade-card {
-  background: #fff;
-  border: 2px solid #e5e7eb;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color-light);
   border-radius: 16px;
   padding: 48px 32px;
   text-align: center;
@@ -81,7 +81,7 @@ const { t } = useI18n()
 }
 
 .upgrade-icon {
-  color: #23424a;
+  color: var(--color-primary);
   margin-bottom: 16px;
 }
 
@@ -98,8 +98,8 @@ const { t } = useI18n()
 
 .btn {
   padding: 10px 20px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.9rem;
   cursor: pointer;
@@ -113,13 +113,13 @@ const { t } = useI18n()
 }
 
 .btn-primary {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-lg {

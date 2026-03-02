@@ -26,7 +26,7 @@ const { t } = useI18n()
 
 <style scoped>
 .form-section {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   padding: 1.25rem;
   margin-bottom: 1.25rem;
@@ -35,7 +35,7 @@ const { t } = useI18n()
 .form-section__legend {
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 0 0.5rem;

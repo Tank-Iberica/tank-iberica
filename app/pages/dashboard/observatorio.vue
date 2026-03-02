@@ -197,12 +197,12 @@ function onUpdateForm(value: typeof entryForm.value): void {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .plan-badge {
   padding: 4px 12px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border-radius: 12px;
   font-size: 0.8rem;
@@ -221,16 +221,16 @@ function onUpdateForm(value: typeof entryForm.value): void {
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
-  color: #475569;
+  color: var(--text-secondary);
   cursor: pointer;
 }
 
 .btn-icon:hover {
-  background: #f8fafc;
-  color: var(--color-primary, #23424a);
+  background: var(--bg-secondary);
+  color: var(--color-primary);
 }
 
 .btn-primary {
@@ -239,7 +239,7 @@ function onUpdateForm(value: typeof entryForm.value): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -250,16 +250,16 @@ function onUpdateForm(value: typeof entryForm.value): void {
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 /* Alerts */
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 /* Loading */
@@ -272,8 +272,8 @@ function onUpdateForm(value: typeof entryForm.value): void {
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -288,8 +288,8 @@ function onUpdateForm(value: typeof entryForm.value): void {
 .empty-state {
   text-align: center;
   padding: 48px 20px;
-  color: #64748b;
-  background: white;
+  color: var(--text-auxiliary);
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -322,7 +322,7 @@ function onUpdateForm(value: typeof entryForm.value): void {
 
 .upgrade-card p {
   margin: 0 0 16px 0;
-  color: #3b82f6;
+  color: var(--color-info);
   font-size: 0.9rem;
 }
 

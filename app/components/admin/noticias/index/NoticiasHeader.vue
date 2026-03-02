@@ -38,8 +38,8 @@ defineProps<{
 }
 
 .count-badge {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--bg-secondary);
+  color: var(--text-auxiliary);
   font-size: 0.8rem;
   font-weight: 600;
   padding: 2px 10px;
@@ -52,8 +52,8 @@ defineProps<{
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid var(--color-gray-200);
+  background: var(--bg-primary);
   color: #374151;
   transition: all 0.15s;
   text-decoration: none;
@@ -63,9 +63,9 @@ defineProps<{
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .btn-primary:hover {

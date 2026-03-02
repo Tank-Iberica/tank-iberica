@@ -316,7 +316,7 @@ function fmt(val: number | null | undefined): string {
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -345,12 +345,12 @@ function fmt(val: number | null | undefined): string {
   border-top: 1px solid #f3f4f6;
 }
 .financial {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
 }
 .cost-badge {
   padding: 4px 10px;
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 600;
@@ -373,13 +373,13 @@ function fmt(val: number | null | undefined): string {
 }
 .field input {
   padding: 8px 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 5px;
   font-size: 0.85rem;
 }
 .field input:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
 }
 .records-block {
   margin-top: 16px;
@@ -402,7 +402,7 @@ function fmt(val: number | null | undefined): string {
 .records-table th {
   text-align: left;
   padding: 6px 8px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   font-weight: 500;
   font-size: 0.7rem;
   text-transform: uppercase;
@@ -414,7 +414,7 @@ function fmt(val: number | null | undefined): string {
 .records-table input {
   width: 100%;
   padding: 4px 6px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 3px;
   font-size: 0.75rem;
 }
@@ -431,7 +431,7 @@ function fmt(val: number | null | undefined): string {
   gap: 4px;
 }
 .invoice-link {
-  color: #23424a;
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 0.75rem;
 }
@@ -446,7 +446,7 @@ function fmt(val: number | null | undefined): string {
 }
 .invoice-upload:hover,
 .invoice-change:hover {
-  color: #23424a;
+  color: var(--color-primary);
 }
 .invoice-upload input,
 .invoice-change input {
@@ -474,11 +474,11 @@ function fmt(val: number | null | undefined): string {
   color: #374151;
 }
 .green {
-  color: #16a34a;
+  color: var(--color-success);
 }
 .btn-add {
   padding: 4px 10px;
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -489,15 +489,15 @@ function fmt(val: number | null | undefined): string {
   width: 24px;
   height: 24px;
   border: none;
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
 }
 .empty-msg {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.8rem;
   padding: 16px;
 }

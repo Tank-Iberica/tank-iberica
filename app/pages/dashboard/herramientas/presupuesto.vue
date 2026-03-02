@@ -162,7 +162,7 @@ onMounted(init)
 }
 
 .back-link {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
@@ -175,31 +175,31 @@ onMounted(init)
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .subtitle {
   margin: 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
 /* Alerts */
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .alert-success {
   padding: 12px 16px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: 8px;
-  color: #16a34a;
+  color: var(--color-success);
   font-size: 0.9rem;
 }
 
@@ -213,8 +213,8 @@ onMounted(init)
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -231,27 +231,27 @@ onMounted(init)
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
 }
 
 .quote-number-label {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-weight: 500;
 }
 
 .quote-number-value {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   font-variant-numeric: tabular-nums;
 }
 
 /* Inline form sections kept in page */
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -261,24 +261,24 @@ onMounted(init)
   margin: 0 0 12px 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .input-field {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
-  color: #1e293b;
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   min-height: 44px;
   transition: border-color 0.2s;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 

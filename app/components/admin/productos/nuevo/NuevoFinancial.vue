@@ -68,7 +68,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -93,12 +93,12 @@ const emit = defineEmits<{
   background: #f9fafb;
 }
 .financial {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
 }
 .cost-badge {
   padding: 4px 10px;
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 600;

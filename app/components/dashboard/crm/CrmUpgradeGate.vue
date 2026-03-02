@@ -34,7 +34,7 @@ const { t } = useI18n()
   text-align: center;
   max-width: 420px;
   padding: 48px 32px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -50,18 +50,18 @@ const { t } = useI18n()
   margin: 0 0 12px;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .upgrade-card p {
   margin: 0 0 24px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.95rem;
   line-height: 1.5;
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -78,6 +78,6 @@ const { t } = useI18n()
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 </style>

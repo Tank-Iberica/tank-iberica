@@ -45,7 +45,7 @@ const { t } = useI18n()
 }
 
 .total-badge {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #6b7280;
   padding: 4px 12px;
   border-radius: 16px;
@@ -54,8 +54,8 @@ const { t } = useI18n()
 }
 
 .pending-badge {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
   padding: 4px 12px;
   border-radius: 16px;
   font-size: 0.85rem;

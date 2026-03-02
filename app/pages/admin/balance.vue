@@ -266,14 +266,14 @@ function updateFilters(newFilters: BalanceFilters & { type_id?: string | null })
 /* Page-level buttons */
 .btn {
   padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 6px;
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-primary {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
 }
@@ -289,8 +289,8 @@ function updateFilters(newFilters: BalanceFilters & { type_id?: string | null })
 
 /* Error */
 .error-msg {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 10px 14px;
   border-radius: 6px;
   margin-bottom: 16px;

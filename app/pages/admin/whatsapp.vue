@@ -211,12 +211,12 @@ const {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .count-badge {
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
   padding: 4px 10px;
@@ -224,14 +224,14 @@ const {
 }
 
 .count-badge.pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .btn-refresh {
   align-self: flex-start;
   padding: 10px 18px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -243,7 +243,7 @@ const {
 }
 
 .btn-refresh:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-refresh:disabled {
@@ -258,7 +258,7 @@ const {
   position: fixed;
   top: 20px;
   right: 20px;
-  background: #16a34a;
+  background: var(--color-success);
   color: white;
   padding: 12px 20px;
   border-radius: 8px;
@@ -287,17 +287,17 @@ const {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .dismiss-btn {
   background: none;
   border: none;
-  color: #dc2626;
+  color: var(--color-error);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -318,7 +318,7 @@ const {
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -327,7 +327,12 @@ const {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-100) 25%,
+    var(--color-gray-200) 50%,
+    var(--color-gray-100) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   flex-shrink: 0;
@@ -343,7 +348,12 @@ const {
 .skeleton-line {
   height: 12px;
   border-radius: 6px;
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-100) 25%,
+    var(--color-gray-200) 50%,
+    var(--color-gray-100) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -360,7 +370,12 @@ const {
   width: 60px;
   height: 24px;
   border-radius: 12px;
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-100) 25%,
+    var(--color-gray-200) 50%,
+    var(--color-gray-100) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   flex-shrink: 0;
@@ -383,7 +398,7 @@ const {
   flex-direction: column;
   align-items: center;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   gap: 12px;
 }
 
@@ -397,9 +412,9 @@ const {
 }
 
 .btn-secondary {
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 500;
@@ -408,8 +423,8 @@ const {
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 /* ============================================
@@ -432,9 +447,9 @@ const {
 
 .btn-load-more {
   padding: 12px 32px;
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   font-size: 0.9rem;
@@ -444,8 +459,8 @@ const {
 }
 
 .btn-load-more:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .loading-more {
@@ -457,8 +472,8 @@ const {
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

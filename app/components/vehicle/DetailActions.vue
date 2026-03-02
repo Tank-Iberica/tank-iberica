@@ -307,8 +307,8 @@ defineEmits<{
 }
 
 .report-btn:hover {
-  border-color: #ef4444 !important;
-  color: #ef4444;
+  border-color: var(--color-error) !important;
+  color: var(--color-error);
 }
 
 .compare-btn.active {

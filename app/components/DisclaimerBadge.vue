@@ -66,7 +66,7 @@ onUnmounted(() => {
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   padding: 12px 16px;
   border-radius: 8px;
@@ -96,7 +96,7 @@ onUnmounted(() => {
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: var(--color-primary, #23424a);
+  border-top-color: var(--color-primary);
 }
 
 .tooltip-enter-active {

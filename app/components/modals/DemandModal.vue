@@ -550,7 +550,7 @@ watch(
 }
 
 .modal-container {
-  background: white;
+  background: var(--bg-primary);
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
@@ -567,7 +567,7 @@ watch(
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--bg-primary);
   z-index: 1;
 }
 
@@ -622,7 +622,7 @@ watch(
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background-color: #10b981;
+  background-color: var(--color-success);
   color: white;
   font-size: 40px;
   display: flex;
@@ -709,12 +709,12 @@ watch(
 }
 
 .input-error {
-  border-color: #ef4444;
+  border-color: var(--color-error);
 }
 
 .field-error {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--color-error, #dc2626);
+  color: var(--color-error, var(--color-error));
   margin-top: var(--spacing-1, 4px);
 }
 
@@ -742,7 +742,7 @@ textarea.form-input {
 .modal-footer {
   padding: var(--spacing-16);
   border-top: 1px solid var(--border-color);
-  background: white;
+  background: var(--bg-primary);
   position: sticky;
   bottom: 0;
 }

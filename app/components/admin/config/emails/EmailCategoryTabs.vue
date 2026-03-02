@@ -46,9 +46,9 @@ const emit = defineEmits<{
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
@@ -59,14 +59,14 @@ const emit = defineEmits<{
 }
 
 .category-tab:hover {
-  border-color: var(--color-primary, #23424a);
-  color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .category-tab--active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .category-tab--active:hover {

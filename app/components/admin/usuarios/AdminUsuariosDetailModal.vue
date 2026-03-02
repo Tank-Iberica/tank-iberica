@@ -116,7 +116,7 @@ function onRoleSelectChange(event: Event) {
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -136,7 +136,7 @@ function onRoleSelectChange(event: Event) {
   border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .modal-header h3 {
@@ -204,8 +204,8 @@ function onRoleSelectChange(event: Event) {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color-light);
 }
 
 .user-main-name {
@@ -226,7 +226,7 @@ function onRoleSelectChange(event: Event) {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -274,13 +274,13 @@ function onRoleSelectChange(event: Event) {
 .role-select-large {
   flex: 1;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -298,7 +298,7 @@ function onRoleSelectChange(event: Event) {
 }
 
 .btn-secondary {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   color: #374151;
   border: none;
   padding: 10px 20px;

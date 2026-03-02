@@ -119,7 +119,7 @@ onMounted(() => init())
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -130,12 +130,12 @@ onMounted(() => init())
 }
 
 .btn-primary:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .error-banner {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;

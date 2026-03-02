@@ -36,7 +36,7 @@ const { sanitize } = useSanitize()
 
 <style scoped>
 .preview-panel {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -62,8 +62,8 @@ const { sanitize } = useSanitize()
 }
 
 .preview-lang-toggle button {
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color-light);
   padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
@@ -73,24 +73,24 @@ const { sanitize } = useSanitize()
 }
 
 .preview-lang-toggle button:hover {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
 }
 
 .preview-lang-toggle button.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .preview-content {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .banner-preview {
   background: #fbbf24;
-  color: #1f2a2a;
+  color: var(--text-primary);
   padding: 12px 20px;
   text-align: center;
   font-size: 14px;
@@ -105,7 +105,7 @@ const { sanitize } = useSanitize()
 .preview-empty {
   padding: 24px;
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-style: italic;
 }
 </style>

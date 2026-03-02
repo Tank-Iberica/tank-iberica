@@ -48,7 +48,7 @@ const { t } = useI18n()
   flex: 1;
   min-width: 120px;
   padding: 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   display: flex;
@@ -59,12 +59,12 @@ const { t } = useI18n()
 .stat-value {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .stat-label {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-weight: 500;
 }
 
@@ -73,11 +73,11 @@ const { t } = useI18n()
 }
 
 .stat-card.stat-contacted .stat-value {
-  color: #d97706;
+  color: var(--color-warning);
 }
 
 .stat-card.stat-interested .stat-value {
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 .stat-card.stat-active .stat-value {

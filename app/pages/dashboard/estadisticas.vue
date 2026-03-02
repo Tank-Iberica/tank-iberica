@@ -200,12 +200,12 @@ onMounted(loadStats)
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .plan-badge {
   padding: 4px 12px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border-radius: 12px;
   font-size: 0.8rem;
@@ -214,10 +214,10 @@ onMounted(loadStats)
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .loading-state {
@@ -229,8 +229,8 @@ onMounted(loadStats)
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -248,7 +248,7 @@ onMounted(loadStats)
 }
 
 .stat-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -261,17 +261,17 @@ onMounted(loadStats)
 .stat-value {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   line-height: 1;
 }
 
 .stat-label {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -281,13 +281,13 @@ onMounted(loadStats)
   margin: 0 0 16px 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .empty-state {
   text-align: center;
   padding: 32px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .vehicle-table {
@@ -298,17 +298,17 @@ onMounted(loadStats)
 .table-header {
   display: flex;
   padding: 10px 0;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
   font-size: 0.8rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   text-transform: uppercase;
 }
 
 .table-row {
   display: flex;
   padding: 12px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.9rem;
   color: #334155;
   min-height: 44px;
@@ -321,7 +321,7 @@ onMounted(loadStats)
 }
 
 .col-vehicle .year {
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-weight: 400;
 }
 
@@ -347,7 +347,7 @@ onMounted(loadStats)
 
 .upgrade-card p {
   margin: 0 0 16px 0;
-  color: #3b82f6;
+  color: var(--color-info);
   font-size: 0.9rem;
 }
 
@@ -357,7 +357,7 @@ onMounted(loadStats)
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;

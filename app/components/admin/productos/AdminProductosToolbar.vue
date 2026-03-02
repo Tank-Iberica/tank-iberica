@@ -76,7 +76,7 @@ const emit = defineEmits<{
   align-items: center;
   gap: 12px;
   padding-top: 12px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .column-toggles {
@@ -90,14 +90,14 @@ const emit = defineEmits<{
 .toggles-label {
   font-size: 14px;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .column-toggle {
   padding: 6px 12px;
-  border: 1px solid #e2e8f0;
-  background: white;
-  color: #64748b;
+  border: 1px solid var(--color-gray-200);
+  background: var(--bg-primary);
+  color: var(--text-auxiliary);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -106,13 +106,13 @@ const emit = defineEmits<{
 }
 
 .column-toggle:hover {
-  border-color: #cbd5e1;
+  border-color: var(--color-gray-300);
 }
 
 .column-toggle.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .toolbar-actions {
@@ -123,9 +123,9 @@ const emit = defineEmits<{
 
 .btn-tool {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
-  background: white;
-  color: #475569;
+  border: 1px solid var(--color-gray-200);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -136,8 +136,8 @@ const emit = defineEmits<{
 }
 
 .btn-tool:hover:not(:disabled) {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .btn-tool:disabled {
@@ -146,13 +146,13 @@ const emit = defineEmits<{
 }
 
 .btn-tool.drive-on {
-  background: #f0fdf4;
+  background: var(--color-success-bg, #dcfce7);
   border-color: #86efac;
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 .badge {
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
   font-size: 11px;
   padding: 2px 6px;

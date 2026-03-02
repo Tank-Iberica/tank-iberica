@@ -35,18 +35,8 @@
     <!-- Legal disclaimer -->
     <DisclaimerFooter />
 
-    <!-- Kit Digital banner -->
-    <div class="footer-kit-digital">
-      <img
-        src="https://lh3.googleusercontent.com/d/13QhArniHSTlOWD1WmODl3b_AqwKhRGqY"
-        alt="Tracciona"
-        loading="lazy"
-      >
-    </div>
-
     <div class="footer-bottom">
       <p>&copy; {{ year }} Tracciona. {{ $t('footer.allRights') }}</p>
-      <NuxtLink to="/admin" class="admin-link">Admin</NuxtLink>
     </div>
   </footer>
 </template>
@@ -117,19 +107,6 @@ const year = new Date().getFullYear()
   padding-left: 0.5rem;
 }
 
-/* Kit Digital banner */
-.footer-kit-digital {
-  text-align: center;
-  padding: 0 1rem;
-  margin-bottom: 32px;
-}
-
-.footer-kit-digital img {
-  width: 100%;
-  max-width: 1600px;
-  height: auto;
-}
-
 /* Footer bottom */
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -140,33 +117,12 @@ const year = new Date().getFullYear()
   line-height: 1.6;
 }
 
-.admin-link {
-  display: inline-block;
-  margin-top: 16px;
-  padding: 8px 20px;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-on-dark-secondary, rgba(255, 255, 255, 0.7));
-  text-decoration: none;
-  border-radius: 6px;
-  font-size: 13px;
-  transition: all 0.2s;
-}
-
-.admin-link:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--text-on-dark-primary, rgba(255, 255, 255, 0.95));
-}
-
 /* ============================================
    RESPONSIVE: ≥480px (large mobile)
    ============================================ */
 @media (min-width: 480px) {
   .footer-content {
     gap: 1rem;
-    padding: 0 2rem;
-  }
-
-  .footer-kit-digital {
     padding: 0 2rem;
   }
 
@@ -206,10 +162,6 @@ const year = new Date().getFullYear()
 
   .footer-section {
     min-width: 150px;
-  }
-
-  .footer-kit-digital {
-    padding: 0 3rem;
   }
 
   .footer-bottom {

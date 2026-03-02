@@ -53,13 +53,13 @@ function getProductUnit(p: MerchProduct): string {
   margin: 0;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .section-desc {
   margin: -8px 0 0;
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   line-height: 1.5;
 }
 
@@ -74,12 +74,12 @@ function getProductUnit(p: MerchProduct): string {
   flex-direction: row;
   align-items: flex-start;
   gap: 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
   padding: 16px;
   transition: box-shadow 0.15s;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--color-gray-100);
 }
 
 .product-card:hover {
@@ -91,7 +91,7 @@ function getProductUnit(p: MerchProduct): string {
   width: 52px;
   height: 52px;
   border-radius: 12px;
-  background: var(--card-bg, #f1f5f9);
+  background: var(--card-bg, var(--color-gray-100));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -113,19 +113,19 @@ function getProductUnit(p: MerchProduct): string {
   margin: 0;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .product-desc {
   margin: 0;
   font-size: 0.82rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   line-height: 1.4;
 }
 
 .product-unit {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-weight: 500;
 }
 

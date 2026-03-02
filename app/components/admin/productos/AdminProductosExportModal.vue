@@ -90,7 +90,7 @@ const localScope = computed({
 }
 
 .modal {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
@@ -119,14 +119,14 @@ const localScope = computed({
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .modal-close {
@@ -135,7 +135,7 @@ const localScope = computed({
   font-size: 28px;
   line-height: 1;
   cursor: pointer;
-  color: #94a3b8;
+  color: var(--text-disabled);
   padding: 0;
   width: 32px;
   height: 32px;
@@ -148,7 +148,7 @@ const localScope = computed({
 
 .modal-close:hover {
   background: rgba(0, 0, 0, 0.05);
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .modal-body {
@@ -167,7 +167,7 @@ const localScope = computed({
   display: block;
   margin-bottom: 12px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 14px;
 }
 
@@ -183,9 +183,9 @@ const localScope = computed({
 .option-buttons button {
   flex: 1;
   padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  background: white;
-  color: #475569;
+  border: 2px solid var(--color-gray-200);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -195,13 +195,13 @@ const localScope = computed({
 }
 
 .option-buttons button:hover {
-  border-color: #cbd5e1;
-  background: #f8fafc;
+  border-color: var(--color-gray-300);
+  background: var(--bg-secondary);
 }
 
 .option-buttons button.active {
-  border-color: var(--color-primary, #23424a);
-  background: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
   color: white;
 }
 
@@ -210,13 +210,13 @@ const localScope = computed({
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 24px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .btn-secondary {
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gray-200);
+  color: var(--text-secondary);
   padding: 10px 18px;
   border-radius: 8px;
   font-size: 14px;
@@ -226,12 +226,12 @@ const localScope = computed({
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -243,6 +243,6 @@ const localScope = computed({
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 </style>

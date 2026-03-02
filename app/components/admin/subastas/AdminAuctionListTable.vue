@@ -138,10 +138,10 @@ const { t } = useI18n()
 <style scoped>
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .loading-state {
@@ -150,14 +150,14 @@ const { t } = useI18n()
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -169,7 +169,7 @@ const { t } = useI18n()
 }
 
 .table-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: auto;
@@ -184,28 +184,28 @@ const { t } = useI18n()
 .data-table th {
   position: sticky;
   top: 0;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   padding: 12px 14px;
   text-align: left;
   font-weight: 600;
   font-size: 0.8rem;
-  color: #475569;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
   white-space: nowrap;
   z-index: 10;
 }
 
 .data-table td {
   padding: 10px 14px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.9rem;
   color: #334155;
 }
 
 .data-table tr:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .col-num {
@@ -218,7 +218,7 @@ const { t } = useI18n()
 }
 
 .text-muted {
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .text-small {
@@ -226,12 +226,12 @@ const { t } = useI18n()
 }
 
 .vehicle-link {
-  color: #1e293b;
+  color: var(--text-primary);
   text-decoration: none;
 }
 
 .vehicle-link:hover {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: underline;
 }
 
@@ -246,23 +246,23 @@ const { t } = useI18n()
 }
 
 .status-draft {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--bg-secondary);
+  color: var(--text-auxiliary);
 }
 
 .status-scheduled {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
 }
 
 .status-active {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .status-ended {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .status-adjudicated {
@@ -271,13 +271,13 @@ const { t } = useI18n()
 }
 
 .status-cancelled {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .status-no-sale {
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
 /* Row actions */
@@ -289,9 +289,9 @@ const { t } = useI18n()
 
 .action-btn {
   padding: 6px 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 14px;
   text-decoration: none;
@@ -304,17 +304,17 @@ const { t } = useI18n()
 }
 
 .action-btn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .action-adjudicate:hover {
-  background: #f0fdf4;
-  border-color: #22c55e;
+  background: var(--color-success-bg, #dcfce7);
+  border-color: var(--color-success);
 }
 
 .action-cancel:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
   border-color: #fca5a5;
 }
 
@@ -325,7 +325,7 @@ const { t } = useI18n()
 
 .empty-state {
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .empty-icon {

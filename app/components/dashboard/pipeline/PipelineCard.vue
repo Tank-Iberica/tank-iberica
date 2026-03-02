@@ -45,7 +45,7 @@ const { t } = useI18n()
 <style scoped>
 .pipeline-card {
   display: flex;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   cursor: pointer;
@@ -72,8 +72,8 @@ const { t } = useI18n()
   min-height: 44px;
   flex-shrink: 0;
   cursor: grab;
-  color: #94a3b8;
-  background: #f8fafc;
+  color: var(--text-disabled);
+  background: var(--bg-secondary);
   touch-action: none;
 }
 
@@ -99,7 +99,7 @@ const { t } = useI18n()
 .card-title {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #1e293b;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -107,7 +107,7 @@ const { t } = useI18n()
 
 .card-contact {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -116,6 +116,6 @@ const { t } = useI18n()
 .card-value {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 </style>

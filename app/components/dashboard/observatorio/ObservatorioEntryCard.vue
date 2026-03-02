@@ -76,11 +76,11 @@ const { t } = useI18n()
 
 <style scoped>
 .entry-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border-left: 4px solid #94a3b8;
+  border-left: 4px solid var(--color-gray-400);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -109,30 +109,30 @@ const { t } = useI18n()
 }
 
 .status-watching {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
 }
 
 .status-sold {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #15803d;
 }
 
 .status-expired {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .card-title {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .card-year {
   font-weight: 400;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .card-details {
@@ -144,18 +144,18 @@ const { t } = useI18n()
 
 .card-price {
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   font-size: 1rem;
 }
 
 .card-location {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .card-notes {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   margin: 0;
   line-height: 1.4;
 }
@@ -174,7 +174,7 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 36px;
   padding: 6px 14px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 6px;
@@ -185,7 +185,7 @@ const { t } = useI18n()
 }
 
 .btn-link:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-action {
@@ -194,24 +194,24 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 36px;
   padding: 6px 14px;
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   font-size: 0.85rem;
   cursor: pointer;
 }
 
 .btn-action:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-danger {
-  color: #dc2626;
-  border-color: #fecaca;
+  color: var(--color-error);
+  border-color: var(--color-error-border);
 }
 
 .btn-danger:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 </style>

@@ -113,8 +113,8 @@ onMounted(() => {
 /* Alerts */
 .alert-error {
   padding: var(--spacing-3) var(--spacing-4);
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: var(--font-size-sm);
@@ -122,8 +122,8 @@ onMounted(() => {
 
 .alert-success {
   padding: var(--spacing-3) var(--spacing-4);
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: var(--border-radius);
   color: var(--color-success);
   font-size: var(--font-size-sm);

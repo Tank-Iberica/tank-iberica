@@ -220,17 +220,17 @@ function getStatusClass(status: BookingStatus): string {
 }
 
 .status-badge.status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .status-badge.status-confirmed {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 
 .status-badge.status-cancelled {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   color: var(--text-auxiliary);
 }
 

@@ -23,7 +23,7 @@ const { t } = useI18n()
 }
 
 .back-link {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
@@ -36,12 +36,12 @@ const { t } = useI18n()
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .subtitle {
   margin: 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 </style>

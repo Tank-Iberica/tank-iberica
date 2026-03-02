@@ -40,7 +40,7 @@ defineEmits<{
 }
 
 .total-badge {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #6b7280;
   padding: 6px 12px;
   border-radius: 16px;
@@ -48,7 +48,7 @@ defineEmits<{
 }
 
 .btn-export {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 8px 16px;

@@ -129,7 +129,7 @@ useHead({
               autocomplete="new-password"
               minlength="8"
               required
-            >
+            />
           </div>
 
           <div class="form-group">
@@ -145,7 +145,7 @@ useHead({
               autocomplete="new-password"
               minlength="8"
               required
-            >
+            />
           </div>
 
           <div v-if="passwordError" class="form-error" role="alert">
@@ -189,7 +189,7 @@ useHead({
             type="text"
             class="form-input"
             placeholder="ELIMINAR"
-          >
+          />
           <div v-if="deleteError" class="form-error" role="alert">
             {{ deleteError }}
           </div>
@@ -243,7 +243,7 @@ useHead({
 }
 
 .section-card--danger {
-  border-color: #fecaca;
+  border-color: var(--color-error-border);
 }
 
 .section-title {
@@ -303,8 +303,8 @@ useHead({
 
 .form-error {
   padding: 0.75rem 1rem;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   color: var(--color-error);
@@ -312,8 +312,8 @@ useHead({
 
 .form-success {
   padding: 0.75rem 1rem;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   color: var(--color-success);
@@ -384,7 +384,7 @@ useHead({
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #dc2626;
+  background: var(--color-error);
 }
 
 .btn-danger:disabled {

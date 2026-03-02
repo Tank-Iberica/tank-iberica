@@ -188,7 +188,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .comment-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 16px 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -200,7 +200,7 @@ const emit = defineEmits<{
 }
 
 .comment-card.comment-pending {
-  border-left: 3px solid #f59e0b;
+  border-left: 3px solid var(--color-warning);
 }
 
 /* Card header */
@@ -223,7 +223,7 @@ const emit = defineEmits<{
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   display: flex;
   align-items: center;
@@ -281,7 +281,7 @@ const emit = defineEmits<{
   color: #6b7280;
   margin-bottom: 8px;
   padding: 4px 10px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 4px;
   width: fit-content;
 }
@@ -324,7 +324,7 @@ const emit = defineEmits<{
 .expand-btn {
   background: none;
   border: none;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
@@ -368,23 +368,23 @@ const emit = defineEmits<{
 }
 
 .action-approve {
-  background: #f0fdf4;
-  color: #16a34a;
-  border-color: #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
+  border-color: var(--color-success-border);
 }
 
 .action-approve:hover:not(:disabled) {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
 }
 
 .action-reject {
-  background: #fef2f2;
-  color: #dc2626;
-  border-color: #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
+  border-color: var(--color-error-border);
 }
 
 .action-reject:hover:not(:disabled) {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .action-spam {
@@ -398,13 +398,13 @@ const emit = defineEmits<{
 }
 
 .action-delete {
-  background: white;
-  color: #dc2626;
-  border-color: #fecaca;
+  background: var(--bg-primary);
+  color: var(--color-error);
+  border-color: var(--color-error-border);
 }
 
 .action-delete:hover:not(:disabled) {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 /* Mobile responsive (480px) */

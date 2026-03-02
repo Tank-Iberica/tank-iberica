@@ -145,7 +145,7 @@ const { t } = useI18n()
 
 .required::after {
   content: ' *';
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 .photos-count {
@@ -161,7 +161,7 @@ const { t } = useI18n()
   padding: var(--spacing-4, 16px);
   border: 2px dashed var(--border-color);
   border-radius: var(--border-radius, 8px);
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   transition:
     border-color 0.2s,
@@ -180,7 +180,7 @@ const { t } = useI18n()
 }
 
 .upload-error {
-  border-color: #ef4444;
+  border-color: var(--color-error);
 }
 
 .upload-icon {
@@ -213,7 +213,7 @@ const { t } = useI18n()
 }
 
 .photo-recommendations {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 6px;
   padding: var(--spacing-2, 8px) var(--spacing-3, 12px);
   font-size: 0.75rem;
@@ -303,7 +303,7 @@ const { t } = useI18n()
 
 .field-error {
   font-size: 0.75rem;
-  color: #ef4444;
+  color: var(--color-error);
   margin: 2px 0 0;
 }
 

@@ -220,7 +220,7 @@ function onYearsInput(event: Event): void {
 <style scoped>
 /* Form */
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -242,7 +242,7 @@ function onYearsInput(event: Event): void {
 .input-label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .input-with-unit {
@@ -254,11 +254,11 @@ function onYearsInput(event: Event): void {
 .input-field {
   flex: 1;
   padding: 12px 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 1rem;
-  color: #1e293b;
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   min-height: 44px;
   transition: border-color 0.2s;
   font-variant-numeric: tabular-nums;
@@ -266,7 +266,7 @@ function onYearsInput(event: Event): void {
 
 .input-field:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -277,7 +277,7 @@ select.input-field {
 
 .input-unit {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-weight: 500;
   white-space: nowrap;
   min-width: 32px;
@@ -288,7 +288,7 @@ select.input-field {
   width: 100%;
   height: 6px;
   appearance: none;
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   border-radius: 3px;
   outline: none;
   margin: 8px 0;
@@ -299,7 +299,7 @@ select.input-field {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   cursor: pointer;
   border: 3px solid white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
@@ -309,7 +309,7 @@ select.input-field {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   cursor: pointer;
   border: 3px solid white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
@@ -319,7 +319,7 @@ select.input-field {
   display: flex;
   justify-content: space-between;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 /* Results */
@@ -333,7 +333,7 @@ select.input-field {
   margin: 0;
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .metrics-grid {
@@ -367,36 +367,36 @@ select.input-field {
 
 /* Metric colors */
 .metric-positive {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
 }
 .metric-positive .metric-value {
-  color: #16a34a;
+  color: var(--color-success);
 }
 .metric-positive .metric-label {
   color: #15803d;
 }
 
 .metric-negative {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
 }
 .metric-negative .metric-value {
-  color: #dc2626;
+  color: var(--color-error);
 }
 .metric-negative .metric-label {
-  color: #b91c1c;
+  color: var(--color-error);
 }
 
 .metric-neutral {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--color-gray-200);
 }
 .metric-neutral .metric-value {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 .metric-neutral .metric-label {
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .metric-warning {
@@ -404,15 +404,15 @@ select.input-field {
   border: 1px solid #fde68a;
 }
 .metric-warning .metric-value {
-  color: #d97706;
+  color: var(--color-warning);
 }
 .metric-warning .metric-label {
-  color: #92400e;
+  color: var(--color-warning-text);
 }
 
 /* Table */
 .table-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -422,7 +422,7 @@ select.input-field {
   margin: 0 0 16px 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .table-wrapper {
@@ -440,30 +440,30 @@ select.input-field {
 .data-table th {
   text-align: left;
   padding: 10px 8px;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 0.8rem;
   white-space: nowrap;
 }
 
 .data-table td {
   padding: 8px;
-  border-bottom: 1px solid #f1f5f9;
-  color: #1e293b;
+  border-bottom: 1px solid var(--color-gray-100);
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
 .cell-highlight {
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 /* Empty state */
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 
@@ -483,7 +483,7 @@ select.input-field {
   justify-content: center;
   min-height: 48px;
   padding: 12px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -496,7 +496,7 @@ select.input-field {
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 /* Responsive */

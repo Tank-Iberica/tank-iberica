@@ -108,7 +108,7 @@ usePageSeo({
   gap: 12px;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid var(--border-color-light, #e2e8f0);
+  border-top: 1px solid var(--border-color-light, var(--color-gray-200));
 }
 
 .legal-link {
@@ -116,8 +116,8 @@ usePageSeo({
   align-items: center;
   min-height: 44px;
   padding: 10px 16px;
-  background: var(--bg-secondary, #f8fafc);
-  color: var(--color-primary, #23424a);
+  background: var(--bg-secondary, var(--color-gray-50));
+  color: var(--color-primary);
   border-radius: 8px;
   font-weight: 500;
   font-size: 0.9rem;
@@ -126,7 +126,7 @@ usePageSeo({
 }
 
 .legal-link:hover {
-  background: var(--border-color-light, #e2e8f0);
+  background: var(--border-color-light, var(--color-gray-200));
 }
 
 @media (min-width: 768px) {

@@ -30,7 +30,7 @@ const { t } = useI18n()
 
 <style scoped>
 .card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 20px;
@@ -40,11 +40,11 @@ const { t } = useI18n()
   margin: 0 0 16px 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .preview-container {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   overflow: hidden;
   min-height: 300px;
@@ -65,7 +65,7 @@ const { t } = useI18n()
   align-items: center;
   justify-content: center;
   min-height: 200px;
-  color: #94a3b8;
+  color: var(--text-disabled);
   text-align: center;
   padding: 20px;
 }

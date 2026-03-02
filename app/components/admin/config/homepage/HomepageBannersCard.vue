@@ -38,7 +38,7 @@ const emit = defineEmits<{
                 @change="
                   emit('update-field', index, 'active', ($event.target as HTMLInputElement).checked)
                 "
-              >
+              />
               <span>{{ banner.active ? 'Activo' : 'Inactivo' }}</span>
             </label>
             <button class="btn-remove" title="Eliminar" @click="emit('remove', index)">
@@ -65,7 +65,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                >
+                />
               </div>
               <div class="lang-field">
                 <span class="lang-badge">EN</span>
@@ -81,7 +81,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                >
+                />
               </div>
             </div>
           </div>
@@ -93,7 +93,7 @@ const emit = defineEmits<{
               type="text"
               placeholder="https://... o /ruta"
               @input="emit('update-field', index, 'url', ($event.target as HTMLInputElement).value)"
-            >
+            />
           </div>
 
           <div class="banner-row-colors">
@@ -112,7 +112,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                >
+                />
                 <input
                   :value="banner.bg_color"
                   type="text"
@@ -127,7 +127,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                >
+                />
               </div>
             </div>
             <div class="form-group">
@@ -145,7 +145,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                >
+                />
                 <input
                   :value="banner.text_color"
                   type="text"
@@ -160,7 +160,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                >
+                />
               </div>
             </div>
           </div>
@@ -179,7 +179,7 @@ const emit = defineEmits<{
                     ($event.target as HTMLInputElement).value,
                   )
                 "
-              >
+              />
             </div>
             <div class="form-group">
               <label>Fecha fin</label>
@@ -189,7 +189,7 @@ const emit = defineEmits<{
                 @input="
                   emit('update-field', index, 'ends_at', ($event.target as HTMLInputElement).value)
                 "
-              >
+              />
             </div>
           </div>
 
@@ -209,7 +209,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
@@ -238,7 +238,7 @@ const emit = defineEmits<{
 }
 
 .btn-add {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -251,15 +251,15 @@ const emit = defineEmits<{
 }
 
 .btn-add:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .empty-state {
   text-align: center;
   padding: 24px;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.875rem;
-  border: 1px dashed #e5e7eb;
+  border: 1px dashed var(--border-color-light);
   border-radius: 8px;
 }
 
@@ -270,7 +270,7 @@ const emit = defineEmits<{
 }
 
 .banner-item {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 10px;
   padding: 16px;
   background: #fafafa;
@@ -310,13 +310,13 @@ const emit = defineEmits<{
 .toggle-label-inline input {
   width: 16px;
   height: 16px;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 .btn-remove {
   background: none;
   border: 1px solid #fca5a5;
-  color: #dc2626;
+  color: var(--color-error);
   width: 28px;
   height: 28px;
   border-radius: 4px;
@@ -330,7 +330,7 @@ const emit = defineEmits<{
 }
 
 .btn-remove:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .banner-fields {
@@ -358,7 +358,7 @@ const emit = defineEmits<{
 .form-group input[type='text'] {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
   box-sizing: border-box;
@@ -366,14 +366,14 @@ const emit = defineEmits<{
 
 .form-group input[type='text']:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 .form-group input[type='datetime-local'] {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.875rem;
   box-sizing: border-box;
@@ -381,7 +381,7 @@ const emit = defineEmits<{
 
 .form-group input[type='datetime-local']:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -404,7 +404,7 @@ const emit = defineEmits<{
   font-size: 0.7rem;
   font-weight: 700;
   color: #6b7280;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 4px;
   padding: 4px 0;
   text-transform: uppercase;
@@ -413,14 +413,14 @@ const emit = defineEmits<{
 .lang-field input {
   flex: 1;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
 }
 
 .lang-field input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -447,7 +447,7 @@ const emit = defineEmits<{
 .color-picker-sm {
   width: 36px;
   height: 36px;
-  border: 2px solid #d1d5db;
+  border: 2px solid var(--border-color);
   border-radius: 6px;
   cursor: pointer;
   padding: 2px;
@@ -466,7 +466,7 @@ const emit = defineEmits<{
 .color-hex-sm {
   flex: 1;
   padding: 7px 8px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.8rem;
   font-family: monospace;
@@ -475,7 +475,7 @@ const emit = defineEmits<{
 
 .color-hex-sm:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 

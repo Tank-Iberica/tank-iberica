@@ -59,7 +59,7 @@ const { t } = useI18n()
 
 .progress-bar {
   height: 8px;
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -67,7 +67,7 @@ const { t } = useI18n()
 
 .progress-fill {
   height: 100%;
-  background: #3b82f6;
+  background: var(--color-info);
   border-radius: 4px;
   transition: width 0.4s;
 }
@@ -84,15 +84,15 @@ const { t } = useI18n()
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 6px;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .step.done {
-  color: #16a34a;
-  background: #f0fdf4;
+  color: var(--color-success);
+  background: var(--color-success-bg, #dcfce7);
 }
 
 .step-check {
@@ -103,13 +103,13 @@ const { t } = useI18n()
   justify-content: center;
   border-radius: 50%;
   font-size: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
 }
 
 .step.done .step-check {
-  background: #22c55e;
+  background: var(--color-success);
   color: white;
-  border-color: #22c55e;
+  border-color: var(--color-success);
 }
 
 .btn-secondary {
@@ -118,9 +118,9 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;
@@ -128,6 +128,6 @@ const { t } = useI18n()
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 </style>

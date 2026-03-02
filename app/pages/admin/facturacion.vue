@@ -96,7 +96,7 @@ function onSelectPeriod(value: string): void {
   width: 24px;
   height: 24px;
   border: 3px solid var(--color-gray-200, #e5e7eb);
-  border-top-color: var(--color-primary, #23424a);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

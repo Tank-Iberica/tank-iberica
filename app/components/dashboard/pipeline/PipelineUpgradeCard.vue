@@ -28,19 +28,19 @@ const { t } = useI18n()
 
 .upgrade-icon {
   font-size: 2.5rem;
-  color: #f59e0b;
+  color: var(--color-warning);
   margin-bottom: 12px;
 }
 
 .upgrade-card h2 {
   margin: 0 0 8px;
   font-size: 1.25rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .upgrade-card p {
   margin: 0 0 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 
@@ -50,7 +50,7 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -62,6 +62,6 @@ const { t } = useI18n()
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 </style>

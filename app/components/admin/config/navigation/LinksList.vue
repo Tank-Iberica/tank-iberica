@@ -183,9 +183,9 @@ const emit = defineEmits<{
 .empty-links {
   text-align: center;
   padding: 24px;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.875rem;
-  border: 1px dashed #e5e7eb;
+  border: 1px dashed var(--border-color-light);
   border-radius: 8px;
 }
 
@@ -193,7 +193,7 @@ const emit = defineEmits<{
 .links-table-wrapper {
   display: none;
   overflow-x: auto;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   margin-top: 12px;
 }
@@ -226,14 +226,14 @@ const emit = defineEmits<{
 .links-table input[type='text'] {
   width: 100%;
   padding: 6px 8px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.85rem;
 }
 
 .links-table input[type='text']:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
@@ -272,7 +272,7 @@ const emit = defineEmits<{
 
 .btn-icon-sm {
   background: none;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   padding: 2px 6px;
   border-radius: 3px;
   cursor: pointer;
@@ -282,7 +282,7 @@ const emit = defineEmits<{
 }
 
 .btn-icon-sm:hover:not(:disabled) {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .btn-icon-sm:disabled {
@@ -293,7 +293,7 @@ const emit = defineEmits<{
 .btn-remove {
   background: none;
   border: 1px solid #fca5a5;
-  color: #dc2626;
+  color: var(--color-error);
   width: 28px;
   height: 28px;
   border-radius: 4px;
@@ -307,7 +307,7 @@ const emit = defineEmits<{
 }
 
 .btn-remove:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 /* Toggle switch */
@@ -340,13 +340,13 @@ const emit = defineEmits<{
   height: 18px;
   left: 2px;
   bottom: 2px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 50%;
   transition: transform 0.2s;
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
 }
 
 .toggle-switch input:checked + .toggle-slider::before {
@@ -362,7 +362,7 @@ const emit = defineEmits<{
 }
 
 .link-card-mobile {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   padding: 12px;
   background: #f9fafb;
@@ -404,7 +404,7 @@ const emit = defineEmits<{
 .form-group-sm input[type='text'] {
   width: 100%;
   padding: 8px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.85rem;
   box-sizing: border-box;
@@ -412,7 +412,7 @@ const emit = defineEmits<{
 
 .form-group-sm input[type='text']:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 

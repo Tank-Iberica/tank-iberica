@@ -306,7 +306,7 @@ onMounted(() => {
 
 /* Button variants */
 .btn-sell {
-  background: var(--color-primary, #23424a) !important;
+  background: var(--color-primary) !important;
   color: var(--color-white) !important;
 }
 

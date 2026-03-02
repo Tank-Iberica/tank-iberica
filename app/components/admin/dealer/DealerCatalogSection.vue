@@ -395,7 +395,7 @@ function updateAutoReplyLang(lang: string, value: string) {
 }
 
 .btn-remove {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
   color: var(--color-error);
   border: none;
   padding: var(--spacing-2) var(--spacing-3);
@@ -407,7 +407,7 @@ function updateAutoReplyLang(lang: string, value: string) {
 }
 
 .btn-remove:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .btn-add-item {
@@ -451,7 +451,7 @@ function updateAutoReplyLang(lang: string, value: string) {
 }
 
 .btn-remove-sm {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
   color: var(--color-error);
   border: none;
   padding: var(--spacing-1) var(--spacing-3);
@@ -464,7 +464,7 @@ function updateAutoReplyLang(lang: string, value: string) {
 }
 
 .btn-remove-sm:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .pin-input-row {

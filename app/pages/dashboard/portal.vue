@@ -569,12 +569,12 @@ const coverRecommendations = [
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .subtitle {
   margin: 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
@@ -584,9 +584,9 @@ const coverRecommendations = [
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;
@@ -601,8 +601,8 @@ const coverRecommendations = [
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -615,25 +615,25 @@ const coverRecommendations = [
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .alert-success {
   padding: 12px 16px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: 8px;
-  color: #16a34a;
+  color: var(--color-success);
   font-size: 0.9rem;
 }
 
 /* ── Sections ── */
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -646,13 +646,13 @@ const coverRecommendations = [
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .section-desc {
   margin: -8px 0 0;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 /* ── Form elements ── */
@@ -665,7 +665,7 @@ const coverRecommendations = [
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .form-group input[type='text'],
@@ -676,13 +676,13 @@ const coverRecommendations = [
 .form-group textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
   min-height: 44px;
-  background: #fff;
-  color: #1e293b;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   box-sizing: border-box;
 }
 
@@ -690,7 +690,7 @@ const coverRecommendations = [
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -721,7 +721,7 @@ const coverRecommendations = [
 .lang-field input {
   flex: 1;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   min-height: 44px;
@@ -729,7 +729,7 @@ const coverRecommendations = [
 
 .lang-field input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -739,8 +739,8 @@ const coverRecommendations = [
   text-align: center;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #64748b;
-  background: #f1f5f9;
+  color: var(--text-auxiliary);
+  background: var(--bg-secondary);
   border-radius: 4px;
   padding: 4px 0;
   text-transform: uppercase;
@@ -765,7 +765,7 @@ const coverRecommendations = [
 .lang-field-block textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
@@ -776,7 +776,7 @@ const coverRecommendations = [
 
 .lang-field-block textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -800,7 +800,7 @@ const coverRecommendations = [
 .color-picker {
   width: 44px;
   height: 44px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-gray-200);
   border-radius: 8px;
   cursor: pointer;
   padding: 2px;
@@ -819,7 +819,7 @@ const coverRecommendations = [
 .color-hex {
   flex: 1;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.9rem;
   font-family: monospace;
@@ -829,7 +829,7 @@ const coverRecommendations = [
 
 .color-hex:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -841,8 +841,8 @@ const coverRecommendations = [
 }
 
 .cert-item {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   padding: 12px;
 }
@@ -857,18 +857,18 @@ const coverRecommendations = [
 .cert-icon-select {
   flex: 0 0 auto;
   padding: 8px 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.875rem;
   min-height: 44px;
-  background: #fff;
+  background: var(--bg-primary);
 }
 
 .cert-label-input {
   flex: 1;
   min-width: 100px;
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.875rem;
   min-height: 44px;
@@ -877,7 +877,7 @@ const coverRecommendations = [
 .cert-label-input:focus,
 .cert-icon-select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .cert-verified {
@@ -885,7 +885,7 @@ const coverRecommendations = [
   align-items: center;
   gap: 6px;
   font-size: 0.8rem;
-  color: #475569;
+  color: var(--text-secondary);
   cursor: pointer;
   min-height: 44px;
 }
@@ -893,7 +893,7 @@ const coverRecommendations = [
 .cert-remove {
   background: none;
   border: none;
-  color: #ef4444;
+  color: var(--color-error);
   font-size: 1rem;
   cursor: pointer;
   padding: 8px;
@@ -907,7 +907,7 @@ const coverRecommendations = [
 
 @media (hover: hover) {
   .cert-remove:hover {
-    background: #fef2f2;
+    background: var(--color-error-bg, #fef2f2);
   }
 }
 
@@ -924,7 +924,7 @@ const coverRecommendations = [
   justify-content: space-between;
   gap: 12px;
   padding: 12px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
   cursor: pointer;
   min-height: 44px;
 }
@@ -943,15 +943,15 @@ const coverRecommendations = [
   height: 20px;
   flex-shrink: 0;
   cursor: pointer;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 /* ── Shared buttons ── */
 .btn-outline {
   align-self: flex-start;
   background: transparent;
-  color: var(--color-primary, #23424a);
-  border: 1px solid var(--color-primary, #23424a);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -965,7 +965,7 @@ const coverRecommendations = [
 
 @media (hover: hover) {
   .btn-outline:hover {
-    background: var(--color-primary, #23424a);
+    background: var(--color-primary);
     color: white;
   }
 }
@@ -981,7 +981,7 @@ const coverRecommendations = [
   justify-content: center;
   min-height: 44px;
   padding: 10px 28px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -993,7 +993,7 @@ const coverRecommendations = [
 
 @media (hover: hover) {
   .btn-primary:hover {
-    background: #1a3238;
+    background: var(--color-primary-dark);
   }
 }
 

@@ -106,7 +106,7 @@ watch(
 
 .chat-message.received {
   align-self: flex-start;
-  background: white;
+  background: var(--bg-primary);
   border-bottom-left-radius: 4px;
 }
 
@@ -138,7 +138,7 @@ watch(
 
 .btn-send {
   padding: 10px 16px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;

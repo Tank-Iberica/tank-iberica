@@ -53,7 +53,7 @@ function onAmountInput(service: OptionalService, event: Event): void {
 
 <style scoped>
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -63,7 +63,7 @@ function onAmountInput(service: OptionalService, event: Event): void {
   margin: 0 0 12px 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 /* Services */
@@ -95,14 +95,14 @@ function onAmountInput(service: OptionalService, event: Event): void {
 .service-checkbox input[type='checkbox'] {
   width: 20px;
   height: 20px;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
   cursor: pointer;
   flex-shrink: 0;
 }
 
 .service-label {
   font-size: 0.95rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .service-amount-input {
@@ -115,28 +115,28 @@ function onAmountInput(service: OptionalService, event: Event): void {
 .input-small {
   width: 90px;
   padding: 8px 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   font-size: 0.9rem;
   text-align: right;
   min-height: 44px;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .input-small:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .currency-symbol {
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
   font-weight: 500;
 }
 
 .service-amount-text {
   font-size: 0.85rem;
-  color: #3b82f6;
+  color: var(--color-info);
   font-weight: 500;
   font-style: italic;
   flex-shrink: 0;

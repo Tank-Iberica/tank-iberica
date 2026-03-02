@@ -136,7 +136,7 @@ function getServiceLabel(type: string): string {
 }
 
 .back-link {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
@@ -149,15 +149,15 @@ function getServiceLabel(type: string): string {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .loading-state {
@@ -169,8 +169,8 @@ function getServiceLabel(type: string): string {
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -188,7 +188,7 @@ function getServiceLabel(type: string): string {
 }
 
 .summary-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 10px;
   padding: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -202,23 +202,23 @@ function getServiceLabel(type: string): string {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .summary-value {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .summary-tax {
-  color: #3b82f6;
+  color: var(--color-info);
 }
 
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .empty-state p {
@@ -229,7 +229,7 @@ function getServiceLabel(type: string): string {
 
 .empty-state span {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .invoices-list {
@@ -239,7 +239,7 @@ function getServiceLabel(type: string): string {
 }
 
 .invoice-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 10px;
   padding: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -254,13 +254,13 @@ function getServiceLabel(type: string): string {
 
 .invoice-type {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 0.95rem;
 }
 
 .invoice-amount {
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   font-size: 1rem;
 }
 
@@ -270,7 +270,7 @@ function getServiceLabel(type: string): string {
 
 .invoice-tax {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .invoice-bottom {
@@ -281,7 +281,7 @@ function getServiceLabel(type: string): string {
 
 .invoice-date {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .invoice-actions {
@@ -298,32 +298,32 @@ function getServiceLabel(type: string): string {
 }
 
 .status-paid {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .status-pending {
-  background: #fef3c7;
-  color: #d97706;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning);
 }
 
 .status-failed {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .status-refunded {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--bg-secondary);
+  color: var(--text-auxiliary);
 }
 
 .invoice-pdf-link {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   padding: 3px 10px;
-  border: 1px solid var(--color-primary, #23424a);
+  border: 1px solid var(--color-primary);
   border-radius: 6px;
   min-height: 28px;
   display: inline-flex;
@@ -331,7 +331,7 @@ function getServiceLabel(type: string): string {
 }
 
 .invoice-pdf-link:hover {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
 }
 

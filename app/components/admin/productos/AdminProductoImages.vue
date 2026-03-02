@@ -72,7 +72,7 @@ const emit = defineEmits<Emits>()
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 12px 16px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -91,7 +91,7 @@ const emit = defineEmits<Emits>()
   padding: 16px;
   text-align: center;
   background: #f9fafb;
-  border: 2px dashed #e5e7eb;
+  border: 2px dashed var(--border-color-light);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
@@ -99,8 +99,8 @@ const emit = defineEmits<Emits>()
   margin-bottom: 12px;
 }
 .upload-zone-label:hover {
-  border-color: #23424a;
-  background: #f3f4f6;
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
 }
 .upload-zone-label input[type='file'] {
   display: none;
@@ -114,7 +114,7 @@ const emit = defineEmits<Emits>()
 .upload-progress .progress-bar {
   flex: 1;
   height: 6px;
-  background: #23424a;
+  background: var(--color-primary);
   border-radius: 3px;
   transition: width 0.2s;
 }
@@ -135,7 +135,7 @@ const emit = defineEmits<Emits>()
   border: 2px solid transparent;
 }
 .img-item.cover {
-  border-color: #23424a;
+  border-color: var(--color-primary);
 }
 .img-item img {
   width: 100%;
@@ -164,20 +164,20 @@ const emit = defineEmits<Emits>()
   width: 26px;
   height: 26px;
   border: none;
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.75rem;
 }
 .img-actions button.del {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 .cover-badge {
   position: absolute;
   bottom: 4px;
   left: 4px;
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   font-size: 0.6rem;
   padding: 2px 6px;
@@ -186,7 +186,7 @@ const emit = defineEmits<Emits>()
 }
 .empty-msg {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.8rem;
   padding: 16px;
 }

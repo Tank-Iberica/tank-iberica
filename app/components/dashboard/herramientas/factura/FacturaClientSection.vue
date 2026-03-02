@@ -41,7 +41,7 @@ function onSelect(field: ClientField, event: Event): void {
           required
           :value="clientName"
           @input="onInput('clientName', $event)"
-        >
+        />
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.docType') }}</label>
@@ -63,7 +63,7 @@ function onSelect(field: ClientField, event: Event): void {
           class="form-field__input"
           :value="clientDocNumber"
           @input="onInput('clientDocNumber', $event)"
-        >
+        />
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.address') }} 1</label>
@@ -72,7 +72,7 @@ function onSelect(field: ClientField, event: Event): void {
           class="form-field__input"
           :value="clientAddress1"
           @input="onInput('clientAddress1', $event)"
-        >
+        />
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.address') }} 2</label>
@@ -81,7 +81,7 @@ function onSelect(field: ClientField, event: Event): void {
           class="form-field__input"
           :value="clientAddress2"
           @input="onInput('clientAddress2', $event)"
-        >
+        />
       </div>
       <div class="form-field form-field--full">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.address') }} 3</label>
@@ -90,7 +90,7 @@ function onSelect(field: ClientField, event: Event): void {
           class="form-field__input"
           :value="clientAddress3"
           @input="onInput('clientAddress3', $event)"
-        >
+        />
       </div>
     </div>
   </fieldset>
@@ -98,7 +98,7 @@ function onSelect(field: ClientField, event: Event): void {
 
 <style scoped>
 .form-section {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   padding: 1.25rem;
   margin-bottom: 1.25rem;
@@ -107,7 +107,7 @@ function onSelect(field: ClientField, event: Event): void {
 .form-section__legend {
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 0 0.5rem;
@@ -132,18 +132,18 @@ function onSelect(field: ClientField, event: Event): void {
 .form-field__label {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .form-field__input,
 .form-field__select {
   min-height: 44px;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.9rem;
-  color: #1e293b;
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   transition: border-color 0.2s;
   width: 100%;
 }
@@ -151,7 +151,7 @@ function onSelect(field: ClientField, event: Event): void {
 .form-field__input:focus,
 .form-field__select:focus {
   outline: none;
-  border-color: var(--primary, #23424a);
+  border-color: var(--primary, var(--color-primary));
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
 }
 

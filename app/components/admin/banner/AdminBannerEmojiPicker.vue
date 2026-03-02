@@ -59,7 +59,7 @@ const emit = defineEmits<{
 }
 
 .emoji-picker-modal {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
   width: 100%;
@@ -99,7 +99,7 @@ const emit = defineEmits<{
 }
 
 .btn-close-picker:hover {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
 }
 
 .emoji-picker-body {

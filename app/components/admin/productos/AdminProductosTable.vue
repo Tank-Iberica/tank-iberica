@@ -62,7 +62,7 @@ function isSortActive(field: string): boolean {
       <thead>
         <tr>
           <th class="col-checkbox">
-            <input v-model="selectAll" type="checkbox" title="Seleccionar todos" >
+            <input v-model="selectAll" type="checkbox" title="Seleccionar todos" />
           </th>
           <th class="col-img">Img</th>
           <th class="col-type">Tipo</th>
@@ -126,11 +126,11 @@ function isSortActive(field: string): boolean {
               type="checkbox"
               :checked="selectedIds.has(v.id)"
               @change="emit('toggle-selection', v.id)"
-            >
+            />
           </td>
           <td class="col-img">
             <div class="thumb">
-              <img v-if="getThumbnail(v)" :src="getThumbnail(v)!" :alt="v.brand" >
+              <img v-if="getThumbnail(v)" :src="getThumbnail(v)!" :alt="v.brand" />
               <span v-else class="thumb-empty">📷</span>
             </div>
           </td>
@@ -266,7 +266,7 @@ function isSortActive(field: string): boolean {
 
 <style scoped>
 .table-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: auto;
@@ -279,7 +279,7 @@ function isSortActive(field: string): boolean {
 }
 
 .data-table thead {
-  background: #f8fafc;
+  background: var(--bg-secondary);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -289,8 +289,8 @@ function isSortActive(field: string): boolean {
   padding: 12px;
   text-align: left;
   font-weight: 600;
-  color: #475569;
-  border-bottom: 2px solid #e2e8f0;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--color-gray-200);
   white-space: nowrap;
 }
 
@@ -300,7 +300,7 @@ function isSortActive(field: string): boolean {
 }
 
 .data-table th.sortable:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .sort-icon {
@@ -311,12 +311,12 @@ function isSortActive(field: string): boolean {
 
 .sort-icon.active {
   opacity: 1;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .data-table td {
   padding: 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .data-table tbody tr:hover {
@@ -362,12 +362,12 @@ function isSortActive(field: string): boolean {
 
 .filter-unit {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--text-disabled);
   margin-left: 2px;
 }
 
 .text-muted {
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .text-small {
@@ -386,7 +386,7 @@ function isSortActive(field: string): boolean {
   height: 36px;
   border-radius: 4px;
   overflow: hidden;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -418,25 +418,25 @@ function isSortActive(field: string): boolean {
 }
 
 .type-pill.offline {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .vehicle-link {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .vehicle-link:hover {
-  color: #1a3238;
+  color: var(--color-primary-dark);
   text-decoration: underline;
 }
 
 .owner-tag {
   display: block;
   font-size: 11px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   margin-top: 2px;
 }
 
@@ -450,13 +450,13 @@ function isSortActive(field: string): boolean {
 }
 
 .cat-venta {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 
 .cat-alquiler {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .cat-terceros {
@@ -466,22 +466,22 @@ function isSortActive(field: string): boolean {
 
 .status-select {
   padding: 4px 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   font-size: 12px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   font-weight: 500;
 }
 
 .status-published {
-  color: #16a34a;
+  color: var(--color-success);
   border-color: #86efac;
 }
 
 .status-draft {
-  color: #64748b;
-  border-color: #cbd5e1;
+  color: var(--text-auxiliary);
+  border-color: var(--color-gray-300);
 }
 
 .status-rented {
@@ -490,7 +490,7 @@ function isSortActive(field: string): boolean {
 }
 
 .status-maintenance {
-  color: #dc2626;
+  color: var(--color-error);
   border-color: #fca5a5;
 }
 
@@ -500,7 +500,7 @@ function isSortActive(field: string): boolean {
 }
 
 .fav-count {
-  color: #dc2626;
+  color: var(--color-error);
   font-weight: 500;
 }
 
@@ -522,7 +522,7 @@ function isSortActive(field: string): boolean {
 }
 
 .action-btn:hover:not(:disabled) {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .action-btn:disabled {
@@ -531,7 +531,7 @@ function isSortActive(field: string): boolean {
 }
 
 .action-btn.delete:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .empty-cell {
@@ -553,14 +553,14 @@ function isSortActive(field: string): boolean {
 
 .empty-state p {
   margin: 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 16px;
 }
 
 .btn-secondary {
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gray-200);
+  color: var(--text-secondary);
   padding: 8px 16px;
   border-radius: 8px;
   font-size: 14px;
@@ -570,7 +570,7 @@ function isSortActive(field: string): boolean {
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 </style>

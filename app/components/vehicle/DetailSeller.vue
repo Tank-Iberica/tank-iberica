@@ -53,17 +53,17 @@ defineProps<{
 
 <style scoped>
 .vehicle-seller-info {
-  background: var(--bg-secondary, #f8fafc);
+  background: var(--bg-secondary, var(--color-gray-50));
   border-radius: 8px;
   padding: 12px 16px;
   margin-bottom: var(--spacing-4);
-  border-left: 3px solid var(--color-primary, #23424a);
+  border-left: 3px solid var(--color-primary);
 }
 
 .vehicle-seller-info h3 {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-auxiliary, #94a3b8);
+  color: var(--text-auxiliary, var(--color-gray-400));
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0 0 8px 0;
@@ -77,7 +77,7 @@ defineProps<{
 
 .seller-item {
   font-size: 0.875rem;
-  color: var(--text-secondary, #475569);
+  color: var(--text-secondary, var(--color-gray-600));
 }
 
 .vehicle-disclaimer {

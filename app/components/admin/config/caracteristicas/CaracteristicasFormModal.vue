@@ -91,7 +91,7 @@ function isChecked(arr: string[], id: string): boolean {
                 required
                 :value="formData.name"
                 @input="onTextInput('name', $event)"
-              >
+              />
             </div>
             <div class="form-group">
               <label for="label_en">Nombre (EN)</label>
@@ -101,7 +101,7 @@ function isChecked(arr: string[], id: string): boolean {
                 placeholder="Ej: Volume"
                 :value="formData.label_en"
                 @input="onTextInput('label_en', $event)"
-              >
+              />
             </div>
           </div>
 
@@ -133,7 +133,7 @@ function isChecked(arr: string[], id: string): boolean {
                 placeholder="Ej: Km, Kg, L, CV..."
                 :value="formData.unit"
                 @input="onTextInput('unit', $event)"
-              >
+              />
             </div>
           </div>
 
@@ -147,7 +147,7 @@ function isChecked(arr: string[], id: string): boolean {
                     type="checkbox"
                     :checked="isChecked(formData.extra_filters, f.id)"
                     @change="onCheckboxToggle('extra_filters', f.id)"
-                  >
+                  />
                   <span>{{ f.label_es || f.name }}</span>
                 </label>
               </template>
@@ -165,7 +165,7 @@ function isChecked(arr: string[], id: string): boolean {
                     type="checkbox"
                     :checked="isChecked(formData.hides, f.id)"
                     @change="onCheckboxToggle('hides', f.id)"
-                  >
+                  />
                   <span>{{ f.label_es || f.name }}</span>
                 </label>
               </template>
@@ -182,7 +182,7 @@ function isChecked(arr: string[], id: string): boolean {
               placeholder="Opcional"
               :value="formData.default_value"
               @input="onTextInput('default_value', $event)"
-            >
+            />
           </div>
 
           <!-- Desplegable options -->
@@ -200,7 +200,7 @@ function isChecked(arr: string[], id: string): boolean {
                     value="manual"
                     :checked="formData.choices_source === 'manual'"
                     @change="onRadioChange('choices_source', 'manual')"
-                  >
+                  />
                   <span>Manual</span>
                   <small>Solo las opciones que definas aqui</small>
                 </label>
@@ -211,7 +211,7 @@ function isChecked(arr: string[], id: string): boolean {
                     value="auto"
                     :checked="formData.choices_source === 'auto'"
                     @change="onRadioChange('choices_source', 'auto')"
-                  >
+                  />
                   <span>Automatico</span>
                   <small>Valores unicos de los vehiculos del catalogo</small>
                 </label>
@@ -222,7 +222,7 @@ function isChecked(arr: string[], id: string): boolean {
                     value="both"
                     :checked="formData.choices_source === 'both'"
                     @change="onRadioChange('choices_source', 'both')"
-                  >
+                  />
                   <span>Ambos</span>
                   <small>Opciones manuales + valores de vehiculos</small>
                 </label>
@@ -239,7 +239,7 @@ function isChecked(arr: string[], id: string): boolean {
                   :value="choiceInput"
                   @input="onChoiceInputChange"
                   @keydown="onChoiceKeydown"
-                >
+                />
                 <button type="button" class="btn-add-choice" @click="emit('add-choice')">
                   Anadir
                 </button>
@@ -268,7 +268,7 @@ function isChecked(arr: string[], id: string): boolean {
                 placeholder="1"
                 :value="formData.step"
                 @input="onNumberInput('step', $event)"
-              >
+              />
             </div>
           </div>
 
@@ -316,7 +316,7 @@ function isChecked(arr: string[], id: string): boolean {
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 100%;
   max-width: 550px;
@@ -365,7 +365,7 @@ function isChecked(arr: string[], id: string): boolean {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -376,7 +376,7 @@ function isChecked(arr: string[], id: string): boolean {
 }
 
 .btn-primary:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -385,7 +385,7 @@ function isChecked(arr: string[], id: string): boolean {
 }
 
 .btn-secondary {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   color: #374151;
   border: none;
   padding: 10px 20px;
@@ -420,7 +420,7 @@ function isChecked(arr: string[], id: string): boolean {
 .form-group select {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
 }
@@ -428,7 +428,7 @@ function isChecked(arr: string[], id: string): boolean {
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -436,7 +436,7 @@ function isChecked(arr: string[], id: string): boolean {
   margin-top: 8px;
   padding: 16px;
   background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   margin-bottom: 16px;
 }
@@ -497,7 +497,7 @@ function isChecked(arr: string[], id: string): boolean {
 }
 
 .btn-add-choice {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -508,7 +508,7 @@ function isChecked(arr: string[], id: string): boolean {
 }
 
 .btn-add-choice:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .choices-list {
@@ -522,8 +522,8 @@ function isChecked(arr: string[], id: string): boolean {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 0.8rem;
@@ -533,7 +533,7 @@ function isChecked(arr: string[], id: string): boolean {
 .choice-remove {
   background: none;
   border: none;
-  color: #1d4ed8;
+  color: var(--color-info);
   cursor: pointer;
   font-size: 14px;
   line-height: 1;
@@ -543,7 +543,7 @@ function isChecked(arr: string[], id: string): boolean {
 }
 
 .choice-remove:hover {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .tick-options {
@@ -557,7 +557,7 @@ function isChecked(arr: string[], id: string): boolean {
   max-height: 150px;
   overflow-y: auto;
   padding: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
 }
 
@@ -584,7 +584,7 @@ function isChecked(arr: string[], id: string): boolean {
 }
 
 .text-muted {
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.875rem;
 }
 

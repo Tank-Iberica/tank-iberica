@@ -30,7 +30,7 @@ const emit = defineEmits<{
             :value="footerText.es"
             placeholder="Texto del pie de pagina"
             @input="emit('update-footer-text', 'es', ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
         <div class="lang-field">
           <span class="lang-badge">EN</span>
@@ -39,7 +39,7 @@ const emit = defineEmits<{
             :value="footerText.en"
             placeholder="Footer text"
             @input="emit('update-footer-text', 'en', ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
       </div>
     </div>
@@ -67,7 +67,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
@@ -135,7 +135,7 @@ const emit = defineEmits<{
   font-size: 0.7rem;
   font-weight: 700;
   color: #6b7280;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 4px;
   padding: 4px 0;
   text-transform: uppercase;
@@ -144,19 +144,19 @@ const emit = defineEmits<{
 .lang-field input {
   flex: 1;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
 }
 
 .lang-field input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 .btn-add {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -169,7 +169,7 @@ const emit = defineEmits<{
 }
 
 .btn-add:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-add-sm {

@@ -58,7 +58,7 @@ function onDescriptionInput(field: 'description_es' | 'description_en', event: E
 
 <style scoped>
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -68,7 +68,7 @@ function onDescriptionInput(field: 'description_es' | 'description_en', event: E
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .form-group {
@@ -80,7 +80,7 @@ function onDescriptionInput(field: 'description_es' | 'description_en', event: E
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .label-row {
@@ -92,7 +92,7 @@ function onDescriptionInput(field: 'description_es' | 'description_en', event: E
 .form-group textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
@@ -102,7 +102,7 @@ function onDescriptionInput(field: 'description_es' | 'description_en', event: E
 
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 

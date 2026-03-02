@@ -102,34 +102,34 @@ const localSellPrice = computed({
           <div v-if="localTransactionType === 'rent'" class="form-grid">
             <div class="form-group half">
               <label>Fecha desde</label>
-              <input v-model="localRentFrom" type="date" >
+              <input v-model="localRentFrom" type="date" />
             </div>
             <div class="form-group half">
               <label>Fecha hasta</label>
-              <input v-model="localRentTo" type="date" >
+              <input v-model="localRentTo" type="date" />
             </div>
             <div class="form-group">
               <label>Cliente</label>
-              <input v-model="localRentClient" type="text" placeholder="Nombre del cliente" >
+              <input v-model="localRentClient" type="text" placeholder="Nombre del cliente" />
             </div>
             <div class="form-group">
               <label>Importe (€)</label>
-              <input v-model="localRentAmount" type="number" step="0.01" placeholder="0.00" >
+              <input v-model="localRentAmount" type="number" step="0.01" placeholder="0.00" />
             </div>
           </div>
 
           <div v-else class="form-grid">
             <div class="form-group">
               <label>Fecha de venta</label>
-              <input v-model="localSellDate" type="date" >
+              <input v-model="localSellDate" type="date" />
             </div>
             <div class="form-group">
               <label>Comprador</label>
-              <input v-model="localSellBuyer" type="text" placeholder="Nombre del comprador" >
+              <input v-model="localSellBuyer" type="text" placeholder="Nombre del comprador" />
             </div>
             <div class="form-group">
               <label>Precio de venta (€)</label>
-              <input v-model="localSellPrice" type="number" step="0.01" >
+              <input v-model="localSellPrice" type="number" step="0.01" />
             </div>
             <div class="info-warning">
               ⚠️ Esto marcará el vehículo como vendido y lo moverá al histórico.
@@ -160,7 +160,7 @@ const localSellPrice = computed({
 }
 
 .modal {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
@@ -189,14 +189,14 @@ const localSellPrice = computed({
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .modal-close {
@@ -205,7 +205,7 @@ const localSellPrice = computed({
   font-size: 28px;
   line-height: 1;
   cursor: pointer;
-  color: #94a3b8;
+  color: var(--text-disabled);
   padding: 0;
   width: 32px;
   height: 32px;
@@ -218,7 +218,7 @@ const localSellPrice = computed({
 
 .modal-close:hover {
   background: rgba(0, 0, 0, 0.05);
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .modal-body {
@@ -230,18 +230,18 @@ const localSellPrice = computed({
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 8px;
   margin-bottom: 20px;
 }
 
 .vehicle-badge strong {
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 16px;
 }
 
 .vehicle-badge span {
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 14px;
 }
 
@@ -254,9 +254,9 @@ const localSellPrice = computed({
 .tab-buttons button {
   flex: 1;
   padding: 10px 16px;
-  border: 2px solid #e2e8f0;
-  background: white;
-  color: #475569;
+  border: 2px solid var(--color-gray-200);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -265,12 +265,12 @@ const localSellPrice = computed({
 }
 
 .tab-buttons button:hover {
-  border-color: #cbd5e1;
+  border-color: var(--color-gray-300);
 }
 
 .tab-buttons button.active {
-  border-color: var(--color-primary, #23424a);
-  background: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
   color: white;
 }
 
@@ -292,14 +292,14 @@ const localSellPrice = computed({
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .form-group input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 14px;
   transition: border 0.2s;
@@ -307,15 +307,15 @@ const localSellPrice = computed({
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .info-warning {
   padding: 12px;
-  background: #fef3c7;
-  border-left: 3px solid #f59e0b;
+  background: var(--color-warning-bg, #fef3c7);
+  border-left: 3px solid var(--color-warning);
   border-radius: 8px;
-  color: #92400e;
+  color: var(--color-warning-text);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -325,13 +325,13 @@ const localSellPrice = computed({
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 24px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .btn-secondary {
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gray-200);
+  color: var(--text-secondary);
   padding: 10px 18px;
   border-radius: 8px;
   font-size: 14px;
@@ -341,12 +341,12 @@ const localSellPrice = computed({
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -358,6 +358,6 @@ const localSellPrice = computed({
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 </style>

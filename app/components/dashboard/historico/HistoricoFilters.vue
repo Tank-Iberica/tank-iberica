@@ -72,7 +72,7 @@ function onSearchInput(event: Event): void {
   gap: 12px;
   justify-content: space-between;
   padding: 12px 16px;
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
@@ -88,11 +88,11 @@ function onSearchInput(event: Event): void {
 .search-input {
   min-height: 44px;
   padding: 8px 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   font-size: 0.85rem;
   min-width: 140px;
-  background: #fff;
+  background: var(--bg-primary);
 }
 
 .search-input {
@@ -102,7 +102,7 @@ function onSearchInput(event: Event): void {
 .filter-select:focus,
 .search-input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .btn {
@@ -111,8 +111,8 @@ function onSearchInput(event: Event): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.875rem;
   cursor: pointer;
@@ -120,7 +120,7 @@ function onSearchInput(event: Event): void {
 }
 
 .btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-sm {

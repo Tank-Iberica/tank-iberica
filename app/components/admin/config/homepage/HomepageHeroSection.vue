@@ -28,7 +28,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="Titulo principal en espanol"
             @input="emit('update-title', 'es', ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
         <div class="lang-field">
           <span class="lang-badge">EN</span>
@@ -37,7 +37,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="Main title in English"
             @input="emit('update-title', 'en', ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
       </div>
     </div>
@@ -52,7 +52,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="Subtitulo en espanol"
             @input="emit('update-subtitle', 'es', ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
         <div class="lang-field">
           <span class="lang-badge">EN</span>
@@ -61,7 +61,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="Subtitle in English"
             @input="emit('update-subtitle', 'en', ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="Ver catalogo"
             @input="emit('update-cta-text', 'es', ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
         <div class="lang-field">
           <span class="lang-badge">EN</span>
@@ -85,7 +85,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="View catalog"
             @input="emit('update-cta-text', 'en', ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
       </div>
     </div>
@@ -99,7 +99,7 @@ const emit = defineEmits<{
           type="text"
           placeholder="/catalogo"
           @input="emit('update-cta-url', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
       <div class="form-group">
         <label for="hero_image_url">Imagen del hero (URL)</label>
@@ -109,19 +109,19 @@ const emit = defineEmits<{
           type="text"
           placeholder="https://res.cloudinary.com/..."
           @input="emit('update-image-url', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
     </div>
 
     <div v-if="heroImageUrl" class="image-preview">
-      <img :src="heroImageUrl" alt="Hero preview" >
+      <img :src="heroImageUrl" alt="Hero preview" />
     </div>
   </div>
 </template>
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
@@ -159,7 +159,7 @@ const emit = defineEmits<{
 .form-group input[type='text'] {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
   box-sizing: border-box;
@@ -167,7 +167,7 @@ const emit = defineEmits<{
 
 .form-group input[type='text']:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -190,7 +190,7 @@ const emit = defineEmits<{
   font-size: 0.7rem;
   font-weight: 700;
   color: #6b7280;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 4px;
   padding: 4px 0;
   text-transform: uppercase;
@@ -199,14 +199,14 @@ const emit = defineEmits<{
 .lang-field input {
   flex: 1;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
 }
 
 .lang-field input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -219,7 +219,7 @@ const emit = defineEmits<{
 .image-preview {
   margin-top: 12px;
   padding: 16px;
-  border: 1px dashed #d1d5db;
+  border: 1px dashed var(--border-color);
   border-radius: 8px;
   background: #f9fafb;
   text-align: center;

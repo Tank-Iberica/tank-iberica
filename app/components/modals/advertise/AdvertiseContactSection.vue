@@ -115,7 +115,7 @@ const { t } = useI18n()
 
 .required::after {
   content: ' *';
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 .form-input {
@@ -127,7 +127,7 @@ const { t } = useI18n()
   font-family: inherit;
   transition: border-color 0.2s;
   min-height: 36px;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .form-input:focus {
@@ -138,12 +138,12 @@ const { t } = useI18n()
 
 .field-error {
   font-size: 0.75rem;
-  color: #dc2626;
+  color: var(--color-error);
   margin-top: 2px;
 }
 
 .input-error {
-  border-color: #ef4444 !important;
+  border-color: var(--color-error) !important;
 }
 
 .checkbox-label {
@@ -164,7 +164,7 @@ const { t } = useI18n()
 }
 
 .input-error-text {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 @media (min-width: 768px) {

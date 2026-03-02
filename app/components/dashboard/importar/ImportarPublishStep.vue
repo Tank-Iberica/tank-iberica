@@ -47,7 +47,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .step-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -66,21 +66,21 @@ const emit = defineEmits<{
   margin: 0;
   font-size: 1.3rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .progress-bar {
   width: 100%;
   max-width: 500px;
   height: 12px;
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   border-radius: 6px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary, #23424a), #16a34a);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
   transition: width 0.3s ease;
 }
 
@@ -88,7 +88,7 @@ const emit = defineEmits<{
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .result-summary {
@@ -104,13 +104,13 @@ const emit = defineEmits<{
   justify-content: space-between;
   align-items: center;
   padding: 12px 20px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 8px;
 }
 
 .result-label {
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .result-value {
@@ -119,11 +119,11 @@ const emit = defineEmits<{
 }
 
 .result-value.success {
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 .result-value.error {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .btn-primary {
@@ -132,7 +132,7 @@ const emit = defineEmits<{
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -141,6 +141,6 @@ const emit = defineEmits<{
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 </style>

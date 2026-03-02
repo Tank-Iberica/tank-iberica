@@ -276,7 +276,7 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -296,7 +296,7 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
   border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--bg-primary);
   z-index: 1;
 }
 
@@ -353,7 +353,7 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 .form-group textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.9rem;
   box-sizing: border-box;
@@ -364,7 +364,7 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -378,7 +378,7 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
    BUTTONS
    ============================================ */
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -399,7 +399,7 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 }
 
 .btn-secondary {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   color: #374151;
   border: none;
   padding: 10px 20px;

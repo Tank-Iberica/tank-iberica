@@ -36,7 +36,7 @@ defineProps<{
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -95,14 +95,14 @@ defineProps<{
 .progress-bar-track {
   width: 100%;
   height: 8px;
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   border-radius: 4px;
   transition: width 0.3s ease;
   min-width: 0;
@@ -115,7 +115,7 @@ defineProps<{
 }
 
 .progress-empty {
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.875rem;
   padding: 8px 0;
 }

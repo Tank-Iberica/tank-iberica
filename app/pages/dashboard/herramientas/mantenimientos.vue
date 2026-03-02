@@ -178,12 +178,12 @@ onMounted(async () => {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .subtitle {
   margin: 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
@@ -197,7 +197,7 @@ onMounted(async () => {
 .plan-gate {
   text-align: center;
   padding: 48px 20px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -210,12 +210,12 @@ onMounted(async () => {
 .plan-gate h2 {
   margin: 0 0 8px;
   font-size: 1.2rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .plan-gate p {
   margin: 0 0 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
@@ -226,7 +226,7 @@ onMounted(async () => {
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -239,7 +239,7 @@ onMounted(async () => {
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-secondary {
@@ -248,9 +248,9 @@ onMounted(async () => {
   justify-content: center;
   min-height: 44px;
   padding: 10px 16px;
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   font-size: 0.9rem;
@@ -258,25 +258,25 @@ onMounted(async () => {
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 /* Alerts */
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .alert-success {
   padding: 12px 16px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: 8px;
-  color: #16a34a;
+  color: var(--color-success);
   font-size: 0.9rem;
 }
 

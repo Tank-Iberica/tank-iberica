@@ -87,7 +87,7 @@ const { t } = useI18n()
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px;
   width: 100%;
   max-width: 560px;
@@ -111,7 +111,7 @@ const { t } = useI18n()
   margin: 0;
   font-size: 1.2rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .btn-close {
@@ -122,21 +122,21 @@ const { t } = useI18n()
   height: 36px;
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--text-disabled);
   cursor: pointer;
   border-radius: 8px;
 }
 
 .btn-close:hover {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
 }
 
 .platform-desc {
   margin: 0;
   padding: 16px 20px 0 20px;
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .platform-list {
@@ -151,32 +151,32 @@ const { t } = useI18n()
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 8px;
   cursor: pointer;
   min-height: 44px;
 }
 
 .platform-item:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .platform-item input[type='checkbox'] {
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 .platform-name {
   flex: 1;
   font-weight: 500;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .platform-default {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-weight: 400;
 }
 
@@ -193,7 +193,7 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -204,6 +204,6 @@ const { t } = useI18n()
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 </style>

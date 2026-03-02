@@ -116,19 +116,19 @@ const scoreClass = computed(() => {
 }
 
 .score-excellent .score-fill {
-  background: #10b981;
+  background: var(--color-success);
 }
 .score-good .score-fill {
   background: #34d399;
 }
 .score-moderate .score-fill {
-  background: #f59e0b;
+  background: var(--color-warning);
 }
 .score-warning .score-fill {
   background: #f97316;
 }
 .score-danger .score-fill {
-  background: #ef4444;
+  background: var(--color-error);
 }
 
 .score-value {
@@ -138,19 +138,19 @@ const scoreClass = computed(() => {
 }
 
 .score-excellent .score-value {
-  color: #10b981;
+  color: var(--color-success);
 }
 .score-good .score-value {
   color: #34d399;
 }
 .score-moderate .score-value {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .score-warning .score-value {
   color: #f97316;
 }
 .score-danger .score-value {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 .score-label {
@@ -159,19 +159,19 @@ const scoreClass = computed(() => {
 }
 
 .score-excellent .score-label {
-  color: #10b981;
+  color: var(--color-success);
 }
 .score-good .score-label {
   color: #34d399;
 }
 .score-moderate .score-label {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .score-warning .score-label {
   color: #f97316;
 }
 .score-danger .score-label {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 .score-explanation {
@@ -195,13 +195,13 @@ const scoreClass = computed(() => {
 }
 
 .anomaly-decrease {
-  background: #fef2f2;
-  color: #ef4444;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .anomaly-spike {
   background: #fffbeb;
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .score-report-link {

@@ -138,7 +138,7 @@ function onSelectChange(event: Event) {
 }
 
 .modal {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px;
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -168,7 +168,7 @@ function onSelectChange(event: Event) {
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
   flex-shrink: 0;
 }
 
@@ -176,14 +176,14 @@ function onSelectChange(event: Event) {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .modal-close {
   background: none;
   border: none;
   font-size: 24px;
-  color: #94a3b8;
+  color: var(--text-disabled);
   cursor: pointer;
   padding: 0;
   line-height: 1;
@@ -196,7 +196,7 @@ function onSelectChange(event: Event) {
 
 @media (hover: hover) {
   .modal-close:hover {
-    color: #475569;
+    color: var(--text-secondary);
   }
 }
 
@@ -211,8 +211,8 @@ function onSelectChange(event: Event) {
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 24px;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--bg-secondary);
   border-radius: 0 0 16px 16px;
   flex-shrink: 0;
 }
@@ -225,7 +225,7 @@ function onSelectChange(event: Event) {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 
@@ -234,7 +234,7 @@ function onSelectChange(event: Event) {
 .form-group textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
@@ -245,7 +245,7 @@ function onSelectChange(event: Event) {
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -276,7 +276,7 @@ function onSelectChange(event: Event) {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -289,7 +289,7 @@ function onSelectChange(event: Event) {
 
 @media (hover: hover) {
   .btn-primary:hover {
-    background: #1a3238;
+    background: var(--color-primary-dark);
   }
 }
 .btn-primary:disabled {
@@ -298,9 +298,9 @@ function onSelectChange(event: Event) {
 }
 
 .btn-secondary {
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 500;
@@ -309,8 +309,8 @@ function onSelectChange(event: Event) {
 
 @media (hover: hover) {
   .btn-secondary:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
+    background: var(--bg-secondary);
+    border-color: var(--color-gray-300);
   }
 }
 </style>

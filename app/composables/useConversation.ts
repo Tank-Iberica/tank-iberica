@@ -42,6 +42,7 @@ export function useConversation() {
   const messages = ref<ConversationMessage[]>([])
   const loading = ref(false)
   const sending = ref(false)
+  const sellerAvgResponseMinutes = ref<number | null>(null)
 
   let realtimeChannel: RealtimeChannel | null = null
 
@@ -202,6 +203,21 @@ export function useConversation() {
   }
 
   // ---------------------------------------------------------------------------
+  // Fetch seller avg response time (shown to buyer only)
+  // ---------------------------------------------------------------------------
+
+  async function fetchSellerResponseTime(sellerId: string): Promise<void> {
+    const { data } = await supabase
+      .from('dealers')
+      .select('avg_response_minutes')
+      .eq('user_id', sellerId)
+      .maybeSingle()
+
+    sellerAvgResponseMinutes.value =
+      (data as { avg_response_minutes: number | null } | null)?.avg_response_minutes ?? null
+  }
+
+  // ---------------------------------------------------------------------------
   // Open conversation (load messages)
   // ---------------------------------------------------------------------------
 
@@ -209,7 +225,15 @@ export function useConversation() {
     if (!user.value) return
 
     const conv = conversations.value.find((c) => c.id === conversationId)
-    if (conv) activeConversation.value = conv
+    if (conv) {
+      activeConversation.value = conv
+      // Fetch seller response time if current user is the buyer
+      if (conv.seller_id && conv.buyer_id === user.value.id) {
+        await fetchSellerResponseTime(conv.seller_id)
+      } else {
+        sellerAvgResponseMinutes.value = null
+      }
+    }
 
     loading.value = true
     try {
@@ -484,6 +508,7 @@ export function useConversation() {
     unreadCount,
     isDataShared,
     hasAcceptedShare,
+    sellerAvgResponseMinutes,
     fetchConversations,
     openConversation,
     startConversation,

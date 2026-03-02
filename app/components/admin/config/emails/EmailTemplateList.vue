@@ -43,7 +43,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .template-list {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -67,7 +67,7 @@ const emit = defineEmits<{
   padding: 12px 16px;
   border: none;
   border-bottom: 1px solid #f3f4f6;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   text-align: left;
   transition: background 0.15s;
@@ -84,7 +84,7 @@ const emit = defineEmits<{
 
 .template-item--active {
   background: #eff6ff;
-  border-left: 3px solid var(--color-primary, #23424a);
+  border-left: 3px solid var(--color-primary);
 }
 
 .template-item--disabled {
@@ -109,7 +109,7 @@ const emit = defineEmits<{
 
 .template-item__key {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-family: monospace;
 }
 
@@ -126,7 +126,7 @@ const emit = defineEmits<{
 }
 
 .status-dot--on {
-  background: #10b981;
+  background: var(--color-success);
 }
 
 .status-dot--off {

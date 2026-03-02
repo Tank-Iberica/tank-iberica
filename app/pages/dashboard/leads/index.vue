@@ -164,12 +164,12 @@ function getStatusColor(status: string): string {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .total-badge {
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
   padding: 4px 10px;
@@ -187,48 +187,48 @@ function getStatusColor(status: string): string {
 .tab-btn {
   min-height: 44px;
   padding: 8px 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
-  background: white;
+  background: var(--bg-primary);
   font-size: 0.85rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.15s;
 }
 
 .tab-btn.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .tab-btn:hover:not(.active) {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .search-box input {
   width: 100%;
   min-height: 44px;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
 }
 
 .search-box input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .loading-state {
@@ -240,8 +240,8 @@ function getStatusColor(status: string): string {
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -255,7 +255,7 @@ function getStatusColor(status: string): string {
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .leads-list {
@@ -269,7 +269,7 @@ function getStatusColor(status: string): string {
   flex-direction: column;
   gap: 8px;
   padding: 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   text-decoration: none;
@@ -289,7 +289,7 @@ function getStatusColor(status: string): string {
 
 .lead-name {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 0.95rem;
 }
 
@@ -302,7 +302,7 @@ function getStatusColor(status: string): string {
 
 .lead-vehicle {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .lead-bottom {
@@ -314,13 +314,13 @@ function getStatusColor(status: string): string {
 
 .lead-date {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   white-space: nowrap;
 }
 
 .lead-preview {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

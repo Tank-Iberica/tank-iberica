@@ -139,7 +139,7 @@ function resetForm() {
           :aria-invalid="!!fieldErrors.name || undefined"
           :aria-describedby="fieldErrors.name ? 'err-insp-name' : undefined"
           :placeholder="$t('inspection.namePlaceholder')"
-        >
+        />
         <p v-if="fieldErrors.name" id="err-insp-name" class="field-error" role="alert">
           {{ fieldErrors.name }}
         </p>
@@ -155,7 +155,7 @@ function resetForm() {
           :aria-invalid="!!fieldErrors.email || undefined"
           :aria-describedby="fieldErrors.email ? 'err-insp-email' : undefined"
           :placeholder="$t('inspection.emailPlaceholder')"
-        >
+        />
         <p v-if="fieldErrors.email" id="err-insp-email" class="field-error" role="alert">
           {{ fieldErrors.email }}
         </p>
@@ -171,7 +171,7 @@ function resetForm() {
           :aria-invalid="!!fieldErrors.phone || undefined"
           :aria-describedby="fieldErrors.phone ? 'err-insp-phone' : undefined"
           :placeholder="$t('inspection.phonePlaceholder')"
-        >
+        />
         <p v-if="fieldErrors.phone" id="err-insp-phone" class="field-error" role="alert">
           {{ fieldErrors.phone }}
         </p>
@@ -184,7 +184,7 @@ function resetForm() {
           v-model="formData.preferredDate"
           type="date"
           :min="new Date().toISOString().split('T')[0]"
-        >
+        />
       </div>
 
       <div class="form-group">
@@ -237,7 +237,7 @@ function resetForm() {
 
 .field-error {
   font-size: 0.8125rem;
-  color: var(--color-error, #dc2626);
+  color: var(--color-error, var(--color-error));
   margin-top: 4px;
 }
 
@@ -263,7 +263,7 @@ function resetForm() {
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -288,7 +288,7 @@ function resetForm() {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
 }
 
@@ -303,12 +303,12 @@ function resetForm() {
 
 .btn-secondary {
   background: transparent;
-  color: var(--color-primary, #23424a);
-  border: 2px solid var(--color-primary, #23424a);
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
 }
 
 .btn-secondary:hover {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
 }
 
@@ -331,7 +331,7 @@ function resetForm() {
   width: 64px;
   height: 64px;
   margin: 0 auto 16px;
-  background: #10b981;
+  background: var(--color-success);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -342,7 +342,7 @@ function resetForm() {
 }
 
 .success-message h3 {
-  color: #10b981;
+  color: var(--color-success);
   margin-bottom: 12px;
 }
 
@@ -354,7 +354,7 @@ function resetForm() {
 
 .price-info {
   font-weight: 600;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 /* Tablet and up */

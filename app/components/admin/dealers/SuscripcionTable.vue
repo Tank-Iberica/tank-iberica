@@ -221,7 +221,7 @@ const emit = defineEmits<{
 }
 
 .admin-table tr.row-expired:hover {
-  background: #fef3c7;
+  background: var(--color-warning-bg, #fef3c7);
 }
 
 /* ---- Dealer Info ---- */
@@ -268,7 +268,7 @@ const emit = defineEmits<{
 }
 
 .text-expired {
-  color: var(--color-error, #ef4444);
+  color: var(--color-error);
   font-weight: var(--font-weight-semibold, 600);
 }
 
@@ -299,21 +299,21 @@ const emit = defineEmits<{
 }
 
 .btn-edit:hover {
-  background: #dbeafe;
-  color: var(--color-info, #3b82f6);
-  border-color: var(--color-info, #3b82f6);
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
+  border-color: var(--color-info);
 }
 
 .btn-extend:hover {
   background: #ecfdf5;
-  color: var(--color-success, #10b981);
-  border-color: var(--color-success, #10b981);
+  color: var(--color-success);
+  border-color: var(--color-success);
 }
 
 .btn-cancel:hover {
-  background: #fef2f2;
-  color: var(--color-error, #ef4444);
-  border-color: var(--color-error, #ef4444);
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
+  border-color: var(--color-error);
 }
 
 .empty-state {

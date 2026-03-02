@@ -39,7 +39,7 @@ definePageMeta({
   font-size: 1.5rem;
 }
 .placeholder-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 60px 40px;
   text-align: center;
@@ -65,7 +65,7 @@ definePageMeta({
   gap: 8px;
 }
 .feature-tag {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #4b5563;
   padding: 6px 12px;
   border-radius: 16px;

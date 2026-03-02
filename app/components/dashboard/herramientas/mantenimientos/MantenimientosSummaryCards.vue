@@ -59,12 +59,12 @@ const { t } = useI18n()
 }
 
 .summary-card.cost-year {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .summary-card.total-records {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 

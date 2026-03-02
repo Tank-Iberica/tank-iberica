@@ -114,8 +114,8 @@ function onRoleChange(user: AdminUser, event: Event) {
 
 <style scoped>
 .error-banner {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -128,7 +128,7 @@ function onRoleChange(user: AdminUser, event: Event) {
 }
 
 .table-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -163,7 +163,7 @@ function onRoleChange(user: AdminUser, event: Event) {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -189,7 +189,7 @@ function onRoleChange(user: AdminUser, event: Event) {
 }
 
 .provider-badge {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #6b7280;
   padding: 3px 8px;
   border-radius: 4px;
@@ -204,7 +204,7 @@ function onRoleChange(user: AdminUser, event: Event) {
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .action-buttons {
@@ -214,7 +214,7 @@ function onRoleChange(user: AdminUser, event: Event) {
 
 .btn-icon {
   background: none;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
@@ -223,15 +223,15 @@ function onRoleChange(user: AdminUser, event: Event) {
 }
 
 .btn-icon:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .btn-view:hover {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
 }
 
 .btn-delete:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .empty-state {

@@ -36,7 +36,7 @@ defineProps<{
 }
 
 .stat-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 16px;
   text-align: center;

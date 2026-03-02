@@ -212,15 +212,15 @@ const { getImageUrl } = useImageUrl()
 }
 
 .status--pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 .status--active {
   background: #d1fae5;
   color: #065f46;
 }
 .status--responded {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 .status--completed {
@@ -232,7 +232,7 @@ const { getImageUrl } = useImageUrl()
   color: var(--text-auxiliary);
 }
 .status--refunded {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 
@@ -323,7 +323,7 @@ const { getImageUrl } = useImageUrl()
 }
 
 .btn-cancel:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 .btn-cancel:disabled {
   opacity: 0.5;

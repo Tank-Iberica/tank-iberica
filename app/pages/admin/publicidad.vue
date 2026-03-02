@@ -196,18 +196,18 @@ onMounted(() => {
 .tabs-bar {
   display: flex;
   gap: 0;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 20px;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .tab-btn {
   flex: 1;
   padding: 12px 16px;
   border: none;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
@@ -221,17 +221,17 @@ onMounted(() => {
 }
 
 .tab-btn.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
 }
 
 .tab-btn:hover:not(.active) {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .error-banner {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;

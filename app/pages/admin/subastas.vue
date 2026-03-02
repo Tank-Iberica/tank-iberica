@@ -185,7 +185,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
 }
 
 .total-badge {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #6b7280;
   padding: 4px 12px;
   border-radius: 16px;
@@ -202,7 +202,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
   gap: 12px;
   margin-bottom: 20px;
   padding: 12px 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   align-items: center;
@@ -214,7 +214,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
 }
 
 .status-filter {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   overflow: hidden;
   overflow-x: auto;
@@ -224,7 +224,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
 .filter-btn {
   padding: 8px 14px;
   border: none;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
@@ -241,20 +241,20 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
 }
 
 .filter-btn.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
 }
 
 .filter-btn:hover:not(.active) {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 /* ============================================
    ERROR / LOADING
    ============================================ */
 .error-banner {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -266,14 +266,14 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -297,7 +297,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
    EMPTY STATE
    ============================================ */
 .empty-state-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 60px 24px;
   text-align: center;
@@ -318,7 +318,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
    BUTTONS
    ============================================ */
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 20px;

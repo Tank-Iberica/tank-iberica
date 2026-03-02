@@ -173,7 +173,7 @@ const { t } = useI18n()
 }
 
 .modal {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px;
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -207,31 +207,31 @@ const { t } = useI18n()
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
   flex-shrink: 0;
 }
 
 .modal-header.danger {
-  background: #fef2f2;
-  border-color: #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border-color: var(--color-error-border);
 }
 
 .modal-header.danger h3 {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .modal-close {
   background: none;
   border: none;
   font-size: 24px;
-  color: #94a3b8;
+  color: var(--text-disabled);
   cursor: pointer;
   padding: 0;
   line-height: 1;
@@ -243,7 +243,7 @@ const { t } = useI18n()
 }
 
 .modal-close:hover {
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .modal-body {
@@ -257,8 +257,8 @@ const { t } = useI18n()
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 24px;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--bg-secondary);
   border-radius: 0 0 16px 16px;
   flex-shrink: 0;
   flex-wrap: wrap;
@@ -272,14 +272,14 @@ const { t } = useI18n()
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 
 .form-group textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   min-height: 80px;
@@ -289,19 +289,19 @@ const { t } = useI18n()
 
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 .text-danger {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.875rem;
 }
 
 .btn-secondary {
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 500;
@@ -312,12 +312,12 @@ const { t } = useI18n()
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -331,7 +331,7 @@ const { t } = useI18n()
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -340,7 +340,7 @@ const { t } = useI18n()
 }
 
 .btn-danger {
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -351,7 +351,7 @@ const { t } = useI18n()
 }
 
 .btn-danger:hover {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 .btn-danger:disabled {
@@ -366,7 +366,7 @@ const { t } = useI18n()
   gap: 12px;
   margin-bottom: 16px;
   padding: 16px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 10px;
 }
 
@@ -379,12 +379,12 @@ const { t } = useI18n()
 
 .adjudicate-label {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .adjudicate-amount {
   font-size: 1.2rem;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .reserve-met {
@@ -392,10 +392,10 @@ const { t } = useI18n()
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: #f0fdf4;
-  border: 1px solid #22c55e;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success);
   border-radius: 8px;
-  color: #16a34a;
+  color: var(--color-success);
   font-weight: 500;
 }
 
@@ -404,10 +404,10 @@ const { t } = useI18n()
   align-items: flex-start;
   gap: 10px;
   padding: 12px 16px;
-  background: #fef3c7;
-  border: 1px solid #f59e0b;
+  background: var(--color-warning-bg, #fef3c7);
+  border: 1px solid var(--color-warning);
   border-radius: 8px;
-  color: #92400e;
+  color: var(--color-warning-text);
 }
 
 .reserve-not-met strong {

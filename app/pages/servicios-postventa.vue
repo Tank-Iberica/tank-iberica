@@ -130,7 +130,7 @@ useHead({
           :src="vehicle.images[0]"
           :alt="vehicle.title"
           class="vehicle-thumb"
-        >
+        />
         <div class="vehicle-info-text">
           <h2 class="vehicle-info-title">{{ vehicle.title }}</h2>
         </div>
@@ -203,7 +203,7 @@ useHead({
 .postsale-title {
   font-size: var(--font-size-2xl, 1.5rem);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   margin-bottom: var(--spacing-3, 0.75rem);
 }
 
@@ -246,7 +246,7 @@ useHead({
 
 /* ---- Error ---- */
 .postsale-error {
-  color: var(--color-error, #ef4444);
+  color: var(--color-error);
   font-size: var(--font-size-sm, 0.875rem);
   margin-bottom: var(--spacing-4, 1rem);
   text-align: center;
@@ -294,7 +294,7 @@ useHead({
   display: inline-block;
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   background: var(--bg-secondary, #f3f4f6);
   padding: var(--spacing-1, 0.25rem) var(--spacing-3, 0.75rem);
   border-radius: var(--border-radius-full, 9999px);
@@ -305,7 +305,7 @@ useHead({
   display: inline-block;
   font-size: var(--font-size-xs, 0.75rem);
   font-weight: var(--font-weight-medium, 500);
-  color: var(--color-success, #10b981);
+  color: var(--color-success);
   align-self: flex-start;
 }
 
@@ -318,7 +318,7 @@ useHead({
 .btn-cta {
   align-self: flex-start;
   padding: var(--spacing-2, 0.5rem) var(--spacing-5, 1.25rem);
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: var(--color-white, #fff);
   border: none;
   border-radius: var(--border-radius, 8px);
@@ -330,7 +330,7 @@ useHead({
 }
 
 .btn-cta:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-cta:disabled {
@@ -338,11 +338,11 @@ useHead({
 }
 
 .btn-cta--done {
-  background: var(--color-success, #10b981);
+  background: var(--color-success);
 }
 
 .btn-cta--done:hover {
-  background: var(--color-success, #10b981);
+  background: var(--color-success);
 }
 
 /* ---- Help footer ---- */

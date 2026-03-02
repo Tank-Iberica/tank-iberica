@@ -80,7 +80,7 @@ const emit = defineEmits<Emits>()
   font-weight: 600;
 }
 .pf-left .star {
-  color: #f59e0b;
+  color: var(--color-warning);
   font-size: 1.2rem;
 }
 .pf-right {
@@ -91,21 +91,21 @@ const emit = defineEmits<Emits>()
 .btn-icon {
   width: 32px;
   height: 32px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 6px;
   cursor: pointer;
 }
 .btn {
   padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 6px;
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-primary {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
 }
@@ -114,18 +114,18 @@ const emit = defineEmits<Emits>()
   cursor: not-allowed;
 }
 .btn-sell {
-  background: #16a34a;
+  background: var(--color-success);
   color: #fff;
   border: none;
 }
 .btn-danger-outline {
-  border-color: #dc2626;
-  color: #dc2626;
+  border-color: var(--color-error);
+  color: var(--color-error);
 }
 .btn-drive-on {
-  background: #f0fdf4;
-  border-color: #22c55e;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  border-color: var(--color-success);
+  color: var(--color-success);
 }
 
 @media (max-width: 768px) {

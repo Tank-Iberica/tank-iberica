@@ -24,6 +24,17 @@
   --color-error: #ef4444;
   --color-info: #3b82f6;
 
+  /* ---- Colors: State backgrounds ---- */
+  --color-success-bg: #dcfce7;
+  --color-warning-bg: #fef3c7;
+  --color-error-bg: #fef2f2;
+  --color-info-bg: #dbeafe;
+
+  /* ---- Colors: State borders & text variants ---- */
+  --color-error-border: #fecaca;
+  --color-success-border: #bbf7d0;
+  --color-warning-text: #92400e;
+
   /* ---- Text on dark background ---- */
   --text-on-dark-primary: #e6ecec;
   --text-on-dark-secondary: #c9d4d4;
@@ -37,7 +48,7 @@
   --text-disabled: #9ca3af;
 
   /* ---- Backgrounds ---- */
-  --bg-primary: #ffffff;
+  --bg-primary: #faf9f8;
   --bg-secondary: #f3f4f6;
   --bg-tertiary: #e5e7eb;
   --bg-dark: #23424a;
@@ -112,6 +123,8 @@
   --header-height-scrolled: 50px;
   --banner-height: 36px;
   --sidebar-width: 280px;
+  --header-offset: 64px;
+  --header-offset-desktop: 60px;
 
   /* ---- Z-Index ---- */
   --z-dropdown: 100;

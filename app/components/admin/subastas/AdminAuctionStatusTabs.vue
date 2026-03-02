@@ -31,7 +31,7 @@ const { t } = useI18n()
 .tabs-row {
   display: flex;
   gap: 4px;
-  background: white;
+  background: var(--bg-primary);
   padding: 6px;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -47,18 +47,18 @@ const { t } = useI18n()
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   white-space: nowrap;
   min-height: 44px;
   transition: all 0.15s;
 }
 
 .tab-btn:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .tab-btn.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
 }
 </style>

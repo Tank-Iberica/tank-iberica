@@ -217,7 +217,7 @@ function updateField<K extends keyof CompetitorVehicleForm>(
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px;
   width: 100%;
   max-width: 560px;
@@ -237,7 +237,7 @@ function updateField<K extends keyof CompetitorVehicleForm>(
   margin: 0;
   font-size: 1.2rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .btn-close {
@@ -248,14 +248,14 @@ function updateField<K extends keyof CompetitorVehicleForm>(
   height: 36px;
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--text-disabled);
   cursor: pointer;
   border-radius: 8px;
 }
 
 .btn-close:hover {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
 }
 
 .modal-form {
@@ -274,7 +274,7 @@ function updateField<K extends keyof CompetitorVehicleForm>(
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .form-group input,
@@ -282,7 +282,7 @@ function updateField<K extends keyof CompetitorVehicleForm>(
 .form-group textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
@@ -293,7 +293,7 @@ function updateField<K extends keyof CompetitorVehicleForm>(
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -320,7 +320,7 @@ function updateField<K extends keyof CompetitorVehicleForm>(
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -331,7 +331,7 @@ function updateField<K extends keyof CompetitorVehicleForm>(
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -345,9 +345,9 @@ function updateField<K extends keyof CompetitorVehicleForm>(
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
@@ -355,6 +355,6 @@ function updateField<K extends keyof CompetitorVehicleForm>(
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 </style>

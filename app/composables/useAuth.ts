@@ -18,6 +18,8 @@ interface UserProfile {
   onboarding_completed: boolean
   avatar_url: string | null
   lang: string | null
+  preferred_country: string | null
+  preferred_location_level: string | null
   last_login_at: string | null
   login_count: number
 }
@@ -77,7 +79,7 @@ export function useAuth() {
       const { data, error: err } = await supabase
         .from('users')
         .select(
-          'id, email, pseudonimo, name, user_type, role, company_name, phone, phone_verified, onboarding_completed, avatar_url, lang, last_login_at, login_count',
+          'id, email, pseudonimo, name, user_type, role, company_name, phone, phone_verified, onboarding_completed, avatar_url, lang, preferred_country, last_login_at, login_count',
         )
         .eq('id', uid)
         .single()

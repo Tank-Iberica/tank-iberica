@@ -3,7 +3,14 @@
     <!-- Mobile: hamburger + title -->
     <div class="header-left">
       <button class="hamburger-btn" @click="$emit('toggle-sidebar')">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <line x1="3" y1="6" x2="21" y2="6" />
           <line x1="3" y1="12" x2="21" y2="12" />
           <line x1="3" y1="18" x2="21" y2="18" />
@@ -12,7 +19,14 @@
 
       <!-- Desktop: collapse toggle -->
       <button class="collapse-btn" @click="$emit('toggle-collapse')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <line x1="3" y1="6" x2="21" y2="6" />
           <line x1="3" y1="12" x2="21" y2="12" />
           <line x1="3" y1="18" x2="21" y2="18" />
@@ -30,7 +44,14 @@
     <!-- Right side: user info -->
     <div class="header-right">
       <NuxtLink to="/" class="view-site-btn" target="_blank">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
           <path d="M15 3h6v6" />
           <path d="M10 14L21 3" />
@@ -44,7 +65,16 @@
             {{ userInitials }}
           </div>
           <span class="user-name">{{ userName }}</span>
-          <svg class="user-chevron" :class="{ open: menuOpen }" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            class="user-chevron"
+            :class="{ open: menuOpen }"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <path d="M6 9l6 6 6-6" />
           </svg>
         </button>
@@ -54,7 +84,14 @@
             <span class="dropdown-email">{{ userEmail }}</span>
           </div>
           <button class="dropdown-item" @click="handleLogout">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
               <path d="M16 17l5-5-5-5" />
               <path d="M21 12H9" />
@@ -153,7 +190,7 @@ async function handleLogout() {
   top: 0;
   right: 0;
   left: 0;
-  height: 56px;
+  min-height: 56px;
   background: var(--bg-primary);
   border-bottom: 1px solid var(--border-color);
   display: flex;
@@ -166,7 +203,7 @@ async function handleLogout() {
 @media (min-width: 768px) {
   .admin-header {
     left: var(--sidebar-width);
-    height: 60px;
+    min-height: 60px;
     transition: left var(--transition-normal);
   }
 

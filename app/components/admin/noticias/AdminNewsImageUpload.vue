@@ -83,7 +83,7 @@ defineEmits<{
 
 <style scoped>
 .section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -95,7 +95,7 @@ defineEmits<{
   color: #374151;
   margin-bottom: 16px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .field {
@@ -107,12 +107,12 @@ defineEmits<{
 .field label {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .input {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
@@ -121,7 +121,7 @@ defineEmits<{
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 /* Image upload */
@@ -136,7 +136,7 @@ defineEmits<{
   justify-content: center;
   gap: 8px;
   padding: 24px;
-  border: 2px dashed #e2e8f0;
+  border: 2px dashed var(--color-gray-200);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s;
@@ -144,12 +144,12 @@ defineEmits<{
 }
 
 .upload-zone:hover {
-  border-color: var(--color-primary, #23424a);
-  background: #f8fafc;
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
 }
 .upload-zone.uploading {
   cursor: default;
-  border-color: #94a3b8;
+  border-color: var(--text-disabled);
 }
 
 .file-input-hidden {
@@ -159,32 +159,32 @@ defineEmits<{
 .upload-icon {
   width: 32px;
   height: 32px;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .upload-text {
   font-size: 0.85rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .upload-hint {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .upload-progress-bar {
   width: 100%;
   max-width: 200px;
   height: 6px;
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   border-radius: 3px;
   overflow: hidden;
 }
 
 .upload-progress-fill {
   height: 100%;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   border-radius: 3px;
   transition: width 0.2s;
 }
@@ -192,8 +192,8 @@ defineEmits<{
 .upload-error {
   margin-top: 8px;
   padding: 8px 12px;
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 6px;
   font-size: 0.8rem;
 }
@@ -234,6 +234,6 @@ defineEmits<{
 }
 
 .remove-image-btn:hover {
-  background: #dc2626;
+  background: var(--color-error);
 }
 </style>

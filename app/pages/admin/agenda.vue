@@ -122,12 +122,12 @@ onMounted(() => init())
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .count-badge {
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
   padding: 4px 10px;
@@ -143,7 +143,7 @@ onMounted(() => init())
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -156,15 +156,15 @@ onMounted(() => init())
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .loading-state {
@@ -173,14 +173,14 @@ onMounted(() => init())
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

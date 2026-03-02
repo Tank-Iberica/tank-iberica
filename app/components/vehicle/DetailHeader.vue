@@ -44,7 +44,7 @@
           :src="`https://flagcdn.com/w20/${vehicleFlagCode}.png`"
           :alt="locationCountry || ''"
           class="location-flag"
-        >
+        />
       </span>
     </div>
 
@@ -112,7 +112,7 @@ const formattedRentalPrice = computed(() =>
 .vehicle-price {
   font-size: var(--font-size-2xl);
   font-weight: 800;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--color-success) 0%, #059669 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

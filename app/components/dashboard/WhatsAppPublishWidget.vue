@@ -235,7 +235,7 @@ onMounted(() => {
    ============================================ */
 .whatsapp-widget {
   position: relative;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -272,7 +272,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, var(--color-success), var(--color-success));
   border-radius: 10px;
   color: white;
 }
@@ -281,14 +281,14 @@ onMounted(() => {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   line-height: 1.3;
 }
 
 .subtitle {
   margin: 4px 0 0 0;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   line-height: 1.4;
 }
 
@@ -314,7 +314,7 @@ onMounted(() => {
   width: 28px;
   height: 28px;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  background: linear-gradient(135deg, #dcfce7, var(--color-success-border));
   color: #15803d;
   border-radius: 50%;
   font-weight: 700;
@@ -339,7 +339,7 @@ onMounted(() => {
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  background: #22c55e;
+  background: var(--color-success);
   color: white;
   border-radius: 8px;
   font-weight: 600;
@@ -351,7 +351,7 @@ onMounted(() => {
 }
 
 .phone-link:hover {
-  background: #16a34a;
+  background: var(--color-success);
 }
 
 .phone-link svg {
@@ -366,7 +366,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #fef3c7;
+  background: var(--color-warning-bg, #fef3c7);
   border: 1px solid #fde047;
   border-radius: 8px;
   gap: 12px;
@@ -378,12 +378,12 @@ onMounted(() => {
   gap: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #92400e;
+  color: var(--color-warning-text);
 }
 
 .status-info svg {
   flex-shrink: 0;
-  color: #d97706;
+  color: var(--color-warning);
 }
 
 .view-drafts-link {
@@ -391,8 +391,8 @@ onMounted(() => {
   align-items: center;
   gap: 4px;
   padding: 6px 12px;
-  background: white;
-  color: #92400e;
+  background: var(--bg-primary);
+  color: var(--color-warning-text);
   border: 1px solid #fbbf24;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -405,7 +405,7 @@ onMounted(() => {
 
 .view-drafts-link:hover {
   background: #fffbeb;
-  border-color: #f59e0b;
+  border-color: var(--color-warning);
 }
 
 .view-drafts-link svg {
@@ -438,19 +438,19 @@ onMounted(() => {
 }
 
 .upgrade-content svg {
-  color: #94a3b8;
+  color: var(--text-disabled);
   margin-bottom: 4px;
 }
 
 .upgrade-content strong {
   font-size: 1rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .upgrade-content p {
   margin: 0;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   line-height: 1.5;
 }
 
@@ -460,7 +460,7 @@ onMounted(() => {
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: #22c55e;
+  background: var(--color-success);
   color: white;
   border: none;
   border-radius: 8px;
@@ -472,7 +472,7 @@ onMounted(() => {
 }
 
 .btn-upgrade:hover {
-  background: #16a34a;
+  background: var(--color-success);
 }
 
 /* ============================================

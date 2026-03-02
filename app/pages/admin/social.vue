@@ -237,7 +237,7 @@ watch(statusFilter, () => {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 .header-actions {
   display: flex;
@@ -245,16 +245,16 @@ watch(statusFilter, () => {
 }
 
 .count-badge {
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 12px;
 }
 .count-badge.pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .btn-generate {
@@ -262,7 +262,7 @@ watch(statusFilter, () => {
   align-items: center;
   gap: 6px;
   padding: 10px 18px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -273,14 +273,14 @@ watch(statusFilter, () => {
   transition: background 0.2s;
 }
 .btn-generate:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-refresh {
   padding: 10px 18px;
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   font-size: 0.9rem;
@@ -289,8 +289,8 @@ watch(statusFilter, () => {
   transition: all 0.2s;
 }
 .btn-refresh:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 .btn-refresh:disabled {
   opacity: 0.5;
@@ -301,7 +301,7 @@ watch(statusFilter, () => {
   position: fixed;
   top: 20px;
   right: 20px;
-  background: #16a34a;
+  background: var(--color-success);
   color: white;
   padding: 12px 20px;
   border-radius: 8px;
@@ -325,16 +325,16 @@ watch(statusFilter, () => {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 .dismiss-btn {
   background: none;
   border: none;
-  color: #dc2626;
+  color: var(--color-error);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -347,13 +347,13 @@ watch(statusFilter, () => {
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -368,7 +368,7 @@ watch(statusFilter, () => {
   flex-direction: column;
   align-items: center;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   gap: 12px;
 }
 .empty-icon {

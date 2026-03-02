@@ -7,6 +7,8 @@ interface ProfileFields {
   name?: string
   phone?: string
   lang?: string
+  preferred_country?: string | null
+  preferred_location_level?: string | null
   avatar_url?: string
 }
 

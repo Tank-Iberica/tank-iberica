@@ -194,18 +194,18 @@ function clusterStatusLabel(status: string): string {
 }
 
 .badge-active {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 
 .badge-migrating {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .badge-full {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .cluster-verticals {

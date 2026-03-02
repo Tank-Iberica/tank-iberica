@@ -112,13 +112,13 @@ function getStatusClass(status: string): string {
 .invoice-history__loading {
   text-align: center;
   padding: 2rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .invoice-history__empty {
   text-align: center;
   padding: 3rem 1.5rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .invoice-history__empty svg {
@@ -139,17 +139,17 @@ function getStatusClass(status: string): string {
 .history-table th {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-auxiliary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 0.75rem 0.5rem;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
   text-align: left;
 }
 
 .history-table td {
   padding: 0.75rem 0.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.875rem;
 }
 
@@ -171,8 +171,8 @@ function getStatusClass(status: string): string {
 }
 
 .history-card {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   padding: 1rem;
 }
@@ -188,7 +188,7 @@ function getStatusClass(status: string): string {
   font-family: monospace;
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
 }
 
 .history-card__client {
@@ -202,11 +202,11 @@ function getStatusClass(status: string): string {
   justify-content: space-between;
   align-items: center;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .history-card__footer strong {
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
   font-size: 0.95rem;
 }
 
@@ -222,23 +222,23 @@ function getStatusClass(status: string): string {
 }
 
 .status-draft {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--bg-secondary);
+  color: var(--text-auxiliary);
 }
 
 .status-sent {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
 }
 
 .status-paid {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #15803d;
 }
 
 .status-cancelled {
-  background: #fef2f2;
-  color: #b91c1c;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 /* ============ DESKTOP BREAKPOINT (768px+) ============ */

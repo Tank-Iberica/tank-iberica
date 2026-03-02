@@ -162,7 +162,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
 }
 
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -175,7 +175,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .form-grid {
@@ -193,7 +193,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .form-group input,
@@ -201,7 +201,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
 .form-group textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
@@ -213,7 +213,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -232,7 +232,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
   right: 14px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-disabled);
   pointer-events: none;
 }
 
@@ -249,14 +249,14 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
   min-height: 44px;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .checkbox-label input[type='checkbox'] {
   width: 20px;
   height: 20px;
   min-height: auto;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
   cursor: pointer;
 }
 
@@ -265,7 +265,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
   background: #fffbeb;
   border: 1px solid #fde68a;
   border-radius: 8px;
-  color: #92400e;
+  color: var(--color-warning-text);
   font-size: 0.9rem;
   font-weight: 500;
   line-height: 1.5;
@@ -273,8 +273,8 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
 
 .benefit-summary {
   padding: 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -286,15 +286,15 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
   justify-content: space-between;
   align-items: center;
   font-size: 0.9rem;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .benefit-total {
   padding-top: 8px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-gray-200);
   font-weight: 700;
   font-size: 1rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .benefit-value {
@@ -302,11 +302,11 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
 }
 
 .benefit-value.positive {
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 .benefit-value.negative {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .form-actions {
@@ -321,7 +321,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
   border: none;
   border-radius: 8px;
@@ -331,7 +331,7 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
 }
 
 .btn-danger:hover {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 .btn-danger:disabled {
@@ -345,9 +345,9 @@ function onCheckboxChange(field: SellFormField, event: Event): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;

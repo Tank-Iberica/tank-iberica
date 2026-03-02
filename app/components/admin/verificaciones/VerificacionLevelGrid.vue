@@ -56,7 +56,7 @@ const { t } = useI18n()
   flex-direction: column;
   gap: 8px;
   padding: 12px 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -70,12 +70,12 @@ const { t } = useI18n()
 .vlc-name {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .vlc-docs {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .vlc-progress {
@@ -87,7 +87,7 @@ const { t } = useI18n()
 .progress-bar-container {
   flex: 1;
   height: 6px;
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -99,16 +99,16 @@ const { t } = useI18n()
 }
 
 .progress-bar-fill.level-none {
-  background: #94a3b8;
+  background: var(--color-gray-400);
   width: 0;
 }
 
 .progress-bar-fill.level-verified {
-  background: #22c55e;
+  background: var(--color-success);
 }
 
 .progress-bar-fill.level-extended {
-  background: #3b82f6;
+  background: var(--color-info);
 }
 
 .progress-bar-fill.level-detailed {
@@ -116,7 +116,7 @@ const { t } = useI18n()
 }
 
 .progress-bar-fill.level-audited {
-  background: #f59e0b;
+  background: var(--color-warning);
 }
 
 .progress-bar-fill.level-certified {
@@ -130,10 +130,10 @@ const { t } = useI18n()
 }
 
 .vlc-level.level-none {
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 .vlc-level.level-verified {
-  color: #16a34a;
+  color: var(--color-success);
 }
 .vlc-level.level-extended {
   color: #2563eb;
@@ -142,7 +142,7 @@ const { t } = useI18n()
   color: #7c3aed;
 }
 .vlc-level.level-audited {
-  color: #d97706;
+  color: var(--color-warning);
 }
 .vlc-level.level-certified {
   color: #0d9488;

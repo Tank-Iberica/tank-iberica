@@ -162,8 +162,8 @@ async function copyLink(): Promise<void> {
 }
 
 .share-btn:hover {
-  border-color: var(--color-primary, #23424a);
-  color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .share-whatsapp:hover {
@@ -179,12 +179,12 @@ async function copyLink(): Promise<void> {
 }
 
 .share-email:hover {
-  border-color: var(--color-primary, #23424a);
-  color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .share-copy:hover {
-  border-color: var(--color-accent, #7fd1c8);
-  color: var(--color-accent, #7fd1c8);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 </style>

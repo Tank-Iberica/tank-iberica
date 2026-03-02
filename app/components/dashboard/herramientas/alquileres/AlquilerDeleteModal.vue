@@ -61,7 +61,7 @@ const { t } = useI18n()
 }
 
 .modal {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 100%;
   max-width: 560px;
@@ -79,7 +79,7 @@ const { t } = useI18n()
   font-weight: 600;
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px 12px 0 0;
 }
 
@@ -88,7 +88,7 @@ const { t } = useI18n()
   border: none;
   font-size: 1.4rem;
   cursor: pointer;
-  color: #9ca3af;
+  color: var(--text-disabled);
   width: 44px;
   height: 44px;
   display: flex;
@@ -98,7 +98,7 @@ const { t } = useI18n()
 }
 
 .modal-head button:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .modal-body {
@@ -124,8 +124,8 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 44px;
   padding: 10px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.875rem;
   cursor: pointer;
@@ -133,11 +133,11 @@ const { t } = useI18n()
 }
 
 .btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-danger {
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
   border: none;
   font-weight: 600;
@@ -151,7 +151,7 @@ const { t } = useI18n()
 }
 
 .btn-danger:hover {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 .btn-danger:disabled {
@@ -162,7 +162,7 @@ const { t } = useI18n()
 /* Delete info */
 .delete-info {
   padding: 12px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 6px;
   text-align: center;
   margin-top: 12px;

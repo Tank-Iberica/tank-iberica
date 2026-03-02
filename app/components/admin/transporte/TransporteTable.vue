@@ -112,7 +112,7 @@ function onNotesInput(event: Event) {
 }
 
 .table-wrapper {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow-x: auto;
@@ -129,17 +129,17 @@ function onNotesInput(event: Event) {
   padding: 12px 16px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-auxiliary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
   white-space: nowrap;
 }
 
 .data-table td {
   padding: 12px 16px;
-  color: #1e293b;
-  border-bottom: 1px solid #f1f5f9;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .table-row {
@@ -148,11 +148,11 @@ function onNotesInput(event: Event) {
 }
 
 .table-row:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .table-row.expanded {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .cell-vehicle {
@@ -166,7 +166,7 @@ function onNotesInput(event: Event) {
 .cell-requester {
   font-family: monospace;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 /* Status badges */
@@ -180,34 +180,34 @@ function onNotesInput(event: Event) {
 }
 
 .status-badge.status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .status-badge.status-accepted {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
 }
 
 .status-badge.status-transit {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
 }
 
 .status-badge.status-completed {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .status-badge.status-cancelled {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 /* Expanded row */
 .expanded-row td {
   padding: 0;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
 }
 
 .expanded-content {
@@ -215,7 +215,7 @@ function onNotesInput(event: Event) {
   display: flex;
   gap: 24px;
   flex-wrap: wrap;
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .expanded-field {
@@ -227,22 +227,22 @@ function onNotesInput(event: Event) {
 .expanded-field label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .expanded-field select {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.9rem;
   min-height: 44px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
 }
 
 .expanded-field select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -254,7 +254,7 @@ function onNotesInput(event: Event) {
 .notes-field textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.9rem;
   font-family: inherit;
@@ -264,14 +264,14 @@ function onNotesInput(event: Event) {
 
 .notes-field textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 .btn-save-notes {
   align-self: flex-start;
   padding: 8px 16px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -284,7 +284,7 @@ function onNotesInput(event: Event) {
 }
 
 .btn-save-notes:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-save-notes:disabled {

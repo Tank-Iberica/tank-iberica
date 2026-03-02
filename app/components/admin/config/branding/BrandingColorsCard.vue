@@ -45,7 +45,7 @@ function onColorChange(key: string, value: string) {
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
@@ -88,7 +88,7 @@ function onColorChange(key: string, value: string) {
 .color-picker {
   width: 40px;
   height: 40px;
-  border: 2px solid #d1d5db;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   cursor: pointer;
   padding: 2px;
@@ -107,7 +107,7 @@ function onColorChange(key: string, value: string) {
 .color-hex {
   flex: 1;
   padding: 8px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.875rem;
   font-family: monospace;
@@ -116,7 +116,7 @@ function onColorChange(key: string, value: string) {
 
 .color-hex:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 

@@ -153,7 +153,7 @@ const formattedFairPrice = computed(() => {
 /* Above market (orange) */
 .badge--above {
   background: rgba(245, 158, 11, 0.12);
-  color: #d97706;
+  color: var(--color-warning);
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 

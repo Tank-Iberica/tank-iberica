@@ -219,7 +219,7 @@ function reset() {
 .demo-hero h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
   margin-bottom: 8px;
 }
 
@@ -240,7 +240,7 @@ function reset() {
 }
 
 .demo-dropzone:hover {
-  border-color: var(--primary, #23424a);
+  border-color: var(--primary, var(--color-primary));
 }
 
 .demo-dropzone.has-images {
@@ -319,8 +319,8 @@ function reset() {
 }
 
 .add-more-btn:hover {
-  border-color: var(--primary, #23424a);
-  color: var(--primary, #23424a);
+  border-color: var(--primary, var(--color-primary));
+  color: var(--primary, var(--color-primary));
 }
 
 .demo-fields {
@@ -348,7 +348,7 @@ function reset() {
 
 .field input:focus {
   outline: none;
-  border-color: var(--primary, #23424a);
+  border-color: var(--primary, var(--color-primary));
 }
 
 .demo-error {
@@ -365,7 +365,7 @@ function reset() {
   width: 100%;
   padding: 14px;
   margin-top: 20px;
-  background: var(--primary, #23424a);
+  background: var(--primary, var(--color-primary));
   color: white;
   border: none;
   border-radius: 10px;
@@ -399,7 +399,7 @@ function reset() {
 .demo-result h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
   margin-bottom: 12px;
 }
 
@@ -428,7 +428,7 @@ function reset() {
 .result-price {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
   margin-bottom: 16px;
 }
 
@@ -468,7 +468,7 @@ function reset() {
   display: block;
   text-align: center;
   padding: 14px;
-  background: var(--primary, #23424a);
+  background: var(--primary, var(--color-primary));
   color: white;
   border-radius: 10px;
   font-weight: 600;

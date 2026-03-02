@@ -68,7 +68,7 @@ function onKeydownEnter() {
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   max-width: 420px;
@@ -83,7 +83,7 @@ function onKeydownEnter() {
 
 .modal-content p {
   margin: 0 0 8px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
@@ -94,14 +94,14 @@ function onKeydownEnter() {
 
 .delete-warning {
   margin-top: 12px !important;
-  color: #dc2626 !important;
+  color: var(--color-error) !important;
   font-size: 0.85rem !important;
 }
 
 .confirm-input {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   margin: 12px 0;
 }
@@ -119,20 +119,20 @@ function onKeydownEnter() {
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid var(--color-gray-200);
+  background: var(--bg-primary);
   color: #374151;
   transition: all 0.15s;
 }
 
 .btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-danger {
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
-  border-color: #dc2626;
+  border-color: var(--color-error);
 }
 
 .btn-danger:disabled {

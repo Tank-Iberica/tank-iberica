@@ -105,7 +105,7 @@ const ogRecommendations = [
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
@@ -138,7 +138,7 @@ const ogRecommendations = [
 }
 
 .logo-text-section {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
   padding-top: 24px;
 }
 

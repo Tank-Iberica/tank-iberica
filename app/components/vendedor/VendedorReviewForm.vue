@@ -58,7 +58,7 @@ const emit = defineEmits<{
           :placeholder="$t('seller.reviewTitlePlaceholder')"
           maxlength="120"
           @input="emit('update-title', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
 
       <!-- Content -->
@@ -195,8 +195,8 @@ const emit = defineEmits<{
 .form-error {
   font-size: var(--font-size-sm);
   color: var(--color-error);
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: var(--border-radius);
   padding: var(--spacing-3) var(--spacing-4);
   margin-bottom: var(--spacing-3);

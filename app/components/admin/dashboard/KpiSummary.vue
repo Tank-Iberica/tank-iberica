@@ -84,11 +84,11 @@ defineProps<{
 }
 
 .kpi-change-up {
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 .kpi-change-down {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .kpi-change-flat {

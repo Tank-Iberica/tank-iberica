@@ -125,7 +125,7 @@ onMounted(() => {
 }
 
 .btn-back {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   color: #374151;
   border: none;
   padding: 8px 16px;
@@ -149,13 +149,13 @@ onMounted(() => {
 }
 
 .error-banner {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .success-banner {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .loading-state {
@@ -171,7 +171,7 @@ onMounted(() => {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 12px 28px;
@@ -183,7 +183,7 @@ onMounted(() => {
 }
 
 .btn-primary:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {

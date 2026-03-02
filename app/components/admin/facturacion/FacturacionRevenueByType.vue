@@ -88,7 +88,7 @@ function getRevenuePercentage(amount: number): number {
 
 .type-bar-fill {
   height: 100%;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   border-radius: var(--border-radius-full, 9999px);
   transition: width var(--transition-normal, 300ms ease);
   min-width: 4px;

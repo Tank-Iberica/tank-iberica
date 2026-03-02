@@ -51,7 +51,7 @@ const { t } = useI18n()
   flex-direction: column;
   align-items: center;
   padding: 12px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -59,27 +59,27 @@ const { t } = useI18n()
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .stat-label {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-weight: 500;
   text-align: center;
 }
 
 .stat-pending .stat-value {
-  color: #d97706;
+  color: var(--color-warning);
 }
 .stat-processed .stat-value {
   color: #2563eb;
 }
 .stat-published .stat-value {
-  color: #16a34a;
+  color: var(--color-success);
 }
 .stat-failed .stat-value {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 /* 480px+ */

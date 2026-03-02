@@ -188,7 +188,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
 }
 
 .modal {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 100%;
   max-width: 520px;
@@ -206,7 +206,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
   font-weight: 600;
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px 12px 0 0;
 }
 
@@ -215,7 +215,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
   border: none;
   font-size: 1.4rem;
   cursor: pointer;
-  color: #9ca3af;
+  color: var(--text-disabled);
   width: 44px;
   height: 44px;
   display: flex;
@@ -225,7 +225,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
 }
 
 .modal-head button:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .modal-body {
@@ -251,8 +251,8 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
   justify-content: center;
   min-height: 44px;
   padding: 10px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.875rem;
   cursor: pointer;
@@ -260,7 +260,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
 }
 
 .btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-primary {
@@ -269,7 +269,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -281,7 +281,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -322,10 +322,10 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
 .field-input {
   min-height: 44px;
   padding: 8px 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   font-size: 0.9rem;
-  background: white;
+  background: var(--bg-primary);
   width: 100%;
   box-sizing: border-box;
   font-family: inherit;
@@ -333,7 +333,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
 
 .field-input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 textarea.field-input {
@@ -368,7 +368,7 @@ textarea.field-input {
 
 .radio-label input {
   margin: 0;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 @media (max-width: 767px) {

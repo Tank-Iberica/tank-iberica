@@ -62,7 +62,7 @@ defineProps<{
 }
 
 .breadcrumb-link {
-  color: var(--color-primary, #23424A);
+  color: var(--color-primary);
   text-decoration: none;
   min-height: 44px;
   display: flex;

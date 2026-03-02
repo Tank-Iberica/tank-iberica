@@ -84,7 +84,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .table-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: auto;
@@ -99,28 +99,28 @@ const emit = defineEmits<{
 .data-table th {
   position: sticky;
   top: 0;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   padding: 12px 14px;
   text-align: left;
   font-weight: 600;
   font-size: 0.8rem;
-  color: #475569;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
   white-space: nowrap;
   z-index: 10;
 }
 
 .data-table td {
   padding: 10px 14px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.9rem;
   color: #334155;
 }
 
 .data-table tr:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .col-type {
@@ -153,7 +153,7 @@ const emit = defineEmits<{
 }
 
 .link {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
@@ -168,9 +168,9 @@ const emit = defineEmits<{
 
 .action-btn {
   padding: 6px 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 14px;
   transition: all 0.15s;
@@ -182,10 +182,10 @@ const emit = defineEmits<{
 }
 
 .action-btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 .action-btn.delete:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
   border-color: #fca5a5;
 }
 
@@ -195,7 +195,7 @@ const emit = defineEmits<{
 
 .empty-state {
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .empty-icon {
@@ -210,7 +210,7 @@ const emit = defineEmits<{
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -223,6 +223,6 @@ const emit = defineEmits<{
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 </style>

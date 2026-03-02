@@ -44,7 +44,7 @@ const { t } = useI18n()
 
 <style scoped>
 .card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -55,19 +55,19 @@ const { t } = useI18n()
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .card-header h2 {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .link-more {
   font-size: 0.85rem;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
   min-height: 44px;
@@ -82,7 +82,7 @@ const { t } = useI18n()
 .empty-state {
   padding: 32px 20px;
   text-align: center;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
@@ -96,9 +96,9 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;
@@ -106,7 +106,7 @@ const { t } = useI18n()
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .vehicles-list {
@@ -120,12 +120,12 @@ const { t } = useI18n()
   align-items: center;
   padding: 14px 20px;
   text-decoration: none;
-  border-bottom: 1px solid #f8fafc;
+  border-bottom: 1px solid var(--color-gray-50);
   min-height: 44px;
 }
 
 .vehicle-item:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .vehicle-item:last-child {
@@ -140,14 +140,14 @@ const { t } = useI18n()
 
 .vehicle-name {
   font-weight: 500;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
 .vehicle-price {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .vehicle-stats {
@@ -156,6 +156,6 @@ const { t } = useI18n()
 
 .stat {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 </style>

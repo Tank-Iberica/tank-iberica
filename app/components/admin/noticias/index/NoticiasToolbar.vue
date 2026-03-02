@@ -104,28 +104,28 @@ function onStatusChange(event: Event) {
   transform: translateY(-50%);
   width: 16px;
   height: 16px;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .search-input {
   width: 100%;
   padding: 8px 12px 8px 36px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   font-size: 0.875rem;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .filter-select {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   font-size: 0.875rem;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .btn {
@@ -134,14 +134,14 @@ function onStatusChange(event: Event) {
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid var(--color-gray-200);
+  background: var(--bg-primary);
   color: #374151;
   transition: all 0.15s;
 }
 
 .btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 .btn-sm {
   padding: 4px 12px;

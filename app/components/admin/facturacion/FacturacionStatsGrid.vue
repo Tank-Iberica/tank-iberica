@@ -80,39 +80,39 @@ defineProps<{
 }
 
 .stat-card.stat-revenue {
-  border-left-color: var(--color-primary, #23424a);
+  border-left-color: var(--color-primary);
 }
 
 .stat-card.stat-tax {
-  border-left-color: var(--color-info, #3b82f6);
+  border-left-color: var(--color-info);
 }
 
 .stat-card.stat-paid {
-  border-left-color: var(--color-success, #10b981);
+  border-left-color: var(--color-success);
 }
 
 .stat-card.stat-pending {
-  border-left-color: var(--color-warning, #f59e0b);
+  border-left-color: var(--color-warning);
 }
 
 .stat-card.stat-failed {
-  border-left-color: var(--color-error, #ef4444);
+  border-left-color: var(--color-error);
 }
 
 .stat-card.stat-mrr {
-  border-left-color: var(--color-primary, #23424a);
+  border-left-color: var(--color-primary);
 }
 
 .stat-card.stat-arr {
-  border-left-color: var(--color-info, #3b82f6);
+  border-left-color: var(--color-info);
 }
 
 .stat-card.stat-leads {
-  border-left-color: var(--color-success, #10b981);
+  border-left-color: var(--color-success);
 }
 
 .stat-card.stat-lead-value {
-  border-left-color: var(--color-warning, #f59e0b);
+  border-left-color: var(--color-warning);
 }
 
 .stats-row--secondary {

@@ -41,7 +41,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           type="text"
           required
           @input="onStringInput('brand', $event)"
-        >
+        />
       </div>
       <div class="form-group">
         <label for="model">{{ t('dashboard.vehicles.model') }} *</label>
@@ -51,7 +51,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           type="text"
           required
           @input="onStringInput('model', $event)"
-        >
+        />
       </div>
       <div class="form-group">
         <label for="year">{{ t('dashboard.vehicles.year') }}</label>
@@ -62,7 +62,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           min="1950"
           :max="new Date().getFullYear() + 1"
           @input="onNumberInput('year', $event)"
-        >
+        />
       </div>
       <div class="form-group">
         <label for="km">{{ t('dashboard.vehicles.km') }}</label>
@@ -72,7 +72,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           type="number"
           min="0"
           @input="onNumberInput('km', $event)"
-        >
+        />
       </div>
       <div class="form-group">
         <label for="price">{{ t('dashboard.vehicles.price') }}</label>
@@ -83,7 +83,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           min="0"
           step="100"
           @input="onNumberInput('price', $event)"
-        >
+        />
       </div>
       <div class="form-group">
         <label for="location">{{ t('dashboard.vehicles.location') }}</label>
@@ -92,7 +92,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           :value="props.location"
           type="text"
           @input="onStringInput('location', $event)"
-        >
+        />
       </div>
     </div>
   </section>
@@ -100,7 +100,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
 
 <style scoped>
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -110,7 +110,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .form-grid {
@@ -128,13 +128,13 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .form-group input {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
@@ -143,7 +143,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 

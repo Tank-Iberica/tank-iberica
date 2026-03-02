@@ -238,7 +238,7 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
   width: 36px;
   height: 36px;
   border-radius: 6px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   transition: all 0.15s;
   border: none;
   background: none;
@@ -246,7 +246,7 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
 }
 
 .btn-icon:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   color: #1a1a1a;
 }
 .btn-icon svg {
@@ -261,20 +261,20 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid var(--color-gray-200);
+  background: var(--bg-primary);
   color: #374151;
   transition: all 0.15s;
 }
 
 .btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .btn-primary:hover {
@@ -287,8 +287,8 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
 
 /* Error */
 .error-msg {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;

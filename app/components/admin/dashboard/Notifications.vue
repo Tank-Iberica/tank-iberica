@@ -217,7 +217,7 @@ defineProps<{
 
 .notification-card.has-pending {
   background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%);
-  border-color: #fecaca;
+  border-color: var(--color-error-border);
 }
 
 .notification-card.has-pending:hover {
@@ -253,7 +253,7 @@ defineProps<{
   min-width: 22px;
   height: 22px;
   padding: 0 6px;
-  background: #ef4444;
+  background: var(--color-error);
   color: white;
   font-size: 12px;
   font-weight: var(--font-weight-bold);
@@ -397,7 +397,7 @@ defineProps<{
 }
 
 .match-type.vehicle {
-  color: #10b981;
+  color: var(--color-success);
 }
 
 .match-text {

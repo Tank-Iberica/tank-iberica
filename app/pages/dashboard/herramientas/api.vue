@@ -226,7 +226,9 @@ onMounted(async () => {
 }
 
 .btn-upgrade {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: var(--spacing-3) var(--spacing-6);
   background: var(--color-primary);
   color: var(--color-white);
@@ -234,7 +236,7 @@ onMounted(async () => {
   font-weight: var(--font-weight-semibold);
   text-decoration: none;
   min-height: 44px;
-  line-height: 44px;
+  line-height: var(--line-height-normal);
 }
 
 .error-msg {

@@ -461,7 +461,7 @@ function onUsersPopover(e: MouseEvent) {
   top: 100%;
   left: 0;
   right: 0;
-  background: #1a3238;
+  background: var(--color-primary-dark);
   border-radius: var(--border-radius);
   margin-top: var(--spacing-1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -617,7 +617,7 @@ function onUsersPopover(e: MouseEvent) {
   right: 8px;
   width: 8px;
   height: 8px;
-  background: #ef4444;
+  background: var(--color-error);
   border-radius: 50%;
 }
 </style>

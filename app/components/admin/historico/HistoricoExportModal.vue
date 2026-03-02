@@ -92,7 +92,7 @@ defineEmits<{
   padding: 16px;
 }
 .modal {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 10px;
   width: 100%;
   max-width: 420px;
@@ -109,14 +109,14 @@ defineEmits<{
   font-weight: 600;
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--bg-primary);
 }
 .modal-head button {
   background: none;
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 .modal-body {
   padding: 16px;
@@ -134,14 +134,14 @@ defineEmits<{
 }
 .btn {
   padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 6px;
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-primary {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
 }

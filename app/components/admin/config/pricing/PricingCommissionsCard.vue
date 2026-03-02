@@ -62,7 +62,7 @@ function onInput(rateKey: string, event: Event) {
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -72,12 +72,12 @@ function onInput(rateKey: string, event: Event) {
   margin: 0 0 8px;
   font-size: 1.125rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .card-description {
   margin: 0 0 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.875rem;
 }
 
@@ -109,7 +109,7 @@ function onInput(rateKey: string, event: Event) {
 .commission-input {
   width: 100%;
   padding: 8px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
   color: #374151;
@@ -118,7 +118,7 @@ function onInput(rateKey: string, event: Event) {
 
 .commission-input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -131,8 +131,8 @@ function onInput(rateKey: string, event: Event) {
 }
 
 .success-banner {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -144,7 +144,7 @@ function onInput(rateKey: string, event: Event) {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -157,7 +157,7 @@ function onInput(rateKey: string, event: Event) {
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {

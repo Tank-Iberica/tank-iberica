@@ -177,7 +177,7 @@ function getContractTypeLabel(type: string): string {
 
 <style scoped>
 .contrato-historial {
-  background: #fff;
+  background: var(--bg-primary);
 }
 
 .tool-header {
@@ -217,8 +217,8 @@ function getContractTypeLabel(type: string): string {
 .spinner {
   width: 32px;
   height: 32px;
-  border: 3px solid #e5e7eb;
-  border-top-color: #23424a;
+  border: 3px solid var(--border-color-light);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -237,9 +237,9 @@ function getContractTypeLabel(type: string): string {
 }
 
 .alert-error {
-  background: #fef2f2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
+  border: 1px solid var(--color-error-border);
 }
 
 .empty-state {
@@ -259,8 +259,8 @@ function getContractTypeLabel(type: string): string {
 
 .btn {
   padding: 10px 20px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.9rem;
   cursor: pointer;
@@ -274,13 +274,13 @@ function getContractTypeLabel(type: string): string {
 }
 
 .btn-primary {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .history-list {
@@ -291,7 +291,7 @@ function getContractTypeLabel(type: string): string {
 }
 
 .history-card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 10px;
   padding: 16px;
   transition: box-shadow 0.2s;
@@ -318,13 +318,13 @@ function getContractTypeLabel(type: string): string {
 }
 
 .contract-type-badge.arrendamiento {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 
 .contract-type-badge.compraventa {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .status-badge {
@@ -366,7 +366,7 @@ function getContractTypeLabel(type: string): string {
 
 .status-select {
   padding: 6px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.8rem;
   min-height: 36px;
@@ -375,7 +375,7 @@ function getContractTypeLabel(type: string): string {
 
 .status-select:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 

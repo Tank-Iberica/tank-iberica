@@ -119,18 +119,18 @@ function getStatusLabel(status: string): string {
 }
 
 .invoice-status.status-paid {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #15803d;
 }
 
 .invoice-status.status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .invoice-status.status-failed {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .invoice-status.status-refunded {

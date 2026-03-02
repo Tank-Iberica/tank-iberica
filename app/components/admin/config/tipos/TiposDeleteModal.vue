@@ -72,7 +72,7 @@ function onConfirmInput(event: Event) {
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 100%;
   max-width: 550px;
@@ -136,13 +136,13 @@ function onConfirmInput(event: Event) {
 }
 
 .text-warning {
-  color: #d97706;
+  color: var(--color-warning);
   font-size: 0.875rem;
   margin-top: 8px;
 }
 
 .text-error {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.75rem;
   margin-top: 4px;
 }
@@ -156,19 +156,19 @@ function onConfirmInput(event: Event) {
 .delete-confirm-group input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
 }
 
 .delete-confirm-group input:focus {
   outline: none;
-  border-color: #dc2626;
+  border-color: var(--color-error);
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 .btn-secondary {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   color: #374151;
   border: none;
   padding: 10px 20px;
@@ -182,7 +182,7 @@ function onConfirmInput(event: Event) {
 }
 
 .btn-danger {
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -192,7 +192,7 @@ function onConfirmInput(event: Event) {
 }
 
 .btn-danger:hover {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 @media (max-width: 768px) {

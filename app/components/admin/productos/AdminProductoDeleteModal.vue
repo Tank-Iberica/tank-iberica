@@ -64,7 +64,7 @@ const emit = defineEmits<Emits>()
   padding: 16px;
 }
 .modal {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 10px;
   width: 100%;
   max-width: 400px;
@@ -83,13 +83,13 @@ const emit = defineEmits<Emits>()
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 .modal-body {
   padding: 16px;
 }
 .modal-body .warn {
-  color: #f59e0b;
+  color: var(--color-warning);
   font-size: 0.85rem;
   margin-top: 8px;
 }
@@ -104,7 +104,7 @@ const emit = defineEmits<Emits>()
 }
 .modal-body .field input {
   padding: 8px 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 5px;
   font-size: 0.85rem;
 }
@@ -119,14 +119,14 @@ const emit = defineEmits<Emits>()
 }
 .btn {
   padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 6px;
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-danger {
-  background: #dc2626;
+  background: var(--color-error);
   color: #fff;
   border: none;
 }

@@ -28,7 +28,7 @@ const status = defineModel<'published' | 'draft' | 'rented' | 'maintenance'>({ r
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 12px 16px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -51,7 +51,7 @@ const status = defineModel<'published' | 'draft' | 'rented' | 'maintenance'>({ r
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
@@ -60,7 +60,7 @@ const status = defineModel<'published' | 'draft' | 'rented' | 'maintenance'>({ r
   display: none;
 }
 .estado-opt.active {
-  border-color: #23424a;
+  border-color: var(--color-primary);
   background: #f0f9ff;
 }
 .dot {
@@ -69,16 +69,16 @@ const status = defineModel<'published' | 'draft' | 'rented' | 'maintenance'>({ r
   border-radius: 50%;
 }
 .dot.green {
-  background: #22c55e;
+  background: var(--color-success);
 }
 .dot.gray {
   background: #9ca3af;
 }
 .dot.blue {
-  background: #3b82f6;
+  background: var(--color-info);
 }
 .dot.red {
-  background: #ef4444;
+  background: var(--color-error);
 }
 
 @media (max-width: 768px) {

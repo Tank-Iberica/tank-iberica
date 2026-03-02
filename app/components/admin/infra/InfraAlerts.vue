@@ -271,7 +271,7 @@ function alertLevelLabel(level: string): string {
 }
 
 .level-warning {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 
@@ -281,8 +281,8 @@ function alertLevelLabel(level: string): string {
 }
 
 .level-emergency {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .alert-metric {

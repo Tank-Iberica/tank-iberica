@@ -282,7 +282,7 @@ if (landing.value) {
 .skeleton-card {
   border-radius: 12px;
   overflow: hidden;
-  background: white;
+  background: var(--bg-primary);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 

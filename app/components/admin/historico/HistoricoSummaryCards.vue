@@ -59,16 +59,16 @@ defineProps<{
   color: #3730a3;
 }
 .summary-card.ingresos {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 .summary-card.beneficio {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 .summary-card.beneficio.negative {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 .summary-card.percent {
   background: #f3e8ff;

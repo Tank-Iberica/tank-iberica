@@ -73,18 +73,18 @@ useHead({
 .disclosure-container h1 {
   font-size: 1.75rem;
   margin-bottom: 24px;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .disclosure-container h2 {
   font-size: 1.25rem;
   margin: 24px 0 12px;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .disclosure-container p {
   line-height: 1.6;
-  color: #475569;
+  color: var(--text-secondary);
   margin-bottom: 12px;
 }
 
@@ -95,7 +95,7 @@ useHead({
 
 .disclosure-container li {
   line-height: 1.6;
-  color: #475569;
+  color: var(--text-secondary);
   margin-bottom: 8px;
 }
 
@@ -105,12 +105,12 @@ useHead({
 }
 
 .email-contact a {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: underline;
 }
 
 section {
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
   padding-bottom: 20px;
 }
 

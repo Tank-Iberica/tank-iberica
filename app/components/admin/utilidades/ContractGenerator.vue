@@ -60,12 +60,12 @@ const {
           <label>Tipo de Contrato</label>
           <div class="radio-group-inline">
             <label class="radio-card" :class="{ active: contractType === 'arrendamiento' }">
-              <input v-model="contractType" type="radio" value="arrendamiento" >
+              <input v-model="contractType" type="radio" value="arrendamiento" />
               <span class="radio-icon">🔄</span>
               <span class="radio-label">Arrendamiento</span>
             </label>
             <label class="radio-card" :class="{ active: contractType === 'venta' }">
-              <input v-model="contractType" type="radio" value="venta" >
+              <input v-model="contractType" type="radio" value="venta" />
               <span class="radio-icon">💰</span>
               <span class="radio-label">Compraventa</span>
             </label>
@@ -73,11 +73,11 @@ const {
         </div>
         <div class="form-group">
           <label>Fecha</label>
-          <input v-model="contractDate" type="date" >
+          <input v-model="contractDate" type="date" />
         </div>
         <div class="form-group">
           <label>Lugar</label>
-          <input v-model="contractLocation" type="text" placeholder="León" >
+          <input v-model="contractLocation" type="text" placeholder="León" />
         </div>
       </div>
 
@@ -98,15 +98,15 @@ const {
         </div>
         <div class="form-group">
           <label>Tipo de Vehículo</label>
-          <input v-model="contractVehicleType" type="text" placeholder="semirremolque cisterna" >
+          <input v-model="contractVehicleType" type="text" placeholder="semirremolque cisterna" />
         </div>
         <div class="form-group">
           <label>Matrícula</label>
-          <input v-model="contractVehiclePlate" type="text" placeholder="S02999R" >
+          <input v-model="contractVehiclePlate" type="text" placeholder="S02999R" />
         </div>
       </div>
 
-      <hr class="divider" >
+      <hr class="divider" />
 
       <!-- Lessor/Seller (Company) -->
       <details class="company-details" open>
@@ -116,28 +116,28 @@ const {
         <div class="form-grid-3">
           <div class="form-group">
             <label>Empresa</label>
-            <input v-model="lessorCompany" type="text" >
+            <input v-model="lessorCompany" type="text" />
           </div>
           <div class="form-group">
             <label>CIF</label>
-            <input v-model="lessorCIF" type="text" >
+            <input v-model="lessorCIF" type="text" />
           </div>
           <div class="form-group">
             <label>Domicilio</label>
-            <input v-model="lessorAddress" type="text" >
+            <input v-model="lessorAddress" type="text" />
           </div>
           <div class="form-group">
             <label>Representante</label>
-            <input v-model="lessorRepresentative" type="text" >
+            <input v-model="lessorRepresentative" type="text" />
           </div>
           <div class="form-group">
             <label>DNI Representante</label>
-            <input v-model="lessorRepresentativeNIF" type="text" >
+            <input v-model="lessorRepresentativeNIF" type="text" />
           </div>
         </div>
       </details>
 
-      <hr class="divider" >
+      <hr class="divider" />
 
       <!-- Lessee/Buyer -->
       <h4 class="section-subtitle">
@@ -149,10 +149,10 @@ const {
           <label>Tipo</label>
           <div class="radio-group-inline compact">
             <label :class="{ active: lesseeType === 'persona' }">
-              <input v-model="lesseeType" type="radio" value="persona" > Persona física
+              <input v-model="lesseeType" type="radio" value="persona" /> Persona física
             </label>
             <label :class="{ active: lesseeType === 'empresa' }">
-              <input v-model="lesseeType" type="radio" value="empresa" > Empresa
+              <input v-model="lesseeType" type="radio" value="empresa" /> Empresa
             </label>
           </div>
         </div>
@@ -162,11 +162,11 @@ const {
       <div v-if="lesseeType === 'persona'" class="form-grid-3">
         <div class="form-group">
           <label>Nombre completo</label>
-          <input v-model="lesseeName" type="text" placeholder="JOSE MANUEL VAZQUEZ LEA" >
+          <input v-model="lesseeName" type="text" placeholder="JOSE MANUEL VAZQUEZ LEA" />
         </div>
         <div class="form-group">
           <label>NIF</label>
-          <input v-model="lesseeNIF" type="text" placeholder="78813316K" >
+          <input v-model="lesseeNIF" type="text" placeholder="78813316K" />
         </div>
         <div class="form-group" style="grid-column: 1 / -1">
           <label>Domicilio</label>
@@ -174,7 +174,7 @@ const {
             v-model="lesseeAddress"
             type="text"
             placeholder="Lugar San Cristovo, 12 15310 San Cristovo, A Coruña, España"
-          >
+          />
         </div>
       </div>
 
@@ -182,27 +182,27 @@ const {
       <div v-if="lesseeType === 'empresa'" class="form-grid-3">
         <div class="form-group">
           <label>Empresa</label>
-          <input v-model="lesseeCompany" type="text" >
+          <input v-model="lesseeCompany" type="text" />
         </div>
         <div class="form-group">
           <label>CIF</label>
-          <input v-model="lesseeCIF" type="text" >
+          <input v-model="lesseeCIF" type="text" />
         </div>
         <div class="form-group">
           <label>Representante</label>
-          <input v-model="lesseeRepresentative" type="text" >
+          <input v-model="lesseeRepresentative" type="text" />
         </div>
         <div class="form-group">
           <label>NIF Representante</label>
-          <input v-model="lesseeRepresentativeNIF" type="text" >
+          <input v-model="lesseeRepresentativeNIF" type="text" />
         </div>
         <div class="form-group" style="grid-column: span 2">
           <label>Domicilio</label>
-          <input v-model="lesseeAddress" type="text" >
+          <input v-model="lesseeAddress" type="text" />
         </div>
       </div>
 
-      <hr class="divider" >
+      <hr class="divider" />
 
       <!-- Rental Terms (only for arrendamiento) -->
       <div v-if="contractType === 'arrendamiento'">
@@ -211,19 +211,19 @@ const {
         <div class="form-grid-3">
           <div class="form-group">
             <label>Renta mensual (€)</label>
-            <input v-model.number="contractMonthlyRent" type="number" step="100" >
+            <input v-model.number="contractMonthlyRent" type="number" step="100" />
           </div>
           <div class="form-group">
             <label>Fianza (€)</label>
-            <input v-model.number="contractDeposit" type="number" step="100" >
+            <input v-model.number="contractDeposit" type="number" step="100" />
           </div>
           <div class="form-group">
             <label>Plazo pago (días)</label>
-            <input v-model.number="contractPaymentDays" type="number" >
+            <input v-model.number="contractPaymentDays" type="number" />
           </div>
           <div class="form-group">
             <label>Duración</label>
-            <input v-model.number="contractDuration" type="number" >
+            <input v-model.number="contractDuration" type="number" />
           </div>
           <div class="form-group">
             <label>Unidad</label>
@@ -234,14 +234,14 @@ const {
           </div>
           <div class="form-group">
             <label>Valor residual (€)</label>
-            <input v-model.number="contractVehicleResidualValue" type="number" step="1000" >
+            <input v-model.number="contractVehicleResidualValue" type="number" step="1000" />
           </div>
         </div>
 
         <!-- Purchase Option -->
         <div class="option-toggle">
           <label>
-            <input v-model="contractHasPurchaseOption" type="checkbox" >
+            <input v-model="contractHasPurchaseOption" type="checkbox" />
             <span>Incluir opción de compra</span>
           </label>
         </div>
@@ -249,15 +249,15 @@ const {
         <div v-if="contractHasPurchaseOption" class="form-grid-3 purchase-options">
           <div class="form-group">
             <label>Precio de compra (€)</label>
-            <input v-model.number="contractPurchasePrice" type="number" step="1000" >
+            <input v-model.number="contractPurchasePrice" type="number" step="1000" />
           </div>
           <div class="form-group">
             <label>Preaviso (días)</label>
-            <input v-model.number="contractPurchaseNotice" type="number" >
+            <input v-model.number="contractPurchaseNotice" type="number" />
           </div>
           <div class="form-group">
             <label>Mensualidades a descontar</label>
-            <input v-model.number="contractRentMonthsToDiscount" type="number" >
+            <input v-model.number="contractRentMonthsToDiscount" type="number" />
           </div>
         </div>
       </div>
@@ -269,7 +269,7 @@ const {
         <div class="form-grid-3">
           <div class="form-group">
             <label>Precio de venta (€)</label>
-            <input v-model.number="contractSalePrice" type="number" step="1000" >
+            <input v-model.number="contractSalePrice" type="number" step="1000" />
           </div>
           <div class="form-group">
             <label>Forma de pago</label>
@@ -283,13 +283,13 @@ const {
         </div>
       </div>
 
-      <hr class="divider" >
+      <hr class="divider" />
 
       <!-- Jurisdiction -->
       <div class="form-row">
         <div class="form-group" style="max-width: 300px">
           <label>Jurisdicción (Tribunales de)</label>
-          <input v-model="contractJurisdiction" type="text" placeholder="León" >
+          <input v-model="contractJurisdiction" type="text" placeholder="León" />
         </div>
       </div>
 
@@ -305,7 +305,7 @@ const {
 
 <style scoped>
 .tool-content {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -353,7 +353,7 @@ const {
 .form-group input,
 .form-group select {
   padding: 8px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.9rem;
 }
@@ -361,7 +361,7 @@ const {
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
@@ -404,7 +404,7 @@ const {
 }
 
 .radio-group-inline.compact label.active {
-  color: #23424a;
+  color: var(--color-primary);
   font-weight: 500;
 }
 
@@ -413,7 +413,7 @@ const {
   align-items: center;
   gap: 12px;
   padding: 16px 20px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color-light);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
@@ -422,11 +422,11 @@ const {
 }
 
 .radio-card:hover {
-  border-color: #23424a;
+  border-color: var(--color-primary);
 }
 
 .radio-card.active {
-  border-color: #23424a;
+  border-color: var(--color-primary);
   background: #f0f9ff;
 }
 
@@ -497,8 +497,8 @@ const {
 
 .btn {
   padding: 10px 20px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.9rem;
   cursor: pointer;
@@ -510,13 +510,13 @@ const {
 }
 
 .btn-primary {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-secondary {

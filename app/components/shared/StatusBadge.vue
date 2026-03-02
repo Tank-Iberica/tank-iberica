@@ -65,7 +65,7 @@ const config = computed(() => getStatusConfig(props.status))
   background: rgba(180, 83, 9, 0.1);
 }
 .status--rented {
-  color: #1d4ed8;
+  color: var(--color-info);
   background: rgba(29, 78, 216, 0.1);
 }
 .status--workshop,

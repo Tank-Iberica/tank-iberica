@@ -100,7 +100,7 @@ const emit = defineEmits<{
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #dc2626;
+  background: var(--color-error);
 }
 
 .btn-danger:disabled {

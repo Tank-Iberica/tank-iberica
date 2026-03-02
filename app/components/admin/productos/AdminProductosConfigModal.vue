@@ -257,7 +257,7 @@ function onDragEnd() {
 }
 
 .modal {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
@@ -286,14 +286,14 @@ function onDragEnd() {
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .modal-close {
@@ -302,7 +302,7 @@ function onDragEnd() {
   font-size: 28px;
   line-height: 1;
   cursor: pointer;
-  color: #94a3b8;
+  color: var(--text-disabled);
   padding: 0;
   width: 32px;
   height: 32px;
@@ -315,7 +315,7 @@ function onDragEnd() {
 
 .modal-close:hover {
   background: rgba(0, 0, 0, 0.05);
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .modal-body {
@@ -328,7 +328,7 @@ function onDragEnd() {
 
 .config-tabs {
   display: flex;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
   padding: 0 24px;
 }
 
@@ -336,7 +336,7 @@ function onDragEnd() {
   padding: 16px 20px;
   border: none;
   background: none;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -346,12 +346,12 @@ function onDragEnd() {
 }
 
 .config-tabs button:hover {
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .config-tabs button.active {
-  color: var(--color-primary, #23424a);
-  border-bottom-color: var(--color-primary, #23424a);
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
 .config-section {
@@ -360,7 +360,7 @@ function onDragEnd() {
 
 .hint {
   margin: 0 0 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 14px;
 }
 
@@ -376,17 +376,17 @@ function onDragEnd() {
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-gray-200);
   border-radius: 8px;
   transition: border 0.2s;
 }
 
 .group-item:hover {
-  border-color: #cbd5e1;
+  border-color: var(--color-gray-300);
 }
 
 .group-item.required {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .group-info {
@@ -401,12 +401,12 @@ function onDragEnd() {
 
 .group-name {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .group-count {
   font-size: 13px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .group-actions {
@@ -415,8 +415,8 @@ function onDragEnd() {
 }
 
 .btn-sm {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gray-200);
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
@@ -425,17 +425,17 @@ function onDragEnd() {
 }
 
 .btn-sm:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .btn-danger-sm {
-  border-color: #fecaca;
-  color: #dc2626;
+  border-color: var(--color-error-border);
+  color: var(--color-error);
 }
 
 .btn-danger-sm:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
   border-color: #fca5a5;
 }
 
@@ -447,8 +447,8 @@ function onDragEnd() {
 }
 
 .tag-gray {
-  background: #e2e8f0;
-  color: #64748b;
+  background: var(--bg-tertiary);
+  color: var(--text-auxiliary);
 }
 
 .tag-green {
@@ -457,13 +457,13 @@ function onDragEnd() {
 }
 
 .tag-blue {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 
 .new-group-form {
   padding: 20px;
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--color-gray-300);
   border-radius: 8px;
   background: #fafbfc;
 }
@@ -471,7 +471,7 @@ function onDragEnd() {
 .new-group-form h4 {
   margin: 0 0 16px;
   font-size: 16px;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .form-row {
@@ -481,14 +481,14 @@ function onDragEnd() {
 .form-row input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 14px;
 }
 
 .form-row input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .form-group {
@@ -503,21 +503,21 @@ function onDragEnd() {
   display: block;
   margin-bottom: 12px;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .form-group input[type='text'] {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 14px;
 }
 
 .form-group input[type='text']:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .columns-grid {
@@ -535,11 +535,11 @@ function onDragEnd() {
   cursor: pointer;
   transition: background 0.2s;
   font-size: 14px;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .column-checkbox:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .column-checkbox input {
@@ -548,7 +548,7 @@ function onDragEnd() {
 
 .edit-group-panel {
   padding: 20px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-gray-200);
   border-radius: 8px;
   background: #fafbfc;
 }
@@ -556,7 +556,7 @@ function onDragEnd() {
 .edit-group-panel h4 {
   margin: 0 0 20px;
   font-size: 16px;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .edit-group-actions {
@@ -577,15 +577,15 @@ function onDragEnd() {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: white;
-  border: 2px solid #e2e8f0;
+  background: var(--bg-primary);
+  border: 2px solid var(--color-gray-200);
   border-radius: 8px;
   cursor: move;
   transition: all 0.2s;
 }
 
 .sortable-item:hover {
-  border-color: #cbd5e1;
+  border-color: var(--color-gray-300);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -594,7 +594,7 @@ function onDragEnd() {
 }
 
 .drag-handle {
-  color: #cbd5e1;
+  color: var(--color-gray-300);
   font-size: 18px;
   cursor: grab;
 }
@@ -606,7 +606,7 @@ function onDragEnd() {
 .col-name {
   flex: 1;
   font-weight: 500;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .modal-footer {
@@ -614,13 +614,13 @@ function onDragEnd() {
   justify-content: space-between;
   gap: 12px;
   padding: 16px 24px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .btn-secondary {
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gray-200);
+  color: var(--text-secondary);
   padding: 10px 18px;
   border-radius: 8px;
   font-size: 14px;
@@ -630,12 +630,12 @@ function onDragEnd() {
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -647,7 +647,7 @@ function onDragEnd() {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -656,9 +656,9 @@ function onDragEnd() {
 }
 
 .btn-danger-outline {
-  background: white;
-  border: 1px solid #dc2626;
-  color: #dc2626;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
   padding: 10px 18px;
   border-radius: 8px;
   font-size: 14px;
@@ -668,6 +668,6 @@ function onDragEnd() {
 }
 
 .btn-danger-outline:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 </style>

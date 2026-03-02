@@ -375,9 +375,9 @@ watch(
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
-  border: 2px solid var(--chip-color, #23424a);
+  border: 2px solid var(--chip-color, var(--color-primary));
   background: transparent;
-  color: var(--chip-color, #23424a);
+  color: var(--chip-color, var(--color-primary));
   transition:
     background var(--transition-fast, 150ms ease),
     color var(--transition-fast, 150ms ease),
@@ -391,7 +391,7 @@ watch(
 }
 
 .ct-chip-active {
-  background: var(--chip-color, #23424a);
+  background: var(--chip-color, var(--color-primary));
   color: var(--chip-text, white);
 }
 
@@ -444,7 +444,7 @@ watch(
 }
 
 .ct-th-sortable:hover {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .ct-th-content {
@@ -464,7 +464,7 @@ watch(
 
 .ct-sort-active {
   opacity: 1;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .ct-sort-desc {

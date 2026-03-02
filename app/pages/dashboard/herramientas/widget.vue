@@ -111,12 +111,12 @@ onMounted(() => init())
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .subtitle {
   margin: 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 
@@ -126,9 +126,9 @@ onMounted(() => init())
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;
@@ -136,7 +136,7 @@ onMounted(() => init())
 }
 
 .btn-back:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .upgrade-card {
@@ -151,7 +151,7 @@ onMounted(() => init())
   margin: 0 0 8px 0;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #92400e;
+  color: var(--color-warning-text);
 }
 
 .upgrade-card p {
@@ -166,7 +166,7 @@ onMounted(() => init())
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: #f59e0b;
+  background: var(--color-warning);
   color: white;
   border: none;
   border-radius: 8px;
@@ -175,15 +175,15 @@ onMounted(() => init())
 }
 
 .btn-upgrade:hover {
-  background: #d97706;
+  background: var(--color-warning);
 }
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .loading-state {
@@ -192,14 +192,14 @@ onMounted(() => init())
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

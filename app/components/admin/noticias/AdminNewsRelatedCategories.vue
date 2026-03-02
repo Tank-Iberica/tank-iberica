@@ -36,7 +36,7 @@ defineEmits<{
 
 <style scoped>
 .section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -48,7 +48,7 @@ defineEmits<{
   color: #374151;
   margin-bottom: 16px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .btn {
@@ -57,14 +57,14 @@ defineEmits<{
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid var(--color-gray-200);
+  background: var(--bg-primary);
   color: #374151;
   transition: all 0.15s;
 }
 
 .btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-sm {
@@ -74,7 +74,7 @@ defineEmits<{
 
 .input {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
@@ -83,7 +83,7 @@ defineEmits<{
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .hashtag-input-row {
@@ -107,10 +107,10 @@ defineEmits<{
   align-items: center;
   gap: 4px;
   padding: 4px 10px;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border-radius: 16px;
   font-size: 0.8rem;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .chip-remove {
@@ -122,7 +122,7 @@ defineEmits<{
   border-radius: 50%;
   border: none;
   background: none;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-size: 1rem;
   cursor: pointer;
   padding: 0;
@@ -130,6 +130,6 @@ defineEmits<{
 }
 
 .chip-remove:hover {
-  color: #ef4444;
+  color: var(--color-error);
 }
 </style>

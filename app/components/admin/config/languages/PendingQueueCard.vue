@@ -49,7 +49,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -69,8 +69,8 @@ const emit = defineEmits<{
 }
 
 .success-banner {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -81,7 +81,7 @@ const emit = defineEmits<{
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   background: #f9fafb;
   margin-bottom: 16px;
@@ -106,7 +106,7 @@ const emit = defineEmits<{
 }
 
 .btn-translate {
-  background: #10b981;
+  background: var(--color-success);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -129,7 +129,7 @@ const emit = defineEmits<{
 .hint-text {
   margin: 8px 0 0;
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 
 @media (max-width: 767px) {

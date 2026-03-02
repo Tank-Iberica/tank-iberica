@@ -16,15 +16,18 @@ function close() {
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div
-        v-if="modelValue"
-        class="dev-backdrop"
-        @click.self="close"
-      >
+      <div v-if="modelValue" class="dev-backdrop" @click.self="close">
         <div class="dev-container">
           <button class="dev-close" @click="close">&times;</button>
           <div class="dev-icon">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
               <path d="M2 17l10 5 10-5" />
               <path d="M2 12l10 5 10-5" />
@@ -32,7 +35,9 @@ function close() {
           </div>
           <h2 class="dev-title">{{ $t('dev.title') }}</h2>
           <p class="dev-message">
-            {{ featureName ? $t('dev.featureMessage', { feature: featureName }) : $t('dev.message') }}
+            {{
+              featureName ? $t('dev.featureMessage', { feature: featureName }) : $t('dev.message')
+            }}
           </p>
           <button class="dev-btn" @click="close">{{ $t('common.close') }}</button>
         </div>
@@ -54,7 +59,7 @@ function close() {
 }
 
 .dev-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px;
   padding: 2rem;
   max-width: 360px;
@@ -77,7 +82,7 @@ function close() {
 }
 
 .dev-icon {
-  color: var(--color-primary, #23424A);
+  color: var(--color-primary);
   margin-bottom: 1rem;
 }
 
@@ -97,7 +102,7 @@ function close() {
 
 .dev-btn {
   padding: 10px 24px;
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;

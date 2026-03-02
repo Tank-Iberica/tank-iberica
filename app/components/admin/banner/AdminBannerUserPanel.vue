@@ -121,7 +121,7 @@ const emit = defineEmits<{
 }
 
 .form-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -142,14 +142,14 @@ const emit = defineEmits<{
 .form-input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -191,14 +191,14 @@ const emit = defineEmits<{
   left: 3px;
   width: 20px;
   height: 20px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 50%;
   transition: transform 0.2s;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-input:checked + .toggle-switch {
-  background: #16a34a;
+  background: var(--color-success);
 }
 
 .toggle-input:checked + .toggle-switch::after {
@@ -219,7 +219,7 @@ const emit = defineEmits<{
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -230,7 +230,7 @@ const emit = defineEmits<{
 }
 
 .btn-primary:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {

@@ -32,15 +32,15 @@ const emit = defineEmits<{
 }
 
 .message--error {
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
+  border: 1px solid var(--color-error-border);
 }
 
 .message--success {
-  background: #f0fdf4;
+  background: var(--color-success-bg, #dcfce7);
   color: #15803d;
-  border: 1px solid #bbf7d0;
+  border: 1px solid var(--color-success-border);
 }
 
 .message__close {

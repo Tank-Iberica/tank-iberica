@@ -40,7 +40,7 @@ const emit = defineEmits<{
 }
 .char-row input {
   padding: 6px 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 4px;
   font-size: 0.8rem;
 }
@@ -50,8 +50,8 @@ const emit = defineEmits<{
   width: 24px;
   height: 24px;
   border: none;
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -60,7 +60,7 @@ const emit = defineEmits<{
 /* Empty message */
 .empty-msg {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.8rem;
   padding: 16px;
 }

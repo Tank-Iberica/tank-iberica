@@ -70,7 +70,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
                   Number(($event.target as HTMLInputElement).value) || 0,
                 )
               "
-            >
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Categoría de venta *</label>
@@ -93,7 +93,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
               type="text"
               class="form-input"
               @input="updateSellField('buyer_name', ($event.target as HTMLInputElement).value)"
-            >
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Contacto comprador</label>
@@ -102,7 +102,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
               type="text"
               class="form-input"
               @input="updateSellField('buyer_contact', ($event.target as HTMLInputElement).value)"
-            >
+            />
           </div>
           <!-- Auto-balance info -->
           <div v-if="sellForm.sale_price > 0" class="tx-preview">
@@ -143,7 +143,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
                   Number(($event.target as HTMLInputElement).value) || 0,
                 )
               "
-            >
+            />
           </div>
           <div class="form-row-2">
             <div class="form-group">
@@ -154,7 +154,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
                 class="form-input"
                 required
                 @input="updateRentalField('start_date', ($event.target as HTMLInputElement).value)"
-              >
+              />
             </div>
             <div class="form-group">
               <label class="form-label">Fecha fin</label>
@@ -163,7 +163,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
                 type="date"
                 class="form-input"
                 @input="updateRentalField('end_date', ($event.target as HTMLInputElement).value)"
-              >
+              />
             </div>
           </div>
           <div class="form-group">
@@ -173,7 +173,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
               type="text"
               class="form-input"
               @input="updateRentalField('renter_name', ($event.target as HTMLInputElement).value)"
-            >
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Contacto arrendatario</label>
@@ -184,7 +184,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
               @input="
                 updateRentalField('renter_contact', ($event.target as HTMLInputElement).value)
               "
-            >
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Notas</label>
@@ -282,8 +282,8 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
 }
 
 .tx-tab.active {
-  color: var(--color-primary, #23424a);
-  border-bottom-color: var(--color-primary, #23424a);
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
 .tx-body {
@@ -340,8 +340,8 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
   flex-direction: column;
   gap: var(--spacing-2);
   padding: var(--spacing-3) var(--spacing-4);
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: var(--border-radius, 6px);
   margin-bottom: var(--spacing-4);
   font-size: var(--font-size-sm, 0.875rem);
@@ -359,7 +359,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
 }
 
 .tx-preview-item.ingreso {
-  color: #16a34a;
+  color: var(--color-success);
   font-weight: 600;
 }
 
@@ -402,7 +402,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
 }
 
 .btn-sell {
-  background: var(--color-primary, #23424a) !important;
+  background: var(--color-primary) !important;
 }
 
 .btn-rent-action {
@@ -410,6 +410,6 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
 }
 
 .btn-rent-action:hover:not(:disabled) {
-  background: #1d4ed8 !important;
+  background: var(--color-info) !important;
 }
 </style>

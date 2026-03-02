@@ -38,7 +38,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
@@ -66,7 +66,7 @@ const emit = defineEmits<{
 }
 
 .btn-add {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -79,6 +79,6 @@ const emit = defineEmits<{
 }
 
 .btn-add:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 </style>

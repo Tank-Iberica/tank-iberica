@@ -40,7 +40,7 @@
           class="news-card"
         >
           <div class="news-card-image">
-            <img v-if="item.image_url" :src="item.image_url" :alt="getTitle(item)" loading="lazy" >
+            <img v-if="item.image_url" :src="item.image_url" :alt="getTitle(item)" loading="lazy" />
             <div v-else class="news-card-placeholder">
               <svg
                 width="32"
@@ -157,7 +157,7 @@ onMounted(() => {
   padding: 8px 16px;
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 20px;
-  background: white;
+  background: var(--bg-primary);
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-secondary);
@@ -183,7 +183,7 @@ onMounted(() => {
 .news-card {
   display: flex;
   flex-direction: column;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -265,7 +265,7 @@ onMounted(() => {
 .skeleton-card {
   border-radius: 12px;
   overflow: hidden;
-  background: white;
+  background: var(--bg-primary);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 

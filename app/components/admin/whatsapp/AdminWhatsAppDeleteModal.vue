@@ -63,7 +63,7 @@ const { t } = useI18n()
 }
 
 .modal-panel {
-  background: white;
+  background: var(--bg-primary);
   width: 100%;
   max-height: 90vh;
   border-radius: 16px 16px 0 0;
@@ -77,20 +77,20 @@ const { t } = useI18n()
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .modal-header h2 {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .modal-close {
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--text-auxiliary);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -109,7 +109,7 @@ const { t } = useI18n()
 .modal-body p {
   margin: 0;
   font-size: 0.95rem;
-  color: #475569;
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 
@@ -118,7 +118,7 @@ const { t } = useI18n()
   flex-wrap: wrap;
   gap: 8px;
   padding: 16px 20px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
 }
 
 .btn-confirm-delete,
@@ -138,12 +138,12 @@ const { t } = useI18n()
 }
 
 .btn-confirm-delete {
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
 }
 
 .btn-confirm-delete:hover {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 .btn-confirm-delete:disabled {
@@ -152,13 +152,13 @@ const { t } = useI18n()
 }
 
 .btn-cancel {
-  background: #f1f5f9;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
 }
 
 .btn-cancel:hover {
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
 }
 
 /* Modal transitions */

@@ -39,7 +39,7 @@ usePageSeo({
   align-items: center;
   min-height: 44px;
   padding: 8px 0;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   font-size: 0.9rem;
   font-weight: 500;
   text-decoration: none;

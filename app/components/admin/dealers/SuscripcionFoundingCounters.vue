@@ -46,7 +46,7 @@ defineProps<{
   display: flex;
   align-items: center;
   gap: var(--spacing-3, 12px);
-  border-left: 4px solid var(--color-gold, #d4a017);
+  border-left: 4px solid var(--color-gold);
 }
 
 .founding-label {
@@ -58,11 +58,11 @@ defineProps<{
 .founding-value {
   font-size: var(--font-size-lg, 1.125rem);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--color-gold, #d4a017);
+  color: var(--color-gold);
 }
 
 .founding-value.at-max {
-  color: var(--color-error, #ef4444);
+  color: var(--color-error);
 }
 
 @media (max-width: 768px) {

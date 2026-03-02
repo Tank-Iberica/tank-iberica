@@ -55,7 +55,7 @@ defineEmits<{
   gap: 6px;
   cursor: pointer;
   padding: 4px 10px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 4px;
   font-weight: 500;
 }

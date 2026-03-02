@@ -55,9 +55,9 @@ const emit = defineEmits<{
 }
 
 .period-tab.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: var(--color-white, #fff);
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 @media (min-width: 1024px) {

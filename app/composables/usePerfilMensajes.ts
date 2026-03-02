@@ -53,6 +53,7 @@ export function usePerfilMensajes() {
     unreadCount,
     isDataShared,
     hasAcceptedShare,
+    sellerAvgResponseMinutes,
     fetchConversations,
     openConversation,
     sendMessage,
@@ -105,6 +106,11 @@ export function usePerfilMensajes() {
     return (
       activeConversation.value.status === 'closed' || activeConversation.value.status === 'reported'
     )
+  })
+
+  const isBuyer = computed<boolean>(() => {
+    if (!activeConversation.value || !user.value) return false
+    return activeConversation.value.buyer_id === user.value.id
   })
 
   // --------------- Helpers ---------------
@@ -200,6 +206,7 @@ export function usePerfilMensajes() {
     unreadCount,
     isDataShared,
     hasAcceptedShare,
+    sellerAvgResponseMinutes,
 
     // Computed
     sortedConversations,
@@ -208,6 +215,7 @@ export function usePerfilMensajes() {
     conversationStatusLabel,
     conversationStatusClass,
     isConversationClosed,
+    isBuyer,
 
     // Helpers
     getLastMessagePreview,

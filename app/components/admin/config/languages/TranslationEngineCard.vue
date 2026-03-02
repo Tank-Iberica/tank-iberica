@@ -28,7 +28,7 @@ function onChange(event: Event) {
           :checked="engine === eng.value"
           name="translationEngine"
           @change="onChange"
-        >
+        />
         <span>{{ eng.label }}</span>
       </label>
     </div>
@@ -37,7 +37,7 @@ function onChange(event: Event) {
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -61,7 +61,7 @@ function onChange(event: Event) {
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   background: #f9fafb;
 }
@@ -80,7 +80,7 @@ function onChange(event: Event) {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 @media (max-width: 767px) {

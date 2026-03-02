@@ -246,7 +246,7 @@ function countryFlag(country: string): string {
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 12px 16px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -271,7 +271,7 @@ function countryFlag(country: string): string {
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
@@ -280,8 +280,8 @@ function countryFlag(country: string): string {
   margin: 0;
 }
 .cat-check.active {
-  border-color: #23424a;
-  background: #23424a;
+  border-color: var(--color-primary);
+  background: var(--color-primary);
   color: #fff;
 }
 .feat-check {
@@ -289,7 +289,7 @@ function countryFlag(country: string): string {
   align-items: center;
   gap: 4px;
   font-size: 0.85rem;
-  color: #f59e0b;
+  color: var(--color-warning);
   cursor: pointer;
   margin-left: auto;
 }
@@ -321,19 +321,19 @@ function countryFlag(country: string): string {
 .field input,
 .field select {
   padding: 8px 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 5px;
   font-size: 0.85rem;
 }
 .field input:focus,
 .field select:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
 }
 .location-detected {
   display: block;
   font-size: 11px;
-  color: #10b981;
+  color: var(--color-success);
   margin-top: 2px;
   font-weight: 500;
 }

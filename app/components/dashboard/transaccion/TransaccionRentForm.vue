@@ -142,7 +142,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
 }
 
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -155,7 +155,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .form-grid {
@@ -173,7 +173,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .form-group input,
@@ -181,7 +181,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
 .form-group textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
@@ -193,7 +193,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -217,7 +217,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
   right: 14px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-disabled);
   pointer-events: none;
 }
 
@@ -233,7 +233,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -243,7 +243,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -257,9 +257,9 @@ function onNumberInput(field: RentFormField, event: Event): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;

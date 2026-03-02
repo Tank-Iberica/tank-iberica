@@ -67,7 +67,7 @@ function setContactType(type: ContactFilters['contact_type']): void {
 <style scoped>
 .toolbar {
   padding: 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -95,7 +95,7 @@ function setContactType(type: ContactFilters['contact_type']): void {
 .search-box input {
   width: 100%;
   padding: 8px 32px 8px 36px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.9rem;
   min-height: 44px;
@@ -103,7 +103,7 @@ function setContactType(type: ContactFilters['contact_type']): void {
 
 .search-box input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -112,7 +112,7 @@ function setContactType(type: ContactFilters['contact_type']): void {
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   border: none;
   width: 24px;
   height: 24px;
@@ -137,13 +137,13 @@ function setContactType(type: ContactFilters['contact_type']): void {
 .filter-label {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   white-space: nowrap;
 }
 
 .segment-control {
   display: flex;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   overflow: hidden;
   flex-wrap: wrap;
@@ -152,26 +152,26 @@ function setContactType(type: ContactFilters['contact_type']): void {
 .segment-control button {
   padding: 7px 12px;
   border: none;
-  background: white;
+  background: var(--bg-primary);
   font-size: 0.85rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   cursor: pointer;
   transition: all 0.15s;
   min-height: 44px;
 }
 
 .segment-control button:not(:last-child) {
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid var(--color-gray-200);
 }
 
 .segment-control button.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
 }
 
 .segment-control button:hover:not(.active) {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 @media (min-width: 768px) {

@@ -26,7 +26,9 @@ defineProps<{
 }
 
 .btn-back {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: var(--spacing-3) var(--spacing-6);
   background: var(--color-primary);
   color: var(--color-white);
@@ -35,7 +37,7 @@ defineProps<{
   font-size: var(--font-size-sm);
   text-decoration: none;
   min-height: 44px;
-  line-height: 44px;
+  line-height: var(--line-height-normal);
   transition: background var(--transition-fast);
 }
 

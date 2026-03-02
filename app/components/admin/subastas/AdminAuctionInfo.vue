@@ -163,7 +163,7 @@ const approvedCount = computed(
 
 <style scoped>
 .section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 20px 24px;
@@ -173,7 +173,7 @@ const approvedCount = computed(
   margin: 0 0 16px;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -187,16 +187,16 @@ const approvedCount = computed(
 
 .info-card {
   padding: 16px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
 }
 
 .info-card h3 {
   margin: 0 0 12px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -212,7 +212,7 @@ const approvedCount = computed(
   height: 60px;
   border-radius: 8px;
   overflow: hidden;
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -238,12 +238,12 @@ const approvedCount = computed(
 
 .vehicle-info strong {
   font-size: 1rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .vehicle-price {
   font-weight: 600;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .info-dl {
@@ -260,13 +260,13 @@ const approvedCount = computed(
 }
 
 .dl-row dt {
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .dl-row dd {
   margin: 0;
   font-weight: 500;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .stats-grid {
@@ -285,26 +285,26 @@ const approvedCount = computed(
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .stat-label {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   text-align: center;
 }
 
 .auction-description {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .auction-description h3 {
   margin: 0 0 8px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   text-transform: uppercase;
 }
 
@@ -318,8 +318,8 @@ const approvedCount = computed(
 .winner-card {
   margin-top: 16px;
   padding: 16px;
-  background: #f0fdf4;
-  border: 2px solid #22c55e;
+  background: var(--color-success-bg, #dcfce7);
+  border: 2px solid var(--color-success);
   border-radius: 10px;
 }
 
@@ -327,7 +327,7 @@ const approvedCount = computed(
   margin: 0 0 8px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #16a34a;
+  color: var(--color-success);
   text-transform: uppercase;
 }
 
@@ -349,21 +349,21 @@ const approvedCount = computed(
 
 .winner-info strong {
   font-size: 0.9rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .winner-info span {
   font-size: 0.85rem;
-  color: #16a34a;
+  color: var(--color-success);
   font-weight: 500;
 }
 
 .text-muted {
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .text-warning {
-  color: #f59e0b;
+  color: var(--color-warning);
   font-weight: 500;
 }
 

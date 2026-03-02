@@ -102,7 +102,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .table-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -143,7 +143,7 @@ const emit = defineEmits<{
 
 .btn-icon {
   background: none;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
@@ -152,7 +152,7 @@ const emit = defineEmits<{
 }
 
 .btn-icon:hover:not(:disabled) {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .btn-icon:disabled {
@@ -161,11 +161,11 @@ const emit = defineEmits<{
 }
 
 .btn-edit:hover {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
 }
 
 .btn-delete:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .name-cell {
@@ -180,7 +180,7 @@ const emit = defineEmits<{
 }
 
 .stock-badge {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   padding: 4px 12px;
   border-radius: 12px;
   font-weight: 600;
@@ -198,12 +198,12 @@ const emit = defineEmits<{
 }
 
 .status-toggle.active {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .status-toggle.inactive {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #6b7280;
 }
 

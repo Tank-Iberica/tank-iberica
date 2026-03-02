@@ -48,7 +48,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .step-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -67,12 +67,12 @@ const emit = defineEmits<{
   margin: 0;
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .hint {
   margin: 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.85rem;
 }
 
@@ -86,31 +86,31 @@ const emit = defineEmits<{
   justify-content: center;
   min-height: 44px;
   padding: 12px 24px;
-  border: 2px dashed #e2e8f0;
+  border: 2px dashed var(--color-gray-200);
   border-radius: 8px;
-  background: #f8fafc;
-  color: #475569;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .file-label:hover {
-  border-color: var(--color-primary, #23424a);
-  background: #f1f5f9;
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
 }
 
 .file-name {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   font-weight: 600;
 }
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   width: 100%;
   max-width: 500px;
 }
@@ -121,7 +121,7 @@ const emit = defineEmits<{
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -130,7 +130,7 @@ const emit = defineEmits<{
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-secondary {
@@ -139,15 +139,15 @@ const emit = defineEmits<{
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 </style>

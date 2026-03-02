@@ -168,7 +168,7 @@ watch(
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .btn-export {
@@ -177,7 +177,7 @@ watch(
   justify-content: center;
   min-height: 44px;
   padding: 10px 16px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -188,15 +188,15 @@ watch(
 }
 
 .btn-export:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 

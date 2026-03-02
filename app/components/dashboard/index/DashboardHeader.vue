@@ -31,12 +31,12 @@ const { t } = useI18n()
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .subtitle {
   margin: 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 
@@ -46,7 +46,7 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -58,7 +58,7 @@ const { t } = useI18n()
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 @media (min-width: 768px) {

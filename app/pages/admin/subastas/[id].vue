@@ -185,8 +185,8 @@ function goBack() {
 .btn-back {
   width: 44px;
   height: 44px;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid var(--color-gray-200);
+  background: var(--bg-primary);
   border-radius: 8px;
   cursor: pointer;
   font-size: 1.2rem;
@@ -197,8 +197,8 @@ function goBack() {
 }
 
 .btn-back:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .header-info {
@@ -215,7 +215,7 @@ function goBack() {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .status-badge {
@@ -228,38 +228,38 @@ function goBack() {
 }
 
 .status-draft {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--bg-secondary);
+  color: var(--text-auxiliary);
 }
 .status-scheduled {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
 }
 .status-active {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 .status-ended {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 .status-adjudicated {
   background: #ede9fe;
   color: #7c3aed;
 }
 .status-cancelled {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 .status-no-sale {
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
 .btn-secondary {
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 500;
@@ -271,8 +271,8 @@ function goBack() {
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .btn-sm-link {
@@ -292,14 +292,14 @@ function goBack() {
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -312,16 +312,16 @@ function goBack() {
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .empty-state-full {
   text-align: center;
   padding: 80px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .empty-state-full p {
@@ -330,7 +330,7 @@ function goBack() {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -344,7 +344,7 @@ function goBack() {
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 @media (min-width: 768px) {

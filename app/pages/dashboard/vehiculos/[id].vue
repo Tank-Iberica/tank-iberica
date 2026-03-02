@@ -155,7 +155,7 @@ function onUploadDocTypeUpdate(value: string): void {
 }
 
 .back-link {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
@@ -175,7 +175,7 @@ function onUploadDocTypeUpdate(value: string): void {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .favorites-stat {
@@ -183,8 +183,8 @@ function onUploadDocTypeUpdate(value: string): void {
   align-items: center;
   gap: 4px;
   padding: 4px 12px;
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 16px;
   font-size: 0.8rem;
   font-weight: 600;
@@ -197,14 +197,14 @@ function onUploadDocTypeUpdate(value: string): void {
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -223,18 +223,18 @@ function onUploadDocTypeUpdate(value: string): void {
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .alert-success {
   padding: 12px 16px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: 8px;
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 @media (min-width: 768px) {

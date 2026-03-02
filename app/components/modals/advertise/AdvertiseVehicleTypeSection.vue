@@ -177,7 +177,7 @@ const { t, locale } = useI18n()
 
 .required::after {
   content: ' *';
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 .unit-label {
@@ -212,7 +212,7 @@ const { t, locale } = useI18n()
   font-family: inherit;
   transition: border-color 0.2s;
   min-height: 36px;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .form-input:focus {

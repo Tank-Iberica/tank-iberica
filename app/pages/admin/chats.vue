@@ -122,7 +122,7 @@ function onUpdateMessagesContainerRef(el: HTMLElement | null) {
 }
 
 .unread-badge-header {
-  background: #ef4444;
+  background: var(--color-error);
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -131,8 +131,8 @@ function onUpdateMessagesContainerRef(el: HTMLElement | null) {
 }
 
 .error-banner {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -150,8 +150,8 @@ function onUpdateMessagesContainerRef(el: HTMLElement | null) {
 .loading-spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e5e7eb;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--border-color-light);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -165,7 +165,7 @@ function onUpdateMessagesContainerRef(el: HTMLElement | null) {
 .chat-container {
   flex: 1;
   display: flex;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;

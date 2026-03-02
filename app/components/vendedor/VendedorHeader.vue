@@ -25,7 +25,7 @@ const { getImageUrl } = useImageUrl()
           :src="getImageUrl(profile.logo_url, 'thumb')"
           :alt="sellerName"
           class="seller-header__logo"
-        >
+        />
         <div v-else class="seller-header__logo-placeholder">
           {{ sellerName.charAt(0).toUpperCase() }}
         </div>
@@ -144,7 +144,7 @@ const { getImageUrl } = useImageUrl()
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
-  background: linear-gradient(135deg, #f5d547 0%, #d4a017 100%);
+  background: linear-gradient(135deg, #f5d547 0%, var(--color-gold) 100%);
   color: #5a4500;
 }
 
@@ -178,13 +178,13 @@ const { getImageUrl } = useImageUrl()
 }
 
 .badge--good {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .badge--slow {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .badge--unknown {

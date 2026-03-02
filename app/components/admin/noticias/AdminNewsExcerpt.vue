@@ -46,7 +46,7 @@ function getExcerptLengthLabel(len: number): string {
 
 <style scoped>
 .section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -58,12 +58,12 @@ function getExcerptLengthLabel(len: number): string {
   color: #374151;
   margin-bottom: 16px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .section-hint {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   margin: -8px 0 12px;
   line-height: 1.4;
 }
@@ -77,12 +77,12 @@ function getExcerptLengthLabel(len: number): string {
 .field label {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .input {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
@@ -91,7 +91,7 @@ function getExcerptLengthLabel(len: number): string {
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .textarea {
@@ -109,17 +109,17 @@ function getExcerptLengthLabel(len: number): string {
 
 .char-count {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   text-align: right;
 }
 
 .count-good {
-  color: #22c55e;
+  color: var(--color-success);
 }
 .count-warning {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .count-bad {
-  color: #ef4444;
+  color: var(--color-error);
 }
 </style>

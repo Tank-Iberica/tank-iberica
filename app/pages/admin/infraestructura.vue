@@ -282,10 +282,10 @@ onMounted(() => init())
   align-items: center;
   gap: var(--spacing-3);
   padding: var(--spacing-4);
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: var(--border-radius-md);
-  color: #b91c1c;
+  color: var(--color-error);
   font-size: var(--font-size-sm);
   margin-bottom: var(--spacing-4);
 }

@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: linear-gradient(135deg, #23424a 0%, #1a5f6e 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #1a5f6e 100%);
   border-radius: 16px;
   padding: 24px 20px;
   color: white;

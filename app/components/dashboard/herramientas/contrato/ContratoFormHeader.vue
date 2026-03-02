@@ -129,7 +129,7 @@ function onTypeChange(event: Event): void {
 .form-group input,
 .form-group select {
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.9rem;
   min-height: 44px;
@@ -138,7 +138,7 @@ function onTypeChange(event: Event): void {
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
@@ -153,7 +153,7 @@ function onTypeChange(event: Event): void {
   align-items: center;
   gap: 12px;
   padding: 16px 20px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color-light);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
@@ -163,11 +163,11 @@ function onTypeChange(event: Event): void {
 }
 
 .radio-card:hover {
-  border-color: #23424a;
+  border-color: var(--color-primary);
 }
 
 .radio-card.active {
-  border-color: #23424a;
+  border-color: var(--color-primary);
   background: #f0f9ff;
 }
 
@@ -177,7 +177,7 @@ function onTypeChange(event: Event): void {
 
 .radio-icon-svg {
   flex-shrink: 0;
-  color: #23424a;
+  color: var(--color-primary);
 }
 
 .radio-label {

@@ -47,7 +47,7 @@ defineEmits<{
 
 <style scoped>
 .section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -69,13 +69,13 @@ defineEmits<{
 
 .toggle-icon {
   font-size: 1.2rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .section-body {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -103,7 +103,7 @@ defineEmits<{
 .info-label {
   font-size: 0.7rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-disabled);
   text-transform: uppercase;
 }
 

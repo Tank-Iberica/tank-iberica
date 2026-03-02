@@ -82,7 +82,7 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -101,27 +101,27 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
   align-items: center;
   gap: 4px;
   padding: 8px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 20px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   transition: all 0.15s;
   min-height: 44px;
   white-space: nowrap;
 }
 
 .status-pill:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .status-pill.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .pill-count {
@@ -143,7 +143,7 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: var(--text-disabled);
   display: flex;
   align-items: center;
 }
@@ -151,7 +151,7 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
 .search-box input {
   width: 100%;
   padding: 10px 36px 10px 38px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.9rem;
   min-height: 44px;
@@ -159,7 +159,7 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
 
 .search-box input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -168,7 +168,7 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   border: none;
   width: 24px;
   height: 24px;
@@ -177,11 +177,11 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .search-box .clear-btn:hover {
-  background: #cbd5e1;
+  background: var(--bg-tertiary);
 }
 
 /* 768px+ */

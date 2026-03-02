@@ -127,12 +127,12 @@ const { t } = useI18n()
   margin: 0 0 4px;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .section-subtitle {
   margin: 0 0 16px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.875rem;
 }
 
@@ -142,7 +142,7 @@ const { t } = useI18n()
 }
 
 .table-wrapper {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow-x: auto;
@@ -159,17 +159,17 @@ const { t } = useI18n()
   padding: 12px 16px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-auxiliary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
   white-space: nowrap;
 }
 
 .data-table td {
   padding: 12px 16px;
-  color: #1e293b;
-  border-bottom: 1px solid #f1f5f9;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .cell-dealer {
@@ -195,7 +195,7 @@ const { t } = useI18n()
 }
 
 .connect-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -210,7 +210,7 @@ const { t } = useI18n()
 .connect-card-name {
   font-weight: 600;
   font-size: 0.95rem;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
@@ -228,7 +228,7 @@ const { t } = useI18n()
 
 .detail-label {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-weight: 500;
 }
 
@@ -241,13 +241,13 @@ const { t } = useI18n()
 }
 
 .connect-status.connect-ok {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .connect-status.connect-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 @media (min-width: 768px) {

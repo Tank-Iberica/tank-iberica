@@ -26,22 +26,22 @@ watch(
   <div>
     <div class="form-field">
       <label>{{ t('user.pseudonym') }}</label>
-      <input v-model="form.pseudonimo" type="text" >
+      <input v-model="form.pseudonimo" type="text" />
     </div>
     <div class="form-field">
       <label>{{ t('user.fullName') }}</label>
       <div class="form-row">
-        <input v-model="form.name" type="text" :placeholder="t('user.name')" >
-        <input v-model="form.apellidos" type="text" :placeholder="t('user.surname')" >
+        <input v-model="form.name" type="text" :placeholder="t('user.name')" />
+        <input v-model="form.apellidos" type="text" :placeholder="t('user.surname')" />
       </div>
     </div>
     <div class="form-field">
       <label>{{ t('user.phone') }}</label>
-      <input v-model="form.telefono" type="tel" placeholder="+34 600 000 000" >
+      <input v-model="form.telefono" type="tel" placeholder="+34 600 000 000" />
     </div>
     <div class="form-field">
       <label>{{ t('user.email') }}</label>
-      <input v-model="form.email" type="email" >
+      <input v-model="form.email" type="email" />
     </div>
     <button class="btn-primary" :disabled="saving" @click="emit('save', { ...form })">
       {{ saving ? '...' : t('user.saveChanges') }}
@@ -91,19 +91,19 @@ watch(
 }
 
 .form-message.success {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .form-message.error {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .btn-primary {
   width: 100%;
   padding: 12px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;

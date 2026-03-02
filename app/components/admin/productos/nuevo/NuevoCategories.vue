@@ -25,7 +25,7 @@ function hasCat(cat: string, cats: string[]): boolean {
           type="checkbox"
           :checked="hasCat('venta', categories)"
           @change="emit('toggle-category', 'venta')"
-        >
+        />
         Venta
       </label>
       <label class="cat-check" :class="{ active: hasCat('alquiler', categories) }">
@@ -33,7 +33,7 @@ function hasCat(cat: string, cats: string[]): boolean {
           type="checkbox"
           :checked="hasCat('alquiler', categories)"
           @change="emit('toggle-category', 'alquiler')"
-        >
+        />
         Alquiler
       </label>
       <label class="cat-check" :class="{ active: hasCat('terceros', categories) }">
@@ -41,11 +41,11 @@ function hasCat(cat: string, cats: string[]): boolean {
           type="checkbox"
           :checked="hasCat('terceros', categories)"
           @change="emit('toggle-category', 'terceros')"
-        >
+        />
         Terceros
       </label>
       <label class="feat-check">
-        <input type="checkbox" :checked="featured" @change="emit('update:featured', !featured)" >
+        <input type="checkbox" :checked="featured" @change="emit('update:featured', !featured)" />
         Destacado
       </label>
     </div>
@@ -54,7 +54,7 @@ function hasCat(cat: string, cats: string[]): boolean {
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 12px 16px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -78,7 +78,7 @@ function hasCat(cat: string, cats: string[]): boolean {
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
@@ -87,8 +87,8 @@ function hasCat(cat: string, cats: string[]): boolean {
   margin: 0;
 }
 .cat-check.active {
-  border-color: #23424a;
-  background: #23424a;
+  border-color: var(--color-primary);
+  background: var(--color-primary);
   color: #fff;
 }
 .feat-check {
@@ -96,7 +96,7 @@ function hasCat(cat: string, cats: string[]): boolean {
   align-items: center;
   gap: 4px;
   font-size: 0.85rem;
-  color: #f59e0b;
+  color: var(--color-warning);
   cursor: pointer;
   margin-left: auto;
 }

@@ -43,7 +43,7 @@ const { t } = useI18n()
   justify-content: space-between;
   align-items: center;
   padding: 10px 12px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 6px;
   border: 1px solid #eee;
 }
@@ -74,17 +74,17 @@ const { t } = useI18n()
 }
 
 .status-badge.pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .status-badge.approved {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 
 .status-badge.rejected {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 </style>

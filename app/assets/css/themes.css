@@ -1,0 +1,207 @@
+/* ================================================
+   THEMES — Dark mode, High Contrast, Font Scale
+   Applied via @nuxtjs/color-mode (class on <html>)
+   ================================================ */
+
+/* ---- Transition suave al cambiar tema ---- */
+body,
+main,
+header,
+nav,
+aside,
+footer,
+section,
+.card,
+.panel,
+.modal,
+.a11y-fab,
+.a11y-panel,
+button,
+input,
+select,
+textarea,
+a {
+  transition:
+    background-color 0.2s ease,
+    color 0.15s ease,
+    border-color 0.2s ease;
+}
+
+/* Excluir elementos donde la transición no aplica */
+img,
+video,
+svg,
+canvas {
+  transition: none;
+}
+
+/* Respeta preferencia del OS: reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* ---- Dark Mode ---- */
+html.dark-mode {
+  --bg-primary: color-mix(in srgb, color-mix(in hsl, var(--color-primary), gray 60%) 7%, #1c1c22);
+  --bg-secondary: color-mix(in srgb, var(--color-primary) 5%, #15151a);
+  --bg-tertiary: color-mix(in srgb, var(--color-primary) 4%, #101014);
+  --bg-dark: color-mix(in srgb, var(--color-primary) 6%, #0e0e12);
+
+  --text-primary: #e6ecec;
+  --text-secondary: #c9d4d4;
+  --text-auxiliary: #9fb1b1;
+  --text-disabled: #5a6a6a;
+
+  --border-color: #2a3838;
+  --border-color-light: #1f2c2c;
+  --border-color-dark: #3a5050;
+
+  --color-gray-50: #111818;
+  --color-gray-100: #161e1e;
+  --color-gray-200: #1e2929;
+  --color-gray-300: #2a3838;
+  --color-gray-400: #4a5c5c;
+  --color-gray-500: #6a8080;
+  --color-gray-600: #8a9e9e;
+  --color-gray-700: #b0c4c4;
+  --color-gray-800: #d0dede;
+  --color-gray-900: #e6ecec;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.7);
+  --shadow-header: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+html.dark-mode body {
+  color-scheme: dark;
+}
+
+html.dark-mode {
+  --color-success-bg: rgba(16, 185, 129, 0.12);
+  --color-warning-bg: rgba(245, 158, 11, 0.12);
+  --color-error-bg: rgba(239, 68, 68, 0.12);
+  --color-info-bg: rgba(59, 130, 246, 0.12);
+  --color-error-border: rgba(239, 68, 68, 0.3);
+  --color-success-border: rgba(16, 185, 129, 0.3);
+  --color-warning-text: #fbbf24;
+}
+
+/* ---- Alto contraste (para daltónicos / baja visión) ---- */
+html.high-contrast-mode {
+  /* Derivado del primary del dealer — no hardcodeado */
+  /* 25% primary + 75% white = siempre legible sobre fondo oscuro */
+  --color-primary-hc: color-mix(in srgb, var(--color-primary) 25%, white);
+  --color-accent-hc: color-mix(in srgb, var(--color-accent) 30%, white);
+
+  /* Off-black/off-white: reduce fatiga visual vs puro #000/#fff */
+  --bg-primary: #0d0d0d;
+  --bg-secondary: #111111;
+  --bg-tertiary: #1a1a1a;
+  --bg-dark: #080808;
+
+  --text-primary: #f5f5f5;
+  --text-secondary: #e8e8e8;
+  --text-auxiliary: #cccccc;
+  --text-disabled: #888888;
+
+  /* Bordes blancos para máxima definición */
+  --border-color: #e0e0e0;
+  --border-color-light: #aaaaaa;
+  --border-color-dark: #f5f5f5;
+
+  /* Grays invertidos */
+  --color-gray-50: #080808;
+  --color-gray-100: #0d0d0d;
+  --color-gray-200: #161616;
+  --color-gray-300: #222222;
+  --color-gray-400: #505050;
+  --color-gray-500: #808080;
+  --color-gray-600: #aaaaaa;
+  --color-gray-700: #cccccc;
+  --color-gray-800: #e8e8e8;
+  --color-gray-900: #f5f5f5;
+
+  /* Sombras → bordes visibles */
+  --shadow-sm: 0 0 0 1px #e0e0e0;
+  --shadow: 0 0 0 1px #e0e0e0;
+  --shadow-md: 0 0 0 2px #e0e0e0;
+  --shadow-lg: 0 0 0 2px #e0e0e0;
+  --shadow-xl: 0 0 0 3px #e0e0e0;
+  --shadow-header: 0 0 0 2px #e0e0e0;
+
+  /* Estado: hue rotations desde --color-primary (CSS Relative Color Syntax)
+     +150° → error   — garantiza ≥60° del primary y entre sí
+     +210° → success — complementario al error
+     +60°  → warning — luminancia alta
+     +270° → info    — hue distinto de los tres anteriores
+     Sin red/green — distinguible por deuteranopes, protanopes y tritanopes */
+  --color-error: hsl(from var(--color-primary) calc(h + 150) 90% 65%);
+  --color-success: hsl(from var(--color-primary) calc(h + 210) 85% 68%);
+  --color-warning: hsl(from var(--color-primary) calc(h + 60) 95% 65%);
+  --color-info: hsl(from var(--color-primary) calc(h + 270) 85% 68%);
+  --color-error-bg: hsl(from var(--color-primary) calc(h + 150) 90% 65% / 0.15);
+  --color-success-bg: hsl(from var(--color-primary) calc(h + 210) 85% 68% / 0.15);
+  --color-warning-bg: hsl(from var(--color-primary) calc(h + 60) 95% 65% / 0.15);
+  --color-info-bg: hsl(from var(--color-primary) calc(h + 270) 85% 68% / 0.15);
+  --color-error-border: hsl(from var(--color-primary) calc(h + 150) 90% 65% / 0.6);
+  --color-success-border: hsl(from var(--color-primary) calc(h + 210) 85% 68% / 0.6);
+  --color-warning-text: hsl(from var(--color-primary) calc(h + 60) 95% 65%);
+
+  color-scheme: dark;
+}
+
+/* ---- Fallback para navegadores sin CSS Relative Color Syntax (~8%) ---- */
+@supports not (color: hsl(from red h s l)) {
+  html.high-contrast-mode {
+    --color-error: #ff8c42;
+    --color-success: #74c0fc;
+    --color-warning: #ffd43b;
+    --color-info: #cc5de8;
+    --color-error-bg: rgba(255, 140, 66, 0.15);
+    --color-success-bg: rgba(116, 192, 252, 0.15);
+    --color-warning-bg: rgba(255, 212, 59, 0.15);
+    --color-info-bg: rgba(204, 93, 232, 0.15);
+    --color-error-border: rgba(255, 140, 66, 0.6);
+    --color-success-border: rgba(116, 192, 252, 0.6);
+    --color-warning-text: #ffd43b;
+  }
+}
+
+html.high-contrast-mode a {
+  color: var(--color-primary-hc);
+  text-decoration: underline;
+}
+
+/* Foco amarillo — más visible para daltonismo */
+html.high-contrast-mode :focus-visible {
+  outline: 3px solid #ffff00;
+  outline-offset: 3px;
+}
+
+/* Activación automática si el SO tiene alto contraste configurado */
+@media (prefers-contrast: more) {
+  :root:not(.light-mode):not(.dark-mode) {
+    --color-primary-hc: color-mix(in srgb, var(--color-primary) 25%, white);
+    --bg-primary: #0d0d0d;
+    --bg-secondary: #111111;
+    --text-primary: #f5f5f5;
+    --border-color: #e0e0e0;
+  }
+}
+
+/* ---- Escala de fuente ---- */
+html[data-font-size='large'] {
+  font-size: 18px;
+  --header-offset: 68px;
+}
+
+html[data-font-size='xlarge'] {
+  font-size: 20px;
+  --header-offset: 72px;
+  --header-offset-desktop: 64px;
+}

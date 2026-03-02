@@ -243,7 +243,7 @@ const { t } = useI18n()
 
 .form-group input {
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.9rem;
   min-height: 44px;
@@ -251,7 +251,7 @@ const { t } = useI18n()
 
 .form-group input:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
@@ -295,7 +295,7 @@ const { t } = useI18n()
 }
 
 .radio-group-inline.compact label.active {
-  color: #23424a;
+  color: var(--color-primary);
   font-weight: 500;
 }
 

@@ -170,7 +170,7 @@ function onDocTypeChange(event: Event): void {
 
 <style scoped>
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -180,7 +180,7 @@ function onDocTypeChange(event: Event): void {
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .form-grid {
@@ -198,14 +198,14 @@ function onDocTypeChange(event: Event): void {
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .form-group select,
 .form-group input[type='file'] {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
@@ -214,24 +214,24 @@ function onDocTypeChange(event: Event): void {
 
 .form-group select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .alert-success {
   padding: 12px 16px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: 8px;
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 /* Verification Section */
@@ -269,7 +269,7 @@ function onDocTypeChange(event: Event): void {
 .level-label {
   margin: 0;
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-weight: 500;
 }
 
@@ -283,33 +283,33 @@ function onDocTypeChange(event: Event): void {
   align-items: center;
   margin-bottom: 8px;
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .progress-value {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   font-weight: 700;
 }
 
 .progress-bar {
   width: 100%;
   height: 8px;
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #10b981, #3b82f6);
+  background: linear-gradient(90deg, var(--color-success), var(--color-info));
   transition: width 0.3s ease;
 }
 
 .next-level-hint {
   padding: 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   margin-bottom: 24px;
 }
@@ -317,21 +317,21 @@ function onDocTypeChange(event: Event): void {
 .hint-title {
   margin: 0 0 8px 0;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 0.95rem;
 }
 
 .hint-label {
   margin: 0 0 8px 0;
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .missing-docs-list {
   margin: 0;
   padding-left: 20px;
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .missing-docs-list li {
@@ -346,16 +346,16 @@ function onDocTypeChange(event: Event): void {
   margin: 0 0 12px 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .no-documents {
   padding: 24px;
   text-align: center;
-  color: #94a3b8;
-  background: #f8fafc;
+  color: var(--text-disabled);
+  background: var(--bg-secondary);
   border-radius: 8px;
-  border: 1px dashed #e2e8f0;
+  border: 1px dashed var(--color-gray-200);
 }
 
 .no-documents p {
@@ -373,8 +373,8 @@ function onDocTypeChange(event: Event): void {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
 }
 
@@ -386,7 +386,7 @@ function onDocTypeChange(event: Event): void {
 
 .doc-type {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
@@ -399,8 +399,8 @@ function onDocTypeChange(event: Event): void {
 }
 
 .status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .status-verified {
@@ -409,12 +409,12 @@ function onDocTypeChange(event: Event): void {
 }
 
 .status-rejected {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .doc-link {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
@@ -430,20 +430,20 @@ function onDocTypeChange(event: Event): void {
 
 .upload-form {
   padding-top: 20px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .upload-form h3 {
   margin: 0 0 16px 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .btn-upload {
   min-height: 44px;
   padding: 10px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -454,7 +454,7 @@ function onDocTypeChange(event: Event): void {
 }
 
 .btn-upload:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-upload:disabled {

@@ -36,7 +36,7 @@ const { t } = useI18n()
 
 <style scoped>
 .card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 20px;
@@ -46,18 +46,18 @@ const { t } = useI18n()
   margin: 0 0 16px 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .code-textarea {
   width: 100%;
   padding: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.85rem;
-  color: #1e293b;
-  background: #f8fafc;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
   resize: vertical;
   box-sizing: border-box;
   line-height: 1.5;
@@ -75,7 +75,7 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -86,30 +86,30 @@ const { t } = useI18n()
 }
 
 .btn-copy:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-copy.success {
-  background: #16a34a;
+  background: var(--color-success);
 }
 
 .instructions {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
 }
 
 .instructions h3 {
   margin: 0 0 12px 0;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .instructions ol {
   margin: 0;
   padding-left: 20px;
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.8;
 }

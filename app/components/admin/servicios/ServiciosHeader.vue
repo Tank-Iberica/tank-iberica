@@ -30,13 +30,13 @@ const { t } = useI18n()
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .btn-refresh {
   align-self: flex-start;
   padding: 10px 18px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -48,7 +48,7 @@ const { t } = useI18n()
 }
 
 .btn-refresh:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-refresh:disabled {

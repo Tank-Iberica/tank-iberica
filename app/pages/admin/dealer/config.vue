@@ -240,12 +240,12 @@ onMounted(() => {
 }
 
 .error-banner {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
   color: var(--color-error);
 }
 
 .success-banner {
-  background: #f0fdf4;
+  background: var(--color-success-bg, #dcfce7);
   color: var(--color-success);
 }
 

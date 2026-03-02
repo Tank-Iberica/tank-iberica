@@ -41,12 +41,12 @@ const { t } = useI18n()
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .count-badge {
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
   padding: 4px 10px;
@@ -54,7 +54,7 @@ const { t } = useI18n()
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -67,7 +67,7 @@ const { t } = useI18n()
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 @media (min-width: 768px) {

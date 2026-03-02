@@ -97,7 +97,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -107,12 +107,12 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
   margin: 0 0 8px;
   font-size: 1.125rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .card-description {
   margin: 0 0 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.875rem;
 }
 
@@ -150,7 +150,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 
 .plan-name {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
@@ -158,15 +158,15 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
   display: inline-block;
   margin-left: 8px;
   padding: 2px 8px;
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
   border-radius: 8px;
   font-size: 0.7rem;
   font-weight: 600;
 }
 
 .price-readonly {
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-style: italic;
   font-size: 0.9rem;
 }
@@ -181,7 +181,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 .price-input {
   width: 100%;
   padding: 8px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
   color: #374151;
@@ -190,7 +190,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 
 .price-input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -203,8 +203,8 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 }
 
 .success-banner {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -216,7 +216,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -229,7 +229,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {

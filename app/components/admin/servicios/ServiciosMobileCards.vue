@@ -125,7 +125,7 @@ const { t } = useI18n()
 }
 
 .request-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -155,7 +155,7 @@ const { t } = useI18n()
 }
 
 .card-header:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .card-top {
@@ -171,7 +171,7 @@ const { t } = useI18n()
   gap: 6px;
   font-weight: 600;
   font-size: 0.95rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .type-icon {
@@ -189,23 +189,23 @@ const { t } = useI18n()
 }
 
 .status-badge.status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .status-badge.status-progress {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
 }
 
 .status-badge.status-completed {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .status-badge.status-cancelled {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .card-details {
@@ -222,13 +222,13 @@ const { t } = useI18n()
 
 .detail-label {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-weight: 500;
 }
 
 .detail-value {
   font-size: 0.85rem;
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -238,7 +238,7 @@ const { t } = useI18n()
 .card-expand-icon {
   display: flex;
   justify-content: center;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .card-expand-icon svg {
@@ -252,7 +252,7 @@ const { t } = useI18n()
 /* Card expanded section */
 .card-expanded {
   padding: 0 16px 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -268,23 +268,23 @@ const { t } = useI18n()
 .expanded-field label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .expanded-field select {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.9rem;
   min-height: 44px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   width: 100%;
 }
 
 .expanded-field select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -303,7 +303,7 @@ const { t } = useI18n()
 }
 
 .btn-notify:hover {
-  background: #1d4ed8;
+  background: var(--color-info);
 }
 
 .btn-notify:disabled {
@@ -319,7 +319,7 @@ const { t } = useI18n()
   margin: 0 0 8px 0;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -335,7 +335,7 @@ const { t } = useI18n()
   justify-content: space-between;
   align-items: flex-start;
   padding: 6px 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .detail-item:last-child {
@@ -345,13 +345,13 @@ const { t } = useI18n()
 .detail-key {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   text-transform: capitalize;
 }
 
 .detail-val {
   font-size: 0.85rem;
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 500;
   text-align: right;
   word-break: break-word;

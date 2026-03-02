@@ -231,7 +231,7 @@ onMounted(async () => {
 /* ---- Banners ---- */
 .success-banner {
   background: #ecfdf5;
-  color: var(--color-success, #10b981);
+  color: var(--color-success);
   padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
   border-radius: var(--border-radius, 8px);
   margin-bottom: var(--spacing-4, 16px);
@@ -239,8 +239,8 @@ onMounted(async () => {
 }
 
 .error-banner {
-  background: #fef2f2;
-  color: var(--color-error, #dc2626);
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error, var(--color-error));
   padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
   border-radius: var(--border-radius, 8px);
   margin-bottom: var(--spacing-4, 16px);
@@ -252,7 +252,7 @@ onMounted(async () => {
 .error-dismiss {
   background: none;
   border: none;
-  color: var(--color-error, #dc2626);
+  color: var(--color-error, var(--color-error));
   font-size: var(--font-size-lg, 1.125rem);
   cursor: pointer;
   padding: 4px 8px;
@@ -271,7 +271,7 @@ onMounted(async () => {
 
 /* ---- Buttons ---- */
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: var(--color-white, white);
   border: none;
   padding: 10px 20px;
@@ -283,7 +283,7 @@ onMounted(async () => {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 /* ---- Mobile Responsive ---- */

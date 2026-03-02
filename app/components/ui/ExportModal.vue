@@ -480,7 +480,7 @@ watch(
 .export-section-title {
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -495,7 +495,7 @@ watch(
 .export-link-btn {
   background: none;
   border: none;
-  color: var(--color-accent, #7fd1c8);
+  color: var(--color-accent);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
@@ -508,7 +508,7 @@ watch(
 }
 
 .export-link-btn:hover:not(:disabled) {
-  color: var(--color-accent-hover, #5fbfb4);
+  color: var(--color-accent-hover);
 }
 
 .export-link-btn:disabled {
@@ -547,7 +547,7 @@ watch(
   min-width: 18px;
   min-height: 18px;
   cursor: pointer;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 .export-column-label {
@@ -558,10 +558,10 @@ watch(
 
 .export-warning {
   font-size: var(--font-size-xs, 0.75rem);
-  color: var(--color-error, #ef4444);
+  color: var(--color-error);
   margin: 0;
   padding: var(--spacing-2) var(--spacing-3);
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
   border-radius: var(--border-radius-sm, 4px);
 }
 
@@ -587,11 +587,11 @@ watch(
 }
 
 .export-format-option:hover {
-  border-color: var(--color-primary-light, #2d545e);
+  border-color: var(--color-primary-light);
 }
 
 .export-format-selected {
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   background: rgba(35, 66, 74, 0.04);
 }
 
@@ -599,13 +599,13 @@ watch(
   min-width: 18px;
   min-height: 18px;
   cursor: pointer;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 .export-format-icon {
   width: 24px;
   height: 24px;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   flex-shrink: 0;
 }
 
@@ -653,7 +653,7 @@ watch(
 
 .export-btn-primary {
   flex: 2;
-  background: linear-gradient(135deg, var(--color-primary, #23424a) 0%, #2d5560 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #2d5560 100%);
   color: white;
 }
 

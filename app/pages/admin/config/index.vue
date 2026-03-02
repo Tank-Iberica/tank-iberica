@@ -196,7 +196,7 @@ const iconPaths: Record<string, string> = {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -207,7 +207,7 @@ const iconPaths: Record<string, string> = {
 }
 
 .config-card:hover {
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
@@ -219,9 +219,9 @@ const iconPaths: Record<string, string> = {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 10px;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .card-icon svg {
@@ -257,7 +257,7 @@ const iconPaths: Record<string, string> = {
 }
 
 .feature-list li {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   padding: 2px 8px;
   border-radius: 10px;
   font-size: 0.7rem;
@@ -265,7 +265,7 @@ const iconPaths: Record<string, string> = {
 }
 
 .card-arrow {
-  color: #9ca3af;
+  color: var(--text-disabled);
   transition: transform 0.2s;
   align-self: center;
   flex-shrink: 0;
@@ -278,7 +278,7 @@ const iconPaths: Record<string, string> = {
 
 .config-card:hover .card-arrow {
   transform: translateX(4px);
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 @media (max-width: 479px) {

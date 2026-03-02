@@ -49,7 +49,7 @@ function getStatusClass(status: string): string {
         v-if="getThumbnail(vehicle)"
         :src="getThumbnail(vehicle)!"
         :alt="`${vehicle.brand} ${vehicle.model}`"
-      >
+      />
       <div v-else class="image-placeholder">
         <span>{{ t('dashboard.vehicles.noImage') }}</span>
       </div>
@@ -109,7 +109,7 @@ function getStatusClass(status: string): string {
 
 <style scoped>
 .vehicle-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -118,7 +118,7 @@ function getStatusClass(status: string): string {
 .card-image {
   position: relative;
   height: 180px;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .card-image img {
@@ -133,7 +133,7 @@ function getStatusClass(status: string): string {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-size: 0.85rem;
 }
 
@@ -148,23 +148,23 @@ function getStatusClass(status: string): string {
 }
 
 .status-published {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .status-draft {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--bg-secondary);
+  color: var(--text-auxiliary);
 }
 
 .status-paused {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .status-sold {
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
 .card-body {
@@ -175,7 +175,7 @@ function getStatusClass(status: string): string {
   margin: 0 0 8px 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .card-meta {
@@ -187,17 +187,17 @@ function getStatusClass(status: string): string {
 
 .meta-item {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .meta-price {
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .card-stats {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .card-actions {
@@ -205,18 +205,18 @@ function getStatusClass(status: string): string {
   flex-wrap: wrap;
   gap: 8px;
   padding: 12px 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
 }
 
 .action-btn {
   min-height: 44px;
   padding: 8px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
-  background: white;
+  background: var(--bg-primary);
   font-size: 0.85rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
@@ -224,21 +224,21 @@ function getStatusClass(status: string): string {
 }
 
 .action-btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .action-delete {
-  color: #dc2626;
-  border-color: #fecaca;
+  color: var(--color-error);
+  border-color: var(--color-error-border);
 }
 
 .action-delete:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .action-delete-confirm {
   color: white;
-  background: #dc2626;
-  border-color: #dc2626;
+  background: var(--color-error);
+  border-color: var(--color-error);
 }
 </style>

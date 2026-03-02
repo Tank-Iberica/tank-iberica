@@ -83,7 +83,7 @@ function onConfirmInput(event: Event): void {
 }
 
 .modal {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 100%;
   max-width: 420px;
@@ -101,7 +101,7 @@ function onConfirmInput(event: Event): void {
   font-weight: 600;
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px 12px 0 0;
 }
 
@@ -110,7 +110,7 @@ function onConfirmInput(event: Event): void {
   border: none;
   font-size: 1.4rem;
   cursor: pointer;
-  color: #9ca3af;
+  color: var(--text-disabled);
   width: 44px;
   height: 44px;
   display: flex;
@@ -120,7 +120,7 @@ function onConfirmInput(event: Event): void {
 }
 
 .modal-head button:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .modal-body {
@@ -142,7 +142,7 @@ function onConfirmInput(event: Event): void {
 /* Restore-specific */
 .restore-info {
   padding: 12px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 6px;
   text-align: center;
   margin-bottom: 12px;
@@ -150,8 +150,8 @@ function onConfirmInput(event: Event): void {
 
 .warning-box {
   padding: 10px;
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
   border-radius: 6px;
   font-size: 0.85rem;
   margin-bottom: 12px;
@@ -174,14 +174,14 @@ function onConfirmInput(event: Event): void {
 .field input {
   min-height: 44px;
   padding: 8px 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   font-size: 0.85rem;
 }
 
 .field input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 /* Buttons */
@@ -191,8 +191,8 @@ function onConfirmInput(event: Event): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.875rem;
   cursor: pointer;
@@ -200,18 +200,18 @@ function onConfirmInput(event: Event): void {
 }
 
 .btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: #fff;
   border: none;
   font-weight: 600;
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {

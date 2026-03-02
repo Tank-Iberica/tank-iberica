@@ -36,7 +36,7 @@ const { t } = useI18n()
 
 <style scoped>
 .options-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -46,7 +46,7 @@ const { t } = useI18n()
   margin: 0 0 16px;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .pdf-info {
@@ -60,7 +60,7 @@ const { t } = useI18n()
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.9rem;
 }
 
@@ -69,7 +69,7 @@ const { t } = useI18n()
 }
 
 .info-label {
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-weight: 500;
 }
 </style>

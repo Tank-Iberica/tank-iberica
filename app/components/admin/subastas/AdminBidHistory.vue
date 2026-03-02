@@ -57,7 +57,7 @@ const { t } = useI18n()
 
 <style scoped>
 .section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 20px 24px;
@@ -67,15 +67,15 @@ const { t } = useI18n()
   margin: 0 0 16px;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .count-badge-sm {
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 2px 8px;
@@ -84,7 +84,7 @@ const { t } = useI18n()
 
 .empty-msg {
   text-align: center;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-size: 0.875rem;
   padding: 32px 16px;
 }
@@ -92,7 +92,7 @@ const { t } = useI18n()
 .table-container {
   overflow: auto;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
 }
 
 .data-table {
@@ -104,28 +104,28 @@ const { t } = useI18n()
 .data-table th {
   position: sticky;
   top: 0;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   padding: 10px 12px;
   text-align: left;
   font-weight: 600;
   font-size: 0.75rem;
-  color: #475569;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
   white-space: nowrap;
   z-index: 10;
 }
 
 .data-table td {
   padding: 10px 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.85rem;
   color: #334155;
 }
 
 .data-table tr:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .col-num {
@@ -134,7 +134,7 @@ const { t } = useI18n()
 }
 
 .text-muted {
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .text-small {
@@ -142,17 +142,17 @@ const { t } = useI18n()
 }
 
 .bid-winning {
-  background: #f0fdf4 !important;
+  background: var(--color-success-bg, #dcfce7) !important;
 }
 
 .winner-indicator {
-  color: #16a34a;
+  color: var(--color-success);
   font-weight: 600;
   font-size: 0.8rem;
 }
 
 .highest-indicator {
-  color: #1d4ed8;
+  color: var(--color-info);
   font-weight: 500;
   font-size: 0.8rem;
 }

@@ -35,7 +35,7 @@ const { t } = useI18n()
 .tool-tabs {
   display: flex;
   gap: 0;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
   margin-bottom: 1.5rem;
 }
 
@@ -51,7 +51,7 @@ const { t } = useI18n()
   margin-bottom: -2px;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   cursor: pointer;
   transition:
     color 0.2s,
@@ -59,12 +59,12 @@ const { t } = useI18n()
 }
 
 .tool-tabs__btn:hover {
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
 }
 
 .tool-tabs__btn--active {
-  color: var(--primary, #23424a);
-  border-bottom-color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
+  border-bottom-color: var(--primary, var(--color-primary));
   font-weight: 600;
 }
 
@@ -75,7 +75,7 @@ const { t } = useI18n()
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  background: var(--primary, #23424a);
+  background: var(--primary, var(--color-primary));
   color: white;
   border-radius: 10px;
   font-size: 0.7rem;

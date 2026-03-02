@@ -120,7 +120,7 @@ const emit = defineEmits<{
 }
 
 .filter-btn.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: var(--color-white, white);
 }
 
@@ -139,7 +139,7 @@ const emit = defineEmits<{
 
 .filter-search:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 

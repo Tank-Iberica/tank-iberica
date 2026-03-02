@@ -210,11 +210,11 @@ function getLineSubtotal(line: InvoiceLine): number {
 .form-field__select {
   min-height: 44px;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.9rem;
-  color: #1e293b;
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   transition: border-color 0.2s;
   width: 100%;
 }
@@ -222,7 +222,7 @@ function getLineSubtotal(line: InvoiceLine): number {
 .form-field__input:focus,
 .form-field__select:focus {
   outline: none;
-  border-color: var(--primary, #23424a);
+  border-color: var(--primary, var(--color-primary));
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
 }
 
@@ -258,18 +258,18 @@ function getLineSubtotal(line: InvoiceLine): number {
 .lines-table th {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-auxiliary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 0.5rem;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
   text-align: left;
   white-space: nowrap;
 }
 
 .lines-table td {
   padding: 0.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
   vertical-align: middle;
 }
 
@@ -280,7 +280,7 @@ function getLineSubtotal(line: InvoiceLine): number {
 
 .lines-table__total {
   font-weight: 600;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
 }
 
 .lines-table__action {
@@ -296,8 +296,8 @@ function getLineSubtotal(line: InvoiceLine): number {
 }
 
 .line-card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   padding: 1rem;
   display: flex;
@@ -330,7 +330,7 @@ function getLineSubtotal(line: InvoiceLine): number {
 
 .line-card__field label {
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-weight: 500;
 }
 
@@ -341,7 +341,7 @@ function getLineSubtotal(line: InvoiceLine): number {
 .line-card__total {
   text-align: right;
   font-size: 0.9rem;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
 }
 
 /* ============ BUTTONS ============ */
@@ -366,12 +366,12 @@ function getLineSubtotal(line: InvoiceLine): number {
 
 .btn--outline {
   background: transparent;
-  color: var(--primary, #23424a);
-  border: 1px dashed #94a3b8;
+  color: var(--primary, var(--color-primary));
+  border: 1px dashed var(--color-gray-400);
 }
 
 .btn--outline:hover {
-  border-color: var(--primary, #23424a);
+  border-color: var(--primary, var(--color-primary));
   background: rgba(35, 66, 74, 0.04);
 }
 
@@ -395,11 +395,11 @@ function getLineSubtotal(line: InvoiceLine): number {
 }
 
 .btn-icon--danger {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 .btn-icon--danger:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 /* ============ RESPONSIVE: TABLET+ (768px) ============ */

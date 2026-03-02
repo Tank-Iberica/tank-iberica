@@ -49,7 +49,7 @@ watch(
             class="delete-modal__input"
             placeholder="ELIMINAR"
             autocomplete="off"
-          >
+          />
 
           <div v-if="localError || apiError" class="delete-modal__error">
             {{ localError || apiError }}
@@ -86,7 +86,7 @@ watch(
 }
 
 .delete-modal {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   max-width: 420px;
@@ -97,7 +97,7 @@ watch(
 .delete-modal__title {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #dc2626;
+  color: var(--color-error);
   margin: 0 0 12px 0;
 }
 
@@ -125,14 +125,14 @@ watch(
 
 .delete-modal__input:focus {
   outline: none;
-  border-color: #dc2626;
+  border-color: var(--color-error);
 }
 
 .delete-modal__error {
   margin-top: 8px;
   padding: 8px 12px;
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 6px;
   font-size: 0.85rem;
 }
@@ -164,12 +164,12 @@ watch(
 }
 
 .delete-modal__btn--confirm {
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
 }
 
 .delete-modal__btn--confirm:hover:not(:disabled) {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 .delete-modal__btn--confirm:disabled {

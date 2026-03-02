@@ -423,7 +423,7 @@ function updateChangePlanNewPlan(plan: PlanType) {
 
 /* ---- Buttons ---- */
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: var(--color-white, white);
   border: none;
   padding: 10px 20px;
@@ -435,7 +435,7 @@ function updateChangePlanNewPlan(plan: PlanType) {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -456,7 +456,7 @@ function updateChangePlanNewPlan(plan: PlanType) {
 }
 
 .btn-danger {
-  background: var(--color-error, #dc2626);
+  background: var(--color-error, var(--color-error));
   color: var(--color-white, white);
   border: none;
   padding: 10px 20px;
@@ -503,7 +503,7 @@ function updateChangePlanNewPlan(plan: PlanType) {
 .form-select:focus,
 .form-input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -517,7 +517,7 @@ function updateChangePlanNewPlan(plan: PlanType) {
 .founding-warning {
   margin-top: 6px;
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--color-gold, #d4a017);
+  color: var(--color-gold);
   font-weight: var(--font-weight-medium, 500);
 }
 
@@ -551,7 +551,7 @@ function updateChangePlanNewPlan(plan: PlanType) {
 }
 
 .extend-new {
-  color: var(--color-success, #10b981);
+  color: var(--color-success);
 }
 
 /* ---- Delete / Cancel Confirmation ---- */
@@ -572,12 +572,12 @@ function updateChangePlanNewPlan(plan: PlanType) {
 
 .delete-confirm-group input:focus {
   outline: none;
-  border-color: var(--color-error, #dc2626);
+  border-color: var(--color-error, var(--color-error));
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 .text-warning {
-  color: var(--color-warning, #d97706);
+  color: var(--color-warning, var(--color-warning));
   font-size: var(--font-size-sm, 0.85rem);
   background: #fffbeb;
   padding: 8px 12px;
@@ -586,7 +586,7 @@ function updateChangePlanNewPlan(plan: PlanType) {
 }
 
 .text-error {
-  color: var(--color-error, #dc2626);
+  color: var(--color-error, var(--color-error));
   font-size: var(--font-size-xs, 0.75rem);
   margin-top: 4px;
 }

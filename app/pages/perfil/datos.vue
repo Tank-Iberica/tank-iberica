@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getProfileCountries, type LocationLevel } from '~/utils/geoData'
+
 definePageMeta({
   layout: 'default',
   middleware: ['auth'],
@@ -12,6 +14,8 @@ const form = reactive({
   name: '',
   phone: '',
   lang: '',
+  preferred_country: '' as string | null,
+  preferred_location_level: null as string | null,
 })
 
 const email = ref('')
@@ -25,6 +29,9 @@ function syncForm() {
     form.name = profile.value.name ?? ''
     form.phone = profile.value.phone ?? ''
     form.lang = profile.value.lang ?? locale.value
+    form.preferred_country = profile.value.preferred_country ?? null
+    form.preferred_location_level =
+      ((profile.value as Record<string, unknown>).preferred_location_level as string | null) ?? null
     email.value = profile.value.email ?? ''
   }
 }
@@ -43,6 +50,8 @@ async function onSave() {
     name: form.name.trim() || undefined,
     phone: form.phone.trim() || undefined,
     lang: form.lang || undefined,
+    preferred_country: form.preferred_country || null,
+    preferred_location_level: form.preferred_location_level || null,
   })
 
   if (success) {
@@ -66,13 +75,31 @@ const initials = computed(() => {
   return name.charAt(0).toUpperCase()
 })
 
-/** Available locales for dropdown */
+/** Location level options for the preferred-area selector */
+const ALL_LOCATION_LEVELS: LocationLevel[] = [
+  'provincia',
+  'comunidad',
+  'limitrofes',
+  'nacional',
+  'suroeste_europeo',
+  'union_europea',
+  'europa',
+  'mundo',
+]
+const locationLevels = computed(() =>
+  ALL_LOCATION_LEVELS.map((v) => ({ value: v, label: t(`catalog.levelLabels.${v}`) })),
+)
+
+/** Available locales for dropdown — dynamic, ready for N languages */
 const availableLocales = computed(() => {
   return (locales.value as Array<{ code: string; name?: string }>).map((l) => ({
     code: l.code,
     name: l.name ?? l.code.toUpperCase(),
   }))
 })
+
+/** Countries grouped for profile selector */
+const profileCountries = computed(() => getProfileCountries(locale.value))
 
 useHead({
   title: t('profile.data.title'),
@@ -97,7 +124,7 @@ onMounted(async () => {
       <!-- Avatar section -->
       <div class="avatar-section">
         <div v-if="profile?.avatar_url" class="avatar">
-          <img :src="profile.avatar_url" :alt="$t('profile.data.avatarAlt')" >
+          <img :src="profile.avatar_url" :alt="$t('profile.data.avatarAlt')" />
         </div>
         <div v-else class="avatar avatar--initials">
           {{ initials }}
@@ -116,7 +143,7 @@ onMounted(async () => {
             class="form-input"
             :placeholder="$t('profile.data.fullNamePlaceholder')"
             autocomplete="name"
-          >
+          />
         </div>
 
         <!-- Email (readonly) -->
@@ -129,7 +156,7 @@ onMounted(async () => {
             class="form-input form-input--readonly"
             readonly
             disabled
-          >
+          />
           <span class="form-hint">{{ $t('profile.data.emailHint') }}</span>
         </div>
 
@@ -146,7 +173,7 @@ onMounted(async () => {
             :aria-describedby="fieldErrors.phone ? 'err-profile-phone' : undefined"
             :placeholder="$t('profile.data.phonePlaceholder')"
             autocomplete="tel"
-          >
+          />
           <p v-if="fieldErrors.phone" id="err-profile-phone" class="field-error" role="alert">
             {{ fieldErrors.phone }}
           </p>
@@ -155,11 +182,66 @@ onMounted(async () => {
         <!-- Preferred locale -->
         <div class="form-group">
           <label for="lang" class="form-label">{{ $t('profile.data.preferredLocale') }}</label>
-          <select id="lang" v-model="form.lang" class="form-input form-select">
+          <select
+            id="lang"
+            v-model="form.lang"
+            class="form-input form-select"
+            autocomplete="language"
+          >
             <option v-for="loc in availableLocales" :key="loc.code" :value="loc.code">
               {{ loc.name }}
             </option>
           </select>
+          <span class="form-hint">{{ $t('profile.data.preferredLocaleHint') }}</span>
+        </div>
+
+        <!-- Preferred country -->
+        <div class="form-group">
+          <label for="preferred_country" class="form-label">{{
+            $t('profile.data.preferredCountry')
+          }}</label>
+          <select
+            id="preferred_country"
+            v-model="form.preferred_country"
+            class="form-input form-select"
+            autocomplete="country"
+          >
+            <option value="">{{ $t('profile.data.preferredCountryAuto') }}</option>
+            <optgroup :label="$t('profile.data.countryGroupPriority')">
+              <option v-for="c in profileCountries.priority" :key="c.code" :value="c.code">
+                {{ c.flag }} {{ c.name }}
+              </option>
+            </optgroup>
+            <optgroup :label="$t('profile.data.countryGroupEurope')">
+              <option v-for="c in profileCountries.europe" :key="c.code" :value="c.code">
+                {{ c.flag }} {{ c.name }}
+              </option>
+            </optgroup>
+            <optgroup :label="$t('profile.data.countryGroupLatam')">
+              <option v-for="c in profileCountries.latam" :key="c.code" :value="c.code">
+                {{ c.flag }} {{ c.name }}
+              </option>
+            </optgroup>
+          </select>
+          <span class="form-hint">{{ $t('profile.data.preferredCountryHint') }}</span>
+        </div>
+
+        <!-- Preferred location level -->
+        <div class="form-group">
+          <label for="preferred_location_level" class="form-label">{{
+            $t('profile.data.preferredLocationLevel')
+          }}</label>
+          <select
+            id="preferred_location_level"
+            v-model="form.preferred_location_level"
+            class="form-input form-select"
+          >
+            <option :value="null">{{ $t('profile.data.preferredLocationLevelAuto') }}</option>
+            <option v-for="level in locationLevels" :key="level.value" :value="level.value">
+              {{ level.label }}
+            </option>
+          </select>
+          <span class="form-hint">{{ $t('profile.data.preferredLocationLevelHint') }}</span>
         </div>
 
         <!-- Error -->
@@ -294,19 +376,19 @@ onMounted(async () => {
 }
 
 .form-input--error {
-  border-color: var(--color-error, #dc2626);
+  border-color: var(--color-error, var(--color-error));
 }
 
 .field-error {
   font-size: var(--font-size-xs);
-  color: var(--color-error, #dc2626);
+  color: var(--color-error, var(--color-error));
   margin-top: var(--spacing-1, 4px);
 }
 
 .form-error {
   padding: 0.75rem 1rem;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   color: var(--color-error);
@@ -314,8 +396,8 @@ onMounted(async () => {
 
 .form-success {
   padding: 0.75rem 1rem;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   color: var(--color-success);

@@ -28,6 +28,9 @@ const {
   conversationStatusLabel,
   conversationStatusClass,
   isConversationClosed,
+  isBuyer,
+  // From useConversation (response time)
+  sellerAvgResponseMinutes,
   // Helpers
   maskContactData,
   // Actions
@@ -81,6 +84,8 @@ onMounted(async () => {
               :status-label="conversationStatusLabel"
               :status-class="conversationStatusClass"
               :is-closed="isConversationClosed"
+              :seller-avg-response-minutes="sellerAvgResponseMinutes"
+              :is-buyer="isBuyer"
               @back="handleBackToList"
               @close="handleCloseConversation"
             />

@@ -271,13 +271,13 @@ function onAcquisitionDateInput(e: Event) {
 }
 .field input {
   padding: 8px 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 5px;
   font-size: 0.85rem;
 }
 .field input:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
 }
 
 /* Records table */
@@ -302,7 +302,7 @@ function onAcquisitionDateInput(e: Event) {
 .records-table th {
   text-align: left;
   padding: 6px 8px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   font-weight: 500;
   font-size: 0.7rem;
   text-transform: uppercase;
@@ -314,7 +314,7 @@ function onAcquisitionDateInput(e: Event) {
 .records-table input {
   width: 100%;
   padding: 4px 6px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 3px;
   font-size: 0.75rem;
 }
@@ -349,13 +349,13 @@ function onAcquisitionDateInput(e: Event) {
   color: #374151;
 }
 .green {
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 /* Buttons */
 .btn-add {
   padding: 4px 10px;
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -366,8 +366,8 @@ function onAcquisitionDateInput(e: Event) {
   width: 24px;
   height: 24px;
   border: none;
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -376,7 +376,7 @@ function onAcquisitionDateInput(e: Event) {
 /* Empty message */
 .empty-msg {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.8rem;
   padding: 16px;
 }

@@ -52,7 +52,7 @@ useHead({ title: t('legalUk.pageTitle') })
 .legal-uk-page h1 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   margin-bottom: 24px;
 }
 
@@ -67,13 +67,13 @@ useHead({ title: t('legalUk.pageTitle') })
 .legal-section h2 {
   font-size: 1.05rem;
   font-weight: 600;
-  color: var(--text-primary, #1e293b);
+  color: var(--text-primary, var(--color-gray-800));
   margin: 0 0 10px 0;
 }
 
 .legal-section p {
   font-size: 0.9rem;
-  color: var(--text-secondary, #475569);
+  color: var(--text-secondary, var(--color-gray-600));
   line-height: 1.6;
   margin: 0;
 }

@@ -86,7 +86,7 @@ defineEmits<{
 }
 
 .badge {
-  background: #ef4444;
+  background: var(--color-error);
   color: white;
   font-size: 11px;
   font-weight: var(--font-weight-bold);

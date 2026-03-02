@@ -73,7 +73,7 @@ const { t } = useI18n()
 }
 
 .btn--primary {
-  background: var(--primary, #23424a);
+  background: var(--primary, var(--color-primary));
   color: white;
 }
 
@@ -82,21 +82,21 @@ const { t } = useI18n()
 }
 
 .btn--secondary {
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   color: #334155;
 }
 
 .btn--secondary:hover:not(:disabled) {
-  background: #cbd5e1;
+  background: var(--bg-tertiary);
 }
 
 .btn--ghost {
   background: transparent;
-  color: #64748b;
-  border: 1px solid #d1d5db;
+  color: var(--text-auxiliary);
+  border: 1px solid var(--border-color);
 }
 
 .btn--ghost:hover:not(:disabled) {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 </style>

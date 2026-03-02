@@ -173,13 +173,13 @@ onMounted(init)
 .tool-page__title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
   margin-bottom: 0.25rem;
 }
 
 .tool-page__subtitle {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   margin-bottom: 1.5rem;
 }
 

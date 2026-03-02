@@ -166,7 +166,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   padding: 40px;
 }
 
@@ -206,7 +206,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
 }
 
 .btn-back:hover {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
 }
 
 .chat-user-info {
@@ -220,7 +220,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -302,7 +302,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
 
 .message-received {
   align-self: flex-start;
-  background: white;
+  background: var(--bg-primary);
   border-bottom-left-radius: 4px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
@@ -338,7 +338,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   text-align: center;
 }
 
@@ -381,7 +381,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
   width: 44px;
   height: 44px;
   border: none;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border-radius: 50%;
   cursor: pointer;
@@ -394,7 +394,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
 }
 
 .btn-send:hover:not(:disabled) {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
   transform: scale(1.05);
 }
 
@@ -444,7 +444,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
     left: 0;
     right: 0;
     bottom: 0;
-    background: white;
+    background: var(--bg-primary);
   }
 
   .chat-panel.mobile-visible {

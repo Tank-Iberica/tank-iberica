@@ -44,13 +44,13 @@ const { t } = useI18n()
 
 .date-btn {
   padding: 8px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   transition: all 0.15s;
   min-height: 44px;
   white-space: nowrap;
@@ -58,13 +58,13 @@ const { t } = useI18n()
 }
 
 .date-btn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .date-btn.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 </style>

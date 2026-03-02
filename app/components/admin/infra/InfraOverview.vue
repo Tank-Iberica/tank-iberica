@@ -415,7 +415,7 @@ function formatMetricValue(value: number): string {
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #15803d;
   border-radius: var(--border-radius-full);
   font-size: var(--font-size-xs);
@@ -428,10 +428,10 @@ function formatMetricValue(value: number): string {
 }
 
 .next-yellow {
-  color: #92400e;
+  color: var(--color-warning-text);
 }
 .next-red {
-  color: #991b1b;
+  color: var(--color-error);
 }
 .next-gray {
   color: var(--text-auxiliary);
@@ -596,7 +596,7 @@ function formatMetricValue(value: number): string {
 .rec-warning {
   background: #fefce8;
   border: 1px solid #fde68a;
-  color: #92400e;
+  color: var(--color-warning-text);
 }
 
 .rec-critical {
@@ -606,9 +606,9 @@ function formatMetricValue(value: number): string {
 }
 
 .rec-emergency {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error);
 }
 
 .rec-icon {

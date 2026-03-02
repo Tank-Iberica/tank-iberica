@@ -111,7 +111,7 @@ const { t } = useI18n()
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -131,7 +131,7 @@ const { t } = useI18n()
   border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--bg-primary);
   z-index: 1;
 }
 
@@ -177,14 +177,14 @@ const { t } = useI18n()
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -245,43 +245,43 @@ const { t } = useI18n()
 }
 
 .deposit-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .deposit-held {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
 }
 
 .deposit-captured {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #15803d;
 }
 
 .deposit-released {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #6b7280;
 }
 
 .deposit-forfeited {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .reg-status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 
 .reg-status-approved {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #15803d;
 }
 
 .reg-status-rejected {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .reg-actions {
@@ -300,30 +300,30 @@ const { t } = useI18n()
 }
 
 .reg-approve {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #15803d;
-  border-color: #bbf7d0;
+  border-color: var(--color-success-border);
 }
 
 .reg-approve:hover {
-  background: #bbf7d0;
+  background: var(--color-success-border);
 }
 
 .reg-reject {
-  background: #fee2e2;
-  color: #991b1b;
-  border-color: #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
+  border-color: var(--color-error-border);
 }
 
 .reg-reject:hover {
-  background: #fecaca;
+  background: var(--color-error-border);
 }
 
 /* ============================================
    BUTTONS
    ============================================ */
 .btn-secondary {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   color: #374151;
   border: none;
   padding: 10px 20px;

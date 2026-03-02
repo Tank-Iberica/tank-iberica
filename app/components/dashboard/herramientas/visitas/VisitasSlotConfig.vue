@@ -275,7 +275,7 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
 }
 
 .btn-icon.delete:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
   color: var(--color-error);
 }
 

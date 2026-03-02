@@ -80,7 +80,7 @@ function onSearchInput(event: Event): void {
 
 <style scoped>
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -90,24 +90,24 @@ function onSearchInput(event: Event): void {
   margin: 0 0 12px 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .input-field {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
-  color: #1e293b;
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   min-height: 44px;
   transition: border-color 0.2s;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -124,7 +124,7 @@ function onSearchInput(event: Event): void {
   background: none;
   border: none;
   cursor: pointer;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-size: 1rem;
   min-width: 44px;
   min-height: 44px;
@@ -140,8 +140,8 @@ function onSearchInput(event: Event): void {
   right: 0;
   max-height: 240px;
   overflow-y: auto;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 0 0 8px 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   z-index: 50;
@@ -163,30 +163,30 @@ function onSearchInput(event: Event): void {
 }
 
 .vehicle-dropdown-item:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .vd-name {
   font-weight: 500;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .vd-year {
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-size: 0.85rem;
 }
 
 .vd-price {
   margin-left: auto;
   font-weight: 600;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   font-size: 0.85rem;
 }
 
 .vd-empty {
   padding: 16px;
   text-align: center;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-size: 0.9rem;
 }
 
@@ -197,9 +197,9 @@ function onSearchInput(event: Event): void {
   align-items: center;
   margin-top: 16px;
   padding: 16px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
 }
 
 .selected-vehicle-img {
@@ -218,14 +218,14 @@ function onSearchInput(event: Event): void {
 
 .sv-title {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 1rem;
 }
 
 .sv-price {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 @media (min-width: 768px) {

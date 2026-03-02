@@ -98,26 +98,26 @@ const r = computed(() => props.record)
 
 <style scoped>
 .rental-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border-left: 4px solid #e2e8f0;
+  border-left: 4px solid var(--color-gray-200);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
 .rental-card.status-active {
-  border-left-color: #22c55e;
+  border-left-color: var(--color-success);
 }
 
 .rental-card.status-finished {
-  border-left-color: #94a3b8;
+  border-left-color: var(--text-disabled);
 }
 
 .rental-card.status-overdue {
-  border-left-color: #ef4444;
+  border-left-color: var(--color-error);
 }
 
 .rental-card.ending-soon {
@@ -146,18 +146,18 @@ const r = computed(() => props.record)
 }
 
 .status-badge.status-active {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 
 .status-badge.status-finished {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--bg-secondary);
+  color: var(--text-auxiliary);
 }
 
 .status-badge.status-overdue {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .card-vehicle {
@@ -165,7 +165,7 @@ const r = computed(() => props.record)
 }
 
 .year-tag {
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.85rem;
   font-weight: 400;
 }
@@ -183,7 +183,7 @@ const r = computed(() => props.record)
 
 .client-contact {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 
 .card-details {
@@ -202,7 +202,7 @@ const r = computed(() => props.record)
 .detail-label {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #9ca3af;
+  color: var(--text-disabled);
   text-transform: uppercase;
 }
 
@@ -213,18 +213,18 @@ const r = computed(() => props.record)
 
 .detail-value.rent {
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .ending-text {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .ending-badge {
   display: inline-block;
   padding: 1px 6px;
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
   border-radius: 8px;
   font-size: 0.7rem;
   font-weight: 700;
@@ -235,7 +235,7 @@ const r = computed(() => props.record)
   font-size: 0.8rem;
   color: #6b7280;
   padding: 8px 10px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 6px;
   font-style: italic;
 }
@@ -254,10 +254,10 @@ const r = computed(() => props.record)
 }
 
 .btn-icon:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .btn-icon.delete:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 </style>

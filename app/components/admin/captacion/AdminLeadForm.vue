@@ -102,7 +102,7 @@ const localForm = computed(() => props.form)
 
 <style scoped>
 .manual-form-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 20px;
@@ -124,22 +124,22 @@ const localForm = computed(() => props.form)
 .form-field label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .form-field input {
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.9rem;
   font-family: inherit;
   min-height: 44px;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .form-field input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -152,9 +152,9 @@ const localForm = computed(() => props.form)
 
 .btn-cancel {
   padding: 10px 18px;
-  background: white;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-auxiliary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   font-size: 0.9rem;
@@ -165,14 +165,14 @@ const localForm = computed(() => props.form)
 
 @media (hover: hover) {
   .btn-cancel:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
+    background: var(--bg-secondary);
+    border-color: var(--color-gray-300);
   }
 }
 
 .btn-save {
   padding: 10px 18px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -185,7 +185,7 @@ const localForm = computed(() => props.form)
 
 @media (hover: hover) {
   .btn-save:hover {
-    background: #1a3238;
+    background: var(--color-primary-dark);
   }
 }
 

@@ -19,6 +19,7 @@
     <ModalsDemandModal v-model="demandOpen" @open-auth="authOpen = true" />
     <ModalsSubscribeModal v-model="subscribeOpen" />
     <LayoutCookieBanner />
+    <AccessibilityFAB />
 
     <!-- ARIA live region para notificaciones dinámicas (screen readers) -->
     <div id="aria-live-region" aria-live="polite" aria-atomic="true" class="sr-only" />
@@ -86,7 +87,7 @@ watch(
   left: 16px;
   z-index: 10000;
   padding: 12px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border-radius: 0 0 8px 8px;
   font-weight: 600;
@@ -107,13 +108,13 @@ watch(
 
 .main-content {
   flex: 1;
-  padding-top: 64px;
+  padding-top: var(--header-offset);
   transition: padding-top 0.3s ease;
 }
 
 @media (min-width: 768px) {
   .main-content {
-    padding-top: 60px;
+    padding-top: var(--header-offset-desktop);
   }
 }
 </style>
@@ -125,12 +126,12 @@ body.banner-visible .app-header {
 }
 
 body.banner-visible .main-content {
-  padding-top: 96px; /* 64px header + 32px banner */
+  padding-top: calc(var(--header-offset) + 32px);
 }
 
 @media (min-width: 768px) {
   body.banner-visible .main-content {
-    padding-top: 92px; /* 60px header + 32px banner */
+    padding-top: calc(var(--header-offset-desktop) + 32px);
   }
 }
 </style>

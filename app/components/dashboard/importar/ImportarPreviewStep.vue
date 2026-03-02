@@ -92,7 +92,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .step-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -109,7 +109,7 @@ const emit = defineEmits<{
   margin: 0;
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .preview-stats {
@@ -120,11 +120,11 @@ const emit = defineEmits<{
 }
 
 .stat-valid {
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 .stat-invalid {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .table-wrapper {
@@ -141,36 +141,36 @@ const emit = defineEmits<{
 .preview-table th {
   text-align: left;
   padding: 12px 8px;
-  background: #f8fafc;
-  border-bottom: 2px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--color-gray-200);
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
 .preview-table td {
   padding: 12px 8px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .row-invalid {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .status-ok {
-  color: #16a34a;
+  color: var(--color-success);
   font-weight: 700;
   font-size: 1.1rem;
 }
 
 .status-error {
-  color: #dc2626;
+  color: var(--color-error);
   font-weight: 700;
   font-size: 1.1rem;
 }
 
 .error-list {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.8rem;
 }
 
@@ -187,7 +187,7 @@ const emit = defineEmits<{
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -196,7 +196,7 @@ const emit = defineEmits<{
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-secondary {
@@ -205,16 +205,16 @@ const emit = defineEmits<{
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 @media (min-width: 768px) {

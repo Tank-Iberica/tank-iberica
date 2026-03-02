@@ -86,12 +86,12 @@ useHead({ title: t('transparency.pageTitle') })
 .transparency-page h1 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   margin-bottom: 8px;
 }
 
 .transparency-subtitle {
-  color: var(--text-auxiliary, #64748b);
+  color: var(--text-auxiliary, var(--color-gray-500));
   font-size: 0.95rem;
   margin-bottom: 32px;
 }
@@ -107,13 +107,13 @@ useHead({ title: t('transparency.pageTitle') })
 .transparency-section h2 {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-primary, #1e293b);
+  color: var(--text-primary, var(--color-gray-800));
   margin: 0 0 12px 0;
 }
 
 .transparency-section p {
   font-size: 0.9rem;
-  color: var(--text-secondary, #475569);
+  color: var(--text-secondary, var(--color-gray-600));
   line-height: 1.6;
   margin: 0 0 12px 0;
 }
@@ -126,11 +126,11 @@ useHead({ title: t('transparency.pageTitle') })
 
 .contact-item {
   font-size: 0.9rem;
-  color: var(--text-secondary, #475569);
+  color: var(--text-secondary, var(--color-gray-600));
 }
 
 .contact-item a {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   font-weight: 500;
 }
 
@@ -142,7 +142,7 @@ useHead({ title: t('transparency.pageTitle') })
 
 .transparency-list li {
   font-size: 0.9rem;
-  color: var(--text-secondary, #475569);
+  color: var(--text-secondary, var(--color-gray-600));
   line-height: 1.6;
   margin-bottom: 4px;
 }
@@ -159,25 +159,25 @@ useHead({ title: t('transparency.pageTitle') })
   flex-direction: column;
   gap: 2px;
   padding: 12px;
-  background: var(--bg-secondary, #f8fafc);
+  background: var(--bg-secondary, var(--color-gray-50));
   border-radius: 8px;
 }
 
 .report-category-item strong {
   font-size: 0.9rem;
-  color: var(--text-primary, #1e293b);
+  color: var(--text-primary, var(--color-gray-800));
 }
 
 .report-category-desc {
   font-size: 0.8rem;
-  color: var(--text-auxiliary, #94a3b8);
+  color: var(--text-auxiliary, var(--color-gray-400));
 }
 
 .report-next-date {
   margin-top: 12px;
   font-size: 0.85rem;
   font-style: italic;
-  color: var(--text-auxiliary, #94a3b8);
+  color: var(--text-auxiliary, var(--color-gray-400));
 }
 
 @media (min-width: 768px) {

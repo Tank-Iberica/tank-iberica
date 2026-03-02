@@ -36,7 +36,7 @@ const { t } = useI18n()
     </p>
     <div class="columns-grid">
       <label v-for="(col, idx) in csvColumns" :key="col.key" class="column-checkbox">
-        <input type="checkbox" :checked="col.enabled" @change="emit('toggleColumn', idx)" >
+        <input type="checkbox" :checked="col.enabled" @change="emit('toggleColumn', idx)" />
         <span>{{ getColumnLabel(col.key) }}</span>
       </label>
     </div>
@@ -45,7 +45,7 @@ const { t } = useI18n()
 
 <style scoped>
 .options-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -64,7 +64,7 @@ const { t } = useI18n()
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .columns-actions {
@@ -75,7 +75,7 @@ const { t } = useI18n()
 .btn-text {
   background: none;
   border: none;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   font-size: 0.85rem;
   cursor: pointer;
   padding: 4px 8px;
@@ -91,7 +91,7 @@ const { t } = useI18n()
 .columns-count {
   margin: 0 0 12px;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .columns-grid {
@@ -105,7 +105,7 @@ const { t } = useI18n()
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -115,13 +115,13 @@ const { t } = useI18n()
 }
 
 .column-checkbox:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .column-checkbox input {
   width: 18px;
   height: 18px;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 @media (min-width: 480px) {

@@ -167,9 +167,9 @@ async function removeBg() {
 
 .preview-box {
   padding: 12px;
-  border: 1px dashed #e2e8f0;
+  border: 1px dashed var(--color-gray-200);
   border-radius: 8px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -252,7 +252,7 @@ async function removeBg() {
 .btn-remove {
   background: none;
   border: none;
-  color: #ef4444;
+  color: var(--color-error);
   font-size: 0.8rem;
   cursor: pointer;
   padding: 0;
@@ -261,7 +261,7 @@ async function removeBg() {
 
 @media (hover: hover) {
   .btn-remove:hover {
-    color: #b91c1c;
+    color: var(--color-error);
   }
 }
 
@@ -269,7 +269,7 @@ async function removeBg() {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--color-gray-300);
   border-radius: 8px;
   padding: 16px;
   cursor: pointer;
@@ -282,14 +282,14 @@ async function removeBg() {
 
 .upload-zone:not(.uploading):focus,
 .upload-zone:not(.uploading):active {
-  border-color: var(--color-primary, #23424a);
-  background: #f0fdf4;
+  border-color: var(--color-primary);
+  background: var(--color-success-bg, #dcfce7);
 }
 
 @media (hover: hover) {
   .upload-zone:not(.uploading):hover {
-    border-color: var(--color-primary, #23424a);
-    background: #f0fdf4;
+    border-color: var(--color-primary);
+    background: var(--color-success-bg, #dcfce7);
   }
 }
 
@@ -305,13 +305,13 @@ async function removeBg() {
   gap: 4px;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .upload-hint {
   font-size: 0.75rem;
   font-weight: 400;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .upload-status {
@@ -320,7 +320,7 @@ async function removeBg() {
   align-items: center;
   gap: 6px;
   font-size: 0.875rem;
-  color: #3b82f6;
+  color: var(--color-info);
   width: 100%;
 }
 
@@ -328,7 +328,7 @@ async function removeBg() {
   width: 100%;
   max-width: 200px;
   height: 6px;
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   border-radius: 99px;
   overflow: hidden;
 }
@@ -336,7 +336,7 @@ async function removeBg() {
 .upload-progress-fill {
   display: block;
   height: 100%;
-  background: #3b82f6;
+  background: var(--color-info);
   border-radius: 99px;
   transition: width 0.2s;
 }
@@ -348,6 +348,6 @@ async function removeBg() {
 .uploader-error {
   margin: 0;
   font-size: 0.8rem;
-  color: #ef4444;
+  color: var(--color-error);
 }
 </style>

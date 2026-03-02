@@ -279,6 +279,30 @@
       />
     </section>
 
+    <!-- 7b. Discover more on Tracciona — subtle cross-sell at end of dealer catalog -->
+    <div class="dealer-discover">
+      <div class="discover-inner">
+        <div class="discover-text">
+          <p class="discover-title">{{ t('dealer.discoverMoreTitle') }}</p>
+          <p class="discover-desc">{{ t('dealer.discoverMoreDesc') }}</p>
+        </div>
+        <NuxtLink to="/" class="discover-cta">
+          {{ t('dealer.discoverMoreCta') }}
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            aria-hidden="true"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </NuxtLink>
+      </div>
+    </div>
+
     <!-- 7. Social links -->
     <section v-if="hasSocialLinks" class="dealer-section">
       <h2 class="section-title">{{ t('dealer.followUs') }}</h2>
@@ -716,7 +740,7 @@ onUnmounted(() => {
 }
 
 .badge-founding {
-  background: linear-gradient(135deg, #f5d547 0%, #d4a017 100%);
+  background: linear-gradient(135deg, #f5d547 0%, var(--color-gold) 100%);
   color: #5a4500;
 }
 
@@ -1028,7 +1052,7 @@ onUnmounted(() => {
 
 .form-error {
   font-size: var(--font-size-sm);
-  color: var(--color-error, #ef4444);
+  color: var(--color-error);
 }
 
 @media (min-width: 480px) {
@@ -1201,6 +1225,75 @@ onUnmounted(() => {
   .dealer-section {
     margin: var(--spacing-5) var(--spacing-8);
     padding: var(--spacing-8);
+  }
+}
+
+/* ── Discover more card ── */
+.dealer-discover {
+  margin: 0 var(--spacing-3) var(--spacing-2);
+}
+
+.discover-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-md);
+}
+
+.discover-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.discover-desc {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin-top: var(--spacing-1);
+}
+
+.discover-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  text-decoration: none;
+  align-self: flex-start;
+  min-height: 44px;
+  padding: var(--spacing-2) 0;
+}
+
+@media (hover: hover) {
+  .discover-cta:hover {
+    opacity: 0.75;
+  }
+}
+
+@media (min-width: 480px) {
+  .discover-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .discover-text {
+    flex: 1;
+  }
+
+  .discover-cta {
+    flex-shrink: 0;
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+}
+
+@media (min-width: 768px) {
+  .dealer-discover {
+    margin: 0 var(--spacing-6) var(--spacing-4);
   }
 }
 </style>

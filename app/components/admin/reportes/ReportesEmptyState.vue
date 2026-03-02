@@ -38,7 +38,7 @@ const { t } = useI18n()
 
 <style scoped>
 .empty-state-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 60px 24px;
   text-align: center;
@@ -58,6 +58,6 @@ const { t } = useI18n()
 .empty-description {
   margin: 0;
   font-size: 0.85rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 </style>

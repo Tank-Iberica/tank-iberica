@@ -71,7 +71,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 12px 16px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -99,7 +99,7 @@ const emit = defineEmits<{
   align-items: flex-start;
   gap: 10px;
   padding: 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color-light);
   border-radius: 8px;
   cursor: pointer;
 }
@@ -107,7 +107,7 @@ const emit = defineEmits<{
   margin-top: 2px;
 }
 .radio-card.active {
-  border-color: #23424a;
+  border-color: var(--color-primary);
   background: #f0f9ff;
 }
 .radio-content {
@@ -124,7 +124,7 @@ const emit = defineEmits<{
 .owner-fields {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px dashed #f59e0b;
+  border-top: 1px dashed var(--color-warning);
   background: #fffbeb;
   margin: 12px -16px -12px;
   padding: 12px 16px;
@@ -143,13 +143,13 @@ const emit = defineEmits<{
 }
 .field input {
   padding: 8px 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 5px;
   font-size: 0.85rem;
 }
 .field input:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
 }
 
 @media (max-width: 768px) {

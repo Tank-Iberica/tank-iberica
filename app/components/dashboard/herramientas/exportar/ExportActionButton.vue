@@ -39,7 +39,7 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 48px;
   padding: 12px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -52,7 +52,7 @@ const { t } = useI18n()
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {

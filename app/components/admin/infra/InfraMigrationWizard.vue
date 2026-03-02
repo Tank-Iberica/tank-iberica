@@ -594,7 +594,7 @@ function updateConfirmed(e: Event) {
   border: 1px solid #fde68a;
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-sm);
-  color: #92400e;
+  color: var(--color-warning-text);
 }
 
 .warning-icon {

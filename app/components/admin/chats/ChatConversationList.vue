@@ -110,7 +110,7 @@ function onSearchInput(event: Event) {
 .search-box input {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 20px;
   font-size: 0.9rem;
   background: #f9fafb;
@@ -118,8 +118,8 @@ function onSearchInput(event: Event) {
 
 .search-box input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
-  background: white;
+  border-color: var(--color-primary);
+  background: var(--bg-primary);
 }
 
 .conversations {
@@ -154,7 +154,7 @@ function onSearchInput(event: Event) {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -180,7 +180,7 @@ function onSearchInput(event: Event) {
   right: 2px;
   width: 12px;
   height: 12px;
-  background: #22c55e;
+  background: var(--color-success);
   border-radius: 50%;
   border: 2px solid white;
 }
@@ -205,7 +205,7 @@ function onSearchInput(event: Event) {
 
 .conversation-time {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 
 .conversation-preview {
@@ -224,17 +224,17 @@ function onSearchInput(event: Event) {
 }
 
 .preview-you {
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 
 .preview-empty {
   font-size: 0.85rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-style: italic;
 }
 
 .unread-badge {
-  background: #22c55e;
+  background: var(--color-success);
   color: white;
   font-size: 0.7rem;
   font-weight: 600;
@@ -247,7 +247,7 @@ function onSearchInput(event: Event) {
 .empty-list {
   padding: 40px 20px;
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 
 .empty-icon {
@@ -287,7 +287,7 @@ function onSearchInput(event: Event) {
     left: 0;
     right: 0;
     bottom: 0;
-    background: white;
+    background: var(--bg-primary);
     z-index: 10;
   }
 

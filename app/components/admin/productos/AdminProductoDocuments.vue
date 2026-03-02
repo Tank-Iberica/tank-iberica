@@ -70,7 +70,7 @@ const emit = defineEmits<Emits>()
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -111,7 +111,7 @@ const emit = defineEmits<Emits>()
 }
 .doc-type-select {
   padding: 6px 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 5px;
   font-size: 0.8rem;
   min-width: 140px;
@@ -123,15 +123,15 @@ const emit = defineEmits<Emits>()
   display: block;
   text-align: center;
   background: #f9fafb;
-  border: 2px dashed #e5e7eb;
+  border: 2px dashed var(--border-color-light);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
   color: #6b7280;
 }
 .upload-zone-label.compact:hover {
-  border-color: #23424a;
-  background: #f3f4f6;
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
 }
 .upload-zone-label.compact input[type='file'] {
   display: none;
@@ -140,8 +140,8 @@ const emit = defineEmits<Emits>()
   font-size: 0.75rem;
   padding: 6px 10px;
   margin-bottom: 8px;
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 6px;
 }
 .doc-row {
@@ -156,7 +156,7 @@ const emit = defineEmits<Emits>()
   font-size: 0.8rem;
 }
 .doc-link {
-  color: #23424a;
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
   flex: 1;
@@ -170,7 +170,7 @@ const emit = defineEmits<Emits>()
 }
 .doc-type-badge {
   padding: 2px 6px;
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   border-radius: 3px;
   font-size: 0.65rem;
   color: #6b7280;
@@ -179,7 +179,7 @@ const emit = defineEmits<Emits>()
 }
 .btn-add {
   padding: 4px 10px;
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -190,15 +190,15 @@ const emit = defineEmits<Emits>()
   width: 24px;
   height: 24px;
   border: none;
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
 }
 .empty-msg {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.8rem;
   padding: 16px;
 }

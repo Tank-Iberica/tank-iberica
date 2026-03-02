@@ -66,7 +66,7 @@ defineEmits<{
 <style scoped>
 /* SEO Panel */
 .nf-seo {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -111,16 +111,16 @@ defineEmits<{
 }
 
 .seo-score-mini.good {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 .seo-score-mini.warning {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 .seo-score-mini.bad {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .seo-panel {
@@ -135,7 +135,7 @@ defineEmits<{
 
 .toggle-icon {
   font-size: 1.2rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 /* Score circle */
@@ -147,8 +147,8 @@ defineEmits<{
 }
 
 .score-circle {
-  width: 72px;
-  height: 72px;
+  min-width: 72px;
+  min-height: 72px;
   border-radius: 50%;
   border: 5px solid;
   display: flex;
@@ -159,13 +159,13 @@ defineEmits<{
 }
 
 .score-circle.good {
-  border-color: #22c55e;
+  border-color: var(--color-success);
 }
 .score-circle.warning {
-  border-color: #f59e0b;
+  border-color: var(--color-warning);
 }
 .score-circle.bad {
-  border-color: #ef4444;
+  border-color: var(--color-error);
 }
 
 .score-number {
@@ -177,7 +177,7 @@ defineEmits<{
 
 .score-label {
   font-size: 0.6rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .score-text {
@@ -195,13 +195,13 @@ defineEmits<{
   font-size: 0.8rem;
 }
 .level-good {
-  color: #22c55e;
+  color: var(--color-success);
 }
 .level-warning {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .level-bad {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 /* Snippet preview */
@@ -212,7 +212,7 @@ defineEmits<{
 .snippet-label {
   font-size: 0.7rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-disabled);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
@@ -220,7 +220,7 @@ defineEmits<{
 
 .snippet-box {
   background: #fafafa;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   padding: 14px;
   font-family: Arial, sans-serif;
@@ -257,13 +257,13 @@ defineEmits<{
 
 /* Criteria */
 .seo-criteria {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
   padding-top: 12px;
 }
 
 .criterion-row {
   padding: 8px 0;
-  border-bottom: 1px solid #f8fafc;
+  border-bottom: 1px solid var(--color-gray-50);
 }
 
 .criterion-row:last-child {
@@ -284,13 +284,13 @@ defineEmits<{
 }
 
 .criterion-dot.good {
-  background: #22c55e;
+  background: var(--color-success);
 }
 .criterion-dot.warning {
-  background: #f59e0b;
+  background: var(--color-warning);
 }
 .criterion-dot.bad {
-  background: #ef4444;
+  background: var(--color-error);
 }
 
 .criterion-label {
@@ -303,12 +303,12 @@ defineEmits<{
 .criterion-score {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .criterion-desc {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   margin: 3px 0 0;
   padding-left: 16px;
   line-height: 1.4;

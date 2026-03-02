@@ -109,8 +109,8 @@ onMounted(() => init())
 }
 
 .error-msg {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -123,14 +123,14 @@ onMounted(() => init())
   gap: 12px;
   padding: 40px 0;
   justify-content: center;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 2px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }

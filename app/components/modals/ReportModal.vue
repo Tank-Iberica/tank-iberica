@@ -187,14 +187,14 @@ watch(
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color-light, #e2e8f0);
+  border-bottom: 1px solid var(--border-color-light, var(--color-gray-200));
 }
 
 .report-header h2 {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--text-primary, #1e293b);
+  color: var(--text-primary, var(--color-gray-800));
 }
 
 .report-close {
@@ -207,13 +207,13 @@ watch(
   justify-content: center;
   border-radius: 50%;
   background: transparent;
-  color: var(--text-auxiliary, #94a3b8);
+  color: var(--text-auxiliary, var(--color-gray-400));
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .report-close:hover {
-  background: var(--bg-secondary, #f1f5f9);
+  background: var(--bg-secondary, var(--color-gray-100));
 }
 
 .report-form {
@@ -225,7 +225,7 @@ watch(
 
 .report-description {
   font-size: 0.875rem;
-  color: var(--text-secondary, #475569);
+  color: var(--text-secondary, var(--color-gray-600));
   margin: 0;
   line-height: 1.5;
 }
@@ -239,7 +239,7 @@ watch(
 .report-field label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-secondary, #475569);
+  color: var(--text-secondary, var(--color-gray-600));
 }
 
 .report-field input,
@@ -247,7 +247,7 @@ watch(
 .report-field textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid var(--border-color, #e2e8f0);
+  border: 1px solid var(--border-color, var(--color-gray-200));
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
@@ -258,7 +258,7 @@ watch(
 .report-field select:focus,
 .report-field textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -269,10 +269,10 @@ watch(
 
 .report-error {
   padding: 10px 14px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.875rem;
 }
 
@@ -288,7 +288,7 @@ watch(
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -311,9 +311,9 @@ watch(
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: white;
-  color: var(--text-secondary, #475569);
-  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-primary);
+  color: var(--text-secondary, var(--color-gray-600));
+  border: 1px solid var(--border-color, var(--color-gray-200));
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
@@ -321,7 +321,7 @@ watch(
 
 .report-legal {
   font-size: 0.75rem;
-  color: var(--text-auxiliary, #94a3b8);
+  color: var(--text-auxiliary, var(--color-gray-400));
   margin: 0;
   line-height: 1.4;
 }
@@ -337,7 +337,7 @@ watch(
 
 .report-success p {
   font-size: 0.95rem;
-  color: var(--text-secondary, #475569);
+  color: var(--text-secondary, var(--color-gray-600));
   margin: 0;
 }
 </style>

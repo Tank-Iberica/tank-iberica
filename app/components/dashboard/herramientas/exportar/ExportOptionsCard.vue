@@ -86,7 +86,7 @@ function onCategoryChange(event: Event): void {
 
 <style scoped>
 .options-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -96,7 +96,7 @@ function onCategoryChange(event: Event): void {
   margin: 0 0 16px;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .options-grid {
@@ -120,23 +120,23 @@ function onCategoryChange(event: Event): void {
 .field-select {
   min-height: 44px;
   padding: 8px 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   font-size: 0.9rem;
-  background: white;
-  color: #1e293b;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .field-select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 /* Format toggle */
 .format-toggle {
   display: flex;
   gap: 0;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -146,10 +146,10 @@ function onCategoryChange(event: Event): void {
   min-height: 44px;
   padding: 10px 16px;
   border: none;
-  background: white;
+  background: var(--bg-primary);
   font-size: 0.9rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -159,7 +159,7 @@ function onCategoryChange(event: Event): void {
 }
 
 .format-btn.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
 }
 

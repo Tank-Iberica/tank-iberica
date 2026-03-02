@@ -122,7 +122,7 @@ onMounted(() => {
 }
 
 .total-badge {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #6b7280;
   padding: 6px 12px;
   border-radius: 16px;

@@ -29,7 +29,7 @@ defineEmits<{
           placeholder="English title..."
           :value="titleEn || ''"
           @input="$emit('update:titleEn', ($event.target as HTMLInputElement).value || null)"
-        >
+        />
       </div>
       <div class="field">
         <label>Meta Descripcion (EN)</label>
@@ -60,7 +60,7 @@ defineEmits<{
 
 <style scoped>
 .section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -82,13 +82,13 @@ defineEmits<{
 
 .toggle-icon {
   font-size: 1.2rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .section-body {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -103,12 +103,12 @@ defineEmits<{
 .field label {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .input {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
@@ -117,7 +117,7 @@ defineEmits<{
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .textarea {

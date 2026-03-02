@@ -35,6 +35,6 @@ const { t } = useI18n()
 .total-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 </style>

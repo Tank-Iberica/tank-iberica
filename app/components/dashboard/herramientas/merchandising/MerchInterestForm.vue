@@ -134,22 +134,22 @@ function onChange(field: keyof MerchForm, event: Event) {
   margin: 0;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .section-desc {
   margin: -8px 0 0;
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   line-height: 1.5;
 }
 
 .form-section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px;
   padding: 24px 20px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
 }
 
 .interest-form {
@@ -171,7 +171,7 @@ function onChange(field: keyof MerchForm, event: Event) {
 }
 
 .required {
-  color: #ef4444;
+  color: var(--color-error);
   margin-left: 2px;
 }
 
@@ -179,11 +179,11 @@ function onChange(field: keyof MerchForm, event: Event) {
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 0.9rem;
-  color: #1e293b;
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
@@ -193,7 +193,7 @@ function onChange(field: keyof MerchForm, event: Event) {
 
 .field-input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.12);
 }
 
@@ -204,17 +204,17 @@ function onChange(field: keyof MerchForm, event: Event) {
 
 .alert-error {
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.875rem;
 }
 
 .alert-success {
   padding: 20px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: 12px;
   color: #15803d;
   display: flex;
@@ -240,7 +240,7 @@ function onChange(field: keyof MerchForm, event: Event) {
   gap: 8px;
   min-height: 48px;
   padding: 12px 24px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 10px;
@@ -254,7 +254,7 @@ function onChange(field: keyof MerchForm, event: Event) {
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-submit:disabled {
@@ -296,13 +296,13 @@ function onChange(field: keyof MerchForm, event: Event) {
 }
 
 .btn-reset:hover {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
 }
 
 .form-note {
   margin: 0;
   font-size: 0.78rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
   text-align: center;
   font-style: italic;
 }

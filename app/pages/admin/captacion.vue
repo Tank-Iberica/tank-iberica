@@ -226,7 +226,7 @@ const {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .header-actions {
@@ -237,7 +237,7 @@ const {
 
 .btn-refresh {
   padding: 10px 18px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -249,7 +249,7 @@ const {
 }
 
 .btn-refresh:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-refresh:disabled {
@@ -271,7 +271,7 @@ const {
 }
 
 .btn-add:hover {
-  background: #1d4ed8;
+  background: var(--color-info);
 }
 
 /* ============================================
@@ -282,10 +282,10 @@ const {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 
@@ -294,10 +294,10 @@ const {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   border-radius: 8px;
-  color: #16a34a;
+  color: var(--color-success);
   font-size: 0.9rem;
 }
 
@@ -317,14 +317,14 @@ const {
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -340,7 +340,7 @@ const {
   flex-direction: column;
   align-items: center;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .empty-state p {

@@ -36,7 +36,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
@@ -66,18 +66,18 @@ const emit = defineEmits<{
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color-light);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .radio-card:hover {
-  border-color: #9ca3af;
+  border-color: var(--text-disabled);
 }
 
 .radio-card.selected {
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   background: #f0fdfa;
 }
 

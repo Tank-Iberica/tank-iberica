@@ -32,7 +32,7 @@ const emit = defineEmits<{
           type="checkbox"
           class="section-checkbox"
           @change="emit('toggle-section', section.key, ($event.target as HTMLInputElement).checked)"
-        >
+        />
       </label>
     </div>
   </div>
@@ -40,7 +40,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
@@ -71,18 +71,18 @@ const emit = defineEmits<{
   justify-content: space-between;
   gap: 12px;
   padding: 14px 16px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color-light);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .section-toggle-card:hover {
-  border-color: #9ca3af;
+  border-color: var(--text-disabled);
 }
 
 .section-toggle-card.active {
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   background: #f0fdfa;
 }
 
@@ -109,7 +109,7 @@ const emit = defineEmits<{
   height: 20px;
   cursor: pointer;
   flex-shrink: 0;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 @media (min-width: 480px) {

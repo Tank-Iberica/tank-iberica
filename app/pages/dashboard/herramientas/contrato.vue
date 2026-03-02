@@ -256,8 +256,8 @@ onMounted(init)
 .spinner {
   width: 32px;
   height: 32px;
-  border: 3px solid #e5e7eb;
-  border-top-color: #23424a;
+  border: 3px solid var(--border-color-light);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -294,16 +294,16 @@ onMounted(init)
 }
 
 .tab:hover {
-  color: #23424a;
+  color: var(--color-primary);
 }
 
 .tab.active {
-  color: #23424a;
-  border-bottom-color: #23424a;
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
 .tab-count {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   font-size: 0.7rem;
   padding: 2px 8px;
@@ -314,7 +314,7 @@ onMounted(init)
 
 /* Tool Content */
 .tool-content {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -350,8 +350,8 @@ onMounted(init)
 /* Buttons */
 .btn {
   padding: 10px 20px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.9rem;
   cursor: pointer;

@@ -29,7 +29,7 @@ const emit = defineEmits<{
   margin: 0;
   font-size: var(--font-size-2xl, 1.5rem);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--text-primary, #1e293b);
+  color: var(--text-primary, var(--color-gray-800));
 }
 
 .btn-export {
@@ -38,7 +38,7 @@ const emit = defineEmits<{
   justify-content: center;
   gap: var(--spacing-2, 8px);
   padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: var(--color-white, #fff);
   border: none;
   border-radius: var(--border-radius, 8px);
@@ -50,7 +50,7 @@ const emit = defineEmits<{
 }
 
 .btn-export:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 @media (min-width: 768px) {

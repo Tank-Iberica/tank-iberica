@@ -80,7 +80,7 @@ function getFilterValue(id: string): string | number | boolean | undefined {
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -128,13 +128,13 @@ function getFilterValue(id: string): string | number | boolean | undefined {
 .field-sm input,
 .field-sm select {
   padding: 6px 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 4px;
   font-size: 0.8rem;
 }
 .hint {
   font-weight: normal;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 .tick-inline {
   display: flex;

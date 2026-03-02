@@ -177,7 +177,7 @@ const {
 }
 
 .back-link {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
@@ -190,12 +190,12 @@ const {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .subtitle {
   margin: 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
@@ -203,7 +203,7 @@ const {
 .tab-bar {
   display: flex;
   gap: 0;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-gray-200);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -217,7 +217,7 @@ const {
   border-bottom: 3px solid transparent;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-auxiliary);
   cursor: pointer;
   white-space: nowrap;
   min-height: 44px;
@@ -228,12 +228,12 @@ const {
 }
 
 .tab-button:hover {
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .tab-active {
-  color: var(--color-primary, #23424a);
-  border-bottom-color: var(--color-primary, #23424a);
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
 /* Print styles */

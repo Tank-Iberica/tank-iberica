@@ -141,7 +141,7 @@ function fmt(val: number | null | undefined): string {
   padding: 16px;
 }
 .modal {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 10px;
   width: 100%;
   max-width: 400px;
@@ -163,7 +163,7 @@ function fmt(val: number | null | undefined): string {
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 .modal-body {
   padding: 16px;
@@ -186,14 +186,14 @@ function fmt(val: number | null | undefined): string {
 .field input,
 .field textarea {
   padding: 8px 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 5px;
   font-size: 0.85rem;
 }
 .profit-box {
   margin-top: 16px;
   padding: 12px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 6px;
 }
 .profit-row {
@@ -211,10 +211,10 @@ function fmt(val: number | null | undefined): string {
   font-size: 1rem;
 }
 .profit-row.final.pos {
-  color: #16a34a;
+  color: var(--color-success);
 }
 .profit-row.final.neg {
-  color: #dc2626;
+  color: var(--color-error);
 }
 .modal-foot {
   display: flex;
@@ -227,14 +227,14 @@ function fmt(val: number | null | undefined): string {
 }
 .btn {
   padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 6px;
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-primary {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
 }

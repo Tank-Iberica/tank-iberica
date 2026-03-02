@@ -342,7 +342,7 @@ const adItems = computed(() =>
   bottom: 0;
   width: 100%;
   max-width: 400px;
-  background: white;
+  background: var(--bg-primary);
   display: flex;
   flex-direction: column;
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
@@ -358,29 +358,26 @@ const adItems = computed(() =>
   min-width: 44px;
   min-height: 44px;
   border: none;
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--bg-secondary);
   border-radius: 50%;
   font-size: 24px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
+  color: var(--text-auxiliary);
   z-index: 10;
 }
 
 .panel-close:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 .panel-banner {
   display: flex;
   padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
-  background: linear-gradient(
-    135deg,
-    var(--color-primary, #23424a) 0%,
-    var(--color-primary-dark, #1a3238) 100%
-  );
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: var(--color-white, #fff);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: 600;
@@ -398,8 +395,8 @@ const adItems = computed(() =>
   align-items: center;
   gap: 16px;
   padding: 24px 20px;
-  background: var(--color-primary, #23424a);
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-white);
 }
 
 .user-avatar {
@@ -433,28 +430,29 @@ const adItems = computed(() =>
   display: flex;
   flex-direction: column;
   gap: 2px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color-light);
 }
 
 .panel-nav-item {
-  display: block;
+  display: flex;
+  align-items: center;
   padding: 10px 12px;
   font-size: 0.9rem;
-  color: #1e293b;
+  color: var(--text-primary);
   text-decoration: none;
   border-radius: 6px;
   transition: background 0.15s;
   min-height: 44px;
-  line-height: 24px;
+  line-height: var(--line-height-normal);
 }
 
 .panel-nav-item:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .panel-nav-divider {
   height: 1px;
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   margin: 4px 0;
 }
 
@@ -462,7 +460,7 @@ const adItems = computed(() =>
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: var(--text-disabled);
   padding: 4px 12px 0;
   letter-spacing: 0.05em;
 }
@@ -475,36 +473,36 @@ const adItems = computed(() =>
 
 .panel-footer {
   padding: 16px 20px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color-light);
 }
 
 .btn-logout {
   width: 100%;
   padding: 12px;
   background: none;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  color: #666;
+  color: var(--text-auxiliary);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .btn-logout:hover {
-  background: #fee2e2;
-  border-color: #fca5a5;
-  color: #dc2626;
+  background: var(--color-error-bg);
+  border-color: var(--color-error-border);
+  color: var(--color-error);
 }
 
 .section-info {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-auxiliary);
   margin-bottom: 12px;
 }
 
 .empty-state {
   text-align: center;
-  color: #999;
+  color: var(--text-disabled);
   padding: 20px;
   font-size: 0.9rem;
 }
@@ -518,9 +516,9 @@ const adItems = computed(() =>
   display: block;
   width: 100%;
   padding: 12px;
-  background: #f0f0f0;
-  color: #333;
-  border: none;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   font-weight: 500;
   text-align: center;
@@ -545,8 +543,8 @@ const adItems = computed(() =>
 .btn-export {
   width: 100%;
   padding: 12px;
-  background: var(--color-primary, #23424a);
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-white);
   border: none;
   border-radius: 8px;
   font-weight: 500;
@@ -563,8 +561,8 @@ const adItems = computed(() =>
 .btn-delete-account {
   width: 100%;
   padding: 12px;
-  background: #dc2626;
-  color: white;
+  background: var(--color-error);
+  color: var(--color-white);
   border: none;
   border-radius: 8px;
   font-weight: 500;
@@ -574,7 +572,7 @@ const adItems = computed(() =>
 }
 
 .btn-delete-account:hover {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 /* Panel slide-in transitions */

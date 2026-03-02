@@ -54,7 +54,7 @@ const { sanitize } = useSanitize()
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 100%;
   max-width: 680px;
@@ -119,7 +119,7 @@ const { sanitize } = useSanitize()
 
 /* -- Buttons -- */
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -132,7 +132,7 @@ const { sanitize } = useSanitize()
 }
 
 .btn-primary:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -141,9 +141,9 @@ const { sanitize } = useSanitize()
 }
 
 .btn-secondary {
-  background: white;
+  background: var(--bg-primary);
   color: #374151;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
@@ -155,7 +155,7 @@ const { sanitize } = useSanitize()
 
 .btn-secondary:hover {
   background: #f9fafb;
-  border-color: #9ca3af;
+  border-color: var(--text-disabled);
 }
 
 .btn-secondary:disabled {

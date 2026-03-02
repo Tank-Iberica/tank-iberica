@@ -55,7 +55,7 @@ function onSearchInput(event: Event) {
   gap: 12px;
   margin-bottom: 20px;
   padding: 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -66,7 +66,7 @@ function onSearchInput(event: Event) {
 }
 
 .status-filter {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -74,7 +74,7 @@ function onSearchInput(event: Event) {
 .filter-btn {
   padding: 8px 12px;
   border: none;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
@@ -87,26 +87,26 @@ function onSearchInput(event: Event) {
 }
 
 .filter-btn.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
 }
 
 .filter-btn:hover:not(.active) {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .filter-search {
   flex: 1;
   min-width: 200px;
   padding: 8px 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   font-size: 0.875rem;
 }
 
 .filter-search:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 @media (max-width: 768px) {

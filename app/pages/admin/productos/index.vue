@@ -235,7 +235,7 @@ onUnmounted(() => cleanup())
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   padding: 20px;
   overflow: auto;
 }
@@ -259,12 +259,12 @@ onUnmounted(() => cleanup())
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .count-badge {
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
   padding: 4px 10px;
@@ -272,7 +272,7 @@ onUnmounted(() => cleanup())
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -284,7 +284,7 @@ onUnmounted(() => cleanup())
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 /* Toolbar */
@@ -293,7 +293,7 @@ onUnmounted(() => cleanup())
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -301,10 +301,10 @@ onUnmounted(() => cleanup())
 /* Error */
 .alert-error {
   padding: 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 14px;
 }
 
@@ -316,15 +316,15 @@ onUnmounted(() => cleanup())
   justify-content: center;
   gap: 16px;
   padding: 48px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
 }
 
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 4px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -336,7 +336,7 @@ onUnmounted(() => cleanup())
 }
 
 .loading-state span {
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 16px;
 }
 </style>

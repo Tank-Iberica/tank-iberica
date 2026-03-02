@@ -66,7 +66,7 @@ const emit = defineEmits<{
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -120,7 +120,7 @@ const emit = defineEmits<{
 
 .delete-preview {
   background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   padding: 12px;
   font-size: 0.85rem;
@@ -131,7 +131,7 @@ const emit = defineEmits<{
 }
 
 .text-warning {
-  color: #d97706;
+  color: var(--color-warning);
   font-size: 0.8rem;
   background: #fffbeb;
   padding: 8px 12px;
@@ -150,7 +150,7 @@ const emit = defineEmits<{
 }
 
 .btn-secondary {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   color: #374151;
   border: none;
   padding: 10px 20px;
@@ -166,7 +166,7 @@ const emit = defineEmits<{
 }
 
 .btn-danger {
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -178,7 +178,7 @@ const emit = defineEmits<{
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 .btn-danger:disabled {

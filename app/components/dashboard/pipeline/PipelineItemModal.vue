@@ -194,7 +194,7 @@ function onEstimatedValueInput(event: Event): void {
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px 16px 0 0;
   width: 100%;
   max-width: 560px;
@@ -209,14 +209,14 @@ function onEstimatedValueInput(event: Event): void {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .modal-header h2 {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .btn-close {
@@ -228,13 +228,13 @@ function onEstimatedValueInput(event: Event): void {
   border: none;
   background: none;
   font-size: 1.5rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   cursor: pointer;
   border-radius: 8px;
 }
 
 .btn-close:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .modal-form {
@@ -259,7 +259,7 @@ function onEstimatedValueInput(event: Event): void {
 .form-group label {
   font-size: 0.85rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .form-group input,
@@ -267,12 +267,12 @@ function onEstimatedValueInput(event: Event): void {
 .form-group textarea {
   min-height: 44px;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
-  color: #1e293b;
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   transition: border-color 0.2s;
 }
 
@@ -280,7 +280,7 @@ function onEstimatedValueInput(event: Event): void {
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .form-group textarea {
@@ -294,7 +294,7 @@ function onEstimatedValueInput(event: Event): void {
   align-items: center;
   gap: 12px;
   padding-top: 8px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
 }
 
 .modal-actions-right {
@@ -310,7 +310,7 @@ function onEstimatedValueInput(event: Event): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -322,7 +322,7 @@ function onEstimatedValueInput(event: Event): void {
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -336,9 +336,9 @@ function onEstimatedValueInput(event: Event): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;
@@ -347,7 +347,7 @@ function onEstimatedValueInput(event: Event): void {
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-danger {
@@ -356,9 +356,9 @@ function onEstimatedValueInput(event: Event): void {
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
@@ -367,7 +367,7 @@ function onEstimatedValueInput(event: Event): void {
 }
 
 .btn-danger:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .btn-danger:disabled {

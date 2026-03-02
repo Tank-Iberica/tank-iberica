@@ -108,7 +108,7 @@ defineEmits<{
 
 /* Badge */
 .badge {
-  background: #ef4444;
+  background: var(--color-error);
   color: white;
   font-size: 11px;
   font-weight: var(--font-weight-bold);
@@ -129,7 +129,7 @@ defineEmits<{
   right: 8px;
   width: 8px;
   height: 8px;
-  background: #ef4444;
+  background: var(--color-error);
   border-radius: 50%;
 }
 

@@ -229,7 +229,7 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
   flex-direction: column;
   gap: 12px;
   padding: 20px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   text-decoration: none;
@@ -267,7 +267,7 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
   justify-content: center;
   background: #f0f9ff;
   border-radius: 10px;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   flex-shrink: 0;
 }
 
@@ -277,8 +277,8 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
 }
 
 .tool-card.locked .tool-icon {
-  background: #f1f5f9;
-  color: #94a3b8;
+  background: var(--bg-secondary);
+  color: var(--text-disabled);
 }
 
 .tool-content {
@@ -291,21 +291,21 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
 .tool-title {
   font-weight: 600;
   font-size: 0.95rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .tool-description {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   line-height: 1.4;
 }
 
 .tool-card.locked .tool-title {
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .tool-card.locked .tool-description {
-  color: #cbd5e1;
+  color: var(--color-gray-300);
 }
 
 .tool-badge-row {
@@ -326,8 +326,8 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
 }
 
 .badge-free {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
 }
 
 .badge-basic {
@@ -336,13 +336,13 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
 }
 
 .badge-premium {
-  background: #fef3c7;
-  color: #d97706;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning);
 }
 
 .badge-locked {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--bg-secondary);
+  color: var(--text-auxiliary);
 }
 
 .lock-icon {

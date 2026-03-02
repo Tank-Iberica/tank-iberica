@@ -134,7 +134,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .table-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow-x: auto;
@@ -147,15 +147,15 @@ const emit = defineEmits<{
 }
 
 .data-table thead th {
-  background: #f8fafc;
+  background: var(--bg-secondary);
   padding: 10px 12px;
   text-align: left;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
   white-space: nowrap;
   cursor: default;
   user-select: none;
@@ -193,7 +193,7 @@ const emit = defineEmits<{
 
 .data-table tbody td {
   padding: 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
   vertical-align: middle;
 }
 
@@ -207,7 +207,7 @@ const emit = defineEmits<{
 }
 
 .news-row:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 /* Title cell */
@@ -225,7 +225,7 @@ const emit = defineEmits<{
 
 .slug-text {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-family: monospace;
 }
 
@@ -240,43 +240,43 @@ const emit = defineEmits<{
 }
 
 .cat-prensa {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg, #dbeafe);
+  color: var(--color-info);
 }
 .cat-eventos {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 .cat-destacados {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 .cat-general {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
 }
 
 /* Status select */
 .status-select {
   padding: 4px 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 4px;
   font-size: 0.8rem;
   cursor: pointer;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .status-draft {
-  color: #92400e;
+  color: var(--color-warning-text);
   border-color: #fbbf24;
 }
 .status-published {
   color: #166534;
-  border-color: #22c55e;
+  border-color: var(--color-success);
 }
 .status-archived {
-  color: #64748b;
-  border-color: #94a3b8;
+  color: var(--text-auxiliary);
+  border-color: var(--text-disabled);
 }
 
 /* SEO badge */
@@ -292,16 +292,16 @@ const emit = defineEmits<{
 }
 
 .seo-good {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 .seo-warning {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text);
 }
 .seo-bad {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 /* Actions */
@@ -317,7 +317,7 @@ const emit = defineEmits<{
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   transition: all 0.15s;
   cursor: pointer;
   border: none;
@@ -326,7 +326,7 @@ const emit = defineEmits<{
 }
 
 .action-btn:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   color: #1a1a1a;
 }
 .action-btn svg {
@@ -334,8 +334,8 @@ const emit = defineEmits<{
   height: 16px;
 }
 .action-delete:hover {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 /* Empty state */
@@ -355,7 +355,7 @@ const emit = defineEmits<{
   font-size: 2rem;
 }
 .empty-content p {
-  color: #64748b;
+  color: var(--text-auxiliary);
   margin: 0;
 }
 
@@ -365,8 +365,8 @@ const emit = defineEmits<{
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid var(--color-gray-200);
+  background: var(--bg-primary);
   color: #374151;
   transition: all 0.15s;
   text-decoration: none;
@@ -376,9 +376,9 @@ const emit = defineEmits<{
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .btn-primary:hover {

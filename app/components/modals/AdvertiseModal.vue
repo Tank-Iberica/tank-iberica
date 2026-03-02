@@ -167,7 +167,7 @@ const {
 }
 
 .modal-container {
-  background: white;
+  background: var(--bg-primary);
   width: 100%;
   max-height: 92vh;
   overflow-y: auto;
@@ -184,7 +184,7 @@ const {
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--bg-primary);
   z-index: 1;
 }
 
@@ -241,7 +241,7 @@ const {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background-color: #10b981;
+  background-color: var(--color-success);
   color: white;
   font-size: 40px;
   display: flex;
@@ -286,18 +286,18 @@ const {
 
 .validation-summary {
   font-size: 0.8rem;
-  color: #ef4444;
+  color: var(--color-error);
   text-align: center;
   margin: 0;
   padding: var(--spacing-2);
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
   border-radius: 6px;
 }
 
 .modal-footer {
   padding: var(--spacing-3) var(--spacing-4);
   border-top: 1px solid var(--border-color);
-  background: white;
+  background: var(--bg-primary);
   position: sticky;
   bottom: 0;
 }

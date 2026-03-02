@@ -37,7 +37,7 @@ const emit = defineEmits<{
 .tab-switcher {
   display: flex;
   gap: 0;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border-radius: 10px;
   padding: 4px;
 }
@@ -51,14 +51,14 @@ const emit = defineEmits<{
   border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-auxiliary);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .tab-btn.active {
-  background: white;
-  color: var(--color-primary, #23424a);
+  background: var(--bg-primary);
+  color: var(--color-primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 </style>

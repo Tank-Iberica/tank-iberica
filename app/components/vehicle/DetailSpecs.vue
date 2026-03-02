@@ -55,7 +55,7 @@ function resolveValue(value: unknown): string {
   flex-direction: column;
   gap: 0.25rem;
   padding: 0.75rem;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 8px;
 }
 

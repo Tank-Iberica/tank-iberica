@@ -118,7 +118,7 @@ const { t } = useI18n()
 
 <style scoped>
 .card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 20px;
@@ -128,7 +128,7 @@ const { t } = useI18n()
   margin: 0 0 16px 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .form-group {
@@ -152,18 +152,18 @@ const { t } = useI18n()
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
-  color: #1e293b;
-  background: white;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   box-sizing: border-box;
 }
 
 .form-select:focus,
 .form-input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
 }
 
@@ -179,12 +179,12 @@ const { t } = useI18n()
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-gray-200);
   border-radius: 8px;
-  background: white;
+  background: var(--bg-primary);
   font-size: 0.95rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   cursor: pointer;
   transition:
     border-color 0.2s,
@@ -192,12 +192,12 @@ const { t } = useI18n()
 }
 
 .count-btn:hover {
-  border-color: #cbd5e1;
+  border-color: var(--color-gray-300);
 }
 
 .count-btn.active {
-  border-color: var(--color-primary, #23424a);
-  background: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
   color: white;
 }
 
@@ -210,7 +210,7 @@ const { t } = useI18n()
   flex: 1;
   min-height: 44px;
   padding: 10px 16px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 600;
@@ -219,17 +219,17 @@ const { t } = useI18n()
 }
 
 .theme-btn.theme-light {
-  background: #ffffff;
-  color: #1e293b;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .theme-btn.theme-dark {
-  background: #1e293b;
-  color: #f1f5f9;
+  background: var(--color-gray-800);
+  color: var(--color-gray-100);
 }
 
 .theme-btn.active {
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.2);
 }
 
@@ -246,13 +246,13 @@ const { t } = useI18n()
   min-height: 44px;
   cursor: pointer;
   font-size: 0.9rem;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .form-checkbox {
   width: 20px;
   height: 20px;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
   cursor: pointer;
 }
 </style>

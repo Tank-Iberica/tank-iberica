@@ -53,13 +53,13 @@ function onTabClick(tab: TabFilter) {
   align-items: center;
   gap: 6px;
   padding: 10px 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 20px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   transition: all 0.15s;
   min-height: 44px;
   white-space: nowrap;
@@ -67,14 +67,14 @@ function onTabClick(tab: TabFilter) {
 }
 
 .tab-btn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .tab-btn.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .tab-count {

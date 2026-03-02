@@ -209,13 +209,13 @@ defineEmits<{
 .modal-vehicle {
   font-weight: 600;
   font-size: 0.95rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .modal-image {
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
 }
 
 .modal-image img {
@@ -233,27 +233,27 @@ defineEmits<{
 
 .locale-tab {
   padding: 8px 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
-  background: white;
+  background: var(--bg-primary);
   font-weight: 600;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   cursor: pointer;
   min-height: 44px;
 }
 
 .locale-tab.active {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 /* Content textarea */
 .content-textarea {
   width: 100%;
   padding: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.9rem;
@@ -264,13 +264,13 @@ defineEmits<{
 
 .content-textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 .content-textarea:disabled {
-  background: #f8fafc;
-  color: #64748b;
+  background: var(--bg-secondary);
+  color: var(--text-auxiliary);
 }
 
 /* Status history */
@@ -279,7 +279,7 @@ defineEmits<{
   flex-direction: column;
   gap: 6px;
   padding: 12px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 8px;
 }
 
@@ -287,7 +287,7 @@ defineEmits<{
   display: flex;
   gap: 8px;
   font-size: 0.8rem;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .history-label {
@@ -296,13 +296,13 @@ defineEmits<{
 }
 
 .history-item.rejection {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .external-id {
   font-family: monospace;
   font-size: 0.75rem;
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -319,19 +319,19 @@ defineEmits<{
   flex-direction: column;
   align-items: center;
   padding: 12px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 8px;
 }
 
 .metric-value {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .metric-label {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 /* Rejection input */
@@ -344,12 +344,12 @@ defineEmits<{
 .rejection-input label {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .rejection-input input {
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.9rem;
   min-height: 44px;
@@ -357,7 +357,7 @@ defineEmits<{
 
 .rejection-input input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 </style>

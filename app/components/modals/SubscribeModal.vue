@@ -174,7 +174,7 @@ watch(
 }
 
 .modal-container {
-  background: white;
+  background: var(--bg-primary);
   width: 100%;
   max-height: 85vh;
   overflow-y: auto;
@@ -189,7 +189,7 @@ watch(
   border-bottom: 1px solid #eee;
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--bg-primary);
   z-index: 1;
 }
 
@@ -236,7 +236,7 @@ watch(
 .form-input {
   width: 100%;
   padding: 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color-light);
   border-radius: 8px;
   font-size: 1rem;
   min-height: 44px;
@@ -273,7 +273,7 @@ watch(
 }
 
 .error-text {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.85rem;
   margin-bottom: 12px;
 }
@@ -281,7 +281,7 @@ watch(
 .btn-submit {
   width: 100%;
   padding: 14px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -305,7 +305,7 @@ watch(
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #10b981;
+  background: var(--color-success);
   color: white;
   font-size: 32px;
   display: flex;

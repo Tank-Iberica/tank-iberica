@@ -28,8 +28,8 @@ const { t } = useI18n()
 
 <style scoped>
 .invoice-totals {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
@@ -42,15 +42,15 @@ const { t } = useI18n()
   justify-content: space-between;
   padding: 0.375rem 0;
   font-size: 0.9rem;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .invoice-totals__row--grand {
-  border-top: 2px solid var(--primary, #23424a);
+  border-top: 2px solid var(--primary, var(--color-primary));
   margin-top: 0.5rem;
   padding-top: 0.75rem;
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--primary, #23424a);
+  color: var(--primary, var(--color-primary));
 }
 </style>

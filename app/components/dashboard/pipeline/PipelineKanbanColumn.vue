@@ -86,7 +86,7 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 
 <style scoped>
 .kanban-column {
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 12px;
   border: 2px solid transparent;
   transition:
@@ -96,8 +96,8 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 }
 
 .kanban-column.drag-over {
-  border-color: var(--color-primary, #23424a);
-  background: #f1f5f9;
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
 }
 
 /* ── Column header ─────────────────────────────────────────────── */
@@ -128,14 +128,14 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .column-count {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
-  background: #e2e8f0;
+  color: var(--text-auxiliary);
+  background: var(--bg-tertiary);
   border-radius: 10px;
   padding: 1px 8px;
 }
@@ -149,7 +149,7 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 .column-total {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .btn-add {
@@ -159,7 +159,7 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
   width: 44px;
   height: 44px;
   border: none;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border-radius: 8px;
   font-size: 1.25rem;
@@ -170,12 +170,12 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 }
 
 .btn-add:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .accordion-arrow {
   font-size: 1rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   transition: transform 0.2s;
 }
 
@@ -198,7 +198,7 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 .column-empty {
   text-align: center;
   padding: 16px 8px;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-size: 0.85rem;
 }
 

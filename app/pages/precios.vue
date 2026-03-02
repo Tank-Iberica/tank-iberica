@@ -47,6 +47,8 @@ onMounted(init)
       <PreciosComparisonTable :rows="comparisonRows" />
 
       <PreciosFaq :faqs="faqs" :open-index="openFaq" @toggle="toggleFaq" />
+
+      <PreciosCreditSection />
     </div>
   </div>
 </template>

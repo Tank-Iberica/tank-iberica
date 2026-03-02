@@ -60,7 +60,7 @@ function updateAnswer(index: number, value: string) {
             class="input"
             placeholder="Ej: Que es un vehiculo industrial?"
             @input="updateQuestion(index, ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
         <div class="field">
           <label>Respuesta</label>
@@ -80,7 +80,7 @@ function updateAnswer(index: number, value: string) {
 
 <style scoped>
 .section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -102,13 +102,13 @@ function updateAnswer(index: number, value: string) {
 
 .toggle-icon {
   font-size: 1.2rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .section-body {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -116,7 +116,7 @@ function updateAnswer(index: number, value: string) {
 
 .section-hint {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
   line-height: 1.4;
 }
 
@@ -129,12 +129,12 @@ function updateAnswer(index: number, value: string) {
 .field label {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .input {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
@@ -143,7 +143,7 @@ function updateAnswer(index: number, value: string) {
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .textarea {
@@ -158,8 +158,8 @@ function updateAnswer(index: number, value: string) {
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid var(--color-gray-200);
+  background: var(--bg-primary);
   color: #374151;
   transition: all 0.15s;
   text-decoration: none;
@@ -170,7 +170,7 @@ function updateAnswer(index: number, value: string) {
 }
 
 .btn:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .btn-sm {
@@ -185,7 +185,7 @@ function updateAnswer(index: number, value: string) {
   width: 36px;
   height: 36px;
   border-radius: 6px;
-  color: #64748b;
+  color: var(--text-auxiliary);
   transition: all 0.15s;
   border: none;
   background: none;
@@ -194,7 +194,7 @@ function updateAnswer(index: number, value: string) {
 }
 
 .btn-icon:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   color: #1a1a1a;
 }
 
@@ -205,8 +205,8 @@ function updateAnswer(index: number, value: string) {
 
 /* FAQ items */
 .faq-item {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   padding: 12px;
   display: flex;
@@ -223,8 +223,8 @@ function updateAnswer(index: number, value: string) {
 .faq-item-number {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #94a3b8;
-  background: #e2e8f0;
+  color: var(--text-disabled);
+  background: var(--bg-tertiary);
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -236,11 +236,11 @@ function updateAnswer(index: number, value: string) {
 .faq-remove {
   width: 28px;
   height: 28px;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .faq-remove:hover {
-  color: #ef4444;
-  background: #fef2f2;
+  color: var(--color-error);
+  background: var(--color-error-bg, #fef2f2);
 }
 </style>

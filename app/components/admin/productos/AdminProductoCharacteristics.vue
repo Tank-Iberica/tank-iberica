@@ -62,7 +62,7 @@ const emit = defineEmits<Emits>()
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -103,13 +103,13 @@ const emit = defineEmits<Emits>()
 }
 .char-row input {
   padding: 6px 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 4px;
   font-size: 0.8rem;
 }
 .btn-add {
   padding: 4px 10px;
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -120,15 +120,15 @@ const emit = defineEmits<Emits>()
   width: 24px;
   height: 24px;
   border: none;
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
 }
 .empty-msg {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.8rem;
   padding: 16px;
 }

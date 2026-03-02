@@ -153,7 +153,7 @@ defineEmits<{
 @import './social-shared.css';
 
 .post-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -172,7 +172,7 @@ defineEmits<{
   position: relative;
   width: 100%;
   height: 160px;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   overflow: hidden;
 }
 
@@ -208,13 +208,13 @@ defineEmits<{
 .post-vehicle-title {
   font-weight: 600;
   font-size: 0.95rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .post-preview {
   margin: 0;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -232,14 +232,14 @@ defineEmits<{
 
 .post-date {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 .post-metrics {
   display: flex;
   gap: 16px;
   padding-top: 8px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
 }
 
 .metric {
@@ -247,7 +247,7 @@ defineEmits<{
   align-items: center;
   gap: 4px;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-weight: 500;
 }
 
@@ -256,7 +256,7 @@ defineEmits<{
   display: flex;
   gap: 4px;
   padding: 8px 16px 12px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-gray-100);
 }
 
 .btn-action {
@@ -265,26 +265,26 @@ defineEmits<{
   justify-content: center;
   width: 44px;
   height: 44px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   transition: all 0.15s;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .btn-action:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .btn-action.btn-approve {
-  color: #16a34a;
-  border-color: #bbf7d0;
+  color: var(--color-success);
+  border-color: var(--color-success-border);
 }
 
 .btn-action.btn-approve:hover {
-  background: #f0fdf4;
+  background: var(--color-success-bg, #dcfce7);
 }
 
 .btn-action.btn-publish {
@@ -297,6 +297,6 @@ defineEmits<{
 }
 
 .btn-action.btn-edit {
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 </style>

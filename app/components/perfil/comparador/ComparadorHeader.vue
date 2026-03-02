@@ -170,7 +170,7 @@ const emit = defineEmits<{
 }
 
 .btn-outline.btn-err:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .new-form {

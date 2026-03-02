@@ -71,21 +71,21 @@ const { t } = useI18n()
 
 <style scoped>
 .section {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 20px 24px;
 }
 
 .actions-section {
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-gray-200);
 }
 
 .section-title {
   margin: 0 0 16px;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .actions-row {
@@ -98,8 +98,8 @@ const { t } = useI18n()
 .btn-action {
   padding: 12px 20px;
   border-radius: 10px;
-  border: 2px solid #e2e8f0;
-  background: white;
+  border: 2px solid var(--color-gray-200);
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 600;
@@ -118,16 +118,16 @@ const { t } = useI18n()
 }
 
 .btn-start {
-  border-color: #22c55e;
-  color: #16a34a;
+  border-color: var(--color-success);
+  color: var(--color-success);
 }
 .btn-start:hover:not(:disabled) {
-  background: #f0fdf4;
+  background: var(--color-success-bg, #dcfce7);
 }
 
 .btn-end {
-  border-color: #f59e0b;
-  color: #92400e;
+  border-color: var(--color-warning);
+  color: var(--color-warning-text);
 }
 .btn-end:hover:not(:disabled) {
   background: #fffbeb;
@@ -142,19 +142,19 @@ const { t } = useI18n()
 }
 
 .btn-cancel {
-  border-color: #dc2626;
-  color: #dc2626;
+  border-color: var(--color-error);
+  color: var(--color-error);
 }
 .btn-cancel:hover:not(:disabled) {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .btn-refresh {
-  border-color: #64748b;
-  color: #475569;
+  border-color: var(--text-auxiliary);
+  color: var(--text-secondary);
 }
 .btn-refresh:hover:not(:disabled) {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 @media (min-width: 480px) {

@@ -121,11 +121,11 @@ function exportToExcel(data: BalanceEntry[]) {
 function exportToPDF(data: BalanceEntry[]) {
   let html = `<!DOCTYPE html><html><head><title>Balance ${filters.year || 'Todos'}</title>
     <style>
-      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
+      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: var(--text-primary); }
       h1 { font-size: 18px; }
       table { width: 100%; border-collapse: collapse; margin-top: 20px; }
       th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
-      th { background: #f3f4f6; }
+      th { background: var(--bg-secondary); }
       .ingreso { color: green; }
       .gasto { color: red; }
       .totals { margin-top: 20px; }
@@ -218,13 +218,13 @@ function exportResumenExcel() {
 function exportResumenPDF() {
   let html = `<!DOCTYPE html><html><head><title>Resumen Balance</title>
     <style>
-      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
+      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: var(--text-primary); }
       h1, h2 { margin-bottom: 10px; }
       h1 { font-size: 18px; }
       h2 { font-size: 14px; margin-top: 20px; }
       table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
       th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: right; }
-      th { background: #f3f4f6; text-align: left; }
+      th { background: var(--bg-secondary); text-align: left; }
       td:first-child { text-align: left; }
       .positive { color: green; }
       .negative { color: red; }
@@ -384,21 +384,21 @@ function fmt(val: number): string {
         <div class="option-group">
           <label class="option-label">Formato:</label>
           <div class="radio-group horizontal">
-            <label><input v-model="exportFormat" type="radio" value="pdf" > PDF (Imprimir)</label>
-            <label><input v-model="exportFormat" type="radio" value="excel" > Excel (CSV)</label>
+            <label><input v-model="exportFormat" type="radio" value="pdf" /> PDF (Imprimir)</label>
+            <label><input v-model="exportFormat" type="radio" value="excel" /> Excel (CSV)</label>
           </div>
         </div>
 
         <div class="option-group">
           <label class="option-label">Columnas a incluir:</label>
           <div class="checkbox-grid">
-            <label><input v-model="exportColumns.tipo" type="checkbox" > Tipo</label>
-            <label><input v-model="exportColumns.fecha" type="checkbox" > Fecha</label>
-            <label><input v-model="exportColumns.razon" type="checkbox" > Razón</label>
-            <label><input v-model="exportColumns.detalle" type="checkbox" > Detalle</label>
-            <label><input v-model="exportColumns.importe" type="checkbox" > Importe</label>
-            <label><input v-model="exportColumns.estado" type="checkbox" > Estado</label>
-            <label><input v-model="exportColumns.notas" type="checkbox" > Notas</label>
+            <label><input v-model="exportColumns.tipo" type="checkbox" /> Tipo</label>
+            <label><input v-model="exportColumns.fecha" type="checkbox" /> Fecha</label>
+            <label><input v-model="exportColumns.razon" type="checkbox" /> Razón</label>
+            <label><input v-model="exportColumns.detalle" type="checkbox" /> Detalle</label>
+            <label><input v-model="exportColumns.importe" type="checkbox" /> Importe</label>
+            <label><input v-model="exportColumns.estado" type="checkbox" /> Estado</label>
+            <label><input v-model="exportColumns.notas" type="checkbox" /> Notas</label>
           </div>
         </div>
 
@@ -416,14 +416,14 @@ function fmt(val: number): string {
           <label class="option-label">Incluir en el resumen:</label>
           <div class="checkbox-group">
             <label
-              ><input v-model="resumenOptions.totales" type="checkbox" > Totales
+              ><input v-model="resumenOptions.totales" type="checkbox" /> Totales
               (Ingresos/Gastos/Balance)</label
             >
             <label
-              ><input v-model="resumenOptions.desglose" type="checkbox" > Desglose por Razón</label
+              ><input v-model="resumenOptions.desglose" type="checkbox" /> Desglose por Razón</label
             >
             <label
-              ><input v-model="resumenOptions.mensual" type="checkbox" > Desglose Mensual</label
+              ><input v-model="resumenOptions.mensual" type="checkbox" /> Desglose Mensual</label
             >
           </div>
         </div>
@@ -438,7 +438,7 @@ function fmt(val: number): string {
 
 <style scoped>
 .tool-content {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -464,7 +464,7 @@ function fmt(val: number): string {
   flex-wrap: wrap;
   gap: 16px;
   padding: 16px 20px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -487,11 +487,11 @@ function fmt(val: number): string {
 }
 
 .summary-item.positive .value {
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 .summary-item.negative .value {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 /* Export Sections */
@@ -533,7 +533,7 @@ function fmt(val: number): string {
 
 .select-input {
   padding: 10px 14px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   font-size: 0.9rem;
   min-width: 160px;
@@ -596,8 +596,8 @@ function fmt(val: number): string {
 /* Buttons */
 .btn {
   padding: 10px 20px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.9rem;
   cursor: pointer;
@@ -609,13 +609,13 @@ function fmt(val: number): string {
 }
 
 .btn-primary {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-secondary {

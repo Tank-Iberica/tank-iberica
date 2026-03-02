@@ -1,15 +1,18 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
-  min: number
-  max: number
-  step?: number
-  modelMin: number | null
-  modelMax: number | null
-  formatLabel?: (n: number) => string
-}>(), {
-  step: 1,
-  formatLabel: undefined,
-})
+const props = withDefaults(
+  defineProps<{
+    min: number
+    max: number
+    step?: number
+    modelMin: number | null
+    modelMax: number | null
+    formatLabel?: (n: number) => string
+  }>(),
+  {
+    step: 1,
+    formatLabel: undefined,
+  },
+)
 
 const emit = defineEmits<{
   'update:modelMin': [value: number | null]
@@ -34,8 +37,12 @@ function onMaxInput(e: Event) {
   emit('update:modelMax', val >= props.max ? null : val)
 }
 
-const minLabel = computed(() => props.formatLabel ? props.formatLabel(localMin.value) : String(localMin.value))
-const maxLabel = computed(() => props.formatLabel ? props.formatLabel(localMax.value) : String(localMax.value))
+const minLabel = computed(() =>
+  props.formatLabel ? props.formatLabel(localMin.value) : String(localMin.value),
+)
+const maxLabel = computed(() =>
+  props.formatLabel ? props.formatLabel(localMax.value) : String(localMax.value),
+)
 </script>
 
 <template>
@@ -48,7 +55,7 @@ const maxLabel = computed(() => props.formatLabel ? props.formatLabel(localMax.v
           class="range-slider__track-active"
           :style="{
             left: `${leftPercent}%`,
-            right: `${100 - rightPercent}%`
+            right: `${100 - rightPercent}%`,
           }"
         />
       </div>
@@ -124,9 +131,11 @@ const maxLabel = computed(() => props.formatLabel ? props.formatLabel(localMax.v
 .range-slider__track-active {
   position: absolute;
   height: 100%;
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary);
   border-radius: 2px;
-  transition: left 0.1s ease, right 0.1s ease;
+  transition:
+    left 0.1s ease,
+    right 0.1s ease;
 }
 
 .range-slider__input {
@@ -149,11 +158,13 @@ const maxLabel = computed(() => props.formatLabel ? props.formatLabel(localMax.v
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary);
   border: 2px solid white;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
 }
 
 .range-slider__input::-moz-range-thumb {
@@ -163,11 +174,13 @@ const maxLabel = computed(() => props.formatLabel ? props.formatLabel(localMax.v
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--color-primary, #23424A);
+  background: var(--color-primary);
   border: 2px solid white;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
 }
 
 /* Hover and active states */
@@ -212,12 +225,12 @@ const maxLabel = computed(() => props.formatLabel ? props.formatLabel(localMax.v
 }
 
 .range-slider__input:focus::-webkit-slider-thumb {
-  outline: 2px solid var(--color-primary, #23424A);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 .range-slider__input:focus::-moz-range-thumb {
-  outline: 2px solid var(--color-primary, #23424A);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 

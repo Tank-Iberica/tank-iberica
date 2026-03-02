@@ -33,7 +33,7 @@ function onChange(event: Event) {
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -60,10 +60,10 @@ function onChange(event: Event) {
   width: 100%;
   max-width: 320px;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
-  background: white;
+  background: var(--bg-primary);
   color: #374151;
   cursor: pointer;
   min-height: 44px;
@@ -71,7 +71,7 @@ function onChange(event: Event) {
 
 .form-select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 

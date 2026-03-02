@@ -47,7 +47,7 @@ const { t } = useI18n()
 }
 
 .kpi-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -59,18 +59,18 @@ const { t } = useI18n()
 .kpi-value {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   line-height: 1;
 }
 
 .kpi-label {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .kpi-limit {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 
 @media (min-width: 768px) {

@@ -202,7 +202,7 @@ const { t } = useI18n()
    CARD
    ============================================ */
 .report-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.2s;
@@ -214,7 +214,7 @@ const { t } = useI18n()
 }
 
 .report-card.report-pending {
-  border-left: 3px solid #f59e0b;
+  border-left: 3px solid var(--color-warning);
 }
 
 .report-card.report-expanded {
@@ -286,7 +286,7 @@ const { t } = useI18n()
   text-transform: uppercase;
   letter-spacing: 0.03em;
   background: #eff6ff;
-  color: #1d4ed8;
+  color: var(--color-info);
 }
 
 .reason-text {
@@ -296,13 +296,13 @@ const { t } = useI18n()
 
 .report-date {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
   white-space: nowrap;
 }
 
 .expand-indicator {
   flex-shrink: 0;
-  color: #9ca3af;
+  color: var(--text-disabled);
   transition: color 0.2s;
 }
 
@@ -358,7 +358,7 @@ const { t } = useI18n()
 .detail-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #9ca3af;
+  color: var(--text-disabled);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -394,7 +394,7 @@ const { t } = useI18n()
 .notes-textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   font-size: 0.9rem;
   font-family: inherit;
@@ -406,16 +406,16 @@ const { t } = useI18n()
 
 .notes-textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
 .btn-save-notes {
   margin-top: 8px;
   padding: 8px 16px;
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid var(--color-primary, #23424a);
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 6px;
   font-size: 0.85rem;
   font-weight: 500;
@@ -467,32 +467,32 @@ const { t } = useI18n()
 
 .action-reviewing {
   background: #eff6ff;
-  color: #1d4ed8;
+  color: var(--color-info);
   border-color: #bfdbfe;
 }
 
 .action-reviewing:hover:not(:disabled) {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
 }
 
 .action-remove {
-  background: #fef2f2;
-  color: #dc2626;
-  border-color: #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
+  border-color: var(--color-error-border);
 }
 
 .action-remove:hover:not(:disabled) {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .action-keep {
-  background: #f0fdf4;
-  color: #16a34a;
-  border-color: #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  color: var(--color-success);
+  border-color: var(--color-success-border);
 }
 
 .action-keep:hover:not(:disabled) {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
 }
 
 /* ============================================

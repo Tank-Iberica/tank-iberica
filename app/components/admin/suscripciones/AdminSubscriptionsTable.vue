@@ -83,7 +83,7 @@ function formatDate(dateStr: string): string {
 
 <style scoped>
 .table-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -136,7 +136,7 @@ function formatDate(dateStr: string): string {
 
 .no-prefs {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-style: italic;
 }
 
@@ -147,7 +147,7 @@ function formatDate(dateStr: string): string {
 
 .btn-icon {
   background: none;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
@@ -156,11 +156,11 @@ function formatDate(dateStr: string): string {
 }
 
 .btn-icon:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .btn-delete:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .empty-state {

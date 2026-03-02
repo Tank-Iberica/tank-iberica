@@ -74,7 +74,7 @@ const tooltipText = computed(() =>
   vertical-align: middle;
   /* Muted / neutral defaults — overridden per type below */
   background: rgba(100, 116, 139, 0.08);
-  color: #64748b;
+  color: var(--text-auxiliary);
   border: 1px solid rgba(100, 116, 139, 0.2);
 }
 
@@ -101,7 +101,7 @@ const tooltipText = computed(() =>
 /* Type: translated — blue tint */
 .type--translated {
   background: rgba(59, 130, 246, 0.08);
-  color: #3b82f6;
+  color: var(--color-info);
   border-color: rgba(59, 130, 246, 0.2);
 }
 
@@ -115,7 +115,7 @@ const tooltipText = computed(() =>
 /* Type: assisted — amber tint */
 .type--assisted {
   background: rgba(245, 158, 11, 0.08);
-  color: #d97706;
+  color: var(--color-warning);
   border-color: rgba(245, 158, 11, 0.2);
 }
 

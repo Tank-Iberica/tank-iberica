@@ -123,7 +123,7 @@ function onBodyInput(event: Event) {
         type="text"
         :placeholder="$t('admin.emails.subjectPlaceholder')"
         @input="onSubjectInput"
-      >
+      />
     </div>
 
     <!-- Body -->
@@ -158,7 +158,7 @@ function onBodyInput(event: Event) {
 
 <style scoped>
 .editor-panel {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -180,8 +180,8 @@ function onBodyInput(event: Event) {
 
 .editor-header__key {
   font-size: 0.75rem;
-  color: #9ca3af;
-  background: #f3f4f6;
+  color: var(--text-disabled);
+  background: var(--bg-secondary);
   padding: 2px 8px;
   border-radius: 4px;
 }
@@ -195,21 +195,21 @@ function onBodyInput(event: Event) {
   align-items: center;
   justify-content: center;
   padding: 6px 12px;
-  border: 1px solid #10b981;
+  border: 1px solid var(--color-success);
   border-radius: 6px;
-  background: #f0fdf4;
+  background: var(--color-success-bg, #dcfce7);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-success);
   transition: all 0.2s;
   min-height: 36px;
 }
 
 .btn-icon--off {
-  border-color: #d1d5db;
+  border-color: var(--border-color);
   background: #f9fafb;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 
 .toggle-icon {
@@ -270,7 +270,7 @@ function onBodyInput(event: Event) {
 }
 
 .variable-tag {
-  background: white;
+  background: var(--bg-primary);
   border: 1px solid #bae6fd;
   padding: 3px 8px;
   border-radius: 4px;
@@ -293,7 +293,7 @@ function onBodyInput(event: Event) {
   display: flex;
   gap: 4px;
   margin-bottom: 16px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   border-radius: 8px;
   padding: 4px;
   width: fit-content;
@@ -313,8 +313,8 @@ function onBodyInput(event: Event) {
 }
 
 .locale-btn--active {
-  background: white;
-  color: var(--color-primary, #23424a);
+  background: var(--bg-primary);
+  color: var(--color-primary);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -340,14 +340,14 @@ function onBodyInput(event: Event) {
 .label-hint {
   font-size: 0.75rem;
   font-weight: 400;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 
 .form-group input[type='text'],
 .form-group textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
   font-family: inherit;
@@ -365,7 +365,7 @@ function onBodyInput(event: Event) {
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -378,9 +378,9 @@ function onBodyInput(event: Event) {
 }
 
 .btn-secondary {
-  background: white;
+  background: var(--bg-primary);
   color: #374151;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
@@ -392,7 +392,7 @@ function onBodyInput(event: Event) {
 
 .btn-secondary:hover {
   background: #f9fafb;
-  border-color: #9ca3af;
+  border-color: var(--text-disabled);
 }
 
 .btn-secondary:disabled {

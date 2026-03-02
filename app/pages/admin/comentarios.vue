@@ -142,7 +142,7 @@ onMounted(() => {
 }
 
 .total-badge {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #6b7280;
   padding: 4px 12px;
   border-radius: 16px;
@@ -152,8 +152,8 @@ onMounted(() => {
 
 /* Error */
 .error-banner {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -165,7 +165,7 @@ onMounted(() => {
 .error-dismiss {
   background: none;
   border: none;
-  color: #dc2626;
+  color: var(--color-error);
   cursor: pointer;
   font-size: 1.1rem;
   font-weight: 600;
@@ -182,7 +182,7 @@ onMounted(() => {
 
 .comment-date {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
   white-space: nowrap;
 }
 
@@ -194,9 +194,9 @@ onMounted(() => {
 }
 
 .btn-load-more {
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid var(--color-primary, #23424a);
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
   padding: 10px 24px;
   border-radius: 6px;
   font-size: 0.85rem;

@@ -128,8 +128,8 @@ function onStatusChange(ad: AdminAdvertisement, event: Event) {
 
 <style scoped>
 .error-banner {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -142,7 +142,7 @@ function onStatusChange(ad: AdminAdvertisement, event: Event) {
 }
 
 .table-container {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -174,11 +174,11 @@ function onStatusChange(ad: AdminAdvertisement, event: Event) {
 }
 
 .admin-table tr.row-pending {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .admin-table tr.row-pending:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .status-select {
@@ -188,7 +188,7 @@ function onStatusChange(ad: AdminAdvertisement, event: Event) {
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .contact-info {
@@ -223,12 +223,12 @@ function onStatusChange(ad: AdminAdvertisement, event: Event) {
 
 .vehicle-type {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-style: italic;
 }
 
 .no-data {
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-style: italic;
 }
 
@@ -243,7 +243,7 @@ function onStatusChange(ad: AdminAdvertisement, event: Event) {
 
 .btn-icon {
   background: none;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
@@ -252,15 +252,15 @@ function onStatusChange(ad: AdminAdvertisement, event: Event) {
 }
 
 .btn-icon:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .btn-view:hover {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
 }
 
 .btn-delete:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .empty-state {

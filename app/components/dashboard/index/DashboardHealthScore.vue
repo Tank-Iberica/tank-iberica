@@ -24,7 +24,7 @@ const { t } = useI18n()
 
 <style scoped>
 .health-score-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -41,7 +41,7 @@ const { t } = useI18n()
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .health-score-value {
@@ -50,20 +50,20 @@ const { t } = useI18n()
 }
 
 .health-score-value.score-high {
-  color: #16a34a;
+  color: var(--color-success);
 }
 
 .health-score-value.score-mid {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .health-score-value.score-low {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .health-bar {
   height: 8px;
-  background: #e2e8f0;
+  background: var(--bg-tertiary);
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 8px;
@@ -76,20 +76,20 @@ const { t } = useI18n()
 }
 
 .health-bar-fill.score-high {
-  background: #22c55e;
+  background: var(--color-success);
 }
 
 .health-bar-fill.score-mid {
-  background: #f59e0b;
+  background: var(--color-warning);
 }
 
 .health-bar-fill.score-low {
-  background: #ef4444;
+  background: var(--color-error);
 }
 
 .health-badge-eligible {
   font-size: 0.8rem;
-  color: #16a34a;
+  color: var(--color-success);
   font-weight: 500;
 }
 </style>

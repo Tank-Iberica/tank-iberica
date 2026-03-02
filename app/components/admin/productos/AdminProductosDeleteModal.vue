@@ -68,7 +68,7 @@ const localConfirmText = computed({
 }
 
 .modal {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
@@ -97,23 +97,23 @@ const localConfirmText = computed({
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header.danger {
-  background: #fef2f2;
-  border-color: #fecaca;
+  background: var(--color-error-bg, #fef2f2);
+  border-color: var(--color-error-border);
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .modal-header.danger h3 {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .modal-close {
@@ -122,7 +122,7 @@ const localConfirmText = computed({
   font-size: 28px;
   line-height: 1;
   cursor: pointer;
-  color: #94a3b8;
+  color: var(--text-disabled);
   padding: 0;
   width: 32px;
   height: 32px;
@@ -135,7 +135,7 @@ const localConfirmText = computed({
 
 .modal-close:hover {
   background: rgba(0, 0, 0, 0.05);
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .modal-body {
@@ -144,12 +144,12 @@ const localConfirmText = computed({
 
 .modal-body p {
   margin: 0 0 12px;
-  color: #475569;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
 .text-danger {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 14px;
 }
 
@@ -161,14 +161,14 @@ const localConfirmText = computed({
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .form-group input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 14px;
   transition: border 0.2s;
@@ -176,7 +176,7 @@ const localConfirmText = computed({
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .modal-footer {
@@ -184,13 +184,13 @@ const localConfirmText = computed({
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 24px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .btn-secondary {
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--bg-primary);
+  border: 1px solid var(--color-gray-200);
+  color: var(--text-secondary);
   padding: 10px 18px;
   border-radius: 8px;
   font-size: 14px;
@@ -200,12 +200,12 @@ const localConfirmText = computed({
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--color-gray-300);
 }
 
 .btn-danger {
-  background: #dc2626;
+  background: var(--color-error);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -217,7 +217,7 @@ const localConfirmText = computed({
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 .btn-danger:disabled {

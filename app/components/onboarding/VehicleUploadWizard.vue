@@ -503,7 +503,7 @@ function confettiStyle(n: number): Record<string, string> {
 .confetti-piece {
   position: absolute;
   top: -10px;
-  background: var(--confetti-color, #10b981);
+  background: var(--confetti-color, var(--color-success));
   border-radius: 2px;
   opacity: 0;
   animation: confetti-fall 2s ease-in forwards;

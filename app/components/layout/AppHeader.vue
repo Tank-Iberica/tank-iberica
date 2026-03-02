@@ -330,7 +330,7 @@ onUnmounted(() => {
 }
 
 .scrolled .logo {
-  font-size: 1rem;
+  font-size: 16px;
   letter-spacing: 0.3px;
 }
 
@@ -350,7 +350,8 @@ onUnmounted(() => {
    Legacy: 300 weight, text-shadow, uppercase
    ============================================ */
 .logo {
-  font-size: 1.2rem;
+  font-size: 19px;
+  line-height: 1;
   font-weight: 300;
   letter-spacing: 0.5px;
   color: var(--color-white);
@@ -380,7 +381,7 @@ onUnmounted(() => {
   color: var(--color-white);
   border: 2px solid var(--color-gold-dark);
   border-radius: 9999px;
-  height: 38px;
+  min-height: 38px;
   padding: 0 0.8rem;
   font-size: 11px;
   font-weight: 600;
@@ -410,7 +411,6 @@ onUnmounted(() => {
 
 /* Scrolled state — mobile: match other header buttons (36px) */
 .scrolled .anunciate-btn {
-  height: 36px;
   min-height: 36px;
   padding: 0 0.6rem;
   font-size: 10px;
@@ -648,7 +648,7 @@ onUnmounted(() => {
   position: absolute;
   top: -6px;
   right: -8px;
-  background: #ef4444;
+  background: var(--color-error);
   color: #fff;
   font-size: 10px;
   font-weight: 700;
@@ -709,7 +709,7 @@ onUnmounted(() => {
   }
 
   .logo {
-    font-size: 1.1rem;
+    font-size: 18px;
     letter-spacing: 1px;
   }
 }
@@ -724,7 +724,8 @@ onUnmounted(() => {
   }
 
   .logo {
-    font-size: 1.8rem;
+    font-size: 29px;
+    line-height: 1;
     letter-spacing: 3px;
   }
 
@@ -749,14 +750,14 @@ onUnmounted(() => {
   }
 
   .anunciate-btn {
-    height: 38px;
+    min-height: 38px;
     padding: 0 1rem;
     font-size: 12px;
     letter-spacing: 0.2px;
   }
 
   .scrolled .anunciate-btn {
-    height: 28px;
+    min-height: 28px;
     padding: 0 0.8rem;
     font-size: 11px;
   }
@@ -800,7 +801,7 @@ onUnmounted(() => {
   }
 
   .scrolled .logo {
-    font-size: 1.2rem;
+    font-size: 19px;
   }
 
   .scrolled .lang-flag-btn {

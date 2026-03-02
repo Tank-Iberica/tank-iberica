@@ -168,7 +168,7 @@ const localOnlineFilter = computed({
 .search-box input {
   width: 100%;
   padding: 8px 36px 8px 36px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 14px;
   transition: border 0.2s;
@@ -176,7 +176,7 @@ const localOnlineFilter = computed({
 
 .search-box input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .clear-btn {
@@ -188,7 +188,7 @@ const localOnlineFilter = computed({
   border: none;
   font-size: 20px;
   cursor: pointer;
-  color: #94a3b8;
+  color: var(--text-disabled);
   padding: 0;
   width: 24px;
   height: 24px;
@@ -199,7 +199,7 @@ const localOnlineFilter = computed({
 }
 
 .clear-btn:hover {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .filter-group {
@@ -211,16 +211,16 @@ const localOnlineFilter = computed({
 .filter-label {
   font-size: 14px;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   white-space: nowrap;
 }
 
 .filter-group select {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 14px;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   min-width: 120px;
   transition: border 0.2s;
@@ -228,12 +228,12 @@ const localOnlineFilter = computed({
 
 .filter-group select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .segment-control {
   display: flex;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border-radius: 8px;
   padding: 2px;
 }
@@ -242,7 +242,7 @@ const localOnlineFilter = computed({
   padding: 6px 12px;
   border: none;
   background: transparent;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -251,15 +251,15 @@ const localOnlineFilter = computed({
 }
 
 .segment-control button.active {
-  background: white;
-  color: var(--color-primary, #23424a);
+  background: var(--bg-primary);
+  color: var(--color-primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .btn-text-danger {
   background: none;
   border: none;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -269,6 +269,6 @@ const localOnlineFilter = computed({
 }
 
 .btn-text-danger:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg, #fef2f2);
 }
 </style>

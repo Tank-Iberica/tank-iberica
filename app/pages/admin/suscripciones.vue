@@ -74,7 +74,7 @@ function handleExport() {
         type="text"
         placeholder="Buscar por email..."
         class="filter-search"
-      >
+      />
     </div>
 
     <div v-if="error" class="error-banner">
@@ -127,7 +127,7 @@ function handleExport() {
 }
 
 .total-badge {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #6b7280;
   padding: 6px 12px;
   border-radius: 16px;
@@ -135,7 +135,7 @@ function handleExport() {
 }
 
 .btn-export {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -154,7 +154,7 @@ function handleExport() {
   gap: 12px;
   margin-bottom: 20px;
   padding: 16px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -162,19 +162,19 @@ function handleExport() {
 .filter-search {
   flex: 1;
   padding: 8px 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   font-size: 0.875rem;
 }
 
 .filter-search:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .error-banner {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;

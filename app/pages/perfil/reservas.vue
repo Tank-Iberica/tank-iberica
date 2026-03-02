@@ -123,10 +123,10 @@ onUnmounted(() => cleanup())
   justify-content: space-between;
   gap: var(--spacing-3);
   padding: var(--spacing-3) var(--spacing-4);
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
   border: 1px solid #fca5a5;
   border-radius: var(--border-radius);
-  color: #991b1b;
+  color: var(--color-error);
   font-size: var(--font-size-sm);
   margin-bottom: var(--spacing-4);
 }
@@ -142,7 +142,7 @@ onUnmounted(() => cleanup())
   border: none;
   cursor: pointer;
   font-size: var(--font-size-xl);
-  color: #991b1b;
+  color: var(--color-error);
 }
 
 .empty-state {

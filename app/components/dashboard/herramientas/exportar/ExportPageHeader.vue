@@ -28,12 +28,12 @@ const { t } = useI18n()
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .subtitle {
   margin: 0;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
@@ -42,9 +42,9 @@ const { t } = useI18n()
   align-items: center;
   min-height: 44px;
   padding: 10px 16px;
-  background: white;
-  color: var(--color-primary, #23424a);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;
@@ -53,7 +53,7 @@ const { t } = useI18n()
 }
 
 .btn-back:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 @media (min-width: 768px) {

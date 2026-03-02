@@ -53,7 +53,7 @@ const { t } = useI18n()
 
 <style scoped>
 .card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -64,19 +64,19 @@ const { t } = useI18n()
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .card-header h2 {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .link-more {
   font-size: 0.85rem;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
   min-height: 44px;
@@ -91,7 +91,7 @@ const { t } = useI18n()
 .empty-state {
   padding: 32px 20px;
   text-align: center;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
@@ -110,13 +110,13 @@ const { t } = useI18n()
   align-items: center;
   padding: 14px 20px;
   text-decoration: none;
-  border-bottom: 1px solid #f8fafc;
+  border-bottom: 1px solid var(--color-gray-50);
   transition: background 0.15s;
   min-height: 44px;
 }
 
 .lead-item:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .lead-item:last-child {
@@ -131,13 +131,13 @@ const { t } = useI18n()
 
 .lead-name {
   font-weight: 500;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
 .lead-vehicle {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .lead-meta {
@@ -158,6 +158,6 @@ const { t } = useI18n()
 
 .lead-date {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-disabled);
 }
 </style>

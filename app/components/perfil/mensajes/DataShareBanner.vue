@@ -55,7 +55,7 @@ const emit = defineEmits<{
 
 .data-share-banner__icon {
   flex-shrink: 0;
-  color: #3b82f6;
+  color: var(--color-info);
   margin-top: 1px;
 }
 

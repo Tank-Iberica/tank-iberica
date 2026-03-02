@@ -68,7 +68,7 @@ function onTypeChange(event: Event) {
   flex-wrap: wrap;
   gap: 12px;
   padding: 12px 16px;
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
@@ -84,31 +84,31 @@ function onTypeChange(event: Event) {
 .filter-select {
   min-height: 44px;
   padding: 8px 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 6px;
   font-size: 0.85rem;
   min-width: 140px;
-  background: #fff;
+  background: var(--bg-primary);
   flex: 1;
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
 }
 
 .btn-sm {
   min-height: 44px;
   padding: 8px 12px;
   font-size: 0.8rem;
-  border: 1px solid #d1d5db;
-  background: white;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 6px;
   cursor: pointer;
 }
 
 .btn-sm:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 @media (min-width: 768px) {

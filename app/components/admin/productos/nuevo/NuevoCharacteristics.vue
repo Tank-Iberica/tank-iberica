@@ -35,7 +35,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -66,7 +66,7 @@ const emit = defineEmits<{
 }
 .btn-add {
   padding: 4px 10px;
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: 4px;

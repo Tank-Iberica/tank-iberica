@@ -182,20 +182,20 @@ onMounted(async () => {
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: #fff;
-  border: 2px solid #e5e7eb;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color-light);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .tool-card:hover:not(.disabled) {
-  border-color: #23424a;
+  border-color: var(--color-primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .tool-card.active {
-  border-color: #23424a;
+  border-color: var(--color-primary);
   background: #f0f9ff;
 }
 

@@ -120,7 +120,7 @@ function onUpdateConfirmText(value: string) {
 }
 
 .total-badge {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #6b7280;
   padding: 6px 12px;
   border-radius: 16px;
@@ -128,8 +128,8 @@ function onUpdateConfirmText(value: string) {
 }
 
 .error-banner {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;

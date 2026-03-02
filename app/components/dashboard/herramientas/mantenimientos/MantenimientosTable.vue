@@ -114,14 +114,14 @@ const { t } = useI18n()
   justify-content: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -134,7 +134,7 @@ const { t } = useI18n()
 
 /* Table */
 .table-container {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow-x: auto;
@@ -165,7 +165,7 @@ const { t } = useI18n()
 }
 
 .data-table th.sortable:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .data-table th.num,
@@ -189,7 +189,7 @@ const { t } = useI18n()
 }
 
 .year-tag {
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.8rem;
 }
 
@@ -216,17 +216,17 @@ const { t } = useI18n()
 }
 
 .badge-preventivo {
-  background: #dbeafe;
+  background: var(--color-info-bg, #dbeafe);
   color: #1e40af;
 }
 
 .badge-correctivo {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 
 .badge-itv {
-  background: #dcfce7;
+  background: var(--color-success-bg, #dcfce7);
   color: #166534;
 }
 
@@ -245,11 +245,11 @@ const { t } = useI18n()
 }
 
 .btn-icon:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .btn-icon.delete:hover {
-  background: #fee2e2;
+  background: var(--color-error-bg, #fef2f2);
 }
 
 .btn-primary {
@@ -258,7 +258,7 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 44px;
   padding: 10px 20px;
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -270,14 +270,14 @@ const { t } = useI18n()
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 /* Empty state */
 .empty-state {
   padding: 48px 20px;
   text-align: center;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 

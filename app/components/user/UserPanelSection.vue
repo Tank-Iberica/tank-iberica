@@ -39,7 +39,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .panel-section {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color-light);
 }
 
 .panel-section--danger {
@@ -56,41 +56,42 @@ const emit = defineEmits<{
   border: none;
   font-size: 1rem;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
   cursor: pointer;
   transition: background 0.15s;
 }
 
 .section-header:hover {
-  background: #f9f9f9;
+  background: var(--bg-secondary);
 }
 
 .section-header.active {
-  background: #f5f5f5;
+  background: var(--bg-secondary);
+  color: var(--color-primary);
 }
 
 .section-header--danger {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .section-header--danger:hover {
-  background: #fef2f2;
+  background: var(--color-error-bg);
 }
 
 .section-arrow {
   font-size: 0.75rem;
-  color: #999;
+  color: var(--text-auxiliary);
 }
 
 .section-content {
   padding: 16px 20px;
-  background: #fafafa;
-  border-top: 1px solid #eee;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color-light);
 }
 
 .section-content--danger {
-  background: #fef2f2;
-  border-top: 1px solid #fecaca;
+  background: var(--color-error-bg);
+  border-top: 1px solid var(--color-error-border);
 }
 
 .badge {
@@ -100,8 +101,8 @@ const emit = defineEmits<{
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  background: #ef4444;
-  color: white;
+  background: var(--color-error);
+  color: var(--color-white);
   border-radius: 10px;
   font-size: 0.75rem;
   font-weight: 600;

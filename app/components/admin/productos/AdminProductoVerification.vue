@@ -135,7 +135,7 @@ const verifLevelOrder = LEVEL_ORDER
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -168,7 +168,7 @@ const verifLevelOrder = LEVEL_ORDER
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: #f0fdf4;
+  background: var(--color-success-bg, #dcfce7);
   border-radius: 6px;
   margin-bottom: 12px;
 }
@@ -181,10 +181,10 @@ const verifLevelOrder = LEVEL_ORDER
   font-size: 14px;
 }
 .verif-current-value.level-none {
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 .verif-current-value.level-verified {
-  color: #10b981;
+  color: var(--color-success);
 }
 .verif-current-value.level-extended {
   color: #059669;
@@ -193,7 +193,7 @@ const verifLevelOrder = LEVEL_ORDER
   color: #0d9488;
 }
 .verif-current-value.level-audited {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .verif-current-value.level-certified {
   color: #8b5cf6;
@@ -217,8 +217,8 @@ const verifLevelOrder = LEVEL_ORDER
   color: #0d9488;
 }
 .verif-level-badge.level-audited {
-  background: #fef3c7;
-  color: #d97706;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning);
 }
 .verif-level-badge.level-certified {
   background: #ede9fe;
@@ -239,7 +239,7 @@ const verifLevelOrder = LEVEL_ORDER
   min-width: 60px;
   padding: 6px 4px;
   border-radius: 6px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   opacity: 0.5;
   transition: all 0.2s;
 }
@@ -248,7 +248,7 @@ const verifLevelOrder = LEVEL_ORDER
   background: #ecfdf5;
 }
 .verif-progress-step.current {
-  outline: 2px solid #10b981;
+  outline: 2px solid var(--color-success);
 }
 .step-badge {
   font-size: 16px;
@@ -272,7 +272,7 @@ const verifLevelOrder = LEVEL_ORDER
 .verif-select {
   flex: 1;
   padding: 8px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 13px;
   min-height: 44px;
@@ -286,15 +286,15 @@ const verifLevelOrder = LEVEL_ORDER
 }
 .btn {
   padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 6px;
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-outline {
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
 }
 .verif-doc-row {
   display: flex;
@@ -317,16 +317,16 @@ const verifLevelOrder = LEVEL_ORDER
   font-weight: 500;
 }
 .verif-doc-status.status-pending {
-  background: #fef3c7;
-  color: #d97706;
+  background: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning);
 }
 .verif-doc-status.status-verified {
   background: #d1fae5;
   color: #059669;
 }
 .verif-doc-status.status-rejected {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
 }
 .verif-doc-link {
   font-size: 12px;
@@ -338,7 +338,7 @@ const verifLevelOrder = LEVEL_ORDER
 }
 .verif-doc-rejection {
   font-size: 12px;
-  color: #dc2626;
+  color: var(--color-error);
   width: 100%;
 }
 .loading-small {
@@ -350,13 +350,13 @@ const verifLevelOrder = LEVEL_ORDER
   font-size: 0.75rem;
   padding: 6px 10px;
   margin-bottom: 8px;
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 6px;
 }
 .empty-msg {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.8rem;
   padding: 16px;
 }

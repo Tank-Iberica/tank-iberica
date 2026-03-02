@@ -121,7 +121,7 @@ watch(
 }
 
 .modal-container {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px 12px 0 0;
   width: 100%;
   max-width: 440px;
@@ -147,7 +147,7 @@ watch(
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .modal-close {
@@ -165,7 +165,7 @@ watch(
 }
 
 .modal-close:hover {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
 }
 
 .modal-body {
@@ -198,7 +198,7 @@ watch(
 .form-input {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.875rem;
   min-height: 44px;
@@ -206,7 +206,7 @@ watch(
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary, #23424a);
+  border-color: var(--primary, var(--color-primary));
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
 }
 
@@ -220,9 +220,9 @@ watch(
 
 .btn-secondary {
   padding: 8px 16px;
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #374151;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.875rem;
   cursor: pointer;
@@ -230,12 +230,12 @@ watch(
 }
 
 .btn-secondary:hover {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
 }
 
 .btn-danger {
   padding: 8px 16px;
-  background: #dc2626;
+  background: var(--color-error);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -245,7 +245,7 @@ watch(
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #b91c1c;
+  background: var(--color-error);
 }
 
 .btn-danger:disabled {

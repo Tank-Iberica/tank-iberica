@@ -227,14 +227,14 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 .ltc-hint {
   margin: 0;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 /* Preview */
 .ltc-preview {
   padding: 20px 16px;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
+  background: var(--bg-secondary);
+  border: 1px dashed var(--color-gray-300);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -245,7 +245,7 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 
 .ltc-preview-text {
   font-size: clamp(1.2rem, 4vw, 1.75rem);
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -262,25 +262,25 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 .ltc-label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .ltc-select {
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.9rem;
-  background: white;
-  color: #1e293b;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   min-height: 44px;
   cursor: pointer;
 }
 
 .ltc-select:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -295,10 +295,10 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 .ltc-weight-btn,
 .ltc-spacing-btn {
   padding: 6px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
-  background: white;
-  color: #475569;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
   font-size: 0.8rem;
   cursor: pointer;
   min-height: 36px;
@@ -310,16 +310,16 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 
 .ltc-weight-btn.active,
 .ltc-spacing-btn.active {
-  border-color: var(--color-primary, #23424a);
-  background: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
   color: white;
 }
 
 @media (hover: hover) {
   .ltc-weight-btn:not(.active):hover,
   .ltc-spacing-btn:not(.active):hover {
-    border-color: var(--color-primary, #23424a);
-    color: var(--color-primary, #23424a);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 }
 
@@ -335,10 +335,10 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
-  background: white;
-  color: #475569;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
   font-size: 0.875rem;
   cursor: pointer;
   min-height: 44px;
@@ -349,15 +349,15 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 }
 
 .ltc-toggle-btn.active {
-  border-color: var(--color-primary, #23424a);
-  background: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
   color: white;
 }
 
 @media (hover: hover) {
   .ltc-toggle-btn:not(.active):hover {
-    border-color: var(--color-primary, #23424a);
-    color: var(--color-primary, #23424a);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 }
 </style>

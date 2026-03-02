@@ -133,15 +133,15 @@ const { t: $t } = useI18n()
 }
 
 .pipeline-message.success {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-bg, #dcfce7);
+  border: 1px solid var(--color-success-border);
   color: #166534;
 }
 
 .pipeline-message.error {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  background: var(--color-error-bg, #fef2f2);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error);
 }
 
 .btn-primary {

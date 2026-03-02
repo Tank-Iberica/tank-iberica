@@ -202,12 +202,17 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1a3238 0%, #23424a 50%, #2d5259 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-dark) 0%,
+    var(--color-primary) 50%,
+    #2d5259 100%
+  );
   padding: 20px;
 }
 
 .login-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 16px;
   padding: 48px 40px;
   width: 100%;
@@ -227,8 +232,8 @@ onMounted(() => {
 .logo-icon {
   width: 48px;
   height: 48px;
-  background: var(--color-primary, #23424a);
-  color: var(--color-accent, #7fd1c8);
+  background: var(--color-primary);
+  color: var(--color-accent);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -240,7 +245,7 @@ onMounted(() => {
 .logo-text {
   font-size: 24px;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 .login-card h1 {
@@ -261,19 +266,19 @@ onMounted(() => {
   justify-content: center;
   gap: 12px;
   padding: 14px 24px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color-light);
   border-radius: 8px;
   font-size: 16px;
   font-weight: 500;
   color: #374151;
-  background: white;
+  background: var(--bg-primary);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .btn-google:hover:not(:disabled) {
   background: #f9fafb;
-  border-color: #d1d5db;
+  border-color: var(--border-color);
 }
 
 .btn-google:disabled {
@@ -282,7 +287,7 @@ onMounted(() => {
 }
 
 .error-msg {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 14px;
   margin-top: 16px;
 }

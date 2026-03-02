@@ -25,7 +25,7 @@ const { t } = useI18n()
   margin: 0 0 8px 0;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #92400e;
+  color: var(--color-warning-text);
 }
 
 .upgrade-card p {
@@ -40,7 +40,7 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 44px;
   padding: 10px 24px;
-  background: #f59e0b;
+  background: var(--color-warning);
   color: white;
   border: none;
   border-radius: 8px;
@@ -50,6 +50,6 @@ const { t } = useI18n()
 }
 
 .btn-upgrade:hover {
-  background: #d97706;
+  background: var(--color-warning);
 }
 </style>

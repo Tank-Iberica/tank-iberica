@@ -62,18 +62,18 @@ const {
             min="0"
             max="10"
             @change="onNumVehiclesChange"
-          >
+          />
         </div>
         <div class="form-group">
           <label>Fecha</label>
-          <input v-model="invoiceDate" type="date" >
+          <input v-model="invoiceDate" type="date" />
         </div>
         <div class="form-group">
           <label>Condiciones</label>
-          <input v-model="invoiceConditions" type="text" placeholder="Pago a 30 días" >
+          <input v-model="invoiceConditions" type="text" placeholder="Pago a 30 días" />
         </div>
         <div class="form-group checkbox-inline">
-          <label><input v-model="invoiceInEnglish" type="checkbox" > Emitir en Inglés</label>
+          <label><input v-model="invoiceInEnglish" type="checkbox" /> Emitir en Inglés</label>
         </div>
       </div>
 
@@ -98,30 +98,30 @@ const {
       <div class="form-row">
         <div class="form-group" style="max-width: 200px">
           <label>Nº Factura</label>
-          <input v-model="invoiceNumber" type="text" readonly class="readonly-input" >
+          <input v-model="invoiceNumber" type="text" readonly class="readonly-input" />
         </div>
       </div>
 
-      <hr class="divider" >
+      <hr class="divider" />
 
       <!-- Client Data -->
       <h4 class="section-subtitle">Facturado a:</h4>
       <div class="form-grid-3">
         <div class="form-group">
           <label>Nombre/Empresa</label>
-          <input v-model="clientName" type="text" >
+          <input v-model="clientName" type="text" />
         </div>
         <div class="form-group">
           <label>Dirección</label>
-          <input v-model="clientAddress1" type="text" >
+          <input v-model="clientAddress1" type="text" />
         </div>
         <div class="form-group">
           <label>CP + Ciudad</label>
-          <input v-model="clientAddress2" type="text" >
+          <input v-model="clientAddress2" type="text" />
         </div>
         <div class="form-group">
           <label>Provincia + País</label>
-          <input v-model="clientAddress3" type="text" >
+          <input v-model="clientAddress3" type="text" />
         </div>
         <div class="form-group">
           <label>Tipo Doc</label>
@@ -134,11 +134,11 @@ const {
         </div>
         <div class="form-group">
           <label>Número Doc</label>
-          <input v-model="clientDocNumber" type="text" >
+          <input v-model="clientDocNumber" type="text" />
         </div>
       </div>
 
-      <hr class="divider" >
+      <hr class="divider" />
 
       <!-- Invoice Lines -->
       <div class="lines-header">
@@ -165,27 +165,27 @@ const {
             <option>Reserva</option>
             <option>Otro</option>
           </select>
-          <input v-model="line.concepto" type="text" placeholder="Concepto" >
-          <input v-model.number="line.cantidad" type="number" min="1" class="right" >
-          <input v-model.number="line.precioUd" type="number" step="0.01" class="right" >
+          <input v-model="line.concepto" type="text" placeholder="Concepto" />
+          <input v-model.number="line.cantidad" type="number" min="1" class="right" />
+          <input v-model.number="line.precioUd" type="number" step="0.01" class="right" />
           <input
             :value="getLineImporte(line).toFixed(2) + ' €'"
             type="text"
             readonly
             class="right readonly-input"
-          >
-          <input v-model.number="line.iva" type="number" class="right" >
+          />
+          <input v-model.number="line.iva" type="number" class="right" />
           <input
             :value="getLineSubtotal(line).toFixed(2) + ' €'"
             type="text"
             readonly
             class="right readonly-input total-cell"
-          >
+          />
           <button class="btn-delete" @click="removeInvoiceLine(line.id)">×</button>
         </div>
       </div>
 
-      <hr class="divider" >
+      <hr class="divider" />
 
       <!-- Totals -->
       <div class="totals-section">
@@ -200,7 +200,7 @@ const {
         </div>
       </div>
 
-      <hr class="divider" >
+      <hr class="divider" />
 
       <!-- Company Data (collapsible) -->
       <details class="company-details">
@@ -208,39 +208,39 @@ const {
         <div class="form-grid-3">
           <div class="form-group">
             <label>Empresa</label>
-            <input v-model="companyName" type="text" >
+            <input v-model="companyName" type="text" />
           </div>
           <div class="form-group">
             <label>NIF</label>
-            <input v-model="companyNIF" type="text" >
+            <input v-model="companyNIF" type="text" />
           </div>
           <div class="form-group">
             <label>Dirección</label>
-            <input v-model="companyAddress1" type="text" >
+            <input v-model="companyAddress1" type="text" />
           </div>
           <div class="form-group">
             <label>CP + Ciudad</label>
-            <input v-model="companyAddress2" type="text" >
+            <input v-model="companyAddress2" type="text" />
           </div>
           <div class="form-group">
             <label>País</label>
-            <input v-model="companyAddress3" type="text" >
+            <input v-model="companyAddress3" type="text" />
           </div>
           <div class="form-group">
             <label>Teléfono</label>
-            <input v-model="companyPhone" type="text" >
+            <input v-model="companyPhone" type="text" />
           </div>
           <div class="form-group">
             <label>Email</label>
-            <input v-model="companyEmail" type="text" >
+            <input v-model="companyEmail" type="text" />
           </div>
           <div class="form-group">
             <label>Web</label>
-            <input v-model="companyWeb" type="text" >
+            <input v-model="companyWeb" type="text" />
           </div>
           <div class="form-group">
             <label>Logo (URL)</label>
-            <input v-model="companyLogoUrl" type="text" placeholder="https://..." >
+            <input v-model="companyLogoUrl" type="text" placeholder="https://..." />
           </div>
         </div>
       </details>
@@ -257,7 +257,7 @@ const {
 
 <style scoped>
 .tool-content {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -305,7 +305,7 @@ const {
 .form-group input,
 .form-group select {
   padding: 8px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.9rem;
 }
@@ -313,12 +313,12 @@ const {
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #23424a;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
 .readonly-input {
-  background: #f3f4f6 !important;
+  background: var(--bg-secondary) !important;
   cursor: default;
 }
 
@@ -405,7 +405,7 @@ const {
 .line-row select,
 .line-row input {
   padding: 6px 8px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.85rem;
 }
@@ -420,7 +420,7 @@ const {
 }
 
 .btn-delete {
-  background: #ef4444;
+  background: var(--color-error);
   color: white;
   border: none;
   border-radius: 4px;
@@ -434,7 +434,7 @@ const {
 }
 
 .btn-delete:hover {
-  background: #dc2626;
+  background: var(--color-error);
 }
 
 .totals-section {
@@ -486,8 +486,8 @@ const {
 
 .btn {
   padding: 10px 20px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
   border-radius: 8px;
   font-size: 0.9rem;
   cursor: pointer;
@@ -499,13 +499,13 @@ const {
 }
 
 .btn-primary {
-  background: #23424a;
+  background: var(--color-primary);
   color: #fff;
   border: none;
 }
 
 .btn-primary:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-secondary {

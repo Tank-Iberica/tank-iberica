@@ -82,13 +82,13 @@ const emit = defineEmits<{
 .field-sm input,
 .field-sm select {
   padding: 6px 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 4px;
   font-size: 0.8rem;
 }
 .hint {
   font-weight: normal;
-  color: #9ca3af;
+  color: var(--text-disabled);
 }
 .tick-inline {
   display: flex;

@@ -28,7 +28,7 @@ const emit = defineEmits<{
     <div v-if="open" class="section-content">
       <label for="doc-upload-input" class="upload-zone-label">
         Subir documentos
-        <input id="doc-upload-input" type="file" multiple @change="emit('upload', $event)" >
+        <input id="doc-upload-input" type="file" multiple @change="emit('upload', $event)" />
       </label>
       <div v-if="documents.length === 0" class="empty-msg">Sin documentos.</div>
       <div v-for="d in documents" :key="d.id" class="doc-row">
@@ -41,7 +41,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .section {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -75,7 +75,7 @@ const emit = defineEmits<{
   padding: 12px;
   text-align: center;
   background: #f9fafb;
-  border: 2px dashed #e5e7eb;
+  border: 2px dashed var(--border-color-light);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.8rem;
@@ -83,8 +83,8 @@ const emit = defineEmits<{
   margin-bottom: 10px;
 }
 .upload-zone-label:hover {
-  border-color: #23424a;
-  background: #f3f4f6;
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
 }
 .upload-zone-label input[type='file'] {
   display: none;
@@ -103,15 +103,15 @@ const emit = defineEmits<{
   width: 24px;
   height: 24px;
   border: none;
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg, #fef2f2);
+  color: var(--color-error);
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
 }
 .empty-msg {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-disabled);
   font-size: 0.8rem;
   padding: 16px;
 }

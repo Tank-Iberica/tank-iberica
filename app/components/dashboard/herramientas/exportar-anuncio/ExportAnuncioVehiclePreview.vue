@@ -39,7 +39,7 @@ const { t } = useI18n()
 
 <style scoped>
 .card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 20px;
@@ -56,7 +56,7 @@ const { t } = useI18n()
   height: 180px;
   border-radius: 8px;
   overflow: hidden;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .preview-image img {
@@ -71,7 +71,7 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
+  color: var(--text-disabled);
   font-size: 0.85rem;
 }
 
@@ -79,7 +79,7 @@ const { t } = useI18n()
   margin: 0 0 8px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .preview-specs {
@@ -91,13 +91,13 @@ const { t } = useI18n()
 
 .spec-item {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
 }
 
 .spec-price {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--color-primary, #23424a);
+  color: var(--color-primary);
 }
 
 @media (min-width: 768px) {

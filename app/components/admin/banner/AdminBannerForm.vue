@@ -180,7 +180,7 @@ function parseDatetimeLocal(value: string): string | null {
 
 <style scoped>
 .form-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -203,14 +203,14 @@ function parseDatetimeLocal(value: string): string | null {
 .form-group input[type='datetime-local'] {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
@@ -232,8 +232,8 @@ function parseDatetimeLocal(value: string): string | null {
 
 .btn-emoji-picker {
   padding: 8px 12px;
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   cursor: pointer;
   font-size: 18px;
@@ -241,7 +241,7 @@ function parseDatetimeLocal(value: string): string | null {
 }
 
 .btn-emoji-picker:hover {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   transform: scale(1.05);
 }
 
@@ -252,8 +252,8 @@ function parseDatetimeLocal(value: string): string | null {
 }
 
 .emoji-btn-quick {
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color-light);
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
@@ -262,7 +262,7 @@ function parseDatetimeLocal(value: string): string | null {
 }
 
 .emoji-btn-quick:hover {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
   transform: scale(1.1);
 }
 
@@ -310,14 +310,14 @@ function parseDatetimeLocal(value: string): string | null {
   left: 3px;
   width: 20px;
   height: 20px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 50%;
   transition: transform 0.2s;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-input:checked + .toggle-switch {
-  background: #16a34a;
+  background: var(--color-success);
 }
 
 .toggle-input:checked + .toggle-switch::after {
@@ -338,7 +338,7 @@ function parseDatetimeLocal(value: string): string | null {
 }
 
 .btn-primary {
-  background: var(--color-primary, #23424a);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -349,7 +349,7 @@ function parseDatetimeLocal(value: string): string | null {
 }
 
 .btn-primary:hover {
-  background: var(--color-primary-dark, #1a3238);
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -358,9 +358,9 @@ function parseDatetimeLocal(value: string): string | null {
 }
 
 .btn-secondary {
-  background: #f3f4f6;
+  background: var(--bg-secondary);
   color: #374151;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   padding: 12px 24px;
   border-radius: 6px;
   cursor: pointer;
@@ -369,7 +369,7 @@ function parseDatetimeLocal(value: string): string | null {
 }
 
 .btn-secondary:hover {
-  background: #e5e7eb;
+  background: var(--bg-tertiary);
 }
 
 @media (max-width: 768px) {

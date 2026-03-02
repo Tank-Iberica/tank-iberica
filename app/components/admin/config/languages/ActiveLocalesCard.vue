@@ -33,7 +33,7 @@ function onCheckboxChange(localeValue: string, event: Event) {
           :value="locale.value"
           :checked="activeLocales.includes(locale.value)"
           @change="onCheckboxChange(locale.value, $event)"
-        >
+        />
         <span>{{ locale.label }}</span>
       </label>
     </div>
@@ -42,7 +42,7 @@ function onCheckboxChange(localeValue: string, event: Event) {
 
 <style scoped>
 .config-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -66,7 +66,7 @@ function onCheckboxChange(localeValue: string, event: Event) {
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 12px;
   padding: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color-light);
   border-radius: 8px;
   background: #f9fafb;
 }
@@ -85,7 +85,7 @@ function onCheckboxChange(localeValue: string, event: Event) {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: var(--color-primary, #23424a);
+  accent-color: var(--color-primary);
 }
 
 @media (max-width: 767px) {

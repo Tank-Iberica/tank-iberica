@@ -74,17 +74,17 @@ const { t } = useI18n()
   width: 100%;
   min-height: 44px;
   padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
-  background: white;
+  background: var(--bg-primary);
 }
 
 .filter-select:focus,
 .filter-search:focus {
   outline: none;
-  border-color: var(--color-primary, #23424a);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
