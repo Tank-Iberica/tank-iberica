@@ -487,26 +487,29 @@ Todos protegidos con `verifyCronSecret()`. Scheduler recomendado: GitHub Actions
 
 ## 13. Referencia Rápida de Archivos
 
-| Necesitas...                         | Lee...                                                       |
-| ------------------------------------ | ------------------------------------------------------------ |
-| Entender el proyecto completo        | Este documento                                               |
-| Estrategia de negocio y monetización | `docs/ESTRATEGIA-NEGOCIO.md`                                 |
-| Ideas no implementadas (92)          | `docs/IDEAS-A-REVISAR.md`                                    |
-| Backlog técnico pendiente            | `docs/tracciona-docs/BACKLOG.md`                             |
-| Estado actual y errores              | `STATUS.md` (raíz)                                           |
-| Convenciones de código               | `CONTRIBUTING.md`                                            |
-| Esquema de BD                        | `docs/tracciona-docs/referencia/ERD.md`                      |
-| Endpoints API                        | `docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md`     |
-| Crons                                | `docs/tracciona-docs/referencia/CRON-JOBS.md`                |
-| Seguridad                            | `docs/tracciona-docs/referencia/SECURITY-TESTING.md`         |
-| Disaster recovery                    | `docs/tracciona-docs/referencia/DISASTER-RECOVERY.md`        |
-| Dependencias externas                | `docs/tracciona-docs/referencia/THIRD-PARTY-DEPENDENCIES.md` |
-| Secrets y rotación                   | `docs/tracciona-docs/referencia/SECRETS-ROTATION.md`         |
-| WAF config                           | `docs/tracciona-docs/referencia/CLOUDFLARE-WAF-CONFIG.md`    |
-| Retención de datos GDPR              | `docs/tracciona-docs/referencia/DATA-RETENTION.md`           |
-| API pública                          | `docs/tracciona-docs/referencia/API-PUBLIC.md`               |
-| Flujos operativos                    | `docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md`        |
-| RAT GDPR (borrador)                  | `docs/legal/RAT-BORRADOR.md`                                 |
-| Auditoría detallada                  | `docs/auditorias/AUDITORIA-26-FEBRERO.md`                    |
-| Tareas negocio pendientes            | `docs/ESTRATEGIA-NEGOCIO.md` §15                             |
-| Documentación legacy                 | `docs/legacy/` (solo referencia, no modificar)               |
+| Necesitas...                         | Lee...                                                         |
+| ------------------------------------ | -------------------------------------------------------------- |
+| Entender el proyecto completo        | Este documento                                                 |
+| Estrategia de negocio y monetización | `docs/ESTRATEGIA-NEGOCIO.md`                                   |
+| Ideas no implementadas (103)         | `docs/IDEAS-A-REVISAR.md`                                      |
+| Backlog técnico pendiente            | `docs/tracciona-docs/BACKLOG.md`                               |
+| Estado actual y errores              | `STATUS.md` (raíz)                                             |
+| Convenciones de código               | `CONTRIBUTING.md`                                              |
+| Esquema de BD                        | `docs/tracciona-docs/referencia/ERD.md`                        |
+| Endpoints API                        | `docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md`       |
+| Crons                                | `docs/tracciona-docs/referencia/CRON-JOBS.md`                  |
+| Seguridad                            | `docs/tracciona-docs/referencia/SECURITY-TESTING.md`           |
+| Disaster recovery                    | `docs/tracciona-docs/referencia/DISASTER-RECOVERY.md`          |
+| Dependencias externas                | `docs/tracciona-docs/referencia/THIRD-PARTY-DEPENDENCIES.md`   |
+| Secrets y rotación                   | `docs/tracciona-docs/referencia/SECRETS-ROTATION.md`           |
+| WAF config                           | `docs/tracciona-docs/referencia/CLOUDFLARE-WAF-CONFIG.md`      |
+| Retención de datos GDPR              | `docs/tracciona-docs/referencia/DATA-RETENTION.md`             |
+| API pública                          | `docs/tracciona-docs/referencia/API-PUBLIC.md`                 |
+| Flujos operativos                    | `docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md`          |
+| RAT GDPR (borrador)                  | `docs/legal/RAT-BORRADOR.md`                                   |
+| Arquitectura y escalabilidad         | `docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md` |
+| Auditoría canónica (~83/100)         | `docs/auditorias/AUDITORIA-26-FEBRERO.md`                      |
+| Metodología de auditoría             | `docs/tracciona-docs/referencia/AUDIT-METHODOLOGY.md`          |
+| Historial de cambios                 | `CHANGELOG.md`                                                 |
+| Tareas negocio pendientes            | `docs/ESTRATEGIA-NEGOCIO.md` §15                               |
+| Documentación legacy                 | `docs/legacy/` (solo referencia, no modificar)                 |

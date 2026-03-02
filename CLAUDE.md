@@ -150,18 +150,29 @@ Si alguna respuesta es "no" o "sí pero violé X", PARA y corrige antes de respo
 
 ## Documentación
 
-Toda la documentación activa está en `docs/tracciona-docs/`.
+Toda la documentación activa está en `docs/` y `docs/tracciona-docs/`.
 
 **Si necesitas entender el proyecto:**
 
 1. Lee `docs/PROYECTO-CONTEXTO.md` — **Documento maestro.** Visión TradeBase, modelo de negocio, arquitectura, decisiones tomadas y criterios para tomar decisiones de código. Leer SIEMPRE antes de cualquier tarea.
 2. Lee `README.md` — Stack, estructura del proyecto, índice completo de documentación
 
-**Si necesitas ver el backlog técnico:**
+**Si necesitas ver estrategia, ideas o backlog:**
 
-- Lee `docs/tracciona-docs/BACKLOG.md` — Mejoras planificadas no ejecutadas (seguridad, resiliencia, arquitectura, SEO, etc.)
+- `docs/ESTRATEGIA-NEGOCIO.md` — Monetización, pricing, go-to-market, captación dealers, datos, anti-fraude
+- `docs/IDEAS-A-REVISAR.md` — Banco de 103 ideas no implementadas en 13 categorías
+- `docs/tracciona-docs/BACKLOG.md` — Mejoras técnicas planificadas no ejecutadas (seguridad, resiliencia, arquitectura, SEO, etc.)
 - Sesiones históricas (1-64, ya ejecutadas): `docs/legacy/INSTRUCCIONES-MAESTRAS.md` (solo referencia)
 - Anexos en `docs/tracciona-docs/anexos/` son REFERENCIA, no tareas independientes.
+
+**Si necesitas referencia técnica:**
+
+- `docs/tracciona-docs/referencia/` — ERD, endpoints, crons, seguridad, DR, WAF, secrets, datos, API pública, metodología de auditoría
+
+**Auditorías:**
+
+- `docs/auditorias/AUDITORIA-26-FEBRERO.md` — Auditoría canónica (12 dimensiones, ~83/100)
+- `docs/tracciona-docs/referencia/AUDIT-METHODOLOGY.md` — Framework y checklists para auditorías
 
 **Reglas críticas:**
 
@@ -196,6 +207,7 @@ Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de cód
 - Tipografía: Inter (Google Fonts) — configurable desde admin
 - Breakpoints: 480px, 768px, 1024px, 1280px (mobile-first)
 - Spacing: escala de 4px (4, 8, 12, 16, 24, 32, 48, 64)
+- Cualquier cosa que se diseñe tener en cuentaque tiene que tener una adaptabilidad en el portal de dealers que usaran fuentes de letra y paleta de colores diferente.
 
 ## UX — Formularios y touch
 

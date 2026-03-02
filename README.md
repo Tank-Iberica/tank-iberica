@@ -90,17 +90,25 @@ docs/                 # Documentacion del proyecto
 | Backlog tecnico             | [`docs/tracciona-docs/BACKLOG.md`](docs/tracciona-docs/BACKLOG.md) |
 | Instrucciones para IA       | [`CLAUDE.md`](CLAUDE.md)                                           |
 | Contribucion y convenciones | [`CONTRIBUTING.md`](CONTRIBUTING.md)                               |
+| Historial de cambios        | [`CHANGELOG.md`](CHANGELOG.md)                                     |
 
 ### Documentacion tecnica
 
-| Documento                                                                                       | Que contiene                                       |
-| ----------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| [`INVENTARIO-ENDPOINTS.md`](docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)             | Todos los endpoints con auth y proposito           |
-| [`ARQUITECTURA-ESCALABILIDAD.md`](docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md) | Diseno multi-cluster, costes, decisiones           |
-| [`FLUJOS-OPERATIVOS.md`](docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md)                   | Diagramas ASCII de flujos principales              |
-| [`ERD.md`](docs/tracciona-docs/referencia/ERD.md)                                               | Diagrama entidad-relacion (Mermaid)                |
-| `docs/tracciona-docs/referencia/`                                                               | Seguridad, WAF, cron jobs, disaster recovery, etc. |
-| `docs/tracciona-docs/anexos/`                                                                   | Anexos A-Y: especificaciones por modulo            |
+| Documento                                                                                       | Que contiene                                     |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [`INVENTARIO-ENDPOINTS.md`](docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)             | Todos los endpoints con auth y proposito         |
+| [`ARQUITECTURA-ESCALABILIDAD.md`](docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md) | Diseno multi-cluster, costes, decisiones         |
+| [`FLUJOS-OPERATIVOS.md`](docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md)                   | Diagramas ASCII de flujos principales            |
+| [`ERD.md`](docs/tracciona-docs/referencia/ERD.md)                                               | Diagrama entidad-relacion (92 tablas, Mermaid)   |
+| [`CRON-JOBS.md`](docs/tracciona-docs/referencia/CRON-JOBS.md)                                   | 13 cron endpoints con frecuencia y config        |
+| [`THIRD-PARTY-DEPENDENCIES.md`](docs/tracciona-docs/referencia/THIRD-PARTY-DEPENDENCIES.md)     | Dependencias externas, failovers, vendor lock-in |
+| [`SECURITY-TESTING.md`](docs/tracciona-docs/referencia/SECURITY-TESTING.md)                     | DAST (ZAP + Nuclei), testing de seguridad        |
+| [`CLOUDFLARE-WAF-CONFIG.md`](docs/tracciona-docs/referencia/CLOUDFLARE-WAF-CONFIG.md)           | Reglas WAF, rate limiting, configuracion         |
+| [`DISASTER-RECOVERY.md`](docs/tracciona-docs/referencia/DISASTER-RECOVERY.md)                   | Backups multi-capa, procedimientos DR            |
+| [`SECRETS-ROTATION.md`](docs/tracciona-docs/referencia/SECRETS-ROTATION.md)                     | Rotacion de secretos y API keys                  |
+| [`DATA-RETENTION.md`](docs/tracciona-docs/referencia/DATA-RETENTION.md)                         | Politica de retencion de datos GDPR              |
+| [`API-PUBLIC.md`](docs/tracciona-docs/referencia/API-PUBLIC.md)                                 | Documentacion de endpoints publicos              |
+| `docs/tracciona-docs/anexos/`                                                                   | Anexos A-Y: especificaciones por modulo          |
 
 ### Legal
 
@@ -110,13 +118,10 @@ docs/                 # Documentacion del proyecto
 
 ### Auditorias
 
-| Documento                                                                        | Contenido                                |
-| -------------------------------------------------------------------------------- | ---------------------------------------- |
-| [`AUDITORIA-26-FEBRERO.md`](docs/auditorias/AUDITORIA-26-FEBRERO.md)             | Auditoria mas reciente (12 dimensiones)  |
-| [`CHECKLIST-POST-SESIONES.md`](docs/auditorias/CHECKLIST-POST-SESIONES.md)       | Pendientes accionables                   |
-| [`RECOMENDACIONES-100-PUNTOS.md`](docs/auditorias/RECOMENDACIONES-100-PUNTOS.md) | 100 recomendaciones priorizadas          |
-| [`ISSUES-AUDITORIA.md`](docs/auditorias/ISSUES-AUDITORIA.md)                     | Issues tecnicos con prioridad            |
-| `docs/auditorias/externa/`                                                       | Auditoria externa profunda (25 feb 2026) |
+| Documento                                                                     | Contenido                                            |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------- |
+| [`AUDITORIA-26-FEBRERO.md`](docs/auditorias/AUDITORIA-26-FEBRERO.md)          | Auditoria canonica (12 dimensiones, ~83/100)         |
+| [`AUDIT-METHODOLOGY.md`](docs/tracciona-docs/referencia/AUDIT-METHODOLOGY.md) | Framework, checklists, guia para proximas auditorias |
 
 ### Historico
 
