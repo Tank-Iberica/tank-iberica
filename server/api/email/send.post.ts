@@ -95,7 +95,7 @@ function markdownToEmailHtml(md: string): string {
   html = html.replaceAll(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
 
   // Links: [text](url)
-  html = html.replace(
+  html = html.replaceAll(
     /\[([^\]]+)\]\(([^)]+)\)/g,
     '<a href="$2" style="color: inherit; text-decoration: underline;">$1</a>',
   )
@@ -182,44 +182,15 @@ function buildEmailHtml(params: {
 </html>`
 }
 
-// ── Handler ────────────────────────────────────────────────────────────────────
-
-export default defineEventHandler(async (event) => {
-  const VERTICAL = process.env.NUXT_PUBLIC_VERTICAL || 'tracciona'
-  const body = await readBody<SendEmailBody>(event)
-
-  // ── Auth check: internal secret OR authenticated user ───────────────────
-  const runtimeCfg = useRuntimeConfig()
-  const internalSecret = runtimeCfg.cronSecret || process.env.CRON_SECRET
-  const internalHeader = getHeader(event, 'x-internal-secret')
-  const isInternalCall = internalSecret && internalHeader === internalSecret
-
-  if (!isInternalCall) {
-    const user = await serverSupabaseUser(event)
-    if (!user) {
-      throw createError({ statusCode: 401, message: 'Authentication required' })
-    }
-    // Force userId to the authenticated user to prevent spoofing
-    if (body.userId && body.userId !== user.id) {
-      body.userId = user.id
-    }
-  }
-
-  if (!body.templateKey || !body.to) {
-    throw createError({ statusCode: 400, message: 'Missing required fields: templateKey and to' })
-  }
-
-  const locale = body.locale ?? 'es'
-  const variables = body.variables ?? {}
-  const siteUrl = 'https://tracciona.com'
-
-  const supabase = serverSupabaseServiceRole(event)
-
-  // ── 1. Read vertical config (template + theme + branding) ─────────────────
+async function loadEmailTemplate(
+  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  vertical: string,
+  templateKey: string,
+): Promise<{ template: EmailTemplate; config: VerticalConfigRow }> {
   const { data: config, error: configError } = await supabase
     .from('vertical_config')
     .select('email_templates, theme, logo_url, name')
-    .eq('vertical', VERTICAL)
+    .eq('vertical', vertical)
     .single()
 
   if (configError || !config) {
@@ -231,44 +202,183 @@ export default defineEventHandler(async (event) => {
 
   const typedConfig = config as unknown as VerticalConfigRow
   const templates = typedConfig.email_templates
-  if (!templates || !templates[body.templateKey]) {
+  if (!templates?.[templateKey]) {
     throw createError({
       statusCode: 404,
-      message: `Email template "${body.templateKey}" not found in vertical_config`,
+      message: `Email template "${templateKey}" not found in vertical_config`,
     })
   }
 
-  const template = templates[body.templateKey]!
+  return { template: templates[templateKey]!, config: typedConfig }
+}
 
-  // ── 2. Check user email preferences ───────────────────────────────────────
-  if (body.userId) {
-    const { data: prefs } = await supabase
-      .from('email_preferences')
-      .select('enabled')
-      .eq('user_id', body.userId)
-      .eq('email_type', body.templateKey)
-      .single()
+async function checkEmailPreference(
+  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  userId: string,
+  templateKey: string,
+  vertical: string,
+  to: string,
+  variables: Record<string, string>,
+): Promise<{ skipped: true; response: object } | null> {
+  const { data: prefs } = await supabase
+    .from('email_preferences')
+    .select('enabled')
+    .eq('user_id', userId)
+    .eq('email_type', templateKey)
+    .single()
 
-    const typedPrefs = prefs as unknown as EmailPreferenceRow | null
-    if (typedPrefs?.enabled === false) {
-      // User has opted out of this email type — skip sending
-      await supabase.from('email_logs').insert({
-        vertical: VERTICAL,
-        recipient_email: body.to,
-        recipient_user_id: body.userId,
-        template_key: body.templateKey,
-        variables: variables,
-        status: 'skipped_preference',
-      })
-
-      return { success: true, messageId: null, skipped: true, reason: 'user_preference' }
+  const typedPrefs = prefs as unknown as EmailPreferenceRow | null
+  if (typedPrefs?.enabled === false) {
+    await supabase.from('email_logs').insert({
+      vertical,
+      recipient_email: to,
+      recipient_user_id: userId,
+      template_key: templateKey,
+      variables,
+      status: 'skipped_preference',
+    })
+    return {
+      skipped: true,
+      response: { success: true, messageId: null, skipped: true, reason: 'user_preference' },
     }
   }
+  return null
+}
 
-  // ── 3. Resolve template fields for locale ─────────────────────────────────
+async function sendViaResend(
+  resendApiKey: string,
+  params: {
+    to: string
+    subject: string
+    html: string
+    unsubscribeUrl: string
+    unsubscribeToken: string
+  },
+): Promise<string> {
+  const resend = new Resend(resendApiKey)
+  const result = await resend.emails.send({
+    from: 'noreply@tracciona.com',
+    to: params.to,
+    subject: params.subject,
+    html: params.html,
+    headers: params.unsubscribeToken
+      ? {
+          'List-Unsubscribe': `<${params.unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        }
+      : undefined,
+  })
+
+  if (result.error) {
+    throw safeError(500, `Resend error: ${result.error.message}`)
+  }
+
+  return result.data?.id ?? ''
+}
+
+async function verifyEmailAuth(
+  event: Parameters<Parameters<typeof defineEventHandler>[0]>[0],
+  body: SendEmailBody,
+): Promise<void> {
+  const runtimeCfg = useRuntimeConfig()
+  const internalSecret = runtimeCfg.cronSecret || process.env.CRON_SECRET
+  const internalHeader = getHeader(event, 'x-internal-secret')
+  if (internalSecret && internalHeader === internalSecret) return
+
+  const user = await serverSupabaseUser(event)
+  if (!user) throw createError({ statusCode: 401, message: 'Authentication required' })
+  if (body.userId && body.userId !== user.id) body.userId = user.id
+}
+
+async function fetchUnsubscribeToken(
+  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  userId: string | undefined,
+): Promise<string> {
+  if (!userId) return ''
+  const { data } = await supabase
+    .from('users')
+    .select('id, email, unsubscribe_token')
+    .eq('id', userId)
+    .single()
+  return (data as unknown as UserRow | null)?.unsubscribe_token ?? ''
+}
+
+async function sendOrMockEmail(
+  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  logBase: Record<string, unknown>,
+  sendParams: {
+    to: string
+    subject: string
+    html: string
+    unsubscribeUrl: string
+    unsubscribeToken: string
+  },
+  templateKey: string,
+): Promise<string> {
+  const runtimeConfig = useRuntimeConfig()
+  const resendApiKey = runtimeConfig.resendApiKey || process.env.RESEND_API_KEY
+
+  if (!resendApiKey) {
+    console.warn(`[email/send] RESEND_API_KEY not set. Mock sending template "${templateKey}"`)
+    return `mock_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+  }
+
+  try {
+    return await sendViaResend(resendApiKey, sendParams)
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown Resend error'
+    await supabase
+      .from('email_logs')
+      .insert({
+        ...logBase,
+        status: 'failed',
+        error: errorMessage,
+        sent_at: new Date().toISOString(),
+      })
+    if (err && typeof err === 'object' && 'statusCode' in err) throw err
+    throw safeError(500, `Email send failed: ${errorMessage}`)
+  }
+}
+
+// ── Handler ────────────────────────────────────────────────────────────────────
+
+export default defineEventHandler(async (event) => {
+  const VERTICAL = process.env.NUXT_PUBLIC_VERTICAL || 'tracciona'
+  const body = await readBody<SendEmailBody>(event)
+
+  await verifyEmailAuth(event, body)
+
+  if (!body.templateKey || !body.to) {
+    throw createError({ statusCode: 400, message: 'Missing required fields: templateKey and to' })
+  }
+
+  const locale = body.locale ?? 'es'
+  const variables = body.variables ?? {}
+  const siteUrl = 'https://tracciona.com'
+  const supabase = serverSupabaseServiceRole(event)
+
+  // ── 1. Read vertical config + check preferences ───────────────────────────
+  const { template, config: typedConfig } = await loadEmailTemplate(
+    supabase,
+    VERTICAL,
+    body.templateKey,
+  )
+
+  if (body.userId) {
+    const prefResult = await checkEmailPreference(
+      supabase,
+      body.userId,
+      body.templateKey,
+      VERTICAL,
+      body.to,
+      variables,
+    )
+    if (prefResult) return prefResult.response
+  }
+
+  // ── 2. Resolve and substitute template ────────────────────────────────────
   const rawSubject = resolveLocalized(template.subject, locale)
   const rawBody = resolveLocalized(template.body, locale)
-
   if (!rawSubject || !rawBody) {
     throw createError({
       statusCode: 500,
@@ -276,138 +386,58 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // ── 4. Get user unsubscribe token if userId provided ──────────────────────
-  let unsubscribeToken = ''
-  if (body.userId) {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('id, email, unsubscribe_token')
-      .eq('id', body.userId)
-      .single()
-
-    const typedUser = userData as unknown as UserRow | null
-    if (typedUser?.unsubscribe_token) {
-      unsubscribeToken = typedUser.unsubscribe_token
-    }
-  }
-
-  // ── 5. Substitute variables ───────────────────────────────────────────────
+  const unsubscribeToken = await fetchUnsubscribeToken(supabase, body.userId)
   const allVariables: Record<string, string> = {
     ...variables,
     site_url: siteUrl,
     unsubscribe_token: unsubscribeToken,
     templateKey: body.templateKey,
   }
-
   const subject = substituteVariables(rawSubject, allVariables)
   const bodyText = substituteVariables(rawBody, allVariables)
 
-  // ── 6. Convert markdown to HTML and wrap in branded template ──────────────
-  const bodyHtml = markdownToEmailHtml(bodyText)
+  // ── 3. Build HTML ─────────────────────────────────────────────────────────
   const unsubscribeUrl = unsubscribeToken
     ? `${siteUrl}/api/email/unsubscribe?token=${unsubscribeToken}&type=${body.templateKey}`
-    : `${siteUrl}`
-
+    : siteUrl
   const siteName = resolveLocalized(typedConfig.name, locale) || 'Tracciona'
-  const theme = typedConfig.theme ?? {}
-
   const footerTextMap: Record<string, string> = {
     es: `Este correo fue enviado por ${siteName}. Si no deseas recibir estos correos, puedes cancelar tu suscripcion.`,
     en: `This email was sent by ${siteName}. If you no longer wish to receive these emails, you can unsubscribe.`,
   }
-  const footerText: string = footerTextMap[locale] ?? footerTextMap.es ?? ''
-
   const html = buildEmailHtml({
-    bodyHtml,
-    theme,
+    bodyHtml: markdownToEmailHtml(bodyText),
+    theme: typedConfig.theme ?? {},
     logoUrl: typedConfig.logo_url,
     siteName,
     siteUrl,
     unsubscribeUrl,
-    footerText,
+    footerText: footerTextMap[locale] ?? footerTextMap.es ?? '',
   })
 
-  // ── 7. Send via Resend (or mock in dev) ───────────────────────────────────
-  const runtimeConfig = useRuntimeConfig()
-  const resendApiKey = runtimeConfig.resendApiKey || process.env.RESEND_API_KEY
-  let resendId = ''
-  let status = 'sent'
-
-  if (resendApiKey) {
-    try {
-      const resend = new Resend(resendApiKey)
-      const result = await resend.emails.send({
-        from: 'noreply@tracciona.com',
-        to: body.to,
-        subject,
-        html,
-        headers: unsubscribeToken
-          ? {
-              'List-Unsubscribe': `<${unsubscribeUrl}>`,
-              'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-            }
-          : undefined,
-      })
-
-      if (result.error) {
-        status = 'failed'
-        // Log the failure
-        await supabase.from('email_logs').insert({
-          vertical: VERTICAL,
-          recipient_email: body.to,
-          recipient_user_id: body.userId ?? null,
-          template_key: body.templateKey,
-          subject,
-          variables: variables,
-          status: 'failed',
-          error: result.error.message,
-          sent_at: new Date().toISOString(),
-        })
-
-        throw safeError(500, `Resend error: ${result.error.message}`)
-      }
-
-      resendId = result.data?.id ?? ''
-    } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'statusCode' in err) {
-        throw err // Re-throw h3 errors
-      }
-      const errorMessage = err instanceof Error ? err.message : 'Unknown Resend error'
-      status = 'failed'
-
-      await supabase.from('email_logs').insert({
-        vertical: VERTICAL,
-        recipient_email: body.to,
-        recipient_user_id: body.userId ?? null,
-        template_key: body.templateKey,
-        subject,
-        variables: variables,
-        status: 'failed',
-        error: errorMessage,
-        sent_at: new Date().toISOString(),
-      })
-
-      throw safeError(500, `Email send failed: ${errorMessage}`)
-    }
-  } else {
-    // Dev mode — log and return mock
-    console.warn(`[email/send] RESEND_API_KEY not set. Mock sending template "${body.templateKey}"`)
-    console.warn(`[email/send] Subject: ${subject}`)
-    resendId = `mock_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
-  }
-
-  // ── 8. Log to email_logs ──────────────────────────────────────────────────
-  await supabase.from('email_logs').insert({
+  // ── 4. Send + log ─────────────────────────────────────────────────────────
+  const logBase = {
     vertical: VERTICAL,
     recipient_email: body.to,
     recipient_user_id: body.userId ?? null,
     template_key: body.templateKey,
     subject,
-    variables: variables,
-    status,
-    resend_id: resendId || null,
-    sent_at: new Date().toISOString(),
-  })
+    variables,
+  }
+  const resendId = await sendOrMockEmail(
+    supabase,
+    logBase,
+    { to: body.to, subject, html, unsubscribeUrl, unsubscribeToken },
+    body.templateKey,
+  )
+  await supabase
+    .from('email_logs')
+    .insert({
+      ...logBase,
+      status: 'sent',
+      resend_id: resendId || null,
+      sent_at: new Date().toISOString(),
+    })
 
   return { success: true, messageId: resendId }
 })

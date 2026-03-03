@@ -48,6 +48,223 @@ export interface CsvColumnOption {
 }
 
 // ────────────────────────────────────────────
+// PDF helpers (module-scoped, no reactivity)
+// ────────────────────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type JsPDFDoc = any
+
+function renderPdfCoverPage(
+  doc: JsPDFDoc,
+  companyName: string,
+  profileUrl: string,
+  count: number,
+  locale: string,
+  t: (key: string) => string,
+) {
+  const pageWidth = 210
+  const pageHeight = 297
+  doc.setFillColor(35, 66, 74)
+  doc.rect(0, 0, pageWidth, pageHeight, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(32)
+  doc.text(companyName, pageWidth / 2, 100, { align: 'center' })
+  doc.setFontSize(14)
+  doc.text(t('dashboard.tools.export.pdfSubtitle'), pageWidth / 2, 120, { align: 'center' })
+  doc.setFontSize(12)
+  doc.text(`${count} ${t('dashboard.tools.export.pdfVehicles')}`, pageWidth / 2, 140, {
+    align: 'center',
+  })
+  doc.setFontSize(10)
+  doc.text(
+    new Date().toLocaleDateString(locale === 'en' ? 'en-GB' : 'es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }),
+    pageWidth / 2,
+    155,
+    { align: 'center' },
+  )
+  doc.setFontSize(9)
+  doc.text(profileUrl, pageWidth / 2, pageHeight - 30, { align: 'center' })
+}
+
+function resolveCategoryLabel(vehicle: ExportVehicle, locale: string): string {
+  if (!vehicle.subcategories) return vehicle.category
+  return (
+    vehicle.subcategories.name?.[locale] ||
+    (locale === 'en' ? vehicle.subcategories.name_en : vehicle.subcategories.name_es) ||
+    vehicle.category
+  )
+}
+
+function collectVehicleSpecs(
+  vehicle: ExportVehicle,
+  locale: string,
+  t: (key: string) => string,
+): Array<{ label: string; value: string }> {
+  const numFmt = locale === 'en' ? 'en-GB' : 'es-ES'
+  const candidates: Array<{ key: string; value: string | null }> = [
+    { key: 'category', value: vehicle.category ? resolveCategoryLabel(vehicle, locale) : null },
+    { key: 'year', value: vehicle.year ? String(vehicle.year) : null },
+    {
+      key: 'km',
+      value: vehicle.km ? new Intl.NumberFormat(numFmt).format(vehicle.km) + ' km' : null,
+    },
+    { key: 'location', value: vehicle.location },
+  ]
+  return candidates
+    .filter((c): c is { key: string; value: string } => c.value !== null && c.value !== '')
+    .map((c) => ({ label: t(`dashboard.tools.export.columns.${c.key}`), value: c.value }))
+}
+
+function renderPdfSpecsGrid(
+  doc: JsPDFDoc,
+  specs: Array<{ label: string; value: string }>,
+  margin: number,
+  yPos: number,
+  colWidth: number,
+): number {
+  doc.setFontSize(10)
+  for (let i = 0; i < specs.length; i++) {
+    const spec = specs[i]
+    if (!spec) continue
+    const col = i % 2
+    const row = Math.floor(i / 2)
+    const xPos = margin + col * colWidth
+    const specY = yPos + row * 16
+    doc.setTextColor(100, 100, 100)
+    doc.text(spec.label, xPos, specY)
+    doc.setTextColor(30, 30, 30)
+    doc.setFont('helvetica', 'bold')
+    doc.text(spec.value, xPos, specY + 6)
+    doc.setFont('helvetica', 'normal')
+  }
+  return yPos + Math.ceil(specs.length / 2) * 16 + 8
+}
+
+function renderPdfDescription(
+  doc: JsPDFDoc,
+  desc: string,
+  margin: number,
+  yPos: number,
+  pageWidth: number,
+  contentWidth: number,
+): number {
+  doc.setDrawColor(220, 220, 220)
+  doc.line(margin, yPos, pageWidth - margin, yPos)
+  yPos += 8
+  doc.setFontSize(9)
+  doc.setTextColor(60, 60, 60)
+  const lines = doc.splitTextToSize(desc, contentWidth) as string[]
+  const maxLines = Math.min(lines.length, 12)
+  for (let i = 0; i < maxLines; i++) {
+    const line = lines[i]
+    if (line !== undefined) doc.text(line, margin, yPos)
+    yPos += 5
+  }
+  if (lines.length > 12) doc.text('...', margin, yPos)
+  return yPos
+}
+
+function renderPdfVehiclePage(
+  doc: JsPDFDoc,
+  vehicle: ExportVehicle,
+  companyName: string,
+  profileUrl: string,
+  locale: string,
+  t: (key: string) => string,
+) {
+  const pageWidth = 210
+  const pageHeight = 297
+  const margin = 20
+  const contentWidth = pageWidth - margin * 2
+
+  doc.addPage()
+  let yPos = margin
+
+  // Header bar
+  doc.setFillColor(35, 66, 74)
+  doc.rect(0, 0, pageWidth, 15, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(10)
+  doc.text(companyName, margin, 10)
+  doc.text(profileUrl, pageWidth - margin, 10, { align: 'right' })
+  yPos = 25
+
+  // Image placeholder
+  doc.setFillColor(240, 240, 240)
+  doc.rect(margin, yPos, contentWidth, 80, 'F')
+  doc.setTextColor(150, 150, 150)
+  doc.setFontSize(10)
+  const imgCount = vehicle.vehicle_images?.length || 0
+  doc.text(
+    imgCount > 0
+      ? `[${t('dashboard.tools.export.pdfMainPhoto')} - ${vehicle.vehicle_images[0]?.url || ''}]`
+      : `[${t('dashboard.tools.export.pdfNoPhoto')}]`,
+    pageWidth / 2,
+    yPos + 40,
+    { align: 'center', maxWidth: contentWidth - 10 },
+  )
+  yPos += 90
+
+  // Title + Year + Price
+  doc.setTextColor(35, 66, 74)
+  doc.setFontSize(22)
+  doc.text(`${vehicle.brand} ${vehicle.model}`, margin, yPos)
+  yPos += 10
+  if (vehicle.year) {
+    doc.setFontSize(14)
+    doc.setTextColor(100, 100, 100)
+    doc.text(String(vehicle.year), margin, yPos)
+    yPos += 10
+  }
+  if (vehicle.price) {
+    doc.setFontSize(20)
+    doc.setTextColor(35, 66, 74)
+    doc.text(
+      new Intl.NumberFormat(locale === 'en' ? 'en-GB' : 'es-ES', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0,
+      }).format(vehicle.price),
+      margin,
+      yPos,
+    )
+    yPos += 12
+  }
+
+  // Divider + Specs
+  doc.setDrawColor(220, 220, 220)
+  doc.line(margin, yPos, pageWidth - margin, yPos)
+  yPos += 8
+
+  const specs = collectVehicleSpecs(vehicle, locale, t)
+  yPos = renderPdfSpecsGrid(doc, specs, margin, yPos, contentWidth / 2)
+
+  // Description
+  const desc = locale === 'en' ? vehicle.description_en : vehicle.description_es
+  if (desc) {
+    yPos = renderPdfDescription(doc, desc, margin, yPos, pageWidth, contentWidth)
+  }
+
+  // Footer
+  doc.setFillColor(245, 245, 245)
+  doc.rect(0, pageHeight - 20, pageWidth, 20, 'F')
+  doc.setTextColor(100, 100, 100)
+  doc.setFontSize(8)
+  doc.text(profileUrl, pageWidth / 2, pageHeight - 10, { align: 'center' })
+  doc.text(companyName, margin, pageHeight - 10)
+  doc.text(
+    `${t('dashboard.tools.export.pdfPage')} ${doc.getNumberOfPages()}`,
+    pageWidth - margin,
+    pageHeight - 10,
+    { align: 'right' },
+  )
+}
+
+// ────────────────────────────────────────────
 // Composable
 // ────────────────────────────────────────────
 
@@ -167,36 +384,29 @@ export function useDashboardExportar() {
     return labels[key]
   }
 
+  function resolveCategory(vehicle: ExportVehicle): string {
+    if (!vehicle.subcategories) return vehicle.category
+    return (
+      vehicle.subcategories.name?.[locale.value] ||
+      (locale.value === 'en' ? vehicle.subcategories.name_en : vehicle.subcategories.name_es) ||
+      vehicle.category
+    )
+  }
+
   function getCellValue(vehicle: ExportVehicle, key: CsvColumn): string {
-    switch (key) {
-      case 'brand':
-        return vehicle.brand || ''
-      case 'model':
-        return vehicle.model || ''
-      case 'year':
-        return vehicle.year ? String(vehicle.year) : ''
-      case 'km':
-        return vehicle.km ? String(vehicle.km) : ''
-      case 'price':
-        return vehicle.price ? vehicle.price.toFixed(2) : ''
-      case 'category':
-        if (vehicle.subcategories) {
-          const jsonb = vehicle.subcategories.name?.[locale.value]
-          if (jsonb) return jsonb
-          return (
-            (locale.value === 'en'
-              ? vehicle.subcategories.name_en
-              : vehicle.subcategories.name_es) || vehicle.category
-          )
-        }
-        return vehicle.category
-      case 'location':
-        return vehicle.location || ''
-      case 'status':
-        return vehicle.status
-      default:
-        return ''
+    const directFields: Record<string, string | number | null | undefined> = {
+      brand: vehicle.brand,
+      model: vehicle.model,
+      location: vehicle.location,
+      status: vehicle.status,
     }
+
+    if (key in directFields) return String(directFields[key] ?? '')
+    if (key === 'year') return vehicle.year ? String(vehicle.year) : ''
+    if (key === 'km') return vehicle.km ? String(vehicle.km) : ''
+    if (key === 'price') return vehicle.price ? vehicle.price.toFixed(2) : ''
+    if (key === 'category') return resolveCategory(vehicle)
+    return ''
   }
 
   // ---------- CSV Export ----------
@@ -254,10 +464,6 @@ export function useDashboardExportar() {
     try {
       const { jsPDF } = await import('jspdf')
       const doc = new jsPDF('p', 'mm', 'a4')
-      const pageWidth = 210
-      const pageHeight = 297
-      const margin = 20
-      const contentWidth = pageWidth - margin * 2
 
       const dealer = dealerProfile.value
       const companyName = dealer?.company_name || 'Tracciona'
@@ -265,204 +471,10 @@ export function useDashboardExportar() {
         ? `https://tracciona.com/dealer/${dealer.slug}`
         : 'https://tracciona.com'
 
-      // --- Cover page ---
-      doc.setFillColor(35, 66, 74) // #23424A
-      doc.rect(0, 0, pageWidth, pageHeight, 'F')
+      renderPdfCoverPage(doc, companyName, profileUrl, vehicleCount.value, locale.value, t)
 
-      // Company name centered
-      doc.setTextColor(255, 255, 255)
-      doc.setFontSize(32)
-      doc.text(companyName, pageWidth / 2, 100, { align: 'center' })
-
-      // Subtitle
-      doc.setFontSize(14)
-      doc.text(t('dashboard.tools.export.pdfSubtitle'), pageWidth / 2, 120, { align: 'center' })
-
-      // Vehicle count
-      doc.setFontSize(12)
-      doc.text(
-        `${vehicleCount.value} ${t('dashboard.tools.export.pdfVehicles')}`,
-        pageWidth / 2,
-        140,
-        { align: 'center' },
-      )
-
-      // Date
-      doc.setFontSize(10)
-      doc.text(
-        new Date().toLocaleDateString(locale.value === 'en' ? 'en-GB' : 'es-ES', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }),
-        pageWidth / 2,
-        155,
-        { align: 'center' },
-      )
-
-      // Profile URL at bottom
-      doc.setFontSize(9)
-      doc.text(profileUrl, pageWidth / 2, pageHeight - 30, { align: 'center' })
-
-      // --- Vehicle pages ---
       for (const vehicle of filteredVehicles.value) {
-        doc.addPage()
-
-        let yPos = margin
-
-        // Header bar
-        doc.setFillColor(35, 66, 74)
-        doc.rect(0, 0, pageWidth, 15, 'F')
-        doc.setTextColor(255, 255, 255)
-        doc.setFontSize(10)
-        doc.text(companyName, margin, 10)
-        doc.text(profileUrl, pageWidth - margin, 10, { align: 'right' })
-
-        yPos = 25
-
-        // Vehicle image placeholder area
-        doc.setFillColor(240, 240, 240)
-        doc.rect(margin, yPos, contentWidth, 80, 'F')
-
-        // Image indicator
-        doc.setTextColor(150, 150, 150)
-        doc.setFontSize(10)
-        const imgCount = vehicle.vehicle_images?.length || 0
-        doc.text(
-          imgCount > 0
-            ? `[${t('dashboard.tools.export.pdfMainPhoto')} - ${vehicle.vehicle_images[0]?.url || ''}]`
-            : `[${t('dashboard.tools.export.pdfNoPhoto')}]`,
-          pageWidth / 2,
-          yPos + 40,
-          { align: 'center', maxWidth: contentWidth - 10 },
-        )
-
-        yPos += 90
-
-        // Vehicle title
-        doc.setTextColor(35, 66, 74)
-        doc.setFontSize(22)
-        const vehicleTitle = `${vehicle.brand} ${vehicle.model}`
-        doc.text(vehicleTitle, margin, yPos)
-        yPos += 10
-
-        // Year
-        if (vehicle.year) {
-          doc.setFontSize(14)
-          doc.setTextColor(100, 100, 100)
-          doc.text(String(vehicle.year), margin, yPos)
-          yPos += 10
-        }
-
-        // Price
-        if (vehicle.price) {
-          doc.setFontSize(20)
-          doc.setTextColor(35, 66, 74)
-          const priceStr = new Intl.NumberFormat(locale.value === 'en' ? 'en-GB' : 'es-ES', {
-            style: 'currency',
-            currency: 'EUR',
-            minimumFractionDigits: 0,
-          }).format(vehicle.price)
-          doc.text(priceStr, margin, yPos)
-          yPos += 12
-        }
-
-        // Divider
-        doc.setDrawColor(220, 220, 220)
-        doc.line(margin, yPos, pageWidth - margin, yPos)
-        yPos += 8
-
-        // Specs grid
-        doc.setFontSize(10)
-        const specs: Array<{ label: string; value: string }> = []
-
-        if (vehicle.category) {
-          let catLabel = vehicle.category
-          if (vehicle.subcategories) {
-            const jsonb = vehicle.subcategories.name?.[locale.value]
-            catLabel =
-              jsonb ||
-              (locale.value === 'en'
-                ? vehicle.subcategories.name_en
-                : vehicle.subcategories.name_es) ||
-              vehicle.category
-          }
-          specs.push({ label: t('dashboard.tools.export.columns.category'), value: catLabel })
-        }
-        if (vehicle.year) {
-          specs.push({
-            label: t('dashboard.tools.export.columns.year'),
-            value: String(vehicle.year),
-          })
-        }
-        if (vehicle.km) {
-          specs.push({
-            label: t('dashboard.tools.export.columns.km'),
-            value:
-              new Intl.NumberFormat(locale.value === 'en' ? 'en-GB' : 'es-ES').format(vehicle.km) +
-              ' km',
-          })
-        }
-        if (vehicle.location) {
-          specs.push({
-            label: t('dashboard.tools.export.columns.location'),
-            value: vehicle.location,
-          })
-        }
-
-        const colWidth = contentWidth / 2
-        for (let i = 0; i < specs.length; i++) {
-          const col = i % 2
-          const row = Math.floor(i / 2)
-          const xPos = margin + col * colWidth
-          const specY = yPos + row * 16
-
-          const spec = specs[i]
-          if (!spec) continue
-          doc.setTextColor(100, 100, 100)
-          doc.text(spec.label, xPos, specY)
-          doc.setTextColor(30, 30, 30)
-          doc.setFont('helvetica', 'bold')
-          doc.text(spec.value, xPos, specY + 6)
-          doc.setFont('helvetica', 'normal')
-        }
-
-        yPos += Math.ceil(specs.length / 2) * 16 + 8
-
-        // Description
-        const desc = locale.value === 'en' ? vehicle.description_en : vehicle.description_es
-        if (desc) {
-          doc.setDrawColor(220, 220, 220)
-          doc.line(margin, yPos, pageWidth - margin, yPos)
-          yPos += 8
-
-          doc.setFontSize(9)
-          doc.setTextColor(60, 60, 60)
-          const lines = doc.splitTextToSize(desc, contentWidth) as string[]
-          const maxLines = Math.min(lines.length, 12)
-          for (let i = 0; i < maxLines; i++) {
-            const line = lines[i]
-            if (line !== undefined) doc.text(line, margin, yPos)
-            yPos += 5
-          }
-          if (lines.length > 12) {
-            doc.text('...', margin, yPos)
-          }
-        }
-
-        // Footer with QR URL
-        doc.setFillColor(245, 245, 245)
-        doc.rect(0, pageHeight - 20, pageWidth, 20, 'F')
-        doc.setTextColor(100, 100, 100)
-        doc.setFontSize(8)
-        doc.text(profileUrl, pageWidth / 2, pageHeight - 10, { align: 'center' })
-        doc.text(companyName, margin, pageHeight - 10)
-        doc.text(
-          `${t('dashboard.tools.export.pdfPage')} ${doc.getNumberOfPages()}`,
-          pageWidth - margin,
-          pageHeight - 10,
-          { align: 'right' },
-        )
+        renderPdfVehiclePage(doc, vehicle, companyName, profileUrl, locale.value, t)
       }
 
       const fileName = `${companyName.replaceAll(/\s+/g, '_')}_catalog_${new Date().toISOString().split('T')[0]}.pdf`

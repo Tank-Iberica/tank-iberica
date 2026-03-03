@@ -54,115 +54,113 @@ interface Chip {
 
 const europeanCountriesData = computed(() => getSortedEuropeanCountries(locale.value))
 
+function resolveLocationLabel(): string {
+  if (filters.value.location_province_eq) return filters.value.location_province_eq as string
+
+  const countries = filters.value.location_countries as string[] | undefined
+  if (!countries?.length) return t('catalog.locationAll')
+  if (countries.length > 1) return `${countries.length} ${t('catalog.countries')}`
+
+  const all = [...europeanCountriesData.value.priority, ...europeanCountriesData.value.rest]
+  const c = all.find((cc) => cc.code === countries[0])
+  return c ? `${c.flag} ${c.name}` : (countries[0] ?? '')
+}
+
+function buildLocationChip(): Chip | null {
+  if (!locationLevel.value || locationLevel.value === 'mundo') return null
+  return { key: 'location', label: resolveLocationLabel(), type: 'location' }
+}
+
+function buildRangeChip(
+  name: string,
+  active: Record<string, unknown>,
+  existingKeys: Set<string>,
+): Chip | null {
+  const baseName = name.replace(/_min$|_max$/, '')
+  const rangeKey = `dyn_${baseName}_range`
+  if (existingKeys.has(rangeKey)) return null
+  const minVal = active[`${baseName}_min`]
+  const maxVal = active[`${baseName}_max`]
+  if (!minVal && !maxVal) return null
+  existingKeys.add(rangeKey)
+  return {
+    key: rangeKey,
+    label: `${getFilterLabel(baseName)}: ${minVal || '...'} – ${maxVal || '...'}`,
+    type: 'dynamic',
+    name: baseName,
+  }
+}
+
+function buildValueChip(name: string, value: unknown): Chip {
+  if (Array.isArray(value)) {
+    return {
+      key: `dyn_${name}`,
+      label: `${getFilterLabel(name)}: ${value.join(', ')}`,
+      type: 'dynamic',
+      name,
+    }
+  }
+  const label = value === true ? getFilterLabel(name) : `${getFilterLabel(name)}: ${value}`
+  return { key: `dyn_${name}`, label, type: 'dynamic', name }
+}
+
+function buildDynamicChips(active: Record<string, unknown>, existingKeys: Set<string>): Chip[] {
+  const result: Chip[] = []
+  for (const [name, value] of Object.entries(active)) {
+    if (!value) continue
+    if (name.endsWith('_min') || name.endsWith('_max')) {
+      const chip = buildRangeChip(name, active, existingKeys)
+      if (chip) result.push(chip)
+      continue
+    }
+    result.push(buildValueChip(name, value))
+  }
+  return result
+}
+
 const chips = computed<Chip[]>(() => {
   const result: Chip[] = []
 
-  // Location
-  if (locationLevel.value && locationLevel.value !== 'mundo') {
-    let label = t('catalog.locationAll')
-    if (filters.value.location_province_eq) {
-      label = filters.value.location_province_eq as string
-    } else if (filters.value.location_countries) {
-      const countries = filters.value.location_countries as string[]
-      if (countries.length === 1) {
-        const all = [...europeanCountriesData.value.priority, ...europeanCountriesData.value.rest]
-        const c = all.find((cc) => cc.code === countries[0])
-        label = c ? `${c.flag} ${c.name}` : (countries[0] ?? '')
-      } else {
-        label = `${countries.length} ${t('catalog.countries')}`
-      }
-    }
-    result.push({ key: 'location', label, type: 'location' })
-  }
+  const locationChip = buildLocationChip()
+  if (locationChip) result.push(locationChip)
 
-  // Price
   if (filters.value.price_min || filters.value.price_max) {
     const min = formatPriceLabel((filters.value.price_min as number) ?? 0)
     const max = formatPriceLabel((filters.value.price_max as number) ?? 200000)
     result.push({ key: 'price', label: `€ ${min} – ${max}`, type: 'price' })
   }
 
-  // Brand
   if (filters.value.brand) {
     result.push({ key: 'brand', label: filters.value.brand as string, type: 'brand' })
   }
 
-  // Year
   if (filters.value.year_min || filters.value.year_max) {
     const min = (filters.value.year_min as number) ?? 2000
     const max = (filters.value.year_max as number) ?? currentYear
     result.push({ key: 'year', label: `${min} – ${max}`, type: 'year' })
   }
 
-  // Dynamic filters
-  for (const [name, value] of Object.entries(activeFilters.value)) {
-    if (!value) continue
-    // Skip range sub-keys (handled by parent filter)
-    if (name.endsWith('_min') || name.endsWith('_max')) {
-      // Show range as a single chip
-      const baseName = name.replace(/_min$|_max$/, '')
-      if (!result.some((r) => r.key === `dyn_${baseName}_range`)) {
-        const minVal = activeFilters.value[`${baseName}_min`]
-        const maxVal = activeFilters.value[`${baseName}_max`]
-        if (minVal || maxVal) {
-          const label = `${getFilterLabel(baseName)}: ${minVal || '...'} – ${maxVal || '...'}`
-          result.push({ key: `dyn_${baseName}_range`, label, type: 'dynamic', name: baseName })
-        }
-      }
-      continue
-    }
-
-    // Arrays (desplegable_tick)
-    if (Array.isArray(value)) {
-      result.push({
-        key: `dyn_${name}`,
-        label: `${getFilterLabel(name)}: ${value.join(', ')}`,
-        type: 'dynamic',
-        name,
-      })
-      continue
-    }
-
-    // Boolean (tick)
-    if (value === true) {
-      result.push({ key: `dyn_${name}`, label: getFilterLabel(name), type: 'dynamic', name })
-      continue
-    }
-
-    // String/number (desplegable, caja)
-    result.push({
-      key: `dyn_${name}`,
-      label: `${getFilterLabel(name)}: ${value}`,
-      type: 'dynamic',
-      name,
-    })
-  }
+  const existingKeys = new Set(result.map((r) => r.key))
+  result.push(...buildDynamicChips(activeFilters.value, existingKeys))
 
   return result
 })
 
+const CHIP_REMOVERS: Record<string, () => void> = {
+  location: () => setLocationLevel(null, '', null, null),
+  price: () => updateFilters({ price_min: undefined, price_max: undefined }),
+  brand: () => updateFilters({ brand: undefined }),
+  year: () => updateFilters({ year_min: undefined, year_max: undefined }),
+}
+
 function removeChip(chip: Chip) {
-  switch (chip.type) {
-    case 'location':
-      setLocationLevel(null, '', null, null)
-      break
-    case 'price':
-      updateFilters({ price_min: undefined, price_max: undefined })
-      break
-    case 'brand':
-      updateFilters({ brand: undefined })
-      break
-    case 'year':
-      updateFilters({ year_min: undefined, year_max: undefined })
-      break
-    case 'dynamic':
-      if (chip.name) {
-        // Clear range filters too
-        clearFilter(chip.name)
-        clearFilter(`${chip.name}_min`)
-        clearFilter(`${chip.name}_max`)
-      }
-      break
+  const handler = CHIP_REMOVERS[chip.type]
+  if (handler) {
+    handler()
+  } else if (chip.type === 'dynamic' && chip.name) {
+    clearFilter(chip.name)
+    clearFilter(`${chip.name}_min`)
+    clearFilter(`${chip.name}_max`)
   }
   emit('change')
 }
