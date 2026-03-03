@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-13 — Policy Engine auditado y reforzado. ENTORNO-DESARROLLO.md creado.
+**Última actualización:** 2026-03-14 — Policy Engine auditado 42/42. ENTORNO-DESARROLLO.md revisado con inventario completo.
 **Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc hasta 13-mar
 **Puntuación global:** ~83/100 (auditoría corregida mar-26) · Historial completo: `git log STATUS.md`
 
@@ -41,8 +41,9 @@
 
 | Fecha         | Resumen                                                                                                                                                                                                                                                                                  |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 14-mar (2)    | Auditoría final policy engine: audit-final.mjs creado y pasado 42/42. Fix DRY_RUN en script de auditoría. Sistema cerrado: 8 DENY · 8 WARN · 4 ASK · 43+42/43+42 tests.                                                                                                                  |
-| 14-mar        | SonarQube cont.: S6551 ✅ (15 arch. supabaseUrl type fix), S2871 ✅ (14 sort comparators), S3358 ✅ (3 ternaries→map). Broken S7721 extractions revertidas (useDashboardIndex, useConversation, useAdminVerificaciones). 0 errores TS nuevos.                                            |
+| 14-mar (3)    | ENTORNO-DESARROLLO.md revisado: Docker/SonarQube, integraciones de código (AdSense, Prebid, Google Ads, Turnstile), VAPID/CRON_SECRET, 12 servicios cloud documentados.                                                                                                                  |
+| 14-mar (2)    | Auditoría final policy engine: audit-final.mjs 42/42 ✅. Fix DRY_RUN en script. Sistema cerrado: 8 DENY · 8 WARN · 4 ASK · 43+42 tests.                                                                                                                                                  |
+| 14-mar        | SonarQube scan: 870→**345** (-525). S7721:153→8 ✅ S7763:35→2 ✅ S7778:23→2 ✅. Fixes: S6551✅ S2871✅ S3358 parcial. Próximo: S3776(68)+css:S7924(39)+S1874(38)+S6551(18)+S6582(15)+S3358(11).                                                                                          |
 | 13-mar        | Policy Engine auditado y cerrado: fix falso positivo `.environment.ts`, DENY→ASK en `--no-verify` y `reset --hard` (explicación lenguaje claro), `.prettierignore` (Prettier rompía regex), `policy-status --brief` al inicio, `ENTORNO-DESARROLLO.md`. 8 DENY · 8 WARN · 4 ASK · 43/43. |
 | 03-mar        | Policy Engine: PreToolUse hook activo. 10 DENY + 8 WARN + 2 ASK. 43/43 tests. Auto-compila en clone. Preflight anti-secretos en git push/commit.                                                                                                                                         |
 | 03-mar        | SonarQube Fase 4 pospuestas: S7781 ✅ (59 archivos) S7764 ✅ (52 window→globalThis) S7735 ✅ S6582 ✅ S1135 ✅. ~140 issues adicionales resueltos (total sesión: ~500+).                                                                                                                 |
@@ -56,6 +57,6 @@
 | 01–05-mar     | Dealer portal branding, UX forms (autocomplete 26 forms, aria), auditoría #7 completada (16 iteraciones), estrategia datos §2.11-§2.12.                                                                                                                                                  |
 | 28-feb–04-mar | Auth fixes, RLS 96 policies fix, UserPanel role-aware, CLAUDE.md restructura, hooks automáticos, auditoría 79→83/100.                                                                                                                                                                    |
 
-> **SonarQube (13-mar→03-mar):** Fase 4 completa. ~344 issues mecánicos resueltos. Próximo scan pendiente.
-> **Próximas acciones:** Fase 3 (cognitive complexity 69 issues) + Fase 5 (S7735 cognitive). Ver `docs/tracciona-docs/AUDITORIA-SONARQUBE-100.md`
-> **Prompt para retomar:** "Continúa la auditoría SonarQube Fase 3 (cognitive complexity) + Fase 5. Lee AUDITORIA-SONARQUBE-100.md para el plan completo."
+> **SonarQube (14-mar):** 870→345 issues (-525). Fase 4 con residuos — cerrar antes de pasar a Fase 3.
+> **⚠️ SIGUIENTE TAREA:** Cerrar Fase 4 completa (residuos: S6551:18 + S6582:15 + S3358:11 + S7764:10 + S7721:8 + S7781:7 + S1135:7 + S7735:3 = ~79 issues). Solo después pasar a Fase 3 (S3776 cognitive complexity, 68 issues).
+> **Prompt para retomar:** "Termina la Fase 4 SonarQube — cierra los residuos pendientes (S6551:18, S6582:15, S3358:11, S7764:10, S7721:8, S7781:7, S1135:7, S7735:3). Lee AUDITORIA-SONARQUBE-100.md para contexto."
