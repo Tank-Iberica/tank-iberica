@@ -148,6 +148,25 @@ Si alguna respuesta es "no" o "sí pero violé X", PARA y corrige antes de respo
 - **Stack:** Nuxt 3 + Supabase + Cloudflare Pages
 - **Proyecto anterior:** Tank Ibérica (monolítico) → migración y evolución en curso a Tracciona (marketplace)
 
+## 🗓️ Tareas obligatorias trimestral (CRÍTICO)
+
+**Automatizado:** GitHub Actions crea issues el 1 de cada trimestre (1-ene, 1-abr, 1-jul, 1-oct).
+
+| Tarea                  | Cuándo         | SLA                       | Documentación                     |
+| ---------------------- | -------------- | ------------------------- | --------------------------------- |
+| **Auditoría completa** | Cada trimestre | Antes de fin de trimestre | `referencia/AUDIT-METHODOLOGY.md` |
+| **Restore Drill**      | Cada trimestre | Antes de fin de trimestre | `referencia/DISASTER-RECOVERY.md` |
+
+**Qué hacer:** Cuando veas issue de GitHub:
+
+1. Conecta con Claude Code
+2. Copia el texto de la issue en el chat
+3. Claude Code te guía paso a paso
+
+**No esperes a la sesión programada — hazlo cuando GitHub cree la issue.**
+
+---
+
 ## Contexto por Tipo de Tarea — Lectura inteligente
 
 **Regla:** STATUS.md se lee SIEMPRE al inicio de sesión. El resto se lee bajo demanda según la tarea, **automáticamente tras confirmar la tarea en Paso 2** (no requiere protocolo adicional). Esto asegura que siempre entiendas la dirección y visión de la empresa para esa área sin desperdiciar tokens en documentos irrelevantes.
