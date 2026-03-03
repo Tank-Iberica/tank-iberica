@@ -1,0 +1,74 @@
+name: Quarterly Reminders
+on:
+  schedule:
+    # Primer día de trimestres: enero 1, abril 1, julio 1, octubre 1
+    - cron: '0 9 1 1,4,7,10 *' # 09:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  audit-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create audit reminder issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          QUARTER=$(date +%q)
+          YEAR=$(date +%Y)
+
+          gh issue create \
+            --title "🔍 Auditoría trimestral Q$QUARTER-$YEAR" \
+            --body "## Auditoría completa del proyecto
+
+**Checklist:**
+- [ ] Leer: \`docs/tracciona-docs/referencia/AUDIT-METHODOLOGY.md\`
+- [ ] Ejecutar: SonarQube scan local (\`bash sonar/run-scan.sh\`)
+- [ ] Revisar: 12 dimensiones (Seguridad, Código, BD, etc.)
+- [ ] Documentar: resultados en \`STATUS.md\`
+- [ ] Decisiones: actualizar \`PROYECTO-CONTEXTO.md\` si hay cambios estratégicos
+
+**Instrucciones:** Conecta con Claude Code y di:
+\`\`\`
+Haz auditoría trimestral Q$QUARTER-$YEAR (guíate por AUDIT-METHODOLOGY.md)
+\`\`\`
+
+**SLA:** Completa antes del último día del trimestre.
+" \
+            --label "operativo,trimestral" \
+            --assignee "@me" || echo "Issue ya existe"
+
+  restore-drill-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create restore drill reminder issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          QUARTER=$(date +%q)
+          YEAR=$(date +%Y)
+
+          gh issue create \
+            --title "💾 Restore Drill trimestral Q$QUARTER-$YEAR" \
+            --body "## Test de restauración desde backup
+
+**Objetivo:** Verificar que los backups funcionan ANTES de necesitarlos.
+
+**Procedure (~30 min):**
+1. Leer: \`docs/tracciona-docs/referencia/DISASTER-RECOVERY.md\` Paso 1-6
+2. Descargar backup más reciente desde Backblaze B2
+3. Descifrar (openssl)
+4. Restaurar en servidor temporal (Neon free tier)
+5. Verificar conteos (SELECT COUNT(*) FROM tablas clave)
+6. Documentar resultado en \`DISASTER-RECOVERY.md\` tabla histórica
+
+**Instrucciones:** Conecta con Claude Code y di:
+\`\`\`
+Voy a hacer restore drill. Guíame por DISASTER-RECOVERY.md
+\`\`\`
+
+**SLA:** Completa antes del último día del trimestre.
+" \
+            --label "operativo,trimestral,disaster-recovery" \
+            --assignee "@me" || echo "Issue ya existe"
