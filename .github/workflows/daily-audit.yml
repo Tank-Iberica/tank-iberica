@@ -129,10 +129,51 @@ jobs:
           name: build-failure-log
           path: build.log
 
+  # ── Detección de anomalías (cambios sospechosos) ──
+  anomaly-detection:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for dangerous code patterns
+        run: |
+          echo "=== Anomaly Detection Report ===" > anomaly-report.txt
+          echo "Date: $(date -u)" >> anomaly-report.txt
+          echo "" >> anomaly-report.txt
+
+          echo "## Recent commits (last 24h):" >> anomaly-report.txt
+          git log --since="24 hours ago" --oneline | head -10 >> anomaly-report.txt || echo "  No commits" >> anomaly-report.txt
+          echo "" >> anomaly-report.txt
+
+          echo "## Potentially dangerous SQL patterns:" >> anomaly-report.txt
+          grep -r "execute\|query\|sql\`\|concatenat" server/api app/ --include='*.ts' --include='*.vue' 2>/dev/null \
+            | grep -v node_modules | grep -v ".spec" | wc -l >> anomaly-report.txt
+          echo "" >> anomaly-report.txt
+
+          echo "## Hardcoded credentials patterns:" >> anomaly-report.txt
+          grep -r "password.*=\|token.*=\|secret.*=" server/ app/ --include='*.ts' 2>/dev/null \
+            | grep -v "// " | grep -v node_modules | grep -v ".spec" | wc -l >> anomaly-report.txt
+          echo "" >> anomaly-report.txt
+
+          echo "## Files changed (last 24h):" >> anomaly-report.txt
+          git diff --name-only $(git rev-parse origin/main)...HEAD 2>/dev/null | head -20 >> anomaly-report.txt || echo "  No changes" >> anomaly-report.txt
+
+          echo "" >> anomaly-report.txt
+          echo "⚠️ Note: This is automated detection. Review with Claude Code if anomaly count is high." >> anomaly-report.txt
+
+          cat anomaly-report.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: anomaly-report
+          path: anomaly-report.txt
+
   # ── Consolidar y notificar ──
   report:
     runs-on: ubuntu-latest
-    needs: [semgrep, npm-audit, license-audit, lint-typecheck, extensibility, seo-check, build-check]
+    needs: [semgrep, npm-audit, license-audit, lint-typecheck, extensibility, seo-check, build-check, anomaly-detection]
     if: always()
     steps:
       - uses: actions/checkout@v4
