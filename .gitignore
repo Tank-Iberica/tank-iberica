@@ -13,6 +13,9 @@ node_modules
 logs
 *.log
 
+# Policy engine (compilado localmente, no commitear)
+.claude/policy/policy-compiled.json
+
 # Misc
 .DS_Store
 .fleet

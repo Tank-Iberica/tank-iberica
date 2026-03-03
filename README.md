@@ -96,6 +96,7 @@ docs/                 # Documentacion del proyecto
 
 | Documento                                                                                       | Que contiene                                     |
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [`ENTORNO-DESARROLLO.md`](docs/tracciona-docs/referencia/ENTORNO-DESARROLLO.md)                 | Requisitos de instalacion para ordenador nuevo   |
 | [`INVENTARIO-ENDPOINTS.md`](docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)             | Todos los endpoints con auth y proposito         |
 | [`ARQUITECTURA-ESCALABILIDAD.md`](docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md) | Diseno multi-cluster, costes, decisiones         |
 | [`FLUJOS-OPERATIVOS.md`](docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md)                   | Diagramas ASCII de flujos principales            |

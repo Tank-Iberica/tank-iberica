@@ -6,11 +6,12 @@
 
 1. **Detecta tu modelo** del system context. Si estás en Opus → salta al paso 2. Si estás en otro modelo → tu ÚNICO mensaje es: "Estoy en [modelo]. Para cargar contexto necesito Opus. ¿Cambias con `/model opus`?" Luego espera respuesta del usuario.
 
-2. **Una vez en Opus**, automáticamente lee:
-   - **CLAUDE.md** — protocolo, reglas, decisiones arquitectónicas
-   - **STATUS.md** — estado actual, errores activos, changelog reciente
+2. **Una vez en Opus**, automáticamente:
+   - Lee **CLAUDE.md** — protocolo, reglas, decisiones arquitectónicas
+   - Lee **STATUS.md** — estado actual, errores activos, changelog reciente
+   - Ejecuta `node .claude/policy/policy-status.mjs --brief` → incluye la línea de output en tu primer mensaje al usuario
 
-3. Solo después de leer estos 2 archivos, estás listo para recibir órdenes del usuario. **NO leas PROYECTO-CONTEXTO.md al inicio** — se lee bajo demanda según el tipo de tarea (ver tabla de Contexto por Tipo de Tarea).
+3. Solo después de leer estos 2 archivos y ejecutar el check del engine, estás listo para recibir órdenes del usuario. **NO leas PROYECTO-CONTEXTO.md al inicio** — se lee bajo demanda según el tipo de tarea (ver tabla de Contexto por Tipo de Tarea).
 
 ---
 
@@ -33,7 +34,7 @@ Puedes leer tu modelo actual del system context (`claude-haiku-4-5-20251001`, `c
 
 ### Excepción — Lectura de contexto al inicio de sesión
 
-**Lectura de contexto de inicio (CLAUDE.md, STATUS.md) NO es una tarea — no requiere protocolo.** Ejecuta Read tools directamente para cargar contexto. La lectura adicional según tipo de tarea (ver tabla abajo) tampoco requiere protocolo — se ejecuta automáticamente tras confirmar la tarea en Paso 2. Cualquier otra orden SÍ requiere protocolo.
+**Lectura de contexto de inicio (CLAUDE.md, STATUS.md) y el check del Policy Engine NO son una tarea — no requieren protocolo.** Ejecuta Read tools y el Bash de `policy-status.mjs --brief` directamente para cargar contexto. La lectura adicional según tipo de tarea (ver tabla abajo) tampoco requiere protocolo — se ejecuta automáticamente tras confirmar la tarea en Paso 2. Cualquier otra orden SÍ requiere protocolo.
 
 ### Paso 0 — Verifica el modelo (Auto-detección)
 
@@ -278,6 +279,28 @@ Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de cód
 2. Solo tras confirmación del usuario, actualiza la sección correspondiente en `docs/PROYECTO-CONTEXTO.md`
 3. Actualiza también la sección "Decisiones estratégicas" de este CLAUDE.md si aplica
 
+### Actualización de ENTORNO-DESARROLLO.md — Obligatoria al añadir herramientas
+
+**Siempre que se implemente o configure algo que requiera instalación en un ordenador nuevo** (y que NO sea simplemente hacer `npm install`), añade una entrada en `docs/tracciona-docs/referencia/ENTORNO-DESARROLLO.md`.
+
+Ejemplos que SÍ requieren actualización:
+
+- Instalar una herramienta CLI globalmente (`npm install -g algo`, `brew install algo`, etc.)
+- Configurar un sistema externo (SonarQube local, Docker, GitHub CLI, etc.)
+- Crear un sistema de hooks o scripts que requieren pasos de setup post-clonado
+- Añadir un servicio cloud nuevo que necesita credenciales/acceso
+
+Ejemplos que NO requieren actualización (se gestionan solos):
+
+- Añadir una dependencia npm a `package.json` → se instala con `npm install`
+- Crear un componente, composable o página nueva
+
+**Procedimiento:**
+
+1. Al terminar de implementar la herramienta/sistema, añade una fila en la tabla "Historial de herramientas añadidas" de `ENTORNO-DESARROLLO.md`
+2. Si requiere pasos de instalación nuevos, añádelos también en la sección correspondiente (Herramientas de sistema, Herramientas de desarrollo, o Servicios cloud)
+3. Actualiza el Checklist si aplica
+
 ## Gestión de sesión
 
 ### Antes de lanzar Node (automático)
@@ -323,4 +346,7 @@ Cuando el usuario confirma que no hay más tareas o pide cerrar sesión, ejecuta
 3. **Mensaje de cierre:** "✅ Sesión lista para cerrar. Cuando abras la siguiente, empieza con: Lee CLAUDE.md y STATUS.md antes de hacer nada."
 4. **STOP:** No continúes con nada más.
 
-**Hooks configurados:** `.claude/settings.json` → PostToolUse detecta `CLOSING_SESSION` en STATUS.md → ejecuta `.claude/check-closing-and-cleanup.sh` → `.claude/cleanup-node.bat` (mata puerto 3000).
+**Hooks configurados:**
+
+- **PreToolUse (policy engine):** `.claude/policy/policy-engine.mjs` evalúa cada Bash/Write/Edit contra `.claude/policy/SECURITY_POLICY.md`. Bloquea operaciones destructivas, avisa en operaciones sensibles, auto-aprueba el resto. Si cambias de máquina o clonas el repo: ejecuta `node .claude/policy/compile-policy.mjs` una vez. Ver estado: `node .claude/policy/policy-status.mjs`. Bypass emergencia: `POLICY_BYPASS=1`.
+- **PostToolUse (ESLint + session close):** Detecta `CLOSING_SESSION` en STATUS.md → ejecuta `.claude/check-closing-and-cleanup.sh` → `.claude/cleanup-node.bat` (mata puerto 3000).
