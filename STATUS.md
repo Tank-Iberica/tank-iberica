@@ -1,7 +1,7 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-14 — Policy Engine auditado 42/42. ENTORNO-DESARROLLO.md revisado con inventario completo.
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc hasta 13-mar
+**Última actualización:** 2026-03-15 — Dependabot PRs #1-2 cerradas (lockfile conflict). ANTHROPIC_API_KEY Q&A respondido.
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc hasta 15-mar
 **Puntuación global:** ~83/100 (auditoría corregida mar-26) · Historial completo: `git log STATUS.md`
 
 ---
@@ -41,6 +41,7 @@
 
 | Fecha         | Resumen                                                                                                                                                                                                                                                                                  |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 15-mar        | Dependabot PRs #1-2 cerradas (lockfile conflict: listhen@1.9.0 vs crossws 0.4.1). Q&A respondido: ANTHROPIC_API_KEY no requiere GitHub Secrets para Claude Code (ya lo gestiona sesiones interactivas). Commit `69da0c4`.                                                                |
 | 14-mar (3)    | ENTORNO-DESARROLLO.md revisado: Docker/SonarQube, integraciones de código (AdSense, Prebid, Google Ads, Turnstile), VAPID/CRON_SECRET, 12 servicios cloud documentados.                                                                                                                  |
 | 14-mar (2)    | Auditoría final policy engine: audit-final.mjs 42/42 ✅. Fix DRY_RUN en script. Sistema cerrado: 8 DENY · 8 WARN · 4 ASK · 43+42 tests.                                                                                                                                                  |
 | 14-mar        | SonarQube scan: 870→**345** (-525). S7721:153→8 ✅ S7763:35→2 ✅ S7778:23→2 ✅. Fixes: S6551✅ S2871✅ S3358 parcial. Próximo: S3776(68)+css:S7924(39)+S1874(38)+S6551(18)+S6582(15)+S3358(11).                                                                                          |
