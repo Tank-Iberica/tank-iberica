@@ -1,0 +1,9 @@
+# Policy engine — contiene regex que Prettier rompe al interpretar * como markdown
+.claude/policy/SECURITY_POLICY.md
+
+# Archivos generados
+.claude/policy/policy-compiled.json
+coverage/
+.output/
+.nuxt/
+dist/
