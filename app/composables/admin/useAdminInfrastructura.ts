@@ -142,7 +142,7 @@ export function useAdminInfrastructura() {
           else if (color === 'red') worstStatus = 'red'
           else if (color === 'yellow' && worstStatus !== 'red') worstStatus = 'yellow'
 
-          const rec = pct !== null ? getRecommendation(def.key, metricDef.name, pct) : null
+          const rec = pct === null ? null : getRecommendation(def.key, metricDef.name, pct)
 
           metricDisplays.push({
             name: metricDef.name,

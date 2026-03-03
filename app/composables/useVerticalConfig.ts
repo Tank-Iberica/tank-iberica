@@ -4,9 +4,17 @@
  */
 
 /** Current vertical slug — reads from NUXT_PUBLIC_VERTICAL env or defaults to 'tracciona' */
+function applyTheme(theme: Record<string, string>) {
+  if (!import.meta.client) return
+  const root = document.documentElement
+  Object.entries(theme).forEach(([key, value]) => {
+    root.style.setProperty(`--${key.replaceAll('_', '-')}`, value)
+  })
+}
+
 export function getVerticalSlug(): string {
   try {
-    return (useRuntimeConfig().public.vertical as string) || 'tracciona'
+    return useRuntimeConfig().public.vertical || 'tracciona'
   } catch {
     return 'tracciona'
   }
@@ -60,14 +68,6 @@ export function useVerticalConfig() {
       .single()
     config.value = data as VerticalConfig | null
     return data
-  }
-
-  function applyTheme(theme: Record<string, string>) {
-    if (!import.meta.client) return
-    const root = document.documentElement
-    Object.entries(theme).forEach(([key, value]) => {
-      root.style.setProperty(`--${key.replaceAll('_', '-')}`, value)
-    })
   }
 
   function isSectionActive(section: string): boolean {

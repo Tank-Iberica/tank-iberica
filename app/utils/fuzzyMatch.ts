@@ -5,8 +5,8 @@ function normalize(str: string): string {
   return str
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '')
-    .replace(/\s+/g, ' ')
+    .replaceAll(/[\u0300-\u036F]/g, '')
+    .replaceAll(/\s+/g, ' ')
     .trim()
 }
 
@@ -51,8 +51,8 @@ export function fuzzyMatch(text: string, query: string, threshold = 0.45): boole
   if (normText.includes(normQuery)) return true
 
   // Split into words and check each query word against text words
-  const queryWords = normQuery.split(' ').filter(w => w.length > 1)
-  const textWords = normText.split(' ').filter(w => w.length > 1)
+  const queryWords = normQuery.split(' ').filter((w) => w.length > 1)
+  const textWords = normText.split(' ').filter((w) => w.length > 1)
 
   for (const qw of queryWords) {
     let wordMatched = false

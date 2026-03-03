@@ -117,7 +117,7 @@ function extractKeywords(text: string): string[] {
   return text
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '')
+    .replaceAll(/[\u0300-\u036F]/g, '')
     .split(/\s+/)
     .filter((w) => w.length > 4 && !STOPWORDS_ES.has(w))
 }
@@ -162,7 +162,7 @@ function evaluateTitleKeywords(title: string): SeoCriterion {
   const words = title
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '')
+    .replaceAll(/[\u0300-\u036F]/g, '')
     .split(/\s+/)
     .filter((w) => w.length > 0)
 
@@ -480,8 +480,8 @@ function evaluateHashtags(hashtags: string[]): SeoCriterion {
 
 // ─── 11. Bilingual ───
 function evaluateBilingual(titleEn: string | null, contentEn: string | null): SeoCriterion {
-  const hasTitle = !!titleEn && titleEn.trim().length > 0
-  const hasContent = !!contentEn && contentEn.trim().length > 0
+  const hasTitle = (titleEn?.trim().length ?? 0) > 0
+  const hasContent = (contentEn?.trim().length ?? 0) > 0
 
   let score = 0
   let description = ''
@@ -541,7 +541,7 @@ function evaluateFaqSchema(
 // ─── 13. Social post text ───
 function evaluateSocialText(socialPostText: Record<string, string> | null): SeoCriterion {
   const texts = socialPostText || {}
-  const filled = Object.values(texts).filter((t) => t && t.trim().length > 0)
+  const filled = Object.values(texts).filter((t) => t?.trim().length > 0)
 
   let score = 0
   let description = ''
@@ -656,7 +656,7 @@ export function useSeoScore(input: Ref<SeoInput> | ComputedRef<SeoInput>) {
 
     const descText = (data.description_es || '').trim()
     const snippetDescription =
-      descText || truncate((data.content_es || '').replace(/\n+/g, ' ').trim(), 155)
+      descText || truncate((data.content_es || '').replaceAll(/\n+/g, ' ').trim(), 155)
     const sectionPrefix = data.section === 'guia' ? 'guia' : 'noticias'
     const snippetPreview: SeoSnippetPreview = {
       title: truncate(data.title_es || 'Sin titulo', 60),

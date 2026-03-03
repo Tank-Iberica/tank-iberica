@@ -101,6 +101,11 @@ export const BALANCE_STATUS_LABELS: Record<BalanceStatus, string> = {
   cobrado: 'Cobrado',
 }
 
+function calculateProfit(importe: number, coste: number | null): number | null {
+  if (!coste || coste === 0) return null
+  return Math.round(((importe - coste) / coste) * 100)
+}
+
 export function useAdminBalance() {
   const supabase = useSupabaseClient()
 
@@ -334,9 +339,7 @@ export function useAdminBalance() {
       }
 
       // By reason
-      if (!byReason[entry.razon]) {
-        byReason[entry.razon] = { ingresos: 0, gastos: 0 }
-      }
+      byReason[entry.razon] ??= { ingresos: 0, gastos: 0 }
       if (entry.tipo === 'ingreso') {
         byReason[entry.razon]!.ingresos += amount
       } else {
@@ -346,9 +349,7 @@ export function useAdminBalance() {
       // By subcategory (for profit analysis)
       if (entry.subcategory_id && entry.subcategories) {
         const subcatName = entry.subcategories.name_es
-        if (!byType[subcatName]) {
-          byType[subcatName] = { ingresos: 0, gastos: 0, coste: 0, beneficio: 0 }
-        }
+        byType[subcatName] ??= { ingresos: 0, gastos: 0, coste: 0, beneficio: 0 }
         if (entry.tipo === 'ingreso') {
           byType[subcatName].ingresos += amount
           byType[subcatName].coste += entry.coste_asociado || 0
@@ -378,11 +379,6 @@ export function useAdminBalance() {
   /**
    * Calculate profit percentage for an entry
    */
-  function calculateProfit(importe: number, coste: number | null): number | null {
-    if (!coste || coste === 0) return null
-    return Math.round(((importe - coste) / coste) * 100)
-  }
-
   return {
     entries: readonly(entries),
     loading: readonly(loading),

@@ -8,7 +8,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'toggle', id: string): void
+  toggle: [id: string]
 }>()
 </script>
 

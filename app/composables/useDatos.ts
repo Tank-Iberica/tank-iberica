@@ -147,7 +147,9 @@ export function useDatos() {
         }
       }
 
-      const months = Array.from(byMonth.keys()).sort().reverse()
+      const months = Array.from(byMonth.keys())
+        .sort((a, b) => a.localeCompare(b))
+        .reverse()
       if (!months.length) continue
 
       const latestMonth = months[0]!
@@ -198,7 +200,7 @@ export function useDatos() {
         medianPrice: Math.round(weightedMedian),
         listingCount: totalListings,
         soldCount: totalSold,
-        avgDaysToSell: daysToSell !== null ? Math.round(daysToSell) : null,
+        avgDaysToSell: daysToSell === null ? null : Math.round(daysToSell),
         trendPct: Math.round(trendPct * 10) / 10,
         trendDirection,
       })
@@ -249,7 +251,9 @@ export function useDatos() {
   const provinceStats = computed<ProvinceStat[]>(() => {
     if (!marketRows.value.length) return []
 
-    const allMonths = [...new Set(marketRows.value.map((r) => r.month))].sort().reverse()
+    const allMonths = [...new Set(marketRows.value.map((r) => r.month))]
+      .sort((a, b) => a.localeCompare(b))
+      .reverse()
     if (!allMonths.length) return []
 
     const latestMonth = allMonths[0]
@@ -411,7 +415,7 @@ export function useDatos() {
     if (!marketRows.value.length) return ''
     const latestMonth = marketRows.value
       .map((r) => r.month)
-      .sort()
+      .sort((a, b) => a.localeCompare(b))
       .reverse()[0]
     if (!latestMonth) return ''
     const date = new Date(latestMonth + '-01')

@@ -42,6 +42,21 @@ interface UserGeo {
   province: string
 }
 
+function detectGeo(): UserGeo {
+  const nuxtApp = useNuxtApp()
+  let country = 'ES'
+  const region = ''
+  const province = ''
+
+  // Try Cloudflare headers from SSR context
+  if (import.meta.server && nuxtApp.ssrContext?.event) {
+    const headers = nuxtApp.ssrContext.event.node.req.headers
+    country = (headers['cf-ipcountry'] as string) || 'ES'
+  }
+
+  return { country, region, province }
+}
+
 export function useAds(
   position: AdPosition,
   options?: {
@@ -60,21 +75,6 @@ export function useAds(
   // 1. Vehicle location (if viewing a vehicle page)
   // 2. Cloudflare headers (CF-IPCountry)
   // 3. Fallback: ES, empty region/province
-  function detectGeo(): UserGeo {
-    const nuxtApp = useNuxtApp()
-    let country = 'ES'
-    const region = ''
-    const province = ''
-
-    // Try Cloudflare headers from SSR context
-    if (import.meta.server && nuxtApp.ssrContext?.event) {
-      const headers = nuxtApp.ssrContext.event.node.req.headers
-      country = (headers['cf-ipcountry'] as string) || 'ES'
-    }
-
-    return { country, region, province }
-  }
-
   async function fetchAds() {
     loading.value = true
     const geo = detectGeo()
@@ -118,7 +118,7 @@ export function useAds(
           ad.provinces.length === 0 || (geo.province && ad.provinces.includes(geo.province))
 
         // Segment matching: if ad targets specific segments, check user segments
-        if (ad.target_segments && ad.target_segments.length > 0) {
+        if ((ad.target_segments?.length ?? 0) > 0) {
           const userSegs = options?.userSegments || []
           if (userSegs.length > 0) {
             const hasMatch = ad.target_segments.some((s) => userSegs.includes(s))
@@ -193,21 +193,21 @@ export function useAds(
   function handleClick(ad: Ad) {
     registerEvent(ad.id, 'click')
     if (ad.link_url) {
-      window.open(ad.link_url, '_blank', 'noopener')
+      globalThis.open(ad.link_url, '_blank', 'noopener')
     }
   }
 
   function handlePhoneClick(ad: Ad) {
     registerEvent(ad.id, 'phone_click')
     if (ad.phone) {
-      window.location.href = `tel:${ad.phone}`
+      globalThis.location.href = `tel:${ad.phone}`
     }
   }
 
   function handleEmailClick(ad: Ad) {
     registerEvent(ad.id, 'email_click')
     if (ad.email) {
-      window.location.href = `mailto:${ad.email}`
+      globalThis.location.href = `mailto:${ad.email}`
     }
   }
 

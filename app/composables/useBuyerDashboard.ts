@@ -206,7 +206,7 @@ export function useBuyerDashboard() {
             dealerName = lead.dealers.company_name
           } else if (typeof lead.dealers.company_name === 'object') {
             // Get first available language
-            const names = lead.dealers.company_name as Record<string, string>
+            const names = lead.dealers.company_name
             dealerName = names.es || names.en || Object.values(names)[0] || null
           }
         }

@@ -16,6 +16,10 @@ interface EmailPreferenceRow {
 /** Email types that cannot be disabled by the user */
 const ALWAYS_ON_TYPES: ReadonlySet<string> = new Set(['confirm_email', 'suspicious_activity'])
 
+function isAlwaysOn(emailType: string): boolean {
+  return ALWAYS_ON_TYPES.has(emailType)
+}
+
 export function useEmailPreferences() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient<any>()
@@ -66,16 +70,12 @@ export function useEmailPreferences() {
 
     const stored = preferences.value.get(emailType)
     // Default to true if no row exists (opt-out model)
-    return stored === undefined ? true : stored
+    return stored ?? true
   }
 
   /**
    * Check if a given email type is always on (cannot be disabled).
    */
-  function isAlwaysOn(emailType: string): boolean {
-    return ALWAYS_ON_TYPES.has(emailType)
-  }
-
   /**
    * Upsert a single email_preferences row.
    * Updates the local reactive map optimistically.

@@ -34,6 +34,28 @@ export interface InfraCluster {
   status: 'active' | 'migrating' | 'full'
 }
 
+function getPeriodDate(period: '24h' | '7d' | '30d'): string {
+  const now = new Date()
+  switch (period) {
+    case '24h':
+      now.setHours(now.getHours() - 24)
+      break
+    case '7d':
+      now.setDate(now.getDate() - 7)
+      break
+    case '30d':
+      now.setDate(now.getDate() - 30)
+      break
+  }
+  return now.toISOString()
+}
+function getStatusColor(usagePercent: number | null): 'green' | 'yellow' | 'red' | 'gray' {
+  if (usagePercent === null) return 'gray'
+  if (usagePercent >= 90) return 'red'
+  if (usagePercent >= 70) return 'yellow'
+  return 'green'
+}
+
 export function useInfraMetrics() {
   const supabase = useSupabaseClient()
   const metrics = ref<InfraMetric[]>([])
@@ -41,22 +63,6 @@ export function useInfraMetrics() {
   const clusters = ref<InfraCluster[]>([])
   const loading = ref(false)
   const error = ref('')
-
-  function getPeriodDate(period: '24h' | '7d' | '30d'): string {
-    const now = new Date()
-    switch (period) {
-      case '24h':
-        now.setHours(now.getHours() - 24)
-        break
-      case '7d':
-        now.setDate(now.getDate() - 7)
-        break
-      case '30d':
-        now.setDate(now.getDate() - 30)
-        break
-    }
-    return now.toISOString()
-  }
 
   async function fetchMetrics(opts?: { component?: string; period?: '24h' | '7d' | '30d' }) {
     loading.value = true
@@ -180,13 +186,6 @@ export function useInfraMetrics() {
       (m) => m.component === component && m.metric_name === metricName,
     )
     return match ?? null
-  }
-
-  function getStatusColor(usagePercent: number | null): 'green' | 'yellow' | 'red' | 'gray' {
-    if (usagePercent === null) return 'gray'
-    if (usagePercent >= 90) return 'red'
-    if (usagePercent >= 70) return 'yellow'
-    return 'green'
   }
 
   const criticalAlertCount = computed(

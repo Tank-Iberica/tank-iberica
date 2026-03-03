@@ -94,6 +94,32 @@ export const categoryOptions: CategoryOption[] = [
 // Composable
 // ---------------------------------------------------------------------------
 
+function getSliderMin(options: FilterOptionValue): number | undefined {
+  if (options && typeof options === 'object' && !Array.isArray(options)) {
+    return options.min
+  }
+  return undefined
+}
+function getSliderMax(options: FilterOptionValue): number | undefined {
+  if (options && typeof options === 'object' && !Array.isArray(options)) {
+    return options.max
+  }
+  return undefined
+}
+function formatCurrency(val: number): string {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(val)
+}
+function calcBeneficio(salePrice: number, cost: number | null | undefined): string {
+  if (!cost || cost === 0) return '\u2014'
+  const pct = Math.round(((salePrice - cost) / cost) * 100)
+  return `${pct > 0 ? '+' : ''}${pct}%`
+}
+
 export function useAdminVehicleDetail(vehicleId: Ref<string>) {
   const router = useRouter()
   const supabase = useSupabaseClient()
@@ -190,35 +216,6 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
   // -----------------------------------------------------------------------
   // Helper functions
   // -----------------------------------------------------------------------
-
-  function getSliderMin(options: FilterOptionValue): number | undefined {
-    if (options && typeof options === 'object' && !Array.isArray(options)) {
-      return options.min
-    }
-    return undefined
-  }
-
-  function getSliderMax(options: FilterOptionValue): number | undefined {
-    if (options && typeof options === 'object' && !Array.isArray(options)) {
-      return options.max
-    }
-    return undefined
-  }
-
-  function formatCurrency(val: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(val)
-  }
-
-  function calcBeneficio(salePrice: number, cost: number | null | undefined): string {
-    if (!cost || cost === 0) return '\u2014'
-    const pct = Math.round(((salePrice - cost) / cost) * 100)
-    return `${pct > 0 ? '+' : ''}${pct}%`
-  }
 
   // -----------------------------------------------------------------------
   // Transaction modal

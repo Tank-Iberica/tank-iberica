@@ -26,10 +26,10 @@ export function slugify(...parts: (string | number | null | undefined)[]): strin
   return joined
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '')
+    .replaceAll(/[\u0300-\u036F]/g, '')
     .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .replaceAll(/[^a-z0-9]+/g, '-')
+    .replaceAll(/^-+|-+$/g, '')
 }
 
 /**
@@ -38,8 +38,8 @@ export function slugify(...parts: (string | number | null | undefined)[]): strin
  */
 function sanitize(text: string): string {
   return text
-    .replace(/[<>:"/\\|?*]+/g, '')
-    .replace(/\s+/g, '-')
+    .replaceAll(/[<>:"/\\|?*]+/g, '')
+    .replaceAll(/\s+/g, '-')
     .trim()
 }
 
@@ -110,7 +110,7 @@ export function generateVehicleAltText(vehicle: FileNamingData, imageIndex: numb
 export function generateVehicleFolderName(vehicle: FileNamingData): string {
   const parts = [`V${vehicle.id}`, sanitize(vehicle.brand)]
   if (vehicle.year) parts.push(String(vehicle.year))
-  if (vehicle.plate) parts.push(vehicle.plate.replace(/\s+/g, ''))
+  if (vehicle.plate) parts.push(vehicle.plate.replaceAll(/\s+/g, ''))
   return parts.join('_')
 }
 
@@ -121,7 +121,7 @@ export function generateVehicleFolderName(vehicle: FileNamingData): string {
 export function generateInterFolderName(vehicle: FileNamingData): string {
   const parts = [`P${vehicle.id}`, sanitize(vehicle.brand)]
   if (vehicle.year) parts.push(String(vehicle.year))
-  if (vehicle.plate) parts.push(vehicle.plate.replace(/\s+/g, ''))
+  if (vehicle.plate) parts.push(vehicle.plate.replaceAll(/\s+/g, ''))
   return parts.join('_')
 }
 
@@ -138,7 +138,7 @@ export function generateDocFileName(
 ): string {
   const parts = [sanitize(docType), sanitize(vehicle.brand)]
   if (vehicle.year) parts.push(String(vehicle.year))
-  if (vehicle.plate) parts.push(vehicle.plate.replace(/\s+/g, ''))
+  if (vehicle.plate) parts.push(vehicle.plate.replaceAll(/\s+/g, ''))
   parts.push(date || (new Date().toISOString().split('T')[0] ?? ''))
 
   return `${parts.join('_')}.${originalExt || 'pdf'}`

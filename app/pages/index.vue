@@ -284,13 +284,13 @@ onMounted(loadVehicles)
 onActivated(() => {
   if (scrollPosition.value) {
     nextTick(() => {
-      window.scrollTo(0, scrollPosition.value)
+      globalThis.scrollTo(0, scrollPosition.value)
     })
   }
 })
 
 onDeactivated(() => {
-  saveScrollPosition(window.scrollY)
+  saveScrollPosition(globalThis.scrollY)
 })
 </script>
 

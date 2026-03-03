@@ -6,7 +6,7 @@
 import type { MaintenanceEntry, RentalEntry } from '~/composables/admin/useAdminVehicles'
 import { useAdminProductForm } from '~/composables/admin/useAdminProductForm'
 
-export type { MaintenanceEntry, RentalEntry }
+export type { MaintenanceEntry, RentalEntry } from '~/composables/admin/useAdminVehicles'
 export type {
   CharacteristicEntry,
   PendingImage,

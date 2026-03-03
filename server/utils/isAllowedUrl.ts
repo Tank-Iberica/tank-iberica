@@ -1,5 +1,5 @@
 /**
- * PATRON OBLIGATORIO: Todo endpoint que reciba URLs externas
+ * PATRON OBLIGATORIO: Cada endpoint que reciba URLs externas
  * (successUrl, returnUrl, redirectUrl, callbackUrl, etc.)
  * DEBE validarlas con esta funcion antes de usarlas.
  * Previene ataques de open redirect.

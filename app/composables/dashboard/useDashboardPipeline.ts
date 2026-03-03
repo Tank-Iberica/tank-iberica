@@ -66,6 +66,16 @@ export const STAGE_COLORS: Record<PipelineStage, string> = {
 
 // ============ COMPOSABLE ============
 
+function formatCurrency(value: number | null | undefined): string {
+  if (value == null) return '-'
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value)
+}
+
 export function useDashboardPipeline() {
   const supabase = useSupabaseClient()
   const { userId } = useAuth()
@@ -390,16 +400,6 @@ export function useDashboardPipeline() {
   }
 
   // ─── Helpers ────────────────────────────────────────────────
-  function formatCurrency(value: number | null | undefined): string {
-    if (value == null) return '-'
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value)
-  }
-
   // ─── Init (called by page in onMounted) ─────────────────────
   async function init(): Promise<void> {
     await fetchSubscription()

@@ -60,6 +60,36 @@ const serviceTypeLabels: Record<string, string> = {
   ad: 'Publicidad',
 }
 
+function getDateRange(period: string): { from: string; to: string } {
+  const now = new Date()
+  let from: Date
+  let to: Date
+
+  switch (period) {
+    case 'this_month':
+      from = new Date(now.getFullYear(), now.getMonth(), 1)
+      to = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      break
+    case 'last_month':
+      from = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      to = new Date(now.getFullYear(), now.getMonth(), 1)
+      break
+    case 'last_3_months':
+      from = new Date(now.getFullYear(), now.getMonth() - 3, 1)
+      to = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      break
+    case 'this_year':
+      from = new Date(now.getFullYear(), 0, 1)
+      to = new Date(now.getFullYear() + 1, 0, 1)
+      break
+    default:
+      from = new Date(2020, 0, 1)
+      to = new Date(now.getFullYear() + 1, 0, 1)
+  }
+
+  return { from: from.toISOString(), to: to.toISOString() }
+}
+
 export function getServiceTypeLabel(type: string): string {
   return serviceTypeLabels[type] || type
 }
@@ -93,36 +123,6 @@ export function useAdminFacturacion() {
     { value: 'this_year', label: () => t('billing.thisYear') },
     { value: 'all', label: () => t('billing.allTime') },
   ]
-
-  function getDateRange(period: string): { from: string; to: string } {
-    const now = new Date()
-    let from: Date
-    let to: Date
-
-    switch (period) {
-      case 'this_month':
-        from = new Date(now.getFullYear(), now.getMonth(), 1)
-        to = new Date(now.getFullYear(), now.getMonth() + 1, 1)
-        break
-      case 'last_month':
-        from = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-        to = new Date(now.getFullYear(), now.getMonth(), 1)
-        break
-      case 'last_3_months':
-        from = new Date(now.getFullYear(), now.getMonth() - 3, 1)
-        to = new Date(now.getFullYear(), now.getMonth() + 1, 1)
-        break
-      case 'this_year':
-        from = new Date(now.getFullYear(), 0, 1)
-        to = new Date(now.getFullYear() + 1, 0, 1)
-        break
-      default:
-        from = new Date(2020, 0, 1)
-        to = new Date(now.getFullYear() + 1, 0, 1)
-    }
-
-    return { from: from.toISOString(), to: to.toISOString() }
-  }
 
   async function loadInvoices(): Promise<void> {
     loading.value = true

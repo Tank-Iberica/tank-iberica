@@ -10,7 +10,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'select', conversationId: string): void
+  select: [conversationId: string]
 }>()
 
 const { t } = useI18n()

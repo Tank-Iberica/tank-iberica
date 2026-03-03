@@ -6,6 +6,48 @@ import type { VehicleFilters } from '~/composables/useVehicles'
  * (visible_from > now). These are "early access" vehicles that Pro users or
  * credit holders can unlock before they become publicly visible.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applyNonLocationFilters(query: any, filters: VehicleFilters) {
+  if (filters.category_id) {
+    query = query.eq('category_id', filters.category_id)
+  }
+  if (filters.subcategory_id) {
+    query = query.eq('subcategory_id', filters.subcategory_id)
+  }
+  if ((filters.actions || filters.categories)?.length) {
+    query = query.in('category', (filters.actions || filters.categories!) as never)
+  }
+  if (filters.price_min !== undefined) {
+    query = query.gte('price', filters.price_min)
+  }
+  if (filters.price_max !== undefined) {
+    query = query.lte('price', filters.price_max)
+  }
+  if (filters.year_min !== undefined) {
+    query = query.gte('year', filters.year_min)
+  }
+  if (filters.year_max !== undefined) {
+    query = query.lte('year', filters.year_max)
+  }
+  if (filters.brand) {
+    query = query.ilike('brand', filters.brand)
+  }
+  return query
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applyLocationFilters(query: any, filters: VehicleFilters) {
+  if (filters.location_province_eq) {
+    query = query.eq('location_province', filters.location_province_eq)
+  }
+  if (filters.location_regions?.length) {
+    query = query.in('location_region', filters.location_regions)
+  }
+  if (filters.location_countries?.length) {
+    query = query.in('location_country', filters.location_countries)
+  }
+  return query
+}
+
 export function useHiddenVehicles() {
   const supabase = useSupabaseClient()
 
@@ -76,51 +118,6 @@ export function useHiddenVehicles() {
     } finally {
       loading.value = false
     }
-  }
-
-  /** Apply non-location filters (category, price, year, brand) */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function applyNonLocationFilters(query: any, filters: VehicleFilters) {
-    if (filters.category_id) {
-      query = query.eq('category_id', filters.category_id)
-    }
-    if (filters.subcategory_id) {
-      query = query.eq('subcategory_id', filters.subcategory_id)
-    }
-    if ((filters.actions || filters.categories)?.length) {
-      query = query.in('category', (filters.actions || filters.categories!) as never)
-    }
-    if (filters.price_min !== undefined) {
-      query = query.gte('price', filters.price_min)
-    }
-    if (filters.price_max !== undefined) {
-      query = query.lte('price', filters.price_max)
-    }
-    if (filters.year_min !== undefined) {
-      query = query.gte('year', filters.year_min)
-    }
-    if (filters.year_max !== undefined) {
-      query = query.lte('year', filters.year_max)
-    }
-    if (filters.brand) {
-      query = query.ilike('brand', filters.brand)
-    }
-    return query
-  }
-
-  /** Apply location filters */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function applyLocationFilters(query: any, filters: VehicleFilters) {
-    if (filters.location_province_eq) {
-      query = query.eq('location_province', filters.location_province_eq)
-    }
-    if (filters.location_regions?.length) {
-      query = query.in('location_region', filters.location_regions)
-    }
-    if (filters.location_countries?.length) {
-      query = query.in('location_country', filters.location_countries)
-    }
-    return query
   }
 
   const showHidden = computed(() => hiddenCount.value > 0 && !loading.value)

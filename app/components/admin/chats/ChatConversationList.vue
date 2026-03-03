@@ -12,7 +12,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'select-conversation' | 'update:searchQuery', value: string): void
+  'select-conversation': [value: string]
+  'update:searchQuery': [value: string]
 }>()
 
 function onSearchInput(event: Event) {

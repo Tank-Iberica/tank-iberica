@@ -50,9 +50,25 @@ const DRIVE_API = 'https://www.googleapis.com/drive/v3'
 const DRIVE_UPLOAD_API = 'https://www.googleapis.com/upload/drive/v3'
 const SCOPES = 'https://www.googleapis.com/auth/drive'
 
+async function loadGis(): Promise<void> {
+  if (globalThis.google?.accounts?.oauth2) return
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.onload = () => resolve()
+    script.onerror = () => reject(new Error('Error cargando Google Identity Services'))
+    document.head.appendChild(script)
+  })
+}
+function openFolderById(folderId: string) {
+  globalThis.open(`https://drive.google.com/drive/folders/${folderId}`, '_blank')
+}
+
 export function useGoogleDrive() {
   const config = useRuntimeConfig()
-  const clientId = config.public.googleClientId as string
+  const clientId = config.public.googleClientId
 
   const connected = ref(false)
   const loading = ref(false)
@@ -65,19 +81,6 @@ export function useGoogleDrive() {
   // -------------------------------------------------------------------------
   // Google Identity Services — OAuth
   // -------------------------------------------------------------------------
-
-  async function loadGis(): Promise<void> {
-    if (globalThis.google?.accounts?.oauth2) return
-
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script')
-      script.src = 'https://accounts.google.com/gsi/client'
-      script.async = true
-      script.onload = () => resolve()
-      script.onerror = () => reject(new Error('Error cargando Google Identity Services'))
-      document.head.appendChild(script)
-    })
-  }
 
   async function connect(): Promise<boolean> {
     if (!clientId) {
@@ -137,7 +140,7 @@ export function useGoogleDrive() {
       ...options,
       headers: {
         Authorization: `Bearer ${accessToken.value}`,
-        ...(options.headers || {}),
+        ...options.headers,
       },
     })
 
@@ -429,10 +432,6 @@ export function useGoogleDrive() {
   // -------------------------------------------------------------------------
   // Navigation — open folders in new tab
   // -------------------------------------------------------------------------
-
-  function openFolderById(folderId: string) {
-    window.open(`https://drive.google.com/drive/folders/${folderId}`, '_blank')
-  }
 
   async function openVehicleFolder(vehicle: FileNamingData, section: DriveSection = 'Vehiculos') {
     loading.value = true

@@ -72,7 +72,7 @@ interface WhatsAppMessage {
 
 /** Normalize phone number: strip '+' and leading zeros, keep digits only */
 function normalizePhone(phone: string): string {
-  return phone.replace(/\D/g, '')
+  return phone.replaceAll(/\D/g, '')
 }
 
 /** Build all possible phone variants for lookup (with/without country code prefix) */
@@ -211,8 +211,8 @@ export default defineEventHandler(async (event) => {
   const supabase = serverSupabaseServiceRole(event)
 
   // Get Supabase REST credentials for direct API calls (whatsapp_submissions not in types)
-  const supabaseUrl = (process.env.SUPABASE_URL || '') as string
-  const supabaseKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '') as string
+  const supabaseUrl = process.env.SUPABASE_URL || ''
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   // Process each entry/change
   for (const entry of payload.entry ?? []) {

@@ -92,7 +92,7 @@ export function usePrebid(
   const loading = ref(false)
 
   const isEnabled = computed(() => runtimeConfig.public.prebidEnabled === true)
-  const timeout = computed(() => (runtimeConfig.public.prebidTimeout as number) || 1500)
+  const timeout = computed(() => runtimeConfig.public.prebidTimeout || 1500)
 
   /**
    * Fetch floor prices from Supabase (cached per session).

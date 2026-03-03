@@ -4,7 +4,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update-field', key: string, value: string): void
+  'update-field': [key: string, value: string]
 }>()
 </script>
 

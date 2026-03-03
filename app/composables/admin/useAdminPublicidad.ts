@@ -516,7 +516,7 @@ export function useAdminPublicidad() {
   // ─── Helper: get advertiser name for ad table ──────────────
   function getAdvertiserName(ad: Ad): string {
     if (ad.advertiser && typeof ad.advertiser === 'object' && 'company_name' in ad.advertiser) {
-      return (ad.advertiser as Advertiser).company_name
+      return ad.advertiser.company_name
     }
     return advertiserMap.value[ad.advertiser_id]?.company_name || '-'
   }

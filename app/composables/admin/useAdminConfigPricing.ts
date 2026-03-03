@@ -55,6 +55,13 @@ export const commissionDefinitions: CommissionDefinition[] = [
   },
 ]
 
+function centsToEuros(cents: number): number {
+  return Math.round(cents) / 100
+}
+function eurosToCents(euros: number): number {
+  return Math.round(euros * 100)
+}
+
 export function useAdminConfigPricing() {
   const supabase = useSupabaseClient()
 
@@ -80,14 +87,6 @@ export function useAdminConfigPricing() {
     verification_level2_cents: 0,
     verification_level3_cents: 0,
   })
-
-  function centsToEuros(cents: number): number {
-    return Math.round(cents) / 100
-  }
-
-  function eurosToCents(euros: number): number {
-    return Math.round(euros * 100)
-  }
 
   async function loadConfig() {
     loading.value = true

@@ -257,18 +257,18 @@ function closeMenus(e: MouseEvent) {
 }
 
 function onScroll() {
-  scrolled.value = window.scrollY > 30
+  scrolled.value = globalThis.scrollY > 30
 }
 
 // Fetch user profile on mount — function handles auth check internally via getSession()
 onMounted(() => {
-  window.addEventListener('scroll', onScroll, { passive: true })
+  globalThis.addEventListener('scroll', onScroll, { passive: true })
   document.addEventListener('click', closeMenus)
   authState.fetchProfile()
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', onScroll)
+  globalThis.removeEventListener('scroll', onScroll)
   document.removeEventListener('click', closeMenus)
 })
 </script>

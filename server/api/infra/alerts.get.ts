@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // ── Parse query params ────────────────────────────────────────────────────
-  const query = getQuery(event) as AlertsQuery
+  const query = getQuery<AlertsQuery>(event)
   const showAll = query.all === 'true'
 
   // ── Build query ───────────────────────────────────────────────────────────

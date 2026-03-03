@@ -13,6 +13,40 @@ export interface VehicleOption {
   source: 'vehicles' | 'historico'
 }
 
+function printHTML(html: string) {
+  const existingFrame = document.getElementById('print-frame')
+  if (existingFrame) {
+    existingFrame.remove()
+  }
+
+  const iframe = document.createElement('iframe')
+  iframe.id = 'print-frame'
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
+  document.body.appendChild(iframe)
+
+  const doc = iframe.contentDocument || iframe.contentWindow?.document
+  if (!doc) return
+
+  doc.open()
+  doc.write(html)
+  doc.close()
+
+  setTimeout(() => {
+    try {
+      iframe.contentWindow?.focus()
+      iframe.contentWindow?.print()
+    } catch {
+      const win = globalThis.open('', '_blank')
+      if (win) {
+        win.document.write(html)
+        win.document.close()
+        win.focus()
+        win.print()
+      }
+    }
+  }, 100)
+}
+
 export function useInvoiceGenerator(getVehicleOptions: () => VehicleOption[]) {
   // Invoice state
   const invoiceDate = ref(new Date().toISOString().split('T')[0])
@@ -123,40 +157,6 @@ export function useInvoiceGenerator(getVehicleOptions: () => VehicleOption[]) {
     if (!dateStr) return ''
     const d = new Date(dateStr)
     return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`
-  }
-
-  function printHTML(html: string) {
-    const existingFrame = document.getElementById('print-frame')
-    if (existingFrame) {
-      existingFrame.remove()
-    }
-
-    const iframe = document.createElement('iframe')
-    iframe.id = 'print-frame'
-    iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
-    document.body.appendChild(iframe)
-
-    const doc = iframe.contentDocument || iframe.contentWindow?.document
-    if (!doc) return
-
-    doc.open()
-    doc.write(html)
-    doc.close()
-
-    setTimeout(() => {
-      try {
-        iframe.contentWindow?.focus()
-        iframe.contentWindow?.print()
-      } catch {
-        const win = window.open('', '_blank')
-        if (win) {
-          win.document.write(html)
-          win.document.close()
-          win.focus()
-          win.print()
-        }
-      }
-    }, 100)
   }
 
   function generateInvoicePDF() {

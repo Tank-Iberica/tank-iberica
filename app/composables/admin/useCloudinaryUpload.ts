@@ -31,8 +31,8 @@ export function useCloudinaryUpload() {
   const progress = ref(0)
   const error = ref<string | null>(null)
 
-  const cloudName = config.public.cloudinaryCloudName as string
-  const uploadPreset = config.public.cloudinaryUploadPreset as string
+  const cloudName = config.public.cloudinaryCloudName
+  const uploadPreset = config.public.cloudinaryUploadPreset
 
   /**
    * Upload a file to Cloudinary using unsigned upload

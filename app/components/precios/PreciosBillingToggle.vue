@@ -6,7 +6,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update', value: BillingInterval): void
+  update: [value: BillingInterval]
 }>()
 </script>
 

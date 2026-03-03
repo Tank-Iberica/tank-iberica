@@ -478,7 +478,7 @@ export function printHTML(html: string): void {
       iframe.contentWindow?.focus()
       iframe.contentWindow?.print()
     } catch {
-      const win = window.open('', '_blank')
+      const win = globalThis.open('', '_blank')
       if (win) {
         win.document.write(html)
         win.document.close()

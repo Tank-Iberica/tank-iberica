@@ -40,6 +40,19 @@ function createEmptyFormData(): FilterFormData {
   }
 }
 
+function getStatusClass(status: FilterStatus): string {
+  switch (status) {
+    case 'published':
+      return 'status-published'
+    case 'draft':
+      return 'status-draft'
+    case 'archived':
+      return 'status-archived'
+    default:
+      return ''
+  }
+}
+
 export function useAdminCaracteristicas() {
   const { t } = useI18n()
   const toast = useToast()
@@ -267,19 +280,6 @@ export function useAdminCaracteristicas() {
 
   function getTypeLabel(type: FilterType): string {
     return FILTER_TYPES.find((ft) => ft.value === type)?.label || type
-  }
-
-  function getStatusClass(status: FilterStatus): string {
-    switch (status) {
-      case 'published':
-        return 'status-published'
-      case 'draft':
-        return 'status-draft'
-      case 'archived':
-        return 'status-archived'
-      default:
-        return ''
-    }
   }
 
   function getStatusLabel(status: FilterStatus): string {

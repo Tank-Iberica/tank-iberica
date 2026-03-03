@@ -60,6 +60,10 @@ export const sectionDefinitions: SectionDefinition[] = [
   },
 ]
 
+function generateBannerId(): string {
+  return `banner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`
+}
+
 export function useAdminHomepage() {
   const { config, loading, saving, error, saved, loadConfig, saveFields } = useAdminVerticalConfig()
 
@@ -72,16 +76,12 @@ export function useAdminHomepage() {
   const homepageSections = ref<Record<string, boolean>>({})
   const banners = ref<BannerItem[]>([])
 
-  function generateBannerId(): string {
-    return `banner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`
-  }
-
   function populateForm(): void {
     if (!config.value) return
 
-    heroTitle.value = { es: '', en: '', ...(config.value.hero_title || {}) }
-    heroSubtitle.value = { es: '', en: '', ...(config.value.hero_subtitle || {}) }
-    heroCtaText.value = { es: '', en: '', ...(config.value.hero_cta_text || {}) }
+    heroTitle.value = { es: '', en: '', ...config.value.hero_title }
+    heroSubtitle.value = { es: '', en: '', ...config.value.hero_subtitle }
+    heroCtaText.value = { es: '', en: '', ...config.value.hero_cta_text }
     heroCtaUrl.value = config.value.hero_cta_url || ''
     heroImageUrl.value = config.value.hero_image_url || ''
 

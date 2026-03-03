@@ -7,13 +7,29 @@ import { useSeoScore, type SeoInput } from '~/composables/admin/useSeoScore'
 import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
 import { slugify } from '~/utils/fileNaming'
 
-export type { NewsFormData }
+export type { NewsFormData } from '~/composables/admin/useAdminNews'
 
 export interface CreateSections {
   english: boolean
   seoPanel: boolean
   faq: boolean
   social: boolean
+}
+
+function generateSlugFromTitle(title: string): string {
+  return slugify(title)
+}
+function getLevelLabel(level: string): string {
+  switch (level) {
+    case 'good':
+      return 'Bueno'
+    case 'warning':
+      return 'Mejorable'
+    case 'bad':
+      return 'Necesita trabajo'
+    default:
+      return ''
+  }
 }
 
 export function useAdminNewsCreate() {
@@ -86,10 +102,6 @@ export function useAdminNewsCreate() {
 
   // Auto-generate slug from title
   let previousAutoSlug = ''
-
-  function generateSlugFromTitle(title: string): string {
-    return slugify(title)
-  }
 
   watch(
     () => formData.value.title_es,
@@ -226,19 +238,6 @@ export function useAdminNewsCreate() {
   }
 
   // SEO level labels
-  function getLevelLabel(level: string): string {
-    switch (level) {
-      case 'good':
-        return 'Bueno'
-      case 'warning':
-        return 'Mejorable'
-      case 'bad':
-        return 'Necesita trabajo'
-      default:
-        return ''
-    }
-  }
-
   return {
     // State
     saving,

@@ -6,7 +6,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'close' | 'confirm'): void
+  close: []
+  confirm: []
 }>()
 
 const { t } = useI18n()
@@ -49,7 +50,7 @@ watch(
             class="delete-modal__input"
             placeholder="ELIMINAR"
             autocomplete="off"
-          />
+          >
 
           <div v-if="localError || apiError" class="delete-modal__error">
             {{ localError || apiError }}

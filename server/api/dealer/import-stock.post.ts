@@ -72,7 +72,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const body = (await readBody(event)) as ImportRequest
+  const body = await readBody<ImportRequest>(event)
 
   // Validate consent
   if (!body.consent) {
@@ -184,8 +184,8 @@ ${truncatedHtml}`,
 
       const slug = `${v.brand}-${v.model || 'vehicle'}-${Date.now()}-${i}`
         .toLowerCase()
-        .replace(/[^a-z0-9-]/g, '-')
-        .replace(/-+/g, '-')
+        .replaceAll(/[^a-z0-9-]/g, '-')
+        .replaceAll(/-+/g, '-')
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: insertError } = await (supabase.from('vehicles') as any).insert({

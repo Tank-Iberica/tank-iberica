@@ -16,6 +16,29 @@ export interface NoticiaFormSections {
   social: boolean
 }
 
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '\u2014'
+  return new Date(dateStr).toLocaleString('es-ES', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+function getLevelLabel(level: string): string {
+  switch (level) {
+    case 'good':
+      return 'Bueno'
+    case 'warning':
+      return 'Mejorable'
+    case 'bad':
+      return 'Necesita trabajo'
+    default:
+      return ''
+  }
+}
+
 export function useAdminNoticiaForm(newsId: Ref<string>) {
   const router = useRouter()
 
@@ -234,31 +257,7 @@ export function useAdminNoticiaForm(newsId: Ref<string>) {
   }
 
   // Format date
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '\u2014'
-    return new Date(dateStr).toLocaleString('es-ES', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
   // SEO level labels
-  function getLevelLabel(level: string): string {
-    switch (level) {
-      case 'good':
-        return 'Bueno'
-      case 'warning':
-        return 'Mejorable'
-      case 'bad':
-        return 'Necesita trabajo'
-      default:
-        return ''
-    }
-  }
-
   // Init function — replaces onMounted
   async function init() {
     const data = await fetchById(newsId.value)
@@ -297,7 +296,7 @@ export function useAdminNoticiaForm(newsId: Ref<string>) {
     }
 
     // Open FAQ section if FAQ data exists
-    if (formData.value.faq_schema && formData.value.faq_schema.length > 0) {
+    if ((formData.value.faq_schema?.length ?? 0) > 0) {
       sections.faq = true
     }
 

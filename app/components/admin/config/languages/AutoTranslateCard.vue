@@ -4,7 +4,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update', value: boolean): void
+  update: [value: boolean]
 }>()
 
 function onChange(event: Event) {
@@ -19,7 +19,7 @@ function onChange(event: Event) {
       Si se activa, el contenido se traducira automaticamente al publicar.
     </p>
     <label class="toggle-label">
-      <input type="checkbox" class="toggle-input" :checked="enabled" @change="onChange" />
+      <input type="checkbox" class="toggle-input" :checked="enabled" @change="onChange" >
       <span class="toggle-switch" />
       <span class="toggle-text">
         {{ enabled ? 'Activado' : 'Desactivado' }}

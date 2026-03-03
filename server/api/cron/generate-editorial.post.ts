@@ -129,10 +129,10 @@ Return as a JSON array of 2 articles.`,
         article.title
           .toLowerCase()
           .normalize('NFD')
-          .replace(/[\u0300-\u036F]/g, '')
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '')
+          .replaceAll(/[\u0300-\u036F]/g, '')
+          .replaceAll(/[^a-z0-9]+/g, '-')
+          .replaceAll(/-+/g, '-')
+          .replaceAll(/^-|-$/g, '')
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: insertError } = await (supabase.from('articles') as any).insert({

@@ -222,7 +222,7 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
       const oldStatus = existing?.status || 'new'
 
       const statusChange: StatusChange = {
-        from: oldStatus as LeadStatus,
+        from: oldStatus,
         to: newStatus,
         changed_at: new Date().toISOString(),
         notes: notes || null,
@@ -252,7 +252,7 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
           status: newStatus,
           updated_at: updateData.updated_at as string,
           status_history: updateData.status_history as StatusChange[],
-          dealer_notes: (notes || leads.value[idx]!.dealer_notes) as string | null,
+          dealer_notes: notes || leads.value[idx]!.dealer_notes,
         }
       }
 
@@ -262,7 +262,7 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
           status: newStatus,
           updated_at: updateData.updated_at as string,
           status_history: updateData.status_history as StatusChange[],
-          dealer_notes: (notes || currentLead.value.dealer_notes) as string | null,
+          dealer_notes: notes || currentLead.value.dealer_notes,
         }
       }
 

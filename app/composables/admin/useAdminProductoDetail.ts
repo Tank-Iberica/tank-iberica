@@ -226,7 +226,7 @@ export function useAdminProductoDetail() {
       year: data.year || null,
       price: data.price || null,
       rental_price: data.rental_price || null,
-      category: data.category as 'alquiler' | 'venta' | 'terceros',
+      category: data.category,
       categories: data.categories || [data.category],
       subcategory_id:
         (data as unknown as { subcategory_id?: string | null }).subcategory_id ?? null,
@@ -238,7 +238,7 @@ export function useAdminProductoDetail() {
       location_region: data.location_region || null,
       description_es: data.description_es || null,
       description_en: data.description_en || null,
-      attributes_json: (data.attributes_json as Record<string, unknown>) || {},
+      attributes_json: data.attributes_json || {},
       status: data.status,
       featured: data.featured || false,
       plate: data.plate || null,

@@ -34,6 +34,14 @@ export interface OptionalService {
 // Composable
 // ────────────────────────────────────────────
 
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
 export function useDashboardPresupuesto() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
@@ -172,14 +180,6 @@ export function useDashboardPresupuesto() {
   function clearVehicle(): void {
     selectedVehicle.value = null
     searchQuery.value = ''
-  }
-
-  function formatDate(date: Date): string {
-    return date.toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
   }
 
   function handleSearchFocus(): void {
@@ -363,7 +363,7 @@ export function useDashboardPresupuesto() {
         </html>
       `
 
-      const printWindow = window.open('', '_blank')
+      const printWindow = globalThis.open('', '_blank')
       if (printWindow) {
         printWindow.document.write(printContent)
         printWindow.document.close()

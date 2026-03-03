@@ -9,7 +9,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'translate-all'): void
+  'translate-all': []
 }>()
 </script>
 

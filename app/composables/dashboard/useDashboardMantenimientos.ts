@@ -41,6 +41,19 @@ export type SortColumn = 'date' | 'cost' | 'vehicle' | 'type'
 
 // ============ COMPOSABLE ============
 
+function getTypeBadgeClass(type: string): string {
+  switch (type) {
+    case 'preventivo':
+      return 'badge-preventivo'
+    case 'correctivo':
+      return 'badge-correctivo'
+    case 'itv':
+      return 'badge-itv'
+    default:
+      return ''
+  }
+}
+
 export function useDashboardMantenimientos() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()
@@ -385,19 +398,6 @@ export function useDashboardMantenimientos() {
   function fmtKm(km: number | null): string {
     if (!km) return '--'
     return new Intl.NumberFormat(locale.value === 'en' ? 'en-GB' : 'es-ES').format(km) + ' km'
-  }
-
-  function getTypeBadgeClass(type: string): string {
-    switch (type) {
-      case 'preventivo':
-        return 'badge-preventivo'
-      case 'correctivo':
-        return 'badge-correctivo'
-      case 'itv':
-        return 'badge-itv'
-      default:
-        return ''
-    }
   }
 
   function clearFilters() {

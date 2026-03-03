@@ -1,10 +1,15 @@
 import { getSortedEuropeanCountries, getSortedProvinces } from '~/utils/geoData'
 import type { Vehicle } from '~/composables/useVehicles'
-import type { AttributeDefinition, ActiveFilters } from '~/composables/useFilters'
+import type { AttributeDefinition } from '~/composables/useFilters'
 
-export type { AttributeDefinition, ActiveFilters }
+export type { AttributeDefinition, ActiveFilters } from '~/composables/useFilters'
 
 export type EuropeanCountriesData = ReturnType<typeof getSortedEuropeanCountries>
+
+function formatPriceLabel(n: number): string {
+  if (n >= 1000) return `${Math.round(n / 1000)}k`
+  return String(n)
+}
 
 export function useFilterBar(
   getVehicles: () => readonly Vehicle[] | undefined,
@@ -114,7 +119,7 @@ export function useFilterBar(
     for (const v of getVehicles() ?? []) {
       if (v.brand) set.add(v.brand)
     }
-    return [...set].sort()
+    return [...set].sort((a, b) => a.localeCompare(b))
   })
 
   const totalActiveCount = computed(() => {
@@ -130,11 +135,6 @@ export function useFilterBar(
 
   const dynamicActiveCount = computed(() => Object.keys(activeFilters.value).length)
   const filtersForFilterBar = computed<AttributeDefinition[]>(() => visibleFilters.value)
-
-  function formatPriceLabel(n: number): string {
-    if (n >= 1000) return `${Math.round(n / 1000)}k`
-    return String(n)
-  }
 
   function onPriceSliderMin(val: number | null) {
     updateFilters({ price_min: val ?? undefined })

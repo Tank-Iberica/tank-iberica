@@ -5,7 +5,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'generate-pdf' | 'save-quote'): void
+  'generate-pdf': []
+  'save-quote': []
 }>()
 
 const { t } = useI18n()

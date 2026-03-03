@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update-lang', lang: BannerLang): void
+  'update-lang': [lang: BannerLang]
 }>()
 
 const { sanitize } = useSanitize()

@@ -47,7 +47,7 @@ defineProps<{
 }>()
 
 defineEmits<{
-  (e: 'select-image', idx: number): void
+  'select-image': [idx: number]
 }>()
 </script>
 

@@ -4,7 +4,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update', value: string): void
+  update: [value: string]
 }>()
 
 function onInput(event: Event) {
@@ -24,7 +24,7 @@ function onInput(event: Event) {
         autocomplete="off"
         :value="apiKey"
         @input="onInput"
-      />
+      >
     </div>
   </div>
 </template>

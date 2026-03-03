@@ -14,7 +14,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update', field: 'category_id' | 'subcategory_id', value: string): void
+  update: [field: 'category_id' | 'subcategory_id', value: string]
 }>()
 
 function onCategoryChange(event: Event): void {

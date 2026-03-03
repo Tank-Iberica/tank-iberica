@@ -3,18 +3,38 @@
  * Wraps useAdminChat and adds UI state + handlers
  */
 
-import {
-  useAdminChat,
-  type ChatMessage,
-  type ChatUser,
-  type Conversation,
-} from '~/composables/admin/useAdminChat'
+import { useAdminChat, type ChatMessage } from '~/composables/admin/useAdminChat'
 
-export type { ChatMessage, ChatUser, Conversation }
+export type { ChatMessage, ChatUser, Conversation } from '~/composables/admin/useAdminChat'
 
 export interface MessageDateGroup {
   date: string
   messages: ChatMessage[]
+}
+
+function groupMessagesByDate(messages: ChatMessage[]): MessageDateGroup[] {
+  const groups: MessageDateGroup[] = []
+  let currentDate = ''
+
+  for (const msg of messages) {
+    const msgDate = new Date(msg.created_at).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    })
+
+    if (msgDate !== currentDate) {
+      currentDate = msgDate
+      groups.push({ date: msgDate, messages: [] })
+    }
+
+    const lastGroup = groups.at(-1)
+    if (lastGroup) {
+      lastGroup.messages.push(msg)
+    }
+  }
+
+  return groups
 }
 
 export function useAdminChats() {
@@ -103,31 +123,6 @@ export function useAdminChats() {
   }
 
   // Group messages by date for display
-  function groupMessagesByDate(messages: ChatMessage[]): MessageDateGroup[] {
-    const groups: MessageDateGroup[] = []
-    let currentDate = ''
-
-    for (const msg of messages) {
-      const msgDate = new Date(msg.created_at).toLocaleDateString('es-ES', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      })
-
-      if (msgDate !== currentDate) {
-        currentDate = msgDate
-        groups.push({ date: msgDate, messages: [] })
-      }
-
-      const lastGroup = groups.at(-1)
-      if (lastGroup) {
-        lastGroup.messages.push(msg)
-      }
-    }
-
-    return groups
-  }
-
   return {
     // State from useAdminChat
     loading,

@@ -12,6 +12,10 @@ import { useVehicleComparator } from '~/composables/useVehicleComparator'
 import { formatPrice } from '~/composables/shared/useListingUtils'
 import type { Vehicle } from '~/composables/useVehicles'
 
+function resolveFilterLabel(key: string): string {
+  return key.charAt(0).toUpperCase() + key.slice(1)
+}
+
 // ---------------------------------------------------------------------------
 // Types used only by this module
 // ---------------------------------------------------------------------------
@@ -156,7 +160,7 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
     const v = vehicle.value
     const parts = [buildProductName(v, locale.value, true)]
     if (v.price) parts.push(`- ${formatPrice(v.price)}`)
-    if (import.meta.client) parts.push(`- ${window.location.href}`)
+    if (import.meta.client) parts.push(`- ${globalThis.location.href}`)
     parts.push('- Tracciona')
     return parts.join(' ')
   })
@@ -173,7 +177,7 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
     parts.push(buildProductName(v, locale.value, true))
     if (v.year) parts.push(`${t('vehicle.year')}: ${v.year}`)
     if (v.price) parts.push(`${t('vehicle.price')}: ${formatPrice(v.price)}`)
-    if (import.meta.client) parts.push(`URL: ${window.location.href}`)
+    if (import.meta.client) parts.push(`URL: ${globalThis.location.href}`)
     return parts.join('\n')
   })
 
@@ -206,10 +210,6 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
   // Helper functions for specs
   // ------------------------------------------------------------------
 
-  function resolveFilterLabel(key: string): string {
-    return key.charAt(0).toUpperCase() + key.slice(1)
-  }
-
   function resolveFilterValue(value: unknown): string {
     if (!value) return ''
     if (typeof value === 'object' && value !== null) {
@@ -233,7 +233,7 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
     if (!vehicle.value || !import.meta.client) return
     const title = buildProductName(vehicle.value, locale.value, true)
     const text = description.value || ''
-    const url = window.location.href
+    const url = globalThis.location.href
 
     if (navigator.share) {
       try {

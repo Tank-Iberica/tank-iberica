@@ -9,7 +9,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'sort', key: ProvinceSortKey): void
+  sort: [key: ProvinceSortKey]
 }>()
 
 function sortArrow(key: ProvinceSortKey): string {

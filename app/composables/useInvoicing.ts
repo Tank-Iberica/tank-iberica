@@ -1,6 +1,15 @@
 /**
  * useInvoicing — Invoice management composable for dealers
  */
+function formatAmount(cents: number, currency = 'EUR'): string {
+  if (!cents) return '-'
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+  }).format(cents / 100)
+}
+
 export function useInvoicing() {
   const supabase = useSupabaseClient()
 
@@ -40,15 +49,6 @@ export function useInvoicing() {
     } finally {
       loading.value = false
     }
-  }
-
-  function formatAmount(cents: number, currency = 'EUR'): string {
-    if (!cents) return '-'
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency,
-      minimumFractionDigits: 2,
-    }).format(cents / 100)
   }
 
   const totalAmount = computed(() =>

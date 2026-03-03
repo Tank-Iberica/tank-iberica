@@ -337,6 +337,6 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
   doc.text('TRACCIONA.COM', pageWidth - margin, footerY + 8, { align: 'right' })
 
   // ===== SAVE =====
-  const fileName = `Tracciona_${vehicle.brand || ''}_${vehicle.model || ''}`.replace(/\s+/g, '_')
+  const fileName = `Tracciona_${vehicle.brand || ''}_${vehicle.model || ''}`.replaceAll(/\s+/g, '_')
   doc.save(`${fileName}.pdf`)
 }

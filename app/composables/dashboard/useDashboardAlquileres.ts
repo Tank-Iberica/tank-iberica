@@ -47,6 +47,19 @@ export interface RentalFormData {
 
 // ============ COMPOSABLE ============
 
+function getStatusClass(status: RentalStatus): string {
+  switch (status) {
+    case 'active':
+      return 'status-active'
+    case 'finished':
+      return 'status-finished'
+    case 'overdue':
+      return 'status-overdue'
+    default:
+      return ''
+  }
+}
+
 export function useDashboardAlquileres() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()
@@ -381,19 +394,6 @@ export function useDashboardAlquileres() {
       month: '2-digit',
       year: 'numeric',
     })
-  }
-
-  function getStatusClass(status: RentalStatus): string {
-    switch (status) {
-      case 'active':
-        return 'status-active'
-      case 'finished':
-        return 'status-finished'
-      case 'overdue':
-        return 'status-overdue'
-      default:
-        return ''
-    }
   }
 
   function isEndingSoon(record: RentalRecord): boolean {

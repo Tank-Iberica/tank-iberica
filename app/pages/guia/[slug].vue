@@ -138,7 +138,7 @@ const breadcrumbItems = computed(() => {
 const shareText = computed(() => {
   if (!article.value) return ''
   const parts = [title.value]
-  if (import.meta.client) parts.push(window.location.href)
+  if (import.meta.client) parts.push(globalThis.location.href)
   parts.push('- Tracciona')
   return parts.join(' - ')
 })

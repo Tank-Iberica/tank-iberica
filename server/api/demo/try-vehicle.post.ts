@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const body = (await readBody(event)) as DemoRequestBody
+  const body = await readBody<DemoRequestBody>(event)
 
   // Validate images
   if (!body.images || !Array.isArray(body.images) || body.images.length === 0) {

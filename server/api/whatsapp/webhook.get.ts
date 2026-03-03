@@ -17,7 +17,7 @@ interface WebhookVerifyQuery {
 
 export default defineEventHandler((event) => {
   const config = useRuntimeConfig()
-  const query = getQuery(event) as WebhookVerifyQuery
+  const query = getQuery<WebhookVerifyQuery>(event)
 
   const mode = query['hub.mode']
   const token = query['hub.verify_token']

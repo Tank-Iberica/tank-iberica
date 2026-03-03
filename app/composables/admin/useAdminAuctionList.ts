@@ -94,6 +94,17 @@ export const STATUS_COLORS: Record<AuctionStatus, string> = {
 }
 
 // ─── Composable ──────────────────────────────────────────────
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 export function useAdminAuctionList() {
   const { t } = useI18n()
   const toast = useToast()
@@ -462,17 +473,6 @@ export function useAdminAuctionList() {
   }
 
   // ─── Helpers ────────────────────────────────────────────
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
   function getStatusColor(status: AuctionStatus): string {
     return STATUS_COLORS[status] || '#6b7280'
   }

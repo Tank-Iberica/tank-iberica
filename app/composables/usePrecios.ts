@@ -245,13 +245,13 @@ export function usePrecios() {
           plan,
           interval: billingInterval.value,
           userId: user.value.id,
-          successUrl: `${window.location.origin}${localePath('/admin/productos')}?checkout=success`,
-          cancelUrl: `${window.location.origin}${localePath('/precios')}?checkout=cancelled`,
+          successUrl: `${globalThis.location.origin}${localePath('/admin/productos')}?checkout=success`,
+          cancelUrl: `${globalThis.location.origin}${localePath('/precios')}?checkout=cancelled`,
         },
       })
 
       if (response.url) {
-        window.location.href = response.url
+        globalThis.location.href = response.url
       }
     } catch {
       checkoutError.value = t('pricing.checkoutError')
@@ -264,9 +264,10 @@ export function usePrecios() {
     if (plan === 'free') {
       navigateTo(localePath(user.value ? '/admin/productos' : '/login'))
     } else if (plan === 'founding') {
-      window.location.href = 'mailto:tankiberica@gmail.com?subject=Solicitud%20Founding%20Dealer'
+      globalThis.location.href =
+        'mailto:tankiberica@gmail.com?subject=Solicitud%20Founding%20Dealer'
     } else {
-      startCheckout(plan as 'basic' | 'premium')
+      startCheckout(plan)
     }
   }
 

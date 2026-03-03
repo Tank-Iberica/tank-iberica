@@ -55,6 +55,19 @@ export const DAYS_KEYS = [
 
 // ============ COMPOSABLE ============
 
+function getStatusClass(status: BookingStatus): string {
+  switch (status) {
+    case 'pending':
+      return 'status-pending'
+    case 'confirmed':
+      return 'status-confirmed'
+    case 'cancelled':
+      return 'status-cancelled'
+    default:
+      return ''
+  }
+}
+
 export function useDashboardVisitas() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()
@@ -268,19 +281,6 @@ export function useDashboardVisitas() {
       month: '2-digit',
       year: 'numeric',
     })
-  }
-
-  function getStatusClass(status: BookingStatus): string {
-    switch (status) {
-      case 'pending':
-        return 'status-pending'
-      case 'confirmed':
-        return 'status-confirmed'
-      case 'cancelled':
-        return 'status-cancelled'
-      default:
-        return ''
-    }
   }
 
   // ---------- Slot form helpers ----------

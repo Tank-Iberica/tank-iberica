@@ -59,8 +59,8 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event, body?.secret)
 
   const config = useRuntimeConfig()
-  const supabaseUrl = config.public?.supabaseUrl || process.env.SUPABASE_URL
-  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabaseUrl = process.env.SUPABASE_URL || ''
+  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   const _internalSecret = config.cronSecret || process.env.CRON_SECRET
 
   if (!supabaseUrl || !supabaseKey) {

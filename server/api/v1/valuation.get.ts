@@ -74,10 +74,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
 
   // Supabase service client (server-side, uses service role key)
   const config = useRuntimeConfig()
-  const supabase = createClient(
-    config.public.supabaseUrl as string,
-    config.supabaseServiceRoleKey as string,
-  )
+  const supabase = createClient(process.env.SUPABASE_URL || '', config.supabaseServiceRoleKey)
 
   // Validate API key
   const { data: sub } = await supabase
@@ -100,7 +97,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
     .eq('api_key', apiKey)
     .gte('created_at', today + 'T00:00:00Z')
 
-  if ((count ?? 0) >= sub!.rate_limit_daily) {
+  if ((count ?? 0) >= sub.rate_limit_daily) {
     await logUsage(supabase, apiKey, query as Record<string, unknown>, Date.now() - startTime, 429)
     throw createError({ statusCode: 429, message: 'Daily rate limit exceeded' })
   }

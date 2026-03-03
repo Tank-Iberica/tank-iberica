@@ -5,7 +5,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:fontPreset', value: string): void
+  'update:fontPreset': [value: string]
 }>()
 </script>
 

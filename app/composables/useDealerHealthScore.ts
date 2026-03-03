@@ -51,6 +51,70 @@ const EMPTY_BREAKDOWN: HealthScoreBreakdown = {
   total: 0,
 }
 
+function calcPhotosScore(imageCount: number, vehicleCount: number): number {
+  if (vehicleCount === 0) return 0
+  const avgPhotos = imageCount / vehicleCount
+  return avgPhotos > 3 ? 10 : Math.round((avgPhotos / 3) * 10)
+}
+function calcDescriptionScore(vehicles: VehicleData[]): number {
+  if (vehicles.length === 0) return 0
+
+  const totalLength = vehicles.reduce((sum, v) => {
+    const descEs = v.description_es || ''
+    const descEn = v.description_en || ''
+    // Use the longest available description for each vehicle
+    const bestLength = Math.max(descEs.length, descEn.length)
+    return sum + bestLength
+  }, 0)
+
+  const avgLength = totalLength / vehicles.length
+  return avgLength > 100 ? 10 : Math.round((avgLength / 100) * 10)
+}
+function calcResponseScore(avgResponseTimeHours: number | null): number {
+  if (avgResponseTimeHours === null) return 0
+  if (avgResponseTimeHours <= 24) return 20
+  if (avgResponseTimeHours >= 72) return 0
+  // Linear scale between 24h (20 points) and 72h (0 points)
+  return Math.round(((72 - avgResponseTimeHours) / (72 - 24)) * 20)
+}
+function calcPriceUpdateScore(vehicles: VehicleData[]): number {
+  if (vehicles.length === 0) return 0
+
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+  const cutoff = thirtyDaysAgo.toISOString()
+
+  const recentlyUpdated = vehicles.filter((v) => v.updated_at && v.updated_at >= cutoff).length
+
+  const ratio = recentlyUpdated / vehicles.length
+  return Math.round(ratio * 10)
+}
+function calcProfileScore(profile: DealerProfileData): number {
+  let filledFields = 0
+
+  if (profile.logo_url) filledFields++
+  if (profile.bio) {
+    // Bio can be JSONB (localized) or string
+    if (typeof profile.bio === 'string' && profile.bio.trim().length > 0) {
+      filledFields++
+    } else if (typeof profile.bio === 'object') {
+      const values = Object.values(profile.bio)
+      if (values.some((v) => typeof v === 'string' && v.trim().length > 0)) {
+        filledFields++
+      }
+    }
+  }
+  if (profile.phone) filledFields++
+  if (profile.email) filledFields++
+
+  // 2.5 points per field, rounded to nearest integer
+  return Math.round((filledFields / 4) * 10)
+}
+function calcVehiclesScore(activeCount: number): number {
+  const groups = Math.floor(activeCount / 5)
+  return Math.min(groups * 10, 40)
+}
+
 export function useDealerHealthScore(dealerId: string) {
   const supabase = useSupabaseClient()
 
@@ -67,97 +131,28 @@ export function useDealerHealthScore(dealerId: string) {
    * Calculate the photos quality score.
    * Awards 10 points if average photos per vehicle > 3.
    */
-  function calcPhotosScore(imageCount: number, vehicleCount: number): number {
-    if (vehicleCount === 0) return 0
-    const avgPhotos = imageCount / vehicleCount
-    return avgPhotos > 3 ? 10 : Math.round((avgPhotos / 3) * 10)
-  }
-
   /**
    * Calculate the description completeness score.
    * Awards 10 points if average description length > 100 characters.
    */
-  function calcDescriptionScore(vehicles: VehicleData[]): number {
-    if (vehicles.length === 0) return 0
-
-    const totalLength = vehicles.reduce((sum, v) => {
-      const descEs = v.description_es || ''
-      const descEn = v.description_en || ''
-      // Use the longest available description for each vehicle
-      const bestLength = Math.max(descEs.length, descEn.length)
-      return sum + bestLength
-    }, 0)
-
-    const avgLength = totalLength / vehicles.length
-    return avgLength > 100 ? 10 : Math.round((avgLength / 100) * 10)
-  }
-
   /**
    * Calculate the response time score.
    * Awards 20 points if avg_response_time_hours <= 24.
    * Scales linearly between 0 and 20 for response times between 24h and 72h.
    */
-  function calcResponseScore(avgResponseTimeHours: number | null): number {
-    if (avgResponseTimeHours === null) return 0
-    if (avgResponseTimeHours <= 24) return 20
-    if (avgResponseTimeHours >= 72) return 0
-    // Linear scale between 24h (20 points) and 72h (0 points)
-    return Math.round(((72 - avgResponseTimeHours) / (72 - 24)) * 20)
-  }
-
   /**
    * Calculate the price update score.
    * Awards 10 points if any vehicle has been updated within the last 30 days.
    * Scales based on the proportion of vehicles updated recently.
    */
-  function calcPriceUpdateScore(vehicles: VehicleData[]): number {
-    if (vehicles.length === 0) return 0
-
-    const thirtyDaysAgo = new Date()
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-    const cutoff = thirtyDaysAgo.toISOString()
-
-    const recentlyUpdated = vehicles.filter((v) => v.updated_at && v.updated_at >= cutoff).length
-
-    const ratio = recentlyUpdated / vehicles.length
-    return Math.round(ratio * 10)
-  }
-
   /**
    * Calculate the profile completeness score.
    * Awards 2.5 points for each of: logo, bio, phone, email (max 10).
    */
-  function calcProfileScore(profile: DealerProfileData): number {
-    let filledFields = 0
-
-    if (profile.logo_url) filledFields++
-    if (profile.bio) {
-      // Bio can be JSONB (localized) or string
-      if (typeof profile.bio === 'string' && profile.bio.trim().length > 0) {
-        filledFields++
-      } else if (typeof profile.bio === 'object') {
-        const values = Object.values(profile.bio)
-        if (values.some((v) => typeof v === 'string' && v.trim().length > 0)) {
-          filledFields++
-        }
-      }
-    }
-    if (profile.phone) filledFields++
-    if (profile.email) filledFields++
-
-    // 2.5 points per field, rounded to nearest integer
-    return Math.round((filledFields / 4) * 10)
-  }
-
   /**
    * Calculate the active vehicles score.
    * Awards 10 points per every 5 active vehicles, up to 40 points max.
    */
-  function calcVehiclesScore(activeCount: number): number {
-    const groups = Math.floor(activeCount / 5)
-    return Math.min(groups * 10, 40)
-  }
-
   /**
    * Fetch all required data and calculate the full health score breakdown.
    */

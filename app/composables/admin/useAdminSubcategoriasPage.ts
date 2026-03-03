@@ -8,10 +8,14 @@ import {
   type AdminSubcategory,
   type SubcategoryFormData,
 } from '~/composables/admin/useAdminSubcategories'
-import { useAdminFilters, type AdminFilter } from '~/composables/admin/useAdminFilters'
+import { useAdminFilters } from '~/composables/admin/useAdminFilters'
 
 // -- Re-export types needed by subcomponents ---------------------------------
-export type { AdminSubcategory, SubcategoryFormData, AdminFilter }
+export type {
+  AdminSubcategory,
+  SubcategoryFormData,
+} from '~/composables/admin/useAdminSubcategories'
+export type { AdminFilter } from '~/composables/admin/useAdminFilters'
 
 export interface DeleteModalState {
   show: boolean
@@ -32,6 +36,17 @@ export const VEHICLE_CATEGORIES: VehicleCategory[] = [
 ]
 
 // -- Composable --------------------------------------------------------------
+function getCategoryLabels(categoryIds: string[] | undefined): string {
+  if (!categoryIds?.length) return '-'
+  const labels = categoryIds
+    .map((id) => {
+      const cat = VEHICLE_CATEGORIES.find((c) => c.id === id)
+      return cat?.label || null
+    })
+    .filter(Boolean)
+  return labels.length ? labels.join(', ') : '-'
+}
+
 export function useAdminSubcategoriasPage() {
   const { t } = useI18n()
   const toast = useToast()
@@ -111,17 +126,6 @@ export function useAdminSubcategoriasPage() {
     return names.length ? names.join(', ') : '-'
   }
 
-  function getCategoryLabels(categoryIds: string[] | undefined): string {
-    if (!categoryIds?.length) return '-'
-    const labels = categoryIds
-      .map((id) => {
-        const cat = VEHICLE_CATEGORIES.find((c) => c.id === id)
-        return cat?.label || null
-      })
-      .filter(Boolean)
-    return labels.length ? labels.join(', ') : '-'
-  }
-
   // -- Modal functions -------------------------------------------------------
   function openNewModal() {
     clearError()
@@ -188,10 +192,10 @@ export function useAdminSubcategoriasPage() {
       formData.value.slug = formData.value.name_es
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036F]/g, '')
-        .replace(/[^a-z0-9-]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
+        .replaceAll(/[\u0300-\u036F]/g, '')
+        .replaceAll(/[^a-z0-9-]/g, '-')
+        .replaceAll(/-+/g, '-')
+        .replaceAll(/^-|-$/g, '')
     }
 
     let success: boolean | string | null

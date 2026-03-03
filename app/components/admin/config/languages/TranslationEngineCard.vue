@@ -6,7 +6,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update', value: string): void
+  update: [value: string]
 }>()
 
 function onChange(event: Event) {
@@ -28,7 +28,7 @@ function onChange(event: Event) {
           :checked="engine === eng.value"
           name="translationEngine"
           @change="onChange"
-        />
+        >
         <span>{{ eng.label }}</span>
       </label>
     </div>

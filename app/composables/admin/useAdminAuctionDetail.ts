@@ -8,6 +8,66 @@ import type {
 
 export type ModalType = 'cancel' | 'adjudicate' | 'reject' | null
 
+function formatCents(cents: number | null): string {
+  if (!cents && cents !== 0) return '-'
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(cents / 100)
+}
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+function formatDateShort(dateStr: string | null): string {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+}
+function getStatusClass(status: AuctionStatus): string {
+  const classes: Record<string, string> = {
+    draft: 'status-draft',
+    scheduled: 'status-scheduled',
+    active: 'status-active',
+    ended: 'status-ended',
+    adjudicated: 'status-adjudicated',
+    cancelled: 'status-cancelled',
+    no_sale: 'status-no-sale',
+  }
+  return classes[status] || ''
+}
+function getRegStatusClass(status: RegistrationStatus): string {
+  const classes: Record<string, string> = {
+    pending: 'reg-pending',
+    approved: 'reg-approved',
+    rejected: 'reg-rejected',
+  }
+  return classes[status] || ''
+}
+function getDepositStatusClass(status: DepositStatus): string {
+  const classes: Record<string, string> = {
+    pending: 'deposit-pending',
+    held: 'deposit-held',
+    captured: 'deposit-captured',
+    released: 'deposit-released',
+    forfeited: 'deposit-forfeited',
+  }
+  return classes[status] || ''
+}
+
 export function useAdminAuctionDetail(auctionId: Ref<string>) {
   const { t } = useI18n()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -96,62 +156,8 @@ export function useAdminAuctionDetail(auctionId: Ref<string>) {
   }
 
   // ---------- Helpers ----------
-  function formatCents(cents: number | null): string {
-    if (!cents && cents !== 0) return '-'
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(cents / 100)
-  }
-
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
-  function formatDateShort(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    })
-  }
-
-  function getStatusClass(status: AuctionStatus): string {
-    const classes: Record<string, string> = {
-      draft: 'status-draft',
-      scheduled: 'status-scheduled',
-      active: 'status-active',
-      ended: 'status-ended',
-      adjudicated: 'status-adjudicated',
-      cancelled: 'status-cancelled',
-      no_sale: 'status-no-sale',
-    }
-    return classes[status] || ''
-  }
-
   function getStatusLabel(status: AuctionStatus): string {
     return t(`admin.subastas.status.${status}`)
-  }
-
-  function getRegStatusClass(status: RegistrationStatus): string {
-    const classes: Record<string, string> = {
-      pending: 'reg-pending',
-      approved: 'reg-approved',
-      rejected: 'reg-rejected',
-    }
-    return classes[status] || ''
   }
 
   function getRegStatusLabel(status: RegistrationStatus): string {
@@ -160,17 +166,6 @@ export function useAdminAuctionDetail(auctionId: Ref<string>) {
 
   function getDepositStatusLabel(status: DepositStatus): string {
     return t(`admin.subastas.depositStatus.${status}`)
-  }
-
-  function getDepositStatusClass(status: DepositStatus): string {
-    const classes: Record<string, string> = {
-      pending: 'deposit-pending',
-      held: 'deposit-held',
-      captured: 'deposit-captured',
-      released: 'deposit-released',
-      forfeited: 'deposit-forfeited',
-    }
-    return classes[status] || ''
   }
 
   function getVehicleLabel(): string {

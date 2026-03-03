@@ -12,7 +12,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'navigate-back'): void
+  'navigate-back': []
 }>()
 </script>
 

@@ -7,8 +7,13 @@ import {
   type ContactFilters,
 } from '~/composables/admin/useAdminContacts'
 
-export type { Contact, ContactType, ContactFormData, ContactFilters }
-export { CONTACT_TYPES }
+export type {
+  Contact,
+  ContactType,
+  ContactFormData,
+  ContactFilters,
+} from '~/composables/admin/useAdminContacts'
+export { CONTACT_TYPES } from '~/composables/admin/useAdminContacts'
 
 export type AgendaModal = 'form' | 'delete' | null
 
@@ -21,6 +26,13 @@ const EMPTY_FORM: ContactFormData = {
   location: '',
   products: '',
   notes: '',
+}
+
+function getTypeLabel(type: ContactType): string {
+  return CONTACT_TYPES.find((t) => t.value === type)?.label || type
+}
+function getTypeColor(type: ContactType): string {
+  return CONTACT_TYPES.find((t) => t.value === type)?.color || '#64748b'
 }
 
 export function useAdminAgenda() {
@@ -108,14 +120,6 @@ export function useAdminAgenda() {
 
   function updateFormField(field: keyof ContactFormData, value: string) {
     formData.value[field] = value as never
-  }
-
-  function getTypeLabel(type: ContactType): string {
-    return CONTACT_TYPES.find((t) => t.value === type)?.label || type
-  }
-
-  function getTypeColor(type: ContactType): string {
-    return CONTACT_TYPES.find((t) => t.value === type)?.color || '#64748b'
   }
 
   // Init replaces onMounted

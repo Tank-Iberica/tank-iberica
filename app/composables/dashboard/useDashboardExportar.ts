@@ -107,7 +107,7 @@ export function useDashboardExportar() {
     for (const v of vehicles.value) {
       if (v.category) cats.add(v.category)
     }
-    return Array.from(cats).sort()
+    return Array.from(cats).sort((a, b) => a.localeCompare(b))
   })
 
   const selectedColumnsCount = computed(() => csvColumns.value.filter((c) => c.enabled).length)
@@ -228,7 +228,7 @@ export function useDashboardExportar() {
       })
 
       const companyName = dealerProfile.value?.company_name || 'catalog'
-      const fileName = `${companyName.replace(/\s+/g, '_')}_catalog_${new Date().toISOString().split('T')[0]}.csv`
+      const fileName = `${companyName.replaceAll(/\s+/g, '_')}_catalog_${new Date().toISOString().split('T')[0]}.csv`
 
       // Generate CSV buffer and download
       const buffer = await workbook.csv.writeBuffer()
@@ -465,7 +465,7 @@ export function useDashboardExportar() {
         )
       }
 
-      const fileName = `${companyName.replace(/\s+/g, '_')}_catalog_${new Date().toISOString().split('T')[0]}.pdf`
+      const fileName = `${companyName.replaceAll(/\s+/g, '_')}_catalog_${new Date().toISOString().split('T')[0]}.pdf`
       doc.save(fileName)
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : t('dashboard.tools.export.errorExport')

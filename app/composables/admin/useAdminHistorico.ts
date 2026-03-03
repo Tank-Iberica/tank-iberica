@@ -168,7 +168,7 @@ export function useAdminHistorico() {
         }
 
         availableYears.value = Array.from(years).sort((a, b) => b - a)
-        availableBrands.value = Array.from(brands).sort()
+        availableBrands.value = Array.from(brands).sort((a, b) => a.localeCompare(b))
 
         // Add current year if not present
         const currentYear = new Date().getFullYear()
@@ -235,7 +235,7 @@ export function useAdminHistorico() {
           subcategories: _subs,
           subcategory_id,
           ...cleanData
-        } = entry.vehicle_data as Record<string, unknown>
+        } = entry.vehicle_data
         vehicleData = cleanData
         // Fix legacy column name: subcategory_id → category_id
         if (subcategory_id && !vehicleData.category_id) {
@@ -258,7 +258,7 @@ export function useAdminHistorico() {
         status: 'draft',
         slug: `${entry.brand}-${entry.model}-restored-${Date.now()}`
           .toLowerCase()
-          .replace(/\s+/g, '-'),
+          .replaceAll(/\s+/g, '-'),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       } as never)
@@ -345,9 +345,7 @@ export function useAdminHistorico() {
 
       // By category
       const cat = entry.sale_category || 'otros'
-      if (!byCategory[cat]) {
-        byCategory[cat] = { count: 0, ingresos: 0, beneficio: 0 }
-      }
+      byCategory[cat] ??= { count: 0, ingresos: 0, beneficio: 0 }
       byCategory[cat].count++
       byCategory[cat].ingresos += salePrice
       byCategory[cat].beneficio += benefit
@@ -355,9 +353,7 @@ export function useAdminHistorico() {
       // By type
       if (entry.subcategories) {
         const subcatName = entry.subcategories.name_es
-        if (!byType[subcatName]) {
-          byType[subcatName] = { count: 0, ingresos: 0, beneficio: 0 }
-        }
+        byType[subcatName] ??= { count: 0, ingresos: 0, beneficio: 0 }
         byType[subcatName].count++
         byType[subcatName].ingresos += salePrice
         byType[subcatName].beneficio += benefit

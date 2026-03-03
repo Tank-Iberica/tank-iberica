@@ -41,7 +41,7 @@ async function handleBuy(pack: CreditPack) {
   error.value = null
 
   try {
-    const siteUrl = window.location.origin
+    const siteUrl = globalThis.location.origin
     const { data } = await useFetch('/api/stripe/checkout-credits', {
       method: 'POST',
       body: {
@@ -52,7 +52,7 @@ async function handleBuy(pack: CreditPack) {
     })
     const url = (data.value as { url?: string })?.url
     if (url) {
-      window.location.href = url
+      globalThis.location.href = url
     }
   } catch {
     error.value = 'Error al procesar el pago. Inténtalo de nuevo.'

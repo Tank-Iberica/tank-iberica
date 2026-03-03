@@ -5,7 +5,7 @@
 import { useAdminConfig, type BannerConfig } from '~/composables/admin/useAdminConfig'
 import { useToast } from '~/composables/useToast'
 
-export type { BannerConfig }
+export type { BannerConfig } from '~/composables/admin/useAdminConfig'
 
 export interface EmojiCategory {
   name: string
@@ -170,6 +170,16 @@ const quickEmojis: string[] = [
   '\u2705',
 ]
 
+function formatDatetimeLocal(dateStr: string | null): string {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return date.toISOString().slice(0, 16)
+}
+function parseDatetimeLocal(value: string): string | null {
+  if (!value) return null
+  return new Date(value).toISOString()
+}
+
 export function useAdminBanner() {
   const toast = useToast()
   const { loading, saving, error, banner, fetchBanner, saveBanner, getBannerPreviewHtml } =
@@ -305,17 +315,6 @@ export function useAdminBanner() {
   }
 
   // --- Date formatting utilities ---
-  function formatDatetimeLocal(dateStr: string | null): string {
-    if (!dateStr) return ''
-    const date = new Date(dateStr)
-    return date.toISOString().slice(0, 16)
-  }
-
-  function parseDatetimeLocal(value: string): string | null {
-    if (!value) return null
-    return new Date(value).toISOString()
-  }
-
   // --- Form field updater ---
   function updateFormField(key: keyof BannerConfig, value: string | boolean | null) {
     if (key === 'active') {

@@ -89,16 +89,16 @@ function onPillChange(level: LocationLevel) {
 const isMobile = ref(true)
 
 function checkMobile() {
-  isMobile.value = window.innerWidth < 768
+  isMobile.value = globalThis.innerWidth < 768
 }
 
 onMounted(() => {
   checkMobile()
-  window.addEventListener('resize', checkMobile, { passive: true })
+  globalThis.addEventListener('resize', checkMobile, { passive: true })
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', checkMobile)
+  globalThis.removeEventListener('resize', checkMobile)
 })
 </script>
 

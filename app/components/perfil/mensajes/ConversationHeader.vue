@@ -12,7 +12,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'back' | 'close'): void
+  back: []
+  close: []
 }>()
 
 const sellerResponseLabel = computed<string>(() => {

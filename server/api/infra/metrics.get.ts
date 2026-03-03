@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // ── Parse query params ────────────────────────────────────────────────────
-  const query = getQuery(event) as MetricsQuery
+  const query = getQuery<MetricsQuery>(event)
   const period = query.period && PERIOD_MS[query.period] ? query.period : '24h'
   const sinceDate = new Date(Date.now() - (PERIOD_MS[period] ?? 0)).toISOString()
 

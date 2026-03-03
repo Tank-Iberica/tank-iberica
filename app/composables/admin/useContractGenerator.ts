@@ -6,6 +6,110 @@ export interface VehicleOption {
   source: 'vehicles' | 'historico'
 }
 
+function numberToWords(n: number): string {
+  const units = [
+    '',
+    'UN',
+    'DOS',
+    'TRES',
+    'CUATRO',
+    'CINCO',
+    'SEIS',
+    'SIETE',
+    'OCHO',
+    'NUEVE',
+    'DIEZ',
+    'ONCE',
+    'DOCE',
+    'TRECE',
+    'CATORCE',
+    'QUINCE',
+    'DIECISEIS',
+    'DIECISIETE',
+    'DIECIOCHO',
+    'DIECINUEVE',
+  ]
+  const tens = [
+    '',
+    '',
+    'VEINTE',
+    'TREINTA',
+    'CUARENTA',
+    'CINCUENTA',
+    'SESENTA',
+    'SETENTA',
+    'OCHENTA',
+    'NOVENTA',
+  ]
+  const hundreds = [
+    '',
+    'CIEN',
+    'DOSCIENTOS',
+    'TRESCIENTOS',
+    'CUATROCIENTOS',
+    'QUINIENTOS',
+    'SEISCIENTOS',
+    'SETECIENTOS',
+    'OCHOCIENTOS',
+    'NOVECIENTOS',
+  ]
+
+  if (n === 0) return 'CERO'
+  if (n < 20) return units[n] ?? ''
+  if (n < 100) {
+    const t = Math.floor(n / 10)
+    const u = n % 10
+    if (t === 2 && u > 0) return `VEINTI${units[u] ?? ''}`
+    return u > 0 ? `${tens[t] ?? ''} Y ${units[u] ?? ''}` : (tens[t] ?? '')
+  }
+  if (n < 1000) {
+    const h = Math.floor(n / 100)
+    const rest = n % 100
+    if (n === 100) return 'CIEN'
+    return rest > 0 ? `${hundreds[h] ?? ''} ${numberToWords(rest)}` : (hundreds[h] ?? '')
+  }
+  if (n < 10000) {
+    const th = Math.floor(n / 1000)
+    const rest = n % 1000
+    const thWord = th === 1 ? 'MIL' : `${units[th]} MIL`
+    return rest > 0 ? `${thWord} ${numberToWords(rest)}` : thWord
+  }
+  return n.toLocaleString('es-ES')
+}
+function printHTML(html: string) {
+  const existingFrame = document.getElementById('print-frame')
+  if (existingFrame) {
+    existingFrame.remove()
+  }
+
+  const iframe = document.createElement('iframe')
+  iframe.id = 'print-frame'
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
+  document.body.appendChild(iframe)
+
+  const doc = iframe.contentDocument || iframe.contentWindow?.document
+  if (!doc) return
+
+  doc.open()
+  doc.write(html)
+  doc.close()
+
+  setTimeout(() => {
+    try {
+      iframe.contentWindow?.focus()
+      iframe.contentWindow?.print()
+    } catch {
+      const win = globalThis.open('', '_blank')
+      if (win) {
+        win.document.write(html)
+        win.document.close()
+        win.focus()
+        win.print()
+      }
+    }
+  }, 100)
+}
+
 export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
   // Contract state
   const contractType = ref<ContractType>('arrendamiento')
@@ -78,77 +182,6 @@ export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
         contractVehicleType.value = 'vehículo'
       }
     }
-  }
-
-  function numberToWords(n: number): string {
-    const units = [
-      '',
-      'UN',
-      'DOS',
-      'TRES',
-      'CUATRO',
-      'CINCO',
-      'SEIS',
-      'SIETE',
-      'OCHO',
-      'NUEVE',
-      'DIEZ',
-      'ONCE',
-      'DOCE',
-      'TRECE',
-      'CATORCE',
-      'QUINCE',
-      'DIECISEIS',
-      'DIECISIETE',
-      'DIECIOCHO',
-      'DIECINUEVE',
-    ]
-    const tens = [
-      '',
-      '',
-      'VEINTE',
-      'TREINTA',
-      'CUARENTA',
-      'CINCUENTA',
-      'SESENTA',
-      'SETENTA',
-      'OCHENTA',
-      'NOVENTA',
-    ]
-    const hundreds = [
-      '',
-      'CIEN',
-      'DOSCIENTOS',
-      'TRESCIENTOS',
-      'CUATROCIENTOS',
-      'QUINIENTOS',
-      'SEISCIENTOS',
-      'SETECIENTOS',
-      'OCHOCIENTOS',
-      'NOVECIENTOS',
-    ]
-
-    if (n === 0) return 'CERO'
-    if (n < 20) return units[n] ?? ''
-    if (n < 100) {
-      const t = Math.floor(n / 10)
-      const u = n % 10
-      if (t === 2 && u > 0) return `VEINTI${units[u] ?? ''}`
-      return u > 0 ? `${tens[t] ?? ''} Y ${units[u] ?? ''}` : (tens[t] ?? '')
-    }
-    if (n < 1000) {
-      const h = Math.floor(n / 100)
-      const rest = n % 100
-      if (n === 100) return 'CIEN'
-      return rest > 0 ? `${hundreds[h] ?? ''} ${numberToWords(rest)}` : (hundreds[h] ?? '')
-    }
-    if (n < 10000) {
-      const th = Math.floor(n / 1000)
-      const rest = n % 1000
-      const thWord = th === 1 ? 'MIL' : `${units[th]} MIL`
-      return rest > 0 ? `${thWord} ${numberToWords(rest)}` : thWord
-    }
-    return n.toLocaleString('es-ES')
   }
 
   function formatDateSpanish(dateStr: string): string {
@@ -437,40 +470,6 @@ export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
   </div>
 </body>
 </html>`
-  }
-
-  function printHTML(html: string) {
-    const existingFrame = document.getElementById('print-frame')
-    if (existingFrame) {
-      existingFrame.remove()
-    }
-
-    const iframe = document.createElement('iframe')
-    iframe.id = 'print-frame'
-    iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
-    document.body.appendChild(iframe)
-
-    const doc = iframe.contentDocument || iframe.contentWindow?.document
-    if (!doc) return
-
-    doc.open()
-    doc.write(html)
-    doc.close()
-
-    setTimeout(() => {
-      try {
-        iframe.contentWindow?.focus()
-        iframe.contentWindow?.print()
-      } catch {
-        const win = window.open('', '_blank')
-        if (win) {
-          win.document.write(html)
-          win.document.close()
-          win.focus()
-          win.print()
-        }
-      }
-    }, 100)
   }
 
   function generateContractPDF() {

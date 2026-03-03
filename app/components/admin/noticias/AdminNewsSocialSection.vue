@@ -10,7 +10,7 @@ const emit = defineEmits<{
 }>()
 
 function updateSocialField(platform: string, value: string) {
-  const social = { ...(props.socialPostText || {}) }
+  const social = { ...props.socialPostText }
   social[platform] = value
   emit('update:socialPostText', social)
 }

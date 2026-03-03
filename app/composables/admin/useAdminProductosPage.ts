@@ -310,11 +310,9 @@ export function useAdminProductosPage() {
     if (exportScope === 'all') {
       dataToExport = vehicles.value as AdminVehicle[]
     } else if (exportScope === 'selected') {
-      dataToExport = sortedVehicles.value.filter((v) =>
-        selectedIds.value.has(v.id),
-      ) as AdminVehicle[]
+      dataToExport = sortedVehicles.value.filter((v) => selectedIds.value.has(v.id))
     } else {
-      dataToExport = sortedVehicles.value as AdminVehicle[]
+      dataToExport = sortedVehicles.value
     }
 
     if (dataToExport.length === 0) {
@@ -415,11 +413,11 @@ export function useAdminProductosPage() {
       fetchAdminFilters(),
     ])
     columns.syncFilterColumns()
-    window.addEventListener('keydown', handleKeydown)
+    globalThis.addEventListener('keydown', handleKeydown)
   }
 
   function cleanup() {
-    window.removeEventListener('keydown', handleKeydown)
+    globalThis.removeEventListener('keydown', handleKeydown)
     document.body.style.overflow = ''
   }
 

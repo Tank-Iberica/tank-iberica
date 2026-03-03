@@ -11,6 +11,17 @@ interface UserAdProfile {
   page_views: number
 }
 
+function getOrCreateSessionId(): string {
+  if (import.meta.server) return ''
+  const key = 'tracciona_ad_session'
+  let id = localStorage.getItem(key)
+  if (!id) {
+    id = crypto.randomUUID()
+    localStorage.setItem(key, id)
+  }
+  return id
+}
+
 export function useAudienceSegmentation() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()
@@ -20,31 +31,18 @@ export function useAudienceSegmentation() {
   const profile = ref<UserAdProfile | null>(null)
   let syncTimeout: ReturnType<typeof setTimeout> | null = null
 
-  function getOrCreateSessionId(): string {
-    if (import.meta.server) return ''
-    const key = 'tracciona_ad_session'
-    let id = localStorage.getItem(key)
-    if (!id) {
-      id = crypto.randomUUID()
-      localStorage.setItem(key, id)
-    }
-    return id
-  }
-
   function ensureProfile() {
-    if (!profile.value) {
-      profile.value = {
-        session_id: sessionId.value,
-        user_id: user.value?.id || null,
-        segments: [],
-        categories_viewed: [],
-        brands_searched: [],
-        price_range_min: null,
-        price_range_max: null,
-        geo_country: null,
-        geo_region: null,
-        page_views: 0,
-      }
+    profile.value ??= {
+      session_id: sessionId.value,
+      user_id: user.value?.id || null,
+      segments: [],
+      categories_viewed: [],
+      brands_searched: [],
+      price_range_min: null,
+      price_range_max: null,
+      geo_country: null,
+      geo_region: null,
+      page_views: 0,
     }
   }
 

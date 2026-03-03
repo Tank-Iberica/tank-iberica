@@ -9,7 +9,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'export'): void
+  export: []
 }>()
 
 const { t } = useI18n()

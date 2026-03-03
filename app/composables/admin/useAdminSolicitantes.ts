@@ -9,8 +9,8 @@ import {
 import { localizedName } from '~/composables/useLocalized'
 
 // Re-export types for subcomponents
-export type { AdminDemand, DemandStatus, DemandFilters }
-export { DEMAND_STATUSES }
+export type { AdminDemand, DemandStatus, DemandFilters } from '~/composables/admin/useAdminDemands'
+export { DEMAND_STATUSES } from '~/composables/admin/useAdminDemands'
 
 /** State shape for the delete confirmation modal */
 export interface DeleteModalState {

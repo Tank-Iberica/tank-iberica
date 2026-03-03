@@ -13,6 +13,50 @@ export type SortCol =
   | 'power'
   | 'location'
 
+function firstImage(vehicle: Vehicle): string | undefined {
+  if (!vehicle.vehicle_images?.length) return undefined
+  const sorted = [...vehicle.vehicle_images].sort((a, b) => a.position - b.position)
+  return sorted[0]?.thumbnail_url || sorted[0]?.url || undefined
+}
+function getPrice(v: Vehicle): number {
+  if (v.category === 'alquiler' && v.rental_price) return v.rental_price
+  return v.price ?? 0
+}
+function getVolume(v: Vehicle): number {
+  const fj = v.attributes_json
+  if (!fj) return 0
+  return Number(fj.volume || fj.volumen || fj.capacity || fj.capacidad || 0)
+}
+function volumeText(v: Vehicle): string {
+  const fj = v.attributes_json
+  if (!fj) return '—'
+  if (fj.volume || fj.volumen) return `${fj.volume || fj.volumen} L`
+  if (fj.capacity || fj.capacidad) return `${fj.capacity || fj.capacidad} kg`
+  return '—'
+}
+function getPower(v: Vehicle): number {
+  const fj = v.attributes_json
+  if (!fj) return 0
+  return Number(fj.power || fj.potencia || fj.cv || 0)
+}
+function powerText(v: Vehicle): string {
+  const fj = v.attributes_json
+  if (!fj) return '—'
+  const val = fj.power || fj.potencia || fj.cv
+  return val ? `${val} CV` : '—'
+}
+function getCompartments(v: Vehicle): number {
+  const fj = v.attributes_json
+  if (!fj) return 0
+  return Number(fj.compartments || fj.compartimentos || 0)
+}
+function compartmentsText(v: Vehicle): string {
+  const fj = v.attributes_json
+  if (!fj) return '—'
+  const val = fj.compartments || fj.compartimentos
+  return val ? String(val) : '—'
+}
+
 export function useVehicleTable(getVehicles: () => readonly Vehicle[]) {
   const { t, locale } = useI18n()
   const { location: userLocation } = useUserLocation()
@@ -163,17 +207,6 @@ export function useVehicleTable(getVehicles: () => readonly Vehicle[]) {
     router.push(`/vehiculo/${slug}`)
   }
 
-  function firstImage(vehicle: Vehicle): string | undefined {
-    if (!vehicle.vehicle_images?.length) return undefined
-    const sorted = [...vehicle.vehicle_images].sort((a, b) => a.position - b.position)
-    return sorted[0]?.thumbnail_url || sorted[0]?.url || undefined
-  }
-
-  function getPrice(v: Vehicle): number {
-    if (v.category === 'alquiler' && v.rental_price) return v.rental_price
-    return v.price ?? 0
-  }
-
   function priceText(vehicle: Vehicle): string {
     if (vehicle.category === 'terceros') return t('catalog.solicitar')
     if (vehicle.category === 'alquiler' && vehicle.rental_price) {
@@ -213,46 +246,6 @@ export function useVehicleTable(getVehicles: () => readonly Vehicle[]) {
     return vehicleCountry.toLowerCase()
   }
 
-  function getVolume(v: Vehicle): number {
-    const fj = v.attributes_json
-    if (!fj) return 0
-    return Number(fj.volume || fj.volumen || fj.capacity || fj.capacidad || 0)
-  }
-
-  function volumeText(v: Vehicle): string {
-    const fj = v.attributes_json
-    if (!fj) return '—'
-    if (fj.volume || fj.volumen) return `${fj.volume || fj.volumen} L`
-    if (fj.capacity || fj.capacidad) return `${fj.capacity || fj.capacidad} kg`
-    return '—'
-  }
-
-  function getPower(v: Vehicle): number {
-    const fj = v.attributes_json
-    if (!fj) return 0
-    return Number(fj.power || fj.potencia || fj.cv || 0)
-  }
-
-  function powerText(v: Vehicle): string {
-    const fj = v.attributes_json
-    if (!fj) return '—'
-    const val = fj.power || fj.potencia || fj.cv
-    return val ? `${val} CV` : '—'
-  }
-
-  function getCompartments(v: Vehicle): number {
-    const fj = v.attributes_json
-    if (!fj) return 0
-    return Number(fj.compartments || fj.compartimentos || 0)
-  }
-
-  function compartmentsText(v: Vehicle): string {
-    const fj = v.attributes_json
-    if (!fj) return '—'
-    const val = fj.compartments || fj.compartimentos
-    return val ? String(val) : '—'
-  }
-
   async function downloadBrochure(vehicle: Vehicle) {
     await generateVehiclePdf({
       vehicle,
@@ -263,7 +256,7 @@ export function useVehicleTable(getVehicles: () => readonly Vehicle[]) {
   }
 
   async function shareVehicle(vehicle: Vehicle) {
-    const url = `${window.location.origin}/vehiculo/${vehicle.slug}`
+    const url = `${globalThis.location.origin}/vehiculo/${vehicle.slug}`
     const title = buildProductName(vehicle, locale.value)
     if (navigator.share) {
       try {

@@ -93,7 +93,7 @@ function normalize(str: string): string {
   return str
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '')
+    .replaceAll(/[\u0300-\u036F]/g, '')
     .trim()
 }
 

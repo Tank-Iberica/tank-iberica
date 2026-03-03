@@ -33,6 +33,28 @@ const TYPE_ICONS: Record<string, string> = {
   inspection: '\uD83D\uDD0D',
 }
 
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString()
+}
+function getTypeIcon(type: string): string {
+  return TYPE_ICONS[type] || '\u2699'
+}
+function getStatusClass(status: string): string {
+  const map: Record<string, string> = {
+    pending: 'status-pending',
+    in_progress: 'status-progress',
+    completed: 'status-completed',
+    cancelled: 'status-cancelled',
+  }
+  return map[status] || 'status-pending'
+}
+function formatDetailValue(value: unknown): string {
+  if (value === null || value === undefined) return '-'
+  if (typeof value === 'object') return JSON.stringify(value)
+  return String(value)
+}
+
 export function useAdminServicios() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
@@ -165,15 +187,6 @@ export function useAdminServicios() {
   // ============================================
   // HELPERS
   // ============================================
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString()
-  }
-
-  function getTypeIcon(type: string): string {
-    return TYPE_ICONS[type] || '\u2699'
-  }
-
   function getTypeLabel(type: string): string {
     const map: Record<string, string> = {
       transport: t('admin.servicios.typeTransport'),
@@ -185,16 +198,6 @@ export function useAdminServicios() {
     return map[type] || type
   }
 
-  function getStatusClass(status: string): string {
-    const map: Record<string, string> = {
-      pending: 'status-pending',
-      in_progress: 'status-progress',
-      completed: 'status-completed',
-      cancelled: 'status-cancelled',
-    }
-    return map[status] || 'status-pending'
-  }
-
   function getStatusLabel(status: string): string {
     const map: Record<string, string> = {
       pending: t('admin.servicios.statusPending'),
@@ -203,12 +206,6 @@ export function useAdminServicios() {
       cancelled: t('admin.servicios.statusCancelled'),
     }
     return map[status] || status
-  }
-
-  function formatDetailValue(value: unknown): string {
-    if (value === null || value === undefined) return '-'
-    if (typeof value === 'object') return JSON.stringify(value)
-    return String(value)
   }
 
   return {

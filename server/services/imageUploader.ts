@@ -30,9 +30,8 @@ export async function uploadToCloudinary(
   imageBuffer: Buffer,
   opts: ImageUploadOptions,
 ): Promise<ImageUploadResult | null> {
-  const cloudName = opts.cloudName || (useRuntimeConfig().public.cloudinaryCloudName as string)
-  const uploadPreset =
-    opts.uploadPreset || (useRuntimeConfig().public.cloudinaryUploadPreset as string)
+  const cloudName = opts.cloudName || useRuntimeConfig().public.cloudinaryCloudName
+  const uploadPreset = opts.uploadPreset || useRuntimeConfig().public.cloudinaryUploadPreset
   const folder = opts.folder || 'tracciona/vehicles'
 
   if (!cloudName || !uploadPreset) {

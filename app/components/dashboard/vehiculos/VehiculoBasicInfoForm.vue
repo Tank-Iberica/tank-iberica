@@ -11,11 +11,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (
-    e: 'update',
-    field: 'brand' | 'model' | 'year' | 'km' | 'price' | 'location',
-    value: string | number,
-  ): void
+  update: [field: 'brand' | 'model' | 'year' | 'km' | 'price' | 'location', value: string | number]
 }>()
 
 function onStringInput(field: 'brand' | 'model' | 'location', event: Event): void {
@@ -41,7 +37,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           type="text"
           required
           @input="onStringInput('brand', $event)"
-        />
+        >
       </div>
       <div class="form-group">
         <label for="model">{{ t('dashboard.vehicles.model') }} *</label>
@@ -51,7 +47,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           type="text"
           required
           @input="onStringInput('model', $event)"
-        />
+        >
       </div>
       <div class="form-group">
         <label for="year">{{ t('dashboard.vehicles.year') }}</label>
@@ -62,7 +58,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           min="1950"
           :max="new Date().getFullYear() + 1"
           @input="onNumberInput('year', $event)"
-        />
+        >
       </div>
       <div class="form-group">
         <label for="km">{{ t('dashboard.vehicles.km') }}</label>
@@ -72,7 +68,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           type="number"
           min="0"
           @input="onNumberInput('km', $event)"
-        />
+        >
       </div>
       <div class="form-group">
         <label for="price">{{ t('dashboard.vehicles.price') }}</label>
@@ -83,7 +79,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           min="0"
           step="100"
           @input="onNumberInput('price', $event)"
-        />
+        >
       </div>
       <div class="form-group">
         <label for="location">{{ t('dashboard.vehicles.location') }}</label>
@@ -92,7 +88,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           :value="props.location"
           type="text"
           @input="onStringInput('location', $event)"
-        />
+        >
       </div>
     </div>
   </section>

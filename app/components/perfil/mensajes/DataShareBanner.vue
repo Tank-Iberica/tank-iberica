@@ -4,7 +4,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'accept-share'): void
+  'accept-share': []
 }>()
 </script>
 

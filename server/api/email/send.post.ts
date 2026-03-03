@@ -75,7 +75,7 @@ function resolveLocalized(
  * Replace all {{variable}} placeholders in text with provided values.
  */
 function substituteVariables(text: string, variables: Record<string, string>): string {
-  return text.replace(/\{\{(\w+)\}\}/g, (_match, key: string) => {
+  return text.replaceAll(/\{\{(\w+)\}\}/g, (_match, key: string) => {
     return variables[key] ?? `{{${key}}}`
   })
 }
@@ -92,7 +92,7 @@ function markdownToEmailHtml(md: string): string {
     .replaceAll('>', '&gt;')
 
   // Bold: **text**
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  html = html.replaceAll(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
 
   // Links: [text](url)
   html = html.replace(
@@ -250,14 +250,14 @@ export default defineEventHandler(async (event) => {
       .single()
 
     const typedPrefs = prefs as unknown as EmailPreferenceRow | null
-    if (typedPrefs && typedPrefs.enabled === false) {
+    if (typedPrefs?.enabled === false) {
       // User has opted out of this email type — skip sending
       await supabase.from('email_logs').insert({
         vertical: VERTICAL,
         recipient_email: body.to,
         recipient_user_id: body.userId,
         template_key: body.templateKey,
-        variables: variables as Record<string, string>,
+        variables: variables,
         status: 'skipped_preference',
       })
 
@@ -309,7 +309,7 @@ export default defineEventHandler(async (event) => {
     : `${siteUrl}`
 
   const siteName = resolveLocalized(typedConfig.name, locale) || 'Tracciona'
-  const theme = (typedConfig.theme ?? {}) as ThemeConfig
+  const theme = typedConfig.theme ?? {}
 
   const footerTextMap: Record<string, string> = {
     es: `Este correo fue enviado por ${siteName}. Si no deseas recibir estos correos, puedes cancelar tu suscripcion.`,
@@ -333,12 +333,7 @@ export default defineEventHandler(async (event) => {
   let resendId = ''
   let status = 'sent'
 
-  if (!resendApiKey) {
-    // Dev mode — log and return mock
-    console.warn(`[email/send] RESEND_API_KEY not set. Mock sending template "${body.templateKey}"`)
-    console.warn(`[email/send] Subject: ${subject}`)
-    resendId = `mock_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
-  } else {
+  if (resendApiKey) {
     try {
       const resend = new Resend(resendApiKey)
       const result = await resend.emails.send({
@@ -363,7 +358,7 @@ export default defineEventHandler(async (event) => {
           recipient_user_id: body.userId ?? null,
           template_key: body.templateKey,
           subject,
-          variables: variables as Record<string, string>,
+          variables: variables,
           status: 'failed',
           error: result.error.message,
           sent_at: new Date().toISOString(),
@@ -386,7 +381,7 @@ export default defineEventHandler(async (event) => {
         recipient_user_id: body.userId ?? null,
         template_key: body.templateKey,
         subject,
-        variables: variables as Record<string, string>,
+        variables: variables,
         status: 'failed',
         error: errorMessage,
         sent_at: new Date().toISOString(),
@@ -394,6 +389,11 @@ export default defineEventHandler(async (event) => {
 
       throw safeError(500, `Email send failed: ${errorMessage}`)
     }
+  } else {
+    // Dev mode — log and return mock
+    console.warn(`[email/send] RESEND_API_KEY not set. Mock sending template "${body.templateKey}"`)
+    console.warn(`[email/send] Subject: ${subject}`)
+    resendId = `mock_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
   }
 
   // ── 8. Log to email_logs ──────────────────────────────────────────────────
@@ -403,7 +403,7 @@ export default defineEventHandler(async (event) => {
     recipient_user_id: body.userId ?? null,
     template_key: body.templateKey,
     subject,
-    variables: variables as Record<string, string>,
+    variables: variables,
     status,
     resend_id: resendId || null,
     sent_at: new Date().toISOString(),

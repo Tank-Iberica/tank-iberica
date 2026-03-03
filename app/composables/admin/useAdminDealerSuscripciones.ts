@@ -84,6 +84,33 @@ export const STATUSES: Array<{ value: StatusType; label: string; color: string }
 export const FOUNDING_MAX_PER_VERTICAL = 10
 
 // ---------- Composable ----------
+function getPlanConfig(plan: string): { value: string; label: string; color: string } {
+  return (PLANS.find((p) => p.value === plan) ?? PLANS[0]) as {
+    value: string
+    label: string
+    color: string
+  }
+}
+function getStatusConfig(status: string | null): { value: string; label: string; color: string } {
+  return (STATUSES.find((s) => s.value === status) ?? STATUSES[0]) as {
+    value: string
+    label: string
+    color: string
+  }
+}
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
+function isExpired(expiresAt: string | null): boolean {
+  if (!expiresAt) return false
+  return new Date(expiresAt) < new Date()
+}
+
 export function useAdminDealerSuscripciones() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()
@@ -137,7 +164,7 @@ export function useAdminDealerSuscripciones() {
       const q = searchQuery.value.toLowerCase().trim()
       result = result.filter((s) => {
         const companyName = s.dealer?.company_name
-          ? localizedField(s.dealer.company_name as Record<string, string>, locale.value)
+          ? localizedField(s.dealer.company_name, locale.value)
           : ''
         return companyName.toLowerCase().includes(q)
       })
@@ -175,7 +202,7 @@ export function useAdminDealerSuscripciones() {
     for (const d of allDealers.value) {
       set.add(d.vertical || getVerticalSlug())
     }
-    return Array.from(set).sort()
+    return Array.from(set).sort((a, b) => a.localeCompare(b))
   })
 
   const availableDealersForNew = computed(() => {
@@ -417,44 +444,14 @@ export function useAdminDealerSuscripciones() {
   }
 
   // ---------- Helpers ----------
-  function getPlanConfig(plan: string): { value: string; label: string; color: string } {
-    return (PLANS.find((p) => p.value === plan) ?? PLANS[0]) as {
-      value: string
-      label: string
-      color: string
-    }
-  }
-
-  function getStatusConfig(status: string | null): { value: string; label: string; color: string } {
-    return (STATUSES.find((s) => s.value === status) ?? STATUSES[0]) as {
-      value: string
-      label: string
-      color: string
-    }
-  }
-
   function getDealerName(sub: DealerSubscription): string {
     if (!sub.dealer?.company_name) return '-'
-    return localizedField(sub.dealer.company_name as Record<string, string>, locale.value) || '-'
+    return localizedField(sub.dealer.company_name, locale.value) || '-'
   }
 
   function getDealerLabel(dealer: DealerInfo): string {
-    const name = localizedField(dealer.company_name as Record<string, string>, locale.value)
+    const name = localizedField(dealer.company_name, locale.value)
     return name || dealer.slug || dealer.id
-  }
-
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
-  }
-
-  function isExpired(expiresAt: string | null): boolean {
-    if (!expiresAt) return false
-    return new Date(expiresAt) < new Date()
   }
 
   function showSuccess(message: string) {

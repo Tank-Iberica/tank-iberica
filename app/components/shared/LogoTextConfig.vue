@@ -103,7 +103,7 @@ watch(
   () => settings.value.font_family,
   (font) => {
     if (!import.meta.client || !font) return
-    const fontId = `gfont-${font.replace(/\s+/g, '-').toLowerCase()}`
+    const fontId = `gfont-${font.replaceAll(/\s+/g, '-').toLowerCase()}`
     if (document.getElementById(fontId)) return
     const f = CURATED_FONTS.find((x) => x.value === font)
     const weightsParam = (f?.weights ?? [400, 700]).join(';')

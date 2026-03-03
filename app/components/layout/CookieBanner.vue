@@ -20,11 +20,11 @@ const localConsent = ref<ConsentState>({
 /** Load consent on mount, show banner if no consent stored */
 onMounted(() => {
   const stored = loadConsent()
-  if (!stored) {
+  if (stored) {
+    localConsent.value = { ...stored }
+  } else {
     visible.value = true
     localConsent.value = { ...defaultConsent }
-  } else {
-    localConsent.value = { ...stored }
   }
 })
 

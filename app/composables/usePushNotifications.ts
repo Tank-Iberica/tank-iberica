@@ -7,6 +7,19 @@
  * - Provides subscription state management
  */
 
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replaceAll('-', '+').replaceAll('_', '/')
+
+  const rawData = globalThis.atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i)
+  }
+  return outputArray
+}
+
 export function usePushNotifications() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()
@@ -111,12 +124,10 @@ export function usePushNotifications() {
       let subscription = await registration.pushManager.getSubscription()
 
       // If no subscription exists, create one
-      if (!subscription) {
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as unknown as ArrayBuffer,
-        })
-      }
+      subscription ??= await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as unknown as ArrayBuffer,
+      })
 
       // Store subscription in Supabase
       const subscriptionJson = subscription.toJSON()
@@ -190,19 +201,6 @@ export function usePushNotifications() {
   /**
    * Convert VAPID public key from base64 to Uint8Array.
    */
-  function urlBase64ToUint8Array(base64String: string): Uint8Array {
-    const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
-    const base64 = (base64String + padding).replaceAll('-', '+').replaceAll('_', '/')
-
-    const rawData = window.atob(base64)
-    const outputArray = new Uint8Array(rawData.length)
-
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i)
-    }
-    return outputArray
-  }
-
   // Check subscription status on mount
   onMounted(() => {
     if (user.value) {

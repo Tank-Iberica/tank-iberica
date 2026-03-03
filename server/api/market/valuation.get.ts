@@ -38,14 +38,14 @@ export default defineEventHandler(async (event) => {
   }
 
   const config = useRuntimeConfig()
-  const supabaseUrl = config.public?.supabaseUrl || process.env.SUPABASE_URL
-  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabaseUrl = process.env.SUPABASE_URL || ''
+  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
     return { error: 'Service unavailable' }
   }
 
-  const supabase = createClient(supabaseUrl as string, supabaseKey as string)
+  const supabase = createClient(supabaseUrl, supabaseKey)
 
   // Build query for similar vehicles
   let queryBuilder = supabase
@@ -101,7 +101,7 @@ export default defineEventHandler(async (event) => {
 
   const avg = Math.round(prices.reduce((s, v) => s + v, 0) / prices.length)
   const min = prices[0]!
-  const max = prices[prices.length - 1]!
+  const max = prices.at(-1)!
   const p25 = Math.round(percentile(prices, 25))
   const p75 = Math.round(percentile(prices, 75))
   const median = Math.round(percentile(prices, 50))

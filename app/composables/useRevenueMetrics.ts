@@ -109,7 +109,7 @@ export function useRevenueMetrics() {
     }>) {
       const d = new Date(row.created_at)
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-      if (!monthMap[key]) monthMap[key] = {}
+      monthMap[key] ??= {}
       monthMap[key][row.type] = (monthMap[key][row.type] || 0) + (row.amount_cents || 0)
     }
 

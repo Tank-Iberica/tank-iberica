@@ -7,7 +7,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'confirm-delete', vehicle: { id: string; brand: string; model: string }): void
+  'confirm-delete': [vehicle: { id: string; brand: string; model: string }]
 }>()
 
 const categoryLabels: Record<string, string> = {

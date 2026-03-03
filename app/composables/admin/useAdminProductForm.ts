@@ -51,6 +51,15 @@ interface ProductFormData extends VehicleFormData {
 }
 
 // ── Composable ─────────────────────────────────────────
+function fmt(val: number | null | undefined): string {
+  if (!val && val !== 0) return '—'
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+  }).format(val)
+}
+
 export function useAdminProductForm() {
   const { t, locale } = useI18n()
   const toast = useToast()
@@ -433,15 +442,6 @@ export function useAdminProductForm() {
   }
 
   // ── Format helper ────────────────────────────────────
-  function fmt(val: number | null | undefined): string {
-    if (!val && val !== 0) return '—'
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-    }).format(val)
-  }
-
   // ── Init (called from onMounted in page) ─────────────
   async function init() {
     await Promise.all([

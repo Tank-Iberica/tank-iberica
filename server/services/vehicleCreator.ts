@@ -46,9 +46,9 @@ export function sanitizeSlug(raw: string): string {
   return raw
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .replaceAll(/[\u0300-\u036F]/g, '')
+    .replaceAll(/[^a-z0-9]+/g, '-')
+    .replaceAll(/^-+|-+$/g, '')
     .slice(0, 120)
 }
 
@@ -66,7 +66,7 @@ export async function createVehicle(
       slug: data.slug,
       category: 'venta' as const,
       category_id: data.categoryId ?? null,
-      status: (data.status || 'draft') as 'draft' | 'active' | 'paused',
+      status: data.status || 'draft',
       dealer_id: data.dealerId ?? null,
       description_es: data.descriptionEs || '',
       description_en: data.descriptionEn || '',

@@ -137,9 +137,9 @@ export function useAdminMetricsActivity() {
               name = row.company_name
             } else if (row.company_name && typeof row.company_name === 'object') {
               name =
-                (row.company_name as Record<string, string>).es ??
-                (row.company_name as Record<string, string>).en ??
-                Object.values(row.company_name as Record<string, string>)[0] ??
+                row.company_name.es ??
+                row.company_name.en ??
+                Object.values(row.company_name)[0] ??
                 ''
             }
             nameMap.set(row.id, name)

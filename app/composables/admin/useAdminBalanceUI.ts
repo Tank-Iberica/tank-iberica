@@ -19,6 +19,16 @@ import { useAdminVehicles } from '~/composables/admin/useAdminVehicles'
 import { useToast } from '~/composables/useToast'
 
 // ─── Empty form helper ──────────────────────────────────────
+function downloadFile(content: string, filename: string, type: string) {
+  const blob = new Blob([content], { type })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export function getEmptyForm(): BalanceFormData {
   return {
     tipo: 'gasto',
@@ -164,9 +174,7 @@ export function useAdminBalanceUI() {
     const months: Record<string, { ingresos: number; gastos: number }> = {}
     for (const e of entries.value) {
       const month = e.fecha.substring(0, 7) // YYYY-MM
-      if (!months[month]) {
-        months[month] = { ingresos: 0, gastos: 0 }
-      }
+      months[month] ??= { ingresos: 0, gastos: 0 }
       if (e.tipo === 'ingreso') {
         months[month].ingresos += e.importe
       } else {
@@ -393,10 +401,12 @@ export function useAdminBalanceUI() {
     const lines: string[] = ['Concepto;Ingresos;Gastos;Neto']
 
     if (resumenOptions.totales) {
-      lines.push(`TOTAL INGRESOS;+${summary.value.totalIngresos.toFixed(2)}\u20AC;;`)
-      lines.push(`TOTAL GASTOS;;-${summary.value.totalGastos.toFixed(2)}\u20AC;`)
-      lines.push(`BALANCE NETO;;;${summary.value.balanceNeto.toFixed(2)}\u20AC`)
-      lines.push('')
+      lines.push(
+        `TOTAL INGRESOS;+${summary.value.totalIngresos.toFixed(2)}\u20AC;;`,
+        `TOTAL GASTOS;;-${summary.value.totalGastos.toFixed(2)}\u20AC;`,
+        `BALANCE NETO;;;${summary.value.balanceNeto.toFixed(2)}\u20AC`,
+        '',
+      )
     }
 
     if (resumenOptions.desglose) {
@@ -525,7 +535,7 @@ export function useAdminBalanceUI() {
         iframe.contentWindow?.focus()
         iframe.contentWindow?.print()
       } catch {
-        const win = window.open('', '_blank')
+        const win = globalThis.open('', '_blank')
         if (win) {
           win.document.write(html)
           win.document.close()
@@ -545,16 +555,6 @@ export function useAdminBalanceUI() {
         // Silent fail - onload will handle it
       }
     }, 100)
-  }
-
-  function downloadFile(content: string, filename: string, type: string) {
-    const blob = new Blob([content], { type })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
   }
 
   // ─── Clear filters ───────────────────────────────────────

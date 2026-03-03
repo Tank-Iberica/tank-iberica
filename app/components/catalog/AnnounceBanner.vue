@@ -8,7 +8,8 @@
         :target="isExternalLink ? '_blank' : undefined"
         :rel="isExternalLink ? 'noopener' : undefined"
         class="banner-link"
-      >{{ $t('banner.moreInfo') }}</a>
+        >{{ $t('banner.moreInfo') }}</a
+      >
     </span>
     <button class="announcement-close" :aria-label="$t('common.close')" @click="dismiss">
       &#215;
@@ -55,10 +56,9 @@ const bannerLink = computed(() => bannerData.value?.link || bannerData.value?.ur
 const isExternalLink = computed(() => {
   if (!bannerLink.value) return false
   try {
-    const url = new URL(bannerLink.value, window.location.origin)
-    return url.hostname !== window.location.hostname
-  }
-  catch {
+    const url = new URL(bannerLink.value, globalThis.location.origin)
+    return url.hostname !== globalThis.location.hostname
+  } catch {
     return false
   }
 })
@@ -88,21 +88,20 @@ function dismiss() {
   document.body.classList.remove('banner-visible')
 }
 
-watch(visible, (val) => {
-  if (val) {
-    document.body.classList.add('banner-visible')
-  }
-  else {
-    document.body.classList.remove('banner-visible')
-  }
-}, { immediate: false })
+watch(
+  visible,
+  (val) => {
+    if (val) {
+      document.body.classList.add('banner-visible')
+    } else {
+      document.body.classList.remove('banner-visible')
+    }
+  },
+  { immediate: false },
+)
 
 onMounted(async () => {
-  const { data } = await supabase
-    .from('config')
-    .select('value')
-    .eq('key', 'banner')
-    .single()
+  const { data } = await supabase.from('config').select('value').eq('key', 'banner').single()
 
   if (data) {
     bannerData.value = (data as Record<string, unknown>).value as BannerConfig
@@ -119,7 +118,7 @@ onUnmounted(() => {
 
 <style scoped>
 .announcement-banner {
-  background: linear-gradient(135deg, #BF6B52 0%, #A3523B 100%);
+  background: linear-gradient(135deg, #bf6b52 0%, #a3523b 100%);
   color: var(--color-white);
   padding: 0.38rem 2rem;
   text-align: center;

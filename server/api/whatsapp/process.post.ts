@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Dev mode: create placeholder if no AI key configured
-  const anthropicKey = config.anthropicApiKey as string
+  const anthropicKey = config.anthropicApiKey
   if (!anthropicKey && !process.env.OPENAI_API_KEY) {
     console.warn('[WhatsApp Process] No AI API keys — creating placeholder vehicle')
     const placeholderSlug = sanitizeSlug(`whatsapp-${Date.now()}`)

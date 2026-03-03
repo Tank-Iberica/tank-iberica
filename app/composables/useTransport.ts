@@ -141,6 +141,54 @@ const FRENCH_SOUTH_PREFIXES = new Set([
 // Composable
 // ============================================
 
+function resolveZoneFromPostalCode(postalCode: string): string | null {
+  const clean = postalCode.replaceAll(/\s+/g, '').replaceAll(/-/g, '')
+
+  // Portuguese postal codes: 4 digits (or 4+3 format like 1000-001)
+  if (/^\d{4}$/.test(clean) || /^\d{7}$/.test(clean)) {
+    return 'portugal'
+  }
+
+  // Spanish and French postal codes: 5 digits
+  if (/^\d{5}$/.test(clean)) {
+    const prefix = clean.substring(0, 2)
+
+    // Check Spanish postal code
+    const province = SPANISH_POSTAL_PREFIXES[prefix]
+    if (province) {
+      const region = PROVINCE_TO_REGION[province]
+      if (region) {
+        return REGION_TO_ZONE[region] || 'personalizado'
+      }
+      return 'personalizado'
+    }
+
+    // Check French southern départements
+    if (FRENCH_SOUTH_PREFIXES.has(prefix)) {
+      return 'francia-sur'
+    }
+  }
+
+  return null
+}
+function getProvinceFromPostalCode(postalCode: string): string | null {
+  const clean = postalCode.replaceAll(/\s+/g, '').replaceAll(/-/g, '')
+  if (/^\d{5}$/.test(clean)) {
+    const prefix = clean.substring(0, 2)
+    return SPANISH_POSTAL_PREFIXES[prefix] || null
+  }
+  return null
+}
+function formatCents(cents: number): string {
+  const euros = cents / 100
+  return (
+    euros.toLocaleString('es-ES', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }) + ' \u20AC'
+  )
+}
+
 export function useTransport() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()
@@ -190,49 +238,9 @@ export function useTransport() {
    *
    * Returns the zone slug string or null if unresolvable.
    */
-  function resolveZoneFromPostalCode(postalCode: string): string | null {
-    const clean = postalCode.replace(/\s+/g, '').replace(/-/g, '')
-
-    // Portuguese postal codes: 4 digits (or 4+3 format like 1000-001)
-    if (/^\d{4}$/.test(clean) || /^\d{7}$/.test(clean)) {
-      return 'portugal'
-    }
-
-    // Spanish and French postal codes: 5 digits
-    if (/^\d{5}$/.test(clean)) {
-      const prefix = clean.substring(0, 2)
-
-      // Check Spanish postal code
-      const province = SPANISH_POSTAL_PREFIXES[prefix]
-      if (province) {
-        const region = PROVINCE_TO_REGION[province]
-        if (region) {
-          return REGION_TO_ZONE[region] || 'personalizado'
-        }
-        return 'personalizado'
-      }
-
-      // Check French southern départements
-      if (FRENCH_SOUTH_PREFIXES.has(prefix)) {
-        return 'francia-sur'
-      }
-    }
-
-    return null
-  }
-
   /**
    * Get the province name from a Spanish postal code.
    */
-  function getProvinceFromPostalCode(postalCode: string): string | null {
-    const clean = postalCode.replace(/\s+/g, '').replace(/-/g, '')
-    if (/^\d{5}$/.test(clean)) {
-      const prefix = clean.substring(0, 2)
-      return SPANISH_POSTAL_PREFIXES[prefix] || null
-    }
-    return null
-  }
-
   /**
    * Calculate transport price for a vehicle to a destination postal code.
    *
@@ -342,16 +350,6 @@ export function useTransport() {
   /**
    * Format cents to display price string (e.g. 150000 → "1.500 €").
    */
-  function formatCents(cents: number): string {
-    const euros = cents / 100
-    return (
-      euros.toLocaleString('es-ES', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }) + ' \u20AC'
-    )
-  }
-
   return {
     zones,
     loading,

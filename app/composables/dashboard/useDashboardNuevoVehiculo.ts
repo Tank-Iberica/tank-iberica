@@ -124,9 +124,9 @@ export function useDashboardNuevoVehiculo() {
       const slug = `${form.value.brand}-${form.value.model}-${form.value.year}`
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036F]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
+        .replaceAll(/[\u0300-\u036F]/g, '')
+        .replaceAll(/[^a-z0-9]+/g, '-')
+        .replaceAll(/(^-|-$)/g, '')
 
       const { error: err } = await supabase.from('vehicles').insert({
         dealer_id: dealer.id,

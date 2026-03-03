@@ -106,7 +106,7 @@ function goToStep4() {
 
 const shareUrl = computed(() => {
   if (typeof window === 'undefined') return ''
-  return `${window.location.origin}/servicios-postventa?v=${props.vehicle.slug || ''}`
+  return `${globalThis.location.origin}/servicios-postventa?v=${props.vehicle.slug || ''}`
 })
 
 async function copyLink() {
@@ -249,7 +249,7 @@ const services = computed(() => [
                 :value="shareUrl"
                 readonly
                 @focus="($event.target as HTMLInputElement)?.select()"
-              />
+              >
               <button class="btn-copy" @click="copyLink">
                 {{ linkCopied ? $t('postSale.linkCopied') : $t('postSale.copyLink') }}
               </button>

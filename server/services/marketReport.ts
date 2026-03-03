@@ -223,8 +223,8 @@ function computeTrends(rows: MarketRow[]): TrendInfo[] {
   const months = [...new Set(rows.map((r) => r.month))].sort((a, b) => a.localeCompare(b))
   if (months.length < 2) return []
 
-  const latestMonth = months[months.length - 1]
-  const previousMonth = months.length >= 3 ? months[months.length - 3] : months[0]
+  const latestMonth = months.at(-1)
+  const previousMonth = months.length >= 3 ? months.at(-3) : months[0]
 
   const latestRows = rows.filter((r) => r.month === latestMonth)
   const previousRows = rows.filter((r) => r.month === previousMonth)
@@ -370,9 +370,8 @@ function generateReportHTML(
     <div class="page">
       <h2 class="section-title">Resumen Ejecutivo</h2>
       ${
-        !hasData
-          ? '<p class="no-data">Datos insuficientes para generar el resumen ejecutivo.</p>'
-          : `
+        hasData
+          ? `
         <div class="summary-grid">
           <div class="summary-card">
             <div class="summary-value">${formatNumber(totalListings)}</div>
@@ -392,6 +391,7 @@ function generateReportHTML(
           <p><strong>Tendencia de precios:</strong> ${escapeHtml(priceChangeSummary)}</p>
         </div>
         `
+          : '<p class="no-data">Datos insuficientes para generar el resumen ejecutivo.</p>'
       }
     </div>
   `
@@ -402,11 +402,11 @@ function generateReportHTML(
     <tr class="${idx % 2 === 0 ? 'row-even' : 'row-odd'}">
       <td>${escapeHtml(s.subcategory)}</td>
       <td class="num">${formatEUR(s.avgPrice)}</td>
-      ${!isPublic ? `<td class="num">${formatEUR(s.medianPrice)}</td>` : ''}
-      ${!isPublic ? `<td class="num">${formatEUR(s.minPrice)} - ${formatEUR(s.maxPrice)}</td>` : ''}
+      ${isPublic ? '' : `<td class="num">${formatEUR(s.medianPrice)}</td>`}
+      ${isPublic ? '' : `<td class="num">${formatEUR(s.minPrice)} - ${formatEUR(s.maxPrice)}</td>`}
       <td class="num">${formatNumber(s.totalListings)}</td>
-      ${!isPublic ? `<td class="num">${formatNumber(s.totalSold)}</td>` : ''}
-      ${!isPublic ? `<td class="num">${formatNumber(s.avgDaysToSell)}</td>` : ''}
+      ${isPublic ? '' : `<td class="num">${formatNumber(s.totalSold)}</td>`}
+      ${isPublic ? '' : `<td class="num">${formatNumber(s.avgDaysToSell)}</td>`}
     </tr>
   `,
     )
@@ -416,19 +416,18 @@ function generateReportHTML(
     <div class="page">
       <h2 class="section-title">Precios por Subcategoria</h2>
       ${
-        !hasData
-          ? '<p class="no-data">Datos insuficientes para generar la tabla de precios.</p>'
-          : `
+        hasData
+          ? `
         <table>
           <thead>
             <tr>
               <th>Subcategoria</th>
               <th>Precio Medio</th>
-              ${!isPublic ? '<th>Precio Mediana</th>' : ''}
-              ${!isPublic ? '<th>Rango (Min - Max)</th>' : ''}
+              ${isPublic ? '' : '<th>Precio Mediana</th>'}
+              ${isPublic ? '' : '<th>Rango (Min - Max)</th>'}
               <th>Anuncios</th>
-              ${!isPublic ? '<th>Vendidos</th>' : ''}
-              ${!isPublic ? '<th>Dias medio venta</th>' : ''}
+              ${isPublic ? '' : '<th>Vendidos</th>'}
+              ${isPublic ? '' : '<th>Dias medio venta</th>'}
             </tr>
           </thead>
           <tbody>
@@ -436,6 +435,7 @@ function generateReportHTML(
           </tbody>
         </table>
         `
+          : '<p class="no-data">Datos insuficientes para generar la tabla de precios.</p>'
       }
     </div>
   `
@@ -456,9 +456,8 @@ function generateReportHTML(
     <div class="page">
       <h2 class="section-title">Top 10 Marcas por Volumen</h2>
       ${
-        !hasData
-          ? '<p class="no-data">Datos insuficientes para generar el ranking de marcas.</p>'
-          : `
+        hasData
+          ? `
         <table>
           <thead>
             <tr>
@@ -472,6 +471,7 @@ function generateReportHTML(
           </tbody>
         </table>
         `
+          : '<p class="no-data">Datos insuficientes para generar el ranking de marcas.</p>'
       }
     </div>
   `
@@ -492,9 +492,8 @@ function generateReportHTML(
     <div class="page">
       <h2 class="section-title">Desglose Geografico</h2>
       ${
-        !hasData
-          ? '<p class="no-data">Datos insuficientes para generar el desglose geografico.</p>'
-          : `
+        hasData
+          ? `
         <table>
           <thead>
             <tr>
@@ -508,6 +507,7 @@ function generateReportHTML(
           </tbody>
         </table>
         `
+          : '<p class="no-data">Datos insuficientes para generar el desglose geografico.</p>'
       }
     </div>
   `
@@ -938,7 +938,7 @@ export async function generateDealerIntelligence(
     const sorted = [...comparePrices].sort((a, b) => a - b)
     const marketAvg = sorted.reduce((s, v) => s + v, 0) / sorted.length
     const marketMin = sorted[0]!
-    const marketMax = sorted[sorted.length - 1]!
+    const marketMax = sorted.at(-1)!
 
     const deviation = ((vehicle.price - marketAvg) / marketAvg) * 100
     let pricePosition: 'below' | 'average' | 'above' = 'average'

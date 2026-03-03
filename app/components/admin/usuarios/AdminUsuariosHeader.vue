@@ -4,7 +4,7 @@ defineProps<{
 }>()
 
 defineEmits<{
-  (e: 'export'): void
+  export: []
 }>()
 </script>
 

@@ -8,7 +8,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'change', range: DateRange): void
+  change: [range: DateRange]
 }>()
 
 const { t } = useI18n()

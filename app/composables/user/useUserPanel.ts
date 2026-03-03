@@ -302,7 +302,7 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
       })
       deleteModalOpen.value = false
       onClose()
-      window.location.href = '/'
+      globalThis.location.href = '/'
     } catch {
       deleteError.value = t('gdpr.deleteError')
     } finally {

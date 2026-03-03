@@ -64,6 +64,10 @@ const PAGE_SIZE = 100
 
 // ============ COMPOSABLE ============
 
+function getTypeColor(type: ContactType): string {
+  return CONTACT_TYPES.find((c) => c.value === type)?.color || '#64748b'
+}
+
 export function useDashboardCrm() {
   const supabase = useSupabaseClient()
   const { t } = useI18n()
@@ -286,10 +290,6 @@ export function useDashboardCrm() {
   function getTypeLabel(type: ContactType): string {
     const ct = CONTACT_TYPES.find((c) => c.value === type)
     return ct ? t(ct.labelKey) : type
-  }
-
-  function getTypeColor(type: ContactType): string {
-    return CONTACT_TYPES.find((c) => c.value === type)?.color || '#64748b'
   }
 
   return {

@@ -5,7 +5,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:theme', value: Record<string, string>): void
+  'update:theme': [value: Record<string, string>]
 }>()
 
 function onColorChange(key: string, value: string) {

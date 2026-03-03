@@ -7,7 +7,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:activeTab', value: TabFilter): void
+  'update:activeTab': [value: TabFilter]
 }>()
 
 const { t } = useI18n()

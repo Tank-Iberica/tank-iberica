@@ -8,7 +8,9 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'toggle-active' | 'edit' | 'delete'): void
+  'toggle-active': []
+  edit: []
+  delete: []
 }>()
 </script>
 

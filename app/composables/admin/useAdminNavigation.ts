@@ -40,7 +40,7 @@ export function useAdminNavigation() {
         }))
       : []
 
-    footerText.value = { es: '', en: '', ...(config.value.footer_text || {}) }
+    footerText.value = { es: '', en: '', ...config.value.footer_text }
 
     footerLinks.value = Array.isArray(config.value.footer_links)
       ? config.value.footer_links.map((link) => ({
@@ -56,7 +56,7 @@ export function useAdminNavigation() {
       instagram: '',
       facebook: '',
       x: '',
-      ...(config.value.social_links || {}),
+      ...config.value.social_links,
     }
   }
 

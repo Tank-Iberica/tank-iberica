@@ -242,7 +242,7 @@ export function useDashboardHistorico() {
         }
 
         availableYears.value = Array.from(years).sort((a, b) => b - a)
-        availableBrands.value = Array.from(brands).sort()
+        availableBrands.value = Array.from(brands).sort((a, b) => a.localeCompare(b))
 
         const currentYear = new Date().getFullYear()
         if (!availableYears.value.includes(currentYear)) {

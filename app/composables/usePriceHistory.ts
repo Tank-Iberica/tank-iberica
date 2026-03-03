@@ -138,12 +138,12 @@ export function usePriceHistory(vehicleId: string) {
 
     if (vehicleError || !vehicle) {
       // Fall back to vehicle average only
-      fairPriceCents.value = vehicleAvg !== null ? Math.round(vehicleAvg) : null
+      fairPriceCents.value = vehicleAvg === null ? null : Math.round(vehicleAvg)
       return
     }
 
-    const vehicleYear = vehicle.year as number | null
-    const categoryId = vehicle.category_id as string | null
+    const vehicleYear = vehicle.year
+    const categoryId = vehicle.category_id
 
     // Step 3: Category average from similar vehicles
     let categoryAvg: number | null = null
@@ -164,10 +164,8 @@ export function usePriceHistory(vehicleId: string) {
 
       const { data: similarVehicles, error: catError } = await query
 
-      if (!catError && similarVehicles && similarVehicles.length > 0) {
-        const prices = similarVehicles
-          .map((v) => v.price as number | null)
-          .filter((p): p is number => p !== null)
+      if (!catError && similarVehicles?.length > 0) {
+        const prices = similarVehicles.map((v) => v.price).filter((p): p is number => p !== null)
 
         if (prices.length > 0) {
           // Convert euros to cents for comparison (vehicles.price is in euros)

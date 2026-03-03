@@ -68,6 +68,28 @@ export interface SectionsOpenState {
 // Composable
 // ---------------------------------------------------------------------------
 
+function formatKpiEuros(cents: number): string {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(cents / 100)
+}
+function kpiChangeClass(pct: number): string {
+  if (pct > 0) return 'kpi-change-up'
+  if (pct < 0) return 'kpi-change-down'
+  return 'kpi-change-flat'
+}
+function formatCategory(category: string): string {
+  const map: Record<string, string> = {
+    venta: 'Venta',
+    alquiler: 'Alquiler',
+    terceros: 'Terceros',
+  }
+  return map[category] || category
+}
+
 export function useAdminDashboard() {
   const supabase = useSupabaseClient()
 
@@ -130,30 +152,6 @@ export function useAdminDashboard() {
   )
 
   // -- Helpers ---------------------------------------------------------------
-
-  function formatKpiEuros(cents: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(cents / 100)
-  }
-
-  function kpiChangeClass(pct: number): string {
-    if (pct > 0) return 'kpi-change-up'
-    if (pct < 0) return 'kpi-change-down'
-    return 'kpi-change-flat'
-  }
-
-  function formatCategory(category: string): string {
-    const map: Record<string, string> = {
-      venta: 'Venta',
-      alquiler: 'Alquiler',
-      terceros: 'Terceros',
-    }
-    return map[category] || category
-  }
 
   // -- Data loaders ----------------------------------------------------------
 

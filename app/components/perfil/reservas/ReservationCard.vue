@@ -13,7 +13,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'cancel' | 'confirm'): void
+  cancel: []
+  confirm: []
 }>()
 
 const { getImageUrl } = useImageUrl()

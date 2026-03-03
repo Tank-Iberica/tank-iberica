@@ -7,7 +7,9 @@ defineProps<{
 }>()
 
 defineEmits<{
-  (e: 'update:showDocs' | 'update:showTecnico' | 'update:showAlquiler', value: boolean): void
+  'update:showDocs': [value: boolean]
+  'update:showTecnico': [value: boolean]
+  'update:showAlquiler': [value: boolean]
 }>()
 </script>
 

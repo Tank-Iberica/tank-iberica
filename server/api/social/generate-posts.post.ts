@@ -68,8 +68,8 @@ function getSubcategorySlug(v: VehicleData): string {
   return es
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036F]/g, '')
-    .replace(/[^a-z0-9]+/g, '')
+    .replaceAll(/[\u0300-\u036F]/g, '')
+    .replaceAll(/[^a-z0-9]+/g, '')
 }
 
 // ============================================

@@ -98,6 +98,10 @@ export function roiColorClass(value: number): string {
 // Composable
 // ────────────────────────────────────────────
 
+function printResults(): void {
+  globalThis.print()
+}
+
 export function useDashboardCalculadora() {
   const { t } = useI18n()
 
@@ -389,10 +393,6 @@ export function useDashboardCalculadora() {
   function formatMonths(value: number): string {
     if (!Number.isFinite(value) || value <= 0) return t('dashboard.calculator.never')
     return `${value} ${value === 1 ? t('dashboard.calculator.month') : t('dashboard.calculator.months')}`
-  }
-
-  function printResults(): void {
-    window.print()
   }
 
   // ═══════════════════════════════════════════

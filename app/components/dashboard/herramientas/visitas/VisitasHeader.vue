@@ -6,7 +6,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'toggle-visits', value: boolean): void
+  'toggle-visits': [value: boolean]
 }>()
 
 function onToggle(event: Event) {

@@ -5,7 +5,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'change', tab: 'new' | 'history'): void
+  change: [tab: 'new' | 'history']
 }>()
 
 const { t } = useI18n()

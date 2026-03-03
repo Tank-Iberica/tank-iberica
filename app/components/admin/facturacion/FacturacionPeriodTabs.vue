@@ -7,7 +7,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'select', value: string): void
+  select: [value: string]
 }>()
 </script>
 

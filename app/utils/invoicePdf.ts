@@ -227,7 +227,7 @@ function printHTML(html: string): void {
   const doc = iframe.contentDocument || iframe.contentWindow?.document
   if (!doc) {
     // Fallback to window.open
-    const w = window.open('', '_blank')
+    const w = globalThis.open('', '_blank')
     if (!w) return
     w.document.write(html)
     w.document.close()
@@ -245,7 +245,7 @@ function printHTML(html: string): void {
       iframe.contentWindow?.focus()
       iframe.contentWindow?.print()
     } catch {
-      const win = window.open('', '_blank')
+      const win = globalThis.open('', '_blank')
       if (win) {
         win.document.write(html)
         win.document.close()

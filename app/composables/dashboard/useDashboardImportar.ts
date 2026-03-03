@@ -44,6 +44,42 @@ export type ImportStep = 1 | 2 | 3
 // Composable
 // ────────────────────────────────────────────
 
+function downloadTemplate(): void {
+  const headers = [
+    'marca',
+    'modelo',
+    'año',
+    'km',
+    'precio',
+    'categoría',
+    'subcategoría',
+    'descripción',
+    'ubicación',
+  ]
+  const exampleRow = [
+    'Schmitz',
+    'S.KO Cool',
+    '2018',
+    '350000',
+    '25000',
+    'semitrailers',
+    'refrigerated',
+    'Semirremolque frigorífico en excelente estado',
+    'Madrid',
+  ]
+
+  const csvContent = [headers.join(';'), exampleRow.join(';')].join('\n')
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'plantilla_importacion_vehiculos.csv'
+  link.click()
+
+  URL.revokeObjectURL(url)
+}
+
 export function useDashboardImportar() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
@@ -144,7 +180,7 @@ export function useDashboardImportar() {
         const line = lines[i]!.trim()
         if (!line) continue
 
-        const cols = line.split(separator).map((col) => col.trim().replace(/^"|"$/g, ''))
+        const cols = line.split(separator).map((col) => col.trim().replaceAll(/^"|"$/g, ''))
 
         const row: ParsedRow = {
           brand: cols[0] || '',
@@ -248,9 +284,9 @@ export function useDashboardImportar() {
         const slug = `${row.brand}-${row.model}-${row.year || ''}`
           .toLowerCase()
           .normalize('NFD')
-          .replace(/[\u0300-\u036F]/g, '')
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/(^-|-$)/g, '')
+          .replaceAll(/[\u0300-\u036F]/g, '')
+          .replaceAll(/[^a-z0-9]+/g, '-')
+          .replaceAll(/(^-|-$)/g, '')
 
         const { error: err } = await supabase.from('vehicles').insert({
           dealer_id: dealer.id,
@@ -286,42 +322,6 @@ export function useDashboardImportar() {
   }
 
   // ---------- Template download ----------
-
-  function downloadTemplate(): void {
-    const headers = [
-      'marca',
-      'modelo',
-      'año',
-      'km',
-      'precio',
-      'categoría',
-      'subcategoría',
-      'descripción',
-      'ubicación',
-    ]
-    const exampleRow = [
-      'Schmitz',
-      'S.KO Cool',
-      '2018',
-      '350000',
-      '25000',
-      'semitrailers',
-      'refrigerated',
-      'Semirremolque frigorífico en excelente estado',
-      'Madrid',
-    ]
-
-    const csvContent = [headers.join(';'), exampleRow.join(';')].join('\n')
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'plantilla_importacion_vehiculos.csv'
-    link.click()
-
-    URL.revokeObjectURL(url)
-  }
 
   // ---------- Navigation ----------
 

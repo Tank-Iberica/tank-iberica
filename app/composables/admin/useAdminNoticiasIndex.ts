@@ -24,6 +24,24 @@ export interface CategoryOption {
   label: string
 }
 
+function getSeoScore(item: News) {
+  return calculateMiniSeoScore({
+    title_es: item.title_es,
+    content_es: item.content_es,
+    slug: item.slug,
+    image_url: item.image_url,
+    hashtags: [...(item.hashtags || [])],
+  })
+}
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '\u2014'
+  return new Date(dateStr).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
 export function useAdminNoticiasIndex() {
   const router = useRouter()
 
@@ -59,10 +77,7 @@ export function useAdminNoticiasIndex() {
   }
 
   const hasActiveFilters = computed(
-    () =>
-      filters.value.status ||
-      filters.value.category ||
-      (filters.value.search && filters.value.search.length > 0),
+    () => filters.value.status || filters.value.category || (filters.value.search?.length ?? 0) > 0,
   )
 
   function clearFilters() {
@@ -155,26 +170,7 @@ export function useAdminNoticiasIndex() {
   }
 
   // ── SEO mini score ───────────────────────────────────────
-  function getSeoScore(item: News) {
-    return calculateMiniSeoScore({
-      title_es: item.title_es,
-      content_es: item.content_es,
-      slug: item.slug,
-      image_url: item.image_url,
-      hashtags: [...(item.hashtags || [])],
-    })
-  }
-
   // ── Format date ──────────────────────────────────────────
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '\u2014'
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    })
-  }
-
   // ── Navigate to item ────────────────────────────────────
   function navigateToItem(id: string) {
     router.push(`/admin/noticias/${id}`)

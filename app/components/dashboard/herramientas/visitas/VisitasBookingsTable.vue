@@ -9,7 +9,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update-status', bookingId: string, status: BookingStatus): void
+  'update-status': [bookingId: string, status: BookingStatus]
 }>()
 
 function fmtDate(date: string | null): string {

@@ -324,7 +324,9 @@ export function useMarketData() {
           : null
 
       // --- Compute trend from last 2 months ---
-      const uniqueMonths = [...new Set(rows.map((r) => r.month))].sort().reverse()
+      const uniqueMonths = [...new Set(rows.map((r) => r.month))]
+        .sort((a, b) => a.localeCompare(b))
+        .reverse()
       let trendPct = 0
 
       if (uniqueMonths.length >= 2) {
@@ -399,7 +401,9 @@ export function useMarketData() {
       if (rows.length === 0) return []
 
       // Determine latest and previous months from the data
-      const uniqueMonths = [...new Set(rows.map((r) => r.month))].sort().reverse()
+      const uniqueMonths = [...new Set(rows.map((r) => r.month))]
+        .sort((a, b) => a.localeCompare(b))
+        .reverse()
       const latestMonth = uniqueMonths[0]
       const previousMonth = uniqueMonths.length >= 2 ? uniqueMonths[1] : null
 
@@ -510,7 +514,9 @@ export function useMarketData() {
 
       if (rows.length === 0) return 0
 
-      const uniqueMonths = [...new Set(rows.map((r) => r.month))].sort().reverse()
+      const uniqueMonths = [...new Set(rows.map((r) => r.month))]
+        .sort((a, b) => a.localeCompare(b))
+        .reverse()
 
       if (uniqueMonths.length < 2) return 0
 

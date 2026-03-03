@@ -31,75 +31,74 @@ export function exportMetricsCSV(data: MetricsExportData): void {
   rows.push(['Metric', 'Current', 'Previous Month', 'Change %'])
 
   const kpi = data.kpiSummary
-  rows.push([
-    'Monthly Revenue (cents)',
-    String(kpi.monthlyRevenue.current),
-    String(kpi.monthlyRevenue.previousMonth),
-    String(kpi.monthlyRevenue.changePercent),
-  ])
-  rows.push([
-    'Active Vehicles',
-    String(kpi.activeVehicles.current),
-    String(kpi.activeVehicles.previousMonth),
-    String(kpi.activeVehicles.changePercent),
-  ])
-  rows.push([
-    'Active Dealers',
-    String(kpi.activeDealers.current),
-    String(kpi.activeDealers.previousMonth),
-    String(kpi.activeDealers.changePercent),
-  ])
-  rows.push([
-    'Monthly Leads',
-    String(kpi.monthlyLeads.current),
-    String(kpi.monthlyLeads.previousMonth),
-    String(kpi.monthlyLeads.changePercent),
-  ])
+  rows.push(
+    [
+      'Monthly Revenue (cents)',
+      String(kpi.monthlyRevenue.current),
+      String(kpi.monthlyRevenue.previousMonth),
+      String(kpi.monthlyRevenue.changePercent),
+    ],
+    [
+      'Active Vehicles',
+      String(kpi.activeVehicles.current),
+      String(kpi.activeVehicles.previousMonth),
+      String(kpi.activeVehicles.changePercent),
+    ],
+    [
+      'Active Dealers',
+      String(kpi.activeDealers.current),
+      String(kpi.activeDealers.previousMonth),
+      String(kpi.activeDealers.changePercent),
+    ],
+    [
+      'Monthly Leads',
+      String(kpi.monthlyLeads.current),
+      String(kpi.monthlyLeads.previousMonth),
+      String(kpi.monthlyLeads.changePercent),
+    ],
+  )
 
-  rows.push([])
-  rows.push(['Month', 'Revenue (cents)', 'Tax (cents)'])
+  rows.push([], ['Month', 'Revenue (cents)', 'Tax (cents)'])
   for (const point of data.revenueSeries) {
     rows.push([point.month, String(point.revenue), String(point.tax)])
   }
 
-  rows.push([])
-  rows.push(['Month', 'Published', 'Sold'])
+  rows.push([], ['Month', 'Published', 'Sold'])
   for (const point of data.vehicleActivity) {
     rows.push([point.month, String(point.published), String(point.sold)])
   }
 
-  rows.push([])
-  rows.push(['Month', 'Leads'])
+  rows.push([], ['Month', 'Leads'])
   for (const point of data.leadsSeries) {
     rows.push([point.month, String(point.leads)])
   }
 
-  rows.push([])
-  rows.push(['Dealer ID', 'Name', 'Vehicle Count', 'Lead Count'])
+  rows.push([], ['Dealer ID', 'Name', 'Vehicle Count', 'Lead Count'])
   for (const d of data.topDealers) {
     rows.push([d.dealerId, d.name, String(d.vehicleCount), String(d.leadCount)])
   }
 
-  rows.push([])
-  rows.push(['Vehicle ID', 'Title', 'Views'])
+  rows.push([], ['Vehicle ID', 'Title', 'Views'])
   for (const v of data.topVehicles) {
     rows.push([v.vehicleId, v.title, String(v.views)])
   }
 
-  rows.push([])
-  rows.push(['Funnel Stage', 'Count'])
+  rows.push([], ['Funnel Stage', 'Count'])
   const funnel = data.conversionFunnel
-  rows.push(['Visits (total views)', String(funnel.visits)])
-  rows.push(['Vehicle Views (unique vehicles)', String(funnel.vehicleViews)])
-  rows.push(['Leads', String(funnel.leads)])
-  rows.push(['Sales', String(funnel.sales)])
+  rows.push(
+    ['Visits (total views)', String(funnel.visits)],
+    ['Vehicle Views (unique vehicles)', String(funnel.vehicleViews)],
+    ['Leads', String(funnel.leads)],
+    ['Sales', String(funnel.sales)],
+  )
 
-  rows.push([])
-  rows.push(['Churn Metric', 'Value'])
+  rows.push([], ['Churn Metric', 'Value'])
   const churn = data.churnRate
-  rows.push(['Total Dealers (subscriptions)', String(churn.totalDealers)])
-  rows.push(['Cancelled Dealers', String(churn.cancelledDealers)])
-  rows.push(['Churn Rate (%)', String(churn.churnRate)])
+  rows.push(
+    ['Total Dealers (subscriptions)', String(churn.totalDealers)],
+    ['Cancelled Dealers', String(churn.cancelledDealers)],
+    ['Churn Rate (%)', String(churn.churnRate)],
+  )
 
   const csv = rows
     .map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(','))

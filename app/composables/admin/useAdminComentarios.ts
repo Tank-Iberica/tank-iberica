@@ -58,6 +58,18 @@ export const STATUS_LABELS: Record<CommentStatus, string> = {
 
 const PAGE_SIZE = 20
 
+function relativeDate(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'ahora'
+  if (mins < 60) return `hace ${mins}m`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `hace ${hours}h`
+  const days = Math.floor(hours / 24)
+  if (days < 30) return `hace ${days}d`
+  return new Date(dateStr).toLocaleDateString('es-ES')
+}
+
 export function useAdminComentarios() {
   const supabase = useSupabaseClient()
 
@@ -224,18 +236,6 @@ export function useAdminComentarios() {
   }
 
   // Relative date helper
-  function relativeDate(dateStr: string): string {
-    const diff = Date.now() - new Date(dateStr).getTime()
-    const mins = Math.floor(diff / 60000)
-    if (mins < 1) return 'ahora'
-    if (mins < 60) return `hace ${mins}m`
-    const hours = Math.floor(mins / 60)
-    if (hours < 24) return `hace ${hours}h`
-    const days = Math.floor(hours / 24)
-    if (days < 30) return `hace ${days}d`
-    return new Date(dateStr).toLocaleDateString('es-ES')
-  }
-
   // Get article display
   function getArticleTitle(comment: Comment): string {
     if (comment.news?.title_es) {

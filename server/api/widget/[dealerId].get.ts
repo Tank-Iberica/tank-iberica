@@ -38,14 +38,14 @@ export default defineEventHandler(async (event) => {
   const layout = query.layout === 'list' ? 'list' : 'grid'
 
   const config = useRuntimeConfig()
-  const supabaseUrl = config.public?.supabaseUrl || process.env.SUPABASE_URL
-  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabaseUrl = process.env.SUPABASE_URL || ''
+  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
     return 'Service unavailable'
   }
 
-  const supabase = createClient(supabaseUrl as string, supabaseKey as string)
+  const supabase = createClient(supabaseUrl, supabaseKey)
 
   // Get dealer info
   const { data: dealer } = await supabase
@@ -104,7 +104,7 @@ export default defineEventHandler(async (event) => {
           }).format(v.price)
         : ''
       const imageUrl =
-        v.images && v.images.length > 0 && cloudinaryBase ? `${cloudinaryBase}${v.images[0]}` : ''
+        (v.images?.length ?? 0) > 0 && cloudinaryBase ? `${cloudinaryBase}${v.images![0]}` : ''
       const vehicleUrl = `https://tracciona.com/vehiculo/${v.slug || v.id}${utm}`
 
       return `<a href="${vehicleUrl}" target="_blank" rel="noopener" class="trk-card">

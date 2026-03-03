@@ -104,6 +104,38 @@ export const PROVINCES: readonly string[] = [
 
 /* ---- Composable ---- */
 
+function formatPrice(value: number): string {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(value)
+}
+function priceBarPosition(value: number, min: number, max: number): number {
+  if (max === min) return 50
+  return Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100))
+}
+function confidenceColor(confidence: string): string {
+  switch (confidence) {
+    case 'high':
+      return 'var(--color-success)'
+    case 'medium':
+      return 'var(--color-warning)'
+    default:
+      return 'var(--color-error)'
+  }
+}
+function trendIcon(trend: string): string {
+  switch (trend) {
+    case 'rising':
+      return '\u2197'
+    case 'falling':
+      return '\u2198'
+    default:
+      return '\u2192'
+  }
+}
+
 export function useValoracion() {
   const { t, locale } = useI18n()
   const supabase = useSupabaseClient()
@@ -311,41 +343,6 @@ export function useValoracion() {
   }
 
   /* ---- Display helpers ---- */
-
-  function formatPrice(value: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0,
-    }).format(value)
-  }
-
-  function priceBarPosition(value: number, min: number, max: number): number {
-    if (max === min) return 50
-    return Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100))
-  }
-
-  function confidenceColor(confidence: string): string {
-    switch (confidence) {
-      case 'high':
-        return 'var(--color-success)'
-      case 'medium':
-        return 'var(--color-warning)'
-      default:
-        return 'var(--color-error)'
-    }
-  }
-
-  function trendIcon(trend: string): string {
-    switch (trend) {
-      case 'rising':
-        return '\u2197'
-      case 'falling':
-        return '\u2198'
-      default:
-        return '\u2192'
-    }
-  }
 
   function trendLabel(trend: string): string {
     switch (trend) {

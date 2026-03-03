@@ -142,7 +142,7 @@ export default defineEventHandler(async (event) => {
   const cloudinaryApiKey = process.env.CLOUDINARY_API_KEY
   const cloudinaryApiSecret = process.env.CLOUDINARY_API_SECRET
   const cloudinaryCloudName =
-    config.public?.cloudinaryCloudName || process.env.CLOUDINARY_CLOUD_NAME
+    config.public.cloudinaryCloudName || process.env.CLOUDINARY_CLOUD_NAME || ''
 
   if (cloudinaryApiKey && cloudinaryApiSecret && cloudinaryCloudName) {
     try {
@@ -313,7 +313,7 @@ export default defineEventHandler(async (event) => {
       .gte('sent_at', cooldownSince)
       .limit(1)
 
-    if (recentAlerts && recentAlerts.length > 0) continue // Still in cooldown
+    if ((recentAlerts?.length ?? 0) > 0) continue // Still in cooldown
 
     // Create the alert
     const message = `${metric.component}.${metric.metric_name} at ${usagePercent.toFixed(1)}% (${metric.metric_value}/${metric.metric_limit})`

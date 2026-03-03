@@ -7,6 +7,29 @@ import { useSeoScore, type SeoInput } from '~/composables/admin/useSeoScore'
 import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
 import type { News } from '~/composables/useNews'
 
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '\u2014'
+  return new Date(dateStr).toLocaleString('es-ES', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+function getLevelLabel(level: string): string {
+  switch (level) {
+    case 'good':
+      return 'Bueno'
+    case 'warning':
+      return 'Mejorable'
+    case 'bad':
+      return 'Necesita trabajo'
+    default:
+      return ''
+  }
+}
+
 export function useAdminNewsForm(newsId: Ref<string>) {
   const router = useRouter()
 
@@ -129,9 +152,7 @@ export function useAdminNewsForm(newsId: Ref<string>) {
 
   // Social media helpers
   function ensureSocialPostText(): Record<string, string> {
-    if (!formData.value.social_post_text) {
-      formData.value.social_post_text = {}
-    }
+    formData.value.social_post_text ??= {}
     return formData.value.social_post_text
   }
 
@@ -242,31 +263,7 @@ export function useAdminNewsForm(newsId: Ref<string>) {
   }
 
   // Format date
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '\u2014'
-    return new Date(dateStr).toLocaleString('es-ES', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
   // SEO level labels
-  function getLevelLabel(level: string): string {
-    switch (level) {
-      case 'good':
-        return 'Bueno'
-      case 'warning':
-        return 'Mejorable'
-      case 'bad':
-        return 'Necesita trabajo'
-      default:
-        return ''
-    }
-  }
-
   // Load article on mount
   onMounted(async () => {
     const data = await fetchById(newsId.value)
@@ -305,7 +302,7 @@ export function useAdminNewsForm(newsId: Ref<string>) {
     }
 
     // Open FAQ section if FAQ data exists
-    if (formData.value.faq_schema && formData.value.faq_schema.length > 0) {
+    if ((formData.value.faq_schema?.length ?? 0) > 0) {
       sections.faq = true
     }
 

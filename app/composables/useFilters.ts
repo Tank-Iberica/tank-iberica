@@ -194,8 +194,7 @@ export function useFilters() {
     const needsValues = filterDefs.filter(
       (f) =>
         (f.type === 'desplegable' || f.type === 'desplegable_tick') &&
-        ((f.options as Record<string, unknown>)?.choices_source === 'auto' ||
-          (f.options as Record<string, unknown>)?.choices_source === 'both'),
+        (f.options?.choices_source === 'auto' || f.options?.choices_source === 'both'),
     )
     const needsRange = filterDefs.filter((f) => f.type === 'slider')
 
@@ -227,7 +226,9 @@ export function useFilters() {
           valuesSet.add(String(val))
         }
       }
-      state.value.vehicleFilterValues[filter.name] = Array.from(valuesSet).sort()
+      state.value.vehicleFilterValues[filter.name] = Array.from(valuesSet).sort((a, b) =>
+        a.localeCompare(b),
+      )
     }
 
     // Compute slider ranges
@@ -253,7 +254,7 @@ export function useFilters() {
    * Get merged options for a desplegable filter (manual choices + auto values)
    */
   function getFilterOptions(filter: AttributeDefinition): string[] {
-    const opts = filter.options as Record<string, unknown>
+    const opts = filter.options
     const source = (opts?.choices_source as string) || 'manual'
     const manual = (opts?.choices as string[]) || []
     const auto = state.value.vehicleFilterValues[filter.name] || []
@@ -261,7 +262,7 @@ export function useFilters() {
     if (source === 'manual') return manual
     if (source === 'auto') return auto
     // 'both': merge and deduplicate
-    return [...new Set([...manual, ...auto])].sort()
+    return [...new Set([...manual, ...auto])].sort((a, b) => a.localeCompare(b))
   }
 
   /**

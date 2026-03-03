@@ -65,16 +65,16 @@ const themeColorLabels: Record<string, string> = {
 
 function populateForm() {
   if (!config.value) return
-  name.value = { es: '', en: '', ...(config.value.name || {}) }
-  tagline.value = { es: '', en: '', ...(config.value.tagline || {}) }
-  metaDescription.value = { es: '', en: '', ...(config.value.meta_description || {}) }
+  name.value = { es: '', en: '', ...config.value.name }
+  tagline.value = { es: '', en: '', ...config.value.tagline }
+  metaDescription.value = { es: '', en: '', ...config.value.meta_description }
   logoUrl.value = config.value.logo_url || ''
   logoDarkUrl.value = config.value.logo_dark_url || ''
   faviconUrl.value = config.value.favicon_url || ''
   ogImageUrl.value = config.value.og_image_url || ''
   logoTextConfig.value = {
     ...DEFAULT_LOGO_TEXT,
-    ...((config.value.logo_text_config as Partial<LogoTextSettings>) || {}),
+    ...(config.value.logo_text_config as Partial<LogoTextSettings>),
   }
   fontPreset.value = config.value.font_preset || 'default'
   theme.value = {
@@ -90,7 +90,7 @@ function populateForm() {
     error: '#EF4444',
     success: '#10B981',
     warning: '#F59E0B',
-    ...(config.value.theme || {}),
+    ...config.value.theme,
   }
 }
 

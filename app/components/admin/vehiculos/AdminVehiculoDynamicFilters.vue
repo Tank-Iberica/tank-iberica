@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:attributesJson', value: Record<string, unknown>): void
+  'update:attributesJson': [value: Record<string, unknown>]
 }>()
 
 function getSliderMin(options: FilterOptionValue): number | undefined {

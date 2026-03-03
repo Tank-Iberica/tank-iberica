@@ -565,7 +565,7 @@ async function submitContactForm() {
     buyer_phone: form.phone || null,
     message: form.message,
     source: 'dealer_portal',
-    source_url: typeof window !== 'undefined' ? window.location.href : null,
+    source_url: typeof window === 'undefined' ? null : globalThis.location.href,
   })
   formLoading.value = false
   if (error) {

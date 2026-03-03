@@ -4,7 +4,8 @@ defineProps<{
 }>()
 
 defineEmits<{
-  (e: 'toggle-fullscreen' | 'open-export'): void
+  'toggle-fullscreen': []
+  'open-export': []
 }>()
 </script>
 

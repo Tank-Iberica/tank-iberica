@@ -12,6 +12,13 @@ const STATUS_MAP: Record<SubastasTab, AuctionStatus[]> = {
   ended: ['ended', 'adjudicated', 'no_sale'],
 }
 
+function getFirstImage(item: Auction): string | null {
+  const images = item.vehicle?.vehicle_images
+  if (!images || images.length === 0) return null
+  const sorted = [...images].sort((a, b) => a.position - b.position)
+  return sorted[0]?.url ?? null
+}
+
 export function useSubastasIndex() {
   const { t } = useI18n()
   const route = useRoute()
@@ -30,13 +37,6 @@ export function useSubastasIndex() {
   }
 
   // --- Helpers ---
-
-  function getFirstImage(item: Auction): string | null {
-    const images = item.vehicle?.vehicle_images
-    if (!images || images.length === 0) return null
-    const sorted = [...images].sort((a, b) => a.position - b.position)
-    return sorted[0]?.url ?? null
-  }
 
   function getVehicleTitle(item: Auction): string {
     if (item.title) return item.title

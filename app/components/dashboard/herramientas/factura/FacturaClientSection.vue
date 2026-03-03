@@ -11,7 +11,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update', field: ClientField, value: string): void
+  update: [field: ClientField, value: string]
 }>()
 
 const { t } = useI18n()
@@ -41,7 +41,7 @@ function onSelect(field: ClientField, event: Event): void {
           required
           :value="clientName"
           @input="onInput('clientName', $event)"
-        />
+        >
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.docType') }}</label>
@@ -63,7 +63,7 @@ function onSelect(field: ClientField, event: Event): void {
           class="form-field__input"
           :value="clientDocNumber"
           @input="onInput('clientDocNumber', $event)"
-        />
+        >
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.address') }} 1</label>
@@ -72,7 +72,7 @@ function onSelect(field: ClientField, event: Event): void {
           class="form-field__input"
           :value="clientAddress1"
           @input="onInput('clientAddress1', $event)"
-        />
+        >
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.address') }} 2</label>
@@ -81,7 +81,7 @@ function onSelect(field: ClientField, event: Event): void {
           class="form-field__input"
           :value="clientAddress2"
           @input="onInput('clientAddress2', $event)"
-        />
+        >
       </div>
       <div class="form-field form-field--full">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.address') }} 3</label>
@@ -90,7 +90,7 @@ function onSelect(field: ClientField, event: Event): void {
           class="form-field__input"
           :value="clientAddress3"
           @input="onInput('clientAddress3', $event)"
-        />
+        >
       </div>
     </div>
   </fieldset>

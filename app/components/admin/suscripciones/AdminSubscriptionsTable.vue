@@ -9,7 +9,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'confirm-delete', sub: AdminSubscription): void
+  'confirm-delete': [sub: AdminSubscription]
 }>()
 
 function getActivePrefs(sub: AdminSubscription) {

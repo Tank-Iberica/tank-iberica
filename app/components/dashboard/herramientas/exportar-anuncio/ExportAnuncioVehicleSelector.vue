@@ -8,7 +8,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:vehicleId', value: string | null): void
+  'update:vehicleId': [value: string | null]
 }>()
 
 const { t } = useI18n()

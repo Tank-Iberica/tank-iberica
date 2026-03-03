@@ -4,14 +4,13 @@
  * Does NOT call onMounted — exposes init() instead.
  */
 import { useAdminTypes, type AdminType, type TypeFormData } from '~/composables/admin/useAdminTypes'
-import { useAdminFilters, type AdminFilter } from '~/composables/admin/useAdminFilters'
-import {
-  useAdminSubcategories,
-  type AdminSubcategory,
-} from '~/composables/admin/useAdminSubcategories'
+import { useAdminFilters } from '~/composables/admin/useAdminFilters'
+import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories'
 
 // ── Re-export types needed by subcomponents ────────────────────────
-export type { AdminType, TypeFormData, AdminFilter, AdminSubcategory }
+export type { AdminType, TypeFormData } from '~/composables/admin/useAdminTypes'
+export type { AdminFilter } from '~/composables/admin/useAdminFilters'
+export type { AdminSubcategory } from '~/composables/admin/useAdminSubcategories'
 
 export interface TiposFormData extends TypeFormData {
   subcategory_ids: string[]
@@ -225,10 +224,10 @@ export function useAdminTiposPage() {
       formData.value.slug = formData.value.name_es
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036F]/g, '')
-        .replace(/[^a-z0-9-]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
+        .replaceAll(/[\u0300-\u036F]/g, '')
+        .replaceAll(/[^a-z0-9-]/g, '-')
+        .replaceAll(/-+/g, '-')
+        .replaceAll(/^-|-$/g, '')
     }
 
     // Extract subcategory_ids before saving (not part of type table)

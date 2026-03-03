@@ -11,8 +11,8 @@ import {
 } from '~/composables/admin/useAdminUsers'
 
 // ── Re-export types needed by subcomponents ──────────────────────────
-export type { AdminUser, UserRole, UserFilters }
-export { USER_ROLES }
+export type { AdminUser, UserRole, UserFilters } from '~/composables/admin/useAdminUsers'
+export { USER_ROLES } from '~/composables/admin/useAdminUsers'
 
 // ── Interfaces for modal state ───────────────────────────────────────
 export interface DeleteModalState {
@@ -143,10 +143,7 @@ export function useAdminUsuariosPage() {
 
   async function saveRole() {
     if (!detailModal.value.user || !detailModal.value.selectedRole) return
-    const success = await updateRole(
-      detailModal.value.user.id,
-      detailModal.value.selectedRole as UserRole,
-    )
+    const success = await updateRole(detailModal.value.user.id, detailModal.value.selectedRole)
     if (success) {
       closeDetail()
       await fetchUsers(filters.value)

@@ -51,6 +51,11 @@ export const PLATFORMS: PlatformConfig[] = [
 // Composable
 // ────────────────────────────────────────────
 
+function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text
+  return text.substring(0, maxLength - 3) + '...'
+}
+
 export function useDashboardExportarAnuncio() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
@@ -127,11 +132,6 @@ export function useDashboardExportarAnuncio() {
 
   // ---------- Text generation helpers ----------
 
-  function truncateText(text: string, maxLength: number): string {
-    if (text.length <= maxLength) return text
-    return text.substring(0, maxLength - 3) + '...'
-  }
-
   function generateAdText(vehicle: DealerVehicleForExport, platform: PlatformKey): string {
     const brand = vehicle.brand
     const model = vehicle.model
@@ -201,7 +201,7 @@ export function useDashboardExportarAnuncio() {
         const priceBlock = price ? `\n\n\u{1F4B0} ${price}\u20AC` : ''
         const locationBlock = location ? `\n\u{1F4CD} ${location}` : ''
         const linkLine = '\n\u{1F517} Link en bio'
-        const brandTag = brand.toLowerCase().replace(/[^a-z0-9]/g, '')
+        const brandTag = brand.toLowerCase().replaceAll(/[^a-z0-9]/g, '')
         const tags = `\n\n#vehiculoindustrial #${brandTag} #tracciona #maquinariaindustrial`
 
         text = `${header}${priceBlock}${locationBlock}${linkLine}${tags}`

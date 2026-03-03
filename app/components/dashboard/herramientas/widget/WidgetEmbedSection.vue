@@ -5,7 +5,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'copy'): void
+  copy: []
 }>()
 
 const { t } = useI18n()

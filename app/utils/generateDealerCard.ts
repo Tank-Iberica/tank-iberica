@@ -113,8 +113,8 @@ export async function generateDealerCardPdf(opts: CardOptions): Promise<void> {
     const badgeY = nameLines.length > 1 ? 22 : 19
     const badgeColor = badgeColors[dealer.badge] || accentColor
     doc.setFillColor(...badgeColor)
-    const badgeText =
-      dealer.badge === 'founding' ? 'FOUNDING' : dealer.badge === 'premium' ? 'PREMIUM' : 'VERIFIED'
+    const badgeLabels: Record<string, string> = { founding: 'FOUNDING', premium: 'PREMIUM' }
+    const badgeText = badgeLabels[dealer.badge] ?? 'VERIFIED'
     const badgeW = doc.getTextWidth(badgeText) * 0.55 + 4
     doc.roundedRect(nameX, badgeY, badgeW, 4, 1, 1, 'F')
     doc.setTextColor(
@@ -218,6 +218,6 @@ export async function generateDealerCardPdf(opts: CardOptions): Promise<void> {
   doc.rect(0, cardH - 2, cardW, 2, 'F')
 
   // ===== SAVE =====
-  const safeName = dealer.companyName.replace(/[^a-z0-9]/gi, '_').substring(0, 30)
+  const safeName = dealer.companyName.replaceAll(/[^a-z0-9]/gi, '_').substring(0, 30)
   doc.save(`Tracciona_Card_${safeName}.pdf`)
 }

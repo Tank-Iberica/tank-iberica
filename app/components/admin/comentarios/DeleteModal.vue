@@ -8,7 +8,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'confirm' | 'cancel'): void
+  confirm: []
+  cancel: []
 }>()
 </script>
 

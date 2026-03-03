@@ -36,6 +36,42 @@ interface Relaxation {
   apply: (f: VehicleFilters) => VehicleFilters
 }
 
+function combinations<T>(arr: T[], n: number): T[][] {
+  if (n === 0) return [[]]
+  if (n > arr.length) return []
+  const result: T[][] = []
+  for (let i = 0; i <= arr.length - n; i++) {
+    const rest = combinations(arr.slice(i + 1), n - 1)
+    for (const combo of rest) {
+      result.push([arr[i]!, ...combo])
+    }
+  }
+  return result
+}
+function buildComboLabel(relaxations: Relaxation[]): {
+  labelKey: string
+  labelParams?: Record<string, unknown>
+} {
+  // For single relaxation, use its own label
+  if (relaxations.length === 1) {
+    return { labelKey: relaxations[0]!.labelKey, labelParams: relaxations[0]!.labelParams }
+  }
+
+  // For multi: combine into a comma-separated i18n key
+  const keys = relaxations.map((r) => r.key).sort((a, b) => a.localeCompare(b))
+  return {
+    labelKey: `catalog.similarCombo.${keys.join('_')}`,
+    labelParams: relaxations[0]?.labelParams,
+  }
+}
+function applyRelaxations(filters: VehicleFilters, relaxations: Relaxation[]): VehicleFilters {
+  let result = { ...filters }
+  for (const r of relaxations) {
+    result = r.apply(result)
+  }
+  return result
+}
+
 export function useSimilarSearches() {
   const { fetchCount } = useVehicles()
   const { getNextLevelFilters } = useGeoFallback()
@@ -113,46 +149,8 @@ export function useSimilarSearches() {
   }
 
   // Generate combinations of N items from an array
-  function combinations<T>(arr: T[], n: number): T[][] {
-    if (n === 0) return [[]]
-    if (n > arr.length) return []
-    const result: T[][] = []
-    for (let i = 0; i <= arr.length - n; i++) {
-      const rest = combinations(arr.slice(i + 1), n - 1)
-      for (const combo of rest) {
-        result.push([arr[i]!, ...combo])
-      }
-    }
-    return result
-  }
-
   // Build label for a multi-relaxation combo
-  function buildComboLabel(relaxations: Relaxation[]): {
-    labelKey: string
-    labelParams?: Record<string, unknown>
-  } {
-    // For single relaxation, use its own label
-    if (relaxations.length === 1) {
-      return { labelKey: relaxations[0]!.labelKey, labelParams: relaxations[0]!.labelParams }
-    }
-
-    // For multi: combine into a comma-separated i18n key
-    const keys = relaxations.map((r) => r.key).sort()
-    return {
-      labelKey: `catalog.similarCombo.${keys.join('_')}`,
-      labelParams: relaxations[0]?.labelParams,
-    }
-  }
-
   // Apply multiple relaxations to filters (compose left-to-right)
-  function applyRelaxations(filters: VehicleFilters, relaxations: Relaxation[]): VehicleFilters {
-    let result = { ...filters }
-    for (const r of relaxations) {
-      result = r.apply(result)
-    }
-    return result
-  }
-
   // ── Simple mode — backward compatible (used in CatalogEmptyState / few results) ──
 
   async function generateSuggestions(filters: VehicleFilters, currentCount = 0): Promise<void> {

@@ -34,6 +34,30 @@ const statusConfig: Record<StatusKey, { labelKey: string; cssClass: string }> = 
   forfeited: { labelKey: 'reservations.statusForfeited', cssClass: 'status--expired' },
 }
 
+function getStatusConfig(status: string): { labelKey: string; cssClass: string } {
+  return (
+    statusConfig[status as StatusKey] ?? {
+      labelKey: 'reservations.statusUnknown',
+      cssClass: '',
+    }
+  )
+}
+function formatDeposit(cents: number): string {
+  return (cents / 100).toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+}
+function canCancel(status: string): boolean {
+  return status === 'pending' || status === 'active'
+}
+function canConfirm(status: string): boolean {
+  return status === 'seller_responded'
+}
+function isTimerVisible(status: string): boolean {
+  return status === 'active' || status === 'pending'
+}
+
 export function usePerfilReservas() {
   const { t } = useI18n()
 
@@ -51,34 +75,6 @@ export function usePerfilReservas() {
   const error = ref<string | null>(null)
   const countdowns = ref<Record<string, string>>({})
   let countdownInterval: ReturnType<typeof setInterval> | null = null
-
-  function getStatusConfig(status: string): { labelKey: string; cssClass: string } {
-    return (
-      statusConfig[status as StatusKey] ?? {
-        labelKey: 'reservations.statusUnknown',
-        cssClass: '',
-      }
-    )
-  }
-
-  function formatDeposit(cents: number): string {
-    return (cents / 100).toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })
-  }
-
-  function canCancel(status: string): boolean {
-    return status === 'pending' || status === 'active'
-  }
-
-  function canConfirm(status: string): boolean {
-    return status === 'seller_responded'
-  }
-
-  function isTimerVisible(status: string): boolean {
-    return status === 'active' || status === 'pending'
-  }
 
   function updateCountdowns(): void {
     const updated: Record<string, string> = {}

@@ -2,7 +2,7 @@
 const { t } = useI18n()
 
 const emit = defineEmits<{
-  (e: 'export'): void
+  export: []
 }>()
 </script>
 

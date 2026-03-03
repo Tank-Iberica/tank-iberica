@@ -269,39 +269,36 @@ function getAdapter(platform: SocialPlatform): PlatformAdapter {
 // MAIN COMPOSABLE
 // ============================================
 
+function generatePostContent(
+  vehicle: {
+    title: string
+    price_cents: number
+    location: string
+    slug: string
+    images?: { url: string }[]
+  },
+  platform: SocialPlatform,
+  locale: string = 'es',
+): string {
+  const adapter = getAdapter(platform)
+  const price = new Intl.NumberFormat(locale === 'en' ? 'en-GB' : 'es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+  }).format(vehicle.price_cents / 100)
+
+  const baseUrl = 'https://tracciona.com'
+  const url = `${baseUrl}/vehiculo/${vehicle.slug}`
+
+  return adapter.formatContent(vehicle.title, price, vehicle.location || '-', url, locale)
+}
+
 export function useSocialPublisher() {
   const supabase = useSupabaseClient()
 
   const posts = ref<SocialPostWithVehicle[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
-
-  // ------------------------------------------
-  // Generate content for a single platform
-  // ------------------------------------------
-  function generatePostContent(
-    vehicle: {
-      title: string
-      price_cents: number
-      location: string
-      slug: string
-      images?: { url: string }[]
-    },
-    platform: SocialPlatform,
-    locale: string = 'es',
-  ): string {
-    const adapter = getAdapter(platform)
-    const price = new Intl.NumberFormat(locale === 'en' ? 'en-GB' : 'es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-    }).format(vehicle.price_cents / 100)
-
-    const baseUrl = 'https://tracciona.com'
-    const url = `${baseUrl}/vehiculo/${vehicle.slug}`
-
-    return adapter.formatContent(vehicle.title, price, vehicle.location || '-', url, locale)
-  }
 
   // ------------------------------------------
   // Create pending posts for all platforms

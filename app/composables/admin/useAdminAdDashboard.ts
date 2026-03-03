@@ -86,6 +86,11 @@ interface AdInfoRow {
 
 // ─── Composable ─────────────────────────────────────────────
 
+function calcCTR(impressions: number, clicks: number): string {
+  if (!impressions) return '0.0%'
+  return ((clicks / impressions) * 100).toFixed(1) + '%'
+}
+
 export function useAdminAdDashboard() {
   const supabase = useSupabaseClient()
 
@@ -121,7 +126,8 @@ export function useAdminAdDashboard() {
     if (dateRange.value === 'custom' && customFrom.value) {
       fromDate = customFrom.value
     } else {
-      const days = dateRange.value === '7d' ? 7 : dateRange.value === '90d' ? 90 : 30
+      const daysMap: Record<string, number> = { '7d': 7, '90d': 90, '30d': 30 }
+      const days = daysMap[dateRange.value] ?? 30
       const d = new Date(now)
       d.setDate(d.getDate() - days)
       fromDate = d.toISOString()
@@ -133,11 +139,6 @@ export function useAdminAdDashboard() {
         : now.toISOString()
 
     return { fromDate, toDate }
-  }
-
-  function calcCTR(impressions: number, clicks: number): string {
-    if (!impressions) return '0.0%'
-    return ((clicks / impressions) * 100).toFixed(1) + '%'
   }
 
   // ─── Fetch Dashboard ───────────────────────────────────────
@@ -178,11 +179,11 @@ export function useAdminAdDashboard() {
 
       for (const ev of events) {
         const src = ev.source || 'direct'
-        if (!sourceMap[src]) sourceMap[src] = { impressions: 0, clicks: 0 }
+        sourceMap[src] ??= { impressions: 0, clicks: 0 }
 
         // Extract position from metadata if available
         const pos = (ev.metadata?.position as string) || 'unknown'
-        if (!posMap[pos]) posMap[pos] = { impressions: 0, clicks: 0, viewable: 0 }
+        posMap[pos] ??= { impressions: 0, clicks: 0, viewable: 0 }
 
         if (ev.event_type === 'impression') {
           totalImpressions++
@@ -271,7 +272,7 @@ export function useAdminAdDashboard() {
       // --- Top ads (fetch ad info for enrichment) ---
       const adAgg: Record<string, { impressions: number; clicks: number; viewable: number }> = {}
       for (const ev of events) {
-        if (!adAgg[ev.ad_id]) adAgg[ev.ad_id] = { impressions: 0, clicks: 0, viewable: 0 }
+        adAgg[ev.ad_id] ??= { impressions: 0, clicks: 0, viewable: 0 }
         if (ev.event_type === 'impression') adAgg[ev.ad_id]!.impressions++
         else if (ev.event_type === 'click') adAgg[ev.ad_id]!.clicks++
         else if (ev.event_type === 'viewable_impression') adAgg[ev.ad_id]!.viewable++
@@ -320,7 +321,7 @@ export function useAdminAdDashboard() {
         for (const [id, agg] of Object.entries(adAgg)) {
           const info = adInfoMap[id]
           if (!info) continue
-          if (!formatAgg[info.format]) formatAgg[info.format] = { impressions: 0, clicks: 0 }
+          formatAgg[info.format] ??= { impressions: 0, clicks: 0 }
           formatAgg[info.format]!.impressions += agg.impressions
           formatAgg[info.format]!.clicks += agg.clicks
         }

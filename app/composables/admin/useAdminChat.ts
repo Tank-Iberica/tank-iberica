@@ -45,6 +45,46 @@ interface ChatMessageRow {
   users?: ChatUser
 }
 
+function formatMessageTime(dateStr: string): string {
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 0) {
+    return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+  } else if (diffDays === 1) {
+    return 'Ayer'
+  } else if (diffDays < 7) {
+    return date.toLocaleDateString('es-ES', { weekday: 'short' })
+  } else {
+    return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })
+  }
+}
+function formatFullDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+function getUserDisplayName(user: ChatUser): string {
+  if (user.name || user.apellidos) {
+    return `${user.name || ''} ${user.apellidos || ''}`.trim()
+  }
+  return user.email?.split('@')[0] || 'Usuario'
+}
+function getUserInitials(user: ChatUser): string {
+  if (user.name) {
+    const first = user.name.charAt(0).toUpperCase()
+    const last = user.apellidos ? user.apellidos.charAt(0).toUpperCase() : ''
+    return first + last
+  }
+  return user.email.charAt(0).toUpperCase()
+}
+
 export function useAdminChat() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient<any>()
@@ -342,58 +382,15 @@ export function useAdminChat() {
   /**
    * Format message time
    */
-  function formatMessageTime(dateStr: string): string {
-    const date = new Date(dateStr)
-    const now = new Date()
-    const diffMs = now.getTime() - date.getTime()
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-
-    if (diffDays === 0) {
-      return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-    } else if (diffDays === 1) {
-      return 'Ayer'
-    } else if (diffDays < 7) {
-      return date.toLocaleDateString('es-ES', { weekday: 'short' })
-    } else {
-      return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })
-    }
-  }
-
   /**
    * Format full date for message tooltip
    */
-  function formatFullDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
   /**
    * Get user display name
    */
-  function getUserDisplayName(user: ChatUser): string {
-    if (user.name || user.apellidos) {
-      return `${user.name || ''} ${user.apellidos || ''}`.trim()
-    }
-    return user.email?.split('@')[0] || 'Usuario'
-  }
-
   /**
    * Get user initials for avatar
    */
-  function getUserInitials(user: ChatUser): string {
-    if (user.name) {
-      const first = user.name.charAt(0).toUpperCase()
-      const last = user.apellidos ? user.apellidos.charAt(0).toUpperCase() : ''
-      return first + last
-    }
-    return user.email.charAt(0).toUpperCase()
-  }
-
   // Cleanup on unmount
   onUnmounted(() => {
     unsubscribeFromRealtime()

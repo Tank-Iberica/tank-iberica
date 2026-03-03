@@ -86,15 +86,15 @@ export function useAdminEmails() {
     const subject = currentTemplate.value.subject[activeLang.value] || ''
 
     for (const v of selectedDefinition.value.variables) {
-      const varName = v.replace(/\{\{|\}\}/g, '')
+      const varName = v.replaceAll(/\{\{|\}\}/g, '')
       body = body.replace(new RegExp(escapeRegex(v), 'g'), getSampleValue(varName))
     }
 
     let html = body
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color:#23424A;">$1</a>')
-      .replace(/^- (.*)$/gm, '<li>$1</li>')
-      .replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`)
+      .replaceAll(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replaceAll(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color:#23424A;">$1</a>')
+      .replaceAll(/^- (.*)$/gm, '<li>$1</li>')
+      .replaceAll(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`)
       .replaceAll('\n\n', '</p><p>')
       .replaceAll('\n', '<br>')
 
@@ -102,7 +102,7 @@ export function useAdminEmails() {
 
     const subjectRendered = selectedDefinition.value.variables.reduce(
       (s, v) =>
-        s.replace(new RegExp(escapeRegex(v), 'g'), getSampleValue(v.replace(/\{\{|\}\}/g, ''))),
+        s.replace(new RegExp(escapeRegex(v), 'g'), getSampleValue(v.replaceAll(/\{\{|\}\}/g, ''))),
       subject,
     )
 
@@ -160,7 +160,7 @@ export function useAdminEmails() {
               es: (stored.body as Record<string, string>)?.es || td.defaultBody.es,
               en: (stored.body as Record<string, string>)?.en || td.defaultBody.en,
             },
-            active: stored.active !== undefined ? Boolean(stored.active) : true,
+            active: stored.active === undefined ? true : Boolean(stored.active),
           }
         }
       }
@@ -183,7 +183,7 @@ export function useAdminEmails() {
           const key = row.template_key
           const status = row.status ?? ''
           if (!key) continue
-          if (!statsMap[key]) statsMap[key] = { sent: 0, opened: 0, clicked: 0 }
+          statsMap[key] ??= { sent: 0, opened: 0, clicked: 0 }
           if (['sent', 'delivered', 'opened', 'clicked'].includes(status)) statsMap[key].sent++
           if (['opened', 'clicked'].includes(status)) statsMap[key].opened++
           if (status === 'clicked') statsMap[key].clicked++
@@ -247,7 +247,7 @@ export function useAdminEmails() {
       const def = selectedDefinition.value
       const sampleVars: Record<string, string> = {}
       for (const v of def.variables) {
-        const varName = v.replace(/\{\{|\}\}/g, '')
+        const varName = v.replaceAll(/\{\{|\}\}/g, '')
         sampleVars[varName] = getSampleValue(varName)
       }
 

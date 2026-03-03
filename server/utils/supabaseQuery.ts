@@ -5,7 +5,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 
 function getVerticalSlug(): string {
   try {
-    return (useRuntimeConfig().public.vertical as string) || 'tracciona'
+    return useRuntimeConfig().public.vertical || 'tracciona'
   } catch {
     return 'tracciona'
   }

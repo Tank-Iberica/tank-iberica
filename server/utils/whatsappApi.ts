@@ -32,8 +32,8 @@ interface WhatsAppMediaUrlResponse {
  */
 export async function sendWhatsAppMessage(to: string, text: string): Promise<void> {
   const config = useRuntimeConfig()
-  const token = config.whatsappApiToken as string
-  const phoneNumberId = config.whatsappPhoneNumberId as string
+  const token = config.whatsappApiToken
+  const phoneNumberId = config.whatsappPhoneNumberId
 
   if (!token || !phoneNumberId) {
     console.warn(`[WhatsApp Dev] Would send message (${text.length} chars)`)
@@ -79,7 +79,7 @@ export async function sendWhatsAppMessage(to: string, text: string): Promise<voi
  */
 export async function downloadWhatsAppMedia(mediaId: string): Promise<Buffer> {
   const config = useRuntimeConfig()
-  const token = config.whatsappApiToken as string
+  const token = config.whatsappApiToken
 
   if (!token) {
     console.warn('[WhatsApp Dev] Would download media (id redacted)')

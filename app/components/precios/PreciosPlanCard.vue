@@ -9,7 +9,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'cta', plan: PlanType): void
+  cta: [plan: PlanType]
 }>()
 </script>
 

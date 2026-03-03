@@ -25,6 +25,48 @@ const defaultConsent: ConsentState = {
 const consent = ref<ConsentState | null>(null)
 const loaded = ref(false)
 
+function removeAnalyticsCookies(): void {
+  if (import.meta.server) return
+
+  const cookiesToRemove = ['_ga', '_ga_', '_gid', '_gat']
+  const hostname = globalThis.location.hostname
+  const domains = [hostname, `.${hostname}`]
+
+  for (const name of cookiesToRemove) {
+    for (const domain of domains) {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`
+    }
+    // Also try without domain
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
+  }
+
+  // Also remove cookies that start with _ga_ (GA4 measurement IDs)
+  const allCookies = document.cookie.split(';')
+  for (const cookie of allCookies) {
+    const cookieName = (cookie.split('=')[0] ?? '').trim()
+    if (cookieName.startsWith('_ga_')) {
+      for (const domain of domains) {
+        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`
+      }
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
+    }
+  }
+}
+function removeMarketingCookies(): void {
+  if (import.meta.server) return
+
+  const cookiesToRemove = ['_fbp', '_fbc', 'fr', '_gcl_au', '_gcl_aw', 'IDE', 'DSID', 'test_cookie']
+  const hostname = globalThis.location.hostname
+  const domains = [hostname, `.${hostname}`]
+
+  for (const name of cookiesToRemove) {
+    for (const domain of domains) {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`
+    }
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
+  }
+}
+
 export function useConsent() {
   const user = useSupabaseUser()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -144,61 +186,9 @@ export function useConsent() {
   /**
    * Remove Google Analytics cookies.
    */
-  function removeAnalyticsCookies(): void {
-    if (import.meta.server) return
-
-    const cookiesToRemove = ['_ga', '_ga_', '_gid', '_gat']
-    const hostname = window.location.hostname
-    const domains = [hostname, `.${hostname}`]
-
-    for (const name of cookiesToRemove) {
-      for (const domain of domains) {
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`
-      }
-      // Also try without domain
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
-    }
-
-    // Also remove cookies that start with _ga_ (GA4 measurement IDs)
-    const allCookies = document.cookie.split(';')
-    for (const cookie of allCookies) {
-      const cookieName = (cookie.split('=')[0] ?? '').trim()
-      if (cookieName.startsWith('_ga_')) {
-        for (const domain of domains) {
-          document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`
-        }
-        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
-      }
-    }
-  }
-
   /**
    * Remove marketing / ads tracking cookies.
    */
-  function removeMarketingCookies(): void {
-    if (import.meta.server) return
-
-    const cookiesToRemove = [
-      '_fbp',
-      '_fbc',
-      'fr',
-      '_gcl_au',
-      '_gcl_aw',
-      'IDE',
-      'DSID',
-      'test_cookie',
-    ]
-    const hostname = window.location.hostname
-    const domains = [hostname, `.${hostname}`]
-
-    for (const name of cookiesToRemove) {
-      for (const domain of domains) {
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`
-      }
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
-    }
-  }
-
   return {
     /** Current consent state (reactive, null if not yet loaded/given) */
     consent: readonly(consent),

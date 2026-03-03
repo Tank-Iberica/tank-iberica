@@ -7,7 +7,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'toggle-section', key: string, value: boolean): void
+  'toggle-section': [key: string, value: boolean]
 }>()
 </script>
 
@@ -32,7 +32,7 @@ const emit = defineEmits<{
           type="checkbox"
           class="section-checkbox"
           @change="emit('toggle-section', section.key, ($event.target as HTMLInputElement).checked)"
-        />
+        >
       </label>
     </div>
   </div>

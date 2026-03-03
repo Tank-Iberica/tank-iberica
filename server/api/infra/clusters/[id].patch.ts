@@ -66,18 +66,18 @@ export default defineEventHandler(async (event) => {
   }
 
   if (body.supabase_anon_key !== undefined) {
-    if (typeof body.supabase_anon_key !== 'string') {
-      errors.push('supabase_anon_key must be a string')
-    } else {
+    if (typeof body.supabase_anon_key === 'string') {
       updateFields.supabase_anon_key = body.supabase_anon_key.trim()
+    } else {
+      errors.push('supabase_anon_key must be a string')
     }
   }
 
   if (body.supabase_service_role_key !== undefined) {
-    if (typeof body.supabase_service_role_key !== 'string') {
-      errors.push('supabase_service_role_key must be a string')
-    } else {
+    if (typeof body.supabase_service_role_key === 'string') {
       updateFields.supabase_service_role_key = body.supabase_service_role_key.trim()
+    } else {
+      errors.push('supabase_service_role_key must be a string')
     }
   }
 

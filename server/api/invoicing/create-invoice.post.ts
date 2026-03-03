@@ -62,8 +62,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const config = useRuntimeConfig()
-  const supabaseUrl = config.public?.supabaseUrl || process.env.SUPABASE_URL
-  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabaseUrl = process.env.SUPABASE_URL || ''
+  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
     throw createError({ statusCode: 500, message: 'Service not configured' })

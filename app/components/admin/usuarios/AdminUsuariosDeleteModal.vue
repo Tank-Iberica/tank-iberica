@@ -7,7 +7,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'close' | 'confirm'): void
+  close: []
+  confirm: []
 }>()
 
 const confirmText = ref('')

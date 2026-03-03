@@ -68,7 +68,7 @@ export function useAdminConfig() {
 
       if (err && err.code !== 'PGRST116') throw err // PGRST116 = not found
 
-      return (data as { value: T } | null)?.value || null
+      return (data as { value: T } | null)?.value ?? null
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching config'
       return null

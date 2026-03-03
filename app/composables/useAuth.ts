@@ -144,8 +144,8 @@ export function useAuth() {
   /** Initiate Google OAuth flow. Optional redirectPath is encoded in the callback URL. */
   async function loginWithGoogle(redirectPath?: string) {
     const callbackUrl = redirectPath
-      ? `${window.location.origin}/confirm?redirect=${encodeURIComponent(redirectPath)}`
-      : `${window.location.origin}/confirm`
+      ? `${globalThis.location.origin}/confirm?redirect=${encodeURIComponent(redirectPath)}`
+      : `${globalThis.location.origin}/confirm`
 
     const { error: err } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -170,7 +170,7 @@ export function useAuth() {
     error.value = null
     try {
       const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/nueva-password`,
+        redirectTo: `${globalThis.location.origin}/auth/nueva-password`,
       })
       if (err) throw err
     } catch (err: unknown) {

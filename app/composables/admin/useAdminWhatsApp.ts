@@ -24,6 +24,27 @@ export type StatusFilter = 'all' | 'received' | 'processing' | 'processed' | 'pu
 
 const PAGE_SIZE = 20
 
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+function getStatusClass(status: string): string {
+  const classes: Record<string, string> = {
+    received: 'status-received',
+    processing: 'status-processing',
+    processed: 'status-processed',
+    published: 'status-published',
+    failed: 'status-failed',
+  }
+  return classes[status] || 'status-received'
+}
+
 export function useAdminWhatsApp() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
@@ -270,28 +291,6 @@ export function useAdminWhatsApp() {
 
   function getImageCount(sub: WhatsAppSubmission): number {
     return sub.image_urls?.length || 0
-  }
-
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
-  function getStatusClass(status: string): string {
-    const classes: Record<string, string> = {
-      received: 'status-received',
-      processing: 'status-processing',
-      processed: 'status-processed',
-      published: 'status-published',
-      failed: 'status-failed',
-    }
-    return classes[status] || 'status-received'
   }
 
   function getStatusLabel(status: string): string {

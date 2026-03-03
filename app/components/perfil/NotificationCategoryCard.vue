@@ -174,7 +174,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'toggle', key: string): void
+  toggle: [key: string]
 }>()
 
 const { t } = useI18n()

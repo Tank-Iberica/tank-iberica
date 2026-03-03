@@ -66,10 +66,7 @@ function validateBody(body: DgtReportBody): string[] {
 
   // provider — optional, must be one of the allowed values
   if (body.provider !== undefined && body.provider !== null) {
-    if (
-      typeof body.provider !== 'string' ||
-      !VALID_PROVIDERS.includes(body.provider as ReportProvider)
-    ) {
+    if (typeof body.provider !== 'string' || !VALID_PROVIDERS.includes(body.provider)) {
       errors.push('provider must be one of: infocar, carvertical, manual')
     }
   }

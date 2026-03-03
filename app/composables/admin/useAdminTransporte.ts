@@ -38,6 +38,21 @@ export const STATUS_OPTIONS = [
 // ============================================
 // COMPOSABLE
 // ============================================
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString()
+}
+function getStatusClass(status: string): string {
+  const map: Record<string, string> = {
+    quoted: 'status-pending',
+    accepted: 'status-accepted',
+    in_transit: 'status-transit',
+    completed: 'status-completed',
+    cancelled: 'status-cancelled',
+  }
+  return map[status] || 'status-pending'
+}
+
 export function useAdminTransporte() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
@@ -191,22 +206,6 @@ export function useAdminTransporte() {
   // ============================================
   // HELPERS
   // ============================================
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString()
-  }
-
-  function getStatusClass(status: string): string {
-    const map: Record<string, string> = {
-      quoted: 'status-pending',
-      accepted: 'status-accepted',
-      in_transit: 'status-transit',
-      completed: 'status-completed',
-      cancelled: 'status-cancelled',
-    }
-    return map[status] || 'status-pending'
-  }
-
   function getStatusLabel(status: string): string {
     const map: Record<string, string> = {
       quoted: t('admin.transporte.statusQuoted'),

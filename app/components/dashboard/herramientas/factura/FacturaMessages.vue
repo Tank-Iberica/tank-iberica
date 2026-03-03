@@ -5,7 +5,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'dismiss-error' | 'dismiss-success'): void
+  'dismiss-error': []
+  'dismiss-success': []
 }>()
 </script>
 

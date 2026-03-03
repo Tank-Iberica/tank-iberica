@@ -40,7 +40,7 @@ useHead({
 })
 
 const retry = (): void => {
-  window.location.reload()
+  globalThis.location.reload()
 }
 </script>
 

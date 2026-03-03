@@ -4,6 +4,6 @@
  */
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const vertical = (config.public.vertical as string) || 'tracciona'
+  const vertical = config.public.vertical || 'tracciona'
   event.context.vertical = vertical
 })

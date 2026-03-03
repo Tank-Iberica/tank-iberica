@@ -8,7 +8,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'save', data: ProfileFormData): void
+  save: [data: ProfileFormData]
 }>()
 
 const { t } = useI18n()
@@ -26,22 +26,22 @@ watch(
   <div>
     <div class="form-field">
       <label>{{ t('user.pseudonym') }}</label>
-      <input v-model="form.pseudonimo" type="text" />
+      <input v-model="form.pseudonimo" type="text" >
     </div>
     <div class="form-field">
       <label>{{ t('user.fullName') }}</label>
       <div class="form-row">
-        <input v-model="form.name" type="text" :placeholder="t('user.name')" />
-        <input v-model="form.apellidos" type="text" :placeholder="t('user.surname')" />
+        <input v-model="form.name" type="text" :placeholder="t('user.name')" >
+        <input v-model="form.apellidos" type="text" :placeholder="t('user.surname')" >
       </div>
     </div>
     <div class="form-field">
       <label>{{ t('user.phone') }}</label>
-      <input v-model="form.telefono" type="tel" placeholder="+34 600 000 000" />
+      <input v-model="form.telefono" type="tel" placeholder="+34 600 000 000" >
     </div>
     <div class="form-field">
       <label>{{ t('user.email') }}</label>
-      <input v-model="form.email" type="email" />
+      <input v-model="form.email" type="email" >
     </div>
     <button class="btn-primary" :disabled="saving" @click="emit('save', { ...form })">
       {{ saving ? '...' : t('user.saveChanges') }}

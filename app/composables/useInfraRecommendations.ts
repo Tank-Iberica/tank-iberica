@@ -170,35 +170,35 @@ const rules: RecommendationRule[] = [
   },
 ]
 
-export function useInfraRecommendations() {
-  function getRecommendation(
-    component: string,
-    metricName: string,
-    usagePercent: number,
-  ): InfraRecommendation | null {
-    // Filter rules matching this component and metric, where usage exceeds threshold
-    const matchingRules = rules.filter(
-      (r) => r.component === component && r.metric === metricName && usagePercent >= r.threshold,
-    )
+function getRecommendation(
+  component: string,
+  metricName: string,
+  usagePercent: number,
+): InfraRecommendation | null {
+  // Filter rules matching this component and metric, where usage exceeds threshold
+  const matchingRules = rules.filter(
+    (r) => r.component === component && r.metric === metricName && usagePercent >= r.threshold,
+  )
 
-    if (matchingRules.length === 0) return null
+  if (matchingRules.length === 0) return null
 
-    // Return the rule with the highest threshold (most severe match)
-    const bestMatch = matchingRules.reduce(
-      (best, current) => (current.threshold > best.threshold ? current : best),
-      matchingRules[0]!,
-    )
+  // Return the rule with the highest threshold (most severe match)
+  const bestMatch = matchingRules.reduce(
+    (best, current) => (current.threshold > best.threshold ? current : best),
+    matchingRules[0]!,
+  )
 
-    return {
-      component: bestMatch.component,
-      metric: bestMatch.metric,
-      level: bestMatch.level,
-      message: bestMatch.message,
-      action: bestMatch.action,
-      url: bestMatch.url,
-    }
+  return {
+    component: bestMatch.component,
+    metric: bestMatch.metric,
+    level: bestMatch.level,
+    message: bestMatch.message,
+    action: bestMatch.action,
+    url: bestMatch.url,
   }
+}
 
+export function useInfraRecommendations() {
   function getAllRecommendations(
     metricsData: Array<{ component: string; metric_name: string; usage_percent: number | null }>,
   ): InfraRecommendation[] {

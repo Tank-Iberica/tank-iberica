@@ -62,6 +62,94 @@ function findFirstIncompleteRequired(stepList: OnboardingStep[]): StepId {
   return found?.id ?? 'preview'
 }
 
+function validateBasicInfo(form: { brand: string; model: string; year: number | null }): {
+  valid: boolean
+  errors: string[]
+} {
+  const errors: string[] = []
+  const maxYear = new Date().getFullYear() + 1
+
+  if (!form.brand.trim()) errors.push('onboarding.errors.brandRequired')
+  if (!form.model.trim()) errors.push('onboarding.errors.modelRequired')
+  if (form.year === null) {
+    errors.push('onboarding.errors.yearRequired')
+  } else if (form.year < MIN_YEAR || form.year > maxYear) {
+    errors.push('onboarding.errors.yearOutOfRange')
+  }
+
+  return { valid: errors.length === 0, errors }
+}
+function validatePhotos(
+  files: File[],
+  existingCount: number,
+): { valid: boolean; errors: string[] } {
+  const errors: string[] = []
+  const total = files.length + existingCount
+
+  if (total < MIN_PHOTOS) errors.push('onboarding.errors.minPhotos')
+
+  for (const file of files) {
+    if (file.size > MAX_FILE_SIZE) {
+      errors.push('onboarding.errors.photoTooLarge')
+      break // report once
+    }
+  }
+
+  // Note: dimension checks are async — use validatePhotoQuality for per-file checks
+  return { valid: errors.length === 0, errors }
+}
+function validateDescription(text: string): { valid: boolean; errors: string[] } {
+  const errors: string[] = []
+  const len = text.trim().length
+
+  if (len < MIN_DESCRIPTION_LENGTH) errors.push('onboarding.errors.descriptionTooShort')
+  if (len > MAX_DESCRIPTION_LENGTH) errors.push('onboarding.errors.descriptionTooLong')
+
+  return { valid: errors.length === 0, errors }
+}
+function validatePrice(price: number | null): { valid: boolean; errors: string[] } {
+  const errors: string[] = []
+
+  if (price === null || price <= 0) errors.push('onboarding.errors.priceRequired')
+  else if (price >= MAX_PRICE) errors.push('onboarding.errors.priceTooHigh')
+
+  return { valid: errors.length === 0, errors }
+}
+function validatePhotoQuality(file: File): Promise<PhotoValidation> {
+  return new Promise<PhotoValidation>((resolve) => {
+    const errors: string[] = []
+
+    if (file.size > MAX_FILE_SIZE) {
+      errors.push('onboarding.errors.photoTooLarge')
+    }
+
+    if (typeof window === 'undefined' || typeof Image === 'undefined') {
+      // SSR fallback — only size check possible
+      resolve({ valid: errors.length === 0, errors })
+      return
+    }
+
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+
+    img.onload = () => {
+      if (img.width < MIN_WIDTH || img.height < MIN_HEIGHT) {
+        errors.push('onboarding.errors.photoTooSmall')
+      }
+      URL.revokeObjectURL(url)
+      resolve({ valid: errors.length === 0, errors })
+    }
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      errors.push('onboarding.errors.photoInvalid')
+      resolve({ valid: errors.length === 0, errors })
+    }
+
+    img.src = url
+  })
+}
+
 export function useOnboarding(vehicleId?: string) {
   const steps = ref<OnboardingStep[]>(createDefaultSteps())
   const currentStep = ref<StepId>('basic_info')
@@ -149,98 +237,6 @@ export function useOnboarding(vehicleId?: string) {
   }
 
   // --- Validators ------------------------------------------------------------
-
-  function validateBasicInfo(form: { brand: string; model: string; year: number | null }): {
-    valid: boolean
-    errors: string[]
-  } {
-    const errors: string[] = []
-    const maxYear = new Date().getFullYear() + 1
-
-    if (!form.brand.trim()) errors.push('onboarding.errors.brandRequired')
-    if (!form.model.trim()) errors.push('onboarding.errors.modelRequired')
-    if (form.year === null) {
-      errors.push('onboarding.errors.yearRequired')
-    } else if (form.year < MIN_YEAR || form.year > maxYear) {
-      errors.push('onboarding.errors.yearOutOfRange')
-    }
-
-    return { valid: errors.length === 0, errors }
-  }
-
-  function validatePhotos(
-    files: File[],
-    existingCount: number,
-  ): { valid: boolean; errors: string[] } {
-    const errors: string[] = []
-    const total = files.length + existingCount
-
-    if (total < MIN_PHOTOS) errors.push('onboarding.errors.minPhotos')
-
-    for (const file of files) {
-      if (file.size > MAX_FILE_SIZE) {
-        errors.push('onboarding.errors.photoTooLarge')
-        break // report once
-      }
-    }
-
-    // Note: dimension checks are async — use validatePhotoQuality for per-file checks
-    return { valid: errors.length === 0, errors }
-  }
-
-  function validateDescription(text: string): { valid: boolean; errors: string[] } {
-    const errors: string[] = []
-    const len = text.trim().length
-
-    if (len < MIN_DESCRIPTION_LENGTH) errors.push('onboarding.errors.descriptionTooShort')
-    if (len > MAX_DESCRIPTION_LENGTH) errors.push('onboarding.errors.descriptionTooLong')
-
-    return { valid: errors.length === 0, errors }
-  }
-
-  function validatePrice(price: number | null): { valid: boolean; errors: string[] } {
-    const errors: string[] = []
-
-    if (price === null || price <= 0) errors.push('onboarding.errors.priceRequired')
-    else if (price >= MAX_PRICE) errors.push('onboarding.errors.priceTooHigh')
-
-    return { valid: errors.length === 0, errors }
-  }
-
-  function validatePhotoQuality(file: File): Promise<PhotoValidation> {
-    return new Promise<PhotoValidation>((resolve) => {
-      const errors: string[] = []
-
-      if (file.size > MAX_FILE_SIZE) {
-        errors.push('onboarding.errors.photoTooLarge')
-      }
-
-      if (typeof window === 'undefined' || typeof Image === 'undefined') {
-        // SSR fallback — only size check possible
-        resolve({ valid: errors.length === 0, errors })
-        return
-      }
-
-      const img = new Image()
-      const url = URL.createObjectURL(file)
-
-      img.onload = () => {
-        if (img.width < MIN_WIDTH || img.height < MIN_HEIGHT) {
-          errors.push('onboarding.errors.photoTooSmall')
-        }
-        URL.revokeObjectURL(url)
-        resolve({ valid: errors.length === 0, errors })
-      }
-
-      img.onerror = () => {
-        URL.revokeObjectURL(url)
-        errors.push('onboarding.errors.photoInvalid')
-        resolve({ valid: errors.length === 0, errors })
-      }
-
-      img.src = url
-    })
-  }
 
   // --- Public API ------------------------------------------------------------
 

@@ -11,8 +11,12 @@ import {
   type AdvertisementFilters,
 } from '~/composables/admin/useAdminAdvertisements'
 
-export { ADVERTISEMENT_STATUSES }
-export type { AdminAdvertisement, AdvertisementStatus, AdvertisementFilters }
+export { ADVERTISEMENT_STATUSES } from '~/composables/admin/useAdminAdvertisements'
+export type {
+  AdminAdvertisement,
+  AdvertisementStatus,
+  AdvertisementFilters,
+} from '~/composables/admin/useAdminAdvertisements'
 
 export interface DeleteModalState {
   show: boolean
@@ -24,6 +28,17 @@ export interface DetailModalState {
   show: boolean
   advertisement: AdminAdvertisement | null
   notes: string
+}
+
+function getStatusConfig(status: AdvertisementStatus) {
+  return ADVERTISEMENT_STATUSES.find((s) => s.value === status) || ADVERTISEMENT_STATUSES[0]
+}
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
 }
 
 export function useAdminAnunciantes() {
@@ -72,10 +87,6 @@ export function useAdminAnunciantes() {
   )
 
   // Status helpers
-  function getStatusConfig(status: AdvertisementStatus) {
-    return ADVERTISEMENT_STATUSES.find((s) => s.value === status) || ADVERTISEMENT_STATUSES[0]
-  }
-
   // Quick status update
   async function handleStatusChange(ad: AdminAdvertisement, newStatus: AdvertisementStatus) {
     await updateStatus(ad.id, newStatus)
@@ -129,14 +140,6 @@ export function useAdminAnunciantes() {
   }
 
   // Format helpers
-  function formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
-  }
-
   // Filter update functions
   function setStatusFilter(status: AdvertisementStatus | null) {
     filters.value.status = status

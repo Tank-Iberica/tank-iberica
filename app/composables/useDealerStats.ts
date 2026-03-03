@@ -43,6 +43,12 @@ const METRIC_ACCESS: Record<string, string[]> = {
   demand_matching: ['premium', 'founding'],
 }
 
+function canAccessMetric(plan: string, metric: string): boolean {
+  const allowedPlans = METRIC_ACCESS[metric]
+  if (!allowedPlans) return false
+  return allowedPlans.includes(plan)
+}
+
 export function useDealerStats() {
   const supabase = useSupabaseClient<Database>()
 
@@ -56,12 +62,6 @@ export function useDealerStats() {
    * @param plan - Subscription plan tier
    * @param metric - Metric identifier
    */
-  function canAccessMetric(plan: string, metric: string): boolean {
-    const allowedPlans = METRIC_ACCESS[metric]
-    if (!allowedPlans) return false
-    return allowedPlans.includes(plan)
-  }
-
   /**
    * Fetch daily stats for a dealer over the last N days.
    * @param dealerId - The dealer's unique ID

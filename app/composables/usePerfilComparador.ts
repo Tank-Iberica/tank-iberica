@@ -13,6 +13,10 @@ export interface ComparisonVehicle {
 export const specKeys = ['year', 'brand', 'model', 'price', 'location', 'category'] as const
 export type SpecKey = (typeof specKeys)[number]
 
+function printPage(): void {
+  globalThis.print()
+}
+
 export function usePerfilComparador() {
   const supabase = useSupabaseClient()
   const {
@@ -123,10 +127,6 @@ export function usePerfilComparador() {
       activeComparison.value = comp
       loadVehicles()
     }
-  }
-
-  function printPage(): void {
-    window.print()
   }
 
   watch(activeComparison, () => {

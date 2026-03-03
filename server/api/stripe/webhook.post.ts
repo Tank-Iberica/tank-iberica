@@ -29,16 +29,16 @@ export default defineEventHandler(async (event) => {
   const stripe = new Stripe(stripeKey)
 
   // Supabase REST API config
-  const supabaseUrl = config.public?.supabaseUrl || process.env.SUPABASE_URL
-  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabaseUrl = process.env.SUPABASE_URL || ''
+  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
     throw createError({ statusCode: 500, message: 'Service not configured' })
   }
 
   const sbConfig: SupabaseRestConfig = {
-    url: supabaseUrl as string,
-    serviceRoleKey: supabaseKey as string,
+    url: supabaseUrl,
+    serviceRoleKey: supabaseKey,
   }
 
   // Verify webhook signature (fail-closed)
@@ -47,16 +47,7 @@ export default defineEventHandler(async (event) => {
 
   let stripeEvent: { type: string; data: { object: Record<string, unknown> } }
 
-  if (!webhookSecret) {
-    if (process.env.NODE_ENV === 'production') {
-      throw createError({ statusCode: 500, message: 'Webhook secret not configured' })
-    }
-    // Dev mode: warn and parse without signature verification
-    console.warn(
-      '[Stripe Webhook] No webhook secret configured — dev mode, processing without verification',
-    )
-    stripeEvent = JSON.parse(rawBody) as unknown as typeof stripeEvent
-  } else {
+  if (webhookSecret) {
     if (!sig) {
       throw createError({ statusCode: 400, message: 'Missing stripe-signature header' })
     }
@@ -70,6 +61,15 @@ export default defineEventHandler(async (event) => {
       const message = err instanceof Error ? err.message : 'Unknown error'
       throw safeError(400, `Webhook signature verification failed: ${message}`)
     }
+  } else {
+    if (process.env.NODE_ENV === 'production') {
+      throw createError({ statusCode: 500, message: 'Webhook secret not configured' })
+    }
+    // Dev mode: warn and parse without signature verification
+    console.warn(
+      '[Stripe Webhook] No webhook secret configured — dev mode, processing without verification',
+    )
+    stripeEvent = JSON.parse(rawBody) as unknown as typeof stripeEvent
   }
 
   const obj = stripeEvent.data.object
@@ -92,7 +92,7 @@ export default defineEventHandler(async (event) => {
 
   switch (stripeEvent.type) {
     case 'checkout.session.completed': {
-      const session = obj as Record<string, unknown>
+      const session = obj
       const metadata = session.metadata as Record<string, string> | undefined
       const userId = metadata?.user_id
       const plan = metadata?.plan
@@ -278,7 +278,7 @@ export default defineEventHandler(async (event) => {
     }
 
     case 'invoice.payment_succeeded': {
-      const invoice = obj as Record<string, unknown>
+      const invoice = obj
       const subscriptionId = invoice.subscription as string
       const customerId = invoice.customer as string
       const amountPaid = invoice.amount_paid as number
@@ -339,7 +339,7 @@ export default defineEventHandler(async (event) => {
     }
 
     case 'invoice.payment_failed': {
-      const invoice = obj as Record<string, unknown>
+      const invoice = obj
       const subscriptionId = invoice.subscription as string
       const customerId = invoice.customer as string
       const amountDue = invoice.amount_due as number
@@ -377,7 +377,10 @@ export default defineEventHandler(async (event) => {
         const attemptCount = (invoice.attempt_count as number) || 1
         const userInfo = await getSubscriptionUserInfo(sbConfig, subscriptionId)
         if (userInfo) {
-          const graceDays = attemptCount <= 1 ? 14 : attemptCount <= 2 ? 7 : 3
+          let graceDays: number
+          if (attemptCount <= 1) graceDays = 14
+          else if (attemptCount <= 2) graceDays = 7
+          else graceDays = 3
           const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
           const internalSecret = config.cronSecret || process.env.CRON_SECRET
           await sendDunningEmail(
@@ -399,7 +402,7 @@ export default defineEventHandler(async (event) => {
     }
 
     case 'customer.subscription.deleted': {
-      const subscription = obj as Record<string, unknown>
+      const subscription = obj
       const subscriptionId = subscription.id as string
 
       // Idempotency: skip if subscription is already canceled

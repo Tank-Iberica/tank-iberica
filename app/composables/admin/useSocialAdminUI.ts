@@ -14,6 +14,40 @@ export interface VehicleSearchResult {
 }
 
 // ─── Composable ──────────────────────────────────────────────
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+function getPlatformLabel(platform: SocialPlatform): string {
+  const labels: Record<SocialPlatform, string> = {
+    linkedin: 'LinkedIn',
+    facebook: 'Facebook',
+    instagram: 'Instagram',
+    x: 'X',
+  }
+  return labels[platform] || platform
+}
+function getPlatformClass(platform: SocialPlatform): string {
+  return `platform-${platform}`
+}
+function getStatusClass(status: string): string {
+  const classes: Record<string, string> = {
+    pending: 'status-pending',
+    approved: 'status-approved',
+    posted: 'status-posted',
+    rejected: 'status-rejected',
+    failed: 'status-failed',
+    draft: 'status-pending',
+  }
+  return classes[status] || 'status-pending'
+}
+
 export function useSocialAdminUI() {
   const { t } = useI18n()
   const { locale } = useI18n()
@@ -78,7 +112,7 @@ export function useSocialAdminUI() {
   // ─── Actions ─────────────────────────────────────────────
   function openPostModal(post: SocialPostWithVehicle) {
     selectedPost.value = post
-    editLocale.value = (locale.value as 'es' | 'en') || 'es'
+    editLocale.value = locale.value || 'es'
     editContent.value = post.content?.[editLocale.value] || post.content?.es || ''
     rejectionReason.value = ''
     showModal.value = true
@@ -213,43 +247,6 @@ export function useSocialAdminUI() {
     const content = post.content?.[locale.value] || post.content?.es || ''
     if (content.length <= maxLen) return content
     return content.slice(0, maxLen) + '...'
-  }
-
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
-  function getPlatformLabel(platform: SocialPlatform): string {
-    const labels: Record<SocialPlatform, string> = {
-      linkedin: 'LinkedIn',
-      facebook: 'Facebook',
-      instagram: 'Instagram',
-      x: 'X',
-    }
-    return labels[platform] || platform
-  }
-
-  function getPlatformClass(platform: SocialPlatform): string {
-    return `platform-${platform}`
-  }
-
-  function getStatusClass(status: string): string {
-    const classes: Record<string, string> = {
-      pending: 'status-pending',
-      approved: 'status-approved',
-      posted: 'status-posted',
-      rejected: 'status-rejected',
-      failed: 'status-failed',
-      draft: 'status-pending',
-    }
-    return classes[status] || 'status-pending'
   }
 
   function getStatusLabel(status: string): string {

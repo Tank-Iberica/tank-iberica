@@ -38,6 +38,18 @@ export interface UploadFormData {
   file: File | null
 }
 
+function getLevelColor(level: string): string {
+  const colors: Record<string, string> = {
+    none: '#94a3b8',
+    verified: '#10b981',
+    extended: '#3b82f6',
+    detailed: '#8b5cf6',
+    audited: '#f59e0b',
+    certified: '#ef4444',
+  }
+  return colors[level] || '#64748b'
+}
+
 export function useDashboardVehiculoDetail(vehicleId: string) {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
@@ -113,18 +125,6 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
   })
 
   // --- Functions ---
-  function getLevelColor(level: string): string {
-    const colors: Record<string, string> = {
-      none: '#94a3b8',
-      verified: '#10b981',
-      extended: '#3b82f6',
-      detailed: '#8b5cf6',
-      audited: '#f59e0b',
-      certified: '#ef4444',
-    }
-    return colors[level] || '#64748b'
-  }
-
   async function loadData(): Promise<void> {
     loading.value = true
     error.value = null

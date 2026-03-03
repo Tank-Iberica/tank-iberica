@@ -56,6 +56,36 @@ export const SOURCE_LIST = [
   'manual',
 ] as const
 
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString()
+}
+function getSourceClass(source: string): string {
+  const map: Record<string, string> = {
+    mascus: 'source-mascus',
+    europa_camiones: 'source-europa',
+    milanuncios: 'source-milanuncios',
+    autoline: 'source-autoline',
+    manual: 'source-manual',
+  }
+  return map[source] || 'source-manual'
+}
+function getStatusClass(status: string): string {
+  const map: Record<string, string> = {
+    new: 'status-new',
+    contacted: 'status-contacted',
+    interested: 'status-interested',
+    onboarding: 'status-onboarding',
+    active: 'status-active',
+    rejected: 'status-rejected',
+  }
+  return map[status] || 'status-new'
+}
+function formatVehicleTypes(types: string[]): string {
+  if (!types || types.length === 0) return '-'
+  return types.join(', ')
+}
+
 export function useAdminCaptacion() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
@@ -407,7 +437,7 @@ export function useAdminCaptacion() {
         return
       }
 
-      if (data && data.length > 0) {
+      if (data?.length > 0) {
         leads.value.unshift(data[0] as unknown as DealerLead)
       }
 
@@ -430,22 +460,6 @@ export function useAdminCaptacion() {
     }, 3000)
   }
 
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString()
-  }
-
-  function getSourceClass(source: string): string {
-    const map: Record<string, string> = {
-      mascus: 'source-mascus',
-      europa_camiones: 'source-europa',
-      milanuncios: 'source-milanuncios',
-      autoline: 'source-autoline',
-      manual: 'source-manual',
-    }
-    return map[source] || 'source-manual'
-  }
-
   function getSourceLabel(source: string): string {
     const map: Record<string, string> = {
       mascus: t('admin.captacion.sourceMascus'),
@@ -455,18 +469,6 @@ export function useAdminCaptacion() {
       manual: t('admin.captacion.sourceManual'),
     }
     return map[source] || source
-  }
-
-  function getStatusClass(status: string): string {
-    const map: Record<string, string> = {
-      new: 'status-new',
-      contacted: 'status-contacted',
-      interested: 'status-interested',
-      onboarding: 'status-onboarding',
-      active: 'status-active',
-      rejected: 'status-rejected',
-    }
-    return map[status] || 'status-new'
   }
 
   function getStatusLabel(status: string): string {
@@ -485,11 +487,6 @@ export function useAdminCaptacion() {
     if (!userId) return t('admin.captacion.unassigned')
     const user = adminUsers.value.find((u) => u.id === userId)
     return user?.full_name || user?.email || userId.slice(0, 8)
-  }
-
-  function formatVehicleTypes(types: string[]): string {
-    if (!types || types.length === 0) return '-'
-    return types.join(', ')
   }
 
   return {

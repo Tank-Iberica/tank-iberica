@@ -4,7 +4,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'select', type: 'buyer' | 'dealer'): void
+  select: [type: 'buyer' | 'dealer']
 }>()
 
 const { t } = useI18n()

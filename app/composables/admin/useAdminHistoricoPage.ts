@@ -24,6 +24,53 @@ export interface HistoricoPageFilters extends HistoricoFilters {
 
 // ---------- Composable ----------
 
+function printHTML(html: string) {
+  const existingFrame = document.getElementById('print-frame')
+  if (existingFrame) existingFrame.remove()
+
+  const iframe = document.createElement('iframe')
+  iframe.id = 'print-frame'
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
+  document.body.appendChild(iframe)
+
+  const doc = iframe.contentDocument || iframe.contentWindow?.document
+  if (!doc) return
+
+  doc.open()
+  doc.write(html)
+  doc.close()
+
+  setTimeout(() => {
+    iframe.contentWindow?.focus()
+    iframe.contentWindow?.print()
+  }, 100)
+}
+function downloadFile(content: string, filename: string, type: string) {
+  const blob = new Blob([content], { type })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+function fmt(val: number | null | undefined): string {
+  if (val === null || val === undefined) return '\u2014'
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(val)
+}
+function fmtDate(date: string): string {
+  return new Date(date).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
+
 export function useAdminHistoricoPage() {
   const {
     entries,
@@ -49,7 +96,7 @@ export function useAdminHistoricoPage() {
     search: '',
   })
 
-  const categoryOptions = Object.entries(SALE_CATEGORIES) as [string, string][]
+  const categoryOptions = Object.entries(SALE_CATEGORIES)
 
   function clearFilters() {
     filters.year = null
@@ -285,57 +332,7 @@ export function useAdminHistoricoPage() {
     printHTML(html)
   }
 
-  function printHTML(html: string) {
-    const existingFrame = document.getElementById('print-frame')
-    if (existingFrame) existingFrame.remove()
-
-    const iframe = document.createElement('iframe')
-    iframe.id = 'print-frame'
-    iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
-    document.body.appendChild(iframe)
-
-    const doc = iframe.contentDocument || iframe.contentWindow?.document
-    if (!doc) return
-
-    doc.open()
-    doc.write(html)
-    doc.close()
-
-    setTimeout(() => {
-      iframe.contentWindow?.focus()
-      iframe.contentWindow?.print()
-    }, 100)
-  }
-
-  function downloadFile(content: string, filename: string, type: string) {
-    const blob = new Blob([content], { type })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
-  }
-
   // ---- Formatting helpers ----
-  function fmt(val: number | null | undefined): string {
-    if (val === null || val === undefined) return '\u2014'
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }).format(val)
-  }
-
-  function fmtDate(date: string): string {
-    return new Date(date).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
-  }
-
   return {
     // Data layer pass-through
     entries,
