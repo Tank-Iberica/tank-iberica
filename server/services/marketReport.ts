@@ -149,72 +149,71 @@ function computeSubcategoryStats(rows: MarketRow[]): SubcategoryStats[] {
   return result.sort((a, b) => b.totalListings - a.totalListings)
 }
 
+function accumulateGroupStats(
+  grouped: Map<string, { totalListings: number; priceSum: number; priceCount: number }>,
+  key: string,
+  row: MarketRow,
+): void {
+  const existing = grouped.get(key)
+  if (existing) {
+    existing.totalListings += row.listings || 0
+    if (row.avg_price > 0) {
+      existing.priceSum += row.avg_price
+      existing.priceCount += 1
+    }
+  } else {
+    grouped.set(key, {
+      totalListings: row.listings || 0,
+      priceSum: row.avg_price > 0 ? row.avg_price : 0,
+      priceCount: row.avg_price > 0 ? 1 : 0,
+    })
+  }
+}
+
 function computeBrandStats(rows: MarketRow[]): BrandStats[] {
   const grouped = new Map<string, { totalListings: number; priceSum: number; priceCount: number }>()
-
   for (const row of rows) {
-    if (!row.brand) continue
-    const existing = grouped.get(row.brand)
-    if (existing) {
-      existing.totalListings += row.listings || 0
-      if (row.avg_price > 0) {
-        existing.priceSum += row.avg_price
-        existing.priceCount += 1
-      }
-    } else {
-      grouped.set(row.brand, {
-        totalListings: row.listings || 0,
-        priceSum: row.avg_price > 0 ? row.avg_price : 0,
-        priceCount: row.avg_price > 0 ? 1 : 0,
-      })
-    }
+    if (row.brand) accumulateGroupStats(grouped, row.brand, row)
   }
 
-  const result: BrandStats[] = []
-
-  for (const [brand, stats] of grouped) {
-    result.push({
+  return [...grouped.entries()]
+    .map(([brand, stats]) => ({
       brand,
       totalListings: stats.totalListings,
       avgPrice: stats.priceCount > 0 ? stats.priceSum / stats.priceCount : 0,
-    })
-  }
-
-  return result.sort((a, b) => b.totalListings - a.totalListings).slice(0, 10)
+    }))
+    .sort((a, b) => b.totalListings - a.totalListings)
+    .slice(0, 10)
 }
 
 function computeProvinceStats(rows: MarketRow[]): ProvinceStats[] {
   const grouped = new Map<string, { totalListings: number; priceSum: number; priceCount: number }>()
-
   for (const row of rows) {
-    if (!row.location_province) continue
-    const existing = grouped.get(row.location_province)
-    if (existing) {
-      existing.totalListings += row.listings || 0
-      if (row.avg_price > 0) {
-        existing.priceSum += row.avg_price
-        existing.priceCount += 1
-      }
-    } else {
-      grouped.set(row.location_province, {
-        totalListings: row.listings || 0,
-        priceSum: row.avg_price > 0 ? row.avg_price : 0,
-        priceCount: row.avg_price > 0 ? 1 : 0,
-      })
-    }
+    if (row.location_province) accumulateGroupStats(grouped, row.location_province, row)
   }
 
-  const result: ProvinceStats[] = []
-
-  for (const [province, stats] of grouped) {
-    result.push({
+  return [...grouped.entries()]
+    .map(([province, stats]) => ({
       province,
       totalListings: stats.totalListings,
       avgPrice: stats.priceCount > 0 ? stats.priceSum / stats.priceCount : 0,
-    })
-  }
+    }))
+    .sort((a, b) => b.totalListings - a.totalListings)
+}
 
-  return result.sort((a, b) => b.totalListings - a.totalListings)
+function groupPricesBySubcategory(rows: MarketRow[]): Map<string, number[]> {
+  const grouped = new Map<string, number[]>()
+  for (const r of rows) {
+    if (r.avg_price > 0) {
+      const existing = grouped.get(r.subcategory)
+      if (existing) {
+        existing.push(r.avg_price)
+      } else {
+        grouped.set(r.subcategory, [r.avg_price])
+      }
+    }
+  }
+  return grouped
 }
 
 function computeTrends(rows: MarketRow[]): TrendInfo[] {
@@ -226,32 +225,8 @@ function computeTrends(rows: MarketRow[]): TrendInfo[] {
   const latestMonth = months.at(-1)
   const previousMonth = months.length >= 3 ? months.at(-3) : months[0]
 
-  const latestRows = rows.filter((r) => r.month === latestMonth)
-  const previousRows = rows.filter((r) => r.month === previousMonth)
-
-  const latestBySubcat = new Map<string, number[]>()
-  for (const r of latestRows) {
-    if (r.avg_price > 0) {
-      const existing = latestBySubcat.get(r.subcategory)
-      if (existing) {
-        existing.push(r.avg_price)
-      } else {
-        latestBySubcat.set(r.subcategory, [r.avg_price])
-      }
-    }
-  }
-
-  const previousBySubcat = new Map<string, number[]>()
-  for (const r of previousRows) {
-    if (r.avg_price > 0) {
-      const existing = previousBySubcat.get(r.subcategory)
-      if (existing) {
-        existing.push(r.avg_price)
-      } else {
-        previousBySubcat.set(r.subcategory, [r.avg_price])
-      }
-    }
-  }
+  const latestBySubcat = groupPricesBySubcategory(rows.filter((r) => r.month === latestMonth))
+  const previousBySubcat = groupPricesBySubcategory(rows.filter((r) => r.month === previousMonth))
 
   const result: TrendInfo[] = []
 
@@ -282,8 +257,126 @@ function computeTrends(rows: MarketRow[]): TrendInfo[] {
 }
 
 /* ------------------------------------------------------------------ */
+/*  HTML generation helpers                                            */
+/* ------------------------------------------------------------------ */
+
+interface ExecutiveSummary {
+  totalListings: number
+  totalSold: number
+  overallAvgPrice: number
+  topCategory: string
+  topCategoryListings: number
+  priceChangeSummary: string
+}
+
+function computeExecutiveSummary(
+  subcategoryStats: ReturnType<typeof computeSubcategoryStats>,
+  trends: ReturnType<typeof computeTrends>,
+): ExecutiveSummary {
+  const totalListings = subcategoryStats.reduce((s, r) => s + r.totalListings, 0)
+  const totalSold = subcategoryStats.reduce((s, r) => s + r.totalSold, 0)
+  const allAvgPrices = subcategoryStats.filter((s) => s.avgPrice > 0).map((s) => s.avgPrice)
+  const overallAvgPrice =
+    allAvgPrices.length > 0 ? allAvgPrices.reduce((s, v) => s + v, 0) / allAvgPrices.length : 0
+
+  const topCategory = subcategoryStats.length > 0 ? subcategoryStats[0]!.subcategory : 'N/A'
+  const topCategoryListings = subcategoryStats.length > 0 ? subcategoryStats[0]!.totalListings : 0
+
+  const risingCount = trends.filter((t) => t.direction === 'rising').length
+  const fallingCount = trends.filter((t) => t.direction === 'falling').length
+
+  let priceChangeSummary: string
+  if (trends.length === 0) {
+    priceChangeSummary = 'Sin datos suficientes para calcular tendencias.'
+  } else if (risingCount > fallingCount) {
+    priceChangeSummary = `Tendencia alcista: ${risingCount} subcategorias con precios al alza frente a ${fallingCount} a la baja.`
+  } else if (fallingCount > risingCount) {
+    priceChangeSummary = `Tendencia bajista: ${fallingCount} subcategorias con precios a la baja frente a ${risingCount} al alza.`
+  } else {
+    priceChangeSummary = `Mercado estable: ${risingCount} subcategorias al alza y ${fallingCount} a la baja.`
+  }
+
+  return {
+    totalListings,
+    totalSold,
+    overallAvgPrice,
+    topCategory,
+    topCategoryListings,
+    priceChangeSummary,
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /*  HTML generation                                                    */
 /* ------------------------------------------------------------------ */
+
+const TREND_LABELS: Record<string, string> = {
+  rising: 'Al alza',
+  falling: 'A la baja',
+  stable: 'Estable',
+}
+const TREND_COLORS: Record<string, string> = {
+  rising: '#16a34a',
+  falling: '#dc2626',
+  stable: '#6b7280',
+}
+
+function trendDirectionLabel(dir: 'rising' | 'falling' | 'stable'): string {
+  return TREND_LABELS[dir]!
+}
+
+function trendDirectionColor(dir: 'rising' | 'falling' | 'stable'): string {
+  return TREND_COLORS[dir]!
+}
+
+function buildTrendsSection(trends: TrendInfo[]): string {
+  if (trends.length === 0) {
+    return `<div class="page">
+      <h2 class="section-title">Tendencias de Precios</h2>
+      <p class="no-data">Datos insuficientes para calcular tendencias. Se requieren al menos 2 meses de datos.</p>
+    </div>`
+  }
+
+  const trendRows = trends
+    .map(
+      (t, idx) => `
+    <tr class="${idx % 2 === 0 ? 'row-even' : 'row-odd'}">
+      <td>${escapeHtml(t.subcategory)}</td>
+      <td class="num">${formatEUR(t.previousAvg)}</td>
+      <td class="num">${formatEUR(t.latestAvg)}</td>
+      <td class="num" style="color: ${trendDirectionColor(t.direction)}; font-weight: 600;">
+        ${t.changePercent >= 0 ? '+' : ''}${formatNumber(t.changePercent)}%
+      </td>
+      <td style="color: ${trendDirectionColor(t.direction)}; font-weight: 600;">
+        ${trendDirectionLabel(t.direction)}
+      </td>
+    </tr>
+  `,
+    )
+    .join('')
+
+  return `<div class="page">
+      <h2 class="section-title">Tendencias de Precios</h2>
+      <p class="section-intro">Comparativa entre el ultimo mes disponible y el trimestre anterior.</p>
+      <table>
+        <thead><tr><th>Subcategoria</th><th>Precio Anterior</th><th>Precio Actual</th><th>Variacion</th><th>Tendencia</th></tr></thead>
+        <tbody>${trendRows}</tbody>
+      </table>
+    </div>`
+}
+
+function buildTableSection(
+  title: string,
+  headers: string[],
+  rows: string,
+  hasData: boolean,
+  noDataMsg: string,
+): string {
+  return `<div class="page">
+      <h2 class="section-title">${title}</h2>
+      ${hasData ? `<table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>` : `<p class="no-data">${noDataMsg}</p>`}
+    </div>`
+}
 
 function generateReportHTML(
   marketRows: MarketRow[] | null,
@@ -307,50 +400,7 @@ function generateReportHTML(
   const provinceStats = hasData ? computeProvinceStats(rows) : []
   const trends = hasData ? computeTrends(rows) : []
 
-  const totalListings = subcategoryStats.reduce((s, r) => s + r.totalListings, 0)
-  const totalSold = subcategoryStats.reduce((s, r) => s + r.totalSold, 0)
-
-  const allAvgPrices = subcategoryStats.filter((s) => s.avgPrice > 0).map((s) => s.avgPrice)
-  const overallAvgPrice =
-    allAvgPrices.length > 0 ? allAvgPrices.reduce((s, v) => s + v, 0) / allAvgPrices.length : 0
-
-  const topCategory = subcategoryStats.length > 0 ? subcategoryStats[0]!.subcategory : 'N/A'
-
-  const risingCount = trends.filter((t) => t.direction === 'rising').length
-  const fallingCount = trends.filter((t) => t.direction === 'falling').length
-
-  let priceChangeSummary = 'Sin datos suficientes para calcular tendencias.'
-  if (trends.length > 0) {
-    if (risingCount > fallingCount) {
-      priceChangeSummary = `Tendencia alcista: ${risingCount} subcategorias con precios al alza frente a ${fallingCount} a la baja.`
-    } else if (fallingCount > risingCount) {
-      priceChangeSummary = `Tendencia bajista: ${fallingCount} subcategorias con precios a la baja frente a ${risingCount} al alza.`
-    } else {
-      priceChangeSummary = `Mercado estable: ${risingCount} subcategorias al alza y ${fallingCount} a la baja.`
-    }
-  }
-
-  const trendDirectionLabel = (dir: 'rising' | 'falling' | 'stable'): string => {
-    switch (dir) {
-      case 'rising':
-        return 'Al alza'
-      case 'falling':
-        return 'A la baja'
-      case 'stable':
-        return 'Estable'
-    }
-  }
-
-  const trendDirectionColor = (dir: 'rising' | 'falling' | 'stable'): string => {
-    switch (dir) {
-      case 'rising':
-        return '#16a34a'
-      case 'falling':
-        return '#dc2626'
-      case 'stable':
-        return '#6b7280'
-    }
-  }
+  const summary = computeExecutiveSummary(subcategoryStats, trends)
 
   /* --- Sections --- */
 
@@ -374,21 +424,21 @@ function generateReportHTML(
           ? `
         <div class="summary-grid">
           <div class="summary-card">
-            <div class="summary-value">${formatNumber(totalListings)}</div>
+            <div class="summary-value">${formatNumber(summary.totalListings)}</div>
             <div class="summary-label">Anuncios activos</div>
           </div>
           <div class="summary-card">
-            <div class="summary-value">${formatEUR(overallAvgPrice)}</div>
+            <div class="summary-value">${formatEUR(summary.overallAvgPrice)}</div>
             <div class="summary-label">Precio medio global</div>
           </div>
           <div class="summary-card">
-            <div class="summary-value">${formatNumber(totalSold)}</div>
+            <div class="summary-value">${formatNumber(summary.totalSold)}</div>
             <div class="summary-label">Vehiculos vendidos</div>
           </div>
         </div>
         <div class="summary-text">
-          <p><strong>Categoria principal:</strong> ${escapeHtml(topCategory)} (${formatNumber(subcategoryStats[0]!.totalListings)} anuncios)</p>
-          <p><strong>Tendencia de precios:</strong> ${escapeHtml(priceChangeSummary)}</p>
+          <p><strong>Categoria principal:</strong> ${escapeHtml(summary.topCategory)} (${formatNumber(summary.topCategoryListings)} anuncios)</p>
+          <p><strong>Tendencia de precios:</strong> ${escapeHtml(summary.priceChangeSummary)}</p>
         </div>
         `
           : '<p class="no-data">Datos insuficientes para generar el resumen ejecutivo.</p>'
@@ -447,34 +497,17 @@ function generateReportHTML(
       <td>${escapeHtml(b.brand)}</td>
       <td class="num">${formatNumber(b.totalListings)}</td>
       <td class="num">${formatEUR(b.avgPrice)}</td>
-    </tr>
-  `,
+    </tr>`,
     )
     .join('')
 
-  const brandSection = `
-    <div class="page">
-      <h2 class="section-title">Top 10 Marcas por Volumen</h2>
-      ${
-        hasData
-          ? `
-        <table>
-          <thead>
-            <tr>
-              <th>Marca</th>
-              <th>Anuncios</th>
-              <th>Precio Medio</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${brandTableRows}
-          </tbody>
-        </table>
-        `
-          : '<p class="no-data">Datos insuficientes para generar el ranking de marcas.</p>'
-      }
-    </div>
-  `
+  const brandSection = buildTableSection(
+    'Top 10 Marcas por Volumen',
+    ['Marca', 'Anuncios', 'Precio Medio'],
+    brandTableRows,
+    hasData,
+    'Datos insuficientes para generar el ranking de marcas.',
+  )
 
   const provinceTableRows = provinceStats
     .map(
@@ -483,79 +516,19 @@ function generateReportHTML(
       <td>${escapeHtml(p.province)}</td>
       <td class="num">${formatNumber(p.totalListings)}</td>
       <td class="num">${formatEUR(p.avgPrice)}</td>
-    </tr>
-  `,
+    </tr>`,
     )
     .join('')
 
-  const geoSection = `
-    <div class="page">
-      <h2 class="section-title">Desglose Geografico</h2>
-      ${
-        hasData
-          ? `
-        <table>
-          <thead>
-            <tr>
-              <th>Provincia</th>
-              <th>Anuncios</th>
-              <th>Precio Medio</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${provinceTableRows}
-          </tbody>
-        </table>
-        `
-          : '<p class="no-data">Datos insuficientes para generar el desglose geografico.</p>'
-      }
-    </div>
-  `
+  const geoSection = buildTableSection(
+    'Desglose Geografico',
+    ['Provincia', 'Anuncios', 'Precio Medio'],
+    provinceTableRows,
+    hasData,
+    'Datos insuficientes para generar el desglose geografico.',
+  )
 
-  const trendRows = trends
-    .map(
-      (t, idx) => `
-    <tr class="${idx % 2 === 0 ? 'row-even' : 'row-odd'}">
-      <td>${escapeHtml(t.subcategory)}</td>
-      <td class="num">${formatEUR(t.previousAvg)}</td>
-      <td class="num">${formatEUR(t.latestAvg)}</td>
-      <td class="num" style="color: ${trendDirectionColor(t.direction)}; font-weight: 600;">
-        ${t.changePercent >= 0 ? '+' : ''}${formatNumber(t.changePercent)}%
-      </td>
-      <td style="color: ${trendDirectionColor(t.direction)}; font-weight: 600;">
-        ${trendDirectionLabel(t.direction)}
-      </td>
-    </tr>
-  `,
-    )
-    .join('')
-
-  const trendsSection = `
-    <div class="page">
-      <h2 class="section-title">Tendencias de Precios</h2>
-      ${
-        trends.length === 0
-          ? '<p class="no-data">Datos insuficientes para calcular tendencias. Se requieren al menos 2 meses de datos.</p>'
-          : `
-        <p class="section-intro">Comparativa entre el ultimo mes disponible y el trimestre anterior.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Subcategoria</th>
-              <th>Precio Anterior</th>
-              <th>Precio Actual</th>
-              <th>Variacion</th>
-              <th>Tendencia</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${trendRows}
-          </tbody>
-        </table>
-        `
-      }
-    </div>
-  `
+  const trendsSection = buildTrendsSection(trends)
 
   const footerSection = `
     <div class="footer">
@@ -854,6 +827,53 @@ export interface DealerIntelligenceReport {
   }
 }
 
+function buildVehicleInsight(
+  vehicle: { id: string; brand: string; model: string; price: number },
+  marketPrices: Map<string, number[]>,
+  brandPrices: Map<string, number[]>,
+): DealerVehicleInsight | null {
+  const exactKey = `${vehicle.brand}:${vehicle.model}`.toLowerCase()
+  const brandKey = vehicle.brand.toLowerCase()
+
+  let comparePrices = marketPrices.get(exactKey)
+  if (!comparePrices || comparePrices.length < 3) {
+    comparePrices = brandPrices.get(brandKey)
+  }
+
+  if (!comparePrices || comparePrices.length < 2) return null
+
+  const sorted = [...comparePrices].sort((a, b) => a - b)
+  const marketAvg = sorted.reduce((s, v) => s + v, 0) / sorted.length
+  const marketMin = sorted[0]!
+  const marketMax = sorted.at(-1)!
+
+  const deviation = ((vehicle.price - marketAvg) / marketAvg) * 100
+  let pricePosition: 'below' | 'average' | 'above' = 'average'
+  if (deviation > 10) pricePosition = 'above'
+  else if (deviation < -10) pricePosition = 'below'
+
+  const SUGGESTION_TEMPLATES: Record<string, string> = {
+    above: 'está un {dev}% por encima del mercado. Considera ajustar el precio.',
+    below: 'tiene buen precio, un {dev}% por debajo de la media.',
+    average: 'está en línea con el mercado.',
+  }
+  const suggestion = `Tu ${vehicle.brand} ${vehicle.model} ${SUGGESTION_TEMPLATES[pricePosition]!.replace('{dev}', String(Math.abs(Math.round(deviation))))}`
+
+  return {
+    vehicleId: vehicle.id,
+    brand: vehicle.brand,
+    model: vehicle.model,
+    dealerPrice: vehicle.price,
+    marketAvg: Math.round(marketAvg),
+    marketMin,
+    marketMax,
+    pricePosition,
+    priceDeviationPercent: Math.round(deviation * 10) / 10,
+    avgDaysOnMarket: 0,
+    suggestion,
+  }
+}
+
 export async function generateDealerIntelligence(
   supabase: SupabaseClient,
   dealerId: string,
@@ -922,51 +942,8 @@ export async function generateDealerIntelligence(
   const insights: DealerVehicleInsight[] = []
 
   for (const vehicle of vehicleList) {
-    const exactKey = `${vehicle.brand}:${vehicle.model}`.toLowerCase()
-    const brandKey = vehicle.brand.toLowerCase()
-
-    // Try exact match first, then brand fallback
-    let comparePrices = marketPrices.get(exactKey)
-    if (!comparePrices || comparePrices.length < 3) {
-      comparePrices = brandPrices.get(brandKey)
-    }
-
-    if (!comparePrices || comparePrices.length < 2) {
-      continue // Not enough data to compare
-    }
-
-    const sorted = [...comparePrices].sort((a, b) => a - b)
-    const marketAvg = sorted.reduce((s, v) => s + v, 0) / sorted.length
-    const marketMin = sorted[0]!
-    const marketMax = sorted.at(-1)!
-
-    const deviation = ((vehicle.price - marketAvg) / marketAvg) * 100
-    let pricePosition: 'below' | 'average' | 'above' = 'average'
-    if (deviation > 10) pricePosition = 'above'
-    else if (deviation < -10) pricePosition = 'below'
-
-    let suggestion = ''
-    if (pricePosition === 'above') {
-      suggestion = `Tu ${vehicle.brand} ${vehicle.model} está un ${Math.abs(Math.round(deviation))}% por encima del mercado. Considera ajustar el precio.`
-    } else if (pricePosition === 'below') {
-      suggestion = `Tu ${vehicle.brand} ${vehicle.model} tiene buen precio, un ${Math.abs(Math.round(deviation))}% por debajo de la media.`
-    } else {
-      suggestion = `Tu ${vehicle.brand} ${vehicle.model} está en línea con el mercado.`
-    }
-
-    insights.push({
-      vehicleId: vehicle.id,
-      brand: vehicle.brand,
-      model: vehicle.model,
-      dealerPrice: vehicle.price,
-      marketAvg: Math.round(marketAvg),
-      marketMin,
-      marketMax,
-      pricePosition,
-      priceDeviationPercent: Math.round(deviation * 10) / 10,
-      avgDaysOnMarket: 0, // Would need sold_at tracking
-      suggestion,
-    })
+    const insight = buildVehicleInsight(vehicle, marketPrices, brandPrices)
+    if (insight) insights.push(insight)
   }
 
   const belowMarket = insights.filter((i) => i.pricePosition === 'below').length

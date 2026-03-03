@@ -7,6 +7,90 @@ import {
   BALANCE_STATUS_LABELS,
 } from '~/composables/admin/useAdminBalance'
 
+interface ColDef {
+  header: string
+  cell: (e: BalanceEntry) => string
+}
+
+function buildExporterColumns(cols: Record<string, boolean>): ColDef[] {
+  const defs: ColDef[] = []
+  if (cols.tipo)
+    defs.push({
+      header: 'Tipo',
+      cell: (e) => `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '↑' : '↓'}</td>`,
+    })
+  if (cols.fecha) defs.push({ header: 'Fecha', cell: (e) => `<td>${e.fecha}</td>` })
+  if (cols.razon)
+    defs.push({ header: 'Razón', cell: (e) => `<td>${BALANCE_REASONS[e.razon]}</td>` })
+  if (cols.detalle) defs.push({ header: 'Detalle', cell: (e) => `<td>${e.detalle || ''}</td>` })
+  if (cols.importe)
+    defs.push({
+      header: 'Importe',
+      cell: (e) =>
+        `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€</td>`,
+    })
+  if (cols.estado)
+    defs.push({ header: 'Estado', cell: (e) => `<td>${BALANCE_STATUS_LABELS[e.estado]}</td>` })
+  if (cols.notas) defs.push({ header: 'Notas', cell: (e) => `<td>${e.notas || ''}</td>` })
+  return defs
+}
+
+function buildExporterTotalesHtml(s: {
+  totalIngresos: number
+  totalGastos: number
+  balanceNeto: number
+}): string {
+  const netoClass = s.balanceNeto >= 0 ? 'positive' : 'negative'
+  return `<h2>Totales</h2><table>
+    <tr><td>Total Ingresos</td><td class="positive">+${s.totalIngresos.toFixed(2)}€</td></tr>
+    <tr><td>Total Gastos</td><td class="negative">-${s.totalGastos.toFixed(2)}€</td></tr>
+    <tr><td><strong>Balance Neto</strong></td><td class="${netoClass}"><strong>${s.balanceNeto.toFixed(2)}€</strong></td></tr>
+  </table>`
+}
+
+function buildExporterDesgloseHtml(
+  byReason: Record<string, { ingresos: number; gastos: number }>,
+): string {
+  let html = `<h2>Desglose por Razón</h2><table><thead><tr><th>Razón</th><th>Ingresos</th><th>Gastos</th><th>Neto</th></tr></thead><tbody>`
+  for (const [key, label] of Object.entries(BALANCE_REASONS)) {
+    const data = byReason[key]
+    if (!data || (data.ingresos <= 0 && data.gastos <= 0)) continue
+    const neto = (data.ingresos || 0) - (data.gastos || 0)
+    const netoClass = neto >= 0 ? 'positive' : 'negative'
+    html += `<tr><td>${label}</td><td class="positive">+${(data.ingresos || 0).toFixed(2)}€</td><td class="negative">-${(data.gastos || 0).toFixed(2)}€</td><td class="${netoClass}">${neto.toFixed(2)}€</td></tr>`
+  }
+  return html + '</tbody></table>'
+}
+
+function buildExporterMensualHtml(
+  monthly: Map<string, { ingresos: number; gastos: number }>,
+): string {
+  let html = `<h2>Desglose Mensual</h2><table><thead><tr><th>Mes</th><th>Ingresos</th><th>Gastos</th><th>Neto</th></tr></thead><tbody>`
+  for (const [month, data] of monthly) {
+    const neto = data.ingresos - data.gastos
+    const netoClass = neto >= 0 ? 'positive' : 'negative'
+    html += `<tr><td>${month}</td><td class="positive">+${data.ingresos.toFixed(2)}€</td><td class="negative">-${data.gastos.toFixed(2)}€</td><td class="${netoClass}">${neto.toFixed(2)}€</td></tr>`
+  }
+  return html + '</tbody></table>'
+}
+
+function buildExporterResumenSections(
+  opts: Record<string, boolean>,
+  summaryData: {
+    totalIngresos: number
+    totalGastos: number
+    balanceNeto: number
+    byReason: Record<string, { ingresos: number; gastos: number }>
+  },
+  monthly: Map<string, { ingresos: number; gastos: number }>,
+): string {
+  const parts: string[] = []
+  if (opts.totales) parts.push(buildExporterTotalesHtml(summaryData))
+  if (opts.desglose) parts.push(buildExporterDesgloseHtml(summaryData.byReason))
+  if (opts.mensual) parts.push(buildExporterMensualHtml(monthly))
+  return parts.join('')
+}
+
 const { t } = useI18n()
 const toast = useToast()
 
@@ -91,28 +175,28 @@ async function exportBalance() {
   }
 }
 
-function exportToExcel(data: BalanceEntry[]) {
-  const headers: string[] = []
-  if (exportColumns.tipo) headers.push('Tipo')
-  if (exportColumns.fecha) headers.push('Fecha')
-  if (exportColumns.razon) headers.push('Razón')
-  if (exportColumns.detalle) headers.push('Detalle')
-  if (exportColumns.importe) headers.push('Importe')
-  if (exportColumns.estado) headers.push('Estado')
-  if (exportColumns.notas) headers.push('Notas')
+const EXCEL_COLUMNS: Array<{
+  key: keyof typeof exportColumns
+  header: string
+  cell: (e: BalanceEntry) => string
+}> = [
+  { key: 'tipo', header: 'Tipo', cell: (e) => (e.tipo === 'ingreso' ? 'Ingreso' : 'Gasto') },
+  { key: 'fecha', header: 'Fecha', cell: (e) => e.fecha },
+  { key: 'razon', header: 'Razón', cell: (e) => BALANCE_REASONS[e.razon] },
+  { key: 'detalle', header: 'Detalle', cell: (e) => e.detalle || '' },
+  {
+    key: 'importe',
+    header: 'Importe',
+    cell: (e) => `${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€`,
+  },
+  { key: 'estado', header: 'Estado', cell: (e) => BALANCE_STATUS_LABELS[e.estado] },
+  { key: 'notas', header: 'Notas', cell: (e) => e.notas || '' },
+]
 
-  const rows = data.map((e) => {
-    const row: string[] = []
-    if (exportColumns.tipo) row.push(e.tipo === 'ingreso' ? 'Ingreso' : 'Gasto')
-    if (exportColumns.fecha) row.push(e.fecha)
-    if (exportColumns.razon) row.push(BALANCE_REASONS[e.razon])
-    if (exportColumns.detalle) row.push(e.detalle || '')
-    if (exportColumns.importe)
-      row.push(`${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€`)
-    if (exportColumns.estado) row.push(BALANCE_STATUS_LABELS[e.estado])
-    if (exportColumns.notas) row.push(e.notas || '')
-    return row
-  })
+function exportToExcel(data: BalanceEntry[]) {
+  const activeCols = EXCEL_COLUMNS.filter((c) => exportColumns[c.key])
+  const headers = activeCols.map((c) => c.header)
+  const rows = data.map((e) => activeCols.map((c) => c.cell(e)))
 
   const csv = [headers.join(';'), ...rows.map((r) => r.join(';'))].join('\n')
   downloadFile(csv, `balance_${filters.year || 'todos'}.csv`, 'text/csv')
@@ -136,27 +220,13 @@ function exportToPDF(data: BalanceEntry[]) {
     <p>Generado: ${new Date().toLocaleDateString('es-ES')}</p>
     <table><thead><tr>`
 
-  if (exportColumns.tipo) html += '<th>Tipo</th>'
-  if (exportColumns.fecha) html += '<th>Fecha</th>'
-  if (exportColumns.razon) html += '<th>Razón</th>'
-  if (exportColumns.detalle) html += '<th>Detalle</th>'
-  if (exportColumns.importe) html += '<th>Importe</th>'
-  if (exportColumns.estado) html += '<th>Estado</th>'
-  if (exportColumns.notas) html += '<th>Notas</th>'
+  const colDefs = buildExporterColumns(exportColumns)
+  html += colDefs.map((c) => `<th>${c.header}</th>`).join('')
 
   html += '</tr></thead><tbody>'
 
   for (const e of data) {
-    html += '<tr>'
-    if (exportColumns.tipo) html += `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '↑' : '↓'}</td>`
-    if (exportColumns.fecha) html += `<td>${e.fecha}</td>`
-    if (exportColumns.razon) html += `<td>${BALANCE_REASONS[e.razon]}</td>`
-    if (exportColumns.detalle) html += `<td>${e.detalle || ''}</td>`
-    if (exportColumns.importe)
-      html += `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}€</td>`
-    if (exportColumns.estado) html += `<td>${BALANCE_STATUS_LABELS[e.estado]}</td>`
-    if (exportColumns.notas) html += `<td>${e.notas || ''}</td>`
-    html += '</tr>'
+    html += '<tr>' + colDefs.map((c) => c.cell(e)).join('') + '</tr>'
   }
 
   html += `</tbody></table>
@@ -178,42 +248,45 @@ function exportResumen() {
   }
 }
 
-function exportResumenExcel() {
-  const lines: string[] = ['Concepto;Ingresos;Gastos;Neto']
+function buildTotalesLines(s: typeof summary.value): string[] {
+  return [
+    `TOTAL INGRESOS;+${s.totalIngresos.toFixed(2)}€;;`,
+    `TOTAL GASTOS;;-${s.totalGastos.toFixed(2)}€;`,
+    `BALANCE NETO;;;${s.balanceNeto.toFixed(2)}€`,
+    '',
+  ]
+}
 
-  if (resumenOptions.totales) {
+function buildDesgloseLines(s: typeof summary.value): string[] {
+  const lines = ['DESGLOSE POR RAZÓN;;;']
+  for (const [key, label] of Object.entries(BALANCE_REASONS)) {
+    const data = s.byReason[key]
+    if (!data) continue
+    const neto = (data.ingresos || 0) - (data.gastos || 0)
     lines.push(
-      `TOTAL INGRESOS;+${summary.value.totalIngresos.toFixed(2)}€;;`,
-      `TOTAL GASTOS;;-${summary.value.totalGastos.toFixed(2)}€;`,
-      `BALANCE NETO;;;${summary.value.balanceNeto.toFixed(2)}€`,
-      '',
+      `${label};+${(data.ingresos || 0).toFixed(2)}€;-${(data.gastos || 0).toFixed(2)}€;${neto.toFixed(2)}€`,
     )
   }
+  lines.push('')
+  return lines
+}
 
-  if (resumenOptions.desglose) {
-    lines.push('DESGLOSE POR RAZÓN;;;')
-    for (const [key, label] of Object.entries(BALANCE_REASONS)) {
-      const data = summary.value.byReason[key]
-      if (data) {
-        const neto = (data.ingresos || 0) - (data.gastos || 0)
-        lines.push(
-          `${label};+${(data.ingresos || 0).toFixed(2)}€;-${(data.gastos || 0).toFixed(2)}€;${neto.toFixed(2)}€`,
-        )
-      }
-    }
-    lines.push('')
+function buildMensualLines(monthly: [string, { ingresos: number; gastos: number }][]): string[] {
+  const lines = ['DESGLOSE MENSUAL;;;']
+  for (const [month, data] of monthly) {
+    const neto = data.ingresos - data.gastos
+    lines.push(
+      `${month};+${data.ingresos.toFixed(2)}€;-${data.gastos.toFixed(2)}€;${neto.toFixed(2)}€`,
+    )
   }
+  return lines
+}
 
-  if (resumenOptions.mensual) {
-    lines.push('DESGLOSE MENSUAL;;;')
-    for (const [month, data] of monthlyBreakdown.value) {
-      const neto = data.ingresos - data.gastos
-      lines.push(
-        `${month};+${data.ingresos.toFixed(2)}€;-${data.gastos.toFixed(2)}€;${neto.toFixed(2)}€`,
-      )
-    }
-  }
-
+function exportResumenExcel() {
+  const lines: string[] = ['Concepto;Ingresos;Gastos;Neto']
+  if (resumenOptions.totales) lines.push(...buildTotalesLines(summary.value))
+  if (resumenOptions.desglose) lines.push(...buildDesgloseLines(summary.value))
+  if (resumenOptions.mensual) lines.push(...buildMensualLines(monthlyBreakdown.value))
   downloadFile(lines.join('\n'), `resumen_balance_${filters.year || 'todos'}.csv`, 'text/csv')
 }
 
@@ -236,37 +309,7 @@ function exportResumenPDF() {
     <h1>Resumen Balance ${filters.year || 'Todos los años'}</h1>
     <p>Generado: ${new Date().toLocaleDateString('es-ES')}</p>`
 
-  if (resumenOptions.totales) {
-    html += `<h2>Totales</h2>
-      <table>
-        <tr><td>Total Ingresos</td><td class="positive">+${summary.value.totalIngresos.toFixed(2)}€</td></tr>
-        <tr><td>Total Gastos</td><td class="negative">-${summary.value.totalGastos.toFixed(2)}€</td></tr>
-        <tr><td><strong>Balance Neto</strong></td><td class="${summary.value.balanceNeto >= 0 ? 'positive' : 'negative'}"><strong>${summary.value.balanceNeto.toFixed(2)}€</strong></td></tr>
-      </table>`
-  }
-
-  if (resumenOptions.desglose) {
-    html += `<h2>Desglose por Razón</h2>
-      <table><thead><tr><th>Razón</th><th>Ingresos</th><th>Gastos</th><th>Neto</th></tr></thead><tbody>`
-    for (const [key, label] of Object.entries(BALANCE_REASONS)) {
-      const data = summary.value.byReason[key]
-      if (data && (data.ingresos > 0 || data.gastos > 0)) {
-        const neto = (data.ingresos || 0) - (data.gastos || 0)
-        html += `<tr><td>${label}</td><td class="positive">+${(data.ingresos || 0).toFixed(2)}€</td><td class="negative">-${(data.gastos || 0).toFixed(2)}€</td><td class="${neto >= 0 ? 'positive' : 'negative'}">${neto.toFixed(2)}€</td></tr>`
-      }
-    }
-    html += '</tbody></table>'
-  }
-
-  if (resumenOptions.mensual) {
-    html += `<h2>Desglose Mensual</h2>
-      <table><thead><tr><th>Mes</th><th>Ingresos</th><th>Gastos</th><th>Neto</th></tr></thead><tbody>`
-    for (const [month, data] of monthlyBreakdown.value) {
-      const neto = data.ingresos - data.gastos
-      html += `<tr><td>${month}</td><td class="positive">+${data.ingresos.toFixed(2)}€</td><td class="negative">-${data.gastos.toFixed(2)}€</td><td class="${neto >= 0 ? 'positive' : 'negative'}">${neto.toFixed(2)}€</td></tr>`
-    }
-    html += '</tbody></table>'
-  }
+  html += buildExporterResumenSections(resumenOptions, summary.value, monthlyBreakdown.value)
 
   html += '</body></html>'
 

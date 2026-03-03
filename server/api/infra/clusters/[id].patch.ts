@@ -22,6 +22,89 @@ interface UpdateClusterBody {
 }
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const VALID_STATUSES = ['active', 'migrating', 'maintenance', 'offline']
+
+interface FieldRule {
+  key: keyof UpdateClusterBody
+  check: (v: unknown) => string | null
+  transform?: (v: unknown) => unknown
+}
+
+const trimStr = (v: unknown) => (v as string).trim()
+
+const CLUSTER_FIELD_RULES: FieldRule[] = [
+  {
+    key: 'name',
+    check: (v) =>
+      typeof v !== 'string' || !(v as string).trim() ? 'name must be a non-empty string' : null,
+    transform: trimStr,
+  },
+  {
+    key: 'supabase_url',
+    check: (v) =>
+      typeof v !== 'string' || !(v as string).trim()
+        ? 'supabase_url must be a non-empty string'
+        : null,
+    transform: trimStr,
+  },
+  {
+    key: 'supabase_anon_key',
+    check: (v) => (typeof v !== 'string' ? 'supabase_anon_key must be a string' : null),
+    transform: trimStr,
+  },
+  {
+    key: 'supabase_service_role_key',
+    check: (v) => (typeof v !== 'string' ? 'supabase_service_role_key must be a string' : null),
+    transform: trimStr,
+  },
+  {
+    key: 'verticals',
+    check: (v) =>
+      !Array.isArray(v) || !(v as unknown[]).every((x) => typeof x === 'string')
+        ? 'verticals must be an array of strings'
+        : null,
+  },
+  {
+    key: 'weight_used',
+    check: (v) =>
+      typeof v !== 'number' || (v as number) < 0
+        ? 'weight_used must be a non-negative number'
+        : null,
+  },
+  {
+    key: 'weight_limit',
+    check: (v) =>
+      typeof v !== 'number' || (v as number) <= 0 ? 'weight_limit must be a positive number' : null,
+  },
+  {
+    key: 'status',
+    check: (v) =>
+      typeof v !== 'string' || !VALID_STATUSES.includes(v as string)
+        ? `status must be one of: ${VALID_STATUSES.join(', ')}`
+        : null,
+  },
+  {
+    key: 'metadata',
+    check: (v) =>
+      typeof v !== 'object' || Array.isArray(v) || v === null ? 'metadata must be an object' : null,
+  },
+]
+
+function validateClusterBody(body: UpdateClusterBody): {
+  errors: string[]
+  updateFields: Record<string, unknown>
+} {
+  const errors: string[] = []
+  const updateFields: Record<string, unknown> = {}
+  for (const rule of CLUSTER_FIELD_RULES) {
+    const val = body[rule.key]
+    if (val === undefined) continue
+    const error = rule.check(val)
+    if (error) errors.push(error)
+    else updateFields[rule.key] = rule.transform ? rule.transform(val) : val
+  }
+  return { errors, updateFields }
+}
 
 export default defineEventHandler(async (event) => {
   // ── Auth: admin only ────────────────────────────────────────────────────
@@ -46,88 +129,7 @@ export default defineEventHandler(async (event) => {
 
   // ── Validate body ──────────────────────────────────────────────────────
   const body = await readBody<UpdateClusterBody>(event)
-  const errors: string[] = []
-  const updateFields: Record<string, unknown> = {}
-
-  if (body.name !== undefined) {
-    if (typeof body.name !== 'string' || body.name.trim().length === 0) {
-      errors.push('name must be a non-empty string')
-    } else {
-      updateFields.name = body.name.trim()
-    }
-  }
-
-  if (body.supabase_url !== undefined) {
-    if (typeof body.supabase_url !== 'string' || body.supabase_url.trim().length === 0) {
-      errors.push('supabase_url must be a non-empty string')
-    } else {
-      updateFields.supabase_url = body.supabase_url.trim()
-    }
-  }
-
-  if (body.supabase_anon_key !== undefined) {
-    if (typeof body.supabase_anon_key === 'string') {
-      updateFields.supabase_anon_key = body.supabase_anon_key.trim()
-    } else {
-      errors.push('supabase_anon_key must be a string')
-    }
-  }
-
-  if (body.supabase_service_role_key !== undefined) {
-    if (typeof body.supabase_service_role_key === 'string') {
-      updateFields.supabase_service_role_key = body.supabase_service_role_key.trim()
-    } else {
-      errors.push('supabase_service_role_key must be a string')
-    }
-  }
-
-  if (body.verticals !== undefined) {
-    if (
-      !Array.isArray(body.verticals) ||
-      !body.verticals.every((v: unknown) => typeof v === 'string')
-    ) {
-      errors.push('verticals must be an array of strings')
-    } else {
-      updateFields.verticals = body.verticals
-    }
-  }
-
-  if (body.weight_used !== undefined) {
-    if (typeof body.weight_used !== 'number' || body.weight_used < 0) {
-      errors.push('weight_used must be a non-negative number')
-    } else {
-      updateFields.weight_used = body.weight_used
-    }
-  }
-
-  if (body.weight_limit !== undefined) {
-    if (typeof body.weight_limit !== 'number' || body.weight_limit <= 0) {
-      errors.push('weight_limit must be a positive number')
-    } else {
-      updateFields.weight_limit = body.weight_limit
-    }
-  }
-
-  if (body.status !== undefined) {
-    const validStatuses = ['active', 'migrating', 'maintenance', 'offline']
-    if (typeof body.status !== 'string' || !validStatuses.includes(body.status)) {
-      errors.push(`status must be one of: ${validStatuses.join(', ')}`)
-    } else {
-      updateFields.status = body.status
-    }
-  }
-
-  if (body.metadata !== undefined) {
-    if (
-      typeof body.metadata !== 'object' ||
-      Array.isArray(body.metadata) ||
-      body.metadata === null
-    ) {
-      errors.push('metadata must be an object')
-    } else {
-      updateFields.metadata = body.metadata
-    }
-  }
+  const { errors, updateFields } = validateClusterBody(body)
 
   if (errors.length > 0) {
     throw createError({

@@ -54,6 +54,101 @@ interface Notification {
   dropPercent: number
 }
 
+async function buildPriceDropNotifications(
+  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  drops: PriceHistoryRow[],
+  vehicleMap: Map<string, VehicleInfo>,
+): Promise<Notification[]> {
+  const notifications: Notification[] = []
+  for (const drop of drops) {
+    const vehicle = vehicleMap.get(drop.vehicle_id)
+    if (!vehicle) continue
+
+    const { data: favorites, error: favsError } = await supabase
+      .from('favorites')
+      .select('user_id, users(id, email, name, lang)')
+      .eq('vehicle_id', drop.vehicle_id)
+
+    if (favsError) {
+      console.error(
+        `[price-drop-alert] Error fetching favorites for vehicle ${drop.vehicle_id}: ${favsError.message}`,
+      )
+      continue
+    }
+    if (!favorites || favorites.length === 0) continue
+
+    const typedFavorites = favorites as unknown as FavoriteRow[]
+    const vehicleTitle = `${vehicle.brand} ${vehicle.model}`
+    const dropPercent = Math.round(
+      ((drop.previous_price_cents - drop.price_cents) / drop.previous_price_cents) * 100,
+    )
+
+    const dropNotifications = typedFavorites
+      .filter(
+        (fav): fav is FavoriteRow & { users: NonNullable<FavoriteRow['users']> } =>
+          !!fav.users?.email,
+      )
+      .map((fav) => ({
+        userId: fav.users.id,
+        email: fav.users.email,
+        userName: fav.users.name,
+        locale: fav.users.lang ?? 'es',
+        vehicleTitle,
+        vehicleSlug: vehicle.slug,
+        oldPriceCents: drop.previous_price_cents,
+        newPriceCents: drop.price_cents,
+        dropPercent,
+      }))
+    notifications.push(...dropNotifications)
+  }
+  return notifications
+}
+
+function groupNotificationsByUser(notifications: Notification[]): Map<string, Notification[]> {
+  const byUser = new Map<string, Notification[]>()
+  for (const n of notifications) {
+    const existing = byUser.get(n.userId)
+    if (existing) existing.push(n)
+    else byUser.set(n.userId, [n])
+  }
+  return byUser
+}
+
+async function sendPriceDropEmail(
+  first: Notification,
+  userNotifications: Notification[],
+  internalSecret: string | undefined,
+): Promise<boolean> {
+  const vehicles = userNotifications.map((n) => ({
+    title: n.vehicleTitle,
+    slug: n.vehicleSlug,
+    oldPrice: n.oldPriceCents,
+    newPrice: n.newPriceCents,
+    dropPercent: n.dropPercent,
+  }))
+
+  try {
+    await $fetch('/api/email/send', {
+      method: 'POST',
+      headers: internalSecret ? { 'x-internal-secret': internalSecret } : {},
+      body: {
+        templateKey: 'favorite_price_drop',
+        to: first.email,
+        userId: first.userId,
+        locale: first.locale,
+        variables: { userName: first.userName ?? first.email, vehicles },
+      },
+    })
+    return true
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    console.error(
+      `[price-drop-alert] Failed to send email to user ${first.userId}: ${errorMessage}`,
+    )
+    return false
+  }
+}
+
 // -- Handler ------------------------------------------------------------------
 
 export default defineEventHandler(async (event) => {
@@ -119,99 +214,18 @@ export default defineEventHandler(async (event) => {
   }
 
   // 4. For each vehicle with a price drop, find users who have it in favorites
-  const notifications: Notification[] = []
-
-  for (const drop of drops) {
-    const vehicle = vehicleMap.get(drop.vehicle_id)
-    if (!vehicle) continue
-
-    const { data: favorites, error: favsError } = await supabase
-      .from('favorites')
-      .select('user_id, users(id, email, name, lang)')
-      .eq('vehicle_id', drop.vehicle_id)
-
-    if (favsError) {
-      console.error(
-        `[price-drop-alert] Error fetching favorites for vehicle ${drop.vehicle_id}: ${favsError.message}`,
-      )
-      continue
-    }
-
-    if (!favorites || favorites.length === 0) continue
-
-    const typedFavorites = favorites as unknown as FavoriteRow[]
-    const vehicleTitle = `${vehicle.brand} ${vehicle.model}`
-    const dropPercent = Math.round(
-      ((drop.previous_price_cents - drop.price_cents) / drop.previous_price_cents) * 100,
-    )
-
-    for (const fav of typedFavorites) {
-      const user = fav.users
-      if (!user || !user.email) continue
-
-      notifications.push({
-        userId: user.id,
-        email: user.email,
-        userName: user.name,
-        locale: user.lang ?? 'es',
-        vehicleTitle,
-        vehicleSlug: vehicle.slug,
-        oldPriceCents: drop.previous_price_cents,
-        newPriceCents: drop.price_cents,
-        dropPercent,
-      })
-    }
-  }
+  const notifications = await buildPriceDropNotifications(supabase, drops, vehicleMap)
 
   // 5. Group notifications by userId so each user gets ONE email with all their drops
-  const byUser = new Map<string, Notification[]>()
-  for (const n of notifications) {
-    const existing = byUser.get(n.userId)
-    if (existing) {
-      existing.push(n)
-    } else {
-      byUser.set(n.userId, [n])
-    }
-  }
+  const byUser = groupNotificationsByUser(notifications)
 
   // 6. Send one email per user with all their price-dropped favorites
   let emailsSent = 0
 
   for (const [, userNotifications] of byUser) {
-    if (!userNotifications.length) continue
     const first = userNotifications[0]!
-
-    const vehicles = userNotifications.map((n) => ({
-      title: n.vehicleTitle,
-      slug: n.vehicleSlug,
-      oldPrice: n.oldPriceCents,
-      newPrice: n.newPriceCents,
-      dropPercent: n.dropPercent,
-    }))
-
-    try {
-      await $fetch('/api/email/send', {
-        method: 'POST',
-        headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
-        body: {
-          templateKey: 'favorite_price_drop',
-          to: first.email,
-          userId: first.userId,
-          locale: first.locale,
-          variables: {
-            userName: first.userName ?? first.email,
-            vehicles,
-          },
-        },
-      })
-
-      emailsSent++
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-      console.error(
-        `[price-drop-alert] Failed to send email to user ${first.userId}: ${errorMessage}`,
-      )
-    }
+    const sent = await sendPriceDropEmail(first, userNotifications, _internalSecret)
+    if (sent) emailsSent++
   }
 
   console.info(

@@ -51,6 +51,215 @@ interface VehicleRow {
   created_at: string
 }
 
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+function resolveDealerName(companyName: Record<string, string> | string, locale: string): string {
+  if (typeof companyName !== 'object' || companyName === null)
+    return String(companyName ?? 'Dealer')
+  return (
+    companyName[locale] ?? companyName['es'] ?? Object.values(companyName).find(Boolean) ?? 'Dealer'
+  )
+}
+
+async function hasAlreadySentEmail(
+  supabaseUrl: string,
+  headers: Record<string, string>,
+  email: string,
+  templateKey: string,
+  sinceDate: string,
+): Promise<boolean> {
+  const res = await fetchWithRetry(
+    `${supabaseUrl}/rest/v1/email_logs?recipient_email=eq.${encodeURIComponent(email)}&template_key=eq.${templateKey}&created_at=gt.${sinceDate}&select=id&limit=1`,
+    { headers },
+  )
+  if (!res.ok) return false
+  const logs = (await res.json()) as EmailLogRow[]
+  return Array.isArray(logs) && logs.length > 0
+}
+
+async function pauseExcessVehicles(
+  supabaseUrl: string,
+  headers: Record<string, string>,
+  dealerId: string,
+  now: Date,
+): Promise<number> {
+  const vehiclesRes = await fetchWithRetry(
+    `${supabaseUrl}/rest/v1/vehicles?dealer_id=eq.${dealerId}&status=eq.published&select=id,status,created_at&order=created_at.asc&limit=500`,
+    { headers },
+  )
+
+  if (!vehiclesRes.ok) {
+    console.error(
+      `[founding-expiry] Failed to fetch vehicles for dealer ${dealerId}: ${vehiclesRes.status}`,
+    )
+    return 0
+  }
+
+  const publishedVehicles = (await vehiclesRes.json()) as VehicleRow[]
+  if (!Array.isArray(publishedVehicles) || publishedVehicles.length <= 3) return 0
+
+  let paused = 0
+  for (const vehicle of publishedVehicles.slice(3)) {
+    const pauseRes = await fetchWithRetry(`${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicle.id}`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ status: 'paused', updated_at: now.toISOString() }),
+    })
+    if (pauseRes.ok) paused++
+    else
+      console.error(`[founding-expiry] Failed to pause vehicle ${vehicle.id}: ${pauseRes.status}`)
+  }
+  return paused
+}
+
+async function downgradeSubscription(
+  supabaseUrl: string,
+  headers: Record<string, string>,
+  subscriptionId: string,
+  dealerId: string,
+  now: Date,
+): Promise<boolean> {
+  const subUpdateRes = await fetchWithRetry(
+    `${supabaseUrl}/rest/v1/subscriptions?id=eq.${subscriptionId}`,
+    {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ plan: 'free', status: 'expired', updated_at: now.toISOString() }),
+    },
+  )
+
+  if (!subUpdateRes.ok) {
+    console.error(
+      `[founding-expiry] Failed to downgrade subscription ${subscriptionId}: ${subUpdateRes.status}`,
+    )
+    return false
+  }
+
+  const dealerUpdateRes = await fetchWithRetry(`${supabaseUrl}/rest/v1/dealers?id=eq.${dealerId}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({
+      badge: 'founding',
+      subscription_type: 'free',
+      updated_at: now.toISOString(),
+    }),
+  })
+
+  if (!dealerUpdateRes.ok) {
+    console.error(
+      `[founding-expiry] Failed to update dealer ${dealerId} after expiry: ${dealerUpdateRes.status}`,
+    )
+  }
+
+  return true
+}
+
+// ── Email helpers ────────────────────────────────────────────────────────────
+
+interface ReminderContext {
+  supabaseUrl: string
+  headers: Record<string, string>
+  recipientEmail: string
+  dealerId: string
+  locale: string
+  dealerName: string
+  expiresAtFormatted: string
+  upgradeUrl: string
+  internalSecret: string | undefined
+  now: Date
+}
+
+async function sendReminder30d(ctx: ReminderContext, daysUntilExpiry: number): Promise<boolean> {
+  if (daysUntilExpiry <= 7) return false // In 7d window, skip 30d notice
+  const thirtyDaysAgo = new Date(ctx.now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
+  const alreadySent = await hasAlreadySentEmail(
+    ctx.supabaseUrl,
+    ctx.headers,
+    ctx.recipientEmail,
+    'founding_expiring_30d',
+    thirtyDaysAgo,
+  )
+  if (alreadySent) return false
+
+  await $fetch('/api/email/send', {
+    method: 'POST',
+    headers: ctx.internalSecret ? { 'x-internal-secret': ctx.internalSecret } : {},
+    body: {
+      templateKey: 'founding_expiring_30d',
+      to: ctx.recipientEmail,
+      locale: ctx.locale,
+      variables: {
+        dealerName: ctx.dealerName,
+        expiresAt: ctx.expiresAtFormatted,
+        upgradeUrl: ctx.upgradeUrl,
+      },
+    },
+  }).catch((err: unknown) => {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error(`[founding-expiry] 30d email failed for dealer ${ctx.dealerId}: ${msg}`)
+  })
+  return true
+}
+
+async function sendReminder7d(ctx: ReminderContext, daysUntilExpiry: number): Promise<boolean> {
+  const sevenDaysAgo = new Date(ctx.now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const alreadySent = await hasAlreadySentEmail(
+    ctx.supabaseUrl,
+    ctx.headers,
+    ctx.recipientEmail,
+    'founding_expiring_7d',
+    sevenDaysAgo,
+  )
+  if (alreadySent) return false
+
+  await $fetch('/api/email/send', {
+    method: 'POST',
+    headers: ctx.internalSecret ? { 'x-internal-secret': ctx.internalSecret } : {},
+    body: {
+      templateKey: 'founding_expiring_7d',
+      to: ctx.recipientEmail,
+      locale: ctx.locale,
+      variables: {
+        dealerName: ctx.dealerName,
+        expiresAt: ctx.expiresAtFormatted,
+        upgradeUrl: ctx.upgradeUrl,
+        daysLeft: String(Math.ceil(daysUntilExpiry)),
+      },
+    },
+  }).catch((err: unknown) => {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error(`[founding-expiry] 7d email failed for dealer ${ctx.dealerId}: ${msg}`)
+  })
+  return true
+}
+
+async function handleFoundingExpiry(ctx: ReminderContext, subscriptionId: string): Promise<number> {
+  const downgraded = await downgradeSubscription(
+    ctx.supabaseUrl,
+    ctx.headers,
+    subscriptionId,
+    ctx.dealerId,
+    ctx.now,
+  )
+  if (!downgraded) return 0
+
+  await $fetch('/api/email/send', {
+    method: 'POST',
+    headers: ctx.internalSecret ? { 'x-internal-secret': ctx.internalSecret } : {},
+    body: {
+      templateKey: 'founding_expired',
+      to: ctx.recipientEmail,
+      locale: ctx.locale,
+      variables: { dealerName: ctx.dealerName, upgradeUrl: ctx.upgradeUrl },
+    },
+  }).catch((err: unknown) => {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error(`[founding-expiry] Expiry email failed for dealer ${ctx.dealerId}: ${msg}`)
+  })
+
+  return await pauseExcessVehicles(ctx.supabaseUrl, ctx.headers, ctx.dealerId, ctx.now)
+}
+
 // ── Handler ──────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event) => {
@@ -122,226 +331,43 @@ export default defineEventHandler(async (event) => {
       const daysUntilExpiry = msUntilExpiry / (1000 * 60 * 60 * 24)
       const isExpired = msUntilExpiry <= 0
 
-      // ── Fetch dealer for this subscription (via user_id) ─────────────────
+      // Fetch dealer for this subscription (via user_id)
       const dealerRes = await fetchWithRetry(
         `${supabaseUrl}/rest/v1/dealers?user_id=eq.${subscription.user_id}&select=id,company_name,email,locale,badge&limit=1`,
         { headers },
       )
-
       if (!dealerRes.ok) return
 
       const dealers = (await dealerRes.json()) as DealerRow[]
       const dealer = dealers[0]
-      if (!dealer) return
-
-      const recipientEmail = dealer.email
-      if (!recipientEmail) return
+      if (!dealer?.email) return
 
       const locale = dealer.locale ?? 'es'
-      const dealerName =
-        typeof dealer.company_name === 'object' && dealer.company_name !== null
-          ? (dealer.company_name[locale] ??
-            dealer.company_name['es'] ??
-            Object.values(dealer.company_name).find(Boolean) ??
-            'Dealer')
-          : String(dealer.company_name ?? 'Dealer')
-
-      const expiresAtFormatted = expiresAt.toLocaleDateString(locale === 'en' ? 'en-GB' : 'es-ES', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      })
-
-      // ── a. 30-day reminder ─────────────────────────────────────────────────
-      if (!isExpired && daysUntilExpiry <= 30) {
-        // Check if we already sent the 30d reminder (avoid duplicate sends)
-        const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
-        const emailCheckRes = await fetchWithRetry(
-          `${supabaseUrl}/rest/v1/email_logs?recipient_email=eq.${encodeURIComponent(recipientEmail)}&template_key=eq.founding_expiring_30d&created_at=gt.${thirtyDaysAgo}&select=id&limit=1`,
-          { headers },
-        )
-
-        let alreadySent30d = false
-        if (emailCheckRes.ok) {
-          const logs = (await emailCheckRes.json()) as EmailLogRow[]
-          alreadySent30d = Array.isArray(logs) && logs.length > 0
-        }
-
-        if (!alreadySent30d && daysUntilExpiry > 7) {
-          // Only send 30d notice when not yet in 7d window (avoid double-sending)
-          await $fetch('/api/email/send', {
-            method: 'POST',
-            headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
-            body: {
-              templateKey: 'founding_expiring_30d',
-              to: recipientEmail,
-              locale,
-              variables: {
-                dealerName,
-                expiresAt: expiresAtFormatted,
-                upgradeUrl,
-              },
-            },
-          }).catch((err: unknown) => {
-            const msg = err instanceof Error ? err.message : String(err)
-            console.error(`[founding-expiry] 30d email failed for dealer ${dealer.id}: ${msg}`)
-          })
-
-          notified30d++
-        }
+      const ctx: ReminderContext = {
+        supabaseUrl,
+        headers,
+        recipientEmail: dealer.email,
+        dealerId: dealer.id,
+        locale,
+        dealerName: resolveDealerName(dealer.company_name, locale),
+        expiresAtFormatted: expiresAt.toLocaleDateString(locale === 'en' ? 'en-GB' : 'es-ES', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        }),
+        upgradeUrl,
+        internalSecret: _internalSecret,
+        now,
       }
 
-      // ── b. 7-day reminder ──────────────────────────────────────────────────
-      if (!isExpired && daysUntilExpiry <= 7) {
-        // Check if we already sent the 7d reminder
-        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
-        const emailCheckRes = await fetchWithRetry(
-          `${supabaseUrl}/rest/v1/email_logs?recipient_email=eq.${encodeURIComponent(recipientEmail)}&template_key=eq.founding_expiring_7d&created_at=gt.${sevenDaysAgo}&select=id&limit=1`,
-          { headers },
-        )
-
-        let alreadySent7d = false
-        if (emailCheckRes.ok) {
-          const logs = (await emailCheckRes.json()) as EmailLogRow[]
-          alreadySent7d = Array.isArray(logs) && logs.length > 0
-        }
-
-        if (!alreadySent7d) {
-          await $fetch('/api/email/send', {
-            method: 'POST',
-            headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
-            body: {
-              templateKey: 'founding_expiring_7d',
-              to: recipientEmail,
-              locale,
-              variables: {
-                dealerName,
-                expiresAt: expiresAtFormatted,
-                upgradeUrl,
-                daysLeft: String(Math.ceil(daysUntilExpiry)),
-              },
-            },
-          }).catch((err: unknown) => {
-            const msg = err instanceof Error ? err.message : String(err)
-            console.error(`[founding-expiry] 7d email failed for dealer ${dealer.id}: ${msg}`)
-          })
-
-          notified7d++
-        }
-      }
-
-      // ── c. Expiry: downgrade to free ───────────────────────────────────────
       if (isExpired) {
-        // Update subscription: plan = 'free', status = 'expired'
-        const subUpdateRes = await fetchWithRetry(
-          `${supabaseUrl}/rest/v1/subscriptions?id=eq.${subscription.id}`,
-          {
-            method: 'PATCH',
-            headers,
-            body: JSON.stringify({
-              plan: 'free',
-              status: 'expired',
-              updated_at: now.toISOString(),
-            }),
-          },
-        )
-
-        if (!subUpdateRes.ok) {
-          console.error(
-            `[founding-expiry] Failed to downgrade subscription ${subscription.id}: ${subUpdateRes.status}`,
-          )
-          return
-        }
-
-        // Set founding_badge_permanent = true on the dealer
-        // The dealer keeps the 'founding' badge permanently even after downgrade.
-        // We store it in the badge column and mark it via a dedicated boolean column.
-        // Since founding_badge_permanent column may not exist yet, we use badge = 'founding'
-        // as the permanent signal and update subscription_type on the dealers table.
-        const dealerUpdateRes = await fetchWithRetry(
-          `${supabaseUrl}/rest/v1/dealers?id=eq.${dealer.id}`,
-          {
-            method: 'PATCH',
-            headers,
-            body: JSON.stringify({
-              badge: 'founding', // Badge is permanent — never cleared
-              subscription_type: 'free', // Downgrade dealer subscription_type
-              updated_at: now.toISOString(),
-            }),
-          },
-        )
-
-        if (!dealerUpdateRes.ok) {
-          console.error(
-            `[founding-expiry] Failed to update dealer ${dealer.id} after expiry: ${dealerUpdateRes.status}`,
-          )
-        }
-
-        // Send expiry notification email
-        await $fetch('/api/email/send', {
-          method: 'POST',
-          headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
-          body: {
-            templateKey: 'founding_expired',
-            to: recipientEmail,
-            locale,
-            variables: {
-              dealerName,
-              upgradeUrl,
-            },
-          },
-        }).catch((err: unknown) => {
-          const msg = err instanceof Error ? err.message : String(err)
-          console.error(`[founding-expiry] Expiry email failed for dealer ${dealer.id}: ${msg}`)
-        })
-
+        vehiclesPaused += await handleFoundingExpiry(ctx, subscription.id)
         expired++
-
-        // ── Pause vehicles exceeding free plan limit (max 3 published) ───────
-        // Fetch all dealer's vehicles ordered by created_at ASC
-        const vehiclesRes = await fetchWithRetry(
-          `${supabaseUrl}/rest/v1/vehicles?dealer_id=eq.${dealer.id}&status=eq.published&select=id,status,created_at&order=created_at.asc&limit=500`,
-          { headers },
-        )
-
-        if (!vehiclesRes.ok) {
-          console.error(
-            `[founding-expiry] Failed to fetch vehicles for dealer ${dealer.id}: ${vehiclesRes.status}`,
-          )
-          return
-        }
-
-        const publishedVehicles = (await vehiclesRes.json()) as VehicleRow[]
-
-        if (!Array.isArray(publishedVehicles) || publishedVehicles.length <= 3) {
-          // At or below free plan limit — nothing to pause
-          return
-        }
-
-        // Keep first 3 (oldest) as published, pause the rest
-        const vehiclesToPause = publishedVehicles.slice(3)
-
-        for (const vehicle of vehiclesToPause) {
-          const pauseRes = await fetchWithRetry(
-            `${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicle.id}`,
-            {
-              method: 'PATCH',
-              headers,
-              body: JSON.stringify({
-                status: 'paused',
-                updated_at: now.toISOString(),
-              }),
-            },
-          )
-
-          if (pauseRes.ok) {
-            vehiclesPaused++
-          } else {
-            console.error(
-              `[founding-expiry] Failed to pause vehicle ${vehicle.id}: ${pauseRes.status}`,
-            )
-          }
-        }
+      } else if (daysUntilExpiry <= 7) {
+        if (await sendReminder7d(ctx, daysUntilExpiry)) notified7d++
+        if (await sendReminder30d(ctx, daysUntilExpiry)) notified30d++
+      } else if (daysUntilExpiry <= 30) {
+        if (await sendReminder30d(ctx, daysUntilExpiry)) notified30d++
       }
     },
   })

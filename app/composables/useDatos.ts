@@ -78,6 +78,65 @@ export function formatPrice(value: number): string {
   }).format(value)
 }
 
+function groupByMonth(rows: MarketRow[]): Map<string, MarketRow[]> {
+  const byMonth = new Map<string, MarketRow[]>()
+  for (const r of rows) {
+    const existing = byMonth.get(r.month)
+    if (existing) existing.push(r)
+    else byMonth.set(r.month, [r])
+  }
+  return byMonth
+}
+
+function weightedAverage(rows: MarketRow[], field: 'avg_price' | 'median_price'): number {
+  const totalListings = rows.reduce((sum, r) => sum + r.listing_count, 0)
+  if (totalListings === 0) return 0
+  return rows.reduce((sum, r) => sum + r[field] * r.listing_count, 0) / totalListings
+}
+
+function computeTrend(
+  currentAvg: number,
+  prevRows: MarketRow[],
+): { pct: number; direction: 'rising' | 'falling' | 'stable' } {
+  const prevAvg = weightedAverage(prevRows, 'avg_price')
+  if (prevAvg <= 0) return { pct: 0, direction: 'stable' }
+  const pct = ((currentAvg - prevAvg) / prevAvg) * 100
+  const direction = pct > 1 ? 'rising' : pct < -1 ? 'falling' : 'stable'
+  return { pct, direction }
+}
+
+function computeSubcategoryStat(subcategory: string, rows: MarketRow[]): CategoryStat | null {
+  const byMonth = groupByMonth(rows)
+  const months = Array.from(byMonth.keys()).sort((a, b) => b.localeCompare(a))
+  if (!months.length) return null
+
+  const latestRows = byMonth.get(months[0]!) ?? []
+  const totalListings = latestRows.reduce((sum, r) => sum + r.listing_count, 0)
+  const avgPrice = weightedAverage(latestRows, 'avg_price')
+  const daysRows = latestRows.filter((r) => r.avg_days_to_sell !== null)
+  const daysToSell =
+    daysRows.length > 0
+      ? daysRows.reduce((sum, r) => sum + (r.avg_days_to_sell ?? 0), 0) / daysRows.length
+      : null
+
+  const trend =
+    months.length > 1
+      ? computeTrend(avgPrice, byMonth.get(months[1]!) ?? [])
+      : { pct: 0, direction: 'stable' as const }
+
+  return {
+    subcategory,
+    label: latestRows[0]?.subcategory_label ?? subcategory,
+    avgPrice: Math.round(avgPrice),
+    medianPrice: Math.round(weightedAverage(latestRows, 'median_price')),
+    listingCount: totalListings,
+    soldCount: latestRows.reduce((sum, r) => sum + r.sold_count, 0),
+    avgDaysToSell: daysToSell === null ? null : Math.round(daysToSell),
+    trendPct: Math.round(trend.pct * 10) / 10,
+    trendDirection: trend.direction,
+  }
+}
+
 /* ------------------------------------------------
    Composable
    ------------------------------------------------ */
@@ -127,83 +186,14 @@ export function useDatos() {
     const grouped = new Map<string, MarketRow[]>()
     for (const row of marketRows.value) {
       const existing = grouped.get(row.subcategory)
-      if (existing) {
-        existing.push(row)
-      } else {
-        grouped.set(row.subcategory, [row])
-      }
+      if (existing) existing.push(row)
+      else grouped.set(row.subcategory, [row])
     }
 
     const stats: CategoryStat[] = []
-
     for (const [subcategory, rows] of grouped) {
-      const byMonth = new Map<string, MarketRow[]>()
-      for (const r of rows) {
-        const existing = byMonth.get(r.month)
-        if (existing) {
-          existing.push(r)
-        } else {
-          byMonth.set(r.month, [r])
-        }
-      }
-
-      const months = Array.from(byMonth.keys())
-        .sort((a, b) => a.localeCompare(b))
-        .reverse()
-      if (!months.length) continue
-
-      const latestMonth = months[0]!
-      const latestRows = byMonth.get(latestMonth) ?? []
-
-      const totalListings = latestRows.reduce((sum, r) => sum + r.listing_count, 0)
-      const totalSold = latestRows.reduce((sum, r) => sum + r.sold_count, 0)
-      const weightedAvg =
-        totalListings > 0
-          ? latestRows.reduce((sum, r) => sum + r.avg_price * r.listing_count, 0) / totalListings
-          : 0
-      const weightedMedian =
-        totalListings > 0
-          ? latestRows.reduce((sum, r) => sum + r.median_price * r.listing_count, 0) / totalListings
-          : 0
-      const daysToSell = latestRows.some((r) => r.avg_days_to_sell !== null)
-        ? latestRows
-            .filter((r) => r.avg_days_to_sell !== null)
-            .reduce((sum, r) => sum + (r.avg_days_to_sell ?? 0), 0) /
-          latestRows.filter((r) => r.avg_days_to_sell !== null).length
-        : null
-
-      let trendPct = 0
-      let trendDirection: 'rising' | 'falling' | 'stable' = 'stable'
-
-      if (months.length > 1) {
-        const prevMonth = months[1]!
-        const prevRows = byMonth.get(prevMonth) ?? []
-        const prevTotalListings = prevRows.reduce((sum, r) => sum + r.listing_count, 0)
-        const prevWeightedAvg =
-          prevTotalListings > 0
-            ? prevRows.reduce((sum, r) => sum + r.avg_price * r.listing_count, 0) /
-              prevTotalListings
-            : 0
-
-        if (prevWeightedAvg > 0) {
-          trendPct = ((weightedAvg - prevWeightedAvg) / prevWeightedAvg) * 100
-          if (trendPct > 1) trendDirection = 'rising'
-          else if (trendPct < -1) trendDirection = 'falling'
-          else trendDirection = 'stable'
-        }
-      }
-
-      stats.push({
-        subcategory,
-        label: latestRows[0]?.subcategory_label ?? subcategory,
-        avgPrice: Math.round(weightedAvg),
-        medianPrice: Math.round(weightedMedian),
-        listingCount: totalListings,
-        soldCount: totalSold,
-        avgDaysToSell: daysToSell === null ? null : Math.round(daysToSell),
-        trendPct: Math.round(trendPct * 10) / 10,
-        trendDirection,
-      })
+      const stat = computeSubcategoryStat(subcategory, rows)
+      if (stat) stats.push(stat)
     }
 
     return stats.sort((a, b) => b.listingCount - a.listingCount)

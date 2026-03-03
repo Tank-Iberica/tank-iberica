@@ -77,6 +77,29 @@ export const FILTER_STATUSES: { value: FilterStatus; label: string; description:
   { value: 'archived', label: 'Inactivo', description: 'No aparece en ningún sitio' },
 ]
 
+/** Fields that set-or-delete based on truthiness */
+const OPTION_MERGE_KEYS = ['default_value', 'extra_filters', 'hides', 'choices', 'step'] as const
+
+function mergeFilterOptions(
+  currentOptions: AdminFilter['options'],
+  formData: Partial<FilterFormData>,
+): AdminFilter['options'] {
+  const options: AdminFilter['options'] = { ...currentOptions }
+  for (const key of OPTION_MERGE_KEYS) {
+    if (formData[key] === undefined) continue
+    const val = formData[key]
+    const hasValue = Array.isArray(val) ? val.length > 0 : Boolean(val)
+    if (hasValue) {
+      ;(options as Record<string, unknown>)[key] = val
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- merging JSONB options by key
+      delete (options as Record<string, unknown>)[key]
+    }
+  }
+  if (formData.choices_source !== undefined) options.choices_source = formData.choices_source
+  return options
+}
+
 export function useAdminFilters() {
   const supabase = useSupabaseClient()
 
@@ -137,6 +160,23 @@ export function useAdminFilters() {
   /**
    * Create new filter
    */
+  function buildFilterOptions(formData: FilterFormData): AdminFilter['options'] {
+    const options: AdminFilter['options'] = {}
+    if (formData.default_value) options.default_value = formData.default_value
+    if (formData.type === 'tick') {
+      if (formData.extra_filters.length) options.extra_filters = formData.extra_filters
+      if (formData.hides.length) options.hides = formData.hides
+    }
+    if (formData.type === 'desplegable' || formData.type === 'desplegable_tick') {
+      options.choices_source = formData.choices_source || 'manual'
+      if (formData.choices.length) options.choices = formData.choices
+    }
+    if (formData.type === 'calc') {
+      if (formData.step) options.step = formData.step
+    }
+    return options
+  }
+
   async function createFilter(formData: FilterFormData): Promise<string | null> {
     saving.value = true
     error.value = null
@@ -145,27 +185,13 @@ export function useAdminFilters() {
       // Get max sort_order
       const maxOrder = filters.value.reduce((max, f) => Math.max(max, f.sort_order), 0)
 
-      const options: AdminFilter['options'] = {}
-      if (formData.default_value) options.default_value = formData.default_value
-      if (formData.type === 'tick') {
-        if (formData.extra_filters.length) options.extra_filters = formData.extra_filters
-        if (formData.hides.length) options.hides = formData.hides
-      }
-      if (formData.type === 'desplegable' || formData.type === 'desplegable_tick') {
-        options.choices_source = formData.choices_source || 'manual'
-        if (formData.choices.length) options.choices = formData.choices
-      }
-      if (formData.type === 'calc') {
-        if (formData.step) options.step = formData.step
-      }
-
       const insertData = {
         name: formData.name,
         type: formData.type,
         label_es: formData.label_es || formData.name,
         label_en: formData.label_en,
         unit: formData.unit,
-        options,
+        options: buildFilterOptions(formData),
         is_extra: formData.is_extra,
         is_hidden: formData.is_hidden,
         status: formData.status,
@@ -214,34 +240,7 @@ export function useAdminFilters() {
       if (formData.is_hidden !== undefined) updateData.is_hidden = formData.is_hidden
       if (formData.status !== undefined) updateData.status = formData.status
 
-      // Merge options
-      const options: AdminFilter['options'] = { ...currentOptions }
-      if (formData.default_value !== undefined) {
-        if (formData.default_value) options.default_value = formData.default_value
-        else delete options.default_value
-      }
-      if (formData.extra_filters !== undefined) {
-        if (formData.extra_filters.length) options.extra_filters = formData.extra_filters
-        else delete options.extra_filters
-      }
-      if (formData.hides !== undefined) {
-        if (formData.hides.length) options.hides = formData.hides
-        else delete options.hides
-      }
-      // Desplegable options
-      if (formData.choices !== undefined) {
-        if (formData.choices.length) options.choices = formData.choices
-        else delete options.choices
-      }
-      if (formData.choices_source !== undefined) {
-        options.choices_source = formData.choices_source
-      }
-      // Calc step
-      if (formData.step !== undefined) {
-        if (formData.step) options.step = formData.step
-        else delete options.step
-      }
-      updateData.options = options
+      updateData.options = mergeFilterOptions(currentOptions, formData)
 
       const { error: err } = await supabase
         .from('attributes')
