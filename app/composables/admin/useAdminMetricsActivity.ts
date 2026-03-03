@@ -17,6 +17,52 @@ import type {
   ChurnRate,
 } from '~/utils/adminMetricsTypes'
 
+function resolveCompanyName(companyName: Record<string, string> | string | null): string {
+  if (!companyName) return ''
+  if (typeof companyName === 'string') return companyName
+  return companyName.es ?? companyName.en ?? Object.values(companyName)[0] ?? ''
+}
+
+async function resolveDealerNames(
+  supabase: ReturnType<typeof useSupabaseClient>,
+  dealerIds: string[],
+): Promise<Map<string, string>> {
+  const nameMap = new Map<string, string>()
+  const { data: dealerData } = await supabase
+    .from('dealers')
+    .select('id, company_name')
+    .in('id', dealerIds)
+    .throwOnError()
+    .catch(() => ({ data: null }))
+
+  if (dealerData) {
+    for (const row of dealerData as {
+      id: string
+      company_name: Record<string, string> | string
+    }[]) {
+      nameMap.set(row.id, resolveCompanyName(row.company_name))
+    }
+    return nameMap
+  }
+
+  // Fallback: try users table
+  const { data: userData } = await supabase
+    .from('users')
+    .select('id, name, company_name')
+    .in('id', dealerIds)
+    .catch(() => ({ data: null }))
+  if (userData) {
+    for (const row of userData as {
+      id: string
+      name: string | null
+      company_name: string | null
+    }[]) {
+      nameMap.set(row.id, row.company_name ?? row.name ?? row.id)
+    }
+  }
+  return nameMap
+}
+
 export function useAdminMetricsActivity() {
   const supabase = useSupabaseClient()
 
@@ -29,6 +75,21 @@ export function useAdminMetricsActivity() {
   // -------------------------------------------------------------------------
   // 3. Vehicles Published / Sold per Month (last 12 months)
   // -------------------------------------------------------------------------
+
+  function countByMonth(
+    rows: Array<{ [key: string]: string | null }>,
+    dateField: string,
+    series: VehicleActivityPoint[],
+    target: 'published' | 'sold',
+  ): void {
+    for (const row of rows) {
+      const dateStr = row[dateField]
+      if (!dateStr) continue
+      const label = getMonthLabel(new Date(dateStr))
+      const entry = series.find((s) => s.month === label)
+      if (entry) entry[target]++
+    }
+  }
 
   async function loadVehicleActivity(): Promise<void> {
     const months = getMonthsRange(12)
@@ -49,12 +110,12 @@ export function useAdminMetricsActivity() {
         .lt('created_at', rangeEnd)
 
       if (createdData) {
-        for (const row of createdData as { created_at: string | null }[]) {
-          if (!row.created_at) continue
-          const label = getMonthLabel(new Date(row.created_at))
-          const entry = series.find((s) => s.month === label)
-          if (entry) entry.published++
-        }
+        countByMonth(
+          createdData as Array<{ created_at: string | null }>,
+          'created_at',
+          series,
+          'published',
+        )
       }
 
       const { data: soldData } = await supabase
@@ -65,12 +126,7 @@ export function useAdminMetricsActivity() {
         .lt('sold_at', rangeEnd)
 
       if (soldData) {
-        for (const row of soldData as { sold_at: string | null }[]) {
-          if (!row.sold_at) continue
-          const label = getMonthLabel(new Date(row.sold_at))
-          const entry = series.find((s) => s.month === label)
-          if (entry) entry.sold++
-        }
+        countByMonth(soldData as Array<{ sold_at: string | null }>, 'sold_at', series, 'sold')
       }
     } catch {
       // vehicles table or column issue
@@ -120,52 +176,7 @@ export function useAdminMetricsActivity() {
 
       const dealerIds = sorted.map(([id]) => id)
 
-      const nameMap = new Map<string, string>()
-      try {
-        const { data: dealerData } = await supabase
-          .from('dealers')
-          .select('id, company_name')
-          .in('id', dealerIds)
-
-        if (dealerData) {
-          for (const row of dealerData as {
-            id: string
-            company_name: Record<string, string> | string
-          }[]) {
-            let name = ''
-            if (typeof row.company_name === 'string') {
-              name = row.company_name
-            } else if (row.company_name && typeof row.company_name === 'object') {
-              name =
-                row.company_name.es ??
-                row.company_name.en ??
-                Object.values(row.company_name)[0] ??
-                ''
-            }
-            nameMap.set(row.id, name)
-          }
-        }
-      } catch {
-        // dealers table may not exist; try users table as fallback
-        try {
-          const { data: userData } = await supabase
-            .from('users')
-            .select('id, name, company_name')
-            .in('id', dealerIds)
-
-          if (userData) {
-            for (const row of userData as {
-              id: string
-              name: string | null
-              company_name: string | null
-            }[]) {
-              nameMap.set(row.id, row.company_name ?? row.name ?? row.id)
-            }
-          }
-        } catch {
-          // fallback to id as name
-        }
-      }
+      const nameMap = await resolveDealerNames(supabase, dealerIds)
 
       topDealers.value = sorted.map(([id, count]) => ({
         dealerId: id,

@@ -68,241 +68,218 @@ const SUPABASE_DB_LIMIT_BYTES = 500 * 1024 * 1024 // 500 MB free tier
 const SUPABASE_CONNECTIONS_LIMIT = 60 // Free tier ~60 direct connections
 const RESEND_DAILY_LIMIT = 100 // Free tier 100/day
 
-// ── Handler ────────────────────────────────────────────────────────────────────
+// ── Supabase client type ────────────────────────────────────────────────────
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SupabaseClient = any
 
-export default defineEventHandler(async (event) => {
-  // ── Verify cron secret ────────────────────────────────────────────────────
-  const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
-  verifyCronSecret(event, body?.secret)
+// ── Metric Collectors ──────────────────────────────────────────────────────
 
-  const supabase = serverSupabaseServiceRole(event)
-  const config = useRuntimeConfig()
-  const _internalSecret = config.cronSecret || process.env.CRON_SECRET
-  const collectedMetrics: MetricEntry[] = []
-  const errors: string[] = []
-
-  // ═════════════════════════════════════════════════════════════════════════
-  // 1. Supabase — Database size
-  // ═════════════════════════════════════════════════════════════════════════
+async function collectSupabaseRpc(
+  supabase: SupabaseClient,
+  rpcName: string,
+  metricName: string,
+  limit: number,
+  source: string,
+): Promise<{ metric: MetricEntry | null; error: string | null }> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: dbSizeData, error: dbSizeError } = await (supabase.rpc as any)(
-      'get_pg_database_size',
-    )
-
-    if (!dbSizeError && dbSizeData !== null && dbSizeData !== undefined) {
-      const sizeBytes = typeof dbSizeData === 'number' ? dbSizeData : Number(dbSizeData)
-      if (!Number.isNaN(sizeBytes)) {
-        collectedMetrics.push({
-          component: 'supabase',
-          metric_name: 'db_size_bytes',
-          metric_value: sizeBytes,
-          metric_limit: SUPABASE_DB_LIMIT_BYTES,
-          metadata: { source: 'pg_database_size' },
-        })
-      }
-    } else if (dbSizeError) {
-      // RPC function may not exist yet — try a fallback estimation
-      errors.push(`supabase.db_size: ${dbSizeError.message}`)
-    }
-  } catch {
-    errors.push('supabase.db_size: exception during collection')
-  }
-
-  // ═════════════════════════════════════════════════════════════════════════
-  // 2. Supabase — Active connections
-  // ═════════════════════════════════════════════════════════════════════════
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: connData, error: connError } = await (supabase.rpc as any)(
-      'get_pg_stat_activity_count',
-    )
-
-    if (!connError && connData !== null && connData !== undefined) {
-      const connections = typeof connData === 'number' ? connData : Number(connData)
-      if (!Number.isNaN(connections)) {
-        collectedMetrics.push({
-          component: 'supabase',
-          metric_name: 'connections_used',
-          metric_value: connections,
-          metric_limit: SUPABASE_CONNECTIONS_LIMIT,
-          metadata: { source: 'pg_stat_activity' },
-        })
-      }
-    } else if (connError) {
-      errors.push(`supabase.connections: ${connError.message}`)
-    }
-  } catch {
-    errors.push('supabase.connections: exception during collection')
-  }
-
-  // ═════════════════════════════════════════════════════════════════════════
-  // 3. Cloudinary — Usage (credits, storage, bandwidth)
-  // ═════════════════════════════════════════════════════════════════════════
-  const cloudinaryApiKey = process.env.CLOUDINARY_API_KEY
-  const cloudinaryApiSecret = process.env.CLOUDINARY_API_SECRET
-  const cloudinaryCloudName =
-    config.public.cloudinaryCloudName || process.env.CLOUDINARY_CLOUD_NAME || ''
-
-  if (cloudinaryApiKey && cloudinaryApiSecret && cloudinaryCloudName) {
-    try {
-      const credentials = Buffer.from(`${cloudinaryApiKey}:${cloudinaryApiSecret}`).toString(
-        'base64',
-      )
-      const usageData = await $fetch<CloudinaryUsageResponse>(
-        `https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/usage`,
-        {
-          headers: {
-            Authorization: `Basic ${credentials}`,
+    const { data, error } = await supabase.rpc(rpcName)
+    if (!error && data !== null && data !== undefined) {
+      const value = typeof data === 'number' ? data : Number(data)
+      if (!Number.isNaN(value)) {
+        return {
+          metric: {
+            component: 'supabase',
+            metric_name: metricName,
+            metric_value: value,
+            metric_limit: limit,
+            metadata: { source },
           },
+          error: null,
+        }
+      }
+    }
+    if (error) return { metric: null, error: `supabase.${metricName}: ${error.message}` }
+    return { metric: null, error: null }
+  } catch {
+    return { metric: null, error: `supabase.${metricName}: exception during collection` }
+  }
+}
+
+async function collectCloudinaryMetrics(config: {
+  public: { cloudinaryCloudName?: string }
+}): Promise<{ metrics: MetricEntry[]; error: string | null }> {
+  const apiKey = process.env.CLOUDINARY_API_KEY
+  const apiSecret = process.env.CLOUDINARY_API_SECRET
+  const cloudName = config.public.cloudinaryCloudName || process.env.CLOUDINARY_CLOUD_NAME || ''
+
+  if (!apiKey || !apiSecret || !cloudName) return { metrics: [], error: null }
+
+  try {
+    const credentials = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64')
+    const usageData = await $fetch<CloudinaryUsageResponse>(
+      `https://api.cloudinary.com/v1_1/${cloudName}/usage`,
+      { headers: { Authorization: `Basic ${credentials}` } },
+    )
+
+    const metrics: MetricEntry[] = []
+    if (usageData?.credits) {
+      metrics.push({
+        component: 'cloudinary',
+        metric_name: 'cloudinary_credits',
+        metric_value: usageData.credits.usage,
+        metric_limit: usageData.credits.limit,
+        metadata: {
+          plan: usageData.plan,
+          used_percent: usageData.credits.used_percent,
+          last_updated: usageData.last_updated,
         },
-      )
-
-      if (usageData?.credits) {
-        collectedMetrics.push({
-          component: 'cloudinary',
-          metric_name: 'cloudinary_credits',
-          metric_value: usageData.credits.usage,
-          metric_limit: usageData.credits.limit,
-          metadata: {
-            plan: usageData.plan,
-            used_percent: usageData.credits.used_percent,
-            last_updated: usageData.last_updated,
-          },
-        })
-      }
-
-      if (usageData?.storage) {
-        collectedMetrics.push({
-          component: 'cloudinary',
-          metric_name: 'cloudinary_storage',
-          metric_value: usageData.storage.usage,
-          metric_limit:
-            usageData.storage.credits_usage > 0 ? usageData.storage.credits_usage * 100 : null,
-          metadata: { source: 'cloudinary_admin_api' },
-        })
-      }
-    } catch {
-      errors.push('cloudinary: API call failed or credentials invalid')
+      })
     }
+    if (usageData?.storage) {
+      metrics.push({
+        component: 'cloudinary',
+        metric_name: 'cloudinary_storage',
+        metric_value: usageData.storage.usage,
+        metric_limit:
+          usageData.storage.credits_usage > 0 ? usageData.storage.credits_usage * 100 : null,
+        metadata: { source: 'cloudinary_admin_api' },
+      })
+    }
+    return { metrics, error: null }
+  } catch {
+    return { metrics: [], error: 'cloudinary: API call failed or credentials invalid' }
   }
+}
 
-  // ═════════════════════════════════════════════════════════════════════════
-  // 4. Resend — Count today's emails from analytics_events
-  // ═════════════════════════════════════════════════════════════════════════
-  const resendApiKey = config.resendApiKey || process.env.RESEND_API_KEY
+async function collectResendMetrics(
+  supabase: SupabaseClient,
+  resendApiKey: string | undefined,
+): Promise<{ metric: MetricEntry | null; error: string | null }> {
+  if (!resendApiKey) return { metric: null, error: null }
+  try {
+    const todayStart = new Date()
+    todayStart.setUTCHours(0, 0, 0, 0)
+    const { count, error } = await supabase
+      .from('email_logs')
+      .select('id', { count: 'exact', head: true })
+      .gte('sent_at', todayStart.toISOString())
 
-  if (resendApiKey) {
-    try {
-      const todayStart = new Date()
-      todayStart.setUTCHours(0, 0, 0, 0)
-
-      const { count, error: countError } = await supabase
-        .from('email_logs')
-        .select('id', { count: 'exact', head: true })
-        .gte('sent_at', todayStart.toISOString())
-
-      if (!countError && count !== null) {
-        collectedMetrics.push({
+    if (!error && count !== null) {
+      return {
+        metric: {
           component: 'resend',
           metric_name: 'resend_emails_today',
           metric_value: count,
           metric_limit: RESEND_DAILY_LIMIT,
           metadata: { source: 'email_logs', since: todayStart.toISOString() },
-        })
+        },
+        error: null,
       }
-    } catch {
-      errors.push('resend: failed to count today emails')
     }
+    return { metric: null, error: null }
+  } catch {
+    return { metric: null, error: 'resend: failed to count today emails' }
   }
+}
 
-  // ═════════════════════════════════════════════════════════════════════════
-  // 5. Sentry — Skip if no token configured
-  // ═════════════════════════════════════════════════════════════════════════
-  const sentryToken = process.env.SENTRY_AUTH_TOKEN
-  if (sentryToken) {
-    // Sentry API integration can be added here when needed
-    // For now, just acknowledge the token exists but don't collect metrics
-  }
-
-  // ═════════════════════════════════════════════════════════════════════════
-  // 6. Stripe — Count recent webhook failures (from payments table)
-  // ═════════════════════════════════════════════════════════════════════════
+async function collectStripeMetrics(
+  supabase: SupabaseClient,
+): Promise<{ metric: MetricEntry | null; error: string | null }> {
   try {
     const last24h = new Date(Date.now() - 24 * 3600000).toISOString()
-
-    const { count: failedWebhookCount, error: webhookError } = await supabase
+    const { count, error } = await supabase
       .from('payments')
       .select('id', { count: 'exact', head: true })
       .eq('status', 'failed')
       .gte('created_at', last24h)
 
-    if (!webhookError && failedWebhookCount !== null) {
-      // Treat 5 failures as 100% (emergency threshold ceiling)
-      const maxFailures = 5
-      collectedMetrics.push({
-        component: 'stripe',
-        metric_name: 'stripe_webhook_failures',
-        metric_value: failedWebhookCount,
-        metric_limit: maxFailures,
-        metadata: { source: 'payments_table', since: last24h },
-      })
+    if (!error && count !== null) {
+      return {
+        metric: {
+          component: 'stripe',
+          metric_name: 'stripe_webhook_failures',
+          metric_value: count,
+          metric_limit: 5,
+          metadata: { source: 'payments_table', since: last24h },
+        },
+        error: null,
+      }
     }
+    return { metric: null, error: null }
   } catch {
-    errors.push('stripe: failed to count webhook failures')
+    return { metric: null, error: 'stripe: failed to count webhook failures' }
   }
+}
 
-  // ═════════════════════════════════════════════════════════════════════════
-  // Insert all collected metrics into infra_metrics
-  // ═════════════════════════════════════════════════════════════════════════
-  let metricsInserted = 0
+// ── Alert Processing ───────────────────────────────────────────────────────
 
-  if (collectedMetrics.length > 0) {
-    const rows = collectedMetrics.map((m) => ({
-      component: m.component,
-      metric_name: m.metric_name,
-      metric_value: m.metric_value,
-      metric_limit: m.metric_limit,
-      metadata: m.metadata,
-      recorded_at: new Date().toISOString(),
-    }))
+function determineAlertLevel(
+  usagePercent: number,
+  thresholdConfig: ThresholdConfig,
+): AlertLevel | null {
+  if (usagePercent >= thresholdConfig.emergency) return 'emergency'
+  if (usagePercent >= thresholdConfig.critical) return 'critical'
+  if (usagePercent >= thresholdConfig.warning) return 'warning'
+  return null
+}
 
-    const { error: insertError } = await supabase.from('infra_metrics').insert(rows as never)
+interface AlertCandidate {
+  metric: MetricEntry
+  usagePercent: number
+  alertLevel: AlertLevel
+}
 
-    if (insertError) {
-      errors.push(`infra_metrics insert: ${insertError.message}`)
-    } else {
-      metricsInserted = rows.length
-    }
-  }
+function buildAlertCandidates(collectedMetrics: MetricEntry[]): AlertCandidate[] {
+  return collectedMetrics
+    .filter((m) => m.metric_limit !== null && m.metric_limit > 0)
+    .flatMap((metric) => {
+      const usagePercent = (metric.metric_value / metric.metric_limit!) * 100
+      const thresholdConfig = THRESHOLDS[metric.metric_name]
+      if (!thresholdConfig) return []
+      const alertLevel = determineAlertLevel(usagePercent, thresholdConfig)
+      if (!alertLevel) return []
+      return [{ metric, usagePercent, alertLevel }]
+    })
+}
 
-  // ═════════════════════════════════════════════════════════════════════════
-  // Check thresholds and generate alerts with cooldown
-  // ═════════════════════════════════════════════════════════════════════════
+async function sendAlertEmail(
+  metric: MetricEntry,
+  roundedPercent: number,
+  alertLevel: AlertLevel,
+  internalSecret: string | undefined,
+): Promise<void> {
+  const { infraAlertEmailHtml, infraAlertSubject } =
+    await import('../../utils/email-templates/infra-alert')
+  const html = infraAlertEmailHtml({
+    component: metric.component,
+    metric: metric.metric_name,
+    usagePercent: roundedPercent,
+    value: metric.metric_value,
+    limit: metric.metric_limit,
+    level: alertLevel,
+  })
+  await $fetch('/api/email/send', {
+    method: 'POST',
+    headers: internalSecret ? { 'x-internal-secret': internalSecret } : {},
+    body: {
+      to: 'tankiberica@gmail.com',
+      subject: infraAlertSubject(metric.component, roundedPercent),
+      html,
+      templateKey: 'infra_alert',
+    },
+  }).catch(() => {})
+}
+
+async function checkAndCreateAlerts(
+  supabase: SupabaseClient,
+  collectedMetrics: MetricEntry[],
+  internalSecret: string | undefined,
+): Promise<number> {
+  const candidates = buildAlertCandidates(collectedMetrics)
   let alertsCreated = 0
 
-  for (const metric of collectedMetrics) {
-    if (metric.metric_limit === null || metric.metric_limit <= 0) continue
-
-    const usagePercent = (metric.metric_value / metric.metric_limit) * 100
-    const thresholdConfig = THRESHOLDS[metric.metric_name]
-    if (!thresholdConfig) continue
-
-    // Determine the highest alert level exceeded
-    let alertLevel: AlertLevel | null = null
-    if (usagePercent >= thresholdConfig.emergency) {
-      alertLevel = 'emergency'
-    } else if (usagePercent >= thresholdConfig.critical) {
-      alertLevel = 'critical'
-    } else if (usagePercent >= thresholdConfig.warning) {
-      alertLevel = 'warning'
-    }
-
-    if (!alertLevel) continue
-
-    // Check cooldown — skip if a recent alert exists for this combo
-    const cooldownHours = COOLDOWNS[alertLevel]
-    const cooldownSince = new Date(Date.now() - cooldownHours * 3600000).toISOString()
+  for (const { metric, usagePercent, alertLevel } of candidates) {
+    const cooldownSince = new Date(Date.now() - COOLDOWNS[alertLevel] * 3600000).toISOString()
 
     const { data: recentAlerts } = await supabase
       .from('infra_alerts')
@@ -313,9 +290,9 @@ export default defineEventHandler(async (event) => {
       .gte('sent_at', cooldownSince)
       .limit(1)
 
-    if ((recentAlerts?.length ?? 0) > 0) continue // Still in cooldown
+    if ((recentAlerts?.length ?? 0) > 0) continue
 
-    // Create the alert
+    const roundedPercent = Math.round(usagePercent * 10) / 10
     const message = `${metric.component}.${metric.metric_name} at ${usagePercent.toFixed(1)}% (${metric.metric_value}/${metric.metric_limit})`
 
     const { error: alertError } = await supabase.from('infra_alerts').insert({
@@ -323,44 +300,73 @@ export default defineEventHandler(async (event) => {
       metric_name: metric.metric_name,
       alert_level: alertLevel,
       message,
-      usage_percent: Math.round(usagePercent * 10) / 10,
+      usage_percent: roundedPercent,
       sent_at: new Date().toISOString(),
     } as never)
 
-    if (!alertError) {
-      alertsCreated++
-
-      // Attempt to send alert email via internal email route
-      try {
-        const { infraAlertEmailHtml, infraAlertSubject } =
-          await import('../../utils/email-templates/infra-alert')
-        const html = infraAlertEmailHtml({
-          component: metric.component,
-          metric: metric.metric_name,
-          usagePercent: Math.round(usagePercent * 10) / 10,
-          value: metric.metric_value,
-          limit: metric.metric_limit,
-          level: alertLevel,
-        })
-        const subject = infraAlertSubject(metric.component, Math.round(usagePercent * 10) / 10)
-
-        await $fetch('/api/email/send', {
-          method: 'POST',
-          headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
-          body: {
-            to: 'tankiberica@gmail.com',
-            subject,
-            html,
-            templateKey: 'infra_alert',
-          },
-        }).catch(() => {
-          // Email send is best-effort; alert was already saved
-        })
-      } catch {
-        // Email template import or send failed; alert was already saved
-      }
-    }
+    if (alertError) continue
+    alertsCreated++
+    await sendAlertEmail(metric, roundedPercent, alertLevel, internalSecret).catch(() => {})
   }
+
+  return alertsCreated
+}
+
+// ── Handler ────────────────────────────────────────────────────────────────────
+
+export default defineEventHandler(async (event) => {
+  const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
+  verifyCronSecret(event, body?.secret)
+
+  const supabase = serverSupabaseServiceRole(event)
+  const config = useRuntimeConfig()
+  const _internalSecret = config.cronSecret || process.env.CRON_SECRET
+  const collectedMetrics: MetricEntry[] = []
+  const errors: string[] = []
+
+  // Collect all metrics — single-metric collectors
+  const singleResults = [
+    await collectSupabaseRpc(
+      supabase,
+      'get_pg_database_size',
+      'db_size_bytes',
+      SUPABASE_DB_LIMIT_BYTES,
+      'pg_database_size',
+    ),
+    await collectSupabaseRpc(
+      supabase,
+      'get_pg_stat_activity_count',
+      'connections_used',
+      SUPABASE_CONNECTIONS_LIMIT,
+      'pg_stat_activity',
+    ),
+    await collectResendMetrics(supabase, config.resendApiKey || process.env.RESEND_API_KEY),
+    await collectStripeMetrics(supabase),
+  ]
+  for (const r of singleResults) {
+    if (r.metric) collectedMetrics.push(r.metric)
+    if (r.error) errors.push(r.error)
+  }
+
+  // Multi-metric collector (cloudinary)
+  const cloudinary = await collectCloudinaryMetrics(config)
+  collectedMetrics.push(...cloudinary.metrics)
+  if (cloudinary.error) errors.push(cloudinary.error)
+
+  // Insert all collected metrics
+  let metricsInserted = 0
+  if (collectedMetrics.length > 0) {
+    const rows = collectedMetrics.map((m) => ({
+      ...m,
+      recorded_at: new Date().toISOString(),
+    }))
+    const { error: insertError } = await supabase.from('infra_metrics').insert(rows as never)
+    if (insertError) errors.push(`infra_metrics insert: ${insertError.message}`)
+    else metricsInserted = rows.length
+  }
+
+  // Check thresholds and generate alerts
+  const alertsCreated = await checkAndCreateAlerts(supabase, collectedMetrics, _internalSecret)
 
   return {
     metricsInserted,

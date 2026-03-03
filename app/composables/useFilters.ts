@@ -38,6 +38,88 @@ interface FiltersState {
   sliderRanges: Record<string, SliderRange>
 }
 
+type VehicleAttrs = { attributes_json: Record<string, unknown> | null }
+
+function getAttrValue(v: VehicleAttrs, filter: AttributeDefinition): unknown {
+  return v.attributes_json?.[filter.id] ?? v.attributes_json?.[filter.name]
+}
+
+function isValidAttrValue(val: unknown): boolean {
+  return val !== null && val !== undefined && val !== ''
+}
+
+function extractFilterValues(
+  vehicles: VehicleAttrs[],
+  needsValues: AttributeDefinition[],
+): Record<string, string[]> {
+  const result: Record<string, string[]> = {}
+  for (const filter of needsValues) {
+    const valuesSet = new Set<string>()
+    for (const v of vehicles) {
+      const val = getAttrValue(v, filter)
+      if (isValidAttrValue(val)) valuesSet.add(String(val))
+    }
+    result[filter.name] = Array.from(valuesSet).sort((a, b) => a.localeCompare(b))
+  }
+  return result
+}
+
+function computeRangeForFilter(
+  vehicles: VehicleAttrs[],
+  filter: AttributeDefinition,
+): SliderRange | null {
+  let min = Infinity
+  let max = -Infinity
+  for (const v of vehicles) {
+    const val = getAttrValue(v, filter)
+    if (!isValidAttrValue(val)) continue
+    const num = Number(val)
+    if (Number.isNaN(num)) continue
+    if (num < min) min = num
+    if (num > max) max = num
+  }
+  return min !== Infinity ? { min, max } : null
+}
+
+function computeSliderRanges(
+  vehicles: VehicleAttrs[],
+  needsRange: AttributeDefinition[],
+): Record<string, SliderRange> {
+  const result: Record<string, SliderRange> = {}
+  for (const filter of needsRange) {
+    const range = computeRangeForFilter(vehicles, filter)
+    if (range) result[filter.name] = range
+  }
+  return result
+}
+
+function isFilterHiddenByTick(
+  filterName: string,
+  definitions: AttributeDefinition[],
+  activeTicks: Set<string>,
+): boolean {
+  for (const tickDef of definitions) {
+    if (tickDef.type !== 'tick') continue
+    if (!activeTicks.has(tickDef.name)) continue
+    const hides = (tickDef.options?.hides as string[]) || []
+    if (hides.includes(filterName)) return true
+  }
+  return false
+}
+
+function isExtraFilterVisible(
+  filterName: string,
+  definitions: AttributeDefinition[],
+  activeTicks: Set<string>,
+): boolean {
+  for (const tickDef of definitions) {
+    if (tickDef.type !== 'tick') continue
+    const extras = (tickDef.options?.extra_filters as string[]) || []
+    if (extras.includes(filterName)) return activeTicks.has(tickDef.name)
+  }
+  return false
+}
+
 const defaultState: FiltersState = {
   definitions: [],
   categoryFilters: [],
@@ -90,6 +172,34 @@ export function useFilters() {
     }
   }
 
+  async function fetchSubcategoryFilters(subcategoryId: string): Promise<AttributeDefinition[]> {
+    const { data: subcatData, error: subcatErr } = await supabase
+      .from('subcategories')
+      .select('applicable_filters')
+      .eq('id', subcategoryId)
+      .single()
+
+    if (subcatErr) throw subcatErr
+    const subcatRow = subcatData as { applicable_filters: string[] | null } | null
+    const subcatFilterIds = subcatRow?.applicable_filters || []
+
+    if (subcatFilterIds.length === 0) return []
+
+    const { data: subcatFilterData, error: subcatFilterErr } = await supabase
+      .from('attributes')
+      .select('*')
+      .in('id', subcatFilterIds)
+      .eq('status', 'published')
+      .eq('is_hidden', false)
+      .order('sort_order', { ascending: true })
+
+    if (subcatFilterErr) throw subcatFilterErr
+    return ((subcatFilterData as AttributeDefinition[]) || []).map((f) => ({
+      ...f,
+      source: 'subcategory' as const,
+    }))
+  }
+
   /**
    * Fetch filters from both category and subcategory with deduplication.
    * If the same filter exists on both levels, it only shows once.
@@ -137,34 +247,7 @@ export function useFilters() {
       }
 
       // Fetch subcategory-level filters (from subcategories.applicable_filters)
-      let subcatFiltersList: AttributeDefinition[] = []
-      if (subcategoryId) {
-        const { data: subcatData, error: subcatErr } = await supabase
-          .from('subcategories')
-          .select('applicable_filters')
-          .eq('id', subcategoryId)
-          .single()
-
-        if (subcatErr) throw subcatErr
-        const subcatRow = subcatData as { applicable_filters: string[] | null } | null
-        const subcatFilterIds = subcatRow?.applicable_filters || []
-
-        if (subcatFilterIds.length > 0) {
-          const { data: subcatFilterData, error: subcatFilterErr } = await supabase
-            .from('attributes')
-            .select('*')
-            .in('id', subcatFilterIds)
-            .eq('status', 'published')
-            .eq('is_hidden', false)
-            .order('sort_order', { ascending: true })
-
-          if (subcatFilterErr) throw subcatFilterErr
-          subcatFiltersList = ((subcatFilterData as AttributeDefinition[]) || []).map((f) => ({
-            ...f,
-            source: 'subcategory' as const,
-          }))
-        }
-      }
+      const subcatFiltersList = subcategoryId ? await fetchSubcategoryFilters(subcategoryId) : []
 
       state.value.categoryFilters = catFilters
       state.value.subcategoryFilters = subcatFiltersList
@@ -214,40 +297,10 @@ export function useFilters() {
     if (vehicleErr) throw vehicleErr
     if (!data) return
 
-    const vehicles = data as { attributes_json: Record<string, unknown> | null }[]
+    const vehicles = data as VehicleAttrs[]
 
-    // Extract unique values for desplegable filters
-    for (const filter of needsValues) {
-      const valuesSet = new Set<string>()
-      for (const v of vehicles) {
-        if (!v.attributes_json) continue
-        const val = v.attributes_json[filter.id] ?? v.attributes_json[filter.name]
-        if (val !== null && val !== undefined && val !== '') {
-          valuesSet.add(String(val))
-        }
-      }
-      state.value.vehicleFilterValues[filter.name] = Array.from(valuesSet).sort((a, b) =>
-        a.localeCompare(b),
-      )
-    }
-
-    // Compute slider ranges
-    for (const filter of needsRange) {
-      let min = Infinity
-      let max = -Infinity
-      for (const v of vehicles) {
-        if (!v.attributes_json) continue
-        const val = v.attributes_json[filter.id] ?? v.attributes_json[filter.name]
-        const num = Number(val)
-        if (!Number.isNaN(num) && val !== null && val !== undefined && val !== '') {
-          if (num < min) min = num
-          if (num > max) max = num
-        }
-      }
-      if (min !== Infinity && max !== -Infinity) {
-        state.value.sliderRanges[filter.name] = { min, max }
-      }
-    }
+    Object.assign(state.value.vehicleFilterValues, extractFilterValues(vehicles, needsValues))
+    Object.assign(state.value.sliderRanges, computeSliderRanges(vehicles, needsRange))
   }
 
   /**
@@ -274,33 +327,13 @@ export function useFilters() {
 
   const visibleFilters = computed(() => {
     const activeTicks = new Set<string>()
-
     for (const def of state.value.definitions) {
-      if (def.type === 'tick' && state.value.activeFilters[def.name]) {
-        activeTicks.add(def.name)
-      }
+      if (def.type === 'tick' && state.value.activeFilters[def.name]) activeTicks.add(def.name)
     }
 
     return state.value.definitions.filter((def) => {
-      // Check if any active tick hides this filter
-      for (const tickDef of state.value.definitions) {
-        if (tickDef.type !== 'tick' || !activeTicks.has(tickDef.name)) continue
-        const hides = (tickDef.options?.hides as string[]) || []
-        if (hides.includes(def.name)) return false
-      }
-
-      // If this filter is an extra, only show if its parent tick is active
-      if (def.is_extra) {
-        for (const tickDef of state.value.definitions) {
-          if (tickDef.type !== 'tick') continue
-          const extras = (tickDef.options?.extra_filters as string[]) || []
-          if (extras.includes(def.name)) {
-            return activeTicks.has(tickDef.name)
-          }
-        }
-        return false
-      }
-
+      if (isFilterHiddenByTick(def.name, state.value.definitions, activeTicks)) return false
+      if (def.is_extra) return isExtraFilterVisible(def.name, state.value.definitions, activeTicks)
       return true
     })
   })

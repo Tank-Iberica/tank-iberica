@@ -31,6 +31,10 @@ const RATE_LIMIT = {
   max: 5,
 }
 
+function extractErrorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err)
+}
+
 const ALLOWED_DOMAINS = [
   'mascus.es',
   'mascus.com',
@@ -41,6 +45,53 @@ const ALLOWED_DOMAINS = [
   'truckscout24.es',
   'truckscout24.com',
 ]
+
+async function fetchPageHtml(url: string): Promise<string> {
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; Tracciona Stock Import)',
+      Accept: 'text/html',
+    },
+    signal: AbortSignal.timeout(15000),
+  })
+  if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  return response.text()
+}
+
+async function createDraftVehicles(
+  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  dealerId: string,
+  vehicles: ExtractedVehicle[],
+  hostname: string,
+): Promise<number> {
+  const toImport = vehicles.slice(0, 20).filter((v) => v?.brand)
+  let imported = 0
+
+  for (let i = 0; i < toImport.length; i++) {
+    const v = toImport[i]!
+    const slug = `${v.brand}-${v.model || 'vehicle'}-${Date.now()}-${i}`
+      .toLowerCase()
+      .replaceAll(/[^a-z0-9-]/g, '-')
+      .replaceAll(/-+/g, '-')
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: insertError } = await (supabase.from('vehicles') as any).insert({
+      dealer_id: dealerId,
+      brand: v.brand,
+      model: v.model || '',
+      year: v.year,
+      price: v.price,
+      description_es: v.description || '',
+      slug,
+      status: 'draft',
+      import_source: hostname,
+    })
+
+    if (!insertError) imported++
+  }
+
+  return imported
+}
 
 export default defineEventHandler(async (event) => {
   // Auth required
@@ -105,24 +156,11 @@ export default defineEventHandler(async (event) => {
   // Fetch the page
   let pageHtml: string
   try {
-    const response = await fetch(body.url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Tracciona Stock Import)',
-        Accept: 'text/html',
-      },
-      signal: AbortSignal.timeout(15000),
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
-    }
-
-    pageHtml = await response.text()
+    pageHtml = await fetchPageHtml(body.url)
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err)
     throw createError({
       statusCode: 502,
-      statusMessage: `Could not fetch the page: ${msg}`,
+      statusMessage: `Could not fetch the page: ${extractErrorMessage(err)}`,
     })
   }
 
@@ -174,34 +212,7 @@ ${truncatedHtml}`,
       return { success: true, imported: 0, message: 'No vehicles found on the page' }
     }
 
-    // Create draft vehicles (max 20 per import)
-    const maxImport = Math.min(vehicles.length, 20)
-    let imported = 0
-
-    for (let i = 0; i < maxImport; i++) {
-      const v = vehicles[i]
-      if (!v || !v.brand) continue
-
-      const slug = `${v.brand}-${v.model || 'vehicle'}-${Date.now()}-${i}`
-        .toLowerCase()
-        .replaceAll(/[^a-z0-9-]/g, '-')
-        .replaceAll(/-+/g, '-')
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: insertError } = await (supabase.from('vehicles') as any).insert({
-        dealer_id: dealer.id,
-        brand: v.brand,
-        model: v.model || '',
-        year: v.year,
-        price: v.price,
-        description_es: v.description || '',
-        slug,
-        status: 'draft',
-        import_source: hostname,
-      })
-
-      if (!insertError) imported++
-    }
+    const imported = await createDraftVehicles(supabase, dealer.id, vehicles, hostname)
 
     return {
       success: true,
@@ -210,8 +221,7 @@ ${truncatedHtml}`,
       message: `${imported} vehicles imported as drafts. Review them in your dashboard.`,
     }
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err)
-    console.error(`[import-stock] AI extraction failed: ${msg}`)
+    console.error(`[import-stock] AI extraction failed: ${extractErrorMessage(err)}`)
     throw createError({
       statusCode: 500,
       statusMessage: 'Could not extract vehicle data from the page',

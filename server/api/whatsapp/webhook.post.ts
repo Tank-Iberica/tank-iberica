@@ -78,22 +78,14 @@ function normalizePhone(phone: string): string {
 /** Build all possible phone variants for lookup (with/without country code prefix) */
 function phoneVariants(phone: string): string[] {
   const digits = normalizePhone(phone)
-  const variants = new Set<string>()
+  const variants = new Set([digits, `+${digits}`])
 
-  // Original normalized
-  variants.add(digits)
+  // Spain country code variants
+  const hasSpainPrefix = digits.startsWith('34') && digits.length > 9
+  const isLocalSpanish = !digits.startsWith('34') && digits.length === 9
 
-  // With + prefix
-  variants.add(`+${digits}`)
-
-  // Without leading country code (try common: 34 for Spain)
-  if (digits.startsWith('34') && digits.length > 9) {
-    variants.add(digits.slice(2))
-    variants.add(`+${digits}`)
-  }
-
-  // If it doesn't start with country code, add the 34 variant
-  if (!digits.startsWith('34') && digits.length === 9) {
+  if (hasSpainPrefix) variants.add(digits.slice(2))
+  if (isLocalSpanish) {
     variants.add(`34${digits}`)
     variants.add(`+34${digits}`)
   }
@@ -139,197 +131,196 @@ async function insertSubmission(
   return rows[0] ?? null
 }
 
-export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig()
+// ── Signature verification ──────────────────────────────────────────────────
 
-  let payload: WhatsAppWebhookPayload
+type VerifyResult = { payload: WhatsAppWebhookPayload } | { earlyReturn: Record<string, unknown> }
 
-  // ── Signature verification (production) ─────────────────────────────────
+function verifyHmacSignature(rawBody: string, signature: string, appSecret: string): string | null {
+  const expected = 'sha256=' + createHmac('sha256', appSecret).update(rawBody).digest('hex')
+  try {
+    const sigBuf = Buffer.from(signature)
+    const expBuf = Buffer.from(expected)
+    if (sigBuf.length !== expBuf.length || !timingSafeEqual(sigBuf, expBuf))
+      return 'invalid_signature'
+    return null
+  } catch {
+    return 'signature_error'
+  }
+}
+
+async function verifyProductionPayload(
+  event: Parameters<Parameters<typeof defineEventHandler>[0]>[0],
+  appSecret: string,
+): Promise<VerifyResult> {
+  const rawBody = await readRawBody(event)
+  if (!rawBody) return { earlyReturn: { status: 'ok', error: 'empty_body' } }
+
+  const signature = getHeader(event, 'x-hub-signature-256')
+  if (!signature) return { earlyReturn: { status: 'ok', error: 'missing_signature' } }
+
+  const sigError = verifyHmacSignature(rawBody, signature, appSecret)
+  if (sigError) return { earlyReturn: { status: 'ok', error: sigError } }
+
+  try {
+    return { payload: JSON.parse(rawBody) as WhatsAppWebhookPayload }
+  } catch {
+    return { earlyReturn: { status: 'ok' } }
+  }
+}
+
+async function verifyAndParsePayload(
+  event: Parameters<Parameters<typeof defineEventHandler>[0]>[0],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: any,
+): Promise<VerifyResult> {
   const appSecret = config.whatsappAppSecret || process.env.WHATSAPP_APP_SECRET
 
   if (appSecret && process.env.NODE_ENV === 'production') {
-    // Read raw body for signature verification
-    const rawBody = await readRawBody(event)
-    if (!rawBody) {
-      return { status: 'ok', error: 'empty_body' }
-    }
+    return verifyProductionPayload(event, appSecret)
+  }
 
-    const signature = getHeader(event, 'x-hub-signature-256')
-    if (!signature) {
-      console.error('[WhatsApp Webhook] Missing x-hub-signature-256 header')
-      return { status: 'ok', error: 'missing_signature' }
-    }
+  if (!config.whatsappApiToken) {
+    const body = await readBody<WhatsAppWebhookPayload>(event)
+    console.warn(
+      '[WhatsApp Webhook] No API token configured (dev mode). Entries received:',
+      body?.entry?.length ?? 0,
+    )
+    return { earlyReturn: { status: 'ok', dev: true } }
+  }
 
-    const expectedSignature =
-      'sha256=' + createHmac('sha256', appSecret).update(rawBody).digest('hex')
+  try {
+    return { payload: await readBody<WhatsAppWebhookPayload>(event) }
+  } catch {
+    return { earlyReturn: { status: 'ok' } }
+  }
+}
 
-    try {
-      const sigBuffer = Buffer.from(signature)
-      const expectedBuffer = Buffer.from(expectedSignature)
-      if (
-        sigBuffer.length !== expectedBuffer.length ||
-        !timingSafeEqual(sigBuffer, expectedBuffer)
-      ) {
-        console.error('[WhatsApp Webhook] Invalid signature')
-        return { status: 'ok', error: 'invalid_signature' }
-      }
-    } catch {
-      console.error('[WhatsApp Webhook] Signature comparison failed')
-      return { status: 'ok', error: 'signature_error' }
-    }
+// ── Message extraction ──────────────────────────────────────────────────────
 
-    try {
-      payload = JSON.parse(rawBody) as WhatsAppWebhookPayload
-    } catch {
-      console.error('[WhatsApp Webhook] Failed to parse verified body')
-      return { status: 'ok' }
-    }
-  } else {
-    // Dev mode or no app secret: read body directly
-    if (!config.whatsappApiToken) {
-      const body = await readBody<WhatsAppWebhookPayload>(event)
-      console.warn(
-        '[WhatsApp Webhook] No API token configured (dev mode). Entries received:',
-        body?.entry?.length ?? 0,
-      )
-      return { status: 'ok', dev: true }
-    }
+function extractMessageContent(messages: WhatsAppMessage[]): {
+  textParts: string[]
+  mediaIds: string[]
+} {
+  const textParts: string[] = []
+  const mediaIds: string[] = []
 
-    try {
-      payload = await readBody<WhatsAppWebhookPayload>(event)
-    } catch {
-      console.error('[WhatsApp Webhook] Failed to parse request body')
-      return { status: 'ok' }
+  for (const msg of messages) {
+    if (msg.type === 'text' && msg.text?.body) {
+      textParts.push(msg.text.body)
+    } else if (msg.type === 'image' && msg.image?.id) {
+      mediaIds.push(msg.image.id)
+      if (msg.image.caption) textParts.push(msg.image.caption)
     }
   }
 
-  // Meta sends various webhook types; we only care about 'whatsapp_business_account'
+  return { textParts, mediaIds }
+}
+
+// ── Dealer lookup ───────────────────────────────────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function lookupDealer(supabase: any, senderPhone: string): Promise<DealerRow | null> {
+  const variants = phoneVariants(senderPhone)
+
+  const { data: waDealer } = await supabase
+    .from('dealers')
+    .select('id, user_id, phone, whatsapp, company_name')
+    .in('whatsapp', variants)
+    .limit(1)
+    .single()
+
+  if (waDealer) return waDealer as unknown as DealerRow
+
+  const { data: phoneDealer } = await supabase
+    .from('dealers')
+    .select('id, user_id, phone, whatsapp, company_name')
+    .in('phone', variants)
+    .limit(1)
+    .single()
+
+  return phoneDealer ? (phoneDealer as unknown as DealerRow) : null
+}
+
+// ── Per-change processor ─────────────────────────────────────────────────────
+
+async function processMessageChange(
+  change: WhatsAppChange,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  supabaseUrl: string,
+  supabaseKey: string,
+): Promise<void> {
+  if (change.field !== 'messages') return
+
+  const messages = change.value.messages ?? []
+  if (messages.length === 0) return
+
+  const senderPhone = messages[0]?.from
+  if (!senderPhone) return
+
+  const { textParts, mediaIds } = extractMessageContent(messages)
+  if (textParts.length === 0 && mediaIds.length === 0) return
+
+  const textContent = textParts.join('\n').trim() || null
+
+  const dealer = await lookupDealer(supabase, senderPhone)
+  if (!dealer) {
+    await sendWhatsAppMessage(
+      senderPhone,
+      'No est\u00E1s registrado como dealer en Tracciona. Visita tracciona.com para m\u00E1s informaci\u00F3n.',
+    )
+    return
+  }
+
+  const submission = await insertSubmission(supabaseUrl, supabaseKey, {
+    dealer_id: dealer.id,
+    phone_number: senderPhone,
+    media_ids: mediaIds,
+    text_content: textContent,
+    status: 'received',
+  })
+  if (!submission) return
+
+  await sendWhatsAppMessage(
+    senderPhone,
+    '\uD83D\uDCF8 Recibido. Estamos procesando tu veh\u00EDculo. Te avisaremos cuando est\u00E9 listo.',
+  )
+
+  $fetch('/api/whatsapp/process', {
+    method: 'POST',
+    body: { submissionId: submission.id },
+  }).catch((err: unknown) => {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error(`[WhatsApp Webhook] Process trigger failed for ${submission.id}:`, message)
+  })
+}
+
+// ── Handler ─────────────────────────────────────────────────────────────────
+
+export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig()
+
+  const result = await verifyAndParsePayload(event, config)
+  if ('earlyReturn' in result) return result.earlyReturn
+  const payload = result.payload
+
   if (payload.object !== 'whatsapp_business_account') {
     return { status: 'ok' }
   }
 
   const supabase = serverSupabaseServiceRole(event)
-
-  // Get Supabase REST credentials for direct API calls (whatsapp_submissions not in types)
   const supabaseUrl = process.env.SUPABASE_URL || ''
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
-  // Process each entry/change
-  for (const entry of payload.entry ?? []) {
-    for (const change of entry.changes) {
-      if (change.field !== 'messages') continue
-
-      const value = change.value
-      const messages = value.messages ?? []
-
-      // Skip status updates (delivery receipts, read receipts)
-      if (messages.length === 0) continue
-
-      // Group messages by sender
-      const senderPhone = messages[0]?.from
-      if (!senderPhone) continue
-
-      // Collect text and image data from all messages in this batch
-      const textParts: string[] = []
-      const mediaIds: string[] = []
-
-      for (const msg of messages) {
-        if (msg.type === 'text' && msg.text?.body) {
-          textParts.push(msg.text.body)
-        } else if (msg.type === 'image' && msg.image?.id) {
-          mediaIds.push(msg.image.id)
-          // Also capture image captions as text
-          if (msg.image.caption) {
-            textParts.push(msg.image.caption)
-          }
-        }
-        // Other message types are ignored for now
-      }
-
-      // Skip if there's nothing useful
-      if (textParts.length === 0 && mediaIds.length === 0) continue
-
-      const textContent = textParts.join('\n').trim() || null
-
-      try {
-        // Look up dealer by phone or whatsapp field
-        const variants = phoneVariants(senderPhone)
-        let dealer: DealerRow | null = null
-
-        // Try whatsapp field first
-        const { data: waDealer } = await supabase
-          .from('dealers')
-          .select('id, user_id, phone, whatsapp, company_name')
-          .in('whatsapp', variants)
-          .limit(1)
-          .single()
-
-        if (waDealer) {
-          dealer = waDealer as unknown as DealerRow
-        } else {
-          // Fallback: try phone field
-          const { data: phoneDealer } = await supabase
-            .from('dealers')
-            .select('id, user_id, phone, whatsapp, company_name')
-            .in('phone', variants)
-            .limit(1)
-            .single()
-
-          if (phoneDealer) {
-            dealer = phoneDealer as unknown as DealerRow
-          }
-        }
-
-        if (!dealer) {
-          // Not a registered dealer — send auto-reply
-          await sendWhatsAppMessage(
-            senderPhone,
-            'No est\u00E1s registrado como dealer en Tracciona. Visita tracciona.com para m\u00E1s informaci\u00F3n.',
-          )
-          continue
-        }
-
-        // Create submission record via REST (table not yet in generated types)
-        const submission = await insertSubmission(supabaseUrl, supabaseKey, {
-          dealer_id: dealer.id,
-          phone_number: senderPhone,
-          media_ids: mediaIds,
-          text_content: textContent,
-          status: 'received',
-        })
-
-        if (!submission) {
-          continue
-        }
-
-        const submissionId = submission.id
-
-        // Send acknowledgment
-        await sendWhatsAppMessage(
-          senderPhone,
-          '\uD83D\uDCF8 Recibido. Estamos procesando tu veh\u00EDculo. Te avisaremos cuando est\u00E9 listo.',
-        )
-
-        // Trigger async processing (fire and forget — don't await)
-        $fetch('/api/whatsapp/process', {
-          method: 'POST',
-          body: { submissionId },
-        }).catch((err: unknown) => {
-          const message = err instanceof Error ? err.message : 'Unknown error'
-          console.error(`[WhatsApp Webhook] Process trigger failed for ${submissionId}:`, message)
-        })
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Unknown error'
-        console.error(
-          '[WhatsApp Webhook] Error processing messages from',
-          senderPhone,
-          ':',
-          message,
-        )
-      }
+  const changes = (payload.entry ?? []).flatMap((e) => e.changes)
+  for (const change of changes) {
+    try {
+      await processMessageChange(change, supabase, supabaseUrl, supabaseKey)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown error'
+      console.error('[WhatsApp Webhook] Error processing change:', message)
     }
   }
 
-  // Always return 200 to Meta
   return { status: 'ok' }
 })

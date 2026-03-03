@@ -18,6 +18,138 @@ import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories
 import { useAdminVehicles } from '~/composables/admin/useAdminVehicles'
 import { useToast } from '~/composables/useToast'
 
+// ─── Resumen PDF section builders ───────────────────────────
+function buildResumenTotalesHtml(s: {
+  totalIngresos: number
+  totalGastos: number
+  balanceNeto: number
+}): string {
+  const netoClass = s.balanceNeto >= 0 ? 'positive' : 'negative'
+  return `<h2>Totales</h2>
+  <table>
+    <tr><td>Total Ingresos</td><td class="positive">+${s.totalIngresos.toFixed(2)}\u20AC</td></tr>
+    <tr><td>Total Gastos</td><td class="negative">-${s.totalGastos.toFixed(2)}\u20AC</td></tr>
+    <tr><td><strong>Balance Neto</strong></td><td class="${netoClass}"><strong>${s.balanceNeto.toFixed(2)}\u20AC</strong></td></tr>
+  </table>`
+}
+
+function buildResumenDesgloseHtml(
+  byReason: Record<string, { ingresos: number; gastos: number }>,
+): string {
+  let html = `<h2>Desglose por Raz\u00F3n</h2>
+  <table><thead><tr><th>Raz\u00F3n</th><th>Ingresos</th><th>Gastos</th><th>Neto</th></tr></thead><tbody>`
+  for (const [key, label] of Object.entries(BALANCE_REASONS)) {
+    const data = byReason[key]
+    if (!data || (data.ingresos <= 0 && data.gastos <= 0)) continue
+    const neto = (data.ingresos || 0) - (data.gastos || 0)
+    const netoClass = neto >= 0 ? 'positive' : 'negative'
+    html += `<tr><td>${label}</td><td class="positive">+${(data.ingresos || 0).toFixed(2)}\u20AC</td><td class="negative">-${(data.gastos || 0).toFixed(2)}\u20AC</td><td class="${netoClass}">${neto.toFixed(2)}\u20AC</td></tr>`
+  }
+  return html + '</tbody></table>'
+}
+
+function buildResumenMensualHtml(
+  monthly: Map<string, { ingresos: number; gastos: number }>,
+): string {
+  let html = `<h2>Desglose Mensual</h2>
+  <table><thead><tr><th>Mes</th><th>Ingresos</th><th>Gastos</th><th>Neto</th></tr></thead><tbody>`
+  for (const [month, data] of monthly) {
+    const neto = data.ingresos - data.gastos
+    const netoClass = neto >= 0 ? 'positive' : 'negative'
+    html += `<tr><td>${month}</td><td class="positive">+${data.ingresos.toFixed(2)}\u20AC</td><td class="negative">-${data.gastos.toFixed(2)}\u20AC</td><td class="${netoClass}">${neto.toFixed(2)}\u20AC</td></tr>`
+  }
+  return html + '</tbody></table>'
+}
+
+function buildResumenSections(
+  opts: Record<string, boolean>,
+  summaryData: {
+    totalIngresos: number
+    totalGastos: number
+    balanceNeto: number
+    byReason: Record<string, { ingresos: number; gastos: number }>
+  },
+  monthly: Map<string, { ingresos: number; gastos: number }>,
+): string {
+  const parts: string[] = []
+  if (opts.totales) parts.push(buildResumenTotalesHtml(summaryData))
+  if (opts.desglose) parts.push(buildResumenDesgloseHtml(summaryData.byReason))
+  if (opts.mensual) parts.push(buildResumenMensualHtml(monthly))
+  return parts.join('')
+}
+
+// ─── Column definition builder for PDF/Excel exports ───────
+interface BalanceColumnDef {
+  header: string
+  cell: (e: BalanceEntry) => string
+}
+
+const ALL_BALANCE_COLS: Array<{ key: string } & BalanceColumnDef> = [
+  {
+    key: 'tipo',
+    header: 'Tipo',
+    cell: (e) => `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '\u2191' : '\u2193'}</td>`,
+  },
+  { key: 'fecha', header: 'Fecha', cell: (e) => `<td>${e.fecha}</td>` },
+  { key: 'razon', header: 'Raz\u00F3n', cell: (e) => `<td>${BALANCE_REASONS[e.razon]}</td>` },
+  { key: 'detalle', header: 'Detalle', cell: (e) => `<td>${e.detalle || ''}</td>` },
+  {
+    key: 'importe',
+    header: 'Importe',
+    cell: (e) =>
+      `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}\u20AC</td>`,
+  },
+  { key: 'estado', header: 'Estado', cell: (e) => `<td>${BALANCE_STATUS_LABELS[e.estado]}</td>` },
+  { key: 'notas', header: 'Notas', cell: (e) => `<td>${e.notas || ''}</td>` },
+]
+
+function buildBalanceColumnDefs(cols: Record<string, boolean>): BalanceColumnDef[] {
+  return ALL_BALANCE_COLS.filter((c) => cols[c.key])
+}
+
+// ─── Resumen Excel section builders ─────────────────────────
+function buildResumenTotalesLines(s: {
+  totalIngresos: number
+  totalGastos: number
+  balanceNeto: number
+}): string[] {
+  return [
+    `TOTAL INGRESOS;+${s.totalIngresos.toFixed(2)}\u20AC;;`,
+    `TOTAL GASTOS;;-${s.totalGastos.toFixed(2)}\u20AC;`,
+    `BALANCE NETO;;;${s.balanceNeto.toFixed(2)}\u20AC`,
+    '',
+  ]
+}
+
+function buildResumenDesgloseLines(s: {
+  byReason: Record<string, { ingresos: number; gastos: number }>
+}): string[] {
+  const lines = ['DESGLOSE POR RAZ\u00D3N;;;']
+  for (const [key, label] of Object.entries(BALANCE_REASONS)) {
+    const data = s.byReason[key]
+    if (!data) continue
+    const neto = (data.ingresos || 0) - (data.gastos || 0)
+    lines.push(
+      `${label};+${(data.ingresos || 0).toFixed(2)}\u20AC;-${(data.gastos || 0).toFixed(2)}\u20AC;${neto.toFixed(2)}\u20AC`,
+    )
+  }
+  lines.push('')
+  return lines
+}
+
+function buildResumenMensualLines(
+  monthly: [string, { ingresos: number; gastos: number }][],
+): string[] {
+  const lines = ['DESGLOSE MENSUAL;;;']
+  for (const [month, data] of monthly) {
+    const neto = data.ingresos - data.gastos
+    lines.push(
+      `${month};+${data.ingresos.toFixed(2)}\u20AC;-${data.gastos.toFixed(2)}\u20AC;${neto.toFixed(2)}\u20AC`,
+    )
+  }
+  return lines
+}
+
 // ─── Empty form helper ──────────────────────────────────────
 function downloadFile(content: string, filename: string, type: string) {
   const blob = new Blob([content], { type })
@@ -146,26 +278,18 @@ export function useAdminBalanceUI() {
   const sortCol = ref<'fecha' | 'importe' | 'tipo' | 'razon'>('fecha')
   const sortAsc = ref(false)
 
+  const SORT_COMPARATORS: Record<string, (a: BalanceEntry, b: BalanceEntry) => number> = {
+    fecha: (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime(),
+    importe: (a, b) => a.importe - b.importe,
+    tipo: (a, b) => a.tipo.localeCompare(b.tipo),
+    razon: (a, b) => a.razon.localeCompare(b.razon),
+  }
+
   const sortedEntries = computed(() => {
     const arr = [...entries.value]
-    arr.sort((a, b) => {
-      let cmp = 0
-      switch (sortCol.value) {
-        case 'fecha':
-          cmp = new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
-          break
-        case 'importe':
-          cmp = a.importe - b.importe
-          break
-        case 'tipo':
-          cmp = a.tipo.localeCompare(b.tipo)
-          break
-        case 'razon':
-          cmp = a.razon.localeCompare(b.razon)
-          break
-      }
-      return sortAsc.value ? cmp : -cmp
-    })
+    const cmpFn = SORT_COMPARATORS[sortCol.value]
+    if (!cmpFn) return arr
+    arr.sort((a, b) => (sortAsc.value ? cmpFn(a, b) : -cmpFn(a, b)))
     return arr
   })
 
@@ -292,29 +416,28 @@ export function useAdminBalanceUI() {
     showExportModal.value = false
   }
 
+  const EXCEL_COL_DEFS: Array<{
+    key: keyof typeof exportColumns
+    header: string
+    cell: (e: BalanceEntry) => string
+  }> = [
+    { key: 'tipo', header: 'Tipo', cell: (e) => (e.tipo === 'ingreso' ? 'Ingreso' : 'Gasto') },
+    { key: 'fecha', header: 'Fecha', cell: (e) => e.fecha },
+    { key: 'razon', header: 'Raz\u00F3n', cell: (e) => BALANCE_REASONS[e.razon] },
+    { key: 'detalle', header: 'Detalle', cell: (e) => e.detalle || '' },
+    {
+      key: 'importe',
+      header: 'Importe',
+      cell: (e) => `${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}\u20AC`,
+    },
+    { key: 'estado', header: 'Estado', cell: (e) => BALANCE_STATUS_LABELS[e.estado] },
+    { key: 'notas', header: 'Notas', cell: (e) => e.notas || '' },
+  ]
+
   function exportToExcel(data: BalanceEntry[]) {
-    const headers: string[] = []
-    if (exportColumns.tipo) headers.push('Tipo')
-    if (exportColumns.fecha) headers.push('Fecha')
-    if (exportColumns.razon) headers.push('Raz\u00F3n')
-    if (exportColumns.detalle) headers.push('Detalle')
-    if (exportColumns.importe) headers.push('Importe')
-    if (exportColumns.estado) headers.push('Estado')
-    if (exportColumns.notas) headers.push('Notas')
-
-    const rows = data.map((e) => {
-      const row: string[] = []
-      if (exportColumns.tipo) row.push(e.tipo === 'ingreso' ? 'Ingreso' : 'Gasto')
-      if (exportColumns.fecha) row.push(e.fecha)
-      if (exportColumns.razon) row.push(BALANCE_REASONS[e.razon])
-      if (exportColumns.detalle) row.push(e.detalle || '')
-      if (exportColumns.importe)
-        row.push(`${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}\u20AC`)
-      if (exportColumns.estado) row.push(BALANCE_STATUS_LABELS[e.estado])
-      if (exportColumns.notas) row.push(e.notas || '')
-      return row
-    })
-
+    const activeCols = EXCEL_COL_DEFS.filter((c) => exportColumns[c.key])
+    const headers = activeCols.map((c) => c.header)
+    const rows = data.map((e) => activeCols.map((c) => c.cell(e)))
     const csv = [headers.join(';'), ...rows.map((r) => r.join(';'))].join('\n')
     downloadFile(csv, `balance_${filters.year || 'todos'}.csv`, 'text/csv')
   }
@@ -351,28 +474,13 @@ export function useAdminBalanceUI() {
     <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>
     <table><thead><tr>`
 
-    if (exportColumns.tipo) html += '<th>Tipo</th>'
-    if (exportColumns.fecha) html += '<th>Fecha</th>'
-    if (exportColumns.razon) html += '<th>Raz\u00F3n</th>'
-    if (exportColumns.detalle) html += '<th>Detalle</th>'
-    if (exportColumns.importe) html += '<th>Importe</th>'
-    if (exportColumns.estado) html += '<th>Estado</th>'
-    if (exportColumns.notas) html += '<th>Notas</th>'
+    const colDefs = buildBalanceColumnDefs(exportColumns)
+    html += colDefs.map((c) => `<th>${c.header}</th>`).join('')
 
     html += '</tr></thead><tbody>'
 
     for (const e of data) {
-      html += '<tr>'
-      if (exportColumns.tipo)
-        html += `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '\u2191' : '\u2193'}</td>`
-      if (exportColumns.fecha) html += `<td>${e.fecha}</td>`
-      if (exportColumns.razon) html += `<td>${BALANCE_REASONS[e.razon]}</td>`
-      if (exportColumns.detalle) html += `<td>${e.detalle || ''}</td>`
-      if (exportColumns.importe)
-        html += `<td class="${e.tipo}">${e.tipo === 'ingreso' ? '+' : '-'}${e.importe.toFixed(2)}\u20AC</td>`
-      if (exportColumns.estado) html += `<td>${BALANCE_STATUS_LABELS[e.estado]}</td>`
-      if (exportColumns.notas) html += `<td>${e.notas || ''}</td>`
-      html += '</tr>'
+      html += '<tr>' + colDefs.map((c) => c.cell(e)).join('') + '</tr>'
     }
 
     html += `</tbody></table>
@@ -399,40 +507,9 @@ export function useAdminBalanceUI() {
 
   function exportResumenExcel() {
     const lines: string[] = ['Concepto;Ingresos;Gastos;Neto']
-
-    if (resumenOptions.totales) {
-      lines.push(
-        `TOTAL INGRESOS;+${summary.value.totalIngresos.toFixed(2)}\u20AC;;`,
-        `TOTAL GASTOS;;-${summary.value.totalGastos.toFixed(2)}\u20AC;`,
-        `BALANCE NETO;;;${summary.value.balanceNeto.toFixed(2)}\u20AC`,
-        '',
-      )
-    }
-
-    if (resumenOptions.desglose) {
-      lines.push('DESGLOSE POR RAZ\u00D3N;;;')
-      for (const [key, label] of Object.entries(BALANCE_REASONS)) {
-        const data = summary.value.byReason[key]
-        if (data) {
-          const neto = (data.ingresos || 0) - (data.gastos || 0)
-          lines.push(
-            `${label};+${(data.ingresos || 0).toFixed(2)}\u20AC;-${(data.gastos || 0).toFixed(2)}\u20AC;${neto.toFixed(2)}\u20AC`,
-          )
-        }
-      }
-      lines.push('')
-    }
-
-    if (resumenOptions.mensual) {
-      lines.push('DESGLOSE MENSUAL;;;')
-      for (const [month, data] of monthlyBreakdown.value) {
-        const neto = data.ingresos - data.gastos
-        lines.push(
-          `${month};+${data.ingresos.toFixed(2)}\u20AC;-${data.gastos.toFixed(2)}\u20AC;${neto.toFixed(2)}\u20AC`,
-        )
-      }
-    }
-
+    if (resumenOptions.totales) lines.push(...buildResumenTotalesLines(summary.value))
+    if (resumenOptions.desglose) lines.push(...buildResumenDesgloseLines(summary.value))
+    if (resumenOptions.mensual) lines.push(...buildResumenMensualLines(monthlyBreakdown.value))
     downloadFile(lines.join('\n'), `resumen_balance_${filters.year || 'todos'}.csv`, 'text/csv')
   }
 
@@ -467,37 +544,7 @@ export function useAdminBalanceUI() {
     <p class="subtitle">Resumen Balance ${filters.year || 'Todos los a\u00F1os'}</p>
     <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>`
 
-    if (resumenOptions.totales) {
-      html += `<h2>Totales</h2>
-      <table>
-        <tr><td>Total Ingresos</td><td class="positive">+${summary.value.totalIngresos.toFixed(2)}\u20AC</td></tr>
-        <tr><td>Total Gastos</td><td class="negative">-${summary.value.totalGastos.toFixed(2)}\u20AC</td></tr>
-        <tr><td><strong>Balance Neto</strong></td><td class="${summary.value.balanceNeto >= 0 ? 'positive' : 'negative'}"><strong>${summary.value.balanceNeto.toFixed(2)}\u20AC</strong></td></tr>
-      </table>`
-    }
-
-    if (resumenOptions.desglose) {
-      html += `<h2>Desglose por Raz\u00F3n</h2>
-      <table><thead><tr><th>Raz\u00F3n</th><th>Ingresos</th><th>Gastos</th><th>Neto</th></tr></thead><tbody>`
-      for (const [key, label] of Object.entries(BALANCE_REASONS)) {
-        const data = summary.value.byReason[key]
-        if (data && (data.ingresos > 0 || data.gastos > 0)) {
-          const neto = (data.ingresos || 0) - (data.gastos || 0)
-          html += `<tr><td>${label}</td><td class="positive">+${(data.ingresos || 0).toFixed(2)}\u20AC</td><td class="negative">-${(data.gastos || 0).toFixed(2)}\u20AC</td><td class="${neto >= 0 ? 'positive' : 'negative'}">${neto.toFixed(2)}\u20AC</td></tr>`
-        }
-      }
-      html += '</tbody></table>'
-    }
-
-    if (resumenOptions.mensual) {
-      html += `<h2>Desglose Mensual</h2>
-      <table><thead><tr><th>Mes</th><th>Ingresos</th><th>Gastos</th><th>Neto</th></tr></thead><tbody>`
-      for (const [month, data] of monthlyBreakdown.value) {
-        const neto = data.ingresos - data.gastos
-        html += `<tr><td>${month}</td><td class="positive">+${data.ingresos.toFixed(2)}\u20AC</td><td class="negative">-${data.gastos.toFixed(2)}\u20AC</td><td class="${neto >= 0 ? 'positive' : 'negative'}">${neto.toFixed(2)}\u20AC</td></tr>`
-      }
-      html += '</tbody></table>'
-    }
+    html += buildResumenSections(resumenOptions, summary.value, monthlyBreakdown.value)
 
     html += `</div>
     <div class="footer">TRACCIONA.COM</div>
