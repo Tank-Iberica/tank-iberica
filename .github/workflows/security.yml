@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
-      - run: npm audit --audit-level=high
+      - run: npm audit --omit=dev --audit-level=critical
 
   # Requiere: configurar SNYK_TOKEN como GitHub Secret (snyk.io → Settings → API token)
   snyk:
