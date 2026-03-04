@@ -1,0 +1,32 @@
+version: 2
+
+updates:
+  # npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels: ["dependencies"]
+    # Major framework updates require manual review
+    ignore:
+      - dependency-name: "nuxt"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vue"
+        update-types: ["version-update:semver-major"]
+    # Group minor/patch updates to reduce PR noise
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+        update-types: ["minor", "patch"]
+      nuxt-ecosystem:
+        patterns: ["@nuxt/*", "@nuxtjs/*"]
+        update-types: ["minor", "patch"]
+
+  # GitHub Actions versions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels: ["ci"]

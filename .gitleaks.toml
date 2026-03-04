@@ -1,0 +1,23 @@
+# Gitleaks configuration for Tracciona
+# Docs: https://github.com/gitleaks/gitleaks#configuration
+
+title = "Tracciona Secret Scanning"
+
+# Use default rules (detects API keys, tokens, passwords, etc.)
+# Only add allowlists for confirmed false positives
+
+[allowlist]
+  description = "Known safe patterns"
+  paths = [
+    '''node_modules/''',
+    '''.nuxt/''',
+    '''.output/''',
+    '''coverage/''',
+    '''docs/legacy/''',
+    '''\.env\.example$''',
+    '''package-lock\.json$''',
+  ]
+  # Example placeholder values used in code (not real secrets)
+  regexes = [
+    '''(?i)example|placeholder|test_key|your[-_]?api[-_]?key|xxx+|sk_test_''',
+  ]

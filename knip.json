@@ -1,0 +1,54 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "app/app.vue",
+    "app/error.vue",
+    "app/pages/**/*.vue",
+    "app/layouts/**/*.vue",
+    "app/plugins/**/*.ts",
+    "app/middleware/**/*.ts",
+    "server/**/*.ts",
+    "tests/**/*.ts"
+  ],
+  "project": ["app/**/*.{ts,vue}", "server/**/*.ts", "i18n/**/*.json", "types/**/*.ts"],
+  "ignore": [
+    "**/*.d.ts",
+    ".nuxt/**",
+    ".output/**",
+    "coverage/**",
+    "sonar/**",
+    "scripts/legacy/**",
+    "docs/**"
+  ],
+  "ignoreDependencies": [
+    "@nuxt/eslint-config",
+    "@nuxt/test-utils",
+    "eslint-config-prettier",
+    "eslint-plugin-prettier",
+    "happy-dom",
+    "husky",
+    "lint-staged",
+    "@lhci/cli"
+  ],
+  "nuxt": {
+    "entry": ["app/app.vue", "nuxt.config.ts"]
+  },
+  "paths": {
+    "~/*": ["app/*"],
+    "@/*": ["app/*"],
+    "#app": ["node_modules/nuxt/dist/app"],
+    "#imports": [".nuxt/imports.d.ts"]
+  },
+  "rules": {
+    "files": "warn",
+    "dependencies": "warn",
+    "devDependencies": "warn",
+    "optionalPeerDependencies": "off",
+    "unlisted": "off",
+    "binaries": "off",
+    "unresolved": "off",
+    "exports": "warn",
+    "types": "warn",
+    "duplicates": "warn"
+  }
+}
