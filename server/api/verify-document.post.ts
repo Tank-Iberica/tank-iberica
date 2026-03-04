@@ -115,6 +115,58 @@ function validateBody(body: VerifyDocumentBody): string[] {
   return errors
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function checkVehicleAccess(
+  supabase: any,
+  userId: string,
+  dealerId: string | null,
+): Promise<boolean> {
+  const { data: userDealer, error: dealerErr } = await supabase
+    .from('dealers')
+    .select('id')
+    .eq('user_id', userId)
+    .single()
+
+  const ownsVehicle = !dealerErr && userDealer && userDealer.id === dealerId
+  if (ownsVehicle) return true
+
+  const { data: userData, error: userErr } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', userId)
+    .single()
+
+  return !userErr && userData?.role === 'admin'
+}
+
+function compareExtractedData(extracted: ExtractedData, declared: DeclaredData): string[] {
+  const discrepancies: string[] = []
+
+  if (extracted.brand !== null && extracted.brand.toLowerCase() !== declared.brand.toLowerCase()) {
+    discrepancies.push(
+      `Brand mismatch: declared "${declared.brand}", extracted "${extracted.brand}"`,
+    )
+  }
+  if (extracted.model !== null && extracted.model.toLowerCase() !== declared.model.toLowerCase()) {
+    discrepancies.push(
+      `Model mismatch: declared "${declared.model}", extracted "${extracted.model}"`,
+    )
+  }
+  if (extracted.year !== null && extracted.year !== declared.year) {
+    discrepancies.push(`Year mismatch: declared ${declared.year}, extracted ${extracted.year}`)
+  }
+  if (extracted.km !== null) {
+    const kmDifference = Math.abs(extracted.km - declared.km)
+    if (kmDifference > declared.km * 0.05) {
+      discrepancies.push(
+        `Km mismatch: declared ${declared.km}, extracted ${extracted.km} (difference: ${kmDifference})`,
+      )
+    }
+  }
+
+  return discrepancies
+}
+
 export default defineEventHandler(async (event): Promise<VerifyDocumentResponse> => {
   // 1. Authenticate user
   const user = await serverSupabaseUser(event)
@@ -177,41 +229,12 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
   }
 
   // 6. Verify vehicle ownership
-  const { data: userDealer, error: dealerErr } = await supabase
-    .from('dealers')
-    .select('id')
-    .eq('user_id', user.id)
-    .single()
-
-  if (dealerErr || !userDealer) {
-    // Check if user is admin
-    const { data: userData, error: userErr } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (userErr || !userData || userData.role !== 'admin') {
-      throw createError({
-        statusCode: 403,
-        message: 'You do not have permission to verify documents for this vehicle',
-      })
-    }
-  } else if (vehicle.dealer_id !== userDealer.id) {
-    // User has a dealer account but doesn't own this vehicle
-    // Check if they're admin
-    const { data: userData, error: userErr } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (userErr || !userData || userData.role !== 'admin') {
-      throw createError({
-        statusCode: 403,
-        message: 'You do not have permission to verify documents for this vehicle',
-      })
-    }
+  const hasAccess = await checkVehicleAccess(supabase, user.id, vehicle.dealer_id)
+  if (!hasAccess) {
+    throw createError({
+      statusCode: 403,
+      message: 'You do not have permission to verify documents for this vehicle',
+    })
   }
 
   // 7. Call AI Vision for document analysis (with fallback to mock)
@@ -271,42 +294,7 @@ Use null for fields not found in the document.`,
   }
 
   // 8. Compare extracted data with declared data
-  const discrepancies: string[] = []
-
-  if (
-    extractedData.brand !== null &&
-    extractedData.brand.toLowerCase() !== declaredData.brand.toLowerCase()
-  ) {
-    discrepancies.push(
-      `Brand mismatch: declared "${declaredData.brand}", extracted "${extractedData.brand}"`,
-    )
-  }
-
-  if (
-    extractedData.model !== null &&
-    extractedData.model.toLowerCase() !== declaredData.model.toLowerCase()
-  ) {
-    discrepancies.push(
-      `Model mismatch: declared "${declaredData.model}", extracted "${extractedData.model}"`,
-    )
-  }
-
-  if (extractedData.year !== null && extractedData.year !== declaredData.year) {
-    discrepancies.push(
-      `Year mismatch: declared ${declaredData.year}, extracted ${extractedData.year}`,
-    )
-  }
-
-  // Allow a 5% tolerance for km readings (odometer photos can be slightly off)
-  if (extractedData.km !== null) {
-    const kmTolerance = declaredData.km * 0.05
-    const kmDifference = Math.abs(extractedData.km - declaredData.km)
-    if (kmDifference > kmTolerance) {
-      discrepancies.push(
-        `Km mismatch: declared ${declaredData.km}, extracted ${extractedData.km} (difference: ${kmDifference})`,
-      )
-    }
-  }
+  const discrepancies = compareExtractedData(extractedData, declaredData)
 
   const isMatch = discrepancies.length === 0
 

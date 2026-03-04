@@ -155,7 +155,7 @@ defineProps<{
   text-align: right;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .churn-stat__value {
     font-size: var(--font-size-2xl);
   }

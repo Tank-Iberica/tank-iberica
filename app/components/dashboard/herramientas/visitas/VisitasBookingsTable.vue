@@ -273,7 +273,7 @@ function getStatusClass(status: BookingStatus): string {
   background: var(--color-gray-300);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .section-card {
     padding: var(--spacing-6);
   }

@@ -68,7 +68,7 @@ defineProps<{
   letter-spacing: 0.5px;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .vehicle-description {
     margin-bottom: var(--spacing-4);
   }

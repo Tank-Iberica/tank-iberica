@@ -157,7 +157,7 @@ const { t } = useI18n()
   background: var(--bg-secondary);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .actions-row {
     flex-direction: row;
   }

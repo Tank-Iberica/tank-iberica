@@ -148,7 +148,7 @@ defineExpose({ scrollToBottom })
   color: var(--text-auxiliary);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .message-bubble-wrap {
     max-width: 65%;
   }

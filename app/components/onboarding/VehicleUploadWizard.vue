@@ -521,7 +521,7 @@ function confettiStyle(n: number): Record<string, string> {
 }
 
 /* Desktop */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .upload-wizard {
     padding: var(--spacing-6);
   }
@@ -541,7 +541,7 @@ function confettiStyle(n: number): Record<string, string> {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .step-indicator {
     min-width: 88px;
   }

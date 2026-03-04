@@ -343,7 +343,7 @@ defineEmits<{
   gap: 0.25rem;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .vehicle-actions-row {
     flex-wrap: nowrap;
   }
@@ -374,7 +374,7 @@ defineEmits<{
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .contact-btn {
     font-size: var(--font-size-sm);
     padding: 0.5rem 0.75rem;

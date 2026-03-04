@@ -70,7 +70,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
                   Number(($event.target as HTMLInputElement).value) || 0,
                 )
               "
-            />
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Categoría de venta *</label>
@@ -93,7 +93,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
               type="text"
               class="form-input"
               @input="updateSellField('buyer_name', ($event.target as HTMLInputElement).value)"
-            />
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Contacto comprador</label>
@@ -102,7 +102,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
               type="text"
               class="form-input"
               @input="updateSellField('buyer_contact', ($event.target as HTMLInputElement).value)"
-            />
+            >
           </div>
           <!-- Auto-balance info -->
           <div v-if="sellForm.sale_price > 0" class="tx-preview">
@@ -143,7 +143,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
                   Number(($event.target as HTMLInputElement).value) || 0,
                 )
               "
-            />
+            >
           </div>
           <div class="form-row-2">
             <div class="form-group">
@@ -154,7 +154,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
                 class="form-input"
                 required
                 @input="updateRentalField('start_date', ($event.target as HTMLInputElement).value)"
-              />
+              >
             </div>
             <div class="form-group">
               <label class="form-label">Fecha fin</label>
@@ -163,7 +163,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
                 type="date"
                 class="form-input"
                 @input="updateRentalField('end_date', ($event.target as HTMLInputElement).value)"
-              />
+              >
             </div>
           </div>
           <div class="form-group">
@@ -173,7 +173,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
               type="text"
               class="form-input"
               @input="updateRentalField('renter_name', ($event.target as HTMLInputElement).value)"
-            />
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Contacto arrendatario</label>
@@ -184,7 +184,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
               @input="
                 updateRentalField('renter_contact', ($event.target as HTMLInputElement).value)
               "
-            />
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Notas</label>
@@ -241,7 +241,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
 }
 
 .transaction-modal {
-  max-width: 480px;
+  max-width: 30em;
 }
 
 .transaction-modal .form-group {

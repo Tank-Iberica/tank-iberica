@@ -200,7 +200,7 @@ async function handleLogout() {
   z-index: var(--z-header);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .admin-header {
     left: var(--sidebar-width);
     min-height: 60px;
@@ -230,7 +230,7 @@ async function handleLogout() {
   padding: var(--spacing-2);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .hamburger-btn {
     display: none;
   }
@@ -294,7 +294,7 @@ async function handleLogout() {
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .view-site-label {
     display: inline;
   }
@@ -338,7 +338,7 @@ async function handleLogout() {
   color: var(--text-primary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .user-name {
     display: inline;
   }

@@ -162,7 +162,7 @@ function onNotesInput(event: Event) {
 }
 
 .modal-medium {
-  max-width: 600px;
+  max-width: 37.5em;
 }
 
 .modal-header {
@@ -325,7 +325,7 @@ function onNotesInput(event: Event) {
   font-weight: 500;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .detail-grid {
     grid-template-columns: 1fr;
   }

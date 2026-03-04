@@ -175,7 +175,7 @@ defineEmits<{
   align-items: flex-start;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .filter-backdrop {
     display: none !important;
   }

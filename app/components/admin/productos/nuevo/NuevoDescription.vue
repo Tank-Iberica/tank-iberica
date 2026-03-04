@@ -116,7 +116,7 @@ const emit = defineEmits<{
   text-align: right;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .row-2 {
     grid-template-columns: 1fr;
   }

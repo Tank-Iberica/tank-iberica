@@ -83,7 +83,7 @@ export default defineNuxtPlugin(() => {
     try {
       // Remove script tag
       if (gtagScript?.parentNode) {
-        gtagScript.parentNode.removeChild(gtagScript)
+        gtagScript.remove()
         gtagScript = null
       }
 

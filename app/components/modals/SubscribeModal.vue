@@ -116,33 +116,33 @@ watch(
                 autocomplete="email"
                 required
                 placeholder="tu@email.com"
-              >
+              />
             </div>
 
             <div class="prefs-group">
               <h3>{{ $t('subscribe.selectPrefs') }}</h3>
               <label class="checkbox-label">
-                <input v-model="prefs.web" type="checkbox" >
+                <input v-model="prefs.web" type="checkbox" />
                 <span>{{ $t('subscribe.prefWeb') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.press" type="checkbox" >
+                <input v-model="prefs.press" type="checkbox" />
                 <span>{{ $t('subscribe.prefPress') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.newsletter" type="checkbox" >
+                <input v-model="prefs.newsletter" type="checkbox" />
                 <span>{{ $t('subscribe.prefNewsletter') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.featured" type="checkbox" >
+                <input v-model="prefs.featured" type="checkbox" />
                 <span>{{ $t('subscribe.prefFeatured') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.events" type="checkbox" >
+                <input v-model="prefs.events" type="checkbox" />
                 <span>{{ $t('subscribe.prefEvents') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.csr" type="checkbox" >
+                <input v-model="prefs.csr" type="checkbox" />
                 <span>{{ $t('subscribe.prefCsr') }}</span>
               </label>
             </div>
@@ -345,14 +345,14 @@ watch(
   transform: translateY(100%);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .modal-backdrop {
     align-items: center;
     padding: 24px;
   }
 
   .modal-container {
-    max-width: 480px;
+    max-width: 30em;
     border-radius: 12px;
   }
 

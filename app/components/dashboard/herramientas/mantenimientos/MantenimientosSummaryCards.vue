@@ -73,7 +73,7 @@ const { t } = useI18n()
   color: #7c3aed;
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .summary-cards {
     grid-template-columns: 1fr;
   }

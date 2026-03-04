@@ -203,7 +203,7 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 }
 
 /* ── Desktop layout ────────────────────────────────────────────── */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   /* On desktop, always show cards — no accordion */
   .column-cards {
     display: flex;

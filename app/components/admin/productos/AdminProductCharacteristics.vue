@@ -17,9 +17,9 @@ const emit = defineEmits<{
       Sin características adicionales. Pulsa "+ Añadir" para crear una.
     </div>
     <div v-for="c in characteristics" :key="c.id" class="char-row">
-      <input v-model="c.key" type="text" placeholder="Nombre (ej: Motor)" >
-      <input v-model="c.value_es" type="text" placeholder="Valor ES" >
-      <input v-model="c.value_en" type="text" placeholder="Valor EN" >
+      <input v-model="c.key" type="text" placeholder="Nombre (ej: Motor)" />
+      <input v-model="c.value_es" type="text" placeholder="Valor ES" />
+      <input v-model="c.value_en" type="text" placeholder="Valor EN" />
       <button class="btn-x" @click="emit('remove', c.id)">×</button>
     </div>
   </div>
@@ -65,7 +65,7 @@ const emit = defineEmits<{
   padding: 16px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .char-row {
     grid-template-columns: 1fr;
   }

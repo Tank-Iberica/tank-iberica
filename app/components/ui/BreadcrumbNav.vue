@@ -86,7 +86,7 @@ defineProps<{
   flex-shrink: 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .breadcrumb-current {
     max-width: none;
   }

@@ -129,7 +129,7 @@ function onSearchInput(event: Event): void {
   font-size: 0.8rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .filters-bar {
     flex-direction: row;
   }
@@ -139,7 +139,7 @@ function onSearchInput(event: Event): void {
   }
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .filters-bar {
     flex-direction: column;
   }

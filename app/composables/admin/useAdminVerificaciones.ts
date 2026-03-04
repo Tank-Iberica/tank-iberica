@@ -1,5 +1,5 @@
 import { localizedField } from '~/composables/useLocalized'
-import { formatPrice } from '~/composables/shared/useListingUtils'
+export { formatPrice } from '~/composables/shared/useListingUtils'
 
 // ============================================
 // TYPES
@@ -57,9 +57,6 @@ export interface VehicleVerificationEntry {
   docs: VerificationDocument[]
   verificationLevel: string
 }
-
-// Re-export formatPrice for subcomponents
-export { formatPrice }
 
 export function useAdminVerificaciones() {
   const { t } = useI18n()

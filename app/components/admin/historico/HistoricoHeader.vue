@@ -61,7 +61,7 @@ defineEmits<{
   font-size: 1.1rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .header-actions {
     width: 100%;
     justify-content: flex-end;

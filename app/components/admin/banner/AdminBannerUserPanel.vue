@@ -238,7 +238,7 @@ const emit = defineEmits<{
   cursor: not-allowed;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header {
     flex-direction: column;
     align-items: stretch;

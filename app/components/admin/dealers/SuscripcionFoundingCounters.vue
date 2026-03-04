@@ -65,13 +65,13 @@ defineProps<{
   color: var(--color-error);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .founding-stats {
     flex-direction: column;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30em) {
   .founding-stat-card {
     flex-direction: column;
     align-items: flex-start;

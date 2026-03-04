@@ -407,15 +407,15 @@ function updateBioLang(lang: string, value: string) {
   color: var(--bg-primary);
 }
 
-/* Responsive: 480px */
-@media (min-width: 480px) {
+/* Responsive: 30em */
+@media (min-width: 30em) {
   .color-row {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-/* Responsive: 768px */
-@media (min-width: 768px) {
+/* Responsive: 48em */
+@media (min-width: 48em) {
   .lang-row {
     flex-direction: row;
   }
@@ -429,8 +429,8 @@ function updateBioLang(lang: string, value: string) {
   }
 }
 
-/* Responsive: 1024px */
-@media (min-width: 1024px) {
+/* Responsive: 64em */
+@media (min-width: 64em) {
   .config-card {
     padding: var(--spacing-8);
   }

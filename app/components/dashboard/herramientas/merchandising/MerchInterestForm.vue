@@ -77,7 +77,7 @@ function onChange(field: keyof MerchForm, event: Event) {
           :value="form.quantity"
           :placeholder="$t('dashboard.tools.merchandising.quantityPlaceholder')"
           @input="onInput('quantity', $event)"
-        >
+        />
       </div>
 
       <div class="field">
@@ -94,7 +94,7 @@ function onChange(field: keyof MerchForm, event: Event) {
           :placeholder="$t('dashboard.tools.merchandising.emailPlaceholder')"
           required
           @input="onInput('email', $event)"
-        >
+        />
       </div>
 
       <div class="field">
@@ -307,14 +307,14 @@ function onChange(field: keyof MerchForm, event: Event) {
   font-style: italic;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .btn-submit {
     width: auto;
     align-self: flex-start;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .form-section {
     padding: 32px;
   }

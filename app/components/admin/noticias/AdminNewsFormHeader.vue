@@ -151,7 +151,7 @@ defineEmits<{
   background: var(--color-error-bg, #fef2f2);
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .nf-right {
     width: 100%;
     justify-content: flex-end;

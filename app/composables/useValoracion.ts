@@ -125,6 +125,25 @@ function confidenceColor(confidence: string): string {
       return 'var(--color-error)'
   }
 }
+function computeTrendFromHistory(historyRows: Array<Record<string, unknown>>): {
+  trend: 'rising' | 'falling' | 'stable'
+  trendPct: number
+} {
+  if (historyRows.length < 2) return { trend: 'stable', trendPct: 0 }
+  const recent = Number(historyRows[0]!.avg_price) || 0
+  const previous = Number(historyRows[1]!.avg_price) || 0
+  if (previous <= 0) return { trend: 'stable', trendPct: 0 }
+  const trendPct = Math.round(((recent - previous) / previous) * 100)
+  const trend = trendPct > 2 ? 'rising' : trendPct < -2 ? 'falling' : 'stable'
+  return { trend, trendPct }
+}
+
+function computeConfidenceLevel(sampleSize: number): 'high' | 'medium' | 'low' {
+  if (sampleSize >= 20) return 'high'
+  if (sampleSize >= 10) return 'medium'
+  return 'low'
+}
+
 function trendIcon(trend: string): string {
   switch (trend) {
     case 'rising':
@@ -265,27 +284,16 @@ export function useValoracion() {
           .order('month', { ascending: false })
           .limit(2)
 
-        const historyRows = (historyData || []) as Array<Record<string, unknown>>
-
-        if (historyRows.length >= 2) {
-          const recent = Number(historyRows[0]!.avg_price) || 0
-          const previous = Number(historyRows[1]!.avg_price) || 0
-          if (previous > 0) {
-            trendPct = Math.round(((recent - previous) / previous) * 100)
-            if (trendPct > 2) trend = 'rising'
-            else if (trendPct < -2) trend = 'falling'
-            else trend = 'stable'
-          }
-        }
+        ;({ trend, trendPct } = computeTrendFromHistory(
+          (historyData || []) as Array<Record<string, unknown>>,
+        ))
       } catch {
         // price_history may not exist yet
       }
 
       /* 6. Confidence: based on sample size */
       const sampleSize = prices.length
-      let confidence: 'high' | 'medium' | 'low' = 'low'
-      if (sampleSize >= 20) confidence = 'high'
-      else if (sampleSize >= 10) confidence = 'medium'
+      const confidence = computeConfidenceLevel(sampleSize)
 
       /* Average days to sell (mock based on sample) */
       const avgDaysToSell =

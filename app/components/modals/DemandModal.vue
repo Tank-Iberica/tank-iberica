@@ -328,7 +328,7 @@ watch(
                       @input="
                         setFilterValue(filter.name, ($event.target as HTMLInputElement).value)
                       "
-                    >
+                    />
                   </div>
 
                   <!-- Slider / Calc → text input (demand: single value preference) -->
@@ -349,7 +349,7 @@ watch(
                       @input="
                         setFilterValue(filter.name, ($event.target as HTMLInputElement).value)
                       "
-                    >
+                    />
                   </div>
 
                   <!-- Tick → checkbox -->
@@ -362,7 +362,7 @@ watch(
                         @change="
                           setFilterValue(filter.name, ($event.target as HTMLInputElement).checked)
                         "
-                      >
+                      />
                       <span>{{ getFilterLabel(filter, locale) }}</span>
                     </label>
                   </div>
@@ -382,7 +382,7 @@ watch(
                   type="text"
                   class="form-input"
                   :placeholder="$t('demand.brandPlaceholder')"
-                >
+                />
               </div>
 
               <!-- Year range -->
@@ -439,7 +439,7 @@ watch(
                   :aria-describedby="validationErrors.contactName ? 'err-demand-name' : undefined"
                   autocomplete="name"
                   required
-                >
+                />
                 <p
                   v-if="validationErrors.contactName"
                   id="err-demand-name"
@@ -462,7 +462,7 @@ watch(
                   :aria-describedby="validationErrors.contactEmail ? 'err-demand-email' : undefined"
                   autocomplete="email"
                   required
-                >
+                />
                 <p
                   v-if="validationErrors.contactEmail"
                   id="err-demand-email"
@@ -481,7 +481,7 @@ watch(
                   type="tel"
                   class="form-input"
                   autocomplete="tel"
-                >
+                />
               </div>
 
               <div class="form-group">
@@ -508,7 +508,7 @@ watch(
                     :aria-describedby="
                       validationErrors.termsAccepted ? 'err-demand-terms' : undefined
                     "
-                  >
+                  />
                   <span>{{ $t('demand.acceptTerms') }}</span>
                 </label>
                 <p
@@ -796,14 +796,14 @@ textarea.form-input {
   transform: translateY(100%);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .modal-backdrop {
     align-items: center;
     padding: var(--spacing-24);
   }
 
   .modal-container {
-    max-width: 600px;
+    max-width: 37.5em;
     max-height: 85vh;
     border-radius: var(--border-radius);
   }

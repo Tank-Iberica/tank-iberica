@@ -124,7 +124,7 @@ defineProps<{
   text-align: center;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .history-item {
     flex-direction: row;
     align-items: center;

@@ -212,7 +212,7 @@
   grid-template-columns: repeat(2, 1fr);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .stats-grid--8 {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -517,7 +517,7 @@
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .tab-header {
     flex-direction: column;
     align-items: stretch;
@@ -545,11 +545,11 @@
   }
 
   .admin-table {
-    min-width: 600px;
+    min-width: 37.5em;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30em) {
   .stats-grid {
     grid-template-columns: 1fr 1fr;
     gap: 8px;

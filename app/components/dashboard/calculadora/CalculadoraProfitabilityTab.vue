@@ -441,7 +441,7 @@ function onNumberInput(
 }
 
 /* Responsive */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .form-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -453,7 +453,7 @@ function onNumberInput(
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .metrics-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -467,7 +467,7 @@ function onNumberInput(
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .metric-value {
     font-size: 1.5rem;
   }

@@ -69,7 +69,7 @@ defineEmits<{
   color: #6b7280;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .column-toggles {
     flex-wrap: wrap;
   }

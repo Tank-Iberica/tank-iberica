@@ -101,7 +101,7 @@ function getRevenuePercentage(amount: number): number {
   text-align: right;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .type-row {
     flex-direction: row;
     align-items: center;
@@ -122,7 +122,7 @@ function getRevenuePercentage(amount: number): number {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .section-card {
     padding: var(--spacing-6, 24px) var(--spacing-8, 32px);
   }

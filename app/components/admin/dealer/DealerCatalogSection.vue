@@ -508,8 +508,8 @@ function updateAutoReplyLang(lang: string, value: string) {
   background: var(--color-primary-dark);
 }
 
-/* Responsive: 768px */
-@media (min-width: 768px) {
+/* Responsive: 48em */
+@media (min-width: 48em) {
   .lang-row {
     flex-direction: row;
   }
@@ -523,8 +523,8 @@ function updateAutoReplyLang(lang: string, value: string) {
   }
 }
 
-/* Responsive: 1024px */
-@media (min-width: 1024px) {
+/* Responsive: 64em */
+@media (min-width: 64em) {
   .config-card {
     padding: var(--spacing-8);
   }

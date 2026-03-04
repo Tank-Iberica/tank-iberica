@@ -333,7 +333,7 @@ onUnmounted(() => {
 }
 
 /* ---- Tablet+ : centrado ---- */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .modal-overlay {
     align-items: center;
   }

@@ -213,7 +213,7 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .location-dropdown-mobile {
     display: none !important;
   }

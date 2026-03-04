@@ -152,7 +152,7 @@ defineProps<{
   text-align: right;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .rankings-grid {
     grid-template-columns: repeat(2, 1fr);
   }

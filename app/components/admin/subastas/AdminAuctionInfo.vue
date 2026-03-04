@@ -367,7 +367,7 @@ const approvedCount = computed(
   font-weight: 500;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .info-grid {
     grid-template-columns: 1fr 1fr;
   }

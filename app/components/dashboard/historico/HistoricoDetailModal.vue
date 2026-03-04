@@ -121,7 +121,7 @@ const { t } = useI18n()
 }
 
 .modal-lg {
-  max-width: 640px;
+  max-width: 40em;
 }
 
 .modal-head {
@@ -243,7 +243,7 @@ const { t } = useI18n()
   background: var(--bg-secondary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .detail-grid {
     grid-template-columns: 1fr 1fr;
   }

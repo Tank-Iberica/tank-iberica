@@ -191,9 +191,9 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: ≥480px (large mobile)
+   RESPONSIVE: ≥30em (large mobile)
    ============================================ */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .categories {
     gap: 0.4rem;
     padding: 0 0.5rem;
@@ -207,9 +207,9 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: ≥768px (tablet — switch to desktop)
+   RESPONSIVE: ≥48em (tablet — switch to desktop)
    ============================================ */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .categories-section {
     padding: 0.34rem 0;
     margin-top: 0;
@@ -231,9 +231,9 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: ≥1024px (desktop)
+   RESPONSIVE: ≥64em (desktop)
    ============================================ */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .categories {
     padding: 0 3rem;
     gap: 0.75rem;

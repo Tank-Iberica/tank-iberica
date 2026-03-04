@@ -89,7 +89,7 @@ async function onExportData() {
     link.download = 'my-data-tracciona.json'
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    link.remove()
     URL.revokeObjectURL(url)
   }
 
@@ -129,7 +129,7 @@ useHead({
               autocomplete="new-password"
               minlength="8"
               required
-            />
+            >
           </div>
 
           <div class="form-group">
@@ -145,7 +145,7 @@ useHead({
               autocomplete="new-password"
               minlength="8"
               required
-            />
+            >
           </div>
 
           <div v-if="passwordError" class="form-error" role="alert">
@@ -189,7 +189,7 @@ useHead({
             type="text"
             class="form-input"
             placeholder="ELIMINAR"
-          />
+          >
           <div v-if="deleteError" class="form-error" role="alert">
             {{ deleteError }}
           </div>

@@ -38,7 +38,7 @@ function onInput(rateKey: string, event: Event) {
             class="commission-input"
             :value="commissionRates[def.key]"
             @input="onInput(def.key, $event)"
-          >
+          />
           <span class="input-suffix">{{ def.type === 'pct' ? '%' : '&euro;' }}</span>
         </div>
       </div>
@@ -165,14 +165,14 @@ function onInput(rateKey: string, event: Event) {
   cursor: not-allowed;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .commission-grid {
     grid-template-columns: 1fr 1fr;
     gap: 20px;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .config-card {
     padding: 16px;
   }

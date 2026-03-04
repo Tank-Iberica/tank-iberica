@@ -1,4 +1,5 @@
 import type { ChartData, ChartOptions } from 'chart.js'
+import type { InfraMetric } from '~/composables/useInfraMetrics'
 
 type TabKey = 'status' | 'alerts' | 'history' | 'migration'
 type PeriodValue = '24h' | '7d' | '30d'
@@ -71,6 +72,124 @@ const componentDefinitions = [
   },
 ]
 
+type GetLatestFn = (
+  component: string,
+  metric: string,
+) => { usage_percent: number | null; metric_value: number; metric_limit?: number } | null
+type GetStatusColorFn = (pct: number | null) => 'green' | 'yellow' | 'red' | 'gray'
+type GetRecommendationFn = (
+  component: string,
+  metric: string,
+  pct: number,
+) => { level: string; message: string; action: string } | null
+
+function buildComponentCard(
+  def: (typeof componentDefinitions)[0],
+  getLatest: GetLatestFn,
+  getStatusColor: GetStatusColorFn,
+  getRecommendation: GetRecommendationFn,
+): ComponentCardData {
+  const metricDisplays: ComponentMetricDisplay[] = []
+  let worstStatus: 'green' | 'yellow' | 'red' | 'gray' = 'gray'
+
+  for (const metricDef of def.metrics) {
+    const latest = getLatest(def.key, metricDef.name)
+    if (!latest) continue
+    const pct = latest.usage_percent ?? null
+    const color = getStatusColor(pct)
+    if (worstStatus === 'gray') worstStatus = color
+    else if (color === 'red') worstStatus = 'red'
+    else if (color === 'yellow' && worstStatus !== 'red') worstStatus = 'yellow'
+    const rec = pct === null ? null : getRecommendation(def.key, metricDef.name, pct)
+    metricDisplays.push({
+      name: metricDef.name,
+      label: metricDef.label,
+      value: latest.metric_value,
+      limit: latest.metric_limit ?? 0,
+      percent: pct,
+      recommendation: rec ? { level: rec.level, message: rec.message, action: rec.action } : null,
+    })
+  }
+
+  return {
+    key: def.key,
+    name: def.name,
+    icon: def.icon,
+    overallStatus: worstStatus,
+    metrics: metricDisplays,
+  }
+}
+
+function groupMetricsByComponent(metricsData: InfraMetric[]): Map<string, InfraMetric[]> {
+  const grouped = new Map<string, InfraMetric[]>()
+  for (const m of metricsData) {
+    if (!grouped.has(m.component)) grouped.set(m.component, [])
+    grouped.get(m.component)!.push(m)
+  }
+  return grouped
+}
+
+function buildDatasetsForComponent(
+  compMetrics: InfraMetric[],
+  component: string,
+  colors: Record<string, string>,
+): { datasets: ChartData<'line'>['datasets']; labels: string[] } {
+  const byMetric = new Map<string, InfraMetric[]>()
+  for (const m of compMetrics) {
+    if (!byMetric.has(m.metric_name)) byMetric.set(m.metric_name, [])
+    byMetric.get(m.metric_name)!.push(m)
+  }
+
+  const datasets: ChartData<'line'>['datasets'] = []
+  let labels: string[] = []
+  const color = colors[component] || '#23424A'
+
+  for (const [metricName, metricValues] of byMetric) {
+    const sorted = [...metricValues].sort(
+      (a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime(),
+    )
+    if (labels.length === 0) {
+      labels = sorted.map((m) =>
+        new Date(m.recorded_at).toLocaleDateString('es-ES', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      )
+    }
+    datasets.push({
+      label: metricName,
+      data: sorted.map((m) => m.metric_value),
+      borderColor: color,
+      backgroundColor: color + '20',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+    })
+  }
+  return { datasets, labels }
+}
+
+function buildHistoryCharts(
+  metricsData: InfraMetric[],
+  colors: Record<string, string>,
+  definitions: typeof componentDefinitions,
+): HistoryChartData[] {
+  const grouped = groupMetricsByComponent(metricsData)
+  const charts: HistoryChartData[] = []
+
+  for (const [component, compMetrics] of grouped) {
+    const { datasets, labels } = buildDatasetsForComponent(compMetrics, component, colors)
+    if (datasets.length > 0) {
+      const def = definitions.find((d) => d.key === component)
+      charts.push({ component, label: def?.name || component, chartData: { labels, datasets } })
+    }
+  }
+  return charts
+}
+
 const chartColors: Record<string, string> = {
   supabase: '#3ECF8E',
   cloudflare: '#F6821F',
@@ -127,45 +246,16 @@ export function useAdminInfrastructura() {
   ])
 
   // ── Component cards (Tab 1) ──────────────────────────────
-  const componentCards = computed<ComponentCardData[]>(() => {
-    return componentDefinitions.map((def) => {
-      const metricDisplays: ComponentMetricDisplay[] = []
-      let worstStatus: 'green' | 'yellow' | 'red' | 'gray' = 'gray'
-
-      for (const metricDef of def.metrics) {
-        const latest = getLatest(def.key, metricDef.name)
-        if (latest) {
-          const pct = latest.usage_percent ?? null
-          const color = getStatusColor(pct)
-
-          if (worstStatus === 'gray') worstStatus = color
-          else if (color === 'red') worstStatus = 'red'
-          else if (color === 'yellow' && worstStatus !== 'red') worstStatus = 'yellow'
-
-          const rec = pct === null ? null : getRecommendation(def.key, metricDef.name, pct)
-
-          metricDisplays.push({
-            name: metricDef.name,
-            label: metricDef.label,
-            value: latest.metric_value,
-            limit: latest.metric_limit ?? 0,
-            percent: pct,
-            recommendation: rec
-              ? { level: rec.level, message: rec.message, action: rec.action }
-              : null,
-          })
-        }
-      }
-
-      return {
-        key: def.key,
-        name: def.name,
-        icon: def.icon,
-        overallStatus: worstStatus,
-        metrics: metricDisplays,
-      }
-    })
-  })
+  const componentCards = computed<ComponentCardData[]>(() =>
+    componentDefinitions.map((def) =>
+      buildComponentCard(
+        def,
+        getLatest as GetLatestFn,
+        getStatusColor as GetStatusColorFn,
+        getRecommendation as GetRecommendationFn,
+      ),
+    ),
+  )
 
   // ── Image Pipeline (Tab 1) ───────────────────────────────
   const pipelineMode = ref('hybrid')
@@ -259,58 +349,9 @@ export function useAdminInfrastructura() {
     await fetchMetrics({ period })
   }
 
-  const historyChartDataSets = computed<HistoryChartData[]>(() => {
-    const grouped = new Map<string, InfraMetric[]>()
-    for (const m of metrics.value) {
-      if (!grouped.has(m.component)) grouped.set(m.component, [])
-      grouped.get(m.component)!.push(m)
-    }
-
-    const charts: HistoryChartData[] = []
-    for (const [component, compMetrics] of grouped) {
-      const byMetric = new Map<string, InfraMetric[]>()
-      for (const m of compMetrics) {
-        if (!byMetric.has(m.metric_name)) byMetric.set(m.metric_name, [])
-        byMetric.get(m.metric_name)!.push(m)
-      }
-
-      const datasets: ChartData<'line'>['datasets'] = []
-      let labels: string[] = []
-
-      for (const [metricName, metricValues] of byMetric) {
-        const sorted = [...metricValues].sort(
-          (a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime(),
-        )
-        if (labels.length === 0) {
-          labels = sorted.map((m) =>
-            new Date(m.recorded_at).toLocaleDateString('es-ES', {
-              day: '2-digit',
-              month: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-            }),
-          )
-        }
-        const color = chartColors[component] || '#23424A'
-        datasets.push({
-          label: metricName,
-          data: sorted.map((m) => m.metric_value),
-          borderColor: color,
-          backgroundColor: color + '20',
-          fill: true,
-          tension: 0.4,
-          pointRadius: 3,
-          pointHoverRadius: 5,
-        })
-      }
-
-      if (datasets.length > 0) {
-        const def = componentDefinitions.find((d) => d.key === component)
-        charts.push({ component, label: def?.name || component, chartData: { labels, datasets } })
-      }
-    }
-    return charts
-  })
+  const historyChartDataSets = computed<HistoryChartData[]>(() =>
+    buildHistoryCharts(metrics.value, chartColors, componentDefinitions),
+  )
 
   const chartOptions: ChartOptions<'line'> = {
     responsive: true,

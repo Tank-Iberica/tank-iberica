@@ -118,7 +118,7 @@ function buildDynamicChips(active: Record<string, unknown>, existingKeys: Set<st
   return result
 }
 
-const chips = computed<Chip[]>(() => {
+function buildStaticChips(): Chip[] {
   const result: Chip[] = []
 
   const locationChip = buildLocationChip()
@@ -140,9 +140,13 @@ const chips = computed<Chip[]>(() => {
     result.push({ key: 'year', label: `${min} – ${max}`, type: 'year' })
   }
 
+  return result
+}
+
+const chips = computed<Chip[]>(() => {
+  const result = buildStaticChips()
   const existingKeys = new Set(result.map((r) => r.key))
   result.push(...buildDynamicChips(activeFilters.value, existingKeys))
-
   return result
 })
 
@@ -280,9 +284,9 @@ function handleClearAll() {
 }
 
 /* ============================================
-   RESPONSIVE: >=480px
+   RESPONSIVE: >=30em
    ============================================ */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .filter-chip {
     font-size: 11px;
     padding: 0.25rem 0.5rem;
@@ -294,9 +298,9 @@ function handleClearAll() {
 }
 
 /* ============================================
-   RESPONSIVE: >=768px
+   RESPONSIVE: >=48em
    ============================================ */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .active-filters {
     padding: 0.4rem 1.5rem;
   }
@@ -307,9 +311,9 @@ function handleClearAll() {
 }
 
 /* ============================================
-   RESPONSIVE: >=1024px
+   RESPONSIVE: >=64em
    ============================================ */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .active-filters {
     padding: 0.4rem 3rem;
   }

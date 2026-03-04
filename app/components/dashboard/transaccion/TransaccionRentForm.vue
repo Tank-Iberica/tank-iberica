@@ -266,7 +266,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
   font-size: 0.95rem;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }

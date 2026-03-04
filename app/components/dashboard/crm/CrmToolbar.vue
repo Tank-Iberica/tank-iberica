@@ -40,7 +40,7 @@ function setContactType(type: ContactFilters['contact_type']): void {
           :value="filters.search"
           :placeholder="t('dashboard.crm.searchPlaceholder')"
           @input="onSearchInput"
-        >
+        />
         <button v-if="filters.search" class="clear-btn" @click="clearSearch">&#215;</button>
       </div>
 
@@ -174,7 +174,7 @@ function setContactType(type: ContactFilters['contact_type']): void {
   background: var(--bg-secondary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .toolbar-row {
     flex-direction: row;
     align-items: center;

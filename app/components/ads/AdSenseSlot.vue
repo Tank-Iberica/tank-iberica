@@ -53,13 +53,13 @@ const adClient = computed(() => (runtimeConfig.public.adsenseId as string) || ''
 const adSlotId = computed(() => (runtimeConfig.public.adsenseSlotId as string) || '')
 
 // Positions where AdSense is NOT allowed
-const ADSENSE_BLOCKED_POSITIONS: AdPosition[] = [
+const ADSENSE_BLOCKED_POSITIONS = new Set<AdPosition>([
   'pro_teaser',
   'search_top',
   'vehicle_services',
   'email_footer',
   'pdf_footer',
-]
+])
 
 const { ads, loading } = useAds(props.position, {
   category: props.category,
@@ -97,7 +97,7 @@ const showAdSense = computed(() => {
   if (loading.value) return false
   if (ads.value.length > 0) return false
   if (prebidWon.value) return false
-  if (ADSENSE_BLOCKED_POSITIONS.includes(props.position as AdPosition)) return false
+  if (ADSENSE_BLOCKED_POSITIONS.has(props.position as AdPosition)) return false
   if (!adClient.value) return false
   return true
 })
@@ -121,7 +121,7 @@ const adSenseStyle = computed(() => {
     case 'horizontal':
       return 'display:block; width:100%; height:90px;'
     case 'vertical':
-      return 'display:block; width:160px; height:600px;'
+      return 'display:block; width:160px; height:37.5em;'
     case 'in-feed':
       return 'display:block;'
     case 'rectangle':

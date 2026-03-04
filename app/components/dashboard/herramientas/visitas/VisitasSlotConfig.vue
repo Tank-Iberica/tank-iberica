@@ -56,7 +56,7 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
             class="field-input"
             :value="formData.start_time"
             @input="onFieldChange('start_time', $event)"
-          >
+          />
         </div>
         <div class="field">
           <label>{{ t('visits.endTime') }}</label>
@@ -65,7 +65,7 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
             class="field-input"
             :value="formData.end_time"
             @input="onFieldChange('end_time', $event)"
-          >
+          />
         </div>
         <div class="field">
           <label>{{ t('visits.maxVisitors') }}</label>
@@ -76,7 +76,7 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
             class="field-input"
             :value="formData.max_visitors"
             @input="onFieldChange('max_visitors', $event)"
-          >
+          />
         </div>
       </div>
       <button class="btn-primary" :disabled="!isFormValid || saving" @click="emit('add-slot')">
@@ -300,15 +300,15 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
   }
 }
 
-/* Responsive: 480px */
-@media (min-width: 480px) {
+/* Responsive: 30em */
+@media (min-width: 30em) {
   .slot-form-fields {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Responsive: 768px */
-@media (min-width: 768px) {
+/* Responsive: 48em */
+@media (min-width: 48em) {
   .slot-form-fields {
     grid-template-columns: repeat(4, 1fr);
   }

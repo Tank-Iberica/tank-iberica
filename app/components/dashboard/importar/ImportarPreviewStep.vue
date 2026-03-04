@@ -217,7 +217,7 @@ const emit = defineEmits<{
   background: var(--bg-secondary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .preview-header {
     flex-direction: row;
     justify-content: space-between;

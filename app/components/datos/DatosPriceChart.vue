@@ -68,7 +68,7 @@ defineProps<{
   position: relative;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .chart-container {
     height: 380px;
     padding: var(--spacing-6);
@@ -79,7 +79,7 @@ defineProps<{
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .chart-container {
     height: 420px;
   }

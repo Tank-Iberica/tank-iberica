@@ -60,7 +60,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
                   class="price-input"
                   :value="subscriptionPrices[plan.key]?.monthly ?? 0"
                   @input="onInput(plan.key, 'monthly', $event)"
-                >
+                />
                 <span class="euro-symbol">&euro;/{{ t('admin.configPricing.month') }}</span>
               </div>
             </td>
@@ -74,7 +74,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
                   class="price-input"
                   :value="subscriptionPrices[plan.key]?.annual ?? 0"
                   @input="onInput(plan.key, 'annual', $event)"
-                >
+                />
                 <span class="euro-symbol">&euro;/{{ t('admin.configPricing.year') }}</span>
               </div>
             </td>
@@ -237,7 +237,7 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
   cursor: not-allowed;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .config-card {
     padding: 16px;
   }

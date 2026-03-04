@@ -60,8 +60,8 @@ defineProps<{
   color: var(--text-auxiliary);
 }
 
-/* ---- Tablet (768px) ---- */
-@media (min-width: 768px) {
+/* ---- Tablet (48em) ---- */
+@media (min-width: 48em) {
   .stats-row {
     grid-template-columns: repeat(4, 1fr);
     padding: 0 var(--spacing-8);

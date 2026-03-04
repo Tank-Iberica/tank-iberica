@@ -46,7 +46,7 @@ function onSelect(field: SettingsField, event: Event): void {
           class="form-field__input"
           :value="invoiceNumber"
           @input="onInput('invoiceNumber', $event)"
-        />
+        >
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.invoiceDate') }}</label>
@@ -55,7 +55,7 @@ function onSelect(field: SettingsField, event: Event): void {
           class="form-field__input"
           :value="invoiceDate"
           @input="onInput('invoiceDate', $event)"
-        />
+        >
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.language') }}</label>
@@ -75,7 +75,7 @@ function onSelect(field: SettingsField, event: Event): void {
           class="form-field__input"
           :value="invoiceConditions"
           @input="onInput('invoiceConditions', $event)"
-        />
+        >
       </div>
       <div class="form-field form-field--full form-field--autocomplete">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.vehicle') }}</label>
@@ -88,7 +88,7 @@ function onSelect(field: SettingsField, event: Event): void {
             @input="onInput('vehicleSearch', $event)"
             @focus="emit('open-dropdown')"
             @blur="emit('blur-vehicle')"
-          />
+          >
           <button
             v-if="selectedVehicle"
             class="autocomplete-clear"
@@ -253,13 +253,13 @@ function onSelect(field: SettingsField, event: Event): void {
   font-size: 0.8rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .form-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .form-section {
     padding: 1.5rem;
   }

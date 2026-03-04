@@ -50,6 +50,78 @@ async function logUsage(
   })
 }
 
+interface PriceEstimate {
+  min: number
+  median: number
+  max: number
+}
+
+function computePriceEstimate(prices: number[], yearParam: string | undefined): PriceEstimate {
+  const sortedPrices = [...prices].sort((a, b) => a - b)
+  let minPrice = Math.min(...prices) * 0.9
+  let maxPrice = Math.max(...prices) * 1.1
+  let medianPrice = computeMedian(sortedPrices)
+
+  if (yearParam) {
+    const vehicleYear = Number(yearParam)
+    if (!Number.isNaN(vehicleYear) && vehicleYear > 0) {
+      const currentYear = new Date().getFullYear()
+      const factor = Math.max(0.5, 1 - (currentYear - vehicleYear) * 0.05)
+      minPrice = Math.round(minPrice * factor)
+      maxPrice = Math.round(maxPrice * factor)
+      medianPrice = Math.round(medianPrice * factor)
+      return { min: minPrice, median: medianPrice, max: maxPrice }
+    }
+  }
+
+  return {
+    min: Math.round(minPrice),
+    median: Math.round(medianPrice),
+    max: Math.round(maxPrice),
+  }
+}
+
+function computeTrend(validRows: (MarketDataRow & { avg_price: number })[]): {
+  marketTrend: 'rising' | 'falling' | 'stable'
+  trendPct: number
+} {
+  const now = new Date()
+  const twoMonthsAgo = new Date(now)
+  twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2)
+  const fourMonthsAgo = new Date(now)
+  fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4)
+
+  const recentRows = validRows.filter((r) => {
+    if (!r.created_at) return false
+    const d = new Date(r.created_at)
+    return d >= twoMonthsAgo && d <= now
+  })
+  const olderRows = validRows.filter((r) => {
+    if (!r.created_at) return false
+    const d = new Date(r.created_at)
+    return d >= fourMonthsAgo && d < twoMonthsAgo
+  })
+
+  if (recentRows.length === 0 || olderRows.length === 0) {
+    return { marketTrend: 'stable', trendPct: 0 }
+  }
+
+  const recentAvg = recentRows.reduce((sum, r) => sum + r.avg_price, 0) / recentRows.length
+  const olderAvg = olderRows.reduce((sum, r) => sum + r.avg_price, 0) / olderRows.length
+
+  if (olderAvg <= 0) return { marketTrend: 'stable', trendPct: 0 }
+
+  const trendPct = Number((((recentAvg - olderAvg) / olderAvg) * 100).toFixed(1))
+  const marketTrend = trendPct > 1 ? 'rising' : trendPct < -1 ? 'falling' : 'stable'
+  return { marketTrend, trendPct }
+}
+
+function computeConfidence(sampleSize: number): 'high' | 'medium' | 'low' {
+  if (sampleSize >= 20) return 'high'
+  if (sampleSize >= 10) return 'medium'
+  return 'low'
+}
+
 export default defineEventHandler(async (event): Promise<ValuationResponse> => {
   // POSPUESTO — Activar cuando haya ≥500 transacciones históricas
   // Ver FLUJOS-OPERATIVOS §15 para criterios de activación
@@ -142,76 +214,13 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
     throw createError({ statusCode: 404, message: 'Insufficient data' })
   }
 
-  // Collect prices
+  // Compute price estimate, trend, and confidence
   const prices = validRows.map((r) => r.avg_price)
-  const sortedPrices = [...prices].sort((a, b) => a - b)
-
-  // Compute base min/median/max
-  let minPrice = Math.min(...prices) * 0.9
-  let maxPrice = Math.max(...prices) * 1.1
-  let medianPrice = computeMedian(sortedPrices)
-
-  // Year depreciation: if year provided, factor = max(0.5, 1 - (currentYear - year) * 0.05)
-  if (query.year) {
-    const vehicleYear = Number(query.year)
-    if (!Number.isNaN(vehicleYear) && vehicleYear > 0) {
-      const currentYear = new Date().getFullYear()
-      const factor = Math.max(0.5, 1 - (currentYear - vehicleYear) * 0.05)
-      minPrice = Math.round(minPrice * factor)
-      maxPrice = Math.round(maxPrice * factor)
-      medianPrice = Math.round(medianPrice * factor)
-    }
-  } else {
-    minPrice = Math.round(minPrice)
-    maxPrice = Math.round(maxPrice)
-    medianPrice = Math.round(medianPrice)
-  }
-
-  // Trend: compare avg of last 2 months vs previous 2 months
-  const now = new Date()
-  const twoMonthsAgo = new Date(now)
-  twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2)
-  const fourMonthsAgo = new Date(now)
-  fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4)
-
-  const recentRows = validRows.filter((r) => {
-    if (!r.created_at) return false
-    const d = new Date(r.created_at)
-    return d >= twoMonthsAgo && d <= now
-  })
-  const olderRows = validRows.filter((r) => {
-    if (!r.created_at) return false
-    const d = new Date(r.created_at)
-    return d >= fourMonthsAgo && d < twoMonthsAgo
-  })
-
-  let marketTrend: 'rising' | 'falling' | 'stable' = 'stable'
-  let trendPct = 0
-
-  if (recentRows.length > 0 && olderRows.length > 0) {
-    const recentAvg = recentRows.reduce((sum, r) => sum + r.avg_price, 0) / recentRows.length
-    const olderAvg = olderRows.reduce((sum, r) => sum + r.avg_price, 0) / olderRows.length
-
-    if (olderAvg > 0) {
-      trendPct = Number((((recentAvg - olderAvg) / olderAvg) * 100).toFixed(1))
-      if (trendPct > 1) {
-        marketTrend = 'rising'
-      } else if (trendPct < -1) {
-        marketTrend = 'falling'
-      }
-    }
-  }
-
-  // Confidence based on sample size
+  const estimated_price = computePriceEstimate(prices, query.year as string | undefined)
+  const { marketTrend, trendPct } = computeTrend(validRows)
   const sampleSize = validRows.length
-  let confidence: 'high' | 'medium' | 'low'
-  if (sampleSize >= 20) {
-    confidence = 'high'
-  } else if (sampleSize >= 10) {
-    confidence = 'medium'
-  } else {
-    confidence = 'low'
-  }
+  const confidence = computeConfidence(sampleSize)
+  const now = new Date()
 
   // Average days to sell
   const rowsWithDays = validRows.filter(
@@ -229,7 +238,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
   await logUsage(supabase, apiKey, query as Record<string, unknown>, Date.now() - startTime, 200)
 
   return {
-    estimated_price: { min: minPrice, median: medianPrice, max: maxPrice },
+    estimated_price,
     market_trend: marketTrend,
     trend_pct: trendPct,
     avg_days_to_sell: avgDaysToSell,

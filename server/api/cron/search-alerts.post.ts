@@ -59,6 +59,32 @@ interface CronBody {
   secret?: string
 }
 
+// -- Helpers ------------------------------------------------------------------
+
+function isAlertEligible(alert: SearchAlertRow, now: Date): boolean {
+  const frequency = alert.frequency ?? 'daily'
+  const lastSent = alert.last_sent_at ? new Date(alert.last_sent_at) : null
+  if (frequency === 'instant') return !lastSent || now.getTime() - lastSent.getTime() > 60_000
+  if (frequency === 'daily')
+    return !lastSent || now.getTime() - lastSent.getTime() > 24 * 60 * 60 * 1000
+  if (frequency === 'weekly')
+    return !lastSent || now.getTime() - lastSent.getTime() > 7 * 24 * 60 * 60 * 1000
+  return false
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applyAlertFilters(query: any, filters: SearchAlertFilters): any {
+  if (filters.category_id) query = query.eq('category_id', filters.category_id)
+  if (filters.price_min != null) query = query.gte('price', filters.price_min)
+  if (filters.price_max != null) query = query.lte('price', filters.price_max)
+  if (filters.year_min != null) query = query.gte('year', filters.year_min)
+  if (filters.year_max != null) query = query.lte('year', filters.year_max)
+  if (filters.brand) query = query.ilike('brand', filters.brand)
+  if (filters.location_country) query = query.eq('location_country', filters.location_country)
+  if (filters.location_region) query = query.eq('location_region', filters.location_region)
+  return query
+}
+
 // -- Handler ------------------------------------------------------------------
 
 export default defineEventHandler(async (event) => {
@@ -93,30 +119,7 @@ export default defineEventHandler(async (event) => {
   const typedAlerts = alerts as unknown as SearchAlertRow[]
 
   // -- 2. Filter alerts by frequency eligibility ------------------------------
-  const eligibleAlerts = typedAlerts.filter((alert) => {
-    const frequency = alert.frequency ?? 'daily'
-    const lastSent = alert.last_sent_at ? new Date(alert.last_sent_at) : null
-
-    if (frequency === 'instant') {
-      // Instant alerts always eligible, but we still check at least 1 min gap
-      if (!lastSent) return true
-      return now.getTime() - lastSent.getTime() > 60_000
-    }
-
-    if (frequency === 'daily') {
-      if (!lastSent) return true
-      const oneDayMs = 24 * 60 * 60 * 1000
-      return now.getTime() - lastSent.getTime() > oneDayMs
-    }
-
-    if (frequency === 'weekly') {
-      if (!lastSent) return true
-      const sevenDaysMs = 7 * 24 * 60 * 60 * 1000
-      return now.getTime() - lastSent.getTime() > sevenDaysMs
-    }
-
-    return false
-  })
+  const eligibleAlerts = typedAlerts.filter((alert) => isAlertEligible(alert, now))
 
   // -- 3. For each eligible alert, find matching vehicles ---------------------
   const result = await processBatch({
@@ -131,7 +134,7 @@ export default defineEventHandler(async (event) => {
       const filters = alert.filters ?? {}
 
       // Build vehicle query
-      let vehicleQuery = supabase
+      const baseQuery = supabase
         .from('vehicles')
         .select(
           'id, brand, model, price, year, slug, category_id, location_country, location_region, created_at',
@@ -141,33 +144,7 @@ export default defineEventHandler(async (event) => {
         .order('created_at', { ascending: false })
         .limit(20)
 
-      // Apply filters dynamically
-      if (filters.category_id) {
-        vehicleQuery = vehicleQuery.eq('category_id', filters.category_id)
-      }
-      if (filters.price_min !== undefined && filters.price_min !== null) {
-        vehicleQuery = vehicleQuery.gte('price', filters.price_min)
-      }
-      if (filters.price_max !== undefined && filters.price_max !== null) {
-        vehicleQuery = vehicleQuery.lte('price', filters.price_max)
-      }
-      if (filters.year_min !== undefined && filters.year_min !== null) {
-        vehicleQuery = vehicleQuery.gte('year', filters.year_min)
-      }
-      if (filters.year_max !== undefined && filters.year_max !== null) {
-        vehicleQuery = vehicleQuery.lte('year', filters.year_max)
-      }
-      if (filters.brand) {
-        vehicleQuery = vehicleQuery.ilike('brand', filters.brand)
-      }
-      if (filters.location_country) {
-        vehicleQuery = vehicleQuery.eq('location_country', filters.location_country)
-      }
-      if (filters.location_region) {
-        vehicleQuery = vehicleQuery.eq('location_region', filters.location_region)
-      }
-
-      const { data: vehicles, error: vehiclesError } = await vehicleQuery
+      const { data: vehicles, error: vehiclesError } = await applyAlertFilters(baseQuery, filters)
 
       if (vehiclesError) {
         console.error(

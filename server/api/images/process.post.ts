@@ -114,6 +114,90 @@ async function uploadToCfImages(
   return result
 }
 
+function buildCloudinaryVariants(cloudinaryUrl: string): VariantUrls {
+  return {
+    thumb: buildCloudinaryVariantUrl(cloudinaryUrl, CLOUDINARY_TRANSFORMS.thumb),
+    card: buildCloudinaryVariantUrl(cloudinaryUrl, CLOUDINARY_TRANSFORMS.card),
+    gallery: buildCloudinaryVariantUrl(cloudinaryUrl, CLOUDINARY_TRANSFORMS.gallery),
+    og: buildCloudinaryVariantUrl(cloudinaryUrl, CLOUDINARY_TRANSFORMS.og),
+  }
+}
+
+function validateCloudinaryUrl(raw: string): URL {
+  let parsed: URL
+  try {
+    parsed = new URL(raw)
+  } catch {
+    throw createError({ statusCode: 400, message: 'Invalid URL' })
+  }
+  if (parsed.protocol !== 'https:' || !parsed.hostname.endsWith('.cloudinary.com')) {
+    throw createError({ statusCode: 400, message: 'URL must be a valid HTTPS image URL' })
+  }
+  return parsed
+}
+
+async function processAllVariants(
+  cloudinaryUrl: string,
+  mode: PipelineMode,
+  cfAccountId: string,
+  cfApiToken: string,
+  cfDeliveryUrl: string,
+  vehicleId?: string,
+): Promise<{ urls: Partial<VariantUrls>; errors: string[] }> {
+  const urls: Partial<VariantUrls> = {}
+  const errors: string[] = []
+  for (const variant of VARIANT_NAMES) {
+    try {
+      urls[variant] = await processVariant(
+        variant,
+        cloudinaryUrl,
+        mode,
+        cfAccountId,
+        cfApiToken,
+        cfDeliveryUrl,
+        vehicleId,
+      )
+    } catch (err: unknown) {
+      errors.push(`${variant}: ${err instanceof Error ? err.message : 'Unknown error'}`)
+    }
+  }
+  // Fallback to Cloudinary for failed variants
+  for (const variant of VARIANT_NAMES) {
+    if (!urls[variant]) {
+      urls[variant] = buildCloudinaryVariantUrl(cloudinaryUrl, CLOUDINARY_TRANSFORMS[variant])
+    }
+  }
+  return { urls, errors }
+}
+
+async function processVariant(
+  variant: VariantName,
+  cloudinaryUrl: string,
+  mode: PipelineMode,
+  cfAccountId: string,
+  cfApiToken: string,
+  cfDeliveryUrl: string,
+  vehicleId?: string,
+): Promise<string> {
+  const imageBuffer =
+    mode === 'hybrid'
+      ? await fetchImageBuffer(
+          buildCloudinaryVariantUrl(cloudinaryUrl, CLOUDINARY_TRANSFORMS[variant]),
+        )
+      : await fetchImageBuffer(cloudinaryUrl)
+
+  const metadata: Record<string, string> = { variant, source: 'tracciona-pipeline' }
+  if (vehicleId) metadata.vehicleId = vehicleId
+
+  const cfResult = await uploadToCfImages(imageBuffer, cfAccountId, cfApiToken, metadata)
+
+  if (!cfResult.success) {
+    throw new Error(cfResult.errors?.[0]?.message ?? 'Unknown CF Images error')
+  }
+
+  return `${cfDeliveryUrl}/${cfResult.result.id}/${variant}`
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event): Promise<ProcessImageResponse> => {
@@ -131,15 +215,7 @@ export default defineEventHandler(async (event): Promise<ProcessImageResponse> =
   }
 
   // Strict URL validation (anti-SSRF)
-  let parsedUrl: URL
-  try {
-    parsedUrl = new URL(body.cloudinaryUrl)
-  } catch {
-    throw createError({ statusCode: 400, message: 'Invalid URL' })
-  }
-  if (parsedUrl.protocol !== 'https:' || !parsedUrl.hostname.endsWith('.cloudinary.com')) {
-    throw createError({ statusCode: 400, message: 'URL must be a valid HTTPS image URL' })
-  }
+  validateCloudinaryUrl(body.cloudinaryUrl)
 
   // 2. Read runtime config
   const config = useRuntimeConfig()
@@ -156,75 +232,23 @@ export default defineEventHandler(async (event): Promise<ProcessImageResponse> =
 
   // 4. Cloudinary-only mode: return URL as-is for all variants
   if (effectiveMode === 'cloudinary') {
-    const urls: VariantUrls = {
-      thumb: buildCloudinaryVariantUrl(body.cloudinaryUrl, CLOUDINARY_TRANSFORMS.thumb),
-      card: buildCloudinaryVariantUrl(body.cloudinaryUrl, CLOUDINARY_TRANSFORMS.card),
-      gallery: buildCloudinaryVariantUrl(body.cloudinaryUrl, CLOUDINARY_TRANSFORMS.gallery),
-      og: buildCloudinaryVariantUrl(body.cloudinaryUrl, CLOUDINARY_TRANSFORMS.og),
-    }
     return {
-      urls,
+      urls: buildCloudinaryVariants(body.cloudinaryUrl),
       original: body.cloudinaryUrl,
       pipeline: 'cloudinary',
     }
   }
 
   // 5. Hybrid or CF-only mode: upload to CF Images
-  const urls: Partial<VariantUrls> = {}
-  const errors: string[] = []
+  const { urls, errors } = await processAllVariants(
+    body.cloudinaryUrl,
+    effectiveMode,
+    cfAccountId as string,
+    cfApiToken as string,
+    cfDeliveryUrl as string,
+    body.vehicleId,
+  )
 
-  for (const variant of VARIANT_NAMES) {
-    try {
-      let imageBuffer: ArrayBuffer
-
-      if (effectiveMode === 'hybrid') {
-        // Fetch Cloudinary-transformed image
-        const transformedUrl = buildCloudinaryVariantUrl(
-          body.cloudinaryUrl,
-          CLOUDINARY_TRANSFORMS[variant],
-        )
-        imageBuffer = await fetchImageBuffer(transformedUrl)
-      } else {
-        // cf_images_only: fetch the original Cloudinary image without transforms
-        imageBuffer = await fetchImageBuffer(body.cloudinaryUrl)
-      }
-
-      // Upload to CF Images
-      const metadata: Record<string, string> = {
-        variant,
-        source: 'tracciona-pipeline',
-      }
-      if (body.vehicleId) {
-        metadata.vehicleId = body.vehicleId
-      }
-
-      const cfResult = await uploadToCfImages(
-        imageBuffer,
-        cfAccountId as string,
-        cfApiToken as string,
-        metadata,
-      )
-
-      if (!cfResult.success) {
-        const errorMsg = cfResult.errors?.[0]?.message ?? 'Unknown CF Images error'
-        errors.push(`${variant}: ${errorMsg}`)
-        continue
-      }
-
-      // Build the delivery URL with the variant name
-      const imageId = cfResult.result.id
-      urls[variant] = `${cfDeliveryUrl}/${imageId}/${variant}`
-      // TODO: After all variants are successfully uploaded to CF Images, delete the original // NOSONAR
-      // Cloudinary asset to avoid paying for duplicate storage. Use the Cloudinary Admin API:
-      // DELETE https://api.cloudinary.com/v1_1/{cloud}/resources/image/upload?public_ids[]={public_id}
-      // This should be done once per image (not per variant) after the loop completes.
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error'
-      errors.push(`${variant}: ${message}`)
-    }
-  }
-
-  // 6. If no variants were uploaded successfully, throw
   if (Object.keys(urls).length === 0) {
     throw createError({
       statusCode: 502,
@@ -232,16 +256,5 @@ export default defineEventHandler(async (event): Promise<ProcessImageResponse> =
     })
   }
 
-  // 7. For any variant that failed, fall back to Cloudinary transform URL
-  for (const variant of VARIANT_NAMES) {
-    if (!urls[variant]) {
-      urls[variant] = buildCloudinaryVariantUrl(body.cloudinaryUrl, CLOUDINARY_TRANSFORMS[variant])
-    }
-  }
-
-  return {
-    urls: urls as VariantUrls,
-    original: body.cloudinaryUrl,
-    pipeline: effectiveMode,
-  }
+  return { urls: urls as VariantUrls, original: body.cloudinaryUrl, pipeline: effectiveMode }
 })

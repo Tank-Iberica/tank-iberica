@@ -18,7 +18,7 @@
  *
  * Set ENABLE_MEMORY_RATE_LIMIT=true in .env to enable this for local dev.
  */
-import { defineEventHandler, getMethod, createError } from 'h3'
+import { defineEventHandler, createError } from 'h3'
 import { checkRateLimit, getRateLimitKey, getRetryAfterSeconds } from '../utils/rateLimit'
 import type { RateLimitConfig } from '../utils/rateLimit'
 
@@ -63,7 +63,7 @@ export default defineEventHandler((event) => {
   if (!enableMemoryRateLimit) return
 
   const path = event.path || ''
-  const method = getMethod(event).toUpperCase()
+  const method = event.method.toUpperCase()
 
   // Only apply rate limiting to /api/* routes
   if (!path.startsWith('/api/')) return

@@ -78,7 +78,7 @@ function loadVisibility() {
 function saveVisibility() {
   try {
     const nonRequired = [...visibleGroupKeys.value].filter(
-      (key) => !props.groups.find((g) => g.key === key && g.required),
+      (key) => !props.groups.some((g) => g.key === key && g.required),
     )
     localStorage.setItem(props.storageKey, JSON.stringify(nonRequired))
   } catch {
@@ -418,7 +418,7 @@ watch(
 .ct-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 600px;
+  min-width: 37.5em;
 }
 
 .ct-table thead {
@@ -558,8 +558,8 @@ watch(
   margin: 0;
 }
 
-/* === Tablet+ (768px) === */
-@media (min-width: 768px) {
+/* === Tablet+ (48em) === */
+@media (min-width: 48em) {
   .ct-table {
     min-width: unset;
   }
@@ -573,8 +573,8 @@ watch(
   }
 }
 
-/* === Desktop (1024px) === */
-@media (min-width: 1024px) {
+/* === Desktop (64em) === */
+@media (min-width: 64em) {
   .ct-chips {
     gap: var(--spacing-3, 0.75rem);
   }

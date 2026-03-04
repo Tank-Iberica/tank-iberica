@@ -402,8 +402,8 @@ function getLineSubtotal(line: InvoiceLine): number {
   background: var(--color-error-bg, #fef2f2);
 }
 
-/* ============ RESPONSIVE: TABLET+ (768px) ============ */
-@media (min-width: 768px) {
+/* ============ RESPONSIVE: TABLET+ (48em) ============ */
+@media (min-width: 48em) {
   .lines-table-wrapper {
     display: block;
   }

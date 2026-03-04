@@ -143,15 +143,15 @@ const emit = defineEmits<{
   color: var(--text-auxiliary);
 }
 
-/* Responsive: 768px */
-@media (min-width: 768px) {
+/* Responsive: 48em */
+@media (min-width: 48em) {
   .config-card {
     padding: var(--spacing-6);
   }
 }
 
-/* Responsive: 1024px */
-@media (min-width: 1024px) {
+/* Responsive: 64em */
+@media (min-width: 64em) {
   .config-card {
     padding: var(--spacing-8);
   }

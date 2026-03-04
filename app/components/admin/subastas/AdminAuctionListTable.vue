@@ -178,7 +178,7 @@ const { t } = useI18n()
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 56.25em;
 }
 
 .data-table th {

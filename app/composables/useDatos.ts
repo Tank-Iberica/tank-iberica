@@ -137,6 +137,49 @@ function computeSubcategoryStat(subcategory: string, rows: MarketRow[]): Categor
   }
 }
 
+function groupBy<T>(items: T[], keyFn: (item: T) => string): Map<string, T[]> {
+  const map = new Map<string, T[]>()
+  for (const item of items) {
+    const key = keyFn(item)
+    const existing = map.get(key)
+    if (existing) existing.push(item)
+    else map.set(key, [item])
+  }
+  return map
+}
+
+function computeProvinceStatsFromRows(latestRows: MarketRow[]): ProvinceStat[] {
+  const byProvince = new Map<string, { totalPrice: number; totalListings: number }>()
+  for (const r of latestRows) {
+    const province = r.province ?? ''
+    const existing = byProvince.get(province)
+    if (existing) {
+      existing.totalPrice += r.avg_price * r.listing_count
+      existing.totalListings += r.listing_count
+    } else {
+      byProvince.set(province, {
+        totalPrice: r.avg_price * r.listing_count,
+        totalListings: r.listing_count,
+      })
+    }
+  }
+
+  const result: ProvinceStat[] = []
+  for (const [province, data] of byProvince) {
+    result.push({
+      province,
+      avgPrice: data.totalListings > 0 ? Math.round(data.totalPrice / data.totalListings) : 0,
+      listingCount: data.totalListings,
+    })
+  }
+  return result.sort((a, b) => b.listingCount - a.listingCount)
+}
+
+function getLatestMonth(rows: MarketRow[]): string | null {
+  if (!rows.length) return null
+  return [...new Set(rows.map((r) => r.month))].sort((a, b) => b.localeCompare(a))[0] ?? null
+}
+
 /* ------------------------------------------------
    Composable
    ------------------------------------------------ */
@@ -183,19 +226,12 @@ export function useDatos() {
   const categoryStats = computed<CategoryStat[]>(() => {
     if (!marketRows.value.length) return []
 
-    const grouped = new Map<string, MarketRow[]>()
-    for (const row of marketRows.value) {
-      const existing = grouped.get(row.subcategory)
-      if (existing) existing.push(row)
-      else grouped.set(row.subcategory, [row])
-    }
-
+    const grouped = groupBy(marketRows.value, (r) => r.subcategory)
     const stats: CategoryStat[] = []
     for (const [subcategory, rows] of grouped) {
       const stat = computeSubcategoryStat(subcategory, rows)
       if (stat) stats.push(stat)
     }
-
     return stats.sort((a, b) => b.listingCount - a.listingCount)
   })
 
@@ -210,22 +246,11 @@ export function useDatos() {
     if (!selectedCategory.value || !marketRows.value.length) return []
 
     const rows = marketRows.value.filter((r) => r.subcategory === selectedCategory.value && r.brand)
-
-    const byBrand = new Map<string, MarketRow[]>()
-    for (const r of rows) {
-      const brand = r.brand ?? ''
-      const existing = byBrand.get(brand)
-      if (existing) {
-        existing.push(r)
-      } else {
-        byBrand.set(brand, [r])
-      }
-    }
+    const byBrand = groupBy(rows, (r) => r.brand ?? '')
 
     const result: BrandBreakdownItem[] = []
-
     for (const [brand, brandRows] of byBrand) {
-      const sorted = brandRows.sort((a, b) => b.month.localeCompare(a.month))
+      const sorted = brandRows.toSorted((a, b) => b.month.localeCompare(a.month))
       const latest = sorted[0]!
       result.push({
         brand,
@@ -233,47 +258,16 @@ export function useDatos() {
         listingCount: latest.listing_count,
       })
     }
-
     return result.sort((a, b) => b.listingCount - a.listingCount)
   })
 
   /* ---- Province stats ---- */
   const provinceStats = computed<ProvinceStat[]>(() => {
     if (!marketRows.value.length) return []
-
-    const allMonths = [...new Set(marketRows.value.map((r) => r.month))]
-      .sort((a, b) => a.localeCompare(b))
-      .reverse()
-    if (!allMonths.length) return []
-
-    const latestMonth = allMonths[0]
+    const latestMonth = getLatestMonth(marketRows.value)
+    if (!latestMonth) return []
     const latestRows = marketRows.value.filter((r) => r.month === latestMonth && r.province)
-
-    const byProvince = new Map<string, { totalPrice: number; totalListings: number }>()
-    for (const r of latestRows) {
-      const province = r.province ?? ''
-      const existing = byProvince.get(province)
-      if (existing) {
-        existing.totalPrice += r.avg_price * r.listing_count
-        existing.totalListings += r.listing_count
-      } else {
-        byProvince.set(province, {
-          totalPrice: r.avg_price * r.listing_count,
-          totalListings: r.listing_count,
-        })
-      }
-    }
-
-    const result: ProvinceStat[] = []
-    for (const [province, data] of byProvince) {
-      result.push({
-        province,
-        avgPrice: data.totalListings > 0 ? Math.round(data.totalPrice / data.totalListings) : 0,
-        listingCount: data.totalListings,
-      })
-    }
-
-    return result.sort((a, b) => b.listingCount - a.listingCount)
+    return computeProvinceStatsFromRows(latestRows)
   })
 
   const sortedProvinces = computed(() => {

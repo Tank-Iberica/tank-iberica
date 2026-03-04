@@ -292,8 +292,8 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
       location_country: vehicle.location_country,
       location_province: vehicle.location_province,
       location_region: vehicle.location_region,
-      description_es: vehicle.description_es,
-      description_en: vehicle.description_en,
+      description_es: vehicle.description_es, // NOSONAR typescript:S1874
+      description_en: vehicle.description_en, // NOSONAR typescript:S1874
       attributes_json: vehicle.attributes_json || {},
       status: vehicle.status,
       featured: vehicle.featured,

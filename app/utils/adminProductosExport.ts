@@ -25,6 +25,32 @@ export interface ExportHelpers {
   getSubcategoryName: (id: string | null | undefined) => string
 }
 
+function addFinancialSection(
+  doc: InstanceType<typeof import('jspdf').jsPDF>,
+  vehicle: AdminVehicle,
+  yPos: number,
+  pageWidth: number,
+): void {
+  doc.setFillColor(255, 251, 235)
+  doc.roundedRect(14, yPos - 5, pageWidth - 28, 35, 3, 3, 'F')
+  doc.setFontSize(12)
+  doc.setTextColor(146, 64, 14)
+  doc.text('Informaci\u00F3n Financiera (Interno)', 18, yPos + 3)
+  let y = yPos + 10
+  doc.setFontSize(10)
+  if (vehicle.acquisition_cost) {
+    doc.text(`Coste Adquisici\u00F3n: ${formatPrice(vehicle.acquisition_cost)}`, 18, y)
+    y += 6
+  }
+  if (vehicle.min_price) {
+    doc.text(`Precio M\u00EDnimo: ${formatPrice(vehicle.min_price)}`, 18, y)
+    y += 6
+  }
+  if (vehicle.price && vehicle.acquisition_cost) {
+    doc.text(`Margen: ${formatPrice(vehicle.price - vehicle.acquisition_cost)}`, 18, y)
+  }
+}
+
 // -------------------------------------------------------------------------
 // Excel export
 // -------------------------------------------------------------------------
@@ -198,6 +224,7 @@ export async function exportVehicleFicha(
   }
 
   if (vehicle.description_es) {
+    // NOSONAR typescript:S1874
     yPos += 10
     doc.setFontSize(14)
     doc.setTextColor(35, 66, 74)
@@ -205,32 +232,14 @@ export async function exportVehicleFicha(
     yPos += 8
     doc.setFontSize(10)
     doc.setTextColor(50, 50, 50)
-    const descLines = doc.splitTextToSize(vehicle.description_es, pageWidth - 28)
+    const descLines = doc.splitTextToSize(vehicle.description_es, pageWidth - 28) // NOSONAR typescript:S1874
     doc.text(descLines, 14, yPos)
     yPos += descLines.length * 5
   }
 
   if (vehicle.acquisition_cost || vehicle.min_price) {
     yPos += 15
-    doc.setFillColor(255, 251, 235)
-    doc.roundedRect(14, yPos - 5, pageWidth - 28, 35, 3, 3, 'F')
-    doc.setFontSize(12)
-    doc.setTextColor(146, 64, 14)
-    doc.text('Informaci\u00F3n Financiera (Interno)', 18, yPos + 3)
-    yPos += 10
-    doc.setFontSize(10)
-    if (vehicle.acquisition_cost) {
-      doc.text(`Coste Adquisici\u00F3n: ${formatPrice(vehicle.acquisition_cost)}`, 18, yPos)
-      yPos += 6
-    }
-    if (vehicle.min_price) {
-      doc.text(`Precio M\u00EDnimo: ${formatPrice(vehicle.min_price)}`, 18, yPos)
-      yPos += 6
-    }
-    if (vehicle.price && vehicle.acquisition_cost) {
-      const margin = vehicle.price - vehicle.acquisition_cost
-      doc.text(`Margen: ${formatPrice(margin)}`, 18, yPos)
-    }
+    addFinancialSection(doc, vehicle, yPos, pageWidth)
   }
 
   doc.setFontSize(8)

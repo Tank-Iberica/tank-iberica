@@ -109,7 +109,7 @@ const emit = defineEmits<{
   background: var(--color-error);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .estado-row {
     flex-direction: column;
   }

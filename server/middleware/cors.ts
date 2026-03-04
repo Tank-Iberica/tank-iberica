@@ -10,7 +10,7 @@
  * Note: Cloudflare Pages already handles CORS for static assets.
  * This middleware adds explicit CORS headers for /api/* routes.
  */
-import { defineEventHandler, getHeader, getMethod, setResponseHeaders } from 'h3'
+import { defineEventHandler, getHeader, setResponseHeaders } from 'h3'
 import { getSiteUrl } from '~~/server/utils/siteConfig'
 
 export default defineEventHandler((event) => {
@@ -44,7 +44,7 @@ export default defineEventHandler((event) => {
   })
 
   // Handle preflight
-  if (getMethod(event) === 'OPTIONS') {
+  if (event.method === 'OPTIONS') {
     event.node.res.statusCode = 204
     event.node.res.end()
   }

@@ -281,7 +281,7 @@ function onNumberInput(field: keyof ValoracionFormData, event: Event): void {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .valuation-form {
     padding: var(--spacing-8);
   }

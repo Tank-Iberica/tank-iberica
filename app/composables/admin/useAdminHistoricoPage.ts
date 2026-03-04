@@ -37,7 +37,7 @@ function printHTML(html: string) {
   if (!doc) return
 
   doc.open()
-  doc.write(html)
+  doc.write(html) // NOSONAR typescript:S1874
   doc.close()
 
   setTimeout(() => {

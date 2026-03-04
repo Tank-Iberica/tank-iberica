@@ -41,7 +41,7 @@ function onRoleSelectChange(event: Event) {
             <!-- Avatar & identity -->
             <div class="detail-section full-width user-identity">
               <div class="avatar large">
-                <img v-if="user.avatar_url" :src="user.avatar_url" :alt="user.email" >
+                <img v-if="user.avatar_url" :src="user.avatar_url" :alt="user.email" />
                 <span v-else class="avatar-initials">{{ getInitials(user) }}</span>
               </div>
               <div>
@@ -307,7 +307,7 @@ function onRoleSelectChange(event: Event) {
   font-weight: 500;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .detail-grid {
     grid-template-columns: 1fr;
   }

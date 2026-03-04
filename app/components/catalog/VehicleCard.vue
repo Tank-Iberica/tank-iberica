@@ -13,7 +13,7 @@
           fit="cover"
           loading="lazy"
           format="webp"
-          sizes="(max-width: 479px) calc(100vw - 32px), (max-width: 768px) calc(50vw - 24px), (max-width: 1024px) calc(33vw - 24px), 25vw"
+          sizes="(max-width: 29.94em) calc(100vw - 32px), (max-width: 48em) calc(50vw - 24px), (max-width: 64em) calc(33vw - 24px), 25vw"
           class="card-img"
         />
         <img
@@ -543,9 +543,9 @@ function nextImage() {
 }
 
 /* ============================================
-   RESPONSIVE: ≥480px
+   RESPONSIVE: ≥30em
    ============================================ */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .terceros-banner {
     font-size: 10px;
     padding: 0.4rem 0.6rem;
@@ -553,9 +553,9 @@ function nextImage() {
 }
 
 /* ============================================
-   RESPONSIVE: ≥768px (tablet/desktop)
+   RESPONSIVE: ≥48em (tablet/desktop)
    ============================================ */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   /* Nav arrows: larger at tablet+ */
   .img-nav {
     width: 38px;
@@ -566,7 +566,7 @@ function nextImage() {
 }
 
 /* On pointer devices: hide arrows until card hover */
-@media (hover: hover) and (min-width: 768px) {
+@media (hover: hover) and (min-width: 48em) {
   .img-nav {
     opacity: 0;
   }
@@ -576,7 +576,7 @@ function nextImage() {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   /* titleStyle computed handles font-size dynamically */
 
   .terceros-banner {

@@ -85,7 +85,7 @@ const { t } = useI18n()
   color: #7c3aed;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .summary-cards {
     gap: 16px;
   }
@@ -95,7 +95,7 @@ const { t } = useI18n()
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .summary-cards {
     grid-template-columns: repeat(4, 1fr);
   }

@@ -236,7 +236,7 @@ const emit = defineEmits<{
   overflow: hidden;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .table-container {
     overflow-x: auto;
   }

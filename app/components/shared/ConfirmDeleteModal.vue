@@ -84,7 +84,7 @@ watch(
                 :placeholder="confirmWord"
                 autocomplete="off"
                 @keyup.enter="handleConfirm"
-              >
+              />
             </div>
           </div>
 
@@ -114,7 +114,7 @@ watch(
   padding: 16px;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .modal-overlay {
     align-items: center;
   }
@@ -129,7 +129,7 @@ watch(
   overflow-y: auto;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .modal-container {
     border-radius: 12px;
   }

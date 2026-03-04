@@ -152,13 +152,13 @@ defineProps<{
   background: var(--color-gray-50);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .detail-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .detail-grid {
     grid-template-columns: repeat(5, 1fr);
   }

@@ -17,61 +17,69 @@ import { processWhatsAppSubmission, sanitizeSlug } from '~~/server/services/what
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
+async function verifyAccess(
+  event: Parameters<typeof getHeader>[0],
+  internalSecret: string | undefined,
+  turnstileToken: string | undefined,
+): Promise<void> {
+  const internalHeader = getHeader(event, 'x-internal-secret')
+  if (internalSecret && internalHeader === internalSecret) return
+  if (turnstileToken) {
+    const ip = getRequestIP(event, { xForwardedFor: true }) || undefined
+    if (!(await verifyTurnstile(turnstileToken, ip))) {
+      throw createError({ statusCode: 403, message: 'CAPTCHA verification failed' })
+    }
+    return
+  }
+  throw createError({ statusCode: 401, message: 'Unauthorized' })
+}
+
+type SupabaseSR = ReturnType<typeof serverSupabaseServiceRole>
+
+async function createPlaceholderVehicle(
+  supabase: SupabaseSR,
+  submissionId: string,
+): Promise<{ vehicleId: string }> {
+  const { data: vehicle, error } = await supabase
+    .from('vehicles')
+    .insert({
+      brand: 'Pendiente',
+      model: 'WhatsApp',
+      slug: sanitizeSlug(`whatsapp-${Date.now()}`),
+      category: 'venta' as const,
+      status: 'draft' as const,
+      dealer_id: null,
+      description_es: 'Vehiculo enviado por WhatsApp (pendiente de procesar)',
+      description_en: 'Vehicle sent via WhatsApp (pending processing)',
+      ai_generated: true,
+      attributes_json: { source: 'whatsapp', submission_id: submissionId },
+    })
+    .select('id, slug')
+    .single()
+
+  if (error || !vehicle) {
+    throw createError({ statusCode: 500, message: 'Failed to create placeholder vehicle' })
+  }
+  return { vehicleId: (vehicle as unknown as { id: string }).id }
+}
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const supabase = serverSupabaseServiceRole(event)
 
-  // ── Auth: internal secret (cron/retry) OR Turnstile (external caller) ──
-  const internalSecret = config.cronSecret || process.env.CRON_SECRET
-  const internalHeader = getHeader(event, 'x-internal-secret')
-  const isInternalCall = internalSecret && internalHeader === internalSecret
-
   const body = await readBody<{ submissionId: string; turnstileToken?: string }>(event)
 
-  if (!isInternalCall) {
-    if (body.turnstileToken) {
-      const ip = getRequestIP(event, { xForwardedFor: true }) || undefined
-      const turnstileValid = await verifyTurnstile(body.turnstileToken, ip)
-      if (!turnstileValid) {
-        throw createError({ statusCode: 403, message: 'CAPTCHA verification failed' })
-      }
-    } else {
-      throw createError({ statusCode: 401, message: 'Unauthorized' })
-    }
-  }
+  await verifyAccess(event, config.cronSecret || process.env.CRON_SECRET, body.turnstileToken)
 
   if (!body.submissionId || !UUID_REGEX.test(body.submissionId)) {
     throw createError({ statusCode: 400, message: 'submissionId must be a valid UUID' })
   }
 
   // Dev mode: create placeholder if no AI key configured
-  const anthropicKey = config.anthropicApiKey
-  if (!anthropicKey && !process.env.OPENAI_API_KEY) {
+  if (!config.anthropicApiKey && !process.env.OPENAI_API_KEY) {
     console.warn('[WhatsApp Process] No AI API keys — creating placeholder vehicle')
-    const placeholderSlug = sanitizeSlug(`whatsapp-${Date.now()}`)
-
-    const { data: vehicle, error: vehicleError } = await supabase
-      .from('vehicles')
-      .insert({
-        brand: 'Pendiente',
-        model: 'WhatsApp',
-        slug: placeholderSlug,
-        category: 'venta' as const,
-        status: 'draft' as const,
-        dealer_id: null,
-        description_es: 'Vehiculo enviado por WhatsApp (pendiente de procesar)',
-        description_en: 'Vehicle sent via WhatsApp (pending processing)',
-        ai_generated: true,
-        attributes_json: { source: 'whatsapp', submission_id: body.submissionId },
-      })
-      .select('id, slug')
-      .single()
-
-    if (vehicleError || !vehicle) {
-      throw createError({ statusCode: 500, message: 'Failed to create placeholder vehicle' })
-    }
-
-    return { status: 'processed', vehicleId: (vehicle as unknown as { id: string }).id, dev: true }
+    const { vehicleId } = await createPlaceholderVehicle(supabase, body.submissionId)
+    return { status: 'processed', vehicleId, dev: true }
   }
 
   try {

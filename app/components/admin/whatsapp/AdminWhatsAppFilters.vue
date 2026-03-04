@@ -58,7 +58,7 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
         type="text"
         :placeholder="t('admin.whatsapp.searchPlaceholder')"
         @input="emit('update:search', ($event.target as HTMLInputElement).value)"
-      >
+      />
       <button v-if="search" class="clear-btn" @click="emit('update:search', '')">
         <svg
           width="14"
@@ -184,8 +184,8 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
   background: var(--bg-tertiary);
 }
 
-/* 768px+ */
-@media (min-width: 768px) {
+/* 48em+ */
+@media (min-width: 48em) {
   .filters-bar {
     flex-direction: row;
     align-items: center;

@@ -379,7 +379,7 @@ function getContractTypeLabel(type: string): string {
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .history-card-body {
     grid-template-columns: 1fr;
     gap: 8px;

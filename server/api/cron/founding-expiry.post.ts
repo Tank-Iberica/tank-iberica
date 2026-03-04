@@ -260,6 +260,63 @@ async function handleFoundingExpiry(ctx: ReminderContext, subscriptionId: string
   return await pauseExcessVehicles(ctx.supabaseUrl, ctx.headers, ctx.dealerId, ctx.now)
 }
 
+async function processSubscription(
+  subscription: SubscriptionRow,
+  supabaseUrl: string,
+  headers: Record<string, string>,
+  upgradeUrl: string,
+  internalSecret: string | undefined,
+  now: Date,
+): Promise<{ notified30d: number; notified7d: number; expired: number; vehiclesPaused: number }> {
+  if (!subscription.expires_at)
+    return { notified30d: 0, notified7d: 0, expired: 0, vehiclesPaused: 0 }
+
+  const expiresAt = new Date(subscription.expires_at)
+  const daysUntilExpiry = (expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+
+  const dealerRes = await fetchWithRetry(
+    `${supabaseUrl}/rest/v1/dealers?user_id=eq.${subscription.user_id}&select=id,company_name,email,locale,badge&limit=1`,
+    { headers },
+  )
+  if (!dealerRes.ok) return { notified30d: 0, notified7d: 0, expired: 0, vehiclesPaused: 0 }
+
+  const dealers = (await dealerRes.json()) as DealerRow[]
+  const dealer = dealers[0]
+  if (!dealer?.email) return { notified30d: 0, notified7d: 0, expired: 0, vehiclesPaused: 0 }
+
+  const locale = dealer.locale ?? 'es'
+  const ctx: ReminderContext = {
+    supabaseUrl,
+    headers,
+    recipientEmail: dealer.email,
+    dealerId: dealer.id,
+    locale,
+    dealerName: resolveDealerName(dealer.company_name, locale),
+    expiresAtFormatted: expiresAt.toLocaleDateString(locale === 'en' ? 'en-GB' : 'es-ES', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    }),
+    upgradeUrl,
+    internalSecret,
+    now,
+  }
+
+  const result = { notified30d: 0, notified7d: 0, expired: 0, vehiclesPaused: 0 }
+
+  if (daysUntilExpiry <= 0) {
+    result.vehiclesPaused = await handleFoundingExpiry(ctx, subscription.id)
+    result.expired = 1
+  } else if (daysUntilExpiry <= 7) {
+    if (await sendReminder7d(ctx, daysUntilExpiry)) result.notified7d = 1
+    if (await sendReminder30d(ctx, daysUntilExpiry)) result.notified30d = 1
+  } else if (daysUntilExpiry <= 30) {
+    if (await sendReminder30d(ctx, daysUntilExpiry)) result.notified30d = 1
+  }
+
+  return result
+}
+
 // ── Handler ──────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event) => {
@@ -324,51 +381,18 @@ export default defineEventHandler(async (event) => {
     items: foundingSubscriptions,
     batchSize: 20,
     processor: async (subscription: SubscriptionRow) => {
-      if (!subscription.expires_at) return
-
-      const expiresAt = new Date(subscription.expires_at)
-      const msUntilExpiry = expiresAt.getTime() - now.getTime()
-      const daysUntilExpiry = msUntilExpiry / (1000 * 60 * 60 * 24)
-      const isExpired = msUntilExpiry <= 0
-
-      // Fetch dealer for this subscription (via user_id)
-      const dealerRes = await fetchWithRetry(
-        `${supabaseUrl}/rest/v1/dealers?user_id=eq.${subscription.user_id}&select=id,company_name,email,locale,badge&limit=1`,
-        { headers },
-      )
-      if (!dealerRes.ok) return
-
-      const dealers = (await dealerRes.json()) as DealerRow[]
-      const dealer = dealers[0]
-      if (!dealer?.email) return
-
-      const locale = dealer.locale ?? 'es'
-      const ctx: ReminderContext = {
+      const result = await processSubscription(
+        subscription,
         supabaseUrl,
         headers,
-        recipientEmail: dealer.email,
-        dealerId: dealer.id,
-        locale,
-        dealerName: resolveDealerName(dealer.company_name, locale),
-        expiresAtFormatted: expiresAt.toLocaleDateString(locale === 'en' ? 'en-GB' : 'es-ES', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-        }),
         upgradeUrl,
-        internalSecret: _internalSecret,
+        _internalSecret,
         now,
-      }
-
-      if (isExpired) {
-        vehiclesPaused += await handleFoundingExpiry(ctx, subscription.id)
-        expired++
-      } else if (daysUntilExpiry <= 7) {
-        if (await sendReminder7d(ctx, daysUntilExpiry)) notified7d++
-        if (await sendReminder30d(ctx, daysUntilExpiry)) notified30d++
-      } else if (daysUntilExpiry <= 30) {
-        if (await sendReminder30d(ctx, daysUntilExpiry)) notified30d++
-      }
+      )
+      notified30d += result.notified30d
+      notified7d += result.notified7d
+      expired += result.expired
+      vehiclesPaused += result.vehiclesPaused
     },
   })
 

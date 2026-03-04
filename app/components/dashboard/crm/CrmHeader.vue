@@ -76,7 +76,7 @@ const { t } = useI18n()
   background: var(--color-primary-dark);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .page-header {
     flex-direction: row;
     justify-content: space-between;

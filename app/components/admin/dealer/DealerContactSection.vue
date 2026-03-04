@@ -332,8 +332,8 @@ function updateCtaTextLang(lang: string, value: string) {
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
-/* Responsive: 768px */
-@media (min-width: 768px) {
+/* Responsive: 48em */
+@media (min-width: 48em) {
   .form-row-2col {
     grid-template-columns: 1fr 1fr;
   }
@@ -351,8 +351,8 @@ function updateCtaTextLang(lang: string, value: string) {
   }
 }
 
-/* Responsive: 1024px */
-@media (min-width: 1024px) {
+/* Responsive: 64em */
+@media (min-width: 64em) {
   .config-card {
     padding: var(--spacing-8);
   }

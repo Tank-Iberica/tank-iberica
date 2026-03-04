@@ -22,7 +22,7 @@ const emit = defineEmits<{
           :value="socialLinks.linkedin"
           placeholder="https://linkedin.com/company/..."
           @input="emit('update-field', 'linkedin', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
       <div class="form-group">
         <label for="social-instagram">Instagram</label>
@@ -32,7 +32,7 @@ const emit = defineEmits<{
           :value="socialLinks.instagram"
           placeholder="https://instagram.com/..."
           @input="emit('update-field', 'instagram', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
       <div class="form-group">
         <label for="social-facebook">Facebook</label>
@@ -42,7 +42,7 @@ const emit = defineEmits<{
           :value="socialLinks.facebook"
           placeholder="https://facebook.com/..."
           @input="emit('update-field', 'facebook', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
       <div class="form-group">
         <label for="social-x">X (Twitter)</label>
@@ -52,7 +52,7 @@ const emit = defineEmits<{
           :value="socialLinks.x"
           placeholder="https://x.com/..."
           @input="emit('update-field', 'x', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
     </div>
   </div>
@@ -112,7 +112,7 @@ const emit = defineEmits<{
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .social-grid {
     grid-template-columns: 1fr 1fr;
   }

@@ -79,7 +79,7 @@ const { t } = useI18n()
   color: var(--color-primary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .quick-actions {
     grid-template-columns: repeat(4, 1fr);
   }

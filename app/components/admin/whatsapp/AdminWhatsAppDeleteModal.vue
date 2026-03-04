@@ -185,8 +185,8 @@ const { t } = useI18n()
   transform: translateY(100%);
 }
 
-/* 768px+ : Modal centered */
-@media (min-width: 768px) {
+/* 48em+ : Modal centered */
+@media (min-width: 48em) {
   .modal-overlay {
     align-items: center;
     padding: 20px;
@@ -194,7 +194,7 @@ const { t } = useI18n()
 
   .modal-panel {
     border-radius: 16px;
-    max-width: 480px;
+    max-width: 30em;
   }
 }
 </style>

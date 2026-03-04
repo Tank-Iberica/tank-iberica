@@ -162,7 +162,7 @@ defineEmits<{
   opacity: 1;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .thumb-btn {
     width: 80px;
     height: 56px;

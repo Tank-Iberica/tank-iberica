@@ -40,7 +40,7 @@ interface DgtReportResponse {
   error?: string
 }
 
-const VALID_PROVIDERS: ReadonlyArray<ReportProvider> = ['infocar', 'carvertical', 'manual']
+const VALID_PROVIDERS = new Set<ReportProvider>(['infocar', 'carvertical', 'manual'])
 
 function validateBody(body: DgtReportBody): string[] {
   const errors: string[] = []
@@ -66,7 +66,10 @@ function validateBody(body: DgtReportBody): string[] {
 
   // provider — optional, must be one of the allowed values
   if (body.provider !== undefined && body.provider !== null) {
-    if (typeof body.provider !== 'string' || !VALID_PROVIDERS.includes(body.provider)) {
+    if (
+      typeof body.provider !== 'string' ||
+      !VALID_PROVIDERS.has(body.provider as ReportProvider)
+    ) {
       errors.push('provider must be one of: infocar, carvertical, manual')
     }
   }

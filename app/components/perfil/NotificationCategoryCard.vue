@@ -204,7 +204,7 @@ const { t } = useI18n()
             :checked="isEnabled(emailType.key)"
             :disabled="isAlwaysOn(emailType.key) || saving"
             @change="emit('toggle', emailType.key)"
-          >
+          />
           <span class="toggle__slider" />
         </label>
       </div>
@@ -332,7 +332,7 @@ const { t } = useI18n()
   transform: translateX(20px);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .category-card {
     padding: 1.5rem;
     margin-bottom: 1.25rem;

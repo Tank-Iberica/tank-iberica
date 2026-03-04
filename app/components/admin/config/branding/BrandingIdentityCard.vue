@@ -174,7 +174,7 @@ function onInput(field: 'name' | 'tagline' | 'metaDescription', lang: string, va
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .lang-row {
     flex-direction: row;
   }

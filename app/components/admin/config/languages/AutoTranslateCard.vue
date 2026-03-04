@@ -19,7 +19,7 @@ function onChange(event: Event) {
       Si se activa, el contenido se traducira automaticamente al publicar.
     </p>
     <label class="toggle-label">
-      <input type="checkbox" class="toggle-input" :checked="enabled" @change="onChange" >
+      <input type="checkbox" class="toggle-input" :checked="enabled" @change="onChange" />
       <span class="toggle-switch" />
       <span class="toggle-text">
         {{ enabled ? 'Activado' : 'Desactivado' }}
@@ -100,7 +100,7 @@ function onChange(event: Event) {
   color: #374151;
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .config-card {
     padding: 16px;
   }

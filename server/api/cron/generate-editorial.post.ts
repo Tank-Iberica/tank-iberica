@@ -12,6 +12,30 @@ import { serverSupabaseServiceRole } from '#supabase/server'
 import { callAI } from '~~/server/services/aiProvider'
 import { isFeatureEnabled } from '~~/server/utils/featureFlags'
 
+function computeTrendingSearches(searches: Array<{ query: string }>): string[] {
+  const freq = new Map<string, number>()
+  for (const term of searches.map((s) => s.query)) {
+    freq.set(term, (freq.get(term) || 0) + 1)
+  }
+  return [...freq.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([term]) => term)
+}
+
+function buildArticleSlug(article: GeneratedArticle): string {
+  return (
+    article.slug ||
+    article.title
+      .toLowerCase()
+      .normalize('NFD')
+      .replaceAll(/[\u0300-\u036F]/g, '')
+      .replaceAll(/[^a-z0-9]+/g, '-')
+      .replaceAll(/-+/g, '-')
+      .replaceAll(/^-|-$/g, '')
+  )
+}
+
 interface GeneratedArticle {
   title: string
   slug: string
@@ -55,15 +79,7 @@ export default defineEventHandler(async (event) => {
       .limit(50)
 
     if (searches) {
-      const searchTerms = (searches as Array<{ query: string }>).map((s) => s.query)
-      const freq = new Map<string, number>()
-      for (const term of searchTerms) {
-        freq.set(term, (freq.get(term) || 0) + 1)
-      }
-      trendingSearches = [...freq.entries()]
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([term]) => term)
+      trendingSearches = computeTrendingSearches(searches as Array<{ query: string }>)
     }
   } catch {
     // search_logs may not exist yet
@@ -113,7 +129,7 @@ Return as a JSON array of 2 articles.`,
       'content',
     )
 
-    const jsonMatch = response.text.match(/\[[\s\S]*\]/)
+    const jsonMatch = /\[[\s\S]*\]/.exec(response.text)
     if (!jsonMatch) {
       return { success: false, message: 'AI did not return valid JSON', generated: 0 }
     }
@@ -124,15 +140,7 @@ Return as a JSON array of 2 articles.`,
     for (const article of articles) {
       if (!article.title || !article.content) continue
 
-      const slug =
-        article.slug ||
-        article.title
-          .toLowerCase()
-          .normalize('NFD')
-          .replaceAll(/[\u0300-\u036F]/g, '')
-          .replaceAll(/[^a-z0-9]+/g, '-')
-          .replaceAll(/-+/g, '-')
-          .replaceAll(/^-|-$/g, '')
+      const slug = buildArticleSlug(article)
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: insertError } = await (supabase.from('articles') as any).insert({

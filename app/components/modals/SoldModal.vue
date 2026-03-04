@@ -176,7 +176,7 @@ watch(
                   class="price-input"
                   autocomplete="off"
                   :placeholder="t('dashboard.sold.salePricePlaceholder')"
-                >
+                />
               </div>
               <p class="price-incentive">{{ t('dashboard.sold.salePriceIncentive') }}</p>
             </div>
@@ -190,7 +190,7 @@ watch(
                     type="radio"
                     name="soldViaTracciona"
                     :value="true"
-                  >
+                  />
                   <span>{{ t('dashboard.sold.yes') }}</span>
                 </label>
                 <label class="radio-option">
@@ -199,7 +199,7 @@ watch(
                     type="radio"
                     name="soldViaTracciona"
                     :value="false"
-                  >
+                  />
                   <span>{{ t('dashboard.sold.no') }}</span>
                 </label>
               </div>
@@ -229,7 +229,7 @@ watch(
                   :value="service.key"
                   :checked="selectedServices.includes(service.key)"
                   @change="toggleService(service.key)"
-                >
+                />
                 <div class="service-icon">{{ service.icon }}</div>
                 <h3>{{ t(`dashboard.sold.crossSell.${service.key}`) }}</h3>
                 <p class="service-desc">
@@ -596,7 +596,7 @@ watch(
 }
 
 /* Desktop styles */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .modal-overlay {
     align-items: center;
     padding: 24px;
@@ -604,7 +604,7 @@ watch(
 
   .modal-container {
     width: 100%;
-    max-width: 600px;
+    max-width: 37.5em;
     max-height: 85vh;
     border-radius: 16px;
   }

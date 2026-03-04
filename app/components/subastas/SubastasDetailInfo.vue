@@ -99,13 +99,13 @@ defineProps<{
   font-weight: var(--font-weight-semibold);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .details-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .auction-details-section {
     padding: var(--spacing-6);
   }
@@ -115,7 +115,7 @@ defineProps<{
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .details-grid {
     grid-template-columns: repeat(3, 1fr);
   }

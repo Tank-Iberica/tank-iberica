@@ -185,13 +185,13 @@ defineProps<{
   margin-bottom: var(--spacing-8);
 }
 
-@media (min-width: 600px) {
+(@media ()min-width: 37.5em())) {
   .notifications-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (min-width: 900px) {
+(@media ()min-width: 56.25em())) {
   .notifications-grid {
     grid-template-columns: repeat(5, 1fr);
   }
@@ -271,7 +271,7 @@ defineProps<{
   margin-bottom: var(--spacing-6);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .two-columns {
     grid-template-columns: repeat(2, 1fr);
   }

@@ -25,7 +25,7 @@ function hasCat(cat: string, cats: string[]): boolean {
           type="checkbox"
           :checked="hasCat('venta', categories)"
           @change="emit('toggle-category', 'venta')"
-        />
+        >
         Venta
       </label>
       <label class="cat-check" :class="{ active: hasCat('alquiler', categories) }">
@@ -33,7 +33,7 @@ function hasCat(cat: string, cats: string[]): boolean {
           type="checkbox"
           :checked="hasCat('alquiler', categories)"
           @change="emit('toggle-category', 'alquiler')"
-        />
+        >
         Alquiler
       </label>
       <label class="cat-check" :class="{ active: hasCat('terceros', categories) }">
@@ -41,11 +41,11 @@ function hasCat(cat: string, cats: string[]): boolean {
           type="checkbox"
           :checked="hasCat('terceros', categories)"
           @change="emit('toggle-category', 'terceros')"
-        />
+        >
         Terceros
       </label>
       <label class="feat-check">
-        <input type="checkbox" :checked="featured" @change="emit('update:featured', !featured)" />
+        <input type="checkbox" :checked="featured" @change="emit('update:featured', !featured)" >
         Destacado
       </label>
     </div>
@@ -104,7 +104,7 @@ function hasCat(cat: string, cats: string[]): boolean {
   margin: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .cat-row {
     flex-direction: column;
     align-items: flex-start;

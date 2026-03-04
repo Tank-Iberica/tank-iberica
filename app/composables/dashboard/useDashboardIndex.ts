@@ -2,7 +2,7 @@
  * Composable for the dealer dashboard index page.
  * Orchestrates data loading, formatting helpers, and derived state.
  */
-import { formatPrice } from '~/composables/shared/useListingUtils'
+export { formatPrice } from '~/composables/shared/useListingUtils'
 
 export interface OnboardingStep {
   key: string
@@ -34,8 +34,6 @@ export interface DashboardVehicle {
   price: number | null
   views: number
 }
-
-export { formatPrice }
 
 export function useDashboardIndex() {
   const { t } = useI18n()

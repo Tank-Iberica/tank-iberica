@@ -223,7 +223,7 @@ function onTouchEnd(e: TouchEvent) {
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .gallery-thumbs {
     display: flex;
     gap: var(--spacing-2);

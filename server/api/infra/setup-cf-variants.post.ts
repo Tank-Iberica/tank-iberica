@@ -46,6 +46,39 @@ const VARIANTS: VariantConfig[] = [
   { id: 'og', width: 1200, height: 630, fit: 'cover' },
 ]
 
+async function createCfVariant(
+  variant: VariantConfig,
+  cfAccountId: string,
+  cfApiToken: string,
+): Promise<{ created: boolean; message: string }> {
+  try {
+    const response = await $fetch<CfVariantResponse>(
+      `https://api.cloudflare.com/client/v4/accounts/${cfAccountId}/images/v1/variants`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${cfApiToken}`, 'Content-Type': 'application/json' },
+        body: {
+          id: variant.id,
+          options: {
+            fit: variant.fit,
+            width: variant.width,
+            height: variant.height,
+            metadata: 'none',
+          },
+        },
+      },
+    )
+    if (response.success) return { created: true, message: '' }
+    return { created: false, message: response.errors?.[0]?.message ?? 'Unknown error' }
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    if (message.includes('409') || message.includes('already exists')) {
+      return { created: true, message: 'Already exists (skipped)' }
+    }
+    return { created: false, message }
+  }
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event): Promise<SetupResult> => {
@@ -80,43 +113,9 @@ export default defineEventHandler(async (event): Promise<SetupResult> => {
   const errors: Array<{ variant: string; message: string }> = []
 
   for (const variant of VARIANTS) {
-    try {
-      const response = await $fetch<CfVariantResponse>(
-        `https://api.cloudflare.com/client/v4/accounts/${cfAccountId}/images/v1/variants`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${cfApiToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: {
-            id: variant.id,
-            options: {
-              fit: variant.fit,
-              width: variant.width,
-              height: variant.height,
-              metadata: 'none',
-            },
-          },
-        },
-      )
-
-      if (response.success) {
-        created.push(variant.id)
-      } else {
-        const errorMsg = response.errors?.[0]?.message ?? 'Unknown error'
-        errors.push({ variant: variant.id, message: errorMsg })
-      }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error'
-      // Check if the variant already exists (409 Conflict)
-      if (message.includes('409') || message.includes('already exists')) {
-        created.push(variant.id)
-        errors.push({ variant: variant.id, message: 'Already exists (skipped)' })
-      } else {
-        errors.push({ variant: variant.id, message })
-      }
-    }
+    const result = await createCfVariant(variant, cfAccountId, cfApiToken)
+    if (result.created) created.push(variant.id)
+    if (result.message) errors.push({ variant: variant.id, message: result.message })
   }
 
   return { created, errors }

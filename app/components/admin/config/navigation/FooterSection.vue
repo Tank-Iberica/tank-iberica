@@ -30,7 +30,7 @@ const emit = defineEmits<{
             :value="footerText.es"
             placeholder="Texto del pie de pagina"
             @input="emit('update-footer-text', 'es', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
         <div class="lang-field">
           <span class="lang-badge">EN</span>
@@ -39,7 +39,7 @@ const emit = defineEmits<{
             :value="footerText.en"
             placeholder="Footer text"
             @input="emit('update-footer-text', 'en', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
       </div>
     </div>
@@ -177,7 +177,7 @@ const emit = defineEmits<{
   font-size: 0.8rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .lang-row {
     flex-direction: row;
   }

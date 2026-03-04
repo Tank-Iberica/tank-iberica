@@ -376,7 +376,7 @@ function onEstimatedValueInput(event: Event): void {
 }
 
 /* ── Desktop layout ────────────────────────────────────────────── */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .modal-overlay {
     align-items: center;
     padding: 24px;

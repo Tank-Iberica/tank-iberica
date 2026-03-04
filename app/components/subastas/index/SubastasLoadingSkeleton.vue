@@ -65,23 +65,23 @@
   }
 }
 
-/* Breakpoint: 768px (tablet) */
-@media (min-width: 768px) {
+/* Breakpoint: 48em (tablet) */
+@media (min-width: 48em) {
   .auctions-loading {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-5);
   }
 }
 
-/* Breakpoint: 1024px (desktop) */
-@media (min-width: 1024px) {
+/* Breakpoint: 64em (desktop) */
+@media (min-width: 64em) {
   .auctions-loading {
     gap: var(--spacing-6);
   }
 }
 
-/* Breakpoint: 1280px (large desktop) */
-@media (min-width: 1280px) {
+/* Breakpoint: 80em (large desktop) */
+@media (min-width: 80em) {
   .auctions-loading {
     grid-template-columns: repeat(3, 1fr);
   }

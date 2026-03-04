@@ -462,7 +462,7 @@ function onDocTypeChange(event: Event): void {
   cursor: not-allowed;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -482,7 +482,7 @@ function onDocTypeChange(event: Event): void {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .verification-header {
     flex-direction: row;
   }

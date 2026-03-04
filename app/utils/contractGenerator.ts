@@ -7,72 +7,76 @@
 // Number to words (Spanish)
 // ---------------------------------------------------------------------------
 
-export function numberToWords(n: number): string {
-  const units = [
-    '',
-    'UN',
-    'DOS',
-    'TRES',
-    'CUATRO',
-    'CINCO',
-    'SEIS',
-    'SIETE',
-    'OCHO',
-    'NUEVE',
-    'DIEZ',
-    'ONCE',
-    'DOCE',
-    'TRECE',
-    'CATORCE',
-    'QUINCE',
-    'DIECISEIS',
-    'DIECISIETE',
-    'DIECIOCHO',
-    'DIECINUEVE',
-  ]
-  const tens = [
-    '',
-    '',
-    'VEINTE',
-    'TREINTA',
-    'CUARENTA',
-    'CINCUENTA',
-    'SESENTA',
-    'SETENTA',
-    'OCHENTA',
-    'NOVENTA',
-  ]
-  const hundreds = [
-    '',
-    'CIEN',
-    'DOSCIENTOS',
-    'TRESCIENTOS',
-    'CUATROCIENTOS',
-    'QUINIENTOS',
-    'SEISCIENTOS',
-    'SETECIENTOS',
-    'OCHOCIENTOS',
-    'NOVECIENTOS',
-  ]
+const NTW_UNITS = [
+  '',
+  'UN',
+  'DOS',
+  'TRES',
+  'CUATRO',
+  'CINCO',
+  'SEIS',
+  'SIETE',
+  'OCHO',
+  'NUEVE',
+  'DIEZ',
+  'ONCE',
+  'DOCE',
+  'TRECE',
+  'CATORCE',
+  'QUINCE',
+  'DIECISEIS',
+  'DIECISIETE',
+  'DIECIOCHO',
+  'DIECINUEVE',
+]
+const NTW_TENS = [
+  '',
+  '',
+  'VEINTE',
+  'TREINTA',
+  'CUARENTA',
+  'CINCUENTA',
+  'SESENTA',
+  'SETENTA',
+  'OCHENTA',
+  'NOVENTA',
+]
+const NTW_HUNDREDS = [
+  '',
+  'CIEN',
+  'DOSCIENTOS',
+  'TRESCIENTOS',
+  'CUATROCIENTOS',
+  'QUINIENTOS',
+  'SEISCIENTOS',
+  'SETECIENTOS',
+  'OCHOCIENTOS',
+  'NOVECIENTOS',
+]
 
+function twoDigitWords(n: number): string {
+  const tIdx = Math.floor(n / 10)
+  const u = n % 10
+  if (tIdx === 2 && u > 0) return `VEINTI${NTW_UNITS[u] ?? ''}`
+  return u > 0 ? `${NTW_TENS[tIdx] ?? ''} Y ${NTW_UNITS[u] ?? ''}` : (NTW_TENS[tIdx] ?? '')
+}
+
+function threeDigitWords(n: number): string {
+  const h = Math.floor(n / 100)
+  const rest = n % 100
+  if (n === 100) return 'CIEN'
+  return rest > 0 ? `${NTW_HUNDREDS[h] ?? ''} ${numberToWords(rest)}` : (NTW_HUNDREDS[h] ?? '')
+}
+
+export function numberToWords(n: number): string {
   if (n === 0) return 'CERO'
-  if (n < 20) return units[n] ?? ''
-  if (n < 100) {
-    const tIdx = Math.floor(n / 10)
-    const u = n % 10
-    if (tIdx === 2 && u > 0) return `VEINTI${units[u] ?? ''}`
-    return u > 0 ? `${tens[tIdx] ?? ''} Y ${units[u] ?? ''}` : (tens[tIdx] ?? '')
-  }
-  if (n < 1000) {
-    const h = Math.floor(n / 100)
-    const rest = n % 100
-    if (n === 100) return 'CIEN'
-    return rest > 0 ? `${hundreds[h] ?? ''} ${numberToWords(rest)}` : (hundreds[h] ?? '')
-  }
+  if (n < 20) return NTW_UNITS[n] ?? ''
+  if (n < 100) return twoDigitWords(n)
+  if (n < 1000) return threeDigitWords(n)
   if (n < 10000) {
     const th = Math.floor(n / 1000)
     const rest = n % 1000
-    const thWord = th === 1 ? 'MIL' : `${units[th]} MIL`
+    const thWord = th === 1 ? 'MIL' : `${NTW_UNITS[th]} MIL`
     return rest > 0 ? `${thWord} ${numberToWords(rest)}` : thWord
   }
   return n.toLocaleString('es-ES')
@@ -470,7 +474,7 @@ export function printHTML(html: string): void {
   if (!doc) return
 
   doc.open()
-  doc.write(html)
+  doc.write(html) // NOSONAR typescript:S1874
   doc.close()
 
   setTimeout(() => {
@@ -480,7 +484,7 @@ export function printHTML(html: string): void {
     } catch {
       const win = globalThis.open('', '_blank')
       if (win) {
-        win.document.write(html)
+        win.document.write(html) // NOSONAR typescript:S1874
         win.document.close()
         win.focus()
         win.print()

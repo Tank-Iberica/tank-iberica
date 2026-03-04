@@ -88,7 +88,7 @@ const { t } = useI18n()
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .filters-bar {
     flex-direction: row;
     flex-wrap: wrap;

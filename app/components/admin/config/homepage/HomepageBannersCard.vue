@@ -38,7 +38,7 @@ const emit = defineEmits<{
                 @change="
                   emit('update-field', index, 'active', ($event.target as HTMLInputElement).checked)
                 "
-              />
+              >
               <span>{{ banner.active ? 'Activo' : 'Inactivo' }}</span>
             </label>
             <button class="btn-remove" title="Eliminar" @click="emit('remove', index)">
@@ -65,7 +65,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                />
+                >
               </div>
               <div class="lang-field">
                 <span class="lang-badge">EN</span>
@@ -81,7 +81,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                />
+                >
               </div>
             </div>
           </div>
@@ -93,7 +93,7 @@ const emit = defineEmits<{
               type="text"
               placeholder="https://... o /ruta"
               @input="emit('update-field', index, 'url', ($event.target as HTMLInputElement).value)"
-            />
+            >
           </div>
 
           <div class="banner-row-colors">
@@ -112,7 +112,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                />
+                >
                 <input
                   :value="banner.bg_color"
                   type="text"
@@ -127,7 +127,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                />
+                >
               </div>
             </div>
             <div class="form-group">
@@ -145,7 +145,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                />
+                >
                 <input
                   :value="banner.text_color"
                   type="text"
@@ -160,7 +160,7 @@ const emit = defineEmits<{
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                />
+                >
               </div>
             </div>
           </div>
@@ -179,7 +179,7 @@ const emit = defineEmits<{
                     ($event.target as HTMLInputElement).value,
                   )
                 "
-              />
+              >
             </div>
             <div class="form-group">
               <label>Fecha fin</label>
@@ -189,7 +189,7 @@ const emit = defineEmits<{
                 @input="
                   emit('update-field', index, 'ends_at', ($event.target as HTMLInputElement).value)
                 "
-              />
+              >
             </div>
           </div>
 
@@ -488,13 +488,13 @@ const emit = defineEmits<{
   margin-top: 4px;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .banner-row-dates {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .lang-row {
     flex-direction: row;
   }

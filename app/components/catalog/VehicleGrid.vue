@@ -381,7 +381,7 @@ function onPromoSecondaryAction(promoId: string, _slotIndex: number) {
 }
 
 .vehicle-grid--empty {
-  max-width: 640px;
+  max-width: 40em;
   margin: var(--spacing-8) auto 0;
 }
 
@@ -479,7 +479,7 @@ function onPromoSecondaryAction(promoId: string, _slotIndex: number) {
 }
 
 /* Responsive grid */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .vehicle-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -489,7 +489,7 @@ function onPromoSecondaryAction(promoId: string, _slotIndex: number) {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .vehicle-grid {
     grid-template-columns: repeat(3, 1fr);
     padding: 1.5rem;
@@ -500,13 +500,13 @@ function onPromoSecondaryAction(promoId: string, _slotIndex: number) {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .vehicle-grid {
     padding: 1.5rem 3rem;
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 80em) {
   .vehicle-grid {
     grid-template-columns: repeat(4, 1fr);
   }

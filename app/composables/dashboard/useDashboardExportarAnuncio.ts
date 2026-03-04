@@ -132,83 +132,93 @@ export function useDashboardExportarAnuncio() {
 
   // ---------- Text generation helpers ----------
 
+  interface AdTextContext {
+    brand: string
+    model: string
+    year: string
+    price: string
+    location: string
+    description: string
+    backlink: string
+    category: string
+  }
+
+  function formatMilanuncios(ctx: AdTextContext): string {
+    const header = `\u{1F69B} ${ctx.brand} ${ctx.model}${ctx.year ? ` ${ctx.year}` : ''}`
+    const specs = [
+      ctx.location ? `\u{1F4CD} Ubicacion: ${ctx.location}` : '',
+      ctx.year ? `\u{1F4C6} Ano: ${ctx.year}` : '',
+      ctx.price ? `\u{1F4B0} Precio: ${ctx.price}\u20AC` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+    const descBlock = ctx.description ? `\n${ctx.description}` : ''
+    const footer = `\n\n\u2705 Mas fotos y ficha completa: ${ctx.backlink}`
+    return `${header}\n\n${specs}${descBlock}${footer}`
+  }
+
+  function formatWallapop(ctx: AdTextContext): string {
+    const shortDesc = ctx.description
+      ? ctx.description.substring(0, 200).replaceAll('\n', ' ').trim()
+      : ''
+    const parts = [
+      `${ctx.brand} ${ctx.model}`,
+      ctx.year ? ctx.year : '',
+      ctx.price ? `${ctx.price}\u20AC` : '',
+    ]
+      .filter(Boolean)
+      .join(' | ')
+    return shortDesc
+      ? `${parts} \u2014 ${shortDesc} \u{1F449} ${ctx.backlink}`
+      : `${parts} \u{1F449} ${ctx.backlink}`
+  }
+
+  function formatSocial(ctx: AdTextContext): string {
+    const header = `\u{1F525} ${ctx.brand} ${ctx.model}${ctx.year ? ` ${ctx.year}` : ''} en venta`
+    const specs = [
+      ctx.year ? `Ano: ${ctx.year}` : '',
+      ctx.category ? `Categoria: ${ctx.category}` : '',
+    ]
+      .filter(Boolean)
+      .join(' | ')
+    const priceBlock = ctx.price ? `\n\n\u{1F4B0} ${ctx.price}\u20AC` : ''
+    const locationBlock = ctx.location ? `\n\u{1F4CD} ${ctx.location}` : ''
+    const descBlock = ctx.description ? `\n\n${ctx.description.substring(0, 500)}` : ''
+    const footer = `\n\n\u{1F449} Ver ficha completa: ${ctx.backlink}`
+    return `${header}\n\n${specs}${priceBlock}${locationBlock}${descBlock}${footer}`
+  }
+
+  function formatInstagram(ctx: AdTextContext): string {
+    const header = `${ctx.brand} ${ctx.model}${ctx.year ? ` ${ctx.year}` : ''} \u2728`
+    const priceBlock = ctx.price ? `\n\n\u{1F4B0} ${ctx.price}\u20AC` : ''
+    const locationBlock = ctx.location ? `\n\u{1F4CD} ${ctx.location}` : ''
+    const linkLine = '\n\u{1F517} Link en bio'
+    const brandTag = ctx.brand.toLowerCase().replaceAll(/[^a-z0-9]/g, '')
+    const tags = `\n\n#vehiculoindustrial #${brandTag} #tracciona #maquinariaindustrial`
+    return `${header}${priceBlock}${locationBlock}${linkLine}${tags}`
+  }
+
+  const platformFormatters: Record<PlatformKey, (ctx: AdTextContext) => string> = {
+    milanuncios: formatMilanuncios,
+    wallapop: formatWallapop,
+    facebook: formatSocial,
+    linkedin: formatSocial,
+    instagram: formatInstagram,
+  }
+
   function generateAdText(vehicle: DealerVehicleForExport, platform: PlatformKey): string {
-    const brand = vehicle.brand
-    const model = vehicle.model
-    const year = vehicle.year ? String(vehicle.year) : ''
-    const price = vehicle.price ? formatPrice(vehicle.price) : ''
-    const location = vehicle.location || ''
-    const description = vehicle.description_es || ''
-    const slug = vehicle.slug
-    const backlink = `tracciona.com/vehiculo/${slug}`
-    const maxChars = PLATFORMS.find((p) => p.key === platform)?.maxChars || 2000
-
-    let text = ''
-
-    switch (platform) {
-      case 'milanuncios': {
-        const header = `\u{1F69B} ${brand} ${model}${year ? ` ${year}` : ''}`
-        const specs = [
-          location ? `\u{1F4CD} Ubicacion: ${location}` : '',
-          year ? `\u{1F4C6} Ano: ${year}` : '',
-          price ? `\u{1F4B0} Precio: ${price}\u20AC` : '',
-        ]
-          .filter(Boolean)
-          .join('\n')
-
-        const descBlock = description ? `\n${description}` : ''
-        const footer = `\n\n\u2705 Mas fotos y ficha completa: ${backlink}`
-
-        text = `${header}\n\n${specs}${descBlock}${footer}`
-        break
-      }
-
-      case 'wallapop': {
-        const shortDesc = description
-          ? description.substring(0, 200).replaceAll('\n', ' ').trim()
-          : ''
-        const parts = [`${brand} ${model}`, year ? year : '', price ? `${price}\u20AC` : '']
-          .filter(Boolean)
-          .join(' | ')
-
-        text = shortDesc
-          ? `${parts} \u2014 ${shortDesc} \u{1F449} ${backlink}`
-          : `${parts} \u{1F449} ${backlink}`
-        break
-      }
-
-      case 'facebook':
-      case 'linkedin': {
-        const header = `\u{1F525} ${brand} ${model}${year ? ` ${year}` : ''} en venta`
-        const specs = [
-          year ? `Ano: ${year}` : '',
-          vehicle.category ? `Categoria: ${vehicle.category}` : '',
-        ]
-          .filter(Boolean)
-          .join(' | ')
-
-        const priceBlock = price ? `\n\n\u{1F4B0} ${price}\u20AC` : ''
-        const locationBlock = location ? `\n\u{1F4CD} ${location}` : ''
-        const descBlock = description ? `\n\n${description.substring(0, 500)}` : ''
-        const footer = `\n\n\u{1F449} Ver ficha completa: ${backlink}`
-
-        text = `${header}\n\n${specs}${priceBlock}${locationBlock}${descBlock}${footer}`
-        break
-      }
-
-      case 'instagram': {
-        const header = `${brand} ${model}${year ? ` ${year}` : ''} \u2728`
-        const priceBlock = price ? `\n\n\u{1F4B0} ${price}\u20AC` : ''
-        const locationBlock = location ? `\n\u{1F4CD} ${location}` : ''
-        const linkLine = '\n\u{1F517} Link en bio'
-        const brandTag = brand.toLowerCase().replaceAll(/[^a-z0-9]/g, '')
-        const tags = `\n\n#vehiculoindustrial #${brandTag} #tracciona #maquinariaindustrial`
-
-        text = `${header}${priceBlock}${locationBlock}${linkLine}${tags}`
-        break
-      }
+    const ctx: AdTextContext = {
+      brand: vehicle.brand,
+      model: vehicle.model,
+      year: vehicle.year ? String(vehicle.year) : '',
+      price: vehicle.price ? formatPrice(vehicle.price) : '',
+      location: vehicle.location || '',
+      description: vehicle.description_es || '',
+      backlink: `tracciona.com/vehiculo/${vehicle.slug}`,
+      category: vehicle.category || '',
     }
-
+    const maxChars = PLATFORMS.find((p) => p.key === platform)?.maxChars || 2000
+    const text = platformFormatters[platform](ctx)
     return truncateText(text, maxChars)
   }
 
@@ -236,8 +246,8 @@ export function useDashboardExportarAnuncio() {
       textarea.style.opacity = '0'
       document.body.appendChild(textarea)
       textarea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textarea)
+      document.execCommand('copy') // NOSONAR typescript:S1874
+      textarea.remove()
       copySuccess.value = true
       setTimeout(() => {
         copySuccess.value = false

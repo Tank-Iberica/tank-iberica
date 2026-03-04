@@ -103,50 +103,66 @@ function escapeHtml(str: string): string {
     .replaceAll('"', '&quot;')
 }
 
+function avgPositive(arr: number[]): number {
+  return arr.length > 0 ? arr.reduce((s, v) => s + v, 0) / arr.length : 0
+}
+
+function groupRows(rows: MarketRow[]): Map<string, MarketRow[]> {
+  const grouped = new Map<string, MarketRow[]>()
+  for (const row of rows) {
+    const existing = grouped.get(row.subcategory)
+    if (existing) existing.push(row)
+    else grouped.set(row.subcategory, [row])
+  }
+  return grouped
+}
+
 /* ------------------------------------------------------------------ */
 /*  Stats computation                                                  */
 /* ------------------------------------------------------------------ */
 
+function computeSingleSubcatStats(subcategory: string, items: MarketRow[]): SubcategoryStats {
+  const totalListings = items.reduce((sum, r) => sum + (r.listings || 0), 0)
+  const totalSold = items.reduce((sum, r) => sum + (r.sold_count || 0), 0)
+
+  const avgPrices = items.filter((r) => r.avg_price > 0).map((r) => r.avg_price)
+  const medianPrices = items.filter((r) => r.median_price > 0).map((r) => r.median_price)
+  const minPrices = items.filter((r) => r.min_price > 0).map((r) => r.min_price)
+  const maxPrices = items.filter((r) => r.max_price > 0).map((r) => r.max_price)
+  const daysList = items.filter((r) => r.avg_days_to_sell > 0).map((r) => r.avg_days_to_sell)
+
+  return {
+    subcategory,
+    avgPrice: avgPositive(avgPrices),
+    medianPrice: avgPositive(medianPrices),
+    minPrice: minPrices.length > 0 ? Math.min(...minPrices) : 0,
+    maxPrice: maxPrices.length > 0 ? Math.max(...maxPrices) : 0,
+    totalListings,
+    totalSold,
+    avgDaysToSell: avgPositive(daysList),
+  }
+}
+
 function computeSubcategoryStats(rows: MarketRow[]): SubcategoryStats[] {
-  const grouped = new Map<string, MarketRow[]>()
-
-  for (const row of rows) {
-    const existing = grouped.get(row.subcategory)
-    if (existing) {
-      existing.push(row)
-    } else {
-      grouped.set(row.subcategory, [row])
-    }
-  }
-
+  const grouped = groupRows(rows)
   const result: SubcategoryStats[] = []
-
   for (const [subcategory, items] of grouped) {
-    const totalListings = items.reduce((sum, r) => sum + (r.listings || 0), 0)
-    const totalSold = items.reduce((sum, r) => sum + (r.sold_count || 0), 0)
-
-    const avgPrices = items.filter((r) => r.avg_price > 0).map((r) => r.avg_price)
-    const medianPrices = items.filter((r) => r.median_price > 0).map((r) => r.median_price)
-    const minPrices = items.filter((r) => r.min_price > 0).map((r) => r.min_price)
-    const maxPrices = items.filter((r) => r.max_price > 0).map((r) => r.max_price)
-    const daysList = items.filter((r) => r.avg_days_to_sell > 0).map((r) => r.avg_days_to_sell)
-
-    const avg = (arr: number[]): number =>
-      arr.length > 0 ? arr.reduce((s, v) => s + v, 0) / arr.length : 0
-
-    result.push({
-      subcategory,
-      avgPrice: avg(avgPrices),
-      medianPrice: avg(medianPrices),
-      minPrice: minPrices.length > 0 ? Math.min(...minPrices) : 0,
-      maxPrice: maxPrices.length > 0 ? Math.max(...maxPrices) : 0,
-      totalListings,
-      totalSold,
-      avgDaysToSell: avg(daysList),
-    })
+    result.push(computeSingleSubcatStats(subcategory, items))
   }
-
   return result.sort((a, b) => b.totalListings - a.totalListings)
+}
+
+function newGroupEntry(row: MarketRow): {
+  totalListings: number
+  priceSum: number
+  priceCount: number
+} {
+  const hasPrice = row.avg_price > 0
+  return {
+    totalListings: row.listings || 0,
+    priceSum: hasPrice ? row.avg_price : 0,
+    priceCount: hasPrice ? 1 : 0,
+  }
 }
 
 function accumulateGroupStats(
@@ -155,18 +171,14 @@ function accumulateGroupStats(
   row: MarketRow,
 ): void {
   const existing = grouped.get(key)
-  if (existing) {
-    existing.totalListings += row.listings || 0
-    if (row.avg_price > 0) {
-      existing.priceSum += row.avg_price
-      existing.priceCount += 1
-    }
-  } else {
-    grouped.set(key, {
-      totalListings: row.listings || 0,
-      priceSum: row.avg_price > 0 ? row.avg_price : 0,
-      priceCount: row.avg_price > 0 ? 1 : 0,
-    })
+  if (!existing) {
+    grouped.set(key, newGroupEntry(row))
+    return
+  }
+  existing.totalListings += row.listings || 0
+  if (row.avg_price > 0) {
+    existing.priceSum += row.avg_price
+    existing.priceCount += 1
   }
 }
 
@@ -216,6 +228,33 @@ function groupPricesBySubcategory(rows: MarketRow[]): Map<string, number[]> {
   return grouped
 }
 
+function classifyTrendDirection(changePercent: number): 'rising' | 'falling' | 'stable' {
+  if (changePercent > 2) return 'rising'
+  if (changePercent < -2) return 'falling'
+  return 'stable'
+}
+
+function computeSingleTrend(
+  subcategory: string,
+  prices: number[],
+  prevPrices: number[] | undefined,
+): TrendInfo | null {
+  if (!prevPrices || prevPrices.length === 0) return null
+
+  const latestAvg = prices.reduce((s, v) => s + v, 0) / prices.length
+  const previousAvg = prevPrices.reduce((s, v) => s + v, 0) / prevPrices.length
+  if (previousAvg === 0) return null
+
+  const changePercent = ((latestAvg - previousAvg) / previousAvg) * 100
+  return {
+    subcategory,
+    latestAvg,
+    previousAvg,
+    changePercent,
+    direction: classifyTrendDirection(changePercent),
+  }
+}
+
 function computeTrends(rows: MarketRow[]): TrendInfo[] {
   if (rows.length === 0) return []
 
@@ -229,28 +268,9 @@ function computeTrends(rows: MarketRow[]): TrendInfo[] {
   const previousBySubcat = groupPricesBySubcategory(rows.filter((r) => r.month === previousMonth))
 
   const result: TrendInfo[] = []
-
   for (const [subcategory, prices] of latestBySubcat) {
-    const prevPrices = previousBySubcat.get(subcategory)
-    if (!prevPrices || prevPrices.length === 0) continue
-
-    const latestAvg = prices.reduce((s, v) => s + v, 0) / prices.length
-    const previousAvg = prevPrices.reduce((s, v) => s + v, 0) / prevPrices.length
-
-    if (previousAvg === 0) continue
-
-    const changePercent = ((latestAvg - previousAvg) / previousAvg) * 100
-    let direction: 'rising' | 'falling' | 'stable' = 'stable'
-    if (changePercent > 2) direction = 'rising'
-    else if (changePercent < -2) direction = 'falling'
-
-    result.push({
-      subcategory,
-      latestAvg,
-      previousAvg,
-      changePercent,
-      direction,
-    })
+    const trend = computeSingleTrend(subcategory, prices, previousBySubcat.get(subcategory))
+    if (trend) result.push(trend)
   }
 
   return result.sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent))
@@ -269,6 +289,17 @@ interface ExecutiveSummary {
   priceChangeSummary: string
 }
 
+function buildPriceChangeSummary(trends: TrendInfo[]): string {
+  if (trends.length === 0) return 'Sin datos suficientes para calcular tendencias.'
+  const risingCount = trends.filter((t) => t.direction === 'rising').length
+  const fallingCount = trends.filter((t) => t.direction === 'falling').length
+  if (risingCount > fallingCount)
+    return `Tendencia alcista: ${risingCount} subcategorias con precios al alza frente a ${fallingCount} a la baja.`
+  if (fallingCount > risingCount)
+    return `Tendencia bajista: ${fallingCount} subcategorias con precios a la baja frente a ${risingCount} al alza.`
+  return `Mercado estable: ${risingCount} subcategorias al alza y ${fallingCount} a la baja.`
+}
+
 function computeExecutiveSummary(
   subcategoryStats: ReturnType<typeof computeSubcategoryStats>,
   trends: ReturnType<typeof computeTrends>,
@@ -282,28 +313,113 @@ function computeExecutiveSummary(
   const topCategory = subcategoryStats.length > 0 ? subcategoryStats[0]!.subcategory : 'N/A'
   const topCategoryListings = subcategoryStats.length > 0 ? subcategoryStats[0]!.totalListings : 0
 
-  const risingCount = trends.filter((t) => t.direction === 'rising').length
-  const fallingCount = trends.filter((t) => t.direction === 'falling').length
-
-  let priceChangeSummary: string
-  if (trends.length === 0) {
-    priceChangeSummary = 'Sin datos suficientes para calcular tendencias.'
-  } else if (risingCount > fallingCount) {
-    priceChangeSummary = `Tendencia alcista: ${risingCount} subcategorias con precios al alza frente a ${fallingCount} a la baja.`
-  } else if (fallingCount > risingCount) {
-    priceChangeSummary = `Tendencia bajista: ${fallingCount} subcategorias con precios a la baja frente a ${risingCount} al alza.`
-  } else {
-    priceChangeSummary = `Mercado estable: ${risingCount} subcategorias al alza y ${fallingCount} a la baja.`
-  }
-
   return {
     totalListings,
     totalSold,
     overallAvgPrice,
     topCategory,
     topCategoryListings,
-    priceChangeSummary,
+    priceChangeSummary: buildPriceChangeSummary(trends),
   }
+}
+
+/* ------------------------------------------------------------------ */
+/*  HTML row builders                                                  */
+/* ------------------------------------------------------------------ */
+
+function rowClass(idx: number): string {
+  return idx % 2 === 0 ? 'row-even' : 'row-odd'
+}
+
+function buildSubcatTableRow(s: SubcategoryStats, idx: number, isPublic: boolean): string {
+  const privateCols = isPublic
+    ? ''
+    : `<td class="num">${formatEUR(s.medianPrice)}</td>
+      <td class="num">${formatEUR(s.minPrice)} - ${formatEUR(s.maxPrice)}</td>`
+  const privateSuffix = isPublic
+    ? ''
+    : `<td class="num">${formatNumber(s.totalSold)}</td>
+      <td class="num">${formatNumber(s.avgDaysToSell)}</td>`
+  return `<tr class="${rowClass(idx)}">
+      <td>${escapeHtml(s.subcategory)}</td>
+      <td class="num">${formatEUR(s.avgPrice)}</td>
+      ${privateCols}
+      <td class="num">${formatNumber(s.totalListings)}</td>
+      ${privateSuffix}
+    </tr>`
+}
+
+function buildPriceTableHeaders(isPublic: boolean): string {
+  const privateHeaders = isPublic ? '' : '<th>Precio Mediana</th><th>Rango (Min - Max)</th>'
+  const privateSuffix = isPublic ? '' : '<th>Vendidos</th><th>Dias medio venta</th>'
+  return `<tr><th>Subcategoria</th><th>Precio Medio</th>${privateHeaders}<th>Anuncios</th>${privateSuffix}</tr>`
+}
+
+function buildBrandRow(b: BrandStats, idx: number): string {
+  return `<tr class="${rowClass(idx)}">
+      <td>${escapeHtml(b.brand)}</td>
+      <td class="num">${formatNumber(b.totalListings)}</td>
+      <td class="num">${formatEUR(b.avgPrice)}</td>
+    </tr>`
+}
+
+function buildProvinceRow(p: ProvinceStats, idx: number): string {
+  return `<tr class="${rowClass(idx)}">
+      <td>${escapeHtml(p.province)}</td>
+      <td class="num">${formatNumber(p.totalListings)}</td>
+      <td class="num">${formatEUR(p.avgPrice)}</td>
+    </tr>`
+}
+
+function buildSummarySection(summary: ExecutiveSummary, hasData: boolean): string {
+  if (!hasData) {
+    return `<div class="page">
+      <h2 class="section-title">Resumen Ejecutivo</h2>
+      <p class="no-data">Datos insuficientes para generar el resumen ejecutivo.</p>
+    </div>`
+  }
+  return `<div class="page">
+      <h2 class="section-title">Resumen Ejecutivo</h2>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-value">${formatNumber(summary.totalListings)}</div>
+          <div class="summary-label">Anuncios activos</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-value">${formatEUR(summary.overallAvgPrice)}</div>
+          <div class="summary-label">Precio medio global</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-value">${formatNumber(summary.totalSold)}</div>
+          <div class="summary-label">Vehiculos vendidos</div>
+        </div>
+      </div>
+      <div class="summary-text">
+        <p><strong>Categoria principal:</strong> ${escapeHtml(summary.topCategory)} (${formatNumber(summary.topCategoryListings)} anuncios)</p>
+        <p><strong>Tendencia de precios:</strong> ${escapeHtml(summary.priceChangeSummary)}</p>
+      </div>
+    </div>`
+}
+
+function buildPriceTableSection(
+  subcategoryStats: SubcategoryStats[],
+  isPublic: boolean,
+  hasData: boolean,
+): string {
+  if (!hasData) {
+    return `<div class="page">
+      <h2 class="section-title">Precios por Subcategoria</h2>
+      <p class="no-data">Datos insuficientes para generar la tabla de precios.</p>
+    </div>`
+  }
+  const rows = subcategoryStats.map((s, idx) => buildSubcatTableRow(s, idx, isPublic)).join('')
+  return `<div class="page">
+      <h2 class="section-title">Precios por Subcategoria</h2>
+      <table>
+        <thead>${buildPriceTableHeaders(isPublic)}</thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`
 }
 
 /* ------------------------------------------------------------------ */
@@ -378,6 +494,79 @@ function buildTableSection(
     </div>`
 }
 
+function buildCoverSection(quarterLabel: string): string {
+  return `<div class="page cover-page">
+      <div class="cover-content">
+        <div class="cover-logo">TRACCIONA</div>
+        <h1 class="cover-title">Informe de Mercado</h1>
+        <h2 class="cover-subtitle">Vehiculos Industriales en Espana</h2>
+        <div class="cover-quarter">${escapeHtml(quarterLabel)}</div>
+        <div class="cover-url">tracciona.com</div>
+      </div>
+    </div>`
+}
+
+function buildFooterSection(dateGenerated: string): string {
+  return `<div class="footer">
+      <p class="disclaimer">
+        Los datos presentados en este informe han sido anonimizados y agregados a partir de la
+        actividad registrada en Tracciona.com. Este informe tiene caracter informativo y no
+        constituye asesoramiento financiero ni comercial. Los precios y tendencias reflejados
+        corresponden al mercado de vehiculos industriales de segunda mano en Espana.
+      </p>
+      <p class="generated-date">Informe generado el ${escapeHtml(dateGenerated)} &mdash; tracciona.com</p>
+    </div>`
+}
+
+function assembleReportSections(
+  opts: {
+    isPublic: boolean
+    hasData: boolean
+    quarterLabel: string
+    dateGenerated: string
+  },
+  subcategoryStats: SubcategoryStats[],
+  brandStats: BrandStats[],
+  provinceStats: ProvinceStats[],
+  trends: TrendInfo[],
+  summary: ExecutiveSummary,
+): string[] {
+  const cover = buildCoverSection(opts.quarterLabel)
+  const summaryHtml = buildSummarySection(summary, opts.hasData)
+  const priceTable = buildPriceTableSection(subcategoryStats, opts.isPublic, opts.hasData)
+  const footer = buildFooterSection(opts.dateGenerated)
+
+  if (opts.isPublic) return [cover, summaryHtml, priceTable, footer]
+
+  const brandRows = brandStats.map((b, idx) => buildBrandRow(b, idx)).join('')
+  const brandSection = buildTableSection(
+    'Top 10 Marcas por Volumen',
+    ['Marca', 'Anuncios', 'Precio Medio'],
+    brandRows,
+    opts.hasData,
+    'Datos insuficientes para generar el ranking de marcas.',
+  )
+
+  const provinceRows = provinceStats.map((p, idx) => buildProvinceRow(p, idx)).join('')
+  const geoSection = buildTableSection(
+    'Desglose Geografico',
+    ['Provincia', 'Anuncios', 'Precio Medio'],
+    provinceRows,
+    opts.hasData,
+    'Datos insuficientes para generar el desglose geografico.',
+  )
+
+  return [
+    cover,
+    summaryHtml,
+    priceTable,
+    brandSection,
+    geoSection,
+    buildTrendsSection(trends),
+    footer,
+  ]
+}
+
 function generateReportHTML(
   marketRows: MarketRow[] | null,
   historyRows: PriceHistoryRow[] | null,
@@ -394,167 +583,20 @@ function generateReportHTML(
   })
 
   const hasData = rows.length > 0
-
   const subcategoryStats = hasData ? computeSubcategoryStats(rows) : []
   const brandStats = hasData ? computeBrandStats(rows) : []
   const provinceStats = hasData ? computeProvinceStats(rows) : []
   const trends = hasData ? computeTrends(rows) : []
-
   const summary = computeExecutiveSummary(subcategoryStats, trends)
 
-  /* --- Sections --- */
-
-  const coverSection = `
-    <div class="page cover-page">
-      <div class="cover-content">
-        <div class="cover-logo">TRACCIONA</div>
-        <h1 class="cover-title">Informe de Mercado</h1>
-        <h2 class="cover-subtitle">Vehiculos Industriales en Espana</h2>
-        <div class="cover-quarter">${escapeHtml(quarterLabel)}</div>
-        <div class="cover-url">tracciona.com</div>
-      </div>
-    </div>
-  `
-
-  const summarySection = `
-    <div class="page">
-      <h2 class="section-title">Resumen Ejecutivo</h2>
-      ${
-        hasData
-          ? `
-        <div class="summary-grid">
-          <div class="summary-card">
-            <div class="summary-value">${formatNumber(summary.totalListings)}</div>
-            <div class="summary-label">Anuncios activos</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-value">${formatEUR(summary.overallAvgPrice)}</div>
-            <div class="summary-label">Precio medio global</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-value">${formatNumber(summary.totalSold)}</div>
-            <div class="summary-label">Vehiculos vendidos</div>
-          </div>
-        </div>
-        <div class="summary-text">
-          <p><strong>Categoria principal:</strong> ${escapeHtml(summary.topCategory)} (${formatNumber(summary.topCategoryListings)} anuncios)</p>
-          <p><strong>Tendencia de precios:</strong> ${escapeHtml(summary.priceChangeSummary)}</p>
-        </div>
-        `
-          : '<p class="no-data">Datos insuficientes para generar el resumen ejecutivo.</p>'
-      }
-    </div>
-  `
-
-  const priceTableRows = subcategoryStats
-    .map(
-      (s, idx) => `
-    <tr class="${idx % 2 === 0 ? 'row-even' : 'row-odd'}">
-      <td>${escapeHtml(s.subcategory)}</td>
-      <td class="num">${formatEUR(s.avgPrice)}</td>
-      ${isPublic ? '' : `<td class="num">${formatEUR(s.medianPrice)}</td>`}
-      ${isPublic ? '' : `<td class="num">${formatEUR(s.minPrice)} - ${formatEUR(s.maxPrice)}</td>`}
-      <td class="num">${formatNumber(s.totalListings)}</td>
-      ${isPublic ? '' : `<td class="num">${formatNumber(s.totalSold)}</td>`}
-      ${isPublic ? '' : `<td class="num">${formatNumber(s.avgDaysToSell)}</td>`}
-    </tr>
-  `,
-    )
-    .join('')
-
-  const priceTableSection = `
-    <div class="page">
-      <h2 class="section-title">Precios por Subcategoria</h2>
-      ${
-        hasData
-          ? `
-        <table>
-          <thead>
-            <tr>
-              <th>Subcategoria</th>
-              <th>Precio Medio</th>
-              ${isPublic ? '' : '<th>Precio Mediana</th>'}
-              ${isPublic ? '' : '<th>Rango (Min - Max)</th>'}
-              <th>Anuncios</th>
-              ${isPublic ? '' : '<th>Vendidos</th>'}
-              ${isPublic ? '' : '<th>Dias medio venta</th>'}
-            </tr>
-          </thead>
-          <tbody>
-            ${priceTableRows}
-          </tbody>
-        </table>
-        `
-          : '<p class="no-data">Datos insuficientes para generar la tabla de precios.</p>'
-      }
-    </div>
-  `
-
-  const brandTableRows = brandStats
-    .map(
-      (b, idx) => `
-    <tr class="${idx % 2 === 0 ? 'row-even' : 'row-odd'}">
-      <td>${escapeHtml(b.brand)}</td>
-      <td class="num">${formatNumber(b.totalListings)}</td>
-      <td class="num">${formatEUR(b.avgPrice)}</td>
-    </tr>`,
-    )
-    .join('')
-
-  const brandSection = buildTableSection(
-    'Top 10 Marcas por Volumen',
-    ['Marca', 'Anuncios', 'Precio Medio'],
-    brandTableRows,
-    hasData,
-    'Datos insuficientes para generar el ranking de marcas.',
+  const fullReportSections = assembleReportSections(
+    { isPublic, hasData, quarterLabel, dateGenerated },
+    subcategoryStats,
+    brandStats,
+    provinceStats,
+    trends,
+    summary,
   )
-
-  const provinceTableRows = provinceStats
-    .map(
-      (p, idx) => `
-    <tr class="${idx % 2 === 0 ? 'row-even' : 'row-odd'}">
-      <td>${escapeHtml(p.province)}</td>
-      <td class="num">${formatNumber(p.totalListings)}</td>
-      <td class="num">${formatEUR(p.avgPrice)}</td>
-    </tr>`,
-    )
-    .join('')
-
-  const geoSection = buildTableSection(
-    'Desglose Geografico',
-    ['Provincia', 'Anuncios', 'Precio Medio'],
-    provinceTableRows,
-    hasData,
-    'Datos insuficientes para generar el desglose geografico.',
-  )
-
-  const trendsSection = buildTrendsSection(trends)
-
-  const footerSection = `
-    <div class="footer">
-      <p class="disclaimer">
-        Los datos presentados en este informe han sido anonimizados y agregados a partir de la
-        actividad registrada en Tracciona.com. Este informe tiene caracter informativo y no
-        constituye asesoramiento financiero ni comercial. Los precios y tendencias reflejados
-        corresponden al mercado de vehiculos industriales de segunda mano en Espana.
-      </p>
-      <p class="generated-date">Informe generado el ${escapeHtml(dateGenerated)} &mdash; tracciona.com</p>
-    </div>
-  `
-
-  /* --- Assemble full HTML --- */
-
-  const fullReportSections = isPublic
-    ? [coverSection, summarySection, priceTableSection, footerSection]
-    : [
-        coverSection,
-        summarySection,
-        priceTableSection,
-        brandSection,
-        geoSection,
-        trendsSection,
-        footerSection,
-      ]
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -874,11 +916,47 @@ function buildVehicleInsight(
   }
 }
 
+function groupPricesByKey(
+  vehicles: Array<{ brand: string; model: string; price: number }>,
+  keyFn: (v: { brand: string; model: string }) => string,
+): Map<string, number[]> {
+  const map = new Map<string, number[]>()
+  for (const v of vehicles) {
+    const key = keyFn(v)
+    const prices = map.get(key) ?? []
+    prices.push(v.price)
+    map.set(key, prices)
+  }
+  return map
+}
+
+function summarizeInsights(insights: DealerVehicleInsight[]): DealerIntelligenceReport['summary'] {
+  const belowMarket = insights.filter((i) => i.pricePosition === 'below').length
+  const atMarket = insights.filter((i) => i.pricePosition === 'average').length
+  const aboveMarket = insights.filter((i) => i.pricePosition === 'above').length
+  const avgDeviation =
+    insights.length > 0
+      ? insights.reduce((s, i) => s + i.priceDeviationPercent, 0) / insights.length
+      : 0
+  return {
+    belowMarket,
+    atMarket,
+    aboveMarket,
+    averageDeviation: Math.round(avgDeviation * 10) / 10,
+  }
+}
+
+const EMPTY_INTELLIGENCE_SUMMARY: DealerIntelligenceReport['summary'] = {
+  belowMarket: 0,
+  atMarket: 0,
+  aboveMarket: 0,
+  averageDeviation: 0,
+}
+
 export async function generateDealerIntelligence(
   supabase: SupabaseClient,
   dealerId: string,
 ): Promise<DealerIntelligenceReport> {
-  // Get dealer's active vehicles
   const { data: vehicles } = await supabase
     .from('vehicles')
     .select('id, brand, model, price, subcategory_id, year')
@@ -897,15 +975,9 @@ export async function generateDealerIntelligence(
   }>
 
   if (vehicleList.length === 0) {
-    return {
-      dealerId,
-      totalVehicles: 0,
-      insights: [],
-      summary: { belowMarket: 0, atMarket: 0, aboveMarket: 0, averageDeviation: 0 },
-    }
+    return { dealerId, totalVehicles: 0, insights: [], summary: EMPTY_INTELLIGENCE_SUMMARY }
   }
 
-  // Get market data for comparison
   const { data: marketData } = await supabase
     .from('vehicles')
     .select('brand, model, price, subcategory_id')
@@ -921,51 +993,22 @@ export async function generateDealerIntelligence(
     subcategory_id: string | null
   }>
 
-  // Group market vehicles by brand+model for comparison
-  const marketPrices = new Map<string, number[]>()
-  for (const v of allVehicles) {
-    const key = `${v.brand}:${v.model}`.toLowerCase()
-    const prices = marketPrices.get(key) || []
-    prices.push(v.price)
-    marketPrices.set(key, prices)
-  }
-
-  // Also group by brand only as fallback
-  const brandPrices = new Map<string, number[]>()
-  for (const v of allVehicles) {
-    const key = v.brand.toLowerCase()
-    const prices = brandPrices.get(key) || []
-    prices.push(v.price)
-    brandPrices.set(key, prices)
-  }
+  const marketPrices = groupPricesByKey(allVehicles, (v) => `${v.brand}:${v.model}`.toLowerCase())
+  const brandPrices = groupPricesByKey(allVehicles, (v) => v.brand.toLowerCase())
 
   const insights: DealerVehicleInsight[] = []
-
   for (const vehicle of vehicleList) {
     const insight = buildVehicleInsight(vehicle, marketPrices, brandPrices)
     if (insight) insights.push(insight)
   }
 
-  const belowMarket = insights.filter((i) => i.pricePosition === 'below').length
-  const atMarket = insights.filter((i) => i.pricePosition === 'average').length
-  const aboveMarket = insights.filter((i) => i.pricePosition === 'above').length
-  const avgDeviation =
-    insights.length > 0
-      ? insights.reduce((s, i) => s + i.priceDeviationPercent, 0) / insights.length
-      : 0
-
   return {
     dealerId,
     totalVehicles: vehicleList.length,
-    insights: insights.sort(
+    insights: insights.toSorted(
       (a, b) => Math.abs(b.priceDeviationPercent) - Math.abs(a.priceDeviationPercent),
     ),
-    summary: {
-      belowMarket,
-      atMarket,
-      aboveMarket,
-      averageDeviation: Math.round(avgDeviation * 10) / 10,
-    },
+    summary: summarizeInsights(insights),
   }
 }
 

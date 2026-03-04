@@ -29,6 +29,31 @@ export interface SubcategoryFormData {
   sort_order: number
 }
 
+function buildSubcatToCategoriesMap(
+  links: { subcategory_id: string; category_id: string }[],
+): Map<string, string[]> {
+  const map = new Map<string, string[]>()
+  for (const link of links) {
+    if (!map.has(link.subcategory_id)) map.set(link.subcategory_id, [])
+    map.get(link.subcategory_id)!.push(link.category_id)
+  }
+  return map
+}
+
+function buildCategoryCountMap(
+  vehicleCounts: { subcategory_id: string | null }[],
+  subcatToCategories: Map<string, string[]>,
+): Map<string, number> {
+  const countMap = new Map<string, number>()
+  for (const v of vehicleCounts) {
+    if (!v.subcategory_id || !subcatToCategories.has(v.subcategory_id)) continue
+    for (const catId of subcatToCategories.get(v.subcategory_id)!) {
+      countMap.set(catId, (countMap.get(catId) || 0) + 1)
+    }
+  }
+  return countMap
+}
+
 export function useAdminSubcategories() {
   const supabase = useSupabaseClient()
 
@@ -66,28 +91,15 @@ export function useAdminSubcategories() {
         .select('subcategory_id')
         .eq('status', 'published')
 
-      // Build a map: category_id -> count of vehicles
-      const countMap = new Map<string, number>()
-
+      let countMap = new Map<string, number>()
       if (subcatLinks && vehicleCounts) {
-        // Build subcategory_id -> category_ids map
-        const subcatToCategories = new Map<string, string[]>()
-        for (const link of subcatLinks as { subcategory_id: string; category_id: string }[]) {
-          if (!subcatToCategories.has(link.subcategory_id)) {
-            subcatToCategories.set(link.subcategory_id, [])
-          }
-          subcatToCategories.get(link.subcategory_id)!.push(link.category_id)
-        }
-
-        // Count vehicles per category
-        for (const v of vehicleCounts as unknown as { subcategory_id: string | null }[]) {
-          if (v.subcategory_id && subcatToCategories.has(v.subcategory_id)) {
-            const catIds = subcatToCategories.get(v.subcategory_id)!
-            for (const catId of catIds) {
-              countMap.set(catId, (countMap.get(catId) || 0) + 1)
-            }
-          }
-        }
+        const subcatToCategories = buildSubcatToCategoriesMap(
+          subcatLinks as { subcategory_id: string; category_id: string }[],
+        )
+        countMap = buildCategoryCountMap(
+          vehicleCounts as unknown as { subcategory_id: string | null }[],
+          subcatToCategories,
+        )
       }
 
       // Merge stock counts

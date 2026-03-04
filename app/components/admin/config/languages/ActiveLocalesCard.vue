@@ -33,7 +33,7 @@ function onCheckboxChange(localeValue: string, event: Event) {
           :value="locale.value"
           :checked="activeLocales.includes(locale.value)"
           @change="onCheckboxChange(locale.value, $event)"
-        >
+        />
         <span>{{ locale.label }}</span>
       </label>
     </div>
@@ -88,7 +88,7 @@ function onCheckboxChange(localeValue: string, event: Event) {
   accent-color: var(--color-primary);
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .config-card {
     padding: 16px;
   }

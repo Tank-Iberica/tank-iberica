@@ -174,7 +174,7 @@ function changePeriod(period: PeriodValue) {
   gap: var(--spacing-4);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .charts-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -200,7 +200,7 @@ function changePeriod(period: PeriodValue) {
   position: relative;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .chart-container {
     height: 300px;
   }

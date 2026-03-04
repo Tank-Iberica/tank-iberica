@@ -128,7 +128,7 @@ const { t } = useI18n()
   color: var(--text-auxiliary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .type-cards {
     flex-direction: row;
   }

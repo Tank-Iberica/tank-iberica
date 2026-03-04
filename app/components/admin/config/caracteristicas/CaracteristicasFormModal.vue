@@ -91,7 +91,7 @@ function isChecked(arr: string[], id: string): boolean {
                 required
                 :value="formData.name"
                 @input="onTextInput('name', $event)"
-              />
+              >
             </div>
             <div class="form-group">
               <label for="label_en">Nombre (EN)</label>
@@ -101,7 +101,7 @@ function isChecked(arr: string[], id: string): boolean {
                 placeholder="Ej: Volume"
                 :value="formData.label_en"
                 @input="onTextInput('label_en', $event)"
-              />
+              >
             </div>
           </div>
 
@@ -133,7 +133,7 @@ function isChecked(arr: string[], id: string): boolean {
                 placeholder="Ej: Km, Kg, L, CV..."
                 :value="formData.unit"
                 @input="onTextInput('unit', $event)"
-              />
+              >
             </div>
           </div>
 
@@ -147,7 +147,7 @@ function isChecked(arr: string[], id: string): boolean {
                     type="checkbox"
                     :checked="isChecked(formData.extra_filters, f.id)"
                     @change="onCheckboxToggle('extra_filters', f.id)"
-                  />
+                  >
                   <span>{{ f.label_es || f.name }}</span>
                 </label>
               </template>
@@ -165,7 +165,7 @@ function isChecked(arr: string[], id: string): boolean {
                     type="checkbox"
                     :checked="isChecked(formData.hides, f.id)"
                     @change="onCheckboxToggle('hides', f.id)"
-                  />
+                  >
                   <span>{{ f.label_es || f.name }}</span>
                 </label>
               </template>
@@ -182,7 +182,7 @@ function isChecked(arr: string[], id: string): boolean {
               placeholder="Opcional"
               :value="formData.default_value"
               @input="onTextInput('default_value', $event)"
-            />
+            >
           </div>
 
           <!-- Desplegable options -->
@@ -200,7 +200,7 @@ function isChecked(arr: string[], id: string): boolean {
                     value="manual"
                     :checked="formData.choices_source === 'manual'"
                     @change="onRadioChange('choices_source', 'manual')"
-                  />
+                  >
                   <span>Manual</span>
                   <small>Solo las opciones que definas aqui</small>
                 </label>
@@ -211,7 +211,7 @@ function isChecked(arr: string[], id: string): boolean {
                     value="auto"
                     :checked="formData.choices_source === 'auto'"
                     @change="onRadioChange('choices_source', 'auto')"
-                  />
+                  >
                   <span>Automatico</span>
                   <small>Valores unicos de los vehiculos del catalogo</small>
                 </label>
@@ -222,7 +222,7 @@ function isChecked(arr: string[], id: string): boolean {
                     value="both"
                     :checked="formData.choices_source === 'both'"
                     @change="onRadioChange('choices_source', 'both')"
-                  />
+                  >
                   <span>Ambos</span>
                   <small>Opciones manuales + valores de vehiculos</small>
                 </label>
@@ -239,7 +239,7 @@ function isChecked(arr: string[], id: string): boolean {
                   :value="choiceInput"
                   @input="onChoiceInputChange"
                   @keydown="onChoiceKeydown"
-                />
+                >
                 <button type="button" class="btn-add-choice" @click="emit('add-choice')">
                   Anadir
                 </button>
@@ -268,7 +268,7 @@ function isChecked(arr: string[], id: string): boolean {
                 placeholder="1"
                 :value="formData.step"
                 @input="onNumberInput('step', $event)"
-              />
+              >
             </div>
           </div>
 
@@ -588,7 +588,7 @@ function isChecked(arr: string[], id: string): boolean {
   font-size: 0.875rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .form-row {
     grid-template-columns: 1fr;
   }

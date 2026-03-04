@@ -72,7 +72,7 @@ defineEmits<{
   overflow: hidden;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .nf-seo {
     position: sticky;
     top: 80px;
@@ -127,7 +127,7 @@ defineEmits<{
   padding: 20px;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .seo-panel {
     padding-top: 20px;
   }

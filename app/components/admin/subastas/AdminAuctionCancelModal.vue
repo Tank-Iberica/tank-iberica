@@ -213,7 +213,7 @@ const { t } = useI18n()
   background: var(--color-error);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .modal {
     margin: 0;
   }

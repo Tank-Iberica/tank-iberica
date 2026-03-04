@@ -1055,7 +1055,7 @@ onUnmounted(() => {
   color: var(--color-error);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .form-row {
     flex-direction: row;
   }
@@ -1065,7 +1065,7 @@ onUnmounted(() => {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .dealer-working-hours {
     padding: var(--spacing-3) var(--spacing-8);
   }
@@ -1083,13 +1083,13 @@ onUnmounted(() => {
   padding: var(--spacing-5) var(--spacing-4) var(--spacing-2);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .dealer-catalog-title {
     padding: var(--spacing-5) var(--spacing-6) var(--spacing-2);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .dealer-catalog-title {
     padding: var(--spacing-5) var(--spacing-8) var(--spacing-2);
     font-size: var(--font-size-xl);
@@ -1123,9 +1123,9 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: >= 480px
+   RESPONSIVE: >= 30em
    ============================================ */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .dealer-name {
     font-size: var(--font-size-2xl);
   }
@@ -1145,9 +1145,9 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: >= 768px (tablet)
+   RESPONSIVE: >= 48em (tablet)
    ============================================ */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .dealer-header {
     padding: var(--spacing-4) var(--spacing-8) var(--spacing-6);
   }
@@ -1195,9 +1195,9 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: >= 1024px (desktop)
+   RESPONSIVE: >= 64em (desktop)
    ============================================ */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .dealer-cover {
     aspect-ratio: 3 / 1;
   }
@@ -1211,7 +1211,7 @@ onUnmounted(() => {
   }
 
   .dealer-contact-bar {
-    max-width: 600px;
+    max-width: 37.5em;
     margin: 0 auto;
     padding: var(--spacing-5) var(--spacing-8);
     gap: var(--spacing-4);
@@ -1274,7 +1274,7 @@ onUnmounted(() => {
   }
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .discover-inner {
     flex-direction: row;
     align-items: center;
@@ -1291,7 +1291,7 @@ onUnmounted(() => {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .dealer-discover {
     margin: 0 var(--spacing-6) var(--spacing-4);
   }

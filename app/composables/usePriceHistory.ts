@@ -26,6 +26,31 @@ interface ChartDataPoint {
 // Constants
 // ---------------------------------------------------------------------------
 
+function computePriceTrend(recent: PricePoint[]): PriceTrend {
+  let rises = 0
+  let falls = 0
+  for (const point of recent) {
+    if (point.previous_price_cents === null) continue
+    if (point.price_cents > point.previous_price_cents) rises++
+    else if (point.price_cents < point.previous_price_cents) falls++
+  }
+  if (rises > falls) return 'rising'
+  if (falls > rises) return 'falling'
+  return 'stable'
+}
+
+function computeWeightedFairPrice(
+  vehicleAvg: number | null,
+  categoryAvg: number | null,
+): number | null {
+  if (vehicleAvg !== null && categoryAvg !== null) {
+    return Math.round(vehicleAvg * VEHICLE_HISTORY_WEIGHT + categoryAvg * CATEGORY_AVERAGE_WEIGHT)
+  }
+  if (vehicleAvg !== null) return Math.round(vehicleAvg)
+  if (categoryAvg !== null) return Math.round(categoryAvg)
+  return null
+}
+
 const HISTORY_LIMIT = 100
 const FAIR_PRICE_SAMPLE_SIZE = 3
 const VEHICLE_HISTORY_WEIGHT = 0.4
@@ -49,20 +74,7 @@ export function usePriceHistory(vehicleId: string) {
 
   const priceTrend = computed<PriceTrend>(() => {
     if (history.value.length < 2) return 'stable'
-
-    const recent = history.value.slice(0, 3)
-    let rises = 0
-    let falls = 0
-
-    for (const point of recent) {
-      if (point.previous_price_cents === null) continue
-      if (point.price_cents > point.previous_price_cents) rises++
-      else if (point.price_cents < point.previous_price_cents) falls++
-    }
-
-    if (rises > falls) return 'rising'
-    if (falls > rises) return 'falling'
-    return 'stable'
+    return computePriceTrend(history.value.slice(0, 3))
   })
 
   const highestPrice = computed<number | null>(() => {
@@ -175,17 +187,7 @@ export function usePriceHistory(vehicleId: string) {
     }
 
     // Step 4: Weighted fair price calculation
-    if (vehicleAvg !== null && categoryAvg !== null) {
-      fairPriceCents.value = Math.round(
-        vehicleAvg * VEHICLE_HISTORY_WEIGHT + categoryAvg * CATEGORY_AVERAGE_WEIGHT,
-      )
-    } else if (vehicleAvg !== null) {
-      fairPriceCents.value = Math.round(vehicleAvg)
-    } else if (categoryAvg !== null) {
-      fairPriceCents.value = Math.round(categoryAvg)
-    } else {
-      fairPriceCents.value = null
-    }
+    fairPriceCents.value = computeWeightedFairPrice(vehicleAvg, categoryAvg)
 
     // Step 5: Fire-and-forget update on the vehicles table
     const trend = priceTrend.value

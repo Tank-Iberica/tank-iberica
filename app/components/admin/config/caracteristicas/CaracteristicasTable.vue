@@ -252,7 +252,7 @@ const emit = defineEmits<{
   font-size: 0.875rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .table-container {
     overflow-x: auto;
   }

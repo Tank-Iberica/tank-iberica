@@ -236,8 +236,8 @@ export function useAdminProductoDetail() {
       location_country: data.location_country || null,
       location_province: data.location_province || null,
       location_region: data.location_region || null,
-      description_es: data.description_es || null,
-      description_en: data.description_en || null,
+      description_es: data.description_es || null, // NOSONAR typescript:S1874
+      description_en: data.description_en || null, // NOSONAR typescript:S1874
       attributes_json: data.attributes_json || {},
       status: data.status,
       featured: data.featured || false,

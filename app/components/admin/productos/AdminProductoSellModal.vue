@@ -61,7 +61,7 @@ function fmt(val: number | null | undefined): string {
                 @input="
                   updateField('sale_price', Number(($event.target as HTMLInputElement).value))
                 "
-              >
+              />
             </div>
             <div class="field">
               <label>Comisión %</label>
@@ -72,7 +72,7 @@ function fmt(val: number | null | undefined): string {
                 @input="
                   updateField('commission', Number(($event.target as HTMLInputElement).value))
                 "
-              >
+              />
             </div>
           </div>
           <div class="row-2">
@@ -83,7 +83,7 @@ function fmt(val: number | null | undefined): string {
                 type="text"
                 placeholder="Nombre / Empresa"
                 @input="updateField('buyer', ($event.target as HTMLInputElement).value)"
-              >
+              />
             </div>
             <div class="field">
               <label>Fecha venta</label>
@@ -91,7 +91,7 @@ function fmt(val: number | null | undefined): string {
                 :value="sellData.sale_date"
                 type="date"
                 @input="updateField('sale_date', ($event.target as HTMLInputElement).value)"
-              >
+              />
             </div>
           </div>
           <div class="field">
@@ -239,7 +239,7 @@ function fmt(val: number | null | undefined): string {
   border: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .row-2 {
     grid-template-columns: 1fr;
   }

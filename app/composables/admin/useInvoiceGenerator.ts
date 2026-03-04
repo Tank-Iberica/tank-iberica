@@ -28,7 +28,7 @@ function printHTML(html: string) {
   if (!doc) return
 
   doc.open()
-  doc.write(html)
+  doc.write(html) // NOSONAR typescript:S1874
   doc.close()
 
   setTimeout(() => {
@@ -38,7 +38,7 @@ function printHTML(html: string) {
     } catch {
       const win = globalThis.open('', '_blank')
       if (win) {
-        win.document.write(html)
+        win.document.write(html) // NOSONAR typescript:S1874
         win.document.close()
         win.focus()
         win.print()

@@ -102,34 +102,34 @@ const localSellPrice = computed({
           <div v-if="localTransactionType === 'rent'" class="form-grid">
             <div class="form-group half">
               <label>Fecha desde</label>
-              <input v-model="localRentFrom" type="date" />
+              <input v-model="localRentFrom" type="date" >
             </div>
             <div class="form-group half">
               <label>Fecha hasta</label>
-              <input v-model="localRentTo" type="date" />
+              <input v-model="localRentTo" type="date" >
             </div>
             <div class="form-group">
               <label>Cliente</label>
-              <input v-model="localRentClient" type="text" placeholder="Nombre del cliente" />
+              <input v-model="localRentClient" type="text" placeholder="Nombre del cliente" >
             </div>
             <div class="form-group">
               <label>Importe (€)</label>
-              <input v-model="localRentAmount" type="number" step="0.01" placeholder="0.00" />
+              <input v-model="localRentAmount" type="number" step="0.01" placeholder="0.00" >
             </div>
           </div>
 
           <div v-else class="form-grid">
             <div class="form-group">
               <label>Fecha de venta</label>
-              <input v-model="localSellDate" type="date" />
+              <input v-model="localSellDate" type="date" >
             </div>
             <div class="form-group">
               <label>Comprador</label>
-              <input v-model="localSellBuyer" type="text" placeholder="Nombre del comprador" />
+              <input v-model="localSellBuyer" type="text" placeholder="Nombre del comprador" >
             </div>
             <div class="form-group">
               <label>Precio de venta (€)</label>
-              <input v-model="localSellPrice" type="number" step="0.01" />
+              <input v-model="localSellPrice" type="number" step="0.01" >
             </div>
             <div class="info-warning">
               ⚠️ Esto marcará el vehículo como vendido y lo moverá al histórico.
@@ -181,7 +181,7 @@ const localSellPrice = computed({
 
 .modal-md {
   width: 100%;
-  max-width: 600px;
+  max-width: 37.5em;
 }
 
 .modal-header {

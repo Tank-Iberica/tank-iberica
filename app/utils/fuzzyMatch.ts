@@ -37,6 +37,16 @@ function diceCoefficient(a: string, b: string): number {
   return (2 * intersection) / (bigramsA.size + bigramsB.size)
 }
 
+function wordMatchesText(qw: string, textWords: string[], threshold: number): boolean {
+  for (const tw of textWords) {
+    if (tw.includes(qw) || qw.includes(tw)) return true
+  }
+  for (const tw of textWords) {
+    if (diceCoefficient(qw, tw) >= threshold) return true
+  }
+  return false
+}
+
 /**
  * Check if `query` fuzzy-matches `text`.
  * Returns true if:
@@ -47,32 +57,13 @@ export function fuzzyMatch(text: string, query: string, threshold = 0.45): boole
   const normText = normalize(text)
   const normQuery = normalize(query)
 
-  // Exact substring match (handles partial typing like "ren" → "renault")
   if (normText.includes(normQuery)) return true
 
-  // Split into words and check each query word against text words
   const queryWords = normQuery.split(' ').filter((w) => w.length > 1)
   const textWords = normText.split(' ').filter((w) => w.length > 1)
 
   for (const qw of queryWords) {
-    let wordMatched = false
-    // Substring match per word
-    for (const tw of textWords) {
-      if (tw.includes(qw) || qw.includes(tw)) {
-        wordMatched = true
-        break
-      }
-    }
-    if (!wordMatched) {
-      // Fuzzy match per word (typo tolerance)
-      for (const tw of textWords) {
-        if (diceCoefficient(qw, tw) >= threshold) {
-          wordMatched = true
-          break
-        }
-      }
-    }
-    if (!wordMatched) return false
+    if (!wordMatchesText(qw, textWords, threshold)) return false
   }
 
   return queryWords.length > 0

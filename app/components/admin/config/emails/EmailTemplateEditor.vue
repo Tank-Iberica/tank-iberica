@@ -123,7 +123,7 @@ function onBodyInput(event: Event) {
         type="text"
         :placeholder="$t('admin.emails.subjectPlaceholder')"
         @input="onSubjectInput"
-      />
+      >
     </div>
 
     <!-- Body -->
@@ -401,7 +401,7 @@ function onBodyInput(event: Event) {
 }
 
 /* -- Responsive -- */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .editor-panel {
     padding: 24px;
   }
@@ -419,7 +419,7 @@ function onBodyInput(event: Event) {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .editor-panel {
     flex: 1;
     min-width: 0;

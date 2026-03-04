@@ -904,18 +904,18 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: ≥480px
+   RESPONSIVE: ≥30em
    ============================================ */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .controls-wrapper {
     padding: 0 0.5rem;
   }
 }
 
 /* ============================================
-   RESPONSIVE: ≥768px (tablet)
+   RESPONSIVE: ≥48em (tablet)
    ============================================ */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .controls-wrapper {
     padding: 0 1.5rem;
   }
@@ -1029,10 +1029,10 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: ≥1024px (desktop)
+   RESPONSIVE: ≥64em (desktop)
    Menu becomes pill with label + eye in circle
    ============================================ */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .controls-wrapper {
     padding: 0 3rem;
   }

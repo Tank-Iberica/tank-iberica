@@ -63,6 +63,173 @@ async function resolveDealerNames(
   return nameMap
 }
 
+function countById<T extends Record<string, unknown>>(
+  rows: T[],
+  idField: keyof T,
+  valueField?: keyof T,
+): Map<string, number> {
+  const map = new Map<string, number>()
+  for (const row of rows) {
+    const id = row[idField] as string | null
+    if (!id) continue
+    const value = valueField ? ((row[valueField] as number | null) ?? 1) : 1
+    map.set(id, (map.get(id) ?? 0) + value)
+  }
+  return map
+}
+
+function topN(map: Map<string, number>, n: number): [string, number][] {
+  return Array.from(map.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, n)
+}
+
+type SupaClient = ReturnType<typeof useSupabaseClient>
+
+function countByMonth(
+  rows: Array<{ [key: string]: string | null }>,
+  dateField: string,
+  series: VehicleActivityPoint[],
+  target: 'published' | 'sold',
+): void {
+  for (const row of rows) {
+    const dateStr = row[dateField]
+    if (!dateStr) continue
+    const label = getMonthLabel(new Date(dateStr))
+    const entry = series.find((s) => s.month === label)
+    if (entry) entry[target]++
+  }
+}
+
+async function queryVehicleActivity(
+  supabase: SupaClient,
+  months: Date[],
+  series: VehicleActivityPoint[],
+): Promise<void> {
+  const rangeStart = monthStart(months[0]!)
+  const rangeEnd = monthEnd(months.at(-1)!)
+
+  const { data: createdData } = await supabase
+    .from('vehicles')
+    .select('created_at')
+    .gte('created_at', rangeStart)
+    .lt('created_at', rangeEnd)
+
+  if (createdData) {
+    countByMonth(
+      createdData as Array<{ created_at: string | null }>,
+      'created_at',
+      series,
+      'published',
+    )
+  }
+
+  const { data: soldData } = await supabase
+    .from('vehicles')
+    .select('sold_at')
+    .not('sold_at', 'is', null)
+    .gte('sold_at', rangeStart)
+    .lt('sold_at', rangeEnd)
+
+  if (soldData) {
+    countByMonth(soldData as Array<{ sold_at: string | null }>, 'sold_at', series, 'sold')
+  }
+}
+
+async function queryLeadCounts(supabase: SupaClient): Promise<Map<string, number>> {
+  try {
+    const { data: leadData } = await supabase.from('leads').select('dealer_id')
+    if (leadData) return countById(leadData as { dealer_id: string }[], 'dealer_id')
+  } catch {
+    /* leads table may not exist */
+  }
+  return new Map<string, number>()
+}
+
+function buildTopDealersList(
+  sorted: [string, number][],
+  nameMap: Map<string, string>,
+  leadCountMap: Map<string, number>,
+): TopDealer[] {
+  return sorted.map(([id, count]) => ({
+    dealerId: id,
+    name: nameMap.get(id) ?? id,
+    vehicleCount: count,
+    leadCount: leadCountMap.get(id) ?? 0,
+  }))
+}
+
+async function queryVehicleTitles(
+  supabase: SupaClient,
+  vehicleIds: string[],
+): Promise<Map<string, string>> {
+  const titleMap = new Map<string, string>()
+  try {
+    const { data: vData } = await supabase
+      .from('vehicles')
+      .select('id, brand, model, year')
+      .in('id', vehicleIds)
+
+    if (vData) {
+      for (const row of vData as {
+        id: string
+        brand: string
+        model: string
+        year: number | null
+      }[]) {
+        const parts = [row.brand, row.model]
+        if (row.year) parts.push(String(row.year))
+        titleMap.set(row.id, parts.join(' '))
+      }
+    }
+  } catch {
+    /* vehicles table issue */
+  }
+  return titleMap
+}
+
+async function queryTotalViews(supabase: SupaClient): Promise<number> {
+  try {
+    const { data } = await supabase.from('user_vehicle_views').select('view_count')
+    if (!data) return 0
+    return (data as { view_count: number | null }[]).reduce(
+      (sum, r) => sum + (r.view_count ?? 0),
+      0,
+    )
+  } catch {
+    return 0
+  }
+}
+
+async function queryUniqueVehicleViews(supabase: SupaClient): Promise<number> {
+  try {
+    const { data } = await supabase.from('user_vehicle_views').select('vehicle_id')
+    if (!data) return 0
+    return new Set((data as { vehicle_id: string }[]).map((r) => r.vehicle_id).filter(Boolean)).size
+  } catch {
+    return 0
+  }
+}
+
+async function queryTableCount(
+  supabase: SupaClient,
+  table: string,
+  filter?: { field: string; value: unknown },
+): Promise<number> {
+  try {
+    let query = supabase.from(table).select('id', { count: 'exact', head: true })
+    if (filter) query = query.not(filter.field, 'is', filter.value)
+    const { count } = await query
+    return count ?? 0
+  } catch {
+    return 0
+  }
+}
+
+function computeChurnRate(total: number, cancelled: number): number {
+  return total > 0 ? Math.round((cancelled / total) * 10000) / 100 : 0
+}
+
 export function useAdminMetricsActivity() {
   const supabase = useSupabaseClient()
 
@@ -72,25 +239,6 @@ export function useAdminMetricsActivity() {
   const conversionFunnel = ref<ConversionFunnel>({ visits: 0, vehicleViews: 0, leads: 0, sales: 0 })
   const churnRate = ref<ChurnRate>({ totalDealers: 0, cancelledDealers: 0, churnRate: 0 })
 
-  // -------------------------------------------------------------------------
-  // 3. Vehicles Published / Sold per Month (last 12 months)
-  // -------------------------------------------------------------------------
-
-  function countByMonth(
-    rows: Array<{ [key: string]: string | null }>,
-    dateField: string,
-    series: VehicleActivityPoint[],
-    target: 'published' | 'sold',
-  ): void {
-    for (const row of rows) {
-      const dateStr = row[dateField]
-      if (!dateStr) continue
-      const label = getMonthLabel(new Date(dateStr))
-      const entry = series.find((s) => s.month === label)
-      if (entry) entry[target]++
-    }
-  }
-
   async function loadVehicleActivity(): Promise<void> {
     const months = getMonthsRange(12)
     const series: VehicleActivityPoint[] = months.map((m) => ({
@@ -98,46 +246,13 @@ export function useAdminMetricsActivity() {
       published: 0,
       sold: 0,
     }))
-
     try {
-      const rangeStart = monthStart(months[0]!)
-      const rangeEnd = monthEnd(months.at(-1)!)
-
-      const { data: createdData } = await supabase
-        .from('vehicles')
-        .select('created_at')
-        .gte('created_at', rangeStart)
-        .lt('created_at', rangeEnd)
-
-      if (createdData) {
-        countByMonth(
-          createdData as Array<{ created_at: string | null }>,
-          'created_at',
-          series,
-          'published',
-        )
-      }
-
-      const { data: soldData } = await supabase
-        .from('vehicles')
-        .select('sold_at')
-        .not('sold_at', 'is', null)
-        .gte('sold_at', rangeStart)
-        .lt('sold_at', rangeEnd)
-
-      if (soldData) {
-        countByMonth(soldData as Array<{ sold_at: string | null }>, 'sold_at', series, 'sold')
-      }
+      await queryVehicleActivity(supabase, months, series)
     } catch {
-      // vehicles table or column issue
+      /* vehicles table or column issue */
     }
-
     vehicleActivity.value = series
   }
-
-  // -------------------------------------------------------------------------
-  // 5. Top 10 Dealers by Activity
-  // -------------------------------------------------------------------------
 
   async function loadTopDealers(): Promise<void> {
     try {
@@ -145,100 +260,44 @@ export function useAdminMetricsActivity() {
         .from('vehicles')
         .select('dealer_id')
         .not('dealer_id', 'is', null)
-
-      if (!vehicleData || vehicleData.length === 0) {
+      if (!vehicleData?.length) {
         topDealers.value = []
         return
       }
 
-      const vehicleCountMap = new Map<string, number>()
-      for (const row of vehicleData as { dealer_id: string | null }[]) {
-        if (!row.dealer_id) continue
-        vehicleCountMap.set(row.dealer_id, (vehicleCountMap.get(row.dealer_id) ?? 0) + 1)
-      }
-
-      const leadCountMap = new Map<string, number>()
-      try {
-        const { data: leadData } = await supabase.from('leads').select('dealer_id')
-        if (leadData) {
-          for (const row of leadData as { dealer_id: string }[]) {
-            if (!row.dealer_id) continue
-            leadCountMap.set(row.dealer_id, (leadCountMap.get(row.dealer_id) ?? 0) + 1)
-          }
-        }
-      } catch {
-        // leads table may not exist; fall back to zero leads
-      }
-
-      const sorted = Array.from(vehicleCountMap.entries())
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10)
-
-      const dealerIds = sorted.map(([id]) => id)
-
-      const nameMap = await resolveDealerNames(supabase, dealerIds)
-
-      topDealers.value = sorted.map(([id, count]) => ({
-        dealerId: id,
-        name: nameMap.get(id) ?? id,
-        vehicleCount: count,
-        leadCount: leadCountMap.get(id) ?? 0,
-      }))
+      const vehicleCountMap = countById(vehicleData as { dealer_id: string | null }[], 'dealer_id')
+      const leadCountMap = await queryLeadCounts(supabase)
+      const sorted = topN(vehicleCountMap, 10)
+      const nameMap = await resolveDealerNames(
+        supabase,
+        sorted.map(([id]) => id),
+      )
+      topDealers.value = buildTopDealersList(sorted, nameMap, leadCountMap)
     } catch {
       topDealers.value = []
     }
   }
-
-  // -------------------------------------------------------------------------
-  // 6. Top 10 Vehicles by Views
-  // -------------------------------------------------------------------------
 
   async function loadTopVehicles(): Promise<void> {
     try {
       const { data: viewData } = await supabase
         .from('user_vehicle_views')
         .select('vehicle_id, view_count')
-
-      if (!viewData || viewData.length === 0) {
+      if (!viewData?.length) {
         topVehicles.value = []
         return
       }
 
-      const viewMap = new Map<string, number>()
-      for (const row of viewData as { vehicle_id: string; view_count: number | null }[]) {
-        if (!row.vehicle_id) continue
-        viewMap.set(row.vehicle_id, (viewMap.get(row.vehicle_id) ?? 0) + (row.view_count ?? 0))
-      }
-
-      const sorted = Array.from(viewMap.entries())
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10)
-
-      const vehicleIds = sorted.map(([id]) => id)
-
-      const titleMap = new Map<string, string>()
-      try {
-        const { data: vData } = await supabase
-          .from('vehicles')
-          .select('id, brand, model, year')
-          .in('id', vehicleIds)
-
-        if (vData) {
-          for (const row of vData as {
-            id: string
-            brand: string
-            model: string
-            year: number | null
-          }[]) {
-            const parts = [row.brand, row.model]
-            if (row.year) parts.push(String(row.year))
-            titleMap.set(row.id, parts.join(' '))
-          }
-        }
-      } catch {
-        // vehicles table issue
-      }
-
+      const viewMap = countById(
+        viewData as { vehicle_id: string; view_count: number | null }[],
+        'vehicle_id',
+        'view_count',
+      )
+      const sorted = topN(viewMap, 10)
+      const titleMap = await queryVehicleTitles(
+        supabase,
+        sorted.map(([id]) => id),
+      )
       topVehicles.value = sorted.map(([id, views]) => ({
         vehicleId: id,
         title: titleMap.get(id) ?? id,
@@ -249,85 +308,37 @@ export function useAdminMetricsActivity() {
     }
   }
 
-  // -------------------------------------------------------------------------
-  // 7. Conversion Funnel
-  // -------------------------------------------------------------------------
-
   async function loadConversionFunnel(): Promise<void> {
-    let visits = 0
-    let vehicleViews = 0
-    let leads = 0
-    let sales = 0
-
-    try {
-      const { data: viewData } = await supabase.from('user_vehicle_views').select('view_count')
-      if (viewData) {
-        for (const row of viewData as { view_count: number | null }[]) {
-          visits += row.view_count ?? 0
-        }
-      }
-    } catch {
-      /* user_vehicle_views table issue */
-    }
-
-    try {
-      const { data: viewedData } = await supabase.from('user_vehicle_views').select('vehicle_id')
-      if (viewedData) {
-        const unique = new Set<string>()
-        for (const row of viewedData as { vehicle_id: string }[]) {
-          if (row.vehicle_id) unique.add(row.vehicle_id)
-        }
-        vehicleViews = unique.size
-      }
-    } catch {
-      /* user_vehicle_views table issue */
-    }
-
-    try {
-      const { count } = await supabase.from('contacts').select('id', { count: 'exact', head: true })
-      leads = count ?? 0
-    } catch {
-      /* contacts table issue */
-    }
-
-    try {
-      const { count } = await supabase
-        .from('vehicles')
-        .select('id', { count: 'exact', head: true })
-        .not('sold_at', 'is', null)
-      sales = count ?? 0
-    } catch {
-      /* vehicles table issue */
-    }
-
+    const [visits, vehicleViews, leads, sales] = await Promise.all([
+      queryTotalViews(supabase),
+      queryUniqueVehicleViews(supabase),
+      queryTableCount(supabase, 'contacts'),
+      queryTableCount(supabase, 'vehicles', { field: 'sold_at', value: null }),
+    ])
     conversionFunnel.value = { visits, vehicleViews, leads, sales }
   }
-
-  // -------------------------------------------------------------------------
-  // 8. Churn Rate
-  // -------------------------------------------------------------------------
 
   async function loadChurnRate(): Promise<void> {
     let totalDealers = 0
     let cancelledDealers = 0
-
     try {
-      const { count: totalCount } = await supabase
+      const { count: t } = await supabase
         .from('subscriptions')
         .select('id', { count: 'exact', head: true })
-      totalDealers = totalCount ?? 0
-
-      const { count: cancelledCount } = await supabase
+      totalDealers = t ?? 0
+      const { count: c } = await supabase
         .from('subscriptions')
         .select('id', { count: 'exact', head: true })
         .eq('status', 'cancelled')
-      cancelledDealers = cancelledCount ?? 0
+      cancelledDealers = c ?? 0
     } catch {
-      // subscriptions table issue
+      /* subscriptions table issue */
     }
-
-    const rate = totalDealers > 0 ? Math.round((cancelledDealers / totalDealers) * 10000) / 100 : 0
-    churnRate.value = { totalDealers, cancelledDealers, churnRate: rate }
+    churnRate.value = {
+      totalDealers,
+      cancelledDealers,
+      churnRate: computeChurnRate(totalDealers, cancelledDealers),
+    }
   }
 
   return {

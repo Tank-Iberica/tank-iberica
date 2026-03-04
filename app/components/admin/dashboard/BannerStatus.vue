@@ -178,7 +178,7 @@ defineEmits<{
   justify-content: center;
 }
 
-@media (min-width: 640px) {
+(@media ()min-width: 40em())) {
   .banner-status-card {
     flex-direction: row;
     align-items: center;

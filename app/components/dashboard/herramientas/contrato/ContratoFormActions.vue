@@ -29,7 +29,7 @@ const { t } = useI18n()
           :value="contractJurisdiction"
           type="text"
           @input="emit('update:contractJurisdiction', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
     </div>
 
@@ -188,7 +188,7 @@ const { t } = useI18n()
   padding-top: 10px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .form-row {
     flex-direction: column;
     gap: 12px;

@@ -128,7 +128,7 @@ const { t } = useI18n()
   font-weight: 500;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .upgrade-card {
     padding: 32px 20px;
   }

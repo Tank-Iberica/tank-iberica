@@ -330,7 +330,6 @@ export function useAdminAuctionList() {
     }
   }
 
-  /** @deprecated Use openCancelModal + confirmCancelAuction instead */
   async function cancelAuction(auctionId: string) {
     if (!confirm(t('admin.subastas.cancelConfirm'))) return
     saving.value = true

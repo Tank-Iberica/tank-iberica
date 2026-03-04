@@ -73,7 +73,7 @@ export function useAdminTiposPage() {
 
   // ── Computed helpers ─────────────────────────────────────────────
   const availableFilters = computed(() => {
-    const coreFilters = [
+    const coreFilters = new Set([
       'precio',
       'marca',
       'ano',
@@ -82,9 +82,9 @@ export function useAdminTiposPage() {
       'brand',
       'year',
       'location',
-    ]
+    ])
     return allFilters.value.filter(
-      (f) => f.status !== 'archived' && !coreFilters.includes(f.name.toLowerCase()),
+      (f) => f.status !== 'archived' && !coreFilters.has(f.name.toLowerCase()),
     )
   })
 

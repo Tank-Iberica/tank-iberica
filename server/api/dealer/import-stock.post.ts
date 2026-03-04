@@ -201,7 +201,7 @@ ${truncatedHtml}`,
     )
 
     // Parse extracted vehicles
-    const jsonMatch = aiResponse.text.match(/\[[\s\S]*\]/)
+    const jsonMatch = /\[[\s\S]*\]/.exec(aiResponse.text)
     if (!jsonMatch) {
       return { success: true, imported: 0, message: 'No vehicles found on the page' }
     }

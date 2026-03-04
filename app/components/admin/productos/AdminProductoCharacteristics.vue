@@ -41,19 +41,19 @@ const emit = defineEmits<Emits>()
           type="text"
           placeholder="Nombre (ej: Motor)"
           @input="emit('update', c.id, 'key', ($event.target as HTMLInputElement).value)"
-        >
+        />
         <input
           :value="c.value_es"
           type="text"
           placeholder="Valor ES"
           @input="emit('update', c.id, 'value_es', ($event.target as HTMLInputElement).value)"
-        >
+        />
         <input
           :value="c.value_en"
           type="text"
           placeholder="Valor EN"
           @input="emit('update', c.id, 'value_en', ($event.target as HTMLInputElement).value)"
-        >
+        />
         <button class="btn-x" @click="emit('remove', c.id)">×</button>
       </div>
     </div>
@@ -133,7 +133,7 @@ const emit = defineEmits<Emits>()
   padding: 16px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .char-row {
     grid-template-columns: 1fr;
   }

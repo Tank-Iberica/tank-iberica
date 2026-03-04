@@ -1,6 +1,89 @@
 import { createClient } from '@supabase/supabase-js'
 import { createHash } from 'node:crypto'
 
+type SitemapUrl = {
+  loc: string
+  lastmod?: string
+  priority?: number
+  changefreq?: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never'
+  images?: { loc: string; title?: string; caption?: string }[]
+}
+
+function buildVehicleUrls(
+  vehicles: Array<{
+    slug: string
+    brand: string
+    model: string
+    year: number | null
+    updated_at: string
+    vehicle_images: { url: string; alt_text: string | null }[] | null
+  }>,
+): SitemapUrl[] {
+  return vehicles.map((v) => {
+    const images = v.vehicle_images || []
+    return {
+      loc: `/vehiculo/${v.slug}`,
+      lastmod: v.updated_at,
+      priority: 0.8,
+      changefreq: 'weekly' as const,
+      images: images.map((img) => ({
+        loc: img.url,
+        title: img.alt_text || `${v.brand} ${v.model} ${v.year || ''} - Tracciona`,
+        caption: img.alt_text || `${v.brand} ${v.model} ${v.year || ''}`,
+      })),
+    }
+  })
+}
+
+function buildNewsUrls(
+  news: Array<{
+    slug: string
+    updated_at: string | null
+    published_at: string | null
+    section: string | null
+  }>,
+): SitemapUrl[] {
+  return news.map((n) => ({
+    loc: `${n.section === 'guia' ? '/guia' : '/noticias'}/${n.slug}`,
+    lastmod: n.updated_at || n.published_at || undefined,
+    priority: 0.6,
+    changefreq: 'monthly' as const,
+  }))
+}
+
+function buildLandingUrls(
+  landings: Array<{ slug: string; last_calculated: string | null }>,
+): SitemapUrl[] {
+  return landings.map((l) => ({
+    loc: `/${l.slug}`,
+    lastmod: l.last_calculated || undefined,
+    priority: 0.7,
+    changefreq: 'weekly' as const,
+  }))
+}
+
+function buildAuctionUrls(
+  auctions: Array<{ id: string; starts_at: string | null; updated_at: string | null }>,
+): SitemapUrl[] {
+  return auctions.map((a) => ({
+    loc: `/subastas/${a.id}`,
+    lastmod: a.updated_at || a.starts_at || undefined,
+    priority: 0.7,
+    changefreq: 'daily' as const,
+  }))
+}
+
+function buildDealerUrls(
+  dealers: Array<{ slug: string | null; updated_at: string | null }>,
+): SitemapUrl[] {
+  return dealers.map((d) => ({
+    loc: `/${d.slug}`,
+    lastmod: d.updated_at || new Date().toISOString(),
+    changefreq: 'weekly' as const,
+    priority: 0.6,
+  }))
+}
+
 export default defineEventHandler(async (event) => {
   setResponseHeader(event, 'Cache-Control', 'public, max-age=21600, s-maxage=21600') // 6h
 
@@ -12,106 +95,32 @@ export default defineEventHandler(async (event) => {
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey)
-  const urls: {
-    loc: string
-    lastmod?: string
-    priority?: number
-    changefreq?: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never'
-    images?: { loc: string; title?: string; caption?: string }[]
-  }[] = []
 
-  // Fetch published vehicles with images
-  const { data: vehicles } = await supabase
-    .from('vehicles')
-    .select('slug, brand, model, year, updated_at, vehicle_images(url, alt_text)')
-    .eq('status', 'published')
+  const [vehiclesRes, newsRes, landingsRes, auctionsRes, dealersRes] = await Promise.all([
+    supabase
+      .from('vehicles')
+      .select('slug, brand, model, year, updated_at, vehicle_images(url, alt_text)')
+      .eq('status', 'published'),
+    supabase
+      .from('news')
+      .select('slug, updated_at, published_at, section')
+      .eq('status', 'published'),
+    supabase.from('active_landings').select('slug, last_calculated').eq('is_active', true),
+    supabase
+      .from('auctions')
+      .select('id, starts_at, updated_at')
+      .in('status', ['scheduled', 'active'])
+      .order('starts_at', { ascending: false }),
+    supabase.from('dealers').select('slug, updated_at').not('slug', 'is', null),
+  ])
 
-  if (vehicles) {
-    for (const v of vehicles) {
-      const images = (v.vehicle_images as { url: string; alt_text: string | null }[] | null) || []
-      urls.push({
-        loc: `/vehiculo/${v.slug}`,
-        lastmod: v.updated_at,
-        priority: 0.8,
-        changefreq: 'weekly',
-        images: images.map((img) => ({
-          loc: img.url,
-          title: img.alt_text || `${v.brand} ${v.model} ${v.year || ''} - Tracciona`,
-          caption: img.alt_text || `${v.brand} ${v.model} ${v.year || ''}`,
-        })),
-      })
-    }
-  }
-
-  // Fetch published news
-  const { data: news } = await supabase
-    .from('news')
-    .select('slug, updated_at, published_at, section')
-    .eq('status', 'published')
-
-  if (news) {
-    for (const n of news) {
-      const prefix = n.section === 'guia' ? '/guia' : '/noticias'
-      urls.push({
-        loc: `${prefix}/${n.slug}`,
-        lastmod: n.updated_at || n.published_at,
-        priority: 0.6,
-        changefreq: 'monthly',
-      })
-    }
-  }
-
-  // Fetch active landing pages
-  const { data: landings } = await supabase
-    .from('active_landings')
-    .select('slug, last_calculated')
-    .eq('is_active', true)
-
-  if (landings) {
-    for (const l of landings) {
-      urls.push({
-        loc: `/${l.slug}`,
-        lastmod: l.last_calculated,
-        priority: 0.7,
-        changefreq: 'weekly',
-      })
-    }
-  }
-
-  // Fetch active auctions
-  const { data: auctions } = await supabase
-    .from('auctions')
-    .select('id, title, starts_at, ends_at, updated_at')
-    .in('status', ['scheduled', 'active'])
-    .order('starts_at', { ascending: false })
-
-  if (auctions) {
-    for (const a of auctions) {
-      urls.push({
-        loc: `/subastas/${a.id}`,
-        lastmod: a.updated_at || a.starts_at,
-        priority: 0.7,
-        changefreq: 'daily',
-      })
-    }
-  }
-
-  // Dealer profile URLs
-  const { data: dealers } = await supabase
-    .from('dealers')
-    .select('slug, updated_at')
-    .not('slug', 'is', null)
-
-  if (dealers) {
-    for (const dealer of dealers) {
-      urls.push({
-        loc: `/${dealer.slug}`,
-        lastmod: dealer.updated_at || new Date().toISOString(),
-        changefreq: 'weekly',
-        priority: 0.6,
-      })
-    }
-  }
+  const urls: SitemapUrl[] = [
+    ...buildVehicleUrls((vehiclesRes.data || []) as Parameters<typeof buildVehicleUrls>[0]),
+    ...buildNewsUrls((newsRes.data || []) as Parameters<typeof buildNewsUrls>[0]),
+    ...buildLandingUrls((landingsRes.data || []) as Parameters<typeof buildLandingUrls>[0]),
+    ...buildAuctionUrls((auctionsRes.data || []) as Parameters<typeof buildAuctionUrls>[0]),
+    ...buildDealerUrls((dealersRes.data || []) as Parameters<typeof buildDealerUrls>[0]),
+  ]
 
   // Generate ETag for conditional requests (304 Not Modified)
   const etag = createHash('md5').update(JSON.stringify(urls)).digest('hex')

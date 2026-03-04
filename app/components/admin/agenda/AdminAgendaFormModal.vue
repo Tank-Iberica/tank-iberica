@@ -264,7 +264,7 @@ function onSelectChange(event: Event) {
   width: 100%;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .form-row {
     flex-direction: row;
     gap: 16px;

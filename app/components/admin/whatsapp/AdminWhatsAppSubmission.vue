@@ -158,7 +158,7 @@ const { t } = useI18n()
             rel="noopener noreferrer"
             class="image-thumb"
           >
-            <img :src="url" :alt="`${t('admin.whatsapp.image')} ${idx + 1}`" >
+            <img :src="url" :alt="`${t('admin.whatsapp.image')} ${idx + 1}`" />
           </a>
         </div>
       </div>
@@ -626,8 +626,8 @@ const { t } = useI18n()
   cursor: not-allowed;
 }
 
-/* 480px+ */
-@media (min-width: 480px) {
+/* 30em+ */
+@media (min-width: 30em) {
   .sub-images-cell {
     display: flex;
     align-items: center;
@@ -638,8 +638,8 @@ const { t } = useI18n()
   }
 }
 
-/* 768px+ */
-@media (min-width: 768px) {
+/* 48em+ */
+@media (min-width: 48em) {
   .sub-date-cell {
     display: block;
   }
@@ -653,8 +653,8 @@ const { t } = useI18n()
   }
 }
 
-/* 1024px+ */
-@media (min-width: 1024px) {
+/* 64em+ */
+@media (min-width: 64em) {
   .sub-images-cell {
     display: flex;
   }
@@ -676,8 +676,8 @@ const { t } = useI18n()
   }
 }
 
-/* 1280px+ */
-@media (min-width: 1280px) {
+/* 80em+ */
+@media (min-width: 80em) {
   .image-grid {
     grid-template-columns: repeat(8, 1fr);
   }

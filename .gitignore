@@ -41,3 +41,21 @@ supabase/.temp/
 
 # SonarQube local
 .scannerwork/
+coverage/
+sonar_*.json
+s3776_*.json
+sq_*.json
+scan_result.json
+qg.json
+fase4_pending.json
+facets.json
+s6606.json
+endpoint-drift-report.json
+sonar_token.json
+
+# Windows artifacts
+nul
+
+# Local / private
+Contratos/
+*.vue.new

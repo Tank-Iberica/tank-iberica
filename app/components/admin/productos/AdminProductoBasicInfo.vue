@@ -92,7 +92,7 @@ function countryFlag(country: string): string {
       <div class="section-title">Categorías *</div>
       <div class="cat-row">
         <label class="cat-check" :class="{ active: hasCat('venta') }">
-          <input type="checkbox" :checked="hasCat('venta')" @change="toggleCategory('venta')" >
+          <input type="checkbox" :checked="hasCat('venta')" @change="toggleCategory('venta')" />
           Venta
         </label>
         <label class="cat-check" :class="{ active: hasCat('alquiler') }">
@@ -100,7 +100,7 @@ function countryFlag(country: string): string {
             type="checkbox"
             :checked="hasCat('alquiler')"
             @change="toggleCategory('alquiler')"
-          >
+          />
           Alquiler
         </label>
         <label class="cat-check" :class="{ active: hasCat('terceros') }">
@@ -108,11 +108,11 @@ function countryFlag(country: string): string {
             type="checkbox"
             :checked="hasCat('terceros')"
             @change="toggleCategory('terceros')"
-          >
+          />
           Terceros
         </label>
         <label class="feat-check">
-          <input :checked="featured" type="checkbox" @change="emit('update:featured', !featured)" >
+          <input :checked="featured" type="checkbox" @change="emit('update:featured', !featured)" />
           ★ Destacado
         </label>
       </div>
@@ -160,7 +160,7 @@ function countryFlag(country: string): string {
             type="text"
             placeholder="Scania"
             @input="emit('update:brand', ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
         <div class="field">
           <label>Modelo *</label>
@@ -169,7 +169,7 @@ function countryFlag(country: string): string {
             type="text"
             placeholder="R450"
             @input="emit('update:model', ($event.target as HTMLInputElement).value)"
-          >
+          />
         </div>
         <div class="field">
           <label>Año *</label>
@@ -178,7 +178,7 @@ function countryFlag(country: string): string {
             type="number"
             placeholder="2023"
             @input="emit('update:year', Number(($event.target as HTMLInputElement).value) || null)"
-          >
+          />
         </div>
         <div class="field" />
       </div>
@@ -190,7 +190,7 @@ function countryFlag(country: string): string {
             type="text"
             placeholder="1234-ABC"
             @input="emit('update:plate', ($event.target as HTMLInputElement).value || null)"
-          >
+          />
         </div>
         <div class="field">
           <label>Precio Venta €</label>
@@ -199,7 +199,7 @@ function countryFlag(country: string): string {
             type="number"
             placeholder="0 = Consultar"
             @input="emit('update:price', Number(($event.target as HTMLInputElement).value) || null)"
-          >
+          />
         </div>
         <div v-if="showRentalPrice" class="field">
           <label>Precio Alquiler €/mes</label>
@@ -210,7 +210,7 @@ function countryFlag(country: string): string {
             @input="
               emit('update:rentalPrice', Number(($event.target as HTMLInputElement).value) || null)
             "
-          >
+          />
         </div>
         <div v-else class="field" />
         <div class="field" />
@@ -223,7 +223,7 @@ function countryFlag(country: string): string {
             type="text"
             placeholder="Madrid, España"
             @input="emit('update:location', ($event.target as HTMLInputElement).value || null)"
-          >
+          />
           <span v-if="locationCountry" class="location-detected">
             {{ countryFlag(locationCountry) }} {{ locationCountry }}
             <template v-if="locationProvince"> · {{ locationProvince }}</template>
@@ -237,7 +237,7 @@ function countryFlag(country: string): string {
             type="text"
             placeholder="Madrid, Spain"
             @input="emit('update:locationEn', ($event.target as HTMLInputElement).value || null)"
-          >
+          />
         </div>
       </div>
     </div>
@@ -338,7 +338,7 @@ function countryFlag(country: string): string {
   font-weight: 500;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .row-2,
   .row-4 {
     grid-template-columns: 1fr;

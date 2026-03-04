@@ -26,7 +26,7 @@ const emit = defineEmits<{
         accept="image/*"
         multiple
         @change="emit('select', $event)"
-      >
+      />
     </label>
     <div v-if="cloudinaryUploading" class="upload-progress">
       <div class="progress-bar" :style="{ width: cloudinaryProgress + '%' }" />
@@ -39,7 +39,7 @@ const emit = defineEmits<{
         class="img-item"
         :class="{ cover: idx === 0 }"
       >
-        <img :src="img.previewUrl" :alt="`Imagen ${idx + 1}`" >
+        <img :src="img.previewUrl" :alt="`Imagen ${idx + 1}`" />
         <div class="img-overlay">
           <div class="img-actions">
             <button
@@ -200,7 +200,7 @@ const emit = defineEmits<{
   text-align: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .img-grid {
     grid-template-columns: repeat(3, 1fr);
   }

@@ -28,7 +28,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="Titulo principal en espanol"
             @input="emit('update-title', 'es', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
         <div class="lang-field">
           <span class="lang-badge">EN</span>
@@ -37,7 +37,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="Main title in English"
             @input="emit('update-title', 'en', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
       </div>
     </div>
@@ -52,7 +52,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="Subtitulo en espanol"
             @input="emit('update-subtitle', 'es', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
         <div class="lang-field">
           <span class="lang-badge">EN</span>
@@ -61,7 +61,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="Subtitle in English"
             @input="emit('update-subtitle', 'en', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="Ver catalogo"
             @input="emit('update-cta-text', 'es', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
         <div class="lang-field">
           <span class="lang-badge">EN</span>
@@ -85,7 +85,7 @@ const emit = defineEmits<{
             type="text"
             placeholder="View catalog"
             @input="emit('update-cta-text', 'en', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
       </div>
     </div>
@@ -99,7 +99,7 @@ const emit = defineEmits<{
           type="text"
           placeholder="/catalogo"
           @input="emit('update-cta-url', ($event.target as HTMLInputElement).value)"
-        />
+        >
       </div>
       <div class="form-group">
         <label for="hero_image_url">Imagen del hero (URL)</label>
@@ -109,12 +109,12 @@ const emit = defineEmits<{
           type="text"
           placeholder="https://res.cloudinary.com/..."
           @input="emit('update-image-url', ($event.target as HTMLInputElement).value)"
-        />
+        >
       </div>
     </div>
 
     <div v-if="heroImageUrl" class="image-preview">
-      <img :src="heroImageUrl" alt="Hero preview" />
+      <img :src="heroImageUrl" alt="Hero preview" >
     </div>
   </div>
 </template>
@@ -232,7 +232,7 @@ const emit = defineEmits<{
   border-radius: 4px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .form-row-2col {
     grid-template-columns: 1fr 1fr;
   }

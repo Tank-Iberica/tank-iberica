@@ -44,7 +44,7 @@ function onSearchInput(event: Event) {
       placeholder="Buscar por nombre, email, pseudónimo..."
       class="filter-search"
       @input="onSearchInput"
-    >
+    />
   </div>
 </template>
 
@@ -109,7 +109,7 @@ function onSearchInput(event: Event) {
   border-color: var(--color-primary);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .filters-bar {
     flex-direction: column;
   }

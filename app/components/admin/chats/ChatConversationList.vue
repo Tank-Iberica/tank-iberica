@@ -279,7 +279,7 @@ function onSearchInput(event: Event) {
 }
 
 /* Mobile responsive */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .conversation-list {
     width: 100%;
     border-right: none;

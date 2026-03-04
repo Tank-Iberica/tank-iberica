@@ -60,7 +60,7 @@ const emit = defineEmits<{
   border-color: var(--color-primary);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .period-tabs {
     padding: var(--spacing-4, 16px) var(--spacing-6, 24px);
   }

@@ -7,19 +7,19 @@ const status = defineModel<'published' | 'draft' | 'rented' | 'maintenance'>({ r
     <div class="section-title">Estado</div>
     <div class="estado-row">
       <label class="estado-opt" :class="{ active: status === 'published' }">
-        <input v-model="status" type="radio" value="published" >
+        <input v-model="status" type="radio" value="published" />
         <span class="dot green" />Publicado
       </label>
       <label class="estado-opt" :class="{ active: status === 'draft' }">
-        <input v-model="status" type="radio" value="draft" >
+        <input v-model="status" type="radio" value="draft" />
         <span class="dot gray" />Oculto
       </label>
       <label class="estado-opt" :class="{ active: status === 'rented' }">
-        <input v-model="status" type="radio" value="rented" >
+        <input v-model="status" type="radio" value="rented" />
         <span class="dot blue" />Alquilado
       </label>
       <label class="estado-opt" :class="{ active: status === 'maintenance' }">
-        <input v-model="status" type="radio" value="maintenance" >
+        <input v-model="status" type="radio" value="maintenance" />
         <span class="dot red" />En Taller
       </label>
     </div>
@@ -81,7 +81,7 @@ const status = defineModel<'published' | 'draft' | 'rented' | 'maintenance'>({ r
   background: var(--color-error);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .estado-row {
     flex-direction: column;
   }

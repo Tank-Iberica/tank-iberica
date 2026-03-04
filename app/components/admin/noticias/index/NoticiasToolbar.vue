@@ -53,7 +53,7 @@ function onStatusChange(event: Event) {
           placeholder="Buscar por titulo..."
           class="search-input"
           @input="onSearchInput"
-        >
+        />
       </div>
 
       <div class="filter-group">
@@ -148,7 +148,7 @@ function onStatusChange(event: Event) {
   font-size: 0.8rem;
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .toolbar-row {
     flex-direction: column;
   }

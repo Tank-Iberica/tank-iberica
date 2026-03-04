@@ -100,6 +100,92 @@ function mergeFilterOptions(
   return options
 }
 
+function buildFilterOptions(formData: FilterFormData): AdminFilter['options'] {
+  const options: AdminFilter['options'] = {}
+  if (formData.default_value) options.default_value = formData.default_value
+
+  const typeHandlers: Partial<Record<FilterType, () => void>> = {
+    tick: () => {
+      if (formData.extra_filters.length) options.extra_filters = formData.extra_filters
+      if (formData.hides.length) options.hides = formData.hides
+    },
+    desplegable: () => {
+      options.choices_source = formData.choices_source || 'manual'
+      if (formData.choices.length) options.choices = formData.choices
+    },
+    desplegable_tick: () => {
+      options.choices_source = formData.choices_source || 'manual'
+      if (formData.choices.length) options.choices = formData.choices
+    },
+    calc: () => {
+      if (formData.step) options.step = formData.step
+    },
+  }
+
+  typeHandlers[formData.type]?.()
+  return options
+}
+
+function buildInsertData(formData: FilterFormData, maxOrder: number): Record<string, unknown> {
+  return {
+    name: formData.name,
+    type: formData.type,
+    label_es: formData.label_es || formData.name,
+    label_en: formData.label_en,
+    unit: formData.unit,
+    options: buildFilterOptions(formData),
+    is_extra: formData.is_extra,
+    is_hidden: formData.is_hidden,
+    status: formData.status,
+    sort_order: maxOrder + 1,
+  }
+}
+
+function buildUpdatePayload(
+  formData: Partial<FilterFormData>,
+  currentOptions: AdminFilter['options'],
+): Record<string, unknown> {
+  const updateData: Record<string, unknown> = {}
+  const directFields: (keyof FilterFormData)[] = [
+    'type',
+    'label_en',
+    'unit',
+    'is_extra',
+    'is_hidden',
+    'status',
+  ]
+  for (const key of directFields) {
+    if (formData[key] !== undefined) updateData[key] = formData[key]
+  }
+  if (formData.name !== undefined) {
+    updateData.name = formData.name
+    updateData.label_es = formData.name
+  }
+  updateData.options = mergeFilterOptions(currentOptions, formData)
+  return updateData
+}
+
+function toErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error ? err.message : fallback
+}
+
+async function swapSortOrder(
+  supabase: ReturnType<typeof useSupabaseClient>,
+  idA: string,
+  orderA: number,
+  idB: string,
+  orderB: number,
+): Promise<void> {
+  await supabase
+    .from('attributes')
+    .update({ sort_order: orderB } as never)
+    .eq('id', idA)
+  await supabase
+    .from('attributes')
+    .update({ sort_order: orderA } as never)
+    .eq('id', idB)
+}
+
 export function useAdminFilters() {
   const supabase = useSupabaseClient()
 
@@ -108,251 +194,141 @@ export function useAdminFilters() {
   const saving = ref(false)
   const error = ref<string | null>(null)
 
-  /**
-   * Fetch all filter definitions
-   */
   async function fetchFilters() {
     loading.value = true
     error.value = null
-
     try {
       const { data, error: err } = await supabase
         .from('attributes')
         .select('*')
         .order('sort_order', { ascending: true })
-
       if (err) throw err
-
       filters.value = (data as unknown as AdminFilter[]) || []
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error fetching filters'
+      error.value = toErrorMessage(err, 'Error fetching filters')
       filters.value = []
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Fetch single filter by ID
-   */
   async function fetchById(id: string): Promise<AdminFilter | null> {
     loading.value = true
     error.value = null
-
     try {
       const { data, error: err } = await supabase
         .from('attributes')
         .select('*')
         .eq('id', id)
         .single()
-
       if (err) throw err
-
       return data as unknown as AdminFilter
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error fetching filter'
+      error.value = toErrorMessage(err, 'Error fetching filter')
       return null
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Create new filter
-   */
-  function buildFilterOptions(formData: FilterFormData): AdminFilter['options'] {
-    const options: AdminFilter['options'] = {}
-    if (formData.default_value) options.default_value = formData.default_value
-    if (formData.type === 'tick') {
-      if (formData.extra_filters.length) options.extra_filters = formData.extra_filters
-      if (formData.hides.length) options.hides = formData.hides
-    }
-    if (formData.type === 'desplegable' || formData.type === 'desplegable_tick') {
-      options.choices_source = formData.choices_source || 'manual'
-      if (formData.choices.length) options.choices = formData.choices
-    }
-    if (formData.type === 'calc') {
-      if (formData.step) options.step = formData.step
-    }
-    return options
-  }
-
   async function createFilter(formData: FilterFormData): Promise<string | null> {
     saving.value = true
     error.value = null
-
     try {
-      // Get max sort_order
       const maxOrder = filters.value.reduce((max, f) => Math.max(max, f.sort_order), 0)
-
-      const insertData = {
-        name: formData.name,
-        type: formData.type,
-        label_es: formData.label_es || formData.name,
-        label_en: formData.label_en,
-        unit: formData.unit,
-        options: buildFilterOptions(formData),
-        is_extra: formData.is_extra,
-        is_hidden: formData.is_hidden,
-        status: formData.status,
-        sort_order: maxOrder + 1,
-      }
-
       const { data, error: err } = await supabase
         .from('attributes')
-        .insert(insertData as never)
+        .insert(buildInsertData(formData, maxOrder) as never)
         .select('id')
         .single()
-
       if (err) throw err
-
       return (data as { id: string } | null)?.id || null
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error creating filter'
+      error.value = toErrorMessage(err, 'Error creating filter')
       return null
     } finally {
       saving.value = false
     }
   }
 
-  /**
-   * Update existing filter
-   */
   async function updateFilter(id: string, formData: Partial<FilterFormData>): Promise<boolean> {
     saving.value = true
     error.value = null
-
     try {
-      // Get current filter to merge options
       const current = filters.value.find((f) => f.id === id)
-      const currentOptions = current?.options || {}
-
-      const updateData: Record<string, unknown> = {}
-
-      if (formData.name !== undefined) {
-        updateData.name = formData.name
-        updateData.label_es = formData.name
-      }
-      if (formData.type !== undefined) updateData.type = formData.type
-      if (formData.label_en !== undefined) updateData.label_en = formData.label_en
-      if (formData.unit !== undefined) updateData.unit = formData.unit
-      if (formData.is_extra !== undefined) updateData.is_extra = formData.is_extra
-      if (formData.is_hidden !== undefined) updateData.is_hidden = formData.is_hidden
-      if (formData.status !== undefined) updateData.status = formData.status
-
-      updateData.options = mergeFilterOptions(currentOptions, formData)
-
+      const payload = buildUpdatePayload(formData, current?.options || {})
       const { error: err } = await supabase
         .from('attributes')
-        .update(updateData as never)
+        .update(payload as never)
         .eq('id', id)
-
       if (err) throw err
-
       return true
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error updating filter'
+      error.value = toErrorMessage(err, 'Error updating filter')
       return false
     } finally {
       saving.value = false
     }
   }
 
-  /**
-   * Delete filter
-   */
   async function deleteFilter(id: string): Promise<boolean> {
     saving.value = true
     error.value = null
-
     try {
       const { error: err } = await supabase.from('attributes').delete().eq('id', id)
-
       if (err) throw err
-
-      // Remove from local list
       filters.value = filters.value.filter((f) => f.id !== id)
-
       return true
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error deleting filter'
+      error.value = toErrorMessage(err, 'Error deleting filter')
       return false
     } finally {
       saving.value = false
     }
   }
 
-  /**
-   * Move filter up in order
-   */
   async function moveUp(id: string): Promise<boolean> {
     const index = filters.value.findIndex((f) => f.id === id)
     if (index <= 0) return false
-
-    const current = filters.value[index]!
-    const previous = filters.value[index - 1]!
-
     saving.value = true
     try {
-      // Swap sort_order values
-      await supabase
-        .from('attributes')
-        .update({ sort_order: previous.sort_order } as never)
-        .eq('id', current.id)
-
-      await supabase
-        .from('attributes')
-        .update({ sort_order: current.sort_order } as never)
-        .eq('id', previous.id)
-
+      await swapSortOrder(
+        supabase,
+        filters.value[index]!.id,
+        filters.value[index]!.sort_order,
+        filters.value[index - 1]!.id,
+        filters.value[index - 1]!.sort_order,
+      )
       await fetchFilters()
       return true
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error reordering filters'
+      error.value = toErrorMessage(err, 'Error reordering filters')
       return false
     } finally {
       saving.value = false
     }
   }
 
-  /**
-   * Move filter down in order
-   */
   async function moveDown(id: string): Promise<boolean> {
     const index = filters.value.findIndex((f) => f.id === id)
     if (index < 0 || index >= filters.value.length - 1) return false
-
-    const current = filters.value[index]!
-    const next = filters.value[index + 1]!
-
     saving.value = true
     try {
-      // Swap sort_order values
-      await supabase
-        .from('attributes')
-        .update({ sort_order: next.sort_order } as never)
-        .eq('id', current.id)
-
-      await supabase
-        .from('attributes')
-        .update({ sort_order: current.sort_order } as never)
-        .eq('id', next.id)
-
+      await swapSortOrder(
+        supabase,
+        filters.value[index]!.id,
+        filters.value[index]!.sort_order,
+        filters.value[index + 1]!.id,
+        filters.value[index + 1]!.sort_order,
+      )
       await fetchFilters()
       return true
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error reordering filters'
+      error.value = toErrorMessage(err, 'Error reordering filters')
       return false
     } finally {
       saving.value = false
     }
-  }
-
-  /**
-   * Get filters available for extra/hide selection (excluding current)
-   */
-  function getAvailableFilters(excludeId?: string) {
-    return filters.value.filter((f) => f.id !== excludeId && f.status !== 'archived')
   }
 
   return {
@@ -367,6 +343,7 @@ export function useAdminFilters() {
     deleteFilter,
     moveUp,
     moveDown,
-    getAvailableFilters,
+    getAvailableFilters: (excludeId?: string) =>
+      filters.value.filter((f) => f.id !== excludeId && f.status !== 'archived'),
   }
 }

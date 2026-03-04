@@ -6,6 +6,35 @@
 type ContractType = 'arrendamiento' | 'compraventa'
 type ClientType = 'persona' | 'empresa'
 
+function detectVehicleType(label: string): string {
+  const l = label.toLowerCase()
+  if (l.includes('cisterna')) return 'semirremolque cisterna'
+  if (l.includes('semirremolque') || l.includes('semi')) return 'semirremolque'
+  if (l.includes('trailer')) return 'trailer'
+  if (l.includes('tractora') || l.includes('cabeza')) return 'cabeza tractora'
+  if (l.includes('camion') || l.includes('camión')) return 'camion'
+  if (l.includes('furgon') || l.includes('furgón')) return 'furgon'
+  return 'vehiculo'
+}
+
+function resolveCompanyName(dealer: Record<string, unknown>): string {
+  if (typeof dealer.legal_name === 'string' && dealer.legal_name) return dealer.legal_name
+  if (typeof dealer.company_name === 'string') return dealer.company_name
+  if (dealer.company_name && typeof dealer.company_name === 'object') {
+    return (dealer.company_name as Record<string, string>).es ?? ''
+  }
+  return ''
+}
+
+function resolveDealerLocation(dealer: Record<string, unknown>): string {
+  if (dealer.location_data && typeof dealer.location_data === 'object') {
+    const loc = dealer.location_data as Record<string, string>
+    return loc.es || loc.en || ''
+  }
+  if (typeof dealer.location === 'string') return dealer.location
+  return ''
+}
+
 export interface VehicleOption {
   id: string
   label: string
@@ -93,27 +122,12 @@ export function useContractForm() {
       }
 
       if (data) {
-        vehicleOptions.value = data.map((v) => {
-          const labelLower = `${v.brand || ''} ${v.model || ''}`.toLowerCase()
-          let detectedType = 'vehiculo'
-          if (labelLower.includes('cisterna')) detectedType = 'semirremolque cisterna'
-          else if (labelLower.includes('semirremolque') || labelLower.includes('semi'))
-            detectedType = 'semirremolque'
-          else if (labelLower.includes('trailer')) detectedType = 'trailer'
-          else if (labelLower.includes('tractora') || labelLower.includes('cabeza'))
-            detectedType = 'cabeza tractora'
-          else if (labelLower.includes('camion') || labelLower.includes('camión'))
-            detectedType = 'camion'
-          else if (labelLower.includes('furgon') || labelLower.includes('furgón'))
-            detectedType = 'furgon'
-
-          return {
-            id: v.id,
-            label: `${v.brand || ''} ${v.model || ''} (${v.plate || ''}) - ${v.year || ''}`.trim(),
-            plate: v.plate || '',
-            vehicleType: detectedType,
-          }
-        })
+        vehicleOptions.value = data.map((v) => ({
+          id: v.id,
+          label: `${v.brand || ''} ${v.model || ''} (${v.plate || ''}) - ${v.year || ''}`.trim(),
+          plate: v.plate || '',
+          vehicleType: detectVehicleType(`${v.brand || ''} ${v.model || ''}`),
+        }))
       }
     } finally {
       loadingVehicles.value = false
@@ -134,34 +148,13 @@ export function useContractForm() {
   function prefillFromDealer(dealer: Record<string, unknown>): void {
     if (!dealer) return
 
-    lessorCompany.value =
-      typeof dealer.legal_name === 'string' && dealer.legal_name
-        ? dealer.legal_name
-        : typeof dealer.company_name === 'string'
-          ? dealer.company_name
-          : dealer.company_name &&
-              typeof dealer.company_name === 'object' &&
-              'es' in (dealer.company_name as Record<string, string>)
-            ? ((dealer.company_name as Record<string, string>).es ?? '')
-            : ''
-
+    lessorCompany.value = resolveCompanyName(dealer)
     lessorCIF.value = typeof dealer.cif_nif === 'string' ? dealer.cif_nif : ''
 
-    // Location data
-    if (dealer.location_data && typeof dealer.location_data === 'object') {
-      const loc = dealer.location_data as Record<string, string>
-      lessorAddress.value = loc.es || loc.en || ''
-      if (!contractLocation.value) {
-        contractLocation.value = loc.es || loc.en || ''
-      }
-      if (!contractJurisdiction.value) {
-        contractJurisdiction.value = loc.es || loc.en || ''
-      }
-    } else if (typeof dealer.location === 'string') {
-      lessorAddress.value = dealer.location
-      if (!contractLocation.value) contractLocation.value = dealer.location
-      if (!contractJurisdiction.value) contractJurisdiction.value = dealer.location
-    }
+    const loc = resolveDealerLocation(dealer)
+    lessorAddress.value = loc
+    if (!contractLocation.value) contractLocation.value = loc
+    if (!contractJurisdiction.value) contractJurisdiction.value = loc
   }
 
   function resetForm(): void {

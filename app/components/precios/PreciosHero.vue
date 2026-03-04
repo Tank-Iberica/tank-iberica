@@ -23,11 +23,11 @@
   font-size: var(--font-size-base);
   color: var(--text-secondary);
   line-height: var(--line-height-relaxed);
-  max-width: 600px;
+  max-width: 37.5em;
   margin: 0 auto;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .pricing-title {
     font-size: var(--font-size-3xl);
   }
@@ -37,7 +37,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .pricing-title {
     font-size: var(--font-size-4xl);
   }

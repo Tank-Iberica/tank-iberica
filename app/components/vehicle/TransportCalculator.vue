@@ -501,7 +501,7 @@ async function onSubmit() {
 }
 
 /* Desktop */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .transport-calculator {
     max-width: 400px;
   }

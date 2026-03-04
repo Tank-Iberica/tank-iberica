@@ -389,7 +389,7 @@ const emit = defineEmits<{
   font-size: 0.8rem;
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .col-views,
   .col-seo,
   .col-date {

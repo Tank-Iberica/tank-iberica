@@ -115,7 +115,7 @@ function onSearchInput(event: Event) {
   border-color: var(--color-primary);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .filters-bar {
     flex-direction: column;
   }

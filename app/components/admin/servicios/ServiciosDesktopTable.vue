@@ -333,7 +333,7 @@ const { t } = useI18n()
   font-style: italic;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .desktop-only {
     display: block;
   }
@@ -343,7 +343,7 @@ const { t } = useI18n()
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .details-grid {
     grid-template-columns: 1fr 1fr 1fr;
   }

@@ -65,7 +65,7 @@
             :min="minimumBid / 100"
             :placeholder="$t('auction.customAmount')"
             class="bid-input"
-          >
+          />
           <button
             class="btn btn-primary bid-btn-custom"
             :disabled="!customAmount || customAmount * 100 < minimumBid"
@@ -724,9 +724,9 @@ function relativeTime(dateStr: string): string {
 }
 
 /* =============================================
-   Breakpoint: 480px (large mobile / landscape)
+   Breakpoint: 30em (large mobile / landscape)
    ============================================= */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .bid-panel {
     padding: var(--spacing-5);
   }
@@ -755,9 +755,9 @@ function relativeTime(dateStr: string): string {
 }
 
 /* =============================================
-   Breakpoint: 768px (tablet / sidebar layout)
+   Breakpoint: 48em (tablet / sidebar layout)
    ============================================= */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .bid-panel {
     padding: var(--spacing-6);
     gap: var(--spacing-5);

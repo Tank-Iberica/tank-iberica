@@ -73,7 +73,7 @@ const { t } = useI18n()
   color: var(--text-disabled);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .kpi-grid {
     grid-template-columns: repeat(4, 1fr);
   }

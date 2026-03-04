@@ -247,7 +247,7 @@ const emit = defineEmits<{
   cursor: not-allowed;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .plan-card--popular {
     transform: scale(1.03);
     z-index: 1;

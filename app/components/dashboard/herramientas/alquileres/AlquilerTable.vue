@@ -194,7 +194,7 @@ const { t } = useI18n()
   margin: 0 0 16px;
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .data-table {
     font-size: 0.75rem;
   }

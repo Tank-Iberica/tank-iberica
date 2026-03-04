@@ -592,7 +592,7 @@ function updateChangePlanNewPlan(plan: PlanType) {
 }
 
 /* ---- Mobile Responsive ---- */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .modal-content {
     margin: var(--spacing-3, 12px);
   }

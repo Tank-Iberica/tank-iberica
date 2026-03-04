@@ -134,13 +134,13 @@ defineProps<{
   font-variant-numeric: tabular-nums;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .stats-row {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .stats-row {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -150,7 +150,7 @@ defineProps<{
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .stats-row {
     grid-template-columns: repeat(5, 1fr);
   }

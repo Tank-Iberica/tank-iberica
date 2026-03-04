@@ -59,7 +59,7 @@
                 required
                 autocomplete="email"
                 :placeholder="$t('auth.email')"
-              >
+              />
             </div>
 
             <div class="field">
@@ -72,7 +72,7 @@
                 autocomplete="current-password"
                 :placeholder="$t('auth.password')"
                 minlength="6"
-              >
+              />
             </div>
 
             <div v-if="mode === 'register'" class="field">
@@ -85,7 +85,7 @@
                 autocomplete="new-password"
                 :placeholder="$t('auth.confirmPassword')"
                 minlength="6"
-              >
+              />
             </div>
 
             <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
@@ -178,14 +178,8 @@ async function handleSubmit() {
       if (error) throw error
 
       // Check if user is admin and redirect BEFORE closing modal
-      if (data.user) {
-        const redirected = await checkAdminAndRedirect(data.user.id)
-        if (!redirected) {
-          close()
-        }
-      } else {
-        close()
-      }
+      const redirected = data.user ? await checkAdminAndRedirect(data.user.id) : false
+      if (!redirected) close()
     }
   } catch (err: unknown) {
     errorMsg.value = err instanceof Error ? err.message : t('common.error')
@@ -207,30 +201,15 @@ async function checkAdminAndRedirect(userId: string): Promise<boolean> {
 
   const isAdmin = data?.role === 'admin'
 
-  // If there's a specific redirect URL, use it
-  if (redirectUrl.value) {
-    // For admin routes, verify user is admin first
-    if (redirectUrl.value.startsWith('/admin')) {
-      if (isAdmin) {
-        await navigateTo(redirectUrl.value)
-        return true
-      }
-      // If not admin, don't redirect to admin route
-      return false
-    } else {
-      // Non-admin redirect, just go there
-      await navigateTo(redirectUrl.value)
-      return true
-    }
+  if (!redirectUrl.value) {
+    if (isAdmin) await navigateTo('/admin')
+    return isAdmin
   }
 
-  // No redirect specified - redirect admins to admin panel
-  if (isAdmin) {
-    await navigateTo('/admin')
-    return true
-  }
-
-  return false
+  // Specific redirect URL
+  if (redirectUrl.value.startsWith('/admin') && !isAdmin) return false
+  await navigateTo(redirectUrl.value)
+  return true
 }
 
 async function loginWithGoogle() {
@@ -460,8 +439,8 @@ watch(
   transform: translateY(100%);
 }
 
-/* ---- Desktop (1024px): centered modal ---- */
-@media (min-width: 1024px) {
+/* ---- Desktop (64em): centered modal ---- */
+@media (min-width: 64em) {
   .auth-backdrop {
     align-items: center;
     justify-content: center;

@@ -130,142 +130,155 @@ export function useUserLocation() {
 
   const detected = ref(false)
 
+  function tryStoredLocation(): UserLocation | null {
+    if (!import.meta.client) return null
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (!stored) return null
+      const parsed = JSON.parse(stored) as UserLocation
+      return parsed.country ? { ...parsed, source: 'manual' } : null
+    } catch {
+      return null
+    }
+  }
+
+  function resolveProvinceRegion(
+    countryCode: string | null,
+    city: string | null,
+    address: { province?: string; state?: string },
+  ): { province: string | null; region: string | null } {
+    if (countryCode !== 'ES') {
+      return { province: address.province || address.state || null, region: null }
+    }
+    // Try local city → province mapping
+    if (city) {
+      const resolved = resolveSpanishCity(city)
+      if (resolved) return resolved
+    }
+    // Fallback: Nominatim province/state
+    if (address.province) {
+      return {
+        province: address.province,
+        region: PROVINCE_TO_REGION[address.province] || address.state || null,
+      }
+    }
+    if (address.state) {
+      const resolved = resolveSpanishCity(address.state)
+      if (resolved) return resolved
+      return { province: null, region: address.state }
+    }
+    return { province: null, region: null }
+  }
+
+  async function tryGeolocation(): Promise<UserLocation | null> {
+    if (!import.meta.client || !navigator.geolocation) return null
+    const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        timeout: 5000,
+        maximumAge: 600000,
+      })
+    })
+    const { latitude, longitude } = pos.coords
+    const latRounded = Math.round(latitude * 100) / 100
+    const lngRounded = Math.round(longitude * 100) / 100
+
+    // Check Supabase geocoding cache first
+    const { data: cached } = await supabase
+      .from('geocoding_cache')
+      .select('country_code, city, province, region')
+      .eq('lat_rounded', latRounded)
+      .eq('lng_rounded', lngRounded)
+      .single()
+
+    if (cached) {
+      return {
+        country: cached.country_code,
+        province: cached.province,
+        region: cached.region,
+        city: cached.city,
+        source: 'geolocation',
+      }
+    }
+
+    // No cache hit — call Nominatim
+    const res = await $fetch<{
+      address?: {
+        country_code?: string
+        city?: string
+        town?: string
+        village?: string
+        state?: string
+        province?: string
+      }
+    }>(
+      `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=es`,
+      { headers: { 'User-Agent': 'Tracciona/1.0' } },
+    )
+    if (!res.address) return null
+
+    const countryCode = res.address.country_code?.toUpperCase() || null
+    const city = res.address.city || res.address.town || res.address.village || null
+    const { province, region } = resolveProvinceRegion(countryCode, city, res.address)
+
+    // Fire-and-forget: store result in geocoding cache
+    supabase
+      .from('geocoding_cache')
+      .upsert({
+        lat_rounded: latRounded,
+        lng_rounded: lngRounded,
+        country_code: countryCode,
+        city,
+        province,
+        region,
+        raw_response: res,
+      })
+      .select()
+      .single()
+
+    return { country: countryCode, province, region, city, source: 'geolocation' }
+  }
+
+  async function tryIpLocation(): Promise<UserLocation | null> {
+    const res = await $fetch<{ country: string | null }>('/api/geo')
+    if (!res.country) return null
+    return { country: res.country, province: null, region: null, city: null, source: 'ip' }
+  }
+
+  const NO_LOCATION: UserLocation = {
+    country: null,
+    province: null,
+    region: null,
+    city: null,
+    source: null,
+  }
+
   async function detect() {
     if (detected.value) return
     detected.value = true
 
     // 1. Check localStorage for manual override
-    if (import.meta.client) {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY)
-        if (stored) {
-          const parsed = JSON.parse(stored) as UserLocation
-          if (parsed.country) {
-            location.value = { ...parsed, source: 'manual' }
-            return
-          }
-        }
-      } catch {
-        /* ignore */
-      }
+    const stored = tryStoredLocation()
+    if (stored) {
+      location.value = stored
+      return
     }
 
     // 2. Try navigator.geolocation → reverse geocode
-    if (import.meta.client && navigator.geolocation) {
-      try {
-        const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            timeout: 5000,
-            maximumAge: 600000,
-          })
-        })
-        const { latitude, longitude } = pos.coords
-
-        // Round coordinates to 2 decimal places (~1km precision) for cache lookup
-        const latRounded = Math.round(latitude * 100) / 100
-        const lngRounded = Math.round(longitude * 100) / 100
-
-        // Check Supabase geocoding cache first
-        const { data: cached } = await supabase
-          .from('geocoding_cache')
-          .select('country_code, city, province, region')
-          .eq('lat_rounded', latRounded)
-          .eq('lng_rounded', lngRounded)
-          .single()
-
-        if (cached) {
-          location.value = {
-            country: cached.country_code,
-            province: cached.province,
-            region: cached.region,
-            city: cached.city,
-            source: 'geolocation',
-          }
-          return
-        }
-
-        // No cache hit — call Nominatim
-        const res = await $fetch<{
-          address?: {
-            country_code?: string
-            city?: string
-            town?: string
-            village?: string
-            state?: string
-            province?: string
-          }
-        }>(
-          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=es`,
-          { headers: { 'User-Agent': 'Tracciona/1.0' } },
-        )
-        if (res.address) {
-          const countryCode = res.address.country_code?.toUpperCase() || null
-          const city = res.address.city || res.address.town || res.address.village || null
-          let province: string | null = null
-          let region: string | null = null
-          if (countryCode === 'ES') {
-            // Try local city → province mapping first
-            if (city) {
-              const resolved = resolveSpanishCity(city)
-              if (resolved) {
-                province = resolved.province
-                region = resolved.region
-              }
-            }
-            // Fallback: use Nominatim's province/state fields
-            if (!province && res.address.province) {
-              province = res.address.province
-              region = PROVINCE_TO_REGION[province] || res.address.state || null
-            }
-            if (!province && res.address.state) {
-              // state = autonomous community, try to match as province
-              const resolved = resolveSpanishCity(res.address.state)
-              if (resolved) {
-                province = resolved.province
-                region = resolved.region
-              } else {
-                region = res.address.state
-              }
-            }
-          } else {
-            // Non-Spain: use Nominatim fields directly
-            province = res.address.province || res.address.state || null
-          }
-          location.value = { country: countryCode, province, region, city, source: 'geolocation' }
-
-          // Fire-and-forget: store result in geocoding cache
-          supabase
-            .from('geocoding_cache')
-            .upsert({
-              lat_rounded: latRounded,
-              lng_rounded: lngRounded,
-              country_code: countryCode,
-              city,
-              province,
-              region,
-              raw_response: res,
-            })
-            .select()
-            .single()
-
-          return
-        }
-      } catch {
-        /* geolocation denied or failed, continue to IP fallback */
+    try {
+      const geo = await tryGeolocation()
+      if (geo) {
+        location.value = geo
+        return
       }
+    } catch {
+      /* geolocation denied or failed, continue to IP fallback */
     }
 
     // 3. Fallback: IP country via server route
     try {
-      const res = await $fetch<{ country: string | null }>('/api/geo')
-      if (res.country) {
-        location.value = {
-          country: res.country,
-          province: null,
-          region: null,
-          city: null,
-          source: 'ip',
-        }
+      const ip = await tryIpLocation()
+      if (ip) {
+        location.value = ip
         return
       }
     } catch {
@@ -273,7 +286,7 @@ export function useUserLocation() {
     }
 
     // 4. No location detected
-    location.value = { country: null, province: null, region: null, city: null, source: null }
+    location.value = NO_LOCATION
   }
 
   function setManualLocation(city: string, country: string, province?: string, region?: string) {

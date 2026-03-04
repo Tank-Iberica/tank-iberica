@@ -93,7 +93,7 @@ function formatDate(dateStr: string): string {
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 600px;
+  min-width: 37.5em;
 }
 
 .admin-table th,

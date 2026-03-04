@@ -150,7 +150,7 @@ const emit = defineEmits<{
   border-color: var(--color-primary);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .row-2,
   .row-3 {
     grid-template-columns: 1fr;

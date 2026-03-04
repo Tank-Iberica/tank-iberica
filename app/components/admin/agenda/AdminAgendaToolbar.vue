@@ -154,7 +154,7 @@ function onSearchInput(event: Event) {
   background: var(--bg-secondary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .toolbar-row {
     flex-direction: row;
     align-items: center;

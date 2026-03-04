@@ -129,13 +129,13 @@ function getProductUnit(p: MerchProduct): string {
   font-weight: 500;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
   }

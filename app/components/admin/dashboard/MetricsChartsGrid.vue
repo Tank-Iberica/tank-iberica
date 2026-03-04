@@ -176,7 +176,7 @@ const LazyDoughnut = defineAsyncComponent(() =>
   font-size: var(--font-size-sm);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .charts-grid {
     grid-template-columns: repeat(2, 1fr);
   }

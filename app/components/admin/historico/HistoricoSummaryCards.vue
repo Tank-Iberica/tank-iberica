@@ -75,7 +75,7 @@ defineProps<{
   color: #7c3aed;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .summary-cards {
     grid-template-columns: repeat(2, 1fr);
   }

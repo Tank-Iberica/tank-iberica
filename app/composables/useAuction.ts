@@ -234,7 +234,7 @@ export function useAuction() {
           const newBid = payload.new as unknown as AuctionBid
 
           // Avoid duplicates
-          if (!bids.value.find((b) => b.id === newBid.id)) {
+          if (!bids.value.some((b) => b.id === newBid.id)) {
             bids.value = [newBid, ...bids.value]
           }
 

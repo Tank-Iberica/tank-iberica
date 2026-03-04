@@ -194,7 +194,7 @@ const localForm = computed(() => props.form)
   cursor: not-allowed;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .form-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -204,7 +204,7 @@ const localForm = computed(() => props.form)
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .form-grid {
     grid-template-columns: 1fr 1fr 1fr;
   }

@@ -336,7 +336,7 @@ const { t } = useI18n()
 /* ============================================
    RESPONSIVE — Mobile-first
    ============================================ */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .registrations-table {
     font-size: 0.75rem;
   }

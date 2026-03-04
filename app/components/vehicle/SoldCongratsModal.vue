@@ -555,7 +555,7 @@ const services = computed(() => [
 }
 
 /* ---- Desktop: centered modal ---- */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .sold-backdrop {
     align-items: center;
   }

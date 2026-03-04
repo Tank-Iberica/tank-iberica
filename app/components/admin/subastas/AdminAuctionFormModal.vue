@@ -412,7 +412,7 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 /* ============================================
    RESPONSIVE — Mobile-first
    ============================================ */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .form-row {
     grid-template-columns: 1fr;
   }

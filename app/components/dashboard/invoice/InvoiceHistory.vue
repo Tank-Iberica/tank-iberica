@@ -241,8 +241,8 @@ function getStatusClass(status: string): string {
   color: var(--color-error);
 }
 
-/* ============ DESKTOP BREAKPOINT (768px+) ============ */
-@media (min-width: 768px) {
+/* ============ DESKTOP BREAKPOINT (48em+) ============ */
+@media (min-width: 48em) {
   .history-table {
     display: table;
   }

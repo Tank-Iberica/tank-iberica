@@ -46,7 +46,7 @@ const statusLabels: Record<string, string> = {
                 v-if="vehicle.vehicle_images?.[0]"
                 :src="vehicle.vehicle_images[0].thumbnail_url || vehicle.vehicle_images[0].url"
                 :alt="vehicle.brand + ' ' + vehicle.model"
-              >
+              />
               <div v-else class="no-image">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -312,7 +312,7 @@ const statusLabels: Record<string, string> = {
   height: 16px;
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .col-category,
   .col-status {
     display: none;

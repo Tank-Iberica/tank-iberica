@@ -1,3 +1,15 @@
+function isClientError(status: number): boolean {
+  return status >= 400 && status < 500 && status !== 429
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status >= 500 || status === 429
+}
+
+function sleepBackoff(attempt: number, baseDelayMs: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, baseDelayMs * Math.pow(2, attempt)))
+}
+
 /**
  * Fetch with exponential backoff retry for transient errors.
  * Retries on: 429, 500, 502, 503, 504, network errors.
@@ -13,26 +25,15 @@ export async function fetchWithRetry(
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       const response = await fetch(url, options)
-
-      if (response.status >= 400 && response.status < 500 && response.status !== 429) {
-        return response
+      if (isClientError(response.status)) return response
+      if (isRetryableStatus(response.status) && attempt < maxRetries) {
+        await sleepBackoff(attempt, baseDelayMs)
+        continue
       }
-
-      if (response.status >= 500 || response.status === 429) {
-        if (attempt < maxRetries) {
-          const delay = baseDelayMs * Math.pow(2, attempt)
-          await new Promise((resolve) => setTimeout(resolve, delay))
-          continue
-        }
-      }
-
       return response
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err))
-      if (attempt < maxRetries) {
-        const delay = baseDelayMs * Math.pow(2, attempt)
-        await new Promise((resolve) => setTimeout(resolve, delay))
-      }
+      if (attempt < maxRetries) await sleepBackoff(attempt, baseDelayMs)
     }
   }
 

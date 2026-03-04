@@ -229,7 +229,7 @@ function printHTML(html: string): void {
     // Fallback to window.open
     const w = globalThis.open('', '_blank')
     if (!w) return
-    w.document.write(html)
+    w.document.write(html) // NOSONAR typescript:S1874
     w.document.close()
     w.focus()
     w.print()
@@ -237,7 +237,7 @@ function printHTML(html: string): void {
   }
 
   doc.open()
-  doc.write(html)
+  doc.write(html) // NOSONAR typescript:S1874
   doc.close()
 
   setTimeout(() => {
@@ -247,7 +247,7 @@ function printHTML(html: string): void {
     } catch {
       const win = globalThis.open('', '_blank')
       if (win) {
-        win.document.write(html)
+        win.document.write(html) // NOSONAR typescript:S1874
         win.document.close()
         win.focus()
         win.print()

@@ -262,7 +262,7 @@ onUnmounted(() => {
   right: 4px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .filters-desktop {
     display: block;
   }
@@ -402,7 +402,7 @@ onUnmounted(() => {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .filters-wrapper {
     padding: 0.6rem 3rem;
   }

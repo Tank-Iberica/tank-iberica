@@ -42,34 +42,82 @@ interface MigrationResult {
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-export default defineEventHandler(async (event): Promise<MigrationResult> => {
-  // ── Auth: admin only ────────────────────────────────────────────────────
-  const user = await serverSupabaseUser(event)
-  if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
-  }
+type SupabaseSR = ReturnType<typeof import('#supabase/server').serverSupabaseServiceRole>
 
-  const supabase = serverSupabaseServiceRole(event)
+async function exportVerticalData(
+  supabase: SupabaseSR,
+  vertical: string,
+): Promise<{ tables: TableMigrationResult[]; data: Record<string, unknown[]> }> {
+  const tables: TableMigrationResult[] = []
+  const data: Record<string, unknown[]> = {}
+
+  const { data: dealers } = await supabase.from('dealers').select('*').eq('vertical', vertical)
+  data.dealers = dealers ?? []
+  tables.push({ name: 'dealers', rows: data.dealers.length })
+
+  const dealerIds = data.dealers.map((d) => (d as Record<string, unknown>).id as string)
+  data.vehicles = []
+  if (dealerIds.length > 0) {
+    const { data: vehicles } = await supabase
+      .from('vehicles')
+      .select('*')
+      .in('dealer_id', dealerIds)
+    data.vehicles = vehicles ?? []
+  }
+  tables.push({ name: 'vehicles', rows: data.vehicles.length })
+
+  const { data: categories } = await supabase.from('categories').select('*')
+  data.categories = categories ?? []
+  tables.push({ name: 'categories', rows: data.categories.length })
+
+  const { data: subcategories } = await supabase.from('subcategories').select('*')
+  data.subcategories = subcategories ?? []
+  tables.push({ name: 'subcategories', rows: data.subcategories.length })
+
+  const { data: verticalConfig } = await supabase
+    .from('vertical_config')
+    .select('*')
+    .eq('slug', vertical)
+  data.vertical_config = verticalConfig ?? []
+  tables.push({ name: 'vertical_config', rows: data.vertical_config.length })
+
+  const { data: landings } = await supabase
+    .from('active_landings')
+    .select('*')
+    .eq('vertical', vertical)
+  data.active_landings = landings ?? []
+  tables.push({ name: 'active_landings', rows: data.active_landings.length })
+
+  const { data: articles } = await supabase.from('articles').select('*').eq('vertical', vertical)
+  data.articles = articles ?? []
+  tables.push({ name: 'articles', rows: data.articles.length })
+
+  return { tables, data }
+}
+
+async function validateMigrationRequest(
+  event: Parameters<typeof getRouterParam>[0],
+  supabase: SupabaseSR,
+): Promise<{
+  user: NonNullable<Awaited<ReturnType<typeof serverSupabaseUser>>>
+  sourceClusterId: string
+  body: ExecuteMigrationBody
+}> {
+  const user = await serverSupabaseUser(event)
+  if (!user) throw createError({ statusCode: 401, message: 'Unauthorized' })
 
   const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
+  if (userData?.role !== 'admin') throw createError({ statusCode: 403, message: 'Forbidden' })
 
-  if (userData?.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Forbidden' })
-  }
-
-  // ── Validate params ────────────────────────────────────────────────────
   const sourceClusterId = getRouterParam(event, 'id')
   if (!sourceClusterId || !UUID_REGEX.test(sourceClusterId)) {
     throw createError({ statusCode: 400, message: 'Invalid source cluster ID' })
   }
 
-  // ── Validate body ──────────────────────────────────────────────────────
   const body = await readBody<ExecuteMigrationBody>(event)
-
   if (!body.verticalToMigrate || typeof body.verticalToMigrate !== 'string') {
     throw createError({ statusCode: 400, message: 'verticalToMigrate is required' })
   }
-
   if (
     !body.targetClusterId ||
     typeof body.targetClusterId !== 'string' ||
@@ -77,10 +125,16 @@ export default defineEventHandler(async (event): Promise<MigrationResult> => {
   ) {
     throw createError({ statusCode: 400, message: 'targetClusterId must be a valid UUID' })
   }
-
   if (sourceClusterId === body.targetClusterId) {
     throw createError({ statusCode: 400, message: 'Source and target clusters must be different' })
   }
+
+  return { user, sourceClusterId, body }
+}
+
+export default defineEventHandler(async (event): Promise<MigrationResult> => {
+  const supabase = serverSupabaseServiceRole(event)
+  const { user, sourceClusterId, body } = await validateMigrationRequest(event, supabase)
 
   // ── Fetch source and target clusters ───────────────────────────────────
   const [sourceResult, targetResult] = await Promise.all([
@@ -115,86 +169,22 @@ export default defineEventHandler(async (event): Promise<MigrationResult> => {
   }
 
   // ── Step 2: Export data from each table with vertical filters ──────────
-  const tablesMigrated: TableMigrationResult[] = []
-  const exportedData: Record<string, unknown[]> = {}
+  let tablesMigrated: TableMigrationResult[]
+  let exportedData: Record<string, unknown[]>
 
   try {
-    // 2a. Dealers filtered by vertical
-    const { data: dealers } = await supabase.from('dealers').select('*').eq('vertical', vertical)
-
-    const dealerData = dealers ?? []
-    exportedData.dealers = dealerData
-    tablesMigrated.push({ name: 'dealers', rows: dealerData.length })
-
-    // 2b. Vehicles via dealer join
-    const dealerIds = dealerData.map((d: Record<string, unknown>) => d.id as string)
-    let vehicleData: unknown[] = []
-
-    if (dealerIds.length > 0) {
-      const { data: vehicles } = await supabase
-        .from('vehicles')
-        .select('*')
-        .in('dealer_id', dealerIds)
-
-      vehicleData = vehicles ?? []
-    }
-
-    exportedData.vehicles = vehicleData
-    tablesMigrated.push({ name: 'vehicles', rows: vehicleData.length })
-
-    // 2c. Categories (shared - copy all)
-    const { data: categories } = await supabase.from('categories').select('*')
-
-    const categoryData = categories ?? []
-    exportedData.categories = categoryData
-    tablesMigrated.push({ name: 'categories', rows: categoryData.length })
-
-    // 2d. Subcategories (shared - copy all)
-    const { data: subcategories } = await supabase.from('subcategories').select('*')
-
-    const subcategoryData = subcategories ?? []
-    exportedData.subcategories = subcategoryData
-    tablesMigrated.push({ name: 'subcategories', rows: subcategoryData.length })
-
-    // 2e. vertical_config filtered by slug
-    const { data: verticalConfig } = await supabase
-      .from('vertical_config')
-      .select('*')
-      .eq('slug', vertical)
-
-    const verticalConfigData = verticalConfig ?? []
-    exportedData.vertical_config = verticalConfigData
-    tablesMigrated.push({ name: 'vertical_config', rows: verticalConfigData.length })
-
-    // 2f. active_landings filtered by vertical
-    const { data: landings } = await supabase
-      .from('active_landings')
-      .select('*')
-      .eq('vertical', vertical)
-
-    const landingsData = landings ?? []
-    exportedData.active_landings = landingsData
-    tablesMigrated.push({ name: 'active_landings', rows: landingsData.length })
-
-    // 2g. articles filtered by vertical
-    const { data: articles } = await supabase.from('articles').select('*').eq('vertical', vertical)
-
-    const articlesData = articles ?? []
-    exportedData.articles = articlesData
-    tablesMigrated.push({ name: 'articles', rows: articlesData.length })
+    const exported = await exportVerticalData(supabase, vertical)
+    tablesMigrated = exported.tables
+    exportedData = exported.data
   } catch (exportError: unknown) {
     // Revert status on failure
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase
       .from('infra_clusters')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .update({ status: 'active' } as any)
       .eq('id', sourceClusterId)
-
     const message = exportError instanceof Error ? exportError.message : 'Unknown export error'
-    throw createError({
-      statusCode: 500,
-      message: `Data export failed: ${message}`,
-    })
+    throw createError({ statusCode: 500, message: `Data export failed: ${message}` })
   }
 
   // ── Step 3: Update cluster verticals arrays ────────────────────────────

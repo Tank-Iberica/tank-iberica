@@ -330,7 +330,7 @@ function onNotesInput(event: Event) {
   cursor: not-allowed;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .mobile-only {
     display: none;
   }

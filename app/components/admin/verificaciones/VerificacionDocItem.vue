@@ -43,7 +43,7 @@ const { t } = useI18n()
             v-if="props.getVehicleThumbnail(doc.vehicles)"
             :src="props.getVehicleThumbnail(doc.vehicles)!"
             :alt="`${doc.vehicles.brand} ${doc.vehicles.model}`"
-          />
+          >
           <span v-else class="thumb-placeholder">
             <svg
               width="20"
@@ -103,7 +103,7 @@ const { t } = useI18n()
               :src="doc.file_url"
               :alt="props.getDocTypeLabel(doc.doc_type)"
               class="preview-image"
-            />
+            >
             <a
               v-else
               :href="doc.file_url"
@@ -807,16 +807,16 @@ const { t } = useI18n()
    RESPONSIVE
    ============================================ */
 
-/* 480px+ : Show doc type column */
-@media (min-width: 480px) {
+/* 30em+ : Show doc type column */
+@media (min-width: 30em) {
   .doc-type-cell {
     display: flex;
     align-items: center;
   }
 }
 
-/* 768px+ : Tablet layout */
-@media (min-width: 768px) {
+/* 48em+ : Tablet layout */
+@media (min-width: 48em) {
   .doc-date-cell {
     display: block;
   }
@@ -830,8 +830,8 @@ const { t } = useI18n()
   }
 }
 
-/* 1024px+ : Desktop layout */
-@media (min-width: 1024px) {
+/* 64em+ : Desktop layout */
+@media (min-width: 64em) {
   .action-buttons {
     flex: none;
   }

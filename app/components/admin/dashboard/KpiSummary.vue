@@ -95,7 +95,7 @@ defineProps<{
   color: var(--text-auxiliary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .kpi-summary-row {
     grid-template-columns: repeat(4, 1fr);
   }

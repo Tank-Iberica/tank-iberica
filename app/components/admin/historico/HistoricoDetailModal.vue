@@ -257,7 +257,7 @@ defineEmits<{
   font-weight: 600;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .detail-grid {
     grid-template-columns: 1fr;
   }

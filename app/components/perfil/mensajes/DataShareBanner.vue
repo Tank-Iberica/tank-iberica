@@ -83,7 +83,7 @@ const emit = defineEmits<{
   background: #2563eb;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .data-share-banner {
     flex-direction: row;
     align-items: center;

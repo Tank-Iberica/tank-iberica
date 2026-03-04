@@ -162,7 +162,7 @@ export function useUserChat() {
           const newMessage = payload.new as ChatMessage
 
           // Avoid duplicates
-          if (!messages.value.find((m) => m.id === newMessage.id)) {
+          if (!messages.value.some((m) => m.id === newMessage.id)) {
             messages.value.push(newMessage)
 
             if (newMessage.direction === 'admin_to_user' && !newMessage.is_read) {

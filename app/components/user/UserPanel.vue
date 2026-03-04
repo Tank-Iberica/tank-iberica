@@ -596,7 +596,7 @@ const adItems = computed(() =>
   transform: translateX(100%);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30em) {
   .user-panel {
     max-width: 100%;
   }

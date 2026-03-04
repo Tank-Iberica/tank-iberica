@@ -32,7 +32,7 @@ const emit = defineEmits<{
           type="checkbox"
           class="section-checkbox"
           @change="emit('toggle-section', section.key, ($event.target as HTMLInputElement).checked)"
-        >
+        />
       </label>
     </div>
   </div>
@@ -112,7 +112,7 @@ const emit = defineEmits<{
   accent-color: var(--color-primary);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .sections-grid {
     grid-template-columns: 1fr 1fr;
   }

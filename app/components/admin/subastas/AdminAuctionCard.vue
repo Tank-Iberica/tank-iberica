@@ -332,7 +332,7 @@ const { t } = useI18n()
 /* ============================================
    RESPONSIVE — Mobile-first
    ============================================ */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .info-grid {
     grid-template-columns: 1fr;
   }
@@ -342,7 +342,7 @@ const { t } = useI18n()
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .auction-card-header {
     padding: 16px 24px;
   }
@@ -360,7 +360,7 @@ const { t } = useI18n()
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .auction-card-actions {
     gap: 10px;
   }

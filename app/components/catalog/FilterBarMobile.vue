@@ -213,7 +213,7 @@ onUnmounted(() => {
 <style src="~/assets/css/filter-bar-shared.css"></style>
 
 <style scoped>
-/* Mobile: Inline scrollable bar (< 768px) */
+/* Mobile: Inline scrollable bar (< 48em) */
 .filters-mobile {
   display: block;
 }
@@ -370,13 +370,13 @@ onUnmounted(() => {
   color: var(--color-white);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .filter-label {
     font-size: 11px;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .filters-mobile {
     display: none;
   }

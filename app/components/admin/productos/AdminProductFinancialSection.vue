@@ -51,7 +51,7 @@ function onAcquisitionDateInput(e: Event) {
           :value="props.minPrice"
           placeholder="Precio mínimo aceptable"
           @input="onMinPriceInput"
-        >
+        />
       </div>
       <div class="field">
         <label>Coste adquisición €</label>
@@ -60,11 +60,11 @@ function onAcquisitionDateInput(e: Event) {
           :value="props.acquisitionCost"
           placeholder="Coste de compra"
           @input="onAcquisitionCostInput"
-        >
+        />
       </div>
       <div class="field">
         <label>Fecha adquisición</label>
-        <input type="date" :value="props.acquisitionDate" @input="onAcquisitionDateInput" >
+        <input type="date" :value="props.acquisitionDate" @input="onAcquisitionDateInput" />
       </div>
     </div>
 
@@ -93,7 +93,7 @@ function onAcquisitionDateInput(e: Event) {
                 @input="
                   emit('update-maint', r.id, 'date', ($event.target as HTMLInputElement).value)
                 "
-              >
+              />
             </td>
             <td>
               <input
@@ -103,7 +103,7 @@ function onAcquisitionDateInput(e: Event) {
                 @input="
                   emit('update-maint', r.id, 'reason', ($event.target as HTMLInputElement).value)
                 "
-              >
+              />
             </td>
             <td>
               <input
@@ -118,7 +118,7 @@ function onAcquisitionDateInput(e: Event) {
                     Number(($event.target as HTMLInputElement).value),
                   )
                 "
-              >
+              />
             </td>
             <td>
               <input
@@ -133,7 +133,7 @@ function onAcquisitionDateInput(e: Event) {
                     ($event.target as HTMLInputElement).value,
                   )
                 "
-              >
+              />
             </td>
             <td><button class="btn-x" @click="emit('remove-maint', r.id)">×</button></td>
           </tr>
@@ -180,7 +180,7 @@ function onAcquisitionDateInput(e: Event) {
                     ($event.target as HTMLInputElement).value,
                   )
                 "
-              >
+              />
             </td>
             <td>
               <input
@@ -189,7 +189,7 @@ function onAcquisitionDateInput(e: Event) {
                 @input="
                   emit('update-rental', r.id, 'to_date', ($event.target as HTMLInputElement).value)
                 "
-              >
+              />
             </td>
             <td>
               <input
@@ -199,7 +199,7 @@ function onAcquisitionDateInput(e: Event) {
                 @input="
                   emit('update-rental', r.id, 'notes', ($event.target as HTMLInputElement).value)
                 "
-              >
+              />
             </td>
             <td>
               <input
@@ -214,7 +214,7 @@ function onAcquisitionDateInput(e: Event) {
                     Number(($event.target as HTMLInputElement).value),
                   )
                 "
-              >
+              />
             </td>
             <td><button class="btn-x" @click="emit('remove-rental', r.id)">×</button></td>
           </tr>
@@ -382,7 +382,7 @@ function onAcquisitionDateInput(e: Event) {
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .row-3 {
     grid-template-columns: 1fr;
   }

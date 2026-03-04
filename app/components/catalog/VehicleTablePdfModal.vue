@@ -155,7 +155,7 @@ const emit = defineEmits<{
   cursor: not-allowed;
 }
 
-@media (max-width: 479px) {
+(@media ()max-width: 29.9375em())) {
   .pdf-modal {
     padding: 1.5rem;
   }

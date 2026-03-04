@@ -56,7 +56,7 @@ defineProps<{
   margin-top: 4px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }

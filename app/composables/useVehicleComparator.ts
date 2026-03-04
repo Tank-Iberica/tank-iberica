@@ -38,6 +38,59 @@ function generateId(): string {
   return crypto.randomUUID()
 }
 
+function buildNotesMap(
+  rows: Array<{
+    id: string
+    vehicle_id: string
+    note: string
+    rating: number | null
+    created_at: string
+  }>,
+): Map<string, ComparisonNote> {
+  const map = new Map<string, ComparisonNote>()
+  for (const row of rows) {
+    map.set(row.vehicle_id, {
+      id: row.id,
+      vehicle_id: row.vehicle_id,
+      note: row.note,
+      rating: row.rating,
+      created_at: row.created_at,
+    })
+  }
+  return map
+}
+
+function findLocalOnlyNotes(
+  localNotes: Map<string, ComparisonNote>,
+  remoteMap: Map<string, ComparisonNote>,
+): ComparisonNote[] {
+  const result: ComparisonNote[] = []
+  for (const [vehicleId, localNote] of localNotes) {
+    if (!remoteMap.has(vehicleId)) result.push(localNote)
+  }
+  return result
+}
+
+function mergeComparisons(remote: Comparison[], local: Comparison[]): Comparison[] {
+  const map = new Map<string, Comparison>()
+  for (const c of remote) map.set(c.id, c)
+  for (const c of local) {
+    if (!map.has(c.id)) map.set(c.id, c)
+  }
+  return [...map.values()]
+}
+
+function mergeNoteMaps(
+  remote: Map<string, ComparisonNote>,
+  local: Map<string, ComparisonNote>,
+): Map<string, ComparisonNote> {
+  const merged = new Map<string, ComparisonNote>(remote)
+  for (const [key, value] of local) {
+    if (!merged.has(key)) merged.set(key, value)
+  }
+  return merged
+}
+
 function loadFromStorage(): void {
   if (loaded) return
   loaded = true
@@ -135,23 +188,9 @@ export function useVehicleComparator() {
 
       if (notesError) return
 
-      const remoteNotesMap = new Map<string, ComparisonNote>()
-      for (const row of remoteNotes ?? []) {
-        const typed = row as {
-          id: string
-          vehicle_id: string
-          note: string
-          rating: number | null
-          created_at: string
-        }
-        remoteNotesMap.set(typed.vehicle_id, {
-          id: typed.id,
-          vehicle_id: typed.vehicle_id,
-          note: typed.note,
-          rating: typed.rating,
-          created_at: typed.created_at,
-        })
-      }
+      const remoteNotesMap = buildNotesMap(
+        (remoteNotes ?? []) as Parameters<typeof buildNotesMap>[0],
+      )
       // Migrate local-only comparisons to Supabase
       const remoteIds = new Set(typedRemote.map((c) => c.id))
       const localOnly = comparisons.value.filter((c) => !remoteIds.has(c.id))
@@ -174,12 +213,7 @@ export function useVehicleComparator() {
       }
 
       // Migrate local-only notes to Supabase
-      const localOnlyNotes: ComparisonNote[] = []
-      for (const [vehicleId, localNote] of notes.value) {
-        if (!remoteNotesMap.has(vehicleId)) {
-          localOnlyNotes.push(localNote)
-        }
-      }
+      const localOnlyNotes = findLocalOnlyNotes(notes.value, remoteNotesMap)
 
       if (localOnlyNotes.length > 0) {
         const userId = user.value.id
@@ -202,19 +236,8 @@ export function useVehicleComparator() {
       }
 
       // Merge: union of remote + local
-      const mergedMap = new Map<string, Comparison>()
-      for (const c of typedRemote) mergedMap.set(c.id, c)
-      for (const c of comparisons.value) {
-        if (!mergedMap.has(c.id)) mergedMap.set(c.id, c)
-      }
-      comparisons.value = [...mergedMap.values()]
-
-      // Merge notes
-      const mergedNotes = new Map<string, ComparisonNote>(remoteNotesMap)
-      for (const [key, value] of notes.value) {
-        if (!mergedNotes.has(key)) mergedNotes.set(key, value)
-      }
-      notes.value = mergedNotes
+      comparisons.value = mergeComparisons(typedRemote, comparisons.value)
+      notes.value = mergeNoteMaps(remoteNotesMap, notes.value)
 
       // Re-resolve active comparison
       if (activeComparison.value) {
@@ -442,23 +465,7 @@ export function useVehicleComparator() {
         .eq('user_id', user.value.id)
 
       if (!notesErr && notesData) {
-        const notesMap = new Map<string, ComparisonNote>()
-        for (const row of notesData as Array<{
-          id: string
-          vehicle_id: string
-          note: string
-          rating: number | null
-          created_at: string
-        }>) {
-          notesMap.set(row.vehicle_id, {
-            id: row.id,
-            vehicle_id: row.vehicle_id,
-            note: row.note,
-            rating: row.rating,
-            created_at: row.created_at,
-          })
-        }
-        notes.value = notesMap
+        notes.value = buildNotesMap(notesData as Parameters<typeof buildNotesMap>[0])
       }
 
       // Set active comparison to first if none selected

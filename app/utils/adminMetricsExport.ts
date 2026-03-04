@@ -58,10 +58,11 @@ export function exportMetricsCSV(data: MetricsExportData): void {
     ],
   )
 
-  rows.push([], ['Month', 'Revenue (cents)', 'Tax (cents)'])
-  for (const point of data.revenueSeries) {
-    rows.push([point.month, String(point.revenue), String(point.tax)])
-  }
+  rows.push(
+    [],
+    ['Month', 'Revenue (cents)', 'Tax (cents)'],
+    ...data.revenueSeries.map((point) => [point.month, String(point.revenue), String(point.tax)]),
+  )
 
   rows.push([], ['Month', 'Published', 'Sold'])
   for (const point of data.vehicleActivity) {
@@ -92,9 +93,10 @@ export function exportMetricsCSV(data: MetricsExportData): void {
     ['Sales', String(funnel.sales)],
   )
 
-  rows.push([], ['Churn Metric', 'Value'])
   const churn = data.churnRate
   rows.push(
+    [],
+    ['Churn Metric', 'Value'],
     ['Total Dealers (subscriptions)', String(churn.totalDealers)],
     ['Cancelled Dealers', String(churn.cancelledDealers)],
     ['Churn Rate (%)', String(churn.churnRate)],

@@ -58,7 +58,7 @@ const emit = defineEmits<{
           :placeholder="$t('seller.reviewTitlePlaceholder')"
           maxlength="120"
           @input="emit('update-title', ($event.target as HTMLInputElement).value)"
-        />
+        >
       </div>
 
       <!-- Content -->
@@ -228,8 +228,8 @@ const emit = defineEmits<{
   cursor: not-allowed;
 }
 
-/* ---- Tablet (768px) ---- */
-@media (min-width: 768px) {
+/* ---- Tablet (48em) ---- */
+@media (min-width: 48em) {
   .review-form-section {
     padding: 0 var(--spacing-8);
   }
@@ -239,8 +239,8 @@ const emit = defineEmits<{
   }
 }
 
-/* ---- Desktop (1024px) ---- */
-@media (min-width: 1024px) {
+/* ---- Desktop (64em) ---- */
+@media (min-width: 64em) {
   .review-form {
     padding: var(--spacing-6);
   }

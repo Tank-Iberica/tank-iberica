@@ -1,78 +1,108 @@
 export type ContractType = 'arrendamiento' | 'venta'
 
+function detectVehicleTypeFromLabel(label: string): string {
+  const l = label.toLowerCase()
+  if (l.includes('cisterna')) return 'semirremolque cisterna'
+  if (l.includes('semirremolque')) return 'semirremolque'
+  if (l.includes('trailer')) return 'trailer'
+  if (l.includes('tractora')) return 'cabeza tractora'
+  return 'vehículo'
+}
+
+function buildPartySection(
+  type: 'persona' | 'empresa',
+  name: string,
+  nif: string,
+  address: string,
+  representative: string,
+  representativeNif: string,
+  company: string,
+  cif: string,
+  role: string,
+): string {
+  if (type === 'persona') {
+    return `De otra parte D. ${name.toUpperCase()}, mayor de edad, con NIF ${nif}, con domicilio en ${address}, en adelante ${role}.`
+  }
+  return `De otra parte D. ${representative}, mayor de edad, con NIF ${representativeNif}, en nombre y representación de la mercantil ${company.toUpperCase()}, con CIF ${cif}, con domicilio en ${address}, en adelante ${role}.`
+}
+
 export interface VehicleOption {
   id: string
   label: string
   source: 'vehicles' | 'historico'
 }
 
-function numberToWords(n: number): string {
-  const units = [
-    '',
-    'UN',
-    'DOS',
-    'TRES',
-    'CUATRO',
-    'CINCO',
-    'SEIS',
-    'SIETE',
-    'OCHO',
-    'NUEVE',
-    'DIEZ',
-    'ONCE',
-    'DOCE',
-    'TRECE',
-    'CATORCE',
-    'QUINCE',
-    'DIECISEIS',
-    'DIECISIETE',
-    'DIECIOCHO',
-    'DIECINUEVE',
-  ]
-  const tens = [
-    '',
-    '',
-    'VEINTE',
-    'TREINTA',
-    'CUARENTA',
-    'CINCUENTA',
-    'SESENTA',
-    'SETENTA',
-    'OCHENTA',
-    'NOVENTA',
-  ]
-  const hundreds = [
-    '',
-    'CIEN',
-    'DOSCIENTOS',
-    'TRESCIENTOS',
-    'CUATROCIENTOS',
-    'QUINIENTOS',
-    'SEISCIENTOS',
-    'SETECIENTOS',
-    'OCHOCIENTOS',
-    'NOVECIENTOS',
-  ]
+const NUM_UNITS = [
+  '',
+  'UN',
+  'DOS',
+  'TRES',
+  'CUATRO',
+  'CINCO',
+  'SEIS',
+  'SIETE',
+  'OCHO',
+  'NUEVE',
+  'DIEZ',
+  'ONCE',
+  'DOCE',
+  'TRECE',
+  'CATORCE',
+  'QUINCE',
+  'DIECISEIS',
+  'DIECISIETE',
+  'DIECIOCHO',
+  'DIECINUEVE',
+]
+const NUM_TENS = [
+  '',
+  '',
+  'VEINTE',
+  'TREINTA',
+  'CUARENTA',
+  'CINCUENTA',
+  'SESENTA',
+  'SETENTA',
+  'OCHENTA',
+  'NOVENTA',
+]
+const NUM_HUNDREDS = [
+  '',
+  'CIEN',
+  'DOSCIENTOS',
+  'TRESCIENTOS',
+  'CUATROCIENTOS',
+  'QUINIENTOS',
+  'SEISCIENTOS',
+  'SETECIENTOS',
+  'OCHOCIENTOS',
+  'NOVECIENTOS',
+]
 
+function numBelow100(n: number): string {
+  if (n < 20) return NUM_UNITS[n] ?? ''
+  const t = Math.floor(n / 10),
+    u = n % 10
+  if (t === 2 && u > 0) return `VEINTI${NUM_UNITS[u] ?? ''}`
+  return u > 0 ? `${NUM_TENS[t] ?? ''} Y ${NUM_UNITS[u] ?? ''}` : (NUM_TENS[t] ?? '')
+}
+
+function numBelow1000(n: number): string {
+  if (n < 100) return numBelow100(n)
+  if (n === 100) return 'CIEN'
+  const h = Math.floor(n / 100),
+    rest = n % 100
+  return rest > 0 ? `${NUM_HUNDREDS[h] ?? ''} ${numBelow100(rest)}` : (NUM_HUNDREDS[h] ?? '')
+}
+
+function numberToWords(n: number): string {
   if (n === 0) return 'CERO'
-  if (n < 20) return units[n] ?? ''
-  if (n < 100) {
-    const t = Math.floor(n / 10)
-    const u = n % 10
-    if (t === 2 && u > 0) return `VEINTI${units[u] ?? ''}`
-    return u > 0 ? `${tens[t] ?? ''} Y ${units[u] ?? ''}` : (tens[t] ?? '')
-  }
-  if (n < 1000) {
-    const h = Math.floor(n / 100)
-    const rest = n % 100
-    if (n === 100) return 'CIEN'
-    return rest > 0 ? `${hundreds[h] ?? ''} ${numberToWords(rest)}` : (hundreds[h] ?? '')
-  }
+  if (n < 1000) return numBelow1000(n)
   if (n < 10000) {
-    const th = Math.floor(n / 1000)
-    const rest = n % 1000
-    const thWord = th === 1 ? 'MIL' : `${units[th]} MIL`
-    return rest > 0 ? `${thWord} ${numberToWords(rest)}` : thWord
+    const th = Math.floor(n / 1000),
+      rest = n % 1000
+    const thWord = th === 1 ? 'MIL' : `${NUM_UNITS[th]} MIL`
+    return rest > 0 ? `${thWord} ${numBelow1000(rest)}` : thWord
   }
   return n.toLocaleString('es-ES')
 }
@@ -91,7 +121,7 @@ function printHTML(html: string) {
   if (!doc) return
 
   doc.open()
-  doc.write(html)
+  doc.write(html) // NOSONAR typescript:S1874
   doc.close()
 
   setTimeout(() => {
@@ -101,7 +131,7 @@ function printHTML(html: string) {
     } catch {
       const win = globalThis.open('', '_blank')
       if (win) {
-        win.document.write(html)
+        win.document.write(html) // NOSONAR typescript:S1874
         win.document.close()
         win.focus()
         win.print()
@@ -165,22 +195,9 @@ export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
 
     const vehicle = getVehicleOptions().find((v) => v.id === vehicleId)
     if (vehicle) {
-      const plateMatch = vehicle.label.match(/\(([^)]+)\)/)
-      if (plateMatch) {
-        contractVehiclePlate.value = plateMatch[1] ?? ''
-      }
-      const labelLower = vehicle.label.toLowerCase()
-      if (labelLower.includes('cisterna')) {
-        contractVehicleType.value = 'semirremolque cisterna'
-      } else if (labelLower.includes('semirremolque')) {
-        contractVehicleType.value = 'semirremolque'
-      } else if (labelLower.includes('trailer')) {
-        contractVehicleType.value = 'trailer'
-      } else if (labelLower.includes('tractora')) {
-        contractVehicleType.value = 'cabeza tractora'
-      } else {
-        contractVehicleType.value = 'vehículo'
-      }
+      const plateMatch = /\(([^)]+)\)/.exec(vehicle.label)
+      if (plateMatch) contractVehiclePlate.value = plateMatch[1] ?? ''
+      contractVehicleType.value = detectVehicleTypeFromLabel(vehicle.label)
     }
   }
 
@@ -213,12 +230,17 @@ export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
     const noticeWords = numberToWords(contractPurchaseNotice.value)
     const rentMonthsWords = numberToWords(contractRentMonthsToDiscount.value)
 
-    let lesseeSection = ''
-    if (lesseeType.value === 'persona') {
-      lesseeSection = `De otra parte D. ${lesseeName.value.toUpperCase()}, mayor de edad, con NIF ${lesseeNIF.value}, con domicilio en ${lesseeAddress.value}, en adelante arrendatario.`
-    } else {
-      lesseeSection = `De otra parte D. ${lesseeRepresentative.value}, mayor de edad, con NIF ${lesseeRepresentativeNIF.value}, en nombre y representación de la mercantil ${lesseeCompany.value.toUpperCase()}, con CIF ${lesseeCIF.value}, con domicilio en ${lesseeAddress.value}, en adelante arrendatario.`
-    }
+    const lesseeSection = buildPartySection(
+      lesseeType.value,
+      lesseeName.value,
+      lesseeNIF.value,
+      lesseeAddress.value,
+      lesseeRepresentative.value,
+      lesseeRepresentativeNIF.value,
+      lesseeCompany.value,
+      lesseeCIF.value,
+      'arrendatario',
+    )
 
     let contract = `
 <!DOCTYPE html>
@@ -370,12 +392,17 @@ export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
     const date = formatDateSpanish(contractDate.value ?? '')
     const salePriceWords = numberToWords(contractSalePrice.value)
 
-    let buyerSection = ''
-    if (lesseeType.value === 'persona') {
-      buyerSection = `De otra parte D. ${lesseeName.value.toUpperCase()}, mayor de edad, con NIF ${lesseeNIF.value}, con domicilio en ${lesseeAddress.value}, en adelante comprador.`
-    } else {
-      buyerSection = `De otra parte D. ${lesseeRepresentative.value}, mayor de edad, con NIF ${lesseeRepresentativeNIF.value}, en nombre y representación de la mercantil ${lesseeCompany.value.toUpperCase()}, con CIF ${lesseeCIF.value}, con domicilio en ${lesseeAddress.value}, en adelante comprador.`
-    }
+    const buyerSection = buildPartySection(
+      lesseeType.value,
+      lesseeName.value,
+      lesseeNIF.value,
+      lesseeAddress.value,
+      lesseeRepresentative.value,
+      lesseeRepresentativeNIF.value,
+      lesseeCompany.value,
+      lesseeCIF.value,
+      'comprador',
+    )
 
     const buyerSignatureName =
       lesseeType.value === 'persona'

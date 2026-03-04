@@ -75,7 +75,7 @@ function onChange(event: Event) {
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .config-card {
     padding: 16px;
   }

@@ -541,9 +541,9 @@ async function onAcceptShare(): Promise<void> {
 }
 
 /* Desktop */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .conversation-panel {
-    max-height: 600px;
+    max-height: 37.5em;
   }
 
   .message-wrapper {

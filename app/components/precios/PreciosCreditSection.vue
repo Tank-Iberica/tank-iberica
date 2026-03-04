@@ -168,13 +168,13 @@ onMounted(loadPacks)
   margin-bottom: var(--spacing-6);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .credits-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .credits-grid {
     grid-template-columns: repeat(5, 1fr);
   }

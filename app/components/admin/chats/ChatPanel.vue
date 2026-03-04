@@ -437,7 +437,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
 }
 
 /* Mobile responsive */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .chat-panel {
     position: absolute;
     top: 0;

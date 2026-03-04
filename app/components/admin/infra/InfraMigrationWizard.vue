@@ -356,7 +356,7 @@ function updateConfirmed(e: Event) {
   background: var(--bg-primary);
   border-radius: var(--border-radius-lg);
   width: 100%;
-  max-width: 640px;
+  max-width: 40em;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: var(--shadow-xl);
@@ -530,7 +530,7 @@ function updateConfirmed(e: Event) {
   margin-bottom: var(--spacing-4);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .review-grid {
     grid-template-columns: repeat(3, 1fr);
   }

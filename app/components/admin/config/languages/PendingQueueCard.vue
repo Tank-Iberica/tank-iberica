@@ -132,7 +132,7 @@ const emit = defineEmits<{
   color: var(--text-disabled);
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .config-card {
     padding: 16px;
   }

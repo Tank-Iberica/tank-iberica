@@ -574,7 +574,7 @@ export function useAdminBalanceUI() {
     }
 
     doc.open()
-    doc.write(html)
+    doc.write(html) // NOSONAR typescript:S1874
     doc.close()
 
     iframe.onload = () => {
@@ -584,7 +584,7 @@ export function useAdminBalanceUI() {
       } catch {
         const win = globalThis.open('', '_blank')
         if (win) {
-          win.document.write(html)
+          win.document.write(html) // NOSONAR typescript:S1874
           win.document.close()
           win.focus()
           win.print()

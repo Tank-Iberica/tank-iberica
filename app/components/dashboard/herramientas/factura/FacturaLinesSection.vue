@@ -41,7 +41,7 @@ const { t } = useI18n()
   padding: 0 0.5rem;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .form-section {
     padding: 1.5rem;
   }

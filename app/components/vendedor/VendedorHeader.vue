@@ -25,7 +25,7 @@ const { getImageUrl } = useImageUrl()
           :src="getImageUrl(profile.logo_url, 'thumb')"
           :alt="sellerName"
           class="seller-header__logo"
-        />
+        >
         <div v-else class="seller-header__logo-placeholder">
           {{ sellerName.charAt(0).toUpperCase() }}
         </div>
@@ -221,8 +221,8 @@ const { getImageUrl } = useImageUrl()
   line-height: var(--line-height-relaxed);
 }
 
-/* ---- Tablet (768px) ---- */
-@media (min-width: 768px) {
+/* ---- Tablet (48em) ---- */
+@media (min-width: 48em) {
   .seller-header {
     padding: 0 var(--spacing-8);
   }
@@ -243,8 +243,8 @@ const { getImageUrl } = useImageUrl()
   }
 }
 
-/* ---- Desktop (1024px) ---- */
-@media (min-width: 1024px) {
+/* ---- Desktop (64em) ---- */
+@media (min-width: 64em) {
   .seller-header__inner {
     gap: var(--spacing-6);
   }

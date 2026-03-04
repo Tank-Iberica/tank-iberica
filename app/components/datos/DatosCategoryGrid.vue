@@ -133,13 +133,13 @@ const emit = defineEmits<{
   color: var(--text-auxiliary);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .category-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .category-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-4);
@@ -150,7 +150,7 @@ const emit = defineEmits<{
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .category-grid {
     grid-template-columns: repeat(4, 1fr);
   }

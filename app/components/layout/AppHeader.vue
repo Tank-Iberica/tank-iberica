@@ -141,7 +141,7 @@
               :src="`https://flagcdn.com/w40/${locale === 'es' ? 'es' : 'gb'}.png`"
               :alt="locale.toUpperCase()"
               class="lang-flag"
-            >
+            />
           </button>
           <Transition name="dropdown">
             <div v-if="openMenu === 'lang'" class="mobile-lang-dropdown">
@@ -158,7 +158,7 @@
                   :src="`https://flagcdn.com/w40/${locale === 'es' ? 'gb' : 'es'}.png`"
                   :alt="altLocale.toUpperCase()"
                   class="lang-flag"
-                >
+                />
               </button>
             </div>
           </Transition>
@@ -171,14 +171,14 @@
             title="Español"
             @click="setLocale('es')"
           >
-            <img src="https://flagcdn.com/w40/es.png" alt="ES" class="lang-flag-desktop" >
+            <img src="https://flagcdn.com/w40/es.png" alt="ES" class="lang-flag-desktop" />
           </button>
           <button
             :class="['lang-flag-btn', { active: locale === 'en' }]"
             title="English"
             @click="setLocale('en')"
           >
-            <img src="https://flagcdn.com/w40/gb.png" alt="EN" class="lang-flag-desktop" >
+            <img src="https://flagcdn.com/w40/gb.png" alt="EN" class="lang-flag-desktop" />
           </button>
         </div>
 
@@ -311,7 +311,7 @@ onUnmounted(() => {
   height: 15px;
 }
 
-/* .scrolled .account-btn — mobile shrink handled here, desktop override at ≥768px */
+/* .scrolled .account-btn — mobile shrink handled here, desktop override at ≥48em */
 .scrolled .account-btn {
   width: 36px;
   height: 36px;
@@ -447,7 +447,7 @@ onUnmounted(() => {
   transform: translateY(-3px) scale(1.05);
 }
 
-/* .scrolled .contact-icon — moved to ≥768px media query */
+/* .scrolled .contact-icon — moved to ≥48em media query */
 
 /* ============================================
    MOBILE MENU GROUPS
@@ -699,10 +699,10 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: MOBILE LARGE (≥480px)
+   RESPONSIVE: MOBILE LARGE (≥30em)
    Logo: 1.1rem → 1.3rem at tablet range
    ============================================ */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .header-content {
     padding: 0.6rem 1rem;
     gap: 0.5rem;
@@ -715,9 +715,9 @@ onUnmounted(() => {
 }
 
 /* ============================================
-   RESPONSIVE: TABLET (≥768px) — switch to desktop layout
+   RESPONSIVE: TABLET (≥48em) — switch to desktop layout
    ============================================ */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .header-content {
     padding: 0.6rem 3rem;
     gap: 1.5rem;

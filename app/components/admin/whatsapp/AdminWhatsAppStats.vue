@@ -82,15 +82,15 @@ const { t } = useI18n()
   color: var(--color-error);
 }
 
-/* 480px+ */
-@media (min-width: 480px) {
+/* 30em+ */
+@media (min-width: 30em) {
   .stats-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-/* 768px+ */
-@media (min-width: 768px) {
+/* 48em+ */
+@media (min-width: 48em) {
   .stats-grid {
     grid-template-columns: repeat(5, 1fr);
   }

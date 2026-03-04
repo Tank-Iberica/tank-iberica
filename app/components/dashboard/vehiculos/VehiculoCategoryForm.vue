@@ -103,7 +103,7 @@ function onSubcategoryChange(event: Event): void {
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }

@@ -24,6 +24,26 @@ export type {
 export { TEMPLATE_DEFINITIONS, CATEGORIES } from '~/utils/adminEmailTemplates'
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function buildEmailStats(
+  rows: Array<{ template_key: string | null; status: string | null }>,
+): Record<string, TemplateStats> {
+  const statsMap: Record<string, TemplateStats> = {}
+  for (const row of rows) {
+    const key = row.template_key
+    const status = row.status ?? ''
+    if (!key) continue
+    statsMap[key] ??= { sent: 0, opened: 0, clicked: 0 }
+    if (['sent', 'delivered', 'opened', 'clicked'].includes(status)) statsMap[key].sent++
+    if (['opened', 'clicked'].includes(status)) statsMap[key].opened++
+    if (status === 'clicked') statsMap[key].clicked++
+  }
+  return statsMap
+}
+
+// ---------------------------------------------------------------------------
 // Composable
 // ---------------------------------------------------------------------------
 
@@ -178,17 +198,9 @@ export function useAdminEmails() {
         .eq('vertical', getVerticalSlug())
 
       if (data) {
-        const statsMap: Record<string, TemplateStats> = {}
-        for (const row of data) {
-          const key = row.template_key
-          const status = row.status ?? ''
-          if (!key) continue
-          statsMap[key] ??= { sent: 0, opened: 0, clicked: 0 }
-          if (['sent', 'delivered', 'opened', 'clicked'].includes(status)) statsMap[key].sent++
-          if (['opened', 'clicked'].includes(status)) statsMap[key].opened++
-          if (status === 'clicked') statsMap[key].clicked++
-        }
-        templateStats.value = statsMap
+        templateStats.value = buildEmailStats(
+          data as Array<{ template_key: string | null; status: string | null }>,
+        )
       }
     } catch {
       // Stats are non-critical; silently fail

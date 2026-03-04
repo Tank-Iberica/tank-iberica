@@ -303,7 +303,7 @@ function formatMetricValue(value: number): string {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--font-size-sm);
-  min-width: 480px;
+  min-width: 30em;
 }
 
 .summary-table thead {
@@ -443,13 +443,13 @@ function formatMetricValue(value: number): string {
   gap: var(--spacing-4);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .component-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .component-grid {
     grid-template-columns: repeat(3, 1fr);
   }

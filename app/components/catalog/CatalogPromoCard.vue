@@ -314,13 +314,13 @@ const isSplit = computed(() => props.slots.length === 2)
 }
 
 /* ── Responsive ── */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .promo-btn {
     flex: 0 auto;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .promo-slot--single .promo-slot__icon-area {
     padding: 2rem 1.5rem;
   }

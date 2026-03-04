@@ -380,15 +380,15 @@
    RESPONSIVE — Mobile-first, breakpoints up
    ============================================ */
 
-/* 480px+ */
-@media (min-width: 480px) {
+/* 30em+ */
+@media (min-width: 30em) {
   .stats-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-/* 768px+ : Tablet */
-@media (min-width: 768px) {
+/* 48em+ : Tablet */
+@media (min-width: 48em) {
   .stats-grid {
     grid-template-columns: repeat(5, 1fr);
   }
@@ -401,12 +401,12 @@
 
   .modal-panel {
     border-radius: 16px;
-    max-width: 600px;
+    max-width: 37.5em;
   }
 }
 
-/* 1024px+ : Desktop */
-@media (min-width: 1024px) {
+/* 64em+ : Desktop */
+@media (min-width: 64em) {
   .modal-panel {
     max-width: 680px;
   }

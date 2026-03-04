@@ -79,7 +79,7 @@ export default defineEventHandler(async (event) => {
       supabase_url: body.supabase_url.trim(),
       supabase_anon_key: body.supabase_anon_key?.trim() ?? null,
       supabase_service_role_key: body.supabase_service_role_key?.trim() ?? null,
-      weight_limit: body.weight_limit ?? 1.0,
+      weight_limit: body.weight_limit ?? 1,
       weight_used: 0,
       verticals: [],
       status: 'active',

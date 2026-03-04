@@ -42,7 +42,7 @@ function onConfirmInput(event: Event) {
               autocomplete="off"
               :value="deleteModal.confirmText"
               @input="onConfirmInput"
-            >
+            />
             <p v-if="deleteModal.confirmText && !canDelete" class="text-error">
               Escribe "Borrar" exactamente para continuar
             </p>
@@ -195,7 +195,7 @@ function onConfirmInput(event: Event) {
   background: var(--color-error);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .modal-content {
     margin: 10px;
     max-height: calc(100vh - 20px);

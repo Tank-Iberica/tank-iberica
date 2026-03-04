@@ -56,13 +56,13 @@
   background: var(--color-warning);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .disclaimers-section {
     padding: var(--spacing-6);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .disclaimers-list li {
     font-size: var(--font-size-sm);
   }

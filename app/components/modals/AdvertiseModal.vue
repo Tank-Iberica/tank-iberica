@@ -353,7 +353,7 @@ const {
   transform: translateY(100%);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .modal-backdrop {
     align-items: center;
     padding: var(--spacing-6);

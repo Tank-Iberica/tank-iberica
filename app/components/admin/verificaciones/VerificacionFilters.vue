@@ -57,7 +57,7 @@ const pills: StatusFilter[] = ['all', 'pending', 'verified', 'rejected']
         type="text"
         :placeholder="t('admin.verificaciones.searchPlaceholder')"
         @input="emit('update:search', ($event.target as HTMLInputElement).value)"
-      />
+      >
       <button v-if="search" class="clear-btn" @click="emit('update:search', '')">
         <svg
           width="14"
@@ -179,8 +179,8 @@ const pills: StatusFilter[] = ['all', 'pending', 'verified', 'rejected']
   background: var(--bg-tertiary);
 }
 
-/* 768px+ : Tablet layout */
-@media (min-width: 768px) {
+/* 48em+ : Tablet layout */
+@media (min-width: 48em) {
   .filters-bar {
     flex-direction: row;
     align-items: center;

@@ -131,7 +131,7 @@ const ogRecommendations = [
   margin-bottom: 32px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .uploaders-grid {
     grid-template-columns: repeat(2, 1fr);
   }

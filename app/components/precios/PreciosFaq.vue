@@ -105,7 +105,7 @@ const emit = defineEmits<{
   line-height: var(--line-height-relaxed);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .faq-title {
     font-size: var(--font-size-2xl);
   }

@@ -44,7 +44,7 @@
           :src="`https://flagcdn.com/w20/${vehicleFlagCode}.png`"
           :alt="locationCountry || ''"
           class="location-flag"
-        />
+        >
       </span>
     </div>
 
@@ -169,13 +169,13 @@ const formattedRentalPrice = computed(() =>
   flex-shrink: 0;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .vehicle-title {
     font-size: var(--font-size-2xl);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .vehicle-title {
     font-size: var(--font-size-2xl);
   }

@@ -143,6 +143,52 @@ function computeMedian(sorted: number[]): number {
   return sorted[mid]!
 }
 
+/** Depreciation factor for a given model year (~5% per year, floor 10%). */
+function depreciationFactor(year: number | undefined): number {
+  if (!year) return 1
+  const yearsOld = Math.max(0, new Date().getFullYear() - year)
+  return Math.max(0.1, 1 - yearsOld * 0.05)
+}
+
+/** Average days-to-sell from rows, or null if no data. */
+function avgDaysToSell(rows: MarketDataRow[]): number | null {
+  const vals = rows.map((r) => r.avg_days_to_sell).filter((d): d is number => d !== null && d > 0)
+  return vals.length > 0 ? Math.round(vals.reduce((s, d) => s + d, 0) / vals.length) : null
+}
+
+/** Trend pct between the two most recent months in rows. */
+function computeRowsTrend(rows: MarketDataRow[]): number {
+  const months = [...new Set(rows.map((r) => r.month))].sort((a, b) => a.localeCompare(b)).reverse()
+  if (months.length < 2) return 0
+  const cur = rows.filter((r) => r.month === months[0])
+  const prev = rows.filter((r) => r.month === months[1])
+  const curAvg = cur.length > 0 ? cur.reduce((s, r) => s + r.avg_price, 0) / cur.length : 0
+  const prevAvg = prev.length > 0 ? prev.reduce((s, r) => s + r.avg_price, 0) / prev.length : 0
+  return pctChange(curAvg, prevAvg)
+}
+
+type SubcatAggregate = { totalPrice: number; totalListings: number; count: number }
+
+/** Aggregate rows into a per-subcategory map of price/listing totals. */
+function aggregateBySubcategory(rows: MarketDataRow[]): Map<string, SubcatAggregate> {
+  const map = new Map<string, SubcatAggregate>()
+  for (const row of rows) {
+    const existing = map.get(row.subcategory)
+    if (existing) {
+      existing.totalPrice += row.avg_price * row.listings
+      existing.totalListings += row.listings
+      existing.count++
+    } else {
+      map.set(row.subcategory, {
+        totalPrice: row.avg_price * row.listings,
+        totalListings: row.listings,
+        count: 1,
+      })
+    }
+  }
+  return map
+}
+
 // ---------------------------------------------------------------------------
 // Composable
 // ---------------------------------------------------------------------------
@@ -305,66 +351,21 @@ export function useMarketData() {
         return null
       }
 
-      // --- Compute base price statistics from all matching rows ---
-      const prices = rows.map((r) => r.avg_price).filter((p) => p > 0)
-      prices.sort((a, b) => a - b)
-
+      const prices = rows
+        .map((r) => r.avg_price)
+        .filter((p) => p > 0)
+        .sort((a, b) => a - b)
       const totalSample = rows.reduce((sum, r) => sum + r.listings, 0)
-      const baseMin = prices.length > 0 ? prices[0]! : 0
-      const baseMedian = computeMedian(prices)
-      const baseMax = prices.length > 0 ? prices.at(-1)! : 0
-
-      // --- Compute avg_days_to_sell ---
-      const daysValues = rows
-        .map((r) => r.avg_days_to_sell)
-        .filter((d): d is number => d !== null && d > 0)
-      const avgDaysToSell =
-        daysValues.length > 0
-          ? Math.round(daysValues.reduce((sum, d) => sum + d, 0) / daysValues.length)
-          : null
-
-      // --- Compute trend from last 2 months ---
-      const uniqueMonths = [...new Set(rows.map((r) => r.month))]
-        .sort((a, b) => a.localeCompare(b))
-        .reverse()
-      let trendPct = 0
-
-      if (uniqueMonths.length >= 2) {
-        const currentMonthRows = rows.filter((r) => r.month === uniqueMonths[0])
-        const previousMonthRows = rows.filter((r) => r.month === uniqueMonths[1])
-
-        const currentAvg =
-          currentMonthRows.length > 0
-            ? currentMonthRows.reduce((sum, r) => sum + r.avg_price, 0) / currentMonthRows.length
-            : 0
-        const previousAvg =
-          previousMonthRows.length > 0
-            ? previousMonthRows.reduce((sum, r) => sum + r.avg_price, 0) / previousMonthRows.length
-            : 0
-
-        trendPct = pctChange(currentAvg, previousAvg)
-      }
-
-      // --- Apply year depreciation adjustment ---
-      // Each year older from current year = ~5% lower price
-      let depreciationFactor = 1
-      if (params.year) {
-        const currentYear = new Date().getFullYear()
-        const yearsOld = Math.max(0, currentYear - params.year)
-        depreciationFactor = Math.max(0.1, 1 - yearsOld * 0.05)
-      }
-
-      const estimatedMin = Math.round(baseMin * depreciationFactor)
-      const estimatedMedian = Math.round(baseMedian * depreciationFactor)
-      const estimatedMax = Math.round(baseMax * depreciationFactor)
+      const factor = depreciationFactor(params.year)
+      const trendPct = computeRowsTrend(rows)
 
       return {
-        estimated_min: estimatedMin,
-        estimated_median: estimatedMedian,
-        estimated_max: estimatedMax,
+        estimated_min: Math.round((prices[0] ?? 0) * factor),
+        estimated_median: Math.round(computeMedian(prices) * factor),
+        estimated_max: Math.round((prices.at(-1) ?? 0) * factor),
         market_trend: getTrendDirection(trendPct),
         trend_pct: trendPct,
-        avg_days_to_sell: avgDaysToSell,
+        avg_days_to_sell: avgDaysToSell(rows),
         sample_size: totalSample,
         confidence: getConfidence(totalSample),
       }
@@ -400,78 +401,33 @@ export function useMarketData() {
 
       if (rows.length === 0) return []
 
-      // Determine latest and previous months from the data
       const uniqueMonths = [...new Set(rows.map((r) => r.month))]
         .sort((a, b) => a.localeCompare(b))
         .reverse()
       const latestMonth = uniqueMonths[0]
       const previousMonth = uniqueMonths.length >= 2 ? uniqueMonths[1] : null
 
-      // Aggregate by subcategory for the latest month
-      const latestRows = rows.filter((r) => r.month === latestMonth)
-      const previousRows = previousMonth ? rows.filter((r) => r.month === previousMonth) : []
+      const latestMap = aggregateBySubcategory(rows.filter((r) => r.month === latestMonth))
+      const prevMap = aggregateBySubcategory(
+        previousMonth ? rows.filter((r) => r.month === previousMonth) : [],
+      )
 
-      const subcategoryMap = new Map<
-        string,
-        { totalPrice: number; totalListings: number; count: number }
-      >()
-
-      for (const row of latestRows) {
-        const existing = subcategoryMap.get(row.subcategory)
-        if (existing) {
-          existing.totalPrice += row.avg_price * row.listings
-          existing.totalListings += row.listings
-          existing.count++
-        } else {
-          subcategoryMap.set(row.subcategory, {
-            totalPrice: row.avg_price * row.listings,
-            totalListings: row.listings,
-            count: 1,
-          })
-        }
-      }
-
-      // Aggregate previous month for trend calculation
-      const prevSubcategoryMap = new Map<string, { totalPrice: number; totalListings: number }>()
-
-      for (const row of previousRows) {
-        const existing = prevSubcategoryMap.get(row.subcategory)
-        if (existing) {
-          existing.totalPrice += row.avg_price * row.listings
-          existing.totalListings += row.listings
-        } else {
-          prevSubcategoryMap.set(row.subcategory, {
-            totalPrice: row.avg_price * row.listings,
-            totalListings: row.listings,
-          })
-        }
-      }
-
-      // Build result
       const stats: CategoryStat[] = []
-
-      for (const [subcategory, data] of subcategoryMap.entries()) {
+      for (const [subcategory, data] of latestMap.entries()) {
         const avgPrice =
           data.totalListings > 0 ? Math.round(data.totalPrice / data.totalListings) : 0
-
-        let trendPct = 0
-        const prev = prevSubcategoryMap.get(subcategory)
-        if (prev != null && prev.totalListings > 0) {
-          const prevAvgPrice = Math.round(prev.totalPrice / prev.totalListings)
-          trendPct = pctChange(avgPrice, prevAvgPrice)
-        }
-
+        const prev = prevMap.get(subcategory)
+        const prevAvgPrice =
+          prev && prev.totalListings > 0 ? Math.round(prev.totalPrice / prev.totalListings) : 0
         stats.push({
           subcategory,
           avg_price: avgPrice,
           listings: data.totalListings,
-          trend_pct: trendPct,
+          trend_pct: prev ? pctChange(avgPrice, prevAvgPrice) : 0,
         })
       }
 
-      // Sort by listings descending
       stats.sort((a, b) => b.listings - a.listings)
-
       return stats
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching category stats'

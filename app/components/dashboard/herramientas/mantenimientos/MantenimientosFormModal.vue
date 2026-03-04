@@ -72,7 +72,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
               type="date"
               class="field-input"
               @input="updateField('date', ($event.target as HTMLInputElement).value)"
-            >
+            />
           </div>
 
           <!-- Type -->
@@ -86,7 +86,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
                   name="maintenance-type"
                   value="preventivo"
                   @change="updateField('type', 'preventivo')"
-                >
+                />
                 {{ t('dashboard.tools.maintenance.types.preventivo') }}
               </label>
               <label class="radio-label">
@@ -96,7 +96,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
                   name="maintenance-type"
                   value="correctivo"
                   @change="updateField('type', 'correctivo')"
-                >
+                />
                 {{ t('dashboard.tools.maintenance.types.correctivo') }}
               </label>
               <label class="radio-label">
@@ -106,7 +106,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
                   name="maintenance-type"
                   value="itv"
                   @change="updateField('type', 'itv')"
-                >
+                />
                 {{ t('dashboard.tools.maintenance.types.itv') }}
               </label>
             </div>
@@ -138,7 +138,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
                 @input="
                   updateField('cost', Number(($event.target as HTMLInputElement).value) || null)
                 "
-              >
+              />
             </div>
 
             <div class="field">
@@ -152,7 +152,7 @@ function updateField<K extends keyof MaintenanceFormData>(key: K, value: Mainten
                 @input="
                   updateField('km', Number(($event.target as HTMLInputElement).value) || null)
                 "
-              >
+              />
             </div>
           </div>
         </div>
@@ -371,7 +371,7 @@ textarea.field-input {
   accent-color: var(--color-primary);
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .field-row {
     flex-direction: column;
     gap: 0;

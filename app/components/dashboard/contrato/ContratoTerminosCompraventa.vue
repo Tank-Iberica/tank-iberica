@@ -35,7 +35,7 @@ const { t } = useI18n()
           type="number"
           step="1000"
           @input="emit('update:salePrice', Number(($event.target as HTMLInputElement).value))"
-        >
+        />
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.paymentMethod') }}</label>
@@ -56,7 +56,7 @@ const { t } = useI18n()
           type="text"
           :placeholder="t('dashboard.tools.contract.deliveryPlaceholder')"
           @input="emit('update:deliveryConditions', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
       <div class="form-group" style="grid-column: 1 / -1">
         <label>{{ t('dashboard.tools.contract.warranty') }}</label>
@@ -65,7 +65,7 @@ const { t } = useI18n()
           type="text"
           :placeholder="t('dashboard.tools.contract.warrantyPlaceholder')"
           @input="emit('update:warranty', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
     </div>
   </div>
@@ -120,13 +120,13 @@ const { t } = useI18n()
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .form-grid-3 {
     grid-template-columns: 1fr;
   }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
+(@media ()min-width: 48.0625em())) and (max-width: 48.0625em) {
   .form-grid-3 {
     grid-template-columns: repeat(2, 1fr);
   }

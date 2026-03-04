@@ -57,7 +57,7 @@ function onVehicleChange(event: Event) {
           :value="contractVehicleType"
           type="text"
           @input="emit('update:contractVehicleType', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.plate') }}</label>
@@ -65,7 +65,7 @@ function onVehicleChange(event: Event) {
           :value="contractVehiclePlate"
           type="text"
           @input="emit('update:contractVehiclePlate', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
     </div>
   </div>
@@ -113,7 +113,7 @@ function onVehicleChange(event: Event) {
   box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .form-row {
     flex-direction: column;
     gap: 12px;

@@ -2,9 +2,10 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 import { useCatalogState } from '../../app/composables/useCatalogState'
 
-// Mock 'vue' so the composable's `import { computed, readonly } from 'vue'` works
+// Mock 'vue' so the composable's `import { computed, inject, readonly } from 'vue'` works
 vi.mock('vue', () => ({
   computed: (fn: () => unknown) => ({ value: fn() }),
+  inject: (_key: unknown, defaultVal?: unknown) => defaultVal,
   readonly: (obj: unknown) => obj,
   ref: (val: unknown) => ({ value: val }),
 }))

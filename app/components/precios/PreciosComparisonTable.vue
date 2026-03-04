@@ -64,7 +64,7 @@ const planKeys = ['free', 'basic', 'premium', 'founding'] as const
 
 .comparison-table {
   width: 100%;
-  min-width: 600px;
+  min-width: 37.5em;
   border-collapse: collapse;
 }
 
@@ -123,7 +123,7 @@ const planKeys = ['free', 'basic', 'premium', 'founding'] as const
   font-size: var(--font-size-base);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .comparison-title {
     font-size: var(--font-size-2xl);
   }

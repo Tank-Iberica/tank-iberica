@@ -96,7 +96,7 @@ export default defineEventHandler(async (event) => {
         start_price_cents: startPriceCents,
         bid_increment_cents: 50000,
         deposit_cents: 100000,
-        buyer_premium_pct: 8.0,
+        buyer_premium_pct: 8,
         starts_at: startDate.toISOString(),
         ends_at: endDate.toISOString(),
         anti_snipe_seconds: 120,

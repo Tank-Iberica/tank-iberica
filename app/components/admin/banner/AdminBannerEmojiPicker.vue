@@ -159,7 +159,7 @@ const emit = defineEmits<{
   opacity: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .emoji-picker-overlay {
     padding: 10px;
     align-items: flex-end;

@@ -230,7 +230,7 @@ watch(
   display: none;
 }
 
-@media (min-width: 640px) {
+(@media ()min-width: 40em())) {
   .collapsible-summary {
     display: block;
   }
@@ -334,7 +334,7 @@ watch(
   gap: var(--spacing-3);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .user-stats-grid {
     grid-template-columns: repeat(3, 1fr);
   }

@@ -249,7 +249,7 @@ function evaluateSlugQuality(slug: string): SeoCriterion {
   if (!slug || slug.trim().length === 0) {
     score = 0
     description = 'Slug vacio. Se generara automaticamente del titulo'
-  } else if (slug.match(/^[0-9a-f]{8}-/)) {
+  } else if (/^[0-9a-f]{8}-/.exec(slug)) {
     score = 10
     description = 'Parece un UUID. Usa un slug descriptivo basado en el titulo'
   } else if (wordCount >= 3 && wordCount <= 5) {

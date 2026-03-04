@@ -42,7 +42,7 @@
   margin: 0 auto;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .valuation-hero {
     padding: var(--spacing-16) var(--spacing-6) var(--spacing-12);
   }
@@ -56,7 +56,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .hero-title {
     font-size: var(--font-size-4xl);
   }

@@ -35,7 +35,7 @@ const emit = defineEmits<Emits>()
         multiple
         :disabled="uploading"
         @change="emit('upload', $event)"
-      >
+      />
     </label>
     <div v-if="cloudinaryUploading" class="upload-progress">
       <div class="progress-bar" :style="{ width: cloudinaryProgress + '%' }" />
@@ -48,7 +48,7 @@ const emit = defineEmits<Emits>()
         class="img-item"
         :class="{ cover: idx === 0 }"
       >
-        <img :src="img.url" :alt="`Imagen ${idx + 1}`" >
+        <img :src="img.url" :alt="`Imagen ${idx + 1}`" />
         <div class="img-overlay">
           <div class="img-actions">
             <button v-if="idx !== 0" title="Portada" @click="emit('set-portada', idx)">⭐</button>
@@ -191,7 +191,7 @@ const emit = defineEmits<Emits>()
   padding: 16px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .img-grid {
     grid-template-columns: repeat(3, 1fr);
   }

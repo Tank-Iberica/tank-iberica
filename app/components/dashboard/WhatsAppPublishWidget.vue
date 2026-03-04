@@ -478,13 +478,13 @@ onMounted(() => {
 /* ============================================
    RESPONSIVE
    ============================================ */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .status-section {
     flex-wrap: nowrap;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .whatsapp-widget {
     padding: 24px;
   }

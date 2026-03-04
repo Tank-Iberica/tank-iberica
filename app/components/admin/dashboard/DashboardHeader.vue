@@ -70,7 +70,7 @@ defineEmits<{
   flex-shrink: 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .page-header {
     flex-direction: row;
     align-items: center;

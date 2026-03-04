@@ -407,15 +407,15 @@ const emit = defineEmits<{
   background: var(--color-error-bg, #fef2f2);
 }
 
-/* Mobile responsive (480px) */
-@media (min-width: 480px) {
+/* Mobile responsive (30em) */
+@media (min-width: 30em) {
   .comment-actions {
     flex-wrap: nowrap;
   }
 }
 
-/* Tablet (768px) */
-@media (max-width: 768px) {
+/* Tablet (48em) */
+@media (max-width: 48em) {
   .comment-header {
     flex-direction: column;
     gap: 8px;
@@ -436,8 +436,8 @@ const emit = defineEmits<{
   }
 }
 
-/* Desktop (1024px) */
-@media (min-width: 1024px) {
+/* Desktop (64em) */
+@media (min-width: 64em) {
   .comment-card {
     padding: 20px 24px;
   }

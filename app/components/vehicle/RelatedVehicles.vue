@@ -14,7 +14,7 @@
             fit="cover"
             loading="lazy"
             format="webp"
-            sizes="(max-width: 479px) 50vw, 25vw"
+            sizes="(max-width: 29.94em) 50vw, 25vw"
             class="related-img"
           />
           <img
@@ -197,13 +197,13 @@ onMounted(() => {
   font-weight: 500;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .related-grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .related-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: var(--spacing-4);

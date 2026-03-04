@@ -48,7 +48,7 @@ defineProps<{
   font-weight: var(--font-weight-bold);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .messages-header--mobile {
     display: none;
   }

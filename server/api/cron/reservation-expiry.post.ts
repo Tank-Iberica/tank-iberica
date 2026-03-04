@@ -36,6 +36,40 @@ interface ExpiryResult {
   timestamp: string
 }
 
+type StripeInstance = InstanceType<typeof import('stripe').default>
+type SupabaseClient = ReturnType<typeof import('#supabase/server').serverSupabaseServiceRole>
+
+async function processOneReservation(
+  reservation: ExpiredReservation,
+  stripe: StripeInstance | null,
+  supabase: SupabaseClient,
+): Promise<{ refunded: boolean; hasError: boolean }> {
+  let newStatus = 'expired'
+  let refunded = false
+
+  if (reservation.stripe_payment_intent_id && stripe) {
+    try {
+      await stripe.refunds.create({ payment_intent: reservation.stripe_payment_intent_id })
+      newStatus = 'refunded'
+      refunded = true
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Unknown Stripe error'
+      console.error(`[reservation-expiry] Refund failed for ${reservation.id}: ${msg}`)
+    }
+  }
+
+  const { error: updateError } = await supabase
+    .from('reservations')
+    .update({ status: newStatus })
+    .eq('id', reservation.id)
+
+  if (updateError) {
+    console.error(`[reservation-expiry] Failed to update ${reservation.id}: ${updateError.message}`)
+  }
+
+  return { refunded, hasError: !!updateError }
+}
+
 // -- Handler ----------------------------------------------------------------
 
 export default defineEventHandler(async (event): Promise<ExpiryResult> => {
@@ -83,39 +117,9 @@ export default defineEventHandler(async (event): Promise<ExpiryResult> => {
 
   // ── 5. Process each expired reservation ───────────────────────────────────
   for (const reservation of typedReservations) {
-    let newStatus = 'expired'
-
-    // Attempt Stripe refund if a payment intent exists
-    if (reservation.stripe_payment_intent_id && stripe) {
-      try {
-        await stripe.refunds.create({
-          payment_intent: reservation.stripe_payment_intent_id,
-        })
-        newStatus = 'refunded'
-        refundedCount++
-      } catch (err: unknown) {
-        // Refund may fail if the payment was never captured or already refunded.
-        // In that case we still mark the reservation as expired.
-        const errorMessage = err instanceof Error ? err.message : 'Unknown Stripe error'
-        console.error(
-          `[reservation-expiry] Refund failed for reservation ${reservation.id}: ${errorMessage}`,
-        )
-        errorCount++
-      }
-    }
-
-    // Update reservation status
-    const { error: updateError } = await supabase
-      .from('reservations')
-      .update({ status: newStatus })
-      .eq('id', reservation.id)
-
-    if (updateError) {
-      console.error(
-        `[reservation-expiry] Failed to update reservation ${reservation.id}: ${updateError.message}`,
-      )
-      errorCount++
-    }
+    const result = await processOneReservation(reservation, stripe, supabase)
+    if (result.refunded) refundedCount++
+    if (result.hasError) errorCount++
   }
 
   // ── 6. Return summary ─────────────────────────────────────────────────────

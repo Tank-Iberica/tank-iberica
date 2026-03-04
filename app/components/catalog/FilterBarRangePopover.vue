@@ -132,7 +132,7 @@ const displayMax = computed(() =>
   overflow: hidden;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .range-dropdown-mobile {
     display: none !important;
   }

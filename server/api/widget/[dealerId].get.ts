@@ -18,6 +18,57 @@ interface DealerRow {
   subscription_type: string | null
 }
 
+interface ThemeColors {
+  bg: string
+  cardBg: string
+  textColor: string
+  textSecondary: string
+  priceColor: string
+  linkColor: string
+  borderColor: string
+}
+
+function buildThemeColors(theme: string): ThemeColors {
+  const dark = theme === 'dark'
+  return {
+    bg: dark ? '#1a1a2e' : '#f8f9fa',
+    cardBg: dark ? '#16213e' : '#ffffff',
+    textColor: dark ? '#e0e0e0' : '#333333',
+    textSecondary: dark ? '#a0a0a0' : '#666666',
+    priceColor: dark ? '#4fc3f7' : '#23424A',
+    linkColor: dark ? '#4fc3f7' : '#23424A',
+    borderColor: dark ? '#2a2a4a' : '#e5e7eb',
+  }
+}
+
+function buildVehicleCardHtml(
+  v: VehicleRow,
+  cloudinaryBase: string,
+  utm: string,
+  colors: ThemeColors,
+): string {
+  const title = escapeHtml(`${v.brand} ${v.model}`)
+  const yearText = v.year ? String(v.year) : ''
+  const priceText = v.price
+    ? new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0,
+      }).format(v.price)
+    : ''
+  const imageUrl =
+    (v.images?.length ?? 0) > 0 && cloudinaryBase ? `${cloudinaryBase}${v.images![0]}` : ''
+  const vehicleUrl = `https://tracciona.com/vehiculo/${v.slug || v.id}${utm}`
+  return `<a href="${vehicleUrl}" target="_blank" rel="noopener" class="trk-card">
+      ${imageUrl ? `<img src="${imageUrl}" alt="${title}" class="trk-img" loading="lazy" />` : '<div class="trk-img trk-placeholder"></div>'}
+      <div class="trk-info">
+        <div class="trk-title" style="color:${colors.textColor}">${title}</div>
+        ${yearText ? `<div class="trk-year" style="color:${colors.textSecondary}">${yearText}</div>` : ''}
+        ${priceText ? `<div class="trk-price" style="color:${colors.priceColor}">${priceText}</div>` : ''}
+      </div>
+    </a>`
+}
+
 function escapeHtml(str: string): string {
   return str
     .replaceAll('&', '&amp;')
@@ -76,46 +127,16 @@ export default defineEventHandler(async (event) => {
   // Build UTM params
   const utm = `?utm_source=widget&utm_medium=embed&utm_campaign=${dealer.id}`
 
-  // Theme colors
-  const bg = theme === 'dark' ? '#1a1a2e' : '#f8f9fa'
-  const cardBg = theme === 'dark' ? '#16213e' : '#ffffff'
-  const textColor = theme === 'dark' ? '#e0e0e0' : '#333333'
-  const textSecondary = theme === 'dark' ? '#a0a0a0' : '#666666'
-  const priceColor = theme === 'dark' ? '#4fc3f7' : '#23424A'
-  const linkColor = theme === 'dark' ? '#4fc3f7' : '#23424A'
-  const borderColor = theme === 'dark' ? '#2a2a4a' : '#e5e7eb'
+  const colors = buildThemeColors(theme)
+  const { bg, cardBg, textColor, textSecondary, priceColor, linkColor, borderColor } = colors
 
-  // Cloudinary base URL for images
   const cloudName = config.public?.cloudinaryCloudName || process.env.CLOUDINARY_CLOUD_NAME || ''
   const cloudinaryBase = cloudName
     ? `https://res.cloudinary.com/${cloudName}/image/upload/c_fill,w_400,h_260,q_auto,f_webp/`
     : ''
 
-  // Build vehicle cards HTML
   const cardsHtml = vehicleList
-    .map((v) => {
-      const title = escapeHtml(`${v.brand} ${v.model}`)
-      const yearText = v.year ? String(v.year) : ''
-      const priceText = v.price
-        ? new Intl.NumberFormat('es-ES', {
-            style: 'currency',
-            currency: 'EUR',
-            maximumFractionDigits: 0,
-          }).format(v.price)
-        : ''
-      const imageUrl =
-        (v.images?.length ?? 0) > 0 && cloudinaryBase ? `${cloudinaryBase}${v.images![0]}` : ''
-      const vehicleUrl = `https://tracciona.com/vehiculo/${v.slug || v.id}${utm}`
-
-      return `<a href="${vehicleUrl}" target="_blank" rel="noopener" class="trk-card">
-      ${imageUrl ? `<img src="${imageUrl}" alt="${title}" class="trk-img" loading="lazy" />` : '<div class="trk-img trk-placeholder"></div>'}
-      <div class="trk-info">
-        <div class="trk-title">${title}</div>
-        ${yearText ? `<div class="trk-year">${yearText}</div>` : ''}
-        ${priceText ? `<div class="trk-price">${priceText}</div>` : ''}
-      </div>
-    </a>`
-    })
+    .map((v) => buildVehicleCardHtml(v, cloudinaryBase, utm, colors))
     .join('\n    ')
 
   const brandingHtml = showBranding

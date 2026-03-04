@@ -115,7 +115,7 @@ watch(
               autocomplete="email"
               required
               :placeholder="t('report.emailPlaceholder')"
-            >
+            />
           </div>
 
           <div class="report-field">
@@ -176,7 +176,7 @@ watch(
   background: var(--bg-primary, white);
   border-radius: 12px;
   width: 100%;
-  max-width: 480px;
+  max-width: 30em;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);

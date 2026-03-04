@@ -261,7 +261,7 @@ const maxLabel = computed(() =>
 }
 
 /* Tablet and up */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .range-slider__val {
     font-size: 10px;
   }

@@ -68,7 +68,7 @@
   pointer-events: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .hero-banner {
     flex-direction: row;
     align-items: center;

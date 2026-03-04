@@ -25,7 +25,7 @@ const { getImageUrl } = useImageUrl()
             :src="getImageUrl(String(vehicle.images_json[0]), 'thumb')"
             :alt="`${vehicle.brand} ${vehicle.model}`"
             loading="lazy"
-          >
+          />
           <div v-else class="vehicle-card__placeholder">
             {{ vehicle.brand.charAt(0) }}
           </div>
@@ -121,8 +121,8 @@ const { getImageUrl } = useImageUrl()
   color: var(--color-primary);
 }
 
-/* ---- Tablet (768px) ---- */
-@media (min-width: 768px) {
+/* ---- Tablet (48em) ---- */
+@media (min-width: 48em) {
   .vehicles-section {
     padding: 0 var(--spacing-8);
   }
@@ -144,8 +144,8 @@ const { getImageUrl } = useImageUrl()
   }
 }
 
-/* ---- Desktop (1024px) ---- */
-@media (min-width: 1024px) {
+/* ---- Desktop (64em) ---- */
+@media (min-width: 64em) {
   .vehicles-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: var(--spacing-4);

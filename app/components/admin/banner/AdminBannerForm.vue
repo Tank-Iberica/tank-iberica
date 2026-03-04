@@ -372,7 +372,7 @@ function parseDatetimeLocal(value: string): string | null {
   background: var(--bg-tertiary);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .form-row {
     grid-template-columns: 1fr;
   }

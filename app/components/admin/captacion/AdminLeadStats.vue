@@ -84,7 +84,7 @@ const { t } = useI18n()
   color: #059669;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .stats-row {
     flex-wrap: nowrap;
   }

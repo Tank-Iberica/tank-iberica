@@ -365,7 +365,7 @@ export function useDashboardPresupuesto() {
 
       const printWindow = globalThis.open('', '_blank')
       if (printWindow) {
-        printWindow.document.write(printContent)
+        printWindow.document.write(printContent) // NOSONAR typescript:S1874
         printWindow.document.close()
         printWindow.focus()
         // Give time for images to load

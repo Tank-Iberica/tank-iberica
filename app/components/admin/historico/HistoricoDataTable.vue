@@ -258,7 +258,7 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
   background: var(--color-success-bg, #dcfce7);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .historico-table {
     font-size: 0.75rem;
   }

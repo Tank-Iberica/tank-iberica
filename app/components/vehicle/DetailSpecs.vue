@@ -73,13 +73,13 @@ function resolveValue(value: unknown): string {
   font-weight: 700;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .vehicle-char-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .vehicle-char-grid {
     grid-template-columns: repeat(3, 1fr);
   }

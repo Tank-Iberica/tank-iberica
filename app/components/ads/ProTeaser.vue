@@ -224,7 +224,7 @@ onMounted(async () => {
 /* ==================================
    Responsive: tablet+
    ================================== */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .pro-teaser {
     flex-direction: row;
     text-align: left;
@@ -253,7 +253,7 @@ onMounted(async () => {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .pro-teaser {
     padding: var(--spacing-5) var(--spacing-8);
   }

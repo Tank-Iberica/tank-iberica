@@ -148,22 +148,22 @@ const { t } = useI18n()
   color: #0d9488;
 }
 
-/* 768px+ : Tablet layout */
-@media (min-width: 768px) {
+/* 48em+ : Tablet layout */
+@media (min-width: 48em) {
   .vehicle-levels {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* 1024px+ : Desktop layout */
-@media (min-width: 1024px) {
+/* 64em+ : Desktop layout */
+@media (min-width: 64em) {
   .vehicle-levels {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-/* 1280px+ : Wide desktop */
-@media (min-width: 1280px) {
+/* 80em+ : Wide desktop */
+@media (min-width: 80em) {
   .vehicle-levels {
     grid-template-columns: repeat(4, 1fr);
   }

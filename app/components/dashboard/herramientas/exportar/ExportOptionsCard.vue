@@ -173,7 +173,7 @@ function onCategoryChange(event: Event): void {
   color: #1e40af;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .options-grid {
     flex-direction: row;
     flex-wrap: wrap;

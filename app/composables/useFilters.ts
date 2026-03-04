@@ -78,7 +78,7 @@ function computeRangeForFilter(
     if (num < min) min = num
     if (num > max) max = num
   }
-  return min !== Infinity ? { min, max } : null
+  return min === Infinity ? null : { min, max }
 }
 
 function computeSliderRanges(
@@ -131,19 +131,139 @@ const defaultState: FiltersState = {
   sliderRanges: {},
 }
 
+async function querySubcategoryFilters(
+  supabase: ReturnType<typeof useSupabaseClient>,
+  subcategoryId: string,
+): Promise<AttributeDefinition[]> {
+  const { data: subcatData, error: subcatErr } = await supabase
+    .from('subcategories')
+    .select('applicable_filters')
+    .eq('id', subcategoryId)
+    .single()
+
+  if (subcatErr) throw subcatErr
+  const subcatRow = subcatData as { applicable_filters: string[] | null } | null
+  const subcatFilterIds = subcatRow?.applicable_filters || []
+  if (subcatFilterIds.length === 0) return []
+
+  const { data: subcatFilterData, error: subcatFilterErr } = await supabase
+    .from('attributes')
+    .select('*')
+    .in('id', subcatFilterIds)
+    .eq('status', 'published')
+    .eq('is_hidden', false)
+    .order('sort_order', { ascending: true })
+
+  if (subcatFilterErr) throw subcatFilterErr
+  return ((subcatFilterData as AttributeDefinition[]) || []).map((f) => ({
+    ...f,
+    source: 'subcategory' as const,
+  }))
+}
+
+async function queryCategoryFilterIds(
+  supabase: ReturnType<typeof useSupabaseClient>,
+  categoryId: string,
+): Promise<string[]> {
+  const { data: catData, error: catErr } = await supabase
+    .from('categories')
+    .select('applicable_filters')
+    .eq('id', categoryId)
+    .single()
+
+  if (catErr) throw catErr
+  const row = catData as { applicable_filters: string[] | null } | null
+  return row?.applicable_filters || []
+}
+
+async function queryFilterDefinitions(
+  supabase: ReturnType<typeof useSupabaseClient>,
+  filterIds: string[],
+): Promise<AttributeDefinition[]> {
+  if (filterIds.length === 0) return []
+
+  const { data: filterData, error: filterErr } = await supabase
+    .from('attributes')
+    .select('*')
+    .in('id', filterIds)
+    .eq('status', 'published')
+    .eq('is_hidden', false)
+    .order('sort_order', { ascending: true })
+
+  if (filterErr) throw filterErr
+  return ((filterData as AttributeDefinition[]) || []).map((f) => ({
+    ...f,
+    source: 'category' as const,
+  }))
+}
+
+async function queryVehicleAttributes(
+  supabase: ReturnType<typeof useSupabaseClient>,
+  categoryId?: string,
+): Promise<VehicleAttrs[]> {
+  let query = supabase
+    .from('vehicles')
+    .select('attributes_json')
+    .eq('status', 'published')
+    .eq('vertical', getVerticalSlug())
+  if (categoryId) query = query.eq('category_id', categoryId)
+
+  const { data, error: vehicleErr } = await query
+  if (vehicleErr) throw vehicleErr
+  return (data as VehicleAttrs[]) || []
+}
+
+function needsDynamicValues(f: AttributeDefinition): boolean {
+  return (
+    (f.type === 'desplegable' || f.type === 'desplegable_tick') &&
+    (f.options?.choices_source === 'auto' || f.options?.choices_source === 'both')
+  )
+}
+
+function getFilterOptions(
+  filter: AttributeDefinition,
+  vehicleFilterValues: Record<string, string[]>,
+): string[] {
+  const source = (filter.options?.choices_source as string) || 'manual'
+  const manual = (filter.options?.choices as string[]) || []
+  if (source === 'manual') return manual
+  const auto = vehicleFilterValues[filter.name] || []
+  if (source === 'auto') return auto
+  return [...new Set([...manual, ...auto])].sort((a, b) => a.localeCompare(b))
+}
+
+function computeVisibleFilters(
+  definitions: AttributeDefinition[],
+  activeFilters: ActiveFilters,
+): AttributeDefinition[] {
+  const activeTicks = new Set<string>()
+  for (const def of definitions) {
+    if (def.type === 'tick' && activeFilters[def.name]) activeTicks.add(def.name)
+  }
+  return definitions.filter((def) => {
+    if (isFilterHiddenByTick(def.name, definitions, activeTicks)) return false
+    if (def.is_extra) return isExtraFilterVisible(def.name, definitions, activeTicks)
+    return true
+  })
+}
+
 export function useFilters() {
   const supabase = useSupabaseClient()
-
-  // Use shared state across all components
   const state = useState<FiltersState>('filters', () => ({ ...defaultState }))
 
-  /**
-   * Fetch filters by subcategory ID only (backward compatible)
-   */
+  async function loadVehicleFilterValues(filterDefs: AttributeDefinition[], categoryId?: string) {
+    const needsValues = filterDefs.filter(needsDynamicValues)
+    const needsRange = filterDefs.filter((f) => f.type === 'slider')
+    if (!needsValues.length && !needsRange.length) return
+
+    const vehicles = await queryVehicleAttributes(supabase, categoryId)
+    Object.assign(state.value.vehicleFilterValues, extractFilterValues(vehicles, needsValues))
+    Object.assign(state.value.sliderRanges, computeSliderRanges(vehicles, needsRange))
+  }
+
   async function fetchBySubcategory(subcategoryId: string) {
     state.value.loading = true
     state.value.error = null
-
     try {
       const { data, error: err } = await supabase
         .from('attributes')
@@ -154,15 +274,13 @@ export function useFilters() {
         .order('sort_order', { ascending: true })
 
       if (err) throw err
-
-      const filters = (data as AttributeDefinition[]) || []
-      state.value.subcategoryFilters = filters.map((f) => ({
+      state.value.subcategoryFilters = ((data as AttributeDefinition[]) || []).map((f) => ({
         ...f,
         source: 'subcategory' as const,
       }))
       state.value.categoryFilters = []
       state.value.definitions = state.value.subcategoryFilters
-      await fetchVehicleFilterValues(state.value.definitions, subcategoryId)
+      await loadVehicleFilterValues(state.value.definitions, subcategoryId)
     } catch (err: unknown) {
       state.value.error = err instanceof Error ? err.message : 'Error fetching filters'
       state.value.definitions = []
@@ -172,92 +290,25 @@ export function useFilters() {
     }
   }
 
-  async function fetchSubcategoryFilters(subcategoryId: string): Promise<AttributeDefinition[]> {
-    const { data: subcatData, error: subcatErr } = await supabase
-      .from('subcategories')
-      .select('applicable_filters')
-      .eq('id', subcategoryId)
-      .single()
-
-    if (subcatErr) throw subcatErr
-    const subcatRow = subcatData as { applicable_filters: string[] | null } | null
-    const subcatFilterIds = subcatRow?.applicable_filters || []
-
-    if (subcatFilterIds.length === 0) return []
-
-    const { data: subcatFilterData, error: subcatFilterErr } = await supabase
-      .from('attributes')
-      .select('*')
-      .in('id', subcatFilterIds)
-      .eq('status', 'published')
-      .eq('is_hidden', false)
-      .order('sort_order', { ascending: true })
-
-    if (subcatFilterErr) throw subcatFilterErr
-    return ((subcatFilterData as AttributeDefinition[]) || []).map((f) => ({
-      ...f,
-      source: 'subcategory' as const,
-    }))
-  }
-
-  /**
-   * Fetch filters from both category and subcategory with deduplication.
-   * If the same filter exists on both levels, it only shows once.
-   */
   async function fetchByCategoryAndSubcategory(
     categoryId: string | null,
     subcategoryId: string | null,
   ) {
     state.value.loading = true
     state.value.error = null
-
     try {
-      // Fetch category-level filters (from categories.applicable_filters)
-      let catFilterIds: string[] = []
-      if (categoryId) {
-        const { data: catData, error: catErr } = await supabase
-          .from('categories')
-          .select('applicable_filters')
-          .eq('id', categoryId)
-          .single()
-
-        if (catErr) throw catErr
-        const row = catData as { applicable_filters: string[] | null } | null
-        if (row?.applicable_filters) {
-          catFilterIds = row.applicable_filters
-        }
-      }
-
-      // Fetch filter definitions for category filters
-      let catFilters: AttributeDefinition[] = []
-      if (catFilterIds.length > 0) {
-        const { data: filterData, error: filterErr } = await supabase
-          .from('attributes')
-          .select('*')
-          .in('id', catFilterIds)
-          .eq('status', 'published')
-          .eq('is_hidden', false)
-          .order('sort_order', { ascending: true })
-
-        if (filterErr) throw filterErr
-        catFilters = ((filterData as AttributeDefinition[]) || []).map((f) => ({
-          ...f,
-          source: 'category' as const,
-        }))
-      }
-
-      // Fetch subcategory-level filters (from subcategories.applicable_filters)
-      const subcatFiltersList = subcategoryId ? await fetchSubcategoryFilters(subcategoryId) : []
+      const catFilterIds = categoryId ? await queryCategoryFilterIds(supabase, categoryId) : []
+      const catFilters = await queryFilterDefinitions(supabase, catFilterIds)
+      const subcatFilters = subcategoryId
+        ? await querySubcategoryFilters(supabase, subcategoryId)
+        : []
 
       state.value.categoryFilters = catFilters
-      state.value.subcategoryFilters = subcatFiltersList
+      state.value.subcategoryFilters = subcatFilters
 
-      // Deduplicate: if same filter ID exists in both, keep only the category one
       const catIds = new Set(catFilters.map((f) => f.id))
-      const dedupedSubcatFilters = subcatFiltersList.filter((f) => !catIds.has(f.id))
-
-      state.value.definitions = [...catFilters, ...dedupedSubcatFilters]
-      await fetchVehicleFilterValues(state.value.definitions, categoryId || undefined)
+      state.value.definitions = [...catFilters, ...subcatFilters.filter((f) => !catIds.has(f.id))]
+      await loadVehicleFilterValues(state.value.definitions, categoryId || undefined)
     } catch (err: unknown) {
       state.value.error = err instanceof Error ? err.message : 'Error fetching filters'
       state.value.definitions = []
@@ -268,102 +319,13 @@ export function useFilters() {
     }
   }
 
-  /**
-   * Fetch unique filter values from published vehicles for dynamic options (desplegable)
-   * and compute slider ranges. Called after filter definitions are loaded.
-   * Optionally filtered by categoryId to avoid fetching all vehicles.
-   */
-  async function fetchVehicleFilterValues(filterDefs: AttributeDefinition[], categoryId?: string) {
-    const needsValues = filterDefs.filter(
-      (f) =>
-        (f.type === 'desplegable' || f.type === 'desplegable_tick') &&
-        (f.options?.choices_source === 'auto' || f.options?.choices_source === 'both'),
-    )
-    const needsRange = filterDefs.filter((f) => f.type === 'slider')
-
-    if (!needsValues.length && !needsRange.length) return
-
-    // Fetch published vehicles' attributes_json, filtered by category and vertical
-    let query = supabase
-      .from('vehicles')
-      .select('attributes_json')
-      .eq('status', 'published')
-      .eq('vertical', getVerticalSlug())
-    if (categoryId) {
-      query = query.eq('category_id', categoryId)
-    }
-    const { data, error: vehicleErr } = await query
-
-    if (vehicleErr) throw vehicleErr
-    if (!data) return
-
-    const vehicles = data as VehicleAttrs[]
-
-    Object.assign(state.value.vehicleFilterValues, extractFilterValues(vehicles, needsValues))
-    Object.assign(state.value.sliderRanges, computeSliderRanges(vehicles, needsRange))
-  }
-
-  /**
-   * Get merged options for a desplegable filter (manual choices + auto values)
-   */
-  function getFilterOptions(filter: AttributeDefinition): string[] {
-    const opts = filter.options
-    const source = (opts?.choices_source as string) || 'manual'
-    const manual = (opts?.choices as string[]) || []
-    const auto = state.value.vehicleFilterValues[filter.name] || []
-
-    if (source === 'manual') return manual
-    if (source === 'auto') return auto
-    // 'both': merge and deduplicate
-    return [...new Set([...manual, ...auto])].sort((a, b) => a.localeCompare(b))
-  }
-
-  /**
-   * Get slider range for a filter
-   */
-  function getSliderRange(filter: AttributeDefinition): SliderRange {
-    return state.value.sliderRanges[filter.name] || { min: 0, max: 100 }
-  }
-
-  const visibleFilters = computed(() => {
-    const activeTicks = new Set<string>()
-    for (const def of state.value.definitions) {
-      if (def.type === 'tick' && state.value.activeFilters[def.name]) activeTicks.add(def.name)
-    }
-
-    return state.value.definitions.filter((def) => {
-      if (isFilterHiddenByTick(def.name, state.value.definitions, activeTicks)) return false
-      if (def.is_extra) return isExtraFilterVisible(def.name, state.value.definitions, activeTicks)
-      return true
-    })
-  })
-
-  function setFilter(name: string, value: unknown) {
-    state.value.activeFilters = { ...state.value.activeFilters, [name]: value }
-  }
-
-  function clearFilter(name: string) {
-    const { [name]: _, ...rest } = state.value.activeFilters
-    state.value.activeFilters = rest
-  }
-
-  function clearAll() {
-    state.value.activeFilters = {}
-  }
-
-  function reset() {
-    state.value.definitions = []
-    state.value.categoryFilters = []
-    state.value.subcategoryFilters = []
-    state.value.activeFilters = {}
-    state.value.error = null
-  }
-
   return {
     definitions: computed(() => state.value.definitions),
     categoryFilters: computed(() => state.value.categoryFilters),
     subcategoryFilters: computed(() => state.value.subcategoryFilters),
-    visibleFilters,
+    visibleFilters: computed(() =>
+      computeVisibleFilters(state.value.definitions, state.value.activeFilters),
+    ),
     activeFilters: computed(() => state.value.activeFilters),
     loading: computed(() => state.value.loading),
     error: computed(() => state.value.error),
@@ -371,11 +333,26 @@ export function useFilters() {
     sliderRanges: computed(() => state.value.sliderRanges),
     fetchBySubcategory,
     fetchByCategoryAndSubcategory,
-    getFilterOptions,
-    getSliderRange,
-    setFilter,
-    clearFilter,
-    clearAll,
-    reset,
+    getFilterOptions: (filter: AttributeDefinition) =>
+      getFilterOptions(filter, state.value.vehicleFilterValues),
+    getSliderRange: (filter: AttributeDefinition): SliderRange =>
+      state.value.sliderRanges[filter.name] || { min: 0, max: 100 },
+    setFilter: (name: string, value: unknown) => {
+      state.value.activeFilters = { ...state.value.activeFilters, [name]: value }
+    },
+    clearFilter: (name: string) => {
+      const { [name]: _, ...rest } = state.value.activeFilters
+      state.value.activeFilters = rest
+    },
+    clearAll: () => {
+      state.value.activeFilters = {}
+    },
+    reset: () => {
+      state.value.definitions = []
+      state.value.categoryFilters = []
+      state.value.subcategoryFilters = []
+      state.value.activeFilters = {}
+      state.value.error = null
+    },
   }
 }

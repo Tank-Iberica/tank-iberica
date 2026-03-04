@@ -176,7 +176,7 @@ export function usePrebid(
         }
 
         // Sort by CPM descending, take highest
-        const best = unitBids.sort((a, b) => b.cpm - a.cpm)[0]!
+        const best = unitBids.toSorted((a, b) => b.cpm - a.cpm)[0]!
 
         // Check against floor price
         if (floorPrice > 0 && best.cpm < floorPrice) {

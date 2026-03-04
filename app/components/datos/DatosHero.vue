@@ -42,7 +42,7 @@ defineProps<{
   font-size: var(--font-size-base);
   color: var(--text-on-dark-secondary);
   line-height: var(--line-height-relaxed);
-  max-width: 640px;
+  max-width: 40em;
   margin: 0 auto var(--spacing-4);
 }
 
@@ -51,7 +51,7 @@ defineProps<{
   color: var(--text-on-dark-auxiliary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .datos-hero {
     padding: var(--spacing-16) 0;
   }
@@ -65,7 +65,7 @@ defineProps<{
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .datos-hero__title {
     font-size: var(--font-size-4xl);
   }

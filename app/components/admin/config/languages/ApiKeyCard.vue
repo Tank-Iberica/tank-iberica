@@ -24,7 +24,7 @@ function onInput(event: Event) {
         autocomplete="off"
         :value="apiKey"
         @input="onInput"
-      >
+      />
     </div>
   </div>
 </template>
@@ -56,7 +56,7 @@ function onInput(event: Event) {
 
 .form-input {
   width: 100%;
-  max-width: 480px;
+  max-width: 30em;
   padding: 10px 12px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -71,7 +71,7 @@ function onInput(event: Event) {
   box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .config-card {
     padding: 16px;
   }

@@ -167,7 +167,7 @@ const yearPopoverOpen = ref(false)
   overflow: visible;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .filters-section {
     padding: 0.3rem 0;
   }

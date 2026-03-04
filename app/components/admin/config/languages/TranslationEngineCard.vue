@@ -28,7 +28,7 @@ function onChange(event: Event) {
           :checked="engine === eng.value"
           name="translationEngine"
           @change="onChange"
-        >
+        />
         <span>{{ eng.label }}</span>
       </label>
     </div>
@@ -83,7 +83,7 @@ function onChange(event: Event) {
   accent-color: var(--color-primary);
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .config-card {
     padding: 16px;
   }

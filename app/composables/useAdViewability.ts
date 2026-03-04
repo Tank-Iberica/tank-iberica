@@ -109,7 +109,7 @@ export function useAdViewability(
           }
         }
       },
-      { threshold: [0, 0.5, 1.0] },
+      { threshold: [0, 0.5, 1] },
     )
 
     observer.observe(elementRef.value)

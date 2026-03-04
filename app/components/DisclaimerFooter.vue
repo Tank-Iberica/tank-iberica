@@ -11,7 +11,7 @@
 
 <style scoped>
 .disclaimer-footer {
-  max-width: 900px;
+  max-width: 56.25em;
   margin: 0 auto;
   padding: 24px 1rem;
   text-align: center;
@@ -35,7 +35,7 @@
   color: var(--text-on-dark-primary, rgba(255, 255, 255, 0.95));
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .disclaimer-footer {
     padding: 24px 2rem;
   }

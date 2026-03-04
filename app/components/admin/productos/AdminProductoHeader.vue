@@ -128,7 +128,7 @@ const emit = defineEmits<Emits>()
   color: var(--color-success);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .pf-right {
     flex-wrap: wrap;
   }

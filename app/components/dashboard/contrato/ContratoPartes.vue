@@ -322,7 +322,7 @@ const { t } = useI18n()
   margin-bottom: 12px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .form-row {
     flex-direction: column;
     gap: 12px;
@@ -333,7 +333,7 @@ const { t } = useI18n()
   }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
+(@media ()min-width: 48.0625em())) and (max-width: 48.0625em) {
   .form-grid-3 {
     grid-template-columns: repeat(2, 1fr);
   }

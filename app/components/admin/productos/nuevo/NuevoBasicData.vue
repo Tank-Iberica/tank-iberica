@@ -92,7 +92,7 @@ const emit = defineEmits<{
           type="text"
           placeholder="Scania"
           @input="emit('update:brand', ($event.target as HTMLInputElement).value)"
-        />
+        >
       </div>
       <div class="field">
         <label>Modelo *</label>
@@ -101,7 +101,7 @@ const emit = defineEmits<{
           type="text"
           placeholder="R450"
           @input="emit('update:model', ($event.target as HTMLInputElement).value)"
-        />
+        >
       </div>
       <div class="field">
         <label>Ano *</label>
@@ -110,7 +110,7 @@ const emit = defineEmits<{
           type="number"
           placeholder="2023"
           @input="emit('update:year', Number(($event.target as HTMLInputElement).value) || null)"
-        />
+        >
       </div>
       <div class="field" />
     </div>
@@ -122,7 +122,7 @@ const emit = defineEmits<{
           type="text"
           placeholder="1234-ABC"
           @input="emit('update:plate', ($event.target as HTMLInputElement).value || null)"
-        />
+        >
       </div>
       <div class="field">
         <label>Precio Venta</label>
@@ -131,7 +131,7 @@ const emit = defineEmits<{
           type="number"
           placeholder="0 = Consultar"
           @input="emit('update:price', Number(($event.target as HTMLInputElement).value) || null)"
-        />
+        >
       </div>
       <div v-if="showRentalPrice" class="field">
         <label>Precio Alquiler /mes</label>
@@ -142,7 +142,7 @@ const emit = defineEmits<{
           @input="
             emit('update:rentalPrice', Number(($event.target as HTMLInputElement).value) || null)
           "
-        />
+        >
       </div>
       <div v-else class="field" />
       <div class="field" />
@@ -155,7 +155,7 @@ const emit = defineEmits<{
           type="text"
           placeholder="Madrid, Espana"
           @input="emit('update:location', ($event.target as HTMLInputElement).value || null)"
-        />
+        >
         <span v-if="locationCountry" class="location-detected">
           {{ countryFlagFn(locationCountry) }} {{ locationCountry }}
           <template v-if="locationProvince"> &middot; {{ locationProvince }}</template>
@@ -169,7 +169,7 @@ const emit = defineEmits<{
           type="text"
           placeholder="Madrid, Spain"
           @input="emit('update:locationEn', ($event.target as HTMLInputElement).value || null)"
-        />
+        >
       </div>
     </div>
   </div>
@@ -232,7 +232,7 @@ const emit = defineEmits<{
   font-weight: 500;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .row-2,
   .row-4 {
     grid-template-columns: 1fr;

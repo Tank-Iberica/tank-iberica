@@ -190,7 +190,7 @@ const emit = defineEmits<{
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 56.25em;
 }
 
 .admin-table th,
@@ -322,7 +322,7 @@ const emit = defineEmits<{
   color: var(--color-gray-500, #6b7280);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30em) {
   .action-buttons {
     flex-direction: column;
     gap: 4px;

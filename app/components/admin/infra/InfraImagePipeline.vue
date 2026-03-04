@@ -88,7 +88,7 @@ const { t: $t } = useI18n()
   margin-bottom: var(--spacing-4);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .pipeline-grid {
     grid-template-columns: repeat(3, 1fr);
   }

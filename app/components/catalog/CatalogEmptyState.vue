@@ -170,7 +170,7 @@ const nextLevelLabel = computed(() =>
   flex-direction: column;
   gap: var(--spacing-4);
   padding: var(--spacing-4) var(--spacing-3);
-  max-width: 640px;
+  max-width: 40em;
   margin: 0 auto;
 }
 
@@ -415,13 +415,13 @@ const nextLevelLabel = computed(() =>
 }
 
 /* ── Responsive ── */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .demand-card__actions {
     flex-direction: row;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .demand-card {
     flex-direction: row;
     align-items: flex-start;

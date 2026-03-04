@@ -127,13 +127,13 @@ const { t } = useI18n()
   cursor: not-allowed;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .platform-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .platform-grid {
     grid-template-columns: repeat(3, 1fr);
   }

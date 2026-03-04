@@ -64,7 +64,7 @@ const emit = defineEmits<{
         :placeholder="$t('comparator.newComparison')"
         @input="emit('update-new-comp-name', ($event.target as HTMLInputElement).value)"
         @keyup.enter="emit('create')"
-      >
+      />
       <button class="btn-fill" @click="emit('create')">{{ $t('common.create') }}</button>
     </div>
   </div>
@@ -193,7 +193,7 @@ const emit = defineEmits<{
   outline: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .page-title {
     font-size: var(--font-size-3xl);
   }

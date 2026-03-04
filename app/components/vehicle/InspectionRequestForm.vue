@@ -139,7 +139,7 @@ function resetForm() {
           :aria-invalid="!!fieldErrors.name || undefined"
           :aria-describedby="fieldErrors.name ? 'err-insp-name' : undefined"
           :placeholder="$t('inspection.namePlaceholder')"
-        />
+        >
         <p v-if="fieldErrors.name" id="err-insp-name" class="field-error" role="alert">
           {{ fieldErrors.name }}
         </p>
@@ -155,7 +155,7 @@ function resetForm() {
           :aria-invalid="!!fieldErrors.email || undefined"
           :aria-describedby="fieldErrors.email ? 'err-insp-email' : undefined"
           :placeholder="$t('inspection.emailPlaceholder')"
-        />
+        >
         <p v-if="fieldErrors.email" id="err-insp-email" class="field-error" role="alert">
           {{ fieldErrors.email }}
         </p>
@@ -171,7 +171,7 @@ function resetForm() {
           :aria-invalid="!!fieldErrors.phone || undefined"
           :aria-describedby="fieldErrors.phone ? 'err-insp-phone' : undefined"
           :placeholder="$t('inspection.phonePlaceholder')"
-        />
+        >
         <p v-if="fieldErrors.phone" id="err-insp-phone" class="field-error" role="alert">
           {{ fieldErrors.phone }}
         </p>
@@ -184,7 +184,7 @@ function resetForm() {
           v-model="formData.preferredDate"
           type="date"
           :min="new Date().toISOString().split('T')[0]"
-        />
+        >
       </div>
 
       <div class="form-group">
@@ -213,7 +213,7 @@ function resetForm() {
   padding: 24px;
   background: var(--color-bg-secondary, #fff);
   border-radius: 8px;
-  max-width: 600px;
+  max-width: 37.5em;
   margin: 0 auto;
 }
 
@@ -358,7 +358,7 @@ function resetForm() {
 }
 
 /* Tablet and up */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .inspection-form {
     padding: 32px;
   }

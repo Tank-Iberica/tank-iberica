@@ -36,7 +36,7 @@ function onTypeChange(event: Event): void {
               value="arrendamiento"
               :checked="contractType === 'arrendamiento'"
               @change="onTypeChange"
-            >
+            />
             <span class="radio-icon-svg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +63,7 @@ function onTypeChange(event: Event): void {
               value="compraventa"
               :checked="contractType === 'compraventa'"
               @change="onTypeChange"
-            >
+            />
             <span class="radio-icon-svg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +90,7 @@ function onTypeChange(event: Event): void {
           :value="contractDate"
           type="date"
           @input="emit('update:contractDate', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.location') }}</label>
@@ -98,7 +98,7 @@ function onTypeChange(event: Event): void {
           :value="contractLocation"
           type="text"
           @input="emit('update:contractLocation', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
     </div>
   </div>
@@ -185,7 +185,7 @@ function onTypeChange(event: Event): void {
   font-size: 0.95rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .form-row {
     flex-direction: column;
     gap: 12px;

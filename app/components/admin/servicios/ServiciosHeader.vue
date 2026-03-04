@@ -56,7 +56,7 @@ const { t } = useI18n()
   cursor: not-allowed;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .page-header {
     flex-direction: row;
     justify-content: space-between;

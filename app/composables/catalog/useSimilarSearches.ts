@@ -173,7 +173,7 @@ export function useSimilarSearches() {
       }
     }
 
-    suggestions.value = results.sort((a, b) => b.count - a.count).slice(0, 3)
+    suggestions.value = results.toSorted((a, b) => b.count - a.count).slice(0, 3)
 
     loading.value = false
   }
@@ -225,7 +225,7 @@ export function useSimilarSearches() {
       }
     }
 
-    level.suggestions = results.sort((a, b) => b.count - a.count)
+    level.suggestions = results.toSorted((a, b) => b.count - a.count)
     level.loaded = true
     level.loading = false
   }

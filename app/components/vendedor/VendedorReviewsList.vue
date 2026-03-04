@@ -174,8 +174,8 @@ const emit = defineEmits<{
   cursor: not-allowed;
 }
 
-/* ---- Tablet (768px) ---- */
-@media (min-width: 768px) {
+/* ---- Tablet (48em) ---- */
+@media (min-width: 48em) {
   .reviews-section {
     padding: 0 var(--spacing-8);
   }

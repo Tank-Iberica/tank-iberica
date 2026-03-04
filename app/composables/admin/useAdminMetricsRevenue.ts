@@ -24,6 +24,74 @@ export function useAdminMetricsRevenue() {
   const revenueSeries = ref<RevenuePoint[]>([])
   const leadsSeries = ref<LeadsPoint[]>([])
 
+  // ── KPI helpers ───────────────────────────────────────────────────────────
+
+  async function sumPaidInvoices(start: string, end: string): Promise<number> {
+    try {
+      const { data } = await supabase
+        .from('invoices')
+        .select('amount_cents')
+        .eq('status', 'paid')
+        .gte('created_at', start)
+        .lt('created_at', end)
+      return (
+        (data as { amount_cents: number }[] | null)?.reduce(
+          (s, r) => s + (r.amount_cents ?? 0),
+          0,
+        ) ?? 0
+      )
+    } catch {
+      return 0
+    }
+  }
+
+  async function countPublishedVehicles(beforeDate?: string): Promise<number> {
+    try {
+      let q = supabase
+        .from('vehicles')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'published')
+      if (beforeDate) q = q.lt('created_at', beforeDate)
+      const { count } = await q
+      return count ?? 0
+    } catch {
+      return 0
+    }
+  }
+
+  async function countDistinctDealers(beforeDate?: string): Promise<number> {
+    try {
+      let q = supabase
+        .from('vehicles')
+        .select('dealer_id')
+        .eq('status', 'published')
+        .not('dealer_id', 'is', null)
+      if (beforeDate) q = q.lt('created_at', beforeDate)
+      const { data } = await q
+      if (!data) return 0
+      return new Set(
+        (data as { dealer_id: string | null }[])
+          .map((r) => r.dealer_id)
+          .filter(Boolean) as string[],
+      ).size
+    } catch {
+      return 0
+    }
+  }
+
+  async function countContactsInRange(start: string, end: string): Promise<number> {
+    try {
+      const { count } = await supabase
+        .from('contacts')
+        .select('id', { count: 'exact', head: true })
+        .gte('created_at', start)
+        .lt('created_at', end)
+      return count ?? 0
+    } catch {
+      return 0
+    }
+  }
+
   // -------------------------------------------------------------------------
   // 1. KPI Summary Cards
   // -------------------------------------------------------------------------
@@ -36,119 +104,25 @@ export function useAdminMetricsRevenue() {
     const prevStart = monthStart(prevMonth)
     const prevEnd = monthEnd(prevMonth)
 
-    // --- Monthly Revenue ---
-    let revCurrent = 0
-    let revPrevious = 0
-    try {
-      const { data: curData } = await supabase
-        .from('invoices')
-        .select('amount_cents')
-        .eq('status', 'paid')
-        .gte('created_at', curStart)
-        .lt('created_at', curEnd)
-
-      if (curData) {
-        for (const row of curData as { amount_cents: number }[]) {
-          revCurrent += row.amount_cents ?? 0
-        }
-      }
-
-      const { data: prevData } = await supabase
-        .from('invoices')
-        .select('amount_cents')
-        .eq('status', 'paid')
-        .gte('created_at', prevStart)
-        .lt('created_at', prevEnd)
-
-      if (prevData) {
-        for (const row of prevData as { amount_cents: number }[]) {
-          revPrevious += row.amount_cents ?? 0
-        }
-      }
-    } catch {
-      // invoices table may not exist or lack columns
-    }
-
-    // --- Active Vehicles (published) ---
-    let vehiclesCurrent = 0
-    let vehiclesPrevious = 0
-    try {
-      const { count: curCount } = await supabase
-        .from('vehicles')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', 'published')
-
-      vehiclesCurrent = curCount ?? 0
-
-      const { count: prevCount } = await supabase
-        .from('vehicles')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', 'published')
-        .lt('created_at', prevEnd)
-
-      vehiclesPrevious = prevCount ?? 0
-    } catch {
-      // vehicles table issue
-    }
-
-    // --- Active Dealers (distinct dealer_id on published vehicles) ---
-    let dealersCurrent = 0
-    let dealersPrevious = 0
-    try {
-      const { data: curDealers } = await supabase
-        .from('vehicles')
-        .select('dealer_id')
-        .eq('status', 'published')
-        .not('dealer_id', 'is', null)
-
-      if (curDealers) {
-        const unique = new Set<string>()
-        for (const row of curDealers as { dealer_id: string | null }[]) {
-          if (row.dealer_id) unique.add(row.dealer_id)
-        }
-        dealersCurrent = unique.size
-      }
-
-      const { data: prevDealers } = await supabase
-        .from('vehicles')
-        .select('dealer_id')
-        .eq('status', 'published')
-        .lt('created_at', prevEnd)
-        .not('dealer_id', 'is', null)
-
-      if (prevDealers) {
-        const unique = new Set<string>()
-        for (const row of prevDealers as { dealer_id: string | null }[]) {
-          if (row.dealer_id) unique.add(row.dealer_id)
-        }
-        dealersPrevious = unique.size
-      }
-    } catch {
-      // vehicles or dealer_id column missing
-    }
-
-    // --- Monthly Leads ---
-    let leadsCurrent = 0
-    let leadsPrevious = 0
-    try {
-      const { count: curLeads } = await supabase
-        .from('contacts')
-        .select('id', { count: 'exact', head: true })
-        .gte('created_at', curStart)
-        .lt('created_at', curEnd)
-
-      leadsCurrent = curLeads ?? 0
-
-      const { count: prevLeads } = await supabase
-        .from('contacts')
-        .select('id', { count: 'exact', head: true })
-        .gte('created_at', prevStart)
-        .lt('created_at', prevEnd)
-
-      leadsPrevious = prevLeads ?? 0
-    } catch {
-      // contacts table issue
-    }
+    const [
+      revCurrent,
+      revPrevious,
+      vehiclesCurrent,
+      vehiclesPrevious,
+      dealersCurrent,
+      dealersPrevious,
+      leadsCurrent,
+      leadsPrevious,
+    ] = await Promise.all([
+      sumPaidInvoices(curStart, curEnd),
+      sumPaidInvoices(prevStart, prevEnd),
+      countPublishedVehicles(),
+      countPublishedVehicles(prevEnd),
+      countDistinctDealers(),
+      countDistinctDealers(prevEnd),
+      countContactsInRange(curStart, curEnd),
+      countContactsInRange(prevStart, prevEnd),
+    ])
 
     kpiSummary.value = {
       monthlyRevenue: {

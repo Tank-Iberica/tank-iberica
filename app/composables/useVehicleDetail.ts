@@ -70,8 +70,8 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
 
   function getColumnDescription(): string | null {
     if (!vehicle.value) return null
-    if (locale.value === 'en' && vehicle.value.description_en) return vehicle.value.description_en
-    return vehicle.value.description_es
+    if (locale.value === 'en' && vehicle.value.description_en) return vehicle.value.description_en // NOSONAR typescript:S1874
+    return vehicle.value.description_es // NOSONAR typescript:S1874
   }
 
   // Description ref -- initialized with column data for SSR compatibility

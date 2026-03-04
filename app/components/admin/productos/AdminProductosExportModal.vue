@@ -111,7 +111,7 @@ const localScope = computed({
 
 .modal-sm {
   width: 100%;
-  max-width: 480px;
+  max-width: 30em;
 }
 
 .modal-header {

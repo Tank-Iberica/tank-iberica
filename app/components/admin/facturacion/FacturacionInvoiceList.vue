@@ -195,13 +195,13 @@ function getStatusLabel(status: string): string {
   margin: 0;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .section-card {
     padding: var(--spacing-6, 24px) var(--spacing-8, 32px);
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 80em) {
   .invoice-card {
     flex-direction: row;
     align-items: center;

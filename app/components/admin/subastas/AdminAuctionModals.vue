@@ -420,7 +420,7 @@ const { t } = useI18n()
   font-size: 0.85rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .modal {
     margin: 0;
   }

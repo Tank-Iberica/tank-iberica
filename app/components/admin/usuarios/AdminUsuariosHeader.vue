@@ -62,7 +62,7 @@ defineEmits<{
   opacity: 0.9;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header {
     flex-direction: column;
     gap: 12px;

@@ -135,7 +135,7 @@ function sortArrow(key: ProvinceSortKey): string {
   background: var(--bg-tertiary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .datos-section__title {
     font-size: var(--font-size-2xl);
   }

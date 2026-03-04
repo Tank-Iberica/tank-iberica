@@ -35,16 +35,13 @@ const trimStr = (v: unknown) => (v as string).trim()
 const CLUSTER_FIELD_RULES: FieldRule[] = [
   {
     key: 'name',
-    check: (v) =>
-      typeof v !== 'string' || !(v as string).trim() ? 'name must be a non-empty string' : null,
+    check: (v) => (typeof v === 'string' && v.trim() ? null : 'name must be a non-empty string'),
     transform: trimStr,
   },
   {
     key: 'supabase_url',
     check: (v) =>
-      typeof v !== 'string' || !(v as string).trim()
-        ? 'supabase_url must be a non-empty string'
-        : null,
+      typeof v === 'string' && v.trim() ? null : 'supabase_url must be a non-empty string',
     transform: trimStr,
   },
   {
@@ -60,7 +57,7 @@ const CLUSTER_FIELD_RULES: FieldRule[] = [
   {
     key: 'verticals',
     check: (v) =>
-      !Array.isArray(v) || !(v as unknown[]).every((x) => typeof x === 'string')
+      !Array.isArray(v) || !v.every((x) => typeof x === 'string')
         ? 'verticals must be an array of strings'
         : null,
   },

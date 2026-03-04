@@ -92,7 +92,7 @@ export function useAdminSubcategoriasPage() {
 
   // -- Computed helpers -------------------------------------------------------
   const availableFilters = computed(() => {
-    const coreFilters = [
+    const coreFilters = new Set([
       'precio',
       'marca',
       'a\u00F1o',
@@ -101,9 +101,9 @@ export function useAdminSubcategoriasPage() {
       'brand',
       'year',
       'location',
-    ]
+    ])
     return allFilters.value.filter(
-      (f) => f.status !== 'archived' && !coreFilters.includes(f.name.toLowerCase()),
+      (f) => f.status !== 'archived' && !coreFilters.has(f.name.toLowerCase()),
     )
   })
 

@@ -29,6 +29,35 @@ interface DemoPreview {
   highlights: string[]
 }
 
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024 * 1.37 // ~5MB in base64
+
+function validateImages(images: unknown): void {
+  if (!images || !Array.isArray(images) || (images as unknown[]).length === 0) {
+    throw createError({ statusCode: 400, statusMessage: 'At least 1 image is required' })
+  }
+  if ((images as unknown[]).length > 4) {
+    throw createError({ statusCode: 400, statusMessage: 'Maximum 4 images allowed' })
+  }
+  for (const img of images as Array<{ data: string; mediaType: string }>) {
+    if (!img.data || !img.mediaType) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Each image must have data and mediaType',
+      })
+    }
+    if (img.data.length > MAX_IMAGE_SIZE) {
+      throw createError({ statusCode: 400, statusMessage: 'Image exceeds 5MB limit' })
+    }
+  }
+}
+
+function buildImageBlocks(images: Array<{ data: string; mediaType: string }>): AIContentBlock[] {
+  return images.map((img) => ({
+    type: 'image' as const,
+    source: { type: 'base64' as const, media_type: img.mediaType, data: img.data },
+  }))
+}
+
 const RATE_LIMIT = {
   windowMs: 24 * 60 * 60 * 1000, // 24 hours
   max: 3,
@@ -47,37 +76,10 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody<DemoRequestBody>(event)
 
-  // Validate images
-  if (!body.images || !Array.isArray(body.images) || body.images.length === 0) {
-    throw createError({ statusCode: 400, statusMessage: 'At least 1 image is required' })
-  }
-  if (body.images.length > 4) {
-    throw createError({ statusCode: 400, statusMessage: 'Maximum 4 images allowed' })
-  }
-
-  // Validate each image (max 5MB base64)
-  const MAX_IMAGE_SIZE = 5 * 1024 * 1024 * 1.37 // ~5MB in base64
-  for (const img of body.images) {
-    if (!img.data || !img.mediaType) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Each image must have data and mediaType',
-      })
-    }
-    if (img.data.length > MAX_IMAGE_SIZE) {
-      throw createError({ statusCode: 400, statusMessage: 'Image exceeds 5MB limit' })
-    }
-  }
+  validateImages(body.images)
 
   // Build AI prompt with images
-  const contentBlocks: AIContentBlock[] = []
-
-  for (const img of body.images) {
-    contentBlocks.push({
-      type: 'image',
-      source: { type: 'base64', media_type: img.mediaType, data: img.data },
-    })
-  }
+  const contentBlocks: AIContentBlock[] = buildImageBlocks(body.images)
 
   const brandInfo = body.brand ? `Brand: ${body.brand}` : ''
   const modelInfo = body.model ? `Model: ${body.model}` : ''
@@ -115,7 +117,7 @@ Respond in JSON format:
     )
 
     // Parse AI response
-    const jsonMatch = response.text.match(/\{[\s\S]*\}/)
+    const jsonMatch = /\{[\s\S]*\}/.exec(response.text)
     if (!jsonMatch) {
       throw new Error('AI did not return valid JSON')
     }

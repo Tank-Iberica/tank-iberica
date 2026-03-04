@@ -493,13 +493,13 @@ onUnmounted(() => {
 }
 
 /* Desktop: centered modal */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .reserve-backdrop {
     align-items: center;
   }
 
   .reserve-modal {
-    max-width: 480px;
+    max-width: 30em;
     border-radius: var(--border-radius-md);
     margin: 0 auto;
   }

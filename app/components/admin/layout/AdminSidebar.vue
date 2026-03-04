@@ -346,7 +346,8 @@ function onUsersPopover(e: MouseEvent) {
 }
 
 /* Mobile: off-canvas */
-@media (max-width: 767px) {
+
+(@media ()max-width: 47.9375em())) {
   .admin-sidebar {
     transform: translateX(-100%);
   }
@@ -357,7 +358,7 @@ function onUsersPopover(e: MouseEvent) {
 }
 
 /* Tablet+: fixed sidebar */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .admin-sidebar {
     transform: translateX(0);
   }
@@ -553,7 +554,7 @@ function onUsersPopover(e: MouseEvent) {
   padding: var(--spacing-2);
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .close-btn-mobile {
     display: flex;
   }

@@ -11,7 +11,7 @@
             :alt="ad.title || $t('ads.sponsoredAd')"
             class="ad-card__logo"
             loading="lazy"
-          >
+          />
         </div>
         <div class="ad-card__body">
           <h3 v-if="ad.title" class="ad-card__title">{{ ad.title }}</h3>
@@ -56,7 +56,7 @@
           :alt="ad.title || $t('ads.sponsoredAd')"
           class="ad-banner__image"
           loading="lazy"
-        >
+        />
         <div v-if="ad.title || ad.description" class="ad-banner__overlay">
           <h3 v-if="ad.title" class="ad-banner__title">{{ ad.title }}</h3>
           <p v-if="ad.description" class="ad-banner__description">{{ ad.description }}</p>
@@ -85,7 +85,7 @@
           :alt="ad.title || $t('ads.sponsoredAd')"
           class="ad-logo-strip__logo"
           loading="lazy"
-        >
+        />
         <div class="ad-logo-strip__info">
           <span v-if="ad.title" class="ad-logo-strip__name">{{ ad.title }}</span>
           <a
@@ -417,7 +417,7 @@ function ctaText(ad: Ad): string {
 /* ==================================
    Responsive: tablet+
    ================================== */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .ad-card__title {
     font-size: var(--font-size-lg);
   }
@@ -435,7 +435,7 @@ function ctaText(ad: Ad): string {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .ad-card__logo {
     width: 56px;
     height: 56px;

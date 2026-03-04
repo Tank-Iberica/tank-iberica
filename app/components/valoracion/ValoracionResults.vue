@@ -532,13 +532,13 @@ const emit = defineEmits<{
 }
 
 /* ---- Responsive ---- */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .result-card {
     padding: var(--spacing-8);
   }
@@ -556,7 +556,7 @@ const emit = defineEmits<{
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .stats-grid {
     grid-template-columns: repeat(3, 1fr);
   }

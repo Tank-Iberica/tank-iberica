@@ -37,7 +37,7 @@ const localConfirmText = computed({
           </p>
           <div class="form-group">
             <label>Escribe <strong>borrar</strong> para confirmar:</label>
-            <input v-model="localConfirmText" type="text" placeholder="borrar" autocomplete="off" >
+            <input v-model="localConfirmText" type="text" placeholder="borrar" autocomplete="off" />
           </div>
         </div>
         <div class="modal-footer">
@@ -89,7 +89,7 @@ const localConfirmText = computed({
 
 .modal-sm {
   width: 100%;
-  max-width: 480px;
+  max-width: 30em;
 }
 
 .modal-header {

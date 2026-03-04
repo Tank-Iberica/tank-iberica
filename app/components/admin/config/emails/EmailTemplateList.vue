@@ -133,7 +133,7 @@ const emit = defineEmits<{
   background: #d1d5db;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .template-list {
     width: 280px;
     flex-shrink: 0;
@@ -144,7 +144,7 @@ const emit = defineEmits<{
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 80em) {
   .template-list {
     width: 320px;
   }

@@ -48,7 +48,7 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
                 :src="vehicle.main_image_url"
                 :alt="`${vehicle.brand} ${vehicle.model}`"
                 loading="lazy"
-              >
+              />
               <div v-else class="card-ph">{{ vehicle.brand.charAt(0) }}</div>
             </div>
             <div class="card-body">
@@ -417,7 +417,7 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .cards-grid {
     min-width: auto;
   }
@@ -431,7 +431,7 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .cards-scroll {
     overflow-x: visible;
   }

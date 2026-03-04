@@ -197,7 +197,7 @@ function calculateScore(anomalies: Anomaly[], rates: number[], maxReasonable: nu
     const cv = mean > 0 ? Math.sqrt(variance) / mean : 0
 
     // High coefficient of variation = inconsistent
-    if (cv > 1.0) score -= 15
+    if (cv > 1) score -= 15
     else if (cv > 0.5) score -= 5
   }
 

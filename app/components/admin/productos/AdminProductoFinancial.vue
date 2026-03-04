@@ -63,7 +63,7 @@ function fmt(val: number | null | undefined): string {
             @input="
               emit('update:minPrice', Number(($event.target as HTMLInputElement).value) || null)
             "
-          >
+          />
         </div>
         <div class="field">
           <label>Coste adquisición €</label>
@@ -77,7 +77,7 @@ function fmt(val: number | null | undefined): string {
                 Number(($event.target as HTMLInputElement).value) || null,
               )
             "
-          >
+          />
         </div>
         <div class="field">
           <label>Fecha adquisición</label>
@@ -87,7 +87,7 @@ function fmt(val: number | null | undefined): string {
             @input="
               emit('update:acquisitionDate', ($event.target as HTMLInputElement).value || null)
             "
-          >
+          />
         </div>
       </div>
 
@@ -116,7 +116,7 @@ function fmt(val: number | null | undefined): string {
                   @input="
                     emit('update-maint', r.id, 'date', ($event.target as HTMLInputElement).value)
                   "
-                >
+                />
               </td>
               <td>
                 <input
@@ -126,7 +126,7 @@ function fmt(val: number | null | undefined): string {
                   @input="
                     emit('update-maint', r.id, 'reason', ($event.target as HTMLInputElement).value)
                   "
-                >
+                />
               </td>
               <td>
                 <input
@@ -141,7 +141,7 @@ function fmt(val: number | null | undefined): string {
                       Number(($event.target as HTMLInputElement).value),
                     )
                   "
-                >
+                />
               </td>
               <td class="invoice-cell">
                 <template v-if="r.invoice_url">
@@ -156,7 +156,7 @@ function fmt(val: number | null | undefined): string {
                   </a>
                   <label class="invoice-change" title="Cambiar factura">
                     ↻
-                    <input type="file" @change="emit('upload-maint-invoice', r.id, $event)" >
+                    <input type="file" @change="emit('upload-maint-invoice', r.id, $event)" />
                   </label>
                 </template>
                 <label v-else class="invoice-upload">
@@ -165,7 +165,7 @@ function fmt(val: number | null | undefined): string {
                     type="file"
                     :disabled="driveLoading"
                     @change="emit('upload-maint-invoice', r.id, $event)"
-                  >
+                  />
                 </label>
               </td>
               <td><button class="btn-x" @click="emit('remove-maint', r.id)">×</button></td>
@@ -214,7 +214,7 @@ function fmt(val: number | null | undefined): string {
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                >
+                />
               </td>
               <td>
                 <input
@@ -228,7 +228,7 @@ function fmt(val: number | null | undefined): string {
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                >
+                />
               </td>
               <td>
                 <input
@@ -238,7 +238,7 @@ function fmt(val: number | null | undefined): string {
                   @input="
                     emit('update-rental', r.id, 'notes', ($event.target as HTMLInputElement).value)
                   "
-                >
+                />
               </td>
               <td>
                 <input
@@ -253,7 +253,7 @@ function fmt(val: number | null | undefined): string {
                       Number(($event.target as HTMLInputElement).value),
                     )
                   "
-                >
+                />
               </td>
               <td class="invoice-cell">
                 <template v-if="r.invoice_url">
@@ -268,7 +268,7 @@ function fmt(val: number | null | undefined): string {
                   </a>
                   <label class="invoice-change" title="Cambiar factura">
                     ↻
-                    <input type="file" @change="emit('upload-rental-invoice', r.id, $event)" >
+                    <input type="file" @change="emit('upload-rental-invoice', r.id, $event)" />
                   </label>
                 </template>
                 <label v-else class="invoice-upload">
@@ -277,7 +277,7 @@ function fmt(val: number | null | undefined): string {
                     type="file"
                     :disabled="driveLoading"
                     @change="emit('upload-rental-invoice', r.id, $event)"
-                  >
+                  />
                 </label>
               </td>
               <td><button class="btn-x" @click="emit('remove-rental', r.id)">×</button></td>
@@ -502,7 +502,7 @@ function fmt(val: number | null | undefined): string {
   padding: 16px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .row-3 {
     grid-template-columns: 1fr;
   }

@@ -224,7 +224,7 @@ function alertLevelLabel(level: string): string {
   background: var(--bg-secondary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .alert-item {
     flex-direction: row;
     align-items: center;

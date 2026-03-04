@@ -116,7 +116,7 @@ async function copyLink(): Promise<void> {
     document.body.appendChild(input)
     input.select()
     document.execCommand('copy')
-    document.body.removeChild(input)
+    input.remove()
     copied.value = true
     setTimeout(() => {
       copied.value = false

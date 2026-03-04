@@ -634,9 +634,10 @@ function onTouchEnd() {
 }
 
 /* ============================================
-   Responsive: 480px (small mobile)
+   Responsive: 30em (small mobile)
    ============================================ */
-@media (max-width: 479px) {
+
+(@media ()max-width: 29.9375em())) {
   .catalog-table {
     min-width: 1000px;
   }
@@ -678,9 +679,9 @@ function onTouchEnd() {
 }
 
 /* ============================================
-   Responsive: >=768px (tablet)
+   Responsive: >=48em (tablet)
    ============================================ */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .table-wrapper {
     padding: 0.5rem 1.5rem;
   }
@@ -711,9 +712,9 @@ function onTouchEnd() {
 }
 
 /* ============================================
-   Responsive: >=1024px (desktop)
+   Responsive: >=64em (desktop)
    ============================================ */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .table-wrapper {
     padding: 0.5rem 3rem;
   }
@@ -730,7 +731,8 @@ function onTouchEnd() {
 }
 
 /* Hide scroll hint on wide screens where table fits */
-@media (min-width: 1400px) {
+
+(@media ()min-width: 87.5em())) {
   .scroll-hint {
     display: none;
   }

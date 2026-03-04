@@ -385,7 +385,7 @@ function onSubmit() {
 }
 
 /* ---- Tablet+ centered modal ---- */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .reg-modal-backdrop {
     align-items: center;
     padding: var(--spacing-4);

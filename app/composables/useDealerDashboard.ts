@@ -58,6 +58,39 @@ interface TopVehicle {
   status: string
 }
 
+function buildFavCounts(rows: Array<{ vehicle_id: string }>): Record<string, number> {
+  const counts: Record<string, number> = {}
+  for (const row of rows) {
+    counts[row.vehicle_id] = (counts[row.vehicle_id] || 0) + 1
+  }
+  return counts
+}
+
+type RawLead = {
+  id: string
+  buyer_name: string | null
+  buyer_email: string | null
+  vehicle_id: string | null
+  status: string
+  message: string | null
+  created_at: string | null
+  vehicles: { brand: string; model: string } | null
+}
+
+function mapLeads(raw: RawLead[]): RecentLead[] {
+  return raw.map((lead) => ({
+    id: lead.id,
+    buyer_name: lead.buyer_name,
+    buyer_email: lead.buyer_email,
+    vehicle_id: lead.vehicle_id,
+    vehicle_brand: lead.vehicles?.brand || null,
+    vehicle_model: lead.vehicles?.model || null,
+    status: lead.status,
+    message: lead.message,
+    created_at: lead.created_at,
+  }))
+}
+
 export function useDealerDashboard() {
   const supabase = useSupabaseClient()
   const { userId } = useAuth()
@@ -215,29 +248,7 @@ export function useDealerDashboard() {
         conversionRate,
       }
 
-      // Map recent leads with vehicle info
-      recentLeads.value = (
-        (recentLeadsRes.data || []) as Array<{
-          id: string
-          buyer_name: string | null
-          buyer_email: string | null
-          vehicle_id: string | null
-          status: string
-          message: string | null
-          created_at: string | null
-          vehicles: { brand: string; model: string } | null
-        }>
-      ).map((lead) => ({
-        id: lead.id,
-        buyer_name: lead.buyer_name,
-        buyer_email: lead.buyer_email,
-        vehicle_id: lead.vehicle_id,
-        vehicle_brand: lead.vehicles?.brand || null,
-        vehicle_model: lead.vehicles?.model || null,
-        status: lead.status,
-        message: lead.message,
-        created_at: lead.created_at,
-      }))
+      recentLeads.value = mapLeads((recentLeadsRes.data || []) as RawLead[])
 
       // Map top vehicles
       const topVehiclesMapped = (
@@ -271,10 +282,7 @@ export function useDealerDashboard() {
           .in('vehicle_id', topVehicleIds)
 
         if (favData) {
-          const favCounts: Record<string, number> = {}
-          for (const row of favData as Array<{ vehicle_id: string }>) {
-            favCounts[row.vehicle_id] = (favCounts[row.vehicle_id] || 0) + 1
-          }
+          const favCounts = buildFavCounts(favData as Array<{ vehicle_id: string }>)
           for (const v of topVehiclesMapped) {
             v.favorites = favCounts[v.id] || 0
           }

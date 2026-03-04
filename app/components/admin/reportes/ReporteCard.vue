@@ -498,7 +498,7 @@ const { t } = useI18n()
 /* ============================================
    RESPONSIVE
    ============================================ */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .report-actions {
     flex-wrap: nowrap;
   }
@@ -508,7 +508,7 @@ const { t } = useI18n()
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .detail-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -526,7 +526,7 @@ const { t } = useI18n()
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .detail-grid {
     grid-template-columns: 1fr 1fr 1fr;
   }

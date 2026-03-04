@@ -250,7 +250,7 @@ const { t } = useI18n()
   color: var(--color-warning-text);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .desktop-only {
     display: block;
   }

@@ -189,7 +189,7 @@ const sellerResponseLabel = computed<string>(() => {
   color: var(--color-error);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .conv-header__back {
     display: none;
   }

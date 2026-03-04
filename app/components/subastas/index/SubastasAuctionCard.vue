@@ -279,8 +279,8 @@ defineProps<{
   font-weight: var(--font-weight-medium);
 }
 
-/* Breakpoint: 480px (large mobile / landscape) */
-@media (min-width: 480px) {
+/* Breakpoint: 30em (large mobile / landscape) */
+@media (min-width: 30em) {
   .auction-card-title {
     font-size: var(--font-size-base);
   }
@@ -290,8 +290,8 @@ defineProps<{
   }
 }
 
-/* Breakpoint: 768px (tablet) */
-@media (min-width: 768px) {
+/* Breakpoint: 48em (tablet) */
+@media (min-width: 48em) {
   .auction-card-body {
     padding: var(--spacing-4);
   }
@@ -306,8 +306,8 @@ defineProps<{
   }
 }
 
-/* Breakpoint: 1024px (desktop) */
-@media (min-width: 1024px) {
+/* Breakpoint: 64em (desktop) */
+@media (min-width: 64em) {
   .auction-card-title {
     font-size: var(--font-size-lg);
   }

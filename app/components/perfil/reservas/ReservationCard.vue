@@ -31,7 +31,7 @@ const { getImageUrl } = useImageUrl()
             :src="getImageUrl(reservation.vehicle_image, 'thumb')"
             :alt="reservation.vehicle_title || $t('reservations.vehicle')"
             loading="lazy"
-          >
+          />
           <div v-else class="reservation-card__image-placeholder">
             <svg
               viewBox="0 0 24 24"
@@ -353,7 +353,7 @@ const { getImageUrl } = useImageUrl()
   cursor: not-allowed;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .reservation-card__image {
     width: 120px;
     height: 80px;
@@ -378,7 +378,7 @@ const { getImageUrl } = useImageUrl()
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .reservation-card__vehicle {
     flex-wrap: nowrap;
     align-items: center;

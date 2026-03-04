@@ -76,7 +76,7 @@ export default defineNuxtPlugin(() => {
 
     try {
       if (prebidScript?.parentNode) {
-        prebidScript.parentNode.removeChild(prebidScript)
+        prebidScript.remove()
         prebidScript = null
       }
 

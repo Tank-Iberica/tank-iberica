@@ -239,7 +239,7 @@ const { t } = useI18n()
   background: var(--color-success-bg, #dcfce7);
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .historico-table {
     font-size: 0.75rem;
   }

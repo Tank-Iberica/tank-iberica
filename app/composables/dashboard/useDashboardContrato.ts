@@ -52,6 +52,54 @@ export interface ContractRow {
 // Composable
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+type ContractTerms = Record<string, unknown>
+
+function buildBaseContractTerms(
+  clientType: ClientType,
+  lessorRepresentative: string,
+  lessorCompany: string,
+  lessorCIF: string,
+  lessorAddress: string,
+  jurisdiction: string,
+  location: string,
+): ContractTerms {
+  return {
+    clientType,
+    lessorRepresentative,
+    lessorCompany,
+    lessorCIF,
+    lessorAddress,
+    jurisdiction,
+    location,
+  }
+}
+
+type DealerRaw = Record<string, unknown>
+
+function resolveCompanyName(raw: DealerRaw): string {
+  if (typeof raw.legal_name === 'string' && raw.legal_name) return raw.legal_name
+  if (typeof raw.company_name === 'string') return raw.company_name
+  if (
+    raw.company_name &&
+    typeof raw.company_name === 'object' &&
+    'es' in (raw.company_name as Record<string, string>)
+  )
+    return (raw.company_name as Record<string, string>).es
+  return ''
+}
+
+function resolveDealerLocation(raw: DealerRaw): string {
+  if (raw.location_data && typeof raw.location_data === 'object') {
+    const loc = raw.location_data as Record<string, string>
+    return loc.es || loc.en || ''
+  }
+  return typeof raw.location === 'string' ? raw.location : ''
+}
+
 export function useDashboardContrato() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
@@ -223,37 +271,14 @@ export function useDashboardContrato() {
     const dealer = dealerProfile.value
     if (!dealer) return
 
-    // The raw data from select('*') contains all columns
-    const raw = dealer as Record<string, unknown>
-
-    lessorCompany.value =
-      (typeof raw.legal_name === 'string' && raw.legal_name
-        ? raw.legal_name
-        : typeof raw.company_name === 'string'
-          ? raw.company_name
-          : raw.company_name &&
-              typeof raw.company_name === 'object' &&
-              'es' in (raw.company_name as Record<string, string>)
-            ? (raw.company_name as Record<string, string>).es
-            : '') || ''
-
+    const raw = dealer as DealerRaw
+    lessorCompany.value = resolveCompanyName(raw) || ''
     lessorCIF.value = typeof raw.cif_nif === 'string' ? raw.cif_nif : ''
 
-    // Location data
-    if (raw.location_data && typeof raw.location_data === 'object') {
-      const loc = raw.location_data as Record<string, string>
-      lessorAddress.value = loc.es || loc.en || ''
-      if (!contractLocation.value) {
-        contractLocation.value = loc.es || loc.en || ''
-      }
-      if (!contractJurisdiction.value) {
-        contractJurisdiction.value = loc.es || loc.en || ''
-      }
-    } else if (typeof raw.location === 'string') {
-      lessorAddress.value = raw.location
-      if (!contractLocation.value) contractLocation.value = raw.location
-      if (!contractJurisdiction.value) contractJurisdiction.value = raw.location
-    }
+    const loc = resolveDealerLocation(raw)
+    lessorAddress.value = loc
+    if (!contractLocation.value) contractLocation.value = loc
+    if (!contractJurisdiction.value) contractJurisdiction.value = loc
   }
 
   // -----------------------------------------------------------------------
@@ -340,41 +365,47 @@ export function useDashboardContrato() {
 
       const clientDocNum = clientType.value === 'persona' ? clientNIF.value : clientCIF.value
 
-      const terms: Record<string, unknown> = {
-        clientType: clientType.value,
-        lessorRepresentative: lessorRepresentative.value,
-        lessorCompany: lessorCompany.value,
-        lessorCIF: lessorCIF.value,
-        lessorAddress: lessorAddress.value,
-        jurisdiction: contractJurisdiction.value,
-        location: contractLocation.value,
-      }
+      const terms = buildBaseContractTerms(
+        clientType.value,
+        lessorRepresentative.value,
+        lessorCompany.value,
+        lessorCIF.value,
+        lessorAddress.value,
+        contractJurisdiction.value,
+        contractLocation.value,
+      )
 
       if (contractType.value === 'arrendamiento') {
-        terms.monthlyRent = contractMonthlyRent.value
-        terms.deposit = contractDeposit.value
-        terms.duration = contractDuration.value
-        terms.durationUnit = contractDurationUnit.value
-        terms.paymentDays = contractPaymentDays.value
-        terms.residualValue = contractVehicleResidualValue.value
-        terms.hasPurchaseOption = contractHasPurchaseOption.value
-        if (contractHasPurchaseOption.value) {
-          terms.purchasePrice = contractPurchasePrice.value
-          terms.purchaseNotice = contractPurchaseNotice.value
-          terms.rentMonthsToDiscount = contractRentMonthsToDiscount.value
-        }
+        Object.assign(terms, {
+          monthlyRent: contractMonthlyRent.value,
+          deposit: contractDeposit.value,
+          duration: contractDuration.value,
+          durationUnit: contractDurationUnit.value,
+          paymentDays: contractPaymentDays.value,
+          residualValue: contractVehicleResidualValue.value,
+          hasPurchaseOption: contractHasPurchaseOption.value,
+          ...(contractHasPurchaseOption.value && {
+            purchasePrice: contractPurchasePrice.value,
+            purchaseNotice: contractPurchaseNotice.value,
+            rentMonthsToDiscount: contractRentMonthsToDiscount.value,
+          }),
+        })
       } else {
-        terms.salePrice = contractSalePrice.value
-        terms.paymentMethod = contractSalePaymentMethod.value
-        terms.deliveryConditions = contractSaleDeliveryConditions.value
-        terms.warranty = contractSaleWarranty.value
+        Object.assign(terms, {
+          salePrice: contractSalePrice.value,
+          paymentMethod: contractSalePaymentMethod.value,
+          deliveryConditions: contractSaleDeliveryConditions.value,
+          warranty: contractSaleWarranty.value,
+        })
       }
 
       if (clientType.value === 'empresa') {
-        terms.clientRepresentative = clientRepresentative.value
-        terms.clientRepresentativeNIF = clientRepresentativeNIF.value
-        terms.clientCompany = clientCompany.value
-        terms.clientCIF = clientCIF.value
+        Object.assign(terms, {
+          clientRepresentative: clientRepresentative.value,
+          clientRepresentativeNIF: clientRepresentativeNIF.value,
+          clientCompany: clientCompany.value,
+          clientCIF: clientCIF.value,
+        })
       }
 
       const insertData = {

@@ -36,7 +36,7 @@ const { t } = useI18n()
     </p>
     <div class="columns-grid">
       <label v-for="(col, idx) in csvColumns" :key="col.key" class="column-checkbox">
-        <input type="checkbox" :checked="col.enabled" @change="emit('toggleColumn', idx)" />
+        <input type="checkbox" :checked="col.enabled" @change="emit('toggleColumn', idx)" >
         <span>{{ getColumnLabel(col.key) }}</span>
       </label>
     </div>
@@ -124,7 +124,7 @@ const { t } = useI18n()
   accent-color: var(--color-primary);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .columns-grid {
     grid-template-columns: repeat(4, 1fr);
   }

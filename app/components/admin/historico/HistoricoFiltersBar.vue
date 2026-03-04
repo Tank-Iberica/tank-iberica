@@ -149,7 +149,7 @@ defineEmits<{
   font-size: 0.8rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .filters-bar {
     flex-direction: column;
   }

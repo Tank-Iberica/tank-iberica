@@ -97,7 +97,7 @@ const { t } = useI18n()
 }
 
 .modal-platforms {
-  max-width: 480px;
+  max-width: 30em;
 }
 
 .modal-header {

@@ -27,7 +27,7 @@ const emit = defineEmits<{
           :value="preset.value"
           :checked="fontPreset === preset.value"
           @change="emit('update:fontPreset', preset.value)"
-        >
+        />
         <span class="radio-label">{{ preset.label }}</span>
       </label>
     </div>
@@ -94,13 +94,13 @@ const emit = defineEmits<{
   font-weight: 500;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .font-presets {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .font-presets {
     grid-template-columns: repeat(4, 1fr);
   }

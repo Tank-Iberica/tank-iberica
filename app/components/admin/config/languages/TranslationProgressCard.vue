@@ -120,7 +120,7 @@ defineProps<{
   padding: 8px 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .progress-item {
     flex-direction: row;
     align-items: center;
@@ -142,7 +142,7 @@ defineProps<{
   }
 }
 
-@media (max-width: 767px) {
+(@media ()max-width: 47.9375em())) {
   .config-card {
     padding: 16px;
   }

@@ -484,7 +484,7 @@ const { t } = useI18n()
   cursor: not-allowed;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .desktop-only {
     display: block;
   }

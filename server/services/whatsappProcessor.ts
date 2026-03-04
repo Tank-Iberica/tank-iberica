@@ -135,6 +135,63 @@ function parseClaudeResponse(text: string): ClaudeVehicleAnalysis {
   return JSON.parse(cleaned) as ClaudeVehicleAnalysis
 }
 
+async function downloadWhatsAppImages(mediaIds: string[]): Promise<Buffer[]> {
+  const buffers: Buffer[] = []
+  for (const mediaId of mediaIds) {
+    try {
+      const buffer = await downloadWhatsAppMedia(mediaId)
+      if (buffer.length > 0) buffers.push(buffer)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown error'
+      console.error('[whatsappProcessor] Failed to download media:', message)
+    }
+  }
+  return buffers
+}
+
+async function uploadAnalyzedImages(
+  imageBuffers: Buffer[],
+  analysis: ClaudeVehicleAnalysis,
+): Promise<
+  Array<{
+    result: { publicId: string; secureUrl: string; width: number; height: number; format: string }
+    altText: string
+    position: number
+  }>
+> {
+  const uploaded: Array<{
+    result: { publicId: string; secureUrl: string; width: number; height: number; format: string }
+    altText: string
+    position: number
+  }> = []
+  for (let i = 0; i < imageBuffers.length; i++) {
+    const currentBuffer = imageBuffers[i]
+    if (!currentBuffer) continue
+    const filename = `${sanitizeSlug(analysis.suggested_slug)}-${i + 1}-${Date.now()}`
+    const altText =
+      analysis.image_alt_texts[i] || `${analysis.brand} ${analysis.model} imagen ${i + 1}`
+    const result = await uploadImage(currentBuffer, { filename })
+    if (result) uploaded.push({ result, altText, position: i })
+  }
+  return uploaded
+}
+
+async function notifyDealerResult(
+  phoneNumber: string,
+  success: boolean,
+  title?: string,
+  slug?: string,
+): Promise<void> {
+  try {
+    const message = success
+      ? `\u2705 Tu veh\u00EDculo ha sido procesado: ${title}. Un admin lo revisar\u00E1 pronto. Enlace: ${getSiteUrl()}/vehiculo/${slug}`
+      : 'Lo sentimos, hubo un error procesando tu env\u00EDo. Nuestro equipo lo revisar\u00E1 manualmente. Gracias por tu paciencia.'
+    await sendWhatsAppMessage(phoneNumber, message)
+  } catch {
+    console.error('[whatsappProcessor] Failed to send notification')
+  }
+}
+
 /**
  * Process a WhatsApp submission end-to-end.
  *
@@ -163,18 +220,7 @@ export async function processWhatsAppSubmission(
 
   try {
     // 3. Download images from WhatsApp
-    const imageBuffers: Buffer[] = []
-    for (const mediaId of submission.media_ids) {
-      try {
-        const buffer = await downloadWhatsAppMedia(mediaId)
-        if (buffer.length > 0) {
-          imageBuffers.push(buffer)
-        }
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Unknown error'
-        console.error('[whatsappProcessor] Failed to download media:', message)
-      }
-    }
+    const imageBuffers = await downloadWhatsAppImages(submission.media_ids)
 
     // 4. Get category names from DB for the prompt
     const { data: categoryNamesRaw } = await supabase.from('categories').select('name_es')
@@ -213,26 +259,7 @@ export async function processWhatsAppSubmission(
     const analysis = parseClaudeResponse(aiResponse.text)
 
     // 6. Upload images
-    const uploadedImages: Array<{
-      result: { publicId: string; secureUrl: string; width: number; height: number; format: string }
-      altText: string
-      position: number
-    }> = []
-
-    for (let i = 0; i < imageBuffers.length; i++) {
-      const currentBuffer = imageBuffers[i]
-      if (!currentBuffer) continue
-
-      const filename = `${sanitizeSlug(analysis.suggested_slug)}-${i + 1}-${Date.now()}`
-      const altText =
-        analysis.image_alt_texts[i] || `${analysis.brand} ${analysis.model} imagen ${i + 1}`
-
-      const result = await uploadImage(currentBuffer, { filename })
-
-      if (result) {
-        uploadedImages.push({ result, altText, position: i })
-      }
-    }
+    const uploadedImages = await uploadAnalyzedImages(imageBuffers, analysis)
 
     // 7. Create vehicle + images
     const vehicleResult = await createVehicleFromAI(
@@ -252,14 +279,7 @@ export async function processWhatsAppSubmission(
 
     // 9. Notify dealer via WhatsApp
     const title = analysis.title_es || `${analysis.brand} ${analysis.model}`
-    try {
-      await sendWhatsAppMessage(
-        submission.phone_number,
-        `\u2705 Tu veh\u00EDculo ha sido procesado: ${title}. Un admin lo revisar\u00E1 pronto. Enlace: ${getSiteUrl()}/vehiculo/${vehicleResult.slug}`,
-      )
-    } catch {
-      console.error('[whatsappProcessor] Failed to send success notification')
-    }
+    await notifyDealerResult(submission.phone_number, true, title, vehicleResult.slug)
 
     return {
       vehicleId: vehicleResult.id,
@@ -276,14 +296,7 @@ export async function processWhatsAppSubmission(
     })
 
     // Notify dealer of failure
-    try {
-      await sendWhatsAppMessage(
-        submission.phone_number,
-        'Lo sentimos, hubo un error procesando tu env\u00EDo. Nuestro equipo lo revisar\u00E1 manualmente. Gracias por tu paciencia.',
-      )
-    } catch {
-      console.error('[whatsappProcessor] Failed to send error notification')
-    }
+    await notifyDealerResult(submission.phone_number, false)
 
     throw err
   }

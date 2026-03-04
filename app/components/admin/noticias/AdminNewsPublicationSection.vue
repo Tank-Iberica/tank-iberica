@@ -177,7 +177,7 @@ function onStatusChange(value: string) {
   gap: 16px;
 }
 
-@media (max-width: 600px) {
+(@media ()max-width: 37.5em())) {
   .row-2 {
     grid-template-columns: 1fr;
   }

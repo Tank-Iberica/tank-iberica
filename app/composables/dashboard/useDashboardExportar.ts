@@ -168,32 +168,30 @@ function renderPdfDescription(
   return yPos
 }
 
-function renderPdfVehiclePage(
+function renderPdfHeader(
   doc: JsPDFDoc,
-  vehicle: ExportVehicle,
   companyName: string,
   profileUrl: string,
-  locale: string,
-  t: (key: string) => string,
-) {
-  const pageWidth = 210
-  const pageHeight = 297
-  const margin = 20
-  const contentWidth = pageWidth - margin * 2
-
-  doc.addPage()
-  let yPos = margin
-
-  // Header bar
+  margin: number,
+  pageWidth: number,
+): void {
   doc.setFillColor(35, 66, 74)
   doc.rect(0, 0, pageWidth, 15, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(10)
   doc.text(companyName, margin, 10)
   doc.text(profileUrl, pageWidth - margin, 10, { align: 'right' })
-  yPos = 25
+}
 
-  // Image placeholder
+function renderPdfImagePlaceholder(
+  doc: JsPDFDoc,
+  vehicle: ExportVehicle,
+  margin: number,
+  yPos: number,
+  pageWidth: number,
+  contentWidth: number,
+  t: (key: string) => string,
+): number {
   doc.setFillColor(240, 240, 240)
   doc.rect(margin, yPos, contentWidth, 80, 'F')
   doc.setTextColor(150, 150, 150)
@@ -207,9 +205,16 @@ function renderPdfVehiclePage(
     yPos + 40,
     { align: 'center', maxWidth: contentWidth - 10 },
   )
-  yPos += 90
+  return yPos + 90
+}
 
-  // Title + Year + Price
+function renderPdfTitlePrice(
+  doc: JsPDFDoc,
+  vehicle: ExportVehicle,
+  margin: number,
+  yPos: number,
+  locale: string,
+): number {
   doc.setTextColor(35, 66, 74)
   doc.setFontSize(22)
   doc.text(`${vehicle.brand} ${vehicle.model}`, margin, yPos)
@@ -234,22 +239,18 @@ function renderPdfVehiclePage(
     )
     yPos += 12
   }
+  return yPos
+}
 
-  // Divider + Specs
-  doc.setDrawColor(220, 220, 220)
-  doc.line(margin, yPos, pageWidth - margin, yPos)
-  yPos += 8
-
-  const specs = collectVehicleSpecs(vehicle, locale, t)
-  yPos = renderPdfSpecsGrid(doc, specs, margin, yPos, contentWidth / 2)
-
-  // Description
-  const desc = locale === 'en' ? vehicle.description_en : vehicle.description_es
-  if (desc) {
-    yPos = renderPdfDescription(doc, desc, margin, yPos, pageWidth, contentWidth)
-  }
-
-  // Footer
+function renderPdfFooter(
+  doc: JsPDFDoc,
+  companyName: string,
+  profileUrl: string,
+  margin: number,
+  pageWidth: number,
+  pageHeight: number,
+  t: (key: string) => string,
+): void {
   doc.setFillColor(245, 245, 245)
   doc.rect(0, pageHeight - 20, pageWidth, 20, 'F')
   doc.setTextColor(100, 100, 100)
@@ -262,6 +263,41 @@ function renderPdfVehiclePage(
     pageHeight - 10,
     { align: 'right' },
   )
+}
+
+function renderPdfVehiclePage(
+  doc: JsPDFDoc,
+  vehicle: ExportVehicle,
+  companyName: string,
+  profileUrl: string,
+  locale: string,
+  t: (key: string) => string,
+) {
+  const pageWidth = 210
+  const pageHeight = 297
+  const margin = 20
+  const contentWidth = pageWidth - margin * 2
+
+  doc.addPage()
+
+  renderPdfHeader(doc, companyName, profileUrl, margin, pageWidth)
+
+  let yPos = renderPdfImagePlaceholder(doc, vehicle, margin, 25, pageWidth, contentWidth, t)
+  yPos = renderPdfTitlePrice(doc, vehicle, margin, yPos, locale)
+
+  doc.setDrawColor(220, 220, 220)
+  doc.line(margin, yPos, pageWidth - margin, yPos)
+  yPos += 8
+
+  const specs = collectVehicleSpecs(vehicle, locale, t)
+  yPos = renderPdfSpecsGrid(doc, specs, margin, yPos, contentWidth / 2)
+
+  const desc = locale === 'en' ? vehicle.description_en : vehicle.description_es
+  if (desc) {
+    renderPdfDescription(doc, desc, margin, yPos, pageWidth, contentWidth)
+  }
+
+  renderPdfFooter(doc, companyName, profileUrl, margin, pageWidth, pageHeight, t)
 }
 
 // ────────────────────────────────────────────

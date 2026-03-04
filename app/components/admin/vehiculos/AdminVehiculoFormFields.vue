@@ -104,7 +104,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
           class="form-input"
           required
           @input="updateField('brand', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
       <div class="form-group">
         <label class="form-label">Modelo *</label>
@@ -114,7 +114,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
           class="form-input"
           required
           @input="updateField('model', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
     </div>
     <div class="form-row">
@@ -127,7 +127,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
           min="1900"
           max="2100"
           @input="updateField('year', Number(($event.target as HTMLInputElement).value) || null)"
-        >
+        />
       </div>
       <div class="form-group">
         <label class="form-label">Matrícula</label>
@@ -136,7 +136,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
           type="text"
           class="form-input"
           @input="updateField('plate', ($event.target as HTMLInputElement).value)"
-        >
+        />
       </div>
     </div>
   </section>
@@ -154,7 +154,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
           min="0"
           step="100"
           @input="updateField('price', Number(($event.target as HTMLInputElement).value) || null)"
-        >
+        />
       </div>
       <div v-if="form.category !== 'venta'" class="form-group">
         <label class="form-label">Precio alquiler (&euro;/mes)</label>
@@ -167,7 +167,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
           @input="
             updateField('rental_price', Number(($event.target as HTMLInputElement).value) || null)
           "
-        >
+        />
       </div>
     </div>
   </section>
@@ -200,7 +200,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
           class="form-input"
           placeholder="Ej: Andalucía"
           @input="updateField('location_region', ($event.target as HTMLInputElement).value || null)"
-        >
+        />
       </div>
       <div class="form-group">
         <label class="form-label">Provincia</label>
@@ -212,7 +212,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
           @input="
             updateField('location_province', ($event.target as HTMLInputElement).value || null)
           "
-        >
+        />
       </div>
     </div>
     <div class="form-row">
@@ -224,7 +224,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
           class="form-input"
           placeholder="Ej: Polígono Industrial..."
           @input="updateField('location', ($event.target as HTMLInputElement).value || null)"
-        >
+        />
       </div>
     </div>
   </section>
@@ -284,7 +284,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
               Number(($event.target as HTMLInputElement).value) || null,
             )
           "
-        >
+        />
       </div>
       <div class="form-group">
         <label class="form-label">Precio mínimo (&euro;)</label>
@@ -297,7 +297,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
           @input="
             updateField('min_price', Number(($event.target as HTMLInputElement).value) || null)
           "
-        >
+        />
       </div>
     </div>
   </section>
@@ -331,7 +331,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
   margin-bottom: 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .form-row {
     grid-template-columns: repeat(2, 1fr);
   }
