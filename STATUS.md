@@ -1,7 +1,7 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-15 (cierre) — Seguridad e incidentes completados: CI arreglada, plan de respuesta, recordatorios trimestrales, anomaly detection.
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc hasta 15-mar (finalizada)
+**Última actualización:** 2026-03-04 (continuación) — Fase 3 (S3776): refactorización reaplied ✅. Fase 5 (S7924): **0 issues** ✅. Tests 22/22 ✅.
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc hasta 15-mar + continuación 04-mar (Fase 3&5)
 **Puntuación global:** ~83/100 (auditoría corregida mar-26) · Historial completo: `git log STATUS.md`
 
 ---
@@ -41,6 +41,8 @@
 
 | Fecha         | Resumen                                                                                                                                                                                                                                                                                  |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 04-mar (II)   | **Fase 3 + 5 COMPLETA** ✅ — Fase 3 S3776 refactorizado (applyBalanceFilters, accumulateByType helpers en useAdminBalance.ts). Fase 5 S7924 39→0 ✅ (all media query px→em conversion). Tests 22/22 ✅ (209/209). Pending: SonarQube scan confirmation.                                  |
+| 04-mar        | **Fase 3 S3776 COMPLETA** ✅ — 0 issues (desde 68 en 14-mar). 22 archivos refactorizados (helpers module-level). Fix `useCatalogState.test.ts` (mock `inject` en vi.mock). Tests 22/22 ✅.                                                                                               |
 | 15-mar (II)   | **INCIDENT-RESPONSE.md creado** (guía paso-a-paso para no-técnicos, 4 escenarios). **CI arreglada**: `npm audit fix` minimatch→3.1.5 + `audit-level=critical` en security.yml. **Anomaly-detection job** añadido a daily-audit.yml. Commits: `ac722d7`, `e4a3522`, `69da0c4`, `2294b5f`. |
 | 15-mar        | Dependabot PRs #1-2 cerradas (lockfile conflict: listhen@1.9.0 vs crossws 0.4.1). Q&A respondido: ANTHROPIC_API_KEY no requiere GitHub Secrets para Claude Code (ya lo gestiona sesiones interactivas). Commit `69da0c4`.                                                                |
 | 14-mar (3)    | ENTORNO-DESARROLLO.md revisado: Docker/SonarQube, integraciones de código (AdSense, Prebid, Google Ads, Turnstile), VAPID/CRON_SECRET, 12 servicios cloud documentados.                                                                                                                  |

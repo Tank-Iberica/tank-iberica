@@ -101,9 +101,38 @@ export const BALANCE_STATUS_LABELS: Record<BalanceStatus, string> = {
   cobrado: 'Cobrado',
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applyBalanceFilters(query: any, filters: BalanceFilters): any {
+  if (filters.year) {
+    query = query.gte('fecha', `${filters.year}-01-01`).lte('fecha', `${filters.year}-12-31`)
+  }
+  if (filters.tipo) query = query.eq('tipo', filters.tipo)
+  if (filters.razon) query = query.eq('razon', filters.razon)
+  if (filters.estado) query = query.eq('estado', filters.estado)
+  if (filters.category_id) query = query.eq('subcategory_id', filters.category_id)
+  if (filters.subcategory_id) query = query.eq('subcategory_id', filters.subcategory_id)
+  if (filters.search)
+    query = query.or(`detalle.ilike.%${filters.search}%,notas.ilike.%${filters.search}%`)
+  return query
+}
+
 function calculateProfit(importe: number, coste: number | null): number | null {
   if (!coste || coste === 0) return null
   return Math.round(((importe - coste) / coste) * 100)
+}
+
+type ByType = Record<string, { ingresos: number; gastos: number; coste: number; beneficio: number }>
+
+function accumulateByType(byType: ByType, entry: BalanceEntry, amount: number): void {
+  if (!entry.subcategory_id || !entry.subcategories) return
+  const subcatName = entry.subcategories.name_es
+  byType[subcatName] ??= { ingresos: 0, gastos: 0, coste: 0, beneficio: 0 }
+  if (entry.tipo === 'ingreso') {
+    byType[subcatName].ingresos += amount
+    byType[subcatName].coste += entry.coste_asociado || 0
+  } else {
+    byType[subcatName].gastos += amount
+  }
 }
 
 export function useAdminBalance() {
@@ -126,43 +155,12 @@ export function useAdminBalance() {
     error.value = null
 
     try {
-      let query = supabase
+      const baseQuery = supabase
         .from('balance')
         .select('*, vehicles(brand, model, year), subcategories(name_es)', { count: 'exact' })
         .order('fecha', { ascending: false })
 
-      // Apply filters
-      if (filters.year) {
-        const startDate = `${filters.year}-01-01`
-        const endDate = `${filters.year}-12-31`
-        query = query.gte('fecha', startDate).lte('fecha', endDate)
-      }
-
-      if (filters.tipo) {
-        query = query.eq('tipo', filters.tipo)
-      }
-
-      if (filters.razon) {
-        query = query.eq('razon', filters.razon)
-      }
-
-      if (filters.estado) {
-        query = query.eq('estado', filters.estado)
-      }
-
-      if (filters.category_id) {
-        query = query.eq('subcategory_id', filters.category_id)
-      }
-
-      if (filters.subcategory_id) {
-        query = query.eq('subcategory_id', filters.subcategory_id)
-      }
-
-      if (filters.search) {
-        query = query.or(`detalle.ilike.%${filters.search}%,notas.ilike.%${filters.search}%`)
-      }
-
-      const { data, error: err, count } = await query
+      const { data, error: err, count } = await applyBalanceFilters(baseQuery, filters)
 
       if (err) throw err
 
@@ -324,10 +322,7 @@ export function useAdminBalance() {
     let totalIngresos = 0
     let totalGastos = 0
     const byReason: Record<string, { ingresos: number; gastos: number }> = {}
-    const byType: Record<
-      string,
-      { ingresos: number; gastos: number; coste: number; beneficio: number }
-    > = {}
+    const byType: ByType = {}
 
     for (const entry of entries.value) {
       const amount = entry.importe || 0
@@ -338,7 +333,6 @@ export function useAdminBalance() {
         totalGastos += amount
       }
 
-      // By reason
       byReason[entry.razon] ??= { ingresos: 0, gastos: 0 }
       if (entry.tipo === 'ingreso') {
         byReason[entry.razon]!.ingresos += amount
@@ -346,20 +340,9 @@ export function useAdminBalance() {
         byReason[entry.razon]!.gastos += amount
       }
 
-      // By subcategory (for profit analysis)
-      if (entry.subcategory_id && entry.subcategories) {
-        const subcatName = entry.subcategories.name_es
-        byType[subcatName] ??= { ingresos: 0, gastos: 0, coste: 0, beneficio: 0 }
-        if (entry.tipo === 'ingreso') {
-          byType[subcatName].ingresos += amount
-          byType[subcatName].coste += entry.coste_asociado || 0
-        } else {
-          byType[subcatName].gastos += amount
-        }
-      }
+      accumulateByType(byType, entry, amount)
     }
 
-    // Calculate profit percentage by type
     for (const key of Object.keys(byType)) {
       const sub = byType[key]
       if (sub != null && sub.coste > 0) {
