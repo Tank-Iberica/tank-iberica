@@ -492,6 +492,171 @@ En lugar de bloquear vendedores, se informa al comprador de forma sutil y contex
 
 ---
 
+## 2.13 Brokeraje Inteligente — Intermediación automatizada con IA
+
+_(Definido 04-mar-2026)_
+
+### Concepto
+
+Sistema de intermediación automatizada donde **tres entidades independientes** colaboran para cerrar operaciones de compraventa con margen garantizado:
+
+- **Tracciona** (marketplace) — precalifica compradores, facilita el match, cobra fee
+- **Tank Ibérica** (compraventa) — negocia con vendedores, compra la unidad, vende al comprador con margen
+- **IberHaul** (transporte) — entrega la unidad si es necesario
+
+El comprador (C) nunca sabe quién es el vendedor original (V). Para C, Tank Ibérica es simplemente el vendedor. Son empresas distintas con CIFs distintos — no hay conflicto de intereses.
+
+### Flujo operativo
+
+```
+1. C encuentra unidad en Tracciona
+        ↓
+2. IA de Tracciona (T) ofrece prenegociación vía WhatsApp
+   - Precalifica: presupuesto, financiación, ubicación, urgencia
+   - NO revela datos del vendedor ni identificadores de la unidad
+   - Scoring de seriedad del comprador
+        ↓
+3. C pasa precalificación → IA de Tank Ibérica (I) contacta a V
+   - "Hemos visto tu [vehículo] en Tracciona. Tenemos un comprador interesado. ¿Aceptarías X€?"
+   - Negocia precio de compra
+   - V no sabe que hay un C concreto esperando
+        ↓
+4. ¿Hay margen ≥ Z entre precio de V y lo que C pagaría?
+   - NO → deal descartado, nadie pierde tiempo humano
+   - SÍ ↓
+        ↓
+5. Tracciona dice a C: "Tenemos una unidad que encaja con lo que buscas
+   a ese precio. ¿Quieres que te pongamos en contacto con el vendedor?"
+   - El "vendedor" es Tank Ibérica
+        ↓
+6. C confirma interés real (visita, depósito, o acuerdo de precio)
+        ↓
+7. IA alerta a humanos de Tank Ibérica con resumen del deal:
+   - Compra a V por X, venta a C por X+Y, margen Y
+   - Humanos validan y toman el relevo
+        ↓
+8. Tank Ibérica compra a V → Tank Ibérica vende a C
+   Tracciona cobra fee por el match
+   IberHaul transporta si es necesario
+```
+
+### Modelo de consentimiento — Diseñado para auditoría
+
+**Principio rector:** No diseñar para "que no se note", sino para ser **defendible ante auditoría** (AEPD, fiscal, mercantil). Transparencia de entidad, logs completos, base jurídica explícita, derecho de oposición efectivo.
+
+**Servicio activo por defecto (opt-out):** Al publicar en Tracciona, los TyC incluyen:
+
+> _"Al publicar un anuncio, aceptas recibir ofertas de compra de empresas colaboradoras de la plataforma. Puedes desactivar este servicio en tu perfil en cualquier momento."_
+
+**Transparencia de entidad en cada comunicación:**
+
+- Tracciona contacta a C → se identifica con nombre legal y CIF de Tracciona
+- Tank Ibérica contacta a V → se identifica con nombre legal, CIF y dirección de Tank Ibérica
+- Nunca se envía un mensaje sin identificar la empresa remitente
+
+**Consentimiento explícito del comprador:** Antes de compartir datos de C con Tank Ibérica, se solicita consentimiento explícito (art. 6.1.a RGPD) con mensaje claro que identifica a Tank Ibérica como destinatario.
+
+**Derecho de oposición del vendedor:**
+
+- Toggle en perfil (`Ajustes → Ofertas de compra`) — efecto inmediato
+- Responder "NO OFERTAS" por WhatsApp — efecto inmediato
+- Cada cambio registrado en `brokerage_consent_log` con timestamp y evidencia
+
+**Tres capas de contacto (todas transparentes):**
+
+| Capa                    | Quién contacta               | Se identifica como    | Base jurídica (RGPD)                  |
+| ----------------------- | ---------------------------- | --------------------- | ------------------------------------- |
+| 1. Servicio activo      | IA en nombre de Tank Ibérica | Tank Ibérica SL + CIF | Art. 6.1.f (interés legítimo) + TyC   |
+| 2. V desactiva servicio | Tank Ibérica como comprador  | Tank Ibérica SL + CIF | Art. 6.1.f (comprador legítimo)       |
+| 3. V fuera de Tracciona | Tank Ibérica directamente    | Tank Ibérica SL + CIF | Art. 6.1.f (oferta a anuncio público) |
+
+**Audit trail:** Cada acción del sistema (contacto, respuesta, opt-out, negociación, escalación) queda en `brokerage_audit_log` con actor, base jurídica y timestamp.
+
+> **Arquitectura técnica completa:** `referencia/BROKERAJE-ARQUITECTURA.md` — tablas, máquina de estados, RLS, retención de datos, separación de datos entre empresas.
+
+### Ventaja competitiva
+
+**Ningún competidor puede replicar esto fácilmente.** Requiere las tres patas simultáneamente:
+
+| Competidor                      | Marketplace | Compraventa con infraestructura | Transporte propio |
+| ------------------------------- | ----------- | ------------------------------- | ----------------- |
+| Autoline/Mascus                 | ✔️          | ✖️                              | ✖️                |
+| Wallapop/Milanuncios            | ✔️          | ✖️                              | ✖️                |
+| Dealers tradicionales           | ✖️          | ✔️                              | ✖️                |
+| **Tracciona + Tank + IberHaul** | **✔️**      | **✔️**                          | **✔️**            |
+
+**Diferenciador para vendedores:** _"En Tracciona no esperas compradores. Nosotros te los buscamos."_
+La plataforma genera actividad percibida incluso cuando el vendedor rechaza ofertas → retención superior.
+
+### Efecto volante
+
+```
+Más unidades publicadas en Tracciona
+    → más compradores precalificados por la IA
+        → más deals cerrados por Tank Ibérica
+            → más vendedores ven actividad (ofertas recibidas)
+                → más vendedores publican en Tracciona
+```
+
+Cada operación genera datos de mercado (precios de compra, precios de venta, tiempos, zonas, marcas) que alimentan la Capa 4 (§2.11 — datos para bancos, leasings, aseguradoras).
+
+### Por qué funciona especialmente bien en vehículo industrial
+
+- **Tickets altos** (20k-200k€): margen del 3-5% = 600-10.000€ por operación
+- **Vendedores profesionales** que priorizan liquidez rápida sobre precio máximo
+- **Compradores (autónomos/pymes)** que no quieren perder días negociando
+- **Poca competencia digital** con IA en el sector industrial
+- **Tank Ibérica ya opera** con campa en Onzonilla — infraestructura existente
+
+### Requisitos legales y de compliance
+
+| Aspecto                  | Estado / Acción                                                                |
+| ------------------------ | ------------------------------------------------------------------------------ |
+| **RGPD**                 |                                                                                |
+| TyC Tracciona            | Añadir cláusula de ofertas de empresas colaboradoras (opt-out)                 |
+| Política de privacidad   | Declarar compartición de datos con Tank Ibérica SL (identificada)              |
+| Acuerdo art. 26 RGPD     | Contrato de co-responsables del tratamiento entre Tracciona y Tank Ibérica     |
+| EIPD (DPIA)              | Evaluación de impacto — recomendable por decisiones automatizadas (scoring IA) |
+| Test de ponderación      | Documentar interés legítimo (art. 6.1.f) para contacto a vendedores            |
+| Protocolo ARSULPD        | Procedimiento de atención de derechos para datos de brokeraje                  |
+| **Mercantil / fiscal**   |                                                                                |
+| Alta IAE Tank Ibérica    | Epígrafe de compraventa de vehículos usados (ya existente)                     |
+| Régimen fiscal           | REBU si V es particular · IVA normal si V es empresa                           |
+| Garantía legal           | 1 año si C es consumidor final (particular)                                    |
+| Precios de transferencia | Fee Tracciona→Tank Ibérica a precio de mercado (documentado)                   |
+| **LSSI**                 |                                                                                |
+| Identificación remitente | Nombre legal + CIF + dirección en toda comunicación comercial                  |
+| Derecho de oposición     | Opt-out inmediato vía perfil web o respuesta WhatsApp                          |
+
+### Margen mínimo viable (Z) — A determinar
+
+Factores que definen Z:
+
+- Coste de transporte (IberHaul, si aplica)
+- Gestión documental (transferencia, ITV si necesario)
+- Coste financiero del stock (días en campa)
+- Garantía legal (provisión por posibles reclamaciones)
+- Fee de Tracciona por el match
+- Margen neto mínimo de Tank Ibérica
+
+> **Pendiente:** Definir Z con datos reales de las primeras operaciones. Inicialmente estimar por franja de precio del vehículo (ej: Z = 5% en vehículos <50k€, Z = 3% en >50k€).
+
+### Precalificación del comprador — Scoring
+
+La IA de Tracciona puntúa a C antes de activar la negociación con V:
+
+| Factor                  | Peso  | Señal positiva                  | Señal negativa               |
+| ----------------------- | ----- | ------------------------------- | ---------------------------- |
+| Presupuesto declarado   | Alto  | Rango realista para la unidad   | Muy por debajo del mercado   |
+| Financiación            | Alto  | Pre-aprobado o no necesita      | Sin capacidad ni interés     |
+| Urgencia                | Medio | "Necesito para este mes"        | "Solo estoy mirando"         |
+| Historial en plataforma | Medio | Ha contactado, ha buscado mucho | Primera visita               |
+| Ubicación               | Bajo  | Cercana o acepta transporte     | Muy lejos sin plan logístico |
+
+Solo compradores con score ≥ umbral activan la negociación con V. Esto evita que Tank Ibérica pierda tiempo con curiosos.
+
+---
+
 ## 3. Crecimiento y Go-to-Market
 
 ### 3.1 Supply-side first

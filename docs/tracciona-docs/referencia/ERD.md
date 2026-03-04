@@ -87,113 +87,119 @@ erDiagram
 
 ## All Tables (92)
 
-| Table                      | RLS | Vertical | Description                                  |
-| -------------------------- | --- | -------- | -------------------------------------------- |
-| **Core**                   |     |          |                                              |
-| `users`                    | Yes | No       | Auth users (Supabase Auth)                   |
-| `profiles`                 | Yes | No       | Extended user profiles                       |
-| `dealers`                  | Yes | Yes      | Business accounts                            |
-| `vehicles`                 | Yes | Yes      | Vehicle listings                             |
-| `vehicle_images`           | Yes | No       | Images per vehicle                           |
-| `categories`               | Yes | Yes      | Dynamic categories                           |
-| `subcategories`            | Yes | Yes      | Nested under categories                      |
-| `subcategory_categories`   | Yes | No       | Many-to-many subcategory-category            |
-| `articles`                 | Yes | Yes      | Blog posts and guides                        |
-| `content_translations`     | Yes | No       | Long-form translations (JSONB)               |
-| `vertical_config`          | Yes | No       | Multi-vertical settings                      |
-| `config`                   | Yes | No       | Global configuration key-value               |
-| `actions`                  | Yes | Yes      | Dynamic action types (buy/sell/rent/auction) |
-| `attributes`               | Yes | No       | Dynamic vehicle attributes                   |
-| `brands`                   | Yes | No       | Vehicle brands                               |
-| `locations`                | Yes | No       | Hierarchical location tree                   |
-| `geo_regions`              | No  | No       | Geographic region definitions                |
-| `geocoding_cache`          | No  | No       | Geocoding API response cache                 |
-| **User engagement**        |     |          |                                              |
-| `favorites`                | Yes | No       | User favorites                               |
-| `search_alerts`            | Yes | No       | Saved search alerts                          |
-| `search_logs`              | Yes | No       | Search query logging                         |
-| `user_vehicle_views`       | Yes | No       | Per-user vehicle view tracking               |
-| `vehicle_comparisons`      | Yes | No       | Vehicle comparison sessions                  |
-| `comparison_notes`         | Yes | No       | Notes on comparisons                         |
-| `comments`                 | Yes | No       | Article comments                             |
-| `seller_reviews`           | Yes | No       | Seller rating and reviews                    |
-| `activity_logs`            | Yes | No       | User activity tracking                       |
-| `analytics_events`         | Yes | No       | Frontend analytics events                    |
-| `consents`                 | Yes | No       | GDPR consent records                         |
-| **Messaging**              |     |          |                                              |
-| `conversations`            | Yes | No       | Buyer-seller conversations                   |
-| `conversation_messages`    | Yes | No       | Messages within conversations                |
-| `chat_messages`            | Yes | No       | Legacy chat messages                         |
-| `contacts`                 | Yes | No       | Contact form submissions                     |
-| **Commerce**               |     |          |                                              |
-| `reservations`             | Yes | No       | Vehicle reservations                         |
-| `auctions`                 | Yes | No       | Auction listings                             |
-| `auction_bids`             | Yes | No       | Bids on auctions                             |
-| `auction_registrations`    | Yes | No       | Auction participant registrations            |
-| `subscriptions`            | Yes | No       | Dealer subscriptions (Stripe)                |
-| `invoices`                 | Yes | No       | Billing invoices                             |
-| `payments`                 | Yes | No       | Payment records                              |
-| `balance`                  | Yes | No       | Dealer balance tracking                      |
-| `price_history`            | Yes | No       | Vehicle price change history                 |
-| `historico`                | Yes | No       | Archived/sold vehicle records                |
-| `transport_requests`       | Yes | No       | Transport service requests                   |
-| `transport_zones`          | No  | No       | Transport zone definitions and pricing       |
-| `service_requests`         | Yes | No       | Post-sale service requests                   |
-| **Credits**                |     |          |                                              |
-| `credit_packs`             | Yes | No       | Available credit pack definitions            |
-| `credit_transactions`      | Yes | No       | Credit purchase/spend log                    |
-| `user_credits`             | Yes | No       | User credit balances                         |
-| **Dealer tools**           |     |          |                                              |
-| `dealer_leads`             | Yes | No       | Lead capture                                 |
-| `leads`                    | Yes | No       | General leads                                |
-| `dealer_stats`             | Yes | No       | Dealer performance statistics                |
-| `dealer_events`            | Yes | No       | Dealer activity events                       |
-| `dealer_fiscal_data`       | Yes | No       | Dealer tax/fiscal information                |
-| `dealer_invoices`          | Yes | No       | Dealer-generated invoices                    |
-| `dealer_stripe_accounts`   | Yes | No       | Stripe Connect accounts                      |
-| `dealer_platforms`         | Yes | No       | External platform sync config                |
-| `dealer_quotes`            | Yes | No       | Dealer price quotes                          |
-| `dealer_contracts`         | Yes | No       | Signed contracts                             |
-| `pipeline_items`           | Yes | No       | Sales pipeline / kanban                      |
-| `maintenance_records`      | Yes | No       | Vehicle maintenance log                      |
-| `rental_records`           | Yes | No       | Vehicle rental tracking                      |
-| `visit_slots`              | Yes | No       | Dealer visit time slots                      |
-| `visit_bookings`           | Yes | No       | Buyer visit reservations                     |
-| `merch_orders`             | Yes | No       | Merchandising orders                         |
-| `whatsapp_submissions`     | Yes | No       | WhatsApp vehicle submissions                 |
-| **Verification**           |     |          |                                              |
-| `verification_documents`   | Yes | No       | Document verification                        |
-| **Advertising**            |     |          |                                              |
-| `advertisements`           | Yes | Yes      | User-submitted ad requests                   |
-| `demands`                  | Yes | Yes      | User-submitted vehicle demands               |
-| `advertisers`              | Yes | No       | Advertiser accounts                          |
-| `ads`                      | Yes | No       | Managed ad placements                        |
-| `ad_events`                | No  | No       | Ad impression/click tracking                 |
-| `ad_floor_prices`          | No  | No       | Minimum CPM per placement                    |
-| `ad_revenue_log`           | No  | No       | Ad revenue tracking                          |
-| `user_ad_profiles`         | Yes | No       | User interest profiles for targeting         |
-| **Content & social**       |     |          |                                              |
-| `news`                     | Yes | Yes      | News articles (legacy)                       |
-| `social_posts`             | Yes | No       | Generated social media posts                 |
-| `active_landings`          | Yes | Yes      | Active landing page configs                  |
-| `newsletter_subscriptions` | Yes | No       | Newsletter signup records                    |
-| **Email**                  |     |          |                                              |
-| `email_preferences`        | Yes | No       | User email opt-in/out                        |
-| `push_subscriptions`       | Yes | No       | Web push notification subscriptions          |
-| `email_logs`               | Yes | No       | Sent email log                               |
-| **Data & market**          |     |          |                                              |
-| `market_data`              | No  | No       | Market price/volume data                     |
-| `competitor_vehicles`      | No  | No       | Scraped competitor listings                  |
-| `demand_data`              | No  | No       | Aggregated demand signals                    |
-| `data_subscriptions`       | Yes | No       | API data product subscriptions               |
-| `api_usage`                | No  | No       | API call tracking                            |
-| `platforms`                | No  | No       | External platform definitions                |
-| **Infrastructure**         |     |          |                                              |
-| `infra_clusters`           | No  | No       | Infrastructure cluster definitions           |
-| `infra_alerts`             | No  | No       | Infrastructure alerts                        |
-| `infra_metrics`            | No  | No       | Infrastructure metric snapshots              |
-| `feature_flags`            | Yes | No       | Feature flag toggles                         |
-| `reports`                  | Yes | No       | User-submitted reports                       |
+| Table                        | RLS | Vertical | Description                                  |
+| ---------------------------- | --- | -------- | -------------------------------------------- |
+| **Core**                     |     |          |                                              |
+| `users`                      | Yes | No       | Auth users (Supabase Auth)                   |
+| `profiles`                   | Yes | No       | Extended user profiles                       |
+| `dealers`                    | Yes | Yes      | Business accounts                            |
+| `vehicles`                   | Yes | Yes      | Vehicle listings                             |
+| `vehicle_images`             | Yes | No       | Images per vehicle                           |
+| `categories`                 | Yes | Yes      | Dynamic categories                           |
+| `subcategories`              | Yes | Yes      | Nested under categories                      |
+| `subcategory_categories`     | Yes | No       | Many-to-many subcategory-category            |
+| `articles`                   | Yes | Yes      | Blog posts and guides                        |
+| `content_translations`       | Yes | No       | Long-form translations (JSONB)               |
+| `vertical_config`            | Yes | No       | Multi-vertical settings                      |
+| `config`                     | Yes | No       | Global configuration key-value               |
+| `actions`                    | Yes | Yes      | Dynamic action types (buy/sell/rent/auction) |
+| `attributes`                 | Yes | No       | Dynamic vehicle attributes                   |
+| `brands`                     | Yes | No       | Vehicle brands                               |
+| `locations`                  | Yes | No       | Hierarchical location tree                   |
+| `geo_regions`                | No  | No       | Geographic region definitions                |
+| `geocoding_cache`            | No  | No       | Geocoding API response cache                 |
+| **User engagement**          |     |          |                                              |
+| `favorites`                  | Yes | No       | User favorites                               |
+| `search_alerts`              | Yes | No       | Saved search alerts                          |
+| `search_logs`                | Yes | No       | Search query logging                         |
+| `user_vehicle_views`         | Yes | No       | Per-user vehicle view tracking               |
+| `vehicle_comparisons`        | Yes | No       | Vehicle comparison sessions                  |
+| `comparison_notes`           | Yes | No       | Notes on comparisons                         |
+| `comments`                   | Yes | No       | Article comments                             |
+| `seller_reviews`             | Yes | No       | Seller rating and reviews                    |
+| `activity_logs`              | Yes | No       | User activity tracking                       |
+| `analytics_events`           | Yes | No       | Frontend analytics events                    |
+| `consents`                   | Yes | No       | GDPR consent records                         |
+| **Messaging**                |     |          |                                              |
+| `conversations`              | Yes | No       | Buyer-seller conversations                   |
+| `conversation_messages`      | Yes | No       | Messages within conversations                |
+| `chat_messages`              | Yes | No       | Legacy chat messages                         |
+| `contacts`                   | Yes | No       | Contact form submissions                     |
+| **Commerce**                 |     |          |                                              |
+| `reservations`               | Yes | No       | Vehicle reservations                         |
+| `auctions`                   | Yes | No       | Auction listings                             |
+| `auction_bids`               | Yes | No       | Bids on auctions                             |
+| `auction_registrations`      | Yes | No       | Auction participant registrations            |
+| `subscriptions`              | Yes | No       | Dealer subscriptions (Stripe)                |
+| `invoices`                   | Yes | No       | Billing invoices                             |
+| `payments`                   | Yes | No       | Payment records                              |
+| `balance`                    | Yes | No       | Dealer balance tracking                      |
+| `price_history`              | Yes | No       | Vehicle price change history                 |
+| `historico`                  | Yes | No       | Archived/sold vehicle records                |
+| `transport_requests`         | Yes | No       | Transport service requests                   |
+| `transport_zones`            | No  | No       | Transport zone definitions and pricing       |
+| `service_requests`           | Yes | No       | Post-sale service requests                   |
+| **Credits**                  |     |          |                                              |
+| `credit_packs`               | Yes | No       | Available credit pack definitions            |
+| `credit_transactions`        | Yes | No       | Credit purchase/spend log                    |
+| `user_credits`               | Yes | No       | User credit balances                         |
+| **Dealer tools**             |     |          |                                              |
+| `dealer_leads`               | Yes | No       | Lead capture                                 |
+| `leads`                      | Yes | No       | General leads                                |
+| `dealer_stats`               | Yes | No       | Dealer performance statistics                |
+| `dealer_events`              | Yes | No       | Dealer activity events                       |
+| `dealer_fiscal_data`         | Yes | No       | Dealer tax/fiscal information                |
+| `dealer_invoices`            | Yes | No       | Dealer-generated invoices                    |
+| `dealer_stripe_accounts`     | Yes | No       | Stripe Connect accounts                      |
+| `dealer_platforms`           | Yes | No       | External platform sync config                |
+| `dealer_quotes`              | Yes | No       | Dealer price quotes                          |
+| `dealer_contracts`           | Yes | No       | Signed contracts                             |
+| `pipeline_items`             | Yes | No       | Sales pipeline / kanban                      |
+| `maintenance_records`        | Yes | No       | Vehicle maintenance log                      |
+| `rental_records`             | Yes | No       | Vehicle rental tracking                      |
+| `visit_slots`                | Yes | No       | Dealer visit time slots                      |
+| `visit_bookings`             | Yes | No       | Buyer visit reservations                     |
+| `merch_orders`               | Yes | No       | Merchandising orders                         |
+| `whatsapp_submissions`       | Yes | No       | WhatsApp vehicle submissions                 |
+| **Verification**             |     |          |                                              |
+| `verification_documents`     | Yes | No       | Document verification                        |
+| **Advertising**              |     |          |                                              |
+| `advertisements`             | Yes | Yes      | User-submitted ad requests                   |
+| `demands`                    | Yes | Yes      | User-submitted vehicle demands               |
+| `advertisers`                | Yes | No       | Advertiser accounts                          |
+| `ads`                        | Yes | No       | Managed ad placements                        |
+| `ad_events`                  | No  | No       | Ad impression/click tracking                 |
+| `ad_floor_prices`            | No  | No       | Minimum CPM per placement                    |
+| `ad_revenue_log`             | No  | No       | Ad revenue tracking                          |
+| `user_ad_profiles`           | Yes | No       | User interest profiles for targeting         |
+| **Content & social**         |     |          |                                              |
+| `news`                       | Yes | Yes      | News articles (legacy)                       |
+| `social_posts`               | Yes | No       | Generated social media posts                 |
+| `active_landings`            | Yes | Yes      | Active landing page configs                  |
+| `newsletter_subscriptions`   | Yes | No       | Newsletter signup records                    |
+| **Email**                    |     |          |                                              |
+| `email_preferences`          | Yes | No       | User email opt-in/out                        |
+| `push_subscriptions`         | Yes | No       | Web push notification subscriptions          |
+| `email_logs`                 | Yes | No       | Sent email log                               |
+| **Data & market**            |     |          |                                              |
+| `market_data`                | No  | No       | Market price/volume data                     |
+| `competitor_vehicles`        | No  | No       | Scraped competitor listings                  |
+| `demand_data`                | No  | No       | Aggregated demand signals                    |
+| `data_subscriptions`         | Yes | No       | API data product subscriptions               |
+| `api_usage`                  | No  | No       | API call tracking                            |
+| `platforms`                  | No  | No       | External platform definitions                |
+| **Infrastructure**           |     |          |                                              |
+| `infra_clusters`             | No  | No       | Infrastructure cluster definitions           |
+| `infra_alerts`               | No  | No       | Infrastructure alerts                        |
+| `infra_metrics`              | No  | No       | Infrastructure metric snapshots              |
+| `feature_flags`              | Yes | No       | Feature flag toggles                         |
+| `reports`                    | Yes | No       | User-submitted reports                       |
+| **Brokerage** _(planned)_    |     |          |                                              |
+| `brokerage_deals`            | Yes | No       | Intermediation deal lifecycle                |
+| `brokerage_messages`         | Yes | No       | Negotiation message history                  |
+| `brokerage_audit_log`        | Yes | No       | Full audit trail (compliance)                |
+| `brokerage_consent_log`      | Yes | No       | Consent/opt-out records (RGPD)               |
+| `brokerage_suppression_list` | Yes | No       | Cooldown + suppression per channel (LSSI)    |
 
 ## Migrations
 
