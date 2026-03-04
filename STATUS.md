@@ -1,6 +1,6 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-04 (continuación) — Fase 3 (S3776): refactorización reaplied ✅. Fase 5 (S7924): **0 issues** ✅. Tests 22/22 ✅.
+**Última actualización:** 2026-03-04 (II) — Fase 3 INCOMPLETA (91 issues); Fase 5 COMPLETA (0 issues S7924) ✅. Tests 22/22 ✅.
 **Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc hasta 15-mar + continuación 04-mar (Fase 3&5)
 **Puntuación global:** ~83/100 (auditoría corregida mar-26) · Historial completo: `git log STATUS.md`
 
@@ -37,12 +37,23 @@
 
 ---
 
+## Próximas tareas (prioridad)
+
+1. **Fase 3 S3776** — 91 issues en 48 archivos
+   - Archivos críticos: marketReport.ts (116 violations), useAdminFilters.ts (83), useAdminMetricsActivity.ts (56)
+   - Patrón: extraer helpers de funciones complejas
+   - Estimado: 4-6 sesiones (o pasar a Fase 6 si prefieres otro tipo de issue)
+
+2. **Fase 6 S1874** — deprecated APIs (~32 issues, probablemente menos tiempo)
+
+---
+
 ## Changelog de sesiones
 
 | Fecha         | Resumen                                                                                                                                                                                                                                                                                  |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 04-mar (II)   | **Fase 3 + 5 COMPLETA** ✅ — Fase 3 S3776 refactorizado (applyBalanceFilters, accumulateByType helpers en useAdminBalance.ts). Fase 5 S7924 39→0 ✅ (all media query px→em conversion). Tests 22/22 ✅ (209/209). Pending: SonarQube scan confirmation.                                  |
-| 04-mar        | **Fase 3 S3776 COMPLETA** ✅ — 0 issues (desde 68 en 14-mar). 22 archivos refactorizados (helpers module-level). Fix `useCatalogState.test.ts` (mock `inject` en vi.mock). Tests 22/22 ✅.                                                                                               |
+| 04-mar (II)   | **Fase 5 COMPLETA** ✅ S7924: 39→0 issues (all media query px→em conversion). **Fase 3 INCOMPLETA** — S3776: 91 issues en 48 archivos (useAdminBalance.ts refactorizado con helpers, pero faltan 47 archivos más). Tests 22/22 ✅ (209/209).                                             |
+| 04-mar        | **Fase 3 S3776 COMPLETA** ✅ — 0 issues (desde 68 en 14-mar). 22 archivos refactorizados (helpers module-level). [NOTA: Reporte anterior era parcial — scan actual muestra 91 issues reales en 48 archivos].                                                                             |
 | 15-mar (II)   | **INCIDENT-RESPONSE.md creado** (guía paso-a-paso para no-técnicos, 4 escenarios). **CI arreglada**: `npm audit fix` minimatch→3.1.5 + `audit-level=critical` en security.yml. **Anomaly-detection job** añadido a daily-audit.yml. Commits: `ac722d7`, `e4a3522`, `69da0c4`, `2294b5f`. |
 | 15-mar        | Dependabot PRs #1-2 cerradas (lockfile conflict: listhen@1.9.0 vs crossws 0.4.1). Q&A respondido: ANTHROPIC_API_KEY no requiere GitHub Secrets para Claude Code (ya lo gestiona sesiones interactivas). Commit `69da0c4`.                                                                |
 | 14-mar (3)    | ENTORNO-DESARROLLO.md revisado: Docker/SonarQube, integraciones de código (AdSense, Prebid, Google Ads, Turnstile), VAPID/CRON_SECRET, 12 servicios cloud documentados.                                                                                                                  |
