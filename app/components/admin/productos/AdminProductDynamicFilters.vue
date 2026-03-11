@@ -65,25 +65,25 @@ const emit = defineEmits<{
 .filters-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding-top: 10px;
+  gap: 0.625rem;
+  padding-top: 0.625rem;
 }
 .field-sm {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 0.1875rem;
 }
 .field-sm label {
   font-size: 0.65rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
 }
 .field-sm input,
 .field-sm select {
-  padding: 6px 8px;
+  padding: 0.375rem var(--spacing-2);
   border: 1px solid var(--border-color-light);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.8rem;
 }
 .hint {
@@ -93,7 +93,7 @@ const emit = defineEmits<{
 .tick-inline {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-1);
   font-size: 0.8rem;
   cursor: pointer;
 }

@@ -5,15 +5,16 @@ const props = defineProps<{
   descriptionEs: string
   descriptionEn: string
   generatingDesc: boolean
+  videoUrl?: string | null
 }>()
 
 const emit = defineEmits<{
-  (e: 'update', field: 'description_es' | 'description_en', value: string): void
+  (e: 'update', field: 'description_es' | 'description_en' | 'video_url', value: string): void
   (e: 'generate'): void
 }>()
 
-function onDescriptionInput(field: 'description_es' | 'description_en', event: Event): void {
-  const target = event.target as HTMLTextAreaElement
+function onDescriptionInput(field: 'description_es' | 'description_en' | 'video_url', event: Event): void {
+  const target = event.target as HTMLTextAreaElement | HTMLInputElement
   emit('update', field, target.value)
 }
 </script>
@@ -53,19 +54,32 @@ function onDescriptionInput(field: 'description_es' | 'description_en', event: E
         @input="onDescriptionInput('description_en', $event)"
       />
     </div>
+
+    <div class="form-group">
+      <label for="video_url">{{ t('dashboard.vehicles.videoUrl') }}</label>
+      <p class="form-help">{{ t('dashboard.vehicles.videoUrlHelp') }}</p>
+      <input
+        id="video_url"
+        type="url"
+        :value="props.videoUrl ?? ''"
+        :placeholder="t('dashboard.vehicles.videoUrlPlaceholder')"
+        autocomplete="off"
+        @input="onDescriptionInput('video_url', $event)"
+      />
+    </div>
   </section>
 </template>
 
 <style scoped>
 .form-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .form-section h2 {
-  margin: 0 0 16px 0;
+  margin: 0 0 1rem 0;
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -74,11 +88,11 @@ function onDescriptionInput(field: 'description_es' | 'description_en', event: E
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .form-group label {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-secondary);
 }
@@ -91,29 +105,29 @@ function onDescriptionInput(field: 'description_es' | 'description_en', event: E
 
 .form-group textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 100px;
+  min-height: 6.25rem;
   resize: vertical;
 }
 
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .btn-ai {
-  min-height: 36px;
-  padding: 6px 14px;
-  background: linear-gradient(135deg, #8b5cf6, #6366f1);
-  color: white;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.875rem;
+  background: var(--color-violet-800);
+  color: var(--color-white);
   border: none;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;
 }

@@ -47,25 +47,25 @@ const { t } = useI18n()
 .quick-actions {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .action-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 20px 12px;
+  gap: 0.5rem;
+  padding: 1.25rem 0.75rem;
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   text-decoration: none;
-  color: #334155;
+  color: var(--color-slate-700);
   font-size: 0.85rem;
   font-weight: 500;
   text-align: center;
   transition: box-shadow 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 @media (hover: hover) {
@@ -75,7 +75,7 @@ const { t } = useI18n()
 }
 
 .action-icon {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   color: var(--color-primary);
 }
 

@@ -275,10 +275,10 @@ const { t } = useI18n()
   align-items: center;
   flex-shrink: 0;
   cursor: pointer;
-  width: 48px;
-  height: 28px;
-  min-height: 44px;
-  min-width: 44px;
+  width: 3rem;
+  height: 1.75rem;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   justify-content: center;
 }
 
@@ -291,8 +291,8 @@ const { t } = useI18n()
 
 .toggle__slider {
   position: absolute;
-  width: 48px;
-  height: 28px;
+  width: 3rem;
+  height: 1.75rem;
   background-color: var(--color-gray-300);
   border-radius: var(--border-radius-full);
   transition: background-color var(--transition-fast);
@@ -301,10 +301,10 @@ const { t } = useI18n()
 .toggle__slider::before {
   content: '';
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 22px;
-  height: 22px;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.375rem;
+  height: 1.375rem;
   background-color: var(--color-white);
   border-radius: 50%;
   transition: transform var(--transition-fast);

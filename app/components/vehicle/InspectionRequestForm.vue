@@ -29,6 +29,7 @@ const formData = ref({
 
 const loading = ref(false)
 const submitted = ref(false)
+const showCheckmark = ref(false)
 const error = ref<string | null>(null)
 const fieldErrors = ref<Record<string, string>>({})
 
@@ -90,6 +91,8 @@ async function submitRequest() {
     if (insertError) throw insertError
 
     submitted.value = true
+    await nextTick()
+    requestAnimationFrame(() => { showCheckmark.value = true })
 
     // Reset form
     formData.value = {
@@ -109,6 +112,7 @@ async function submitRequest() {
 
 function resetForm() {
   submitted.value = false
+  showCheckmark.value = false
   error.value = null
 }
 </script>
@@ -116,7 +120,7 @@ function resetForm() {
 <template>
   <div class="inspection-form">
     <div v-if="submitted" class="success-message">
-      <div class="success-icon">✓</div>
+      <UiSuccessCheckmark :show="showCheckmark" />
       <h3>{{ $t('inspection.success') }}</h3>
       <p>{{ $t('inspection.successDesc') }}</p>
       <p class="price-info">{{ $t('inspection.price') }}</p>
@@ -197,7 +201,7 @@ function resetForm() {
         />
       </div>
 
-      <div v-if="error" class="error-message">
+      <div v-if="error" class="error-message" role="alert">
         {{ error }}
       </div>
 
@@ -210,78 +214,78 @@ function resetForm() {
 
 <style scoped>
 .inspection-form {
-  padding: 24px;
-  background: var(--color-bg-secondary, #fff);
-  border-radius: 8px;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: var(--border-radius);
   max-width: 37.5em;
   margin: 0 auto;
 }
 
 .inspection-form h3 {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--color-text-primary, #1a1a1a);
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
 }
 
 .description {
-  color: var(--color-text-secondary, #666);
-  margin-bottom: 24px;
-  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  font-size: var(--font-size-sm);
   line-height: 1.5;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .field-error {
-  font-size: 0.8125rem;
-  color: var(--color-error, var(--color-error));
-  margin-top: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  margin-top: 0.25rem;
 }
 
 .form-group label {
   display: block;
   font-weight: 500;
-  margin-bottom: 8px;
-  color: var(--color-text-primary, #1a1a1a);
-  font-size: 0.9375rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--color-border, #ddd);
-  border-radius: 6px;
-  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
   transition: border-color 0.2s;
-  min-height: 44px; /* Touch target minimum */
+  min-height: 2.75rem;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: 0 0 0 3px var(--color-primary-alpha-10, rgba(35, 66, 74, 0.1));
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 6.25rem;
   font-family: inherit;
 }
 
 .btn-primary,
 .btn-secondary {
   width: 100%;
-  padding: 14px 24px;
-  min-height: 48px; /* Touch target minimum */
-  font-size: 1rem;
+  padding: 0.875rem 1.5rem;
+  min-height: 3rem;
+  font-size: var(--font-size-base);
   font-weight: 600;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
@@ -289,11 +293,11 @@ function resetForm() {
 
 .btn-primary {
   background: var(--color-primary);
-  color: white;
+  color: var(--color-white);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--color-primary-dark, #1a323a);
+  background: var(--color-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -309,46 +313,33 @@ function resetForm() {
 
 .btn-secondary:hover {
   background: var(--color-primary);
-  color: white;
+  color: var(--color-white);
 }
 
 .error-message {
-  background: #fee;
-  border: 1px solid #fcc;
-  color: #c33;
-  padding: 12px 16px;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  font-size: 0.9375rem;
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border, rgba(220, 38, 38, 0.3));
+  color: var(--color-error);
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-sm);
+  margin-bottom: 1rem;
+  font-size: var(--font-size-sm);
 }
 
 .success-message {
   text-align: center;
-  padding: 32px 16px;
+  padding: 2rem 1rem;
 }
 
-.success-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 16px;
-  background: var(--color-success);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: bold;
-}
 
 .success-message h3 {
   color: var(--color-success);
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .success-message p {
-  color: var(--color-text-secondary, #666);
-  margin-bottom: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
   line-height: 1.5;
 }
 
@@ -360,13 +351,13 @@ function resetForm() {
 /* Tablet and up */
 @media (min-width: 48em) {
   .inspection-form {
-    padding: 32px;
+    padding: 2rem;
   }
 
   .btn-primary,
   .btn-secondary {
     width: auto;
-    min-width: 200px;
+    min-width: 12.5rem;
   }
 }
 </style>

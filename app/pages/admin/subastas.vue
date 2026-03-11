@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAdminAuctionList, STATUS_FILTERS } from '~/composables/admin/useAdminAuctionList'
+import { useAdminAuctionList, STATUS_TABS } from '~/composables/admin/useAdminAuctionList'
 
 definePageMeta({
   layout: 'admin',
@@ -68,7 +68,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
     <div class="filters-bar">
       <div class="filter-group status-filter">
         <button
-          v-for="f in STATUS_FILTERS"
+          v-for="f in STATUS_TABS"
           :key="f.value"
           class="filter-btn"
           :class="{ active: activeFilter === f.value }"
@@ -85,9 +85,8 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('admin.subastas.loading') }}</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard v-for="n in 3" :key="n" :lines="3" />
     </div>
 
     <!-- Auctions list -->
@@ -118,7 +117,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
           height="48"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#9ca3af"
+          stroke="var(--color-gray-400)"
           stroke-width="1.5"
         >
           <circle cx="12" cy="12" r="10" />
@@ -167,28 +166,28 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
 }
 
 .section-header h2 {
   margin: 0;
   font-size: 1.5rem;
-  color: #111827;
+  color: var(--color-gray-900);
 }
 
 .total-badge {
   background: var(--bg-secondary);
-  color: #6b7280;
-  padding: 4px 12px;
-  border-radius: 16px;
+  color: var(--color-gray-500);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-lg);
   font-size: 0.85rem;
   font-weight: 500;
 }
@@ -199,12 +198,12 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
 .filters-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding: 12px 16px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
+  padding: var(--spacing-3) var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-card);
   align-items: center;
 }
 
@@ -215,29 +214,29 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
 
 .status-filter {
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   overflow: hidden;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .filter-btn {
-  padding: 8px 14px;
+  padding: var(--spacing-2) 0.875rem;
   border: none;
   background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
   transition:
     background 0.2s,
     color 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
   white-space: nowrap;
 }
 
 .filter-btn:not(:last-child) {
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid var(--color-gray-200);
 }
 
 .filter-btn.active {
@@ -253,25 +252,25 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
    ERROR / LOADING
    ============================================ */
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .loading-state {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -290,7 +289,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
 .auctions-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 /* ============================================
@@ -298,20 +297,20 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
    ============================================ */
 .empty-state-container {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 60px 24px;
+  border-radius: var(--border-radius);
+  padding: 3.75rem var(--spacing-6);
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
 }
 
 .empty-icon {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .empty-title {
   margin: 0;
   font-size: 1.1rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 /* ============================================
@@ -321,11 +320,11 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   font-size: 0.9rem;
 }
 
@@ -341,7 +340,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
 /* ============================================
    RESPONSIVE — Mobile-first
    ============================================ */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header {
     flex-direction: column;
     align-items: stretch;

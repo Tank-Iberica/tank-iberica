@@ -20,9 +20,9 @@
 
     <!-- Vehicle grid with interleaved promo cards -->
     <div v-else-if="displayedVehicles.length" class="vehicle-grid">
-      <template v-for="item in gridItems" :key="item.key">
+      <template v-for="(item, idx) in gridItems" :key="item.key">
         <!-- Vehicle card -->
-        <CatalogVehicleCard v-if="item.type === 'vehicle'" :vehicle="item.vehicle!" />
+        <CatalogVehicleCard v-if="item.type === 'vehicle'" :vehicle="item.vehicle!" :priority="idx < 4" />
         <!-- Promo card (demand + hidden split, or end-of-catalog promos) -->
         <CatalogPromoCard
           v-else
@@ -44,7 +44,7 @@
 
       <!-- Expand area (if available) -->
       <CatalogPromoCard
-        v-if="nextLevel && (nextLevelCount > 0 || nextLevelCountLoading)"
+        v-if="nextLevel && ((nextLevelCount ?? 0) > 0 || nextLevelCountLoading)"
         :slots="[expandSlot]"
         @action="$emit('expandArea')"
       />
@@ -71,7 +71,7 @@
 
     <!-- End-of-catalog cascade (after load-more or when no more pages) -->
     <div
-      v-if="displayedVehicles.length && !hasMore && !loading && cascadeLevels.length"
+      v-if="displayedVehicles.length && !hasMore && !loading && cascadeLevels?.length"
       class="vehicle-grid vehicle-grid--cascade"
     >
       <template v-for="level in cascadeLevels" :key="'cl-' + level.depth">
@@ -232,7 +232,7 @@ const hiddenSlot = computed<PromoSlot | null>(() => {
     descParams: { count: props.hiddenCount, hours: props.hoursUntilNext ?? '?' },
     ctaKey: 'catalog.hiddenVehiclesCta',
     variant: 'gold',
-    badge: `${props.hiddenCount} ${t('catalog.vehicles')}`,
+    badge: `${props.hiddenCount} ${t('vertical.itemsName')}`,
   }
 })
 
@@ -247,7 +247,7 @@ const expandSlot = computed<PromoSlot>(() => ({
   ctaKey: 'catalog.expandToArea',
   ctaSecondaryKey: undefined,
   variant: 'primary',
-  badge: props.nextLevelCount ? `${props.nextLevelCount} ${t('catalog.vehicles')}` : undefined,
+  badge: props.nextLevelCount ? `${props.nextLevelCount} ${t('vertical.itemsName')}` : undefined,
 }))
 
 // Build a suggestion promo slot
@@ -258,7 +258,7 @@ function buildSuggestionSlot(s: SearchSuggestion): PromoSlot {
     titleParams: s.labelParams,
     ctaKey: 'catalog.viewDetails',
     variant: 'accent',
-    badge: `${s.count} ${t('catalog.vehicles')}`,
+    badge: `${s.count} ${t('vertical.itemsName')}`,
   }
 }
 
@@ -376,7 +376,7 @@ function onPromoSecondaryAction(promoId: string, _slotIndex: number) {
 .vehicle-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 1.5rem;
   padding: 1rem 0.5rem;
 }
 
@@ -407,7 +407,7 @@ function onPromoSecondaryAction(promoId: string, _slotIndex: number) {
 }
 
 .skeleton-line {
-  height: 14px;
+  height: 0.875rem;
   border-radius: var(--border-radius-sm);
   background: var(--bg-secondary);
   animation: pulse 1.5s ease-in-out infinite;
@@ -465,7 +465,7 @@ function onPromoSecondaryAction(promoId: string, _slotIndex: number) {
   border-radius: var(--border-radius);
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
-  min-height: 48px;
+  min-height: 3rem;
   transition: background var(--transition-fast);
 }
 

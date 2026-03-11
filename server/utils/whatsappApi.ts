@@ -1,3 +1,4 @@
+import { logger } from './logger'
 /**
  * WhatsApp Cloud API Utilities
  *
@@ -36,7 +37,7 @@ export async function sendWhatsAppMessage(to: string, text: string): Promise<voi
   const phoneNumberId = config.whatsappPhoneNumberId
 
   if (!token || !phoneNumberId) {
-    console.warn(`[WhatsApp Dev] Would send message (${text.length} chars)`)
+    logger.warn(`[WhatsApp Dev] Would send message (${text.length} chars)`)
     return
   }
 
@@ -59,7 +60,7 @@ export async function sendWhatsAppMessage(to: string, text: string): Promise<voi
 
   if (!response.ok) {
     await response.text()
-    console.error(`[WhatsApp] Failed to send message: ${response.status} ${response.statusText}`)
+    logger.error(`[WhatsApp] Failed to send message: ${response.status} ${response.statusText}`)
     throw new Error(`WhatsApp API error: ${response.status} ${response.statusText}`)
   }
 
@@ -82,7 +83,7 @@ export async function downloadWhatsAppMedia(mediaId: string): Promise<Buffer> {
   const token = config.whatsappApiToken
 
   if (!token) {
-    console.warn('[WhatsApp Dev] Would download media (id redacted)')
+    logger.warn('[WhatsApp Dev] Would download media (id redacted)')
     return Buffer.from('')
   }
 
@@ -96,7 +97,7 @@ export async function downloadWhatsAppMedia(mediaId: string): Promise<Buffer> {
 
   if (!metadataResponse.ok) {
     await metadataResponse.text()
-    console.error(`[WhatsApp] Failed to get media metadata: ${metadataResponse.status}`)
+    logger.error(`[WhatsApp] Failed to get media metadata: ${metadataResponse.status}`)
     throw new Error(`WhatsApp media metadata error: ${metadataResponse.status}`)
   }
 
@@ -111,7 +112,7 @@ export async function downloadWhatsAppMedia(mediaId: string): Promise<Buffer> {
 
   if (!mediaResponse.ok) {
     await mediaResponse.text()
-    console.error(`[WhatsApp] Failed to download media: ${mediaResponse.status}`)
+    logger.error(`[WhatsApp] Failed to download media: ${mediaResponse.status}`)
     throw new Error(`WhatsApp media download error: ${mediaResponse.status}`)
   }
 

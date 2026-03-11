@@ -122,26 +122,26 @@ const emit = defineEmits<{
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .card-title {
-  margin: 0 0 4px;
+  margin: 0 0 0.25rem;
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-subtitle {
-  margin: 0 0 20px;
-  color: #6b7280;
+  margin: 0 0 1.25rem;
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .form-group:last-child {
@@ -151,16 +151,16 @@ const emit = defineEmits<{
 .form-group > label {
   display: block;
   font-weight: 600;
-  margin-bottom: 8px;
-  color: #374151;
+  margin-bottom: 0.5rem;
+  color: var(--color-gray-700);
   font-size: 0.875rem;
 }
 
 .form-group input[type='text'] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.95rem;
   box-sizing: border-box;
 }
@@ -168,68 +168,68 @@ const emit = defineEmits<{
 .form-group input[type='text']:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .lang-row {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .lang-field {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .lang-badge {
   flex-shrink: 0;
-  width: 32px;
+  width: 2rem;
   text-align: center;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #6b7280;
+  color: var(--color-gray-500);
   background: var(--bg-secondary);
-  border-radius: 4px;
-  padding: 4px 0;
+  border-radius: var(--border-radius-sm);
+  padding: 0.25rem 0;
   text-transform: uppercase;
 }
 
 .lang-field input {
   flex: 1;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.95rem;
 }
 
 .lang-field input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-row-2col {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .image-preview {
-  margin-top: 12px;
-  padding: 16px;
+  margin-top: 0.75rem;
+  padding: 1rem;
   border: 1px dashed var(--border-color);
-  border-radius: 8px;
-  background: #f9fafb;
+  border-radius: var(--border-radius);
+  background: var(--color-gray-50);
   text-align: center;
 }
 
 .image-preview img {
   max-width: 100%;
-  max-height: 200px;
+  max-height: 12.5rem;
   object-fit: contain;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
 }
 
 @media (min-width: 48em) {

@@ -1,37 +1,31 @@
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
 import { serverSupabaseUser } from '#supabase/server'
 import { isAllowedUrl } from '../../utils/isAllowedUrl'
 import { verifyCsrf } from '../../utils/verifyCsrf'
+import { safeError } from '../../utils/safeError'
+import { validateBody } from '../../utils/validateBody'
 
-interface CheckoutCreditsBody {
-  packSlug: string
-  successUrl: string
-  cancelUrl: string
-}
+const checkoutCreditsSchema = z.object({
+  packSlug: z.string().min(1).max(64).regex(/^[a-z0-9-]+$/, 'packSlug must be lowercase alphanumeric with dashes'),
+  successUrl: z.string().url(),
+  cancelUrl: z.string().url(),
+})
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<CheckoutCreditsBody>(event)
-
   verifyCsrf(event)
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
-  const { packSlug, successUrl, cancelUrl } = body
-
-  if (!packSlug || !successUrl || !cancelUrl) {
-    throw createError({
-      statusCode: 400,
-      message: 'Missing required fields: packSlug, successUrl, cancelUrl',
-    })
-  }
+  const { packSlug, successUrl, cancelUrl } = await validateBody(event, checkoutCreditsSchema)
 
   if (!isAllowedUrl(successUrl)) {
-    throw createError({ statusCode: 400, message: 'Invalid successUrl' })
+    throw safeError(400, 'Invalid successUrl')
   }
   if (!isAllowedUrl(cancelUrl)) {
-    throw createError({ statusCode: 400, message: 'Invalid cancelUrl' })
+    throw safeError(400, 'Invalid cancelUrl')
   }
 
   const config = useRuntimeConfig()
@@ -39,7 +33,7 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Service not configured' })
+    throw safeError(500, 'Service not configured')
   }
 
   // Fetch pack from DB
@@ -61,7 +55,7 @@ export default defineEventHandler(async (event) => {
   }>
 
   if (!packs.length) {
-    throw createError({ statusCode: 404, message: 'Credit pack not found or inactive' })
+    throw safeError(404, 'Credit pack not found or inactive')
   }
 
   // packs.length > 0 guaranteed by check above

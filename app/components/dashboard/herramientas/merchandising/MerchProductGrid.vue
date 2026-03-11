@@ -46,7 +46,7 @@ function getProductUnit(p: MerchProduct): string {
 .section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .section-title {
@@ -57,8 +57,8 @@ function getProductUnit(p: MerchProduct): string {
 }
 
 .section-desc {
-  margin: -8px 0 0;
-  font-size: 0.875rem;
+  margin: -0.5rem 0 0;
+  font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
   line-height: 1.5;
 }
@@ -66,18 +66,18 @@ function getProductUnit(p: MerchProduct): string {
 .product-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .product-card {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 16px;
+  gap: 1rem;
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
-  padding: 16px;
+  padding: 1rem;
   transition: box-shadow 0.15s;
   border: 1px solid var(--color-gray-100);
 }
@@ -88,9 +88,9 @@ function getProductUnit(p: MerchProduct): string {
 
 .product-icon-wrap {
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: var(--border-radius-md);
   background: var(--card-bg, var(--color-gray-100));
   display: flex;
   align-items: center;
@@ -105,7 +105,7 @@ function getProductUnit(p: MerchProduct): string {
 .product-body {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   min-width: 0;
 }
 
@@ -124,7 +124,7 @@ function getProductUnit(p: MerchProduct): string {
 }
 
 .product-unit {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: var(--text-disabled);
   font-weight: 500;
 }

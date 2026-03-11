@@ -124,24 +124,24 @@ function clusterStatusLabel(status: string): string {
 .cluster-badge {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
-  padding: 2px 10px;
+  padding: 0.125rem 0.625rem;
   border-radius: var(--border-radius-full);
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 
 .badge-active {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 
 .badge-migrating {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .badge-full {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -154,7 +154,7 @@ function clusterStatusLabel(status: string): string {
 
 .vertical-tag {
   font-size: var(--font-size-xs);
-  padding: 2px 8px;
+  padding: 0.125rem var(--spacing-2);
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-sm);
@@ -188,15 +188,15 @@ function clusterStatusLabel(status: string): string {
 }
 
 .progress-bar-container {
-  height: 8px;
+  height: 0.5rem;
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   transition: width 0.6s ease;
 }
 

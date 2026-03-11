@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { localizedField } from '../../app/composables/useLocalized'
+import { describe, it, expect, vi } from 'vitest'
+import { localizedField, localizedName, fetchTranslation } from '../../app/composables/useLocalized'
 
 describe('localizedField', () => {
   it('returns the value for the requested locale', () => {
@@ -62,5 +62,142 @@ describe('localizedField', () => {
     // until Object.values()[0] which is '' => returns ''
     const field = { es: '', en: '', fr: '' }
     expect(localizedField(field, 'es')).toBe('')
+  })
+})
+
+// ─── localizedName ────────────────────────────────────────────────────────────
+
+describe('localizedName', () => {
+  it('returns empty string for null item', () => {
+    expect(localizedName(null, 'es')).toBe('')
+  })
+
+  it('returns empty string for undefined item', () => {
+    expect(localizedName(undefined, 'es')).toBe('')
+  })
+
+  it('returns JSONB name value when name field has the locale', () => {
+    const item = { name: { es: 'Camión', en: 'Truck' } }
+    expect(localizedName(item, 'es')).toBe('Camión')
+    expect(localizedName(item, 'en')).toBe('Truck')
+  })
+
+  it('falls back to name_en when locale is en and no JSONB name', () => {
+    const item = { name: null, name_es: 'Camión', name_en: 'Truck' }
+    expect(localizedName(item, 'en')).toBe('Truck')
+  })
+
+  it('falls back to name_es when locale is es and no JSONB name', () => {
+    const item = { name: null, name_es: 'Camión', name_en: 'Truck' }
+    expect(localizedName(item, 'es')).toBe('Camión')
+  })
+
+  it('falls back to name_es for non-en locale when JSONB is empty', () => {
+    const item = { name: null, name_es: 'Camión', name_en: null }
+    expect(localizedName(item, 'fr')).toBe('Camión')
+  })
+
+  it('returns empty string when no JSONB, no name_en (for en locale), no name_es', () => {
+    const item = { name: null }
+    expect(localizedName(item, 'en')).toBe('')
+  })
+
+  it('prefers JSONB over legacy columns', () => {
+    const item = { name: { es: 'Desde JSONB' }, name_es: 'Legacy', name_en: 'Legacy EN' }
+    expect(localizedName(item, 'es')).toBe('Desde JSONB')
+  })
+
+  it('returns empty string when item has no name fields', () => {
+    const item = {}
+    expect(localizedName(item, 'es')).toBe('')
+  })
+})
+
+// ─── fetchTranslation ─────────────────────────────────────────────────────────
+
+describe('fetchTranslation', () => {
+  it('returns empty string when no data returned (default mock)', async () => {
+    const result = await fetchTranslation('vehicle', 'uuid-1', 'description', 'es')
+    expect(result).toBe('')
+  })
+
+  it('returns empty string for en locale with no data', async () => {
+    const result = await fetchTranslation('article', 'uuid-2', 'body', 'en')
+    expect(result).toBe('')
+  })
+
+  it('returns value from exact locale match when supabase returns data', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            eq: () => ({
+              eq: () => ({
+                in: () => ({
+                  order: () =>
+                    Promise.resolve({
+                      data: [
+                        { locale: 'es', value: 'Descripción en español' },
+                        { locale: 'en', value: 'Description in English' },
+                      ],
+                      error: null,
+                    }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      }),
+    }))
+    const result = await fetchTranslation('vehicle', 'uuid-3', 'description', 'es')
+    expect(result).toBe('Descripción en español')
+  })
+
+  it('falls back to en when exact locale not found', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            eq: () => ({
+              eq: () => ({
+                in: () => ({
+                  order: () =>
+                    Promise.resolve({
+                      data: [{ locale: 'en', value: 'English fallback' }],
+                      error: null,
+                    }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      }),
+    }))
+    const result = await fetchTranslation('vehicle', 'uuid-4', 'description', 'fr')
+    expect(result).toBe('English fallback')
+  })
+
+  it('falls back to es when neither exact locale nor en found', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            eq: () => ({
+              eq: () => ({
+                in: () => ({
+                  order: () =>
+                    Promise.resolve({
+                      data: [{ locale: 'es', value: 'Fallback español' }],
+                      error: null,
+                    }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      }),
+    }))
+    const result = await fetchTranslation('vehicle', 'uuid-5', 'description', 'fr')
+    expect(result).toBe('Fallback español')
   })
 })

@@ -1,6 +1,7 @@
 <template>
   <div class="guides-page">
     <div class="guides-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('guide.title') }]" />
       <h1 class="guides-title">{{ $t('guide.title') }}</h1>
       <p class="guides-subtitle">{{ $t('guide.subtitle') }}</p>
 
@@ -29,7 +30,8 @@
 
       <!-- No results -->
       <div v-else-if="guides.length === 0" class="guides-empty">
-        <p>{{ $t('guide.noResults') }}</p>
+        <p class="guides-empty-title">{{ $t('guide.noResults') }}</p>
+        <p class="guides-empty-hint">{{ $t('guide.noResultsHint') }}</p>
       </div>
 
       <!-- Guides grid -->
@@ -41,7 +43,7 @@
           class="guide-card"
         >
           <div class="guide-card-image">
-            <img v-if="item.image_url" :src="item.image_url" :alt="getTitle(item)" loading="lazy" />
+            <NuxtImg v-if="item.image_url" :src="item.image_url" :alt="getTitle(item)" loading="lazy" width="400" height="225" decoding="async" sizes="(max-width: 48rem) 100vw, 400px" />
             <div v-else class="guide-card-placeholder">
               <svg
                 width="32"
@@ -192,9 +194,15 @@ usePageSeo({
   path: '/guia',
 })
 
-onMounted(() => {
-  fetchGuides()
+// SSR-compatible initial load — data arrives in HTML, no client-only flash
+const { data: ssrGuides } = await useAsyncData('guide-index', async () => {
+  const { data, count } = await buildQuery(undefined).range(0, PAGE_SIZE - 1)
+  return { items: (data as unknown as GuideItem[]) || [], count: count || 0 }
 })
+
+guides.value = ssrGuides.value?.items || []
+total.value = ssrGuides.value?.count || 0
+hasMore.value = guides.value.length < total.value
 </script>
 
 <style scoped>
@@ -204,7 +212,7 @@ onMounted(() => {
 }
 
 .guides-container {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -225,24 +233,24 @@ onMounted(() => {
 /* Categories */
 .guides-categories {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   overflow-x: auto;
-  padding-bottom: 8px;
+  padding-bottom: var(--spacing-2);
   margin-bottom: 1.5rem;
   -webkit-overflow-scrolling: touch;
 }
 
 .category-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 20px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--border-color, var(--color-gray-200));
+  border-radius: var(--border-radius-full);
   background: var(--bg-primary);
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: all 0.2s;
 }
 
@@ -263,7 +271,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   text-decoration: none;
@@ -281,7 +289,7 @@ onMounted(() => {
 .guide-card-image {
   position: relative;
   aspect-ratio: 16 / 9;
-  background: var(--bg-secondary, #f5f5f5);
+  background: var(--bg-secondary, var(--color-skeleton-bg));
   overflow: hidden;
 }
 
@@ -302,12 +310,12 @@ onMounted(() => {
 
 .guide-card-category {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 0.5rem;
+  left: 0.5rem;
   background: var(--color-primary);
   color: white;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -353,7 +361,7 @@ onMounted(() => {
 }
 
 .skeleton-card {
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
   background: var(--bg-primary);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -369,13 +377,13 @@ onMounted(() => {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .skeleton-line {
-  height: 16px;
+  height: 1rem;
   background: var(--bg-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -403,6 +411,17 @@ onMounted(() => {
   color: var(--text-auxiliary);
 }
 
+.guides-empty-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.guides-empty-hint {
+  font-size: 0.875rem;
+  color: var(--text-auxiliary);
+}
+
 /* Load more */
 .guides-load-more {
   text-align: center;
@@ -410,14 +429,14 @@ onMounted(() => {
 }
 
 .btn-load-more {
-  padding: 12px 32px;
+  padding: var(--spacing-3) var(--spacing-8);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: opacity 0.2s;
 }
 
@@ -431,7 +450,7 @@ onMounted(() => {
 }
 
 /* Tablet */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .guides-grid,
   .guides-loading {
     grid-template-columns: repeat(2, 1fr);
@@ -439,7 +458,7 @@ onMounted(() => {
 }
 
 /* Desktop */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .guides-title {
     font-size: 1.75rem;
   }
@@ -454,7 +473,7 @@ onMounted(() => {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .guides-container {
     padding: 0 2rem;
   }

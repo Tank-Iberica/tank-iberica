@@ -45,8 +45,8 @@ test.describe('Catalog browsing flow', () => {
     if (await searchInput.first().isVisible()) {
       await searchInput.first().fill('Volvo')
 
-      // Wait briefly for client-side fuzzy filtering to apply
-      await page.waitForTimeout(500)
+      // Wait for client-side fuzzy filtering to apply (reactive, no network request)
+      await expect(searchInput.first()).toHaveValue('Volvo')
     }
   })
 

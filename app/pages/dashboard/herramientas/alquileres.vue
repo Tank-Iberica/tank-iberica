@@ -145,9 +145,8 @@ function onDeleteClose() {
       </div>
 
       <!-- Loading -->
-      <div v-if="loading" class="loading-state">
-        <div class="spinner" />
-        <span>{{ t('common.loading') }}...</span>
+      <div v-if="loading" class="loading-state" aria-busy="true">
+        <UiSkeletonCard :lines="4" />
       </div>
 
       <!-- Card View -->
@@ -215,18 +214,18 @@ function onDeleteClose() {
 
 <style scoped>
 .rentals-page {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .page-header h1 {
@@ -244,32 +243,32 @@ function onDeleteClose() {
 
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   flex-wrap: wrap;
 }
 
 /* Plan gate */
 .plan-gate {
   text-align: center;
-  padding: 48px 20px;
+  padding: var(--spacing-12) var(--spacing-5);
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .gate-icon {
   font-size: 3rem;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .plan-gate h2 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.2rem;
   color: var(--text-primary);
 }
 
 .plan-gate p {
-  margin: 0 0 20px;
+  margin: 0 0 var(--spacing-5);
   color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
@@ -279,18 +278,18 @@ function onDeleteClose() {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-5);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
   cursor: pointer;
   transition: background 0.2s;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .btn-primary:hover {
@@ -301,12 +300,12 @@ function onDeleteClose() {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-4);
   background: var(--bg-primary);
   color: var(--color-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
@@ -318,34 +317,34 @@ function onDeleteClose() {
 
 /* Alerts */
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .alert-success {
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
   font-size: 0.9rem;
 }
 
 /* Ending soon alerts */
 .ending-soon-alert {
-  padding: 16px;
-  background: var(--color-warning-bg, #fef3c7);
-  border: 1px solid #fbbf24;
-  border-radius: 12px;
+  padding: var(--spacing-4);
+  background: var(--color-warning-bg, var(--color-warning-bg));
+  border: 1px solid var(--color-warning);
+  border-radius: var(--border-radius-md);
 }
 
 .ending-soon-alert strong {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
   color: var(--color-warning-text);
   font-size: 0.9rem;
 }
@@ -354,9 +353,9 @@ function onDeleteClose() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
+  padding: 0.375rem 0;
   font-size: 0.85rem;
-  color: #78350f;
+  color: var(--color-warning-text);
 }
 
 .days-remaining {
@@ -369,14 +368,14 @@ function onDeleteClose() {
   display: flex;
   gap: 0;
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
   align-self: flex-start;
 }
 
 .toggle-btn {
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-5);
   border: none;
   background: var(--bg-primary);
   font-size: 0.85rem;
@@ -387,7 +386,7 @@ function onDeleteClose() {
 }
 
 .toggle-btn + .toggle-btn {
-  border-left: 1px solid #e5e7eb;
+  border-left: 1px solid var(--border-color-light);
 }
 
 .toggle-btn.active {
@@ -400,14 +399,14 @@ function onDeleteClose() {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -424,32 +423,32 @@ function onDeleteClose() {
 .rental-cards-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 /* Empty state */
 .empty-state {
-  padding: 48px 20px;
+  padding: var(--spacing-12) var(--spacing-5);
   text-align: center;
   color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 
 .empty-state p {
-  margin: 0 0 16px;
+  margin: 0 0 var(--spacing-4);
 }
 
 /* Responsive */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .rental-cards-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .rentals-page {
-    padding: 24px;
-    gap: 20px;
+    padding: var(--spacing-6);
+    gap: var(--spacing-5);
   }
 
   .page-header {
@@ -459,7 +458,7 @@ function onDeleteClose() {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .rental-cards-grid {
     grid-template-columns: repeat(3, 1fr);
   }

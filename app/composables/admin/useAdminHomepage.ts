@@ -61,7 +61,7 @@ export const sectionDefinitions: SectionDefinition[] = [
 ]
 
 function generateBannerId(): string {
-  return `banner_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`
+  return `banner_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`
 }
 
 export function useAdminHomepage() {

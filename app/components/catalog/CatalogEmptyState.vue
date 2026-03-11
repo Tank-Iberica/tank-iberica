@@ -17,7 +17,7 @@
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
         <p class="empty-title">
-          {{ $t('catalog.noResultsInArea', { area: currentLevelLabel }) }}
+          {{ $t('catalog.noResultsInArea', { area: currentLevelLabel, itemsName: $t('vertical.itemsName') }) }}
         </p>
         <button class="btn-ghost-sm" @click="$emit('clearFilters')">
           {{ $t('catalog.clearFilters') }}
@@ -66,10 +66,10 @@
           @click="$emit('applySuggestion', s.filters)"
         >
           <span class="suggestion-card__label">
-            {{ $t(s.labelKey, s.labelParams) }}
+            {{ $t(s.labelKey, s.labelParams ?? {}) }}
           </span>
           <span class="suggestion-card__count">
-            {{ $tc('catalog.resultCount', s.count, { count: s.count }) }}
+            {{ $t('catalog.resultCount', { count: s.count }) }}
             <svg
               width="14"
               height="14"
@@ -94,10 +94,10 @@
       @click="$emit('expandArea')"
     >
       <span v-if="nextLevelCountLoading" class="expand-card__text">
-        {{ $t('catalog.expandToAreaNoCount', { area: nextLevelLabel }) }}
+        {{ $t('catalog.expandToAreaNoCount', { area: nextLevelLabel, itemsName: $t('vertical.itemsName') }) }}
       </span>
       <span v-else class="expand-card__text">
-        {{ $t('catalog.expandToArea', { count: nextLevelCount, area: nextLevelLabel }) }}
+        {{ $t('catalog.expandToArea', { count: nextLevelCount, area: nextLevelLabel, itemsName: $t('vertical.itemsName') }) }}
       </span>
       <svg
         width="18"
@@ -261,7 +261,7 @@ const nextLevelLabel = computed(() =>
   border: 1px solid var(--border-color-light);
   border-radius: var(--border-radius-md);
   text-align: left;
-  min-height: 52px;
+  min-height: 3.25rem;
   transition:
     border-color var(--transition-fast),
     background var(--transition-fast);
@@ -302,7 +302,7 @@ const nextLevelLabel = computed(() =>
 }
 
 .skel-line {
-  height: 13px;
+  height: 0.8125rem;
   border-radius: var(--border-radius-sm);
   background: var(--bg-secondary);
   animation: pulse 1.5s ease-in-out infinite;
@@ -337,7 +337,7 @@ const nextLevelLabel = computed(() =>
   border-radius: var(--border-radius-md);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  min-height: 52px;
+  min-height: 3.25rem;
   transition: opacity var(--transition-fast);
   cursor: pointer;
 }
@@ -366,7 +366,7 @@ const nextLevelLabel = computed(() =>
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: opacity var(--transition-fast);
 }
 
@@ -383,7 +383,7 @@ const nextLevelLabel = computed(() =>
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: all var(--transition-fast);
   background: transparent;
 }
@@ -401,7 +401,7 @@ const nextLevelLabel = computed(() =>
   font-size: var(--font-size-xs);
   border: 1px solid var(--border-color-light);
   border-radius: var(--border-radius);
-  min-height: 36px;
+  min-height: 2.25rem;
   transition:
     color var(--transition-fast),
     border-color var(--transition-fast);

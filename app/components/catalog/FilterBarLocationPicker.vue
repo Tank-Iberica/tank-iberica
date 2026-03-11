@@ -105,26 +105,26 @@ onUnmounted(() => {
 <style scoped>
 .location-dropdown {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 0.375rem);
   left: 0;
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   padding: 0.5rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   z-index: 1100;
-  min-width: 220px;
+  min-width: 13.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
 
 .filter-sublabel {
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--text-auxiliary);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.019rem;
   padding: 0.3rem 0 0.1rem;
 }
 
@@ -145,16 +145,16 @@ onUnmounted(() => {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 120px;
+  padding-top: 7.5rem;
 }
 
 .location-dropdown-mobile-content {
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   padding: 1rem;
   width: calc(100% - 2rem);
-  max-width: 280px;
+  max-width: 17.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -168,27 +168,27 @@ onUnmounted(() => {
   font-weight: 600;
   color: var(--color-primary);
   margin-bottom: 0.25rem;
-  font-size: 14px;
+  font-size: var(--font-size-base);
 }
 
 .location-dropdown-close {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
+  min-width: 1.75rem;
+  min-height: 1.75rem;
   border-radius: 50%;
   background: var(--bg-secondary);
   border: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .location-dropdown-mobile .filter-sublabel {
-  font-size: 11px;
-  color: #6b7280;
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
   font-weight: 500;
   margin-top: 0.25rem;
 }
@@ -197,18 +197,18 @@ onUnmounted(() => {
   width: 100%;
   padding: 0.5rem;
   border: 2px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 14px;
-  min-height: 44px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  min-height: 2.75rem;
 }
 
 .location-dropdown-mobile .location-range-select {
   width: 100%;
   padding: 0.5rem;
   border: 2px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 14px;
-  min-height: 44px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  min-height: 2.75rem;
   background: var(--bg-primary);
   cursor: pointer;
 }
@@ -223,7 +223,7 @@ onUnmounted(() => {
 .location-dropdown-mobile-content .level-pills-nav {
   padding: 0;
   margin: 0;
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 </style>

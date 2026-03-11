@@ -164,36 +164,36 @@ const approvedCount = computed(
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px 24px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-5) var(--spacing-6);
 }
 
 .section-title {
-  margin: 0 0 16px;
+  margin: 0 0 var(--spacing-4);
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .info-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .info-card {
-  padding: 16px;
+  padding: var(--spacing-4);
   background: var(--bg-secondary);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   border: 1px solid var(--color-gray-200);
 }
 
 .info-card h3 {
-  margin: 0 0 12px;
+  margin: 0 0 var(--spacing-3);
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-secondary);
@@ -203,14 +203,14 @@ const approvedCount = computed(
 
 .vehicle-card {
   display: flex;
-  gap: 16px;
+  gap: var(--spacing-4);
   align-items: center;
 }
 
 .vehicle-thumb {
-  width: 80px;
-  height: 60px;
-  border-radius: 8px;
+  width: 5rem;
+  height: 3.75rem;
+  border-radius: var(--border-radius);
   overflow: hidden;
   background: var(--bg-tertiary);
   display: flex;
@@ -226,14 +226,14 @@ const approvedCount = computed(
 }
 
 .thumb-placeholder {
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   opacity: 0.3;
 }
 
 .vehicle-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .vehicle-info strong {
@@ -249,7 +249,7 @@ const approvedCount = computed(
 .info-dl {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .dl-row {
@@ -272,14 +272,14 @@ const approvedCount = computed(
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .stat {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .stat-value {
@@ -295,13 +295,13 @@ const approvedCount = computed(
 }
 
 .auction-description {
-  margin-top: 16px;
-  padding-top: 16px;
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
   border-top: 1px solid var(--color-gray-200);
 }
 
 .auction-description h3 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-secondary);
@@ -311,20 +311,20 @@ const approvedCount = computed(
 .auction-description p {
   margin: 0;
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--color-slate-700);
   line-height: 1.5;
 }
 
 .winner-card {
-  margin-top: 16px;
-  padding: 16px;
-  background: var(--color-success-bg, #dcfce7);
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 2px solid var(--color-success);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
 }
 
 .winner-card h3 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-success);
@@ -334,7 +334,7 @@ const approvedCount = computed(
 .winner-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .winner-badge {
@@ -344,7 +344,7 @@ const approvedCount = computed(
 .winner-info div {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .winner-info strong {

@@ -32,8 +32,8 @@ const { t } = useI18n()
   text-align: center;
   padding: 3rem 1.5rem;
   background: var(--bg-secondary);
-  border-radius: 12px;
-  border: 2px dashed var(--color-gray-300);
+  border-radius: var(--border-radius-md);
+  border: 0.125rem dashed var(--color-gray-300);
   margin-top: 2rem;
 }
 
@@ -43,7 +43,7 @@ const { t } = useI18n()
 }
 
 .plan-gate__title {
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--primary, var(--color-primary));
   margin-bottom: 0.5rem;
@@ -52,7 +52,7 @@ const { t } = useI18n()
 .plan-gate__text {
   color: var(--text-auxiliary);
   margin-bottom: 1.5rem;
-  max-width: 400px;
+  max-width: 25rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -61,11 +61,11 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0.75rem 2rem;
   background: var(--primary, var(--color-primary));
   color: white;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   text-decoration: none;
   transition: opacity 0.2s;

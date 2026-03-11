@@ -4,23 +4,23 @@ const status = defineModel<'published' | 'draft' | 'rented' | 'maintenance'>({ r
 
 <template>
   <div class="section">
-    <div class="section-title">Estado</div>
+    <div class="section-title">{{ $t('common.status') }}</div>
     <div class="estado-row">
       <label class="estado-opt" :class="{ active: status === 'published' }">
         <input v-model="status" type="radio" value="published" />
-        <span class="dot green" />Publicado
+        <span class="dot green" />{{ $t('common.published') }}
       </label>
       <label class="estado-opt" :class="{ active: status === 'draft' }">
         <input v-model="status" type="radio" value="draft" />
-        <span class="dot gray" />Oculto
+        <span class="dot gray" />{{ $t('common.hidden') }}
       </label>
       <label class="estado-opt" :class="{ active: status === 'rented' }">
         <input v-model="status" type="radio" value="rented" />
-        <span class="dot blue" />Alquilado
+        <span class="dot blue" />{{ $t('common.rented') }}
       </label>
       <label class="estado-opt" :class="{ active: status === 'maintenance' }">
         <input v-model="status" type="radio" value="maintenance" />
-        <span class="dot red" />En Taller
+        <span class="dot red" />{{ $t('common.maintenance') }}
       </label>
     </div>
   </div>
@@ -29,30 +29,30 @@ const status = defineModel<'published' | 'draft' | 'rented' | 'maintenance'>({ r
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 12px 16px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow-xs);
 }
 .section-title {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #374151;
-  margin-bottom: 10px;
+  color: var(--color-gray-700);
+  margin-bottom: 0.625rem;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 .estado-row {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 .estado-opt {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-size: 0.85rem;
 }
@@ -61,18 +61,18 @@ const status = defineModel<'published' | 'draft' | 'rented' | 'maintenance'>({ r
 }
 .estado-opt.active {
   border-color: var(--color-primary);
-  background: #f0f9ff;
+  background: var(--color-sky-50);
 }
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 0.625rem;
+  height: 0.625rem;
   border-radius: 50%;
 }
 .dot.green {
   background: var(--color-success);
 }
 .dot.gray {
-  background: #9ca3af;
+  background: var(--color-gray-400);
 }
 .dot.blue {
   background: var(--color-info);

@@ -38,7 +38,7 @@
           <h1 class="landing-title">{{ landingTitle }}</h1>
           <p v-if="landingDescription" class="landing-description">{{ landingDescription }}</p>
           <p v-if="landing!.vehicle_count" class="landing-count">
-            {{ $t('catalog.resultsCount', { count: landing!.vehicle_count }) }}
+            {{ $t('catalog.resultsCount', { count: landing!.vehicle_count, itemsName: $t('vertical.itemsName') }) }}
           </p>
         </div>
 
@@ -131,7 +131,7 @@ async function resolveSlug(): Promise<
   // 1. Try active_landings
   const { data: landingData } = await supabase
     .from('active_landings')
-    .select('*')
+    .select('id, slug, vertical, vehicle_count, meta_title_es, meta_title_en, meta_description_es, meta_description_en, intro_text_es, intro_text_en, breadcrumb, schema_data')
     .eq('slug', fullSlug.value)
     .eq('is_active', true)
     .single()
@@ -217,7 +217,7 @@ if (landing.value) {
 }
 
 .landing-container {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -247,13 +247,13 @@ if (landing.value) {
 }
 
 .landing-intro {
-  font-size: 0.95rem;
+  font-size: var(--font-size-sm);
   line-height: 1.7;
   color: var(--text-secondary);
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: var(--bg-secondary, #f5f5f5);
-  border-radius: 8px;
+  margin-bottom: var(--spacing-8);
+  padding: var(--spacing-4);
+  background: var(--bg-secondary);
+  border-radius: var(--border-radius);
 }
 
 .landing-catalog-placeholder {
@@ -264,7 +264,7 @@ if (landing.value) {
 
 /* Loading */
 .landing-loading {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   padding: 0 1rem;
   display: flex;
@@ -280,7 +280,7 @@ if (landing.value) {
 }
 
 .skeleton-card {
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
   background: var(--bg-primary);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -296,13 +296,13 @@ if (landing.value) {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .skeleton-line {
-  height: 16px;
+  height: 1rem;
   background: var(--bg-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -350,10 +350,10 @@ if (landing.value) {
   color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
-  padding: 10px 24px;
+  padding: 0.625rem var(--spacing-6);
   border: 1px solid var(--color-primary);
-  border-radius: 8px;
-  min-height: 44px;
+  border-radius: var(--border-radius);
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
   transition: all 0.2s;
@@ -365,14 +365,14 @@ if (landing.value) {
 }
 
 /* Tablet */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .landing-skeleton-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 /* Desktop */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .landing-title {
     font-size: 2rem;
   }
@@ -382,7 +382,7 @@ if (landing.value) {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .landing-container,
   .landing-loading {
     padding: 0 2rem;

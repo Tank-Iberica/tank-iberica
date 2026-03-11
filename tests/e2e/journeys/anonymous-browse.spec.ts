@@ -28,9 +28,9 @@ test.describe('Journey: Anonymous buyer browses catalog', () => {
         .catch(() => false)
     ) {
       await searchInput.first().fill('test')
-      await page.waitForTimeout(500)
+      await expect(searchInput.first()).toHaveValue('test')
       await searchInput.first().clear()
-      await page.waitForTimeout(500)
+      await expect(searchInput.first()).toHaveValue('')
     }
 
     // 4. Click first vehicle card to navigate to detail

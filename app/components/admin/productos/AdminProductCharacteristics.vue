@@ -20,39 +20,39 @@ const emit = defineEmits<{
       <input v-model="c.key" type="text" placeholder="Nombre (ej: Motor)" />
       <input v-model="c.value_es" type="text" placeholder="Valor ES" />
       <input v-model="c.value_en" type="text" placeholder="Valor EN" />
-      <button class="btn-x" @click="emit('remove', c.id)">×</button>
+      <button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove', c.id)">×</button>
     </div>
   </div>
 </template>
 
 <style scoped>
 .section-content {
-  padding: 0 16px 16px;
-  border-top: 1px solid #f3f4f6;
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-100);
 }
 
 /* Characteristics */
 .char-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 32px;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
 }
 .char-row input {
-  padding: 6px 8px;
+  padding: 0.375rem var(--spacing-2);
   border: 1px solid var(--border-color-light);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.8rem;
 }
 
 /* Buttons */
 .btn-x {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: none;
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -62,7 +62,7 @@ const emit = defineEmits<{
   text-align: center;
   color: var(--text-disabled);
   font-size: 0.8rem;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 
 @media (max-width: 48em) {

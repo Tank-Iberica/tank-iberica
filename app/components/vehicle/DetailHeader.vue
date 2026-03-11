@@ -31,8 +31,8 @@
           width="14"
           height="14"
           viewBox="0 0 24 24"
-          fill="#C41E3A"
-          stroke="#C41E3A"
+          fill="var(--color-danger)"
+          stroke="var(--color-danger)"
           stroke-width="2"
         >
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -91,7 +91,7 @@ const formattedRentalPrice = computed(() =>
 .vehicle-title {
   font-size: var(--font-size-xl);
   font-weight: 800;
-  color: #0f2a2e;
+  color: var(--color-primary-dark);
   flex: 1;
   min-width: 0;
 }
@@ -102,8 +102,8 @@ const formattedRentalPrice = computed(() =>
   color: var(--color-white);
   font-size: var(--font-size-xs);
   font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--border-radius-sm);
   text-transform: uppercase;
   vertical-align: middle;
   margin-left: 0.5rem;
@@ -112,7 +112,7 @@ const formattedRentalPrice = computed(() =>
 .vehicle-price {
   font-size: var(--font-size-2xl);
   font-weight: 800;
-  background: linear-gradient(135deg, var(--color-success) 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark, var(--color-success-dark)) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -137,14 +137,14 @@ const formattedRentalPrice = computed(() =>
 .vehicle-category-badge {
   display: inline-flex;
   align-items: center;
-  background: linear-gradient(135deg, #0f2a2e 0%, #1a4248 100%);
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
   color: var(--color-white);
   padding: 0.4rem 0.8rem;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   white-space: nowrap;
 }
 
@@ -155,16 +155,16 @@ const formattedRentalPrice = computed(() =>
   background: rgba(0, 0, 0, 0.75);
   color: var(--color-white);
   padding: 0.4rem 0.8rem;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   white-space: nowrap;
 }
 
 .location-flag {
-  width: 18px;
-  height: 14px;
-  border-radius: 9999px;
+  width: 1.125rem;
+  height: 0.875rem;
+  border-radius: var(--border-radius-full);
   object-fit: cover;
   flex-shrink: 0;
 }

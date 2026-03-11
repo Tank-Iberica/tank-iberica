@@ -156,7 +156,7 @@ const { t, locale } = useI18n()
 .section-fields {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--spacing-2, 8px);
+  gap: var(--spacing-2);
 }
 
 .form-group {
@@ -172,7 +172,7 @@ const { t, locale } = useI18n()
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--color-text);
-  margin-bottom: 2px;
+  margin-bottom: 0.125rem;
 }
 
 .required::after {
@@ -186,7 +186,7 @@ const { t, locale } = useI18n()
 }
 
 .filter-section-label {
-  margin-top: var(--spacing-1, 4px);
+  margin-top: var(--spacing-1);
 }
 
 .filter-title {
@@ -207,18 +207,18 @@ const { t, locale } = useI18n()
   width: 100%;
   padding: 0.4rem 0.5rem;
   border: 1.5px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   font-family: inherit;
   transition: border-color 0.2s;
-  min-height: 36px;
+  min-height: 2.25rem;
   background: var(--bg-primary);
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 .form-input:disabled {
@@ -229,7 +229,7 @@ const { t, locale } = useI18n()
 .checkbox-label {
   display: flex;
   align-items: flex-start;
-  gap: var(--spacing-2, 8px);
+  gap: var(--spacing-2);
   cursor: pointer;
   font-size: 0.8rem;
   color: var(--color-text-secondary);
@@ -237,16 +237,16 @@ const { t, locale } = useI18n()
 }
 
 .checkbox-input {
-  min-width: 18px;
-  min-height: 18px;
-  margin-top: 2px;
+  min-width: 1.125rem;
+  min-height: 1.125rem;
+  margin-top: 0.125rem;
   cursor: pointer;
 }
 
 @media (min-width: 48em) {
   .section-fields {
     grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-3, 12px);
+    gap: var(--spacing-3);
   }
 }
 </style>

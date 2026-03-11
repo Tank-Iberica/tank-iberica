@@ -16,16 +16,21 @@ const {
   loading,
   savingPrices,
   savingCommissions,
+  savingAuctionDefaults,
   error,
   successPrices,
   successCommissions,
+  successAuctionDefaults,
   subscriptionPrices,
   commissionRates,
+  auctionDefaults,
   loadConfig,
   savePrices,
   saveCommissions,
+  saveAuctionDefaults,
   updatePrice,
   updateRate,
+  updateAuctionDefault,
   dismissError,
 } = useAdminConfigPricing()
 
@@ -57,9 +62,8 @@ onMounted(() => {
       <span>{{ t('admin.configPricing.stripeSyncNote') }}</span>
     </div>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('common.loading') }}</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="5" />
     </div>
 
     <template v-else>
@@ -97,6 +101,14 @@ onMounted(() => {
         @save="saveCommissions"
         @update-rate="updateRate($event.rateKey, $event.value)"
       />
+
+      <PricingAuctionDefaultsCard
+        :auction-defaults="auctionDefaults"
+        :saving-auction-defaults="savingAuctionDefaults"
+        :success-auction-defaults="successAuctionDefaults"
+        @save="saveAuctionDefaults"
+        @update="updateAuctionDefault($event.key, $event.value)"
+      />
     </template>
   </div>
 </template>
@@ -105,37 +117,37 @@ onMounted(() => {
 .config-pricing-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 800px;
+  gap: var(--spacing-4);
+  max-width: 50rem;
 }
 
 .section-header {
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
 }
 
 .section-header h1 {
-  margin: 0 0 8px;
-  font-size: 1.5rem;
-  font-weight: 600;
+  margin: 0 0 var(--spacing-2);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
 }
 
 .section-subtitle {
   margin: 0;
   color: var(--text-auxiliary);
-  font-size: 0.95rem;
+  font-size: var(--font-size-sm);
 }
 
 .info-banner {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 8px;
-  color: #1e40af;
-  font-size: 0.875rem;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-info-bg);
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--border-radius);
+  color: var(--color-info-text);
+  font-size: var(--font-size-sm);
 }
 
 .info-banner svg {
@@ -146,12 +158,12 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg);
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
 }
 
 .dismiss-btn {
@@ -159,7 +171,7 @@ onMounted(() => {
   border: none;
   color: var(--color-error);
   cursor: pointer;
-  padding: 4px;
+  padding: var(--spacing-1);
   display: flex;
   align-items: center;
 }
@@ -168,27 +180,11 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  padding: var(--spacing-16) var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--color-gray-200);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header h1 {
     font-size: 1.35rem;
   }

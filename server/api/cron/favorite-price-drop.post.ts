@@ -11,10 +11,13 @@
  * When a dealer updates the price, the old price should be stored in
  * `previous_price` before overwriting `price`.
  */
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
+import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
+import { acquireCronLock } from '../../utils/cronLock'
 import { processBatch } from '../../utils/batchProcessor'
+import { logger } from '../../utils/logger'
 
 // -- Types --------------------------------------------------------------------
 
@@ -35,6 +38,7 @@ interface PriceDropVehicle {
 
 interface FavoriteWithUser {
   user_id: string
+  price_threshold: number | null
   users: UserRow | null
 }
 
@@ -53,6 +57,12 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event, body?.secret)
 
   const supabase = serverSupabaseServiceRole(event)
+
+  // Cron lock — prevent duplicate emails if scheduler fires twice in the same hour
+  if (!(await acquireCronLock(supabase, 'favorite-price-drop'))) {
+    return { skipped: true, reason: 'already_ran_in_window', timestamp: new Date().toISOString() }
+  }
+
   const _internalSecret = useRuntimeConfig().cronSecret || process.env.CRON_SECRET
   const now = new Date()
   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
@@ -70,10 +80,7 @@ export default defineEventHandler(async (event) => {
     .limit(200)
 
   if (vehiclesError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to fetch vehicles: ${vehiclesError.message}`,
-    })
+    throw safeError(500, `Failed to fetch vehicles: ${vehiclesError.message}`)
   }
 
   if (!vehicles || vehicles.length === 0) {
@@ -98,13 +105,11 @@ export default defineEventHandler(async (event) => {
     processor: async (vehicle: PriceDropVehicle) => {
       const { data: favorites, error: favsError } = await supabase
         .from('favorites')
-        .select('user_id, users(id, email, name, lang)')
+        .select('user_id, price_threshold, users(id, email, name, lang)')
         .eq('vehicle_id', vehicle.id)
 
       if (favsError) {
-        console.error(
-          `[favorite-price-drop] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`,
-        )
+        logger.error(`[favorite-price-drop] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`)
         return
       }
 
@@ -121,7 +126,12 @@ export default defineEventHandler(async (event) => {
       // -- 4. Send notification to each user who favorited ----------------------
       for (const fav of typedFavorites) {
         const user = fav.users
-        if (!user || !user.email) {
+        if (!user?.email) {
+          continue
+        }
+
+        // Respect configurable price threshold: skip if price hasn't reached target
+        if (fav.price_threshold !== null && vehicle.price > fav.price_threshold) {
           continue
         }
 
@@ -150,9 +160,7 @@ export default defineEventHandler(async (event) => {
           notificationsSent++
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-          console.error(
-            `[favorite-price-drop] Failed to send email to user ${user.id}: ${errorMessage}`,
-          )
+          logger.error(`[favorite-price-drop] Failed to send email to user ${user.id}: ${errorMessage}`)
         }
       }
     },

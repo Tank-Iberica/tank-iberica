@@ -1,9 +1,25 @@
 <template>
   <header :class="['app-header', { scrolled }]">
+    <!-- Global search modal (Cmd+K) -->
+    <UiGlobalSearch ref="globalSearchRef" />
+
     <div class="header-content">
       <NuxtLink to="/" class="logo">TRACCIONA</NuxtLink>
 
       <div class="header-right">
+        <!-- Search trigger button -->
+        <button
+          class="header-icon-btn"
+          :aria-label="$t('search.openSearch')"
+          :title="`${$t('search.openSearch')} (Ctrl+K)`"
+          @click="openGlobalSearch"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+
         <!-- Anúnciate button -->
         <button class="anunciate-btn" @click="$emit('openAnunciate')">
           <span class="anunciate-mobile">{{ $t('catalog.anunciate') }}</span>
@@ -171,14 +187,14 @@
             title="Español"
             @click="setLocale('es')"
           >
-            <img src="https://flagcdn.com/w40/es.png" alt="ES" class="lang-flag-desktop" />
+            <NuxtImg src="https://flagcdn.com/w40/es.png" alt="ES" width="20" height="15" format="webp" class="lang-flag-desktop" />
           </button>
           <button
             :class="['lang-flag-btn', { active: locale === 'en' }]"
             title="English"
             @click="setLocale('en')"
           >
-            <img src="https://flagcdn.com/w40/gb.png" alt="EN" class="lang-flag-desktop" />
+            <NuxtImg src="https://flagcdn.com/w40/gb.png" alt="EN" width="20" height="15" format="webp" class="lang-flag-desktop" />
           </button>
         </div>
 
@@ -227,6 +243,11 @@ defineEmits<{
 const user = useSupabaseUser()
 const authState = useAuth()
 const { unreadCount: unreadMessages } = useUnreadMessages()
+
+const globalSearchRef = ref<{ open: () => void; close: () => void } | null>(null)
+function openGlobalSearch(): void {
+  globalSearchRef.value?.open()
+}
 
 const { locale, setLocale } = useI18n()
 const scrolled = ref(false)
@@ -287,6 +308,9 @@ onUnmounted(() => {
   color: var(--color-white);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  padding-top: env(safe-area-inset-top, 0);
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
 }
 
 /* Scrolled state — mobile */
@@ -300,38 +324,38 @@ onUnmounted(() => {
 }
 
 .scrolled .header-icon-btn {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
 }
 
 .scrolled .header-icon-btn svg {
-  width: 15px;
-  height: 15px;
+  width: 0.9375rem;
+  height: 0.9375rem;
 }
 
 /* .scrolled .account-btn — mobile shrink handled here, desktop override at ≥48em */
 .scrolled .account-btn {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
 }
 
 .scrolled .account-btn svg {
-  width: 15px;
-  height: 15px;
+  width: 0.9375rem;
+  height: 0.9375rem;
 }
 
 .scrolled .lang-flag {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .scrolled .logo {
-  font-size: 16px;
-  letter-spacing: 0.3px;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
 }
 
 .header-content {
@@ -350,10 +374,10 @@ onUnmounted(() => {
    Legacy: 300 weight, text-shadow, uppercase
    ============================================ */
 .logo {
-  font-size: 19px;
+  font-size: 1.1875rem;
   line-height: 1;
   font-weight: 300;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.03em;
   color: var(--color-white);
   text-decoration: none;
   text-transform: uppercase;
@@ -366,7 +390,7 @@ onUnmounted(() => {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
   flex-shrink: 0;
 }
 
@@ -380,10 +404,10 @@ onUnmounted(() => {
   background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
   color: var(--color-white);
   border: 2px solid var(--color-gold-dark);
-  border-radius: 9999px;
-  min-height: 38px;
+  border-radius: var(--border-radius-full);
+  min-height: 2.375rem;
   padding: 0 0.8rem;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   line-height: 1;
@@ -411,9 +435,9 @@ onUnmounted(() => {
 
 /* Scrolled state — mobile: match other header buttons (36px) */
 .scrolled .anunciate-btn {
-  min-height: 36px;
+  min-height: 2.25rem;
   padding: 0 0.6rem;
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 
 /* ============================================
@@ -427,8 +451,8 @@ onUnmounted(() => {
 }
 
 .contact-icon {
-  width: 38px;
-  height: 38px;
+  width: 2.375rem;
+  height: 2.375rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -463,12 +487,12 @@ onUnmounted(() => {
   top: 100%;
   left: 0;
   right: 0;
-  height: 15px;
+  height: 0.9375rem;
 }
 
 .header-icon-btn {
-  width: 38px;
-  height: 38px;
+  width: 2.375rem;
+  height: 2.375rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -498,28 +522,28 @@ onUnmounted(() => {
 /* Mobile dropdowns — HORIZONTAL row, CENTERED under trigger */
 .mobile-menu-dropdown {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 0.625rem);
   left: 50%;
   transform: translateX(-50%);
   background: rgba(35, 66, 74, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: 12px;
+  border-radius: 0.75rem;
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: 0.375rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  padding: 8px;
+  padding: 0.5rem;
   z-index: 1000;
 }
 
 .mobile-menu-dropdown .header-icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
 }
 
 .mobile-menu-dropdown .header-icon-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
 }
 
 /* ============================================
@@ -533,9 +557,9 @@ onUnmounted(() => {
 }
 
 .lang-flag {
-  width: 26px;
-  height: 18px;
-  border-radius: 9999px;
+  width: 1.625rem;
+  height: 1.125rem;
+  border-radius: var(--border-radius-full);
   object-fit: cover;
   display: block;
 }
@@ -543,14 +567,14 @@ onUnmounted(() => {
 /* Mobile lang dropdown — CIRCULAR like legacy */
 .mobile-lang-dropdown {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 0.625rem);
   left: 50%;
   transform: translateX(-50%);
   background: rgba(35, 66, 74, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 50%;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  padding: 4px;
+  padding: 0.25rem;
   z-index: 1000;
 }
 
@@ -572,9 +596,9 @@ onUnmounted(() => {
   justify-content: center;
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid transparent !important;
-  border-radius: 9999px;
+  border-radius: var(--border-radius-full);
   cursor: pointer;
-  padding: 3px;
+  padding: 0.1875rem;
   transition: all 0.3s ease;
   min-height: auto;
   min-width: auto;
@@ -594,10 +618,10 @@ onUnmounted(() => {
 }
 
 .lang-flag-desktop {
-  width: 28px;
-  height: 19px;
+  width: 1.75rem;
+  height: 1.1875rem;
   object-fit: cover;
-  border-radius: 9999px;
+  border-radius: var(--border-radius-full);
   display: block;
 }
 
@@ -610,10 +634,10 @@ onUnmounted(() => {
   justify-content: center;
   gap: 0.5rem;
   background: rgba(255, 255, 255, 0.15);
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
-  min-height: 38px;
+  width: 2.375rem;
+  height: 2.375rem;
+  min-width: 2.375rem;
+  min-height: 2.375rem;
   padding: 0;
   border-radius: 50%;
   backdrop-filter: blur(10px);
@@ -631,8 +655,8 @@ onUnmounted(() => {
 }
 
 .account-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   flex-shrink: 0;
 }
 
@@ -646,16 +670,16 @@ onUnmounted(() => {
 
 .account-unread-badge {
   position: absolute;
-  top: -6px;
-  right: -8px;
+  top: -0.375rem;
+  right: -0.5rem;
   background: var(--color-error);
-  color: #fff;
-  font-size: 10px;
+  color: var(--color-white);
+  font-size: 0.625rem;
   font-weight: 700;
   line-height: 1;
-  padding: 2px 4px;
-  border-radius: 999px;
-  min-width: 16px;
+  padding: 0.125rem 0.25rem;
+  border-radius: var(--border-radius-full);
+  min-width: 1rem;
   text-align: center;
   pointer-events: none;
 }
@@ -709,8 +733,8 @@ onUnmounted(() => {
   }
 
   .logo {
-    font-size: 18px;
-    letter-spacing: 1px;
+    font-size: 1.125rem;
+    letter-spacing: 0.06em;
   }
 }
 
@@ -724,9 +748,9 @@ onUnmounted(() => {
   }
 
   .logo {
-    font-size: 29px;
+    font-size: 1.8125rem;
     line-height: 1;
-    letter-spacing: 3px;
+    letter-spacing: 0.1em;
   }
 
   .header-right {
@@ -750,16 +774,16 @@ onUnmounted(() => {
   }
 
   .anunciate-btn {
-    min-height: 38px;
+    min-height: 2.375rem;
     padding: 0 1rem;
-    font-size: 12px;
-    letter-spacing: 0.2px;
+    font-size: 0.75rem;
+    letter-spacing: 0.01em;
   }
 
   .scrolled .anunciate-btn {
-    min-height: 28px;
+    min-height: 1.75rem;
     padding: 0 0.8rem;
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
 
   /* Account: show text, pill shape */
@@ -767,14 +791,14 @@ onUnmounted(() => {
     width: auto;
     height: auto;
     min-width: auto;
-    min-height: 38px;
+    min-height: 2.375rem;
     padding: 0.4rem 1rem;
-    border-radius: 24px;
+    border-radius: 1.5rem;
   }
 
   .account-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 1.125rem;
+    height: 1.125rem;
   }
 
   .account-text {
@@ -787,13 +811,13 @@ onUnmounted(() => {
   }
 
   .scrolled .contact-icon {
-    width: 28px;
-    height: 28px;
+    width: 1.75rem;
+    height: 1.75rem;
   }
 
   .scrolled .contact-icon svg {
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
   }
 
   .scrolled .header-content {
@@ -801,36 +825,36 @@ onUnmounted(() => {
   }
 
   .scrolled .logo {
-    font-size: 19px;
+    font-size: 1.1875rem;
   }
 
   .scrolled .lang-flag-btn {
-    padding: 2px;
+    padding: 0.125rem;
   }
 
   .scrolled .lang-flag-desktop {
-    width: 22px;
-    height: 15px;
+    width: 1.375rem;
+    height: 0.9375rem;
   }
 
   .scrolled .account-btn {
     width: auto;
     height: auto;
     min-width: auto;
-    min-height: 32px;
+    min-height: 2rem;
     padding: 0.3rem 0.8rem;
     font-size: 0.75rem;
-    border-radius: 24px;
+    border-radius: 1.5rem;
   }
 
   .scrolled .account-btn svg {
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
   }
 
   .scrolled .social-links svg {
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
   }
 }
 </style>

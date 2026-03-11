@@ -21,33 +21,30 @@ const localConfirmText = computed({
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal modal-sm">
         <div class="modal-header danger">
-          <h3>Eliminar producto</h3>
-          <button class="modal-close" @click="emit('close')">×</button>
+          <h3>{{ $t('admin.productos.deleteProduct') }}</h3>
+          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">×</button>
         </div>
         <div class="modal-body">
-          <p>
-            ¿Eliminar <strong>{{ vehicle?.brand }} {{ vehicle?.model }}</strong
-            >?
-          </p>
+          <p v-html="$t('admin.productos.deleteConfirmMsg', { name: `<strong>${vehicle?.brand} ${vehicle?.model}</strong>` })" />
           <p class="text-danger">
-            Se eliminarán también las imágenes. Esta acción no se puede deshacer.
+            {{ $t('admin.productos.deleteImagesWarning') }}
           </p>
           <div class="form-group">
-            <label>Escribe <strong>borrar</strong> para confirmar:</label>
+            <label v-html="$t('admin.productos.typeDeleteConfirm', { word: '<strong>borrar</strong>' })" />
             <input v-model="localConfirmText" type="text" placeholder="borrar" autocomplete="off" />
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cancelar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
           <button
             class="btn-danger"
             :disabled="localConfirmText.toLowerCase() !== 'borrar'"
             @click="emit('confirm')"
           >
-            Eliminar
+            {{ $t('common.delete') }}
           </button>
         </div>
       </div>
@@ -64,12 +61,12 @@ const localConfirmText = computed({
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
   overflow: auto;
@@ -96,12 +93,12 @@ const localConfirmText = computed({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: var(--spacing-5) var(--spacing-6);
   border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header.danger {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border-color: var(--color-error-border);
 }
 
@@ -119,17 +116,17 @@ const localConfirmText = computed({
 .modal-close {
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 1.75rem;
   line-height: 1;
   cursor: pointer;
   color: var(--text-disabled);
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   transition: all 0.2s;
 }
 
@@ -139,38 +136,38 @@ const localConfirmText = computed({
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .modal-body p {
-  margin: 0 0 12px;
+  margin: 0 0 var(--spacing-3);
   color: var(--text-secondary);
   line-height: 1.6;
 }
 
 .text-danger {
   color: var(--color-error);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .form-group {
-  margin-top: 20px;
+  margin-top: var(--spacing-5);
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
   font-weight: 500;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   transition: border 0.2s;
 }
 
@@ -182,8 +179,8 @@ const localConfirmText = computed({
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
   border-top: 1px solid var(--color-gray-200);
 }
 
@@ -191,9 +188,9 @@ const localConfirmText = computed({
   background: var(--bg-primary);
   border: 1px solid var(--color-gray-200);
   color: var(--text-secondary);
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -208,9 +205,9 @@ const localConfirmText = computed({
   background: var(--color-error);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;

@@ -118,9 +118,8 @@ onUnmounted(() => cleanup())
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ $t('admin.productos.loading') }}</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonTable :rows="6" :cols="5" />
     </div>
 
     <!-- Table -->
@@ -227,7 +226,7 @@ onUnmounted(() => cleanup())
 .productos-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
   height: 100%;
 }
 
@@ -236,7 +235,7 @@ onUnmounted(() => cleanup())
   inset: 0;
   z-index: 1000;
   background: var(--bg-secondary);
-  padding: 20px;
+  padding: var(--spacing-5);
   overflow: auto;
 }
 
@@ -246,13 +245,13 @@ onUnmounted(() => cleanup())
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .header-left h1 {
@@ -267,16 +266,16 @@ onUnmounted(() => cleanup())
   color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
@@ -291,21 +290,21 @@ onUnmounted(() => cleanup())
 .toolbar {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 /* Error */
 .alert-error {
-  padding: 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 /* Loading */
@@ -314,15 +313,15 @@ onUnmounted(() => cleanup())
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 48px;
+  gap: var(--spacing-4);
+  padding: var(--spacing-12);
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
 }
 
 .spinner {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border: 4px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -337,6 +336,6 @@ onUnmounted(() => cleanup())
 
 .loading-state span {
   color: var(--text-auxiliary);
-  font-size: 16px;
+  font-size: var(--font-size-base);
 }
 </style>

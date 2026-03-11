@@ -27,31 +27,31 @@ const emit = defineEmits<{
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   margin-bottom: 1rem;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
 }
 
 .message--error {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
   border: 1px solid var(--color-error-border);
 }
 
 .message--success {
-  background: var(--color-success-bg, #dcfce7);
-  color: #15803d;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--color-green-700);
   border: 1px solid var(--color-success-border);
 }
 
 .message__close {
   background: none;
   border: none;
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   cursor: pointer;
   color: inherit;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;

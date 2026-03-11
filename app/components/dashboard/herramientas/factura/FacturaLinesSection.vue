@@ -27,17 +27,17 @@ const { t } = useI18n()
 <style scoped>
 .form-section {
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   padding: 1.25rem;
   margin-bottom: 1.25rem;
 }
 
 .form-section__legend {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 700;
   color: var(--primary, var(--color-primary));
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.0313rem;
   padding: 0 0.5rem;
 }
 

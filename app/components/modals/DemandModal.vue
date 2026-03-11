@@ -554,7 +554,7 @@ watch(
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
   display: flex;
   flex-direction: column;
 }
@@ -581,13 +581,13 @@ watch(
 .close-button {
   background: none;
   border: none;
-  font-size: 32px;
+  font-size: 2rem;
   line-height: 1;
   color: var(--color-text-secondary);
   cursor: pointer;
   padding: 0;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -619,12 +619,12 @@ watch(
 }
 
 .success-icon {
-  width: 64px;
-  height: 64px;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
   background-color: var(--color-success);
   color: white;
-  font-size: 40px;
+  font-size: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -695,7 +695,7 @@ watch(
   font-size: var(--font-size-base);
   font-family: inherit;
   transition: border-color 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-input:focus {
@@ -715,12 +715,12 @@ watch(
 .field-error {
   font-size: var(--font-size-sm, 0.875rem);
   color: var(--color-error, var(--color-error));
-  margin-top: var(--spacing-1, 4px);
+  margin-top: var(--spacing-1);
 }
 
 textarea.form-input {
   resize: vertical;
-  min-height: 100px;
+  min-height: 6.25rem;
 }
 
 .checkbox-label {
@@ -733,9 +733,9 @@ textarea.form-input {
 }
 
 .checkbox-input {
-  min-width: 20px;
-  min-height: 20px;
-  margin-top: 2px;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  margin-top: 0.125rem;
   cursor: pointer;
 }
 
@@ -754,7 +754,7 @@ textarea.form-input {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-12) var(--spacing-24);
 }
 
@@ -826,7 +826,7 @@ textarea.form-input {
 
   .btn-submit {
     width: auto;
-    min-width: 200px;
+    min-width: 12.5rem;
   }
 
   .modal-enter-from .modal-container,

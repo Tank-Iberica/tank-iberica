@@ -1,0 +1,1407 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Decisiones Financieras</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Decisiones Financieras</h1>
+    <p>Maestro de decisiones: sede, estructura societaria, roadmap, pools y orden de ejecucion.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#uso-del-documento'>Uso del documento</a></li>
+<li class='toc-l2'><a href='#estado-de-decisiones'>Estado de decisiones</a></li>
+<li class='toc-l2'><a href='#reconciliacion-rapida-con-presupuestos-md'>Reconciliación rápida con PRESUPUESTOS.md</a></li>
+<li class='toc-l2'><a href='#estructura-societaria-acordada'>Estructura societaria acordada</a></li>
+<li class='toc-l3'><a href='#estructura-acordada'>Estructura acordada</a></li>
+<li class='toc-l3'><a href='#lectura-operativa'>Lectura operativa</a></li>
+<li class='toc-l2'><a href='#version-ejecutiva-que-hacer-de-verdad'>Versión ejecutiva — Qué hacer de verdad</a></li>
+<li class='toc-l3'><a href='#1-decision-de-sede'>1. Decisión de sede</a></li>
+<li class='toc-l3'><a href='#estructura-financiera-recomendada-para-maximizar-ayudas'>Estructura financiera recomendada para maximizar ayudas</a></li>
+<li class='toc-l3'><a href='#2-ayudas-top-2026-las-que-si-merece-la-pena-trabajar'>2. Ayudas top 2026 — Las que sí merece la pena trabajar</a></li>
+<li class='toc-l3'><a href='#3-ayudas-condicionales-solo-si-se-cumplen-estas-premisas'>3. Ayudas condicionales — Solo si se cumplen estas premisas</a></li>
+<li class='toc-l3'><a href='#4-ayudas-a-ignorar-por-ahora'>4. Ayudas a ignorar por ahora</a></li>
+<li class='toc-l3'><a href='#5-plan-realista-2026'>5. Plan realista 2026</a></li>
+<li class='toc-l3'><a href='#6-matriz-final-de-foco-2026-6-lineas-activas'>6. Matriz final de foco 2026 — 6 líneas activas</a></li>
+<li class='toc-l3'><a href='#7-producto-evidencia-y-expediente-foco-2026'>7. Producto, evidencia y expediente — foco 2026</a></li>
+<li class='toc-l2'><a href='#analisis-de-sede-fresno-decidido-y-alternativas-valoradas'>Análisis de sede — Fresno decidido y alternativas valoradas</a></li>
+<li class='toc-l3'><a href='#comparativa-de-alternativas-no-elegidas'>Comparativa de alternativas no elegidas</a></li>
+<li class='toc-l3'><a href='#pendientes-operativos-con-fresno'>Pendientes operativos con Fresno</a></li>
+<li class='toc-l3'><a href='#checklist-documental-de-sede-fresno-de-la-vega'>Checklist documental de sede — Fresno de la Vega</a></li>
+<li class='toc-l3'><a href='#base-territorial-de-trabajo-para-21-miteco-fresno'>Base territorial de trabajo para #21 MITECO — Fresno</a></li>
+<li class='toc-l3'><a href='#conclusion-operativa'>Conclusión operativa</a></li>
+<li class='toc-l2'><a href='#roadmap-de-3-anos-orden-de-ejecucion'>Roadmap de 3 años — orden de ejecución</a></li>
+<li class='toc-l3'><a href='#ano-1-2026-constitucion-y-primeras-capturas'>Año 1 (2026) — constitución y primeras capturas</a></li>
+<li class='toc-l3'><a href='#ano-2-2027-traccion-y-segunda-vertical'>Año 2 (2027) — tracción y segunda vertical</a></li>
+<li class='toc-l3'><a href='#ano-3-2028-consolidacion-y-madurez-fiscal'>Año 3 (2028) — consolidación y madurez fiscal</a></li>
+<li class='toc-l3'><a href='#plan-mensual-2026-foco-operativo'>Plan mensual 2026 — foco operativo</a></li>
+<li class='toc-l3'><a href='#hitos-2027-2028'>Hitos 2027-2028</a></li>
+<li class='toc-l2'><a href='#pools-de-gasto-asignacion-recomendada'>Pools de gasto — asignación recomendada</a></li>
+<li class='toc-l3'><a href='#ano-1-tracciona'>Año 1 — Tracciona</a></li>
+<li class='toc-l3'><a href='#ano-2-campoindustrial'>Año 2 — CampoIndustrial</a></li>
+<li class='toc-l3'><a href='#ano-3-tercera-vertical'>Año 3 — tercera vertical</a></li>
+<li class='toc-l3'><a href='#regla-de-documentacion'>Regla de documentación</a></li>
+<li class='toc-l2'><a href='#retorno-acumulado-lectura-realista'>Retorno acumulado — lectura realista</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tradebase-sl-decisiones-financieras">TradeBase SL — Decisiones Financieras</h1>
+<blockquote>
+<p><strong>Documento de trabajo · Marzo 2026 · Versión 1.14</strong>
+<strong>Última actualización:</strong> 10/03/2026
+<strong>Rol:</strong> maestro de decisiones. Este documento concentra lo que TradeBase va a hacer, en qué orden y por qué.
+<strong>Referencia de ayudas:</strong> <a href="SUBVENCIONES.md">SUBVENCIONES.md</a>
+<strong>Referencia de costes y tesorería:</strong> <a href="PRESUPUESTOS.md">PRESUPUESTOS.md</a>
+<strong>Derivados regenerables:</strong> <a href="TradeBase-one-pager.md">TradeBase-one-pager.md</a> · <a href="TradeBase-dossier-ejecutivo.md">TradeBase-dossier-ejecutivo.md</a></p>
+</blockquote>
+<hr />
+<h2 id="uso-del-documento">Uso del documento</h2>
+<blockquote>
+<p><strong>Rol:</strong> maestro de decisiones.</p>
+<ul>
+<li>Sirve para: sede, estructura societaria, roadmap, pools y orden de ejecución.</li>
+<li>No sirve para: sustituir el catálogo completo de ayudas ni el presupuesto detallado.</li>
+<li>Derivados: <a href="TradeBase-one-pager.md">TradeBase-one-pager.md</a> y <a href="TradeBase-dossier-ejecutivo.md">TradeBase-dossier-ejecutivo.md</a>.</li>
+<li>Referencias maestras: <a href="SUBVENCIONES.md">SUBVENCIONES.md</a> para ayudas y <a href="PRESUPUESTOS.md">PRESUPUESTOS.md</a> para costes y tesorería.</li>
+<li>Mapa general: <a href="README-documental.md">README-documental.md</a>.</li>
+</ul>
+</blockquote>
+<h2 id="estado-de-decisiones">Estado de decisiones</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Estado</th>
+<th>Criterio actual</th>
+<th>Próximo paso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sede definitiva</td>
+<td>✅ <strong>DECIDIDA</strong></td>
+<td><strong>Fresno de la Vega</strong></td>
+<td>Mantener coherencia entre escritura, dirección operativa, conectividad y relato territorial</td>
+</tr>
+<tr>
+<td>Valencia de Don Juan como sede</td>
+<td>✅ <strong>DESCARTADO</strong> si se priorizan ayudas</td>
+<td>Mantener VdDJ cierra MITECO mientras siga por encima de 5.000 hab.</td>
+<td>Solo reconsiderar si cambia la estrategia y se acepta perder upside</td>
+</tr>
+<tr>
+<td>Número de socios</td>
+<td>✅ <strong>DECIDIDO</strong></td>
+<td><strong>2 socios</strong></td>
+<td>Reflejarlo en escritura y pacto de socios</td>
+</tr>
+<tr>
+<td>Reparto de socios</td>
+<td>✅ <strong>DECIDIDO</strong></td>
+<td><strong>50/50</strong></td>
+<td>Redactar estatutos y pacto coherentes con el reparto acordado</td>
+</tr>
+<tr>
+<td>Estructura financiera inicial</td>
+<td>✅ <strong>DECIDIDO</strong></td>
+<td><strong>30.000€ de fondos propios / 6.000€ de capital social</strong></td>
+<td>Mantener coherencia en escritura, cap table y tesorería</td>
+</tr>
+<tr>
+<td>Certificación startup</td>
+<td>✅ <strong>DECIDIDO</strong> como prioridad</td>
+<td>Es crítica para capturar bien el IRPF estatal con el reparto acordado</td>
+<td>Solicitar pronto tras constituir</td>
+</tr>
+<tr>
+<td>One-pager y dossier ejecutivo</td>
+<td>✅ <strong>DECIDIDO</strong></td>
+<td>Son derivados; se regeneran, no se parchean</td>
+<td>Regenerar cuando cambie una decisión maestra</td>
+</tr>
+</tbody>
+</table>
+<h2 id="reconciliacion-rapida-con-presupuestos.md">Reconciliación rápida con PRESUPUESTOS.md</h2>
+<table>
+<thead>
+<tr>
+<th>Magnitud</th>
+<th style="text-align: right;">Importe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Coste operativo Año 1</td>
+<td style="text-align: right;">~15.000€</td>
+</tr>
+<tr>
+<td>Coste total 3 años</td>
+<td style="text-align: right;">~50.997€</td>
+</tr>
+<tr>
+<td>Mínimo operativo puro Año 1</td>
+<td style="text-align: right;">~15.313€</td>
+</tr>
+<tr>
+<td>Caja cómoda Año 1</td>
+<td style="text-align: right;">~17.800€</td>
+</tr>
+<tr>
+<td><strong>Estructura recomendada para jugar ayudas</strong></td>
+<td style="text-align: right;"><strong>30.000€ de fondos propios / 6.000€ de capital</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Lectura correcta:</strong> el Año 1 no “cuesta” 30.000€. Ese importe es la estructura financiera recomendada para no arrancar con una SL infracapitalizada y poder prefinanciar convocatorias, justificar pools de gasto y mantener abierta la vía ENISA / IRPF descrita en los documentos maestros.</p>
+</blockquote>
+<h2 id="estructura-societaria-acordada">Estructura societaria acordada</h2>
+<h3 id="estructura-acordada">Estructura acordada</h3>
+<ul>
+<li>Número de socios acordado: <strong>2 socios</strong>.</li>
+<li>Reparto acordado: <strong>50/50</strong>.</li>
+</ul>
+<h3 id="lectura-operativa">Lectura operativa</h3>
+<ul>
+<li>Estructura simple y alineada con una SL de <strong>30.000€ de fondos propios totales</strong>.</li>
+<li>En <strong>50/50</strong>, el IRPF estatal y CyL es <strong>0€</strong> sin certificación startup.</li>
+<li>Con certificación startup y ambos fundadores válidos, el techo teórico estatal conjunto asciende a <strong>15.000€</strong>.</li>
+<li>Antes de firmar escritura: revisar pacto de socios, cláusulas anti-bloqueo y base deducible de IRPF (capital / prima) con gestoría y abogado mercantil.</li>
+</ul>
+<h2 id="version-ejecutiva-que-hacer-de-verdad">Versión ejecutiva — Qué hacer de verdad</h2>
+<blockquote>
+<p>Esta sección reduce el documento a decisiones operativas. El resto del archivo mantiene el detalle, pero la ejecución real debe gobernarse desde aquí.</p>
+</blockquote>
+<h3 id="decision-de-sede">1. Decisión de sede</h3>
+<p><strong>Sede decidida:</strong> <strong>Fresno de la Vega</strong>.</p>
+<p><strong>Motivos de la decisión</strong></p>
+<ul>
+<li>desbloquea #21 MITECO por territorio;</li>
+<li>activa el diferencial A7 Tierra de Campos;</li>
+<li>mantiene un relato rural fuerte y coherente con TradeBase y con CampoIndustrial;</li>
+<li>ofrece mejor equilibrio entre subvención probable, narrativa y cercanía razonable a León.</li>
+</ul>
+<p><strong>Alternativas valoradas</strong></p>
+<table>
+<thead>
+<tr>
+<th>Opción</th>
+<th>Pros</th>
+<th>Contras</th>
+<th>Qué ayudas / diferencial habría aportado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fresno de la Vega</strong></td>
+<td>Mejor equilibrio general; narrativa rural fuerte; buena sinergia con CampoIndustrial; desbloquea MITECO</td>
+<td>Hay que sostener bien espacio usable y conectividad</td>
+<td>#21 MITECO + A7 Tierra de Campos + LEADER</td>
+</tr>
+<tr>
+<td><strong>La Robla</strong></td>
+<td>Buen techo subvencional y mejor soporte operativo que Pola</td>
+<td>Menor diferencial rural que Fresno y más fricción diaria</td>
+<td>#21 MITECO + A2 Transición Justa + A8 Centro de Empresas</td>
+</tr>
+<tr>
+<td><strong>Pola de Gordón</strong></td>
+<td>Mayor techo bruto de subvención pública</td>
+<td>Más fricción operativa, distancia y menor comodidad de ejecución</td>
+<td>#21 MITECO + A2 Transición Justa</td>
+</tr>
+<tr>
+<td><strong>Onzonilla</strong></td>
+<td>Muy buena operativa diaria y base logística</td>
+<td>Menor relato rural y sin extras territoriales exclusivos</td>
+<td>#21 MITECO + LEADER</td>
+</tr>
+<tr>
+<td><strong>Santovenia</strong></td>
+<td>Comodidad y proximidad a León</td>
+<td>Menor upside y menos narrativa territorial</td>
+<td>#21 MITECO + LEADER</td>
+</tr>
+<tr>
+<td><strong>Valencia de Don Juan</strong></td>
+<td>Comodidad / arraigo</td>
+<td>Queda fuera de #21 MITECO con <strong>5.094 hab.</strong></td>
+<td>Solo líneas provinciales y generales; pierde el diferencial territorial fuerte</td>
+</tr>
+</tbody>
+</table>
+<h3 id="estructura-financiera-recomendada-para-maximizar-ayudas">Estructura financiera recomendada para maximizar ayudas</h3>
+<blockquote>
+<p>Recomendación operativa: arrancar con <strong>30.000€ de fondos propios totales</strong>, de los cuales <strong>6.000€</strong> sean capital social y <strong>24.000€</strong> aportación adicional de socios. <strong>No son 36.000€</strong>: los 6.000€ de capital están dentro de esos 30.000€ de fondos propios.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th style="text-align: right;">Importe recomendado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Capital social</td>
+<td style="text-align: right;"><strong>6.000€</strong></td>
+</tr>
+<tr>
+<td>Aportación adicional socios / prima / reservas iniciales</td>
+<td style="text-align: right;"><strong>24.000€</strong></td>
+</tr>
+<tr>
+<td><strong>Fondos propios totales al inicio</strong></td>
+<td style="text-align: right;"><strong>30.000€</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Motivo de esta recomendación:</strong></p>
+<ul>
+<li><strong>Abre bien las ayudas realistas</strong> del Año 1 sin sobredimensionar la sociedad: #4 Creación Empresas CyL, #12 Certificación Startup, #21 MITECO (ya desbloqueada territorialmente con Fresno), #24 I+D+i y #27 IRPF inversores.</li>
+<li><strong>Mejora mucho la posición frente a ENISA Jóvenes Emprendedores</strong>: con 30.000€ de fondos propios se puede defender una operación de hasta ~60.000€ en esa línea, mientras que 25.000€ deja menos margen.</li>
+<li><strong>Da solvencia y capacidad de prefinanciación</strong> para ejecutar gastos, justificar subvenciones y separar pools sin que la SL parezca infracapitalizada.</li>
+<li><strong>Sigue muy por debajo del límite de 400.000€ de fondos propios</strong> de la deducción IRPF por inversión en empresa de nueva creación (#27).</li>
+<li><strong>Evita inflar capital innecesariamente</strong> para perseguir ayudas hoy poco realistas como NEOTEC o estructuras de financiación demasiado prematuras.</li>
+</ul>
+<blockquote>
+<p><strong>Excepción:</strong> si el objetivo prioritario fuera solicitar desde el día 1 una línea ENISA Emprendedores de ~50.000€, entonces convendría subir a <strong>50.000€ de fondos propios</strong>. Para la estrategia actual de subvenciones + ENISA Jóvenes, el punto de equilibrio recomendado sigue siendo <strong>30.000€ FP / 6.000€ capital</strong>.</p>
+</blockquote>
+<h3 id="ayudas-top-2026-las-que-si-merece-la-pena-trabajar">2. Ayudas top 2026 — Las que sí merece la pena trabajar</h3>
+<blockquote>
+<p>Regla operativa: <strong>máximo 6 líneas o bloques activos en 2026</strong>. Si una ayuda exige mucha memoria y el encaje no es claro, se aparca o pasa a vigilancia.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Prioridad</th>
+<th>Ayuda</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Muy alta</strong></td>
+<td>#12 Certificación startup</td>
+<td>Multiplica otros beneficios (IS 15%, IRPF 50%) y mejora narrativa institucional</td>
+</tr>
+<tr>
+<td><strong>Muy alta</strong></td>
+<td>#27 Deducción IRPF socios</td>
+<td>Retorno muy potente, pero no automático: depende de estructura societaria y certificación startup</td>
+</tr>
+<tr>
+<td><strong>Muy alta</strong></td>
+<td>#24 Deducciones I+D+i</td>
+<td>Es estructural, acumulable y no depende de convocatoria</td>
+</tr>
+<tr>
+<td><strong>Alta</strong></td>
+<td>#8/#9/#10 Cámaras + #18 España Emprende</td>
+<td>Las líneas de Cámara León ya están verificadas y abiertas en 2026; España Emprende sigue operando más como servicio permanente que como ayuda de caja</td>
+</tr>
+<tr>
+<td><strong>Alta</strong></td>
+<td>#1 Plan Emprendedores León</td>
+<td>Última edición oficial verificada en 2025; sigue siendo prioritaria cuando reaparezca la convocatoria 2026</td>
+</tr>
+<tr>
+<td><strong>Alta</strong></td>
+<td>#4 Creación Empresas CyL</td>
+<td>Sigue siendo la principal ayuda de fondo perdido lógica para Año 1; la última edición verificada (2025) fue no competitiva y 2026 está pendiente</td>
+</tr>
+<tr>
+<td><strong>Media</strong></td>
+<td>#2 Hacendera</td>
+<td>Solo tiene sentido si se acepta su lógica de <code>matchfunding</code>; no conviene modelarla como subvención lineal base</td>
+</tr>
+<tr>
+<td><strong>Media</strong></td>
+<td>#7 Red Argos Ciber o la siguiente línea digital viva en CyL</td>
+<td>La línea secundaria real verificable hoy es la vigente; evitar modelar convocatorias genéricas no publicadas</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ayudas-condicionales-solo-si-se-cumplen-estas-premisas">3. Ayudas condicionales — Solo si se cumplen estas premisas</h3>
+<table>
+<thead>
+<tr>
+<th>Ayuda</th>
+<th>Condición de activación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#21 MITECO</td>
+<td><strong>Territorio ya desbloqueado</strong> con sede en <strong>Fresno de la Vega</strong>; falta memoria territorial propia y proyecto bien separado</td>
+</tr>
+<tr>
+<td>A2 Transición Justa</td>
+<td><strong>Descartada</strong> por sede elegida en Fresno; habría aplicado solo en <strong>La Robla</strong> o <strong>Pola de Gordón</strong></td>
+</tr>
+<tr>
+<td>#3 LEADER / A3</td>
+<td>Solo si el GAL confirma por escrito buen encaje de un proyecto digital sin componente físico fuerte</td>
+</tr>
+<tr>
+<td>A6 Contratación indefinida ECYL</td>
+<td>Solo cuando haya una contratación indefinida real; mejora claramente en municipios &lt;5.000 hab.</td>
+</tr>
+<tr>
+<td>A7 Tierra de Campos 2024-2031</td>
+<td><strong>Activada territorialmente</strong> por sede en <strong>Fresno de la Vega</strong>; confirmar siempre anexo vigente y encaje práctico</td>
+</tr>
+<tr>
+<td>A8 Centro de Empresas La Robla</td>
+<td><strong>Descartada</strong> por sede elegida en Fresno; habría aplicado solo en <strong>La Robla</strong> si el espacio municipal fuese viable</td>
+</tr>
+<tr>
+<td>#13 ENISA</td>
+<td>Solo si se necesita financiación real y se estructura capital/fondos propios para que tenga sentido</td>
+</tr>
+<tr>
+<td>#20 SEPE capitalización</td>
+<td>Solo si algún socio llega con prestación por desempleo</td>
+</tr>
+<tr>
+<td>A5 UNICO Rural</td>
+<td>Solo si la sede en <strong>Fresno</strong> tiene carencia real de conectividad</td>
+</tr>
+<tr>
+<td>#26 Patent Box</td>
+<td>Solo desde fase madura, con software registrado e ingresos por licencias/API</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ayudas-a-ignorar-por-ahora">4. Ayudas a ignorar por ahora</h3>
+<blockquote>
+<p>No porque sean malas, sino porque <strong>no deben consumir foco en Año 1</strong>.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Ayuda</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#22 NEOTEC</td>
+<td>Demasiado exigente en tamaño de proyecto para la escala actual</td>
+</tr>
+<tr>
+<td>#23 Eurostars</td>
+<td>Requiere socio europeo y estructura de I+D internacional; no es prioridad operativa inmediata</td>
+</tr>
+<tr>
+<td>#11 SODICAL</td>
+<td>Tiene sentido con métricas y cierta tracción, no en pre-seed muy temprana</td>
+</tr>
+<tr>
+<td>#15 MicroBank</td>
+<td>Útil como colchón, pero no como prioridad estratégica si hay otras vías mejores</td>
+</tr>
+<tr>
+<td>#26 Patent Box</td>
+<td>Importante a futuro, irrelevante para la operativa inmediata</td>
+</tr>
+</tbody>
+</table>
+<h3 id="plan-realista-2026">5. Plan realista 2026</h3>
+<p><strong>Si hoy hubiera que ejecutar de verdad, el orden sería este:</strong></p>
+<ol>
+<li>Formalizar <strong>Fresno de la Vega</strong> como sede en escritura y altas fiscales/administrativas.</li>
+<li>Formalizar aportaciones y escritura para capturar #27 IRPF.</li>
+<li>Solicitar #12 certificación startup.</li>
+<li>Montar trazabilidad de gastos I+D+i para #24.</li>
+<li>Trabajar #4 Creación Empresas CyL como ayuda principal.</li>
+<li>Lanzar paquete de baja fricción: #1 + Cámaras + #18.</li>
+<li>Elegir <strong>solo una</strong> entre #5 y #7 como línea competitiva secundaria.</li>
+<li>Activar #21 MITECO solo cuando exista memoria territorial propia y proyecto separado, ya con la sede fijada en Fresno.</li>
+</ol>
+<blockquote>
+<p><strong>Revalidación oficial a 10/03/2026:</strong> #12, #24 y #27 siguen plenamente vigentes como palancas estructurales; #1 y #4 tienen última edición oficial verificada en 2025 y 2026 sigue pendiente; #8-#10 ya tienen edición 2026 verificada y abierta en León; #2 Hacendera debe tratarse como matchfunding; y la línea digital secundaria hoy verificable es la convocatoria viva en CyL, no una ventana genérica futura.</p>
+</blockquote>
+<h3 id="matriz-final-de-foco-2026-6-lineas-activas">6. Matriz final de foco 2026 — 6 líneas activas</h3>
+<blockquote>
+<p><strong>Criterio:</strong> esto no es el mapa completo de ayudas; es el <strong>foco real de ejecución</strong> para 2026. Todo lo que no entra aquí queda en vigilancia o condicionado a sede, tracción o capacidad operativa adicional.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Ventana</th>
+<th>Línea / bloque activo</th>
+<th>Tipo</th>
+<th>Motivo de entrada</th>
+<th>Salida mínima 2026</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pre-constitución / escritura</td>
+<td><strong>#27 IRPF socios</strong></td>
+<td>Fiscal</td>
+<td>Se decide en la constitución; si se estructura mal, se pierde</td>
+<td>Escritura y aportación documentadas, coordinadas con gestoría</td>
+</tr>
+<tr>
+<td>Abril-mayo 2026</td>
+<td><strong>#12 Certificación startup</strong></td>
+<td>Certificación</td>
+<td>Desbloquea IRPF estatal, IS al 15% y mejora el relato institucional</td>
+<td>Solicitud ENISA presentada con memoria sólida</td>
+</tr>
+<tr>
+<td>Abril-diciembre 2026</td>
+<td><strong>#24 I+D+i</strong></td>
+<td>Fiscal estructural</td>
+<td>No depende de convocatoria y se construye desde el día 1</td>
+<td>Registro técnico-contable y base preparada para IMV</td>
+</tr>
+<tr>
+<td>En cuanto publique 2026</td>
+<td><strong>#4 Creación Empresas CyL</strong></td>
+<td>Fondo perdido</td>
+<td>Es la ayuda de Año 1 con mejor encaje estructural</td>
+<td>Memoria + presupuesto + solicitud completa</td>
+</tr>
+<tr>
+<td>En cuanto publique 2026</td>
+<td><strong>#1 Plan Emprendedores León</strong></td>
+<td>Fondo perdido</td>
+<td>Importe pequeño, baja fricción y buen encaje territorial</td>
+<td>Solicitud completa en plazo</td>
+</tr>
+<tr>
+<td>Q2-Q4 2026</td>
+<td><strong>Bloque cameral: #8 / #9 / #10 + #18</strong></td>
+<td>Asesoramiento / implantación</td>
+<td>Valor práctico alto y coste documental contenido</td>
+<td>Diagnósticos, plan de implantación y acompañamiento activados</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fuera del foco base 2026, salvo condición expresa:</strong></p>
+<ul>
+<li><strong>#7 Red Argos Ciber</strong>: entra solo si queda capacidad real tras activar #4 y el bloque cameral, o si aparece un hueco claro de ciberseguridad que justifique priorizarla.</li>
+<li><strong>#21 MITECO</strong>: aunque la sede elegible ya está fijada en <strong>Fresno</strong>, no entra en el foco base hasta tener una memoria territorial propia, no un reciclaje de la del Año 1.</li>
+<li><strong>#2 Hacendera</strong>: se mantiene en vigilancia; solo se activa si compensa de verdad su lógica de matchfunding.</li>
+<li><strong>#13 ENISA</strong>: no entra como línea activa por defecto; se abre solo si hace falta financiación adicional y no como sustituto de disciplina de caja.</li>
+</ul>
+<h3 id="producto-evidencia-y-expediente-foco-2026">7. Producto, evidencia y expediente — foco 2026</h3>
+<blockquote>
+<p>Regla operativa: no conviene intentar “optimizar el producto para todas las ayudas”. En 2026 solo merece la pena reforzar el producto y la evidencia en las <strong>6 líneas activas</strong>, y hacerlo de forma reutilizable.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Línea / bloque</th>
+<th>Qué tiene que ver un tercero para creerlo</th>
+<th>Qué conviene reforzar en producto</th>
+<th>Evidencia mínima a preparar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>#27 IRPF socios</strong></td>
+<td>Que la inversión está bien estructurada y que la sociedad puede acogerse a la deducción sin fisuras formales</td>
+<td>Aquí el producto pesa poco de forma directa; lo que ayuda es que la narrativa de startup sea consistente con <code>#12</code></td>
+<td>Escritura, aportaciones, cap table, coordinación con gestoría y trazabilidad de desembolso</td>
+</tr>
+<tr>
+<td><strong>#12 Certificación startup</strong></td>
+<td>Que TradeBase es una startup tecnológica escalable, no una web sectorial básica</td>
+<td>Arquitectura propia, motor de valoración, capa dealer profesional y diferenciación clara frente a clasificados tradicionales</td>
+<td>Memoria ENISA, capturas del producto, roadmap técnico, relato de escalabilidad y primeras señales de mercado</td>
+</tr>
+<tr>
+<td><strong>#24 I+D+i</strong></td>
+<td>Que existe trabajo técnico real, no solo desarrollo rutinario</td>
+<td>Registro de experimentos, datasets, iteraciones de producto, decisiones de arquitectura y evolución del motor propio</td>
+<td>Repos limpios, issues, horas, memoria técnica, gastos asociados y trazabilidad contable</td>
+</tr>
+<tr>
+<td><strong>#4 Creación Empresas CyL</strong></td>
+<td>Que la empresa nace con producto real, presupuesto serio y salida al mercado plausible</td>
+<td>MVP funcional, onboarding inicial, propuesta de valor bien cerrada y roadmap de 12 meses defendible</td>
+<td>Memoria de proyecto, presupuesto elegible, cronograma, actividad prevista y soporte societario/fiscal</td>
+</tr>
+<tr>
+<td><strong>#1 Plan Emprendedores León</strong></td>
+<td>Que la actividad es real, reciente y con base efectiva en León rural</td>
+<td>Prueba de operativa desde Fresno, primeras acciones comerciales y servicio identificable</td>
+<td>Alta IAE, memoria breve, dirección operativa, presupuesto y evidencias básicas de actividad</td>
+</tr>
+<tr>
+<td><strong>Bloque #8 / #9 / #10 + #18</strong></td>
+<td>Que hay necesidades concretas de digitalización, innovación y ciberseguridad sobre las que actuar</td>
+<td>CRM, analítica de leads, reporting comercial, flujos internos y security-by-design visibles</td>
+<td>Diagnósticos, plan de implantación, inventario de procesos, medidas de ciber y hoja de mejora</td>
+</tr>
+</tbody>
+</table>
+<h4 id="palancas-transversales-que-mejoran-varias-lineas-a-la-vez">Palancas transversales que mejoran varias líneas a la vez</h4>
+<ol>
+<li><strong>Motor de valoración propio</strong>: refuerza <code>#12</code>, <code>#24</code> y mejora el relato en <code>#4</code>.</li>
+<li><strong>Capa dealer profesional completa</strong>: refuerza <code>#4</code>, <code>#8</code>, <code>#9</code>, <code>#10</code> y la credibilidad operativa general.</li>
+<li><strong>Trazabilidad técnica y fiscal desde el día 1</strong>: hace viable <code>#24</code> y evita perder orden documental cuando lleguen más líneas.</li>
+<li><strong>Narrativa territorial real desde Fresno</strong>: mejora <code>#1</code>, prepara <code>#21</code> y hace más coherente el proyecto ante terceros.</li>
+<li><strong>Señales tempranas de mercado</strong>: cartas de interés, primeras altas, leads o pilotos mejoran <code>#4</code>, <code>#12</code> y cualquier conversación futura de financiación.</li>
+</ol>
+<blockquote>
+<p><strong>Criterio práctico:</strong> si una mejora no ayuda al menos a dos de estas líneas, no debería ganar prioridad frente al roadmap normal de producto.</p>
+</blockquote>
+<h4 id="checklist-trimestral-2026">Checklist trimestral 2026</h4>
+<table>
+<thead>
+<tr>
+<th>Trimestre</th>
+<th>Mejora / frente</th>
+<th>Qué debe quedar hecho</th>
+<th>Evidencia de cierre</th>
+<th>Responsable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Q2 2026</strong></td>
+<td><strong>#27 IRPF socios</strong></td>
+<td>Escritura, aportaciones y estructura societaria cerradas sin fisuras</td>
+<td>Escritura firmada, justificantes de desembolso y cap table</td>
+<td>Socios + gestoría</td>
+</tr>
+<tr>
+<td><strong>Q2 2026</strong></td>
+<td><strong>#12 Certificación startup</strong></td>
+<td>Memoria ENISA montada y narrativa de startup tecnológica cerrada</td>
+<td>Dossier ENISA, capturas del producto, roadmap y relato de escalabilidad</td>
+<td>Socios</td>
+</tr>
+<tr>
+<td><strong>Q2 2026</strong></td>
+<td><strong>#24 I+D+i</strong></td>
+<td>Sistema mínimo de trazabilidad técnica y contable arrancado</td>
+<td>Repos ordenados, registro de horas/tareas y clasificación inicial de gastos</td>
+<td>Socios + asesoría fiscal</td>
+</tr>
+<tr>
+<td><strong>Q2 2026</strong></td>
+<td><strong>#4 Creación Empresas CyL</strong></td>
+<td>Expediente base preparado para presentar en cuanto abra</td>
+<td>Memoria, presupuesto elegible y cronograma listos</td>
+<td>Socios</td>
+</tr>
+<tr>
+<td><strong>Q2 2026</strong></td>
+<td><strong>#1 Plan Emprendedores León</strong></td>
+<td>Expediente territorial y de actividad listo</td>
+<td>Alta IAE, memoria breve, base de sede en Fresno y presupuesto resumido</td>
+<td>Socios + gestoría</td>
+</tr>
+<tr>
+<td><strong>Q2 2026</strong></td>
+<td><strong>Bloque cameral</strong></td>
+<td>Diagnósticos y primera conversación con Cámara activados</td>
+<td>Alta/contacto, ficha de necesidades y calendario de implantación</td>
+<td>Socios</td>
+</tr>
+<tr>
+<td><strong>Q3 2026</strong></td>
+<td><strong>Producto / mercado</strong></td>
+<td>Motor de valoración más visible, capa dealer y primeras señales de mercado</td>
+<td>Demo funcional, backlog, cartas de interés o primeras altas/leads</td>
+<td>Socios</td>
+</tr>
+<tr>
+<td><strong>Q3 2026</strong></td>
+<td><strong>Bloque cameral</strong></td>
+<td>Implantaciones de digitalización/ciber/innovación ejecutándose</td>
+<td>Informes, entregables o planes de implantación</td>
+<td>Socios + Cámara</td>
+</tr>
+<tr>
+<td><strong>Q3 2026</strong></td>
+<td><strong>#24 I+D+i</strong></td>
+<td>Evidencia técnica acumulada sin lagunas</td>
+<td>Memoria técnica viva, issues, commits, datasets y gastos trazados</td>
+<td>Socios</td>
+</tr>
+<tr>
+<td><strong>Q3 2026</strong></td>
+<td><strong>#4 / #1</strong></td>
+<td>Solicitudes presentadas si ya han abierto</td>
+<td>Resguardos de presentación y expediente completo</td>
+<td>Socios + gestoría</td>
+</tr>
+<tr>
+<td><strong>Q4 2026</strong></td>
+<td><strong>#24 I+D+i</strong></td>
+<td>Cierre anual ordenado para base fiscal e IMV</td>
+<td>Memoria anual, horas consolidadas y base documental cerrada</td>
+<td>Socios + asesoría fiscal</td>
+</tr>
+<tr>
+<td><strong>Q4 2026</strong></td>
+<td><strong>#12 / #27</strong></td>
+<td>Validar impacto fiscal real tras constitución y certificación</td>
+<td>Revisión con gestoría de deducción esperable y documentación soporte</td>
+<td>Socios + gestoría</td>
+</tr>
+<tr>
+<td><strong>Q4 2026</strong></td>
+<td><strong>#21 MITECO</strong></td>
+<td>Decidir si hay base suficiente para abrir expediente propio en siguiente ventana</td>
+<td>Memo territorial específica Fresno + presupuesto separado + criterio go/no-go</td>
+<td>Socios</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Regla de cierre:</strong> una línea no cuenta como “trabajada” porque exista una idea o un borrador. Solo cuenta cuando existe <strong>evidencia documental reutilizable</strong>.</p>
+</blockquote>
+<h2 id="analisis-de-sede-fresno-decidido-y-alternativas-valoradas">Análisis de sede — Fresno decidido y alternativas valoradas</h2>
+<blockquote>
+<p><strong>Decisión cerrada:</strong> Fresno de la Vega queda fijada como sede por equilibrio entre elegibilidad, relato y cercanía. Las demás opciones se preservan aquí como referencia de alternativas valoradas.</p>
+</blockquote>
+<h3 id="comparativa-de-alternativas-no-elegidas">Comparativa de alternativas no elegidas</h3>
+<table>
+<thead>
+<tr>
+<th>Opción</th>
+<th>Pros</th>
+<th>Contras</th>
+<th>Qué habría aportado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>La Robla</strong></td>
+<td>Mejor soporte operativo que Pola y buen techo subvencional</td>
+<td>Menos diferencial rural que Fresno</td>
+<td>A2 Transición Justa + A8 Centro de Empresas + #21 MITECO</td>
+</tr>
+<tr>
+<td><strong>Pola de Gordón</strong></td>
+<td>Techo máximo de ayudas entre las opciones valoradas</td>
+<td>Más fricción operativa y mayor coste de ejecución diaria</td>
+<td>A2 Transición Justa + #21 MITECO</td>
+</tr>
+<tr>
+<td><strong>Onzonilla</strong></td>
+<td>Operativa/logística diaria muy buena</td>
+<td>Menor relato rural y ningún diferencial territorial exclusivo</td>
+<td>#21 MITECO + LEADER</td>
+</tr>
+<tr>
+<td><strong>Santovenia</strong></td>
+<td>Proximidad y comodidad</td>
+<td>Upside subvencional más limitado y relato rural flojo</td>
+<td>#21 MITECO + LEADER</td>
+</tr>
+<tr>
+<td><strong>Valencia de Don Juan</strong></td>
+<td>Arraigo y operativa cómoda</td>
+<td>Queda fuera de #21 MITECO mientras siga por encima de 5.000 habitantes</td>
+<td>Solo líneas generales y provinciales; sin diferencial territorial fuerte</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pendientes-operativos-con-fresno">Pendientes operativos con Fresno</h3>
+<ul>
+<li>fijar la <strong>dirección exacta</strong> de la sede y mantenerla coherente en escritura, AEAT, TGSS y resto de expedientes;</li>
+<li>confirmar <strong>espacio usable</strong> y <strong>conectividad suficiente</strong>;</li>
+<li>preparar la memoria territorial de #21 MITECO desde el relato real de Fresno, no como adaptación genérica.</li>
+</ul>
+<h3 id="checklist-documental-de-sede-fresno-de-la-vega">Checklist documental de sede — Fresno de la Vega</h3>
+<table>
+<thead>
+<tr>
+<th>Pieza</th>
+<th>Qué debe quedar cerrado</th>
+<th>Evidencia mínima</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dirección de sede</td>
+<td>Una única dirección exacta para uso societario y fiscal</td>
+<td>Dirección completa con calle, número, código postal y municipio</td>
+</tr>
+<tr>
+<td>Título de uso</td>
+<td>Derecho de uso real del espacio</td>
+<td>Contrato de alquiler, cesión, autorización firmada o título equivalente</td>
+</tr>
+<tr>
+<td>Escritura y estatutos</td>
+<td>Domicilio social idéntico al del resto de expedientes</td>
+<td>Escritura revisada antes de firma</td>
+</tr>
+<tr>
+<td>AEAT</td>
+<td>Alta censal coherente con la sede decidida</td>
+<td>Modelo 036/037 presentado</td>
+</tr>
+<tr>
+<td>TGSS / Seguridad Social</td>
+<td>Mismo domicilio cuando proceda</td>
+<td>Alta de empresa / comunicaciones coherentes</td>
+</tr>
+<tr>
+<td>Prueba de operatividad</td>
+<td>Que no sea una sede vacía o puramente nominal</td>
+<td>Fotos del espacio, inventario básico y descripción de uso</td>
+</tr>
+<tr>
+<td>Conectividad</td>
+<td>Capacidad mínima para operar de forma continuada</td>
+<td>Contrato, factura o test de velocidad guardado</td>
+</tr>
+<tr>
+<td>Carpeta de sede</td>
+<td>Dossier único reutilizable para ayudas y fiscalidad</td>
+<td>PDF con contrato, fotos, mapa, conectividad y breve memoria</td>
+</tr>
+</tbody>
+</table>
+<h3 id="base-territorial-de-trabajo-para-21-miteco-fresno">Base territorial de trabajo para #21 MITECO — Fresno</h3>
+<p><strong>Tesis de proyecto</strong></p>
+<p>TradeBase opera desde <strong>Fresno de la Vega</strong> para crear empleo digital y actividad económica cualificada en un municipio rural, profesionalizando un mercado B2B industrial todavía muy analógico y preparando una segunda vertical con encaje directo en el entorno agroindustrial.</p>
+<p><strong>Argumentos que sí conviene sostener</strong></p>
+<ul>
+<li>Fresno cumple con holgura el umbral territorial de municipio rural y encaja en la lógica de reto demográfico.</li>
+<li>La sede activa el marco <strong>Tierra de Campos</strong>, reforzando la narrativa territorial del proyecto.</li>
+<li>El proyecto no se plantea como teletrabajo deslocalizado sin arraigo, sino como actividad digital con base operativa rural y continuidad documental.</li>
+<li>La segunda vertical prevista, <strong>CampoIndustrial</strong>, conecta mejor con el entorno económico local que una narrativa puramente urbana o genérica.</li>
+<li>La propuesta genera digitalización, intermediación profesional, captación de demanda y posibilidad de empleo cualificado desde territorio rural.</li>
+</ul>
+<p><strong>Evidencias recomendadas para la memoria</strong></p>
+<ul>
+<li>dirección de sede cerrada y título de uso;</li>
+<li>fotos del espacio y prueba de conectividad;</li>
+<li>breve ficha del municipio y del encaje en Tierra de Campos;</li>
+<li>mapa del problema que resuelve Tracciona en compraventa industrial analógica;</li>
+<li>explicación separada de CampoIndustrial como evolución coherente, no como copia del Año 1;</li>
+<li>presupuesto específico de MITECO separado del pool del Año 1;</li>
+<li>si es posible, cartas de interés, apoyos locales o contactos sectoriales ligados al entorno rural.</li>
+</ul>
+<h3 id="conclusion-operativa">Conclusión operativa</h3>
+<ol>
+<li><strong>Fresno de la Vega</strong> queda como sede definitiva.</li>
+<li><strong>La Robla</strong> habría sido la principal alternativa si se quisiera priorizar Transición Justa con menor fricción que Pola.</li>
+<li><strong>Pola de Gordón</strong> habría sido la alternativa más agresiva en techo bruto.</li>
+<li><strong>Onzonilla / Santovenia</strong> eran alternativas de comodidad, no de máximo upside.</li>
+</ol>
+<h2 id="roadmap-de-3-anos-orden-de-ejecucion">Roadmap de 3 años — orden de ejecución</h2>
+<blockquote>
+<p>El detalle de requisitos, bases y URLs oficiales vive en <a href="SUBVENCIONES.md">SUBVENCIONES.md</a>. Aquí solo queda el orden de trabajo y la lógica de asignación.</p>
+</blockquote>
+<h3 id="ano-1-2026-constitucion-y-primeras-capturas">Año 1 (2026) — constitución y primeras capturas</h3>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Qué hacer</th>
+<th>Ayudas principales</th>
+<th>Objetivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sede y estructura</td>
+<td>Formalizar Fresno, escritura y aportaciones</td>
+<td>#21, #27</td>
+<td>No bloquear MITECO ni el IRPF socios</td>
+</tr>
+<tr>
+<td>Certificaciones base</td>
+<td>Solicitar certificación startup y montar trazabilidad I+D+i</td>
+<td>#12, #24</td>
+<td>Abrir fiscalidad y relato institucional</td>
+</tr>
+<tr>
+<td>Fondo perdido principal</td>
+<td>Preparar la memoria fuerte de empresa nueva</td>
+<td>#4</td>
+<td>Capturar la ayuda autonómica más lógica del Año 1</td>
+</tr>
+<tr>
+<td>Paquete de baja fricción</td>
+<td>Activar Cámara, España Emprende y ayuda local/provincial</td>
+<td>#1, #8, #9, #10, #18</td>
+<td>Obtener retorno práctico rápido</td>
+</tr>
+<tr>
+<td>Financiación blanda</td>
+<td>Trabajar préstamo solo si hace falta caja adicional</td>
+<td>#13, #14, #15</td>
+<td>No sobredimensionar deuda desde el día 1</td>
+</tr>
+<tr>
+<td>Condicionales</td>
+<td>Activar MITECO o LEADER solo si el encaje es real; <strong>A2</strong> ya queda fuera con Fresno</td>
+<td>#21, #3 / A3</td>
+<td>Evitar memorias forzadas</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ano-2-2027-traccion-y-segunda-vertical">Año 2 (2027) — tracción y segunda vertical</h3>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Qué hacer</th>
+<th>Ayudas principales</th>
+<th>Objetivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nueva vertical</td>
+<td>Presentar CampoIndustrial como proyecto distinto</td>
+<td>#2, #5, #6, #7</td>
+<td>Repetir convocatorias con memoria propia</td>
+</tr>
+<tr>
+<td>Subvención estrella</td>
+<td>Convertir CampoIndustrial en candidatura fuerte para reto demográfico</td>
+<td>#21</td>
+<td>Aprovechar mejor el relato rural</td>
+</tr>
+<tr>
+<td>Financiación</td>
+<td>Reabrir ENISA / SODICAL solo con métricas reales</td>
+<td>#13, #11</td>
+<td>Financiar crecimiento, no supervivencia</td>
+</tr>
+<tr>
+<td>Fiscalidad</td>
+<td>Consolidar I+D+i y estudiar Sello Pyme Innovadora</td>
+<td>#24, #25</td>
+<td>Preparar ventajas del Año 3</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ano-3-2028-consolidacion-y-madurez-fiscal">Año 3 (2028) — consolidación y madurez fiscal</h3>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Qué hacer</th>
+<th>Ayudas principales</th>
+<th>Objetivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tercera vertical</td>
+<td>Presentar un proyecto realmente distinto</td>
+<td>#2, #5, #6, #7, #21</td>
+<td>Cerrar el ciclo de convocatorias repetibles</td>
+</tr>
+<tr>
+<td>Fiscalidad madura</td>
+<td>Activar Patent Box si ya hay ingresos por licencias / API</td>
+<td>#24, #26</td>
+<td>Convertir I+D acumulada en ahorro real</td>
+</tr>
+<tr>
+<td>Financiación de escala</td>
+<td>Valorar ENISA Crecimiento y ampliaciones solo con tracción clara</td>
+<td>#13, #11</td>
+<td>Abrir crecimiento serio sin perder disciplina</td>
+</tr>
+</tbody>
+</table>
+<h3 id="plan-mensual-2026-foco-operativo">Plan mensual 2026 — foco operativo</h3>
+<table>
+<thead>
+<tr>
+<th>Mes</th>
+<th>Acción prioritaria</th>
+<th>Documento / expediente</th>
+<th>Responsable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Marzo 2026</td>
+<td>Cerrar sede usable, escritura, cap table 30k/6k, pacto de socios y validación IRPF</td>
+<td>Escritura SL, pacto de socios, <a href="DECISIONES-FINANCIERAS.md">DECISIONES-FINANCIERAS.md</a></td>
+<td>Socios + gestoría + abogado mercantil</td>
+</tr>
+<tr>
+<td>Abril 2026</td>
+<td>Constituir la SL, pedir #12 Certificación startup y arrancar la trazabilidad de #24 I+D+i</td>
+<td>Expediente ENISA startup, registro técnico-contable I+D+i</td>
+<td>Socios + gestoría + asesoría fiscal</td>
+</tr>
+<tr>
+<td>Mayo 2026</td>
+<td>Consolidar memoria de innovación y preparar el expediente base de #4 y #1</td>
+<td>Memoria de innovación, presupuesto trazable, expediente base ayudas 2026</td>
+<td>Socios</td>
+</tr>
+<tr>
+<td>Junio 2026</td>
+<td>Presentar #4 y #1 si ya están publicadas y activar el bloque cameral si abre ventana 2026</td>
+<td>Solicitudes #4/#1, diagnósticos Cámara, alta en #18</td>
+<td>Socios + Cámara + gestoría</td>
+</tr>
+<tr>
+<td>Julio 2026</td>
+<td>Ejecutar implantaciones de baja fricción y mantener la evidencia de #24</td>
+<td>Informes de implantación, archivo técnico y contable</td>
+<td>Socios</td>
+</tr>
+<tr>
+<td>Agosto 2026</td>
+<td>No abrir líneas nuevas salvo publicación clara; ordenar facturas, evidencias y seguimiento</td>
+<td>Archivo de justificación, tablero de convocatorias</td>
+<td>Socios</td>
+</tr>
+<tr>
+<td>Septiembre 2026</td>
+<td>Revisar segunda ola de convocatorias y decidir si entra una línea secundaria</td>
+<td>Matriz de decisión, expedientes Cámara / provincial si siguen vivos</td>
+<td>Socios</td>
+</tr>
+<tr>
+<td>Octubre 2026</td>
+<td>Preparar la base territorial de #21 MITECO para 2027 desde Fresno de la Vega</td>
+<td>Borrador de memoria territorial y encaje CampoIndustrial</td>
+<td>Socios</td>
+</tr>
+<tr>
+<td>Noviembre 2026</td>
+<td>Cerrar la evidencia anual de #24 I+D+i y prevalidar la base para IMV</td>
+<td>Memoria técnica anual, horas, gastos y trazabilidad</td>
+<td>Socios + asesoría fiscal</td>
+</tr>
+<tr>
+<td>Diciembre 2026</td>
+<td>Cerrar el año, revisar retorno real y fijar el foco activo 2027</td>
+<td>Cierre documental, actualización de maestros y plan 2027</td>
+<td>Socios</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hitos-2027-2028">Hitos 2027-2028</h3>
+<table>
+<thead>
+<tr>
+<th>Tramo</th>
+<th>Foco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2027</td>
+<td>CampoIndustrial, repetición selectiva de convocatorias y posible ENISA 2</td>
+</tr>
+<tr>
+<td>2028</td>
+<td>Tercera vertical, fiscalidad madura y financiación de crecimiento si hay tracción</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pools-de-gasto-asignacion-recomendada">Pools de gasto — asignación recomendada</h2>
+<blockquote>
+<p><strong>Regla fija:</strong> una factura, una subvención. Los importes son orientativos y se recalculan contra <a href="PRESUPUESTOS.md">PRESUPUESTOS.md</a> antes de presentar cada solicitud.</p>
+</blockquote>
+<h3 id="ano-1-tracciona">Año 1 — Tracciona</h3>
+<table>
+<thead>
+<tr>
+<th>Pool</th>
+<th>Ayuda</th>
+<th style="text-align: right;">Importe orientativo</th>
+<th>Qué contiene</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>#4 Creación Empresas CyL</td>
+<td style="text-align: right;">~10.054€</td>
+<td>Constitución, legal, desarrollo, infra, marcas, dominios, sede y operaciones parciales</td>
+</tr>
+<tr>
+<td>B</td>
+<td>#2 Hacendera</td>
+<td style="text-align: right;">~2.500€</td>
+<td>Marketing digital y contenido Tracciona</td>
+</tr>
+<tr>
+<td>C</td>
+<td>#5 ICECYL Digitalización</td>
+<td style="text-align: right;">~2.096€</td>
+<td>Ferias, branding físico y contingencia operativa</td>
+</tr>
+<tr>
+<td>D</td>
+<td>#7 Digital. Pymes CyL</td>
+<td style="text-align: right;">~1.104€</td>
+<td>Operaciones y administración restante</td>
+</tr>
+<tr>
+<td>E</td>
+<td>#1 Plan Emprendedores</td>
+<td style="text-align: right;">~1.000€</td>
+<td>Marketing restante</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ano-2-campoindustrial">Año 2 — CampoIndustrial</h3>
+<table>
+<thead>
+<tr>
+<th>Pool</th>
+<th>Ayuda</th>
+<th style="text-align: right;">Importe orientativo</th>
+<th>Qué contiene</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>#6 ICECYL Innovación</td>
+<td style="text-align: right;">~4.732€</td>
+<td>Motor IA de valoración agrícola</td>
+</tr>
+<tr>
+<td>B</td>
+<td>#2 Hacendera</td>
+<td style="text-align: right;">~2.700€</td>
+<td>Relato rural y captación agrícola</td>
+</tr>
+<tr>
+<td>C</td>
+<td>#5 ICECYL Digitalización</td>
+<td style="text-align: right;">~1.128€</td>
+<td>Legal, marcas y dominios de expansión</td>
+</tr>
+<tr>
+<td>D</td>
+<td>#21 MITECO</td>
+<td style="text-align: right;">~6.241€</td>
+<td>Sede elegible, marketing rural, material y contingencia</td>
+</tr>
+<tr>
+<td>E</td>
+<td>#7 Digital. Pymes CyL</td>
+<td style="text-align: right;">~2.450€</td>
+<td>Automatización y operaciones multi-vertical</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ano-3-tercera-vertical">Año 3 — tercera vertical</h3>
+<table>
+<thead>
+<tr>
+<th>Pool</th>
+<th>Ayuda</th>
+<th style="text-align: right;">Importe orientativo</th>
+<th>Qué contiene</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>#6 ICECYL Innovación</td>
+<td style="text-align: right;">~5.670€</td>
+<td>API de datos y motor multi-sector</td>
+</tr>
+<tr>
+<td>B</td>
+<td>#2 Hacendera</td>
+<td style="text-align: right;">~3.000€</td>
+<td>Nuevo relato sectorial</td>
+</tr>
+<tr>
+<td>C</td>
+<td>#5 ICECYL Digitalización</td>
+<td style="text-align: right;">~1.153€</td>
+<td>Expansión de la vertical</td>
+</tr>
+<tr>
+<td>D</td>
+<td>#7 Digital. Pymes CyL</td>
+<td style="text-align: right;">~2.600€</td>
+<td>Automatización cross-vertical</td>
+</tr>
+<tr>
+<td>E</td>
+<td>#21 MITECO</td>
+<td style="text-align: right;">~6.492€</td>
+<td>Impacto rural con historial de dos años</td>
+</tr>
+</tbody>
+</table>
+<h3 id="regla-de-documentacion">Regla de documentación</h3>
+<ul>
+<li>Cada pool debe tener <strong>memoria, presupuesto y facturas</strong> propias.</li>
+<li>Cada vertical debe presentarse como <strong>proyecto distinto</strong>, no como clon sectorial.</li>
+<li>Si la sede final cambia, hay que recalcular solo los pools afectados por territorio: <strong>#21, A2, A3, A7 y A8</strong>.</li>
+</ul>
+<h2 id="retorno-acumulado-lectura-realista">Retorno acumulado — lectura realista</h2>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th style="text-align: right;">Conservador</th>
+<th style="text-align: right;">Optimista</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fondo perdido</td>
+<td style="text-align: right;">2.700€</td>
+<td style="text-align: right;">36.332€</td>
+</tr>
+<tr>
+<td>Fiscal (IRPF + I+D + Patent Box)</td>
+<td style="text-align: right;">4.619€</td>
+<td style="text-align: right;">30.853€</td>
+</tr>
+<tr>
+<td>Préstamos blandos</td>
+<td style="text-align: right;">20.000€</td>
+<td style="text-align: right;">1.875.000€</td>
+</tr>
+<tr>
+<td>Asesoramiento (valor)</td>
+<td style="text-align: right;">21.000€</td>
+<td style="text-align: right;">38.500€</td>
+</tr>
+<tr>
+<td><strong>Retorno total</strong></td>
+<td style="text-align: right;"><strong>48.319€</strong></td>
+<td style="text-align: right;"><strong>1.980.685€</strong></td>
+</tr>
+<tr>
+<td><strong>Gasto total 3 años</strong></td>
+<td style="text-align: right;"><strong>50.997€</strong></td>
+<td style="text-align: right;"><strong>50.997€</strong></td>
+</tr>
+<tr>
+<td>Retorno en efectivo (fondo perdido + fiscal)</td>
+<td style="text-align: right;">7.319€</td>
+<td style="text-align: right;">67.185€</td>
+</tr>
+<tr>
+<td>Retorno en efectivo como % del gasto</td>
+<td style="text-align: right;"><strong>14%</strong></td>
+<td style="text-align: right;"><strong>132%</strong></td>
+</tr>
+<tr>
+<td>Financiación neta disponible (préstamos - gasto)</td>
+<td style="text-align: right;">−30.997€</td>
+<td style="text-align: right;">+1.824.003€</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Lo más controlable:</strong> Cámara, España Emprende, trazabilidad I+D+i y la memoria de #4.</li>
+<li><strong>Lo más sensible:</strong> el IRPF socios en 50/50 depende de obtener certificación startup y cumplir la excepción de fundadores.</li>
+<li><strong>La sede cambia el techo, no la lógica:</strong> Fresno y La Robla/Pola amplían el upside; Onzonilla mejora la operativa; VdDJ reduce el recorrido.</li>
+</ul>
+<blockquote>
+<p><strong>Criterio de lectura:</strong> este documento no promete el extremo optimista. Sirve para ordenar decisiones, dimensionar el upside y evitar perseguir ayudas incompatibles con la fase real del proyecto.</p>
+</blockquote>
+
+  </section>
+</main>
+</body>
+</html>

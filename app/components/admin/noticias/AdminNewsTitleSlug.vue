@@ -44,24 +44,24 @@ defineEmits<{
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .section-title {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--color-gray-100);
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .field label {
@@ -71,9 +71,9 @@ defineEmits<{
 }
 
 .input {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   width: 100%;
   box-sizing: border-box;
@@ -105,12 +105,12 @@ defineEmits<{
   display: flex;
   align-items: center;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   overflow: hidden;
 }
 
 .slug-prefix {
-  padding: 8px 0 8px 12px;
+  padding: 0.5rem 0 0.5rem 0.75rem;
   color: var(--text-disabled);
   font-size: 0.85rem;
   white-space: nowrap;
@@ -120,7 +120,7 @@ defineEmits<{
 .slug-field {
   border: none !important;
   border-radius: 0 !important;
-  padding-left: 4px !important;
+  padding-left: var(--spacing-1) !important;
 }
 
 .slug-field:focus {

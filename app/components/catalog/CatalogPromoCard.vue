@@ -105,7 +105,7 @@ const isSplit = computed(() => props.slots.length === 2)
 .promo-card {
   display: flex;
   flex-direction: column;
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   border: 2px dashed var(--border-color);
@@ -175,8 +175,8 @@ const isSplit = computed(() => props.slots.length === 2)
 }
 
 .promo-card--split .promo-slot__svg {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .promo-slot__badge {
@@ -185,7 +185,7 @@ const isSplit = computed(() => props.slots.length === 2)
   color: var(--color-primary);
   background: var(--bg-primary);
   padding: 0.2rem 0.6rem;
-  border-radius: 999px;
+  border-radius: var(--border-radius-full);
   white-space: nowrap;
 }
 
@@ -233,7 +233,7 @@ const isSplit = computed(() => props.slots.length === 2)
   border-radius: var(--border-radius);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
-  min-height: 44px;
+  min-height: 2.75rem;
   cursor: pointer;
   transition: opacity var(--transition-fast);
   flex: 1;
@@ -277,13 +277,13 @@ const isSplit = computed(() => props.slots.length === 2)
 
 /* ── Variant: gold — for hidden vehicles ── */
 .promo-slot--gold .promo-slot__icon-area {
-  background: linear-gradient(135deg, #fffbeb 0%, #fde68a 50%, #fcd34d 100%);
-  color: #78350f;
+  background: linear-gradient(135deg, var(--color-amber-50) 0%, var(--color-amber-200) 50%, var(--color-amber-300) 100%);
+  color: var(--color-amber-900);
 }
 
 .promo-slot--gold .promo-slot__badge {
-  background: #f59e0b;
-  color: #fff;
+  background: var(--color-gold-bg);
+  color: var(--color-gold-text);
   font-weight: var(--font-weight-bold);
 }
 
@@ -293,24 +293,24 @@ const isSplit = computed(() => props.slots.length === 2)
 }
 
 .promo-card--primary-gold .promo-slot--gold .promo-slot__icon-area {
-  min-height: 64px;
+  min-height: 4rem;
   padding: 0.9rem 1rem;
 }
 
 .promo-card--primary-gold .promo-slot--gold .promo-slot__svg {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
 }
 
 /* ── Variant: accent — for similar searches ── */
 .promo-slot--accent .promo-slot__icon-area {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  color: #166534;
+  background: linear-gradient(135deg, var(--color-green-50) 0%, var(--color-success-bg) 100%);
+  color: var(--badge-success-bg);
 }
 
 .promo-slot--accent .promo-slot__badge {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--color-success-bg);
+  color: var(--badge-success-bg);
 }
 
 /* ── Responsive ── */

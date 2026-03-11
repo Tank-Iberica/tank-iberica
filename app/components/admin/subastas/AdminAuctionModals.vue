@@ -29,7 +29,7 @@ const { t } = useI18n()
 <template>
   <!-- Cancel Modal -->
   <Teleport to="body">
-    <div v-if="activeModal === 'cancel'" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="activeModal === 'cancel'" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal modal-sm">
         <div class="modal-header danger">
           <h3>{{ t('admin.subastas.cancelTitle') }}</h3>
@@ -62,7 +62,7 @@ const { t } = useI18n()
 
   <!-- Adjudicate Modal -->
   <Teleport to="body">
-    <div v-if="activeModal === 'adjudicate'" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="activeModal === 'adjudicate'" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal modal-md">
         <div class="modal-header">
           <h3>{{ t('admin.subastas.detail.adjudicateTitle') }}</h3>
@@ -128,7 +128,7 @@ const { t } = useI18n()
 
   <!-- Reject Registration Modal -->
   <Teleport to="body">
-    <div v-if="activeModal === 'reject'" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="activeModal === 'reject'" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal modal-sm">
         <div class="modal-header danger">
           <h3>{{ t('admin.subastas.detail.rejectTitle') }}</h3>
@@ -168,20 +168,20 @@ const { t } = useI18n()
   align-items: center;
   justify-content: center;
   z-index: 1100;
-  padding: 20px;
+  padding: var(--spacing-5);
   backdrop-filter: blur(2px);
 }
 
 .modal {
   background: var(--bg-primary);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   animation: modalIn 0.2s ease-out;
   max-height: calc(100vh - 40px);
   display: flex;
   flex-direction: column;
-  margin: 10px;
+  margin: 0.625rem;
 }
 
 @keyframes modalIn {
@@ -196,23 +196,23 @@ const { t } = useI18n()
 }
 
 .modal-sm {
-  max-width: 420px;
+  max-width: 26.25rem;
 }
 .modal-md {
-  max-width: 540px;
+  max-width: 33.75rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: var(--spacing-5) var(--spacing-6);
   border-bottom: 1px solid var(--color-gray-200);
   flex-shrink: 0;
 }
 
 .modal-header.danger {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border-color: var(--color-error-border);
 }
 
@@ -230,13 +230,13 @@ const { t } = useI18n()
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   color: var(--text-disabled);
   cursor: pointer;
   padding: 0;
   line-height: 1;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -247,7 +247,7 @@ const { t } = useI18n()
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
   overflow-y: auto;
   flex: 1;
 }
@@ -255,8 +255,8 @@ const { t } = useI18n()
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
   border-top: 1px solid var(--color-gray-200);
   background: var(--bg-secondary);
   border-radius: 0 0 16px 16px;
@@ -265,7 +265,7 @@ const { t } = useI18n()
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .form-group label {
@@ -273,16 +273,16 @@ const { t } = useI18n()
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .form-group textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
-  min-height: 80px;
+  min-height: 5rem;
   resize: vertical;
   box-sizing: border-box;
 }
@@ -290,7 +290,7 @@ const { t } = useI18n()
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .text-danger {
@@ -302,11 +302,11 @@ const { t } = useI18n()
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -320,12 +320,12 @@ const { t } = useI18n()
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -343,11 +343,11 @@ const { t } = useI18n()
   background: var(--color-error);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-danger:hover {
@@ -363,11 +363,11 @@ const { t } = useI18n()
 .adjudicate-info {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 16px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+  padding: var(--spacing-4);
   background: var(--bg-secondary);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
 }
 
 .adjudicate-bid,
@@ -390,11 +390,11 @@ const { t } = useI18n()
 .reserve-met {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
   font-weight: 500;
 }
@@ -402,17 +402,17 @@ const { t } = useI18n()
 .reserve-not-met {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  padding: 12px 16px;
-  background: var(--color-warning-bg, #fef3c7);
+  gap: 0.625rem;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   border: 1px solid var(--color-warning);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-warning-text);
 }
 
 .reserve-not-met strong {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1);
 }
 
 .reserve-not-met p {

@@ -206,25 +206,25 @@ function reset() {
 
 <style scoped>
 .demo-page {
-  max-width: 720px;
+  max-width: 45rem;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: var(--spacing-6) var(--spacing-4);
 }
 
 .demo-hero {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: var(--spacing-8);
 }
 
 .demo-hero h1 {
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--primary, var(--color-primary));
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
 }
 
 .demo-subtitle {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 1rem;
 }
 
@@ -232,9 +232,9 @@ function reset() {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 160px;
+  min-height: 10rem;
   border: 2px dashed #ccc;
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
   transition: border-color 0.2s;
 }
@@ -249,8 +249,8 @@ function reset() {
 
 .sr-only {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 0.0625rem;
+  height: 0.0625rem;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
 }
@@ -259,7 +259,7 @@ function reset() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   color: #888;
 }
 
@@ -270,15 +270,15 @@ function reset() {
 .demo-previews {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 16px;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-4);
 }
 
 .preview-thumb {
   position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 8px;
+  width: 6.25rem;
+  height: 6.25rem;
+  border-radius: var(--border-radius);
   overflow: hidden;
 }
 
@@ -290,15 +290,15 @@ function reset() {
 
 .remove-btn {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 24px;
-  height: 24px;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border: none;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.6);
   color: white;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -306,10 +306,10 @@ function reset() {
 }
 
 .add-more-btn {
-  width: 100px;
-  height: 100px;
+  width: 6.25rem;
+  height: 6.25rem;
   border: 2px dashed #ccc;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -326,23 +326,23 @@ function reset() {
 .demo-fields {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 20px;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-5);
 }
 
 .field label {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-bottom: 4px;
-  color: #333;
+  margin-bottom: var(--spacing-1);
+  color: var(--text-primary);
 }
 
 .field input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 1rem;
 }
 
@@ -352,27 +352,27 @@ function reset() {
 }
 
 .demo-error {
-  color: #dc3545;
+  color: var(--color-error-mid);
   font-size: 0.875rem;
-  margin-top: 12px;
+  margin-top: var(--spacing-3);
 }
 
 .demo-submit {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   width: 100%;
-  padding: 14px;
-  margin-top: 20px;
+  padding: 0.875rem;
+  margin-top: var(--spacing-5);
   background: var(--primary, var(--color-primary));
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  min-height: 48px;
+  min-height: 3rem;
 }
 
 .demo-submit:disabled {
@@ -381,8 +381,8 @@ function reset() {
 }
 
 .spinner {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
   border-radius: 50%;
@@ -400,20 +400,20 @@ function reset() {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary, var(--color-primary));
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 
 .result-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
 }
 
 .tag {
-  padding: 4px 10px;
-  background: #f0f0f0;
-  border-radius: 16px;
+  padding: var(--spacing-1) 0.625rem;
+  background: var(--color-skeleton-bg);
+  border-radius: var(--border-radius-lg);
   font-size: 0.8rem;
   color: #555;
 }
@@ -421,7 +421,7 @@ function reset() {
 .result-description {
   line-height: 1.6;
   color: #444;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
   white-space: pre-line;
 }
 
@@ -429,65 +429,65 @@ function reset() {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--primary, var(--color-primary));
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .result-highlights {
   list-style: disc;
-  padding-left: 20px;
-  margin-bottom: 20px;
+  padding-left: var(--spacing-5);
+  margin-bottom: var(--spacing-5);
   color: #555;
 }
 
 .result-highlights li {
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1);
 }
 
 .result-images {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   overflow-x: auto;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
 }
 
 .result-thumb {
-  width: 120px;
-  height: 80px;
+  width: 7.5rem;
+  height: 5rem;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   flex-shrink: 0;
 }
 
 .demo-ctas {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .cta-primary {
   display: block;
   text-align: center;
-  padding: 14px;
+  padding: 0.875rem;
   background: var(--primary, var(--color-primary));
   color: white;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   font-weight: 600;
   text-decoration: none;
-  min-height: 48px;
+  min-height: 3rem;
   line-height: 1.4;
 }
 
 .cta-secondary {
-  padding: 12px;
+  padding: var(--spacing-3);
   background: transparent;
   border: 1px solid #ddd;
-  border-radius: 10px;
-  color: #666;
+  border-radius: var(--border-radius-md);
+  color: var(--text-secondary);
   cursor: pointer;
   font-size: 0.9rem;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30em) {
   .demo-fields {
     grid-template-columns: 1fr;
   }

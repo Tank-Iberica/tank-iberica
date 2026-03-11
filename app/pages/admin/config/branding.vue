@@ -30,15 +30,15 @@ const theme = ref<Record<string, string>>({
   primary: '#23424A',
   primary_hover: '#1A3238',
   secondary: '#7FD1C8',
-  accent: '#D4A017',
+  accent: 'var(--color-amber-400)',
   background: '#FFFFFF',
-  surface: '#F3F4F6',
+  surface: 'var(--color-gray-100)',
   text: '#1F2A2A',
-  text_secondary: '#4A5A5A',
-  border: '#D1D5DB',
-  error: '#EF4444',
-  success: '#10B981',
-  warning: '#F59E0B',
+  text_secondary: 'var(--color-teal-dark)',
+  border: 'var(--color-gray-300)',
+  error: 'var(--color-error)',
+  success: 'var(--color-success)',
+  warning: 'var(--color-warning)',
 })
 
 const fontPresets = [
@@ -81,15 +81,15 @@ function populateForm() {
     primary: '#23424A',
     primary_hover: '#1A3238',
     secondary: '#7FD1C8',
-    accent: '#D4A017',
+    accent: 'var(--color-amber-400)',
     background: '#FFFFFF',
-    surface: '#F3F4F6',
+    surface: 'var(--color-gray-100)',
     text: '#1F2A2A',
-    text_secondary: '#4A5A5A',
-    border: '#D1D5DB',
-    error: '#EF4444',
-    success: '#10B981',
-    warning: '#F59E0B',
+    text_secondary: 'var(--color-teal-dark)',
+    border: 'var(--color-gray-300)',
+    error: 'var(--color-error)',
+    success: 'var(--color-success)',
+    warning: 'var(--color-warning)',
     ...config.value.theme,
   }
 }
@@ -121,11 +121,9 @@ async function handleSave() {
     <div class="section-header">
       <div>
         <h2>{{ $t('admin.configBranding.title') }}</h2>
-        <p class="section-subtitle">
-          Configura el nombre, logotipo, tipografia y colores del sitio
-        </p>
+        <p class="section-subtitle">{{ $t('admin.configBranding.subtitle') }}</p>
       </div>
-      <NuxtLink to="/admin/config" class="btn-back">Volver</NuxtLink>
+      <NuxtLink to="/admin/config" class="btn-back">{{ $t('common.back') }}</NuxtLink>
     </div>
 
     <div v-if="error" class="feedback-banner error-banner">{{ error }}</div>
@@ -169,28 +167,28 @@ async function handleSave() {
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
 }
 
 .section-header h2 {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.75rem;
   color: var(--color-text);
 }
 
 .section-subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 1rem;
 }
 
 .btn-back {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   text-decoration: none;
@@ -199,34 +197,34 @@ async function handleSave() {
 }
 
 .btn-back:hover {
-  background: #d1d5db;
+  background: var(--color-gray-300);
 }
 
 .feedback-banner {
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
   font-size: 0.95rem;
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
 .save-bar {
-  padding: 20px 0;
+  padding: var(--spacing-5) 0;
   display: flex;
   justify-content: flex-end;
 }
@@ -235,8 +233,8 @@ async function handleSave() {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 28px;
-  border-radius: 8px;
+  padding: var(--spacing-3) 1.75rem;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 600;
   font-size: 1rem;

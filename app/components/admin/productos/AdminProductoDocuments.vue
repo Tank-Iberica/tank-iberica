@@ -62,7 +62,7 @@ const emit = defineEmits<Emits>()
       <div v-for="d in documents" :key="d.id" class="doc-row">
         <a :href="d.url" target="_blank" rel="noopener" class="doc-link">📄 {{ d.name }}</a>
         <span class="doc-type-badge">{{ d.type }}</span>
-        <button class="btn-x" @click="emit('remove', d.id)">×</button>
+        <button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove', d.id)">×</button>
       </div>
     </div>
   </div>
@@ -71,8 +71,8 @@ const emit = defineEmits<Emits>()
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xs);
 }
 .collapsible {
   padding: 0;
@@ -82,52 +82,52 @@ const emit = defineEmits<Emits>()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   text-transform: uppercase;
 }
 .section-toggle:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 .section-content {
-  padding: 0 16px 16px;
-  border-top: 1px solid #f3f4f6;
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-100);
 }
 .toggle-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
 }
 .doc-upload-row {
   display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: var(--spacing-2);
+  margin-bottom: 0.625rem;
   align-items: stretch;
 }
 .doc-type-select {
-  padding: 6px 10px;
+  padding: 0.375rem 0.625rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.8rem;
-  min-width: 140px;
+  min-width: 8.75rem;
 }
 .upload-zone-label.compact {
   flex: 1;
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   margin-bottom: 0;
   display: block;
   text-align: center;
-  background: #f9fafb;
+  background: var(--color-gray-50);
   border: 2px dashed var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 .upload-zone-label.compact:hover {
   border-color: var(--color-primary);
@@ -138,21 +138,21 @@ const emit = defineEmits<Emits>()
 }
 .error-msg.small {
   font-size: 0.75rem;
-  padding: 6px 10px;
-  margin-bottom: 8px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: 0.375rem 0.625rem;
+  margin-bottom: var(--spacing-2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
 }
 .doc-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  background: #f9fafb;
-  border-radius: 4px;
-  margin-bottom: 4px;
+  gap: var(--spacing-2);
+  padding: 0.375rem 0.625rem;
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-1);
   font-size: 0.8rem;
 }
 .doc-link {
@@ -169,30 +169,30 @@ const emit = defineEmits<Emits>()
   text-decoration: underline;
 }
 .doc-type-badge {
-  padding: 2px 6px;
+  padding: 0.125rem 0.375rem;
   background: var(--bg-tertiary);
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.65rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
   flex-shrink: 0;
 }
 .btn-add {
-  padding: 4px 10px;
+  padding: var(--spacing-1) 0.625rem;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.75rem;
   cursor: pointer;
 }
 .btn-x {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: none;
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -200,6 +200,6 @@ const emit = defineEmits<Emits>()
   text-align: center;
   color: var(--text-disabled);
   font-size: 0.8rem;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 </style>

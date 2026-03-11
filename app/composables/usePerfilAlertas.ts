@@ -67,16 +67,16 @@ export function usePerfilAlertas() {
 
   function filterSummary(filters: Record<string, unknown>): string {
     const parts: string[] = []
-    if (filters.brand) parts.push(String(filters.brand))
-    if (filters.model) parts.push(String(filters.model))
-    if (filters.category) parts.push(String(filters.category))
+    if (filters.brand) parts.push(String(filters.brand as string))
+    if (filters.model) parts.push(String(filters.model as string))
+    if (filters.category) parts.push(String(filters.category as string))
     if (filters.price_min || filters.price_max) {
       const min = filters.price_min ? `${Number(filters.price_min).toLocaleString()}` : '0'
       const max = filters.price_max ? `${Number(filters.price_max).toLocaleString()}` : '...'
       parts.push(`${min} - ${max} \u20AC`)
     }
     if (filters.year_min || filters.year_max) {
-      parts.push(`${filters.year_min ?? '...'} - ${filters.year_max ?? '...'}`)
+      parts.push(`${filters.year_min == null ? '...' : Number(filters.year_min)} - ${filters.year_max == null ? '...' : Number(filters.year_max)}`)
     }
     return parts.length > 0 ? parts.join(' \u00B7 ') : t('profile.alerts.noFilters')
   }
@@ -97,13 +97,12 @@ export function usePerfilAlertas() {
   function updateEditField(field: string, value: string) {
     if (field === 'frequency') {
       editForm.value.frequency = value
+    } else if (value === '') {
+      editForm.value.filters[field] = undefined
+    } else if (['price_min', 'price_max', 'year_min', 'year_max'].includes(field)) {
+      editForm.value.filters[field] = Number(value)
     } else {
-      editForm.value.filters[field] =
-        value === ''
-          ? undefined
-          : ['price_min', 'price_max', 'year_min', 'year_max'].includes(field)
-            ? Number(value)
-            : value
+      editForm.value.filters[field] = value
     }
   }
 

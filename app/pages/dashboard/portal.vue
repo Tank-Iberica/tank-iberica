@@ -42,6 +42,8 @@ const {
   emailOnSale,
   emailWeeklyStats,
   emailAuctionUpdates,
+  brokerageOptOut,
+  toggleBrokerageOptOut,
   phoneModeOptions,
   loadPortal,
   save,
@@ -84,8 +86,8 @@ const coverRecommendations = [
       </a>
     </header>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="5" />
     </div>
 
     <template v-else>
@@ -97,7 +99,7 @@ const coverRecommendations = [
       <!-- ── 1. IDENTIDAD ─────────────────────────────────────── -->
       <section class="form-section">
         <h2>{{ t('dashboard.portal.sectionIdentity') }}</h2>
-        <p class="section-desc">Nombre, logotipo, favicon e imagen de portada de tu portal</p>
+        <p class="section-desc">{{ t('dashboard.portal.identityDesc') }}</p>
 
         <!-- Company name (ES / EN) -->
         <div class="form-group">
@@ -157,9 +159,9 @@ const coverRecommendations = [
 
       <!-- ── 1b. NOMBRE COMO LOGO ──────────────────────────── -->
       <section class="form-section">
-        <h2>Nombre como logo</h2>
+        <h2>{{ t('dashboard.portal.sectionLogoText') }}</h2>
         <p class="section-desc">
-          Tipografía que se usa cuando no hay logo — también visible como alternativa accesible
+          {{ t('dashboard.portal.logoTextDesc') }}
         </p>
         <SharedLogoTextConfig
           v-model="logoTextConfig"
@@ -170,7 +172,7 @@ const coverRecommendations = [
       <!-- ── 2. COLORES ─────────────────────────────────────── -->
       <section class="form-section">
         <h2>{{ t('dashboard.portal.sectionColors') }}</h2>
-        <p class="section-desc">Se aplican sobre la base de Tracciona en tu portal</p>
+        <p class="section-desc">{{ t('dashboard.portal.colorsDesc') }}</p>
 
         <div class="color-row">
           <div class="form-group color-group">
@@ -182,7 +184,7 @@ const coverRecommendations = [
                 type="text"
                 class="color-hex"
                 maxlength="7"
-                placeholder="#23424A"
+                placeholder="var(--color-primary)"
               >
             </div>
           </div>
@@ -202,14 +204,14 @@ const coverRecommendations = [
         </div>
 
         <button type="button" class="btn-outline" @click="resetThemeColors">
-          Restaurar colores de Tracciona
+          {{ t('dashboard.portal.resetColors') }}
         </button>
       </section>
 
       <!-- ── 3. SOBRE NOSOTROS ───────────────────────────────── -->
       <section class="form-section">
         <h2>{{ t('dashboard.portal.bio') }}</h2>
-        <p class="section-desc">Descripción de tu empresa (se muestra en tu portal)</p>
+        <p class="section-desc">{{ t('dashboard.portal.bioDesc') }}</p>
 
         <div class="lang-col">
           <div class="lang-field-block">
@@ -282,7 +284,7 @@ const coverRecommendations = [
 
         <!-- Phone display mode -->
         <div class="form-group">
-          <label for="phone_mode">Cómo mostrar el teléfono</label>
+          <label for="phone_mode">{{ t('dashboard.portal.phoneModeLabel') }}</label>
           <select id="phone_mode" v-model="phoneMode">
             <option v-for="opt in phoneModeOptions" :key="opt.value" :value="opt.value">
               {{ opt.label }}
@@ -292,7 +294,7 @@ const coverRecommendations = [
 
         <!-- CTA text -->
         <div class="form-group">
-          <label>Texto del botón de contacto</label>
+          <label>{{ t('dashboard.portal.ctaTextLabel') }}</label>
           <div class="lang-row">
             <div class="lang-field">
               <span class="lang-badge">ES</span>
@@ -317,7 +319,7 @@ const coverRecommendations = [
 
         <!-- Working hours -->
         <div class="form-group">
-          <label>Horario de atención</label>
+          <label>{{ t('dashboard.portal.workingHoursLabel') }}</label>
           <div class="lang-row">
             <div class="lang-field">
               <span class="lang-badge">ES</span>
@@ -389,9 +391,9 @@ const coverRecommendations = [
 
       <!-- ── 6. CERTIFICACIONES ──────────────────────────────── -->
       <section class="form-section">
-        <h2>Certificaciones y sellos</h2>
+        <h2>{{ t('dashboard.portal.sectionCertifications') }}</h2>
         <p class="section-desc">
-          Badges que se muestran en tu portal (dealer verificado, garantía, etc.)
+          {{ t('dashboard.portal.certificationsDesc') }}
         </p>
 
         <div v-if="certifications.length" class="cert-list">
@@ -448,7 +450,7 @@ const coverRecommendations = [
                     )
                   "
                 >
-                Verificado
+                {{ t('dashboard.portal.certified') }}
               </label>
               <button
                 type="button"
@@ -463,16 +465,16 @@ const coverRecommendations = [
         </div>
 
         <button type="button" class="btn-outline" @click="addCertification">
-          + Añadir certificación
+          {{ t('dashboard.portal.addCertification') }}
         </button>
       </section>
 
       <!-- ── 7. CATÁLOGO ────────────────────────────────────── -->
       <section class="form-section">
-        <h2>Configuración del catálogo</h2>
+        <h2>{{ t('dashboard.portal.sectionCatalog') }}</h2>
 
         <div class="form-group">
-          <label for="catalog_sort">Ordenación por defecto</label>
+          <label for="catalog_sort">{{ t('dashboard.portal.catalogSortLabel') }}</label>
           <select id="catalog_sort" v-model="catalogSort">
             <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
               {{ opt.label }}
@@ -483,9 +485,9 @@ const coverRecommendations = [
 
       <!-- ── 8. RESPUESTA AUTOMÁTICA ────────────────────────── -->
       <section class="form-section">
-        <h2>Respuesta automática</h2>
+        <h2>{{ t('dashboard.portal.sectionAutoReply') }}</h2>
         <p class="section-desc">
-          Mensaje que recibirá el comprador al contactarte fuera de horario
+          {{ t('dashboard.portal.autoReplyDesc') }}
         </p>
 
         <div class="lang-col">
@@ -512,23 +514,23 @@ const coverRecommendations = [
 
       <!-- ── 9. NOTIFICACIONES ───────────────────────────────── -->
       <section class="form-section">
-        <h2>Notificaciones por email</h2>
+        <h2>{{ t('dashboard.portal.sectionNotifications') }}</h2>
 
         <div class="toggle-list">
           <label class="toggle-row">
-            <span class="toggle-label">Nuevo lead recibido</span>
+            <span class="toggle-label">{{ t('dashboard.portal.notifNewLead') }}</span>
             <input v-model="emailOnLead" type="checkbox" class="toggle-input" role="switch" >
           </label>
           <label class="toggle-row">
-            <span class="toggle-label">Venta completada</span>
+            <span class="toggle-label">{{ t('dashboard.portal.notifSale') }}</span>
             <input v-model="emailOnSale" type="checkbox" class="toggle-input" role="switch" >
           </label>
           <label class="toggle-row">
-            <span class="toggle-label">Resumen semanal de estadísticas</span>
+            <span class="toggle-label">{{ t('dashboard.portal.notifWeeklyStats') }}</span>
             <input v-model="emailWeeklyStats" type="checkbox" class="toggle-input" role="switch" >
           </label>
           <label class="toggle-row">
-            <span class="toggle-label">Actualizaciones de subastas</span>
+            <span class="toggle-label">{{ t('dashboard.portal.notifAuctionUpdates') }}</span>
             <input
               v-model="emailAuctionUpdates"
               type="checkbox"
@@ -536,6 +538,26 @@ const coverRecommendations = [
               role="switch"
             >
           </label>
+        </div>
+      </section>
+
+      <!-- ── SERVICIOS ──────────────────────────────────────── -->
+      <section class="form-section">
+        <h2>{{ t('dashboard.portal.sectionServices') }}</h2>
+        <div class="toggle-group">
+          <label class="toggle-row">
+            <span class="toggle-label">{{ t('dashboard.portal.brokerageLabel') }}</span>
+            <input
+              :checked="!brokerageOptOut"
+              type="checkbox"
+              class="toggle-input"
+              role="switch"
+              @change="toggleBrokerageOptOut(!($event.target as HTMLInputElement).checked)"
+            >
+          </label>
+          <p class="field-hint">
+            {{ t('dashboard.portal.brokerageHint') }}
+          </p>
         </div>
       </section>
 
@@ -551,18 +573,18 @@ const coverRecommendations = [
 
 <style scoped>
 .portal-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .page-header h1 {
@@ -582,12 +604,12 @@ const coverRecommendations = [
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-5);
   background: var(--bg-primary);
   color: var(--color-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   text-decoration: none;
 }
@@ -595,12 +617,12 @@ const coverRecommendations = [
 .loading-state {
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: var(--spacing-10);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -614,19 +636,19 @@ const coverRecommendations = [
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .alert-success {
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
   font-size: 0.9rem;
 }
@@ -634,12 +656,12 @@ const coverRecommendations = [
 /* ── Sections ── */
 .form-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .form-section h2 {
@@ -659,7 +681,7 @@ const coverRecommendations = [
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .form-group label {
@@ -675,12 +697,12 @@ const coverRecommendations = [
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
   background: var(--bg-primary);
   color: var(--text-primary);
   box-sizing: border-box;
@@ -691,71 +713,71 @@ const coverRecommendations = [
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 90px;
+  min-height: 5.625rem;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 /* ── Language inputs ── */
 .lang-row {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .lang-field {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .lang-field input {
   flex: 1;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .lang-field input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .lang-badge {
   flex-shrink: 0;
-  width: 32px;
+  width: 2rem;
   text-align: center;
   font-size: 0.7rem;
   font-weight: 700;
   color: var(--text-auxiliary);
   background: var(--bg-secondary);
-  border-radius: 4px;
-  padding: 4px 0;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-1) 0;
   text-transform: uppercase;
 }
 
 .lang-col {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .lang-field-block {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .lang-field-block .lang-badge {
@@ -764,46 +786,46 @@ const coverRecommendations = [
 
 .lang-field-block textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
   resize: vertical;
-  min-height: 90px;
+  min-height: 5.625rem;
   box-sizing: border-box;
 }
 
 .lang-field-block textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* ── Colors ── */
 .color-row {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .color-group {
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .color-input {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .color-picker {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  padding: 2px;
+  padding: 0.125rem;
   flex-shrink: 0;
   background: none;
 }
@@ -813,65 +835,65 @@ const coverRecommendations = [
 }
 .color-picker::-webkit-color-swatch {
   border: none;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
 }
 
 .color-hex {
   flex: 1;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   font-family: monospace;
   text-transform: uppercase;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .color-hex:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* ── Certifications ── */
 .cert-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .cert-item {
   background: var(--bg-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3);
 }
 
 .cert-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--spacing-2);
   align-items: center;
 }
 
 .cert-icon-select {
   flex: 0 0 auto;
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
-  min-height: 44px;
+  min-height: 2.75rem;
   background: var(--bg-primary);
 }
 
 .cert-label-input {
   flex: 1;
-  min-width: 100px;
-  padding: 8px 12px;
+  min-width: 6.25rem;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .cert-label-input:focus,
@@ -883,11 +905,11 @@ const coverRecommendations = [
 .cert-verified {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   font-size: 0.8rem;
   color: var(--text-secondary);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .cert-remove {
@@ -896,10 +918,10 @@ const coverRecommendations = [
   color: var(--color-error);
   font-size: 1rem;
   cursor: pointer;
-  padding: 8px;
-  min-height: 44px;
-  min-width: 44px;
-  border-radius: 8px;
+  padding: var(--spacing-2);
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  border-radius: var(--border-radius);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -907,7 +929,7 @@ const coverRecommendations = [
 
 @media (hover: hover) {
   .cert-remove:hover {
-    background: var(--color-error-bg, #fef2f2);
+    background: var(--color-error-bg, var(--color-error-bg));
   }
 }
 
@@ -915,18 +937,18 @@ const coverRecommendations = [
 .toggle-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 12px 0;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) 0;
   border-bottom: 1px solid var(--color-gray-100);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .toggle-row:last-child {
@@ -935,12 +957,12 @@ const coverRecommendations = [
 
 .toggle-label {
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--text-secondary);
 }
 
 .toggle-input {
-  width: 36px;
-  height: 20px;
+  width: 2.25rem;
+  height: 1.25rem;
   flex-shrink: 0;
   cursor: pointer;
   accent-color: var(--color-primary);
@@ -952,12 +974,12 @@ const coverRecommendations = [
   background: transparent;
   color: var(--color-primary);
   border: 1px solid var(--color-primary);
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 0.625rem var(--spacing-4);
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition:
     background 0.15s,
     color 0.15s;
@@ -979,12 +1001,12 @@ const coverRecommendations = [
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 28px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.75rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -1003,7 +1025,7 @@ const coverRecommendations = [
 }
 
 /* ── Responsive ── */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1017,9 +1039,9 @@ const coverRecommendations = [
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .portal-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 
   .page-header {
@@ -1029,7 +1051,7 @@ const coverRecommendations = [
   }
 
   .form-section {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 
   .lang-row {

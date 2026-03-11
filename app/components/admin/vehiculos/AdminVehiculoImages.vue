@@ -96,8 +96,8 @@ const emit = defineEmits<{
   position: absolute;
   top: var(--spacing-1);
   right: var(--spacing-1);
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   background: rgba(0, 0, 0, 0.6);
   border-radius: var(--border-radius-sm);
   color: white;
@@ -113,16 +113,16 @@ const emit = defineEmits<{
 }
 
 .image-delete svg {
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 .image-position {
   position: absolute;
   bottom: var(--spacing-1);
   left: var(--spacing-1);
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   background: rgba(0, 0, 0, 0.6);
   border-radius: var(--border-radius-sm);
   color: white;
@@ -158,7 +158,7 @@ const emit = defineEmits<{
 }
 
 .image-upload svg {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 </style>

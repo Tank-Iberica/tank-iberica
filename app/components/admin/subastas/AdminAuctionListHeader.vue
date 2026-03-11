@@ -25,7 +25,7 @@ const { t } = useI18n()
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-direction: column;
   align-items: stretch;
 }
@@ -33,7 +33,7 @@ const { t } = useI18n()
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .header-left h1 {
@@ -48,21 +48,21 @@ const { t } = useI18n()
   color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {

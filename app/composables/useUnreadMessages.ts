@@ -3,6 +3,7 @@
  * Shared singleton — all components read the same count.
  */
 import type { RealtimeChannel } from '@supabase/supabase-js'
+import type { Database } from '~~/types/supabase'
 
 // Module-level state (shared across all uses of this composable)
 const unreadCount = ref(0)
@@ -10,8 +11,7 @@ let channel: RealtimeChannel | null = null
 let initialized = false
 
 export function useUnreadMessages() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = useSupabaseClient<any>()
+  const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
 
   async function refresh(): Promise<void> {

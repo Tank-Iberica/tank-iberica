@@ -3,6 +3,7 @@
  * Handles tab switching, auction fetching, countdown timer, helpers, and SEO.
  */
 import { useAuction, formatCents, type AuctionStatus, type Auction } from '~/composables/useAuction'
+import { getVerticalSlug } from '~/composables/useVerticalConfig'
 
 export type SubastasTab = 'live' | 'scheduled' | 'ended'
 
@@ -33,7 +34,7 @@ export function useSubastasIndex() {
   // --- Data loading ---
 
   async function loadTab(): Promise<void> {
-    await fetchAuctions({ status: STATUS_MAP[activeTab.value] })
+    await fetchAuctions({ status: STATUS_MAP[activeTab.value], vertical: getVerticalSlug() })
   }
 
   // --- Helpers ---

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { BannerItem, BannerField } from '~/composables/admin/useAdminHomepage'
+const { t } = useI18n()
 
 defineProps<{
   banners: BannerItem[]
@@ -23,7 +24,7 @@ const emit = defineEmits<{
     </div>
 
     <div v-if="banners.length === 0" class="empty-state">
-      No hay banners configurados. Anade el primero.
+      {{ t('admin.configHomepage.noBanners') }}
     </div>
 
     <div v-else class="banners-list">
@@ -118,7 +119,7 @@ const emit = defineEmits<{
                   type="text"
                   class="color-hex-sm"
                   maxlength="7"
-                  placeholder="#23424A"
+                  placeholder="var(--color-primary)"
                   @input="
                     emit(
                       'update-field',
@@ -210,30 +211,30 @@ const emit = defineEmits<{
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .card-header-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 0.75rem;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .card-title {
-  margin: 0 0 4px;
+  margin: 0 0 0.25rem;
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-subtitle {
-  margin: 0 0 20px;
-  color: #6b7280;
+  margin: 0 0 1.25rem;
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
@@ -241,8 +242,8 @@ const emit = defineEmits<{
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.875rem;
@@ -256,72 +257,72 @@ const emit = defineEmits<{
 
 .empty-state {
   text-align: center;
-  padding: 24px;
+  padding: 1.5rem;
   color: var(--text-disabled);
   font-size: 0.875rem;
   border: 1px dashed var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .banners-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .banner-item {
   border: 1px solid var(--border-color-light);
-  border-radius: 10px;
-  padding: 16px;
-  background: #fafafa;
+  border-radius: var(--border-radius-md);
+  padding: 1rem;
+  background: var(--color-gray-50);
 }
 
 .banner-item-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--bg-tertiary);
 }
 
 .banner-index {
   font-weight: 700;
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .banner-header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .toggle-label-inline {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   cursor: pointer;
   font-size: 0.8rem;
-  color: #374151;
+  color: var(--color-gray-700);
   font-weight: 500;
 }
 
 .toggle-label-inline input {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   accent-color: var(--color-primary);
 }
 
 .btn-remove {
   background: none;
-  border: 1px solid #fca5a5;
+  border: 1px solid var(--color-error-soft);
   color: var(--color-error);
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-size: 16px;
+  font-size: var(--font-size-base);
   line-height: 1;
   display: flex;
   align-items: center;
@@ -330,7 +331,7 @@ const emit = defineEmits<{
 }
 
 .btn-remove:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg);
 }
 
 .banner-fields {
@@ -340,7 +341,7 @@ const emit = defineEmits<{
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .form-group:last-child {
@@ -350,16 +351,16 @@ const emit = defineEmits<{
 .form-group > label {
   display: block;
   font-weight: 600;
-  margin-bottom: 8px;
-  color: #374151;
+  margin-bottom: 0.5rem;
+  color: var(--color-gray-700);
   font-size: 0.875rem;
 }
 
 .form-group input[type='text'] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.95rem;
   box-sizing: border-box;
 }
@@ -367,14 +368,14 @@ const emit = defineEmits<{
 .form-group input[type='text']:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-group input[type='datetime-local'] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.875rem;
   box-sizing: border-box;
 }
@@ -382,75 +383,75 @@ const emit = defineEmits<{
 .form-group input[type='datetime-local']:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .lang-row {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .lang-field {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .lang-badge {
   flex-shrink: 0;
-  width: 32px;
+  width: 2rem;
   text-align: center;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #6b7280;
+  color: var(--color-gray-500);
   background: var(--bg-secondary);
-  border-radius: 4px;
-  padding: 4px 0;
+  border-radius: var(--border-radius-sm);
+  padding: 0.25rem 0;
   text-transform: uppercase;
 }
 
 .lang-field input {
   flex: 1;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.95rem;
 }
 
 .lang-field input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .banner-row-colors {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .banner-row-dates {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .color-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .color-picker-sm {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   border: 2px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
-  padding: 2px;
+  padding: 0.125rem;
   flex-shrink: 0;
 }
 
@@ -460,14 +461,14 @@ const emit = defineEmits<{
 
 .color-picker-sm::-webkit-color-swatch {
   border: none;
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
 }
 
 .color-hex-sm {
   flex: 1;
-  padding: 7px 8px;
+  padding: 0.4375rem 0.5rem;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.8rem;
   font-family: monospace;
   text-transform: uppercase;
@@ -476,16 +477,16 @@ const emit = defineEmits<{
 .color-hex-sm:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 .banner-preview {
-  padding: 12px 16px;
-  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-sm);
   font-size: 0.9rem;
   font-weight: 500;
   text-align: center;
-  margin-top: 4px;
+  margin-top: 0.25rem;
 }
 
 @media (min-width: 30em) {

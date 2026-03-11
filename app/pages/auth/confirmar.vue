@@ -74,14 +74,14 @@ useHead({
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - var(--header-height) - 80px);
+  min-height: calc(100vh - var(--header-height) - 5rem);
   padding: var(--spacing-6) var(--spacing-4);
 }
 
 .auth-card {
   background: var(--bg-primary);
   width: 100%;
-  max-width: 440px;
+  max-width: 27.5rem;
   border-radius: var(--border-radius-md);
   padding: var(--spacing-8) var(--spacing-6);
   box-shadow: var(--shadow-md);
@@ -109,7 +109,7 @@ useHead({
 .confirm-message {
   font-size: var(--font-size-base);
   color: var(--text-secondary);
-  max-width: 340px;
+  max-width: 21.25rem;
   line-height: var(--line-height-relaxed);
 }
 
@@ -131,7 +131,7 @@ useHead({
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
   transition: background var(--transition-fast);
-  min-height: 48px;
+  min-height: 3rem;
   margin-top: var(--spacing-4);
   text-decoration: none;
 }
@@ -141,7 +141,7 @@ useHead({
 }
 
 /* Desktop */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .auth-card {
     padding: var(--spacing-10) var(--spacing-8);
   }

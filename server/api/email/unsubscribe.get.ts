@@ -5,8 +5,9 @@
  * looks up the user by unsubscribe_token, and disables that email type in
  * email_preferences. Returns a simple HTML confirmation page.
  */
-import { createError, defineEventHandler, getQuery } from 'h3'
+import { defineEventHandler, getQuery } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import { safeError } from '../../utils/safeError'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const emailType = query.type as string | undefined
 
   if (!token || !emailType) {
-    throw createError({ statusCode: 400, message: 'Missing required query params: token, type' })
+    throw safeError(400, 'Missing required query params: token, type')
   }
 
   const supabase = serverSupabaseServiceRole(event)

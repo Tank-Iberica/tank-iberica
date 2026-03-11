@@ -55,9 +55,9 @@ const { t } = useI18n()
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0.625rem 1.25rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   font-weight: 600;
   border: none;
@@ -85,7 +85,7 @@ const { t } = useI18n()
 
 .btn--secondary {
   background: var(--bg-tertiary);
-  color: #334155;
+  color: var(--color-slate-700);
 }
 
 .btn--secondary:hover:not(:disabled) {

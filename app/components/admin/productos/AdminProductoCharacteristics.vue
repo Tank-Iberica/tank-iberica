@@ -54,7 +54,7 @@ const emit = defineEmits<Emits>()
           placeholder="Valor EN"
           @input="emit('update', c.id, 'value_en', ($event.target as HTMLInputElement).value)"
         />
-        <button class="btn-x" @click="emit('remove', c.id)">×</button>
+        <button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove', c.id)">×</button>
       </div>
     </div>
   </div>
@@ -63,8 +63,8 @@ const emit = defineEmits<Emits>()
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xs);
 }
 .collapsible {
   padding: 0;
@@ -74,55 +74,55 @@ const emit = defineEmits<Emits>()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   text-transform: uppercase;
 }
 .section-toggle:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 .section-content {
-  padding: 0 16px 16px;
-  border-top: 1px solid #f3f4f6;
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-100);
 }
 .toggle-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
 }
 .char-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 32px;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
 }
 .char-row input {
-  padding: 6px 8px;
+  padding: 0.375rem var(--spacing-2);
   border: 1px solid var(--border-color-light);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.8rem;
 }
 .btn-add {
-  padding: 4px 10px;
+  padding: var(--spacing-1) 0.625rem;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.75rem;
   cursor: pointer;
 }
 .btn-x {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: none;
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -130,7 +130,7 @@ const emit = defineEmits<Emits>()
   text-align: center;
   color: var(--text-disabled);
   font-size: 0.8rem;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 
 @media (max-width: 48em) {

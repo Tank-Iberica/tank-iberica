@@ -38,7 +38,7 @@ const emit = defineEmits<{
           <th style="width: 100px">
             {{ t('admin.dealerSubscriptions.colStatus') }}
           </th>
-          <th style="width: 80px">
+          <th style="width: 5rem">
             {{ t('admin.dealerSubscriptions.vertical') }}
           </th>
           <th style="width: 100px">
@@ -183,7 +183,7 @@ const emit = defineEmits<{
   background: var(--bg-primary, white);
   border-radius: var(--border-radius, 8px);
   overflow: hidden;
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  box-shadow: var(--shadow-sm, var(--shadow-card));
   overflow-x: auto;
 }
 
@@ -195,21 +195,21 @@ const emit = defineEmits<{
 
 .admin-table th,
 .admin-table td {
-  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+  padding: var(--spacing-3) var(--spacing-4);
   text-align: left;
-  border-bottom: 1px solid var(--border-color-light, #e5e7eb);
+  border-bottom: 1px solid var(--border-color-light, var(--color-gray-200));
 }
 
 .admin-table th {
-  background: var(--color-gray-50, #f9fafb);
+  background: var(--color-gray-50, var(--color-gray-50));
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-gray-700, #374151);
+  color: var(--color-gray-700, var(--color-gray-700));
   font-size: var(--font-size-sm, 0.875rem);
   white-space: nowrap;
 }
 
 .admin-table tr:hover {
-  background: var(--color-gray-50, #f9fafb);
+  background: var(--color-gray-50, var(--color-gray-50));
 }
 
 .admin-table tr.row-canceled {
@@ -217,35 +217,35 @@ const emit = defineEmits<{
 }
 
 .admin-table tr.row-expired {
-  background: #fffbeb;
+  background: var(--color-warning-bg, var(--color-warning-bg));
 }
 
 .admin-table tr.row-expired:hover {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
 }
 
 /* ---- Dealer Info ---- */
 .dealer-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .dealer-info strong {
   font-size: var(--font-size-sm, 0.95rem);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
 }
 
 .dealer-slug {
   font-size: var(--font-size-xs, 0.75rem);
-  color: var(--color-gray-400, #9ca3af);
+  color: var(--color-gray-400, var(--color-gray-400));
 }
 
 /* ---- Badges ---- */
 .plan-badge,
 .status-badge {
   display: inline-block;
-  padding: 3px 10px;
+  padding: 0.1875rem 0.625rem;
   border-radius: var(--border-radius-lg, 12px);
   font-size: var(--font-size-xs, 0.75rem);
   font-weight: var(--font-weight-semibold, 600);
@@ -255,9 +255,9 @@ const emit = defineEmits<{
 
 .vertical-badge {
   display: inline-block;
-  background: var(--color-gray-100, #f3f4f6);
-  color: var(--color-gray-600, #4b5563);
-  padding: 3px 8px;
+  background: var(--color-gray-100, var(--color-gray-100));
+  color: var(--color-gray-600, var(--color-gray-600));
+  padding: 0.1875rem 0.5rem;
   border-radius: var(--border-radius-sm, 4px);
   font-size: var(--font-size-xs, 0.75rem);
   font-weight: var(--font-weight-medium, 500);
@@ -275,57 +275,57 @@ const emit = defineEmits<{
 /* ---- Action Buttons ---- */
 .action-buttons {
   display: flex;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .btn-icon {
   background: none;
-  border: 1px solid var(--border-color-light, #e5e7eb);
-  padding: 6px 8px;
+  border: 1px solid var(--border-color-light, var(--color-gray-200));
+  padding: 0.375rem 0.5rem;
   border-radius: var(--border-radius-sm, 4px);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   transition: all var(--transition-fast, 150ms ease);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  min-width: 44px;
-  color: var(--color-gray-500, #6b7280);
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  color: var(--color-gray-500, var(--color-gray-500));
 }
 
 .btn-icon:hover {
-  background: var(--color-gray-100, #f3f4f6);
+  background: var(--color-gray-100, var(--color-gray-100));
 }
 
 .btn-edit:hover {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
   border-color: var(--color-info);
 }
 
 .btn-extend:hover {
-  background: #ecfdf5;
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
   border-color: var(--color-success);
 }
 
 .btn-cancel:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
   border-color: var(--color-error);
 }
 
 .empty-state {
   text-align: center;
-  padding: var(--spacing-10, 40px);
-  color: var(--color-gray-500, #6b7280);
+  padding: var(--spacing-10);
+  color: var(--color-gray-500, var(--color-gray-500));
 }
 
 @media (max-width: 30em) {
   .action-buttons {
     flex-direction: column;
-    gap: 4px;
+    gap: 0.25rem;
   }
 }
 </style>

@@ -1,3 +1,4 @@
+import { defineEventHandler, getRequestHeader, setResponseHeader } from 'h3'
 import { createClient } from '@supabase/supabase-js'
 import { createHash } from 'node:crypto'
 

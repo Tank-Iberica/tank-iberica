@@ -194,7 +194,7 @@ const emit = defineEmits<{
   color: var(--color-success);
   font-weight: var(--font-weight-bold);
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 0.0625rem;
 }
 
 /* ---- CTA button ---- */
@@ -204,7 +204,7 @@ const emit = defineEmits<{
   border-radius: var(--border-radius);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
-  min-height: 44px;
+  min-height: 2.75rem;
   cursor: pointer;
   transition: all var(--transition-fast);
 }

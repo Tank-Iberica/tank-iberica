@@ -77,7 +77,7 @@ function onAcquisitionDateInput(e: Event) {
       <table v-if="maintenanceRecords.length" class="records-table">
         <thead>
           <tr>
-            <th>Fecha</th>
+            <th>{{ $t('common.date') }}</th>
             <th>Razón</th>
             <th>Coste €</th>
             <th>Factura</th>
@@ -135,7 +135,7 @@ function onAcquisitionDateInput(e: Event) {
                 "
               />
             </td>
-            <td><button class="btn-x" @click="emit('remove-maint', r.id)">×</button></td>
+            <td><button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove-maint', r.id)">×</button></td>
           </tr>
         </tbody>
         <tfoot>
@@ -216,7 +216,7 @@ function onAcquisitionDateInput(e: Event) {
                 "
               />
             </td>
-            <td><button class="btn-x" @click="emit('remove-rental', r.id)">×</button></td>
+            <td><button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove-rental', r.id)">×</button></td>
           </tr>
         </tbody>
         <tfoot>
@@ -254,25 +254,25 @@ function onAcquisitionDateInput(e: Event) {
 .row-3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 /* Fields */
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 .field label {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
 }
 .field input {
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.85rem;
 }
 .field input:focus {
@@ -282,15 +282,15 @@ function onAcquisitionDateInput(e: Event) {
 
 /* Records table */
 .records-block {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
 }
 .records-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
   font-weight: 600;
   font-size: 0.85rem;
 }
@@ -301,25 +301,25 @@ function onAcquisitionDateInput(e: Event) {
 }
 .records-table th {
   text-align: left;
-  padding: 6px 8px;
+  padding: 0.375rem var(--spacing-2);
   background: var(--bg-secondary);
   font-weight: 500;
   font-size: 0.7rem;
   text-transform: uppercase;
 }
 .records-table td {
-  padding: 4px 8px;
-  border-bottom: 1px solid #f3f4f6;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-bottom: 1px solid var(--color-gray-100);
 }
 .records-table input {
   width: 100%;
-  padding: 4px 6px;
+  padding: var(--spacing-1) 0.375rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.75rem;
 }
 .records-table tfoot td {
-  padding-top: 8px;
+  padding-top: var(--spacing-2);
   border: none;
 }
 .text-right {
@@ -328,25 +328,25 @@ function onAcquisitionDateInput(e: Event) {
 
 /* Cost summary */
 .cost-summary {
-  margin-top: 16px;
-  padding: 12px;
-  background: #f9fafb;
-  border-radius: 6px;
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius);
 }
 .cost-row {
   display: flex;
   justify-content: space-between;
   font-size: 0.8rem;
-  color: #6b7280;
-  padding: 4px 0;
+  color: var(--color-gray-500);
+  padding: var(--spacing-1) 0;
 }
 .cost-row.total {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #e5e7eb;
+  margin-top: var(--spacing-2);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-gray-200);
   font-weight: 700;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 .green {
   color: var(--color-success);
@@ -354,21 +354,21 @@ function onAcquisitionDateInput(e: Event) {
 
 /* Buttons */
 .btn-add {
-  padding: 4px 10px;
+  padding: var(--spacing-1) 0.625rem;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.75rem;
   cursor: pointer;
 }
 .btn-x {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: none;
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -378,7 +378,7 @@ function onAcquisitionDateInput(e: Event) {
   text-align: center;
   color: var(--text-disabled);
   font-size: 0.8rem;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 
 /* Mobile */

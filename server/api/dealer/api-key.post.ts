@@ -1,11 +1,12 @@
-import { createError, defineEventHandler } from 'h3'
+import { defineEventHandler } from 'h3'
 import { serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
 import { randomUUID } from 'node:crypto'
+import { safeError } from '../../utils/safeError'
 
 export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   const supabase = serverSupabaseServiceRole(event)
@@ -18,16 +19,13 @@ export default defineEventHandler(async (event) => {
     .single()
 
   if (!dealer) {
-    throw createError({ statusCode: 404, message: 'Dealer not found' })
+    throw safeError(404, 'Dealer not found')
   }
 
   // Require at least basic plan
   const plan = dealer.subscription_type || 'free'
   if (plan === 'free') {
-    throw createError({
-      statusCode: 403,
-      message: 'API access requires at least a Basic subscription',
-    })
+    throw safeError(403, 'API access requires at least a Basic subscription')
   }
 
   // Determine rate limit based on plan
@@ -67,7 +65,7 @@ export default defineEventHandler(async (event) => {
   })
 
   if (error) {
-    throw createError({ statusCode: 500, message: 'Failed to generate API key' })
+    throw safeError(500, 'Failed to generate API key')
   }
 
   return {

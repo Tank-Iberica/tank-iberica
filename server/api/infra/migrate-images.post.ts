@@ -8,13 +8,10 @@
  * Returns: { processed: number, remaining: number, errors: number }
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, readBody, createError } from 'h3'
-
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-interface MigrateImagesBody {
-  batchSize?: number
-}
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
+import { safeError } from '../../utils/safeError'
+import { validateBody } from '../../utils/validateBody'
 
 interface MigrateImagesResponse {
   processed: number
@@ -45,25 +42,29 @@ interface VehicleImageRow {
 const DEFAULT_BATCH_SIZE = 50
 const MAX_BATCH_SIZE = 200
 
+const migrateImagesSchema = z.object({
+  batchSize: z.number().int().positive().max(MAX_BATCH_SIZE).optional(),
+})
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event): Promise<MigrateImagesResponse> => {
   // 1. Admin auth check
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw safeError(401, 'Unauthorized')
   }
 
   const supabase = serverSupabaseServiceRole(event)
   const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
 
   if (userData?.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Forbidden' })
+    throw safeError(403, 'Forbidden')
   }
 
   // 2. Read body
-  const body = (await readBody<MigrateImagesBody>(event)) ?? {}
-  const batchSize = Math.min(Math.max(body.batchSize ?? DEFAULT_BATCH_SIZE, 1), MAX_BATCH_SIZE)
+  const body = await validateBody(event, migrateImagesSchema)
+  const batchSize = body.batchSize ?? DEFAULT_BATCH_SIZE
 
   // 3. Validate pipeline config
   const config = useRuntimeConfig()
@@ -72,11 +73,7 @@ export default defineEventHandler(async (event): Promise<MigrateImagesResponse> 
   const cfDeliveryUrl = config.cloudflareImagesDeliveryUrl as string | undefined
 
   if (!cfApiToken || !cfAccountId || !cfDeliveryUrl) {
-    throw createError({
-      statusCode: 500,
-      message:
-        'Missing Cloudflare Images configuration. Required: CLOUDFLARE_IMAGES_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_IMAGES_DELIVERY_URL',
-    })
+    throw safeError(500, 'Missing Cloudflare Images configuration. Required: CLOUDFLARE_IMAGES_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_IMAGES_DELIVERY_URL')
   }
 
   // 4. Query images that still reference Cloudinary (not yet migrated)
@@ -88,10 +85,7 @@ export default defineEventHandler(async (event): Promise<MigrateImagesResponse> 
     .limit(batchSize)
 
   if (queryError) {
-    throw createError({
-      statusCode: 500,
-      message: 'An error occurred while processing your request',
-    })
+    throw safeError(500, 'An error occurred while processing your request')
   }
 
   const imagesToProcess = (images ?? []) as VehicleImageRow[]
@@ -126,7 +120,10 @@ export default defineEventHandler(async (event): Promise<MigrateImagesResponse> 
       })
 
       // Only update if the pipeline actually used CF Images
-      if (pipelineResult.pipeline !== 'cloudinary') {
+      if (pipelineResult.pipeline === 'cloudinary') {
+        // Pipeline fell back to cloudinary mode — skip this image
+        errorCount++
+      } else {
         // Update the image record with the new CF Images gallery URL as the main URL
         // and the thumb URL as the thumbnail
         const { error: updateError } = await supabase
@@ -143,9 +140,6 @@ export default defineEventHandler(async (event): Promise<MigrateImagesResponse> 
         }
 
         processed++
-      } else {
-        // Pipeline fell back to cloudinary mode — skip this image
-        errorCount++
       }
     } catch {
       errorCount++

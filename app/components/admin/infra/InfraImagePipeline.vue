@@ -133,13 +133,13 @@ const { t: $t } = useI18n()
 }
 
 .pipeline-message.success {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  color: #166534;
+  color: var(--badge-success-bg);
 }
 
 .pipeline-message.error {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
   color: var(--color-error);
 }
@@ -157,8 +157,8 @@ const { t: $t } = useI18n()
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -183,8 +183,8 @@ const { t: $t } = useI18n()
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: all var(--transition-fast);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .btn-secondary:hover {

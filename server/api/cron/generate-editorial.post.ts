@@ -11,6 +11,7 @@ import { defineEventHandler } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { callAI } from '~~/server/services/aiProvider'
 import { isFeatureEnabled } from '~~/server/utils/featureFlags'
+import { logger } from '../../utils/logger'
 
 function computeTrendingSearches(searches: Array<{ query: string }>): string[] {
   const freq = new Map<string, number>()
@@ -32,7 +33,7 @@ function buildArticleSlug(article: GeneratedArticle): string {
       .replaceAll(/[\u0300-\u036F]/g, '')
       .replaceAll(/[^a-z0-9]+/g, '-')
       .replaceAll(/-+/g, '-')
-      .replaceAll(/^-|-$/g, '')
+      .replace(/^-/, '').replace(/-$/, '')
   )
 }
 
@@ -164,7 +165,7 @@ Return as a JSON array of 2 articles.`,
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    console.error(`[generate-editorial] AI generation failed: ${msg}`)
+    logger.error(`[generate-editorial] AI generation failed: ${msg}`)
     return { success: false, message: 'AI generation failed', generated: 0 }
   }
 })

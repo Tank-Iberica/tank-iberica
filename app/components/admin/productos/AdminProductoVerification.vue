@@ -136,8 +136,8 @@ const verifLevelOrder = LEVEL_ORDER
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xs);
 }
 .collapsible {
   padding: 0;
@@ -147,38 +147,38 @@ const verifLevelOrder = LEVEL_ORDER
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   text-transform: uppercase;
 }
 .section-toggle:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 .section-content {
-  padding: 0 16px 16px;
-  border-top: 1px solid #f3f4f6;
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-100);
 }
 .verif-current {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: var(--color-success-bg, #dcfce7);
-  border-radius: 6px;
-  margin-bottom: 12px;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-success-bg, var(--color-success-bg));
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-3);
 }
 .verif-current-label {
-  font-size: 13px;
-  color: #6b7280;
+  font-size: 0.8125rem;
+  color: var(--color-gray-500);
 }
 .verif-current-value {
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 .verif-current-value.level-none {
   color: var(--text-disabled);
@@ -187,108 +187,108 @@ const verifLevelOrder = LEVEL_ORDER
   color: var(--color-success);
 }
 .verif-current-value.level-extended {
-  color: #059669;
+  color: var(--color-success-dark);
 }
 .verif-current-value.level-detailed {
-  color: #0d9488;
+  color: var(--color-teal-600);
 }
 .verif-current-value.level-audited {
   color: var(--color-warning);
 }
 .verif-current-value.level-certified {
-  color: #8b5cf6;
+  color: var(--color-violet-500);
 }
 .verif-level-badge {
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 10px;
+  font-size: 0.6875rem;
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--border-radius-md);
   font-weight: 600;
 }
 .verif-level-badge.level-verified {
-  background: #d1fae5;
-  color: #059669;
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 .verif-level-badge.level-extended {
-  background: #d1fae5;
-  color: #047857;
+  background: var(--color-emerald-100);
+  color: var(--color-emerald-700);
 }
 .verif-level-badge.level-detailed {
-  background: #ccfbf1;
-  color: #0d9488;
+  background: var(--color-teal-bg);
+  color: var(--color-teal-text);
 }
 .verif-level-badge.level-audited {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning);
 }
 .verif-level-badge.level-certified {
-  background: #ede9fe;
-  color: #7c3aed;
+  background: var(--color-purple-bg);
+  color: var(--color-purple-600);
 }
 .verif-progress {
   display: flex;
-  gap: 4px;
-  margin-bottom: 16px;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-4);
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: var(--spacing-1);
 }
 .verif-progress-step {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  min-width: 60px;
-  padding: 6px 4px;
-  border-radius: 6px;
+  gap: var(--spacing-1);
+  min-width: 3.75rem;
+  padding: 0.375rem 0.25rem;
+  border-radius: var(--border-radius);
   background: var(--bg-secondary);
   opacity: 0.5;
   transition: all 0.2s;
 }
 .verif-progress-step.active {
   opacity: 1;
-  background: #ecfdf5;
+  background: var(--color-emerald-50);
 }
 .verif-progress-step.current {
   outline: 2px solid var(--color-success);
 }
 .step-badge {
-  font-size: 16px;
+  font-size: var(--font-size-base);
 }
 .step-label {
-  font-size: 10px;
+  font-size: 0.625rem;
   text-align: center;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 .verif-docs-header {
   font-weight: 600;
-  font-size: 13px;
-  margin-bottom: 8px;
-  color: #374151;
+  font-size: 0.8125rem;
+  margin-bottom: var(--spacing-2);
+  color: var(--color-gray-700);
 }
 .verif-upload-row {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
 }
 .verif-select {
   flex: 1;
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 13px;
-  min-height: 44px;
+  border-radius: var(--border-radius);
+  font-size: 0.8125rem;
+  min-height: 2.75rem;
 }
 .verif-upload-btn {
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   cursor: pointer;
 }
 .btn {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   cursor: pointer;
 }
@@ -299,65 +299,65 @@ const verifLevelOrder = LEVEL_ORDER
 .verif-doc-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f3f4f6;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) 0;
+  border-bottom: 1px solid var(--color-gray-100);
   flex-wrap: wrap;
 }
 .verif-doc-type {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   flex: 1;
-  min-width: 120px;
+  min-width: 7.5rem;
 }
 .verif-doc-status {
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 10px;
+  font-size: var(--font-size-xs);
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--border-radius-md);
   font-weight: 500;
 }
 .verif-doc-status.status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning);
 }
 .verif-doc-status.status-verified {
-  background: #d1fae5;
-  color: #059669;
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 .verif-doc-status.status-rejected {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 .verif-doc-link {
-  font-size: 12px;
-  color: #2563eb;
+  font-size: var(--font-size-xs);
+  color: var(--color-focus);
   text-decoration: none;
 }
 .verif-doc-link:hover {
   text-decoration: underline;
 }
 .verif-doc-rejection {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--color-error);
   width: 100%;
 }
 .loading-small {
-  font-size: 13px;
-  color: #6b7280;
-  padding: 8px 0;
+  font-size: 0.8125rem;
+  color: var(--color-gray-500);
+  padding: var(--spacing-2) 0;
 }
 .error-msg.small {
   font-size: 0.75rem;
-  padding: 6px 10px;
-  margin-bottom: 8px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: 0.375rem 0.625rem;
+  margin-bottom: var(--spacing-2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
 }
 .empty-msg {
   text-align: center;
   color: var(--text-disabled);
   font-size: 0.8rem;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 </style>

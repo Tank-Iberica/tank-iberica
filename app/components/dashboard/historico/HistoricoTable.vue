@@ -97,7 +97,12 @@ const { t } = useI18n()
 
     <!-- Empty state -->
     <div v-else class="empty-state">
-      <p>{{ t('dashboard.historico.empty') }}</p>
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <p class="empty-title">{{ t('dashboard.historico.empty') }}</p>
+      <p class="empty-desc">{{ t('dashboard.historico.emptyDesc') }}</p>
+      <NuxtLink to="/dashboard" class="btn-primary">{{ t('dashboard.historico.goToDashboard') }}</NuxtLink>
     </div>
   </div>
 </template>
@@ -108,17 +113,17 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: 0.75rem;
+  padding: 3.75rem 1.25rem;
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--color-gray-200);
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0.1875rem solid var(--color-gray-200);
   border-top-color: var(--color-primary);
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   animation: spin 0.8s linear infinite;
 }
 
@@ -131,8 +136,8 @@ const { t } = useI18n()
 /* Table */
 .table-container {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -145,13 +150,13 @@ const { t } = useI18n()
 
 .historico-table th {
   text-align: left;
-  padding: 12px 10px;
-  background: #f9fafb;
+  padding: 0.75rem 0.625rem;
+  background: var(--color-gray-50);
   font-weight: 600;
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
-  color: #6b7280;
-  border-bottom: 1px solid #e5e7eb;
+  color: var(--color-gray-500);
+  border-bottom: 1px solid var(--color-gray-200);
   white-space: nowrap;
 }
 
@@ -171,12 +176,12 @@ const { t } = useI18n()
 
 .historico-table th.actions-col {
   text-align: center;
-  width: 100px;
+  width: 6.25rem;
 }
 
 .historico-table td {
-  padding: 10px;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 0.625rem;
+  border-bottom: 1px solid var(--color-gray-100);
   vertical-align: middle;
 }
 
@@ -207,10 +212,40 @@ const { t } = useI18n()
 
 /* Empty state */
 .empty-state {
-  padding: 48px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1.25rem;
   text-align: center;
   color: var(--text-auxiliary);
-  font-size: 0.95rem;
+}
+
+.empty-title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.empty-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.btn-primary {
+  margin-top: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--color-primary, var(--color-primary));
+  color: var(--color-white);
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
 }
 
 .empty-state p {
@@ -219,13 +254,13 @@ const { t } = useI18n()
 
 /* Action buttons */
 .btn-icon {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 1rem;
-  border-radius: 6px;
+  font-size: var(--font-size-base);
+  border-radius: var(--border-radius);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -236,17 +271,17 @@ const { t } = useI18n()
 }
 
 .btn-icon.restore:hover {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
 }
 
 (@media ()max-width: 47.9375em())) {
   .historico-table {
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
   }
 
   .historico-table th,
   .historico-table td {
-    padding: 8px 6px;
+    padding: 0.5rem 0.375rem;
   }
 }
 </style>

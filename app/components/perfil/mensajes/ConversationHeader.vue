@@ -79,10 +79,10 @@ const sellerResponseLabel = computed<string>(() => {
 <style scoped>
 .sr-only {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 0.0625rem;
+  height: 0.0625rem;
   padding: 0;
-  margin: -1px;
+  margin: -0.0625rem;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
@@ -96,15 +96,15 @@ const sellerResponseLabel = computed<string>(() => {
   padding: var(--spacing-3) var(--spacing-4);
   border-bottom: 1px solid var(--border-color-light);
   background: var(--bg-primary);
-  min-height: 56px;
+  min-height: 3.5rem;
 }
 
 .conv-header__back {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -117,7 +117,7 @@ const sellerResponseLabel = computed<string>(() => {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0.0625rem;
 }
 
 .conv-header__vehicle {
@@ -135,7 +135,7 @@ const sellerResponseLabel = computed<string>(() => {
 }
 
 .conv-header__response-time {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--color-primary);
   opacity: 0.75;
   white-space: nowrap;
@@ -152,13 +152,13 @@ const sellerResponseLabel = computed<string>(() => {
 }
 
 .conv-status--active {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-emerald-100);
+  color: var(--color-success-text);
 }
 
 .conv-status--shared {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 
 .conv-status--closed {
@@ -167,7 +167,7 @@ const sellerResponseLabel = computed<string>(() => {
 }
 
 .conv-status--reported {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -175,8 +175,8 @@ const sellerResponseLabel = computed<string>(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   background: none;
   border: none;
   cursor: pointer;

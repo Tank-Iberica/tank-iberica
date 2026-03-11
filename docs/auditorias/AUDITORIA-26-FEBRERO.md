@@ -622,7 +622,7 @@ Auditoría externa (25-feb) verificada contra código real el 26-feb y re-verifi
 - Errores TypeScript: 50 → 10 restantes
 - Archivos >500 líneas: 32 → 0 (auditoría #7 iter 1-16 completada)
 
-### Pendientes confirmados (movidos a STATUS.md y BACKLOG.md)
+### Pendientes confirmados (movidos a STATUS.md y BACKLOG.md, alias histórico de BACKLOG-EJECUTABLE.md)
 
 - **P0-3:** Rate limiting en producción — requiere configurar reglas CF WAF (fundadores)
 - **P0-4:** Ownership validation en /api/verify-document
@@ -655,3 +655,4 @@ Auditoría externa (25-feb) verificada contra código real el 26-feb y re-verifi
 
 _Informe original: 26 febrero 2026. Actualizado: marzo 2026 (verificación cruzada)._
 _Archivado en: `docs/auditorias/AUDITORIA-26-FEBRERO.md`_
+

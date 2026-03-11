@@ -15,7 +15,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const outputArray = new Uint8Array(rawData.length)
 
   for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i)
+    outputArray[i] = rawData.codePointAt(i) ?? 0
   }
   return outputArray
 }
@@ -34,10 +34,10 @@ export function usePushNotifications() {
    */
   const isSupported = computed(() => {
     return (
-      typeof window !== 'undefined' &&
+      globalThis.window !== undefined &&
       'serviceWorker' in navigator &&
-      'PushManager' in window &&
-      'Notification' in window
+      'PushManager' in globalThis &&
+      'Notification' in globalThis
     )
   })
 

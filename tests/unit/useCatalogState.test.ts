@@ -187,4 +187,158 @@ describe('useCatalogState', () => {
       brand: 'Volvo',
     })
   })
+
+  // ─── setActions ──────────────────────────────────────────────────────────
+
+  it('setActions sets activeActions and first action as activeAction', () => {
+    const catalog = useCatalogState()
+    catalog.setActions(['venta', 'alquiler'])
+
+    const fresh = useCatalogState()
+    expect(fresh.activeActions.value).toEqual(['venta', 'alquiler'])
+    expect(fresh.activeAction.value).toBe('venta')
+    expect(fresh.filters.value).toEqual({ actions: ['venta', 'alquiler'] })
+  })
+
+  it('setActions with empty array clears activeAction and filters', () => {
+    const catalog = useCatalogState()
+    catalog.setActions(['venta'])
+    catalog.setActions([])
+
+    const fresh = useCatalogState()
+    expect(fresh.activeAction.value).toBeNull()
+    expect(fresh.filters.value).toEqual({})
+  })
+
+  it('setActions clears category and subcategory', () => {
+    const catalog = useCatalogState()
+    catalog.setCategory('cat-1', 'semirremolques')
+    catalog.setSubcategory('sub-1', 'cisternas')
+    catalog.setActions(['terceros'])
+
+    const fresh = useCatalogState()
+    expect(fresh.activeCategoryId.value).toBeNull()
+    expect(fresh.activeCategorySlug.value).toBeNull()
+    expect(fresh.activeSubcategoryId.value).toBeNull()
+    expect(fresh.activeSubcategorySlug.value).toBeNull()
+  })
+
+  // ─── setSubcategory ──────────────────────────────────────────────────────
+
+  it('setSubcategory(null, null) clears subcategory_id from filters', () => {
+    const catalog = useCatalogState()
+    catalog.setSubcategory('sub-1', 'cisternas')
+    catalog.setSubcategory(null, null)
+
+    const fresh = useCatalogState()
+    expect(fresh.activeSubcategoryId.value).toBeNull()
+    expect(fresh.activeSubcategorySlug.value).toBeNull()
+    expect(fresh.filters.value.subcategory_id).toBeUndefined()
+  })
+
+  // ─── setCategory preserves other filters ─────────────────────────────────
+
+  it('setCategory preserves existing action filter', () => {
+    const catalog = useCatalogState()
+    catalog.setAction('venta')
+    catalog.setCategory('cat-1', 'semirremolques')
+
+    const fresh = useCatalogState()
+    expect(fresh.filters.value).toEqual({ action: 'venta', category_id: 'cat-1' })
+  })
+
+  it('setCategory removes subcategory_id from filters', () => {
+    const catalog = useCatalogState()
+    catalog.setSubcategory('sub-1', 'cisternas')
+    catalog.setCategory('cat-1', 'semirremolques')
+
+    const fresh = useCatalogState()
+    // subcategory_id should be removed when category changes
+    expect(fresh.filters.value).not.toHaveProperty('subcategory_id')
+    expect(fresh.filters.value).toEqual({ category_id: 'cat-1' })
+  })
+
+  // ─── saveScrollPosition ──────────────────────────────────────────────────
+
+  it('saveScrollPosition stores the position', () => {
+    const catalog = useCatalogState()
+    catalog.saveScrollPosition(450)
+
+    const fresh = useCatalogState()
+    expect(fresh.scrollPosition.value).toBe(450)
+  })
+
+  // ─── setLocationLevel ────────────────────────────────────────────────────
+
+  it('setLocationLevel(null) clears location filters', () => {
+    const catalog = useCatalogState()
+    catalog.setLocationLevel(null, 'ES', null, null)
+
+    const fresh = useCatalogState()
+    expect(fresh.locationLevel.value).toBeNull()
+    expect(fresh.filters.value).not.toHaveProperty('location_countries')
+    expect(fresh.filters.value).not.toHaveProperty('location_regions')
+    expect(fresh.filters.value).not.toHaveProperty('location_province_eq')
+  })
+
+  it('setLocationLevel("mundo") clears location filters', () => {
+    const catalog = useCatalogState()
+    catalog.setLocationLevel('mundo' as any, 'ES', null, null)
+
+    const fresh = useCatalogState()
+    expect(fresh.locationLevel.value).toBe('mundo')
+    expect(fresh.filters.value).not.toHaveProperty('location_countries')
+  })
+
+  it('setLocationLevel("provincia") sets location_province_eq filter', () => {
+    const catalog = useCatalogState()
+    catalog.setLocationLevel('provincia' as any, 'ES', 'Madrid', 'Comunidad de Madrid')
+
+    const fresh = useCatalogState()
+    expect(fresh.locationLevel.value).toBe('provincia')
+    expect(fresh.filters.value).toHaveProperty('location_province_eq', 'Madrid')
+  })
+
+  it('setLocationLevel("provincia") without province falls through', () => {
+    const catalog = useCatalogState()
+    catalog.setLocationLevel('provincia' as any, 'ES', null, null)
+
+    const fresh = useCatalogState()
+    expect(fresh.locationLevel.value).toBe('provincia')
+    // No province → falls through to regions/countries
+    expect(fresh.filters.value).not.toHaveProperty('location_province_eq')
+  })
+
+  // ─── locationLevel with regions mock ─────────────────────────────────────
+
+  it('setLocationLevel clears previous location filters before setting new ones', () => {
+    const catalog = useCatalogState()
+    // First set a province filter
+    catalog.setLocationLevel('provincia' as any, 'ES', 'Madrid', 'Comunidad de Madrid')
+    // Now set mundo — should clear location_province_eq
+    catalog.setLocationLevel('mundo' as any, 'ES', 'Madrid', 'Comunidad de Madrid')
+
+    const fresh = useCatalogState()
+    expect(fresh.filters.value).not.toHaveProperty('location_province_eq')
+    expect(fresh.filters.value).not.toHaveProperty('location_countries')
+    expect(fresh.filters.value).not.toHaveProperty('location_regions')
+  })
+
+  // ─── activeActions default ────────────────────────────────────────────────
+
+  it('activeActions defaults to ["alquiler"]', () => {
+    const { activeActions } = useCatalogState()
+    expect(activeActions.value).toEqual(['alquiler'])
+  })
+
+  // ─── resetCatalog restores activeActions default ──────────────────────────
+
+  it('resetCatalog restores activeActions to default', () => {
+    const catalog = useCatalogState()
+    catalog.setActions(['venta', 'terceros'])
+    catalog.resetCatalog()
+
+    const fresh = useCatalogState()
+    expect(fresh.activeActions.value).toEqual(['alquiler'])
+  })
 })

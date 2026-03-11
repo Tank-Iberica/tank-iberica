@@ -164,7 +164,8 @@ export default defineEventHandler(async (event) => {
   // Build vehicle cards HTML
   const vehicleCards = vehicles
     .map((v) => {
-      const title = escapeHtml(`${v.brand} ${v.model}${v.year ? ` (${v.year})` : ''}`)
+      const yearPart = v.year ? ` (${v.year})` : ''
+      const title = escapeHtml(`${v.brand} ${v.model}${yearPart}`)
       const priceStr = v.price ? `${formatPrice(v.price)}\u20AC` : ''
       const locationStr = v.location ? escapeHtml(v.location) : ''
       const vehicleUrl = `${siteUrl}/vehiculo/${v.slug}`

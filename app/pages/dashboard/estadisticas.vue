@@ -123,8 +123,11 @@ onMounted(loadStats)
 
     <div v-if="error" class="alert-error">{{ error }}</div>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
+    <div v-if="loading" class="loading-skeleton" aria-busy="true">
+      <div class="stats-grid">
+        <UiSkeletonCard v-for="n in 3" :key="n" :lines="1" />
+      </div>
+      <UiSkeletonTable :rows="5" :cols="3" />
     </div>
 
     <template v-else>
@@ -181,18 +184,18 @@ onMounted(loadStats)
 
 <style scoped>
 .stats-page {
-  max-width: 900px;
+  max-width: 56.25rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .page-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
 }
 
@@ -204,57 +207,42 @@ onMounted(loadStats)
 }
 
 .plan-badge {
-  padding: 4px 12px;
+  padding: var(--spacing-1) var(--spacing-3);
   background: var(--color-primary);
   color: white;
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 600;
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
-.loading-state {
+.loading-skeleton {
   display: flex;
-  justify-content: center;
-  padding: 40px;
-}
-
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--color-gray-200);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  flex-direction: column;
+  gap: var(--spacing-5);
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .stat-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6) var(--spacing-4);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
   text-align: center;
 }
 
@@ -272,13 +260,13 @@ onMounted(loadStats)
 
 .card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .card h2 {
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--spacing-4) 0;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -286,7 +274,7 @@ onMounted(loadStats)
 
 .empty-state {
   text-align: center;
-  padding: 32px 20px;
+  padding: var(--spacing-8) var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
@@ -297,7 +285,7 @@ onMounted(loadStats)
 
 .table-header {
   display: flex;
-  padding: 10px 0;
+  padding: 0.625rem 0;
   border-bottom: 2px solid var(--color-gray-200);
   font-size: 0.8rem;
   font-weight: 600;
@@ -307,11 +295,11 @@ onMounted(loadStats)
 
 .table-row {
   display: flex;
-  padding: 12px 0;
+  padding: var(--spacing-3) 0;
   border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.9rem;
-  color: #334155;
-  min-height: 44px;
+  color: var(--text-secondary);
+  min-height: 2.75rem;
   align-items: center;
 }
 
@@ -326,27 +314,27 @@ onMounted(loadStats)
 }
 
 .col-num {
-  width: 80px;
+  width: 5rem;
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
 .upgrade-card {
-  background: linear-gradient(135deg, #f0f9ff, #eff6ff);
-  border: 1px solid #bfdbfe;
-  border-radius: 12px;
-  padding: 24px;
+  background: linear-gradient(135deg, var(--color-info-bg), var(--color-info-bg));
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
   text-align: center;
 }
 
 .upgrade-card h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-2) 0;
   font-size: 1.1rem;
-  color: #1e40af;
+  color: var(--color-info-text);
 }
 
 .upgrade-card p {
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--spacing-4) 0;
   color: var(--color-info);
   font-size: 0.9rem;
 }
@@ -355,20 +343,20 @@ onMounted(loadStats)
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-6);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .stats-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
   .stats-grid {
     grid-template-columns: repeat(3, 1fr);

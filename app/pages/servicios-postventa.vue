@@ -5,6 +5,12 @@ const route = useRoute()
 const supabase = useSupabaseClient<any>()
 const user = useSupabaseUser()
 
+usePageSeo({
+  title: `${t('postSale.pageTitle')} — ${t('site.title')}`,
+  description: t('postSale.seoDescription'),
+  path: '/servicios-postventa',
+})
+
 const vehicleSlug = computed(() => (route.query.v as string) || '')
 
 interface VehicleInfo {
@@ -114,6 +120,7 @@ useHead({
 <template>
   <div class="postsale-page">
     <div class="postsale-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('postSale.pageTitle') }]" />
       <!-- Hero -->
       <section class="postsale-hero">
         <h1 class="postsale-title">{{ $t('postSale.pageTitle') }}</h1>
@@ -190,7 +197,7 @@ useHead({
 }
 
 .postsale-container {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
   padding: 0 var(--spacing-4, 1rem);
 }
@@ -209,7 +216,7 @@ useHead({
 
 .postsale-subtitle {
   font-size: var(--font-size-base, 1rem);
-  color: var(--text-secondary, #4a5a5a);
+  color: var(--text-secondary, var(--text-secondary));
   line-height: var(--line-height-relaxed, 1.625);
 }
 
@@ -218,16 +225,16 @@ useHead({
   display: flex;
   align-items: center;
   gap: var(--spacing-4, 1rem);
-  background: var(--bg-primary, #fff);
-  border: 1px solid var(--border-color, #d1d5db);
+  background: var(--bg-primary, var(--color-white));
+  border: 1px solid var(--border-color, var(--color-gray-300));
   border-radius: var(--border-radius-md, 12px);
   padding: var(--spacing-4, 1rem);
   margin-bottom: var(--spacing-8, 2rem);
 }
 
 .vehicle-thumb {
-  width: 80px;
-  height: 60px;
+  width: 5rem;
+  height: 3.75rem;
   object-fit: cover;
   border-radius: var(--border-radius, 8px);
   flex-shrink: 0;
@@ -236,11 +243,11 @@ useHead({
 .vehicle-info-title {
   font-size: var(--font-size-base, 1rem);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
 }
 
 .loading-text {
-  color: var(--text-auxiliary, #7a8a8a);
+  color: var(--text-auxiliary, var(--text-auxiliary));
   font-size: var(--font-size-sm, 0.875rem);
 }
 
@@ -264,11 +271,11 @@ useHead({
 }
 
 .service-card {
-  background: var(--bg-primary, #fff);
-  border: 1px solid var(--border-color, #d1d5db);
+  background: var(--bg-primary, var(--color-white));
+  border: 1px solid var(--border-color, var(--color-gray-300));
   border-radius: var(--border-radius-md, 12px);
   padding: var(--spacing-5, 1.25rem);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  box-shadow: var(--shadow-sm, var(--shadow-sm));
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2, 0.5rem);
@@ -281,12 +288,12 @@ useHead({
 .service-title {
   font-size: var(--font-size-lg, 1.125rem);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
 }
 
 .service-desc {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-secondary, #4a5a5a);
+  color: var(--text-secondary, var(--text-secondary));
   line-height: var(--line-height-normal, 1.5);
 }
 
@@ -295,7 +302,7 @@ useHead({
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-bold, 700);
   color: var(--color-primary);
-  background: var(--bg-secondary, #f3f4f6);
+  background: var(--bg-secondary, var(--color-gray-100));
   padding: var(--spacing-1, 0.25rem) var(--spacing-3, 0.75rem);
   border-radius: var(--border-radius-full, 9999px);
   align-self: flex-start;
@@ -311,7 +318,7 @@ useHead({
 
 .login-required {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-auxiliary, #7a8a8a);
+  color: var(--text-auxiliary, var(--text-auxiliary));
   font-style: italic;
 }
 
@@ -319,13 +326,13 @@ useHead({
   align-self: flex-start;
   padding: var(--spacing-2, 0.5rem) var(--spacing-5, 1.25rem);
   background: var(--color-primary);
-  color: var(--color-white, #fff);
+  color: var(--color-white, var(--color-white));
   border: none;
   border-radius: var(--border-radius, 8px);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background var(--transition-fast, 150ms ease);
 }
 
@@ -349,22 +356,22 @@ useHead({
 .postsale-help {
   text-align: center;
   padding: var(--spacing-6, 1.5rem) 0;
-  border-top: 1px solid var(--border-color-light, #e5e7eb);
+  border-top: 1px solid var(--border-color-light, var(--color-gray-200));
 }
 
 .postsale-help p {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-auxiliary, #7a8a8a);
+  color: var(--text-auxiliary, var(--text-auxiliary));
 }
 
 /* ---- Responsive ---- */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .postsale-container {
     padding: 0 var(--spacing-6, 1.5rem);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .postsale-title {
     font-size: var(--font-size-3xl, 1.875rem);
   }
@@ -374,8 +381,8 @@ useHead({
   }
 
   .vehicle-thumb {
-    width: 120px;
-    height: 80px;
+    width: 7.5rem;
+    height: 5rem;
   }
 }
 </style>

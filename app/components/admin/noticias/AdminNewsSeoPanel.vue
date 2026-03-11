@@ -67,15 +67,15 @@ defineEmits<{
 /* SEO Panel */
 .nf-seo {
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
 @media (min-width: 64em) {
   .nf-seo {
     position: sticky;
-    top: 80px;
+    top: 5rem;
   }
 
   .seo-toggle-mobile {
@@ -88,48 +88,48 @@ defineEmits<{
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 16px 20px;
+  padding: var(--spacing-4) var(--spacing-5);
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-gray-700);
   cursor: pointer;
   border: none;
   background: none;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .seo-score-mini {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 22px;
-  border-radius: 11px;
+  width: 2rem;
+  height: 1.375rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.7rem;
   font-weight: 700;
   margin-left: auto;
 }
 
 .seo-score-mini.good {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 .seo-score-mini.warning {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 .seo-score-mini.bad {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .seo-panel {
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 @media (min-width: 64em) {
   .seo-panel {
-    padding-top: 20px;
+    padding-top: var(--spacing-5);
   }
 }
 
@@ -142,13 +142,13 @@ defineEmits<{
 .seo-score-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-5);
 }
 
 .score-circle {
-  min-width: 72px;
-  min-height: 72px;
+  min-width: 4.5rem;
+  min-height: 4.5rem;
   border-radius: 50%;
   border: 5px solid;
   display: flex;
@@ -172,7 +172,7 @@ defineEmits<{
   font-size: 1.4rem;
   font-weight: 700;
   line-height: 1;
-  color: #1a1a1a;
+  color: var(--color-near-black);
 }
 
 .score-label {
@@ -183,12 +183,12 @@ defineEmits<{
 .score-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .score-text strong {
   font-size: 0.9rem;
-  color: #1a1a1a;
+  color: var(--color-near-black);
 }
 
 .level-text {
@@ -206,7 +206,7 @@ defineEmits<{
 
 /* Snippet preview */
 .snippet-preview {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
 }
 
 .snippet-label {
@@ -215,22 +215,22 @@ defineEmits<{
   color: var(--text-disabled);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
 }
 
 .snippet-box {
-  background: #fafafa;
+  background: var(--color-gray-50);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  padding: 14px;
+  border-radius: var(--border-radius);
+  padding: 0.875rem;
   font-family: Arial, sans-serif;
 }
 
 .snippet-title {
   color: #1a0dab;
-  font-size: 16px;
+  font-size: var(--font-size-base);
   line-height: 1.3;
-  margin-bottom: 2px;
+  margin-bottom: 0.125rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -238,8 +238,8 @@ defineEmits<{
 
 .snippet-url {
   color: #006621;
-  font-size: 12px;
-  margin-bottom: 4px;
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--spacing-1);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -247,7 +247,7 @@ defineEmits<{
 
 .snippet-desc {
   color: #545454;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -258,11 +258,11 @@ defineEmits<{
 /* Criteria */
 .seo-criteria {
   border-top: 1px solid var(--color-gray-100);
-  padding-top: 12px;
+  padding-top: var(--spacing-3);
 }
 
 .criterion-row {
-  padding: 8px 0;
+  padding: var(--spacing-2) 0;
   border-bottom: 1px solid var(--color-gray-50);
 }
 
@@ -273,12 +273,12 @@ defineEmits<{
 .criterion-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .criterion-dot {
-  width: 8px;
-  height: 8px;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -297,7 +297,7 @@ defineEmits<{
   flex: 1;
   font-size: 0.8rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .criterion-score {
@@ -309,8 +309,8 @@ defineEmits<{
 .criterion-desc {
   font-size: 0.7rem;
   color: var(--text-disabled);
-  margin: 3px 0 0;
-  padding-left: 16px;
+  margin: 0.1875rem 0 0;
+  padding-left: var(--spacing-4);
   line-height: 1.4;
 }
 </style>

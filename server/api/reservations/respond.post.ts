@@ -6,23 +6,21 @@
  * Only the seller associated with the reservation can respond.
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
 import { safeError } from '../../utils/safeError'
+import { validateBody } from '../../utils/validateBody'
 
 // -- Types ------------------------------------------------------------------
-
-interface RespondBody {
-  reservationId: string
-  response: string
-}
 
 interface RespondResponse {
   success: boolean
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
-const MIN_RESPONSE_LENGTH = 50
+const respondSchema = z.object({
+  reservationId: z.string().uuid('reservationId must be a valid UUID'),
+  response: z.string().min(50, 'Response must be at least 50 characters long').max(2000),
+})
 
 // -- Handler ----------------------------------------------------------------
 
@@ -30,26 +28,11 @@ export default defineEventHandler(async (event): Promise<RespondResponse> => {
   // ── 1. Auth check ─────────────────────────────────────────────────────────
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   // ── 2. Read and validate body ─────────────────────────────────────────────
-  const body = await readBody<RespondBody>(event)
-  const { reservationId, response } = body
-
-  if (!reservationId || !UUID_RE.test(reservationId)) {
-    throw createError({
-      statusCode: 400,
-      message: 'Invalid or missing reservationId (UUID expected)',
-    })
-  }
-
-  if (!response || typeof response !== 'string' || response.trim().length < MIN_RESPONSE_LENGTH) {
-    throw createError({
-      statusCode: 400,
-      message: `Response must be at least ${MIN_RESPONSE_LENGTH} characters long`,
-    })
-  }
+  const { reservationId, response } = await validateBody(event, respondSchema)
 
   // ── 3. Get Supabase service role client ───────────────────────────────────
   const supabase = serverSupabaseServiceRole(event)
@@ -62,7 +45,7 @@ export default defineEventHandler(async (event): Promise<RespondResponse> => {
     .single()
 
   if (fetchError || !reservation) {
-    throw createError({ statusCode: 404, message: 'Reservation not found' })
+    throw safeError(404, 'Reservation not found')
   }
 
   // Verify the authenticated user is the seller for this reservation.
@@ -74,18 +57,13 @@ export default defineEventHandler(async (event): Promise<RespondResponse> => {
     .maybeSingle()
 
   if (!dealer || reservation.seller_id !== user.id) {
-    throw createError({
-      statusCode: 403,
-      message: 'Only the seller can respond to this reservation',
-    })
+    throw safeError(403, 'Only the seller can respond to this reservation')
   }
 
   // Ensure reservation is in a respondable state
   if (!['pending', 'active'].includes(reservation.status as string)) {
-    throw createError({
-      statusCode: 409,
-      message: `Cannot respond to a reservation with status "${reservation.status}"`,
-    })
+    throw safeError(409, `Cannot respond to a reservation with status "${reservation.status}"`)
+
   }
 
   // ── 5. Update reservation with seller response ────────────────────────────

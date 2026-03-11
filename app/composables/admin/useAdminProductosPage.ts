@@ -377,7 +377,7 @@ export function useAdminProductosPage() {
       const obj = val as { es?: string; en?: string }
       return obj.es || obj.en || '-'
     }
-    return String(val)
+    return String(val as string | number | boolean)
   }
 
   // --- Keyboard ----------------------------------------------------------

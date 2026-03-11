@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # Auditoría integral — Tracciona
 
@@ -204,4 +204,6 @@
 
 ---
 
-_Documento generado en el marco de la auditoría integral del proyecto Tracciona. Para estado detallado de módulos y sesiones, ver docs/ESTADO-REAL-PRODUCTO.md y docs/progreso.md._
+_Documento generado en el marco de la auditoría integral del proyecto Tracciona. Para estado detallado de módulos y sesiones, ver docs/ESTADO-REAL-PRODUCTO.md (alias de compatibilidad) y docs/progreso.md (alias de compatibilidad histórica)._
+
+

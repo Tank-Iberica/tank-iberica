@@ -17,6 +17,8 @@ const emit = defineEmits<{
     <button
       class="section-header"
       :class="{ active: activeSection === sectionId, 'section-header--danger': danger }"
+      :aria-expanded="activeSection === sectionId"
+      :aria-controls="`panel-${sectionId}`"
       @click="emit('toggle', sectionId)"
     >
       <span>
@@ -28,8 +30,10 @@ const emit = defineEmits<{
     <Transition name="accordion">
       <div
         v-if="activeSection === sectionId"
+        :id="`panel-${sectionId}`"
         class="section-content"
         :class="{ 'section-content--danger': danger }"
+        role="region"
       >
         <slot />
       </div>
@@ -51,10 +55,10 @@ const emit = defineEmits<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 1rem 1.25rem;
   background: none;
   border: none;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   font-weight: 500;
   color: var(--text-primary);
   cursor: pointer;
@@ -79,12 +83,12 @@ const emit = defineEmits<{
 }
 
 .section-arrow {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: var(--text-auxiliary);
 }
 
 .section-content {
-  padding: 16px 20px;
+  padding: 1rem 1.25rem;
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color-light);
 }
@@ -98,15 +102,15 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.375rem;
   background: var(--color-error);
   color: var(--color-white);
-  border-radius: 10px;
-  font-size: 0.75rem;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  margin-left: 8px;
+  margin-left: 0.5rem;
 }
 
 .accordion-enter-active,

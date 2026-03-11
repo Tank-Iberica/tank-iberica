@@ -58,6 +58,33 @@ export interface VehicleVerificationEntry {
   verificationLevel: string
 }
 
+function getVehicleThumbnail(vehicle: VehicleInfo): string | null {
+  if (!vehicle.vehicle_images?.length) return null
+  const sorted = [...vehicle.vehicle_images].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+  return sorted[0]?.url || null
+}
+
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
+
+function getStatusClass(status: string | null): string {
+  if (status === 'verified') return 'status-verified'
+  if (status === 'rejected') return 'status-rejected'
+  return 'status-pending'
+}
+
+function isFileImage(url: string | null): boolean {
+  if (!url) return false
+  const ext = url.split('.').pop()?.toLowerCase() || ''
+  return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg'].includes(ext)
+}
+
 export function useAdminVerificaciones() {
   const { t } = useI18n()
   const { locale } = useI18n()
@@ -241,24 +268,10 @@ export function useAdminVerificaciones() {
   // ============================================
   // HELPERS
   // ============================================
-  function getVehicleThumbnail(vehicle: VehicleInfo): string | null {
-    if (!vehicle.vehicle_images?.length) return null
-    const sorted = [...vehicle.vehicle_images].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-    return sorted[0]?.url || null
-  }
 
   function getDealerName(doc: VerificationDocument): string {
     if (!doc.vehicles.dealers) return '-'
     return localizedField(doc.vehicles.dealers.company_name, locale.value) || '-'
-  }
-
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
   }
 
   function getDocTypeLabel(docType: string): string {
@@ -277,12 +290,6 @@ export function useAdminVerificaciones() {
       inspection_report: t('admin.verificaciones.docTypes.inspectionReport'),
     }
     return labels[docType] || docType
-  }
-
-  function getStatusClass(status: string | null): string {
-    if (status === 'verified') return 'status-verified'
-    if (status === 'rejected') return 'status-rejected'
-    return 'status-pending'
   }
 
   function getStatusLabel(status: string | null): string {
@@ -333,11 +340,6 @@ export function useAdminVerificaciones() {
     return levels[level || 'none'] || levels.none!
   }
 
-  function isFileImage(url: string | null): boolean {
-    if (!url) return false
-    const ext = url.split('.').pop()?.toLowerCase() || ''
-    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg'].includes(ext)
-  }
 
   return {
     // State

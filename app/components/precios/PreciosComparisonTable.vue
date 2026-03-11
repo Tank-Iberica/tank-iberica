@@ -83,7 +83,7 @@ const planKeys = ['free', 'basic', 'premium', 'founding'] as const
 
 .comparison-feature-header {
   text-align: left !important;
-  min-width: 160px;
+  min-width: 10rem;
 }
 
 .comparison-table td {

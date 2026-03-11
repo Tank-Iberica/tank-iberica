@@ -49,9 +49,9 @@
   content: '';
   position: absolute;
   left: 0;
-  top: 6px;
-  width: 6px;
-  height: 6px;
+  top: 0.375rem;
+  width: 0.375rem;
+  height: 0.375rem;
   border-radius: var(--border-radius-full);
   background: var(--color-warning);
 }

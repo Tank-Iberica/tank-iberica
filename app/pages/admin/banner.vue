@@ -58,7 +58,7 @@ onMounted(() => {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">Cargando configuracion...</div>
+    <div v-if="loading" class="loading-state">{{ $t('common.loadingItems') }}</div>
 
     <!-- Form -->
     <div v-else class="banner-form">
@@ -112,9 +112,9 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .section-header h2 {
@@ -124,49 +124,49 @@ onMounted(() => {
 }
 
 .header-status {
-  padding: 6px 16px;
-  border-radius: 20px;
+  padding: 0.375rem var(--spacing-4);
+  border-radius: var(--border-radius-full);
   font-size: 0.85rem;
   font-weight: 500;
 }
 
 .status-active {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .status-inactive {
   background: var(--bg-secondary);
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .status-scheduled {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 
 .status-expired {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
 .banner-form {
   display: grid;
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
 /* Transitions */
@@ -182,7 +182,7 @@ onMounted(() => {
 }
 
 /* Mobile responsive */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header {
     flex-direction: column;
     align-items: stretch;

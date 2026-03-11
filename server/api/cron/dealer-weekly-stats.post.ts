@@ -6,10 +6,13 @@
  *
  * Protected by x-cron-secret header.
  */
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
+import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
+import { acquireCronLock } from '../../utils/cronLock'
 import { processBatch } from '../../utils/batchProcessor'
+import { logger } from '../../utils/logger'
 
 // -- Types --------------------------------------------------------------------
 
@@ -44,6 +47,12 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event, body?.secret)
 
   const supabase = serverSupabaseServiceRole(event)
+
+  // Cron lock — prevent duplicate weekly emails if scheduler fires twice in the same hour
+  if (!(await acquireCronLock(supabase, 'dealer-weekly-stats'))) {
+    return { skipped: true, reason: 'already_ran_in_window', timestamp: new Date().toISOString() }
+  }
+
   const _internalSecret = useRuntimeConfig().cronSecret || process.env.CRON_SECRET
   const now = new Date()
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -58,10 +67,7 @@ export default defineEventHandler(async (event) => {
     .limit(200)
 
   if (dealersError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to fetch dealers: ${dealersError.message}`,
-    })
+    throw safeError(500, `Failed to fetch dealers: ${dealersError.message}`)
   }
 
   if (!dealers || dealers.length === 0) {
@@ -156,7 +162,7 @@ export default defineEventHandler(async (event) => {
       }
 
       if (!recipientEmail) {
-        console.warn(`[dealer-weekly-stats] No email for dealer ${dealer.id}, skipping`)
+        logger.warn(`[dealer-weekly-stats] No email for dealer ${dealer.id}, skipping`)
         return
       }
 
@@ -201,9 +207,7 @@ export default defineEventHandler(async (event) => {
         emailsSent++
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-        console.error(
-          `[dealer-weekly-stats] Failed to send to dealer ${dealer.id}: ${errorMessage}`,
-        )
+        logger.error(`[dealer-weekly-stats] Failed to send to dealer ${dealer.id}: ${errorMessage}`)
       }
     },
   })

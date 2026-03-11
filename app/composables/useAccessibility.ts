@@ -12,11 +12,11 @@ export const useAccessibility = () => {
   })
 
   // Aplica data-font-size al <html> para que el CSS lo capture
-  useHead({
-    htmlAttrs: computed(() => ({
-      'data-font-size': fontSizeCookie.value !== 'normal' ? fontSizeCookie.value : undefined,
-    })),
-  })
+  useHead(() => ({
+    htmlAttrs: {
+      'data-font-size': fontSizeCookie.value === 'normal' ? undefined : fontSizeCookie.value,
+    },
+  }))
 
   function setFontSize(size: string) {
     fontSizeCookie.value = size

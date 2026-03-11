@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="show" class="modal-overlay" @click.self="$emit('close')">
+      <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="$emit('close')">
         <div class="modal-panel modal-generate">
           <div class="modal-header">
             <h2>{{ t('admin.social.generatePosts') }}</h2>
@@ -142,39 +142,39 @@ defineProps<{
 
 .search-input {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .search-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .vehicle-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  max-height: 300px;
+  gap: var(--spacing-1);
+  max-height: 18.75rem;
   overflow-y: auto;
 }
 
 .vehicle-option {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
+  gap: var(--spacing-3);
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   cursor: pointer;
   text-align: left;
   width: 100%;
-  min-height: 56px;
+  min-height: 3.5rem;
   transition: all 0.15s;
 }
 
@@ -189,17 +189,17 @@ defineProps<{
 }
 
 .vehicle-thumb {
-  width: 44px;
-  height: 44px;
-  border-radius: 6px;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--border-radius);
   object-fit: cover;
   flex-shrink: 0;
 }
 
 .vehicle-thumb-placeholder {
-  width: 44px;
-  height: 44px;
-  border-radius: 6px;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--border-radius);
   background: var(--bg-secondary);
   flex-shrink: 0;
 }
@@ -229,6 +229,6 @@ defineProps<{
 .search-loading {
   display: flex;
   justify-content: center;
-  padding: 12px;
+  padding: var(--spacing-3);
 }
 </style>

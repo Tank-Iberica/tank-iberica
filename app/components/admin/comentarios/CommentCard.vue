@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Comment, CommentStatus } from '~/composables/admin/useAdminComentarios'
+const { t } = useI18n()
 
 defineProps<{
   comment: Comment
@@ -25,7 +26,7 @@ const emit = defineEmits<{
           {{ (comment.author_name || 'A').charAt(0).toUpperCase() }}
         </div>
         <div class="author-details">
-          <span class="author-name">{{ comment.author_name || 'Anonimo' }}</span>
+          <span class="author-name">{{ comment.author_name || t('admin.comments.anonymous') }}</span>
           <span v-if="comment.author_email" class="author-email">{{ comment.author_email }}</span>
         </div>
       </div>
@@ -58,7 +59,7 @@ const emit = defineEmits<{
         <polyline points="9 14 4 9 9 4" />
         <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
       </svg>
-      Respuesta a otro comentario
+      {{ t('admin.comments.replyTo') }}
     </div>
 
     <!-- Article link -->
@@ -90,7 +91,7 @@ const emit = defineEmits<{
       class="expand-btn"
       @click="emit('toggleExpand', comment.id)"
     >
-      {{ isExpanded ? 'Ver menos' : 'Ver mas...' }}
+      {{ isExpanded ? t('common.seeLess') : t('common.seeMore') }}
     </button>
 
     <!-- Actions -->
@@ -113,7 +114,7 @@ const emit = defineEmits<{
         >
           <polyline points="20 6 9 17 4 12" />
         </svg>
-        Aprobar
+        {{ t('common.approve') }}
       </button>
       <button
         v-if="comment.status !== 'rejected'"
@@ -134,7 +135,7 @@ const emit = defineEmits<{
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
-        Rechazar
+        {{ t('common.reject') }}
       </button>
       <button
         v-if="comment.status !== 'spam'"
@@ -158,7 +159,7 @@ const emit = defineEmits<{
           <line x1="12" y1="9" x2="12" y2="13" />
           <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
-        Spam
+        {{ t('admin.comments.spam') }}
       </button>
       <button
         class="action-btn action-delete"
@@ -180,7 +181,7 @@ const emit = defineEmits<{
             d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
           />
         </svg>
-        Eliminar
+        {{ t('common.delete') }}
       </button>
     </div>
   </div>
@@ -189,9 +190,9 @@ const emit = defineEmits<{
 <style scoped>
 .comment-card {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 16px 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-card);
   transition: box-shadow 0.2s;
 }
 
@@ -208,20 +209,20 @@ const emit = defineEmits<{
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 0.75rem;
+  margin-bottom: 0.625rem;
 }
 
 .comment-author-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
   min-width: 0;
 }
 
 .author-avatar {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 50%;
   background: var(--color-primary);
   color: white;
@@ -242,7 +243,7 @@ const emit = defineEmits<{
 .author-name {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #111827;
+  color: var(--color-gray-900);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -250,7 +251,7 @@ const emit = defineEmits<{
 
 .author-email {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -259,14 +260,14 @@ const emit = defineEmits<{
 .comment-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   flex-shrink: 0;
 }
 
 .status-badge {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
@@ -276,13 +277,13 @@ const emit = defineEmits<{
 .reply-indicator {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   font-size: 0.75rem;
-  color: #6b7280;
-  margin-bottom: 8px;
-  padding: 4px 10px;
+  color: var(--color-gray-500);
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0.625rem;
   background: var(--bg-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   width: fit-content;
 }
 
@@ -290,10 +291,10 @@ const emit = defineEmits<{
 .comment-article {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   font-size: 0.75rem;
-  color: #6b7280;
-  margin-bottom: 10px;
+  color: var(--color-gray-500);
+  margin-bottom: 0.625rem;
 }
 
 .article-title {
@@ -306,8 +307,8 @@ const emit = defineEmits<{
 .comment-content {
   font-size: 0.85rem;
   line-height: 1.6;
-  color: #374151;
-  margin-bottom: 4px;
+  color: var(--color-gray-700);
+  margin-bottom: 0.25rem;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -328,8 +329,8 @@ const emit = defineEmits<{
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
-  padding: 2px 0;
-  margin-bottom: 8px;
+  padding: 0.125rem 0;
+  margin-bottom: 0.5rem;
 }
 
 .expand-btn:hover {
@@ -340,18 +341,18 @@ const emit = defineEmits<{
 .comment-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #f3f4f6;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--bg-secondary);
 }
 
 .action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 7px 14px;
-  border-radius: 6px;
+  gap: 0.3125rem;
+  padding: 0.4375rem 0.875rem;
+  border-radius: var(--border-radius-sm);
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
@@ -359,7 +360,7 @@ const emit = defineEmits<{
   transition:
     background 0.2s,
     border-color 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .action-btn:disabled {
@@ -368,33 +369,33 @@ const emit = defineEmits<{
 }
 
 .action-approve {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg);
   color: var(--color-success);
   border-color: var(--color-success-border);
 }
 
 .action-approve:hover:not(:disabled) {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg);
 }
 
 .action-reject {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg);
   color: var(--color-error);
   border-color: var(--color-error-border);
 }
 
 .action-reject:hover:not(:disabled) {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg);
 }
 
 .action-spam {
-  background: #fff7ed;
-  color: #ea580c;
-  border-color: #fed7aa;
+  background: var(--color-orange-bg);
+  color: var(--color-orange-text);
+  border-color: var(--color-orange-200);
 }
 
 .action-spam:hover:not(:disabled) {
-  background: #ffedd5;
+  background: var(--color-orange-100);
 }
 
 .action-delete {
@@ -404,7 +405,7 @@ const emit = defineEmits<{
 }
 
 .action-delete:hover:not(:disabled) {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg);
 }
 
 /* Mobile responsive (30em) */
@@ -418,7 +419,7 @@ const emit = defineEmits<{
 @media (max-width: 48em) {
   .comment-header {
     flex-direction: column;
-    gap: 8px;
+    gap: 0.5rem;
   }
 
   .comment-meta {
@@ -431,7 +432,7 @@ const emit = defineEmits<{
 
   .action-btn {
     flex: 1;
-    min-width: calc(50% - 4px);
+    min-width: calc(50% - 0.25rem);
     justify-content: center;
   }
 }
@@ -439,11 +440,11 @@ const emit = defineEmits<{
 /* Desktop (64em) */
 @media (min-width: 64em) {
   .comment-card {
-    padding: 20px 24px;
+    padding: 1.25rem 1.5rem;
   }
 
   .comment-actions {
-    gap: 10px;
+    gap: 0.625rem;
   }
 }
 </style>

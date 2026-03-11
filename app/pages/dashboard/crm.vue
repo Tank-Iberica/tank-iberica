@@ -99,9 +99,8 @@ watch(dealerId, (newId) => {
       </div>
 
       <!-- Loading -->
-      <div v-if="loading" class="loading-state">
-        <div class="spinner" />
-        <span>{{ t('dashboard.crm.loading') }}</span>
+      <div v-if="loading" class="loading-state" aria-busy="true">
+        <UiSkeletonTable :rows="5" :cols="4" />
       </div>
 
       <!-- Table -->
@@ -145,15 +144,15 @@ watch(dealerId, (newId) => {
 .crm-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
@@ -161,14 +160,14 @@ watch(dealerId, (newId) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;

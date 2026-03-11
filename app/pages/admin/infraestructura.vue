@@ -98,6 +98,10 @@
         @execute-migration="executeMigration"
       />
     </div>
+
+    <div v-show="activeTab === 'crons'" class="tab-content">
+      <InfraCronJobs />
+    </div>
   </div>
 </template>
 
@@ -159,7 +163,7 @@ onMounted(() => init())
 
 <style scoped>
 .infra-page {
-  max-width: 1400px;
+  max-width: 87.5rem;
   margin: 0 auto;
   padding: 0;
 }
@@ -182,9 +186,9 @@ onMounted(() => init())
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 24px;
-  height: 24px;
-  padding: 0 6px;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.375rem;
   background: var(--color-error);
   color: var(--color-white);
   font-size: var(--font-size-xs);
@@ -219,10 +223,10 @@ onMounted(() => init())
   font-weight: var(--font-weight-medium);
   white-space: nowrap;
   transition: all var(--transition-fast);
-  min-height: 48px;
-  min-width: 44px;
+  min-height: 3rem;
+  min-width: 2.75rem;
   cursor: pointer;
-  margin-bottom: -2px;
+  margin-bottom: -0.125rem;
 }
 
 .tab-btn:hover {
@@ -246,7 +250,7 @@ onMounted(() => init())
   display: none;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .tab-label {
     display: inline;
   }
@@ -263,8 +267,8 @@ onMounted(() => init())
 }
 
 .infra-spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--border-color);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -282,7 +286,7 @@ onMounted(() => init())
   align-items: center;
   gap: var(--spacing-3);
   padding: var(--spacing-4);
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
   border-radius: var(--border-radius-md);
   color: var(--color-error);
@@ -291,12 +295,12 @@ onMounted(() => init())
 }
 
 .error-icon {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   flex-shrink: 0;
 }
 
 .tab-content {
-  min-height: 200px;
+  min-height: 12.5rem;
 }
 </style>

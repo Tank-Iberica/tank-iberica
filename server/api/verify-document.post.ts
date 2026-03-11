@@ -11,25 +11,31 @@
  * POST /api/verify-document
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
 import { callAI } from '~~/server/services/aiProvider'
+import { safeError } from '~~/server/utils/safeError'
+import { validateBody } from '~~/server/utils/validateBody'
+import { logger } from '../utils/logger'
+import { logAdminAction } from '../utils/auditLog'
 
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-const URL_REGEX = /^https?:\/\/.+/i
+const verifyDocumentSchema = z.object({
+  documentId: z.string().uuid(),
+  vehicleId: z.string().uuid(),
+  imageUrl: z.string().url().max(2048),
+  declaredData: z.object({
+    brand: z.string().trim().min(1).max(128),
+    model: z.string().trim().min(1).max(128),
+    year: z
+      .number()
+      .int()
+      .min(1950)
+      .max(new Date().getFullYear() + 2),
+    km: z.number().nonnegative(),
+  }),
+})
 
-interface DeclaredData {
-  brand: string
-  model: string
-  year: number
-  km: number
-}
-
-interface VerifyDocumentBody {
-  documentId: string
-  vehicleId: string
-  imageUrl: string
-  declaredData: DeclaredData
-}
+type DeclaredData = z.infer<typeof verifyDocumentSchema>['declaredData']
 
 interface ExtractedData {
   brand: string | null
@@ -49,72 +55,6 @@ interface VerifyDocumentResponse {
   status: 'verified' | 'pending'
 }
 
-function validateDeclaredData(data: DeclaredData): string[] {
-  const errors: string[] = []
-  const currentYear = new Date().getFullYear()
-
-  if (!data || typeof data !== 'object') {
-    errors.push('declaredData must be an object')
-    return errors
-  }
-
-  if (!data.brand || typeof data.brand !== 'string' || data.brand.trim().length === 0) {
-    errors.push('declaredData.brand is required')
-  }
-
-  if (!data.model || typeof data.model !== 'string' || data.model.trim().length === 0) {
-    errors.push('declaredData.model is required')
-  }
-
-  if (data.year === undefined || data.year === null || typeof data.year !== 'number') {
-    errors.push('declaredData.year is required and must be a number')
-  } else if (data.year < 1950 || data.year > currentYear + 2) {
-    errors.push(`declaredData.year must be between 1950 and ${currentYear + 2}`)
-  }
-
-  if (data.km === undefined || data.km === null || typeof data.km !== 'number') {
-    errors.push('declaredData.km is required and must be a number')
-  } else if (data.km < 0) {
-    errors.push('declaredData.km must be >= 0')
-  }
-
-  return errors
-}
-
-function validateBody(body: VerifyDocumentBody): string[] {
-  const errors: string[] = []
-
-  // documentId — required UUID
-  if (!body.documentId || typeof body.documentId !== 'string') {
-    errors.push('documentId is required')
-  } else if (!UUID_REGEX.test(body.documentId)) {
-    errors.push('documentId must be a valid UUID')
-  }
-
-  // vehicleId — required UUID
-  if (!body.vehicleId || typeof body.vehicleId !== 'string') {
-    errors.push('vehicleId is required')
-  } else if (!UUID_REGEX.test(body.vehicleId)) {
-    errors.push('vehicleId must be a valid UUID')
-  }
-
-  // imageUrl — required, must be a valid URL
-  if (!body.imageUrl || typeof body.imageUrl !== 'string') {
-    errors.push('imageUrl is required')
-  } else if (!URL_REGEX.test(body.imageUrl.trim())) {
-    errors.push('imageUrl must be a valid HTTP/HTTPS URL')
-  }
-
-  // declaredData — required object with nested validation
-  if (body.declaredData) {
-    errors.push(...validateDeclaredData(body.declaredData))
-  } else {
-    errors.push('declaredData is required')
-  }
-
-  return errors
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function checkVehicleAccess(
   supabase: any,
@@ -127,7 +67,7 @@ async function checkVehicleAccess(
     .eq('user_id', userId)
     .single()
 
-  const ownsVehicle = !dealerErr && userDealer && userDealer.id === dealerId
+  const ownsVehicle = !dealerErr && userDealer?.id === dealerId
   if (ownsVehicle) return true
 
   const { data: userData, error: userErr } = await supabase
@@ -171,50 +111,18 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
   // 1. Authenticate user
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   // 2. Get Supabase service role client for DB operations
   const supabase = serverSupabaseServiceRole(event)
 
   // 3. Read and validate body
-  const body = await readBody<VerifyDocumentBody>(event)
-  const validationErrors = validateBody(body)
+  const body = await validateBody(event, verifyDocumentSchema)
 
-  if (validationErrors.length > 0) {
-    throw createError({
-      statusCode: 400,
-      message: `Validation failed: ${validationErrors.join('; ')}`,
-    })
-  }
+  const { documentId, vehicleId, imageUrl, declaredData } = body
 
-  const documentId = body.documentId.trim()
-  const vehicleId = body.vehicleId.trim()
-  const imageUrl = body.imageUrl.trim()
-  const declaredData = body.declaredData
-
-  // 4. Verify the document exists and belongs to the vehicle
-  const { data: existingDoc, error: docError } = await supabase
-    .from('verification_documents')
-    .select('id, vehicle_id, doc_type, status')
-    .eq('id', documentId)
-    .single()
-
-  if (docError || !existingDoc) {
-    throw createError({
-      statusCode: 404,
-      message: 'Verification document not found',
-    })
-  }
-
-  if (existingDoc.vehicle_id !== vehicleId) {
-    throw createError({
-      statusCode: 400,
-      message: 'Document does not belong to the specified vehicle',
-    })
-  }
-
-  // 5. Verify the vehicle exists
+  // 4. Verify the vehicle exists and check ownership FIRST (before exposing any document data)
   const { data: vehicle, error: vehicleError } = await supabase
     .from('vehicles')
     .select('id, brand, model, year, dealer_id')
@@ -222,19 +130,25 @@ export default defineEventHandler(async (event): Promise<VerifyDocumentResponse>
     .single()
 
   if (vehicleError || !vehicle) {
-    throw createError({
-      statusCode: 404,
-      message: 'Vehicle not found',
-    })
+    throw safeError(404, 'Vehicle not found')
   }
 
-  // 6. Verify vehicle ownership
+  // 5. Verify vehicle ownership before accessing any documents
   const hasAccess = await checkVehicleAccess(supabase, user.id, vehicle.dealer_id)
   if (!hasAccess) {
-    throw createError({
-      statusCode: 403,
-      message: 'You do not have permission to verify documents for this vehicle',
-    })
+    throw safeError(403, 'You do not have permission to verify documents for this vehicle')
+  }
+
+  // 6. Verify the document exists and belongs to the vehicle (ownership already confirmed)
+  const { data: existingDoc, error: docError } = await supabase
+    .from('verification_documents')
+    .select('id, vehicle_id, doc_type, status')
+    .eq('id', documentId)
+    .eq('vehicle_id', vehicleId)
+    .single()
+
+  if (docError || !existingDoc) {
+    throw safeError(404, 'Verification document not found')
   }
 
   // 7. Call AI Vision for document analysis (with fallback to mock)
@@ -282,7 +196,7 @@ Use null for fields not found in the document.`,
     extractedData = JSON.parse(cleaned) as ExtractedData
   } catch {
     // Fallback to mock if no AI provider available
-    console.warn('[verify-document] AI unavailable, using mock extracted data')
+    logger.warn('[verify-document] AI unavailable, using mock extracted data')
     extractedData = {
       brand: declaredData.brand,
       model: declaredData.model,
@@ -329,19 +243,18 @@ Use null for fields not found in the document.`,
     .eq('id', documentId)
 
   if (updateError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to update document status: ${updateError.message}`,
-    })
+    throw safeError(500, `Failed to update document status: ${updateError.message}`)
   }
 
-  // 10. If mismatch, flag the document for manual review by adding a note to the data
-  if (!isMatch) {
-    // The document stays as 'pending' — admin will see it in the
-    // verification dashboard with discrepancies listed for manual review.
-    // No additional DB operation needed; the discrepancies are stored
-    // in the data JSONB field above.
-  }
+  // 10. Audit log the verification action (fire-and-forget)
+  await logAdminAction(supabase, event, {
+    action: 'vehicle.document_verify',
+    resourceType: 'vehicle',
+    resourceId: vehicleId,
+    actorId: user.id,
+    actorEmail: user.email ?? undefined,
+    metadata: { documentId, match: isMatch, confidence, discrepancyCount: discrepancies.length },
+  })
 
   return {
     match: isMatch,

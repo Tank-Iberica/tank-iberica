@@ -7,7 +7,9 @@
  *
  * GET /api/whatsapp/webhook?hub.mode=subscribe&hub.verify_token=xxx&hub.challenge=yyy
  */
-import { defineEventHandler, getQuery, createError } from 'h3'
+import { defineEventHandler, getQuery } from 'h3'
+import { safeError } from '../../utils/safeError'
+import { logger } from '../../utils/logger'
 
 interface WebhookVerifyQuery {
   'hub.mode'?: string
@@ -24,16 +26,14 @@ export default defineEventHandler((event) => {
   const challenge = query['hub.challenge']
 
   if (mode === 'subscribe' && token === config.whatsappVerifyToken) {
-    console.info('[WhatsApp Webhook] Verification successful')
+    logger.info('[WhatsApp Webhook] Verification successful')
     // Meta expects the challenge value returned as plain text
     return challenge
   }
 
-  console.warn(
-    '[WhatsApp Webhook] Verification failed — mode:',
+  logger.warn('[WhatsApp Webhook] Verification failed', {
     mode,
-    'token match:',
-    token === config.whatsappVerifyToken,
-  )
-  throw createError({ statusCode: 403, message: 'Forbidden' })
+    tokenMatch: token === config.whatsappVerifyToken,
+  })
+  throw safeError(403, 'Forbidden')
 })

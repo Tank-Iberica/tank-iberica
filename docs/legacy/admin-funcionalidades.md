@@ -1,6 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
-
-> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README.md`](../../README.md) y [`INSTRUCCIONES-MAESTRAS.md`](INSTRUCCIONES-MAESTRAS.md).
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 **TANK IBERICA**
 
@@ -924,3 +922,5 @@ modalFactura Generar factura PDF Generar PDF
 - Chat en tiempo real: actualmente requiere refresco manual (botón \'Refrescar\')
 
 - Chart.js: librería importada pero sin gráficos implementados visiblemente
+
+

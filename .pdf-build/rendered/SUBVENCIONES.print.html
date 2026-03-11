@@ -1,0 +1,3110 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Subvenciones y Ayudas</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Subvenciones y Ayudas</h1>
+    <p>Maestro de referencia de ayudas, metodologia, fichas, compatibilidades y alertas.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#uso-del-documento'>Uso del documento</a></li>
+<li class='toc-l2'><a href='#resumen-ejecutivo'>Resumen ejecutivo</a></li>
+<li class='toc-l2'><a href='#tabla-resumen-ambito-geografico-y-dependencia-de-sede'>Tabla resumen — Ámbito geográfico y dependencia de sede</a></li>
+<li class='toc-l3'><a href='#provincial-leon'>🏘️ Provincial (León)</a></li>
+<li class='toc-l3'><a href='#autonomico-castilla-y-leon'>🏛️ Autonómico (Castilla y León)</a></li>
+<li class='toc-l3'><a href='#nacional-espana'>🇪🇸 Nacional (España)</a></li>
+<li class='toc-l3'><a href='#europeo'>🇪🇺 Europeo</a></li>
+<li class='toc-l3'><a href='#beneficios-fiscales-permanentes-sin-convocatoria'>💰 Beneficios fiscales permanentes (sin convocatoria)</a></li>
+<li class='toc-l3'><a href='#justificacion-de-probabilidades-2026-con-referencias-explicitas'>Justificación de probabilidades 2026 (con referencias explícitas)</a></li>
+<li class='toc-l3'><a href='#como-potenciar-producto-evidencia-por-linea'>Cómo potenciar producto / evidencia por línea</a></li>
+<li class='toc-l2'><a href='#a-ambito-local-y-provincial-leon'>A. Ámbito local y provincial (León)</a></li>
+<li class='toc-l3'><a href='#1-plan-de-emprendedores-diputacion-de-leon'>1. Plan de Emprendedores — Diputación de León</a></li>
+<li class='toc-l3'><a href='#2-hacendera-de-proyectos-diputacion-de-leon'>2. Hacendera de Proyectos — Diputación de León</a></li>
+<li class='toc-l3'><a href='#3-poeda-leader'>3. POEDA / LEADER</a></li>
+<li class='toc-l2'><a href='#b-ambito-autonomico-castilla-y-leon'>B. Ámbito autonómico (Castilla y León)</a></li>
+<li class='toc-l3'><a href='#4-subvenciones-para-creacion-de-empresas-cyl'>4. Subvenciones para Creación de Empresas CyL</a></li>
+<li class='toc-l3'><a href='#5-icecyl-digitalizacion-transformacion-digital'>5. ICECYL — Digitalización / Transformación digital</a></li>
+<li class='toc-l3'><a href='#6-icecyl-innovacion-tecnologica'>6. ICECYL — Innovación tecnológica</a></li>
+<li class='toc-l3'><a href='#7-digitalizacion-y-seguridad-tecnologica-para-pymes-cyl'>7. Digitalización y Seguridad Tecnológica para Pymes CyL</a></li>
+<li class='toc-l3'><a href='#8-camara-de-comercio-de-leon-pyme-digital'>8. Cámara de Comercio de León: Pyme Digital</a></li>
+<li class='toc-l3'><a href='#9-camara-de-comercio-de-leon-pyme-innova'>9. Cámara de Comercio de León: Pyme Innova</a></li>
+<li class='toc-l3'><a href='#10-camara-de-comercio-de-leon-pyme-cibersegura'>10. Cámara de Comercio de León: Pyme Cibersegura</a></li>
+<li class='toc-l3'><a href='#11-sodical-prestamo-participativo-capital-riesgo'>11. SODICAL — Préstamo participativo / Capital riesgo</a></li>
+<li class='toc-l2'><a href='#c-ambito-nacional-espana'>C. Ámbito nacional (España)</a></li>
+<li class='toc-l3'><a href='#12-certificacion-startup-ley-de-startups'>12. Certificación Startup / Ley de Startups</a></li>
+<li class='toc-l3'><a href='#13-enisa-lineas-de-financiacion'>13. ENISA — Líneas de financiación</a></li>
+<li class='toc-l3'><a href='#14-linea-ico-mrr-empresas-y-emprendedores'>14. Línea ICO MRR — Empresas y Emprendedores</a></li>
+<li class='toc-l3'><a href='#15-microbank-microcredito-para-emprendedores'>15. MicroBank — Microcrédito para emprendedores</a></li>
+<li class='toc-l3'><a href='#16-kit-digital'>16. Kit Digital</a></li>
+<li class='toc-l3'><a href='#17-kit-consulting'>17. Kit Consulting</a></li>
+<li class='toc-l3'><a href='#18-espana-emprende'>18. España Emprende</a></li>
+<li class='toc-l3'><a href='#19-activa-startups'>19. Activa Startups</a></li>
+<li class='toc-l3'><a href='#20-sepe-capitalizacion-de-prestacion-por-desempleo'>20. SEPE — Capitalización de prestación por desempleo</a></li>
+<li class='toc-l3'><a href='#21-miteco-reto-demografico-modalidad-c'>21. MITECO — Reto Demográfico (Modalidad C)</a></li>
+<li class='toc-l3'><a href='#22-neotec-cdti-lic-cdti-i-d'>22. NEOTEC / CDTI LIC / CDTI I+D</a></li>
+<li class='toc-l2'><a href='#d-ambito-europeo'>D. Ámbito europeo</a></li>
+<li class='toc-l3'><a href='#23-eurostars-3-cdti-eureka'>23. Eurostars-3 (CDTI / Eureka)</a></li>
+<li class='toc-l2'><a href='#e-beneficios-fiscales-permanentes'>E. Beneficios fiscales permanentes</a></li>
+<li class='toc-l3'><a href='#24-deducciones-i-d-i-en-impuesto-de-sociedades'>24. Deducciones I+D+i en Impuesto de Sociedades</a></li>
+<li class='toc-l3'><a href='#25-sello-pyme-innovadora'>25. Sello Pyme Innovadora</a></li>
+<li class='toc-l3'><a href='#26-patent-box'>26. Patent Box</a></li>
+<li class='toc-l3'><a href='#27-deduccion-irpf-por-inversion-en-empresa-de-nueva-creacion'>27. Deducción IRPF por inversión en empresa de nueva creación</a></li>
+<li class='toc-l2'><a href='#recurrencia-cuantas-veces-se-puede-solicitar'>Recurrencia — ¿Cuántas veces se puede solicitar?</a></li>
+<li class='toc-l3'><a href='#como-justificar-proyectos-diferentes-cada-ano'>Cómo justificar proyectos diferentes cada año</a></li>
+<li class='toc-l2'><a href='#notas-importantes'>Notas importantes</a></li>
+<li class='toc-l3'><a href='#compatibilidad-entre-ayudas'>Compatibilidad entre ayudas</a></li>
+<li class='toc-l3'><a href='#documentacion-a-preparar-una-vez-reutilizable'>Documentación a preparar (una vez, reutilizable)</a></li>
+<li class='toc-l3'><a href='#alertas-recomendadas'>Alertas recomendadas</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tradebase-sl-mapa-de-subvenciones-y-ayudas-publicas">TradeBase SL — Mapa de Subvenciones y Ayudas Públicas</h1>
+<blockquote>
+<p><strong>Documento de trabajo · Marzo 2026 · Versión 1.21</strong>
+Sede social decidida: <strong>Fresno de la Vega</strong>, León (CyL, <strong>~700 hab. INE 2024</strong> — sí cumple requisito MITECO &lt;5.000)
+Alternativas valoradas: La Robla, Pola de Gordón, Onzonilla, Santovenia de la Valdoncina y Valencia de Don Juan
+Perfil: SL nueva · Base tecnológica (marketplace B2B + IA) · 2 socios · 0 empleados · Facturación &lt;500K€</p>
+<p><strong>Convención:</strong> ✅ = abierta/permanente · ⏳ = cerrada, próxima convocatoria prevista · 🔭 = vigilancia (a medio plazo)</p>
+<p><strong>Sobre repetición de convocatorias:</strong> La mayoría de ayudas marcadas como ⏳ son programas con <strong>histórico de repetición anual o bienal</strong>. No existe garantía de que se repitan, pero basándose en el historial documentado de cada programa (Diputación León desde 2012, ICECYL desde 2018, Hacendera desde 2020, MITECO desde 2021, Cámaras cada año, etc.) hay motivos fundados para esperar nuevas ediciones. Las ayudas fiscales permanentes (#24-#27) no dependen de convocatoria — se aplican automáticamente en cada declaración. Los programas LEADER tienen convocatoria abierta confirmada hasta diciembre 2027.</p>
+</blockquote>
+<hr />
+<h2 id="uso-del-documento">Uso del documento</h2>
+<blockquote>
+<p><strong>Rol:</strong> maestro de referencia de ayudas.</p>
+<ul>
+<li>Sirve para: catálogo, fichas, tabla maestra, metodología, compatibilidades, alertas y fuentes.</li>
+<li>No sirve para: cerrar decisiones ejecutivas de sede, estructura societaria o roadmap.</li>
+<li>Derivados: <a href="SUBVENCIONES-resumen.md">SUBVENCIONES-resumen.md</a>, <a href="TradeBase-one-pager.md">TradeBase-one-pager.md</a> y <a href="TradeBase-dossier-ejecutivo.md">TradeBase-dossier-ejecutivo.md</a> en su parte de ayudas.</li>
+<li>Para decisiones de ejecución: <a href="DECISIONES-FINANCIERAS.md">DECISIONES-FINANCIERAS.md</a>. Para costes y tesorería: <a href="PRESUPUESTOS.md">PRESUPUESTOS.md</a>.</li>
+<li>Mapa general: <a href="README-documental.md">README-documental.md</a>.</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="resumen-ejecutivo">Resumen ejecutivo</h2>
+<p><strong>27 líneas de ayuda principales + 9 ayudas/incentivos complementarios</strong> identificados para TradeBase SL, clasificados por ámbito, probabilidad, recurrencia y encaje real.</p>
+<p><strong>Potencial acumulable estimado (primeros 3 años):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Tipo</th>
+<th>Potencial orientativo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Subvenciones a fondo perdido</td>
+<td>5.000–60.000€ (según convocatorias ganadas)</td>
+</tr>
+<tr>
+<td>Préstamos blandos / microcréditos</td>
+<td>25.000–100.000€ disponibles</td>
+</tr>
+<tr>
+<td>Beneficios fiscales anuales</td>
+<td>~600–15.000€/año en deducciones IS + IRPF socios (según estructura y cert. startup)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Nota:</strong> Importes orientativos basados en convocatorias históricas. Cada convocatoria tiene requisitos específicos que pueden cambiar. Verificar siempre en las URLs oficiales antes de solicitar.</p>
+</blockquote>
+<hr />
+<h2 id="tabla-resumen-ambito-geografico-y-dependencia-de-sede">Tabla resumen — Ámbito geográfico y dependencia de sede</h2>
+<p><strong>Columna &quot;Alcance&quot;:</strong> indica el ámbito geográfico de la ayuda — desde &quot;Provincia León&quot; (cualquier municipio) hasta &quot;Nacional&quot; (cualquier punto de España). La #21 MITECO requiere municipio &lt;5.000 hab. (VdDJ NO cumple con 5.094 hab.).</p>
+<h3 id="provincial-leon">🏘️ Provincial (León)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Ayuda</th>
+<th>Organismo</th>
+<th>Alcance</th>
+<th>Estado</th>
+<th>Tipo</th>
+<th>%</th>
+<th>Inv. mín.</th>
+<th>Inv. máx.</th>
+<th>Podrías recibir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Plan Emprendedores</td>
+<td>Dip. de León</td>
+<td>Provincia León (mun. &lt;20k hab.)</td>
+<td>⏳ Última edición verificada 2025 · 2026 pendiente</td>
+<td>Fondo perdido</td>
+<td><strong>55%</strong></td>
+<td>Sin mínimo</td>
+<td>Sin máximo</td>
+<td><strong>2.700–4.500€</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Hacendera de Proyectos</td>
+<td>Dip. de León</td>
+<td>Provincia León (rural)</td>
+<td>⏳ Última edición verificada 2025 · 2026 pendiente</td>
+<td>Matchfunding</td>
+<td><strong>20%</strong></td>
+<td>Campaña validada</td>
+<td><strong>20.000€</strong></td>
+<td><strong>Hasta 20.000€</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>LEADER (POEDA / Cuatro Valles)</td>
+<td>Junta CyL vía GAL</td>
+<td>Zona rural León</td>
+<td>✅ Abierta hasta dic 2027</td>
+<td>Fondo perdido</td>
+<td><strong>30%</strong></td>
+<td>Crear empleo (0,5 UTA)</td>
+<td><strong>250.000€</strong></td>
+<td><strong>4.500–75.000€</strong> (30%)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Cámara: Pyme Digital</td>
+<td>Cámara León</td>
+<td>Demarcación Cámara León</td>
+<td>✅ 2026 abierta y verificada · cierre 30/09/2026 o agotamiento</td>
+<td>Asesoramiento</td>
+<td><strong>80%</strong></td>
+<td>Sin mínimo</td>
+<td>N/A</td>
+<td><strong>Diagnóstico 85% + implantación 60% (máx. 4.494€)</strong></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Cámara: Pyme Innova</td>
+<td>Cámara León</td>
+<td>Demarcación Cámara León</td>
+<td>✅ 2026 abierta y verificada · cierre 30/09/2026 o agotamiento</td>
+<td>Asesoramiento</td>
+<td><strong>70%</strong></td>
+<td>Sin mínimo</td>
+<td>N/A</td>
+<td><strong>Diagnóstico 85% + implantación 60% (máx. 4.494€)</strong></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Cámara: Cibersegura</td>
+<td>Cámara León</td>
+<td>Demarcación Cámara León</td>
+<td>✅ 2026 abierta y verificada · cierre 30/09/2026 o agotamiento</td>
+<td>Asesoramiento</td>
+<td><strong>75%</strong></td>
+<td>Sin mínimo</td>
+<td>N/A</td>
+<td><strong>Diagnóstico 85% + implantación 60% (máx. 2.568€)</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="autonomico-castilla-y-leon">🏛️ Autonómico (Castilla y León)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Ayuda</th>
+<th>Organismo</th>
+<th>Alcance</th>
+<th>Estado</th>
+<th>Tipo</th>
+<th>%</th>
+<th>Inv. mín.</th>
+<th>Inv. máx.</th>
+<th>Podrías recibir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td>Creación Empresas CyL</td>
+<td>Consejería Industria</td>
+<td>CyL</td>
+<td>⏳ Última edición verificada 2025 · 2026 pendiente</td>
+<td>Fondo perdido</td>
+<td><strong>45%</strong></td>
+<td><strong>10.000€</strong></td>
+<td><strong>150.000€</strong></td>
+<td><strong>3.500–52.500€</strong> (35-45%)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ICECYL Digitalización</td>
+<td>ICE, Junta CyL</td>
+<td>CyL</td>
+<td>🔭 Sin convocatoria 2026 verificada a 10/03/2026</td>
+<td>Fondo perdido</td>
+<td><strong>30%</strong></td>
+<td>Según línea vigente</td>
+<td>Según línea vigente</td>
+<td><strong>Variable; revisar convocatoria viva</strong></td>
+</tr>
+<tr>
+<td>6</td>
+<td>ICECYL Innovación</td>
+<td>ICE, Junta CyL</td>
+<td>CyL</td>
+<td>⏳ Q2-Q3 2026</td>
+<td>Fondo perdido</td>
+<td><strong>20%</strong></td>
+<td>Según convoc.</td>
+<td>Hasta 200.000€</td>
+<td><strong>5.000–100.000€</strong></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Digital. Pymes CyL</td>
+<td>Consejería Industria</td>
+<td>CyL</td>
+<td>✅ Red Argos Ciber 2025 abierta hasta 31/03/2026</td>
+<td>Fondo perdido</td>
+<td><strong>25%</strong></td>
+<td>Sin mínimo</td>
+<td><strong>20.000€</strong></td>
+<td><strong>50% hardware / 75% consultoría (máx. 20.000€)</strong></td>
+</tr>
+<tr>
+<td>11</td>
+<td>SODICAL</td>
+<td>ADE Capital CyL</td>
+<td>CyL</td>
+<td>✅ Permanente</td>
+<td>Préstamo</td>
+<td><strong>10%</strong></td>
+<td>~50.000€</td>
+<td>3.000.000€</td>
+<td><strong>50.000–300.000€</strong> (préstamo)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="nacional-espana">🇪🇸 Nacional (España)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Ayuda</th>
+<th>Organismo</th>
+<th>Alcance</th>
+<th>Estado</th>
+<th>Tipo</th>
+<th>%</th>
+<th>Inv. mín.</th>
+<th>Inv. máx.</th>
+<th>Podrías recibir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12</td>
+<td>Certif. Startup</td>
+<td>ENISA</td>
+<td>Nacional</td>
+<td>✅ Permanente</td>
+<td>Certificación</td>
+<td><strong>50%</strong></td>
+<td>Sin mínimo</td>
+<td>N/A</td>
+<td><strong>IS al 15%</strong> + IRPF inversores al 50%</td>
+</tr>
+<tr>
+<td>13</td>
+<td>ENISA préstamo</td>
+<td>ENISA</td>
+<td>Nacional</td>
+<td>✅ Permanente</td>
+<td>Préstamo</td>
+<td><strong>35%</strong></td>
+<td>JE: socios aportan 50% del préstamo · Empr.: FP ≥ préstamo</td>
+<td>75k–300k€</td>
+<td><strong>25.000–75.000€</strong> (sin aval)</td>
+</tr>
+<tr>
+<td>14</td>
+<td>ICO MRR</td>
+<td>ICO vía bancos</td>
+<td>Nacional</td>
+<td>✅ <strong>Abierta hasta 30/06/2026</strong></td>
+<td>Préstamo</td>
+<td><strong>40%</strong></td>
+<td>Sin mínimo</td>
+<td>100% proyecto</td>
+<td><strong>10.000–50.000€</strong> (blando)</td>
+</tr>
+<tr>
+<td>15</td>
+<td>MicroBank</td>
+<td>CaixaBank</td>
+<td>Nacional</td>
+<td>✅ Permanente</td>
+<td>Microcrédito</td>
+<td><strong>50%</strong></td>
+<td>Sin mínimo</td>
+<td>30.000€</td>
+<td><strong>5.000–30.000€</strong> (sin aval real)</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Kit Digital</td>
+<td>Red.es</td>
+<td>Nacional</td>
+<td>🔭 Sin ventana 2026 verificada a 10/03/2026</td>
+<td>Fondo perdido</td>
+<td><strong>10%</strong></td>
+<td>Antigüedad ≥6m</td>
+<td>2.000€</td>
+<td><strong>2.000€</strong> (bono fijo)</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Kit Consulting</td>
+<td>Red.es</td>
+<td>Nacional</td>
+<td>🔭 Sin convocatoria activa verificada · no cumple tamaño actual</td>
+<td>Fondo perdido</td>
+<td><strong>0% hoy</strong></td>
+<td><strong>10 empleados</strong></td>
+<td>24.000€</td>
+<td><strong>N/A</strong> (no cumple)</td>
+</tr>
+<tr>
+<td>18</td>
+<td>España Emprende</td>
+<td>Cámaras España</td>
+<td>Nacional</td>
+<td>✅ Servicio permanente / red cameral</td>
+<td>Asesoramiento</td>
+<td><strong>65%</strong></td>
+<td>Sin mínimo</td>
+<td>N/A</td>
+<td><strong>Orientación y acompañamiento emprendedor</strong></td>
+</tr>
+<tr>
+<td>19</td>
+<td>Activa Startups</td>
+<td>EOI, Min. Industria</td>
+<td>Nacional</td>
+<td>🔭 Sin convocatoria abierta verificada a 10/03/2026</td>
+<td>Innovación abierta / asesoramiento</td>
+<td><strong>15%</strong></td>
+<td>Según convocatoria</td>
+<td>N/A</td>
+<td><strong>Proyecto de colaboración / asesoramiento, no cash fijo</strong></td>
+</tr>
+<tr>
+<td>20</td>
+<td>SEPE Capitalización</td>
+<td>SEPE</td>
+<td>Nacional</td>
+<td>✅ Permanente</td>
+<td>Capitalización</td>
+<td><strong>10%</strong></td>
+<td>Sin mínimo</td>
+<td>100% prestación</td>
+<td><strong>~9.600€</strong> (si aplica)</td>
+</tr>
+<tr>
+<td>21</td>
+<td>MITECO Reto Demográfico</td>
+<td>Min. Trans. Ecol.</td>
+<td>Nacional (&lt;5k hab.)</td>
+<td>⏳ Q4 2026</td>
+<td>Fondo perdido</td>
+<td><strong>35% con Fresno / 5% con VdDJ</strong></td>
+<td><strong>25.000€</strong></td>
+<td><strong>200.000€</strong></td>
+<td><strong>17.500–140.000€</strong> (70%) · territorio ya desbloqueado en Fresno</td>
+</tr>
+<tr>
+<td>22</td>
+<td>NEOTEC / CDTI</td>
+<td>CDTI, Min. Ciencia</td>
+<td>Nacional</td>
+<td>⏳ Q2-Q3 2026</td>
+<td>Fondo perdido</td>
+<td><strong>12%</strong></td>
+<td><strong>~175.000€</strong></td>
+<td><strong>250.000€</strong></td>
+<td><strong>Hasta 250.000€</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="europeo">🇪🇺 Europeo</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Ayuda</th>
+<th>Organismo</th>
+<th>Alcance</th>
+<th>Estado</th>
+<th>Tipo</th>
+<th>%</th>
+<th>Inv. mín.</th>
+<th>Inv. máx.</th>
+<th>Podrías recibir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>23</td>
+<td>Eurostars-3</td>
+<td>CDTI / Eureka</td>
+<td>UE (Eureka)</td>
+<td>⏳ Sept 2026</td>
+<td>Fondo perdido</td>
+<td><strong>8%</strong></td>
+<td>Consorcio ~200k€</td>
+<td>400.000€/entidad</td>
+<td><strong>Hasta 240.000€</strong> (60%)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="beneficios-fiscales-permanentes-sin-convocatoria">💰 Beneficios fiscales permanentes (sin convocatoria)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Ayuda</th>
+<th>Organismo</th>
+<th>Alcance</th>
+<th>Estado</th>
+<th>Tipo</th>
+<th>%</th>
+<th>Inv. mín.</th>
+<th>Inv. máx.</th>
+<th>Podrías recibir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>24</td>
+<td>Deducciones I+D+i IS</td>
+<td>AEAT</td>
+<td>Nacional</td>
+<td>✅ Permanente</td>
+<td>Deducción fiscal</td>
+<td><strong>70%</strong></td>
+<td>Sin mínimo</td>
+<td>Sin máximo</td>
+<td><strong>12-42% según calificación (IT vs I+D)</strong></td>
+</tr>
+<tr>
+<td>25</td>
+<td>Sello Pyme Innovadora</td>
+<td>MCINU</td>
+<td>Nacional</td>
+<td>✅ Permanente</td>
+<td>Certificación</td>
+<td><strong>25%</strong></td>
+<td>Sin mínimo</td>
+<td>N/A</td>
+<td><strong>Bonificaciones SS</strong> + puntuación extra convocatorias</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Patent Box</td>
+<td>AEAT</td>
+<td>Nacional</td>
+<td>✅ Permanente</td>
+<td>Reducción fiscal</td>
+<td><strong>15%</strong></td>
+<td>Sin mínimo</td>
+<td>Sin máximo</td>
+<td><strong>60% reducción BI</strong> sobre rentas de intangibles</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Deducción IRPF inversores</td>
+<td>AEAT + Junta CyL</td>
+<td>Nacional + CyL</td>
+<td>✅ Permanente</td>
+<td>Deducción fiscal</td>
+<td><strong>70%</strong></td>
+<td>Sin mínimo</td>
+<td>100.000€/año</td>
+<td><strong>0-50% de lo invertido</strong> según estructura/certificación</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Nota sobre inversión mínima:</strong> Las ayudas #4 (Creación Empresas CyL, mín. 10.000€), #21 (MITECO, mín. 25.000€) y #22 (NEOTEC, mín. ~175.000€) exigen un volumen de proyecto mínimo. TradeBase con ~15.000€/año cubre la #4, pero para #21 y #22 habría que presentar un plan plurianual o incluir inversiones adicionales (marketing, legal, infra) para alcanzar los mínimos. La #13 (ENISA) no es uniforme: en Jóvenes Emprendedores los socios deben aportar, vía capital o fondos propios, al menos el 50% del préstamo; en Emprendedores, los fondos propios deben ser como mínimo equivalentes al préstamo.</p>
+</blockquote>
+<h3 id="justificacion-de-probabilidades-2026-con-referencias-explicitas">Justificación de probabilidades 2026 (con referencias explícitas)</h3>
+<blockquote>
+<p>Perfil base usado para estimar probabilidades: SL de nueva constitución, sin facturación ni empleados, con producto funcional pero sin tracción comercial validada.</p>
+<p><strong>Cómo leer esta sección:</strong></p>
+<ul>
+<li>aquí &quot;probabilidad&quot; significa <strong>probabilidad de capturar algo útil entre marzo y diciembre de 2026</strong>;</li>
+<li>no todos los porcentajes significan lo mismo: en subvención es probabilidad de aprobación/cobro, en fiscal es probabilidad de poder aplicar el beneficio y en financiación es probabilidad de aprobación;</li>
+<li>la lectura honesta para TradeBase es que <strong>las líneas de probabilidad alta son pocas</strong>, y eso es normal para una SL nueva, pre-revenue y sin tracción validada.</li>
+</ul>
+</blockquote>
+<h4 id="a.subvencion-cash-y-convocatorias">A. Subvención, cash y convocatorias</h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Línea</th>
+<th>Prob. real 2026</th>
+<th>Lectura con los pies en la tierra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Plan Emprendedores León</td>
+<td><strong>55%</strong></td>
+<td>Convocatoria provincial relativamente accesible, pero sigue siendo competitiva y el importe pequeño atrae mucha demanda.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Hacendera</td>
+<td><strong>20%</strong></td>
+<td>La última edición verificada funciona como matchfunding: no basta con pedir, hay que ejecutar bien la campaña y el encaje no es lineal ni automático.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>LEADER</td>
+<td><strong>25%</strong></td>
+<td>GAL y territorio están verificados, pero TradeBase sigue siendo un negocio digital y los GAL suelen priorizar impacto físico local más visible.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Creación Empresas CyL</td>
+<td><strong>45%</strong></td>
+<td>La edición 2025 fue no competitiva y por orden de presentación, pero la edición 2026 aún no está publicada; el encaje sigue siendo bueno, no garantizado.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ICECYL Digitalización</td>
+<td><strong>25%</strong></td>
+<td>Sigue orientada a pymes que se digitalizan desde una base más tradicional; una pyme nativa digital puede encajar peor en el espíritu de la línea.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ICECYL Innovación</td>
+<td><strong>15%</strong></td>
+<td>Requiere una memoria de I+D más convincente que &quot;usar IA&quot;; para una startup tan temprana el riesgo de no pasar filtro es alto.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Red Argos Ciber / línea digital secundaria viva</td>
+<td><strong>20%</strong></td>
+<td>Puede servir como línea secundaria real, pero no es el mejor foco para una startup que todavía no ha capturado #4 ni el bloque cameral.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Cámara León - Pyme Digital 2026</td>
+<td><strong>80%</strong></td>
+<td>Convocatoria 2026 ya verificada y abierta, con baja fricción y encaje directo. La probabilidad real sube, siempre que la SL llegue a tiempo y no encaje en una exclusión sectorial concreta.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Cámara León - Pyme Innova 2026</td>
+<td><strong>70%</strong></td>
+<td>También abierta y verificable en 2026. Menos directa que Pyme Digital, pero sigue siendo una de las líneas más accesibles para ordenar el relato de innovación.</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Cámara León - Pyme Cibersegura 2026</td>
+<td><strong>75%</strong></td>
+<td>Convocatoria 2026 abierta y muy buen encaje técnico; ayuda pequeña, documentación acotada y necesidad real de ciberseguridad.</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Kit Digital (segmento I, 0-2 empleados)</td>
+<td><strong>10%</strong></td>
+<td>A 10/03/2026 no hay una ventana 2026 verificada para este caso y, además, se exige antigüedad mínima. Debe quedar en vigilancia, no en foco activo.</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Kit Consulting</td>
+<td><strong>0% hoy / 5% futuro</strong></td>
+<td>Con TradeBase actual queda fuera por tamaño y, además, no hay convocatoria activa verificada a 10/03/2026.</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Activa Startups</td>
+<td><strong>15%</strong></td>
+<td>No conviene tratarla como aceleración genérica: su encaje mejora solo si TradeBase puede articular un proyecto formal de colaboración con una pyme o actor sectorial.</td>
+</tr>
+<tr>
+<td>21</td>
+<td>MITECO</td>
+<td><strong>35% con Fresno / 5% con VdDJ</strong></td>
+<td>Con la sede ya decidida en <strong>Fresno</strong>, el territorio queda desbloqueado. Aun así sigue siendo competitiva y exige memoria territorial seria.</td>
+</tr>
+<tr>
+<td>22</td>
+<td>NEOTEC</td>
+<td><strong>10%</strong></td>
+<td>Incluso con tasas generales de éxito razonables, el perfil actual de TradeBase está por debajo del candidato tipo por falta de equipo, tracción y madurez técnica formal.</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Eurostars</td>
+<td><strong>5%</strong></td>
+<td>Necesita socio europeo, consorcio y proyecto I+D internacional. Hoy es una línea demasiado lejana.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="b.fiscalidad-y-certificacion">B. Fiscalidad y certificación</h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Línea</th>
+<th>Prob. real 2026</th>
+<th>Lectura con los pies en la tierra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12</td>
+<td>Certificación startup</td>
+<td><strong>50%</strong></td>
+<td>El encaje existe, pero ENISA evalúa innovación y escalabilidad; no basta con ser una SL nueva con software.</td>
+</tr>
+<tr>
+<td>24</td>
+<td>I+D+i</td>
+<td><strong>70%</strong></td>
+<td>La probabilidad alta significa <strong>poder capturar alguna deducción</strong> si se documenta bien; no significa capturar automáticamente el tramo alto de I+D.</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Sello Pyme Innovadora</td>
+<td><strong>25%</strong></td>
+<td>Sigue dependiendo de una vía formal de prueba: IMV, CDTI, patente o esquema equivalente. Sin eso, el sello no sale.</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Patent Box</td>
+<td><strong>15%</strong></td>
+<td>Es una palanca a más largo plazo: requiere software registrado e ingresos por intangible.</td>
+</tr>
+<tr>
+<td>27</td>
+<td>IRPF socios</td>
+<td><strong>0% sin #12 / 70% con #12</strong></td>
+<td>En el reparto 50/50 actual, sin certificación startup el retorno fiscal efectivo es 0. Si sale #12 y ambos fundadores cumplen, vuelve a ser una palanca fuerte.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="c.financiacion">C. Financiación</h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Línea</th>
+<th>Prob. real 2026</th>
+<th>Lectura con los pies en la tierra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>11</td>
+<td>SODICAL</td>
+<td><strong>10% ahora / 35-40% con tracción</strong></td>
+<td>Para una SL recién constituida es prematuro. Tiene más sentido como conversación de 6-12 meses si hay datos reales.</td>
+</tr>
+<tr>
+<td>13</td>
+<td>ENISA</td>
+<td><strong>35%</strong></td>
+<td>Sigue siendo la mejor financiación pública para el perfil startup, pero TradeBase llega muy pronto y sin ingresos.</td>
+</tr>
+<tr>
+<td>14</td>
+<td>ICO MRR Empresas y Emprendedores</td>
+<td><strong>40%</strong></td>
+<td>No es competitiva, pero el banco sí filtra riesgo y una SL sin facturación puede quedarse fuera o exigir garantías.</td>
+</tr>
+<tr>
+<td>15</td>
+<td>MicroBank</td>
+<td><strong>50%</strong></td>
+<td>Existe justo para perfiles pequeños, pero la viabilidad y la capacidad de devolución siguen siendo decisivas.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="d.apoyo-y-condicionales-personales">D. Apoyo y condicionales personales</h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Línea</th>
+<th>Prob. real 2026</th>
+<th>Lectura con los pies en la tierra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>18</td>
+<td>España Emprende</td>
+<td><strong>65%</strong></td>
+<td>Más que dinero, es acompañamiento. La accesibilidad es relativamente buena, pero no debe leerse como cash comparable a una subvención.</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Capitalización del paro</td>
+<td><strong>10%</strong></td>
+<td>Solo existe si algún socio tiene prestación pendiente. Si no se da esa condición personal, la probabilidad real es 0.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="como-potenciar-producto-evidencia-por-linea">Cómo potenciar producto / evidencia por línea</h3>
+<blockquote>
+<p>Esta tabla no sustituye los requisitos formales. Resume qué evidencia de producto, mercado o ejecución mejora realmente el encaje de TradeBase en cada línea.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Línea</th>
+<th>Cómo potenciar producto / evidencia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Plan Emprendedores León</td>
+<td>MVP funcional, primeras altas o cartas de interés y prueba de actividad real desde Fresno.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Hacendera</td>
+<td>Landing pública, vídeo de campaña, comunidad activable y narrativa rural comprensible para no expertos.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>LEADER</td>
+<td>Evidencia de impacto local: empleo digital en Fresno, atención a dealers rurales y hoja de implantación territorial.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Creación Empresas CyL</td>
+<td>Producto lanzable, presupuesto limpio, roadmap de 12 meses y primeras señales de demanda.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ICECYL Digitalización</td>
+<td>Automatización visible: intake por WhatsApp, CRM dealer, importación de stock y flujos documentales.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ICECYL Innovación</td>
+<td>Motor de valoración propio, datasets, benchmarks y experimentos técnicos trazables.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Red Argos Ciber / línea digital secundaria</td>
+<td>MFA, backups, segregación de accesos, hardening y una auditoría ligera o checklist de ciber.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Cámara León - Pyme Digital</td>
+<td>CRM, analítica de leads, reporting comercial y procesos digitales internos claros.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Cámara León - Pyme Innova</td>
+<td>Backlog de hipótesis, experimentos, KPIs de producto y memoria de innovación ordenada.</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Cámara León - Pyme Cibersegura</td>
+<td>Política de seguridad, gestión de secretos, control de accesos e incidentes documentados.</td>
+</tr>
+<tr>
+<td>11</td>
+<td>SODICAL</td>
+<td>Tracción medible: GMV, altas dealer, leads, retención, ingresos recurrentes y unit economics.</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Certificación startup</td>
+<td>Innovación propia defendible, arquitectura escalable y diferenciación real frente a una web sectorial.</td>
+</tr>
+<tr>
+<td>13</td>
+<td>ENISA</td>
+<td>Pipeline comercial, forecast defendible, métricas básicas y uso de fondos nítido.</td>
+</tr>
+<tr>
+<td>14</td>
+<td>ICO MRR Empresas y Emprendedores</td>
+<td>Paquete bancarizable: inversión concreta, hitos, repago y destino del préstamo claramente definidos.</td>
+</tr>
+<tr>
+<td>15</td>
+<td>MicroBank</td>
+<td>Plan de negocio simple, caja prevista y narrativa de devolución sin complejidad innecesaria.</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Kit Digital</td>
+<td>No merece orientar producto hoy; solo vigilar si Red.es reabre un segmento aplicable.</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Kit Consulting</td>
+<td>No depende del producto hoy; depende de tamaño de plantilla y de que exista convocatoria activa.</td>
+</tr>
+<tr>
+<td>18</td>
+<td>España Emprende</td>
+<td>Deck, tesis, métricas base y necesidades claras para aprovechar mejor el acompañamiento.</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Activa Startups</td>
+<td>Diseñar un piloto o reto de colaboración formal con una pyme o actor sectorial, no solo una solicitud genérica.</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Capitalización del paro</td>
+<td>No depende del producto; depende de situación personal y timing del alta.</td>
+</tr>
+<tr>
+<td>21</td>
+<td>MITECO</td>
+<td>Caso Fresno sólido, vertical rural/agroindustrial, empleo digital rural y memoria territorial específica.</td>
+</tr>
+<tr>
+<td>22</td>
+<td>NEOTEC</td>
+<td>Equipo técnico más visible, roadmap de I+D, prototipos, IP propia y ambición tecnológica clara.</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Eurostars</td>
+<td>Arquitectura API, caso de co-desarrollo internacional y socio europeo técnico/comercial real.</td>
+</tr>
+<tr>
+<td>24</td>
+<td>I+D+i</td>
+<td>Time tracking técnico, repos limpios, logs de experimentación y memoria técnica/fiscal continua.</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Sello Pyme Innovadora</td>
+<td>Vía formal de innovación: IMV, CDTI, patente o evidencia homologable; registrar software ayuda.</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Patent Box</td>
+<td>Diseñar activos licenciables: API, motor de valoración, software registrado y contratos de licencia futuros.</td>
+</tr>
+<tr>
+<td>27</td>
+<td>IRPF socios</td>
+<td>No depende del producto directamente: depende de escritura, certificación startup y estructura societaria correcta.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="a.ambito-local-y-provincial-leon">A. Ámbito local y provincial (León)</h2>
+<h3 id="plan-de-emprendedores-diputacion-de-leon">1. Plan de Emprendedores — Diputación de León</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Diputación Provincial de León</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://sede.dipuleon.es/carpetaciudadana/tramite.aspx?idtramite=27635">sede.dipuleon.es</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>Competitiva</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Anual (desde 2013, ininterrumpida — 2.443 beneficiarios acumulados)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>1 vez</strong> — subvención a empresa nueva; no repetible para la misma empresa</td>
+</tr>
+<tr>
+<td><strong>Última convocatoria</strong></td>
+<td>2025 (cerrada octubre 2025)</td>
+</tr>
+<tr>
+<td><strong>Próxima estimada</strong></td>
+<td>⏳ 2026 pendiente de publicación oficial</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>~2.700–4.500€ por beneficiario · Dotación total ~1M€/año</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Municipio &lt;20.000 hab. en provincia de León · Alta IAE reciente · Actividad nueva</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Directo.</strong> Con la sede ya decidida en <strong>Fresno de la Vega</strong>, TradeBase sigue cumpliendo con holgura el requisito territorial de municipio leonés &lt;20.000 hab. La actividad digital (marketplace, SaaS) es elegible — no se limita a industria física.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media-alta (55%)</strong> — convocatoria histórica y con buen encaje territorial, pero sigue siendo competitiva y el importe pequeño atrae mucha demanda</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Vigilar BOPLeón mayo-junio 2026. Preparar memoria económica y de actividad</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="hacendera-de-proyectos-diputacion-de-leon">2. Hacendera de Proyectos — Diputación de León</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Diputación Provincial de León</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.dipuleon.es/actualidad-y-comunicacion/noticias-de-diputacion/hp121124/">dipuleon.es</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Matchfunding / fondo perdido</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>Competitiva</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Convocatorias periódicas, con ediciones verificadas desde 2020</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> — solo si cada edición plantea un proyecto distinto y una nueva campaña válida</td>
+</tr>
+<tr>
+<td><strong>Última convocatoria verificada</strong></td>
+<td>2025</td>
+</tr>
+<tr>
+<td><strong>Próxima estimada</strong></td>
+<td>⏳ 2026 pendiente de publicación oficial</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>La Diputación <strong>duplica cada euro captado</strong> en crowdfunding hasta <strong>20.000€ por proyecto</strong> (última edición oficial verificada)</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Proyecto innovador para el medio rural leonés + campaña de financiación colectiva validada</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Condicional.</strong> Puede servir para proyectos con relato rural fuerte, pero exige una lógica de comunidad/campaña que no encaja igual de bien que una subvención clásica.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media-baja (20%)</strong> — no depende solo de la memoria; depende también de ejecutar bien el esquema de crowdfunding</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Tratarla como línea oportunista, no como subvención lineal base del Año 1</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="poeda-leader">3. POEDA / LEADER</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Junta de Castilla y León, vía Grupo de Acción Local (GAL) comarcal</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://poeda.eu/wp-content/uploads/2024/10/Guia-resumen-para-la-solicitud-de-ayudas-LEADER-POEDA-2023-2027.pdf">poeda.eu</a> · <a href="https://agriculturaganaderia.jcyl.es/web/es/ayudas-leader-20232027.html">agriculturaganaderia.jcyl.es</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido (fondos FEADER)</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>Competitiva dentro del GAL</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Programa marco 2023-2027, convocatorias periódicas del GAL</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> — se pueden solicitar varias ayudas LEADER para proyectos distintos dentro del marco 2023-2027</td>
+</tr>
+<tr>
+<td><strong>Estado</strong></td>
+<td>✅ <strong>VERIFICADO.</strong> <strong>Fresno de la Vega</strong> está cubierto por <strong><a href="https://poeda.eu/planes-de-desarrollo/programa-leader-2023-2027/">POEDA</a></strong> (Páramo, Órbigo y Esla Desarrollo Asociado), cuya convocatoria productiva LEADER 2023-2027 sigue abierta hasta <strong>31/12/2027</strong>. Como alternativas valoradas, <strong>Onzonilla</strong> y <strong>Santovenia</strong> también quedarían en POEDA; <strong>La Robla</strong> y <strong>Pola de Gordón</strong> pasarían a <strong><a href="https://cuatrovalles.es/">Cuatro Valles</a></strong>.</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td><strong>30% a fondo perdido para pequeña empresa</strong> (35% en Soria), tope <strong>250.000€</strong> por proyecto. Requisito: crear empleo (mín. 0,5 UTA)</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Pyme (&lt;250 empleados) en zona rural LEADER · Proyecto productivo que genere actividad económica · Inversión no iniciada antes de solicitud</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Fuerte si se justifica arraigo.</strong> El relato: sede en zona rural de León, dealers de toda CyL digitalizados vía Tracciona. Verticales como CampoIndustrial (maquinaria agrícola) refuerzan el vínculo rural. Empleo digital de calidad en zona despoblada.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media (30%)</strong> — GAL verificado para <strong>Fresno en POEDA</strong>, convocatoria abierta y relato rural más coherente que con VdDJ, pero LEADER sigue priorizando impacto físico y empleo local visible</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Contactar <strong>POEDA</strong> como GAL de trabajo para Fresno (<a href="https://poeda.eu/planes-de-desarrollo/programa-leader-2023-2027/">Programa LEADER 2023-2027</a> · 987 351 026 / 987 351 161 · poeda@poeda.eu). Mantener <strong>Cuatro Valles</strong> solo como referencia histórica de la alternativa La Robla / Pola.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="b.ambito-autonomico-castilla-y-leon">B. Ámbito autonómico (Castilla y León)</h2>
+<h3 id="subvenciones-para-creacion-de-empresas-cyl">4. Subvenciones para Creación de Empresas CyL</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Consejería de Industria, Comercio y Empleo — Junta de Castilla y León</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.tramitacastillayleon.jcyl.es/web/jcyl/AdministracionElectronica/es/Plantilla100Detalle/1251181050732/Ayuda012/1285499531893/Propuesta">tramitacastillayleon.jcyl.es</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td><strong>No competitiva en la última edición verificada (2025)</strong> — por orden de presentación hasta agotar crédito</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Convocatoria recurrente; última edición oficial verificada en 2025</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>1 vez</strong> — subvención a creación de empresa; no repetible para la misma SL</td>
+</tr>
+<tr>
+<td><strong>Última convocatoria verificada</strong></td>
+<td>2025 (fin de plazo: 31/12/2025)</td>
+</tr>
+<tr>
+<td><strong>Próxima estimada</strong></td>
+<td>⏳ 2026 pendiente de publicación oficial</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td><strong>35%</strong> del coste subvencionable, ampliable con criterios adicionales hasta <strong>45%</strong>, sobre proyectos de <strong>10.000€ a 150.000€</strong></td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Empresa nueva en CyL · Proyecto de creación y lanzamiento de actividad</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Perfecto.</strong> Sigue siendo la ayuda de fondo perdido más lógica para el Año 1 si reaparece una edición equivalente.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media-alta (45%)</strong> — el encaje es directo, pero la prioridad real depende de que la edición 2026 mantenga estructura similar y de presentar la memoria completa a tiempo</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Vigilar BOCyL / Tramita Castilla y León. Preparar memoria y presupuesto listos para presentar en cuanto se publique</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="icecyl-digitalizacion-transformacion-digital">5. ICECYL — Digitalización / Transformación digital</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Instituto para la Competitividad Empresarial de CyL (ICE) — Junta de Castilla y León</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.tramitacastillayleon.jcyl.es/web/jcyl/AdministracionElectronica/es/Plantilla100Detalle/1284933058677/Ayuda012/1285292642303/Propuesta">tramitacastillayleon.jcyl.es</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>Competitiva</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Anual (convocatorias regulares del ICE)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> — anual con proyectos diferentes. Año 1: Tracciona; Año 2: CampoIndustrial o nueva vertical</td>
+</tr>
+<tr>
+<td><strong>Próxima estimada</strong></td>
+<td>⏳ Q2-Q3 2026</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Variable por convocatoria (hasta 50-75% del coste subvencionable)</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Pyme en CyL · Proyecto de transformación digital</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Directo.</strong> TradeBase es nativa digital, pero la inversión en IA (Claude API para descripciones, WhatsApp Vision pipeline, editorial automatizada), infraestructura cloud (Supabase, Cloudflare), y herramientas SaaS dealer son costes de digitalización puros. Las verticales futuras (Horecaria, CampoIndustrial) amplían el alcance.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media (30%)</strong> — suele priorizar pymes existentes que se digitalizan, no nativas digitales</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Vigilar convocatorias ICE. Enfocar solicitud en la transformación digital del sector de vehículos industriales (dealers 45-60 años, WhatsApp-first → marketplace profesional)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="icecyl-innovacion-tecnologica">6. ICECYL — Innovación tecnológica</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>ICE — Junta de Castilla y León</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.tramitacastillayleon.jcyl.es/web/jcyl/AdministracionElectronica/es/Plantilla100Detalle/1284933058677/Ayuda012/1285292642303/Propuesta">tramitacastillayleon.jcyl.es</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>Competitiva</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Anual</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> — anual con proyectos de innovación distintos. Ej: Año 1 motor IA valoración, Año 2 pipeline multi-vertical</td>
+</tr>
+<tr>
+<td><strong>Próxima estimada</strong></td>
+<td>⏳ Q2-Q3 2026</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Variable (hasta 200.000€ en convocatorias anteriores)</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Pyme en CyL · Proyecto de innovación tecnológica con componente I+D</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Fuerte si se separa bien el relato.</strong> Componentes innovadores: (1) Pipeline WhatsApp → Claude Vision → ficha bilingüe auto-publicada (ningún competidor lo tiene), (2) Motor de valoración de mercado con datos exclusivos (precio real de venta, flujos geográficos), (3) Sistema multi-vertical de codebase único con vertical_config, (4) IA para generación de contenido editorial y posts sociales. El vacío competitivo (no existe marketplace B2B industrial profesional en España/Europa) refuerza la innovación.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Baja-media (20%)</strong> — requiere demostrar componente I+D diferencial, no solo uso de APIs existentes</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Preparar memoria técnica detallada del pipeline de IA (WhatsApp Vision, valoración, editorial). Documentar el estado del arte competitivo (Mascus, Autoline, TruckScout24) y por qué la solución es innovadora</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="digitalizacion-y-seguridad-tecnologica-para-pymes-cyl">7. Digitalización y Seguridad Tecnológica para Pymes CyL</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Consejería de Industria, Comercio y Empleo — Junta de Castilla y León</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.tramitacastillayleon.jcyl.es/web/jcyl/AdministracionElectronica/es/Plantilla100Detalle/1284933058677/Ayuda012/1285592445096/Propuesta">Red Argos Ciber 2025</a> · <a href="https://www.tramitacastillayleon.jcyl.es/">Tramita Castilla y León</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>Competitiva</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Líneas periódicas de digitalización / ciberseguridad</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> — según línea, proyecto y edición</td>
+</tr>
+<tr>
+<td><strong>Última situación oficial verificada</strong></td>
+<td><strong>Red Argos Ciber 2025 abierta hasta 31/03/2026</strong> · la línea de digitalización avanzada 2025 cerró el <strong>27/02/2026</strong> salvo sustitución por nueva convocatoria</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>En Red Argos Ciber: <strong>50%</strong> para hardware/software y <strong>75%</strong> para consultoría, con <strong>máximo 20.000€</strong>. En la última línea de digitalización avanzada localizada, el tope llegó a <strong>65.000€</strong></td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Pyme en CyL · proyecto ajustado a la línea vigente</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Útil como línea secundaria real</strong>, sobre todo en ciberseguridad, pero ya no conviene modelarla como una bolsa genérica Q2-Q3 2026 sin convocatoria viva confirmada</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media-baja (25%)</strong> — depende de que la línea vigente acepte bien a una pyme nativa digital</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Si se quiere trabajar una línea secundaria hoy, priorizar la vigente con base oficial (Red Argos Ciber) o esperar la siguiente convocatoria viva</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="camara-de-comercio-de-leon-pyme-digital">8. Cámara de Comercio de León: Pyme Digital</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Cámara de Comercio de León</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://bop.dipuleon.es/publica/buscador-anuncios/anuncio/Extracto-de-la-convocatoria-de-ayudas-para-el-desarrollo-de-planes-de-apoyo-de-soluciones-TIC-en-el-marco-del-Programa-Pyme-Digital-BDNS-887374/">Pyme Digital 2026 - BOP León</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Diagnóstico + ayuda a implantación</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva, con presupuesto limitado y cierre por agotamiento posible</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Ediciones recurrentes; <strong>2026 ya abierta y verificada</strong></td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> por edición y fase</td>
+</tr>
+<tr>
+<td><strong>Última edición verificada</strong></td>
+<td>2026</td>
+</tr>
+<tr>
+<td><strong>Estado actual</strong></td>
+<td>✅ Publicación BOP <strong>18/02/2026</strong> · apertura <strong>26/02/2026</strong> · cierre <strong>30/09/2026</strong> o agotamiento</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Diagnóstico subvencionado al <strong>85%</strong> y ayuda a implantación del <strong>60%</strong>, con <strong>máximo 4.494€</strong> sobre <strong>7.490€</strong></td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Pyme con sede en el ámbito de la Cámara de León · alta en IAE · exclusión general para IAE 845</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Directo.</strong> Sigue siendo una de las líneas de menor fricción real para lanzar Tracciona.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Alta (80%)</strong> — convocatoria 2026 abierta, encaje fuerte y carga documental contenida</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Activar durante 2026 en cuanto la SL esté constituida, dada de alta y con gasto no solapado</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="camara-de-comercio-de-leon-pyme-innova">9. Cámara de Comercio de León: Pyme Innova</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Cámara de Comercio de León</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://bop.dipuleon.es/publica/buscador-anuncios/anuncio/Extracto-de-la-convocatoria-de-subvenciones-para-el-desarrollo-de-Planes-de-implantacion-de-soluciones-innovadoras-en-el-marco-del-Programa-Pyme-Innova-BDNS-887205/">Pyme Innova 2026 - BOP León</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Diagnóstico + ayuda a implantación en innovación</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva, con presupuesto limitado y cierre por agotamiento posible</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Ediciones recurrentes; <strong>2026 ya abierta y verificada</strong></td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> por edición</td>
+</tr>
+<tr>
+<td><strong>Última edición verificada</strong></td>
+<td>2026</td>
+</tr>
+<tr>
+<td><strong>Estado actual</strong></td>
+<td>✅ Publicación BOP <strong>17/02/2026</strong> · apertura estimada <strong>25/02/2026</strong> · cierre <strong>30/09/2026</strong> o agotamiento</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Diagnóstico subvencionado al <strong>85%</strong> y ayuda a implantación del <strong>60%</strong>, con <strong>máximo 4.494€</strong> sobre <strong>7.490€</strong></td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Pyme innovadora con sede en el ámbito de la Cámara de León</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Fuerte.</strong> Buen instrumento para ordenar el relato de innovación y preparar Sello Pyme Innovadora o certificación startup.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Alta (70%)</strong> — convocatoria 2026 abierta y encaje bueno, aunque exige hilar mejor el relato de innovación que Pyme Digital</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Activar si la SL ya está constituida y se quiere reforzar la capa metodológica de innovación en 2026</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="camara-de-comercio-de-leon-pyme-cibersegura">10. Cámara de Comercio de León: Pyme Cibersegura</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Cámara de Comercio de León</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://bop.dipuleon.es/publica/buscador-anuncios/anuncio/Extracto-de-la-convocatoria-de-ayudas-para-el-desarrollo-de-planes-de-apoyo-de-soluciones-TIC-en-el-marco-del-programa-Pyme-Cibersegura-BDNS-888013/">Pyme Cibersegura 2026 - BOP León</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Diagnóstico + ayuda a implantación en ciberseguridad</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva, con presupuesto limitado y cierre por agotamiento posible</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Ediciones recurrentes; <strong>2026 ya abierta y verificada</strong></td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> por edición</td>
+</tr>
+<tr>
+<td><strong>Última edición verificada</strong></td>
+<td>2026</td>
+</tr>
+<tr>
+<td><strong>Estado actual</strong></td>
+<td>✅ Publicación BOP <strong>20/02/2026</strong> · apertura <strong>02/03/2026</strong> · cierre <strong>30/09/2026</strong> o agotamiento</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Diagnóstico subvencionado al <strong>85%</strong> y ayuda a implantación del <strong>60%</strong>, con <strong>máximo 2.568€</strong> sobre <strong>4.280€</strong></td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Pyme con sede en el ámbito de la Cámara de León</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Directo.</strong> Útil para reforzar el relato de seguridad y cubrir un gap real de control externo.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Alta (75%)</strong> — convocatoria 2026 abierta y muy buen encaje técnico para el proyecto</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Activarla como soporte técnico/documental si la SL está ya operativa y se quiere cubrir ciberseguridad real en 2026</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sodical-prestamo-participativo-capital-riesgo">11. SODICAL — Préstamo participativo / Capital riesgo</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>ADE Capital SODICAL (Sociedad de Capital Riesgo de CyL, participada por el ICE)</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://sodical.es/">sodical.es</a> · <a href="https://sodical.es/instrumento-financiero-para-la-capitalizacion-de-la-innovacion-empresarial/">Instrumento de capitalización</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Préstamo participativo / entrada en capital</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (evaluación caso a caso, continua)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>✅ Permanente (programa vigente 2024-2026, mientras haya fondos)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>1 vez</strong> — préstamo/inversión puntual. Ampliable si la empresa crece y necesita más capital</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>50.000€–3M€ · Plazo hasta 10 años · Carencia hasta 3 años</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Empresa con sede/proyecto en CyL · Proyecto viable con potencial de crecimiento</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Encaja a medio plazo.</strong> SODICAL busca proyectos con cierta tracción. Para una SL recién constituida sin facturación puede ser prematuro, pero el modelo multi-vertical (7 verticales confirmadas) son argumentos sólidos. El préstamo participativo no diluye como el equity.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td>🔭 <strong>Baja ahora, media-alta con tracción</strong> (6-12 meses de operación)</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Contactar tras 6 meses de operación con métricas de Tracciona (GMV, dealers activos, tráfico). Preparar pitch con proyección multi-vertical</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="c.ambito-nacional-espana">C. Ámbito nacional (España)</h2>
+<h3 id="certificacion-startup-ley-de-startups">12. Certificación Startup / Ley de Startups</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>ENISA (Empresa Nacional de Innovación) — Ministerio de Industria y Turismo</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.enisa.es/es/certifica-tu-startup/faqs">enisa.es/certifica-tu-startup</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Certificación que desbloquea beneficios fiscales (Ley 28/2022, de fomento del ecosistema de las empresas emergentes)</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (cumples requisitos → certificación)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>✅ Permanente</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>1 vez</strong> — certificación vigente 5 años desde constitución (o 7 para biotech). No renovable pero los beneficios duran el período</td>
+</tr>
+<tr>
+<td><strong>Beneficios</strong></td>
+<td>IS al 15% (vs 25%) durante 4 años · Stock options exentas hasta 50.000€/año · Deducción IRPF inversores al 50% (vs 30%) hasta 100.000€ · Visa de nómada digital para talento</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Empresa &lt;5 años · &lt;10M€ facturación · No cotizada · Carácter innovador · No haber distribuido dividendos</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Perfecto.</strong> TradeBase SL cumple todos los requisitos: empresa nueva, base tecnológica (IA + marketplace), facturación &lt;10M€, no cotizada. El IS al 15% supone un ahorro directo cuando haya beneficios. La deducción al 50% para inversores (vs 30% estándar) es clave para atraer al segundo socio o business angels.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media-alta (50%)</strong> — no es automática; ENISA evalúa el carácter innovador y &quot;usar APIs de IA&quot; no siempre basta — hay que demostrar innovación propia (pipeline WhatsApp Vision, motor de datos)</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Solicitar certificación una vez constituida la SL. Preparar memoria de innovación. El pipeline WhatsApp → Vision → ficha bilingüe y el motor de datos exclusivos son los argumentos más fuertes</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="enisa-lineas-de-financiacion">13. ENISA — Líneas de financiación</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>ENISA — Ministerio de Industria y Turismo</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.enisa.es/">enisa.es</a> · <a href="https://www.enisa.es/es/financia-tu-empresa/lineas-de-financiacion/d/jovenes-emprendedores">Jóvenes Emprendedores</a> · <a href="https://www.enisa.es/es/financia-tu-empresa/lineas-de-financiacion/d/emprendedoras-digitales">Emprendedoras Digitales</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Préstamo participativo (sin garantías personales)</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (evaluación de viabilidad)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>✅ Permanente (convocatoria abierta continua)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Varias líneas</strong> — se puede solicitar Jóvenes Emprendedores primero y Crecimiento después (secuencialmente, no simultáneas). Cada línea 1 vez</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Jóvenes Emprendedores: 25.000–75.000€ · Emprendedores: hasta 300.000€ · Crecimiento: hasta 1,5M€</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>SL constituida · Plan de empresa viable · Jóvenes Emprendedores: socios aportan vía capital o fondos propios al menos el 50% del préstamo · Emprendedores: fondos propios mínimos equivalentes al préstamo</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Directo.</strong> ENISA es la fuente de financiación pública más accesible para startups tech en España. El préstamo participativo no requiere avales personales ni diluye equity. El plan de negocio de TradeBase (4 capas de revenue, 7 verticales, costes controlados ~50K€/3 años) es un buen candidato.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media (35%)</strong> — ENISA evalúa viabilidad financiera; SL nueva sin facturación, sin equipo estructurado = perfil de riesgo. SL nueva sin facturación, sin equipo estructurado = perfil de riesgo</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Solicitar tras constitución. Necesario: plan de empresa, proyecciones financieras, memoria de innovación. PRESUPUESTOS.md ya cubre la mayor parte del plan financiero</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="linea-ico-mrr-empresas-y-emprendedores">14. Línea ICO MRR — Empresas y Emprendedores</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Instituto de Crédito Oficial (ICO), vía entidades financieras</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.ico.es/en/plan-de-recuperacion-linea-ico-empresas-y-emprendedores">ico.es</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Préstamo blando (tipo subsidiado con fondos MRR europeos)</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (análisis de viabilidad por la entidad financiera)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>✅ <strong>Abierta ahora</strong> — hasta <strong>30 junio 2026</strong> (formalización hasta 31 agosto 2026)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> — se puede solicitar más de un préstamo ICO (uno por operación). Si se devuelve, se puede pedir otro en futuras líneas</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Hasta 100% del proyecto · Plazos 1-20 años · Carencia hasta 3 años · Dotación global 8.150M€</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Empresa constituida en España · Proyecto de inversión o necesidad de liquidez</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Directo.</strong> Se puede financiar todo el plan de inversión de TradeBase (~15.000€ Año 1) con condiciones muy favorables: tipo subsidiado, carencia de hasta 3 años. Se solicita a través de BBVA (banco previsto para la cuenta de la SL).</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media-alta (40%)</strong> — no es competitiva pero el banco evalúa riesgo; SL nueva sin facturación = riesgo alto sin garantía personal de socios</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td><strong>Solicitar en BBVA al abrir la cuenta de TradeBase SL.</strong> Plazo hasta junio 2026 — no dejar pasar</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="microbank-microcredito-para-emprendedores">15. MicroBank — Microcrédito para emprendedores</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>MicroBank (banco social de CaixaBank)</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.caixabank.es/empresa/general/microbank-prestamo-empresas-estudios.html">caixabank.es/microbank</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Microcrédito sin aval real</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (evaluación de proyecto)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>✅ Permanente (producto financiero continuo)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> — se puede solicitar nuevo microcrédito tras devolver el anterior</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Hasta 30.000€ · 100% de la inversión · Sin aval real (garantía personal de socios)</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Microempresa (&lt;10 trabajadores, &lt;2M€ facturación) · Plan de negocio vía entidad social colaboradora</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Directo.</strong> TradeBase SL (2 socios, 0 empleados, &lt;500K€) cumple todos los requisitos. 30.000€ cubre más de la mitad del presupuesto trienal de OPEX (~50.000€). No requiere aval real — solo garantía personal de los socios.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media-alta (50%)</strong> — producto accesible pero sin facturación demostrable la decisión depende del oficial de oficina</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Solicitar en oficina CaixaBank con plan de empresa. PRESUPUESTOS.md sirve como base del plan financiero</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="kit-digital">16. Kit Digital</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Red.es — Ministerio para la Transformación Digital</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.red.es/es/iniciativas/proyectos/kit-digital">red.es/kit-digital</a> · <a href="https://www.red.es/es/actualidad/noticias/finaliza-plazo-solicitudes-kitdigital">Cierre último segmento verificado (31/10/2025)</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido (bono digital)</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (plazas limitadas por orden de solicitud)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Programa NextGenerationEU, con convocatorias por segmentos</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>1 vez</strong> por segmento — bono digital no repetible</td>
+</tr>
+<tr>
+<td><strong>Estado</strong></td>
+<td>🔭 <strong>Sin ventana 2026 verificada a 10/03/2026</strong> para el segmento que interesaría a TradeBase (0-2 empleados). La última ventana verificada del segmento III cerró el <strong>31/10/2025</strong></td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Hasta 2.000€ para segmento III (0-2 empleados) en la última ventana verificada</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Pyme o autónomo · Antigüedad mínima 6 meses · Test de autodiagnóstico digital · disponibilidad de convocatoria abierta para el segmento aplicable</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Parcial y hoy no prioritario.</strong> El bono es pequeño y útil, pero no conviene orientar el roadmap ni el producto a una línea que no tiene ventana 2026 verificada a fecha <strong>10/03/2026</strong></td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Baja (10%)</strong> — sin convocatoria abierta verificada hoy y con antigüedad mínima exigida, debe tratarse como vigilancia documental</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Mantener en vigilancia. No planificar producto ni caja sobre esta línea hasta que Red.es publique una nueva ventana aplicable al segmento de TradeBase</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="kit-consulting">17. Kit Consulting</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Red.es — Ministerio para la Transformación Digital</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.red.es/es/iniciativas/proyectos/kit-consulting">red.es/kit-consulting</a> · <a href="https://www.red.es/es/actualidad/noticias/hasta-el-31-de-marzo-puedes-solicitar-los-bonos-de-asesoramiento-digital">Último plazo verificado (31/03/2025)</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido (bono de asesoramiento)</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (plazas limitadas por orden de solicitud)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Programa NextGenerationEU, por convocatorias</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>1 vez</strong> por empresa — bono no repetible</td>
+</tr>
+<tr>
+<td><strong>Estado</strong></td>
+<td>🔭 <strong>Sin convocatoria activa verificada a 10/03/2026</strong> y, además, TradeBase no cumple el tamaño mínimo actual</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>12.000–24.000€ en asesoramiento especializado en la última estructura conocida</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Pyme de <strong>10 a menos de 250 empleados</strong> según la referencia oficial verificada</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>No encaja hoy.</strong> TradeBase tiene 0 empleados y no debe modelar esta línea como opción real mientras no cambie de tamaño o se publique un segmento distinto</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>0% hoy / 5% futuro con plantilla</strong> — a día <strong>10/03/2026</strong> no es una línea aplicable al proyecto</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Sacarla del foco. Reabrirla solo si TradeBase alcanza el tamaño exigido o Red.es publica un segmento nuevo que sí cubra microempresa</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="espana-emprende">18. España Emprende</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Cámara de España / red cameral</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.camara.es/creacion-de-empresas">cámara.es/creacion-de-empresas</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Servicio de orientación y acompañamiento emprendedor</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td><strong>Permanente</strong> como servicio / red de apoyo</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Seguimiento recurrente</strong> mientras el programa y la red territorial lo permitan</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>No es una ayuda económica automática; aporta asesoramiento y acompañamiento</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Emprendedor o empresa nueva</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Directo.</strong> Tiene sentido como soporte práctico y acompañamiento, no como subvención de caja.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Alta (65%)</strong> — por accesibilidad y baja fricción, no por retorno monetario</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Canalizarlo a través de Cámara León como servicio de apoyo, no como partida principal del plan financiero</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="activa-startups">19. Activa Startups</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Escuela de Organización Industrial (EOI) — Ministerio de Industria y Turismo</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.eoi.es/es/empresas/programas-activa/activa-startups">EOI Activa Startups</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Programa de innovación abierta / asesoramiento para proyectos de colaboración entre pymes y startups (no es subvención directa)</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>Competitiva</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Convocatorias periódicas; no abierta a fecha <strong>10/03/2026</strong></td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td>Depende de la convocatoria; no conviene modelarla hoy como línea estable de repetición</td>
+</tr>
+<tr>
+<td><strong>Próxima estimada</strong></td>
+<td>🔭 Sin convocatoria abierta verificada a <strong>10/03/2026</strong></td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>El alcance depende de cada convocatoria; no conviene modelarlo como cash fijo ni como aceleración genérica</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Según convocatoria. El marco oficial se orienta a <strong>proyectos de colaboración entre pymes y startups</strong>, pudiendo dirigirse a pymes, startups o sus agrupaciones</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Condicional.</strong> Tiene sentido si TradeBase puede estructurar un piloto o reto de innovación abierta con una pyme o actor sectorial real. Tiene menos sentido si se intenta presentar como mera startup escalable sin proyecto de colaboración definido</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Baja (15%)</strong> — no hay convocatoria abierta verificada y el encaje mejora solo si existe un piloto formal de colaboración</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>No activarla como línea base. Reabrirla solo cuando exista convocatoria y se pueda formular un proyecto concreto de colaboración con una pyme o socio sectorial</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sepe-capitalizacion-de-prestacion-por-desempleo">20. SEPE — Capitalización de prestación por desempleo</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Servicio Público de Empleo Estatal (SEPE)</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.sepe.es/HomeSepe/autonomos/capitaliza-tu-prestacion/socio-de-entidad-mercantil.html">sepe.es</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Capitalización (pago único de prestación pendiente)</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (derecho individual)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>✅ Permanente</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>1 vez</strong> por socio — capitalización única de la prestación de desempleo</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>100% de la prestación pendiente en pago único (para aportación al capital social de la SL)</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Tener prestación por desempleo pendiente · Ser socio trabajador de una SL nueva · Solicitar antes de incorporarse a la empresa</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Solo si algún socio está en situación de desempleo.</strong> La capitalización permite convertir la prestación restante en un pago único para invertir como capital social en TradeBase SL.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Condicional (10%)</strong> — solo si algún socio tiene prestación por desempleo pendiente</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Verificar si alguno de los 2 socios tiene prestación por desempleo pendiente. Si sí → solicitar ANTES de darse de alta como socio de TradeBase SL</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="miteco-reto-demografico-modalidad-c">21. MITECO — Reto Demográfico (Modalidad C)</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Ministerio para la Transición Ecológica y el Reto Demográfico</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://sede.miteco.gob.es/portal/site/seMITECO/ficha-procedimiento?procedure_suborg_responsable=257&amp;procedure_etiqueta_pdu=null&amp;procedure_id=1130&amp;by=theme">sede.miteco.gob.es</a> · <a href="https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/transicion-ecologica/paginas/2025/041225-proyectos-despoblacion.aspx">La Moncloa</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>Competitiva</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Anual (desde 2021, dotación ~52M€)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> — anual con proyectos distintos. Año 1: Tracciona (marketplace industrial); Año 2: CampoIndustrial (maquinaria agrícola); Año 3: otra vertical rural</td>
+</tr>
+<tr>
+<td><strong>Última convocatoria</strong></td>
+<td>Cerrada 20/01/2026</td>
+</tr>
+<tr>
+<td><strong>Próxima estimada</strong></td>
+<td>⏳ Q4 2026 o Q1 2027</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>25.000–200.000€ · Hasta 70% del gasto subvencionable</td>
+</tr>
+<tr>
+<td><strong>Nota oficial 2025</strong></td>
+<td>La nota general del MITECO comunica ayudas de hasta 300.000€ y 90%, pero ese máximo corresponde a otras modalidades. Para la <strong>modalidad C</strong> de pymes/autónomos/economía social, la convocatoria 2025 mantiene <strong>25.000–200.000€</strong> y hasta <strong>70%</strong> del gasto subvencionable.</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Pymes y autónomos en municipios &lt;5.000 habitantes · Proyectos innovadores de transformación territorial y lucha contra despoblación</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Muy fuerte con sede ya decidida en Fresno de la Vega.</strong> Fresno cumple con holgura el requisito territorial y además activa el diferencial <code>A7 Tierra de Campos</code>. Las alternativas valoradas que también habrían desbloqueado MITECO eran Onzonilla, La Robla, Pola y Santovenia; VdDJ queda fuera con <strong>5.094 hab. (INE 2024)</strong>.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>35% con Fresno / 5% con VdDJ</strong> — Con Fresno el territorio ya queda desbloqueado, pero sigue siendo una convocatoria competitiva a escala nacional.</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td><strong>Sede ya fijada en Fresno.</strong> Preparar memoria con énfasis en arraigo rural, empleo digital, Tierra de Campos y digitalización del sector agrícola/industrial</td>
+</tr>
+<tr>
+<td><strong>Base territorial Fresno</strong></td>
+<td>Municipio rural elegible, encaje en Tierra de Campos, base operativa digital desde territorio y puente natural hacia CampoIndustrial. La memoria debe apoyarse en dirección exacta, prueba de uso real del espacio, conectividad y relato económico ligado al entorno.</td>
+</tr>
+<tr>
+<td><strong>Evidencia mínima recomendada</strong></td>
+<td>Título de uso de la sede, fotos, conectividad, ficha territorial, presupuesto propio MITECO y narrativa separada del proyecto de Año 1.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="neotec-cdti-lic-cdti-id">22. NEOTEC / CDTI LIC / CDTI I+D</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>CDTI Innovación — Ministerio de Ciencia e Innovación</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.cdti.es/ayudas/ayudas-neotec-2025">cdti.es/ayudas-neotec</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido (NEOTEC) / Préstamo blando (LIC, I+D)</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>Competitiva</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>Anual (NEOTEC) / Continua (LIC, I+D)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>NEOTEC: 1 vez.</strong> LIC/I+D: repetibles con proyectos distintos. Estrategia: NEOTEC Año 1, LIC Año 2-3 si no sale</td>
+</tr>
+<tr>
+<td><strong>Próxima estimada</strong></td>
+<td>⏳ NEOTEC 2026 prevista Q2-Q3</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>NEOTEC: hasta 250.000€ · LIC: hasta 250.000€ (préstamo) · I+D: variable</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>NEOTEC: empresa &lt;6 años, modelo tech, plan de negocio innovador. LIC/I+D: actividad I+D demostrable</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>NEOTEC es el mejor encaje.</strong> TradeBase cumple: empresa &lt;6 años, base tecnológica (IA + marketplace B2B), modelo escalable (7 verticales), vacío competitivo documentado (no existe marketplace B2B industrial en España/Europa). La inversión en IA genuina (Claude Vision para auto-verificación, motor de valoración con datos exclusivos, pipeline WhatsApp → ficha bilingüe) es innovación demostrable. LIC como alternativa si NEOTEC no sale.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td>🔭 <strong>Baja (12%)</strong> — NEOTEC tiene ~15-20% tasa general, pero sin facturación, sin equipo técnico formal, sin tracción → por debajo de la media</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Preparar plan de empresa para NEOTEC con foco en: (1) innovación tecnológica (IA, datos exclusivos), (2) escalabilidad (7→20 verticales, vertical_config), (3) vacío competitivo, (4) impacto sectorial (digitalización de un mercado analógico de 45-60 años). Evaluar LIC como alternativa de préstamo</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="d.ambito-europeo">D. Ámbito europeo</h2>
+<h3 id="eurostars-3-cdti-eureka">23. Eurostars-3 (CDTI / Eureka)</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Eureka, gestionado en España por CDTI</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://www.cdti.es/ayudas/eurostarts-3-cod3">cdti.es/eurostars</a> · <a href="https://tacticacorporativa.es/es/calendario-cdti-convocatorias-2026/">Calendario CDTI 2026</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Subvención a fondo perdido</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>Competitiva</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>2 cortes anuales (típicamente marzo y septiembre)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Repetible</strong> — se puede presentar a cada corte (2/año) con proyectos distintos. Si CoD9 falla, intentar CoD10, CoD11...</td>
+</tr>
+<tr>
+<td><strong>Última convocatoria</strong></td>
+<td>CoD8 cierra 19 marzo 2026</td>
+</tr>
+<tr>
+<td><strong>Próxima estimada</strong></td>
+<td>⏳ CoD9: septiembre-octubre 2026</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Hasta 400.000€ por entidad española · 60% costes elegibles para pequeña empresa</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Consorcio mínimo 2 entidades de 2 países Eurostars · Liderado por pyme innovadora · Proyecto I+D de max 36 meses</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Fuerte si encuentras socio.</strong> El componente de IA (motor de valoración, pipeline WhatsApp Vision, generación editorial multilingüe) es I+D elegible. Un socio tecnológico en Portugal (mercado natural por cercanía, idioma afín, camiones circulan Portugal↔España) o en Francia/Países Bajos (mercados maduros de vehículos industriales) sería ideal. El proyecto podría ser: &quot;IA multilingüe para marketplace B2B industrial europeo&quot;.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td>🔭 <strong>Muy baja (8%)</strong> — triple barrera: necesitas socio europeo, proyecto I+D de consorcio internacional, e informes a Eureka durante 36 meses</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Para CoD9 (sept 2026): buscar socio europeo (universidad, centro tecnológico o pyme tech) en Portugal, Francia u Holanda. CDTI ofrece herramientas de búsqueda de socios</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="e.beneficios-fiscales-permanentes">E. Beneficios fiscales permanentes</h2>
+<h3 id="deducciones-idi-en-impuesto-de-sociedades">24. Deducciones I+D+i en Impuesto de Sociedades</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>AEAT (arts. 35-39 Ley del Impuesto de Sociedades)</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://sede.agenciatributaria.gob.es/Sede/impuesto-sobre-sociedades/deducciones-beneficios-fiscales-impuesto-sobre-sociedades.html">AEAT</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Deducción fiscal en Impuesto de Sociedades</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (derecho fiscal)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>✅ Permanente</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Anual</strong> — se aplica en cada ejercicio fiscal del IS</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td><strong>I+D:</strong> 25% de los gastos, 42% sobre el exceso respecto a la media previa, 17% adicional para investigadores y 8% para determinadas inversiones. <strong>Innovación tecnológica:</strong> <strong>12%</strong></td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Actividad calificable como I+D o innovación tecnológica, bien documentada. Recomendable: Informe Motivado Vinculante</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Muy bueno, con matiz.</strong> El proyecto encaja con seguridad al menos como <strong>innovación tecnológica</strong>; para sostener una deducción en la banda de <strong>25-42%</strong> hay que defender bien el salto de I+D frente al estado del arte.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Alta (70%)</strong> — el derecho existe, pero la intensidad real depende de la calificación técnica y de la calidad documental</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Documentar desde el primer día la actividad técnica y separar claramente qué parte es innovación tecnológica (12%) y qué parte podría defenderse como I+D (25-42%)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="sello-pyme-innovadora">25. Sello Pyme Innovadora</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>Ministerio de Ciencia e Innovación (MCINU)</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://aplicaciones.ciencia.gob.es/pyi/">Solicitud PYI</a> · <a href="https://aplicaciones.ciencia.gob.es/pyiINFO/">Info PYI</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Certificación que desbloquea beneficios adicionales</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (cumples requisitos → certificación)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>✅ Permanente (registro online abierto, vigencia 3 años renovable)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Renovable cada 3 años</strong> — una vez obtenido, se renueva si se mantiene actividad innovadora</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>No es dinero directo. Desbloquea: 40% bonificación SS de investigadores · Puntuación extra en convocatorias públicas · Ventajas en contratación pública · Deducciones I+D+i reforzadas</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Demostrar actividad innovadora mediante: proyecto CDTI, certificación UNE 166002, patentes/software registrado, o Informe Motivado Vinculante</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>Estratégico a medio plazo.</strong> El Sello PYI es un multiplicador de beneficios: mejora la puntuación en convocatorias competitivas (#4, #6, #22), desbloquea bonificaciones SS cuando se contrate investigadores, y refuerza las deducciones fiscales (#24). La vía más rápida para obtenerlo sería: (a) registrar el software de TradeBase/Tracciona en el Registro de Propiedad Intelectual, o (b) obtener un Informe Motivado Vinculante de I+D+i.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td>🔭 <strong>Media-baja (25%)</strong> — necesita evidencia formal: proyecto CDTI, patentes, UNE 166002 o IMV. Sin ninguna vía formalizada, no se puede solicitar</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Fase 1: Obtener Informe Motivado Vinculante I+D+i. Fase 2: Solicitar Sello PYI. Fase 3: Usar el sello para mejorar candidaturas en otras convocatorias</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="patent-box">26. Patent Box</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>AEAT (art. 23 Ley del Impuesto de Sociedades)</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://oepm.es/es/detalle-noticia/Patent-Box-nueva-regulacion-en-Ley-del-Impuesto-sobre-Sociedades/">OEPM</a> · <a href="https://www.bik.eus/noticias/patent-box-2025-guia-reduccion-fiscal-patentes-software-intangibles/">Guía BIK</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Reducción fiscal en IS</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (derecho fiscal)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>✅ Permanente (incentivo fiscal estructural)</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Anual</strong> — se aplica en cada ejercicio fiscal mientras se generen rentas de intangibles registrados</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td>Reducción del 60% de la renta neta procedente de cesión/explotación de activos intangibles · Tipo efectivo ~6% sobre esas rentas (vs 25% general, o vs 15% con certificación startup)</td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Activos intangibles protegidos: patentes, software registrado, modelos de utilidad, algoritmos propietarios</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>A largo plazo, muy potente.</strong> Si TradeBase registra como propiedad intelectual: (1) el motor de IA de valoración de mercado, (2) el sistema multi-vertical (vertical_config + zero-code cloning), (3) el pipeline WhatsApp Vision, entonces los ingresos derivados de estos activos (API de datos, licencias SaaS a otras verticales, licencia de la plataforma) tributan al ~6% efectivo. Es especialmente relevante para la Capa 4 de revenue (productos de datos) y para el modelo de franquicia/licencia de verticales a terceros.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td>🔭 <strong>Baja (15%)</strong> a largo plazo — requiere registrar software como propiedad intelectual Y generar ingresos por intangibles (API datos, licencias)</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Fase 1 (Año 1): Registrar el software de Tracciona en el Registro de Propiedad Intelectual (~gratuito). Fase 2 (Año 2-3): Cuando la API de datos o licencias generen ingresos, aplicar Patent Box. Consultar con gestoría/abogado fiscal</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="deduccion-irpf-por-inversion-en-empresa-de-nueva-creacion">27. Deducción IRPF por inversión en empresa de nueva creación</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Organismo</strong></td>
+<td>AEAT (estatal) + Junta de CyL (autonómica)</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><a href="https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2024/c16-deducciones-generales-cuota/deduccion-inversion-empresas-nueva-reciente-creacion.html">AEAT</a> · <a href="https://help.taxdown.es/es/articles/4963446-deduccion-por-inversion-en-empresas-de-nueva-creacion-o-fomento-del-emprendimiento-en-castilla-y-leon">TaxDown CyL</a></td>
+</tr>
+<tr>
+<td><strong>Tipo</strong></td>
+<td>Deducción fiscal en IRPF de los socios inversores</td>
+</tr>
+<tr>
+<td><strong>Concurrencia</strong></td>
+<td>No competitiva (derecho fiscal)</td>
+</tr>
+<tr>
+<td><strong>Periodicidad</strong></td>
+<td>✅ Permanente</td>
+</tr>
+<tr>
+<td><strong>Recurrencia</strong></td>
+<td><strong>Anual</strong> — cada nueva aportación de capital genera deducción IRPF. Vigente mientras empresa &lt;3 años y &lt;400K€ fondos propios</td>
+</tr>
+<tr>
+<td><strong>Importe</strong></td>
+<td><strong>Estatal:</strong> 30% del importe invertido (50% con certificación startup Ley 28/2022) hasta 100.000€/año · <strong>CyL autonómica:</strong> 20% hasta 10.000€ · <strong>No acumulables sobre los mismos euros invertidos</strong></td>
+</tr>
+<tr>
+<td><strong>Requisitos</strong></td>
+<td>Empresa &lt;3 años · &lt;400.000€ fondos propios · <strong>Estatal:</strong> inversores PF que no controlen &gt;40%, salvo excepción para socios fundadores de empresa emergente · <strong>CyL:</strong> límite general de participación &lt;=45% y requisitos autonómicos adicionales</td>
+</tr>
+<tr>
+<td><strong>Encaje TradeBase</strong></td>
+<td><strong>⚠️ Beneficia a los socios, no a la SL directamente.</strong> Con la estructura recomendada 50/50, <strong>sin certificación startup la deducción es 0€</strong> (estatal &gt;40%, CyL &gt;45%). Con certificación startup y ambos fundadores en escritura, la vía estatal al 50% se reabre: si cada socio suscribe 15.000€ (30.000€ FP totales), el techo teórico conjunto es <strong>15.000€</strong> en IRPF estatal. La autonómica CyL sigue sin aplicar en 50/50.</td>
+</tr>
+<tr>
+<td><strong>Probabilidad</strong></td>
+<td><strong>Media-alta (70%)</strong> — es derecho fiscal, pero depende de estructura societaria, certificación startup y cuota estatal suficiente en el IRPF de los socios. En 50/50 sin certificación startup sería 0€.</td>
+</tr>
+<tr>
+<td><strong>Acción</strong></td>
+<td>Informar a los socios. Obtener certificación startup (#12) tras constituir si se quiere mantener 50/50 y capturar la deducción estatal. Validar con gestoría la base deducible (capital/prima) y la no acumulación estatal/CyL sobre los mismos euros.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Escenario práctico 50/50 con 30.000€ de fondos propios totales (15.000€ por socio):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Estructura</th>
+<th style="text-align: right;">Estatal</th>
+<th style="text-align: right;">CyL</th>
+<th style="text-align: right;">Total teórico</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>50/50 sin cert. startup</td>
+<td style="text-align: right;">0€</td>
+<td style="text-align: right;">0€</td>
+<td style="text-align: right;">0€</td>
+</tr>
+<tr>
+<td>50/50 con cert. startup y ambos fundadores en escritura</td>
+<td style="text-align: right;">15.000€</td>
+<td style="text-align: right;">0€</td>
+<td style="text-align: right;">15.000€</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Nota:</strong> el total teórico solo se materializa si ambos socios tienen cuota íntegra estatal suficiente en su IRPF.</p>
+</blockquote>
+<hr />
+<h2 id="recurrencia-cuantas-veces-se-puede-solicitar">Recurrencia — ¿Cuántas veces se puede solicitar?</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Ayuda</th>
+<th>Recurrencia</th>
+<th>Veces en 3 años</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Plan Emprendedores</td>
+<td>1 vez (empresa nueva)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Hacendera de Proyectos</td>
+<td>Anual (proyecto diferente)</td>
+<td>Hasta 3</td>
+</tr>
+<tr>
+<td>3</td>
+<td>POEDA / LEADER</td>
+<td>Repetible dentro del marco 2023-2027</td>
+<td>1-2</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Creación Empresas CyL</td>
+<td>1 vez (empresa nueva)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ICECYL Digitalización</td>
+<td>Anual (proyecto diferente)</td>
+<td>Hasta 3</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ICECYL Innovación</td>
+<td>Anual (proyecto diferente)</td>
+<td>Hasta 3</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Digital. Pymes CyL</td>
+<td>Anual (líneas diferentes)</td>
+<td>Hasta 3</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Cámara: Pyme Digital</td>
+<td>Anual</td>
+<td>Hasta 3</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Cámara: Pyme Innova</td>
+<td>Anual</td>
+<td>Hasta 3</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Cámara: Cibersegura</td>
+<td>Anual</td>
+<td>Hasta 3</td>
+</tr>
+<tr>
+<td>11</td>
+<td>SODICAL</td>
+<td>1 vez (ampliable)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Certif. Startup</td>
+<td>1 vez (vigente 5 años)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>13</td>
+<td>ENISA préstamo</td>
+<td>Varias líneas secuenciales</td>
+<td>1-2</td>
+</tr>
+<tr>
+<td>14</td>
+<td>ICO MRR</td>
+<td>Repetible por operación</td>
+<td>1-2</td>
+</tr>
+<tr>
+<td>15</td>
+<td>MicroBank</td>
+<td>Repetible tras devolución</td>
+<td>1-2</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Kit Digital</td>
+<td>1 vez por segmento</td>
+<td>1</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Kit Consulting</td>
+<td>1 vez (no aplica: &lt;10 emp.)</td>
+<td>0</td>
+</tr>
+<tr>
+<td>18</td>
+<td>España Emprende</td>
+<td>Anual</td>
+<td>Hasta 3</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Activa Startups</td>
+<td>1 vez por proyecto de colaboración</td>
+<td>1</td>
+</tr>
+<tr>
+<td>20</td>
+<td>SEPE Capitalización</td>
+<td>1 vez por socio</td>
+<td>1</td>
+</tr>
+<tr>
+<td>21</td>
+<td>MITECO Reto Demográfico</td>
+<td>Anual (proyecto diferente)</td>
+<td>Hasta 3</td>
+</tr>
+<tr>
+<td>22</td>
+<td>NEOTEC / CDTI</td>
+<td>NEOTEC 1 vez · LIC repetible</td>
+<td>1-2</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Eurostars-3</td>
+<td>2 cortes/año (proyecto diferente)</td>
+<td>Hasta 6</td>
+</tr>
+<tr>
+<td>24</td>
+<td>Deducciones I+D+i IS</td>
+<td><strong>Cada ejercicio fiscal</strong></td>
+<td><strong>3</strong></td>
+</tr>
+<tr>
+<td>25</td>
+<td>Sello Pyme Innovadora</td>
+<td>1 vez (renovable cada 3 años)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Patent Box</td>
+<td><strong>Cada ejercicio fiscal</strong></td>
+<td><strong>2-3</strong></td>
+</tr>
+<tr>
+<td>27</td>
+<td>Deducción IRPF inversores</td>
+<td><strong>Cada aportación de capital</strong> (primeros 3 años)</td>
+<td><strong>3</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Clave de optimización:</strong> las ayudas repetibles (#2, #5, #6, #7, #21) solo tienen sentido si cada año se presenta un proyecto distinto y bien documentado. La estrategia multi-vertical de TradeBase permite hacerlo sin forzar memorias artificiales.</p>
+</blockquote>
+<hr />
+<h3 id="como-justificar-proyectos-diferentes-cada-ano">Cómo justificar proyectos diferentes cada año</h3>
+<blockquote>
+<p><strong>Regla de oro:</strong> Nunca presentar la misma memoria cambiando solo el nombre del sector. Cada vertical necesita justificación de inversión real y diferencial.</p>
+</blockquote>
+<h4 id="documentos-diferenciadores-por-vertical">Documentos diferenciadores por vertical</h4>
+<p>Cada vez que se presenta una convocatoria repetible con una vertical diferente, preparar:</p>
+<table>
+<thead>
+<tr>
+<th>Documento</th>
+<th>Qué demuestra</th>
+<th>Ejemplo CampoIndustrial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Estudio de mercado propio</strong></td>
+<td>TAM/SAM/SOM del sector, competidores, vacío digital</td>
+<td>&quot;El mercado de maquinaria agrícola usada en España mueve ~800M€/año, con 0 plataformas B2B digitales profesionales&quot;</td>
+</tr>
+<tr>
+<td><strong>2. Modelo de valoración específico</strong></td>
+<td>Variables diferentes, fuentes de datos diferentes</td>
+<td>&quot;Horas motor, tipo de cultivo, estacionalidad de cosecha, normativa PAC, depreciación por uso vs por obsolescencia&quot;</td>
+</tr>
+<tr>
+<td><strong>3. Plan de captación sectorial</strong></td>
+<td>Dealers/proveedores del sector, asociaciones, ferias</td>
+<td>&quot;50 cooperativas agrarias en CyL, feria FIMA Zaragoza, partnerships con concesionarios John Deere/Kubota&quot;</td>
+</tr>
+<tr>
+<td><strong>4. Contenido editorial especializado</strong></td>
+<td>SEO técnico del sector, guías de compra</td>
+<td>&quot;Guía de compra de cosechadoras usadas, glosario de maquinaria agrícola, informes de precio de mercado&quot;</td>
+</tr>
+<tr>
+<td><strong>5. Memoria de impacto diferencial</strong></td>
+<td>Empleos directos, digitalización de actores</td>
+<td>&quot;Digitalización de 200 cooperativas agrarias en CyL, 15 empleos de gestión digital en zona rural&quot;</td>
+</tr>
+</tbody>
+</table>
+<h4 id="presupuesto-diferencial-por-vertical">Presupuesto diferencial por vertical</h4>
+<p>Cada vertical tiene gastos reales distintos. Ejemplo de inversión específica para CampoIndustrial en Año 2:</p>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th style="text-align: right;">Importe</th>
+<th>Por qué es diferente de Tracciona</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Investigación de mercado agrícola</td>
+<td style="text-align: right;">~500€</td>
+<td>Fuentes diferentes: Ministerio Agricultura, FEGA, cooperativas</td>
+</tr>
+<tr>
+<td>Captación de dealers agrícolas</td>
+<td style="text-align: right;">~1.200€</td>
+<td>Ferias agrícolas (FIMA), visitas a cooperativas, no polígonos industriales</td>
+</tr>
+<tr>
+<td>Contenido SEO especializado</td>
+<td style="text-align: right;">~800€</td>
+<td>Terminología técnica agrícola, no logística industrial</td>
+</tr>
+<tr>
+<td>Adaptación modelo valoración</td>
+<td style="text-align: right;">~600€</td>
+<td>Variables: horas motor, estacionalidad, PAC, no km/año</td>
+</tr>
+<tr>
+<td>Partnerships sectoriales</td>
+<td style="text-align: right;">~300€</td>
+<td>Asociaciones agrarias, no transportistas</td>
+</tr>
+<tr>
+<td><strong>Total inversión diferencial</strong></td>
+<td style="text-align: right;"><strong>~3.400€</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Este desglose demuestra al evaluador que CampoIndustrial NO es &quot;la misma plataforma con otro nombre&quot; sino un proyecto con inversión real en un sector genuinamente diferente.</p>
+</blockquote>
+<h4 id="como-variar-el-enfoque-de-la-solicitud">Cómo variar el enfoque de la solicitud</h4>
+<p>Incluso para la misma subvención, el ángulo debe cambiar cada año:</p>
+<table>
+<thead>
+<tr>
+<th>Ayuda</th>
+<th>Año 1 (Tracciona)</th>
+<th>Año 2 (CampoIndustrial)</th>
+<th>Año 3 (Horecaria)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>#2 Hacendera</strong></td>
+<td>&quot;Marketplace industrial que arraiga empleo digital en León&quot;</td>
+<td>&quot;Digitalización del mercado agrícola que conecta cooperativas leonesas con compradores europeos&quot;</td>
+<td>&quot;Plataforma hostelera que digitaliza la cadena de suministro de hostelería rural en León&quot;</td>
+</tr>
+<tr>
+<td><strong>#5 ICECYL Dig.</strong></td>
+<td>&quot;Transformación digital del sector de vehículos industriales&quot;</td>
+<td>&quot;IA aplicada a valoración y comercialización de maquinaria agrícola&quot;</td>
+<td>&quot;Ecosistema digital multi-vertical para pymes sectoriales de CyL&quot;</td>
+</tr>
+<tr>
+<td><strong>#21 MITECO</strong>*</td>
+<td>&quot;Empleo digital de calidad desde sede rural para sector logístico&quot;</td>
+<td>&quot;CampoIndustrial: herramienta digital para el campo despoblado&quot;</td>
+<td>&quot;Hostelería rural digitalizada: herramienta para negocios de zona despoblada&quot;</td>
+</tr>
+<tr>
+<td><strong>A2 Trans. Justa</strong>**</td>
+<td>&quot;Reconversión digital de comarca minera: marketplace industrial&quot;</td>
+<td>&quot;Digitalización agrícola en zona de transición justa&quot;</td>
+<td>&quot;Hostelería digital para pueblos mineros reconvertidos&quot;</td>
+</tr>
+<tr>
+<td><strong>A4 Dig. Pymes CyL</strong></td>
+<td>&quot;Desarrollo plataforma marketplace B2B con IA&quot;</td>
+<td>&quot;Módulo CampoIndustrial: expansión al sector agrícola&quot;</td>
+<td>&quot;Módulo hostelero: tercera vertical con modelo de datos propio&quot;</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="notas-importantes">Notas importantes</h2>
+<h3 id="compatibilidad-entre-ayudas">Compatibilidad entre ayudas</h3>
+<ul>
+<li><strong>Subvenciones a fondo perdido:</strong> Generalmente compatibles entre sí siempre que no financien el mismo gasto. Cada factura solo puede imputarse a una subvención.</li>
+<li><strong>Préstamos (ENISA, ICO, MicroBank, SODICAL):</strong> Compatibles entre sí y con subvenciones a fondo perdido.</li>
+<li><strong>Beneficios fiscales (I+D+i, Patent Box, IRPF):</strong> Compatibles entre sí y con todo lo anterior.</li>
+<li><strong>Certificación startup:</strong> Multiplica otros beneficios (IRPF 50%, IS 15%).</li>
+<li><strong>Regla general:</strong> No hay incompatibilidad entre ayudas de distintos organismos/niveles, pero sí hay que declarar en cada solicitud las demás ayudas recibidas o solicitadas para el mismo proyecto. Consultar con gestoría para la justificación cruzada.</li>
+</ul>
+<h3 id="documentacion-a-preparar-una-vez-reutilizable">Documentación a preparar (una vez, reutilizable)</h3>
+<ol>
+<li><strong>Plan de empresa</strong> — reutilizable para ENISA, ICO, MicroBank, SODICAL, NEOTEC y, si aplica, Activa Startups</li>
+<li><strong>Memoria de innovación</strong> — reutilizable para certificación startup, NEOTEC, ICECYL innovación, Sello PYI, Dig. Pymes CyL (A4)</li>
+<li><strong>Memoria de impacto rural</strong> — reutilizable para MITECO, LEADER (A3), Hacendera, Plan Emprendedores León</li>
+<li><strong>Memoria de transición justa</strong> (si sede La Robla/Pola) — para convocatorias ITJ empresariales (A2)</li>
+<li><strong>Registro de actividad I+D+i</strong> — necesario para deducciones IS, Informe Motivado, Sello PYI</li>
+<li><strong>Presupuesto desglosado</strong> — ya existe (PRESUPUESTOS.md), adaptar formato a cada convocatoria</li>
+</ol>
+<h3 id="alertas-recomendadas">Alertas recomendadas</h3>
+<p>Configurar alertas en:</p>
+<ul>
+<li><strong><a href="https://bocyl.jcyl.es/">BOCyL</a></strong> (Boletín Oficial de CyL): &quot;creación empresas&quot;, &quot;digitalización&quot;, &quot;innovación&quot;, &quot;emprendimiento&quot;, &quot;transición justa&quot;</li>
+<li><strong><a href="https://www.dipuleon.es/bop/">BOPLeón</a></strong> (Boletín Oficial Provincial): &quot;emprendedores&quot;, &quot;subvención&quot;</li>
+<li><strong><a href="https://www.boe.es/">BOE</a></strong>: &quot;reto demográfico&quot;, &quot;NEOTEC&quot;, &quot;kit digital&quot;, &quot;startups&quot;, &quot;transición justa&quot;</li>
+<li><strong><a href="https://www.camaraleon.com/">Cámara León</a></strong>: consultar trimestralmente</li>
+<li><strong><a href="https://www.cdti.es/ayudas">CDTI</a></strong>: calendario de convocatorias actualizado</li>
+<li><strong><a href="https://www.tramitacastillayleon.jcyl.es/">Tramita Castilla y León</a></strong>: vigilar &quot;contratación indefinida&quot;, &quot;Tierra de Campos&quot; y programas territoriales</li>
+<li><strong><a href="https://www.aytolarobla.es/">Ayto La Robla</a></strong>: consultar disponibilidad/condiciones del Centro de Empresas</li>
+<li><strong><a href="https://www.euipo.europa.eu/es/sme-corner/sme-fund">EUIPO SME Fund</a></strong>: consultar anualmente</li>
+<li><strong><a href="https://www.transicionjusta.gob.es/">transicionjusta.gob.es</a></strong>: si sede en La Robla/Pola — convocatorias ITJ para pymes</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>Versión:</strong> 1.21 · Marzo 2026 (v1.7: matriz semáforo + 30K FP / 6K capital. v1.8: bloque IRPF corregido y alineado con 50/50, cert. startup y no acumulación estatal/CyL. v1.9: matriz operativa por sede con escenarios S1-S5 y probabilidades. v1.10: A9 FELE INCIBE Emprende incorporado como incentivo complementario. v1.11: split de contenido operativo hacia DECISIONES-FINANCIERAS.md. v1.12: nota de gobierno documental y derivados explícitos. v1.13: enlace al mapa general README-documental.md. v1.14: normalización editorial, terminología y maquetación del maestro. v1.17: probabilidades reescritas por línea y tipo, con actualización de Cámara León 2026. v1.18: sede decidida en Fresno y reseña de alternativas valoradas. v1.19: reconciliación de probabilidades y fichas con la sede ya fijada en Fresno. v1.20: checklist documental de sede y base territorial MITECO aterrizada a Fresno. v1.21: revisión de requisitos sensibles, ajuste de líneas temporales y sección de palancas de producto/evidencia por ayuda.)
+<strong>Próxima revisión:</strong> Junio 2026 (post-constitución, actualizar estados de convocatorias)
+<strong>Fuente:</strong> Investigación propia con verificación en webs oficiales. Verificar siempre plazos y requisitos actualizados antes de solicitar.</p>
+</blockquote>
+
+  </section>
+</main>
+</body>
+</html>

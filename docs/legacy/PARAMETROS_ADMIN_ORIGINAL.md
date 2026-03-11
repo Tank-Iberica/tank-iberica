@@ -1,6 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
-
-> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README.md`](../../README.md) y [`INSTRUCCIONES-MAESTRAS.md`](INSTRUCCIONES-MAESTRAS.md).
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # PARÁMETROS DEL ADMIN.HTML ORIGINAL
 
@@ -339,3 +337,5 @@ let cache = {
 - **Modales:** prefijo `modal` + nombre (ej: `modalBalance`)
 - **Badges:** prefijo `badge` + nombre (ej: `badgeAnunciantes`)
 - **Funciones:** camelCase (ej: `renderBalance`, `filterHistorico`)
+
+

@@ -195,12 +195,12 @@ function ctaText(ad: Ad): string {
   display: flex;
   align-items: center;
   padding: var(--spacing-4);
-  padding-right: calc(var(--spacing-2) + 80px); /* space for badge */
+  padding-right: calc(var(--spacing-2) + 5rem); /* space for badge */
 }
 
 .ad-card__logo {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   object-fit: contain;
   border-radius: var(--border-radius);
   flex-shrink: 0;
@@ -247,7 +247,7 @@ function ctaText(ad: Ad): string {
   color: var(--color-primary);
   text-decoration: none;
   font-weight: var(--font-weight-medium);
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--border-radius);
   transition: background var(--transition-fast);
@@ -269,8 +269,8 @@ function ctaText(ad: Ad): string {
   border-radius: var(--border-radius);
   border: none;
   cursor: pointer;
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   transition: background var(--transition-fast);
   margin-left: auto;
 }
@@ -299,7 +299,7 @@ function ctaText(ad: Ad): string {
   width: 100%;
   height: auto;
   display: block;
-  min-height: 100px;
+  min-height: 6.25rem;
   object-fit: cover;
 }
 
@@ -336,7 +336,7 @@ function ctaText(ad: Ad): string {
   gap: var(--spacing-2);
   padding: var(--spacing-2) 0;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .ad-text__label {
@@ -374,8 +374,8 @@ function ctaText(ad: Ad): string {
 }
 
 .ad-logo-strip__logo {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   object-fit: contain;
   border-radius: var(--border-radius-sm);
   flex-shrink: 0;
@@ -402,7 +402,7 @@ function ctaText(ad: Ad): string {
   color: var(--color-primary);
   text-decoration: none;
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -437,8 +437,8 @@ function ctaText(ad: Ad): string {
 
 @media (min-width: 64em) {
   .ad-card__logo {
-    width: 56px;
-    height: 56px;
+    width: 3.5rem;
+    height: 3.5rem;
   }
 
   .ad-banner__title {

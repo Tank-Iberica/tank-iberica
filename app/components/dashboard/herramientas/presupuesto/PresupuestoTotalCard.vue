@@ -20,20 +20,20 @@ const { t } = useI18n()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  background: linear-gradient(135deg, #f0f9ff, #eff6ff);
-  border: 2px solid #bfdbfe;
-  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, var(--color-sky-50), var(--color-blue-50));
+  border: 0.125rem solid var(--color-info-border);
+  border-radius: var(--border-radius-md);
 }
 
 .total-label {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   font-weight: 600;
-  color: #1e40af;
+  color: var(--badge-info-bg);
 }
 
 .total-value {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   color: var(--color-primary);
 }

@@ -107,12 +107,12 @@ export function useAdminEmails() {
 
     for (const v of selectedDefinition.value.variables) {
       const varName = v.replaceAll(/\{\{|\}\}/g, '')
-      body = body.replace(new RegExp(escapeRegex(v), 'g'), getSampleValue(varName))
+      body = body.replaceAll(new RegExp(escapeRegex(v), 'g'), getSampleValue(varName))
     }
 
     let html = body
       .replaceAll(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replaceAll(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color:#23424A;">$1</a>')
+      .replaceAll(/\[([^\]]*)\]\(([^)]*)\)/g, '<a href="$2" style="color:#23424A;">$1</a>')
       .replaceAll(/^- (.*)$/gm, '<li>$1</li>')
       .replaceAll(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`)
       .replaceAll('\n\n', '</p><p>')
@@ -122,7 +122,7 @@ export function useAdminEmails() {
 
     const subjectRendered = selectedDefinition.value.variables.reduce(
       (s, v) =>
-        s.replace(new RegExp(escapeRegex(v), 'g'), getSampleValue(v.replaceAll(/\{\{|\}\}/g, ''))),
+        s.replaceAll(new RegExp(escapeRegex(v), 'g'), getSampleValue(v.replaceAll(/\{\{|\}\}/g, ''))),
       subject,
     )
 

@@ -7,7 +7,8 @@
  * Variants: thumb (300x200), card (600x400), gallery (1200x800), og (1200x630)
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler } from 'h3'
+import { safeError } from '../../utils/safeError'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -85,14 +86,14 @@ export default defineEventHandler(async (event): Promise<SetupResult> => {
   // 1. Admin auth check
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw safeError(401, 'Unauthorized')
   }
 
   const supabase = serverSupabaseServiceRole(event)
   const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
 
   if (userData?.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Forbidden' })
+    throw safeError(403, 'Forbidden')
   }
 
   // 2. Validate runtime config
@@ -101,11 +102,7 @@ export default defineEventHandler(async (event): Promise<SetupResult> => {
   const cfAccountId = config.cloudflareAccountId as string | undefined
 
   if (!cfApiToken || !cfAccountId) {
-    throw createError({
-      statusCode: 500,
-      message:
-        'Missing Cloudflare Images configuration: CLOUDFLARE_IMAGES_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are required',
-    })
+    throw safeError(500, 'Missing Cloudflare Images configuration: CLOUDFLARE_IMAGES_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are required')
   }
 
   // 3. Create each variant in CF Images

@@ -81,9 +81,9 @@ function getSocialField(platform: string): string {
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .section-toggle {
@@ -93,7 +93,7 @@ function getSocialField(platform: string): string {
   width: 100%;
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-gray-700);
   cursor: pointer;
   border: none;
   background: none;
@@ -106,18 +106,18 @@ function getSocialField(platform: string): string {
 }
 
 .section-body {
-  margin-top: 16px;
-  padding-top: 16px;
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
   border-top: 1px solid var(--color-gray-100);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .field label {
@@ -127,9 +127,9 @@ function getSocialField(platform: string): string {
 }
 
 .input {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   width: 100%;
   box-sizing: border-box;

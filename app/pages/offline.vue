@@ -61,7 +61,7 @@ const retry = (): void => {
   gap: var(--spacing-4);
   background: var(--bg-primary);
   width: 100%;
-  max-width: 400px;
+  max-width: 25rem;
   border-radius: var(--border-radius-md);
   padding: var(--spacing-10) var(--spacing-6);
   box-shadow: var(--shadow-md);
@@ -81,7 +81,7 @@ const retry = (): void => {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
   line-height: var(--line-height-relaxed);
-  max-width: 320px;
+  max-width: 20rem;
 }
 
 .btn-retry {
@@ -94,7 +94,7 @@ const retry = (): void => {
   border-radius: var(--border-radius);
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
-  min-height: 48px;
+  min-height: 3rem;
   transition: background var(--transition-fast);
 }
 

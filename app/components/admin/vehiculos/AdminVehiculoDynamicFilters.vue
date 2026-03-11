@@ -129,7 +129,7 @@ function getOptionsArray(filter: FilterDefinition): string[] {
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   color: var(--text-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: border-color var(--transition-fast);
 }
 
@@ -152,11 +152,11 @@ function getOptionsArray(filter: FilterDefinition): string[] {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .checkbox-label input {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 </style>

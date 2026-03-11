@@ -31,6 +31,7 @@ export interface VehicleFormData {
   description_en: string
   location: string
   status: string
+  video_url: string
 }
 
 export interface UploadFormData {
@@ -80,6 +81,8 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
   const error = ref<string | null>(null)
   const success = ref(false)
   const favoritesCount = ref(0)
+  const viewCount = ref(0)
+  const leadCount = ref(0)
 
   const form = ref<VehicleFormData>({
     brand: '',
@@ -93,6 +96,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
     description_en: '',
     location: '',
     status: 'published',
+    video_url: '',
   })
 
   const uploadForm = ref<UploadFormData>({
@@ -136,7 +140,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
         return
       }
 
-      const [vehicleRes, catRes, subRes, , , favRes] = await Promise.all([
+      const [vehicleRes, catRes, subRes, , , favRes, leadsRes] = await Promise.all([
         supabase
           .from('vehicles')
           .select('*')
@@ -151,6 +155,10 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
           .from('favorites')
           .select('id', { count: 'exact', head: true })
           .eq('vehicle_id', vehicleId),
+        supabase
+          .from('leads')
+          .select('id', { count: 'exact', head: true })
+          .eq('vehicle_id', vehicleId),
       ])
 
       if (vehicleRes.error || !vehicleRes.data) {
@@ -159,8 +167,10 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
       }
 
       favoritesCount.value = favRes.count || 0
+      leadCount.value = leadsRes.count || 0
 
       const v = vehicleRes.data as Record<string, unknown>
+      viewCount.value = (v.views as number) || 0
       form.value = {
         brand: (v.brand as string) || '',
         model: (v.model as string) || '',
@@ -173,6 +183,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
         description_en: (v.description_en as string) || '',
         location: (v.location as string) || '',
         status: (v.status as string) || 'published',
+        video_url: (v.video_url as string) || '',
       }
 
       categories.value = (catRes.data || []) as CategoryOption[]
@@ -240,6 +251,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
           description_es: form.value.description_es || null,
           description_en: form.value.description_en || null,
           location: form.value.location || null,
+          video_url: form.value.video_url || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', vehicleId)
@@ -332,6 +344,8 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
     error,
     success,
     favoritesCount,
+    viewCount,
+    leadCount,
     maxPhotos,
 
     // Verification state

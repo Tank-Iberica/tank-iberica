@@ -221,8 +221,8 @@ function onSubmit() {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: var(--border-radius-full);
   color: var(--text-auxiliary);
   transition:
@@ -265,7 +265,7 @@ function onSubmit() {
 
 .form-input {
   width: 100%;
-  min-height: 48px;
+  min-height: 3rem;
   padding: var(--spacing-3) var(--spacing-4);
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -278,12 +278,12 @@ function onSubmit() {
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-select {
   width: 100%;
-  min-height: 48px;
+  min-height: 3rem;
   padding: var(--spacing-3) var(--spacing-4);
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -293,8 +293,8 @@ function onSubmit() {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 16px center;
-  padding-right: 40px;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
   cursor: pointer;
   transition: border-color var(--transition-fast);
 }
@@ -302,7 +302,7 @@ function onSubmit() {
 .form-select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* File upload */
@@ -318,7 +318,7 @@ function onSubmit() {
   opacity: 0;
   cursor: pointer;
   z-index: 2;
-  min-height: 48px;
+  min-height: 3rem;
 }
 
 .file-upload-label {
@@ -326,7 +326,7 @@ function onSubmit() {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
-  min-height: 48px;
+  min-height: 3rem;
   padding: var(--spacing-3) var(--spacing-4);
   border: 2px dashed var(--border-color);
   border-radius: var(--border-radius);
@@ -348,7 +348,7 @@ function onSubmit() {
 /* Submit button */
 .btn-submit-reg {
   width: 100%;
-  min-height: 52px;
+  min-height: 3.25rem;
   padding: var(--spacing-3) var(--spacing-4);
   background: var(--color-primary);
   color: var(--color-white);
@@ -393,7 +393,7 @@ function onSubmit() {
 
   .reg-modal {
     border-radius: var(--border-radius-lg);
-    max-width: 520px;
+    max-width: 32.5rem;
     padding: var(--spacing-8) var(--spacing-6);
     animation: modal-fade-in 0.3s ease;
   }

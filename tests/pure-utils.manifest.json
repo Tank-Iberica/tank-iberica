@@ -1,0 +1,16 @@
+{
+  "comment": "Lista de utils que deben tener test. Añadir aquí al crear un util puro nuevo.",
+  "utils": [
+    "app/utils/fileNaming.ts",
+    "app/utils/fuzzyMatch.ts",
+    "app/utils/kmScore.ts",
+    "app/utils/adminMetricsExport.ts",
+    "app/utils/parseLocation.ts",
+    "app/utils/productName.ts",
+    "app/utils/invoiceFormatters.ts",
+    "server/utils/fetchWithRetry.ts",
+    "server/utils/isAllowedUrl.ts",
+    "server/utils/sanitizeLog.ts",
+    "server/utils/safeError.ts"
+  ]
+}

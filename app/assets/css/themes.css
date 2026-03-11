@@ -37,8 +37,13 @@ canvas {
 
 /* Respeta preferencia del OS: reduce motion */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -69,19 +74,20 @@ html.dark-mode {
   --color-gray-800: #d0dede;
   --color-gray-900: #e6ecec;
 
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.6);
   --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.7);
   --shadow-header: 0 8px 32px rgba(0, 0, 0, 0.6);
-}
+  --shadow-focus: 0 0 0 3px rgba(127, 209, 200, 0.3);
+  --shadow-focus-error: 0 0 0 3px rgba(220, 38, 38, 0.4);
+  --shadow-ring: 0 0 0 2px rgba(127, 209, 200, 0.3);
+  --shadow-ring-strong: 0 0 0 2px rgba(127, 209, 200, 0.4);
 
-html.dark-mode body {
-  color-scheme: dark;
-}
-
-html.dark-mode {
+  /* State color overrides */
   --color-success-bg: rgba(16, 185, 129, 0.12);
   --color-warning-bg: rgba(245, 158, 11, 0.12);
   --color-error-bg: rgba(239, 68, 68, 0.12);
@@ -89,6 +95,37 @@ html.dark-mode {
   --color-error-border: rgba(239, 68, 68, 0.3);
   --color-success-border: rgba(16, 185, 129, 0.3);
   --color-warning-text: #fbbf24;
+
+  /* Soft badge text — bright on dark backgrounds */
+  --color-success-text: #34d399;
+  --color-error-text: #f87171;
+  --color-info-text: #93c5fd;
+
+  /* Solid badges — inverted in dark mode (light bg + dark text) */
+  --badge-success-bg: #bbf7d0;
+  --badge-success-text: #052e16;
+  --badge-error-bg: #fecaca;
+  --badge-error-text: #450a0a;
+  --badge-warning-bg: #fef08a;
+  --badge-warning-text: #451a03;
+  --badge-info-bg: #bfdbfe;
+  --badge-info-text: #1e3a5f;
+
+  /* Specialized palettes — dark mode */
+  --color-purple-bg: #2e1065;
+  --color-purple-text: #c4b5fd;
+  --color-orange-bg: #431407;
+  --color-orange-text: #fdba74;
+  --color-cyan-bg: #083344;
+  --color-cyan-text: #67e8f9;
+  --color-teal-bg: #042f2e;
+  --color-teal-text: #5eead4;
+  --color-gold-bg: #3d1f00;
+  --color-gold-text: #fcd34d;     /* 6.20:1 on dark gold bg ✅ */
+}
+
+html.dark-mode body {
+  color-scheme: dark;
 }
 
 /* ---- Alto contraste (para daltónicos / baja visión) ---- */
@@ -127,12 +164,18 @@ html.high-contrast-mode {
   --color-gray-900: #f5f5f5;
 
   /* Sombras → bordes visibles */
+  --shadow-xs: 0 0 0 1px #e0e0e0;
   --shadow-sm: 0 0 0 1px #e0e0e0;
+  --shadow-card: 0 0 0 1px #e0e0e0;
   --shadow: 0 0 0 1px #e0e0e0;
   --shadow-md: 0 0 0 2px #e0e0e0;
   --shadow-lg: 0 0 0 2px #e0e0e0;
   --shadow-xl: 0 0 0 3px #e0e0e0;
   --shadow-header: 0 0 0 2px #e0e0e0;
+  --shadow-focus: 0 0 0 3px #e0e0e0;
+  --shadow-focus-error: 0 0 0 3px #dc2626;
+  --shadow-ring: 0 0 0 2px #e0e0e0;
+  --shadow-ring-strong: 0 0 0 2px #e0e0e0;
 
   /* Estado: hue rotations desde --color-primary (CSS Relative Color Syntax)
      +150° → error   — garantiza ≥60° del primary y entre sí
@@ -196,12 +239,12 @@ html.high-contrast-mode :focus-visible {
 
 /* ---- Escala de fuente ---- */
 html[data-font-size='large'] {
-  font-size: 18px;
-  --header-offset: 68px;
+  font-size: var(--font-size-lg);
+  --header-offset: 4.25rem;
 }
 
 html[data-font-size='xlarge'] {
-  font-size: 20px;
-  --header-offset: 72px;
-  --header-offset-desktop: 64px;
+  font-size: var(--font-size-xl);
+  --header-offset: 4.5rem;
+  --header-offset-desktop: 4rem;
 }

@@ -9,5 +9,6 @@
 
 <script setup lang="ts">
 // Site-wide Organization schema (appears on every page)
-useJsonLd(buildOrganizationSchema())
+const { t } = useI18n()
+useJsonLd(buildOrganizationSchema(t('site.title')))
 </script>

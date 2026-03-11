@@ -43,17 +43,17 @@ const { t } = useI18n()
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .kpi-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem 1rem;
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .kpi-value {
@@ -69,7 +69,7 @@ const { t } = useI18n()
 }
 
 .kpi-limit {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: var(--text-disabled);
 }
 

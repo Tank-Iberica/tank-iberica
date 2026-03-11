@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Presupuestos (Resumen)</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 12px; }
+body { font-family: Segoe UI, Arial, sans-serif; color: #111; line-height: 1.38; margin: 0; }
+main { max-width: 1020px; margin: 0 auto; }
+section.cover { min-height: 236mm; display: flex; flex-direction: column; justify-content: center; border-bottom: 2px solid #111; page-break-after: always; }
+.cover .eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #555; margin-bottom: 14px; }
+.cover h1 { font-size: 30px; line-height: 1.1; margin: 0 0 12px 0; }
+.cover p { max-width: 760px; color: #333; font-size: 14px; }
+.cover .meta { margin-top: 22px; color: #555; font-size: 12px; }
+section.toc-wrap { page-break-after: always; }
+.toc-title { font-size: 24px; margin: 0 0 14px 0; }
+.toc-note { color: #555; margin-bottom: 12px; }
+.toc { margin: 0; padding-left: 0; list-style: none; }
+.toc li { margin: 4px 0; break-inside: avoid; }
+.toc a { color: #0b57d0; text-decoration: none; }
+.toc-l2 { font-weight: 600; margin-top: 10px; }
+.toc-l3 { padding-left: 16px; font-size: 11.5px; color: #333; }
+hr { border: 0; border-top: 1px solid #d0d7de; margin: 16px 0; }
+h1, h2, h3, h4 { page-break-after: avoid; break-after: avoid-page; }
+h1 { font-size: 28px; line-height: 1.15; margin: 0 0 16px 0; }
+h2 { font-size: 21px; margin-top: 22px; padding-top: 8px; border-top: 1px solid #e5e7eb; }
+h3 { font-size: 16px; margin-top: 16px; }
+p, li { orphans: 3; widows: 3; }
+blockquote { margin: 10px 0; padding: 7px 10px; border-left: 4px solid #d0d7de; color: #333; background: #fafafa; }
+a { color: #0b57d0; text-decoration: none; }
+pre, code { font-family: Consolas, 'Courier New', monospace; }
+code { background: #f6f8fa; padding: 1px 3px; border-radius: 4px; }
+pre { white-space: pre-wrap; word-break: break-word; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; padding: 10px; overflow-wrap: anywhere; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10.8px; table-layout: fixed; }
+th, td { border: 1px solid #d0d7de; padding: 6px 7px; text-align: left; vertical-align: top; overflow-wrap: anywhere; word-break: break-word; }
+th { background: #f3f4f6; font-weight: 700; }
+tr:nth-child(even) td { background: #fcfcfd; }
+ul, ol { padding-left: 18px; }
+.small { font-size: 11px; color: #666; }
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase · Resumen ejecutivo</div>
+    <h1>TradeBase - Presupuestos (Resumen)</h1>
+    <p>Version ejecutiva corta para entender coste operativo real, caja minima y relacion con la estrategia de subvenciones.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <p class="toc-note small">Indice automatico basado en encabezados del resumen.</p>
+    <ol class='toc'><li class='toc-l2'><a href='#foto-general'>1. Foto general</a></li>
+<li class='toc-l2'><a href='#donde-se-va-el-dinero'>2. Donde se va el dinero</a></li>
+<li class='toc-l2'><a href='#opex-fijo-vs-coste-variable'>3. OPEX fijo vs coste variable</a></li>
+<li class='toc-l2'><a href='#cuanta-caja-minima-hace-falta'>4. Cuanta caja minima hace falta</a></li>
+<li class='toc-l2'><a href='#coste-operativo-vs-capitalizacion'>5. Coste operativo vs capitalizacion</a></li>
+<li class='toc-l2'><a href='#partidas-que-exigen-disciplina'>6. Partidas que exigen disciplina</a></li>
+<li class='toc-l3'><a href='#marketing'>Marketing</a></li>
+<li class='toc-l3'><a href='#operaciones-y-administracion'>Operaciones y administracion</a></li>
+<li class='toc-l2'><a href='#supuestos-que-conviene-no-olvidar'>7. Supuestos que conviene no olvidar</a></li>
+<li class='toc-l2'><a href='#lectura-final-para-decidir'>8. Lectura final para decidir</a></li></ol>
+  </section>
+  <section class="content">
+    <h1 id="tradebase-resumen-ejecutivo-de-presupuestos">TradeBase - Resumen Ejecutivo de Presupuestos</h1>
+<blockquote>
+<p>Sintesis de decision a partir de <code>PRESUPUESTOS.md</code> v1.1. Documento pensado para lectura ejecutiva rapida.</p>
+</blockquote>
+<h2 id="foto-general">1. Foto general</h2>
+<table>
+<thead>
+<tr>
+<th>Magnitud</th>
+<th style="text-align: right;">Importe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ano 1</td>
+<td style="text-align: right;"><code>~15.000 EUR</code></td>
+</tr>
+<tr>
+<td>Ano 2</td>
+<td style="text-align: right;"><code>~16.100 EUR</code></td>
+</tr>
+<tr>
+<td>Ano 3</td>
+<td style="text-align: right;"><code>~19.900 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Total 3 anos</strong></td>
+<td style="text-align: right;"><strong><code>~50.997 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lectura</strong></p>
+<ul>
+<li>El proyecto no requiere una estructura grande para operar.</li>
+<li>El coste total de tres anos equivale a unos pocos meses de un equipo tradicional, pero aqui financia producto, operacion, contenido, admin y crecimiento comercial basico.</li>
+</ul>
+<h2 id="donde-se-va-el-dinero">2. Donde se va el dinero</h2>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th style="text-align: right;">Total 3 anos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Marketing</td>
+<td style="text-align: right;"><code>~15.490 EUR</code></td>
+</tr>
+<tr>
+<td>Desarrollo (tooling IA)</td>
+<td style="text-align: right;"><code>~8.850 EUR</code></td>
+</tr>
+<tr>
+<td>Operaciones / administracion</td>
+<td style="text-align: right;"><code>~7.880 EUR</code></td>
+</tr>
+<tr>
+<td>Contingencia 10%</td>
+<td style="text-align: right;"><code>~4.236 EUR</code></td>
+</tr>
+<tr>
+<td>Legal / GDPR</td>
+<td style="text-align: right;"><code>~3.750 EUR</code></td>
+</tr>
+<tr>
+<td>Infraestructura SaaS</td>
+<td style="text-align: right;"><code>~2.196 EUR</code></td>
+</tr>
+<tr>
+<td>APIs producto (<code>IA + WhatsApp</code>)</td>
+<td style="text-align: right;"><code>~2.123 EUR</code></td>
+</tr>
+<tr>
+<td>Stripe COGS variable</td>
+<td style="text-align: right;"><code>~4.400 EUR</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lectura</strong></p>
+<ul>
+<li>Los dos bloques que mas pesan son <strong>marketing</strong> y <strong>desarrollo</strong>.</li>
+<li><code>Stripe</code> esta dentro del total, pero es <strong>coste variable</strong> ligado a ingresos y no OPEX fijo puro.</li>
+</ul>
+<h2 id="opex-fijo-vs-coste-variable">3. OPEX fijo vs coste variable</h2>
+<table>
+<thead>
+<tr>
+<th>Capa</th>
+<th style="text-align: right;">Total 3 anos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPEX fijo sin Stripe</td>
+<td style="text-align: right;"><code>~46.597 EUR</code></td>
+</tr>
+<tr>
+<td>Stripe COGS variable</td>
+<td style="text-align: right;"><code>~4.400 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Total con Stripe</strong></td>
+<td style="text-align: right;"><strong><code>~50.997 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Interpretacion</strong></p>
+<ul>
+<li>La base fija del negocio esta en torno a <code>46,6k</code> en 3 anos.</li>
+<li>El resto escala con actividad transaccional y, por tanto, con ingresos.</li>
+</ul>
+<h2 id="cuanta-caja-minima-hace-falta">4. Cuanta caja minima hace falta</h2>
+<table>
+<thead>
+<tr>
+<th>Escenario</th>
+<th style="text-align: right;">Importe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Minimo operativo puro</td>
+<td style="text-align: right;"><code>~15.313 EUR</code></td>
+</tr>
+<tr>
+<td>Comodo operativo</td>
+<td style="text-align: right;"><code>~17.800 EUR</code></td>
+</tr>
+<tr>
+<td>Recomendado para maximizar ayudas</td>
+<td style="text-align: right;"><strong><code>30.000 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ojo</strong></p>
+<ul>
+<li><code>15k-18k</code> describen <strong>cuanto hace falta para sobrevivir</strong> el Ano 1.</li>
+<li><strong>No</strong> describen la mejor estructura para jugar subvenciones.</li>
+<li>Para eso, el documento ya queda reconciliado con <code>SUBVENCIONES.md</code>: <strong><code>30.000 EUR</code> de fondos propios totales</strong>.</li>
+</ul>
+<h2 id="coste-operativo-vs-capitalizacion">5. Coste operativo vs capitalizacion</h2>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th style="text-align: right;">Importe</th>
+<th>Que significa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Coste operativo Ano 1</td>
+<td style="text-align: right;"><code>~15.000 EUR</code></td>
+<td>Lo que la empresa quema para funcionar</td>
+</tr>
+<tr>
+<td>Capital social recomendado</td>
+<td style="text-align: right;"><code>6.000 EUR</code></td>
+<td>Parte nominal del patrimonio de arranque</td>
+</tr>
+<tr>
+<td>Aportacion adicional socios</td>
+<td style="text-align: right;"><code>24.000 EUR</code></td>
+<td>Prima / reservas / fondos propios adicionales</td>
+</tr>
+<tr>
+<td><strong>Fondos propios recomendados</strong></td>
+<td style="text-align: right;"><strong><code>30.000 EUR</code></strong></td>
+<td>Caja y solvencia para operar y prefinanciar ayudas</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conclusion</strong></p>
+<ul>
+<li>No hay contradiccion entre &quot;el Ano 1 cuesta <code>15.000 EUR</code>&quot; y &quot;conviene arrancar con <code>30.000 EUR</code>&quot;.</li>
+<li>Lo primero es <strong>coste</strong>. Lo segundo es <strong>capitalizacion</strong>.</li>
+</ul>
+<h2 id="partidas-que-exigen-disciplina">6. Partidas que exigen disciplina</h2>
+<h3 id="marketing">Marketing</h3>
+<ul>
+<li>Punto medio trienal: <strong><code>~15.490 EUR</code></strong>.</li>
+<li>Esta muy condicionado por metricas de activacion: trafico minimo, ROAS, necesidad real de ferias, activacion progresiva de retargeting y herramientas paid.</li>
+<li>Si no se cumplen las condiciones, el gasto real debe ir por debajo del punto medio.</li>
+</ul>
+<h3 id="operaciones-y-administracion">Operaciones y administracion</h3>
+<ul>
+<li>Punto medio trienal: <strong><code>~7.880 EUR</code></strong>.</li>
+<li>La gestoría es la linea mas pesada de este bloque.</li>
+<li>Verifactu puede seguir en cero si la gestoría o una herramienta gratuita cubren el uso, pero no debe fiarse el plan a que Billin Free aguante sin revisar volumen.</li>
+</ul>
+<h2 id="supuestos-que-conviene-no-olvidar">7. Supuestos que conviene no olvidar</h2>
+<ul>
+<li>No se incluye salario del fundador.</li>
+<li>No se presupuesta oficina fija en el modelo base.</li>
+<li>Parte del soporte, comercial y operacion descansa en tiempo del fundador.</li>
+<li>El IVA adelantado se recupera via <code>modelo 303</code>, por lo que el problema no es tanto el coste final como el <strong>float de caja</strong>.</li>
+<li>La contingencia del <code>10%</code> debe proteger disputas, incidencias operativas y desviaciones menores; no sustituye a una mala estructura financiera.</li>
+</ul>
+<h2 id="lectura-final-para-decidir">8. Lectura final para decidir</h2>
+<ul>
+<li>Si el objetivo es <strong>sobrevivir y lanzar</strong>, el negocio puede arrancar con caja en la banda <code>15k-18k</code>.</li>
+<li>Si el objetivo es <strong>optimizar subvenciones y mantener flexibilidad financiera</strong>, la estructura coherente pasa a ser <strong><code>30.000 EUR</code> de fondos propios / <code>6.000 EUR</code> de capital social</strong>.</li>
+<li>El presupuesto base es austero, pero no admite frivolidad: la disciplina de gasto en marketing, legal, operaciones y tesoreria marca la diferencia.</li>
+</ul>
+
+  </section>
+</main>
+</body>
+</html>
+

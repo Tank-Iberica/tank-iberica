@@ -135,7 +135,7 @@ export function useDashboardPipeline() {
     try {
       const { data, error: err } = await supabase
         .from('pipeline_items')
-        .select('*')
+        .select('id, dealer_id, title, contact_name, contact_phone, contact_email, estimated_value, stage, position, vehicle_id, lead_id, notes, close_reason, created_at, updated_at')
         .eq('dealer_id', dealerId.value)
         .order('position', { ascending: true })
 

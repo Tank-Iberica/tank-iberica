@@ -30,7 +30,7 @@ defineProps<{
 
 <style scoped>
 .stats-row {
-  max-width: 960px;
+  max-width: 60rem;
   margin: 0 auto var(--spacing-8);
   padding: 0 var(--spacing-4);
   display: grid;

@@ -1,0 +1,25 @@
+{
+  "date": "2026-03-05T19:10:00Z",
+  "tag": "coverage-plan-start",
+  "sonarqube": {
+    "coverage_overall": 5.4,
+    "new_coverage": 7.5,
+    "lines_to_cover": 24155,
+    "uncovered_lines": 23361,
+    "covered_lines": 794,
+    "ncloc": 178983,
+    "files": 914,
+    "bugs": 0,
+    "vulnerabilities": 0,
+    "code_smells": 7,
+    "security_hotspots": 22,
+    "duplicated_lines_density": 2.0
+  },
+  "vitest": {
+    "test_files": 33,
+    "tests_passed": 491,
+    "tests_failed": 0,
+    "duration_seconds": 33.36
+  },
+  "notes": "Baseline before coverage-100 plan. SonarQube counts all 914 files; lcov only covers 21. coverage.all not yet enabled in vitest."
+}

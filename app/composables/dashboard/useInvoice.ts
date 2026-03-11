@@ -7,6 +7,7 @@
  * PDF / print → utils/invoicePdf
  */
 import { generateInvoicePDF as buildInvoicePDF } from '~/utils/invoicePdf'
+import { useFormAutosave } from '~/composables/useFormAutosave'
 import {
   formatDateDMY,
   formatCurrency,
@@ -78,6 +79,47 @@ export function useInvoice() {
   // Vehicle autocomplete
   const vehicleSearch = ref('')
   const showVehicleDropdown = ref(false)
+
+  // ============ AUTOSAVE DRAFT ============
+  const _autosaveRef = ref<Record<string, unknown>>({}) as Ref<Record<string, unknown>>
+  const { hasDraft, restoreDraft, clearDraft, draftSavedAt } = useFormAutosave(
+    'factura',
+    _autosaveRef,
+    {
+      beforeSave: (_ignored) => ({
+        clientName: clientName.value,
+        clientDocType: clientDocType.value,
+        clientDocNumber: clientDocNumber.value,
+        clientAddress1: clientAddress1.value,
+        clientAddress2: clientAddress2.value,
+        clientAddress3: clientAddress3.value,
+        invoiceConditions: invoiceConditions.value,
+        invoiceLanguage: invoiceLanguage.value,
+        invoiceLines: JSON.stringify(invoiceLines.value),
+      }),
+      onRestore: (data) => {
+        const d = data as Record<string, unknown>
+        if (d.clientName !== undefined) clientName.value = d.clientName as string
+        if (d.clientDocType !== undefined)
+          clientDocType.value = d.clientDocType as 'NIF' | 'DNI' | 'CIF' | 'Pasaporte'
+        if (d.clientDocNumber !== undefined) clientDocNumber.value = d.clientDocNumber as string
+        if (d.clientAddress1 !== undefined) clientAddress1.value = d.clientAddress1 as string
+        if (d.clientAddress2 !== undefined) clientAddress2.value = d.clientAddress2 as string
+        if (d.clientAddress3 !== undefined) clientAddress3.value = d.clientAddress3 as string
+        if (d.invoiceConditions !== undefined) invoiceConditions.value = d.invoiceConditions as string
+        if (d.invoiceLanguage !== undefined)
+          invoiceLanguage.value = d.invoiceLanguage as 'es' | 'en'
+        if (d.invoiceLines !== undefined) {
+          try {
+            const lines = JSON.parse(d.invoiceLines as string) as typeof invoiceLines.value
+            invoiceLines.value = lines
+          } catch {
+            // ignore parse errors
+          }
+        }
+      },
+    },
+  )
 
   // ============ COMPUTED ============
   const filteredVehicles = computed(() => {
@@ -219,7 +261,7 @@ export function useInvoice() {
         ).map((v) => ({
           id: v.id,
           label:
-            `${v.brand || ''} ${v.model || ''} ${v.plate ? `(${v.plate})` : ''} ${v.year ? `- ${v.year}` : ''}`.trim(),
+            `${v.brand || ''} ${v.model || ''} ${v.plate ? '(' + v.plate + ')' : ''} ${v.year ? '- ' + v.year : ''}`.trim(),
         }))
       }
     } finally {
@@ -271,7 +313,7 @@ export function useInvoice() {
     try {
       const { data, error: fetchError } = await supabase
         .from('dealer_invoices')
-        .select('*')
+        .select('id, invoice_number, invoice_date, client_name, client_doc_type, client_doc_number, client_address, vehicle_ids, lines, subtotal, total_tax, total, conditions, language, status, created_at')
         .eq('dealer_id', dealer.id)
         .order('created_at', { ascending: false })
         .limit(50)
@@ -346,6 +388,7 @@ export function useInvoice() {
         status === 'draft'
           ? t('dashboard.tools.invoice.draftSaved')
           : t('dashboard.tools.invoice.invoiceSaved')
+      clearDraft()
 
       // Refresh history
       await loadInvoiceHistory()
@@ -418,6 +461,7 @@ export function useInvoice() {
     lineIdCounter = 0
     errorMessage.value = null
     successMessage.value = null
+    clearDraft()
     addInvoiceLine()
     generateInvoiceNumber()
   }
@@ -492,5 +536,11 @@ export function useInvoice() {
 
     // Dependencies exposed for lifecycle use
     fetchSubscription,
+
+    // Autosave draft
+    hasDraft,
+    restoreDraft,
+    clearDraft,
+    draftSavedAt,
   }
 }

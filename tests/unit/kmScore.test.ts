@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   analyzeUsageReliability,
   analyzeKmReliability,
+  getScoreLabels,
   type InspectionRecord,
 } from '~/utils/kmScore'
 
@@ -278,6 +279,23 @@ describe('analyzeUsageReliability — consistency penalty', () => {
   })
 })
 
+// ─── Con reservas label (score 40–59) ────────────────────────────────────────
+
+describe('analyzeUsageReliability — Con reservas label', () => {
+  it('label is "Con reservas" for score 40–59 (decrease + cv>1 penalty)', () => {
+    // rates ≈ [+30000, -10000]: 1 decrease (-40) + cv>1 (-15) = score 45
+    const history = makeHistory([
+      { date: '2020-01-01', value: 0 },
+      { date: '2021-01-01', value: 30000 },
+      { date: '2022-01-01', value: 20000 }, // decrease
+    ])
+    const result = analyzeUsageReliability(history)
+    expect(result.score).toBe(45)
+    expect(result.label).toBe('Con reservas')
+    expect(result.labelKey).toBe('verification.kmScore.withReservations')
+  })
+})
+
 // ─── analyzeKmReliability convenience wrapper ─────────────────────────────────
 
 describe('analyzeKmReliability', () => {
@@ -341,5 +359,31 @@ describe('analyzeUsageReliability — return structure', () => {
       ]),
     )
     expect(Number.isInteger(result.avgPerYear)).toBe(true)
+  })
+})
+
+// ─── getScoreLabels — general explanation fallback ──────────────────────────
+
+describe('getScoreLabels — general explanation (no anomalies, score < 80)', () => {
+  it('returns explanationGeneral when no anomalies and score < 80', () => {
+    const result = getScoreLabels(
+      50, // score < 80
+      5, // inspections
+      '2019-01-01',
+      '2023-01-01',
+      25000,
+      'km',
+      [], // no anomalies
+    )
+    expect(result.explanationKey).toBe('verification.kmScore.explanationGeneral')
+    expect(result.explanation).toContain('5 inspecciones analizadas')
+    expect(result.explanation).toContain('2019')
+    expect(result.explanation).toContain('2023')
+  })
+
+  it('returns correct label for score < 80 with no anomalies', () => {
+    const result = getScoreLabels(70, 3, '2020-01-01', '2022-01-01', 40000, 'km', [])
+    expect(result.labelKey).toBe('verification.kmScore.reliable')
+    expect(result.explanationKey).toBe('verification.kmScore.explanationGeneral')
   })
 })

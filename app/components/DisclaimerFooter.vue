@@ -13,19 +13,19 @@
 .disclaimer-footer {
   max-width: 56.25em;
   margin: 0 auto;
-  padding: 24px 1rem;
+  padding: 1.5rem 1rem;
   text-align: center;
 }
 
 .disclaimer-text {
-  font-size: 11px;
+  font-size: 0.6875rem;
   line-height: 1.6;
   color: var(--text-on-dark-secondary, rgba(255, 255, 255, 0.6));
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
 }
 
 .disclaimer-link {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--text-on-dark-secondary, rgba(255, 255, 255, 0.6));
   text-decoration: underline;
   transition: color 0.2s;
@@ -37,11 +37,11 @@
 
 @media (min-width: 48em) {
   .disclaimer-footer {
-    padding: 24px 2rem;
+    padding: 1.5rem 2rem;
   }
 
   .disclaimer-text {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
   }
 }
 </style>

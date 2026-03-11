@@ -83,14 +83,14 @@ watch(
   align-items: center;
   justify-content: center;
   z-index: 10001;
-  padding: 16px;
+  padding: 1rem;
 }
 
 .delete-modal {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  max-width: 420px;
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  max-width: 26.25rem;
   width: 100%;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
 }
@@ -99,29 +99,29 @@ watch(
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--color-error);
-  margin: 0 0 12px 0;
+  margin: 0 0 0.75rem 0;
 }
 
 .delete-modal__warning {
   font-size: 0.9rem;
-  color: #333;
+  color: var(--text-primary);
   line-height: 1.5;
-  margin: 0 0 12px 0;
+  margin: 0 0 0.75rem 0;
 }
 
 .delete-modal__instruction {
   font-size: 0.85rem;
-  color: #666;
-  margin: 0 0 12px 0;
+  color: var(--text-secondary);
+  margin: 0 0 0.75rem 0;
 }
 
 .delete-modal__input {
   width: 100%;
-  padding: 10px 12px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
-  min-height: 44px;
+  padding: 0.625rem 0.75rem;
+  border: 0.125rem solid #ddd;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  min-height: 2.75rem;
 }
 
 .delete-modal__input:focus {
@@ -130,38 +130,38 @@ watch(
 }
 
 .delete-modal__error {
-  margin-top: 8px;
-  padding: 8px 12px;
-  background: var(--color-error-bg, #fef2f2);
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
 }
 
 .delete-modal__actions {
   display: flex;
-  gap: 8px;
-  margin-top: 16px;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .delete-modal__btn {
   flex: 1;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   border: none;
   font-size: 0.9rem;
 }
 
 .delete-modal__btn--cancel {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--color-skeleton-bg);
+  color: var(--text-primary);
 }
 
 .delete-modal__btn--cancel:hover {
-  background: #e0e0e0;
+  background: var(--color-skeleton-shine);
 }
 
 .delete-modal__btn--confirm {

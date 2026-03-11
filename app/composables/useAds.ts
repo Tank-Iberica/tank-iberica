@@ -84,7 +84,7 @@ export function useAds(
       // Build query: active ads matching position, geo, and category
       let query = supabase
         .from('ads')
-        .select('*')
+        .select('id, advertiser_id, vertical, title, description, image_url, logo_url, link_url, phone, email, cta_text, format, positions, countries, regions, provinces, category_slugs, action_slugs, include_in_pdf, include_in_email, target_segments')
         .eq('status', 'active')
         .contains('positions', [position])
         .lte('starts_at', new Date().toISOString())
@@ -135,7 +135,7 @@ export function useAds(
       })
 
       // Randomize and limit
-      filtered.sort(() => Math.random() - 0.5)
+      filtered.sort(() => (crypto.getRandomValues(new Uint8Array(1))[0]! < 128 ? -1 : 1))
       ads.value = filtered.slice(0, max)
 
       // Register impressions

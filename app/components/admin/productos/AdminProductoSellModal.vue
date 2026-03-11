@@ -44,16 +44,14 @@ function fmt(val: number | null | undefined): string {
     <div v-if="show" class="modal-bg" @click.self="emit('update:show', false)">
       <div class="modal modal-lg">
         <div class="modal-head">
-          <span>💰 Registrar Venta</span>
-          <button @click="emit('update:show', false)">×</button>
+          <span>{{ $t('admin.productos.registerSale') }}</span>
+          <button :aria-label="$t('common.close')" @click="emit('update:show', false)">×</button>
         </div>
         <div class="modal-body">
-          <p>
-            Vender <strong>{{ vehicleBrand }} {{ vehicleModel }}</strong>
-          </p>
+          <p v-html="$t('admin.productos.sellVehicle', { name: `<strong>${vehicleBrand} ${vehicleModel}</strong>` })" />
           <div class="row-2">
             <div class="field">
-              <label>Precio venta final €</label>
+              <label>{{ $t('admin.productos.finalSalePrice') }}</label>
               <input
                 :value="sellData.sale_price"
                 type="number"
@@ -64,7 +62,7 @@ function fmt(val: number | null | undefined): string {
               />
             </div>
             <div class="field">
-              <label>Comisión %</label>
+              <label>{{ $t('admin.productos.commissionPercent') }}</label>
               <input
                 :value="sellData.commission"
                 type="number"
@@ -77,16 +75,16 @@ function fmt(val: number | null | undefined): string {
           </div>
           <div class="row-2">
             <div class="field">
-              <label>Comprador</label>
+              <label>{{ $t('admin.productos.buyer') }}</label>
               <input
                 :value="sellData.buyer"
                 type="text"
-                placeholder="Nombre / Empresa"
+                :placeholder="$t('admin.productos.buyerPlaceholder')"
                 @input="updateField('buyer', ($event.target as HTMLInputElement).value)"
               />
             </div>
             <div class="field">
-              <label>Fecha venta</label>
+              <label>{{ $t('admin.productos.saleDate') }}</label>
               <input
                 :value="sellData.sale_date"
                 type="date"
@@ -95,34 +93,34 @@ function fmt(val: number | null | undefined): string {
             </div>
           </div>
           <div class="field">
-            <label>Notas</label>
+            <label>{{ $t('common.notes') }}</label>
             <textarea
               :value="sellData.notes"
               rows="2"
-              placeholder="Notas adicionales..."
+              :placeholder="$t('admin.productos.additionalNotesPlaceholder')"
               @input="updateField('notes', ($event.target as HTMLTextAreaElement).value)"
             />
           </div>
           <div class="profit-box">
             <div class="profit-row">
-              <span>Precio venta</span><span>{{ fmt(sellData.sale_price) }}</span>
+              <span>{{ $t('admin.productos.salePriceLabel') }}</span><span>{{ fmt(sellData.sale_price) }}</span>
             </div>
             <div class="profit-row">
-              <span>− Coste total</span><span>{{ fmt(totalCost) }}</span>
+              <span>{{ $t('admin.productos.totalCostLabel') }}</span><span>{{ fmt(totalCost) }}</span>
             </div>
             <div class="profit-row">
-              <span>− Comisión ({{ sellData.commission }}%)</span>
+              <span>{{ $t('admin.productos.commissionLabel', { percent: sellData.commission }) }}</span>
               <span>{{ fmt((sellData.sale_price * sellData.commission) / 100) }}</span>
             </div>
             <div class="profit-row final" :class="finalProfit >= 0 ? 'pos' : 'neg'">
-              <span>BENEFICIO FINAL</span>
+              <span>{{ $t('admin.productos.finalProfit') }}</span>
               <span>{{ fmt(finalProfit) }}</span>
             </div>
           </div>
         </div>
         <div class="modal-foot">
-          <button class="btn" @click="emit('update:show', false)">Cancelar</button>
-          <button class="btn btn-primary" @click="emit('sell')">Confirmar Venta</button>
+          <button class="btn" @click="emit('update:show', false)">{{ $t('common.cancel') }}</button>
+          <button class="btn btn-primary" @click="emit('sell')">{{ $t('admin.productos.confirmSale') }}</button>
         </div>
       </div>
     </div>
@@ -138,24 +136,24 @@ function fmt(val: number | null | undefined): string {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 .modal {
   background: var(--bg-primary);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   width: 100%;
-  max-width: 400px;
+  max-width: 25rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 .modal-lg {
-  max-width: 500px;
+  max-width: 31.25rem;
 }
 .modal-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 0.875rem var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-200);
   font-weight: 600;
 }
 .modal-head button {
@@ -166,18 +164,18 @@ function fmt(val: number | null | undefined): string {
   color: var(--text-disabled);
 }
 .modal-body {
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 .row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
 }
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 .field label {
   font-size: 0.85rem;
@@ -185,28 +183,28 @@ function fmt(val: number | null | undefined): string {
 }
 .field input,
 .field textarea {
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.85rem;
 }
 .profit-box {
-  margin-top: 16px;
-  padding: 12px;
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-3);
   background: var(--bg-secondary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
 }
 .profit-row {
   display: flex;
   justify-content: space-between;
   font-size: 0.8rem;
-  color: #6b7280;
-  padding: 4px 0;
+  color: var(--color-gray-500);
+  padding: var(--spacing-1) 0;
 }
 .profit-row.final {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #d1d5db;
+  margin-top: var(--spacing-2);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-gray-300);
   font-weight: 700;
   font-size: 1rem;
 }
@@ -219,23 +217,23 @@ function fmt(val: number | null | undefined): string {
 .modal-foot {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
   border-radius: 0 0 10px 10px;
 }
 .btn {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 

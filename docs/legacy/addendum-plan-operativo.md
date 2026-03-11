@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # ADDENDUM — Plan Operativo Tracciona
 
@@ -188,3 +188,5 @@ COSTE: 0€ (todo con Claude Max)
 
 _Addendum creado: 18 de febrero de 2026_
 _Aplica sobre: Plan Operativo Tracciona (16 Feb 2026)_
+
+

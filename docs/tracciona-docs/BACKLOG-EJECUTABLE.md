@@ -289,6 +289,7 @@ No bloquean ni son bloqueadas por codigo. Ejecutar cuando sea posible.
 | #   | Item                                          | Esfuerzo | Urgencia | Hecho cuando...                                           |
 | --- | --------------------------------------------- | -------- | -------- | --------------------------------------------------------- |
 | 101 | Configurar reglas CF WAF (rate limiting)      | S        | ALTA     | Reglas activas en dashboard CF                            |
+| 123 | Configurar GitHub Secrets (crons + k6 + CI)   | S        | ALTA     | 6 secrets añadidos: `CRON_SECRET` (generar con `openssl rand -hex 32`) + `SUPABASE_URL` + `SUPABASE_ANON_KEY` (ambos de Supabase Dashboard → Project Settings → API) + `RESEND_API_KEY` (tras tarea #21) + `INFRA_ALERT_EMAIL` = tankiberica@gmail.com. Variable: `APP_URL` = https://tracciona.com. GitHub → repo → Settings → Secrets and variables → Actions |
 | 102 | DMARC + SPF + DKIM en Cloudflare DNS          | S        | ALTA     | Records DNS configurados, DMARC report sin fallos         |
 | 103 | Verificar Google Search Console               | S        | ALTA     | site:tracciona.com devuelve resultados                    |
 | 104 | Registrar marca Tracciona OEPM                | S        | MEDIA    | Solicitud presentada en OEPM Clase 35                     |
@@ -379,6 +380,26 @@ Bloque 8 (WhatsApp funnel)
 5. Fase 10 (Final verification, 2h)
 
 **Próximo paso:** Mandar mensaje "auditoría SonarQube fase 1" para empezar.
+
+---
+
+## Items Bloqueados — Agente Coverage (desbloqueo automático)
+
+> **Estado:** Bloqueados mientras el agente de coverage escribe tests para estos archivos/composables.
+> **Desbloqueo:** Cuando el agente de coverage termine (prompt: "siguiente lote de tests de coverage" hasta 100%).
+> **Estos items NO se pueden ejecutar en paralelo con el agente** porque modifican los mismos composables que está cubriendo.
+
+| #   | Plan ID | Item                                                              | Esfuerzo | Tipo | Bloqueo                                          | Hecho cuando...                                                                 |
+| --- | ------- | ----------------------------------------------------------------- | -------- | ---- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
+| 117 | U2      | Optimistic UI en acciones frecuentes (favoritos, reservas, pujas) | M        | Code | Agente coverage cubre useReservation, useFavorites | Actualización visual inmediata sin esperar respuesta servidor; rollback en error |
+| 118 | O1      | Structured logs con nivel + contexto en server/services           | S        | Code | Agente coverage cubre server/services            | Todos los `console.log/error` reemplazados por logger estructurado (`[service][level] msg context`) |
+| 119 | O2      | Weekly report cron — KPIs clave via email                         | S        | Code | Agente coverage cubre composables de métricas    | Cron lunes 07:00 UTC envia email con: nuevos vehículos, dealers activos, leads, revenue semana |
+| 120 | N1      | Script scaffold para nueva vertical                               | M        | Code | Agente coverage termina (no modificar utils)     | `node scripts/new-vertical.mjs --slug maquinaria` crea vertical_config row + i18n keys + README |
+| 121 | D1      | Split composables >500 líneas                                     | M        | Code | Agente coverage cubre composables grandes        | Cada composable ≤500 líneas; funciones extraídas a utils/ o sub-composables con tests propios |
+| 122 | S7      | Coverage gate en CI (quality gate automático)                     | S        | Code | Agente coverage termina (~100% alcanzado)        | CI job `coverage-gate` falla si coverage cae por debajo del último baseline registrado |
+
+**Desbloqueo parcial:** U2, O1, O2 se pueden hacer una vez el agente cubra los composables relevantes (no hay que esperar el 100%).
+**Desbloqueo total:** D1 y S7 requieren que el agente haya terminado completamente.
 
 ---
 

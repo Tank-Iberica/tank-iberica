@@ -41,14 +41,17 @@ onMounted(() => {
       {{ error }}
     </div>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
+    <div v-if="loading" class="loading-skeleton" aria-busy="true">
+      <div class="loading-skeleton__kpis">
+        <UiSkeletonCard v-for="n in 4" :key="n" :lines="2" />
+      </div>
+      <UiSkeletonCard :lines="5" />
     </div>
 
     <template v-else>
       <AdminDashboardMetricsKpiCards :kpi-summary="kpiSummary" />
 
-      <AdminDashboardMetricsChartsGrid
+      <LazyAdminDashboardMetricsChartsGrid
         :revenue-chart-data="revenueChartData"
         :vehicles-chart-data="vehiclesChartData"
         :leads-chart-data="leadsChartData"
@@ -93,8 +96,8 @@ onMounted(() => {
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border: 3px solid var(--border-color);
   border-top-color: var(--color-primary);
   border-radius: 50%;

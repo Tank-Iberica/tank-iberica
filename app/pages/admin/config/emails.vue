@@ -173,56 +173,56 @@ onMounted(async () => {
 
 /* -- Header -- */
 .section-header {
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
 }
 
 .section-header h2 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.5rem;
-  color: var(--color-text, #1f2937);
+  color: var(--color-text, var(--color-gray-800));
 }
 
 .section-subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 0.95rem;
 }
 
 /* -- Loading -- */
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
 /* -- Banners -- */
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
   font-weight: 500;
 }
 
 .success-banner--test {
-  background: #eff6ff;
-  color: #2563eb;
+  background: var(--color-blue-50);
+  color: var(--color-focus);
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 /* -- Layout: list + editor -- */
 .emails-layout {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 /* -- Buttons -- */
@@ -230,13 +230,13 @@ onMounted(async () => {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -250,7 +250,7 @@ onMounted(async () => {
 
 /* -- Actions bar -- */
 .actions-bar {
-  margin-top: 24px;
+  margin-top: var(--spacing-6);
   display: flex;
   justify-content: flex-end;
 }
@@ -267,13 +267,13 @@ onMounted(async () => {
 }
 
 /* -- Responsive -- */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .section-header h2 {
     font-size: 1.75rem;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .emails-layout {
     flex-direction: row;
     align-items: flex-start;

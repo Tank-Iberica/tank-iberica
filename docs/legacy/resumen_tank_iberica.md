@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # Resumen Exhaustivo — Auditoría y Análisis SEO de Tank Ibérica / Tracciona
 
@@ -1279,3 +1279,5 @@ IMAGE_PIPELINE_MODE=  # cloudinary | hybrid | cf_images
 
 > **Documento generado el 25/02/2026** a partir de la conversación completa de 2,165 páginas con Claude.
 > Procesado en 6 secciones de ~15,000 líneas cada una.
+
+

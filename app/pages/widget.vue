@@ -140,129 +140,129 @@ async function copySnippet() {
 
 <style scoped>
 .widget-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: var(--spacing-6) var(--spacing-4);
 }
 
 .widget-page h1 {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary, var(--color-primary));
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
 }
 
 .subtitle {
-  color: #666;
-  margin-bottom: 24px;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-6);
 }
 
 .no-dealer {
-  padding: 24px;
+  padding: var(--spacing-6);
   text-align: center;
-  background: #f9f9f9;
-  border-radius: 8px;
-  color: #666;
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius);
+  color: var(--text-secondary);
 }
 
 .widget-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px;
-  margin-bottom: 24px;
-  padding: 16px;
-  background: #f9f9f9;
-  border-radius: 8px;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+  padding: var(--spacing-4);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius);
 }
 
 .control-group label {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-bottom: 6px;
-  color: #333;
+  margin-bottom: 0.375rem;
+  color: var(--text-primary);
 }
 
 .radio-group {
   display: flex;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .radio-group label {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-1);
   font-weight: 400;
   cursor: pointer;
 }
 
 select {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
 }
 
 .snippet-section {
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
 }
 
 .snippet-section > label {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-bottom: 6px;
-  color: #333;
+  margin-bottom: 0.375rem;
+  color: var(--text-primary);
 }
 
 .snippet-box {
-  padding: 12px;
+  padding: var(--spacing-3);
   background: #1a1a2e;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow-x: auto;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
 }
 
 .snippet-box code {
-  color: #4fc3f7;
+  color: var(--color-sky-400);
   font-size: 0.8rem;
   word-break: break-all;
 }
 
 .copy-btn {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   background: var(--primary, var(--color-primary));
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.875rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .preview-section h2 {
   font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 12px;
-  color: #333;
+  margin-bottom: var(--spacing-3);
+  color: var(--text-primary);
 }
 
 .preview-frame {
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
 }
 
 .widget-iframe {
   width: 100%;
-  min-height: 400px;
+  min-height: 25rem;
   border: none;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30em) {
   .widget-controls {
     flex-direction: column;
-    gap: 16px;
+    gap: var(--spacing-4);
   }
 }
 </style>

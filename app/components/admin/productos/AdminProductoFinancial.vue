@@ -3,6 +3,8 @@
 import type { MaintenanceEntry, RentalEntry } from '~/composables/admin/useAdminVehicles'
 import type { FileNamingData } from '~/utils/fileNaming'
 
+const { t } = useI18n()
+
 interface Props {
   open: boolean
   acquisitionCost: number | null
@@ -49,28 +51,28 @@ function fmt(val: number | null | undefined): string {
 <template>
   <div class="section collapsible financial">
     <button class="section-toggle" @click="emit('update:open', !open)">
-      <span>💰 Cuentas</span>
-      <span class="cost-badge">COSTE TOTAL: {{ fmt(totalCost) }}</span>
+      <span>💰 {{ t('admin.productos.financial.accounts') }}</span>
+      <span class="cost-badge">{{ t('admin.productos.financial.totalCost') }}: {{ fmt(totalCost) }}</span>
     </button>
     <div v-if="open" class="section-content">
       <div class="row-3">
         <div class="field">
-          <label>Precio mínimo €</label>
+          <label>{{ t('admin.productos.financial.minPrice') }}</label>
           <input
             :value="minPrice"
             type="number"
-            placeholder="Precio mínimo aceptable"
+            :placeholder="t('admin.productos.financial.minPricePlaceholder')"
             @input="
               emit('update:minPrice', Number(($event.target as HTMLInputElement).value) || null)
             "
           />
         </div>
         <div class="field">
-          <label>Coste adquisición €</label>
+          <label>{{ t('admin.productos.financial.acquisitionCost') }}</label>
           <input
             :value="acquisitionCost"
             type="number"
-            placeholder="Coste de compra"
+            :placeholder="t('admin.productos.financial.purchaseCostPlaceholder')"
             @input="
               emit(
                 'update:acquisitionCost',
@@ -80,7 +82,7 @@ function fmt(val: number | null | undefined): string {
           />
         </div>
         <div class="field">
-          <label>Fecha adquisición</label>
+          <label>{{ t('admin.productos.financial.acquisitionDate') }}</label>
           <input
             :value="acquisitionDate"
             type="date"
@@ -94,16 +96,16 @@ function fmt(val: number | null | undefined): string {
       <!-- Maintenance table -->
       <div class="records-block">
         <div class="records-header">
-          <span>🔧 Mantenimiento (suma)</span>
-          <button class="btn-add" @click="emit('add-maint')">+ Añadir</button>
+          <span>🔧 {{ t('admin.productos.financial.maintenanceSum') }}</span>
+          <button class="btn-add" @click="emit('add-maint')">+ {{ t('common.add') }}</button>
         </div>
         <table v-if="maintenanceRecords?.length" class="records-table">
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Razón</th>
-              <th>Coste €</th>
-              <th>Factura</th>
+              <th>{{ $t('common.date') }}</th>
+              <th>{{ t('admin.productos.financial.reason') }}</th>
+              <th>{{ t('admin.productos.financial.costEur') }}</th>
+              <th>{{ t('admin.productos.financial.invoice') }}</th>
               <th />
             </tr>
           </thead>
@@ -122,7 +124,7 @@ function fmt(val: number | null | undefined): string {
                 <input
                   type="text"
                   :value="r.reason"
-                  placeholder="Razón"
+                  :placeholder="t('admin.productos.financial.reason')"
                   @input="
                     emit('update-maint', r.id, 'reason', ($event.target as HTMLInputElement).value)
                   "
@@ -150,17 +152,17 @@ function fmt(val: number | null | undefined): string {
                     target="_blank"
                     rel="noopener"
                     class="invoice-link"
-                    title="Ver factura"
+                    :title="t('admin.productos.financial.viewInvoice')"
                   >
-                    📎 Ver
+                    📎 {{ t('common.view') }}
                   </a>
-                  <label class="invoice-change" title="Cambiar factura">
+                  <label class="invoice-change" :title="t('admin.productos.financial.changeInvoice')">
                     ↻
                     <input type="file" @change="emit('upload-maint-invoice', r.id, $event)" />
                   </label>
                 </template>
                 <label v-else class="invoice-upload">
-                  📎 Subir
+                  📎 {{ t('common.upload') }}
                   <input
                     type="file"
                     :disabled="driveLoading"
@@ -168,35 +170,35 @@ function fmt(val: number | null | undefined): string {
                   />
                 </label>
               </td>
-              <td><button class="btn-x" @click="emit('remove-maint', r.id)">×</button></td>
+              <td><button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove-maint', r.id)">×</button></td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="2" class="text-right">Total Mant:</td>
+              <td colspan="2" class="text-right">{{ t('admin.productos.financial.totalMaint') }}:</td>
               <td colspan="3">
                 <strong>{{ fmt(totalMaint) }}</strong>
               </td>
             </tr>
           </tfoot>
         </table>
-        <div v-else class="empty-msg">Sin registros de mantenimiento.</div>
+        <div v-else class="empty-msg">{{ t('admin.productos.financial.noMaintenanceRecords') }}</div>
       </div>
 
       <!-- Rental income table -->
       <div class="records-block">
         <div class="records-header">
-          <span>📅 Renta (resta)</span>
-          <button class="btn-add" @click="emit('add-rental')">+ Añadir</button>
+          <span>📅 {{ t('admin.productos.financial.rentalSubtracts') }}</span>
+          <button class="btn-add" @click="emit('add-rental')">+ {{ t('common.add') }}</button>
         </div>
         <table v-if="rentalRecords?.length" class="records-table">
           <thead>
             <tr>
-              <th>Desde</th>
-              <th>Hasta</th>
-              <th>Razón</th>
-              <th>Importe €</th>
-              <th>Factura</th>
+              <th>{{ t('common.from') }}</th>
+              <th>{{ t('common.to') }}</th>
+              <th>{{ t('admin.productos.financial.reason') }}</th>
+              <th>{{ t('admin.productos.financial.amountEur') }}</th>
+              <th>{{ t('admin.productos.financial.invoice') }}</th>
               <th />
             </tr>
           </thead>
@@ -234,7 +236,7 @@ function fmt(val: number | null | undefined): string {
                 <input
                   type="text"
                   :value="r.notes"
-                  placeholder="Razón"
+                  :placeholder="t('admin.productos.financial.reason')"
                   @input="
                     emit('update-rental', r.id, 'notes', ($event.target as HTMLInputElement).value)
                   "
@@ -262,17 +264,17 @@ function fmt(val: number | null | undefined): string {
                     target="_blank"
                     rel="noopener"
                     class="invoice-link"
-                    title="Ver factura"
+                    :title="t('admin.productos.financial.viewInvoice')"
                   >
-                    📎 Ver
+                    📎 {{ t('common.view') }}
                   </a>
-                  <label class="invoice-change" title="Cambiar factura">
+                  <label class="invoice-change" :title="t('admin.productos.financial.changeInvoice')">
                     ↻
                     <input type="file" @change="emit('upload-rental-invoice', r.id, $event)" />
                   </label>
                 </template>
                 <label v-else class="invoice-upload">
-                  📎 Subir
+                  📎 {{ t('common.upload') }}
                   <input
                     type="file"
                     :disabled="driveLoading"
@@ -280,34 +282,34 @@ function fmt(val: number | null | undefined): string {
                   />
                 </label>
               </td>
-              <td><button class="btn-x" @click="emit('remove-rental', r.id)">×</button></td>
+              <td><button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove-rental', r.id)">×</button></td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="4" class="text-right">Total Renta:</td>
+              <td colspan="4" class="text-right">{{ t('admin.productos.financial.totalRental') }}:</td>
               <td colspan="2">
                 <strong class="green">{{ fmt(totalRental) }}</strong>
               </td>
             </tr>
           </tfoot>
         </table>
-        <div v-else class="empty-msg">Sin registros de alquiler.</div>
+        <div v-else class="empty-msg">{{ t('admin.productos.financial.noRentalRecords') }}</div>
       </div>
 
       <!-- Cost summary -->
       <div class="cost-summary">
         <div class="cost-row">
-          <span>Coste adquisición</span><span>{{ fmt(acquisitionCost) }}</span>
+          <span>{{ t('admin.productos.financial.acquisitionCostLabel') }}</span><span>{{ fmt(acquisitionCost) }}</span>
         </div>
         <div class="cost-row">
-          <span>+ Mantenimiento</span><span>{{ fmt(totalMaint) }}</span>
+          <span>+ {{ t('admin.productos.financial.maintenanceLabel') }}</span><span>{{ fmt(totalMaint) }}</span>
         </div>
         <div class="cost-row">
-          <span>− Renta</span><span class="green">{{ fmt(totalRental) }}</span>
+          <span>− {{ t('admin.productos.financial.rentalLabel') }}</span><span class="green">{{ fmt(totalRental) }}</span>
         </div>
         <div class="cost-row total">
-          <span>COSTE TOTAL</span><span>{{ fmt(totalCost) }}</span>
+          <span>{{ t('admin.productos.financial.totalCost') }}</span><span>{{ fmt(totalCost) }}</span>
         </div>
       </div>
     </div>
@@ -317,8 +319,8 @@ function fmt(val: number | null | undefined): string {
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xs);
 }
 .collapsible {
   padding: 0;
@@ -328,53 +330,53 @@ function fmt(val: number | null | undefined): string {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   text-transform: uppercase;
 }
 .section-toggle:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 .section-content {
-  padding: 0 16px 16px;
-  border-top: 1px solid #f3f4f6;
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-100);
 }
 .financial {
   border: 1px solid var(--border-color);
 }
 .cost-badge {
-  padding: 4px 10px;
-  background: var(--color-warning-bg, #fef3c7);
+  padding: var(--spacing-1) 0.625rem;
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.75rem;
   font-weight: 600;
 }
 .row-3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 .field label {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
 }
 .field input {
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.85rem;
 }
 .field input:focus {
@@ -382,15 +384,15 @@ function fmt(val: number | null | undefined): string {
   border-color: var(--color-primary);
 }
 .records-block {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
 }
 .records-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
   font-weight: 600;
   font-size: 0.85rem;
 }
@@ -401,25 +403,25 @@ function fmt(val: number | null | undefined): string {
 }
 .records-table th {
   text-align: left;
-  padding: 6px 8px;
+  padding: 0.375rem var(--spacing-2);
   background: var(--bg-secondary);
   font-weight: 500;
   font-size: 0.7rem;
   text-transform: uppercase;
 }
 .records-table td {
-  padding: 4px 8px;
-  border-bottom: 1px solid #f3f4f6;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-bottom: 1px solid var(--color-gray-100);
 }
 .records-table input {
   width: 100%;
-  padding: 4px 6px;
+  padding: var(--spacing-1) 0.375rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.75rem;
 }
 .records-table tfoot td {
-  padding-top: 8px;
+  padding-top: var(--spacing-2);
   border: none;
 }
 .text-right {
@@ -428,7 +430,7 @@ function fmt(val: number | null | undefined): string {
 .invoice-cell {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 .invoice-link {
   color: var(--color-primary);
@@ -442,7 +444,7 @@ function fmt(val: number | null | undefined): string {
 .invoice-change {
   cursor: pointer;
   font-size: 0.7rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 .invoice-upload:hover,
 .invoice-change:hover {
@@ -453,45 +455,45 @@ function fmt(val: number | null | undefined): string {
   display: none;
 }
 .cost-summary {
-  margin-top: 16px;
-  padding: 12px;
-  background: #f9fafb;
-  border-radius: 6px;
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius);
 }
 .cost-row {
   display: flex;
   justify-content: space-between;
   font-size: 0.8rem;
-  color: #6b7280;
-  padding: 4px 0;
+  color: var(--color-gray-500);
+  padding: var(--spacing-1) 0;
 }
 .cost-row.total {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #e5e7eb;
+  margin-top: var(--spacing-2);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-gray-200);
   font-weight: 700;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 .green {
   color: var(--color-success);
 }
 .btn-add {
-  padding: 4px 10px;
+  padding: var(--spacing-1) 0.625rem;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.75rem;
   cursor: pointer;
 }
 .btn-x {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: none;
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -499,7 +501,7 @@ function fmt(val: number | null | undefined): string {
   text-align: center;
   color: var(--text-disabled);
   font-size: 0.8rem;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 
 @media (max-width: 48em) {

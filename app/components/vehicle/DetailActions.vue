@@ -160,13 +160,42 @@
           <line x1="6" y1="20" x2="6" y2="14" />
         </svg>
       </button>
+      <div class="qr-wrapper">
+        <button
+          :class="['vehicle-icon-btn', 'qr-btn', { active: showQR }]"
+          :title="$t('vehicle.qrCode')"
+          @click="toggleQR"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9V3h6v6H3z" />
+            <path d="M15 9V3h6v6h-6z" />
+            <path d="M3 21v-6h6v6H3z" />
+            <rect x="5" y="5" width="2" height="2" fill="currentColor" stroke="none" />
+            <rect x="17" y="5" width="2" height="2" fill="currentColor" stroke="none" />
+            <rect x="5" y="17" width="2" height="2" fill="currentColor" stroke="none" />
+            <rect x="15" y="15" width="2" height="2" fill="currentColor" stroke="none" />
+            <rect x="19" y="15" width="2" height="2" fill="currentColor" stroke="none" />
+            <rect x="15" y="19" width="2" height="2" fill="currentColor" stroke="none" />
+            <rect x="19" y="19" width="2" height="2" fill="currentColor" stroke="none" />
+          </svg>
+        </button>
+        <div v-if="showQR" class="qr-popover" role="dialog" :aria-label="$t('vehicle.qrCode')">
+          <img v-if="qrDataUrl" :src="qrDataUrl" :alt="$t('vehicle.qrCode')" width="128" height="128" />
+          <div v-else class="qr-loading" aria-busy="true">⋯</div>
+          <p class="qr-label">{{ $t('vehicle.qrCode') }}</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { ref } from 'vue'
+import { generateVehicleQR } from '~/utils/generateQR'
+
+const props = defineProps<{
   vehicleId: string
+  vehicleSlug: string
   dealerId: string
   sellerUserId: string | null
   emailSubject: string
@@ -185,6 +214,16 @@ defineEmits<{
     method: 'phone' | 'whatsapp' | 'form',
   ): void
 }>()
+
+const showQR = ref(false)
+const qrDataUrl = ref('')
+
+async function toggleQR() {
+  showQR.value = !showQR.value
+  if (showQR.value && !qrDataUrl.value) {
+    qrDataUrl.value = await generateVehicleQR(props.vehicleSlug, 128)
+  }
+}
 </script>
 
 <style scoped>
@@ -202,14 +241,16 @@ defineEmits<{
   gap: 0.35rem;
   padding: 0.5rem 0.75rem;
   border: 2px solid var(--border-color-dark) !important;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: all 0.2s ease;
+  order: 1;
+  flex-shrink: 0;
 }
 
 .vehicle-pdf-btn:hover {
@@ -222,19 +263,21 @@ defineEmits<{
   gap: 0.4rem;
   flex: 1;
   min-width: 0;
+  order: 3;
+  flex-basis: 100%;
 }
 
 .contact-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0.25rem;
   flex: 1;
-  padding: 0.5rem 0.6rem;
-  border-radius: 8px;
+  padding: 0.5rem 0.4rem;
+  border-radius: var(--border-radius);
   font-weight: 600;
-  font-size: var(--font-size-xs);
-  min-height: 44px;
+  font-size: var(--font-size-sm);
+  min-height: 2.75rem;
   text-decoration: none;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -259,25 +302,27 @@ defineEmits<{
 }
 
 .contact-call {
-  background: #334155;
+  background: var(--color-slate-700);
   color: var(--color-white);
 }
 
 .contact-whatsapp {
-  background: #25d366;
+  background: var(--color-whatsapp);
   color: var(--color-white);
 }
 
 .vehicle-icon-btns {
   display: flex;
   gap: 0.4rem;
+  order: 2;
+  margin-left: auto;
 }
 
 .vehicle-icon-btn {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   border-radius: 50%;
   border: 2px solid var(--border-color-dark) !important;
   background: var(--bg-primary);
@@ -296,9 +341,9 @@ defineEmits<{
 }
 
 .favorite-btn.active {
-  border-color: #f39c12;
-  background: rgba(243, 156, 18, 0.1);
-  color: #f39c12;
+  border-color: var(--color-warning-text);
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
 }
 
 .share-btn:hover {
@@ -317,30 +362,53 @@ defineEmits<{
   color: var(--color-primary);
 }
 
-/* Mobile base: contact btns on a separate row */
-.vehicle-pdf-btn {
-  order: 1;
-  flex-shrink: 0;
+.qr-wrapper {
+  position: relative;
+}
+
+.qr-btn.active {
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary);
+}
+
+.qr-popover {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  right: 0;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color-dark);
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  text-align: center;
+  min-width: 9.5rem;
+}
+
+.qr-popover img {
+  display: block;
+  margin: 0 auto;
+}
+
+.qr-label {
+  margin: 0.35rem 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.qr-loading {
+  width: 8rem;
+  height: 8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  letter-spacing: 0.2em;
 }
 
 .vehicle-pdf-btn span {
   display: none;
-}
-
-.vehicle-icon-btns {
-  order: 2;
-  margin-left: auto;
-}
-
-.vehicle-contact-btns {
-  order: 3;
-  flex-basis: 100%;
-}
-
-.contact-btn {
-  padding: 0.5rem 0.4rem;
-  font-size: 0.875rem;
-  gap: 0.25rem;
 }
 
 @media (min-width: 30em) {
@@ -369,7 +437,7 @@ defineEmits<{
 
   .contact-btn {
     padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm);
     gap: 0.4rem;
   }
 }

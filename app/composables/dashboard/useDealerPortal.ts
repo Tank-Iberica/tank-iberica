@@ -79,25 +79,30 @@ export function useDealerPortal() {
   const emailWeeklyStats = ref(false)
   const emailAuctionUpdates = ref(false)
 
-  // Static options
-  const phoneModeOptions = [
-    { value: 'visible', label: 'Siempre visible' },
-    { value: 'click_to_reveal', label: 'Click para revelar' },
-    { value: 'form_only', label: 'Solo formulario de contacto' },
-  ]
+  // Brokerage
+  const brokerageOptOut = ref(false)
 
-  const sortOptions = [
-    { value: 'newest', label: 'Más recientes primero' },
-    { value: 'price_asc', label: 'Precio: menor a mayor' },
-    { value: 'price_desc', label: 'Precio: mayor a menor' },
-    { value: 'featured_first', label: 'Destacados primero' },
-  ]
+  const { t } = useI18n()
 
-  const iconOptions = [
-    { value: 'badge', label: 'Insignia' },
-    { value: 'shield', label: 'Escudo' },
-    { value: 'star', label: 'Estrella' },
-  ]
+  // Static options — labels from i18n
+  const phoneModeOptions = computed(() => [
+    { value: 'visible', label: t('dealer.phoneModeVisible') },
+    { value: 'click_to_reveal', label: t('dealer.phoneModeReveal') },
+    { value: 'form_only', label: t('dealer.phoneModeForm') },
+  ])
+
+  const sortOptions = computed(() => [
+    { value: 'newest', label: t('dealer.sortNewest') },
+    { value: 'price_asc', label: t('dealer.sortPriceAsc') },
+    { value: 'price_desc', label: t('dealer.sortPriceDesc') },
+    { value: 'featured_first', label: t('dealer.sortFeatured') },
+  ])
+
+  const iconOptions = computed(() => [
+    { value: 'badge', label: t('dealer.iconBadge') },
+    { value: 'shield', label: t('dealer.iconShield') },
+    { value: 'star', label: t('dealer.iconStar') },
+  ])
 
   function initForm(data: Record<string, unknown>) {
     dealerSlug.value = (data.slug as string) || ''
@@ -161,6 +166,9 @@ export function useDealerPortal() {
     emailOnSale.value = nc.email_on_sale ?? true
     emailWeeklyStats.value = nc.email_weekly_stats ?? true
     emailAuctionUpdates.value = nc.email_auction_updates ?? false
+
+    // Brokerage
+    brokerageOptOut.value = (data.brokerage_opt_out as boolean) ?? false
   }
 
   async function loadPortal() {
@@ -171,7 +179,7 @@ export function useDealerPortal() {
 
     const { data, error: fetchError } = await supabase
       .from('dealers')
-      .select('*')
+      .select('id, slug, company_name, logo_url, favicon_url, cover_image_url, logo_text_config, theme, bio, phone, email, address, whatsapp, contact_config, social_links, certifications, catalog_sort')
       .eq('user_id', user.value.id)
       .single()
 
@@ -263,6 +271,8 @@ export function useDealerPortal() {
         email_weekly_stats: emailWeeklyStats.value,
         email_auction_updates: emailAuctionUpdates.value,
       },
+      brokerage_opt_out: brokerageOptOut.value,
+      brokerage_opt_out_at: brokerageOptOut.value ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),
     }
 
@@ -282,6 +292,24 @@ export function useDealerPortal() {
     setTimeout(() => {
       saved.value = false
     }, 3000)
+  }
+
+  async function toggleBrokerageOptOut(newValue: boolean) {
+    brokerageOptOut.value = newValue
+
+    // Log consent change for GDPR traceability
+    if (user.value?.id) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sb = supabase as any
+      await sb.from('brokerage_consent_log').insert({
+        user_id: user.value.id,
+        consent_type: newValue ? 'seller_brokerage_optout' : 'seller_brokerage_optin',
+        granted: !newValue,
+        legal_basis: 'consent_art6_1a',
+        channel: 'web',
+        evidence: { source: 'dealer_portal_toggle', timestamp: new Date().toISOString() },
+      })
+    }
   }
 
   return {
@@ -328,6 +356,9 @@ export function useDealerPortal() {
     emailOnSale,
     emailWeeklyStats,
     emailAuctionUpdates,
+    // Brokerage
+    brokerageOptOut,
+    toggleBrokerageOptOut,
     // Static
     phoneModeOptions,
     // Actions

@@ -33,6 +33,7 @@ defineEmits<{
           :to="item.to"
           class="popover-item"
           :class="{ active: isActiveFn(item.to) }"
+          :aria-current="isActiveFn(item.to) ? 'page' : undefined"
           @click="$emit('close')"
         >
           {{ item.label }}
@@ -49,7 +50,7 @@ defineEmits<{
   background: var(--color-primary);
   border-radius: var(--border-radius);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  min-width: 180px;
+  min-width: 11.25rem;
   z-index: 9999;
   overflow: hidden;
 }
@@ -88,12 +89,12 @@ defineEmits<{
 .badge {
   background: var(--color-error);
   color: white;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: var(--font-weight-bold);
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.3125rem;
+  border-radius: var(--border-radius);
   display: flex;
   align-items: center;
   justify-content: center;

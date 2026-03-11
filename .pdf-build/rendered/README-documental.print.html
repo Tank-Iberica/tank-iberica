@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Mapa Documental</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Mapa Documental</h1>
+    <p>Mapa general de la arquitectura documental, reglas de uso y flujo de regeneracion.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#nucleo-principal'>Núcleo principal</a></li>
+<li class='toc-l2'><a href='#derivados-regenerables'>Derivados regenerables</a></li>
+<li class='toc-l2'><a href='#documentos-de-apoyo-operativo'>Documentos de apoyo operativo</a></li>
+<li class='toc-l2'><a href='#documentos-paralelos-fuera-del-nucleo-principal'>Documentos paralelos fuera del núcleo principal</a></li>
+<li class='toc-l2'><a href='#regla-de-uso'>Regla de uso</a></li>
+<li class='toc-l2'><a href='#criterio-editorial'>Criterio editorial</a></li>
+<li class='toc-l2'><a href='#flujo-correcto-de-trabajo'>Flujo correcto de trabajo</a></li>
+<li class='toc-l2'><a href='#versionado-y-regeneracion'>Versionado y regeneración</a></li>
+<li class='toc-l3'><a href='#cuando-subir-version'>Cuándo subir versión</a></li>
+<li class='toc-l3'><a href='#cuando-regenerar-derivados-markdown'>Cuándo regenerar derivados Markdown</a></li>
+<li class='toc-l3'><a href='#cuando-regenerar-pdfs'>Cuándo regenerar PDFs</a></li>
+<li class='toc-l2'><a href='#script-de-generacion'>Script de generación</a></li>
+<li class='toc-l2'><a href='#pdfs-vigentes'>PDFs vigentes</a></li>
+<li class='toc-l2'><a href='#estado-actual'>Estado actual</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tradebase-mapa-documental">TradeBase - Mapa Documental</h1>
+<blockquote>
+<p>Guía corta para saber qué documento editar, qué documento consultar y qué documentos se regeneran al final de cada ciclo.</p>
+</blockquote>
+<h2 id="nucleo-principal">Núcleo principal</h2>
+<table>
+<thead>
+<tr>
+<th>Documento</th>
+<th>Tipo</th>
+<th>Rol</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="PRESUPUESTOS.md">PRESUPUESTOS.md</a></td>
+<td>Maestro</td>
+<td>Costes, tesorería, OPEX/COGS y lectura de capitalización</td>
+</tr>
+<tr>
+<td><a href="SUBVENCIONES.md">SUBVENCIONES.md</a></td>
+<td>Maestro</td>
+<td>Catálogo de ayudas, fichas, metodología, compatibilidades, alertas y fuentes</td>
+</tr>
+<tr>
+<td><a href="DECISIONES-FINANCIERAS.md">DECISIONES-FINANCIERAS.md</a></td>
+<td>Maestro</td>
+<td>Sede, estructura societaria, prioridades, roadmap y orden de ejecución</td>
+</tr>
+<tr>
+<td><a href="SUBVENCIONES-PLAYBOOK.md">SUBVENCIONES-PLAYBOOK.md</a></td>
+<td>Apoyo profundo</td>
+<td>Playbook de preparación de expedientes, optimización y evidencia por ayuda</td>
+</tr>
+<tr>
+<td><a href="SUBVENCIONES-BIBLIA.md">SUBVENCIONES-BIBLIA.md</a></td>
+<td>Apoyo monográfico</td>
+<td>Biblia modular por ayuda, con tomos individuales de profundidad alta</td>
+</tr>
+</tbody>
+</table>
+<h2 id="derivados-regenerables">Derivados regenerables</h2>
+<table>
+<thead>
+<tr>
+<th>Documento</th>
+<th>Rol</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="PRESUPUESTOS-resumen.md">PRESUPUESTOS-resumen.md</a></td>
+<td>Resumen ejecutivo de costes y capitalización</td>
+</tr>
+<tr>
+<td><a href="SUBVENCIONES-resumen.md">SUBVENCIONES-resumen.md</a></td>
+<td>Resumen ejecutivo del mapa de ayudas</td>
+</tr>
+<tr>
+<td><a href="TradeBase-one-pager.md">TradeBase-one-pager.md</a></td>
+<td>Síntesis corta para socios, asesoría o terceros</td>
+</tr>
+<tr>
+<td><a href="TradeBase-dossier-ejecutivo.md">TradeBase-dossier-ejecutivo.md</a></td>
+<td>Dossier de decisión y conversación externa</td>
+</tr>
+</tbody>
+</table>
+<h2 id="documentos-de-apoyo-operativo">Documentos de apoyo operativo</h2>
+<table>
+<thead>
+<tr>
+<th>Documento</th>
+<th>Rol</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="SUBVENCIONES-PLAYBOOK.md">SUBVENCIONES-PLAYBOOK.md</a></td>
+<td>Playbook profundo para leer cada ayuda, optimizar el encaje y preparar expedientes</td>
+</tr>
+<tr>
+<td><a href="PLANTILLAS-EXPEDIENTES-PRIORITARIOS.md">PLANTILLAS-EXPEDIENTES-PRIORITARIOS.md</a></td>
+<td>Plantillas operativas para convertir el foco 2026 en expedientes reales</td>
+</tr>
+<tr>
+<td><a href="subvenciones-biblia/12-certificacion-startup.md">subvenciones-biblia/12-certificacion-startup.md</a></td>
+<td>Tomo monográfico de la certificación startup</td>
+</tr>
+<tr>
+<td><a href="subvenciones-biblia/27-irpf-socios.md">subvenciones-biblia/27-irpf-socios.md</a></td>
+<td>Tomo monográfico de la deducción IRPF socios</td>
+</tr>
+</tbody>
+</table>
+<h2 id="documentos-paralelos-fuera-del-nucleo-principal">Documentos paralelos fuera del núcleo principal</h2>
+<table>
+<thead>
+<tr>
+<th>Documento</th>
+<th>Rol</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="CONSEJO-MULTI-AI.md">CONSEJO-MULTI-AI.md</a></td>
+<td>Nota de producto paralela sobre un sistema multiagente; no forma parte del núcleo financiero ni del mapa de ayudas</td>
+</tr>
+</tbody>
+</table>
+<h2 id="regla-de-uso">Regla de uso</h2>
+<ol>
+<li>Si cambia una cifra de coste, caja o tesorería, se edita primero <code>PRESUPUESTOS.md</code>.</li>
+<li>Si cambia una ayuda, una compatibilidad, una condición o una fuente oficial, se edita primero <code>SUBVENCIONES.md</code>.</li>
+<li>Si cambia una decisión de sede, socios, estructura financiera o prioridad anual, se edita primero <code>DECISIONES-FINANCIERAS.md</code>.</li>
+<li>Los derivados no son fuente de verdad y no deben contener información única.</li>
+</ol>
+<h2 id="criterio-editorial">Criterio editorial</h2>
+<ul>
+<li>Los maestros contienen criterio, detalle y justificación.</li>
+<li>Los derivados sintetizan y ordenan; no deben abrir debates nuevos por su cuenta.</li>
+<li>Cuando una afirmación ejecutiva dependa de una ayuda, una deducción o un precio externo, debe llevar enlace oficial de apoyo.</li>
+<li>El estilo correcto es: una idea por bloque, terminología estable, tablas cortas y lenguaje directo.</li>
+</ul>
+<h2 id="flujo-correcto-de-trabajo">Flujo correcto de trabajo</h2>
+<ol>
+<li>Editar primero el maestro correcto.</li>
+<li>Revisar si el cambio afecta a otro maestro y reconciliarlo si hace falta.</li>
+<li>Regenerar derivados Markdown si cambia la narrativa ejecutiva.</li>
+<li>Regenerar PDFs al final del ciclo.</li>
+</ol>
+<h2 id="versionado-y-regeneracion">Versionado y regeneración</h2>
+<h3 id="cuando-subir-version">Cuándo subir versión</h3>
+<ul>
+<li>Si cambia el contenido de un maestro de forma sustantiva, se sube versión en ese maestro.</li>
+<li>Si el cambio es solo tipográfico o de maquetación menor, se puede mantener la versión si no altera criterio, cifras ni decisiones.</li>
+<li>Los derivados no necesitan versión propia salvo que se quiera congelar una edición concreta para compartir.</li>
+</ul>
+<h3 id="cuando-regenerar-derivados-markdown">Cuándo regenerar derivados Markdown</h3>
+<ul>
+<li>Si cambia una decisión, una cifra visible en resumen o una narrativa ejecutiva.</li>
+<li>Si cambian fuentes oficiales que sostienen una conclusión externa.</li>
+<li>Si hay duda, se regeneran: son cortos y sale más barato que mantener incoherencias.</li>
+</ul>
+<h3 id="cuando-regenerar-pdfs">Cuándo regenerar PDFs</h3>
+<ul>
+<li>Siempre que cambie un maestro o un derivado que vaya a compartirse.</li>
+<li>Si el cambio es solo interno y nadie va a leer el PDF, se puede posponer.</li>
+<li>Antes de compartir fuera, la regla es simple: PDFs regenerados al final del ciclo.</li>
+</ul>
+<h2 id="script-de-generacion">Script de generación</h2>
+<p>Script actual:</p>
+<ul>
+<li><a href="C:/TradeBase/Tracciona/scripts/generate-tradebase-doc-pdfs.ps1">generate-tradebase-doc-pdfs.ps1</a></li>
+</ul>
+<p>Uso desde <code>C:\TradeBase\Tracciona</code>:</p>
+<pre><code class="language-powershell">C:\Program Files\PowerShell\7\pwsh.exe -File scripts\generate-tradebase-doc-pdfs.ps1
+</code></pre>
+<h2 id="pdfs-vigentes">PDFs vigentes</h2>
+<ul>
+<li><a href="PRESUPUESTOS.pdf">PRESUPUESTOS.pdf</a></li>
+<li><a href="SUBVENCIONES.pdf">SUBVENCIONES.pdf</a></li>
+<li><a href="DECISIONES-FINANCIERAS.pdf">DECISIONES-FINANCIERAS.pdf</a></li>
+<li><a href="SUBVENCIONES-PLAYBOOK.pdf">SUBVENCIONES-PLAYBOOK.pdf</a></li>
+<li><a href="SUBVENCIONES-BIBLIA.pdf">SUBVENCIONES-BIBLIA.pdf</a></li>
+<li><a href="subvenciones-biblia/12-certificacion-startup.pdf">subvenciones-biblia/12-certificacion-startup.pdf</a></li>
+<li><a href="subvenciones-biblia/27-irpf-socios.pdf">subvenciones-biblia/27-irpf-socios.pdf</a></li>
+<li><a href="PLANTILLAS-EXPEDIENTES-PRIORITARIOS.pdf">PLANTILLAS-EXPEDIENTES-PRIORITARIOS.pdf</a></li>
+<li><a href="PLANTILLAS-EXPEDIENTES-PRIORITARIOS.pdf">PLANTILLAS-EXPEDIENTES-PRIORITARIOS.pdf</a></li>
+<li><a href="README-documental.pdf">README-documental.pdf</a></li>
+<li><a href="PRESUPUESTOS-resumen.pdf">PRESUPUESTOS-resumen.pdf</a></li>
+<li><a href="SUBVENCIONES-resumen.pdf">SUBVENCIONES-resumen.pdf</a></li>
+<li><a href="TradeBase-one-pager.pdf">TradeBase-one-pager.pdf</a></li>
+<li><a href="TradeBase-dossier-ejecutivo.pdf">TradeBase-dossier-ejecutivo.pdf</a></li>
+<li><a href="CONSEJO-MULTI-AI.pdf">CONSEJO-MULTI-AI.pdf</a></li>
+</ul>
+<h2 id="estado-actual">Estado actual</h2>
+<ul>
+<li>Arquitectura principal cerrada en 3 maestros y 4 derivados regenerables.</li>
+<li><code>Proyecto CONSEJO.md</code> queda absorbido por <code>CONSEJO-MULTI-AI.md</code> como documento paralelo, fuera del núcleo financiero.</li>
+<li>Los derivados ejecutivos incorporan enlaces oficiales para justificar ayudas, fiscalidad y fuentes base de costes.</li>
+</ul>
+
+  </section>
+</main>
+</body>
+</html>

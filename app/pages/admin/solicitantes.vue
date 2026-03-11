@@ -69,7 +69,9 @@ function onUpdateConfirmText(value: string) {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">Cargando solicitantes...</div>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonTable :rows="5" :cols="5" />
+    </div>
 
     <!-- Table -->
     <AdminSolicitantesDemandsTable
@@ -110,8 +112,8 @@ function onUpdateConfirmText(value: string) {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
 }
 
 .section-header h2 {
@@ -121,30 +123,30 @@ function onUpdateConfirmText(value: string) {
 
 .total-badge {
   background: var(--bg-secondary);
-  color: #6b7280;
-  padding: 6px 12px;
-  border-radius: 16px;
+  color: var(--color-gray-500);
+  padding: 0.375rem var(--spacing-3);
+  border-radius: var(--border-radius-lg);
   font-size: 0.85rem;
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header {
     flex-direction: column;
-    gap: 12px;
+    gap: var(--spacing-3);
     align-items: stretch;
   }
 }

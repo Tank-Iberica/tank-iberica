@@ -80,8 +80,6 @@ export const STATUS_TABS: Array<{ value: AuctionStatus | 'all'; labelKey: string
   { value: 'cancelled', labelKey: 'admin.subastas.tabs.cancelled' },
 ]
 
-/** @deprecated Use STATUS_TABS instead */
-export const STATUS_FILTERS = STATUS_TABS
 
 export const STATUS_COLORS: Record<AuctionStatus, string> = {
   draft: '#6b7280',
@@ -356,7 +354,7 @@ export function useAdminAuctionList() {
       // Fetch highest bid
       const { data: topBid, error: bidErr } = await supabase
         .from('auction_bids')
-        .select('*')
+        .select('id, auction_id, user_id, amount_cents, is_winning, created_at')
         .eq('auction_id', auctionId)
         .order('amount_cents', { ascending: false })
         .limit(1)

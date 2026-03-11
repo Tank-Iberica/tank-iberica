@@ -175,7 +175,7 @@ export function useAdminDealerConfig() {
 
     const { data, error: fetchError } = await supabase
       .from('dealers')
-      .select('*')
+      .select('id, slug, logo_url, cover_image_url, company_name, theme, bio, phone, email, website, address, whatsapp, contact_config, social_links, certifications, catalog_sort, pinned_vehicles, auto_reply_message, notification_config')
       .eq('user_id', user.value.id)
       .single()
 

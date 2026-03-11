@@ -60,8 +60,8 @@ function formatListings(count: number): string {
       <h1>{{ t('dashboard.subscription.title') }}</h1>
     </header>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="4" />
     </div>
 
     <template v-else>
@@ -164,12 +164,12 @@ function formatListings(count: number): string {
 
 <style scoped>
 .subscription-page {
-  max-width: 1000px;
+  max-width: 62.5rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
 .page-header h1 {
@@ -182,12 +182,12 @@ function formatListings(count: number): string {
 .loading-state {
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: var(--spacing-10);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -204,15 +204,15 @@ function formatListings(count: number): string {
 .current-plan-card {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   color: white;
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
 }
 
 .plan-info {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
 }
 
 .plan-label {
@@ -228,14 +228,14 @@ function formatListings(count: number): string {
 .plan-details {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
   font-size: 0.9rem;
   opacity: 0.9;
 }
 
 .plan-expiry {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: var(--spacing-3);
+  padding-top: var(--spacing-3);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 0.85rem;
   opacity: 0.8;
@@ -243,7 +243,7 @@ function formatListings(count: number): string {
 
 /* Comparison */
 .comparison-section h2 {
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--spacing-4) 0;
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -252,18 +252,18 @@ function formatListings(count: number): string {
 .plans-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .plan-card {
   background: var(--bg-primary);
   border: 2px solid var(--color-gray-200);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .plan-card.current {
@@ -278,11 +278,11 @@ function formatListings(count: number): string {
 .popular-tag {
   position: absolute;
   top: -12px;
-  right: 16px;
+  right: 1rem;
   background: var(--color-info);
   color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -297,7 +297,7 @@ function formatListings(count: number): string {
 .plan-price {
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .price-amount {
@@ -317,13 +317,13 @@ function formatListings(count: number): string {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .plan-features li {
   font-size: 0.85rem;
   color: var(--text-secondary);
-  padding-left: 20px;
+  padding-left: var(--spacing-5);
   position: relative;
 }
 
@@ -336,10 +336,10 @@ function formatListings(count: number): string {
 }
 
 .current-badge {
-  padding: 10px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: 0.625rem;
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   text-align: center;
   font-weight: 600;
   color: var(--color-success);
@@ -350,10 +350,10 @@ function formatListings(count: number): string {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-5);
   border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   color: var(--text-secondary);
   font-weight: 600;
@@ -378,20 +378,20 @@ function formatListings(count: number): string {
 
 .cancel-section {
   text-align: center;
-  padding: 20px;
+  padding: var(--spacing-5);
   color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
 .cancel-section p {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-2) 0;
 }
 
 .btn-text {
   color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -400,20 +400,20 @@ function formatListings(count: number): string {
   text-decoration: underline;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .subscription-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
   .plans-grid {
     grid-template-columns: repeat(2, 1fr);
   }
   .plan-details {
     flex-direction: row;
-    gap: 24px;
+    gap: var(--spacing-6);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .plans-grid {
     grid-template-columns: repeat(4, 1fr);
   }

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 defineProps<{
   section: string
   status: string
@@ -26,9 +28,9 @@ function onStatusChange(value: string) {
 
 <template>
   <div class="section">
-    <div class="section-title">Publicacion</div>
-    <div class="field" style="margin-bottom: 12px">
-      <label>Seccion</label>
+    <div class="section-title">{{ t('admin.newsForm.publication') }}</div>
+    <div class="field" style="margin-bottom: var(--spacing-3)">
+      <label>{{ t('admin.newsForm.section') }}</label>
       <div class="estado-row">
         <label class="estado-opt" :class="{ active: section === 'noticias' }">
           <input
@@ -37,7 +39,7 @@ function onStatusChange(value: string) {
             value="noticias"
             @change="onSectionChange('noticias')"
           >
-          Noticias
+          {{ t('news.title') }}
         </label>
         <label class="estado-opt" :class="{ active: section === 'guia' }">
           <input
@@ -46,13 +48,13 @@ function onStatusChange(value: string) {
             value="guia"
             @change="onSectionChange('guia')"
           >
-          Guia
+          {{ t('guide.title') }}
         </label>
       </div>
     </div>
     <div class="row-2">
       <div class="field">
-        <label>Estado</label>
+        <label>{{ $t('common.status') }}</label>
         <div class="estado-row">
           <label class="estado-opt" :class="{ active: status === 'draft' }">
             <input
@@ -61,7 +63,7 @@ function onStatusChange(value: string) {
               value="draft"
               @change="onStatusChange('draft')"
             >
-            Borrador
+            {{ $t('common.draft') }}
           </label>
           <label class="estado-opt" :class="{ active: status === 'published' }">
             <input
@@ -70,7 +72,7 @@ function onStatusChange(value: string) {
               value="published"
               @change="onStatusChange('published')"
             >
-            Publicado
+            {{ $t('common.published') }}
           </label>
           <label class="estado-opt" :class="{ active: status === 'scheduled' }">
             <input
@@ -79,7 +81,7 @@ function onStatusChange(value: string) {
               value="scheduled"
               @change="onStatusChange('scheduled')"
             >
-            Programado
+            {{ $t('common.scheduled') }}
           </label>
           <label class="estado-opt" :class="{ active: status === 'archived' }">
             <input
@@ -88,26 +90,26 @@ function onStatusChange(value: string) {
               value="archived"
               @change="onStatusChange('archived')"
             >
-            Archivado
+            {{ t('common.archived') }}
           </label>
         </div>
       </div>
       <div class="field">
-        <label>Categoria</label>
+        <label>{{ t('common.category') }}</label>
         <select
           class="input"
           :value="category"
           @change="$emit('update:category', ($event.target as HTMLSelectElement).value)"
         >
-          <option value="prensa">Prensa</option>
-          <option value="eventos">Eventos</option>
-          <option value="destacados">Destacados</option>
-          <option value="general">General</option>
+          <option value="prensa">{{ t('news.prensa') }}</option>
+          <option value="eventos">{{ t('news.eventos') }}</option>
+          <option value="destacados">{{ t('news.destacados') }}</option>
+          <option value="general">{{ t('news.general') }}</option>
         </select>
       </div>
     </div>
     <div v-if="status === 'published'" class="field">
-      <label>Fecha de publicacion</label>
+      <label>{{ t('admin.newsForm.publishDate') }}</label>
       <input
         type="datetime-local"
         class="input"
@@ -116,14 +118,14 @@ function onStatusChange(value: string) {
       >
     </div>
     <div v-if="status === 'scheduled'" class="field">
-      <label>Fecha de publicacion programada</label>
+      <label>{{ t('admin.newsForm.scheduledPublishDate') }}</label>
       <input
         type="datetime-local"
         class="input"
         :value="scheduledAt"
         @input="$emit('update:scheduledAt', ($event.target as HTMLInputElement).value || null)"
       >
-      <span class="char-count">El articulo se publicara automaticamente en esta fecha</span>
+      <span class="char-count">{{ t('admin.newsForm.autoPublishHint') }}</span>
     </div>
   </div>
 </template>
@@ -131,24 +133,24 @@ function onStatusChange(value: string) {
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .section-title {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
+  color: var(--color-gray-700);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--color-gray-100);
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .field label {
@@ -158,9 +160,9 @@ function onStatusChange(value: string) {
 }
 
 .input {
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.875rem;
   width: 100%;
   box-sizing: border-box;
@@ -174,7 +176,7 @@ function onStatusChange(value: string) {
 .row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 1rem;
 }
 
 (@media ()max-width: 37.5em())) {
@@ -185,17 +187,17 @@ function onStatusChange(value: string) {
 
 .estado-row {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .estado-opt {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.15s;

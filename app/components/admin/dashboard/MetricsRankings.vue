@@ -114,7 +114,7 @@ defineProps<{
   font-weight: var(--font-weight-semibold);
   color: var(--text-auxiliary);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.01875rem;
   border-bottom: 1px solid var(--border-color);
   white-space: nowrap;
 }
@@ -124,7 +124,7 @@ defineProps<{
   border-bottom: 1px solid var(--border-color-light);
   color: var(--text-primary);
   vertical-align: middle;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .ranking-table tbody tr:last-child td {
@@ -132,14 +132,14 @@ defineProps<{
 }
 
 .col-rank {
-  width: 48px;
+  width: 3rem;
   text-align: center;
   font-weight: var(--font-weight-semibold);
   color: var(--text-auxiliary);
 }
 
 .col-name {
-  min-width: 120px;
+  min-width: 7.5rem;
 }
 
 .col-num {

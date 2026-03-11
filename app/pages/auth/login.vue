@@ -72,7 +72,14 @@
 
         <p v-if="errorMsg" class="error-msg" role="alert">{{ errorMsg }}</p>
 
-        <button type="submit" class="btn-primary" :disabled="isSubmitting">
+        <!-- Turnstile captcha for locked accounts -->
+        <div v-if="auth.showCaptcha.value" class="lockout-captcha">
+          <p class="lockout-hint">{{ $t('auth.accountLockedCaptcha') }}</p>
+          <TurnstileWidget action="unlock-account" @verified="onCaptchaVerified" @error="captchaError = true" />
+          <p v-if="captchaError" class="field-error">{{ $t('common.error') }}</p>
+        </div>
+
+        <button type="submit" class="btn-primary" :disabled="isSubmitting || auth.accountLocked.value">
           <span v-if="isSubmitting" class="spinner" />
           {{ isSubmitting ? $t('common.loading') : $t('auth.login') }}
         </button>
@@ -102,13 +109,22 @@ definePageMeta({
 const { t } = useI18n()
 const auth = useAuth()
 const errorMsg = ref('')
+const captchaError = ref(false)
+const captchaToken = ref<string | undefined>(undefined)
+
+function onCaptchaVerified(token: string) {
+  captchaToken.value = token
+  captchaError.value = false
+  errorMsg.value = ''
+}
 
 const { defineField, translatedErrors, isSubmitting, onSubmit } = useFormValidation(loginSchema, {
   initialValues: { email: '', password: '' },
   onSubmit: async (values) => {
     errorMsg.value = ''
     try {
-      await auth.login(values.email, values.password)
+      await auth.login(values.email, values.password, captchaToken.value)
+      captchaToken.value = undefined
       await auth.fetchProfile()
 
       if (auth.isAdmin.value) {
@@ -141,14 +157,14 @@ useHead({
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  min-height: calc(100vh - var(--header-height) - 80px);
+  min-height: calc(100vh - var(--header-height) - 5rem);
   padding: var(--spacing-6) var(--spacing-4);
 }
 
 .auth-card {
   background: var(--bg-primary);
   width: 100%;
-  max-width: 440px;
+  max-width: 27.5rem;
   border-radius: var(--border-radius-md);
   padding: var(--spacing-8) var(--spacing-6);
   box-shadow: var(--shadow-md);
@@ -184,7 +200,7 @@ useHead({
   color: var(--text-primary);
   background: var(--bg-primary);
   transition: all var(--transition-fast);
-  min-height: 48px;
+  min-height: 3rem;
 }
 
 .btn-google:hover {
@@ -205,7 +221,7 @@ useHead({
 .divider::after {
   content: '';
   flex: 1;
-  height: 1px;
+  height: 0.0625rem;
   background: var(--border-color-light);
 }
 
@@ -251,7 +267,7 @@ useHead({
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
   transition: background var(--transition-fast);
-  min-height: 48px;
+  min-height: 3rem;
 }
 
 .btn-primary:hover {
@@ -265,8 +281,8 @@ useHead({
 
 /* Spinner */
 .spinner {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: var(--color-white);
   border-radius: 50%;
@@ -277,6 +293,21 @@ useHead({
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Lockout captcha */
+.lockout-captcha {
+  margin-bottom: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: var(--bg-warning, var(--bg-secondary));
+  border-radius: var(--border-radius);
+  text-align: center;
+}
+
+.lockout-hint {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-3);
 }
 
 /* Links */
@@ -309,7 +340,7 @@ useHead({
 }
 
 /* Desktop */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .auth-page {
     align-items: center;
     padding: var(--spacing-12) var(--spacing-4);

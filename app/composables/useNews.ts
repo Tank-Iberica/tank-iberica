@@ -21,6 +21,7 @@ export interface News {
 }
 
 const PAGE_SIZE = 12
+const NEWS_COLUMNS = 'id, title_es, title_en, slug, category, image_url, description_es, description_en, content_es, content_en, hashtags, views, status, published_at, created_at, updated_at'
 
 export function useNews() {
   const supabase = useSupabaseClient()
@@ -36,7 +37,7 @@ export function useNews() {
   function buildQuery(category?: string) {
     let query = supabase
       .from('news')
-      .select('*', { count: 'exact' })
+      .select(NEWS_COLUMNS, { count: 'exact' })
       .eq('status', 'published')
       .order('published_at', { ascending: false })
 
@@ -100,7 +101,7 @@ export function useNews() {
   async function fetchBySlug(slug: string): Promise<News | null> {
     const { data, error: err } = await supabase
       .from('news')
-      .select('*')
+      .select(NEWS_COLUMNS)
       .eq('slug', slug)
       .eq('status', 'published')
       .single()

@@ -13,6 +13,7 @@ import {
   type RentalContractData,
   type SaleContractData,
 } from '~/utils/contractGenerator'
+import { useFormAutosave } from '~/composables/useFormAutosave'
 
 // ---------------------------------------------------------------------------
 // Types (module-scoped — only used by this feature)
@@ -78,6 +79,17 @@ function buildBaseContractTerms(
   }
 }
 
+function detectVehicleType(label: string): string {
+  const l = label.toLowerCase()
+  if (l.includes('cisterna')) return 'semirremolque cisterna'
+  if (l.includes('semirremolque') || l.includes('semi')) return 'semirremolque'
+  if (l.includes('trailer')) return 'trailer'
+  if (l.includes('tractora') || l.includes('cabeza')) return 'cabeza tractora'
+  if (l.includes('camion') || l.includes('camión')) return 'camion'
+  if (l.includes('furgon') || l.includes('furgón')) return 'furgon'
+  return 'vehiculo'
+}
+
 type DealerRaw = Record<string, unknown>
 
 function resolveCompanyName(raw: DealerRaw): string {
@@ -88,7 +100,7 @@ function resolveCompanyName(raw: DealerRaw): string {
     typeof raw.company_name === 'object' &&
     'es' in (raw.company_name as Record<string, string>)
   )
-    return (raw.company_name as Record<string, string>).es
+    return (raw.company_name as Record<string, string>).es ?? ''
   return ''
 }
 
@@ -189,6 +201,87 @@ export function useDashboardContrato() {
   const historyError = ref<string | null>(null)
 
   // -----------------------------------------------------------------------
+  // Autosave draft (client-entered data; lessor data reloads from DB)
+  // -----------------------------------------------------------------------
+
+  const _autosaveRef = ref<Record<string, unknown>>({}) as Ref<Record<string, unknown>>
+  const { hasDraft, restoreDraft, clearDraft, draftSavedAt } = useFormAutosave(
+    'contrato',
+    _autosaveRef,
+    {
+      beforeSave: (_ignored) => ({
+        contractType: contractType.value,
+        contractDate: contractDate.value,
+        contractLocation: contractLocation.value,
+        clientType: clientType.value,
+        clientName: clientName.value,
+        clientNIF: clientNIF.value,
+        clientCompany: clientCompany.value,
+        clientCIF: clientCIF.value,
+        clientRepresentative: clientRepresentative.value,
+        clientRepresentativeNIF: clientRepresentativeNIF.value,
+        clientAddress: clientAddress.value,
+        contractMonthlyRent: contractMonthlyRent.value,
+        contractDeposit: contractDeposit.value,
+        contractDuration: contractDuration.value,
+        contractDurationUnit: contractDurationUnit.value,
+        contractPaymentDays: contractPaymentDays.value,
+        contractHasPurchaseOption: contractHasPurchaseOption.value,
+        contractPurchasePrice: contractPurchasePrice.value,
+        contractPurchaseNotice: contractPurchaseNotice.value,
+        contractRentMonthsToDiscount: contractRentMonthsToDiscount.value,
+        contractSalePrice: contractSalePrice.value,
+        contractSalePaymentMethod: contractSalePaymentMethod.value,
+        contractSaleDeliveryConditions: contractSaleDeliveryConditions.value,
+        contractSaleWarranty: contractSaleWarranty.value,
+        contractJurisdiction: contractJurisdiction.value,
+      }),
+      onRestore: (data) => {
+        const d = data as Record<string, unknown>
+        if (d.contractType !== undefined) contractType.value = d.contractType as ContractType
+        if (d.contractDate !== undefined) contractDate.value = d.contractDate as string
+        if (d.contractLocation !== undefined) contractLocation.value = d.contractLocation as string
+        if (d.clientType !== undefined) clientType.value = d.clientType as ClientType
+        if (d.clientName !== undefined) clientName.value = d.clientName as string
+        if (d.clientNIF !== undefined) clientNIF.value = d.clientNIF as string
+        if (d.clientCompany !== undefined) clientCompany.value = d.clientCompany as string
+        if (d.clientCIF !== undefined) clientCIF.value = d.clientCIF as string
+        if (d.clientRepresentative !== undefined)
+          clientRepresentative.value = d.clientRepresentative as string
+        if (d.clientRepresentativeNIF !== undefined)
+          clientRepresentativeNIF.value = d.clientRepresentativeNIF as string
+        if (d.clientAddress !== undefined) clientAddress.value = d.clientAddress as string
+        if (d.contractMonthlyRent !== undefined)
+          contractMonthlyRent.value = d.contractMonthlyRent as number
+        if (d.contractDeposit !== undefined) contractDeposit.value = d.contractDeposit as number
+        if (d.contractDuration !== undefined) contractDuration.value = d.contractDuration as number
+        if (d.contractDurationUnit !== undefined)
+          contractDurationUnit.value = d.contractDurationUnit as 'meses' | 'anos'
+        if (d.contractPaymentDays !== undefined)
+          contractPaymentDays.value = d.contractPaymentDays as number
+        if (d.contractHasPurchaseOption !== undefined)
+          contractHasPurchaseOption.value = d.contractHasPurchaseOption as boolean
+        if (d.contractPurchasePrice !== undefined)
+          contractPurchasePrice.value = d.contractPurchasePrice as number
+        if (d.contractPurchaseNotice !== undefined)
+          contractPurchaseNotice.value = d.contractPurchaseNotice as number
+        if (d.contractRentMonthsToDiscount !== undefined)
+          contractRentMonthsToDiscount.value = d.contractRentMonthsToDiscount as number
+        if (d.contractSalePrice !== undefined)
+          contractSalePrice.value = d.contractSalePrice as number
+        if (d.contractSalePaymentMethod !== undefined)
+          contractSalePaymentMethod.value = d.contractSalePaymentMethod as string
+        if (d.contractSaleDeliveryConditions !== undefined)
+          contractSaleDeliveryConditions.value = d.contractSaleDeliveryConditions as string
+        if (d.contractSaleWarranty !== undefined)
+          contractSaleWarranty.value = d.contractSaleWarranty as string
+        if (d.contractJurisdiction !== undefined)
+          contractJurisdiction.value = d.contractJurisdiction as string
+      },
+    },
+  )
+
+  // -----------------------------------------------------------------------
   // Tab navigation
   // -----------------------------------------------------------------------
 
@@ -225,27 +318,12 @@ export function useDashboardContrato() {
       }
 
       if (data) {
-        vehicleOptions.value = data.map((v) => {
-          const labelLower = `${v.brand || ''} ${v.model || ''}`.toLowerCase()
-          let detectedType = 'vehiculo'
-          if (labelLower.includes('cisterna')) detectedType = 'semirremolque cisterna'
-          else if (labelLower.includes('semirremolque') || labelLower.includes('semi'))
-            detectedType = 'semirremolque'
-          else if (labelLower.includes('trailer')) detectedType = 'trailer'
-          else if (labelLower.includes('tractora') || labelLower.includes('cabeza'))
-            detectedType = 'cabeza tractora'
-          else if (labelLower.includes('camion') || labelLower.includes('camión'))
-            detectedType = 'camion'
-          else if (labelLower.includes('furgon') || labelLower.includes('furgón'))
-            detectedType = 'furgon'
-
-          return {
-            id: v.id,
-            label: `${v.brand || ''} ${v.model || ''} (${v.plate || ''}) - ${v.year || ''}`.trim(),
-            plate: v.plate || '',
-            vehicleType: detectedType,
-          }
-        })
+        vehicleOptions.value = data.map((v) => ({
+          id: v.id,
+          label: `${v.brand || ''} ${v.model || ''} (${v.plate || ''}) - ${v.year || ''}`.trim(),
+          plate: v.plate || '',
+          vehicleType: detectVehicleType(`${v.brand || ''} ${v.model || ''}`),
+        }))
       }
     } finally {
       loadingVehicles.value = false
@@ -427,6 +505,7 @@ export function useDashboardContrato() {
       if (err) throw new Error(err.message)
 
       saveSuccess.value = true
+      clearDraft()
       setTimeout(() => {
         saveSuccess.value = false
       }, 4000)
@@ -454,7 +533,7 @@ export function useDashboardContrato() {
     try {
       const { data, error: err } = (await supabase
         .from('dealer_contracts')
-        .select('*')
+        .select('id, dealer_id, contract_type, contract_date, vehicle_id, vehicle_plate, vehicle_type, client_name, client_doc_number, client_address, terms, pdf_url, status, created_at, updated_at')
         .eq('dealer_id', dealer.id)
         .order('created_at', { ascending: false })) as never as {
         data: ContractRow[] | null
@@ -522,6 +601,7 @@ export function useDashboardContrato() {
     contractVehicleResidualValue.value = 13000
     saveError.value = null
     saveSuccess.value = false
+    clearDraft()
   }
 
   // -----------------------------------------------------------------------
@@ -622,5 +702,11 @@ export function useDashboardContrato() {
     generateContract,
     resetForm,
     init,
+
+    // Autosave draft
+    hasDraft,
+    restoreDraft,
+    clearDraft,
+    draftSavedAt,
   }
 }

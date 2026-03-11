@@ -43,8 +43,8 @@ const emit = defineEmits<{
   flex-direction: column;
   gap: var(--spacing-3);
   padding: var(--spacing-3) var(--spacing-4);
-  background: #eff6ff;
-  border-bottom: 1px solid #bfdbfe;
+  background: var(--color-blue-50);
+  border-bottom: 1px solid var(--color-info-border);
 }
 
 .data-share-banner__content {
@@ -56,12 +56,12 @@ const emit = defineEmits<{
 .data-share-banner__icon {
   flex-shrink: 0;
   color: var(--color-info);
-  margin-top: 1px;
+  margin-top: 0.0625rem;
 }
 
 .data-share-banner__text {
   font-size: var(--font-size-sm);
-  color: #1e40af;
+  color: var(--badge-info-bg);
   line-height: var(--line-height-normal);
 }
 
@@ -76,11 +76,11 @@ const emit = defineEmits<{
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .data-share-banner__btn:hover {
-  background: #2563eb;
+  background: var(--color-focus);
 }
 
 @media (min-width: 48em) {

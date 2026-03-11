@@ -103,15 +103,15 @@ const scoreClass = computed(() => {
 
 .score-bar {
   flex: 1;
-  height: 8px;
+  height: 0.5rem;
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 
 .score-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   transition: width 0.6s ease-out;
 }
 
@@ -119,13 +119,13 @@ const scoreClass = computed(() => {
   background: var(--color-success);
 }
 .score-good .score-fill {
-  background: #34d399;
+  background: var(--color-success-light);
 }
 .score-moderate .score-fill {
   background: var(--color-warning);
 }
 .score-warning .score-fill {
-  background: #f97316;
+  background: var(--color-warning-dark);
 }
 .score-danger .score-fill {
   background: var(--color-error);
@@ -141,13 +141,13 @@ const scoreClass = computed(() => {
   color: var(--color-success);
 }
 .score-good .score-value {
-  color: #34d399;
+  color: var(--color-success-light);
 }
 .score-moderate .score-value {
   color: var(--color-warning);
 }
 .score-warning .score-value {
-  color: #f97316;
+  color: var(--color-warning-dark);
 }
 .score-danger .score-value {
   color: var(--color-error);
@@ -162,13 +162,13 @@ const scoreClass = computed(() => {
   color: var(--color-success);
 }
 .score-good .score-label {
-  color: #34d399;
+  color: var(--color-success-light);
 }
 .score-moderate .score-label {
   color: var(--color-warning);
 }
 .score-warning .score-label {
-  color: #f97316;
+  color: var(--color-warning-dark);
 }
 .score-danger .score-label {
   color: var(--color-error);
@@ -189,18 +189,18 @@ const scoreClass = computed(() => {
 
 .anomaly-tag {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 0.125rem 0.5rem;
   font-size: var(--font-size-xs);
   border-radius: var(--border-radius-full);
 }
 
 .anomaly-decrease {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg);
   color: var(--color-error);
 }
 
 .anomaly-spike {
-  background: #fffbeb;
+  background: var(--color-warning-bg);
   color: var(--color-warning);
 }
 
@@ -218,7 +218,7 @@ const scoreClass = computed(() => {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   width: 100%;
   transition: all var(--transition-fast);
 }

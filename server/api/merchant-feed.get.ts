@@ -1,5 +1,6 @@
+import { defineEventHandler, setResponseHeader } from 'h3'
 import { createClient } from '@supabase/supabase-js'
-import { createHash } from 'node:crypto'
+import { makeEtag, checkEtag } from '../utils/etag'
 
 /**
  * Google Merchant Center feed.
@@ -50,7 +51,8 @@ export default defineEventHandler(async (event) => {
 
   const items = (vehicles || [])
     .map((v) => {
-      const title = escapeXml(`${v.brand} ${v.model}${v.year ? ` (${v.year})` : ''}`)
+      const yearPart = v.year ? ` (${v.year})` : ''
+      const title = escapeXml(`${v.brand} ${v.model}${yearPart}`)
       const description = escapeXml(
         v.description_es
           ? v.description_es.substring(0, 5000)
@@ -89,18 +91,9 @@ ${items}
   </channel>
 </rss>`
 
-  // Add Cache-Control and ETag headers
-  const etag = createHash('md5').update(xml).digest('hex')
-
   setResponseHeader(event, 'Cache-Control', 'public, max-age=43200, s-maxage=43200') // 12h
-  setResponseHeader(event, 'ETag', `"${etag}"`)
-
-  // Check If-None-Match for conditional requests
-  const ifNoneMatch = getRequestHeader(event, 'if-none-match')
-  if (ifNoneMatch === `"${etag}"`) {
-    setResponseStatus(event, 304)
-    return ''
-  }
+  const etag = makeEtag(xml)
+  if (checkEtag(event, etag)) return ''
 
   setResponseHeader(event, 'content-type', 'application/xml; charset=utf-8')
   return xml

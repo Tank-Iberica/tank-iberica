@@ -1,0 +1,5 @@
+# k6 result files (can be large)
+*-load.json
+
+# Keep summary snapshots
+!*-summary.json

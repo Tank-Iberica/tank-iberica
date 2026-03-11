@@ -11,6 +11,8 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 /*  Type definitions                                                   */
 /* ------------------------------------------------------------------ */
 
+type MarketTrend = 'rising' | 'falling' | 'stable'
+
 export interface MarketRow {
   id: string
   vertical: string
@@ -65,12 +67,160 @@ interface TrendInfo {
   latestAvg: number
   previousAvg: number
   changePercent: number
-  direction: 'rising' | 'falling' | 'stable'
+  direction: MarketTrend
 }
 
 export interface ReportOptions {
   isPublic: boolean
   vertical?: string
+  locale?: string
+}
+
+/* ------------------------------------------------------------------ */
+/*  Translations                                                        */
+/* ------------------------------------------------------------------ */
+
+interface ReportTranslations {
+  coverTitle: string
+  coverSubtitle: string
+  executiveSummary: string
+  activeListings: string
+  avgPriceGlobal: string
+  vehiclesSold: string
+  topCategory: string
+  priceChangeSummary: (rising: number, falling: number) => string
+  priceTrend: string
+  insufficientData: string
+  priceBySubcategory: string
+  subcategory: string
+  avgPrice: string
+  medianPrice: string
+  priceRange: string
+  listings: string
+  sold: string
+  avgDaysToSell: string
+  topBrands: string
+  brand: string
+  geographicBreakdown: string
+  province: string
+  priceTrends: string
+  trendIntro: string
+  prevPrice: string
+  currPrice: string
+  variation: string
+  trend: string
+  trendRising: string
+  trendFalling: string
+  trendStable: string
+  noDataTrends: string
+  noDataBrands: string
+  noDataGeo: string
+  noDataSummary: string
+  noDataPrice: string
+  footerDisclaimer: (siteName: string) => string
+  generatedOn: (date: string, siteUrl: string) => string
+  insufficientDataTrends: string
+}
+
+const TRANSLATIONS: Record<string, ReportTranslations> = {
+  es: {
+    coverTitle: 'Informe de Mercado',
+    coverSubtitle: 'Maquinaria y Vehículos Industriales',
+    executiveSummary: 'Resumen Ejecutivo',
+    activeListings: 'Anuncios activos',
+    avgPriceGlobal: 'Precio medio global',
+    vehiclesSold: 'Vendidos',
+    topCategory: 'Categoría principal',
+    priceChangeSummary: (rising: number, falling: number) => {
+      if (rising === 0 && falling === 0) return 'Sin datos suficientes para calcular tendencias.'
+      if (rising > falling) return `Tendencia alcista: ${rising} subcategorías con precios al alza frente a ${falling} a la baja.`
+      if (falling > rising) return `Tendencia bajista: ${falling} subcategorías con precios a la baja frente a ${rising} al alza.`
+      return `Mercado estable: ${rising} subcategorías al alza y ${falling} a la baja.`
+    },
+    priceTrend: 'Tendencia de precios',
+    insufficientData: 'Datos insuficientes para generar el resumen ejecutivo.',
+    priceBySubcategory: 'Precios por Subcategoría',
+    subcategory: 'Subcategoría',
+    avgPrice: 'Precio Medio',
+    medianPrice: 'Precio Mediana',
+    priceRange: 'Rango (Min - Max)',
+    listings: 'Anuncios',
+    sold: 'Vendidos',
+    avgDaysToSell: 'Días medio venta',
+    topBrands: 'Top 10 Marcas por Volumen',
+    brand: 'Marca',
+    geographicBreakdown: 'Desglose Geográfico',
+    province: 'Provincia',
+    priceTrends: 'Tendencias de Precios',
+    trendIntro: 'Comparativa entre el último mes disponible y el trimestre anterior.',
+    prevPrice: 'Precio Anterior',
+    currPrice: 'Precio Actual',
+    variation: 'Variación',
+    trend: 'Tendencia',
+    trendRising: 'Al alza',
+    trendFalling: 'A la baja',
+    trendStable: 'Estable',
+    noDataTrends: 'Datos insuficientes para calcular tendencias. Se requieren al menos 2 meses de datos.',
+    noDataBrands: 'Datos insuficientes para generar el ranking de marcas.',
+    noDataGeo: 'Datos insuficientes para generar el desglose geográfico.',
+    noDataSummary: 'Datos insuficientes para generar el resumen ejecutivo.',
+    noDataPrice: 'Datos insuficientes para generar la tabla de precios.',
+    footerDisclaimer: (siteName) =>
+      `Los datos presentados en este informe han sido anonimizados y agregados a partir de la actividad registrada en ${siteName}. Este informe tiene carácter informativo y no constituye asesoramiento financiero ni comercial. Los precios y tendencias reflejados corresponden al mercado de segunda mano.`,
+    generatedOn: (date, siteUrl) => `Informe generado el ${date} — ${siteUrl}`,
+    insufficientDataTrends: 'Datos insuficientes para calcular tendencias.',
+  },
+  en: {
+    coverTitle: 'Market Report',
+    coverSubtitle: 'Industrial Machinery & Vehicles',
+    executiveSummary: 'Executive Summary',
+    activeListings: 'Active listings',
+    avgPriceGlobal: 'Overall average price',
+    vehiclesSold: 'Units sold',
+    topCategory: 'Top category',
+    priceChangeSummary: (rising: number, falling: number) => {
+      if (rising === 0 && falling === 0) return 'Insufficient data to calculate trends.'
+      if (rising > falling) return `Upward trend: ${rising} subcategories rising vs ${falling} falling.`
+      if (falling > rising) return `Downward trend: ${falling} subcategories falling vs ${rising} rising.`
+      return `Stable market: ${rising} subcategories rising and ${falling} falling.`
+    },
+    priceTrend: 'Price trend',
+    insufficientData: 'Insufficient data to generate the executive summary.',
+    priceBySubcategory: 'Prices by Subcategory',
+    subcategory: 'Subcategory',
+    avgPrice: 'Avg. Price',
+    medianPrice: 'Median Price',
+    priceRange: 'Range (Min - Max)',
+    listings: 'Listings',
+    sold: 'Sold',
+    avgDaysToSell: 'Avg. days to sell',
+    topBrands: 'Top 10 Brands by Volume',
+    brand: 'Brand',
+    geographicBreakdown: 'Geographic Breakdown',
+    province: 'Province',
+    priceTrends: 'Price Trends',
+    trendIntro: 'Comparison between the latest available month and the previous quarter.',
+    prevPrice: 'Previous Price',
+    currPrice: 'Current Price',
+    variation: 'Change',
+    trend: 'Trend',
+    trendRising: 'Rising',
+    trendFalling: 'Falling',
+    trendStable: 'Stable',
+    noDataTrends: 'Insufficient data to calculate trends. At least 2 months of data required.',
+    noDataBrands: 'Insufficient data to generate the brand ranking.',
+    noDataGeo: 'Insufficient data to generate the geographic breakdown.',
+    noDataSummary: 'Insufficient data to generate the executive summary.',
+    noDataPrice: 'Insufficient data to generate the price table.',
+    footerDisclaimer: (siteName) =>
+      `The data presented in this report has been anonymised and aggregated from activity recorded on ${siteName}. This report is for informational purposes only and does not constitute financial or commercial advice. Prices and trends reflect the used machinery and vehicle market.`,
+    generatedOn: (date, siteUrl) => `Report generated on ${date} — ${siteUrl}`,
+    insufficientDataTrends: 'Insufficient data to calculate trends.',
+  },
+}
+
+function getTranslations(locale?: string): ReportTranslations {
+  return TRANSLATIONS[locale ?? 'es'] ?? TRANSLATIONS.es!
 }
 
 /* ------------------------------------------------------------------ */
@@ -228,7 +378,7 @@ function groupPricesBySubcategory(rows: MarketRow[]): Map<string, number[]> {
   return grouped
 }
 
-function classifyTrendDirection(changePercent: number): 'rising' | 'falling' | 'stable' {
+function classifyTrendDirection(changePercent: number): MarketTrend {
   if (changePercent > 2) return 'rising'
   if (changePercent < -2) return 'falling'
   return 'stable'
@@ -289,20 +439,16 @@ interface ExecutiveSummary {
   priceChangeSummary: string
 }
 
-function buildPriceChangeSummary(trends: TrendInfo[]): string {
-  if (trends.length === 0) return 'Sin datos suficientes para calcular tendencias.'
-  const risingCount = trends.filter((t) => t.direction === 'rising').length
-  const fallingCount = trends.filter((t) => t.direction === 'falling').length
-  if (risingCount > fallingCount)
-    return `Tendencia alcista: ${risingCount} subcategorias con precios al alza frente a ${fallingCount} a la baja.`
-  if (fallingCount > risingCount)
-    return `Tendencia bajista: ${fallingCount} subcategorias con precios a la baja frente a ${risingCount} al alza.`
-  return `Mercado estable: ${risingCount} subcategorias al alza y ${fallingCount} a la baja.`
+function buildPriceChangeSummary(trends: TrendInfo[], t: ReportTranslations): string {
+  const risingCount = trends.filter((tr) => tr.direction === 'rising').length
+  const fallingCount = trends.filter((tr) => tr.direction === 'falling').length
+  return t.priceChangeSummary(risingCount, fallingCount)
 }
 
 function computeExecutiveSummary(
   subcategoryStats: ReturnType<typeof computeSubcategoryStats>,
   trends: ReturnType<typeof computeTrends>,
+  t: ReportTranslations,
 ): ExecutiveSummary {
   const totalListings = subcategoryStats.reduce((s, r) => s + r.totalListings, 0)
   const totalSold = subcategoryStats.reduce((s, r) => s + r.totalSold, 0)
@@ -319,7 +465,7 @@ function computeExecutiveSummary(
     overallAvgPrice,
     topCategory,
     topCategoryListings,
-    priceChangeSummary: buildPriceChangeSummary(trends),
+    priceChangeSummary: buildPriceChangeSummary(trends, t),
   }
 }
 
@@ -331,7 +477,7 @@ function rowClass(idx: number): string {
   return idx % 2 === 0 ? 'row-even' : 'row-odd'
 }
 
-function buildSubcatTableRow(s: SubcategoryStats, idx: number, isPublic: boolean): string {
+function buildSubcatTableRow(s: SubcategoryStats, idx: number, isPublic: boolean, t: ReportTranslations): string {
   const privateCols = isPublic
     ? ''
     : `<td class="num">${formatEUR(s.medianPrice)}</td>
@@ -349,10 +495,10 @@ function buildSubcatTableRow(s: SubcategoryStats, idx: number, isPublic: boolean
     </tr>`
 }
 
-function buildPriceTableHeaders(isPublic: boolean): string {
-  const privateHeaders = isPublic ? '' : '<th>Precio Mediana</th><th>Rango (Min - Max)</th>'
-  const privateSuffix = isPublic ? '' : '<th>Vendidos</th><th>Dias medio venta</th>'
-  return `<tr><th>Subcategoria</th><th>Precio Medio</th>${privateHeaders}<th>Anuncios</th>${privateSuffix}</tr>`
+function buildPriceTableHeaders(isPublic: boolean, t: ReportTranslations): string {
+  const privateHeaders = isPublic ? '' : `<th>${t.medianPrice}</th><th>${t.priceRange}</th>`
+  const privateSuffix = isPublic ? '' : `<th>${t.sold}</th><th>${t.avgDaysToSell}</th>`
+  return `<tr><th>${t.subcategory}</th><th>${t.avgPrice}</th>${privateHeaders}<th>${t.listings}</th>${privateSuffix}</tr>`
 }
 
 function buildBrandRow(b: BrandStats, idx: number): string {
@@ -371,32 +517,32 @@ function buildProvinceRow(p: ProvinceStats, idx: number): string {
     </tr>`
 }
 
-function buildSummarySection(summary: ExecutiveSummary, hasData: boolean): string {
+function buildSummarySection(summary: ExecutiveSummary, hasData: boolean, t: ReportTranslations): string {
   if (!hasData) {
     return `<div class="page">
-      <h2 class="section-title">Resumen Ejecutivo</h2>
-      <p class="no-data">Datos insuficientes para generar el resumen ejecutivo.</p>
+      <h2 class="section-title">${t.executiveSummary}</h2>
+      <p class="no-data">${t.noDataSummary}</p>
     </div>`
   }
   return `<div class="page">
-      <h2 class="section-title">Resumen Ejecutivo</h2>
+      <h2 class="section-title">${t.executiveSummary}</h2>
       <div class="summary-grid">
         <div class="summary-card">
           <div class="summary-value">${formatNumber(summary.totalListings)}</div>
-          <div class="summary-label">Anuncios activos</div>
+          <div class="summary-label">${t.activeListings}</div>
         </div>
         <div class="summary-card">
           <div class="summary-value">${formatEUR(summary.overallAvgPrice)}</div>
-          <div class="summary-label">Precio medio global</div>
+          <div class="summary-label">${t.avgPriceGlobal}</div>
         </div>
         <div class="summary-card">
           <div class="summary-value">${formatNumber(summary.totalSold)}</div>
-          <div class="summary-label">Vehiculos vendidos</div>
+          <div class="summary-label">${t.vehiclesSold}</div>
         </div>
       </div>
       <div class="summary-text">
-        <p><strong>Categoria principal:</strong> ${escapeHtml(summary.topCategory)} (${formatNumber(summary.topCategoryListings)} anuncios)</p>
-        <p><strong>Tendencia de precios:</strong> ${escapeHtml(summary.priceChangeSummary)}</p>
+        <p><strong>${t.topCategory}:</strong> ${escapeHtml(summary.topCategory)} (${formatNumber(summary.topCategoryListings)} ${t.listings.toLowerCase()})</p>
+        <p><strong>${t.priceTrend}:</strong> ${escapeHtml(summary.priceChangeSummary)}</p>
       </div>
     </div>`
 }
@@ -405,18 +551,19 @@ function buildPriceTableSection(
   subcategoryStats: SubcategoryStats[],
   isPublic: boolean,
   hasData: boolean,
+  t: ReportTranslations,
 ): string {
   if (!hasData) {
     return `<div class="page">
-      <h2 class="section-title">Precios por Subcategoria</h2>
-      <p class="no-data">Datos insuficientes para generar la tabla de precios.</p>
+      <h2 class="section-title">${t.priceBySubcategory}</h2>
+      <p class="no-data">${t.noDataPrice}</p>
     </div>`
   }
-  const rows = subcategoryStats.map((s, idx) => buildSubcatTableRow(s, idx, isPublic)).join('')
+  const rows = subcategoryStats.map((s, idx) => buildSubcatTableRow(s, idx, isPublic, t)).join('')
   return `<div class="page">
-      <h2 class="section-title">Precios por Subcategoria</h2>
+      <h2 class="section-title">${t.priceBySubcategory}</h2>
       <table>
-        <thead>${buildPriceTableHeaders(isPublic)}</thead>
+        <thead>${buildPriceTableHeaders(isPublic, t)}</thead>
         <tbody>${rows}</tbody>
       </table>
     </div>`
@@ -426,45 +573,42 @@ function buildPriceTableSection(
 /*  HTML generation                                                    */
 /* ------------------------------------------------------------------ */
 
-const TREND_LABELS: Record<string, string> = {
-  rising: 'Al alza',
-  falling: 'A la baja',
-  stable: 'Estable',
-}
 const TREND_COLORS: Record<string, string> = {
   rising: '#16a34a',
   falling: '#dc2626',
   stable: '#6b7280',
 }
 
-function trendDirectionLabel(dir: 'rising' | 'falling' | 'stable'): string {
-  return TREND_LABELS[dir]!
+function trendDirectionLabel(dir: MarketTrend, t: ReportTranslations): string {
+  if (dir === 'rising') return t.trendRising
+  if (dir === 'falling') return t.trendFalling
+  return t.trendStable
 }
 
-function trendDirectionColor(dir: 'rising' | 'falling' | 'stable'): string {
+function trendDirectionColor(dir: MarketTrend): string {
   return TREND_COLORS[dir]!
 }
 
-function buildTrendsSection(trends: TrendInfo[]): string {
+function buildTrendsSection(trends: TrendInfo[], t: ReportTranslations): string {
   if (trends.length === 0) {
     return `<div class="page">
-      <h2 class="section-title">Tendencias de Precios</h2>
-      <p class="no-data">Datos insuficientes para calcular tendencias. Se requieren al menos 2 meses de datos.</p>
+      <h2 class="section-title">${t.priceTrends}</h2>
+      <p class="no-data">${t.noDataTrends}</p>
     </div>`
   }
 
   const trendRows = trends
     .map(
-      (t, idx) => `
+      (tr, idx) => `
     <tr class="${idx % 2 === 0 ? 'row-even' : 'row-odd'}">
-      <td>${escapeHtml(t.subcategory)}</td>
-      <td class="num">${formatEUR(t.previousAvg)}</td>
-      <td class="num">${formatEUR(t.latestAvg)}</td>
-      <td class="num" style="color: ${trendDirectionColor(t.direction)}; font-weight: 600;">
-        ${t.changePercent >= 0 ? '+' : ''}${formatNumber(t.changePercent)}%
+      <td>${escapeHtml(tr.subcategory)}</td>
+      <td class="num">${formatEUR(tr.previousAvg)}</td>
+      <td class="num">${formatEUR(tr.latestAvg)}</td>
+      <td class="num" style="color: ${trendDirectionColor(tr.direction)}; font-weight: 600;">
+        ${tr.changePercent >= 0 ? '+' : ''}${formatNumber(tr.changePercent)}%
       </td>
-      <td style="color: ${trendDirectionColor(t.direction)}; font-weight: 600;">
-        ${trendDirectionLabel(t.direction)}
+      <td style="color: ${trendDirectionColor(tr.direction)}; font-weight: 600;">
+        ${trendDirectionLabel(tr.direction, t)}
       </td>
     </tr>
   `,
@@ -472,13 +616,18 @@ function buildTrendsSection(trends: TrendInfo[]): string {
     .join('')
 
   return `<div class="page">
-      <h2 class="section-title">Tendencias de Precios</h2>
-      <p class="section-intro">Comparativa entre el ultimo mes disponible y el trimestre anterior.</p>
+      <h2 class="section-title">${t.priceTrends}</h2>
+      <p class="section-intro">${t.trendIntro}</p>
       <table>
-        <thead><tr><th>Subcategoria</th><th>Precio Anterior</th><th>Precio Actual</th><th>Variacion</th><th>Tendencia</th></tr></thead>
+        <thead><tr><th>${t.subcategory}</th><th>${t.prevPrice}</th><th>${t.currPrice}</th><th>${t.variation}</th><th>${t.trend}</th></tr></thead>
         <tbody>${trendRows}</tbody>
       </table>
     </div>`
+}
+
+function buildTable(headers: string[], rows: string): string {
+  const headerCells = headers.map((h) => '<th>' + h + '</th>').join('')
+  return `<table><thead><tr>${headerCells}</tr></thead><tbody>${rows}</tbody></table>`
 }
 
 function buildTableSection(
@@ -488,33 +637,29 @@ function buildTableSection(
   hasData: boolean,
   noDataMsg: string,
 ): string {
+  const content = hasData ? buildTable(headers, rows) : '<p class="no-data">' + noDataMsg + '</p>'
   return `<div class="page">
       <h2 class="section-title">${title}</h2>
-      ${hasData ? `<table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>` : `<p class="no-data">${noDataMsg}</p>`}
+      ${content}
     </div>`
 }
 
-function buildCoverSection(quarterLabel: string): string {
+function buildCoverSection(quarterLabel: string, siteName: string, siteUrl: string, t: ReportTranslations): string {
   return `<div class="page cover-page">
       <div class="cover-content">
-        <div class="cover-logo">TRACCIONA</div>
-        <h1 class="cover-title">Informe de Mercado</h1>
-        <h2 class="cover-subtitle">Vehiculos Industriales en Espana</h2>
+        <div class="cover-logo">${escapeHtml(siteName.toUpperCase())}</div>
+        <h1 class="cover-title">${t.coverTitle}</h1>
+        <h2 class="cover-subtitle">${t.coverSubtitle}</h2>
         <div class="cover-quarter">${escapeHtml(quarterLabel)}</div>
-        <div class="cover-url">tracciona.com</div>
+        <div class="cover-url">${escapeHtml(siteUrl)}</div>
       </div>
     </div>`
 }
 
-function buildFooterSection(dateGenerated: string): string {
+function buildFooterSection(dateGenerated: string, siteName: string, siteUrl: string, t: ReportTranslations): string {
   return `<div class="footer">
-      <p class="disclaimer">
-        Los datos presentados en este informe han sido anonimizados y agregados a partir de la
-        actividad registrada en Tracciona.com. Este informe tiene caracter informativo y no
-        constituye asesoramiento financiero ni comercial. Los precios y tendencias reflejados
-        corresponden al mercado de vehiculos industriales de segunda mano en Espana.
-      </p>
-      <p class="generated-date">Informe generado el ${escapeHtml(dateGenerated)} &mdash; tracciona.com</p>
+      <p class="disclaimer">${t.footerDisclaimer(siteName)}</p>
+      <p class="generated-date">${t.generatedOn(escapeHtml(dateGenerated), escapeHtml(siteUrl))}</p>
     </div>`
 }
 
@@ -524,6 +669,9 @@ function assembleReportSections(
     hasData: boolean
     quarterLabel: string
     dateGenerated: string
+    siteName: string
+    siteUrl: string
+    t: ReportTranslations
   },
   subcategoryStats: SubcategoryStats[],
   brandStats: BrandStats[],
@@ -531,29 +679,30 @@ function assembleReportSections(
   trends: TrendInfo[],
   summary: ExecutiveSummary,
 ): string[] {
-  const cover = buildCoverSection(opts.quarterLabel)
-  const summaryHtml = buildSummarySection(summary, opts.hasData)
-  const priceTable = buildPriceTableSection(subcategoryStats, opts.isPublic, opts.hasData)
-  const footer = buildFooterSection(opts.dateGenerated)
+  const { t } = opts
+  const cover = buildCoverSection(opts.quarterLabel, opts.siteName, opts.siteUrl, t)
+  const summaryHtml = buildSummarySection(summary, opts.hasData, t)
+  const priceTable = buildPriceTableSection(subcategoryStats, opts.isPublic, opts.hasData, t)
+  const footer = buildFooterSection(opts.dateGenerated, opts.siteName, opts.siteUrl, t)
 
   if (opts.isPublic) return [cover, summaryHtml, priceTable, footer]
 
   const brandRows = brandStats.map((b, idx) => buildBrandRow(b, idx)).join('')
   const brandSection = buildTableSection(
-    'Top 10 Marcas por Volumen',
-    ['Marca', 'Anuncios', 'Precio Medio'],
+    t.topBrands,
+    [t.brand, t.listings, t.avgPrice],
     brandRows,
     opts.hasData,
-    'Datos insuficientes para generar el ranking de marcas.',
+    t.noDataBrands,
   )
 
   const provinceRows = provinceStats.map((p, idx) => buildProvinceRow(p, idx)).join('')
   const geoSection = buildTableSection(
-    'Desglose Geografico',
-    ['Provincia', 'Anuncios', 'Precio Medio'],
+    t.geographicBreakdown,
+    [t.province, t.listings, t.avgPrice],
     provinceRows,
     opts.hasData,
-    'Datos insuficientes para generar el desglose geografico.',
+    t.noDataGeo,
   )
 
   return [
@@ -562,7 +711,7 @@ function assembleReportSections(
     priceTable,
     brandSection,
     geoSection,
-    buildTrendsSection(trends),
+    buildTrendsSection(trends, t),
     footer,
   ]
 }
@@ -571,12 +720,19 @@ function generateReportHTML(
   marketRows: MarketRow[] | null,
   historyRows: PriceHistoryRow[] | null,
   isPublic: boolean,
+  locale?: string,
+  siteName?: string,
+  siteUrl?: string,
 ): string {
   const rows = marketRows ?? []
   const _history = historyRows ?? []
   const now = new Date()
   const quarterLabel = getQuarterLabel(now)
-  const dateGenerated = now.toLocaleDateString('es-ES', {
+  const resolvedLocale = locale ?? 'es'
+  const resolvedSiteName = siteName ?? 'Tracciona'
+  const resolvedSiteUrl = siteUrl ?? 'tracciona.com'
+  const t = getTranslations(resolvedLocale)
+  const dateGenerated = now.toLocaleDateString(resolvedLocale === 'en' ? 'en-GB' : 'es-ES', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
@@ -587,10 +743,10 @@ function generateReportHTML(
   const brandStats = hasData ? computeBrandStats(rows) : []
   const provinceStats = hasData ? computeProvinceStats(rows) : []
   const trends = hasData ? computeTrends(rows) : []
-  const summary = computeExecutiveSummary(subcategoryStats, trends)
+  const summary = computeExecutiveSummary(subcategoryStats, trends, t)
 
   const fullReportSections = assembleReportSections(
-    { isPublic, hasData, quarterLabel, dateGenerated },
+    { isPublic, hasData, quarterLabel, dateGenerated, siteName: resolvedSiteName, siteUrl: resolvedSiteUrl, t },
     subcategoryStats,
     brandStats,
     provinceStats,
@@ -599,11 +755,11 @@ function generateReportHTML(
   )
 
   return `<!DOCTYPE html>
-<html lang="es">
+<html lang="${escapeHtml(resolvedLocale)}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Informe de Mercado ${escapeHtml(quarterLabel)} — Tracciona</title>
+  <title>${t.coverTitle} ${escapeHtml(quarterLabel)} — ${escapeHtml(resolvedSiteName)}</title>
   <style>
     /* ---- Base ---- */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1020,7 +1176,7 @@ export async function generateMarketReport(
   supabase: SupabaseClient,
   options: ReportOptions,
 ): Promise<{ html: string }> {
-  const vertical = options.vertical || 'tracciona'
+  const vertical = options.vertical || (process.env.NUXT_PUBLIC_VERTICAL || 'tracciona')
 
   // Fetch market data (last 3 months)
   const threeMonthsAgo = new Date()
@@ -1054,10 +1210,16 @@ export async function generateMarketReport(
     throw new Error(`Error al obtener historial de precios: ${historyError.message}`)
   }
 
+  const siteName = process.env.NUXT_PUBLIC_SITE_NAME || vertical.charAt(0).toUpperCase() + vertical.slice(1)
+  const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || `${vertical}.com`
+
   const html = generateReportHTML(
     (marketRows ?? []) as unknown as MarketRow[],
     (historyRows ?? []) as unknown as PriceHistoryRow[],
     options.isPublic,
+    options.locale,
+    siteName,
+    siteUrl,
   )
 
   return { html }

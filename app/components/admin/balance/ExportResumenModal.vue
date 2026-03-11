@@ -3,37 +3,36 @@
     <div v-if="show" class="modal-bg" @click.self="$emit('close')">
       <div class="modal">
         <div class="modal-head">
-          <span>&#x1F4CA; Exportar Resumen</span>
+          <span>&#x1F4CA; {{ $t('admin.balance.exportSummaryTitle') }}</span>
           <button @click="$emit('close')">&times;</button>
         </div>
         <div class="modal-body">
           <div class="field">
-            <label>Formato</label>
+            <label>{{ $t('common.format') }}</label>
             <div class="radio-group">
-              <label><input v-model="localFormat" type="radio" value="excel" > Excel (CSV)</label>
-              <label><input v-model="localFormat" type="radio" value="pdf" > PDF (Imprimir)</label>
+              <label><input v-model="localFormat" type="radio" value="excel" > {{ $t('admin.balance.excelCsv') }}</label>
+              <label><input v-model="localFormat" type="radio" value="pdf" > {{ $t('admin.balance.pdfPrint') }}</label>
             </div>
           </div>
 
           <div class="field">
-            <label>Incluir</label>
+            <label>{{ $t('admin.balance.include') }}</label>
             <div class="checkbox-group">
               <label
-                ><input v-model="localOptions.totales" type="checkbox" > Totales
-                (Ingresos/Gastos/Neto)</label
+                ><input v-model="localOptions.totales" type="checkbox" > {{ $t('admin.balance.totals') }}</label
               >
               <label
-                ><input v-model="localOptions.desglose" type="checkbox" > Desglose por Razon</label
+                ><input v-model="localOptions.desglose" type="checkbox" > {{ $t('admin.balance.breakdownByReason') }}</label
               >
               <label
-                ><input v-model="localOptions.mensual" type="checkbox" > Desglose Mensual</label
+                ><input v-model="localOptions.mensual" type="checkbox" > {{ $t('admin.balance.monthlyBreakdown') }}</label
               >
             </div>
           </div>
         </div>
         <div class="modal-foot">
-          <button class="btn" @click="$emit('close')">Cancelar</button>
-          <button class="btn btn-primary" @click="$emit('export')">Exportar</button>
+          <button class="btn" @click="$emit('close')">{{ $t('common.cancel') }}</button>
+          <button class="btn btn-primary" @click="$emit('export')">{{ $t('common.export') }}</button>
         </div>
       </div>
     </div>

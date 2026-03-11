@@ -35,7 +35,7 @@
 }
 
 .skeleton-line {
-  height: 16px;
+  height: 1rem;
   background: var(--bg-secondary);
   border-radius: var(--border-radius-sm);
   animation: skeleton-pulse 1.5s ease-in-out infinite;

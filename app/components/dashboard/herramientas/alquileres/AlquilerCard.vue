@@ -99,13 +99,13 @@ const r = computed(() => props.record)
 <style scoped>
 .rental-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border-left: 4px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  padding: 1rem;
+  box-shadow: var(--shadow-card);
+  border-left: 0.25rem solid var(--color-gray-200);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .rental-card.status-active {
@@ -121,7 +121,7 @@ const r = computed(() => props.record)
 }
 
 .rental-card.ending-soon {
-  background: #fffbeb;
+  background: var(--color-amber-50);
 }
 
 .card-top {
@@ -138,16 +138,16 @@ const r = computed(() => props.record)
 /* Status badges */
 .status-badge {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   white-space: nowrap;
 }
 
 .status-badge.status-active {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 
 .status-badge.status-finished {
@@ -156,12 +156,12 @@ const r = computed(() => props.record)
 }
 
 .status-badge.status-overdue {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .card-vehicle {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
 }
 
 .year-tag {
@@ -173,30 +173,30 @@ const r = computed(() => props.record)
 .card-client {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .client-name {
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .client-contact {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--text-disabled);
 }
 
 .card-details {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-top: 4px;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 .detail {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .detail-label {
@@ -208,7 +208,7 @@ const r = computed(() => props.record)
 
 .detail-value {
   font-size: 0.85rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .detail-value.rent {
@@ -222,32 +222,32 @@ const r = computed(() => props.record)
 
 .ending-badge {
   display: inline-block;
-  padding: 1px 6px;
-  background: var(--color-warning-bg, #fef3c7);
+  padding: 0.0625rem 0.375rem;
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.7rem;
   font-weight: 700;
-  margin-left: 4px;
+  margin-left: 0.25rem;
 }
 
 .card-notes {
-  font-size: 0.8rem;
-  color: #6b7280;
-  padding: 8px 10px;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  padding: 0.5rem 0.625rem;
   background: var(--bg-secondary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-style: italic;
 }
 
 .btn-icon {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 1rem;
-  border-radius: 6px;
+  font-size: var(--font-size-base);
+  border-radius: var(--border-radius);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -258,6 +258,6 @@ const r = computed(() => props.record)
 }
 
 .btn-icon.delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 </style>

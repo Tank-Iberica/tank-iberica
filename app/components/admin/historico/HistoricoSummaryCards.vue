@@ -35,15 +35,15 @@ defineProps<{
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: var(--spacing-4);
+  margin-bottom: 1.25rem;
 }
 .summary-card {
-  padding: 16px 20px;
-  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  border-radius: var(--border-radius-md);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 .summary-card .label {
   font-size: 0.8rem;
@@ -55,24 +55,24 @@ defineProps<{
   font-weight: 700;
 }
 .summary-card.ventas {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: var(--color-indigo-100);
+  color: var(--color-indigo-800);
 }
 .summary-card.ingresos {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 .summary-card.beneficio {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 .summary-card.beneficio.negative {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 .summary-card.percent {
-  background: #f3e8ff;
-  color: #7c3aed;
+  background: var(--color-purple-100);
+  color: var(--color-purple-600);
 }
 
 @media (max-width: 48em) {

@@ -1,10 +1,16 @@
 <template>
-  <div class="auctions-error">
-    <p>{{ message }}</p>
-    <button class="btn-retry" @click="$emit('retry')">
-      {{ $t('auction.retry') }}
-    </button>
-  </div>
+  <UiErrorState
+    type="network"
+    :title="$t('auction.errorTitle')"
+    :description="message"
+    :hint="$t('common.errorHintNetwork')"
+  >
+    <template #actions>
+      <button class="btn-retry" @click="$emit('retry')">
+        {{ $t('auction.retry') }}
+      </button>
+    </template>
+  </UiErrorState>
 </template>
 
 <script setup lang="ts">
@@ -18,17 +24,6 @@ defineEmits<{
 </script>
 
 <style scoped>
-.auctions-error {
-  text-align: center;
-  padding: var(--spacing-12) 0;
-  color: var(--color-error);
-}
-
-.auctions-error p {
-  font-size: var(--font-size-sm);
-  margin-bottom: var(--spacing-4);
-}
-
 .btn-retry {
   padding: var(--spacing-3) var(--spacing-6);
   background: var(--color-primary);
@@ -36,7 +31,7 @@ defineEmits<{
   border-radius: var(--border-radius);
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-sm);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background var(--transition-fast);
 }
 

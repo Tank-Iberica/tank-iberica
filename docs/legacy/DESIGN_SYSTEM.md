@@ -1,6 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
-
-> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README.md`](../../README.md) y [`INSTRUCCIONES-MAESTRAS.md`](INSTRUCCIONES-MAESTRAS.md).
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # TANK IBERICA - PARAMETROS DEL PROYECTO Y DESIGN SYSTEM
 
@@ -365,3 +363,5 @@ Todas las imagenes de vehiculos deben usar `loading="lazy"`
 
 _Documento actualizado: 29 Enero 2025_
 _Version: 1.2_
+
+

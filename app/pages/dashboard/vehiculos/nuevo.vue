@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { useDashboardNuevoVehiculo } from '~/composables/dashboard/useDashboardNuevoVehiculo'
+import {
+  getDescriptionTemplate,
+  applyPlaceholders,
+} from '~/utils/descriptionTemplates'
 
 definePageMeta({
   layout: 'default',
@@ -26,6 +30,22 @@ const {
 
 const showWizard = ref(true)
 const draftVehicleId = ref<string | undefined>(undefined)
+const photos = ref<{ id: string; url: string; publicId: string; width: number; height: number }[]>([])
+
+/** Apply a description template for the selected category */
+function applyTemplate() {
+  const selectedCat = categories.value.find((c) => c.id === form.value.category_id)
+  const slug = selectedCat?.slug || ''
+  const tpl = getDescriptionTemplate(slug)
+  const values = {
+    marca: form.value.brand || undefined,
+    modelo: form.value.model || undefined,
+    año: form.value.year || undefined,
+    km: form.value.km || undefined,
+  }
+  form.value.description_es = applyPlaceholders(tpl.es, values)
+  form.value.description_en = applyPlaceholders(tpl.en, values)
+}
 
 onMounted(loadFormData)
 </script>
@@ -55,7 +75,7 @@ onMounted(loadFormData)
         </NuxtLink>
       </div>
 
-      <form v-else class="vehicle-form" @submit.prevent="submitVehicle">
+      <form v-else class="vehicle-form" @submit.prevent="submitVehicle(photos)">
         <div v-if="error" class="alert-error">{{ error }}</div>
         <div v-if="success" class="alert-success">{{ t('dashboard.vehicles.published') }}</div>
 
@@ -70,6 +90,7 @@ onMounted(loadFormData)
                 v-model="form.brand"
                 type="text"
                 required
+                autocomplete="off"
                 :placeholder="t('dashboard.vehicles.brandPlaceholder')"
               >
             </div>
@@ -80,6 +101,7 @@ onMounted(loadFormData)
                 v-model="form.model"
                 type="text"
                 required
+                autocomplete="off"
                 :placeholder="t('dashboard.vehicles.modelPlaceholder')"
               >
             </div>
@@ -91,15 +113,16 @@ onMounted(loadFormData)
                 type="number"
                 min="1950"
                 :max="new Date().getFullYear() + 1"
+                autocomplete="off"
               >
             </div>
             <div class="form-group">
               <label for="km">{{ t('dashboard.vehicles.km') }}</label>
-              <input id="km" v-model.number="form.km" type="number" min="0" >
+              <input id="km" v-model.number="form.km" type="number" min="0" autocomplete="off" >
             </div>
             <div class="form-group">
               <label for="price">{{ t('dashboard.vehicles.price') }}</label>
-              <input id="price" v-model.number="form.price" type="number" min="0" step="100" >
+              <input id="price" v-model.number="form.price" type="number" min="0" step="100" autocomplete="off" >
             </div>
             <div class="form-group">
               <label for="location">{{ t('dashboard.vehicles.location') }}</label>
@@ -107,6 +130,7 @@ onMounted(loadFormData)
                 id="location"
                 v-model="form.location"
                 type="text"
+                autocomplete="off"
                 :placeholder="t('dashboard.vehicles.locationPlaceholder')"
               >
             </div>
@@ -144,18 +168,27 @@ onMounted(loadFormData)
           <div class="form-group">
             <div class="label-row">
               <label for="description_es">{{ t('dashboard.vehicles.descriptionEs') }}</label>
-              <button
-                type="button"
-                class="btn-ai"
-                :disabled="generatingDesc"
-                @click="generateDescription"
-              >
-                {{
-                  generatingDesc
-                    ? t('dashboard.vehicles.generating')
-                    : t('dashboard.vehicles.generateAI')
-                }}
-              </button>
+              <div class="label-actions">
+                <button
+                  type="button"
+                  class="btn-template"
+                  @click="applyTemplate"
+                >
+                  {{ t('dashboard.vehicles.useTemplate') }}
+                </button>
+                <button
+                  type="button"
+                  class="btn-ai"
+                  :disabled="generatingDesc"
+                  @click="generateDescription"
+                >
+                  {{
+                    generatingDesc
+                      ? t('dashboard.vehicles.generating')
+                      : t('dashboard.vehicles.generateAI')
+                  }}
+                </button>
+              </div>
             </div>
             <textarea
               id="description_es"
@@ -175,15 +208,10 @@ onMounted(loadFormData)
           </div>
         </section>
 
-        <!-- Photos Placeholder -->
+        <!-- Photos -->
         <section class="form-section">
           <h2>{{ t('dashboard.vehicles.sectionPhotos') }}</h2>
-          <div class="photo-placeholder">
-            <p>{{ t('dashboard.vehicles.photosComingSoon') }}</p>
-            <span class="photo-limit">{{
-              t('dashboard.vehicles.maxPhotos', { max: maxPhotos })
-            }}</span>
-          </div>
+          <DashboardPhotoUpload v-model="photos" :max-photos="maxPhotos" />
         </section>
 
         <!-- Submit -->
@@ -202,18 +230,18 @@ onMounted(loadFormData)
 
 <style scoped>
 .publish-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .back-link {
@@ -221,7 +249,7 @@ onMounted(loadFormData)
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -235,26 +263,26 @@ onMounted(loadFormData)
 
 .limit-banner {
   text-align: center;
-  padding: 40px 20px;
-  background: var(--color-warning-bg, #fef3c7);
-  border: 1px solid #fde68a;
-  border-radius: 12px;
+  padding: var(--spacing-10) var(--spacing-5);
+  background: var(--color-warning-bg, var(--color-warning-bg));
+  border: 1px solid var(--color-warning);
+  border-radius: var(--border-radius-md);
   color: var(--color-warning-text);
 }
 
 .limit-banner p {
-  margin: 0 0 12px 0;
+  margin: 0 0 var(--spacing-3) 0;
 }
 
 .btn-upgrade {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-6);
   background: var(--color-warning);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   text-decoration: none;
 }
@@ -262,34 +290,34 @@ onMounted(loadFormData)
 .vehicle-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
 .alert-success {
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
 }
 
 .form-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .form-section h2 {
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--spacing-4) 0;
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -298,13 +326,13 @@ onMounted(loadFormData)
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .form-group label {
@@ -323,12 +351,12 @@ onMounted(loadFormData)
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus,
@@ -336,21 +364,44 @@ onMounted(loadFormData)
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 6.25rem;
+}
+
+.label-actions {
+  display: flex;
+  gap: 0.375rem;
+  align-items: center;
+}
+
+.btn-template {
+  min-height: 2.25rem;
+  padding: 0.375rem 0.75rem;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.btn-template:hover {
+  background: var(--bg-tertiary);
 }
 
 .btn-ai {
-  min-height: 36px;
-  padding: 6px 14px;
-  background: linear-gradient(135deg, #8b5cf6, #6366f1);
-  color: white;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.875rem;
+  background: var(--color-purple-text);
+  color: var(--color-white);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -361,26 +412,9 @@ onMounted(loadFormData)
   cursor: not-allowed;
 }
 
-.photo-placeholder {
-  padding: 32px 20px;
-  border: 2px dashed var(--color-gray-200);
-  border-radius: 8px;
-  text-align: center;
-  color: var(--text-auxiliary);
-}
-
-.photo-placeholder p {
-  margin: 0 0 8px 0;
-}
-
-.photo-limit {
-  font-size: 0.8rem;
-  color: var(--text-disabled);
-}
-
 .form-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
   justify-content: flex-end;
 }
 
@@ -388,12 +422,12 @@ onMounted(loadFormData)
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-6);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
 }
@@ -411,26 +445,26 @@ onMounted(loadFormData)
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-6);
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .publish-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

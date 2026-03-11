@@ -31,10 +31,14 @@ onUnmounted(() => cleanup())
 <template>
   <div class="reservations-page">
     <div class="reservations-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('reservations.pageTitle') }]" />
+      <PerfilProfileNavPills />
       <h1 class="page-title">{{ $t('reservations.pageTitle') }}</h1>
       <p class="page-subtitle">{{ $t('reservations.pageSubtitle') }}</p>
 
-      <div v-if="loading" class="loading-state">{{ $t('common.loading') }}</div>
+      <div v-if="loading" class="loading-state" aria-busy="true">
+        <UiSkeletonCard v-for="n in 3" :key="n" :lines="3" />
+      </div>
 
       <div v-if="error" class="error-banner" role="alert">
         {{ error }}
@@ -92,7 +96,7 @@ onUnmounted(() => cleanup())
 }
 
 .reservations-container {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
   padding: 0 var(--spacing-4);
 }
@@ -123,8 +127,8 @@ onUnmounted(() => cleanup())
   justify-content: space-between;
   gap: var(--spacing-3);
   padding: var(--spacing-3) var(--spacing-4);
-  background: var(--color-error-bg, #fef2f2);
-  border: 1px solid #fca5a5;
+  background: var(--color-error-bg, var(--color-error-bg));
+  border: 1px solid var(--color-error-soft);
   border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: var(--font-size-sm);
@@ -133,8 +137,8 @@ onUnmounted(() => cleanup())
 
 .error-dismiss {
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -184,7 +188,7 @@ onUnmounted(() => cleanup())
   cursor: pointer;
   text-decoration: none;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -197,7 +201,7 @@ onUnmounted(() => cleanup())
   gap: var(--spacing-4);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .reservations-container {
     padding: 0 var(--spacing-8);
   }

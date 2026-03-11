@@ -103,22 +103,22 @@ const localForm = computed(() => props.form)
 <style scoped>
 .manual-form-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px;
-  border: 2px solid #dbeafe;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-5);
+  border: 2px solid var(--color-info-bg);
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .form-field label {
@@ -128,39 +128,39 @@ const localForm = computed(() => props.form)
 }
 
 .form-field input {
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
   background: var(--bg-primary);
 }
 
 .form-field input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-actions {
   display: flex;
-  gap: 8px;
-  margin-top: 16px;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
   justify-content: flex-end;
 }
 
 .btn-cancel {
-  padding: 10px 18px;
+  padding: 0.625rem 1.125rem;
   background: var(--bg-primary);
   color: var(--text-auxiliary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 @media (hover: hover) {
@@ -171,16 +171,16 @@ const localForm = computed(() => props.form)
 }
 
 .btn-save {
-  padding: 10px 18px;
+  padding: 0.625rem 1.125rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 @media (hover: hover) {

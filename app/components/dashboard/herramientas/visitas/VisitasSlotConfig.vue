@@ -158,7 +158,7 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
 }
 
 .field-input {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--border-color-light);
   border-radius: var(--border-radius);
@@ -172,7 +172,7 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
 .field-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Slots list */
@@ -202,7 +202,7 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
 .slot-day {
   font-weight: var(--font-weight-semibold);
   color: var(--color-primary);
-  min-width: 80px;
+  min-width: 5rem;
 }
 
 .slot-time {
@@ -233,7 +233,7 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-5);
   background: var(--color-primary);
   color: var(--color-white);
@@ -257,8 +257,8 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
 }
 
 .btn-icon {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -275,7 +275,7 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
 }
 
 .btn-icon.delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -285,11 +285,11 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
 }
 
 .spinner-sm {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 1rem;
+  height: 1rem;
+  border: 0.125rem solid rgba(255, 255, 255, 0.3);
   border-top-color: var(--color-white);
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   animation: spin 0.8s linear infinite;
   display: inline-block;
 }
@@ -311,15 +311,12 @@ function onFieldChange(field: keyof SlotFormData, event: Event) {
 @media (min-width: 48em) {
   .slot-form-fields {
     grid-template-columns: repeat(4, 1fr);
+    flex: 1;
   }
 
   .slot-form {
     flex-direction: row;
     align-items: flex-end;
-  }
-
-  .slot-form-fields {
-    flex: 1;
   }
 
   .section-card {

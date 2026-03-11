@@ -100,6 +100,24 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
     deleteConfirmId.value = null
   }
 }
+
+const cloning = ref<string | null>(null)
+
+async function cloneVehicle(vehicleId: string): Promise<void> {
+  cloning.value = vehicleId
+  error.value = null
+  try {
+    await $fetch('/api/dealer/clone-vehicle', {
+      method: 'POST',
+      body: { vehicleId },
+    })
+    await loadVehicles()
+  } catch (err: unknown) {
+    error.value = err instanceof Error ? err.message : t('dashboard.vehicles.cloneError')
+  } finally {
+    cloning.value = null
+  }
+}
 </script>
 
 <template>
@@ -127,9 +145,8 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
 
     <div v-if="error" class="alert-error">{{ error }}</div>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('common.loading') }}...</span>
+    <div v-if="loading" class="loading-skeleton" aria-busy="true">
+      <UiSkeletonCard v-for="n in 6" :key="n" :image="true" :lines="2" />
     </div>
 
     <div v-else-if="vehicles.length === 0" class="empty-state">
@@ -149,6 +166,7 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
         @open-sold-modal="openSoldModal"
         @set-delete-confirm="deleteConfirmId = $event"
         @delete-vehicle="deleteVehicle"
+        @clone="cloneVehicle"
       />
     </div>
 
@@ -165,18 +183,18 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
 
 <style scoped>
 .vehicles-page {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .page-header h1 {
@@ -189,10 +207,10 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
 .header-actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .header-actions {
     flex-direction: row;
   }
@@ -208,12 +226,12 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-5);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -227,73 +245,67 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-5);
   background: var(--color-warning);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   text-decoration: none;
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
-.loading-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
-  color: var(--text-auxiliary);
+.loading-skeleton {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-4);
 }
 
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--color-gray-200);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+@media (min-width: 30em) {
+  .loading-skeleton {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+@media (min-width: 64em) {
+  .loading-skeleton {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .empty-state p {
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--spacing-4) 0;
 }
 
 .vehicles-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .vehicles-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .vehicles-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 
   .page-header {
@@ -303,7 +315,7 @@ async function deleteVehicle(vehicleId: string): Promise<void> {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .vehicles-grid {
     grid-template-columns: repeat(3, 1fr);
   }

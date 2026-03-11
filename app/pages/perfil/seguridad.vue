@@ -5,7 +5,7 @@ definePageMeta({
 })
 
 const { t } = useI18n()
-const { updatePassword, loading: authLoading } = useAuth()
+const { updatePassword, logoutAll, loading: authLoading } = useAuth()
 const { deleteAccount, exportData, loading: profileLoading, error: profileError } = useUserProfile()
 
 /** Password change form */
@@ -104,6 +104,8 @@ useHead({
 <template>
   <div class="security-page">
     <div class="security-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('profile.security.title') }]" />
+      <PerfilProfileNavPills />
       <h1 class="page-title">
         {{ $t('profile.security.title') }}
       </h1>
@@ -162,6 +164,15 @@ useHead({
         </form>
       </section>
 
+      <!-- Logout all devices -->
+      <section class="section-card">
+        <h2 class="section-title">{{ $t('profile.security.logoutAllTitle') }}</h2>
+        <p class="section-desc">{{ $t('profile.security.logoutAllDesc') }}</p>
+        <button class="btn-outline" :disabled="authLoading" @click="logoutAll">
+          {{ authLoading ? $t('common.loading') : $t('profile.security.logoutAllBtn') }}
+        </button>
+      </section>
+
       <!-- Export data (GDPR) -->
       <section class="section-card">
         <h2 class="section-title">{{ $t('profile.security.exportDataTitle') }}</h2>
@@ -214,7 +225,7 @@ useHead({
 }
 
 .security-container {
-  max-width: 600px;
+  max-width: 37.5rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -292,18 +303,18 @@ useHead({
   background: var(--bg-primary);
   color: var(--text-primary);
   transition: border-color var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 .form-error {
   padding: 0.75rem 1rem;
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
@@ -312,7 +323,7 @@ useHead({
 
 .form-success {
   padding: 0.75rem 1rem;
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
@@ -331,7 +342,7 @@ useHead({
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -356,7 +367,7 @@ useHead({
   transition:
     background var(--transition-fast),
     color var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-outline:hover:not(:disabled) {
@@ -380,7 +391,7 @@ useHead({
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-danger:hover:not(:disabled) {
@@ -401,7 +412,7 @@ useHead({
   background: transparent;
   border: none;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-ghost:hover {
@@ -428,7 +439,7 @@ useHead({
 }
 
 /* ---- Tablet ---- */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .security-container {
     padding: 0 2rem;
   }

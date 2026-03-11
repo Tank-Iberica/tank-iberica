@@ -99,7 +99,7 @@ const { t } = useI18n()
   border-radius: var(--border-radius-md);
   text-align: center;
   transition: all var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .type-card:hover {

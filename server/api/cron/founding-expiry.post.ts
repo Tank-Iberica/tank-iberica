@@ -10,10 +10,12 @@
  *
  * Protected by x-cron-secret header or body.secret field.
  */
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
+import { safeError } from '../../utils/safeError'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
 import { fetchWithRetry } from '../../utils/fetchWithRetry'
+import { logger } from '../../utils/logger'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -89,9 +91,7 @@ async function pauseExcessVehicles(
   )
 
   if (!vehiclesRes.ok) {
-    console.error(
-      `[founding-expiry] Failed to fetch vehicles for dealer ${dealerId}: ${vehiclesRes.status}`,
-    )
+    logger.error(`[founding-expiry] Failed to fetch vehicles for dealer ${dealerId}: ${vehiclesRes.status}`)
     return 0
   }
 
@@ -107,7 +107,7 @@ async function pauseExcessVehicles(
     })
     if (pauseRes.ok) paused++
     else
-      console.error(`[founding-expiry] Failed to pause vehicle ${vehicle.id}: ${pauseRes.status}`)
+      logger.error(`[founding-expiry] Failed to pause vehicle ${vehicle.id}: ${pauseRes.status}`)
   }
   return paused
 }
@@ -129,9 +129,7 @@ async function downgradeSubscription(
   )
 
   if (!subUpdateRes.ok) {
-    console.error(
-      `[founding-expiry] Failed to downgrade subscription ${subscriptionId}: ${subUpdateRes.status}`,
-    )
+    logger.error(`[founding-expiry] Failed to downgrade subscription ${subscriptionId}: ${subUpdateRes.status}`)
     return false
   }
 
@@ -146,9 +144,7 @@ async function downgradeSubscription(
   })
 
   if (!dealerUpdateRes.ok) {
-    console.error(
-      `[founding-expiry] Failed to update dealer ${dealerId} after expiry: ${dealerUpdateRes.status}`,
-    )
+    logger.error(`[founding-expiry] Failed to update dealer ${dealerId} after expiry: ${dealerUpdateRes.status}`)
   }
 
   return true
@@ -196,7 +192,7 @@ async function sendReminder30d(ctx: ReminderContext, daysUntilExpiry: number): P
     },
   }).catch((err: unknown) => {
     const msg = err instanceof Error ? err.message : String(err)
-    console.error(`[founding-expiry] 30d email failed for dealer ${ctx.dealerId}: ${msg}`)
+    logger.error(`[founding-expiry] 30d email failed for dealer ${ctx.dealerId}: ${msg}`)
   })
   return true
 }
@@ -228,7 +224,7 @@ async function sendReminder7d(ctx: ReminderContext, daysUntilExpiry: number): Pr
     },
   }).catch((err: unknown) => {
     const msg = err instanceof Error ? err.message : String(err)
-    console.error(`[founding-expiry] 7d email failed for dealer ${ctx.dealerId}: ${msg}`)
+    logger.error(`[founding-expiry] 7d email failed for dealer ${ctx.dealerId}: ${msg}`)
   })
   return true
 }
@@ -254,7 +250,7 @@ async function handleFoundingExpiry(ctx: ReminderContext, subscriptionId: string
     },
   }).catch((err: unknown) => {
     const msg = err instanceof Error ? err.message : String(err)
-    console.error(`[founding-expiry] Expiry email failed for dealer ${ctx.dealerId}: ${msg}`)
+    logger.error(`[founding-expiry] Expiry email failed for dealer ${ctx.dealerId}: ${msg}`)
   })
 
   return await pauseExcessVehicles(ctx.supabaseUrl, ctx.headers, ctx.dealerId, ctx.now)
@@ -330,7 +326,7 @@ export default defineEventHandler(async (event) => {
   const _internalSecret = config.cronSecret || process.env.CRON_SECRET
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Service not configured' })
+    throw safeError(500, 'Service not configured')
   }
 
   const headers = {
@@ -358,10 +354,7 @@ export default defineEventHandler(async (event) => {
   )
 
   if (!foundingRes.ok) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to fetch founding subscriptions: ${foundingRes.status}`,
-    })
+    throw safeError(500, `Failed to fetch founding subscriptions: ${foundingRes.status}`)
   }
 
   const foundingSubscriptions = (await foundingRes.json()) as SubscriptionRow[]

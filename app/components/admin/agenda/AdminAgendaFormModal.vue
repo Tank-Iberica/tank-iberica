@@ -24,15 +24,15 @@ function onSelectChange(event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="visible" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal modal-md">
         <div class="modal-header">
-          <h3>{{ isEditing ? 'Editar contacto' : 'Nuevo contacto' }}</h3>
+          <h3>{{ isEditing ? $t('admin.agenda.editContact') : $t('admin.agenda.newContact') }}</h3>
           <button class="modal-close" @click="emit('close')">&#xD7;</button>
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <label>Tipo *</label>
+            <label>{{ $t('admin.agenda.typeLabel') }}</label>
             <select :value="formData.contact_type" @change="onSelectChange">
               <option v-for="ct in CONTACT_TYPES" :key="ct.value" :value="ct.value">
                 {{ ct.label }}
@@ -40,28 +40,28 @@ function onSelectChange(event: Event) {
             </select>
           </div>
           <div class="form-group">
-            <label>Empresa</label>
+            <label>{{ $t('admin.agenda.company') }}</label>
             <input
               type="text"
               autocomplete="organization"
               :value="formData.company"
-              placeholder="Nombre de la empresa"
+              :placeholder="$t('admin.agenda.companyPlaceholder')"
               @input="onInput('company', $event)"
             >
           </div>
           <div class="form-group">
-            <label>Nombre de contacto *</label>
+            <label>{{ $t('admin.agenda.contactName') }}</label>
             <input
               type="text"
               autocomplete="name"
               :value="formData.contact_name"
-              placeholder="Nombre y apellidos"
+              :placeholder="$t('admin.agenda.contactNamePlaceholder')"
               @input="onInput('contact_name', $event)"
             >
           </div>
           <div class="form-row">
             <div class="form-group half">
-              <label>Telefono</label>
+              <label>{{ $t('common.phone') }}</label>
               <input
                 type="tel"
                 autocomplete="tel"
@@ -71,7 +71,7 @@ function onSelectChange(event: Event) {
               >
             </div>
             <div class="form-group half">
-              <label>Email</label>
+              <label>{{ $t('common.email') }}</label>
               <input
                 type="email"
                 autocomplete="email"
@@ -82,41 +82,41 @@ function onSelectChange(event: Event) {
             </div>
           </div>
           <div class="form-group">
-            <label>Ubicacion</label>
+            <label>{{ $t('common.location') }}</label>
             <input
               type="text"
               :value="formData.location"
-              placeholder="Ciudad, pais"
+              :placeholder="$t('admin.agenda.locationPlaceholder')"
               @input="onInput('location', $event)"
             >
           </div>
           <div class="form-group">
-            <label>Producto/s que maneja</label>
+            <label>{{ $t('admin.agenda.products') }}</label>
             <input
               type="text"
               :value="formData.products"
-              placeholder="Camiones, furgonetas, gruas..."
+              :placeholder="$t('admin.agenda.productsPlaceholder')"
               @input="onInput('products', $event)"
             >
           </div>
           <div class="form-group">
-            <label>Notas</label>
+            <label>{{ $t('common.notes') }}</label>
             <textarea
               rows="3"
               :value="formData.notes"
-              placeholder="Notas internas..."
+              :placeholder="$t('admin.agenda.notesPlaceholder')"
               @input="onInput('notes', $event)"
             />
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cancelar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
           <button
             class="btn-primary"
             :disabled="saving || !formData.contact_name.trim()"
             @click="emit('submit')"
           >
-            {{ saving ? 'Guardando...' : isEditing ? 'Guardar' : 'Crear' }}
+            {{ saving ? $t('common.saving') : isEditing ? $t('common.save') : $t('common.create') }}
           </button>
         </div>
       </div>
@@ -133,17 +133,17 @@ function onSelectChange(event: Event) {
   align-items: center;
   justify-content: center;
   z-index: 1100;
-  padding: 20px;
+  padding: 1.25rem;
   backdrop-filter: blur(2px);
 }
 
 .modal {
   background: var(--bg-primary);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   animation: modalIn 0.2s ease-out;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100vh - 2.5rem);
   display: flex;
   flex-direction: column;
 }
@@ -160,14 +160,14 @@ function onSelectChange(event: Event) {
 }
 
 .modal-md {
-  max-width: 540px;
+  max-width: 33.75rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--color-gray-200);
   flex-shrink: 0;
 }
@@ -182,13 +182,13 @@ function onSelectChange(event: Event) {
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   color: var(--text-disabled);
   cursor: pointer;
   padding: 0;
   line-height: 1;
-  min-width: 36px;
-  min-height: 36px;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -201,7 +201,7 @@ function onSelectChange(event: Event) {
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 1.5rem;
   overflow-y: auto;
   flex: 1;
 }
@@ -209,16 +209,16 @@ function onSelectChange(event: Event) {
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
   border-top: 1px solid var(--color-gray-200);
   background: var(--bg-secondary);
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
   flex-shrink: 0;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -226,19 +226,19 @@ function onSelectChange(event: Event) {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus,
@@ -246,12 +246,12 @@ function onSelectChange(event: Event) {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .form-row {
@@ -267,11 +267,11 @@ function onSelectChange(event: Event) {
 @media (min-width: 30em) {
   .form-row {
     flex-direction: row;
-    gap: 16px;
+    gap: 1rem;
   }
 
   .form-group.half {
-    width: calc(50% - 8px);
+    width: calc(50% - 0.5rem);
   }
 }
 
@@ -279,8 +279,8 @@ function onSelectChange(event: Event) {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
@@ -301,8 +301,8 @@ function onSelectChange(event: Event) {
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
 }

@@ -23,7 +23,7 @@ const { t } = useI18n()
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .page-header h1 {
@@ -35,16 +35,16 @@ const { t } = useI18n()
 
 .btn-refresh {
   align-self: flex-start;
-  padding: 10px 18px;
+  padding: 0.625rem 1.125rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-refresh:hover {

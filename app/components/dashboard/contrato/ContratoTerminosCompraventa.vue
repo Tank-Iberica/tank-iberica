@@ -43,10 +43,10 @@ const { t } = useI18n()
           :value="paymentMethod"
           @change="emit('update:paymentMethod', ($event.target as HTMLSelectElement).value)"
         >
-          <option>Transferencia bancaria</option>
-          <option>Efectivo</option>
-          <option>Cheque</option>
-          <option>Financiacion</option>
+          <option :value="t('dashboard.tools.contract.paymentBankTransfer')">{{ t('dashboard.tools.contract.paymentBankTransfer') }}</option>
+          <option :value="t('dashboard.tools.contract.paymentCash')">{{ t('dashboard.tools.contract.paymentCash') }}</option>
+          <option :value="t('dashboard.tools.contract.paymentCheck')">{{ t('dashboard.tools.contract.paymentCheck') }}</option>
+          <option :value="t('dashboard.tools.contract.paymentFinancing')">{{ t('dashboard.tools.contract.paymentFinancing') }}</option>
         </select>
       </div>
       <div class="form-group" style="grid-column: 1 / -1">
@@ -73,51 +73,51 @@ const { t } = useI18n()
 
 <style scoped>
 .contrato-terminos-compraventa {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .section-subtitle {
-  margin: 0 0 12px;
+  margin: 0 0 0.75rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0f2a2e;
+  color: var(--color-primary-darker);
 }
 
 .form-grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   flex: 1;
-  min-width: 120px;
+  min-width: 7.5rem;
 }
 
 .form-group label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .form-group input,
 .form-group select {
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 @media (max-width: 48em) {

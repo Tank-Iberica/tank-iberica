@@ -1,100 +1,18 @@
 import { ref } from 'vue'
 import { useSupabaseClient } from '#imports'
 import { retryQuery } from '~/utils/retryQuery'
+import type { Vehicle, VehicleFilters } from './shared/vehiclesTypes'
+import { applyFilters } from './shared/vehiclesHelpers'
 
-export interface VehicleImage {
-  id: string
-  url: string
-  thumbnail_url: string | null
-  position: number
-  alt_text: string | null
-}
-
-export interface Category {
-  id: string
-  name: Record<string, string> | null
-  name_singular: Record<string, string> | null
-  /** @deprecated Use JSONB `name` field instead */
-  name_es: string
-  /** @deprecated Use JSONB `name` field instead */
-  name_en: string | null
-  /** @deprecated Use JSONB `name_singular` field instead */
-  name_singular_es: string | null
-  /** @deprecated Use JSONB `name_singular` field instead */
-  name_singular_en: string | null
-}
-
-export interface SubcategoryCategoryJunction {
-  categories: Category
-}
-
-export interface VehicleSubcategory {
-  id: string
-  name: Record<string, string> | null
-  name_singular: Record<string, string> | null
-  /** @deprecated Use JSONB `name` field instead */
-  name_es: string
-  /** @deprecated Use JSONB `name` field instead */
-  name_en: string | null
-  /** @deprecated Use JSONB `name_singular` field instead */
-  name_singular_es: string | null
-  /** @deprecated Use JSONB `name_singular` field instead */
-  name_singular_en: string | null
-  slug: string
-  subcategory_categories?: SubcategoryCategoryJunction[]
-}
-
-export interface Vehicle {
-  id: string
-  slug: string
-  brand: string
-  model: string
-  year: number | null
-  price: number | null
-  rental_price: number | null
-  category: 'alquiler' | 'venta' | 'terceros'
-  action_id: string | null
-  category_id: string | null
-  location: string | null
-  location_en: string | null
-  location_data: Record<string, string> | null
-  /** @deprecated Will use content_translations */
-  description_es: string | null
-  /** @deprecated Will use content_translations */
-  description_en: string | null
-  attributes_json: Record<string, unknown>
-  location_country: string | null
-  location_province: string | null
-  location_region: string | null
-  status: string
-  featured: boolean
-  created_at: string
-  updated_at: string
-  vehicle_images: VehicleImage[]
-  subcategories: VehicleSubcategory | null
-}
-
-export interface VehicleFilters {
-  category?: 'alquiler' | 'venta' | 'terceros'
-  action?: string
-  categories?: string[]
-  actions?: string[]
-  category_id?: string
-  subcategory_id?: string
-  price_min?: number
-  price_max?: number
-  year_min?: number
-  year_max?: number
-  brand?: string
-  search?: string
-  featured?: boolean
-  sortBy?: string
-  location_countries?: string[]
-  location_regions?: string[]
-  location_province_eq?: string
-  dealer_id?: string
-  [key: string]: unknown
-}
+// Re-export types for backward compatibility
+export type {
+  VehicleImage,
+  Category,
+  SubcategoryCategoryJunction,
+  VehicleSubcategory,
+  Vehicle,
+  VehicleFilters,
+} from './shared/vehiclesTypes'
 
 const PAGE_SIZE = 20
 
@@ -108,46 +26,6 @@ export function useVehicles() {
   const hasMore = ref(true)
   const page = ref(0)
   const total = ref(0)
-
-  // Applies catalog filters (location, category, price, year, brand) to any query.
-  // Used by both buildQuery (full select) and fetchCount (head-only).
-
-  function applyFilters<T extends ReturnType<typeof supabase.from>>(
-    query: T,
-    filters: VehicleFilters,
-  ): T {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let q = query as any
-
-    q = q.or('visible_from.is.null,visible_from.lte.' + new Date().toISOString())
-
-    if ((filters.actions || filters.categories)?.length) {
-      q = q.in('category', (filters.actions || filters.categories!) as never)
-    } else if (filters.action || filters.category) {
-      q = q.eq('category', (filters.action || filters.category!) as never)
-    }
-
-    if (filters.category_id) q = q.eq('category_id', filters.category_id)
-    if (filters.price_min !== undefined) q = q.gte('price', filters.price_min)
-    if (filters.price_max !== undefined) q = q.lte('price', filters.price_max)
-    if (filters.year_min !== undefined) q = q.gte('year', filters.year_min)
-    if (filters.year_max !== undefined) q = q.lte('year', filters.year_max)
-    if (filters.brand) q = q.ilike('brand', `%${filters.brand}%`)
-
-    // Location filters (mutually exclusive, most specific wins)
-    if (filters.location_province_eq) {
-      q = q.eq('location_province', filters.location_province_eq)
-    } else if (filters.location_regions?.length) {
-      q = q.in('location_region', filters.location_regions)
-    } else if (filters.location_countries?.length) {
-      q = q.in('location_country', filters.location_countries)
-    }
-
-    if (filters.featured) q = q.eq('featured', true)
-    if (filters.dealer_id) q = q.eq('dealer_id', filters.dealer_id)
-
-    return q as T
-  }
 
   function buildQuery(filters: VehicleFilters) {
     let query = supabase

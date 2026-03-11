@@ -9,18 +9,27 @@
  *   - hybrid           → process via Cloudinary transforms, then upload to CF Images
  *   - cf_images_only   → upload directly to CF Images without Cloudinary processing
  */
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
 import { serverSupabaseUser } from '#supabase/server'
+import { safeError } from '../../utils/safeError'
+import { validateBody } from '../../utils/validateBody'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type PipelineMode = 'cloudinary' | 'hybrid' | 'cf_images_only'
 type VariantName = 'thumb' | 'card' | 'gallery' | 'og'
 
-interface ProcessImageBody {
-  cloudinaryUrl: string
-  vehicleId?: string
-}
+const processImageSchema = z.object({
+  cloudinaryUrl: z
+    .string()
+    .url()
+    .max(2048)
+    .refine((u) => u.startsWith('https://') && new URL(u).hostname.endsWith('.cloudinary.com'), {
+      message: 'URL must be a valid HTTPS Cloudinary URL',
+    }),
+  vehicleId: z.string().uuid().optional(),
+})
 
 interface VariantUrls {
   thumb: string
@@ -123,19 +132,6 @@ function buildCloudinaryVariants(cloudinaryUrl: string): VariantUrls {
   }
 }
 
-function validateCloudinaryUrl(raw: string): URL {
-  let parsed: URL
-  try {
-    parsed = new URL(raw)
-  } catch {
-    throw createError({ statusCode: 400, message: 'Invalid URL' })
-  }
-  if (parsed.protocol !== 'https:' || !parsed.hostname.endsWith('.cloudinary.com')) {
-    throw createError({ statusCode: 400, message: 'URL must be a valid HTTPS image URL' })
-  }
-  return parsed
-}
-
 async function processAllVariants(
   cloudinaryUrl: string,
   mode: PipelineMode,
@@ -192,7 +188,7 @@ async function processVariant(
   const cfResult = await uploadToCfImages(imageBuffer, cfAccountId, cfApiToken, metadata)
 
   if (!cfResult.success) {
-    throw new Error(cfResult.errors?.[0]?.message ?? 'Unknown CF Images error')
+    throw safeError(502, 'CF Images upload failed')
   }
 
   return `${cfDeliveryUrl}/${cfResult.result.id}/${variant}`
@@ -204,18 +200,11 @@ export default defineEventHandler(async (event): Promise<ProcessImageResponse> =
   // Auth: verify user is logged in
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw safeError(401, 'Unauthorized')
   }
 
-  // 1. Read and validate body
-  const body = await readBody<ProcessImageBody>(event)
-
-  if (!body.cloudinaryUrl || typeof body.cloudinaryUrl !== 'string') {
-    throw createError({ statusCode: 400, message: 'cloudinaryUrl is required' })
-  }
-
-  // Strict URL validation (anti-SSRF)
-  validateCloudinaryUrl(body.cloudinaryUrl)
+  // 1. Read and validate body (Zod validates HTTPS Cloudinary URL — anti-SSRF)
+  const body = await validateBody(event, processImageSchema)
 
   // 2. Read runtime config
   const config = useRuntimeConfig()
@@ -250,10 +239,7 @@ export default defineEventHandler(async (event): Promise<ProcessImageResponse> =
   )
 
   if (Object.keys(urls).length === 0) {
-    throw createError({
-      statusCode: 502,
-      message: `Image pipeline failed for all variants: ${errors.join('; ')}`,
-    })
+    throw safeError(502, `Image pipeline failed for all variants: ${errors.join('; ')}`)
   }
 
   return { urls: urls as VariantUrls, original: body.cloudinaryUrl, pipeline: effectiveMode }

@@ -31,13 +31,13 @@ const { t } = useI18n()
 <style scoped>
 .card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem;
 }
 
 .card-title {
-  margin: 0 0 16px 0;
+  margin: 0 0 1rem 0;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -45,13 +45,13 @@ const { t } = useI18n()
 
 .preview-container {
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  min-height: 300px;
+  min-height: 18.75rem;
 }
 
 .preview-container.dark-preview {
-  border-color: #334155;
+  border-color: var(--color-slate-700);
 }
 
 .preview-iframe {
@@ -64,10 +64,10 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
+  min-height: 12.5rem;
   color: var(--text-disabled);
   text-align: center;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .preview-placeholder p {

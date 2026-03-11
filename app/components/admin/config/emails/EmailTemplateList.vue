@@ -44,19 +44,19 @@ const emit = defineEmits<{
 <style scoped>
 .template-list {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
 .template-list__header {
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   font-weight: 600;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .template-item {
@@ -64,14 +64,14 @@ const emit = defineEmits<{
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: none;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--color-gray-100);
   background: var(--bg-primary);
   cursor: pointer;
   text-align: left;
   transition: background 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .template-item:last-child {
@@ -79,11 +79,11 @@ const emit = defineEmits<{
 }
 
 .template-item:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .template-item--active {
-  background: #eff6ff;
+  background: var(--color-blue-50);
   border-left: 3px solid var(--color-primary);
 }
 
@@ -94,14 +94,14 @@ const emit = defineEmits<{
 .template-item__info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
   min-width: 0;
 }
 
 .template-item__name {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #1f2937;
+  color: var(--color-gray-800);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -115,13 +115,13 @@ const emit = defineEmits<{
 
 .template-item__status {
   flex-shrink: 0;
-  margin-left: 8px;
+  margin-left: var(--spacing-2);
 }
 
 .status-dot {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
 }
 
@@ -130,15 +130,15 @@ const emit = defineEmits<{
 }
 
 .status-dot--off {
-  background: #d1d5db;
+  background: var(--color-gray-300);
 }
 
 @media (min-width: 64em) {
   .template-list {
-    width: 280px;
+    width: 17.5rem;
     flex-shrink: 0;
     position: sticky;
-    top: 16px;
+    top: 1rem;
     max-height: calc(100vh - 200px);
     overflow-y: auto;
   }
@@ -146,7 +146,7 @@ const emit = defineEmits<{
 
 @media (min-width: 80em) {
   .template-list {
-    width: 320px;
+    width: 20rem;
   }
 }
 </style>

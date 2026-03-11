@@ -8,6 +8,7 @@ useHead({ title: t('legalUk.pageTitle') })
 
 <template>
   <div class="legal-uk-page">
+    <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('legal.title'), to: '/legal' }, { label: t('legalUk.title') }]" />
     <h1>{{ t('legalUk.title') }}</h1>
 
     <section class="legal-section">
@@ -44,31 +45,31 @@ useHead({ title: t('legalUk.pageTitle') })
 
 <style scoped>
 .legal-uk-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 
 .legal-uk-page h1 {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-primary);
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
 }
 
 .legal-section {
   background: var(--bg-primary, white);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
+  margin-bottom: var(--spacing-4);
+  box-shadow: var(--shadow-card);
 }
 
 .legal-section h2 {
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary, var(--color-gray-800));
-  margin: 0 0 10px 0;
+  margin: 0 0 0.625rem 0;
 }
 
 .legal-section p {
@@ -78,9 +79,9 @@ useHead({ title: t('legalUk.pageTitle') })
   margin: 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .legal-uk-page {
-    padding: 32px 16px;
+    padding: var(--spacing-8) var(--spacing-4);
   }
 
   .legal-uk-page h1 {

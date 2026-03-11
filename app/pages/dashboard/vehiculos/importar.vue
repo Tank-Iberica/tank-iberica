@@ -74,17 +74,17 @@ onMounted(init)
 
 <style scoped>
 .import-page {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .import-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

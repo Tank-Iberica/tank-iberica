@@ -84,24 +84,24 @@ defineEmits<{
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .section-title {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--color-gray-100);
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .field label {
@@ -111,9 +111,9 @@ defineEmits<{
 }
 
 .input {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   width: 100%;
   box-sizing: border-box;
@@ -126,7 +126,7 @@ defineEmits<{
 
 /* Image upload */
 .image-upload-area {
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 
 .upload-zone {
@@ -134,10 +134,10 @@ defineEmits<{
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 24px;
+  gap: var(--spacing-2);
+  padding: var(--spacing-6);
   border: 2px dashed var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   transition: all 0.15s;
   text-align: center;
@@ -157,8 +157,8 @@ defineEmits<{
 }
 
 .upload-icon {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   color: var(--text-disabled);
 }
 
@@ -175,35 +175,35 @@ defineEmits<{
 
 .upload-progress-bar {
   width: 100%;
-  max-width: 200px;
-  height: 6px;
+  max-width: 12.5rem;
+  height: 0.375rem;
   background: var(--bg-tertiary);
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 
 .upload-progress-fill {
   height: 100%;
   background: var(--color-primary);
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
   transition: width 0.2s;
 }
 
 .upload-error {
-  margin-top: 8px;
-  padding: 8px 12px;
-  background: var(--color-error-bg, #fef2f2);
+  margin-top: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.8rem;
 }
 
 /* Image preview */
 .image-preview-container {
-  margin-top: 8px;
-  border-radius: 8px;
+  margin-top: var(--spacing-2);
+  border-radius: var(--border-radius);
   overflow: hidden;
-  max-height: 200px;
+  max-height: 12.5rem;
   position: relative;
 }
 
@@ -212,15 +212,15 @@ defineEmits<{
   height: auto;
   display: block;
   object-fit: cover;
-  max-height: 200px;
+  max-height: 12.5rem;
 }
 
 .remove-image-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.6);
   color: white;

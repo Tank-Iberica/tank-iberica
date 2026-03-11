@@ -123,6 +123,20 @@ describe('buildProductName — name_singular priority', () => {
   })
 })
 
+// ─── Year-only vehicle (only year part, no brand/model/subcategory) ──────────
+
+describe('buildProductName — year only', () => {
+  it('returns "Vehículo {year}" in es when only year is available', () => {
+    const v = makeVehicle({ year: 2021 })
+    expect(buildProductName(v, 'es', true)).toBe('Vehículo 2021')
+  })
+
+  it('returns "Vehicle {year}" in en when only year is available', () => {
+    const v = makeVehicle({ year: 2021 })
+    expect(buildProductName(v, 'en', true)).toBe('Vehicle 2021')
+  })
+})
+
 // ─── Fallback chain for locale ────────────────────────────────────────────────
 
 describe('buildProductName — locale fallback', () => {

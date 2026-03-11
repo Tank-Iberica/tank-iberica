@@ -159,31 +159,31 @@ function onBodyInput(event: Event) {
 <style scoped>
 .editor-panel {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .editor-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 16px;
-  gap: 12px;
+  margin-bottom: 1rem;
+  gap: 0.75rem;
 }
 
 .editor-header__title h3 {
-  margin: 0 0 4px;
+  margin: 0 0 0.25rem;
   font-size: 1.15rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .editor-header__key {
   font-size: 0.75rem;
   color: var(--text-disabled);
   background: var(--bg-secondary);
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--border-radius-sm);
 }
 
 .editor-header__actions {
@@ -194,21 +194,21 @@ function onBodyInput(event: Event) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: 0.375rem 0.75rem;
   border: 1px solid var(--color-success);
-  border-radius: 6px;
-  background: var(--color-success-bg, #dcfce7);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-success-bg, var(--color-success-bg));
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-success);
   transition: all 0.2s;
-  min-height: 36px;
+  min-height: 2.25rem;
 }
 
 .btn-icon--off {
   border-color: var(--border-color);
-  background: #f9fafb;
+  background: var(--color-gray-50);
   color: var(--text-disabled);
 }
 
@@ -221,15 +221,15 @@ function onBodyInput(event: Event) {
 .stats-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .stat-card {
-  background: #f9fafb;
-  border: 1px solid #f3f4f6;
-  border-radius: 8px;
-  padding: 12px;
+  background: var(--color-gray-50);
+  border: 1px solid var(--bg-secondary);
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
   text-align: center;
 }
 
@@ -237,79 +237,79 @@ function onBodyInput(event: Event) {
   display: block;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .stat-card__label {
   display: block;
   font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 2px;
+  color: var(--color-gray-500);
+  margin-top: 0.125rem;
 }
 
 /* -- Variables -- */
 .variables-info {
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  background: var(--color-sky-50);
+  border: 1px solid var(--color-sky-200);
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
 }
 
 .variables-label {
-  margin: 0 0 8px;
+  margin: 0 0 0.5rem;
   font-weight: 500;
   font-size: 0.85rem;
-  color: #0369a1;
+  color: var(--color-sky-700);
 }
 
 .variables-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .variable-tag {
   background: var(--bg-primary);
-  border: 1px solid #bae6fd;
-  padding: 3px 8px;
-  border-radius: 4px;
+  border: 1px solid var(--color-sky-200);
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--border-radius-sm);
   font-size: 0.78rem;
-  color: #0c4a6e;
+  color: var(--color-sky-900);
   white-space: nowrap;
   cursor: pointer;
   font-family: monospace;
   transition: all 0.15s;
-  min-height: 28px;
+  min-height: 1.75rem;
 }
 
 .variable-tag:hover {
-  background: #e0f2fe;
-  border-color: #7dd3fc;
+  background: var(--color-sky-100);
+  border-color: var(--color-sky-300);
 }
 
 /* -- Locale switcher -- */
 .locale-switcher {
   display: flex;
-  gap: 4px;
-  margin-bottom: 16px;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
   background: var(--bg-secondary);
-  border-radius: 8px;
-  padding: 4px;
+  border-radius: var(--border-radius);
+  padding: 0.25rem;
   width: fit-content;
 }
 
 .locale-btn {
-  padding: 6px 16px;
+  padding: 0.375rem 1rem;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   background: transparent;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--color-gray-500);
   transition: all 0.2s;
-  min-height: 36px;
+  min-height: 2.25rem;
 }
 
 .locale-btn--active {
@@ -320,7 +320,7 @@ function onBodyInput(event: Event) {
 
 /* -- Form groups -- */
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .form-group:last-child {
@@ -330,10 +330,10 @@ function onBodyInput(event: Event) {
 .form-group label {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 0.5rem;
   font-weight: 500;
-  margin-bottom: 6px;
-  color: #374151;
+  margin-bottom: 0.375rem;
+  color: var(--color-gray-700);
   font-size: 0.9rem;
 }
 
@@ -346,9 +346,9 @@ function onBodyInput(event: Event) {
 .form-group input[type='text'],
 .form-group textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.95rem;
   font-family: inherit;
   box-sizing: border-box;
@@ -356,7 +356,7 @@ function onBodyInput(event: Event) {
 
 .form-group textarea {
   resize: vertical;
-  min-height: 180px;
+  min-height: 11.25rem;
   line-height: 1.6;
   font-family: 'Courier New', monospace;
   font-size: 0.88rem;
@@ -366,32 +366,32 @@ function onBodyInput(event: Event) {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* -- Editor actions -- */
 .editor-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 16px;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .btn-secondary {
   background: var(--bg-primary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: 1px solid var(--border-color);
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.88rem;
   transition: all 0.2s;
-  min-height: 40px;
+  min-height: 2.5rem;
 }
 
 .btn-secondary:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   border-color: var(--text-disabled);
 }
 
@@ -403,15 +403,15 @@ function onBodyInput(event: Event) {
 /* -- Responsive -- */
 @media (min-width: 48em) {
   .editor-panel {
-    padding: 24px;
+    padding: 1.5rem;
   }
 
   .stats-row {
-    gap: 16px;
+    gap: 1rem;
   }
 
   .stat-card {
-    padding: 16px;
+    padding: 1rem;
   }
 
   .stat-card__value {
@@ -423,7 +423,7 @@ function onBodyInput(event: Event) {
   .editor-panel {
     flex: 1;
     min-width: 0;
-    padding: 28px;
+    padding: 1.75rem;
   }
 }
 </style>

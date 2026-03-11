@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
+    "analyze": "nuxi analyze",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
@@ -17,6 +18,9 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:load": "k6 run tests/load/k6-full.js",
+    "test:load:smoke": "K6_SCENARIO=smoke k6 run tests/load/k6-full.js",
+    "test:load:peak": "K6_SCENARIO=peak k6 run tests/load/k6-full.js",
     "db:inspect": "bash sonar/db-inspect.sh"
   },
   "dependencies": {
@@ -56,6 +60,7 @@
     ]
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
     "@lhci/cli": "^0.15.1",
     "@nuxt/eslint-config": "^1.13.0",
     "@nuxt/test-utils": "^4.0.0",
@@ -67,9 +72,12 @@
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-vuejs-accessibility": "^2.5.0",
     "happy-dom": "^20.6.3",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
+    "madge": "^7.0.0",
+    "msw": "^2.12.10",
     "prettier": "^3.8.1",
     "vitest": "^4.0.18"
   }

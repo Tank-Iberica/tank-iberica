@@ -32,10 +32,10 @@ function onStatusToggle(currentStatus: string) {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>{{ editingId ? 'Editar Tipo' : 'Nuevo Tipo' }}</h3>
+          <h3>{{ editingId ? $t('admin.configTipos.editType') : $t('admin.configTipos.newType') }}</h3>
           <button class="modal-close" @click="emit('close')">&times;</button>
         </div>
 
@@ -43,22 +43,22 @@ function onStatusToggle(currentStatus: string) {
           <!-- Names -->
           <div class="form-row">
             <div class="form-group">
-              <label for="name_es">Nombre (ES) *</label>
+              <label for="name_es">{{ $t('admin.configTipos.nameEs') }}</label>
               <input
                 id="name_es"
                 type="text"
-                placeholder="Ej: Cisternas"
+                :placeholder="$t('admin.configTipos.nameEsPlaceholder')"
                 required
                 :value="formData.name_es"
                 @input="onTextInput('name_es', $event)"
               />
             </div>
             <div class="form-group">
-              <label for="name_en">Nombre (EN)</label>
+              <label for="name_en">{{ $t('admin.configTipos.nameEn') }}</label>
               <input
                 id="name_en"
                 type="text"
-                placeholder="Ej: Tankers"
+                :placeholder="$t('admin.configTipos.nameEnPlaceholder')"
                 :value="formData.name_en || ''"
                 @input="onTextInput('name_en', $event)"
               />
@@ -67,8 +67,8 @@ function onStatusToggle(currentStatus: string) {
 
           <!-- Subcategories -->
           <div class="form-group">
-            <label>Subcategorias</label>
-            <p class="form-hint">Selecciona a que subcategorias pertenece este tipo.</p>
+            <label>{{ $t('admin.configTipos.subcategoriesLabel') }}</label>
+            <p class="form-hint">{{ $t('admin.configTipos.subcategoriesHint') }}</p>
             <div class="subcategories-checkbox-grid">
               <template v-if="availableSubcategories.length">
                 <label
@@ -85,15 +85,15 @@ function onStatusToggle(currentStatus: string) {
                 </label>
               </template>
               <p v-else class="text-muted">
-                No hay subcategorias creadas. Crea subcategorias primero.
+                {{ $t('admin.configTipos.noSubcategories') }}
               </p>
             </div>
           </div>
 
           <!-- Filters -->
           <div class="form-group">
-            <label>Filtros aplicables</label>
-            <p class="form-hint">Precio, Marca, Ano y Ubicacion siempre estan activos.</p>
+            <label>{{ $t('admin.configTipos.filtersLabel') }}</label>
+            <p class="form-hint">{{ $t('admin.configTipos.filtersHint') }}</p>
             <div class="filters-checkbox-grid">
               <template v-if="availableFilters.length">
                 <label v-for="filter in availableFilters" :key="filter.id" class="checkbox-label">
@@ -105,7 +105,7 @@ function onStatusToggle(currentStatus: string) {
                   <span>{{ filter.label_es || filter.name }}</span>
                 </label>
               </template>
-              <p v-else class="text-muted">No hay filtros creados. Crea filtros primero.</p>
+              <p v-else class="text-muted">{{ $t('admin.configTipos.noFilters') }}</p>
             </div>
           </div>
 
@@ -117,15 +117,15 @@ function onStatusToggle(currentStatus: string) {
                 :checked="formData.status === 'published'"
                 @change="onStatusToggle(formData.status)"
               />
-              <span>Publicar tipo</span>
+              <span>{{ $t('admin.configTipos.publishType') }}</span>
             </label>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cancelar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
           <button class="btn-primary" :disabled="saving" @click="emit('save')">
-            {{ saving ? 'Guardando...' : 'Guardar' }}
+            {{ saving ? $t('common.saving') : $t('common.save') }}
           </button>
         </div>
       </div>
@@ -142,14 +142,14 @@ function onStatusToggle(currentStatus: string) {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
-  max-width: 550px;
+  max-width: 34.375rem;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -159,8 +159,8 @@ function onStatusToggle(currentStatus: string) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header h3 {
@@ -171,90 +171,90 @@ function onStatusToggle(currentStatus: string) {
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   cursor: pointer;
-  color: #6b7280;
+  color: var(--color-gray-500);
   line-height: 1;
 }
 
 .modal-close:hover {
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .form-group label {
   display: block;
   font-weight: 500;
-  margin-bottom: 6px;
-  color: #374151;
+  margin-bottom: 0.375rem;
+  color: var(--color-gray-700);
 }
 
 .form-group input[type='text'] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-hint {
   font-size: 0.75rem;
-  color: #6b7280;
-  margin: 4px 0 8px;
+  color: var(--color-gray-500);
+  margin: var(--spacing-1) 0 var(--spacing-2);
 }
 
 .filters-checkbox-grid,
 .subcategories-checkbox-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 8px;
-  max-height: 200px;
+  gap: var(--spacing-2);
+  max-height: 12.5rem;
   overflow-y: auto;
-  padding: 12px;
+  padding: var(--spacing-3);
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
-  background: #f9fafb;
+  border-radius: var(--border-radius);
+  background: var(--color-gray-50);
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   cursor: pointer;
   font-size: 0.9rem;
 }
 
 .checkbox-label input {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   cursor: pointer;
 }
 
@@ -267,8 +267,8 @@ function onStatusToggle(currentStatus: string) {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   transition: background 0.2s;
@@ -285,16 +285,16 @@ function onStatusToggle(currentStatus: string) {
 
 .btn-secondary {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
 }
 
 .btn-secondary:hover {
-  background: #d1d5db;
+  background: var(--color-gray-300);
 }
 
 @media (max-width: 48em) {
@@ -303,7 +303,7 @@ function onStatusToggle(currentStatus: string) {
   }
 
   .modal-content {
-    margin: 10px;
+    margin: 0.625rem;
     max-height: calc(100vh - 20px);
   }
 }

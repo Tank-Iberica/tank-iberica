@@ -3,6 +3,7 @@
  * Extracts all state and logic from UserPanel.vue (slide-in drawer).
  */
 
+import type { Database } from '~~/types/supabase'
 import type { ChatMessage } from '~/composables/useUserChat'
 import { useFavorites } from '~/composables/useFavorites'
 import { useUserChat } from '~/composables/useUserChat'
@@ -41,8 +42,7 @@ export interface UserAd {
 
 export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   const { t } = useI18n()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = useSupabaseClient<any>()
+  const supabase = useSupabaseClient<Database>()
 
   // Favorites
   const { count: favoritesCount } = useFavorites()

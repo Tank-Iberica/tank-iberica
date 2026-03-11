@@ -22,6 +22,7 @@ defineProps<{
 const emit = defineEmits<{
   (e: 'toggle-status' | 'open-sold-modal', vehicle: DealerVehicle): void
   (e: 'set-delete-confirm' | 'delete-vehicle', id: string): void
+  (e: 'clone', id: string): void
 }>()
 
 const { t } = useI18n()
@@ -68,9 +69,12 @@ function getStatusClass(status: string): string {
       </div>
     </div>
     <div class="card-actions">
-      <NuxtLink :to="`/dashboard/vehiculos/${vehicle.id}`" class="action-btn">
+      <NuxtLink :to="`/dashboard/vehiculos/${vehicle.id}`" prefetch class="action-btn">
         {{ t('common.edit') }}
       </NuxtLink>
+      <button class="action-btn" @click="emit('clone', vehicle.id)">
+        {{ t('dashboard.vehicles.clone') }}
+      </button>
       <button
         v-if="vehicle.status !== 'sold'"
         class="action-btn"
@@ -110,14 +114,14 @@ function getStatusClass(status: string): string {
 <style scoped>
 .vehicle-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
 .card-image {
   position: relative;
-  height: 180px;
+  height: 11.25rem;
   background: var(--bg-secondary);
 }
 
@@ -139,16 +143,16 @@ function getStatusClass(status: string): string {
 
 .status-pill {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
   font-weight: 600;
 }
 
 .status-published {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
@@ -158,7 +162,7 @@ function getStatusClass(status: string): string {
 }
 
 .status-paused {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
@@ -168,11 +172,11 @@ function getStatusClass(status: string): string {
 }
 
 .card-body {
-  padding: 16px;
+  padding: 1rem;
 }
 
 .card-body h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 0.5rem 0;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -181,8 +185,8 @@ function getStatusClass(status: string): string {
 .card-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .meta-item {
@@ -196,23 +200,23 @@ function getStatusClass(status: string): string {
 }
 
 .card-stats {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--text-disabled);
 }
 
 .card-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 12px 16px;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
   border-top: 1px solid var(--color-gray-100);
 }
 
 .action-btn {
-  min-height: 44px;
-  padding: 8px 14px;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   font-size: 0.85rem;
   font-weight: 500;
@@ -233,7 +237,7 @@ function getStatusClass(status: string): string {
 }
 
 .action-delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .action-delete-confirm {

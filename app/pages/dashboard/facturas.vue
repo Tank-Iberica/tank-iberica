@@ -8,7 +8,7 @@ definePageMeta({
   middleware: ['auth', 'dealer'],
 })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { dealerProfile, loadDealer } = useDealerDashboard()
 const { invoices, loading, error, loadInvoices, formatAmount, totalAmount, totalTax } =
   useInvoicing()
@@ -23,7 +23,9 @@ async function init(): Promise<void> {
 onMounted(init)
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('es-ES', {
+  const localeMap: Record<string, string> = { es: 'es-ES', en: 'en-GB', fr: 'fr-FR', pt: 'pt-PT', de: 'de-DE' }
+  const intlLocale = localeMap[locale.value] ?? 'es-ES'
+  return new Date(dateStr).toLocaleDateString(intlLocale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -63,8 +65,8 @@ function getServiceLabel(type: string): string {
 
     <div v-if="error" class="alert-error">{{ error }}</div>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonTable :rows="5" :cols="4" />
     </div>
 
     <template v-else>
@@ -121,18 +123,18 @@ function getServiceLabel(type: string): string {
 
 <style scoped>
 .invoices-page {
-  max-width: 700px;
+  max-width: 43.75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .back-link {
@@ -140,7 +142,7 @@ function getServiceLabel(type: string): string {
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -153,22 +155,22 @@ function getServiceLabel(type: string): string {
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
 .loading-state {
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: var(--spacing-10);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -184,17 +186,17 @@ function getServiceLabel(type: string): string {
 .summary-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .summary-card {
   background: var(--bg-primary);
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-4);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .summary-label {
@@ -217,12 +219,12 @@ function getServiceLabel(type: string): string {
 
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .empty-state p {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-2) 0;
   font-size: 1rem;
   font-weight: 500;
 }
@@ -235,21 +237,21 @@ function getServiceLabel(type: string): string {
 .invoices-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .invoice-card {
   background: var(--bg-primary);
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-4);
+  box-shadow: var(--shadow-card);
 }
 
 .invoice-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .invoice-type {
@@ -265,7 +267,7 @@ function getServiceLabel(type: string): string {
 }
 
 .invoice-middle {
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
 }
 
 .invoice-tax {
@@ -286,29 +288,29 @@ function getServiceLabel(type: string): string {
 
 .invoice-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   align-items: center;
 }
 
 .invoice-status {
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 12px;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
 }
 
 .status-paid {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning);
 }
 
 .status-failed {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -322,10 +324,10 @@ function getServiceLabel(type: string): string {
   font-weight: 600;
   color: var(--color-primary);
   text-decoration: none;
-  padding: 3px 10px;
+  padding: 0.1875rem 0.625rem;
   border: 1px solid var(--color-primary);
-  border-radius: 6px;
-  min-height: 28px;
+  border-radius: var(--border-radius);
+  min-height: 1.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -335,9 +337,9 @@ function getServiceLabel(type: string): string {
   color: white;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .invoices-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

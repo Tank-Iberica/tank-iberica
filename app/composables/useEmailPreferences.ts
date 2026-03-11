@@ -4,6 +4,8 @@
  * Defaults to enabled (true) when no row exists for a given email type.
  */
 
+import type { Database } from '~~/types/supabase'
+
 interface EmailPreferenceRow {
   id: string
   user_id: string
@@ -13,6 +15,9 @@ interface EmailPreferenceRow {
   updated_at: string
 }
 
+export type DigestFrequency = 'daily' | 'weekly' | 'never'
+export const DIGEST_FREQUENCY_OPTIONS: DigestFrequency[] = ['daily', 'weekly', 'never']
+
 /** Email types that cannot be disabled by the user */
 const ALWAYS_ON_TYPES: ReadonlySet<string> = new Set(['confirm_email', 'suspicious_activity'])
 
@@ -21,11 +26,11 @@ function isAlwaysOn(emailType: string): boolean {
 }
 
 export function useEmailPreferences() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = useSupabaseClient<any>()
+  const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
 
   const preferences = ref<Map<string, boolean>>(new Map())
+  const digestFrequency = ref<DigestFrequency>('weekly')
   const loading = ref(false)
   const saving = ref(false)
   const error = ref<string | null>(null)
@@ -41,18 +46,30 @@ export function useEmailPreferences() {
     error.value = null
 
     try {
-      const { data, error: fetchErr } = await supabase
-        .from('email_preferences')
-        .select('*')
-        .eq('user_id', user.value.id)
+      const [prefsRes, userRes] = await Promise.all([
+        supabase
+          .from('email_preferences')
+          .select('id, user_id, email_type, enabled, created_at, updated_at')
+          .eq('user_id', user.value.id),
+        supabase
+          .from('users')
+          .select('digest_frequency')
+          .eq('id', user.value.id)
+          .single(),
+      ])
 
-      if (fetchErr) throw fetchErr
+      if (prefsRes.error) throw prefsRes.error
 
       const map = new Map<string, boolean>()
-      for (const row of (data || []) as EmailPreferenceRow[]) {
+      for (const row of (prefsRes.data || []) as EmailPreferenceRow[]) {
         map.set(row.email_type, row.enabled)
       }
       preferences.value = map
+
+      const freq = (userRes.data as { digest_frequency?: string } | null)?.digest_frequency
+      if (freq === 'daily' || freq === 'weekly' || freq === 'never') {
+        digestFrequency.value = freq
+      }
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error loading preferences'
     } finally {
@@ -169,9 +186,42 @@ export function useEmailPreferences() {
     }
   }
 
+  /**
+   * Update the user's digest frequency preference.
+   * Optimistically updates the local reactive value.
+   */
+  async function setDigestFrequency(freq: DigestFrequency): Promise<boolean> {
+    if (!user.value) return false
+
+    const previous = digestFrequency.value
+    digestFrequency.value = freq
+
+    saving.value = true
+    error.value = null
+
+    try {
+      const { error: updateErr } = await supabase
+        .from('users')
+        .update({ digest_frequency: freq, updated_at: new Date().toISOString() })
+        .eq('id', user.value.id)
+
+      if (updateErr) throw updateErr
+
+      return true
+    } catch (err: unknown) {
+      digestFrequency.value = previous
+      error.value = err instanceof Error ? err.message : 'Error updating digest frequency'
+      return false
+    } finally {
+      saving.value = false
+    }
+  }
+
   return {
     /** Reactive map of email_type -> enabled */
     preferences: readonly(preferences),
+    /** Current digest frequency (daily/weekly/never) */
+    digestFrequency: readonly(digestFrequency),
     /** Whether preferences are being loaded */
     loading: readonly(loading),
     /** Whether a save/toggle operation is in progress */
@@ -188,5 +238,7 @@ export function useEmailPreferences() {
     togglePreference,
     /** Bulk update multiple preferences */
     bulkUpdate,
+    /** Set digest frequency (daily/weekly/never) */
+    setDigestFrequency,
   }
 }

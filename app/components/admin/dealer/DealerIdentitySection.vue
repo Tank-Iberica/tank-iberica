@@ -30,18 +30,18 @@ function updateBioLang(lang: string, value: string) {
 <template>
   <!-- SECTION 1: IDENTIDAD -->
   <div class="config-card">
-    <h3 class="card-title">Identidad</h3>
-    <p class="card-subtitle">Logo, imagen de portada y nombre de la empresa</p>
+    <h3 class="card-title">{{ $t('admin.dealer.identityTitle') }}</h3>
+    <p class="card-subtitle">{{ $t('admin.dealer.identitySubtitle') }}</p>
 
     <div class="form-group">
-      <label>Nombre de la empresa</label>
+      <label>{{ $t('admin.dealer.companyName') }}</label>
       <div class="lang-row">
         <div class="lang-field">
           <span class="lang-badge">ES</span>
           <input
             :value="companyName.es"
             type="text"
-            placeholder="Nombre en espanol"
+            :placeholder="$t('admin.dealer.namePlaceholderEs')"
             @input="updateCompanyNameLang('es', ($event.target as HTMLInputElement).value)"
           >
         </div>
@@ -50,7 +50,7 @@ function updateBioLang(lang: string, value: string) {
           <input
             :value="companyName.en"
             type="text"
-            placeholder="Company name in English"
+            :placeholder="$t('admin.dealer.namePlaceholderEn')"
             @input="updateCompanyNameLang('en', ($event.target as HTMLInputElement).value)"
           >
         </div>
@@ -58,7 +58,7 @@ function updateBioLang(lang: string, value: string) {
     </div>
 
     <div class="form-group">
-      <label for="dealer-logo-url">Logo (URL)</label>
+      <label for="dealer-logo-url">{{ $t('admin.dealer.logoUrl') }}</label>
       <input
         id="dealer-logo-url"
         :value="logoUrl"
@@ -72,7 +72,7 @@ function updateBioLang(lang: string, value: string) {
     </div>
 
     <div class="form-group">
-      <label for="dealer-cover-url">Imagen de portada (URL)</label>
+      <label for="dealer-cover-url">{{ $t('admin.dealer.coverImageUrl') }}</label>
       <input
         id="dealer-cover-url"
         :value="coverImageUrl"
@@ -88,14 +88,14 @@ function updateBioLang(lang: string, value: string) {
 
   <!-- SECTION 2: COLORES DE ACENTO -->
   <div class="config-card">
-    <h3 class="card-title">Colores de acento</h3>
+    <h3 class="card-title">{{ $t('admin.dealer.accentColors') }}</h3>
     <p class="card-subtitle">
-      Personaliza los colores de tu portal. Se aplicaran sobre la base de Tracciona.
+      {{ $t('admin.dealer.accentColorsSubtitle') }}
     </p>
 
     <div class="color-row">
       <div class="color-field">
-        <label for="theme-primary">Color primario</label>
+        <label for="theme-primary">{{ $t('admin.dealer.primaryColor') }}</label>
         <div class="color-input-wrapper">
           <input
             id="theme-primary"
@@ -109,14 +109,14 @@ function updateBioLang(lang: string, value: string) {
             type="text"
             class="color-hex"
             maxlength="7"
-            placeholder="#23424A"
+            placeholder="var(--color-primary)"
             @input="emit('update:themePrimary', ($event.target as HTMLInputElement).value)"
           >
         </div>
       </div>
 
       <div class="color-field">
-        <label for="theme-accent">Color acento</label>
+        <label for="theme-accent">{{ $t('admin.dealer.accentColor') }}</label>
         <div class="color-input-wrapper">
           <input
             id="theme-accent"
@@ -137,23 +137,23 @@ function updateBioLang(lang: string, value: string) {
       </div>
     </div>
 
-    <button class="btn-outline" @click="emit('resetTheme')">Restaurar colores de Tracciona</button>
+    <button class="btn-outline" @click="emit('resetTheme')">{{ $t('admin.dealer.restoreColors') }}</button>
   </div>
 
   <!-- SECTION 3: SOBRE NOSOTROS -->
   <div class="config-card">
-    <h3 class="card-title">Sobre nosotros</h3>
-    <p class="card-subtitle">Descripcion de tu empresa que se mostrara en tu portal publico</p>
+    <h3 class="card-title">{{ $t('admin.dealer.aboutUs') }}</h3>
+    <p class="card-subtitle">{{ $t('admin.dealer.aboutUsSubtitle') }}</p>
 
     <div class="form-group">
-      <label>Biografia / Descripcion</label>
+      <label>{{ $t('admin.dealer.bioLabel') }}</label>
       <div class="lang-col">
         <div class="lang-field-block">
           <span class="lang-badge">ES</span>
           <textarea
             :value="bio.es"
             rows="4"
-            placeholder="Descripcion de la empresa en espanol..."
+            :placeholder="$t('admin.dealer.bioPlaceholderEs')"
             @input="updateBioLang('es', ($event.target as HTMLTextAreaElement).value)"
           />
         </div>
@@ -162,7 +162,7 @@ function updateBioLang(lang: string, value: string) {
           <textarea
             :value="bio.en"
             rows="4"
-            placeholder="Company description in English..."
+            :placeholder="$t('admin.dealer.bioPlaceholderEn')"
             @input="updateBioLang('en', ($event.target as HTMLTextAreaElement).value)"
           />
         </div>
@@ -218,18 +218,18 @@ function updateBioLang(lang: string, value: string) {
   box-sizing: border-box;
   background: var(--bg-primary);
   color: var(--text-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 /* Language rows */
@@ -247,7 +247,7 @@ function updateBioLang(lang: string, value: string) {
 
 .lang-badge {
   flex-shrink: 0;
-  width: 32px;
+  width: 2rem;
   text-align: center;
   font-size: 0.7rem;
   font-weight: var(--font-weight-bold);
@@ -264,13 +264,13 @@ function updateBioLang(lang: string, value: string) {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .lang-field input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Language column layout for textareas */
@@ -297,14 +297,14 @@ function updateBioLang(lang: string, value: string) {
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
   font-family: var(--font-family);
 }
 
 .lang-field-block textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Image preview */
@@ -318,15 +318,15 @@ function updateBioLang(lang: string, value: string) {
 }
 
 .image-preview img {
-  max-width: 200px;
-  max-height: 60px;
+  max-width: 12.5rem;
+  max-height: 3.75rem;
   object-fit: contain;
   margin: 0 auto;
 }
 
 .image-preview .cover-preview-img {
   max-width: 100%;
-  max-height: 120px;
+  max-height: 7.5rem;
 }
 
 /* Color section */
@@ -352,12 +352,12 @@ function updateBioLang(lang: string, value: string) {
 }
 
 .color-picker {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
   cursor: pointer;
-  padding: 2px;
+  padding: 0.125rem;
   flex-shrink: 0;
 }
 
@@ -378,13 +378,13 @@ function updateBioLang(lang: string, value: string) {
   font-size: var(--font-size-sm);
   font-family: monospace;
   text-transform: uppercase;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .color-hex:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .btn-outline {
@@ -399,7 +399,7 @@ function updateBioLang(lang: string, value: string) {
   transition:
     background var(--transition-fast),
     color var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-outline:hover {

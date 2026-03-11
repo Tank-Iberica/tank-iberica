@@ -70,13 +70,13 @@ const localSellPrice = computed({
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal modal-md">
         <div class="modal-header">
           <h3>
             {{ localTransactionType === 'rent' ? 'Registrar alquiler' : 'Registrar venta' }}
           </h3>
-          <button class="modal-close" @click="emit('close')">×</button>
+          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">×</button>
         </div>
         <div class="modal-body">
           <div class="vehicle-badge">
@@ -132,12 +132,12 @@ const localSellPrice = computed({
               <input v-model="localSellPrice" type="number" step="0.01" >
             </div>
             <div class="info-warning">
-              ⚠️ Esto marcará el vehículo como vendido y lo moverá al histórico.
+              ⚠️ Esto marcará el {{ $t('vertical.itemName') }} como vendido y lo moverá al histórico.
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cancelar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
           <button class="btn-primary" @click="emit('confirm')">
             {{ localTransactionType === 'rent' ? 'Registrar alquiler' : 'Registrar venta' }}
           </button>
@@ -156,12 +156,12 @@ const localSellPrice = computed({
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
   overflow: auto;
@@ -188,7 +188,7 @@ const localSellPrice = computed({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: var(--spacing-5) var(--spacing-6);
   border-bottom: 1px solid var(--color-gray-200);
 }
 
@@ -202,17 +202,17 @@ const localSellPrice = computed({
 .modal-close {
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 1.75rem;
   line-height: 1;
   cursor: pointer;
   color: var(--text-disabled);
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   transition: all 0.2s;
 }
 
@@ -222,45 +222,45 @@ const localSellPrice = computed({
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .vehicle-badge {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
   background: var(--bg-secondary);
-  border-radius: 8px;
-  margin-bottom: 20px;
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-5);
 }
 
 .vehicle-badge strong {
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: var(--font-size-base);
 }
 
 .vehicle-badge span {
   color: var(--text-auxiliary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .tab-buttons {
   display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-6);
 }
 
 .tab-buttons button {
   flex: 1;
-  padding: 10px 16px;
+  padding: 0.625rem var(--spacing-4);
   border: 2px solid var(--color-gray-200);
   background: var(--bg-primary);
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   transition: all 0.2s;
 }
 
@@ -277,7 +277,7 @@ const localSellPrice = computed({
 .form-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .form-group {
@@ -290,18 +290,18 @@ const localSellPrice = computed({
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
   font-weight: 500;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   transition: border 0.2s;
 }
 
@@ -311,20 +311,20 @@ const localSellPrice = computed({
 }
 
 .info-warning {
-  padding: 12px;
-  background: var(--color-warning-bg, #fef3c7);
+  padding: var(--spacing-3);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   border-left: 3px solid var(--color-warning);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-warning-text);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   line-height: 1.5;
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
   border-top: 1px solid var(--color-gray-200);
 }
 
@@ -332,9 +332,9 @@ const localSellPrice = computed({
   background: var(--bg-primary);
   border: 1px solid var(--color-gray-200);
   color: var(--text-secondary);
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -349,9 +349,9 @@ const localSellPrice = computed({
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;

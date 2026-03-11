@@ -116,13 +116,13 @@ const { t } = useI18n()
 .card-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .payment-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   transition: box-shadow 0.2s;
 }
@@ -138,15 +138,15 @@ const { t } = useI18n()
 .card-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px;
+  gap: 0.5rem;
+  padding: 1rem;
   width: 100%;
   border: none;
   background: transparent;
   cursor: pointer;
   text-align: left;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .card-header:hover {
@@ -157,19 +157,19 @@ const { t } = useI18n()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .card-details {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .card-detail {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .detail-label {
@@ -205,18 +205,18 @@ const { t } = useI18n()
 
 /* Card expanded section */
 .card-expanded {
-  padding: 0 16px 16px;
+  padding: 0 1rem 1rem;
   border-top: 1px solid var(--color-gray-100);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-top: 12px;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
 }
 
 .expanded-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .expanded-field label {
@@ -236,7 +236,7 @@ const { t } = useI18n()
 }
 
 .stripe-link {
-  color: #635bff;
+  color: var(--color-stripe);
   text-decoration: none;
   font-family: monospace;
   font-size: 0.8rem;
@@ -253,97 +253,97 @@ const { t } = useI18n()
 .metadata-pre {
   background: var(--color-gray-800);
   color: var(--color-gray-200);
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
   font-size: 0.8rem;
   overflow-x: auto;
   margin: 0;
-  max-height: 200px;
+  max-height: 12.5rem;
   overflow-y: auto;
 }
 
 /* Type badges */
 .type-badge {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .type-badge.type-subscription {
-  background: #ede9fe;
-  color: #6d28d9;
+  background: var(--color-purple-bg);
+  color: var(--color-violet-700);
 }
 
 .type-badge.type-auction-deposit {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg);
   color: var(--color-info);
 }
 
 .type-badge.type-auction-premium {
-  background: #e0e7ff;
-  color: #4338ca;
+  background: var(--color-indigo-100);
+  color: var(--color-indigo-700);
 }
 
 .type-badge.type-verification {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg);
   color: var(--color-success);
 }
 
 .type-badge.type-transport {
-  background: #cffafe;
-  color: #0891b2;
+  background: var(--color-cyan-bg);
+  color: var(--color-cyan-text);
 }
 
 .type-badge.type-transfer {
-  background: #ccfbf1;
-  color: #0d9488;
+  background: var(--color-teal-bg);
+  color: var(--color-teal-text);
 }
 
 .type-badge.type-ad {
-  background: #ffedd5;
-  color: #c2410c;
+  background: var(--color-orange-100);
+  color: var(--color-orange-700);
 }
 
 .type-badge.type-one-time {
   background: var(--bg-secondary);
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 /* Status badges */
 .status-badge {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .status-badge.status-succeeded {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg);
   color: var(--color-success);
 }
 
 .status-badge.status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg);
   color: var(--color-warning-text);
 }
 
 .status-badge.status-failed {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg);
   color: var(--color-error);
 }
 
 .status-badge.status-refunded {
-  background: #ede9fe;
-  color: #7c3aed;
+  background: var(--color-purple-bg);
+  color: var(--color-purple-600);
 }
 
 .status-badge.status-cancelled {
   background: var(--bg-secondary);
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 </style>

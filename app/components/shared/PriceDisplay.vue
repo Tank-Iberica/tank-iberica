@@ -33,6 +33,6 @@ const formatted = computed(() => {
 
 .price-suffix {
   font-size: 0.8em;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 </style>

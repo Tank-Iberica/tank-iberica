@@ -171,7 +171,7 @@ const {
   width: 100%;
   max-height: 92vh;
   overflow-y: auto;
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
   display: flex;
   flex-direction: column;
 }
@@ -204,13 +204,13 @@ const {
 .close-button {
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 1.75rem;
   line-height: 1;
   color: var(--color-text-secondary);
   cursor: pointer;
   padding: 0;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -238,12 +238,12 @@ const {
 }
 
 .success-icon {
-  width: 64px;
-  height: 64px;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
   background-color: var(--color-success);
   color: white;
-  font-size: 40px;
+  font-size: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -269,7 +269,7 @@ const {
 }
 
 .form-section {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: var(--spacing-3);
@@ -290,8 +290,8 @@ const {
   text-align: center;
   margin: 0;
   padding: var(--spacing-2);
-  background: var(--color-error-bg, #fef2f2);
-  border-radius: 6px;
+  background: var(--color-error-bg, var(--color-error-bg));
+  border-radius: var(--border-radius);
 }
 
 .modal-footer {
@@ -309,12 +309,12 @@ const {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-6);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #2d5560 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: white;
 }
 
@@ -360,7 +360,7 @@ const {
   }
 
   .modal-container {
-    max-width: 700px;
+    max-width: 43.75rem;
     max-height: 88vh;
     border-radius: var(--border-radius);
   }
@@ -384,12 +384,26 @@ const {
 
   .btn-submit {
     width: auto;
-    min-width: 200px;
+    min-width: 12.5rem;
   }
 
   .modal-enter-from .modal-container,
   .modal-leave-to .modal-container {
     transform: scale(0.95);
+  }
+}
+
+/* Landscape on short viewports: switch from bottom-sheet to centered */
+@media (orientation: landscape) and (max-height: 30em) {
+  .modal-backdrop {
+    align-items: center;
+    padding: var(--spacing-2);
+  }
+
+  .modal-container {
+    border-radius: var(--border-radius);
+    max-height: 90dvh;
+    max-width: 37.5rem;
   }
 }
 </style>

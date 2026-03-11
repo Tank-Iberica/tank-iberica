@@ -69,8 +69,8 @@ const emit = defineEmits<{
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xs);
 }
 .collapsible {
   padding: 0;
@@ -80,26 +80,26 @@ const emit = defineEmits<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   text-transform: uppercase;
 }
 .section-toggle:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 .financial {
   border: 1px solid var(--border-color);
 }
 .cost-badge {
-  padding: 4px 10px;
-  background: var(--color-warning-bg, #fef3c7);
+  padding: var(--spacing-1) 0.625rem;
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.75rem;
   font-weight: 600;
 }

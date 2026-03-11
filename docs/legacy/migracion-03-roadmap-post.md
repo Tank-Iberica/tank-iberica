@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 ## PASO 7: MEJORAS POST-LANZAMIENTO — FASE 1 (Primeras semanas)
 
@@ -459,3 +459,5 @@ Medir Lighthouse como baseline después de la migración. Optimizar iterativamen
 - Este es un refactor de nomenclatura + añadir columna vertical + nuevas tablas. La lógica de negocio NO cambia.
 
 ---
+
+

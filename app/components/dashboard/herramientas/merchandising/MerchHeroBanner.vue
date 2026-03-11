@@ -13,10 +13,10 @@
 .hero-banner {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
   background: linear-gradient(135deg, var(--color-primary) 0%, #1a5f6e 100%);
-  border-radius: 16px;
-  padding: 24px 20px;
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem 1.25rem;
   color: white;
   position: relative;
   overflow: hidden;
@@ -25,17 +25,17 @@
 .hero-content {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-width: 560px;
+  gap: 0.5rem;
+  max-width: 35rem;
 }
 
 .hero-badge {
   display: inline-block;
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 20px;
-  padding: 4px 12px;
-  font-size: 0.75rem;
+  border-radius: var(--border-radius-xl);
+  padding: 0.25rem 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -44,7 +44,7 @@
 
 .hero-banner h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   line-height: 1.2;
 }
@@ -61,7 +61,7 @@
   line-height: 1;
   align-self: flex-end;
   position: absolute;
-  right: 20px;
+  right: 1.25rem;
   top: 50%;
   transform: translateY(-50%);
   opacity: 0.35;
@@ -72,7 +72,7 @@
   .hero-banner {
     flex-direction: row;
     align-items: center;
-    padding: 32px;
+    padding: 2rem;
   }
 
   .hero-icon {

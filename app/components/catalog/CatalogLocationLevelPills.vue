@@ -120,13 +120,13 @@ onMounted(() => {
   flex-shrink: 0;
   padding: var(--spacing-1) var(--spacing-3);
   border: 1px solid var(--border-color-light);
-  border-radius: 999px;
+  border-radius: var(--border-radius-full);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--text-secondary);
   background: transparent;
   white-space: nowrap;
-  min-height: 32px;
+  min-height: 2rem;
   transition: all var(--transition-fast);
   cursor: pointer;
 }
@@ -147,12 +147,12 @@ onMounted(() => {
 /* Scroll arrows */
 .scroll-btn {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   color: var(--text-auxiliary);
   border: 1px solid var(--border-color-light);
   border-radius: 50%;

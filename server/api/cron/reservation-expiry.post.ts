@@ -10,9 +10,11 @@
  *
  * Protected by x-cron-secret header.
  */
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
+import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
+import { logger } from '../../utils/logger'
 
 // -- Types ------------------------------------------------------------------
 
@@ -37,12 +39,11 @@ interface ExpiryResult {
 }
 
 type StripeInstance = InstanceType<typeof import('stripe').default>
-type SupabaseClient = ReturnType<typeof import('#supabase/server').serverSupabaseServiceRole>
 
 async function processOneReservation(
   reservation: ExpiredReservation,
   stripe: StripeInstance | null,
-  supabase: SupabaseClient,
+  supabase: any,
 ): Promise<{ refunded: boolean; hasError: boolean }> {
   let newStatus = 'expired'
   let refunded = false
@@ -54,17 +55,17 @@ async function processOneReservation(
       refunded = true
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown Stripe error'
-      console.error(`[reservation-expiry] Refund failed for ${reservation.id}: ${msg}`)
+      logger.error(`[reservation-expiry] Refund failed for ${reservation.id}: ${msg}`)
     }
   }
 
   const { error: updateError } = await supabase
     .from('reservations')
-    .update({ status: newStatus })
+    .update({ status: newStatus } as never)
     .eq('id', reservation.id)
 
   if (updateError) {
-    console.error(`[reservation-expiry] Failed to update ${reservation.id}: ${updateError.message}`)
+    logger.error(`[reservation-expiry] Failed to update ${reservation.id}: ${updateError.message}`)
   }
 
   return { refunded, hasError: !!updateError }
@@ -90,10 +91,7 @@ export default defineEventHandler(async (event): Promise<ExpiryResult> => {
     .limit(200)
 
   if (fetchError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to fetch expired reservations: ${fetchError.message}`,
-    })
+    throw safeError(500, `Failed to fetch expired reservations: ${fetchError.message}`)
   }
 
   if (!reservations || reservations.length === 0) {

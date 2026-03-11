@@ -227,17 +227,17 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
 .tool-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px;
+  gap: 0.75rem;
+  padding: 1.25rem;
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   text-decoration: none;
   color: inherit;
   transition:
     box-shadow 0.2s,
     transform 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 @media (hover: hover) {
@@ -260,20 +260,20 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
 }
 
 .tool-icon {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f0f9ff;
-  border-radius: 10px;
+  background: var(--color-sky-50);
+  border-radius: var(--border-radius-md);
   color: var(--color-primary);
   flex-shrink: 0;
 }
 
 .tool-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 1.375rem;
+  height: 1.375rem;
 }
 
 .tool-card.locked .tool-icon {
@@ -284,7 +284,7 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
 .tool-content {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   flex: 1;
 }
 
@@ -316,27 +316,27 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   white-space: nowrap;
-  min-height: 28px;
+  min-height: 1.75rem;
 }
 
 .badge-free {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .badge-basic {
-  background: #eff6ff;
-  color: #2563eb;
+  background: var(--color-blue-50);
+  color: var(--color-focus);
 }
 
 .badge-premium {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning);
 }
 
@@ -346,8 +346,8 @@ function getPlanBadgeLabel(requiredPlan: PlanType): string {
 }
 
 .lock-icon {
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
   flex-shrink: 0;
 }
 </style>

@@ -77,7 +77,7 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
             :colspan="9 + (showDocs ? 1 : 0) + (showTecnico ? 2 : 0) + (showAlquiler ? 1 : 0) + 1"
             class="empty"
           >
-            No hay registros en el histórico
+            {{ $t('common.noResults') }}
           </td>
         </tr>
         <tr v-for="e in entries" :key="e.id">
@@ -138,14 +138,14 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
 <style scoped>
 .table-container {
   background: var(--bg-primary);
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
 }
 .loading {
-  padding: 40px;
+  padding: 2.5rem;
   text-align: center;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 .historico-table {
   width: 100%;
@@ -154,13 +154,13 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
 }
 .historico-table th {
   text-align: left;
-  padding: 12px 10px;
-  background: #f9fafb;
+  padding: 0.75rem 0.625rem;
+  background: var(--color-gray-50);
   font-weight: 600;
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: #6b7280;
-  border-bottom: 1px solid #e5e7eb;
+  color: var(--color-gray-500);
+  border-bottom: 1px solid var(--bg-tertiary);
   white-space: nowrap;
 }
 .historico-table th.sortable {
@@ -175,23 +175,23 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
 }
 .historico-table th.actions {
   text-align: center;
-  width: 100px;
+  width: 6.25rem;
 }
 .historico-table td {
-  padding: 10px;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 0.625rem;
+  border-bottom: 1px solid var(--bg-secondary);
   vertical-align: middle;
 }
 .historico-table td.empty {
   text-align: center;
   color: var(--text-disabled);
-  padding: 40px;
+  padding: 2.5rem;
 }
 .historico-table td.vehiculo {
   font-weight: 500;
 }
 .historico-table td.buyer {
-  max-width: 120px;
+  max-width: 7.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -205,21 +205,21 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
 
 /* Category badges */
 .cat-badge {
-  padding: 3px 8px;
-  border-radius: 10px;
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.7rem;
   font-weight: 500;
 }
 .cat-badge.venta {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 .cat-badge.terceros {
-  background: #f3e8ff;
-  color: #7c3aed;
+  background: var(--color-purple-100);
+  color: var(--color-purple-600);
 }
 .cat-badge.exportacion {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
@@ -240,22 +240,22 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
 
 /* Action buttons */
 .btn-icon {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: 0.9rem;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
 }
 .btn-icon:hover {
   background: var(--bg-secondary);
 }
 .btn-icon.del:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 .btn-icon.restore:hover {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
 }
 
 @media (max-width: 48em) {
@@ -264,7 +264,7 @@ function getTypeName(entry: HistoricoEntry, locale: string): string {
   }
   .historico-table th,
   .historico-table td {
-    padding: 8px 6px;
+    padding: 0.5rem 0.375rem;
   }
 }
 </style>

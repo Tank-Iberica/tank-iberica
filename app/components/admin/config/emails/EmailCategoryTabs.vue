@@ -30,8 +30,8 @@ const emit = defineEmits<{
 <style scoped>
 .category-tabs {
   display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-5);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -44,18 +44,18 @@ const emit = defineEmits<{
 .category-tab {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: var(--spacing-2);
+  padding: 0.625rem var(--spacing-4);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
   transition: all 0.2s;
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .category-tab:hover {
@@ -75,8 +75,8 @@ const emit = defineEmits<{
 
 .category-tab__count {
   background: rgba(0, 0, 0, 0.1);
-  padding: 2px 8px;
-  border-radius: 10px;
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
 }
 

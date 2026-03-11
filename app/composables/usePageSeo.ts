@@ -10,6 +10,7 @@ export function usePageSeo(options: {
   path: string
   jsonLd?: Record<string, unknown>
 }) {
+  const { t } = useI18n()
   const SITE_URL = 'https://tracciona.com'
   const DEFAULT_IMAGE = `${SITE_URL}/og-default.png`
   const canonicalUrl = `${SITE_URL}${options.path}`
@@ -23,7 +24,7 @@ export function usePageSeo(options: {
     ogImage: options.image || DEFAULT_IMAGE,
     ogType: (options.type || 'website') as 'website',
     ogUrl: canonicalUrl,
-    ogSiteName: 'Tracciona',
+    ogSiteName: t('site.title'),
     twitterCard: 'summary_large_image',
     twitterTitle: options.title,
     twitterDescription: options.description,

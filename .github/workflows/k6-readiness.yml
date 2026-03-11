@@ -1,0 +1,214 @@
+name: k6 Load Test (Automated)
+
+# Weekly smoke test against staging.
+#
+# Behaviour:
+#   - Checks readiness conditions (≥50 vehicles, ≥2 dealers).
+#   - If NOT ready: logs status, exits 0, no email.
+#   - If ready: installs k6, fetches real slugs from Supabase, runs smoke test,
+#     uploads results artifact, sends email with pass/fail summary.
+#
+# Secrets required:
+#   - CRON_SECRET           — same secret used by all cron endpoints
+#   - SUPABASE_ANON_KEY     — public anon key (reads published vehicles)
+#   - SUPABASE_URL          — https://xxx.supabase.co
+#   - RESEND_API_KEY        — for result notification emails
+#   - INFRA_ALERT_EMAIL     — destination email (admin)
+#
+# Vars required:
+#   - APP_URL               — e.g. https://tracciona.com or https://staging.tracciona.com
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Every Monday at 09:00 UTC
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: 'k6 scenario to run'
+        required: false
+        default: 'smoke'
+        type: choice
+        options: [smoke, load]
+      force:
+        description: 'Run even if readiness conditions not met'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
+
+jobs:
+  k6-test:
+    runs-on: ubuntu-latest
+    steps:
+      # ── 1. Check readiness conditions ────────────────────────────────────────
+      - name: Check k6 readiness
+        id: readiness
+        env:
+          APP_URL: ${{ vars.APP_URL || 'https://tracciona.com' }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          FORCE: ${{ github.event.inputs.force || 'false' }}
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X POST "${APP_URL}/api/cron/k6-readiness-check" \
+            -H "Content-Type: application/json" \
+            -d "{\"secret\":\"${CRON_SECRET}\"}" \
+            --max-time 15)
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "HTTP: $HTTP_CODE"
+          echo "Body: $BODY"
+
+          VEHICLES=$(echo "$BODY" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('vehicleCount',0))" 2>/dev/null || echo "0")
+          DEALERS=$(echo "$BODY" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('dealerCount',0))" 2>/dev/null || echo "0")
+          CONDITIONS=$(echo "$BODY" | python3 -c "import sys,json; d=json.load(sys.stdin); print(str(d.get('conditionsMet',False)).lower())" 2>/dev/null || echo "false")
+
+          echo "vehicles=$VEHICLES" >> $GITHUB_OUTPUT
+          echo "dealers=$DEALERS" >> $GITHUB_OUTPUT
+          echo "conditions_met=$CONDITIONS" >> $GITHUB_OUTPUT
+
+          echo ""
+          echo "=== k6 Readiness ==="
+          echo "  Vehicles: $VEHICLES / 50"
+          echo "  Dealers:  $DEALERS / 2"
+          echo "  Ready:    $CONDITIONS"
+          echo "  Force:    $FORCE"
+
+          if [ "$CONDITIONS" != "true" ] && [ "$FORCE" != "true" ]; then
+            echo ""
+            echo "⏳ Conditions not met. Skipping k6. Will retry next Monday."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      # ── 2. Install k6 ────────────────────────────────────────────────────────
+      - name: Install k6
+        if: steps.readiness.outputs.skip == 'false'
+        run: |
+          sudo gpg --no-default-keyring \
+            --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+            --keyserver hkp://keyserver.ubuntu.com:80 \
+            --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" \
+            | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update -qq && sudo apt-get install -y k6
+          k6 version
+
+      # ── 3. Checkout (needed for test scripts) ────────────────────────────────
+      - name: Checkout
+        if: steps.readiness.outputs.skip == 'false'
+        uses: actions/checkout@v4
+
+      # ── 4. Fetch real vehicle slugs from Supabase ─────────────────────────────
+      - name: Fetch vehicle slugs
+        if: steps.readiness.outputs.skip == 'false'
+        id: slugs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "⚠️  SUPABASE_URL or SUPABASE_ANON_KEY not set — using placeholder slugs"
+            echo "slugs=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          SLUGS=$(curl -s \
+            "${SUPABASE_URL}/rest/v1/vehicles?select=slug&status=eq.published&limit=20&order=created_at.desc" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" | \
+            python3 -c "
+          import sys, json
+          rows = json.load(sys.stdin)
+          slugs = [r['slug'] for r in rows if r.get('slug')]
+          print(','.join(slugs))
+          " 2>/dev/null || echo "")
+
+          echo "Fetched slugs: $SLUGS"
+          echo "slugs=$SLUGS" >> $GITHUB_OUTPUT
+
+      # ── 5. Run k6 smoke test ──────────────────────────────────────────────────
+      - name: Run k6 smoke test
+        if: steps.readiness.outputs.skip == 'false'
+        id: k6
+        env:
+          K6_BASE_URL: ${{ vars.APP_URL || 'https://tracciona.com' }}
+          K6_SCENARIO: ${{ github.event.inputs.scenario || 'smoke' }}
+          K6_VEHICLE_SLUGS: ${{ steps.slugs.outputs.slugs }}
+        run: |
+          mkdir -p tests/load/results
+
+          TIMESTAMP=$(date +%Y%m%d-%H%M)
+          SUMMARY_FILE="tests/load/results/${TIMESTAMP}-summary.json"
+
+          set +e
+          k6 run tests/load/k6-full.js \
+            --summary-export="$SUMMARY_FILE" \
+            --out json=tests/load/results/${TIMESTAMP}-load.json
+          K6_EXIT=$?
+          set -e
+
+          echo "exit_code=$K6_EXIT" >> $GITHUB_OUTPUT
+          echo "summary_file=$SUMMARY_FILE" >> $GITHUB_OUTPUT
+          echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+
+          if [ $K6_EXIT -eq 0 ]; then
+            echo "status=passed" >> $GITHUB_OUTPUT
+            echo "✅ k6 smoke test PASSED"
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "❌ k6 smoke test FAILED (exit code $K6_EXIT)"
+          fi
+
+      # ── 6. Upload results artifact ────────────────────────────────────────────
+      - name: Upload k6 results
+        if: steps.readiness.outputs.skip == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-results-${{ steps.k6.outputs.timestamp }}
+          path: tests/load/results/
+          retention-days: 30
+
+      # ── 7. Send email notification ────────────────────────────────────────────
+      - name: Send results notification
+        if: steps.readiness.outputs.skip == 'false'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.INFRA_ALERT_EMAIL }}
+          K6_STATUS: ${{ steps.k6.outputs.status }}
+          VEHICLES: ${{ steps.readiness.outputs.vehicles }}
+          DEALERS: ${{ steps.readiness.outputs.dealers }}
+          SCENARIO: ${{ github.event.inputs.scenario || 'smoke' }}
+          APP_URL: ${{ vars.APP_URL || 'https://tracciona.com' }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$RESEND_API_KEY" ] || [ -z "$ALERT_EMAIL" ]; then
+            echo "⚠️  RESEND_API_KEY or INFRA_ALERT_EMAIL not set — skipping email"
+            exit 0
+          fi
+
+          if [ "$K6_STATUS" = "passed" ]; then
+            ICON="✅"
+            SUBJECT="✅ k6 ${SCENARIO} PASADO — Tracciona"
+            COLOR="#22c55e"
+          else
+            ICON="❌"
+            SUBJECT="❌ k6 ${SCENARIO} FALLADO — Tracciona"
+            COLOR="#ef4444"
+          fi
+
+          DATE=$(date -u '+%Y-%m-%d %H:%M UTC')
+
+          curl -s -X POST 'https://api.resend.com/emails' \
+            -H "Authorization: Bearer ${RESEND_API_KEY}" \
+            -H 'Content-Type: application/json' \
+            -d "{
+              \"from\": \"Tracciona CI <noreply@tracciona.com>\",
+              \"to\": [\"${ALERT_EMAIL}\"],
+              \"subject\": \"${SUBJECT}\",
+              \"html\": \"<h2 style='color:${COLOR}'>${ICON} k6 ${SCENARIO} — ${K6_STATUS}</h2><p><b>Target:</b> ${APP_URL}<br><b>Vehículos:</b> ${VEHICLES}<br><b>Dealers:</b> ${DEALERS}<br><b>Fecha:</b> ${DATE}</p><p><a href='${RUN_URL}'>Ver resultados completos en GitHub Actions →</a></p>\"
+            }"
+
+          echo "Email sent to $ALERT_EMAIL"

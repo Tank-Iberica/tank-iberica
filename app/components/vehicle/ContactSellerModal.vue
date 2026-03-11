@@ -83,6 +83,7 @@ onUnmounted(() => {
         class="modal-overlay"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="contact-seller-title"
         @click.self="handleClose"
       >
         <div class="modal-box">
@@ -101,7 +102,7 @@ onUnmounted(() => {
             </svg>
           </button>
 
-          <h2 class="modal-title">{{ $t('messages.contactSellerTitle') }}</h2>
+          <h2 id="contact-seller-title" class="modal-title">{{ $t('messages.contactSellerTitle') }}</h2>
           <p class="modal-subtitle">{{ vehicleTitle }}</p>
 
           <!-- Not logged in -->
@@ -122,6 +123,7 @@ onUnmounted(() => {
             <textarea
               v-model="messageText"
               class="modal-textarea"
+              :aria-label="$t('messages.contactSellerMessageLabel')"
               :placeholder="$t('messages.contactSellerPlaceholder')"
               :disabled="sending"
               rows="4"
@@ -166,7 +168,7 @@ onUnmounted(() => {
   border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
   padding: var(--spacing-6) var(--spacing-4) var(--spacing-8);
   width: 100%;
-  max-width: 520px;
+  max-width: 32.5rem;
   position: relative;
 }
 
@@ -174,10 +176,10 @@ onUnmounted(() => {
   position: absolute;
   top: var(--spacing-4);
   right: var(--spacing-4);
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
   border-radius: 50%;
   border: none;
   background: var(--bg-secondary);
@@ -220,7 +222,7 @@ onUnmounted(() => {
   color: var(--text-primary);
   background: var(--bg-primary);
   resize: vertical;
-  min-height: 100px;
+  min-height: 6.25rem;
   margin-bottom: var(--spacing-3);
   box-sizing: border-box;
 }
@@ -228,7 +230,7 @@ onUnmounted(() => {
 .modal-textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 .modal-textarea:disabled {
@@ -272,7 +274,7 @@ onUnmounted(() => {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   text-decoration: none;
   transition: opacity 0.2s;
 }
@@ -298,7 +300,7 @@ onUnmounted(() => {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background 0.2s;
 }
 
@@ -329,7 +331,7 @@ onUnmounted(() => {
 
 .modal-enter-from .modal-box,
 .modal-leave-to .modal-box {
-  transform: translateY(20px);
+  transform: translateY(1.25rem);
 }
 
 /* ---- Tablet+ : centrado ---- */
@@ -340,6 +342,19 @@ onUnmounted(() => {
 
   .modal-box {
     border-radius: var(--border-radius-lg);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 30em) {
+  .modal-overlay {
+    align-items: center;
+    overflow-y: auto;
+  }
+
+  .modal-box {
+    border-radius: var(--border-radius-lg);
+    max-height: 90dvh;
+    overflow-y: auto;
   }
 }
 </style>

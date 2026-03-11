@@ -139,14 +139,14 @@ useHead({
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  min-height: calc(100vh - var(--header-height) - 80px);
+  min-height: calc(100vh - var(--header-height) - 5rem);
   padding: var(--spacing-6) var(--spacing-4);
 }
 
 .auth-card {
   background: var(--bg-primary);
   width: 100%;
-  max-width: 440px;
+  max-width: 27.5rem;
   border-radius: var(--border-radius-md);
   padding: var(--spacing-8) var(--spacing-6);
   box-shadow: var(--shadow-md);
@@ -211,7 +211,7 @@ useHead({
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
   transition: background var(--transition-fast);
-  min-height: 48px;
+  min-height: 3rem;
   text-decoration: none;
   text-align: center;
 }
@@ -227,8 +227,8 @@ useHead({
 
 /* Spinner */
 .spinner {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: var(--color-white);
   border-radius: 50%;
@@ -264,7 +264,7 @@ useHead({
 .success-message {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
-  max-width: 320px;
+  max-width: 20rem;
   line-height: var(--line-height-relaxed);
 }
 
@@ -274,7 +274,7 @@ useHead({
 }
 
 /* Desktop */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .auth-page {
     align-items: center;
     padding: var(--spacing-12) var(--spacing-4);

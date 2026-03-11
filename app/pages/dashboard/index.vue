@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useDashboardIndex } from '~/composables/dashboard/useDashboardIndex'
+import { useOnboardingTour } from '~/composables/useOnboardingTour'
 
 /**
  * Dealer Dashboard Home
@@ -31,6 +32,50 @@ definePageMeta({
 
 const { t } = useI18n()
 
+// ---------------------------------------------------------------------------
+// Guided tour — shown once to new dealers before checklist is completed
+// ---------------------------------------------------------------------------
+
+const tourSteps = computed(() => [
+  {
+    key: 'welcome',
+    title: t('tour.dealer.step1.title'),
+    description: t('tour.dealer.step1.desc'),
+  },
+  {
+    key: 'publish',
+    title: t('tour.dealer.step2.title'),
+    description: t('tour.dealer.step2.desc'),
+    actionLabel: t('tour.dealer.step2.action'),
+    actionRoute: '/dashboard/vehiculos/nuevo',
+  },
+  {
+    key: 'leads',
+    title: t('tour.dealer.step3.title'),
+    description: t('tour.dealer.step3.desc'),
+  },
+  {
+    key: 'profile',
+    title: t('tour.dealer.step4.title'),
+    description: t('tour.dealer.step4.desc'),
+    actionLabel: t('tour.dealer.step4.action'),
+    actionRoute: '/dashboard/portal',
+  },
+])
+
+const tour = useOnboardingTour(tourSteps.value)
+
+// Start tour once dealer profile loads and onboarding is not yet complete
+watch(
+  dealerProfile,
+  (profile) => {
+    if (profile && !profile.onboarding_completed) {
+      tour.startTour()
+    }
+  },
+  { once: true },
+)
+
 onMounted(() => init())
 </script>
 
@@ -48,10 +93,15 @@ onMounted(() => init())
     <!-- Error -->
     <div v-if="error" class="alert-error">{{ error }}</div>
 
-    <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('common.loading') }}...</span>
+    <!-- Loading skeleton -->
+    <div v-if="loading" class="dashboard-skeleton" aria-busy="true">
+      <div class="dashboard-skeleton__kpis">
+        <UiSkeletonCard v-for="n in 4" :key="n" :lines="2" />
+      </div>
+      <div class="dashboard-skeleton__sections">
+        <UiSkeletonCard :lines="5" />
+        <UiSkeletonCard :lines="5" />
+      </div>
     </div>
 
     <template v-else>
@@ -89,59 +139,70 @@ onMounted(() => init())
       <DashboardIndexDashboardQuickActions :current-plan="currentPlan" />
     </template>
   </div>
+
+  <!-- Guided onboarding tour (fixed bottom card, shown once) -->
+  <UiOnboardingTour
+    :visible="tour.visible.value"
+    :current-step="tour.currentStep.value"
+    :step-number="tour.stepNumber.value"
+    :total-steps="tour.totalSteps"
+    :is-first="tour.isFirst.value"
+    :is-last="tour.isLast.value"
+    @next="tour.nextStep()"
+    @prev="tour.prevStep()"
+    @skip="tour.skipTour()"
+  />
 </template>
 
 <style scoped>
 .dashboard-page {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
-.loading-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
-  color: var(--text-auxiliary);
+.dashboard-skeleton__kpis {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--color-gray-200);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+.dashboard-skeleton__sections {
+  display: grid;
+  gap: 1rem;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+@media (min-width: 48em) {
+  .dashboard-skeleton__kpis {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .dashboard-skeleton__sections {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 .content-grid {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .dashboard-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 
   .content-grid {

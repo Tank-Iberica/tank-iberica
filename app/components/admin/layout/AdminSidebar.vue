@@ -19,6 +19,7 @@ const {
   pendingCatalog,
   pendingComunicacion,
   pendingUsuarios,
+  pendingDeals,
   infraAlertCount,
   isActive,
   isActiveGroup,
@@ -27,10 +28,12 @@ const {
   financeItems,
   communicationItems,
   usersItems,
+  brokerageItems,
   popover,
   openPopover,
   closePopover,
   handleLogout,
+  siteName,
 } = useAdminSidebar()
 
 function onConfigPopover(e: MouseEvent) {
@@ -48,6 +51,9 @@ function onCommunicationPopover(e: MouseEvent) {
 function onUsersPopover(e: MouseEvent) {
   openPopover('users', e)
 }
+function onBrokeragePopover(e: MouseEvent) {
+  openPopover('brokerage', e)
+}
 </script>
 
 <template>
@@ -56,9 +62,14 @@ function onUsersPopover(e: MouseEvent) {
     <div class="sidebar-header">
       <div class="header-top">
         <div v-if="!collapsed" class="company-dropdown" :class="{ 'dropdown-open': showDropdown }">
-          <button class="company-btn" @click="toggleDropdown">
+          <button
+            class="company-btn"
+            :aria-expanded="showDropdown"
+            aria-controls="sidebar-company-menu"
+            @click="toggleDropdown"
+          >
             <span class="logo-icon">TI</span>
-            <span class="company-name">Tracciona</span>
+            <span class="company-name">{{ siteName }}</span>
             <svg
               class="dropdown-arrow"
               viewBox="0 0 24 24"
@@ -70,14 +81,14 @@ function onUsersPopover(e: MouseEvent) {
             </svg>
           </button>
           <Transition name="dropdown">
-            <div v-if="showDropdown" class="dropdown-menu">
+            <div id="sidebar-company-menu" v-if="showDropdown" class="dropdown-menu">
               <button class="dropdown-item" @click="handleLogout">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
                   <polyline points="16 17 21 12 16 7" />
                   <line x1="21" y1="12" x2="9" y2="12" />
                 </svg>
-                Cerrar sesión
+                {{ $t('nav.logout') }}
               </button>
             </div>
           </Transition>
@@ -88,7 +99,7 @@ function onUsersPopover(e: MouseEvent) {
         <button
           v-if="!collapsed"
           class="close-btn-mobile"
-          aria-label="Cerrar menú"
+          :aria-label="$t('common.close')"
           @click="$emit('close')"
         >
           <svg
@@ -111,14 +122,14 @@ function onUsersPopover(e: MouseEvent) {
             <polyline points="15 3 21 3 21 9" />
             <line x1="10" y1="14" x2="21" y2="3" />
           </svg>
-          <span v-if="!collapsed" class="btn-label">Abrir sitio</span>
+          <span v-if="!collapsed" class="btn-label">{{ $t('admin.sidebar.openSite') }}</span>
         </a>
         <button class="header-btn" @click="$emit('toggle-collapse')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path v-if="collapsed" d="M9 18l6-6-6-6" />
             <path v-else d="M15 18l-6-6 6-6" />
           </svg>
-          <span v-if="!collapsed" class="btn-label">Plegar menú</span>
+          <span v-if="!collapsed" class="btn-label">{{ $t('admin.sidebar.collapseMenu') }}</span>
         </button>
       </div>
     </div>
@@ -126,7 +137,8 @@ function onUsersPopover(e: MouseEvent) {
     <!-- Navigation -->
     <nav class="sidebar-nav">
       <!-- Dashboard -->
-      <NuxtLink to="/admin" class="nav-item" :class="{ active: isActive('/admin', true) }">
+      <NuxtLink to="/admin" class="nav-item" :class="{ active: isActive('/admin', true) }"
+        :aria-current="isActive('/admin', true) ? 'page' : undefined">
         <svg
           class="nav-icon"
           viewBox="0 0 24 24"
@@ -139,7 +151,7 @@ function onUsersPopover(e: MouseEvent) {
           <rect x="14" y="12" width="7" height="9" rx="1" />
           <rect x="3" y="16" width="7" height="5" rx="1" />
         </svg>
-        <span v-if="!collapsed" class="nav-label">Dashboard</span>
+        <span v-if="!collapsed" class="nav-label">{{ $t('admin.nav.dashboard') }}</span>
       </NuxtLink>
 
       <!-- Métricas -->
@@ -147,6 +159,7 @@ function onUsersPopover(e: MouseEvent) {
         to="/admin/dashboard"
         class="nav-item"
         :class="{ active: isActive('/admin/dashboard') }"
+        :aria-current="isActive('/admin/dashboard') ? 'page' : undefined"
       >
         <svg
           class="nav-icon"
@@ -159,12 +172,12 @@ function onUsersPopover(e: MouseEvent) {
           <line x1="12" y1="20" x2="12" y2="4" />
           <line x1="6" y1="20" x2="6" y2="14" />
         </svg>
-        <span v-if="!collapsed" class="nav-label">Metricas</span>
+        <span v-if="!collapsed" class="nav-label">{{ $t('admin.nav.metrics') }}</span>
       </NuxtLink>
 
       <!-- Configuración -->
       <AdminLayoutAdminSidebarNavGroup
-        label="Configuración"
+        :label="$t('admin.nav.config')"
         :collapsed="collapsed"
         :is-open="openGroups.config"
         :badge="0"
@@ -192,7 +205,7 @@ function onUsersPopover(e: MouseEvent) {
 
       <!-- Catálogo -->
       <AdminLayoutAdminSidebarNavGroup
-        label="Catálogo"
+        :label="$t('admin.nav.catalog')"
         :collapsed="collapsed"
         :is-open="openGroups.catalog"
         :badge="pendingCatalog"
@@ -220,7 +233,7 @@ function onUsersPopover(e: MouseEvent) {
 
       <!-- Finanzas -->
       <AdminLayoutAdminSidebarNavGroup
-        label="Finanzas"
+        :label="$t('admin.nav.finance')"
         :collapsed="collapsed"
         :is-open="openGroups.finance"
         :badge="0"
@@ -246,7 +259,7 @@ function onUsersPopover(e: MouseEvent) {
 
       <!-- Comunicación -->
       <AdminLayoutAdminSidebarNavGroup
-        label="Comunicación"
+        :label="$t('admin.nav.communication')"
         :collapsed="collapsed"
         :is-open="openGroups.communication"
         :badge="pendingComunicacion"
@@ -271,7 +284,7 @@ function onUsersPopover(e: MouseEvent) {
 
       <!-- Comunidad -->
       <AdminLayoutAdminSidebarNavGroup
-        label="Comunidad"
+        :label="$t('admin.nav.community')"
         :collapsed="collapsed"
         :is-open="openGroups.users"
         :badge="pendingUsuarios"
@@ -296,11 +309,39 @@ function onUsersPopover(e: MouseEvent) {
         </template>
       </AdminLayoutAdminSidebarNavGroup>
 
+      <!-- Brokeraje -->
+      <AdminLayoutAdminSidebarNavGroup
+        :label="$t('admin.nav.brokerage')"
+        :collapsed="collapsed"
+        :is-open="openGroups.brokerage"
+        :badge="pendingDeals"
+        :is-active-group="isActiveGroup('brokerage')"
+        :items="brokerageItems"
+        :is-active-fn="isActive"
+        @toggle="toggleGroup('brokerage')"
+        @open-popover="onBrokeragePopover"
+      >
+        <template #icon>
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+        </template>
+      </AdminLayoutAdminSidebarNavGroup>
+
       <!-- Infraestructura -->
       <NuxtLink
         to="/admin/infraestructura"
         class="nav-item"
         :class="{ active: isActive('/admin/infraestructura') }"
+        :aria-current="isActive('/admin/infraestructura') ? 'page' : undefined"
       >
         <svg
           class="nav-icon"
@@ -314,7 +355,7 @@ function onUsersPopover(e: MouseEvent) {
           <line x1="6" y1="6" x2="6.01" y2="6" />
           <line x1="6" y1="18" x2="6.01" y2="18" />
         </svg>
-        <span v-if="!collapsed" class="nav-label">Infraestructura</span>
+        <span v-if="!collapsed" class="nav-label">{{ $t('admin.nav.infrastructure') }}</span>
         <span v-if="infraAlertCount > 0" class="badge-dot" />
       </NuxtLink>
     </nav>
@@ -364,7 +405,7 @@ function onUsersPopover(e: MouseEvent) {
   }
 
   .admin-sidebar.collapsed {
-    width: 64px;
+    width: 4rem;
   }
 
   .close-btn-mobile {
@@ -398,8 +439,8 @@ function onUsersPopover(e: MouseEvent) {
 }
 
 .collapsed .header-top .logo-icon {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
 }
 
 .company-dropdown {
@@ -425,8 +466,8 @@ function onUsersPopover(e: MouseEvent) {
 }
 
 .logo-icon {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   background: var(--color-accent);
   color: var(--color-primary);
   border-radius: var(--border-radius);
@@ -447,8 +488,8 @@ function onUsersPopover(e: MouseEvent) {
 }
 
 .dropdown-arrow {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   flex-shrink: 0;
   transition: transform var(--transition-fast);
 }
@@ -487,8 +528,8 @@ function onUsersPopover(e: MouseEvent) {
 }
 
 .dropdown-item svg {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .dropdown-enter-active,
@@ -532,8 +573,8 @@ function onUsersPopover(e: MouseEvent) {
 }
 
 .header-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   flex-shrink: 0;
 }
 
@@ -544,8 +585,8 @@ function onUsersPopover(e: MouseEvent) {
 .collapsed .header-btn {
   padding: var(--spacing-2);
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 .close-btn-mobile {
@@ -586,7 +627,7 @@ function onUsersPopover(e: MouseEvent) {
   transition:
     background var(--transition-fast),
     color var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .nav-item:hover {
@@ -600,8 +641,8 @@ function onUsersPopover(e: MouseEvent) {
 }
 
 .nav-icon {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   flex-shrink: 0;
 }
 
@@ -614,10 +655,10 @@ function onUsersPopover(e: MouseEvent) {
 
 .badge-dot {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 8px;
-  height: 8px;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 0.5rem;
+  height: 0.5rem;
   background: var(--color-error);
   border-radius: 50%;
 }

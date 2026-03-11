@@ -87,13 +87,13 @@ function onCategoryChange(event: Event): void {
 <style scoped>
 .options-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .options-card h2 {
-  margin: 0 0 16px;
+  margin: 0 0 1rem;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -102,26 +102,26 @@ function onCategoryChange(event: Event): void {
 .options-grid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .field label {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .field-select {
-  min-height: 44px;
-  padding: 8px 12px;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   background: var(--bg-primary);
   color: var(--text-primary);
@@ -137,14 +137,14 @@ function onCategoryChange(event: Event): void {
   display: flex;
   gap: 0;
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
 }
 
 .format-btn {
   flex: 1;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
   border: none;
   background: var(--bg-primary);
   font-size: 0.9rem;
@@ -155,7 +155,7 @@ function onCategoryChange(event: Event): void {
 }
 
 .format-btn + .format-btn {
-  border-left: 1px solid #e5e7eb;
+  border-left: 1px solid var(--color-gray-200);
 }
 
 .format-btn.active {
@@ -165,12 +165,12 @@ function onCategoryChange(event: Event): void {
 
 /* Vehicle count */
 .vehicle-count {
-  margin-top: 16px;
-  padding: 12px 16px;
-  background: #f0f9ff;
-  border-radius: 8px;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-sky-50);
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  color: #1e40af;
+  color: var(--badge-info-bg);
 }
 
 @media (min-width: 48em) {
@@ -181,7 +181,7 @@ function onCategoryChange(event: Event): void {
 
   .options-grid .field {
     flex: 1;
-    min-width: 180px;
+    min-width: 11.25rem;
   }
 }
 </style>

@@ -81,34 +81,34 @@ function onSearchInput(event: Event): void {
 <style scoped>
 .form-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .form-section h2 {
-  margin: 0 0 12px 0;
-  font-size: 1rem;
+  margin: 0 0 0.75rem 0;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .input-field {
   width: 100%;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   color: var(--text-primary);
   background: var(--bg-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: border-color 0.2s;
 }
 
 .input-field:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Vehicle search */
@@ -119,15 +119,15 @@ function onSearchInput(event: Event): void {
 .clear-btn {
   position: absolute;
   top: 50%;
-  right: 12px;
+  right: 0.75rem;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
   color: var(--text-disabled);
-  font-size: 1rem;
-  min-width: 44px;
-  min-height: 44px;
+  font-size: var(--font-size-base);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,11 +138,11 @@ function onSearchInput(event: Event): void {
   top: 100%;
   left: 0;
   right: 0;
-  max-height: 240px;
+  max-height: 15rem;
   overflow-y: auto;
   background: var(--bg-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   z-index: 50;
 }
@@ -150,15 +150,15 @@ function onSearchInput(event: Event): void {
 .vehicle-dropdown-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   width: 100%;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   border: none;
   background: none;
   cursor: pointer;
   text-align: left;
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background 0.15s;
 }
 
@@ -184,7 +184,7 @@ function onSearchInput(event: Event): void {
 }
 
 .vd-empty {
-  padding: 16px;
+  padding: 1rem;
   text-align: center;
   color: var(--text-disabled);
   font-size: 0.9rem;
@@ -193,45 +193,45 @@ function onSearchInput(event: Event): void {
 /* Selected vehicle card */
 .selected-vehicle-card {
   display: flex;
-  gap: 16px;
+  gap: 1rem;
   align-items: center;
-  margin-top: 16px;
-  padding: 16px;
+  margin-top: 1rem;
+  padding: 1rem;
   background: var(--bg-secondary);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   border: 1px solid var(--color-gray-200);
 }
 
 .selected-vehicle-img {
-  width: 120px;
-  height: 80px;
+  width: 7.5rem;
+  height: 5rem;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   flex-shrink: 0;
 }
 
 .selected-vehicle-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .sv-title {
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: var(--font-size-base);
 }
 
 .sv-price {
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--color-primary);
 }
 
 @media (min-width: 48em) {
   .selected-vehicle-img {
-    width: 160px;
-    height: 100px;
+    width: 10rem;
+    height: 6.25rem;
   }
 }
 </style>

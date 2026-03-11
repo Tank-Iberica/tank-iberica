@@ -1,5 +1,5 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad.
-> Sesiones 1-64 ya ejecutadas. Backlog futuro extraído a `docs/tracciona-docs/BACKLOG.md`.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
+> Sesiones 1-64 ya ejecutadas. El trabajo activo vive en [BACKLOG-EJECUTABLE.md](../tracciona-docs/BACKLOG-EJECUTABLE.md).
 
 # INSTRUCCIONES MAESTRAS DE EJECUCIÓN
 
@@ -123,10 +123,10 @@ Claude Code tiene acceso a:
 
 **Leer ANTES de escribir código:**
 
-1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 1 (renombrar tablas)
-2. `docs/tracciona-docs/anexos/T-internacionalizacion-i18n.md` — Secciones T.2, T.3, T.4 (JSONB + content_translations)
-3. `docs/tracciona-docs/anexos/V-tablas-placeholder-capa2.md` — Todas las tablas placeholder
-4. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Secciones W.2 y W.9 (vertical_config + activity_logs)
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md (alias de compatibilidad histórica)` — Sección PASO 1 (renombrar tablas)
+2. `docs/tracciona-docs/anexos/T-internacionalizacion-i18n.md (alias de compatibilidad histórica)` — Secciones T.2, T.3, T.4 (JSONB + content_translations)
+3. `docs/tracciona-docs/anexos/V-tablas-placeholder-capa2.md (alias de compatibilidad histórica)` — Todas las tablas placeholder
+4. `docs/tracciona-docs/anexos/W-panel-configuracion.md (alias de compatibilidad histórica)` — Secciones W.2 y W.9 (vertical_config + activity_logs)
 5. `docs/esquema-bd.md` — Esquema actual de la BD (ubicado en `docs/`, NO en `docs/tracciona-docs/`)
 
 **Crear una SOLA migración:** `supabase/migrations/00031_tracciona_migration.sql`
@@ -378,8 +378,8 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer ANTES de escribir código:**
 
-1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 2
-2. `docs/tracciona-docs/anexos/T-internacionalizacion-i18n.md` — Secciones T.5 (localizedField), T.6 (config i18n)
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md (alias de compatibilidad histórica)` — Sección PASO 2
+2. `docs/tracciona-docs/anexos/T-internacionalizacion-i18n.md (alias de compatibilidad histórica)` — Secciones T.5 (localizedField), T.6 (config i18n)
 
 **Hacer:**
 
@@ -401,7 +401,7 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer ANTES de escribir código:**
 
-1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 3
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md (alias de compatibilidad histórica)` — Sección PASO 3
 
 **Hacer:**
 
@@ -415,8 +415,8 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer ANTES de escribir código:**
 
-1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 4
-2. `docs/tracciona-docs/anexos/P-contenido-editorial.md` — Secciones P.1 (URLs) y P.3 (estructura)
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md (alias de compatibilidad histórica)` — Sección PASO 4
+2. `docs/tracciona-docs/anexos/P-contenido-editorial.md (alias de compatibilidad histórica)` — Secciones P.1 (URLs) y P.3 (estructura)
 
 **Hacer:**
 
@@ -436,7 +436,7 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer:**
 
-1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 5
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md (alias de compatibilidad histórica)` — Sección PASO 5
 
 **Hacer:**
 
@@ -449,7 +449,7 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer:**
 
-1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 6, ítems 6.1 a 6.10
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md (alias de compatibilidad histórica)` — Sección PASO 6, ítems 6.1 a 6.10
 
 **Hacer:**
 
@@ -461,8 +461,8 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer:**
 
-1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md` — Sección PASO 6, ítems 6.11 a 6.20
-2. `docs/tracciona-docs/anexos/R-marco-legal.md` — Para disclaimers
+1. `docs/tracciona-docs/migracion/01-pasos-0-6-migracion.md (alias de compatibilidad histórica)` — Sección PASO 6, ítems 6.11 a 6.20
+2. `docs/tracciona-docs/anexos/R-marco-legal.md (alias de compatibilidad histórica)` — Para disclaimers
 
 **Hacer:**
 
@@ -476,7 +476,7 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Completo
+1. `docs/tracciona-docs/anexos/W-panel-configuracion.md (alias de compatibilidad histórica)` — Completo
 
 **Hacer:**
 
@@ -498,8 +498,8 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Secciones W.4, W.5, W.7
-2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md` — Para contexto
+1. `docs/tracciona-docs/anexos/W-panel-configuracion.md (alias de compatibilidad histórica)` — Secciones W.4, W.5, W.7
+2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md (alias de compatibilidad histórica)` — Para contexto
 
 **Hacer:**
 
@@ -514,8 +514,8 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/P-contenido-editorial.md`
-2. `docs/tracciona-docs/anexos/U-publicacion-programada-calendario.md`
+1. `docs/tracciona-docs/anexos/P-contenido-editorial.md (alias de compatibilidad histórica)`
+2. `docs/tracciona-docs/anexos/U-publicacion-programada-calendario.md (alias de compatibilidad histórica)`
 
 **Hacer:**
 
@@ -532,7 +532,7 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/T-internacionalizacion-i18n.md` — Sección T.7
+1. `docs/tracciona-docs/anexos/T-internacionalizacion-i18n.md (alias de compatibilidad histórica)` — Sección T.7
 
 **Hacer:**
 
@@ -555,7 +555,7 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 **Leer:**
 
-1. `docs/tracciona-docs/migracion/02-deuda-tecnica-diferida.md`
+1. `docs/tracciona-docs/migracion/02-deuda-tecnica-diferida.md (alias de compatibilidad histórica)`
 
 **Hacer:**
 
@@ -563,7 +563,7 @@ El admin original de Tank Ibérica (8.860 líneas, 453 elementos UI, 16 seccione
 
 ### Deuda heredada de Tank Ibérica (Bloque D-QUINQUIES)
 
-Estos ítems estaban pendientes en el proyecto original (docs/progreso.md Step 2.5, 2.17, Steps 3-6 completos) y aplican a Tracciona:
+Estos ítems estaban pendientes en el proyecto original (docs/progreso.md (alias de compatibilidad histórica) Step 2.5, 2.17, Steps 3-6 completos) y aplican a Tracciona:
 
 **1. Auditoría mobile-first retroactiva (sesiones 1-12):**
 
@@ -612,9 +612,9 @@ Estos ítems estaban pendientes en el proyecto original (docs/progreso.md Step 2
 
 **Leer:**
 
-1. `docs/tracciona-docs/migracion/03-roadmap-post-lanzamiento.md` — Sección PASO 7
-2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md`
-3. `docs/tracciona-docs/anexos/E-sistema-pro.md`
+1. `docs/tracciona-docs/migracion/03-roadmap-post-lanzamiento.md (alias de compatibilidad histórica)` — Sección PASO 7
+2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md (alias de compatibilidad histórica)`
+3. `docs/tracciona-docs/anexos/E-sistema-pro.md (alias de compatibilidad histórica)`
 
 **Hacer:**
 
@@ -628,8 +628,8 @@ Estos ítems estaban pendientes en el proyecto original (docs/progreso.md Step 2
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/G-verificacion-carfax.md` — Completo
-2. `docs/tracciona-docs/anexos/R-marco-legal.md` — Sección R.1 (disclaimers de verificación)
+1. `docs/tracciona-docs/anexos/G-verificacion-carfax.md (alias de compatibilidad histórica)` — Completo
+2. `docs/tracciona-docs/anexos/R-marco-legal.md (alias de compatibilidad histórica)` — Sección R.1 (disclaimers de verificación)
 
 **Hacer:**
 
@@ -700,8 +700,8 @@ Estos ítems estaban pendientes en el proyecto original (docs/progreso.md Step 2
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/H-subastas.md` — Completo
-2. `docs/tracciona-docs/anexos/E-sistema-pro.md` — Sección E.5 (alertas Pro para subastas)
+1. `docs/tracciona-docs/anexos/H-subastas.md (alias de compatibilidad histórica)` — Completo
+2. `docs/tracciona-docs/anexos/E-sistema-pro.md (alias de compatibilidad histórica)` — Sección E.5 (alertas Pro para subastas)
 
 **Hacer:**
 
@@ -756,9 +756,9 @@ Estos ítems estaban pendientes en el proyecto original (docs/progreso.md Step 2
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/F-publicidad-directa.md` — Completo
-2. `docs/tracciona-docs/anexos/J-adsense-google-ads.md` — Completo
-3. `docs/tracciona-docs/anexos/E-sistema-pro.md` — Secciones E.2 y E.4 (visible_from + UX conversión)
+1. `docs/tracciona-docs/anexos/F-publicidad-directa.md (alias de compatibilidad histórica)` — Completo
+2. `docs/tracciona-docs/anexos/J-adsense-google-ads.md (alias de compatibilidad histórica)` — Completo
+3. `docs/tracciona-docs/anexos/E-sistema-pro.md (alias de compatibilidad histórica)` — Secciones E.2 y E.4 (visible_from + UX conversión)
 
 **Hacer:**
 
@@ -1167,8 +1167,8 @@ Implementar `visible_from` en vehicles y la lógica de filtrado:
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/G-BIS-transporte.md` — Completo
-2. `docs/tracciona-docs/anexos/L-flujo-post-venta.md` — Completo
+1. `docs/tracciona-docs/anexos/G-BIS-transporte.md (alias de compatibilidad histórica)` — Completo
+2. `docs/tracciona-docs/anexos/L-flujo-post-venta.md (alias de compatibilidad histórica)` — Completo
 
 **Hacer:**
 
@@ -1223,7 +1223,7 @@ Implementar `visible_from` en vehicles y la lógica de filtrado:
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/I-automatizacion-ia.md` — Secciones I.2 y I.3
+1. `docs/tracciona-docs/anexos/I-automatizacion-ia.md (alias de compatibilidad histórica)` — Secciones I.2 y I.3
 
 **Hacer:**
 
@@ -1259,9 +1259,9 @@ Implementar `visible_from` en vehicles y la lógica de filtrado:
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/E-sistema-pro.md` — Tiers de suscripción
-2. `docs/tracciona-docs/anexos/D-monetizacion.md` — 16 fuentes de ingreso
-3. `docs/tracciona-docs/anexos/H-subastas.md` — Buyer premium y depósitos
+1. `docs/tracciona-docs/anexos/E-sistema-pro.md (alias de compatibilidad histórica)` — Tiers de suscripción
+2. `docs/tracciona-docs/anexos/D-monetizacion.md (alias de compatibilidad histórica)` — 16 fuentes de ingreso
+3. `docs/tracciona-docs/anexos/H-subastas.md (alias de compatibilidad histórica)` — Buyer premium y depósitos
 
 **Hacer:**
 
@@ -1293,9 +1293,9 @@ Implementar `visible_from` en vehicles y la lógica de filtrado:
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Sección W.6.8 (templates de email)
-2. `docs/tracciona-docs/anexos/D-monetizacion.md` — Fuentes de ingreso que generan emails
-3. `docs/tracciona-docs/anexos/K-dealer-toolkit.md` — Comunicación dealer
+1. `docs/tracciona-docs/anexos/W-panel-configuracion.md (alias de compatibilidad histórica)` — Sección W.6.8 (templates de email)
+2. `docs/tracciona-docs/anexos/D-monetizacion.md (alias de compatibilidad histórica)` — Fuentes de ingreso que generan emails
+3. `docs/tracciona-docs/anexos/K-dealer-toolkit.md (alias de compatibilidad histórica)` — Comunicación dealer
 
 **Hacer:**
 
@@ -1383,7 +1383,7 @@ Implementar `visible_from` en vehicles y la lógica de filtrado:
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/N-seguridad-mantenimiento.md`
+1. `docs/tracciona-docs/anexos/N-seguridad-mantenimiento.md (alias de compatibilidad histórica)`
 
 **Hacer:**
 
@@ -1472,7 +1472,7 @@ Implementar `visible_from` en vehicles y la lógica de filtrado:
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/I-automatizacion-ia.md`
+1. `docs/tracciona-docs/anexos/I-automatizacion-ia.md (alias de compatibilidad histórica)`
 
 **Hacer:**
 
@@ -1506,10 +1506,10 @@ Implementar `visible_from` en vehicles y la lógica de filtrado:
 
 **Leer:**
 
-1. `docs/tracciona-docs/contexto-global.md` — Sección 3 (los 7 verticales)
-2. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Sección W.8 (flujo de clonado)
-3. `docs/tracciona-docs/anexos/A-verticales-confirmados.md`
-4. `docs/tracciona-docs/anexos/B-verticales-futuros.md`
+1. `docs/tracciona-docs/contexto-global.md (alias de compatibilidad)` — Sección 3 (los 7 verticales)
+2. `docs/tracciona-docs/anexos/W-panel-configuracion.md (alias de compatibilidad histórica)` — Sección W.8 (flujo de clonado)
+3. `docs/tracciona-docs/anexos/A-verticales-confirmados.md (alias de compatibilidad histórica)`
+4. `docs/tracciona-docs/anexos/B-verticales-futuros.md (alias de compatibilidad histórica)`
 
 **Hacer:**
 
@@ -1556,9 +1556,9 @@ Implementar `visible_from` en vehicles y la lógica de filtrado:
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/E-sistema-pro.md` — Tipos de suscripción y sistema Pro
-2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md` — Funcionalidades del dealer (K.1 a K.6)
-3. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Sección W.4 (portal dealer)
+1. `docs/tracciona-docs/anexos/E-sistema-pro.md (alias de compatibilidad histórica)` — Tipos de suscripción y sistema Pro
+2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md (alias de compatibilidad histórica)` — Funcionalidades del dealer (K.1 a K.6)
+3. `docs/tracciona-docs/anexos/W-panel-configuracion.md (alias de compatibilidad histórica)` — Sección W.4 (portal dealer)
 
 **Hacer:**
 
@@ -1720,8 +1720,8 @@ En el header:
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/R-marco-legal.md`
-2. `docs/tracciona-docs/anexos/N-seguridad-mantenimiento.md`
+1. `docs/tracciona-docs/anexos/R-marco-legal.md (alias de compatibilidad histórica)`
+2. `docs/tracciona-docs/anexos/N-seguridad-mantenimiento.md (alias de compatibilidad histórica)`
 
 **Hacer:**
 
@@ -1811,7 +1811,7 @@ Si se activa el mercado británico (idioma EN con `.co.uk` o tráfico UK signifi
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/K-dealer-toolkit.md`
+1. `docs/tracciona-docs/anexos/K-dealer-toolkit.md (alias de compatibilidad histórica)`
 
 **Hacer:**
 
@@ -1940,7 +1940,7 @@ Si se activa el mercado británico (idioma EN con `.co.uk` o tráfico UK signifi
   - Subir a Backblaze B2 o S3 (cifrado)
   - Retención: 4 backups semanales + 3 mensuales
 - Script de restauración testeado: backup → nueva instancia PostgreSQL → verificar
-- Documentar todo en `docs/tracciona-docs/migracion/04-plan-contingencia.md`
+- Documentar todo en `docs/tracciona-docs/migracion/04-plan-contingencia.md (alias de compatibilidad histórica)`
 - GitHub como fuente de verdad (no OneDrive). Push diario obligatorio.
 
 ---
@@ -1951,8 +1951,8 @@ Si se activa el mercado británico (idioma EN con `.co.uk` o tráfico UK signifi
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/M-herramientas-dealer.md` — Completo
-2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md` — Secciones K.7
+1. `docs/tracciona-docs/anexos/M-herramientas-dealer.md (alias de compatibilidad histórica)` — Completo
+2. `docs/tracciona-docs/anexos/K-dealer-toolkit.md (alias de compatibilidad histórica)` — Secciones K.7
 
 **Hacer:**
 
@@ -2123,8 +2123,8 @@ Añadir en sidebar/menú del dealer:
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/S-monetizacion-datos.md` — Completo
-2. `docs/tracciona-docs/anexos/R-marco-legal.md` — Sección RGPD
+1. `docs/tracciona-docs/anexos/S-monetizacion-datos.md (alias de compatibilidad histórica)` — Completo
+2. `docs/tracciona-docs/anexos/R-marco-legal.md (alias de compatibilidad histórica)` — Sección RGPD
 
 **Hacer:**
 
@@ -2312,9 +2312,9 @@ Cuando haya 2+ verticales, los datos se multiplican:
 
 **Leer:**
 
-1. `docs/tracciona-docs/anexos/N-seguridad-mantenimiento.md` — Arquitectura de seguridad por capas
-2. `docs/tracciona-docs/anexos/W-panel-configuracion.md` — Estructura de `vertical_config` y principios del admin
-3. `docs/tracciona-docs/anexos/X-integraciones-externas.md` — Integraciones actuales
+1. `docs/tracciona-docs/anexos/N-seguridad-mantenimiento.md (alias de compatibilidad histórica)` — Arquitectura de seguridad por capas
+2. `docs/tracciona-docs/anexos/W-panel-configuracion.md (alias de compatibilidad histórica)` — Estructura de `vertical_config` y principios del admin
+3. `docs/tracciona-docs/anexos/X-integraciones-externas.md (alias de compatibilidad histórica)` — Integraciones actuales
 4. `app/pages/admin/index.vue` — Dashboard actual (patrón de KPIs y notificaciones)
 5. `app/components/admin/layout/AdminSidebar.vue` — Sidebar del admin (para añadir sección)
 6. `server/api/push/send.post.ts` — Sistema de push notifications existente
@@ -3723,7 +3723,7 @@ Ejecutar `npm audit` y corregir vulnerabilidades.
 **Leer:**
 
 1. `docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md` — Contexto de arquitectura
-2. `docs/progreso.md` — Estado actual (desactualizado)
+2. `docs/progreso.md (alias de compatibilidad histórica)` — Estado actual (desactualizado)
 3. `app/pages/admin/` — Verificar duplicación con dashboard
 4. `server/api/` — Endpoints a auditar
 
@@ -3811,13 +3811,13 @@ Claude Code debe leer el contenido del archivo para determinar qué hace. Si gen
 
 ---
 
-### Parte C — ESTADO REAL DEL PRODUCTO (docs/progreso.md)
+### Parte C — ESTADO REAL DEL PRODUCTO (docs/progreso.md (alias de compatibilidad histórica))
 
-**Problema (punto 1.4-1.5 auditoría):** `docs/progreso.md` dice "Step 2 en progreso" pero el código ya tiene subastas, pagos Stripe, WhatsApp pipeline, sistema de ads, panel de infraestructura, etc. Esto puede llevar a decisiones erróneas y a reescribir código que ya existe.
+**Problema (punto 1.4-1.5 auditoría):** `docs/progreso.md (alias de compatibilidad histórica)` dice "Step 2 en progreso" pero el código ya tiene subastas, pagos Stripe, WhatsApp pipeline, sistema de ads, panel de infraestructura, etc. Esto puede llevar a decisiones erróneas y a reescribir código que ya existe.
 
 Este es el hallazgo más valioso de la 4ª auditoría y ninguna sesión anterior lo aborda.
 
-**Fix — Crear `docs/ESTADO-REAL-PRODUCTO.md`:**
+**Fix — Crear `docs/ESTADO-REAL-PRODUCTO.md (alias de compatibilidad)`:**
 
 Claude Code debe generar este documento ejecutando análisis del código real:
 
@@ -3856,7 +3856,7 @@ Para cada módulo, documentar:
 
 El documento debe reflejar la REALIDAD del código, no las aspiraciones de las sesiones.
 
-**Además:** Actualizar `docs/progreso.md` para que apunte a `ESTADO-REAL-PRODUCTO.md` como fuente de verdad.
+**Además:** Actualizar `docs/progreso.md (alias de compatibilidad histórica)` para que apunte a `ESTADO-REAL-PRODUCTO.md` como fuente de verdad.
 
 ---
 
@@ -4053,7 +4053,7 @@ Este inventario sirve como checklist para futuras auditorías y para Claude Code
 
 | Archivo                                                  | Tipo                                              |
 | -------------------------------------------------------- | ------------------------------------------------- |
-| `docs/ESTADO-REAL-PRODUCTO.md`                           | Estado real de cada módulo vs docs                |
+| `docs/ESTADO-REAL-PRODUCTO.md (alias de compatibilidad)`                           | Estado real de cada módulo vs docs                |
 | `docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md`    | Diagramas ASCII de flujos usuario/dealer/admin    |
 | `docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md` | Tabla de todos los endpoints con auth y propósito |
 
@@ -4067,7 +4067,7 @@ Este inventario sirve como checklist para futuras auditorías y para Claude Code
 | `server/api/push/send.post.ts`            | Añadir auth (internal secret o admin)                 | 🟠 Alto   |
 | `server/api/account/*.ts`                 | Verificar auth completa en todos                      | 🟠 Alto   |
 | `server/api/market-report.get.ts`         | Decidir auth según contenido (público vs admin)       | 🟡 Medio  |
-| `docs/progreso.md`                        | Apuntar a ESTADO-REAL-PRODUCTO.md                     | 🟡 Medio  |
+| `docs/progreso.md (alias de compatibilidad histórica)`                        | Apuntar a ESTADO-REAL-PRODUCTO.md                     | 🟡 Medio  |
 | Archivos con `.name_es`/`.name_en`        | Migrar a `localizedField()` si quedan                 | 🟡 Medio  |
 | Composables admin+dashboard               | Extraer lógica común a `shared/`                      | 🟢 Bajo   |
 | `nuxt.config.ts`                          | Verificar code-splitting admin                        | 🟢 Bajo   |
@@ -4471,7 +4471,7 @@ STRIPE_SECRET_KEY=sk_test_...
 **Leer:**
 
 1. `docs/` — Estructura actual de documentación
-2. `docs/progreso.md` — Estado de progreso
+2. `docs/progreso.md (alias de compatibilidad histórica)` — Estado de progreso
 3. `CLAUDE.md` — Instrucciones para Claude Code
 4. `package.json` — Name actual
 
@@ -4507,7 +4507,7 @@ Plataforma multi-vertical de compraventa profesional. Cada vertical (vehículos,
 
 ## Estado actual
 
-Ver [`docs/ESTADO-REAL-PRODUCTO.md`](docs/ESTADO-REAL-PRODUCTO.md) para el estado real de cada módulo.
+Ver [`STATUS.md`](../../STATUS.md) para el estado operativo actual y [`docs/README.md`](../README.md) para el mapa documental vigente.
 
 ## Cómo empezar
 
@@ -4531,12 +4531,13 @@ Ver [Guía de onboarding](#guía-de-onboarding) más abajo.
 
 | Documento                                                                                       | Qué contiene                                     |
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [`INSTRUCCIONES-MAESTRAS.md`](docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md)                    | Sesiones de ejecución (1-38+) para Claude Code   |
-| [`ESTADO-REAL-PRODUCTO.md`](docs/ESTADO-REAL-PRODUCTO.md)                                       | Estado real de cada módulo (generado del código) |
-| [`contexto-global.md`](docs/tracciona-docs/contexto-global.md)                                  | Mapa del proyecto para Claude Code               |
-| [`CLAUDE.md`](CLAUDE.md)                                                                        | Instrucciones rápidas para Claude Code           |
-| [`INVENTARIO-ENDPOINTS.md`](docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)             | Todos los endpoints con auth y propósito         |
-| [`ARQUITECTURA-ESCALABILIDAD.md`](docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md) | Diseño multi-cluster, costes, decisiones         |
+| [`README.md`](../../README.md)                                                                  | Punto de entrada general del repositorio         |
+| [`STATUS.md`](../../STATUS.md)                                                                  | Estado actual: métricas, errores y changelog     |
+| [`PROYECTO-CONTEXTO.md`](../PROYECTO-CONTEXTO.md)                                               | Visión, arquitectura y decisiones activas        |
+| [`BACKLOG-EJECUTABLE.md`](../tracciona-docs/BACKLOG-EJECUTABLE.md)                              | Única fuente de verdad del trabajo pendiente     |
+| [`CLAUDE.md`](../../CLAUDE.md)                                                                  | Instrucciones rápidas para Claude Code           |
+| [`INVENTARIO-ENDPOINTS.md`](../tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)               | Todos los endpoints con auth y propósito         |
+| [`ARQUITECTURA-ESCALABILIDAD.md`](../tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md)   | Diseño multi-cluster, costes y decisiones        |
 
 ### Documentos HISTÓRICOS (referencia, no modificar)
 
@@ -4551,7 +4552,7 @@ Ver [Guía de onboarding](#guía-de-onboarding) más abajo.
 
 | Carpeta                           | Contenido                                             |
 | --------------------------------- | ----------------------------------------------------- |
-| `docs/tracciona-docs/anexos/`     | Anexos A-X: especificaciones detalladas por módulo    |
+| `docs/tracciona-docs/anexos/`     | Anexos A-X: especificaciones detalladas por módulo (aliases de compatibilidad histórica) |
 | `docs/tracciona-docs/referencia/` | FLUJOS-OPERATIVOS, INVENTARIO-ENDPOINTS, ARQUITECTURA |
 
 ## Guía de onboarding
@@ -4559,7 +4560,7 @@ Ver [Guía de onboarding](#guía-de-onboarding) más abajo.
 ### Para Claude Code
 
 1. Leer `CLAUDE.md` (instrucciones rápidas)
-2. Leer `contexto-global.md` (mapa completo)
+2. Leer `contexto-global.md` (alias de compatibilidad, mapa completo)
 3. Si te piden ejecutar una sesión: leer `INSTRUCCIONES-MAESTRAS.md` → sesión N
 
 ### Para un desarrollador humano
@@ -4568,7 +4569,7 @@ Ver [Guía de onboarding](#guía-de-onboarding) más abajo.
 2. `cp .env.example .env` y rellenar variables
 3. `npm install`
 4. `npm run dev`
-5. Leer este README y luego `ESTADO-REAL-PRODUCTO.md`
+5. Leer este README y luego `ESTADO-REAL-PRODUCTO.md` (alias de compatibilidad)
 6. Para entender una funcionalidad: buscar en `INSTRUCCIONES-MAESTRAS.md` la sesión correspondiente
 
 ### Comandos útiles
@@ -5058,7 +5059,7 @@ const retry = () => window.location.reload()
 
 1. `server/api/stripe/` — Flujos Stripe actuales
 2. `server/api/stripe/webhook.post.ts` — Eventos de pago
-3. `docs/tracciona-docs/anexos/E-sistema-pro.md` — Sistema Pro
+3. `docs/tracciona-docs/anexos/E-sistema-pro.md (alias de compatibilidad histórica)` — Sistema Pro
 4. `app/pages/admin/facturacion.vue` — Panel actual
 5. Sesión 17 (Stripe) y sesión 27 (Métricas) en INSTRUCCIONES-MAESTRAS
 
@@ -5790,8 +5791,8 @@ tracciona.com/fr/vehiculo/citerne-indox-25000l       → i18n prefix + vehiculo/
 
 **Leer:**
 
-1. `docs/progreso.md` — Estado actual (desactualizado)
-2. `docs/ESTADO-REAL-PRODUCTO.md` — Generado automáticamente
+1. `docs/progreso.md (alias de compatibilidad histórica)` — Estado actual (desactualizado)
+2. `docs/ESTADO-REAL-PRODUCTO.md (alias de compatibilidad)` — Generado automáticamente
 3. `docs/auditorias/CHECKLIST-POST-SESIONES.md` — Pendientes post-sesiones
 4. `scripts/generate-estado-real.sh` — Script generador
 
@@ -5807,7 +5808,7 @@ Verificar que el output refleja todas las páginas, composables, endpoints y mig
 
 ### Parte B — ACTUALIZAR PROGRESO.MD
 
-Reescribir `docs/progreso.md` con:
+Reescribir `docs/progreso.md (alias de compatibilidad histórica)` con:
 
 1. Lista de sesiones 1-42 con estado (completada / parcial / pendiente)
 2. Resumen de módulos implementados vs pendientes
@@ -5816,7 +5817,7 @@ Reescribir `docs/progreso.md` con:
 
 ### Parte C — DOCUMENTAR MÓDULOS POSPUESTOS
 
-Añadir sección en `docs/ESTADO-REAL-PRODUCTO.md`:
+Añadir sección en `docs/ESTADO-REAL-PRODUCTO.md (alias de compatibilidad)`:
 
 - **Landing pages builder** → POSPUESTO (diseño en anexos, no implementado)
 - **OAuth social** → MÍNIMO (solo email+password activo, Google OAuth preparado pero no activado)
@@ -5826,14 +5827,14 @@ Añadir sección en `docs/ESTADO-REAL-PRODUCTO.md`:
 
 1. README-PROYECTO.md apunta a docs correctos
 2. CLAUDE.md refleja estado actual (sesiones 1-42 completadas)
-3. contexto-global.md actualizado con nuevos módulos (conversación, reservas, comparador, etc.)
+3. contexto-global.md (alias de compatibilidad) actualizado con nuevos módulos (conversación, reservas, comparador, etc.)
 
 ### Resumen archivos sesión 43
 
 | Archivo                        | Tipo                   |
 | ------------------------------ | ---------------------- |
-| `docs/ESTADO-REAL-PRODUCTO.md` | Regenerado             |
-| `docs/progreso.md`             | Reescrito completo     |
+| `docs/ESTADO-REAL-PRODUCTO.md (alias de compatibilidad)` | Regenerado             |
+| `docs/progreso.md (alias de compatibilidad histórica)`             | Reescrito completo     |
 | `README-PROYECTO.md`           | Verificado/actualizado |
 | `CLAUDE.md`                    | Verificado/actualizado |
 
@@ -5846,7 +5847,7 @@ Añadir sección en `docs/ESTADO-REAL-PRODUCTO.md`:
 **Leer ANTES de escribir código:**
 
 1. `docs/tracciona-docs/FLUJOS-OPERATIVOS-TRACCIONA.md` — Secciones §1, §2, §7, §11, §13, §15, §18, §30 (buscar marcas ⚠️ DECISIÓN)
-2. `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` — Sesiones 3 (i18n), 16b (publicidad), 16d (scraping), 18 (emails), 31 (merchandising/herramientas), 32 (datos), 33 (infra)
+2. `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md (alias de compatibilidad)` — Sesiones 3 (i18n), 16b (publicidad), 16d (scraping), 18 (emails), 31 (merchandising/herramientas), 32 (datos), 33 (infra)
 3. `nuxt.config.ts` — Configuración actual de i18n (locales activos)
 4. `server/api/cron/infra-metrics.post.ts` — Cron de monitorización actual
 
@@ -6093,7 +6094,7 @@ Añadir sección en `docs/ESTADO-REAL-PRODUCTO.md`:
 
 3. **`app/pages/admin/config/pricing.vue`** o equivalente — Si hay opciones de pricing para "API valoración" o "dataset anualizado", marcarlas como deshabilitadas o eliminarlas de la UI.
 
-4. **Documentar** en `docs/ESTADO-REAL-PRODUCTO.md`:
+4. **Documentar** en `docs/ESTADO-REAL-PRODUCTO.md (alias de compatibilidad)`:
 
    ```markdown
    ## Módulos pospuestos
@@ -6160,11 +6161,11 @@ Añadir sección en `docs/ESTADO-REAL-PRODUCTO.md`:
    - Métricas infra: tag vertical en infra_metrics desde día 1
    ```
 
-2. **`docs/tracciona-docs/contexto-global.md`** — Añadir sección "Decisiones estratégicas activas" con tabla de las 12 decisiones de §30.
+2. **`docs/tracciona-docs/contexto-global.md (alias de compatibilidad)`** — Añadir sección "Decisiones estratégicas activas" con tabla de las 12 decisiones de §30.
 
-3. **`docs/progreso.md`** — Añadir sesión 44 como pendiente/completada según corresponda.
+3. **`docs/progreso.md (alias de compatibilidad histórica)`** — Añadir sesión 44 como pendiente/completada según corresponda.
 
-4. **`docs/ESTADO-REAL-PRODUCTO.md`** — Si existe, añadir módulos pospuestos (merchandising completo, API valoración, idiomas 3-7).
+4. **`docs/ESTADO-REAL-PRODUCTO.md (alias de compatibilidad)`** — Si existe, añadir módulos pospuestos (merchandising completo, API valoración, idiomas 3-7).
 
 ---
 
@@ -6183,10 +6184,10 @@ Añadir sección en `docs/ESTADO-REAL-PRODUCTO.md`:
 | `server/api/cron/scrape-competitors.post.ts`                   | ELIMINAR (si existe)                            |
 | `scripts/scrape-competitors.ts`                                | Verificar que es script CLI manual              |
 | `CLAUDE.md`                                                    | Añadir decisiones estratégicas                  |
-| `docs/tracciona-docs/contexto-global.md`                       | Añadir sección decisiones                       |
+| `docs/tracciona-docs/contexto-global.md (alias de compatibilidad)`                       | Añadir sección decisiones                       |
 | `docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md` | Añadir dependencias Supabase                    |
-| `docs/ESTADO-REAL-PRODUCTO.md`                                 | Añadir módulos pospuestos                       |
-| `docs/progreso.md`                                             | Añadir sesión 44                                |
+| `docs/ESTADO-REAL-PRODUCTO.md (alias de compatibilidad)`                                 | Añadir módulos pospuestos                       |
+| `docs/progreso.md (alias de compatibilidad histórica)`                                             | Añadir sesión 44                                |
 
 ### Orden de ejecución
 
@@ -9316,3 +9317,4 @@ jobs:
 - **Si algo falla:** No seguir adelante. Corregir primero.
 - **Los anexos son referencia, no tareas.** Solo se leen cuando esta guía los indica.
 - **No implementar roadmap post-lanzamiento** (pasos 7-9) hasta completar todas las sesiones 1-12.
+

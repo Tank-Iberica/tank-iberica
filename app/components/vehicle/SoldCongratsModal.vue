@@ -105,7 +105,7 @@ function goToStep4() {
 }
 
 const shareUrl = computed(() => {
-  if (typeof window === 'undefined') return ''
+  if (globalThis.window === undefined) return ''
   return `${globalThis.location.origin}/servicios-postventa?v=${props.vehicle.slug || ''}`
 })
 
@@ -284,7 +284,7 @@ const services = computed(() => [
   left: 0;
   right: 0;
   max-height: 85vh;
-  background: var(--bg-primary, #fff);
+  background: var(--bg-primary, var(--color-white));
   border-radius: var(--border-radius-lg, 16px) var(--border-radius-lg, 16px) 0 0;
   overflow-y: auto;
   padding: var(--spacing-6, 1.5rem);
@@ -298,11 +298,11 @@ const services = computed(() => [
   right: var(--spacing-3, 0.75rem);
   background: none;
   border: none;
-  font-size: 28px;
-  color: var(--text-auxiliary, #999);
+  font-size: 1.75rem;
+  color: var(--text-auxiliary);
   cursor: pointer;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -316,19 +316,19 @@ const services = computed(() => [
 .sold-heading {
   font-size: var(--font-size-xl, 1.25rem);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
   margin-bottom: var(--spacing-4, 1rem);
 }
 
 .sold-question {
   font-size: var(--font-size-base, 1rem);
-  color: var(--text-secondary, #4a5a5a);
+  color: var(--text-secondary, var(--text-secondary));
   margin-bottom: var(--spacing-6, 1.5rem);
 }
 
 .sold-subtitle {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-secondary, #4a5a5a);
+  color: var(--text-secondary, var(--text-secondary));
   margin-bottom: var(--spacing-6, 1.5rem);
 }
 
@@ -359,13 +359,13 @@ const services = computed(() => [
   width: 100%;
   padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
   background: var(--color-primary);
-  color: var(--color-white, #fff);
+  color: var(--color-white, var(--color-white));
   border: none;
   border-radius: var(--border-radius, 8px);
   font-size: var(--font-size-base, 1rem);
   font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background var(--transition-fast, 150ms ease);
 }
 
@@ -381,19 +381,19 @@ const services = computed(() => [
 .btn-secondary {
   width: 100%;
   padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
-  background: var(--bg-secondary, #f3f4f6);
-  color: var(--text-primary, #1f2a2a);
-  border: 1px solid var(--border-color, #d1d5db);
+  background: var(--bg-secondary, var(--color-gray-100));
+  color: var(--text-primary, var(--text-primary));
+  border: 1px solid var(--border-color, var(--color-gray-300));
   border-radius: var(--border-radius, 8px);
   font-size: var(--font-size-base, 1rem);
   font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background var(--transition-fast, 150ms ease);
 }
 
 .btn-secondary:hover {
-  background: var(--bg-tertiary, #e5e7eb);
+  background: var(--bg-tertiary, var(--color-gray-200));
 }
 
 .btn-secondary:disabled {
@@ -411,7 +411,7 @@ const services = computed(() => [
 }
 
 .service-card {
-  border: 1px solid var(--border-color, #d1d5db);
+  border: 1px solid var(--border-color, var(--color-gray-300));
   border-radius: var(--border-radius-md, 12px);
   padding: var(--spacing-4, 1rem);
   display: flex;
@@ -426,12 +426,12 @@ const services = computed(() => [
 .service-title {
   font-size: var(--font-size-base, 1rem);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
 }
 
 .service-desc {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-secondary, #4a5a5a);
+  color: var(--text-secondary, var(--text-secondary));
   line-height: var(--line-height-normal, 1.5);
 }
 
@@ -445,13 +445,13 @@ const services = computed(() => [
   align-self: flex-start;
   padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
   background: var(--color-primary);
-  color: var(--color-white, #fff);
+  color: var(--color-white, var(--color-white));
   border: none;
   border-radius: var(--border-radius, 8px);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background var(--transition-fast, 150ms ease);
 }
 
@@ -475,16 +475,16 @@ const services = computed(() => [
 .btn-link {
   background: none;
   border: none;
-  color: var(--text-auxiliary, #7a8a8a);
+  color: var(--text-auxiliary, var(--text-auxiliary));
   font-size: var(--font-size-sm, 0.875rem);
   cursor: pointer;
   text-decoration: underline;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2, 0.5rem);
 }
 
 .btn-link:hover {
-  color: var(--text-secondary, #4a5a5a);
+  color: var(--text-secondary, var(--text-secondary));
 }
 
 /* ---- New listing step ---- */
@@ -503,24 +503,24 @@ const services = computed(() => [
 .share-url-input {
   flex: 1;
   padding: var(--spacing-3, 0.75rem);
-  border: 2px solid var(--border-color, #d1d5db);
+  border: 2px solid var(--border-color, var(--color-gray-300));
   border-radius: var(--border-radius, 8px);
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-primary, #1f2a2a);
-  background: var(--bg-secondary, #f3f4f6);
-  min-height: 44px;
+  color: var(--text-primary, var(--text-primary));
+  background: var(--bg-secondary, var(--color-gray-100));
+  min-height: 2.75rem;
 }
 
 .btn-copy {
   padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
   background: var(--color-primary);
-  color: var(--color-white, #fff);
+  color: var(--color-white, var(--color-white));
   border: none;
   border-radius: var(--border-radius, 8px);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   white-space: nowrap;
   transition: background var(--transition-fast, 150ms ease);
 }
@@ -566,7 +566,7 @@ const services = computed(() => [
     left: auto;
     right: auto;
     top: auto;
-    max-width: 500px;
+    max-width: 31.25rem;
     border-radius: var(--border-radius-md, 12px);
     margin: 0 auto;
   }

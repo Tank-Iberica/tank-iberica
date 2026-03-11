@@ -7,6 +7,8 @@ import { useToast } from '~/composables/useToast'
 
 export type { BannerConfig } from '~/composables/admin/useAdminConfig'
 
+type FormFieldValue = string | boolean | null
+
 export interface EmojiCategory {
   name: string
   emojis: string[]
@@ -316,16 +318,16 @@ export function useAdminBanner() {
 
   // --- Date formatting utilities ---
   // --- Form field updater ---
-  function updateFormField(key: keyof BannerConfig, value: string | boolean | null) {
+  function updateFormField(key: keyof BannerConfig, value: FormFieldValue) {
     if (key === 'active') {
       formData.value[key] = value as boolean
     } else {
-      ;(formData.value as Record<string, string | boolean | null>)[key] = value
+      ;(formData.value as Record<string, FormFieldValue>)[key] = value
     }
   }
 
   // --- User panel field updater ---
-  function updateUserPanelField(key: keyof UserPanelBannerForm, value: string | boolean | null) {
+  function updateUserPanelField(key: keyof UserPanelBannerForm, value: FormFieldValue) {
     if (key === 'active') {
       ;(userPanelForm.value as Record<string, unknown>)[key] = value as boolean
     } else {

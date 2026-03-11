@@ -344,7 +344,7 @@ function updateChangePlanNewPlan(plan: PlanType) {
   align-items: center;
   justify-content: center;
   z-index: var(--z-modal, 500);
-  padding: var(--spacing-5, 20px);
+  padding: var(--spacing-5);
 }
 
 .modal-content {
@@ -357,19 +357,19 @@ function updateChangePlanNewPlan(plan: PlanType) {
 }
 
 .modal-small {
-  max-width: 440px;
+  max-width: 27.5rem;
 }
 
 .modal-medium {
-  max-width: 560px;
+  max-width: 35rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-5, 20px) var(--spacing-6, 24px);
-  border-bottom: 1px solid var(--border-color-light, #e5e7eb);
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--border-color-light, var(--color-gray-200));
   position: sticky;
   top: 0;
   background: var(--bg-primary, white);
@@ -379,17 +379,17 @@ function updateChangePlanNewPlan(plan: PlanType) {
 .modal-header h3 {
   margin: 0;
   font-size: var(--font-size-xl, 1.25rem);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
 }
 
 .modal-close {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: var(--font-size-xl);
   cursor: pointer;
-  color: var(--color-gray-500, #6b7280);
-  min-height: 44px;
-  min-width: 44px;
+  color: var(--color-gray-500, var(--color-gray-500));
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -397,26 +397,26 @@ function updateChangePlanNewPlan(plan: PlanType) {
 }
 
 .modal-close:hover {
-  background: var(--color-gray-100, #f3f4f6);
+  background: var(--color-gray-100, var(--color-gray-100));
 }
 
 .modal-body {
-  padding: var(--spacing-6, 24px);
+  padding: var(--spacing-6);
 }
 
 .modal-description {
-  margin: 0 0 var(--spacing-4, 16px) 0;
-  color: var(--text-secondary, #4a5a5a);
+  margin: 0 0 var(--spacing-4) 0;
+  color: var(--text-secondary, var(--text-secondary));
   line-height: var(--line-height-relaxed, 1.625);
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: var(--spacing-3, 12px);
-  padding: var(--spacing-4, 16px) var(--spacing-6, 24px);
-  border-top: 1px solid var(--border-color-light, #e5e7eb);
-  background: var(--color-gray-50, #f9fafb);
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--border-color-light, var(--color-gray-200));
+  background: var(--color-gray-50, var(--color-gray-50));
   position: sticky;
   bottom: 0;
 }
@@ -426,11 +426,11 @@ function updateChangePlanNewPlan(plan: PlanType) {
   background: var(--color-primary);
   color: var(--color-white, white);
   border: none;
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   border-radius: var(--border-radius-sm, 6px);
   cursor: pointer;
   font-weight: var(--font-weight-medium, 500);
-  min-height: 44px;
+  min-height: 2.75rem;
   font-size: var(--font-size-sm, 0.875rem);
 }
 
@@ -444,14 +444,14 @@ function updateChangePlanNewPlan(plan: PlanType) {
 }
 
 .btn-secondary {
-  background: var(--color-gray-200, #e5e7eb);
-  color: var(--color-gray-700, #374151);
+  background: var(--color-gray-200, var(--color-gray-200));
+  color: var(--color-gray-700, var(--color-gray-700));
   border: none;
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   border-radius: var(--border-radius-sm, 6px);
   cursor: pointer;
   font-weight: var(--font-weight-medium, 500);
-  min-height: 44px;
+  min-height: 2.75rem;
   font-size: var(--font-size-sm, 0.875rem);
 }
 
@@ -459,11 +459,11 @@ function updateChangePlanNewPlan(plan: PlanType) {
   background: var(--color-error, var(--color-error));
   color: var(--color-white, white);
   border: none;
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   border-radius: var(--border-radius-sm, 6px);
   cursor: pointer;
   font-weight: var(--font-weight-medium, 500);
-  min-height: 44px;
+  min-height: 2.75rem;
   font-size: var(--font-size-sm, 0.875rem);
 }
 
@@ -474,7 +474,7 @@ function updateChangePlanNewPlan(plan: PlanType) {
 
 /* ---- Forms ---- */
 .form-group {
-  margin-bottom: var(--spacing-4, 16px);
+  margin-bottom: var(--spacing-4);
 }
 
 .form-group:last-child {
@@ -484,19 +484,19 @@ function updateChangePlanNewPlan(plan: PlanType) {
 .form-group label {
   display: block;
   font-weight: var(--font-weight-medium, 500);
-  margin-bottom: 6px;
-  color: var(--color-gray-700, #374151);
+  margin-bottom: 0.375rem;
+  color: var(--color-gray-700, var(--color-gray-700));
   font-size: var(--font-size-sm, 0.875rem);
 }
 
 .form-select,
 .form-input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border-color, #d1d5db);
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border-color, var(--color-gray-300));
   border-radius: var(--border-radius-sm, 6px);
   font-size: var(--font-size-sm, 0.95rem);
-  min-height: 44px;
+  min-height: 2.75rem;
   background: var(--bg-primary, white);
 }
 
@@ -504,18 +504,18 @@ function updateChangePlanNewPlan(plan: PlanType) {
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .price-preview {
   display: inline-block;
-  margin-top: 4px;
+  margin-top: 0.25rem;
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--color-gray-500, #6b7280);
+  color: var(--color-gray-500, var(--color-gray-500));
 }
 
 .founding-warning {
-  margin-top: 6px;
+  margin-top: 0.375rem;
   font-size: var(--font-size-sm, 0.875rem);
   color: var(--color-gold);
   font-weight: var(--font-weight-medium, 500);
@@ -523,31 +523,31 @@ function updateChangePlanNewPlan(plan: PlanType) {
 
 /* ---- Extend Info ---- */
 .extend-info {
-  background: var(--color-gray-50, #f9fafb);
+  background: var(--color-gray-50, var(--color-gray-50));
   border-radius: var(--border-radius, 8px);
-  padding: var(--spacing-4, 16px);
-  margin-top: var(--spacing-4, 16px);
+  padding: var(--spacing-4);
+  margin-top: var(--spacing-4);
 }
 
 .extend-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 0.5rem 0;
 }
 
 .extend-row:not(:last-child) {
-  border-bottom: 1px solid var(--border-color-light, #e5e7eb);
+  border-bottom: 1px solid var(--border-color-light, var(--color-gray-200));
 }
 
 .extend-label {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--color-gray-500, #6b7280);
+  color: var(--color-gray-500, var(--color-gray-500));
 }
 
 .extend-value {
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
 }
 
 .extend-new {
@@ -556,57 +556,57 @@ function updateChangePlanNewPlan(plan: PlanType) {
 
 /* ---- Delete / Cancel Confirmation ---- */
 .delete-confirm-group {
-  margin-top: var(--spacing-4, 16px);
-  padding-top: var(--spacing-4, 16px);
-  border-top: 1px solid var(--border-color-light, #e5e7eb);
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--border-color-light, var(--color-gray-200));
 }
 
 .delete-confirm-group input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border-color, #d1d5db);
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border-color, var(--color-gray-300));
   border-radius: var(--border-radius-sm, 6px);
   font-size: var(--font-size-sm, 0.95rem);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .delete-confirm-group input:focus {
   outline: none;
   border-color: var(--color-error, var(--color-error));
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  box-shadow: var(--shadow-focus-error);
 }
 
 .text-warning {
   color: var(--color-warning, var(--color-warning));
   font-size: var(--font-size-sm, 0.85rem);
-  background: #fffbeb;
-  padding: 8px 12px;
+  background: var(--color-warning-bg, var(--color-warning-bg));
+  padding: 0.5rem 0.75rem;
   border-radius: var(--border-radius-sm, 6px);
-  margin-top: 8px;
+  margin-top: 0.5rem;
 }
 
 .text-error {
   color: var(--color-error, var(--color-error));
   font-size: var(--font-size-xs, 0.75rem);
-  margin-top: 4px;
+  margin-top: 0.25rem;
 }
 
 /* ---- Mobile Responsive ---- */
 @media (max-width: 48em) {
   .modal-content {
-    margin: var(--spacing-3, 12px);
+    margin: var(--spacing-3);
   }
 
   .modal-body {
-    padding: var(--spacing-4, 16px);
+    padding: var(--spacing-4);
   }
 
   .modal-header {
-    padding: var(--spacing-4, 16px);
+    padding: var(--spacing-4);
   }
 
   .modal-footer {
-    padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+    padding: var(--spacing-3) var(--spacing-4);
     flex-direction: column;
   }
 

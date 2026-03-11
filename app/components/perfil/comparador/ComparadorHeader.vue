@@ -92,8 +92,8 @@ const emit = defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: var(--border-radius);
   color: var(--text-secondary);
   transition: background var(--transition-fast);
@@ -116,7 +116,7 @@ const emit = defineEmits<{
 
 .cmp-select {
   flex: 1 1 180px;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-3);
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -135,7 +135,7 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-4);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
@@ -170,7 +170,7 @@ const emit = defineEmits<{
 }
 
 .btn-outline.btn-err:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .new-form {
@@ -181,7 +181,7 @@ const emit = defineEmits<{
 
 .input-name {
   flex: 1;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-3);
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);

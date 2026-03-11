@@ -7,9 +7,12 @@
  *
  * Protected by x-cron-secret header.
  */
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
+import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
+import { acquireCronLock } from '../../utils/cronLock'
+import { logger } from '../../utils/logger'
 
 // -- Types --------------------------------------------------------------------
 
@@ -55,7 +58,8 @@ interface Notification {
 }
 
 async function buildPriceDropNotifications(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
   drops: PriceHistoryRow[],
   vehicleMap: Map<string, VehicleInfo>,
 ): Promise<Notification[]> {
@@ -70,9 +74,7 @@ async function buildPriceDropNotifications(
       .eq('vehicle_id', drop.vehicle_id)
 
     if (favsError) {
-      console.error(
-        `[price-drop-alert] Error fetching favorites for vehicle ${drop.vehicle_id}: ${favsError.message}`,
-      )
+      logger.error(`[price-drop-alert] Error fetching favorites for vehicle ${drop.vehicle_id}: ${favsError.message}`)
       continue
     }
     if (!favorites || favorites.length === 0) continue
@@ -142,9 +144,7 @@ async function sendPriceDropEmail(
     return true
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-    console.error(
-      `[price-drop-alert] Failed to send email to user ${first.userId}: ${errorMessage}`,
-    )
+    logger.error(`[price-drop-alert] Failed to send email to user ${first.userId}: ${errorMessage}`)
     return false
   }
 }
@@ -157,6 +157,12 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event, body?.secret)
 
   const supabase = serverSupabaseServiceRole(event)
+
+  // Cron lock — prevent duplicate emails if scheduler fires twice in the same hour
+  if (!(await acquireCronLock(supabase, 'price-drop-alert'))) {
+    return { skipped: true, reason: 'already_ran_in_window', timestamp: new Date().toISOString() }
+  }
+
   const _internalSecret = useRuntimeConfig().cronSecret || process.env.CRON_SECRET
   const now = new Date()
   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
@@ -169,10 +175,7 @@ export default defineEventHandler(async (event) => {
     .limit(500)
 
   if (historyError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to fetch price_history: ${historyError.message}`,
-    })
+    throw safeError(500, `Failed to fetch price_history: ${historyError.message}`)
   }
 
   if (!priceChanges || priceChanges.length === 0) {
@@ -202,10 +205,7 @@ export default defineEventHandler(async (event) => {
     .in('id', vehicleIds)
 
   if (vehiclesError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to fetch vehicles: ${vehiclesError.message}`,
-    })
+    throw safeError(500, `Failed to fetch vehicles: ${vehiclesError.message}`)
   }
 
   const vehicleMap = new Map<string, VehicleInfo>()
@@ -228,9 +228,10 @@ export default defineEventHandler(async (event) => {
     if (sent) emailsSent++
   }
 
-  console.info(
-    `[price-drop-alert] ${emailsSent} email(s) sent for ${vehicleIds.length} vehicle(s) with price drops`,
-  )
+  logger.info('[price-drop-alert]', {
+    emailsSent,
+    vehiclesWithDrops: vehicleIds.length,
+  })
 
   return {
     checked: drops.length,

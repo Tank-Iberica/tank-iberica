@@ -34,34 +34,34 @@ function onSearchInput(e: Event) {
 <template>
   <div class="filters-bar">
     <div class="filter-group">
-      <label class="filter-label">Estado</label>
+      <label class="filter-label">{{ $t('common.status') }}</label>
       <select class="filter-select" :value="status ?? ''" @change="onStatusChange">
-        <option value="">Todos</option>
-        <option value="draft">Borrador</option>
-        <option value="published">Publicado</option>
-        <option value="rented">Alquilado</option>
-        <option value="workshop">En taller</option>
-        <option value="sold">Vendido</option>
+        <option value="">{{ $t('common.all') }}</option>
+        <option value="draft">{{ $t('common.draft') }}</option>
+        <option value="published">{{ $t('common.published') }}</option>
+        <option value="rented">{{ $t('common.rented') }}</option>
+        <option value="workshop">{{ $t('common.workshop') }}</option>
+        <option value="sold">{{ $t('common.sold') }}</option>
       </select>
     </div>
 
     <div class="filter-group">
-      <label class="filter-label">Categoría</label>
+      <label class="filter-label">{{ $t('common.category') }}</label>
       <select class="filter-select" :value="category ?? ''" @change="onCategoryChange">
-        <option value="">Todas</option>
-        <option value="venta">Venta</option>
-        <option value="alquiler">Alquiler</option>
-        <option value="terceros">Terceros</option>
+        <option value="">{{ $t('common.allFeminine') }}</option>
+        <option value="venta">{{ $t('common.sale') }}</option>
+        <option value="alquiler">{{ $t('common.rental') }}</option>
+        <option value="terceros">{{ $t('common.thirdParty') }}</option>
       </select>
     </div>
 
     <div class="filter-group search-group">
-      <label class="filter-label">Buscar</label>
+      <label class="filter-label">{{ $t('common.search') }}</label>
       <input
         type="text"
         class="filter-input"
         :value="search"
-        placeholder="Marca o modelo..."
+        :placeholder="$t('common.searchPlaceholder')"
         @input="onSearchInput"
       >
     </div>
@@ -84,12 +84,12 @@ function onSearchInput(e: Event) {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-1);
-  min-width: 150px;
+  min-width: 9.375rem;
 }
 
 .search-group {
   flex: 1;
-  min-width: 200px;
+  min-width: 12.5rem;
 }
 
 .filter-label {
@@ -108,7 +108,7 @@ function onSearchInput(e: Event) {
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   color: var(--text-primary);
-  min-height: 40px;
+  min-height: 2.5rem;
 }
 
 .filter-select:focus,

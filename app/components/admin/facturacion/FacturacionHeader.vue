@@ -21,7 +21,7 @@ const emit = defineEmits<{
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3, 12px);
+  gap: var(--spacing-3);
   align-items: stretch;
 }
 
@@ -36,17 +36,17 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-2, 8px);
-  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
   background: var(--color-primary);
-  color: var(--color-white, #fff);
+  color: var(--color-white, var(--color-white));
   border: none;
   border-radius: var(--border-radius, 8px);
   font-weight: var(--font-weight-medium, 500);
   font-size: var(--font-size-sm, 0.875rem);
   cursor: pointer;
   transition: background var(--transition-fast, 150ms ease);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-export:hover {

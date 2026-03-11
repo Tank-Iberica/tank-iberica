@@ -67,9 +67,8 @@ onMounted(() => {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('common.loading') }}</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonTable :rows="5" :cols="4" />
     </div>
 
     <!-- Empty -->
@@ -120,7 +119,7 @@ onMounted(() => {
 .servicios-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
   height: 100%;
 }
 
@@ -128,10 +127,10 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
@@ -141,7 +140,7 @@ onMounted(() => {
   border: none;
   color: var(--color-error);
   cursor: pointer;
-  padding: 4px;
+  padding: var(--spacing-1);
   display: flex;
   align-items: center;
 }
@@ -150,14 +149,14 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -174,7 +173,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 

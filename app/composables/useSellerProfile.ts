@@ -108,7 +108,7 @@ export function useSellerProfile(dealerSlug?: string) {
     try {
       const { data, error } = await supabase
         .from('dealers')
-        .select('*')
+        .select('id, user_id, slug, company_name, legal_name, logo_url, cover_image_url, location_data, phone, email, website, bio, verified, featured, badge, total_listings, active_listings, total_reviews, avg_response_minutes, response_rate_pct, rating, social_links, created_at')
         .eq('slug', targetSlug)
         .single()
 

@@ -199,14 +199,9 @@ function estimateMaintenance(category: string, vehicleAge: number, km: number): 
 }
 function formatCurrency(cents: number): string {
   const euros = cents / 100
-  const parts = euros.toFixed(2).split('.')
-  const integerPart = parts[0] ?? '0'
-  const decimalPart = parts[1] ?? '00'
-
-  // Add thousand separators with dots
-  const formatted = integerPart.replaceAll(/\B(?=(\d{3})+(?!\d))/g, '.')
-
-  return `${formatted},${decimalPart} €`
+  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 })
+    .format(euros)
+    .replace('\u00A0', ' ')
 }
 
 export function useFinanceCalculator() {

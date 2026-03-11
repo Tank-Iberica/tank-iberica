@@ -1,5 +1,6 @@
-import { createError, defineEventHandler, getQuery } from 'h3'
+import { defineEventHandler, getQuery } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { safeError } from '../../utils/safeError'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
@@ -7,16 +8,13 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Service not configured' })
+    throw safeError(500, 'Service not configured')
   }
 
   // Authentication check
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({
-      statusCode: 401,
-      message: 'Unauthorized: Authentication required',
-    })
+    throw safeError(401, 'Unauthorized: Authentication required')
   }
 
   // Authorization check: Get user role and dealer_id if applicable
@@ -28,10 +26,7 @@ export default defineEventHandler(async (event) => {
     .single()
 
   if (userError || !userData) {
-    throw createError({
-      statusCode: 403,
-      message: 'Forbidden: Unable to verify user permissions',
-    })
+    throw safeError(403, 'Forbidden: Unable to verify user permissions')
   }
 
   let dealerFilter = ''
@@ -44,10 +39,7 @@ export default defineEventHandler(async (event) => {
       .single()
 
     if (dealerError || !dealerData) {
-      throw createError({
-        statusCode: 403,
-        message: 'Forbidden: No dealer associated with this user',
-      })
+      throw safeError(403, 'Forbidden: No dealer associated with this user')
     }
 
     dealerFilter = `&dealer_id=eq.${dealerData.id}`
@@ -80,7 +72,7 @@ export default defineEventHandler(async (event) => {
   const invoices = await res.json()
 
   if (!Array.isArray(invoices)) {
-    throw createError({ statusCode: 500, message: 'Error fetching invoices' })
+    throw safeError(500, 'Error fetching invoices')
   }
 
   // Build CSV

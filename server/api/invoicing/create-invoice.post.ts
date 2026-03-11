@@ -1,17 +1,21 @@
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, getHeaders } from 'h3'
+import { z } from 'zod'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { safeError } from '../../utils/safeError'
+import { validateBody } from '../../utils/validateBody'
+import { getIdempotencyKey, checkIdempotency, storeIdempotencyResponse } from '../../utils/idempotency'
 
-interface InvoiceRequest {
-  dealerId: string
-  userId: string
-  serviceType: 'subscription' | 'auction_premium' | 'transport' | 'verification' | 'ad'
-  amountCents: number
-  taxCents?: number
-  currency?: string
-  stripeInvoiceId?: string
-  description?: string
-  metadata?: Record<string, unknown>
-}
+const invoiceRequestSchema = z.object({
+  dealerId: z.string().uuid(),
+  userId: z.string().uuid(),
+  serviceType: z.enum(['subscription', 'auction_premium', 'transport', 'verification', 'ad']),
+  amountCents: z.number().int().positive().max(10_000_000),
+  taxCents: z.number().int().nonnegative().optional(),
+  currency: z.string().length(3).optional().default('EUR'),
+  stripeInvoiceId: z.string().max(255).optional(),
+  description: z.string().max(500).optional(),
+  metadata: z.record(z.unknown()).optional(),
+})
 
 /** VAT rates by EU country (standard rates) */
 const EU_VAT_RATES: Record<string, number> = {
@@ -46,31 +50,31 @@ const EU_VAT_RATES: Record<string, number> = {
 }
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<InvoiceRequest>(event)
-
   // Authentication check
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({
-      statusCode: 401,
-      message: 'Unauthorized: Authentication required',
-    })
+    throw safeError(401, 'Unauthorized: Authentication required')
   }
 
-  if (!body.dealerId || !body.serviceType || !body.amountCents) {
-    throw createError({ statusCode: 400, message: 'Missing required fields' })
-  }
+  const body = await validateBody(event, invoiceRequestSchema)
 
   const config = useRuntimeConfig()
   const supabaseUrl = process.env.SUPABASE_URL || ''
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Service not configured' })
+    throw safeError(500, 'Service not configured')
+  }
+
+  // Idempotency check — prevent duplicate invoice creation
+  const supabase = serverSupabaseServiceRole(event)
+  const idempotencyKey = getIdempotencyKey(getHeaders(event))
+  if (idempotencyKey) {
+    const cached = await checkIdempotency(supabase, idempotencyKey)
+    if (cached) return cached
   }
 
   // Ownership validation: Verify dealerId belongs to authenticated user
-  const supabase = serverSupabaseServiceRole(event)
   const { data: dealer, error: dealerError } = await supabase
     .from('dealers')
     .select('id')
@@ -79,10 +83,7 @@ export default defineEventHandler(async (event) => {
     .single()
 
   if (dealerError || !dealer) {
-    throw createError({
-      statusCode: 403,
-      message: 'Forbidden: You do not have access to this dealer',
-    })
+    throw safeError(403, 'Forbidden: You do not have access to this dealer')
   }
 
   // Fetch dealer fiscal data for VAT calculation
@@ -111,7 +112,7 @@ export default defineEventHandler(async (event) => {
       const quadernoRes = await fetch(`${quadernoApiUrl}/invoices`, {
         method: 'POST',
         headers: {
-          Authorization: `Basic ${Buffer.from(`${quadernoApiKey}:`).toString('base64')}`,
+          Authorization: 'Basic ' + Buffer.from(`${quadernoApiKey}:`).toString('base64'),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -163,11 +164,17 @@ export default defineEventHandler(async (event) => {
 
   const inserted = await insertRes.json()
 
-  return {
+  const response = {
     success: true,
     invoice: inserted?.[0] || invoiceData,
     quadernoConfigured: !!quadernoApiKey,
     vatRate,
     taxCountry,
   }
+
+  if (idempotencyKey) {
+    await storeIdempotencyResponse(supabase, idempotencyKey, 'POST /api/invoicing/create-invoice', response)
+  }
+
+  return response
 })

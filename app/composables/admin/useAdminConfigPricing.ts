@@ -1,6 +1,14 @@
 interface VerticalConfig {
   subscription_prices: Record<string, Record<string, number>>
   commission_rates: Record<string, number>
+  auction_defaults: AuctionDefaults | null
+}
+
+export interface AuctionDefaults {
+  bid_increment_cents: number
+  deposit_cents: number
+  anti_snipe_seconds: number
+  duration_days: number
 }
 
 export interface PlanDefinition {
@@ -68,9 +76,11 @@ export function useAdminConfigPricing() {
   const loading = ref(true)
   const savingPrices = ref(false)
   const savingCommissions = ref(false)
+  const savingAuctionDefaults = ref(false)
   const error = ref<string | null>(null)
   const successPrices = ref(false)
   const successCommissions = ref(false)
+  const successAuctionDefaults = ref(false)
 
   const subscriptionPrices = ref<Record<string, { monthly: number; annual: number }>>({
     founding: { monthly: 0, annual: 0 },
@@ -88,13 +98,20 @@ export function useAdminConfigPricing() {
     verification_level3_cents: 0,
   })
 
+  const auctionDefaults = ref<AuctionDefaults>({
+    bid_increment_cents: 50000,
+    deposit_cents: 100000,
+    anti_snipe_seconds: 120,
+    duration_days: 7,
+  })
+
   async function loadConfig() {
     loading.value = true
     error.value = null
     try {
       const { data, error: fetchError } = await supabase
         .from('vertical_config')
-        .select('subscription_prices, commission_rates')
+        .select('subscription_prices, commission_rates, auction_defaults')
         .eq('vertical', getVerticalSlug())
         .single()
 
@@ -121,6 +138,10 @@ export function useAdminConfigPricing() {
           def.type === 'cents'
             ? centsToEuros((rates[def.key] as number) || 0)
             : (rates[def.key] as number) || 0
+      }
+
+      if (cfg.auction_defaults) {
+        auctionDefaults.value = { ...auctionDefaults.value, ...cfg.auction_defaults }
       }
     } catch (err) {
       error.value = err instanceof Error ? err.message : String(err)
@@ -200,6 +221,34 @@ export function useAdminConfigPricing() {
     commissionRates.value[rateKey] = value
   }
 
+  async function saveAuctionDefaults() {
+    savingAuctionDefaults.value = true
+    error.value = null
+    successAuctionDefaults.value = false
+    try {
+      const { error: updateError } = await supabase
+        .from('vertical_config')
+        .update({ auction_defaults: auctionDefaults.value })
+        .eq('vertical', getVerticalSlug())
+      if (updateError) {
+        error.value = updateError.message
+        return
+      }
+      successAuctionDefaults.value = true
+      setTimeout(() => {
+        successAuctionDefaults.value = false
+      }, 3000)
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : String(err)
+    } finally {
+      savingAuctionDefaults.value = false
+    }
+  }
+
+  function updateAuctionDefault<K extends keyof AuctionDefaults>(key: K, value: AuctionDefaults[K]) {
+    auctionDefaults.value[key] = value
+  }
+
   function dismissError() {
     error.value = null
   }
@@ -208,16 +257,21 @@ export function useAdminConfigPricing() {
     loading,
     savingPrices,
     savingCommissions,
+    savingAuctionDefaults,
     error,
     successPrices,
     successCommissions,
+    successAuctionDefaults,
     subscriptionPrices,
     commissionRates,
+    auctionDefaults,
     loadConfig,
     savePrices,
     saveCommissions,
+    saveAuctionDefaults,
     updatePrice,
     updateRate,
+    updateAuctionDefault,
     dismissError,
   }
 }

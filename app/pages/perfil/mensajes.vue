@@ -53,6 +53,8 @@ onMounted(async () => {
 <template>
   <div class="messages-page">
     <div class="messages-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('messages.title') }]" />
+      <PerfilProfileNavPills />
       <PerfilMensajesMensajesPageHeader
         :unread-count="unreadCount"
         :mobile-show-conversation="mobileShowConversation"
@@ -108,6 +110,7 @@ onMounted(async () => {
               v-if="!isConversationClosed"
               :value="messageInput"
               :sending="sending"
+              :show-quick-replies="!isBuyer"
               @input="messageInput = $event"
               @send="handleSendMessage"
             />
@@ -130,7 +133,7 @@ onMounted(async () => {
 }
 
 .messages-container {
-  max-width: 1100px;
+  max-width: 68.75rem;
   margin: 0 auto;
   padding: 0 var(--spacing-4);
 }
@@ -145,7 +148,7 @@ onMounted(async () => {
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   height: calc(100vh - 180px);
-  min-height: 400px;
+  min-height: 25rem;
 }
 
 /* Right panel: conversation detail */
@@ -172,7 +175,7 @@ onMounted(async () => {
 }
 
 /* ---- Tablet (768px): side-by-side layout ---- */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .messages-layout {
     height: calc(100vh - 200px);
   }
@@ -187,14 +190,14 @@ onMounted(async () => {
 }
 
 /* ---- Desktop (1024px) ---- */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .messages-container {
     padding: 0 var(--spacing-8);
   }
 
   .messages-layout {
     height: calc(100vh - 220px);
-    min-height: 500px;
+    min-height: 31.25rem;
   }
 }
 </style>

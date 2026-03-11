@@ -105,8 +105,8 @@ function onUpdateForm(value: typeof entryForm.value): void {
       <div v-if="error" class="alert-error">{{ error }}</div>
 
       <!-- Loading -->
-      <div v-if="loading" class="loading-state">
-        <div class="spinner" />
+      <div v-if="loading" class="loading-state" aria-busy="true">
+        <UiSkeletonCard :lines="4" />
       </div>
 
       <template v-else>
@@ -171,25 +171,25 @@ function onUpdateForm(value: typeof entryForm.value): void {
 
 <style scoped>
 .observatory-page {
-  max-width: 1100px;
+  max-width: 68.75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 /* Header */
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
 }
 
@@ -201,10 +201,10 @@ function onUpdateForm(value: typeof entryForm.value): void {
 }
 
 .plan-badge {
-  padding: 4px 12px;
+  padding: var(--spacing-1) var(--spacing-3);
   background: var(--color-primary);
   color: white;
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -212,18 +212,18 @@ function onUpdateForm(value: typeof entryForm.value): void {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .btn-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   background: var(--bg-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--text-secondary);
   cursor: pointer;
 }
@@ -237,12 +237,12 @@ function onUpdateForm(value: typeof entryForm.value): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-6);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
@@ -255,10 +255,10 @@ function onUpdateForm(value: typeof entryForm.value): void {
 
 /* Alerts */
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
@@ -266,12 +266,12 @@ function onUpdateForm(value: typeof entryForm.value): void {
 .loading-state {
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: var(--spacing-10);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -287,49 +287,49 @@ function onUpdateForm(value: typeof entryForm.value): void {
 /* Empty */
 .empty-state {
   text-align: center;
-  padding: 48px 20px;
+  padding: var(--spacing-12) var(--spacing-5);
   color: var(--text-auxiliary);
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .empty-state p {
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--spacing-4) 0;
 }
 
 /* Card Grid */
 .card-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 /* Upgrade Card */
 .upgrade-card {
-  background: linear-gradient(135deg, #f0f9ff, #eff6ff);
-  border: 1px solid #bfdbfe;
-  border-radius: 12px;
-  padding: 24px;
+  background: linear-gradient(135deg, var(--color-sky-50), var(--color-blue-50));
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
   text-align: center;
 }
 
 .upgrade-card h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-2) 0;
   font-size: 1.1rem;
-  color: #1e40af;
+  color: var(--badge-info-bg);
 }
 
 .upgrade-card p {
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--spacing-4) 0;
   color: var(--color-info);
   font-size: 0.9rem;
 }
 
 /* Responsive */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .observatory-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 
   .page-header {
@@ -343,7 +343,7 @@ function onUpdateForm(value: typeof entryForm.value): void {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .card-grid {
     grid-template-columns: repeat(3, 1fr);
   }

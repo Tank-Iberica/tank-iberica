@@ -7,8 +7,10 @@
  * and sends confirmation email.
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler } from 'h3'
 import { verifyCsrf } from '../../utils/verifyCsrf'
+import { safeError } from '../../utils/safeError'
+import { logger } from '../../utils/logger'
 
 interface DeleteAccountResponse {
   success: boolean
@@ -18,7 +20,7 @@ export default defineEventHandler(async (event): Promise<DeleteAccountResponse> 
   // ── 1. Authenticate user ──────────────────────────────────────────────────
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   verifyCsrf(event)
@@ -128,7 +130,7 @@ export default defineEventHandler(async (event): Promise<DeleteAccountResponse> 
   const { error: deleteAuthError } = await supabase.auth.admin.deleteUser(userId)
   if (deleteAuthError) {
     // Log but don't fail — data has been anonymized already
-    console.error(`[account/delete] Failed to delete auth user ${userId}:`, deleteAuthError.message)
+    logger.error(`[account/delete] Failed to delete auth user ${userId}:`, { error: String(deleteAuthError.message) })
   }
 
   return { success: true }

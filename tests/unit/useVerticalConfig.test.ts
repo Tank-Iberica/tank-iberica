@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-import { useVerticalConfig } from '../../app/composables/useVerticalConfig'
+import { useVerticalConfig, getVerticalSlug } from '../../app/composables/useVerticalConfig'
 
 // Track supabase calls so we can verify caching
 let supabaseSingleCallCount = 0
@@ -156,5 +156,22 @@ describe('useVerticalConfig', () => {
     expect(config.value?.vertical).toBe('tracciona')
     expect(config.value?.active_locales).toEqual(['es', 'en'])
     expect(config.value?.active_actions).toEqual(['venta', 'alquiler'])
+  })
+})
+
+// ─── getVerticalSlug — fallback behavior ──────────────────────────────────────
+
+describe('getVerticalSlug', () => {
+  it('returns vertical from useRuntimeConfig', () => {
+    expect(getVerticalSlug()).toBe('tracciona')
+  })
+
+  it('falls back to "tracciona" when useRuntimeConfig throws', () => {
+    vi.stubGlobal('useRuntimeConfig', () => { throw new Error('not available') })
+    expect(getVerticalSlug()).toBe('tracciona')
+    // Restore
+    vi.stubGlobal('useRuntimeConfig', () => ({
+      public: { vertical: 'tracciona', supabaseUrl: '', supabaseKey: '', turnstileSiteKey: '' },
+    }))
   })
 })

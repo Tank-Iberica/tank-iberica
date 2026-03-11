@@ -184,10 +184,10 @@ function goToNext(): void {
 }
 
 // CSS-only confetti animation: generate varied styles per piece
-const CONFETTI_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
+const CONFETTI_COLORS = ['var(--color-success)', 'var(--color-info)', 'var(--color-warning)', 'var(--color-error)', 'var(--color-violet-500)', '#ec4899']
 
 function confettiStyle(n: number): Record<string, string> {
-  const color = CONFETTI_COLORS[n % CONFETTI_COLORS.length] ?? '#10b981'
+  const color = CONFETTI_COLORS[n % CONFETTI_COLORS.length] ?? 'var(--color-success)'
   const left = `${(n * 17 + 5) % 100}%`
   const delay = `${(n * 0.15) % 2}s`
   const duration = `${1.5 + (n % 3) * 0.5}s`
@@ -224,7 +224,7 @@ function confettiStyle(n: number): Record<string, string> {
 
 .progress-bar {
   flex: 1;
-  height: 8px;
+  height: 0.5rem;
   background: var(--bg-tertiary);
   border-radius: var(--border-radius-full);
   overflow: hidden;
@@ -241,7 +241,7 @@ function confettiStyle(n: number): Record<string, string> {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
-  min-width: 36px;
+  min-width: 2.25rem;
   text-align: right;
 }
 
@@ -264,7 +264,7 @@ function confettiStyle(n: number): Record<string, string> {
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-1);
-  min-width: 56px;
+  min-width: 3.5rem;
   padding: var(--spacing-1);
   background: none;
   border: none;
@@ -277,8 +277,8 @@ function confettiStyle(n: number): Record<string, string> {
 }
 
 .step-circle {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -310,11 +310,11 @@ function confettiStyle(n: number): Record<string, string> {
 }
 
 .step-label {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--text-auxiliary);
   text-align: center;
   line-height: 1.2;
-  max-width: 64px;
+  max-width: 4rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -379,7 +379,7 @@ function confettiStyle(n: number): Record<string, string> {
 }
 
 .step-slot {
-  min-height: 40px;
+  min-height: 2.5rem;
 }
 
 /* Step actions */
@@ -390,7 +390,7 @@ function confettiStyle(n: number): Record<string, string> {
 }
 
 .btn-complete {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-4);
   background: var(--color-primary);
   color: var(--color-white);
@@ -407,7 +407,7 @@ function confettiStyle(n: number): Record<string, string> {
 }
 
 .btn-skip {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-4);
   background: none;
   color: var(--text-auxiliary);
@@ -436,7 +436,7 @@ function confettiStyle(n: number): Record<string, string> {
   display: flex;
   align-items: center;
   gap: var(--spacing-1);
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-3);
   background: none;
   border: 1px solid var(--border-color);
@@ -504,7 +504,7 @@ function confettiStyle(n: number): Record<string, string> {
   position: absolute;
   top: -10px;
   background: var(--confetti-color, var(--color-success));
-  border-radius: 2px;
+  border-radius: var(--border-radius-sm);
   opacity: 0;
   animation: confetti-fall 2s ease-in forwards;
 }
@@ -532,22 +532,22 @@ function confettiStyle(n: number): Record<string, string> {
   }
 
   .step-indicator {
-    min-width: 72px;
+    min-width: 4.5rem;
   }
 
   .step-label {
     font-size: var(--font-size-xs);
-    max-width: 80px;
+    max-width: 5rem;
   }
 }
 
 @media (min-width: 64em) {
   .step-indicator {
-    min-width: 88px;
+    min-width: 5.5rem;
   }
 
   .step-label {
-    max-width: 100px;
+    max-width: 6.25rem;
     white-space: normal;
   }
 }

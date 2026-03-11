@@ -11,6 +11,7 @@
 import { defineEventHandler, readBody } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -68,9 +69,6 @@ const SUPABASE_DB_LIMIT_BYTES = 500 * 1024 * 1024 // 500 MB free tier
 const SUPABASE_CONNECTIONS_LIMIT = 60 // Free tier ~60 direct connections
 const RESEND_DAILY_LIMIT = 100 // Free tier 100/day
 
-// ── Supabase client type ────────────────────────────────────────────────────
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type SupabaseClient = any
 
 // ── Metric Collectors ──────────────────────────────────────────────────────
 
@@ -255,7 +253,7 @@ async function sendAlertEmail(
     metric: metric.metric_name,
     usagePercent: roundedPercent,
     value: metric.metric_value,
-    limit: metric.metric_limit,
+    limit: metric.metric_limit ?? 0,
     level: alertLevel,
   })
   await $fetch('/api/email/send', {

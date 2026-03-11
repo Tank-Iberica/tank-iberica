@@ -37,13 +37,13 @@ function updateAutoReplyLang(lang: string, value: string) {
 <template>
   <!-- SECTION 6: CERTIFICACIONES -->
   <div class="config-card">
-    <h3 class="card-title">Certificaciones</h3>
+    <h3 class="card-title">{{ $t('admin.dealer.certificationsTitle') }}</h3>
     <p class="card-subtitle">
-      Anade certificaciones y sellos de confianza para mostrar en tu portal
+      {{ $t('admin.dealer.certificationsSubtitle') }}
     </p>
 
     <div v-if="certifications.length === 0" class="empty-list">
-      Sin certificaciones. Pulsa el boton para anadir una.
+      {{ $t('admin.dealer.noCertifications') }}
     </div>
 
     <div v-for="cert in certifications" :key="cert.id" class="cert-item">
@@ -76,15 +76,15 @@ function updateAutoReplyLang(lang: string, value: string) {
                 )
               "
             >
-            Verificada
+            {{ $t('admin.dealer.verified') }}
           </label>
         </div>
         <button
           class="btn-remove"
-          title="Eliminar certificacion"
+          :title="$t('admin.dealer.deleteCertification')"
           @click="emit('removeCertification', cert.id)"
         >
-          Eliminar
+          {{ $t('common.delete') }}
         </button>
       </div>
       <div class="lang-row">
@@ -93,7 +93,7 @@ function updateAutoReplyLang(lang: string, value: string) {
           <input
             :value="cert.label.es"
             type="text"
-            placeholder="Nombre de la certificacion"
+            :placeholder="$t('admin.dealer.certLabelPlaceholderEs')"
             @input="
               emit(
                 'updateCertificationLabel',
@@ -109,7 +109,7 @@ function updateAutoReplyLang(lang: string, value: string) {
           <input
             :value="cert.label.en"
             type="text"
-            placeholder="Certification name"
+            :placeholder="$t('admin.dealer.certLabelPlaceholderEn')"
             @input="
               emit(
                 'updateCertificationLabel',
@@ -123,16 +123,16 @@ function updateAutoReplyLang(lang: string, value: string) {
       </div>
     </div>
 
-    <button class="btn-add-item" @click="emit('addCertification')">+ Anadir certificacion</button>
+    <button class="btn-add-item" @click="emit('addCertification')">+ {{ $t('admin.dealer.addCertification') }}</button>
   </div>
 
   <!-- SECTION 7: CATALOGO -->
   <div class="config-card">
-    <h3 class="card-title">Catalogo</h3>
-    <p class="card-subtitle">Configura el orden de tu catalogo y fija vehiculos destacados</p>
+    <h3 class="card-title">{{ $t('admin.dealer.catalogTitle') }}</h3>
+    <p class="card-subtitle">{{ $t('admin.dealer.catalogSubtitle') }}</p>
 
     <div class="form-group">
-      <label for="catalog-sort">Orden por defecto</label>
+      <label for="catalog-sort">{{ $t('admin.dealer.defaultSort') }}</label>
       <select
         id="catalog-sort"
         :value="catalogSort"
@@ -150,35 +150,35 @@ function updateAutoReplyLang(lang: string, value: string) {
     </div>
 
     <div class="form-group">
-      <label>Vehiculos fijados</label>
-      <div v-if="pinnedVehicles.length === 0" class="empty-list">Sin vehiculos fijados.</div>
+      <label>{{ $t('admin.dealer.pinnedVehicles') }}</label>
+      <div v-if="pinnedVehicles.length === 0" class="empty-list">{{ $t('admin.dealer.noPinnedVehicles') }}</div>
       <div v-for="uuid in pinnedVehicles" :key="uuid" class="pinned-item">
         <span class="pinned-uuid">{{ uuid }}</span>
         <button
           class="btn-remove-sm"
-          title="Quitar vehiculo fijado"
+          :title="$t('admin.dealer.removePinned')"
           @click="emit('removePinnedVehicle', uuid)"
         >
-          Quitar
+          {{ $t('admin.dealer.removePinned') }}
         </button>
       </div>
       <div class="pin-input-row">
         <input
           :value="newPinnedUuid"
           type="text"
-          placeholder="UUID del vehiculo a fijar"
+          :placeholder="$t('admin.dealer.pinVehiclePlaceholder')"
           @input="emit('update:newPinnedUuid', ($event.target as HTMLInputElement).value)"
           @keyup.enter="emit('addPinnedVehicle')"
         >
-        <button class="btn-add-inline" @click="emit('addPinnedVehicle')">Fijar vehiculo</button>
+        <button class="btn-add-inline" @click="emit('addPinnedVehicle')">{{ $t('admin.dealer.pinVehicle') }}</button>
       </div>
     </div>
   </div>
 
   <!-- SECTION 8: RESPUESTA AUTOMATICA -->
   <div class="config-card">
-    <h3 class="card-title">Respuesta automatica</h3>
-    <p class="card-subtitle">Mensaje que se envia automaticamente cuando un cliente te contacta</p>
+    <h3 class="card-title">{{ $t('admin.dealer.autoReplyTitle') }}</h3>
+    <p class="card-subtitle">{{ $t('admin.dealer.autoReplySubtitle') }}</p>
 
     <div class="form-group">
       <div class="lang-col">
@@ -252,13 +252,13 @@ function updateAutoReplyLang(lang: string, value: string) {
   box-sizing: border-box;
   background: var(--bg-primary);
   color: var(--text-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Language rows */
@@ -276,7 +276,7 @@ function updateAutoReplyLang(lang: string, value: string) {
 
 .lang-badge {
   flex-shrink: 0;
-  width: 32px;
+  width: 2rem;
   text-align: center;
   font-size: 0.7rem;
   font-weight: var(--font-weight-bold);
@@ -293,13 +293,13 @@ function updateAutoReplyLang(lang: string, value: string) {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .lang-field input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Language column layout for textareas */
@@ -326,14 +326,14 @@ function updateAutoReplyLang(lang: string, value: string) {
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
   font-family: var(--font-family);
 }
 
 .lang-field-block textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Certifications */
@@ -374,7 +374,7 @@ function updateAutoReplyLang(lang: string, value: string) {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
-  min-height: 44px;
+  min-height: 2.75rem;
   background: var(--bg-primary);
 }
 
@@ -385,17 +385,17 @@ function updateAutoReplyLang(lang: string, value: string) {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .cert-verified input {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   cursor: pointer;
 }
 
 .btn-remove {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
   border: none;
   padding: var(--spacing-2) var(--spacing-3);
@@ -403,11 +403,11 @@ function updateAutoReplyLang(lang: string, value: string) {
   cursor: pointer;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-remove:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .btn-add-item {
@@ -420,7 +420,7 @@ function updateAutoReplyLang(lang: string, value: string) {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   width: 100%;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background var(--transition-fast);
 }
 
@@ -451,7 +451,7 @@ function updateAutoReplyLang(lang: string, value: string) {
 }
 
 .btn-remove-sm {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
   border: none;
   padding: var(--spacing-1) var(--spacing-3);
@@ -460,11 +460,11 @@ function updateAutoReplyLang(lang: string, value: string) {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   flex-shrink: 0;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-remove-sm:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .pin-input-row {
@@ -480,13 +480,13 @@ function updateAutoReplyLang(lang: string, value: string) {
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   font-family: monospace;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .pin-input-row input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .btn-add-inline {
@@ -500,7 +500,7 @@ function updateAutoReplyLang(lang: string, value: string) {
   font-weight: var(--font-weight-medium);
   white-space: nowrap;
   flex-shrink: 0;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background var(--transition-fast);
 }
 

@@ -202,7 +202,7 @@ export function useVehicleVerification(vehicleId: string) {
     try {
       const { data, error: err } = await supabase
         .from('verification_documents')
-        .select('*')
+        .select('id, vehicle_id, doc_type, file_url, data, verified_by, status, level, generated_at, expires_at, price_cents, submitted_by, rejection_reason, notes')
         .eq('vehicle_id', vehicleId)
         .order('generated_at', { ascending: false })
 

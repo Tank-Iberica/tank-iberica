@@ -106,11 +106,9 @@ export function useAuctionDetail(auctionId: Ref<string>) {
       startDate: auction.value.starts_at,
       endDate: auction.value.extended_until || auction.value.ends_at,
       eventStatus:
-        auction.value.status === 'active'
-          ? 'https://schema.org/EventScheduled'
-          : auction.value.status === 'ended'
-            ? 'https://schema.org/EventCompleted'
-            : 'https://schema.org/EventScheduled',
+        auction.value.status === 'ended'
+          ? 'https://schema.org/EventCompleted'
+          : 'https://schema.org/EventScheduled',
       eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
       location: {
         '@type': 'VirtualLocation',
@@ -118,7 +116,7 @@ export function useAuctionDetail(auctionId: Ref<string>) {
       },
       organizer: {
         '@type': 'Organization',
-        name: 'Tracciona',
+        name: t('site.title'),
         url: 'https://tracciona.com',
       },
       offers: {

@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Biblia de Subvenciones</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Biblia de Subvenciones</h1>
+    <p>Indice maestro de la capa monografica: un tomo por ayuda, con desarrollo exhaustivo de expediente.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#uso'>Uso</a></li>
+<li class='toc-l2'><a href='#estado-de-la-biblia'>Estado de la biblia</a></li>
+<li class='toc-l3'><a href='#tomos-nucleares-ya-elevados-al-estandar-largo'>Tomos nucleares ya elevados al estándar largo</a></li>
+<li class='toc-l3'><a href='#tomos-monograficos-ya-publicados-para-el-resto-del-mapa'>Tomos monográficos ya publicados para el resto del mapa</a></li>
+<li class='toc-l2'><a href='#nota-de-estructura'>Nota de estructura</a></li>
+<li class='toc-l2'><a href='#orden-de-lectura-recomendado'>Orden de lectura recomendado</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="biblia-de-subvenciones-y-ayudas-tradebase">Biblia de Subvenciones y Ayudas — TradeBase</h1>
+<blockquote>
+<p><strong>Rol:</strong> índice maestro de la capa monográfica.<br />
+<strong>Estándar:</strong> una monografía por ayuda, con ficha inicial y desarrollo exhaustivo orientado a resolver obstáculos reales de expediente.<br />
+<strong>Relación con otros documentos:</strong></p>
+<ul>
+<li><a href="C:/TradeBase/SUBVENCIONES.md">SUBVENCIONES.md</a>: catálogo y mapa de referencia.</li>
+<li><a href="C:/TradeBase/SUBVENCIONES-PLAYBOOK.md">SUBVENCIONES-PLAYBOOK.md</a>: capa intermedia de apoyo, congelada.</li>
+<li>Esta biblia: desarrollo monográfico, requisito por requisito, a nivel de expediente.</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="uso">Uso</h2>
+<ul>
+<li>Sirve para preparar expedientes de verdad.</li>
+<li>No resume ayudas; las despieza.</li>
+<li>Cada tomo debe responder, como mínimo, a estas preguntas:
+<ul>
+<li>qué exige exactamente la norma;</li>
+<li>qué parte encaja o no encaja en TradeBase;</li>
+<li>qué prueba lo acredita;</li>
+<li>qué decisión societaria, operativa o de producto lo mejora;</li>
+<li>qué error tumba la línea;</li>
+<li>cuándo es <code>GO</code>, <code>NO-GO</code> o <code>NOT YET</code>.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="estado-de-la-biblia">Estado de la biblia</h2>
+<h3 id="tomos-nucleares-ya-elevados-al-estandar-largo">Tomos nucleares ya elevados al estándar largo</h3>
+<table>
+<thead>
+<tr>
+<th>Línea</th>
+<th>Documento</th>
+<th>Estado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>#1</code> Plan Emprendedores León</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/01-plan-emprendedores-leon.md">01-plan-emprendedores-leon.md</a></td>
+<td>Desarrollo largo activo</td>
+</tr>
+<tr>
+<td><code>#4</code> Creación Empresas CyL</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/04-creacion-empresas-cyl.md">04-creacion-empresas-cyl.md</a></td>
+<td>Desarrollo largo activo</td>
+</tr>
+<tr>
+<td><code>#12</code> Certificación startup</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/12-certificacion-startup.md">12-certificacion-startup.md</a></td>
+<td>Desarrollo largo activo</td>
+</tr>
+<tr>
+<td><code>#21</code> MITECO</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/21-miteco-despoblacion.md">21-miteco-despoblacion.md</a></td>
+<td>Desarrollo largo activo</td>
+</tr>
+<tr>
+<td><code>#24</code> I+D+i</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/24-idi.md">24-idi.md</a></td>
+<td>Desarrollo largo activo</td>
+</tr>
+<tr>
+<td><code>#27</code> IRPF socios</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/27-irpf-socios.md">27-irpf-socios.md</a></td>
+<td>Desarrollo largo activo</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tomos-monograficos-ya-publicados-para-el-resto-del-mapa">Tomos monográficos ya publicados para el resto del mapa</h3>
+<table>
+<thead>
+<tr>
+<th>Línea</th>
+<th>Documento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>#2</code> Hacendera</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/02-hacendera.md">02-hacendera.md</a></td>
+</tr>
+<tr>
+<td><code>#3</code> LEADER</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/03-leader.md">03-leader.md</a></td>
+</tr>
+<tr>
+<td><code>#5</code> ICECYL Digitalización</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/05-icecyl-digitalizacion.md">05-icecyl-digitalizacion.md</a></td>
+</tr>
+<tr>
+<td><code>#6</code> ICECYL Innovación</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/06-icecyl-innovacion.md">06-icecyl-innovacion.md</a></td>
+</tr>
+<tr>
+<td><code>#7</code> Red Argos Ciber</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/07-red-argos-ciber.md">07-red-argos-ciber.md</a></td>
+</tr>
+<tr>
+<td><code>#8</code> Pyme Digital</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/08-pyme-digital.md">08-pyme-digital.md</a></td>
+</tr>
+<tr>
+<td><code>#9</code> Pyme Innova</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/09-pyme-innova.md">09-pyme-innova.md</a></td>
+</tr>
+<tr>
+<td><code>#10</code> Pyme Cibersegura</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/10-pyme-cibersegura.md">10-pyme-cibersegura.md</a></td>
+</tr>
+<tr>
+<td><code>#11</code> SODICAL</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/11-sodical.md">11-sodical.md</a></td>
+</tr>
+<tr>
+<td><code>#13</code> ENISA</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/13-enisa.md">13-enisa.md</a></td>
+</tr>
+<tr>
+<td><code>#14</code> ICO MRR</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/14-ico-mrr.md">14-ico-mrr.md</a></td>
+</tr>
+<tr>
+<td><code>#15</code> MicroBank</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/15-microbank.md">15-microbank.md</a></td>
+</tr>
+<tr>
+<td><code>#16</code> Kit Digital</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/16-kit-digital.md">16-kit-digital.md</a></td>
+</tr>
+<tr>
+<td><code>#17</code> Kit Consulting</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/17-kit-consulting.md">17-kit-consulting.md</a></td>
+</tr>
+<tr>
+<td><code>#18</code> España Emprende</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/18-espana-emprende.md">18-espana-emprende.md</a></td>
+</tr>
+<tr>
+<td><code>#19</code> Activa Startups</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/19-activa-startups.md">19-activa-startups.md</a></td>
+</tr>
+<tr>
+<td><code>#20</code> Capitalización del paro</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/20-capitalizacion-paro.md">20-capitalizacion-paro.md</a></td>
+</tr>
+<tr>
+<td><code>#22</code> NEOTEC / CDTI</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/22-neotec-cdti.md">22-neotec-cdti.md</a></td>
+</tr>
+<tr>
+<td><code>#23</code> Eurostars</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/23-eurostars.md">23-eurostars.md</a></td>
+</tr>
+<tr>
+<td><code>#25</code> Sello Pyme Innovadora</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/25-sello-pyme-innovadora.md">25-sello-pyme-innovadora.md</a></td>
+</tr>
+<tr>
+<td><code>#26</code> Patent Box</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/26-patent-box.md">26-patent-box.md</a></td>
+</tr>
+<tr>
+<td><code>A1</code> SME Fund</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/A1-sme-fund.md">A1-sme-fund.md</a></td>
+</tr>
+<tr>
+<td><code>A2</code> Transición Justa</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/A2-transicion-justa.md">A2-transicion-justa.md</a></td>
+</tr>
+<tr>
+<td><code>A3</code> LEADER segundo proyecto</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/A3-leader-segundo-proyecto.md">A3-leader-segundo-proyecto.md</a></td>
+</tr>
+<tr>
+<td><code>A4</code> Digitalización Pymes CyL</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/A4-digitalizacion-pymes-cyl.md">A4-digitalizacion-pymes-cyl.md</a></td>
+</tr>
+<tr>
+<td><code>A5</code> UNICO conectividad</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/A5-unico-conectividad.md">A5-unico-conectividad.md</a></td>
+</tr>
+<tr>
+<td><code>A6</code> ECYL contratación</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/A6-ecyl-contratacion.md">A6-ecyl-contratacion.md</a></td>
+</tr>
+<tr>
+<td><code>A7</code> Tierra de Campos</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/A7-tierra-de-campos.md">A7-tierra-de-campos.md</a></td>
+</tr>
+<tr>
+<td><code>A8</code> Centro de Empresas La Robla</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/A8-centro-empresas-la-robla.md">A8-centro-empresas-la-robla.md</a></td>
+</tr>
+<tr>
+<td><code>A9</code> FELE INCIBE Emprende</td>
+<td><a href="C:/TradeBase/subvenciones-biblia/A9-fele-incibe-emprende.md">A9-fele-incibe-emprende.md</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="nota-de-estructura">Nota de estructura</h2>
+<ul>
+<li>El antiguo bloque agrupado de Cámara queda solo como redirección en <a href="C:/TradeBase/subvenciones-biblia/08-09-10-18-camara-y-espana-emprende.md">08-09-10-18-camara-y-espana-emprende.md</a>.</li>
+<li>Las líneas activas y las líneas descartadas por sede o por timing siguen compartiendo la misma biblia, pero los tomos archivados se mantienen solo para preservar el análisis y evitar reabrir debates ya cerrados.</li>
+</ul>
+<hr />
+<h2 id="orden-de-lectura-recomendado">Orden de lectura recomendado</h2>
+<ol>
+<li><code>#27</code> IRPF socios</li>
+<li><code>#12</code> Certificación startup</li>
+<li><code>#24</code> I+D+i</li>
+<li><code>#4</code> Creación Empresas CyL</li>
+<li><code>#1</code> Plan Emprendedores León</li>
+<li><code>#21</code> MITECO</li>
+<li>resto de líneas condicionadas o secundarias</li>
+</ol>
+<p>La razón es simple: las seis primeras concentran la mayor parte del valor real y, además, arrastran decisiones de estructura, producto, sede y prueba que luego sirven al resto.</p>
+
+  </section>
+</main>
+</body>
+</html>

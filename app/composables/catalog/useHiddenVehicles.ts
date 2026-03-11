@@ -1,13 +1,21 @@
 import { ref } from 'vue'
 import type { VehicleFilters } from '~/composables/useVehicles'
+import { getVerticalSlug } from '~/composables/useVerticalConfig'
 
 /**
  * Counts vehicles matching current filters that are published but not yet visible
  * (visible_from > now). These are "early access" vehicles that Pro users or
  * credit holders can unlock before they become publicly visible.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function applyNonLocationFilters(query: any, filters: VehicleFilters) {
+interface FilterChain {
+  eq: (col: string, val: unknown) => FilterChain
+  gte: (col: string, val: unknown) => FilterChain
+  lte: (col: string, val: unknown) => FilterChain
+  in: (col: string, vals: readonly unknown[]) => FilterChain
+  ilike: (col: string, pattern: string) => FilterChain
+}
+
+function applyNonLocationFilters(query: FilterChain, filters: VehicleFilters): FilterChain {
   if (filters.category_id) {
     query = query.eq('category_id', filters.category_id)
   }
@@ -34,8 +42,7 @@ function applyNonLocationFilters(query: any, filters: VehicleFilters) {
   }
   return query
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function applyLocationFilters(query: any, filters: VehicleFilters) {
+function applyLocationFilters(query: FilterChain, filters: VehicleFilters): FilterChain {
   if (filters.location_province_eq) {
     query = query.eq('location_province', filters.location_province_eq)
   }
@@ -79,6 +86,7 @@ export function useHiddenVehicles() {
       let countQuery = supabase
         .from('vehicles')
         .select('id', { count: 'exact', head: true })
+        .eq('vertical', getVerticalSlug())
         .eq('status', 'published')
         .gt('visible_from', now)
 
@@ -94,6 +102,7 @@ export function useHiddenVehicles() {
         let earliestQuery = supabase
           .from('vehicles')
           .select('visible_from')
+          .eq('vertical', getVerticalSlug())
           .eq('status', 'published')
           .gt('visible_from', now)
           .order('visible_from', { ascending: true })

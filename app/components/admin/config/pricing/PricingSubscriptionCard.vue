@@ -98,20 +98,20 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
 }
 
 .card-title {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .card-description {
-  margin: 0 0 20px;
+  margin: 0 0 var(--spacing-5);
   color: var(--text-auxiliary);
   font-size: 0.875rem;
 }
@@ -123,29 +123,29 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 .pricing-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 360px;
+  min-width: 22.5rem;
 }
 
 .pricing-table th {
   text-align: left;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  background: #f9fafb;
-  border-bottom: 2px solid #e5e7eb;
+  background: var(--color-gray-50);
+  border-bottom: 2px solid var(--color-gray-200);
 }
 
 .pricing-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-200);
   vertical-align: middle;
 }
 
 .row-readonly {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .plan-name {
@@ -156,11 +156,11 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 
 .plan-free-tag {
   display: inline-block;
-  margin-left: 8px;
-  padding: 2px 8px;
-  background: var(--color-success-bg, #dcfce7);
+  margin-left: var(--spacing-2);
+  padding: 0.125rem var(--spacing-2);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.7rem;
   font-weight: 600;
 }
@@ -174,28 +174,28 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 .input-euro {
   display: flex;
   align-items: center;
-  gap: 6px;
-  max-width: 180px;
+  gap: 0.375rem;
+  max-width: 11.25rem;
 }
 
 .price-input {
   width: 100%;
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
-  color: #374151;
-  min-height: 44px;
+  color: var(--color-gray-700);
+  min-height: 2.75rem;
 }
 
 .price-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .euro-symbol {
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-weight: 500;
   flex-shrink: 0;
   white-space: nowrap;
@@ -203,29 +203,29 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 0.625rem var(--spacing-4);
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
-  margin-top: 12px;
+  margin-top: var(--spacing-3);
 }
 
 .save-section {
-  margin-top: 16px;
+  margin-top: var(--spacing-4);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -239,16 +239,16 @@ function onInput(planKey: string, field: 'monthly' | 'annual', event: Event) {
 
 @media (max-width: 48em) {
   .config-card {
-    padding: 16px;
+    padding: var(--spacing-4);
   }
 
   .pricing-table th,
   .pricing-table td {
-    padding: 10px 12px;
+    padding: 0.625rem var(--spacing-3);
   }
 
   .input-euro {
-    max-width: 140px;
+    max-width: 8.75rem;
   }
 
   .btn-primary {

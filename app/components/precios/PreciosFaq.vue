@@ -21,11 +21,16 @@ const emit = defineEmits<{
         class="faq-item"
         :class="{ 'faq-item--open': openIndex === idx }"
       >
-        <button class="faq-question" @click="emit('toggle', idx)">
+        <button
+          class="faq-question"
+          :aria-expanded="openIndex === idx"
+          :aria-controls="`faq-answer-${idx}`"
+          @click="emit('toggle', idx)"
+        >
           <span>{{ faq.question }}</span>
           <span class="faq-icon" aria-hidden="true">{{ openIndex === idx ? '\u2212' : '+' }}</span>
         </button>
-        <div v-if="openIndex === idx" class="faq-answer">
+        <div v-if="openIndex === idx" :id="`faq-answer-${idx}`" class="faq-answer" role="region">
           <p>{{ faq.answer }}</p>
         </div>
       </div>
@@ -35,7 +40,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .faq-section {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
 }
 
@@ -77,7 +82,7 @@ const emit = defineEmits<{
   text-align: left;
   background: transparent;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   min-width: auto;
   gap: var(--spacing-3);
   transition: background var(--transition-fast);

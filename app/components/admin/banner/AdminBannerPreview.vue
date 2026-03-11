@@ -37,35 +37,35 @@ const { sanitize } = useSanitize()
 <style scoped>
 .preview-panel {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  max-width: 700px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
+  max-width: 43.75rem;
 }
 
 .preview-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .preview-header h4 {
   margin: 0;
   font-size: 1rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .preview-lang-toggle {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .preview-lang-toggle button {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color-light);
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 0.375rem var(--spacing-3);
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.8rem;
@@ -84,26 +84,26 @@ const { sanitize } = useSanitize()
 
 .preview-content {
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
 }
 
 .banner-preview {
-  background: #fbbf24;
+  background: var(--color-amber-400);
   color: var(--text-primary);
-  padding: 12px 20px;
+  padding: var(--spacing-3) var(--spacing-5);
   text-align: center;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .banner-preview :deep(a) {
-  color: #0f2a2e;
+  color: var(--color-primary-darker);
   font-weight: 600;
   text-decoration: underline;
 }
 
 .preview-empty {
-  padding: 24px;
+  padding: var(--spacing-6);
   text-align: center;
   color: var(--text-disabled);
   font-style: italic;

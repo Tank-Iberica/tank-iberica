@@ -66,7 +66,7 @@
               class="pie-color"
               :style="{
                 background:
-                  (props.chartSubcatData.beneficios[idx] ?? 0) >= 0 ? '#22c55e' : '#ef4444',
+                  (props.chartSubcatData.beneficios[idx] ?? 0) >= 0 ? '#22c55e' : 'var(--color-error)',
               }"
             />
             <span class="pie-label">{{ label }}</span>

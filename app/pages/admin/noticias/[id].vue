@@ -54,9 +54,8 @@ onMounted(init)
 
 <template>
   <div class="nf">
-    <div v-if="loading && !article" class="loading-state">
-      <div class="spinner" />
-      Cargando articulo...
+    <div v-if="loading && !article" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="8" />
     </div>
 
     <template v-else-if="article">
@@ -198,21 +197,21 @@ onMounted(init)
 
 <style scoped>
 .nf {
-  max-width: 1200px;
+  max-width: 75rem;
 }
 
 .loading-state {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 40px 0;
+  gap: var(--spacing-3);
+  padding: 2.5rem 0;
   justify-content: center;
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   border: 2px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -226,25 +225,25 @@ onMounted(init)
 }
 
 .error-msg {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
   font-size: 0.875rem;
 }
 
 .nf-grid {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .nf-grid {
     display: grid;
     grid-template-columns: 1fr 360px;
-    gap: 24px;
+    gap: var(--spacing-6);
     align-items: start;
   }
 }
@@ -252,6 +251,6 @@ onMounted(init)
 .nf-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 </style>

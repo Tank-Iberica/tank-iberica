@@ -153,7 +153,7 @@ function getStatusLabel(status: Conversation['status']): string {
   border-bottom: 1px solid var(--border-color-light);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 72px;
+  min-height: 4.5rem;
 }
 
 .conv-item:hover {
@@ -166,8 +166,8 @@ function getStatusLabel(status: Conversation['status']): string {
 }
 
 .conv-item__thumb {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: var(--border-radius-sm);
   overflow: hidden;
   flex-shrink: 0;
@@ -194,7 +194,7 @@ function getStatusLabel(status: Conversation['status']): string {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0.0625rem;
 }
 
 .conv-item__vehicle-title {
@@ -234,8 +234,8 @@ function getStatusLabel(status: Conversation['status']): string {
 }
 
 .conv-item__status-badge {
-  font-size: 10px;
-  padding: 1px 6px;
+  font-size: 0.625rem;
+  padding: 0.0625rem 0.375rem;
   border-radius: var(--border-radius-full);
   background: var(--bg-tertiary);
   color: var(--text-auxiliary);
@@ -244,7 +244,7 @@ function getStatusLabel(status: Conversation['status']): string {
 
 @media (min-width: 48em) {
   .conv-list-panel {
-    width: 320px;
+    width: 20rem;
     display: flex !important;
   }
 
@@ -255,7 +255,7 @@ function getStatusLabel(status: Conversation['status']): string {
 
 @media (min-width: 64em) {
   .conv-list-panel {
-    width: 360px;
+    width: 22.5rem;
   }
 }
 </style>

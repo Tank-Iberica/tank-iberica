@@ -199,51 +199,51 @@ onMounted(async () => {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--spacing-3, 12px);
-  margin-bottom: var(--spacing-5, 20px);
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--bg-secondary, #f3f4f6);
-  padding: var(--spacing-4, 16px) 0;
+  background: var(--bg-secondary, var(--color-gray-100));
+  padding: var(--spacing-4) 0;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: var(--spacing-3, 12px);
+  gap: var(--spacing-3);
 }
 
 .section-header h2 {
   margin: 0;
   font-size: var(--font-size-2xl, 1.5rem);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
 }
 
 .total-badge {
-  background: var(--color-gray-100, #f3f4f6);
-  color: var(--color-gray-500, #6b7280);
-  padding: 6px 12px;
+  background: var(--color-gray-100, var(--color-gray-100));
+  color: var(--color-gray-500, var(--color-gray-500));
+  padding: 0.375rem var(--spacing-3);
   border-radius: var(--border-radius-lg, 16px);
   font-size: var(--font-size-sm, 0.85rem);
 }
 
 /* ---- Banners ---- */
 .success-banner {
-  background: #ecfdf5;
+  background: var(--color-emerald-50);
   color: var(--color-success);
-  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+  padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--border-radius, 8px);
-  margin-bottom: var(--spacing-4, 16px);
+  margin-bottom: var(--spacing-4);
   font-weight: var(--font-weight-medium, 500);
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error, var(--color-error));
-  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+  padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--border-radius, 8px);
-  margin-bottom: var(--spacing-4, 16px);
+  margin-bottom: var(--spacing-4);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -255,9 +255,9 @@ onMounted(async () => {
   color: var(--color-error, var(--color-error));
   font-size: var(--font-size-lg, 1.125rem);
   cursor: pointer;
-  padding: 4px 8px;
-  min-height: 44px;
-  min-width: 44px;
+  padding: var(--spacing-1) var(--spacing-2);
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -265,8 +265,8 @@ onMounted(async () => {
 
 .loading-state {
   text-align: center;
-  padding: var(--spacing-10, 40px);
-  color: var(--color-gray-500, #6b7280);
+  padding: var(--spacing-10);
+  color: var(--color-gray-500, var(--color-gray-500));
 }
 
 /* ---- Buttons ---- */
@@ -274,11 +274,11 @@ onMounted(async () => {
   background: var(--color-primary);
   color: var(--color-white, white);
   border: none;
-  padding: 10px 20px;
+  padding: 0.625rem var(--spacing-5);
   border-radius: var(--border-radius-sm, 6px);
   cursor: pointer;
   font-weight: var(--font-weight-medium, 500);
-  min-height: 44px;
+  min-height: 2.75rem;
   font-size: var(--font-size-sm, 0.875rem);
 }
 
@@ -287,14 +287,14 @@ onMounted(async () => {
 }
 
 /* ---- Mobile Responsive ---- */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header {
     flex-direction: column;
-    gap: var(--spacing-3, 12px);
+    gap: var(--spacing-3);
     align-items: stretch;
     position: static;
     padding: 0;
-    margin-bottom: var(--spacing-4, 16px);
+    margin-bottom: var(--spacing-4);
   }
 
   .header-left {
@@ -306,7 +306,7 @@ onMounted(async () => {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30em) {
   .section-header h2 {
     font-size: var(--font-size-xl, 1.25rem);
   }

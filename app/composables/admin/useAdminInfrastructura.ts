@@ -1,7 +1,7 @@
 import type { ChartData, ChartOptions } from 'chart.js'
 import type { InfraMetric } from '~/composables/useInfraMetrics'
 
-type TabKey = 'status' | 'alerts' | 'history' | 'migration'
+type TabKey = 'status' | 'alerts' | 'history' | 'migration' | 'crons'
 type PeriodValue = '24h' | '7d' | '30d'
 
 export interface ComponentMetricDisplay {
@@ -243,6 +243,11 @@ export function useAdminInfrastructura() {
       label: t('admin.infra.tabs.migration', 'Migracion'),
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>',
     },
+    {
+      key: 'crons' as TabKey,
+      label: t('admin.infra.tabs.crons', 'Cron Jobs'),
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    },
   ])
 
   // ── Component cards (Tab 1) ──────────────────────────────
@@ -296,7 +301,7 @@ export function useAdminInfrastructura() {
         pipelineMessage.value = t(
           'admin.infra.imagesMigrated',
           'Imagenes migradas: {count}',
-        ).replace('{count}', String(result.migrated || 0))
+        ).replace('{count}', String(Number(result.migrated) || 0))
         pipelineMessageType.value = 'success'
         await loadPipelineData()
       }
@@ -325,7 +330,7 @@ export function useAdminInfrastructura() {
         pipelineMessage.value = t(
           'admin.infra.variantsConfigured',
           'Variantes configuradas: {count}',
-        ).replace('{count}', String(result.count || 0))
+        ).replace('{count}', String(Number(result.count) || 0))
         pipelineMessageType.value = 'success'
       }
     } catch {
@@ -350,7 +355,7 @@ export function useAdminInfrastructura() {
   }
 
   const historyChartDataSets = computed<HistoryChartData[]>(() =>
-    buildHistoryCharts(metrics.value, chartColors, componentDefinitions),
+    buildHistoryCharts([...metrics.value], chartColors, componentDefinitions),
   )
 
   const chartOptions: ChartOptions<'line'> = {
@@ -419,7 +424,7 @@ export function useAdminInfrastructura() {
     wizardProgress.value = 0
     const progressInterval = setInterval(() => {
       if (wizardProgress.value < 90) {
-        wizardProgress.value += Math.floor(Math.random() * 15) + 5
+        wizardProgress.value += (crypto.getRandomValues(new Uint8Array(1))[0]! % 15) + 5
         if (wizardProgress.value > 90) wizardProgress.value = 90
       }
     }, 800)

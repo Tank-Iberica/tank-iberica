@@ -49,22 +49,22 @@ defineProps<{
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 4px;
+  gap: 0.25rem;
   flex-wrap: nowrap;
   white-space: nowrap;
-  font-size: 0.85rem;
+  font-size: var(--font-size-base);
 }
 
 .breadcrumb-item {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .breadcrumb-link {
   color: var(--color-primary);
   text-decoration: none;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   font-weight: 500;
@@ -75,14 +75,14 @@ defineProps<{
 }
 
 .breadcrumb-current {
-  color: var(--text-auxiliary, #9ca3af);
+  color: var(--text-auxiliary, var(--color-gray-400));
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  max-width: 12.5rem;
 }
 
 .breadcrumb-separator {
-  color: var(--text-auxiliary, #9ca3af);
+  color: var(--text-auxiliary, var(--color-gray-400));
   flex-shrink: 0;
 }
 

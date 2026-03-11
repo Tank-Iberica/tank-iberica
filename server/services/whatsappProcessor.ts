@@ -12,6 +12,7 @@ import { callAI, type AIContentBlock } from './aiProvider'
 import { uploadImage } from './imageUploader'
 import { sanitizeSlug, createVehicleFromAI, type ClaudeVehicleAnalysis } from './vehicleCreator'
 import { getSiteUrl } from '~~/server/utils/siteConfig'
+import { logger } from '../utils/logger'
 
 // Re-export for convenience
 export { uploadImage } from './imageUploader'
@@ -77,10 +78,11 @@ async function updateSubmission(
 
 // ── Claude Vision prompt ──
 
-function buildClaudePrompt(textContent: string | null, categoryList?: string): string {
-  const cats =
-    categoryList ||
-    "'Cabezas tractoras', 'Camiones', 'Semirremolques', 'Remolques', 'Cisternas', 'Furgonetas', 'Otros'"
+function buildClaudePrompt(
+  textContent: string | null,
+  categoryList = "'Cabezas tractoras', 'Camiones', 'Semirremolques', 'Remolques', 'Cisternas', 'Furgonetas', 'Otros'",
+): string {
+  const cats = categoryList
 
   const textSection = textContent
     ? `\n\nThe dealer also sent this text message with the images:\n"${textContent}"\n\nUse this text to supplement your analysis — it may contain brand, model, year, plate, or other details.`
@@ -143,13 +145,13 @@ async function downloadWhatsAppImages(mediaIds: string[]): Promise<Buffer[]> {
       if (buffer.length > 0) buffers.push(buffer)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unknown error'
-      console.error('[whatsappProcessor] Failed to download media:', message)
+      logger.error('[whatsappProcessor] Failed to download media:', { error: String(message) })
     }
   }
   return buffers
 }
 
-async function uploadAnalyzedImages(
+export async function uploadAnalyzedImages(
   imageBuffers: Buffer[],
   analysis: ClaudeVehicleAnalysis,
 ): Promise<
@@ -188,7 +190,7 @@ async function notifyDealerResult(
       : 'Lo sentimos, hubo un error procesando tu env\u00EDo. Nuestro equipo lo revisar\u00E1 manualmente. Gracias por tu paciencia.'
     await sendWhatsAppMessage(phoneNumber, message)
   } catch {
-    console.error('[whatsappProcessor] Failed to send notification')
+    logger.error('[whatsappProcessor] Failed to send notification')
   }
 }
 
@@ -288,7 +290,7 @@ export async function processWhatsAppSubmission(
     }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown processing error'
-    console.error(`[whatsappProcessor] Error processing submission ${submissionId}:`, message)
+    logger.error(`[whatsappProcessor] Error processing submission ${submissionId}:`, { error: String(message) })
 
     await updateSubmission(supabaseUrl, supabaseKey, submissionId, {
       status: 'failed',

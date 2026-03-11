@@ -423,7 +423,7 @@ export function useSocialPublisher() {
       // 1. Fetch the post
       const { data: post, error: fetchErr } = await supabase
         .from('social_posts')
-        .select('*')
+        .select('id, vehicle_id, article_id, platform, content, image_url, status, scheduled_at, posted_at, external_post_id, impressions, clicks, approved_at, approved_by, rejection_reason, created_at')
         .eq('id', postId)
         .single()
 
@@ -537,7 +537,7 @@ export function useSocialPublisher() {
     try {
       const { data, error: fetchErr } = await supabase
         .from('social_posts')
-        .select('*')
+        .select('id, vehicle_id, article_id, platform, content, image_url, status, scheduled_at, posted_at, external_post_id, impressions, clicks, approved_at, approved_by, rejection_reason, created_at')
         .eq('vehicle_id', vehicleId)
         .order('created_at', { ascending: false })
 

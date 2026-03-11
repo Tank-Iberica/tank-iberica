@@ -40,21 +40,21 @@ const { t } = useI18n()
 <style scoped>
 .card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem;
 }
 
 .preview-layout {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .preview-image {
   width: 100%;
-  height: 180px;
-  border-radius: 8px;
+  height: 11.25rem;
+  border-radius: var(--border-radius);
   overflow: hidden;
   background: var(--bg-secondary);
 }
@@ -76,7 +76,7 @@ const { t } = useI18n()
 }
 
 .preview-info h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -85,7 +85,7 @@ const { t } = useI18n()
 .preview-specs {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 0.75rem;
   align-items: center;
 }
 
@@ -95,7 +95,7 @@ const { t } = useI18n()
 }
 
 .spec-price {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   font-weight: 700;
   color: var(--color-primary);
 }
@@ -106,8 +106,8 @@ const { t } = useI18n()
   }
 
   .preview-image {
-    width: 200px;
-    height: 140px;
+    width: 12.5rem;
+    height: 8.75rem;
     flex-shrink: 0;
   }
 }

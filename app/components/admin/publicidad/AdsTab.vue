@@ -17,7 +17,7 @@
             <th>{{ t('admin.publicidad.format') }}</th>
             <th style="width: 90px">{{ t('admin.publicidad.status') }}</th>
             <th style="width: 90px">{{ t('admin.publicidad.price') }}</th>
-            <th style="width: 80px">{{ t('admin.publicidad.impressions') }}</th>
+            <th style="width: 5rem">{{ t('admin.publicidad.impressions') }}</th>
             <th style="width: 60px">{{ t('admin.publicidad.clicks') }}</th>
             <th style="width: 60px">CTR</th>
             <th style="width: 90px">{{ t('admin.publicidad.dates') }}</th>

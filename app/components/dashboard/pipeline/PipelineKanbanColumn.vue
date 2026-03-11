@@ -87,8 +87,8 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 <style scoped>
 .kanban-column {
   background: var(--bg-secondary);
-  border-radius: 12px;
-  border: 2px solid transparent;
+  border-radius: var(--border-radius-md);
+  border: 0.125rem solid transparent;
   transition:
     border-color 0.2s,
     background 0.2s;
@@ -105,22 +105,22 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   cursor: pointer;
-  min-height: 48px;
+  min-height: 3rem;
   user-select: none;
 }
 
 .column-header-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .stage-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: var(--border-radius-full);
   flex-shrink: 0;
 }
 
@@ -132,22 +132,22 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 }
 
 .column-count {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--text-auxiliary);
   background: var(--bg-tertiary);
-  border-radius: 10px;
-  padding: 1px 8px;
+  border-radius: var(--border-radius-md);
+  padding: 0.0625rem 0.5rem;
 }
 
 .column-header-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .column-total {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-primary);
 }
@@ -156,13 +156,13 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
   background: var(--color-primary);
   color: white;
-  border-radius: 8px;
-  font-size: 1.25rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-xl);
   font-weight: 700;
   cursor: pointer;
   transition: background 0.2s;
@@ -174,7 +174,7 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 }
 
 .accordion-arrow {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   color: var(--text-disabled);
   transition: transform 0.2s;
 }
@@ -186,9 +186,9 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 /* ── Cards container (mobile accordion) ────────────────────────── */
 .column-cards {
   display: none;
-  padding: 0 12px 12px;
+  padding: 0 0.75rem 0.75rem;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .kanban-column.expanded .column-cards {
@@ -197,7 +197,7 @@ function onCardDragStart(event: DragEvent, itemId: string): void {
 
 .column-empty {
   text-align: center;
-  padding: 16px 8px;
+  padding: 1rem 0.5rem;
   color: var(--text-disabled);
   font-size: 0.85rem;
 }

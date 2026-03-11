@@ -3,36 +3,34 @@
     <div v-if="show" class="modal-bg" @click.self="$emit('close')">
       <div class="modal">
         <div class="modal-head">
-          <span>&#x1F5D1;&#xFE0F; Eliminar transaccion</span>
+          <span>{{ $t('admin.balance.deleteTransaction') }}</span>
           <button @click="$emit('close')">&times;</button>
         </div>
         <div class="modal-body">
-          <p>Eliminar esta transaccion?</p>
+          <p>{{ $t('admin.balance.deleteTransactionConfirm') }}</p>
           <p class="delete-info">
             <strong>{{ BALANCE_REASONS[deleteTarget?.razon || 'otros'] }}</strong> &mdash;
             {{ fmt(deleteTarget?.importe) }}
           </p>
           <div class="field">
-            <label for="delete-confirm-input"
-              >Escribe <strong>Borrar</strong> para confirmar:</label
-            >
+            <label for="delete-confirm-input" v-html="$t('admin.balance.typeDeleteConfirm', { word: '<strong>Borrar</strong>' })" />
             <input
               id="delete-confirm-input"
               :value="deleteConfirm"
               type="text"
-              placeholder="Borrar"
+              :placeholder="$t('common.delete')"
               @input="$emit('update:deleteConfirm', ($event.target as HTMLInputElement).value)"
             >
           </div>
         </div>
         <div class="modal-foot">
-          <button class="btn" @click="$emit('close')">Cancelar</button>
+          <button class="btn" @click="$emit('close')">{{ $t('common.cancel') }}</button>
           <button
             class="btn btn-danger"
             :disabled="!canDelete || saving"
             @click="$emit('confirmDelete')"
           >
-            Eliminar
+            {{ $t('common.delete') }}
           </button>
         </div>
       </div>

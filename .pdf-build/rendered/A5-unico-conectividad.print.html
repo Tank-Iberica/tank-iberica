@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Biblia de Subvenciones - A5 unico conectividad</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Biblia de Subvenciones - A5 unico conectividad</h1>
+    <p>Tomo monografico de la biblia de subvenciones para desarrollo exhaustivo por linea.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#1-ficha-de-trabajo'>1. Ficha de trabajo</a></li>
+<li class='toc-l2'><a href='#2-que-se-esta-decidiendo-realmente'>2. Que se esta decidiendo realmente</a></li>
+<li class='toc-l2'><a href='#3-que-significa-eso-para-tradebase'>3. Que significa eso para TradeBase</a></li>
+<li class='toc-l2'><a href='#4-que-haria-falta-si-se-quisiera-activarla'>4. Que haria falta si se quisiera activarla</a></li>
+<li class='toc-l2'><a href='#5-go-no-go-not-yet'>5. GO / NO-GO / NOT YET</a></li>
+<li class='toc-l3'><a href='#go'>GO</a></li>
+<li class='toc-l3'><a href='#no-go'>NO-GO</a></li>
+<li class='toc-l3'><a href='#not-yet'>NOT YET</a></li>
+<li class='toc-l2'><a href='#6-conclusion-operativa'>6. Conclusion operativa</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tomo-a5-unico-conectividad-bono-de-demanda">Tomo A5 - UNICO conectividad / bono de demanda</h1>
+<blockquote>
+<p><strong>Rol:</strong> monografia para decidir si UNICO merece expediente con Fresno o si debe quedar como una linea puramente condicional a un problema real de conectividad que, de momento, no debe darse por supuesto.<br />
+<strong>Fecha de corte:</strong> 11/03/2026.<br />
+<strong>Fuentes principales:</strong></p>
+<ul>
+<li>BOE, bases y convocatoria 2024 de bonos de conectividad: <a href="https://www.boe.es/boe/dias/2024/07/23/pdfs/BOE-A-2024-15200.pdf">https://www.boe.es/boe/dias/2024/07/23/pdfs/BOE-A-2024-15200.pdf</a></li>
+<li>BOE, modificacion 2024: <a href="https://www.boe.es/boe/dias/2024/12/30/pdfs/BOE-A-2024-27496.pdf">https://www.boe.es/boe/dias/2024/12/30/pdfs/BOE-A-2024-27496.pdf</a></li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="ficha-de-trabajo">1. Ficha de trabajo</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Organismo</td>
+<td>Ministerio para la Transformacion Digital / programa UNICO</td>
+</tr>
+<tr>
+<td>Naturaleza</td>
+<td>Bono de conectividad / subvencion condicionada a solucion elegible</td>
+</tr>
+<tr>
+<td>Cuello de botella TradeBase</td>
+<td>Solo existe linea real si la sede de Fresno tiene un problema efectivo de conectividad o servicio asociado</td>
+</tr>
+<tr>
+<td>Decision actual</td>
+<td>Condicional</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="que-se-esta-decidiendo-realmente">2. Que se esta decidiendo realmente</h2>
+<p>No se decide si una pyme quiere mejor internet en abstracto. Se decide si:</p>
+<ul>
+<li>existe necesidad real;</li>
+<li>existe solucion elegible;</li>
+<li>existe proveedor o esquema adherido compatible;</li>
+<li>y el bono encaja con la situacion de la empresa.</li>
+</ul>
+<hr />
+<h2 id="que-significa-eso-para-tradebase">3. Que significa eso para TradeBase</h2>
+<p>No debe prepararse expediente mientras no exista una medicion minima de la sede:</p>
+<ul>
+<li>velocidad real;</li>
+<li>estabilidad;</li>
+<li>carencias operativas concretas;</li>
+<li>limitacion para actividad digital.</li>
+</ul>
+<p>Sin ese dato, todo es especulacion.</p>
+<hr />
+<h2 id="que-haria-falta-si-se-quisiera-activarla">4. Que haria falta si se quisiera activarla</h2>
+<ul>
+<li>test de conectividad de Fresno;</li>
+<li>descripcion de la carencia real;</li>
+<li>identificacion de la solucion elegible;</li>
+<li>proveedor adherido o encaje formal equivalente;</li>
+<li>no solape con gasto ya asumido fuera del programa.</li>
+</ul>
+<hr />
+<h2 id="go-no-go-not-yet">5. GO / NO-GO / NOT YET</h2>
+<h3 id="go">GO</h3>
+<p>Si la sede de Fresno presenta una carencia real de conectividad y existe solucion elegible.</p>
+<h3 id="no-go">NO-GO</h3>
+<p>Si la conectividad de la sede es suficiente y el bono no resuelve un problema real.</p>
+<h3 id="not-yet">NOT YET</h3>
+<p>Si aun no se han medido las condiciones tecnicas de la sede.</p>
+<hr />
+<h2 id="conclusion-operativa">6. Conclusion operativa</h2>
+<p>UNICO no es una ayuda para perseguir por principio. Es una ayuda a activar solo si la realidad tecnica de la sede la justifica.</p>
+
+  </section>
+</main>
+</body>
+</html>

@@ -2,7 +2,7 @@
   <div class="post-card" @click="$emit('select', post)">
     <!-- Image -->
     <div class="post-image">
-      <img v-if="post.image_url" :src="post.image_url" :alt="vehicleTitle" >
+      <img v-if="post.image_url" :src="post.image_url" :alt="vehicleTitle" loading="lazy" decoding="async" >
       <div v-else class="post-image-placeholder">
         <svg
           width="32"
@@ -154,8 +154,8 @@ defineEmits<{
 
 .post-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   cursor: pointer;
   transition: box-shadow 0.2s;
@@ -171,7 +171,7 @@ defineEmits<{
 .post-image {
   position: relative;
   width: 100%;
-  height: 160px;
+  height: 10rem;
   background: var(--bg-secondary);
   overflow: hidden;
 }
@@ -192,17 +192,17 @@ defineEmits<{
 
 .post-image .platform-badge {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 0.5rem;
+  left: 0.5rem;
 }
 
 /* Post body */
 .post-body {
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .post-vehicle-title {
@@ -226,7 +226,7 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--spacing-2);
   margin-top: auto;
 }
 
@@ -237,15 +237,15 @@ defineEmits<{
 
 .post-metrics {
   display: flex;
-  gap: 16px;
-  padding-top: 8px;
+  gap: var(--spacing-4);
+  padding-top: var(--spacing-2);
   border-top: 1px solid var(--color-gray-100);
 }
 
 .metric {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-1);
   font-size: 0.8rem;
   color: var(--text-auxiliary);
   font-weight: 500;
@@ -254,8 +254,8 @@ defineEmits<{
 /* Post actions */
 .post-actions {
   display: flex;
-  gap: 4px;
-  padding: 8px 16px 12px;
+  gap: var(--spacing-1);
+  padding: 0.5rem 1rem 0.75rem;
   border-top: 1px solid var(--color-gray-100);
 }
 
@@ -263,10 +263,10 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   cursor: pointer;
   transition: all 0.15s;
@@ -284,16 +284,16 @@ defineEmits<{
 }
 
 .btn-action.btn-approve:hover {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
 }
 
 .btn-action.btn-publish {
-  color: #2563eb;
-  border-color: #bfdbfe;
+  color: var(--color-focus);
+  border-color: var(--color-info-border);
 }
 
 .btn-action.btn-publish:hover {
-  background: #eff6ff;
+  background: var(--color-blue-50);
 }
 
 .btn-action.btn-edit {

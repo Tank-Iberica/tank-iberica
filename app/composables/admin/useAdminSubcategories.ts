@@ -72,7 +72,7 @@ export function useAdminSubcategories() {
     try {
       const { data, error: err } = await supabase
         .from('categories')
-        .select('*')
+        .select('id, name_es, name_en, slug, applicable_categories, applicable_filters, stock_count, status, sort_order, created_at, updated_at')
         .order('sort_order', { ascending: true })
 
       if (err) throw err
@@ -125,7 +125,7 @@ export function useAdminSubcategories() {
     try {
       const { data, error: err } = await supabase
         .from('categories')
-        .select('*')
+        .select('id, name_es, name_en, slug, applicable_categories, applicable_filters, stock_count, status, sort_order, created_at, updated_at')
         .eq('id', id)
         .single()
 

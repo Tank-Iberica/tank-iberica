@@ -66,16 +66,16 @@ const { t } = useI18n()
 .filters-bar {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .filter-select,
 .filter-search {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
   background: var(--bg-primary);
@@ -85,7 +85,7 @@ const { t } = useI18n()
 .filter-search:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 @media (min-width: 30em) {
@@ -96,12 +96,12 @@ const { t } = useI18n()
 
   .filter-select {
     width: auto;
-    min-width: 160px;
+    min-width: 10rem;
   }
 
   .filter-search {
     flex: 1;
-    min-width: 180px;
+    min-width: 11.25rem;
   }
 }
 </style>

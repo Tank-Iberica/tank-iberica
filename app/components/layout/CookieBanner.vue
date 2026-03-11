@@ -196,11 +196,12 @@ function toggleCustomize() {
   right: 0;
   z-index: 10000;
   padding: var(--spacing-3);
+  padding-bottom: max(var(--spacing-3), env(safe-area-inset-bottom, 0));
   pointer-events: none;
 }
 
 .cookie-banner__inner {
-  max-width: 720px;
+  max-width: 45rem;
   margin: 0 auto;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
@@ -250,7 +251,7 @@ function toggleCustomize() {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
@@ -302,7 +303,7 @@ function toggleCustomize() {
 }
 
 .cookie-banner__separator {
-  height: 1px;
+  height: 0.0625rem;
   background: var(--border-color-light);
   margin: var(--spacing-4) 0;
 }
@@ -323,7 +324,7 @@ function toggleCustomize() {
 .cookie-category__info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
   min-width: 0;
   flex: 1;
 }
@@ -347,10 +348,10 @@ function toggleCustomize() {
   align-items: center;
   flex-shrink: 0;
   cursor: pointer;
-  width: 48px;
-  height: 28px;
-  min-height: 44px;
-  min-width: 44px;
+  width: 3rem;
+  height: 1.75rem;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   justify-content: center;
 }
 
@@ -363,8 +364,8 @@ function toggleCustomize() {
 
 .cookie-toggle__slider {
   position: absolute;
-  width: 48px;
-  height: 28px;
+  width: 3rem;
+  height: 1.75rem;
   background-color: var(--color-gray-300);
   border-radius: var(--border-radius-full);
   transition: background-color var(--transition-fast);
@@ -373,10 +374,10 @@ function toggleCustomize() {
 .cookie-toggle__slider::before {
   content: '';
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 22px;
-  height: 22px;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.375rem;
+  height: 1.375rem;
   background-color: var(--color-white);
   border-radius: 50%;
   transition: transform var(--transition-fast);
@@ -388,7 +389,7 @@ function toggleCustomize() {
 }
 
 .cookie-toggle--active .cookie-toggle__slider::before {
-  transform: translateX(20px);
+  transform: translateX(1.25rem);
 }
 
 .cookie-toggle--disabled {
@@ -401,7 +402,7 @@ function toggleCustomize() {
 }
 
 .cookie-toggle--disabled .cookie-toggle__slider::before {
-  transform: translateX(20px);
+  transform: translateX(1.25rem);
 }
 
 /* ---- Transitions ---- */
@@ -419,12 +420,12 @@ function toggleCustomize() {
 
 .cookie-banner-enter-from {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(1.5rem);
 }
 
 .cookie-banner-leave-to {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(1.5rem);
 }
 
 .customize-panel-enter-active,
@@ -441,7 +442,7 @@ function toggleCustomize() {
 
 .customize-panel-enter-to,
 .customize-panel-leave-from {
-  max-height: 500px;
+  max-height: 31.25rem;
 }
 
 /* ---- Tablet / Desktop ---- */
@@ -468,7 +469,7 @@ function toggleCustomize() {
   .cookie-banner__actions {
     flex-direction: column;
     flex-shrink: 0;
-    width: 180px;
+    width: 11.25rem;
   }
 }
 </style>

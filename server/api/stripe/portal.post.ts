@@ -1,30 +1,25 @@
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { isAllowedUrl } from '../../utils/isAllowedUrl'
 import { verifyCsrf } from '../../utils/verifyCsrf'
+import { safeError } from '../../utils/safeError'
+import { validateBody } from '../../utils/validateBody'
 
-interface PortalBody {
-  customerId: string
-  returnUrl: string
-}
+const portalSchema = z.object({
+  customerId: z.string().startsWith('cus_', 'Stripe customer ID must start with cus_'),
+  returnUrl: z.string().url(),
+})
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<PortalBody>(event)
-  const { customerId, returnUrl } = body
-
   // CSRF + Auth check
   verifyCsrf(event)
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
-  if (!customerId || !returnUrl) {
-    throw createError({
-      statusCode: 400,
-      message: 'Missing required fields: customerId, returnUrl',
-    })
-  }
+  const { customerId, returnUrl } = await validateBody(event, portalSchema)
 
   // Verify the customerId belongs to this user
   const supabase = serverSupabaseServiceRole(event)
@@ -36,11 +31,11 @@ export default defineEventHandler(async (event) => {
     .maybeSingle()
 
   if (!sub) {
-    throw createError({ statusCode: 403, message: 'Forbidden: customer does not belong to user' })
+    throw safeError(403, 'Forbidden: customer does not belong to user')
   }
 
   if (!isAllowedUrl(returnUrl)) {
-    throw createError({ statusCode: 400, message: 'Invalid returnUrl' })
+    throw safeError(400, 'Invalid returnUrl')
   }
 
   const config = useRuntimeConfig()

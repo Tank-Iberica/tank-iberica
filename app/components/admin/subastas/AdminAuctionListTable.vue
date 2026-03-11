@@ -137,10 +137,10 @@ const { t } = useI18n()
 
 <style scoped>
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
@@ -148,14 +148,14 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -170,8 +170,8 @@ const { t } = useI18n()
 
 .table-container {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: auto;
 }
 
@@ -185,7 +185,7 @@ const { t } = useI18n()
   position: sticky;
   top: 0;
   background: var(--bg-secondary);
-  padding: 12px 14px;
+  padding: 0.75rem 0.875rem;
   text-align: left;
   font-weight: 600;
   font-size: 0.8rem;
@@ -198,10 +198,10 @@ const { t } = useI18n()
 }
 
 .data-table td {
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--color-slate-700);
 }
 
 .data-table tr:hover {
@@ -214,7 +214,7 @@ const { t } = useI18n()
 }
 
 .col-actions {
-  width: 140px;
+  width: 8.75rem;
 }
 
 .text-muted {
@@ -238,8 +238,8 @@ const { t } = useI18n()
 /* Status badges */
 .status-badge {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: capitalize;
@@ -251,27 +251,27 @@ const { t } = useI18n()
 }
 
 .status-scheduled {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 
 .status-active {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .status-ended {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .status-adjudicated {
-  background: #ede9fe;
-  color: #7c3aed;
+  background: var(--color-purple-bg);
+  color: var(--color-purple-600);
 }
 
 .status-cancelled {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -283,21 +283,21 @@ const { t } = useI18n()
 /* Row actions */
 .row-actions {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-1);
   flex-wrap: wrap;
 }
 
 .action-btn {
-  padding: 6px 10px;
+  padding: 0.375rem 0.625rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   text-decoration: none;
   transition: all 0.15s;
-  min-width: 36px;
-  min-height: 36px;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -309,13 +309,13 @@ const { t } = useI18n()
 }
 
 .action-adjudicate:hover {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   border-color: var(--color-success);
 }
 
 .action-cancel:hover {
-  background: var(--color-error-bg, #fef2f2);
-  border-color: #fca5a5;
+  background: var(--color-error-bg, var(--color-error-bg));
+  border-color: var(--color-error-soft);
 }
 
 /* Empty state */
@@ -324,18 +324,18 @@ const { t } = useI18n()
 }
 
 .empty-state {
-  padding: 60px 20px;
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .empty-icon {
-  font-size: 48px;
+  font-size: 3rem;
   opacity: 0.3;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 
 .empty-state p {
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--spacing-4) 0;
 }
 </style>

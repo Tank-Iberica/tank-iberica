@@ -16,6 +16,7 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
+const { t } = useI18n()
 const { upload, uploading, progress, error: uploadError } = useCloudinaryUpload()
 const localError = ref<string | null>(null)
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -56,10 +57,10 @@ async function removeBg() {
     // Pre-fetch so Cloudinary processes the transformation before we save
     const res = await fetch(transformedUrl, { method: 'HEAD' })
     if (!res.ok)
-      throw new Error('La eliminación de fondo no está disponible en tu cuenta de Cloudinary')
+      throw new Error(t('shared.imageUploader.bgRemovalUnavailable'))
     emit('update:modelValue', transformedUrl)
   } catch (err: unknown) {
-    localError.value = err instanceof Error ? err.message : 'Error eliminando fondo'
+    localError.value = err instanceof Error ? err.message : t('shared.imageUploader.bgRemovalError')
   } finally {
     bgRemoving.value = false
   }
@@ -88,9 +89,9 @@ async function removeBg() {
           :disabled="bgRemoving"
           @click="removeBg"
         >
-          {{ bgRemoving ? 'Procesando...' : '✦ Eliminar fondo' }}
+          {{ bgRemoving ? t('shared.imageUploader.processing') : t('shared.imageUploader.removeBg') }}
         </button>
-        <button type="button" class="btn-remove" @click="removeImage">Eliminar imagen</button>
+        <button type="button" class="btn-remove" @click="removeImage">{{ t('shared.imageUploader.removeImage') }}</button>
       </div>
     </div>
 
@@ -100,11 +101,11 @@ async function removeBg() {
         <span class="upload-progress-bar">
           <span class="upload-progress-fill" :style="{ width: `${progress}%` }" />
         </span>
-        Subiendo... {{ progress }}%
+        {{ t('shared.imageUploader.uploading', { n: progress }) }}
       </span>
       <span v-else class="upload-cta">
-        {{ currentUrl ? 'Cambiar imagen' : 'Subir imagen' }}
-        <span class="upload-hint">PNG, JPG o WebP · Máx. 10 MB</span>
+        {{ currentUrl ? t('shared.imageUploader.changeImage') : t('shared.imageUploader.uploadImage') }}
+        <span class="upload-hint">{{ t('shared.imageUploader.hint') }}</span>
       </span>
     </div>
 
@@ -124,31 +125,31 @@ async function removeBg() {
 .image-uploader {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .uploader-label {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--color-gray-700, #374151);
+  color: var(--color-gray-700, var(--color-gray-700));
 }
 
 .recommendations {
   margin: 0;
-  padding: 10px 12px;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 8px;
+  padding: 0.625rem 0.75rem;
+  background: var(--color-sky-50);
+  border: 1px solid var(--color-sky-200);
+  border-radius: var(--border-radius);
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .recommendations li {
-  font-size: 0.8rem;
-  color: #0369a1;
-  padding-left: 14px;
+  font-size: var(--font-size-sm);
+  color: var(--color-sky-700);
+  padding-left: 0.875rem;
   position: relative;
 }
 
@@ -156,40 +157,40 @@ async function removeBg() {
   content: '→';
   position: absolute;
   left: 0;
-  color: #38bdf8;
+  color: var(--color-sky-400);
 }
 
 .preview-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .preview-box {
-  padding: 12px;
+  padding: 0.75rem;
   border: 1px dashed var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background: var(--bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 /* Dark logo preview uses dark bg */
 .preview-box.logo-dark-preview {
-  background: #1f2937;
-  border-color: #374151;
-  min-height: 80px;
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  min-height: 5rem;
 }
 
 .preview-box.favicon-preview {
-  min-height: 56px;
+  min-height: 3.5rem;
 }
 
 .preview-box.cover-preview,
 .preview-box.og-preview {
-  min-height: 140px;
+  min-height: 8.75rem;
 }
 
 .preview-img {
@@ -199,42 +200,42 @@ async function removeBg() {
 
 .preview-box.logo-preview .preview-img,
 .preview-box.logo-dark-preview .preview-img {
-  max-height: 56px;
+  max-height: 3.5rem;
 }
 
 .preview-box.favicon-preview .preview-img {
-  max-height: 32px;
-  max-width: 32px;
+  max-height: 2rem;
+  max-width: 2rem;
 }
 
 .preview-box.cover-preview .preview-img,
 .preview-box.og-preview .preview-img {
-  max-height: 140px;
+  max-height: 8.75rem;
   width: 100%;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
 }
 
 .preview-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
 .btn-bg-removal {
   background: none;
-  border: 1px solid #7c3aed;
-  color: #7c3aed;
-  font-size: 0.8rem;
+  border: 1px solid var(--color-purple-600);
+  color: var(--color-purple-600);
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   transition:
     background 0.15s,
     color 0.15s;
-  min-height: 32px;
+  min-height: 2rem;
 }
 
 .btn-bg-removal:disabled {
@@ -244,7 +245,7 @@ async function removeBg() {
 
 @media (hover: hover) {
   .btn-bg-removal:not(:disabled):hover {
-    background: #7c3aed;
+    background: var(--color-purple-600);
     color: white;
   }
 }
@@ -253,7 +254,7 @@ async function removeBg() {
   background: none;
   border: none;
   color: var(--color-error);
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
@@ -269,47 +270,47 @@ async function removeBg() {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px dashed var(--color-gray-300);
-  border-radius: 8px;
-  padding: 16px;
+  border: 0.125rem dashed var(--color-gray-300);
+  border-radius: var(--border-radius);
+  padding: 1rem;
   cursor: pointer;
   transition:
     border-color 0.15s,
     background 0.15s;
-  min-height: 64px;
+  min-height: 4rem;
   text-align: center;
 }
 
 .upload-zone:not(.uploading):focus,
 .upload-zone:not(.uploading):active {
   border-color: var(--color-primary);
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
 }
 
 @media (hover: hover) {
   .upload-zone:not(.uploading):hover {
     border-color: var(--color-primary);
-    background: var(--color-success-bg, #dcfce7);
+    background: var(--color-success-bg, var(--color-success-bg));
   }
 }
 
 .upload-zone.uploading {
   cursor: default;
-  border-color: #93c5fd;
-  background: #eff6ff;
+  border-color: var(--color-blue-300);
+  background: var(--color-blue-50);
 }
 
 .upload-cta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 0.875rem;
+  gap: 0.25rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-primary);
 }
 
 .upload-hint {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 400;
   color: var(--text-disabled);
 }
@@ -318,18 +319,18 @@ async function removeBg() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  font-size: 0.875rem;
+  gap: 0.375rem;
+  font-size: var(--font-size-sm);
   color: var(--color-info);
   width: 100%;
 }
 
 .upload-progress-bar {
   width: 100%;
-  max-width: 200px;
-  height: 6px;
-  background: var(--color-info-bg, #dbeafe);
-  border-radius: 99px;
+  max-width: 12.5rem;
+  height: 0.375rem;
+  background: var(--color-info-bg, var(--color-info-bg));
+  border-radius: 6.1875rem;
   overflow: hidden;
 }
 
@@ -337,7 +338,7 @@ async function removeBg() {
   display: block;
   height: 100%;
   background: var(--color-info);
-  border-radius: 99px;
+  border-radius: 6.1875rem;
   transition: width 0.2s;
 }
 
@@ -347,7 +348,7 @@ async function removeBg() {
 
 .uploader-error {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--color-error);
 }
 </style>

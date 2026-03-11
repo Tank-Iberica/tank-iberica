@@ -58,19 +58,19 @@ const { t } = useI18n()
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px 24px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-5) var(--spacing-6);
 }
 
 .section-title {
-  margin: 0 0 16px;
+  margin: 0 0 var(--spacing-4);
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .count-badge-sm {
@@ -78,34 +78,34 @@ const { t } = useI18n()
   color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 10px;
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--border-radius-md);
 }
 
 .empty-msg {
   text-align: center;
   color: var(--text-disabled);
   font-size: 0.875rem;
-  padding: 32px 16px;
+  padding: var(--spacing-8) var(--spacing-4);
 }
 
 .table-container {
   overflow: auto;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   border: 1px solid var(--color-gray-200);
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 700px;
+  min-width: 43.75rem;
 }
 
 .data-table th {
   position: sticky;
   top: 0;
   background: var(--bg-secondary);
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   text-align: left;
   font-weight: 600;
   font-size: 0.75rem;
@@ -118,10 +118,10 @@ const { t } = useI18n()
 }
 
 .data-table td {
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.85rem;
-  color: #334155;
+  color: var(--color-slate-700);
 }
 
 .data-table tr:hover {
@@ -142,7 +142,7 @@ const { t } = useI18n()
 }
 
 .bid-winning {
-  background: var(--color-success-bg, #dcfce7) !important;
+  background: var(--color-success-bg, var(--color-success-bg)) !important;
 }
 
 .winner-indicator {

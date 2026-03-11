@@ -3,13 +3,13 @@
 .filter-label {
   font-weight: 500;
   color: var(--color-primary);
-  font-size: 10px;
+  font-size: 0.625rem;
   line-height: 1.4;
   text-transform: uppercase;
   display: flex;
   align-items: center;
   gap: 0.3rem;
-  letter-spacing: 0.15px;
+  letter-spacing: 0.01rem;
   white-space: nowrap;
 }
 
@@ -18,15 +18,15 @@
 }
 
 .filter-label-price {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 
 .reset-filters-btn {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  min-height: 2rem;
   border-radius: 50%;
   border: 2px solid var(--color-primary);
   background: var(--bg-primary);
@@ -54,7 +54,7 @@
 
 .filter-divider {
   width: 1px;
-  height: 24px;
+  height: 1.5rem;
   background: var(--border-color, #e5e7eb);
   flex-shrink: 0;
 }
@@ -62,13 +62,13 @@
 .filter-badge {
   background: var(--color-primary);
   color: var(--color-white);
-  font-size: 9px;
+  font-size: 0.5625rem;
   font-weight: 600;
-  min-width: 18px;
-  height: 18px;
-  border-radius: 9999px;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  border-radius: var(--border-radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  padding: 0 0.25rem;
 }

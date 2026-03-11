@@ -1,6 +1,6 @@
 # Entity Relationship Diagram
 
-> Generated from 80 migrations (00001-00066 + 14 timestamped). 92 tables in `public` schema.
+> Generated from 81 migrations (00001-00066 + 15 timestamped). 97 tables in `public` schema (+5 brokerage).
 > Last updated: Mar 2026.
 
 ```mermaid

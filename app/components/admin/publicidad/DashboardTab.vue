@@ -56,37 +56,37 @@
         <span class="stat-label">{{ t('admin.publicidad.totalImpressions') }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" style="color: #3b82f6">{{
+        <span class="stat-value" style="color: var(--color-info)">{{
           formatNumber(summary.totalClicks)
         }}</span>
         <span class="stat-label">{{ t('admin.publicidad.totalClicks') }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" style="color: #8b5cf6">{{ summary.avgCTR }}</span>
+        <span class="stat-value" style="color: var(--color-violet-500)">{{ summary.avgCTR }}</span>
         <span class="stat-label">{{ t('admin.publicidad.avgCtr') }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" style="color: #16a34a">{{ summary.activeAds }}</span>
+        <span class="stat-value" style="color: var(--color-green-600)">{{ summary.activeAds }}</span>
         <span class="stat-label">{{ t('admin.publicidad.activeAds') }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" style="color: #059669">{{
+        <span class="stat-value" style="color: var(--color-success-dark)">{{
           formatPriceCents(summary.estimatedRevenue)
         }}</span>
         <span class="stat-label">{{ t('admin.publicidad.estimatedRevenue') }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" style="color: #0891b2">{{
+        <span class="stat-value" style="color: var(--color-cyan-600)">{{
           formatPriceCents(summary.avgEcpm)
         }}</span>
         <span class="stat-label">{{ t('admin.publicidad.avgEcpm') }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" style="color: #d97706">{{ summary.fillRate }}</span>
+        <span class="stat-value" style="color: var(--color-amber-600)">{{ summary.fillRate }}</span>
         <span class="stat-label">{{ t('admin.publicidad.fillRate') }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-value" style="color: #7c3aed">{{ summary.viewabilityRate }}</span>
+        <span class="stat-value" style="color: var(--color-purple-600)">{{ summary.viewabilityRate }}</span>
         <span class="stat-label">{{ t('admin.publicidad.viewabilityRate') }}</span>
       </div>
     </div>
@@ -100,7 +100,7 @@
             <th>{{ t('admin.publicidad.source') }}</th>
             <th style="width: 100px">{{ t('admin.publicidad.impressions') }}</th>
             <th style="width: 100px">{{ t('admin.publicidad.revenue') }}</th>
-            <th style="width: 80px">eCPM</th>
+            <th style="width: 5rem">eCPM</th>
           </tr>
         </thead>
         <tbody>
@@ -152,7 +152,7 @@
           <tr>
             <th>{{ t('admin.publicidad.format') }}</th>
             <th style="width: 100px">{{ t('admin.publicidad.impressions') }}</th>
-            <th style="width: 80px">{{ t('admin.publicidad.clicks') }}</th>
+            <th style="width: 5rem">{{ t('admin.publicidad.clicks') }}</th>
             <th style="width: 60px">CTR</th>
           </tr>
         </thead>

@@ -30,10 +30,10 @@ const { t } = useI18n()
 .invoice-totals {
   background: var(--bg-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
-  max-width: 360px;
+  max-width: 22.5rem;
   margin-left: auto;
 }
 
@@ -46,7 +46,7 @@ const { t } = useI18n()
 }
 
 .invoice-totals__row--grand {
-  border-top: 2px solid var(--primary, var(--color-primary));
+  border-top: 0.125rem solid var(--primary, var(--color-primary));
   margin-top: 0.5rem;
   padding-top: 0.75rem;
   font-size: 1.1rem;

@@ -1,14 +1,17 @@
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
 import { serverSupabaseUser } from '#supabase/server'
 import { isAllowedUrl } from '../../utils/isAllowedUrl'
 import { verifyCsrf } from '../../utils/verifyCsrf'
+import { safeError } from '../../utils/safeError'
+import { validateBody } from '../../utils/validateBody'
 
-interface CheckoutBody {
-  plan: 'basic' | 'premium'
-  interval: 'month' | 'year'
-  successUrl: string
-  cancelUrl: string
-}
+const checkoutSchema = z.object({
+  plan: z.enum(['basic', 'premium']),
+  interval: z.enum(['month', 'year']),
+  successUrl: z.string().url(),
+  cancelUrl: z.string().url(),
+})
 
 const PRICES: Record<string, Record<string, number>> = {
   basic: { month: 2900, year: 29000 },
@@ -21,37 +24,20 @@ const PLAN_NAMES: Record<string, string> = {
 }
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<CheckoutBody>(event)
-
   // CSRF + Auth check
   verifyCsrf(event)
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
-  const { plan, interval, successUrl, cancelUrl } = body
-
-  if (!plan || !interval || !successUrl || !cancelUrl) {
-    throw createError({
-      statusCode: 400,
-      message: 'Missing required fields: plan, interval, successUrl, cancelUrl',
-    })
-  }
+  const { plan, interval, successUrl, cancelUrl } = await validateBody(event, checkoutSchema)
 
   if (!isAllowedUrl(successUrl)) {
-    throw createError({ statusCode: 400, message: 'Invalid successUrl' })
+    throw safeError(400, 'Invalid successUrl')
   }
   if (!isAllowedUrl(cancelUrl)) {
-    throw createError({ statusCode: 400, message: 'Invalid cancelUrl' })
-  }
-
-  if (!['basic', 'premium'].includes(plan)) {
-    throw createError({ statusCode: 400, message: 'Invalid plan. Must be basic or premium' })
-  }
-
-  if (!['month', 'year'].includes(interval)) {
-    throw createError({ statusCode: 400, message: 'Invalid interval. Must be month or year' })
+    throw safeError(400, 'Invalid cancelUrl')
   }
 
   const config = useRuntimeConfig()
@@ -75,7 +61,7 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Service not configured' })
+    throw safeError(500, 'Service not configured')
   }
 
   // Check if user already has a subscription (for stripe_customer_id + trial eligibility)

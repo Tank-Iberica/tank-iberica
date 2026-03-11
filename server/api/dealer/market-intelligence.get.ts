@@ -6,21 +6,22 @@
  *
  * GET /api/dealer/market-intelligence?dealerId=xxx
  */
-import { defineEventHandler, getQuery, createError } from 'h3'
+import { defineEventHandler, getQuery, setResponseHeader } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { generateDealerIntelligence } from '~~/server/services/marketReport'
+import { safeError } from '~~/server/utils/safeError'
 
 export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, statusMessage: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   const query = getQuery(event)
   const dealerId = query.dealerId as string
 
   if (!dealerId) {
-    throw createError({ statusCode: 400, statusMessage: 'dealerId is required' })
+    throw safeError(400, 'dealerId is required')
   }
 
   const supabase = serverSupabaseServiceRole(event)
@@ -41,10 +42,11 @@ export default defineEventHandler(async (event) => {
       .maybeSingle()
 
     if (!dealer) {
-      throw createError({ statusCode: 403, statusMessage: 'Not authorized for this dealer' })
+      throw safeError(403, 'Not authorized for this dealer')
     }
   }
 
   const report = await generateDealerIntelligence(supabase, dealerId)
+  setResponseHeader(event, 'Cache-Control', 'private, no-store')
   return report
 })

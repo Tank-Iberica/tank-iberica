@@ -9,6 +9,7 @@
 | DAST (producción) | OWASP ZAP             | Semanal (baseline)          | XSS, SQLi, CSRF, headers, cookies   |
 | Infraestructura   | Nuclei                | Semanal                     | CVEs, misconfigs, exposiciones, SSL |
 | Lógica de negocio | Vitest security tests | Cada PR                     | IDOR, rate limiting, info leakage   |
+| RLS / IDOR        | Vitest + Supabase staging | Cada PR (CI `idor-tests` job) | Aislamiento cross-dealer via RLS  |
 | Pentest humano    | Externo               | Anual (cuando haya revenue) | Ataques creativos, lógica compleja  |
 
 ## Cómo ejecutar
@@ -31,6 +32,24 @@ Los informes HTML se descargan de GitHub Actions → Artifacts.
 - **Critical/High**: Acción inmediata.
 - **Medium**: Planificar corrección.
 - **Info**: Templates que detectaron la tecnología (normal).
+
+### Tests IDOR / RLS (Supabase Staging)
+
+Los tests de aislamiento cross-dealer (`tests/security/idor-protection.test.ts`) se ejecutan contra
+un proyecto Supabase **staging** separado (`xddjhrgkwwolpugtxgfk`) con fixtures de prueba:
+
+- **13 tests** que verifican RLS en: vehicles, pipeline_items, historico, dealers, invoices
+- **2 dealers de test** autenticados con `signInWithPassword` — cada uno verifica que NO puede leer/escribir datos del otro
+- **CI job:** `idor-tests` en `.github/workflows/ci.yml` (requiere `STAGING_SUPABASE_URL` + `STAGING_SUPABASE_KEY` en GitHub Secrets)
+- **Skip graceful:** sin variables de staging, los 13 tests pasan instantáneamente (skip)
+
+**Ejecutar localmente:**
+
+```bash
+STAGING_SUPABASE_URL=https://xddjhrgkwwolpugtxgfk.supabase.co \
+STAGING_SUPABASE_KEY=eyJ... \
+npx vitest run tests/security/idor-protection
+```
 
 ## Falsos positivos conocidos
 

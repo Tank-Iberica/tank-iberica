@@ -133,7 +133,7 @@ function resolveSpanishProvince(cityPart: string): { province: string; region: s
  * Parse a location text like "Madrid, España" into structured fields (sync, local dictionary).
  */
 export function parseLocationText(text: string | null): ParsedLocation {
-  if (!text || !text.trim()) {
+  if (!text?.trim()) {
     return { country: null, province: null, region: null }
   }
 
@@ -213,7 +213,7 @@ function resolveNominatimAddress(
 export async function geocodeLocation(text: string | null): Promise<ParsedLocation> {
   const local = parseLocationText(text)
 
-  if (local.province || !text || !text.trim()) {
+  if (local.province || !text?.trim()) {
     return local
   }
 

@@ -43,10 +43,10 @@ function _updateAttributeField(fieldName: string, value: unknown) {
 <template>
   <!-- Category & Subcategory -->
   <section class="form-section">
-    <h2 class="section-title">Categoría</h2>
+    <h2 class="section-title">{{ $t('admin.vehicleForm.categorySection') }}</h2>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Categoría *</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.categoryLabel') }} *</label>
         <div class="category-buttons">
           <button
             v-for="cat in categoryOptions"
@@ -61,7 +61,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Subcategoría</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.subcategoryLabel') }}</label>
         <select
           class="form-select"
           :value="selectedSubcategoryId"
@@ -69,21 +69,21 @@ function _updateAttributeField(fieldName: string, value: unknown) {
             emit('update:selectedSubcategoryId', ($event.target as HTMLSelectElement).value || null)
           "
         >
-          <option :value="null">Seleccionar...</option>
+          <option :value="null">{{ $t('admin.vehicleForm.selectPlaceholder') }}</option>
           <option v-for="sub in subcategories" :key="sub.id" :value="sub.id">
             {{ localizedName(sub, locale) }}
           </option>
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Tipo *</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.typeLabel') }} *</label>
         <select
           class="form-select"
           required
           :value="form.type_id ?? ''"
           @change="updateField('type_id', ($event.target as HTMLSelectElement).value || null)"
         >
-          <option value="">Seleccionar...</option>
+          <option value="">{{ $t('admin.vehicleForm.selectPlaceholder') }}</option>
           <option v-for="t in types" :key="t.id" :value="t.id">
             {{ localizedName(t, locale) }}
           </option>
@@ -94,10 +94,10 @@ function _updateAttributeField(fieldName: string, value: unknown) {
 
   <!-- Basic info -->
   <section class="form-section">
-    <h2 class="section-title">Información básica</h2>
+    <h2 class="section-title">{{ $t('admin.vehicleForm.basicInfo') }}</h2>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Marca *</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.brandLabel') }} *</label>
         <input
           :value="form.brand"
           type="text"
@@ -107,7 +107,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
         />
       </div>
       <div class="form-group">
-        <label class="form-label">Modelo *</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.modelLabel') }} *</label>
         <input
           :value="form.model"
           type="text"
@@ -119,7 +119,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Año</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.yearLabel') }}</label>
         <input
           :value="form.year"
           type="number"
@@ -130,7 +130,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
         />
       </div>
       <div class="form-group">
-        <label class="form-label">Matrícula</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.plateLabel') }}</label>
         <input
           :value="form.plate"
           type="text"
@@ -143,10 +143,10 @@ function _updateAttributeField(fieldName: string, value: unknown) {
 
   <!-- Prices -->
   <section class="form-section">
-    <h2 class="section-title">Precios</h2>
+    <h2 class="section-title">{{ $t('admin.vehicleForm.pricesSection') }}</h2>
     <div class="form-row">
       <div v-if="form.category !== 'alquiler'" class="form-group">
-        <label class="form-label">Precio venta (&euro;)</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.salePriceLabel') }} (&euro;)</label>
         <input
           :value="form.price"
           type="number"
@@ -157,7 +157,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
         />
       </div>
       <div v-if="form.category !== 'venta'" class="form-group">
-        <label class="form-label">Precio alquiler (&euro;/mes)</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.rentalPriceLabel') }} (&euro;{{ $t('admin.vehicleForm.perMonth') }})</label>
         <input
           :value="form.rental_price"
           type="number"
@@ -174,10 +174,10 @@ function _updateAttributeField(fieldName: string, value: unknown) {
 
   <!-- Location -->
   <section class="form-section">
-    <h2 class="section-title">Ubicación</h2>
+    <h2 class="section-title">{{ $t('admin.vehicleForm.locationSection') }}</h2>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">País</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.countryLabel') }}</label>
         <select
           class="form-select"
           :value="form.location_country ?? ''"
@@ -185,7 +185,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
             updateField('location_country', ($event.target as HTMLSelectElement).value || null)
           "
         >
-          <option value="">Seleccionar...</option>
+          <option value="">{{ $t('admin.vehicleForm.selectPlaceholder') }}</option>
           <option value="ES">España</option>
           <option value="PT">Portugal</option>
           <option value="FR">Francia</option>
@@ -193,7 +193,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Región</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.regionLabel') }}</label>
         <input
           :value="form.location_region"
           type="text"
@@ -203,7 +203,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
         />
       </div>
       <div class="form-group">
-        <label class="form-label">Provincia</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.provinceLabel') }}</label>
         <input
           :value="form.location_province"
           type="text"
@@ -217,7 +217,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
     </div>
     <div class="form-row">
       <div class="form-group full-width">
-        <label class="form-label">Ubicación detallada</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.detailedLocation') }}</label>
         <input
           :value="form.location"
           type="text"
@@ -231,10 +231,10 @@ function _updateAttributeField(fieldName: string, value: unknown) {
 
   <!-- Description -->
   <section class="form-section">
-    <h2 class="section-title">Descripción</h2>
+    <h2 class="section-title">{{ $t('admin.vehicleForm.descriptionSection') }}</h2>
     <div class="form-row">
       <div class="form-group full-width">
-        <label class="form-label">Descripción (ES)</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.descriptionEs') }}</label>
         <textarea
           :value="form.description_es"
           class="form-textarea"
@@ -250,7 +250,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
     </div>
     <div class="form-row">
       <div class="form-group full-width">
-        <label class="form-label">Descripción (EN)</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.descriptionEn') }}</label>
         <textarea
           :value="form.description_en"
           class="form-textarea"
@@ -268,10 +268,10 @@ function _updateAttributeField(fieldName: string, value: unknown) {
 
   <!-- Financial (admin only) -->
   <section class="form-section">
-    <h2 class="section-title">Contabilidad</h2>
+    <h2 class="section-title">{{ $t('admin.vehicleForm.accountingSection') }}</h2>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Coste adquisición (&euro;)</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.acquisitionCost') }} (&euro;)</label>
         <input
           :value="form.acquisition_cost"
           type="number"
@@ -287,7 +287,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
         />
       </div>
       <div class="form-group">
-        <label class="form-label">Precio mínimo (&euro;)</label>
+        <label class="form-label">{{ $t('admin.vehicleForm.minPrice') }} (&euro;)</label>
         <input
           :value="form.min_price"
           type="number"
@@ -366,7 +366,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   color: var(--text-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: border-color var(--transition-fast);
 }
 
@@ -379,7 +379,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
 
 .form-textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 6.25rem;
 }
 
 .char-count {
@@ -404,7 +404,7 @@ function _updateAttributeField(fieldName: string, value: unknown) {
   font-weight: var(--font-weight-medium);
   color: var(--text-secondary);
   transition: all var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .category-btn:hover {

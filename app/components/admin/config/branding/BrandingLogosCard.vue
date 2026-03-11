@@ -106,29 +106,29 @@ const ogRecommendations = [
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .card-title {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-subtitle {
-  margin: 0 0 24px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-6);
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
 .uploaders-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 28px;
-  margin-bottom: 32px;
+  gap: 1.75rem;
+  margin-bottom: var(--spacing-8);
 }
 
 @media (min-width: 48em) {
@@ -139,19 +139,19 @@ const ogRecommendations = [
 
 .logo-text-section {
   border-top: 1px solid var(--color-gray-100);
-  padding-top: 24px;
+  padding-top: var(--spacing-6);
 }
 
 .subsection-title {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .subsection-desc {
-  margin: 0 0 16px;
+  margin: 0 0 var(--spacing-4);
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 </style>

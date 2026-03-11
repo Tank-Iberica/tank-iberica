@@ -97,20 +97,20 @@ function onDragEnd() {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal modal-lg">
         <div class="modal-header">
-          <h3>⚙️ Configurar tabla</h3>
-          <button class="modal-close" @click="emit('close')">×</button>
+          <h3>⚙️ {{ $t('admin.productos.configureTable') }}</h3>
+          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">×</button>
         </div>
         <div class="modal-body config-body">
           <!-- Tabs -->
           <div class="config-tabs">
             <button :class="{ active: configTab === 'grupos' }" @click="configTab = 'grupos'">
-              📁 Grupos de columnas
+              📁 {{ $t('admin.productos.columnGroups') }}
             </button>
             <button :class="{ active: configTab === 'ordenar' }" @click="configTab = 'ordenar'">
-              📊 Ordenar tabla
+              📊 {{ $t('admin.productos.sortTable') }}
             </button>
           </div>
 
@@ -118,13 +118,13 @@ function onDragEnd() {
           <div v-if="configTab === 'grupos'" class="config-section">
             <!-- Editing a group -->
             <div v-if="editingGroup" class="edit-group-panel">
-              <h4>Editando: {{ editingGroup.name }}</h4>
+              <h4>{{ $t('admin.productos.editing', { name: editingGroup.name }) }}</h4>
               <div class="form-group">
-                <label>Nombre del grupo</label>
+                <label>{{ $t('admin.productos.groupName') }}</label>
                 <input v-model="editingGroup.name" type="text" :disabled="editingGroup.required" >
               </div>
               <div class="form-group">
-                <label>Columnas incluidas</label>
+                <label>{{ $t('admin.productos.includedColumns') }}</label>
                 <div class="columns-grid">
                   <label
                     v-for="col in availableColumnsForGroups"
@@ -141,8 +141,8 @@ function onDragEnd() {
                 </div>
               </div>
               <div class="edit-group-actions">
-                <button class="btn-secondary" @click="cancelEditGroup">Cancelar</button>
-                <button class="btn-primary" @click="saveEditGroup">Guardar</button>
+                <button class="btn-secondary" @click="cancelEditGroup">{{ $t('common.cancel') }}</button>
+                <button class="btn-primary" @click="saveEditGroup">{{ $t('common.save') }}</button>
               </div>
             </div>
 
@@ -159,7 +159,7 @@ function onDragEnd() {
                     <span class="group-icon">{{ group.icon }}</span>
                     <span class="group-name">{{ group.name }}</span>
                     <span class="group-count">{{ group.columns.length }} col.</span>
-                    <span v-if="group.required" class="tag tag-gray">Obligatorio</span>
+                    <span v-if="group.required" class="tag tag-gray">{{ $t('common.required') }}</span>
                   </div>
                   <div class="group-actions">
                     <button class="btn-sm" @click="startEditGroup(group)">✏️</button>
@@ -176,12 +176,12 @@ function onDragEnd() {
 
               <!-- Create new group -->
               <div class="new-group-form">
-                <h4>Crear nuevo grupo</h4>
+                <h4>{{ $t('admin.productos.createNewGroup') }}</h4>
                 <div class="form-row">
-                  <input v-model="newGroupName" type="text" placeholder="Nombre del grupo" >
+                  <input v-model="newGroupName" type="text" :placeholder="$t('admin.productos.groupName')" >
                 </div>
                 <div class="form-group">
-                  <label>Columnas</label>
+                  <label>{{ $t('common.columns') }}</label>
                   <div class="columns-grid">
                     <label
                       v-for="col in availableColumnsForGroups"
@@ -198,7 +198,7 @@ function onDragEnd() {
                   :disabled="!newGroupName.trim() || newGroupColumns.length === 0"
                   @click="createGroup"
                 >
-                  + Crear grupo
+                  + {{ $t('admin.productos.createGroup') }}
                 </button>
               </div>
             </div>
@@ -206,7 +206,7 @@ function onDragEnd() {
 
           <!-- Ordenar Tab -->
           <div v-if="configTab === 'ordenar'" class="config-section">
-            <p class="hint">Arrastra las columnas para cambiar su orden en la tabla.</p>
+            <p class="hint">{{ $t('admin.productos.dragHint') }}</p>
             <div class="sortable-list">
               <div
                 v-for="key in columnOrder"
@@ -222,12 +222,12 @@ function onDragEnd() {
                 <span class="col-name">{{
                   allColumns.find((c) => c.key === key)?.label || key
                 }}</span>
-                <span v-if="key.startsWith('filter_')" class="tag tag-green">Filtro</span>
+                <span v-if="key.startsWith('filter_')" class="tag tag-green">{{ $t('admin.productos.filterTag') }}</span>
                 <span
                   v-else-if="allColumns.find((c) => c.key === key)?.sortable"
                   class="tag tag-blue"
                 >
-                  Ordenable
+                  {{ $t('admin.productos.sortableTag') }}
                 </span>
               </div>
             </div>
@@ -235,9 +235,9 @@ function onDragEnd() {
         </div>
         <div class="modal-footer">
           <button class="btn-danger-outline" @click="emit('reset-config')">
-            Restaurar valores
+            {{ $t('admin.productos.restoreDefaults') }}
           </button>
-          <button class="btn-primary" @click="emit('close')">Cerrar</button>
+          <button class="btn-primary" @click="emit('close')">{{ $t('common.close') }}</button>
         </div>
       </div>
     </div>
@@ -253,12 +253,12 @@ function onDragEnd() {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
   overflow: auto;
@@ -278,14 +278,14 @@ function onDragEnd() {
 
 .modal-lg {
   width: 100%;
-  max-width: 800px;
+  max-width: 50rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: var(--spacing-5) var(--spacing-6);
   border-bottom: 1px solid var(--color-gray-200);
 }
 
@@ -299,17 +299,17 @@ function onDragEnd() {
 .modal-close {
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 1.75rem;
   line-height: 1;
   cursor: pointer;
   color: var(--text-disabled);
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   transition: all 0.2s;
 }
 
@@ -323,25 +323,25 @@ function onDragEnd() {
 }
 
 .config-body {
-  min-height: 400px;
+  min-height: 25rem;
 }
 
 .config-tabs {
   display: flex;
   border-bottom: 2px solid var(--color-gray-200);
-  padding: 0 24px;
+  padding: 0 var(--spacing-6);
 }
 
 .config-tabs button {
-  padding: 16px 20px;
+  padding: var(--spacing-4) var(--spacing-5);
   border: none;
   background: none;
   color: var(--text-auxiliary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  margin-bottom: -0.125rem;
   transition: all 0.2s;
 }
 
@@ -355,29 +355,29 @@ function onDragEnd() {
 }
 
 .config-section {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .hint {
-  margin: 0 0 20px;
+  margin: 0 0 var(--spacing-5);
   color: var(--text-auxiliary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .groups-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 32px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-8);
 }
 
 .group-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: var(--spacing-4);
   border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   transition: border 0.2s;
 }
 
@@ -392,11 +392,11 @@ function onDragEnd() {
 .group-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .group-icon {
-  font-size: 20px;
+  font-size: var(--font-size-xl);
 }
 
 .group-name {
@@ -405,22 +405,22 @@ function onDragEnd() {
 }
 
 .group-count {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-auxiliary);
 }
 
 .group-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .btn-sm {
   background: var(--bg-primary);
   border: 1px solid var(--color-gray-200);
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   transition: all 0.2s;
 }
 
@@ -435,14 +435,14 @@ function onDragEnd() {
 }
 
 .btn-danger-sm:hover {
-  background: var(--color-error-bg, #fef2f2);
-  border-color: #fca5a5;
+  background: var(--color-error-bg, var(--color-error-bg));
+  border-color: var(--color-error-soft);
 }
 
 .tag {
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 0.1875rem var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.6875rem;
   font-weight: 600;
 }
 
@@ -452,38 +452,38 @@ function onDragEnd() {
 }
 
 .tag-green {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-emerald-100);
+  color: var(--color-success-text);
 }
 
 .tag-blue {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 
 .new-group-form {
-  padding: 20px;
+  padding: var(--spacing-5);
   border: 2px dashed var(--color-gray-300);
-  border-radius: 8px;
-  background: #fafbfc;
+  border-radius: var(--border-radius);
+  background: var(--color-off-white);
 }
 
 .new-group-form h4 {
-  margin: 0 0 16px;
-  font-size: 16px;
+  margin: 0 0 var(--spacing-4);
+  font-size: var(--font-size-base);
   color: var(--text-primary);
 }
 
 .form-row {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .form-row input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
 }
 
 .form-row input:focus {
@@ -492,7 +492,7 @@ function onDragEnd() {
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
 }
 
 .form-group:last-child {
@@ -501,18 +501,18 @@ function onDragEnd() {
 
 .form-group label {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
   font-weight: 500;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .form-group input[type='text'] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
 }
 
 .form-group input[type='text']:focus {
@@ -523,18 +523,18 @@ function onDragEnd() {
 .columns-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .column-checkbox {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 6px;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius);
   cursor: pointer;
   transition: background 0.2s;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
 }
 
@@ -547,39 +547,39 @@ function onDragEnd() {
 }
 
 .edit-group-panel {
-  padding: 20px;
+  padding: var(--spacing-5);
   border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
-  background: #fafbfc;
+  border-radius: var(--border-radius);
+  background: var(--color-off-white);
 }
 
 .edit-group-panel h4 {
-  margin: 0 0 20px;
-  font-size: 16px;
+  margin: 0 0 var(--spacing-5);
+  font-size: var(--font-size-base);
   color: var(--text-primary);
 }
 
 .edit-group-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 20px;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-5);
 }
 
 .sortable-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .sortable-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
   background: var(--bg-primary);
   border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: move;
   transition: all 0.2s;
 }
@@ -595,7 +595,7 @@ function onDragEnd() {
 
 .drag-handle {
   color: var(--color-gray-300);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   cursor: grab;
 }
 
@@ -612,8 +612,8 @@ function onDragEnd() {
 .modal-footer {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  padding: 16px 24px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
   border-top: 1px solid var(--color-gray-200);
 }
 
@@ -621,9 +621,9 @@ function onDragEnd() {
   background: var(--bg-primary);
   border: 1px solid var(--color-gray-200);
   color: var(--text-secondary);
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -638,9 +638,9 @@ function onDragEnd() {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
@@ -659,15 +659,15 @@ function onDragEnd() {
   background: var(--bg-primary);
   border: 1px solid var(--color-error);
   color: var(--color-error);
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .btn-danger-outline:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 </style>

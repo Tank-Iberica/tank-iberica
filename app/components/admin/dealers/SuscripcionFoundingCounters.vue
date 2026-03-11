@@ -34,24 +34,24 @@ defineProps<{
 .founding-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-3, 12px);
-  margin-bottom: var(--spacing-5, 20px);
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
 }
 
 .founding-stat-card {
   background: var(--bg-primary, white);
   border-radius: var(--border-radius, 8px);
-  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  padding: var(--spacing-3) var(--spacing-4);
+  box-shadow: var(--shadow-sm, var(--shadow-sm));
   display: flex;
   align-items: center;
-  gap: var(--spacing-3, 12px);
+  gap: var(--spacing-3);
   border-left: 4px solid var(--color-gold);
 }
 
 .founding-label {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-secondary, #4a5a5a);
+  color: var(--text-secondary, var(--text-secondary));
   font-weight: var(--font-weight-medium, 500);
 }
 
@@ -75,7 +75,7 @@ defineProps<{
   .founding-stat-card {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 0.25rem;
   }
 }
 </style>

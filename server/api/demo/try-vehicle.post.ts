@@ -7,15 +7,28 @@
  *
  * POST /api/demo/try-vehicle
  */
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
+import { safeError } from '~~/server/utils/safeError'
+import { validateBody } from '~~/server/utils/validateBody'
 import { callAI, type AIContentBlock } from '~~/server/services/aiProvider'
 import { checkRateLimit, getRateLimitKey, getRetryAfterSeconds } from '~~/server/utils/rateLimit'
+import { logger } from '../../utils/logger'
 
-interface DemoRequestBody {
-  images: Array<{ data: string; mediaType: string }>
-  brand?: string
-  model?: string
-}
+const MAX_IMAGE_B64 = 5 * 1024 * 1024 * 1.37 // ~5MB in base64
+const demoRequestSchema = z.object({
+  images: z
+    .array(
+      z.object({
+        data: z.string().max(MAX_IMAGE_B64, 'Image exceeds 5MB limit'),
+        mediaType: z.enum(['image/jpeg', 'image/png', 'image/webp', 'image/gif']),
+      }),
+    )
+    .min(1, 'At least 1 image is required')
+    .max(4, 'Maximum 4 images allowed'),
+  brand: z.string().max(128).optional(),
+  model: z.string().max(128).optional(),
+})
 
 interface DemoPreview {
   title: string
@@ -27,28 +40,6 @@ interface DemoPreview {
   year: number | null
   estimatedPrice: string | null
   highlights: string[]
-}
-
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024 * 1.37 // ~5MB in base64
-
-function validateImages(images: unknown): void {
-  if (!images || !Array.isArray(images) || (images as unknown[]).length === 0) {
-    throw createError({ statusCode: 400, statusMessage: 'At least 1 image is required' })
-  }
-  if ((images as unknown[]).length > 4) {
-    throw createError({ statusCode: 400, statusMessage: 'Maximum 4 images allowed' })
-  }
-  for (const img of images as Array<{ data: string; mediaType: string }>) {
-    if (!img.data || !img.mediaType) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Each image must have data and mediaType',
-      })
-    }
-    if (img.data.length > MAX_IMAGE_SIZE) {
-      throw createError({ statusCode: 400, statusMessage: 'Image exceeds 5MB limit' })
-    }
-  }
 }
 
 function buildImageBlocks(images: Array<{ data: string; mediaType: string }>): AIContentBlock[] {
@@ -68,15 +59,10 @@ export default defineEventHandler(async (event) => {
   const ipKey = `demo:${getRateLimitKey(event)}`
   if (!checkRateLimit(ipKey, RATE_LIMIT)) {
     const retryAfter = getRetryAfterSeconds(ipKey, RATE_LIMIT)
-    throw createError({
-      statusCode: 429,
-      statusMessage: `Rate limited. Try again in ${Math.ceil(retryAfter / 3600)} hours.`,
-    })
+    throw safeError(429, `Rate limited. Try again in ${Math.ceil(retryAfter / 3600)} hours.`)
   }
 
-  const body = await readBody<DemoRequestBody>(event)
-
-  validateImages(body.images)
+  const body = await validateBody(event, demoRequestSchema)
 
   // Build AI prompt with images
   const contentBlocks: AIContentBlock[] = buildImageBlocks(body.images)
@@ -119,7 +105,7 @@ Respond in JSON format:
     // Parse AI response
     const jsonMatch = /\{[\s\S]*\}/.exec(response.text)
     if (!jsonMatch) {
-      throw new Error('AI did not return valid JSON')
+      throw safeError(500, 'AI parsing failed')
     }
 
     const preview = JSON.parse(jsonMatch[0]) as DemoPreview
@@ -143,7 +129,7 @@ Respond in JSON format:
   } catch (err) {
     // Fallback: return a mock preview so the demo still works
     const msg = err instanceof Error ? err.message : String(err)
-    console.warn(`[demo] AI analysis failed: ${msg}`)
+    logger.warn(`[demo] AI analysis failed: ${msg}`)
 
     return {
       success: true,

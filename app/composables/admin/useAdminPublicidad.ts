@@ -1,5 +1,6 @@
 import type { Database } from '~~/types/supabase'
 import { useAdminAdDashboard } from '~/composables/admin/useAdminAdDashboard'
+import { getVerticalSlug } from '~/composables/useVerticalConfig'
 
 // ─── Types ───────────────────────────────────────────────────
 export type Advertiser = {
@@ -214,7 +215,7 @@ export function useAdminPublicidad() {
     try {
       const { data, error: err } = await supabase
         .from('advertisers')
-        .select('*')
+        .select('id, company_name, logo_url, contact_email, contact_phone, website, tax_id, status, created_at, updated_at')
         .order('created_at', { ascending: false })
       if (err) throw err
       advertisers.value = (data || []) as Advertiser[]
@@ -472,7 +473,7 @@ export function useAdminPublicidad() {
       const { data, error: err } = await supabase
         .from('ad_floor_prices')
         .select('position, floor_cpm_cents')
-        .eq('vertical', 'tracciona')
+        .eq('vertical', getVerticalSlug())
         .order('position')
       if (err) throw err
 
@@ -500,7 +501,7 @@ export function useAdminPublicidad() {
           {
             position: fp.position,
             floor_cpm_cents: fp.floor_cpm_cents,
-            vertical: 'tracciona',
+            vertical: getVerticalSlug(),
             currency: 'EUR',
           },
           { onConflict: 'position,vertical' },

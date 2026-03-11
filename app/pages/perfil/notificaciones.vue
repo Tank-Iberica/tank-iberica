@@ -6,8 +6,17 @@ definePageMeta({
 })
 
 const { t } = useI18n()
-const { loading, saving, error, loadPreferences, isEnabled, isAlwaysOn, togglePreference } =
-  useEmailPreferences()
+const {
+  loading,
+  saving,
+  error,
+  digestFrequency,
+  loadPreferences,
+  isEnabled,
+  isAlwaysOn,
+  togglePreference,
+  setDigestFrequency,
+} = useEmailPreferences()
 
 /** Toast feedback state */
 const toast = ref<{ message: string; type: 'success' | 'error' } | null>(null)
@@ -32,6 +41,16 @@ async function onToggle(emailType: string) {
   }
 }
 
+/** Handle digest frequency change */
+async function onDigestFrequency(freq: import('~/composables/useEmailPreferences').DigestFrequency) {
+  const success = await setDigestFrequency(freq)
+  if (success) {
+    showToast(t('profile.notifications.saved'))
+  } else {
+    showToast(t('profile.notifications.errorSaving'), 'error')
+  }
+}
+
 useHead({
   title: t('profile.notifications.title'),
 })
@@ -44,6 +63,8 @@ onMounted(() => {
 <template>
   <div class="notifications-page">
     <div class="notifications-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('profile.notifications.title') }]" />
+      <PerfilProfileNavPills />
       <h1 class="page-title">
         {{ $t('profile.notifications.title') }}
       </h1>
@@ -51,8 +72,8 @@ onMounted(() => {
         {{ $t('profile.notifications.subtitle') }}
       </p>
 
-      <div v-if="loading" class="loading-state">
-        {{ $t('common.loading') }}
+      <div v-if="loading" class="loading-state" aria-busy="true">
+        <UiSkeletonCard v-for="n in 4" :key="n" :lines="2" />
       </div>
 
       <div v-else-if="error" class="error-state">
@@ -60,6 +81,12 @@ onMounted(() => {
       </div>
 
       <template v-else>
+        <PerfilDigestFrequencyCard
+          :model-value="digestFrequency"
+          :saving="saving"
+          @update:model-value="onDigestFrequency"
+        />
+
         <div class="info-banner">
           <svg
             class="info-icon"
@@ -111,7 +138,7 @@ onMounted(() => {
 }
 
 .notifications-container {
-  max-width: 720px;
+  max-width: 45rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -134,18 +161,18 @@ onMounted(() => {
   align-items: flex-start;
   gap: 0.625rem;
   padding: 0.75rem 1rem;
-  background-color: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background-color: var(--color-blue-50);
+  border: 1px solid var(--color-info-border);
   border-radius: var(--border-radius);
   margin-bottom: 1.5rem;
   font-size: var(--font-size-sm);
-  color: #1e40af;
+  color: var(--badge-info-bg);
   line-height: var(--line-height-normal);
 }
 
 .info-icon {
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 0.0625rem;
 }
 
 .loading-state,
@@ -200,7 +227,7 @@ onMounted(() => {
   transform: translateX(-50%) translateY(-8px);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .notifications-container {
     padding: 0 2rem;
   }

@@ -25,6 +25,8 @@ const {
   error,
   success,
   favoritesCount,
+  viewCount,
+  leadCount,
   maxPhotos,
   verificationDocs,
   verificationError,
@@ -55,7 +57,7 @@ function onCategoryUpdate(field: 'category_id' | 'subcategory_id', value: string
   updateFormField(field, value)
 }
 
-function onDescriptionUpdate(field: 'description_es' | 'description_en', value: string): void {
+function onDescriptionUpdate(field: 'description_es' | 'description_en' | 'video_url', value: string): void {
   updateFormField(field, value)
 }
 
@@ -78,9 +80,8 @@ function onUploadDocTypeUpdate(value: string): void {
       </div>
     </header>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('common.loading') }}...</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="6" />
     </div>
 
     <form v-else class="vehicle-form" @submit.prevent="saveVehicle">
@@ -109,6 +110,7 @@ function onUploadDocTypeUpdate(value: string): void {
         :description-es="form.description_es"
         :description-en="form.description_en"
         :generating-desc="generatingDesc"
+        :video-url="form.video_url"
         @update="onDescriptionUpdate"
         @generate="generateDescription"
       />
@@ -133,6 +135,13 @@ function onUploadDocTypeUpdate(value: string): void {
         @upload-document="handleUploadDocument"
       />
 
+      <VehicleAnalyticsFunnel
+        :views="viewCount"
+        :favorites="favoritesCount"
+        :leads="leadCount"
+        :period="t('dashboard.analytics.period30d')"
+      />
+
       <VehiculoFormActions :saving="saving" />
     </form>
   </div>
@@ -140,18 +149,18 @@ function onUploadDocTypeUpdate(value: string): void {
 
 <style scoped>
 .edit-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .back-link {
@@ -159,7 +168,7 @@ function onUploadDocTypeUpdate(value: string): void {
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -167,7 +176,7 @@ function onUploadDocTypeUpdate(value: string): void {
 .header-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
 }
 
@@ -181,11 +190,11 @@ function onUploadDocTypeUpdate(value: string): void {
 .favorites-stat {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 12px;
-  background: var(--color-error-bg, #fef2f2);
+  gap: var(--spacing-1);
+  padding: var(--spacing-1) var(--spacing-3);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
@@ -195,14 +204,14 @@ function onUploadDocTypeUpdate(value: string): void {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -218,28 +227,28 @@ function onUploadDocTypeUpdate(value: string): void {
 .vehicle-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
 .alert-success {
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .edit-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

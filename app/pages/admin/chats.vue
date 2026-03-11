@@ -59,7 +59,7 @@ function onUpdateMessagesContainerRef(el: HTMLElement | null) {
     <!-- Loading -->
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner" />
-      Cargando conversaciones...
+      {{ $t('common.loadingItems') }}
     </div>
 
     <!-- Chat container -->
@@ -111,8 +111,8 @@ function onUpdateMessagesContainerRef(el: HTMLElement | null) {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
   flex-shrink: 0;
 }
 
@@ -124,32 +124,32 @@ function onUpdateMessagesContainerRef(el: HTMLElement | null) {
 .unread-badge-header {
   background: var(--color-error);
   color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-md);
   font-size: 0.85rem;
   font-weight: 500;
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .loading-state {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px;
-  color: #6b7280;
+  gap: var(--spacing-3);
+  padding: 3.75rem;
+  color: var(--color-gray-500);
 }
 
 .loading-spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--border-color-light);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -166,13 +166,13 @@ function onUpdateMessagesContainerRef(el: HTMLElement | null) {
   flex: 1;
   display: flex;
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   min-height: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .admin-chat {
     height: calc(100vh - 80px);
   }

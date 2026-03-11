@@ -160,18 +160,18 @@ onMounted(async () => {
 
 <style scoped>
 .maintenance-page {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .page-header h1 {
@@ -189,32 +189,32 @@ onMounted(async () => {
 
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   flex-wrap: wrap;
 }
 
 /* Plan gate */
 .plan-gate {
   text-align: center;
-  padding: 48px 20px;
+  padding: var(--spacing-12) var(--spacing-5);
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .gate-icon {
   font-size: 3rem;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .plan-gate h2 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.2rem;
   color: var(--text-primary);
 }
 
 .plan-gate p {
-  margin: 0 0 20px;
+  margin: 0 0 var(--spacing-5);
   color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
@@ -224,18 +224,18 @@ onMounted(async () => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-5);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
   cursor: pointer;
   transition: background 0.2s;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .btn-primary:hover {
@@ -246,12 +246,12 @@ onMounted(async () => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-4);
   background: var(--bg-primary);
   color: var(--color-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
@@ -263,28 +263,28 @@ onMounted(async () => {
 
 /* Alerts */
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .alert-success {
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
   font-size: 0.9rem;
 }
 
 /* Responsive */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .maintenance-page {
-    padding: 24px;
-    gap: 20px;
+    padding: var(--spacing-6);
+    gap: var(--spacing-5);
   }
 
   .page-header {

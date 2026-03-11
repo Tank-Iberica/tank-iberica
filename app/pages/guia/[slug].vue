@@ -11,7 +11,7 @@
 
     <!-- Not found -->
     <div v-else-if="!article" class="article-not-found">
-      <p>{{ $t('guide.noResults') }}</p>
+      <p>{{ $t('guide.notFound') }}</p>
       <NuxtLink to="/guia" class="back-link">
         {{ $t('guide.backToGuides') }}
       </NuxtLink>
@@ -33,7 +33,7 @@
           <h1 class="article-title">{{ title }}</h1>
 
           <div v-if="article.image_url" class="article-image">
-            <img :src="article.image_url" :alt="title" >
+            <NuxtImg :src="article.image_url" :alt="title" loading="eager" decoding="async" sizes="(max-width: 48rem) 100vw, 800px" width="800" height="450" />
           </div>
 
           <div class="article-body">
@@ -91,7 +91,7 @@ const supabase = useSupabaseClient()
 async function fetchGuideBySlug(slug: string): Promise<GuideArticle | null> {
   const { data, error } = await supabase
     .from('news')
-    .select('*')
+    .select('id, title_es, title_en, content_es, content_en, description_es, description_en, image_url, published_at, updated_at, category, hashtags, slug')
     .eq('slug', slug)
     .eq('status', 'published')
     .eq('section', 'guia')
@@ -139,12 +139,12 @@ const shareText = computed(() => {
   if (!article.value) return ''
   const parts = [title.value]
   if (import.meta.client) parts.push(globalThis.location.href)
-  parts.push('- Tracciona')
+  parts.push(`- ${t('site.title')}`)
   return parts.join(' - ')
 })
 
 if (article.value) {
-  const seoTitle = `${title.value} — Tracciona`
+  const seoTitle = `${title.value} — ${t('site.title')}`
 
   usePageSeo({
     title: seoTitle,
@@ -160,10 +160,10 @@ if (article.value) {
       image: article.value.image_url || '',
       datePublished: article.value.published_at,
       dateModified: article.value.updated_at || article.value.published_at,
-      author: { '@type': 'Organization', name: 'Tracciona' },
+      author: { '@type': 'Organization', name: t('site.title') },
       publisher: {
         '@type': 'Organization',
-        name: 'Tracciona',
+        name: t('site.title'),
         logo: { '@type': 'ImageObject', url: 'https://tracciona.com/og-default.png' },
       },
       articleSection: 'Guías',
@@ -179,7 +179,7 @@ if (article.value) {
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Tracciona', item: 'https://tracciona.com' },
+            { '@type': 'ListItem', position: 1, name: t('site.title'), item: 'https://tracciona.com' },
             {
               '@type': 'ListItem',
               position: 2,
@@ -211,7 +211,7 @@ function formatDate(date: string | null): string {
 
 <style scoped>
 .article-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
 }
@@ -226,14 +226,14 @@ function formatDate(date: string | null): string {
 .skeleton-img {
   aspect-ratio: 16 / 9;
   background: var(--bg-secondary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
 .skeleton-line {
-  height: 18px;
+  height: 1.125rem;
   background: var(--bg-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -275,15 +275,15 @@ function formatDate(date: string | null): string {
 .article-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   margin-bottom: 1rem;
 }
 
 .article-category {
   background: var(--color-primary);
   color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -304,10 +304,10 @@ function formatDate(date: string | null): string {
 
 .article-image {
   margin-bottom: 1.5rem;
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
   aspect-ratio: 16 / 9;
-  background: var(--bg-secondary, #f5f5f5);
+  background: var(--bg-secondary, var(--color-skeleton-bg));
 }
 
 .article-image img {
@@ -322,13 +322,14 @@ function formatDate(date: string | null): string {
   line-height: 1.8;
   color: var(--text-secondary);
   white-space: pre-line;
+  max-width: 65ch;
 }
 
 /* Tags */
 .article-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--spacing-2);
   margin-top: 2rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border-color-light, #eee);
@@ -338,24 +339,24 @@ function formatDate(date: string | null): string {
   font-size: 0.8rem;
   color: var(--color-primary);
   background: rgba(35, 66, 74, 0.08);
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
 }
 
 /* Share */
 .article-share {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
   margin-top: 2rem;
 }
 
 .share-btn {
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
   font-weight: 500;
   text-decoration: none;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -367,8 +368,8 @@ function formatDate(date: string | null): string {
 }
 
 .share-whatsapp {
-  background: #25d366;
-  color: white;
+  background: var(--color-whatsapp);
+  color: #052e16;
 }
 
 .share-email {
@@ -376,7 +377,7 @@ function formatDate(date: string | null): string {
   color: white;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .article-title {
     font-size: 2rem;
   }

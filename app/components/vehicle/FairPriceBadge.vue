@@ -132,22 +132,22 @@ const formattedFairPrice = computed(() => {
   font-weight: var(--font-weight-medium);
   cursor: default;
   position: relative;
-  min-height: 32px;
+  min-height: 2rem;
   user-select: none;
 }
 
 /* Fair price (green) */
 .badge--fair {
-  background: rgba(16, 185, 129, 0.12);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid var(--color-success-border);
 }
 
 /* Below market (blue - great deal) */
 .badge--below {
-  background: rgba(59, 130, 246, 0.12);
-  color: #2563eb;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+  border: 1px solid var(--color-info-border);
 }
 
 /* Above market (orange) */
@@ -174,14 +174,14 @@ const formattedFairPrice = computed(() => {
 /* Tooltip */
 .badge-tooltip {
   position: absolute;
-  bottom: calc(100% + 8px);
+  bottom: calc(100% + 0.5rem);
   left: 50%;
   transform: translateX(-50%);
   background: var(--bg-dark);
   color: var(--text-on-dark-primary);
   padding: var(--spacing-3);
   border-radius: var(--border-radius);
-  width: 240px;
+  width: 15rem;
   z-index: var(--z-tooltip);
   box-shadow: var(--shadow-lg);
   pointer-events: none;

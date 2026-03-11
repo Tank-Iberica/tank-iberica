@@ -52,7 +52,7 @@ function getStatusClass(status: string): string {
 function formatDetailValue(value: unknown): string {
   if (value === null || value === undefined) return '-'
   if (typeof value === 'object') return JSON.stringify(value)
-  return String(value)
+  return String(value as string | number | boolean | bigint)
 }
 
 export function useAdminServicios() {

@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Subvenciones (Resumen)</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Subvenciones (Resumen)</h1>
+    <p>Resumen ejecutivo derivado de SUBVENCIONES.md y DECISIONES-FINANCIERAS.md.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#1-lectura-ejecutiva'>1. Lectura ejecutiva</a></li>
+<li class='toc-l2'><a href='#2-decisiones-que-ya-afectan-al-mapa'>2. Decisiones que ya afectan al mapa</a></li>
+<li class='toc-l2'><a href='#3-sede-elegida-y-alternativas-valoradas'>3. Sede elegida y alternativas valoradas</a></li>
+<li class='toc-l2'><a href='#4-paquete-que-si-merece-la-pena-trabajar-en-2026'>4. Paquete que sí merece la pena trabajar en 2026</a></li>
+<li class='toc-l2'><a href='#5-revalidacion-oficial-a-10-03-2026'>5. Revalidación oficial a 10/03/2026</a></li>
+<li class='toc-l2'><a href='#6-foco-cerrado-2026'>6. Foco cerrado 2026</a></li>
+<li class='toc-l2'><a href='#7-lineas-condicionales'>7. Líneas condicionales</a></li>
+<li class='toc-l2'><a href='#8-como-leer-el-retorno'>8. Cómo leer el retorno</a></li>
+<li class='toc-l2'><a href='#9-fuentes-oficiales-clave'>9. Fuentes oficiales clave</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tradebase-resumen-ejecutivo-de-subvenciones">TradeBase - Resumen Ejecutivo de Subvenciones</h1>
+<blockquote>
+<p>Derivado regenerable a partir de <a href="SUBVENCIONES.md">SUBVENCIONES.md</a> y <a href="DECISIONES-FINANCIERAS.md">DECISIONES-FINANCIERAS.md</a>. Documento pensado para lectura ejecutiva rápida.</p>
+</blockquote>
+<h2 id="lectura-ejecutiva">1. Lectura ejecutiva</h2>
+<ul>
+<li>Si las subvenciones importan de verdad, <strong>no conviene constituir en Valencia de Don Juan</strong> mientras siga por encima de 5.000 habitantes y deje fuera <code>#21 MITECO</code>.</li>
+<li>La <strong>estructura financiera recomendada</strong> para jugar ayudas con seriedad es <strong><code>30.000 EUR</code> de fondos propios</strong>: <code>6.000 EUR</code> de capital social y <code>24.000 EUR</code> de aportación adicional.</li>
+<li>En 2026 conviene trabajar <strong>6 líneas o bloques activos</strong>, no perseguir todo el mapa.</li>
+<li>Con el reparto acordado, <strong>sin certificación startup el IRPF estatal y CyL es <code>0 EUR</code></strong>. Con certificación startup y ambos fundadores válidos, el techo teórico conjunto es <strong><code>15.000 EUR</code></strong>.</li>
+</ul>
+<h2 id="decisiones-que-ya-afectan-al-mapa">2. Decisiones que ya afectan al mapa</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Estado</th>
+<th>Efecto sobre ayudas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Número de socios</td>
+<td><code>DECIDIDO</code></td>
+<td><code>2 socios</code></td>
+</tr>
+<tr>
+<td>Reparto</td>
+<td><code>DECIDIDO</code></td>
+<td><code>50/50</code>; la certificación startup pasa a ser clave para el IRPF</td>
+</tr>
+<tr>
+<td>Fondos propios iniciales</td>
+<td><code>DECIDIDO</code></td>
+<td><code>30.000 EUR</code>; mantiene abiertas las líneas serias sin sobredimensionar la SL</td>
+</tr>
+<tr>
+<td>Sede definitiva</td>
+<td><code>DECIDIDA</code></td>
+<td><strong>Fresno de la Vega</strong>; desbloquea <code>#21 MITECO</code> y activa <code>A7</code>, mientras deja fuera <code>A2</code> y <code>A8</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="sede-elegida-y-alternativas-valoradas">3. Sede elegida y alternativas valoradas</h2>
+<table>
+<thead>
+<tr>
+<th>Opción</th>
+<th>Estado</th>
+<th>Pros</th>
+<th>Contras</th>
+<th>Diferencial de ayudas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fresno de la Vega</strong></td>
+<td><strong>DECIDIDA</strong></td>
+<td>Mejor equilibrio general: MITECO + Tierra de Campos + relato rural + cercanía razonable</td>
+<td>Exige cuidar espacio usable y conectividad</td>
+<td>#21 MITECO + A7 Tierra de Campos + LEADER</td>
+</tr>
+<tr>
+<td><strong>La Robla</strong></td>
+<td>Valorada</td>
+<td>Muy fuerte si se quiere apretar subvención con más soporte operativo que Pola</td>
+<td>Menor diferencial rural que Fresno</td>
+<td>#21 MITECO + A2 Transición Justa + A8 Centro de Empresas</td>
+</tr>
+<tr>
+<td><strong>Pola de Gordón</strong></td>
+<td>Valorada</td>
+<td>Máximo techo bruto por MITECO + Transición Justa</td>
+<td>Mayor fricción real</td>
+<td>#21 MITECO + A2 Transición Justa</td>
+</tr>
+<tr>
+<td><strong>Onzonilla</strong></td>
+<td>Valorada</td>
+<td>Mejor base operativa diaria</td>
+<td>Menos extras exclusivos</td>
+<td>#21 MITECO + LEADER</td>
+</tr>
+<tr>
+<td><strong>Santovenia</strong></td>
+<td>Valorada</td>
+<td>Opción cómoda y cercana</td>
+<td>Menor upside y narrativa más floja</td>
+<td>#21 MITECO + LEADER</td>
+</tr>
+<tr>
+<td><strong>VdDJ</strong></td>
+<td>Descartada</td>
+<td>Comodidad / arraigo</td>
+<td>Queda fuera de #21 MITECO</td>
+<td>Solo líneas provinciales y generales</td>
+</tr>
+</tbody>
+</table>
+<h2 id="paquete-que-si-merece-la-pena-trabajar-en-2026">4. Paquete que sí merece la pena trabajar en 2026</h2>
+<table>
+<thead>
+<tr>
+<th>Prioridad</th>
+<th>Línea</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Muy alta</td>
+<td><code>#12 Certificación startup</code></td>
+<td>Multiplica la lógica fiscal y mejora el relato institucional</td>
+</tr>
+<tr>
+<td>Muy alta</td>
+<td><code>#24 I+D+i</code></td>
+<td>Recurrente, estructural y no dependiente de convocatoria</td>
+</tr>
+<tr>
+<td>Muy alta</td>
+<td><code>#27 IRPF socios</code></td>
+<td>Retorno fuerte si la estructura societaria y fiscal está bien montada</td>
+</tr>
+<tr>
+<td>Alta</td>
+<td><code>#4 Creación Empresas CyL</code></td>
+<td>Principal ayuda de fondo perdido realista del Año 1</td>
+</tr>
+<tr>
+<td>Alta</td>
+<td><code>#1 Plan Emprendedores León</code></td>
+<td>Importe pequeño, pero con fricción baja</td>
+</tr>
+<tr>
+<td>Alta</td>
+<td><code>#8 / #9 / #10 Cámaras + #18 España Emprende</code></td>
+<td>Baja fricción; Cámaras León ya verificadas y abiertas en 2026, y España Emprende como servicio permanente</td>
+</tr>
+<tr>
+<td>Media</td>
+<td><code>#2 Hacendera</code></td>
+<td>Solo si se acepta su lógica de <code>matchfunding</code>; no como subvención lineal base</td>
+</tr>
+<tr>
+<td>Media</td>
+<td><code>#7 Red Argos Ciber</code> o la siguiente línea digital viva en CyL</td>
+<td>Elegir una secundaria real con convocatoria oficial publicada</td>
+</tr>
+</tbody>
+</table>
+<h2 id="revalidacion-oficial-a-10032026">5. Revalidación oficial a 10/03/2026</h2>
+<ul>
+<li>#12, #24 y #27 siguen plenamente vigentes y no dependen de convocatoria.</li>
+<li>#1 y #4 tienen última edición oficial verificada en 2025; #8-#10 ya tienen edición 2026 verificada y abierta en León.</li>
+<li>#2 Hacendera debe tratarse como matchfunding con tope oficial verificado de 20.000 EUR, no como subvención lineal al 30%.</li>
+<li>La línea secundaria real verificable hoy en CyL es Red Argos Ciber; el resto debe entrar en vigilancia hasta nueva convocatoria viva.</li>
+</ul>
+<h2 id="foco-cerrado-2026">6. Foco cerrado 2026</h2>
+<table>
+<thead>
+<tr>
+<th>Ventana</th>
+<th>Foco activo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pre-constitución</td>
+<td>#27 IRPF socios</td>
+</tr>
+<tr>
+<td>Tras constituir</td>
+<td>#12 Certificación startup</td>
+</tr>
+<tr>
+<td>Todo el año</td>
+<td>#24 I+D+i</td>
+</tr>
+<tr>
+<td>En cuanto abra 2026</td>
+<td>#4 Creación Empresas CyL</td>
+</tr>
+<tr>
+<td>En cuanto abra 2026</td>
+<td>#1 Plan Emprendedores León</td>
+</tr>
+<tr>
+<td>Q2-Q4</td>
+<td>#8 / #9 / #10 + #18 como bloque cameral de baja fricción</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Queda fuera del foco base 2026:</strong></p>
+<ul>
+<li>#21 MITECO aunque la sede ya está cerrada en Fresno, hasta tener memoria territorial propia</li>
+<li>#2 Hacendera salvo que compense su lógica de matchfunding</li>
+<li>#13 ENISA salvo necesidad real de financiación</li>
+<li>#7 Red Argos Ciber solo si queda capacidad real tras activar el núcleo</li>
+</ul>
+<p><strong>Plan mensual detallado:</strong> vive en <a href="DECISIONES-FINANCIERAS.md">DECISIONES-FINANCIERAS.md</a>, en la sección Plan mensual 2026 — foco operativo.</p>
+<h2 id="lineas-condicionales">7. Líneas condicionales</h2>
+<ul>
+<li><code>#21 MITECO</code>: territorio ya desbloqueado con <strong>Fresno de la Vega</strong>; sigue faltando memoria territorial propia.</li>
+<li><code>A2 Transición Justa</code>: habría aplicado solo en <strong>La Robla / Pola de Gordón</strong>; queda fuera con Fresno.</li>
+<li><code>A7 Tierra de Campos</code>: diferencial territorial <strong>activo</strong> en <strong>Fresno de la Vega</strong>.</li>
+<li><code>A8 Centro de Empresas</code>: habría tenido sentido solo en <strong>La Robla</strong>; queda fuera con Fresno.</li>
+<li><code>A9 FELE INCIBE Emprende</code>: ayuda no dineraria; premio potencial de <code>3.000 EUR</code> si el relato de ciberseguridad es defendible.</li>
+<li><code>#13 ENISA</code>: solo si realmente hace falta financiación y se mantiene coherencia con fondos propios.</li>
+</ul>
+<h2 id="como-leer-el-retorno">8. Cómo leer el retorno</h2>
+<table>
+<thead>
+<tr>
+<th>Capa</th>
+<th style="text-align: right;">Conservador</th>
+<th style="text-align: right;">Optimista</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fondo perdido</td>
+<td style="text-align: right;"><code>2.700 EUR</code></td>
+<td style="text-align: right;"><code>36.332 EUR</code></td>
+</tr>
+<tr>
+<td>Fiscal (<code>IRPF + I+D+i + Patent Box</code>)</td>
+<td style="text-align: right;"><code>4.619 EUR</code></td>
+<td style="text-align: right;"><code>30.853 EUR</code></td>
+</tr>
+<tr>
+<td>Préstamos blandos</td>
+<td style="text-align: right;"><code>20.000 EUR</code></td>
+<td style="text-align: right;"><code>1.875.000 EUR</code></td>
+</tr>
+<tr>
+<td>Asesoramiento (valor)</td>
+<td style="text-align: right;"><code>21.000 EUR</code></td>
+<td style="text-align: right;"><code>38.500 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Efectivo directo (<code>fondo perdido + fiscal</code>)</strong></td>
+<td style="text-align: right;"><strong><code>7.319 EUR</code></strong></td>
+<td style="text-align: right;"><strong><code>67.185 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lectura correcta</strong></p>
+<ul>
+<li>El dinero verdaderamente comparable con gasto es <strong>fondo perdido + fiscal</strong>.</li>
+<li>Los préstamos no son retorno; son capacidad de financiación.</li>
+<li>El caso central realista está bastante por debajo del techo optimista.</li>
+</ul>
+<h2 id="fuentes-oficiales-clave">9. Fuentes oficiales clave</h2>
+<ul>
+<li><a href="https://www.enisa.es/es/certifica-tu-startup/faqs">ENISA - Certificación startup</a></li>
+<li><a href="https://www.enisa.es/es/financia-tu-empresa/lineas-de-financiacion/d/jovenes-emprendedores">ENISA - Jóvenes Emprendedores</a></li>
+<li><a href="https://sede.agenciatributaria.gob.es/Sede/Ayuda/24Presentacion/100/9_2.html">AEAT - Deducción por inversión en empresas de nueva creación</a></li>
+<li><a href="https://www.tramitacastillayleon.jcyl.es/">Junta de Castilla y León - Tramitación electrónica</a></li>
+<li><a href="https://www.dipuleon.es/anuncios-y-convocatorias/ayudas-y-subvenciones/">Diputación de León - Ayudas y subvenciones</a></li>
+<li><a href="https://www.camaraleon.com/">Cámara de Comercio de León</a></li>
+<li><a href="https://www.miteco.gob.es/es/prensa/ultimas-noticias/2025/diciembre/miteco-convoca-ayudas-por-valor-de-52-millones-de-euros-para-fin.html">MITECO - Convocatoria oficial 2025 para proyectos innovadores de transformación territorial</a></li>
+<li><a href="https://www.transicionjusta.gob.es/es/">Instituto para la Transición Justa</a></li>
+<li><a href="https://www.incibe.es/emprendimiento">INCIBE - Emprendimiento</a></li>
+<li><a href="https://fele.es/incubadora-incibe-emprende/">FELE - Incubadora INCIBE Emprende</a></li>
+</ul>
+<blockquote>
+<p>Antes de solicitar, verificar siempre la convocatoria viva en la URL oficial correspondiente. El resumen sirve para decidir foco; la validación final siempre se hace contra la fuente primaria.</p>
+</blockquote>
+
+  </section>
+</main>
+</body>
+</html>

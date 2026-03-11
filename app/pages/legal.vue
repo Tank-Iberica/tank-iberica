@@ -1,6 +1,7 @@
 <template>
   <div class="legal-page">
     <div class="legal-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('legal.title') }]" />
       <h1 class="legal-title">{{ $t('legal.title') }}</h1>
 
       <section id="aviso-legal" class="legal-section">
@@ -63,7 +64,7 @@ usePageSeo({
 }
 
 .legal-container {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -77,7 +78,7 @@ usePageSeo({
 
 .legal-section {
   margin-bottom: 2.5rem;
-  scroll-margin-top: 80px;
+  scroll-margin-top: var(--header-offset, 5rem);
 }
 
 .legal-section h2 {
@@ -91,12 +92,12 @@ usePageSeo({
 }
 
 .legal-section p {
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.7;
   color: var(--text-secondary);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .legal-container {
     padding: 0 1.5rem;
   }
@@ -105,20 +106,20 @@ usePageSeo({
 .legal-links {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 32px;
-  padding-top: 24px;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-8);
+  padding-top: var(--spacing-6);
   border-top: 1px solid var(--border-color-light, var(--color-gray-200));
 }
 
 .legal-link {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-4);
   background: var(--bg-secondary, var(--color-gray-50));
   color: var(--color-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   text-decoration: none;
@@ -129,7 +130,7 @@ usePageSeo({
   background: var(--border-color-light, var(--color-gray-200));
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .legal-title {
     font-size: 1.75rem;
   }
@@ -139,7 +140,7 @@ usePageSeo({
   }
 
   .legal-section p {
-    font-size: 16px;
+    font-size: var(--font-size-base);
   }
 }
 </style>

@@ -1,22 +1,13 @@
 <template>
   <div class="auction-detail-page">
     <div class="auction-detail-container">
-      <!-- Back link -->
-      <NuxtLink to="/subastas" class="back-link">
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="m15 18-6-6 6-6" />
-        </svg>
-        {{ $t('auction.backToList') }}
-      </NuxtLink>
+      <UiBreadcrumbNav
+        :items="[
+          { label: $t('nav.home'), to: '/' },
+          { label: $t('nav.subastas'), to: '/subastas' },
+          { label: vehicleTitle || $t('auction.detail') },
+        ]"
+      />
 
       <!-- Loading -->
       <SubastasDetailSkeleton v-if="loading && !auction" />
@@ -165,7 +156,7 @@ usePageSeo({
   font-weight: var(--font-weight-medium);
   color: var(--text-secondary);
   text-decoration: none;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: color var(--transition-fast);
 }
 
@@ -190,7 +181,7 @@ usePageSeo({
   width: 100%;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .auction-detail-container {
     padding: 0 var(--spacing-6);
   }
@@ -209,12 +200,12 @@ usePageSeo({
   .auction-sidebar {
     position: sticky;
     top: calc(var(--header-height) + var(--spacing-4));
-    width: 360px;
+    width: 22.5rem;
     flex-shrink: 0;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .auction-detail-container {
     padding: 0 var(--spacing-8);
   }
@@ -224,13 +215,13 @@ usePageSeo({
   }
 
   .auction-sidebar {
-    width: 400px;
+    width: 25rem;
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 80em) {
   .auction-sidebar {
-    width: 420px;
+    width: 26.25rem;
   }
 }
 </style>

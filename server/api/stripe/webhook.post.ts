@@ -1,4 +1,4 @@
-import { createError, defineEventHandler, readRawBody } from 'h3'
+import { defineEventHandler, readRawBody } from 'h3'
 import { safeError } from '../../utils/safeError'
 import {
   supabaseRestPatch,
@@ -9,6 +9,7 @@ import {
   createAutoInvoice,
   type SupabaseRestConfig,
 } from '../../services/billing'
+import { logger } from '../../utils/logger'
 
 // Plan listing limits for vehicle pause/reactivation
 const PLAN_LIMITS: Record<string, number> = {
@@ -423,14 +424,12 @@ function verifyStripeEvent(
 ): StripeEvent {
   if (!webhookSecret) {
     if (process.env.NODE_ENV === 'production')
-      throw createError({ statusCode: 500, message: 'Webhook secret not configured' })
-    console.warn(
-      '[Stripe Webhook] No webhook secret configured — dev mode, processing without verification',
-    )
+      throw safeError(500, 'Webhook secret not configured')
+    logger.warn('[Stripe Webhook] No webhook secret configured — dev mode, processing without verification')
     return JSON.parse(rawBody) as StripeEvent
   }
 
-  if (!sig) throw createError({ statusCode: 400, message: 'Missing stripe-signature header' })
+  if (!sig) throw safeError(400, 'Missing stripe-signature header')
 
   try {
     return stripe.webhooks.constructEvent(rawBody, sig, webhookSecret) as unknown as StripeEvent
@@ -444,11 +443,11 @@ function verifyStripeEvent(
 
 export default defineEventHandler(async (event) => {
   const rawBody = await readRawBody(event)
-  if (!rawBody) throw createError({ statusCode: 400, message: 'Missing request body' })
+  if (!rawBody) throw safeError(400, 'Missing request body')
 
   const config = useRuntimeConfig()
   const stripeKey = config.stripeSecretKey || process.env.STRIPE_SECRET_KEY
-  if (!stripeKey) throw createError({ statusCode: 500, message: 'Service not configured' })
+  if (!stripeKey) throw safeError(500, 'Service not configured')
 
   const { default: Stripe } = await import('stripe')
   const stripe = new Stripe(stripeKey)
@@ -456,7 +455,7 @@ export default defineEventHandler(async (event) => {
   const supabaseUrl = process.env.SUPABASE_URL || ''
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   if (!supabaseUrl || !supabaseKey)
-    throw createError({ statusCode: 500, message: 'Service not configured' })
+    throw safeError(500, 'Service not configured')
 
   const sbConfig: SupabaseRestConfig = { url: supabaseUrl, serviceRoleKey: supabaseKey }
   const sig = event.node.req.headers['stripe-signature'] as string

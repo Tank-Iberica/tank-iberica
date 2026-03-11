@@ -32,21 +32,21 @@ const { t } = useI18n()
 .actions-bar {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 12px 24px;
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   text-decoration: none;
   cursor: pointer;
   transition: background 0.2s;
@@ -65,14 +65,14 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 12px 24px;
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
   background: var(--bg-primary);
   color: var(--color-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   text-decoration: none;
   cursor: pointer;
   transition: background 0.2s;

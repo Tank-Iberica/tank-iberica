@@ -13,9 +13,19 @@
         format="webp"
         fetchpriority="high"
         sizes="100vw"
+        placeholder
         class="gallery-img"
       />
-      <img v-else-if="currentImageRaw" :src="currentImageRaw.url" :alt="alt" class="gallery-img" >
+      <img
+        v-else-if="currentImageRaw"
+        :src="currentImageRaw.url"
+        :alt="alt"
+        class="gallery-img"
+        width="800"
+        height="600"
+        fetchpriority="high"
+        decoding="async"
+      />
       <div v-else class="gallery-placeholder">
         <svg
           width="64"
@@ -85,8 +95,9 @@
           format="webp"
           loading="lazy"
           sizes="80px"
+          placeholder
         />
-        <img v-else :src="img.url" :alt="`${alt} ${i + 1}`" >
+        <img v-else :src="img.url" :alt="`${alt} ${i + 1}`" width="100" height="75" loading="lazy" decoding="async" />
       </button>
     </div>
   </div>
@@ -180,8 +191,8 @@ function onTouchEnd(e: TouchEvent) {
   background: rgba(0, 0, 0, 0.4);
   color: var(--color-white);
   border-radius: var(--border-radius-full);
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -238,8 +249,8 @@ function onTouchEnd(e: TouchEvent) {
 
   .gallery-thumb {
     flex-shrink: 0;
-    width: 80px;
-    height: 60px;
+    width: 5rem;
+    height: 3.75rem;
     border-radius: var(--border-radius-sm);
     overflow: hidden;
     border: 2px solid transparent;

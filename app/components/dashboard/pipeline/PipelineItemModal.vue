@@ -195,9 +195,9 @@ function onEstimatedValueInput(event: Event): void {
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
   width: 100%;
-  max-width: 560px;
+  max-width: 35rem;
   max-height: 90vh;
   overflow-y: auto;
   display: flex;
@@ -208,7 +208,7 @@ function onEstimatedValueInput(event: Event): void {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--color-gray-100);
 }
 
@@ -223,14 +223,14 @@ function onEstimatedValueInput(event: Event): void {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
   background: none;
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   color: var(--text-auxiliary);
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .btn-close:hover {
@@ -238,22 +238,22 @@ function onEstimatedValueInput(event: Event): void {
 }
 
 .modal-form {
-  padding: 16px 20px 24px;
+  padding: 1rem 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .form-row {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .form-group label {
@@ -265,10 +265,10 @@ function onEstimatedValueInput(event: Event): void {
 .form-group input,
 .form-group select,
 .form-group textarea {
-  min-height: 44px;
-  padding: 10px 12px;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
   color: var(--text-primary);
@@ -285,21 +285,21 @@ function onEstimatedValueInput(event: Event): void {
 
 .form-group textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .modal-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  padding-top: 8px;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
   border-top: 1px solid var(--color-gray-100);
 }
 
 .modal-actions-right {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   margin-left: auto;
 }
 
@@ -308,12 +308,12 @@ function onEstimatedValueInput(event: Event): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.95rem;
   text-decoration: none;
@@ -334,12 +334,12 @@ function onEstimatedValueInput(event: Event): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
   background: var(--bg-primary);
   color: var(--color-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
@@ -354,12 +354,12 @@ function onEstimatedValueInput(event: Event): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
-  background: var(--color-error-bg, #fef2f2);
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   font-size: 0.95rem;
@@ -367,7 +367,7 @@ function onEstimatedValueInput(event: Event): void {
 }
 
 .btn-danger:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .btn-danger:disabled {
@@ -379,11 +379,11 @@ function onEstimatedValueInput(event: Event): void {
 @media (min-width: 48em) {
   .modal-overlay {
     align-items: center;
-    padding: 24px;
+    padding: 1.5rem;
   }
 
   .modal-content {
-    border-radius: 16px;
+    border-radius: var(--border-radius-lg);
     max-height: 85vh;
   }
 

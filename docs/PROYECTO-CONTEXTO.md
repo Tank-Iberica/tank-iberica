@@ -5,6 +5,9 @@
 >
 > **Documentos complementarios (leer solo cuando la tarea lo requiera):**
 >
+> - `docs/README.md` — Mapa documental actual y navegación por dominios
+> - `STATUS.md` — Estado operativo, métricas y siguientes tareas
+> - `docs/tracciona-docs/BACKLOG-EJECUTABLE.md` — Trabajo pendiente activo
 > - `docs/ESTRATEGIA-NEGOCIO.md` — Detalle de monetización (créditos/suscripciones completo), go-to-market, captación dealers, SEO/Ads, estrategia de datos, anti-fraude, roadmap
 > - `docs/IDEAS-A-REVISAR.md` — Banco de 92 ideas no implementadas organizadas en 12 categorías
 

@@ -184,8 +184,8 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
 }
 
 .section-header h2 {
@@ -197,27 +197,27 @@ onMounted(() => {
   display: flex;
   gap: 0;
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
   background: var(--bg-primary);
 }
 
 .tab-btn {
   flex: 1;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: none;
   background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
   transition: all 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .tab-btn:not(:last-child) {
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid var(--color-gray-200);
 }
 
 .tab-btn.active {
@@ -230,20 +230,20 @@ onMounted(() => {
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header {
     flex-direction: column;
     align-items: stretch;
@@ -255,7 +255,7 @@ onMounted(() => {
 
   .tab-btn:not(:last-child) {
     border-right: none;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--color-gray-200);
   }
 }
 </style>

@@ -113,8 +113,8 @@ function onNotesInput(event: Event) {
 
 .table-wrapper {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
 }
 
@@ -126,7 +126,7 @@ function onNotesInput(event: Event) {
 
 .data-table th {
   text-align: left;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-auxiliary);
@@ -137,7 +137,7 @@ function onNotesInput(event: Event) {
 }
 
 .data-table td {
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   color: var(--text-primary);
   border-bottom: 1px solid var(--color-gray-100);
 }
@@ -157,7 +157,7 @@ function onNotesInput(event: Event) {
 
 .cell-vehicle {
   font-weight: 600;
-  max-width: 200px;
+  max-width: 12.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -172,35 +172,35 @@ function onNotesInput(event: Event) {
 /* Status badges */
 .status-badge {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .status-badge.status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .status-badge.status-accepted {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 
 .status-badge.status-transit {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 
 .status-badge.status-completed {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .status-badge.status-cancelled {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -211,9 +211,9 @@ function onNotesInput(event: Event) {
 }
 
 .expanded-content {
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
-  gap: 24px;
+  gap: var(--spacing-6);
   flex-wrap: wrap;
   background: var(--bg-secondary);
 }
@@ -221,7 +221,7 @@ function onNotesInput(event: Event) {
 .expanded-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .expanded-field label {
@@ -231,11 +231,11 @@ function onNotesInput(event: Event) {
 }
 
 .expanded-field select {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
   background: var(--bg-primary);
   cursor: pointer;
 }
@@ -243,44 +243,44 @@ function onNotesInput(event: Event) {
 .expanded-field select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .notes-field {
   flex: 1;
-  min-width: 240px;
+  min-width: 15rem;
 }
 
 .notes-field textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   font-family: inherit;
   resize: vertical;
-  min-height: 60px;
+  min-height: 3.75rem;
 }
 
 .notes-field textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .btn-save-notes {
   align-self: flex-start;
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.2s;
-  min-height: 44px;
-  margin-top: 8px;
+  min-height: 2.75rem;
+  margin-top: var(--spacing-2);
 }
 
 .btn-save-notes:hover {

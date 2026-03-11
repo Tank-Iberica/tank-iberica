@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>TradeBase / Tracciona — Plan de Inversión 3 Años</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #1a1a2e;
+    line-height: 1.6;
+    font-size: 11px;
+    background: white;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm 18mm;
+    page-break-after: always;
+    position: relative;
+  }
+
+  .page:last-child { page-break-after: avoid; }
+
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 297mm;
+    background: linear-gradient(135deg, #23424A 0%, #1a2f35 50%, #0f1d21 100%);
+    color: white;
+    padding: 40mm 30mm;
+  }
+
+  .cover h1 {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+
+  .cover .subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    opacity: 0.85;
+    margin-bottom: 40px;
+  }
+
+  .cover .tagline {
+    font-size: 14px;
+    font-weight: 500;
+    background: rgba(255,255,255,0.12);
+    padding: 12px 24px;
+    border-radius: 8px;
+    margin-bottom: 60px;
+    max-width: 500px;
+  }
+
+  .cover .meta {
+    font-size: 11px;
+    opacity: 0.6;
+  }
+
+  .cover .big-number {
+    font-size: 64px;
+    font-weight: 800;
+    color: #4ecdc4;
+    margin: 10px 0;
+  }
+
+  .cover .number-label {
+    font-size: 13px;
+    opacity: 0.7;
+    margin-bottom: 30px;
+  }
+
+  .cover-stats {
+    display: flex;
+    gap: 40px;
+    margin: 40px 0;
+  }
+
+  .cover-stat {
+    text-align: center;
+  }
+
+  .cover-stat .val {
+    font-size: 28px;
+    font-weight: 700;
+    color: #4ecdc4;
+  }
+
+  .cover-stat .lbl {
+    font-size: 10px;
+    opacity: 0.6;
+    margin-top: 4px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #23424A;
+    margin: 24px 0 12px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #23424A;
+  }
+
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #23424A;
+    margin: 16px 0 8px 0;
+  }
+
+  h4 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #456;
+    margin: 12px 0 6px 0;
+  }
+
+  p { margin: 6px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 14px 0;
+    font-size: 10px;
+  }
+
+  th {
+    background: #23424A;
+    color: white;
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #e8e8e8;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) { background: #f8fafb; }
+
+  .highlight-row { background: #e8f5e9 !important; font-weight: 600; }
+  .total-row { background: #23424A !important; color: white; font-weight: 700; }
+  .total-row td { border-bottom: none; }
+
+  .summary-box {
+    background: linear-gradient(135deg, #f0f7f4, #e8f0ed);
+    border-left: 4px solid #23424A;
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .summary-box .big {
+    font-size: 24px;
+    font-weight: 700;
+    color: #23424A;
+  }
+
+  .summary-box .label {
+    font-size: 10px;
+    color: #666;
+  }
+
+  .alert-box {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 10px 14px;
+    margin: 10px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 10px;
+  }
+
+  .info-box {
+    background: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    padding: 10px 14px;
+    margin: 10px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 10px;
+  }
+
+  .success-box {
+    background: #e8f5e9;
+    border-left: 4px solid #4caf50;
+    padding: 10px 14px;
+    margin: 10px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 10px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+
+  .kpi-card {
+    background: #f8fafb;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+  }
+
+  .kpi-card .kpi-val {
+    font-size: 22px;
+    font-weight: 700;
+    color: #23424A;
+  }
+
+  .kpi-card .kpi-label {
+    font-size: 9px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .timeline {
+    border-left: 3px solid #23424A;
+    padding-left: 20px;
+    margin: 10px 0;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 12px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: #23424A;
+    border-radius: 50%;
+    position: absolute;
+    left: -26px;
+    top: 4px;
+  }
+
+  .timeline-item .time {
+    font-size: 9px;
+    font-weight: 600;
+    color: #23424A;
+    text-transform: uppercase;
+  }
+
+  .timeline-item .desc {
+    font-size: 10px;
+    color: #555;
+  }
+
+  ul { margin: 4px 0 8px 20px; font-size: 10.5px; }
+  li { margin: 2px 0; }
+
+  .footer {
+    position: absolute;
+    bottom: 10mm;
+    left: 18mm;
+    right: 18mm;
+    font-size: 8px;
+    color: #aaa;
+    border-top: 1px solid #eee;
+    padding-top: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .moat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 10px 0;
+  }
+
+  .moat-item {
+    background: #f0f7f4;
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .moat-item strong {
+    color: #23424A;
+    font-size: 11px;
+  }
+
+  .moat-item p {
+    font-size: 9.5px;
+    color: #555;
+    margin-top: 4px;
+  }
+
+  .scenario-header {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .conservative { background: #fff3e0; color: #e65100; }
+  .optimistic { background: #e8f5e9; color: #2e7d32; }
+  .base { background: #e3f2fd; color: #1565c0; }
+</style>
+</head>
+<body>
+
+<!-- ==================== PORTADA ==================== -->
+<div class="page cover">
+  <div style="margin-bottom: 20px;">
+    <div style="font-size: 14px; font-weight: 300; letter-spacing: 4px; text-transform: uppercase; opacity: 0.5;">Plan de inversión</div>
+  </div>
+  <h1>TradeBase</h1>
+  <div class="subtitle">Grupo de Marketplaces B2B Verticales</div>
+  <div class="tagline">
+    El Idealista de la maquinaria industrial: un solo codebase, múltiples verticales, datos de mercado irreplicables
+  </div>
+  <div class="cover-stats">
+    <div class="cover-stat">
+      <div class="val">7+4</div>
+      <div class="lbl">Verticales planificados</div>
+    </div>
+    <div class="cover-stat">
+      <div class="val">~115K€</div>
+      <div class="lbl">Inversión total 3 años</div>
+    </div>
+    <div class="cover-stat">
+      <div class="val">Mes 14–18</div>
+      <div class="lbl">Break-even estimado</div>
+    </div>
+  </div>
+  <div style="margin-top: 20px;">
+    <div class="big-number">95%</div>
+    <div class="number-label">Ahorro vs equipo técnico tradicional gracias a IA como ingeniero</div>
+  </div>
+  <div class="meta" style="margin-top: 40px;">
+    Documento confidencial · Marzo 2026 · v2.0<br>
+    TradeBase SL · tankiberica@gmail.com
+  </div>
+</div>
+
+<!-- ==================== PÁG 2: RESUMEN EJECUTIVO ==================== -->
+<div class="page">
+  <h2>1. Resumen Ejecutivo</h2>
+
+  <p><strong>TradeBase</strong> es un grupo de marketplaces B2B verticales que comparten un solo codebase. El primer vertical, <strong>Tracciona</strong> (tracciona.com), cubre vehículos industriales. Cada vertical adicional se lanza con coste incremental mínimo (~2–4 horas de setup, 0 líneas de código nuevo).</p>
+
+  <div class="summary-box">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <div class="label">INVERSIÓN TOTAL 3 AÑOS (CON CONTINGENCIA)</div>
+        <div class="big">115.456€</div>
+      </div>
+      <div style="text-align: right;">
+        <div class="label">INGRESOS PROYECTADOS AÑO 3</div>
+        <div class="big" style="color: #2e7d32;">87K–290K€</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="three-col">
+    <div class="kpi-card">
+      <div class="kpi-val">21.857€</div>
+      <div class="kpi-label">Coste Año 1</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">28.146€</div>
+      <div class="kpi-label">Coste Año 2</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">65.453€</div>
+      <div class="kpi-label">Coste Año 3</div>
+    </div>
+  </div>
+
+  <h3>Entidades legales</h3>
+  <table>
+    <tr><th>Entidad</th><th>Función</th><th>Relevancia</th></tr>
+    <tr><td><strong>TradeBase SL</strong></td><td>Titular de los marketplaces digitales</td><td>Digital, escalable, bajo coste fijo</td></tr>
+    <tr><td><strong>Tank Ibérica SL</strong></td><td>Operaciones físicas: campa (León), compraventa, subastas, liquidaciones</td><td>Revenue existente ~500K€/año, 200K€ en caja</td></tr>
+    <tr><td><strong>IberHaul</strong></td><td>Logística y transporte de vehículos industriales (góndola propia)</td><td>Integración transporte end-to-end</td></tr>
+  </table>
+
+  <div class="info-box">
+    <strong>Modelo operativo:</strong> 2 fundadores + IA como ingeniero principal (Claude Code). Cero empleados fijos. Sin presión de VC: Tank Ibérica financia el experimento con caja y operaciones existentes.
+  </div>
+
+  <h3>Los 4 layers de revenue</h3>
+  <table>
+    <tr><th>#</th><th>Capa</th><th>Descripción</th><th>Cuándo</th></tr>
+    <tr><td>1</td><td><strong>Marketplace</strong></td><td>Tráfico orgánico + acumulación de datos (listados gratis, SEO, editorial)</td><td>Día 1</td></tr>
+    <tr><td>2</td><td><strong>Dealer SaaS</strong></td><td>Revenue recurrente (Free / Basic 29€ / Premium 79€ / Founding gratis)</td><td>Mes 4+</td></tr>
+    <tr><td>3</td><td><strong>Servicios transaccionales</strong></td><td>Alto margen por operación (transporte, verificación, seguros, subastas)</td><td>Mes 6+</td></tr>
+    <tr><td>4</td><td><strong>Productos de datos</strong></td><td>API valoración, informes sectoriales, datasets (moat a largo plazo)</td><td>Año 2+</td></tr>
+  </table>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 2</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 3: VERTICALES Y MERCADO ==================== -->
+<div class="page">
+  <h2>2. Verticales y Oportunidad de Mercado</h2>
+
+  <h3>2.1 Verticales confirmados (7) + futuros (4)</h3>
+  <table>
+    <tr><th>Vertical</th><th>Dominio</th><th>Sector</th><th>Ticket medio</th><th>Estado</th></tr>
+    <tr class="highlight-row"><td><strong>Tracciona</strong></td><td>tracciona.com</td><td>Vehículos industriales</td><td>15–80K€</td><td>MVP listo</td></tr>
+    <tr><td>Municipiante</td><td>municipiante.com</td><td>Maquinaria municipal</td><td>20–120K€</td><td>Año 2</td></tr>
+    <tr><td>CampoIndustrial</td><td>campoindustrial.com</td><td>Maquinaria agrícola</td><td>10–200K€</td><td>Año 2</td></tr>
+    <tr><td>Horecaria</td><td>horecaria.com</td><td>Equipamiento hostelería</td><td>500–50K€</td><td>Año 2–3</td></tr>
+    <tr><td>ReSolar</td><td>resolar.es</td><td>Energía renovable</td><td>1–100K€</td><td>Año 3</td></tr>
+    <tr><td>Clinistock</td><td>clinistock.com</td><td>Equipamiento médico</td><td>2–500K€</td><td>Año 3</td></tr>
+    <tr><td>BoxPort</td><td>boxport.es</td><td>Contenedores marítimos</td><td>1.5–25K€</td><td>Año 3</td></tr>
+    <tr><td colspan="5" style="background: #f5f5f5; text-align:center; font-size:9px;">+ 4 verticales futuros: Relevo, Construcción, Equipamiento fábrica, Náutica</td></tr>
+  </table>
+
+  <div class="success-box">
+    <strong>Coste incremental por vertical:</strong> ~0€ en código (1 codebase, N deploys) + 25$/mes Supabase (compartido) + 15€/año dominio + 150€ marca OEPM. Clonar un vertical = 2–4 horas de setup.
+  </div>
+
+  <h3>2.2 Vacío competitivo</h3>
+  <p>No existe un marketplace B2B industrial profesional en España ni en Europa. Los dealers usan Milanuncios/Wallapop (generalistas) o nada.</p>
+
+  <table>
+    <tr><th>Competidor</th><th>Marketplace digital</th><th>Compraventa física</th><th>Transporte propio</th><th>Pipeline IA WhatsApp</th></tr>
+    <tr><td>Autoline / Mascus</td><td>✔</td><td>✖</td><td>✖</td><td>✖</td></tr>
+    <tr><td>Wallapop / Milanuncios</td><td>✔</td><td>✖</td><td>✖</td><td>✖</td></tr>
+    <tr><td>Dealers tradicionales</td><td>✖</td><td>✔</td><td>✖</td><td>✖</td></tr>
+    <tr class="highlight-row"><td><strong>TradeBase + Tank + IberHaul</strong></td><td><strong>✔</strong></td><td><strong>✔</strong></td><td><strong>✔</strong></td><td><strong>✔</strong></td></tr>
+  </table>
+
+  <h3>2.3 Escalado de infraestructura por escenario</h3>
+  <table>
+    <tr><th>Escenario</th><th>Verticales</th><th>Visitas/mes</th><th>Clusters Supabase</th><th>Coste infra</th></tr>
+    <tr><td>Lanzamiento</td><td>1</td><td>50K–200K</td><td>1 ($25)</td><td>~34$/mes</td></tr>
+    <tr><td>Año 1</td><td>1–3</td><td>500K–2M</td><td>1–2 ($50)</td><td>~60–90$/mes</td></tr>
+    <tr><td>Año 2</td><td>4–7</td><td>2M–10M</td><td>3–4 ($100)</td><td>~150–200$/mes</td></tr>
+    <tr class="highlight-row"><td><strong>Año 3+ (10M users)</strong></td><td><strong>10–20</strong></td><td><strong>10M–200M</strong></td><td><strong>5–6 ($150)</strong></td><td><strong>~350–600$/mes</strong></td></tr>
+  </table>
+
+  <div class="info-box">
+    <strong>¿Cómo es posible 10M visitas/mes por 600$/mes?</strong> Cloudflare edge cache absorbe el 98% de lecturas (coste $0). Un marketplace B2B es 95% lecturas. La BD solo atiende el 2% de requests (cache misses). Comparativa bruta: $5.750/mes vs nuestros $600/mes = <strong>ahorro del 90%</strong>.
+  </div>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 3</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 4: COSTES DESGLOSADOS ==================== -->
+<div class="page">
+  <h2>3. Desglose de Costes — 3 Años</h2>
+
+  <h3>3.1 Constitución, legal y registros</h3>
+  <table>
+    <tr><th>Concepto</th><th>Año 1</th><th>Año 2</th><th>Año 3</th><th>Notas</th></tr>
+    <tr><td>Constitución TradeBase SL (notario + registro + capital)</td><td>3.200€</td><td>—</td><td>—</td><td>Capital social 3.000€ depositado</td></tr>
+    <tr><td>RETA autónomos (2 socios)</td><td>1.920€</td><td>1.920€</td><td>3.840€</td><td>Tarifa plana 80€/mes → ~320€/mes año 3</td></tr>
+    <tr><td>Certificación RMNC + certificado digital</td><td>35€</td><td>—</td><td>15€</td><td>Renovación cert. digital cada 2 años</td></tr>
+    <tr><td>Marcas OEPM (Tracciona + TradeBase + 5 verticales)</td><td>450€</td><td>300€</td><td>300€</td><td>150€/marca, repartido en 3 años</td></tr>
+    <tr><td>Dominios (7 verticales + corporativo)</td><td>115€</td><td>115€</td><td>115€</td><td>~15€/dominio/año × 8</td></tr>
+    <tr><td>TyC + Política Privacidad (abogado digital)</td><td>800€</td><td>—</td><td>—</td><td>Redacción profesional</td></tr>
+    <tr><td>Formalización RAT GDPR + contratos art. 26</td><td>900€</td><td>—</td><td>—</td><td>Registro actividades tratamiento</td></tr>
+    <tr><td>DPIA (evaluación impacto scoring IA)</td><td>—</td><td>600€</td><td>—</td><td>Requerida por decisiones automatizadas</td></tr>
+    <tr><td>Revisión legal expansión EU</td><td>—</td><td>—</td><td>1.200€</td><td>Multi-jurisdicción (si aplica)</td></tr>
+    <tr class="total-row"><td><strong>Subtotal legal/registros</strong></td><td><strong>7.420€</strong></td><td><strong>2.935€</strong></td><td><strong>5.470€</strong></td><td></td></tr>
+  </table>
+
+  <h3>3.2 Infraestructura técnica y APIs</h3>
+  <table>
+    <tr><th>Servicio</th><th>Año 1</th><th>Año 2</th><th>Año 3</th><th>Función</th></tr>
+    <tr><td>Supabase Pro (BD + Auth + Realtime)</td><td>276€</td><td>276€</td><td>552€</td><td>1→2 clusters en año 3</td></tr>
+    <tr><td>Cloudflare Pages + Workers</td><td>0€</td><td>55€</td><td>230€</td><td>Free → Paid con Workers</td></tr>
+    <tr><td>Cloudflare Images (almacén CDN)</td><td>60€</td><td>120€</td><td>240€</td><td>Creciente con listings</td></tr>
+    <tr><td>Cloudinary (transformación imágenes)</td><td>0€</td><td>270€</td><td>540€</td><td>Free → Plus si >25K trans/mes</td></tr>
+    <tr><td>Backblaze B2 (backups cifrados)</td><td>60€</td><td>60€</td><td>60€</td><td>AES-256, 7d+4sem+6mes</td></tr>
+    <tr><td>Anthropic Claude API (IA principal)</td><td>600€</td><td>1.200€</td><td>1.800€</td><td>Descripciones, verificación, brokeraje</td></tr>
+    <tr><td>OpenAI API (traducciones batch)</td><td>120€</td><td>240€</td><td>360€</td><td>GPT-4o mini, 30× más barato que DeepL</td></tr>
+    <tr><td>WhatsApp Meta Cloud API</td><td>240€</td><td>600€</td><td>960€</td><td>Pipeline fotos → ficha IA</td></tr>
+    <tr><td>Resend (email transaccional)</td><td>0€</td><td>240€</td><td>240€</td><td>Free → Pro con volumen</td></tr>
+    <tr><td>Stripe (comisiones por transacción)</td><td>200€</td><td>1.500€</td><td>5.000€</td><td>1,4% + 0,25€ (coste variable)</td></tr>
+    <tr><td>Sentry (monitorización errores)</td><td>0€</td><td>312€</td><td>312€</td><td>Free → Team</td></tr>
+    <tr><td>Turnstile + GA4 + SonarQube</td><td>0€</td><td>0€</td><td>0€</td><td>Gratis permanente</td></tr>
+    <tr class="total-row"><td><strong>Subtotal infra/APIs</strong></td><td><strong>1.556€</strong></td><td><strong>4.873€</strong></td><td><strong>10.294€</strong></td><td></td></tr>
+  </table>
+
+  <h3>3.3 Desarrollo (IA como ingeniero principal)</h3>
+  <table>
+    <tr><th>Herramienta</th><th>Año 1</th><th>Año 2</th><th>Año 3</th><th>Notas</th></tr>
+    <tr><td>Claude Code (Anthropic) — desarrollo</td><td>2.400€</td><td>2.400€</td><td>2.400€</td><td>~200€/mes, sustituye dev senior (40-60K€/año)</td></tr>
+    <tr><td>Claude Max — contenido editorial</td><td>1.200€</td><td>1.200€</td><td>1.200€</td><td>~100€/mes, 2 artículos/semana</td></tr>
+    <tr><td>GitHub + CI/CD</td><td>0€</td><td>0€</td><td>0€</td><td>Free (repos privados, Actions)</td></tr>
+    <tr class="total-row"><td><strong>Subtotal desarrollo</strong></td><td><strong>3.600€</strong></td><td><strong>3.600€</strong></td><td><strong>3.600€</strong></td><td></td></tr>
+  </table>
+
+  <div class="alert-box">
+    <strong>Comparativa desarrollo:</strong> Un equipo mínimo (1 senior + 1 junior) costaría 80.000–100.000€/año. Con IA: 3.600€/año = <strong>ahorro del 95%</strong>. El producto YA tiene 126 páginas, 424 componentes, 65 endpoints, 13.862 tests automatizados, 0 bugs SonarQube.
+  </div>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 4</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 5: MÁS COSTES ==================== -->
+<div class="page">
+  <h3>3.4 Marketing y adquisición</h3>
+  <table>
+    <tr><th>Canal</th><th>Año 1</th><th>Año 2</th><th>Año 3</th><th>Estrategia</th></tr>
+    <tr><td><strong>Google Ads (6 campañas)</strong></td><td>1.500€</td><td>6.000€</td><td>14.400€</td><td>Branded + Categoría + Marca + Acción + Remarketing + Shopping</td></tr>
+    <tr><td>Retargeting Meta + Google (DPA)</td><td>1.800€</td><td>2.160€</td><td>2.160€</td><td>6€/día, catálogo dinámico, feed XML automático</td></tr>
+    <tr><td>Milanuncios PRO (paraguas)</td><td>550€</td><td>600€</td><td>600€</td><td>Dealers aparecen en PRO sin pagar</td></tr>
+    <tr><td>LinkedIn Ads (B2B)</td><td>0€</td><td>1.800€</td><td>3.600€</td><td>Fleet managers, directores transporte</td></tr>
+    <tr><td>Vinilo góndola IberHaul</td><td>300€</td><td>—</td><td>—</td><td>Miles de impresiones/día en autopistas</td></tr>
+    <tr><td>Material físico (QR, tarjetas, flyers)</td><td>150€</td><td>150€</td><td>150€</td><td>Campa, talleres, ITV</td></tr>
+    <tr><td>Merchandising muestra</td><td>200€</td><td>200€</td><td>200€</td><td>Camisetas, gorras para dealers</td></tr>
+    <tr><td>SEO orgánico + editorial</td><td>0€</td><td>0€</td><td>0€</td><td>Canal principal — coste solo tiempo</td></tr>
+    <tr><td>Redes sociales orgánicas</td><td>0€</td><td>0€</td><td>0€</td><td>LinkedIn, YouTube, WhatsApp, Facebook</td></tr>
+    <tr class="total-row"><td><strong>Subtotal marketing</strong></td><td><strong>4.500€</strong></td><td><strong>10.910€</strong></td><td><strong>21.110€</strong></td><td></td></tr>
+  </table>
+
+  <h3>3.5 Operaciones, administración y RRHH</h3>
+  <table>
+    <tr><th>Concepto</th><th>Año 1</th><th>Año 2</th><th>Año 3</th><th>Notas</th></tr>
+    <tr><td>Gestoría fiscal (IVA, IS, IRPF)</td><td>1.800€</td><td>2.400€</td><td>3.000€</td><td>150–250€/mes, modelos trimestrales</td></tr>
+    <tr><td>Google Workspace (2 usuarios)</td><td>144€</td><td>144€</td><td>144€</td><td>Email @tracciona.com + herramientas</td></tr>
+    <tr><td>Seguro RC actividad digital</td><td>350€</td><td>350€</td><td>400€</td><td>Cobertura intermediación digital</td></tr>
+    <tr><td>Compliance GDPR puntual</td><td>300€</td><td>0€</td><td>300€</td><td>Consultoría formalización RAT/DPIA</td></tr>
+    <tr><td>Varios (material oficina, etc.)</td><td>200€</td><td>200€</td><td>200€</td><td></td></tr>
+    <tr><td><strong>1ª contratación (soporte+ventas, media jornada)</strong></td><td>0€</td><td>0€</td><td>12.000€</td><td>Solo si ingresos >3.000€/mes × 3 meses</td></tr>
+    <tr><td>Freelance diseño UX/UI</td><td>0€</td><td>0€</td><td>3.000€</td><td>2–3 proyectos puntuales</td></tr>
+    <tr class="total-row"><td><strong>Subtotal operaciones+RRHH</strong></td><td><strong>2.794€</strong></td><td><strong>3.094€</strong></td><td><strong>19.044€</strong></td><td></td></tr>
+  </table>
+
+  <h3>3.6 Resumen consolidado de costes</h3>
+  <table>
+    <tr><th>Categoría</th><th>Año 1</th><th>Año 2</th><th>Año 3</th><th>Total 3 años</th></tr>
+    <tr><td>Legal, registros, marcas</td><td>7.420€</td><td>2.935€</td><td>5.470€</td><td>15.825€</td></tr>
+    <tr><td>Infraestructura y APIs</td><td>1.556€</td><td>4.873€</td><td>10.294€</td><td>16.723€</td></tr>
+    <tr><td>Desarrollo (IA)</td><td>3.600€</td><td>3.600€</td><td>3.600€</td><td>10.800€</td></tr>
+    <tr><td>Marketing y adquisición</td><td>4.500€</td><td>10.910€</td><td>21.110€</td><td>36.520€</td></tr>
+    <tr><td>Operaciones + RRHH</td><td>2.794€</td><td>3.094€</td><td>19.044€</td><td>24.932€</td></tr>
+    <tr style="background: #e8f5e9; font-weight: 600;"><td>Subtotal</td><td>19.870€</td><td>25.412€</td><td>59.518€</td><td>104.800€</td></tr>
+    <tr><td>Contingencia (10%)</td><td>1.987€</td><td>2.541€</td><td>5.952€</td><td>10.480€</td></tr>
+    <tr class="total-row"><td><strong>TOTAL CON CONTINGENCIA</strong></td><td><strong>21.857€</strong></td><td><strong>27.953€</strong></td><td><strong>65.470€</strong></td><td><strong>115.280€</strong></td></tr>
+  </table>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 5</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 6: ESTRATEGIA SEO ==================== -->
+<div class="page">
+  <h2>4. Estrategia SEO — Canal Principal de Adquisición (Coste: 0€)</h2>
+  <p>El SEO orgánico es el canal principal de crecimiento. No se empieza con paid ads. El flywheel es: contenido → tráfico orgánico → usuarios → dealers siguen a los usuarios.</p>
+
+  <h3>4.1 SEO técnico (ya implementado)</h3>
+  <table>
+    <tr><th>Elemento</th><th>Implementación</th><th>Impacto</th></tr>
+    <tr><td>SSR (Server-Side Rendering)</td><td>Nuxt 3 SSR en toda página pública</td><td>Google indexa contenido completo</td></tr>
+    <tr><td>Schema.org JSON-LD</td><td>Product, Organization, Article, FAQ, BreadcrumbList, WebSite, Vehicle</td><td>Rich snippets en SERPs</td></tr>
+    <tr><td>Hreflang</td><td>ES (default, sin prefijo) + EN (/en/)</td><td>Google elige versión correcta por idioma</td></tr>
+    <tr><td>Sitemap dinámico</td><td>@nuxtjs/sitemap auto-generado</td><td>Indexación completa del catálogo</td></tr>
+    <tr><td>Breadcrumbs</td><td>En 30+ páginas con markup</td><td>Navegación + Schema BreadcrumbList</td></tr>
+    <tr><td>URLs planas SEO</td><td>/cisterna-alimentaria-indox-2019-madrid</td><td>Anti-canibalización, keywords en URL</td></tr>
+    <tr><td>Canonical tags</td><td>Auto en Nuxt (doble URL: /vehiculo/ + /[dealer]/)</td><td>Evita contenido duplicado</td></tr>
+    <tr><td>SWR Cache</td><td>Stale-While-Revalidate por ruta</td><td>Velocidad <50ms (señal de ranking)</td></tr>
+    <tr><td>Core Web Vitals</td><td>LCP <2.5s, FID <100ms, CLS <0.1</td><td>Factor de ranking Google</td></tr>
+  </table>
+
+  <h3>4.2 Landings programáticas — 200+ páginas indexables automáticas</h3>
+  <p>Páginas autogeneradas para cada combinación marca/modelo/ubicación:</p>
+  <ul>
+    <li><code>/camiones-volvo-fh-500</code> · <code>/excavadoras-caterpillar-320-precio-madrid</code></li>
+    <li>Con vehículos → los muestra. Sin ellos → "Crea alerta" (captura email/WhatsApp)</li>
+    <li>Tabla <code>active_landings</code> recalculada semanalmente por cron</li>
+    <li>Umbral dinámico de activación (mínimo N vehículos)</li>
+    <li><strong>Posiciona en 3–6 meses</strong> para long-tail keywords sin competencia</li>
+  </ul>
+
+  <h3>4.3 Motor de contenido editorial</h3>
+  <table>
+    <tr><th>Concepto</th><th>Detalle</th></tr>
+    <tr><td>Frecuencia</td><td>2 artículos/semana (martes + jueves 09:00 CET)</td></tr>
+    <tr><td>Producción</td><td>1–2h dominicales con Claude Max → 2 artículos + traducción + social</td></tr>
+    <tr><td>Gate de calidad</td><td>SEO Score ≥50 para publicar (15 checks ponderados)</td></tr>
+    <tr><td>Linking interno</td><td>Cada artículo enlaza a 2+ páginas de catálogo</td></tr>
+    <tr><td>Schema FAQ</td><td>Preguntas frecuentes con markup → rich snippets</td></tr>
+    <tr><td>2 secciones</td><td>/guia/ (evergreen) + /noticias/ (temporal)</td></tr>
+  </table>
+
+  <h3>4.4 Herramientas de captación SEO (coste 0€)</h3>
+  <table>
+    <tr><th>Herramienta</th><th>URL</th><th>Keyword objetivo</th><th>Conversión</th></tr>
+    <tr><td>Valoración de mercado</td><td>/valoracion</td><td>"valoración camión segunda mano"</td><td>Captura vendedores → publicar</td></tr>
+    <tr><td>Calculadora coste/km</td><td>/herramientas/calculadora</td><td>"coste por km camión"</td><td>Tráfico calificado</td></tr>
+    <tr><td>Simulador financiación</td><td>/herramientas/calculadora</td><td>"financiar vehículo industrial"</td><td>Compradores intención alta</td></tr>
+    <tr><td>Guías compra/venta</td><td>/guia/[slug]</td><td>"cómo comprar camión usado"</td><td>Posicionamiento como experto</td></tr>
+  </table>
+
+  <h3>4.5 Contenido de inteligencia de mercado</h3>
+  <div class="two-col">
+    <div>
+      <h4>Para compradores</h4>
+      <ul>
+        <li>Cómo evaluar si un precio es justo (datos Tracciona)</li>
+        <li>Checklist inspección: 20 puntos</li>
+        <li>Cuándo comprar (estacionalidad real)</li>
+        <li>Guía de transporte por zona</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Para vendedores</h4>
+      <ul>
+        <li>Cómo fijar precio para vender rápido</li>
+        <li>Las 5 fotos que triplican contactos</li>
+        <li>Por qué responder en &lt;2h da 40% más leads</li>
+        <li>Preparar vehículo para venta</li>
+      </ul>
+    </div>
+  </div>
+  <div class="success-box">
+    <strong>Diferencial:</strong> Cada artículo respaldado con datos propios — "Según 500 transacciones en Tracciona, las cisternas con ITV al día se venden un 25% más rápido." Ningún competidor puede replicar esto.
+  </div>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 6</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 7: PUBLICIDAD Y ADSENSE ==================== -->
+<div class="page">
+  <h2>5. Estrategia de Publicidad y AdSense</h2>
+
+  <h3>5.1 Transición de 3 fases: AdSense → Mixto → Publicidad directa</h3>
+  <table>
+    <tr><th>Fase</th><th>Periodo</th><th>Modelo</th><th>Ingreso estimado</th></tr>
+    <tr><td><strong>Fase 1</strong></td><td>Meses 1–6</td><td>AdSense en espacios disponibles (puente)</td><td>50–270€/mes</td></tr>
+    <tr><td><strong>Fase 2</strong></td><td>Meses 6–12</td><td>Anunciantes directos en slots premium + AdSense en el resto</td><td>400–1.200€/mes</td></tr>
+    <tr><td><strong>Fase 3</strong></td><td>Meses 12+</td><td>Publicidad directa donde haya anunciante + AdSense residual</td><td>1.200–3.600€/mes</td></tr>
+  </table>
+
+  <h3>5.2 AdSense — Proyección por tráfico</h3>
+  <table>
+    <tr><th>Visitas/mes</th><th>CPM realista</th><th>Bloques/pág</th><th>Ingresos/mes</th><th>Cuándo</th></tr>
+    <tr><td>5.000</td><td>5€</td><td>2</td><td>~50€</td><td>Mes 3–6</td></tr>
+    <tr><td>15.000</td><td>9€</td><td>2</td><td>~270€</td><td>Mes 6–9</td></tr>
+    <tr><td>30.000</td><td>12€</td><td>2</td><td>~720€</td><td>Mes 9–12</td></tr>
+    <tr><td>100.000</td><td>18€</td><td>2</td><td>~3.600€</td><td>Año 2+</td></tr>
+    <tr class="highlight-row"><td>10.000.000</td><td>18–25€</td><td>2</td><td>~36.000–50.000€</td><td>Escenario 10M users</td></tr>
+  </table>
+
+  <div class="info-box">
+    <strong>Evolución de red publicitaria:</strong> AdSense (sin mínimo) → Ezoic (>10K visitas) → Mediavine (>50K sesiones, mejor CPM) → Raptive (>100K pageviews). Cada salto sube CPM un 30–50%.
+  </div>
+
+  <h3>5.3 Publicidad directa geolocalizada — 7 posiciones de ad</h3>
+  <table>
+    <tr><th>Posición</th><th>Ubicación</th><th>CPM estimado</th><th>Precio directo</th></tr>
+    <tr><td>In-feed catálogo</td><td>Entre resultados de búsqueda</td><td>15–25€</td><td>200–400€/mes</td></tr>
+    <tr><td>Sidebar desktop</td><td>Lateral en landings/ficha</td><td>8–15€</td><td>100–200€/mes</td></tr>
+    <tr><td>Below specs</td><td>Debajo de especificaciones en ficha</td><td>12–20€</td><td>150–300€/mes</td></tr>
+    <tr><td>Footer banner</td><td>Pie de página global</td><td>5–10€</td><td>80–150€/mes</td></tr>
+    <tr><td>Artículos editoriales</td><td>Dentro del contenido</td><td>10–18€</td><td>100–250€/mes</td></tr>
+    <tr><td>Newsletter</td><td>Email semanal "El Industrial"</td><td>—</td><td>50–100€/envío</td></tr>
+    <tr><td>Ficha dealer</td><td>Servicios relacionados en portal</td><td>—</td><td>80–150€/mes</td></tr>
+  </table>
+
+  <h3>5.4 Anunciantes target por vertical</h3>
+  <table>
+    <tr><th>Tipo de anunciante</th><th>Relevancia</th><th>Ticket medio/mes</th></tr>
+    <tr><td>Gestorías de transferencias</td><td>Toda compraventa necesita gestoría</td><td>100–200€</td></tr>
+    <tr><td>Talleres especializados</td><td>Mantenimiento post-compra</td><td>100–300€</td></tr>
+    <tr><td>Aseguradoras de flotas</td><td>Todo vehículo necesita seguro</td><td>200–500€</td></tr>
+    <tr><td>Financieras / leasing</td><td>BNPL para tickets altos</td><td>300–800€</td></tr>
+    <tr><td>Empresas de transporte</td><td>Logística de entrega</td><td>150–400€</td></tr>
+    <tr><td>Proveedores de repuestos</td><td>Aftermarket natural</td><td>100–250€</td></tr>
+  </table>
+
+  <div class="success-box">
+    <strong>Potencial publicidad directa con 10M visitas/mes:</strong> 7 slots × 7 verticales = 49 posiciones. Si el 50% tiene anunciante directo a 200€/mes medio → <strong>4.900€/mes solo en publicidad directa</strong>. Con todos ocupados: ~9.800€/mes.
+  </div>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 7</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 8: INGRESOS ==================== -->
+<div class="page">
+  <h2>6. Proyección de Ingresos — 17+ Canales de Monetización</h2>
+
+  <h3>6.1 Fase 1 — Día 1 (ingresos inmediatos)</h3>
+  <table>
+    <tr><th>#</th><th>Canal</th><th>Modelo</th><th>Ingreso/mes estimado</th></tr>
+    <tr><td>1</td><td>Anuncios destacados</td><td>2–5€/día por vehículo</td><td>100–500€</td></tr>
+    <tr><td>2</td><td>Publicidad geolocalizada (7 posiciones)</td><td>CPM 8–25€</td><td>200–1.200€</td></tr>
+    <tr><td>3</td><td>Google AdSense (puente)</td><td>CPM 5–18€</td><td>50–720€</td></tr>
+    <tr><td>4</td><td>Suscripciones dealer (Basic 29€ / Premium 79€)</td><td>Recurrente mensual</td><td>0–790€</td></tr>
+    <tr><td>5</td><td>Generación IA de fichas</td><td>0,99€/ficha con Claude Haiku</td><td>30–100€</td></tr>
+  </table>
+
+  <h3>6.2 Fase 2 — Meses 1–6 (servicios de valor añadido)</h3>
+  <table>
+    <tr><th>#</th><th>Canal</th><th>Modelo</th><th>Ingreso/mes estimado</th></tr>
+    <tr><td>6</td><td>Suscripciones usuario (Classic 19€ / Premium 39€)</td><td>Recurrente</td><td>190–1.560€</td></tr>
+    <tr><td>7</td><td>Créditos (5 packs: 5€ → 64,90€)</td><td>One-time + retención</td><td>100–600€</td></tr>
+    <tr><td>8</td><td>Comisión por venta (1–3%)</td><td>% del precio final</td><td>400–3.000€</td></tr>
+    <tr><td>9</td><td>Informes DGT / verificación</td><td>3,50–15€ por informe</td><td>100–600€</td></tr>
+    <tr><td>10</td><td>Transporte (IberHaul)</td><td>250–1.200€ por zona</td><td>250–1.000€</td></tr>
+    <tr><td>11</td><td>Documentación legal</td><td>Contratos, facturas</td><td>50–200€</td></tr>
+    <tr><td>12</td><td>Seguros (referidos)</td><td>Comisión 5–15%</td><td>100–500€</td></tr>
+  </table>
+
+  <h3>6.3 Fase 3 — Año 2+ (productos premium)</h3>
+  <table>
+    <tr><th>#</th><th>Canal</th><th>Modelo</th><th>Ingreso/mes estimado</th></tr>
+    <tr><td>13</td><td>Escrow / garantía de pago</td><td>1,5–2,5% del importe</td><td>300–2.500€</td></tr>
+    <tr><td>14</td><td>Financiación BNPL</td><td>Comisión entidad financiera</td><td>200–1.500€</td></tr>
+    <tr><td>15</td><td>Informes de valoración de mercado</td><td>9,99–29,99€ por informe</td><td>500–3.000€</td></tr>
+    <tr><td>16</td><td>Datos sectoriales / API</td><td>Suscripción mensual a empresas</td><td>2.000–10.000€</td></tr>
+    <tr><td>17</td><td>Subastas online (8% buyer's premium)</td><td>% sobre precio de cierre</td><td>800–5.000€</td></tr>
+  </table>
+
+  <h3>6.4 Revenue stacking — 1 transacción de 40.000€</h3>
+  <div class="summary-box">
+    <table style="margin:0;">
+      <tr><td>Destacado (5 días × 3€)</td><td style="text-align:right">15€</td></tr>
+      <tr><td>Créditos consumidos (vendedor)</td><td style="text-align:right">10€</td></tr>
+      <tr><td>Comisión venta (3%)</td><td style="text-align:right">1.200€</td></tr>
+      <tr><td>Transporte IberHaul</td><td style="text-align:right">600€</td></tr>
+      <tr><td>Verificación + informe DGT</td><td style="text-align:right">30€</td></tr>
+      <tr><td>Seguro referido (10%)</td><td style="text-align:right">200€</td></tr>
+      <tr><td>Documentación</td><td style="text-align:right">30€</td></tr>
+      <tr><td>Buyer's premium subasta (8%)</td><td style="text-align:right">1.700€</td></tr>
+      <tr class="total-row"><td><strong>TOTAL POR TRANSACCIÓN</strong></td><td style="text-align:right"><strong>3.785€</strong></td></tr>
+    </table>
+  </div>
+
+  <h3>6.5 Proyección consolidada de ingresos</h3>
+  <table>
+    <tr><th>Escenario</th><th>Año 1</th><th>Año 2</th><th>Año 3</th></tr>
+    <tr><td><span class="scenario-header conservative">Conservador</span></td><td>1.600€</td><td>18.960€</td><td>87.120€</td></tr>
+    <tr><td><span class="scenario-header base">Base (media)</span></td><td>6.200€</td><td>47.370€</td><td>188.760€</td></tr>
+    <tr class="highlight-row"><td><span class="scenario-header optimistic">Optimista</span></td><td>10.800€</td><td>75.780€</td><td>290.400€</td></tr>
+  </table>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 8</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 9: ESCENARIO 10M USUARIOS ==================== -->
+<div class="page">
+  <h2>7. Escenario 10M Usuarios/Mes — Proyección a Escala</h2>
+
+  <h3>7.1 Supuestos del escenario</h3>
+  <table>
+    <tr><th>Métrica</th><th>Valor</th><th>Notas</th></tr>
+    <tr><td>Visitas/mes totales</td><td>10.000.000</td><td>Distribuidas entre 7+ verticales</td></tr>
+    <tr><td>Verticales activos</td><td>7–11</td><td>7 confirmados + 4 futuros</td></tr>
+    <tr><td>Vehículos/items publicados</td><td>50.000–200.000</td><td>Todos los verticales combinados</td></tr>
+    <tr><td>Dealers activos</td><td>500–2.000</td><td>Todos los verticales</td></tr>
+    <tr><td>Transacciones/mes</td><td>500–2.000</td><td>Ticket medio ponderado ~30K€</td></tr>
+  </table>
+
+  <h3>7.2 Costes de infraestructura a 10M</h3>
+  <table>
+    <tr><th>Componente</th><th>Plan bruto</th><th>Nuestra arquitectura</th><th>Ahorro</th></tr>
+    <tr><td>Base de datos</td><td>2.000$/mes (Supabase Dedicated)</td><td>150–350$/mes (multi-cluster Pro)</td><td>83–93%</td></tr>
+    <tr><td>Imágenes</td><td>2.500$/mes (Cloudinary Pro)</td><td>50–139$/mes (pipeline híbrido)</td><td>94–98%</td></tr>
+    <tr><td>CDN/Hosting</td><td>200$/mes</td><td>0–20$/mes (CF Pages free)</td><td>90–100%</td></tr>
+    <tr><td>Email</td><td>500$/mes</td><td>500$/mes (Resend)</td><td>0%</td></tr>
+    <tr><td>Monitoring</td><td>200$/mes</td><td>200$/mes (Sentry)</td><td>0%</td></tr>
+    <tr class="total-row"><td><strong>TOTAL</strong></td><td><strong>5.400$/mes</strong></td><td><strong>350–600$/mes</strong></td><td><strong>~90%</strong></td></tr>
+  </table>
+
+  <h3>7.3 Revenue estimado a 10M usuarios/mes</h3>
+  <table>
+    <tr><th>Canal</th><th>Conservador</th><th>Optimista</th><th>Lógica</th></tr>
+    <tr><td>Suscripciones dealer (500–2.000)</td><td>15.000€/mes</td><td>80.000€/mes</td><td>30–40% en Basic/Premium</td></tr>
+    <tr><td>Suscripciones usuario</td><td>10.000€/mes</td><td>40.000€/mes</td><td>0,1–0,5% conversión</td></tr>
+    <tr><td>Créditos</td><td>5.000€/mes</td><td>20.000€/mes</td><td>Destacar, renovar, informes</td></tr>
+    <tr><td>Publicidad (directa + AdSense)</td><td>15.000€/mes</td><td>50.000€/mes</td><td>7 slots × 7 verticales, CPM alto</td></tr>
+    <tr><td>Comisiones venta</td><td>15.000€/mes</td><td>60.000€/mes</td><td>500–2.000 transacciones × 1–3%</td></tr>
+    <tr><td>Transporte</td><td>5.000€/mes</td><td>20.000€/mes</td><td>IberHaul + partners</td></tr>
+    <tr><td>Verificaciones + informes</td><td>3.000€/mes</td><td>15.000€/mes</td><td>DGT, inspecciones</td></tr>
+    <tr><td>Subastas (8% buyer's premium)</td><td>5.000€/mes</td><td>40.000€/mes</td><td>Tickets altos en industrial</td></tr>
+    <tr><td>Datos de mercado (Capa 4)</td><td>10.000€/mes</td><td>50.000€/mes</td><td>Bancos, aseguradoras, fabricantes</td></tr>
+    <tr><td>Brokeraje (fee de match)</td><td>5.000€/mes</td><td>25.000€/mes</td><td>Tank Ibérica intermediación</td></tr>
+    <tr class="total-row"><td><strong>TOTAL</strong></td><td><strong>88.000€/mes</strong></td><td><strong>400.000€/mes</strong></td><td></td></tr>
+    <tr class="highlight-row"><td><strong>ANUALIZADO</strong></td><td><strong>1.056.000€/año</strong></td><td><strong>4.800.000€/año</strong></td><td></td></tr>
+  </table>
+
+  <div class="summary-box">
+    <strong>Margen operativo a escala:</strong> Con costes de infra de ~600$/mes (~550€) e ingresos de 88K–400K€/mes, el margen bruto supera el <strong>99%</strong>. El marketplace digital es inherentemente un negocio de alto margen una vez alcanzada masa crítica.
+  </div>
+
+  <h3>7.4 Geolocalización y pricing por zona</h3>
+  <table>
+    <tr><th>Feature</th><th>Detalle</th><th>Monetización</th></tr>
+    <tr><td>Geo-fallback inteligente</td><td>Escalera de 8 niveles (provincia → mundo), preferencia persistente</td><td>Mejor UX = más retención</td></tr>
+    <tr><td>Transporte por zonas</td><td>250–1.200€ según zona (tabla transport_zones)</td><td>Margen IberHaul</td></tr>
+    <tr><td>Publicidad geolocalizada</td><td>Anunciantes locales por provincia/zona</td><td>CPM premium por localización</td></tr>
+    <tr><td>Alertas por ubicación</td><td>"Nuevos en tu zona" + radio configurable</td><td>Valor añadido suscripción</td></tr>
+    <tr><td>Datos geo de mercado</td><td>Flujos comprador↔vendedor por provincia</td><td>Capa 4: datos para logísticas</td></tr>
+  </table>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 9</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 10: BROKERAJE Y DATOS ==================== -->
+<div class="page">
+  <h2>8. Brokeraje Inteligente y Datos como Producto</h2>
+
+  <h3>8.1 Brokeraje — Intermediación automatizada con IA</h3>
+  <p>Sistema donde tres entidades independientes colaboran para cerrar operaciones con margen garantizado:</p>
+
+  <div class="three-col">
+    <div class="kpi-card">
+      <div class="kpi-val" style="font-size: 16px;">Tracciona</div>
+      <div class="kpi-label">Precalifica compradores<br>Facilita match · Cobra fee</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val" style="font-size: 16px;">Tank Ibérica</div>
+      <div class="kpi-label">Negocia con vendedores<br>Compra y vende con margen</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val" style="font-size: 16px;">IberHaul</div>
+      <div class="kpi-label">Entrega la unidad<br>Góndola propia</div>
+    </div>
+  </div>
+
+  <p><strong>Flujo:</strong> Comprador → IA precalifica → IA negocia con vendedor → ¿Hay margen? → Tank Ibérica compra → Tank vende a comprador → IberHaul transporta. El comprador nunca sabe quién es el vendedor original.</p>
+
+  <table>
+    <tr><th>Ventaja</th><th>Detalle</th></tr>
+    <tr><td>Tickets altos</td><td>20K–200K€: margen del 3–5% = 600–10.000€/operación</td></tr>
+    <tr><td>Infraestructura existente</td><td>Tank Ibérica ya opera con campa en León</td></tr>
+    <tr><td>Automatización IA</td><td>Precalificación + scoring sin intervención humana al 99%</td></tr>
+    <tr><td>Irreplicable</td><td>Requiere marketplace + compraventa física + transporte propio simultáneamente</td></tr>
+  </table>
+
+  <h3>8.2 Datos como producto — Moat irreplicable (Capa 4)</h3>
+  <p>El moat de TradeBase no es el código ni la UI. Es <strong>la base de datos de mercado que solo nosotros poseemos</strong>.</p>
+
+  <h4>Datos que YA recopilamos</h4>
+  <table>
+    <tr><th>Dato</th><th>Tabla</th><th>Valor</th></tr>
+    <tr><td>Precio + categoría + marca + modelo + km + provincia</td><td>vehicles</td><td>Core del dataset</td></tr>
+    <tr><td>Historial de bajadas de precio</td><td>price_history</td><td>Evolución temporal</td></tr>
+    <tr><td>Media, mediana, min, max, días hasta venta</td><td>market_data (vista)</td><td>Listo para vender a financieras</td></tr>
+    <tr><td>Búsquedas, alertas, favoritos</td><td>search_alerts, favorites</td><td>Demanda latente del mercado</td></tr>
+    <tr><td>Contactos buyer→dealer con precio real</td><td>leads (sale_price_cents)</td><td><strong>Precio real de venta = oro puro</strong></td></tr>
+    <tr><td>Comportamiento completo del usuario</td><td>analytics_events</td><td>Page views, searches, clicks</td></tr>
+  </table>
+
+  <h4>Datos exclusivos (ningún competidor los tiene)</h4>
+  <div class="moat-grid">
+    <div class="moat-item">
+      <strong>Precio real de venta</strong>
+      <p>Mascus solo ve el precio publicado. Solo nosotros vemos lo que realmente se pagó.</p>
+    </div>
+    <div class="moat-item">
+      <strong>Tiempo real hasta venta</strong>
+      <p>Controlamos inicio y fin. El competidor solo ve un punto en el tiempo.</p>
+    </div>
+    <div class="moat-item">
+      <strong>Demanda vs oferta por zona</strong>
+      <p>Cruzamos búsquedas (demanda) con listings (oferta). Nadie más puede hacerlo.</p>
+    </div>
+    <div class="moat-item">
+      <strong>Flujos geográficos</strong>
+      <p>"El comprador de Barcelona compra camiones de Zaragoza." Solo el intermediario lo sabe.</p>
+    </div>
+  </div>
+
+  <h4>5 productos de datos</h4>
+  <table>
+    <tr><th>Producto</th><th>Comprador</th><th>Precio</th><th>Activación</th></tr>
+    <tr><td>API de valoración</td><td>Fintech, aseguradoras</td><td>0,50–5€/consulta</td><td>≥500 transacciones</td></tr>
+    <tr><td>Informe trimestral sectorial</td><td>Bancos, fabricantes</td><td>500–2.000€/informe</td><td>≥12 meses datos</td></tr>
+    <tr><td>Dataset anualizado</td><td>Consultoras, fondos</td><td>5.000–15.000€/licencia</td><td>≥12 meses datos</td></tr>
+    <tr><td>Trust Badge API</td><td>Otros marketplaces</td><td>1–5€/consulta</td><td>≥100 reviews</td></tr>
+    <tr><td>Supply chain intelligence</td><td>Logísticas, fabricantes</td><td>3.000–5.000€/proyecto</td><td>≥500 transacciones</td></tr>
+  </table>
+
+  <div class="summary-box">
+    <strong>Estimación Capa 4 (mes 8–12):</strong> Con reviews + compliance tracking + supply chain → ingresos recurrentes de <strong>200.000–500.000€/año solo en datos</strong>, sin afectar UX del usuario.
+  </div>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 10</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 11: GO-TO-MARKET ==================== -->
+<div class="page">
+  <h2>9. Go-to-Market y Adquisición</h2>
+
+  <h3>9.1 Plan de ejecución por semana</h3>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="time">Semana 1 (0€)</div>
+      <div class="desc">Subir inventario Tank Ibérica (seed 20–30 fichas) · 3–5 dealers conocidos prueban · LinkedIn + Google Business Profile</div>
+    </div>
+    <div class="timeline-item">
+      <div class="time">Semana 2 (50€)</div>
+      <div class="desc">Milanuncios PRO + anuncios con wa.me · Facebook Marketplace + 2 grupos · WhatsApp Channel · 10 emails/día a dealers</div>
+    </div>
+    <div class="timeline-item">
+      <div class="time">Semana 3 (6€/día)</div>
+      <div class="desc">Google Tag Manager + pixels · Retargeting Meta + Google · Primer vídeo YouTube · Vinilo en góndola</div>
+    </div>
+    <div class="timeline-item">
+      <div class="time">Mes 2 (requiere código)</div>
+      <div class="desc">SEO programático (landings marca/modelo) · Herramienta valoración pública · Auto-publicación en redes · Feed catálogo dinámico · Contactar renting/leasing</div>
+    </div>
+    <div class="timeline-item">
+      <div class="time">Mes 3+ (escalar)</div>
+      <div class="desc">Newsletter "El Industrial" · Informe mercado trimestral · Calculadoras públicas · Pinterest auto-pin · Gestorías + talleres + corredores seguros</div>
+    </div>
+  </div>
+
+  <h3>9.2 WhatsApp AI Pipeline — Moat competitivo</h3>
+  <div class="info-box">
+    <strong>Diferenciador único:</strong> Dealer envía fotos por WhatsApp → Claude Vision analiza → ficha bilingüe (ES+EN) auto-publicada en minutos. <strong>Ningún competidor ofrece esto.</strong> El target (dealers 45–60 años) vive en WhatsApp.
+  </div>
+
+  <h3>9.3 Funnel WhatsApp desde plataformas externas</h3>
+  <p>Anuncios en Milanuncios/Wallapop con enlace <code>wa.me/34XXX?text=TRC-042</code> → respuesta automática con ficha + enlace a Tracciona → comprador entra en el ecosistema.</p>
+
+  <h3>9.4 Retargeting con catálogo dinámico (6€/día)</h3>
+  <table>
+    <tr><th>Plataforma</th><th>Dónde aparece</th><th>€/día</th><th>Cuándo</th></tr>
+    <tr><td>Google</td><td>Webs, YouTube, Gmail, Maps, Discover</td><td>3€</td><td>Día 1</td></tr>
+    <tr><td>Meta</td><td>Instagram, Facebook, Messenger</td><td>3€</td><td>Día 1</td></tr>
+    <tr><td>LinkedIn</td><td>Feed profesional</td><td>10€</td><td>>100 visitas/día</td></tr>
+  </table>
+  <p>Dynamic Product Ads: endpoint <code>/api/feed/products.xml</code> genera feed → Meta/Google importan diario → cada vehículo nuevo = anuncio sin intervención manual.</p>
+
+  <h3>9.5 Alianzas offline (coste 0€)</h3>
+  <table>
+    <tr><th>Aliado</th><th>Propuesta</th><th>Impacto</th></tr>
+    <tr><td>Gestorías de transferencias</td><td>"50€ por venta cerrada referida"</td><td>Alto (flujo constante)</td></tr>
+    <tr><td>Corredores de seguros de flotas</td><td>"Si tu cliente vende, recomiéndanos"</td><td>Alto (multiplicador: 50–200 empresas cada corredor)</td></tr>
+    <tr><td>Empresas renting/leasing</td><td>"Os publicamos toda la flota gratis"</td><td>Muy alto (llena catálogo de golpe)</td></tr>
+    <tr><td>Talleres + ITV pesados</td><td>Flyers: "¿No pasa ITV? Véndelo gratis"</td><td>Medio</td></tr>
+  </table>
+
+  <h3>9.6 Métricas de captación</h3>
+  <table>
+    <tr><th>Métrica norte</th><th>Objetivo Año 1</th><th>Objetivo Año 2</th><th>Objetivo Año 3</th></tr>
+    <tr class="highlight-row"><td><strong>Dealers activos con vehículos</strong></td><td><strong>20</strong></td><td><strong>100</strong></td><td><strong>500+</strong></td></tr>
+    <tr><td>Vehículos publicados</td><td>200</td><td>2.000</td><td>10.000+</td></tr>
+    <tr><td>Visitas/mes</td><td>5.000–15.000</td><td>30.000–100.000</td><td>100.000–1.000.000</td></tr>
+    <tr><td>Transacciones cerradas/mes</td><td>5–10</td><td>30–100</td><td>100–500</td></tr>
+  </table>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 11</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 12: P&L Y FINANCIERO ==================== -->
+<div class="page">
+  <h2>10. Proyección Financiera Consolidada</h2>
+
+  <h3>10.1 P&L — Escenario conservador</h3>
+  <table>
+    <tr><th></th><th>Año 1</th><th>Año 2</th><th>Año 3</th></tr>
+    <tr><td><strong>Ingresos</strong></td><td>1.600€</td><td>18.960€</td><td>87.120€</td></tr>
+    <tr><td>Costes operativos</td><td>-19.870€</td><td>-25.412€</td><td>-59.518€</td></tr>
+    <tr><td>Contingencia (10%)</td><td>-1.987€</td><td>-2.541€</td><td>-5.952€</td></tr>
+    <tr class="highlight-row"><td><strong>Resultado neto</strong></td><td><strong>-20.257€</strong></td><td><strong>-8.993€</strong></td><td><strong>+21.650€</strong></td></tr>
+    <tr><td>Resultado acumulado</td><td>-20.257€</td><td>-29.250€</td><td>-7.600€</td></tr>
+  </table>
+
+  <h3>10.2 P&L — Escenario optimista</h3>
+  <table>
+    <tr><th></th><th>Año 1</th><th>Año 2</th><th>Año 3</th></tr>
+    <tr><td><strong>Ingresos</strong></td><td>10.800€</td><td>75.780€</td><td>290.400€</td></tr>
+    <tr><td>Costes operativos</td><td>-19.870€</td><td>-25.412€</td><td>-59.518€</td></tr>
+    <tr><td>Contingencia (10%)</td><td>-1.987€</td><td>-2.541€</td><td>-5.952€</td></tr>
+    <tr class="highlight-row"><td><strong>Resultado neto</strong></td><td><strong>-11.057€</strong></td><td><strong>+47.827€</strong></td><td><strong>+224.930€</strong></td></tr>
+    <tr><td>Resultado acumulado</td><td>-11.057€</td><td>+36.770€</td><td>+261.700€</td></tr>
+  </table>
+
+  <h3>10.3 Unit Economics</h3>
+  <div class="three-col">
+    <div class="kpi-card">
+      <div class="kpi-val">~50€</div>
+      <div class="kpi-label">CAC (Coste adquisición dealer)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">348–948€</div>
+      <div class="kpi-label">LTV dealer (12 meses)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">7:1 — 19:1</div>
+      <div class="kpi-label">Ratio LTV/CAC</div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top: 14px;">
+    <div class="kpi-card">
+      <div class="kpi-val">85–92%</div>
+      <div class="kpi-label">Margen bruto (servicios digitales)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">&lt;0,01€</div>
+      <div class="kpi-label">Coste infra por usuario/mes</div>
+    </div>
+  </div>
+
+  <h3>10.4 Hitos de milestone</h3>
+  <table>
+    <tr><th>Hito</th><th>Cuándo</th><th>Trigger</th></tr>
+    <tr><td>MVP en producción</td><td>Mes 1</td><td>—</td></tr>
+    <tr><td>10 Founding Dealers activos</td><td>Mes 3</td><td>Activar monetización</td></tr>
+    <tr><td>100 vehículos publicados</td><td>Mes 4</td><td>Google Ads + AdSense</td></tr>
+    <tr><td>Primer ingreso recurrente</td><td>Mes 6</td><td>Validación PMF</td></tr>
+    <tr><td><strong>Break-even operativo</strong></td><td><strong>Mes 14–18</strong></td><td>Considerar 2º vertical</td></tr>
+    <tr><td>1.000 vehículos</td><td>Mes 18</td><td>Activar productos de datos</td></tr>
+    <tr><td>2º vertical live</td><td>Mes 24–30</td><td>Escalar modelo</td></tr>
+    <tr><td>100.000 visitas/mes</td><td>Mes 30–36</td><td>Contratar primer empleado</td></tr>
+  </table>
+
+  <h3>10.5 Uso de fondos (ronda seed 60.000€)</h3>
+  <table>
+    <tr><th>Destino</th><th>Importe</th><th>%</th><th>Retorno esperado</th></tr>
+    <tr><td>Operaciones año 1</td><td>22.000€</td><td>37%</td><td>Producto en mercado + 10 founding dealers</td></tr>
+    <tr><td>Marketing acelerado año 2</td><td>15.000€</td><td>25%</td><td>30+ dealers de pago + 2.000+ vehículos</td></tr>
+    <tr><td>Reserva de caja (6 meses)</td><td>15.000€</td><td>25%</td><td>Runway sin presión</td></tr>
+    <tr><td>Legal y compliance</td><td>3.000€</td><td>5%</td><td>Marcas + GDPR formal</td></tr>
+    <tr><td>Contingencia</td><td>5.000€</td><td>8%</td><td>Imprevistos</td></tr>
+  </table>
+
+  <div class="alert-box">
+    <strong>Alternativa bootstrap:</strong> El proyecto puede ejecutarse sin inversión externa. Tank Ibérica tiene ~200.000€ en caja + ~500.000€/año de facturación + ~150.000€ en stock. La inversión externa solo aceleraría la velocidad.
+  </div>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 12</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 13: RIESGOS Y COMPARABLES ==================== -->
+<div class="page">
+  <h2>11. Riesgos, Mitigaciones y Comparables</h2>
+
+  <h3>11.1 Riesgos y mitigaciones</h3>
+  <table>
+    <tr><th>Riesgo</th><th>Prob.</th><th>Impacto</th><th>Mitigación</th></tr>
+    <tr><td>Adopción lenta de dealers</td><td>Media</td><td>Alto</td><td>Founding program gratuito + onboarding WhatsApp + publicación multicanal como servicio gratuito</td></tr>
+    <tr><td>Cambio pricing proveedores cloud</td><td>Baja</td><td>Medio</td><td>Stack 100% open source (Supabase, Nuxt). Plan B documentado para cada servicio</td></tr>
+    <tr><td>Competidor entra al mercado</td><td>Baja</td><td>Medio</td><td>12+ meses de ventaja + datos acumulados + integración física imposible de replicar rápido</td></tr>
+    <tr><td>Regulación GDPR estricta</td><td>Baja</td><td>Bajo</td><td>Compliance DSA ya implementado, RAT en borrador, DPIA planificada</td></tr>
+    <tr><td>Dependencia IA (Claude Code)</td><td>Media</td><td>Medio</td><td>Codebase documentado (13.800+ tests, 0 bugs SonarQube), reproducible con cualquier LLM</td></tr>
+    <tr><td>Estacionalidad del mercado</td><td>Alta</td><td>Bajo</td><td>Multi-vertical diversifica: diferentes sectores tienen diferentes ciclos</td></tr>
+    <tr><td>Fraude en la plataforma</td><td>Media</td><td>Medio</td><td>Silent Safety: Trust Score, badges, alertas contextuales, verificación escalonada (6 niveles)</td></tr>
+  </table>
+
+  <h3>11.2 Comparables del sector</h3>
+  <table>
+    <tr><th>Empresa</th><th>Sector</th><th>Valoración</th><th>Múltiplo</th><th>Empleados</th></tr>
+    <tr><td>Idealista</td><td>Inmobiliario</td><td>1.300M€ (venta 2024)</td><td>~12× revenue</td><td>~300</td></tr>
+    <tr><td>AutoScout24</td><td>Vehículos</td><td>2.900M€</td><td>8–10× revenue</td><td>~1.000</td></tr>
+    <tr><td>Wallapop</td><td>Generalista</td><td>690M€ (2021)</td><td>~20× revenue</td><td>~200</td></tr>
+    <tr><td>Mascus (Ritchie Bros)</td><td>Maquinaria industrial</td><td>Adquirida $10M+</td><td>—</td><td>~50</td></tr>
+    <tr><td>TruckScout24</td><td>Vehículos industriales</td><td>Parte del grupo AutoScout24</td><td>—</td><td>~30</td></tr>
+  </table>
+
+  <h3>11.3 Tesis de inversión</h3>
+  <div class="moat-grid">
+    <div class="moat-item">
+      <strong>1. Mercado sin incumbente</strong>
+      <p>No existe marketplace B2B industrial profesional en España/Europa. Vacío competitivo total.</p>
+    </div>
+    <div class="moat-item">
+      <strong>2. Modelo probado</strong>
+      <p>Idealista (inmobiliario) → TradeBase (industrial). Misma estrategia de datos, diferente vertical.</p>
+    </div>
+    <div class="moat-item">
+      <strong>3. Multi-vertical = multiplicador</strong>
+      <p>1 codebase × 7+ verticales = 7× el mercado con coste incremental mínimo (~0€ en código).</p>
+    </div>
+    <div class="moat-item">
+      <strong>4. Infraestructura física</strong>
+      <p>Tank Ibérica: campa, stock, logística, facturación. Sin inversión greenfield necesaria.</p>
+    </div>
+    <div class="moat-item">
+      <strong>5. Coste ultra-bajo</strong>
+      <p>IA como ingeniero principal → 95% de ahorro. Infra en cloud → escala sin CapEx.</p>
+    </div>
+    <div class="moat-item">
+      <strong>6. Moat de datos desde día 1</strong>
+      <p>Cada transacción genera datos irreplicables. A los 2 años: 2 años de datos que nadie más tiene.</p>
+    </div>
+  </div>
+
+  <h3>11.4 Estado actual del producto</h3>
+  <div class="three-col">
+    <div class="kpi-card">
+      <div class="kpi-val">126</div>
+      <div class="kpi-label">Páginas Vue</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">424</div>
+      <div class="kpi-label">Componentes Vue</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">65</div>
+      <div class="kpi-label">Endpoints API</div>
+    </div>
+  </div>
+  <div class="three-col" style="margin-top: 10px;">
+    <div class="kpi-card">
+      <div class="kpi-val">97</div>
+      <div class="kpi-label">Tablas en BD</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">13.862</div>
+      <div class="kpi-label">Tests (0 fallos)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-val">0 bugs</div>
+      <div class="kpi-label">SonarQube Quality Gate OK</div>
+    </div>
+  </div>
+
+  <div class="success-box" style="margin-top: 16px;">
+    <strong>Valoración equivalente de desarrollo:</strong> Si se hubiese construido con un equipo tradicional (2 senior devs + 1 junior + 1 diseñador UX), el coste estimado habría sido <strong>250.000–350.000€</strong> en 12–18 meses. Coste real: <strong>&lt;5.000€</strong> en suscripciones de IA.
+  </div>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 13</span>
+  </div>
+</div>
+
+<!-- ==================== PÁG 14: CONTACTO ==================== -->
+<div class="page" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(135deg, #f8fafb, #e8f0ed);">
+
+  <div style="max-width: 500px;">
+    <h2 style="border: none; font-size: 28px; margin-bottom: 20px;">¿Siguiente paso?</h2>
+
+    <p style="font-size: 14px; color: #555; margin-bottom: 30px;">
+      TradeBase combina un mercado sin competencia, infraestructura física existente, tecnología de vanguardia y un modelo de datos que se convierte en moat irreplicable desde el día 1.
+    </p>
+
+    <div class="summary-box" style="text-align: left; max-width: 400px; margin: 0 auto 30px auto;">
+      <p><strong>Inversión total 3 años:</strong> ~115.000€</p>
+      <p><strong>Break-even:</strong> Mes 14–18</p>
+      <p><strong>Revenue año 3:</strong> 87K–290K€ (1 vertical)</p>
+      <p><strong>Revenue a escala (10M):</strong> 1M–4.8M€/año</p>
+      <p><strong>Margen bruto:</strong> 85–92%</p>
+    </div>
+
+    <div style="margin: 30px 0;">
+      <div style="font-size: 18px; font-weight: 700; color: #23424A;">TradeBase SL</div>
+      <div style="font-size: 12px; color: #888; margin-top: 8px;">tankiberica@gmail.com</div>
+      <div style="font-size: 12px; color: #888;">tracciona.com</div>
+    </div>
+
+    <div style="font-size: 9px; color: #bbb; margin-top: 40px;">
+      Documento confidencial · Marzo 2026 · v2.0<br>
+      Las proyecciones son estimaciones basadas en datos reales del proyecto y precios de mercado verificados.<br>
+      No constituyen garantía de rendimiento.
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>TradeBase SL — Plan de Inversión 3 Años</span>
+    <span>Confidencial · Pág. 14</span>
+  </div>
+</div>
+
+</body>
+</html>

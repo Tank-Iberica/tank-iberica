@@ -9,7 +9,7 @@
       >
         <div class="notification-icon">&#x1F4E3;</div>
         <div class="notification-content">
-          <span class="notification-label">Anunciantes</span>
+          <span class="notification-label">{{ t('admin.notifications.anunciantesLabel') }}</span>
           <span class="notification-value">{{ stats.anunciantes }}</span>
         </div>
         <span v-if="stats.anunciantesPending > 0" class="notification-badge">{{
@@ -24,7 +24,7 @@
       >
         <div class="notification-icon">&#x1F50D;</div>
         <div class="notification-content">
-          <span class="notification-label">Solicitantes</span>
+          <span class="notification-label">{{ t('admin.notifications.solicitantesLabel') }}</span>
           <span class="notification-value">{{ stats.solicitantes }}</span>
         </div>
         <span v-if="stats.solicitantesPending > 0" class="notification-badge">{{
@@ -39,7 +39,7 @@
       >
         <div class="notification-icon">&#x1F4AC;</div>
         <div class="notification-content">
-          <span class="notification-label">Comentarios</span>
+          <span class="notification-label">{{ t('admin.notifications.comentariosLabel') }}</span>
           <span class="notification-value">{{ stats.comentarios }}</span>
         </div>
         <span v-if="stats.comentariosPending > 0" class="notification-badge">{{
@@ -54,7 +54,7 @@
       >
         <div class="notification-icon">&#x1F4F1;</div>
         <div class="notification-content">
-          <span class="notification-label">Chats</span>
+          <span class="notification-label">{{ t('admin.notifications.chatsLabel') }}</span>
           <span class="notification-value">{{ stats.chats }}</span>
         </div>
         <span v-if="stats.chatsUnread > 0" class="notification-badge">{{ stats.chatsUnread }}</span>
@@ -67,7 +67,7 @@
       >
         <div class="notification-icon">&#x1F4E7;</div>
         <div class="notification-content">
-          <span class="notification-label">Suscripciones</span>
+          <span class="notification-label">{{ t('admin.notifications.suscripcionesLabel') }}</span>
           <span class="notification-value">{{ stats.suscripciones }}</span>
         </div>
         <span v-if="stats.suscripcionesPending > 0" class="notification-badge">{{
@@ -82,7 +82,7 @@
       <div class="dashboard-section">
         <h2 class="section-title">
           <span class="title-icon">&#x23F3;</span>
-          Pendientes
+          {{ t('admin.notifications.pendingTitle') }}
         </h2>
         <div class="pending-list">
           <NuxtLink
@@ -137,7 +137,7 @@
           </NuxtLink>
           <div v-if="totalPending === 0" class="pending-empty">
             <span class="empty-icon">&#x2713;</span>
-            <span>Todo al dia</span>
+            <span>{{ t('admin.notifications.allUpToDate') }}</span>
           </div>
         </div>
       </div>
@@ -146,7 +146,7 @@
       <div class="dashboard-section">
         <h2 class="section-title">
           <span class="title-icon">&#x1F517;</span>
-          Coincidencias
+          {{ t('admin.notifications.matchesTitle') }}
         </h2>
         <div class="matches-list">
           <div v-for="match in matches" :key="match.id" class="match-item">
@@ -158,7 +158,7 @@
           </div>
           <div v-if="matches.length === 0" class="matches-empty">
             <span class="empty-icon">&#x1F4ED;</span>
-            <span>No hay coincidencias</span>
+            <span>{{ t('admin.notifications.noMatches') }}</span>
           </div>
         </div>
       </div>
@@ -168,6 +168,7 @@
 
 <script setup lang="ts">
 import type { NotificationStats, MatchItem } from '~/composables/admin/useAdminDashboard'
+const { t } = useI18n()
 
 defineProps<{
   stats: NotificationStats
@@ -216,16 +217,16 @@ defineProps<{
 }
 
 .notification-card.has-pending {
-  background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%);
+  background: linear-gradient(135deg, var(--color-error-bg) 0%, var(--color-red-50) 100%);
   border-color: var(--color-error-border);
 }
 
 .notification-card.has-pending:hover {
-  border-color: #f87171;
+  border-color: var(--color-error-soft);
 }
 
 .notification-icon {
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   flex-shrink: 0;
 }
 
@@ -248,16 +249,16 @@ defineProps<{
 
 .notification-badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 6px;
+  top: -0.375rem;
+  right: -0.375rem;
+  min-width: 1.375rem;
+  height: 1.375rem;
+  padding: 0 0.375rem;
   background: var(--color-error);
   color: white;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  border-radius: 11px;
+  border-radius: var(--border-radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -297,7 +298,7 @@ defineProps<{
 }
 
 .title-icon {
-  font-size: 20px;
+  font-size: var(--font-size-xl);
 }
 
 /* Pending list */
@@ -328,7 +329,7 @@ defineProps<{
 }
 
 .pending-icon {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   flex-shrink: 0;
 }
 
@@ -354,7 +355,7 @@ defineProps<{
 }
 
 .empty-icon {
-  font-size: 20px;
+  font-size: var(--font-size-xl);
 }
 
 /* Matches list */
@@ -389,11 +390,11 @@ defineProps<{
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.03125rem;
 }
 
 .match-type.demand {
-  color: #8b5cf6;
+  color: var(--color-violet-500);
 }
 
 .match-type.vehicle {

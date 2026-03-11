@@ -70,13 +70,13 @@ onMounted(() => {
 .category-links {
   margin-top: var(--spacing-4);
   padding-top: var(--spacing-4);
-  border-top: 1px solid var(--border-color, #e5e7eb);
+  border-top: 1px solid var(--border-color);
 }
 
 .category-links h3 {
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--text-secondary, var(--color-gray-600));
+  color: var(--text-secondary);
   margin-bottom: var(--spacing-3);
 }
 
@@ -93,17 +93,17 @@ onMounted(() => {
   font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-primary);
-  background: var(--bg-secondary, #f3f4f6);
-  border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-full);
   text-decoration: none;
   transition: all 0.2s;
-  min-height: 36px;
+  min-height: 2.25rem;
 }
 
 .category-link-chip:hover {
   background: var(--color-primary);
-  color: var(--color-white, #fff);
+  color: var(--color-white);
   border-color: var(--color-primary);
 }
 </style>

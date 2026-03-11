@@ -47,12 +47,12 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  margin-left: 4px;
+  margin-left: var(--spacing-1);
   vertical-align: middle;
 }
 
 .info-icon {
-  color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary, var(--color-gray-500));
   opacity: 0.6;
   transition: opacity 0.2s;
 }
@@ -68,11 +68,11 @@ onUnmounted(() => {
   transform: translateX(-50%);
   background: var(--color-primary);
   color: white;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 12px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-xs);
   line-height: 1.5;
-  width: 280px;
+  width: 17.5rem;
   max-width: 90vw;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   z-index: 100;
@@ -80,8 +80,8 @@ onUnmounted(() => {
 
 .badge-tooltip strong {
   display: block;
-  margin-bottom: 4px;
-  font-size: 13px;
+  margin-bottom: var(--spacing-1);
+  font-size: 0.8125rem;
 }
 
 .badge-tooltip p {
@@ -117,7 +117,7 @@ onUnmounted(() => {
 
 @media (min-width: 48em) {
   .badge-tooltip {
-    width: 320px;
+    width: 20rem;
   }
 }
 </style>

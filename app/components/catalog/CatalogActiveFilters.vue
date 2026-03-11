@@ -208,13 +208,13 @@ function handleClearAll() {
   gap: 0.25rem;
   padding: 0.2rem 0.4rem;
   background: var(--color-primary-light, #2f5a64);
-  color: var(--color-white, #fff);
-  border-radius: 9999px;
-  font-size: 10px;
+  color: var(--color-white, var(--color-white));
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
   font-weight: 500;
   line-height: 1.4;
   white-space: nowrap;
-  max-width: 180px;
+  max-width: 11.25rem;
 }
 
 .chip-label {
@@ -226,15 +226,15 @@ function handleClearAll() {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  min-height: 16px;
+  width: 1rem;
+  height: 1rem;
+  min-width: 1rem;
+  min-height: 1rem;
   border: none;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.25);
   color: inherit;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   line-height: 1;
   cursor: pointer;
   padding: 0;
@@ -249,8 +249,8 @@ function handleClearAll() {
 .clear-all-link {
   border: none;
   background: none;
-  color: var(--text-auxiliary, #6b7280);
-  font-size: 10px;
+  color: var(--text-auxiliary, var(--color-gray-500));
+  font-size: var(--font-size-xs);
   cursor: pointer;
   white-space: nowrap;
   text-decoration: underline;
@@ -288,12 +288,12 @@ function handleClearAll() {
    ============================================ */
 @media (min-width: 30em) {
   .filter-chip {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     padding: 0.25rem 0.5rem;
   }
 
   .clear-all-link {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
   }
 }
 
@@ -306,7 +306,7 @@ function handleClearAll() {
   }
 
   .filter-chip {
-    max-width: 220px;
+    max-width: 13.75rem;
   }
 }
 

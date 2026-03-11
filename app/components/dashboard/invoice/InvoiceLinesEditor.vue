@@ -208,10 +208,10 @@ function getLineSubtotal(line: InvoiceLine): number {
 /* ============ FORM FIELD INPUTS ============ */
 .form-field__input,
 .form-field__select {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   color: var(--text-primary);
   background: var(--bg-primary);
@@ -223,24 +223,24 @@ function getLineSubtotal(line: InvoiceLine): number {
 .form-field__select:focus {
   outline: none;
   border-color: var(--primary, var(--color-primary));
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 .form-field__input--compact {
-  min-height: 38px;
+  min-height: 2.375rem;
   padding: 0.375rem 0.5rem;
   font-size: 0.85rem;
 }
 
 .form-field__select--compact {
-  min-height: 38px;
+  min-height: 2.375rem;
   padding: 0.375rem 0.5rem;
   font-size: 0.85rem;
 }
 
 .form-field__input--num {
   text-align: right;
-  max-width: 100px;
+  max-width: 6.25rem;
 }
 
 /* ============ INVOICE LINES TABLE (Desktop) ============ */
@@ -256,13 +256,13 @@ function getLineSubtotal(line: InvoiceLine): number {
 }
 
 .lines-table th {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--text-auxiliary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.0313rem;
   padding: 0.5rem;
-  border-bottom: 2px solid var(--color-gray-200);
+  border-bottom: 0.125rem solid var(--color-gray-200);
   text-align: left;
   white-space: nowrap;
 }
@@ -284,7 +284,7 @@ function getLineSubtotal(line: InvoiceLine): number {
 }
 
 .lines-table__action {
-  width: 44px;
+  width: 2.75rem;
   text-align: center;
 }
 
@@ -298,7 +298,7 @@ function getLineSubtotal(line: InvoiceLine): number {
 .line-card {
   background: var(--bg-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -350,9 +350,9 @@ function getLineSubtotal(line: InvoiceLine): number {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0.625rem 1.25rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   font-weight: 600;
   border: none;
@@ -384,13 +384,13 @@ function getLineSubtotal(line: InvoiceLine): number {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding: 0;
   background: none;
   border: none;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   transition: background 0.2s;
 }
 
@@ -399,7 +399,7 @@ function getLineSubtotal(line: InvoiceLine): number {
 }
 
 .btn-icon--danger:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 /* ============ RESPONSIVE: TABLET+ (48em) ============ */

@@ -32,8 +32,8 @@ function formatDate(dateStr: string): string {
         <tr>
           <th>Email</th>
           <th>Preferencias</th>
-          <th style="width: 100px">Fecha</th>
-          <th style="width: 80px">Acciones</th>
+          <th style="width: 100px">{{ $t('common.date') }}</th>
+          <th style="width: 5rem">{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -73,7 +73,7 @@ function formatDate(dateStr: string): string {
         </tr>
         <tr v-if="!subscriptions.length">
           <td colspan="4" class="empty-state">
-            No hay suscripciones que coincidan con la búsqueda.
+            {{ $t('common.noResults') }}
           </td>
         </tr>
       </tbody>
@@ -84,9 +84,9 @@ function formatDate(dateStr: string): string {
 <style scoped>
 .table-container {
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   overflow-x: auto;
 }
 
@@ -98,61 +98,61 @@ function formatDate(dateStr: string): string {
 
 .admin-table th,
 .admin-table td {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--bg-tertiary);
 }
 
 .admin-table th {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   font-weight: 600;
-  color: #374151;
-  font-size: 0.875rem;
+  color: var(--color-gray-700);
+  font-size: var(--font-size-sm);
 }
 
 .admin-table tr:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .email-cell {
-  font-size: 0.9rem;
-  color: #4b5563;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
 }
 
 .pref-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .pref-chip {
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 0.7rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   border: 1px solid;
   white-space: nowrap;
 }
 
 .no-prefs {
-  font-size: 0.8rem;
+  font-size: var(--font-size-xs);
   color: var(--text-disabled);
   font-style: italic;
 }
 
 .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .btn-icon {
   background: none;
   border: 1px solid var(--border-color-light);
-  padding: 6px 10px;
-  border-radius: 4px;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
 }
 
 .btn-icon:hover {
@@ -160,12 +160,12 @@ function formatDate(dateStr: string): string {
 }
 
 .btn-delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .empty-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: 2.5rem;
+  color: var(--color-gray-500);
 }
 </style>

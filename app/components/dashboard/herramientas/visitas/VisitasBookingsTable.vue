@@ -169,7 +169,7 @@ function getStatusClass(status: BookingStatus): string {
 
 .data-table th.actions-col {
   text-align: center;
-  width: 140px;
+  width: 8.75rem;
 }
 
 .data-table td {
@@ -188,7 +188,7 @@ function getStatusClass(status: BookingStatus): string {
 }
 
 .notes-cell {
-  max-width: 200px;
+  max-width: 12.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -212,7 +212,7 @@ function getStatusClass(status: BookingStatus): string {
 /* Status badges */
 .status-badge {
   display: inline-block;
-  padding: 3px 10px;
+  padding: 0.1875rem 0.625rem;
   border-radius: var(--border-radius-full);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
@@ -220,13 +220,13 @@ function getStatusClass(status: BookingStatus): string {
 }
 
 .status-badge.status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .status-badge.status-confirmed {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 
 .status-badge.status-cancelled {
@@ -239,8 +239,8 @@ function getStatusClass(status: BookingStatus): string {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
-  min-width: 44px;
+  min-height: 2.25rem;
+  min-width: 2.75rem;
   padding: var(--spacing-1) var(--spacing-3);
   border: none;
   border-radius: var(--border-radius-sm);
@@ -261,7 +261,7 @@ function getStatusClass(status: BookingStatus): string {
 }
 
 .btn-confirm:hover {
-  background: #059669;
+  background: var(--color-success-dark);
 }
 
 .btn-cancel {

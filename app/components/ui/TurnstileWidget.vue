@@ -143,6 +143,6 @@ defineExpose({ reset })
 
 <style scoped>
 .turnstile-widget {
-  min-height: 65px;
+  min-height: 4.0625rem;
 }
 </style>

@@ -6,8 +6,8 @@
         <span class="logo-icon">TI</span>
         <span class="logo-text">Tracciona</span>
       </div>
-      <h1>Panel de Administración</h1>
-      <p class="login-subtitle">Inicia sesión para continuar</p>
+      <h1>{{ t('admin.layout.title') }}</h1>
+      <p class="login-subtitle">{{ t('admin.layout.loginSubtitle') }}</p>
 
       <button class="btn-google" :disabled="loading" @click="loginWithGoogle">
         <svg width="20" height="20" viewBox="0 0 24 24">
@@ -28,7 +28,7 @@
             fill="#EA4335"
           />
         </svg>
-        {{ loading ? 'Cargando...' : 'Iniciar sesión con Google' }}
+        {{ loading ? t('common.loading') : t('admin.layout.loginWithGoogle') }}
       </button>
 
       <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
@@ -42,7 +42,7 @@
         <span class="logo-icon">TI</span>
         <span class="logo-text">Tracciona</span>
       </div>
-      <p class="login-subtitle">Verificando acceso...</p>
+      <p class="login-subtitle">{{ t('admin.layout.verifyingAccess') }}</p>
     </div>
   </div>
 
@@ -53,9 +53,9 @@
         <span class="logo-icon">TI</span>
         <span class="logo-text">Tracciona</span>
       </div>
-      <h1>Acceso Denegado</h1>
-      <p class="login-subtitle">No tienes permisos de administrador</p>
-      <button class="btn-google" @click="logout">Cerrar sesión</button>
+      <h1>{{ t('admin.layout.accessDenied') }}</h1>
+      <p class="login-subtitle">{{ t('admin.layout.noAdminPermissions') }}</p>
+      <button class="btn-google" @click="logout">{{ t('nav.logout') }}</button>
     </div>
   </div>
 
@@ -84,13 +84,29 @@
         @toggle-collapse="sidebarCollapsed = !sidebarCollapsed"
       />
       <main class="admin-content">
-        <slot />
+        <NuxtErrorBoundary @error="(e) => console.error('[admin] Error boundary caught:', e)">
+          <template #error="{ error, clearError }">
+            <div class="error-boundary">
+              <p class="error-boundary__msg">{{ t('admin.layout.errorBoundaryMsg') }}</p>
+              <div class="error-boundary__actions">
+                <button class="error-boundary__btn" @click="clearError">{{ t('common.retry') }}</button>
+                <NuxtLink to="/admin" class="error-boundary__link" @click="clearError">
+                  {{ t('admin.layout.backToStart') }}
+                </NuxtLink>
+              </div>
+            </div>
+          </template>
+          <slot />
+        </NuxtErrorBoundary>
       </main>
     </div>
+    <UiToastContainer />
   </div>
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
+
 // Prevent admin pages from being indexed by search engines
 useSeoMeta({ robots: 'noindex, nofollow' })
 
@@ -199,6 +215,7 @@ onMounted(() => {
 /* Admin Login Screen */
 .admin-login {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,55 +225,55 @@ onMounted(() => {
     var(--color-primary) 50%,
     #2d5259 100%
   );
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .login-card {
   background: var(--bg-primary);
-  border-radius: 16px;
-  padding: 48px 40px;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-12) var(--spacing-10);
   width: 100%;
-  max-width: 400px;
+  max-width: 25rem;
   text-align: center;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-xl);
 }
 
 .login-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
 }
 
 .logo-icon {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   background: var(--color-primary);
   color: var(--color-accent);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
 }
 
 .logo-text {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
   color: var(--color-primary);
 }
 
 .login-card h1 {
-  font-size: 1.5rem;
-  color: #1f2937;
-  margin: 0 0 8px;
+  font-size: var(--font-size-2xl);
+  color: var(--color-gray-800);
+  margin: 0 0 var(--spacing-2);
 }
 
 .login-subtitle {
-  color: #6b7280;
-  margin: 0 0 32px;
+  color: var(--color-gray-500);
+  margin: 0 0 var(--spacing-8);
 }
 
 .btn-google {
@@ -264,20 +281,20 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 14px 24px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-6);
   border: 2px solid var(--border-color-light);
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #374151;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
   background: var(--bg-primary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
 }
 
 .btn-google:hover:not(:disabled) {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   border-color: var(--border-color);
 }
 
@@ -288,13 +305,14 @@ onMounted(() => {
 
 .error-msg {
   color: var(--color-error);
-  font-size: 14px;
-  margin-top: 16px;
+  font-size: 0.875rem;
+  margin-top: 1rem;
 }
 
 /* Admin Layout */
 .admin-layout {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   background: var(--bg-secondary);
 }
@@ -309,6 +327,8 @@ onMounted(() => {
 .admin-content {
   flex: 1;
   overflow-x: hidden;
+  padding: var(--spacing-3);
+  padding-top: calc(56px + var(--spacing-3));
 }
 
 /* Header only on mobile */
@@ -316,7 +336,7 @@ onMounted(() => {
   display: block;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .mobile-only-header {
     display: none;
   }
@@ -341,13 +361,8 @@ onMounted(() => {
   visibility: visible;
 }
 
-.admin-content {
-  padding: var(--spacing-3);
-  padding-top: calc(56px + var(--spacing-3));
-}
-
 /* Tablet+ */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .sidebar-overlay {
     display: none;
   }
@@ -358,7 +373,7 @@ onMounted(() => {
   }
 
   .sidebar-collapsed .admin-main {
-    margin-left: 64px;
+    margin-left: var(--spacing-16);
   }
 
   .admin-content {
@@ -367,7 +382,7 @@ onMounted(() => {
 }
 
 /* Desktop */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .admin-content {
     padding: var(--spacing-8);
   }

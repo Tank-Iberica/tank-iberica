@@ -64,9 +64,9 @@ const tooltipText = computed(() =>
 .ai-disclosure-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
-  border-radius: 4px;
+  gap: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--border-radius-sm);
   font-weight: 500;
   white-space: nowrap;
   line-height: 1.4;
@@ -80,22 +80,22 @@ const tooltipText = computed(() =>
 
 /* Size variants */
 .size--sm {
-  font-size: 0.65rem;
+  font-size: var(--font-size-xs);
 }
 
 .size--sm .badge-icon {
-  width: 10px;
-  height: 10px;
+  width: 0.625rem;
+  height: 0.625rem;
 }
 
 .size--md {
-  font-size: 0.75rem;
-  padding: 3px 8px;
+  font-size: var(--font-size-xs);
+  padding: 0.1875rem 0.5rem;
 }
 
 .size--md .badge-icon {
-  width: 12px;
-  height: 12px;
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 /* Type: translated — blue tint */
@@ -107,9 +107,9 @@ const tooltipText = computed(() =>
 
 /* Type: generated — violet tint */
 .type--generated {
-  background: rgba(139, 92, 246, 0.08);
-  color: #8b5cf6;
-  border-color: rgba(139, 92, 246, 0.2);
+  background: var(--color-purple-bg);
+  color: var(--color-purple-text);
+  border-color: var(--color-info-border);
 }
 
 /* Type: assisted — amber tint */

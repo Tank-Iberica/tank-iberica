@@ -28,10 +28,9 @@ export interface MetricsExportData {
 export function exportMetricsCSV(data: MetricsExportData): void {
   const rows: string[][] = []
 
-  rows.push(['Metric', 'Current', 'Previous Month', 'Change %'])
-
   const kpi = data.kpiSummary
   rows.push(
+    ['Metric', 'Current', 'Previous Month', 'Change %'],
     [
       'Monthly Revenue (cents)',
       String(kpi.monthlyRevenue.current),
@@ -56,20 +55,15 @@ export function exportMetricsCSV(data: MetricsExportData): void {
       String(kpi.monthlyLeads.previousMonth),
       String(kpi.monthlyLeads.changePercent),
     ],
-  )
-
-  rows.push(
     [],
     ['Month', 'Revenue (cents)', 'Tax (cents)'],
     ...data.revenueSeries.map((point) => [point.month, String(point.revenue), String(point.tax)]),
+    [],
+    ['Month', 'Published', 'Sold'],
+    ...data.vehicleActivity.map((point) => [point.month, String(point.published), String(point.sold)]),
+    [],
+    ['Month', 'Leads'],
   )
-
-  rows.push([], ['Month', 'Published', 'Sold'])
-  for (const point of data.vehicleActivity) {
-    rows.push([point.month, String(point.published), String(point.sold)])
-  }
-
-  rows.push([], ['Month', 'Leads'])
   for (const point of data.leadsSeries) {
     rows.push([point.month, String(point.leads)])
   }
@@ -84,17 +78,15 @@ export function exportMetricsCSV(data: MetricsExportData): void {
     rows.push([v.vehicleId, v.title, String(v.views)])
   }
 
-  rows.push([], ['Funnel Stage', 'Count'])
   const funnel = data.conversionFunnel
+  const churn = data.churnRate
   rows.push(
+    [],
+    ['Funnel Stage', 'Count'],
     ['Visits (total views)', String(funnel.visits)],
     ['Vehicle Views (unique vehicles)', String(funnel.vehicleViews)],
     ['Leads', String(funnel.leads)],
     ['Sales', String(funnel.sales)],
-  )
-
-  const churn = data.churnRate
-  rows.push(
     [],
     ['Churn Metric', 'Value'],
     ['Total Dealers (subscriptions)', String(churn.totalDealers)],

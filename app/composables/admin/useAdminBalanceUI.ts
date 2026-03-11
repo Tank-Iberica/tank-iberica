@@ -150,6 +150,121 @@ function buildResumenMensualLines(
   return lines
 }
 
+// ─── PDF styles (shared between balance & resumen) ──────────
+const BALANCE_PDF_STYLE = `
+  body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
+  .header { background: linear-gradient(135deg, #1A3238 0%, #23424A 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+  .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+  .header-accent { width: 45px; height: 2px; background: #7FD1C8; margin-top: 6px; }
+  .header-info { font-size: 9px; text-align: right; line-height: 1.8; opacity: 0.85; }
+  .content { padding: 20px 24px; }
+  .subtitle { font-size: 14px; color: #23424A; font-weight: 700; margin: 0 0 4px; }
+  .date { font-size: 11px; color: #4A5A5A; margin: 0 0 16px; }
+  .footer { background: #23424A; color: white; text-align: center; padding: 10px; font-size: 9px; margin-top: 24px; }
+  @media print { body { margin: 0; } .footer { position: fixed; bottom: 0; left: 0; right: 0; } }`
+
+const BALANCE_PDF_HEADER = `<div class="header">
+  <div><h1>TRACCIONA</h1><div class="header-accent"></div></div>
+  <div class="header-info">TRACCIONA.COM<br>info@tracciona.com<br>+34 645 779 594</div>
+</div>`
+
+function buildBalancePdfHtml(
+  data: BalanceEntry[],
+  colDefs: BalanceColumnDef[],
+  yearLabel: string,
+  totals: { totalIngresos: number; totalGastos: number; balanceNeto: number },
+): string {
+  const tableStyle = `
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  th { background: #23424A; color: white; padding: 8px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  td { border-bottom: 1px solid #e5e7eb; padding: 7px 10px; text-align: left; font-size: 11px; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  .ingreso { color: #059669; font-weight: 600; }
+  .gasto { color: #dc2626; font-weight: 600; }
+  .totals { margin-top: 20px; padding: 16px; background: #f3f4f6; border-radius: 8px; }
+  .totals p { margin: 4px 0; font-size: 12px; }`
+
+  const headers = colDefs.map((c) => `<th>${c.header}</th>`).join('')
+  const rows = data.map((e) => '<tr>' + colDefs.map((c) => c.cell(e)).join('') + '</tr>').join('')
+
+  return `<!DOCTYPE html><html><head><title>Balance ${yearLabel} - Tracciona</title>
+  <style>${BALANCE_PDF_STYLE}${tableStyle}</style>
+  </head><body>${BALANCE_PDF_HEADER}
+  <div class="content">
+  <p class="subtitle">Balance ${yearLabel}</p>
+  <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>
+  <table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>
+  <div class="totals">
+    <p><strong>Total Ingresos:</strong> <span class="ingreso">+${totals.totalIngresos.toFixed(2)}\u20AC</span></p>
+    <p><strong>Total Gastos:</strong> <span class="gasto">-${totals.totalGastos.toFixed(2)}\u20AC</span></p>
+    <p><strong>Balance Neto:</strong> <strong>${totals.balanceNeto.toFixed(2)}\u20AC</strong></p>
+  </div></div>
+  <div class="footer">TRACCIONA.COM</div></body></html>`
+}
+
+function buildResumenPdfHtml(yearLabel: string, resumenSectionsHtml: string): string {
+  const tableStyle = `
+  h2 { font-size: 13px; color: #23424A; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+  th { background: #23424A; color: white; padding: 8px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  td { border-bottom: 1px solid #e5e7eb; padding: 7px 10px; text-align: right; font-size: 11px; }
+  td:first-child { text-align: left; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  .positive { color: #059669; font-weight: 600; }
+  .negative { color: #dc2626; font-weight: 600; }`
+
+  return `<!DOCTYPE html><html><head><title>Resumen Balance - Tracciona</title>
+  <style>${BALANCE_PDF_STYLE}${tableStyle}</style>
+  </head><body>${BALANCE_PDF_HEADER}
+  <div class="content">
+  <p class="subtitle">Resumen Balance ${yearLabel}</p>
+  <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>
+  ${resumenSectionsHtml}</div>
+  <div class="footer">TRACCIONA.COM</div></body></html>`
+}
+
+/** Print HTML via hidden iframe with fallback to popup window. */
+function printHTMLContent(html: string, onError: () => void): void {
+  const existingFrame = document.getElementById('print-frame')
+  if (existingFrame) existingFrame.remove()
+
+  const iframe = document.createElement('iframe')
+  iframe.id = 'print-frame'
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
+  document.body.appendChild(iframe)
+
+  const doc = iframe.contentDocument || iframe.contentWindow?.document
+  if (!doc) { onError(); return }
+
+  doc.open()
+  doc.write(html) // NOSONAR typescript:S1874
+  doc.close()
+
+  iframe.onload = () => {
+    try {
+      iframe.contentWindow?.focus()
+      iframe.contentWindow?.print()
+    } catch {
+      const win = globalThis.open('', '_blank')
+      if (win) {
+        win.document.write(html) // NOSONAR typescript:S1874
+        win.document.close()
+        win.focus()
+        win.print()
+      } else {
+        onError()
+      }
+    }
+  }
+
+  setTimeout(() => {
+    try {
+      iframe.contentWindow?.focus()
+      iframe.contentWindow?.print()
+    } catch { /* Silent fail - onload will handle it */ }
+  }, 100)
+}
+
 // ─── Empty form helper ──────────────────────────────────────
 function downloadFile(content: string, filename: string, type: string) {
   const blob = new Blob([content], { type })
@@ -443,57 +558,10 @@ export function useAdminBalanceUI() {
   }
 
   function exportToPDF(data: BalanceEntry[]) {
-    let html = `<!DOCTYPE html><html><head><title>Balance ${filters.year || 'Todos'} - Tracciona</title>
-    <style>
-      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
-      .header { background: linear-gradient(135deg, #1A3238 0%, #23424A 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
-      .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
-      .header-accent { width: 45px; height: 2px; background: #7FD1C8; margin-top: 6px; }
-      .header-info { font-size: 9px; text-align: right; line-height: 1.8; opacity: 0.85; }
-      .content { padding: 20px 24px; }
-      .subtitle { font-size: 14px; color: #23424A; font-weight: 700; margin: 0 0 4px; }
-      .date { font-size: 11px; color: #4A5A5A; margin: 0 0 16px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-      th { background: #23424A; color: white; padding: 8px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-      td { border-bottom: 1px solid #e5e7eb; padding: 7px 10px; text-align: left; font-size: 11px; }
-      tr:nth-child(even) td { background: #f9fafb; }
-      .ingreso { color: #059669; font-weight: 600; }
-      .gasto { color: #dc2626; font-weight: 600; }
-      .totals { margin-top: 20px; padding: 16px; background: #f3f4f6; border-radius: 8px; }
-      .totals p { margin: 4px 0; font-size: 12px; }
-      .footer { background: #23424A; color: white; text-align: center; padding: 10px; font-size: 9px; margin-top: 24px; }
-      @media print { body { margin: 0; } .footer { position: fixed; bottom: 0; left: 0; right: 0; } }
-    </style>
-  </head><body>
-    <div class="header">
-      <div><h1>TRACCIONA</h1><div class="header-accent"></div></div>
-      <div class="header-info">TRACCIONA.COM<br>info@tracciona.com<br>+34 645 779 594</div>
-    </div>
-    <div class="content">
-    <p class="subtitle">Balance ${filters.year || 'Todos los a\u00F1os'}</p>
-    <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>
-    <table><thead><tr>`
-
     const colDefs = buildBalanceColumnDefs(exportColumns)
-    html += colDefs.map((c) => `<th>${c.header}</th>`).join('')
-
-    html += '</tr></thead><tbody>'
-
-    for (const e of data) {
-      html += '<tr>' + colDefs.map((c) => c.cell(e)).join('') + '</tr>'
-    }
-
-    html += `</tbody></table>
-    <div class="totals">
-      <p><strong>Total Ingresos:</strong> <span class="ingreso">+${summary.value.totalIngresos.toFixed(2)}\u20AC</span></p>
-      <p><strong>Total Gastos:</strong> <span class="gasto">-${summary.value.totalGastos.toFixed(2)}\u20AC</span></p>
-      <p><strong>Balance Neto:</strong> <strong>${summary.value.balanceNeto.toFixed(2)}\u20AC</strong></p>
-    </div>
-    </div>
-    <div class="footer">TRACCIONA.COM</div>
-  </body></html>`
-
-    printHTML(html)
+    const yearLabel = String(filters.year || 'Todos los a\u00F1os')
+    const html = buildBalancePdfHtml(data, colDefs, yearLabel, summary.value)
+    printHTMLContent(html, () => toast.error('toast.printBlocked'))
   }
 
   function exportResumen() {
@@ -514,94 +582,10 @@ export function useAdminBalanceUI() {
   }
 
   function exportResumenPDF() {
-    let html = `<!DOCTYPE html><html><head><title>Resumen Balance - Tracciona</title>
-    <style>
-      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: #1F2A2A; }
-      .header { background: linear-gradient(135deg, #1A3238 0%, #23424A 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
-      .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
-      .header-accent { width: 45px; height: 2px; background: #7FD1C8; margin-top: 6px; }
-      .header-info { font-size: 9px; text-align: right; line-height: 1.8; opacity: 0.85; }
-      .content { padding: 20px 24px; }
-      .subtitle { font-size: 14px; color: #23424A; font-weight: 700; margin: 0 0 4px; }
-      .date { font-size: 11px; color: #4A5A5A; margin: 0 0 16px; }
-      h2 { font-size: 13px; color: #23424A; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-      table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-      th { background: #23424A; color: white; padding: 8px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-      td { border-bottom: 1px solid #e5e7eb; padding: 7px 10px; text-align: right; font-size: 11px; }
-      td:first-child { text-align: left; }
-      tr:nth-child(even) td { background: #f9fafb; }
-      .positive { color: #059669; font-weight: 600; }
-      .negative { color: #dc2626; font-weight: 600; }
-      .footer { background: #23424A; color: white; text-align: center; padding: 10px; font-size: 9px; margin-top: 24px; }
-      @media print { body { margin: 0; } .footer { position: fixed; bottom: 0; left: 0; right: 0; } }
-    </style>
-  </head><body>
-    <div class="header">
-      <div><h1>TRACCIONA</h1><div class="header-accent"></div></div>
-      <div class="header-info">TRACCIONA.COM<br>info@tracciona.com<br>+34 645 779 594</div>
-    </div>
-    <div class="content">
-    <p class="subtitle">Resumen Balance ${filters.year || 'Todos los a\u00F1os'}</p>
-    <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>`
-
-    html += buildResumenSections(resumenOptions, summary.value, monthlyBreakdown.value)
-
-    html += `</div>
-    <div class="footer">TRACCIONA.COM</div>
-  </body></html>`
-
-    printHTML(html)
-  }
-
-  /**
-   * Print HTML content using a hidden iframe (avoids popup blocker issues)
-   */
-  function printHTML(html: string) {
-    const existingFrame = document.getElementById('print-frame')
-    if (existingFrame) {
-      existingFrame.remove()
-    }
-
-    const iframe = document.createElement('iframe')
-    iframe.id = 'print-frame'
-    iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
-    document.body.appendChild(iframe)
-
-    const doc = iframe.contentDocument || iframe.contentWindow?.document
-    if (!doc) {
-      toast.error('toast.printBlocked')
-      return
-    }
-
-    doc.open()
-    doc.write(html) // NOSONAR typescript:S1874
-    doc.close()
-
-    iframe.onload = () => {
-      try {
-        iframe.contentWindow?.focus()
-        iframe.contentWindow?.print()
-      } catch {
-        const win = globalThis.open('', '_blank')
-        if (win) {
-          win.document.write(html) // NOSONAR typescript:S1874
-          win.document.close()
-          win.focus()
-          win.print()
-        } else {
-          toast.error('toast.printBlocked')
-        }
-      }
-    }
-
-    setTimeout(() => {
-      try {
-        iframe.contentWindow?.focus()
-        iframe.contentWindow?.print()
-      } catch {
-        // Silent fail - onload will handle it
-      }
-    }, 100)
+    const yearLabel = String(filters.year || 'Todos los a\u00F1os')
+    const sections = buildResumenSections(resumenOptions, summary.value, new Map(monthlyBreakdown.value))
+    const html = buildResumenPdfHtml(yearLabel, sections)
+    printHTMLContent(html, () => toast.error('toast.printBlocked'))
   }
 
   // ─── Clear filters ───────────────────────────────────────

@@ -2,192 +2,43 @@
  * useMarketData — Composable for querying market intelligence materialized views.
  * Provides market data, price history, demand data, valuations, category stats, and trends.
  * Used by the public /datos page and dealer analytics features.
+ *
+ * Pure calculation helpers → shared/marketDataHelpers.ts
+ * Type definitions       → shared/marketDataTypes.ts
  */
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
+// Re-export types for backwards compatibility
+export type {
+  MarketDataRow,
+  PriceHistoryRow,
+  DemandDataRow,
+  MarketFilters,
+  PriceHistoryFilters,
+  DemandFilters,
+  ValuationParams,
+  ValuationResult,
+  CategoryStat,
+} from '~/composables/shared/marketDataTypes'
 
-// pctChange imported from shared helpers
-import { pctChange } from '~/composables/shared/dateHelpers'
+import type {
+  MarketDataRow,
+  PriceHistoryRow,
+  DemandDataRow,
+  MarketFilters,
+  PriceHistoryFilters,
+  DemandFilters,
+  ValuationParams,
+  ValuationResult,
+  CategoryStat,
+} from '~/composables/shared/marketDataTypes'
 
-export interface MarketDataRow {
-  vertical: string
-  action: string
-  subcategory: string
-  brand: string
-  location_province: string
-  location_country: string
-  month: string
-  listings: number
-  avg_price: number
-  median_price: number
-  min_price: number
-  max_price: number
-  avg_days_to_sell: number | null
-  sold_count: number
-}
-
-export interface PriceHistoryRow {
-  vertical: string
-  subcategory: string
-  brand: string
-  week: string
-  avg_price: number
-  median_price: number
-  sample_size: number
-}
-
-export interface DemandDataRow {
-  vertical: string
-  category: string
-  subcategory: string
-  brand: string
-  province: string
-  month: string
-  alert_count: number
-}
-
-export interface MarketFilters {
-  subcategory?: string
-  brand?: string
-  province?: string
-  months?: number // last N months, default 12
-}
-
-export interface PriceHistoryFilters {
-  subcategory?: string
-  brand?: string
-  weeks?: number // last N weeks, default 52
-}
-
-export interface DemandFilters {
-  subcategory?: string
-  brand?: string
-  province?: string
-}
-
-export interface ValuationParams {
-  brand: string
-  model?: string
-  year?: number
-  km?: number
-  province?: string
-  subcategory?: string
-}
-
-export interface ValuationResult {
-  estimated_min: number
-  estimated_median: number
-  estimated_max: number
-  market_trend: 'rising' | 'falling' | 'stable'
-  trend_pct: number
-  avg_days_to_sell: number | null
-  sample_size: number
-  confidence: 'low' | 'medium' | 'high'
-}
-
-export interface CategoryStat {
-  subcategory: string
-  avg_price: number
-  listings: number
-  trend_pct: number
-}
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/** Returns 'YYYY-MM' for a date offset by N months from now. */
-function getMonthCutoff(monthsAgo: number): string {
-  const d = new Date()
-  d.setMonth(d.getMonth() - monthsAgo)
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  return `${y}-${m}`
-}
-
-/** Returns 'YYYY-Www' (ISO week) for a date offset by N weeks from now. */
-function getWeekCutoff(weeksAgo: number): string {
-  const d = new Date()
-  d.setDate(d.getDate() - weeksAgo * 7)
-  const y = d.getFullYear()
-  // Approximate ISO week number
-  const jan1 = new Date(y, 0, 1)
-  const dayOfYear = Math.floor((d.getTime() - jan1.getTime()) / 86400000) + 1
-  const week = Math.ceil(dayOfYear / 7)
-  return `${y}-W${String(week).padStart(2, '0')}`
-}
-
-/** Determine confidence level based on sample size. */
-function getConfidence(sampleSize: number): 'low' | 'medium' | 'high' {
-  if (sampleSize >= 20) return 'high'
-  if (sampleSize >= 10) return 'medium'
-  return 'low'
-}
-
-/** Determine trend direction from percentage change. */
-function getTrendDirection(pct: number): 'rising' | 'falling' | 'stable' {
-  if (pct > 2) return 'rising'
-  if (pct < -2) return 'falling'
-  return 'stable'
-}
-
-/** Compute the median from a sorted array of numbers. */
-function computeMedian(sorted: number[]): number {
-  if (sorted.length === 0) return 0
-  const mid = Math.floor(sorted.length / 2)
-  if (sorted.length % 2 === 0) {
-    return (sorted[mid - 1]! + sorted[mid]!) / 2
-  }
-  return sorted[mid]!
-}
-
-/** Depreciation factor for a given model year (~5% per year, floor 10%). */
-function depreciationFactor(year: number | undefined): number {
-  if (!year) return 1
-  const yearsOld = Math.max(0, new Date().getFullYear() - year)
-  return Math.max(0.1, 1 - yearsOld * 0.05)
-}
-
-/** Average days-to-sell from rows, or null if no data. */
-function avgDaysToSell(rows: MarketDataRow[]): number | null {
-  const vals = rows.map((r) => r.avg_days_to_sell).filter((d): d is number => d !== null && d > 0)
-  return vals.length > 0 ? Math.round(vals.reduce((s, d) => s + d, 0) / vals.length) : null
-}
-
-/** Trend pct between the two most recent months in rows. */
-function computeRowsTrend(rows: MarketDataRow[]): number {
-  const months = [...new Set(rows.map((r) => r.month))].sort((a, b) => a.localeCompare(b)).reverse()
-  if (months.length < 2) return 0
-  const cur = rows.filter((r) => r.month === months[0])
-  const prev = rows.filter((r) => r.month === months[1])
-  const curAvg = cur.length > 0 ? cur.reduce((s, r) => s + r.avg_price, 0) / cur.length : 0
-  const prevAvg = prev.length > 0 ? prev.reduce((s, r) => s + r.avg_price, 0) / prev.length : 0
-  return pctChange(curAvg, prevAvg)
-}
-
-type SubcatAggregate = { totalPrice: number; totalListings: number; count: number }
-
-/** Aggregate rows into a per-subcategory map of price/listing totals. */
-function aggregateBySubcategory(rows: MarketDataRow[]): Map<string, SubcatAggregate> {
-  const map = new Map<string, SubcatAggregate>()
-  for (const row of rows) {
-    const existing = map.get(row.subcategory)
-    if (existing) {
-      existing.totalPrice += row.avg_price * row.listings
-      existing.totalListings += row.listings
-      existing.count++
-    } else {
-      map.set(row.subcategory, {
-        totalPrice: row.avg_price * row.listings,
-        totalListings: row.listings,
-        count: 1,
-      })
-    }
-  }
-  return map
-}
+import {
+  computeValuation,
+  buildCategoryStats,
+  computeWeightedTrend,
+  getMonthCutoff,
+  getWeekCutoff,
+} from '~/composables/shared/marketDataHelpers'
 
 // ---------------------------------------------------------------------------
 // Composable
@@ -218,7 +69,7 @@ export function useMarketData() {
 
       let query = supabase
         .from('market_data')
-        .select('*')
+        .select('vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count')
         .gte('month', cutoff)
         .order('month', { ascending: false })
 
@@ -259,7 +110,7 @@ export function useMarketData() {
 
       let query = supabase
         .from('price_history')
-        .select('*')
+        .select('vertical, subcategory, brand, week, avg_price, median_price, sample_size')
         .gte('week', cutoff)
         .order('week', { ascending: true })
 
@@ -292,7 +143,7 @@ export function useMarketData() {
     error.value = ''
 
     try {
-      let query = supabase.from('demand_data').select('*').order('month', { ascending: false })
+      let query = supabase.from('demand_data').select('vertical, category, subcategory, brand, province, month, alert_count').order('month', { ascending: false })
 
       if (filters.subcategory) {
         query = query.eq('subcategory', filters.subcategory)
@@ -326,49 +177,24 @@ export function useMarketData() {
     error.value = ''
 
     try {
-      // --- Fetch matching market data rows ---
       let marketQuery = supabase
         .from('market_data')
-        .select('*')
+        .select('vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count')
         .eq('brand', params.brand)
         .order('month', { ascending: false })
 
-      if (params.subcategory) {
-        marketQuery = marketQuery.eq('subcategory', params.subcategory)
-      }
-      if (params.province) {
-        marketQuery = marketQuery.eq('location_province', params.province)
-      }
+      if (params.subcategory) marketQuery = marketQuery.eq('subcategory', params.subcategory)
+      if (params.province) marketQuery = marketQuery.eq('location_province', params.province)
 
       const { data: mData, error: mErr } = await marketQuery
-
       if (mErr) throw mErr
 
       const rows = (mData || []) as unknown as MarketDataRow[]
-
       if (rows.length === 0) {
         error.value = 'No market data found for the given parameters'
         return null
       }
-
-      const prices = rows
-        .map((r) => r.avg_price)
-        .filter((p) => p > 0)
-        .sort((a, b) => a - b)
-      const totalSample = rows.reduce((sum, r) => sum + r.listings, 0)
-      const factor = depreciationFactor(params.year)
-      const trendPct = computeRowsTrend(rows)
-
-      return {
-        estimated_min: Math.round((prices[0] ?? 0) * factor),
-        estimated_median: Math.round(computeMedian(prices) * factor),
-        estimated_max: Math.round((prices.at(-1) ?? 0) * factor),
-        market_trend: getTrendDirection(trendPct),
-        trend_pct: trendPct,
-        avg_days_to_sell: avgDaysToSell(rows),
-        sample_size: totalSample,
-        confidence: getConfidence(totalSample),
-      }
+      return computeValuation(rows, params.year)
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error computing valuation'
       return null
@@ -386,49 +212,15 @@ export function useMarketData() {
     error.value = ''
 
     try {
-      // Fetch the last 2 months of market data to compute trends
       const cutoff = getMonthCutoff(2)
-
       const { data, error: err } = await supabase
         .from('market_data')
-        .select('*')
+        .select('vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count')
         .gte('month', cutoff)
         .order('month', { ascending: false })
 
       if (err) throw err
-
-      const rows = (data || []) as unknown as MarketDataRow[]
-
-      if (rows.length === 0) return []
-
-      const uniqueMonths = [...new Set(rows.map((r) => r.month))]
-        .sort((a, b) => a.localeCompare(b))
-        .reverse()
-      const latestMonth = uniqueMonths[0]
-      const previousMonth = uniqueMonths.length >= 2 ? uniqueMonths[1] : null
-
-      const latestMap = aggregateBySubcategory(rows.filter((r) => r.month === latestMonth))
-      const prevMap = aggregateBySubcategory(
-        previousMonth ? rows.filter((r) => r.month === previousMonth) : [],
-      )
-
-      const stats: CategoryStat[] = []
-      for (const [subcategory, data] of latestMap.entries()) {
-        const avgPrice =
-          data.totalListings > 0 ? Math.round(data.totalPrice / data.totalListings) : 0
-        const prev = prevMap.get(subcategory)
-        const prevAvgPrice =
-          prev && prev.totalListings > 0 ? Math.round(prev.totalPrice / prev.totalListings) : 0
-        stats.push({
-          subcategory,
-          avg_price: avgPrice,
-          listings: data.totalListings,
-          trend_pct: prev ? pctChange(avgPrice, prevAvgPrice) : 0,
-        })
-      }
-
-      stats.sort((a, b) => b.listings - a.listings)
-      return stats
+      return buildCategoryStats((data || []) as unknown as MarketDataRow[])
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching category stats'
       return []
@@ -447,7 +239,6 @@ export function useMarketData() {
 
     try {
       const cutoff = getMonthCutoff(2)
-
       let query = supabase
         .from('market_data')
         .select('month, avg_price, listings')
@@ -455,40 +246,14 @@ export function useMarketData() {
         .gte('month', cutoff)
         .order('month', { ascending: false })
 
-      if (brand) {
-        query = query.eq('brand', brand)
-      }
+      if (brand) query = query.eq('brand', brand)
 
       const { data, error: err } = await query
-
       if (err) throw err
 
-      const rows = (data || []) as unknown as Pick<
-        MarketDataRow,
-        'month' | 'avg_price' | 'listings'
-      >[]
-
-      if (rows.length === 0) return 0
-
-      const uniqueMonths = [...new Set(rows.map((r) => r.month))]
-        .sort((a, b) => a.localeCompare(b))
-        .reverse()
-
-      if (uniqueMonths.length < 2) return 0
-
-      const currentRows = rows.filter((r) => r.month === uniqueMonths[0])
-      const previousRows = rows.filter((r) => r.month === uniqueMonths[1])
-
-      // Weighted average by listings count
-      const currentTotal = currentRows.reduce((sum, r) => sum + r.avg_price * r.listings, 0)
-      const currentListings = currentRows.reduce((sum, r) => sum + r.listings, 0)
-      const previousTotal = previousRows.reduce((sum, r) => sum + r.avg_price * r.listings, 0)
-      const previousListings = previousRows.reduce((sum, r) => sum + r.listings, 0)
-
-      const currentAvg = currentListings > 0 ? currentTotal / currentListings : 0
-      const previousAvg = previousListings > 0 ? previousTotal / previousListings : 0
-
-      return pctChange(currentAvg, previousAvg)
+      return computeWeightedTrend(
+        (data || []) as unknown as Pick<MarketDataRow, 'month' | 'avg_price' | 'listings'>[],
+      )
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error computing trend'
       return 0

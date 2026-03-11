@@ -89,14 +89,14 @@ function formatDateTime(dateStr: string | null): string {
 
 function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
-    new: '#3b82f6',
-    viewed: '#8b5cf6',
-    contacted: '#f59e0b',
+    new: 'var(--color-info)',
+    viewed: 'var(--color-violet-500)',
+    contacted: 'var(--color-warning)',
     negotiating: '#f97316',
     won: '#22c55e',
-    lost: '#ef4444',
+    lost: 'var(--color-error)',
   }
-  return colors[status] || '#64748b'
+  return colors[status] || 'var(--color-slate-500)'
 }
 </script>
 
@@ -109,8 +109,8 @@ function getStatusColor(status: string): string {
       <h1>{{ t('dashboard.leads.detail') }}</h1>
     </header>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="5" />
     </div>
 
     <template v-else-if="currentLead">
@@ -254,18 +254,18 @@ function getStatusColor(status: string): string {
 
 <style scoped>
 .lead-detail-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .back-link {
@@ -273,7 +273,7 @@ function getStatusColor(status: string): string {
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -288,12 +288,12 @@ function getStatusColor(status: string): string {
 .loading-state {
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: var(--spacing-10);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -307,30 +307,30 @@ function getStatusColor(status: string): string {
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
 .alert-success {
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
 }
 
 .card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .card h2 {
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--spacing-4) 0;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -339,13 +339,13 @@ function getStatusColor(status: string): string {
 .info-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .info-label {
@@ -371,7 +371,7 @@ function getStatusColor(status: string): string {
 .vehicle-link {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   color: var(--color-primary);
   font-weight: 600;
   text-decoration: none;
@@ -384,7 +384,7 @@ function getStatusColor(status: string): string {
 
 .message-text {
   margin: 0;
-  color: #334155;
+  color: var(--text-secondary);
   line-height: 1.6;
   white-space: pre-wrap;
 }
@@ -392,15 +392,15 @@ function getStatusColor(status: string): string {
 .status-current {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
   font-size: 0.9rem;
   color: var(--text-auxiliary);
 }
 
 .status-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -408,14 +408,14 @@ function getStatusColor(status: string): string {
 .status-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .status-btn {
-  min-height: 44px;
-  padding: 8px 16px;
+  min-height: 2.75rem;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   font-size: 0.85rem;
   font-weight: 500;
@@ -432,38 +432,38 @@ function getStatusColor(status: string): string {
   cursor: not-allowed;
 }
 .status-btn.active {
-  border-width: 2px;
+  border-width: 0.125rem;
   font-weight: 700;
 }
 
 textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
   resize: vertical;
-  min-height: 80px;
-  margin-bottom: 12px;
+  min-height: 5rem;
+  margin-bottom: var(--spacing-3);
 }
 
 textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-6);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
 }
@@ -482,41 +482,41 @@ textarea:focus {
   flex-direction: column;
   gap: 0;
   position: relative;
-  padding-left: 24px;
+  padding-left: var(--spacing-6);
 }
 
 .timeline::before {
   content: '';
   position: absolute;
-  left: 7px;
-  top: 8px;
-  bottom: 8px;
-  width: 2px;
+  left: 0.4375rem;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 0.125rem;
   background: var(--bg-tertiary);
 }
 
 .timeline-item {
   display: flex;
-  gap: 16px;
+  gap: var(--spacing-4);
   position: relative;
-  padding-bottom: 16px;
+  padding-bottom: var(--spacing-4);
 }
 
 .timeline-dot {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   border-radius: 50%;
   flex-shrink: 0;
   position: absolute;
   left: -24px;
-  top: 2px;
+  top: 0.125rem;
   z-index: 1;
 }
 
 .timeline-content {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .timeline-status {
@@ -534,31 +534,31 @@ textarea:focus {
   font-size: 0.85rem;
   color: var(--text-auxiliary);
   font-style: italic;
-  margin-top: 4px;
+  margin-top: var(--spacing-1);
 }
 
 .meta-info {
   font-size: 0.8rem;
   color: var(--text-disabled);
   text-align: center;
-  padding: 8px;
+  padding: var(--spacing-2);
 }
 
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .info-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .lead-detail-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

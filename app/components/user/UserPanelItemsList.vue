@@ -28,63 +28,63 @@ const { t } = useI18n()
 .empty-state {
   text-align: center;
   color: #999;
-  padding: 20px;
+  padding: 1.25rem;
   font-size: 0.9rem;
 }
 
 .items-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .item-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   border: 1px solid #eee;
 }
 
 .item-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .item-title {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .item-date {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: #999;
 }
 
 .status-badge {
   font-size: 0.7rem;
   font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 12px;
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--border-radius-md);
   text-transform: capitalize;
 }
 
 .status-badge.pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .status-badge.approved {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 
 .status-badge.rejected {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 </style>

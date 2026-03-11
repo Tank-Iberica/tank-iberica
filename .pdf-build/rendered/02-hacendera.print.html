@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Biblia de Subvenciones - 02 hacendera</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Biblia de Subvenciones - 02 hacendera</h1>
+    <p>Tomo monografico de la biblia de subvenciones para desarrollo exhaustivo por linea.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#1-ficha-de-trabajo'>1. Ficha de trabajo</a></li>
+<li class='toc-l2'><a href='#2-que-decide-realmente-la-diputacion'>2. Que decide realmente la Diputacion</a></li>
+<li class='toc-l2'><a href='#3-base-oficial-verificable-y-lectura-normativa-practica'>3. Base oficial verificable y lectura normativa practica</a></li>
+<li class='toc-l2'><a href='#4-requisitos-sustantivos-desglosados'>4. Requisitos sustantivos desglosados</a></li>
+<li class='toc-l3'><a href='#4-1-proyecto-en-municipio-leones-elegible'>4.1 Proyecto en municipio leones elegible</a></li>
+<li class='toc-l3'><a href='#4-2-proyecto-con-impacto-rural-defendible'>4.2 Proyecto con impacto rural defendible</a></li>
+<li class='toc-l3'><a href='#4-3-campana-publica-de-financiacion-colectiva'>4.3 Campana publica de financiacion colectiva</a></li>
+<li class='toc-l3'><a href='#4-4-legitimidad-comunitaria'>4.4 Legitimidad comunitaria</a></li>
+<li class='toc-l2'><a href='#5-encaje-real-de-tradebase'>5. Encaje real de TradeBase</a></li>
+<li class='toc-l3'><a href='#5-1-lo-que-juega-a-favor'>5.1 Lo que juega a favor</a></li>
+<li class='toc-l3'><a href='#5-2-lo-que-juega-en-contra'>5.2 Lo que juega en contra</a></li>
+<li class='toc-l2'><a href='#6-que-habria-que-hacer-exactamente-para-que-el-expediente-tenga-opciones'>6. Que habria que hacer exactamente para que el expediente tenga opciones</a></li>
+<li class='toc-l3'><a href='#6-1-redefinir-el-relato-publico'>6.1 Redefinir el relato publico</a></li>
+<li class='toc-l3'><a href='#6-2-crear-una-landing-especifica-de-campana'>6.2 Crear una landing especifica de campana</a></li>
+<li class='toc-l3'><a href='#6-3-definir-un-objetivo-economico-simple'>6.3 Definir un objetivo economico simple</a></li>
+<li class='toc-l3'><a href='#6-4-preparar-material-audiovisual-y-de-legitimidad'>6.4 Preparar material audiovisual y de legitimidad</a></li>
+<li class='toc-l2'><a href='#7-documentacion-minima-que-yo-exigiria-antes-de-pulsar-enviar'>7. Documentacion minima que yo exigiria antes de pulsar enviar</a></li>
+<li class='toc-l2'><a href='#8-que-no-sirve'>8. Que no sirve</a></li>
+<li class='toc-l2'><a href='#9-obstaculos-previsibles-y-resolucion-exacta'>9. Obstaculos previsibles y resolucion exacta</a></li>
+<li class='toc-l3'><a href='#obstaculo-1-el-publico-no-entiende-que-hace-tradebase'>Obstaculo 1: el publico no entiende que hace TradeBase</a></li>
+<li class='toc-l3'><a href='#obstaculo-2-no-existe-comunidad-natural-de-donantes'>Obstaculo 2: no existe comunidad natural de donantes</a></li>
+<li class='toc-l3'><a href='#obstaculo-3-el-destino-de-fondos-es-demasiado-abstracto'>Obstaculo 3: el destino de fondos es demasiado abstracto</a></li>
+<li class='toc-l2'><a href='#10-red-flags'>10. Red flags</a></li>
+<li class='toc-l2'><a href='#11-go-no-go-not-yet'>11. GO / NO-GO / NOT YET</a></li>
+<li class='toc-l3'><a href='#go'>GO</a></li>
+<li class='toc-l3'><a href='#no-go'>NO-GO</a></li>
+<li class='toc-l3'><a href='#not-yet'>NOT YET</a></li>
+<li class='toc-l2'><a href='#12-conclusion-operativa'>12. Conclusion operativa</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tomo-2-hacendera-de-proyectos">Tomo #2 - Hacendera de Proyectos</h1>
+<blockquote>
+<p><strong>Rol:</strong> monografia de expediente para decidir si Hacendera merece tiempo real de preparacion, que exige exactamente el esquema de matchfunding de la Diputacion y como tendria que traducirse TradeBase a un relato publico comprensible para no fracasar antes incluso de lanzar la campana.<br />
+<strong>Fecha de corte:</strong> 11/03/2026.<br />
+<strong>Fuentes principales:</strong></p>
+<ul>
+<li>Diputacion de Leon, lanzamiento Hacendera 2024: <a href="https://www.dipuleon.es/actualidad-y-comunicacion/noticias-de-diputacion/hp121124/">https://www.dipuleon.es/actualidad-y-comunicacion/noticias-de-diputacion/hp121124/</a></li>
+<li>Ecosistema Leon Sostenible / Centro de Innovacion Territorial reflejado por la propia Diputacion en esa noticia oficial.</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="ficha-de-trabajo">1. Ficha de trabajo</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Organismo</td>
+<td>Diputacion de Leon</td>
+</tr>
+<tr>
+<td>Naturaleza</td>
+<td>Matchfunding / financiacion colaborativa publica, no subvencion clasica a memoria cerrada</td>
+</tr>
+<tr>
+<td>Estado verificable</td>
+<td>Ultima edicion oficial verificada: campana anunciada el 12/11/2024; presentacion de proyectos del 19/11/2024 al 31/01/2025</td>
+</tr>
+<tr>
+<td>Intensidad</td>
+<td>La Diputacion duplica cada euro captado en la campana hasta un maximo de 20.000 EUR por proyecto</td>
+</tr>
+<tr>
+<td>Ambito territorial</td>
+<td>Municipios leoneses de menos de 20.000 habitantes</td>
+</tr>
+<tr>
+<td>Cuello de botella TradeBase</td>
+<td>El proyecto hay que traducirlo a lenguaje de comunidad y no de startup B2B tecnica</td>
+</tr>
+<tr>
+<td>Decision inicial</td>
+<td>Condicional fuerte; solo merece expediente si aceptais una campana publica de validacion social</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="que-decide-realmente-la-diputacion">2. Que decide realmente la Diputacion</h2>
+<p>Hacendera no decide si el proyecto es una buena startup para inversor. Decide otra cosa:</p>
+<ol>
+<li>si el proyecto tiene un impacto rural entendible;</li>
+<li>si puede movilizar una comunidad de apoyo;</li>
+<li>si la campana publica valida la propuesta con aportaciones reales;</li>
+<li>si la Diputacion ve sentido en duplicar esa validacion con dinero publico.</li>
+</ol>
+<p>La frase operativa de la noticia oficial es muy clara: la administracion duplica cada euro recaudado en la campana hasta 20.000 EUR. Eso significa que aqui la primera criba no es documental; es narrativa y comunitaria.</p>
+<hr />
+<h2 id="base-oficial-verificable-y-lectura-normativa-practica">3. Base oficial verificable y lectura normativa practica</h2>
+<p>La Diputacion describio Hacendera como una herramienta de <strong>matchfunding</strong> para &quot;pequenas empresas y proyectos de emprendimiento social en el medio rural&quot;. Tambien dejo fijados estos puntos verificables para la edicion anunciada:</p>
+<ul>
+<li>proyectos en municipios de menos de 20.000 habitantes;</li>
+<li>plazo de presentacion del 19/11/2024 al 31/01/2025;</li>
+<li>campanas de matchfunding a partir del 18/02/2025;</li>
+<li>duplicacion publica de la recaudacion privada hasta 20.000 EUR por proyecto;</li>
+<li>enfasis en impacto social, ambiental y economico.</li>
+</ul>
+<p>No estamos ante una base reguladora clasica con baremo tecnico publicado en la fuente abierta que hemos verificado; estamos ante una convocatoria apoyada en una plataforma y en logica de validacion comunitaria. Eso condiciona toda la preparacion.</p>
+<hr />
+<h2 id="requisitos-sustantivos-desglosados">4. Requisitos sustantivos desglosados</h2>
+<h3 id="proyecto-en-municipio-leones-elegible">4.1 Proyecto en municipio leones elegible</h3>
+<p>Con Fresno de la Vega este requisito territorial encaja de entrada. Aqui no hay trabajo adicional, salvo poder probar la sede y el arraigo real.</p>
+<h3 id="proyecto-con-impacto-rural-defendible">4.2 Proyecto con impacto rural defendible</h3>
+<p>No basta con decir que la SL esta en un pueblo. Hay que demostrar que el proyecto:</p>
+<ul>
+<li>crea actividad economica desde el medio rural;</li>
+<li>conecta con un problema del territorio;</li>
+<li>y genera un beneficio que un tercero no financiero pueda entender.</li>
+</ul>
+<p>Para TradeBase, la formulacion puramente B2B digital es demasiado abstracta. Hay que convertirla en algo asi:</p>
+<blockquote>
+<p>Plataforma tecnologica implantada en Fresno de la Vega para digitalizar mercados industriales tradicionalmente opacos, mejorar el acceso de profesionales rurales a herramientas de compraventa y crear actividad tecnologica estable desde el entorno rural leones.</p>
+</blockquote>
+<h3 id="campana-publica-de-financiacion-colectiva">4.3 Campana publica de financiacion colectiva</h3>
+<p>Este es el requisito que mas cambia el expediente. No se resuelve con una memoria cerrada. Exige:</p>
+<ul>
+<li>una campana publica explicable;</li>
+<li>un objetivo economico claro;</li>
+<li>materiales de comunicacion;</li>
+<li>capacidad real de movilizacion;</li>
+<li>y aceptar que el proyecto sera juzgado por comunidad, no solo por tecnicos.</li>
+</ul>
+<h3 id="legitimidad-comunitaria">4.4 Legitimidad comunitaria</h3>
+<p>La propia Diputacion subrayo que el valor del modelo es que la comunidad valida la propuesta. Para TradeBase, eso implica que el relato no puede quedarse en arquitectura software o monetizacion de verticales. Tiene que aterrizarse en:</p>
+<ul>
+<li>empleo tecnologico en el medio rural;</li>
+<li>acceso de pymes profesionales a herramientas digitales;</li>
+<li>impacto sobre sectores productivos de Leon;</li>
+<li>posibilidad de fijar actividad economica en Fresno.</li>
+</ul>
+<hr />
+<h2 id="encaje-real-de-tradebase">5. Encaje real de TradeBase</h2>
+<h3 id="lo-que-juega-a-favor">5.1 Lo que juega a favor</h3>
+<ul>
+<li>sede en Fresno de la Vega;</li>
+<li>narrativa de actividad tecnologica desde un municipio rural;</li>
+<li>potencial conexion futura con CampoIndustrial;</li>
+<li>posibilidad de hablar de digitalizacion de mercados industriales y agroindustriales.</li>
+</ul>
+<h3 id="lo-que-juega-en-contra">5.2 Lo que juega en contra</h3>
+<ul>
+<li>producto B2B poco intuitivo para publico general;</li>
+<li>dificultad para construir recompensas de campana si se usa crowdfunding clasico;</li>
+<li>necesidad de invertir tiempo en comunicacion publica que compite con el foco de ejecucion;</li>
+<li>riesgo de que la comunidad no entienda la propuesta y no valide con aportaciones.</li>
+</ul>
+<hr />
+<h2 id="que-habria-que-hacer-exactamente-para-que-el-expediente-tenga-opciones">6. Que habria que hacer exactamente para que el expediente tenga opciones</h2>
+<h3 id="redefinir-el-relato-publico">6.1 Redefinir el relato publico</h3>
+<p>No presentar:</p>
+<ul>
+<li>plataforma multi-vertical;</li>
+<li>motor de valoracion;</li>
+<li>monetizacion hibrida.</li>
+</ul>
+<p>Presentar:</p>
+<ul>
+<li>proyecto tecnologico implantado en Fresno;</li>
+<li>mejora del acceso a herramientas profesionales para operadores del territorio;</li>
+<li>creacion de actividad economica digital en zona rural;</li>
+<li>capacidad de abrir una segunda vertical ligada a maquinaria/agroindustria.</li>
+</ul>
+<h3 id="crear-una-landing-especifica-de-campana">6.2 Crear una landing especifica de campana</h3>
+<p>La landing no puede ser la home del producto. Debe ser una pieza de campana con:</p>
+<ul>
+<li>problema rural definido;</li>
+<li>solucion en lenguaje no tecnico;</li>
+<li>objetivo economico concreto;</li>
+<li>cronograma comprensible;</li>
+<li>destino claro de los fondos;</li>
+<li>llamadas a la accion.</li>
+</ul>
+<h3 id="definir-un-objetivo-economico-simple">6.3 Definir un objetivo economico simple</h3>
+<p>No conviene presentar una recaudacion ambigua. Hay que decir exactamente para que sirve el dinero de la campana y el matchfunding, por ejemplo:</p>
+<ul>
+<li>despliegue del modulo dealer rural;</li>
+<li>digitalizacion de captacion y publicacion profesional;</li>
+<li>equipamiento y consolidacion del centro operativo en Fresno;</li>
+<li>primera fase de CampoIndustrial si se aprueba esa linea estrategica.</li>
+</ul>
+<h3 id="preparar-material-audiovisual-y-de-legitimidad">6.4 Preparar material audiovisual y de legitimidad</h3>
+<p>Sin video, testimonios o piezas claras, la campana pierde fuerza. Aqui la tesis es simple: Hacendera os obliga a salir de la logica de expediente y entrar en logica de movilizacion.</p>
+<hr />
+<h2 id="documentacion-minima-que-yo-exigiria-antes-de-pulsar-enviar">7. Documentacion minima que yo exigiria antes de pulsar enviar</h2>
+<ul>
+<li>prueba de sede en Fresno;</li>
+<li>memoria de proyecto en version tecnica;</li>
+<li>memoria publica simplificada de campana;</li>
+<li>landing de campana lista;</li>
+<li>video corto o pieza explicativa equivalente;</li>
+<li>presupuesto especifico de destino de fondos;</li>
+<li>plan de difusion local/comarcal;</li>
+<li>listado de apoyos iniciales potenciales;</li>
+<li>cronograma de campana y postcampana.</li>
+</ul>
+<hr />
+<h2 id="que-no-sirve">8. Que no sirve</h2>
+<p>No sirve presentar Hacendera como si fuera <code>#4 Creacion Empresas CyL</code> con otro nombre. Tampoco sirve:</p>
+<ul>
+<li>una landing de startup generica;</li>
+<li>un deck para inversor reciclado;</li>
+<li>un mensaje centrado en software sin beneficio territorial;</li>
+<li>una campana sin comunidad de arranque;</li>
+<li>una peticion de dinero sin uso claro por tramos.</li>
+</ul>
+<hr />
+<h2 id="obstaculos-previsibles-y-resolucion-exacta">9. Obstaculos previsibles y resolucion exacta</h2>
+<h3 id="obstaculo-1-el-publico-no-entiende-que-hace-tradebase">Obstaculo 1: el publico no entiende que hace TradeBase</h3>
+<p><strong>Resolucion</strong></p>
+<p>Traducir el caso a un problema visible: mercados industriales fragmentados, operadores rurales con menos herramientas digitales y creacion de empleo tecnologico estable en Fresno.</p>
+<h3 id="obstaculo-2-no-existe-comunidad-natural-de-donantes">Obstaculo 2: no existe comunidad natural de donantes</h3>
+<p><strong>Resolucion</strong></p>
+<p>No confiar en audiencia espontanea. Construir previamente una lista de:</p>
+<ul>
+<li>contactos locales;</li>
+<li>aliados del ecosistema rural;</li>
+<li>red sectorial;</li>
+<li>socios y entorno cercano;</li>
+<li>actores que puedan actuar como validadores iniciales.</li>
+</ul>
+<h3 id="obstaculo-3-el-destino-de-fondos-es-demasiado-abstracto">Obstaculo 3: el destino de fondos es demasiado abstracto</h3>
+<p><strong>Resolucion</strong></p>
+<p>Definir un paquete de ejecucion visible y finito, con hitos y entregables. Ejemplo: despliegue del centro operativo en Fresno + modulo de digitalizacion profesional del canal dealer.</p>
+<hr />
+<h2 id="red-flags">10. Red flags</h2>
+<ul>
+<li>querer pedir Hacendera sin aceptar campana publica;</li>
+<li>no tener activos de comunicacion preparados;</li>
+<li>no dedicar tiempo especifico a difusion;</li>
+<li>presentar una tesis puramente tecnologica o financiera;</li>
+<li>no poder explicar el proyecto a una persona no tecnica en un minuto.</li>
+</ul>
+<hr />
+<h2 id="go-no-go-not-yet">11. GO / NO-GO / NOT YET</h2>
+<h3 id="go">GO</h3>
+<p>Solo si se aprueban internamente estas decisiones:</p>
+<ol>
+<li>aceptar campana publica;</li>
+<li>simplificar el relato;</li>
+<li>dedicar tiempo de comunicacion y validacion social;</li>
+<li>fijar un uso de fondos publico y entendible.</li>
+</ol>
+<h3 id="no-go">NO-GO</h3>
+<p>Si la prioridad absoluta es ejecutar producto sin distraer recursos, o si no quereis exponeros a validacion comunitaria.</p>
+<h3 id="not-yet">NOT YET</h3>
+<p>Si la idea de campana interesa pero aun no existe relato, landing, objetivo economico ni base de apoyos.</p>
+<hr />
+<h2 id="conclusion-operativa">12. Conclusion operativa</h2>
+<p>Hacendera puede encajar con TradeBase solo si dejais de tratarla como subvencion estandar. Es una ayuda en la que el verdadero expediente es la capacidad de traducir una startup B2B a un proyecto rural publicamente defendible y validado por comunidad. Si no quereis hacer ese trabajo, la linea debe quedar fuera sin remordimiento.</p>
+
+  </section>
+</main>
+</body>
+</html>

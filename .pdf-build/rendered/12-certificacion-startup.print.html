@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Tomo #12 Certificacion Startup</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Tomo #12 Certificacion Startup</h1>
+    <p>Monografia operativa para preparar la certificacion de empresa emergente ante ENISA.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#1-ficha-de-trabajo'>1. Ficha de trabajo</a></li>
+<li class='toc-l2'><a href='#2-que-se-esta-decidiendo-realmente'>2. Qué se está decidiendo realmente</a></li>
+<li class='toc-l2'><a href='#3-requisitos-formales-de-la-ley-28-2022-uno-por-uno'>3. Requisitos formales de la Ley 28/2022, uno por uno</a></li>
+<li class='toc-l3'><a href='#3-1-sociedad-de-nueva-creacion-o-dentro-del-limite-temporal'>3.1 Sociedad de nueva creación o dentro del límite temporal</a></li>
+<li class='toc-l3'><a href='#3-2-facturacion-inferior-a-10m-eur'>3.2 Facturación inferior a `10M EUR`</a></li>
+<li class='toc-l3'><a href='#3-3-no-reparto-de-dividendos-y-no-cotizacion'>3.3 No reparto de dividendos y no cotización</a></li>
+<li class='toc-l3'><a href='#3-4-sede-social-o-establecimiento-permanente-en-espana'>3.4 Sede social o establecimiento permanente en España</a></li>
+<li class='toc-l3'><a href='#3-5-60-de-plantilla-en-espana'>3.5 `60%` de plantilla en España</a></li>
+<li class='toc-l3'><a href='#3-6-proyecto-de-emprendimiento-innovador-con-modelo-escalable'>3.6 Proyecto de emprendimiento innovador con modelo escalable</a></li>
+<li class='toc-l2'><a href='#4-que-entiende-enisa-por-innovacion-y-escalabilidad'>4. Qué entiende ENISA por innovación y escalabilidad</a></li>
+<li class='toc-l2'><a href='#5-tesis-correcta-para-tradebase'>5. Tesis correcta para TradeBase</a></li>
+<li class='toc-l2'><a href='#6-como-puede-fracasar-el-expediente-de-tradebase'>6. Cómo puede fracasar el expediente de TradeBase</a></li>
+<li class='toc-l3'><a href='#6-1-si-el-evaluador-os-lee-como-clasificado-portal'>6.1 Si el evaluador os lee como clasificado/portal</a></li>
+<li class='toc-l3'><a href='#6-2-si-el-evaluador-concluye-que-el-crecimiento-depende-de-mas-personas-y-no-de-mas-software'>6.2 Si el evaluador concluye que el crecimiento depende de más personas y no de más software</a></li>
+<li class='toc-l3'><a href='#6-3-si-hablais-de-ia-datos-o-automatizacion-de-forma-decorativa'>6.3 Si habláis de IA, datos o automatización de forma decorativa</a></li>
+<li class='toc-l3'><a href='#6-4-si-no-hay-producto-demostrable-o-senales-minimas-de-uso'>6.4 Si no hay producto demostrable o señales mínimas de uso</a></li>
+<li class='toc-l3'><a href='#6-5-si-la-narrativa-multi-vertical-parece-una-ambicion-sin-base-tecnologica-real'>6.5 Si la narrativa multi-vertical parece una ambición sin base tecnológica real</a></li>
+<li class='toc-l2'><a href='#7-que-piezas-del-proyecto-interno-os-dan-fuerza-y-hay-que-explotar'>7. Qué piezas del proyecto interno os dan fuerza y hay que explotar</a></li>
+<li class='toc-l3'><a href='#7-1-arquitectura-de-escalabilidad'>7.1 Arquitectura de escalabilidad</a></li>
+<li class='toc-l3'><a href='#7-2-estrategia-de-negocio-y-monetizacion'>7.2 Estrategia de negocio y monetización</a></li>
+<li class='toc-l3'><a href='#7-3-narrativa-territorial-y-vertical-futura'>7.3 Narrativa territorial y vertical futura</a></li>
+<li class='toc-l2'><a href='#8-que-evidencia-exacta-deberia-contener-el-expediente'>8. Qué evidencia exacta debería contener el expediente</a></li>
+<li class='toc-l3'><a href='#8-1-bloque-societario'>8.1 Bloque societario</a></li>
+<li class='toc-l3'><a href='#8-2-bloque-producto'>8.2 Bloque producto</a></li>
+<li class='toc-l3'><a href='#8-3-bloque-tecnico'>8.3 Bloque técnico</a></li>
+<li class='toc-l3'><a href='#8-4-bloque-mercado'>8.4 Bloque mercado</a></li>
+<li class='toc-l3'><a href='#8-5-bloque-traccion'>8.5 Bloque tracción</a></li>
+<li class='toc-l3'><a href='#8-6-bloque-equipo'>8.6 Bloque equipo</a></li>
+<li class='toc-l2'><a href='#9-que-no-sirve-aunque-suene-bien'>9. Qué no sirve aunque suene bien</a></li>
+<li class='toc-l2'><a href='#10-como-escribir-la-memoria-para-que-enisa-vea-software-y-no-servicio'>10. Cómo escribir la memoria para que ENISA vea software y no servicio</a></li>
+<li class='toc-l3'><a href='#10-1-el-lenguaje-que-conviene-usar'>10.1 El lenguaje que conviene usar</a></li>
+<li class='toc-l3'><a href='#10-2-el-lenguaje-que-conviene-evitar-o-relegar'>10.2 El lenguaje que conviene evitar o relegar</a></li>
+<li class='toc-l3'><a href='#10-3-que-frase-nucleo-recomiendo'>10.3 Qué frase núcleo recomiendo</a></li>
+<li class='toc-l2'><a href='#11-que-mejoras-de-producto-os-subirian-de-nivel-ante-enisa'>11. Qué mejoras de producto os subirían de nivel ante ENISA</a></li>
+<li class='toc-l3'><a href='#11-1-motor-de-valoracion-propio'>11.1 Motor de valoración propio</a></li>
+<li class='toc-l3'><a href='#11-2-flujo-dealer-profesional-completo'>11.2 Flujo dealer profesional completo</a></li>
+<li class='toc-l3'><a href='#11-3-trazabilidad-de-datos-y-decisiones-tecnicas'>11.3 Trazabilidad de datos y decisiones técnicas</a></li>
+<li class='toc-l3'><a href='#11-4-seguridad-y-compliance-basicos-visibles'>11.4 Seguridad y compliance básicos visibles</a></li>
+<li class='toc-l2'><a href='#12-obstaculos-previsibles-y-resolucion-real'>12. Obstáculos previsibles y resolución real</a></li>
+<li class='toc-l3'><a href='#obstaculo-1-parece-un-portal-sectorial'>Obstáculo 1: "Parece un portal sectorial"</a></li>
+<li class='toc-l3'><a href='#obstaculo-2-innovacion-debil-o-generica'>Obstáculo 2: innovación débil o genérica</a></li>
+<li class='toc-l3'><a href='#obstaculo-3-traccion-demasiado-temprana'>Obstáculo 3: tracción demasiado temprana</a></li>
+<li class='toc-l3'><a href='#obstaculo-4-equipo-pequeno'>Obstáculo 4: equipo pequeño</a></li>
+<li class='toc-l2'><a href='#13-estructura-recomendada-del-expediente'>13. Estructura recomendada del expediente</a></li>
+<li class='toc-l3'><a href='#13-1-documento-principal'>13.1 Documento principal</a></li>
+<li class='toc-l3'><a href='#13-2-anexos-minimos'>13.2 Anexos mínimos</a></li>
+<li class='toc-l3'><a href='#13-3-carpeta-de-respaldo'>13.3 Carpeta de respaldo</a></li>
+<li class='toc-l2'><a href='#14-secuencia-recomendada-de-ejecucion'>14. Secuencia recomendada de ejecución</a></li>
+<li class='toc-l2'><a href='#15-go-no-go'>15. Go / no-go</a></li>
+<li class='toc-l3'><a href='#go'>GO</a></li>
+<li class='toc-l3'><a href='#no-go'>NO-GO</a></li>
+<li class='toc-l3'><a href='#not-yet'>NOT YET</a></li>
+<li class='toc-l2'><a href='#16-que-desbloquea-si-sale-bien'>16. Qué desbloquea si sale bien</a></li>
+<li class='toc-l2'><a href='#17-conclusion'>17. Conclusión</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tomo-12-certificacion-startup-empresa-emergente">Tomo #12 — Certificación startup / empresa emergente</h1>
+<blockquote>
+<p><strong>Rol:</strong> monografía operativa para preparar la certificación de empresa emergente ante ENISA al nivel que necesita TradeBase, entendiendo qué evalúa de verdad el organismo, cómo se demuestra innovación y escalabilidad y qué piezas documentales deben existir antes de presentar.<br />
+<strong>Fecha de corte:</strong> 11/03/2026.<br />
+<strong>Fuentes principales:</strong></p>
+<ul>
+<li>ENISA FAQ: <a href="https://www.enisa.es/es/certifica-tu-startup/faqs">https://www.enisa.es/es/certifica-tu-startup/faqs</a></li>
+<li>Ley 28/2022: <a href="https://www.boe.es/eli/es/l/2022/12/21/28">https://www.boe.es/eli/es/l/2022/12/21/28</a></li>
+<li>Orden PCM/825/2023: <a href="https://www.boe.es/eli/es/o/2023/07/20/pcm825">https://www.boe.es/eli/es/o/2023/07/20/pcm825</a></li>
+<li>Documento técnico interno: <a href="C:/TradeBase/Tracciona/docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md">ARQUITECTURA-ESCALABILIDAD.md</a></li>
+<li>Documento de negocio interno: <a href="C:/TradeBase/Tracciona/docs/ESTRATEGIA-NEGOCIO.md">ESTRATEGIA-NEGOCIO.md</a></li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="ficha-de-trabajo">1. Ficha de trabajo</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Organismo</td>
+<td>ENISA</td>
+</tr>
+<tr>
+<td>Naturaleza</td>
+<td>Certificación administrativa, no subvención</td>
+</tr>
+<tr>
+<td>Qué acredita</td>
+<td>Condición de empresa emergente</td>
+</tr>
+<tr>
+<td>Qué desbloquea</td>
+<td>especialidades fiscales, refuerzo institucional, llave práctica de <code>#27</code>, mejor encaje para financiación</td>
+</tr>
+<tr>
+<td>Cuello de botella TradeBase</td>
+<td>riesgo de que el proyecto se lea como portal sectorial o intermediación digitalizada</td>
+</tr>
+<tr>
+<td>Hipótesis de trabajo</td>
+<td>TradeBase puede encajar si se presenta como plataforma tecnológica B2B vertical reutilizable</td>
+</tr>
+<tr>
+<td>Decisión actual</td>
+<td><code>GO</code> condicionado a expediente técnico y narrativo de calidad alta</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="que-se-esta-decidiendo-realmente">2. Qué se está decidiendo realmente</h2>
+<p>ENISA no está certificando entusiasmo emprendedor. Está decidiendo si TradeBase entra o no en la categoría jurídica de empresa emergente a partir de dos pruebas sustantivas:</p>
+<ol>
+<li>que el proyecto sea <strong>innovador</strong>;</li>
+<li>que el modelo sea <strong>escalable</strong>.</li>
+</ol>
+<p>Los requisitos formales de antigüedad, facturación, sede y no cotización importan, pero no son el verdadero cuello de botella. El cuello de botella es este: <strong>que el evaluador os vea como software replicable con núcleo tecnológico propio, y no como negocio de intermediación sectorial con una buena capa digital</strong>.</p>
+<hr />
+<h2 id="requisitos-formales-de-la-ley-282022-uno-por-uno">3. Requisitos formales de la Ley 28/2022, uno por uno</h2>
+<h3 id="sociedad-de-nueva-creacion-o-dentro-del-limite-temporal">3.1 Sociedad de nueva creación o dentro del límite temporal</h3>
+<p><strong>Lectura práctica</strong></p>
+<p>TradeBase encaja de salida. No hay que forzar nada aquí.</p>
+<p><strong>Prueba</strong></p>
+<ul>
+<li>escritura;</li>
+<li>fecha de constitución;</li>
+<li>NIF;</li>
+<li>nota registral si se quiere reforzar el expediente.</li>
+</ul>
+<h3 id="facturacion-inferior-a-10m-eur">3.2 Facturación inferior a <code>10M EUR</code></h3>
+<p>Encaja de forma natural. No tiene dificultad, pero conviene que el expediente financiero no parezca improvisado. ENISA no necesita volumen alto; necesita coherencia.</p>
+<h3 id="no-reparto-de-dividendos-y-no-cotizacion">3.3 No reparto de dividendos y no cotización</h3>
+<p>Requisito de higiene jurídica. No da puntos; simplemente evita exclusión.</p>
+<h3 id="sede-social-o-establecimiento-permanente-en-espana">3.4 Sede social o establecimiento permanente en España</h3>
+<p>Con Fresno, este requisito queda limpio y además se alinea con la narrativa territorial.</p>
+<h3 id="de-plantilla-en-espana">3.5 <code>60%</code> de plantilla en España</h3>
+<p>En fase inicial, con socios fundadores en España, no debería ser problema. La clave aquí es no presentar una estructura difusa o artificial.</p>
+<h3 id="proyecto-de-emprendimiento-innovador-con-modelo-escalable">3.6 Proyecto de emprendimiento innovador con modelo escalable</h3>
+<p>Este es el corazón del expediente.</p>
+<hr />
+<h2 id="que-entiende-enisa-por-innovacion-y-escalabilidad">4. Qué entiende ENISA por innovación y escalabilidad</h2>
+<p>La propia información pública de ENISA lista criterios como:</p>
+<ul>
+<li>grado de innovación;</li>
+<li>atractivo del mercado;</li>
+<li>fase de vida de la empresa;</li>
+<li>modelo de negocio;</li>
+<li>competencia;</li>
+<li>equipo;</li>
+<li>dependencia de proveedores y alquileres;</li>
+<li>clientela;</li>
+<li>riesgos reputacionales o regulatorios.</li>
+</ul>
+<p>Esto significa que el expediente no puede limitarse a una memoria técnica ni a un plan financiero. Debe unir:</p>
+<ul>
+<li>producto;</li>
+<li>tecnología;</li>
+<li>mercado;</li>
+<li>equipo;</li>
+<li>y capacidad de crecer sin multiplicar linealmente estructura humana.</li>
+</ul>
+<hr />
+<h2 id="tesis-correcta-para-tradebase">5. Tesis correcta para TradeBase</h2>
+<p>La tesis correcta no es:</p>
+<blockquote>
+<p>&quot;Marketplace de vehículos industriales con tecnología moderna&quot;</p>
+</blockquote>
+<p>porque eso suena a portal sectorial.</p>
+<p>La tesis correcta es más dura y más precisa:</p>
+<blockquote>
+<p>TradeBase desarrolla una plataforma tecnológica B2B vertical para digitalizar mercados industriales fragmentados mediante un core reutilizable de captura de oferta profesional, estructuración de datos, automatización operativa, valoración, publicación y monetización recurrente. Tracciona es la primera vertical operativa y CampoIndustrial es una expansión natural sobre el mismo núcleo tecnológico, no un negocio distinto.</p>
+</blockquote>
+<p>Esto conecta directamente con lo que os favorece:</p>
+<ul>
+<li>vertical B2B;</li>
+<li>arquitectura multi-vertical;</li>
+<li>costes marginales bajos;</li>
+<li>monetización híbrida recurrente + transaccional;</li>
+<li>capacidad de extender producto a varios sectores sin rehacer la compañía.</li>
+</ul>
+<hr />
+<h2 id="como-puede-fracasar-el-expediente-de-tradebase">6. Cómo puede fracasar el expediente de TradeBase</h2>
+<h3 id="si-el-evaluador-os-lee-como-clasificadoportal">6.1 Si el evaluador os lee como clasificado/portal</h3>
+<p>Se cae la innovación.</p>
+<h3 id="si-el-evaluador-concluye-que-el-crecimiento-depende-de-mas-personas-y-no-de-mas-software">6.2 Si el evaluador concluye que el crecimiento depende de más personas y no de más software</h3>
+<p>Se cae la escalabilidad.</p>
+<h3 id="si-hablais-de-ia-datos-o-automatizacion-de-forma-decorativa">6.3 Si habláis de IA, datos o automatización de forma decorativa</h3>
+<p>Se cae la credibilidad técnica.</p>
+<h3 id="si-no-hay-producto-demostrable-o-senales-minimas-de-uso">6.4 Si no hay producto demostrable o señales mínimas de uso</h3>
+<p>Se cae la fase de vida y la tracción.</p>
+<h3 id="si-la-narrativa-multi-vertical-parece-una-ambicion-sin-base-tecnologica-real">6.5 Si la narrativa multi-vertical parece una ambición sin base tecnológica real</h3>
+<p>Se cae la coherencia estratégica.</p>
+<hr />
+<h2 id="que-piezas-del-proyecto-interno-os-dan-fuerza-y-hay-que-explotar">7. Qué piezas del proyecto interno os dan fuerza y hay que explotar</h2>
+<h3 id="arquitectura-de-escalabilidad">7.1 Arquitectura de escalabilidad</h3>
+<p>El documento interno de arquitectura os da material muy útil:</p>
+<ul>
+<li>diseño distribuido;</li>
+<li>capacidad de escalar a múltiples verticales;</li>
+<li>separación de componentes;</li>
+<li>control de costes infra;</li>
+<li>razonamiento técnico explícito.</li>
+</ul>
+<p>No es un anexo decorativo. Debe alimentar la memoria ENISA.</p>
+<h3 id="estrategia-de-negocio-y-monetizacion">7.2 Estrategia de negocio y monetización</h3>
+<p>El documento de estrategia aporta:</p>
+<ul>
+<li>modelo de ingresos más complejo que un simple clasificado;</li>
+<li>suscripciones;</li>
+<li>créditos;</li>
+<li>servicios premium;</li>
+<li>flujos de valor para dealers y compradores.</li>
+</ul>
+<p>Esto refuerza el modelo escalable y la diferenciación.</p>
+<h3 id="narrativa-territorial-y-vertical-futura">7.3 Narrativa territorial y vertical futura</h3>
+<p>Fresno + CampoIndustrial no convierten por sí solos el proyecto en startup, pero sí ayudan a defender:</p>
+<ul>
+<li>caso de uso real en entorno no saturado;</li>
+<li>expansión multi-vertical con lógica industrial/rural;</li>
+<li>posibilidad de impacto económico más allá de un único nicho.</li>
+</ul>
+<hr />
+<h2 id="que-evidencia-exacta-deberia-contener-el-expediente">8. Qué evidencia exacta debería contener el expediente</h2>
+<h3 id="bloque-societario">8.1 Bloque societario</h3>
+<ul>
+<li>escritura;</li>
+<li>NIF;</li>
+<li>cap table;</li>
+<li>identificación de fundadores;</li>
+<li>sede en Fresno.</li>
+</ul>
+<h3 id="bloque-producto">8.2 Bloque producto</h3>
+<ul>
+<li>demo funcional navegable;</li>
+<li>capturas de flujos clave;</li>
+<li>explicación de módulos;</li>
+<li>paneles o features diferenciales.</li>
+</ul>
+<h3 id="bloque-tecnico">8.3 Bloque técnico</h3>
+<ul>
+<li>esquema de arquitectura;</li>
+<li>qué piezas son propias;</li>
+<li>qué incertidumbres técnicas existen o han existido;</li>
+<li>qué automatización de flujo aporta ventaja.</li>
+</ul>
+<h3 id="bloque-mercado">8.4 Bloque mercado</h3>
+<ul>
+<li>definición clara de usuario profesional;</li>
+<li>problema del mercado actual;</li>
+<li>por qué las alternativas existentes no resuelven bien el caso;</li>
+<li>primeras señales de demanda.</li>
+</ul>
+<h3 id="bloque-traccion">8.5 Bloque tracción</h3>
+<p>No hace falta una gran tracción, pero sí señales mínimas:</p>
+<ul>
+<li>conversaciones reales con dealers;</li>
+<li>leads;</li>
+<li>pruebas de uso;</li>
+<li>interés sectorial;</li>
+<li>demos realizadas;</li>
+<li>pipeline comercial inicial.</li>
+</ul>
+<h3 id="bloque-equipo">8.6 Bloque equipo</h3>
+<ul>
+<li>quién construye el producto;</li>
+<li>quién opera salida a mercado;</li>
+<li>prueba de dedicación real.</li>
+</ul>
+<hr />
+<h2 id="que-no-sirve-aunque-suene-bien">9. Qué no sirve aunque suene bien</h2>
+<ul>
+<li>decir &quot;somos una startup de IA&quot; sin explicar qué hace la IA;</li>
+<li>decir &quot;podemos escalar a muchos verticales&quot; sin probar que el core sea reusable;</li>
+<li>presentar solo un deck sin demo ni arquitectura;</li>
+<li>describir el proyecto como intermediación o compraventa asistida;</li>
+<li>inflar tracción con contactos informales no documentados.</li>
+</ul>
+<hr />
+<h2 id="como-escribir-la-memoria-para-que-enisa-vea-software-y-no-servicio">10. Cómo escribir la memoria para que ENISA vea software y no servicio</h2>
+<h3 id="el-lenguaje-que-conviene-usar">10.1 El lenguaje que conviene usar</h3>
+<ul>
+<li>plataforma tecnológica B2B vertical;</li>
+<li>software propio;</li>
+<li>automatización del flujo de captación y estructuración;</li>
+<li>modelo reusable por vertical;</li>
+<li>datos y procesos propios;</li>
+<li>escalabilidad operativa;</li>
+<li>monetización recurrente y transaccional.</li>
+</ul>
+<h3 id="el-lenguaje-que-conviene-evitar-o-relegar">10.2 El lenguaje que conviene evitar o relegar</h3>
+<ul>
+<li>portal;</li>
+<li>compraventa digital;</li>
+<li>intermediario;</li>
+<li>servicio personalizado como núcleo;</li>
+<li>marketplace genérico.</li>
+</ul>
+<h3 id="que-frase-nucleo-recomiendo">10.3 Qué frase núcleo recomiendo</h3>
+<blockquote>
+<p>TradeBase no se limita a publicar oferta; construye un sistema de software para capturar, normalizar, valorar, operar y monetizar información profesional en mercados industriales verticales.</p>
+</blockquote>
+<hr />
+<h2 id="que-mejoras-de-producto-os-subirian-de-nivel-ante-enisa">11. Qué mejoras de producto os subirían de nivel ante ENISA</h2>
+<h3 id="motor-de-valoracion-propio">11.1 Motor de valoración propio</h3>
+<p>Es una de las mejores palancas porque refuerza:</p>
+<ul>
+<li>innovación;</li>
+<li>diferenciación;</li>
+<li>futuro I+D+i;</li>
+<li>potencial de API o datos.</li>
+</ul>
+<h3 id="flujo-dealer-profesional-completo">11.2 Flujo dealer profesional completo</h3>
+<p>Si el expediente puede enseñar un backoffice o toolkit profesional, ya no parecéis un clasificado. Parecéis software vertical.</p>
+<h3 id="trazabilidad-de-datos-y-decisiones-tecnicas">11.3 Trazabilidad de datos y decisiones técnicas</h3>
+<p>Commits, arquitectura, issues, métricas, datasets, documentación y pruebas hacen visible que aquí hay ingeniería, no solo ejecución comercial.</p>
+<h3 id="seguridad-y-compliance-basicos-visibles">11.4 Seguridad y compliance básicos visibles</h3>
+<p>No son el corazón del expediente, pero sí elevan la percepción de producto serio y escalable.</p>
+<hr />
+<h2 id="obstaculos-previsibles-y-resolucion-real">12. Obstáculos previsibles y resolución real</h2>
+<h3 id="obstaculo-1-parece-un-portal-sectorial">Obstáculo 1: &quot;Parece un portal sectorial&quot;</h3>
+<p><strong>Riesgo real</strong></p>
+<p>Muy alto. Este es probablemente el principal riesgo.</p>
+<p><strong>Cómo se resuelve de verdad</strong></p>
+<ul>
+<li>abrir la memoria con problema, tecnología y arquitectura, no con anuncios o compraventa;</li>
+<li>mostrar demo y flujos internos, no solo front público;</li>
+<li>explicar módulos propios y automatización;</li>
+<li>usar la arquitectura multi-vertical como tesis de escala, no como sueño vago.</li>
+</ul>
+<h3 id="obstaculo-2-innovacion-debil-o-generica">Obstáculo 2: innovación débil o genérica</h3>
+<p><strong>Riesgo real</strong></p>
+<p>Alto.</p>
+<p><strong>Cómo se resuelve</strong></p>
+<ul>
+<li>describir qué habéis tenido que resolver técnicamente;</li>
+<li>explicar qué parte no se resuelve con herramientas genéricas;</li>
+<li>vincular producto con incertidumbre técnica o de modelo.</li>
+</ul>
+<h3 id="obstaculo-3-traccion-demasiado-temprana">Obstáculo 3: tracción demasiado temprana</h3>
+<p><strong>Riesgo real</strong></p>
+<p>Medio.</p>
+<p><strong>Cómo se resuelve</strong></p>
+<ul>
+<li>no fingir tracción que no existe;</li>
+<li>sustituir volumen por calidad de evidencia:
+<ul>
+<li>demos;</li>
+<li>conversaciones;</li>
+<li>cartas de interés;</li>
+<li>primeras interacciones reales.</li>
+</ul>
+</li>
+</ul>
+<h3 id="obstaculo-4-equipo-pequeno">Obstáculo 4: equipo pequeño</h3>
+<p><strong>Riesgo real</strong></p>
+<p>Medio.</p>
+<p><strong>Cómo se resuelve</strong></p>
+<ul>
+<li>no vender tamaño, vender complementariedad y ejecución;</li>
+<li>explicar quién hace qué;</li>
+<li>demostrar que el producto ya existe o está muy avanzado.</li>
+</ul>
+<hr />
+<h2 id="estructura-recomendada-del-expediente">13. Estructura recomendada del expediente</h2>
+<h3 id="documento-principal">13.1 Documento principal</h3>
+<p>Memoria de 6-10 páginas con:</p>
+<ol>
+<li>problema del mercado;</li>
+<li>solución y producto;</li>
+<li>arquitectura y tecnología;</li>
+<li>modelo escalable;</li>
+<li>mercado y diferenciación;</li>
+<li>equipo;</li>
+<li>estado actual y siguientes hitos.</li>
+</ol>
+<h3 id="anexos-minimos">13.2 Anexos mínimos</h3>
+<ul>
+<li>arquitectura resumida;</li>
+<li>capturas de producto;</li>
+<li>cap table;</li>
+<li>sede;</li>
+<li>prueba de actividad inicial;</li>
+<li>si existe, material de tracción.</li>
+</ul>
+<h3 id="carpeta-de-respaldo">13.3 Carpeta de respaldo</h3>
+<p>Todo lo que no va en la memoria pero debe existir si lo piden:</p>
+<ul>
+<li>commits;</li>
+<li>roadmap técnico;</li>
+<li>métricas;</li>
+<li>contratos/facturas clave;</li>
+<li>documentación de producto.</li>
+</ul>
+<hr />
+<h2 id="secuencia-recomendada-de-ejecucion">14. Secuencia recomendada de ejecución</h2>
+<ol>
+<li>Constituir SL y cerrar sede.</li>
+<li>Congelar material de producto demostrable.</li>
+<li>Redactar memoria con tesis software-first.</li>
+<li>Revisar si un tercero la lee como startup tecnológica.</li>
+<li>Completar anexos.</li>
+<li>Presentar.</li>
+</ol>
+<hr />
+<h2 id="go-no-go">15. Go / no-go</h2>
+<h3 id="go">GO</h3>
+<ul>
+<li>demo funcional real;</li>
+<li>arquitectura explicable;</li>
+<li>tesis multi-vertical seria;</li>
+<li>equipo con roles claros;</li>
+<li>narrativa que ya suena a software B2B, no a portal.</li>
+</ul>
+<h3 id="no-go">NO-GO</h3>
+<ul>
+<li>solo deck;</li>
+<li>solo web pública;</li>
+<li>sin arquitectura ni módulos internos explicables;</li>
+<li>narrativa centrada en compraventa o intermediación.</li>
+</ul>
+<h3 id="not-yet">NOT YET</h3>
+<ul>
+<li>el producto existe, pero la memoria aún no está construida a la altura;</li>
+<li>o la memoria existe, pero no hay demo suficiente para sostenerla.</li>
+</ul>
+<hr />
+<h2 id="que-desbloquea-si-sale-bien">16. Qué desbloquea si sale bien</h2>
+<p>Esta certificación no da caja directa, pero cambia mucho el sistema:</p>
+<ul>
+<li>fortalece <code>#27</code>;</li>
+<li>mejora credibilidad frente a financiación pública;</li>
+<li>ordena la narrativa estratégica de TradeBase;</li>
+<li>da marco institucional para trataros como empresa tecnológica emergente y no como operador sectorial digitalizado.</li>
+</ul>
+<hr />
+<h2 id="conclusion">17. Conclusión</h2>
+<p>Para TradeBase, <code>#12</code> no es un accesorio ni un sello bonito. Es la pieza que separa dos lecturas posibles del proyecto:</p>
+<ul>
+<li>portal sectorial con buena tecnología;</li>
+<li>o plataforma tecnológica B2B vertical con núcleo reusable y escalable.</li>
+</ul>
+<p>Si la memoria gana esa batalla, la certificación es defendible. Si no la gana, el expediente se cae aunque el producto sea bueno.</p>
+
+  </section>
+</main>
+</body>
+</html>

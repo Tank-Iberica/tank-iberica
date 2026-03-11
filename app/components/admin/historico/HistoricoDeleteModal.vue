@@ -22,7 +22,7 @@ defineEmits<{
       <div class="modal">
         <div class="modal-head">
           <span>🗑️ Eliminar registro</span>
-          <button @click="$emit('close')">×</button>
+          <button :aria-label="$t('common.close')" @click="$emit('close')">×</button>
         </div>
         <div class="modal-body">
           <p>¿Eliminar permanentemente este registro del histórico?</p>
@@ -42,7 +42,7 @@ defineEmits<{
           </div>
         </div>
         <div class="modal-foot">
-          <button class="btn" @click="$emit('close')">Cancelar</button>
+          <button class="btn" @click="$emit('close')">{{ $t('common.cancel') }}</button>
           <button class="btn btn-danger" :disabled="!canDelete || saving" @click="$emit('confirm')">
             Eliminar
           </button>
@@ -61,13 +61,13 @@ defineEmits<{
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 .modal {
   background: var(--bg-primary);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   width: 100%;
-  max-width: 420px;
+  max-width: 26.25rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
   overflow-y: auto;
@@ -76,8 +76,8 @@ defineEmits<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 0.875rem var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-200);
   font-weight: 600;
   position: sticky;
   top: 0;
@@ -91,30 +91,30 @@ defineEmits<{
   color: var(--text-disabled);
 }
 .modal-body {
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 .modal-foot {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
   border-radius: 0 0 10px 10px;
   position: sticky;
   bottom: 0;
 }
 .btn {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-danger {
   background: var(--color-error);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 .btn-danger:disabled {
@@ -122,35 +122,35 @@ defineEmits<{
   cursor: not-allowed;
 }
 .delete-info {
-  padding: 12px;
+  padding: var(--spacing-3);
   background: var(--bg-secondary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 .warning {
-  padding: 10px;
-  background: var(--color-warning-bg, #fef3c7);
+  padding: 0.625rem;
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 12px;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-3);
 }
 .field label {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 .field input {
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.85rem;
 }
 .field input:focus {

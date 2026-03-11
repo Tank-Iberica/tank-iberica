@@ -9,8 +9,13 @@
  */
 
 import type { AdPosition } from '~/composables/useAds'
+import { getVerticalSlug } from '~/composables/useVerticalConfig'
 
 type AdSenseFormat = 'horizontal' | 'vertical' | 'rectangle' | 'in-feed'
+
+function byDescCpm(a: { cpm: number }, b: { cpm: number }): number {
+  return b.cpm - a.cpm
+}
 
 interface PrebidBidResponse {
   adId: string
@@ -104,7 +109,7 @@ export function usePrebid(
       const { data } = await supabase
         .from('ad_floor_prices')
         .select('position, floor_cpm_cents')
-        .eq('vertical', 'tracciona')
+        .eq('vertical', getVerticalSlug())
 
       floorPriceCache = new Map()
       for (const row of data || []) {
@@ -176,7 +181,7 @@ export function usePrebid(
         }
 
         // Sort by CPM descending, take highest
-        const best = unitBids.toSorted((a, b) => b.cpm - a.cpm)[0]!
+        const best = unitBids.toSorted(byDescCpm)[0]!
 
         // Check against floor price
         if (floorPrice > 0 && best.cpm < floorPrice) {

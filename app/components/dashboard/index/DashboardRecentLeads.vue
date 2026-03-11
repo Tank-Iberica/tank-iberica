@@ -54,8 +54,8 @@ const { t } = useI18n()
 <style scoped>
 .card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
@@ -63,7 +63,7 @@ const { t } = useI18n()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--color-gray-100);
 }
 
@@ -79,7 +79,7 @@ const { t } = useI18n()
   color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
 }
@@ -89,14 +89,14 @@ const { t } = useI18n()
 }
 
 .empty-state {
-  padding: 32px 20px;
+  padding: 2rem 1.25rem;
   text-align: center;
   color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
 
 .empty-state p {
-  margin: 0 0 12px 0;
+  margin: 0 0 0.75rem 0;
 }
 
 .leads-list {
@@ -108,11 +108,11 @@ const { t } = useI18n()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 20px;
+  padding: 0.875rem 1.25rem;
   text-decoration: none;
   border-bottom: 1px solid var(--color-gray-50);
   transition: background 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .lead-item:hover {
@@ -126,7 +126,7 @@ const { t } = useI18n()
 .lead-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .lead-name {
@@ -136,7 +136,7 @@ const { t } = useI18n()
 }
 
 .lead-vehicle {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
 }
 
@@ -144,20 +144,20 @@ const { t } = useI18n()
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .status-badge {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   white-space: nowrap;
 }
 
 .lead-date {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: var(--text-disabled);
 }
 </style>

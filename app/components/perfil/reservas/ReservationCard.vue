@@ -147,8 +147,8 @@ const { getImageUrl } = useImageUrl()
 }
 
 .reservation-card__image {
-  width: 80px;
-  height: 60px;
+  width: 5rem;
+  height: 3.75rem;
   border-radius: var(--border-radius-sm);
   overflow: hidden;
   background: var(--bg-secondary);
@@ -213,28 +213,28 @@ const { getImageUrl } = useImageUrl()
 }
 
 .status--pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 .status--active {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-emerald-100);
+  color: var(--color-success-text);
 }
 .status--responded {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 .status--completed {
-  background: #d1fae5;
-  color: #047857;
+  background: var(--color-emerald-100);
+  color: var(--color-emerald-700);
 }
 .status--expired {
   background: var(--bg-tertiary);
   color: var(--text-auxiliary);
 }
 .status--refunded {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 
 .reservation-card__details {
@@ -249,7 +249,7 @@ const { getImageUrl } = useImageUrl()
 .detail-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .detail-label {
@@ -270,8 +270,8 @@ const { getImageUrl } = useImageUrl()
 .freebie-badge {
   display: inline-block;
   padding: 2px var(--spacing-2);
-  background: #ede9fe;
-  color: #6d28d9;
+  background: var(--color-purple-bg);
+  color: var(--color-violet-700);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
@@ -320,11 +320,11 @@ const { getImageUrl } = useImageUrl()
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-cancel:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 .btn-cancel:disabled {
   opacity: 0.5;
@@ -342,11 +342,11 @@ const { getImageUrl } = useImageUrl()
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-confirm:hover {
-  background: #059669;
+  background: var(--color-success-dark);
 }
 .btn-confirm:disabled {
   opacity: 0.5;
@@ -355,8 +355,8 @@ const { getImageUrl } = useImageUrl()
 
 @media (min-width: 48em) {
   .reservation-card__image {
-    width: 120px;
-    height: 80px;
+    width: 7.5rem;
+    height: 5rem;
   }
 
   .reservation-card__title {
@@ -374,7 +374,7 @@ const { getImageUrl } = useImageUrl()
   .btn-cancel,
   .btn-confirm {
     flex: unset;
-    min-width: 140px;
+    min-width: 8.75rem;
   }
 }
 

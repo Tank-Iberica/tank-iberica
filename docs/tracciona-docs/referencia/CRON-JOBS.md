@@ -1,8 +1,8 @@
 # Cron Jobs Documentation
 
-> All cron endpoints require `x-internal-secret: <CRON_SECRET>` header.
+> All cron endpoints accept the CRON_SECRET via: `x-cron-secret: <CRON_SECRET>` header, `body.secret` field, or `Authorization: Bearer <CRON_SECRET>`.
 > They should be scheduled via an external scheduler (GitHub Actions, cron-job.org, or Cloudflare Workers Cron Triggers).
-> Last updated: Mar 2026 (13 crons verified against server/api/cron/).
+> Last updated: Mar 2026 (14 crons verified against server/api/cron/).
 
 ## Cron Endpoints
 
@@ -21,6 +21,8 @@
 | `/api/cron/infra-metrics`       | Collect infrastructure metrics (DB size, cache, etc.)         | Every 5 min        | Low      |
 | `/api/cron/whatsapp-retry`      | Retry failed WhatsApp submissions                             | Every 15 min       | Medium   |
 | `/api/cron/dealer-weekly-stats` | Send weekly performance digest to dealers                     | Weekly (Mon 09:00) | Medium   |
+| `/api/cron/k6-readiness-check` | Check ≥50 vehicles + ≥2 dealers → trigger k6 CI workflow      | Weekly (Mon 09:00) | Low      |
+| `/api/cron/data-retention`     | GDPR data retention: delete whatsapp/analytics/logs past TTL  | Daily (03:00 UTC)  | Medium   |
 
 ## Scheduler Configuration
 
@@ -44,9 +46,9 @@ jobs:
       - run: |
           for endpoint in freshness-check search-alerts favorite-price-drop favorite-sold \
                           price-drop-alert reservation-expiry publish-scheduled \
-                          founding-expiry generate-editorial; do
+                          founding-expiry generate-editorial data-retention; do
             curl -s -X POST "https://tracciona.com/api/cron/$endpoint" \
-              -H "x-internal-secret: ${{ secrets.CRON_SECRET }}" || true
+              -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" || true
           done
 
   frequent:
@@ -55,9 +57,9 @@ jobs:
     steps:
       - run: |
           curl -s -X POST "https://tracciona.com/api/cron/auto-auction" \
-            -H "x-internal-secret: ${{ secrets.CRON_SECRET }}" || true
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" || true
           curl -s -X POST "https://tracciona.com/api/cron/infra-metrics" \
-            -H "x-internal-secret: ${{ secrets.CRON_SECRET }}" || true
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" || true
 
   whatsapp-retry:
     if: github.event.schedule == '*/5 * * * *'
@@ -67,7 +69,7 @@ jobs:
           # Only run every 15 min (skip if minute % 15 != 0)
           if [ $(( $(date +%M) % 15 )) -eq 0 ]; then
             curl -s -X POST "https://tracciona.com/api/cron/whatsapp-retry" \
-              -H "x-internal-secret: ${{ secrets.CRON_SECRET }}" || true
+              -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" || true
           fi
 
   weekly:
@@ -76,7 +78,7 @@ jobs:
     steps:
       - run: |
           curl -s -X POST "https://tracciona.com/api/cron/dealer-weekly-stats" \
-            -H "x-internal-secret: ${{ secrets.CRON_SECRET }}" || true
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" || true
 ```
 
 ### Option B: cron-job.org (free tier)
@@ -84,7 +86,7 @@ jobs:
 1. Create an account at https://cron-job.org
 2. Add each endpoint as a job
 3. Set HTTP method to POST
-4. Add header: `x-internal-secret: <CRON_SECRET>`
+4. Add header: `x-cron-secret: <CRON_SECRET>`
 5. Configure schedule per the table above
 
 ### Option C: Cloudflare Workers Cron Triggers
@@ -100,4 +102,4 @@ Requires Cloudflare Workers Paid plan. Create a worker that calls the endpoints 
 
 ## Authentication
 
-All cron endpoints verify the `x-internal-secret` header against `CRON_SECRET` environment variable using the `verifyCronSecret()` utility. In development, a warning is logged but the request is allowed to proceed.
+All cron endpoints verify the secret via `verifyCronSecret()` utility, which accepts: `x-cron-secret` header, `body.secret` field, or `Authorization: Bearer <secret>` — all checked against the `CRON_SECRET` environment variable. In development, a warning is logged but the request is allowed to proceed.

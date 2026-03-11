@@ -6,28 +6,28 @@
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .stat-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 0.75rem;
+  background: var(--color-white);
+  border-radius: 0.625rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .stat-label {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-auxiliary);
   font-weight: 500;
   text-align: center;
 }
@@ -36,10 +36,10 @@
   color: #d97706;
 }
 .stat-approved .stat-value {
-  color: #2563eb;
+  color: var(--color-info);
 }
 .stat-posted .stat-value {
-  color: #16a34a;
+  color: var(--color-success-text);
 }
 .stat-failed .stat-value {
   color: #ea580c;
@@ -49,16 +49,16 @@
    FILTERS BAR / STATUS PILLS
    ============================================ */
 .filters-bar {
-  padding: 12px 16px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 0.75rem 1rem;
+  background: var(--color-white);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
   overflow-x: auto;
 }
 
 .status-pills {
   display: flex;
-  gap: 6px;
+  gap: 0.375rem;
   flex-wrap: nowrap;
   min-width: max-content;
 }
@@ -66,17 +66,17 @@
 .status-pill {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 8px 14px;
+  gap: 0.25rem;
+  padding: 0.5rem 0.875rem;
   border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  background: white;
+  border-radius: 1.25rem;
+  background: var(--color-white);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-auxiliary);
   transition: all 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
   white-space: nowrap;
 }
 
@@ -86,9 +86,9 @@
 }
 
 .status-pill.active {
-  background: var(--color-primary, #23424a);
-  color: white;
-  border-color: var(--color-primary, #23424a);
+  background: var(--color-primary, var(--color-primary));
+  color: var(--color-white);
+  border-color: var(--color-primary, var(--color-primary));
 }
 
 .pill-count {
@@ -105,15 +105,15 @@
    ============================================ */
 .platform-badge {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.375rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: white;
+  color: var(--color-white);
 }
 
 .platform-badge.large {
-  padding: 6px 14px;
+  padding: 0.375rem 0.875rem;
   font-size: 0.85rem;
 }
 
@@ -138,35 +138,35 @@
    ============================================ */
 .status-badge {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 10px;
+  padding: 0.1875rem 0.625rem;
+  border-radius: 0.625rem;
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
 }
 
 .status-approved {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-info-bg);
+  color: var(--color-info);
 }
 
 .status-posted {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 
 .status-rejected {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
 }
 
 .status-failed {
-  background: #ffedd5;
+  background: var(--badge-warning-bg);
   color: #c2410c;
 }
 
@@ -185,10 +185,10 @@
 }
 
 .modal-panel {
-  background: white;
+  background: var(--color-white);
   width: 100%;
   max-height: 90vh;
-  border-radius: 16px 16px 0 0;
+  border-radius: 1rem 1rem 0 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -198,7 +198,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 1rem 1.25rem;
   border-bottom: 1px solid #f1f5f9;
 }
 
@@ -206,36 +206,36 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .modal-close {
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--text-auxiliary);
   cursor: pointer;
-  padding: 4px;
+  padding: 0.25rem;
   display: flex;
   align-items: center;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   justify-content: center;
 }
 
 .modal-body {
-  padding: 16px 20px;
+  padding: 1rem 1.25rem;
   overflow-y: auto;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .modal-footer {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 16px 20px;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
   border-top: 1px solid #f1f5f9;
 }
 
@@ -249,11 +249,11 @@
 .btn-generate-confirm,
 .btn-cancel {
   flex: 1;
-  min-width: 100px;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-width: 6.25rem;
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
@@ -264,7 +264,7 @@
 
 .btn-save {
   background: #475569;
-  color: white;
+  color: var(--color-white);
 }
 
 .btn-save:hover {
@@ -272,8 +272,8 @@
 }
 
 .btn-approve-lg {
-  background: #16a34a;
-  color: white;
+  background: var(--badge-success-bg);
+  color: var(--badge-success-text);
 }
 
 .btn-approve-lg:hover {
@@ -281,8 +281,8 @@
 }
 
 .btn-reject-lg {
-  background: #dc2626;
-  color: white;
+  background: var(--color-error);
+  color: var(--color-white);
 }
 
 .btn-reject-lg:hover {
@@ -290,21 +290,21 @@
 }
 
 .btn-publish-lg {
-  background: #2563eb;
-  color: white;
+  background: var(--color-info);
+  color: var(--color-white);
 }
 
 .btn-publish-lg:hover {
-  background: #1d4ed8;
+  background: var(--color-info);
 }
 
 .btn-generate-confirm {
-  background: var(--color-primary, #23424a);
-  color: white;
+  background: var(--color-primary, var(--color-primary));
+  color: var(--color-white);
 }
 
 .btn-generate-confirm:hover {
-  background: #1a3238;
+  background: var(--color-primary-dark);
 }
 
 .btn-cancel {
@@ -356,17 +356,17 @@
    SPINNER
    ============================================ */
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid #e2e8f0;
-  border-top-color: var(--color-primary, #23424a);
+  border-top-color: var(--color-primary, var(--color-primary));
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
 .spinner.small {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   border-width: 2px;
 }
 
@@ -396,11 +396,11 @@
   /* Modal: centered */
   .modal-overlay {
     align-items: center;
-    padding: 20px;
+    padding: 1.25rem;
   }
 
   .modal-panel {
-    border-radius: 16px;
+    border-radius: var(--border-radius-lg);
     max-width: 37.5em;
   }
 }
@@ -408,6 +408,6 @@
 /* 64em+ : Desktop */
 @media (min-width: 64em) {
   .modal-panel {
-    max-width: 680px;
+    max-width: 42.5rem;
   }
 }

@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 ## RESUMEN COMPLETO DEL DOCUMENTO
 
@@ -93,3 +93,5 @@ Este prompt de migración es la referencia técnica y estratégica de producto. 
 _Documento compilado en febrero de 2026._
 _Última actualización: 18 de febrero de 2026._
 _Total: ~5.100 líneas. 10 pasos de migración + 22 anexos (A-V)._
+
+

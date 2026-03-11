@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # Estructura de la carpeta Tracciona
 
@@ -115,8 +115,10 @@ C:\Users\j_m_g\OneDrive\Documentos\
    claude
 
 5. Primer prompt:
-   "Lee docs/tracciona-docs/migracion/00-backup.md y ejecuta el backup"
+   "Lee docs/tracciona-docs/migracion/00-backup.md (alias de compatibilidad histórica) y ejecuta el backup"
 
 ```
 
 ```
+
+

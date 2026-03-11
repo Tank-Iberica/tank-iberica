@@ -114,8 +114,8 @@ const { t } = useI18n()
 
 .table-wrapper {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
 }
 
@@ -127,7 +127,7 @@ const { t } = useI18n()
 
 .data-table th {
   text-align: left;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-auxiliary);
@@ -138,7 +138,7 @@ const { t } = useI18n()
 }
 
 .data-table td {
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   color: var(--text-primary);
   border-bottom: 1px solid var(--color-gray-100);
 }
@@ -159,7 +159,7 @@ const { t } = useI18n()
 .cell-type {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .type-icon {
@@ -172,7 +172,7 @@ const { t } = useI18n()
 
 .cell-vehicle {
   font-weight: 600;
-  max-width: 200px;
+  max-width: 12.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -187,15 +187,15 @@ const { t } = useI18n()
 .table-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .status-select {
-  padding: 6px 10px;
+  padding: 0.375rem 0.625rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.8rem;
-  min-height: 36px;
+  min-height: 2.25rem;
   background: var(--bg-primary);
   cursor: pointer;
 }
@@ -203,36 +203,36 @@ const { t } = useI18n()
 .status-select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Status badges */
 .status-badge {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .status-badge.status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .status-badge.status-progress {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 
 .status-badge.status-completed {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .status-badge.status-cancelled {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -250,16 +250,16 @@ const { t } = useI18n()
 }
 
 .btn-notify {
-  padding: 8px 14px;
-  background: #2563eb;
+  padding: var(--spacing-2) 0.875rem;
+  background: var(--color-focus);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
   white-space: nowrap;
 }
 
@@ -279,12 +279,12 @@ const { t } = useI18n()
 }
 
 .expanded-content {
-  padding: 16px;
+  padding: var(--spacing-4);
   background: var(--bg-secondary);
 }
 
 .expanded-content h4 {
-  margin: 0 0 12px 0;
+  margin: 0 0 var(--spacing-3) 0;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-secondary);
@@ -295,14 +295,14 @@ const { t } = useI18n()
 .details-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .detail-item {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 6px 0;
+  padding: 0.375rem 0;
   border-bottom: 1px solid var(--color-gray-200);
 }
 

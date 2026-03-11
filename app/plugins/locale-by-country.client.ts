@@ -19,7 +19,7 @@ export default defineNuxtPlugin(async () => {
   const p = profile.value ?? (await fetchProfile())
   if (p?.lang) {
     if ($i18n.locale.value !== p.lang) {
-      await $i18n.setLocale(p.lang)
+      await $i18n.setLocale(p.lang as 'es' | 'en')
     }
     langCookie.value = p.lang
     return

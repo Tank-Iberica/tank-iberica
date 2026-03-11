@@ -50,23 +50,23 @@ defineEmits<{
 
 <style scoped>
 .filter-sublabel {
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--text-auxiliary);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.019rem;
   padding: 0.3rem 0 0.1rem;
 }
 
 .filter-select-inline {
   padding: 0.2rem 0.3rem;
   border: 2px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 10px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
   line-height: 1.4;
   color: var(--text-primary);
   background: var(--bg-primary);
-  min-width: 60px;
+  min-width: 3.75rem;
   min-height: auto;
   cursor: pointer;
 }

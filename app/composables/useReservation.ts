@@ -304,7 +304,7 @@ export function useReservation() {
   async function getActiveReservationForVehicle(vehicleId: string): Promise<Reservation | null> {
     const { data, error } = await supabase
       .from('reservations')
-      .select('*')
+      .select('id, vehicle_id, buyer_id, seller_id, deposit_cents, stripe_payment_intent_id, status, seller_response, seller_responded_at, buyer_confirmed_at, expires_at, subscription_freebie, created_at')
       .eq('vehicle_id', vehicleId)
       .in('status', ['pending', 'active', 'seller_responded'])
       .limit(1)

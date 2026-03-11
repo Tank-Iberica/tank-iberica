@@ -109,7 +109,7 @@ defineProps<{
 
 .brand-table {
   width: 100%;
-  min-width: 320px;
+  min-width: 20rem;
   border-collapse: collapse;
 }
 

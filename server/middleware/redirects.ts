@@ -7,6 +7,7 @@
  * Note: www → non-www is handled by Cloudflare Page Rules.
  */
 import { defineEventHandler, sendRedirect } from 'h3'
+import { logger } from '../utils/logger'
 
 // Static redirect map: old path → new path
 const REDIRECT_MAP: Record<string, string> = {
@@ -88,10 +89,7 @@ export function track404(path: string): void {
       .slice(0, 20)
 
     if (frequent.length > 0) {
-      console.warn(
-        '[Redirects] Frequent 404s (consider adding redirects):',
-        JSON.stringify(frequent),
-      )
+      logger.warn('[Redirects] Frequent 404s (consider adding redirects):', frequent)
     }
 
     // Reset counters

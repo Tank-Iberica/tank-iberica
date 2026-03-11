@@ -79,7 +79,7 @@ onMounted(() => init())
 
 <template>
   <div class="pf">
-    <div v-if="loading && !vehicle" class="loading">Cargando...</div>
+    <div v-if="loading && !vehicle" class="loading">{{ $t('common.loading') }}</div>
 
     <template v-else-if="vehicle">
       <AdminProductoHeader
@@ -235,25 +235,25 @@ onMounted(() => init())
 
 <style scoped>
 .pf {
-  max-width: 900px;
+  max-width: 56.25rem;
   margin: 0 auto;
-  padding-bottom: 40px;
+  padding-bottom: var(--spacing-10);
 }
 .loading {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 .error-msg {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 10px 14px;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-3);
 }
 .pf-body {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 </style>

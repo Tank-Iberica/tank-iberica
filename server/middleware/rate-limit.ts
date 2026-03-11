@@ -18,8 +18,8 @@
  *
  * Set ENABLE_MEMORY_RATE_LIMIT=true in .env to enable this for local dev.
  */
-import { defineEventHandler, createError } from 'h3'
-import { checkRateLimit, getRateLimitKey, getRetryAfterSeconds } from '../utils/rateLimit'
+import { defineEventHandler, createError, getResponseStatus } from 'h3'
+import { checkRateLimit, getRateLimitKey, getUserOrIpRateLimitKey, getRetryAfterSeconds, isIpBanned, record4xxError } from '../utils/rateLimit'
 import type { RateLimitConfig } from '../utils/rateLimit'
 
 interface RouteRateLimitRule {
@@ -70,6 +70,28 @@ export default defineEventHandler((event) => {
 
   const ip = getRateLimitKey(event)
 
+  // Auto-ban check: block IPs that generated >100 4xx responses in 5 minutes
+  const banExpiry = isIpBanned(ip)
+  if (banExpiry) {
+    const retryAfter = Math.ceil((banExpiry - Date.now()) / 1000)
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'Forbidden',
+      data: { error: 'Temporarily banned', retryAfter },
+    })
+  }
+
+  // Track 4xx responses after the request completes
+  event.node.res.on('finish', () => {
+    const status = getResponseStatus(event)
+    if (status >= 400 && status < 500) {
+      record4xxError(ip)
+    }
+  })
+
+  // Use user ID when available (prevents NAT shared-IP bypass), fallback to IP
+  const baseKey = getUserOrIpRateLimitKey(event)
+
   // Check specific rules first
   for (const rule of RULES) {
     if (!rule.pattern.test(path)) continue
@@ -77,7 +99,7 @@ export default defineEventHandler((event) => {
     // If rule has method restrictions, check them
     if (rule.methods && !rule.methods.includes(method)) continue
 
-    const key = `${ip}:${rule.pattern.source}`
+    const key = `${baseKey}:${rule.pattern.source}`
     const allowed = checkRateLimit(key, rule.config)
 
     if (!allowed) {
@@ -99,7 +121,11 @@ export default defineEventHandler((event) => {
   // Apply default limits for /api/* routes
   const isWrite = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
   const config = isWrite ? DEFAULT_POST_CONFIG : DEFAULT_GET_CONFIG
-  const key = `${ip}:api:${isWrite ? 'write' : 'read'}`
+  // Writes: user-aware key (prevents one user from abusing shared NAT)
+  // Reads: IP key (user ID lookup unnecessary for read-heavy public routes)
+  const key = isWrite
+    ? `${baseKey}:api:write`
+    : `${ip}:api:read`
   const allowed = checkRateLimit(key, config)
 
   if (!allowed) {

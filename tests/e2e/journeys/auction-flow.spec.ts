@@ -29,7 +29,7 @@ test.describe('Journey: Auction browsing flow', () => {
     await page.waitForLoadState('networkidle')
 
     // Wait for content to load (skeleton disappears)
-    await page.waitForTimeout(2000)
+    await page.locator('.auctions-loading').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {})
 
     // Either we have auction cards or an empty state
     const auctionCards = page.locator('.auction-card')
@@ -64,7 +64,7 @@ test.describe('Journey: Auction browsing flow', () => {
   test('Clicking auction card navigates to detail', async ({ page }) => {
     await page.goto('/subastas')
     await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(2000)
+    await page.locator('.auctions-loading').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {})
 
     const auctionCard = page.locator('.auction-card').first()
 
@@ -95,7 +95,6 @@ test.describe('Journey: Auction browsing flow', () => {
       // Click second tab
       if (tabCount >= 2) {
         await tabBtns.nth(1).click()
-        await page.waitForTimeout(500)
 
         // Verify active state changed
         await expect(tabBtns.nth(1)).toHaveClass(/active/)

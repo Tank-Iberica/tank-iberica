@@ -63,7 +63,7 @@ function onToggle(event: Event) {
   align-items: center;
   gap: var(--spacing-3);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .toggle-switch input {
@@ -71,8 +71,8 @@ function onToggle(event: Event) {
 }
 
 .toggle-slider {
-  width: 48px;
-  height: 26px;
+  width: 3rem;
+  height: 1.625rem;
   background: var(--color-gray-300);
   border-radius: var(--border-radius-full);
   position: relative;
@@ -83,12 +83,12 @@ function onToggle(event: Event) {
 .toggle-slider::after {
   content: '';
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.25rem;
+  height: 1.25rem;
   background: var(--color-white);
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   transition: transform var(--transition-fast);
   box-shadow: var(--shadow-sm);
 }
@@ -98,7 +98,7 @@ function onToggle(event: Event) {
 }
 
 .toggle-switch input:checked + .toggle-slider::after {
-  transform: translateX(22px);
+  transform: translateX(1.375rem);
 }
 
 .toggle-label {

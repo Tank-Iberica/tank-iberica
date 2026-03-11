@@ -26,7 +26,7 @@
 
   <!-- DESKTOP: Collapsible advanced filters panel -->
   <Transition name="slide-down">
-    <div v-if="desktopOpen && filters.length" class="advanced-panel">
+    <div id="filter-advanced-panel" v-if="desktopOpen && filters.length" class="advanced-panel">
       <div class="advanced-panel-grid">
         <CatalogFilterBarDynamicFilters
           :filters="filters"
@@ -81,7 +81,7 @@ defineEmits<{
   right: 0;
   z-index: var(--z-modal);
   background: var(--bg-primary);
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
   max-height: 80vh;
   overflow-y: auto;
 }
@@ -99,16 +99,16 @@ defineEmits<{
 }
 
 .filter-sheet-header h3 {
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .filter-close {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   color: var(--text-auxiliary);
-  min-height: 32px;
-  min-width: 32px;
+  min-height: 2rem;
+  min-width: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -156,7 +156,7 @@ defineEmits<{
 }
 .slide-down-enter-to,
 .slide-down-leave-from {
-  max-height: 500px;
+  max-height: 31.25rem;
 }
 
 /* ============================================

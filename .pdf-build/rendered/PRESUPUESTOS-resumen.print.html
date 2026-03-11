@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Presupuestos (Resumen)</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Presupuestos (Resumen)</h1>
+    <p>Resumen ejecutivo derivado de PRESUPUESTOS.md.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#1-lectura-ejecutiva'>1. Lectura ejecutiva</a></li>
+<li class='toc-l2'><a href='#2-fotografia-de-3-anos'>2. Fotografía de 3 años</a></li>
+<li class='toc-l2'><a href='#3-donde-se-va-el-dinero'>3. Dónde se va el dinero</a></li>
+<li class='toc-l2'><a href='#4-opex-fijo-vs-coste-variable'>4. OPEX fijo vs coste variable</a></li>
+<li class='toc-l2'><a href='#5-caja-minima-vs-estructura-correcta'>5. Caja mínima vs estructura correcta</a></li>
+<li class='toc-l2'><a href='#6-reglas-de-lectura'>6. Reglas de lectura</a></li>
+<li class='toc-l2'><a href='#7-fuentes-base-de-costes'>7. Fuentes base de costes</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tradebase-resumen-ejecutivo-de-presupuestos">TradeBase - Resumen Ejecutivo de Presupuestos</h1>
+<blockquote>
+<p>Derivado regenerable a partir de <a href="PRESUPUESTOS.md">PRESUPUESTOS.md</a> y reconciliado con <a href="DECISIONES-FINANCIERAS.md">DECISIONES-FINANCIERAS.md</a> para la lectura de capitalización.</p>
+</blockquote>
+<h2 id="lectura-ejecutiva">1. Lectura ejecutiva</h2>
+<ul>
+<li>TradeBase no necesita una estructura pesada para operar.</li>
+<li>El coste total de tres años es contenido para un proyecto que cubre producto, operación, contenido, administración y crecimiento comercial básico.</li>
+<li>El error sería confundir el <strong>mínimo para sobrevivir</strong> con la <strong>capitalización recomendable</strong> para jugar ayudas con rigor.</li>
+</ul>
+<h2 id="fotografia-de-3-anos">2. Fotografía de 3 años</h2>
+<table>
+<thead>
+<tr>
+<th>Magnitud</th>
+<th style="text-align: right;">Importe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Año 1</td>
+<td style="text-align: right;"><code>~15.000 EUR</code></td>
+</tr>
+<tr>
+<td>Año 2</td>
+<td style="text-align: right;"><code>~16.100 EUR</code></td>
+</tr>
+<tr>
+<td>Año 3</td>
+<td style="text-align: right;"><code>~19.900 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Total 3 años</strong></td>
+<td style="text-align: right;"><strong><code>~50.997 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="donde-se-va-el-dinero">3. Dónde se va el dinero</h2>
+<p>| Bloque | Total 3 años |
+|---|---:|
+| Marketing | <code>~15.490 EUR</code> |
+| Desarrollo (tooling IA) | <code>~8.850 EUR</code> |
+| Operaciones / administración | <code>~7.880 EUR</code> |
+| Contingencia 10% | <code>~4.236 EUR</code> |
+| Legal / GDPR | <code>~3.750 EUR</code> |
+| Infraestructura SaaS | <code>~2.196 EUR</code> |
+| APIs de producto (<code>IA + WhatsApp</code>) | <code>~2.123 EUR</code> |
+| Stripe COGS variable | <code>~4.400 EUR</code> |
+<strong>Lectura</strong></p>
+<ul>
+<li>Los dos bloques que más pesan son <strong>marketing</strong> y <strong>desarrollo</strong>.</li>
+<li><code>Stripe</code> está dentro del total, pero es <strong>coste variable</strong> ligado a ingresos y no OPEX fijo puro.</li>
+</ul>
+<h2 id="opex-fijo-vs-coste-variable">4. OPEX fijo vs coste variable</h2>
+<table>
+<thead>
+<tr>
+<th>Capa</th>
+<th style="text-align: right;">Total 3 años</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPEX fijo sin Stripe</td>
+<td style="text-align: right;"><code>~46.597 EUR</code></td>
+</tr>
+<tr>
+<td>Stripe COGS variable</td>
+<td style="text-align: right;"><code>~4.400 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Total con Stripe</strong></td>
+<td style="text-align: right;"><strong><code>~50.997 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="caja-minima-vs-estructura-correcta">5. Caja mínima vs estructura correcta</h2>
+<table>
+<thead>
+<tr>
+<th>Escenario</th>
+<th style="text-align: right;">Importe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mínimo operativo puro</td>
+<td style="text-align: right;"><code>~15.313 EUR</code></td>
+</tr>
+<tr>
+<td>Caja cómoda Año 1</td>
+<td style="text-align: right;"><code>~17.800 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Recomendado para maximizar ayudas</strong></td>
+<td style="text-align: right;"><strong><code>30.000 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lectura correcta</strong></p>
+<ul>
+<li><code>15k-18k</code> describen cuánto hace falta para sobrevivir el Año 1.</li>
+<li><strong>No</strong> describen la mejor estructura para jugar subvenciones.</li>
+<li>Para eso, el documento queda reconciliado con <code>DECISIONES-FINANCIERAS.md</code>: <strong><code>30.000 EUR</code> de fondos propios totales</strong>.</li>
+</ul>
+<h2 id="reglas-de-lectura">6. Reglas de lectura</h2>
+<ul>
+<li>El presupuesto es austero, pero no improvisado: combina tasas públicas, SaaS básicos, marketing mínimo y contingencia.</li>
+<li>La cifra de <code>30k</code> no es gasto operativo; es capitalización inicial recomendable.</li>
+<li>Antes de cerrar un deck o un compromiso de caja, las tarifas SaaS y las tasas se vuelven a verificar en la fuente oficial.</li>
+</ul>
+<h2 id="fuentes-base-de-costes">7. Fuentes base de costes</h2>
+<ul>
+<li><a href="https://www.rmc.es/deno_solicitud.aspx">RMNC - Certificación negativa de denominación social</a></li>
+<li><a href="https://www.sede.fnmt.gob.es/certificados/certificado-de-representante/persona-juridica">FNMT - Certificado de representante para persona jurídica</a></li>
+<li><a href="https://www.oepm.es/es/tasas-y-precios-publicos/tasas-de-marcas-y-nombres-comerciales/">OEPM - Tasas de marcas y nombres comerciales</a></li>
+<li><a href="https://stripe.com/en-es/pricing">Stripe - Pricing</a></li>
+<li><a href="https://www.anthropic.com/pricing">Anthropic - Pricing</a></li>
+<li><a href="https://docs.anthropic.com/en/docs/about-claude/pricing">Anthropic - API pricing</a></li>
+<li><a href="https://business.whatsapp.com/products/platform-pricing">WhatsApp Business Platform - Pricing</a></li>
+<li><a href="https://supabase.com/pricing">Supabase - Pricing</a></li>
+<li><a href="https://www.cloudflare.com/plans/">Cloudflare - Plans and pricing</a></li>
+</ul>
+<blockquote>
+<p>Las cifras del presupuesto son una foto razonada para planificar. Antes de contratar o presentar a terceros, se revalidan las tarifas variables en estas URLs oficiales.</p>
+</blockquote>
+
+  </section>
+</main>
+</body>
+</html>

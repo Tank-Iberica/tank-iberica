@@ -127,7 +127,7 @@ function onChange(field: keyof MerchForm, event: Event) {
 .section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .section-title {
@@ -138,16 +138,16 @@ function onChange(field: keyof MerchForm, event: Event) {
 }
 
 .section-desc {
-  margin: -8px 0 0;
-  font-size: 0.875rem;
+  margin: -0.5rem 0 0;
+  font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
   line-height: 1.5;
 }
 
 .form-section {
   background: var(--bg-primary);
-  border-radius: 16px;
-  padding: 24px 20px;
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem 1.25rem;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
   border: 1px solid var(--color-gray-200);
 }
@@ -155,32 +155,32 @@ function onChange(field: keyof MerchForm, event: Event) {
 .interest-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .field-label {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .required {
   color: var(--color-error);
-  margin-left: 2px;
+  margin-left: 0.125rem;
 }
 
 .field-input {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   color: var(--text-primary);
   background: var(--bg-primary);
@@ -198,38 +198,38 @@ function onChange(field: keyof MerchForm, event: Event) {
 }
 
 .field-textarea {
-  min-height: 88px;
+  min-height: 5.5rem;
   resize: vertical;
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: 0.75rem 1rem;
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
 }
 
 .alert-success {
-  padding: 20px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: 1.25rem;
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 12px;
-  color: #15803d;
+  border-radius: var(--border-radius-md);
+  color: var(--color-green-700);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .alert-success strong {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   font-weight: 700;
 }
 
 .alert-success p {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   opacity: 0.9;
 }
 
@@ -237,13 +237,13 @@ function onChange(field: keyof MerchForm, event: Event) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 48px;
-  padding: 12px 24px;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -264,11 +264,11 @@ function onChange(field: keyof MerchForm, event: Event) {
 
 .spinner-sm {
   display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 1rem;
+  height: 1rem;
+  border: 0.125rem solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   animation: spin 0.8s linear infinite;
 }
 
@@ -282,13 +282,13 @@ function onChange(field: keyof MerchForm, event: Event) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
   background: transparent;
-  color: #15803d;
-  border: 1px solid #86efac;
-  border-radius: 8px;
-  font-size: 0.875rem;
+  color: var(--color-green-700);
+  border: 1px solid var(--color-green-300);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   align-self: flex-start;
@@ -296,7 +296,7 @@ function onChange(field: keyof MerchForm, event: Event) {
 }
 
 .btn-reset:hover {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
 }
 
 .form-note {
@@ -316,7 +316,7 @@ function onChange(field: keyof MerchForm, event: Event) {
 
 @media (min-width: 48em) {
   .form-section {
-    padding: 32px;
+    padding: 2rem;
   }
 }
 </style>

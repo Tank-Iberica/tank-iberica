@@ -108,13 +108,13 @@ function handleEdit(auction: AuctionWithVehicle) {
 .admin-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
   height: 100%;
 }
 
 .page-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 </style>

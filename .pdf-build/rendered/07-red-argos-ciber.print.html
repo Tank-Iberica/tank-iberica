@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Biblia de Subvenciones - 07 red argos ciber</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Biblia de Subvenciones - 07 red argos ciber</h1>
+    <p>Tomo monografico de la biblia de subvenciones para desarrollo exhaustivo por linea.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#1-ficha-de-trabajo'>1. Ficha de trabajo</a></li>
+<li class='toc-l2'><a href='#2-que-decide-realmente-la-linea'>2. Que decide realmente la linea</a></li>
+<li class='toc-l2'><a href='#3-como-se-traduce-eso-a-tradebase'>3. Como se traduce eso a TradeBase</a></li>
+<li class='toc-l2'><a href='#4-lo-que-probablemente-si-seria-elegible'>4. Lo que probablemente si seria elegible</a></li>
+<li class='toc-l3'><a href='#4-1-gestion-de-identidades-y-accesos'>4.1 Gestion de identidades y accesos</a></li>
+<li class='toc-l3'><a href='#4-2-continuidad-y-recuperacion'>4.2 Continuidad y recuperacion</a></li>
+<li class='toc-l3'><a href='#4-3-hardening-e-inventario'>4.3 Hardening e inventario</a></li>
+<li class='toc-l3'><a href='#4-4-logging-y-monitorizacion'>4.4 Logging y monitorizacion</a></li>
+<li class='toc-l3'><a href='#4-5-consultoria-especializada'>4.5 Consultoria especializada</a></li>
+<li class='toc-l2'><a href='#5-lo-que-no-deberia-meterse'>5. Lo que no deberia meterse</a></li>
+<li class='toc-l2'><a href='#6-requisitos-practicos-que-yo-impondria-antes-de-preparar-la-solicitud'>6. Requisitos practicos que yo impondria antes de preparar la solicitud</a></li>
+<li class='toc-l3'><a href='#6-1-tener-un-punto-de-partida-escrito'>6.1 Tener un punto de partida escrito</a></li>
+<li class='toc-l3'><a href='#6-2-tener-un-paquete-de-medidas-cerrado'>6.2 Tener un paquete de medidas cerrado</a></li>
+<li class='toc-l3'><a href='#6-3-tener-proveedor-o-solucion-definida'>6.3 Tener proveedor o solucion definida</a></li>
+<li class='toc-l2'><a href='#7-proyecto-candidato-razonable-para-tradebase'>7. Proyecto candidato razonable para TradeBase</a></li>
+<li class='toc-l3'><a href='#7-1-por-que-este-proyecto-encaja'>7.1 Por que este proyecto encaja</a></li>
+<li class='toc-l3'><a href='#7-2-por-que-no-intentaria-hacer-algo-mas-grande'>7.2 Por que no intentaria hacer algo mas grande</a></li>
+<li class='toc-l2'><a href='#8-documentacion-exacta-que-yo-exigiria'>8. Documentacion exacta que yo exigiria</a></li>
+<li class='toc-l3'><a href='#8-1-carpeta-de-situacion-actual'>8.1 Carpeta de situacion actual</a></li>
+<li class='toc-l3'><a href='#8-2-carpeta-de-proyecto'>8.2 Carpeta de proyecto</a></li>
+<li class='toc-l3'><a href='#8-3-carpeta-economica'>8.3 Carpeta economica</a></li>
+<li class='toc-l3'><a href='#8-4-carpeta-de-cierre'>8.4 Carpeta de cierre</a></li>
+<li class='toc-l2'><a href='#9-obstaculos-previsibles-y-como-resolverlos'>9. Obstaculos previsibles y como resolverlos</a></li>
+<li class='toc-l3'><a href='#9-1-obstaculo-1-querer-financiar-higiene-basica-sin-proyecto'>9.1 Obstaculo 1 - Querer financiar higiene basica sin proyecto</a></li>
+<li class='toc-l3'><a href='#9-2-obstaculo-2-no-poder-probar-la-mejora'>9.2 Obstaculo 2 - No poder probar la mejora</a></li>
+<li class='toc-l3'><a href='#9-3-obstaculo-3-mezclar-seguridad-con-infraestructura-general'>9.3 Obstaculo 3 - Mezclar seguridad con infraestructura general</a></li>
+<li class='toc-l3'><a href='#9-4-obstaculo-4-llegar-tarde'>9.4 Obstaculo 4 - Llegar tarde</a></li>
+<li class='toc-l2'><a href='#10-umbral-minimo-defendible-para-pedirla'>10. Umbral minimo defendible para pedirla</a></li>
+<li class='toc-l2'><a href='#11-escenario-optimo'>11. Escenario optimo</a></li>
+<li class='toc-l2'><a href='#12-go-no-go-not-yet'>12. GO / NO-GO / NOT YET</a></li>
+<li class='toc-l3'><a href='#go'>GO</a></li>
+<li class='toc-l3'><a href='#no-go'>NO-GO</a></li>
+<li class='toc-l3'><a href='#not-yet'>NOT YET</a></li>
+<li class='toc-l2'><a href='#13-conclusion-operativa'>13. Conclusión operativa</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tomo-7-red-argos-ciber-linea-ciber-viva-en-castilla-y-leon">Tomo #7 - Red Argos Ciber / linea ciber viva en Castilla y Leon</h1>
+<blockquote>
+<p><strong>Rol:</strong> monografia de expediente para preparar de verdad una solicitud sobre la linea ciber viva de Castilla y Leon, evitando el error tipico de intentar pasar mantenimiento general o higiene tecnica difusa como si fuera un proyecto de ciberseguridad elegible.<br />
+<strong>Fecha de corte:</strong> 11/03/2026.<br />
+<strong>Fuente principal:</strong> <a href="https://www.tramitacastillayleon.jcyl.es/web/jcyl/AdministracionElectronica/es/Plantilla100Detalle/1284933058677/Ayuda012/1285592445096/Propuesta">https://www.tramitacastillayleon.jcyl.es/web/jcyl/AdministracionElectronica/es/Plantilla100Detalle/1284933058677/Ayuda012/1285592445096/Propuesta</a></p>
+</blockquote>
+<hr />
+<h2 id="ficha-de-trabajo">1. Ficha de trabajo</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Organismo</td>
+<td>Junta de Castilla y Leon</td>
+</tr>
+<tr>
+<td>Naturaleza</td>
+<td>Subvencion de ciberseguridad / digitalizacion especializada</td>
+</tr>
+<tr>
+<td>Estado verificable</td>
+<td>Convocatoria viva de referencia hasta 31/03/2026</td>
+</tr>
+<tr>
+<td>Intensidad verificable</td>
+<td><code>50%</code> para hardware y software; <code>75%</code> para consultoria; maximo <code>20.000 EUR</code></td>
+</tr>
+<tr>
+<td>Pregunta clave del expediente</td>
+<td>si existe un proyecto ciber delimitado, con situacion de partida, medidas concretas, coste elegible separado y mejora verificable</td>
+</tr>
+<tr>
+<td>Cuello de botella TradeBase</td>
+<td>querer imputar infraestructura ordinaria o mantenimiento tecnico como si fueran un proyecto ciber subvencionable</td>
+</tr>
+<tr>
+<td>Decision actual</td>
+<td><code>GO</code> solo con paquete ciber cerrado y presupuesto separado; <code>NO-GO</code> si se intenta usar como bolsa de gasto tecnico general</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="que-decide-realmente-la-linea">2. Que decide realmente la linea</h2>
+<p>No decide si la empresa considera importante la seguridad. Eso es irrelevante. Decide si:</p>
+<ol>
+<li>existe un <strong>riesgo o carencia identificable</strong>;</li>
+<li>las medidas a implantar son <strong>concretas y elegibles</strong>;</li>
+<li>el gasto esta <strong>presupuestado y separado</strong>;</li>
+<li>y el resultado es <strong>verificable</strong>.</li>
+</ol>
+<p>En otras palabras, la linea no paga &quot;ser prudentes&quot;. Paga proyectos tecnicos delimitados.</p>
+<hr />
+<h2 id="como-se-traduce-eso-a-tradebase">3. Como se traduce eso a TradeBase</h2>
+<p>TradeBase es especialmente vulnerable a dos errores:</p>
+<ol>
+<li>tratar seguridad como parte indistinta del stack;</li>
+<li>pedir para tareas basicas que deberian hacerse igual aunque no hubiera ayuda.</li>
+</ol>
+<p>La forma correcta de enfocar la solicitud no es:</p>
+<blockquote>
+<p>necesitamos mas seguridad porque somos una startup digital.</p>
+</blockquote>
+<p>La forma correcta es:</p>
+<blockquote>
+<p>hoy existe un conjunto identificable de riesgos en accesos, continuidad, segregacion, logging y hardening; se propone un paquete tecnico cerrado, con entregables y pruebas de implantacion, para elevar el nivel de ciberseguridad de la sociedad.</p>
+</blockquote>
+<hr />
+<h2 id="lo-que-probablemente-si-seria-elegible">4. Lo que probablemente si seria elegible</h2>
+<p>Tomando como referencia la linea viva, yo concentraria el expediente de TradeBase en estos bloques:</p>
+<h3 id="gestion-de-identidades-y-accesos">4.1 Gestion de identidades y accesos</h3>
+<ul>
+<li>MFA obligatorio;</li>
+<li>cuentas privilegiadas separadas;</li>
+<li>gestor de secretos;</li>
+<li>politica de altas/bajas/cambios;</li>
+<li>control de accesos a paneles, infraestructura y herramientas.</li>
+</ul>
+<h3 id="continuidad-y-recuperacion">4.2 Continuidad y recuperacion</h3>
+<ul>
+<li>copias de seguridad;</li>
+<li>pruebas de restauracion;</li>
+<li>politica de retencion;</li>
+<li>procedimiento documentado de recuperacion.</li>
+</ul>
+<h3 id="hardening-e-inventario">4.3 Hardening e inventario</h3>
+<ul>
+<li>inventario minimo de activos;</li>
+<li>reduccion de superficie de exposicion;</li>
+<li>endurecimiento de configuraciones;</li>
+<li>revisiones de seguridad basicas de servicios criticos.</li>
+</ul>
+<h3 id="logging-y-monitorizacion">4.4 Logging y monitorizacion</h3>
+<ul>
+<li>centralizacion minima de logs;</li>
+<li>alertado basico;</li>
+<li>trazabilidad de accesos y eventos criticos.</li>
+</ul>
+<h3 id="consultoria-especializada">4.5 Consultoria especializada</h3>
+<ul>
+<li>diagnostico externo;</li>
+<li>plan de medidas;</li>
+<li>auditoria de configuracion;</li>
+<li>validacion de implantacion.</li>
+</ul>
+<hr />
+<h2 id="lo-que-no-deberia-meterse">5. Lo que no deberia meterse</h2>
+<p>No meteria en esta linea:</p>
+<ul>
+<li>gasto cloud ordinario;</li>
+<li>licencias generales de trabajo;</li>
+<li>mantenimiento rutinario;</li>
+<li>refactorizaciones no ligadas a seguridad;</li>
+<li>compra de equipos sin explicacion ciber;</li>
+<li>horas internas difusas sin entregable ni plan.</li>
+</ul>
+<p>Si el gasto entraria igual aunque la empresa no hiciera ningun proyecto de ciberseguridad, probablemente no es buen candidato.</p>
+<hr />
+<h2 id="requisitos-practicos-que-yo-impondria-antes-de-preparar-la-solicitud">6. Requisitos practicos que yo impondria antes de preparar la solicitud</h2>
+<h3 id="tener-un-punto-de-partida-escrito">6.1 Tener un punto de partida escrito</h3>
+<p>Si no puedes describir por escrito:</p>
+<ul>
+<li>que activos tienes;</li>
+<li>que accesos existen;</li>
+<li>que debilidades concretas detectas;</li>
+<li>y que consecuencias tendria no corregirlas,</li>
+</ul>
+<p>entonces no tienes expediente; solo intuicion.</p>
+<h3 id="tener-un-paquete-de-medidas-cerrado">6.2 Tener un paquete de medidas cerrado</h3>
+<p>No vale lista abierta de buenas practicas. Tiene que quedar algo como:</p>
+<table>
+<thead>
+<tr>
+<th>Riesgo actual</th>
+<th>Medida</th>
+<th>Entregable</th>
+<th>Coste</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cuentas sin MFA consistente</td>
+<td>MFA y politica de acceso</td>
+<td>politica + implantacion</td>
+<td>X</td>
+</tr>
+<tr>
+<td>backups no validados</td>
+<td>backup + test de restore</td>
+<td>informe y evidencia</td>
+<td>Y</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tener-proveedor-o-solucion-definida">6.3 Tener proveedor o solucion definida</h3>
+<p>La ayuda no deberia pedirse para &quot;ya veremos que compramos&quot;. Hay que llegar con:</p>
+<ul>
+<li>proveedor;</li>
+<li>alcance;</li>
+<li>presupuesto;</li>
+<li>entregables.</li>
+</ul>
+<hr />
+<h2 id="proyecto-candidato-razonable-para-tradebase">7. Proyecto candidato razonable para TradeBase</h2>
+<p>Si tuviera que resumirlo en una sola frase:</p>
+<blockquote>
+<p>Plan de ciberseguridad base para TradeBase con foco en identidades, secretos, copias, logging, hardening y validacion externa.</p>
+</blockquote>
+<h3 id="por-que-este-proyecto-encaja">7.1 Por que este proyecto encaja</h3>
+<ul>
+<li>es concreto;</li>
+<li>responde a riesgos reales;</li>
+<li>genera entregables verificables;</li>
+<li>y no depende de inventar una ciber avanzada que todavia no necesitais.</li>
+</ul>
+<h3 id="por-que-no-intentaria-hacer-algo-mas-grande">7.2 Por que no intentaria hacer algo mas grande</h3>
+<p>Porque el riesgo aqui es la inflacion del proyecto. Una pyme temprana no necesita fingir un SOC. Necesita un expediente defendible, no grandilocuente.</p>
+<hr />
+<h2 id="documentacion-exacta-que-yo-exigiria">8. Documentacion exacta que yo exigiria</h2>
+<h3 id="carpeta-de-situacion-actual">8.1 Carpeta de situacion actual</h3>
+<ul>
+<li>inventario de servicios y accesos;</li>
+<li>diagrama basico de infraestructura;</li>
+<li>lista de cuentas criticas;</li>
+<li>descripcion de backups actuales;</li>
+<li>lista de riesgos detectados.</li>
+</ul>
+<h3 id="carpeta-de-proyecto">8.2 Carpeta de proyecto</h3>
+<ul>
+<li>memoria corta del plan ciber;</li>
+<li>alcance;</li>
+<li>justificacion tecnica;</li>
+<li>cronograma;</li>
+<li>responsables;</li>
+<li>matriz riesgo-medida.</li>
+</ul>
+<h3 id="carpeta-economica">8.3 Carpeta economica</h3>
+<ul>
+<li>presupuesto por medida;</li>
+<li>identificacion clara de que parte es hardware/software y que parte consultoria;</li>
+<li>tabla de gasto elegible.</li>
+</ul>
+<h3 id="carpeta-de-cierre">8.4 Carpeta de cierre</h3>
+<ul>
+<li>configuraciones implantadas;</li>
+<li>politicas;</li>
+<li>capturas o reportes;</li>
+<li>informe del proveedor;</li>
+<li>prueba de restauracion o de validacion si aplica.</li>
+</ul>
+<hr />
+<h2 id="obstaculos-previsibles-y-como-resolverlos">9. Obstaculos previsibles y como resolverlos</h2>
+<h3 id="obstaculo-1-querer-financiar-higiene-basica-sin-proyecto">9.1 Obstaculo 1 - Querer financiar higiene basica sin proyecto</h3>
+<p><strong>Riesgo real</strong></p>
+<p>La empresa tiene varias tareas de seguridad en mente, pero ninguna esta organizada como expediente.</p>
+<p><strong>Como se resuelve</strong></p>
+<p>Crear un documento unico de proyecto con:</p>
+<ol>
+<li>estado inicial;</li>
+<li>medidas;</li>
+<li>entregables;</li>
+<li>coste;</li>
+<li>calendario.</li>
+</ol>
+<p>Sin ese documento, el expediente es difuso.</p>
+<h3 id="obstaculo-2-no-poder-probar-la-mejora">9.2 Obstaculo 2 - No poder probar la mejora</h3>
+<p><strong>Riesgo real</strong></p>
+<p>Se implantan cosas, pero despues no se sabe demostrar que se hicieron ni como quedo el nivel de seguridad.</p>
+<p><strong>Como se resuelve</strong></p>
+<p>Antes de ejecutar, definir evidencias de cierre:</p>
+<ul>
+<li>politica aprobada;</li>
+<li>panel o captura de MFA;</li>
+<li>reporte de backup;</li>
+<li>informe de consultoria;</li>
+<li>checklists de hardening.</li>
+</ul>
+<h3 id="obstaculo-3-mezclar-seguridad-con-infraestructura-general">9.3 Obstaculo 3 - Mezclar seguridad con infraestructura general</h3>
+<p><strong>Riesgo real</strong></p>
+<p>Se intenta colar gasto de cloud, herramientas generales o trabajo de desarrollo normal.</p>
+<p><strong>Como se resuelve</strong></p>
+<p>Separar un <strong>pool #7</strong> propio y no contaminarlo con:</p>
+<ul>
+<li>producto;</li>
+<li>marketing;</li>
+<li>operacion;</li>
+<li>SaaS general.</li>
+</ul>
+<h3 id="obstaculo-4-llegar-tarde">9.4 Obstaculo 4 - Llegar tarde</h3>
+<p><strong>Riesgo real</strong></p>
+<p>La ventana esta viva pero corta. Si no esta el paquete montado, la empresa pierde la linea por simple falta de preparacion.</p>
+<p><strong>Como se resuelve</strong></p>
+<p>Trabajar en 72 horas:</p>
+<ol>
+<li>inventario;</li>
+<li>plan;</li>
+<li>presupuesto;</li>
+<li>proveedor;</li>
+<li>solicitud.</li>
+</ol>
+<p>Esta es una de las pocas lineas donde la preparacion operativa manda mas que el relato.</p>
+<hr />
+<h2 id="umbral-minimo-defendible-para-pedirla">10. Umbral minimo defendible para pedirla</h2>
+<p>Yo no presentaria esta ayuda si no existen, como minimo:</p>
+<ul>
+<li>inventario de activos y accesos;</li>
+<li>lista de riesgos priorizados;</li>
+<li>paquete de medidas definido;</li>
+<li>presupuesto del proveedor o proveedores;</li>
+<li>separacion clara entre consultoria y software/hardware;</li>
+<li>ventana viva.</li>
+</ul>
+<hr />
+<h2 id="escenario-optimo">11. Escenario optimo</h2>
+<p>El escenario fuerte seria:</p>
+<ul>
+<li>diagnostico externo corto;</li>
+<li>plan de identidad y accesos;</li>
+<li>backups con prueba de restauracion;</li>
+<li>logging y alertado minimo;</li>
+<li>endurecimiento de configuraciones;</li>
+<li>documentacion de politicas;</li>
+<li>cierre con informe final y evidencias.</li>
+</ul>
+<p>Ese paquete no solo sirve para <code>#7</code>; tambien mejora:</p>
+<ul>
+<li><code>#10</code> Pyme Cibersegura;</li>
+<li><code>#12</code> por imagen de empresa seria;</li>
+<li><code>#13</code> ENISA por madurez operativa;</li>
+<li>y reduce riesgo real del negocio.</li>
+</ul>
+<hr />
+<h2 id="go-no-go-not-yet">12. GO / NO-GO / NOT YET</h2>
+<h3 id="go">GO</h3>
+<ul>
+<li>paquete ciber acotado;</li>
+<li>presupuesto separado;</li>
+<li>entregables definidos;</li>
+<li>ventana abierta.</li>
+</ul>
+<h3 id="no-go">NO-GO</h3>
+<ul>
+<li>solo hay ganas de mejorar seguridad;</li>
+<li>no hay proyecto cerrado;</li>
+<li>el gasto es infraestructura ordinaria.</li>
+</ul>
+<h3 id="not-yet">NOT YET</h3>
+<ul>
+<li>necesidad real;</li>
+<li>pero todavia no existe plan, proveedor o tabla de gasto elegible.</li>
+</ul>
+<hr />
+<h2 id="conclusion-operativa">13. Conclusión operativa</h2>
+<p><code>#7</code> es una buena linea para TradeBase precisamente porque obliga a hacer lo que igual deberiais hacer de todos modos, pero con metodo. No hay que inflarla. Cuanto mas sobria, concreta y verificable sea la solicitud, mejor. Si se intenta convertir en una bolsa de gasto tecnico general, se desactiva sola.</p>
+
+  </section>
+</main>
+</body>
+</html>

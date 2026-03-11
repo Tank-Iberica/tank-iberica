@@ -1,0 +1,21 @@
+# Semgrep ignore file
+# Directories
+node_modules/
+.nuxt/
+.output/
+dist/
+coverage/
+playwright-report/
+
+# Test files (not production code)
+tests/
+**/*.test.ts
+**/*.spec.ts
+
+# Generated files
+package-lock.json
+*.min.js
+*.min.css
+
+# i18n JSON (data, not code)
+i18n/

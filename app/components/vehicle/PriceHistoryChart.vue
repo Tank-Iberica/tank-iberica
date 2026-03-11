@@ -225,7 +225,7 @@ function formatDate(dateStr: string): string {
 }
 
 .skeleton-bar {
-  height: 12px;
+  height: 0.75rem;
   background: var(--bg-tertiary);
   border-radius: var(--border-radius-sm);
   animation: pulse 1.5s ease-in-out infinite;
@@ -304,13 +304,13 @@ function formatDate(dateStr: string): string {
 }
 
 .chart-axis-label {
-  font-size: 8px;
+  font-size: 0.5rem;
   fill: var(--text-auxiliary);
   font-family: var(--font-family);
 }
 
 .chart-axis-label--x {
-  font-size: 7px;
+  font-size: 0.4375rem;
 }
 
 /* Tooltip */
@@ -325,7 +325,7 @@ function formatDate(dateStr: string): string {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 0.125rem;
   z-index: var(--z-tooltip);
   box-shadow: var(--shadow-md);
 }

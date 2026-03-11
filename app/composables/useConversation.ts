@@ -5,36 +5,16 @@
  */
 
 import type { RealtimeChannel } from '@supabase/supabase-js'
+import type { Database } from '~~/types/supabase'
 
-export interface Conversation {
-  id: string
-  vehicle_id: string
-  buyer_id: string
-  seller_id: string
-  status: 'active' | 'data_shared' | 'closed' | 'reported'
-  buyer_accepted_share: boolean
-  seller_accepted_share: boolean
-  last_message_at: string
-  created_at: string
-  vehicle_title?: string
-  vehicle_image?: string
-  other_party_name?: string
-  last_message_preview?: string
-}
+// Re-export types for backwards compatibility
+export type { Conversation, ConversationMessage } from '~/composables/shared/conversationTypes'
 
-export interface ConversationMessage {
-  id: string
-  conversation_id: string
-  sender_id: string
-  content: string
-  is_system: boolean
-  is_read: boolean
-  created_at: string
-}
+import type { Conversation, ConversationMessage } from '~/composables/shared/conversationTypes'
+import { maskContactData, resolveUserName } from '~/composables/shared/conversationHelpers'
 
 export function useConversation() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = useSupabaseClient<any>()
+  const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
 
   const conversations = ref<Conversation[]>([])
@@ -56,20 +36,6 @@ export function useConversation() {
 
     return messages.value.filter((m) => m.sender_id !== userId && !m.is_read).length
   })
-
-  // ---------------------------------------------------------------------------
-  // Data masking
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Masks phone numbers and email addresses when data sharing has not been accepted.
-   */
-  function maskContactData(text: string, isDataShared: boolean): string {
-    if (isDataShared) return text
-    return text
-      .replace(/(\+?\d[\d\s\-().]{6,})/g, '[datos ocultos]')
-      .replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, '[datos ocultos]')
-  }
 
   // ---------------------------------------------------------------------------
   // Fetch conversations
@@ -183,25 +149,6 @@ export function useConversation() {
     }
   }
 
-  /**
-   * Resolves a display name from a user row.
-   * Priority: pseudonimo > company_name > name + apellidos > first part of name
-   */
-  function resolveUserName(
-    u: {
-      name: string | null
-      apellidos: string | null
-      pseudonimo: string | null
-      company_name: string | null
-    } | null,
-  ): string | undefined {
-    if (!u) return undefined
-    if (u.pseudonimo) return u.pseudonimo
-    if (u.company_name) return u.company_name
-    const parts = [u.name, u.apellidos].filter(Boolean)
-    return parts.length > 0 ? parts.join(' ') : undefined
-  }
-
   // ---------------------------------------------------------------------------
   // Fetch seller avg response time (shown to buyer only)
   // ---------------------------------------------------------------------------
@@ -239,7 +186,7 @@ export function useConversation() {
     try {
       const { data, error: fetchErr } = await supabase
         .from('conversation_messages')
-        .select('*')
+        .select('id, conversation_id, sender_id, content, is_system, is_read, created_at')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true })
 
@@ -330,7 +277,7 @@ export function useConversation() {
           sender_id: user.value.id,
           content: content.trim(),
         })
-        .select('*')
+        .select('id, conversation_id, sender_id, content, is_system, is_read, created_at')
         .single()
 
       if (sendErr) throw sendErr

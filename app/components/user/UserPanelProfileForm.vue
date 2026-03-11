@@ -26,25 +26,25 @@ watch(
   <div>
     <div class="form-field">
       <label>{{ t('user.pseudonym') }}</label>
-      <input v-model="form.pseudonimo" type="text" >
+      <input v-model="form.pseudonimo" type="text" autocomplete="username" >
     </div>
     <div class="form-field">
       <label>{{ t('user.fullName') }}</label>
       <div class="form-row">
-        <input v-model="form.name" type="text" :placeholder="t('user.name')" >
-        <input v-model="form.apellidos" type="text" :placeholder="t('user.surname')" >
+        <input v-model="form.name" type="text" :placeholder="t('user.name')" autocomplete="given-name" >
+        <input v-model="form.apellidos" type="text" :placeholder="t('user.surname')" autocomplete="family-name" >
       </div>
     </div>
     <div class="form-field">
       <label>{{ t('user.phone') }}</label>
-      <input v-model="form.telefono" type="tel" placeholder="+34 600 000 000" >
+      <input v-model="form.telefono" type="tel" :placeholder="t('user.phonePlaceholder')" autocomplete="tel" >
     </div>
     <div class="form-field">
       <label>{{ t('user.email') }}</label>
-      <input v-model="form.email" type="email" >
+      <input v-model="form.email" type="email" autocomplete="email" >
     </div>
     <button class="btn-primary" :disabled="saving" @click="emit('save', { ...form })">
-      {{ saving ? '...' : t('user.saveChanges') }}
+      {{ saving ? t('common.saving') : t('user.saveChanges') }}
     </button>
     <div v-if="message" :class="['form-message', message.type]">
       {{ message.text }}
@@ -54,7 +54,7 @@ watch(
 
 <style scoped>
 .form-field {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .form-field label {
@@ -62,20 +62,20 @@ watch(
   font-size: 0.85rem;
   font-weight: 500;
   color: #555;
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .form-field input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
 }
 
 .form-row {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .form-row input {
@@ -84,32 +84,32 @@ watch(
 }
 
 .form-message {
-  margin-top: 12px;
-  padding: 10px;
-  border-radius: 6px;
+  margin-top: 0.75rem;
+  padding: 0.625rem;
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
 }
 
 .form-message.success {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .form-message.error {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .btn-primary {
   width: 100%;
-  padding: 12px;
+  padding: 0.75rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:disabled {

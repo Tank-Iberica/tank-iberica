@@ -148,12 +148,12 @@ watch(
 
 <style scoped>
 .historico-page {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .page-header {
@@ -161,7 +161,7 @@ watch(
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .page-header h1 {
@@ -175,12 +175,12 @@ watch(
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-4);
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -192,23 +192,23 @@ watch(
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .record-count {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .historico-page {
-    padding: 24px;
-    gap: 20px;
+    padding: var(--spacing-6);
+    gap: var(--spacing-5);
   }
 }
 </style>

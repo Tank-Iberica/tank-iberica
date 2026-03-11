@@ -116,7 +116,7 @@ function isSortActive(field: string): boolean {
               getSortIcon('status')
             }}</span>
           </th>
-          <th class="col-actions">Acciones</th>
+          <th class="col-actions">{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -202,11 +202,11 @@ function isSortActive(field: string): boolean {
               :class="getStatusClass(v.status)"
               @change="emit('status-change', v, ($event.target as HTMLSelectElement).value)"
             >
-              <option value="published">Publicado</option>
-              <option value="draft">Oculto</option>
-              <option value="rented">Alquilado</option>
-              <option value="maintenance">Taller</option>
-              <option value="sold">Vendido</option>
+              <option value="published">{{ $t('common.published') }}</option>
+              <option value="draft">{{ $t('common.hidden') }}</option>
+              <option value="rented">{{ $t('common.rented') }}</option>
+              <option value="maintenance">{{ $t('common.maintenance') }}</option>
+              <option value="sold">{{ $t('common.sold') }}</option>
             </select>
           </td>
           <td class="col-actions">
@@ -252,9 +252,9 @@ function isSortActive(field: string): boolean {
           >
             <div class="empty-state">
               <span class="empty-icon">📦</span>
-              <p>No hay productos que coincidan con los filtros</p>
+              <p>{{ $t('common.noResults') }}</p>
               <button v-if="hasActiveFilters" class="btn-secondary" @click="emit('clear-filters')">
-                Limpiar filtros
+                {{ $t('catalog.clearFilters') }}
               </button>
             </div>
           </td>
@@ -267,15 +267,15 @@ function isSortActive(field: string): boolean {
 <style scoped>
 .table-container {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: auto;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .data-table thead {
@@ -286,7 +286,7 @@ function isSortActive(field: string): boolean {
 }
 
 .data-table th {
-  padding: 12px;
+  padding: var(--spacing-3);
   text-align: left;
   font-weight: 600;
   color: var(--text-secondary);
@@ -305,8 +305,8 @@ function isSortActive(field: string): boolean {
 
 .sort-icon {
   opacity: 0.3;
-  margin-left: 4px;
-  font-size: 12px;
+  margin-left: var(--spacing-1);
+  font-size: var(--font-size-xs);
 }
 
 .sort-icon.active {
@@ -315,29 +315,29 @@ function isSortActive(field: string): boolean {
 }
 
 .data-table td {
-  padding: 12px;
+  padding: var(--spacing-3);
   border-bottom: 1px solid var(--color-gray-100);
 }
 
 .data-table tbody tr:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .data-table tbody tr.selected {
-  background: #eff6ff;
+  background: var(--color-blue-50);
 }
 
 .col-checkbox {
-  width: 40px;
+  width: 2.5rem;
   text-align: center;
 }
 
 .col-img {
-  width: 56px;
+  width: 3.5rem;
 }
 
 .col-type {
-  width: 60px;
+  width: 3.75rem;
 }
 
 .col-num {
@@ -345,25 +345,25 @@ function isSortActive(field: string): boolean {
 }
 
 .col-actions {
-  width: 150px;
+  width: 9.375rem;
 }
 
 .col-favs {
-  width: 70px;
+  width: 4.375rem;
 }
 
 .col-desc {
-  max-width: 200px;
+  max-width: 12.5rem;
 }
 
 .col-filter {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .filter-unit {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--text-disabled);
-  margin-left: 2px;
+  margin-left: 0.125rem;
 }
 
 .text-muted {
@@ -371,7 +371,7 @@ function isSortActive(field: string): boolean {
 }
 
 .text-small {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .truncate {
@@ -382,9 +382,9 @@ function isSortActive(field: string): boolean {
 }
 
 .thumb {
-  width: 48px;
-  height: 36px;
-  border-radius: 4px;
+  width: 3rem;
+  height: 2.25rem;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
   background: var(--bg-secondary);
   display: flex;
@@ -399,26 +399,26 @@ function isSortActive(field: string): boolean {
 }
 
 .thumb-empty {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   opacity: 0.3;
 }
 
 .type-pill {
   display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 0.1875rem var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .type-pill.online {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-emerald-100);
+  color: var(--color-success-text);
 }
 
 .type-pill.offline {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -435,40 +435,40 @@ function isSortActive(field: string): boolean {
 
 .owner-tag {
   display: block;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--text-auxiliary);
-  margin-top: 2px;
+  margin-top: 0.125rem;
 }
 
 .cat-pill {
   display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .cat-venta {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 
 .cat-alquiler {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .cat-terceros {
-  background: #e9d5ff;
-  color: #6b21a8;
+  background: var(--color-purple-200);
+  color: var(--color-purple-800);
 }
 
 .status-select {
-  padding: 4px 8px;
+  padding: var(--spacing-1) var(--spacing-2);
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
-  font-size: 12px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-xs);
   background: var(--bg-primary);
   cursor: pointer;
   font-weight: 500;
@@ -476,7 +476,7 @@ function isSortActive(field: string): boolean {
 
 .status-published {
   color: var(--color-success);
-  border-color: #86efac;
+  border-color: var(--color-green-300);
 }
 
 .status-draft {
@@ -485,18 +485,18 @@ function isSortActive(field: string): boolean {
 }
 
 .status-rented {
-  color: #ca8a04;
-  border-color: #fde047;
+  color: var(--color-amber-600);
+  border-color: var(--color-amber-300);
 }
 
 .status-maintenance {
   color: var(--color-error);
-  border-color: #fca5a5;
+  border-color: var(--color-error-soft);
 }
 
 .status-sold {
-  color: #7c3aed;
-  border-color: #c4b5fd;
+  color: var(--color-purple-600);
+  border-color: var(--color-violet-300);
 }
 
 .fav-count {
@@ -506,17 +506,17 @@ function isSortActive(field: string): boolean {
 
 .row-actions {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-1);
   align-items: center;
 }
 
 .action-btn {
   background: none;
   border: none;
-  font-size: 16px;
+  font-size: var(--font-size-base);
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--border-radius-sm);
   transition: background 0.2s;
   text-decoration: none;
 }
@@ -531,39 +531,39 @@ function isSortActive(field: string): boolean {
 }
 
 .action-btn.delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .empty-cell {
   text-align: center;
-  padding: 48px 24px;
+  padding: var(--spacing-12) var(--spacing-6);
 }
 
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .empty-icon {
-  font-size: 48px;
+  font-size: 3rem;
   opacity: 0.3;
 }
 
 .empty-state p {
   margin: 0;
   color: var(--text-auxiliary);
-  font-size: 16px;
+  font-size: var(--font-size-base);
 }
 
 .btn-secondary {
   background: var(--bg-primary);
   border: 1px solid var(--color-gray-200);
   color: var(--text-secondary);
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;

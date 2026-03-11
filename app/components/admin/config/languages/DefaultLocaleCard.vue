@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { LocaleOption } from '~/composables/admin/useAdminLanguages'
+const { t } = useI18n()
 
 defineProps<{
   defaultLocale: string
@@ -17,10 +18,8 @@ function onChange(event: Event) {
 
 <template>
   <div class="config-card">
-    <h3 class="card-title">Idioma por Defecto</h3>
-    <p class="card-description">
-      El idioma principal del sitio. Debe ser uno de los idiomas activos.
-    </p>
+    <h3 class="card-title">{{ t('admin.configLanguages.defaultLocaleTitle') }}</h3>
+    <p class="card-description">{{ t('admin.configLanguages.defaultLocaleDesc') }}</p>
     <div class="form-group">
       <select class="form-select" :value="defaultLocale" @change="onChange">
         <option v-for="loc in options" :key="loc.value" :value="loc.value">
@@ -34,21 +33,21 @@ function onChange(event: Event) {
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--spacing-5);
 }
 
 .card-title {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.125rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-description {
-  margin: 0 0 16px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-4);
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
@@ -58,26 +57,26 @@ function onChange(event: Event) {
 
 .form-select {
   width: 100%;
-  max-width: 320px;
-  padding: 10px 12px;
+  max-width: 20rem;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   background: var(--bg-primary);
-  color: #374151;
+  color: var(--color-gray-700);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 (@media ()max-width: 47.9375em())) {
   .config-card {
-    padding: 16px;
+    padding: var(--spacing-4);
   }
 
   .form-select {

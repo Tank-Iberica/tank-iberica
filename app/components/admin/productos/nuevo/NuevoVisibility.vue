@@ -72,43 +72,43 @@ const emit = defineEmits<{
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 12px 16px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3) var(--spacing-4);
+  box-shadow: var(--shadow-xs);
 }
 .section-title {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #374151;
-  margin-bottom: 10px;
+  color: var(--color-gray-700);
+  margin-bottom: 0.625rem;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 .row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .row-3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .radio-card {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  padding: 12px;
+  gap: 0.625rem;
+  padding: var(--spacing-3);
   border: 2px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
 }
 .radio-card input {
-  margin-top: 2px;
+  margin-top: 0.125rem;
 }
 .radio-card.active {
   border-color: var(--color-primary);
-  background: #f0f9ff;
+  background: var(--color-sky-50);
 }
 .radio-content {
   display: flex;
@@ -119,30 +119,30 @@ const emit = defineEmits<{
 }
 .radio-content span {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 .owner-fields {
   border-top: 1px dashed var(--color-warning);
-  background: #fffbeb;
-  margin: 12px -16px -12px;
-  padding: 12px 16px;
+  background: var(--color-amber-50);
+  margin: var(--spacing-3) calc(-1 * var(--spacing-4)) calc(-1 * var(--spacing-3));
+  padding: var(--spacing-3) var(--spacing-4);
   border-radius: 0 0 8px 8px;
 }
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 .field label {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
 }
 .field input {
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.85rem;
 }
 .field input:focus {

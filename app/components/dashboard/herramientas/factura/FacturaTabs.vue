@@ -35,7 +35,7 @@ const { t } = useI18n()
 .tool-tabs {
   display: flex;
   gap: 0;
-  border-bottom: 2px solid var(--color-gray-200);
+  border-bottom: 0.125rem solid var(--color-gray-200);
   margin-bottom: 1.5rem;
 }
 
@@ -43,12 +43,12 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0.75rem 1.25rem;
   background: none;
   border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  border-bottom: 0.125rem solid transparent;
+  margin-bottom: -0.125rem;
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-auxiliary);
@@ -72,12 +72,12 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.375rem;
   background: var(--primary, var(--color-primary));
   color: white;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   font-size: 0.7rem;
   font-weight: 600;
 }

@@ -293,16 +293,16 @@ watch(
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .modal-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 44px;
-  height: 44px;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
   background: var(--bg-secondary);
   border-radius: 50%;
@@ -320,10 +320,10 @@ watch(
 }
 
 .modal-content {
-  padding: 48px 20px 24px 20px;
+  padding: 3rem 1.25rem 1.5rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
 .celebration-header {
@@ -333,7 +333,7 @@ watch(
 .celebration-icon {
   font-size: 4rem;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 
 .celebration-header h2 {
@@ -344,7 +344,7 @@ watch(
 }
 
 .vehicle-title {
-  margin: 8px 0 0 0;
+  margin: 0.5rem 0 0 0;
   font-size: 1rem;
   color: var(--text-auxiliary);
 }
@@ -352,7 +352,7 @@ watch(
 .question-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .question-label {
@@ -366,9 +366,9 @@ watch(
   display: flex;
   align-items: center;
   border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  min-height: 48px;
+  min-height: 3rem;
 }
 
 .price-input-wrapper:focus-within {
@@ -376,7 +376,7 @@ watch(
 }
 
 .price-currency {
-  padding: 0 12px;
+  padding: 0 var(--spacing-3);
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-auxiliary);
@@ -390,7 +390,7 @@ watch(
 .price-input {
   flex: 1;
   border: none;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -414,18 +414,18 @@ watch(
 .radio-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .radio-option {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
   border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .radio-option:has(input:checked) {
@@ -434,8 +434,8 @@ watch(
 }
 
 .radio-option input[type='radio'] {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   cursor: pointer;
 }
 
@@ -454,27 +454,27 @@ watch(
 .services-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .service-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
   border: 2px solid var(--color-gray-200);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .service-card input[type='checkbox'] {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 20px;
-  height: 20px;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 1.25rem;
+  height: 1.25rem;
   cursor: pointer;
 }
 
@@ -508,17 +508,17 @@ watch(
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .modal-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-direction: column-reverse;
 }
 
@@ -527,9 +527,9 @@ watch(
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 12px 24px;
-  border-radius: 8px;
+  min-height: 3rem;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -571,7 +571,7 @@ watch(
 .final-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 /* Transition */
@@ -599,18 +599,18 @@ watch(
 @media (min-width: 48em) {
   .modal-overlay {
     align-items: center;
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 
   .modal-container {
     width: 100%;
     max-width: 37.5em;
     max-height: 85vh;
-    border-radius: 16px;
+    border-radius: var(--border-radius-lg);
   }
 
   .modal-content {
-    padding: 48px 40px 32px 40px;
+    padding: 3rem 2.5rem 2rem 2.5rem;
   }
 
   .services-grid {

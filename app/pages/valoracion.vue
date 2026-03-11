@@ -66,6 +66,7 @@ onMounted(() => {
 
 <template>
   <div class="valuation-page">
+    <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('valuation.title') }]" class="valuation-breadcrumb" />
     <ValoracionHero />
 
     <div class="valuation-container">
@@ -116,12 +117,12 @@ onMounted(() => {
 }
 
 .valuation-container {
-  max-width: 700px;
+  max-width: 43.75rem;
   margin: 0 auto;
   padding: var(--spacing-6) var(--spacing-4) var(--spacing-16);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .valuation-container {
     padding-left: var(--spacing-6);
     padding-right: var(--spacing-6);

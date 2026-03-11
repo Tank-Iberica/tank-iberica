@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Plantillas de Expedientes Prioritarios</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Plantillas de Expedientes Prioritarios</h1>
+    <p>Plantillas operativas para preparar los expedientes prioritarios de ayudas y fiscalidad.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#uso-del-documento'>Uso del documento</a></li>
+<li class='toc-l2'><a href='#carpeta-base-recomendada'>Carpeta base recomendada</a></li>
+<li class='toc-l2'><a href='#1-plantilla-12-certificacion-startup'>1. Plantilla `#12` — Certificación startup</a></li>
+<li class='toc-l2'><a href='#2-plantilla-27-irpf-socios'>2. Plantilla `#27` — IRPF socios</a></li>
+<li class='toc-l2'><a href='#3-plantilla-24-i-d-i'>3. Plantilla `#24` — I+D+i</a></li>
+<li class='toc-l2'><a href='#4-plantilla-4-creacion-de-empresas-cyl'>4. Plantilla `#4` — Creación de Empresas CyL</a></li>
+<li class='toc-l2'><a href='#5-plantilla-1-plan-emprendedores-leon'>5. Plantilla `#1` — Plan Emprendedores León</a></li>
+<li class='toc-l2'><a href='#6-plantilla-21-miteco-reto-demografico'>6. Plantilla `#21` — MITECO Reto Demográfico</a></li>
+<li class='toc-l2'><a href='#7-plantilla-8-9-10-18-bloque-cameral-ejecutable'>7. Plantilla `#8 / #9 / #10 + #18` — bloque cameral ejecutable</a></li>
+<li class='toc-l2'><a href='#orden-de-uso-recomendado'>Orden de uso recomendado</a></li>
+<li class='toc-l2'><a href='#regla-final'>Regla final</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tradebase-plantillas-de-expedientes-prioritarios">TradeBase — Plantillas de Expedientes Prioritarios</h1>
+<blockquote>
+<p><strong>Fecha de corte:</strong> 10/03/2026<br />
+<strong>Rol:</strong> plantillas operativas para convertir el foco 2026 en expedientes presentables.<br />
+<strong>Ámbito:</strong> TradeBase SL con sede en <strong>Fresno de la Vega</strong>, 2 socios <code>50/50</code>, <code>30.000 EUR</code> de fondos propios y primera vertical <strong>Tracciona</strong>.<br />
+<strong>Se usan junto con:</strong> <a href="C:/TradeBase/SUBVENCIONES-PLAYBOOK.md">SUBVENCIONES-PLAYBOOK.md</a>, <a href="C:/TradeBase/SUBVENCIONES.md">SUBVENCIONES.md</a>, <a href="C:/TradeBase/DECISIONES-FINANCIERAS.md">DECISIONES-FINANCIERAS.md</a> y <a href="C:/TradeBase/PRESUPUESTOS.md">PRESUPUESTOS.md</a>.</p>
+</blockquote>
+<hr />
+<h2 id="uso-del-documento">Uso del documento</h2>
+<ul>
+<li>Cada plantilla está pensada para abrir una carpeta o expediente real.</li>
+<li>No sustituye la convocatoria viva ni el criterio del asesor.</li>
+<li>El objetivo es evitar empezar cada línea desde cero.</li>
+</ul>
+<h2 id="carpeta-base-recomendada">Carpeta base recomendada</h2>
+<pre><code class="language-text">EXPEDIENTE-XX-NOMBRE/
+  01-portada-y-resumen/
+  02-societario/
+  03-financiero/
+  04-producto-y-mercado/
+  05-innovacion-y-tecnica/
+  06-territorio-y-sede/
+  07-fiscal/
+  08-anexos-y-evidencias/
+</code></pre>
+<hr />
+<h2 id="plantilla-12-certificacion-startup">1. Plantilla <code>#12</code> — Certificación startup</h2>
+<p><strong>Fuente oficial</strong></p>
+<ul>
+<li>ENISA: <a href="https://www.enisa.es/es/certifica-tu-startup/faqs">https://www.enisa.es/es/certifica-tu-startup/faqs</a></li>
+<li>Ley 28/2022: <a href="https://www.boe.es/eli/es/l/2022/12/21/28">https://www.boe.es/eli/es/l/2022/12/21/28</a></li>
+</ul>
+<p><strong>Objetivo</strong></p>
+<ul>
+<li>Obtener la certificación de empresa emergente.</li>
+<li>Abrir la excepción fiscal relevante para el <code>50/50</code>.</li>
+<li>Reforzar señal institucional de innovación y escalabilidad.</li>
+</ul>
+<p><strong>Núcleo del expediente</strong></p>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Qué debe contener</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sociedad</td>
+<td>escritura, cap table, NIF, alta y estructura de socios</td>
+</tr>
+<tr>
+<td>Innovación</td>
+<td>arquitectura, diferenciación, backlog técnico, automatización y propuesta tecnológica</td>
+</tr>
+<tr>
+<td>Escalabilidad</td>
+<td>multi-vertical, coste marginal bajo, modelo SaaS/plataforma, recurrencia</td>
+</tr>
+<tr>
+<td>Mercado</td>
+<td>problema, cliente, vertical inicial, expansión prevista</td>
+</tr>
+<tr>
+<td>Equipo</td>
+<td>rol de cada socio y capacidad de ejecución</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Narrativa base para TradeBase</strong></p>
+<ul>
+<li>Plataforma tecnológica B2B vertical.</li>
+<li>Primera vertical: <code>Tracciona</code>.</li>
+<li>Evolución natural: <code>CampoIndustrial</code>.</li>
+<li>Base tecnológica propia y reutilizable.</li>
+<li>Sede en Fresno con posibilidad de empleo digital rural.</li>
+</ul>
+<p><strong>Checklist mínimo</strong></p>
+<ul>
+<li>escritura con ambos socios fundadores</li>
+<li>explicación clara de producto y no solo de intermediación</li>
+<li>capturas, flujos y demo</li>
+<li>memoria breve de innovación</li>
+<li>explicación de escalabilidad</li>
+</ul>
+<p><strong>Errores a evitar</strong></p>
+<ul>
+<li>venderlo como “marketplace sin tecnología propia”</li>
+<li>centrar el relato en compraventa manual</li>
+<li>no explicar escalabilidad</li>
+</ul>
+<p><strong>Checklist de pre-solicitud</strong></p>
+<ul>
+<li>SL constituida</li>
+<li>escritura cerrada con ambos fundadores</li>
+<li>sede coherente y operativa</li>
+<li>demo funcional disponible</li>
+<li>memoria ENISA redactada</li>
+<li>relato de innovación y escalabilidad probado internamente</li>
+</ul>
+<p><strong>Checklist de presentación</strong></p>
+<ul>
+<li>formulario ENISA revisado</li>
+<li>memoria adjunta sin contradicciones</li>
+<li>capturas y anexos incluidos</li>
+<li>datos societarios consistentes con escritura y AEAT</li>
+</ul>
+<p><strong>Checklist de cierre / post-solicitud</strong></p>
+<ul>
+<li>guardar resguardo</li>
+<li>registrar versión enviada</li>
+<li>preparar respuestas a requerimientos sobre innovación o escalabilidad</li>
+</ul>
+<p><strong>Go / no-go</strong></p>
+<ul>
+<li><code>GO</code> si al leer el expediente un tercero entiende “empresa de software escalable”</li>
+<li><code>NO-GO</code> si todavía se lee como intermediación manual con web</li>
+</ul>
+<hr />
+<h2 id="plantilla-27-irpf-socios">2. Plantilla <code>#27</code> — IRPF socios</h2>
+<p><strong>Fuentes oficiales</strong></p>
+<ul>
+<li>AEAT deducción estatal: <a href="https://sede.agenciatributaria.gob.es/Sede/Ayuda/24Presentacion/100/9_2.html">https://sede.agenciatributaria.gob.es/Sede/Ayuda/24Presentacion/100/9_2.html</a></li>
+<li>AEAT Castilla y León: <a href="https://sede.agenciatributaria.gob.es/Sede/eu_es/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2023/c17-deducciones-autonomicas-cuota/comunidad-castilla-leon/fomento-emprendimiento.html">https://sede.agenciatributaria.gob.es/Sede/eu_es/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2023/c17-deducciones-autonomicas-cuota/comunidad-castilla-leon/fomento-emprendimiento.html</a></li>
+</ul>
+<p><strong>Objetivo</strong></p>
+<ul>
+<li>Dejar listo el pack fiscal para que el <code>50/50</code> no quede mal montado.</li>
+</ul>
+<p><strong>Núcleo del expediente</strong></p>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Qué debe contener</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inversión</td>
+<td>desembolso de cada socio y prueba bancaria</td>
+</tr>
+<tr>
+<td>Escritura</td>
+<td>participaciones, socios fundadores, fecha</td>
+</tr>
+<tr>
+<td>Fondos propios</td>
+<td>capital + aportación adicional correctamente instrumentada</td>
+</tr>
+<tr>
+<td>Certificación startup</td>
+<td>si se obtiene, documento acreditativo para la excepción estatal</td>
+</tr>
+<tr>
+<td>Asesoría</td>
+<td>nota fiscal final sobre aplicación concreta</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Checklist mínimo</strong></p>
+<ul>
+<li>justificante de desembolso de ambos socios</li>
+<li>escritura inscrita</li>
+<li>cuadro de fondos propios</li>
+<li>criterio fiscal final del asesor</li>
+</ul>
+<p><strong>Errores a evitar</strong></p>
+<ul>
+<li>asumir que estatal y CyL suman sobre la misma base</li>
+<li>asumir que el <code>50/50</code> funciona fiscalmente igual sin certificación startup</li>
+</ul>
+<p><strong>Checklist de pre-solicitud / pre-aplicación</strong></p>
+<ul>
+<li>escritura inscrita</li>
+<li>desembolso de ambos socios trazado</li>
+<li>cuadro de fondos propios cerrado</li>
+<li>revisión fiscal preliminar con asesoría</li>
+<li>plan sobre escenario con y sin <code>#12</code></li>
+</ul>
+<p><strong>Checklist de presentación / uso</strong></p>
+<ul>
+<li>justificantes bancarios archivados</li>
+<li>escritura y cap table archivados</li>
+<li>criterio fiscal definitivo documentado</li>
+</ul>
+<p><strong>Checklist de cierre</strong></p>
+<ul>
+<li>conservar soporte para IRPF de ambos socios</li>
+<li>documentar si se aplica estatal, autonómica o combinación no solapada por bases distintas</li>
+</ul>
+<p><strong>Go / no-go</strong></p>
+<ul>
+<li><code>GO</code> si la estructura y los justificantes están cerrados y la estrategia fiscal está revisada</li>
+<li><code>NO-GO</code> si se sigue asumiendo la deducción sin soporte de <code>#12</code> o sin trazabilidad de inversión</li>
+</ul>
+<hr />
+<h2 id="plantilla-24-idi">3. Plantilla <code>#24</code> — I+D+i</h2>
+<p><strong>Fuentes oficiales</strong></p>
+<ul>
+<li>AEAT I+D+i: <a href="https://sede.agenciatributaria.gob.es/Sede/impuesto-sobre-sociedades/brexit/deduccion-actividades-investigacion-desarrollo-innovacion.html">https://sede.agenciatributaria.gob.es/Sede/impuesto-sobre-sociedades/brexit/deduccion-actividades-investigacion-desarrollo-innovacion.html</a></li>
+<li>LIS: <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2014-12328">https://www.boe.es/buscar/act.php?id=BOE-A-2014-12328</a></li>
+</ul>
+<p><strong>Objetivo</strong></p>
+<ul>
+<li>Convertir trabajo técnico real en soporte fiscal defendible.</li>
+</ul>
+<p><strong>Núcleo del expediente</strong></p>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Qué debe contener</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Proyecto técnico</td>
+<td>módulos, hipótesis, incertidumbre técnica, resultados</td>
+</tr>
+<tr>
+<td>Trazabilidad</td>
+<td>horas, commits, issues, decisiones de arquitectura</td>
+</tr>
+<tr>
+<td>Costes</td>
+<td>personal, colaboradores, servicios y materiales elegibles</td>
+</tr>
+<tr>
+<td>Evidencia</td>
+<td>demos, pruebas, experimentos, errores, benchmark</td>
+</tr>
+<tr>
+<td>Cierre fiscal</td>
+<td>clasificación preliminar I+D vs IT y cuadro de gastos</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Narrativa base para TradeBase</strong></p>
+<ul>
+<li>Motor de valoración y automatización comercial/documental.</li>
+<li>Procesamiento de datos del mercado B2B industrial.</li>
+<li>Arquitectura reusable multi-vertical.</li>
+</ul>
+<p><strong>Checklist mínimo</strong></p>
+<ul>
+<li>timesheet técnico</li>
+<li>issues / sprints</li>
+<li>repositorio ordenado</li>
+<li>memoria trimestral</li>
+<li>cuadro de gastos por proyecto</li>
+</ul>
+<p><strong>Errores a evitar</strong></p>
+<ul>
+<li>llamar I+D a simple integración de SaaS externos</li>
+<li>mezclar gasto comercial con gasto técnico</li>
+</ul>
+<p><strong>Checklist de pre-solicitud / pre-cierre fiscal</strong></p>
+<ul>
+<li>repositorio ordenado</li>
+<li>backlog/issue tracker activo</li>
+<li>criterio de horas definido</li>
+<li>clasificación preliminar de proyectos y gastos</li>
+<li>asesoría fiscal alineada con el método de trabajo</li>
+</ul>
+<p><strong>Checklist de ejecución</strong></p>
+<ul>
+<li>registro mensual o trimestral actualizado</li>
+<li>evidencias técnicas guardadas</li>
+<li>costes etiquetados por proyecto</li>
+</ul>
+<p><strong>Checklist de cierre</strong></p>
+<ul>
+<li>memoria anual técnica cerrada</li>
+<li>cuadro final de gastos elegibles</li>
+<li>revisión fiscal del encaje I+D vs IT</li>
+</ul>
+<p><strong>Go / no-go</strong></p>
+<ul>
+<li><code>GO</code> si el rastro técnico-contable existe desde el principio</li>
+<li><code>NO-GO</code> si vais a reconstruirlo todo al final del año</li>
+</ul>
+<hr />
+<h2 id="plantilla-4-creacion-de-empresas-cyl">4. Plantilla <code>#4</code> — Creación de Empresas CyL</h2>
+<p><strong>Fuentes oficiales</strong></p>
+<ul>
+<li>Sede JCyL 2025: <a href="https://www.tramitacastillayleon.jcyl.es/web/jcyl/AdministracionElectronica/es/Plantilla100Detalle/1251181050732/Ayuda012/1285499531893/Propuesta">https://www.tramitacastillayleon.jcyl.es/web/jcyl/AdministracionElectronica/es/Plantilla100Detalle/1251181050732/Ayuda012/1285499531893/Propuesta</a></li>
+<li>BOCyL bases: <a href="https://bocyl.jcyl.es/eli/es-cl/o/2025/03/03/eyh201/">https://bocyl.jcyl.es/eli/es-cl/o/2025/03/03/eyh201/</a></li>
+</ul>
+<p><strong>Objetivo</strong></p>
+<ul>
+<li>Presentar proyecto de creación y puesta en marcha de nueva actividad <strong>antes de su ejecución completa</strong>.</li>
+</ul>
+<p><strong>Núcleo del expediente</strong></p>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Qué debe contener</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Proyecto</td>
+<td>descripción de la actividad nueva en CyL</td>
+</tr>
+<tr>
+<td>Presupuesto</td>
+<td>pool específico <code>#4</code>, entre mínimos y máximos elegibles</td>
+</tr>
+<tr>
+<td>Calendario</td>
+<td>qué está hecho y qué sigue pendiente a fecha de solicitud</td>
+</tr>
+<tr>
+<td>Finanzas</td>
+<td>plan de financiación y sostenibilidad</td>
+</tr>
+<tr>
+<td>Actividad</td>
+<td>CNAE, encaje sectorial y lanzamiento</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Checklist mínimo</strong></p>
+<ul>
+<li>memoria de creación y puesta en marcha</li>
+<li>presupuesto elegible separado</li>
+<li>cronograma que pruebe que el proyecto no está concluido materialmente</li>
+<li>documentación societaria</li>
+</ul>
+<p><strong>Errores a evitar</strong></p>
+<ul>
+<li>presentar cuando el proyecto ya está prácticamente terminado</li>
+<li>meter gastos sin separar del resto del lanzamiento</li>
+<li>usar una descripción ambigua de la actividad</li>
+</ul>
+<p><strong>Checklist de pre-solicitud</strong></p>
+<ul>
+<li>actividad nueva definida</li>
+<li>pool <code>#4</code> separado</li>
+<li>presupuesto elegible entre mínimos y máximos</li>
+<li>cronograma con parte relevante aún pendiente</li>
+<li>memoria y CNAE revisados</li>
+</ul>
+<p><strong>Checklist de presentación</strong></p>
+<ul>
+<li>formulario completo</li>
+<li>memoria, presupuesto y cronograma coherentes</li>
+<li>soporte de sede y sociedad adjunto</li>
+<li>proyecto no materialmente concluido a fecha de solicitud</li>
+</ul>
+<p><strong>Checklist de justificación posterior</strong></p>
+<ul>
+<li>facturas del pool <code>#4</code></li>
+<li>pagos y evidencias de ejecución</li>
+<li>hitos de puesta en marcha</li>
+<li>archivo de cambios respecto al plan inicial</li>
+</ul>
+<p><strong>Go / no-go</strong></p>
+<ul>
+<li><code>GO</code> si el proyecto sigue claramente en fase de puesta en marcha</li>
+<li><code>NO-GO</code> si el núcleo del lanzamiento ya está hecho y solo queda buscar subvención a posteriori</li>
+</ul>
+<hr />
+<h2 id="plantilla-1-plan-emprendedores-leon">5. Plantilla <code>#1</code> — Plan Emprendedores León</h2>
+<p><strong>Fuente oficial</strong></p>
+<ul>
+<li>Diputación de León: <a href="https://sede.dipuleon.es/carpetaciudadana/tramite.aspx?idtramite=27635">https://sede.dipuleon.es/carpetaciudadana/tramite.aspx?idtramite=27635</a></li>
+</ul>
+<p><strong>Objetivo</strong></p>
+<ul>
+<li>Aprovechar la línea provincial más lógica de Año 1.</li>
+</ul>
+<p><strong>Núcleo del expediente</strong></p>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Qué debe contener</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Empresa</td>
+<td>datos básicos, sede y forma jurídica</td>
+</tr>
+<tr>
+<td>Proyecto</td>
+<td>actividad, lanzamiento y empleo previsto</td>
+</tr>
+<tr>
+<td>Territorio</td>
+<td>encaje rural y provincial</td>
+</tr>
+<tr>
+<td>Inversión</td>
+<td>gastos e inversión subvencionable</td>
+</tr>
+<tr>
+<td>Viabilidad</td>
+<td>plan de ingresos y tesorería</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Narrativa base para TradeBase</strong></p>
+<ul>
+<li>Empresa tecnológica implantada en Fresno.</li>
+<li>Actividad económica real desde León rural.</li>
+<li>Digitalización de un mercado B2B tradicional.</li>
+</ul>
+<p><strong>Checklist mínimo</strong></p>
+<ul>
+<li>memoria ejecutiva</li>
+<li>presupuesto</li>
+<li>calendario de lanzamiento</li>
+<li>soporte de sede</li>
+</ul>
+<p><strong>Errores a evitar</strong></p>
+<ul>
+<li>no aterrizar la utilidad provincial del proyecto</li>
+<li>sonar a startup abstracta sin implantación real</li>
+</ul>
+<p><strong>Checklist de pre-solicitud</strong></p>
+<ul>
+<li>alta IAE y datos censales listos</li>
+<li>sede Fresno acreditable</li>
+<li>memoria provincial corta cerrada</li>
+<li>presupuesto resumido y coherente</li>
+</ul>
+<p><strong>Checklist de presentación</strong></p>
+<ul>
+<li>datos de empresa y actividad sin contradicciones</li>
+<li>anexos básicos completos</li>
+<li>relato provincial claro</li>
+</ul>
+<p><strong>Checklist de cierre</strong></p>
+<ul>
+<li>resguardo</li>
+<li>archivo de documentación presentada</li>
+<li>seguimiento de requerimientos o subsanaciones</li>
+</ul>
+<p><strong>Go / no-go</strong></p>
+<ul>
+<li><code>GO</code> si se puede explicar en dos minutos qué hace la empresa y por qué su actividad es real en León</li>
+<li><code>NO-GO</code> si la sede o la actividad siguen siendo demasiado nominales</li>
+</ul>
+<hr />
+<h2 id="plantilla-21-miteco-reto-demografico">6. Plantilla <code>#21</code> — MITECO Reto Demográfico</h2>
+<p><strong>Fuentes oficiales</strong></p>
+<ul>
+<li>Sede MITECO: <a href="https://sede.miteco.gob.es/portal/site/seMITECO/ficha-procedimiento?procedure_suborg_responsable=257&amp;procedure_etiqueta_pdu=null&amp;procedure_id=1130&amp;by=theme">https://sede.miteco.gob.es/portal/site/seMITECO/ficha-procedimiento?procedure_suborg_responsable=257&amp;procedure_etiqueta_pdu=null&amp;procedure_id=1130&amp;by=theme</a></li>
+<li>Nota 2025: <a href="https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/transicion-ecologica/paginas/2025/041225-proyectos-despoblacion.aspx">https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/transicion-ecologica/paginas/2025/041225-proyectos-despoblacion.aspx</a></li>
+</ul>
+<p><strong>Objetivo</strong></p>
+<ul>
+<li>Preparar una memoria territorial específica y separada del lanzamiento base.</li>
+</ul>
+<p><strong>Núcleo del expediente</strong></p>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th>Qué debe contener</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Territorio</td>
+<td>Fresno, población, entorno, necesidad y oportunidad</td>
+</tr>
+<tr>
+<td>Proyecto</td>
+<td>qué problema rural resuelve el proyecto</td>
+</tr>
+<tr>
+<td>Innovación</td>
+<td>por qué no es solo comercio electrónico</td>
+</tr>
+<tr>
+<td>Impacto</td>
+<td>empleo, fijación de actividad, digitalización local</td>
+</tr>
+<tr>
+<td>Presupuesto</td>
+<td>pool propio <code>#21</code>, independiente del Año 1 base</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Narrativa base para TradeBase</strong></p>
+<ul>
+<li>Plataforma tecnológica implantada en municipio rural elegible.</li>
+<li>Empleo digital cualificado desde Fresno.</li>
+<li>Evolución hacia <code>CampoIndustrial</code> y digitalización del tejido agroindustrial.</li>
+</ul>
+<p><strong>Checklist mínimo</strong></p>
+<ul>
+<li>dirección exacta de sede</li>
+<li>título de uso del espacio</li>
+<li>prueba de conectividad</li>
+<li>memoria territorial</li>
+<li>presupuesto independiente</li>
+<li>cartas o apoyos si existen</li>
+</ul>
+<p><strong>Errores a evitar</strong></p>
+<ul>
+<li>presentar un proyecto genérico sin anclaje territorial</li>
+<li>reciclar la memoria de lanzamiento sin adaptación</li>
+<li>depender solo del argumento “estamos en un pueblo”</li>
+</ul>
+<p><strong>Checklist de pre-solicitud</strong></p>
+<ul>
+<li>dirección exacta de sede</li>
+<li>título de uso del espacio</li>
+<li>prueba de conectividad</li>
+<li>presupuesto independiente <code>#21</code></li>
+<li>memoria territorial específica Fresno</li>
+<li>relato de impacto rural y empleo digital</li>
+</ul>
+<p><strong>Checklist de presentación</strong></p>
+<ul>
+<li>memoria separada del lanzamiento base</li>
+<li>anexos territoriales y de sede completos</li>
+<li>presupuesto y cronograma propios</li>
+<li>apoyos o contexto local si existen</li>
+</ul>
+<p><strong>Checklist de justificación posterior</strong></p>
+<ul>
+<li>rastro de ejecución del proyecto territorial</li>
+<li>hitos de impacto</li>
+<li>archivo de gastos del pool <code>#21</code></li>
+<li>soporte de mantenimiento de sede y actividad</li>
+</ul>
+<p><strong>Go / no-go</strong></p>
+<ul>
+<li><code>GO</code> si podéis responder con pruebas qué gana Fresno con el proyecto</li>
+<li><code>NO-GO</code> si la memoria se apoya solo en cumplir población <code>&lt;5.000</code></li>
+</ul>
+<hr />
+<h2 id="plantilla-8-9-10-18-bloque-cameral-ejecutable">7. Plantilla <code>#8 / #9 / #10 + #18</code> — bloque cameral ejecutable</h2>
+<p><strong>Fuentes oficiales</strong></p>
+<ul>
+<li>Pyme Digital 2026: <a href="https://bop.dipuleon.es/publica/buscador-anuncios/anuncio/Extracto-de-la-convocatoria-de-ayudas-para-el-desarrollo-de-planes-de-apoyo-de-soluciones-TIC-en-el-marco-del-Programa-Pyme-Digital-BDNS-887374/">https://bop.dipuleon.es/publica/buscador-anuncios/anuncio/Extracto-de-la-convocatoria-de-ayudas-para-el-desarrollo-de-planes-de-apoyo-de-soluciones-TIC-en-el-marco-del-Programa-Pyme-Digital-BDNS-887374/</a></li>
+<li>Pyme Innova 2026: <a href="https://bop.dipuleon.es/publica/buscador-anuncios/anuncio/Extracto-de-la-convocatoria-de-subvenciones-para-el-desarrollo-de-Planes-de-implantacion-de-soluciones-innovadoras-en-el-marco-del-Programa-Pyme-Innova-BDNS-887205/">https://bop.dipuleon.es/publica/buscador-anuncios/anuncio/Extracto-de-la-convocatoria-de-subvenciones-para-el-desarrollo-de-Planes-de-implantacion-de-soluciones-innovadoras-en-el-marco-del-Programa-Pyme-Innova-BDNS-887205/</a></li>
+<li>Pyme Cibersegura 2026: <a href="https://bop.dipuleon.es/publica/buscador-anuncios/anuncio/Extracto-de-la-convocatoria-de-ayudas-para-el-desarrollo-de-planes-de-apoyo-de-soluciones-TIC-en-el-marco-del-programa-Pyme-Cibersegura-BDNS-888013/">https://bop.dipuleon.es/publica/buscador-anuncios/anuncio/Extracto-de-la-convocatoria-de-ayudas-para-el-desarrollo-de-planes-de-apoyo-de-soluciones-TIC-en-el-marco-del-programa-Pyme-Cibersegura-BDNS-888013/</a></li>
+<li>España Emprende: <a href="https://www.camara.es/creacion-de-empresas">https://www.camara.es/creacion-de-empresas</a></li>
+</ul>
+<p><strong>Objetivo</strong></p>
+<ul>
+<li>Sacar valor operativo real del bloque cameral sin solapar gastos ni conceptos.</li>
+</ul>
+<p><strong>Checklist de pre-solicitud</strong></p>
+<ul>
+<li>mapa de necesidades separado en digital / innovación / ciber</li>
+<li>proceso actual descrito</li>
+<li>mejora concreta definida</li>
+<li>proveedor o solución identificada</li>
+</ul>
+<p><strong>Checklist de presentación</strong></p>
+<ul>
+<li>no usar el mismo gasto en las tres líneas</li>
+<li>memoria de necesidad concreta por línea</li>
+<li>calendario de implantación entendible</li>
+</ul>
+<p><strong>Checklist de cierre</strong></p>
+<ul>
+<li>entregables guardados</li>
+<li>evidencia de implantación</li>
+<li>archivo separado por línea</li>
+</ul>
+<p><strong>Go / no-go</strong></p>
+<ul>
+<li><code>GO</code> si cada línea tiene un paquete de gasto y una necesidad distinta</li>
+<li><code>NO-GO</code> si el mismo proyecto se está intentando vestir de digital, innovador y ciber a la vez</li>
+</ul>
+<hr />
+<h2 id="orden-de-uso-recomendado">Orden de uso recomendado</h2>
+<ol>
+<li>Abrir primero <code>#12</code>, <code>#27</code> y <code>#24</code>.</li>
+<li>Preparar <code>#4</code> y <code>#1</code> en paralelo.</li>
+<li>Dejar <code>#21</code> en pre-expediente hasta tener base territorial completa.</li>
+</ol>
+<h2 id="regla-final">Regla final</h2>
+<ul>
+<li>Si una plantilla se empieza a usar de verdad, debe convertirse en carpeta/expediente con nombre, fecha y responsable.</li>
+<li>Si cambia la convocatoria viva, se corrige primero la plantilla y luego el expediente.</li>
+</ul>
+
+  </section>
+</main>
+</body>
+</html>

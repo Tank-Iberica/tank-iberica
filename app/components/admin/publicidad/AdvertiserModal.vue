@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div v-if="modal.show" class="modal-overlay" @click.self="$emit('close')">
+    <div v-if="modal.show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="$emit('close')">
       <div class="modal-content modal-medium">
         <div class="modal-header">
           <h3>

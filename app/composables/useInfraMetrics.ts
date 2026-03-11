@@ -70,7 +70,7 @@ export function useInfraMetrics() {
     try {
       let query = supabase
         .from('infra_metrics')
-        .select('*')
+        .select('id, vertical, component, metric_name, metric_value, metric_limit, usage_percent, recorded_at, metadata')
         .order('recorded_at', { ascending: false })
 
       if (opts?.component) {
@@ -101,7 +101,7 @@ export function useInfraMetrics() {
     loading.value = true
     error.value = ''
     try {
-      let query = supabase.from('infra_alerts').select('*').order('sent_at', { ascending: false })
+      let query = supabase.from('infra_alerts').select('id, component, metric_name, alert_level, message, usage_percent, sent_at, acknowledged_at, acknowledged_by').order('sent_at', { ascending: false })
 
       if (!opts?.all) {
         query = query.is('acknowledged_at', null)
@@ -165,7 +165,7 @@ export function useInfraMetrics() {
     try {
       const { data, error: dbError } = await supabase
         .from('infra_clusters')
-        .select('*')
+        .select('id, name, supabase_url, verticals, weight_used, weight_limit, status')
         .order('name', { ascending: true })
 
       if (dbError) {

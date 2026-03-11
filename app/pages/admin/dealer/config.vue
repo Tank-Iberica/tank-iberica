@@ -93,11 +93,9 @@ onMounted(() => {
     <div class="page-header">
       <div>
         <h2>{{ $t('admin.dealerConfig.title') }}</h2>
-        <p class="page-subtitle">
-          Personaliza tu perfil publico, contacto, catalogo y notificaciones
-        </p>
+        <p class="page-subtitle">{{ $t('admin.dealerConfig.subtitle') }}</p>
       </div>
-      <NuxtLink to="/admin" class="btn-back"> Volver </NuxtLink>
+      <NuxtLink to="/admin" class="btn-back">{{ $t('common.back') }}</NuxtLink>
     </div>
 
     <!-- Feedback banners -->
@@ -113,9 +111,7 @@ onMounted(() => {
     <div v-else-if="!dealerExists" class="empty-state">
       <div class="empty-state-icon">!</div>
       <p>{{ $t('admin.dealerConfig.noDealer') }}</p>
-      <span class="empty-state-hint">
-        Contacta con el administrador para crear tu perfil de dealer.
-      </span>
+      <span class="empty-state-hint">{{ $t('admin.dealerConfig.noDealerHint') }}</span>
     </div>
 
     <!-- Main form -->
@@ -173,7 +169,7 @@ onMounted(() => {
       <!-- Bottom bar: Preview + Save -->
       <div class="bottom-bar">
         <NuxtLink v-if="dealerSlug" :to="`/${dealerSlug}`" target="_blank" class="btn-preview">
-          Ver portal publico
+          {{ $t('admin.dealerConfig.viewPublicPortal') }}
         </NuxtLink>
         <button class="btn-primary" :disabled="saving" @click="handleSave">
           {{ saving ? $t('admin.common.saving') : $t('admin.common.saveChanges') }}
@@ -186,9 +182,9 @@ onMounted(() => {
 <style scoped>
 .dealer-config {
   padding: 0;
-  max-width: 900px;
+  max-width: 56.25rem;
   margin: 0 auto;
-  padding-bottom: 100px;
+  padding-bottom: 6.25rem;
 }
 
 /* Page header */
@@ -240,12 +236,12 @@ onMounted(() => {
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
@@ -265,8 +261,8 @@ onMounted(() => {
 }
 
 .empty-state-icon {
-  width: 56px;
-  height: 56px;
+  width: 3.5rem;
+  height: 3.5rem;
   margin: 0 auto var(--spacing-4);
   background: var(--color-gray-100);
   color: var(--text-auxiliary);
@@ -320,7 +316,7 @@ onMounted(() => {
   transition:
     background var(--transition-fast),
     color var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
 }
@@ -340,7 +336,7 @@ onMounted(() => {
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -353,14 +349,14 @@ onMounted(() => {
 }
 
 /* Responsive: 480px */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .page-header h2 {
     font-size: var(--font-size-2xl);
   }
 }
 
 /* Responsive: 768px */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .bottom-bar {
     position: static;
     background: transparent;

@@ -14,23 +14,23 @@ const { t } = useI18n()
 
 <style scoped>
 .upgrade-card {
-  background: linear-gradient(135deg, #fffbeb, #fef3c7);
-  border: 1px solid #fde68a;
-  border-radius: 12px;
-  padding: 24px;
+  background: linear-gradient(135deg, var(--color-amber-50), var(--color-warning-bg));
+  border: 1px solid var(--color-amber-200);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
   text-align: center;
 }
 
 .upgrade-card h2 {
-  margin: 0 0 8px 0;
+  margin: 0 0 0.5rem 0;
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--color-warning-text);
 }
 
 .upgrade-card p {
-  margin: 0 0 16px 0;
-  color: #a16207;
+  margin: 0 0 1rem 0;
+  color: var(--color-amber-700);
   font-size: 0.95rem;
 }
 
@@ -38,12 +38,12 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--color-warning);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;

@@ -19,12 +19,11 @@
     />
 
     <div class="results-info">
-      <span>{{ total }} vehículos</span>
+      <span>{{ total }} {{ $t('vertical.itemsName') }}</span>
     </div>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ $t('admin.vehiculosIndex.loadingVehicles') }}</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonTable :rows="5" :cols="5" />
     </div>
 
     <div v-else-if="error" class="error-state">
@@ -40,7 +39,7 @@
         <circle cx="18.5" cy="18.5" r="2.5" />
       </svg>
       <p>{{ $t('admin.vehiculosIndex.empty') }}</p>
-      <NuxtLink to="/admin/vehiculos/new" class="btn-primary">Crear vehículo</NuxtLink>
+      <NuxtLink to="/admin/vehiculos/new" class="btn-primary">Crear {{ $t('vertical.itemName') }}</NuxtLink>
     </div>
 
     <AdminVehiclesTable v-else :vehicles="vehicles" @confirm-delete="confirmDelete" />
@@ -110,7 +109,7 @@ onMounted(() => {
 
 <style scoped>
 .admin-vehicles {
-  max-width: 1400px;
+  max-width: 87.5rem;
   margin: 0 auto;
 }
 
@@ -121,7 +120,7 @@ onMounted(() => {
   margin-bottom: var(--spacing-6);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .page-header {
     flex-direction: row;
     align-items: center;
@@ -147,7 +146,7 @@ onMounted(() => {
   font-weight: var(--font-weight-medium);
   border-radius: var(--border-radius);
   text-decoration: none;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background var(--transition-fast);
 }
 
@@ -156,8 +155,8 @@ onMounted(() => {
 }
 
 .btn-primary svg {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .results-info {
@@ -181,24 +180,10 @@ onMounted(() => {
   gap: var(--spacing-4);
 }
 
-.loading-state .spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--border-color);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 .empty-state svg {
-  width: 64px;
-  height: 64px;
+  width: 4rem;
+  height: 4rem;
   color: var(--text-auxiliary);
 }
 
@@ -213,7 +198,7 @@ onMounted(() => {
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   color: var(--text-primary);
-  min-height: 40px;
+  min-height: 2.5rem;
   cursor: pointer;
   transition: all var(--transition-fast);
 }

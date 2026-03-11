@@ -28,15 +28,15 @@ const localScope = computed({
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal modal-sm">
         <div class="modal-header">
-          <h3>Exportar productos</h3>
-          <button class="modal-close" @click="emit('close')">×</button>
+          <h3>{{ $t('admin.productos.exportTitle') }}</h3>
+          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">×</button>
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <label>Formato</label>
+            <label>{{ $t('common.format') }}</label>
             <div class="option-buttons">
               <button :class="{ active: localFormat === 'pdf' }" @click="localFormat = 'pdf'">
                 📄 PDF
@@ -47,30 +47,30 @@ const localScope = computed({
             </div>
           </div>
           <div class="form-group">
-            <label>Productos</label>
+            <label>{{ $t('admin.productos.allProducts') }}</label>
             <div class="option-buttons vertical">
               <button
                 :class="{ active: localScope === 'filtered' }"
                 @click="localScope = 'filtered'"
               >
-                Filtrados ({{ filteredCount }})
+                {{ $t('admin.productos.filtered') }} ({{ filteredCount }})
               </button>
               <button
                 v-if="selectedCount > 0"
                 :class="{ active: localScope === 'selected' }"
                 @click="localScope = 'selected'"
               >
-                Seleccionados ({{ selectedCount }})
+                {{ $t('admin.productos.selected') }} ({{ selectedCount }})
               </button>
               <button :class="{ active: localScope === 'all' }" @click="localScope = 'all'">
-                Todos ({{ totalCount }})
+                {{ $t('common.all') }} ({{ totalCount }})
               </button>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cancelar</button>
-          <button class="btn-primary" @click="emit('confirm')">Exportar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
+          <button class="btn-primary" @click="emit('confirm')">{{ $t('common.export') }}</button>
         </div>
       </div>
     </div>
@@ -86,12 +86,12 @@ const localScope = computed({
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   max-height: 90vh;
   overflow: auto;
@@ -118,7 +118,7 @@ const localScope = computed({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: var(--spacing-5) var(--spacing-6);
   border-bottom: 1px solid var(--color-gray-200);
 }
 
@@ -132,17 +132,17 @@ const localScope = computed({
 .modal-close {
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 1.75rem;
   line-height: 1;
   cursor: pointer;
   color: var(--text-disabled);
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   transition: all 0.2s;
 }
 
@@ -152,11 +152,11 @@ const localScope = computed({
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
 }
 
 .form-group:last-child {
@@ -165,15 +165,15 @@ const localScope = computed({
 
 .form-group label {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .option-buttons {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .option-buttons.vertical {
@@ -182,14 +182,14 @@ const localScope = computed({
 
 .option-buttons button {
   flex: 1;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: 2px solid var(--color-gray-200);
   background: var(--bg-primary);
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   transition: all 0.2s;
   text-align: left;
 }
@@ -208,8 +208,8 @@ const localScope = computed({
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
   border-top: 1px solid var(--color-gray-200);
 }
 
@@ -217,9 +217,9 @@ const localScope = computed({
   background: var(--bg-primary);
   border: 1px solid var(--color-gray-200);
   color: var(--text-secondary);
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -234,9 +234,9 @@ const localScope = computed({
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;

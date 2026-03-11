@@ -1,6 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
-
-> **DOCUMENTO HISTORICO.** Este documento es referencia del diseno original. La fuente de verdad actual es [`README.md`](../../README.md) y [`INSTRUCCIONES-MAESTRAS.md`](INSTRUCCIONES-MAESTRAS.md).
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 **TANK IBERICA**
 
@@ -1057,3 +1055,5 @@ Dominio (.com) \~1 €/mes \~1 €/mes Coste fijo (\~12€/año)
 _Fin del documento --- Tank Iberica --- Plan de Profesionalización v3_
 
 _Supabase + Nuxt 3 + Cloudflare Pages + Cloudinary_
+
+

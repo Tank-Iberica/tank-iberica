@@ -30,9 +30,9 @@ defineEmits<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .page-header h1 {
   margin: 0;
@@ -40,20 +40,20 @@ defineEmits<{
 }
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   flex-wrap: wrap;
 }
 .btn {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-icon-only {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   padding: 0;
   display: flex;
   align-items: center;

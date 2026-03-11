@@ -35,7 +35,7 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 
 <template>
   <Teleport to="body">
-    <div v-if="props.show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="props.show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal-content modal-large">
         <div class="modal-header">
           <h3>
@@ -272,12 +272,12 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: 90vh;
@@ -285,15 +285,15 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 }
 
 .modal-large {
-  max-width: 720px;
+  max-width: 45rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
   position: sticky;
   top: 0;
   background: var(--bg-primary);
@@ -308,27 +308,27 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   cursor: pointer;
-  color: #6b7280;
-  min-width: 44px;
-  min-height: 44px;
+  color: var(--color-gray-500);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
   position: sticky;
   bottom: 0;
 }
@@ -337,14 +337,14 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
    FORM
    ============================================ */
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .form-group label {
   display: block;
   font-weight: 500;
-  margin-bottom: 6px;
-  color: #374151;
+  margin-bottom: 0.375rem;
+  color: var(--color-gray-700);
   font-size: 0.875rem;
 }
 
@@ -352,12 +352,12 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   box-sizing: border-box;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus,
@@ -365,13 +365,13 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 /* ============================================
@@ -381,11 +381,11 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   font-size: 0.9rem;
 }
 
@@ -400,13 +400,13 @@ function updateField<K extends keyof AuctionForm>(key: K, value: AuctionForm[K])
 
 .btn-secondary {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 /* ============================================

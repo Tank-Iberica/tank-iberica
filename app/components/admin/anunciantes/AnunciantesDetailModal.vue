@@ -25,53 +25,53 @@ function onNotesInput(event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal-content modal-medium">
         <div class="modal-header">
-          <h3>Detalles del Anunciante</h3>
-          <button class="modal-close" @click="emit('close')">×</button>
+          <h3>{{ $t('admin.anunciantes.detailTitle') }}</h3>
+          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">×</button>
         </div>
         <div class="modal-body">
           <div v-if="advertisement" class="detail-grid">
             <!-- Contact Info -->
             <div class="detail-section">
-              <h4>Contacto</h4>
-              <p><strong>Nombre:</strong> {{ advertisement.contact_name }}</p>
+              <h4>{{ $t('admin.anunciantes.sectionContact') }}</h4>
+              <p><strong>{{ $t('admin.anunciantes.labelName') }}</strong> {{ advertisement.contact_name }}</p>
               <p v-if="advertisement.contact_phone">
-                <strong>Teléfono:</strong> {{ advertisement.contact_phone }}
+                <strong>{{ $t('admin.anunciantes.labelPhone') }}</strong> {{ advertisement.contact_phone }}
               </p>
               <p v-if="advertisement.contact_email">
-                <strong>Email:</strong> {{ advertisement.contact_email }}
+                <strong>{{ $t('admin.anunciantes.labelEmail') }}</strong> {{ advertisement.contact_email }}
               </p>
               <p v-if="advertisement.location">
-                <strong>Ubicación:</strong> {{ advertisement.location }}
+                <strong>{{ $t('admin.anunciantes.labelLocation') }}</strong> {{ advertisement.location }}
               </p>
             </div>
 
             <!-- Vehicle Info -->
             <div class="detail-section">
-              <h4>Vehículo</h4>
+              <h4>{{ $t('admin.anunciantes.sectionVehicle') }}</h4>
               <p v-if="advertisement.subcategory || advertisement.type">
-                <strong>Clasificación:</strong>
+                <strong>{{ $t('admin.anunciantes.labelClassification') }}</strong>
                 {{ localizedName(advertisement.subcategory, locale) || ''
                 }}{{ advertisement.subcategory && advertisement.type ? ' > ' : ''
                 }}{{ localizedName(advertisement.type, locale) || '' }}
               </p>
               <p v-else-if="advertisement.vehicle_type">
-                <strong>Tipo:</strong> {{ advertisement.vehicle_type }}
+                <strong>{{ $t('admin.anunciantes.labelType') }}</strong> {{ advertisement.vehicle_type }}
               </p>
-              <p v-if="advertisement.brand"><strong>Marca:</strong> {{ advertisement.brand }}</p>
-              <p v-if="advertisement.model"><strong>Modelo:</strong> {{ advertisement.model }}</p>
-              <p v-if="advertisement.year"><strong>Año:</strong> {{ advertisement.year }}</p>
+              <p v-if="advertisement.brand"><strong>{{ $t('admin.anunciantes.labelBrand') }}</strong> {{ advertisement.brand }}</p>
+              <p v-if="advertisement.model"><strong>{{ $t('admin.anunciantes.labelModel') }}</strong> {{ advertisement.model }}</p>
+              <p v-if="advertisement.year"><strong>{{ $t('admin.anunciantes.labelYear') }}</strong> {{ advertisement.year }}</p>
               <p v-if="advertisement.kilometers">
-                <strong>Kilómetros:</strong>
+                <strong>{{ $t('admin.anunciantes.labelKilometers') }}</strong>
                 {{ advertisement.kilometers.toLocaleString('es-ES') }} km
               </p>
               <p v-if="advertisement.price">
-                <strong>Precio:</strong> {{ formatPrice(advertisement.price) }}
+                <strong>{{ $t('admin.anunciantes.labelPrice') }}</strong> {{ formatPrice(advertisement.price) }}
               </p>
               <p v-if="advertisement.contact_preference">
-                <strong>Preferencia contacto:</strong>
+                <strong>{{ $t('admin.anunciantes.labelContactPreference') }}</strong>
                 {{ advertisement.contact_preference }}
               </p>
             </div>
@@ -83,7 +83,7 @@ function onNotesInput(event: Event) {
               "
               class="detail-section full-width"
             >
-              <h4>Características</h4>
+              <h4>{{ $t('admin.anunciantes.sectionCharacteristics') }}</h4>
               <div class="characteristics-grid">
                 <div
                   v-for="(value, key) in advertisement.attributes_json"
@@ -98,13 +98,13 @@ function onNotesInput(event: Event) {
 
             <!-- Description -->
             <div v-if="advertisement.description" class="detail-section full-width">
-              <h4>Descripción</h4>
+              <h4>{{ $t('common.description') }}</h4>
               <p class="description-text">{{ advertisement.description }}</p>
             </div>
 
             <!-- Photos -->
             <div v-if="advertisement.photos?.length" class="detail-section full-width">
-              <h4>Fotos ({{ advertisement.photos.length }})</h4>
+              <h4>{{ $t('admin.anunciantes.sectionPhotos', { count: advertisement.photos.length }) }}</h4>
               <div class="photos-grid">
                 <img
                   v-for="(photo, index) in advertisement.photos"
@@ -119,20 +119,20 @@ function onNotesInput(event: Event) {
 
             <!-- Admin Notes -->
             <div class="detail-section full-width">
-              <h4>Notas del Admin</h4>
+              <h4>{{ $t('admin.anunciantes.adminNotes') }}</h4>
               <textarea
                 :value="notes"
                 rows="3"
-                placeholder="Añade notas internas sobre este anunciante..."
+                :placeholder="$t('admin.anunciantes.adminNotesPlaceholder')"
                 @input="onNotesInput"
               />
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cerrar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.close') }}</button>
           <button class="btn-primary" :disabled="saving" @click="emit('save')">
-            {{ saving ? 'Guardando...' : 'Guardar Notas' }}
+            {{ saving ? $t('common.saving') : $t('common.save') }}
           </button>
         </div>
       </div>
@@ -149,12 +149,12 @@ function onNotesInput(event: Event) {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: 90vh;
@@ -169,8 +169,8 @@ function onNotesInput(event: Event) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
   position: sticky;
   top: 0;
   background: var(--bg-primary);
@@ -184,22 +184,22 @@ function onNotesInput(event: Event) {
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   cursor: pointer;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
   position: sticky;
   bottom: 0;
 }
@@ -207,13 +207,13 @@ function onNotesInput(event: Event) {
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
 .detail-section {
-  background: #f9fafb;
-  padding: 16px;
-  border-radius: 8px;
+  background: var(--color-gray-50);
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius);
 }
 
 .detail-section.full-width {
@@ -221,15 +221,15 @@ function onNotesInput(event: Event) {
 }
 
 .detail-section h4 {
-  margin: 0 0 12px 0;
+  margin: 0 0 var(--spacing-3) 0;
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .detail-section p {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-2) 0;
   font-size: 0.95rem;
 }
 
@@ -245,63 +245,63 @@ function onNotesInput(event: Event) {
 .characteristics-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .characteristic-item {
   display: flex;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
 }
 
 .char-label {
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: capitalize;
 }
 
 .char-value {
   font-weight: 500;
-  color: #111827;
+  color: var(--color-gray-900);
 }
 
 .photos-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .photos-grid img {
   width: 100%;
   aspect-ratio: 4/3;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
 }
 
 .detail-section textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .detail-section textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
 }
@@ -317,10 +317,10 @@ function onNotesInput(event: Event) {
 
 .btn-secondary {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
 }

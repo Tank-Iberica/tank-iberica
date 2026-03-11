@@ -1,191 +1,44 @@
-/* ------------------------------------------------
-   Types
-   ------------------------------------------------ */
-export interface MarketRow {
-  id: string
-  vertical: string
-  subcategory: string
-  subcategory_label: string
-  brand: string | null
-  province: string | null
-  month: string
-  avg_price: number
-  median_price: number
-  listing_count: number
-  sold_count: number
-  avg_days_to_sell: number | null
-}
+// Re-export types for backwards compatibility
+export type {
+  MarketRow,
+  PriceHistoryRow,
+  CategoryStat,
+  ProvinceStat,
+  BrandBreakdownItem,
+  ProvinceSortKey,
+  DatosChartDataset,
+  DatosChartData,
+} from '~/composables/shared/datosTypes'
 
-export interface PriceHistoryRow {
-  id: string
-  vertical: string
-  subcategory: string
-  week: string
-  avg_price: number
-  listing_count: number
-}
+// Re-export formatPrice for backwards compatibility (tests import it from here)
+export { formatPrice } from '~/utils/formatters'
 
-export interface CategoryStat {
-  subcategory: string
-  label: string
-  avgPrice: number
-  medianPrice: number
-  listingCount: number
-  soldCount: number
-  avgDaysToSell: number | null
-  trendPct: number
-  trendDirection: 'rising' | 'falling' | 'stable'
-}
+import type {
+  MarketRow,
+  PriceHistoryRow,
+  CategoryStat,
+  ProvinceStat,
+  BrandBreakdownItem,
+  ProvinceSortKey,
+  DatosChartData,
+} from '~/composables/shared/datosTypes'
 
-export interface ProvinceStat {
-  province: string
-  avgPrice: number
-  listingCount: number
-}
+import {
+  groupBy,
+  computeSubcategoryStat,
+  computeProvinceStatsFromRows,
+  getLatestMonth,
+} from '~/composables/shared/datosHelpers'
 
-export interface BrandBreakdownItem {
-  brand: string
-  avgPrice: number
-  listingCount: number
-}
-
-export type ProvinceSortKey = 'province' | 'avgPrice' | 'listingCount'
-
-export interface DatosChartDataset {
-  label: string
-  data: number[]
-  fill: boolean
-  borderColor: string
-  backgroundColor: string
-  tension: number
-  pointRadius: number
-  pointHoverRadius: number
-}
-
-export interface DatosChartData {
-  labels: string[]
-  datasets: DatosChartDataset[]
-}
-
-/* ------------------------------------------------
-   Utility
-   ------------------------------------------------ */
-export function formatPrice(value: number): string {
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(value)
-}
-
-function groupByMonth(rows: MarketRow[]): Map<string, MarketRow[]> {
-  const byMonth = new Map<string, MarketRow[]>()
-  for (const r of rows) {
-    const existing = byMonth.get(r.month)
-    if (existing) existing.push(r)
-    else byMonth.set(r.month, [r])
-  }
-  return byMonth
-}
-
-function weightedAverage(rows: MarketRow[], field: 'avg_price' | 'median_price'): number {
-  const totalListings = rows.reduce((sum, r) => sum + r.listing_count, 0)
-  if (totalListings === 0) return 0
-  return rows.reduce((sum, r) => sum + r[field] * r.listing_count, 0) / totalListings
-}
-
-function computeTrend(
-  currentAvg: number,
-  prevRows: MarketRow[],
-): { pct: number; direction: 'rising' | 'falling' | 'stable' } {
-  const prevAvg = weightedAverage(prevRows, 'avg_price')
-  if (prevAvg <= 0) return { pct: 0, direction: 'stable' }
-  const pct = ((currentAvg - prevAvg) / prevAvg) * 100
-  const direction = pct > 1 ? 'rising' : pct < -1 ? 'falling' : 'stable'
-  return { pct, direction }
-}
-
-function computeSubcategoryStat(subcategory: string, rows: MarketRow[]): CategoryStat | null {
-  const byMonth = groupByMonth(rows)
-  const months = Array.from(byMonth.keys()).sort((a, b) => b.localeCompare(a))
-  if (!months.length) return null
-
-  const latestRows = byMonth.get(months[0]!) ?? []
-  const totalListings = latestRows.reduce((sum, r) => sum + r.listing_count, 0)
-  const avgPrice = weightedAverage(latestRows, 'avg_price')
-  const daysRows = latestRows.filter((r) => r.avg_days_to_sell !== null)
-  const daysToSell =
-    daysRows.length > 0
-      ? daysRows.reduce((sum, r) => sum + (r.avg_days_to_sell ?? 0), 0) / daysRows.length
-      : null
-
-  const trend =
-    months.length > 1
-      ? computeTrend(avgPrice, byMonth.get(months[1]!) ?? [])
-      : { pct: 0, direction: 'stable' as const }
-
-  return {
-    subcategory,
-    label: latestRows[0]?.subcategory_label ?? subcategory,
-    avgPrice: Math.round(avgPrice),
-    medianPrice: Math.round(weightedAverage(latestRows, 'median_price')),
-    listingCount: totalListings,
-    soldCount: latestRows.reduce((sum, r) => sum + r.sold_count, 0),
-    avgDaysToSell: daysToSell === null ? null : Math.round(daysToSell),
-    trendPct: Math.round(trend.pct * 10) / 10,
-    trendDirection: trend.direction,
-  }
-}
-
-function groupBy<T>(items: T[], keyFn: (item: T) => string): Map<string, T[]> {
-  const map = new Map<string, T[]>()
-  for (const item of items) {
-    const key = keyFn(item)
-    const existing = map.get(key)
-    if (existing) existing.push(item)
-    else map.set(key, [item])
-  }
-  return map
-}
-
-function computeProvinceStatsFromRows(latestRows: MarketRow[]): ProvinceStat[] {
-  const byProvince = new Map<string, { totalPrice: number; totalListings: number }>()
-  for (const r of latestRows) {
-    const province = r.province ?? ''
-    const existing = byProvince.get(province)
-    if (existing) {
-      existing.totalPrice += r.avg_price * r.listing_count
-      existing.totalListings += r.listing_count
-    } else {
-      byProvince.set(province, {
-        totalPrice: r.avg_price * r.listing_count,
-        totalListings: r.listing_count,
-      })
-    }
-  }
-
-  const result: ProvinceStat[] = []
-  for (const [province, data] of byProvince) {
-    result.push({
-      province,
-      avgPrice: data.totalListings > 0 ? Math.round(data.totalPrice / data.totalListings) : 0,
-      listingCount: data.totalListings,
-    })
-  }
-  return result.sort((a, b) => b.listingCount - a.listingCount)
-}
-
-function getLatestMonth(rows: MarketRow[]): string | null {
-  if (!rows.length) return null
-  return [...new Set(rows.map((r) => r.month))].sort((a, b) => b.localeCompare(a))[0] ?? null
-}
+import { formatPrice, formatDate } from '~/utils/formatters'
+import { getVerticalSlug } from '~/composables/useVerticalConfig'
 
 /* ------------------------------------------------
    Composable
    ------------------------------------------------ */
 export function useDatos() {
   const supabase = useSupabaseClient()
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
 
   /* ---- Reactive state ---- */
   const loading = ref(true)
@@ -202,13 +55,13 @@ export function useDatos() {
     const [marketResult, historyResult] = await Promise.all([
       supabase
         .from('market_data')
-        .select('*')
-        .eq('vertical', 'tracciona')
+        .select('vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count')
+        .eq('vertical', getVerticalSlug())
         .order('month', { ascending: false }),
       supabase
         .from('price_history')
-        .select('*')
-        .eq('vertical', 'tracciona')
+        .select('vertical, subcategory, brand, week, avg_price, median_price, sample_size')
+        .eq('vertical', getVerticalSlug())
         .order('week', { ascending: true }),
     ])
 
@@ -316,7 +169,7 @@ export function useDatos() {
 
     const labels = recent.map((r) => {
       const date = new Date(r.week)
-      return date.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' })
+      return formatDate(date, locale.value, { month: 'short', year: '2-digit' })
     })
 
     const prices = recent.map((r) => r.avg_price)
@@ -403,7 +256,7 @@ export function useDatos() {
       .reverse()[0]
     if (!latestMonth) return ''
     const date = new Date(latestMonth + '-01')
-    return date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+    return formatDate(date, locale.value, { month: 'long', year: 'numeric' })
   })
 
   /* ---- JSON-LD Dataset Schema ---- */
@@ -416,7 +269,7 @@ export function useDatos() {
     license: 'https://creativecommons.org/licenses/by-nc/4.0/',
     creator: {
       '@type': 'Organization',
-      name: 'Tracciona',
+      name: t('site.title'),
       url: 'https://tracciona.com',
     },
     temporalCoverage: lastUpdated.value ? `../${lastUpdated.value}` : undefined,

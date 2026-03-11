@@ -7,6 +7,8 @@
  * The composable does NOT call onMounted — expose an init() function instead.
  */
 
+import type { jsPDF as JsPDFDoc } from 'jspdf'
+
 // ────────────────────────────────────────────
 // Types (module-scoped — only used by this feature)
 // ────────────────────────────────────────────
@@ -50,9 +52,6 @@ export interface CsvColumnOption {
 // ────────────────────────────────────────────
 // PDF helpers (module-scoped, no reactivity)
 // ────────────────────────────────────────────
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type JsPDFDoc = any
 
 function renderPdfCoverPage(
   doc: JsPDFDoc,

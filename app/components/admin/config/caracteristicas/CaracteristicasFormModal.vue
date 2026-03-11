@@ -72,10 +72,10 @@ function isChecked(arr: string[], id: string): boolean {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>{{ editingId ? 'Editar Caracteristica' : 'Nueva Caracteristica' }}</h3>
+          <h3>{{ editingId ? $t('admin.config.editCharacteristic') : $t('admin.config.newCharacteristic') }}</h3>
           <button class="modal-close" @click="emit('close')">&#xD7;</button>
         </div>
 
@@ -83,7 +83,7 @@ function isChecked(arr: string[], id: string): boolean {
           <!-- Names -->
           <div class="form-row">
             <div class="form-group">
-              <label for="name">Nombre (ES) *</label>
+              <label for="name">{{ $t('admin.config.nameEs') }} *</label>
               <input
                 id="name"
                 type="text"
@@ -94,7 +94,7 @@ function isChecked(arr: string[], id: string): boolean {
               >
             </div>
             <div class="form-group">
-              <label for="label_en">Nombre (EN)</label>
+              <label for="label_en">{{ $t('admin.config.nameEn') }}</label>
               <input
                 id="label_en"
                 type="text"
@@ -108,14 +108,14 @@ function isChecked(arr: string[], id: string): boolean {
           <!-- Type and Unit -->
           <div class="form-row">
             <div class="form-group">
-              <label for="type">Tipo *</label>
+              <label for="type">{{ $t('admin.config.typeLabel') }} *</label>
               <select
                 id="type"
                 required
                 :value="formData.type"
                 @change="onSelectChange('type', $event)"
               >
-                <option value="" disabled>Seleccionar</option>
+                <option value="" disabled>{{ $t('admin.config.selectType') }}</option>
                 <option
                   v-for="filterType in filterTypes"
                   :key="filterType.value"
@@ -126,7 +126,7 @@ function isChecked(arr: string[], id: string): boolean {
               </select>
             </div>
             <div class="form-group">
-              <label for="unit">Unidad de medida</label>
+              <label for="unit">{{ $t('admin.config.unitLabel') }}</label>
               <input
                 id="unit"
                 type="text"
@@ -139,7 +139,7 @@ function isChecked(arr: string[], id: string): boolean {
 
           <!-- Extra filters (only for tick type) -->
           <div v-if="showTickOptions" class="form-group tick-options">
-            <label>Extra caracteristicas (aparecen cuando este tick esta activo)</label>
+            <label>{{ $t('admin.config.extraFilters') }}</label>
             <div class="checkbox-grid extra-grid">
               <template v-if="availableFiltersForSelection.length">
                 <label v-for="f in availableFiltersForSelection" :key="f.id" class="checkbox-label">
@@ -151,13 +151,13 @@ function isChecked(arr: string[], id: string): boolean {
                   <span>{{ f.label_es || f.name }}</span>
                 </label>
               </template>
-              <p v-else class="text-muted">No hay otras caracteristicas disponibles.</p>
+              <p v-else class="text-muted">{{ $t('admin.config.noOtherFilters') }}</p>
             </div>
           </div>
 
           <!-- Hide filters (only for tick type) -->
           <div v-if="showTickOptions" class="form-group tick-options">
-            <label>Ocultar caracteristicas (se ocultan cuando este tick esta activo)</label>
+            <label>{{ $t('admin.config.hideFilters') }}</label>
             <div class="checkbox-grid hide-grid">
               <template v-if="availableFiltersForSelection.length">
                 <label v-for="f in availableFiltersForSelection" :key="f.id" class="checkbox-label">
@@ -169,13 +169,13 @@ function isChecked(arr: string[], id: string): boolean {
                   <span>{{ f.label_es || f.name }}</span>
                 </label>
               </template>
-              <p v-else class="text-muted">No hay otras caracteristicas disponibles.</p>
+              <p v-else class="text-muted">{{ $t('admin.config.noOtherFilters') }}</p>
             </div>
           </div>
 
           <!-- Default value -->
           <div class="form-group">
-            <label for="default_value">Valor por defecto</label>
+            <label for="default_value">{{ $t('admin.config.defaultValue') }}</label>
             <input
               id="default_value"
               type="text"
@@ -187,11 +187,11 @@ function isChecked(arr: string[], id: string): boolean {
 
           <!-- Desplegable options -->
           <div v-if="showChoicesOptions" class="type-options-section">
-            <h4 class="type-options-title">Opciones del desplegable</h4>
+            <h4 class="type-options-title">{{ $t('admin.config.dropdownOptions') }}</h4>
 
             <!-- Source selector -->
             <div class="form-group">
-              <label>Origen de las opciones</label>
+              <label>{{ $t('admin.config.optionsSource') }}</label>
               <div class="radio-group">
                 <label class="radio-label">
                   <input
@@ -201,8 +201,8 @@ function isChecked(arr: string[], id: string): boolean {
                     :checked="formData.choices_source === 'manual'"
                     @change="onRadioChange('choices_source', 'manual')"
                   >
-                  <span>Manual</span>
-                  <small>Solo las opciones que definas aqui</small>
+                  <span>{{ $t('admin.config.sourceManual') }}</span>
+                  <small>{{ $t('admin.config.sourceManualDesc') }}</small>
                 </label>
                 <label class="radio-label">
                   <input
@@ -212,8 +212,8 @@ function isChecked(arr: string[], id: string): boolean {
                     :checked="formData.choices_source === 'auto'"
                     @change="onRadioChange('choices_source', 'auto')"
                   >
-                  <span>Automatico</span>
-                  <small>Valores unicos de los vehiculos del catalogo</small>
+                  <span>{{ $t('admin.config.sourceAuto') }}</span>
+                  <small>{{ $t('admin.config.sourceAutoDesc') }}</small>
                 </label>
                 <label class="radio-label">
                   <input
@@ -223,25 +223,25 @@ function isChecked(arr: string[], id: string): boolean {
                     :checked="formData.choices_source === 'both'"
                     @change="onRadioChange('choices_source', 'both')"
                   >
-                  <span>Ambos</span>
-                  <small>Opciones manuales + valores de vehiculos</small>
+                  <span>{{ $t('admin.config.sourceBoth') }}</span>
+                  <small>{{ $t('admin.config.sourceBothDesc') }}</small>
                 </label>
               </div>
             </div>
 
             <!-- Manual choices input -->
             <div v-if="formData.choices_source !== 'auto'" class="form-group">
-              <label>Opciones manuales</label>
+              <label>{{ $t('admin.config.manualOptions') }}</label>
               <div class="choices-input-row">
                 <input
                   type="text"
-                  placeholder="Escribir opcion y pulsar Anadir"
+                  :placeholder="$t('admin.config.typeAndAdd')"
                   :value="choiceInput"
                   @input="onChoiceInputChange"
                   @keydown="onChoiceKeydown"
                 >
                 <button type="button" class="btn-add-choice" @click="emit('add-choice')">
-                  Anadir
+                  {{ $t('admin.config.addOption') }}
                 </button>
               </div>
               <div v-if="formData.choices.length" class="choices-list">
@@ -252,15 +252,15 @@ function isChecked(arr: string[], id: string): boolean {
                   </button>
                 </span>
               </div>
-              <p v-else class="text-muted">No hay opciones definidas.</p>
+              <p v-else class="text-muted">{{ $t('admin.config.noOptionsDefined') }}</p>
             </div>
           </div>
 
           <!-- Calc step -->
           <div v-if="showCalcOptions" class="type-options-section">
-            <h4 class="type-options-title">Configuracion del calculador</h4>
+            <h4 class="type-options-title">{{ $t('admin.config.calcConfig') }}</h4>
             <div class="form-group">
-              <label for="step">Paso (incremento/decremento)</label>
+              <label for="step">{{ $t('admin.config.calcStep') }}</label>
               <input
                 id="step"
                 type="number"
@@ -274,16 +274,15 @@ function isChecked(arr: string[], id: string): boolean {
 
           <!-- Slider info -->
           <div v-if="showSliderInfo" class="type-options-section">
-            <h4 class="type-options-title">Configuracion del slider</h4>
+            <h4 class="type-options-title">{{ $t('admin.config.sliderConfig') }}</h4>
             <p class="type-options-info">
-              El rango del slider se calcula automaticamente a partir de los valores minimo y maximo
-              de los vehiculos visibles en el catalogo. No necesita configuracion manual.
+              {{ $t('admin.config.sliderAutoRange') }}
             </p>
           </div>
 
           <!-- Status -->
           <div class="form-group">
-            <label for="status">Estado</label>
+            <label for="status">{{ $t('common.status') }}</label>
             <select id="status" :value="formData.status" @change="onSelectChange('status', $event)">
               <option v-for="s in filterStatuses" :key="s.value" :value="s.value">
                 {{ s.label }} - {{ s.description }}
@@ -293,9 +292,9 @@ function isChecked(arr: string[], id: string): boolean {
         </div>
 
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cancelar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
           <button class="btn-primary" :disabled="saving" @click="emit('save')">
-            {{ saving ? 'Guardando...' : 'Guardar' }}
+            {{ saving ? $t('common.saving') : $t('common.save') }}
           </button>
         </div>
       </div>
@@ -312,14 +311,14 @@ function isChecked(arr: string[], id: string): boolean {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
-  max-width: 550px;
+  max-width: 34.375rem;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -329,8 +328,8 @@ function isChecked(arr: string[], id: string): boolean {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--bg-tertiary);
 }
 
 .modal-header h3 {
@@ -341,35 +340,35 @@ function isChecked(arr: string[], id: string): boolean {
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 1.5rem;
   cursor: pointer;
-  color: #6b7280;
+  color: var(--color-gray-500);
   line-height: 1;
 }
 
 .modal-close:hover {
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 1.5rem;
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--bg-tertiary);
+  background: var(--color-gray-50);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: 500;
   transition: background 0.2s;
@@ -386,42 +385,42 @@ function isChecked(arr: string[], id: string): boolean {
 
 .btn-secondary {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: 500;
 }
 
 .btn-secondary:hover {
-  background: #d1d5db;
+  background: var(--border-color);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .form-group label {
   display: block;
   font-weight: 500;
-  margin-bottom: 6px;
-  color: #374151;
+  margin-bottom: 0.375rem;
+  color: var(--color-gray-700);
 }
 
 .form-group input[type='text'],
 .form-group input[type='number'],
 .form-group select {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.95rem;
 }
 
@@ -429,48 +428,48 @@ function isChecked(arr: string[], id: string): boolean {
 .form-group select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .type-options-section {
-  margin-top: 8px;
-  padding: 16px;
-  background: #f9fafb;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: var(--color-gray-50);
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
-  margin-bottom: 16px;
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
 }
 
 .type-options-title {
-  margin: 0 0 12px;
+  margin: 0 0 0.75rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .type-options-info {
   margin: 0;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   line-height: 1.5;
 }
 
 .radio-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .radio-label {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--spacing-2);
   cursor: pointer;
   font-size: 0.9rem;
 }
 
 .radio-label input[type='radio'] {
-  margin-top: 3px;
+  margin-top: 0.1875rem;
   width: auto;
   min-height: auto;
   min-width: auto;
@@ -483,13 +482,13 @@ function isChecked(arr: string[], id: string): boolean {
 .radio-label small {
   display: block;
   font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 2px;
+  color: var(--color-gray-500);
+  margin-top: 0.125rem;
 }
 
 .choices-input-row {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .choices-input-row input {
@@ -500,8 +499,8 @@ function isChecked(arr: string[], id: string): boolean {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-size: 0.85rem;
   white-space: nowrap;
@@ -514,18 +513,18 @@ function isChecked(arr: string[], id: string): boolean {
 .choices-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 0.375rem;
+  margin-top: var(--spacing-2);
 }
 
 .choice-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: var(--color-info-bg, #dbeafe);
+  gap: var(--spacing-1);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 500;
 }
@@ -535,9 +534,9 @@ function isChecked(arr: string[], id: string): boolean {
   border: none;
   color: var(--color-info);
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1;
-  padding: 0 2px;
+  padding: 0 0.125rem;
   min-height: auto;
   min-width: auto;
 }
@@ -547,39 +546,39 @@ function isChecked(arr: string[], id: string): boolean {
 }
 
 .tick-options {
-  margin-top: 8px;
+  margin-top: var(--spacing-2);
 }
 
 .checkbox-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 8px;
-  max-height: 150px;
+  grid-template-columns: repeat(auto-fill, minmax(8.75rem, 1fr));
+  gap: 0.5rem;
+  max-height: 9.375rem;
   overflow-y: auto;
-  padding: 12px;
+  padding: 0.75rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
 }
 
 .extra-grid {
-  background: #f0fff4;
+  background: var(--color-green-50);
 }
 
 .hide-grid {
-  background: #fff5f5;
+  background: var(--color-red-50);
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   cursor: pointer;
   font-size: 0.85rem;
 }
 
 .checkbox-label input {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   cursor: pointer;
 }
 
@@ -594,8 +593,8 @@ function isChecked(arr: string[], id: string): boolean {
   }
 
   .modal-content {
-    margin: 10px;
-    max-height: calc(100vh - 20px);
+    margin: 0.625rem;
+    max-height: calc(100vh - 1.25rem);
   }
 }
 </style>

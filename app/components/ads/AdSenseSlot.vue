@@ -143,7 +143,7 @@ function setupAdSenseObserver() {
           isVisible.value = true
           nextTick(() => {
             try {
-              const w = window as unknown as Record<string, unknown>
+              const w = globalThis as unknown as Record<string, unknown>
               const adsbygoogle = (w.adsbygoogle || []) as unknown[]
               adsbygoogle.push({})
               w.adsbygoogle = adsbygoogle
@@ -217,24 +217,24 @@ onUnmounted(() => {
   overflow: hidden;
   background: var(--bg-secondary);
   border-radius: var(--border-radius);
-  min-height: 50px;
+  min-height: 3.125rem;
 }
 
 .adsense-container--horizontal {
-  min-height: 90px;
+  min-height: 5.625rem;
 }
 
 .adsense-container--vertical {
-  min-height: 250px;
-  max-width: 160px;
+  min-height: 15.625rem;
+  max-width: 10rem;
 }
 
 .adsense-container--rectangle {
-  min-height: 250px;
+  min-height: 15.625rem;
 }
 
 .adsense-container--in-feed {
-  min-height: 100px;
+  min-height: 6.25rem;
 }
 
 .prebid-container {
@@ -242,24 +242,24 @@ onUnmounted(() => {
   overflow: hidden;
   background: var(--bg-secondary);
   border-radius: var(--border-radius);
-  min-height: 250px;
+  min-height: 15.625rem;
 }
 
 .prebid-container--horizontal {
-  min-height: 90px;
+  min-height: 5.625rem;
 }
 
 .prebid-container--vertical {
-  min-height: 250px;
-  max-width: 160px;
+  min-height: 15.625rem;
+  max-width: 10rem;
 }
 
 .prebid-container--rectangle {
-  min-height: 250px;
+  min-height: 15.625rem;
 }
 
 .prebid-container--in-feed {
-  min-height: 100px;
+  min-height: 6.25rem;
 }
 
 /* Ensure AdSense ins element fills container */

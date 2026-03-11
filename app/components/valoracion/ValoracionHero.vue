@@ -21,7 +21,7 @@
 }
 
 .hero-content {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
   text-align: center;
 }
@@ -38,7 +38,7 @@
   font-size: var(--font-size-base);
   color: var(--text-on-dark-secondary);
   line-height: var(--line-height-relaxed);
-  max-width: 560px;
+  max-width: 35rem;
   margin: 0 auto;
 }
 

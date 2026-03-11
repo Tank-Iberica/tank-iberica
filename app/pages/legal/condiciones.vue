@@ -1,7 +1,7 @@
 <template>
   <div class="legal-page">
     <div class="legal-container">
-      <NuxtLink to="/legal" class="legal-back"> &larr; {{ $t('legal.backToLegal') }} </NuxtLink>
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('legal.title'), to: '/legal' }, { label: $t('legal.terms') }]" />
 
       <h1 class="legal-title">{{ $t('legal.terms') }}</h1>
 
@@ -29,7 +29,7 @@ usePageSeo({
 }
 
 .legal-container {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -37,8 +37,8 @@ usePageSeo({
 .legal-back {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  padding: 8px 0;
+  min-height: 2.75rem;
+  padding: var(--spacing-2) 0;
   color: var(--color-primary);
   font-size: 0.9rem;
   font-weight: 500;
@@ -63,24 +63,24 @@ usePageSeo({
 }
 
 .legal-section p {
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.7;
   color: var(--text-secondary);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .legal-container {
     padding: 0 1.5rem;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .legal-title {
     font-size: 1.75rem;
   }
 
   .legal-section p {
-    font-size: 16px;
+    font-size: var(--font-size-base);
   }
 }
 </style>

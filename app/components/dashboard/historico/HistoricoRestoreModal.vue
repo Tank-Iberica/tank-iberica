@@ -79,14 +79,14 @@ function onConfirmInput(event: Event): void {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
+  padding: 1rem;
 }
 
 .modal {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
-  max-width: 420px;
+  max-width: 26.25rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
   overflow-y: auto;
@@ -96,13 +96,13 @@ function onConfirmInput(event: Event): void {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--color-gray-200);
   font-weight: 600;
   position: sticky;
   top: 0;
   background: var(--bg-primary);
-  border-radius: 12px 12px 0 0;
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
 }
 
 .modal-head button {
@@ -111,12 +111,12 @@ function onConfirmInput(event: Event): void {
   font-size: 1.4rem;
   cursor: pointer;
   color: var(--text-disabled);
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
 }
 
 .modal-head button:hover {
@@ -124,58 +124,58 @@ function onConfirmInput(event: Event): void {
 }
 
 .modal-body {
-  padding: 16px;
+  padding: 1rem;
 }
 
 .modal-foot {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
-  border-radius: 0 0 12px 12px;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
   position: sticky;
   bottom: 0;
 }
 
 /* Restore-specific */
 .restore-info {
-  padding: 12px;
+  padding: 0.75rem;
   background: var(--bg-secondary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .warning-box {
-  padding: 10px;
-  background: var(--color-warning-bg, #fef3c7);
+  padding: 0.625rem;
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 /* Form fields */
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 12px;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
 }
 
 .field label {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .field input {
-  min-height: 44px;
-  padding: 8px 10px;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.625rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
 }
 
@@ -189,12 +189,12 @@ function onConfirmInput(event: Event): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -205,7 +205,7 @@ function onConfirmInput(event: Event): void {
 
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
   font-weight: 600;
 }

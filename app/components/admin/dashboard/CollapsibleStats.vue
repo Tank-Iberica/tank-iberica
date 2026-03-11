@@ -4,9 +4,9 @@
     <div class="collapsible-section" :class="{ open: localSections.products }">
       <button class="collapsible-header" @click="localSections.products = !localSections.products">
         <span class="collapsible-icon">&#x1F69B;</span>
-        <span class="collapsible-title">Productos</span>
+        <span class="collapsible-title">{{ $t('admin.collapsibleStats.productsTitle') }}</span>
         <span class="collapsible-summary"
-          >{{ productStats.total }} total &middot; {{ productStats.published }} publicados</span
+          >{{ productStats.total }} total &middot; {{ productStats.published }} {{ $t('admin.collapsibleStats.published') }}</span
         >
         <svg
           class="collapsible-chevron"
@@ -22,37 +22,37 @@
         <div class="stats-cards">
           <div class="mini-stat">
             <span class="mini-stat-value">{{ productStats.total }}</span>
-            <span class="mini-stat-label">Total</span>
+            <span class="mini-stat-label">{{ $t('common.total') }}</span>
           </div>
           <div class="mini-stat published">
             <span class="mini-stat-value">{{ productStats.published }}</span>
-            <span class="mini-stat-label">Publicados</span>
+            <span class="mini-stat-label">{{ $t('admin.collapsibleStats.published') }}</span>
           </div>
           <div class="mini-stat unpublished">
             <span class="mini-stat-value">{{ productStats.unpublished }}</span>
-            <span class="mini-stat-label">No publicados</span>
+            <span class="mini-stat-label">{{ $t('admin.collapsibleStats.unpublished') }}</span>
           </div>
         </div>
 
         <div class="stats-breakdown">
-          <h4 class="breakdown-title">Por categoria</h4>
+          <h4 class="breakdown-title">{{ $t('admin.collapsibleStats.byCategory') }}</h4>
           <div class="breakdown-items">
             <div v-for="cat in productStats.byCategory" :key="cat.name" class="breakdown-item">
               <span class="breakdown-label">{{ cat.name }}</span>
               <span class="breakdown-value">{{ cat.count }}</span>
             </div>
-            <div v-if="productStats.byCategory.length === 0" class="breakdown-empty">Sin datos</div>
+            <div v-if="productStats.byCategory.length === 0" class="breakdown-empty">{{ $t('admin.collapsibleStats.noData') }}</div>
           </div>
         </div>
 
         <div class="stats-breakdown">
-          <h4 class="breakdown-title">Por tipo</h4>
+          <h4 class="breakdown-title">{{ $t('admin.collapsibleStats.byType') }}</h4>
           <div class="breakdown-items scrollable">
             <div v-for="sub in productStats.byType" :key="sub.name" class="breakdown-item">
               <span class="breakdown-label">{{ sub.name }}</span>
               <span class="breakdown-value">{{ sub.count }}</span>
             </div>
-            <div v-if="productStats.byType.length === 0" class="breakdown-empty">Sin datos</div>
+            <div v-if="productStats.byType.length === 0" class="breakdown-empty">{{ $t('admin.collapsibleStats.noData') }}</div>
           </div>
         </div>
       </div>
@@ -62,9 +62,9 @@
     <div class="collapsible-section" :class="{ open: localSections.users }">
       <button class="collapsible-header" @click="localSections.users = !localSections.users">
         <span class="collapsible-icon">&#x1F465;</span>
-        <span class="collapsible-title">Comunidad</span>
+        <span class="collapsible-title">{{ $t('admin.collapsibleStats.communityTitle') }}</span>
         <span class="collapsible-summary"
-          >{{ userStats.registered }} registrados &middot; {{ userStats.visits }} visitas</span
+          >{{ userStats.registered }} {{ $t('admin.collapsibleStats.registered') }} &middot; {{ userStats.visits }} {{ $t('admin.collapsibleStats.visits') }}</span
         >
         <svg
           class="collapsible-chevron"
@@ -80,15 +80,15 @@
         <div class="stats-cards">
           <div class="mini-stat">
             <span class="mini-stat-value">{{ userStats.visits }}</span>
-            <span class="mini-stat-label">Visitas</span>
+            <span class="mini-stat-label">{{ $t('admin.collapsibleStats.visits') }}</span>
           </div>
           <div class="mini-stat">
             <span class="mini-stat-value">{{ userStats.uniqueVisits }}</span>
-            <span class="mini-stat-label">Visitas unicas</span>
+            <span class="mini-stat-label">{{ $t('admin.collapsibleStats.uniqueVisits') }}</span>
           </div>
           <div class="mini-stat highlight">
             <span class="mini-stat-value">{{ userStats.registered }}</span>
-            <span class="mini-stat-label">Registrados</span>
+            <span class="mini-stat-label">{{ $t('admin.collapsibleStats.registered') }}</span>
           </div>
         </div>
 
@@ -96,32 +96,32 @@
           <div class="user-stat-item">
             <span class="user-stat-icon">&#x1F6D2;</span>
             <span class="user-stat-value">{{ userStats.buyers }}</span>
-            <span class="user-stat-label">Compradores</span>
+            <span class="user-stat-label">{{ $t('admin.collapsibleStats.buyers') }}</span>
           </div>
           <div class="user-stat-item">
             <span class="user-stat-icon">&#x1F511;</span>
             <span class="user-stat-value">{{ userStats.renters }}</span>
-            <span class="user-stat-label">Arrendatarios</span>
+            <span class="user-stat-label">{{ $t('admin.collapsibleStats.renters') }}</span>
           </div>
           <div class="user-stat-item">
             <span class="user-stat-icon">&#x1F4DD;</span>
             <span class="user-stat-value">{{ userStats.requests }}</span>
-            <span class="user-stat-label">Solicitudes</span>
+            <span class="user-stat-label">{{ $t('admin.collapsibleStats.requests') }}</span>
           </div>
           <div class="user-stat-item">
             <span class="user-stat-icon">&#x1F4E2;</span>
             <span class="user-stat-value">{{ userStats.advertisers }}</span>
-            <span class="user-stat-label">Anunciantes</span>
+            <span class="user-stat-label">{{ $t('admin.notifications.anunciantesLabel') }}</span>
           </div>
           <div class="user-stat-item">
             <span class="user-stat-icon">&#x1F441;&#xFE0F;</span>
             <span class="user-stat-value">{{ userStats.newsVisits }}</span>
-            <span class="user-stat-label">Visitas noticias</span>
+            <span class="user-stat-label">{{ $t('admin.collapsibleStats.newsVisits') }}</span>
           </div>
           <div class="user-stat-item">
             <span class="user-stat-icon">&#x1F4AC;</span>
             <span class="user-stat-value">{{ userStats.newsComments }}</span>
-            <span class="user-stat-label">Comentarios</span>
+            <span class="user-stat-label">{{ $t('admin.notifications.comentariosLabel') }}</span>
           </div>
         </div>
       </div>
@@ -178,7 +178,7 @@ watch(
   padding: var(--spacing-4);
   text-align: left;
   transition: background var(--transition-fast);
-  min-height: 56px;
+  min-height: 3.5rem;
 }
 
 .collapsible-header:hover {
@@ -186,7 +186,7 @@ watch(
 }
 
 .collapsible-icon {
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   flex-shrink: 0;
 }
 
@@ -197,6 +197,7 @@ watch(
 }
 
 .collapsible-summary {
+  display: none;
   flex: 1;
   font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
@@ -205,8 +206,8 @@ watch(
 }
 
 .collapsible-chevron {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   color: var(--text-auxiliary);
   transition: transform var(--transition-fast);
   flex-shrink: 0;
@@ -225,12 +226,7 @@ watch(
   margin-top: var(--spacing-4);
 }
 
-/* Mobile base: hide collapsible summary */
-.collapsible-summary {
-  display: none;
-}
-
-(@media ()min-width: 40em())) {
+@media (min-width: 40em) {
   .collapsible-summary {
     display: block;
   }
@@ -296,7 +292,7 @@ watch(
 }
 
 .breakdown-items.scrollable {
-  max-height: 150px;
+  max-height: 9.375rem;
   overflow-y: auto;
 }
 
@@ -351,7 +347,7 @@ watch(
 }
 
 .user-stat-icon {
-  font-size: 20px;
+  font-size: var(--font-size-xl);
   margin-bottom: var(--spacing-1);
 }
 

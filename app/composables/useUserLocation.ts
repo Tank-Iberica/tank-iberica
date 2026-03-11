@@ -118,6 +118,34 @@ function resolveSpanishCity(city: string): { province: string; region: string } 
   return null
 }
 
+function resolveProvinceRegion(
+  countryCode: string | null,
+  city: string | null,
+  address: { province?: string; state?: string },
+): { province: string | null; region: string | null } {
+  if (countryCode !== 'ES') {
+    return { province: address.province || address.state || null, region: null }
+  }
+  // Try local city → province mapping
+  if (city) {
+    const resolved = resolveSpanishCity(city)
+    if (resolved) return resolved
+  }
+  // Fallback: Nominatim province/state
+  if (address.province) {
+    return {
+      province: address.province,
+      region: PROVINCE_TO_REGION[address.province] || address.state || null,
+    }
+  }
+  if (address.state) {
+    const resolved = resolveSpanishCity(address.state)
+    if (resolved) return resolved
+    return { province: null, region: address.state }
+  }
+  return { province: null, region: null }
+}
+
 export function useUserLocation() {
   const supabase = useSupabaseClient()
   const location = useState<UserLocation>('userLocation', () => ({
@@ -140,34 +168,6 @@ export function useUserLocation() {
     } catch {
       return null
     }
-  }
-
-  function resolveProvinceRegion(
-    countryCode: string | null,
-    city: string | null,
-    address: { province?: string; state?: string },
-  ): { province: string | null; region: string | null } {
-    if (countryCode !== 'ES') {
-      return { province: address.province || address.state || null, region: null }
-    }
-    // Try local city → province mapping
-    if (city) {
-      const resolved = resolveSpanishCity(city)
-      if (resolved) return resolved
-    }
-    // Fallback: Nominatim province/state
-    if (address.province) {
-      return {
-        province: address.province,
-        region: PROVINCE_TO_REGION[address.province] || address.state || null,
-      }
-    }
-    if (address.state) {
-      const resolved = resolveSpanishCity(address.state)
-      if (resolved) return resolved
-      return { province: null, region: address.state }
-    }
-    return { province: null, region: null }
   }
 
   async function tryGeolocation(): Promise<UserLocation | null> {
@@ -289,10 +289,15 @@ export function useUserLocation() {
     location.value = NO_LOCATION
   }
 
-  function setManualLocation(city: string, country: string, province?: string, region?: string) {
+  function setManualLocation(
+    city: string,
+    country: string,
+    province: string | null = null,
+    region: string | null = null,
+  ) {
     // If country is Spain and no province/region given, try to resolve from city
-    let prov = province || null
-    let reg = region || null
+    let prov = province
+    let reg = region
     if (country === 'ES' && !prov && city) {
       const resolved = resolveSpanishCity(city)
       if (resolved) {

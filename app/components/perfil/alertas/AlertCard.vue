@@ -115,10 +115,10 @@ const emit = defineEmits<{
   align-items: center;
   flex-shrink: 0;
   cursor: pointer;
-  width: 44px;
-  height: 24px;
-  min-height: 44px;
-  min-width: 44px;
+  width: 2.75rem;
+  height: 1.5rem;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   justify-content: center;
 }
 
@@ -131,8 +131,8 @@ const emit = defineEmits<{
 
 .toggle__slider {
   position: absolute;
-  width: 44px;
-  height: 24px;
+  width: 2.75rem;
+  height: 1.5rem;
   background-color: var(--color-gray-300);
   border-radius: var(--border-radius-full);
   transition: background-color var(--transition-fast);
@@ -141,10 +141,10 @@ const emit = defineEmits<{
 .toggle__slider::before {
   content: '';
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
   background-color: var(--color-white);
   border-radius: 50%;
   transition: transform var(--transition-fast);
@@ -164,8 +164,8 @@ const emit = defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   background: none;
   border: none;
   cursor: pointer;

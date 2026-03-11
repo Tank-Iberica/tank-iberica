@@ -42,9 +42,8 @@ function onSelectPeriod(value: string): void {
     />
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('billing.title') }}...</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonTable :rows="5" :cols="5" />
     </div>
 
     <template v-else>
@@ -79,7 +78,7 @@ function onSelectPeriod(value: string): void {
 .billing-page {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4, 16px);
+  gap: var(--spacing-4);
   min-height: 100%;
 }
 
@@ -87,15 +86,15 @@ function onSelectPeriod(value: string): void {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-3, 12px);
-  padding: 60px 20px;
-  color: var(--text-auxiliary, #7a8a8a);
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
+  color: var(--text-auxiliary, var(--text-auxiliary));
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--color-gray-200, #e5e7eb);
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid var(--color-gray-200, var(--color-gray-200));
   border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;

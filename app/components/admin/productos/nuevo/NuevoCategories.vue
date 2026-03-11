@@ -55,31 +55,31 @@ function hasCat(cat: string, cats: string[]): boolean {
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 12px 16px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3) var(--spacing-4);
+  box-shadow: var(--shadow-xs);
 }
 .section-title {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #374151;
-  margin-bottom: 10px;
+  color: var(--color-gray-700);
+  margin-bottom: 0.625rem;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 .cat-row {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
   align-items: center;
 }
 .cat-check {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 0.375rem;
+  padding: var(--spacing-2) 0.875rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.85rem;
 }
@@ -89,12 +89,12 @@ function hasCat(cat: string, cats: string[]): boolean {
 .cat-check.active {
   border-color: var(--color-primary);
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
 }
 .feat-check {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-1);
   font-size: 0.85rem;
   color: var(--color-warning);
   cursor: pointer;
@@ -111,7 +111,7 @@ function hasCat(cat: string, cats: string[]): boolean {
   }
   .feat-check {
     margin-left: 0;
-    margin-top: 8px;
+    margin-top: var(--spacing-2);
   }
 }
 </style>

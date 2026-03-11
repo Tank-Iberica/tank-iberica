@@ -1,124 +1,25 @@
 import { computed } from 'vue'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { useSupabaseClient, useState } from '#imports'
+import type {
+  AttributeDefinition,
+  ActiveFilters,
+  SliderRange,
+  FiltersState,
+  VehicleAttrs,
+} from './shared/filtersTypes'
+import {
+  extractFilterValues,
+  computeSliderRanges,
+  needsDynamicValues,
+  getFilterOptions,
+  computeVisibleFilters,
+} from './shared/filtersHelpers'
 
-export interface AttributeDefinition {
-  id: string
-  subcategory_id: string | null
-  name: string
-  type: 'caja' | 'desplegable' | 'desplegable_tick' | 'tick' | 'slider' | 'calc'
-  label_es: string | null
-  label_en: string | null
-  unit: string | null
-  options: Record<string, unknown>
-  is_extra: boolean
-  is_hidden: boolean
-  status: string
-  sort_order: number
-  // Extended: track source for UI
-  source?: 'category' | 'subcategory'
-}
+// Re-export types for backward compatibility
+export type { AttributeDefinition, ActiveFilters, SliderRange, FiltersState }
 
-export interface ActiveFilters {
-  [filterName: string]: unknown
-}
-
-interface SliderRange {
-  min: number
-  max: number
-}
-
-interface FiltersState {
-  definitions: AttributeDefinition[]
-  categoryFilters: AttributeDefinition[]
-  subcategoryFilters: AttributeDefinition[]
-  loading: boolean
-  error: string | null
-  activeFilters: ActiveFilters
-  vehicleFilterValues: Record<string, string[]>
-  sliderRanges: Record<string, SliderRange>
-}
-
-type VehicleAttrs = { attributes_json: Record<string, unknown> | null }
-
-function getAttrValue(v: VehicleAttrs, filter: AttributeDefinition): unknown {
-  return v.attributes_json?.[filter.id] ?? v.attributes_json?.[filter.name]
-}
-
-function isValidAttrValue(val: unknown): boolean {
-  return val !== null && val !== undefined && val !== ''
-}
-
-function extractFilterValues(
-  vehicles: VehicleAttrs[],
-  needsValues: AttributeDefinition[],
-): Record<string, string[]> {
-  const result: Record<string, string[]> = {}
-  for (const filter of needsValues) {
-    const valuesSet = new Set<string>()
-    for (const v of vehicles) {
-      const val = getAttrValue(v, filter)
-      if (isValidAttrValue(val)) valuesSet.add(String(val))
-    }
-    result[filter.name] = Array.from(valuesSet).sort((a, b) => a.localeCompare(b))
-  }
-  return result
-}
-
-function computeRangeForFilter(
-  vehicles: VehicleAttrs[],
-  filter: AttributeDefinition,
-): SliderRange | null {
-  let min = Infinity
-  let max = -Infinity
-  for (const v of vehicles) {
-    const val = getAttrValue(v, filter)
-    if (!isValidAttrValue(val)) continue
-    const num = Number(val)
-    if (Number.isNaN(num)) continue
-    if (num < min) min = num
-    if (num > max) max = num
-  }
-  return min === Infinity ? null : { min, max }
-}
-
-function computeSliderRanges(
-  vehicles: VehicleAttrs[],
-  needsRange: AttributeDefinition[],
-): Record<string, SliderRange> {
-  const result: Record<string, SliderRange> = {}
-  for (const filter of needsRange) {
-    const range = computeRangeForFilter(vehicles, filter)
-    if (range) result[filter.name] = range
-  }
-  return result
-}
-
-function isFilterHiddenByTick(
-  filterName: string,
-  definitions: AttributeDefinition[],
-  activeTicks: Set<string>,
-): boolean {
-  for (const tickDef of definitions) {
-    if (tickDef.type !== 'tick') continue
-    if (!activeTicks.has(tickDef.name)) continue
-    const hides = (tickDef.options?.hides as string[]) || []
-    if (hides.includes(filterName)) return true
-  }
-  return false
-}
-
-function isExtraFilterVisible(
-  filterName: string,
-  definitions: AttributeDefinition[],
-  activeTicks: Set<string>,
-): boolean {
-  for (const tickDef of definitions) {
-    if (tickDef.type !== 'tick') continue
-    const extras = (tickDef.options?.extra_filters as string[]) || []
-    if (extras.includes(filterName)) return activeTicks.has(tickDef.name)
-  }
-  return false
-}
+// ── Default state ─────────────────────────────────────────────────────────────
 
 const defaultState: FiltersState = {
   definitions: [],
@@ -131,8 +32,10 @@ const defaultState: FiltersState = {
   sliderRanges: {},
 }
 
+// ── Supabase queries ──────────────────────────────────────────────────────────
+
 async function querySubcategoryFilters(
-  supabase: ReturnType<typeof useSupabaseClient>,
+  supabase: SupabaseClient,
   subcategoryId: string,
 ): Promise<AttributeDefinition[]> {
   const { data: subcatData, error: subcatErr } = await supabase
@@ -148,7 +51,7 @@ async function querySubcategoryFilters(
 
   const { data: subcatFilterData, error: subcatFilterErr } = await supabase
     .from('attributes')
-    .select('*')
+    .select('id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order')
     .in('id', subcatFilterIds)
     .eq('status', 'published')
     .eq('is_hidden', false)
@@ -162,7 +65,7 @@ async function querySubcategoryFilters(
 }
 
 async function queryCategoryFilterIds(
-  supabase: ReturnType<typeof useSupabaseClient>,
+  supabase: SupabaseClient,
   categoryId: string,
 ): Promise<string[]> {
   const { data: catData, error: catErr } = await supabase
@@ -177,14 +80,14 @@ async function queryCategoryFilterIds(
 }
 
 async function queryFilterDefinitions(
-  supabase: ReturnType<typeof useSupabaseClient>,
+  supabase: SupabaseClient,
   filterIds: string[],
 ): Promise<AttributeDefinition[]> {
   if (filterIds.length === 0) return []
 
   const { data: filterData, error: filterErr } = await supabase
     .from('attributes')
-    .select('*')
+    .select('id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order')
     .in('id', filterIds)
     .eq('status', 'published')
     .eq('is_hidden', false)
@@ -198,7 +101,7 @@ async function queryFilterDefinitions(
 }
 
 async function queryVehicleAttributes(
-  supabase: ReturnType<typeof useSupabaseClient>,
+  supabase: SupabaseClient,
   categoryId?: string,
 ): Promise<VehicleAttrs[]> {
   let query = supabase
@@ -213,39 +116,7 @@ async function queryVehicleAttributes(
   return (data as VehicleAttrs[]) || []
 }
 
-function needsDynamicValues(f: AttributeDefinition): boolean {
-  return (
-    (f.type === 'desplegable' || f.type === 'desplegable_tick') &&
-    (f.options?.choices_source === 'auto' || f.options?.choices_source === 'both')
-  )
-}
-
-function getFilterOptions(
-  filter: AttributeDefinition,
-  vehicleFilterValues: Record<string, string[]>,
-): string[] {
-  const source = (filter.options?.choices_source as string) || 'manual'
-  const manual = (filter.options?.choices as string[]) || []
-  if (source === 'manual') return manual
-  const auto = vehicleFilterValues[filter.name] || []
-  if (source === 'auto') return auto
-  return [...new Set([...manual, ...auto])].sort((a, b) => a.localeCompare(b))
-}
-
-function computeVisibleFilters(
-  definitions: AttributeDefinition[],
-  activeFilters: ActiveFilters,
-): AttributeDefinition[] {
-  const activeTicks = new Set<string>()
-  for (const def of definitions) {
-    if (def.type === 'tick' && activeFilters[def.name]) activeTicks.add(def.name)
-  }
-  return definitions.filter((def) => {
-    if (isFilterHiddenByTick(def.name, definitions, activeTicks)) return false
-    if (def.is_extra) return isExtraFilterVisible(def.name, definitions, activeTicks)
-    return true
-  })
-}
+// ── Composable ────────────────────────────────────────────────────────────────
 
 export function useFilters() {
   const supabase = useSupabaseClient()
@@ -267,7 +138,7 @@ export function useFilters() {
     try {
       const { data, error: err } = await supabase
         .from('attributes')
-        .select('*')
+        .select('id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order')
         .eq('subcategory_id', subcategoryId)
         .eq('status', 'published')
         .eq('is_hidden', false)

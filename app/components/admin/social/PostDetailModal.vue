@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="show && post" class="modal-overlay" @click.self="$emit('close')">
+      <div v-if="show && post" class="modal-overlay" role="dialog" aria-modal="true" @click.self="$emit('close')">
         <div class="modal-panel">
           <div class="modal-header">
             <h2>{{ t('admin.social.postDetail') }}</h2>
@@ -202,7 +202,7 @@ defineEmits<{
 .modal-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   flex-wrap: wrap;
 }
 
@@ -213,14 +213,14 @@ defineEmits<{
 }
 
 .modal-image {
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
   border: 1px solid var(--color-gray-200);
 }
 
 .modal-image img {
   width: 100%;
-  max-height: 200px;
+  max-height: 12.5rem;
   object-fit: cover;
   display: block;
 }
@@ -228,19 +228,19 @@ defineEmits<{
 /* Locale tabs */
 .locale-tabs {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .locale-tab {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   font-weight: 600;
   font-size: 0.8rem;
   color: var(--text-auxiliary);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .locale-tab.active {
@@ -252,20 +252,20 @@ defineEmits<{
 /* Content textarea */
 .content-textarea {
   width: 100%;
-  padding: 12px;
+  padding: var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-family: inherit;
   font-size: 0.9rem;
   resize: vertical;
-  min-height: 120px;
+  min-height: 7.5rem;
   line-height: 1.5;
 }
 
 .content-textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .content-textarea:disabled {
@@ -277,15 +277,15 @@ defineEmits<{
 .status-history {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 12px;
+  gap: 0.375rem;
+  padding: var(--spacing-3);
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .history-item {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
@@ -303,14 +303,14 @@ defineEmits<{
   font-family: monospace;
   font-size: 0.75rem;
   background: var(--bg-tertiary);
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--border-radius-sm);
 }
 
 /* Modal metrics */
 .modal-metrics {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .metric-card {
@@ -318,9 +318,9 @@ defineEmits<{
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px;
+  padding: var(--spacing-3);
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .metric-value {
@@ -338,7 +338,7 @@ defineEmits<{
 .rejection-input {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .rejection-input label {
@@ -348,16 +348,16 @@ defineEmits<{
 }
 
 .rejection-input input {
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .rejection-input input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 </style>

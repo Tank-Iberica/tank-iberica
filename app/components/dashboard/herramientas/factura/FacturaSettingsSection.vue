@@ -128,17 +128,17 @@ function onSelect(field: SettingsField, event: Event): void {
 <style scoped>
 .form-section {
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   padding: 1.25rem;
   margin-bottom: 1.25rem;
 }
 
 .form-section__legend {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 700;
   color: var(--primary, var(--color-primary));
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.0313rem;
   padding: 0 0.5rem;
 }
 
@@ -159,17 +159,17 @@ function onSelect(field: SettingsField, event: Event): void {
 }
 
 .form-field__label {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-secondary);
 }
 
 .form-field__input,
 .form-field__select {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   color: var(--text-primary);
   background: var(--bg-primary);
@@ -181,7 +181,7 @@ function onSelect(field: SettingsField, event: Event): void {
 .form-field__select:focus {
   outline: none;
   border-color: var(--primary, var(--color-primary));
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 /* Autocomplete */
@@ -200,11 +200,11 @@ function onSelect(field: SettingsField, event: Event): void {
   transform: translateY(-50%);
   background: none;
   border: none;
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   cursor: pointer;
   color: var(--text-disabled);
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -218,8 +218,8 @@ function onSelect(field: SettingsField, event: Event): void {
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-top: none;
-  border-radius: 0 0 6px 6px;
-  max-height: 200px;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  max-height: 12.5rem;
   overflow-y: auto;
   z-index: 50;
   list-style: none;
@@ -237,7 +237,7 @@ function onSelect(field: SettingsField, event: Event): void {
   padding: 0.625rem 0.75rem;
   cursor: pointer;
   font-size: 0.85rem;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   transition: background 0.15s;
@@ -250,7 +250,7 @@ function onSelect(field: SettingsField, event: Event): void {
 .autocomplete-loading {
   padding: 0.5rem 0.75rem;
   color: var(--text-disabled);
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
 }
 
 @media (min-width: 48em) {

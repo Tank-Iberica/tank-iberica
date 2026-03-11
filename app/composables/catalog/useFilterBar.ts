@@ -188,16 +188,12 @@ export function useFilterBar(
   }
 
   function onDynamicRange(name: string, value: number | null) {
-    if (value) setFilter(name, value)
+    if (value !== null && value !== undefined) setFilter(name, value)
     else clearFilter(name)
     onEmit()
   }
 
-  function onDynamicText(name: string, value: string) {
-    if (value) setFilter(name, value)
-    else clearFilter(name)
-    onEmit()
-  }
+  const onDynamicText = onDynamicSelect
 
   function handleClearAll() {
     clearAll()

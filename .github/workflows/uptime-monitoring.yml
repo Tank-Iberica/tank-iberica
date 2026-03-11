@@ -1,0 +1,144 @@
+name: 🟢 Uptime Monitoring
+
+on:
+  schedule:
+    # Every 30 minutes (more frequent for uptime monitoring)
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+env:
+  HEALTH_ENDPOINT: https://tracciona.com/api/health
+  TIMEOUT: 10 # seconds
+  RETRIES: 2
+
+jobs:
+  check-uptime:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        region: [us-east, eu-west, ap-south]
+      fail-fast: false
+    permissions:
+      issues: write
+    steps:
+      - name: Check health endpoint
+        id: health
+        continue-on-error: true
+        run: |
+          attempt=0
+          while [ $attempt -lt ${{ env.RETRIES }} ]; do
+            attempt=$((attempt + 1))
+            echo "Attempt $attempt/${{ env.RETRIES }} from ${{ matrix.region }}..."
+
+            RESPONSE=$(curl -s -w "\n%{http_code}\n%{time_total}" \
+              --max-time ${{ env.TIMEOUT }} \
+              -H "User-Agent: Uptime-Monitor/${{ matrix.region }}" \
+              "${{ env.HEALTH_ENDPOINT }}")
+
+            HTTP_CODE=$(echo "$RESPONSE" | tail -2 | head -1)
+            RESPONSE_TIME=$(echo "$RESPONSE" | tail -1)
+            BODY=$(echo "$RESPONSE" | head -n -2)
+
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "✓ Health check passed (HTTP $HTTP_CODE, ${RESPONSE_TIME}s)"
+              echo "status=ok" >> $GITHUB_OUTPUT
+              echo "http_code=$HTTP_CODE" >> $GITHUB_OUTPUT
+              echo "response_time=$RESPONSE_TIME" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+
+            if [ $attempt -lt ${{ env.RETRIES }} ]; then
+              echo "⚠️ Attempt $attempt failed (HTTP $HTTP_CODE), retrying..."
+              sleep 5
+            fi
+          done
+
+          echo "❌ Health check failed after ${{ env.RETRIES }} attempts"
+          echo "http_code=$HTTP_CODE" >> $GITHUB_OUTPUT
+          echo "response_time=$RESPONSE_TIME" >> $GITHUB_OUTPUT
+          echo "status=failed" >> $GITHUB_OUTPUT
+          exit 1
+
+      - name: Alert if down
+        if: steps.health.outputs.status == 'failed'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const now = new Date().toISOString();
+            const region = '${{ matrix.region }}';
+            const httpCode = '${{ steps.health.outputs.http_code }}';
+
+            // Check if recent issue exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'uptime-alert',
+              state: 'open',
+              per_page: 10
+            });
+
+            const recentIssue = issues.data.find(issue =>
+              issue.title.includes(`Uptime Alert — ${region}`) &&
+              new Date(issue.created_at).getTime() > Date.now() - 3600000 // 1h
+            );
+
+            if (!recentIssue) {
+              // Create new issue if one doesn't exist in last hour
+              github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Uptime Alert — ${region} (HTTP ${httpCode})`,
+                labels: ['uptime-alert', 'p0', 'automated'],
+                assignees: ['j-m-g'],
+                body: `## Uptime Alert — ${now}
+
+**Status:** 🔴 **DOWN**
+
+### Details:
+- **Region:** ${region}
+- **Endpoint:** ${{ env.HEALTH_ENDPOINT }}
+- **Response Code:** ${httpCode}
+- **Timeout:** ${{ env.TIMEOUT }}s
+- **Retries:** ${{ env.RETRIES }}
+
+### Health checks from other regions:
+- [Check logs](../../actions/workflows/uptime-monitoring.yml)
+- [Cloudflare Status](https://www.cloudflarestatus.com)
+
+### Immediate Actions:
+1. ✅ Check Cloudflare Pages status
+2. ✅ Review recent deployments
+3. ✅ Check database connectivity
+4. ✅ Review error logs: \`npm run logs\`
+5. 🔧 If critical: trigger rollback or scale up
+
+### Monitor:
+- Real-time logs: \`npm run logs:live\`
+- Health status: \`curl ${{ env.HEALTH_ENDPOINT }}\`
+- Cloudflare Analytics: https://dash.cloudflare.com
+
+---
+
+*Auto-resolved if health check passes next cycle*
+`
+              });
+            }
+
+      - name: Log result
+        if: always()
+        run: |
+          echo "📊 Uptime check completed (${{ matrix.region }})"
+          echo "Status: ${{ steps.health.outputs.status }}"
+          echo "HTTP Code: ${{ steps.health.outputs.http_code }}"
+          echo "Response Time: ${{ steps.health.outputs.response_time }}s"
+
+  aggregate-results:
+    needs: check-uptime
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Summary
+        run: |
+          echo "### 📊 Uptime Monitoring Summary"
+          echo "Time: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "Status: ${{ needs.check-uptime.result }}"

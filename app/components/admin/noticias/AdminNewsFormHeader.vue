@@ -30,7 +30,7 @@ defineEmits<{
           fill="none"
           stroke="currentColor"
           stroke-width="2"
-          style="width: 16px; height: 16px"
+          style="width: 1rem; height: 1rem"
         >
           <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
           <polyline points="15 3 21 3 21 9" />
@@ -38,10 +38,10 @@ defineEmits<{
         </svg>
         Ver
       </a>
-      <button class="btn btn-delete-outline" @click="$emit('delete')">Eliminar</button>
-      <button class="btn" @click="$emit('cancel')">Cancelar</button>
+      <button class="btn btn-delete-outline" @click="$emit('delete')">{{ $t('common.delete') }}</button>
+      <button class="btn" @click="$emit('cancel')">{{ $t('common.cancel') }}</button>
       <button class="btn btn-primary" :disabled="saving || !isValid" @click="$emit('save')">
-        {{ saving ? 'Guardando...' : 'Guardar' }}
+        {{ saving ? $t('common.saving') : $t('common.save') }}
       </button>
     </div>
   </header>
@@ -52,15 +52,15 @@ defineEmits<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .nf-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   min-width: 0;
   flex: 1;
 }
@@ -69,7 +69,7 @@ defineEmits<{
   margin: 0;
   font-size: 1.3rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--color-near-black);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -77,7 +77,7 @@ defineEmits<{
 
 .nf-right {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   flex-wrap: wrap;
 }
 
@@ -85,9 +85,9 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--border-radius);
   color: var(--text-auxiliary);
   transition: all 0.15s;
   border: none;
@@ -98,28 +98,28 @@ defineEmits<{
 
 .btn-icon:hover {
   background: var(--bg-secondary);
-  color: #1a1a1a;
+  color: var(--color-near-black);
 }
 
 .btn-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .btn {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--color-gray-200);
   background: var(--bg-primary);
-  color: #374151;
+  color: var(--color-gray-700);
   transition: all 0.15s;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   white-space: nowrap;
 }
 
@@ -148,7 +148,7 @@ defineEmits<{
 }
 
 .btn-delete-outline:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 (@media ()max-width: 47.9375em())) {

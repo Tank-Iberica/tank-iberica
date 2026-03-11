@@ -6,6 +6,8 @@
 
 // ============ TYPES ============
 
+export type MaintenanceType = 'preventivo' | 'correctivo' | 'itv'
+
 export interface DealerVehicleOption {
   id: string
   brand: string
@@ -21,7 +23,7 @@ export interface MaintenanceRecord {
   vehicle_model: string
   vehicle_year: number | null
   date: string
-  type: 'preventivo' | 'correctivo' | 'itv'
+  type: MaintenanceType
   description: string
   cost: number
   km: number | null
@@ -31,7 +33,7 @@ export interface MaintenanceRecord {
 export interface MaintenanceFormData {
   vehicle_id: string
   date: string
-  type: 'preventivo' | 'correctivo' | 'itv'
+  type: MaintenanceType
   description: string
   cost: number | null
   km: number | null
@@ -199,7 +201,7 @@ export function useDashboardMantenimientos() {
           dealer_id: string
           vehicle_id: string
           date: string
-          type: 'preventivo' | 'correctivo' | 'itv'
+          type: MaintenanceType
           description: string
           cost: number
           km: number | null

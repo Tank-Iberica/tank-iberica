@@ -5,6 +5,8 @@
  * and provides insights on pricing position.
  */
 
+type PricePosition = 'below' | 'average' | 'above'
+
 interface VehicleInsight {
   vehicleId: string
   brand: string
@@ -13,7 +15,7 @@ interface VehicleInsight {
   marketAvg: number
   marketMin: number
   marketMax: number
-  pricePosition: 'below' | 'average' | 'above'
+  pricePosition: PricePosition
   priceDeviationPercent: number
   suggestion: string
 }

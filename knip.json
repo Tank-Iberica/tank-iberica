@@ -21,6 +21,7 @@
     "docs/**"
   ],
   "ignoreDependencies": [
+    "@anthropic-ai/sdk",
     "@nuxt/eslint-config",
     "@nuxt/test-utils",
     "eslint-config-prettier",
@@ -28,7 +29,8 @@
     "happy-dom",
     "husky",
     "lint-staged",
-    "@lhci/cli"
+    "@lhci/cli",
+    "vue-router"
   ],
   "nuxt": {
     "entry": ["app/app.vue", "nuxt.config.ts"]
@@ -39,6 +41,7 @@
     "#app": ["node_modules/nuxt/dist/app"],
     "#imports": [".nuxt/imports.d.ts"]
   },
+  "github-actions": false,
   "rules": {
     "files": "warn",
     "dependencies": "warn",

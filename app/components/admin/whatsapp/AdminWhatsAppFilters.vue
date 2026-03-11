@@ -80,16 +80,16 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
 .filters-bar {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .status-pills {
   display: flex;
-  gap: 6px;
+  gap: 0.375rem;
   flex-wrap: nowrap;
   overflow-x: auto;
   min-width: max-content;
@@ -99,17 +99,17 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
 .status-pill {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 8px 14px;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2) 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 20px;
+  border-radius: var(--border-radius-full);
   background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-auxiliary);
   transition: all 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
   white-space: nowrap;
 }
 
@@ -140,7 +140,7 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
 
 .search-box .search-icon {
   position: absolute;
-  left: 12px;
+  left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-disabled);
@@ -150,28 +150,28 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
 
 .search-box input {
   width: 100%;
-  padding: 10px 36px 10px 38px;
+  padding: 0.625rem 2.25rem 0.625rem 2.375rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .search-box input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .search-box .clear-btn {
   position: absolute;
-  right: 8px;
+  right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
   background: var(--bg-tertiary);
   border: none;
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -192,7 +192,7 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
   }
 
   .search-box {
-    max-width: 280px;
+    max-width: 17.5rem;
   }
 }
 </style>

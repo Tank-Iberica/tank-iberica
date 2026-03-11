@@ -114,7 +114,7 @@ export function useDashboardObservatorio() {
     try {
       const { data, error: err } = await supabase
         .from('competitor_vehicles')
-        .select('*')
+        .select('id, dealer_id, platform_id, url, brand, model, year, price, location, notes, status, created_at, updated_at')
         .eq('dealer_id', dealerId.value)
         .order('created_at', { ascending: false })
 
@@ -131,7 +131,7 @@ export function useDashboardObservatorio() {
     try {
       const { data, error: err } = await supabase
         .from('platforms')
-        .select('*')
+        .select('id, name, slug, is_default')
         .order('name', { ascending: true })
 
       if (err) throw err
@@ -146,7 +146,7 @@ export function useDashboardObservatorio() {
     try {
       const { data, error: err } = await supabase
         .from('dealer_platforms')
-        .select('*')
+        .select('id, dealer_id, platform_id, custom_name')
         .eq('dealer_id', dealerId.value)
 
       if (err) throw err

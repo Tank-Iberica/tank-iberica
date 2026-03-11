@@ -30,26 +30,26 @@ const { t } = useI18n()
 <style scoped>
 .tabs-row {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-1);
   background: var(--bg-primary);
-  padding: 6px;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 0.375rem;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .tab-btn {
-  padding: 10px 18px;
+  padding: 0.625rem 1.125rem;
   border: none;
   background: transparent;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-auxiliary);
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: all 0.15s;
 }
 

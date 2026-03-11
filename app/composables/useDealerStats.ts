@@ -7,8 +7,6 @@ import type { Database } from '~~/types/supabase'
 
 type DealerStatsRow = Database['public']['Tables']['dealer_stats']['Row']
 
-type DailyStatsEntry = DealerStatsRow
-
 interface MonthlyStatsEntry {
   month: string // Format: 'YYYY-MM'
   vehicle_views: number
@@ -52,7 +50,7 @@ function canAccessMetric(plan: string, metric: string): boolean {
 export function useDealerStats() {
   const supabase = useSupabaseClient<Database>()
 
-  const dailyStats = ref<DailyStatsEntry[]>([])
+  const dailyStats = ref<DealerStatsRow[]>([])
   const monthlyStats = ref<MonthlyStatsEntry[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -83,14 +81,14 @@ export function useDealerStats() {
 
       const { data, error: err } = await supabase
         .from('dealer_stats')
-        .select('*')
+        .select('period_date, vehicle_views, profile_views, leads_received, leads_responded, favorites_added')
         .eq('dealer_id', dealerId)
         .gte('period_date', cutoffISO)
         .order('period_date', { ascending: true })
 
       if (err) throw err
 
-      dailyStats.value = (data || []) as DailyStatsEntry[]
+      dailyStats.value = (data || []) as DealerStatsRow[]
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error loading daily stats'
       dailyStats.value = []
@@ -120,7 +118,7 @@ export function useDealerStats() {
 
       const { data, error: err } = await supabase
         .from('dealer_stats')
-        .select('*')
+        .select('period_date, vehicle_views, profile_views, leads_received, leads_responded, favorites_added')
         .eq('dealer_id', dealerId)
         .gte('period_date', cutoffISO)
         .order('period_date', { ascending: true })
@@ -130,7 +128,7 @@ export function useDealerStats() {
       // Aggregate by month
       const monthlyMap = new Map<string, MonthlyStatsEntry>()
 
-      for (const row of (data || []) as DailyStatsEntry[]) {
+      for (const row of (data || []) as DealerStatsRow[]) {
         const month = row.period_date.substring(0, 7) // Extract 'YYYY-MM'
 
         if (!monthlyMap.has(month)) {

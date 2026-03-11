@@ -25,6 +25,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
+useScrollLock(toRef(props, 'show'))
+
 const confirmInput = ref('')
 
 const canConfirm = computed(() => {
@@ -48,6 +50,14 @@ watch(
     if (!val) confirmInput.value = ''
   },
 )
+
+// Close on Escape
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') close()
+}
+
+onMounted(() => window.addEventListener('keydown', onKeydown))
+onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
@@ -111,7 +121,7 @@ watch(
   align-items: flex-end;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
+  padding: 1rem;
 }
 
 @media (min-width: 30em) {
@@ -122,16 +132,16 @@ watch(
 
 .modal-container {
   background: var(--bg-primary);
-  border-radius: 12px 12px 0 0;
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
   width: 100%;
-  max-width: 440px;
+  max-width: 27.5rem;
   max-height: 90vh;
   overflow-y: auto;
 }
 
 @media (min-width: 30em) {
   .modal-container {
-    border-radius: 12px;
+    border-radius: var(--border-radius-md);
   }
 }
 
@@ -139,13 +149,13 @@ watch(
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header h3 {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--color-error);
 }
@@ -154,11 +164,11 @@ watch(
   background: none;
   border: none;
   cursor: pointer;
-  color: #6b7280;
-  padding: 4px;
-  border-radius: 4px;
-  min-width: 44px;
-  min-height: 44px;
+  color: var(--color-gray-500);
+  padding: 0.25rem;
+  border-radius: var(--border-radius-sm);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -169,64 +179,64 @@ watch(
 }
 
 .modal-body {
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .modal-item-label {
   font-weight: 600;
-  margin: 0 0 8px;
-  color: #111827;
+  margin: 0 0 0.5rem;
+  color: var(--color-gray-900);
 }
 
 .modal-warning-text {
-  color: #6b7280;
-  font-size: 0.875rem;
-  margin: 0 0 16px;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+  margin: 0 0 1rem;
 }
 
 .form-group {
-  margin-top: 12px;
+  margin-top: 0.75rem;
 }
 
 .form-label {
   display: block;
-  font-size: 0.875rem;
-  color: #374151;
-  margin-bottom: 6px;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  margin-bottom: 0.375rem;
 }
 
 .form-input {
   width: 100%;
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 0.875rem;
-  min-height: 44px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  min-height: 2.75rem;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--primary, var(--color-primary));
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 16px 20px;
-  border-top: 1px solid #e5e7eb;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .btn-secondary {
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   background: var(--bg-secondary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 0.875rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-secondary:hover {
@@ -234,14 +244,14 @@ watch(
 }
 
 .btn-danger {
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   background: var(--color-error);
-  color: #fff;
+  color: var(--color-white);
   border: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-danger:hover:not(:disabled) {
@@ -270,10 +280,22 @@ watch(
 }
 
 .modal-enter-from .modal-container {
-  transform: translateY(20px);
+  transform: translateY(1.25rem);
 }
 
 .modal-leave-to .modal-container {
-  transform: translateY(20px);
+  transform: translateY(1.25rem);
+}
+
+/* Landscape on short viewports: ensure modal stays visible */
+@media (orientation: landscape) and (max-height: 30em) {
+  .modal-overlay {
+    align-items: center;
+  }
+
+  .modal-container {
+    border-radius: var(--border-radius-md);
+    max-height: 90dvh;
+  }
 }
 </style>

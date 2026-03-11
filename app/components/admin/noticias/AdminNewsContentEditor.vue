@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 defineProps<{
   contentEs: string
   contentWordCount: number
@@ -12,21 +14,21 @@ defineEmits<{
 
 <template>
   <div class="section">
-    <div class="section-title">Contenido (ES) *</div>
+    <div class="section-title">{{ t('admin.newsForm.contentEs') }} *</div>
     <div class="field">
       <textarea
         rows="14"
         class="input textarea"
-        placeholder="Escribe el contenido de la noticia...&#10;&#10;Separa los parrafos con lineas en blanco para mejorar la estructura SEO."
+        :placeholder="t('admin.newsForm.contentPlaceholder')"
         :value="contentEs"
         @input="$emit('update:contentEs', ($event.target as HTMLTextAreaElement).value)"
       />
       <div class="count-row">
-        <span class="char-count"> {{ contentEs.length }} caracteres </span>
+        <span class="char-count"> {{ contentEs.length }} {{ t('admin.newsForm.characters') }} </span>
         <span class="char-count word-count" :class="wordCountClass">
-          {{ contentWordCount }} palabras
+          {{ contentWordCount }} {{ t('admin.newsForm.words') }}
           <span v-if="contentWordCount > 0 && contentWordCount < 300" class="word-target"
-            >/ 300 recomendadas</span
+            >/ 300 {{ t('admin.newsForm.recommended') }}</span
           >
         </span>
       </div>
@@ -37,30 +39,30 @@ defineEmits<{
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .section-title {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
+  color: var(--color-gray-700);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--color-gray-100);
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .input {
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.875rem;
   width: 100%;
   box-sizing: border-box;
@@ -81,7 +83,7 @@ defineEmits<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .char-count {

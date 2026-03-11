@@ -138,17 +138,17 @@ function onNumberInput(field: RentFormField, event: Event): void {
 .transaction-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1.5rem;
 }
 
 .form-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .form-section h2 {
@@ -161,17 +161,17 @@ function onNumberInput(field: RentFormField, event: Event): void {
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .form-group label {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-secondary);
 }
@@ -180,12 +180,12 @@ function onNumberInput(field: RentFormField, event: Event): void {
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
   box-sizing: border-box;
 }
 
@@ -194,12 +194,12 @@ function onNumberInput(field: RentFormField, event: Event): void {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .input-with-suffix {
@@ -209,12 +209,12 @@ function onNumberInput(field: RentFormField, event: Event): void {
 }
 
 .input-with-suffix input {
-  padding-right: 52px;
+  padding-right: 3.25rem;
 }
 
 .input-suffix {
   position: absolute;
-  right: 14px;
+  right: 0.875rem;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-disabled);
@@ -223,7 +223,7 @@ function onNumberInput(field: RentFormField, event: Event): void {
 
 .form-actions {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
   justify-content: flex-end;
 }
 
@@ -231,12 +231,12 @@ function onNumberInput(field: RentFormField, event: Event): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
   font-size: 0.95rem;
@@ -255,12 +255,12 @@ function onNumberInput(field: RentFormField, event: Event): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   text-decoration: none;
   font-size: 0.95rem;

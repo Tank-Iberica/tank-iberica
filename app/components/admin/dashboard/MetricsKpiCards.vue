@@ -151,7 +151,7 @@ defineProps<{
   font-weight: var(--font-weight-medium);
   color: var(--text-auxiliary);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.01875rem;
 }
 
 .kpi-value {
@@ -164,11 +164,11 @@ defineProps<{
 .kpi-change {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   color: var(--text-auxiliary);
-  padding: 2px 0;
+  padding: 0.125rem 0;
 }
 
 .kpi-change--up {
@@ -180,8 +180,8 @@ defineProps<{
 }
 
 .change-arrow {
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
   flex-shrink: 0;
 }
 

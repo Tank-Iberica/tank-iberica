@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # Valoración del proyecto Tracciona — 1 a 100 puntos
 
@@ -220,3 +220,5 @@ El proyecto está **por encima de 75/100** en la mayoría de dimensiones y en la
 ---
 
 _Documento de valoración interna. No sustituye una auditoría externa ni una valoración financiera._
+
+

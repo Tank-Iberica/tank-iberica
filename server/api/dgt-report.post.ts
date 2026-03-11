@@ -11,26 +11,30 @@
  * POST /api/dgt-report
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, readBody, createError } from 'h3'
-
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
+import { safeError } from '../utils/safeError'
+import { validateBody } from '../utils/validateBody'
 
 /**
  * Spanish matricula formats:
  * - Modern (post-2000): 4 digits + 3 letters (e.g. 1234 BCD)
  * - Old provincial: 1-2 letters + 4-6 digits + 0-2 letters (e.g. M 1234 AB)
- * - Temporary / diplomatic and other special plates
- * We accept a relaxed pattern: 4-10 alphanumeric characters with optional spaces/hyphens.
+ * We accept a relaxed pattern: alphanumeric with optional spaces/hyphens.
  */
 const MATRICULA_REGEX = /^[A-Z0-9]{1,4}[\s-]?[A-Z0-9]{2,6}[\s-]?[A-Z0-9]{0,3}$/i
 
-type ReportProvider = 'infocar' | 'carvertical' | 'manual'
+const dgtReportSchema = z.object({
+  vehicleId: z.string().uuid(),
+  matricula: z
+    .string()
+    .min(1)
+    .max(20)
+    .refine((v) => MATRICULA_REGEX.test(v.trim()), { message: 'matricula format is invalid' }),
+  provider: z.enum(['infocar', 'carvertical', 'manual']).optional(),
+})
 
-interface DgtReportBody {
-  vehicleId: string
-  matricula: string
-  provider?: ReportProvider
-}
+type ReportProvider = 'infocar' | 'carvertical' | 'manual'
 
 interface DgtReportResponse {
   success: boolean
@@ -40,48 +44,11 @@ interface DgtReportResponse {
   error?: string
 }
 
-const VALID_PROVIDERS = new Set<ReportProvider>(['infocar', 'carvertical', 'manual'])
-
-function validateBody(body: DgtReportBody): string[] {
-  const errors: string[] = []
-
-  // vehicleId — required UUID
-  if (!body.vehicleId || typeof body.vehicleId !== 'string') {
-    errors.push('vehicleId is required')
-  } else if (!UUID_REGEX.test(body.vehicleId)) {
-    errors.push('vehicleId must be a valid UUID')
-  }
-
-  // matricula — required, must look like a Spanish plate
-  if (body.matricula && typeof body.matricula === 'string') {
-    const cleaned = body.matricula.trim()
-    if (cleaned.length === 0) {
-      errors.push('matricula cannot be empty')
-    } else if (!MATRICULA_REGEX.test(cleaned)) {
-      errors.push('matricula format is invalid')
-    }
-  } else {
-    errors.push('matricula is required')
-  }
-
-  // provider — optional, must be one of the allowed values
-  if (body.provider !== undefined && body.provider !== null) {
-    if (
-      typeof body.provider !== 'string' ||
-      !VALID_PROVIDERS.has(body.provider as ReportProvider)
-    ) {
-      errors.push('provider must be one of: infocar, carvertical, manual')
-    }
-  }
-
-  return errors
-}
-
 export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
   // 1. Authenticate user
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   // 2. Get Supabase service role client for DB operations
@@ -95,25 +62,17 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
     .single()
 
   if (profileError || !userProfile) {
-    throw createError({ statusCode: 500, message: 'Failed to verify user permissions' })
+    throw safeError(500, 'Failed to verify user permissions')
   }
 
   if (userProfile.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Admin access required' })
+    throw safeError(403, 'Admin access required')
   }
 
   // 4. Read and validate body
-  const body = await readBody<DgtReportBody>(event)
-  const validationErrors = validateBody(body)
+  const body = await validateBody(event, dgtReportSchema)
 
-  if (validationErrors.length > 0) {
-    throw createError({
-      statusCode: 400,
-      message: `Validation failed: ${validationErrors.join('; ')}`,
-    })
-  }
-
-  const vehicleId = body.vehicleId.trim()
+  const vehicleId = body.vehicleId
   const matricula = body.matricula.trim().toUpperCase()
   const provider: ReportProvider = body.provider ?? 'infocar'
 
@@ -125,10 +84,7 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
     .single()
 
   if (vehicleError || !vehicle) {
-    throw createError({
-      statusCode: 404,
-      message: 'Vehicle not found',
-    })
+    throw safeError(404, 'Vehicle not found')
   }
 
   // 6. Call report provider API
@@ -190,10 +146,7 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
     .single()
 
   if (insertError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to save report: ${insertError.message}`,
-    })
+    throw safeError(500, `Failed to save report: ${insertError.message}`)
   }
 
   // 8. Update vehicle verification_level to audited (level 3) if currently lower
@@ -208,10 +161,7 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
       .eq('id', vehicleId)
 
     if (updateError) {
-      throw createError({
-        statusCode: 500,
-        message: `Report saved but failed to update vehicle verification level: ${updateError.message}`,
-      })
+      throw safeError(500, `Report saved but failed to update vehicle verification level: ${updateError.message}`)
     }
   }
 

@@ -100,7 +100,12 @@ const LazyDoughnut = defineAsyncComponent(() =>
         <div v-if="!hasRevenueData" class="chart-card__empty">
           {{ $t('admin.metrics.noData') }}
         </div>
-        <LazyBar v-else :data="revenueChartData" :options="barChartOptions" />
+        <Suspense v-else>
+          <LazyBar :data="revenueChartData" :options="barChartOptions" />
+          <template #fallback>
+            <UiSkeleton class="chart-card__skeleton" />
+          </template>
+        </Suspense>
       </div>
     </div>
 
@@ -111,7 +116,12 @@ const LazyDoughnut = defineAsyncComponent(() =>
         <div v-if="!hasVehiclesData" class="chart-card__empty">
           {{ $t('admin.metrics.noData') }}
         </div>
-        <LazyLine v-else :data="vehiclesChartData" :options="lineChartOptions" />
+        <Suspense v-else>
+          <LazyLine :data="vehiclesChartData" :options="lineChartOptions" />
+          <template #fallback>
+            <UiSkeleton class="chart-card__skeleton" />
+          </template>
+        </Suspense>
       </div>
     </div>
 
@@ -122,7 +132,12 @@ const LazyDoughnut = defineAsyncComponent(() =>
         <div v-if="!hasLeadsData" class="chart-card__empty">
           {{ $t('admin.metrics.noData') }}
         </div>
-        <LazyBar v-else :data="leadsChartData" :options="barChartOptions" />
+        <Suspense v-else>
+          <LazyBar :data="leadsChartData" :options="barChartOptions" />
+          <template #fallback>
+            <UiSkeleton class="chart-card__skeleton" />
+          </template>
+        </Suspense>
       </div>
     </div>
 
@@ -133,7 +148,12 @@ const LazyDoughnut = defineAsyncComponent(() =>
         <div v-if="!hasFunnelData" class="chart-card__empty">
           {{ $t('admin.metrics.noData') }}
         </div>
-        <LazyDoughnut v-else :data="funnelChartData" :options="doughnutChartOptions" />
+        <Suspense v-else>
+          <LazyDoughnut :data="funnelChartData" :options="doughnutChartOptions" />
+          <template #fallback>
+            <UiSkeleton class="chart-card__skeleton" />
+          </template>
+        </Suspense>
       </div>
     </div>
   </section>
@@ -164,7 +184,7 @@ const LazyDoughnut = defineAsyncComponent(() =>
 
 .chart-card__body {
   position: relative;
-  height: 280px;
+  height: 17.5rem;
 }
 
 .chart-card__empty {
@@ -176,13 +196,18 @@ const LazyDoughnut = defineAsyncComponent(() =>
   font-size: var(--font-size-sm);
 }
 
+.chart-card__skeleton {
+  width: 100%;
+  height: 100%;
+}
+
 @media (min-width: 48em) {
   .charts-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .chart-card__body {
-    height: 320px;
+    height: 20rem;
   }
 }
 </style>

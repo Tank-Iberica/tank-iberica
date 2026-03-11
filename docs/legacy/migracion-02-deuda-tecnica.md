@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 ## PASO 6B: DEUDA TÉCNICA DIFERIDA (NO hacer durante migración — referencia)
 
@@ -62,3 +62,5 @@ export default defineNuxtPlugin((nuxtApp) => {
 ```
 
 ---
+
+

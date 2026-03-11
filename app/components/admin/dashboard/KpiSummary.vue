@@ -1,7 +1,7 @@
 <template>
   <div class="kpi-summary-row">
     <div class="kpi-mini-card">
-      <span class="kpi-mini-label">Ingresos mes</span>
+      <span class="kpi-mini-label">{{ $t('admin.kpi.monthlyRevenue') }}</span>
       <span class="kpi-mini-value">{{ formatEuros(kpiSummary.monthlyRevenue.current) }}</span>
       <span class="kpi-mini-change" :class="changeClass(kpiSummary.monthlyRevenue.changePercent)">
         {{ kpiSummary.monthlyRevenue.changePercent > 0 ? '+' : ''
@@ -9,7 +9,7 @@
       </span>
     </div>
     <div class="kpi-mini-card">
-      <span class="kpi-mini-label">Vehiculos</span>
+      <span class="kpi-mini-label">{{ $t('admin.kpi.activeVehicles') }}</span>
       <span class="kpi-mini-value">{{ kpiSummary.activeVehicles.current }}</span>
       <span class="kpi-mini-change" :class="changeClass(kpiSummary.activeVehicles.changePercent)">
         {{ kpiSummary.activeVehicles.changePercent > 0 ? '+' : ''
@@ -17,7 +17,7 @@
       </span>
     </div>
     <div class="kpi-mini-card">
-      <span class="kpi-mini-label">Dealers</span>
+      <span class="kpi-mini-label">{{ $t('admin.kpi.activeDealers') }}</span>
       <span class="kpi-mini-value">{{ kpiSummary.activeDealers.current }}</span>
       <span class="kpi-mini-change" :class="changeClass(kpiSummary.activeDealers.changePercent)">
         {{ kpiSummary.activeDealers.changePercent > 0 ? '+' : ''
@@ -25,7 +25,7 @@
       </span>
     </div>
     <div class="kpi-mini-card">
-      <span class="kpi-mini-label">Leads mes</span>
+      <span class="kpi-mini-label">{{ $t('admin.kpi.monthlyLeads') }}</span>
       <span class="kpi-mini-value">{{ kpiSummary.monthlyLeads.current }}</span>
       <span class="kpi-mini-change" :class="changeClass(kpiSummary.monthlyLeads.changePercent)">
         {{ kpiSummary.monthlyLeads.changePercent > 0 ? '+' : ''
@@ -60,7 +60,7 @@ defineProps<{
   padding: var(--spacing-3);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
   box-shadow: var(--shadow-sm);
 }
 
@@ -69,7 +69,7 @@ defineProps<{
   color: var(--text-auxiliary);
   font-weight: var(--font-weight-medium);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.01875rem;
 }
 
 .kpi-mini-value {

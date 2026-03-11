@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { ComparisonVehicle } from '~/composables/usePerfilComparador'
+import { getBestVehicleIds } from '~/composables/usePerfilComparador'
 
-defineProps<{
+const props = defineProps<{
   vehicles: ComparisonVehicle[]
   draftNotes: Record<string, string>
   draftRatings: Record<string, number>
@@ -16,9 +18,31 @@ const emit = defineEmits<{
 
 function getSpec(vehicle: ComparisonVehicle, key: string): string {
   const val = vehicle[key as keyof ComparisonVehicle]
-  if (val == null) return '-'
+  if (val == null || val === '') return '-'
   if (key === 'price') return `${Number(val).toLocaleString()} €`
+  if (key === 'km') return `${Number(val).toLocaleString()} km`
+  if (key === 'is_verified') return val ? '✓' : '✗'
   return String(val)
+}
+
+/**
+ * For each spec key, compute the set of vehicle IDs that have the "best" value.
+ * Used to add a visual winner highlight.
+ */
+const bestByKey = computed(() => {
+  const result: Record<string, Set<string>> = {}
+  for (const key of props.specKeys) {
+    const values = props.vehicles.map((v) => {
+      const val = v[key as keyof ComparisonVehicle]
+      return typeof val === 'number' ? val : null
+    })
+    result[key] = getBestVehicleIds(props.vehicles, values, key)
+  }
+  return result
+})
+
+function isBest(vehicleId: string, key: string): boolean {
+  return bestByKey.value[key]?.has(vehicleId) ?? false
 }
 </script>
 
@@ -71,7 +95,13 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
           <tbody>
             <tr v-for="key in specKeys" :key="key">
               <th>{{ $t(`comparator.spec.${key}`) }}</th>
-              <td v-for="vehicle in vehicles" :key="vehicle.id">{{ getSpec(vehicle, key) }}</td>
+              <td
+                v-for="vehicle in vehicles"
+                :key="vehicle.id"
+                :class="{ 'td--best': isBest(vehicle.id, key) }"
+              >
+                {{ getSpec(vehicle, key) }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -162,8 +192,8 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
   border-radius: var(--border-radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  min-width: 200px;
-  max-width: 300px;
+  min-width: 12.5rem;
+  max-width: 18.75rem;
 }
 
 .card-link {
@@ -173,7 +203,7 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
 
 .card-img {
   width: 100%;
-  height: 140px;
+  height: 8.75rem;
   background: var(--bg-secondary);
   overflow: hidden;
 }
@@ -232,8 +262,8 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
   position: absolute;
   top: var(--spacing-2);
   right: var(--spacing-2);
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -271,7 +301,7 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
 .spec-tbl {
   width: 100%;
   border-collapse: collapse;
-  min-width: 400px;
+  min-width: 25rem;
 }
 
 .spec-tbl tr:nth-child(even) {
@@ -285,7 +315,7 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
   font-weight: var(--font-weight-semibold);
   color: var(--text-secondary);
   white-space: nowrap;
-  min-width: 100px;
+  min-width: 6.25rem;
 }
 
 .spec-tbl td {
@@ -293,6 +323,12 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
   font-size: var(--font-size-sm);
   color: var(--text-primary);
   text-align: center;
+}
+
+.spec-tbl td.td--best {
+  color: var(--color-success-text, #166534);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-success-bg, #f0fdf4);
 }
 
 /* Ratings */
@@ -320,15 +356,15 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
 .stars {
   display: flex;
   justify-content: center;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .star-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   color: var(--color-gray-300);
   transition: color var(--transition-fast);
   background: none;
@@ -367,7 +403,7 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
 
 .note-cell textarea {
   width: 100%;
-  min-height: 80px;
+  min-height: 5rem;
   padding: var(--spacing-3);
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -386,7 +422,7 @@ function getSpec(vehicle: ComparisonVehicle, key: string): string {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-4);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);

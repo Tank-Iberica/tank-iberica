@@ -72,9 +72,9 @@ const { t } = useI18n()
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px 24px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-5) var(--spacing-6);
 }
 
 .actions-section {
@@ -82,7 +82,7 @@ const { t } = useI18n()
 }
 
 .section-title {
-  margin: 0 0 16px;
+  margin: 0 0 var(--spacing-4);
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -90,24 +90,24 @@ const { t } = useI18n()
 
 .actions-row {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
   flex-direction: column;
 }
 
 .btn-action {
-  padding: 12px 20px;
-  border-radius: 10px;
+  padding: var(--spacing-3) var(--spacing-5);
+  border-radius: var(--border-radius-md);
   border: 2px solid var(--color-gray-200);
   background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 600;
-  min-height: 48px;
+  min-height: 3rem;
   transition: all 0.15s;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   width: 100%;
   justify-content: center;
 }
@@ -122,7 +122,7 @@ const { t } = useI18n()
   color: var(--color-success);
 }
 .btn-start:hover:not(:disabled) {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
 }
 
 .btn-end {
@@ -130,15 +130,15 @@ const { t } = useI18n()
   color: var(--color-warning-text);
 }
 .btn-end:hover:not(:disabled) {
-  background: #fffbeb;
+  background: var(--color-amber-50);
 }
 
 .btn-adjudicate {
-  border-color: #7c3aed;
-  color: #7c3aed;
+  border-color: var(--color-purple-600);
+  color: var(--color-purple-600);
 }
 .btn-adjudicate:hover:not(:disabled) {
-  background: #faf5ff;
+  background: var(--color-purple-50);
 }
 
 .btn-cancel {
@@ -146,7 +146,7 @@ const { t } = useI18n()
   color: var(--color-error);
 }
 .btn-cancel:hover:not(:disabled) {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .btn-refresh {

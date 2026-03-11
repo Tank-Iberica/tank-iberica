@@ -29,6 +29,7 @@ export default defineNuxtConfig({
     families: {
       Inter: [400, 500, 600, 700],
     },
+    subsets: ['latin'],
     display: 'swap',
     preload: true,
     download: true,
@@ -93,6 +94,7 @@ export default defineNuxtConfig({
     },
     quality: 80,
     format: ['webp'],
+    domains: ['flagcdn.com'],
   },
 
   pwa: {
@@ -154,14 +156,45 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    '/**': {
+      headers: {
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'SAMEORIGIN',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=(self), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), usb=(), payment=(), display-capture=()',
+        // Report-Only first — switch to Content-Security-Policy once violations confirmed zero
+        'Content-Security-Policy-Report-Only': [
+          "default-src 'self'",
+          // Scripts: GTM, AdSense, Prebid, Turnstile
+          "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://cdn.jsdelivr.net https://challenges.cloudflare.com",
+          // Styles: Nuxt scoped + Google Fonts
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+          // Fonts: Google Fonts CDN
+          "font-src 'self' https://fonts.gstatic.com",
+          // Images: Cloudinary, CF Images, GA pixel, data URIs
+          "img-src 'self' data: https://res.cloudinary.com https://imagedelivery.net https://www.google.com https://www.google-analytics.com https://www.googletagmanager.com",
+          // Fetch/XHR: Supabase, GA, GTM
+          "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://www.googletagmanager.com https://pagead2.googlesyndication.com",
+          // Frames: Turnstile widget
+          "frame-src https://challenges.cloudflare.com",
+          // Block plugins/objects
+          "object-src 'none'",
+          // Block base tag hijacking
+          "base-uri 'self'",
+          // Block form submissions to external origins
+          "form-action 'self'",
+        ].join('; '),
+      },
+    },
     '/': { swr: 60 * 10 },
     '/vehiculo/**': { swr: 60 * 5 },
     '/noticias': { swr: 60 * 10 },
     '/noticias/**': { swr: 60 * 30 },
     '/guia': { swr: 60 * 60 },
     '/guia/**': { swr: 60 * 60 },
-    '/sobre-nosotros': { swr: 60 * 60 * 24 },
-    '/legal': { swr: 60 * 60 * 24 },
+    '/sobre-nosotros': { prerender: true },
+    '/legal': { prerender: true },
+    '/legal/**': { prerender: true },
     '/subastas': { swr: 60 },
     '/subastas/**': { swr: 60 },
     '/admin/**': { ssr: false },
@@ -175,7 +208,13 @@ export default defineNuxtConfig({
     '/api/merchant-feed**': { cors: true, swr: 60 * 60 * 12 },
     '/api/health**': { cors: true },
     '/api/market-report': { swr: 60 * 60 * 6 },
+    '/api/v1/valuation**': { swr: 60 * 60 },
+    '/api/market/valuation**': { swr: 60 * 60 },
+    '/api/widget/**': { swr: 60 * 5 },
+    '/api/search**': { swr: 60 },
+    '/embed/**': { swr: 60 * 5 },
     '/images/**': { headers: { 'Cache-Control': 'public, max-age=2592000, immutable' } },
+    '/_nuxt/**': { headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
   },
 
   runtimeConfig: {
@@ -243,17 +282,23 @@ export default defineNuxtConfig({
     },
   },
 
+  features: {
+    inlineStyles: true,
+  },
+
   experimental: {
     payloadExtraction: true,
   },
 
-  css: ['@/assets/css/tokens.css', '@/assets/css/interactions.css', '@/assets/css/themes.css'],
+  css: ['@/assets/css/tokens.css', '@/assets/css/interactions.css', '@/assets/css/themes.css', '@/assets/css/print.css'],
 
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+    layoutTransition: { name: 'layout', mode: 'out-in' },
     head: {
       htmlAttrs: { lang: 'es' },
       charset: 'utf-8',
-      viewport: 'width=device-width, initial-scale=1',
+      viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
       title: 'Tracciona',
       meta: [
         {
@@ -272,12 +317,19 @@ export default defineNuxtConfig({
         { rel: 'icon', href: '/favicon.ico' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
         { rel: 'dns-prefetch', href: 'https://res.cloudinary.com' },
+        { rel: 'dns-prefetch', href: 'https://imagedelivery.net' },
         ...(process.env.SUPABASE_URL
           ? [{ rel: 'dns-prefetch', href: process.env.SUPABASE_URL }]
           : []),
         { rel: 'dns-prefetch', href: 'https://flagcdn.com' },
         { rel: 'dns-prefetch', href: 'https://www.googletagmanager.com' },
         { rel: 'preconnect', href: 'https://res.cloudinary.com', crossorigin: '' },
+        { rel: 'preconnect', href: 'https://imagedelivery.net', crossorigin: '' },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        ...(process.env.SUPABASE_URL
+          ? [{ rel: 'preconnect', href: process.env.SUPABASE_URL }]
+          : []),
       ],
     },
   },

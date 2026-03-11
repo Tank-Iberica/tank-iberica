@@ -33,7 +33,12 @@
       <div v-for="chart in historyChartDataSets" :key="chart.component" class="chart-card">
         <h3 class="chart-title">{{ chart.label }}</h3>
         <div class="chart-container">
-          <LazyLine :data="chart.chartData" :options="chartOptions" />
+          <Suspense>
+            <LazyLine :data="chart.chartData" :options="chartOptions" />
+            <template #fallback>
+              <UiSkeleton class="chart-skeleton" />
+            </template>
+          </Suspense>
         </div>
       </div>
     </div>
@@ -136,8 +141,8 @@ function changePeriod(period: PeriodValue) {
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: all var(--transition-fast);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .period-btn:hover {
@@ -163,8 +168,8 @@ function changePeriod(period: PeriodValue) {
 }
 
 .empty-icon {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   opacity: 0.5;
 }
 
@@ -196,13 +201,18 @@ function changePeriod(period: PeriodValue) {
 }
 
 .chart-container {
-  height: 250px;
+  height: 15.625rem;
   position: relative;
+}
+
+.chart-skeleton {
+  width: 100%;
+  height: 100%;
 }
 
 @media (min-width: 64em) {
   .chart-container {
-    height: 300px;
+    height: 18.75rem;
   }
 }
 </style>

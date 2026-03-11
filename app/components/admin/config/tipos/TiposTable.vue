@@ -20,12 +20,12 @@ const emit = defineEmits<{
       <thead>
         <tr>
           <th style="width: 50px">Orden</th>
-          <th>Nombre</th>
+          <th>{{ $t('common.name') }}</th>
           <th>Subcategorias</th>
           <th>Filtros aplicables</th>
-          <th style="width: 80px">Stock</th>
-          <th style="width: 100px">Estado</th>
-          <th style="width: 120px">Acciones</th>
+          <th style="width: 5rem">Stock</th>
+          <th style="width: 100px">{{ $t('common.status') }}</th>
+          <th style="width: 7.5rem">{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -87,7 +87,7 @@ const emit = defineEmits<{
           </td>
         </tr>
         <tr v-if="!types.length">
-          <td colspan="7" class="empty-state">No hay tipos. Crea el primero.</td>
+          <td colspan="7" class="empty-state">{{ $t('common.noResults') }}</td>
         </tr>
       </tbody>
     </table>
@@ -97,9 +97,9 @@ const emit = defineEmits<{
 <style scoped>
 .table-container {
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
 }
 
 .admin-table {
@@ -109,20 +109,20 @@ const emit = defineEmits<{
 
 .admin-table th,
 .admin-table td {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--bg-tertiary);
 }
 
 .admin-table th {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   font-size: 0.875rem;
 }
 
 .admin-table tr:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .order-cell {
@@ -132,16 +132,16 @@ const emit = defineEmits<{
 .order-buttons {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .btn-icon {
   background: none;
   border: 1px solid var(--border-color-light);
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-size: 10px;
+  font-size: 0.625rem;
   transition: all 0.2s;
 }
 
@@ -155,35 +155,35 @@ const emit = defineEmits<{
 }
 
 .btn-edit:hover {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
 }
 
 .btn-delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .name-cell {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .name-en {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .stock-badge {
   background: var(--bg-secondary);
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-md);
   font-weight: 600;
   font-size: 0.875rem;
 }
 
 .status-toggle {
-  padding: 6px 16px;
-  border-radius: 20px;
+  padding: 0.375rem 1rem;
+  border-radius: 1.25rem;
   border: none;
   font-weight: 600;
   font-size: 0.75rem;
@@ -192,13 +192,13 @@ const emit = defineEmits<{
 }
 
 .status-toggle.active {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .status-toggle.inactive {
   background: var(--bg-secondary);
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .status-toggle:disabled {
@@ -208,13 +208,13 @@ const emit = defineEmits<{
 
 .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .empty-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: 2.5rem;
+  color: var(--color-gray-500);
 }
 
 .text-center {
@@ -223,13 +223,13 @@ const emit = defineEmits<{
 
 .filters-cell,
 .subcategories-cell {
-  max-width: 180px;
+  max-width: 11.25rem;
 }
 
 .filters-list,
 .subcategories-list {
   font-size: 0.85rem;
-  color: #4b5563;
+  color: var(--color-gray-600);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -242,7 +242,7 @@ const emit = defineEmits<{
   }
 
   .admin-table {
-    min-width: 750px;
+    min-width: 46.875rem;
   }
 }
 </style>

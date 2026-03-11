@@ -90,7 +90,7 @@ watch(
             height="48"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#16a34a"
+            stroke="var(--color-green-600)"
             stroke-width="2"
           >
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
@@ -169,12 +169,12 @@ watch(
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 
 .report-modal {
   background: var(--bg-primary, white);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
   max-width: 30em;
   max-height: 90vh;
@@ -186,7 +186,7 @@ watch(
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: var(--spacing-4) var(--spacing-5);
   border-bottom: 1px solid var(--border-color-light, var(--color-gray-200));
 }
 
@@ -198,10 +198,10 @@ watch(
 }
 
 .report-close {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -217,10 +217,10 @@ watch(
 }
 
 .report-form {
-  padding: 20px;
+  padding: var(--spacing-5);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .report-description {
@@ -233,7 +233,7 @@ watch(
 .report-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .report-field label {
@@ -246,12 +246,12 @@ watch(
 .report-field select,
 .report-field textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--border-color, var(--color-gray-200));
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .report-field input:focus,
@@ -259,26 +259,26 @@ watch(
 .report-field textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .report-field textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .report-error {
-  padding: 10px 14px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: 0.625rem 0.875rem;
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.875rem;
 }
 
 .report-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
   justify-content: flex-end;
 }
 
@@ -286,12 +286,12 @@ watch(
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-5);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
 }
@@ -309,12 +309,12 @@ watch(
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-5);
   background: var(--bg-primary);
   color: var(--text-secondary, var(--color-gray-600));
   border: 1px solid var(--border-color, var(--color-gray-200));
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
 }
@@ -330,8 +330,8 @@ watch(
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 40px 20px;
+  gap: var(--spacing-4);
+  padding: var(--spacing-10) var(--spacing-5);
   text-align: center;
 }
 

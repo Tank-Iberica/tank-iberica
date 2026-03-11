@@ -97,7 +97,7 @@ export function useAdminReportes() {
   // ============================================
   async function loadReports() {
     loading.value = true
-    let query = supabase.from('reports').select('*').order('created_at', { ascending: false })
+    let query = supabase.from('reports').select('id, vertical, reporter_email, entity_type, entity_id, reason, details, status, admin_notes, resolved_at, created_at').order('created_at', { ascending: false })
 
     if (activeFilter.value !== 'all') {
       query = query.eq('status', activeFilter.value)

@@ -67,6 +67,9 @@ const {
   generateContract,
   resetForm,
   init,
+  hasDraft,
+  restoreDraft,
+  clearDraft,
 } = useDashboardContrato()
 
 useHead({ title: t('dashboard.tools.contract.title') })
@@ -83,9 +86,8 @@ onMounted(init)
 
     <!-- Loading -->
     <template v-else-if="loading">
-      <div class="loading-state">
-        <div class="spinner" />
-        <p>{{ t('dashboard.tools.contract.loading') }}</p>
+      <div class="loading-state" aria-busy="true">
+        <UiSkeletonCard :lines="5" />
       </div>
     </template>
 
@@ -107,6 +109,19 @@ onMounted(init)
           {{ t('dashboard.tools.contract.tabHistory') }}
           <span v-if="contracts.length" class="tab-count">{{ contracts.length }}</span>
         </button>
+      </div>
+
+      <!-- Draft restore banner -->
+      <div v-if="hasDraft && activeTab === 'nuevo'" class="draft-banner" role="alert">
+        <span>{{ t('common.draftFound') }}</span>
+        <div class="draft-banner__actions">
+          <button class="btn btn-sm btn-primary" @click="restoreDraft">
+            {{ t('common.draftRestore') }}
+          </button>
+          <button class="btn btn-sm btn-ghost" @click="clearDraft">
+            {{ t('common.draftDiscard') }}
+          </button>
+        </div>
       </div>
 
       <!-- ==================== NEW CONTRACT ==================== -->
@@ -214,17 +229,17 @@ onMounted(init)
 
 <style scoped>
 .contract-page {
-  max-width: 900px;
+  max-width: 56.25rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 
 /* Header */
 .page-header {
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
 }
 
@@ -233,14 +248,14 @@ onMounted(init)
 }
 
 .page-header h1 {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.5rem;
 }
 
 .subtitle {
   margin: 0;
-  color: #6b7280;
-  font-size: 0.9rem;
+  color: var(--text-auxiliary);
+  font-size: var(--font-size-sm);
 }
 
 /* Loading */
@@ -249,13 +264,13 @@ onMounted(init)
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 64px 16px;
-  gap: 16px;
+  padding: 4rem 1rem;
+  gap: var(--spacing-4);
 }
 
 .spinner {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   border: 3px solid var(--border-color-light);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -272,25 +287,25 @@ onMounted(init)
 .tabs {
   display: flex;
   gap: 0;
-  margin-bottom: 24px;
-  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: var(--spacing-6);
+  border-bottom: 2px solid var(--border-color-light);
 }
 
 .tab {
-  padding: 12px 24px;
+  padding: var(--spacing-3) var(--spacing-6);
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  margin-bottom: -0.125rem;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--text-auxiliary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 44px;
+  gap: var(--spacing-2);
+  min-height: 2.75rem;
 }
 
 .tab:hover {
@@ -304,31 +319,31 @@ onMounted(init)
 
 .tab-count {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   font-size: 0.7rem;
-  padding: 2px 8px;
-  border-radius: 10px;
-  min-width: 20px;
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--border-radius-md);
+  min-width: 1.25rem;
   text-align: center;
 }
 
 /* Tool Content */
 .tool-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 
 .tool-header {
-  padding: 16px 20px;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--border-color-light);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .tool-header h2 {
@@ -338,56 +353,98 @@ onMounted(init)
 
 /* Contract Form */
 .contract-form {
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .divider {
   border: none;
-  border-top: 2px solid #0f2a2e;
-  margin: 20px 0;
+  border-top: 2px solid var(--color-primary-dark);
+  margin: 1.25rem 0;
 }
 
 /* Buttons */
 .btn {
-  padding: 10px 20px;
+  padding: 0.625rem var(--spacing-5);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   text-decoration: none;
 }
 
 .btn:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .btn-secondary {
-  background: #6b7280;
-  color: #fff;
+  background: var(--color-gray-500);
+  color: var(--color-white);
   border: none;
 }
 
 .btn-secondary:hover {
-  background: #4b5563;
+  background: var(--color-gray-600);
 }
 
 .btn-sm {
-  padding: 6px 14px;
+  padding: 0.375rem 0.875rem;
   font-size: 0.8rem;
-  min-height: 36px;
+  min-height: 2.25rem;
+}
+
+/* Draft banner */
+.draft-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
+  padding: var(--spacing-3) var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+  background: var(--color-amber-50, #fffbeb);
+  border: 1px solid var(--color-amber-300, #fcd34d);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  color: var(--color-amber-900, #78350f);
+}
+
+.draft-banner__actions {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark, #1a3238);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.btn-ghost:hover {
+  background: var(--color-gray-50);
 }
 
 /* ========================= Mobile-first responsive ========================= */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .contract-page {
-    padding: 12px;
+    padding: var(--spacing-3);
   }
 
   .page-header h1 {
@@ -401,7 +458,7 @@ onMounted(init)
   .tab {
     flex: 1;
     justify-content: center;
-    padding: 12px 16px;
+    padding: var(--spacing-3) var(--spacing-4);
     font-size: 0.85rem;
   }
 }

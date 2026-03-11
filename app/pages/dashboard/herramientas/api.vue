@@ -106,8 +106,8 @@ onMounted(async () => {
     </header>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="3" />
     </div>
 
     <!-- Plan gate -->
@@ -184,7 +184,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
   padding: var(--spacing-4);
 }
@@ -235,7 +235,7 @@ onMounted(async () => {
   border-radius: var(--border-radius);
   font-weight: var(--font-weight-semibold);
   text-decoration: none;
-  min-height: 44px;
+  min-height: 2.75rem;
   line-height: var(--line-height-normal);
 }
 
@@ -283,7 +283,7 @@ onMounted(async () => {
   color: var(--color-white);
   border-radius: var(--border-radius);
   white-space: nowrap;
-  min-height: 36px;
+  min-height: 2.25rem;
 }
 
 .key-warning {
@@ -304,7 +304,7 @@ onMounted(async () => {
   border-radius: var(--border-radius);
   font-weight: var(--font-weight-medium);
   font-size: var(--font-size-sm);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-generate:disabled {
@@ -388,8 +388,8 @@ onMounted(async () => {
 
 .params-list code {
   background: var(--bg-secondary);
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--border-radius-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-primary);
 }

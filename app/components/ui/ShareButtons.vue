@@ -129,33 +129,33 @@ async function copyLink(): Promise<void> {
 .share-buttons {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
 .share-label {
-  font-size: 0.85rem;
-  color: var(--text-secondary, #6b7280);
+  font-size: var(--font-size-base);
+  color: var(--text-secondary, var(--color-gray-500));
   font-weight: 500;
 }
 
 .share-actions {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .share-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  min-height: 44px;
-  min-width: 44px;
+  width: 2.5rem;
+  height: 2.5rem;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   border-radius: 50%;
-  border: 1px solid var(--border-color, #e5e7eb);
+  border: 1px solid var(--border-color, var(--color-gray-200));
   background: var(--bg-primary, #ffffff);
-  color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary, var(--color-gray-500));
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s;
@@ -167,15 +167,15 @@ async function copyLink(): Promise<void> {
 }
 
 .share-whatsapp:hover {
-  border-color: #25d366;
-  color: #25d366;
-  background: rgba(37, 211, 102, 0.05);
+  border-color: var(--color-whatsapp);
+  color: var(--color-success-text);
+  background: var(--color-success-bg);
 }
 
 .share-linkedin:hover {
-  border-color: #0077b5;
-  color: #0077b5;
-  background: rgba(0, 119, 181, 0.05);
+  border-color: var(--color-linkedin);
+  color: var(--color-info-text);
+  background: var(--color-info-bg);
 }
 
 .share-email:hover {

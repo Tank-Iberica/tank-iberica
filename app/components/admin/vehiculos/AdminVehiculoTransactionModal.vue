@@ -43,21 +43,21 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
             :class="{ active: tab === 'venta' }"
             @click="emit('update:tab', 'venta')"
           >
-            Vender
+            {{ $t('admin.vehicles.tabSell') }}
           </button>
           <button
             class="tx-tab"
             :class="{ active: tab === 'alquiler' }"
             @click="emit('update:tab', 'alquiler')"
           >
-            Alquilar
+            {{ $t('admin.vehicles.tabRent') }}
           </button>
         </div>
 
         <!-- Sale form -->
         <div v-if="tab === 'venta'" class="tx-body">
           <div class="form-group">
-            <label class="form-label">Precio de venta (&euro;) *</label>
+            <label class="form-label">{{ $t('admin.vehicles.salePriceLabel') }}</label>
             <input
               :value="sellForm.sale_price"
               type="number"
@@ -73,21 +73,21 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
             >
           </div>
           <div class="form-group">
-            <label class="form-label">Categoría de venta *</label>
+            <label class="form-label">{{ $t('admin.vehicles.saleCategoryLabel') }}</label>
             <select
               class="form-select"
               required
               :value="sellForm.sale_category"
               @change="updateSellField('sale_category', ($event.target as HTMLSelectElement).value)"
             >
-              <option value="">Seleccionar...</option>
-              <option value="venta_directa">Venta directa</option>
-              <option value="terceros">Terceros</option>
-              <option value="exportacion">Exportación</option>
+              <option value="">{{ $t('admin.vehicles.saleCategorySelect') }}</option>
+              <option value="venta_directa">{{ $t('admin.vehicles.saleCategoryDirect') }}</option>
+              <option value="terceros">{{ $t('admin.vehicles.saleCategoryThirdParty') }}</option>
+              <option value="exportacion">{{ $t('admin.vehicles.saleCategoryExport') }}</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Nombre comprador</label>
+            <label class="form-label">{{ $t('admin.vehicles.buyerName') }}</label>
             <input
               :value="sellForm.buyer_name"
               type="text"
@@ -96,7 +96,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
             >
           </div>
           <div class="form-group">
-            <label class="form-label">Contacto comprador</label>
+            <label class="form-label">{{ $t('admin.vehicles.buyerContact') }}</label>
             <input
               :value="sellForm.buyer_contact"
               type="text"
@@ -106,23 +106,23 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
           </div>
           <!-- Auto-balance info -->
           <div v-if="sellForm.sale_price > 0" class="tx-preview">
-            <span class="tx-preview-label">Se creará automáticamente:</span>
+            <span class="tx-preview-label">{{ $t('admin.vehicles.autoBalanceLabel') }}</span>
             <span class="tx-preview-item ingreso">
-              + {{ formatCurrency(sellForm.sale_price) }} ingreso en Balance
+              {{ $t('admin.vehicles.balanceIncome', { amount: formatCurrency(sellForm.sale_price) }) }}
             </span>
             <span v-if="acquisitionCost" class="tx-preview-item">
-              Beneficio: {{ calcBeneficio(sellForm.sale_price, acquisitionCost) }}
+              {{ $t('admin.vehicles.balanceProfit', { amount: calcBeneficio(sellForm.sale_price, acquisitionCost) }) }}
             </span>
           </div>
           <div class="modal-actions">
-            <button type="button" class="btn-secondary" @click="emit('close')">Cancelar</button>
+            <button type="button" class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
             <button
               type="button"
               class="btn-primary btn-sell"
               :disabled="!sellForm.sale_price || !sellForm.sale_category || saving"
               @click="emit('sell')"
             >
-              {{ saving ? 'Procesando...' : 'Confirmar venta' }}
+              {{ saving ? $t('common.processing') : $t('admin.vehicles.confirmSale') }}
             </button>
           </div>
         </div>
@@ -130,7 +130,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
         <!-- Rental form -->
         <div v-if="tab === 'alquiler'" class="tx-body">
           <div class="form-group">
-            <label class="form-label">Precio alquiler (&euro;/mes) *</label>
+            <label class="form-label">{{ $t('admin.vehicles.rentalPriceLabel') }}</label>
             <input
               :value="rentalForm.monthly_price"
               type="number"
@@ -147,7 +147,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
           </div>
           <div class="form-row-2">
             <div class="form-group">
-              <label class="form-label">Fecha inicio *</label>
+              <label class="form-label">{{ $t('admin.vehicles.startDate') }}</label>
               <input
                 :value="rentalForm.start_date"
                 type="date"
@@ -157,7 +157,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
               >
             </div>
             <div class="form-group">
-              <label class="form-label">Fecha fin</label>
+              <label class="form-label">{{ $t('admin.vehicles.endDate') }}</label>
               <input
                 :value="rentalForm.end_date"
                 type="date"
@@ -167,7 +167,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Nombre arrendatario</label>
+            <label class="form-label">{{ $t('admin.vehicles.renterName') }}</label>
             <input
               :value="rentalForm.renter_name"
               type="text"
@@ -176,7 +176,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
             >
           </div>
           <div class="form-group">
-            <label class="form-label">Contacto arrendatario</label>
+            <label class="form-label">{{ $t('admin.vehicles.renterContact') }}</label>
             <input
               :value="rentalForm.renter_contact"
               type="text"
@@ -187,31 +187,31 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
             >
           </div>
           <div class="form-group">
-            <label class="form-label">Notas</label>
+            <label class="form-label">{{ $t('common.notes') }}</label>
             <textarea
               :value="rentalForm.notes"
               class="form-textarea"
               rows="2"
-              placeholder="Condiciones, fianza..."
+              :placeholder="$t('admin.vehicles.rentalNotesPlaceholder')"
               @input="updateRentalField('notes', ($event.target as HTMLTextAreaElement).value)"
             />
           </div>
           <!-- Auto-balance info -->
           <div v-if="rentalForm.monthly_price > 0" class="tx-preview">
-            <span class="tx-preview-label">Se creará automáticamente:</span>
+            <span class="tx-preview-label">{{ $t('admin.vehicles.autoBalanceLabel') }}</span>
             <span class="tx-preview-item ingreso">
-              + {{ formatCurrency(rentalForm.monthly_price) }}/mes ingreso recurrente en Balance
+              {{ $t('admin.vehicles.balanceRecurringIncome', { amount: formatCurrency(rentalForm.monthly_price) }) }}
             </span>
           </div>
           <div class="modal-actions">
-            <button type="button" class="btn-secondary" @click="emit('close')">Cancelar</button>
+            <button type="button" class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
             <button
               type="button"
               class="btn-primary btn-rent-action"
               :disabled="!rentalForm.monthly_price || !rentalForm.start_date || saving"
               @click="emit('rent')"
             >
-              {{ saving ? 'Procesando...' : 'Confirmar alquiler' }}
+              {{ saving ? $t('common.processing') : $t('admin.vehicles.confirmRental') }}
             </button>
           </div>
         </div>
@@ -236,7 +236,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
   background: var(--bg-primary);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-6);
-  max-width: 400px;
+  max-width: 25rem;
   width: 100%;
 }
 
@@ -258,7 +258,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
 /* Tabs */
 .tx-tabs {
   display: flex;
-  border-bottom: 2px solid var(--border-color, #e5e7eb);
+  border-bottom: 2px solid var(--border-color, var(--color-gray-200));
 }
 
 .tx-tab {
@@ -268,17 +268,17 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
   border: none;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--text-auxiliary, #9ca3af);
+  color: var(--text-auxiliary, var(--color-gray-400));
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  min-height: 44px;
+  margin-bottom: -0.125rem;
+  min-height: 2.75rem;
   transition: all 0.15s;
 }
 
 .tx-tab:hover {
   color: var(--text-primary);
-  background: var(--bg-secondary, #f9fafb);
+  background: var(--bg-secondary, var(--color-gray-50));
 }
 
 .tx-tab.active {
@@ -318,7 +318,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   color: var(--text-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: border-color var(--transition-fast);
 }
 
@@ -331,7 +331,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
 
 .form-textarea {
   resize: vertical;
-  min-height: 60px;
+  min-height: 3.75rem;
 }
 
 /* Transaction preview */
@@ -340,7 +340,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
   flex-direction: column;
   gap: var(--spacing-2);
   padding: var(--spacing-3) var(--spacing-4);
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
   border-radius: var(--border-radius, 6px);
   margin-bottom: var(--spacing-4);
@@ -349,7 +349,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
 
 .tx-preview-label {
   font-weight: var(--font-weight-medium, 500);
-  color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary, var(--color-gray-500));
   font-size: 0.75rem;
   text-transform: uppercase;
 }
@@ -373,7 +373,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   border-radius: var(--border-radius);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: all var(--transition-fast);
 }
 
@@ -406,7 +406,7 @@ function updateRentalField<K extends keyof RentalFormData>(key: K, value: Rental
 }
 
 .btn-rent-action {
-  background: #2563eb !important;
+  background: var(--color-focus) !important;
 }
 
 .btn-rent-action:hover:not(:disabled) {

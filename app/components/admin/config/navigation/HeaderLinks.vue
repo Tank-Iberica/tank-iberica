@@ -39,29 +39,29 @@ const emit = defineEmits<{
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .card-header-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
 }
 
 .card-title {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-subtitle {
-  margin: 0 0 20px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-5);
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
@@ -69,8 +69,8 @@ const emit = defineEmits<{
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.875rem;

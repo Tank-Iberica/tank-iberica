@@ -90,7 +90,7 @@ test.describe('Admin panel - authenticated', () => {
 
       // Wait for navigation or content update after login
       await page.waitForLoadState('networkidle')
-      await page.waitForTimeout(2000)
+      await expect(page.locator('.admin-dashboard, .login-form')).toBeVisible({ timeout: 10000 }).catch(() => {})
     }
   })
 
@@ -167,7 +167,8 @@ test.describe('Admin panel - authenticated', () => {
       await categorySelect.selectOption({ index: 1 })
 
       // Wait for the filtered results to load
-      await page.waitForTimeout(1000)
+      await page.waitForLoadState('networkidle')
+      await page.locator('.loading-state').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {})
     }
 
     // Verify status filter dropdown is present

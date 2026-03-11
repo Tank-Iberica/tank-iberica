@@ -1,31 +1,26 @@
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
 import { serverSupabaseUser } from '#supabase/server'
 import { isAllowedUrl } from '../utils/isAllowedUrl'
 import { verifyCsrf } from '../utils/verifyCsrf'
+import { safeError } from '../utils/safeError'
+import { validateBody } from '../utils/validateBody'
 
-interface ConnectOnboardBody {
-  dealerId: string
-  returnUrl: string
-  refreshUrl: string
-}
+const connectOnboardSchema = z.object({
+  dealerId: z.string().uuid(),
+  returnUrl: z.string().url().max(2048),
+  refreshUrl: z.string().url().max(2048),
+})
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<ConnectOnboardBody>(event)
-  const { dealerId, returnUrl, refreshUrl } = body
-
   // CSRF + Auth check
   verifyCsrf(event)
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
-  if (!dealerId || !returnUrl || !refreshUrl) {
-    throw createError({
-      statusCode: 400,
-      message: 'Missing required fields: dealerId, returnUrl, refreshUrl',
-    })
-  }
+  const { dealerId, returnUrl, refreshUrl } = await validateBody(event, connectOnboardSchema)
 
   const config = useRuntimeConfig()
 
@@ -48,7 +43,7 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Service not configured' })
+    throw safeError(500, 'Service not configured')
   }
 
   // Verify dealer belongs to this user
@@ -63,14 +58,14 @@ export default defineEventHandler(async (event) => {
   )
   const dealerCheckData = await dealerCheckRes.json()
   if (!Array.isArray(dealerCheckData) || dealerCheckData.length === 0) {
-    throw createError({ statusCode: 403, message: 'Forbidden: dealer does not belong to user' })
+    throw safeError(403, 'Forbidden: dealer does not belong to user')
   }
 
   if (!isAllowedUrl(returnUrl)) {
-    throw createError({ statusCode: 400, message: 'Invalid returnUrl' })
+    throw safeError(400, 'Invalid returnUrl')
   }
   if (!isAllowedUrl(refreshUrl)) {
-    throw createError({ statusCode: 400, message: 'Invalid refreshUrl' })
+    throw safeError(400, 'Invalid refreshUrl')
   }
 
   // Check if dealer already has a Stripe Connect account

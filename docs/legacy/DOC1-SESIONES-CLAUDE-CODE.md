@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # DOCUMENTO 1 — Sesiones para Claude Code
 
@@ -1358,3 +1358,5 @@ Las sesiones 61-64 pueden ejecutarse **antes** de muchas otras sesiones, ya que 
 5. **Sesión 64** (slugs + linking) → depende de 47 (migración BD)
 6. **Sesión 63** (schema.org) → depende de 61 (meta tags)
 7. Resto según prioridad original
+
+

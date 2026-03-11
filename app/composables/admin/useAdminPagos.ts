@@ -200,7 +200,7 @@ export function useAdminPagos() {
     try {
       const { data, error: fetchError } = await supabase
         .from('payments')
-        .select('*')
+        .select('id, user_id, type, amount_cents, currency, status, stripe_payment_id, description, metadata, created_at')
         .order('created_at', { ascending: false })
 
       if (fetchError) {

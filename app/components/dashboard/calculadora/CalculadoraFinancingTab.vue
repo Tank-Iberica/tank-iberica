@@ -196,18 +196,18 @@ function onTermChange(event: Event): void {
 /* Form */
 .form-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .input-group--full {
@@ -221,25 +221,25 @@ function onTermChange(event: Event): void {
 }
 
 .input-hint {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--text-disabled);
 }
 
 .input-with-unit {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .input-field {
   flex: 1;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
   color: var(--text-primary);
   background: var(--bg-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: border-color 0.2s;
   font-variant-numeric: tabular-nums;
 }
@@ -247,7 +247,7 @@ function onTermChange(event: Event): void {
 .input-field:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 select.input-field {
@@ -260,14 +260,14 @@ select.input-field {
   color: var(--text-auxiliary);
   font-weight: 500;
   white-space: nowrap;
-  min-width: 32px;
+  min-width: 2rem;
 }
 
 /* Results */
 .results-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .results-section h2 {
@@ -280,46 +280,46 @@ select.input-field {
 .metrics-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .metric-card {
-  border-radius: 12px;
-  padding: 20px 16px;
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
 }
 
 .metric-value {
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   font-weight: 700;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
 
 .metric-label {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1.3;
 }
 
 /* Metric colors */
 .metric-positive {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
 }
 .metric-positive .metric-value {
   color: var(--color-success);
 }
 .metric-positive .metric-label {
-  color: #15803d;
+  color: var(--color-green-700);
 }
 
 .metric-negative {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
 }
 .metric-negative .metric-value {
@@ -341,8 +341,8 @@ select.input-field {
 }
 
 .metric-warning {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
+  background: var(--color-amber-50);
+  border: 1px solid var(--color-amber-200);
 }
 .metric-warning .metric-value {
   color: var(--color-warning);
@@ -354,13 +354,13 @@ select.input-field {
 /* Table */
 .table-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .table-section h2 {
-  margin: 0 0 16px 0;
+  margin: 0 0 1rem 0;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -380,16 +380,16 @@ select.input-field {
 
 .data-table th {
   text-align: left;
-  padding: 10px 8px;
-  border-bottom: 2px solid var(--color-gray-200);
+  padding: 0.625rem 0.5rem;
+  border-bottom: 0.125rem solid var(--color-gray-200);
   font-weight: 600;
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   white-space: nowrap;
 }
 
 .data-table td {
-  padding: 8px;
+  padding: 0.5rem;
   border-bottom: 1px solid var(--color-gray-100);
   color: var(--text-primary);
   white-space: nowrap;
@@ -399,14 +399,14 @@ select.input-field {
   text-align: center;
   color: var(--text-disabled);
   font-weight: 600;
-  padding: 4px 8px;
+  padding: 0.25rem 0.5rem;
   border-bottom: none;
 }
 
 /* Empty state */
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
+  padding: 3.75rem 1.25rem;
   color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
@@ -418,21 +418,21 @@ select.input-field {
 /* Actions */
 .actions-bar {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 12px 24px;
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   text-decoration: none;
   cursor: pointer;
   transition: background 0.2s;
@@ -448,7 +448,7 @@ select.input-field {
   .form-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 1rem;
   }
 
   .input-group:first-child,
@@ -469,7 +469,7 @@ select.input-field {
 
 @media (min-width: 64em) {
   .metric-value {
-    font-size: 1.5rem;
+    font-size: var(--font-size-2xl);
   }
 
   .metrics-grid {

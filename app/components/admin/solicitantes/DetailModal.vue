@@ -19,7 +19,7 @@ const emit = defineEmits<{
 
 const { locale } = useI18n()
 
-function hasTypeField(demand: AdminDemand): boolean {
+function hasTypeField(demand: AdminDemand): demand is AdminDemand & { type: unknown } {
   return !!(demand as unknown as Record<string, unknown>).type
 }
 
@@ -31,11 +31,11 @@ function onNotesInput(event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="modal.show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="modal.show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal-content modal-medium">
         <div class="modal-header">
           <h3>Detalles del Solicitante</h3>
-          <button class="modal-close" @click="emit('close')">×</button>
+          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">×</button>
         </div>
         <div class="modal-body">
           <div v-if="modal.demand" class="detail-grid">
@@ -136,9 +136,9 @@ function onNotesInput(event: Event) {
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cerrar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.close') }}</button>
           <button class="btn-primary" :disabled="saving" @click="emit('save')">
-            {{ saving ? 'Guardando...' : 'Guardar Notas' }}
+            {{ saving ? $t('common.saving') : $t('common.save') }}
           </button>
         </div>
       </div>
@@ -155,12 +155,12 @@ function onNotesInput(event: Event) {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: 90vh;
@@ -175,8 +175,8 @@ function onNotesInput(event: Event) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
   position: sticky;
   top: 0;
   background: var(--bg-primary);
@@ -190,22 +190,22 @@ function onNotesInput(event: Event) {
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   cursor: pointer;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
   position: sticky;
   bottom: 0;
 }
@@ -214,13 +214,13 @@ function onNotesInput(event: Event) {
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
 .detail-section {
-  background: #f9fafb;
-  padding: 16px;
-  border-radius: 8px;
+  background: var(--color-gray-50);
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius);
 }
 
 .detail-section.full-width {
@@ -228,15 +228,15 @@ function onNotesInput(event: Event) {
 }
 
 .detail-section h4 {
-  margin: 0 0 12px 0;
+  margin: 0 0 var(--spacing-3) 0;
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .detail-section p {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-2) 0;
   font-size: 0.95rem;
 }
 
@@ -252,42 +252,42 @@ function onNotesInput(event: Event) {
 .characteristics-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .characteristic-item {
   display: flex;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
 }
 
 .char-label {
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: capitalize;
 }
 
 .char-value {
   font-weight: 500;
-  color: #111827;
+  color: var(--color-gray-900);
 }
 
 .detail-section textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .detail-section textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Buttons */
@@ -295,8 +295,8 @@ function onNotesInput(event: Event) {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
 }
@@ -312,10 +312,10 @@ function onNotesInput(event: Event) {
 
 .btn-secondary {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
 }

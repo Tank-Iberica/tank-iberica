@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 ﻿# Auditoria Completa (10 Puntos) — Tracciona (version verificada)
 
@@ -9,7 +9,7 @@ Fecha: 2026-02-24
 - Repositorio completo revisado. Inventario: `docs/.codex_full_inventory.txt`.
 - Documentacion completa leida: `docs/` y `docs/tracciona-docs/`.
 - Codigo verificado en archivos clave de `app/`, `server/` y `supabase/migrations/`.
-- Cruce con `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` (Sesiones 34, 34b, 35 y verificacion 36) y `docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md`.
+- Cruce con `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md (alias de compatibilidad)` (Sesiones 34, 34b, 35 y verificacion 36) y `docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md`.
 
 **Principio de esta version**
 Cada afirmacion relevante se acompana de evidencia concreta (archivo y ruta). Cuando hay discrepancias entre docs y codigo, se explican y se prioriza el codigo como fuente de verdad tecnica.
@@ -46,8 +46,8 @@ Cada afirmacion relevante se acompana de evidencia concreta (archivo y ruta). Cu
 
 ### 1.2 Gaps donde los docs estan por debajo de la realidad
 
-- `docs/progreso.md` indica estado temprano, pero el codigo incluye subastas, pagos, infra, WhatsApp y editorial programado.
-  Evidence (docs): `docs/progreso.md`.
+- `docs/progreso.md (alias de compatibilidad histórica)` indica estado temprano, pero el codigo incluye subastas, pagos, infra, WhatsApp y editorial programado.
+  Evidence (docs): `docs/progreso.md (alias de compatibilidad histórica)`.
   Evidence (code): ver 1.1.
 
 ### 1.3 Gaps donde los docs estan por encima o incompletos
@@ -57,13 +57,13 @@ Cada afirmacion relevante se acompana de evidencia concreta (archivo y ruta). Cu
   Evidence (code): no hay script/flow de clonacion en `scripts/` ni endpoints dedicados.
 
 - Operativa editorial real no aparece como workflow de negocio en codigo.
-  Evidence (docs): `docs/tracciona-docs/anexos/P-contenido-editorial.md`, `docs/tracciona-docs/anexos/U-publicacion-programada-calendario.md`.
+  Evidence (docs): `docs/tracciona-docs/anexos/P-contenido-editorial.md (alias de compatibilidad histórica)`, `docs/tracciona-docs/anexos/U-publicacion-programada-calendario.md (alias de compatibilidad histórica)`.
   Evidence (code): existe infra tecnica, pero no hay pipeline editorial operativo.
 
 ### 1.4 Verificacion cruzada (Sesion 36)
 
-En `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md`, la Sesion 36 confirma que muchos hallazgos de auditoria ya fueron cubiertos en sesiones 34/34b/35 y lista pendientes reales (cache de feeds/sitemap, indices faltantes, auth parcial en endpoints concretos).
-Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md`.
+En `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md (alias de compatibilidad)`, la Sesion 36 confirma que muchos hallazgos de auditoria ya fueron cubiertos en sesiones 34/34b/35 y lista pendientes reales (cache de feeds/sitemap, indices faltantes, auth parcial en endpoints concretos).
+Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md (alias de compatibilidad)`.
 
 ---
 
@@ -90,7 +90,7 @@ Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md`.
 ### 2.4 Gap documental
 
 Sesion 36 indica que no existe diagrama formal de flujos.
-Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` (tabla Sesion 36).
+Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md (alias de compatibilidad)` (tabla Sesion 36).
 
 ---
 
@@ -99,7 +99,7 @@ Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` (tabla Sesion 3
 ### 3.1 Riesgos declarados como resueltos en sesiones 34/34b/35
 
 - **Service role sin ownership**: marcado como cubierto por Sesiones 34 A.1‑A.3, 34b E, 35 A.1‑A.5.
-  Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` (Sesion 36).
+  Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md (alias de compatibilidad)` (Sesion 36).
 
 - **Crons sin secreto**: verificado que `verifyCronSecret` esta en todos los cron.
   Evidence (code): `server/api/cron/*` + `server/utils/verifyCronSecret.ts`.
@@ -110,7 +110,7 @@ Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` (tabla Sesion 3
 ### 3.2 Riesgos que permanecen abiertos (Sesion 36)
 
 - Cache explicita para `merchant-feed` y `sitemap` no implementada.
-  Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md`.
+  Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md (alias de compatibilidad)`.
   Evidence (code): `server/api/merchant-feed.get.ts`, `server/api/__sitemap.ts` (sin headers cache).
 
 - Indices faltantes: `vehicles(category_id)` y `auction_bids(auction_id)`.
@@ -293,7 +293,7 @@ Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` (tabla Sesion 3
 
 ## Conclusiones y acciones prioritarias
 
-1. **Actualizar docs/progreso.md** para reflejar el estado real del codigo.
+1. **Actualizar docs/progreso.md (alias de compatibilidad histórica)** para reflejar el estado real del codigo.
 2. **Crear diagrama formal de flujos** para usuario, dealer y admin.
 3. **Completar indices faltantes**: `vehicles(category_id)` y `auction_bids(auction_id)`.
 4. **Implementar cache CDN explicita** en `merchant-feed` y `sitemap`.
@@ -304,7 +304,7 @@ Evidence (docs): `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` (tabla Sesion 3
 
 **Referencias clave**
 
-- `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` (Sesion 36)
+- `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md (alias de compatibilidad)` (Sesion 36)
 - `docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md`
 - `supabase/migrations/00055_rls_hardening.sql`
 - `supabase/migrations/00056_performance_indexes.sql`
@@ -325,3 +325,5 @@ Este anexo se genera por escaneo automático de `server/api/**/*.ts`. Los contro
 | `serverpiuction-deposit.post.ts` | `supabase_user`                                  |
 
 | `serverpi
+
+

@@ -5,6 +5,7 @@
  */
 
 import type { RealtimeChannel } from '@supabase/supabase-js'
+import type { Database } from '~~/types/supabase'
 
 export type MessageDirection = 'user_to_admin' | 'admin_to_user'
 
@@ -86,8 +87,7 @@ function getUserInitials(user: ChatUser): string {
 }
 
 export function useAdminChat() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = useSupabaseClient<any>()
+  const supabase = useSupabaseClient<Database>()
 
   // State
   const conversations = ref<Map<string, Conversation>>(new Map())

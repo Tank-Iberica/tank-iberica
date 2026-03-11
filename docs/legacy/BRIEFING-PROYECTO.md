@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # BRIEFING COMPLETO DEL PROYECTO — Para cualquier sesión de Claude
 
@@ -142,7 +142,7 @@ ZONA ADMIN (/admin/*)
 
 ### Sesiones de trabajo (INSTRUCCIONES-MAESTRAS.md)
 
-El proyecto se ejecuta por **sesiones numeradas** definidas en `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md` (5.719 líneas). Cada sesión tiene: qué leer, qué hacer, orden de ejecución, tests mínimos.
+El proyecto se ejecuta por **sesiones numeradas** definidas en `docs/tracciona-docs/INSTRUCCIONES-MAESTRAS.md (alias de compatibilidad)` (5.719 líneas). Cada sesión tiene: qué leer, qué hacer, orden de ejecución, tests mínimos.
 
 | Sesiones    | Contenido                                                                                             | Estado        |
 | ----------- | ----------------------------------------------------------------------------------------------------- | ------------- |
@@ -204,14 +204,14 @@ Las sesiones 36-42 están diseñadas para llevar TODAS las dimensiones a ≥95/1
 
 | Documento                     | Ubicación                                    |
 | ----------------------------- | -------------------------------------------- |
-| **INSTRUCCIONES-MAESTRAS.md** | docs/tracciona-docs/ — 42 sesiones completas |
+| **INSTRUCCIONES-MAESTRAS.md** | docs/tracciona-docs/ — 42 sesiones completas (alias de compatibilidad) |
 | **CLAUDE.md**                 | raíz — stack, comandos, convenciones         |
-| **contexto-global.md**        | docs/tracciona-docs/ — mapa del proyecto     |
+| **contexto-global.md**        | docs/tracciona-docs/ — mapa del proyecto (alias de compatibilidad) |
 | **BRIEFING-PROYECTO.md**      | docs/ — **ESTE ARCHIVO**                     |
 | ARQUITECTURA-ESCALABILIDAD.md | docs/tracciona-docs/referencia/              |
 | RECOMENDACIONES-100-PUNTOS.md | docs/                                        |
 | VALORACION-PROYECTO-1-100.md  | docs/                                        |
-| Anexos A-X                    | docs/tracciona-docs/anexos/                  |
+| Anexos A-X                    | docs/tracciona-docs/anexos/ (aliases de compatibilidad histórica) |
 
 ---
 
@@ -237,3 +237,5 @@ Las sesiones 36-42 están diseñadas para llevar TODAS las dimensiones a ≥95/1
 **Fase 4 (24+ meses):** 7 verticales. El "grupo Idealista" de B2B industrial.
 
 El código ya está preparado para esto. Añadir un vertical nuevo = insertar filas en BD + deploy + dominio. Cero cambios de código.
+
+

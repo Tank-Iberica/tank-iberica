@@ -35,7 +35,7 @@ function updateAnswer(index: number, value: string) {
       <span class="toggle-icon">{{ open ? '−' : '+' }}</span>
     </button>
     <div v-if="open" class="section-body">
-      <p class="section-hint" style="margin: 0 0 8px">
+      <p class="section-hint" style="margin: 0 0 var(--spacing-2)">
         Anade 3+ preguntas frecuentes para activar los featured snippets de Google.
       </p>
       <div v-for="(faq, index) in faqSchema || []" :key="index" class="faq-item">
@@ -81,9 +81,9 @@ function updateAnswer(index: number, value: string) {
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .section-toggle {
@@ -93,7 +93,7 @@ function updateAnswer(index: number, value: string) {
   width: 100%;
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-gray-700);
   cursor: pointer;
   border: none;
   background: none;
@@ -106,12 +106,12 @@ function updateAnswer(index: number, value: string) {
 }
 
 .section-body {
-  margin-top: 16px;
-  padding-top: 16px;
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
   border-top: 1px solid var(--color-gray-100);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .section-hint {
@@ -123,7 +123,7 @@ function updateAnswer(index: number, value: string) {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .field label {
@@ -133,9 +133,9 @@ function updateAnswer(index: number, value: string) {
 }
 
 .input {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   width: 100%;
   box-sizing: border-box;
@@ -153,19 +153,19 @@ function updateAnswer(index: number, value: string) {
 }
 
 .btn {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--color-gray-200);
   background: var(--bg-primary);
-  color: #374151;
+  color: var(--color-gray-700);
   transition: all 0.15s;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   white-space: nowrap;
 }
 
@@ -174,7 +174,7 @@ function updateAnswer(index: number, value: string) {
 }
 
 .btn-sm {
-  padding: 4px 12px;
+  padding: var(--spacing-1) var(--spacing-3);
   font-size: 0.8rem;
 }
 
@@ -182,9 +182,9 @@ function updateAnswer(index: number, value: string) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--border-radius);
   color: var(--text-auxiliary);
   transition: all 0.15s;
   border: none;
@@ -195,23 +195,23 @@ function updateAnswer(index: number, value: string) {
 
 .btn-icon:hover {
   background: var(--bg-secondary);
-  color: #1a1a1a;
+  color: var(--color-near-black);
 }
 
 .btn-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 /* FAQ items */
 .faq-item {
   background: var(--bg-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .faq-item-header {
@@ -225,8 +225,8 @@ function updateAnswer(index: number, value: string) {
   font-weight: 600;
   color: var(--text-disabled);
   background: var(--bg-tertiary);
-  width: 22px;
-  height: 22px;
+  width: 1.375rem;
+  height: 1.375rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -234,13 +234,13 @@ function updateAnswer(index: number, value: string) {
 }
 
 .faq-remove {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   color: var(--text-disabled);
 }
 
 .faq-remove:hover {
   color: var(--color-error);
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 </style>

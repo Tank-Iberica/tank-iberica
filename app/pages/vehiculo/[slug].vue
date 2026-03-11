@@ -26,6 +26,7 @@
         <div class="vehicle-info">
           <VehicleDetailActions
             :vehicle-id="vehicle.id"
+            :vehicle-slug="vehicle.slug"
             :dealer-id="vehicleDetail?.dealer_id || ''"
             :seller-user-id="sellerUserId"
             :email-subject="emailSubject"
@@ -58,6 +59,7 @@
           />
 
           <VehicleDetailSeller
+            id="main-form"
             :seller-info="sellerInfo"
             :dealer-id="vehicleDetail?.dealer_id || null"
             :dealer-slug="vehicleDetail?.dealer_slug || null"
@@ -75,6 +77,22 @@
             :vehicle-id="vehicle.id"
             :locale="locale"
             :is-ai-generated="!!(vehicle as unknown as Record<string, unknown>).ai_generated"
+          />
+
+          <VehiclePriceHistoryChart :vehicle-id="vehicle.id" />
+
+          <VehicleVideo
+            v-if="(vehicle as unknown as Record<string, unknown>).video_url"
+            :video-url="(vehicle as unknown as Record<string, unknown>).video_url as string"
+          />
+
+          <VehicleTransportCalculator
+            :vehicle="{
+              id: vehicle.id,
+              location: vehicle.location,
+              location_province: vehicle.location_province,
+            }"
+            :vehicle-price="vehicle.price ?? null"
           />
         </div>
       </article>
@@ -167,7 +185,7 @@ onBeforeUnmount(() => {
 
 // SEO meta tags -- runs during SSR so crawlers and social previews see them
 if (vehicle.value) {
-  const seoTitle = `${buildProductName(vehicle.value, locale.value, true)} - Tracciona`
+  const seoTitle = `${buildProductName(vehicle.value, locale.value, true)} - ${t('site.title')}`
   const seoDesc = description.value || t('site.description')
   const seoImage = vehicle.value.vehicle_images?.[0]?.url || ''
   const canonicalUrl = `https://tracciona.com/vehiculo/${vehicle.value.slug}`
@@ -183,7 +201,7 @@ if (vehicle.value) {
     ogUrl: canonicalUrl,
     ogLocale: 'es_ES',
     ogLocaleAlternate: ['en_GB'],
-    ogSiteName: 'Tracciona',
+    ogSiteName: t('site.title'),
     twitterCard: 'summary_large_image',
     twitterTitle: seoTitle,
     twitterDescription: seoDesc,
@@ -200,6 +218,7 @@ if (vehicle.value) {
         href: `https://tracciona.com/en/vehiculo/${vehicle.value.slug}`,
       },
       { rel: 'alternate', hreflang: 'x-default', href: canonicalUrl },
+      ...(seoImage ? [{ rel: 'preload', as: 'image', href: seoImage, fetchpriority: 'high' }] : []),
     ],
     script: [
       {
@@ -224,7 +243,7 @@ if (vehicle.value) {
             price: vehicle.value.price || undefined,
             availability: 'https://schema.org/InStock',
             url: canonicalUrl,
-            seller: { '@type': 'Organization', name: 'Tracciona' },
+            seller: { '@type': 'Organization', name: t('site.title') },
             itemCondition: 'https://schema.org/UsedCondition',
           },
           url: canonicalUrl,
@@ -247,7 +266,7 @@ if (vehicle.value) {
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Tracciona', item: 'https://tracciona.com' },
+            { '@type': 'ListItem', position: 1, name: t('site.title'), item: 'https://tracciona.com' },
             { '@type': 'ListItem', position: 2, name: productName, item: canonicalUrl },
           ],
         }),
@@ -259,7 +278,7 @@ if (vehicle.value) {
 
 <style scoped>
 .vehicle-page {
-  max-width: 1024px;
+  max-width: 64rem;
   margin: 0 auto;
   padding: var(--spacing-4);
   padding-bottom: var(--spacing-16);
@@ -270,16 +289,16 @@ if (vehicle.value) {
   display: block;
   width: 100%;
   margin-top: var(--spacing-3);
-  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  background: linear-gradient(135deg, #f39c12 0%, var(--color-orange-500) 100%);
   color: var(--color-white);
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: var(--font-size-sm);
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .vehicle-sticky-notification:hover {
@@ -296,9 +315,9 @@ if (vehicle.value) {
 /* ============================================
    DESKTOP (>=1024px) -- side-by-side layout
    ============================================ */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .vehicle-page {
-    max-width: 1400px;
+    max-width: 87.5rem;
     height: calc(100vh - 60px);
     display: flex;
     flex-direction: column;

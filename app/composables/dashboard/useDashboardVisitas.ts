@@ -132,7 +132,7 @@ export function useDashboardVisitas() {
       // Load visit slots
       const { data: slotsData, error: sErr } = await supabase
         .from('visit_slots')
-        .select('*')
+        .select('id, dealer_id, day_of_week, start_time, end_time, max_visitors, created_at')
         .eq('dealer_id', dealer.id)
         .order('day_of_week', { ascending: true })
 

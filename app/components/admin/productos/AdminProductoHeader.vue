@@ -48,7 +48,7 @@ const emit = defineEmits<Emits>()
       </button>
       <button class="btn btn-sell" @click="emit('sell')">€ Vender</button>
       <button class="btn btn-danger-outline" @click="emit('delete')">🗑️</button>
-      <button class="btn" @click="emit('cancel')">Cancelar</button>
+      <button class="btn" @click="emit('cancel')">{{ $t('common.cancel') }}</button>
       <button class="btn btn-primary" :disabled="saving || !isValid" @click="emit('save')">
         {{ saving ? 'Guardando...' : '💾 Guardar' }}
       </button>
@@ -61,18 +61,18 @@ const emit = defineEmits<Emits>()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+  margin-bottom: var(--spacing-4);
   position: sticky;
   top: 0;
-  background: #f9fafb;
+  background: var(--color-gray-50);
   z-index: 50;
 }
 .pf-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
 }
 .pf-left h1 {
   margin: 0;
@@ -85,28 +85,28 @@ const emit = defineEmits<Emits>()
 }
 .pf-right {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .btn-icon {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   cursor: pointer;
 }
 .btn {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 .btn-primary:disabled {
@@ -115,7 +115,7 @@ const emit = defineEmits<Emits>()
 }
 .btn-sell {
   background: var(--color-success);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 .btn-danger-outline {
@@ -123,7 +123,7 @@ const emit = defineEmits<Emits>()
   color: var(--color-error);
 }
 .btn-drive-on {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   border-color: var(--color-success);
   color: var(--color-success);
 }

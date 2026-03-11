@@ -76,9 +76,9 @@ function extractCharacteristicsFromSource(
     let displayValue: string
     if (typeof value === 'object' && value !== null) {
       const obj = value as Record<string, string>
-      displayValue = obj[locale] || obj.es || obj.value || String(value)
+      displayValue = obj[locale] || obj.es || obj.value || JSON.stringify(value)
     } else {
-      displayValue = String(value)
+      displayValue = String(value as string | number | boolean)
     }
     if (displayValue) out.push({ label: key, value: displayValue })
   }
@@ -423,7 +423,7 @@ export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
   yPos = await renderCoverImage(layout, coverUrl, yPos, portadaHeight)
 
   const location = locale === 'en' && vehicle.location_en ? vehicle.location_en : vehicle.location
-  yPos = renderTitlePrice(layout, productName, priceText, location, yPos)
+  yPos = renderTitlePrice(layout, productName, priceText, location ?? undefined, yPos)
   yPos = renderCharacteristics(layout, characteristics, yPos)
   yPos = await renderGallery(layout, vehicle.vehicle_images || [], yPos, galleryHeight)
   renderDescription(layout, description, yPos, footerHeight)

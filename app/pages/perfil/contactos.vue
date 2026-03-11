@@ -24,12 +24,12 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 
 const statusColors: Record<LeadStatus, string> = {
-  new: '#3B82F6',
-  viewed: '#8B5CF6',
-  contacted: '#F59E0B',
-  negotiating: '#10B981',
-  won: '#059669',
-  lost: '#EF4444',
+  new: 'var(--color-info)',
+  viewed: 'var(--color-violet-500)',
+  contacted: 'var(--color-warning)',
+  negotiating: 'var(--color-success)',
+  won: 'var(--color-success-dark)',
+  lost: 'var(--color-error)',
 }
 
 async function loadLeads() {
@@ -94,6 +94,8 @@ onMounted(() => {
 <template>
   <div class="contacts-page">
     <div class="contacts-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('profile.contacts.title') }]" />
+      <PerfilProfileNavPills />
       <h1 class="page-title">
         {{ $t('profile.contacts.title') }}
       </h1>
@@ -102,8 +104,8 @@ onMounted(() => {
       </p>
 
       <!-- Loading -->
-      <div v-if="loading" class="loading-state">
-        {{ $t('common.loading') }}
+      <div v-if="loading" class="loading-state" aria-busy="true">
+        <UiSkeletonCard v-for="n in 4" :key="n" :lines="2" />
       </div>
 
       <!-- Error -->
@@ -150,7 +152,7 @@ onMounted(() => {
 }
 
 .contacts-container {
-  max-width: 720px;
+  max-width: 45rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -214,7 +216,7 @@ onMounted(() => {
   cursor: pointer;
   text-decoration: none;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -277,7 +279,7 @@ onMounted(() => {
 }
 
 /* ---- Tablet ---- */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .contacts-container {
     padding: 0 2rem;
   }

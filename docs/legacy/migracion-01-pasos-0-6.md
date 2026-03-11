@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 ## PASO 1: RENOMBRAR TABLAS Y NOMENCLATURA
 
@@ -1057,3 +1057,5 @@ export default defineNuxtPlugin((nuxtApp) => {
 ```
 
 ---
+
+

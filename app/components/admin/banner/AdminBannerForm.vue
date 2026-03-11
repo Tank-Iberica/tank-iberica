@@ -169,7 +169,7 @@ function parseDatetimeLocal(value: string): string | null {
     <!-- Actions -->
     <div class="form-actions">
       <button class="btn-primary" :disabled="props.saving" @click="emit('save')">
-        {{ props.saving ? 'Guardando...' : 'Guardar' }}
+        {{ props.saving ? $t('common.saving') : $t('common.save') }}
       </button>
       <button class="btn-secondary" type="button" @click="emit('toggle-preview')">
         {{ props.showPreview ? 'Ocultar preview' : 'Ver preview' }}
@@ -181,48 +181,48 @@ function parseDatetimeLocal(value: string): string | null {
 <style scoped>
 .form-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  max-width: 700px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  max-width: 43.75rem;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
 }
 
 .form-group label {
   display: block;
   font-weight: 500;
-  margin-bottom: 8px;
-  color: #374151;
+  margin-bottom: var(--spacing-2);
+  color: var(--color-gray-700);
 }
 
 .form-group input[type='text'],
 .form-group input[type='url'],
 .form-group input[type='datetime-local'] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .input-with-emoji {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .input-row {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   align-items: center;
 }
 
@@ -231,12 +231,12 @@ function parseDatetimeLocal(value: string): string | null {
 }
 
 .btn-emoji-picker {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   transition: all 0.15s;
 }
 
@@ -247,17 +247,17 @@ function parseDatetimeLocal(value: string): string | null {
 
 .quick-emojis {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-1);
   flex-wrap: wrap;
 }
 
 .emoji-btn-quick {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color-light);
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-size: 16px;
+  font-size: var(--font-size-base);
   transition: all 0.15s;
 }
 
@@ -268,21 +268,21 @@ function parseDatetimeLocal(value: string): string | null {
 
 .form-hint {
   font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 4px;
+  color: var(--color-gray-500);
+  margin-top: var(--spacing-1);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 /* Toggle switch */
 .toggle-label {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   cursor: pointer;
   user-select: none;
 }
@@ -296,20 +296,20 @@ function parseDatetimeLocal(value: string): string | null {
 
 .toggle-switch {
   position: relative;
-  width: 48px;
-  height: 26px;
-  background: #d1d5db;
-  border-radius: 13px;
+  width: 3rem;
+  height: 1.625rem;
+  background: var(--color-gray-300);
+  border-radius: var(--border-radius-md);
   transition: background 0.2s;
 }
 
 .toggle-switch::after {
   content: '';
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.25rem;
+  height: 1.25rem;
   background: var(--bg-primary);
   border-radius: 50%;
   transition: transform 0.2s;
@@ -326,23 +326,23 @@ function parseDatetimeLocal(value: string): string | null {
 
 .toggle-text {
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .form-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-6);
+  padding-top: var(--spacing-5);
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   transition: background 0.2s;
@@ -359,10 +359,10 @@ function parseDatetimeLocal(value: string): string | null {
 
 .btn-secondary {
   background: var(--bg-secondary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: 1px solid var(--border-color);
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   transition: all 0.2s;
@@ -382,14 +382,14 @@ function parseDatetimeLocal(value: string): string | null {
   }
 
   .form-card {
-    padding: 16px;
+    padding: var(--spacing-4);
   }
 
   .quick-emojis {
     max-width: 100%;
     overflow-x: auto;
     flex-wrap: nowrap;
-    padding-bottom: 8px;
+    padding-bottom: var(--spacing-2);
   }
 }
 </style>

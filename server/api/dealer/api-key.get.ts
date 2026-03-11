@@ -1,10 +1,11 @@
-import { createError, defineEventHandler } from 'h3'
+import { defineEventHandler, setResponseHeader } from 'h3'
 import { serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
+import { safeError } from '../../utils/safeError'
 
 export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   const supabase = serverSupabaseServiceRole(event)
@@ -17,7 +18,7 @@ export default defineEventHandler(async (event) => {
     .single()
 
   if (!dealer) {
-    throw createError({ statusCode: 404, message: 'Dealer not found' })
+    throw safeError(404, 'Dealer not found')
   }
 
   // Get existing API key from data_subscriptions
@@ -55,6 +56,7 @@ export default defineEventHandler(async (event) => {
     ? `trk_${'*'.repeat(Math.max(0, sub.api_key.length - 12))}${sub.api_key.slice(-8)}`
     : null
 
+  setResponseHeader(event, 'Cache-Control', 'private, no-store')
   return {
     apiKey: maskedKey,
     hasKey: !!sub?.api_key,

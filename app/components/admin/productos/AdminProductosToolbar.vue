@@ -74,34 +74,34 @@ const emit = defineEmits<{
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  padding-top: 12px;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-3);
   border-top: 1px solid var(--color-gray-200);
 }
 
 .column-toggles {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   flex-wrap: wrap;
   flex: 1;
 }
 
 .toggles-label {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-auxiliary);
 }
 
 .column-toggle {
-  padding: 6px 12px;
+  padding: 0.375rem var(--spacing-3);
   border: 1px solid var(--color-gray-200);
   background: var(--bg-primary);
   color: var(--text-auxiliary);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   transition: all 0.2s;
 }
 
@@ -117,19 +117,19 @@ const emit = defineEmits<{
 
 .toolbar-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   align-items: center;
 }
 
 .btn-tool {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-gray-200);
   background: var(--bg-primary);
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   transition: all 0.2s;
   position: relative;
   white-space: nowrap;
@@ -146,17 +146,17 @@ const emit = defineEmits<{
 }
 
 .btn-tool.drive-on {
-  background: var(--color-success-bg, #dcfce7);
-  border-color: #86efac;
+  background: var(--color-success-bg, var(--color-success-bg));
+  border-color: var(--color-green-300);
   color: var(--color-success);
 }
 
 .badge {
   background: var(--color-error);
   color: white;
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin-left: 4px;
+  font-size: 0.6875rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--border-radius-md);
+  margin-left: var(--spacing-1);
 }
 </style>

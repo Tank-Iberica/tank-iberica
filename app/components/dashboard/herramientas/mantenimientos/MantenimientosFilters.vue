@@ -66,28 +66,28 @@ function onTypeChange(event: Event) {
 .filters-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
 }
 
 .filter-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.5rem;
   align-items: center;
   width: 100%;
 }
 
 .filter-select {
-  min-height: 44px;
-  padding: 8px 12px;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
-  min-width: 140px;
+  min-width: 8.75rem;
   background: var(--bg-primary);
   flex: 1;
 }
@@ -98,12 +98,12 @@ function onTypeChange(event: Event) {
 }
 
 .btn-sm {
-  min-height: 44px;
-  padding: 8px 12px;
-  font-size: 0.8rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: var(--font-size-sm);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   cursor: pointer;
 }
 
@@ -118,7 +118,7 @@ function onTypeChange(event: Event) {
 
   .filter-select {
     flex: initial;
-    min-width: 180px;
+    min-width: 11.25rem;
   }
 }
 </style>

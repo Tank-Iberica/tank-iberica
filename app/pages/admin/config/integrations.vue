@@ -131,66 +131,66 @@ async function handleSave() {
 }
 
 .section-header {
-  margin-bottom: 32px;
+  margin-bottom: var(--spacing-8);
 }
 
 .section-header h2 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.75rem;
   color: var(--color-text);
 }
 
 .section-subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 1rem;
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
   font-weight: 500;
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--spacing-5);
 }
 
 .card-title {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-description {
-  margin: 0 0 20px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-5);
+  color: var(--color-gray-500);
   font-size: 0.9rem;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .form-group:last-child {
@@ -200,16 +200,16 @@ async function handleSave() {
 .form-group label {
   display: block;
   font-weight: 500;
-  margin-bottom: 6px;
-  color: #374151;
+  margin-bottom: 0.375rem;
+  color: var(--color-gray-700);
   font-size: 0.9rem;
 }
 
 .form-group input[type='text'] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   box-sizing: border-box;
 }
@@ -217,11 +217,11 @@ async function handleSave() {
 .form-group input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .actions-bar {
-  margin-top: 24px;
+  margin-top: var(--spacing-6);
   display: flex;
   justify-content: flex-end;
 }
@@ -230,13 +230,13 @@ async function handleSave() {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -248,13 +248,13 @@ async function handleSave() {
   cursor: not-allowed;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .config-card {
-    padding: 32px;
+    padding: var(--spacing-8);
   }
 
   .form-group input[type='text'] {
-    max-width: 480px;
+    max-width: 30em;
   }
 }
 </style>

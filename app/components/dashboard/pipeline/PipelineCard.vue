@@ -46,13 +46,13 @@ const { t } = useI18n()
 .pipeline-card {
   display: flex;
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
   transition:
     box-shadow 0.15s,
     opacity 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
   overflow: hidden;
 }
 
@@ -68,8 +68,8 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  min-height: 44px;
+  width: 2.75rem;
+  min-height: 2.75rem;
   flex-shrink: 0;
   cursor: grab;
   color: var(--text-disabled);
@@ -83,15 +83,15 @@ const { t } = useI18n()
 
 .drag-dots {
   font-size: 1.1rem;
-  letter-spacing: -3px;
+  letter-spacing: -0.1875rem;
   line-height: 1;
 }
 
 .card-body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 10px 12px;
+  gap: 0.125rem;
+  padding: 0.625rem 0.75rem;
   min-width: 0;
   flex: 1;
 }
@@ -106,7 +106,7 @@ const { t } = useI18n()
 }
 
 .card-contact {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
   white-space: nowrap;
   overflow: hidden;

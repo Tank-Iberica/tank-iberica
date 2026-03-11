@@ -69,7 +69,7 @@ const localOnlineFilter = computed({
         type="text"
         :placeholder="t('admin.productos.searchPlaceholder')"
       >
-      <button v-if="localFilters.search" class="clear-btn" @click="localFilters.search = ''">
+      <button v-if="localFilters.search" class="clear-btn" :aria-label="$t('common.clear')" @click="localFilters.search = ''">
         ×
       </button>
     </div>
@@ -147,30 +147,30 @@ const localOnlineFilter = computed({
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .search-box {
   position: relative;
   width: 100%;
-  max-width: 280px;
+  max-width: 17.5rem;
 }
 
 .search-box .search-icon {
   position: absolute;
-  left: 12px;
+  left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   opacity: 0.5;
 }
 
 .search-box input {
   width: 100%;
-  padding: 8px 36px 8px 36px;
+  padding: 0.5rem 2.25rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   transition: border 0.2s;
 }
 
@@ -181,21 +181,21 @@ const localOnlineFilter = computed({
 
 .clear-btn {
   position: absolute;
-  right: 8px;
+  right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: var(--font-size-xl);
   cursor: pointer;
   color: var(--text-disabled);
   padding: 0;
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
 }
 
 .clear-btn:hover {
@@ -205,24 +205,24 @@ const localOnlineFilter = computed({
 .filter-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .filter-label {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-auxiliary);
   white-space: nowrap;
 }
 
 .filter-group select {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   background: var(--bg-primary);
   cursor: pointer;
-  min-width: 120px;
+  min-width: 7.5rem;
   transition: border 0.2s;
 }
 
@@ -234,41 +234,41 @@ const localOnlineFilter = computed({
 .segment-control {
   display: flex;
   background: var(--bg-secondary);
-  border-radius: 8px;
-  padding: 2px;
+  border-radius: var(--border-radius);
+  padding: 0.125rem;
 }
 
 .segment-control button {
-  padding: 6px 12px;
+  padding: 0.375rem var(--spacing-3);
   border: none;
   background: transparent;
   color: var(--text-auxiliary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   transition: all 0.2s;
 }
 
 .segment-control button.active {
   background: var(--bg-primary);
   color: var(--color-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
 }
 
 .btn-text-danger {
   background: none;
   border: none;
   color: var(--color-error);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--border-radius);
   transition: background 0.2s;
 }
 
 .btn-text-danger:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 </style>

@@ -1,18 +1,33 @@
-import { createError, defineEventHandler, readBody } from 'h3'
-import { serverSupabaseUser } from '#supabase/server'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
+import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { safeError } from '../utils/safeError'
+import { validateBody } from '../utils/validateBody'
+import { getIdempotencyKey, checkIdempotency, storeIdempotencyResponse } from '../utils/idempotency'
+
+const auctionDepositSchema = z.object({
+  auctionId: z.string().uuid(),
+  registrationId: z.string().uuid(),
+})
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-  const { auctionId, registrationId } = body
+  // Idempotency check
+  const idempotencyKey = getIdempotencyKey(event.node.req.headers as Record<string, string>)
+  const supabase = serverSupabaseServiceRole(event)
 
-  if (!auctionId || !registrationId) {
-    throw createError({ statusCode: 400, message: 'Missing auctionId or registrationId' })
+  if (idempotencyKey) {
+    const cached = await checkIdempotency(supabase, idempotencyKey)
+    if (cached) {
+      return cached
+    }
   }
+
+  const { auctionId, registrationId } = await validateBody(event, auctionDepositSchema)
 
   // Auth: verify user is logged in
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw safeError(401, 'Unauthorized')
   }
 
   // Get Supabase client (server-side, service role)
@@ -38,7 +53,7 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Service not configured' })
+    throw safeError(500, 'Service not configured')
   }
 
   // Verify registrationId belongs to the authenticated user
@@ -53,10 +68,7 @@ export default defineEventHandler(async (event) => {
   )
   const registrationData = await registrationRes.json()
   if (!registrationData?.length) {
-    throw createError({
-      statusCode: 403,
-      message: 'Registration not found or does not belong to user',
-    })
+    throw safeError(403, 'Registration not found or does not belong to user')
   }
 
   // Fetch auction deposit_cents
@@ -71,7 +83,7 @@ export default defineEventHandler(async (event) => {
   )
   const auctionData = await auctionRes.json()
   if (!auctionData?.length) {
-    throw createError({ statusCode: 404, message: 'Auction not found' })
+    throw safeError(404, 'Auction not found')
   }
 
   const depositCents = auctionData[0].deposit_cents || 100000 // Default 1000€
@@ -104,5 +116,12 @@ export default defineEventHandler(async (event) => {
     }),
   })
 
-  return { clientSecret: paymentIntent.client_secret }
+  const response = { clientSecret: paymentIntent.client_secret }
+
+  // Store in idempotency cache if key provided
+  if (idempotencyKey) {
+    await storeIdempotencyResponse(supabase, idempotencyKey, 'POST /api/auction-deposit', response)
+  }
+
+  return response
 })

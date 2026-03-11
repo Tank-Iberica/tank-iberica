@@ -11,7 +11,7 @@
 
     <!-- Not found -->
     <div v-else-if="!article" class="article-not-found">
-      <p>{{ $t('news.noResults') }}</p>
+      <p>{{ $t('news.notFound') }}</p>
       <NuxtLink to="/noticias" class="back-link">
         {{ $t('news.backToNews') }}
       </NuxtLink>
@@ -33,12 +33,19 @@
           <h1 class="article-title">{{ title }}</h1>
 
           <div v-if="article.image_url" class="article-image">
-            <img :src="article.image_url" :alt="title" >
+            <NuxtImg :src="article.image_url" :alt="title" width="800" height="450" fetchpriority="high" decoding="async" sizes="(max-width: 48rem) 100vw, 800px" />
           </div>
 
-          <div class="article-body">
-            {{ content }}
-          </div>
+          <!-- Table of contents (auto-generated from headings) -->
+          <UiArticleToc
+            v-if="tocItems.length > 0"
+            :toc-items="tocItems"
+            :active-id="activeId"
+            :scroll-to-heading="scrollToHeading"
+          />
+
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div ref="articleBodyRef" class="article-body" v-html="sanitizedContent" />
 
           <div v-if="article.hashtags?.length" class="article-tags">
             <span v-for="tag in article.hashtags" :key="tag" class="tag"> #{{ tag }} </span>
@@ -73,6 +80,10 @@ import { fetchTranslation } from '~/composables/useLocalized'
 const route = useRoute()
 const { locale, t } = useI18n()
 const { fetchBySlug } = useNews()
+const { sanitize } = useSanitize()
+const { tocItems, activeId, buildToc, scrollToHeading } = useTableOfContents()
+
+const articleBodyRef = ref<HTMLElement | null>(null)
 
 // Fetch at setup level so SSR can render SEO meta
 const { data: article, status } = await useAsyncData(`news-${route.params.slug}`, () =>
@@ -150,13 +161,13 @@ const shareText = computed(() => {
   if (!article.value) return ''
   const parts = [title.value]
   if (import.meta.client) parts.push(globalThis.location.href)
-  parts.push('- Tracciona')
+  parts.push(`- ${t('site.title')}`)
   return parts.join(' - ')
 })
 
 // SEO meta at setup level — works during SSR
 if (article.value) {
-  const seoTitle = `${title.value} — Tracciona`
+  const seoTitle = `${title.value} — ${t('site.title')}`
   const articleSlug = route.params.slug as string
 
   // Build enhanced NewsArticle JSON-LD
@@ -170,12 +181,12 @@ if (article.value) {
     dateModified: article.value.updated_at,
     author: {
       '@type': 'Organization',
-      name: 'Tracciona',
+      name: t('site.title'),
       url: 'https://tracciona.com',
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Tracciona',
+      name: t('site.title'),
       url: 'https://tracciona.com',
       logo: {
         '@type': 'ImageObject',
@@ -224,7 +235,7 @@ if (article.value) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Tracciona', item: 'https://tracciona.com' },
+      { '@type': 'ListItem', position: 1, name: t('site.title'), item: 'https://tracciona.com' },
       {
         '@type': 'ListItem',
         position: 2,
@@ -259,6 +270,20 @@ if (article.value) {
   })
 }
 
+const sanitizedContent = computed(() => sanitize(content.value))
+
+// Rebuild TOC whenever content changes (client-side only)
+if (import.meta.client) {
+  watch(
+    sanitizedContent,
+    () => {
+      nextTick(() => buildToc(articleBodyRef.value))
+    },
+    { immediate: false },
+  )
+  onMounted(() => nextTick(() => buildToc(articleBodyRef.value)))
+}
+
 function formatDate(date: string): string {
   return new Date(date).toLocaleDateString(locale.value === 'en' ? 'en-GB' : 'es-ES', {
     year: 'numeric',
@@ -270,7 +295,7 @@ function formatDate(date: string): string {
 
 <style scoped>
 .article-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
 }
@@ -285,14 +310,14 @@ function formatDate(date: string): string {
 .skeleton-img {
   aspect-ratio: 16 / 9;
   background: var(--bg-secondary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
 .skeleton-line {
-  height: 18px;
+  height: 1.125rem;
   background: var(--bg-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -328,15 +353,15 @@ function formatDate(date: string): string {
 .article-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   margin-bottom: 1rem;
 }
 
 .article-category {
   background: var(--color-primary);
   color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -357,10 +382,10 @@ function formatDate(date: string): string {
 
 .article-image {
   margin-bottom: 1.5rem;
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
   aspect-ratio: 16 / 9;
-  background: var(--bg-secondary, #f5f5f5);
+  background: var(--bg-secondary, var(--color-skeleton-bg));
 }
 
 .article-image img {
@@ -375,13 +400,14 @@ function formatDate(date: string): string {
   line-height: 1.8;
   color: var(--text-secondary);
   white-space: pre-line;
+  max-width: 65ch;
 }
 
 /* Tags */
 .article-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--spacing-2);
   margin-top: 2rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border-color-light, #eee);
@@ -391,24 +417,24 @@ function formatDate(date: string): string {
   font-size: 0.8rem;
   color: var(--color-primary);
   background: rgba(35, 66, 74, 0.08);
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
 }
 
 /* Share */
 .article-share {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
   margin-top: 2rem;
 }
 
 .share-btn {
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
   font-weight: 500;
   text-decoration: none;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -420,8 +446,8 @@ function formatDate(date: string): string {
 }
 
 .share-whatsapp {
-  background: #25d366;
-  color: white;
+  background: var(--color-whatsapp);
+  color: #052e16;
 }
 
 .share-email {
@@ -429,7 +455,7 @@ function formatDate(date: string): string {
   color: white;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .article-title {
     font-size: 2rem;
   }

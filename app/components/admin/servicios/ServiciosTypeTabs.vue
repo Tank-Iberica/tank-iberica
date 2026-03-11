@@ -34,11 +34,11 @@ const { t } = useI18n()
 <style scoped>
 .tabs-row {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding-bottom: 4px;
+  padding-bottom: var(--spacing-1);
 }
 
 .tabs-row::-webkit-scrollbar {
@@ -48,17 +48,17 @@ const { t } = useI18n()
 .tab-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
+  gap: 0.375rem;
+  padding: 0.625rem var(--spacing-4);
   border: 1px solid var(--color-gray-200);
-  border-radius: 20px;
+  border-radius: var(--border-radius-full);
   background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-auxiliary);
   transition: all 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
   white-space: nowrap;
   flex-shrink: 0;
 }

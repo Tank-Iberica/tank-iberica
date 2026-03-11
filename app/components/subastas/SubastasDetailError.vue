@@ -36,7 +36,7 @@ defineProps<{
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-sm);
   text-decoration: none;
-  min-height: 44px;
+  min-height: 2.75rem;
   line-height: var(--line-height-normal);
   transition: background var(--transition-fast);
 }

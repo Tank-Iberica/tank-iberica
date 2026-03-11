@@ -37,13 +37,13 @@ const { t } = useI18n()
 <style scoped>
 .options-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .options-card h2 {
-  margin: 0 0 16px;
+  margin: 0 0 1rem;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -52,14 +52,14 @@ const { t } = useI18n()
 .pdf-info {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .pdf-info-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 0.625rem 0;
   border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.9rem;
 }

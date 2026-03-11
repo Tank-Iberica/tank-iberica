@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 defineProps<{
   pendingVehicles: number
   pendingArticles: number
@@ -15,20 +17,20 @@ const emit = defineEmits<{
 
 <template>
   <div class="config-card">
-    <h3 class="card-title">Cola de Traducciones Pendientes</h3>
-    <p class="card-description">Contenido marcado como pendiente de traduccion.</p>
+    <h3 class="card-title">{{ t('admin.configLanguages.pendingQueueTitle') }}</h3>
+    <p class="card-description">{{ t('admin.configLanguages.pendingQueueDesc') }}</p>
 
     <div v-if="translateSuccess" class="success-banner">
-      Traducciones procesadas correctamente. Los flags pendientes han sido limpiados.
+      {{ t('admin.configLanguages.pendingQueueSuccess') }}
     </div>
 
     <div class="pending-list">
       <div class="pending-row">
-        <span class="pending-label">Vehiculos pendientes:</span>
+        <span class="pending-label">{{ t('admin.configLanguages.pendingVehicles') }}</span>
         <span class="pending-count">{{ pendingVehicles }}</span>
       </div>
       <div class="pending-row">
-        <span class="pending-label">Articulos pendientes:</span>
+        <span class="pending-label">{{ t('admin.configLanguages.pendingArticles') }}</span>
         <span class="pending-count">{{ pendingArticles }}</span>
       </div>
     </div>
@@ -38,11 +40,11 @@ const emit = defineEmits<{
       :disabled="translateDisabled || translating"
       @click="emit('translate-all')"
     >
-      {{ translating ? 'Traduciendo...' : 'Traducir todo ahora' }}
+      {{ translating ? t('admin.configLanguages.translating') : t('admin.configLanguages.translateNow') }}
     </button>
 
     <p v-if="showApiKeyHint" class="hint-text">
-      Configura una API key para habilitar la traduccion.
+      {{ t('admin.configLanguages.pendingQueueNoKey') }}
     </p>
   </div>
 </template>
@@ -50,67 +52,67 @@ const emit = defineEmits<{
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--spacing-5);
 }
 
 .card-title {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.125rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-description {
-  margin: 0 0 16px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-4);
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .pending-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
-  background: #f9fafb;
-  margin-bottom: 16px;
+  border-radius: var(--border-radius);
+  background: var(--color-gray-50);
+  margin-bottom: var(--spacing-4);
 }
 
 .pending-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .pending-label {
   font-size: 0.95rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .pending-count {
   font-weight: 600;
   font-size: 1rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .btn-translate {
   background: var(--color-success);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
@@ -118,7 +120,7 @@ const emit = defineEmits<{
 }
 
 .btn-translate:hover {
-  background: #059669;
+  background: var(--color-success-dark);
 }
 
 .btn-translate:disabled {
@@ -127,14 +129,14 @@ const emit = defineEmits<{
 }
 
 .hint-text {
-  margin: 8px 0 0;
+  margin: 0.5rem 0 0;
   font-size: 0.8rem;
   color: var(--text-disabled);
 }
 
 (@media ()max-width: 47.9375em())) {
   .config-card {
-    padding: 16px;
+    padding: var(--spacing-4);
   }
 
   .btn-translate {

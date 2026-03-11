@@ -29,40 +29,40 @@ const emit = defineEmits<{
 .period-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-2, 8px);
-  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
-  background: var(--bg-primary, #fff);
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--bg-primary, var(--color-white));
   border-radius: var(--border-radius-md, 12px);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  box-shadow: var(--shadow-sm, var(--shadow-sm));
 }
 
 .period-tab {
-  padding: var(--spacing-2, 8px) var(--spacing-4, 16px);
-  border: 1px solid var(--border-color-light, #e5e7eb);
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--border-color-light, var(--color-gray-200));
   border-radius: var(--border-radius-full, 9999px);
-  background: var(--bg-primary, #fff);
+  background: var(--bg-primary, var(--color-white));
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-medium, 500);
-  color: var(--text-secondary, #4a5a5a);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   transition: all var(--transition-fast, 150ms ease);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .period-tab:hover:not(.active) {
-  background: var(--color-gray-50, #f9fafb);
-  border-color: var(--border-color, #d1d5db);
+  background: var(--color-gray-50, var(--color-gray-50));
+  border-color: var(--border-color, var(--color-gray-300));
 }
 
 .period-tab.active {
   background: var(--color-primary);
-  color: var(--color-white, #fff);
+  color: var(--color-white, var(--color-white));
   border-color: var(--color-primary);
 }
 
 @media (min-width: 64em) {
   .period-tabs {
-    padding: var(--spacing-4, 16px) var(--spacing-6, 24px);
+    padding: var(--spacing-4) var(--spacing-6);
   }
 }
 </style>

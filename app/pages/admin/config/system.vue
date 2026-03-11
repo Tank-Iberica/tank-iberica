@@ -207,66 +207,66 @@ function formatDetails(details: Record<string, unknown> | null): string {
 }
 
 .section-header {
-  margin-bottom: 32px;
+  margin-bottom: var(--spacing-8);
 }
 
 .section-header h2 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.75rem;
   color: var(--color-text);
 }
 
 .section-subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 1rem;
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
   font-weight: 500;
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--spacing-5);
 }
 
 .card-title {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-description {
-  margin: 0 0 20px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-5);
+  color: var(--color-gray-500);
   font-size: 0.9rem;
 }
 
 .toggle-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .toggle-group:last-child {
@@ -276,11 +276,11 @@ function formatDetails(details: Record<string, unknown> | null): string {
 .toggle-label {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--spacing-3);
   cursor: pointer;
-  padding: 12px;
+  padding: var(--spacing-3);
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   transition: border-color 0.2s;
 }
 
@@ -289,9 +289,9 @@ function formatDetails(details: Record<string, unknown> | null): string {
 }
 
 .toggle-label input[type='checkbox'] {
-  width: 20px;
-  height: 20px;
-  margin-top: 2px;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.125rem;
   flex-shrink: 0;
   cursor: pointer;
   accent-color: var(--color-primary);
@@ -300,22 +300,22 @@ function formatDetails(details: Record<string, unknown> | null): string {
 .toggle-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .toggle-text strong {
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .toggle-text small {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .actions-bar {
-  margin-top: 24px;
-  margin-bottom: 32px;
+  margin-top: var(--spacing-6);
+  margin-bottom: var(--spacing-8);
   display: flex;
   justify-content: flex-end;
 }
@@ -324,13 +324,13 @@ function formatDetails(details: Record<string, unknown> | null): string {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -343,27 +343,27 @@ function formatDetails(details: Record<string, unknown> | null): string {
 }
 
 .logs-card {
-  margin-top: 8px;
+  margin-top: var(--spacing-2);
 }
 
 .logs-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1);
 }
 
 .btn-refresh {
   background: var(--bg-secondary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: 1px solid var(--border-color);
-  padding: 6px 14px;
-  border-radius: 6px;
+  padding: 0.375rem 0.875rem;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
   transition: all 0.2s;
-  min-height: 36px;
+  min-height: 2.25rem;
 }
 
 .btn-refresh:hover:not(:disabled) {
@@ -377,7 +377,7 @@ function formatDetails(details: Record<string, unknown> | null): string {
 
 .empty-state {
   text-align: center;
-  padding: 32px;
+  padding: var(--spacing-8);
   color: var(--text-disabled);
   font-size: 0.95rem;
 }
@@ -385,32 +385,32 @@ function formatDetails(details: Record<string, unknown> | null): string {
 .table-container {
   overflow-x: auto;
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .logs-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 600px;
+  min-width: 37.5rem;
 }
 
 .logs-table th,
 .logs-table td {
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   text-align: left;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.85rem;
 }
 
 .logs-table th {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   white-space: nowrap;
 }
 
 .logs-table tbody tr:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .logs-table tbody tr:last-child td {
@@ -419,59 +419,59 @@ function formatDetails(details: Record<string, unknown> | null): string {
 
 .date-cell {
   white-space: nowrap;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 0.8rem;
 }
 
 .actor-badge {
   display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .actor--admin {
-  background: #ede9fe;
-  color: #6d28d9;
+  background: var(--color-purple-bg);
+  color: var(--color-violet-700);
 }
 
 .actor--dealer {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 
 .actor--system {
   background: var(--bg-secondary);
-  color: #4b5563;
+  color: var(--color-gray-600);
 }
 
 .actor--cron {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .details-col {
-  min-width: 150px;
+  min-width: 9.375rem;
 }
 
 .details-cell {
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 0.8rem;
-  max-width: 200px;
+  max-width: 12.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .config-card {
-    padding: 32px;
+    padding: var(--spacing-8);
   }
 
   .details-cell {
-    max-width: 300px;
+    max-width: 18.75rem;
   }
 }
 </style>

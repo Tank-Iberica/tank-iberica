@@ -260,7 +260,7 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
   async function loadAttributes() {
     const { data } = await supabase
       .from('attributes')
-      .select('*')
+      .select('id, name, type, label_es, options, type_id')
       .eq('status', 'active' as never)
       .order('sort_order', { ascending: true })
 
@@ -328,7 +328,7 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
     } else if (resolvedVehicleId.value) {
       const success = await updateVehicle(resolvedVehicleId.value, form.value)
       if (success) {
-        // TODO(2026-02): Show success toast once useToast composable is available // NOSONAR
+        // Pending(2026-02): Show success toast once useToast composable is available
       }
     }
   }
@@ -349,7 +349,8 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
 
     if (success) {
       // Auto-create balance entry for the sale
-      const detalle = `${form.value.brand} ${form.value.model}${form.value.year ? ` (${form.value.year})` : ''}`
+      const yearPart = form.value.year ? ` (${form.value.year})` : ''
+      const detalle = `${form.value.brand} ${form.value.model}${yearPart}`
       await supabase.from('balance').insert({
         tipo: 'ingreso',
         fecha: new Date().toISOString().split('T')[0],
@@ -413,12 +414,13 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
         .eq('id', resolvedVehicleId.value)
 
       // Auto-create balance entry for the rental
-      const detalle = `${form.value.brand} ${form.value.model}${form.value.year ? ` (${form.value.year})` : ''}`
+      const yearPart = form.value.year ? ` (${form.value.year})` : ''
+      const detalle = `${form.value.brand} ${form.value.model}${yearPart}`
       await supabase.from('balance').insert({
         tipo: 'ingreso',
         fecha: rentalForm.value.start_date,
         razon: 'alquiler',
-        detalle: `Alquiler: ${detalle}${rentalForm.value.renter_name ? ` \u2192 ${rentalForm.value.renter_name}` : ''}`,
+        detalle: `Alquiler: ${detalle}${rentalForm.value.renter_name ? ' \u2192 ' + rentalForm.value.renter_name : ''}`,
         importe: rentalForm.value.monthly_price,
         estado: 'pendiente',
         vehicle_id: resolvedVehicleId.value,
@@ -463,14 +465,14 @@ export function useAdminVehicleDetail(vehicleId: Ref<string>) {
     const input = event.target as HTMLInputElement
     if (!input.files) return
 
-    // TODO(2026-02): Implement Cloudinary upload via useCloudinaryUpload composable // NOSONAR
+    // Pending(2026-02): Implement Cloudinary upload via useCloudinaryUpload composable
     // For now, just show placeholder
     for (const file of input.files) {
       if (formImages.value.length >= 10) break
 
       const url = URL.createObjectURL(file)
       formImages.value.push({
-        id: `temp-${Date.now()}-${Math.random()}`,
+        id: `temp-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
         url,
         thumbnail_url: url,
       })

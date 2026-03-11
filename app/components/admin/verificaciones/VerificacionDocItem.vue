@@ -285,8 +285,8 @@ const { t } = useI18n()
    ============================================ */
 .doc-item {
   background: var(--bg-primary);
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   transition: box-shadow 0.2s;
 }
@@ -303,14 +303,14 @@ const { t } = useI18n()
   display: grid;
   grid-template-columns: 1fr auto auto auto auto;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
   width: 100%;
   border: none;
   background: transparent;
   cursor: pointer;
   text-align: left;
-  min-height: 64px;
+  min-height: 4rem;
   font-family: inherit;
 }
 
@@ -322,14 +322,14 @@ const { t } = useI18n()
 .doc-vehicle {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   min-width: 0;
 }
 
 .doc-thumb {
-  width: 44px;
-  height: 44px;
-  border-radius: 6px;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
   background: var(--bg-secondary);
   display: flex;
@@ -380,10 +380,10 @@ const { t } = useI18n()
 
 .doc-type-badge {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 0.25rem 0.625rem;
   background: var(--bg-secondary);
   color: var(--text-secondary);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
@@ -405,25 +405,25 @@ const { t } = useI18n()
 
 .status-badge {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .status-badge.status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .status-badge.status-verified {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .status-badge.status-rejected {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -446,21 +446,21 @@ const { t } = useI18n()
    EXPANDED DETAIL VIEW
    ============================================ */
 .doc-detail {
-  padding: 0 16px 16px;
+  padding: 0 1rem 1rem;
   border-top: 1px solid var(--color-gray-100);
 }
 
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
-  padding-top: 16px;
+  gap: 1.25rem;
+  padding-top: 1rem;
 }
 
 /* Preview section */
 .detail-preview h4,
 .detail-data h4 {
-  margin: 0 0 12px 0;
+  margin: 0 0 0.75rem 0;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-secondary);
@@ -470,14 +470,14 @@ const { t } = useI18n()
 
 .preview-container {
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .preview-image {
   width: 100%;
-  max-height: 320px;
+  max-height: 20rem;
   object-fit: contain;
   display: block;
   background: var(--bg-secondary);
@@ -487,8 +487,8 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 32px;
+  gap: 0.5rem;
+  padding: 2rem;
   color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
@@ -500,38 +500,38 @@ const { t } = useI18n()
 }
 
 .no-file {
-  padding: 32px;
+  padding: 2rem;
   text-align: center;
   color: var(--text-disabled);
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 /* Verification level in detail */
 .detail-level {
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 .level-display {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .progress-bar-container {
   flex: 1;
-  height: 6px;
+  height: 0.375rem;
   background: var(--bg-tertiary);
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 
 .progress-bar-container.large {
-  height: 8px;
-  border-radius: 4px;
+  height: 0.5rem;
+  border-radius: var(--border-radius-sm);
 }
 
 .progress-bar-fill {
@@ -554,7 +554,7 @@ const { t } = useI18n()
 }
 
 .progress-bar-fill.level-detailed {
-  background: #8b5cf6;
+  background: var(--color-violet-500);
 }
 
 .progress-bar-fill.level-audited {
@@ -562,7 +562,7 @@ const { t } = useI18n()
 }
 
 .progress-bar-fill.level-certified {
-  background: #14b8a6;
+  background: var(--color-teal-500);
 }
 
 .level-label {
@@ -578,55 +578,55 @@ const { t } = useI18n()
   color: var(--color-success);
 }
 .level-label.level-extended {
-  color: #2563eb;
+  color: var(--color-focus);
 }
 .level-label.level-detailed {
-  color: #7c3aed;
+  color: var(--color-purple-600);
 }
 .level-label.level-audited {
   color: var(--color-warning);
 }
 .level-label.level-certified {
-  color: #0d9488;
+  color: var(--color-teal-600);
 }
 
 .other-docs {
-  margin-top: 8px;
+  margin-top: 0.5rem;
 }
 
 .other-docs-label {
   font-size: 0.8rem;
   color: var(--text-auxiliary);
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .other-docs-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .other-doc-chip {
   display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--border-radius-sm);
   font-size: 0.7rem;
   font-weight: 500;
 }
 
 .other-doc-chip.status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .other-doc-chip.status-verified {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .other-doc-chip.status-rejected {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -642,7 +642,7 @@ const { t } = useI18n()
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 8px 0;
+  padding: 0.5rem 0;
   border-bottom: 1px solid var(--color-gray-100);
 }
 
@@ -667,7 +667,7 @@ const { t } = useI18n()
 
 .data-row.full {
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .data-row.full dd {
@@ -685,13 +685,13 @@ const { t } = useI18n()
 
 /* Actions section */
 .detail-actions {
-  margin-top: 16px;
-  padding-top: 16px;
+  margin-top: 1rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--color-gray-200);
 }
 
 .rejection-input {
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .rejection-input label {
@@ -699,29 +699,29 @@ const { t } = useI18n()
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .rejection-input textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   font-family: inherit;
   resize: vertical;
-  min-height: 60px;
+  min-height: 3.75rem;
 }
 
 .rejection-input textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .action-buttons {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .btn-approve,
@@ -729,17 +729,17 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 20px;
+  gap: 0.375rem;
+  padding: 0.625rem 1.25rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
   transition:
     background 0.2s,
     opacity 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
   flex: 1;
 }
 
@@ -749,7 +749,7 @@ const { t } = useI18n()
 }
 
 .btn-approve:hover {
-  background: #15803d;
+  background: var(--color-green-700);
 }
 
 .btn-reject {
@@ -769,31 +769,31 @@ const { t } = useI18n()
 
 /* Already reviewed */
 .detail-reviewed {
-  margin-top: 16px;
-  padding: 12px 16px;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
 .reviewed-badge {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.85rem;
   font-weight: 600;
 }
 
 .reviewed-badge.status-verified {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .reviewed-badge.status-rejected {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -839,7 +839,7 @@ const { t } = useI18n()
   .btn-approve,
   .btn-reject {
     flex: none;
-    padding: 10px 24px;
+    padding: 0.625rem 1.5rem;
   }
 }
 </style>

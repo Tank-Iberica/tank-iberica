@@ -24,60 +24,60 @@
 .skeleton-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .skeleton-card {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .skeleton-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 
 .skeleton-line {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, var(--color-skeleton-bg) 25%, var(--color-skeleton-shine) 50%, var(--color-skeleton-bg) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s infinite;
-  border-radius: 4px;
-  height: 14px;
+  border-radius: var(--border-radius-sm);
+  height: 0.875rem;
 }
 
 .skeleton-short {
-  width: 120px;
+  width: 7.5rem;
 }
 
 .skeleton-badge {
-  width: 80px;
-  height: 24px;
-  border-radius: 12px;
+  width: 5rem;
+  height: 1.5rem;
+  border-radius: var(--border-radius-md);
 }
 
 .skeleton-long {
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
 }
 
 .skeleton-medium {
   width: 70%;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .skeleton-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .skeleton-btn {
-  width: 80px;
-  height: 34px;
-  border-radius: 6px;
+  width: 5rem;
+  height: 2.125rem;
+  border-radius: var(--border-radius);
 }
 
 @keyframes skeleton-shimmer {

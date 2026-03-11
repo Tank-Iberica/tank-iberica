@@ -82,12 +82,12 @@ const emit = defineEmits<{
 .filters-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-3, 12px);
-  margin-bottom: var(--spacing-5, 20px);
-  padding: var(--spacing-4, 16px);
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
+  padding: var(--spacing-4);
   background: var(--bg-primary, white);
   border-radius: var(--border-radius, 8px);
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  box-shadow: var(--shadow-sm, var(--shadow-card));
 }
 
 .filter-group {
@@ -97,26 +97,26 @@ const emit = defineEmits<{
 
 .plan-filter,
 .status-filter {
-  border: 1px solid var(--border-color-light, #e5e7eb);
+  border: 1px solid var(--border-color-light, var(--color-gray-200));
   border-radius: var(--border-radius-sm, 6px);
   overflow: hidden;
 }
 
 .filter-btn {
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   border: none;
   background: var(--bg-primary, white);
   cursor: pointer;
   font-size: var(--font-size-xs, 0.8rem);
   font-weight: var(--font-weight-medium, 500);
-  color: var(--color-gray-500, #6b7280);
+  color: var(--color-gray-500, var(--color-gray-500));
   transition: all var(--transition-fast, 150ms ease);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .filter-btn:not(:last-child) {
-  border-right: 1px solid var(--border-color-light, #e5e7eb);
+  border-right: 1px solid var(--border-color-light, var(--color-gray-200));
 }
 
 .filter-btn.active {
@@ -125,14 +125,14 @@ const emit = defineEmits<{
 }
 
 .filter-btn:hover:not(.active) {
-  background: var(--color-gray-100, #f3f4f6);
+  background: var(--color-gray-100, var(--color-gray-100));
 }
 
 .filter-search {
   flex: 1;
-  min-width: 200px;
-  padding: 8px 12px;
-  border: 1px solid var(--border-color-light, #e5e7eb);
+  min-width: 12.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color-light, var(--color-gray-200));
   border-radius: var(--border-radius-sm, 6px);
   font-size: var(--font-size-sm, 0.875rem);
 }
@@ -140,7 +140,7 @@ const emit = defineEmits<{
 .filter-search:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 @media (max-width: 48em) {

@@ -149,78 +149,78 @@ const { t } = useI18n()
 
 <style scoped>
 .contrato-terminos-arrendamiento {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .section-subtitle {
-  margin: 0 0 12px;
+  margin: 0 0 0.75rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0f2a2e;
+  color: var(--color-primary-darker);
 }
 
 .form-grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   flex: 1;
-  min-width: 120px;
+  min-width: 7.5rem;
 }
 
 .form-group label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .form-group input,
 .form-group select {
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 .option-toggle {
-  margin: 16px 0;
+  margin: 1rem 0;
 }
 
 .option-toggle label {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #374151;
-  min-height: 44px;
+  color: var(--color-gray-700);
+  min-height: 2.75rem;
 }
 
 .option-toggle input {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .purchase-options {
-  background: #f9fafb;
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 12px;
+  background: var(--color-gray-50);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-top: 0.75rem;
 }
 
 @media (max-width: 48em) {
@@ -229,7 +229,7 @@ const { t } = useI18n()
   }
 
   .purchase-options {
-    padding: 12px;
+    padding: 0.75rem;
   }
 }
 

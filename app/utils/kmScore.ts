@@ -210,7 +210,7 @@ function calculateScore(anomalies: Anomaly[], rates: number[], maxReasonable: nu
   return Math.max(0, Math.min(100, score))
 }
 
-function getScoreLabels(
+export function getScoreLabels(
   score: number,
   inspections: number,
   firstDate: string,

@@ -27,37 +27,37 @@ const { t } = useI18n()
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
 }
 
 .section-header h2 {
   margin: 0;
   font-size: 1.5rem;
-  color: #111827;
+  color: var(--color-gray-900);
 }
 
 .total-badge {
   background: var(--bg-secondary);
-  color: #6b7280;
-  padding: 4px 12px;
-  border-radius: 16px;
+  color: var(--color-gray-500);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-lg);
   font-size: 0.85rem;
   font-weight: 500;
 }
 
 .pending-badge {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
-  padding: 4px 12px;
-  border-radius: 16px;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-lg);
   font-size: 0.85rem;
   font-weight: 600;
 }

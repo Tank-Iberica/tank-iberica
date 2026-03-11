@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { LocaleProgress } from '~/composables/admin/useAdminLanguages'
+const { t } = useI18n()
 
 defineProps<{
   progress: LocaleProgress[]
@@ -10,10 +11,8 @@ defineProps<{
 
 <template>
   <div v-if="visible" class="config-card">
-    <h3 class="card-title">Progreso de Traduccion</h3>
-    <p class="card-description">
-      Estado de las traducciones para cada idioma activo (excepto el idioma por defecto).
-    </p>
+    <h3 class="card-title">{{ t('admin.configLanguages.progressTitle') }}</h3>
+    <p class="card-description">{{ t('admin.configLanguages.progressDesc') }}</p>
 
     <div v-if="loadingProgress" class="progress-loading">Cargando progreso...</div>
 
@@ -37,40 +36,40 @@ defineProps<{
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--spacing-5);
 }
 
 .card-title {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.125rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-description {
-  margin: 0 0 16px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-4);
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
 .progress-loading {
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 0.875rem;
-  padding: 12px 0;
+  padding: var(--spacing-3) 0;
 }
 
 .progress-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .progress-item {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .progress-header {
@@ -78,32 +77,32 @@ defineProps<{
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .progress-locale {
   font-weight: 500;
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .progress-count {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .progress-bar-track {
   width: 100%;
-  height: 8px;
+  height: 0.5rem;
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
   background: var(--color-primary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   transition: width 0.3s ease;
   min-width: 0;
 }
@@ -111,24 +110,24 @@ defineProps<{
 .progress-percentage {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .progress-empty {
   color: var(--text-disabled);
   font-size: 0.875rem;
-  padding: 8px 0;
+  padding: var(--spacing-2) 0;
 }
 
 @media (min-width: 48em) {
   .progress-item {
     flex-direction: row;
     align-items: center;
-    gap: 12px;
+    gap: var(--spacing-3);
   }
 
   .progress-header {
-    min-width: 240px;
+    min-width: 15rem;
     flex-shrink: 0;
   }
 
@@ -137,14 +136,14 @@ defineProps<{
   }
 
   .progress-percentage {
-    min-width: 40px;
+    min-width: 2.5rem;
     text-align: right;
   }
 }
 
 (@media ()max-width: 47.9375em())) {
   .config-card {
-    padding: 16px;
+    padding: var(--spacing-4);
   }
 }
 </style>

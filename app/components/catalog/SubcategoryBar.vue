@@ -177,7 +177,7 @@ const hasItems = computed(() => {
 async function fetchCategories() {
   const { data } = await supabase
     .from('categories')
-    .select('*')
+    .select('id, name_es, name_en, slug, applicable_actions, sort_order')
     .eq('status', 'published')
     .order('sort_order', { ascending: true })
 
@@ -189,7 +189,7 @@ async function fetchCategories() {
 async function fetchSubcategories() {
   const { data } = await supabase
     .from('subcategories')
-    .select('*')
+    .select('id, name_es, name_en, slug, applicable_actions, sort_order')
     .eq('status', 'published')
     .order('sort_order', { ascending: true })
 
@@ -291,7 +291,7 @@ onUnmounted(() => {
 .subcategories-section {
   background: var(--bg-primary);
   padding: 0.28rem 0;
-  margin-top: 8px;
+  margin-top: 0.5rem;
   position: relative;
   overflow: hidden;
   border-top: 1px solid var(--border-color);
@@ -320,8 +320,8 @@ onUnmounted(() => {
    SEPARATOR — ">" between subcategory and types
    ============================================ */
 .separator {
-  color: var(--text-secondary, #6b7280);
-  font-size: 12px;
+  color: var(--text-secondary, var(--color-gray-500));
+  font-size: var(--font-size-xs);
   font-weight: 600;
   padding: 0 0.25rem;
   flex-shrink: 0;
@@ -333,10 +333,10 @@ onUnmounted(() => {
 .subcategory-btn {
   padding: 0.3rem 0.6rem;
   border: 2px solid var(--border-color);
-  border-radius: 9999px;
+  border-radius: var(--border-radius-full);
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   line-height: 1.4;
   white-space: nowrap;
@@ -373,15 +373,15 @@ onUnmounted(() => {
 }
 
 .subcategory-btn.disabled {
-  color: var(--text-auxiliary, #9ca3af);
+  color: var(--text-auxiliary, var(--color-gray-400));
   cursor: not-allowed;
-  background: #f9fafb;
-  border-color: var(--text-auxiliary, #9ca3af);
+  background: var(--color-gray-50, var(--color-gray-50));
+  border-color: var(--text-auxiliary, var(--color-gray-400));
 }
 
 .subcategory-btn.disabled:hover {
-  background: #f9fafb;
-  color: var(--text-auxiliary, #9ca3af);
+  background: var(--color-gray-50, var(--color-gray-50));
+  color: var(--text-auxiliary, var(--color-gray-400));
 }
 
 /* Subcategory names in uppercase (not types) */
@@ -409,14 +409,14 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--border-color);
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  min-height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   color: var(--text-primary);
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
@@ -424,11 +424,11 @@ onUnmounted(() => {
 }
 
 .scroll-btn-left {
-  left: 2px;
+  left: 0.125rem;
 }
 
 .scroll-btn-right {
-  right: 2px;
+  right: 0.125rem;
 }
 
 /* ============================================
@@ -441,12 +441,12 @@ onUnmounted(() => {
   }
 
   .subcategory-btn {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     padding: 0.25rem 0.45rem;
   }
 
   .separator {
-    font-size: 13px;
+    font-size: var(--font-size-sm);
     padding: 0 0.35rem;
   }
 }
@@ -466,15 +466,15 @@ onUnmounted(() => {
   }
 
   .subcategory-btn {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
     padding: 0.4rem 0.6rem;
-    height: 36px;
+    height: 2.25rem;
     display: inline-flex;
     align-items: center;
   }
 
   .separator {
-    font-size: 14px;
+    font-size: var(--font-size-base);
     padding: 0 0.5rem;
   }
 }
@@ -489,7 +489,7 @@ onUnmounted(() => {
   }
 
   .subcategory-btn {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
     padding: 0.4rem 0.6rem;
   }
 }

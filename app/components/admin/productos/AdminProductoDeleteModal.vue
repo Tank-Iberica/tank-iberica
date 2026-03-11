@@ -22,8 +22,8 @@ const emit = defineEmits<Emits>()
     <div v-if="show" class="modal-bg" @click.self="emit('update:show', false)">
       <div class="modal">
         <div class="modal-head">
-          <span>🗑️ Eliminar vehículo</span>
-          <button @click="emit('update:show', false)">×</button>
+          <span>🗑️ Eliminar {{ $t('vertical.itemNameCapitalized') }}</span>
+          <button :aria-label="$t('common.close')" @click="emit('update:show', false)">×</button>
         </div>
         <div class="modal-body">
           <p>
@@ -42,7 +42,7 @@ const emit = defineEmits<Emits>()
           </div>
         </div>
         <div class="modal-foot">
-          <button class="btn" @click="emit('update:show', false)">Cancelar</button>
+          <button class="btn" @click="emit('update:show', false)">{{ $t('common.cancel') }}</button>
           <button class="btn btn-danger" :disabled="!canDelete" @click="emit('delete')">
             Eliminar
           </button>
@@ -61,21 +61,21 @@ const emit = defineEmits<Emits>()
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 .modal {
   background: var(--bg-primary);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   width: 100%;
-  max-width: 400px;
+  max-width: 25rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 .modal-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 0.875rem var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-200);
   font-weight: 600;
 }
 .modal-head button {
@@ -86,48 +86,48 @@ const emit = defineEmits<Emits>()
   color: var(--text-disabled);
 }
 .modal-body {
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 .modal-body .warn {
   color: var(--color-warning);
   font-size: 0.85rem;
-  margin-top: 8px;
+  margin-top: var(--spacing-2);
 }
 .modal-body .field {
-  margin-top: 12px;
+  margin-top: var(--spacing-3);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 .modal-body .field label {
   font-size: 0.85rem;
 }
 .modal-body .field input {
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.85rem;
 }
 .modal-foot {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
   border-radius: 0 0 10px 10px;
 }
 .btn {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-danger {
   background: var(--color-error);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 .btn-danger:disabled {

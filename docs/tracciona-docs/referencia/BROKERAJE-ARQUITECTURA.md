@@ -1079,6 +1079,17 @@ Si los KPIs cruzan umbrales de peligro durante periodos sostenidos, el sistema a
 - Integración con financiación (pre-aprobación de crédito en el flujo)
 - Modo "oferta ciega" (C lanza criterios, IA busca matches)
 
+### Fase 4 — Tests de brokeraje
+
+> **Prerequisito:** Convenciones de testing del proyecto establecidas (ver sección "Tests" en `CONTRIBUTING.md`).
+> **Ejecutar:** Cuando los endpoints de Fases 1-2 estén implementados.
+
+- Tests unitarios de endpoints: `server/api/brokerage/*.ts` (Vitest + mocks)
+- Tests de RLS: verificar que las 6 policies funcionan (admin access, own_consents, denegación a no-admin)
+- Tests de lógica de negocio: transiciones de estado del deal, validación de margen, consent flow
+- Tests de seguridad: vertical isolation (dealer A no ve deals de dealer B), opt-out respetado
+- Cobertura mínima: ≥ 80% statements en módulo brokerage
+
 ---
 
 ## 10.1 Barreras anti-abuso del comprador

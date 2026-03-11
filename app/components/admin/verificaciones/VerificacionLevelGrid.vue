@@ -47,18 +47,18 @@ const { t } = useI18n()
 .vehicle-levels {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
 }
 
 .vehicle-level-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px 16px;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .vlc-info {
@@ -81,14 +81,14 @@ const { t } = useI18n()
 .vlc-progress {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .progress-bar-container {
   flex: 1;
-  height: 6px;
+  height: 0.375rem;
   background: var(--bg-tertiary);
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 
@@ -112,7 +112,7 @@ const { t } = useI18n()
 }
 
 .progress-bar-fill.level-detailed {
-  background: #8b5cf6;
+  background: var(--color-violet-500);
 }
 
 .progress-bar-fill.level-audited {
@@ -120,7 +120,7 @@ const { t } = useI18n()
 }
 
 .progress-bar-fill.level-certified {
-  background: #14b8a6;
+  background: var(--color-teal-500);
 }
 
 .vlc-level {
@@ -136,16 +136,16 @@ const { t } = useI18n()
   color: var(--color-success);
 }
 .vlc-level.level-extended {
-  color: #2563eb;
+  color: var(--color-focus);
 }
 .vlc-level.level-detailed {
-  color: #7c3aed;
+  color: var(--color-purple-600);
 }
 .vlc-level.level-audited {
   color: var(--color-warning);
 }
 .vlc-level.level-certified {
-  color: #0d9488;
+  color: var(--color-teal-600);
 }
 
 /* 48em+ : Tablet layout */

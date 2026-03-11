@@ -52,7 +52,7 @@ defineEmits<{
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-export:hover {
@@ -65,8 +65,8 @@ defineEmits<{
 }
 
 .btn-icon {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   flex-shrink: 0;
 }
 

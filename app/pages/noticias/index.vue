@@ -1,6 +1,7 @@
 <template>
   <div class="news-page">
     <div class="news-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('news.title') }]" />
       <h1 class="news-title">{{ $t('news.title') }}</h1>
 
       <!-- Category filters -->
@@ -28,7 +29,8 @@
 
       <!-- No results -->
       <div v-else-if="news.length === 0" class="news-empty">
-        <p>{{ $t('news.noResults') }}</p>
+        <p class="news-empty-title">{{ $t('news.noResults') }}</p>
+        <p class="news-empty-hint">{{ $t('news.noResultsHint') }}</p>
       </div>
 
       <!-- News grid -->
@@ -40,7 +42,7 @@
           class="news-card"
         >
           <div class="news-card-image">
-            <img v-if="item.image_url" :src="item.image_url" :alt="getTitle(item)" loading="lazy" />
+            <NuxtImg v-if="item.image_url" :src="item.image_url" :alt="getTitle(item)" loading="lazy" width="400" height="225" decoding="async" sizes="(max-width: 48rem) 100vw, 400px" />
             <div v-else class="news-card-placeholder">
               <svg
                 width="32"
@@ -79,7 +81,8 @@
 import type { News } from '~/composables/useNews'
 
 const { locale, t } = useI18n()
-const { news, loading, loadingMore, hasMore, fetchNews, fetchMore } = useNews()
+const supabase = useSupabaseClient()
+const { news, loading, loadingMore, hasMore, total, fetchNews, fetchMore } = useNews()
 
 const activeCategory = ref('')
 
@@ -90,6 +93,21 @@ const categories = [
   { value: 'destacados', label: 'news.destacados' },
   { value: 'general', label: 'news.general' },
 ]
+
+// SSR-compatible initial load — data arrives in HTML, no client-only flash
+const { data: ssrNews } = await useAsyncData('news-index', async () => {
+  const { data, count } = await supabase
+    .from('news')
+    .select('id, title_es, title_en, slug, category, image_url, description_es, description_en, content_es, content_en, hashtags, views, status, published_at, created_at, updated_at', { count: 'exact' })
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .range(0, 11)
+  return { items: data || [], count: count || 0 }
+})
+
+news.value = (ssrNews.value?.items as News[]) || []
+total.value = ssrNews.value?.count || 0
+hasMore.value = news.value.length < total.value
 
 function getTitle(item: News): string {
   if (locale.value === 'en' && item.title_en) return item.title_en
@@ -118,10 +136,6 @@ usePageSeo({
   description: t('seo.newsDescription'),
   path: '/noticias',
 })
-
-onMounted(() => {
-  fetchNews()
-})
 </script>
 
 <style scoped>
@@ -131,7 +145,7 @@ onMounted(() => {
 }
 
 .news-container {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -146,24 +160,24 @@ onMounted(() => {
 /* Categories */
 .news-categories {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   overflow-x: auto;
-  padding-bottom: 8px;
+  padding-bottom: var(--spacing-2);
   margin-bottom: 1.5rem;
   -webkit-overflow-scrolling: touch;
 }
 
 .category-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 20px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--border-color, var(--color-gray-200));
+  border-radius: var(--border-radius-full);
   background: var(--bg-primary);
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: all 0.2s;
 }
 
@@ -184,7 +198,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   text-decoration: none;
@@ -202,7 +216,7 @@ onMounted(() => {
 .news-card-image {
   position: relative;
   aspect-ratio: 16 / 9;
-  background: var(--bg-secondary, #f5f5f5);
+  background: var(--bg-secondary, var(--color-skeleton-bg));
   overflow: hidden;
 }
 
@@ -223,12 +237,12 @@ onMounted(() => {
 
 .news-card-category {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 0.5rem;
+  left: 0.5rem;
   background: var(--color-primary);
   color: white;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -263,7 +277,7 @@ onMounted(() => {
 }
 
 .skeleton-card {
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
   background: var(--bg-primary);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -279,13 +293,13 @@ onMounted(() => {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .skeleton-line {
-  height: 16px;
+  height: 1rem;
   background: var(--bg-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -313,6 +327,17 @@ onMounted(() => {
   color: var(--text-auxiliary);
 }
 
+.news-empty-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.news-empty-hint {
+  font-size: 0.875rem;
+  color: var(--text-auxiliary);
+}
+
 /* Load more */
 .news-load-more {
   text-align: center;
@@ -320,14 +345,14 @@ onMounted(() => {
 }
 
 .btn-load-more {
-  padding: 12px 32px;
+  padding: var(--spacing-3) var(--spacing-8);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: opacity 0.2s;
 }
 
@@ -341,7 +366,7 @@ onMounted(() => {
 }
 
 /* Tablet */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .news-grid,
   .news-loading {
     grid-template-columns: repeat(2, 1fr);
@@ -349,7 +374,7 @@ onMounted(() => {
 }
 
 /* Desktop */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .news-title {
     font-size: 1.75rem;
   }
@@ -364,7 +389,7 @@ onMounted(() => {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .news-container {
     padding: 0 2rem;
   }

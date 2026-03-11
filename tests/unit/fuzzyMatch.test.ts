@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { fuzzyMatch } from '../../app/utils/fuzzyMatch'
+import { fuzzyMatch, diceCoefficient } from '../../app/utils/fuzzyMatch'
 
 describe('fuzzyMatch', () => {
   it('returns true for an exact match', () => {
@@ -80,5 +80,36 @@ describe('fuzzyMatch', () => {
   it('handles whitespace normalization', () => {
     expect(fuzzyMatch('  Renault   Trucks  ', 'renault trucks')).toBe(true)
     expect(fuzzyMatch('Renault Trucks', '  renault   trucks  ')).toBe(true)
+  })
+})
+
+// ─── diceCoefficient direct tests ─────────────────────────────────────────────
+
+describe('diceCoefficient', () => {
+  it('returns 1 for identical strings', () => {
+    expect(diceCoefficient('hello', 'hello')).toBe(1)
+  })
+
+  it('returns 0 when first string has length < 2', () => {
+    expect(diceCoefficient('a', 'hello')).toBe(0)
+  })
+
+  it('returns 0 when second string has length < 2', () => {
+    expect(diceCoefficient('hello', 'b')).toBe(0)
+  })
+
+  it('returns 0 for empty strings', () => {
+    expect(diceCoefficient('', 'hello')).toBe(0)
+    expect(diceCoefficient('hello', '')).toBe(0)
+  })
+
+  it('returns a value between 0 and 1 for similar strings', () => {
+    const score = diceCoefficient('cisterna', 'cisterma')
+    expect(score).toBeGreaterThan(0)
+    expect(score).toBeLessThanOrEqual(1)
+  })
+
+  it('returns 0 for completely different strings of length >= 2', () => {
+    expect(diceCoefficient('ab', 'cd')).toBe(0)
   })
 })

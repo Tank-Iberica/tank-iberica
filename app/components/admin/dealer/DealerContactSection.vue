@@ -44,12 +44,12 @@ function updateCtaTextLang(lang: string, value: string) {
 <template>
   <!-- SECTION 4: CONTACTO -->
   <div class="config-card">
-    <h3 class="card-title">Contacto</h3>
-    <p class="card-subtitle">Informacion de contacto que veran tus clientes</p>
+    <h3 class="card-title">{{ $t('admin.dealer.contactTitle') }}</h3>
+    <p class="card-subtitle">{{ $t('admin.dealer.contactSubtitle') }}</p>
 
     <div class="form-row-2col">
       <div class="form-group">
-        <label for="dealer-phone">Telefono</label>
+        <label for="dealer-phone">{{ $t('admin.dealer.phoneLabel') }}</label>
         <input
           id="dealer-phone"
           :value="phone"
@@ -60,7 +60,7 @@ function updateCtaTextLang(lang: string, value: string) {
         >
       </div>
       <div class="form-group">
-        <label for="dealer-whatsapp">WhatsApp</label>
+        <label for="dealer-whatsapp">{{ $t('admin.dealer.whatsappLabel') }}</label>
         <input
           id="dealer-whatsapp"
           :value="whatsapp"
@@ -74,7 +74,7 @@ function updateCtaTextLang(lang: string, value: string) {
 
     <div class="form-row-2col">
       <div class="form-group">
-        <label for="dealer-email">Email</label>
+        <label for="dealer-email">{{ $t('admin.dealer.emailLabel') }}</label>
         <input
           id="dealer-email"
           :value="email"
@@ -85,7 +85,7 @@ function updateCtaTextLang(lang: string, value: string) {
         >
       </div>
       <div class="form-group">
-        <label for="dealer-website">Sitio web</label>
+        <label for="dealer-website">{{ $t('admin.dealer.websiteLabel') }}</label>
         <input
           id="dealer-website"
           :value="website"
@@ -97,7 +97,7 @@ function updateCtaTextLang(lang: string, value: string) {
     </div>
 
     <div class="form-group">
-      <label for="dealer-address">Direccion</label>
+      <label for="dealer-address">{{ $t('admin.dealer.addressLabel') }}</label>
       <input
         id="dealer-address"
         :value="address"
@@ -109,7 +109,7 @@ function updateCtaTextLang(lang: string, value: string) {
     </div>
 
     <div class="form-group">
-      <label for="dealer-phone-mode">Modo de telefono</label>
+      <label for="dealer-phone-mode">{{ $t('admin.dealer.phoneModeLabel') }}</label>
       <select
         id="dealer-phone-mode"
         :value="phoneMode"
@@ -122,7 +122,7 @@ function updateCtaTextLang(lang: string, value: string) {
     </div>
 
     <div class="form-group">
-      <label>Horario de atencion</label>
+      <label>{{ $t('admin.dealer.workingHoursLabel') }}</label>
       <div class="lang-row">
         <div class="lang-field">
           <span class="lang-badge">ES</span>
@@ -146,7 +146,7 @@ function updateCtaTextLang(lang: string, value: string) {
     </div>
 
     <div class="form-group">
-      <label>Texto del boton de contacto (CTA)</label>
+      <label>{{ $t('admin.dealer.ctaLabel') }}</label>
       <div class="lang-row">
         <div class="lang-field">
           <span class="lang-badge">ES</span>
@@ -172,8 +172,8 @@ function updateCtaTextLang(lang: string, value: string) {
 
   <!-- SECTION 5: REDES SOCIALES -->
   <div class="config-card">
-    <h3 class="card-title">Redes sociales</h3>
-    <p class="card-subtitle">Enlaces a tus perfiles en redes sociales</p>
+    <h3 class="card-title">{{ $t('admin.dealer.socialTitle') }}</h3>
+    <p class="card-subtitle">{{ $t('admin.dealer.socialSubtitle') }}</p>
 
     <div class="form-row-2col">
       <div class="form-group">
@@ -274,14 +274,14 @@ function updateCtaTextLang(lang: string, value: string) {
   box-sizing: border-box;
   background: var(--bg-primary);
   color: var(--text-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Two column form row (stacks on mobile) */
@@ -306,7 +306,7 @@ function updateCtaTextLang(lang: string, value: string) {
 
 .lang-badge {
   flex-shrink: 0;
-  width: 32px;
+  width: 2rem;
   text-align: center;
   font-size: 0.7rem;
   font-weight: var(--font-weight-bold);
@@ -323,13 +323,13 @@ function updateCtaTextLang(lang: string, value: string) {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .lang-field input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Responsive: 48em */

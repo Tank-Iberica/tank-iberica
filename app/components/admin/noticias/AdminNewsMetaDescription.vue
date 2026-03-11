@@ -47,17 +47,17 @@ function getDescLengthLabel(len: number): string {
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .section-title {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--color-gray-100);
 }
 
@@ -71,7 +71,7 @@ function getDescLengthLabel(len: number): string {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .field label {
@@ -81,9 +81,9 @@ function getDescLengthLabel(len: number): string {
 }
 
 .input {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   width: 100%;
   box-sizing: border-box;
@@ -104,7 +104,7 @@ function getDescLengthLabel(len: number): string {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .char-count {

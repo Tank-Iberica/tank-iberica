@@ -2,7 +2,7 @@
   <header class="admin-header">
     <!-- Mobile: hamburger + title -->
     <div class="header-left">
-      <button class="hamburger-btn" @click="$emit('toggle-sidebar')">
+      <button class="hamburger-btn" :aria-label="$t('admin.header.openSidebar')" @click="$emit('toggle-sidebar')">
         <svg
           width="24"
           height="24"
@@ -18,7 +18,7 @@
       </button>
 
       <!-- Desktop: collapse toggle -->
-      <button class="collapse-btn" @click="$emit('toggle-collapse')">
+      <button class="collapse-btn" :aria-label="$t('admin.header.collapseSidebar')" @click="$emit('toggle-collapse')">
         <svg
           width="20"
           height="20"
@@ -56,7 +56,7 @@
           <path d="M15 3h6v6" />
           <path d="M10 14L21 3" />
         </svg>
-        <span class="view-site-label">Ver sitio</span>
+        <span class="view-site-label">{{ $t('admin.header.viewSite') }}</span>
       </NuxtLink>
 
       <div class="user-menu">
@@ -96,7 +96,7 @@
               <path d="M16 17l5-5-5-5" />
               <path d="M21 12H9" />
             </svg>
-            Cerrar sesión
+            {{ $t('nav.logout') }}
           </button>
         </div>
       </div>
@@ -110,6 +110,7 @@ defineEmits<{
   'toggle-collapse': []
 }>()
 
+const { t } = useI18n()
 const route = useRoute()
 const user = useSupabaseUser()
 const supabase = useSupabaseClient()
@@ -152,22 +153,22 @@ const userInitials = computed(() => {
 const currentSection = computed(() => {
   const path = route.path
   const sections: Record<string, string> = {
-    '/admin/vehiculos': 'Vehículos',
-    '/admin/intermediacion': 'Intermediación',
-    '/admin/ojeados': 'Ojeados',
-    '/admin/historico': 'Histórico',
-    '/admin/config/tipos': 'Tipos',
-    '/admin/config/filtros': 'Filtros',
-    '/admin/config/banner': 'Banner',
-    '/admin/anunciantes': 'Anunciantes',
-    '/admin/solicitantes': 'Solicitantes',
-    '/admin/usuarios': 'Usuarios',
-    '/admin/agenda': 'Agenda',
-    '/admin/chat': 'Chat',
-    '/admin/suscripciones': 'Suscripciones',
-    '/admin/noticias': 'Noticias',
-    '/admin/comentarios': 'Comentarios',
-    '/admin/balance': 'Balance',
+    '/admin/vehiculos': t('admin.header.breadcrumbs.vehiculos'),
+    '/admin/intermediacion': t('admin.header.breadcrumbs.intermediacion'),
+    '/admin/ojeados': t('admin.header.breadcrumbs.ojeados'),
+    '/admin/historico': t('admin.header.breadcrumbs.historico'),
+    '/admin/config/tipos': t('admin.header.breadcrumbs.tipos'),
+    '/admin/config/filtros': t('admin.header.breadcrumbs.filtros'),
+    '/admin/config/banner': t('admin.header.breadcrumbs.banner'),
+    '/admin/anunciantes': t('admin.header.breadcrumbs.anunciantes'),
+    '/admin/solicitantes': t('admin.header.breadcrumbs.solicitantes'),
+    '/admin/usuarios': t('admin.header.breadcrumbs.usuarios'),
+    '/admin/agenda': t('admin.header.breadcrumbs.agenda'),
+    '/admin/chat': t('admin.header.breadcrumbs.chat'),
+    '/admin/suscripciones': t('admin.header.breadcrumbs.suscripciones'),
+    '/admin/noticias': t('admin.header.breadcrumbs.noticias'),
+    '/admin/comentarios': t('admin.header.breadcrumbs.comentarios'),
+    '/admin/balance': t('admin.header.breadcrumbs.balance'),
   }
 
   for (const [prefix, name] of Object.entries(sections)) {
@@ -190,7 +191,7 @@ async function handleLogout() {
   top: 0;
   right: 0;
   left: 0;
-  min-height: 56px;
+  min-height: 3.5rem;
   background: var(--bg-primary);
   border-bottom: 1px solid var(--border-color);
   display: flex;
@@ -203,12 +204,12 @@ async function handleLogout() {
 @media (min-width: 48em) {
   .admin-header {
     left: var(--sidebar-width);
-    min-height: 60px;
+    min-height: 3.75rem;
     transition: left var(--transition-normal);
   }
 
   .sidebar-collapsed .admin-header {
-    left: 64px;
+    left: 4rem;
   }
 }
 
@@ -320,8 +321,8 @@ async function handleLogout() {
 }
 
 .user-avatar {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   background: var(--color-primary);
   color: var(--color-white);
   border-radius: var(--border-radius-full);
@@ -358,7 +359,7 @@ async function handleLogout() {
   position: absolute;
   top: calc(100% + var(--spacing-2));
   right: 0;
-  min-width: 200px;
+  min-width: 12.5rem;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -387,7 +388,7 @@ async function handleLogout() {
   font-size: var(--font-size-sm);
   text-align: left;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .dropdown-item:hover {

@@ -1,5 +1,8 @@
-import { describe, it, expect } from 'vitest'
-import { parseLocationText } from '~/utils/parseLocation'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { parseLocationText, geocodeLocation } from '~/utils/parseLocation'
+
+// Mock $fetch for geocodeLocation tests
+vi.stubGlobal('$fetch', vi.fn())
 
 // ─── Empty / null input ───────────────────────────────────────────────────────
 
@@ -167,5 +170,143 @@ describe('parseLocationText — return structure', () => {
     const r = parseLocationText('Pamplona')
     expect(r.region).toBeTruthy()
     expect(typeof r.region).toBe('string')
+  })
+})
+
+// ─── geocodeLocation ─────────────────────────────────────────────────────────
+
+describe('geocodeLocation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('returns local result when province already resolved', async () => {
+    const r = await geocodeLocation('Madrid, España')
+    expect(r.country).toBe('ES')
+    expect(r.province).toBe('Madrid')
+    // $fetch should NOT be called since local resolution succeeded
+    expect(vi.mocked(globalThis.$fetch)).not.toHaveBeenCalled()
+  })
+
+  it('returns empty result for null/empty input', async () => {
+    const r = await geocodeLocation(null)
+    expect(r).toEqual({ country: null, province: null, region: null })
+  })
+
+  it('returns empty result for whitespace-only input', async () => {
+    const r = await geocodeLocation('   ')
+    expect(r).toEqual({ country: null, province: null, region: null })
+  })
+
+  it('geocodes unknown city and resolves Spanish province from Nominatim', async () => {
+    vi.mocked(globalThis.$fetch).mockResolvedValueOnce([{
+      address: {
+        country_code: 'es',
+        province: 'Segovia',
+        state: 'Castilla y León',
+        city: 'La Granja de San Ildefonso',
+      },
+    }])
+    const r = await geocodeLocation('La Granja de San Ildefonso')
+    expect(r.country).toBe('ES')
+    expect(r.province).toBe('Segovia')
+  })
+
+  it('resolves Spanish province from state when province field misses', async () => {
+    vi.mocked(globalThis.$fetch).mockResolvedValueOnce([{
+      address: {
+        country_code: 'es',
+        state: 'Comunidad de Madrid',
+      },
+    }])
+    const r = await geocodeLocation('Alcobendas')
+    expect(r.country).toBe('ES')
+    expect(r.province).toBe('Madrid')
+  })
+
+  it('returns country only for non-Spanish Nominatim result', async () => {
+    vi.mocked(globalThis.$fetch).mockResolvedValueOnce([{
+      address: {
+        country_code: 'de',
+        state: 'Bayern',
+        city: 'München',
+      },
+    }])
+    const r = await geocodeLocation('München')
+    expect(r.country).toBe('DE')
+    expect(r.province).toBeNull()
+  })
+
+  it('falls back to local result when $fetch throws', async () => {
+    vi.mocked(globalThis.$fetch).mockRejectedValueOnce(new Error('Network error'))
+    const r = await geocodeLocation('UnknownCity123')
+    expect(r.country).toBeNull()
+    expect(r.province).toBeNull()
+  })
+
+  it('falls back to local result when Nominatim returns empty array', async () => {
+    vi.mocked(globalThis.$fetch).mockResolvedValueOnce([])
+    const r = await geocodeLocation('UnknownCity123')
+    expect(r.country).toBeNull()
+  })
+
+  it('uses fallback country from local parsing when Nominatim has no country_code', async () => {
+    vi.mocked(globalThis.$fetch).mockResolvedValueOnce([{
+      address: {
+        state: 'Unknown State',
+      },
+    }])
+    const r = await geocodeLocation('SomePlace, DE')
+    expect(r.country).toBe('DE')
+    expect(r.province).toBeNull()
+  })
+
+  it('resolves province from county field', async () => {
+    vi.mocked(globalThis.$fetch).mockResolvedValueOnce([{
+      address: {
+        country_code: 'es',
+        county: 'Ávila',
+        state: 'Castilla y León',
+      },
+    }])
+    const r = await geocodeLocation('Arenas de San Pedro')
+    expect(r.country).toBe('ES')
+    expect(r.province).toBe('Ávila')
+  })
+
+  it('returns null province when Nominatim state does not match any region', async () => {
+    vi.mocked(globalThis.$fetch).mockResolvedValueOnce([{
+      address: {
+        country_code: 'es',
+        state: 'UnknownRegion123',
+      },
+    }])
+    const r = await geocodeLocation('SomeVillage')
+    expect(r.country).toBe('ES')
+    expect(r.province).toBeNull()
+  })
+})
+
+// ─── resolveSpanishProvince via PROVINCE_TO_REGION loop ──────────────────────
+
+describe('parseLocationText — province name as input (not city)', () => {
+  it('resolves Guipúzcoa (province not in city map) via province loop', () => {
+    const r = parseLocationText('Guipúzcoa')
+    expect(r.country).toBe('ES')
+    expect(r.province).toBe('Guipúzcoa')
+    expect(r.region).toBeTruthy()
+  })
+
+  it('resolves La Rioja (province not in city map) via province loop', () => {
+    const r = parseLocationText('La Rioja')
+    expect(r.country).toBe('ES')
+    expect(r.province).toBe('La Rioja')
+  })
+
+  it('returns country ES with null province for unknown Spanish city', () => {
+    const r = parseLocationText('UnknownVillage, ES')
+    expect(r.country).toBe('ES')
+    expect(r.province).toBeNull()
+    expect(r.region).toBeNull()
   })
 })

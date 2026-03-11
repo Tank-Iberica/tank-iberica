@@ -61,13 +61,13 @@ function getStatusLabel(status: string): string {
 
 function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
-    draft: '#6b7280',
-    signed: '#3b82f6',
+    draft: 'var(--color-gray-500)',
+    signed: 'var(--color-info)',
     active: '#22c55e',
-    expired: '#f59e0b',
-    cancelled: '#ef4444',
+    expired: 'var(--color-warning)',
+    cancelled: 'var(--color-error)',
   }
-  return colors[status] || '#6b7280'
+  return colors[status] || 'var(--color-gray-500)'
 }
 
 function getContractTypeLabel(type: string): string {
@@ -92,7 +92,7 @@ function getContractTypeLabel(type: string): string {
     </div>
 
     <!-- Error -->
-    <div v-else-if="error" class="alert alert-error" style="margin: 16px">
+    <div v-else-if="error" class="alert alert-error" style="margin: 1rem">
       {{ error }}
     </div>
 
@@ -181,14 +181,14 @@ function getContractTypeLabel(type: string): string {
 }
 
 .tool-header {
-  padding: 16px 20px;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.25rem;
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .tool-header h2 {
@@ -198,7 +198,7 @@ function getContractTypeLabel(type: string): string {
 
 .history-count {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .loading-state {
@@ -206,20 +206,20 @@ function getContractTypeLabel(type: string): string {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 64px 16px;
-  gap: 16px;
+  padding: 4rem 1rem;
+  gap: 1rem;
 }
 
 .loading-state.compact {
-  padding: 32px 16px;
+  padding: 2rem 1rem;
 }
 
 .spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--border-color-light);
+  width: 2rem;
+  height: 2rem;
+  border: 0.1875rem solid var(--border-color-light);
   border-top-color: var(--color-primary);
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   animation: spin 0.8s linear infinite;
 }
 
@@ -230,14 +230,14 @@ function getContractTypeLabel(type: string): string {
 }
 
 .alert {
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .alert-error {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
   border: 1px solid var(--color-error-border);
 }
@@ -246,9 +246,9 @@ function getContractTypeLabel(type: string): string {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 48px 16px;
-  color: #6b7280;
+  gap: 1rem;
+  padding: 3rem 1rem;
+  color: var(--color-gray-500);
   text-align: center;
 }
 
@@ -258,24 +258,24 @@ function getContractTypeLabel(type: string): string {
 }
 
 .btn {
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
   text-decoration: none;
 }
 
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 
@@ -284,16 +284,16 @@ function getContractTypeLabel(type: string): string {
 }
 
 .history-list {
-  padding: 16px;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .history-card {
   border: 1px solid var(--border-color-light);
-  border-radius: 10px;
-  padding: 16px;
+  border-radius: var(--border-radius-md);
+  padding: 1rem;
   transition: box-shadow 0.2s;
 }
 
@@ -304,59 +304,59 @@ function getContractTypeLabel(type: string): string {
 .history-card-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .contract-type-badge {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--border-radius);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.0188rem;
 }
 
 .contract-type-badge.arrendamiento {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 
 .contract-type-badge.compraventa {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .status-badge {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--border-radius);
 }
 
 .history-card-body {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .history-field {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .field-label {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
 }
 
 .field-value {
   font-size: 0.9rem;
-  color: #111827;
+  color: var(--color-gray-900);
 }
 
 .history-card-actions {
@@ -365,24 +365,24 @@ function getContractTypeLabel(type: string): string {
 }
 
 .status-select {
-  padding: 6px 10px;
+  padding: 0.375rem 0.625rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 0.8rem;
-  min-height: 36px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  min-height: 2.25rem;
   cursor: pointer;
 }
 
 .status-select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 @media (max-width: 48em) {
   .history-card-body {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 0.5rem;
   }
 }
 </style>

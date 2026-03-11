@@ -39,7 +39,7 @@ const emit = defineEmits<{
   background: var(--bg-tertiary);
   border-radius: var(--border-radius-full);
   padding: var(--spacing-1);
-  max-width: 320px;
+  max-width: 20rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -57,7 +57,7 @@ const emit = defineEmits<{
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
-  min-height: 44px;
+  min-height: 2.75rem;
   min-width: auto;
 }
 
@@ -73,7 +73,7 @@ const emit = defineEmits<{
   font-weight: var(--font-weight-semibold);
   color: var(--color-success);
   background: rgba(16, 185, 129, 0.1);
-  padding: 2px 6px;
+  padding: 0.125rem 0.375rem;
   border-radius: var(--border-radius-full);
   white-space: nowrap;
 }

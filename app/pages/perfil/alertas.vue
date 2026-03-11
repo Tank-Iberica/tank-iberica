@@ -33,10 +33,14 @@ onMounted(() => {
 <template>
   <div class="alerts-page">
     <div class="alerts-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('profile.alerts.title') }]" />
+      <PerfilProfileNavPills />
       <h1 class="page-title">{{ $t('profile.alerts.title') }}</h1>
       <p class="page-subtitle">{{ $t('profile.alerts.subtitle') }}</p>
 
-      <div v-if="loading" class="loading-state">{{ $t('common.loading') }}</div>
+      <div v-if="loading" class="loading-state" aria-busy="true">
+        <UiSkeletonCard v-for="n in 3" :key="n" :lines="2" />
+      </div>
 
       <div v-else-if="error" class="error-state">{{ error }}</div>
 
@@ -80,7 +84,7 @@ onMounted(() => {
 }
 
 .alerts-container {
-  max-width: 720px;
+  max-width: 45rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -142,7 +146,7 @@ onMounted(() => {
   cursor: pointer;
   text-decoration: none;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -155,7 +159,7 @@ onMounted(() => {
   gap: 0.75rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .alerts-container {
     padding: 0 2rem;
   }

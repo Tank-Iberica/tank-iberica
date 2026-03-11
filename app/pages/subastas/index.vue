@@ -1,6 +1,12 @@
 <template>
   <div class="auctions-page">
     <div class="auctions-container">
+      <UiBreadcrumbNav
+        :items="[
+          { label: $t('nav.home'), to: '/' },
+          { label: $t('nav.subastas') },
+        ]"
+      />
       <h1 class="auctions-title">{{ $t('auction.pageTitle') }}</h1>
 
       <!-- Tab buttons -->
@@ -40,6 +46,13 @@
 import { useSubastasIndex } from '~/composables/useSubastasIndex'
 
 definePageMeta({ layout: 'default' })
+
+const { t } = useI18n()
+usePageSeo({
+  title: t('auction.seoTitle'),
+  description: t('auction.seoDescription'),
+  path: '/subastas',
+})
 
 const {
   activeTab,
@@ -87,14 +100,14 @@ onUnmounted(destroy)
 }
 
 /* Breakpoint: 480px (large mobile / landscape) */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .auctions-title {
     font-size: var(--font-size-3xl);
   }
 }
 
 /* Breakpoint: 768px (tablet) */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .auctions-container {
     padding: 0 var(--spacing-6);
   }
@@ -106,7 +119,7 @@ onUnmounted(destroy)
 }
 
 /* Breakpoint: 1024px (desktop) */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .auctions-container {
     padding: 0 var(--spacing-8);
   }
@@ -117,7 +130,7 @@ onUnmounted(destroy)
 }
 
 /* Breakpoint: 1280px (large desktop) */
-@media (min-width: 1280px) {
+@media (min-width: 80em) {
   .auctions-grid {
     grid-template-columns: repeat(3, 1fr);
   }

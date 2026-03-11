@@ -5,6 +5,8 @@
  * cookie storage, and Supabase consents table sync.
  */
 
+import type { Database } from '~~/types/supabase'
+
 export interface ConsentState {
   necessary: boolean
   analytics: boolean
@@ -69,8 +71,7 @@ function removeMarketingCookies(): void {
 
 export function useConsent() {
   const user = useSupabaseUser()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = useSupabaseClient<any>()
+  const supabase = useSupabaseClient<Database>()
 
   /**
    * Read consent from localStorage (client only).

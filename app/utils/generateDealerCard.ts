@@ -146,7 +146,6 @@ export async function generateDealerCardPdf(opts: CardOptions): Promise<void> {
   if (dealer.website) {
     const displayUrl = dealer.website.replace(/^https?:\/\//, '').replace(/\/$/, '')
     doc.text(displayUrl, 6, contactY)
-    contactY += 4
   }
 
   // Address at bottom

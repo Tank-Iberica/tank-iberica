@@ -1,4 +1,9 @@
+import { defineEventHandler, getHeader, getQuery, setHeader } from 'h3'
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { safeError } from '../../utils/safeError'
+import { setApiVersionHeaders } from '../../utils/apiVersion'
+
+type PriceTrend = 'rising' | 'falling' | 'stable'
 
 interface MarketDataRow {
   avg_price: number | null
@@ -11,7 +16,7 @@ interface MarketDataRow {
 
 interface ValuationResponse {
   estimated_price: { min: number; median: number; max: number }
-  market_trend: 'rising' | 'falling' | 'stable'
+  market_trend: PriceTrend
   trend_pct: number
   avg_days_to_sell: number | null
   sample_size: number
@@ -26,7 +31,7 @@ interface DataSubscription {
   rate_limit_daily: number
 }
 
-function computeMedian(sorted: number[]): number {
+export function computeMedian(sorted: number[]): number {
   const mid = Math.floor(sorted.length / 2)
   if (sorted.length % 2 === 0) {
     return Math.round((sorted[mid - 1]! + sorted[mid]!) / 2)
@@ -34,7 +39,7 @@ function computeMedian(sorted: number[]): number {
   return Math.round(sorted[mid]!)
 }
 
-async function logUsage(
+export async function logUsage(
   supabase: SupabaseClient,
   apiKey: string | undefined,
   params: Record<string, unknown>,
@@ -56,7 +61,7 @@ interface PriceEstimate {
   max: number
 }
 
-function computePriceEstimate(prices: number[], yearParam: string | undefined): PriceEstimate {
+export function computePriceEstimate(prices: number[], yearParam: string | undefined): PriceEstimate {
   const sortedPrices = [...prices].sort((a, b) => a - b)
   let minPrice = Math.min(...prices) * 0.9
   let maxPrice = Math.max(...prices) * 1.1
@@ -81,8 +86,8 @@ function computePriceEstimate(prices: number[], yearParam: string | undefined): 
   }
 }
 
-function computeTrend(validRows: (MarketDataRow & { avg_price: number })[]): {
-  marketTrend: 'rising' | 'falling' | 'stable'
+export function computeTrend(validRows: (MarketDataRow & { avg_price: number })[]): {
+  marketTrend: PriceTrend
   trendPct: number
 } {
   const now = new Date()
@@ -112,11 +117,13 @@ function computeTrend(validRows: (MarketDataRow & { avg_price: number })[]): {
   if (olderAvg <= 0) return { marketTrend: 'stable', trendPct: 0 }
 
   const trendPct = Number((((recentAvg - olderAvg) / olderAvg) * 100).toFixed(1))
-  const marketTrend = trendPct > 1 ? 'rising' : trendPct < -1 ? 'falling' : 'stable'
+  let marketTrend: PriceTrend = 'stable'
+  if (trendPct > 1) marketTrend = 'rising'
+  else if (trendPct < -1) marketTrend = 'falling'
   return { marketTrend, trendPct }
 }
 
-function computeConfidence(sampleSize: number): 'high' | 'medium' | 'low' {
+export function computeConfidence(sampleSize: number): 'high' | 'medium' | 'low' {
   if (sampleSize >= 20) return 'high'
   if (sampleSize >= 10) return 'medium'
   return 'low'
@@ -125,12 +132,9 @@ function computeConfidence(sampleSize: number): 'high' | 'medium' | 'low' {
 export default defineEventHandler(async (event): Promise<ValuationResponse> => {
   // POSPUESTO — Activar cuando haya ≥500 transacciones históricas
   // Ver FLUJOS-OPERATIVOS §15 para criterios de activación
-  const VALUATION_API_ENABLED = false
+  const VALUATION_API_ENABLED = process.env.VALUATION_API_ENABLED === 'true'
   if (!VALUATION_API_ENABLED) {
-    throw createError({
-      statusCode: 503,
-      message: 'Valuation API coming soon. Insufficient market data for reliable estimates.',
-    })
+    throw safeError(503, 'Valuation API coming soon. Insufficient market data for reliable estimates.')
   }
 
   const query = getQuery(event)
@@ -141,7 +145,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
   // Extract API key
   const apiKey = authHeader?.replace('Bearer ', '')
   if (!apiKey) {
-    throw createError({ statusCode: 401, message: 'API key required' })
+    throw safeError(401, 'API key required')
   }
 
   // Supabase service client (server-side, uses service role key)
@@ -158,7 +162,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
 
   if (!sub) {
     await logUsage(supabase, apiKey, query as Record<string, unknown>, Date.now() - startTime, 401)
-    throw createError({ statusCode: 401, message: 'Invalid or inactive API key' })
+    throw safeError(401, 'Invalid or inactive API key')
   }
 
   // Check rate limit
@@ -171,14 +175,14 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
 
   if ((count ?? 0) >= sub.rate_limit_daily) {
     await logUsage(supabase, apiKey, query as Record<string, unknown>, Date.now() - startTime, 429)
-    throw createError({ statusCode: 429, message: 'Daily rate limit exceeded' })
+    throw safeError(429, 'Daily rate limit exceeded')
   }
 
   // Validate required params
   const brand = (query.brand as string | undefined)?.toLowerCase()
   if (!brand) {
     await logUsage(supabase, apiKey, query as Record<string, unknown>, Date.now() - startTime, 400)
-    throw createError({ statusCode: 400, message: 'brand parameter is required' })
+    throw safeError(400, 'brand parameter is required')
   }
 
   // Query market_data
@@ -189,17 +193,17 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
     .ilike('brand', brand)
 
   if (query.subcategory) {
-    marketQuery = marketQuery.eq('subcategory', String(query.subcategory))
+    marketQuery = marketQuery.eq('subcategory', String(query.subcategory as string))
   }
   if (query.province) {
-    marketQuery = marketQuery.ilike('location_province', String(query.province))
+    marketQuery = marketQuery.ilike('location_province', String(query.province as string))
   }
 
   const { data: rows, error: marketError } = await marketQuery
 
   if (marketError) {
     await logUsage(supabase, apiKey, query as Record<string, unknown>, Date.now() - startTime, 500)
-    throw createError({ statusCode: 500, message: 'Error querying market data' })
+    throw safeError(500, 'Error querying market data')
   }
 
   const typedRows = (rows ?? []) as MarketDataRow[]
@@ -211,7 +215,7 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
 
   if (validRows.length === 0) {
     await logUsage(supabase, apiKey, query as Record<string, unknown>, Date.now() - startTime, 404)
-    throw createError({ statusCode: 404, message: 'Insufficient data' })
+    throw safeError(404, 'Insufficient data')
   }
 
   // Compute price estimate, trend, and confidence
@@ -236,6 +240,9 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
 
   // Log successful usage
   await logUsage(supabase, apiKey, query as Record<string, unknown>, Date.now() - startTime, 200)
+
+  setHeader(event, 'Cache-Control', 'private, max-age=300')
+  setApiVersionHeaders(event, 'v1')
 
   return {
     estimated_price,

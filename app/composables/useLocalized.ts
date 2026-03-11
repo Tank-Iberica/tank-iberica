@@ -58,7 +58,7 @@ export async function fetchTranslation(
     .in('locale', [locale, 'en', 'es'])
     .order('locale')
 
-  if (!data || !data.length) return ''
+  if (!data?.length) return ''
   const match =
     data.find((d) => d.locale === locale) ||
     data.find((d) => d.locale === 'en') ||

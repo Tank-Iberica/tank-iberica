@@ -58,9 +58,8 @@ function onSellUpdate(field: SellFormField, value: string | number | boolean): v
     <TransaccionHeader :vehicle-id="vehicleId" :vehicle-title="vehicleTitle" />
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ $t('common.loading') }}...</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="5" />
     </div>
 
     <!-- Error when vehicle not found -->
@@ -114,26 +113,26 @@ function onSellUpdate(field: SellFormField, value: string | number | boolean): v
 
 <style scoped>
 .transaction-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .loading-state {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -147,30 +146,30 @@ function onSellUpdate(field: SellFormField, value: string | number | boolean): v
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
 .alert-success {
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
 }
 
 .transaction-content {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .transaction-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

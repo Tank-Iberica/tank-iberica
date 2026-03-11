@@ -113,8 +113,8 @@ onUnmounted(() => {
               width="14"
               height="14"
               viewBox="0 0 24 24"
-              fill="#C41E3A"
-              stroke="#C41E3A"
+              fill="var(--color-danger)"
+              stroke="var(--color-danger)"
               stroke-width="2"
             >
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -189,6 +189,8 @@ onUnmounted(() => {
         <button
           v-if="filtersForFilterBar.length"
           class="filter-advanced-btn-desktop"
+          :aria-expanded="advancedOpen"
+          aria-controls="filter-advanced-panel"
           @click="emit('toggleAdvanced')"
         >
           <svg
@@ -234,10 +236,10 @@ onUnmounted(() => {
   background: rgba(35, 66, 74, 0.8);
   border: none;
   color: white;
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
+  min-width: 1.75rem;
+  min-height: 1.75rem;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -245,7 +247,7 @@ onUnmounted(() => {
   justify-content: center;
   z-index: 10;
   transition: all 0.3s ease;
-  font-size: 10px;
+  font-size: var(--font-size-xs);
 }
 
 @media (hover: hover) {
@@ -255,11 +257,11 @@ onUnmounted(() => {
 }
 
 .scroll-btn-left {
-  left: 4px;
+  left: 0.25rem;
 }
 
 .scroll-btn-right {
-  right: 4px;
+  right: 0.25rem;
 }
 
 @media (min-width: 48em) {
@@ -272,16 +274,16 @@ onUnmounted(() => {
   }
 
   .location-pin-icon {
-    width: 16px;
-    height: 16px;
+    width: 1rem;
+    height: 1rem;
   }
 
   .filter-label {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
   }
 
   .filter-label-price {
-    font-size: 14px;
+    font-size: var(--font-size-base);
   }
 
   .filters-wrapper {
@@ -313,7 +315,7 @@ onUnmounted(() => {
   }
 
   .filter-group-slider {
-    min-width: 160px;
+    min-width: 10rem;
   }
 
   .filter-group:not(:last-child)::after {
@@ -326,22 +328,22 @@ onUnmounted(() => {
   .filter-select-inline {
     padding: 0.2rem 0.3rem;
     border: 2px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 10px;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
     line-height: 1.4;
     color: var(--text-primary);
     background: var(--bg-primary);
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 400;
-    min-width: 74px;
+    min-width: 4.625rem;
     min-height: auto;
   }
 
   .filter-select-inline:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+    box-shadow: var(--shadow-ring);
   }
 
   .filter-group-location {
@@ -358,8 +360,8 @@ onUnmounted(() => {
     gap: 0.3rem;
     padding: 0.2rem 0.4rem;
     border: 2px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 10px;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
     line-height: 1.4;
     color: var(--text-primary);
     background: var(--bg-primary);
@@ -381,10 +383,10 @@ onUnmounted(() => {
     gap: 0.3rem;
     padding: 0.2rem 0.5rem;
     border: 2px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     background: var(--bg-primary);
     color: var(--text-primary);
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     font-weight: 500;
     cursor: pointer;
     white-space: nowrap;
@@ -408,36 +410,36 @@ onUnmounted(() => {
   }
 
   .filter-label {
-    font-size: 13px;
+    font-size: var(--font-size-sm);
   }
 
   .location-pin-icon {
-    width: 18px;
-    height: 18px;
+    width: 1.125rem;
+    height: 1.125rem;
   }
 
   .filter-label-price {
-    font-size: 15px;
+    font-size: var(--font-size-sm);
   }
 
   .filter-select-inline {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
   }
 
   .scroll-btn {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    min-height: 32px;
-    font-size: 12px;
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    font-size: var(--font-size-xs);
   }
 
   .scroll-btn-left {
-    left: 6px;
+    left: 0.375rem;
   }
 
   .scroll-btn-right {
-    right: 6px;
+    right: 0.375rem;
   }
 }
 </style>

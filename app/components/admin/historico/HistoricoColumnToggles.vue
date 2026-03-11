@@ -47,18 +47,18 @@ defineEmits<{
 .column-toggles {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 16px;
+  gap: var(--spacing-5);
+  margin-bottom: var(--spacing-4);
   font-size: 0.85rem;
 }
 .toggle-check {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   cursor: pointer;
-  padding: 4px 10px;
+  padding: var(--spacing-1) 0.625rem;
   background: var(--bg-secondary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-weight: 500;
 }
 .toggle-check input {
@@ -66,7 +66,7 @@ defineEmits<{
 }
 .count {
   margin-left: auto;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 @media (max-width: 48em) {

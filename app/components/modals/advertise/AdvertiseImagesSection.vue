@@ -127,20 +127,20 @@ const { t } = useI18n()
 .section-fields--stacked {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3, 12px);
+  gap: var(--spacing-3);
 }
 
 .upload-block {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2, 8px);
+  gap: var(--spacing-2);
 }
 
 .upload-block > label {
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--color-text);
-  margin-bottom: 2px;
+  margin-bottom: 0.125rem;
 }
 
 .required::after {
@@ -158,7 +158,7 @@ const { t } = useI18n()
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-4, 16px);
+  padding: var(--spacing-4);
   border: 2px dashed var(--border-color);
   border-radius: var(--border-radius, 8px);
   background: var(--bg-primary);
@@ -167,16 +167,16 @@ const { t } = useI18n()
     border-color 0.2s,
     background 0.2s;
   text-align: center;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .upload-area:hover {
   border-color: var(--color-primary);
-  background: #f0f4f5;
+  background: var(--color-gray-50);
 }
 
 .upload-area--compact {
-  padding: var(--spacing-3, 12px);
+  padding: var(--spacing-3);
 }
 
 .upload-error {
@@ -184,10 +184,10 @@ const { t } = useI18n()
 }
 
 .upload-icon {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   color: var(--color-primary);
-  margin-bottom: 2px;
+  margin-bottom: 0.125rem;
 }
 
 .upload-main-text {
@@ -202,10 +202,10 @@ const { t } = useI18n()
 
 .sr-only {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 0.0625rem;
+  height: 0.0625rem;
   padding: 0;
-  margin: -1px;
+  margin: -0.0625rem;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
@@ -214,8 +214,8 @@ const { t } = useI18n()
 
 .photo-recommendations {
   background: var(--bg-primary);
-  border-radius: 6px;
-  padding: var(--spacing-2, 8px) var(--spacing-3, 12px);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-2) var(--spacing-3);
   font-size: 0.75rem;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -224,29 +224,29 @@ const { t } = useI18n()
 .photo-recommendations strong {
   color: var(--color-text);
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 0.125rem;
   font-size: 0.8rem;
 }
 
 .photo-recommendations ul {
   margin: 0;
-  padding-left: var(--spacing-4, 16px);
+  padding-left: var(--spacing-4);
 }
 
 .photo-recommendations li {
-  margin-bottom: 1px;
+  margin-bottom: 0.0625rem;
 }
 
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-2, 8px);
+  gap: var(--spacing-2);
 }
 
 .photo-thumb {
   position: relative;
   aspect-ratio: 1;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   overflow: hidden;
   border: 1px solid var(--border-color);
 }
@@ -259,21 +259,21 @@ const { t } = useI18n()
 
 .photo-remove {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 24px;
-  height: 24px;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.6);
   color: white;
   border: none;
   cursor: pointer;
-  font-size: 16px;
+  font-size: var(--font-size-base);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 24px;
-  min-height: 24px;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
   transition: background 0.2s;
 }
 
@@ -283,8 +283,8 @@ const { t } = useI18n()
 
 .tech-sheet-preview {
   position: relative;
-  max-width: 160px;
-  border-radius: 6px;
+  max-width: 10rem;
+  border-radius: var(--border-radius);
   overflow: hidden;
   border: 1px solid var(--border-color);
 }
@@ -304,7 +304,7 @@ const { t } = useI18n()
 .field-error {
   font-size: 0.75rem;
   color: var(--color-error);
-  margin: 2px 0 0;
+  margin: 0.125rem 0 0;
 }
 
 @media (min-width: 48em) {

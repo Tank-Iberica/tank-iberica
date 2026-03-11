@@ -85,7 +85,7 @@ const {
     </nav>
 
     <!-- Tab 1: Profitability -->
-    <CalculadoraProfitabilityTab
+    <LazyCalculadoraProfitabilityTab
       v-if="activeTab === 'profitability'"
       :purchase-price="purchasePrice"
       :monthly-rent="monthlyRent"
@@ -116,7 +116,7 @@ const {
     />
 
     <!-- Tab 2: Financing -->
-    <CalculadoraFinancingTab
+    <LazyCalculadoraFinancingTab
       v-if="activeTab === 'financing'"
       :fin-vehicle-price="finVehiclePrice"
       :fin-down-payment-pct="finDownPaymentPct"
@@ -135,7 +135,7 @@ const {
     />
 
     <!-- Tab 3: Total Cost -->
-    <CalculadoraTotalCostTab
+    <LazyCalculadoraTotalCostTab
       v-if="activeTab === 'totalCost'"
       :tc-purchase-price="tcPurchasePrice"
       :tc-years="tcYears"
@@ -162,18 +162,18 @@ const {
 
 <style scoped>
 .calculator-page {
-  max-width: 900px;
+  max-width: 56.25rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .back-link {
@@ -181,7 +181,7 @@ const {
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -211,7 +211,7 @@ const {
 .tab-button {
   flex: 1;
   min-width: 0;
-  padding: 12px 8px;
+  padding: 0.75rem 0.5rem;
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
@@ -220,7 +220,7 @@ const {
   color: var(--text-auxiliary);
   cursor: pointer;
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition:
     color 0.2s,
     border-color 0.2s;
@@ -249,16 +249,16 @@ const {
 }
 
 /* Responsive */
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .tab-button {
     font-size: 0.95rem;
-    padding: 12px 16px;
+    padding: var(--spacing-3) var(--spacing-4);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .calculator-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

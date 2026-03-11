@@ -7,6 +7,8 @@
  */
 import { fetchWithRetry } from '~~/server/utils/fetchWithRetry'
 import { AI_MODELS, type AIModelRole } from '~~/server/utils/aiConfig'
+import { logger } from '~~/server/utils/logger'
+import { callWithCircuitBreaker, CircuitOpenError } from '~~/server/utils/circuitBreaker'
 
 // ---------------------------------------------------------------------------
 // Interfaces
@@ -253,22 +255,22 @@ export async function callAI(
     const start = Date.now()
 
     try {
-      let text: string
+      const circuitName = `ai:${provider.name}`
 
-      if (provider.name === 'anthropic') {
-        text = await callAnthropic(provider, request, opts)
-      } else {
-        text = await callOpenAI(provider, request, opts)
-      }
+      const text = await callWithCircuitBreaker(
+        circuitName,
+        () =>
+          provider.name === 'anthropic'
+            ? callAnthropic(provider, request, opts)
+            : callOpenAI(provider, request, opts),
+        { failureThreshold: 5, cooldownMs: 30_000 },
+      )
 
       const latencyMs = Date.now() - start
 
       // Log warning if fallback was used
       if (i > 0) {
-        console.warn(
-          `[aiProvider] Fallback used: ${provider.name}/${provider.model} ` +
-            `(primary failed: ${errors.join('; ')})`,
-        )
+        logger.warn(`[aiProvider] Fallback used: ${provider.name}/${provider.model} (primary failed: ${errors.join('; ')})`)
       }
 
       return {
@@ -279,6 +281,9 @@ export async function callAI(
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
+      if (err instanceof CircuitOpenError) {
+        logger.warn(`[aiProvider] Circuit OPEN for ${provider.name} — skipping provider`)
+      }
       errors.push(`${provider.name}: ${message}`)
     }
   }

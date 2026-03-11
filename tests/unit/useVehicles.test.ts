@@ -11,8 +11,9 @@ vi.mock('vue', () => ({
 }))
 
 // Mock retryQuery to execute the query immediately without retries
+const mockRetryQuery = vi.fn().mockImplementation(async (fn: () => Promise<unknown>) => await fn())
 vi.mock('~/utils/retryQuery', () => ({
-  retryQuery: async (fn: () => Promise<unknown>) => await fn(),
+  retryQuery: (...args: Parameters<typeof mockRetryQuery>) => mockRetryQuery(...args),
 }))
 
 // Helper to create a mock vehicle
@@ -233,6 +234,12 @@ describe('useVehicles', () => {
     await expect(fetchVehicles({ subcategory_id: 'subcat-456' })).resolves.not.toThrow()
   })
 
+  it('dealer_id filter should be applied without errors', async () => {
+    const { fetchVehicles } = useVehicles()
+
+    await expect(fetchVehicles({ dealer_id: 'dealer-abc' })).resolves.not.toThrow()
+  })
+
   it('multiple filters can be combined without errors', async () => {
     const { fetchVehicles } = useVehicles()
 
@@ -276,5 +283,59 @@ describe('useVehicles', () => {
 
     // fetchMore should have executed without errors
     expect(true).toBe(true)
+  })
+})
+
+// ─── fetchCount + error path coverage ────────────────────────────────────────
+
+describe('useVehicles — fetchCount', () => {
+  it('fetchCount returns 0 with default mock (no count in response)', async () => {
+    const { fetchCount } = useVehicles()
+    const result = await fetchCount({})
+    expect(result).toBe(0)
+  })
+
+  it('fetchCount with filters returns a number', async () => {
+    const { fetchCount } = useVehicles()
+    const result = await fetchCount({ category: 'venta', brand: 'Volvo' })
+    expect(typeof result).toBe('number')
+  })
+})
+
+describe('useVehicles — error paths', () => {
+  // Note: error paths for fetchVehicles/fetchMore are triggered via mockRetryQuery,
+  // since tests/stubs/imports.ts captures useSupabaseClient at module-load time
+  // and vi.stubGlobal cannot retroactively update already-imported module exports.
+
+  it('fetchVehicles sets error.value when retryQuery rejects', async () => {
+    mockRetryQuery.mockRejectedValueOnce(new Error('DB connection error'))
+    const { fetchVehicles, error, loading } = useVehicles()
+    await fetchVehicles()
+    expect(error.value).toBe('DB connection error')
+    expect(loading.value).toBe(false)
+  })
+
+  it('fetchMore sets error.value when retryQuery rejects', async () => {
+    mockRetryQuery.mockRejectedValueOnce(new Error('DB connection error'))
+    const { fetchMore, hasMore, error } = useVehicles()
+    hasMore.value = true
+    await fetchMore()
+    expect(error.value).toBe('DB connection error')
+  })
+
+  it('fetchVehicles sets generic error message for non-Error rejections', async () => {
+    mockRetryQuery.mockRejectedValueOnce('plain string error')
+    const { fetchVehicles, error } = useVehicles()
+    await fetchVehicles()
+    expect(error.value).toBe('Error fetching vehicles')
+  })
+
+  it('fetchVehicles handles result.error object (Supabase error in response)', async () => {
+    // retryQuery resolves (doesn't throw) but returns an object with error field
+    mockRetryQuery.mockResolvedValueOnce({ data: null, error: { message: 'DB error from result' }, count: 0 })
+    const { fetchVehicles, error } = useVehicles()
+    await fetchVehicles()
+    // The thrown error object is not instanceof Error → generic message
+    expect(error.value).toBe('Error fetching vehicles')
   })
 })

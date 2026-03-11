@@ -234,13 +234,13 @@ function updateFilters(newFilters: BalanceFilters & { type_id?: string | null })
 
 <style scoped>
 .balance-page {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
 }
 .balance-page.fullscreen {
   max-width: none;
-  padding: 20px;
-  background: #f9fafb;
+  padding: var(--spacing-5);
+  background: var(--color-gray-50);
   min-height: 100vh;
 }
 
@@ -249,9 +249,9 @@ function updateFilters(newFilters: BalanceFilters & { type_id?: string | null })
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .page-header h1 {
   margin: 0;
@@ -259,27 +259,27 @@ function updateFilters(newFilters: BalanceFilters & { type_id?: string | null })
 }
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   flex-wrap: wrap;
 }
 
 /* Page-level buttons */
 .btn {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 .btn-icon-only {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   padding: 0;
   display: flex;
   align-items: center;
@@ -289,15 +289,15 @@ function updateFilters(newFilters: BalanceFilters & { type_id?: string | null })
 
 /* Error */
 .error-msg {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 10px 14px;
-  border-radius: 6px;
-  margin-bottom: 16px;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .header-actions {
     width: 100%;
     justify-content: flex-end;

@@ -76,7 +76,7 @@ const { getImageUrl } = useImageUrl()
 
 <style scoped>
 .seller-header {
-  max-width: 960px;
+  max-width: 60rem;
   margin: 0 auto;
   padding: 0 var(--spacing-4);
   margin-bottom: var(--spacing-6);
@@ -93,16 +93,16 @@ const { getImageUrl } = useImageUrl()
 }
 
 .seller-header__logo {
-  width: 72px;
-  height: 72px;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: var(--border-radius-md);
   object-fit: cover;
   border: 2px solid var(--border-color-light);
 }
 
 .seller-header__logo-placeholder {
-  width: 72px;
-  height: 72px;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: var(--border-radius-md);
   background: var(--color-primary);
   color: var(--color-white);
@@ -144,8 +144,8 @@ const { getImageUrl } = useImageUrl()
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
-  background: linear-gradient(135deg, #f5d547 0%, var(--color-gold) 100%);
-  color: #5a4500;
+  background: linear-gradient(135deg, var(--color-yellow-400) 0%, var(--color-gold) 100%);
+  color: var(--color-amber-800);
 }
 
 .seller-header__location {
@@ -173,17 +173,17 @@ const { getImageUrl } = useImageUrl()
 }
 
 .badge--fast {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-emerald-100);
+  color: var(--color-success-text);
 }
 
 .badge--good {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .badge--slow {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -201,7 +201,7 @@ const { getImageUrl } = useImageUrl()
 
 .stars {
   color: var(--color-gold);
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
 }
 
 .rating-value {
@@ -228,13 +228,13 @@ const { getImageUrl } = useImageUrl()
   }
 
   .seller-header__logo {
-    width: 96px;
-    height: 96px;
+    width: 6rem;
+    height: 6rem;
   }
 
   .seller-header__logo-placeholder {
-    width: 96px;
-    height: 96px;
+    width: 6rem;
+    height: 6rem;
     font-size: var(--font-size-3xl);
   }
 

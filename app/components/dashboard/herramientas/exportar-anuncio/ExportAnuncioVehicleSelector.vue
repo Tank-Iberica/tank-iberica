@@ -50,13 +50,13 @@ function onSelectChange(event: Event): void {
 <style scoped>
 .card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem;
 }
 
 .card-title {
-  margin: 0 0 16px 0;
+  margin: 0 0 1rem 0;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -64,20 +64,20 @@ function onSelectChange(event: Event): void {
 
 .empty-state {
   text-align: center;
-  padding: 24px;
+  padding: 1.5rem;
   color: var(--text-auxiliary);
 }
 
 .empty-state p {
-  margin: 0 0 12px 0;
+  margin: 0 0 0.75rem 0;
 }
 
 .select-vehicle {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   color: var(--text-primary);
   background: var(--bg-primary);
@@ -87,19 +87,19 @@ function onSelectChange(event: Event): void {
 .select-vehicle:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;

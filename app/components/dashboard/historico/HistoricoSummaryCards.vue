@@ -37,57 +37,57 @@ const { t } = useI18n()
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .summary-card {
-  padding: 16px 20px;
-  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border-radius: var(--border-radius-md);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .summary-card .card-label {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   opacity: 0.8;
 }
 
 .summary-card .card-value {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   line-height: 1.2;
 }
 
 .summary-card.sales {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: var(--color-indigo-100);
+  color: var(--color-indigo-800);
 }
 
 .summary-card.revenue {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 
 .summary-card.profit {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 
 .summary-card.profit.negative {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .summary-card.margin {
-  background: #f3e8ff;
-  color: #7c3aed;
+  background: var(--color-purple-100);
+  color: var(--color-purple-600);
 }
 
 @media (min-width: 30em) {
   .summary-cards {
-    gap: 16px;
+    gap: 1rem;
   }
 
   .summary-card .card-value {

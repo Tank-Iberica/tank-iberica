@@ -5,8 +5,20 @@
  * Uses web-push library with VAPID authentication.
  */
 
+import { defineEventHandler, getHeader } from 'h3'
 import webpush from 'web-push'
+import { z } from 'zod'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { safeError } from '../../utils/safeError'
+import { validateBody } from '../../utils/validateBody'
+
+const pushSendSchema = z.object({
+  userId: z.string().uuid(),
+  title: z.string().min(1).max(128),
+  body: z.string().min(1).max(512),
+  url: z.string().url().optional(),
+  icon: z.string().url().optional(),
+})
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
@@ -20,7 +32,7 @@ export default defineEventHandler(async (event) => {
     // Fallback: admin authentication for calls from admin panel
     const user = await serverSupabaseUser(event)
     if (!user) {
-      throw createError({ statusCode: 401, message: 'Unauthorized' })
+      throw safeError(401, 'Unauthorized')
     }
     const supabaseAuth = serverSupabaseServiceRole(event)
     const { data: profile } = await supabaseAuth
@@ -29,20 +41,11 @@ export default defineEventHandler(async (event) => {
       .eq('id', user.id)
       .single()
     if (!profile || (profile as { role: string }).role !== 'admin') {
-      throw createError({ statusCode: 403, message: 'Admin access required' })
+      throw safeError(403, 'Admin access required')
     }
   }
 
-  const body = await readBody(event)
-
-  const { userId, title, body: messageBody, url } = body
-
-  if (!userId || !title || !messageBody) {
-    throw createError({
-      statusCode: 400,
-      message: 'Missing required fields: userId, title, body',
-    })
-  }
+  const { userId, title, body: messageBody, url } = await validateBody(event, pushSendSchema)
 
   // Configure VAPID details
   const vapidPublicKey = config.public.vapidPublicKey
@@ -50,10 +53,7 @@ export default defineEventHandler(async (event) => {
   const vapidEmail = config.vapidEmail
 
   if (!vapidPublicKey || !vapidPrivateKey || !vapidEmail) {
-    throw createError({
-      statusCode: 500,
-      message: 'VAPID keys not configured',
-    })
+    throw safeError(500, 'VAPID keys not configured')
   }
 
   webpush.setVapidDetails(`mailto:${vapidEmail}`, vapidPublicKey, vapidPrivateKey)
@@ -63,14 +63,11 @@ export default defineEventHandler(async (event) => {
 
   const { data: subscriptions, error: fetchError } = await supabase
     .from('push_subscriptions')
-    .select('*')
+    .select('id, endpoint, keys')
     .eq('user_id', userId)
 
   if (fetchError) {
-    throw createError({
-      statusCode: 500,
-      message: `Error fetching subscriptions: ${fetchError.message}`,
-    })
+    throw safeError(500, `Error fetching subscriptions: ${fetchError.message}`)
   }
 
   if (!subscriptions || subscriptions.length === 0) {

@@ -68,9 +68,8 @@ onMounted(() => {
     <div v-if="error" class="alert-error">{{ error }}</div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('common.loading') }}...</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="4" />
     </div>
 
     <template v-else-if="visitsEnabled">
@@ -102,7 +101,7 @@ onMounted(() => {
 
 <style scoped>
 .visits-page {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   padding: var(--spacing-4);
   display: flex;
@@ -113,7 +112,7 @@ onMounted(() => {
 /* Alerts */
 .alert-error {
   padding: var(--spacing-3) var(--spacing-4);
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
   border-radius: var(--border-radius);
   color: var(--color-error);
@@ -122,7 +121,7 @@ onMounted(() => {
 
 .alert-success {
   padding: var(--spacing-3) var(--spacing-4);
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
   border-radius: var(--border-radius);
   color: var(--color-success);
@@ -155,8 +154,8 @@ onMounted(() => {
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -170,14 +169,14 @@ onMounted(() => {
 }
 
 /* Responsive */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .visits-page {
     padding: var(--spacing-6);
     gap: var(--spacing-5);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .visits-page {
     padding: var(--spacing-8);
   }

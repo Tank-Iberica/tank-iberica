@@ -139,12 +139,13 @@ function evaluateTitleLength(title: string): SeoCriterion {
         : `Largo: ${len} caracteres. Google podria truncarlo`
   } else {
     score = len > 0 ? 20 : 0
-    description =
-      len === 0
-        ? 'El titulo esta vacio'
-        : len < 20
-          ? `Muy corto: ${len} caracteres. Minimo recomendado: 30`
-          : `Muy largo: ${len} caracteres. Google truncara a ~60`
+    if (len === 0) {
+      description = 'El titulo esta vacio'
+    } else if (len < 20) {
+      description = `Muy corto: ${len} caracteres. Minimo recomendado: 30`
+    } else {
+      description = `Muy largo: ${len} caracteres. Google truncara a ~60`
+    }
   }
 
   return {
@@ -224,7 +225,6 @@ function evaluateKeywordsInUrl(slug: string, title: string): SeoCriterion {
       description = 'La URL no contiene palabras clave del titulo. Usa un slug basado en el titulo'
     }
   } else {
-    score = 0
     description = 'Sin slug o titulo para evaluar'
   }
 
@@ -247,7 +247,6 @@ function evaluateSlugQuality(slug: string): SeoCriterion {
   let description = ''
 
   if (!slug || slug.trim().length === 0) {
-    score = 0
     description = 'Slug vacio. Se generara automaticamente del titulo'
   } else if (/^[0-9a-f]{8}-/.exec(slug)) {
     score = 10
@@ -348,7 +347,6 @@ function evaluateMetaDescription(descriptionEs: string | null): SeoCriterion {
   let description = ''
 
   if (len === 0) {
-    score = 0
     description = 'Sin meta descripcion. Escribe un resumen de 120-160 caracteres para Google'
   } else if (len >= 120 && len <= 160) {
     score = 100
@@ -386,7 +384,6 @@ function evaluateExcerpt(excerptEs: string | null): SeoCriterion {
   let description = ''
 
   if (len === 0) {
-    score = 0
     description =
       'Sin extracto. Anade un resumen de 120-200 caracteres para listados y redes sociales'
   } else if (len >= 120 && len <= 200) {
@@ -430,7 +427,6 @@ function evaluateImage(imageUrl: string | null): SeoCriterion {
       description = 'URL de imagen no parece valida. Debe empezar con https://'
     }
   } else {
-    score = 0
     description = 'Sin imagen. Las noticias con imagen tienen 2x mas clicks en redes sociales'
   }
 
@@ -461,7 +457,6 @@ function evaluateHashtags(hashtags: string[]): SeoCriterion {
         ? `Pocas: ${count} etiqueta(s). Anade al menos 3 para mejor categorizacion`
         : `Muchas: ${count} etiquetas. Recomendado 3-6 para no diluir relevancia`
   } else if (count === 0) {
-    score = 0
     description = 'Sin etiquetas. Anade 3-6 para mejorar la categorizacion y descubrimiento'
   } else {
     score = 30
@@ -493,7 +488,6 @@ function evaluateBilingual(titleEn: string | null, contentEn: string | null): Se
     score = 50
     description = 'Solo titulo en ingles. Anade el contenido para completar la version bilingue'
   } else {
-    score = 0
     description = 'Sin version en ingles. El contenido bilingue amplía el alcance internacional'
   }
 
@@ -524,7 +518,6 @@ function evaluateFaqSchema(
     score = 50
     description = `${valid.length} pregunta(s) FAQ. Anade al menos 3 para optar a featured snippets`
   } else {
-    score = 0
     description = 'Sin FAQ. Anade 3+ preguntas frecuentes para destacar en resultados de Google'
   }
 
@@ -554,7 +547,6 @@ function evaluateSocialText(socialPostText: Record<string, string> | null): SeoC
     description =
       'Solo 1 red social. Anade textos para mas plataformas (twitter, linkedin, facebook)'
   } else {
-    score = 0
     description = 'Sin textos para redes sociales. Prepara posts para maximizar difusion'
   }
 
@@ -582,7 +574,6 @@ function evaluateRelatedCategories(relatedCategories: string[] | null): SeoCrite
     score = 60
     description = '1 categoria enlazada. Anade al menos 2 para mejor interlinking'
   } else {
-    score = 0
     description = 'Sin categorias relacionadas. Enlaza a categorias para mejorar el SEO interno'
   }
 
@@ -605,7 +596,6 @@ function evaluateReadingTime(content: string): SeoCriterion {
   let description = ''
 
   if (words === 0) {
-    score = 0
     description = 'Sin contenido para estimar tiempo de lectura'
   } else if (minutes >= 2 && minutes <= 8) {
     score = 100

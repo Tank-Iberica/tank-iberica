@@ -5,6 +5,7 @@
  * Caches flags in-memory for 60 seconds to avoid hitting the DB on every request.
  */
 import { $fetch } from 'ofetch'
+import { logger } from './logger'
 
 interface FeatureFlag {
   key: string
@@ -24,7 +25,7 @@ async function loadFlags(): Promise<void> {
 
   const rest = useSupabaseRestHeaders()
   if (!rest) {
-    console.warn('[featureFlags] No Supabase credentials — all flags default to disabled')
+    logger.warn('[featureFlags] No Supabase credentials — all flags default to disabled')
     return
   }
 
@@ -36,7 +37,7 @@ async function loadFlags(): Promise<void> {
     flagCache = new Map(data.map((f) => [f.key, f]))
     cacheExpiry = now + CACHE_TTL_MS
   } catch (err) {
-    console.error('[featureFlags] Failed to load flags:', err)
+    logger.error('[featureFlags] Failed to load flags:', { error: String(err) })
   }
 }
 
@@ -76,7 +77,7 @@ export async function isFeatureEnabled(key: string, dealerId?: string): Promise<
 function simpleHash(str: string): number {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
+    const char = str.codePointAt(i) ?? 0
     hash = (hash << 5) - hash + char
     hash = hash & hash // Convert to 32-bit integer
   }

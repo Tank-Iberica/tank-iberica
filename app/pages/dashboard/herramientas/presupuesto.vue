@@ -61,8 +61,8 @@ onMounted(init)
     <div v-if="successMessage" class="alert-success">{{ successMessage }}</div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="4" />
     </div>
 
     <template v-else>
@@ -147,18 +147,18 @@ onMounted(init)
 
 <style scoped>
 .quote-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .back-link {
@@ -166,7 +166,7 @@ onMounted(init)
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -186,19 +186,19 @@ onMounted(init)
 
 /* Alerts */
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
 
 .alert-success {
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
   font-size: 0.9rem;
 }
@@ -207,12 +207,12 @@ onMounted(init)
 .loading-state {
   display: flex;
   justify-content: center;
-  padding: 60px;
+  padding: 3.75rem;
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -229,10 +229,10 @@ onMounted(init)
 .quote-number-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   border: 1px solid var(--color-gray-200);
 }
 
@@ -252,13 +252,13 @@ onMounted(init)
 /* Inline form sections kept in page */
 .form-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .form-section h2 {
-  margin: 0 0 12px 0;
+  margin: 0 0 var(--spacing-3) 0;
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -266,35 +266,35 @@ onMounted(init)
 
 .input-field {
   width: 100%;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   color: var(--text-primary);
   background: var(--bg-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: border-color 0.2s;
 }
 
 .input-field:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .textarea-field {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .input-narrow {
-  max-width: 120px;
+  max-width: 7.5rem;
 }
 
 /* Responsive */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .quote-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

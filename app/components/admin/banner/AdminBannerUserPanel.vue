@@ -94,18 +94,18 @@ const emit = defineEmits<{
 
 <style scoped>
 .user-panel-banner-section {
-  margin-top: 40px;
-  padding-top: 32px;
-  border-top: 2px solid #e5e7eb;
+  margin-top: var(--spacing-10);
+  padding-top: var(--spacing-8);
+  border-top: 2px solid var(--color-gray-200);
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .section-header h2 {
@@ -116,54 +116,54 @@ const emit = defineEmits<{
 
 .admin-hint {
   font-size: 0.85rem;
-  color: #6b7280;
-  margin-bottom: 20px;
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-5);
 }
 
 .form-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  max-width: 700px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  max-width: 43.75rem;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
 }
 
 .form-group label {
   display: block;
   font-weight: 500;
-  margin-bottom: 8px;
-  color: #374151;
+  margin-bottom: var(--spacing-2);
+  color: var(--color-gray-700);
 }
 
 .form-input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 /* Toggle switch */
 .toggle-label {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   cursor: pointer;
   user-select: none;
 }
@@ -177,20 +177,20 @@ const emit = defineEmits<{
 
 .toggle-switch {
   position: relative;
-  width: 48px;
-  height: 26px;
-  background: #d1d5db;
-  border-radius: 13px;
+  width: 3rem;
+  height: 1.625rem;
+  background: var(--color-gray-300);
+  border-radius: var(--border-radius-md);
   transition: background 0.2s;
 }
 
 .toggle-switch::after {
   content: '';
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.25rem;
+  height: 1.25rem;
   background: var(--bg-primary);
   border-radius: 50%;
   transition: transform 0.2s;
@@ -207,23 +207,23 @@ const emit = defineEmits<{
 
 .toggle-text {
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .form-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-6);
+  padding-top: var(--spacing-5);
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   transition: background 0.2s;
@@ -249,7 +249,7 @@ const emit = defineEmits<{
   }
 
   .form-card {
-    padding: 16px;
+    padding: var(--spacing-4);
   }
 }
 </style>

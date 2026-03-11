@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Consejo Multi-AI</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Consejo Multi-AI</h1>
+    <p>Documento paralelo de producto: sistema de toma de decisiones multiagente, fuera del nucleo financiero principal.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#estado'>Estado</a></li>
+<li class='toc-l2'><a href='#que-es'>Qué es</a></li>
+<li class='toc-l2'><a href='#que-no-es'>Qué no es</a></li>
+<li class='toc-l2'><a href='#arquitectura-conceptual'>Arquitectura conceptual</a></li>
+<li class='toc-l2'><a href='#criterios-de-valor'>Criterios de valor</a></li>
+<li class='toc-l2'><a href='#stack-minimo-viable'>Stack mínimo viable</a></li>
+<li class='toc-l2'><a href='#riesgos'>Riesgos</a></li>
+<li class='toc-l2'><a href='#proximos-pasos-razonables'>Próximos pasos razonables</a></li>
+<li class='toc-l2'><a href='#fuentes-tecnicas-oficiales'>Fuentes técnicas oficiales</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tradebase-consejo-multi-ai">TradeBase - Consejo Multi-AI</h1>
+<blockquote>
+<p>Documento paralelo de producto. No forma parte del núcleo financiero principal formado por <a href="PRESUPUESTOS.md">PRESUPUESTOS.md</a>, <a href="SUBVENCIONES.md">SUBVENCIONES.md</a> y <a href="DECISIONES-FINANCIERAS.md">DECISIONES-FINANCIERAS.md</a>.</p>
+</blockquote>
+<h2 id="estado">Estado</h2>
+<table>
+<thead>
+<tr>
+<th>Punto</th>
+<th>Estado</th>
+<th>Lectura</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Encaje en la arquitectura principal</td>
+<td><code>FUERA DEL NÚCLEO</code></td>
+<td>No condiciona presupuesto, subvenciones ni estructura societaria de TradeBase</td>
+</tr>
+<tr>
+<td>Madurez</td>
+<td><code>CONCEPTO</code></td>
+<td>Documento de producto en fase de definición</td>
+</tr>
+<tr>
+<td>Objetivo</td>
+<td><code>CLARO</code></td>
+<td>Diseñar un sistema multiagente para apoyar decisiones complejas</td>
+</tr>
+<tr>
+<td>Implementación</td>
+<td><code>PENDIENTE</code></td>
+<td>Falta validar stack, flujo y coste operativo real</td>
+</tr>
+</tbody>
+</table>
+<h2 id="que-es">Qué es</h2>
+<p>Un sistema de toma de decisiones con múltiples IAs organizadas en dos niveles:</p>
+<ol>
+<li><strong>Consejo general</strong>: roles especializados como CTO, Seguridad, Comercial, Marketing, Finanzas o Legal.</li>
+<li><strong>Subconsejos por rol</strong>: cada rol consolida internamente posiciones de varios modelos antes de elevar una respuesta al consejo general.</li>
+</ol>
+<p>La idea no es “preguntar a muchos modelos y mezclar texto”, sino <strong>obtener desacuerdo útil, síntesis y trazabilidad</strong>.</p>
+<h2 id="que-no-es">Qué no es</h2>
+<ul>
+<li>No es un documento de financiación.</li>
+<li>No es una pieza del stack operativo actual de Tracciona.</li>
+<li>No es una decisión cerrada de producto; es una línea paralela que puede o no convertirse en proyecto ejecutable.</li>
+</ul>
+<h2 id="arquitectura-conceptual">Arquitectura conceptual</h2>
+<pre><code class="language-text">Pregunta de entrada
+        |
+        v
+Consejo general
+  |-- CTO
+  |-- Seguridad
+  |-- Comercial
+  |-- Marketing
+  |-- Finanzas
+  |-- Legal
+        |
+        v
+Subconsejo por rol
+  |-- Modelo A
+  |-- Modelo B
+  |-- Modelo C
+        |
+        v
+Posición consolidada por rol
+        |
+        v
+Debate final + decisión ejecutiva + registro
+</code></pre>
+<h2 id="criterios-de-valor">Criterios de valor</h2>
+<table>
+<thead>
+<tr>
+<th>Criterio</th>
+<th>Qué debería aportar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Calidad de decisión</td>
+<td>Menos respuestas superficiales y más contraste real entre enfoques</td>
+</tr>
+<tr>
+<td>Trazabilidad</td>
+<td>Registro de qué agentes participaron y por qué ganó una posición</td>
+</tr>
+<tr>
+<td>Reutilización</td>
+<td>Plantillas de roles y flujos repetibles por tipo de decisión</td>
+</tr>
+<tr>
+<td>Seguridad operativa</td>
+<td>Separar bien datos sensibles, prompts del sistema y ejecución de herramientas</td>
+</tr>
+</tbody>
+</table>
+<h2 id="stack-minimo-viable">Stack mínimo viable</h2>
+<table>
+<thead>
+<tr>
+<th>Capa</th>
+<th>Opción razonable</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Orquestación multiagente</td>
+<td>AutoGen, CrewAI o LangGraph</td>
+<td>Permiten roles, turnos, herramientas y consolidación</td>
+</tr>
+<tr>
+<td>Modelos</td>
+<td>OpenAI, Anthropic y uno o dos open-weight</td>
+<td>Mezcla de calidad, coste y diversidad</td>
+</tr>
+<tr>
+<td>Persistencia</td>
+<td>SQLite o Postgres</td>
+<td>Registro de sesiones, votos y salidas</td>
+</tr>
+<tr>
+<td>Observabilidad</td>
+<td>Logs estructurados y trazas por sesión</td>
+<td>Sin trazas, el sistema pierde valor</td>
+</tr>
+<tr>
+<td>Interfaz</td>
+<td>CLI o panel web mínimo</td>
+<td>Conviene validar primero el flujo, no el frontend</td>
+</tr>
+</tbody>
+</table>
+<h2 id="riesgos">Riesgos</h2>
+<ul>
+<li><strong>Complejidad innecesaria</strong>: es fácil construir una demo llamativa y un sistema débil.</li>
+<li><strong>Coste por consulta</strong>: varios agentes por ronda pueden disparar consumo si no se controla.</li>
+<li><strong>Falsa sensación de rigor</strong>: más voces no equivalen automáticamente a mejor decisión.</li>
+<li><strong>Gobierno del sistema</strong>: hay que decidir quién arbitra empates, cuándo se para el debate y qué peso tiene cada rol.</li>
+</ul>
+<h2 id="proximos-pasos-razonables">Próximos pasos razonables</h2>
+<ol>
+<li>Cerrar un caso de uso concreto: por ejemplo, decisiones de producto o evaluación de riesgos.</li>
+<li>Probar un MVP con <code>3</code> roles y <code>2-3</code> agentes por rol, no con un consejo completo desde el día 1.</li>
+<li>Medir coste, latencia y calidad frente a una respuesta única de modelo.</li>
+<li>Solo después decidir si merece convertirse en proyecto real separado.</li>
+</ol>
+<h2 id="fuentes-tecnicas-oficiales">Fuentes técnicas oficiales</h2>
+<ul>
+<li><a href="https://microsoft.github.io/autogen/stable/">Microsoft AutoGen</a></li>
+<li><a href="https://docs.crewai.com/">CrewAI - Documentation</a></li>
+<li><a href="https://langchain-ai.github.io/langgraph/">LangGraph - Overview</a></li>
+<li><a href="https://platform.openai.com/docs/overview">OpenAI API - Overview</a></li>
+<li><a href="https://docs.anthropic.com/en/api/overview">Anthropic API - Overview</a></li>
+<li><a href="https://www.sqlite.org/docs.html">SQLite Documentation</a></li>
+</ul>
+<blockquote>
+<p>Si este documento evoluciona hacia proyecto real, conviene convertirlo en un repositorio o carpeta propia y dejarlo explícitamente separado del núcleo financiero de TradeBase.</p>
+</blockquote>
+
+  </section>
+</main>
+</body>
+</html>

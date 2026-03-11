@@ -61,9 +61,8 @@ function goBack() {
 <template>
   <div class="admin-page">
     <!-- Loading -->
-    <div v-if="loading && !auction" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('admin.subastas.loading') }}</span>
+    <div v-if="loading && !auction" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="6" />
     </div>
 
     <template v-else-if="auction">
@@ -162,7 +161,7 @@ function goBack() {
 .admin-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
   height: 100%;
 }
 
@@ -170,7 +169,7 @@ function goBack() {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-direction: column;
   align-items: stretch;
 }
@@ -178,15 +177,15 @@ function goBack() {
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .btn-back {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 1px solid var(--color-gray-200);
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 1.2rem;
   display: flex;
@@ -204,7 +203,7 @@ function goBack() {
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
   align-items: flex-start;
 }
 
@@ -217,8 +216,8 @@ function goBack() {
 
 .status-badge {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: capitalize;
@@ -229,23 +228,23 @@ function goBack() {
   color: var(--text-auxiliary);
 }
 .status-scheduled {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 .status-active {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 .status-ended {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 .status-adjudicated {
-  background: #ede9fe;
-  color: #7c3aed;
+  background: var(--color-purple-bg);
+  color: var(--color-purple-600);
 }
 .status-cancelled {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 .status-no-sale {
@@ -257,12 +256,12 @@ function goBack() {
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -274,27 +273,27 @@ function goBack() {
 
 .btn-sm-link {
   font-size: 0.875rem;
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
 }
 
 .page-content {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .loading-state {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -308,21 +307,21 @@ function goBack() {
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
 .empty-state-full {
   text-align: center;
-  padding: 80px 20px;
+  padding: 5rem 1.25rem;
   color: var(--text-auxiliary);
 }
 
 .empty-state-full p {
-  margin: 0 0 16px;
+  margin: 0 0 var(--spacing-4);
   font-size: 1.1rem;
 }
 
@@ -330,12 +329,12 @@ function goBack() {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -344,7 +343,7 @@ function goBack() {
   background: var(--color-primary-dark);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .page-header {
     flex-direction: row;
     align-items: center;

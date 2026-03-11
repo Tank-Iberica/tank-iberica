@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Dossier Ejecutivo</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 12px; }
+body { font-family: Segoe UI, Arial, sans-serif; color: #111; line-height: 1.38; margin: 0; }
+main { max-width: 1020px; margin: 0 auto; }
+section.cover { min-height: 236mm; display: flex; flex-direction: column; justify-content: center; border-bottom: 2px solid #111; page-break-after: always; }
+.cover .eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #555; margin-bottom: 14px; }
+.cover h1 { font-size: 32px; line-height: 1.08; margin: 0 0 12px 0; }
+.cover p { max-width: 760px; color: #333; font-size: 14px; }
+.cover .meta { margin-top: 22px; color: #555; font-size: 12px; }
+section.toc-wrap { page-break-after: always; }
+.toc-title { font-size: 24px; margin: 0 0 14px 0; }
+.toc-note { color: #555; margin-bottom: 12px; }
+.toc { margin: 0; padding-left: 0; list-style: none; }
+.toc li { margin: 4px 0; break-inside: avoid; }
+.toc a { color: #0b57d0; text-decoration: none; }
+.toc-l2 { font-weight: 600; margin-top: 10px; }
+.toc-l3 { padding-left: 16px; font-size: 11.5px; color: #333; }
+hr { border: 0; border-top: 1px solid #d0d7de; margin: 16px 0; }
+h1, h2, h3, h4 { page-break-after: avoid; break-after: avoid-page; }
+h1 { font-size: 28px; line-height: 1.15; margin: 0 0 16px 0; }
+h2 { font-size: 21px; margin-top: 22px; padding-top: 8px; border-top: 1px solid #e5e7eb; }
+h3 { font-size: 16px; margin-top: 16px; }
+p, li { orphans: 3; widows: 3; }
+blockquote { margin: 10px 0; padding: 7px 10px; border-left: 4px solid #d0d7de; color: #333; background: #fafafa; }
+a { color: #0b57d0; text-decoration: none; }
+pre, code { font-family: Consolas, 'Courier New', monospace; }
+code { background: #f6f8fa; padding: 1px 3px; border-radius: 4px; }
+pre { white-space: pre-wrap; word-break: break-word; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; padding: 10px; overflow-wrap: anywhere; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10.8px; table-layout: fixed; }
+th, td { border: 1px solid #d0d7de; padding: 6px 7px; text-align: left; vertical-align: top; overflow-wrap: anywhere; word-break: break-word; }
+th { background: #f3f4f6; font-weight: 700; }
+tr:nth-child(even) td { background: #fcfcfd; }
+ul, ol { padding-left: 18px; }
+.small { font-size: 11px; color: #666; }
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase · Dossier ejecutivo</div>
+    <h1>TradeBase - Dossier Ejecutivo</h1>
+    <p>Documento unico de decision para sede, estructura financiera, subvenciones y presupuesto. Integra los resumenes ejecutivos de ayudas y costes operativos en una sola lectura.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <p class="toc-note small">Indice automatico basado en los encabezados del dossier.</p>
+    <ol class='toc'><li class='toc-l2'><a href='#tesis-central'>1. Tesis central</a></li>
+<li class='toc-l2'><a href='#decisiones-que-mandan'>2. Decisiones que mandan</a></li>
+<li class='toc-l2'><a href='#ranking-de-sede'>3. Ranking de sede</a></li>
+<li class='toc-l3'><a href='#lectura-de-sede'>Lectura de sede</a></li>
+<li class='toc-l2'><a href='#estructura-financiera-recomendada'>4. Estructura financiera recomendada</a></li>
+<li class='toc-l3'><a href='#por-que-30.000-eur'>Por que 30.000 EUR</a></li>
+<li class='toc-l3'><a href='#si-sois-2-socios-al-5050'>Si sois 2 socios al 50/50</a></li>
+<li class='toc-l2'><a href='#irpf-de-socios-la-regla-que-no-se-puede-leer-mal'>5. IRPF de socios: la regla que no se puede leer mal</a></li>
+<li class='toc-l3'><a href='#lectura-correcta'>Lectura correcta</a></li>
+<li class='toc-l2'><a href='#ayudas-que-si-merece-la-pena-trabajar-en-2026'>6. Ayudas que si merece la pena trabajar en 2026</a></li>
+<li class='toc-l2'><a href='#ayudas-condicionales-importantes'>7. Ayudas condicionales importantes</a></li>
+<li class='toc-l2'><a href='#presupuesto-operativo-real'>8. Presupuesto operativo real</a></li>
+<li class='toc-l3'><a href='#donde-se-concentra-el-gasto'>Donde se concentra el gasto</a></li>
+<li class='toc-l3'><a href='#lectura-del-presupuesto'>Lectura del presupuesto</a></li>
+<li class='toc-l2'><a href='#caja-minima-vs-estructura-recomendada'>9. Caja minima vs estructura recomendada</a></li>
+<li class='toc-l3'><a href='#regla-de-lectura'>Regla de lectura</a></li>
+<li class='toc-l2'><a href='#retorno-3-anos-como-no-enganarse'>10. Retorno 3 anos: como no enganarse</a></li>
+<li class='toc-l3'><a href='#lectura-correcta-1'>Lectura correcta</a></li>
+<li class='toc-l2'><a href='#plan-de-ejecucion-2026'>11. Plan de ejecucion 2026</a></li>
+<li class='toc-l2'><a href='#conclusiones-finales'>12. Conclusiones finales</a></li></ol>
+  </section>
+  <section class="content">
+    <h1 id="tradebase-dossier-ejecutivo">TradeBase - Dossier Ejecutivo</h1>
+<blockquote>
+<p>Sintesis ejecutiva de <code>SUBVENCIONES.md</code> y <code>PRESUPUESTOS.md</code>. Documento de decision para sede, estructura financiera y plan de captacion 2026-2028.</p>
+</blockquote>
+<h2 id="tesis-central">1. Tesis central</h2>
+<p>TradeBase puede lanzarse con un presupuesto operativo contenido, pero si se quiere jugar subvenciones con seriedad no basta con el minimo de caja para sobrevivir. La lectura correcta es:</p>
+<ul>
+<li><strong>coste operativo Ano 1</strong>: ~<code>15.000 EUR</code></li>
+<li><strong>coste total 3 anos</strong>: ~<code>50.997 EUR</code></li>
+<li><strong>estructura financiera recomendada</strong>: <strong><code>30.000 EUR</code> de fondos propios</strong>, con <code>6.000 EUR</code> de capital social y <code>24.000 EUR</code> de aportacion adicional</li>
+</ul>
+<p>La diferencia entre coste y capitalizacion es la clave de todo el dossier.</p>
+<h2 id="decisiones-que-mandan">2. Decisiones que mandan</h2>
+<ol>
+<li><strong>No constituir en VdDJ</strong> si las subvenciones importan de verdad, porque hoy deja fuera <code>#21 MITECO</code>.</li>
+<li><strong>Elegir sede &lt;5.000 habitantes</strong> si se quiere mantener el mayor upside subvencional.</li>
+<li><strong>Trabajar maximo 6-8 lineas en 2026</strong>, no perseguir todo el mapa.</li>
+<li><strong>Solicitar certificacion startup</strong> pronto tras constituir si se quiere mantener <code>50/50</code> y capturar IRPF estatal.</li>
+<li><strong>Arrancar con 30.000 EUR de fondos propios</strong>, no con una SL minima sin caja.</li>
+</ol>
+<h2 id="ranking-de-sede">3. Ranking de sede</h2>
+<table>
+<thead>
+<tr>
+<th>Opcion</th>
+<th>Lectura ejecutiva</th>
+<th style="text-align: right;">Subvencion 3 anos esperable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fresno de la Vega</strong></td>
+<td>Mejor equilibrio general: <code>MITECO + Tierra de Campos + relato rural + cercania razonable</code></td>
+<td style="text-align: right;"><code>38.000-50.000 EUR</code></td>
+</tr>
+<tr>
+<td><strong>La Robla</strong></td>
+<td>Muy fuerte si se quiere apretar subvencion sin la friccion maxima de Pola</td>
+<td style="text-align: right;"><code>45.000-60.000 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Pola de Gordon</strong></td>
+<td>Mayor techo bruto por <code>MITECO + Transicion Justa</code>, pero con mas friccion real</td>
+<td style="text-align: right;"><code>50.000-70.000 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Onzonilla</strong></td>
+<td>Mejor base operativa diaria, con menos extras exclusivos</td>
+<td style="text-align: right;"><code>28.000-38.000 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Santovenia</strong></td>
+<td>Opcion comoda, mejor que VdDJ, pero con menor upside</td>
+<td style="text-align: right;"><code>20.000-28.000 EUR</code></td>
+</tr>
+<tr>
+<td><strong>VdDJ</strong></td>
+<td>Solo si se acepta conscientemente perder <code>MITECO</code></td>
+<td style="text-align: right;"><code>15.000-22.000 EUR</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="lectura-de-sede">Lectura de sede</h3>
+<ul>
+<li><strong>Fresno</strong> es la mejor combinacion de dinero probable, narrativa y practicidad.</li>
+<li><strong>La Robla</strong> es la opcion fuerte si se quiere apretar subvencion con mas apoyo de implantacion.</li>
+<li><strong>Pola</strong> solo gana si se prioriza el techo maximo y la operativa no penaliza demasiado.</li>
+<li><strong>Santovenia</strong> solo gana si el peso de la comodidad y una sede gratis compensa perder upside.</li>
+</ul>
+<h2 id="estructura-financiera-recomendada">4. Estructura financiera recomendada</h2>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th style="text-align: right;">Importe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Capital social</td>
+<td style="text-align: right;"><code>6.000 EUR</code></td>
+</tr>
+<tr>
+<td>Aportacion adicional socios / prima</td>
+<td style="text-align: right;"><code>24.000 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Fondos propios totales</strong></td>
+<td style="text-align: right;"><strong><code>30.000 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="por-que-30.000-eur">Por que 30.000 EUR</h3>
+<ul>
+<li>abre mejor <code>#4 Creacion Empresas CyL</code>, <code>#12 Certificacion startup</code>, <code>#21 MITECO</code>, <code>#24 I+D+i</code> y <code>#27 IRPF socios</code></li>
+<li>mejora la foto para <code>ENISA Jovenes Emprendedores</code></li>
+<li>permite prefinanciar gasto subvencionable y separar pools de <code>10.000 EUR</code> y <code>25.000 EUR</code></li>
+<li>evita una SL infracapitalizada frente a bancos, evaluadores y terceros</li>
+</ul>
+<h3 id="si-sois-2-socios-al-5050">Si sois 2 socios al 50/50</h3>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th style="text-align: right;">Total</th>
+<th style="text-align: right;">Socio A</th>
+<th style="text-align: right;">Socio B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Capital social</td>
+<td style="text-align: right;"><code>6.000 EUR</code></td>
+<td style="text-align: right;"><code>3.000 EUR</code></td>
+<td style="text-align: right;"><code>3.000 EUR</code></td>
+</tr>
+<tr>
+<td>Aportacion adicional / prima</td>
+<td style="text-align: right;"><code>24.000 EUR</code></td>
+<td style="text-align: right;"><code>12.000 EUR</code></td>
+<td style="text-align: right;"><code>12.000 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Fondos propios totales</strong></td>
+<td style="text-align: right;"><strong><code>30.000 EUR</code></strong></td>
+<td style="text-align: right;"><strong><code>15.000 EUR</code></strong></td>
+<td style="text-align: right;"><strong><code>15.000 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="irpf-de-socios-la-regla-que-no-se-puede-leer-mal">5. IRPF de socios: la regla que no se puede leer mal</h2>
+<p>Con <code>2 socios 50/50</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Escenario</th>
+<th style="text-align: right;">Estatal</th>
+<th style="text-align: right;">CyL</th>
+<th style="text-align: right;">Total teorico</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sin certificacion startup</td>
+<td style="text-align: right;"><code>0 EUR</code></td>
+<td style="text-align: right;"><code>0 EUR</code></td>
+<td style="text-align: right;"><code>0 EUR</code></td>
+</tr>
+<tr>
+<td>Con certificacion startup y ambos fundadores validos</td>
+<td style="text-align: right;"><code>15.000 EUR</code></td>
+<td style="text-align: right;"><code>0 EUR</code></td>
+<td style="text-align: right;"><code>15.000 EUR</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="lectura-correcta">Lectura correcta</h3>
+<ul>
+<li>sin certificacion startup, el <code>50/50</code> <strong>bloquea</strong> tanto la estatal como la autonoma</li>
+<li>con certificacion startup, la via estatal puede reabrirse para ambos fundadores</li>
+<li>ese <code>15.000 EUR</code> es <strong>techo teorico</strong>, no dinero automatico: depende de que la certificacion salga y de tener cuota suficiente en IRPF</li>
+</ul>
+<h2 id="ayudas-que-si-merece-la-pena-trabajar-en-2026">6. Ayudas que si merece la pena trabajar en 2026</h2>
+<table>
+<thead>
+<tr>
+<th>Prioridad</th>
+<th>Linea</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Muy alta</td>
+<td><code>#12 Certificacion startup</code></td>
+<td>Multiplica otros beneficios y mejora el relato institucional</td>
+</tr>
+<tr>
+<td>Muy alta</td>
+<td><code>#24 I+D+i</code></td>
+<td>Es estructural y acumulable</td>
+</tr>
+<tr>
+<td>Muy alta</td>
+<td><code>#27 IRPF socios</code></td>
+<td>Retorno fuerte si la estructura esta bien armada</td>
+</tr>
+<tr>
+<td>Alta</td>
+<td><code>#4 Creacion Empresas CyL</code></td>
+<td>Principal ayuda realista de fondo perdido del Ano 1</td>
+</tr>
+<tr>
+<td>Alta</td>
+<td><code>#1 Plan Emprendedores Leon</code></td>
+<td>Pequeña, pero con friccion baja</td>
+</tr>
+<tr>
+<td>Alta</td>
+<td><code>#8/#9/#10 Camaras + #18 Espana Emprende</code></td>
+<td>Mucho valor con baja carga</td>
+</tr>
+<tr>
+<td>Media-alta</td>
+<td><code>#2 Hacendera</code></td>
+<td>Interesante si el relato local esta bien armado</td>
+</tr>
+<tr>
+<td>Media</td>
+<td><code>#5 ICECYL Digitalizacion</code> o <code>#7 Digital. Pymes CyL</code></td>
+<td>Elegir una, no las dos como prioridad real</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ayudas-condicionales-importantes">7. Ayudas condicionales importantes</h2>
+<ul>
+<li><code>#21 MITECO</code>: solo con sede <code>&lt;5.000</code> habitantes</li>
+<li><code>A2 Transicion Justa</code>: solo en <strong>La Robla / Pola</strong></li>
+<li><code>A7 Tierra de Campos</code>: diferencial especifico de <strong>Fresno de la Vega</strong></li>
+<li><code>A8 Centro de Empresas</code>: solo en <strong>La Robla</strong></li>
+<li><code>A9 FELE INCIBE Emprende</code>: ayuda sobre todo no dineraria; premio de <code>3.000 EUR</code> solo si se gana</li>
+<li><code>#13 ENISA</code>: solo si hace falta financiacion y se mantiene coherencia con fondos propios</li>
+</ul>
+<h2 id="presupuesto-operativo-real">8. Presupuesto operativo real</h2>
+<table>
+<thead>
+<tr>
+<th>Magnitud</th>
+<th style="text-align: right;">Importe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ano 1</td>
+<td style="text-align: right;"><code>~15.000 EUR</code></td>
+</tr>
+<tr>
+<td>Ano 2</td>
+<td style="text-align: right;"><code>~16.100 EUR</code></td>
+</tr>
+<tr>
+<td>Ano 3</td>
+<td style="text-align: right;"><code>~19.900 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Total 3 anos</strong></td>
+<td style="text-align: right;"><strong><code>~50.997 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="donde-se-concentra-el-gasto">Donde se concentra el gasto</h3>
+<table>
+<thead>
+<tr>
+<th>Bloque</th>
+<th style="text-align: right;">Total 3 anos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Marketing</td>
+<td style="text-align: right;"><code>~15.490 EUR</code></td>
+</tr>
+<tr>
+<td>Desarrollo (tooling IA)</td>
+<td style="text-align: right;"><code>~8.850 EUR</code></td>
+</tr>
+<tr>
+<td>Operaciones / administracion</td>
+<td style="text-align: right;"><code>~7.880 EUR</code></td>
+</tr>
+<tr>
+<td>Contingencia 10%</td>
+<td style="text-align: right;"><code>~4.236 EUR</code></td>
+</tr>
+<tr>
+<td>Legal / GDPR</td>
+<td style="text-align: right;"><code>~3.750 EUR</code></td>
+</tr>
+<tr>
+<td>Infraestructura SaaS</td>
+<td style="text-align: right;"><code>~2.196 EUR</code></td>
+</tr>
+<tr>
+<td>APIs producto</td>
+<td style="text-align: right;"><code>~2.123 EUR</code></td>
+</tr>
+<tr>
+<td>Stripe variable</td>
+<td style="text-align: right;"><code>~4.400 EUR</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="lectura-del-presupuesto">Lectura del presupuesto</h3>
+<ul>
+<li>la empresa es austera, pero no trivial</li>
+<li>el gasto mas sensible esta en <strong>marketing</strong>, <strong>tooling de desarrollo</strong> y <strong>operaciones/admin</strong></li>
+<li><code>Stripe</code> debe leerse como coste variable, no como OPEX fijo</li>
+<li><code>15k-18k</code> sirven para sobrevivir; <code>30k</code> sirven para sobrevivir y jugar ayudas con margen</li>
+</ul>
+<h2 id="caja-minima-vs-estructura-recomendada">9. Caja minima vs estructura recomendada</h2>
+<table>
+<thead>
+<tr>
+<th>Escenario</th>
+<th style="text-align: right;">Importe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Minimo operativo puro</td>
+<td style="text-align: right;"><code>~15.313 EUR</code></td>
+</tr>
+<tr>
+<td>Comodo operativo</td>
+<td style="text-align: right;"><code>~17.800 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Recomendado para maximizar ayudas</strong></td>
+<td style="text-align: right;"><strong><code>30.000 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="regla-de-lectura">Regla de lectura</h3>
+<ul>
+<li><strong>supervivencia</strong>: <code>15k-18k</code></li>
+<li><strong>estrategia de subvenciones seria</strong>: <code>30k</code></li>
+</ul>
+<p>No hay contradiccion: lo primero es coste de operar; lo segundo es capitalizacion recomendable.</p>
+<h2 id="retorno-3-anos-como-no-enganarse">10. Retorno 3 anos: como no enganarse</h2>
+<table>
+<thead>
+<tr>
+<th>Capa</th>
+<th style="text-align: right;">Conservador</th>
+<th style="text-align: right;">Optimista</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fondo perdido</td>
+<td style="text-align: right;"><code>2.700 EUR</code></td>
+<td style="text-align: right;"><code>36.332 EUR</code></td>
+</tr>
+<tr>
+<td>Fiscal (<code>IRPF + I+D+i + Patent Box</code>)</td>
+<td style="text-align: right;"><code>4.619 EUR</code></td>
+<td style="text-align: right;"><code>30.853 EUR</code></td>
+</tr>
+<tr>
+<td>Prestamos blandos</td>
+<td style="text-align: right;"><code>20.000 EUR</code></td>
+<td style="text-align: right;"><code>1.875.000 EUR</code></td>
+</tr>
+<tr>
+<td>Asesoramiento (valor)</td>
+<td style="text-align: right;"><code>21.000 EUR</code></td>
+<td style="text-align: right;"><code>38.500 EUR</code></td>
+</tr>
+<tr>
+<td><strong>Efectivo directo (<code>fondo perdido + fiscal</code>)</strong></td>
+<td style="text-align: right;"><strong><code>7.319 EUR</code></strong></td>
+<td style="text-align: right;"><strong><code>67.185 EUR</code></strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="lectura-correcta-1">Lectura correcta</h3>
+<ul>
+<li>el dinero realmente comparable con gasto es <strong>fondo perdido + fiscal</strong></li>
+<li>los prestamos no son retorno; son capacidad de financiacion</li>
+<li>el caso central serio esta mas cerca de <strong><code>6.000-10.000 EUR al ano</code></strong> en retorno directo que del techo optimista</li>
+</ul>
+<h2 id="plan-de-ejecucion-2026">11. Plan de ejecucion 2026</h2>
+<ol>
+<li>Cerrar <strong>sede definitiva</strong> antes de constituir.</li>
+<li>Cerrar estructura socios y fondos propios (<code>30.000 EUR / 6.000 EUR</code>).</li>
+<li>Constituir la SL.</li>
+<li>Solicitar <code>#12 Certificacion startup</code>.</li>
+<li>Montar trazabilidad <code>I+D+i</code> desde el dia 1.</li>
+<li>Trabajar <code>#4 Creacion Empresas CyL</code> como ayuda principal.</li>
+<li>Lanzar paquete de baja friccion: <code>#1 + Camaras + #18</code>.</li>
+<li>Activar <code>#21 MITECO</code> solo si la sede final es elegible y la memoria sale fuerte.</li>
+</ol>
+<h2 id="conclusiones-finales">12. Conclusiones finales</h2>
+<ul>
+<li><strong>Si la prioridad es maximizar subvenciones con equilibrio real</strong>, la mejor apuesta sigue siendo <strong>Fresno de la Vega</strong>.</li>
+<li><strong>Si la prioridad es apretar el mayor techo posible</strong>, la pelea real esta entre <strong>La Robla</strong> y <strong>Pola de Gordon</strong>.</li>
+<li><strong>Si la prioridad es solo operativa y comodidad</strong>, <code>Santovenia</code> u <code>Onzonilla</code> pueden ser mas faciles, pero con menor upside.</li>
+<li><strong>Si vais 50/50</strong>, la certificacion startup no es un extra estetico; es una palanca critica para el IRPF.</li>
+<li><strong>Si quereis jugar ayudas de verdad</strong>, no penseis la empresa como una SL de <code>3.000 EUR</code>: pensadla como una SL de <strong><code>30.000 EUR</code> de fondos propios</strong>.</li>
+</ul>
+
+  </section>
+</main>
+</body>
+</html>
+

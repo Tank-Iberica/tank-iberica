@@ -71,5 +71,5 @@ The `/api/account/export` endpoint generates a JSON/CSV export of:
 - [x] Data export endpoint (`/api/account/export`)
 - [x] GDPR request tracking (`gdpr_requests` table)
 - [x] Backup retention (daily/weekly/monthly via `backup-multi-tier.sh`)
-- [ ] Automated archival cron job (planned)
+- [x] Automated archival cron job (`/api/cron/data-retention` — daily 03:00 UTC)
 - [ ] Cold storage migration (Phase 2)

@@ -54,9 +54,8 @@ onMounted(() => init())
     <template v-else>
       <div v-if="error" class="alert-error">{{ error }}</div>
 
-      <div v-if="loading" class="loading-state">
-        <div class="spinner" />
-        <span>{{ t('common.loading') }}...</span>
+      <div v-if="loading" class="loading-state" aria-busy="true">
+        <UiSkeletonCard :lines="3" />
       </div>
 
       <template v-else>
@@ -93,18 +92,18 @@ onMounted(() => init())
 
 <style scoped>
 .widget-page {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .page-header h1 {
@@ -124,12 +123,12 @@ onMounted(() => init())
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-5);
   background: var(--bg-primary);
   color: var(--color-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   text-decoration: none;
   align-self: flex-start;
@@ -140,23 +139,23 @@ onMounted(() => init())
 }
 
 .upgrade-card {
-  background: linear-gradient(135deg, #fffbeb, #fef3c7);
-  border: 1px solid #fde68a;
-  border-radius: 12px;
-  padding: 24px;
+  background: linear-gradient(135deg, var(--color-amber-50), var(--color-warning-bg));
+  border: 1px solid var(--color-amber-200);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
   text-align: center;
 }
 
 .upgrade-card h2 {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-2) 0;
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--color-warning-text);
 }
 
 .upgrade-card p {
-  margin: 0 0 16px 0;
-  color: #a16207;
+  margin: 0 0 var(--spacing-4) 0;
+  color: var(--color-amber-700);
   font-size: 0.95rem;
 }
 
@@ -164,12 +163,12 @@ onMounted(() => init())
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-6);
   background: var(--color-warning);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   text-decoration: none;
 }
@@ -179,10 +178,10 @@ onMounted(() => init())
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
@@ -190,14 +189,14 @@ onMounted(() => init())
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -213,12 +212,12 @@ onMounted(() => init())
 .config-layout {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .widget-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 
   .page-header {

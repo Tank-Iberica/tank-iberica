@@ -2,7 +2,7 @@
   <NuxtLink :to="`/subastas/${auction.id}`" class="auction-card">
     <!-- Card image -->
     <div class="auction-card-image">
-      <img v-if="firstImage" :src="firstImage" :alt="vehicleTitle" loading="lazy" >
+      <NuxtImg v-if="firstImage" :src="firstImage" :alt="vehicleTitle" loading="lazy" width="400" height="300" decoding="async" sizes="(max-width: 48rem) 100vw, 400px" />
       <div v-else class="auction-card-placeholder">
         <svg
           width="32"
@@ -227,7 +227,7 @@ defineProps<{
 .auction-card-price {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .price-label {
@@ -262,7 +262,7 @@ defineProps<{
 .card-countdown {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   color: var(--text-secondary);

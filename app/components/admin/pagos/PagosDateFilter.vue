@@ -31,11 +31,11 @@ const { t } = useI18n()
 <style scoped>
 .date-range-row {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding-bottom: 2px;
+  padding-bottom: 0.125rem;
 }
 
 .date-range-row::-webkit-scrollbar {
@@ -43,16 +43,16 @@ const { t } = useI18n()
 }
 
 .date-btn {
-  padding: 8px 14px;
+  padding: var(--spacing-2) 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-auxiliary);
   transition: all 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
   white-space: nowrap;
   flex-shrink: 0;
 }

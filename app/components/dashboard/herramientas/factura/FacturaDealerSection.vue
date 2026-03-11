@@ -100,17 +100,17 @@ function onInput(field: DealerField, event: Event): void {
 <style scoped>
 .form-section {
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   padding: 1.25rem;
   margin-bottom: 1.25rem;
 }
 
 .form-section__legend {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 700;
   color: var(--primary, var(--color-primary));
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.0313rem;
   padding: 0 0.5rem;
 }
 
@@ -131,16 +131,16 @@ function onInput(field: DealerField, event: Event): void {
 }
 
 .form-field__label {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-secondary);
 }
 
 .form-field__input {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   color: var(--text-primary);
   background: var(--bg-primary);
@@ -151,7 +151,7 @@ function onInput(field: DealerField, event: Event): void {
 .form-field__input:focus {
   outline: none;
   border-color: var(--primary, var(--color-primary));
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 @media (min-width: 48em) {

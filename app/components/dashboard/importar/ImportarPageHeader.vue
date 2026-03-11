@@ -19,7 +19,7 @@ const { t } = useI18n()
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .back-link {
@@ -27,14 +27,14 @@ const { t } = useI18n()
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
 
 .page-header h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   color: var(--color-primary);
 }

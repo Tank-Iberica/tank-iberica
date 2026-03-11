@@ -57,7 +57,7 @@ export function useAuctionRegistration(auctionId: string) {
     try {
       const { data, error: err } = await supabase
         .from('auction_registrations')
-        .select('*')
+        .select('id, auction_id, user_id, deposit_paid, registered_at, id_type, id_number, id_document_url, company_name, transport_license_url, additional_docs, stripe_payment_intent_id')
         .eq('auction_id', auctionId)
         .eq('user_id', user.value.id)
         .maybeSingle()
@@ -176,7 +176,7 @@ export function useAuctionRegistration(auctionId: string) {
   async function fetchAllRegistrations(forAuctionId: string): Promise<AuctionRegistration[]> {
     const { data, error: err } = await supabase
       .from('auction_registrations')
-      .select('*')
+      .select('id, auction_id, user_id, deposit_paid, registered_at, id_type, id_number, id_document_url, company_name, transport_license_url, additional_docs, stripe_payment_intent_id')
       .eq('auction_id', forAuctionId)
       .order('registered_at', { ascending: false })
 

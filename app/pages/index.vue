@@ -27,6 +27,7 @@
       <CatalogActiveFilters @change="onFilterChange" />
 
       <CatalogVehicleGrid
+        id="catalog-results"
         :vehicles="vehicles"
         :loading="loading"
         :loading-more="loadingMore"
@@ -129,7 +130,7 @@ usePageSeo({
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Tracciona',
+    name: t('site.title'),
     url: 'https://tracciona.com',
     description: t('seo.homeDescription'),
     potentialAction: {
@@ -247,11 +248,7 @@ async function onCategoryChange() {
   await loadVehicles()
 }
 
-async function onSubcategoryChange() {
-  clearAllFilters()
-  await fetchByCategoryAndSubcategory(activeCategoryId.value, activeSubcategoryId.value)
-  await loadVehicles()
-}
+const onSubcategoryChange = onCategoryChange
 
 async function onFilterChange() {
   await loadVehicles()

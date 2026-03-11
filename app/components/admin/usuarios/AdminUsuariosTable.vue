@@ -34,7 +34,7 @@ function onRoleChange(user: AdminUser, event: Event) {
   </div>
 
   <!-- Loading -->
-  <div v-if="loading" class="loading-state">Cargando usuarios...</div>
+  <div v-if="loading" class="loading-state">{{ $t('common.loadingItems') }}</div>
 
   <!-- Table -->
   <div v-else class="table-container">
@@ -43,12 +43,12 @@ function onRoleChange(user: AdminUser, event: Event) {
         <tr>
           <th style="width: 50px" />
           <th>Pseudónimo</th>
-          <th>Nombre</th>
+          <th>{{ $t('common.name') }}</th>
           <th>Email</th>
           <th style="width: 90px">Proveedor</th>
           <th style="width: 100px">Rol</th>
-          <th style="width: 100px">Fecha</th>
-          <th style="width: 130px">Acciones</th>
+          <th style="width: 100px">{{ $t('common.date') }}</th>
+          <th style="width: 130px">{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -114,54 +114,54 @@ function onRoleChange(user: AdminUser, event: Event) {
 
 <style scoped>
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
 .table-container {
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 850px;
+  min-width: 53.125rem;
 }
 
 .admin-table th,
 .admin-table td {
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .admin-table th {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   font-size: 0.875rem;
 }
 
 .admin-table tr:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 50%;
   background: var(--bg-tertiary);
   display: flex;
@@ -179,27 +179,27 @@ function onRoleChange(user: AdminUser, event: Event) {
 
 .avatar-initials {
   font-weight: 600;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 0.9rem;
 }
 
 .email-cell {
   font-size: 0.9rem;
-  color: #4b5563;
+  color: var(--color-gray-600);
 }
 
 .provider-badge {
   background: var(--bg-secondary);
-  color: #6b7280;
-  padding: 3px 8px;
-  border-radius: 4px;
+  color: var(--color-gray-500);
+  padding: 0.1875rem var(--spacing-2);
+  border-radius: var(--border-radius-sm);
   font-size: 0.75rem;
   font-weight: 500;
 }
 
 .role-select {
-  padding: 6px 8px;
-  border-radius: 6px;
+  padding: 0.375rem var(--spacing-2);
+  border-radius: var(--border-radius);
   border: 2px solid;
   font-size: 0.75rem;
   font-weight: 600;
@@ -209,16 +209,16 @@ function onRoleChange(user: AdminUser, event: Event) {
 
 .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .btn-icon {
   background: none;
   border: 1px solid var(--border-color-light);
-  padding: 6px 10px;
-  border-radius: 4px;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   transition: all 0.2s;
 }
 
@@ -227,16 +227,16 @@ function onRoleChange(user: AdminUser, event: Event) {
 }
 
 .btn-view:hover {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
 }
 
 .btn-delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .empty-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 </style>

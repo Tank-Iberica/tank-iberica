@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # CONTEXTO COMPLETO — TRACCIONA / TRADEBASE
 
@@ -237,3 +237,5 @@ Si necesitas más detalle de negocio: pregúntame directamente, tengo todas las 
 ---
 
 _Última actualización: 24 febrero 2026_
+
+

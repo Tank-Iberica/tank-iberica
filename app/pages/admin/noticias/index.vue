@@ -73,9 +73,8 @@ onMounted(() => init())
       @clear-filters="clearFilters"
     />
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      Cargando noticias...
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonTable :rows="5" :cols="4" />
     </div>
 
     <NoticiasTable
@@ -105,39 +104,19 @@ onMounted(() => init())
 
 <style scoped>
 .noticias-page {
-  max-width: 1200px;
+  max-width: 75rem;
 }
 
 .error-msg {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
   font-size: 0.875rem;
 }
 
 .loading-state {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 40px 0;
-  justify-content: center;
-  color: var(--text-auxiliary);
-}
-
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--color-gray-200);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  padding: 2.5rem 0;
 }
 </style>

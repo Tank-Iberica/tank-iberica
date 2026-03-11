@@ -1,0 +1,117 @@
+{
+  "migratedAt": "2026-03-06T20:28:13.814Z",
+  "files": [
+    {
+      "file": "server/utils/whatsappApi.ts",
+      "replacements": 5
+    },
+    {
+      "file": "server/utils/verifyCronSecret.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/utils/featureFlags.ts",
+      "replacements": 2
+    },
+    {
+      "file": "server/utils/eventBus.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/services/whatsappProcessor.ts",
+      "replacements": 3
+    },
+    {
+      "file": "server/services/vehicleCreator.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/services/notifications.ts",
+      "replacements": 5
+    },
+    {
+      "file": "server/services/imageUploader.ts",
+      "replacements": 3
+    },
+    {
+      "file": "server/middleware/redirects.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/api/verify-document.post.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/api/error-report.post.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/api/whatsapp/webhook.post.ts",
+      "replacements": 5
+    },
+    {
+      "file": "server/api/whatsapp/process.post.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/api/stripe/webhook.post.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/api/social/generate-posts.post.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/api/email/send.post.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/api/demo/try-vehicle.post.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/api/dealer/import-stock.post.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/api/cron/search-alerts.post.ts",
+      "replacements": 3
+    },
+    {
+      "file": "server/api/cron/reservation-expiry.post.ts",
+      "replacements": 2
+    },
+    {
+      "file": "server/api/cron/price-drop-alert.post.ts",
+      "replacements": 2
+    },
+    {
+      "file": "server/api/cron/k6-readiness-check.post.ts",
+      "replacements": 2
+    },
+    {
+      "file": "server/api/cron/generate-editorial.post.ts",
+      "replacements": 1
+    },
+    {
+      "file": "server/api/cron/founding-expiry.post.ts",
+      "replacements": 7
+    },
+    {
+      "file": "server/api/cron/favorite-sold.post.ts",
+      "replacements": 2
+    },
+    {
+      "file": "server/api/cron/favorite-price-drop.post.ts",
+      "replacements": 2
+    },
+    {
+      "file": "server/api/cron/dealer-weekly-stats.post.ts",
+      "replacements": 2
+    },
+    {
+      "file": "server/api/account/delete.post.ts",
+      "replacements": 1
+    }
+  ]
+}

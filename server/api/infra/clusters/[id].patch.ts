@@ -7,107 +7,29 @@
  * Body can include: name, supabase_url, supabase_anon_key, supabase_service_role_key,
  *                   verticals, weight_used, weight_limit, status, metadata
  */
+import { defineEventHandler, getRouterParam } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { z } from 'zod'
+import { safeError } from '../../../utils/safeError'
+import { validateBody } from '../../../utils/validateBody'
 
-interface UpdateClusterBody {
-  name?: string
-  supabase_url?: string
-  supabase_anon_key?: string
-  supabase_service_role_key?: string
-  verticals?: string[]
-  weight_used?: number
-  weight_limit?: number
-  status?: string
-  metadata?: Record<string, unknown>
-}
-
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-const VALID_STATUSES = ['active', 'migrating', 'maintenance', 'offline']
-
-interface FieldRule {
-  key: keyof UpdateClusterBody
-  check: (v: unknown) => string | null
-  transform?: (v: unknown) => unknown
-}
-
-const trimStr = (v: unknown) => (v as string).trim()
-
-const CLUSTER_FIELD_RULES: FieldRule[] = [
-  {
-    key: 'name',
-    check: (v) => (typeof v === 'string' && v.trim() ? null : 'name must be a non-empty string'),
-    transform: trimStr,
-  },
-  {
-    key: 'supabase_url',
-    check: (v) =>
-      typeof v === 'string' && v.trim() ? null : 'supabase_url must be a non-empty string',
-    transform: trimStr,
-  },
-  {
-    key: 'supabase_anon_key',
-    check: (v) => (typeof v !== 'string' ? 'supabase_anon_key must be a string' : null),
-    transform: trimStr,
-  },
-  {
-    key: 'supabase_service_role_key',
-    check: (v) => (typeof v !== 'string' ? 'supabase_service_role_key must be a string' : null),
-    transform: trimStr,
-  },
-  {
-    key: 'verticals',
-    check: (v) =>
-      !Array.isArray(v) || !v.every((x) => typeof x === 'string')
-        ? 'verticals must be an array of strings'
-        : null,
-  },
-  {
-    key: 'weight_used',
-    check: (v) =>
-      typeof v !== 'number' || (v as number) < 0
-        ? 'weight_used must be a non-negative number'
-        : null,
-  },
-  {
-    key: 'weight_limit',
-    check: (v) =>
-      typeof v !== 'number' || (v as number) <= 0 ? 'weight_limit must be a positive number' : null,
-  },
-  {
-    key: 'status',
-    check: (v) =>
-      typeof v !== 'string' || !VALID_STATUSES.includes(v as string)
-        ? `status must be one of: ${VALID_STATUSES.join(', ')}`
-        : null,
-  },
-  {
-    key: 'metadata',
-    check: (v) =>
-      typeof v !== 'object' || Array.isArray(v) || v === null ? 'metadata must be an object' : null,
-  },
-]
-
-function validateClusterBody(body: UpdateClusterBody): {
-  errors: string[]
-  updateFields: Record<string, unknown>
-} {
-  const errors: string[] = []
-  const updateFields: Record<string, unknown> = {}
-  for (const rule of CLUSTER_FIELD_RULES) {
-    const val = body[rule.key]
-    if (val === undefined) continue
-    const error = rule.check(val)
-    if (error) errors.push(error)
-    else updateFields[rule.key] = rule.transform ? rule.transform(val) : val
-  }
-  return { errors, updateFields }
-}
+const updateClusterSchema = z.object({
+  name: z.string().min(1).max(128).optional(),
+  supabase_url: z.string().url().max(512).optional(),
+  supabase_anon_key: z.string().max(512).optional(),
+  supabase_service_role_key: z.string().max(512).optional(),
+  verticals: z.array(z.string()).optional(),
+  weight_used: z.number().nonnegative().optional(),
+  weight_limit: z.number().positive().optional(),
+  status: z.enum(['active', 'migrating', 'maintenance', 'offline']).optional(),
+  metadata: z.record(z.unknown()).optional(),
+})
 
 export default defineEventHandler(async (event) => {
   // ── Auth: admin only ────────────────────────────────────────────────────
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw safeError(401, 'Unauthorized')
   }
 
   const supabase = serverSupabaseServiceRole(event)
@@ -115,31 +37,22 @@ export default defineEventHandler(async (event) => {
   const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
 
   if (userData?.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Forbidden' })
+    throw safeError(403, 'Forbidden')
   }
 
   // ── Validate params ────────────────────────────────────────────────────
   const clusterId = getRouterParam(event, 'id')
-  if (!clusterId || !UUID_REGEX.test(clusterId)) {
-    throw createError({ statusCode: 400, message: 'Invalid cluster ID' })
+  if (!clusterId || !/^[0-9a-f-]{36}$/i.test(clusterId)) {
+    throw safeError(400, 'Invalid cluster ID')
   }
 
   // ── Validate body ──────────────────────────────────────────────────────
-  const body = await readBody<UpdateClusterBody>(event)
-  const { errors, updateFields } = validateClusterBody(body)
+  const body = await validateBody(event, updateClusterSchema)
 
-  if (errors.length > 0) {
-    throw createError({
-      statusCode: 400,
-      message: `Validation failed: ${errors.join('; ')}`,
-    })
-  }
+  const updateFields = Object.fromEntries(Object.entries(body).filter(([, v]) => v !== undefined))
 
   if (Object.keys(updateFields).length === 0) {
-    throw createError({
-      statusCode: 400,
-      message: 'No valid fields provided for update',
-    })
+    throw safeError(400, 'No valid fields provided for update')
   }
 
   // ── Update cluster ─────────────────────────────────────────────────────
@@ -151,17 +64,11 @@ export default defineEventHandler(async (event) => {
     .single()
 
   if (error) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to update cluster: ${error.message}`,
-    })
+    throw safeError(500, `Failed to update cluster: ${error.message}`)
   }
 
   if (!data) {
-    throw createError({
-      statusCode: 404,
-      message: 'Cluster not found',
-    })
+    throw safeError(404, 'Cluster not found')
   }
 
   return data

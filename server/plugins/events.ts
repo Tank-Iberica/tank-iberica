@@ -7,85 +7,35 @@
 import { on } from '~~/server/utils/eventBus'
 import { notifyAdmin } from '~~/server/services/notifications'
 
-// ── Event payload types ──
-
-interface VehicleCreatedPayload {
-  vehicleId: string
-  dealerId: string
-  title: string
-  vertical?: string
-}
-
-interface VehicleSoldPayload {
-  vehicleId: string
-  dealerId: string
-  title: string
-  buyerUserId?: string
-}
-
-interface DealerRegisteredPayload {
-  dealerId: string
-  email: string
-  companyName: string
-}
-
-interface SubscriptionChangedPayload {
-  dealerId: string
-  previousPlan: string | null
-  newPlan: string
-  action: 'created' | 'upgraded' | 'downgraded' | 'cancelled'
-}
-
 export default defineNitroPlugin(() => {
-  // ── vehicle:created ──
-  on('vehicle:created', async (_payload: unknown) => {
-    const payload = _payload as VehicleCreatedPayload
-    console.info(`[events] vehicle:created — ${payload.title} (dealer: ${payload.dealerId})`)
-
-    // Notify admin of new listing
-    await notifyAdmin('vehicle_created', {
-      vehicleId: payload.vehicleId,
-      dealerId: payload.dealerId,
-      title: payload.title,
-    })
+  // ── vehicle:created ──────────────────────────────────────────────────────
+  on('vehicle:created', async ({ vehicleId, dealerId, title }) => {
+    console.info(`[events] vehicle:created — ${title} (dealer: ${dealerId})`)
+    await notifyAdmin('vehicle_created', { vehicleId, dealerId, title })
   })
 
-  // ── vehicle:sold ──
-  on('vehicle:sold', async (_payload: unknown) => {
-    const payload = _payload as VehicleSoldPayload
-    console.info(`[events] vehicle:sold — ${payload.title} (dealer: ${payload.dealerId})`)
-
-    // Notify admin
-    await notifyAdmin('vehicle_sold', {
-      vehicleId: payload.vehicleId,
-      dealerId: payload.dealerId,
-      title: payload.title,
-    })
+  // ── vehicle:sold ─────────────────────────────────────────────────────────
+  on('vehicle:sold', async ({ vehicleId, dealerId, title }) => {
+    console.info(`[events] vehicle:sold — ${title} (dealer: ${dealerId})`)
+    await notifyAdmin('vehicle_sold', { vehicleId, dealerId, title })
   })
 
-  // ── dealer:registered ──
-  on('dealer:registered', async (_payload: unknown) => {
-    const payload = _payload as DealerRegisteredPayload
-    console.info(`[events] dealer:registered — ${payload.companyName}`)
-
-    await notifyAdmin('dealer_registered', {
-      dealerId: payload.dealerId,
-      email: payload.email,
-      companyName: payload.companyName,
-    })
+  // ── dealer:registered ────────────────────────────────────────────────────
+  on('dealer:registered', async ({ dealerId, email, companyName }) => {
+    console.info(`[events] dealer:registered — ${companyName}`)
+    await notifyAdmin('dealer_registered', { dealerId, email, companyName })
   })
 
-  // ── subscription:changed ──
-  on('subscription:changed', async (_payload: unknown) => {
-    const payload = _payload as SubscriptionChangedPayload
-    console.info(`[events] subscription:changed — dealer ${payload.dealerId}: ${payload.action}`)
+  // ── subscription:changed ─────────────────────────────────────────────────
+  on('subscription:changed', async ({ dealerId, action, previousPlan, newPlan }) => {
+    console.info(`[events] subscription:changed — dealer ${dealerId}: ${action}`)
+    await notifyAdmin('subscription_changed', { dealerId, action, previousPlan, newPlan })
+  })
 
-    await notifyAdmin('subscription_changed', {
-      dealerId: payload.dealerId,
-      action: payload.action,
-      previousPlan: payload.previousPlan,
-      newPlan: payload.newPlan,
-    })
+  // ── job:dead_letter ──────────────────────────────────────────────────────
+  on('job:dead_letter', async ({ jobId, jobType, error }) => {
+    console.warn(`[events] job:dead_letter — ${jobType} (${jobId}): ${error}`)
+    // Could notify admin or trigger alerting here
   })
 
   console.info('[events] Event bus listeners registered')

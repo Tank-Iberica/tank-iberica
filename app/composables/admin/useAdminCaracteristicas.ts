@@ -10,8 +10,8 @@ import {
   type FilterType,
   type FilterStatus,
   type ChoicesSource,
-  FILTER_TYPES,
-  FILTER_STATUSES,
+  getFilterTypeOptions,
+  getFilterStatusOptions,
 } from '~/composables/admin/useAdminFilters'
 
 /** State for the delete confirmation modal */
@@ -278,12 +278,15 @@ export function useAdminCaracteristicas() {
   // Display helpers
   // ---------------------------------------------------------------------------
 
+  const filterTypeOptions = computed(() => getFilterTypeOptions(t))
+  const filterStatusOptions = computed(() => getFilterStatusOptions(t))
+
   function getTypeLabel(type: FilterType): string {
-    return FILTER_TYPES.find((ft) => ft.value === type)?.label || type
+    return filterTypeOptions.value.find((ft) => ft.value === type)?.label || type
   }
 
   function getStatusLabel(status: FilterStatus): string {
-    return FILTER_STATUSES.find((s) => s.value === status)?.label || status
+    return filterStatusOptions.value.find((s) => s.value === status)?.label || status
   }
 
   function getExtraFiltersDisplay(filter: AdminFilter): string {
@@ -340,9 +343,9 @@ export function useAdminCaracteristicas() {
     showCalcOptions,
     showSliderInfo,
 
-    // Constants (re-exported for subcomponents)
-    FILTER_TYPES,
-    FILTER_STATUSES,
+    // Options (i18n-aware, for subcomponents)
+    filterTypeOptions,
+    filterStatusOptions,
 
     // Modal
     openNewModal,

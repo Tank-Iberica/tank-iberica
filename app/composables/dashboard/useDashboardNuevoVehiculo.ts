@@ -11,15 +11,20 @@ interface SubcategoryOption {
   category_id: string
 }
 
+import { useLocalStorageCache } from '~/composables/useLocalStorageCache'
+
 export function useDashboardNuevoVehiculo() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
+  const supabaseUser = useSupabaseUser()
   const router = useRouter()
   const { userId } = useAuth()
   const { dealerProfile, loadDealer } = useDealerDashboard()
   const { planLimits, canPublish, maxPhotos, fetchSubscription } = useSubscriptionPlan(
     userId.value || undefined,
   )
+  const categoriesCache = useLocalStorageCache<CategoryOption[]>('categories_v1', 600)
+  const subcategoriesCache = useLocalStorageCache<SubcategoryOption[]>('subcategories_v1', 600)
 
   const categories = ref<CategoryOption[]>([])
   const subcategories = ref<SubcategoryOption[]>([])
@@ -48,6 +53,7 @@ export function useDashboardNuevoVehiculo() {
   })
 
   const canPublishVehicle = computed(() => canPublish(activeListingsCount.value))
+  const emailVerified = computed(() => !!supabaseUser.value?.email_confirmed_at)
 
   async function loadFormData(): Promise<void> {
     const dealer = dealerProfile.value || (await loadDealer())
@@ -55,9 +61,17 @@ export function useDashboardNuevoVehiculo() {
 
     await fetchSubscription()
 
+    // Use localStorage cache for reference data (10 min TTL)
+    const cachedCats = categoriesCache.get()
+    const cachedSubs = subcategoriesCache.get()
+
     const [catRes, subRes, countRes] = await Promise.all([
-      supabase.from('categories').select('id, name, slug').order('slug'),
-      supabase.from('subcategories').select('id, name, slug, category_id').order('slug'),
+      cachedCats
+        ? Promise.resolve({ data: cachedCats })
+        : supabase.from('categories').select('id, name, slug').order('slug'),
+      cachedSubs
+        ? Promise.resolve({ data: cachedSubs })
+        : supabase.from('subcategories').select('id, name, slug, category_id').order('slug'),
       supabase
         .from('vehicles')
         .select('id', { count: 'exact', head: true })
@@ -65,8 +79,12 @@ export function useDashboardNuevoVehiculo() {
         .eq('status', 'published'),
     ])
 
-    categories.value = (catRes.data || []) as CategoryOption[]
-    subcategories.value = (subRes.data || []) as unknown as SubcategoryOption[]
+    const freshCats = (catRes.data || []) as CategoryOption[]
+    const freshSubs = (subRes.data || []) as unknown as SubcategoryOption[]
+    if (!cachedCats) categoriesCache.set(freshCats)
+    if (!cachedSubs) subcategoriesCache.set(freshSubs)
+    categories.value = freshCats
+    subcategories.value = freshSubs
     activeListingsCount.value = countRes.count || 0
   }
 
@@ -103,9 +121,16 @@ export function useDashboardNuevoVehiculo() {
     }
   }
 
-  async function submitVehicle(): Promise<void> {
+  async function submitVehicle(
+    photos: Array<{ url: string; publicId: string; width: number; height: number }> = [],
+  ): Promise<void> {
     const dealer = dealerProfile.value
     if (!dealer) return
+
+    if (!emailVerified.value) {
+      error.value = t('dashboard.vehicles.emailVerificationRequired')
+      return
+    }
 
     if (!canPublishVehicle.value) {
       error.value = t('dashboard.vehicles.limitReached')
@@ -128,25 +153,42 @@ export function useDashboardNuevoVehiculo() {
         .replaceAll(/[^a-z0-9]+/g, '-')
         .replaceAll(/(^-|-$)/g, '')
 
-      const { error: err } = await supabase.from('vehicles').insert({
-        dealer_id: dealer.id,
-        brand: form.value.brand,
-        model: form.value.model,
-        year: form.value.year || null,
-        km: form.value.km || null,
-        price: form.value.price || null,
-        category_id: form.value.category_id || null,
-        description_es: form.value.description_es || null,
-        description_en: form.value.description_en || null,
-        location: form.value.location || null,
-        slug,
-        status: 'published',
-        views: 0,
-        is_online: true,
-        vertical: getVerticalSlug(),
-      } as never)
+      const { data: vehicle, error: err } = await supabase
+        .from('vehicles')
+        .insert({
+          dealer_id: dealer.id,
+          brand: form.value.brand,
+          model: form.value.model,
+          year: form.value.year || null,
+          km: form.value.km || null,
+          price: form.value.price || null,
+          category_id: form.value.category_id || null,
+          description_es: form.value.description_es || null,
+          description_en: form.value.description_en || null,
+          location: form.value.location || null,
+          slug,
+          status: 'published',
+          views: 0,
+          is_online: true,
+          vertical: getVerticalSlug(),
+        } as never)
+        .select('id')
+        .single()
 
       if (err) throw err
+
+      // Insert uploaded photos into vehicle_images
+      if (vehicle && photos.length > 0) {
+        const imageInserts = photos.map((photo, index) => ({
+          vehicle_id: vehicle.id,
+          url: photo.url,
+          cloudinary_public_id: photo.publicId,
+          alt_text: `${form.value.brand} ${form.value.model} - ${index + 1}`,
+          position: index,
+        }))
+
+        await supabase.from('vehicle_images').insert(imageInserts)
+      }
 
       success.value = true
       setTimeout(() => {
@@ -170,6 +212,7 @@ export function useDashboardNuevoVehiculo() {
     form,
     filteredSubcategories,
     canPublishVehicle,
+    emailVerified,
     planLimits,
     maxPhotos,
     loadFormData,

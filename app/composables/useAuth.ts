@@ -24,6 +24,50 @@ interface UserProfile {
   login_count: number
 }
 
+// Client-side login rate limiting (defense in depth — Supabase has server-side limits too)
+// Persists to localStorage so it survives page refreshes
+const LOGIN_MAX_ATTEMPTS = 5
+const LOGIN_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
+const LS_PREFIX = 'lr_' // login-rate prefix
+
+function _getLSEntry(key: string): { count: number; firstAttempt: number } | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(LS_PREFIX + key)
+    return raw ? (JSON.parse(raw) as { count: number; firstAttempt: number }) : null
+  } catch {
+    return null
+  }
+}
+
+function _setLSEntry(key: string, entry: { count: number; firstAttempt: number }): void {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(LS_PREFIX + key, JSON.stringify(entry))
+  } catch {
+    // Ignore storage errors (private browsing, quota exceeded)
+  }
+}
+
+function checkLoginRateLimit(email: string): { allowed: boolean; retryAfterMs: number } {
+  const key = email.toLowerCase().trim()
+  const now = Date.now()
+  const entry = _getLSEntry(key)
+
+  if (!entry || now - entry.firstAttempt > LOGIN_WINDOW_MS) {
+    _setLSEntry(key, { count: 1, firstAttempt: now })
+    return { allowed: true, retryAfterMs: 0 }
+  }
+
+  if (entry.count >= LOGIN_MAX_ATTEMPTS) {
+    const retryAfterMs = LOGIN_WINDOW_MS - (now - entry.firstAttempt)
+    return { allowed: false, retryAfterMs }
+  }
+
+  _setLSEntry(key, { count: entry.count + 1, firstAttempt: entry.firstAttempt })
+  return { allowed: true, retryAfterMs: 0 }
+}
+
 export function useAuth() {
   const supabase = useSupabaseClient()
   const supabaseUser = useSupabaseUser()
@@ -31,6 +75,7 @@ export function useAuth() {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const lastFetched = useState<number>('auth-profile-ts', () => 0)
+  const { t } = useI18n()
   const TTL = 5 * 60 * 1000 // 5 min cache
 
   const isAuthenticated = computed(() => !!supabaseUser.value || !!profile.value?.id)
@@ -96,13 +141,59 @@ export function useAuth() {
     }
   }
 
+  const accountLocked = ref(false)
+  const lockoutRetrySeconds = ref(0)
+  const showCaptcha = ref(false)
+
   /** Sign in with email and password. Throws on failure. */
-  async function login(email: string, password: string) {
+  async function login(email: string, password: string, turnstileToken?: string) {
+    // Client-side rate limit check (defense in depth)
+    const { allowed, retryAfterMs } = checkLoginRateLimit(email)
+    if (!allowed) {
+      const minutes = Math.ceil(retryAfterMs / 60_000)
+      const msg = t('auth.tooManyLoginAttempts', { minutes })
+      error.value = msg
+      throw new Error(msg)
+    }
+
+    // Server-side lockout check
+    try {
+      const lockoutCheck = await $fetch('/api/auth/check-lockout', {
+        method: 'POST',
+        body: { email, action: 'check', turnstileToken },
+      }) as { locked: boolean; retryAfterSeconds?: number; attemptsRemaining?: number }
+
+      if (lockoutCheck.locked) {
+        accountLocked.value = true
+        lockoutRetrySeconds.value = lockoutCheck.retryAfterSeconds ?? 0
+        showCaptcha.value = true
+        const minutes = Math.ceil((lockoutCheck.retryAfterSeconds ?? 0) / 60)
+        const msg = t('auth.accountLocked', { minutes })
+        error.value = msg
+        throw new Error(msg)
+      }
+      accountLocked.value = false
+      showCaptcha.value = false
+    } catch (err: unknown) {
+      // If it's our lockout error, re-throw
+      if (err instanceof Error && err.message.includes(t('auth.accountLocked', { minutes: 0 }).split('0')[0])) {
+        throw err
+      }
+      // Server check failed — continue with login (graceful degradation)
+    }
+
     loading.value = true
     error.value = null
     try {
       const { error: err } = await supabase.auth.signInWithPassword({ email, password })
-      if (err) throw err
+      if (err) {
+        // Record failure server-side (fire-and-forget)
+        void $fetch('/api/auth/check-lockout', {
+          method: 'POST',
+          body: { email, action: 'record_failure' },
+        }).catch(() => {})
+        throw err
+      }
       await fetchProfile()
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Login error'
@@ -164,6 +255,23 @@ export function useAuth() {
     await navigateTo('/')
   }
 
+  /** Invalidate ALL sessions (all devices) then redirect to home. */
+  async function logoutAll() {
+    loading.value = true
+    error.value = null
+    try {
+      await supabase.auth.signOut({ scope: 'global' })
+      profile.value = null
+      lastFetched.value = 0
+      await navigateTo('/')
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error signing out'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   /** Send a password-reset email. Throws on failure. */
   async function resetPassword(email: string) {
     loading.value = true
@@ -206,6 +314,9 @@ export function useAuth() {
     profile: readonly(profile),
     loading: readonly(loading),
     error,
+    accountLocked: readonly(accountLocked),
+    lockoutRetrySeconds: readonly(lockoutRetrySeconds),
+    showCaptcha: readonly(showCaptcha),
     isAuthenticated,
     userId,
     userEmail,
@@ -219,6 +330,7 @@ export function useAuth() {
     register,
     loginWithGoogle,
     logout,
+    logoutAll,
     resetPassword,
     updatePassword,
     clearCache,

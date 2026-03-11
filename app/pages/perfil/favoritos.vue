@@ -76,6 +76,8 @@ onMounted(() => {
 <template>
   <div class="favorites-page">
     <div class="favorites-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('profile.favorites.title') }]" />
+      <PerfilProfileNavPills />
       <h1 class="page-title">
         {{ $t('profile.favorites.title') }}
       </h1>
@@ -84,8 +86,8 @@ onMounted(() => {
       </p>
 
       <!-- Loading -->
-      <div v-if="loading" class="loading-state">
-        {{ $t('common.loading') }}
+      <div v-if="loading" class="loading-skeleton" aria-busy="true">
+        <UiSkeletonCard v-for="n in 6" :key="n" :image="true" :lines="2" />
       </div>
 
       <!-- Error -->
@@ -94,13 +96,18 @@ onMounted(() => {
       </div>
 
       <!-- Empty state -->
-      <div v-else-if="vehicles.length === 0" class="empty-state">
-        <p class="empty-title">{{ $t('profile.favorites.emptyTitle') }}</p>
-        <p class="empty-desc">{{ $t('profile.favorites.emptyDesc') }}</p>
-        <NuxtLink to="/catalogo" class="btn-primary">
-          {{ $t('profile.favorites.browseCatalog') }}
-        </NuxtLink>
-      </div>
+      <UiEmptyState
+        v-else-if="vehicles.length === 0"
+        icon="heart"
+        :title="$t('profile.favorites.emptyTitle')"
+        :description="$t('profile.favorites.emptyDesc')"
+      >
+        <template #action>
+          <NuxtLink to="/catalogo" class="btn-primary">
+            {{ $t('profile.favorites.browseCatalog') }}
+          </NuxtLink>
+        </template>
+      </UiEmptyState>
 
       <!-- Grid -->
       <div v-else class="vehicles-grid">
@@ -153,7 +160,7 @@ onMounted(() => {
 }
 
 .favorites-container {
-  max-width: 960px;
+  max-width: 60rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -171,16 +178,30 @@ onMounted(() => {
   margin-bottom: 1.5rem;
 }
 
-/* Loading & error */
-.loading-state,
+/* Loading skeleton grid */
+.loading-skeleton {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 48em) {
+  .loading-skeleton {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64em) {
+  .loading-skeleton {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Error */
 .error-state {
   text-align: center;
   padding: 3rem 1rem;
   font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-}
-
-.error-state {
   color: var(--color-error);
 }
 
@@ -217,7 +238,7 @@ onMounted(() => {
   cursor: pointer;
   text-decoration: none;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -252,7 +273,7 @@ onMounted(() => {
 
 .card-image {
   width: 100%;
-  height: 160px;
+  height: 10rem;
   background: var(--bg-secondary);
   overflow: hidden;
 }
@@ -307,8 +328,8 @@ onMounted(() => {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -326,7 +347,7 @@ onMounted(() => {
 }
 
 /* ---- Tablet: 2 cols ---- */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .favorites-container {
     padding: 0 2rem;
   }
@@ -341,7 +362,7 @@ onMounted(() => {
 }
 
 /* ---- Desktop: 3 cols ---- */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .vehicles-grid {
     grid-template-columns: repeat(3, 1fr);
   }

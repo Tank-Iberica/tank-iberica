@@ -32,13 +32,13 @@ function onStatusChange(demand: AdminDemand, event: Event) {
     <table class="admin-table">
       <thead>
         <tr>
-          <th style="width: 100px">Estado</th>
+          <th style="width: 100px">{{ $t('common.status') }}</th>
           <th>Contacto</th>
           <th>Busca</th>
           <th style="width: 110px">Rango Precio</th>
           <th style="width: 90px">Rango Año</th>
-          <th style="width: 100px">Fecha</th>
-          <th style="width: 130px">Acciones</th>
+          <th style="width: 100px">{{ $t('common.date') }}</th>
+          <th style="width: 130px">{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -101,7 +101,7 @@ function onStatusChange(demand: AdminDemand, event: Event) {
         </tr>
         <tr v-if="!demands.length">
           <td colspan="7" class="empty-state">
-            No hay solicitantes que coincidan con los filtros.
+            {{ $t('common.noResults') }}
           </td>
         </tr>
       </tbody>
@@ -112,47 +112,47 @@ function onStatusChange(demand: AdminDemand, event: Event) {
 <style scoped>
 .table-container {
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 850px;
+  min-width: 53.125rem;
 }
 
 .admin-table th,
 .admin-table td {
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .admin-table th {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   font-size: 0.875rem;
 }
 
 .admin-table tr:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .admin-table tr.row-pending {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .admin-table tr.row-pending:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .status-select {
-  padding: 6px 8px;
-  border-radius: 6px;
+  padding: 0.375rem var(--spacing-2);
+  border-radius: var(--border-radius);
   border: 2px solid;
   font-size: 0.75rem;
   font-weight: 600;
@@ -163,7 +163,7 @@ function onStatusChange(demand: AdminDemand, event: Event) {
 .contact-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .contact-info strong {
@@ -172,13 +172,13 @@ function onStatusChange(demand: AdminDemand, event: Event) {
 
 .contact-detail {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .vehicle-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .vehicle-type-label {
@@ -188,7 +188,7 @@ function onStatusChange(demand: AdminDemand, event: Event) {
 
 .vehicle-brand {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-style: italic;
 }
 
@@ -202,16 +202,16 @@ function onStatusChange(demand: AdminDemand, event: Event) {
 
 .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .btn-icon {
   background: none;
   border: 1px solid var(--border-color-light);
-  padding: 6px 10px;
-  border-radius: 4px;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   transition: all 0.2s;
 }
 
@@ -220,16 +220,16 @@ function onStatusChange(demand: AdminDemand, event: Event) {
 }
 
 .btn-view:hover {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
 }
 
 .btn-delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .empty-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 </style>

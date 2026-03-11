@@ -32,77 +32,77 @@ const { t } = useI18n()
 
 <style scoped>
 .onboarding-card {
-  background: linear-gradient(135deg, #f0f9ff, #eff6ff);
-  border: 1px solid #bfdbfe;
-  border-radius: 12px;
-  padding: 20px;
+  background: linear-gradient(135deg, var(--color-sky-50), var(--color-blue-50));
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
 }
 
 .onboarding-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .onboarding-header h3 {
   margin: 0;
-  font-size: 1rem;
-  color: #1e40af;
+  font-size: var(--font-size-base);
+  color: var(--badge-info-bg);
 }
 
 .progress-text {
   font-weight: 700;
-  color: #1e40af;
+  color: var(--badge-info-bg);
   font-size: 0.95rem;
 }
 
 .progress-bar {
-  height: 8px;
-  background: var(--color-info-bg, #dbeafe);
-  border-radius: 4px;
+  height: 0.5rem;
+  background: var(--color-info-bg, var(--color-info-bg));
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .progress-fill {
   height: 100%;
   background: var(--color-info);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   transition: width 0.4s;
 }
 
 .onboarding-steps {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .step {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
   color: var(--text-auxiliary);
 }
 
 .step.done {
   color: var(--color-success);
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
 }
 
 .step-check {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  font-size: 12px;
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
   border: 1px solid var(--color-gray-200);
 }
 
@@ -116,12 +116,12 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
   background: var(--bg-primary);
   color: var(--color-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;

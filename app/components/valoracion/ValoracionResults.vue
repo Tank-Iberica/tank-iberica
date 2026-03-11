@@ -185,7 +185,7 @@ const emit = defineEmits<{
   color: var(--text-secondary);
   line-height: var(--line-height-relaxed);
   margin-bottom: var(--spacing-6);
-  max-width: 400px;
+  max-width: 25rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -200,7 +200,7 @@ const emit = defineEmits<{
   border-radius: var(--border-radius);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
-  min-height: 48px;
+  min-height: 3rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   display: flex;
@@ -272,7 +272,7 @@ const emit = defineEmits<{
 }
 
 .price-bar {
-  height: 12px;
+  height: 0.75rem;
   border-radius: var(--border-radius-full);
   background: linear-gradient(
     90deg,
@@ -295,8 +295,8 @@ const emit = defineEmits<{
 
 .price-bar-marker::after {
   content: '';
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   background: var(--color-white);
   border: 3px solid var(--color-primary);
   border-radius: 50%;
@@ -325,7 +325,7 @@ const emit = defineEmits<{
 .price-label {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .price-label--max {
@@ -409,8 +409,8 @@ const emit = defineEmits<{
 }
 
 .confidence-dot {
-  width: 10px;
-  height: 10px;
+  width: 0.625rem;
+  height: 0.625rem;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
@@ -436,7 +436,7 @@ const emit = defineEmits<{
   display: flex;
   align-items: flex-end;
   gap: var(--spacing-2);
-  height: 120px;
+  height: 7.5rem;
   margin-bottom: var(--spacing-4);
 }
 
@@ -444,7 +444,7 @@ const emit = defineEmits<{
   flex: 1;
   background: linear-gradient(180deg, var(--color-accent) 0%, var(--color-primary-light) 100%);
   border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
-  min-width: 20px;
+  min-width: 1.25rem;
 }
 
 .blurred-table {
@@ -454,7 +454,7 @@ const emit = defineEmits<{
 }
 
 .fake-row {
-  height: 24px;
+  height: 1.5rem;
   background: var(--bg-tertiary);
   border-radius: var(--border-radius-sm);
 }
@@ -480,7 +480,7 @@ const emit = defineEmits<{
 
 .overlay-content {
   text-align: center;
-  max-width: 360px;
+  max-width: 22.5rem;
 }
 
 .overlay-title {
@@ -508,7 +508,7 @@ const emit = defineEmits<{
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  min-height: 44px;
+  min-height: 2.75rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
@@ -552,7 +552,7 @@ const emit = defineEmits<{
   }
 
   .blurred-chart {
-    height: 160px;
+    height: 10rem;
   }
 }
 

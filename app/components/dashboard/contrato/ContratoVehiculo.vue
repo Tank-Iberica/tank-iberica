@@ -73,50 +73,50 @@ function onVehicleChange(event: Event) {
 
 <style scoped>
 .contrato-vehiculo {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .form-row {
   display: flex;
-  gap: 16px;
+  gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   flex: 1;
-  min-width: 120px;
+  min-width: 7.5rem;
 }
 
 .form-group label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .form-group input,
 .form-group select {
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 @media (max-width: 48em) {
   .form-row {
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
   }
 }
 </style>

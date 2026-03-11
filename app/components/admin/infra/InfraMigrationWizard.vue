@@ -383,8 +383,8 @@ function updateConfirmed(e: Event) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   background: none;
   border: none;
   color: var(--text-auxiliary);
@@ -399,8 +399,8 @@ function updateConfirmed(e: Event) {
 }
 
 .wizard-close svg {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .wizard-steps-indicator {
@@ -422,8 +422,8 @@ function updateConfirmed(e: Event) {
 }
 
 .step-number {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -446,13 +446,13 @@ function updateConfirmed(e: Event) {
 }
 
 .step-label {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--text-auxiliary);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 80px;
+  max-width: 5rem;
 }
 
 .wizard-step-dot.active .step-label {
@@ -481,13 +481,13 @@ function updateConfirmed(e: Event) {
   font-size: var(--font-size-base);
   color: var(--text-primary);
   background: var(--bg-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .wizard-select:focus {
   border-color: var(--color-primary);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .wizard-info {
@@ -500,9 +500,9 @@ function updateConfirmed(e: Event) {
 }
 
 .wizard-new-cluster-info {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #1e40af;
+  background: var(--color-blue-50);
+  border: 1px solid var(--color-info-border);
+  color: var(--badge-info-bg);
 }
 
 .wizard-new-cluster-info ol {
@@ -590,18 +590,18 @@ function updateConfirmed(e: Event) {
   align-items: flex-start;
   gap: var(--spacing-3);
   padding: var(--spacing-3);
-  background: #fefce8;
-  border: 1px solid #fde68a;
+  background: var(--color-yellow-50);
+  border: 1px solid var(--color-amber-200);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-sm);
   color: var(--color-warning-text);
 }
 
 .warning-icon {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 0.0625rem;
 }
 
 .execute-confirmation {
@@ -621,8 +621,8 @@ function updateConfirmed(e: Event) {
 }
 
 .confirm-check input[type='checkbox'] {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   min-height: auto;
   accent-color: var(--color-primary);
   cursor: pointer;
@@ -644,8 +644,8 @@ function updateConfirmed(e: Event) {
 }
 
 .infra-spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--border-color);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -660,20 +660,20 @@ function updateConfirmed(e: Event) {
 
 .wizard-progress {
   width: 100%;
-  max-width: 300px;
-  height: 10px;
+  max-width: 18.75rem;
+  height: 0.625rem;
 }
 
 .progress-bar-container {
-  height: 8px;
+  height: 0.5rem;
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   transition: width 0.6s ease;
 }
 
@@ -697,8 +697,8 @@ function updateConfirmed(e: Event) {
 }
 
 .result-icon {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   color: var(--color-success);
 }
 
@@ -771,8 +771,8 @@ function updateConfirmed(e: Event) {
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -797,8 +797,8 @@ function updateConfirmed(e: Event) {
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: all var(--transition-fast);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .btn-secondary:hover {

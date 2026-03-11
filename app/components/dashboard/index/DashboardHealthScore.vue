@@ -25,27 +25,27 @@ const { t } = useI18n()
 <style scoped>
 .health-score-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .health-score-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .health-score-header h3 {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .health-score-value {
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   font-weight: 700;
 }
 
@@ -62,16 +62,16 @@ const { t } = useI18n()
 }
 
 .health-bar {
-  height: 8px;
+  height: 0.5rem;
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
 
 .health-bar-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   transition: width 0.4s;
 }
 
@@ -88,7 +88,7 @@ const { t } = useI18n()
 }
 
 .health-badge-eligible {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--color-success);
   font-weight: 500;
 }

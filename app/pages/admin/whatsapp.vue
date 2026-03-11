@@ -187,7 +187,7 @@ const {
 .whatsapp-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
   height: 100%;
 }
 
@@ -197,14 +197,14 @@ const {
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
   align-items: stretch;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .header-left h1 {
@@ -219,27 +219,27 @@ const {
   color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
 }
 
 .count-badge.pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .btn-refresh {
   align-self: flex-start;
-  padding: 10px 18px;
+  padding: 0.625rem 1.125rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-refresh:hover {
@@ -256,12 +256,12 @@ const {
    ============================================ */
 .toast-success {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 1.25rem;
+  right: 1.25rem;
   background: var(--color-success);
   color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
+  padding: var(--spacing-3) var(--spacing-5);
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   z-index: 9999;
@@ -286,10 +286,10 @@ const {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
@@ -299,7 +299,7 @@ const {
   border: none;
   color: var(--color-error);
   cursor: pointer;
-  padding: 4px;
+  padding: var(--spacing-1);
   display: flex;
   align-items: center;
 }
@@ -310,22 +310,22 @@ const {
 .skeleton-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .skeleton-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .skeleton-avatar {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 50%;
   background: linear-gradient(
     90deg,
@@ -342,12 +342,12 @@ const {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .skeleton-line {
-  height: 12px;
-  border-radius: 6px;
+  height: 0.75rem;
+  border-radius: var(--border-radius);
   background: linear-gradient(
     90deg,
     var(--color-gray-100) 25%,
@@ -367,9 +367,9 @@ const {
 }
 
 .skeleton-badge {
-  width: 60px;
-  height: 24px;
-  border-radius: 12px;
+  width: 3.75rem;
+  height: 1.5rem;
+  border-radius: var(--border-radius-md);
   background: linear-gradient(
     90deg,
     var(--color-gray-100) 25%,
@@ -397,13 +397,13 @@ const {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .empty-icon {
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1);
 }
 
 .empty-state p {
@@ -415,11 +415,11 @@ const {
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-secondary:hover {
@@ -433,7 +433,7 @@ const {
 .submissions-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 /* ============================================
@@ -442,19 +442,19 @@ const {
 .load-more {
   display: flex;
   justify-content: center;
-  padding: 16px 0;
+  padding: var(--spacing-4) 0;
 }
 
 .btn-load-more {
-  padding: 12px 32px;
+  padding: var(--spacing-3) var(--spacing-8);
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: all 0.15s;
 }
 
@@ -466,12 +466,12 @@ const {
 .loading-more {
   display: flex;
   justify-content: center;
-  padding: 16px 0;
+  padding: var(--spacing-4) 0;
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -479,9 +479,9 @@ const {
 }
 
 .spinner.small {
-  width: 18px;
-  height: 18px;
-  border-width: 2px;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-width: 0.125rem;
 }
 
 @keyframes spin {
@@ -495,7 +495,7 @@ const {
    ============================================ */
 
 /* 768px+ : Tablet */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .page-header {
     flex-direction: row;
     justify-content: space-between;

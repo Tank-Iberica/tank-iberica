@@ -38,17 +38,17 @@ const emit = defineEmits<{
   display: flex;
   gap: 0;
   background: var(--bg-secondary);
-  border-radius: 10px;
-  padding: 4px;
+  border-radius: var(--border-radius-md);
+  padding: 0.25rem;
 }
 
 .tab-btn {
   flex: 1;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-auxiliary);
@@ -59,6 +59,6 @@ const emit = defineEmits<{
 .tab-btn.active {
   background: var(--bg-primary);
   color: var(--color-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
 }
 </style>

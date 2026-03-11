@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import type { Database } from '~~/types/supabase'
 import type { Auction, AuctionStatus, AuctionBid } from '~/composables/useAuction'
 import type {
   AuctionRegistration,
@@ -70,8 +71,7 @@ function getDepositStatusClass(status: DepositStatus): string {
 
 export function useAdminAuctionDetail(auctionId: Ref<string>) {
   const { t } = useI18n()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = useSupabaseClient<any>()
+  const supabase = useSupabaseClient<Database>()
 
   // ---------- State ----------
   const auction = ref<Auction | null>(null)
@@ -130,7 +130,7 @@ export function useAdminAuctionDetail(auctionId: Ref<string>) {
   async function loadBids() {
     const { data, error: err } = await supabase
       .from('auction_bids')
-      .select('*')
+      .select('id, auction_id, user_id, amount_cents, is_winning, created_at')
       .eq('auction_id', auctionId.value)
       .order('amount_cents', { ascending: false })
 
@@ -144,7 +144,7 @@ export function useAdminAuctionDetail(auctionId: Ref<string>) {
   async function loadRegistrations() {
     const { data, error: err } = await supabase
       .from('auction_registrations')
-      .select('*')
+      .select('id, auction_id, user_id, deposit_paid, registered_at, id_type, id_number, id_document_url, company_name, transport_license_url, additional_docs, stripe_payment_intent_id')
       .eq('auction_id', auctionId.value)
       .order('registered_at', { ascending: false })
 
@@ -171,7 +171,8 @@ export function useAdminAuctionDetail(auctionId: Ref<string>) {
   function getVehicleLabel(): string {
     if (auction.value?.vehicle) {
       const v = auction.value.vehicle
-      return `${v.brand} ${v.model}${v.year ? ` (${v.year})` : ''}`
+      const yearPart = v.year ? ` (${v.year})` : ''
+      return `${v.brand} ${v.model}${yearPart}`
     }
     return auction.value?.vehicle_id || '-'
   }

@@ -167,17 +167,17 @@ function onTextareaKeydown(event: KeyboardEvent) {
   align-items: center;
   justify-content: center;
   color: var(--text-disabled);
-  padding: 40px;
+  padding: var(--spacing-10);
 }
 
 .no-conversation-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
+  font-size: 4rem;
+  margin-bottom: var(--spacing-4);
 }
 
 .no-conversation h3 {
-  margin: 0 0 8px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-2);
+  color: var(--color-gray-500);
 }
 
 .no-conversation p {
@@ -187,21 +187,21 @@ function onTextareaKeydown(event: KeyboardEvent) {
 .chat-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .btn-back {
   display: none;
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   border: none;
   background: none;
   font-size: 1.25rem;
   cursor: pointer;
-  color: #6b7280;
+  color: var(--color-gray-500);
   border-radius: 50%;
 }
 
@@ -212,13 +212,13 @@ function onTextareaKeydown(event: KeyboardEvent) {
 .chat-user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .avatar {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   background: var(--bg-tertiary);
   display: flex;
@@ -229,8 +229,8 @@ function onTextareaKeydown(event: KeyboardEvent) {
 }
 
 .avatar.small {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 .avatar img {
@@ -242,7 +242,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
 .avatar-initials {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .chat-user-details {
@@ -252,58 +252,58 @@ function onTextareaKeydown(event: KeyboardEvent) {
 
 .chat-user-name {
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .chat-user-email {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 /* Messages */
 .messages-container {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
-  background: #f0f2f5;
+  padding: var(--spacing-4);
+  background: var(--color-ui-gray);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .date-separator {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 12px 0;
+  margin: 0.75rem 0;
 }
 
 .date-separator span {
   background: rgba(255, 255, 255, 0.9);
-  padding: 4px 12px;
-  border-radius: 8px;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius);
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .message {
   max-width: 70%;
-  padding: 8px 12px;
-  border-radius: 12px;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--border-radius-md);
   position: relative;
 }
 
 .message-sent {
   align-self: flex-end;
-  background: #dcf8c6;
-  border-bottom-right-radius: 4px;
+  background: var(--color-whatsapp-bg);
+  border-bottom-right-radius: 0.25rem;
 }
 
 .message-received {
   align-self: flex-start;
   background: var(--bg-primary);
-  border-bottom-left-radius: 4px;
+  border-bottom-left-radius: 0.25rem;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
@@ -318,18 +318,18 @@ function onTextareaKeydown(event: KeyboardEvent) {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 4px;
-  margin-top: 4px;
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-1);
 }
 
 .message-time {
   font-size: 0.7rem;
-  color: #8696a0;
+  color: var(--color-chat-text-secondary);
 }
 
 .message-status {
   font-size: 0.8rem;
-  color: #53bdeb;
+  color: var(--color-chat-link);
 }
 
 .no-messages {
@@ -348,27 +348,27 @@ function onTextareaKeydown(event: KeyboardEvent) {
 
 .no-messages .hint {
   font-size: 0.85rem;
-  margin-top: 4px;
+  margin-top: var(--spacing-1);
 }
 
 /* Input area */
 .message-input-area {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #f0f2f5;
-  border-top: 1px solid #e5e7eb;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-ui-gray);
+  border-top: 1px solid var(--color-gray-200);
 }
 
 .message-input-area textarea {
   flex: 1;
-  padding: 10px 16px;
+  padding: 0.625rem var(--spacing-4);
   border: none;
-  border-radius: 20px;
+  border-radius: var(--border-radius-full);
   font-size: 0.95rem;
   resize: none;
-  max-height: 120px;
+  max-height: 7.5rem;
   line-height: 1.4;
 }
 
@@ -378,8 +378,8 @@ function onTextareaKeydown(event: KeyboardEvent) {
 }
 
 .btn-send {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
   background: var(--color-primary);
   color: white;
@@ -404,8 +404,8 @@ function onTextareaKeydown(event: KeyboardEvent) {
 }
 
 .sending-spinner {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
   border-radius: 50%;
@@ -420,7 +420,7 @@ function onTextareaKeydown(event: KeyboardEvent) {
 
 /* Scrollbar styling */
 .messages-container::-webkit-scrollbar {
-  width: 6px;
+  width: 0.375rem;
 }
 
 .messages-container::-webkit-scrollbar-track {
@@ -428,12 +428,12 @@ function onTextareaKeydown(event: KeyboardEvent) {
 }
 
 .messages-container::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
+  background: var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
 }
 
 .messages-container::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: var(--color-gray-400);
 }
 
 /* Mobile responsive */

@@ -18,14 +18,14 @@ const emit = defineEmits<{
     <table class="data-table">
       <thead>
         <tr>
-          <th class="col-type">Tipo</th>
-          <th>Empresa</th>
-          <th>Contacto</th>
-          <th>Telefono</th>
-          <th>Email</th>
-          <th>Ubicacion</th>
-          <th>Productos</th>
-          <th class="col-actions">Acciones</th>
+          <th class="col-type">{{ $t('admin.agenda.colType') }}</th>
+          <th>{{ $t('admin.agenda.colCompany') }}</th>
+          <th>{{ $t('admin.agenda.colContact') }}</th>
+          <th>{{ $t('admin.agenda.colPhone') }}</th>
+          <th>{{ $t('admin.agenda.colEmail') }}</th>
+          <th>{{ $t('admin.agenda.colLocation') }}</th>
+          <th>{{ $t('admin.agenda.colProducts') }}</th>
+          <th class="col-actions">{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -59,10 +59,10 @@ const emit = defineEmits<{
           </td>
           <td class="col-actions">
             <div class="row-actions">
-              <button class="action-btn" title="Editar" @click="emit('edit', c)">
+              <button class="action-btn" :title="$t('common.edit')" @click="emit('edit', c)">
                 &#x270E;&#xFE0F;
               </button>
-              <button class="action-btn delete" title="Eliminar" @click="emit('delete', c)">
+              <button class="action-btn delete" :title="$t('common.delete')" @click="emit('delete', c)">
                 &#x1F5D1;&#xFE0F;
               </button>
             </div>
@@ -72,8 +72,8 @@ const emit = defineEmits<{
           <td colspan="8" class="empty-cell">
             <div class="empty-state">
               <span class="empty-icon">&#x1F4D2;</span>
-              <p>No hay contactos</p>
-              <button class="btn-primary" @click="emit('create')">Crear primer contacto</button>
+              <p>{{ $t('common.noResults') }}</p>
+              <button class="btn-primary" @click="emit('create')">{{ $t('admin.agenda.createFirstContact') }}</button>
             </div>
           </td>
         </tr>
@@ -85,22 +85,22 @@ const emit = defineEmits<{
 <style scoped>
 .table-container {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: auto;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 700px;
+  min-width: 43.75rem;
 }
 
 .data-table th {
   position: sticky;
   top: 0;
   background: var(--bg-secondary);
-  padding: 12px 14px;
+  padding: 0.75rem 0.875rem;
   text-align: left;
   font-weight: 600;
   font-size: 0.8rem;
@@ -113,10 +113,10 @@ const emit = defineEmits<{
 }
 
 .data-table td {
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--text-primary);
 }
 
 .data-table tr:hover {
@@ -124,13 +124,13 @@ const emit = defineEmits<{
 }
 
 .col-type {
-  width: 100px;
+  width: 6.25rem;
 }
 .col-actions {
-  width: 90px;
+  width: 5.625rem;
 }
 .col-products {
-  max-width: 160px;
+  max-width: 10rem;
 }
 .text-small {
   font-size: 0.8rem;
@@ -138,7 +138,7 @@ const emit = defineEmits<{
 
 .truncate {
   display: block;
-  max-width: 160px;
+  max-width: 10rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -146,8 +146,8 @@ const emit = defineEmits<{
 
 .type-pill {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -163,19 +163,19 @@ const emit = defineEmits<{
 
 .row-actions {
   display: flex;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .action-btn {
-  padding: 6px 8px;
+  padding: 0.375rem 0.5rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   background: var(--bg-primary);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   transition: all 0.15s;
-  min-width: 36px;
-  min-height: 36px;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,8 +185,8 @@ const emit = defineEmits<{
   background: var(--bg-secondary);
 }
 .action-btn.delete:hover {
-  background: var(--color-error-bg, #fef2f2);
-  border-color: #fca5a5;
+  background: var(--color-error-bg, var(--color-error-bg));
+  border-color: var(--color-error-soft);
 }
 
 .empty-cell {
@@ -194,27 +194,27 @@ const emit = defineEmits<{
 }
 
 .empty-state {
-  padding: 60px 20px;
+  padding: 3.75rem 1.25rem;
   color: var(--text-auxiliary);
 }
 
 .empty-icon {
-  font-size: 48px;
+  font-size: 3rem;
   opacity: 0.3;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .empty-state p {
-  margin: 0 0 16px;
+  margin: 0 0 1rem;
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;

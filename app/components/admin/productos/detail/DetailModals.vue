@@ -51,5 +51,3 @@ const emit = defineEmits<{
     @sell="emit('sell')"
   />
 </template>
-
-<style scoped></style>

@@ -67,16 +67,16 @@ const displayMax = computed(() =>
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 120px;
+  padding-top: 7.5rem;
 }
 
 .range-dropdown-mobile-content {
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   padding: 1rem 1.25rem;
   width: calc(100% - 2rem);
-  max-width: 320px;
+  max-width: 20rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -90,19 +90,19 @@ const displayMax = computed(() =>
   font-weight: 600;
   color: var(--color-primary);
   margin-bottom: 0.25rem;
-  font-size: 14px;
+  font-size: var(--font-size-base);
 }
 
 .range-dropdown-close {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
+  min-width: 1.75rem;
+  min-height: 1.75rem;
   border-radius: 50%;
   background: var(--bg-secondary);
   border: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,7 +111,7 @@ const displayMax = computed(() =>
 .range-dropdown-values {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-primary);
   padding: 0.25rem 0;
@@ -122,7 +122,7 @@ const displayMax = computed(() =>
 }
 
 .range-dropdown-mobile-content .range-slider__track-container {
-  height: 40px;
+  height: 2.5rem;
 }
 
 .range-dropdown-mobile-content .range-slider__val {

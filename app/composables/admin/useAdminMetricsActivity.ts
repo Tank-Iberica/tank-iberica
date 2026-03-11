@@ -1,3 +1,5 @@
+import type { SupabaseClient } from '@supabase/supabase-js'
+
 /**
  * Admin Metrics — Activity & Rankings queries
  * Handles: vehicle activity, top dealers, top vehicles, funnel, churn.
@@ -24,7 +26,7 @@ function resolveCompanyName(companyName: Record<string, string> | string | null)
 }
 
 async function resolveDealerNames(
-  supabase: ReturnType<typeof useSupabaseClient>,
+    supabase: SupabaseClient,
   dealerIds: string[],
 ): Promise<Map<string, string>> {
   const nameMap = new Map<string, string>()
@@ -32,8 +34,6 @@ async function resolveDealerNames(
     .from('dealers')
     .select('id, company_name')
     .in('id', dealerIds)
-    .throwOnError()
-    .catch(() => ({ data: null }))
 
   if (dealerData) {
     for (const row of dealerData as {
@@ -50,7 +50,6 @@ async function resolveDealerNames(
     .from('users')
     .select('id, name, company_name')
     .in('id', dealerIds)
-    .catch(() => ({ data: null }))
   if (userData) {
     for (const row of userData as {
       id: string
@@ -84,8 +83,6 @@ function topN(map: Map<string, number>, n: number): [string, number][] {
     .slice(0, n)
 }
 
-type SupaClient = ReturnType<typeof useSupabaseClient>
-
 function countByMonth(
   rows: Array<{ [key: string]: string | null }>,
   dateField: string,
@@ -102,7 +99,7 @@ function countByMonth(
 }
 
 async function queryVehicleActivity(
-  supabase: SupaClient,
+  supabase: SupabaseClient,
   months: Date[],
   series: VehicleActivityPoint[],
 ): Promise<void> {
@@ -136,7 +133,7 @@ async function queryVehicleActivity(
   }
 }
 
-async function queryLeadCounts(supabase: SupaClient): Promise<Map<string, number>> {
+async function queryLeadCounts(supabase: SupabaseClient): Promise<Map<string, number>> {
   try {
     const { data: leadData } = await supabase.from('leads').select('dealer_id')
     if (leadData) return countById(leadData as { dealer_id: string }[], 'dealer_id')
@@ -160,7 +157,7 @@ function buildTopDealersList(
 }
 
 async function queryVehicleTitles(
-  supabase: SupaClient,
+  supabase: SupabaseClient,
   vehicleIds: string[],
 ): Promise<Map<string, string>> {
   const titleMap = new Map<string, string>()
@@ -188,7 +185,7 @@ async function queryVehicleTitles(
   return titleMap
 }
 
-async function queryTotalViews(supabase: SupaClient): Promise<number> {
+async function queryTotalViews(supabase: SupabaseClient): Promise<number> {
   try {
     const { data } = await supabase.from('user_vehicle_views').select('view_count')
     if (!data) return 0
@@ -201,7 +198,7 @@ async function queryTotalViews(supabase: SupaClient): Promise<number> {
   }
 }
 
-async function queryUniqueVehicleViews(supabase: SupaClient): Promise<number> {
+async function queryUniqueVehicleViews(supabase: SupabaseClient): Promise<number> {
   try {
     const { data } = await supabase.from('user_vehicle_views').select('vehicle_id')
     if (!data) return 0
@@ -212,7 +209,7 @@ async function queryUniqueVehicleViews(supabase: SupaClient): Promise<number> {
 }
 
 async function queryTableCount(
-  supabase: SupaClient,
+  supabase: SupabaseClient,
   table: string,
   filter?: { field: string; value: unknown },
 ): Promise<number> {

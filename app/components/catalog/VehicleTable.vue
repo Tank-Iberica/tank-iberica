@@ -109,6 +109,10 @@
                 v-if="firstImage(vehicle)"
                 :src="firstImage(vehicle)"
                 :alt="buildProductName(vehicle, locale)"
+                width="80"
+                height="60"
+                loading="lazy"
+                decoding="async"
                 class="table-image"
               >
               <div v-else class="table-image-placeholder">
@@ -146,7 +150,7 @@
                   width="14"
                   height="14"
                   viewBox="0 0 24 24"
-                  fill="#C41E3A"
+                  fill="var(--color-danger)"
                   stroke="none"
                 >
                   <path
@@ -355,31 +359,31 @@ function onTouchEnd() {
 
 /* Custom scrollbar */
 .table-wrapper::-webkit-scrollbar {
-  height: 10px;
+  height: 0.625rem;
 }
 
 .table-wrapper::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 5px;
+  background: var(--color-gray-100);
+  border-radius: var(--border-radius-sm);
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 5px;
+  background: var(--color-gray-400);
+  border-radius: var(--border-radius-sm);
 }
 
 .table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--color-gray-500);
 }
 
 /* Table */
 .catalog-table {
   width: 100%;
-  min-width: 1050px;
+  min-width: 65.625rem;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   background: var(--bg-primary, white);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
@@ -388,7 +392,7 @@ function onTouchEnd() {
 .catalog-table thead {
   background: linear-gradient(
     135deg,
-    var(--color-primary, #0f2a2e) 0%,
+    var(--color-primary, var(--color-primary-darker)) 0%,
     var(--color-primary-dark, #1a4248) 100%
   );
   color: white;
@@ -398,9 +402,9 @@ function onTouchEnd() {
   padding: 0.75rem 0.5rem;
   text-align: left;
   font-weight: 700;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.031rem;
   white-space: nowrap;
   border-bottom: 2px solid rgba(255, 255, 255, 0.2);
   position: sticky;
@@ -414,8 +418,8 @@ function onTouchEnd() {
 
 /* Select / PDF column */
 .col-select {
-  width: 44px;
-  min-width: 44px;
+  width: 2.75rem;
+  min-width: 2.75rem;
   text-align: center;
 }
 
@@ -423,10 +427,10 @@ function onTouchEnd() {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   border: 1.5px solid rgba(255, 255, 255, 0.5);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   background: transparent;
   color: white;
   cursor: pointer;
@@ -440,8 +444,8 @@ function onTouchEnd() {
 }
 
 .select-checkbox {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   cursor: pointer;
   accent-color: var(--color-primary);
 }
@@ -459,7 +463,7 @@ function onTouchEnd() {
 .sortable::after {
   content: ' \21C5';
   opacity: 0.3;
-  font-size: 10px;
+  font-size: var(--font-size-xs);
 }
 
 .sortable.sorted-asc::after {
@@ -475,7 +479,7 @@ function onTouchEnd() {
 /* Cells */
 .catalog-table td {
   padding: 0.5rem;
-  border-bottom: 1px solid var(--border-color-light, #e5e7eb);
+  border-bottom: 1px solid var(--border-color-light, var(--color-gray-200));
   vertical-align: middle;
 }
 
@@ -491,21 +495,21 @@ function onTouchEnd() {
 
 /* Image */
 .table-image {
-  width: 80px;
-  height: 60px;
+  width: 5rem;
+  height: 3.75rem;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   display: block;
 }
 
 .table-image-placeholder {
-  width: 80px;
-  height: 60px;
+  width: 5rem;
+  height: 3.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-secondary, #f3f4f6);
-  border-radius: 6px;
+  background: var(--bg-secondary, var(--color-gray-100));
+  border-radius: var(--border-radius-sm);
   color: var(--text-auxiliary);
 }
 
@@ -513,13 +517,13 @@ function onTouchEnd() {
 .table-category {
   display: inline-block;
   padding: 0.5rem 0.9rem;
-  border-radius: 12px;
-  font-size: 12px;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.019rem;
   color: white;
-  background: linear-gradient(135deg, #0f2a2e 0%, #1a4248 100%);
+  background: linear-gradient(135deg, var(--color-primary-darker) 0%, #1a4248 100%);
   white-space: nowrap;
 }
 
@@ -527,7 +531,7 @@ function onTouchEnd() {
 .table-price {
   font-weight: 700;
   white-space: nowrap;
-  background: linear-gradient(135deg, var(--color-success), #059669);
+  background: linear-gradient(135deg, var(--color-success), var(--color-success-dark));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -537,7 +541,7 @@ function onTouchEnd() {
 .location-cell {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
   white-space: nowrap;
 }
 
@@ -546,9 +550,9 @@ function onTouchEnd() {
 }
 
 .location-flag {
-  width: 18px;
-  height: 14px;
-  border-radius: 9999px;
+  width: 1.125rem;
+  height: 0.875rem;
+  border-radius: var(--border-radius-full);
   object-fit: cover;
   flex-shrink: 0;
 }
@@ -562,22 +566,22 @@ function onTouchEnd() {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .action-icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
-  border: 1.5px solid var(--border-color, #d1d5db);
-  border-radius: 6px;
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  min-height: 2rem;
+  border: 1.5px solid var(--border-color, var(--color-gray-300));
+  border-radius: var(--border-radius-sm);
   background: transparent;
   cursor: pointer;
-  color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary, var(--color-gray-500));
   transition: all 0.2s;
   text-decoration: none;
   padding: 0;
@@ -620,16 +624,16 @@ function onTouchEnd() {
 
 /* Download button */
 .download-btn:hover {
-  border-color: #c41e3a;
-  color: #c41e3a;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
 }
 
 /* Scroll hint */
 .scroll-hint {
   text-align: center;
-  font-size: 11px;
-  color: var(--text-auxiliary, #9ca3af);
-  padding: 4px 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-auxiliary, var(--color-gray-400));
+  padding: 0.25rem 0;
   margin: 0;
 }
 
@@ -637,24 +641,24 @@ function onTouchEnd() {
    Responsive: 30em (small mobile)
    ============================================ */
 
-(@media ()max-width: 29.9375em())) {
+@media (max-width: 29.9375em) {
   .catalog-table {
-    min-width: 1000px;
+    min-width: 62.5rem;
   }
 
   .table-image {
-    width: 50px;
-    height: 38px;
+    width: 3.125rem;
+    height: 2.375rem;
   }
 
   .table-image-placeholder {
-    width: 50px;
-    height: 38px;
+    width: 3.125rem;
+    height: 2.375rem;
   }
 
   .catalog-table th {
     padding: 0.4rem 0.6rem;
-    font-size: 10px;
+    font-size: var(--font-size-xs);
   }
 
   .catalog-table td {
@@ -662,19 +666,19 @@ function onTouchEnd() {
   }
 
   .catalog-table {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
   }
 
   .action-icon-btn {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    min-height: 28px;
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    min-height: 1.75rem;
   }
 
   .action-icon-btn svg {
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
   }
 }
 
@@ -687,12 +691,12 @@ function onTouchEnd() {
   }
 
   .catalog-table {
-    min-width: 1200px;
-    font-size: 13px;
+    min-width: 75rem;
+    font-size: var(--font-size-sm);
   }
 
   .catalog-table th {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     padding: 0.75rem 0.6rem;
   }
 
@@ -701,13 +705,13 @@ function onTouchEnd() {
   }
 
   .table-image {
-    width: 60px;
-    height: 45px;
+    width: 3.75rem;
+    height: 2.8125rem;
   }
 
   .table-image-placeholder {
-    width: 60px;
-    height: 45px;
+    width: 3.75rem;
+    height: 2.8125rem;
   }
 }
 
@@ -720,19 +724,19 @@ function onTouchEnd() {
   }
 
   .table-image {
-    width: 80px;
-    height: 60px;
+    width: 5rem;
+    height: 3.75rem;
   }
 
   .table-image-placeholder {
-    width: 80px;
-    height: 60px;
+    width: 5rem;
+    height: 3.75rem;
   }
 }
 
 /* Hide scroll hint on wide screens where table fits */
 
-(@media ()min-width: 87.5em())) {
+@media (min-width: 87.5em) {
   .scroll-hint {
     display: none;
   }

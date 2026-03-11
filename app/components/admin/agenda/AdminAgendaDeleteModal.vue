@@ -20,19 +20,19 @@ function onConfirmInput(event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="visible" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal modal-sm">
         <div class="modal-header danger">
-          <h3>Eliminar contacto</h3>
+          <h3>{{ $t('admin.agenda.deleteContact') }}</h3>
           <button class="modal-close" @click="emit('close')">&#xD7;</button>
         </div>
         <div class="modal-body">
           <p>
-            &#xBF;Eliminar a <strong>{{ contact?.contact_name }}</strong>
-            <span v-if="contact?.company"> ({{ contact.company }})</span>?
+            {{ $t('admin.agenda.deleteConfirmMsg', { name: contact?.contact_name }) }}
+            <span v-if="contact?.company"> ({{ contact.company }})</span>
           </p>
           <div class="form-group">
-            <label>Escribe <strong>borrar</strong> para confirmar:</label>
+            <label v-html="$t('admin.agenda.typeDeleteConfirm', { word: '<strong>borrar</strong>' })" />
             <input
               type="text"
               :value="confirmText"
@@ -43,13 +43,13 @@ function onConfirmInput(event: Event) {
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cancelar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
           <button
             class="btn-danger"
             :disabled="confirmText.toLowerCase() !== 'borrar' || saving"
             @click="emit('confirm')"
           >
-            Eliminar
+            {{ $t('common.delete') }}
           </button>
         </div>
       </div>
@@ -66,17 +66,17 @@ function onConfirmInput(event: Event) {
   align-items: center;
   justify-content: center;
   z-index: 1100;
-  padding: 20px;
+  padding: 1.25rem;
   backdrop-filter: blur(2px);
 }
 
 .modal {
   background: var(--bg-primary);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   animation: modalIn 0.2s ease-out;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100vh - 2.5rem);
   display: flex;
   flex-direction: column;
 }
@@ -93,20 +93,20 @@ function onConfirmInput(event: Event) {
 }
 
 .modal-sm {
-  max-width: 420px;
+  max-width: 26.25rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--color-gray-200);
   flex-shrink: 0;
 }
 
 .modal-header.danger {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border-color: var(--color-error-border);
 }
 
@@ -124,13 +124,13 @@ function onConfirmInput(event: Event) {
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   color: var(--text-disabled);
   cursor: pointer;
   padding: 0;
   line-height: 1;
-  min-width: 36px;
-  min-height: 36px;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -141,7 +141,7 @@ function onConfirmInput(event: Event) {
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 1.5rem;
   overflow-y: auto;
   flex: 1;
 }
@@ -149,16 +149,16 @@ function onConfirmInput(event: Event) {
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
   border-top: 1px solid var(--color-gray-200);
   background: var(--bg-secondary);
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
   flex-shrink: 0;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -166,31 +166,31 @@ function onConfirmInput(event: Event) {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .btn-secondary {
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
 }
@@ -204,8 +204,8 @@ function onConfirmInput(event: Event) {
   background: var(--color-error);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
 }

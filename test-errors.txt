@@ -1,0 +1,205 @@
+ FAIL  tests/unit/useDashboardExportar.test.ts > exportCSV — via mocked exceljs > sets error when CSV write fails
+- Expected: 
++ Received: 
+ FAIL  tests/unit/server/api-dealer-market-intelligence.test.ts > GET /api/dealer/market-intelligence > allows admin to access any dealer
+Error: [vitest] No "setResponseHeader" export is defined on the "h3" mock. Did you forget to return it from "vi.mock"?
+ FAIL  tests/unit/server/api-dealer-market-intelligence.test.ts > GET /api/dealer/market-intelligence > allows dealer owner to access own data
+Error: [vitest] No "setResponseHeader" export is defined on the "h3" mock. Did you forget to return it from "vi.mock"?
+ FAIL  tests/unit/components/AdminAgendaDeleteModal.test.ts > AdminAgendaDeleteModal > shows title
+Expected: "Eliminar contacto"
+Received: "admin.agenda.deleteContact"
+ FAIL  tests/unit/components/AdminAgendaDeleteModal.test.ts > AdminAgendaDeleteModal > shows contact name
+ FAIL  tests/unit/components/AdminAgendaFormModal.test.ts > AdminAgendaFormModal > shows create title
+Expected: "Nuevo contacto"
+Received: "admin.agenda.newContact"
+ FAIL  tests/unit/components/AdminAgendaFormModal.test.ts > AdminAgendaFormModal > shows edit title when editing
+Expected: "Editar contacto"
+Received: "admin.agenda.editContact"
+ FAIL  tests/unit/components/AdminHistoricoExportModal.test.ts > AdminHistoricoExportModal > shows modal header
+Expected: "Exportar Histórico"
+Received: "📥 admin.historico.exportTitle×"
+ FAIL  tests/unit/components/AdminNewsContentEditor.test.ts > AdminNewsContentEditor > shows title
+Expected: "Contenido (ES) *"
+Received: "admin.newsForm.contentEs *"
+ FAIL  tests/unit/components/AdminNewsContentEditor.test.ts > AdminNewsContentEditor > shows character count
+Expected: "35 caracteres"
+Received: "35 admin.newsForm.characters"
+ FAIL  tests/unit/components/AdminNewsContentEditor.test.ts > AdminNewsContentEditor > shows word count
+Expected: "150 palabras"
+Received: "150 admin.newsForm.words / 300 admin.newsForm.recommended"
+ FAIL  tests/unit/components/AdminNewsDeleteModal.test.ts > AdminNewsDeleteModal > shows title
+Expected: "Eliminar noticia"
+Received: "admin.news.deleteTitle"
+ FAIL  tests/unit/components/AdminNewsExcerpt.test.ts > AdminNewsExcerpt > shows title
+Expected: "Extracto"
+Received: "admin.newsForm.excerpt"
+ FAIL  tests/unit/components/AdminNewsExcerpt.test.ts > AdminNewsExcerpt > shows hint text
+Expected: "120-200"
+Received: "admin.newsForm.excerptHint"
+ FAIL  tests/unit/components/AdminNewsExcerpt.test.ts > AdminNewsExcerpt > shows length label for ideal length
+Expected: "Longitud ideal"
+Received: "admin.newsForm.excerptadmin.newsForm.excerptHintadmin.newsForm.excerptEs150/300 admin.newsForm.charactersadmin.newsForm.excerptIdealLength"
+ FAIL  tests/unit/components/AdminNewsExcerpt.test.ts > AdminNewsExcerpt > shows short label
+Expected: "Muy corto"
+Received: "admin.newsForm.excerptadmin.newsForm.excerptHintadmin.newsForm.excerptEs5/300 admin.newsForm.charactersadmin.newsForm.excerptTooShort"
+ FAIL  tests/unit/components/AdminNewsExcerpt.test.ts > AdminNewsExcerpt > shows Largo label when excerptEs exceeds 200 chars
+Expected: "Largo"
+Received: "admin.newsForm.excerptadmin.newsForm.excerptHintadmin.newsForm.excerptEs250/300 admin.newsForm.charactersadmin.newsForm.excerptTooLong"
+ FAIL  tests/unit/components/AdminNewsPublicationSection.test.ts > AdminNewsPublicationSection > shows title
+Expected: "Publicacion"
+Received: "admin.newsForm.publication"
+ FAIL  tests/unit/components/AdminNewsPublicationSection.test.ts > AdminNewsPublicationSection > shows section radios
+Expected: "Noticias"
+Received: "news.title"
+ FAIL  tests/unit/components/AdminNewsPublicationSection.test.ts > AdminNewsPublicationSection > shows 4 status radios
+Expected: "Archivado"
+Received: "admin.newsForm.publicationadmin.newsForm.section news.title guide.titlecommon.status common.draft common.published common.scheduled common.archivedcommon.categorynews.prensanews.eventosnews.destacadosnews.general"
+ FAIL  tests/unit/components/AdminNewsPublicationSection.test.ts > AdminNewsPublicationSection > has 4 category options
+Expected: "Prensa"
+Received: "news.prensa"
+ FAIL  tests/unit/components/AdminNewsPublicationSection.test.ts > AdminNewsPublicationSection > shows scheduled date for scheduled status
+Expected: "publicara automaticamente"
+Received: "admin.newsForm.publicationadmin.newsForm.section news.title guide.titlecommon.status common.draft common.published common.scheduled common.archivedcommon.categorynews.prensanews.eventosnews.destacadosnews.generaladmin.newsForm.scheduledPublishDateadmin.newsForm.autoPublishHint"
+ FAIL  tests/unit/components/AdminProductoBasicInfo.test.ts > AdminProductoBasicInfo > shows rental price when showRentalPrice is true
+ FAIL  tests/unit/components/AdminProductoFinancial.test.ts > AdminProductoFinancial > shows toggle with total cost
+Expected: "Cuentas"
+Received: "💰 admin.productos.financial.accountsadmin.productos.financial.totalCost: 47.700 €"
+ FAIL  tests/unit/components/AdminProductoFinancial.test.ts > AdminProductoFinancial > shows maintenance headers
+Expected: "Razón"
+Received: "admin.productos.financial.reason"
+ FAIL  tests/unit/components/AdminProductoFinancial.test.ts > AdminProductoFinancial > shows invoice link for records with invoice_url
+Expected: "Ver"
+Received: "📎 common.view"
+ FAIL  tests/unit/components/AdminProductoFinancial.test.ts > AdminProductoFinancial > shows upload label for records without invoice_url
+Expected: "Subir"
+Received: "📎 common.upload"
+ FAIL  tests/unit/components/AdminProductoFinancial.test.ts > AdminProductoFinancial > shows add-maint button
+Expected: "Mantenimiento"
+Received: "🔧 admin.productos.financial.maintenanceSum+ common.add"
+ FAIL  tests/unit/components/AdminProductoFinancial.test.ts > AdminProductoFinancial > shows add-rental button
+Expected: "Renta"
+Received: "📅 admin.productos.financial.rentalSubtracts+ common.add"
+ FAIL  tests/unit/components/AdminProductoFinancial.test.ts > AdminProductoFinancial > shows empty msg when no maintenance records
+Expected: "Sin registros de mantenimiento"
+Received: "💰 admin.productos.financial.accountsadmin.productos.financial.totalCost: 47.700 €admin.productos.financial.minPriceadmin.productos.financial.acquisitionCostadmin.productos.financial.acquisitionDate🔧 admin.productos.financial.maintenanceSum+ common.addadmin.productos.financial.noMaintenanceRecords📅 admin.productos.financial.rentalSubtracts+ common.addcommon.fromcommon.toadmin.productos.financial.reasonadmin.productos.financial.amountEuradmin.productos.financial.invoice 📎 common.view ↻ ×admin.productos.financial.totalRental:3000 €admin.productos.financial.acquisitionCostLabel50.000 €+ admin.productos.financial.maintenanceLabel700 €− admin.productos.financial.rentalLabel3000 €admin.productos.financial.totalCost47.700 €"
+ FAIL  tests/unit/components/AdminProductoFinancial.test.ts > AdminProductoFinancial > shows empty msg when no rental records
+Expected: "Sin registros de alquiler"
+Received: "💰 admin.productos.financial.accountsadmin.productos.financial.totalCost: 47.700 €admin.productos.financial.minPriceadmin.productos.financial.acquisitionCostadmin.productos.financial.acquisitionDate🔧 admin.productos.financial.maintenanceSum+ common.addcommon.dateadmin.productos.financial.reasonadmin.productos.financial.costEuradmin.productos.financial.invoice 📎 common.view ↻ × 📎 common.upload ×admin.productos.financial.totalMaint:700 €📅 admin.productos.financial.rentalSubtracts+ common.addadmin.productos.financial.noRentalRecordsadmin.productos.financial.acquisitionCostLabel50.000 €+ admin.productos.financial.maintenanceLabel700 €− admin.productos.financial.rentalLabel3000 €admin.productos.financial.totalCost47.700 €"
+ FAIL  tests/unit/components/AdminProductoSellModal.test.ts > AdminProductoSellModal > shows title
+Expected: "Registrar Venta"
+Received: "admin.productos.registerSale"
+ FAIL  tests/unit/components/AdminProductoSellModal.test.ts > AdminProductoSellModal > shows vehicle name
+Expected: "Volvo FH 500"
+Received: "admin.productos.registerSale×admin.productos.sellVehicleadmin.productos.finalSalePriceadmin.productos.commissionPercentadmin.productos.buyeradmin.productos.saleDatecommon.notesadmin.productos.salePriceLabel70.000 €admin.productos.totalCostLabel60.000 €admin.productos.commissionLabel3500 €admin.productos.finalProfit6500 €Cancelaradmin.productos.confirmSale"
+ FAIL  tests/unit/components/AdminProductoSellModal.test.ts > AdminProductoSellModal > shows BENEFICIO FINAL
+Expected: "BENEFICIO FINAL"
+Received: "admin.productos.finalProfit6500 €"
+ FAIL  tests/unit/components/AdminVehicleDeleteModal.test.ts > AdminVehicleDeleteModal > shows title
+Expected: "Eliminar vehículo"
+Received: "admin.vehicles.deleteVehicle"
+ FAIL  tests/unit/components/AdminVehicleDeleteModal.test.ts > AdminVehicleDeleteModal > shows vehicle brand and model
+Expected: "DAF"
+Received: "admin.vehicles.deleteConfirmMsg"
+ FAIL  tests/unit/components/AdminVehiculoFormFields.test.ts > AdminVehiculoFormFields > renders category section
+Expected: "Categoría"
+Received: "admin.vehicleForm.categorySection"
+ FAIL  tests/unit/components/AdminVehiculoFormFields.test.ts > AdminVehiculoFormFields > renders basic info section
+Expected: "Información básica"
+Received: "admin.vehicleForm.basicInfo"
+ FAIL  tests/unit/components/AdminVehiculoFormFields.test.ts > AdminVehiculoFormFields > renders prices section
+Expected: "Precios"
+Received: "admin.vehicleForm.pricesSection"
+ FAIL  tests/unit/components/AdminVehiculoFormFields.test.ts > AdminVehiculoFormFields > renders location section
+Expected: "Ubicación"
+Received: "admin.vehicleForm.locationSection"
+ FAIL  tests/unit/components/AdminVehiculoFormFields.test.ts > AdminVehiculoFormFields > renders description section
+Expected: "Descripción"
+Received: "admin.vehicleForm.descriptionSection"
+ FAIL  tests/unit/components/AdminVehiculoFormFields.test.ts > AdminVehiculoFormFields > renders contabilidad section
+Expected: "Contabilidad"
+Received: "admin.vehicleForm.accountingSection"
+ FAIL  tests/unit/components/AdminVehiculoTransactionModal.test.ts > AdminVehiculoTransactionModal > shows formatted currency in preview
+Expected: "85000 €"
+Received: "admin.vehicles.balanceIncome"
+ FAIL  tests/unit/components/AdminVehiculoTransactionModal.test.ts > AdminVehiculoTransactionModal > shows beneficio when acquisition cost exists
+Expected: "15000 €"
+Received: "admin.vehicles.autoBalanceLabeladmin.vehicles.balanceIncomeadmin.vehicles.balanceProfit"
+ FAIL  tests/unit/components/AdminVehiculoTransactionModal.test.ts > AdminVehiculoTransactionModal > shows saving text on sell button
+Expected: "Procesando..."
+Received: "common.processing"
+ FAIL  tests/unit/components/AnunciantesDeleteModal.test.ts > AnunciantesDeleteModal > shows title
+Expected: "Confirmar eliminación"
+Received: "admin.anunciantes.confirmDelete"
+ FAIL  tests/unit/components/AnunciantesDeleteModal.test.ts > AnunciantesDeleteModal > shows advertiser name
+ FAIL  tests/unit/components/AnunciantesDetailModal.test.ts > AnunciantesDetailModal > shows title
+Expected: "Detalles del Anunciante"
+Received: "admin.anunciantes.detailTitle"
+ FAIL  tests/unit/components/BalanceDeleteModal.test.ts > BalanceDeleteModal > shows header title
+Expected: "Eliminar transaccion"
+Received: "admin.balance.deleteTransaction×"
+ FAIL  tests/unit/components/BannerStatus.test.ts > BannerStatus > shows ACTIVO when enabled
+Expected: "ACTIVO"
+Received: "admin.banner.statusActive"
+ FAIL  tests/unit/components/BannerStatus.test.ts > BannerStatus > shows INACTIVO when disabled
+Expected: "INACTIVO"
+Received: "admin.banner.statusInactive"
+ FAIL  tests/unit/components/BannerStatus.test.ts > BannerStatus > shows toggle button with "Desactivar" when enabled
+Expected: "Desactivar"
+Received: "admin.banner.deactivate"
+ FAIL  tests/unit/components/BannerStatus.test.ts > BannerStatus > shows toggle button with "Activar" when disabled
+Expected: "Activar"
+Received: "admin.banner.activate"
+ FAIL  tests/unit/components/CaracteristicasFormModal.test.ts > CaracteristicasFormModal > shows create title
+Expected: "Nueva Caracteristica"
+Received: "admin.config.newCharacteristic"
+ FAIL  tests/unit/components/CaracteristicasFormModal.test.ts > CaracteristicasFormModal > shows edit title when editing
+Expected: "Editar Caracteristica"
+Received: "admin.config.editCharacteristic"
+ FAIL  tests/unit/components/ComentariosDeleteModal.test.ts > ComentariosDeleteModal > shows header title
+Expected: "Eliminar comentario"
+Received: "admin.comments.deleteTitle"
+ FAIL  tests/unit/components/ComentariosDeleteModal.test.ts > ComentariosDeleteModal > shows author name
+Expected: "Juan García"
+Received: "admin.comments.deleteConfirmEste es un comentario de prueba para verificar la funcionalidad del modal de eliminación.admin.comments.deleteWarning"
+ FAIL  tests/unit/components/ComentariosDeleteModal.test.ts > ComentariosDeleteModal > shows fallback for null author
+Expected: "Anonimo"
+Received: "admin.comments.deleteConfirmEste es un comentario de prueba para verificar la funcionalidad del modal de eliminación.admin.comments.deleteWarning"
+ FAIL  tests/unit/components/DealerCatalogSection.test.ts > DealerCatalogSection > shows Certificaciones title
+Expected: "Certificaciones"
+Received: "admin.dealer.certificationsTitle"
+ FAIL  tests/unit/components/DealerCatalogSection.test.ts > DealerCatalogSection > shows empty cert list when none
+Expected: "Sin certificaciones"
+Received: "admin.dealer.noCertifications"
+ FAIL  tests/unit/components/DealerCatalogSection.test.ts > DealerCatalogSection > shows Catalogo title
+Expected: "Catalogo"
+Received: "admin.dealer.catalogTitle"
+ FAIL  tests/unit/components/DealerCatalogSection.test.ts > DealerCatalogSection > shows Respuesta automatica title
+Expected: "Respuesta automatica"
+Received: "admin.dealer.autoReplyTitle"
+ FAIL  tests/unit/components/DealerContactSection.test.ts > DealerContactSection > shows card title
+Expected: "Contacto"
+Received: "admin.dealer.contactTitle"
+ FAIL  tests/unit/components/DealerIdentitySection.test.ts > DealerIdentitySection > shows identity title
+Expected: "Identidad"
+Received: "admin.dealer.identityTitle"
+ FAIL  tests/unit/components/DealerIdentitySection.test.ts > DealerIdentitySection > shows color section title
+Expected: "Colores"
+Received: "admin.dealer.accentColors"
+ FAIL  tests/unit/components/HistoricoExportModal.test.ts > HistoricoExportModal > shows title
+Expected: "Exportar"
+Received: "📥 admin.historico.exportTitle"
+ FAIL  tests/unit/components/NoticiasDeleteModal.test.ts > NoticiasDeleteModal > shows title
+Expected: "Eliminar noticia"
+Received: "admin.news.deleteTitle"
+ FAIL  tests/unit/components/NuevoDescription.test.ts > NuevoDescription > shows toggle button
+Expected: "Descripcion"
+Received: "admin.productos.descriptionSection−"
+ FAIL  tests/unit/components/TiposDeleteModal.test.ts > TiposDeleteModal > shows type name
+Expected: "Grua"
+Received: "admin.configTipos.confirmDelete×admin.configTipos.deleteConfirmMsgadmin.configTipos.deleteWarningadmin.configTipos.typeDeleteConfirmCancelarEliminar"
+ FAIL  tests/unit/components/TiposFormModal.test.ts > TiposFormModal > shows create title
+Expected: "Nuevo Tipo"
+Received: "admin.configTipos.newType"
+ FAIL  tests/unit/components/TiposFormModal.test.ts > TiposFormModal > shows edit title when editing
+Expected: "Editar Tipo"
+Received: "admin.configTipos.editType"

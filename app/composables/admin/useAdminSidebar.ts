@@ -7,6 +7,13 @@ export interface SidebarNavItem {
 export function useAdminSidebar() {
   const route = useRoute()
   const supabase = useSupabaseClient()
+  const { t, locale } = useI18n()
+  const { config } = useVerticalConfig()
+  const siteName = computed(() => {
+    if (!config.value?.name) return 'Tracciona'
+    const names = config.value.name
+    return names[locale.value] || names.es || names.en || 'Tracciona'
+  })
 
   // Dropdown state
   const showDropdown = ref(false)
@@ -33,6 +40,7 @@ export function useAdminSidebar() {
     finance: false,
     communication: false,
     users: false,
+    brokerage: false,
   }))
 
   function toggleGroup(group: keyof typeof openGroups.value) {
@@ -45,6 +53,7 @@ export function useAdminSidebar() {
   const pendingComentarios = ref(0)
   const pendingChats = ref(0)
   const pendingSuscripciones = ref(0)
+  const pendingDeals = ref(0)
   const infraAlertCount = ref(0)
 
   const pendingCatalog = computed(() => pendingAnunciantes.value + pendingSolicitantes.value)
@@ -70,6 +79,7 @@ export function useAdminSidebar() {
       finance: ['/admin/balance', '/admin/registro', '/admin/historico', '/admin/utilidades'],
       communication: ['/admin/banner', '/admin/noticias', '/admin/comentarios'],
       users: ['/admin/usuarios', '/admin/chats', '/admin/suscripciones'],
+      brokerage: ['/admin/brokeraje'],
     }
     return groupPaths[group]?.some((path) => route.path.startsWith(path)) || false
   }
@@ -131,6 +141,10 @@ export function useAdminSidebar() {
     },
   ])
 
+  const brokerageItems = computed<SidebarNavItem[]>(() => [
+    { to: '/admin/brokeraje', label: 'Deals', badge: pendingDeals.value || undefined },
+  ])
+
   // Popover (for collapsed sidebar)
   const popover = ref({
     show: false,
@@ -142,11 +156,12 @@ export function useAdminSidebar() {
 
   function openPopover(group: string, event: MouseEvent) {
     const data: Record<string, { title: string; items: SidebarNavItem[] }> = {
-      config: { title: 'Configuración', items: configItems },
-      catalog: { title: 'Catálogo', items: catalogItems.value },
-      finance: { title: 'Finanzas', items: financeItems },
-      communication: { title: 'Comunicación', items: communicationItems.value },
-      users: { title: 'Comunidad', items: usersItems.value },
+      config: { title: t('admin.sidebar.config'), items: configItems },
+      catalog: { title: t('admin.sidebar.catalog'), items: catalogItems.value },
+      finance: { title: t('admin.sidebar.finance'), items: financeItems },
+      communication: { title: t('admin.sidebar.communication'), items: communicationItems.value },
+      users: { title: t('admin.sidebar.users'), items: usersItems.value },
+      brokerage: { title: t('admin.sidebar.brokerage'), items: brokerageItems.value },
     }
     const groupData = data[group]
     if (!groupData) return
@@ -185,8 +200,24 @@ export function useAdminSidebar() {
     infraAlertCount.value = count ?? 0
   }
 
+  // Brokerage pending deals
+  async function fetchPendingDeals() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sb = supabase as any
+    try {
+      const { count } = await sb
+        .from('brokerage_deals')
+        .select('*', { count: 'exact', head: true })
+        .in('status', ['qualifying_buyer', 'manual_review', 'escalated_to_humans'])
+      pendingDeals.value = count ?? 0
+    } catch {
+      pendingDeals.value = 0
+    }
+  }
+
   onMounted(() => {
     fetchInfraAlerts()
+    fetchPendingDeals()
   })
 
   // Logout
@@ -204,6 +235,7 @@ export function useAdminSidebar() {
     pendingCatalog,
     pendingComunicacion,
     pendingUsuarios,
+    pendingDeals,
     infraAlertCount,
     isActive,
     isActiveGroup,
@@ -212,9 +244,11 @@ export function useAdminSidebar() {
     financeItems,
     communicationItems,
     usersItems,
+    brokerageItems,
     popover,
     openPopover,
     closePopover,
     handleLogout,
+    siteName,
   }
 }

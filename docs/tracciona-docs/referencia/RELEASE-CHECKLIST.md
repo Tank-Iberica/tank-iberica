@@ -24,10 +24,11 @@ Este checklist aplica a releases que incluyan cambios críticos
 
 ### Base de datos (solo si hay migración)
 
-- [ ] Migración probada en Supabase preview/dev branch
+- [ ] Migración probada en Supabase preview/dev branch o staging (`xddjhrgkwwolpugtxgfk`)
 - [ ] Sin datos irrecuperables borrados (migración reversible o con backup)
 - [ ] Si hay columnas nuevas: valores por defecto no null razonables
 - [ ] RLS policies para tablas nuevas
+- [ ] Tests IDOR pasan en CI (job `idor-tests`) — verificar si la migración afecta RLS
 
 ### Configuración (solo si hay nuevo servicio)
 

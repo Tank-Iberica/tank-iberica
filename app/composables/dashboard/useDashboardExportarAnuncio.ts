@@ -144,7 +144,8 @@ export function useDashboardExportarAnuncio() {
   }
 
   function formatMilanuncios(ctx: AdTextContext): string {
-    const header = `\u{1F69B} ${ctx.brand} ${ctx.model}${ctx.year ? ` ${ctx.year}` : ''}`
+    const yearSuffix = ctx.year ? ` ${ctx.year}` : ''
+    const header = `\u{1F69B} ${ctx.brand} ${ctx.model}${yearSuffix}`
     const specs = [
       ctx.location ? `\u{1F4CD} Ubicacion: ${ctx.location}` : '',
       ctx.year ? `\u{1F4C6} Ano: ${ctx.year}` : '',
@@ -174,7 +175,8 @@ export function useDashboardExportarAnuncio() {
   }
 
   function formatSocial(ctx: AdTextContext): string {
-    const header = `\u{1F525} ${ctx.brand} ${ctx.model}${ctx.year ? ` ${ctx.year}` : ''} en venta`
+    const yearSuffix = ctx.year ? ` ${ctx.year}` : ''
+    const header = `\u{1F525} ${ctx.brand} ${ctx.model}${yearSuffix} en venta`
     const specs = [
       ctx.year ? `Ano: ${ctx.year}` : '',
       ctx.category ? `Categoria: ${ctx.category}` : '',
@@ -189,7 +191,8 @@ export function useDashboardExportarAnuncio() {
   }
 
   function formatInstagram(ctx: AdTextContext): string {
-    const header = `${ctx.brand} ${ctx.model}${ctx.year ? ` ${ctx.year}` : ''} \u2728`
+    const yearSuffix = ctx.year ? ` ${ctx.year}` : ''
+    const header = `${ctx.brand} ${ctx.model}${yearSuffix} \u2728`
     const priceBlock = ctx.price ? `\n\n\u{1F4B0} ${ctx.price}\u20AC` : ''
     const locationBlock = ctx.location ? `\n\u{1F4CD} ${ctx.location}` : ''
     const linkLine = '\n\u{1F517} Link en bio'

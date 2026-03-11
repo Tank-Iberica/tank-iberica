@@ -6,7 +6,8 @@
  * and returns it as a downloadable JSON file.
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, createError, setResponseHeaders } from 'h3'
+import { defineEventHandler, setResponseHeaders } from 'h3'
+import { safeError } from '../../utils/safeError'
 
 interface UserProfile {
   id: string
@@ -25,7 +26,7 @@ interface ExportData {
   platform: string
   userId: string
   profile: UserProfile | null
-  dealer: unknown | null
+  dealer: unknown
   vehicles: unknown[]
   leadsReceived: unknown[]
   leadsSent: unknown[]
@@ -42,7 +43,7 @@ export default defineEventHandler(async (event): Promise<ExportData> => {
   // ── 1. Authenticate user ──────────────────────────────────────────────────
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   const userId = user.id

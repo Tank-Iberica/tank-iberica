@@ -73,41 +73,41 @@ watch(
 
 <style scoped>
 .chat-messages {
-  height: 200px;
+  height: 12.5rem;
   overflow-y: auto;
-  background: #f0f2f5;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
+  background: var(--color-ui-gray);
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .chat-loading,
 .chat-empty {
   text-align: center;
   color: #999;
-  padding: 40px 0;
+  padding: 2.5rem 0;
   font-size: 0.9rem;
 }
 
 .chat-message {
   max-width: 80%;
-  padding: 8px 12px;
-  border-radius: 12px;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--border-radius-md);
 }
 
 .chat-message.sent {
   align-self: flex-end;
-  background: #dcf8c6;
-  border-bottom-right-radius: 4px;
+  background: var(--color-whatsapp-bg);
+  border-bottom-right-radius: 0.25rem;
 }
 
 .chat-message.received {
   align-self: flex-start;
   background: var(--bg-primary);
-  border-bottom-left-radius: 4px;
+  border-bottom-left-radius: 0.25rem;
 }
 
 .message-content {
@@ -119,29 +119,29 @@ watch(
   font-size: 0.7rem;
   color: #888;
   text-align: right;
-  margin-top: 4px;
+  margin-top: 0.25rem;
 }
 
 .chat-input-area {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .chat-input-area textarea {
   flex: 1;
-  padding: 10px;
+  padding: 0.625rem;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   resize: none;
   font-size: 0.9rem;
 }
 
 .btn-send {
-  padding: 10px 16px;
+  padding: 0.625rem 1rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
 }
@@ -152,8 +152,8 @@ watch(
 }
 
 .chat-info {
-  margin-top: 12px;
-  font-size: 0.75rem;
+  margin-top: 0.75rem;
+  font-size: var(--font-size-xs);
   color: #888;
   text-align: center;
 }

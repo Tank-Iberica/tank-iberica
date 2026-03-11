@@ -66,7 +66,7 @@ const { t } = useI18n()
   background: var(--bg-primary);
   width: 100%;
   max-height: 90vh;
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -76,7 +76,7 @@ const { t } = useI18n()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: var(--spacing-4) var(--spacing-5);
   border-bottom: 1px solid var(--color-gray-100);
 }
 
@@ -92,16 +92,16 @@ const { t } = useI18n()
   border: none;
   color: var(--text-auxiliary);
   cursor: pointer;
-  padding: 4px;
+  padding: var(--spacing-1);
   display: flex;
   align-items: center;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   justify-content: center;
 }
 
 .modal-body {
-  padding: 16px 20px;
+  padding: var(--spacing-4) var(--spacing-5);
   overflow-y: auto;
   flex: 1;
 }
@@ -116,19 +116,19 @@ const { t } = useI18n()
 .modal-footer {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 16px 20px;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4) var(--spacing-5);
   border-top: 1px solid var(--color-gray-100);
 }
 
 .btn-confirm-delete,
 .btn-cancel {
   flex: 1;
-  min-width: 100px;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-width: 6.25rem;
+  min-height: 2.75rem;
+  padding: 0.625rem var(--spacing-4);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
@@ -189,11 +189,11 @@ const { t } = useI18n()
 @media (min-width: 48em) {
   .modal-overlay {
     align-items: center;
-    padding: 20px;
+    padding: var(--spacing-5);
   }
 
   .modal-panel {
-    border-radius: 16px;
+    border-radius: var(--border-radius-lg);
     max-width: 30em;
   }
 }

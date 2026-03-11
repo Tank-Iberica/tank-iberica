@@ -4,13 +4,15 @@
  * List all infrastructure clusters with their verticals and weight.
  * Admin-only endpoint.
  */
+import { defineEventHandler } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { safeError } from '../../../utils/safeError'
 
 export default defineEventHandler(async (event) => {
   // ── Auth: admin only ────────────────────────────────────────────────────
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw safeError(401, 'Unauthorized')
   }
 
   const supabase = serverSupabaseServiceRole(event)
@@ -18,17 +20,14 @@ export default defineEventHandler(async (event) => {
   const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
 
   if (userData?.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Forbidden' })
+    throw safeError(403, 'Forbidden')
   }
 
   // ── Fetch clusters ──────────────────────────────────────────────────────
   const { data, error } = await supabase.from('infra_clusters').select('*').order('created_at')
 
   if (error) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to fetch clusters: ${error.message}`,
-    })
+    throw safeError(500, `Failed to fetch clusters: ${error.message}`)
   }
 
   return data ?? []

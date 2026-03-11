@@ -43,7 +43,7 @@ const { getImageUrl } = useImageUrl()
 
 <style scoped>
 .vehicles-section {
-  max-width: 960px;
+  max-width: 60rem;
   margin: 0 auto;
   padding: 0 var(--spacing-4);
 }
@@ -78,7 +78,7 @@ const { getImageUrl } = useImageUrl()
 
 .vehicle-card__image {
   width: 100%;
-  height: 120px;
+  height: 7.5rem;
   background: var(--bg-secondary);
   overflow: hidden;
 }
@@ -136,7 +136,7 @@ const { getImageUrl } = useImageUrl()
   }
 
   .vehicle-card__image {
-    height: 140px;
+    height: 8.75rem;
   }
 
   .vehicle-card__title {
@@ -152,7 +152,7 @@ const { getImageUrl } = useImageUrl()
   }
 
   .vehicle-card__image {
-    height: 160px;
+    height: 10rem;
   }
 }
 </style>

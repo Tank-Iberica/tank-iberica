@@ -7,26 +7,50 @@
  * In production: sends error reports to Sentry (if DSN configured).
  */
 
-import * as Sentry from '@sentry/vue'
+import { init as sentryInit, captureException, setUser, Replay } from '@sentry/vue'
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(async (nuxtApp) => {
   const config = useRuntimeConfig()
   const dsn = config.public.sentryDsn
 
   // Initialize Sentry if DSN is configured
   if (dsn) {
-    Sentry.init({
+    sentryInit({
       app: nuxtApp.vueApp,
       dsn,
       environment: import.meta.dev ? 'development' : 'production',
-      tracesSampleRate: 0.1,
+      // P1 § Monitoring: increased from 0.1 to 0.5 for better coverage
+      tracesSampleRate: import.meta.dev ? 0.1 : 0.5,
+      integrations: [
+        new Replay({
+          maskAllText: true,
+          blockAllMedia: true,
+        }),
+      ],
+      replaysSessionSampleRate: 0.1,
+      replaysOnErrorSampleRate: 1.0,
     })
+
+    // Automatically set user context when authenticated
+    const { user } = await useAuth()
+    if (user.value?.id) {
+      setUser({
+        id: user.value.id,
+        email: user.value.email,
+        username: user.value.username || undefined,
+      })
+    }
   }
 
   // Catch Vue component errors without crashing the page
   nuxtApp.vueApp.config.errorHandler = (error, instance, info) => {
     if (dsn) {
-      Sentry.captureException(error, { extra: { info } })
+      captureException(error, {
+        extra: {
+          info,
+          component: instance?.$options?.name || 'unknown',
+        }
+      })
     }
     console.error('Component error:', error, info)
   }
@@ -34,7 +58,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Catch top-level app errors (SSR + client)
   nuxtApp.hook('app:error', (error) => {
     if (dsn) {
-      Sentry.captureException(error)
+      captureException(error)
     }
     console.error('Global error:', error)
   })

@@ -77,6 +77,28 @@ describe('Vertical Isolation - Query Helpers', () => {
     expect(chain).toContainEqual({ method: 'eq', args: ['vertical', 'tracciona'] })
   })
 
+  it('vehiclesQuery uses vertical from useRuntimeConfig when vertical arg is omitted', async () => {
+    const { vehiclesQuery } = await import('../../server/utils/supabaseQuery')
+    const mock = createMockSupabase()
+    // No vertical arg → getVerticalSlug() → useRuntimeConfig().public.vertical → 'tracciona'
+    vehiclesQuery(mock as unknown as SupabaseClient)
+    const chain = mock.getChain()
+    expect(chain).toContainEqual({ method: 'from', args: ['vehicles'] })
+    expect(chain).toContainEqual({ method: 'eq', args: ['vertical', 'tracciona'] })
+  })
+
+  it('vehiclesQuery falls back to "tracciona" when useRuntimeConfig throws', async () => {
+    vi.stubGlobal('useRuntimeConfig', () => { throw new Error('not available') })
+    const { vehiclesQuery } = await import('../../server/utils/supabaseQuery')
+    const mock = createMockSupabase()
+    vehiclesQuery(mock as unknown as SupabaseClient)
+    expect(mock.getChain()).toContainEqual({ method: 'eq', args: ['vertical', 'tracciona'] })
+    // Restore default mock
+    vi.stubGlobal('useRuntimeConfig', () => ({
+      public: { vertical: 'tracciona', supabaseUrl: '', supabaseKey: '', turnstileSiteKey: '' },
+    }))
+  })
+
   it('queries with different verticals produce different filters', async () => {
     const { vehiclesQuery } = await import('../../server/utils/supabaseQuery')
 

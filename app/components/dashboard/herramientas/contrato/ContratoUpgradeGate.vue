@@ -48,73 +48,73 @@ const { t } = useI18n()
 
 <style scoped>
 .page-header {
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
 .page-header h1 {
-  margin: 0 0 4px;
-  font-size: 1.5rem;
+  margin: 0 0 0.25rem;
+  font-size: var(--font-size-2xl);
 }
 
 .plan-badge {
   background: var(--bg-tertiary);
-  color: #374151;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
+  color: var(--color-gray-700);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-xl);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .upgrade-card {
   background: var(--bg-primary);
-  border: 2px solid var(--border-color-light);
-  border-radius: 16px;
-  padding: 48px 32px;
+  border: 0.125rem solid var(--border-color-light);
+  border-radius: var(--border-radius-lg);
+  padding: 3rem 2rem;
   text-align: center;
-  max-width: 500px;
-  margin: 32px auto;
+  max-width: 31.25rem;
+  margin: 2rem auto;
 }
 
 .upgrade-icon {
   color: var(--color-primary);
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .upgrade-card h2 {
-  margin: 0 0 8px;
-  font-size: 1.25rem;
+  margin: 0 0 0.5rem;
+  font-size: var(--font-size-xl);
 }
 
 .upgrade-card p {
-  margin: 0 0 24px;
-  color: #6b7280;
+  margin: 0 0 1.5rem;
+  color: var(--color-gray-500);
   font-size: 0.9rem;
 }
 
 .btn {
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
   text-decoration: none;
 }
 
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 
@@ -123,14 +123,14 @@ const { t } = useI18n()
 }
 
 .btn-lg {
-  padding: 14px 28px;
-  font-size: 1rem;
+  padding: 0.875rem 1.75rem;
+  font-size: var(--font-size-base);
   font-weight: 500;
 }
 
 @media (max-width: 48em) {
   .upgrade-card {
-    padding: 32px 20px;
+    padding: 2rem 1.25rem;
   }
 }
 </style>

@@ -69,9 +69,8 @@ onMounted(() => {
     <div v-if="error" class="alert-error">{{ error }}</div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('common.loading') }}...</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="4" />
     </div>
 
     <!-- Kanban board -->
@@ -114,12 +113,12 @@ onMounted(() => {
 
 <style scoped>
 .pipeline-page {
-  max-width: 1400px;
+  max-width: 87.5rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .page-header h1 {
@@ -130,17 +129,17 @@ onMounted(() => {
 }
 
 .subtitle {
-  margin: 4px 0 0;
+  margin: 0.25rem 0 0;
   color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 
 /* ── Error / Loading ───────────────────────────────────────────── */
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
@@ -148,14 +147,14 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -172,31 +171,31 @@ onMounted(() => {
 .kanban-board {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 /* ── Desktop layout ────────────────────────────────────────────── */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .pipeline-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 
   .kanban-board {
     flex-direction: row;
-    gap: 16px;
+    gap: var(--spacing-4);
     overflow-x: auto;
-    padding-bottom: 8px;
+    padding-bottom: var(--spacing-2);
   }
 
   .kanban-board :deep(.kanban-column) {
-    min-width: 240px;
+    min-width: 15rem;
     flex: 1;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .kanban-board :deep(.kanban-column) {
-    min-width: 260px;
+    min-width: 16.25rem;
   }
 }
 </style>

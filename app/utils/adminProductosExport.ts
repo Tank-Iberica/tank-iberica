@@ -223,8 +223,7 @@ export async function exportVehicleFicha(
     yPos += 7
   }
 
-  if (vehicle.description_es) {
-    // NOSONAR typescript:S1874
+  if (vehicle.description_es) { // NOSONAR typescript:S1874
     yPos += 10
     doc.setFontSize(14)
     doc.setTextColor(35, 66, 74)

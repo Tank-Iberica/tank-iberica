@@ -8,50 +8,54 @@
  * Requires auth. Rate limiting should be enforced by the caller based on plan.
  */
 import { serverSupabaseUser } from '#supabase/server'
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
 import { safeError } from '~~/server/utils/safeError'
+import { validateBody } from '~~/server/utils/validateBody'
 import { callAI } from '~~/server/services/aiProvider'
+import { sanitizeText } from '~~/server/utils/sanitizeInput'
+import { logger } from '~~/server/utils/logger'
 
-interface GenerateDescriptionBody {
-  brand: string
-  model: string
-  year?: number
-  km?: number
-  category?: string
-  subcategory?: string
-  attributes?: Record<string, unknown>
-}
+const generateDescriptionSchema = z.object({
+  brand: z.string().min(1).max(128),
+  model: z.string().min(1).max(128),
+  year: z.number().int().min(1900).max(new Date().getFullYear() + 2).optional(),
+  km: z.number().nonnegative().optional(),
+  category: z.string().max(128).optional(),
+  subcategory: z.string().max(128).optional(),
+  attributes: z.record(z.unknown()).optional(),
+})
 
 interface GenerateDescriptionResponse {
   description: string
+  /** True when all AI providers were unavailable — caller should let user fill manually */
+  aiUnavailable?: boolean
 }
 
 export default defineEventHandler(async (event): Promise<GenerateDescriptionResponse> => {
   // 1. Authenticate
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   // 2. Read and validate body
-  const body = await readBody<GenerateDescriptionBody>(event)
+  const body = await validateBody(event, generateDescriptionSchema)
 
-  if (!body.brand || typeof body.brand !== 'string') {
-    throw createError({ statusCode: 400, message: 'brand is required' })
-  }
-
-  if (!body.model || typeof body.model !== 'string') {
-    throw createError({ statusCode: 400, message: 'model is required' })
-  }
+  // 2.5 Sanitize string fields before interpolating into AI prompt
+  const brand = sanitizeText(body.brand, { maxLength: 128 })
+  const model = sanitizeText(body.model, { maxLength: 128 })
+  const category = body.category ? sanitizeText(body.category, { maxLength: 128 }) : undefined
+  const subcategory = body.subcategory ? sanitizeText(body.subcategory, { maxLength: 128 }) : undefined
 
   // 3. Build prompt
   const vehicleInfo = [
-    `Marca: ${body.brand}`,
-    `Modelo: ${body.model}`,
+    `Marca: ${brand}`,
+    `Modelo: ${model}`,
     body.year ? `Ano: ${body.year}` : null,
     body.km ? `Kilometros: ${body.km.toLocaleString('es-ES')}` : null,
-    body.category ? `Categoria: ${body.category}` : null,
-    body.subcategory ? `Subcategoria: ${body.subcategory}` : null,
+    category ? `Categoria: ${category}` : null,
+    subcategory ? `Subcategoria: ${subcategory}` : null,
   ]
     .filter(Boolean)
     .join('\n')
@@ -90,7 +94,10 @@ Responde SOLO con la descripcion, sin titulos ni encabezados.`
     )
     return { description: response.text.trim() }
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'AI generation failed'
-    throw safeError(500, `Description generation failed: ${message}`)
+    // Graceful fallback: if all AI providers are down (circuit open, timeout, no keys),
+    // return an empty description so the user can still publish the vehicle manually.
+    const message = err instanceof Error ? err.message : String(err)
+    logger.warn(`[generate-description] AI unavailable (${message}) — returning empty for manual input`)
+    return { description: '', aiUnavailable: true }
   }
 })

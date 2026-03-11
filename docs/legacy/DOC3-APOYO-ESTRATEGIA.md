@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # DOCUMENTO 3 — Documento de apoyo: estrategia, negocio y recomendaciones
 
@@ -612,3 +612,5 @@ Todo lo técnico discutido en 46+ sesiones importa. Pero importa menos que esta 
 ---
 
 _Documento de apoyo v1.0 — Complementa DOC1 (sesiones Claude Code) y DOC2 (tareas fundadores)._
+
+

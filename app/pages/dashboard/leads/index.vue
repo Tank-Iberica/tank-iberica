@@ -52,14 +52,14 @@ function formatDate(dateStr: string | null): string {
 
 function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
-    new: '#3b82f6',
-    viewed: '#8b5cf6',
-    contacted: '#f59e0b',
+    new: 'var(--color-info)',
+    viewed: 'var(--color-violet-500)',
+    contacted: 'var(--color-warning)',
     negotiating: '#f97316',
     won: '#22c55e',
-    lost: '#ef4444',
+    lost: 'var(--color-error)',
   }
-  return colors[status] || '#64748b'
+  return colors[status] || 'var(--color-slate-500)'
 }
 </script>
 
@@ -98,8 +98,8 @@ function getStatusColor(status: string): string {
     <div v-if="error" class="alert-error">{{ error }}</div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
+    <div v-if="loading" class="loading-skeleton" aria-busy="true">
+      <UiSkeletonCard v-for="n in 5" :key="n" :lines="3" />
     </div>
 
     <!-- Empty -->
@@ -146,18 +146,18 @@ function getStatusColor(status: string): string {
 
 <style scoped>
 .leads-page {
-  max-width: 900px;
+  max-width: 56.25rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .page-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .page-header h1 {
@@ -172,23 +172,23 @@ function getStatusColor(status: string): string {
   color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
 }
 
 .tabs-row {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-1);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
+  padding-bottom: var(--spacing-1);
 }
 
 .tab-btn {
-  min-height: 44px;
-  padding: 8px 16px;
+  min-height: 2.75rem;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   font-size: 0.85rem;
   font-weight: 500;
@@ -210,71 +210,56 @@ function getStatusColor(status: string): string {
 
 .search-box input {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
 }
 
 .search-box input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
-.loading-state {
+.loading-skeleton {
   display: flex;
-  justify-content: center;
-  padding: 40px;
-}
-
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--color-gray-200);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  flex-direction: column;
+  gap: var(--spacing-2);
 }
 
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .leads-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .lead-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   text-decoration: none;
   transition: box-shadow 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .lead-card:hover {
@@ -294,8 +279,8 @@ function getStatusColor(status: string): string {
 }
 
 .status-badge {
-  padding: 3px 10px;
-  border-radius: 12px;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -309,7 +294,7 @@ function getStatusColor(status: string): string {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .lead-date {
@@ -326,9 +311,9 @@ function getStatusColor(status: string): string {
   white-space: nowrap;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .leads-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

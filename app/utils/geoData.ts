@@ -436,6 +436,10 @@ const PRIORITY_COUNTRIES = ['ES', 'PT', 'FR', 'GR']
 
 type CountryEntry = { code: string; name: string; flag: string }
 
+function makeToEntry(names: Record<string, string>) {
+  return (c: string): CountryEntry => ({ code: c, name: names[c] || c, flag: countryFlag(c) })
+}
+
 /**
  * Returns European countries split into priority and rest (alphabetically by locale).
  */
@@ -444,11 +448,7 @@ export function getSortedEuropeanCountries(locale = 'es'): {
   rest: CountryEntry[]
 } {
   const names = COUNTRY_NAMES[locale] || COUNTRY_NAMES.es!
-  const toEntry = (c: string): CountryEntry => ({
-    code: c,
-    name: names[c] || c,
-    flag: countryFlag(c),
-  })
+  const toEntry = makeToEntry(names)
 
   const priority = PRIORITY_COUNTRIES.filter((c) => EUROPEAN_COUNTRIES.includes(c)).map(toEntry)
 
@@ -468,9 +468,9 @@ export function getSortedProvinces(): string[] {
 
 // --- ISO code → flag emoji ---
 export function countryFlag(iso: string): string {
-  if (!iso || iso.length !== 2) return ''
+  if (iso?.length !== 2) return ''
   const upper = iso.toUpperCase()
-  return String.fromCodePoint(...[...upper].map((c) => 0x1F1E6 + c.charCodeAt(0) - 65))
+  return String.fromCodePoint(...[...upper].map((c) => 0x1F1E6 + (c.codePointAt(0) ?? 65) - 65))
 }
 
 // --- All available location levels (always show all) ---
@@ -525,20 +525,15 @@ export function getCountriesForLevel(
 }
 
 // --- Countries available for profile preference (Europe + LATAM) ---
-type ProfileCountryEntry = { code: string; name: string; flag: string }
 type ProfileCountryGroups = {
-  priority: ProfileCountryEntry[]
-  europe: ProfileCountryEntry[]
-  latam: ProfileCountryEntry[]
+  priority: CountryEntry[]
+  europe: CountryEntry[]
+  latam: CountryEntry[]
 }
 
 export function getProfileCountries(locale = 'es'): ProfileCountryGroups {
   const names = COUNTRY_NAMES[locale] || COUNTRY_NAMES['es']!
-  const toEntry = (c: string): ProfileCountryEntry => ({
-    code: c,
-    name: names[c] || c,
-    flag: countryFlag(c),
-  })
+  const toEntry = makeToEntry(names)
 
   const priority = ['ES', 'PT', 'FR', 'DE', 'IT', 'GB'].map(toEntry)
 

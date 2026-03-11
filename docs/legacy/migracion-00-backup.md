@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 ## PASO 0: BACKUP (HACER PRIMERO, ANTES DE CUALQUIER CAMBIO)
 
@@ -24,3 +24,5 @@ Destino: C:\Users\j_m_g\OneDrive\Documentos\Tracciona\
 **NUNCA MODIFICAR NADA EN C:\Users\j_m_g\OneDrive\Documentos ank-iberica\*\*
 
 ---
+
+

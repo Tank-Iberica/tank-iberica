@@ -135,9 +135,8 @@ const {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('admin.captacion.loading') }}</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonTable :rows="6" :cols="5" />
     </div>
 
     <!-- Empty -->
@@ -209,7 +208,7 @@ const {
 .captacion-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
   height: 100%;
 }
 
@@ -219,7 +218,7 @@ const {
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .page-header h1 {
@@ -231,21 +230,21 @@ const {
 
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   flex-wrap: wrap;
 }
 
 .btn-refresh {
-  padding: 10px 18px;
+  padding: 0.625rem 1.125rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-refresh:hover {
@@ -258,16 +257,16 @@ const {
 }
 
 .btn-add {
-  padding: 10px 18px;
-  background: #2563eb;
+  padding: 0.625rem 1.125rem;
+  background: var(--color-focus);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-add:hover {
@@ -281,10 +280,10 @@ const {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
@@ -293,10 +292,10 @@ const {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
   font-size: 0.9rem;
 }
@@ -306,40 +305,20 @@ const {
   border: none;
   color: inherit;
   cursor: pointer;
-  padding: 4px;
+  padding: var(--spacing-1);
   display: flex;
   align-items: center;
 }
 
 .loading-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
-  color: var(--text-auxiliary);
-}
-
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--color-gray-200);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  padding: var(--spacing-6);
 }
 
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
@@ -348,7 +327,7 @@ const {
   font-size: 0.95rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .page-header {
     flex-direction: row;
     justify-content: space-between;

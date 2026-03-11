@@ -112,8 +112,8 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
 }
 
 .section-header h2 {
@@ -123,16 +123,16 @@ onMounted(() => {
 
 .total-badge {
   background: var(--bg-secondary);
-  color: #6b7280;
-  padding: 6px 12px;
-  border-radius: 16px;
+  color: var(--color-gray-500);
+  padding: 0.375rem var(--spacing-3);
+  border-radius: var(--border-radius-lg);
   font-size: 0.85rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header {
     flex-direction: column;
-    gap: 12px;
+    gap: var(--spacing-3);
     align-items: stretch;
   }
 }

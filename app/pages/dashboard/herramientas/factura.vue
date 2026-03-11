@@ -64,6 +64,9 @@ const {
   updateSettingsField,
   dismissError,
   dismissSuccess,
+  hasDraft,
+  restoreDraft,
+  clearDraft,
 } = useDashboardFactura()
 
 onMounted(init)
@@ -91,6 +94,19 @@ onMounted(init)
         @dismiss-error="dismissError"
         @dismiss-success="dismissSuccess"
       />
+
+      <!-- Draft restore banner -->
+      <div v-if="hasDraft && activeTab === 'new'" class="draft-banner" role="alert">
+        <span>{{ t('common.draftFound') }}</span>
+        <div class="draft-banner__actions">
+          <button class="btn-sm btn-primary" @click="restoreDraft">
+            {{ t('common.draftRestore') }}
+          </button>
+          <button class="btn-sm btn-ghost" @click="clearDraft">
+            {{ t('common.draftDiscard') }}
+          </button>
+        </div>
+      </div>
 
       <!-- New invoice form -->
       <div v-if="activeTab === 'new'" class="invoice-form">
@@ -166,7 +182,7 @@ onMounted(init)
 <style scoped>
 .tool-page {
   padding: 1.5rem;
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
 }
 
@@ -183,13 +199,56 @@ onMounted(init)
   margin-bottom: 1.5rem;
 }
 
-@media (min-width: 768px) {
+.draft-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
+  padding: var(--spacing-3) var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+  background: var(--color-amber-50, #fffbeb);
+  border: 1px solid var(--color-amber-300, #fcd34d);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  color: var(--color-amber-900, #78350f);
+}
+
+.draft-banner__actions {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
+}
+
+.btn-sm {
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8rem;
+  min-height: 2.25rem;
+  border-radius: var(--border-radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+@media (min-width: 48em) {
   .tool-page {
     padding: 2rem;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .tool-page__title {
     font-size: 1.75rem;
   }

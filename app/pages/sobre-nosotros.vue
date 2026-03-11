@@ -1,6 +1,7 @@
 <template>
   <div class="about-page">
     <div class="about-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('about.title') }]" />
       <h1 class="about-title">{{ $t('about.title') }}</h1>
 
       <section id="quienes-somos" class="about-section">
@@ -31,7 +32,7 @@ usePageSeo({
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Tracciona',
+    name: t('site.title'),
     url: 'https://tracciona.com',
     description: t('seo.aboutDescription'),
     logo: 'https://tracciona.com/og-default.png',
@@ -51,7 +52,7 @@ usePageSeo({
 }
 
 .about-container {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -65,7 +66,7 @@ usePageSeo({
 
 .about-section {
   margin-bottom: 2.5rem;
-  scroll-margin-top: 80px;
+  scroll-margin-top: var(--header-offset, 5rem);
 }
 
 .about-section h2 {
@@ -79,18 +80,18 @@ usePageSeo({
 }
 
 .about-section p {
-  font-size: 15px;
+  font-size: var(--font-size-sm);
   line-height: 1.7;
   color: var(--text-secondary);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .about-container {
     padding: 0 1.5rem;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .about-title {
     font-size: 1.75rem;
   }
@@ -100,7 +101,7 @@ usePageSeo({
   }
 
   .about-section p {
-    font-size: 16px;
+    font-size: var(--font-size-base);
   }
 }
 </style>

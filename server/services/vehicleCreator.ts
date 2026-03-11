@@ -3,6 +3,7 @@
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { ImageUploadResult } from './imageUploader'
+import { logger } from '../utils/logger'
 
 export interface VehicleCreateData {
   brand: string
@@ -48,7 +49,7 @@ export function sanitizeSlug(raw: string): string {
     .normalize('NFD')
     .replaceAll(/[\u0300-\u036F]/g, '')
     .replaceAll(/[^a-z0-9]+/g, '-')
-    .replaceAll(/^-+|-+$/g, '')
+    .replace(/^-+/, '').replace(/-+$/, '')
     .slice(0, 120)
 }
 
@@ -148,7 +149,7 @@ export async function createVehicleFromAI(
     const { error: imageInsertError } = await supabase.from('vehicle_images').insert(imageInserts)
 
     if (imageInsertError) {
-      console.error('[vehicleCreator] Failed to insert vehicle images:', imageInsertError.message)
+      logger.error('[vehicleCreator] Failed to insert vehicle images:', { error: String(imageInsertError.message) })
     }
   }
 

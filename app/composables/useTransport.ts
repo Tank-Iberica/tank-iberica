@@ -142,7 +142,7 @@ const FRENCH_SOUTH_PREFIXES = new Set([
 // ============================================
 
 function resolveZoneFromPostalCode(postalCode: string): string | null {
-  const clean = postalCode.replaceAll(/\s+/g, '').replaceAll(/-/g, '')
+  const clean = postalCode.replaceAll(/\s+/g, '').replaceAll('-', '')
 
   // Portuguese postal codes: 4 digits (or 4+3 format like 1000-001)
   if (/^\d{4}$/.test(clean) || /^\d{7}$/.test(clean)) {
@@ -172,7 +172,7 @@ function resolveZoneFromPostalCode(postalCode: string): string | null {
   return null
 }
 function getProvinceFromPostalCode(postalCode: string): string | null {
-  const clean = postalCode.replaceAll(/\s+/g, '').replaceAll(/-/g, '')
+  const clean = postalCode.replaceAll(/\s+/g, '').replaceAll('-', '')
   if (/^\d{5}$/.test(clean)) {
     const prefix = clean.substring(0, 2)
     return SPANISH_POSTAL_PREFIXES[prefix] || null
@@ -207,7 +207,7 @@ export function useTransport() {
     try {
       let query = supabase
         .from('transport_zones')
-        .select('*')
+        .select('id, vertical, zone_name, zone_slug, price_cents, regions, sort_order, status')
         .eq('status', 'active')
         .order('sort_order', { ascending: true })
 
@@ -332,7 +332,7 @@ export function useTransport() {
     try {
       const { data, error: err } = await supabase
         .from('transport_requests')
-        .select('*')
+        .select('id, vehicle_id, user_id, origin_zone, destination_zone, destination_postal_code, estimated_price_cents, status, created_at')
         .eq('user_id', user.value.id)
         .order('created_at', { ascending: false })
 

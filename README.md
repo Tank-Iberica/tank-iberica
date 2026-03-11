@@ -73,16 +73,22 @@ docs/                 # Documentacion del proyecto
 | `npm run lint`                                                                            | ESLint                   |
 | `npm run typecheck`                                                                       | TypeScript check         |
 | `npm run test`                                                                            | Tests unitarios (Vitest) |
+| `npm run test:load`                                                                       | k6 load test completo    |
+| `npm run test:load:smoke`                                                                 | k6 smoke test (5 VUs)    |
+| `npm run analyze`                                                                         | Bundle analysis (nuxi)   |
 | `npx playwright test`                                                                     | Tests E2E                |
 | `npx supabase db push`                                                                    | Aplicar migraciones      |
 | `npx supabase gen types typescript --project-id gmnrfuzekbwyzkgsaftv > types/supabase.ts` | Regenerar tipos BD       |
 
 ## Documentacion
 
+Mapa completo de documentacion actual: [`docs/README.md`](docs/README.md)
+
 ### Fuentes de verdad (SSOT)
 
 | Que                         | Donde                                                                                    |
 | --------------------------- | ---------------------------------------------------------------------------------------- |
+| Mapa de documentacion       | [`docs/README.md`](docs/README.md)                                                       |
 | Estado actual               | [`STATUS.md`](STATUS.md)                                                                 |
 | Vision y arquitectura       | [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md)                                 |
 | Estrategia de negocio       | [`docs/ESTRATEGIA-NEGOCIO.md`](docs/ESTRATEGIA-NEGOCIO.md)                               |
@@ -100,8 +106,8 @@ docs/                 # Documentacion del proyecto
 | [`INVENTARIO-ENDPOINTS.md`](docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)             | Todos los endpoints con auth y proposito         |
 | [`ARQUITECTURA-ESCALABILIDAD.md`](docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md) | Diseno multi-cluster, costes, decisiones         |
 | [`FLUJOS-OPERATIVOS.md`](docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md)                   | Diagramas ASCII de flujos principales            |
-| [`ERD.md`](docs/tracciona-docs/referencia/ERD.md)                                               | Diagrama entidad-relacion (92 tablas, Mermaid)   |
-| [`CRON-JOBS.md`](docs/tracciona-docs/referencia/CRON-JOBS.md)                                   | 13 cron endpoints con frecuencia y config        |
+| [`ERD.md`](docs/tracciona-docs/referencia/ERD.md)                                               | Diagrama entidad-relacion (97 tablas, Mermaid)   |
+| [`CRON-JOBS.md`](docs/tracciona-docs/referencia/CRON-JOBS.md)                                   | 14 cron endpoints con frecuencia y config        |
 | [`THIRD-PARTY-DEPENDENCIES.md`](docs/tracciona-docs/referencia/THIRD-PARTY-DEPENDENCIES.md)     | Dependencias externas, failovers, vendor lock-in |
 | [`SECURITY-TESTING.md`](docs/tracciona-docs/referencia/SECURITY-TESTING.md)                     | DAST (ZAP + Nuclei), testing de seguridad        |
 | [`CLOUDFLARE-WAF-CONFIG.md`](docs/tracciona-docs/referencia/CLOUDFLARE-WAF-CONFIG.md)           | Reglas WAF, rate limiting, configuracion         |
@@ -109,7 +115,8 @@ docs/                 # Documentacion del proyecto
 | [`SECRETS-ROTATION.md`](docs/tracciona-docs/referencia/SECRETS-ROTATION.md)                     | Rotacion de secretos y API keys                  |
 | [`DATA-RETENTION.md`](docs/tracciona-docs/referencia/DATA-RETENTION.md)                         | Politica de retencion de datos GDPR              |
 | [`API-PUBLIC.md`](docs/tracciona-docs/referencia/API-PUBLIC.md)                                 | Documentacion de endpoints publicos              |
-| `docs/tracciona-docs/anexos/`                                                                   | Anexos A-Y: especificaciones por modulo          |
+| [`INCIDENT-RESPONSE.md`](docs/tracciona-docs/operativo/INCIDENT-RESPONSE.md)                   | Respuesta operativa a incidentes                 |
+| [`PLAN-MAESTRO-10-DE-10.md`](docs/tracciona-docs/PLAN-MAESTRO-10-DE-10.md)                     | Plan tecnico de mejora y excelencia              |
 
 ### Legal
 

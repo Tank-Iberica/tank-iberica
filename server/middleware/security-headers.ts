@@ -62,8 +62,10 @@ export default defineEventHandler((event) => {
   headers.setHeader('X-Content-Type-Options', 'nosniff')
   headers.setHeader('X-Frame-Options', 'DENY')
   headers.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
-  headers.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)')
+  headers.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), usb=(), payment=(), display-capture=()')
   // Cross-Origin headers for additional isolation
   headers.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
   headers.setHeader('Cross-Origin-Resource-Policy', 'same-origin')
+  // Disable browser automatic DNS prefetching for external links (explicit dns-prefetch hints still work)
+  headers.setHeader('X-DNS-Prefetch-Control', 'off')
 })

@@ -115,11 +115,11 @@ onMounted(() => {
 .related-vehicles {
   margin-top: var(--spacing-6);
   padding-top: var(--spacing-6);
-  border-top: 1px solid var(--border-color, #e5e7eb);
+  border-top: 1px solid var(--border-color);
 }
 
 .related-vehicles h2 {
-  font-size: 1.1rem;
+  font-size: var(--font-size-base);
   font-weight: 700;
   color: var(--color-primary);
   margin-bottom: var(--spacing-4);
@@ -136,9 +136,9 @@ onMounted(() => {
 .related-card {
   text-decoration: none;
   color: inherit;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  border: 1px solid var(--border-color, #e5e7eb);
+  border: 1px solid var(--border-color);
   transition:
     box-shadow 0.2s,
     transform 0.2s;
@@ -152,7 +152,7 @@ onMounted(() => {
 .related-img-wrapper {
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: var(--bg-secondary, #f3f4f6);
+  background: var(--bg-secondary);
 }
 
 .related-img {
@@ -167,14 +167,14 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-auxiliary, #9ca3af);
+  color: var(--text-auxiliary);
 }
 
 .related-info {
   padding: var(--spacing-2) var(--spacing-3);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .related-name {
@@ -189,11 +189,11 @@ onMounted(() => {
 .related-price {
   font-size: var(--font-size-sm);
   font-weight: 700;
-  color: #059669;
+  color: var(--color-success);
 }
 
 .related-price.muted {
-  color: var(--text-auxiliary, #9ca3af);
+  color: var(--text-auxiliary);
   font-weight: 500;
 }
 

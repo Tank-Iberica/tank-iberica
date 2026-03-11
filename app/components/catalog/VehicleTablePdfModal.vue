@@ -22,7 +22,7 @@ const emit = defineEmits<{
             width="40"
             height="40"
             fill="none"
-            stroke="#C41E3A"
+            stroke="var(--color-danger)"
             stroke-width="1.5"
           >
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -68,9 +68,9 @@ const emit = defineEmits<{
 
 .pdf-modal {
   background: var(--bg-primary, white);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   padding: 2rem;
-  max-width: 400px;
+  max-width: 25rem;
   width: 100%;
   text-align: center;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
@@ -81,21 +81,21 @@ const emit = defineEmits<{
 }
 
 .pdf-modal-title {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--color-primary);
   margin: 0 0 0.5rem;
 }
 
 .pdf-modal-message {
-  font-size: 14px;
-  color: var(--text-secondary, #6b7280);
+  font-size: var(--font-size-base);
+  color: var(--text-secondary, var(--color-gray-500));
   margin: 0 0 0.5rem;
   line-height: 1.5;
 }
 
 .pdf-modal-count {
-  font-size: 20px;
+  font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--color-primary);
   margin: 0 0 1.5rem;
@@ -109,19 +109,19 @@ const emit = defineEmits<{
 .pdf-btn {
   flex: 1;
   padding: 0.75rem 0.5rem;
-  border-radius: 8px;
-  font-size: 13px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;
   border: 1.5px solid transparent;
   transition: all 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .pdf-btn-back {
   background: transparent;
-  border-color: var(--border-color, #d1d5db);
-  color: var(--text-secondary, #6b7280);
+  border-color: var(--border-color, var(--color-gray-300));
+  color: var(--text-secondary, var(--color-gray-500));
 }
 
 .pdf-btn-back:hover {
@@ -140,7 +140,7 @@ const emit = defineEmits<{
 }
 
 .pdf-btn-confirm {
-  background: linear-gradient(135deg, #c41e3a 0%, #a01830 100%);
+  background: linear-gradient(135deg, var(--color-danger) 0%, #a01830 100%);
   color: white;
   border-color: transparent;
 }

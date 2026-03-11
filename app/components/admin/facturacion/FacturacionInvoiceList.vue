@@ -60,38 +60,38 @@ function getStatusLabel(status: string): string {
 
 <style scoped>
 .section-card {
-  background: var(--bg-primary, #fff);
+  background: var(--bg-primary, var(--color-white));
   border-radius: var(--border-radius-md, 12px);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
-  padding: var(--spacing-4, 16px) var(--spacing-5, 20px);
+  box-shadow: var(--shadow-sm, var(--shadow-sm));
+  padding: var(--spacing-4) var(--spacing-5);
 }
 
 .section-title {
-  margin: 0 0 var(--spacing-4, 16px) 0;
+  margin: 0 0 var(--spacing-4) 0;
   font-size: var(--font-size-lg, 1.125rem);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
 }
 
 .invoices-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3, 12px);
+  gap: var(--spacing-3);
 }
 
 .invoice-card {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2, 8px);
-  padding: var(--spacing-4, 16px);
-  background: var(--color-gray-50, #f9fafb);
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+  background: var(--color-gray-50, var(--color-gray-50));
   border-radius: var(--border-radius, 8px);
-  border: 1px solid var(--border-color-light, #e5e7eb);
+  border: 1px solid var(--border-color-light, var(--color-gray-200));
   transition: border-color var(--transition-fast, 150ms ease);
 }
 
 .invoice-card:hover {
-  border-color: var(--border-color, #d1d5db);
+  border-color: var(--border-color, var(--color-gray-300));
 }
 
 .invoice-top {
@@ -102,13 +102,13 @@ function getStatusLabel(status: string): string {
 
 .invoice-date {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-auxiliary, #7a8a8a);
+  color: var(--text-auxiliary, var(--text-auxiliary));
   font-variant-numeric: tabular-nums;
 }
 
 .invoice-status {
   display: inline-block;
-  padding: 2px 10px;
+  padding: 0.125rem 0.625rem;
   border-radius: var(--border-radius-full, 9999px);
   font-size: var(--font-size-xs, 0.75rem);
   font-weight: var(--font-weight-semibold, 600);
@@ -119,23 +119,23 @@ function getStatusLabel(status: string): string {
 }
 
 .invoice-status.status-paid {
-  background: var(--color-success-bg, #dcfce7);
-  color: #15803d;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--color-green-700);
 }
 
 .invoice-status.status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .invoice-status.status-failed {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .invoice-status.status-refunded {
-  background: var(--color-gray-100, #f3f4f6);
-  color: var(--color-gray-600, #4b5563);
+  background: var(--color-gray-100, var(--color-gray-100));
+  color: var(--color-gray-600, var(--color-gray-600));
 }
 
 .invoice-middle {
@@ -145,9 +145,9 @@ function getStatusLabel(status: string): string {
 
 .invoice-type-badge {
   display: inline-block;
-  padding: 4px 12px;
-  background: var(--color-gray-200, #e5e7eb);
-  color: var(--text-secondary, #4a5a5a);
+  padding: var(--spacing-1) var(--spacing-3);
+  background: var(--color-gray-200, var(--color-gray-200));
+  color: var(--text-secondary, var(--text-secondary));
   border-radius: var(--border-radius-sm, 4px);
   font-size: var(--font-size-xs, 0.75rem);
   font-weight: var(--font-weight-medium, 500);
@@ -164,19 +164,19 @@ function getStatusLabel(status: string): string {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .invoice-amount {
   font-size: var(--font-size-base, 1rem);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
   font-variant-numeric: tabular-nums;
 }
 
 .invoice-tax {
   font-size: var(--font-size-xs, 0.75rem);
-  color: var(--text-auxiliary, #7a8a8a);
+  color: var(--text-auxiliary, var(--text-auxiliary));
   font-variant-numeric: tabular-nums;
 }
 
@@ -185,19 +185,19 @@ function getStatusLabel(status: string): string {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px var(--spacing-4, 16px);
+  padding: 48px var(--spacing-4);
   text-align: center;
 }
 
 .empty-state p {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-auxiliary, #7a8a8a);
+  color: var(--text-auxiliary, var(--text-auxiliary));
   margin: 0;
 }
 
 @media (min-width: 64em) {
   .section-card {
-    padding: var(--spacing-6, 24px) var(--spacing-8, 32px);
+    padding: var(--spacing-6) var(--spacing-8);
   }
 }
 
@@ -206,13 +206,13 @@ function getStatusLabel(status: string): string {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: var(--spacing-4, 16px);
+    gap: var(--spacing-4);
   }
 
   .invoice-top {
     flex: 0 0 auto;
-    gap: var(--spacing-4, 16px);
-    min-width: 200px;
+    gap: var(--spacing-4);
+    min-width: 12.5rem;
   }
 
   .invoice-middle {
@@ -226,7 +226,7 @@ function getStatusLabel(status: string): string {
   .invoice-amounts {
     flex-direction: row;
     align-items: baseline;
-    gap: var(--spacing-3, 12px);
+    gap: var(--spacing-3);
   }
 }
 </style>

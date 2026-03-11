@@ -94,7 +94,7 @@ onMounted(() => {
 
 <style scoped>
 .admin-dashboard {
-  max-width: 1400px;
+  max-width: 87.5rem;
   margin: 0 auto;
 }
 
@@ -104,13 +104,14 @@ onMounted(() => {
   gap: var(--spacing-3);
   margin-bottom: var(--spacing-6);
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .quick-actions-bar .action-btn {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-4);
+  padding: var(--spacing-3);
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -127,28 +128,16 @@ onMounted(() => {
 }
 
 .quick-actions-bar .action-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-.quick-actions-bar .action-btn span {
-  font-weight: var(--font-weight-medium);
-}
-
-/* Mobile base: quick actions stacked */
-.quick-actions-bar {
-  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .quick-actions-bar .action-btn span {
   display: none;
+  font-weight: var(--font-weight-medium);
 }
 
-.quick-actions-bar .action-btn {
-  padding: var(--spacing-3);
-}
-
-@media (min-width: 640px) {
+@media (min-width: 40em) {
   .quick-actions-bar {
     justify-content: flex-start;
   }

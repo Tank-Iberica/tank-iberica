@@ -140,6 +140,8 @@
 <script setup lang="ts">
 import type { InfraCluster } from '~/composables/useInfraMetrics'
 
+type OverallStatus = 'green' | 'yellow' | 'red' | 'gray'
+
 interface ComponentMetricDisplay {
   name: string
   label: string
@@ -153,7 +155,7 @@ interface ComponentCardData {
   key: string
   name: string
   icon: string
-  overallStatus: 'green' | 'yellow' | 'red' | 'gray'
+  overallStatus: OverallStatus
   metrics: ComponentMetricDisplay[]
 }
 
@@ -167,7 +169,7 @@ interface Props {
   configuringVariants: boolean
   pipelineMessage: string
   pipelineMessageType: 'success' | 'error'
-  getStatusColor: (percent: number | null) => 'green' | 'yellow' | 'red' | 'gray'
+  getStatusColor: (percent: number | null) => OverallStatus
 }
 
 const props = defineProps<Props>()
@@ -188,7 +190,7 @@ interface StackSummaryRow {
   name: string
   plan: string
   usagePercent: number | null
-  status: 'green' | 'yellow' | 'red' | 'gray'
+  status: OverallStatus
   nextStep: string
 }
 
@@ -346,8 +348,8 @@ function formatMetricValue(value: number): string {
 }
 
 .service-dot {
-  width: 8px;
-  height: 8px;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -358,7 +360,7 @@ function formatMetricValue(value: number): string {
 }
 
 .col-usage {
-  min-width: 100px;
+  min-width: 6.25rem;
 }
 
 .usage-cell {
@@ -369,23 +371,23 @@ function formatMetricValue(value: number): string {
 
 .mini-bar-bg {
   flex: 1;
-  height: 6px;
+  height: 0.375rem;
   background: var(--bg-tertiary);
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
-  min-width: 48px;
+  min-width: 3rem;
 }
 
 .mini-bar-fill {
   height: 100%;
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
   transition: width 0.4s ease;
 }
 
 .usage-label {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
-  min-width: 34px;
+  min-width: 2.125rem;
   text-align: right;
 }
 
@@ -408,15 +410,15 @@ function formatMetricValue(value: number): string {
 }
 
 .col-next {
-  max-width: 260px;
+  max-width: 16.25rem;
 }
 
 .next-ok {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  background: var(--color-success-bg, #dcfce7);
-  color: #15803d;
+  padding: 0.125rem var(--spacing-2);
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--color-green-700);
   border-radius: var(--border-radius-full);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
@@ -490,8 +492,8 @@ function formatMetricValue(value: number): string {
 }
 
 .status-dot {
-  width: 12px;
-  height: 12px;
+  width: 0.75rem;
+  height: 0.75rem;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -555,15 +557,15 @@ function formatMetricValue(value: number): string {
 }
 
 .progress-bar-container {
-  height: 8px;
+  height: 0.5rem;
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   transition: width 0.6s ease;
 }
 
@@ -594,34 +596,34 @@ function formatMetricValue(value: number): string {
 }
 
 .rec-warning {
-  background: #fefce8;
-  border: 1px solid #fde68a;
+  background: var(--color-yellow-50);
+  border: 1px solid var(--color-amber-200);
   color: var(--color-warning-text);
 }
 
 .rec-critical {
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  color: #9a3412;
+  background: var(--color-orange-bg);
+  border: 1px solid var(--color-orange-200);
+  color: var(--color-orange-text);
 }
 
 .rec-emergency {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
   color: var(--color-error);
 }
 
 .rec-icon {
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 0.0625rem;
 }
 
 .rec-content {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .rec-message {

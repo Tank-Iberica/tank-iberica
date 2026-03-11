@@ -68,7 +68,7 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
         <h1>{{ $t('admin.noticias.newTitle') }}</h1>
       </div>
       <div class="nf-right">
-        <button class="btn" @click="handleCancel">Cancelar</button>
+        <button class="btn" @click="handleCancel">{{ $t('common.cancel') }}</button>
         <button class="btn btn-primary" :disabled="saving || !isValid" @click="handleSave">
           {{ saving ? $t('admin.common.saving') : $t('admin.common.save') }}
         </button>
@@ -200,7 +200,7 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
 
 <style scoped>
 .nf {
-  max-width: 1200px;
+  max-width: 75rem;
 }
 
 /* Header */
@@ -208,36 +208,36 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .nf-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .nf-left h1 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--color-near-black);
 }
 
 .nf-right {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .btn-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--border-radius);
   color: var(--text-auxiliary);
   transition: all 0.15s;
   border: none;
@@ -247,23 +247,23 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
 
 .btn-icon:hover {
   background: var(--bg-secondary);
-  color: #1a1a1a;
+  color: var(--color-near-black);
 }
 .btn-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 /* Buttons */
 .btn {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--color-gray-200);
   background: var(--bg-primary);
-  color: #374151;
+  color: var(--color-gray-700);
   transition: all 0.15s;
 }
 
@@ -287,11 +287,11 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
 
 /* Error */
 .error-msg {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
   font-size: 0.875rem;
 }
 
@@ -299,14 +299,14 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
 .nf-grid {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .nf-grid {
     display: grid;
     grid-template-columns: 1fr 360px;
-    gap: 24px;
+    gap: var(--spacing-6);
     align-items: start;
   }
 }
@@ -315,6 +315,6 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
 .nf-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 </style>

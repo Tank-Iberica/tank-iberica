@@ -127,6 +127,48 @@ Tienes 2 opciones:
 
 ---
 
+## ⏱️ SLAs formales por severidad
+
+| Severidad | Descripción | Respuesta | Resolución | Comunicación | Escalación |
+|-----------|-------------|-----------|------------|--------------|------------|
+| **SEV-1** (Crítico) | Sitio completamente caído o datos comprometidos | **≤5 min** | **≤1 hora** | Cada 15 min | Inmediata a fundadores |
+| **SEV-2** (Alto) | Funcionalidad core rota (pagos, auth, publicación) | **≤15 min** | **≤4 horas** | Cada 30 min | Si no resuelto en 1h |
+| **SEV-3** (Medio) | Feature secundaria rota (chat, alertas, reports) | **≤1 hora** | **≤24 horas** | Al resolver | Si no resuelto en 4h |
+| **SEV-4** (Bajo) | Bug cosmético o degradación menor | **≤4 horas** | **≤72 horas** | En changelog | No requiere escalación |
+
+### Clasificación automática
+
+| Síntoma | Severidad asignada |
+|---------|-------------------|
+| Web no carga (5xx, timeout) | SEV-1 |
+| Ataque detectado / datos filtrados | SEV-1 |
+| Login/registro rotos | SEV-2 |
+| Pagos/Stripe no funcionan | SEV-2 |
+| Publicación de vehículos falla | SEV-2 |
+| Chat/mensajería caído | SEV-3 |
+| Alertas de precio no llegan | SEV-3 |
+| Report/export falla | SEV-3 |
+| Error visual, texto mal | SEV-4 |
+| Feature menor no funciona | SEV-4 |
+
+### Escalación
+
+1. **0–5 min:** Detección automática (UptimeRobot, error rate monitoring)
+2. **5–15 min:** Claude Code diagnostica y clasifica severidad
+3. **15 min (SEV-1) / 1h (SEV-2):** Si no resuelto → notificar fundadores por WhatsApp
+4. **1h (SEV-1) / 4h (SEV-2):** Si no resuelto → contactar soporte del proveedor afectado
+5. **4h (SEV-1):** Activar DISASTER-RECOVERY.md completo
+
+### Post-incidente (obligatorio para SEV-1 y SEV-2)
+
+1. **Post-mortem** dentro de 48h: qué pasó, por qué, cómo se resolvió
+2. **Root cause analysis** con los 5 porqués
+3. **Action items** con responsable y deadline
+4. **Actualizar** este documento si el procedimiento cambió
+5. **Registrar** en `STATUS.md` changelog
+
+---
+
 ## 📞 Contactos de emergencia
 
 | Situación                      | A contactar           | Cómo                           |
@@ -172,9 +214,9 @@ Tienes 2 opciones:
 
 - [DISASTER-RECOVERY.md](../referencia/DISASTER-RECOVERY.md) — Cómo restaurar desde backup (30 min procedure)
 - [AUDIT-OVERVIEW.md](../referencia/AUDIT-OVERVIEW.md) — Sistema automático que evita crashes
-- [STATUS.md](../../STATUS.md) — Estado actual del proyecto
+- [STATUS.md](../../../STATUS.md) — Estado actual del proyecto
 
 ---
 
-_Versión 1.0 · Creado 15-mar-2026_
+_Versión 2.0 · Creado 15-mar-2026 · SLAs formales añadidos 11-mar-2026_
 _Última revisión: cuando cambien procedimientos críticos_

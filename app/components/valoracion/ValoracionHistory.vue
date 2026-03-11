@@ -75,7 +75,7 @@ defineProps<{
 .history-item-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .history-vehicle {
@@ -102,16 +102,16 @@ defineProps<{
 }
 
 .confidence-dot {
-  width: 10px;
-  height: 10px;
+  width: 0.625rem;
+  height: 0.625rem;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
 }
 
 .confidence-dot--small {
-  width: 8px;
-  height: 8px;
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
 .no-history {

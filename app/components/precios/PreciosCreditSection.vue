@@ -233,7 +233,7 @@ onMounted(loadPacks)
 .credit-price {
   display: flex;
   align-items: baseline;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .credit-price-amount {
@@ -280,7 +280,7 @@ onMounted(loadPacks)
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  min-height: 44px;
+  min-height: 2.75rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   background: transparent;

@@ -8,6 +8,8 @@
           <button
             :class="['menu-toggle-btn', { 'menu-visible': props.menuVisible }]"
             :title="$t('catalog.menuToggle')"
+            :aria-expanded="props.menuVisible"
+            aria-controls="catalog-filter-panel"
             @click="onToggleMenu"
           >
             <span class="menu-label">{{ $t('catalog.menuToggle') }}</span>
@@ -50,8 +52,15 @@
           </button>
 
           <!-- Mobile search: circular icon, expands to dropdown -->
-          <div :class="['mobile-search-wrapper', { active: searchExpanded }]">
-            <button class="search-btn-icon" @mousedown.prevent @click="toggleMobileSearch">
+          <div :class="['mobile-search-wrapper', { active: searchExpanded }]" role="search">
+            <button
+              class="search-btn-icon"
+              :aria-label="$t('catalog.searchPlaceholder')"
+              :aria-expanded="searchExpanded"
+              aria-controls="mobile-search-dropdown"
+              @mousedown.prevent
+              @click="toggleMobileSearch"
+            >
               <svg
                 width="16"
                 height="16"
@@ -64,7 +73,7 @@
                 <path d="m21 21-4.35-4.35" />
               </svg>
             </button>
-            <div v-show="searchExpanded" class="search-dropdown">
+            <div id="mobile-search-dropdown" v-show="searchExpanded" class="search-dropdown">
               <input
                 ref="mobileSearchInput"
                 :value="searchQuery"
@@ -77,7 +86,7 @@
           </div>
 
           <!-- Desktop search: full box with icon + clear X -->
-          <div class="search-box desktop-search">
+          <div class="search-box desktop-search" role="search">
             <input
               ref="desktopSearchInput"
               :value="searchQuery"
@@ -90,6 +99,7 @@
               v-show="searchQuery"
               class="search-clear-btn"
               type="button"
+              :aria-label="$t('common.clear')"
               @click="clearSearch"
             >
               <svg
@@ -434,10 +444,10 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 29px;
-  height: 29px;
-  min-height: 29px;
-  min-width: 29px;
+  width: 1.8125rem;
+  height: 1.8125rem;
+  min-height: 1.8125rem;
+  min-width: 1.8125rem;
   padding: 0;
   border: 2px solid var(--color-primary);
   border-radius: 50%;
@@ -448,7 +458,7 @@ onUnmounted(() => {
 
 .menu-label {
   display: none;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
 }
 
@@ -460,8 +470,8 @@ onUnmounted(() => {
 }
 
 .eye-svg {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
 }
 
 .menu-toggle-btn.menu-visible {
@@ -519,10 +529,10 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 29px;
-  height: 29px;
-  min-height: 29px;
-  min-width: 29px;
+  width: 1.8125rem;
+  height: 1.8125rem;
+  min-height: 1.8125rem;
+  min-width: 1.8125rem;
   padding: 0;
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
@@ -540,21 +550,21 @@ onUnmounted(() => {
 
 .search-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 0.5rem);
   left: 0;
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   padding: 0.4rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 100;
-  min-width: 200px;
+  min-width: 12.5rem;
 }
 
 .search-dropdown input {
   border: none;
   outline: none;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   width: 100%;
   padding: 0.3rem;
   background: transparent;
@@ -566,17 +576,17 @@ onUnmounted(() => {
 .search-box {
   position: relative;
   min-width: 0;
-  max-width: 225px;
+  max-width: 14.0625rem;
   flex: 1;
 }
 
 .search-box .search-input {
   width: 100%;
-  height: 29px;
+  height: 1.8125rem;
   padding: 0 2.5rem 0 0.75rem;
   border: 2px solid var(--color-primary);
-  border-radius: 20px;
-  font-size: 12px;
+  border-radius: var(--border-radius-xl);
+  font-size: var(--font-size-xs);
   line-height: 1.3;
   background: var(--bg-primary);
   min-height: auto;
@@ -593,7 +603,7 @@ onUnmounted(() => {
 .search-box .search-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
   background: var(--bg-primary);
 }
 
@@ -614,16 +624,16 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  min-height: 20px;
-  min-width: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
+  min-height: 1.25rem;
+  min-width: 1.25rem;
   padding: 0;
-  background: var(--border-color, #e5e7eb);
+  background: var(--border-color, var(--color-gray-200));
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary, var(--color-gray-500));
   transition: all 0.2s;
 }
 
@@ -646,10 +656,10 @@ onUnmounted(() => {
 .category-btn {
   padding: 0.25rem 0.5rem;
   border: 2px solid var(--border-color);
-  border-radius: 9999px;
+  border-radius: var(--border-radius-full);
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   text-transform: uppercase;
   line-height: 1.4;
@@ -691,10 +701,10 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 29px;
-  height: 29px;
-  min-height: 29px;
-  min-width: 29px;
+  width: 1.8125rem;
+  height: 1.8125rem;
+  min-height: 1.8125rem;
+  min-width: 1.8125rem;
   padding: 0;
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
@@ -707,8 +717,8 @@ onUnmounted(() => {
 }
 
 .favorites-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   fill: none;
   stroke: var(--color-primary);
   stroke-width: 2;
@@ -740,10 +750,10 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 29px;
-  height: 29px;
-  min-height: 44px;
-  min-width: 44px;
+  width: 1.8125rem;
+  height: 1.8125rem;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   padding: 0;
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
@@ -756,8 +766,8 @@ onUnmounted(() => {
 }
 
 .save-search-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   transition: all 0.3s ease;
 }
 
@@ -787,7 +797,7 @@ onUnmounted(() => {
   display: flex;
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
-  border-radius: 20px;
+  border-radius: var(--border-radius-xl);
   overflow: hidden;
 }
 
@@ -795,10 +805,10 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 25px;
-  min-height: 25px;
-  min-width: 28px;
+  width: 1.75rem;
+  height: 1.5625rem;
+  min-height: 1.5625rem;
+  min-width: 1.75rem;
   padding: 0;
   background: transparent;
   border: none;
@@ -821,8 +831,8 @@ onUnmounted(() => {
 }
 
 .view-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 /* Sort: circular button + custom dropdown */
@@ -834,7 +844,7 @@ onUnmounted(() => {
 
 .sort-label {
   display: none;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-primary);
 }
@@ -847,10 +857,10 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 29px;
-  height: 29px;
-  min-height: 29px;
-  min-width: 29px;
+  width: 1.8125rem;
+  height: 1.8125rem;
+  min-height: 1.8125rem;
+  min-width: 1.8125rem;
   padding: 0;
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
@@ -868,15 +878,15 @@ onUnmounted(() => {
 
 .sort-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 0.5rem);
   right: 0;
   background: var(--bg-primary);
   border: 2px solid var(--color-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   padding: 0.5rem 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 100;
-  min-width: 150px;
+  min-width: 9.375rem;
 }
 
 .sort-option {
@@ -887,7 +897,7 @@ onUnmounted(() => {
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--color-primary);
   transition: background 0.2s;
   min-height: auto;
@@ -929,29 +939,29 @@ onUnmounted(() => {
   }
 
   .category-btn {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
     padding: 0.4rem 0.6rem;
-    letter-spacing: 0.2px;
-    height: 36px;
+    letter-spacing: 0.0125rem;
+    height: 2.25rem;
     display: inline-flex;
     align-items: center;
   }
 
   .search-box .search-input {
-    height: 36px;
+    height: 2.25rem;
   }
 
   /* Menu: larger */
   .menu-toggle-btn {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
   }
 
   .eye-svg {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   /* Search: show desktop, hide mobile */
@@ -965,34 +975,34 @@ onUnmounted(() => {
 
   /* Favorites: larger */
   .favorites-btn {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
   }
 
   .favorites-btn svg {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   /* Save search: larger */
   .save-search-btn {
-    width: 36px;
-    height: 36px;
-    min-width: 44px;
-    min-height: 44px;
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
   }
 
   .save-search-btn svg {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   .view-label-desktop,
   .fav-label-desktop {
     display: inline;
-    font-size: 13px;
+    font-size: var(--font-size-sm);
     font-weight: 600;
     color: var(--color-primary);
     white-space: nowrap;
@@ -1000,15 +1010,15 @@ onUnmounted(() => {
 
   /* View switcher: larger */
   .view-btn {
-    width: 36px;
-    height: 32px;
-    min-width: 36px;
-    min-height: 32px;
+    width: 2.25rem;
+    height: 2rem;
+    min-width: 2.25rem;
+    min-height: 2rem;
   }
 
   .view-btn svg {
-    width: 16px;
-    height: 16px;
+    width: 1rem;
+    height: 1rem;
   }
 
   /* Sort: larger, show label */
@@ -1017,10 +1027,10 @@ onUnmounted(() => {
   }
 
   .sort-btn {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
   }
 
   .controls-right {
@@ -1047,7 +1057,7 @@ onUnmounted(() => {
     min-width: auto;
     min-height: auto;
     padding: 0.4rem 0.5rem 0.4rem 0.75rem;
-    border-radius: 20px;
+    border-radius: var(--border-radius-xl);
     gap: 0.5rem;
   }
 
@@ -1056,8 +1066,8 @@ onUnmounted(() => {
   }
 
   .eye-wrapper {
-    width: 24px;
-    height: 24px;
+    width: 1.5rem;
+    height: 1.5rem;
     border: 2px solid white;
     border-radius: 50%;
   }
@@ -1067,8 +1077,8 @@ onUnmounted(() => {
   }
 
   .eye-svg {
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
   }
 }
 </style>

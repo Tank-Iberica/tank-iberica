@@ -54,14 +54,14 @@ function onAmountInput(service: OptionalService, event: Event): void {
 <style scoped>
 .form-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .form-section h2 {
-  margin: 0 0 12px 0;
-  font-size: 1rem;
+  margin: 0 0 0.75rem 0;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -70,31 +70,31 @@ function onAmountInput(service: OptionalService, event: Event): void {
 .services-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .service-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 8px 0;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
   flex-wrap: wrap;
 }
 
 .service-checkbox {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   flex: 1;
   min-width: 0;
 }
 
 .service-checkbox input[type='checkbox'] {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   accent-color: var(--color-primary);
   cursor: pointer;
   flex-shrink: 0;
@@ -108,18 +108,18 @@ function onAmountInput(service: OptionalService, event: Event): void {
 .service-amount-input {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
   flex-shrink: 0;
 }
 
 .input-small {
-  width: 90px;
-  padding: 8px 10px;
+  width: 5.625rem;
+  padding: 0.5rem 0.625rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   text-align: right;
-  min-height: 44px;
+  min-height: 2.75rem;
   color: var(--text-primary);
 }
 

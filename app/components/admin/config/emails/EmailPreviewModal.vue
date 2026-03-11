@@ -17,7 +17,7 @@ const { sanitize } = useSanitize()
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+      <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
         <div class="modal-content">
           <div class="modal-header">
             <h3>{{ $t('admin.emails.previewTitle') }}</h3>
@@ -50,14 +50,14 @@ const { sanitize } = useSanitize()
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
-  max-width: 680px;
+  max-width: 42.5rem;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -68,14 +68,14 @@ const { sanitize } = useSanitize()
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 1.1rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .modal-close {
@@ -83,38 +83,38 @@ const { sanitize } = useSanitize()
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #6b7280;
-  padding: 4px 8px;
+  color: var(--color-gray-500);
+  padding: var(--spacing-1) var(--spacing-2);
   line-height: 1;
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .modal-close:hover {
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .modal-body {
-  padding: 20px;
+  padding: var(--spacing-5);
   overflow-y: auto;
   flex: 1;
 }
 
 .preview-container {
-  background: #f9fafb;
-  padding: 24px;
-  border-radius: 8px;
+  background: var(--color-gray-50);
+  padding: var(--spacing-6);
+  border-radius: var(--border-radius);
 }
 
 .modal-footer {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
   justify-content: flex-end;
-  padding: 16px 20px;
-  border-top: 1px solid #e5e7eb;
+  padding: var(--spacing-4) var(--spacing-5);
+  border-top: 1px solid var(--color-gray-200);
 }
 
 /* -- Buttons -- */
@@ -122,13 +122,13 @@ const { sanitize } = useSanitize()
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -142,19 +142,19 @@ const { sanitize } = useSanitize()
 
 .btn-secondary {
   background: var(--bg-primary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: 1px solid var(--border-color);
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.88rem;
   transition: all 0.2s;
-  min-height: 40px;
+  min-height: 2.5rem;
 }
 
 .btn-secondary:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   border-color: var(--text-disabled);
 }
 

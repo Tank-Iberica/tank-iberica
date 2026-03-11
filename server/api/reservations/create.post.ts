@@ -7,16 +7,17 @@
  *   - Basic plan (with freebies): 25 EUR
  *   - Premium plan (with freebies): 10 EUR
  *
+ * Idempotent via Idempotency-Key header (24h cache).
  * Returns a Stripe clientSecret for the frontend to confirm payment.
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
+import { safeError } from '../../utils/safeError'
+import { validateBody } from '../../utils/validateBody'
+import { getIdempotencyKey, checkIdempotency, storeIdempotencyResponse } from '../../utils/idempotency'
 
 // -- Types ------------------------------------------------------------------
-
-interface CreateReservationBody {
-  vehicleId: string
-}
 
 interface CreateReservationResponse {
   clientSecret: string | null
@@ -24,28 +25,35 @@ interface CreateReservationResponse {
   depositCents: number
 }
 
-// UUID v4 format validation
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const createReservationSchema = z.object({
+  vehicleId: z.string().uuid('vehicleId must be a valid UUID'),
+})
 
 // -- Handler ----------------------------------------------------------------
 
 export default defineEventHandler(async (event): Promise<CreateReservationResponse> => {
+  // ── 0. Idempotency check ──────────────────────────────────────────────────
+  const idempotencyKey = getIdempotencyKey(event.node.req.headers as Record<string, string>)
+  const supabase = serverSupabaseServiceRole(event)
+
+  if (idempotencyKey) {
+    const cached = await checkIdempotency(supabase, idempotencyKey)
+    if (cached) {
+      return cached as CreateReservationResponse
+    }
+  }
+
   // ── 1. Auth check ─────────────────────────────────────────────────────────
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   // ── 2. Read and validate body ─────────────────────────────────────────────
-  const body = await readBody<CreateReservationBody>(event)
-  const { vehicleId } = body
-
-  if (!vehicleId || !UUID_RE.test(vehicleId)) {
-    throw createError({ statusCode: 400, message: 'Invalid or missing vehicleId (UUID expected)' })
-  }
+  const { vehicleId } = await validateBody(event, createReservationSchema)
 
   // ── 3. Get Supabase service role client ───────────────────────────────────
-  const supabase = serverSupabaseServiceRole(event)
+  // (already initialized above for idempotency check)
 
   // ── 4. Fetch vehicle and determine seller ─────────────────────────────────
   const { data: vehicle, error: vehicleError } = await supabase
@@ -55,23 +63,23 @@ export default defineEventHandler(async (event): Promise<CreateReservationRespon
     .single()
 
   if (vehicleError || !vehicle) {
-    throw createError({ statusCode: 404, message: 'Vehicle not found' })
+    throw safeError(404, 'Vehicle not found')
   }
 
   if (vehicle.status !== 'published') {
-    throw createError({ statusCode: 409, message: 'Vehicle is not available for reservation' })
+    throw safeError(409, 'Vehicle is not available for reservation')
   }
 
   // Extract seller user ID from the dealer join
   const dealerData = vehicle.dealers as unknown as { user_id: string } | null
   const sellerId = dealerData?.user_id
   if (!sellerId) {
-    throw createError({ statusCode: 422, message: 'Vehicle has no associated seller' })
+    throw safeError(422, 'Vehicle has no associated seller')
   }
 
   // Buyer cannot reserve their own vehicle
   if (sellerId === user.id) {
-    throw createError({ statusCode: 409, message: 'You cannot reserve your own vehicle' })
+    throw safeError(409, 'You cannot reserve your own vehicle')
   }
 
   // ── 5. Check no active reservation exists for this vehicle + buyer ────────
@@ -84,10 +92,7 @@ export default defineEventHandler(async (event): Promise<CreateReservationRespon
     .maybeSingle()
 
   if (existingReservation) {
-    throw createError({
-      statusCode: 409,
-      message: 'An active reservation already exists for this vehicle',
-    })
+    throw safeError(409, 'An active reservation already exists for this vehicle')
   }
 
   // ── 6. Determine deposit based on subscription tier ───────────────────────
@@ -163,16 +168,20 @@ export default defineEventHandler(async (event): Promise<CreateReservationRespon
     .single()
 
   if (insertError || !reservation) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to create reservation: ${insertError?.message ?? 'unknown error'}`,
-    })
+    throw safeError(500, `Failed to create reservation: ${insertError?.message ?? 'unknown error'}`)
   }
 
   // ── 9. Return client secret for frontend payment confirmation ─────────────
-  return {
+  const response: CreateReservationResponse = {
     clientSecret: paymentIntent.client_secret,
     reservationId: reservation.id as string,
     depositCents,
   }
+
+  // Store in idempotency cache if key provided
+  if (idempotencyKey) {
+    await storeIdempotencyResponse(supabase, idempotencyKey, 'POST /api/reservations/create', response)
+  }
+
+  return response
 })

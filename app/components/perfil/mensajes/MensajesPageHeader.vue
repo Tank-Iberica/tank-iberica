@@ -38,8 +38,8 @@ defineProps<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 24px;
-  height: 24px;
+  min-width: 1.5rem;
+  height: 1.5rem;
   padding: 0 var(--spacing-2);
   background: var(--color-error);
   color: var(--color-white);

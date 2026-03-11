@@ -174,12 +174,12 @@ const skeletonRows = 5
 const chipColors: readonly string[] = [
   '#23424A',
   '#7FD1C8',
-  '#D4A017',
-  '#3B82F6',
-  '#10B981',
-  '#F59E0B',
-  '#EF4444',
-  '#8B5CF6',
+  'var(--color-amber-400)',
+  'var(--color-info)',
+  'var(--color-success)',
+  'var(--color-warning)',
+  'var(--color-error)',
+  'var(--color-violet-500)',
 ]
 
 function getChipColor(index: number): string {
@@ -368,8 +368,8 @@ watch(
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
   border-radius: var(--border-radius-full, 9999px);
   font-size: var(--font-size-sm, 0.875rem);
@@ -409,7 +409,7 @@ watch(
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  border: 1px solid var(--border-color, #d1d5db);
+  border: 1px solid var(--border-color, var(--color-gray-300));
   border-radius: var(--border-radius, 8px);
   background: var(--bg-primary, white);
 }
@@ -422,8 +422,8 @@ watch(
 }
 
 .ct-table thead {
-  background: var(--color-gray-50, #f9fafb);
-  border-bottom: 2px solid var(--border-color, #d1d5db);
+  background: var(--color-gray-50, var(--color-gray-50));
+  border-bottom: 2px solid var(--border-color, var(--color-gray-300));
 }
 
 .ct-table th {
@@ -431,9 +431,9 @@ watch(
   text-align: left;
   font-size: var(--font-size-xs, 0.75rem);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--text-secondary, #4a5a5a);
+  color: var(--text-secondary, var(--text-secondary));
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.03125rem;
   white-space: nowrap;
 }
 
@@ -479,8 +479,8 @@ watch(
 .ct-table td {
   padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-primary, #1f2a2a);
-  border-bottom: 1px solid var(--border-color-light, #e5e7eb);
+  color: var(--text-primary, var(--text-primary));
+  border-bottom: 1px solid var(--border-color-light, var(--color-gray-200));
   vertical-align: middle;
 }
 
@@ -496,7 +496,7 @@ watch(
 }
 
 .ct-row:hover {
-  background: var(--color-gray-50, #f9fafb);
+  background: var(--color-gray-50, var(--color-gray-50));
 }
 
 .ct-row:last-child td {
@@ -507,9 +507,9 @@ watch(
 .ct-skeleton {
   background: linear-gradient(
     90deg,
-    var(--color-gray-200, #e5e7eb) 25%,
-    var(--color-gray-100, #f3f4f6) 50%,
-    var(--color-gray-200, #e5e7eb) 75%
+    var(--color-gray-200, var(--color-gray-200)) 25%,
+    var(--color-gray-100, var(--color-gray-100)) 50%,
+    var(--color-gray-200, var(--color-gray-200)) 75%
   );
   background-size: 200% 100%;
   animation: ct-shimmer 1.5s infinite;
@@ -517,12 +517,12 @@ watch(
 }
 
 .ct-skeleton-header {
-  height: 12px;
+  height: 0.75rem;
   width: 80%;
 }
 
 .ct-skeleton-cell {
-  height: 16px;
+  height: 1rem;
   width: 70%;
 }
 
@@ -546,15 +546,15 @@ watch(
 }
 
 .ct-empty-icon {
-  width: 48px;
-  height: 48px;
-  color: var(--text-disabled, #9ca3af);
+  width: 3rem;
+  height: 3rem;
+  color: var(--text-disabled, var(--color-gray-400));
   margin-bottom: var(--spacing-4, 1rem);
 }
 
 .ct-empty-text {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--text-auxiliary, #7a8a8a);
+  color: var(--text-auxiliary, var(--text-auxiliary));
   margin: 0;
 }
 

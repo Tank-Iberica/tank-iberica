@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # Plan de Auditoría Integral — Tracciona / TradeBase
 
@@ -863,3 +863,5 @@ Para que las futuras auditorías tengan un punto de referencia:
 ---
 
 _Plan de auditoría integral v1.0 — Documento vivo. Se actualiza anualmente o ante cambios significativos._
+
+

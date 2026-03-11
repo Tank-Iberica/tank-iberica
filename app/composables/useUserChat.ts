@@ -5,6 +5,7 @@
  */
 
 import type { RealtimeChannel } from '@supabase/supabase-js'
+import type { Database } from '~~/types/supabase'
 
 export type MessageDirection = 'user_to_admin' | 'admin_to_user'
 
@@ -17,27 +18,30 @@ export interface ChatMessage {
   created_at: string
 }
 
-function formatTime(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-
-  if (diffDays === 0) {
-    return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-  } else if (diffDays === 1) {
-    return 'Ayer'
-  } else if (diffDays < 7) {
-    return date.toLocaleDateString('es-ES', { weekday: 'short' })
-  } else {
-    return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })
-  }
-}
-
 export function useUserChat() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = useSupabaseClient<any>()
+  const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
+  const { t, locale } = useI18n()
+
+  const localeMap: Record<string, string> = { es: 'es-ES', en: 'en-GB', fr: 'fr-FR', pt: 'pt-PT', de: 'de-DE' }
+
+  function formatTime(dateStr: string): string {
+    const date = new Date(dateStr)
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    const intlLocale = localeMap[locale.value] ?? 'es-ES'
+
+    if (diffDays === 0) {
+      return date.toLocaleTimeString(intlLocale, { hour: '2-digit', minute: '2-digit' })
+    } else if (diffDays === 1) {
+      return t('messages.yesterday')
+    } else if (diffDays < 7) {
+      return date.toLocaleDateString(intlLocale, { weekday: 'short' })
+    } else {
+      return date.toLocaleDateString(intlLocale, { day: '2-digit', month: '2-digit' })
+    }
+  }
 
   const messages = ref<ChatMessage[]>([])
   const loading = ref(false)
@@ -59,7 +63,7 @@ export function useUserChat() {
     try {
       const { data, error: fetchErr } = await supabase
         .from('chat_messages')
-        .select('*')
+        .select('id, user_id, content, direction, is_read, created_at')
         .eq('user_id', user.value.id)
         .order('created_at', { ascending: true })
 

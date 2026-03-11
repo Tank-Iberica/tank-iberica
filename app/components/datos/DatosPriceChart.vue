@@ -42,7 +42,12 @@ defineProps<{
       {{ $t('data.priceTrends') }} &mdash; {{ $t('data.last12Months') }}
     </h2>
     <div class="chart-container">
-      <LazyLine :data="chartData" :options="chartOptions as any" />
+      <Suspense>
+        <LazyLine :data="chartData" :options="chartOptions as any" />
+        <template #fallback>
+          <UiSkeleton class="chart-skeleton" />
+        </template>
+      </Suspense>
     </div>
   </section>
 </template>
@@ -64,13 +69,18 @@ defineProps<{
   border: 1px solid var(--border-color-light);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-4);
-  height: 300px;
+  height: 18.75rem;
   position: relative;
+}
+
+.chart-skeleton {
+  width: 100%;
+  height: 100%;
 }
 
 @media (min-width: 48em) {
   .chart-container {
-    height: 380px;
+    height: 23.75rem;
     padding: var(--spacing-6);
   }
 
@@ -81,7 +91,7 @@ defineProps<{
 
 @media (min-width: 64em) {
   .chart-container {
-    height: 420px;
+    height: 26.25rem;
   }
 }
 </style>

@@ -37,7 +37,7 @@ function onStatusToggle(currentStatus: string) {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal-content">
         <div class="modal-header">
           <h3>{{ editingId ? 'Editar Subcategoria' : 'Nueva Subcategoria' }}</h3>
@@ -127,9 +127,9 @@ function onStatusToggle(currentStatus: string) {
         </div>
 
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cancelar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
           <button class="btn-primary" :disabled="saving" @click="emit('save')">
-            {{ saving ? 'Guardando...' : 'Guardar' }}
+            {{ saving ? $t('common.saving') : $t('common.save') }}
           </button>
         </div>
       </div>
@@ -146,14 +146,14 @@ function onStatusToggle(currentStatus: string) {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
-  max-width: 550px;
+  max-width: 34.375rem;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -163,8 +163,8 @@ function onStatusToggle(currentStatus: string) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--bg-tertiary);
 }
 
 .modal-header h3 {
@@ -175,111 +175,111 @@ function onStatusToggle(currentStatus: string) {
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 1.5rem;
   cursor: pointer;
-  color: #6b7280;
+  color: var(--color-gray-500);
   line-height: 1;
 }
 
 .modal-close:hover {
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 1.5rem;
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--bg-tertiary);
+  background: var(--color-gray-50);
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
 }
 
 .modal-error {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
   font-size: 0.9rem;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .form-group label {
   display: block;
   font-weight: 500;
-  margin-bottom: 6px;
-  color: #374151;
+  margin-bottom: 0.375rem;
+  color: var(--color-gray-700);
 }
 
 .form-group input[type='text'] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.95rem;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-hint {
   font-size: 0.75rem;
-  color: #6b7280;
-  margin: 4px 0 8px;
+  color: var(--color-gray-500);
+  margin: var(--spacing-1) 0 var(--spacing-2);
 }
 
 .categories-checkbox-grid {
   display: flex;
-  gap: 24px;
+  gap: 1.5rem;
   flex-wrap: wrap;
-  padding: 12px;
+  padding: 0.75rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
-  background: #f9fafb;
+  border-radius: var(--border-radius-sm);
+  background: var(--color-gray-50);
 }
 
 .filters-checkbox-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 8px;
-  max-height: 200px;
+  grid-template-columns: repeat(auto-fill, minmax(8.75rem, 1fr));
+  gap: 0.5rem;
+  max-height: 12.5rem;
   overflow-y: auto;
-  padding: 12px;
+  padding: 0.75rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
-  background: #f9fafb;
+  border-radius: var(--border-radius-sm);
+  background: var(--color-gray-50);
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   cursor: pointer;
   font-size: 0.9rem;
 }
 
 .checkbox-label input {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   cursor: pointer;
 }
 
@@ -292,8 +292,8 @@ function onStatusToggle(currentStatus: string) {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: 500;
   transition: background 0.2s;
@@ -310,16 +310,16 @@ function onStatusToggle(currentStatus: string) {
 
 .btn-secondary {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: 500;
 }
 
 .btn-secondary:hover {
-  background: #d1d5db;
+  background: var(--border-color);
 }
 
 @media (max-width: 48em) {
@@ -328,8 +328,8 @@ function onStatusToggle(currentStatus: string) {
   }
 
   .modal-content {
-    margin: 10px;
-    max-height: calc(100vh - 20px);
+    margin: 0.625rem;
+    max-height: calc(100vh - 1.25rem);
   }
 }
 </style>

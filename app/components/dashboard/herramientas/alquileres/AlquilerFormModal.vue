@@ -217,14 +217,14 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
+  padding: 1rem;
 }
 
 .modal {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
-  max-width: 560px;
+  max-width: 35rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
   overflow-y: auto;
@@ -234,13 +234,13 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--color-gray-200);
   font-weight: 600;
   position: sticky;
   top: 0;
   background: var(--bg-primary);
-  border-radius: 12px 12px 0 0;
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
 }
 
 .modal-head button {
@@ -249,12 +249,12 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
   font-size: 1.4rem;
   cursor: pointer;
   color: var(--text-disabled);
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
 }
 
 .modal-head button:hover {
@@ -262,17 +262,17 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
 }
 
 .modal-body {
-  padding: 16px;
+  padding: 1rem;
 }
 
 .modal-foot {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
-  border-radius: 0 0 12px 12px;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
   position: sticky;
   bottom: 0;
 }
@@ -282,12 +282,12 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -300,17 +300,17 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.2s;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .btn-primary:hover {
@@ -323,11 +323,11 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
 }
 
 .spinner-sm {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 1rem;
+  height: 1rem;
+  border: 0.125rem solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   animation: spin 0.8s linear infinite;
   display: inline-block;
 }
@@ -342,21 +342,21 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 0.375rem;
+  margin-bottom: 0.875rem;
 }
 
 .field label {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .field-input {
-  min-height: 44px;
-  padding: 8px 12px;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   background: var(--bg-primary);
   width: 100%;
@@ -371,12 +371,12 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
 
 textarea.field-input {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .field-row {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .field-row .field {
@@ -385,18 +385,18 @@ textarea.field-input {
 
 .radio-group {
   display: flex;
-  gap: 16px;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
 .radio-label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   cursor: pointer;
   font-size: 0.9rem;
-  color: #374151;
-  min-height: 44px;
+  color: var(--color-gray-700);
+  min-height: 2.75rem;
 }
 
 .radio-label input {

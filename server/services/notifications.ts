@@ -3,6 +3,7 @@
  * Sends notifications via email, WhatsApp, or push based on user preferences.
  */
 import { $fetch } from 'ofetch'
+import { logger } from '../utils/logger'
 
 interface NotifyOptions {
   type: string
@@ -35,17 +36,17 @@ export async function notify(
             await sendWhatsAppMessage(opts.data.phone as string, opts.data.message as string)
             sent.push('whatsapp')
           } else {
-            console.warn('[notifications] WhatsApp requires phone and message in data')
+            logger.warn('[notifications] WhatsApp requires phone and message in data')
           }
           break
         case 'push':
-          // TODO: Integrate with web push when ready // NOSONAR
-          console.warn('[notifications] Push channel not yet implemented')
+          // Pending: Integrate with web push when ready
+          logger.warn('[notifications] Push channel not yet implemented')
           break
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
-      console.error(`[notifications] Failed to send ${channel} to user ${userId}: ${message}`)
+      logger.error(`[notifications] Failed to send ${channel} to user ${userId}: ${message}`)
       failed.push(channel)
     }
   }
@@ -67,7 +68,7 @@ export async function notifyDealer(
       await sendWhatsAppMessage(data.phone as string, data.message as string)
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
-      console.error(`[notifications] WhatsApp to dealer ${dealerId} failed: ${msg}`)
+      logger.error(`[notifications] WhatsApp to dealer ${dealerId} failed: ${msg}`)
     }
   }
 
@@ -98,7 +99,7 @@ export async function notifyAdmin(type: string, data: Record<string, unknown>): 
     })
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    console.error(`[notifications] Admin notification failed: ${msg}`)
+    logger.error(`[notifications] Admin notification failed: ${msg}`)
   }
 }
 

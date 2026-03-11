@@ -33,6 +33,9 @@
       </svg>
     </NuxtLink>
 
+    <!-- Dealer reviews section -->
+    <DealerReviewsSection v-if="dealerId" :dealer-id="dealerId" />
+
     <!-- Disclaimer for terceros -->
     <div v-if="isTerceros" class="vehicle-disclaimer">
       {{ $t('vehicle.disclaimer') }}
@@ -53,40 +56,40 @@ defineProps<{
 
 <style scoped>
 .vehicle-seller-info {
-  background: var(--bg-secondary, var(--color-gray-50));
-  border-radius: 8px;
-  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
   margin-bottom: var(--spacing-4);
   border-left: 3px solid var(--color-primary);
 }
 
 .vehicle-seller-info h3 {
-  font-size: 0.8rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  color: var(--text-auxiliary, var(--color-gray-400));
+  color: var(--text-auxiliary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin: 0 0 8px 0;
+  margin: 0 0 0.5rem 0;
 }
 
 .seller-details {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .seller-item {
-  font-size: 0.875rem;
-  color: var(--text-secondary, var(--color-gray-600));
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
 }
 
 .vehicle-disclaimer {
-  background: rgba(231, 76, 60, 0.1);
-  color: #c0392b;
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
   padding: 0.75rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
-  border-left: 4px solid #c0392b;
+  border-left: 4px solid var(--color-error-text);
   margin-bottom: var(--spacing-4);
 }
 
@@ -99,7 +102,7 @@ defineProps<{
   font-weight: 600;
   text-decoration: none;
   margin-top: var(--spacing-2);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: color var(--transition-fast);
 }
 

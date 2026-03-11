@@ -119,20 +119,20 @@ const { t } = useI18n()
 <style scoped>
 .card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem;
 }
 
 .card-title {
-  margin: 0 0 16px 0;
+  margin: 0 0 1rem 0;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .form-group:last-child {
@@ -143,17 +143,17 @@ const { t } = useI18n()
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #334155;
-  margin-bottom: 8px;
+  color: var(--color-slate-700);
+  margin-bottom: 0.5rem;
 }
 
 .form-select,
 .form-input {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   color: var(--text-primary);
   background: var(--bg-primary);
@@ -164,23 +164,23 @@ const { t } = useI18n()
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 .count-options {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .count-btn {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px;
-  border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border: 0.125rem solid var(--color-gray-200);
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   font-size: 0.95rem;
   font-weight: 600;
@@ -203,15 +203,15 @@ const { t } = useI18n()
 
 .theme-options {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .theme-btn {
   flex: 1;
-  min-height: 44px;
-  padding: 10px 16px;
-  border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
+  border: 0.125rem solid var(--color-gray-200);
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -236,22 +236,22 @@ const { t } = useI18n()
 .height-controls {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 44px;
+  gap: 0.5rem;
+  min-height: 2.75rem;
   cursor: pointer;
   font-size: 0.9rem;
   color: var(--text-secondary);
 }
 
 .form-checkbox {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   accent-color: var(--color-primary);
   cursor: pointer;
 }

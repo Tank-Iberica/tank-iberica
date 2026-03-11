@@ -23,7 +23,7 @@ const { t } = useI18n()
   <div class="contrato-form-actions">
     <!-- Jurisdiction -->
     <div class="form-row">
-      <div class="form-group" style="max-width: 300px">
+      <div class="form-group" style="max-width: 18.75rem">
         <label>{{ t('dashboard.tools.contract.jurisdiction') }}</label>
         <input
           :value="contractJurisdiction"
@@ -72,81 +72,81 @@ const { t } = useI18n()
 <style scoped>
 .form-row {
   display: flex;
-  gap: 16px;
+  gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   flex: 1;
-  min-width: 120px;
+  min-width: 7.5rem;
 }
 
 .form-group label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .form-group input {
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 .alert {
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .alert-error {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
   border: 1px solid var(--color-error-border);
 }
 
 .alert-success {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
   border: 1px solid var(--color-success-border);
 }
 
 .btn {
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
   text-decoration: none;
 }
 
 .btn:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 
@@ -155,8 +155,8 @@ const { t } = useI18n()
 }
 
 .btn-lg {
-  padding: 14px 28px;
-  font-size: 1rem;
+  padding: 0.875rem 1.75rem;
+  font-size: var(--font-size-base);
   font-weight: 500;
 }
 
@@ -167,13 +167,13 @@ const { t } = useI18n()
 
 .spinner-sm {
   display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  border: 0.125rem solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--color-white);
+  border-radius: var(--border-radius-full);
   animation: spin 0.8s linear infinite;
-  margin-right: 8px;
+  margin-right: 0.5rem;
 }
 
 @keyframes spin {
@@ -185,13 +185,13 @@ const { t } = useI18n()
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  padding-top: 10px;
+  padding-top: 0.625rem;
 }
 
 @media (max-width: 48em) {
   .form-row {
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
   }
 
   .form-actions {

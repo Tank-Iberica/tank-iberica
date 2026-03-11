@@ -209,7 +209,7 @@ onUnmounted(() => {
 /* Main button */
 .reserve-btn {
   width: 100%;
-  min-height: 48px;
+  min-height: 3rem;
   padding: var(--spacing-3) var(--spacing-4);
   background: var(--color-primary);
   color: var(--color-white);
@@ -263,11 +263,11 @@ onUnmounted(() => {
   right: var(--spacing-3);
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 1.75rem;
   color: var(--text-auxiliary);
   cursor: pointer;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -364,7 +364,7 @@ onUnmounted(() => {
 
 .btn-primary {
   width: 100%;
-  min-height: 48px;
+  min-height: 3rem;
   padding: var(--spacing-3) var(--spacing-4);
   background: var(--color-primary);
   color: var(--color-white);
@@ -391,7 +391,7 @@ onUnmounted(() => {
 
 .btn-secondary {
   width: 100%;
-  min-height: 48px;
+  min-height: 3rem;
   padding: var(--spacing-3) var(--spacing-4);
   background: var(--bg-secondary);
   color: var(--text-primary);
@@ -453,8 +453,8 @@ onUnmounted(() => {
 /* Spinner */
 .spinner {
   display: inline-block;
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   border: 2px solid transparent;
   border-top-color: currentColor;
   border-radius: 50%;

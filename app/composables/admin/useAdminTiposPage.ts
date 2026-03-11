@@ -227,7 +227,7 @@ export function useAdminTiposPage() {
         .replaceAll(/[\u0300-\u036F]/g, '')
         .replaceAll(/[^a-z0-9-]/g, '-')
         .replaceAll(/-+/g, '-')
-        .replaceAll(/^-|-$/g, '')
+        .replace(/^-/, '').replace(/-$/, '')
     }
 
     // Extract subcategory_ids before saving (not part of type table)

@@ -672,6 +672,28 @@ En un marketplace bilateral, primero se resuelve la oferta (dealers/inventario),
 3. Onboarding con funnel diseñado: día 0 (registro) → día 1-3 (primera ficha) → día 7 (primer email stats) → día 14 (trial expiry) → día 30 (conversión o free tier)
 4. Éxitos de Founding Dealers = casos de estudio para la segunda ola
 
+#### 3.2.1 SLAs de activación de dealers
+
+_(Añadido 10-mar-2026)_
+
+Medir 5 hitos de activación por dealer:
+
+1. **Contactado** — primer contacto realizado
+2. **Acepta prueba** — confirma que quiere probar
+3. **Inventario cargado** — tiene anuncios publicados
+4. **Primera interacción compradora** — un comprador ve/contacta sus vehículos
+5. **Primer lead cualificado** — recibe consulta seria de comprador
+
+**SLAs internos (no negociables):**
+
+| Regla | SLA |
+|---|---|
+| Dealer que acepta → anuncios publicados | **Máximo 48h** |
+| Dealer activo → reporte de rendimiento | **Cada 7 días** |
+| Dealer con 0 leads en 14 días | **Intervención manual obligatoria** |
+
+En fase inicial, la retención de dealers no la gana un dashboard — la gana una sensación de acompañamiento y movimiento. El contacto humano antes del día 7 es más valioso que el email automático de stats.
+
 ### 3.3 SEO orgánico como canal principal de adquisición
 
 No se empieza con paid ads. El funnel es: contenido editorial → tráfico orgánico → usuarios → dealers siguen a los usuarios. Esto explica por qué el motor de contenido es tan crítico.
@@ -681,6 +703,8 @@ No se empieza con paid ads. El funnel es: contenido editorial → tráfico orgá
 **El sitio NO está indexado en Google todavía** (0 resultados en `site:tracciona.com`). Google Search Console necesita verificación por los fundadores. Todo el trabajo SEO (SSR, Schema.org, hreflang, editorial) depende de esto.
 
 ### 3.4 Motor de contenido editorial
+
+> **Consideración (10-mar-2026):** El arranque editorial debería condicionarse a tener Google Search Console verificada y operativa. Sin GSC, publicar artículos no tiene efecto SEO medible — el contenido existe pero no se puede validar su impacto en indexación, impresiones ni posiciones. Priorizar la verificación de GSC como bloqueante antes de iniciar la rutina editorial.
 
 - **Rutina dominical:** 1-2h con Claude Max → 2 artículos/semana + traducción + social posts
 - **Publicación programada:** Martes y jueves 09:00 CET (cron cada 15 min)
@@ -709,20 +733,110 @@ No se empieza con paid ads. El funnel es: contenido editorial → tráfico orgá
 
 **SEO:** Palabras clave como "cómo comprar camión usado", "precio justo grúa autocargante" no tienen contenido de calidad en el sector. Oportunidad de dominar SERPs con contenido experto.
 
-### 3.5 Google Ads (lado gasto)
+### 3.5 Google Ads — Herramienta de validación, no de crecimiento
 
-Activar cuando haya >100 vehículos publicados, landings indexadas y presupuesto sin comprometer operaciones. Estructura de 6 campañas (detalle en Anexo J):
+_(Reescrito 10-mar-2026)_
 
-- **Campaña 0 — Branded** (Tracciona como keyword): CPC ~0.10€, 20€/mes. Protege la marca, siempre activa.
-- **Campaña 1 — Categoría**: cisternas, semirremolques, cabezas tractoras. CPC 0.50-1.80€, 150-200€/mes.
-- **Campaña 2 — Marca**: Indox, Schmitz, Lecitrailer, etc. CPC 0.30-0.80€, 100€/mes.
-- **Campaña 3 — Acción+tipo**: alquiler, subasta, liquidación flota. CPC 0.30-2.50€, 150€/mes.
-- **Campaña 4 — Remarketing Display**: usuarios que vieron fichas sin contactar. CPC 0.10-0.30€, 100€/mes.
-- **Campaña 5 — Shopping/Merchant Center**: feed XML dinámico. Listados orgánicos gratuitos desde día 1; solo pagar posición premium si hay ROI demostrado.
+Google Ads NO es un canal de crecimiento permanente para este nicho. En vehículo industrial hay pocas búsquedas con intención altísima — quien busca "cisterna alimentaria segunda mano" quiere comprar una. Cada clic es valioso, pero hay muy pocos clics disponibles. Subir presupuesto no da más clics, solo sube el CPC.
 
-**Presupuesto progresivo:** mes 6-9 → 150-200€ (solo campañas 0+1, validar keywords); mes 9-12 → 500€ (añadir 2+3); mes 12+ → 800-1.200€ (remarketing + Shopping pago). **Regla de parada:** 200€ sin leads = pausar y revisar. **Regla de escalado:** CPC <1€ y conversión >3% = duplicar presupuesto.
+El SEO orgánico dará más tráfico a coste cero en 6-12 meses que Ads pagando indefinidamente. Google Ads se usa como **diagnóstico y puente**, no como motor.
 
-**KPIs:** CPC medio <2€ · CTR >3% · Tasa conversión (contacto) >2% · Coste por lead <30€ · ROAS >3:1. Conversiones trackeadas via `useGtag()` con 6 eventos: viewItem, search, generateLead, beginCheckout, subscribe, register. Gated por `useConsent()`. Implementación via GTM (no scripts directos en nuxt.config.ts).
+#### 3.5.1 Los 3 usos de Google Ads
+
+**Uso 1 — Investigación de mercado (meses 3-4, ~€300 total)**
+
+No buscas ventas. Buscas datos. Configuras campañas con keywords amplias por categoría y dejas que Google te diga qué busca la gente realmente (los "términos de búsqueda reales" que activaron tus anuncios). Vas a descubrir cosas como que la gente busca "cisterna de leche usada" en vez de "cisterna alimentaria", o que buscan marcas concretas ("cisterna Indox segunda mano") más que categorías genéricas. Esos datos valen oro para el SEO orgánico: creas landing pages para esas keywords reales y te posicionas gratis.
+
+- Presupuesto: 10€/día durante 1 mes = ~€300
+- Objetivo: datos de keywords, no leads
+
+**Uso 2 — Demostrar valor a dealers (meses 4-6, €200-300/mes)**
+
+El problema más difícil no es atraer compradores — es convencer a dealers de que publiquen. Si un dealer publica 10 vehículos y no recibe ni una llamada en 2 meses, se va. Google Ads permite enviar tráfico cualificado a las fichas de los dealers y generar leads reales. Cuando un dealer recibe 3 llamadas desde Tracciona en un mes, ya no necesitas convencerle de nada.
+
+- Este dinero no es "marketing" — es inversión en retención de supply
+- Se para cuando el tráfico orgánico sea suficiente para generar leads sin pagar
+
+**Uso 3 — Puente SEO para keywords transaccionales (puntual)**
+
+El SEO tarda 6-12 meses en posicionar. Hay keywords transaccionales donde necesitas estar visible ya, especialmente las de marca ("cisterna Indox venta") que son las de mayor conversión. Hasta que la posición orgánica suba, Ads te pone ahí. Cuando la posición orgánica suba, quitas el Ad para esa keyword y dejas el orgánico hacer su trabajo. Es un puente, no un destino.
+
+#### 3.5.2 Configuración concreta
+
+**Solo campañas de búsqueda (Search).** Nunca Display, nunca Performance Max — están optimizadas para e-commerce de consumo con miles de conversiones. Con 3-5 leads/mes, el algoritmo no tiene datos suficientes para optimizar y quema el presupuesto en clics irrelevantes.
+
+**Estructura por grupos:**
+
+| Grupo | Keywords ejemplo | Landing |
+|---|---|---|
+| Cisternas | "cisterna segunda mano", "cisterna alimentaria usada", "cisterna ADR venta" | `/cisternas` |
+| Tractoras | "cabeza tractora ocasión", "tractora segunda mano" | `/cabezas-tractoras` |
+| Semirremolques | "semirremolque usado", "semirremolque frigorífico venta" | `/semirremolques` |
+| Alquiler | "alquiler cisterna", "alquiler semirremolque" | `/alquiler` |
+| Marcas | "cisterna Indox", "semirremolque Schmitz segunda mano" | Landing de marca |
+
+Cada grupo apunta a su landing page específica en Tracciona (nunca a la home).
+
+**Keywords negativas desde el día 1:** "nuevo", "nueva", "precio nuevo", "concesionario oficial", "financiación nueva". No queremos gente que busca vehículos nuevos.
+
+**Segmentación:** España. Si se prueba Portugal, campaña separada en portugués.
+
+#### 3.5.3 Números reales
+
+300€/mes → ~100 clics (a ~3€ CPC medio) → 3-5 contactos (conversión 3-5% en B2B nicho) → 1-2 operaciones con servicios → €500-1.500 de ingreso por servicios.
+
+- Si el ROAS es positivo → se autofinancia, se mantiene con lo que genera
+- Si el ROAS es negativo después de 2 meses → se para. Has gastado €600 en datos de mercado que aplicas al SEO. En ambos casos ganas
+
+#### 3.5.4 Lo que NO hacer
+
+- **No dejar que Google venda campañas "inteligentes" o Performance Max.** Para este volumen y nicho, se necesita control total sobre keywords y pujas.
+- **No poner más de 15€/día.** En un nicho de bajo volumen, subir presupuesto no da más clics — solo sube el CPC porque Google interpreta que tienes más margen.
+- **No usar como canal permanente.** El SEO orgánico es acumulativo y gratuito. Ads es lineal y de pago.
+
+#### 3.5.5 Timeline
+
+| Fase | Acción | Gasto |
+|---|---|---|
+| Meses 1-3 | Nada de Ads. Llenar catálogo + captar Founding Dealers | €0 |
+| Meses 3-4 | €300 de investigación de keywords. Analizar datos, aplicar al SEO | ~€300 |
+| Meses 4-6 | €200-300/mes si los datos son prometedores, enfocado en generar leads para dealers | €400-900 |
+| Mes 7+ | Evaluar. Si el SEO orgánico ya genera leads, reducir o eliminar Ads. Si no, mantener como puente | Variable |
+| **Máximo Año 1** | | **€1.200-1.800** |
+
+**Regla de parada:** €200 gastados sin leads = pausar y revisar.
+
+**Regla de autofinanciación:** Si genera retorno, se mantiene con lo que produce. Si no, se para.
+
+#### 3.5.6 Cuándo repetir el ciclo de diagnóstico
+
+Google Ads como herramienta de diagnóstico no es de una sola vez. Repetir el ciclo de investigación (Uso 1: €300, 1 mes) cada vez que cambien las condiciones del marketplace:
+
+| Situación | Por qué repetir |
+|---|---|
+| **Lanzamiento de nuevo vertical** (Horecaria, CampoIndustrial) | Las keywords son completamente distintas. Necesitas descubrir qué busca ESE sector |
+| **Apertura de nueva categoría** dentro de un vertical | Validar si hay demanda real antes de invertir en contenido/landings |
+| **SEO orgánico estancado** | Diagnosticar si el problema es keyword, landing, demanda o competencia |
+| **Entrada en nuevo país** | Las keywords, el idioma y el comportamiento de búsqueda cambian |
+| **Cambio significativo en el mercado** | Nueva regulación, crisis del sector, nuevo competidor fuerte |
+
+Coste de cada ciclo de diagnóstico: ~€300 (10€/día × 1 mes). Retorno: datos de mercado actualizados para recalibrar la estrategia SEO.
+
+#### 3.5.7 Campaña Branded — Protección de marca (€20/mes, constante)
+
+Campaña Search con la keyword "Tracciona" (y variantes: "tracciona.com", "tracciona vehículos", "tracciona marketplace"). CPC ~€0.10. Objetivo: que nadie puje por tu marca y se lleve tus clics. No busca crecimiento — es defensiva.
+
+- **Cuándo activar:** Cuando GSC detecte que empiezan a llegar impresiones por búsquedas de marca. Antes de eso, nadie busca "Tracciona" y los €20/mes no sirven para nada.
+- **Cuándo desactivar:** Nunca. Una vez activa, se deja siempre encendida. €20/mes = €240/año por proteger la marca.
+- **Independiente del resto:** Esta campaña NO forma parte de los ciclos de diagnóstico (§3.5.1-3.5.6). Es una línea fija aparte.
+
+#### 3.5.8 Google Shopping orgánico (€0)
+
+Independientemente de si se pagan Ads o no, activar Google Merchant Center para listados orgánicos gratuitos en Google Shopping. Requiere feed XML dinámico (`/api/feed/products.xml`). Los vehículos aparecen en Shopping sin coste. Solo pagar posición premium si hay ROI demostrado (probablemente nunca necesario en este nicho).
+
+#### 3.5.9 KPIs
+
+CPC medio <€4 · Tasa conversión (contacto) >3% · Coste por lead <€30 · ROAS >1:1 para autofinanciación. Conversiones trackeadas via `useGtag()` con 6 eventos: viewItem, search, generateLead, beginCheckout, subscribe, register. Gated por `useConsent()`. Implementación via GTM (no scripts directos en nuxt.config.ts).
 
 ### 3.6 WhatsApp multi-país
 
@@ -746,9 +860,9 @@ Lista de 50 dealers extraídos de Mascus/MachineryTrader/Milanuncios. 10-15 emai
 
 Propuesta de valor: "Me mandas fotos por WhatsApp → te publico en Tracciona + Milanuncios + Wallapop + Facebook desde un solo sitio." Killer feature: nadie en el sector lo ofrece. La herramienta "Exportar anuncio" ya está construida.
 
-#### 3.8.4 Milanuncios PRO paraguas (€50/mes)
+#### 3.8.4 Milanuncios como canal de distribución (€0)
 
-Una cuenta PRO a nombre de Tracciona. Subir vehículos de varios dealers. El contacto va directo al dealer real. Ellos aparecen en PRO sin pagar. Tracciona gana dealers comprometidos.
+Publicar anuncios gratuitos en Milanuncios a nombre de Tracciona. Subir vehículos de varios dealers. El contacto va al funnel WhatsApp con ref codes (§3.9.6) que redirige al dealer real en Tracciona. No se contrata Milanuncios PRO — el anuncio gratuito cumple la función de embudo hacia Tracciona, donde se genera la confianza real. El sello verificado y la mejor posición de PRO no justifican €30-50/mes cuando el objetivo no es vender en Milanuncios sino capturar tráfico hacia la plataforma propia.
 
 #### 3.8.5 Empresas de renting/leasing (€0)
 
@@ -781,11 +895,36 @@ Teléfono del comprador, vehículo de interés, si hizo click, si contactó al v
 - Handler en `server/api/whatsapp/webhook.post.ts` para mensajes con patrón `TRC-\d+`
 - Respuesta automática con datos del vehículo + enlace a la ficha
 
+#### 3.9.6 Códigos de referencia mejorados para atribución
+
+_(Añadido 10-mar-2026)_
+
+El formato `TRC-042` es insuficiente para atribuir origen y rendimiento. Migrar a formato compuesto:
+
+```
+{CANAL}-{CATEGORÍA}-{DEALER}-{VEHÍCULO}
+```
+
+Ejemplos:
+- `MIL-CIST-D03-042` → Milanuncios, cisterna, dealer 03, vehículo 042
+- `WAL-SEMI-D07-118` → Wallapop, semirremolque, dealer 07, vehículo 118
+- `FBK-GRUA-D01-055` → Facebook, grúa, dealer 01, vehículo 055
+
+**Canales:** `MIL` (Milanuncios), `WAL` (Wallapop), `FBK` (Facebook), `WEB` (web directa), `LNK` (LinkedIn), `YTB` (YouTube), `NWS` (newsletter), `QR` (QR físico).
+
+Esto permite medir:
+- Qué canal genera más leads
+- Qué categoría convierte mejor por canal
+- Qué dealers reciben más tráfico externo
+- ROI real de cada canal de distribución
+
 ### 3.10 SEO programático y herramientas de captación
 
 #### 3.10.1 Landing pages programáticas
 
 Páginas autogeneradas para cada combinación marca/modelo/ubicación: `/camiones/volvo-fh-500`, `/excavadoras/caterpillar-320-precio-madrid`. 200 combinaciones = 200 páginas indexables. Con vehículos: los muestra. Sin ellos: "Crea alerta y te avisamos" (captura email/WhatsApp). Posiciona en 3-6 meses.
+
+> **Regla de activación (10-mar-2026):** No abrir SEO programático masivo hasta tener **al menos 100-150 fichas reales activas** y señales de GSC sobre consultas, impresiones y categorías que ya empiezan a moverse. Antes de eso, mejor pocas páginas excelentes que muchas páginas con thin content. El riesgo de crear 200 páginas sin inventario suficiente es penalización SEO por contenido pobre.
 
 #### 3.10.2 Herramienta "¿Cuánto vale mi camión?"
 
@@ -821,9 +960,32 @@ Publicar vehículos en Marketplace como "Tracciona.com". En grupos de compravent
 
 Crear "Compraventa Industrial España". No presentarlo como grupo de Tracciona sino como grupo del sector. Moderar, compartir, convertirse en referente.
 
-#### 3.11.6 Pinterest auto-pin (setup 3h, después automático)
+#### 3.11.6 Pinterest — SEO visual + catálogo gratuito (setup 3-4h, después automático, €0)
 
-Cada vehículo nuevo → pin automático vía API con foto + título + enlace. Pinterest indexa en Google Images en días, no meses. Tableros por categoría: "Camiones usados España", "Excavadoras de ocasión".
+Pinterest es un canal infrautilizado en B2B industrial: competencia prácticamente cero en keywords como "cisterna segunda mano" o "cabeza tractora usada". No va a ser canal principal de leads — el comprador de cisterna no va a Pinterest a comprar — pero da posicionamiento gratuito en Google Images, presencia de marca y otro escaparate de producto sin esfuerzo recurrente.
+
+**SEO indirecto (por qué importa):**
+- Los pins y boards de Pinterest se indexan en Google → un board "Cisternas alimentarias en venta" puede posicionar en búsquedas de cola larga
+- Las imágenes de pins aparecen en Google Images con enlace directo a la ficha en Tracciona
+- Pinterest tiene DA 89 — las menciones de marca y tráfico referido envían señales positivas a Google
+- Pinterest tiene buscador propio (450M usuarios/mes) — en industrial no hay contenido, primer entrador domina
+
+**Pinterest Shopping Catalog (Product Pins gratuitos):**
+- Feed de productos `/api/feed/products.xml` (el mismo de retargeting §3.12.3 y Google Merchant Center §3.5.8) se conecta a [Pinterest Catalogs](https://business.pinterest.com/shopping/)
+- Cada vehículo aparece como Product Pin con precio, disponibilidad y enlace directo a ficha
+- Es otro Google Shopping gratis — listados orgánicos de producto sin coste publicitario
+- Se actualiza automáticamente con el feed diario (vehículos vendidos desaparecen, nuevos aparecen)
+
+**Automatización:**
+- Cada insert en `vehicles` → pin automático vía [Pinterest API v5](https://developers.pinterest.com/) con foto principal + título + precio + enlace a ficha
+- Boards organizados por categoría: "Cisternas en venta", "Cabezas tractoras usadas", "Semirremolques de ocasión", "Maquinaria industrial"
+- Pinterest indexa imágenes en Google Images en días, no meses
+- Setup: 3-4 horas (cuenta business + API + feed catalog + boards). Después: cero intervención manual
+
+**Lo que NO hacer:**
+- No pagar Pinterest Ads (audiencia mayoritariamente B2C, CPM alto para nicho industrial)
+- No crear pins manuales con diseño (las fotos reales del vehículo son el contenido — autenticidad > diseño)
+- No esperar leads directos — Pinterest es amplificador de SEO y presencia, no canal de conversión
 
 #### 3.11.7 Auto-publicación en redes (setup 3-4h, después automático)
 
@@ -833,32 +995,71 @@ Cada insert en `vehicles` dispara automáticamente un post en Instagram + Facebo
 
 5 vehículos destacados + 1 dato de mercado + 1 consejo práctico. Con Resend (ya configurado). Captura emails desde la herramienta de valoración, el informe de mercado y el registro en Tracciona. Canal propio, independiente de algoritmos.
 
-### 3.12 Retargeting con pixel (€6/día)
+### 3.12 Retargeting con pixel
 
 #### 3.12.1 Concepto
 
-Un visitante ve un vehículo en Tracciona y se va sin contactar. Durante los siguientes 7 días, le aparecen anuncios de ESE vehículo concreto en Instagram, Facebook, YouTube, webs, Gmail y LinkedIn. Tasa de conversión retargeting: 5-15% (vs 1-2% tráfico frío). Coste por click: €0.10-0.50.
+Un visitante ve un vehículo en Tracciona y se va sin contactar. Entra en una ventana de retargeting de hasta 30 días, durante la cual puede ver anuncios de ese vehículo concreto en Instagram, Facebook, YouTube, webs de Display, Gmail y Discover. El retargeting suele convertir significativamente mejor que el tráfico frío; como referencia orientativa, puede situarse en rangos del 5–15% frente a 1–2% en tráfico frío, según sector, volumen y calidad del dato. Coste por clic orientativo: desde ~€0,10–0,50 en audiencias de retargeting eficientes, con variación según plataforma y competencia.
 
 #### 3.12.2 Implementación
 
-Google Tag Manager como contenedor único → dispara Meta Pixel + Google Tag + LinkedIn Insight Tag con un solo `dataLayer.push()`. Setup: 30 minutos. No necesita vídeos ni diseño: las plataformas generan automáticamente todos los formatos (imagen estática, carrusel, slideshow animado, mini-vídeo) desde las fotos del vehículo.
+Google Tag Manager como contenedor único → dispara Meta Pixel + Google Tag + LinkedIn Insight Tag con un solo `dataLayer.push()`. Configuración técnica inicial: 0,5–1 día incluyendo consent mode, validación de eventos y QA. No necesita vídeos ni diseño: las plataformas pueden adaptar automáticamente las fotos del vehículo a distintos formatos publicitarios (imagen, carrusel, slideshow y variantes animadas).
 
 #### 3.12.3 Catálogo dinámico (Dynamic Product Ads)
 
 Endpoint `/api/feed/products.xml` genera feed de todos los vehículos. Meta y Google lo importan diariamente. Cada vehículo nuevo aparece como anuncio de retargeting sin intervención manual. El visitante ve exactamente el vehículo que miró, no un anuncio genérico.
 
-#### 3.12.4 Plataformas y presupuesto
+#### 3.12.4 Modelo operativo: always-on + pulsos
 
-| Plataforma   | Dónde aparece el anuncio             | €/día         | Prioridad                    |
-| ------------ | ------------------------------------ | ------------- | ---------------------------- |
-| Google       | Webs, YouTube, Gmail, Maps, Discover | €3            | Desde el día 1               |
-| Meta         | Instagram, Facebook, Messenger       | €3            | Desde el día 1               |
-| LinkedIn     | Feed (fleet managers, directores)    | €10           | Cuando haya +100 visitas/día |
-| Total inicio |                                      | €6 (€180/mes) |                              |
+| Modo | Qué es | Cuándo | Presupuesto |
+| --- | --- | --- | --- |
+| **Always-on** | Presupuesto mínimo constante | Siempre (tras activación) | Base orientativo de €6/día (€3 Meta + €3 Google), ajustable según tamaño de audiencia y rendimiento |
+| **Pulso** | Incremento temporal ×2-×3 | Activadores específicos (ver abajo) | €12–18/día durante 2–4 semanas |
 
-#### 3.12.5 GDPR
+**Activadores de pulso:**
+- Entrada de lote relevante de stock (ej. dealer nuevo con 20+ vehículos)
+- Campañas de captación que eleven tráfico a fichas
+- Newsletter o acción comercial dirigida
+- Ferias o eventos sectoriales (SMOPYC, SIL, FIAA)
+- Meses estacionalmente fuertes del sector (sept-oct, ene-feb)
+
+Como punto de partida, se recomienda mantener un always-on continuo y añadir 3–4 pulsos al año de 2 semanas cada uno. Coste anual estimado: ~€2.500–3.000.
+
+#### 3.12.5 Plataformas y prioridad
+
+| Plataforma | Dónde aparece el anuncio | €/día | Activación |
+| --- | --- | --- | --- |
+| Meta | Instagram, Facebook, Messenger | €3 | Cuando ≥30 visitas/semana a fichas |
+| Google | Webs de Display, YouTube, Gmail, Discover | €3 | Cuando ≥30 visitas/semana a fichas |
+| LinkedIn | Feed (fleet managers, directores) | €10 | Fase posterior; reservado para campañas ABM orientadas a perfiles directivos, no retargeting general de inventario |
+
+> **Condición de activación:** No activar retargeting hasta que exista un flujo mínimo de **30–50 visitas semanales a fichas de vehículos** con eventos bien medidos (vista de ficha, clic a WhatsApp, contacto). Sin volumen, el gasto no genera retorno. Verificar vía GA4 antes de activar.
+
+#### 3.12.6 Audiencia y segmentación
+
+Una sola audiencia: **visitantes que vieron ficha de vehículo en los últimos 30 días**. Con volúmenes de 30–100 visitas/día, segmentar en múltiples audiencias por intención deja cada una demasiado pequeña para que los algoritmos optimicen. La personalización principal la aporta el catálogo dinámico: cada visitante ve el vehículo exacto que miró, sin necesidad de segmentación manual fina. Esta se reserva para fases de mayor volumen (>500 visitas/día a fichas).
+
+#### 3.12.7 Exclusiones (ahorro real)
+
+| Excluir | Por qué | Cómo |
+| --- | --- | --- |
+| Leads confirmados | Ya están en el funnel — retargetear es gastar doble | Evento `form_submitted` / lead confirmado → excluir automáticamente |
+| Clics a WhatsApp/teléfono | Probablemente ya contactaron, pero no siempre | Evaluar según tasa de contacto real observada; excluir solo si >70% de clics resultan en contacto efectivo |
+| Vehículos vendidos | Anunciar un vehículo ya vendido frustra al usuario | Feed `/api/feed/products.xml` se actualiza diariamente — la plataforma retira automáticamente |
+| Rebote rápido (<10s) | No tuvo interés real — clic accidental o bot | Configurar en GTM: solo disparar pixel si tiempo en ficha >10 segundos |
+| Dealers propios | El anunciante no debe ver sus propios vehículos como retargeting | Excluir por email de sesión (si logueado) |
+
+#### 3.12.8 Frequency cap
+
+Máximo **7–10 impresiones por usuario por semana**. Con €6/día el riesgo de saturación es bajo, pero el cap evita que un visitante vea el mismo vehículo 30 veces y asocie la marca con spam. Configurar en Meta Ads Manager y Google Ads.
+
+#### 3.12.9 GDPR
 
 Banner de cookies con toggle separado para "marketing". Pixels solo se activan si el usuario acepta cookies de marketing. Sin consentimiento, sin tracking. Implementar vía `useConsent()` existente.
+
+#### 3.12.10 KPIs de control
+
+Tamaño de audiencia retargetable, frecuencia media, CTR, visitas de retorno a ficha, leads asistidos y coste por lead recuperado.
 
 ### 3.13 Alianzas offline con coste cero
 
@@ -871,56 +1072,180 @@ Banner de cookies con toggle separado para "marketing". Pixels solo se activan s
 
 ### 3.14 Branding físico pasivo
 
-#### 3.14.1 Vinilo en góndola IberHaul (€300, una vez)
+_(Ampliado 10-mar-2026)_
 
-Lateral: "¿Vendes tu camión? tracciona.com — Publica gratis" + QR grande. Trasero: logo + WhatsApp. Miles de impresiones diarias en autopistas y polígonos industriales. La góndola viaja por toda España.
+Todo el branding físico lleva QR con ref code de canal `QR` (§3.9.6) para medir qué soporte genera más tráfico.
 
-#### 3.14.2 QR en vehículos de la campa (€20)
+#### 3.14.1 Vinilos en vehículos propios (~€150-300/unidad)
 
-Cartel plastificado en parabrisas de cada vehículo en Onzonilla → enlace a la ficha en Tracciona. Visitantes de la campa escanean y entran en la web.
+Lateral: "¿Vendes tu camión? tracciona.com — Publica gratis" + QR grande. Trasero: logo + WhatsApp. Miles de impresiones diarias en autopistas y polígonos industriales.
 
-#### 3.14.3 Google Business Profile (€0, 10 min)
+| Vehículo | Coste | Impacto |
+|---|---|---|
+| Góndola IberHaul | ~€300 | Alto — viaja por toda España, público 100% target |
+| Otros camiones Tank Ibérica | ~€150-250/ud | Medio-alto — circulan por zonas industriales |
+| Furgonetas de servicio | ~€100-150/ud | Medio — visibilidad local/regional |
+
+Priorizar la góndola primero. Añadir más vinilos según presupuesto y flota disponible. Cada vinilo es inversión única que dura años.
+
+#### 3.14.2 QR en vehículos de la campa (~€20-30)
+
+Carteles plastificados con QR en el parabrisas de cada vehículo en la campa de Onzonilla. El QR enlaza a la ficha de ESE vehículo en Tracciona. Visitantes que vienen a ver vehículos físicamente escanean y entran a la web. Coste: impresión y plastificación del lote.
+
+#### 3.14.3 Tarjetas de visita (~€30-50 por 500 uds)
+
+Tarjeta con QR + "Publica gratis en tracciona.com" + número WhatsApp + logo. Para:
+- Dejar a dealers en visitas comerciales
+- Entregar en ferias del sector
+- Dejar en gestorías y talleres aliados (§3.13)
+- Llevar siempre encima para networking
+
+#### 3.14.4 Flyers / panfletos (~€50-80 por 500 uds)
+
+A4 o A5 con propuesta de valor, 2-3 vehículos destacados, QR y WhatsApp. Para distribuir en:
+- ITV de vehículos pesados (§3.13): "¿No pasa ITV? Véndelo gratis en tracciona.com"
+- Talleres de camiones/maquinaria: dejar en zona de recepción/espera
+- Gestorías de transferencias: junto al mostrador
+- Campas ajenas y parkings de vehículos industriales
+- Áreas de servicio en autopistas (zona camiones)
+
+#### 3.14.5 Banners / carteles (~€50-150/unidad)
+
+Carteles grandes para zonas de paso de público target:
+- Campa propia de Onzonilla (visible desde la carretera)
+- Campas de dealers aliados (si lo permiten)
+- Parkings de polígonos industriales
+- Áreas de descanso de camiones
+
+Coste variable según tamaño y material (lona, PVC, forex). Lo más económico: lona impresa con ojales (~€50 por 1×2m).
+
+#### 3.14.6 Google Business Profile (€0, 10 min)
 
 "Tracciona — Marketplace de Vehículo Industrial" en Google Maps con dirección de la campa. Fotos de vehículos. Categoría: "Concesionario de vehículos comerciales". Aparece en búsquedas locales.
 
+#### 3.14.7 Ferias como visitante
+
+_(Añadido 10-mar-2026)_
+
+Ir como visitante, no como expositor. Objetivo: networking con dealers, repartir tarjetas, conocer el mercado. Coste = entrada + viaje.
+
+| Feria | Dónde | Frecuencia | Entrada | Relevancia |
+|---|---|---|---|---|
+| **SMOPYC** (Salón Int. Maquinaria Obra Pública) | Zaragoza | Bienal (próxima: 15-18 abril 2026) | ~€15-30 | Muy alta — Pabellón 1 = vehículo industrial. 964 expositores de 34 países |
+| **SIL** (Salón Int. Logística) | Barcelona | Anual (junio) | ~€20-30 | Alta — Logística y transporte |
+| **FIAA** (Feria Int. Autobús y Autocar) | Madrid (IFEMA) | Bienal | ~€15-25 | Media — Más autobuses/autocares, pero hay vehículo industrial |
+| **Logistics & Automation** | Madrid | Anual (noviembre) | ~€20 | Media — Logística y automatización |
+
+**Prioridad:** SMOPYC (abril 2026) es la cita más importante. Ir con tarjetas de visita y flyers, recorrer Pabellón 1, hablar con dealers, dejar material. Coste total: entrada + viaje + material impreso.
+
+#### 3.14.8 Eventos sectoriales
+
+Jornadas y eventos de asociaciones del sector. Coste bajo o gratuito. Objetivo: networking directo con fleet managers, transportistas y dealers.
+
+| Evento | Organiza | Coste | Público |
+|---|---|---|---|
+| Jornadas ASTIC | Asociación de Transporte Internacional | €0-50 | Transportistas internacionales |
+| Jornadas CETM | Confederación Española de Transporte de Mercancías | €0-100 | Empresas de flota, directores de transporte |
+| Jornadas ANMOPYC | Asociación Nacional de Maquinaria de Obra Pública | €0-50 | Dealers y fabricantes de maquinaria |
+| Meetups logísticos locales | Varios | €0 | Networking informal del sector |
+
+#### 3.14.9 Presencia en medios sectoriales (€0)
+
+No pagar anuncios en revistas (€300-2.000/inserción). En su lugar, tres tácticas gratuitas:
+
+**1. Aparecer como fuente de datos** — Ofrecer datos de mercado de Tracciona a las revistas para sus artículos. "Según datos de Tracciona, las cisternas alimentarias se venden un 25% más rápido con ITV al día." Publicidad gratuita a cambio de contenido relevante.
+
+**2. Notas de prensa** — "Nace Tracciona, el primer marketplace especializado en vehículo industrial en España." Las revistas digitales publican notas de prensa gratis si son relevantes para su audiencia.
+
+**3. Artículos invitados** — Algunas publicaciones aceptan colaboraciones de expertos del sector a coste cero. Posiciona a Tracciona como referente.
+
+**Revistas target — Transporte:**
+
+| Revista | Tipo | Público | Web |
+|---|---|---|---|
+| **Transporte 3** | Mensual impresa + digital, 12.000 ejemplares, 39 años | Transporte de mercancías | transporte3.com |
+| **Transporte Profesional** | Impresa + digital (revista del CETM) | Transporte y logística | transporteprofesional.es |
+| **Autónomos ¡En Ruta!** | Impresa + digital | Transportistas autónomos | autonomosenruta.com |
+| **Ruta del Transporte** | Digital | Transporte por carretera | rutadeltransporte.com |
+| **Camión Actualidad** | Digital | Camiones y furgonetas | camionactualidad.es |
+
+**Revistas target — Maquinaria y obra pública:**
+
+| Revista | Tipo | Público | Web |
+|---|---|---|---|
+| **OP Machinery** | Mensual impresa + digital | Maquinaria obra pública, construcción, minería | opmachinery.com |
+| **Noticias Maquinaria** | Digital | Maquinaria agrícola, construcción, elevación, alquiler | noticiasmaquinaria.com |
+| **Interempresas Obras Públicas** | Digital (portal grande) | Construcción e infraestructura | interempresas.net/ObrasPublicas |
+
+#### 3.14.10 Resumen de costes branding físico
+
+| Soporte | Coste unitario | Unidades iniciales | Total estimado |
+|---|---|---|---|
+| Vinilo góndola | ~€300 | 1 | €300 |
+| Vinilos adicionales | ~€150-250 | Según flota | Variable |
+| QR campa | ~€20-30 | 1 lote | €25 |
+| Tarjetas de visita | ~€30-50 | 500 uds | €40 |
+| Flyers | ~€50-80 | 500 uds | €65 |
+| Banners | ~€50-150 | 1-2 | €100-300 |
+| Ferias (entrada + viaje) | ~€50-150/feria | 1-2/año | €100-300 |
+| Eventos sectoriales | ~€0-100/evento | 2-4/año | €0-200 |
+| Medios sectoriales | €0 | — | €0 |
+| Google Business Profile | €0 | 1 | €0 |
+| **Total mínimo inicial** | | | **~€630-1.230** |
+
 ### 3.15 Plan de ejecución por fases
 
+_(Reorganizado 10-mar-2026 en 4 bloques secuenciales por retorno esperado)_
+
+La secuencia separa claramente fundación, tracción y amplificación. No mezclar construcción de motor con expansión de canales demasiado pronto.
+
 ```
-SEMANA 1  (€0, sin código)
-├─ Subir inventario Tank Ibérica (seed 20-30 fichas)
-├─ Pedir a 3-5 dealers conocidos que prueben
-├─ Crear perfil LinkedIn + primer post
-└─ Google Business Profile
+BLOQUE 1 — Fundamentos comerciales (semanas 1-4, ~€70)
+├─ Subir inventario Tank Ibérica como seed (20-30 fichas)
+├─ Lista de 50-100 dealers objetivo
+├─ Outreach diario (10-15 emails personalizados)
+├─ Onboarding manual concierge (ver SLAs §3.2.1)
+├─ Reporting sencillo a dealers activados
+├─ Google Business Profile
+├─ Milanuncios gratis (anuncios como embudo hacia Tracciona)
+├─ QR en vehículos de la campa (€20)
+└─ Objetivo: 15 dealers activos, 100+ fichas
 
-SEMANA 2  (€50)
-├─ Milanuncios PRO + primeros anuncios con wa.me
-├─ Facebook Marketplace + 2 grupos
+BLOQUE 2 — Fundamentos de demanda (semanas 3-6, ~€180/mes)
+├─ Verificar Google Search Console (BLOQUEANTE)
+├─ Instalar GTM + GA4 + Microsoft Clarity
+├─ Fichas y categorías indexables (SEO técnico)
+├─ 1 canal externo principal (Milanuncios con ref codes §3.9.6)
+├─ Tracking WhatsApp / click / contacto
+├─ Vinilo en góndola IberHaul (€300, una vez)
+├─ Activar retargeting Meta+Google (€6/día) — solo si §3.12.4 se cumple
 ├─ WhatsApp Channel + primer mensaje
-└─ Empezar emails personalizados a dealers (10/día)
+└─ Objetivo: trazabilidad perfecta de leads
 
-SEMANA 3  (€6/día)
-├─ Instalar Google Tag Manager + pixels
-├─ Activar retargeting Meta + Google (€6/día)
-├─ Primer vídeo YouTube en la campa
-└─ Vinilo en la góndola
-
-MES 2  (requiere código)
-├─ SEO programático (landing pages marca/modelo)
-├─ Herramienta de valoración pública
-├─ Auto-publicación en redes (webhook → 4 plataformas)
+BLOQUE 3 — Aceleración (meses 2-3, escalar lo que funcione)
+├─ 2º canal externo (Facebook Marketplace + grupos)
+├─ Auto-publicación en redes (webhook → 4 plataformas, setup 3-4h)
+├─ 2-4 piezas de contenido de alta intención (guías pricing/inspección)
 ├─ Feed de catálogo dinámico para retargeting
-└─ Contactar 2-3 empresas de renting/leasing
+├─ Pinterest auto-pin (setup 3h, automático después)
+├─ Primer vídeo YouTube en la campa
+├─ Primeras landing pages programáticas (solo si ≥100 fichas, §3.10.1)
+├─ Contactar 2-3 empresas de renting/leasing
+└─ Objetivo: multiplicar visibilidad con canales automáticos
 
-MES 3+  (escalar lo que funcione)
+BLOQUE 4 — Expansión (mes 3+, solo tras validar tracción)
 ├─ Newsletter semanal "El Industrial"
-├─ Informe de mercado trimestral
+├─ Herramienta de valoración pública
+├─ Informe de mercado trimestral (lead magnet)
 ├─ Calculadoras públicas
-├─ Pinterest auto-pin
 ├─ Gestorías + talleres + corredores de seguros
+├─ Telegram grupo sectorial
+├─ Rutina editorial completa (2 artículos/semana)
+├─ Google Ads (campañas 0+1, solo si >100 vehículos publicados, §3.5)
 └─ Medir, descartar lo que no funcione, doblar lo que sí
 ```
 
-**Coste total primer mes: ~€250.** €50 Milanuncios PRO + €180 retargeting + €20 QR. Todo lo demás es tiempo del fundador.
+**Coste total primer mes: ~€200.** €180 retargeting (condicional, ver §3.12.4) + €20 QR. Todo lo demás es tiempo del fundador.
 
 **Métrica norte:** número de dealers activos con vehículos publicados. Todo lo demás es secundario hasta llegar a 20 dealers / 200 fichas.
 
@@ -956,6 +1281,115 @@ AdSense y publicidad directa **nunca conviven en el mismo espacio**. Cuando lleg
 **Roadmap de redes:** AdSense (sin mínimo) → Ezoic (>10K visitas, mejor IA de optimización) → Mediavine (>50K sesiones, mejor CPM) → Raptive (>100K pageviews, muy selectivo).
 
 **Implementación:** via GTM. Componente `AdSenseSlot.vue` con lógica fallback: si hay anuncio directo disponible para esa posición (tabla `ads`), renderiza anuncio directo; si no, renderiza AdSense. Carga lazy (IntersectionObserver) para no penalizar LCP. Ver Anexo J para detalles de implementación y comparativa completa AdSense vs Google Ads vs publicidad directa.
+
+### 3.17 KPIs de liquidez del marketplace
+
+_(Añadido 10-mar-2026)_
+
+Los KPIs de canales de marketing (CTR, CPC, ROAS) son secundarios frente a los KPIs de liquidez del marketplace. Reducir el cuadro de mando semanal a 7 métricas core + 2 ratios.
+
+#### 7 métricas semanales
+
+| # | Métrica | Qué mide |
+|---|---|---|
+| 1 | Dealers contactados | Esfuerzo de captación |
+| 2 | Dealers activados (con inventario) | Conversión del outreach |
+| 3 | Fichas publicadas | Volumen de oferta |
+| 4 | Fichas con al menos 1 visita | Visibilidad real del inventario |
+| 5 | Leads generados | Demanda activa |
+| 6 | % de dealers con al menos 1 lead | Distribución de la demanda (¿concentrada o repartida?) |
+| 7 | Tiempo medio alta dealer → primera publicación | Eficiencia del onboarding |
+
+#### 2 ratios críticos
+
+| Ratio | Fórmula | Qué revela |
+|---|---|---|
+| **Lead por 10 fichas** | leads / (fichas / 10) | Liquidez: ¿el inventario genera interés? Si <1 → problema de demanda o calidad |
+| **Dealer activo a 30 días** | dealers con ≥1 ficha a los 30 días / dealers activados | Retención: ¿los dealers se quedan o abandonan tras probar? |
+
+#### Diagnóstico por ratio
+
+Estos ratios permiten identificar dónde está el problema real:
+
+- **Lead/10 fichas bajo + fichas con visitas alto** → Las fichas se ven pero no generan contacto. Problema de precio, calidad de fotos o confianza.
+- **Lead/10 fichas bajo + fichas con visitas bajo** → Las fichas no se ven. Problema de SEO, distribución o volumen de tráfico.
+- **Dealer activo a 30d bajo** → Los dealers prueban y se van. Problema de valor percibido, soporte o falta de leads.
+- **Dealer activo a 30d alto + leads bajo** → Los dealers se quedan pero no reciben demanda. Problema de tráfico, no de producto.
+
+### 3.18 Stack de herramientas de marketing
+
+_(Añadido 10-mar-2026)_
+
+Inventario completo de herramientas disponibles, organizadas por función. Prioridad: aprovechar todo lo gratuito. Las versiones de pago se activan solo cuando se cumplan condiciones de gating.
+
+#### 3.18.1 Analítica y medición (todas €0)
+
+| Herramienta | Función | Cuándo activar | Notas |
+|---|---|---|---|
+| **Google Analytics 4 (GA4)** | Tráfico, eventos, conversiones, audiencias | Día 1, vía GTM | Reemplaza Universal Analytics. Gratuito sin límite |
+| **Google Search Console (GSC)** | Indexación, queries, impresiones, errores, posiciones | Día 1 — **BLOQUEANTE** para toda la estrategia SEO | Requiere verificación por fundadores |
+| **Microsoft Clarity** | Heatmaps, grabaciones de sesión, rage clicks, scroll depth | Día 1 | Script ligero (~17KB), no afecta rendimiento. Complementa GA4 con datos visuales |
+| **Google Looker Studio** | Dashboards visuales conectando GSC + GA4 + otras fuentes | Cuando haya datos (mes 2-3) | Gratuito. Ideal para reportes semanales y deck de inversores |
+| **Hotjar (free)** | Heatmaps + grabaciones (35 sesiones/día) | Opcional | Solapa con Clarity. Usar solo si Clarity no cubre algún caso específico |
+| **Matomo** | Analítica web completa, alternativa open source a GA4 | Disponible como reserva | GPL, self-hosted. Requiere servidor propio. Útil si se quisiera independencia total de Google o cumplimiento GDPR estricto sin transferencia de datos a terceros |
+| **Plausible** | Analítica ligera y privacy-first | Disponible como reserva | AGPL, self-hosted gratis. Más simple que GA4/Matomo — sin cookies, sin banner de consentimiento necesario. Ideal si se busca analítica mínima sin complejidad |
+| **Umami** | Analítica simple y privada, self-hosted | Disponible como reserva | MIT, self-hosted. Similar a Plausible en filosofía. Dashboard limpio, métricas esenciales. Muy ligero |
+
+#### 3.18.2 SEO y keyword research
+
+| Herramienta | Función | Coste | Cuándo | Notas |
+|---|---|---|---|---|
+| **Google Keyword Planner** | Volúmenes de búsqueda por keyword, ideas de keywords | €0 (con cuenta Google Ads, sin gastar) | Bloque 2 | Datos de primera mano de Google. Suficiente para research básico |
+| **Ubersuggest (free)** | Ideas de keywords + dificultad + backlinks básicos | €0 (3 búsquedas/día) | Bajo demanda | Complementa Keyword Planner con datos de dificultad |
+| **Ahrefs Webmaster Tools** | Auditoría técnica SEO + backlinks de tu propio sitio | €0 (verificando sitio) | Bloque 2 | Solo para tu sitio, no competidores. Buena auditoría técnica gratuita |
+| **SEMrush (free)** | Keyword research + datos de competidores | €0 (10 búsquedas/día, resultados limitados) | Bajo demanda | Resultados recortados (3 por consulta), pero útil para consultas puntuales |
+| **AnswerThePublic (free)** | Preguntas que la gente hace en Google sobre un tema | €0 (3 búsquedas/día) | Para generar ideas de artículos editoriales | Útil para contenido de inteligencia de mercado (§3.4.1) |
+| **Google Trends** | Estacionalidad y tendencias de búsqueda por keyword/zona | €0 | Desde Bloque 1 | Validar estacionalidad del sector (cuándo buscan cisternas, cuándo hay valles) |
+| **Screaming Frog (free)** | Crawler SEO: errores 404, títulos duplicados, metas vacías, imágenes sin alt, redirects, thin content | €0 (hasta 500 URLs) | Bloque 2-3 | Suficiente para Año 1. Versión paid (€230/año) solo si sitio supera 500 URLs |
+| **Serpbear** | Tracking de posiciones en Google para tus keywords | €0 (open source, MIT, self-hosted) | Cuando haya keywords objetivo definidos | Alternativa gratuita a Ahrefs/SEMrush para rank tracking. Se ejecuta en Docker |
+| **SEOPanel** | Suite SEO básica: keywords, backlinks, rank tracker, auditoría | €0 (open source, GPL, self-hosted) | Disponible como alternativa | Suite todo-en-uno open source. Menos potente que Ahrefs/SEMrush pero cubre lo básico sin coste. Requiere servidor LAMP |
+
+**Herramientas de pago condicionales (no activar sin cumplir gating):**
+
+| Herramienta | Coste | Condición de activación |
+|---|---|---|
+| **Screaming Frog paid** | £199/año (~€230) | Sitio supera 500 URLs indexables |
+| **Ahrefs Lite** | $99/mes (~€1.090/año) | Merece la pena pagar cuando: (1) SEO genera >30% del tráfico total, (2) se necesita análisis de backlinks de competidores (qué sitios enlazan a Mascus/Autoline y no a nosotros), (3) se quiere auditar link building o detectar backlinks tóxicos, (4) keyword research avanzado con datos de dificultad y volumen más precisos que Ubersuggest/Keyword Planner, (5) content gap analysis (qué keywords posicionan competidores y nosotros no). Mientras Ahrefs Webmaster Tools (free) + Serpbear + Ubersuggest cubran las necesidades, no activar. Probablemente Año 2-3 |
+
+> **Nota:** Ahrefs Lite O SEMrush Pro, nunca las dos. Solapan en un 80%. Si se llega al punto de necesitar una herramienta paid, elegir una.
+
+#### 3.18.3 Rendimiento y auditoría técnica (todas €0)
+
+| Herramienta | Función | Cuándo | Notas |
+|---|---|---|---|
+| **Google PageSpeed Insights** | Rendimiento web, Core Web Vitals | Bajo demanda | No requiere setup. Usar antes de cada release importante |
+| **Google Lighthouse** | Auditoría rendimiento + accesibilidad + SEO + best practices | Bajo demanda | Integrado en Chrome DevTools. Puntuación 0-100 por categoría |
+| **Schema Markup Validator** | Validar structured data (Product, Article, FAQ, etc.) | Tras cambios en schema | Ya tenemos Schema.org implementados (§3.4). Validar periódicamente |
+| **Rich Results Test** | Previsualizar cómo aparecen las páginas en Google con rich snippets | Tras cambios en schema | Confirma que Google interpreta correctamente los structured data |
+| **TinyPNG** | Compresión de imágenes para web | Bajo demanda | 500 imágenes/mes gratis. Útil para editorial e informes |
+
+#### 3.18.4 Distribución y contenido visual
+
+| Herramienta | Función | Coste | Cuándo | Notas |
+|---|---|---|---|---|
+| **Canva (free)** | Diseño gráfico: banners, infografías, creatividades social | €0 | Cuando se produzca contenido visual (informes, newsletter, social) | Tier gratuito cubre lo esencial. No pagamos Pro |
+| **Buffer (free)** | Programar publicaciones en 3 canales, 10 posts/canal | €0 | Solo si auto-publicación por webhook no cubre algún caso | Probablemente innecesario — la auto-publicación (§3.11.7) cubre más. No pagamos Pro |
+| **Google Merchant Center** | Feed de productos gratuito para Shopping orgánico | €0 | Bloque 3 (requiere feed XML, §3.5 Campaña 5) | Listados orgánicos gratuitos en Google Shopping desde día 1 |
+
+#### 3.18.5 Solapamientos y decisiones
+
+Algunas herramientas cubren funciones similares. Todas las alternativas están disponibles como reserva — activar solo si la herramienta principal falla o no cubre un caso concreto.
+
+| Función | Herramienta principal | Alternativas disponibles (todas €0) | Decisión |
+|---|---|---|---|
+| Analítica web | **GA4** | Matomo (GPL), Plausible (AGPL), Umami (MIT) — todas self-hosted | GA4 como principal (ya integrado vía GTM, sin hosting). Matomo/Plausible/Umami disponibles como reserva si se necesita independencia de Google o GDPR sin transferencia a terceros |
+| Heatmaps/grabaciones | **Microsoft Clarity** | Hotjar free (35 sesiones/día) | Clarity como principal (ilimitado). Hotjar disponible como complemento |
+| Rank tracking | **Serpbear** (MIT, self-hosted) | SEOPanel (GPL, self-hosted) | Serpbear para tracking de posiciones. SEOPanel como suite más amplia si se necesita todo-en-uno |
+| Keyword research | **Google Keyword Planner + Ubersuggest free** | Ahrefs Webmaster Tools (free), SEMrush free (10/día), AnswerThePublic free (3/día), SEOPanel | Stack gratuito cubre ~80% de necesidades. Ahrefs Lite paid solo si se cumple gating §3.18.2 |
+| Crawler SEO | **Screaming Frog free** (hasta 500 URLs) | SEOPanel (auditoría básica) | Screaming Frog free suficiente para Año 1. Paid (€230/año) solo si >500 URLs |
+| Suite SEO todo-en-uno | **Stack modular** (GSC + Keyword Planner + Screaming Frog + Serpbear) | SEOPanel (GPL, self-hosted) | Stack modular más potente. SEOPanel disponible como alternativa todo-en-uno más simple |
+| Publicación social | **Auto-publicación por webhook** (§3.11.7) | Buffer free (3 canales, 10 posts/canal) | Webhook cubre publicación automática. Buffer solo para posts manuales/editoriales |
+| Diseño gráfico | **Canva free** | Figma (free tier), GIMP (open source) | Canva free por su simplicidad para no-diseñadores |
 
 ---
 

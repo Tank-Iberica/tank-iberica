@@ -29,19 +29,19 @@ const { t } = useI18n()
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
   align-items: stretch;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .header-left h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -49,24 +49,24 @@ const { t } = useI18n()
 .count-badge {
   background: var(--bg-tertiary);
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--border-radius-md);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   transition: background 0.2s;
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;

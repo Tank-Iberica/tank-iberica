@@ -31,7 +31,7 @@ const emit = defineEmits<{
           <th>Label EN</th>
           <th>URL</th>
           <th class="th-toggle">Visible</th>
-          <th class="th-actions">Acciones</th>
+          <th class="th-actions">{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -182,11 +182,11 @@ const emit = defineEmits<{
 <style scoped>
 .empty-links {
   text-align: center;
-  padding: 24px;
+  padding: var(--spacing-6);
   color: var(--text-disabled);
   font-size: 0.875rem;
   border: 1px dashed var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 /* Links table - desktop only */
@@ -194,8 +194,8 @@ const emit = defineEmits<{
   display: none;
   overflow-x: auto;
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
-  margin-top: 12px;
+  border-radius: var(--border-radius);
+  margin-top: var(--spacing-3);
 }
 
 .links-table {
@@ -206,15 +206,15 @@ const emit = defineEmits<{
 
 .links-table th,
 .links-table td {
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .links-table th {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   font-size: 0.8rem;
   white-space: nowrap;
 }
@@ -225,29 +225,29 @@ const emit = defineEmits<{
 
 .links-table input[type='text'] {
   width: 100%;
-  padding: 6px 8px;
+  padding: 0.375rem var(--spacing-2);
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.85rem;
 }
 
 .links-table input[type='text']:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 .th-order {
-  width: 60px;
+  width: 3.75rem;
 }
 
 .th-toggle {
-  width: 70px;
+  width: 4.375rem;
   text-align: center;
 }
 
 .th-actions {
-  width: 60px;
+  width: 3.75rem;
   text-align: center;
 }
 
@@ -266,17 +266,17 @@ const emit = defineEmits<{
 .order-buttons {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
   align-items: center;
 }
 
 .btn-icon-sm {
   background: none;
   border: 1px solid var(--border-color-light);
-  padding: 2px 6px;
-  border-radius: 3px;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-size: 9px;
+  font-size: 0.5625rem;
   transition: all 0.2s;
   line-height: 1;
 }
@@ -292,13 +292,13 @@ const emit = defineEmits<{
 
 .btn-remove {
   background: none;
-  border: 1px solid #fca5a5;
+  border: 1px solid var(--color-error-soft);
   color: var(--color-error);
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-size: 16px;
+  font-size: var(--font-size-base);
   line-height: 1;
   display: flex;
   align-items: center;
@@ -307,15 +307,15 @@ const emit = defineEmits<{
 }
 
 .btn-remove:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 /* Toggle switch */
 .toggle-switch {
   position: relative;
   display: inline-block;
-  width: 40px;
-  height: 22px;
+  width: 2.5rem;
+  height: 1.375rem;
   cursor: pointer;
 }
 
@@ -328,18 +328,18 @@ const emit = defineEmits<{
 .toggle-slider {
   position: absolute;
   inset: 0;
-  background: #d1d5db;
-  border-radius: 11px;
+  background: var(--color-gray-300);
+  border-radius: var(--border-radius-md);
   transition: background 0.2s;
 }
 
 .toggle-slider::before {
   content: '';
   position: absolute;
-  width: 18px;
-  height: 18px;
-  left: 2px;
-  bottom: 2px;
+  width: 1.125rem;
+  height: 1.125rem;
+  left: 0.125rem;
+  bottom: 0.125rem;
   background: var(--bg-primary);
   border-radius: 50%;
   transition: transform 0.2s;
@@ -357,55 +357,55 @@ const emit = defineEmits<{
 .links-cards-mobile {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-3);
 }
 
 .link-card-mobile {
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
-  padding: 12px;
-  background: #f9fafb;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
 }
 
 .link-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
 }
 
 .link-card-index {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .link-card-actions {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-1);
   align-items: center;
 }
 
 .link-card-fields {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .form-group-sm label {
   display: block;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6b7280;
-  margin-bottom: 2px;
+  color: var(--color-gray-500);
+  margin-bottom: 0.125rem;
 }
 
 .form-group-sm input[type='text'] {
   width: 100%;
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.85rem;
   box-sizing: border-box;
 }
@@ -413,21 +413,21 @@ const emit = defineEmits<{
 .form-group-sm input[type='text']:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 .toggle-label-mobile {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   cursor: pointer;
   font-size: 0.85rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .toggle-label-mobile input {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
 }
 
 @media (min-width: 48em) {

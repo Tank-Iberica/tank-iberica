@@ -1,0 +1,106 @@
+name: 📊 Error Rate Monitoring
+
+on:
+  schedule:
+    # Every 6 hours (0:00, 6:00, 12:00, 18:00 UTC)
+    - cron: '0 0,6,12,18 * * *'
+  workflow_dispatch: # Manual trigger for testing
+
+env:
+  APP_URL: https://tracciona.com
+  THRESHOLD: 0.5 # Alert if error rate > 0.5%
+
+jobs:
+  check-error-rate:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Check error rate via API
+        id: check
+        continue-on-error: true
+        run: |
+          RESPONSE=$(curl -s -X GET \
+            "${{ env.APP_URL }}/api/infra/error-rate" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -w "\n%{http_code}")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "Response: $BODY"
+          echo "HTTP Code: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "error_message=API returned $HTTP_CODE" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          ERROR_RATE=$(echo "$BODY" | jq -r '.errorRate')
+          ERROR_COUNT=$(echo "$BODY" | jq -r '.errorCount')
+          TOTAL_EVENTS=$(echo "$BODY" | jq -r '.totalEvents')
+          PERIOD=$(echo "$BODY" | jq -r '.period')
+
+          echo "error_rate=$ERROR_RATE" >> $GITHUB_OUTPUT
+          echo "error_count=$ERROR_COUNT" >> $GITHUB_OUTPUT
+          echo "total_events=$TOTAL_EVENTS" >> $GITHUB_OUTPUT
+          echo "period=$PERIOD" >> $GITHUB_OUTPUT
+
+          if (( $(echo "$ERROR_RATE > ${{ env.THRESHOLD }}" | bc -l) )); then
+            echo "status=alert" >> $GITHUB_OUTPUT
+            echo "message=Error rate $ERROR_RATE% exceeds threshold ${{ env.THRESHOLD }}%" >> $GITHUB_OUTPUT
+          else
+            echo "status=ok" >> $GITHUB_OUTPUT
+            echo "message=Error rate $ERROR_RATE% is within threshold" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create alert issue if needed
+        if: steps.check.outputs.status == 'alert'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toISOString();
+            const errorRate = '${{ steps.check.outputs.error_rate }}';
+            const errorCount = '${{ steps.check.outputs.error_count }}';
+            const totalEvents = '${{ steps.check.outputs.total_events }}';
+            const period = '${{ steps.check.outputs.period }}';
+
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Error Rate ALERT — ${errorRate}% (threshold: ${{ env.THRESHOLD }}%)`,
+              labels: ['bug', 'p0', 'monitoring', 'automated'],
+              assignees: ['j-m-g'], // Adjust to actual owner
+              body: `## Error Rate Alert — ${date}
+
+**Status:** 🔴 **CRITICAL**
+
+### Metrics:
+- **Error Rate:** ${errorRate}% (Threshold: ${{ env.THRESHOLD }}%)
+- **Errors:** ${errorCount} in last ${period}
+- **Total Events:** ${totalEvents}
+- **Severity:** High
+
+### Next Steps:
+1. 👉 Check [Sentry Dashboard](https://sentry.io) for error patterns
+2. 📊 Review [Error Rate API](${{ env.APP_URL }}/api/infra/error-rate)
+3. 🔍 Check recent deployments: \`git log --oneline -10\`
+4. 🚨 If critical: rollback last deploy or scale up resources
+5. ✅ Close issue once error rate < ${{ env.THRESHOLD }}%
+
+### Related:
+- Logs: \`npm run logs\`
+- Status: \`curl ${{ env.APP_URL }}/api/health\`
+- Uptime: Check Cloudflare Analytics
+`
+            });
+
+      - name: Log result
+        if: always()
+        run: |
+          echo "✓ Error rate check completed"
+          echo "Status: ${{ steps.check.outputs.status }}"
+          echo "Error Rate: ${{ steps.check.outputs.error_rate }}%"
+          echo "Period: ${{ steps.check.outputs.period }}"

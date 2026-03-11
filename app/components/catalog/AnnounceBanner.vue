@@ -122,7 +122,7 @@ onUnmounted(() => {
   color: var(--color-white);
   padding: 0.38rem 2rem;
   text-align: center;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   line-height: 1.4;
   position: fixed;
   top: 0;
@@ -147,10 +147,10 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: var(--color-white);
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
   border-radius: 50%;
   cursor: pointer;
   font-size: 1.3rem;

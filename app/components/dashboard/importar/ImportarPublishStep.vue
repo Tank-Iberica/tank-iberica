@@ -48,17 +48,17 @@ const emit = defineEmits<{
 <style scoped>
 .step-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
 }
 
 .publish-progress {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  padding: 40px 20px;
+  gap: 1.25rem;
+  padding: 2.5rem 1.25rem;
   text-align: center;
 }
 
@@ -71,10 +71,10 @@ const emit = defineEmits<{
 
 .progress-bar {
   width: 100%;
-  max-width: 500px;
-  height: 12px;
+  max-width: 31.25rem;
+  height: 0.75rem;
   background: var(--bg-tertiary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   overflow: hidden;
 }
 
@@ -94,18 +94,18 @@ const emit = defineEmits<{
 .result-summary {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 25rem;
 }
 
 .result-stat {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
+  padding: 0.75rem 1.25rem;
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .result-label {
@@ -114,7 +114,7 @@ const emit = defineEmits<{
 }
 
 .result-value {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
 }
 
@@ -130,12 +130,12 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
 }

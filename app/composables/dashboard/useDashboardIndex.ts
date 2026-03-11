@@ -35,8 +35,30 @@ export interface DashboardVehicle {
   views: number
 }
 
+function getStatusColor(status: string): string {
+  const colors: Record<string, string> = {
+    new: '#3B82F6',
+    viewed: '#8B5CF6',
+    contacted: '#F59E0B',
+    negotiating: '#F97316',
+    won: '#22C55E',
+    lost: '#EF4444',
+  }
+  return colors[status] || '#64748B'
+}
+
 export function useDashboardIndex() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+
+  const localeMap: Record<string, string> = { es: 'es-ES', en: 'en-GB', fr: 'fr-FR', pt: 'pt-PT', de: 'de-DE' }
+  function formatDate(dateStr: string | null): string {
+    if (!dateStr) return '-'
+    const intlLocale = localeMap[locale.value] ?? 'es-ES'
+    return new Date(dateStr).toLocaleDateString(intlLocale, {
+      day: 'numeric',
+      month: 'short',
+    })
+  }
   const { dealerProfile, stats, recentLeads, topVehicles, loading, error, loadDashboardData } =
     useDealerDashboard()
   const { userId } = useAuth()
@@ -44,30 +66,6 @@ export function useDashboardIndex() {
     userId.value || undefined,
   )
   const healthScore = ref<{ total: number } | null>(null)
-
-  // ---------------------------------------------------------------------------
-  // Formatting helpers
-  // ---------------------------------------------------------------------------
-
-  function formatDate(dateStr: string | null): string {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'short',
-    })
-  }
-
-  function getStatusColor(status: string): string {
-    const colors: Record<string, string> = {
-      new: '#3B82F6',
-      viewed: '#8B5CF6',
-      contacted: '#F59E0B',
-      negotiating: '#F97316',
-      won: '#22C55E',
-      lost: '#EF4444',
-    }
-    return colors[status] || '#64748B'
-  }
 
   // ---------------------------------------------------------------------------
   // Derived state

@@ -1,4 +1,5 @@
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
+import { safeError } from '../../utils/safeError'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
 import { fetchWithRetry } from '../../utils/fetchWithRetry'
@@ -17,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Service not configured' })
+    throw safeError(500, 'Service not configured')
   }
 
   const headers = {
@@ -63,43 +64,85 @@ export default defineEventHandler(async (event) => {
     return thresholdDate <= now
   })
 
+  // Fetch auction defaults from vertical_config (replaces hardcoded values)
+  const vertical = process.env.NUXT_PUBLIC_VERTICAL || 'tracciona'
+  let auctionDefaults = {
+    bid_increment_cents: 50000,
+    deposit_cents: 100000,
+    anti_snipe_seconds: 120,
+    duration_days: 7,
+  }
+  let buyerPremiumPct = 8
+
+  let configRes: Awaited<ReturnType<typeof fetchWithRetry>> | null = null
+  try {
+    configRes = await fetchWithRetry(
+      `${supabaseUrl}/rest/v1/vertical_config?vertical=eq.${vertical}&select=auction_defaults,commission_rates`,
+      { headers },
+    )
+  } catch {
+    // Use hardcoded defaults on config fetch failure
+  }
+
+  if (configRes?.ok) {
+    const cfgData = (await configRes.json()) as Array<{
+      auction_defaults?: typeof auctionDefaults
+      commission_rates?: { auction_buyer_premium_pct?: number }
+    }>
+    if (cfgData?.[0]) {
+      if (cfgData[0].auction_defaults) {
+        auctionDefaults = { ...auctionDefaults, ...cfgData[0].auction_defaults }
+      }
+      if (cfgData[0].commission_rates?.auction_buyer_premium_pct != null) {
+        buyerPremiumPct = cfgData[0].commission_rates.auction_buyer_premium_pct
+      }
+    }
+  }
+
+  // Prefetch all vehicle IDs with active auctions (dedup N+1)
+  const vehicleIdsWithAuctions = new Set<string>()
+  if (eligibleVehicles.length > 0) {
+    const vehicleIdList = eligibleVehicles.map((v) => `"${v.id as string}"`).join(',')
+    const auctionsRes = await fetchWithRetry(
+      `${supabaseUrl}/rest/v1/auctions?vehicle_id=in.(${vehicleIdList})&status=not.eq.cancelled&select=vehicle_id`,
+      { headers },
+    )
+    const auctions = (await auctionsRes.json()) as Array<{ vehicle_id: string }>
+    auctions.forEach((a) => vehicleIdsWithAuctions.add(a.vehicle_id))
+  }
+
   const result = await processBatch({
     items: eligibleVehicles,
     batchSize: 50,
     processor: async (v: Record<string, unknown>) => {
-      // Check no existing active auction
-      const existingRes = await fetchWithRetry(
-        `${supabaseUrl}/rest/v1/auctions?vehicle_id=eq.${v.id}&status=not.eq.cancelled&select=id&limit=1`,
-        { headers },
-      )
-      const existing = await existingRes.json()
-      if (existing?.length > 0) return
+      // Skip if already has active auction
+      if (vehicleIdsWithAuctions.has(v.id as string)) return
 
       // Calculate starting price
       const startPriceCents = Math.round(
         (((v.price as number) || 0) * 100 * ((v.auto_auction_starting_pct as number) || 70)) / 100,
       )
 
-      // Create auction: starts tomorrow at 10:00, ends 7 days later at 20:00
+      // Create auction: starts tomorrow at 10:00, ends after configured duration at 20:00
       const startDate = new Date(now)
       startDate.setDate(startDate.getDate() + 1)
       startDate.setHours(10, 0, 0, 0)
 
       const endDate = new Date(startDate)
-      endDate.setDate(endDate.getDate() + 7)
+      endDate.setDate(endDate.getDate() + auctionDefaults.duration_days)
       endDate.setHours(20, 0, 0, 0)
 
       const auctionData = {
         vehicle_id: v.id,
-        vertical: process.env.NUXT_PUBLIC_VERTICAL || 'tracciona',
+        vertical,
         title: `${v.brand} ${v.model}`,
         start_price_cents: startPriceCents,
-        bid_increment_cents: 50000,
-        deposit_cents: 100000,
-        buyer_premium_pct: 8,
+        bid_increment_cents: auctionDefaults.bid_increment_cents,
+        deposit_cents: auctionDefaults.deposit_cents,
+        buyer_premium_pct: buyerPremiumPct,
         starts_at: startDate.toISOString(),
         ends_at: endDate.toISOString(),
-        anti_snipe_seconds: 120,
+        anti_snipe_seconds: auctionDefaults.anti_snipe_seconds,
         status: 'scheduled',
       }
 
@@ -111,7 +154,7 @@ export default defineEventHandler(async (event) => {
 
       if (createRes.ok) {
         created++
-        // TODO(2026-02): Notify seller and matching Pro subscribers via email/push once notification templates are available // NOSONAR
+        // Pending(2026-02): Notify seller and matching Pro subscribers via email/push once notification templates are available
       }
     },
   })

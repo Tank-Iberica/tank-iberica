@@ -123,7 +123,7 @@ function validatePhotoQuality(file: File): Promise<PhotoValidation> {
       errors.push('onboarding.errors.photoTooLarge')
     }
 
-    if (typeof window === 'undefined' || typeof Image === 'undefined') {
+    if (globalThis.window === undefined || typeof Image === 'undefined') {
       // SSR fallback — only size check possible
       resolve({ valid: errors.length === 0, errors })
       return

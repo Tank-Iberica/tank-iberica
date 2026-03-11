@@ -114,27 +114,38 @@ export function useFavorites() {
 
   /**
    * Toggle a vehicle as favorite/unfavorite.
-   * Updates localStorage immediately and syncs to Supabase if authenticated.
+   * Optimistic: updates UI immediately, reverts on Supabase error.
    */
   function toggle(vehicleId: string) {
+    const wasAdded = !favoriteIds.value.has(vehicleId)
     const next = new Set(favoriteIds.value)
-    if (next.has(vehicleId)) {
-      next.delete(vehicleId)
-    } else {
+    if (wasAdded) {
       next.add(vehicleId)
+    } else {
+      next.delete(vehicleId)
     }
     favoriteIds.value = next
     saveToStorage()
 
-    // Sync with Supabase for authenticated users (fire-and-forget)
+    // Sync with Supabase for authenticated users — revert on error
     if (user.value) {
-      if (favoriteIds.value.has(vehicleId)) {
-        // Was just added
-        supabase.from('favorites').insert({ user_id: user.value.id, vehicle_id: vehicleId })
-      } else {
-        // Was just removed
-        supabase.from('favorites').delete().eq('user_id', user.value.id).eq('vehicle_id', vehicleId)
-      }
+      const promise = wasAdded
+        ? supabase.from('favorites').insert({ user_id: user.value.id, vehicle_id: vehicleId })
+        : supabase.from('favorites').delete().eq('user_id', user.value.id).eq('vehicle_id', vehicleId)
+
+      promise.then(({ error: err }) => {
+        if (err) {
+          // Revert optimistic update
+          const reverted = new Set(favoriteIds.value)
+          if (wasAdded) {
+            reverted.delete(vehicleId)
+          } else {
+            reverted.add(vehicleId)
+          }
+          favoriteIds.value = reverted
+          saveToStorage()
+        }
+      })
     }
   }
 
@@ -153,6 +164,21 @@ export function useFavorites() {
     return favoriteIds.value.size
   }
 
+  /**
+   * Set a price alert threshold for a favorited vehicle.
+   * Only meaningful for authenticated users. No-op for anonymous.
+   * @param vehicleId - vehicle to set alert for
+   * @param threshold - alert when price drops to this value or below (same unit as vehicles.price). Pass null to clear.
+   */
+  async function setThreshold(vehicleId: string, threshold: number | null): Promise<void> {
+    if (!user.value) return
+    await supabase
+      .from('favorites')
+      .update({ price_threshold: threshold })
+      .eq('user_id', user.value.id)
+      .eq('vehicle_id', vehicleId)
+  }
+
   return {
     favoriteIds: readonly(favoriteIds),
     favoritesOnly,
@@ -160,5 +186,6 @@ export function useFavorites() {
     isFavorite,
     toggleFilter,
     count,
+    setThreshold,
   }
 }

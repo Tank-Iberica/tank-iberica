@@ -219,7 +219,7 @@ export function useAdminDealerSuscripciones() {
       // Fetch subscriptions
       const { data: subsData, error: subsError } = await supabase
         .from('subscriptions')
-        .select('*')
+        .select('id, user_id, vertical, plan, status, price_cents, started_at, expires_at, stripe_subscription_id, stripe_customer_id, created_at, updated_at')
         .order('created_at', { ascending: false })
 
       if (subsError) throw subsError
@@ -370,7 +370,7 @@ export function useAdminDealerSuscripciones() {
       }
 
       const dealer = allDealers.value.find((d) => d.id === newModal.value.selectedDealerId)
-      if (!dealer || !dealer.user_id) {
+      if (!dealer?.user_id) {
         error.value = t('admin.dealerSubscriptions.noDealerSelected')
         saving.value = false
         return

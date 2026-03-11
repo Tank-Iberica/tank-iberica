@@ -171,13 +171,13 @@ function onDocTypeChange(event: Event): void {
 <style scoped>
 .form-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .form-section h2 {
-  margin: 0 0 16px 0;
+  margin: 0 0 1rem 0;
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -186,17 +186,17 @@ function onDocTypeChange(event: Event): void {
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .form-group label {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-secondary);
 }
@@ -204,33 +204,33 @@ function onDocTypeChange(event: Event): void {
 .form-group select,
 .form-group input[type='file'] {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: 0.75rem 1rem;
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
 }
 
 .alert-success {
-  padding: 12px 16px;
-  background: var(--color-success-bg, #dcfce7);
+  padding: 0.75rem 1rem;
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-success);
 }
 
@@ -238,16 +238,16 @@ function onDocTypeChange(event: Event): void {
 .verification-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .level-badge {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 20px;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-xl);
   color: white;
   font-weight: 600;
   font-size: 0.9rem;
@@ -268,21 +268,21 @@ function onDocTypeChange(event: Event): void {
 
 .level-label {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
   font-weight: 500;
 }
 
 .progress-section {
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
 }
 
 .progress-label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
   font-weight: 500;
 }
@@ -294,9 +294,9 @@ function onDocTypeChange(event: Event): void {
 
 .progress-bar {
   width: 100%;
-  height: 8px;
+  height: 0.5rem;
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 
@@ -307,54 +307,54 @@ function onDocTypeChange(event: Event): void {
 }
 
 .next-level-hint {
-  padding: 16px;
+  padding: 1rem;
   background: var(--bg-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
-  margin-bottom: 24px;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
 }
 
 .hint-title {
-  margin: 0 0 8px 0;
+  margin: 0 0 0.5rem 0;
   font-weight: 600;
   color: var(--text-primary);
   font-size: 0.95rem;
 }
 
 .hint-label {
-  margin: 0 0 8px 0;
-  font-size: 0.875rem;
+  margin: 0 0 0.5rem 0;
+  font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
 }
 
 .missing-docs-list {
   margin: 0;
-  padding-left: 20px;
-  font-size: 0.875rem;
+  padding-left: 1.25rem;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
 }
 
 .missing-docs-list li {
-  margin-bottom: 4px;
+  margin-bottom: 0.25rem;
 }
 
 .documents-list {
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
 }
 
 .documents-list h3 {
-  margin: 0 0 12px 0;
-  font-size: 1rem;
+  margin: 0 0 0.75rem 0;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .no-documents {
-  padding: 24px;
+  padding: 1.5rem;
   text-align: center;
   color: var(--text-disabled);
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   border: 1px dashed var(--color-gray-200);
 }
 
@@ -365,23 +365,23 @@ function onDocTypeChange(event: Event): void {
 .document-items {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .document-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   background: var(--bg-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .doc-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .doc-type {
@@ -391,37 +391,37 @@ function onDocTypeChange(event: Event): void {
 }
 
 .doc-status {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--border-radius-sm);
   width: fit-content;
 }
 
 .status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .status-verified {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-emerald-100);
+  color: var(--color-success-text);
 }
 
 .status-rejected {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .doc-link {
   color: var(--color-primary);
   text-decoration: none;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
-  min-height: 36px;
+  min-height: 2.25rem;
   display: inline-flex;
   align-items: center;
-  padding: 0 12px;
+  padding: 0 0.75rem;
 }
 
 .doc-link:hover {
@@ -429,28 +429,28 @@ function onDocTypeChange(event: Event): void {
 }
 
 .upload-form {
-  padding-top: 20px;
+  padding-top: 1.25rem;
   border-top: 1px solid var(--color-gray-200);
 }
 
 .upload-form h3 {
-  margin: 0 0 16px 0;
-  font-size: 1rem;
+  margin: 0 0 1rem 0;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .btn-upload {
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
   width: 100%;
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 .btn-upload:hover {
@@ -478,7 +478,7 @@ function onDocTypeChange(event: Event): void {
   .doc-info {
     flex-direction: row;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
   }
 }
 

@@ -42,11 +42,9 @@ onMounted(() => {
     <div class="section-header">
       <div>
         <h2>{{ $t('admin.configHomepage.title') }}</h2>
-        <p class="section-subtitle">
-          Configura el hero, las secciones visibles y los banners promocionales
-        </p>
+        <p class="section-subtitle">{{ $t('admin.configHomepage.subtitle') }}</p>
       </div>
-      <NuxtLink to="/admin/config" class="btn-back"> Volver </NuxtLink>
+      <NuxtLink to="/admin/config" class="btn-back">{{ $t('common.back') }}</NuxtLink>
     </div>
 
     <!-- Feedback -->
@@ -108,28 +106,28 @@ onMounted(() => {
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
 }
 
 .section-header h2 {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.75rem;
   color: var(--color-text);
 }
 
 .section-subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 1rem;
 }
 
 .btn-back {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   text-decoration: none;
@@ -138,34 +136,34 @@ onMounted(() => {
 }
 
 .btn-back:hover {
-  background: #d1d5db;
+  background: var(--color-gray-300);
 }
 
 .feedback-banner {
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
   font-size: 0.95rem;
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
 .save-bar {
-  padding: 20px 0;
+  padding: var(--spacing-5) 0;
   display: flex;
   justify-content: flex-end;
 }
@@ -174,8 +172,8 @@ onMounted(() => {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 28px;
-  border-radius: 8px;
+  padding: var(--spacing-3) 1.75rem;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 600;
   font-size: 1rem;

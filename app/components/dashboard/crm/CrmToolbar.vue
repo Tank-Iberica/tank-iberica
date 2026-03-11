@@ -66,16 +66,16 @@ function setContactType(type: ContactFilters['contact_type']): void {
 
 <style scoped>
 .toolbar {
-  padding: 16px;
+  padding: 1rem;
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .toolbar-row {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .search-box {
@@ -85,43 +85,43 @@ function setContactType(type: ContactFilters['contact_type']): void {
 
 .search-box .search-icon {
   position: absolute;
-  left: 12px;
+  left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   opacity: 0.5;
 }
 
 .search-box input {
   width: 100%;
-  padding: 8px 32px 8px 36px;
+  padding: 0.5rem 2rem 0.5rem 2.25rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .search-box input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .search-box .clear-btn {
   position: absolute;
-  right: 8px;
+  right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
   background: var(--bg-tertiary);
   border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--border-radius-full);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   line-height: 1;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -130,12 +130,12 @@ function setContactType(type: ContactFilters['contact_type']): void {
 .filter-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .filter-label {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-auxiliary);
   white-space: nowrap;
@@ -144,13 +144,13 @@ function setContactType(type: ContactFilters['contact_type']): void {
 .segment-control {
   display: flex;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
   flex-wrap: wrap;
 }
 
 .segment-control button {
-  padding: 7px 12px;
+  padding: 0.4375rem 0.75rem;
   border: none;
   background: var(--bg-primary);
   font-size: 0.85rem;
@@ -158,7 +158,7 @@ function setContactType(type: ContactFilters['contact_type']): void {
   color: var(--text-auxiliary);
   cursor: pointer;
   transition: all 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .segment-control button:not(:last-child) {
@@ -181,7 +181,7 @@ function setContactType(type: ContactFilters['contact_type']): void {
   }
 
   .search-box {
-    max-width: 320px;
+    max-width: 20rem;
   }
 }
 </style>

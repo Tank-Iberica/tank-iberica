@@ -1,3 +1,5 @@
+import { defineEventHandler, getRequestHeader, readBody } from 'h3'
+import { logger } from '../utils/logger'
 /**
  * Client error ingestion endpoint.
  * Accepts error reports from the frontend error-handler plugin.
@@ -111,7 +113,7 @@ export default defineEventHandler(async (event) => {
       component: report.component,
       timestamp: report.timestamp,
     }
-    console.error('[error-report]', JSON.stringify(sanitizedReport))
+    logger.error('[error-report]', sanitizedReport)
   } catch {
     // Swallow all errors — this endpoint must never fail visibly
   }

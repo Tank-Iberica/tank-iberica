@@ -4,8 +4,9 @@
  * Admin-only endpoint to acknowledge an infrastructure alert.
  * Sets acknowledged_at and acknowledged_by on the alert record.
  */
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { safeError } from '../../../utils/safeError'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -19,7 +20,7 @@ export default defineEventHandler(async (event) => {
   // ── Admin auth check ──────────────────────────────────────────────────────
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw safeError(401, 'Unauthorized')
   }
 
   const supabase = serverSupabaseServiceRole(event)
@@ -28,19 +29,19 @@ export default defineEventHandler(async (event) => {
 
   const typedUser = userData as unknown as UserRow | null
   if (typedUser?.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Forbidden' })
+    throw safeError(403, 'Forbidden')
   }
 
   // ── Get alert ID from route params ────────────────────────────────────────
   const id = event.context.params?.id
   if (!id) {
-    throw createError({ statusCode: 400, message: 'Alert ID is required' })
+    throw safeError(400, 'Alert ID is required')
   }
 
   // ── Validate UUID format ──────────────────────────────────────────────────
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
   if (!uuidRegex.test(id)) {
-    throw createError({ statusCode: 400, message: 'Invalid alert ID format' })
+    throw safeError(400, 'Invalid alert ID format')
   }
 
   // ── Check alert exists and is not already acknowledged ────────────────────
@@ -55,7 +56,7 @@ export default defineEventHandler(async (event) => {
   } | null
 
   if (fetchError || !existingAlert) {
-    throw createError({ statusCode: 404, message: 'Alert not found' })
+    throw safeError(404, 'Alert not found')
   }
 
   if (existingAlert.acknowledged) {
@@ -76,10 +77,7 @@ export default defineEventHandler(async (event) => {
     .eq('id', id)
 
   if (updateError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to acknowledge alert: ${updateError.message}`,
-    })
+    throw safeError(500, `Failed to acknowledge alert: ${updateError.message}`)
   }
 
   return {

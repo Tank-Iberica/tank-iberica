@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # DOCUMENTO 2 — Tareas que debemos hacer nosotros (Claude Code no puede)
 
@@ -336,3 +336,5 @@ No necesitáis decidir esto ahora. El bot ya funciona internacionalmente con el 
 | 18  | Seguro RC profesional        | 🔵       | Variable      | 300-600€/año | ☐       |
 | 19  | PWA en dispositivo real      | 🔵       | 20 min        | 0€           | ☐       |
 | 20  | Rollback CF Pages            | 🔵       | 5 min         | 0€           | ☐       |
+
+

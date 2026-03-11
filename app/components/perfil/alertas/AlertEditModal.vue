@@ -20,7 +20,7 @@ function onFieldInput(field: string, event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="visible && targetAlert" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="visible && targetAlert" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal">
         <div class="modal-header">
           <h3>{{ $t('profile.alerts.editTitle') }}</h3>
@@ -141,8 +141,8 @@ function onFieldInput(field: string, event: Event) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -189,7 +189,7 @@ function onFieldInput(field: string, event: Event) {
   background: var(--bg-primary);
   border: 1px solid var(--border-color-light);
   border-radius: var(--border-radius);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: border-color var(--transition-fast);
   box-sizing: border-box;
 }
@@ -197,7 +197,7 @@ function onFieldInput(field: string, event: Event) {
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 .form-row {
@@ -223,13 +223,13 @@ function onFieldInput(field: string, event: Event) {
   font-size: var(--font-size-sm);
   color: var(--text-primary);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0 0.25rem;
 }
 
 .radio-label input[type='radio'] {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   accent-color: var(--color-primary);
   cursor: pointer;
 }
@@ -246,7 +246,7 @@ function onFieldInput(field: string, event: Event) {
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background var(--transition-fast);
 }
 
@@ -266,7 +266,7 @@ function onFieldInput(field: string, event: Event) {
   border: 1px solid var(--border-color-light);
   border-radius: var(--border-radius);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast);

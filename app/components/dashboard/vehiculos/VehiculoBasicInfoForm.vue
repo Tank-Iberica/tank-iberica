@@ -36,6 +36,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           :value="props.brand"
           type="text"
           required
+          autocomplete="off"
           @input="onStringInput('brand', $event)"
         >
       </div>
@@ -46,6 +47,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           :value="props.model"
           type="text"
           required
+          autocomplete="off"
           @input="onStringInput('model', $event)"
         >
       </div>
@@ -57,6 +59,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           type="number"
           min="1950"
           :max="new Date().getFullYear() + 1"
+          autocomplete="off"
           @input="onNumberInput('year', $event)"
         >
       </div>
@@ -67,6 +70,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           :value="props.km"
           type="number"
           min="0"
+          autocomplete="off"
           @input="onNumberInput('km', $event)"
         >
       </div>
@@ -78,6 +82,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           type="number"
           min="0"
           step="100"
+          autocomplete="off"
           @input="onNumberInput('price', $event)"
         >
       </div>
@@ -87,6 +92,7 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
           id="location"
           :value="props.location"
           type="text"
+          autocomplete="off"
           @input="onStringInput('location', $event)"
         >
       </div>
@@ -97,13 +103,13 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
 <style scoped>
 .form-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .form-section h2 {
-  margin: 0 0 16px 0;
+  margin: 0 0 1rem 0;
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -112,35 +118,35 @@ function onNumberInput(field: 'year' | 'km' | 'price', event: Event): void {
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .form-group label {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-secondary);
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 @media (min-width: 30em) {

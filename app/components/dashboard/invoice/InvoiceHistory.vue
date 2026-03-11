@@ -137,20 +137,20 @@ function getStatusClass(status: string): string {
 }
 
 .history-table th {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--text-auxiliary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.0313rem;
   padding: 0.75rem 0.5rem;
-  border-bottom: 2px solid var(--color-gray-200);
+  border-bottom: 0.125rem solid var(--color-gray-200);
   text-align: left;
 }
 
 .history-table td {
   padding: 0.75rem 0.5rem;
   border-bottom: 1px solid var(--color-gray-100);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
 }
 
 .history-table__num {
@@ -160,7 +160,7 @@ function getStatusClass(status: string): string {
 
 .history-table__number {
   font-family: monospace;
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
 }
 
 /* History mobile cards — shown on mobile */
@@ -173,7 +173,7 @@ function getStatusClass(status: string): string {
 .history-card {
   background: var(--bg-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   padding: 1rem;
 }
 
@@ -193,7 +193,7 @@ function getStatusClass(status: string): string {
 
 .history-card__client {
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--color-slate-700);
   margin-bottom: 0.5rem;
 }
 
@@ -201,7 +201,7 @@ function getStatusClass(status: string): string {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
 }
 
@@ -214,11 +214,11 @@ function getStatusClass(status: string): string {
 .status-badge {
   display: inline-block;
   padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.0188rem;
 }
 
 .status-draft {
@@ -227,17 +227,17 @@ function getStatusClass(status: string): string {
 }
 
 .status-sent {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 
 .status-paid {
-  background: var(--color-success-bg, #dcfce7);
-  color: #15803d;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--color-green-700);
 }
 
 .status-cancelled {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 

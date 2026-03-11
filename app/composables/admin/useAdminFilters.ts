@@ -1,3 +1,5 @@
+import type { SupabaseClient } from '@supabase/supabase-js'
+
 /**
  * Admin Filters Composable (migrated: filter_definitions table → attributes table)
  * Full CRUD operations for attribute definitions (formerly "filter definitions") in admin panel
@@ -54,28 +56,23 @@ export interface FilterFormData {
   step: number | null
 }
 
-export const FILTER_TYPES: { value: FilterType; label: string; description: string }[] = [
-  { value: 'caja', label: 'Caja (texto libre)', description: 'Input de texto para valores libres' },
-  { value: 'desplegable', label: 'Desplegable', description: 'Select con opciones predefinidas' },
-  {
-    value: 'desplegable_tick',
-    label: 'Desplegable con ticks',
-    description: 'Select con opciones múltiples',
-  },
-  {
-    value: 'tick',
-    label: 'Tick (sí/no)',
-    description: 'Checkbox que puede mostrar/ocultar otros filtros',
-  },
-  { value: 'slider', label: 'Slider (rango)', description: 'Rango numérico con min/max' },
-  { value: 'calc', label: 'Calc (+/-)', description: 'Botones incrementar/decrementar' },
-]
+export const FILTER_TYPE_VALUES: FilterType[] = ['caja', 'desplegable', 'desplegable_tick', 'tick', 'slider', 'calc']
+export const FILTER_STATUS_VALUES: FilterStatus[] = ['published', 'draft', 'archived']
 
-export const FILTER_STATUSES: { value: FilterStatus; label: string; description: string }[] = [
-  { value: 'published', label: 'Publicado', description: 'Aparece en filtros y características' },
-  { value: 'draft', label: 'Oculto', description: 'Solo en características del vehículo' },
-  { value: 'archived', label: 'Inactivo', description: 'No aparece en ningún sitio' },
-]
+/** Use inside composable for translated labels. For raw values use FILTER_TYPE_VALUES. */
+export function getFilterTypeOptions(t: (key: string) => string) {
+  return FILTER_TYPE_VALUES.map((value) => ({
+    value,
+    label: t(`admin.filterTypes.${value}`),
+  }))
+}
+
+export function getFilterStatusOptions(t: (key: string) => string) {
+  return FILTER_STATUS_VALUES.map((value) => ({
+    value,
+    label: t(`admin.filterStatuses.${value}`),
+  }))
+}
 
 /** Fields that set-or-delete based on truthiness */
 const OPTION_MERGE_KEYS = ['default_value', 'extra_filters', 'hides', 'choices', 'step'] as const
@@ -170,7 +167,7 @@ function toErrorMessage(err: unknown, fallback: string): string {
 }
 
 async function swapSortOrder(
-  supabase: ReturnType<typeof useSupabaseClient>,
+  supabase: SupabaseClient,
   idA: string,
   orderA: number,
   idB: string,
@@ -200,7 +197,7 @@ export function useAdminFilters() {
     try {
       const { data, error: err } = await supabase
         .from('attributes')
-        .select('*')
+        .select('id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order, created_at, updated_at')
         .order('sort_order', { ascending: true })
       if (err) throw err
       filters.value = (data as unknown as AdminFilter[]) || []
@@ -218,7 +215,7 @@ export function useAdminFilters() {
     try {
       const { data, error: err } = await supabase
         .from('attributes')
-        .select('*')
+        .select('id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order, created_at, updated_at')
         .eq('id', id)
         .single()
       if (err) throw err

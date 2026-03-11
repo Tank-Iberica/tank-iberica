@@ -45,13 +45,13 @@ const { t } = useI18n()
 <style scoped>
 .card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem;
 }
 
 .card-title {
-  margin: 0 0 16px 0;
+  margin: 0 0 1rem 0;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -60,19 +60,19 @@ const { t } = useI18n()
 .platform-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .platform-btn {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
-  min-height: 44px;
-  padding: 12px 16px;
-  border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
+  gap: 0.125rem;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: 0.125rem solid var(--color-gray-200);
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   cursor: pointer;
   transition:
@@ -87,7 +87,7 @@ const { t } = useI18n()
 
 .platform-btn.active {
   border-color: var(--color-primary);
-  background: #f0f9ff;
+  background: var(--color-sky-50);
 }
 
 .platform-name {
@@ -97,7 +97,7 @@ const { t } = useI18n()
 }
 
 .platform-limit {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--text-disabled);
 }
 
@@ -106,12 +106,12 @@ const { t } = useI18n()
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 44px;
-  padding: 12px 24px;
+  min-height: 2.75rem;
+  padding: 0.75rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;

@@ -83,14 +83,14 @@ const { t } = useI18n()
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
+  padding: 1rem;
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   width: 100%;
-  max-width: 560px;
+  max-width: 35rem;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
@@ -104,7 +104,7 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 20px 0 20px;
+  padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
 .modal-header h2 {
@@ -118,13 +118,13 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   background: none;
   border: none;
   color: var(--text-disabled);
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .btn-close:hover {
@@ -134,27 +134,27 @@ const { t } = useI18n()
 
 .platform-desc {
   margin: 0;
-  padding: 16px 20px 0 20px;
+  padding: 1rem 1.25rem 0 1.25rem;
   font-size: 0.9rem;
   color: var(--text-auxiliary);
 }
 
 .platform-list {
-  padding: 16px 20px;
+  padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .platform-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
+  gap: 0.75rem;
+  padding: 0.75rem;
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .platform-item:hover {
@@ -162,8 +162,8 @@ const { t } = useI18n()
 }
 
 .platform-item input[type='checkbox'] {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   flex-shrink: 0;
   accent-color: var(--color-primary);
 }
@@ -175,7 +175,7 @@ const { t } = useI18n()
 }
 
 .platform-default {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: var(--text-disabled);
   font-weight: 400;
 }
@@ -183,20 +183,20 @@ const { t } = useI18n()
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 0 20px 20px 20px;
+  gap: 0.5rem;
+  padding: 0 1.25rem 1.25rem 1.25rem;
 }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;

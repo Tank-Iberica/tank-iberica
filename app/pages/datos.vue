@@ -37,6 +37,7 @@ usePageSeo({
 
 <template>
   <div class="datos-page">
+    <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('data.title') }]" class="datos-breadcrumb" />
     <DatosHero :last-updated="lastUpdated" />
 
     <div class="datos-content">
@@ -63,7 +64,7 @@ usePageSeo({
           :brand-breakdown="brandBreakdown"
         />
 
-        <DatosPriceChart
+        <LazyDatosPriceChart
           :chart-data="chartData"
           :chart-options="chartOptions as Record<string, unknown>"
         />
@@ -103,8 +104,8 @@ usePageSeo({
 }
 
 .datos-loading__spinner {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border: 3px solid var(--border-color);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -131,7 +132,7 @@ usePageSeo({
 .datos-empty__text {
   font-size: var(--font-size-lg);
   color: var(--text-auxiliary);
-  max-width: 400px;
+  max-width: 25rem;
   margin: 0 auto;
   line-height: var(--line-height-relaxed);
 }
@@ -141,12 +142,12 @@ usePageSeo({
   color: var(--text-auxiliary);
   text-align: center;
   line-height: var(--line-height-relaxed);
-  max-width: 640px;
+  max-width: 40rem;
   margin: 0 auto;
   padding-top: var(--spacing-4);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .datos-content {
     padding-left: var(--spacing-6);
     padding-right: var(--spacing-6);

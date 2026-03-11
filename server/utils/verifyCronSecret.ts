@@ -1,5 +1,6 @@
 import { createError, getHeader } from 'h3'
 import type { H3Event } from 'h3'
+import { logger } from './logger'
 
 /**
  * Verify cron secret from request body or headers.
@@ -14,7 +15,7 @@ export function verifyCronSecret(event: H3Event, bodySecret?: string): void {
     if (process.env.NODE_ENV === 'production') {
       throw createError({ statusCode: 500, message: 'CRON_SECRET not configured' })
     }
-    console.warn('[verifyCronSecret] No CRON_SECRET configured — allowing in dev mode')
+    logger.warn('[verifyCronSecret] No CRON_SECRET configured — allowing in dev mode')
     return
   }
 

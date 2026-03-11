@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # ADDENDUM — Business Bible TradeBase
 
@@ -143,3 +143,5 @@ Módulos independientes que se conectan al sistema sin modificar nada existente:
 
 _Addendum creado: 18 de febrero de 2026_
 _Aplica sobre: Business Bible TradeBase (13-14 Feb 2026)_
+
+

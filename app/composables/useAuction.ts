@@ -4,6 +4,7 @@
  */
 
 import type { RealtimeChannel } from '@supabase/supabase-js'
+import type { Database } from '~~/types/supabase'
 
 export type AuctionStatus =
   | 'draft'
@@ -71,8 +72,7 @@ export function formatCents(cents: number): string {
 }
 
 export function useAuction() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = useSupabaseClient<any>()
+  const supabase = useSupabaseClient<Database>()
 
   const auctions = ref<Auction[]>([])
   const auction = ref<Auction | null>(null)
@@ -154,7 +154,7 @@ export function useAuction() {
   async function fetchBids(auctionId: string) {
     const { data, error: fetchErr } = await supabase
       .from('auction_bids')
-      .select('*')
+      .select('id, auction_id, user_id, amount_cents, is_winning, created_at')
       .eq('auction_id', auctionId)
       .order('amount_cents', { ascending: false })
 

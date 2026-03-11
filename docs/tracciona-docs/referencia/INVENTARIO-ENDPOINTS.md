@@ -1,7 +1,7 @@
 # Inventario de Endpoints — Tracciona
 
 > Generado analizando el codigo fuente. Actualizar cuando se anadan nuevos endpoints.
-> Ultima actualizacion: Mar 2026 (71 migraciones, revision completa de server/api/).
+> Ultima actualizacion: Mar 2026 (81 migraciones, 97 tablas, revision completa de server/api/).
 
 ---
 
@@ -9,10 +9,10 @@
 
 | Metrica            | Valor |
 | ------------------ | ----- |
-| Total endpoints    | 62    |
+| Total endpoints    | 63    |
 | Admin-only         | 14    |
 | User (autenticado) | 16    |
-| CRON_SECRET        | 13    |
+| CRON_SECRET        | 14    |
 | Public             | 8     |
 | Internal secret    | 3     |
 | Firma externa      | 3     |
@@ -83,6 +83,7 @@
 | /api/cron/reservation-expiry               | POST   | CRON_SECRET        | Expirar reservas caducadas                                |
 | /api/cron/search-alerts                    | POST   | CRON_SECRET        | Evaluar alertas de busqueda y enviar emails               |
 | /api/cron/whatsapp-retry                   | POST   | CRON_SECRET        | Reintentar envios WhatsApp fallidos                       |
+| /api/cron/k6-readiness-check               | POST   | CRON_SECRET        | Verificar condiciones (≥50 vehiculos, ≥2 dealers) para k6 |
 | **Reservations**                           |        |                    |                                                           |
 | /api/reservations/create                   | POST   | User               | Crear reserva prioritaria de vehiculo                     |
 | /api/reservations/respond                  | POST   | User               | Responder a solicitud de reserva (aceptar/rechazar)       |
@@ -122,7 +123,7 @@ Usan `serverSupabaseUser(event)` + verificacion `role === 'admin'` en tabla user
 
 ### 4. CRON_SECRET
 
-Verifican header `x-internal-secret` contra variable de entorno CRON_SECRET. Solo para tareas programadas desde Cloudflare Workers o GitHub Actions.
+Verifican el secreto via `verifyCronSecret()`: acepta `x-cron-secret` header, `body.secret`, o `Authorization: Bearer <secret>` contra variable de entorno CRON_SECRET. Solo para tareas programadas desde Cloudflare Workers o GitHub Actions.
 
 ### 5. Internal
 

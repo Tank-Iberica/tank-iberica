@@ -81,7 +81,7 @@ const emit = defineEmits<{
   color: var(--text-secondary);
   cursor: pointer;
   transition: all var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .status-option:hover {
@@ -110,8 +110,8 @@ const emit = defineEmits<{
 }
 
 .status-dot {
-  width: 10px;
-  height: 10px;
+  width: 0.625rem;
+  height: 0.625rem;
   border-radius: 50%;
   background: currentColor;
 }
@@ -126,7 +126,7 @@ const emit = defineEmits<{
 }
 
 .featured-toggle input {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 </style>

@@ -426,7 +426,7 @@ function relativeTime(dateStr: string): string {
   margin-top: var(--spacing-1);
   padding: var(--spacing-1) var(--spacing-3);
   background: var(--color-warning);
-  color: #ffffff;
+  color: var(--color-white);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   border-radius: var(--border-radius-full);
@@ -467,7 +467,7 @@ function relativeTime(dateStr: string): string {
 
 .bid-btn {
   width: 100%;
-  min-height: 48px;
+  min-height: 3rem;
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--border-radius);
   font-size: var(--font-size-base);
@@ -516,7 +516,7 @@ function relativeTime(dateStr: string): string {
 
 .bid-input {
   flex: 1;
-  min-height: 48px;
+  min-height: 3rem;
   padding: var(--spacing-2) var(--spacing-3);
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -537,12 +537,12 @@ function relativeTime(dateStr: string): string {
 .bid-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .bid-btn-custom {
-  min-height: 48px;
-  min-width: 80px;
+  min-height: 3rem;
+  min-width: 5rem;
   padding: var(--spacing-2) var(--spacing-4);
   border-radius: var(--border-radius);
   background: var(--color-primary);
@@ -587,7 +587,7 @@ function relativeTime(dateStr: string): string {
 
 .bid-register-btn {
   width: 100%;
-  min-height: 48px;
+  min-height: 3rem;
   padding: var(--spacing-3) var(--spacing-4);
   background: var(--color-primary);
   color: var(--color-white);
@@ -708,7 +708,7 @@ function relativeTime(dateStr: string): string {
 .history-amount {
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
-  min-width: 80px;
+  min-width: 5rem;
 }
 
 .history-user {
@@ -750,7 +750,7 @@ function relativeTime(dateStr: string): string {
   }
 
   .history-amount {
-    min-width: 100px;
+    min-width: 6.25rem;
   }
 }
 
@@ -761,7 +761,7 @@ function relativeTime(dateStr: string): string {
   .bid-panel {
     padding: var(--spacing-6);
     gap: var(--spacing-5);
-    max-width: 400px;
+    max-width: 25rem;
   }
 
   .bid-panel-title {
@@ -781,7 +781,7 @@ function relativeTime(dateStr: string): string {
   }
 
   .bid-btn {
-    min-height: 48px;
+    min-height: 3rem;
   }
 
   .bid-history-row {

@@ -18,14 +18,12 @@ const emit = defineEmits<{
     <div v-if="show" class="modal-overlay" @click.self="emit('cancel')">
       <div class="modal-content modal-small">
         <div class="modal-header">
-          <h3>Eliminar comentario</h3>
+          <h3>{{ $t('admin.comments.deleteTitle') }}</h3>
           <button class="modal-close" @click="emit('cancel')">x</button>
         </div>
         <div class="modal-body">
           <p>
-            Estas seguro de eliminar este comentario de
-            <strong>{{ comment?.author_name || 'Anonimo' }}</strong
-            >?
+            {{ $t('admin.comments.deleteConfirm', { author: comment?.author_name || $t('admin.comments.anonymous') }) }}
           </p>
           <div v-if="comment" class="delete-preview">
             {{
@@ -35,18 +33,17 @@ const emit = defineEmits<{
             }}
           </div>
           <p class="text-warning">
-            Esta accion no se puede deshacer. Si el comentario tiene respuestas, tambien seran
-            eliminadas.
+            {{ $t('admin.comments.deleteWarning') }}
           </p>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('cancel')">Cancelar</button>
+          <button class="btn-secondary" @click="emit('cancel')">{{ $t('common.cancel') }}</button>
           <button
             class="btn-danger"
             :disabled="actionLoading === comment?.id"
             @click="emit('confirm')"
           >
-            {{ actionLoading === comment?.id ? 'Eliminando...' : 'Eliminar' }}
+            {{ actionLoading === comment?.id ? $t('common.deleting') : $t('common.delete') }}
           </button>
         </div>
       </div>
@@ -63,12 +60,12 @@ const emit = defineEmits<{
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: 90vh;
@@ -76,21 +73,21 @@ const emit = defineEmits<{
 }
 
 .modal-small {
-  max-width: 420px;
+  max-width: 26.25rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 1.1rem;
-  color: #111827;
+  color: var(--color-gray-900);
 }
 
 .modal-close {
@@ -98,84 +95,84 @@ const emit = defineEmits<{
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  color: #6b7280;
-  padding: 4px 8px;
+  color: var(--color-gray-500);
+  padding: var(--spacing-1) var(--spacing-2);
   line-height: 1;
   font-weight: 600;
 }
 
 .modal-close:hover {
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .modal-body p {
-  margin: 0 0 12px 0;
+  margin: 0 0 var(--spacing-3) 0;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-gray-700);
   line-height: 1.5;
 }
 
 .delete-preview {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
-  padding: 12px;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3);
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   line-height: 1.5;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
   font-style: italic;
 }
 
 .text-warning {
   color: var(--color-warning);
   font-size: 0.8rem;
-  background: #fffbeb;
-  padding: 8px 12px;
-  border-radius: 6px;
+  background: var(--color-amber-50);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--border-radius);
   margin: 0;
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
   border-radius: 0 0 12px 12px;
 }
 
 .btn-secondary {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.85rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-secondary:hover {
-  background: #d1d5db;
+  background: var(--color-gray-300);
 }
 
 .btn-danger {
   background: var(--color-error);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.85rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-danger:hover:not(:disabled) {

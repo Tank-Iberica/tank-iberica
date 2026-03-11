@@ -65,17 +65,17 @@ defineProps<{
 .stats-row {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--spacing-3, 12px);
+  gap: var(--spacing-3);
 }
 
 .stat-card {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-1, 4px);
-  padding: var(--spacing-4, 16px) var(--spacing-5, 20px);
-  background: var(--bg-primary, #fff);
+  gap: var(--spacing-1);
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--bg-primary, var(--color-white));
   border-radius: var(--border-radius-md, 12px);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  box-shadow: var(--shadow-sm, var(--shadow-sm));
   border-left: 4px solid transparent;
 }
 
@@ -116,13 +116,13 @@ defineProps<{
 }
 
 .stats-row--secondary {
-  margin-top: var(--spacing-2, 8px);
+  margin-top: var(--spacing-2);
 }
 
 .stat-label {
   font-size: var(--font-size-xs, 0.75rem);
   font-weight: var(--font-weight-medium, 500);
-  color: var(--text-auxiliary, #7a8a8a);
+  color: var(--text-auxiliary, var(--text-auxiliary));
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -130,7 +130,7 @@ defineProps<{
 .stat-value {
   font-size: var(--font-size-xl, 1.25rem);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
   font-variant-numeric: tabular-nums;
 }
 

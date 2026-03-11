@@ -96,6 +96,9 @@ export function useDashboardFactura() {
     generateInvoiceNumber,
     loadInvoiceHistory,
     fetchSubscription,
+    hasDraft,
+    restoreDraft,
+    clearDraft,
   } = useInvoice()
 
   // ── Init (replaces onMounted in the page) ──────
@@ -220,5 +223,10 @@ export function useDashboardFactura() {
     updateSettingsField,
     dismissError,
     dismissSuccess,
+
+    // Autosave draft
+    hasDraft,
+    restoreDraft,
+    clearDraft,
   }
 }

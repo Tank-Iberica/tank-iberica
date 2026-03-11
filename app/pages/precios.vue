@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const {
   billingInterval,
   loading,
@@ -14,11 +15,18 @@ const {
 } = usePrecios()
 
 onMounted(init)
+
+usePageSeo({
+  title: t('pricing.seoTitle'),
+  description: t('pricing.seoDescription'),
+  path: '/precios',
+})
 </script>
 
 <template>
   <div class="pricing-page">
     <div class="pricing-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('pricing.title') }]" />
       <PreciosHero />
 
       <PreciosBillingToggle :interval="billingInterval" @update="billingInterval = $event" />
@@ -61,7 +69,7 @@ onMounted(init)
 }
 
 .pricing-container {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   padding: 0 var(--spacing-4);
 }
@@ -96,20 +104,20 @@ onMounted(init)
   margin-bottom: var(--spacing-16);
 }
 
-@media (min-width: 480px) {
+@media (min-width: 30em) {
   .pricing-container {
     padding: 0 var(--spacing-6);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .plans-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-5);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .plans-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: var(--spacing-5);

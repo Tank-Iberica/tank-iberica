@@ -77,6 +77,8 @@ onMounted(() => {
 <template>
   <div class="subscription-page">
     <div class="subscription-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('profile.subscription.title') }]" />
+      <PerfilProfileNavPills />
       <h1 class="page-title">
         {{ $t('profile.subscription.title') }}
       </h1>
@@ -85,8 +87,8 @@ onMounted(() => {
       </p>
 
       <!-- Loading -->
-      <div v-if="loading" class="loading-state">
-        {{ $t('common.loading') }}
+      <div v-if="loading" class="loading-state" aria-busy="true">
+        <UiSkeletonCard v-for="n in 3" :key="n" :lines="3" />
       </div>
 
       <template v-else>
@@ -185,7 +187,7 @@ onMounted(() => {
 }
 
 .subscription-container {
-  max-width: 960px;
+  max-width: 60rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -281,7 +283,7 @@ onMounted(() => {
   transition:
     background var(--transition-fast),
     color var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-outline:hover {
@@ -319,7 +321,7 @@ onMounted(() => {
 
 .plan-card--highlighted {
   border-color: var(--color-primary);
-  border-width: 2px;
+  border-width: 0.125rem;
 }
 
 .plan-badge {
@@ -380,7 +382,7 @@ onMounted(() => {
   transition:
     background var(--transition-fast),
     color var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .plan-cta--primary {
@@ -410,7 +412,7 @@ onMounted(() => {
 }
 
 /* ---- Tablet ---- */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .subscription-container {
     padding: 0 2rem;
   }
@@ -439,7 +441,7 @@ onMounted(() => {
 }
 
 /* ---- Desktop ---- */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .plans-grid {
     gap: 1.25rem;
   }

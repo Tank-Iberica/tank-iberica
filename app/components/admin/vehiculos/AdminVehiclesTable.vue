@@ -10,19 +10,21 @@ const emit = defineEmits<{
   'confirm-delete': [vehicle: { id: string; brand: string; model: string }]
 }>()
 
-const categoryLabels: Record<string, string> = {
-  venta: 'Venta',
-  alquiler: 'Alquiler',
-  terceros: 'Terceros',
-}
+const { t } = useI18n()
 
-const statusLabels: Record<string, string> = {
-  draft: 'Borrador',
-  published: 'Publicado',
-  rented: 'Alquilado',
-  workshop: 'En taller',
-  sold: 'Vendido',
-}
+const categoryLabels = computed<Record<string, string>>(() => ({
+  venta: t('common.sale'),
+  alquiler: t('common.rental'),
+  terceros: t('common.thirdParty'),
+}))
+
+const statusLabels = computed<Record<string, string>>(() => ({
+  draft: t('common.draft'),
+  published: t('common.published'),
+  rented: t('common.rented'),
+  workshop: t('common.workshop'),
+  sold: t('common.sold'),
+}))
 </script>
 
 <template>
@@ -30,12 +32,12 @@ const statusLabels: Record<string, string> = {
     <table class="vehicles-table">
       <thead>
         <tr>
-          <th class="col-image">Imagen</th>
-          <th class="col-vehicle">Vehículo</th>
-          <th class="col-category">Categoría</th>
-          <th class="col-price">Precio</th>
-          <th class="col-status">Estado</th>
-          <th class="col-actions">Acciones</th>
+          <th class="col-image">{{ $t('common.image') }}</th>
+          <th class="col-vehicle">{{ $t('admin.vehicles.vehicle') }}</th>
+          <th class="col-category">{{ $t('common.category') }}</th>
+          <th class="col-price">{{ $t('common.price') }}</th>
+          <th class="col-status">{{ $t('common.status') }}</th>
+          <th class="col-actions">{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -162,27 +164,27 @@ const statusLabels: Record<string, string> = {
 }
 
 .col-image {
-  width: 80px;
+  width: 5rem;
 }
 .col-vehicle {
-  min-width: 200px;
+  min-width: 12.5rem;
 }
 .col-category {
-  width: 100px;
+  width: 6.25rem;
 }
 .col-price {
-  width: 120px;
+  width: 7.5rem;
 }
 .col-status {
-  width: 120px;
+  width: 7.5rem;
 }
 .col-actions {
-  width: 120px;
+  width: 7.5rem;
 }
 
 .vehicle-thumbnail {
-  width: 60px;
-  height: 45px;
+  width: 3.75rem;
+  height: 2.8125rem;
   border-radius: var(--border-radius-sm);
   overflow: hidden;
   background: var(--bg-secondary);
@@ -204,8 +206,8 @@ const statusLabels: Record<string, string> = {
 }
 
 .no-image svg {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .vehicle-info {
@@ -281,8 +283,8 @@ const statusLabels: Record<string, string> = {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   padding: 0;
   background: transparent;
   border: 1px solid var(--border-color);
@@ -308,8 +310,8 @@ const statusLabels: Record<string, string> = {
 }
 
 .action-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
 }
 
 (@media ()max-width: 47.9375em())) {
@@ -324,8 +326,8 @@ const statusLabels: Record<string, string> = {
   }
 
   .vehicle-thumbnail {
-    width: 50px;
-    height: 38px;
+    width: 3.125rem;
+    height: 2.375rem;
   }
 }
 </style>

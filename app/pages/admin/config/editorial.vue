@@ -121,50 +121,50 @@ async function handleSave() {
 }
 
 .section-header {
-  margin-bottom: 32px;
+  margin-bottom: var(--spacing-8);
 }
 
 .section-header h2 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.75rem;
   color: var(--color-text);
 }
 
 .section-subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 1rem;
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
   font-weight: 500;
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--spacing-5);
 }
 
 .config-card--muted {
@@ -173,19 +173,19 @@ async function handleSave() {
 }
 
 .card-title {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-description {
-  margin: 0 0 20px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-5);
+  color: var(--color-gray-500);
   font-size: 0.9rem;
 }
 
 .toggle-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .toggle-group:last-child {
@@ -195,11 +195,11 @@ async function handleSave() {
 .toggle-label {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--spacing-3);
   cursor: pointer;
-  padding: 12px;
+  padding: var(--spacing-3);
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   transition: border-color 0.2s;
 }
 
@@ -208,9 +208,9 @@ async function handleSave() {
 }
 
 .toggle-label input[type='checkbox'] {
-  width: 20px;
-  height: 20px;
-  margin-top: 2px;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.125rem;
   flex-shrink: 0;
   cursor: pointer;
   accent-color: var(--color-primary);
@@ -219,26 +219,26 @@ async function handleSave() {
 .toggle-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .toggle-text strong {
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .toggle-text small {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .link-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   text-decoration: none;
   color: inherit;
   transition: all 0.2s;
@@ -246,24 +246,24 @@ async function handleSave() {
 
 .link-card:hover {
   border-color: var(--color-primary);
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .link-card-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .link-card-content strong {
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .link-card-content small {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .link-card-arrow {
@@ -279,32 +279,32 @@ async function handleSave() {
 
 .placeholder-box {
   text-align: center;
-  padding: 32px 16px;
-  background: #f9fafb;
-  border-radius: 8px;
+  padding: var(--spacing-8) var(--spacing-4);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius);
 }
 
 .placeholder-text {
   display: inline-block;
   background: var(--bg-tertiary);
-  color: #6b7280;
-  padding: 4px 16px;
-  border-radius: 20px;
+  color: var(--color-gray-500);
+  padding: var(--spacing-1) var(--spacing-4);
+  border-radius: var(--border-radius-full);
   font-size: 0.85rem;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 
 .placeholder-description {
   color: var(--text-disabled);
   font-size: 0.85rem;
-  max-width: 400px;
+  max-width: 25rem;
   margin: 0 auto;
   line-height: 1.5;
 }
 
 .actions-bar {
-  margin-top: 24px;
+  margin-top: var(--spacing-6);
   display: flex;
   justify-content: flex-end;
 }
@@ -313,13 +313,13 @@ async function handleSave() {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -331,9 +331,9 @@ async function handleSave() {
   cursor: not-allowed;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .config-card {
-    padding: 32px;
+    padding: var(--spacing-8);
   }
 }
 </style>

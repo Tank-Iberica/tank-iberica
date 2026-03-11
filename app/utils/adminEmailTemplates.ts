@@ -521,7 +521,7 @@ export const TEMPLATE_DEFINITIONS: TemplateDefinition[] = [
 // ---------------------------------------------------------------------------
 
 export function escapeRegex(str: string): string {
-  return str.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return str.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
 }
 
 export function getSampleValue(varName: string): string {

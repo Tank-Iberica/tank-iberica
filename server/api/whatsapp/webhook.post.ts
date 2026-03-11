@@ -3,10 +3,11 @@
  *
  * Receives incoming WhatsApp messages from Meta Cloud API.
  * Extracts sender info, text and image messages, then:
- * 1. Looks up the dealer by phone/whatsapp field
- * 2. Creates a whatsapp_submissions record
- * 3. Triggers async processing via /api/whatsapp/process
- * 4. Sends an auto-reply acknowledgment
+ * 1. Deduplicates by message.id (Meta redelivery protection)
+ * 2. Looks up the dealer by phone/whatsapp field
+ * 3. Creates a whatsapp_submissions record
+ * 4. Triggers async processing via /api/whatsapp/process
+ * 5. Sends an auto-reply acknowledgment
  *
  * Returns 200 immediately as required by Meta.
  *
@@ -15,6 +16,7 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { defineEventHandler, readBody, readRawBody, getHeader } from 'h3'
 import { createHmac, timingSafeEqual } from 'node:crypto'
+import { logger } from '../../utils/logger'
 
 // ── Meta Cloud API webhook payload types ──
 
@@ -123,7 +125,7 @@ async function insertSubmission(
 
   if (!response.ok) {
     const errorText = await response.text()
-    console.error('[WhatsApp Webhook] Failed to insert submission:', errorText)
+    logger.error('[WhatsApp Webhook] Failed to insert submission:', { error: String(errorText) })
     return null
   }
 
@@ -181,10 +183,9 @@ async function verifyAndParsePayload(
 
   if (!config.whatsappApiToken) {
     const body = await readBody<WhatsAppWebhookPayload>(event)
-    console.warn(
-      '[WhatsApp Webhook] No API token configured (dev mode). Entries received:',
-      body?.entry?.length ?? 0,
-    )
+    logger.warn('[WhatsApp Webhook] No API token configured (dev mode)', {
+      entriesReceived: body?.entry?.length ?? 0,
+    })
     return { earlyReturn: { status: 'ok', dev: true } }
   }
 
@@ -255,8 +256,21 @@ async function processMessageChange(
   const messages = change.value.messages ?? []
   if (messages.length === 0) return
 
+  const messageId = messages[0]?.id
   const senderPhone = messages[0]?.from
-  if (!senderPhone) return
+  if (!senderPhone || !messageId) return
+
+  // Dedup: check if this message_id was already processed
+  const { data: existing } = await supabase
+    .from('whatsapp_submissions')
+    .select('id')
+    .eq('meta_message_id', messageId)
+    .maybeSingle()
+
+  if (existing) {
+    // Message already processed, skip
+    return
+  }
 
   const { textParts, mediaIds } = extractMessageContent(messages)
   if (textParts.length === 0 && mediaIds.length === 0) return
@@ -267,7 +281,7 @@ async function processMessageChange(
   if (!dealer) {
     await sendWhatsAppMessage(
       senderPhone,
-      'No est\u00E1s registrado como dealer en Tracciona. Visita tracciona.com para m\u00E1s informaci\u00F3n.',
+      'No estás registrado como dealer en Tracciona. Visita tracciona.com para más información.',
     )
     return
   }
@@ -278,12 +292,13 @@ async function processMessageChange(
     media_ids: mediaIds,
     text_content: textContent,
     status: 'received',
+    meta_message_id: messageId,
   })
   if (!submission) return
 
   await sendWhatsAppMessage(
     senderPhone,
-    '\uD83D\uDCF8 Recibido. Estamos procesando tu veh\u00EDculo. Te avisaremos cuando est\u00E9 listo.',
+    'Recibido. Estamos procesando tu vehículo. Te avisaremos cuando esté listo.',
   )
 
   $fetch('/api/whatsapp/process', {
@@ -291,8 +306,41 @@ async function processMessageChange(
     body: { submissionId: submission.id },
   }).catch((err: unknown) => {
     const message = err instanceof Error ? err.message : 'Unknown error'
-    console.error(`[WhatsApp Webhook] Process trigger failed for ${submission.id}:`, message)
+    logger.error(`[WhatsApp Webhook] Process trigger failed for ${submission.id}:`, { error: String(message) })
   })
+}
+
+// ── Send WhatsApp message via Meta API ───────────────────────────────────────
+
+async function sendWhatsAppMessage(recipientPhone: string, messageBody: string): Promise<void> {
+  const config = useRuntimeConfig()
+  const apiToken = config.whatsappApiToken || process.env.WHATSAPP_API_TOKEN
+  const phoneNumberId = config.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
+
+  if (!apiToken || !phoneNumberId) {
+    logger.warn('[WhatsApp Webhook] Cannot send reply: missing API token or phone number ID')
+    return
+  }
+
+  try {
+    await $fetch(`https://graph.instagram.com/v19.0/${phoneNumberId}/messages`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: recipientPhone,
+        type: 'text',
+        text: { body: messageBody },
+      },
+    })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    logger.error('[WhatsApp Webhook] Failed to send reply:', { error: String(message) })
+  }
 }
 
 // ── Handler ─────────────────────────────────────────────────────────────────
@@ -318,7 +366,7 @@ export default defineEventHandler(async (event) => {
       await processMessageChange(change, supabase, supabaseUrl, supabaseKey)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unknown error'
-      console.error('[WhatsApp Webhook] Error processing change:', message)
+      logger.error('[WhatsApp Webhook] Error processing change:', { error: String(message) })
     }
   }
 

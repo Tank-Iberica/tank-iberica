@@ -33,12 +33,12 @@ const { t } = useI18n()
 .filters-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding: 12px 16px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
+  padding: var(--spacing-3) var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-card);
   align-items: center;
 }
 
@@ -49,29 +49,29 @@ const { t } = useI18n()
 
 .status-filter {
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   overflow: hidden;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .filter-btn {
-  padding: 8px 14px;
+  padding: var(--spacing-2) 0.875rem;
   border: none;
   background: var(--bg-primary);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
   transition:
     background 0.2s,
     color 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
   white-space: nowrap;
 }
 
 .filter-btn:not(:last-child) {
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid var(--color-gray-200);
 }
 
 .filter-btn.active {

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 import {
   useAdminBalance,
   type BalanceEntry,
@@ -63,7 +63,7 @@ function buildExporterDesgloseHtml(
 }
 
 function buildExporterMensualHtml(
-  monthly: Map<string, { ingresos: number; gastos: number }>,
+  monthly: Iterable<[string, { ingresos: number; gastos: number }]>,
 ): string {
   let html = `<h2>Desglose Mensual</h2><table><thead><tr><th>Mes</th><th>Ingresos</th><th>Gastos</th><th>Neto</th></tr></thead><tbody>`
   for (const [month, data] of monthly) {
@@ -82,7 +82,7 @@ function buildExporterResumenSections(
     balanceNeto: number
     byReason: Record<string, { ingresos: number; gastos: number }>
   },
-  monthly: Map<string, { ingresos: number; gastos: number }>,
+  monthly: Iterable<[string, { ingresos: number; gastos: number }]>,
 ): string {
   const parts: string[] = []
   if (opts.totales) parts.push(buildExporterTotalesHtml(summaryData))
@@ -91,6 +91,103 @@ function buildExporterResumenSections(
   return parts.join('')
 }
 
+const EXPORTER_PDF_STYLE = `
+  body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: var(--font-size-xs); margin: 0; color: var(--text-primary); }
+  h1 { font-size: var(--font-size-lg); }
+  table { width: 100%; border-collapse: collapse; margin-top: var(--spacing-5); }
+  th, td { border: 1px solid #ccc; padding: 0.375rem var(--spacing-2); text-align: left; }
+  th { background: var(--bg-secondary); }
+  .ingreso { color: green; }
+  .gasto { color: red; }
+  .totals { margin-top: var(--spacing-5); }
+  @media print { body { margin: 0; } }
+`
+
+const EXPORTER_RESUMEN_STYLE = `
+  body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: var(--font-size-xs); margin: 0; color: var(--text-primary); }
+  h1, h2 { margin-bottom: 0.625rem; }
+  h1 { font-size: var(--font-size-lg); }
+  h2 { font-size: var(--font-size-sm); margin-top: var(--spacing-5); }
+  table { width: 100%; border-collapse: collapse; margin-bottom: var(--spacing-5); }
+  th, td { border: 1px solid #ccc; padding: 0.375rem var(--spacing-2); text-align: right; }
+  th { background: var(--bg-secondary); text-align: left; }
+  td:first-child { text-align: left; }
+  .positive { color: green; }
+  .negative { color: red; }
+  @media print { body { margin: 0; } }
+`
+
+function buildBalanceExportPdfHtml(
+  data: BalanceEntry[],
+  colDefs: ColDef[],
+  yearLabel: string,
+  totals: { totalIngresos: number; totalGastos: number; balanceNeto: number },
+): string {
+  const headerCells = colDefs.map((c) => `<th>${c.header}</th>`).join('')
+  const bodyRows = data
+    .map((e) => '<tr>' + colDefs.map((c) => c.cell(e)).join('') + '</tr>')
+    .join('')
+  return `<!DOCTYPE html><html><head><title>Balance ${yearLabel}</title>
+    <style>${EXPORTER_PDF_STYLE}</style>
+  </head><body>
+    <h1>Balance ${yearLabel}</h1>
+    <p>Generado: ${new Date().toLocaleDateString('es-ES')}</p>
+    <table><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table>
+    <div class="totals">
+      <p><strong>Total Ingresos:</strong> +${totals.totalIngresos.toFixed(2)}€</p>
+      <p><strong>Total Gastos:</strong> -${totals.totalGastos.toFixed(2)}€</p>
+      <p><strong>Balance Neto:</strong> ${totals.balanceNeto.toFixed(2)}€</p>
+    </div>
+  </body></html>`
+}
+
+function buildResumenExportPdfHtml(yearLabel: string, sectionsHtml: string): string {
+  return `<!DOCTYPE html><html><head><title>Resumen Balance</title>
+    <style>${EXPORTER_RESUMEN_STYLE}</style>
+  </head><body>
+    <h1>Resumen Balance ${yearLabel}</h1>
+    <p>Generado: ${new Date().toLocaleDateString('es-ES')}</p>
+    ${sectionsHtml}
+  </body></html>`
+}
+
+function printExportHTML(html: string, onError: () => void): void {
+  const existingFrame = document.getElementById('print-frame')
+  if (existingFrame) existingFrame.remove()
+
+  const iframe = document.createElement('iframe')
+  iframe.id = 'print-frame'
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
+  document.body.appendChild(iframe)
+
+  const doc = iframe.contentDocument || iframe.contentWindow?.document
+  if (!doc) {
+    onError()
+    return
+  }
+
+  doc.open()
+  doc.write(html)
+  doc.close()
+
+  setTimeout(() => {
+    try {
+      iframe.contentWindow?.focus()
+      iframe.contentWindow?.print()
+    } catch {
+      const win = globalThis.open('', '_blank')
+      if (win) {
+        win.document.write(html)
+        win.document.close()
+        win.focus()
+        win.print()
+      }
+    }
+  }, 100)
+}
+</script>
+
+<script setup lang="ts">
 const { t } = useI18n()
 const toast = useToast()
 
@@ -203,41 +300,10 @@ function exportToExcel(data: BalanceEntry[]) {
 }
 
 function exportToPDF(data: BalanceEntry[]) {
-  let html = `<!DOCTYPE html><html><head><title>Balance ${filters.year || 'Todos'}</title>
-    <style>
-      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: var(--text-primary); }
-      h1 { font-size: 18px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-      th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
-      th { background: var(--bg-secondary); }
-      .ingreso { color: green; }
-      .gasto { color: red; }
-      .totals { margin-top: 20px; }
-      @media print { body { margin: 0; } }
-    </style>
-  </head><body>
-    <h1>Balance ${filters.year || 'Todos los años'}</h1>
-    <p>Generado: ${new Date().toLocaleDateString('es-ES')}</p>
-    <table><thead><tr>`
-
   const colDefs = buildExporterColumns(exportColumns)
-  html += colDefs.map((c) => `<th>${c.header}</th>`).join('')
-
-  html += '</tr></thead><tbody>'
-
-  for (const e of data) {
-    html += '<tr>' + colDefs.map((c) => c.cell(e)).join('') + '</tr>'
-  }
-
-  html += `</tbody></table>
-    <div class="totals">
-      <p><strong>Total Ingresos:</strong> +${summary.value.totalIngresos.toFixed(2)}€</p>
-      <p><strong>Total Gastos:</strong> -${summary.value.totalGastos.toFixed(2)}€</p>
-      <p><strong>Balance Neto:</strong> ${summary.value.balanceNeto.toFixed(2)}€</p>
-    </div>
-  </body></html>`
-
-  printHTML(html)
+  const yearLabel = String(filters.year || 'Todos los años')
+  const html = buildBalanceExportPdfHtml(data, colDefs, yearLabel, summary.value)
+  printExportHTML(html, () => toast.error(t('toast.printFailed')))
 }
 
 function exportResumen() {
@@ -291,66 +357,10 @@ function exportResumenExcel() {
 }
 
 function exportResumenPDF() {
-  let html = `<!DOCTYPE html><html><head><title>Resumen Balance</title>
-    <style>
-      body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 0; color: var(--text-primary); }
-      h1, h2 { margin-bottom: 10px; }
-      h1 { font-size: 18px; }
-      h2 { font-size: 14px; margin-top: 20px; }
-      table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-      th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: right; }
-      th { background: var(--bg-secondary); text-align: left; }
-      td:first-child { text-align: left; }
-      .positive { color: green; }
-      .negative { color: red; }
-      @media print { body { margin: 0; } }
-    </style>
-  </head><body>
-    <h1>Resumen Balance ${filters.year || 'Todos los años'}</h1>
-    <p>Generado: ${new Date().toLocaleDateString('es-ES')}</p>`
-
-  html += buildExporterResumenSections(resumenOptions, summary.value, monthlyBreakdown.value)
-
-  html += '</body></html>'
-
-  printHTML(html)
-}
-
-function printHTML(html: string) {
-  const existingFrame = document.getElementById('print-frame')
-  if (existingFrame) {
-    existingFrame.remove()
-  }
-
-  const iframe = document.createElement('iframe')
-  iframe.id = 'print-frame'
-  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
-  document.body.appendChild(iframe)
-
-  const doc = iframe.contentDocument || iframe.contentWindow?.document
-  if (!doc) {
-    toast.error(t('toast.printFailed'))
-    return
-  }
-
-  doc.open()
-  doc.write(html)
-  doc.close()
-
-  setTimeout(() => {
-    try {
-      iframe.contentWindow?.focus()
-      iframe.contentWindow?.print()
-    } catch {
-      const win = globalThis.open('', '_blank')
-      if (win) {
-        win.document.write(html)
-        win.document.close()
-        win.focus()
-        win.print()
-      }
-    }
-  }, 100)
+  const yearLabel = String(filters.year || 'Todos los años')
+  const sections = buildExporterResumenSections(resumenOptions, summary.value, monthlyBreakdown.value)
+  const html = buildResumenExportPdfHtml(yearLabel, sections)
+  printExportHTML(html, () => toast.error(t('toast.printFailed')))
 }
 
 function downloadFile(content: string, filename: string, type: string) {
@@ -484,15 +494,15 @@ function fmt(val: number): string {
 <style scoped>
 .tool-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 
 .tool-header {
-  padding: 16px 20px;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -507,22 +517,22 @@ function fmt(val: number): string {
 .preview-summary {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  padding: 16px 20px;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-5);
   background: var(--bg-secondary);
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .summary-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .summary-item .label {
   font-size: 0.7rem;
   text-transform: uppercase;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-weight: 500;
 }
 
@@ -541,15 +551,15 @@ function fmt(val: number): string {
 
 /* Export Sections */
 .export-sections {
-  padding: 20px;
+  padding: var(--spacing-5);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-6);
 }
 
 .export-section {
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .export-section:last-child {
@@ -558,65 +568,65 @@ function fmt(val: number): string {
 }
 
 .export-section h3 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .section-desc {
-  margin: 0 0 16px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-4);
+  color: var(--color-gray-500);
   font-size: 0.85rem;
 }
 
 /* Filter Row */
 .filter-row {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
 }
 
 .select-input {
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-width: 160px;
+  min-width: 10rem;
 }
 
 /* Option Groups */
 .option-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .option-label {
   display: block;
   font-size: 0.8rem;
   font-weight: 500;
-  color: #374151;
-  margin-bottom: 8px;
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-2);
 }
 
 .radio-group,
 .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .radio-group.horizontal {
   flex-direction: row;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .radio-group label,
 .checkbox-group label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   cursor: pointer;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .radio-group input,
@@ -627,35 +637,35 @@ function fmt(val: number): string {
 .checkbox-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .checkbox-grid label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   font-size: 0.85rem;
   cursor: pointer;
 }
 
 /* Buttons */
 .btn {
-  padding: 10px 20px;
+  padding: 0.625rem var(--spacing-5);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .btn:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 
@@ -664,17 +674,17 @@ function fmt(val: number): string {
 }
 
 .btn-secondary {
-  background: #6b7280;
-  color: #fff;
+  background: var(--color-gray-500);
+  color: var(--color-white);
   border: none;
 }
 
 .btn-secondary:hover {
-  background: #4b5563;
+  background: var(--color-gray-600);
 }
 
 .btn-lg {
-  padding: 12px 24px;
+  padding: var(--spacing-3) var(--spacing-6);
   font-size: 1rem;
   font-weight: 500;
 }
@@ -687,17 +697,17 @@ function fmt(val: number): string {
 /* Mobile */
 @media (max-width: 48em) {
   .preview-summary {
-    gap: 12px;
+    gap: var(--spacing-3);
   }
 
   .summary-item {
     flex: 1;
-    min-width: 80px;
+    min-width: 5rem;
   }
 
   .radio-group.horizontal {
     flex-direction: column;
-    gap: 8px;
+    gap: var(--spacing-2);
   }
 
   .checkbox-grid {

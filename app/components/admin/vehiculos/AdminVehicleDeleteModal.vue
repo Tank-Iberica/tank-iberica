@@ -15,16 +15,12 @@ const emit = defineEmits<{
   <Teleport to="body">
     <div v-if="show" class="modal-backdrop" @click.self="emit('close')">
       <div class="modal-content">
-        <h3 class="modal-title">Eliminar vehículo</h3>
-        <p class="modal-text">
-          ¿Estás seguro de que quieres eliminar
-          <strong>{{ vehicle?.brand }} {{ vehicle?.model }}</strong
-          >? Esta acción no se puede deshacer.
-        </p>
+        <h3 class="modal-title">{{ $t('admin.vehicles.deleteVehicle') }}</h3>
+        <p class="modal-text" v-html="$t('admin.vehicles.deleteConfirmMsg', { name: `<strong>${vehicle?.brand} ${vehicle?.model}</strong>` })" />
         <div class="modal-actions">
-          <button class="btn-secondary" @click="emit('close')">Cancelar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.cancel') }}</button>
           <button class="btn-danger" :disabled="saving" @click="emit('confirm')">
-            {{ saving ? 'Eliminando...' : 'Eliminar' }}
+            {{ saving ? $t('common.deleting') : $t('common.delete') }}
           </button>
         </div>
       </div>
@@ -48,7 +44,7 @@ const emit = defineEmits<{
   background: var(--bg-primary);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-6);
-  max-width: 400px;
+  max-width: 25rem;
   width: 100%;
 }
 
@@ -78,7 +74,7 @@ const emit = defineEmits<{
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   color: var(--text-primary);
-  min-height: 40px;
+  min-height: 2.5rem;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
@@ -95,7 +91,7 @@ const emit = defineEmits<{
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  min-height: 40px;
+  min-height: 2.5rem;
   cursor: pointer;
   transition: background var(--transition-fast);
 }

@@ -80,10 +80,8 @@ async function handleSave() {
 
       <!-- Active Actions Section -->
       <div class="config-card">
-        <h3 class="card-title">Acciones Activas</h3>
-        <p class="card-description">
-          Selecciona los tipos de accion disponibles en el catalogo de vehiculos.
-        </p>
+        <h3 class="card-title">{{ $t('admin.configCatalog.activeActionsTitle') }}</h3>
+        <p class="card-description">{{ $t('admin.configCatalog.activeActionsDesc') }}</p>
         <div class="checkbox-grid">
           <label v-for="action in availableActions" :key="action.value" class="checkbox-label">
             <input v-model="activeActions" type="checkbox" :value="action.value" >
@@ -127,100 +125,100 @@ async function handleSave() {
 }
 
 .section-header {
-  margin-bottom: 32px;
+  margin-bottom: var(--spacing-8);
 }
 
 .section-header h2 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.75rem;
   color: var(--color-text);
 }
 
 .section-subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 1rem;
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 24px;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--spacing-6);
 }
 
 .card-title {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.125rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-description {
-  margin: 0 0 16px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-4);
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
 .checkbox-grid {
   display: flex;
-  gap: 24px;
+  gap: var(--spacing-6);
   flex-wrap: wrap;
-  padding: 16px;
+  padding: var(--spacing-4);
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
-  background: #f9fafb;
+  border-radius: var(--border-radius);
+  background: var(--color-gray-50);
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
   cursor: pointer;
   font-size: 0.95rem;
-  color: #374151;
-  min-height: 44px;
+  color: var(--color-gray-700);
+  min-height: 2.75rem;
 }
 
 .checkbox-label input {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   cursor: pointer;
   accent-color: var(--color-primary);
 }
 
 .save-section {
-  margin-bottom: 40px;
+  margin-bottom: var(--spacing-10);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
@@ -237,29 +235,29 @@ async function handleSave() {
 }
 
 .management-section {
-  border-top: 1px solid #e5e7eb;
-  padding-top: 32px;
+  border-top: 1px solid var(--color-gray-200);
+  padding-top: var(--spacing-8);
 }
 
 .management-title {
-  margin: 0 0 20px;
+  margin: 0 0 var(--spacing-5);
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .management-grid {
   display: grid;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .management-card {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5) var(--spacing-6);
+  box-shadow: var(--shadow-card);
   text-decoration: none;
   color: inherit;
   transition: all 0.2s;
@@ -277,14 +275,14 @@ async function handleSave() {
 }
 
 .management-card-content h4 {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.05rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .management-card-content p {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
@@ -301,23 +299,23 @@ async function handleSave() {
 }
 
 /* Mobile responsive */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header h2 {
     font-size: 1.5rem;
   }
 
   .config-card {
-    padding: 16px;
+    padding: var(--spacing-4);
   }
 
   .checkbox-grid {
     flex-direction: column;
-    gap: 12px;
-    padding: 12px;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
   }
 
   .management-card {
-    padding: 16px;
+    padding: var(--spacing-4);
   }
 
   .management-card-arrow {

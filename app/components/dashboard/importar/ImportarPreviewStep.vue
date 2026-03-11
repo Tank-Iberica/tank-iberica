@@ -93,16 +93,16 @@ const emit = defineEmits<{
 <style scoped>
 .step-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
 }
 
 .preview-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
 }
 
 .preview-header h2 {
@@ -114,7 +114,7 @@ const emit = defineEmits<{
 
 .preview-stats {
   display: flex;
-  gap: 16px;
+  gap: 1rem;
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -129,7 +129,7 @@ const emit = defineEmits<{
 
 .table-wrapper {
   overflow-x: auto;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .preview-table {
@@ -140,21 +140,21 @@ const emit = defineEmits<{
 
 .preview-table th {
   text-align: left;
-  padding: 12px 8px;
+  padding: 0.75rem 0.5rem;
   background: var(--bg-secondary);
-  border-bottom: 2px solid var(--color-gray-200);
+  border-bottom: 0.125rem solid var(--color-gray-200);
   font-weight: 600;
   color: var(--text-secondary);
   white-space: nowrap;
 }
 
 .preview-table td {
-  padding: 12px 8px;
+  padding: 0.75rem 0.5rem;
   border-bottom: 1px solid var(--color-gray-100);
 }
 
 .row-invalid {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .status-ok {
@@ -171,12 +171,12 @@ const emit = defineEmits<{
 
 .error-list {
   color: var(--color-error);
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
 }
 
 .preview-actions {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
   justify-content: flex-end;
   flex-wrap: wrap;
 }
@@ -185,12 +185,12 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
 }
@@ -203,12 +203,12 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
 }

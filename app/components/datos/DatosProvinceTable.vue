@@ -77,7 +77,7 @@ function sortArrow(key: ProvinceSortKey): string {
 
 .province-table {
   width: 100%;
-  min-width: 360px;
+  min-width: 22.5rem;
   border-collapse: collapse;
 }
 
@@ -101,7 +101,7 @@ function sortArrow(key: ProvinceSortKey): string {
 .province-table__th--sortable {
   cursor: pointer;
   user-select: none;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background var(--transition-fast);
 }
 

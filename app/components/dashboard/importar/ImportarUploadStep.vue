@@ -49,18 +49,18 @@ const emit = defineEmits<{
 <style scoped>
 .step-section {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
 }
 
 .upload-area {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
   align-items: center;
   text-align: center;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .upload-area h2 {
@@ -84,10 +84,10 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 12px 24px;
-  border: 2px dashed var(--color-gray-200);
-  border-radius: 8px;
+  min-height: 2.75rem;
+  padding: 0.75rem 1.5rem;
+  border: 0.125rem dashed var(--color-gray-200);
+  border-radius: var(--border-radius);
   background: var(--bg-secondary);
   color: var(--text-secondary);
   font-weight: 500;
@@ -106,25 +106,25 @@ const emit = defineEmits<{
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: 0.75rem 1rem;
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   width: 100%;
-  max-width: 500px;
+  max-width: 31.25rem;
 }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
 }
@@ -137,12 +137,12 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
 }

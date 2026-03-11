@@ -5,9 +5,13 @@
  * substitutes variables, converts markdown to HTML, wraps in branded template,
  * checks user preferences, sends via Resend, and logs to email_logs.
  */
-import { createError, defineEventHandler, getHeader, readBody } from 'h3'
+import { defineEventHandler, getHeader } from 'h3'
+import { z } from 'zod'
+import { safeError } from '../../utils/safeError'
+import { validateBody } from '../../utils/validateBody'
 import { serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
 import { Resend } from 'resend'
+import { logger } from '../../utils/logger'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -127,14 +131,15 @@ function buildEmailHtml(params: {
   siteUrl: string
   unsubscribeUrl: string
   footerText: string
+  locale?: string
 }): string {
-  const { bodyHtml, theme, logoUrl, siteName, siteUrl, unsubscribeUrl, footerText } = params
+  const { bodyHtml, theme, logoUrl, siteName, siteUrl, unsubscribeUrl, footerText, locale = 'es' } = params
   const primary = theme.primary ?? '#23424A'
   const bgColor = theme.background ?? '#f4f4f5'
   const textColor = theme.text ?? '#1a1a1a'
 
   return `<!DOCTYPE html>
-<html lang="es">
+<html lang="${locale}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -183,7 +188,8 @@ function buildEmailHtml(params: {
 }
 
 async function loadEmailTemplate(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
   vertical: string,
   templateKey: string,
 ): Promise<{ template: EmailTemplate; config: VerticalConfigRow }> {
@@ -194,26 +200,21 @@ async function loadEmailTemplate(
     .single()
 
   if (configError || !config) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to load vertical config: ${configError?.message ?? 'not found'}`,
-    })
+    throw safeError(500, `Failed to load vertical config: ${configError?.message ?? 'not found'}`)
   }
 
   const typedConfig = config as unknown as VerticalConfigRow
   const templates = typedConfig.email_templates
   if (!templates?.[templateKey]) {
-    throw createError({
-      statusCode: 404,
-      message: `Email template "${templateKey}" not found in vertical_config`,
-    })
+    throw safeError(404, `Email template "${templateKey}" not found in vertical_config`)
   }
 
-  return { template: templates[templateKey]!, config: typedConfig }
+  return { template: templates[templateKey], config: typedConfig }
 }
 
 async function checkEmailPreference(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
   userId: string,
   templateKey: string,
   vertical: string,
@@ -236,7 +237,7 @@ async function checkEmailPreference(
       template_key: templateKey,
       variables,
       status: 'skipped_preference',
-    })
+    } as never)
     return {
       skipped: true,
       response: { success: true, messageId: null, skipped: true, reason: 'user_preference' },
@@ -286,12 +287,13 @@ async function verifyEmailAuth(
   if (internalSecret && internalHeader === internalSecret) return
 
   const user = await serverSupabaseUser(event)
-  if (!user) throw createError({ statusCode: 401, message: 'Authentication required' })
+  if (!user) throw safeError(401, 'Authentication required')
   if (body.userId && body.userId !== user.id) body.userId = user.id
 }
 
 async function fetchUnsubscribeToken(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
   userId: string | undefined,
 ): Promise<string> {
   if (!userId) return ''
@@ -304,7 +306,8 @@ async function fetchUnsubscribeToken(
 }
 
 async function sendOrMockEmail(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
   logBase: Record<string, unknown>,
   sendParams: {
     to: string
@@ -319,8 +322,8 @@ async function sendOrMockEmail(
   const resendApiKey = runtimeConfig.resendApiKey || process.env.RESEND_API_KEY
 
   if (!resendApiKey) {
-    console.warn(`[email/send] RESEND_API_KEY not set. Mock sending template "${templateKey}"`)
-    return `mock_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+    logger.warn(`[email/send] RESEND_API_KEY not set. Mock sending template "${templateKey}"`)
+    return `mock_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`
   }
 
   try {
@@ -334,23 +337,27 @@ async function sendOrMockEmail(
         status: 'failed',
         error: errorMessage,
         sent_at: new Date().toISOString(),
-      })
+      } as never)
     if (err && typeof err === 'object' && 'statusCode' in err) throw err
     throw safeError(500, `Email send failed: ${errorMessage}`)
   }
 }
 
+const sendEmailSchema = z.object({
+  templateKey: z.string().min(1).max(128),
+  to: z.string().email(),
+  userId: z.string().uuid().optional(),
+  variables: z.record(z.string()).optional(),
+  locale: z.string().min(2).max(5).optional(),
+})
+
 // ── Handler ────────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event) => {
   const VERTICAL = process.env.NUXT_PUBLIC_VERTICAL || 'tracciona'
-  const body = await readBody<SendEmailBody>(event)
+  const body = await validateBody(event, sendEmailSchema)
 
   await verifyEmailAuth(event, body)
-
-  if (!body.templateKey || !body.to) {
-    throw createError({ statusCode: 400, message: 'Missing required fields: templateKey and to' })
-  }
 
   const locale = body.locale ?? 'es'
   const variables = body.variables ?? {}
@@ -380,10 +387,7 @@ export default defineEventHandler(async (event) => {
   const rawSubject = resolveLocalized(template.subject, locale)
   const rawBody = resolveLocalized(template.body, locale)
   if (!rawSubject || !rawBody) {
-    throw createError({
-      statusCode: 500,
-      message: `Template "${body.templateKey}" has empty subject or body for locale "${locale}"`,
-    })
+    throw safeError(500, `Template "${body.templateKey}" has empty subject or body for locale "${locale}"`)
   }
 
   const unsubscribeToken = await fetchUnsubscribeToken(supabase, body.userId)
@@ -413,6 +417,7 @@ export default defineEventHandler(async (event) => {
     siteUrl,
     unsubscribeUrl,
     footerText: footerTextMap[locale] ?? footerTextMap.es ?? '',
+    locale,
   })
 
   // ── 4. Send + log ─────────────────────────────────────────────────────────

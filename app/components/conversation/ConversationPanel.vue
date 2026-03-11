@@ -78,6 +78,22 @@
       </template>
     </div>
 
+    <!-- Quick replies for dealers -->
+    <div v-if="showQuickReplies" class="quick-replies" :aria-label="$t('messages.quickReplies')">
+      <button class="quick-reply-chip" @click="useQuickReply($t('messages.quickReplyAvailable'))">
+        {{ $t('messages.quickReplyAvailable') }}
+      </button>
+      <button class="quick-reply-chip" @click="useQuickReply($t('messages.quickReplyNegotiable'))">
+        {{ $t('messages.quickReplyNegotiable') }}
+      </button>
+      <button class="quick-reply-chip" @click="useQuickReply($t('messages.quickReplySold'))">
+        {{ $t('messages.quickReplySold') }}
+      </button>
+      <button class="quick-reply-chip" @click="useQuickReply($t('messages.quickReplyVisit'))">
+        {{ $t('messages.quickReplyVisit') }}
+      </button>
+    </div>
+
     <!-- Input area -->
     <div class="input-area">
       <textarea
@@ -121,8 +137,12 @@ import { useConversation } from '~/composables/useConversation'
 
 const props = defineProps<{
   conversationId: string
+  /** Show quick reply chips for dealers */
+  showQuickReplies?: boolean
 }>()
 
+const { t, locale } = useI18n()
+const localeMap: Record<string, string> = { es: 'es-ES', en: 'en-GB', fr: 'fr-FR', pt: 'pt-PT', de: 'de-DE' }
 const user = useSupabaseUser()
 
 const {
@@ -174,14 +194,15 @@ function formatTimestamp(iso: string): string {
     date.getMonth() === now.getMonth() &&
     date.getFullYear() === now.getFullYear()
 
-  const time = date.toLocaleTimeString('es-ES', {
+  const intlLocale = localeMap[locale.value] ?? 'es-ES'
+  const time = date.toLocaleTimeString(intlLocale, {
     hour: '2-digit',
     minute: '2-digit',
   })
 
   if (isToday) return time
 
-  const day = date.toLocaleDateString('es-ES', {
+  const day = date.toLocaleDateString(intlLocale, {
     day: '2-digit',
     month: '2-digit',
   })
@@ -222,6 +243,13 @@ async function onSend(): Promise<void> {
 async function onAcceptShare(): Promise<void> {
   await acceptDataShare(props.conversationId)
 }
+
+function useQuickReply(text: string): void {
+  newMessage.value = text
+  nextTick(() => {
+    textareaRef.value?.focus()
+  })
+}
 </script>
 
 <style scoped>
@@ -250,8 +278,8 @@ async function onAcceptShare(): Promise<void> {
 }
 
 .header-vehicle-img {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: var(--border-radius-sm);
   object-fit: cover;
   flex-shrink: 0;
@@ -260,7 +288,7 @@ async function onAcceptShare(): Promise<void> {
 .header-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
   min-width: 0;
 }
 
@@ -329,7 +357,7 @@ async function onAcceptShare(): Promise<void> {
   font-size: var(--font-size-xs);
   color: var(--text-secondary);
   margin: 0;
-  min-width: 140px;
+  min-width: 8.75rem;
 }
 
 .share-banner-btn {
@@ -341,13 +369,13 @@ async function onAcceptShare(): Promise<void> {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  min-height: 36px;
+  min-height: 2.25rem;
   white-space: nowrap;
   transition: background var(--transition-fast);
 }
 
 .share-banner-btn:hover {
-  background: #2563eb;
+  background: var(--color-focus);
 }
 
 /* Messages area */
@@ -358,7 +386,7 @@ async function onAcceptShare(): Promise<void> {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-3);
-  min-height: 200px;
+  min-height: 12.5rem;
 }
 
 .messages-loading {
@@ -431,9 +459,9 @@ async function onAcceptShare(): Promise<void> {
 
 .message-timestamp {
   display: block;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--text-auxiliary);
-  margin-top: 2px;
+  margin-top: 0.125rem;
   text-align: right;
 }
 
@@ -451,6 +479,41 @@ async function onAcceptShare(): Promise<void> {
   text-align: center;
 }
 
+/* Quick replies */
+.quick-replies {
+  display: flex;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-top: 1px solid var(--border-color-light);
+  flex-shrink: 0;
+}
+
+.quick-replies::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-reply-chip {
+  padding: 0.3rem 0.875rem;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius-full);
+  background: transparent;
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 2rem;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.quick-reply-chip:hover {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
 /* Input area */
 .input-area {
   display: flex;
@@ -464,8 +527,8 @@ async function onAcceptShare(): Promise<void> {
 
 .input-textarea {
   flex: 1;
-  min-height: 44px;
-  max-height: 72px;
+  min-height: 2.75rem;
+  max-height: 4.5rem;
   padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -485,7 +548,7 @@ async function onAcceptShare(): Promise<void> {
 .input-textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 .input-textarea:disabled {
@@ -494,8 +557,8 @@ async function onAcceptShare(): Promise<void> {
 }
 
 .input-send-btn {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding: var(--spacing-2);
   background: var(--color-primary);
   color: var(--color-white);
@@ -521,8 +584,8 @@ async function onAcceptShare(): Promise<void> {
 /* Spinner */
 .spinner {
   display: inline-block;
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   border: 2px solid transparent;
   border-top-color: currentColor;
   border-radius: 50%;
@@ -530,8 +593,8 @@ async function onAcceptShare(): Promise<void> {
 }
 
 .spinner--small {
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 @keyframes spin {

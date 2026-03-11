@@ -8,7 +8,8 @@
  *
  * Returns metrics sorted by recorded_at DESC.
  */
-import { defineEventHandler, createError, getQuery } from 'h3'
+import { defineEventHandler, getQuery } from 'h3'
+import { safeError } from '../../utils/safeError'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -36,7 +37,7 @@ export default defineEventHandler(async (event) => {
   // ── Admin auth check ──────────────────────────────────────────────────────
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw safeError(401, 'Unauthorized')
   }
 
   const supabase = serverSupabaseServiceRole(event)
@@ -45,7 +46,7 @@ export default defineEventHandler(async (event) => {
 
   const typedUser = userData as unknown as UserRow | null
   if (typedUser?.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Forbidden' })
+    throw safeError(403, 'Forbidden')
   }
 
   // ── Parse query params ────────────────────────────────────────────────────

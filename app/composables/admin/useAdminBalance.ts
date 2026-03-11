@@ -101,8 +101,15 @@ export const BALANCE_STATUS_LABELS: Record<BalanceStatus, string> = {
   cobrado: 'Cobrado',
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function applyBalanceFilters(query: any, filters: BalanceFilters): any {
+type FilterChainResult = { data: BalanceEntry[] | null; error: unknown; count: number | null }
+type FilterChain = {
+  eq: (col: string, val: unknown) => FilterChain
+  gte: (col: string, val: unknown) => FilterChain
+  lte: (col: string, val: unknown) => FilterChain
+  or: (filters: string) => FilterChain
+} & Promise<FilterChainResult>
+
+function applyBalanceFilters(query: FilterChain, filters: BalanceFilters): Promise<FilterChainResult> {
   if (filters.year) {
     query = query.gte('fecha', `${filters.year}-01-01`).lte('fecha', `${filters.year}-12-31`)
   }
@@ -132,6 +139,44 @@ function accumulateByType(byType: ByType, entry: BalanceEntry, amount: number): 
     byType[subcatName].coste += entry.coste_asociado || 0
   } else {
     byType[subcatName].gastos += amount
+  }
+}
+
+function computeBalanceSummary(entryList: BalanceEntry[]): BalanceSummary {
+  let totalIngresos = 0
+  let totalGastos = 0
+  const byReason: Record<string, { ingresos: number; gastos: number }> = {}
+  const byType: ByType = {}
+
+  for (const entry of entryList) {
+    const amount = entry.importe || 0
+    if (entry.tipo === 'ingreso') {
+      totalIngresos += amount
+    } else {
+      totalGastos += amount
+    }
+    byReason[entry.razon] ??= { ingresos: 0, gastos: 0 }
+    if (entry.tipo === 'ingreso') {
+      byReason[entry.razon]!.ingresos += amount
+    } else {
+      byReason[entry.razon]!.gastos += amount
+    }
+    accumulateByType(byType, entry, amount)
+  }
+
+  for (const key of Object.keys(byType)) {
+    const sub = byType[key]
+    if (sub != null && sub.coste > 0) {
+      sub.beneficio = Math.round(((sub.ingresos - sub.coste) / sub.coste) * 100)
+    }
+  }
+
+  return {
+    totalIngresos,
+    totalGastos,
+    balanceNeto: totalIngresos - totalGastos,
+    byReason,
+    byType,
   }
 }
 
@@ -318,46 +363,7 @@ export function useAdminBalance() {
   /**
    * Calculate summary from current entries
    */
-  const summary = computed<BalanceSummary>(() => {
-    let totalIngresos = 0
-    let totalGastos = 0
-    const byReason: Record<string, { ingresos: number; gastos: number }> = {}
-    const byType: ByType = {}
-
-    for (const entry of entries.value) {
-      const amount = entry.importe || 0
-
-      if (entry.tipo === 'ingreso') {
-        totalIngresos += amount
-      } else {
-        totalGastos += amount
-      }
-
-      byReason[entry.razon] ??= { ingresos: 0, gastos: 0 }
-      if (entry.tipo === 'ingreso') {
-        byReason[entry.razon]!.ingresos += amount
-      } else {
-        byReason[entry.razon]!.gastos += amount
-      }
-
-      accumulateByType(byType, entry, amount)
-    }
-
-    for (const key of Object.keys(byType)) {
-      const sub = byType[key]
-      if (sub != null && sub.coste > 0) {
-        sub.beneficio = Math.round(((sub.ingresos - sub.coste) / sub.coste) * 100)
-      }
-    }
-
-    return {
-      totalIngresos,
-      totalGastos,
-      balanceNeto: totalIngresos - totalGastos,
-      byReason,
-      byType,
-    }
-  })
+  const summary = computed<BalanceSummary>(() => computeBalanceSummary(entries.value))
 
   /**
    * Calculate profit percentage for an entry

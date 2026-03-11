@@ -178,45 +178,45 @@ const emit = defineEmits<{
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 12px 16px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3) var(--spacing-4);
+  box-shadow: var(--shadow-xs);
 }
 .section-title {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #374151;
-  margin-bottom: 10px;
+  color: var(--color-gray-700);
+  margin-bottom: 0.625rem;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 .row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .row-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
 }
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 .field label {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
 }
 .field input,
 .field select {
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.85rem;
 }
 .field input:focus,
@@ -226,9 +226,9 @@ const emit = defineEmits<{
 }
 .location-detected {
   display: block;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--color-success);
-  margin-top: 2px;
+  margin-top: 0.125rem;
   font-weight: 500;
 }
 

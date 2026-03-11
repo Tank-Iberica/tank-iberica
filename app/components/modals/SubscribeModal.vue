@@ -178,14 +178,14 @@ watch(
   width: 100%;
   max-height: 85vh;
   overflow-y: auto;
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: var(--spacing-4) var(--spacing-5);
   border-bottom: 1px solid #eee;
   position: sticky;
   top: 0;
@@ -202,44 +202,44 @@ watch(
 .close-button {
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 1.75rem;
   color: #999;
   cursor: pointer;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .modal-body {
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal-subtitle {
   font-size: 0.9rem;
   color: var(--text-secondary, #666);
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .form-group label {
   display: block;
   font-size: 0.85rem;
   font-weight: 500;
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .form-input {
   width: 100%;
-  padding: 12px;
+  padding: var(--spacing-3);
   border: 2px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 1rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-input:focus {
@@ -248,47 +248,47 @@ watch(
 }
 
 .prefs-group {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
 }
 
 .prefs-group h3 {
   font-size: 0.9rem;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 0;
+  gap: 0.625rem;
+  padding: var(--spacing-2) 0;
   cursor: pointer;
   font-size: 0.9rem;
 }
 
 .checkbox-label input {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   cursor: pointer;
 }
 
 .error-text {
   color: var(--color-error);
   font-size: 0.85rem;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 
 .btn-submit {
   width: 100%;
-  padding: 14px;
+  padding: 0.875rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-submit:disabled {
@@ -297,30 +297,30 @@ watch(
 }
 
 .success-message {
-  padding: 48px 24px;
+  padding: var(--spacing-12) var(--spacing-6);
   text-align: center;
 }
 
 .success-icon {
-  width: 56px;
-  height: 56px;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 50%;
   background: var(--color-success);
   color: white;
-  font-size: 32px;
+  font-size: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
+  margin: 0 auto 1rem;
 }
 
 .success-message h3 {
   font-size: 1.1rem;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
 }
 
 .success-message p {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -348,12 +348,12 @@ watch(
 @media (min-width: 48em) {
   .modal-backdrop {
     align-items: center;
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 
   .modal-container {
     max-width: 30em;
-    border-radius: 12px;
+    border-radius: var(--border-radius-md);
   }
 
   .modal-enter-from .modal-container,

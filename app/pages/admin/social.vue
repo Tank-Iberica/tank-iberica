@@ -125,9 +125,8 @@ watch(statusFilter, () => {
     </div>
 
     <!-- Loading -->
-    <div v-if="loading && filteredPosts.length === 0" class="loading-state">
-      <div class="spinner" />
-      <span>{{ t('admin.social.loading') }}</span>
+    <div v-if="loading && filteredPosts.length === 0" class="loading-state" aria-busy="true">
+      <UiSkeletonCard v-for="n in 4" :key="n" :image="true" :lines="2" />
     </div>
 
     <!-- Empty state -->
@@ -219,19 +218,19 @@ watch(statusFilter, () => {
 .social-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-4);
   height: 100%;
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .header-left h1 {
   margin: 0;
@@ -241,7 +240,7 @@ watch(statusFilter, () => {
 }
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .count-badge {
@@ -249,27 +248,27 @@ watch(statusFilter, () => {
   color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: var(--spacing-1) 0.625rem;
+  border-radius: var(--border-radius-md);
 }
 .count-badge.pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .btn-generate {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 18px;
+  gap: 0.375rem;
+  padding: 0.625rem 1.125rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background 0.2s;
 }
 .btn-generate:hover {
@@ -277,15 +276,15 @@ watch(statusFilter, () => {
 }
 
 .btn-refresh {
-  padding: 10px 18px;
+  padding: 0.625rem 1.125rem;
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: all 0.2s;
 }
 .btn-refresh:hover {
@@ -299,12 +298,12 @@ watch(statusFilter, () => {
 
 .toast-success {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 1.25rem;
+  right: 1.25rem;
   background: var(--color-success);
   color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
+  padding: var(--spacing-3) var(--spacing-5);
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.9rem;
   z-index: 9999;
@@ -324,10 +323,10 @@ watch(statusFilter, () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
@@ -336,7 +335,7 @@ watch(statusFilter, () => {
   border: none;
   color: var(--color-error);
   cursor: pointer;
-  padding: 4px;
+  padding: var(--spacing-1);
   display: flex;
   align-items: center;
 }
@@ -345,13 +344,13 @@ watch(statusFilter, () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -367,12 +366,12 @@ watch(statusFilter, () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .empty-icon {
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1);
 }
 .empty-state p {
   margin: 0;
@@ -382,10 +381,10 @@ watch(statusFilter, () => {
 .posts-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .page-header {
     flex-direction: row;
     justify-content: space-between;
@@ -395,12 +394,12 @@ watch(statusFilter, () => {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .posts-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-@media (min-width: 1280px) {
+@media (min-width: 80em) {
   .posts-grid {
     grid-template-columns: repeat(4, 1fr);
   }

@@ -178,7 +178,7 @@ export function useAdvertiseModal(
 
   function handleTechSheetSelect(e: Event) {
     const input = e.target as HTMLInputElement
-    if (!input.files || !input.files[0]) return
+    if (!input.files?.[0]) return
     const file = input.files[0]
     if (file.size > 10 * 1024 * 1024) return
     if (techSheetPreview.value) URL.revokeObjectURL(techSheetPreview.value)

@@ -32,24 +32,24 @@ const { t } = useI18n()
 .ai-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.7rem;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   white-space: nowrap;
   line-height: 1.4;
 }
 
 .ai-badge.generated {
-  background: rgba(139, 92, 246, 0.1);
-  color: #7c3aed;
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: var(--color-purple-bg);
+  color: var(--color-purple-text);
+  border: 1px solid var(--color-info-border);
 }
 
 .ai-badge.translated {
-  background: rgba(59, 130, 246, 0.1);
-  color: #2563eb;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+  border: 1px solid var(--color-info-border);
 }
 </style>

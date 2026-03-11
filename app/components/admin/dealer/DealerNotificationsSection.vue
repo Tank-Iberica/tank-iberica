@@ -111,7 +111,7 @@ const emit = defineEmits<{
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .notification-item:hover {
@@ -120,17 +120,17 @@ const emit = defineEmits<{
 }
 
 .notification-item input[type='checkbox'] {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   cursor: pointer;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 0.125rem;
 }
 
 .notification-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .notification-text strong {

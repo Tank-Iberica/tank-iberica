@@ -34,6 +34,8 @@ onMounted(() => init())
 <template>
   <div class="cmp-page">
     <div class="cmp-wrap">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('comparator.title') }]" />
+      <PerfilProfileNavPills />
       <ComparadorHeader
         :comparisons="comparisons"
         :active-comparison="activeComparison"
@@ -115,7 +117,7 @@ onMounted(() => init())
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-4);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
@@ -132,7 +134,7 @@ onMounted(() => init())
   background: var(--color-primary-dark);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .cmp-wrap {
     padding: 0 var(--spacing-8);
   }

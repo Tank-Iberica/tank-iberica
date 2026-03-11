@@ -29,7 +29,7 @@ const emit = defineEmits<{
             Titulo {{ getSortIcon('title_es') }}
           </th>
           <th class="col-category">Categoria</th>
-          <th class="col-status">Estado</th>
+          <th class="col-status">{{ $t('common.status') }}</th>
           <th class="col-views" @click="emit('toggle-sort', 'views')">
             Visitas {{ getSortIcon('views') }}
           </th>
@@ -37,7 +37,7 @@ const emit = defineEmits<{
             Fecha {{ getSortIcon('published_at') }}
           </th>
           <th class="col-seo">SEO</th>
-          <th class="col-actions">Acciones</th>
+          <th class="col-actions">{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -45,13 +45,13 @@ const emit = defineEmits<{
           <td colspan="7" class="empty-state">
             <div class="empty-content">
               <span class="empty-icon">&#x1F4F0;</span>
-              <p>No hay noticias{{ hasActiveFilters ? ' con estos filtros' : '' }}</p>
+              <p>{{ $t('common.noResults') }}</p>
               <NuxtLink
                 v-if="!hasActiveFilters"
                 to="/admin/noticias/nuevo"
                 class="btn btn-primary btn-sm"
               >
-                Crear primera noticia
+                {{ $t('admin.noticias.createFirst') }}
               </NuxtLink>
             </div>
           </td>
@@ -80,9 +80,9 @@ const emit = defineEmits<{
               :class="'status-' + item.status"
               @change="emit('status-change', item, $event)"
             >
-              <option value="draft">Borrador</option>
-              <option value="published">Publicado</option>
-              <option value="archived">Archivado</option>
+              <option value="draft">{{ $t('common.draft') }}</option>
+              <option value="published">{{ $t('common.published') }}</option>
+              <option value="archived">{{ $t('common.archived') }}</option>
             </select>
           </td>
           <td class="col-views">{{ item.views || 0 }}</td>
@@ -135,8 +135,8 @@ const emit = defineEmits<{
 <style scoped>
 .table-container {
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
 }
 
@@ -148,7 +148,7 @@ const emit = defineEmits<{
 
 .data-table thead th {
   background: var(--bg-secondary);
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   text-align: left;
   font-weight: 600;
   color: var(--text-auxiliary);
@@ -162,43 +162,43 @@ const emit = defineEmits<{
 }
 
 .data-table thead th:first-child {
-  padding-left: 16px;
+  padding-left: var(--spacing-4);
 }
 
 .col-title {
-  min-width: 250px;
+  min-width: 15.625rem;
   cursor: pointer !important;
 }
 .col-category {
-  width: 100px;
+  width: 6.25rem;
 }
 .col-status {
-  width: 120px;
+  width: 7.5rem;
 }
 .col-views {
-  width: 80px;
+  width: 5rem;
   text-align: center;
 }
 .col-date {
-  width: 120px;
+  width: 7.5rem;
   cursor: pointer !important;
 }
 .col-seo {
-  width: 60px;
+  width: 3.75rem;
   text-align: center;
 }
 .col-actions {
-  width: 110px;
+  width: 6.875rem;
 }
 
 .data-table tbody td {
-  padding: 12px;
+  padding: var(--spacing-3);
   border-bottom: 1px solid var(--color-gray-100);
   vertical-align: middle;
 }
 
 .data-table tbody td:first-child {
-  padding-left: 16px;
+  padding-left: var(--spacing-4);
 }
 
 .news-row {
@@ -214,12 +214,12 @@ const emit = defineEmits<{
 .title-cell {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .news-title {
   font-weight: 500;
-  color: #1a1a1a;
+  color: var(--color-near-black);
   line-height: 1.3;
 }
 
@@ -232,24 +232,24 @@ const emit = defineEmits<{
 /* Category pill */
 .cat-pill {
   display: inline-block;
-  padding: 2px 8px;
-  border-radius: 10px;
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--border-radius-md);
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .cat-prensa {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 .cat-eventos {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 .cat-destacados {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 .cat-general {
   background: var(--bg-secondary);
@@ -258,9 +258,9 @@ const emit = defineEmits<{
 
 /* Status select */
 .status-select {
-  padding: 4px 8px;
+  padding: var(--spacing-1) var(--spacing-2);
   border: 1px solid var(--color-gray-200);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.8rem;
   cursor: pointer;
   background: var(--bg-primary);
@@ -268,10 +268,10 @@ const emit = defineEmits<{
 
 .status-draft {
   color: var(--color-warning-text);
-  border-color: #fbbf24;
+  border-color: var(--color-amber-400);
 }
 .status-published {
-  color: #166534;
+  color: var(--badge-success-bg);
   border-color: var(--color-success);
 }
 .status-archived {
@@ -284,39 +284,39 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 24px;
-  border-radius: 12px;
+  width: 2.25rem;
+  height: 1.5rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.7rem;
   font-weight: 700;
 }
 
 .seo-good {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 .seo-warning {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 .seo-bad {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 /* Actions */
 .action-btns {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--border-radius);
   color: var(--text-auxiliary);
   transition: all 0.15s;
   cursor: pointer;
@@ -327,28 +327,28 @@ const emit = defineEmits<{
 
 .action-btn:hover {
   background: var(--bg-secondary);
-  color: #1a1a1a;
+  color: var(--color-near-black);
 }
 .action-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
 }
 .action-delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 /* Empty state */
 .empty-state {
   text-align: center;
-  padding: 40px 20px !important;
+  padding: 2.5rem 1.25rem !important;
 }
 
 .empty-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .empty-icon {
@@ -360,19 +360,19 @@ const emit = defineEmits<{
 }
 
 .btn {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--color-gray-200);
   background: var(--bg-primary);
-  color: #374151;
+  color: var(--color-gray-700);
   transition: all 0.15s;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .btn-primary {
@@ -385,7 +385,7 @@ const emit = defineEmits<{
   opacity: 0.9;
 }
 .btn-sm {
-  padding: 4px 12px;
+  padding: var(--spacing-1) var(--spacing-3);
   font-size: 0.8rem;
 }
 

@@ -9,11 +9,17 @@
  * falling back to static templates if AI is unavailable or fails.
  */
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
 import { getSiteUrl } from '~~/server/utils/siteConfig'
 import { callAI } from '~~/server/services/aiProvider'
+import { safeError } from '~~/server/utils/safeError'
+import { validateBody } from '~~/server/utils/validateBody'
+import { logger } from '../../utils/logger'
 
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const generatePostsSchema = z.object({
+  vehicleId: z.string().uuid('vehicleId must be a valid UUID'),
+})
 
 type Platform = 'linkedin' | 'facebook' | 'instagram' | 'x'
 
@@ -216,7 +222,7 @@ Rules:
     return parsed
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
-    console.warn(`[social/generate-posts] AI generation failed, using templates: ${message}`)
+    logger.warn(`[social/generate-posts] AI generation failed, using templates: ${message}`)
     return null
   }
 }
@@ -229,24 +235,14 @@ export default defineEventHandler(async (event): Promise<GeneratePostsResponse> 
   // 1. Authenticate
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   // 2. Service role client
   const supabase = serverSupabaseServiceRole(event)
 
   // 3. Validate body
-  const body = await readBody<GeneratePostsBody>(event)
-
-  if (!body.vehicleId || typeof body.vehicleId !== 'string') {
-    throw createError({ statusCode: 400, message: 'vehicleId is required' })
-  }
-
-  if (!UUID_REGEX.test(body.vehicleId.trim())) {
-    throw createError({ statusCode: 400, message: 'vehicleId must be a valid UUID' })
-  }
-
-  const vehicleId = body.vehicleId.trim()
+  const { vehicleId } = await validateBody(event, generatePostsSchema)
 
   // 4. Fetch vehicle data
   const { data: vehicleRaw, error: vehicleErr } = await supabase
@@ -259,10 +255,7 @@ export default defineEventHandler(async (event): Promise<GeneratePostsResponse> 
     .single()
 
   if (vehicleErr || !vehicleRaw) {
-    throw createError({
-      statusCode: 404,
-      message: 'Vehicle not found',
-    })
+    throw safeError(404, 'Vehicle not found')
   }
 
   const vehicle = vehicleRaw as unknown as VehicleData
@@ -274,34 +267,16 @@ export default defineEventHandler(async (event): Promise<GeneratePostsResponse> 
     .eq('user_id', user.id)
     .single()
 
-  if (dealerErr || !userDealer) {
-    // Check if user is admin
+  if (dealerErr || vehicle.dealer_id !== userDealer?.id) {
+    // User has no dealer account or doesn't own this vehicle — verify admin role
     const { data: userData, error: userErr } = await supabase
       .from('users')
       .select('role')
       .eq('id', user.id)
       .single()
 
-    if (userErr || !userData || userData.role !== 'admin') {
-      throw createError({
-        statusCode: 403,
-        message: 'You do not have permission to generate posts for this vehicle',
-      })
-    }
-  } else if (vehicle.dealer_id !== userDealer.id) {
-    // User has a dealer account but doesn't own this vehicle
-    // Check if they're admin
-    const { data: userData, error: userErr } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (userErr || !userData || userData.role !== 'admin') {
-      throw createError({
-        statusCode: 403,
-        message: 'You do not have permission to generate posts for this vehicle',
-      })
+    if (userErr || userData?.role !== 'admin') {
+      throw safeError(403, 'You do not have permission to generate posts for this vehicle')
     }
   }
 
@@ -353,10 +328,7 @@ export default defineEventHandler(async (event): Promise<GeneratePostsResponse> 
     .select('id')
 
   if (insertErr) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to create social posts: ${insertErr.message}`,
-    })
+    throw safeError(500, `Failed to create social posts: ${insertErr.message}`)
   }
 
   const inserted = (insertedRaw as unknown as { id: string }[]) || []

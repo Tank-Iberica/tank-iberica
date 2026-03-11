@@ -16,7 +16,7 @@ defineProps<{
         height="48"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#9ca3af"
+        stroke="var(--color-gray-400)"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -40,20 +40,20 @@ defineProps<{
 <style scoped>
 .empty-state-container {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 60px 24px;
+  border-radius: var(--border-radius);
+  padding: 3.75rem var(--spacing-6);
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
 }
 
 .empty-icon {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .empty-title {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-2) 0;
   font-size: 1.1rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .empty-description {

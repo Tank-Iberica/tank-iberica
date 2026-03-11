@@ -1,1 +1,6 @@
 npx lint-staged
+
+# Run gitleaks secret scan on staged files if gitleaks is installed
+if command -v gitleaks &> /dev/null; then
+  gitleaks protect --staged --no-banner -q
+fi

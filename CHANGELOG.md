@@ -6,6 +6,21 @@ All notable changes to Tracciona are documented here. Format based on [Keep a Ch
 
 ### Added
 
+- Brokeraje Fase 1: 5 tablas BD + dashboard admin + sidebar (sesión 05-mar)
+- k6 load testing suite: `tests/load/` con k6-full.js + 3 escenarios (smoke/load/stress) + thresholds
+- k6 CI automation: `.github/workflows/k6-readiness.yml` — lunes 09:00 UTC, fetchea slugs reales de Supabase, sube artifact, notifica por email
+- Cron `k6-readiness-check`: verifica ≥50 vehículos + ≥2 dealers antes de correr k6
+- GitHub Secrets configurados: SUPABASE_URL, SUPABASE_ANON_KEY, INFRA_ALERT_EMAIL, CRON_SECRET + variable APP_URL
+- Plan 10/10: 24/30 items completados (V3 QUERY-BUDGET.md, E2 RUNBOOK-MIGRACIÓN, X3 forms, X4 localizedField, V4 BUNDLE-ANALYSIS)
+- Coverage plan 8/8 fases completas: 233 archivos test, 6248 tests, todos los composables + utils + middleware + server/api cubiertos
+- Tests IDOR (13): Supabase staging directo, CI job `idor-tests`
+- SonarQube: 0 bugs, 0 vulns, 0 smells (05-mar)
+- Pre-push hook: typecheck + lint (NO test — evita --no-verify)
+- Dependabot, gitleaks, knip, endpoint drift tooling
+- Documentos técnicos: QUERY-BUDGET.md, BUNDLE-ANALYSIS.md, RUNBOOK-MIGRACION-CLUSTER.md, BROKERAJE-ARQUITECTURA.md
+
+### Changed
+
 - Sessions 47-55: Security hardening, modularization, testing, documentation
 
 ## [0.9.0] - 2026-02-26

@@ -122,7 +122,7 @@ defineProps<{
 
 .churn-progress__track {
   flex: 1;
-  height: 10px;
+  height: 0.625rem;
   background: var(--bg-tertiary);
   border-radius: var(--border-radius-full);
   overflow: hidden;
@@ -132,7 +132,7 @@ defineProps<{
   height: 100%;
   border-radius: var(--border-radius-full);
   transition: width var(--transition-normal);
-  min-width: 4px;
+  min-width: 0.25rem;
 }
 
 .churn-progress__bar--low {
@@ -151,7 +151,7 @@ defineProps<{
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--text-secondary);
-  min-width: 48px;
+  min-width: 3rem;
   text-align: right;
 }
 

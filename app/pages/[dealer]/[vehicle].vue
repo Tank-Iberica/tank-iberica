@@ -2,7 +2,7 @@
   <div class="dealer-vehicle-page">
     <!-- Dealer banner: branded header with logo + link back to dealer portal -->
     <NuxtLink :to="`/${dealerSlug}`" class="dealer-banner" :style="bannerStyle">
-      <img v-if="dealer?.logo_url" :src="dealer.logo_url" :alt="companyName" class="dealer-logo" >
+      <NuxtImg v-if="dealer?.logo_url" :src="dealer.logo_url" :alt="companyName" class="dealer-logo" loading="eager" decoding="async" width="48" height="48" />
       <div class="dealer-banner-text">
         <span class="dealer-name">{{ companyName }}</span>
         <span class="dealer-back">{{ $t('dashboard.portal.viewAllVehicles') }}</span>
@@ -183,7 +183,7 @@ const dealerTheme = computed(() => {
   const theme = dealer.value?.theme as Record<string, string> | null
   return {
     primary: theme?.primary || theme?.theme_primary || '#23424A',
-    accent: theme?.accent || theme?.theme_accent || '#f59e0b',
+    accent: theme?.accent || theme?.theme_accent || 'var(--color-warning)',
   }
 })
 
@@ -213,7 +213,7 @@ if (vehicle.value) {
   padding: var(--spacing-3) var(--spacing-4);
   text-decoration: none;
   transition: filter 0.15s ease;
-  min-height: 56px;
+  min-height: 3.5rem;
 }
 
 .dealer-banner:hover {
@@ -221,20 +221,20 @@ if (vehicle.value) {
 }
 
 .dealer-logo {
-  height: 36px;
+  height: 2.25rem;
   width: auto;
-  max-width: 120px;
+  max-width: 7.5rem;
   object-fit: contain;
   flex-shrink: 0;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   background: rgba(255, 255, 255, 0.15);
-  padding: 2px 4px;
+  padding: 0.125rem 0.25rem;
 }
 
 .dealer-banner-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .dealer-name {
@@ -252,7 +252,7 @@ if (vehicle.value) {
 
 /* Vehicle page (identical structure to /vehiculo/[slug]) */
 .vehicle-page {
-  max-width: 1024px;
+  max-width: 64rem;
   margin: 0 auto;
   padding: var(--spacing-4);
   padding-bottom: var(--spacing-16);
@@ -262,16 +262,16 @@ if (vehicle.value) {
   display: block;
   width: 100%;
   margin-top: var(--spacing-3);
-  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  background: linear-gradient(135deg, #f39c12 0%, var(--color-orange-500) 100%);
   color: var(--color-white);
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: var(--font-size-sm);
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .vehicle-sticky-notification:hover {
@@ -287,9 +287,9 @@ if (vehicle.value) {
 /* ============================================
    DESKTOP (>=1024px)
    ============================================ */
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .vehicle-page {
-    max-width: 1400px;
+    max-width: 87.5rem;
     height: calc(100vh - 60px - 56px); /* subtract banner height */
     display: flex;
     flex-direction: column;

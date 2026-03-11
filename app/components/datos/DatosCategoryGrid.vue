@@ -75,8 +75,8 @@ const emit = defineEmits<{
   text-align: left;
   cursor: pointer;
   transition: all var(--transition-fast);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .category-card:hover {

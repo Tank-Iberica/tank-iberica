@@ -98,12 +98,47 @@ tests/            # Unit tests (Vitest) + E2E (Playwright)
 - Incremental numbering in `supabase/migrations/` (00065, 00066...).
 - Apply with `npx supabase db push`.
 - Regenerate types: `npx supabase gen types typescript --project-id <id> > types/supabase.ts`.
+- **Staging project** (`xddjhrgkwwolpugtxgfk`): usado para tests IDOR/RLS. Si una migración afecta RLS policies, aplicar también en staging con `npx supabase link --project-ref xddjhrgkwwolpugtxgfk && npx supabase db push`, luego re-vincular a producción.
 
 ## Tests
 
 - Security: `tests/security/` — integration tests (require running server for some)
+  - **IDOR/RLS** (`tests/security/idor-protection.test.ts`): 13 tests contra Supabase staging. Requiere `STAGING_SUPABASE_URL` + `STAGING_SUPABASE_KEY` en `.env` o como env vars. Sin ellas, los tests se saltan automáticamente.
 - Unit: `tests/unit/` — Vitest
 - E2E: `tests/e2e/` — Playwright
+
+### Clasificación de tests (qué herramienta usar)
+
+| Situación | Herramienta |
+|-----------|-------------|
+| Lógica pura sin deps externas | Vitest |
+| Composable con useI18n/useRouter simples | Vitest + mocks de `tests/setup.ts` |
+| Composable con contexto Nuxt complejo | Vitest + `@nuxt/test-utils` |
+| Necesita servidor HTTP real | Playwright |
+| Necesita navegador real | Playwright |
+| Necesita BD real (RLS) | Vitest contra Supabase staging (IDOR tests) |
+| Seguridad de endpoints (sin servidor real) | Vitest + MSW |
+
+### Notas arquitectónicas de tests
+
+- **`e2e-journeys` mantiene `continue-on-error: true`** — necesita secrets de E2E (emails, passwords). Es exploratorio/informativo, no bloqueante.
+- **`@nuxt/test-utils`** — solo instalar si se testean composables con contexto Nuxt complejo (`useNuxtApp`, `useRuntimeConfig` con plugins). Para composables simples, los mocks de `tests/setup.ts` son suficientes. No instalar preventivamente.
+- **Supabase staging** (`xddjhrgkwwolpugtxgfk`) — proyecto separado con fixtures fijos (2 dealers, 5 vehículos, 4 facturas, 3 pipeline items, 2 historico). Nunca usar datos de producción en tests.
+
+### Regla de tests para funciones puras
+
+**Toda función en `app/utils/` o `server/utils/` que sea pura (sin dependencias de Supabase, Nuxt ni DOM) debe tener un archivo de test correspondiente en `tests/unit/`.**
+
+CI verifica esto automáticamente. Un nuevo `app/utils/foo.ts` sin `tests/unit/foo.test.ts` bloqueará el merge.
+
+Criterio de "función pura" a efectos de esta regla:
+- No importa `useSupabaseClient`, `useSupabaseUser`, ni hace `fetch`
+- No importa `useNuxtApp`, `useRuntimeConfig`, `useI18n` directamente
+- No usa `document`, `window` ni APIs de browser
+
+Si la función usa DOM (ej: genera un `<a>` para descarga), se testea igualmente mockeando las APIs con `vi.stubGlobal`. Ver `tests/unit/adminMetricsExport.test.ts` como referencia.
+
+Clasificación de tests → sección "Clasificación de tests" más abajo en este documento
 
 ## Before Submitting
 

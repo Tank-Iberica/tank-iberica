@@ -253,8 +253,8 @@ const { t } = useI18n()
 <style scoped>
 .submission-item {
   background: var(--bg-primary);
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   transition: box-shadow 0.2s;
 }
@@ -271,14 +271,14 @@ const { t } = useI18n()
 .submission-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
   width: 100%;
   border: none;
   background: transparent;
   cursor: pointer;
   text-align: left;
-  min-height: 64px;
+  min-height: 4rem;
   font-family: inherit;
 }
 
@@ -290,16 +290,16 @@ const { t } = useI18n()
 .sub-dealer {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   min-width: 0;
   flex: 1;
 }
 
 .sub-avatar {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 50%;
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -368,7 +368,7 @@ const { t } = useI18n()
 .image-count {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-1);
   font-size: 0.8rem;
   color: var(--text-auxiliary);
   font-weight: 500;
@@ -385,9 +385,9 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--border-radius-sm);
   color: var(--color-primary);
   transition: background 0.15s;
 }
@@ -414,35 +414,35 @@ const { t } = useI18n()
 /* Status badges */
 .status-badge {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .status-received {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 
 .status-processing {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .status-processed {
-  background: #e0e7ff;
-  color: #4338ca;
+  background: var(--color-indigo-100);
+  color: var(--color-indigo-700);
 }
 
 .status-published {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .status-failed {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -450,16 +450,16 @@ const { t } = useI18n()
    EXPANDED DETAIL VIEW
    ============================================ */
 .submission-detail {
-  padding: 0 16px 16px;
+  padding: 0 var(--spacing-4) var(--spacing-4);
   border-top: 1px solid var(--color-gray-100);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-top: 16px;
+  gap: var(--spacing-4);
+  padding-top: var(--spacing-4);
 }
 
 .detail-section h4 {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-2) 0;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-secondary);
@@ -468,11 +468,11 @@ const { t } = useI18n()
 }
 
 .message-content {
-  padding: 12px;
+  padding: var(--spacing-3);
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--color-gray-700);
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
@@ -490,7 +490,7 @@ const { t } = useI18n()
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 8px 0;
+  padding: var(--spacing-2) 0;
   border-bottom: 1px solid var(--color-gray-100);
 }
 
@@ -518,12 +518,12 @@ const { t } = useI18n()
 .image-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .image-thumb {
   aspect-ratio: 1;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
   border: 1px solid var(--color-gray-200);
   display: block;
@@ -542,10 +542,10 @@ const { t } = useI18n()
 
 /* Error content */
 .error-content {
-  padding: 12px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
   color: var(--color-error);
   font-family: monospace;
@@ -557,8 +557,8 @@ const { t } = useI18n()
 .detail-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding-top: 12px;
+  gap: var(--spacing-2);
+  padding-top: var(--spacing-3);
   border-top: 1px solid var(--color-gray-200);
 }
 
@@ -569,17 +569,17 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 16px;
+  gap: 0.375rem;
+  padding: 0.625rem var(--spacing-4);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.85rem;
   cursor: pointer;
   transition:
     background 0.2s,
     opacity 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
   text-decoration: none;
 }
 
@@ -589,7 +589,7 @@ const { t } = useI18n()
 }
 
 .btn-retry:hover {
-  background: #334155;
+  background: var(--color-gray-700);
 }
 
 .btn-view {
@@ -607,11 +607,11 @@ const { t } = useI18n()
 }
 
 .btn-publish:hover {
-  background: #15803d;
+  background: var(--color-green-700);
 }
 
 .btn-delete {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -668,7 +668,7 @@ const { t } = useI18n()
   .btn-publish,
   .btn-delete {
     flex: none;
-    padding: 10px 20px;
+    padding: 0.625rem var(--spacing-5);
   }
 
   .image-grid {

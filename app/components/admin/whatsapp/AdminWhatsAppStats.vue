@@ -43,17 +43,17 @@ const { t } = useI18n()
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .stat-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px;
+  padding: var(--spacing-3);
   background: var(--bg-primary);
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .stat-value {
@@ -73,7 +73,7 @@ const { t } = useI18n()
   color: var(--color-warning);
 }
 .stat-processed .stat-value {
-  color: #2563eb;
+  color: var(--color-focus);
 }
 .stat-published .stat-value {
   color: var(--color-success);

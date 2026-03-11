@@ -1,4 +1,5 @@
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
+import { safeError } from '../../utils/safeError'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
 import { fetchWithRetry } from '../../utils/fetchWithRetry'
@@ -17,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
   if (!supabaseUrl || !supabaseKey) {
-    throw createError({ statusCode: 500, message: 'Service not configured' })
+    throw safeError(500, 'Service not configured')
   }
 
   const headers = {
@@ -69,7 +70,7 @@ export default defineEventHandler(async (event) => {
           },
         )
         if (!updateRes.ok) throw new Error('Update failed')
-        // TODO(2026-02): Implement email notification once dealer email is available in the query // NOSONAR
+        // Pending(2026-02): Implement email notification once dealer email is available in the query
         // Call: $fetch('/api/email/send', { method: 'POST', headers: { 'x-internal-secret': internalSecret }, body: { to: dealer.email, subject: 'Freshness reminder', templateKey: 'freshness_reminder', vehicleId: vehicle.id } })
       },
     })

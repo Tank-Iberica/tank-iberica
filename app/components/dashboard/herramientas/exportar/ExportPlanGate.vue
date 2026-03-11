@@ -19,25 +19,25 @@ const { t } = useI18n()
 <style scoped>
 .plan-gate {
   text-align: center;
-  padding: 48px 20px;
+  padding: 3rem 1.25rem;
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .gate-icon {
   font-size: 3rem;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .plan-gate h2 {
-  margin: 0 0 8px;
+  margin: 0 0 0.5rem;
   font-size: 1.2rem;
   color: var(--text-primary);
 }
 
 .plan-gate p {
-  margin: 0 0 20px;
+  margin: 0 0 1.25rem;
   color: var(--text-auxiliary);
   font-size: 0.9rem;
 }
@@ -46,14 +46,14 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 12px 24px;
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   text-decoration: none;
   cursor: pointer;
   transition: background 0.2s;

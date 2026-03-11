@@ -42,7 +42,7 @@ function getPower(v: Vehicle): number {
 function powerText(v: Vehicle): string {
   const fj = v.attributes_json
   if (!fj) return '—'
-  const val = fj.power || fj.potencia || fj.cv
+  const val = Number(fj.power ?? fj.potencia ?? fj.cv)
   return val ? `${val} CV` : '—'
 }
 function getCompartments(v: Vehicle): number {
@@ -53,7 +53,7 @@ function getCompartments(v: Vehicle): number {
 function compartmentsText(v: Vehicle): string {
   const fj = v.attributes_json
   if (!fj) return '—'
-  const val = fj.compartments || fj.compartimentos
+  const val = Number(fj.compartments ?? fj.compartimentos)
   return val ? String(val) : '—'
 }
 

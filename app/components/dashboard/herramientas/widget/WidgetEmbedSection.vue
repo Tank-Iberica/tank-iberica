@@ -37,13 +37,13 @@ const { t } = useI18n()
 <style scoped>
 .card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem;
 }
 
 .card-title {
-  margin: 0 0 16px 0;
+  margin: 0 0 1rem 0;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -51,9 +51,9 @@ const { t } = useI18n()
 
 .code-textarea {
   width: 100%;
-  padding: 12px;
+  padding: 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.85rem;
   color: var(--text-primary);
@@ -66,19 +66,19 @@ const { t } = useI18n()
 .code-footer {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
+  margin-top: 0.75rem;
 }
 
 .btn-copy {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
@@ -94,13 +94,13 @@ const { t } = useI18n()
 }
 
 .instructions {
-  margin-top: 20px;
-  padding-top: 20px;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
   border-top: 1px solid var(--color-gray-100);
 }
 
 .instructions h3 {
-  margin: 0 0 12px 0;
+  margin: 0 0 0.75rem 0;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -108,7 +108,7 @@ const { t } = useI18n()
 
 .instructions ol {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 1.25rem;
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.8;

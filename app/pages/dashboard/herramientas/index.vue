@@ -147,8 +147,8 @@ function isLocked(requiredPlan: PlanType): boolean {
       <p class="subtitle">{{ t('dashboard.tools.subtitle') }}</p>
     </header>
 
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
+    <div v-if="loading" class="loading-skeleton" aria-busy="true">
+      <UiSkeletonCard v-for="n in 6" :key="n" :lines="2" />
     </div>
 
     <template v-else>
@@ -169,12 +169,12 @@ function isLocked(requiredPlan: PlanType): boolean {
 
 <style scoped>
 .tools-page {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: var(--spacing-8);
 }
 
 .page-header h1 {
@@ -185,7 +185,7 @@ function isLocked(requiredPlan: PlanType): boolean {
 }
 
 .subtitle {
-  margin: 4px 0 0;
+  margin: 0.25rem 0 0;
   color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
@@ -194,12 +194,12 @@ function isLocked(requiredPlan: PlanType): boolean {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--spacing-5);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -215,7 +215,7 @@ function isLocked(requiredPlan: PlanType): boolean {
 .tool-category {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .category-title {
@@ -223,25 +223,25 @@ function isLocked(requiredPlan: PlanType): boolean {
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
-  padding-bottom: 8px;
+  padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--color-gray-200);
 }
 
 .tools-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
-@media (min-width: 640px) {
+@media (min-width: 40em) {
   .tools-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64em) {
   .tools-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 
   .tools-grid {

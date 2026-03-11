@@ -145,20 +145,20 @@ function onFilterUpdate(key: keyof HistoricoPageFilters, value: string | number 
 
 <style scoped>
 .historico-page {
-  max-width: 1400px;
+  max-width: 87.5rem;
   margin: 0 auto;
 }
 .historico-page.fullscreen {
   max-width: none;
-  padding: 20px;
-  background: #f9fafb;
+  padding: var(--spacing-5);
+  background: var(--color-gray-50);
   min-height: 100vh;
 }
 .error-msg {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 10px 14px;
-  border-radius: 6px;
-  margin-bottom: 16px;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 </style>

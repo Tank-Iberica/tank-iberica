@@ -6,21 +6,25 @@
  *
  * Body: { name, supabase_url, supabase_anon_key?, supabase_service_role_key?, weight_limit? }
  */
+import { defineEventHandler } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { z } from 'zod'
+import { safeError } from '../../../utils/safeError'
+import { validateBody } from '../../../utils/validateBody'
 
-interface CreateClusterBody {
-  name: string
-  supabase_url: string
-  supabase_anon_key?: string
-  supabase_service_role_key?: string
-  weight_limit?: number
-}
+const createClusterSchema = z.object({
+  name: z.string().min(1).max(128),
+  supabase_url: z.string().url().max(512),
+  supabase_anon_key: z.string().max(512).optional(),
+  supabase_service_role_key: z.string().max(512).optional(),
+  weight_limit: z.number().positive().optional(),
+})
 
 export default defineEventHandler(async (event) => {
   // ── Auth: admin only ────────────────────────────────────────────────────
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw safeError(401, 'Unauthorized')
   }
 
   const supabase = serverSupabaseServiceRole(event)
@@ -28,48 +32,11 @@ export default defineEventHandler(async (event) => {
   const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
 
   if (userData?.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Forbidden' })
+    throw safeError(403, 'Forbidden')
   }
 
   // ── Validate body ──────────────────────────────────────────────────────
-  const body = await readBody<CreateClusterBody>(event)
-  const errors: string[] = []
-
-  if (!body.name || typeof body.name !== 'string' || body.name.trim().length === 0) {
-    errors.push('name is required')
-  }
-
-  if (
-    !body.supabase_url ||
-    typeof body.supabase_url !== 'string' ||
-    body.supabase_url.trim().length === 0
-  ) {
-    errors.push('supabase_url is required')
-  }
-
-  if (body.supabase_anon_key !== undefined && typeof body.supabase_anon_key !== 'string') {
-    errors.push('supabase_anon_key must be a string')
-  }
-
-  if (
-    body.supabase_service_role_key !== undefined &&
-    typeof body.supabase_service_role_key !== 'string'
-  ) {
-    errors.push('supabase_service_role_key must be a string')
-  }
-
-  if (body.weight_limit !== undefined) {
-    if (typeof body.weight_limit !== 'number' || body.weight_limit <= 0) {
-      errors.push('weight_limit must be a positive number')
-    }
-  }
-
-  if (errors.length > 0) {
-    throw createError({
-      statusCode: 400,
-      message: `Validation failed: ${errors.join('; ')}`,
-    })
-  }
+  const body = await validateBody(event, createClusterSchema)
 
   // ── Insert cluster ─────────────────────────────────────────────────────
   const { data, error } = await supabase
@@ -89,10 +56,7 @@ export default defineEventHandler(async (event) => {
     .single()
 
   if (error) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to create cluster: ${error.message}`,
-    })
+    throw safeError(500, `Failed to create cluster: ${error.message}`)
   }
 
   return data

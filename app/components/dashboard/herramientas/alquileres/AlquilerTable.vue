@@ -72,8 +72,8 @@ const { t } = useI18n()
 <style scoped>
 .table-container {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -86,13 +86,13 @@ const { t } = useI18n()
 
 .data-table th {
   text-align: left;
-  padding: 12px 10px;
-  background: #f9fafb;
+  padding: 0.75rem 0.625rem;
+  background: var(--color-gray-50);
   font-weight: 600;
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
-  color: #6b7280;
-  border-bottom: 1px solid #e5e7eb;
+  color: var(--color-gray-500);
+  border-bottom: 1px solid var(--color-gray-200);
   white-space: nowrap;
 }
 
@@ -103,12 +103,12 @@ const { t } = useI18n()
 
 .data-table th.actions-col {
   text-align: center;
-  width: 100px;
+  width: 6.25rem;
 }
 
 .data-table td {
-  padding: 10px;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 0.625rem;
+  border-bottom: 1px solid var(--color-gray-100);
   vertical-align: middle;
 }
 
@@ -124,16 +124,16 @@ const { t } = useI18n()
 /* Status badges */
 .status-badge {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   white-space: nowrap;
 }
 
 .status-badge.status-active {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 
 .status-badge.status-finished {
@@ -142,7 +142,7 @@ const { t } = useI18n()
 }
 
 .status-badge.status-overdue {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -152,23 +152,23 @@ const { t } = useI18n()
 
 .ending-badge {
   display: inline-block;
-  padding: 1px 6px;
-  background: var(--color-warning-bg, #fef3c7);
+  padding: 0.0625rem 0.375rem;
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.7rem;
   font-weight: 700;
-  margin-left: 4px;
+  margin-left: 0.25rem;
 }
 
 .btn-icon {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 1rem;
-  border-radius: 6px;
+  font-size: var(--font-size-base);
+  border-radius: var(--border-radius);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -179,29 +179,29 @@ const { t } = useI18n()
 }
 
 .btn-icon.delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 /* Empty state */
 .empty-state {
-  padding: 48px 20px;
+  padding: 3rem 1.25rem;
   text-align: center;
   color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 
 .empty-state p {
-  margin: 0 0 16px;
+  margin: 0 0 1rem;
 }
 
 (@media ()max-width: 47.9375em())) {
   .data-table {
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
   }
 
   .data-table th,
   .data-table td {
-    padding: 8px 6px;
+    padding: 0.5rem 0.375rem;
   }
 }
 </style>

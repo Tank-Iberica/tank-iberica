@@ -160,8 +160,8 @@ function alertLevelLabel(level: string): string {
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: all var(--transition-fast);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .filter-btn:hover {
@@ -181,7 +181,7 @@ function alertLevelLabel(level: string): string {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
   background: var(--bg-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .empty-state {
@@ -197,8 +197,8 @@ function alertLevelLabel(level: string): string {
 }
 
 .empty-icon {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   opacity: 0.5;
 }
 
@@ -262,7 +262,7 @@ function alertLevelLabel(level: string): string {
 .alert-level-badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
+  padding: 0.125rem var(--spacing-2);
   border-radius: var(--border-radius-full);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
@@ -271,17 +271,17 @@ function alertLevelLabel(level: string): string {
 }
 
 .level-warning {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 
 .level-critical {
-  background: #fff7ed;
-  color: #9a3412;
+  background: var(--color-orange-bg);
+  color: var(--color-orange-text);
 }
 
 .level-emergency {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
@@ -310,8 +310,8 @@ function alertLevelLabel(level: string): string {
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 .btn-acknowledge:hover {

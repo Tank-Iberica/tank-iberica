@@ -32,7 +32,7 @@ definePageMeta({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
 }
 .section-header h2 {
   margin: 0;
@@ -40,35 +40,35 @@ definePageMeta({
 }
 .placeholder-content {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 60px 40px;
+  border-radius: var(--border-radius-md);
+  padding: 3.75rem var(--spacing-10);
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
 }
 .placeholder-icon {
-  font-size: 64px;
-  margin-bottom: 20px;
+  font-size: 4rem;
+  margin-bottom: var(--spacing-5);
 }
 .placeholder-content h3 {
-  margin: 0 0 12px;
+  margin: 0 0 var(--spacing-3);
   font-size: 1.25rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 .placeholder-content p {
-  color: #6b7280;
-  margin: 0 0 24px;
+  color: var(--color-gray-500);
+  margin: 0 0 var(--spacing-6);
 }
 .placeholder-features {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 .feature-tag {
   background: var(--bg-secondary);
-  color: #4b5563;
-  padding: 6px 12px;
-  border-radius: 16px;
+  color: var(--color-gray-600);
+  padding: 0.375rem var(--spacing-3);
+  border-radius: var(--border-radius-lg);
   font-size: 0.8rem;
   font-weight: 500;
 }

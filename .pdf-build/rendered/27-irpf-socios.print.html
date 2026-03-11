@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeBase - Tomo #27 IRPF Socios</title>
+<style>
+@page { size: A4; margin: 11mm 10mm 12mm 10mm; }
+html { font-size: 11.6px; }
+body {
+  font-family: Segoe UI, Arial, sans-serif;
+  color: #111;
+  line-height: 1.38;
+  margin: 0;
+}
+main {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.cover {
+  min-height: 236mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 2px solid #111;
+  page-break-after: always;
+}
+.cover-compact {
+  min-height: auto;
+  display: block;
+  border-bottom: 2px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  page-break-after: auto;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+}
+.cover h1 {
+  font-size: 30px;
+  line-height: 1.08;
+  margin: 0 0 10px 0;
+}
+.cover-compact h1 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 4px 0 6px 0;
+}
+.cover p {
+  max-width: 760px;
+  color: #333;
+  font-size: 13px;
+  margin: 0;
+}
+.toc-wrap {
+  page-break-after: always;
+}
+.toc-inline {
+  page-break-after: auto;
+}
+.toc-title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.toc {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.toc-inline .toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.toc li {
+  margin: 3px 0;
+  break-inside: avoid;
+}
+.toc-inline li {
+  margin: 0;
+}
+.toc a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+.toc-l2 {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.toc-l3 {
+  padding-left: 14px;
+  font-size: 11px;
+  color: #333;
+}
+.toc-inline .toc-l3,
+.toc-inline .toc-l2 {
+  padding-left: 0;
+  margin-top: 0;
+  font-size: 9.4px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 16px 0;
+}
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+h1 {
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 12px 0;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 22px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+h3 {
+  font-size: 15px;
+  margin-top: 16px;
+}
+h4 {
+  font-size: 13px;
+  margin-top: 14px;
+}
+p, li {
+  orphans: 3;
+  widows: 3;
+}
+ul, ol {
+  padding-left: 18px;
+}
+blockquote {
+  margin: 10px 0;
+  padding: 7px 10px;
+  border-left: 4px solid #d0d7de;
+  color: #333;
+  background: #fafafa;
+}
+a {
+  color: #0b57d0;
+  text-decoration: none;
+}
+pre, code {
+  font-family: Consolas, 'Courier New', monospace;
+}
+code {
+  background: #f6f8fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 10.2px;
+  table-layout: fixed;
+}
+th, td {
+  border: 1px solid #d0d7de;
+  padding: 5px 6px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+img {
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="cover">
+    <div class="eyebrow">TradeBase</div>
+    <h1>TradeBase - Tomo #27 IRPF Socios</h1>
+    <p>Monografia fiscal y probatoria para la deduccion por inversion en empresa nueva o de reciente creacion.</p>
+  </section>
+  <section class="toc-wrap">
+    <h2 class="toc-title">Indice</h2>
+    <ol class='toc'><li class='toc-l2'><a href='#1-ficha-de-trabajo'>1. Ficha de trabajo</a></li>
+<li class='toc-l2'><a href='#2-que-se-esta-jugando-realmente-aqui'>2. Qué se está jugando realmente aquí</a></li>
+<li class='toc-l2'><a href='#3-marco-normativo-de-verdad'>3. Marco normativo de verdad</a></li>
+<li class='toc-l3'><a href='#3-1-capa-estatal'>3.1 Capa estatal</a></li>
+<li class='toc-l3'><a href='#3-2-capa-autonomica-de-castilla-y-leon'>3.2 Capa autonómica de Castilla y León</a></li>
+<li class='toc-l2'><a href='#4-requisitos-estatales-desglosados-uno-por-uno'>4. Requisitos estatales desglosados uno por uno</a></li>
+<li class='toc-l3'><a href='#4-1-la-entidad-debe-ser-sa-sl-sal-o-sll-y-no-cotizar'>4.1 La entidad debe ser SA, SL, SAL o SLL y no cotizar</a></li>
+<li class='toc-l3'><a href='#4-2-la-entidad-debe-ejercer-una-actividad-economica-con-medios-personales-y-materiales'>4.2 La entidad debe ejercer una actividad económica con medios personales y materiales</a></li>
+<li class='toc-l3'><a href='#4-3-fondos-propios-no-superiores-a-400-000-eur'>4.3 Fondos propios no superiores a `400.000 EUR`</a></li>
+<li class='toc-l3'><a href='#4-4-la-suscripcion-debe-hacerse-en-constitucion-o-ampliacion-dentro-del-plazo-legal'>4.4 La suscripción debe hacerse en constitución o ampliación dentro del plazo legal</a></li>
+<li class='toc-l3'><a href='#4-5-permanencia-minima-superior-a-3-anos-e-inferior-a-12'>4.5 Permanencia mínima superior a 3 años e inferior a 12</a></li>
+<li class='toc-l3'><a href='#4-6-participacion-maxima-del-40-para-contribuyente-familiares'>4.6 Participación máxima del `40%` para contribuyente + familiares</a></li>
+<li class='toc-l3'><a href='#4-7-certificacion-de-la-sociedad-para-la-deduccion'>4.7 Certificación de la sociedad para la deducción</a></li>
+<li class='toc-l2'><a href='#5-requisitos-autonomicos-de-castilla-y-leon-bien-leidos'>5. Requisitos autonómicos de Castilla y León, bien leídos</a></li>
+<li class='toc-l3'><a href='#5-1-participacion-maxima-del-45'>5.1 Participación máxima del `45%`</a></li>
+<li class='toc-l3'><a href='#5-2-inversion-destinada-a-proyectos-en-castilla-y-leon'>5.2 Inversión destinada a proyectos en Castilla y León</a></li>
+<li class='toc-l3'><a href='#5-3-empleo-o-condicion-asimilada'>5.3 Empleo o condición asimilada</a></li>
+<li class='toc-l2'><a href='#6-que-significa-realmente-mala-instrumentacion-del-desembolso'>6. Qué significa realmente “mala instrumentación del desembolso”</a></li>
+<li class='toc-l3'><a href='#6-1-estandar-documental-que-recomiendo'>6.1 Estándar documental que recomiendo</a></li>
+<li class='toc-l3'><a href='#6-2-prueba-bancaria-minima'>6.2 Prueba bancaria mínima</a></li>
+<li class='toc-l3'><a href='#6-3-prueba-societaria-minima'>6.3 Prueba societaria mínima</a></li>
+<li class='toc-l3'><a href='#6-4-prueba-contable-minima'>6.4 Prueba contable mínima</a></li>
+<li class='toc-l2'><a href='#7-que-significa-doble-computo-estatal-autonomica-y-por-que-hay-que-prohibirlo-desde-el-diseno'>7. Qué significa “doble cómputo estatal + autonómica” y por qué hay que prohibirlo desde el diseño</a></li>
+<li class='toc-l3'><a href='#7-1-regla-de-prudencia-para-tradebase'>7.1 Regla de prudencia para TradeBase</a></li>
+<li class='toc-l3'><a href='#7-2-documento-interno-recomendado'>7.2 Documento interno recomendado</a></li>
+<li class='toc-l2'><a href='#8-relato-de-actividad-economica-que-deberiais-poder-sostener-manana'>8. Relato de actividad económica que deberíais poder sostener mañana</a></li>
+<li class='toc-l2'><a href='#9-carpeta-de-prueba-que-deberiais-poder-ensenar-sin-improvisar'>9. Carpeta de prueba que deberíais poder enseñar sin improvisar</a></li>
+<li class='toc-l3'><a href='#9-1-carpeta-societaria'>9.1 Carpeta societaria</a></li>
+<li class='toc-l3'><a href='#9-2-carpeta-bancaria'>9.2 Carpeta bancaria</a></li>
+<li class='toc-l3'><a href='#9-3-carpeta-de-actividad-economica'>9.3 Carpeta de actividad económica</a></li>
+<li class='toc-l3'><a href='#9-4-carpeta-fiscal'>9.4 Carpeta fiscal</a></li>
+<li class='toc-l2'><a href='#10-secuencia-operativa-correcta-para-tradebase'>10. Secuencia operativa correcta para TradeBase</a></li>
+<li class='toc-l2'><a href='#11-arbol-de-decision-real'>11. Árbol de decisión real</a></li>
+<li class='toc-l2'><a href='#12-go-no-go'>12. Go / no-go</a></li>
+<li class='toc-l3'><a href='#go'>GO</a></li>
+<li class='toc-l3'><a href='#no-go'>NO-GO</a></li>
+<li class='toc-l3'><a href='#not-yet'>NOT YET</a></li>
+<li class='toc-l2'><a href='#13-conclusion'>13. Conclusión</a></li></ol>
+  </section>
+  <section class="content">
+<h1 id="tomo-27-irpf-socios-en-empresa-de-nueva-o-reciente-creacion">Tomo #27 — IRPF socios en empresa de nueva o reciente creación</h1>
+<blockquote>
+<p><strong>Rol:</strong> monografía operativa y fiscal para decidir si TradeBase puede capturar la deducción estatal por inversión en empresa nueva o de reciente creación, qué requisitos exactos hay que cumplir y cómo blindar el expediente probatorio.<br />
+<strong>Ámbito:</strong> TradeBase, S.L. con 2 socios al <code>50/50</code>, <code>30.000 EUR</code> de fondos propios iniciales y sede en Fresno de la Vega.<br />
+<strong>Fecha de corte:</strong> 11/03/2026.<br />
+<strong>Fuentes principales:</strong></p>
+<ul>
+<li>AEAT deducción estatal: <a href="https://sede.agenciatributaria.gob.es/Sede/Ayuda/24Presentacion/100/9_2.html">https://sede.agenciatributaria.gob.es/Sede/Ayuda/24Presentacion/100/9_2.html</a></li>
+<li>Ley IRPF: <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2006-20764">https://www.boe.es/buscar/act.php?id=BOE-A-2006-20764</a></li>
+<li>AEAT Castilla y León: <a href="https://sede.agenciatributaria.gob.es/Sede/eu_es/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2023/c17-deducciones-autonomicas-cuota/comunidad-castilla-leon/fomento-emprendimiento.html">https://sede.agenciatributaria.gob.es/Sede/eu_es/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2023/c17-deducciones-autonomicas-cuota/comunidad-castilla-leon/fomento-emprendimiento.html</a></li>
+<li>ENISA certificación startup: <a href="https://www.enisa.es/es/certifica-tu-startup/faqs">https://www.enisa.es/es/certifica-tu-startup/faqs</a></li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="ficha-de-trabajo">1. Ficha de trabajo</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Detalle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Organismo</td>
+<td>AEAT / Junta de Castilla y León</td>
+</tr>
+<tr>
+<td>Naturaleza</td>
+<td>Incentivo fiscal en IRPF, no subvención competitiva</td>
+</tr>
+<tr>
+<td>Qué premia</td>
+<td>La inversión en participaciones/acciones de empresa que cumple los requisitos legales</td>
+</tr>
+<tr>
+<td>Qué no es</td>
+<td>No es una ayuda que se &quot;conceda&quot; con expediente separado</td>
+</tr>
+<tr>
+<td>Cuello de botella TradeBase</td>
+<td><code>50/50</code> + necesidad de encajar actividad económica real + dependencia práctica de <code>#12</code></td>
+</tr>
+<tr>
+<td>Resultado máximo práctico hoy</td>
+<td>Vía estatal, condicionada; vía autonómica bloqueada en <code>50/50</code></td>
+</tr>
+<tr>
+<td>Decisión operativa actual</td>
+<td><code>NOT YET</code> hasta cerrar estructura probatoria y resultado de <code>#12</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="que-se-esta-jugando-realmente-aqui">2. Qué se está jugando realmente aquí</h2>
+<p>La línea <code>#27</code> solo parece simple cuando se describe mal. La realidad es otra: no estáis intentando &quot;pedir una deducción&quot;; estáis intentando demostrar que una inversión hecha por dos socios fundadores en una sociedad recién creada cumple simultáneamente:</p>
+<ol>
+<li>los requisitos de la entidad;</li>
+<li>los requisitos de cada contribuyente;</li>
+<li>los requisitos de base deducible;</li>
+<li>las reglas de incompatibilidad entre deducción estatal y autonómica;</li>
+<li>y, en vuestro caso, la excepción por empresa emergente para que el <code>50/50</code> no mate la estatal.</li>
+</ol>
+<p>Por eso esta línea no se resuelve con una tabla. Se resuelve con diseño societario, prueba bancaria, prueba de actividad económica y disciplina documental.</p>
+<hr />
+<h2 id="marco-normativo-de-verdad">3. Marco normativo de verdad</h2>
+<h3 id="capa-estatal">3.1 Capa estatal</h3>
+<p>La deducción estatal descansa en la normativa del IRPF y en el criterio operativo de la AEAT sobre inversión en empresas de nueva o reciente creación. La AEAT no mira solo la existencia de la sociedad. Mira:</p>
+<ul>
+<li>forma societaria válida;</li>
+<li>naturaleza no cotizada;</li>
+<li>fondos propios dentro del límite;</li>
+<li>existencia de actividad económica real;</li>
+<li>porcentaje máximo de participación;</li>
+<li>permanencia mínima;</li>
+<li>certificación societaria;</li>
+<li>y, si se invoca la excepción de fundadores de empresa emergente, que <code>#12</code> exista y sea defendible.</li>
+</ul>
+<h3 id="capa-autonomica-de-castilla-y-leon">3.2 Capa autonómica de Castilla y León</h3>
+<p>La deducción autonómica de Castilla y León no es una simple &quot;capa extra&quot;. Tiene reglas propias:</p>
+<ul>
+<li>porcentaje distinto;</li>
+<li>máximo de deducción propio;</li>
+<li>límite de participación distinto (<code>45%</code>);</li>
+<li>condición territorial de inversión en Castilla y León;</li>
+<li>y condición laboral/empleo o asimilada.</li>
+</ul>
+<p>En una estructura <code>50/50</code>, esto no os sirve hoy como vía natural. La línea autonómica importa para evitar un error: <strong>no presupuestar una deducción que el cap table ya impide</strong>.</p>
+<hr />
+<h2 id="requisitos-estatales-desglosados-uno-por-uno">4. Requisitos estatales desglosados uno por uno</h2>
+<h3 id="la-entidad-debe-ser-sa-sl-sal-o-sll-y-no-cotizar">4.1 La entidad debe ser SA, SL, SAL o SLL y no cotizar</h3>
+<p><strong>Qué significa realmente</strong></p>
+<p>TradeBase debe existir como sociedad de capital válida para la deducción. Una SL encaja. No hace falta complejidad adicional.</p>
+<p><strong>Qué prueba vale</strong></p>
+<ul>
+<li>escritura de constitución;</li>
+<li>NIF definitivo;</li>
+<li>inscripción registral o, como mínimo, trazabilidad de constitución si el registro está en curso;</li>
+<li>pacto de socios, si existe, como apoyo interno, no como prueba principal.</li>
+</ul>
+<p><strong>Qué no vale</strong></p>
+<ul>
+<li>operar como autónomo y pensar que luego eso se traslada automáticamente;</li>
+<li>una sociedad en formación con papeles sin cerrar, si luego la fecha de suscripción o la participación se vuelve confusa.</li>
+</ul>
+<p><strong>Cómo se resuelve para TradeBase</strong></p>
+<ul>
+<li>constitución de SL con 2 socios fundadores;</li>
+<li>mención clara en escritura de ambos como otorgantes fundadores;</li>
+<li>reparto <code>50/50</code> perfectamente definido desde el día 1.</li>
+</ul>
+<h3 id="la-entidad-debe-ejercer-una-actividad-economica-con-medios-personales-y-materiales">4.2 La entidad debe ejercer una actividad económica con medios personales y materiales</h3>
+<p>Este es el requisito peor entendido y el que más fácil mata la deducción si se improvisa.</p>
+<h4 id="que-exige-la-aeat-en-sustancia">Qué exige la AEAT en sustancia</h4>
+<p>No pide una oficina grande ni facturación elevada. Pide que la sociedad no sea una mera caja con dinero o una patrimonial. Debe existir una ordenación por cuenta propia de medios para intervenir en el mercado con bienes o servicios.</p>
+<h4 id="umbral-minimo-prudencial-que-yo-considero-defendible-para-tradebase">Umbral mínimo prudencial que yo considero defendible para TradeBase</h4>
+<p>No es un umbral legal numérico; es un estándar de defensa prudente.</p>
+<p><strong>Medios personales mínimos defendibles</strong></p>
+<ul>
+<li>ambos socios trabajando en el proyecto o, como mínimo, uno de ellos con dedicación intensa y el otro con participación real acreditable;</li>
+<li>funciones separadas y explicables:
+<ul>
+<li>socio producto/tecnología;</li>
+<li>socio negocio/operaciones;</li>
+</ul>
+</li>
+<li>rastro de trabajo:
+<ul>
+<li>commits;</li>
+<li>documentos de producto;</li>
+<li>calendario de reuniones;</li>
+<li>pipeline comercial;</li>
+<li>emails y contactos con dealers o proveedores.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Medios materiales mínimos defendibles</strong></p>
+<ul>
+<li>sede en Fresno con título de uso real;</li>
+<li>cuenta bancaria de la sociedad;</li>
+<li>dominio y correo corporativo;</li>
+<li>infraestructura cloud contratada;</li>
+<li>software operativo;</li>
+<li>gestoría/contabilidad;</li>
+<li>demo funcional o entorno de producto real.</li>
+</ul>
+<p><strong>Actividad económica mínima defendible</strong></p>
+<ul>
+<li>plataforma en fase funcional, no idea vacía;</li>
+<li>capacidad de captar oferta profesional o al menos probar ese flujo;</li>
+<li>narrativa comercial identificable;</li>
+<li>primeras acciones reales de salida a mercado.</li>
+</ul>
+<h4 id="que-os-da-fuerza-probatoria-adicional">Qué os da fuerza probatoria adicional</h4>
+<ul>
+<li>contrato o cesión de sede con duración razonable;</li>
+<li>facturas de cloud, dominio, correo, gestoría, analítica, SaaS;</li>
+<li>acta o documento interno describiendo actividad, funciones de socios y medios;</li>
+<li>capturas del producto y del panel de gestión;</li>
+<li>primeras comunicaciones comerciales y reuniones.</li>
+</ul>
+<h4 id="que-no-cuenta-o-cuenta-poco">Qué no cuenta o cuenta poco</h4>
+<ul>
+<li>solo el dinero ingresado por socios;</li>
+<li>un logo o una landing sin operativa;</li>
+<li>domicilio formal sin prueba de uso real;</li>
+<li>un deck de negocio sin producto o sin rastro operativo.</li>
+</ul>
+<h3 id="fondos-propios-no-superiores-a-400.000-eur">4.3 Fondos propios no superiores a <code>400.000 EUR</code></h3>
+<p><strong>Qué significa</strong></p>
+<p>La deducción estatal tiene techo de fondos propios de la entidad en el inicio del período impositivo en que el socio adquiere la participación.</p>
+<p><strong>Aplicación a TradeBase</strong></p>
+<p>Con <code>30.000 EUR</code> de fondos propios iniciales, estáis lejísimos del límite. El problema aquí no es cumplir, sino <strong>documentar bien</strong> el importe real de fondos propios y no confundirlo con capital nominal.</p>
+<p><strong>Qué prueba vale</strong></p>
+<ul>
+<li>balance de apertura;</li>
+<li>cuadro de fondos propios;</li>
+<li>detalle capital / aportación adicional;</li>
+<li>asiento o informe de apertura contable.</li>
+</ul>
+<h3 id="la-suscripcion-debe-hacerse-en-constitucion-o-ampliacion-dentro-del-plazo-legal">4.4 La suscripción debe hacerse en constitución o ampliación dentro del plazo legal</h3>
+<p>En vuestro caso, la vía limpia es la constitución. Eso simplifica todo:</p>
+<ul>
+<li>fecha de entrada del dinero;</li>
+<li>condición de fundadores;</li>
+<li>cap table inicial;</li>
+<li>y conexión posterior con <code>#12</code>.</li>
+</ul>
+<h3 id="permanencia-minima-superior-a-3-anos-e-inferior-a-12">4.5 Permanencia mínima superior a 3 años e inferior a 12</h3>
+<p><strong>Qué implica en la práctica</strong></p>
+<p>No debéis estructurar la entrada de socios pensando en salida temprana, reordenación inmediata o reventa rápida. En particular:</p>
+<ul>
+<li>no vender participaciones antes del umbral temporal;</li>
+<li>no plantear una reestructuración que destruya la lógica de la inversión original sin revisar antes el impacto fiscal.</li>
+</ul>
+<p><strong>Qué control recomiendo</strong></p>
+<ul>
+<li>hoja interna con fecha de adquisición;</li>
+<li>fecha mínima a partir de la que podría analizarse salida;</li>
+<li>aviso a socios y asesoría de que cualquier cambio societario afecta a esta línea.</li>
+</ul>
+<h3 id="participacion-maxima-del-40-para-contribuyente-familiares">4.6 Participación máxima del <code>40%</code> para contribuyente + familiares</h3>
+<p>Aquí está el núcleo del problema.</p>
+<p><strong>Sin empresa emergente certificada</strong></p>
+<ul>
+<li>socio A al <code>50%</code> incumple la regla;</li>
+<li>socio B al <code>50%</code> incumple la regla;</li>
+<li>la deducción estatal cae.</li>
+</ul>
+<p><strong>Con empresa emergente certificada y ambos fundadores</strong></p>
+<p>La excepción para socios fundadores de empresa emergente puede reabrir la vía estatal. Esa es la razón por la que <code>#12</code> no es solo reputacional: <strong>es pieza fiscal estructural</strong>.</p>
+<h3 id="certificacion-de-la-sociedad-para-la-deduccion">4.7 Certificación de la sociedad para la deducción</h3>
+<p>No basta con que vosotros creáis que cumplís. Debe poder emitirse certificado societario coherente con:</p>
+<ul>
+<li>fecha de constitución;</li>
+<li>reparto;</li>
+<li>importe aportado por cada socio;</li>
+<li>fondos propios;</li>
+<li>actividad económica;</li>
+<li>condición de empresa emergente, si se invoca.</li>
+</ul>
+<hr />
+<h2 id="requisitos-autonomicos-de-castilla-y-leon-bien-leidos">5. Requisitos autonómicos de Castilla y León, bien leídos</h2>
+<h3 id="participacion-maxima-del-45">5.1 Participación máxima del <code>45%</code></h3>
+<p>Con <code>50/50</code>, la vía CyL ya falla por pura estructura. No hay nada que interpretar aquí.</p>
+<h3 id="inversion-destinada-a-proyectos-en-castilla-y-leon">5.2 Inversión destinada a proyectos en Castilla y León</h3>
+<p>Aquí sí encajáis bien por sede en Fresno. Pero este requisito no os sirve de nada si el <code>50/50</code> ya os ha dejado fuera por porcentaje.</p>
+<h3 id="empleo-o-condicion-asimilada">5.3 Empleo o condición asimilada</h3>
+<p>Esta es otra razón por la que la vía autonómica no debe ponerse en el modelo financiero base. Aunque resolvierais el problema del porcentaje, todavía habría que defender el componente de empleo y mantenimiento.</p>
+<p><strong>Conclusión autonómica para TradeBase hoy</strong></p>
+<ul>
+<li>no modelarla como ayuda activa;</li>
+<li>no duplicar base con la estatal;</li>
+<li>solo reabrirla si algún día cambia la estructura de socios.</li>
+</ul>
+<hr />
+<h2 id="que-significa-realmente-mala-instrumentacion-del-desembolso">6. Qué significa realmente “mala instrumentación del desembolso”</h2>
+<p>Esta expresión no es retórica. Significa que el dinero entra en la sociedad de forma que luego no puede demostrarse con precisión:</p>
+<ul>
+<li>cuánto puso cada socio;</li>
+<li>qué parte fue capital;</li>
+<li>qué parte fue aportación adicional;</li>
+<li>qué fecha exacta tuvo cada ingreso;</li>
+<li>y cómo se refleja todo eso en escritura y contabilidad.</li>
+</ul>
+<h3 id="estandar-documental-que-recomiendo">6.1 Estándar documental que recomiendo</h3>
+<p>Antes de firmar, debe existir un cuadro de inversión con estas columnas:</p>
+<table>
+<thead>
+<tr>
+<th>Socio</th>
+<th style="text-align: right;">Importe total</th>
+<th style="text-align: right;">Capital social</th>
+<th style="text-align: right;">Aportación adicional / prima</th>
+<th>Fecha prevista de transferencia</th>
+<th>Cuenta origen</th>
+<th>Cuenta destino</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Socio A</td>
+<td style="text-align: right;"><code>15.000</code></td>
+<td style="text-align: right;"><code>3.000</code></td>
+<td style="text-align: right;"><code>12.000</code></td>
+<td>dd/mm/2026</td>
+<td>IBAN origen</td>
+<td>IBAN sociedad</td>
+</tr>
+<tr>
+<td>Socio B</td>
+<td style="text-align: right;"><code>15.000</code></td>
+<td style="text-align: right;"><code>3.000</code></td>
+<td style="text-align: right;"><code>12.000</code></td>
+<td>dd/mm/2026</td>
+<td>IBAN origen</td>
+<td>IBAN sociedad</td>
+</tr>
+</tbody>
+</table>
+<h3 id="prueba-bancaria-minima">6.2 Prueba bancaria mínima</h3>
+<ul>
+<li>justificante individual de cada transferencia;</li>
+<li>reflejo en extracto de la sociedad;</li>
+<li>identificación del ordenante;</li>
+<li>concepto que no induzca a error.</li>
+</ul>
+<h3 id="prueba-societaria-minima">6.3 Prueba societaria mínima</h3>
+<ul>
+<li>escritura que refleje coherentemente la operación;</li>
+<li>número de participaciones;</li>
+<li>valor nominal;</li>
+<li>y, si existe prima o aportación adicional, tratamiento claro.</li>
+</ul>
+<h3 id="prueba-contable-minima">6.4 Prueba contable mínima</h3>
+<ul>
+<li>asiento de apertura;</li>
+<li>cuadro de fondos propios;</li>
+<li>soporte del criterio contable aplicado.</li>
+</ul>
+<hr />
+<h2 id="que-significa-doble-computo-estatal-autonomica-y-por-que-hay-que-prohibirlo-desde-el-diseno">7. Qué significa “doble cómputo estatal + autonómica” y por qué hay que prohibirlo desde el diseño</h2>
+<p>Este error nace cuando se hace el modelo financiero antes de leer bien la fiscalidad. Se suman:</p>
+<ul>
+<li>estatal <code>50%</code>;</li>
+<li>autonómica <code>20%</code>;</li>
+<li>y se presume que todo eso opera sobre la misma inversión.</li>
+</ul>
+<p>Eso no es la lectura correcta.</p>
+<h3 id="regla-de-prudencia-para-tradebase">7.1 Regla de prudencia para TradeBase</h3>
+<ul>
+<li>no modelar estatal y CyL sobre la misma base;</li>
+<li>en <code>50/50</code>, ni siquiera abrir la CyL como respaldo;</li>
+<li>tratar <code>#27</code> como estatal condicionada por <code>#12</code>.</li>
+</ul>
+<h3 id="documento-interno-recomendado">7.2 Documento interno recomendado</h3>
+<p>Preparad una nota fiscal corta con tres escenarios:</p>
+<ol>
+<li><code>50/50</code> sin <code>#12</code>;</li>
+<li><code>50/50</code> con <code>#12</code>;</li>
+<li>escenario alternativo si algún día se altera la estructura.</li>
+</ol>
+<p>Eso evita que el número fiscal se convierta en argumento comercial sin base.</p>
+<hr />
+<h2 id="relato-de-actividad-economica-que-deberiais-poder-sostener-manana">8. Relato de actividad económica que deberíais poder sostener mañana</h2>
+<p>Si mañana un tercero os pide justificar que TradeBase ejerce actividad económica real, la respuesta no debe ser improvisada. Debe existir un texto estable de 1-2 páginas que diga algo parecido a esto:</p>
+<blockquote>
+<p>TradeBase, S.L. desarrolla y explota una plataforma tecnológica B2B para la digitalización de mercados industriales especializados. Su primera vertical operativa es Tracciona, centrada en vehículos industriales, y el modelo se apoya en infraestructura propia de software, servicios cloud, herramientas de gestión y trabajo directo de los socios fundadores en desarrollo, operaciones y salida a mercado. La sociedad cuenta con sede operativa en Fresno de la Vega, medios técnicos contratados, demo funcional, dominio propio, proveedores operativos y actividad preparatoria y comercial orientada a la captación de oferta profesional, normalización de datos y monetización recurrente.</p>
+</blockquote>
+<p>Ese relato tiene que estar respaldado por prueba. Si no, es prosa.</p>
+<hr />
+<h2 id="carpeta-de-prueba-que-deberiais-poder-ensenar-sin-improvisar">9. Carpeta de prueba que deberíais poder enseñar sin improvisar</h2>
+<h3 id="carpeta-societaria">9.1 Carpeta societaria</h3>
+<ul>
+<li>escritura;</li>
+<li>NIF;</li>
+<li>inscripción registral;</li>
+<li>cap table inicial;</li>
+<li>pacto de socios si existe.</li>
+</ul>
+<h3 id="carpeta-bancaria">9.2 Carpeta bancaria</h3>
+<ul>
+<li>justificantes de aportación de los socios;</li>
+<li>extracto de la cuenta de la sociedad;</li>
+<li>cuadro de control de entradas.</li>
+</ul>
+<h3 id="carpeta-de-actividad-economica">9.3 Carpeta de actividad económica</h3>
+<ul>
+<li>contrato o cesión de sede;</li>
+<li>facturas de dominio, cloud, correo, gestoría, herramientas;</li>
+<li>demo funcional;</li>
+<li>capturas del producto;</li>
+<li>roadmap técnico;</li>
+<li>primeras acciones comerciales.</li>
+</ul>
+<h3 id="carpeta-fiscal">9.4 Carpeta fiscal</h3>
+<ul>
+<li>cuadro de fondos propios;</li>
+<li>certificado societario para la deducción;</li>
+<li>nota de criterio fiscal;</li>
+<li>calendario de permanencia mínima.</li>
+</ul>
+<hr />
+<h2 id="secuencia-operativa-correcta-para-tradebase">10. Secuencia operativa correcta para TradeBase</h2>
+<ol>
+<li>Cerrar escritura con ambos socios fundadores al <code>50/50</code>.</li>
+<li>Ejecutar transferencias trazables de cada socio.</li>
+<li>Cerrar balance de apertura con <code>30.000 EUR</code> de fondos propios.</li>
+<li>Formalizar sede y medios operativos mínimos.</li>
+<li>Congelar carpeta probatoria de actividad económica.</li>
+<li>Lanzar <code>#12</code> como expediente crítico.</li>
+<li>Solo después de <code>#12</code>, recalcular el uso real de <code>#27</code>.</li>
+</ol>
+<hr />
+<h2 id="arbol-de-decision-real">11. Árbol de decisión real</h2>
+<table>
+<thead>
+<tr>
+<th>Pregunta</th>
+<th>Si sí</th>
+<th>Si no</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>¿La sociedad está constituida y ambos figuran como fundadores?</td>
+<td>seguir</td>
+<td>parar</td>
+</tr>
+<tr>
+<td>¿El desembolso de ambos está trazado y documentado?</td>
+<td>seguir</td>
+<td>no modelar deducción</td>
+</tr>
+<tr>
+<td>¿Existen sede, medios y actividad económica defendibles?</td>
+<td>seguir</td>
+<td>reconstruir prueba antes de usar la línea</td>
+</tr>
+<tr>
+<td>¿El <code>50/50</code> sigue vigente?</td>
+<td>exigir <code>#12</code></td>
+<td>revisar fiscalidad según nueva estructura</td>
+</tr>
+<tr>
+<td>¿Ha salido <code>#12</code>?</td>
+<td>valorar estatal con seriedad</td>
+<td>asumir que la estatal está muy comprometida</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="go-no-go">12. Go / no-go</h2>
+<h3 id="go">GO</h3>
+<ul>
+<li>sociedad constituida;</li>
+<li>ambos socios fundadores;</li>
+<li>dinero trazado;</li>
+<li>fondos propios claros;</li>
+<li>actividad económica real demostrable;</li>
+<li><code>#12</code> favorable o, al menos, expediente muy sólido en curso si se toma postura prudente.</li>
+</ul>
+<h3 id="no-go">NO-GO</h3>
+<ul>
+<li>sociedad vacía o patrimonial de hecho;</li>
+<li>ausencia de prueba bancaria ordenada;</li>
+<li>ausencia de prueba de actividad económica;</li>
+<li>cap table <code>50/50</code> sin <code>#12</code> y aun así modelar ahorro fiscal como hecho.</li>
+</ul>
+<h3 id="not-yet">NOT YET</h3>
+<ul>
+<li>hay escritura y dinero, pero aún no hay sede o producto defendible;</li>
+<li>o hay sede y producto, pero la carpeta fiscal está incompleta.</li>
+</ul>
+<hr />
+<h2 id="conclusion">13. Conclusión</h2>
+<p>La deducción <code>#27</code> no es un bonus simpático. En TradeBase es una línea delicada y binaria. Con <code>50/50</code>, solo se convierte en palanca seria si se cierra bien la secuencia:</p>
+<ul>
+<li>estructura societaria limpia;</li>
+<li>prueba bancaria impecable;</li>
+<li>actividad económica real;</li>
+<li>y <code>#12</code> como llave fiscal.</li>
+</ul>
+<p>Mientras una de esas cuatro piezas no exista, el enfoque correcto no es “tener cuidado”. Es <strong>no presupuestar la deducción</strong>.</p>
+
+  </section>
+</main>
+</body>
+</html>

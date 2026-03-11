@@ -72,7 +72,7 @@
 
 ### Estado actual (Marzo 2026)
 
-**Plataforma:** Funcional, pre-lanzamiento. 125 páginas, 418 componentes, 92 tablas, 62 endpoints, 80 migraciones. Auditoría 83/100.
+**Plataforma:** Funcional, pre-lanzamiento. 126 páginas, 424 componentes, 97 tablas, 63 endpoints, 81 migraciones. Auditoría 83/100.
 
 **Próximos 30 días:**
 
@@ -1055,12 +1055,12 @@ app/
   middleware/         # auth.ts, admin.ts
   assets/css/         # tokens.css (design system), themes.css
 server/
-  api/                # 62 endpoints API (Nitro)
+  api/                # 63 endpoints API (Nitro)
   services/           # Lógica de negocio (billing, marketReport, aiProvider)
   middleware/         # Security headers, rate limiting, CORS
   utils/              # verifyCronSecret, safeError
 i18n/                 # Traducciones (es.json, en.json)
-supabase/migrations/  # SQL (80 migraciones)
+supabase/migrations/  # SQL (81 migraciones)
 types/                # supabase.ts (auto-generated)
 tests/                # Vitest + Playwright
 ```
@@ -1075,8 +1075,8 @@ La tabla `vertical_config` controla todo per-vertical: marca, colores, tipograf�
 
 ### 7.4 Base de datos
 
-- **92 tablas** con RLS habilitado (89 con RLS activo)
-- **80 migraciones** aplicadas
+- **97 tablas** con RLS habilitado (+5 brokeraje)
+- **81 migraciones** aplicadas
 - Columna `vertical` en tablas clave para aislamiento de datos
 - Índices compuestos para queries multi-vertical
 - Full-text search en PostgreSQL
@@ -1129,7 +1129,7 @@ WebP, responsive sizes, lazy loading, blur placeholder. Cache immutable 30d. Aho
 | API writes       | 30 req/min  |
 | API reads        | 200 req/min |
 
-### 7.8 API (62 endpoints)
+### 7.8 API (63 endpoints)
 
 | Tipo          | Cantidad | Auth                              |
 | ------------- | -------- | --------------------------------- |
@@ -2137,7 +2137,7 @@ Ver `CONTRIBUTING.md` para reglas completas. Resumen:
 
 ## S16 — Apéndices
 
-### Apéndice A — Esquema de base de datos (92 tablas)
+### Apéndice A — Esquema de base de datos (97 tablas)
 
 **Core:**
 `users`, `profiles`, `dealers`, `vehicles`, `vehicle_images`, `categories`, `subcategories`, `subcategory_categories`, `articles`, `content_translations`, `vertical_config`, `config`, `actions`, `attributes`, `brands`, `locations`, `geo_regions`, `geocoding_cache`
@@ -2207,7 +2207,7 @@ Ver `docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md` para la tabla compl
 
 **Migración a Tracciona (feb 2026):** Migración completa del monolito a Nuxt 3 + Supabase. 64 sesiones de implementación paso a paso. Renombrado de tablas (subcategories→categories, types→subcategories, filter_definitions→attributes). Migración de columnas `_es`/`_en` a JSONB.
 
-**Estado actual (mar 2026):** Plataforma funcional con 4.000+ vehículos, 500+ dealers, 1.200+ transacciones históricas. ~83/100 en auditoría de 12 dimensiones. 80 migraciones, 92 tablas, 62 endpoints, 418 componentes.
+**Estado actual (mar 2026):** Plataforma funcional con 4.000+ vehículos, 500+ dealers, 1.200+ transacciones históricas. ~83/100 en auditoría de 12 dimensiones. 81 migraciones, 97 tablas, 63 endpoints, 424 componentes. 6248 tests, 233 archivos test.
 
 ### Apéndice E — Acciones pendientes de fundadores
 

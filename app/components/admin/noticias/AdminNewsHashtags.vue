@@ -37,29 +37,29 @@ defineEmits<{
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .section-title {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--color-gray-100);
 }
 
 .btn {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--color-gray-200);
   background: var(--bg-primary);
-  color: #374151;
+  color: var(--color-gray-700);
   transition: all 0.15s;
 }
 
@@ -68,14 +68,14 @@ defineEmits<{
 }
 
 .btn-sm {
-  padding: 4px 12px;
+  padding: var(--spacing-1) var(--spacing-3);
   font-size: 0.8rem;
 }
 
 .input {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   width: 100%;
   box-sizing: border-box;
@@ -89,8 +89,8 @@ defineEmits<{
 /* Hashtags */
 .hashtag-input-row {
   display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
 }
 
 .hashtag-input-row .input {
@@ -100,16 +100,16 @@ defineEmits<{
 .hashtag-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .hashtag-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1) 0.625rem;
   background: var(--bg-secondary);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
@@ -118,8 +118,8 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   border-radius: 50%;
   border: none;
   background: none;

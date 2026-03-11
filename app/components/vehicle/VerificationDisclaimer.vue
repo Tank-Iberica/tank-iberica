@@ -12,17 +12,17 @@ const { t } = useI18n()
 
 <style scoped>
 .verification-disclaimer {
-  background: var(--bg-secondary, #f9fafb);
-  border: 1px solid var(--border-color-light, #e5e7eb);
-  border-radius: var(--border-radius, 6px);
-  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
-  margin-top: var(--spacing-3, 12px);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3) var(--spacing-4);
+  margin-top: var(--spacing-3);
 }
 
 .disclaimer-text {
-  font-size: var(--font-size-xs, 12px);
-  color: var(--text-secondary, #6b7280);
-  line-height: var(--line-height-relaxed, 1.625);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
   margin: 0;
 }
 </style>

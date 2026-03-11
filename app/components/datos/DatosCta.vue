@@ -48,8 +48,8 @@ const localePath = useLocalePath()
   font-weight: var(--font-weight-semibold);
   border-radius: var(--border-radius);
   text-decoration: none;
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   transition: background var(--transition-fast);
 }
 

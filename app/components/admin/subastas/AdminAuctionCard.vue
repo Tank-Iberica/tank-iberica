@@ -153,8 +153,8 @@ const { t } = useI18n()
 <style scoped>
 .auction-card {
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   transition: box-shadow 0.2s;
 }
@@ -165,34 +165,34 @@ const { t } = useI18n()
 
 /* Card header */
 .auction-card-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f3f4f6;
+  padding: var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .auction-main-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .auction-title {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-gray-900);
 }
 
 .auction-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
   flex-wrap: wrap;
 }
 
 .status-badge {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
@@ -201,27 +201,27 @@ const { t } = useI18n()
 
 .meta-item {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 /* Card body */
 .auction-card-body {
-  padding: 16px 20px;
+  padding: var(--spacing-4) var(--spacing-5);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .info-label {
@@ -234,7 +234,7 @@ const { t } = useI18n()
 
 .info-value {
   font-size: 0.95rem;
-  color: #374151;
+  color: var(--color-gray-700);
   font-weight: 600;
 }
 
@@ -245,21 +245,21 @@ const { t } = useI18n()
 .dates-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #f3f4f6;
+  gap: var(--spacing-2);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-gray-100);
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .date-item {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .date-separator {
-  color: #d1d5db;
+  color: var(--color-gray-300);
   font-weight: 600;
 }
 
@@ -267,21 +267,21 @@ const { t } = useI18n()
 .auction-card-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 12px 20px;
-  background: #f9fafb;
-  border-top: 1px solid #f3f4f6;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-5);
+  background: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-100);
 }
 
 .action-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
   border: 1px solid transparent;
   transition: all 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .action-btn:disabled {
@@ -290,43 +290,43 @@ const { t } = useI18n()
 }
 
 .action-edit {
-  background: #eff6ff;
+  background: var(--color-blue-50);
   color: var(--color-info);
-  border-color: #bfdbfe;
+  border-color: var(--color-info-border);
 }
 
 .action-edit:hover:not(:disabled) {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
 }
 
 .action-registrations {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
   border-color: var(--color-success-border);
 }
 
 .action-registrations:hover {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
 }
 
 .action-adjudicate {
-  background: #faf5ff;
-  color: #7c3aed;
-  border-color: #e9d5ff;
+  background: var(--color-purple-50);
+  color: var(--color-purple-600);
+  border-color: var(--color-purple-200);
 }
 
 .action-adjudicate:hover:not(:disabled) {
-  background: #f3e8ff;
+  background: var(--color-purple-100);
 }
 
 .action-cancel {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
   border-color: var(--color-error-border);
 }
 
 .action-cancel:hover:not(:disabled) {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 /* ============================================
@@ -344,15 +344,15 @@ const { t } = useI18n()
 
 @media (min-width: 48em) {
   .auction-card-header {
-    padding: 16px 24px;
+    padding: var(--spacing-4) var(--spacing-6);
   }
 
   .auction-card-body {
-    padding: 16px 24px;
+    padding: var(--spacing-4) var(--spacing-6);
   }
 
   .auction-card-actions {
-    padding: 12px 24px;
+    padding: var(--spacing-3) var(--spacing-6);
   }
 
   .info-grid {
@@ -362,7 +362,7 @@ const { t } = useI18n()
 
 @media (min-width: 64em) {
   .auction-card-actions {
-    gap: 10px;
+    gap: 0.625rem;
   }
 }
 </style>

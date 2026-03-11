@@ -30,11 +30,11 @@ function onRoleSelectChange(event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal-content modal-medium">
         <div class="modal-header">
           <h3>Detalles del Usuario</h3>
-          <button class="modal-close" @click="emit('close')">×</button>
+          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">×</button>
         </div>
         <div class="modal-body">
           <div v-if="user" class="detail-grid">
@@ -96,7 +96,7 @@ function onRoleSelectChange(event: Event) {
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" @click="emit('close')">Cerrar</button>
+          <button class="btn-secondary" @click="emit('close')">{{ $t('common.close') }}</button>
         </div>
       </div>
     </div>
@@ -112,12 +112,12 @@ function onRoleSelectChange(event: Event) {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: 90vh;
@@ -125,15 +125,15 @@ function onRoleSelectChange(event: Event) {
 }
 
 .modal-medium {
-  max-width: 560px;
+  max-width: 35rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
   position: sticky;
   top: 0;
   background: var(--bg-primary);
@@ -147,22 +147,22 @@ function onRoleSelectChange(event: Event) {
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   cursor: pointer;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
   position: sticky;
   bottom: 0;
 }
@@ -170,13 +170,13 @@ function onRoleSelectChange(event: Event) {
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .detail-section {
-  background: #f9fafb;
-  padding: 16px;
-  border-radius: 8px;
+  background: var(--color-gray-50);
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius);
 }
 
 .detail-section.full-width {
@@ -184,15 +184,15 @@ function onRoleSelectChange(event: Event) {
 }
 
 .detail-section h4 {
-  margin: 0 0 12px 0;
+  margin: 0 0 var(--spacing-3) 0;
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .detail-section p {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-2) 0;
   font-size: 0.95rem;
 }
 
@@ -203,28 +203,28 @@ function onRoleSelectChange(event: Event) {
 .user-identity {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-4);
   background: var(--bg-primary);
   border: 1px solid var(--border-color-light);
 }
 
 .user-main-name {
-  margin: 0 0 4px 0 !important;
+  margin: 0 0 0.25rem 0 !important;
   font-size: 1.15rem !important;
-  color: #111827;
+  color: var(--color-gray-900);
   text-transform: none !important;
   letter-spacing: 0 !important;
 }
 
 .user-sub-name {
-  color: #6b7280;
+  color: var(--color-gray-500);
   margin: 0 !important;
   font-size: 0.9rem;
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 50%;
   background: var(--bg-tertiary);
   display: flex;
@@ -235,8 +235,8 @@ function onRoleSelectChange(event: Event) {
 }
 
 .avatar.large {
-  width: 64px;
-  height: 64px;
+  width: 4rem;
+  height: 4rem;
 }
 
 .avatar img {
@@ -247,7 +247,7 @@ function onRoleSelectChange(event: Event) {
 
 .avatar-initials {
   font-weight: 600;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 0.9rem;
 }
 
@@ -258,24 +258,24 @@ function onRoleSelectChange(event: Event) {
 .role-badge {
   display: inline-block;
   color: white;
-  padding: 2px 10px;
-  border-radius: 12px;
+  padding: 0.125rem 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 500;
-  margin-left: 4px;
+  margin-left: var(--spacing-1);
 }
 
 .role-change-row {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
   align-items: center;
 }
 
 .role-select-large {
   flex: 1;
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
 }
 
@@ -283,8 +283,8 @@ function onRoleSelectChange(event: Event) {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
 }
@@ -299,10 +299,10 @@ function onRoleSelectChange(event: Event) {
 
 .btn-secondary {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
 }

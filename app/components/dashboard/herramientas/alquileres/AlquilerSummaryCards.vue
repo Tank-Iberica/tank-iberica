@@ -35,41 +35,41 @@ const { t } = useI18n()
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .summary-card {
-  padding: 16px 20px;
-  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border-radius: var(--border-radius-md);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .summary-card .card-label {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   opacity: 0.8;
 }
 
 .summary-card .card-value {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   line-height: 1.2;
 }
 
 .summary-card.active-rentals {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 
 .summary-card.monthly-income {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 
 .summary-card.available-soon {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 

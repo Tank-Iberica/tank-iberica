@@ -18,6 +18,7 @@ defineProps<{
   dynamicActiveCount: number
   totalActiveCount: number
   formatPriceLabel: (n: number) => string
+  advancedOpen?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -117,8 +118,8 @@ onUnmounted(() => {
               width="14"
               height="14"
               viewBox="0 0 24 24"
-              fill="#C41E3A"
-              stroke="#C41E3A"
+              fill="var(--color-danger)"
+              stroke="var(--color-danger)"
               stroke-width="2"
             >
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -180,6 +181,8 @@ onUnmounted(() => {
         <button
           v-if="filtersForFilterBar.length"
           class="filter-advanced-btn"
+          :aria-expanded="advancedOpen ?? false"
+          aria-controls="filter-advanced-panel"
           @click="emit('toggleAdvanced')"
         >
           <svg
@@ -263,8 +266,8 @@ onUnmounted(() => {
   gap: 0.3rem;
   padding: 0.2rem 0.4rem;
   border: 2px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 10px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
   line-height: 1.4;
   color: var(--text-primary);
   background: var(--bg-primary);
@@ -283,12 +286,12 @@ onUnmounted(() => {
 .filters-mobile-wrapper .filter-select-inline {
   padding: 0.2rem 0.3rem;
   border: 2px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 10px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
   line-height: 1.4;
   color: var(--text-primary);
   background: var(--bg-primary);
-  min-width: 60px;
+  min-width: 3.75rem;
   min-height: auto;
   cursor: pointer;
 }
@@ -307,8 +310,8 @@ onUnmounted(() => {
   gap: 0.3rem;
   padding: 0.2rem 0.4rem;
   border: 2px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 10px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
   line-height: 1.4;
   color: var(--text-primary);
   background: var(--bg-primary);
@@ -325,25 +328,25 @@ onUnmounted(() => {
   background: rgba(35, 66, 74, 0.8);
   border: none;
   color: white;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  min-height: 2rem;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
-  font-size: 10px;
+  font-size: var(--font-size-xs);
 }
 
 .filters-mobile-container .scroll-btn-left {
-  left: 2px;
+  left: 0.125rem;
 }
 
 .filters-mobile-container .scroll-btn-right {
-  right: 2px;
+  right: 0.125rem;
 }
 
 .filter-advanced-btn {
@@ -353,8 +356,8 @@ onUnmounted(() => {
   flex-shrink: 0;
   padding: 0.25rem 0.6rem;
   border: 2px solid var(--color-primary);
-  border-radius: 6px;
-  font-size: 10px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
   font-weight: 500;
   color: var(--color-primary);
   background: var(--bg-primary);
@@ -372,7 +375,7 @@ onUnmounted(() => {
 
 @media (min-width: 30em) {
   .filter-label {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
   }
 }
 

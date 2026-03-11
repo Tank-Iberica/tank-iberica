@@ -91,7 +91,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .review-form-section {
-  max-width: 960px;
+  max-width: 60rem;
   margin: 0 auto var(--spacing-8);
   padding: 0 var(--spacing-4);
 }
@@ -105,10 +105,10 @@ const emit = defineEmits<{
 
 .success-banner {
   padding: var(--spacing-4);
-  background: #d1fae5;
-  border: 1px solid #6ee7b7;
+  background: var(--color-emerald-100);
+  border: 1px solid var(--color-emerald-300);
   border-radius: var(--border-radius);
-  color: #065f46;
+  color: var(--color-success-text);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   text-align: center;
@@ -145,8 +145,8 @@ const emit = defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -165,13 +165,13 @@ const emit = defineEmits<{
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
   background: var(--bg-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-textarea {
@@ -182,20 +182,20 @@ const emit = defineEmits<{
   border-radius: var(--border-radius);
   background: var(--bg-primary);
   resize: vertical;
-  min-height: 100px;
+  min-height: 6.25rem;
   font-family: inherit;
 }
 
 .form-textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-error {
   font-size: var(--font-size-sm);
   color: var(--color-error);
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
   border-radius: var(--border-radius);
   padding: var(--spacing-3) var(--spacing-4);
@@ -216,7 +216,7 @@ const emit = defineEmits<{
   cursor: pointer;
   text-decoration: none;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {

@@ -1,4 +1,4 @@
-> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver `docs/tracciona-docs/` para documentación activa.
+> ⚠️ **[LEGACY]** Documento histórico — solo referencia. No modificar ni usar como fuente de verdad. Ver [docs/README.md](../README.md) para navegación activa.
 
 # Plan de Contingencia y Resiliencia Técnica
 
@@ -549,3 +549,5 @@ jobs:
 ---
 
 _Documento creado en Sesión 30. Revisar trimestralmente._
+
+

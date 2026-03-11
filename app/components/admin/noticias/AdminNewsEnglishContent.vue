@@ -61,9 +61,9 @@ defineEmits<{
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .section-toggle {
@@ -73,7 +73,7 @@ defineEmits<{
   width: 100%;
   font-weight: 600;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-gray-700);
   cursor: pointer;
   border: none;
   background: none;
@@ -86,18 +86,18 @@ defineEmits<{
 }
 
 .section-body {
-  margin-top: 16px;
-  padding-top: 16px;
+  margin-top: 1rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--color-gray-100);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .field label {
@@ -107,9 +107,9 @@ defineEmits<{
 }
 
 .input {
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.875rem;
   width: 100%;
   box-sizing: border-box;

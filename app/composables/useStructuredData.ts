@@ -45,7 +45,7 @@ export function buildVehicleSchema(v: VehicleSchemaInput): Record<string, unknow
   return {
     '@context': 'https://schema.org',
     '@type': ['Vehicle', 'Product'],
-    name: `${v.brand} ${v.model}${v.year ? ` ${v.year}` : ''}`,
+    name: v.year ? `${v.brand} ${v.model} ${v.year}` : `${v.brand} ${v.model}`,
     description: v.description || undefined,
     image: v.image || undefined,
     brand: { '@type': 'Brand', name: v.brand },
@@ -83,11 +83,11 @@ export function buildVehicleSchema(v: VehicleSchemaInput): Record<string, unknow
 /**
  * Build Organization JSON-LD schema (site-wide)
  */
-export function buildOrganizationSchema(): Record<string, unknown> {
+export function buildOrganizationSchema(siteName?: string): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: SITE_NAME,
+    name: siteName || SITE_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/icon-512x512.png`,
     description: 'Marketplace de vehículos industriales con IA',

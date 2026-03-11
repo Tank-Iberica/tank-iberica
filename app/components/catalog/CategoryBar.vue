@@ -100,7 +100,7 @@ onUnmounted(() => {
 .categories-section {
   background: var(--bg-primary);
   padding: 0.28rem 0;
-  margin-top: 8px;
+  margin-top: 0.5rem;
   position: relative;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
@@ -129,10 +129,10 @@ onUnmounted(() => {
 .category-btn {
   padding: 0.3rem 0.6rem;
   border: 2px solid var(--border-color);
-  border-radius: 9999px;
+  border-radius: var(--border-radius-full);
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   text-transform: uppercase;
   line-height: 1.4;
@@ -168,14 +168,14 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--border-color);
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  min-height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   color: var(--text-primary);
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
@@ -183,11 +183,11 @@ onUnmounted(() => {
 }
 
 .scroll-btn-left {
-  left: 2px;
+  left: 0.125rem;
 }
 
 .scroll-btn-right {
-  right: 2px;
+  right: 0.125rem;
 }
 
 /* ============================================
@@ -200,9 +200,9 @@ onUnmounted(() => {
   }
 
   .category-btn {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     padding: 0.25rem 0.45rem;
-    letter-spacing: 0.1px;
+    letter-spacing: 0.006rem;
   }
 }
 
@@ -221,10 +221,10 @@ onUnmounted(() => {
   }
 
   .category-btn {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
     padding: 0.4rem 0.6rem;
-    letter-spacing: 0.2px;
-    min-height: 36px;
+    letter-spacing: 0.0125rem;
+    min-height: 2.25rem;
     display: inline-flex;
     align-items: center;
   }
@@ -240,9 +240,9 @@ onUnmounted(() => {
   }
 
   .category-btn {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
     padding: 0.4rem 0.6rem;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.019rem;
   }
 }
 </style>

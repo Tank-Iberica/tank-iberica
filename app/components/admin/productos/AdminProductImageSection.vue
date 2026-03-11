@@ -58,7 +58,7 @@ const emit = defineEmits<{
             >
               ↓
             </button>
-            <button type="button" class="del" title="Eliminar" @click="emit('remove', img.id)">
+            <button type="button" class="del" :aria-label="$t('common.delete')" @click="emit('remove', img.id)">
               ×
             </button>
           </div>
@@ -67,7 +67,7 @@ const emit = defineEmits<{
       </div>
     </div>
     <p v-if="pendingImages.length" class="img-hint">
-      Las imágenes se subirán al guardar el vehículo
+      Las imágenes se subirán al guardar el {{ $t('vertical.itemName') }}
     </p>
   </div>
 </template>
@@ -75,15 +75,15 @@ const emit = defineEmits<{
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  padding: 12px 16px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3) var(--spacing-4);
+  box-shadow: var(--shadow-xs);
 }
 .section-title {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #374151;
-  margin-bottom: 10px;
+  color: var(--color-gray-700);
+  margin-bottom: 0.625rem;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
@@ -92,15 +92,15 @@ const emit = defineEmits<{
 .upload-zone-label {
   display: block;
   width: 100%;
-  padding: 12px;
+  padding: var(--spacing-3);
   text-align: center;
-  background: #f9fafb;
+  background: var(--color-gray-50);
   border: 2px dashed var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.8rem;
-  color: #6b7280;
-  margin-bottom: 10px;
+  color: var(--color-gray-500);
+  margin-bottom: 0.625rem;
 }
 .upload-zone-label:hover {
   border-color: var(--color-primary);
@@ -114,32 +114,32 @@ const emit = defineEmits<{
 .upload-progress {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: var(--spacing-2);
+  margin-bottom: 0.625rem;
 }
 .upload-progress .progress-bar {
   flex: 1;
-  height: 6px;
+  height: 0.375rem;
   background: var(--color-primary);
-  border-radius: 3px;
+  border-radius: var(--border-radius-sm);
   transition: width 0.2s;
 }
 .upload-progress span {
   font-size: 0.7rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 /* Image grid */
 .img-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  margin-top: 12px;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
 }
 .img-item {
   position: relative;
   aspect-ratio: 4/3;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   overflow: hidden;
   border: 2px solid transparent;
 }
@@ -167,36 +167,36 @@ const emit = defineEmits<{
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 .img-actions button {
-  width: 26px;
-  height: 26px;
+  width: 1.625rem;
+  height: 1.625rem;
   border: none;
   background: var(--bg-primary);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-size: 0.75rem;
 }
 .img-actions button.del {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 .cover-badge {
   position: absolute;
-  bottom: 4px;
-  left: 4px;
+  bottom: 0.25rem;
+  left: 0.25rem;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   font-size: 0.6rem;
-  padding: 2px 6px;
-  border-radius: 3px;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--border-radius-sm);
   font-weight: 600;
 }
 .img-hint {
-  margin-top: 8px;
+  margin-top: var(--spacing-2);
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-align: center;
 }
 

@@ -565,7 +565,7 @@ async function submitContactForm() {
     buyer_phone: form.phone || null,
     message: form.message,
     source: 'dealer_portal',
-    source_url: typeof window === 'undefined' ? null : globalThis.location.href,
+    source_url: globalThis.window === undefined ? null : globalThis.location.href,
   })
   formLoading.value = false
   if (error) {
@@ -688,8 +688,8 @@ onUnmounted(() => {
 }
 
 .dealer-logo {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   border-radius: var(--border-radius-full);
   object-fit: cover;
   border: 4px solid var(--bg-primary);
@@ -740,8 +740,8 @@ onUnmounted(() => {
 }
 
 .badge-founding {
-  background: linear-gradient(135deg, #f5d547 0%, var(--color-gold) 100%);
-  color: #5a4500;
+  background: linear-gradient(135deg, var(--color-yellow-400) 0%, var(--color-gold) 100%);
+  color: var(--color-amber-800);
 }
 
 .badge-premium {
@@ -777,7 +777,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .stat-value {
@@ -794,8 +794,8 @@ onUnmounted(() => {
 }
 
 .stat-separator {
-  width: 1px;
-  height: 32px;
+  width: 0.0625rem;
+  height: 2rem;
   background: var(--border-color-light);
 }
 
@@ -814,7 +814,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
@@ -835,7 +835,7 @@ onUnmounted(() => {
 }
 
 .contact-whatsapp {
-  background: #25d366;
+  background: var(--color-whatsapp);
   color: var(--color-white);
 }
 
@@ -904,8 +904,8 @@ onUnmounted(() => {
 }
 
 .cert-icon {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -944,8 +944,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: var(--border-radius-full);
   background: var(--bg-secondary);
   color: var(--color-primary);
@@ -1011,11 +1011,11 @@ onUnmounted(() => {
 
 .form-textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .form-submit {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-3) var(--spacing-6);
   background: var(--color-primary);
   color: var(--color-white);
@@ -1159,12 +1159,12 @@ onUnmounted(() => {
   }
 
   .logo-wrapper {
-    margin-top: -64px;
+    margin-top: -4rem;
   }
 
   .dealer-logo {
-    width: 100px;
-    height: 100px;
+    width: 6.25rem;
+    height: 6.25rem;
   }
 
   .header-info {
@@ -1264,7 +1264,7 @@ onUnmounted(() => {
   color: var(--color-primary);
   text-decoration: none;
   align-self: flex-start;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) 0;
 }
 

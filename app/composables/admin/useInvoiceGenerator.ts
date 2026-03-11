@@ -80,7 +80,7 @@ export function useInvoiceGenerator(getVehicleOptions: () => VehicleOption[]) {
   function updateInvoiceNumber() {
     const year = new Date().getFullYear()
     const ids = selectedVehicles.value
-      .filter((v) => v)
+      .filter(Boolean)
       .map((v) => v.split('-')[1])
       .join('-')
     invoiceNumber.value = ids ? `${year}/${ids}` : `${year}/000`

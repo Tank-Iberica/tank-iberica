@@ -1,3 +1,4 @@
+import { logger } from '../utils/logger'
 /**
  * Image upload service — handles uploads to Cloudinary and CF Images.
  */
@@ -35,7 +36,7 @@ export async function uploadToCloudinary(
   const folder = opts.folder || 'tracciona/vehicles'
 
   if (!cloudName || !uploadPreset) {
-    console.warn('[imageUploader] Cloudinary not configured, skipping upload')
+    logger.warn('[imageUploader] Cloudinary not configured, skipping upload')
     return null
   }
 
@@ -58,9 +59,7 @@ export async function uploadToCloudinary(
 
   if (!response.ok) {
     await response.text()
-    console.error(
-      `[imageUploader] Cloudinary upload failed: ${response.status} ${response.statusText}`,
-    )
+    logger.error(`[imageUploader] Cloudinary upload failed: ${response.status} ${response.statusText}`)
     return null
   }
 
@@ -86,7 +85,7 @@ export async function uploadImage(
 
   if (mode === 'cf-images') {
     // CF Images not yet implemented — fall back to Cloudinary
-    console.warn('[imageUploader] CF Images not yet implemented, using Cloudinary')
+    logger.warn('[imageUploader] CF Images not yet implemented, using Cloudinary')
   }
 
   return uploadToCloudinary(imageBuffer, opts)

@@ -16,13 +16,17 @@
 | `WHATSAPP_API_TOKEN`        | Cloudflare Pages env                 | Annual             | Initial setup |
 | `WHATSAPP_PHONE_NUMBER_ID`  | Cloudflare Pages env                 | Never (static)     | N/A           |
 | `WHATSAPP_VERIFY_TOKEN`     | Cloudflare Pages env                 | Annual             | Initial setup |
-| `RESEND_API_KEY`            | GitHub Secrets                       | Annual             | Initial setup |
+| `RESEND_API_KEY`            | Cloudflare Pages env, GitHub Secrets | Annual             | Initial setup |
+| `SUPABASE_ANON_KEY`         | Cloudflare Pages env, GitHub Secrets | Never (rotatable)  | Initial setup |
+| `INFRA_ALERT_EMAIL`         | GitHub Secrets                       | Never (static)     | N/A           |
 | `CRON_SECRET`               | Cloudflare Pages env, GitHub Secrets | Annual             | Initial setup |
 | `TURNSTILE_SECRET_KEY`      | Cloudflare Pages env                 | Annual             | Initial setup |
 | `CLOUDINARY_CLOUD_NAME`     | nuxt.config.ts (public)              | Never (static)     | N/A           |
 | `CLOUDINARY_UPLOAD_PRESET`  | nuxt.config.ts (public)              | Annual             | Initial setup |
 | `BACKBLAZE_KEY_ID`          | GitHub Secrets                       | Annual             | Initial setup |
 | `BACKBLAZE_APPLICATION_KEY` | GitHub Secrets                       | Annual             | Initial setup |
+| `STAGING_SUPABASE_URL`      | GitHub Secrets, .env local           | Never (static)     | N/A           |
+| `STAGING_SUPABASE_KEY`      | GitHub Secrets, .env local           | Annual             | Initial setup |
 
 ## Rotation Procedures
 
@@ -96,7 +100,9 @@ For webhook secret:
 
 1. Go to **resend.com/api-keys**
 2. Create a new API key
-3. Update in GitHub Secrets: `RESEND_API_KEY`
+3. Update in:
+   - Cloudflare Pages env vars: `RESEND_API_KEY` (used by server routes)
+   - GitHub Secrets: `RESEND_API_KEY` (used by k6-readiness.yml workflow)
 4. Delete the old key in Resend dashboard
 
 ### Backblaze B2 Keys
@@ -105,6 +111,27 @@ For webhook secret:
 2. Create a new application key with same bucket permissions
 3. Update in GitHub Secrets: `BACKBLAZE_KEY_ID` and `BACKBLAZE_APPLICATION_KEY`
 4. Delete the old key
+
+### Supabase Staging (IDOR Tests)
+
+> **Nota:** El proyecto staging (`xddjhrgkwwolpugtxgfk`) tiene sus propias credenciales
+> separadas de producción. Solo se usan para tests IDOR/RLS en CI y desarrollo local.
+
+1. Go to **Supabase Dashboard** > staging project > **Settings** > **API**
+2. Copy the new anon key
+3. Update in:
+   - GitHub Secrets: `STAGING_SUPABASE_KEY`
+   - `.env` local (si se ejecutan tests IDOR localmente)
+4. Verify: `STAGING_SUPABASE_URL=... STAGING_SUPABASE_KEY=... npx vitest run tests/security/idor-protection`
+5. The URL (`STAGING_SUPABASE_URL`) is static and does not need rotation
+
+**Test users en staging** (credenciales fijas para fixtures IDOR):
+
+| Email                         | Password          | Rol      |
+| ----------------------------- | ----------------- | -------- |
+| `dealer-a@test.tracciona.com` | `TestDealer2024!` | Dealer A |
+| `dealer-b@test.tracciona.com` | `TestDealer2024!` | Dealer B |
+| `admin@test.tracciona.com`    | `TestDealer2024!` | Admin    |
 
 ## Post-Rotation Checklist
 

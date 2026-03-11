@@ -136,7 +136,7 @@ defineExpose({ scrollToBottom })
 
 .message-time {
   display: block;
-  font-size: 10px;
+  font-size: 0.625rem;
   text-align: right;
 }
 

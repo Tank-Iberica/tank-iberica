@@ -1,8 +1,10 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-useHead({
-  title: t('security.disclosure.title'),
+usePageSeo({
+  title: `${t('security.disclosure.title')} — ${t('site.title')}`,
+  description: t('security.disclosure.seoDescription'),
+  path: '/seguridad/politica-divulgacion',
 })
 </script>
 
@@ -65,38 +67,38 @@ useHead({
 
 <style scoped>
 .disclosure-page {
-  padding: 24px 16px;
-  max-width: 800px;
+  padding: var(--spacing-6) var(--spacing-4);
+  max-width: 50rem;
   margin: 0 auto;
 }
 
 .disclosure-container h1 {
   font-size: 1.75rem;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
   color: var(--color-primary);
 }
 
 .disclosure-container h2 {
   font-size: 1.25rem;
-  margin: 24px 0 12px;
+  margin: 1.5rem 0 0.75rem;
   color: var(--text-primary);
 }
 
 .disclosure-container p {
   line-height: 1.6;
   color: var(--text-secondary);
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 
 .disclosure-container ul {
-  padding-left: 24px;
-  margin-bottom: 16px;
+  padding-left: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
 }
 
 .disclosure-container li {
   line-height: 1.6;
   color: var(--text-secondary);
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
 }
 
 .email-contact {
@@ -111,7 +113,7 @@ useHead({
 
 section {
   border-bottom: 1px solid var(--color-gray-200);
-  padding-bottom: 20px;
+  padding-bottom: var(--spacing-5);
 }
 
 section:last-child {

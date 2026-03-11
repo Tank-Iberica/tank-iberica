@@ -125,38 +125,38 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .section-header h2 {
   margin: 0;
   font-size: 1.5rem;
-  color: #111827;
+  color: var(--color-gray-900);
 }
 
 .total-badge {
   background: var(--bg-secondary);
-  color: #6b7280;
-  padding: 4px 12px;
-  border-radius: 16px;
+  color: var(--color-gray-500);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-lg);
   font-size: 0.85rem;
   font-weight: 500;
 }
 
 /* Error */
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -169,7 +169,7 @@ onMounted(() => {
   cursor: pointer;
   font-size: 1.1rem;
   font-weight: 600;
-  padding: 4px 8px;
+  padding: var(--spacing-1) var(--spacing-2);
   line-height: 1;
 }
 
@@ -177,7 +177,7 @@ onMounted(() => {
 .comments-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .comment-date {
@@ -190,24 +190,24 @@ onMounted(() => {
 .load-more-container {
   display: flex;
   justify-content: center;
-  padding: 20px 0;
+  padding: var(--spacing-5) 0;
 }
 
 .btn-load-more {
   background: var(--bg-primary);
   color: var(--color-primary);
   border: 1px solid var(--color-primary);
-  padding: 10px 24px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-6);
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background 0.2s;
 }
 
 .btn-load-more:hover:not(:disabled) {
-  background: #f0f4f5;
+  background: var(--color-gray-50);
 }
 
 .btn-load-more:disabled {
@@ -216,10 +216,10 @@ onMounted(() => {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header {
     flex-direction: column;
-    gap: 8px;
+    gap: var(--spacing-2);
     align-items: stretch;
   }
 

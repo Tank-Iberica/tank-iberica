@@ -159,34 +159,34 @@ const iconPaths: Record<string, string> = {
 }
 
 .section-header {
-  margin-bottom: 32px;
+  margin-bottom: var(--spacing-8);
 }
 
 .section-header h2 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.75rem;
   color: var(--color-text);
 }
 
 .section-subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 1rem;
 }
 
 .config-grid {
   display: grid;
-  gap: 16px;
+  gap: var(--spacing-4);
   grid-template-columns: 1fr;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .config-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 80em) {
   .config-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -195,11 +195,11 @@ const iconPaths: Record<string, string> = {
 .config-card {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
   text-decoration: none;
   color: inherit;
   transition: all 0.2s;
@@ -214,19 +214,19 @@ const iconPaths: Record<string, string> = {
 
 .card-icon {
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--bg-secondary);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   color: var(--color-primary);
 }
 
 .card-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 1.375rem;
+  height: 1.375rem;
 }
 
 .card-content {
@@ -235,14 +235,14 @@ const iconPaths: Record<string, string> = {
 }
 
 .card-content h3 {
-  margin: 0 0 6px;
+  margin: 0 0 0.375rem;
   font-size: 1rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-content p {
-  margin: 0 0 10px;
-  color: #6b7280;
+  margin: 0 0 0.625rem;
+  color: var(--color-gray-500);
   font-size: 0.85rem;
   line-height: 1.4;
 }
@@ -253,15 +253,15 @@ const iconPaths: Record<string, string> = {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .feature-list li {
   background: var(--bg-secondary);
-  padding: 2px 8px;
-  border-radius: 10px;
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--border-radius-md);
   font-size: 0.7rem;
-  color: #4b5563;
+  color: var(--color-gray-600);
 }
 
 .card-arrow {
@@ -272,8 +272,8 @@ const iconPaths: Record<string, string> = {
 }
 
 .card-arrow svg {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .config-card:hover .card-arrow {
@@ -281,10 +281,10 @@ const iconPaths: Record<string, string> = {
   color: var(--color-primary);
 }
 
-@media (max-width: 479px) {
+@media (max-width: 29.9375em) {
   .config-card {
-    padding: 16px;
-    gap: 12px;
+    padding: var(--spacing-4);
+    gap: var(--spacing-3);
   }
 
   .card-arrow {

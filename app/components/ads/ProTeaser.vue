@@ -142,8 +142,8 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   background: rgba(255, 255, 255, 0.15);
   border-radius: var(--border-radius-full);
   flex-shrink: 0;
@@ -189,8 +189,8 @@ onMounted(async () => {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   text-decoration: none;
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   transition:
     background var(--transition-fast),
     transform var(--transition-fast);

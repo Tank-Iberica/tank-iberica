@@ -120,18 +120,18 @@ const { t } = useI18n()
 
 <style scoped>
 .stripe-connect-section {
-  margin-top: 16px;
+  margin-top: var(--spacing-4);
 }
 
 .stripe-connect-section h2 {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .section-subtitle {
-  margin: 0 0 16px;
+  margin: 0 0 var(--spacing-4);
   color: var(--text-auxiliary);
   font-size: 0.875rem;
 }
@@ -143,8 +143,8 @@ const { t } = useI18n()
 
 .table-wrapper {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
 }
 
@@ -156,7 +156,7 @@ const { t } = useI18n()
 
 .data-table th {
   text-align: left;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-auxiliary);
@@ -167,7 +167,7 @@ const { t } = useI18n()
 }
 
 .data-table td {
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   color: var(--text-primary);
   border-bottom: 1px solid var(--color-gray-100);
 }
@@ -177,7 +177,7 @@ const { t } = useI18n()
 }
 
 .stripe-link {
-  color: #635bff;
+  color: var(--color-stripe);
   text-decoration: none;
   font-family: monospace;
   font-size: 0.8rem;
@@ -191,16 +191,16 @@ const { t } = useI18n()
 .mobile-only {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .connect-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   transition: box-shadow 0.2s;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 
 .connect-card:hover {
@@ -211,19 +211,19 @@ const { t } = useI18n()
   font-weight: 600;
   font-size: 0.95rem;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-2);
 }
 
 .card-details {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .card-detail {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .detail-label {
@@ -234,19 +234,19 @@ const { t } = useI18n()
 
 .connect-status {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 10px;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   font-weight: 600;
 }
 
 .connect-status.connect-ok {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
 }
 
 .connect-status.connect-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 

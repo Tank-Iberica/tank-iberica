@@ -214,9 +214,9 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
     if (!value) return ''
     if (typeof value === 'object' && value !== null) {
       const obj = value as Record<string, string>
-      return locale.value === 'en' && obj.en ? obj.en : obj.es || String(value)
+      return locale.value === 'en' && obj.en ? obj.en : obj.es || JSON.stringify(value)
     }
-    return String(value)
+    return String(value as string | number | boolean)
   }
 
   // ------------------------------------------------------------------

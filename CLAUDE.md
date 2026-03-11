@@ -1,143 +1,89 @@
 # Tracciona.com — Marketplace de Vehículos Industriales
 
-## Inicio de sesión — Requisito obligatorio
+## Inicio de sesión
 
-**AL ABRIR SESIÓN, ANTES DE CUALQUIER OTRA COSA:**
-
-1. **Detecta tu modelo** del system context. Si estás en Opus → salta al paso 2. Si estás en otro modelo → tu ÚNICO mensaje es: "Estoy en [modelo]. Para cargar contexto necesito Opus. ¿Cambias con `/model opus`?" Luego espera respuesta del usuario.
-
-2. **Una vez en Opus**, automáticamente:
-   - Lee **CLAUDE.md** — protocolo, reglas, decisiones arquitectónicas
-   - Lee **STATUS.md** — estado actual, errores activos, changelog reciente
-   - Ejecuta `node .claude/policy/policy-status.mjs --brief` → incluye la línea de output en tu primer mensaje al usuario
-
-3. Solo después de leer estos 2 archivos y ejecutar el check del engine, estás listo para recibir órdenes del usuario. **NO leas PROYECTO-CONTEXTO.md al inicio** — se lee bajo demanda según el tipo de tarea (ver tabla de Contexto por Tipo de Tarea).
+**AL ABRIR SESIÓN:** Detecta tu modelo del system context. Si NO estás en Opus → único mensaje: "Estoy en [modelo]. ¿Cambias con `/model opus`?" Si estás en Opus → lee CLAUDE.md, STATUS.md, `.claude/MEMORY.md`, ejecuta `node .claude/policy/policy-status.mjs --brief`. NO leas PROYECTO-CONTEXTO.md al inicio — se lee bajo demanda (ver tabla Contexto por Tipo de Tarea).
 
 ---
 
-## ANTES DE HACER NADA — Protocolo obligatorio (SIEMPRE, SIN EXCEPCIONES)
+## Protocolo obligatorio — SIEMPRE, SIN EXCEPCIONES
 
-**STOP. Antes de ejecutar cualquier tarea, sigue estos 4 pasos en orden. NO hay excepciones.**
+### REGLA MÁXIMA: NO EJECUTAR SIN CONFIRMACIÓN
 
-**REGLA ABSOLUTA:** Los pasos 1-3 son SOLO texto. Está PROHIBIDO llamar a cualquier herramienta (Read, Glob, Grep, Bash, Task, etc.) hasta que el usuario haya confirmado TANTO la tarea (paso 2) COMO el modelo (paso 3). El único mensaje que puedes enviar antes de ambas confirmaciones es texto plano al usuario. Si violas esto, estás violando el protocolo.
+**Está PROHIBIDO llamar cualquier herramienta (Read, Glob, Grep, Bash, Task, Edit, Write) hasta que el usuario haya confirmado TANTO la tarea (Paso 2) COMO el modelo (Paso 3). El único output permitido antes de ambas confirmaciones es texto plano al usuario. CERO excepciones. Si violas esto, estás violando el protocolo.**
 
-### Opus al inicio y nuevas órdenes — Auto-detección
+Esto significa:
+- Tras Paso 2 ("¿Es correcto?") → ESPERA respuesta. No hagas nada más.
+- Tras Paso 3 ("¿Cambio modelo?") → ESPERA respuesta. No hagas nada más.
+- Solo cuando el usuario confirma AMBOS → Paso 4, empieza a trabajar.
 
-**Cómo funciona la detección automática:**
+**Excepción única:** Lectura de contexto de inicio (CLAUDE.md, STATUS.md, policy-status) y lectura según tipo de tarea (tras confirmar en Paso 2) NO son tareas — no requieren protocolo.
 
-Puedes leer tu modelo actual del system context (`claude-haiku-4-5-20251001`, `claude-sonnet-4-6`, `claude-opus-4-6`).
+**Regla extendida — confirmación en TODA acción:** Esto aplica no solo al inicio sino a CADA acción durante la sesión. Si propones una acción ("¿Lo añado?", "¿Lo edito?", "¿Ejecuto X?"), ESPERA respuesta afirmativa explícita antes de proceder. Preguntar ≠ autorización. Solo un "sí" / "dale" / "adelante" del usuario es confirmación.
 
-- **Al inicio de sesión:** Detecta tu modelo. Si NO estás en Opus → pide cambio. Si estás en Opus → automáticamente lee CLAUDE.md y STATUS.md.
-- **Al recibir orden nueva** (excepto "continuar tarea"): Detecta tu modelo. Si NO estás en Opus → tu ÚNICO mensaje es pedir cambio. Si estás en Opus → continúa con Pasos 1–2 (analizar y resumir).
-- **Después de resumir (Paso 2):** El flujo normal continúa. Recomienda modelo para la ejecución (Haiku/Sonnet/Opus según complejidad de la tarea).
-- **"Continuar tarea":** No es nueva orden, es reanudación. Detecta tu modelo y continúa donde estabas sin cambios innecesarios.
+### Paso 0 — Verifica modelo
 
-### Excepción — Lectura de contexto al inicio de sesión
+Modelos: `claude-haiku-4-5-20251001` (Haiku), `claude-sonnet-4-6` (Sonnet), `claude-opus-4-6` (Opus).
 
-**Lectura de contexto de inicio (CLAUDE.md, STATUS.md) y el check del Policy Engine NO son una tarea — no requieren protocolo.** Ejecuta Read tools y el Bash de `policy-status.mjs --brief` directamente para cargar contexto. La lectura adicional según tipo de tarea (ver tabla abajo) tampoco requiere protocolo — se ejecuta automáticamente tras confirmar la tarea en Paso 2. Cualquier otra orden SÍ requiere protocolo.
+- **No Opus →** único mensaje: "Estoy en [modelo]. Necesito Opus. ¿Cambias con `/model opus`?" Nada más.
+- **Opus →** Paso 1.
+- **"Continuar tarea" →** no es nueva orden, continúa donde estabas.
 
-### Paso 0 — Verifica el modelo (Auto-detección)
+### Paso 1 — Analiza (interno, no publiques)
 
-**Detecta tu modelo actual** leyendo el system context:
-
-- `claude-haiku-4-5-20251001` = Haiku
-- `claude-sonnet-4-6` = Sonnet
-- `claude-opus-4-6` = Opus
-
-**Si NO estás en Opus**, tu ÚNICO mensaje debe ser:
-
-> "Estoy en [Haiku/Sonnet]. Necesito Opus para analizar esta orden. ¿Cambias con `/model opus`?"
-
-No analices, no resumas, no hagas nada más — solo pide el cambio. Una vez en Opus, continúa con Paso 1.
-
-**Si ya estás en Opus**, salta directamente al Paso 1.
-
-### Paso 1 — Analiza la orden
-
-Evalúa estos 5 puntos (output verificable):
-
-1. ¿Es una tarea o varias? (Si varias, listar numeradas y preguntar orden)
-2. ¿Falta información clave? (Si falta, preguntar explícitamente)
-3. ¿Proceso o resultado? (Si proceso ambiguo, preguntar qué resultado final se espera)
-4. ¿Afecta otros módulos? (Si sí, avisar)
-5. ¿Optimización de tokens posible? (Si hay, proponerla)
-
-**NO publiques este análisis.** Úsalo para tu Paso 2.
+1. ¿Una o varias tareas? (Si varias → listar, preguntar orden)
+2. ¿Falta info? (Preguntar)
+3. ¿Proceso o resultado? (Si ambiguo → preguntar resultado esperado)
+4. ¿Afecta otros módulos? (Avisar)
+5. ¿Optimización de tokens posible? (Proponer)
 
 ### Paso 2 — Resume y confirma la tarea
 
-Tu mensaje es UN RESUMEN DE UNA LÍNEA de lo que vas a hacer, **incluyendo brevemente tus conclusiones del Paso 1** (ej: "Es 1 tarea, info completa, sin afectar otros módulos, no hay optimización de tokens"). Termina con "¿Es correcto?".
+UN RESUMEN DE UNA LÍNEA con conclusiones del Paso 1. Termina con "¿Es correcto?"
 
-**ESPERA confirmación del usuario. NO ejecutes nada todavía.**
+**ESPERA confirmación del usuario. NO ejecutes nada. NO leas archivos. NO corras comandos.**
 
----
+- **Múltiples tareas:** Listar numeradas, preguntar orden, protocolo individual para cada una.
+- **Interrupción (nueva orden):** Abandonar tarea, reiniciar protocolo.
 
-**Si el usuario da múltiples tareas en un mensaje:** Listarlas numeradas, preguntar orden de ejecución, y luego aplicar este protocolo a CADA tarea individualmente.
+### Paso 3 — Recomienda modelo y ESPERA
 
-**Si el usuario interrumpe a medio camino (nueva orden diferente):** Abandona la tarea anterior, reinicia el protocolo desde Paso 0 para la nueva orden.
+| Tipo | Modelo | Ejemplos |
+|---|---|---|
+| Simple | **Haiku** | Correcciones, listar archivos, renombrar, consultas rápidas |
+| Intermedia | **Sonnet** | Componentes, bugs, refactoring, features |
+| Compleja | **Opus** | Auditorías, arquitectura, migraciones, análisis profundo |
 
-### Paso 3 — Recomienda modelo y espera confirmación
+Mensaje EXACTO: "Para esta tarea recomiendo **[modelo]** porque [razón]. ¿Cambio con /model o mantengo?"
 
-Con la tarea ya clara, recomienda el modelo adecuado:
+**ESPERA confirmación del usuario. NO ejecutes nada. NO leas archivos. NO corras comandos. El mensaje contiene SOLO la recomendación, NADA MÁS.**
 
-| Tipo de tarea | Modelo     | Ejemplos                                                                          |
-| ------------- | ---------- | --------------------------------------------------------------------------------- |
-| Simple        | **Haiku**  | Correcciones, listar archivos, actualizar STATUS.md, renombrar, consultas rapidas |
-| Intermedia    | **Sonnet** | Crear componentes, resolver bugs, refactoring, implementar features               |
-| Compleja      | **Opus**   | Auditorias, arquitectura, migraciones grandes, analisis profundo                  |
-
-Tu mensaje es EXACTAMENTE: "Para esta tarea recomiendo **[modelo]** porque [razón]. ¿Cambio con /model o mantengo el actual?"
-
-**ESPERA confirmación del usuario. NO ejecutes herramientas, NO leas archivos, NO corras comandos.**
-
-El mensaje debe contener SOLO la recomendación de modelo y NADA MÁS. Cualquier acción antes de recibir confirmación es una violación del protocolo.
+**Excepción — modelo ya correcto:** Si el modelo recomendado coincide con el modelo actual, NO pedir confirmación de modelo. Tras confirmar la tarea (Paso 2), pasar directamente al Paso 4.
 
 ### Paso 4 — Ejecuta
 
-Solo tras confirmar tarea (paso 2) Y modelo (paso 3), empieza a trabajar.
+Solo tras confirmar tarea (Paso 2) Y modelo (Paso 3), empieza a trabajar.
 
 ---
 
-### Skills — Clasificación por protocolo
+### Skills por protocolo
 
-- **Sin protocolo (ejecuta directamente):** `/commit`, `/status`, `/review` — tareas simples de diagnóstico.
-- **Con protocolo (Pasos 0–4):** `/build`, `/session`, `/db`, `/verify`, `/debug` — tareas complejas que alteran estado.
-- **Clarificación:** Si no sabes qué skill invocar, pregunta al usuario en lugar de asumir.
+- **Sin protocolo:** `/commit`, `/status`, `/review`
+- **Con protocolo (Pasos 0–4):** `/build`, `/session`, `/db`, `/verify`, `/debug`
+- **Duda →** pregunta al usuario.
 
----
+### Cambio de modelo en subtareas
 
-**Durante la tarea — Cambio de modelo en subtareas:**
+- **2 niveles** (Haiku ↔ Opus) → Propón cambio.
+- **1 nivel** → Solo si sustancialmente diferente (análisis profundo, arquitectura).
+- **Misma familia →** NO proponer. Ejemplo: editar componente + otro componente = ambos Sonnet.
+- Si cambia significativamente → PARA: "Esta parte requiere [modelo]. ¿Cambio?"
 
-**Umbral:** Solo proponer cambio si la diferencia es SIGNIFICATIVA:
+**Razón:** Opus en tarea simple = desperdicio. Haiku en tarea compleja = resultado pobre.
 
-- **Diferencia 2 niveles** (Haiku ↔ Opus) → Propón cambio.
-- **Diferencia 1 nivel** (Haiku ↔ Sonnet) → Solo si la subtarea es **sustancialmente diferente** (análisis profundo, arquitectura, debugging complejo).
-- **Misma familia de complejidad** → NO proponer cambio (ej: editar componente Vue vs editar otro componente = ambos Sonnet, no cambiar a Haiku).
+### Auto-verificación (antes de cada respuesta)
 
-**Procedimiento:**
-
-- Si la tarea tiene **múltiples subtareas con distintos niveles de complejidad**, evalúa cada una:
-  - Subtareas **simples** (ediciones, bash scripts, actualizaciones de ficheros) → **Cambia a Haiku** (si estabas en Opus/Sonnet)
-  - Subtareas **intermedias/complejas** → **Cambia a Sonnet** (si estabas en Haiku y el cambio es sustancial)
-  - Ejemplo: "Hallazgos menores #16-22" = 6 subtareas simples → cambiar a Haiku una sola vez al inicio.
-- Si el tipo de trabajo cambia significativamente, PARA y di: "Esta parte requiere **[otro modelo]**. ¿Cambio?"
-- Si ya estás en el modelo correcto, confirma: "Estamos en [modelo], correcto para esta tarea."
-
-**Razón:** El usuario paga por tokens. Opus en una tarea simple = desperdicio. Haiku en una tarea compleja = resultado pobre. Una orden mal entendida = trabajo tirado. **Cambiar de modelo entre subtareas maximiza eficiencia, pero propuestas excesivas = ruido.**
-
----
-
-### Auto-verificación — Antes de cada respuesta
-
-Antes de enviar cualquier respuesta, verifica mentalmente:
-
-1. ¿Seguí el protocolo (Pasos 0–4)?
-2. ¿Confirmé tarea (Paso 2) y modelo (Paso 3) antes de ejecutar?
-3. ¿Estoy en el modelo correcto para esta tarea?
-4. ¿Hay múltiples tareas? ¿Pregunté orden de ejecución?
-5. ¿Hice commit sin que lo pidiera el usuario? (Si sí → REVERTIR)
-
-Si alguna respuesta es "no" o "sí pero violé X", PARA y corrige antes de responder.
+1. ¿Seguí protocolo? 2. ¿Confirmé tarea y modelo antes de ejecutar? 3. ¿Modelo correcto? 4. ¿Múltiples tareas → pregunté orden? 5. ¿Commit sin pedirlo? (→ REVERTIR)
 
 ---
 
@@ -146,226 +92,178 @@ Si alguna respuesta es "no" o "sí pero violé X", PARA y corrige antes de respo
 - **Email admin:** tankiberica@gmail.com
 - **Supabase Project ID:** gmnrfuzekbwyzkgsaftv
 - **Stack:** Nuxt 3 + Supabase + Cloudflare Pages
-- **Proyecto anterior:** Tank Ibérica (monolítico) → migración y evolución en curso a Tracciona (marketplace)
+- **Anterior:** Tank Ibérica (monolítico) → Tracciona (marketplace)
 
-## 🗓️ Tareas obligatorias trimestral (CRÍTICO)
+## Tareas trimestrales (CRÍTICO)
 
-**Automatizado:** GitHub Actions crea issues el 1 de cada trimestre (1-ene, 1-abr, 1-jul, 1-oct).
+GitHub Actions crea issues cada trimestre (1-ene, 1-abr, 1-jul, 1-oct).
 
-| Tarea                  | Cuándo         | SLA                       | Documentación                     |
-| ---------------------- | -------------- | ------------------------- | --------------------------------- |
-| **Auditoría completa** | Cada trimestre | Antes de fin de trimestre | `referencia/AUDIT-METHODOLOGY.md` |
-| **Restore Drill**      | Cada trimestre | Antes de fin de trimestre | `referencia/DISASTER-RECOVERY.md` |
+| Tarea | Documentación |
+|---|---|
+| **Auditoría completa** | `referencia/AUDIT-METHODOLOGY.md` |
+| **Restore Drill** | `referencia/DISASTER-RECOVERY.md` |
 
-**Qué hacer:** Cuando veas issue de GitHub:
-
-1. Conecta con Claude Code
-2. Copia el texto de la issue en el chat
-3. Claude Code te guía paso a paso
-
-**No esperes a la sesión programada — hazlo cuando GitHub cree la issue.**
+Cuando veas la issue → conecta Claude Code → copia texto → se guía paso a paso.
 
 ---
 
-## Contexto por Tipo de Tarea — Lectura inteligente
+## Contexto por Tipo de Tarea
 
-**Regla:** STATUS.md se lee SIEMPRE al inicio de sesión. El resto se lee bajo demanda según la tarea, **automáticamente tras confirmar la tarea en Paso 2** (no requiere protocolo adicional). Esto asegura que siempre entiendas la dirección y visión de la empresa para esa área sin desperdiciar tokens en documentos irrelevantes.
+STATUS.md se lee SIEMPRE al inicio. El resto bajo demanda tras confirmar tarea en Paso 2.
 
-**REGLA ABSOLUTA DE LECTURA:** Cuando se lee un documento, se lee **ENTERO e ÍNTEGRO**. Sin muestras, sin "primeras N líneas", sin resúmenes parciales. Si el archivo es grande, usa múltiples llamadas Read con offset/limit hasta leerlo completo. Un documento leído a medias es peor que no leerlo — lleva a decisiones basadas en información incompleta.
+**REGLA:** Documentos se leen ENTEROS. Sin muestras ni "primeras N líneas". Si es grande, múltiples Read con offset/limit.
 
-| Tipo de tarea                     | Lee también (además de STATUS.md)                                                    |
-| --------------------------------- | ------------------------------------------------------------------------------------ |
-| **Bug fix / error**               | Código relevante                                                                     |
-| **Feature de monetización**       | `ESTRATEGIA-NEGOCIO.md` + `BACKLOG-EJECUTABLE.md` (bloque relevante)                 |
-| **Componente / página nueva**     | `PROYECTO-CONTEXTO.md` §4 (arquitectura) + `CONTRIBUTING.md`                         |
-| **Migración / BD**                | `referencia/ERD.md` + `referencia/INVENTARIO-ENDPOINTS.md`                           |
-| **SEO / landings**                | `PROYECTO-CONTEXTO.md` §5.1 + `BACKLOG-EJECUTABLE.md` Bloque 3                       |
-| **Anti-fraude / seguridad**       | `ESTRATEGIA-NEGOCIO.md` §2.12 + `referencia/SECURITY-TESTING.md`                     |
-| **Marketing / contenido**         | `ESTRATEGIA-NEGOCIO.md` §3 + `BACKLOG-EJECUTABLE.md` Bloque 7                        |
-| **Arquitectura / multi-vertical** | `PROYECTO-CONTEXTO.md` (completo) + `referencia/ARQUITECTURA-ESCALABILIDAD.md`       |
-| **Auditoría**                     | `auditorias/AUDITORIA-26-FEBRERO.md` + `referencia/AUDIT-METHODOLOGY.md`             |
-| **Estrategia / dirección**        | `PROYECTO-CONTEXTO.md` + `ESTRATEGIA-NEGOCIO.md`                                     |
-| **Backlog / planificación**       | `BACKLOG-EJECUTABLE.md`                                                              |
-| **Infra / DR / secrets**          | `referencia/DISASTER-RECOVERY.md`, `SECRETS-ROTATION.md`, `CLOUDFLARE-WAF-CONFIG.md` |
-| **GDPR / legal**                  | `legal/RAT-BORRADOR.md` + `referencia/DATA-RETENTION.md`                             |
-| **No sé qué tipo es**             | `PROYECTO-CONTEXTO.md` (completo) — documento maestro                                |
+**REGLA — No releer sin motivo:** En una misma sesión, no releer documentos largos que ya se leyeron si no han cambiado. Usar el resumen en memoria de sesión. Releer solo si: (a) se detectó un cambio en el archivo, o (b) es una validación final crítica.
+
+| Tipo de tarea | Lee también |
+|---|---|
+| Bug fix / error | Código relevante |
+| Feature monetización | `ESTRATEGIA-NEGOCIO.md` + `BACKLOG-EJECUTABLE.md` (bloque) |
+| Componente / página | `PROYECTO-CONTEXTO.md` §4 + `CONTRIBUTING.md` |
+| Migración / BD | `referencia/ERD.md` + `referencia/INVENTARIO-ENDPOINTS.md` |
+| SEO / landings | `PROYECTO-CONTEXTO.md` §5.1 + `BACKLOG-EJECUTABLE.md` Bloque 3 |
+| Anti-fraude / seguridad | `ESTRATEGIA-NEGOCIO.md` §2.12 + `referencia/SECURITY-TESTING.md` |
+| Marketing / contenido | `ESTRATEGIA-NEGOCIO.md` §3 + `BACKLOG-EJECUTABLE.md` Bloque 7 |
+| Arquitectura / multi-vertical | `PROYECTO-CONTEXTO.md` completo + `referencia/ARQUITECTURA-ESCALABILIDAD.md` |
+| Auditoría | `auditorias/AUDITORIA-26-FEBRERO.md` + `referencia/AUDIT-METHODOLOGY.md` |
+| Estrategia / dirección | `PROYECTO-CONTEXTO.md` + `ESTRATEGIA-NEGOCIO.md` |
+| Backlog / planificación | `BACKLOG-EJECUTABLE.md` |
+| Infra / DR / secrets | `referencia/DISASTER-RECOVERY.md`, `SECRETS-ROTATION.md`, `CLOUDFLARE-WAF-CONFIG.md` |
+| GDPR / legal | `legal/RAT-BORRADOR.md` + `referencia/DATA-RETENTION.md` |
+| No sé qué tipo | `PROYECTO-CONTEXTO.md` completo |
 
 ## Documentación — Índice
 
-| Documento                                   | Función                                                                        |
-| ------------------------------------------- | ------------------------------------------------------------------------------ |
-| `STATUS.md`                                 | Estado actual: métricas, errores activos, changelog                            |
-| `docs/PROYECTO-CONTEXTO.md`                 | Documento maestro: visión, arquitectura, decisiones estratégicas               |
-| `docs/ESTRATEGIA-NEGOCIO.md`                | Monetización, pricing, go-to-market, datos, anti-fraude                        |
-| `docs/IDEAS-A-REVISAR.md`                   | Banco de 103+ ideas no implementadas (brainstorming, NO backlog)               |
-| `docs/tracciona-docs/BACKLOG-EJECUTABLE.md` | **Única fuente de verdad** de trabajo pendiente (116 items, 6 fases)           |
-| `docs/MANUAL-CORPORATIVO-Y-OPERATIVO.md`    | Snapshot corporativo para inversores (no se mantiene sesión a sesión)          |
-| `docs/auditorias/AUDITORIA-26-FEBRERO.md`   | Auditoría canónica (~83/100) — snapshot histórico                              |
-| `docs/legal/RAT-BORRADOR.md`                | Borrador GDPR RAT                                                              |
-| `docs/tracciona-docs/referencia/`           | Docs técnicos: ERD, endpoints, crons, seguridad, DR, WAF, secrets, API pública |
-| `README.md`                                 | Stack, estructura, comandos, índice docs                                       |
-| `CONTRIBUTING.md`                           | Convenciones de código, workflow git                                           |
-| `CHANGELOG.md`                              | Historial de versiones                                                         |
-| `docs/legacy/`                              | 30+ documentos obsoletos (no modificar, solo referencia histórica)             |
+| Documento | Función |
+|---|---|
+| `docs/README.md` | Mapa documental actual y rutas canónicas |
+| `STATUS.md` | Estado actual: métricas, errores, changelog |
+| `docs/PROYECTO-CONTEXTO.md` | Maestro: visión, arquitectura, decisiones |
+| `docs/ESTRATEGIA-NEGOCIO.md` | Monetización, pricing, go-to-market, datos |
+| `docs/IDEAS-A-REVISAR.md` | 103+ ideas (brainstorming, NO backlog) |
+| `docs/tracciona-docs/BACKLOG-EJECUTABLE.md` | **Única fuente de verdad** trabajo pendiente (116 items) |
+| `docs/MANUAL-CORPORATIVO-Y-OPERATIVO.md` | Snapshot corporativo (no mantener sesión a sesión) |
+| `docs/auditorias/AUDITORIA-26-FEBRERO.md` | Auditoría canónica (~83/100) |
+| `docs/legal/RAT-BORRADOR.md` | Borrador GDPR RAT |
+| `docs/tracciona-docs/referencia/` | Técnicos: ERD, endpoints, crons, seguridad, DR, WAF |
+| `docs/tracciona-docs/PLAN-MAESTRO-10-DE-10.md` | Plan maestro técnico y lotes de mejora |
+| `README.md` | Stack, estructura, comandos |
+| `CONTRIBUTING.md` | Convenciones, workflow git |
+| `CHANGELOG.md` | Historial versiones |
+| `docs/legacy/` | 30+ docs obsoletos (solo referencia) |
 
 **Reglas críticas:**
 
-- Si no sabes cómo implementar algo, PREGUNTA al usuario. No improvises.
-- Si necesitas dashboards web (Supabase, Stripe, Cloudflare) → pregunta al usuario.
-- **NUNCA hacer commit sin que el usuario lo pida explícitamente.** Ni siquiera commits "pequeños" o "lógicos".
+- No sabes implementar algo → PREGUNTA. No improvises.
+- Dashboards web (Supabase/Stripe/Cloudflare) → pregunta al usuario.
+- **NUNCA commit sin que el usuario lo pida explícitamente.** Ni "pequeños" ni "lógicos".
 
-**Acceso a herramientas:**
+**Acceso:** FS completo, terminal (npm, supabase CLI, git), .env. NO navegador/dashboards.
 
-- Tienes acceso completo al sistema de archivos y terminal (npm, supabase CLI, git).
-- Puedes leer y modificar .env / .env.local para configurar variables de entorno.
-- Puedes ejecutar `supabase db push`, `supabase gen types`, `npm install`, `npm run build` directamente.
-- NO tienes acceso a navegador web ni dashboards. Si necesitas crear algo en Stripe/Supabase/Cloudflare dashboard, pide al usuario que lo haga.
+## Coverage obligatorio en código nuevo
 
-**Documentación legacy:** Todo en `docs/legacy/` (30+ archivos del sistema anterior, no modificar).
+**Regla:** Al implementar cualquier feature, sistema, flujo, endpoint o util nuevo, evaluar durante la planificación si genera código con lógica testeable. Si es así:
 
-## Convenciones y estructura
+1. **En el plan:** Añadir un apartado "Tests necesarios" listando qué se debe cubrir.
+2. **En la ejecución:** Escribir los tests **en la misma sesión** que el código, no después.
+3. **Criterio:** Todo archivo nuevo con lógica (composables, utils, server routes con lógica, scripts) requiere tests con >80% coverage. Config declarativa (`nuxt.config.ts`, routeRules, CSS) NO requiere tests.
 
-Ver `CONTRIBUTING.md` para: stack, estructura del proyecto, convenciones de código, comandos, tests y git workflow.
+**Objetivo:** Que el coverage crezca con cada sesión. Nunca acumular deuda de tests que requiera sesiones masivas de backfill.
+
+## Convenciones
+
+Ver `CONTRIBUTING.md` para stack, estructura, convenciones, comandos, tests, git workflow.
 
 ## Cinco reglas no negociables
 
-1. **Mobile-first:** CSS base = 360px. Breakpoints con `min-width`. Touch targets ≥ 44px.
-2. **Páginas reales:** Vehículos y artículos son páginas con URL propia, NO modales.
-3. **Extensible:** Categorías, subcategorías, filtros e idiomas se leen de la BD. Añadir uno = insertar fila, no tocar código.
-4. **Multilenguaje:** `$t()` + `localizedField()` en todo el código visible al usuario. Sin excepciones.
-5. **Secuencial:** No usar subagentes paralelos (Task). Una llamada Task a la vez, esperar resultado, luego la siguiente.
+1. **Mobile-first:** CSS base 360px. `min-width` breakpoints (480/768/1024/1280). Touch ≥ 44px. `rem` no `px`. Desktop = mejora, no base.
+2. **Páginas reales:** Vehículos y artículos = URL propia, NO modales.
+3. **Extensible:** Categorías, subcategorías, filtros, idiomas de BD. Añadir = INSERT, no código. JSONB para campos multi-idioma.
+4. **Multilenguaje:** `$t()` + `localizedField()` siempre. ES+EN hoy, preparado para N idiomas.
+5. **Secuencial:** No subagentes paralelos (Task). Una a la vez, esperar, siguiente. **Excepción — Haiku únicamente:** Si el modelo objetivo es Haiku y las subtareas son independientes (sin dependencias de aprendizaje entre sí), ofrecer paralelo como opción al usuario (por defecto secuencial para ahorro de tokens). Si las tareas tienen dependencias de aprendizaje entre sí, NUNCA paralelo independientemente del modelo.
 
 ## Design system
 
-- Color primario: #23424A (petrol blue) — cambiará a los colores de Tracciona vía vertical_config
+- Color primario: #23424A (petrol blue) — cambiará vía `vertical_config`
 - Tipografía: Inter (Google Fonts) — configurable desde admin
-- Breakpoints: 480px, 768px, 1024px, 1280px (mobile-first)
-- Spacing: escala de 4px (4, 8, 12, 16, 24, 32, 48, 64)
-- Cualquier cosa que se diseñe tener en cuentaque tiene que tener una adaptabilidad en el portal de dealers que usaran fuentes de letra y paleta de colores diferente.
+- Breakpoints: 480/768/1024/1280px (mobile-first)
+- Spacing: escala 4px (4, 8, 12, 16, 24, 32, 48, 64)
+- Dealers usarán fuentes y paleta propias — diseñar con adaptabilidad
 
-## UX — Formularios y touch
+## UX y accesibilidad
 
-- Errores claros: mensaje descriptivo + cómo corregir (no solo borde rojo)
-- `autocomplete` en todos los inputs de formulario
-- Validación amable: no castigar, guiar al usuario
-- Interacciones: nunca depender solo de `:hover` — siempre alternativa touch/focus
+- **Errores:** mensaje descriptivo + cómo corregir (no solo borde rojo)
+- **Formularios:** `autocomplete` en todos los inputs. Validación amable: guiar, no castigar.
+- **Touch:** nunca solo `:hover` — siempre alternativa touch/focus. Botones ≥ 44px.
+- **3 modos de color:** claro/oscuro/alto contraste. CSS custom properties (`--color-*`, `--bg-*`, `--text-*`).
+- **Fuente ajustable:** `rem` (no `px`), base 16px. No romper con zoom.
+- **Localización:** país, provincia, moneda, fecha de BD/config. Nueva vertical = 0 cambios UI.
 
-## Principios de diseño y construcción
+## Filosofía de construcción
 
-### Accesibilidad visual
-
-- **Modos de color:** La web se construye soportando 3 modos (claro/oscuro/alto contraste). Todos los colores deben funcionar en los 3. Usar CSS custom properties (`--color-*`, `--bg-*`, `--text-*`) que cambian por modo.
-- **Tamaño de fuente ajustable:** El usuario puede agrandar o empequeñecer la fuente desde el navegador. Usar `rem` (no `px`), base 16px. Nunca fijar tamaños que rompan con zoom.
-
-### Escalabilidad internacional
-
-- **Expansión de idiomas:** Hoy ES + EN. Mañana FR, DE, NL, etc. Todos los textos visibles → `$t('key')`. Datos de BD → `localizedField(jsonField, locale)`. Nunca hardcodear frases.
-- **Localizaciones múltiples:** País, provincia, moneda, formato de fecha → todo de BD o config. Que abrir una nueva vertical no implique tocar código UI.
-
-### Reutilización y migración
-
-- **Zero hardcoding:** Categorías, subcategorías, filtros, atributos, acciones → en BD. Agregar uno = INSERT, no ALTER código.
-- **Datos extensibles:** Usar JSONB para campos multi-idioma/multi-valor que crecerán. Permite N idiomas sin migrar columnas.
-- **Migración fluida:** Cuando una nueva vertical (ej: maquinaria) use este codebase, debe ser clonación + `vertical_config`. Cero cambios de código.
-
-### Dispositivos y rendimiento
-
-- **Mobile/tablet first:** La mayoría de usuarios navegan en móvil/tablet. Diseña base para 360px. Desktop es mejora, no base.
-- **Touch-friendly:** Botones ≥ 44px, spacing generoso, sin hover-only interacciones, scroll horizontal evitado.
-
-### Filosofía de construcción
-
-- **Simplicidad:** Menos código, más claridad. No abstracciones prematuras. Una característica = lo mínimo viable bien.
-- **Elegancia:** La solución obvia pero refinada. No trucos, no complejidad sin propósito. Código que otros entienden al primer vistazo.
-- **Pragmatismo:** Perfecto es enemigo de lanzado. Mejor imperfecto hoy que perfecto nunca. Deuda técnica se paga después, si hace falta.
-- **Anticipar problemas:** Cuando diseñes una feature, pregúntate: ¿qué puede salir mal? ¿Dónde se atascará el usuario? Resuelve eso ANTES del lanzamiento, no después. La mejor UX es la que nunca da problemas.
+- **Simplicidad:** menos código, más claridad. Sin abstracciones prematuras.
+- **Elegancia:** solución obvia pero refinada. Código que se entiende al primer vistazo.
+- **Pragmatismo:** imperfecto hoy > perfecto nunca. Deuda técnica se paga después.
+- **Anticipar:** ¿qué puede salir mal? ¿Dónde se atasca el usuario? Resolver ANTES del lanzamiento.
+- **Zero hardcoding:** todo en BD. INSERT, no ALTER código.
+- **Migración fluida:** nueva vertical = clonación + `vertical_config`. 0 cambios de código.
 
 ## Decisiones estratégicas (25 Feb 2026)
 
-- Idiomas activos: ES + EN. Resto pospuesto (ver FLUJOS-OPERATIVOS §7)
-- Pipeline imágenes: Cloudinary transforma, CF Images almacena. Cache immutable 30d
-- Merchandising: solo formulario de interés, no flujo completo
-- API valoración de pago: pospuesta hasta volumen suficiente
-- Scraping: solo script manual, NUNCA cron en producción
-- 2º cluster BD: considerar Neon/Railway para diversificar
-- Métricas infra: tag vertical en infra_metrics desde día 1
+- Idiomas: ES + EN. Resto pospuesto
+- Imágenes: Cloudinary transforma, CF Images almacena. Cache immutable 30d
+- Merchandising: solo formulario de interés
+- API valoración pago: pospuesta hasta volumen
+- Scraping: solo manual, NUNCA cron en producción
+- 2º cluster BD: considerar Neon/Railway
+- Métricas infra: tag vertical desde día 1
 
-### Actualización de PROYECTO-CONTEXTO.md — En tiempo real
+### Actualización de docs en tiempo real
 
-**Si durante una sesión se toma una decisión estratégica, cambio de rumbo, o nueva dirección del proyecto:**
-
-1. PARA y pregunta: "Esta decisión afecta PROYECTO-CONTEXTO.md. ¿Actualizo el documento?"
-2. Solo tras confirmación del usuario, actualiza la sección correspondiente en `docs/PROYECTO-CONTEXTO.md`
-3. Actualiza también la sección "Decisiones estratégicas" de este CLAUDE.md si aplica
-
-### Actualización de ENTORNO-DESARROLLO.md — Obligatoria al añadir herramientas
-
-**Siempre que se implemente o configure algo que requiera instalación en un ordenador nuevo** (y que NO sea simplemente hacer `npm install`), añade una entrada en `docs/tracciona-docs/referencia/ENTORNO-DESARROLLO.md`.
-
-Ejemplos que SÍ requieren actualización:
-
-- Instalar una herramienta CLI globalmente (`npm install -g algo`, `brew install algo`, etc.)
-- Configurar un sistema externo (SonarQube local, Docker, GitHub CLI, etc.)
-- Crear un sistema de hooks o scripts que requieren pasos de setup post-clonado
-- Añadir un servicio cloud nuevo que necesita credenciales/acceso
-
-Ejemplos que NO requieren actualización (se gestionan solos):
-
-- Añadir una dependencia npm a `package.json` → se instala con `npm install`
-- Crear un componente, composable o página nueva
-
-**Procedimiento:**
-
-1. Al terminar de implementar la herramienta/sistema, añade una fila en la tabla "Historial de herramientas añadidas" de `ENTORNO-DESARROLLO.md`
-2. Si requiere pasos de instalación nuevos, añádelos también en la sección correspondiente (Herramientas de sistema, Herramientas de desarrollo, o Servicios cloud)
-3. Actualiza el Checklist si aplica
+- **PROYECTO-CONTEXTO.md:** Si hay decisión estratégica → PARA, pregunta "¿Actualizo?", espera confirmación.
+- **ENTORNO-DESARROLLO.md:** Siempre que se instale/configure algo que requiera setup en PC nuevo (CLI global, servicio cloud, hooks). NO para npm dependencies o nuevos componentes. Añadir fila en tabla + pasos de instalación + checklist.
 
 ## Gestión de sesión
 
-### Antes de lanzar Node (automático)
-
-**SIEMPRE** encadena la limpieza antes de cualquier comando que lance Node:
+### Node: siempre limpiar antes
 
 ```bash
 taskkill /F /IM node.exe 2>nul; npm run dev
 taskkill /F /IM node.exe 2>nul; npm run build
 ```
 
-Esto es una convención obligatoria. NUNCA ejecutes `npm run dev`, `npm run build`, o cualquier comando que lance Node sin el `taskkill` previo en el mismo comando.
+NUNCA lanzar Node sin `taskkill` previo.
 
-### Mantenimiento de STATUS.md (máximo ~120 líneas)
+### STATUS.md (máximo ~120 líneas)
 
-- **Errores resueltos:** ELIMINAR inmediatamente (nunca tachar con `~~`). Git preserva el historial.
-- **Sesión nueva:** Añadir 1 línea al changelog. No escribir párrafos completos.
-- **Changelog:** Si supera 10 entradas, comprimir las más antiguas.
-- **Duplicados:** NO repetir tablas que ya están en `PROYECTO-CONTEXTO.md`.
-- **Fuente de verdad:** STATUS.md = estado actual. Git (`git log STATUS.md`) = historial.
+- Errores resueltos → ELIMINAR (git preserva historial)
+- Sesión nueva → 1 línea changelog
+- >10 entradas → comprimir antiguas
+- No duplicar tablas de PROYECTO-CONTEXTO.md
+- STATUS.md = estado actual. `git log STATUS.md` = historial.
 
 ### Tokens bajos
 
-1. Avisa: "⚠️ Tokens bajos — guardando estado"
-2. Actualiza `STATUS.md` con lo hecho y lo pendiente
-3. Indica el prompt exacto para continuar en la siguiente sesión
+1. Avisar: "Tokens bajos — guardando estado"
+2. Actualizar STATUS.md (hecho + pendiente + prompt exacto para continuar)
 
-### Al terminar cualquier tarea
+### Al terminar tarea
 
-1. Pregunta: "¿Hay algo más relacionado con esta tarea o módulo antes de cerrar sesión?"
-2. Si la respuesta es no → sigue el procedimiento de **"Al cerrar sesión"** abajo.
-3. No continúes con nada más hasta recibir respuesta.
+Preguntar: "¿Algo más relacionado?" → Si no → cerrar sesión.
 
-### Al cerrar sesión (automático)
+### Al cerrar sesión
 
-Cuando el usuario confirma que no hay más tareas o pide cerrar sesión, ejecutar EN ESTE ORDEN:
+1. `taskkill /F /IM node.exe 2>nul`
+2. Actualizar STATUS.md (realizado + pendiente con prompt exacto + `CLOSING_SESSION`)
+3. **Actualizar referencias** — OBLIGATORIO antes de cerrar:
+   - `.claude/MEMORY.md` — patrones aprendidos, decisiones, configuraciones nuevas, IPs/credenciales de entorno
+   - `.claude/memory/sonarqube.md` — si hubo trabajo de calidad/análisis
+   - `.claude/memory/patterns.md` — si se establecieron nuevos patrones de código
+   - Cualquier otro sub-archivo relevante según lo trabajado en la sesión
+4. Mensaje: "Sesión lista para cerrar."
+5. STOP.
 
-1. **Limpieza Node:** Ejecutar `taskkill /F /IM node.exe 2>nul` para matar todos los procesos Node
-2. **Actualizar STATUS.md:**
-   - Añadir lo realizado en la sesión
-   - **Si hay tarea incompleta:** Documentar claramente qué queda pendiente y el prompt exacto para retomar en la siguiente sesión (ej: "Continúa con [descripción de lo que falta]. El último paso completado fue [X].")
-   - Escribir `CLOSING_SESSION` al final del archivo (dispara el hook automático vía `.claude/cleanup-node.bat`)
-3. **Mensaje de cierre:** "✅ Sesión lista para cerrar. Cuando abras la siguiente, empieza con: Lee CLAUDE.md y STATUS.md antes de hacer nada."
-4. **STOP:** No continúes con nada más.
+### Hooks configurados
 
-**Hooks configurados:**
-
-- **PreToolUse (policy engine):** `.claude/policy/policy-engine.mjs` evalúa cada Bash/Write/Edit contra `.claude/policy/SECURITY_POLICY.md`. Bloquea operaciones destructivas, avisa en operaciones sensibles, auto-aprueba el resto. Si cambias de máquina o clonas el repo: ejecuta `node .claude/policy/compile-policy.mjs` una vez. Ver estado: `node .claude/policy/policy-status.mjs`. Bypass emergencia: `POLICY_BYPASS=1`.
-- **PostToolUse (ESLint + session close):** Detecta `CLOSING_SESSION` en STATUS.md → ejecuta `.claude/check-closing-and-cleanup.sh` → `.claude/cleanup-node.bat` (mata puerto 3000).
+- **PreToolUse (policy engine):** `.claude/policy/policy-engine.mjs` evalúa Bash/Write/Edit contra SECURITY_POLICY.md. Bloquea destructivas, avisa sensibles, auto-aprueba resto. Nueva máquina: `node .claude/policy/compile-policy.mjs`. Estado: `node .claude/policy/policy-status.mjs`. Bypass: `POLICY_BYPASS=1`.
+- **PostToolUse:** Detecta `CLOSING_SESSION` → `.claude/check-closing-and-cleanup.sh` → `.claude/cleanup-node.bat` (mata puerto 3000).

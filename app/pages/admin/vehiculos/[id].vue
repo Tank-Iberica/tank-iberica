@@ -32,9 +32,8 @@
     </div>
 
     <!-- Loading state -->
-    <div v-if="loading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ $t('admin.vehiculosIndex.loadingDetail') }}</span>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard :lines="8" />
     </div>
 
     <!-- Form -->
@@ -165,7 +164,7 @@ onMounted(() => {
 
 <style scoped>
 .vehicle-form-page {
-  max-width: 1000px;
+  max-width: 62.5rem;
   margin: 0 auto;
 }
 
@@ -177,7 +176,7 @@ onMounted(() => {
   margin-bottom: var(--spacing-6);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .page-header {
     flex-direction: row;
     align-items: center;
@@ -195,8 +194,8 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   background: var(--bg-secondary);
   border-radius: var(--border-radius);
   color: var(--text-secondary);
@@ -209,8 +208,8 @@ onMounted(() => {
 }
 
 .back-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .page-title {
@@ -234,7 +233,7 @@ onMounted(() => {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   border-radius: var(--border-radius);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: all var(--transition-fast);
 }
 
@@ -273,8 +272,8 @@ onMounted(() => {
 }
 
 .spinner {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   border: 3px solid var(--border-color);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -311,11 +310,11 @@ onMounted(() => {
 }
 
 .btn-rent {
-  border-color: #2563eb !important;
-  color: #2563eb !important;
+  border-color: var(--color-focus) !important;
+  color: var(--color-focus) !important;
 }
 
 .btn-rent:hover {
-  background: #eff6ff !important;
+  background: var(--color-blue-50) !important;
 }
 </style>

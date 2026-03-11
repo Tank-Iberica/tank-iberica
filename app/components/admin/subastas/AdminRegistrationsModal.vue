@@ -19,7 +19,7 @@ const { t } = useI18n()
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal-content modal-large">
         <div class="modal-header">
           <h3>{{ t('admin.subastas.detail.bidders') }} &mdash; {{ auctionTitle }}</h3>
@@ -107,12 +107,12 @@ const { t } = useI18n()
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: 90vh;
@@ -120,15 +120,15 @@ const { t } = useI18n()
 }
 
 .modal-large {
-  max-width: 720px;
+  max-width: 45rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--color-gray-200);
   position: sticky;
   top: 0;
   background: var(--bg-primary);
@@ -143,27 +143,27 @@ const { t } = useI18n()
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   cursor: pointer;
-  color: #6b7280;
-  min-width: 44px;
-  min-height: 44px;
+  color: var(--color-gray-500);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-6);
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
   position: sticky;
   bottom: 0;
 }
@@ -175,14 +175,14 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -197,8 +197,8 @@ const { t } = useI18n()
 
 .empty-state {
   text-align: center;
-  padding: 40px 20px;
-  color: #6b7280;
+  padding: var(--spacing-10) var(--spacing-5);
+  color: var(--color-gray-500);
 }
 
 /* ============================================
@@ -212,96 +212,96 @@ const { t } = useI18n()
 
 .registrations-table th,
 .registrations-table td {
-  padding: 10px 12px;
+  padding: 0.625rem var(--spacing-3);
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .registrations-table th {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .user-cell {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .user-email {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .deposit-badge,
 .reg-status-badge {
   display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
+  padding: 0.1875rem var(--spacing-2);
+  border-radius: var(--border-radius-sm);
   font-size: 0.7rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .deposit-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .deposit-held {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg, var(--color-info-bg));
   color: var(--color-info);
 }
 
 .deposit-captured {
-  background: var(--color-success-bg, #dcfce7);
-  color: #15803d;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--color-green-700);
 }
 
 .deposit-released {
   background: var(--bg-secondary);
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .deposit-forfeited {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .reg-status-pending {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
 }
 
 .reg-status-approved {
-  background: var(--color-success-bg, #dcfce7);
-  color: #15803d;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--color-green-700);
 }
 
 .reg-status-rejected {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .reg-actions {
   display: flex;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .reg-btn {
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 0.375rem var(--spacing-3);
+  border-radius: var(--border-radius-sm);
   font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   border: 1px solid transparent;
-  min-height: 36px;
+  min-height: 2.25rem;
 }
 
 .reg-approve {
-  background: var(--color-success-bg, #dcfce7);
-  color: #15803d;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--color-green-700);
   border-color: var(--color-success-border);
 }
 
@@ -310,7 +310,7 @@ const { t } = useI18n()
 }
 
 .reg-reject {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
   border-color: var(--color-error-border);
 }
@@ -324,13 +324,13 @@ const { t } = useI18n()
    ============================================ */
 .btn-secondary {
   background: var(--bg-tertiary);
-  color: #374151;
+  color: var(--color-gray-700);
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 0.625rem var(--spacing-5);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 /* ============================================
@@ -343,7 +343,7 @@ const { t } = useI18n()
 
   .registrations-table th,
   .registrations-table td {
-    padding: 8px;
+    padding: var(--spacing-2);
   }
 }
 </style>

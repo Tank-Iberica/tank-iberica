@@ -12,10 +12,16 @@
  * Body: { submissionId: string }
  */
 import { serverSupabaseServiceRole } from '#supabase/server'
-import { defineEventHandler, readBody, createError, getHeader, getRequestIP } from 'h3'
+import { defineEventHandler, getHeader, getRequestIP } from 'h3'
+import { z } from 'zod'
 import { processWhatsAppSubmission, sanitizeSlug } from '~~/server/services/whatsappProcessor'
+import { validateBody } from '~~/server/utils/validateBody'
+import { logger } from '../../utils/logger'
 
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const processSchema = z.object({
+  submissionId: z.string().uuid('submissionId must be a valid UUID'),
+  turnstileToken: z.string().optional(),
+})
 
 async function verifyAccess(
   event: Parameters<typeof getHeader>[0],
@@ -27,17 +33,16 @@ async function verifyAccess(
   if (turnstileToken) {
     const ip = getRequestIP(event, { xForwardedFor: true }) || undefined
     if (!(await verifyTurnstile(turnstileToken, ip))) {
-      throw createError({ statusCode: 403, message: 'CAPTCHA verification failed' })
+      throw safeError(403, 'CAPTCHA verification failed')
     }
     return
   }
-  throw createError({ statusCode: 401, message: 'Unauthorized' })
+  throw safeError(401, 'Unauthorized')
 }
 
-type SupabaseSR = ReturnType<typeof serverSupabaseServiceRole>
 
 async function createPlaceholderVehicle(
-  supabase: SupabaseSR,
+  supabase: any,
   submissionId: string,
 ): Promise<{ vehicleId: string }> {
   const { data: vehicle, error } = await supabase
@@ -53,12 +58,12 @@ async function createPlaceholderVehicle(
       description_en: 'Vehicle sent via WhatsApp (pending processing)',
       ai_generated: true,
       attributes_json: { source: 'whatsapp', submission_id: submissionId },
-    })
+    } as never)
     .select('id, slug')
     .single()
 
   if (error || !vehicle) {
-    throw createError({ statusCode: 500, message: 'Failed to create placeholder vehicle' })
+    throw safeError(500, 'Failed to create placeholder vehicle')
   }
   return { vehicleId: (vehicle as unknown as { id: string }).id }
 }
@@ -67,17 +72,13 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const supabase = serverSupabaseServiceRole(event)
 
-  const body = await readBody<{ submissionId: string; turnstileToken?: string }>(event)
+  const body = await validateBody(event, processSchema)
 
   await verifyAccess(event, config.cronSecret || process.env.CRON_SECRET, body.turnstileToken)
 
-  if (!body.submissionId || !UUID_REGEX.test(body.submissionId)) {
-    throw createError({ statusCode: 400, message: 'submissionId must be a valid UUID' })
-  }
-
   // Dev mode: create placeholder if no AI key configured
   if (!config.anthropicApiKey && !process.env.OPENAI_API_KEY) {
-    console.warn('[WhatsApp Process] No AI API keys — creating placeholder vehicle')
+    logger.warn('[WhatsApp Process] No AI API keys — creating placeholder vehicle')
     const { vehicleId } = await createPlaceholderVehicle(supabase, body.submissionId)
     return { status: 'processed', vehicleId, dev: true }
   }

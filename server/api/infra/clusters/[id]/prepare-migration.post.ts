@@ -7,12 +7,16 @@
  *
  * Body: { verticalToMigrate: string, targetClusterId: string }
  */
+import { defineEventHandler, getRouterParam } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { z } from 'zod'
+import { safeError } from '../../../../utils/safeError'
+import { validateBody } from '../../../../utils/validateBody'
 
-interface PrepareMigrationBody {
-  verticalToMigrate: string
-  targetClusterId: string
-}
+const prepareMigrationSchema = z.object({
+  verticalToMigrate: z.string().min(1).max(128),
+  targetClusterId: z.string().uuid(),
+})
 
 interface TablePlan {
   name: string
@@ -34,8 +38,6 @@ interface MigrationPlan {
   warnings: string[]
   estimated_time_seconds: number
 }
-
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 async function countRows(
   supabase: ReturnType<typeof serverSupabaseServiceRole>,
@@ -64,7 +66,7 @@ export default defineEventHandler(async (event): Promise<MigrationPlan> => {
   // ── Auth: admin only ────────────────────────────────────────────────────
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw safeError(401, 'Unauthorized')
   }
 
   const supabase = serverSupabaseServiceRole(event)
@@ -72,32 +74,20 @@ export default defineEventHandler(async (event): Promise<MigrationPlan> => {
   const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
 
   if (userData?.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Forbidden' })
+    throw safeError(403, 'Forbidden')
   }
 
   // ── Validate params ────────────────────────────────────────────────────
   const sourceClusterId = getRouterParam(event, 'id')
-  if (!sourceClusterId || !UUID_REGEX.test(sourceClusterId)) {
-    throw createError({ statusCode: 400, message: 'Invalid source cluster ID' })
+  if (!sourceClusterId || !/^[0-9a-f-]{36}$/i.test(sourceClusterId)) {
+    throw safeError(400, 'Invalid source cluster ID')
   }
 
   // ── Validate body ──────────────────────────────────────────────────────
-  const body = await readBody<PrepareMigrationBody>(event)
-
-  if (!body.verticalToMigrate || typeof body.verticalToMigrate !== 'string') {
-    throw createError({ statusCode: 400, message: 'verticalToMigrate is required' })
-  }
-
-  if (
-    !body.targetClusterId ||
-    typeof body.targetClusterId !== 'string' ||
-    !UUID_REGEX.test(body.targetClusterId)
-  ) {
-    throw createError({ statusCode: 400, message: 'targetClusterId must be a valid UUID' })
-  }
+  const body = await validateBody(event, prepareMigrationSchema)
 
   if (sourceClusterId === body.targetClusterId) {
-    throw createError({ statusCode: 400, message: 'Source and target clusters must be different' })
+    throw safeError(400, 'Source and target clusters must be different')
   }
 
   // ── Fetch source and target clusters ───────────────────────────────────
@@ -107,11 +97,11 @@ export default defineEventHandler(async (event): Promise<MigrationPlan> => {
   ])
 
   if (sourceResult.error || !sourceResult.data) {
-    throw createError({ statusCode: 404, message: 'Source cluster not found' })
+    throw safeError(404, 'Source cluster not found')
   }
 
   if (targetResult.error || !targetResult.data) {
-    throw createError({ statusCode: 404, message: 'Target cluster not found' })
+    throw safeError(404, 'Target cluster not found')
   }
 
   const sourceCluster = sourceResult.data

@@ -102,7 +102,7 @@ defineEmits<{
         class="search-input"
         @input="$emit('update:filter', 'search', ($event.target as HTMLInputElement).value)"
       >
-      <button class="btn btn-sm" @click="$emit('clear')">Limpiar</button>
+      <button class="btn btn-sm" @click="$emit('clear')">{{ $t('common.clear') }}</button>
     </div>
   </div>
 </template>
@@ -111,41 +111,41 @@ defineEmits<{
 .filters-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
   justify-content: space-between;
-  margin-bottom: 16px;
-  padding: 12px 16px;
+  margin-bottom: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
 }
 .filter-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--spacing-2);
   align-items: center;
 }
 .filters-bar select,
 .search-input {
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
-  min-width: 140px;
+  min-width: 8.75rem;
 }
 .search-input {
-  min-width: 180px;
+  min-width: 11.25rem;
 }
 .btn {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   cursor: pointer;
 }
 .btn-sm {
-  padding: 6px 12px;
+  padding: 0.375rem var(--spacing-3);
   font-size: 0.8rem;
 }
 

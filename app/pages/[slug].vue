@@ -40,17 +40,17 @@ const {
 // ---- SEO ----
 
 useSeoMeta({
-  title: () => (sellerName.value ? `${sellerName.value} — Tracciona` : 'Tracciona'),
-  ogTitle: () => sellerName.value || 'Tracciona',
+  title: () => (sellerName.value ? `${sellerName.value} — ${t('site.title')}` : t('site.title')),
+  ogTitle: () => sellerName.value || t('site.title'),
   description: () => sellerBio.value || t('seller.seoDefaultDescription'),
   ogDescription: () => sellerBio.value || t('seller.seoDefaultDescription'),
   ogImage: () => profile.value?.logo_url || '/og-default.png',
   ogType: 'profile',
   ogLocale: 'es_ES',
   ogLocaleAlternate: ['en_GB'],
-  ogSiteName: 'Tracciona',
+  ogSiteName: t('site.title'),
   twitterCard: 'summary_large_image',
-  twitterTitle: () => sellerName.value || 'Tracciona',
+  twitterTitle: () => sellerName.value || t('site.title'),
   twitterDescription: () => sellerBio.value || t('seller.seoDefaultDescription'),
   twitterImage: () => profile.value?.logo_url || '/og-default.png',
 })
@@ -169,7 +169,7 @@ onMounted(() => init())
   cursor: pointer;
   text-decoration: none;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {

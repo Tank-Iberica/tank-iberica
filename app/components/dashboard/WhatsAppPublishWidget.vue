@@ -236,15 +236,15 @@ onMounted(() => {
 .whatsapp-widget {
   position: relative;
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
   overflow: hidden;
-  border: 2px solid #dcfce7;
+  border: 0.125rem solid var(--color-success-bg);
 }
 
 .whatsapp-widget.locked .widget-inner {
-  filter: blur(4px);
+  filter: blur(0.25rem);
   pointer-events: none;
   user-select: none;
 }
@@ -252,7 +252,7 @@ onMounted(() => {
 .widget-inner {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
   transition: filter 0.2s;
 }
 
@@ -262,18 +262,18 @@ onMounted(() => {
 .widget-header {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .header-icon {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, var(--color-success), var(--color-success));
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   color: white;
 }
 
@@ -286,7 +286,7 @@ onMounted(() => {
 }
 
 .subtitle {
-  margin: 4px 0 0 0;
+  margin: 0.25rem 0 0 0;
   font-size: 0.85rem;
   color: var(--text-auxiliary);
   line-height: 1.4;
@@ -298,25 +298,25 @@ onMounted(() => {
 .instructions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .step {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .step-number {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #dcfce7, var(--color-success-border));
-  color: #15803d;
-  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-success-bg), var(--color-success-border));
+  color: var(--color-green-700);
+  border-radius: var(--border-radius-full);
   font-weight: 700;
   font-size: 0.85rem;
 }
@@ -325,29 +325,29 @@ onMounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .step-content strong {
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--color-slate-700);
   line-height: 1.4;
 }
 
 .phone-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
   background: var(--color-success);
   color: white;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
   transition: background 0.2s;
   width: fit-content;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .phone-link:hover {
@@ -365,17 +365,17 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: var(--color-warning-bg, #fef3c7);
-  border: 1px solid #fde047;
-  border-radius: 8px;
-  gap: 12px;
+  padding: 0.75rem 1rem;
+  background: var(--color-warning-bg, var(--color-warning-bg));
+  border: 1px solid var(--color-amber-300);
+  border-radius: var(--border-radius);
+  gap: 0.75rem;
 }
 
 .status-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-warning-text);
@@ -389,22 +389,22 @@ onMounted(() => {
 .view-drafts-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
   background: var(--bg-primary);
   color: var(--color-warning-text);
-  border: 1px solid #fbbf24;
-  border-radius: 6px;
+  border: 1px solid var(--color-amber-400);
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.15s;
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .view-drafts-link:hover {
-  background: #fffbeb;
+  background: var(--color-amber-50);
   border-color: var(--color-warning);
 }
 
@@ -422,7 +422,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(0.125rem);
   cursor: pointer;
   z-index: 10;
 }
@@ -431,19 +431,19 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 24px 20px;
+  gap: 0.75rem;
+  padding: 1.5rem 1.25rem;
   text-align: center;
-  max-width: 280px;
+  max-width: 17.5rem;
 }
 
 .upgrade-content svg {
   color: var(--text-disabled);
-  margin-bottom: 4px;
+  margin-bottom: 0.25rem;
 }
 
 .upgrade-content strong {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   color: var(--text-primary);
 }
 
@@ -458,12 +458,12 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
   background: var(--color-success);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
@@ -486,7 +486,7 @@ onMounted(() => {
 
 @media (min-width: 48em) {
   .whatsapp-widget {
-    padding: 24px;
+    padding: 1.5rem;
   }
 
   .widget-header h3 {
@@ -494,7 +494,7 @@ onMounted(() => {
   }
 
   .instructions {
-    gap: 14px;
+    gap: 0.875rem;
   }
 }
 </style>

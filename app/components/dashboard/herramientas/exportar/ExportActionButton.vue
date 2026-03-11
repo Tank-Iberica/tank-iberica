@@ -37,18 +37,18 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 12px 24px;
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   text-decoration: none;
   cursor: pointer;
   transition: background 0.2s;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .btn-primary:hover {
@@ -65,11 +65,11 @@ const { t } = useI18n()
 }
 
 .spinner-sm {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 0.125rem solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   animation: spin 0.8s linear infinite;
   display: inline-block;
 }

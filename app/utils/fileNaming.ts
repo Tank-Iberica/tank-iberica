@@ -29,7 +29,7 @@ export function slugify(...parts: (string | number | null | undefined)[]): strin
     .replaceAll(/[\u0300-\u036F]/g, '')
     .trim()
     .replaceAll(/[^a-z0-9]+/g, '-')
-    .replaceAll(/^-+|-+$/g, '')
+    .replace(/^-+/, '').replace(/-+$/, '')
 }
 
 /**

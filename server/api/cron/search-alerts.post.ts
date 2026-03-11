@@ -7,10 +7,12 @@
  *
  * Protected by x-cron-secret header.
  */
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
+import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
+import { logger } from '../../utils/logger'
 
 // -- Types --------------------------------------------------------------------
 
@@ -106,10 +108,7 @@ export default defineEventHandler(async (event) => {
     .limit(200)
 
   if (alertsError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to fetch search alerts: ${alertsError.message}`,
-    })
+    throw safeError(500, `Failed to fetch search alerts: ${alertsError.message}`)
   }
 
   if (!alerts || alerts.length === 0) {
@@ -147,9 +146,7 @@ export default defineEventHandler(async (event) => {
       const { data: vehicles, error: vehiclesError } = await applyAlertFilters(baseQuery, filters)
 
       if (vehiclesError) {
-        console.error(
-          `[search-alerts] Error querying vehicles for alert ${alert.id}: ${vehiclesError.message}`,
-        )
+        logger.error(`[search-alerts] Error querying vehicles for alert ${alert.id}: ${vehiclesError.message}`)
         return
       }
 
@@ -167,9 +164,7 @@ export default defineEventHandler(async (event) => {
         .single()
 
       if (userError || !userData) {
-        console.error(
-          `[search-alerts] User not found for alert ${alert.id}: ${userError?.message ?? 'no data'}`,
-        )
+        logger.error(`[search-alerts] User not found for alert ${alert.id}: ${userError?.message ?? 'no data'}`)
         return
       }
 
@@ -180,7 +175,7 @@ export default defineEventHandler(async (event) => {
         .slice(0, 10) // Cap at 10 vehicles in the email
         .map(
           (v) =>
-            `${v.brand} ${v.model}${v.year ? ` (${v.year})` : ''}${v.price ? ` - ${v.price.toLocaleString('es-ES')} EUR` : ''}`,
+            `${v.brand} ${v.model}${v.year ? ' (' + v.year + ')' : ''}${v.price ? ' - ' + v.price.toLocaleString('es-ES') + ' EUR' : ''}`,
         )
         .join(', ')
 
@@ -211,7 +206,7 @@ export default defineEventHandler(async (event) => {
         emailsSent++
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-        console.error(`[search-alerts] Failed to send email for alert ${alert.id}: ${errorMessage}`)
+        logger.error(`[search-alerts] Failed to send email for alert ${alert.id}: ${errorMessage}`)
       }
 
       // -- 7. Update last_sent_at on the alert ----------------------------------

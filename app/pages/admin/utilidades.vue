@@ -149,23 +149,23 @@ onMounted(async () => {
 
 <style scoped>
 .utilidades-page {
-  max-width: 1000px;
+  max-width: 62.5rem;
   margin: 0 auto;
 }
 
 /* Header */
 .page-header {
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
 }
 
 .page-header h1 {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.5rem;
 }
 
 .subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 0.9rem;
 }
 
@@ -173,18 +173,18 @@ onMounted(async () => {
 .tools-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
 }
 
 .tool-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
   background: var(--bg-primary);
   border: 2px solid var(--border-color-light);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -196,7 +196,7 @@ onMounted(async () => {
 
 .tool-card.active {
   border-color: var(--color-primary);
-  background: #f0f9ff;
+  background: var(--color-sky-50);
 }
 
 .tool-card.disabled {
@@ -210,18 +210,18 @@ onMounted(async () => {
 }
 
 .tool-info h3 {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1rem;
 }
 
 .tool-info p {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 0.8rem;
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .tools-grid {
     grid-template-columns: 1fr;
   }

@@ -213,14 +213,14 @@ function updateField<K extends keyof CompetitorVehicleForm>(
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
+  padding: 1rem;
 }
 
 .modal-content {
   background: var(--bg-primary);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   width: 100%;
-  max-width: 560px;
+  max-width: 35rem;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
@@ -230,7 +230,7 @@ function updateField<K extends keyof CompetitorVehicleForm>(
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 20px 0 20px;
+  padding: 1.25rem 1.25rem 0 1.25rem;
 }
 
 .modal-header h2 {
@@ -244,13 +244,13 @@ function updateField<K extends keyof CompetitorVehicleForm>(
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   background: none;
   border: none;
   color: var(--text-disabled);
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .btn-close:hover {
@@ -259,20 +259,20 @@ function updateField<K extends keyof CompetitorVehicleForm>(
 }
 
 .modal-form {
-  padding: 20px;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0.875rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .form-group label {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-secondary);
 }
@@ -281,12 +281,12 @@ function updateField<K extends keyof CompetitorVehicleForm>(
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus,
@@ -294,36 +294,36 @@ function updateField<K extends keyof CompetitorVehicleForm>(
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 24px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.5rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
@@ -343,12 +343,12 @@ function updateField<K extends keyof CompetitorVehicleForm>(
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
   background: var(--bg-primary);
   color: var(--color-primary);
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   font-size: 0.95rem;

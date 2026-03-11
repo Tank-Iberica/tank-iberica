@@ -69,34 +69,34 @@ function onSearchInput(event: Event): void {
 .filters-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 0.75rem;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
 }
 
 .filter-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.5rem;
   align-items: center;
 }
 
 .filter-select,
 .search-input {
-  min-height: 44px;
-  padding: 8px 12px;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.85rem;
-  min-width: 140px;
+  min-width: 8.75rem;
   background: var(--bg-primary);
 }
 
 .search-input {
-  min-width: 180px;
+  min-width: 11.25rem;
 }
 
 .filter-select:focus,
@@ -109,12 +109,12 @@ function onSearchInput(event: Event): void {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -124,9 +124,9 @@ function onSearchInput(event: Event): void {
 }
 
 .btn-sm {
-  min-height: 36px;
-  padding: 6px 12px;
-  font-size: 0.8rem;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.75rem;
+  font-size: var(--font-size-sm);
 }
 
 @media (min-width: 48em) {

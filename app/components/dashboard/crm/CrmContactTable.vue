@@ -102,8 +102,8 @@ const { t } = useI18n()
 <style scoped>
 .table-container {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -111,30 +111,30 @@ const { t } = useI18n()
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 700px;
+  min-width: 43.75rem;
 }
 
 .data-table th {
   position: sticky;
   top: 0;
   background: var(--bg-secondary);
-  padding: 12px 14px;
+  padding: 0.75rem 0.875rem;
   text-align: left;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  border-bottom: 2px solid var(--color-gray-200);
+  border-bottom: 0.125rem solid var(--color-gray-200);
   white-space: nowrap;
   z-index: 10;
 }
 
 .data-table td {
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border-bottom: 1px solid var(--color-gray-100);
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--color-slate-700);
 }
 
 @media (hover: hover) {
@@ -144,21 +144,21 @@ const { t } = useI18n()
 }
 
 .col-type {
-  width: 110px;
+  width: 6.875rem;
 }
 .col-actions {
-  width: 90px;
+  width: 5.625rem;
 }
 .col-vertical {
-  max-width: 160px;
+  max-width: 10rem;
 }
 .text-small {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
 }
 
 .truncate {
   display: block;
-  max-width: 160px;
+  max-width: 10rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -166,9 +166,9 @@ const { t } = useI18n()
 
 .type-pill {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
   font-weight: 600;
 }
 
@@ -185,19 +185,19 @@ const { t } = useI18n()
 
 .row-actions {
   display: flex;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .action-btn {
-  padding: 6px 8px;
+  padding: 0.375rem 0.5rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   transition: all 0.15s;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,8 +209,8 @@ const { t } = useI18n()
   }
 
   .action-btn.delete:hover {
-    background: var(--color-error-bg, #fef2f2);
-    border-color: #fca5a5;
+    background: var(--color-error-bg, var(--color-error-bg));
+    border-color: var(--color-error-soft);
   }
 }
 
@@ -219,33 +219,33 @@ const { t } = useI18n()
 }
 
 .empty-state {
-  padding: 60px 20px;
+  padding: 3.75rem 1.25rem;
   color: var(--text-auxiliary);
 }
 
 .empty-icon {
-  font-size: 48px;
+  font-size: 3rem;
   opacity: 0.3;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .empty-state p {
-  margin: 0 0 16px;
+  margin: 0 0 1rem;
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   transition: background 0.2s;
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;

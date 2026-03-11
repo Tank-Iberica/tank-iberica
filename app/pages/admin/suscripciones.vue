@@ -65,7 +65,7 @@ function handleExport() {
         <h2>{{ $t('admin.suscripciones.title') }}</h2>
         <span class="total-badge">{{ total }} registros</span>
       </div>
-      <button class="btn-export" @click="handleExport">Exportar CSV</button>
+      <button class="btn-export" @click="handleExport">{{ $t('common.exportCsv') }}</button>
     </div>
 
     <div class="filters-bar">
@@ -81,7 +81,9 @@ function handleExport() {
       {{ error }}
     </div>
 
-    <div v-if="loading" class="loading-state">Cargando suscripciones...</div>
+    <div v-if="loading" class="loading-state" aria-busy="true">
+      <UiSkeletonTable :rows="5" :cols="4" />
+    </div>
 
     <AdminSubscriptionsTable
       v-else
@@ -111,14 +113,14 @@ function handleExport() {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .section-header h2 {
@@ -128,9 +130,9 @@ function handleExport() {
 
 .total-badge {
   background: var(--bg-secondary);
-  color: #6b7280;
-  padding: 6px 12px;
-  border-radius: 16px;
+  color: var(--color-gray-500);
+  padding: 0.375rem var(--spacing-3);
+  border-radius: var(--border-radius-lg);
   font-size: 0.85rem;
 }
 
@@ -138,8 +140,8 @@ function handleExport() {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
@@ -151,19 +153,19 @@ function handleExport() {
 
 .filters-bar {
   display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding: 16px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
+  padding: var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-card);
 }
 
 .filter-search {
   flex: 1;
-  padding: 8px 12px;
+  padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--border-color-light);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
 }
 
@@ -173,23 +175,23 @@ function handleExport() {
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .section-header {
     flex-direction: column;
-    gap: 12px;
+    gap: var(--spacing-3);
     align-items: stretch;
   }
 

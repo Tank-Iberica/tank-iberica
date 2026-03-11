@@ -42,7 +42,7 @@ function onSelectType(event: Event): void {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" @click.self="emit('close')">
+    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
       <div class="modal modal-md">
         <div class="modal-header">
           <h3>
@@ -65,6 +65,7 @@ function onSelectType(event: Event): void {
               type="text"
               :value="form.company"
               :placeholder="t('dashboard.crm.placeholderCompany')"
+              autocomplete="organization"
               @input="onInputField('company', $event)"
             />
           </div>
@@ -74,6 +75,7 @@ function onSelectType(event: Event): void {
               type="text"
               :value="form.contact_name"
               :placeholder="t('dashboard.crm.placeholderName')"
+              autocomplete="name"
               @input="onInputField('contact_name', $event)"
             />
           </div>
@@ -84,6 +86,7 @@ function onSelectType(event: Event): void {
                 type="tel"
                 :value="form.phone"
                 :placeholder="t('dashboard.crm.placeholderPhone')"
+                autocomplete="tel"
                 @input="onInputField('phone', $event)"
               />
             </div>
@@ -93,6 +96,7 @@ function onSelectType(event: Event): void {
                 type="email"
                 :value="form.email"
                 :placeholder="t('dashboard.crm.placeholderEmail')"
+                autocomplete="email"
                 @input="onInputField('email', $event)"
               />
             </div>
@@ -161,17 +165,17 @@ function onSelectType(event: Event): void {
   align-items: center;
   justify-content: center;
   z-index: 1100;
-  padding: 20px;
-  backdrop-filter: blur(2px);
+  padding: 1.25rem;
+  backdrop-filter: blur(0.125rem);
 }
 
 .modal {
   background: var(--bg-primary);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   animation: modalIn 0.2s ease-out;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100vh - 2.5rem);
   display: flex;
   flex-direction: column;
 }
@@ -179,7 +183,7 @@ function onSelectType(event: Event): void {
 @keyframes modalIn {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(-10px);
+    transform: scale(0.95) translateY(-0.625rem);
   }
   to {
     opacity: 1;
@@ -188,14 +192,14 @@ function onSelectType(event: Event): void {
 }
 
 .modal-md {
-  max-width: 540px;
+  max-width: 33.75rem;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--color-gray-200);
   flex-shrink: 0;
 }
@@ -210,13 +214,13 @@ function onSelectType(event: Event): void {
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   color: var(--text-disabled);
   cursor: pointer;
   padding: 0;
   line-height: 1;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -227,7 +231,7 @@ function onSelectType(event: Event): void {
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 1.5rem;
   overflow-y: auto;
   flex: 1;
 }
@@ -235,37 +239,37 @@ function onSelectType(event: Event): void {
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
   border-top: 1px solid var(--color-gray-200);
   background: var(--bg-secondary);
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
   flex-shrink: 0;
 }
 
 /* Form styles */
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
   display: block;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-family: inherit;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus,
@@ -273,12 +277,12 @@ function onSelectType(event: Event): void {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 .form-row {
@@ -294,11 +298,11 @@ function onSelectType(event: Event): void {
 @media (min-width: 30em) {
   .form-row {
     flex-direction: row;
-    gap: 16px;
+    gap: 1rem;
   }
 
   .form-group.half {
-    width: calc(50% - 8px);
+    width: calc(50% - 0.5rem);
   }
 }
 
@@ -307,14 +311,14 @@ function onSelectType(event: Event): void {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   transition: background 0.2s;
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -332,11 +336,11 @@ function onSelectType(event: Event): void {
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--color-gray-200);
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-secondary:hover {

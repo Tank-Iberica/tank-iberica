@@ -1,7 +1,7 @@
 import { onCLS, onINP, onLCP, onFCP, onTTFB } from 'web-vitals'
 import type { Metric } from 'web-vitals'
 
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin((nuxtApp) => {
   if (!import.meta.client) return
 
   const sendMetric = (metric: Metric): void => {
@@ -11,8 +11,8 @@ export default defineNuxtPlugin(() => {
     }
 
     // Send to Google Analytics 4 if available
-    if (typeof window !== 'undefined' && 'gtag' in window) {
-      const gtag = (window as unknown as Record<string, unknown>).gtag as (
+    if (globalThis.window !== undefined && 'gtag' in globalThis) {
+      const gtag = (globalThis as unknown as Record<string, unknown>).gtag as (
         command: string,
         name: string,
         params: Record<string, unknown>,
@@ -30,4 +30,25 @@ export default defineNuxtPlugin(() => {
   onLCP(sendMetric)
   onFCP(sendMetric)
   onTTFB(sendMetric)
+
+  // Performance marks for route navigation profiling
+  if (typeof performance !== 'undefined' && performance.mark) {
+    nuxtApp.hook('page:start', () => {
+      performance.mark('nuxt:page:start')
+    })
+
+    nuxtApp.hook('page:finish', () => {
+      performance.mark('nuxt:page:finish')
+      try {
+        performance.measure('nuxt:page:navigation', 'nuxt:page:start', 'nuxt:page:finish')
+      }
+      catch {
+        // marks may be cleared between hook calls; ignore
+      }
+    })
+
+    nuxtApp.hook('app:mounted', () => {
+      performance.mark('nuxt:app:mounted')
+    })
+  }
 })

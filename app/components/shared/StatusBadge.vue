@@ -36,45 +36,45 @@ const config = computed(() => getStatusConfig(props.status))
 /* Sizes */
 .status-badge--sm {
   font-size: 0.7rem;
-  padding: 3px 8px;
+  padding: 0.1875rem 0.5rem;
 }
 .status-badge--md {
-  font-size: 0.75rem;
-  padding: 4px 10px;
+  font-size: var(--font-size-xs);
+  padding: 0.25rem 0.625rem;
 }
 
 /* Variants */
 .status-badge--pill {
-  border-radius: 9999px;
+  border-radius: var(--border-radius-full);
 }
 .status-badge--badge {
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
 }
 
 /* Status colors */
 .status--published {
-  color: #15803d;
-  background: rgba(21, 128, 61, 0.1);
+  color: var(--color-success-text);
+  background: var(--color-success-bg);
 }
 .status--draft {
-  color: #6b7280;
-  background: rgba(107, 114, 128, 0.1);
+  color: var(--text-secondary);
+  background: var(--color-gray-100);
 }
 .status--paused {
-  color: #b45309;
-  background: rgba(180, 83, 9, 0.1);
+  color: var(--color-warning-text);
+  background: var(--color-warning-bg);
 }
 .status--rented {
-  color: var(--color-info);
-  background: rgba(29, 78, 216, 0.1);
+  color: var(--color-info-text);
+  background: var(--color-info-bg);
 }
 .status--workshop,
 .status--maintenance {
-  color: #c2410c;
-  background: rgba(194, 65, 12, 0.1);
+  color: var(--color-orange-text);
+  background: var(--color-orange-bg);
 }
 .status--sold {
-  color: #7c3aed;
-  background: rgba(124, 58, 237, 0.1);
+  color: var(--color-purple-text);
+  background: var(--color-purple-bg);
 }
 </style>

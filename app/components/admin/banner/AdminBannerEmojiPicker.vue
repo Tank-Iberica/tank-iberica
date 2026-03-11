@@ -55,15 +55,15 @@ const emit = defineEmits<{
   align-items: center;
   justify-content: center;
   z-index: 10001;
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .emoji-picker-modal {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 380px;
+  max-width: 23.75rem;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -74,8 +74,8 @@ const emit = defineEmits<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: #f5f5f5;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-skeleton-bg);
   border-bottom: 1px solid #eee;
   font-weight: 500;
   flex-shrink: 0;
@@ -84,17 +84,17 @@ const emit = defineEmits<{
 .btn-close-picker {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
   padding: 0;
   line-height: 1;
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   transition: background 0.15s;
 }
 
@@ -104,12 +104,12 @@ const emit = defineEmits<{
 
 .emoji-picker-body {
   overflow-y: auto;
-  padding: 12px;
+  padding: var(--spacing-3);
   flex: 1;
 }
 
 .emoji-category {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .emoji-category:last-child {
@@ -117,26 +117,26 @@ const emit = defineEmits<{
 }
 
 .emoji-category-name {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   color: #888;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 8px;
-  padding-left: 4px;
+  margin-bottom: var(--spacing-2);
+  padding-left: var(--spacing-1);
 }
 
 .emoji-grid {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .emoji-btn {
-  font-size: 22px;
-  padding: 6px;
+  font-size: 1.375rem;
+  padding: 0.375rem;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   text-align: center;
   transition: all 0.15s;
   background: transparent;
@@ -144,7 +144,7 @@ const emit = defineEmits<{
 }
 
 .emoji-btn:hover {
-  background: #e0f2fe;
+  background: var(--color-sky-100);
   transform: scale(1.15);
 }
 
@@ -161,7 +161,7 @@ const emit = defineEmits<{
 
 @media (max-width: 48em) {
   .emoji-picker-overlay {
-    padding: 10px;
+    padding: 0.625rem;
     align-items: flex-end;
   }
 
@@ -175,8 +175,8 @@ const emit = defineEmits<{
   }
 
   .emoji-btn {
-    font-size: 20px;
-    padding: 5px;
+    font-size: var(--font-size-xl);
+    padding: 0.3125rem;
   }
 }
 </style>

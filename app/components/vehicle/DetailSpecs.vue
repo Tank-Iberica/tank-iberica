@@ -36,7 +36,7 @@ function resolveValue(value: unknown): string {
 }
 
 .vehicle-characteristics h2 {
-  font-size: 1.1rem;
+  font-size: var(--font-size-base);
   font-weight: 700;
   color: var(--color-primary);
   margin-bottom: var(--spacing-3);
@@ -56,11 +56,11 @@ function resolveValue(value: unknown): string {
   gap: 0.25rem;
   padding: 0.75rem;
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .vehicle-char-label {
-  font-size: 0.7rem;
+  font-size: var(--font-size-xs);
   color: var(--text-auxiliary);
   text-transform: uppercase;
   letter-spacing: 0.5px;

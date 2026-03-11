@@ -14,6 +14,17 @@ fi
 SONAR_URL="http://localhost:9000"
 SONAR_TOKEN="${SONAR_TOKEN:-}"
 
+# ── Ensure coverage/lcov.info exists and is non-empty ─────────────────────────
+LCOV_FILE="$(dirname "$0")/../coverage/lcov.info"
+if [ ! -f "$LCOV_FILE" ] || [ ! -s "$LCOV_FILE" ]; then
+  echo ">> coverage/lcov.info missing or empty — running vitest coverage first..."
+  (cd "$(dirname "$0")/.." && npx vitest run --coverage)
+fi
+
+# Fix Windows backslashes in lcov paths so SonarQube can map them
+echo ">> Fixing lcov paths..."
+(cd "$(dirname "$0")/.." && node scripts/fix-lcov-paths.mjs)
+
 # Check SonarQube is running
 echo ">> Checking SonarQube at $SONAR_URL ..."
 MAX_WAIT=60

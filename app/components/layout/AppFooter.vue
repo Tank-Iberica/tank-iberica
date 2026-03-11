@@ -1,6 +1,6 @@
 <template>
   <footer class="app-footer">
-    <div class="footer-content">
+    <nav class="footer-content" :aria-label="$t('footer.siteNavigation')">
       <div class="footer-section">
         <h3>{{ $t('footer.communications') }}</h3>
         <div class="footer-links">
@@ -30,7 +30,7 @@
           <NuxtLink to="/transparencia">{{ $t('footer.transparency') }}</NuxtLink>
         </div>
       </div>
-    </div>
+    </nav>
 
     <!-- Legal disclaimer -->
     <DisclaimerFooter />
@@ -59,13 +59,16 @@ const year = new Date().getFullYear()
     var(--color-primary) 100%
   );
   color: var(--text-on-dark-primary, rgba(255, 255, 255, 0.95));
-  padding: 48px 0 32px 0;
-  margin-top: 64px;
+  padding: 3rem 0 2rem 0;
+  padding-bottom: max(2rem, env(safe-area-inset-bottom, 0));
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+  margin-top: 4rem;
 }
 
 .footer-content {
   max-width: 56.25em;
-  margin: 0 auto 48px;
+  margin: 0 auto 3rem;
   padding: 0 1rem;
   display: flex;
   flex-direction: row;
@@ -79,7 +82,7 @@ const year = new Date().getFullYear()
 }
 
 .footer-section h3 {
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.4;
   margin-bottom: 0;
   font-weight: 700;
@@ -89,7 +92,7 @@ const year = new Date().getFullYear()
 .footer-links {
   display: none;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .footer-links a {
@@ -99,7 +102,7 @@ const year = new Date().getFullYear()
   transition: all 0.3s ease;
   display: block;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .footer-links a:hover {
@@ -110,10 +113,10 @@ const year = new Date().getFullYear()
 /* Footer bottom */
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 32px 1rem 0;
+  padding: 2rem 1rem 0;
   text-align: center;
   color: var(--text-on-dark-secondary, rgba(255, 255, 255, 0.7));
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.6;
 }
 
@@ -127,7 +130,7 @@ const year = new Date().getFullYear()
   }
 
   .footer-bottom {
-    padding: 32px 2rem 0;
+    padding: 2rem 2rem 0;
   }
 }
 
@@ -141,8 +144,8 @@ const year = new Date().getFullYear()
   }
 
   .footer-section h3 {
-    font-size: 16px;
-    margin-bottom: 16px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
   }
 
   .footer-links {
@@ -161,11 +164,11 @@ const year = new Date().getFullYear()
   }
 
   .footer-section {
-    min-width: 150px;
+    min-width: 9.375rem;
   }
 
   .footer-bottom {
-    padding: 32px 3rem 0;
+    padding: 2rem 3rem 0;
   }
 }
 </style>

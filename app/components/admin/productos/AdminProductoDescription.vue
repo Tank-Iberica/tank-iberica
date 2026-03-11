@@ -19,19 +19,19 @@ const emit = defineEmits<Emits>()
 <template>
   <div class="section collapsible">
     <button class="section-toggle" @click="emit('update:open', !open)">
-      <span>Descripción (300 char)</span>
+      <span>{{ $t('admin.productos.descriptionSection') }}</span>
       <span>{{ open ? '−' : '+' }}</span>
     </button>
     <div v-if="open" class="section-content">
       <div class="row-2">
         <div class="field">
-          <label for="desc-es">Descripción ES</label>
+          <label for="desc-es">{{ $t('admin.productos.descriptionEs') }}</label>
           <textarea
             id="desc-es"
             :value="descriptionEs"
             rows="3"
             maxlength="300"
-            placeholder="Descripción en español..."
+            :placeholder="$t('admin.productos.descriptionEsPlaceholder')"
             @input="
               emit('update:descriptionEs', ($event.target as HTMLTextAreaElement).value || null)
             "
@@ -39,13 +39,13 @@ const emit = defineEmits<Emits>()
           <span class="char-count">{{ (descriptionEs || '').length }}/300</span>
         </div>
         <div class="field">
-          <label for="desc-en">Descripción EN</label>
+          <label for="desc-en">{{ $t('admin.productos.descriptionEn') }}</label>
           <textarea
             id="desc-en"
             :value="descriptionEn"
             rows="3"
             maxlength="300"
-            placeholder="Description in English..."
+            :placeholder="$t('admin.productos.descriptionEnPlaceholder')"
             @input="
               emit('update:descriptionEn', ($event.target as HTMLTextAreaElement).value || null)
             "
@@ -60,8 +60,8 @@ const emit = defineEmits<Emits>()
 <style scoped>
 .section {
   background: var(--bg-primary);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xs);
 }
 .collapsible {
   padding: 0;
@@ -71,42 +71,42 @@ const emit = defineEmits<Emits>()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-gray-700);
   text-transform: uppercase;
 }
 .section-toggle:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 .section-content {
-  padding: 0 16px 16px;
-  border-top: 1px solid #f3f4f6;
+  padding: 0 var(--spacing-4) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-100);
 }
 .row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 .field label {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-gray-500);
   text-transform: uppercase;
 }
 .field textarea {
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.85rem;
   resize: vertical;
 }

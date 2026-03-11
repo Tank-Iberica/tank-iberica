@@ -19,10 +19,104 @@
 
 ## Herramientas de desarrollo (instalar manualmente)
 
-| Herramienta           | Cómo instalar                              | Para qué se usa                            | Obligatorio  |
-| --------------------- | ------------------------------------------ | ------------------------------------------ | ------------ |
-| **GitHub CLI (`gh`)** | https://cli.github.com                     | Crear PRs, gestionar issues desde terminal | Recomendado  |
-| **Supabase CLI**      | `npm install -g supabase` o `npx supabase` | Migraciones BD, gen tipos, dev local       | Sí (para BD) |
+| Herramienta           | Cómo instalar                              | Para qué se usa                            | Obligatorio          |
+| --------------------- | ------------------------------------------ | ------------------------------------------ | -------------------- |
+| **GitHub CLI (`gh`)** | https://cli.github.com                     | Crear PRs, gestionar issues desde terminal | Recomendado          |
+| **Supabase CLI**      | Windows: `winget install Supabase.CLI` · Linux/WSL: ver sección de acceso remoto | Migraciones BD, gen tipos, dev local | Sí (para BD) |
+| **Codex CLI**         | `npm install -g @openai/codex`             | Asistente IA alternativo (OpenAI)          | Opcional             |
+| **k6**                | Windows: `winget install k6` · Linux/WSL: ver sección de acceso remoto | Load tests (`npm run test:load`) | Si tocas rendimiento |
+
+---
+
+## Acceso remoto — WSL + tmux + Tailscale + SSH
+
+Permite trabajar desde cualquier dispositivo (p. ej. iPhone con Termius) con sesiones persistentes que sobreviven a desconexiones.
+
+### Requisitos en el PC (Windows, una sola vez)
+
+1. **Tailscale** — `winget install Tailscale.Tailscale` → login → anota tu IP (`100.x.x.x`)
+2. **OpenSSH Server** — PowerShell admin: `Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0 && Start-Service sshd && Set-Service sshd -StartupType Automatic`
+3. **sshd_config** — `C:\ProgramData\ssh\sshd_config` — añadir **encima** del bloque `Match Group administrators`:
+   ```
+   PasswordAuthentication no
+   AllowUsers <tu_usuario_windows>
+   ListenAddress <tu_ip_tailscale>
+   ```
+4. **Clave SSH** — genera en el cliente (Termius, VS Code, etc.) y copia la clave pública en `C:\ProgramData\ssh\administrators_authorized_keys`. Permisos:
+   ```powershell
+   icacls C:\ProgramData\ssh\administrators_authorized_keys /inheritance:r /grant "SYSTEM:F" /grant "Administradores:F"
+   ```
+5. **WSL + Ubuntu** — PowerShell admin: `wsl --install -d Ubuntu`
+
+### Ubuntu — instalación de herramientas (una sola vez)
+
+```bash
+# En Ubuntu como root
+apt-get install -y tmux git jq python3
+
+# nvm + Node.js 22
+curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh -o /tmp/install-nvm.sh
+bash /tmp/install-nvm.sh
+source ~/.nvm/nvm.sh && nvm install 22
+
+# Claude Code + Codex CLI + Supabase MCP + Prettier
+npm install -g @anthropic-ai/claude-code @openai/codex @supabase/mcp-server-supabase prettier
+
+# Supabase CLI (binario — no soporta npm install -g)
+curl -fsSL https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz \
+  -o /tmp/supabase.tar.gz && tar -xzf /tmp/supabase.tar.gz -C /usr/local/bin supabase
+
+# k6
+curl -fsSL https://dl.k6.io/key.gpg -o /tmp/k6.gpg
+gpg --dearmor < /tmp/k6.gpg > /usr/share/keyrings/k6-archive-keyring.gpg
+echo 'deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main' \
+  > /etc/apt/sources.list.d/k6.list
+apt-get update -qq && apt-get install -y k6
+
+# GitHub CLI
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+  -o /usr/share/keyrings/githubcli-archive-keyring.gpg
+echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main' \
+  > /etc/apt/sources.list.d/github-cli.list
+apt-get update -qq && apt-get install -y gh
+
+# Playwright
+npx playwright install --with-deps chromium
+```
+
+### Usuario y alias (en Ubuntu, como el usuario Linux)
+
+```bash
+# Crear usuario curro
+useradd -m -s /bin/bash curro && echo 'curro:<contraseña>' | chpasswd
+usermod -aG sudo curro
+echo 'curro ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# Usuario por defecto en /etc/wsl.conf
+echo -e '[user]\ndefault=curro' > /etc/wsl.conf
+
+# En ~/.bashrc del usuario curro:
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+export TRACCIONA="/mnt/c/TradeBase/Tracciona"
+alias tracciona="cd $TRACCIONA"
+curro() {
+  cd "$TRACCIONA" || return 1
+  claude --model opus --append-system-prompt "..." "Inicio de sesion"
+}
+```
+
+### Flujo diario
+
+```bash
+# Desde el cliente SSH (iPhone Termius, etc.):
+wsl                        # entrar a Ubuntu
+tmux new -s curro          # crear sesión (primera vez)
+tmux attach -t curro       # reconectar sesión existente
+curro                      # lanzar Claude Code en el proyecto
+```
+
+> **Nota:** Los archivos del proyecto (`C:\TradeBase\Tracciona`) son accesibles desde Ubuntu en `/mnt/c/TradeBase/Tracciona`. Docker Desktop también está disponible desde WSL vía integración nativa.
 
 ---
 
@@ -92,7 +186,8 @@ Estos son SaaS — no hay que instalar nada, pero necesitas credenciales/acceso 
 
 | Servicio                 | URL                                                         | Para qué                          | Obligatorio dev   |
 | ------------------------ | ----------------------------------------------------------- | --------------------------------- | ----------------- |
-| **Supabase**             | https://supabase.com/dashboard/project/gmnrfuzekbwyzkgsaftv | BD, auth, storage                 | Sí                |
+| **Supabase (producción)**| https://supabase.com/dashboard/project/gmnrfuzekbwyzkgsaftv | BD, auth, storage                 | Sí                |
+| **Supabase (staging)**   | https://supabase.com/dashboard/project/xddjhrgkwwolpugtxgfk | Tests IDOR/RLS (aislado de prod)  | Si tocas seguridad|
 | **Cloudflare**           | https://dash.cloudflare.com                                 | Deploy, CDN, Workers, Turnstile   | Sí (deploy)       |
 | **Stripe**               | https://dashboard.stripe.com                                | Pagos, suscripciones, créditos    | Si tocas pagos    |
 | **Resend**               | https://resend.com                                          | Envío de emails transaccionales   | Si tocas emails   |
@@ -164,9 +259,19 @@ cp .env.example .env
 [ ] npx playwright install chromium (si vas a correr tests E2E)
 [ ] npx web-push generate-vapid-keys (si tocas push notifications, añadir al .env)
 [ ] GitHub CLI instalado (recomendado para operaciones con PRs)
-[ ] Acceso a Supabase, Cloudflare, Stripe, Resend, Cloudinary confirmado
+[ ] Acceso a Supabase (prod + staging), Cloudflare, Stripe, Resend, Cloudinary confirmado
+[ ] STAGING_SUPABASE_URL + STAGING_SUPABASE_KEY en .env (si vas a correr tests IDOR)
 [ ] node .claude/policy/policy-status.mjs --brief → debe mostrar ACTIVO
 [ ] docker compose -f sonar/docker-compose.yml up -d (si vas a usar SonarQube)
+
+### Checklist acceso remoto (opcional, para trabajar desde fuera)
+[ ] Tailscale instalado y logueado
+[ ] OpenSSH Server instalado y configurado (ListenAddress = IP Tailscale, PasswordAuth off)
+[ ] Clave pública en C:\ProgramData\ssh\administrators_authorized_keys con permisos correctos
+[ ] WSL + Ubuntu instalado (wsl --install -d Ubuntu)
+[ ] Herramientas Ubuntu instaladas (ver sección "Acceso remoto" arriba)
+[ ] tmux funcionando (tmux -V)
+[ ] curro() en ~/.bashrc del usuario Ubuntu
 ```
 
 ---
@@ -175,6 +280,9 @@ cp .env.example .env
 
 | Fecha      | Herramienta / Sistema             | Quién lo añadió | Notas                                                                                   |
 | ---------- | --------------------------------- | --------------- | --------------------------------------------------------------------------------------- |
+| 2026-03-09 | Acceso remoto (WSL+tmux+Tailscale+SSH) | Claude Code | Sesiones persistentes desde iPhone/remoto. Ubuntu con todas las herramientas. Codex CLI añadido. |
+| 2026-03-06 | k6 load testing                   | Claude Code     | Load tests en `tests/load/`. `npm run test:load` / `test:load:smoke`. CI: `k6-readiness.yml`. |
+| 2026-03-15 | Supabase staging + IDOR tests     | Claude Code     | Proyecto staging (`xddjhrgkwwolpugtxgfk`) para tests IDOR/RLS. Checklist actualizado.   |
 | 2026-03-14 | Revisión completa del documento   | Claude Code     | Docker/SonarQube, integraciones de código, claves VAPID/CRON, servicios cloud completos |
 | 2026-03-03 | Policy Engine (`.claude/policy/`) | Claude Code     | PreToolUse hooks para seguridad. Auto-compila en `npm install`.                         |
 | —          | Husky + lint-staged               | —               | Pre-commit hooks ESLint + Prettier                                                      |

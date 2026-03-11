@@ -52,9 +52,8 @@ onMounted(() => {
       <div v-if="error" class="alert-error">{{ error }}</div>
 
       <!-- Loading -->
-      <div v-if="loading" class="loading-state">
-        <div class="spinner" />
-        <span>{{ t('common.loading') }}...</span>
+      <div v-if="loading" class="loading-state" aria-busy="true">
+        <UiSkeletonCard :lines="4" />
       </div>
 
       <template v-else>
@@ -99,19 +98,19 @@ onMounted(() => {
 
 <style scoped>
 .export-page {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .alert-error {
-  padding: 12px 16px;
-  background: var(--color-error-bg, #fef2f2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--color-error);
   font-size: 0.9rem;
 }
@@ -120,14 +119,14 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -140,9 +139,9 @@ onMounted(() => {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .export-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

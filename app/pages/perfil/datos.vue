@@ -64,6 +64,19 @@ async function onSave() {
   }
 }
 
+/** Profile completeness checklist (reactive to form state) */
+const completenessItems = computed(() => [
+  { key: 'name', done: !!form.name.trim(), label: t('profile.data.fullName') },
+  { key: 'phone', done: !!form.phone.trim(), label: t('profile.data.phone') },
+  { key: 'country', done: !!form.preferred_country, label: t('profile.data.preferredCountry') },
+  { key: 'level', done: !!form.preferred_location_level, label: t('profile.data.preferredLocationLevel') },
+])
+
+const completeness = computed(() => {
+  const done = completenessItems.value.filter((i) => i.done).length
+  return Math.round((done / completenessItems.value.length) * 100)
+})
+
 /** Compute avatar initials from name or email */
 const initials = computed(() => {
   const name = form.name || email.value
@@ -114,6 +127,8 @@ onMounted(async () => {
 <template>
   <div class="data-page">
     <div class="data-container">
+      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('profile.data.title') }]" />
+      <PerfilProfileNavPills />
       <h1 class="page-title">
         {{ $t('profile.data.title') }}
       </h1>
@@ -121,10 +136,77 @@ onMounted(async () => {
         {{ $t('profile.data.subtitle') }}
       </p>
 
+      <!-- Profile completeness -->
+      <div class="profile-completeness">
+        <div class="completeness-header">
+          <span class="completeness-label">{{ $t('profile.data.completeness') }}</span>
+          <span
+            class="completeness-percent"
+            :class="{ 'completeness-percent--done': completeness === 100 }"
+          >{{ completeness }}%</span>
+        </div>
+        <div class="completeness-bar" :aria-label="`${completeness}%`" role="progressbar" :aria-valuenow="completeness" aria-valuemin="0" aria-valuemax="100">
+          <div class="completeness-bar-fill" :style="{ width: `${completeness}%` }" />
+        </div>
+        <div v-if="completeness === 100" class="completeness-reward">
+          {{ $t('profile.data.completenessReward') }}
+        </div>
+        <ul v-else class="completeness-checklist">
+          <li
+            v-for="item in completenessItems"
+            :key="item.key"
+            class="checklist-item"
+            :class="{ 'checklist-item--done': item.done }"
+          >
+            <svg
+              v-if="item.done"
+              class="checklist-icon checklist-icon--done"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              width="14"
+              height="14"
+              aria-hidden="true"
+            >
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            <svg
+              v-else
+              class="checklist-icon checklist-icon--pending"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              width="14"
+              height="14"
+              aria-hidden="true"
+            >
+              <circle cx="10" cy="10" r="8" stroke-width="1.5" />
+            </svg>
+            {{ item.label }}
+          </li>
+        </ul>
+      </div>
+
       <!-- Avatar section -->
       <div class="avatar-section">
         <div v-if="profile?.avatar_url" class="avatar">
-          <img :src="profile.avatar_url" :alt="$t('profile.data.avatarAlt')" />
+          <NuxtImg
+            v-if="profile.avatar_url.includes('cloudinary.com')"
+            provider="cloudinary"
+            :src="profile.avatar_url.match(/\/upload\/(.+)$/)?.[1] || profile.avatar_url"
+            :alt="$t('profile.data.avatarAlt')"
+            width="96"
+            height="96"
+            fit="cover"
+            format="webp"
+            loading="lazy"
+          />
+          <img
+            v-else
+            :src="profile.avatar_url"
+            :alt="$t('profile.data.avatarAlt')"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
         <div v-else class="avatar avatar--initials">
           {{ initials }}
@@ -270,7 +352,7 @@ onMounted(async () => {
 }
 
 .data-container {
-  max-width: 560px;
+  max-width: 35rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -288,6 +370,94 @@ onMounted(async () => {
   margin-bottom: 1.5rem;
 }
 
+/* Completeness widget */
+.profile-completeness {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-md);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.completeness-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.completeness-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.completeness-percent {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+}
+
+.completeness-percent--done {
+  color: var(--color-success, #16a34a);
+}
+
+.completeness-bar {
+  width: 100%;
+  height: 0.5rem;
+  background: var(--border-color-light);
+  border-radius: var(--border-radius-full);
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.completeness-bar-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--border-radius-full);
+  transition: width 0.4s ease;
+}
+
+.completeness-reward {
+  font-size: var(--font-size-sm);
+  color: var(--color-success, #16a34a);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+  padding: 0.25rem 0;
+}
+
+.completeness-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: var(--font-size-xs);
+  color: var(--text-auxiliary);
+}
+
+.checklist-item--done {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}
+
+.checklist-icon--done {
+  color: var(--color-success, #16a34a);
+  flex-shrink: 0;
+}
+
+.checklist-icon--pending {
+  color: var(--border-color);
+  flex-shrink: 0;
+}
+
 /* Avatar */
 .avatar-section {
   display: flex;
@@ -296,8 +466,8 @@ onMounted(async () => {
 }
 
 .avatar {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   border-radius: var(--border-radius-full);
   overflow: hidden;
   border: 3px solid var(--border-color-light);
@@ -347,13 +517,13 @@ onMounted(async () => {
   background: var(--bg-primary);
   color: var(--text-primary);
   transition: border-color var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 .form-input--readonly {
@@ -382,12 +552,12 @@ onMounted(async () => {
 .field-error {
   font-size: var(--font-size-xs);
   color: var(--color-error, var(--color-error));
-  margin-top: var(--spacing-1, 4px);
+  margin-top: var(--spacing-1);
 }
 
 .form-error {
   padding: 0.75rem 1rem;
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   border: 1px solid var(--color-error-border);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
@@ -396,7 +566,7 @@ onMounted(async () => {
 
 .form-success {
   padding: 0.75rem 1rem;
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   border: 1px solid var(--color-success-border);
   border-radius: var(--border-radius);
   font-size: var(--font-size-sm);
@@ -414,7 +584,7 @@ onMounted(async () => {
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -427,7 +597,7 @@ onMounted(async () => {
 }
 
 /* ---- Tablet ---- */
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .data-container {
     padding: 0 2rem;
   }
@@ -442,8 +612,8 @@ onMounted(async () => {
   }
 
   .avatar {
-    width: 96px;
-    height: 96px;
+    width: 6rem;
+    height: 6rem;
   }
 
   .btn-primary {

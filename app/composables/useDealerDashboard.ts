@@ -1,83 +1,27 @@
 /**
  * Composable for the dealer dashboard home.
  * Loads dealer profile, KPI stats, and recent leads.
+ *
+ * Query reduction (§1.5 Plan Maestro):
+ *   Before: 10 round-trips (6 parallel + 1 sequential + 2 parallel + 1 sequential)
+ *   After:  3 parallel queries → 1 round-trip
+ *     1. get_dealer_dashboard_stats RPC  → all 8 KPIs
+ *     2. PostgREST leads query           → recent leads with vehicle join
+ *     3. get_dealer_top_vehicles RPC     → top vehicles with leads + favorites
  */
+import type {
+  DealerProfile,
+  DashboardStats,
+  RecentLead,
+  TopVehicle,
+  DashboardStatsRaw,
+  TopVehicleRaw,
+  RawLead,
+} from './shared/dealerDashboardTypes'
 
-interface DealerProfile {
-  id: string
-  user_id: string
-  company_name: string | null
-  slug: string | null
-  bio: string | null
-  logo_url: string | null
-  phone: string | null
-  email: string | null
-  website: string | null
-  location: string | null
-  theme_primary: string | null
-  theme_accent: string | null
-  social_links: Record<string, string> | null
-  certifications: string[] | null
-  auto_reply_message: string | null
-  onboarding_completed: boolean
-  created_at: string | null
-}
+export type { DealerProfile, DashboardStats, RecentLead, TopVehicle } from './shared/dealerDashboardTypes'
 
-interface DashboardStats {
-  activeListings: number
-  totalLeads: number
-  totalViews: number
-  leadsThisMonth: number
-  responseRate: number
-  contactsThisMonth: number
-  fichaViewsThisMonth: number
-  conversionRate: number
-}
-
-interface RecentLead {
-  id: string
-  buyer_name: string | null
-  buyer_email: string | null
-  vehicle_id: string | null
-  vehicle_brand: string | null
-  vehicle_model: string | null
-  status: string
-  message: string | null
-  created_at: string | null
-}
-
-interface TopVehicle {
-  id: string
-  brand: string
-  model: string
-  year: number | null
-  price: number | null
-  views: number
-  leads: number
-  favorites: number
-  status: string
-}
-
-function buildFavCounts(rows: Array<{ vehicle_id: string }>): Record<string, number> {
-  const counts: Record<string, number> = {}
-  for (const row of rows) {
-    counts[row.vehicle_id] = (counts[row.vehicle_id] || 0) + 1
-  }
-  return counts
-}
-
-type RawLead = {
-  id: string
-  buyer_name: string | null
-  buyer_email: string | null
-  vehicle_id: string | null
-  status: string
-  message: string | null
-  created_at: string | null
-  vehicles: { brand: string; model: string } | null
-}
-
-function mapLeads(raw: RawLead[]): RecentLead[] {
+export function mapLeads(raw: RawLead[]): RecentLead[] {
   return raw.map((lead) => ({
     id: lead.id,
     buyer_name: lead.buyer_name,
@@ -115,9 +59,9 @@ export function useDealerDashboard() {
     if (!userId.value) return null
 
     try {
-      const { data, error: err } = await supabase
+      const { data, error: err } = await (supabase as ReturnType<typeof useSupabaseClient>)
         .from('dealers')
-        .select('*')
+        .select('id, user_id, company_name, slug, bio, logo_url, phone, email, website, location, theme_primary, theme_accent, social_links, certifications, auto_reply_message, onboarding_completed, created_at')
         .eq('user_id', userId.value)
         .single()
 
@@ -141,155 +85,68 @@ export function useDealerDashboard() {
         return
       }
 
-      // Fetch stats in parallel
-      const now = new Date()
-      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+      const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
+      const vertical = getVerticalSlug()
 
-      const [
-        activeListingsRes,
-        totalLeadsRes,
-        monthLeadsRes,
-        viewsRes,
-        recentLeadsRes,
-        topVehiclesRes,
-      ] = await Promise.all([
-        // Active listings count
-        supabase
-          .from('vehicles')
-          .select('id', { count: 'exact', head: true })
-          .eq('dealer_id', dealer.id)
-          .eq('status', 'published')
-          .eq('vertical', getVerticalSlug()),
+      // 3 queries in parallel → 1 round-trip (was 10 queries / 4 round-trips)
+      const [statsRes, recentLeadsRes, topVehiclesRes] = await Promise.all([
+        // All 8 KPIs in one server-side CTE
+        (supabase as ReturnType<typeof useSupabaseClient>).rpc('get_dealer_dashboard_stats', {
+          p_dealer_id: dealer.id,
+          p_vertical: vertical,
+          p_month_start: monthStart,
+        }),
 
-        // Total leads count
-        supabase
+        // Recent leads — PostgREST join (already a single query)
+        (supabase as ReturnType<typeof useSupabaseClient>)
           .from('leads')
-          .select('id', { count: 'exact', head: true })
-          .eq('dealer_id', dealer.id),
-
-        // Leads this month
-        supabase
-          .from('leads')
-          .select('id', { count: 'exact', head: true })
-          .eq('dealer_id', dealer.id)
-          .gte('created_at', monthStart),
-
-        // Total views from dealer_stats or vehicles
-        supabase
-          .from('dealer_stats')
-          .select('total_views')
-          .eq('dealer_id', dealer.id)
-          .maybeSingle(),
-
-        // Recent leads (last 5)
-        supabase
-          .from('leads')
-          .select(
-            'id, buyer_name, buyer_email, vehicle_id, status, message, created_at, vehicles(brand, model)',
-          )
+          .select('id, buyer_name, buyer_email, vehicle_id, status, message, created_at, vehicles(brand, model)')
           .eq('dealer_id', dealer.id)
           .order('created_at', { ascending: false })
           .limit(5),
 
-        // Top vehicles by views
-        supabase
-          .from('vehicles')
-          .select('id, brand, model, year, price, views, status')
-          .eq('dealer_id', dealer.id)
-          .eq('status', 'published')
-          .eq('vertical', getVerticalSlug())
-          .order('views', { ascending: false })
-          .limit(5),
+        // Top vehicles with leads + favorites (was 2 queries, now 1 RPC)
+        (supabase as ReturnType<typeof useSupabaseClient>).rpc('get_dealer_top_vehicles', {
+          p_dealer_id: dealer.id,
+          p_vertical: vertical,
+          p_limit: 5,
+        }),
       ])
 
-      // Calculate response rate from leads
-      let responseRate = 0
-      if (totalLeadsRes.count && totalLeadsRes.count > 0) {
-        const { count: respondedCount } = await supabase
-          .from('leads')
-          .select('id', { count: 'exact', head: true })
-          .eq('dealer_id', dealer.id)
-          .neq('status', 'new')
+      // Map stats RPC response (returns array with one row for RETURNS TABLE functions)
+      const statsRow = Array.isArray(statsRes.data) && statsRes.data.length > 0
+        ? (statsRes.data[0] as DashboardStatsRaw)
+        : null
 
-        responseRate = respondedCount ? Math.round((respondedCount / totalLeadsRes.count) * 100) : 0
+      if (statsRes.error || !statsRow) {
+        throw statsRes.error || new Error('Dashboard stats RPC returned no data')
       }
 
-      // Lead tracking metrics from analytics_events
-      const [contactClicksRes, fichaViewsRes] = await Promise.all([
-        supabase
-          .from('analytics_events')
-          .select('*', { count: 'exact', head: true })
-          .eq('event_type', 'contact_click')
-          .contains('metadata', { dealer_id: dealer.id })
-          .gte('created_at', monthStart),
-        supabase
-          .from('analytics_events')
-          .select('*', { count: 'exact', head: true })
-          .eq('event_type', 'ficha_view')
-          .contains('metadata', { dealer_id: dealer.id })
-          .gte('created_at', monthStart),
-      ])
-
-      const contactsThisMonth = contactClicksRes.count || 0
-      const fichaViewsThisMonth = fichaViewsRes.count || 0
-      const conversionRate =
-        fichaViewsThisMonth > 0
-          ? Math.round((contactsThisMonth / fichaViewsThisMonth) * 1000) / 10
-          : 0
-
       stats.value = {
-        activeListings: activeListingsRes.count || 0,
-        totalLeads: totalLeadsRes.count || 0,
-        totalViews: (viewsRes.data as { total_views: number } | null)?.total_views || 0,
-        leadsThisMonth: monthLeadsRes.count || 0,
-        responseRate,
-        contactsThisMonth,
-        fichaViewsThisMonth,
-        conversionRate,
+        activeListings: statsRow.active_listings ?? 0,
+        totalLeads: statsRow.total_leads ?? 0,
+        totalViews: statsRow.total_views ?? 0,
+        leadsThisMonth: statsRow.leads_this_month ?? 0,
+        responseRate: statsRow.response_rate ?? 0,
+        contactsThisMonth: statsRow.contacts_this_month ?? 0,
+        fichaViewsThisMonth: statsRow.ficha_views_this_month ?? 0,
+        conversionRate: statsRow.conversion_rate ?? 0,
       }
 
       recentLeads.value = mapLeads((recentLeadsRes.data || []) as RawLead[])
 
-      // Map top vehicles
-      const topVehiclesMapped = (
-        (topVehiclesRes.data || []) as unknown as Array<{
-          id: string
-          brand: string
-          model: string
-          year: number | null
-          price: number | null
-          views: number
-          status: string
-        }>
-      ).map((v) => ({
+      // Map top vehicles — leads and favorites now included from the RPC
+      topVehicles.value = ((topVehiclesRes.data || []) as TopVehicleRaw[]).map((v) => ({
         id: v.id,
         brand: v.brand,
         model: v.model,
         year: v.year,
         price: v.price,
         views: v.views || 0,
-        leads: 0,
-        favorites: 0,
+        leads: v.leads || 0,
+        favorites: v.favorites || 0,
         status: v.status,
       }))
-
-      // Fetch favorites counts for top vehicles
-      const topVehicleIds = topVehiclesMapped.map((v) => v.id)
-      if (topVehicleIds.length > 0) {
-        const { data: favData } = await supabase
-          .from('favorites')
-          .select('vehicle_id')
-          .in('vehicle_id', topVehicleIds)
-
-        if (favData) {
-          const favCounts = buildFavCounts(favData as Array<{ vehicle_id: string }>)
-          for (const v of topVehiclesMapped) {
-            v.favorites = favCounts[v.id] || 0
-          }
-        }
-      }
-
-      topVehicles.value = topVehiclesMapped
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error loading dashboard data'
     } finally {

@@ -19,22 +19,22 @@ defineProps<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-6);
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .header-left h1 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--color-near-black);
 }
 
 .count-badge {
@@ -42,24 +42,24 @@ defineProps<{
   color: var(--text-auxiliary);
   font-size: 0.8rem;
   font-weight: 600;
-  padding: 2px 10px;
-  border-radius: 12px;
+  padding: 0.125rem 0.625rem;
+  border-radius: var(--border-radius-md);
 }
 
 .btn {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   border: 1px solid var(--color-gray-200);
   background: var(--bg-primary);
-  color: #374151;
+  color: var(--color-gray-700);
   transition: all 0.15s;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .btn-primary {

@@ -63,20 +63,20 @@ function onInput(rateKey: string, event: Event) {
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
 }
 
 .card-title {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .card-description {
-  margin: 0 0 20px;
+  margin: 0 0 var(--spacing-5);
   color: var(--text-auxiliary);
   font-size: 0.875rem;
 }
@@ -84,76 +84,76 @@ function onInput(rateKey: string, event: Event) {
 .commission-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .commission-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .commission-label {
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
   font-size: 0.9rem;
 }
 
 .input-with-suffix {
   display: flex;
   align-items: center;
-  gap: 8px;
-  max-width: 200px;
+  gap: var(--spacing-2);
+  max-width: 12.5rem;
 }
 
 .commission-input {
   width: 100%;
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
-  color: #374151;
-  min-height: 44px;
+  color: var(--color-gray-700);
+  min-height: 2.75rem;
 }
 
 .commission-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .input-suffix {
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-weight: 500;
   font-size: 0.95rem;
   flex-shrink: 0;
-  min-width: 20px;
+  min-width: 1.25rem;
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 0.625rem var(--spacing-4);
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
-  margin-top: 12px;
+  margin-top: var(--spacing-3);
 }
 
 .save-section {
-  margin-top: 16px;
+  margin-top: var(--spacing-4);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
   transition: background 0.2s;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-primary:hover {
@@ -168,13 +168,13 @@ function onInput(rateKey: string, event: Event) {
 @media (min-width: 48em) {
   .commission-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: var(--spacing-5);
   }
 }
 
 @media (max-width: 48em) {
   .config-card {
-    padding: 16px;
+    padding: var(--spacing-4);
   }
 
   .input-with-suffix {

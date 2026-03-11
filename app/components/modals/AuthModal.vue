@@ -293,8 +293,8 @@ watch(
   top: var(--spacing-4);
   right: var(--spacing-4);
   color: var(--text-auxiliary);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -323,7 +323,7 @@ watch(
   color: var(--text-primary);
   background: var(--bg-primary);
   transition: all var(--transition-fast);
-  min-height: 48px;
+  min-height: 3rem;
 }
 
 .btn-google:hover {
@@ -344,7 +344,7 @@ watch(
 .divider::after {
   content: '';
   flex: 1;
-  height: 1px;
+  height: 0.0625rem;
   background: var(--border-color-light);
 }
 
@@ -380,7 +380,7 @@ watch(
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
   transition: background var(--transition-fast);
-  min-height: 48px;
+  min-height: 3rem;
 }
 
 .btn-primary:hover {
@@ -447,7 +447,7 @@ watch(
   }
 
   .auth-panel {
-    max-width: 440px;
+    max-width: 27.5rem;
     border-radius: var(--border-radius-xl);
     max-height: 85vh;
   }

@@ -20,26 +20,26 @@ const { t } = useI18n()
 <style scoped>
 .upgrade-card {
   text-align: center;
-  padding: 48px 24px;
-  background: linear-gradient(135deg, #f0f9ff, #eff6ff);
-  border: 1px solid #bfdbfe;
-  border-radius: 12px;
+  padding: 3rem 1.5rem;
+  background: linear-gradient(135deg, var(--color-sky-50), var(--color-blue-50));
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--border-radius-md);
 }
 
 .upgrade-icon {
   font-size: 2.5rem;
   color: var(--color-warning);
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .upgrade-card h2 {
-  margin: 0 0 8px;
-  font-size: 1.25rem;
+  margin: 0 0 0.5rem;
+  font-size: var(--font-size-xl);
   color: var(--text-primary);
 }
 
 .upgrade-card p {
-  margin: 0 0 20px;
+  margin: 0 0 1.25rem;
   color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
@@ -48,12 +48,12 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.95rem;
   text-decoration: none;

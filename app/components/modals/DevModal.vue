@@ -60,9 +60,9 @@ function close() {
 
 .dev-container {
   background: var(--bg-primary);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   padding: 2rem;
-  max-width: 360px;
+  max-width: 22.5rem;
   width: 100%;
   text-align: center;
   position: relative;
@@ -70,15 +70,15 @@ function close() {
 
 .dev-close {
   position: absolute;
-  top: 8px;
-  right: 12px;
+  top: 0.5rem;
+  right: 0.75rem;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   color: #999;
   cursor: pointer;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
 }
 
 .dev-icon {
@@ -101,14 +101,14 @@ function close() {
 }
 
 .dev-btn {
-  padding: 10px 24px;
+  padding: 0.625rem var(--spacing-6);
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .modal-enter-active,

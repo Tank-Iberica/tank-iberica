@@ -15,6 +15,27 @@ interface AnalyticsEvent {
   metadata?: Record<string, unknown>
 }
 
+/** Current event schema version — bump when breaking changes to event structure */
+const EVENT_SCHEMA_VERSION = 1
+
+/**
+ * Canonical event type constants.
+ * See docs/tracciona-docs/referencia/EVENT-TAXONOMY.md for full documentation.
+ */
+export const ANALYTICS_EVENTS = {
+  VEHICLE_VIEW: 'vehicle_view',
+  VEHICLE_DURATION: 'vehicle_duration',
+  SEARCH_PERFORMED: 'search_performed',
+  LEAD_SENT: 'lead_sent',
+  FAVORITE_ADDED: 'favorite_added',
+  FUNNEL_SEARCH: 'funnel:search',
+  FUNNEL_VIEW_VEHICLE: 'funnel:view_vehicle',
+  FUNNEL_CONTACT_SELLER: 'funnel:contact_seller',
+  FUNNEL_RESERVATION: 'funnel:reservation',
+} as const
+
+export type AnalyticsEventType = typeof ANALYTICS_EVENTS[keyof typeof ANALYTICS_EVENTS]
+
 const SESSION_STORAGE_KEY = 'analytics_session_id'
 
 /**
@@ -27,10 +48,7 @@ function getSessionId(): string | null {
   try {
     let sessionId = sessionStorage.getItem(SESSION_STORAGE_KEY)
     if (!sessionId) {
-      sessionId =
-        typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-          ? crypto.randomUUID()
-          : `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
+      sessionId = crypto.randomUUID()
       sessionStorage.setItem(SESSION_STORAGE_KEY, sessionId)
     }
     return sessionId
@@ -60,7 +78,8 @@ export function useAnalyticsTracking() {
       metadata: event.metadata ?? null,
       session_id: sessionId,
       user_id: user.value?.id ?? null,
-      vertical: 'tracciona',
+      vertical: getVerticalSlug(),
+      version: EVENT_SCHEMA_VERSION,
     }
 
     void supabase.from('analytics_events').insert(row as never)
@@ -71,7 +90,7 @@ export function useAnalyticsTracking() {
    */
   function trackVehicleView(vehicleId: string, metadata?: Record<string, unknown>): void {
     trackEvent({
-      event_type: 'vehicle_view',
+      event_type: ANALYTICS_EVENTS.VEHICLE_VIEW,
       entity_type: 'vehicle',
       entity_id: vehicleId,
       metadata,
@@ -83,7 +102,7 @@ export function useAnalyticsTracking() {
    */
   function trackSearch(filters: Record<string, unknown>): void {
     trackEvent({
-      event_type: 'search_performed',
+      event_type: ANALYTICS_EVENTS.SEARCH_PERFORMED,
       metadata: filters,
     })
   }
@@ -93,7 +112,7 @@ export function useAnalyticsTracking() {
    */
   function trackLeadSent(vehicleId: string, dealerId: string): void {
     trackEvent({
-      event_type: 'lead_sent',
+      event_type: ANALYTICS_EVENTS.LEAD_SENT,
       entity_type: 'vehicle',
       entity_id: vehicleId,
       metadata: { dealer_id: dealerId },
@@ -105,7 +124,7 @@ export function useAnalyticsTracking() {
    */
   function trackFavoriteAdded(vehicleId: string): void {
     trackEvent({
-      event_type: 'favorite_added',
+      event_type: ANALYTICS_EVENTS.FAVORITE_ADDED,
       entity_type: 'vehicle',
       entity_id: vehicleId,
     })
@@ -120,10 +139,49 @@ export function useAnalyticsTracking() {
     const durationSeconds = Math.round((Date.now() - startedAt) / 1000)
     if (durationSeconds < 3) return
     trackEvent({
-      event_type: 'vehicle_duration',
+      event_type: ANALYTICS_EVENTS.VEHICLE_DURATION,
       entity_type: 'vehicle',
       entity_id: vehicleId,
       metadata: { duration_seconds: durationSeconds },
+    })
+  }
+
+  // --- Funnel tracking ---
+
+  /** Track funnel step: user searches in catalog */
+  function trackFunnelSearch(filters: Record<string, unknown>): void {
+    trackEvent({
+      event_type: ANALYTICS_EVENTS.FUNNEL_SEARCH,
+      metadata: filters,
+    })
+  }
+
+  /** Track funnel step: user views a vehicle detail page */
+  function trackFunnelViewVehicle(vehicleId: string, source?: string): void {
+    trackEvent({
+      event_type: ANALYTICS_EVENTS.FUNNEL_VIEW_VEHICLE,
+      entity_type: 'vehicle',
+      entity_id: vehicleId,
+      metadata: source ? { source } : undefined,
+    })
+  }
+
+  /** Track funnel step: user contacts the seller */
+  function trackFunnelContactSeller(vehicleId: string, dealerId: string): void {
+    trackEvent({
+      event_type: ANALYTICS_EVENTS.FUNNEL_CONTACT_SELLER,
+      entity_type: 'vehicle',
+      entity_id: vehicleId,
+      metadata: { dealer_id: dealerId },
+    })
+  }
+
+  /** Track funnel step: user places a reservation */
+  function trackFunnelReservation(vehicleId: string): void {
+    trackEvent({
+      event_type: ANALYTICS_EVENTS.FUNNEL_RESERVATION,
+      entity_type: 'vehicle',
+      entity_id: vehicleId,
     })
   }
 
@@ -134,5 +192,9 @@ export function useAnalyticsTracking() {
     trackLeadSent,
     trackFavoriteAdded,
     trackVehicleDuration,
+    trackFunnelSearch,
+    trackFunnelViewVehicle,
+    trackFunnelContactSeller,
+    trackFunnelReservation,
   }
 }

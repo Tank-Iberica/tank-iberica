@@ -13,7 +13,7 @@
     <!-- Price History -->
     <div v-if="vehicleId" class="vehicle-price-history">
       <h2>{{ $t('priceHistory.title') }}</h2>
-      <VehiclePriceHistoryChart :vehicle-id="vehicleId" />
+      <LazyVehiclePriceHistoryChart :vehicle-id="vehicleId" />
     </div>
   </div>
 </template>
@@ -33,7 +33,7 @@ defineProps<{
 }
 
 .vehicle-description h2 {
-  font-size: 1.1rem;
+  font-size: var(--font-size-base);
   font-weight: 700;
   color: var(--color-primary);
   margin-bottom: var(--spacing-3);
@@ -46,12 +46,13 @@ defineProps<{
   color: var(--text-secondary);
   line-height: var(--line-height-relaxed);
   white-space: pre-line;
+  max-width: 65ch;
 }
 
 .vehicle-description-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 0.375rem;
   margin-top: var(--spacing-3);
 }
 
@@ -60,7 +61,7 @@ defineProps<{
 }
 
 .vehicle-price-history h2 {
-  font-size: 1.1rem;
+  font-size: var(--font-size-base);
   font-weight: 700;
   color: var(--color-primary);
   margin-bottom: var(--spacing-3);

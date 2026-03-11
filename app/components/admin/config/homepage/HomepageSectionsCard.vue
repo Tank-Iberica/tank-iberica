@@ -41,38 +41,38 @@ const emit = defineEmits<{
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .card-title {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-subtitle {
-  margin: 0 0 20px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-5);
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
 .sections-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .section-toggle-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 14px 16px;
+  gap: var(--spacing-3);
+  padding: 0.875rem var(--spacing-4);
   border: 2px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -83,30 +83,30 @@ const emit = defineEmits<{
 
 .section-toggle-card.active {
   border-color: var(--color-primary);
-  background: #f0fdfa;
+  background: var(--color-teal-50);
 }
 
 .section-toggle-content {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
   min-width: 0;
 }
 
 .section-toggle-label {
   font-weight: 600;
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .section-toggle-desc {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .section-checkbox {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   cursor: pointer;
   flex-shrink: 0;
   accent-color: var(--color-primary);

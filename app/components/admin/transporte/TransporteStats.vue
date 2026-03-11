@@ -36,19 +36,19 @@ const { t } = useI18n()
 .stats-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
 .stat-card {
   flex: 1;
-  min-width: 140px;
-  padding: 16px;
+  min-width: 8.75rem;
+  padding: var(--spacing-4);
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
 }
 
 .stat-value {
@@ -68,7 +68,7 @@ const { t } = useI18n()
 }
 
 .stat-card.stat-transit .stat-value {
-  color: #2563eb;
+  color: var(--color-focus);
 }
 
 .stat-card.stat-completed .stat-value {

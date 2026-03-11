@@ -121,7 +121,7 @@ const adItems = computed(() =>
                 class="panel-nav-item"
                 @click="emit('update:modelValue', false)"
               >
-                Dashboard
+                {{ $t('nav.dashboardTab') }}
               </NuxtLink>
               <NuxtLink
                 to="/dashboard/vehiculos"
@@ -341,7 +341,7 @@ const adItems = computed(() =>
   right: 0;
   bottom: 0;
   width: 100%;
-  max-width: 400px;
+  max-width: 25rem;
   background: var(--bg-primary);
   display: flex;
   flex-direction: column;
@@ -351,16 +351,16 @@ const adItems = computed(() =>
 
 .panel-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   border: none;
   background: var(--bg-secondary);
-  border-radius: 50%;
-  font-size: 24px;
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-2xl);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -376,16 +376,16 @@ const adItems = computed(() =>
 
 .panel-banner {
   display: flex;
-  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+  padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-  color: var(--color-white, #fff);
+  color: var(--color-white, var(--color-white));
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: 600;
   text-align: center;
   text-decoration: none;
-  border-radius: var(--border-radius, 8px);
-  margin: 12px 12px 0;
-  min-height: 44px;
+  border-radius: var(--border-radius);
+  margin: 0.75rem 0.75rem 0;
+  min-height: 2.75rem;
   align-items: center;
   justify-content: center;
 }
@@ -393,21 +393,21 @@ const adItems = computed(() =>
 .panel-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 24px 20px;
+  gap: 1rem;
+  padding: 1.5rem 1.25rem;
   background: var(--color-primary);
   color: var(--color-white);
 }
 
 .user-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--border-radius-full);
   background: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 600;
   flex-shrink: 0;
 }
@@ -419,30 +419,30 @@ const adItems = computed(() =>
 }
 
 .user-info p {
-  margin: 4px 0 0;
+  margin: 0.25rem 0 0;
   font-size: 0.85rem;
   opacity: 0.8;
 }
 
 /* Quick nav */
 .panel-nav {
-  padding: 12px 20px;
+  padding: 0.75rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
   border-bottom: 1px solid var(--border-color-light);
 }
 
 .panel-nav-item {
   display: flex;
   align-items: center;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   font-size: 0.9rem;
   color: var(--text-primary);
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   transition: background 0.15s;
-  min-height: 44px;
+  min-height: 2.75rem;
   line-height: var(--line-height-normal);
 }
 
@@ -451,37 +451,37 @@ const adItems = computed(() =>
 }
 
 .panel-nav-divider {
-  height: 1px;
+  height: 0.0625rem;
   background: var(--bg-tertiary);
-  margin: 4px 0;
+  margin: 0.25rem 0;
 }
 
 .panel-nav-label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   text-transform: uppercase;
   color: var(--text-disabled);
-  padding: 4px 12px 0;
+  padding: 0.25rem 0.75rem 0;
   letter-spacing: 0.05em;
 }
 
 .panel-menu {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 0;
+  padding: 0.5rem 0;
 }
 
 .panel-footer {
-  padding: 16px 20px;
+  padding: 1rem 1.25rem;
   border-top: 1px solid var(--border-color-light);
 }
 
 .btn-logout {
   width: 100%;
-  padding: 12px;
+  padding: 0.75rem;
   background: none;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   color: var(--text-auxiliary);
   font-weight: 500;
   cursor: pointer;
@@ -497,29 +497,29 @@ const adItems = computed(() =>
 .section-info {
   font-size: 0.85rem;
   color: var(--text-auxiliary);
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .empty-state {
   text-align: center;
   color: var(--text-disabled);
-  padding: 20px;
+  padding: 1.25rem;
   font-size: 0.9rem;
 }
 
 .favorites-section .favorites-count {
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
   font-weight: 500;
 }
 
 .btn-secondary {
   display: block;
   width: 100%;
-  padding: 12px;
+  padding: 0.75rem;
   background: var(--bg-tertiary);
   color: var(--text-primary);
   border: 1px solid var(--border-color-light);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   text-align: center;
   text-decoration: none;
@@ -529,28 +529,28 @@ const adItems = computed(() =>
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 0;
+  gap: 0.625rem;
+  padding: 0.625rem 0;
   cursor: pointer;
 }
 
 .checkbox-label input[type='checkbox'] {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   cursor: pointer;
 }
 
 .btn-export {
   width: 100%;
-  padding: 12px;
+  padding: 0.75rem;
   background: var(--color-primary);
   color: var(--color-white);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  margin-bottom: 8px;
-  min-height: 44px;
+  margin-bottom: 0.5rem;
+  min-height: 2.75rem;
 }
 
 .btn-export:disabled {
@@ -560,14 +560,14 @@ const adItems = computed(() =>
 
 .btn-delete-account {
   width: 100%;
-  padding: 12px;
+  padding: 0.75rem;
   background: var(--color-error);
   color: var(--color-white);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition: background 0.15s;
 }
 

@@ -215,7 +215,7 @@ export function useSubscriptionPlan(dealerId?: string) {
     try {
       const { data, error: err } = await supabase
         .from('subscriptions')
-        .select('*')
+        .select('id, user_id, plan, status, started_at, expires_at, stripe_subscription_id, stripe_customer_id, price_cents, vertical, created_at, updated_at')
         .eq('user_id', id)
         .eq('status', 'active')
         .order('created_at', { ascending: false })

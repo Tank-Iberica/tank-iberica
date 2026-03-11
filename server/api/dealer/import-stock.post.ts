@@ -7,15 +7,20 @@
  *
  * POST /api/dealer/import-stock
  */
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { callAI } from '~~/server/services/aiProvider'
 import { checkRateLimit, getRateLimitKey, getRetryAfterSeconds } from '~~/server/utils/rateLimit'
+import { safeError } from '~~/server/utils/safeError'
+import { validateBody } from '~~/server/utils/validateBody'
+import { isPrivateHost } from '~~/server/utils/validatePath'
+import { logger } from '../../utils/logger'
 
-interface ImportRequest {
-  url: string
-  consent: boolean
-}
+const importRequestSchema = z.object({
+  url: z.string().url().max(2048),
+  consent: z.literal(true, { errorMap: () => ({ message: 'Explicit consent is required to import your stock' }) }),
+})
 
 interface ExtractedVehicle {
   brand: string
@@ -59,7 +64,8 @@ async function fetchPageHtml(url: string): Promise<string> {
 }
 
 async function createDraftVehicles(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
   dealerId: string,
   vehicles: ExtractedVehicle[],
   hostname: string,
@@ -74,8 +80,7 @@ async function createDraftVehicles(
       .replaceAll(/[^a-z0-9-]/g, '-')
       .replaceAll(/-+/g, '-')
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: insertError } = await (supabase.from('vehicles') as any).insert({
+    const { error: insertError } = await supabase.from('vehicles').insert({
       dealer_id: dealerId,
       brand: v.brand,
       model: v.model || '',
@@ -97,7 +102,7 @@ export default defineEventHandler(async (event) => {
   // Auth required
   const user = await serverSupabaseUser(event)
   if (!user) {
-    throw createError({ statusCode: 401, statusMessage: 'Authentication required' })
+    throw safeError(401, 'Authentication required')
   }
 
   const supabase = serverSupabaseServiceRole(event)
@@ -110,47 +115,36 @@ export default defineEventHandler(async (event) => {
     .maybeSingle()
 
   if (!dealer) {
-    throw createError({ statusCode: 403, statusMessage: 'Dealer account required' })
+    throw safeError(403, 'Dealer account required')
   }
 
   // Rate limit
   const ipKey = `import-stock:${getRateLimitKey(event)}`
   if (!checkRateLimit(ipKey, RATE_LIMIT)) {
     const retryAfter = getRetryAfterSeconds(ipKey, RATE_LIMIT)
-    throw createError({
-      statusCode: 429,
-      statusMessage: `Rate limited. Try again in ${retryAfter} seconds.`,
-    })
+    throw safeError(429, `Rate limited. Try again in ${retryAfter} seconds.`)
   }
 
-  const body = await readBody<ImportRequest>(event)
-
-  // Validate consent
-  if (!body.consent) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Explicit consent is required to import your stock',
-    })
-  }
-
-  // Validate URL
-  if (!body.url || typeof body.url !== 'string') {
-    throw createError({ statusCode: 400, statusMessage: 'URL is required' })
-  }
+  const body = await validateBody(event, importRequestSchema)
 
   let parsedUrl: URL
   try {
     parsedUrl = new URL(body.url)
   } catch {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid URL format' })
+    throw safeError(400, 'Invalid URL format')
+  }
+
+  // SSRF: enforce HTTPS only + reject private/loopback hosts
+  if (parsedUrl.protocol !== 'https:') {
+    throw safeError(400, 'Only HTTPS URLs are allowed')
+  }
+  if (isPrivateHost(parsedUrl.hostname)) {
+    throw safeError(400, 'Invalid URL')
   }
 
   const hostname = parsedUrl.hostname.replace('www.', '')
   if (!ALLOWED_DOMAINS.some((d) => hostname.endsWith(d))) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: `Unsupported platform. Supported: ${ALLOWED_DOMAINS.join(', ')}`,
-    })
+    throw safeError(400, `Unsupported platform. Supported: ${ALLOWED_DOMAINS.join(', ')}`)
   }
 
   // Fetch the page
@@ -158,10 +152,7 @@ export default defineEventHandler(async (event) => {
   try {
     pageHtml = await fetchPageHtml(body.url)
   } catch (err) {
-    throw createError({
-      statusCode: 502,
-      statusMessage: `Could not fetch the page: ${extractErrorMessage(err)}`,
-    })
+    throw safeError(502, `Could not fetch the page: ${extractErrorMessage(err)}`)
   }
 
   // Truncate HTML to avoid exceeding AI token limits
@@ -221,10 +212,7 @@ ${truncatedHtml}`,
       message: `${imported} vehicles imported as drafts. Review them in your dashboard.`,
     }
   } catch (err) {
-    console.error(`[import-stock] AI extraction failed: ${extractErrorMessage(err)}`)
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Could not extract vehicle data from the page',
-    })
+    logger.error(`[import-stock] AI extraction failed: ${extractErrorMessage(err)}`)
+    throw safeError(500, 'Could not extract vehicle data from the page')
   }
 })

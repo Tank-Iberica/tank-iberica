@@ -6,16 +6,17 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (
-    e: 'update:name' | 'update:tagline' | 'update:metaDescription',
-    value: Record<string, string>,
-  ): void
+  'update:name': [value: Record<string, string>]
+  'update:tagline': [value: Record<string, string>]
+  'update:metaDescription': [value: Record<string, string>]
 }>()
 
 function onInput(field: 'name' | 'tagline' | 'metaDescription', lang: string, value: string) {
   const source = props[field]
-  const key = field === 'metaDescription' ? 'update:metaDescription' : (`update:${field}` as const)
-  emit(key, { ...source, [lang]: value })
+  const updated = { ...source, [lang]: value }
+  if (field === 'name') emit('update:name', updated)
+  else if (field === 'tagline') emit('update:tagline', updated)
+  else emit('update:metaDescription', updated)
 }
 </script>
 
@@ -101,26 +102,26 @@ function onInput(field: 'name' | 'tagline' | 'metaDescription', lang: string, va
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .card-title {
-  margin: 0 0 4px;
+  margin: 0 0 0.25rem;
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-subtitle {
-  margin: 0 0 20px;
-  color: #6b7280;
+  margin: 0 0 1.25rem;
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .form-group:last-child {
@@ -130,48 +131,48 @@ function onInput(field: 'name' | 'tagline' | 'metaDescription', lang: string, va
 .form-group > label {
   display: block;
   font-weight: 600;
-  margin-bottom: 8px;
-  color: #374151;
+  margin-bottom: 0.5rem;
+  color: var(--color-gray-700);
   font-size: 0.875rem;
 }
 
 .lang-row {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .lang-field {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .lang-badge {
   flex-shrink: 0;
-  width: 32px;
+  width: 2rem;
   text-align: center;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #6b7280;
+  color: var(--color-gray-500);
   background: var(--bg-secondary);
-  border-radius: 4px;
-  padding: 4px 0;
+  border-radius: var(--border-radius-sm);
+  padding: 0.25rem 0;
   text-transform: uppercase;
 }
 
 .lang-field input {
   flex: 1;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius-sm);
   font-size: 0.95rem;
 }
 
 .lang-field input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 @media (min-width: 48em) {

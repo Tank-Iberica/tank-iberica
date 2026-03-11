@@ -89,16 +89,16 @@ const maxLabel = computed(() =>
 .range-slider {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
   width: 100%;
 }
 
 .range-slider__val {
-  font-size: 9px;
-  color: var(--text-primary, #1a1a1a);
+  font-size: 0.5625rem;
+  color: var(--text-primary, var(--color-near-black));
   font-weight: 600;
   white-space: nowrap;
-  min-width: 20px;
+  min-width: 1.25rem;
   flex-shrink: 0;
 }
 
@@ -112,19 +112,19 @@ const maxLabel = computed(() =>
 
 .range-slider__track-container {
   position: relative;
-  height: 20px;
+  height: 1.25rem;
   display: flex;
   align-items: center;
   flex: 1;
-  min-width: 60px;
+  min-width: 3.75rem;
 }
 
 .range-slider__track {
   position: absolute;
   width: 100%;
-  height: 3px;
-  background: var(--bg-secondary, #e5e7eb);
-  border-radius: 2px;
+  height: 0.1875rem;
+  background: var(--bg-secondary, var(--color-gray-200));
+  border-radius: 0.125rem;
   pointer-events: none;
 }
 
@@ -132,7 +132,7 @@ const maxLabel = computed(() =>
   position: absolute;
   height: 100%;
   background: var(--color-primary);
-  border-radius: 2px;
+  border-radius: 0.125rem;
   transition:
     left 0.1s ease,
     right 0.1s ease;
@@ -155,8 +155,8 @@ const maxLabel = computed(() =>
   pointer-events: all;
   -webkit-appearance: none;
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
   border-radius: 50%;
   background: var(--color-primary);
   border: 2px solid white;
@@ -171,8 +171,8 @@ const maxLabel = computed(() =>
   pointer-events: all;
   -moz-appearance: none;
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
   border-radius: 50%;
   background: var(--color-primary);
   border: 2px solid white;
@@ -226,12 +226,12 @@ const maxLabel = computed(() =>
 
 .range-slider__input:focus::-webkit-slider-thumb {
   outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline-offset: 0.125rem;
 }
 
 .range-slider__input:focus::-moz-range-thumb {
   outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline-offset: 0.125rem;
 }
 
 /* Ensure max slider is above min slider for proper interaction */
@@ -246,34 +246,34 @@ const maxLabel = computed(() =>
 /* Increase touch target size for mobile */
 @media (pointer: coarse) {
   .range-slider__input::-webkit-slider-thumb {
-    width: 18px;
-    height: 18px;
+    width: 1.125rem;
+    height: 1.125rem;
   }
 
   .range-slider__input::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
+    width: 1.125rem;
+    height: 1.125rem;
   }
 
   .range-slider__track-container {
-    height: 28px;
+    height: 1.75rem;
   }
 }
 
 /* Tablet and up */
 @media (min-width: 48em) {
   .range-slider__val {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
 
   .range-slider__input::-webkit-slider-thumb {
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
   }
 
   .range-slider__input::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
   }
 }
 </style>

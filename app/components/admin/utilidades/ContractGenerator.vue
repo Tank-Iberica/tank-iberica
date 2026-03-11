@@ -72,7 +72,7 @@ const {
           </div>
         </div>
         <div class="form-group">
-          <label>Fecha</label>
+          <label>{{ $t('common.date') }}</label>
           <input v-model="contractDate" type="date" >
         </div>
         <div class="form-group">
@@ -306,15 +306,15 @@ const {
 <style scoped>
 .tool-content {
   background: var(--bg-primary);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 
 .tool-header {
-  padding: 16px 20px;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -326,35 +326,35 @@ const {
 }
 
 .contract-form {
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 
 .form-row {
   display: flex;
-  gap: 16px;
+  gap: var(--spacing-4);
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-1);
   flex: 1;
-  min-width: 120px;
+  min-width: 7.5rem;
 }
 
 .form-group label {
   font-size: 0.75rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .form-group input,
 .form-group select {
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
 }
 
@@ -362,43 +362,43 @@ const {
 .form-group select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 .form-grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
 }
 
 .divider {
   border: none;
-  border-top: 2px solid #0f2a2e;
-  margin: 20px 0;
+  border-top: 2px solid var(--color-primary-darker);
+  margin: 1.25rem 0;
 }
 
 .section-subtitle {
-  margin: 0 0 12px;
+  margin: 0 0 var(--spacing-3);
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0f2a2e;
+  color: var(--color-primary-darker);
 }
 
 .radio-group-inline {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
 }
 
 .radio-group-inline.compact {
-  gap: 16px;
+  gap: var(--spacing-4);
 }
 
 .radio-group-inline.compact label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -411,14 +411,14 @@ const {
 .radio-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5);
   border: 2px solid var(--border-color-light);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
   transition: all 0.2s;
   flex: 1;
-  min-width: 180px;
+  min-width: 11.25rem;
 }
 
 .radio-card:hover {
@@ -427,7 +427,7 @@ const {
 
 .radio-card.active {
   border-color: var(--color-primary);
-  background: #f0f9ff;
+  background: var(--color-sky-50);
 }
 
 .radio-card input {
@@ -444,74 +444,74 @@ const {
 }
 
 .option-toggle {
-  margin: 16px 0;
+  margin: 1rem 0;
 }
 
 .option-toggle label {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .option-toggle input {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .purchase-options {
-  background: #f9fafb;
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 12px;
+  background: var(--color-gray-50);
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-top: var(--spacing-3);
 }
 
 .company-details {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
 }
 
 .company-details summary {
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #6b7280;
-  padding: 8px 0;
+  color: var(--color-gray-500);
+  padding: var(--spacing-2) 0;
 }
 
 .company-details summary:hover {
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .company-details[open] summary {
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-3);
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  padding-top: 10px;
+  padding-top: 0.625rem;
 }
 
 .btn {
-  padding: 10px 20px;
+  padding: 0.625rem var(--spacing-5);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .btn:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
 }
 
@@ -520,30 +520,30 @@ const {
 }
 
 .btn-secondary {
-  background: #6b7280;
-  color: #fff;
+  background: var(--color-gray-500);
+  color: var(--color-white);
   border: none;
 }
 
 .btn-secondary:hover {
-  background: #4b5563;
+  background: var(--color-gray-600);
 }
 
 .btn-lg {
-  padding: 12px 24px;
+  padding: var(--spacing-3) var(--spacing-6);
   font-size: 1rem;
   font-weight: 500;
 }
 
 .btn-sm {
-  padding: 6px 12px;
+  padding: 0.375rem var(--spacing-3);
   font-size: 0.85rem;
 }
 
 @media (max-width: 48em) {
   .form-row {
     flex-direction: column;
-    gap: 12px;
+    gap: var(--spacing-3);
   }
 
   .form-grid-3 {
@@ -559,7 +559,7 @@ const {
   }
 
   .purchase-options {
-    padding: 12px;
+    padding: var(--spacing-3);
   }
 
   .form-actions {

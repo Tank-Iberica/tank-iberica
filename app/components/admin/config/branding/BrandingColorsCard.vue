@@ -46,52 +46,52 @@ function onColorChange(key: string, value: string) {
 <style scoped>
 .config-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-5);
+  box-shadow: var(--shadow-card);
 }
 
 .card-title {
-  margin: 0 0 4px;
+  margin: 0 0 var(--spacing-1);
   font-size: 1.25rem;
-  color: #1f2937;
+  color: var(--color-gray-800);
 }
 
 .card-subtitle {
-  margin: 0 0 20px;
-  color: #6b7280;
+  margin: 0 0 var(--spacing-5);
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
 .color-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 0.875rem;
 }
 
 .color-field label {
   display: block;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #374151;
-  margin-bottom: 4px;
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-1);
   text-transform: capitalize;
 }
 
 .color-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .color-picker {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border: 2px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  padding: 2px;
+  padding: 0.125rem;
   flex-shrink: 0;
 }
 
@@ -101,14 +101,14 @@ function onColorChange(key: string, value: string) {
 
 .color-picker::-webkit-color-swatch {
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
 }
 
 .color-hex {
   flex: 1;
-  padding: 8px 10px;
+  padding: var(--spacing-2) 0.625rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   font-family: monospace;
   text-transform: uppercase;
@@ -117,7 +117,7 @@ function onColorChange(key: string, value: string) {
 .color-hex:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 @media (min-width: 30em) {

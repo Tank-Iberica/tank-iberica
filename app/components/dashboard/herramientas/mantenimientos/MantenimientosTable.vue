@@ -112,17 +112,17 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: 0.75rem;
+  padding: 3.75rem 1.25rem;
   color: var(--text-auxiliary);
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--color-gray-200);
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0.1875rem solid var(--color-gray-200);
   border-top-color: var(--color-primary);
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   animation: spin 0.8s linear infinite;
 }
 
@@ -135,8 +135,8 @@ const { t } = useI18n()
 /* Table */
 .table-container {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -149,13 +149,13 @@ const { t } = useI18n()
 
 .data-table th {
   text-align: left;
-  padding: 12px 10px;
-  background: #f9fafb;
+  padding: 0.75rem 0.625rem;
+  background: var(--color-gray-50);
   font-weight: 600;
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
-  color: #6b7280;
-  border-bottom: 1px solid #e5e7eb;
+  color: var(--color-gray-500);
+  border-bottom: 1px solid var(--color-gray-200);
   white-space: nowrap;
 }
 
@@ -175,12 +175,12 @@ const { t } = useI18n()
 
 .data-table th.actions-col {
   text-align: center;
-  width: 100px;
+  width: 6.25rem;
 }
 
 .data-table td {
-  padding: 10px;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 0.625rem;
+  border-bottom: 1px solid var(--color-gray-100);
   vertical-align: middle;
 }
 
@@ -190,11 +190,11 @@ const { t } = useI18n()
 
 .year-tag {
   color: var(--text-disabled);
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
 }
 
 .desc-cell {
-  max-width: 200px;
+  max-width: 12.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -208,37 +208,37 @@ const { t } = useI18n()
 /* Type badges */
 .type-badge {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   white-space: nowrap;
 }
 
 .badge-preventivo {
-  background: var(--color-info-bg, #dbeafe);
-  color: #1e40af;
+  background: var(--color-info-bg, var(--color-info-bg));
+  color: var(--badge-info-bg);
 }
 
 .badge-correctivo {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
 }
 
 .badge-itv {
-  background: var(--color-success-bg, #dcfce7);
-  color: #166534;
+  background: var(--color-success-bg, var(--color-success-bg));
+  color: var(--badge-success-bg);
 }
 
 /* Buttons */
 .btn-icon {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 1rem;
-  border-radius: 6px;
+  font-size: var(--font-size-base);
+  border-radius: var(--border-radius);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -249,24 +249,24 @@ const { t } = useI18n()
 }
 
 .btn-icon.delete:hover {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
 }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 20px;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.2s;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .btn-primary:hover {
@@ -275,28 +275,28 @@ const { t } = useI18n()
 
 /* Empty state */
 .empty-state {
-  padding: 48px 20px;
+  padding: 3rem 1.25rem;
   text-align: center;
   color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 
 .empty-state p {
-  margin: 0 0 16px;
+  margin: 0 0 1rem;
 }
 
 (@media ()max-width: 47.9375em())) {
   .data-table {
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
   }
 
   .data-table th,
   .data-table td {
-    padding: 8px 6px;
+    padding: 0.5rem 0.375rem;
   }
 
   .desc-cell {
-    max-width: 120px;
+    max-width: 7.5rem;
   }
 }
 </style>

@@ -56,7 +56,7 @@ const tabs = computed(() => [
   font-weight: var(--font-weight-medium);
   color: var(--text-secondary);
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 2.75rem;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
@@ -76,8 +76,8 @@ const tabs = computed(() => [
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 22px;
-  height: 22px;
+  min-width: 1.375rem;
+  height: 1.375rem;
   padding: 0 var(--spacing-1);
   border-radius: var(--border-radius-full);
   background: rgba(0, 0, 0, 0.1);

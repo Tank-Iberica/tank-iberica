@@ -20,7 +20,7 @@ defineEmits<{
       <div class="modal modal-lg">
         <div class="modal-head">
           <span>📜 {{ entry.brand }} {{ entry.model }} ({{ entry.year }})</span>
-          <button @click="$emit('close')">×</button>
+          <button :aria-label="$t('common.close')" @click="$emit('close')">×</button>
         </div>
         <div class="modal-body">
           <div class="detail-grid">
@@ -85,7 +85,7 @@ defineEmits<{
             <table class="mini-table">
               <thead>
                 <tr>
-                  <th>Fecha</th>
+                  <th>{{ $t('common.date') }}</th>
                   <th>Razón</th>
                   <th>Coste</th>
                 </tr>
@@ -122,7 +122,7 @@ defineEmits<{
           </div>
         </div>
         <div class="modal-foot">
-          <button class="btn" @click="$emit('close')">Cerrar</button>
+          <button class="btn" @click="$emit('close')">{{ $t('common.close') }}</button>
         </div>
       </div>
     </div>
@@ -138,26 +138,26 @@ defineEmits<{
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 .modal {
   background: var(--bg-primary);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   width: 100%;
-  max-width: 420px;
+  max-width: 26.25rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
   overflow-y: auto;
 }
 .modal-lg {
-  max-width: 700px;
+  max-width: 43.75rem;
 }
 .modal-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 0.875rem var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-200);
   font-weight: 600;
   position: sticky;
   top: 0;
@@ -171,24 +171,24 @@ defineEmits<{
   color: var(--text-disabled);
 }
 .modal-body {
-  padding: 16px;
+  padding: var(--spacing-4);
 }
 .modal-foot {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
   border-radius: 0 0 10px 10px;
   position: sticky;
   bottom: 0;
 }
 .btn {
-  padding: 8px 16px;
+  padding: var(--spacing-2) var(--spacing-4);
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.875rem;
   cursor: pointer;
 }
@@ -197,37 +197,37 @@ defineEmits<{
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: var(--spacing-5);
+  margin-bottom: var(--spacing-5);
 }
 .detail-section {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-4);
 }
 .detail-section h4 {
-  margin: 0 0 12px;
+  margin: 0 0 var(--spacing-3);
   font-size: 0.9rem;
-  color: #374151;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 8px;
+  color: var(--color-gray-700);
+  border-bottom: 1px solid var(--color-gray-200);
+  padding-bottom: var(--spacing-2);
 }
 .detail-row {
   display: flex;
   justify-content: space-between;
-  padding: 6px 0;
+  padding: 0.375rem 0;
   font-size: 0.85rem;
 }
 .detail-row .label {
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 .detail-row.total {
-  border-top: 1px solid #e5e7eb;
-  margin-top: 8px;
-  padding-top: 10px;
+  border-top: 1px solid var(--color-gray-200);
+  margin-top: var(--spacing-2);
+  padding-top: 0.625rem;
   font-weight: 600;
 }
 .detail-row .highlight {
   font-weight: 700;
-  color: #1e40af;
+  color: var(--badge-info-bg);
 }
 
 /* Profit colors */
@@ -248,12 +248,12 @@ defineEmits<{
 }
 .mini-table th,
 .mini-table td {
-  padding: 6px 8px;
+  padding: 0.375rem var(--spacing-2);
   border: 1px solid var(--border-color-light);
   text-align: left;
 }
 .mini-table th {
-  background: #f9fafb;
+  background: var(--color-gray-50);
   font-weight: 600;
 }
 

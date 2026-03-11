@@ -40,9 +40,7 @@ onMounted(() => {
   <div class="admin-config-languages">
     <div class="section-header">
       <h2>{{ $t('admin.configLanguages.title') }}</h2>
-      <p class="section-subtitle">
-        Configura los idiomas activos y el motor de traduccion automatica.
-      </p>
+      <p class="section-subtitle">{{ $t('admin.configLanguages.subtitle') }}</p>
     </div>
 
     <!-- Loading -->
@@ -122,54 +120,54 @@ onMounted(() => {
 }
 
 .section-header {
-  margin-bottom: 32px;
+  margin-bottom: var(--spacing-8);
 }
 
 .section-header h2 {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-2);
   font-size: 1.75rem;
   color: var(--color-text);
 }
 
 .section-subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-gray-500);
   font-size: 1rem;
 }
 
 .loading-state {
   text-align: center;
-  padding: 40px;
-  color: #6b7280;
+  padding: var(--spacing-10);
+  color: var(--color-gray-500);
 }
 
 .error-banner {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg, var(--color-error-bg));
   color: var(--color-error);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .success-banner {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg, var(--color-success-bg));
   color: var(--color-success);
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-4);
 }
 
 .save-section {
-  margin-top: 8px;
-  padding-top: 24px;
+  margin-top: var(--spacing-2);
+  padding-top: var(--spacing-6);
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
@@ -185,7 +183,7 @@ onMounted(() => {
   cursor: not-allowed;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 47.9375em) {
   .section-header h2 {
     font-size: 1.5rem;
   }

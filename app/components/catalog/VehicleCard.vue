@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="`/vehiculo/${vehicle.slug}`" class="product-card">
+  <NuxtLink :to="`/vehiculo/${vehicle.slug}`" prefetch class="product-card">
     <div class="card-image">
       <!-- Images carousel -->
       <template v-if="images.length">
@@ -11,15 +11,22 @@
           width="400"
           height="300"
           fit="cover"
-          loading="lazy"
+          :loading="priority ? 'eager' : 'lazy'"
+          :fetchpriority="priority ? 'high' : 'auto'"
           format="webp"
           sizes="(max-width: 29.94em) calc(100vw - 32px), (max-width: 48em) calc(50vw - 24px), (max-width: 64em) calc(33vw - 24px), 25vw"
+          placeholder
           class="card-img"
         />
         <img
           v-else
           :src="images[currentImage]?.url"
           :alt="buildProductName(vehicle, locale, true)"
+          width="400"
+          height="300"
+          :loading="priority ? 'eager' : 'lazy'"
+          :fetchpriority="priority ? 'high' : 'auto'"
+          decoding="async"
           class="card-img"
         >
       </template>
@@ -105,8 +112,8 @@
           width="14"
           height="14"
           viewBox="0 0 24 24"
-          fill="#C41E3A"
-          stroke="#C41E3A"
+          fill="var(--color-danger)"
+          stroke="var(--color-danger)"
           stroke-width="2"
         >
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -150,6 +157,8 @@ import { formatPrice } from '~/composables/shared/useListingUtils'
 
 const props = defineProps<{
   vehicle: Vehicle
+  /** True for above-fold cards: disables lazy loading and sets fetchpriority=high */
+  priority?: boolean
 }>()
 
 const { t, locale } = useI18n()
@@ -265,7 +274,7 @@ function nextImage() {
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   border: 1px solid transparent;
@@ -288,7 +297,7 @@ function nextImage() {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-color, #e5e7eb) 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-color, var(--color-gray-200)) 100%);
 }
 
 .card-img {
@@ -318,10 +327,10 @@ function nextImage() {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
-  min-height: 32px;
-  min-width: 32px;
+  width: 2rem;
+  height: 2rem;
+  min-height: 2rem;
+  min-width: 2rem;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.95);
   border: none;
@@ -361,14 +370,14 @@ function nextImage() {
   gap: 0.5rem;
   background: rgba(0, 0, 0, 0.5);
   padding: 0.4rem 0.9rem;
-  border-radius: 20px;
+  border-radius: var(--border-radius-xl);
   backdrop-filter: blur(10px);
   z-index: 2;
 }
 
 .indicator {
-  width: 7px;
-  height: 7px;
+  width: 0.4375rem;
+  height: 0.4375rem;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.5);
   cursor: pointer;
@@ -377,8 +386,8 @@ function nextImage() {
 
 .indicator.active {
   background: var(--color-white);
-  width: 24px;
-  border-radius: 4px;
+  width: 1.5rem;
+  border-radius: var(--border-radius-sm);
 }
 
 /* Badges overlaid on image */
@@ -386,12 +395,12 @@ function nextImage() {
   position: absolute;
   top: 0;
   right: 0;
-  background: linear-gradient(135deg, var(--color-success) 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);
   color: var(--color-white);
   padding: 0.6rem 1rem;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: 700;
-  border-bottom-left-radius: 12px;
+  border-bottom-left-radius: var(--border-radius-md);
   z-index: 1;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -407,11 +416,11 @@ function nextImage() {
   );
   color: var(--color-white);
   padding: 0.5rem 0.9rem;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-top-right-radius: 12px;
+  letter-spacing: 0.031rem;
+  border-top-right-radius: var(--border-radius-md);
   z-index: 1;
 }
 
@@ -423,9 +432,9 @@ function nextImage() {
   backdrop-filter: blur(10px);
   color: var(--color-white);
   padding: 0.5rem 0.9rem;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  border-top-left-radius: 12px;
+  border-top-left-radius: var(--border-radius-md);
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -433,10 +442,10 @@ function nextImage() {
 }
 
 .location-flag {
-  width: 18px;
-  height: 14px;
+  width: 1.125rem;
+  height: 0.875rem;
   object-fit: cover;
-  border-radius: 9999px;
+  border-radius: var(--border-radius-full);
   display: inline-block;
 }
 
@@ -452,12 +461,12 @@ function nextImage() {
 /* Terceros banner — yellow-pastel with gold left border */
 .terceros-banner {
   background: #fffef0;
-  border-left: 3px solid #f5d547;
+  border-left: 3px solid var(--color-yellow-400);
   padding: 0.3rem 0.5rem;
-  font-size: 9px;
+  font-size: var(--font-size-xs);
   line-height: 1.3;
   color: #5a5a3d;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -470,7 +479,7 @@ function nextImage() {
   overflow: hidden;
   max-width: 100%;
   line-height: 1.35;
-  font-size: 16px; /* default, overridden by JS adjustTitleSize */
+  font-size: var(--font-size-md); /* default, overridden by JS adjustTitleSize */
 }
 
 /* Specs grid — 3 columns matching legacy */
@@ -487,10 +496,10 @@ function nextImage() {
 }
 
 .spec-label {
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   color: var(--text-auxiliary);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.019rem;
   font-weight: 500;
   line-height: 1.4;
 }
@@ -498,7 +507,7 @@ function nextImage() {
 .spec-value {
   font-weight: 700;
   color: var(--color-primary);
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   line-height: 1.4;
 }
 
@@ -507,10 +516,10 @@ function nextImage() {
   position: absolute;
   top: 0.5rem;
   left: 0.5rem;
-  width: 32px;
-  height: 32px;
-  min-height: 32px;
-  min-width: 32px;
+  width: 2rem;
+  height: 2rem;
+  min-height: 2rem;
+  min-width: 2rem;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
   border: 2px solid rgba(0, 0, 0, 0.15) !important;
@@ -547,7 +556,7 @@ function nextImage() {
    ============================================ */
 @media (min-width: 30em) {
   .terceros-banner {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     padding: 0.4rem 0.6rem;
   }
 }
@@ -558,10 +567,10 @@ function nextImage() {
 @media (min-width: 48em) {
   /* Nav arrows: larger at tablet+ */
   .img-nav {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-    min-height: 38px;
+    width: 2.375rem;
+    height: 2.375rem;
+    min-width: 2.375rem;
+    min-height: 2.375rem;
   }
 }
 
@@ -580,15 +589,15 @@ function nextImage() {
   /* titleStyle computed handles font-size dynamically */
 
   .terceros-banner {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
   }
 
   .spec-label {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
   }
 
   .spec-value {
-    font-size: 14px;
+    font-size: var(--font-size-base);
   }
 }
 </style>

@@ -9,17 +9,20 @@ function detectVehicleTypeFromLabel(label: string): string {
   return 'vehículo'
 }
 
-function buildPartySection(
-  type: 'persona' | 'empresa',
-  name: string,
-  nif: string,
-  address: string,
-  representative: string,
-  representativeNif: string,
-  company: string,
-  cif: string,
-  role: string,
-): string {
+interface PartySection {
+  type: 'persona' | 'empresa'
+  name: string
+  nif: string
+  address: string
+  representative: string
+  representativeNif: string
+  company: string
+  cif: string
+  role: string
+}
+
+function buildPartySection(opts: PartySection): string {
+  const { type, name, nif, address, representative, representativeNif, company, cif, role } = opts
   if (type === 'persona') {
     return `De otra parte D. ${name.toUpperCase()}, mayor de edad, con NIF ${nif}, con domicilio en ${address}, en adelante ${role}.`
   }
@@ -230,17 +233,17 @@ export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
     const noticeWords = numberToWords(contractPurchaseNotice.value)
     const rentMonthsWords = numberToWords(contractRentMonthsToDiscount.value)
 
-    const lesseeSection = buildPartySection(
-      lesseeType.value,
-      lesseeName.value,
-      lesseeNIF.value,
-      lesseeAddress.value,
-      lesseeRepresentative.value,
-      lesseeRepresentativeNIF.value,
-      lesseeCompany.value,
-      lesseeCIF.value,
-      'arrendatario',
-    )
+    const lesseeSection = buildPartySection({
+      type: lesseeType.value,
+      name: lesseeName.value,
+      nif: lesseeNIF.value,
+      address: lesseeAddress.value,
+      representative: lesseeRepresentative.value,
+      representativeNif: lesseeRepresentativeNIF.value,
+      company: lesseeCompany.value,
+      cif: lesseeCIF.value,
+      role: 'arrendatario',
+    })
 
     let contract = `
 <!DOCTYPE html>
@@ -392,17 +395,17 @@ export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
     const date = formatDateSpanish(contractDate.value ?? '')
     const salePriceWords = numberToWords(contractSalePrice.value)
 
-    const buyerSection = buildPartySection(
-      lesseeType.value,
-      lesseeName.value,
-      lesseeNIF.value,
-      lesseeAddress.value,
-      lesseeRepresentative.value,
-      lesseeRepresentativeNIF.value,
-      lesseeCompany.value,
-      lesseeCIF.value,
-      'comprador',
-    )
+    const buyerSection = buildPartySection({
+      type: lesseeType.value,
+      name: lesseeName.value,
+      nif: lesseeNIF.value,
+      address: lesseeAddress.value,
+      representative: lesseeRepresentative.value,
+      representativeNif: lesseeRepresentativeNIF.value,
+      company: lesseeCompany.value,
+      cif: lesseeCIF.value,
+      role: 'comprador',
+    })
 
     const buyerSignatureName =
       lesseeType.value === 'persona'

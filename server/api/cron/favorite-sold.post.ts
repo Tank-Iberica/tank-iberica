@@ -7,10 +7,12 @@
  *
  * Protected by x-cron-secret header.
  */
-import { createError, defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
+import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
+import { logger } from '../../utils/logger'
 
 // -- Types --------------------------------------------------------------------
 
@@ -64,10 +66,7 @@ export default defineEventHandler(async (event) => {
     .limit(200)
 
   if (vehiclesError) {
-    throw createError({
-      statusCode: 500,
-      message: `Failed to fetch sold vehicles: ${vehiclesError.message}`,
-    })
+    throw safeError(500, `Failed to fetch sold vehicles: ${vehiclesError.message}`)
   }
 
   if (!vehicles || vehicles.length === 0) {
@@ -88,9 +87,7 @@ export default defineEventHandler(async (event) => {
         .eq('vehicle_id', vehicle.id)
 
       if (favsError) {
-        console.error(
-          `[favorite-sold] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`,
-        )
+        logger.error(`[favorite-sold] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`)
         return
       }
 
@@ -108,7 +105,7 @@ export default defineEventHandler(async (event) => {
       // -- 4. Send notification to each user who favorited ----------------------
       for (const fav of typedFavorites) {
         const user = fav.users
-        if (!user || !user.email) {
+        if (!user?.email) {
           continue
         }
 
@@ -135,7 +132,7 @@ export default defineEventHandler(async (event) => {
           notificationsSent++
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-          console.error(`[favorite-sold] Failed to send email to user ${user.id}: ${errorMessage}`)
+          logger.error(`[favorite-sold] Failed to send email to user ${user.id}: ${errorMessage}`)
         }
       }
     },

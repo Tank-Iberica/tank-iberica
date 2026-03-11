@@ -1,5 +1,30 @@
 // Vitest setup file — mock Nuxt auto-imports and browser APIs
 import { vi } from 'vitest'
+import { config } from '@vue/test-utils'
+
+// Minimal translation map for common keys used in component tests
+const translations: Record<string, string> = {
+  'common.save': 'Guardar',
+  'common.saving': 'Guardando...',
+  'common.cancel': 'Cancelar',
+  'common.delete': 'Eliminar',
+  'common.deleting': 'Eliminando...',
+  'common.create': 'Crear',
+  'common.close': 'Cerrar',
+  'common.back': 'Volver',
+  'common.loading': 'Cargando',
+  'common.edit': 'Editar',
+  'common.exportCsv': 'Exportar CSV',
+  'common.noResults': 'Sin resultados',
+  'common.print': 'Imprimir',
+  'common.continue': 'Continuar',
+  'common.loadingItems': 'Cargando...',
+}
+
+// Global Vue Test Utils config — makes $t available in all component templates
+config.global.mocks = {
+  $t: (key: string) => translations[key] ?? key,
+}
 
 // Mock useState (Nuxt)
 const stateStore = new Map<string, { value: unknown }>()
@@ -55,6 +80,11 @@ vi.stubGlobal('useI18n', () => ({
   t: (key: string) => key,
 }))
 
+// Mock useVerticalConfig
+vi.stubGlobal('useVerticalConfig', () => ({
+  config: { value: { name: { es: 'Tracciona', en: 'Tracciona' } } },
+}))
+
 // Mock useNuxtApp
 vi.stubGlobal('useNuxtApp', () => ({
   $i18n: { locale: { value: 'es' } },
@@ -76,7 +106,15 @@ vi.stubGlobal('import', { meta: { client: true, server: false } })
 // Mock computed/ref/reactive for composables that import them
 vi.stubGlobal('computed', (fn: () => unknown) => ({ value: fn() }))
 vi.stubGlobal('readonly', (obj: unknown) => obj)
+vi.stubGlobal('reactive', <T extends object>(obj: T): T => obj)
 vi.stubGlobal('ref', (val: unknown) => ({ value: val }))
+vi.stubGlobal('unref', (val: unknown) =>
+  val && typeof val === 'object' && 'value' in val ? (val as { value: unknown }).value : val,
+)
+vi.stubGlobal('toValue', (val: unknown) =>
+  typeof val === 'function' ? (val as () => unknown)() :
+  val && typeof val === 'object' && 'value' in val ? (val as { value: unknown }).value : val,
+)
 vi.stubGlobal('watch', () => {})
 vi.stubGlobal('watchEffect', () => {})
 vi.stubGlobal('onMounted', () => {})

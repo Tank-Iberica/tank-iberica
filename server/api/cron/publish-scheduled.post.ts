@@ -1,15 +1,27 @@
 /**
- * Cron endpoint: Publishes articles with status='scheduled' and scheduled_at <= now.
+ * Cron endpoint: Publishes scheduled content that is ready to go live.
+ *
+ * Handles two types of scheduled content:
+ * 1. News articles (news table): status='scheduled' AND scheduled_at <= now
+ * 2. Vehicles (vehicles table): status='draft' AND scheduled_publish_at <= now
+ *
  * Protected by a secret header: x-cron-secret.
  * Called by an external cron job or Cloudflare Worker.
  *
  * POST /api/cron/publish-scheduled
  * Header: x-cron-secret: <CRON_SECRET>
  */
+import { defineEventHandler } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 
 interface ScheduledArticle {
+  id: string
+  title_es: string
+  slug: string
+}
+
+interface ScheduledVehicle {
   id: string
   title_es: string
   slug: string
@@ -20,41 +32,71 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event)
 
   const supabase = serverSupabaseServiceRole(event)
-
-  // Find articles ready to publish
   const now = new Date().toISOString()
-  const { data: articles, error: fetchErr } = await supabase
+
+  // ── 1. Publish scheduled news articles ──────────────────────────────────
+
+  const { data: articles, error: fetchArticleErr } = await supabase
     .from('news')
     .select('id, title_es, slug')
     .eq('status', 'scheduled')
     .lte('scheduled_at', now)
 
-  if (fetchErr) {
-    throw safeError(500, `Fetch scheduled articles failed: ${fetchErr.message}`)
+  if (fetchArticleErr) {
+    throw safeError(500, `Fetch scheduled articles failed: ${fetchArticleErr.message}`)
   }
 
-  if (!articles || articles.length === 0) {
-    return { published: 0, articles: [] }
+  let publishedArticles = 0
+  if (articles && articles.length > 0) {
+    const typedArticles = articles as ScheduledArticle[]
+    const ids = typedArticles.map((a) => a.id)
+    const { error: updateErr } = await supabase
+      .from('news')
+      .update({ status: 'published', published_at: now, updated_at: now })
+      .in('id', ids)
+
+    if (updateErr) {
+      throw safeError(500, `Update scheduled articles failed: ${updateErr.message}`)
+    }
+    publishedArticles = typedArticles.length
   }
 
-  // Update all matching articles to published
-  const typedArticles = articles as ScheduledArticle[]
-  const ids = typedArticles.map((a) => a.id)
-  const { error: updateErr } = await supabase
-    .from('news')
-    .update({
-      status: 'published',
-      published_at: now,
-      updated_at: now,
-    })
-    .in('id', ids)
+  // ── 2. Publish scheduled vehicles ────────────────────────────────────────
 
-  if (updateErr) {
-    throw safeError(500, `Update scheduled articles failed: ${updateErr.message}`)
+  const { data: vehicles, error: fetchVehicleErr } = await supabase
+    .from('vehicles')
+    .select('id, title_es, slug')
+    .eq('status', 'draft')
+    .not('scheduled_publish_at', 'is', null)
+    .lte('scheduled_publish_at', now)
+
+  if (fetchVehicleErr) {
+    throw safeError(500, `Fetch scheduled vehicles failed: ${fetchVehicleErr.message}`)
+  }
+
+  let publishedVehicles = 0
+  if (vehicles && vehicles.length > 0) {
+    const typedVehicles = vehicles as ScheduledVehicle[]
+    const ids = typedVehicles.map((v) => v.id)
+    const { error: updateErr } = await supabase
+      .from('vehicles')
+      .update({
+        status: 'published',
+        published_at: now,
+        updated_at: now,
+        scheduled_publish_at: null,
+      })
+      .in('id', ids)
+
+    if (updateErr) {
+      throw safeError(500, `Update scheduled vehicles failed: ${updateErr.message}`)
+    }
+    publishedVehicles = typedVehicles.length
   }
 
   return {
-    published: typedArticles.length,
-    articles: typedArticles.map((a) => ({ id: a.id, slug: a.slug, title: a.title_es })),
+    articles: { published: publishedArticles },
+    vehicles: { published: publishedVehicles },
+    total: publishedArticles + publishedVehicles,
   }
 })

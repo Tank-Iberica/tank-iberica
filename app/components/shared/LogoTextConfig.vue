@@ -131,21 +131,23 @@ const previewStyle = computed(() => ({
   textTransform: settings.value.uppercase ? 'uppercase' : 'none',
 }))
 
-const displayName = computed(() => props.previewName || 'Tu empresa')
+const { t } = useI18n()
+
+const displayName = computed(() => props.previewName || t('shared.logoText.previewFallback'))
 </script>
 
 <template>
   <div class="logo-text-config">
-    <p class="ltc-hint">Se mostrará cuando no haya logo subido, o como alternativa accesible.</p>
+    <p class="ltc-hint">{{ t('shared.logoText.hint') }}</p>
 
     <!-- Live preview -->
-    <div class="ltc-preview" aria-label="Previsualización del nombre">
+    <div class="ltc-preview" :aria-label="t('shared.logoText.previewAriaLabel')">
       <span class="ltc-preview-text" :style="previewStyle">{{ displayName }}</span>
     </div>
 
     <!-- Font family -->
     <div class="ltc-field">
-      <label class="ltc-label">Tipografía</label>
+      <label class="ltc-label">{{ t('shared.logoText.fontFamily') }}</label>
       <select
         :value="settings.font_family"
         class="ltc-select"
@@ -159,7 +161,7 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 
     <!-- Font weight -->
     <div class="ltc-field">
-      <label class="ltc-label">Peso</label>
+      <label class="ltc-label">{{ t('shared.logoText.fontWeight') }}</label>
       <div class="ltc-weight-row">
         <button
           v-for="w in availableWeights"
@@ -177,7 +179,7 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 
     <!-- Letter spacing -->
     <div class="ltc-field">
-      <label class="ltc-label">Espaciado de letra</label>
+      <label class="ltc-label">{{ t('shared.logoText.letterSpacing') }}</label>
       <div class="ltc-spacing-row">
         <button
           v-for="opt in LETTER_SPACING_OPTIONS"
@@ -202,7 +204,7 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
         :aria-pressed="settings.italic"
         @click="update({ italic: !settings.italic })"
       >
-        <em>It</em> Cursiva
+        <em>It</em> {{ t('shared.logoText.italic') }}
       </button>
       <button
         type="button"
@@ -211,7 +213,7 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
         :aria-pressed="settings.uppercase"
         @click="update({ uppercase: !settings.uppercase })"
       >
-        AA Mayúsculas
+        AA {{ t('shared.logoText.uppercase') }}
       </button>
     </div>
   </div>
@@ -221,25 +223,25 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 .logo-text-config {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .ltc-hint {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
 }
 
 /* Preview */
 .ltc-preview {
-  padding: 20px 16px;
+  padding: 1.25rem 1rem;
   background: var(--bg-secondary);
   border: 1px dashed var(--color-gray-300);
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 72px;
+  min-height: 4.5rem;
   overflow: hidden;
 }
 
@@ -256,11 +258,11 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 .ltc-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .ltc-label {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
@@ -268,20 +270,20 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 }
 
 .ltc-select {
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   background: var(--bg-primary);
   color: var(--text-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
   cursor: pointer;
 }
 
 .ltc-select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Weight buttons */
@@ -289,19 +291,19 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 .ltc-spacing-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .ltc-weight-btn,
 .ltc-spacing-btn {
-  padding: 6px 12px;
+  padding: 0.375rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  min-height: 36px;
+  min-height: 2.25rem;
   transition:
     border-color 0.15s,
     background 0.15s,
@@ -326,22 +328,22 @@ const displayName = computed(() => props.previewName || 'Tu empresa')
 /* Toggles */
 .ltc-toggles {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .ltc-toggle-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background: var(--bg-primary);
   color: var(--text-secondary);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
   transition:
     border-color 0.15s,
     background 0.15s,

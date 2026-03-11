@@ -195,8 +195,8 @@ const { t } = useI18n()
 
 .table-wrapper {
   background: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   overflow-x: auto;
 }
 
@@ -208,7 +208,7 @@ const { t } = useI18n()
 
 .data-table th {
   text-align: left;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-auxiliary);
@@ -219,19 +219,19 @@ const { t } = useI18n()
 }
 
 .data-table td {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   color: var(--text-primary);
   border-bottom: 1px solid var(--color-gray-100);
 }
 
 .col-check {
-  width: 40px;
+  width: 2.5rem;
   text-align: center;
 }
 
 .col-check input[type='checkbox'] {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   cursor: pointer;
   accent-color: var(--color-primary);
 }
@@ -250,12 +250,12 @@ const { t } = useI18n()
 }
 
 .table-row.selected {
-  background: #eff6ff;
+  background: var(--color-blue-50);
 }
 
 .cell-company {
   font-weight: 600;
-  max-width: 200px;
+  max-width: 12.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -267,7 +267,7 @@ const { t } = useI18n()
 }
 
 .cell-types {
-  max-width: 180px;
+  max-width: 11.25rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -283,31 +283,31 @@ const { t } = useI18n()
 /* Source badges */
 .source-badge {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 10px;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.78rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .source-badge.source-mascus {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg);
   color: var(--color-info);
 }
 
 .source-badge.source-europa {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg);
   color: var(--color-success);
 }
 
 .source-badge.source-milanuncios {
-  background: #fff7ed;
-  color: #c2410c;
+  background: var(--color-orange-bg);
+  color: var(--color-orange-700);
 }
 
 .source-badge.source-autoline {
-  background: #f3e8ff;
-  color: #7c3aed;
+  background: var(--color-purple-100);
+  color: var(--color-purple-600);
 }
 
 .source-badge.source-manual {
@@ -318,40 +318,40 @@ const { t } = useI18n()
 /* Status badges */
 .status-badge {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-md);
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .status-badge.status-new {
-  background: var(--color-info-bg, #dbeafe);
+  background: var(--color-info-bg);
   color: var(--color-info);
 }
 
 .status-badge.status-contacted {
-  background: var(--color-warning-bg, #fef3c7);
+  background: var(--color-warning-bg);
   color: var(--color-warning-text);
 }
 
 .status-badge.status-interested {
-  background: var(--color-success-bg, #dcfce7);
+  background: var(--color-success-bg);
   color: var(--color-success);
 }
 
 .status-badge.status-onboarding {
-  background: #cffafe;
-  color: #0e7490;
+  background: var(--color-cyan-bg);
+  color: var(--color-cyan-700);
 }
 
 .status-badge.status-active {
-  background: #d1fae5;
-  color: #059669;
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 
 .status-badge.status-rejected {
-  background: var(--color-error-bg, #fef2f2);
+  background: var(--color-error-bg);
   color: var(--color-error);
 }
 
@@ -362,29 +362,29 @@ const { t } = useI18n()
 }
 
 .expanded-content {
-  padding: 16px;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
   background: var(--bg-secondary);
 }
 
 .expanded-row-top {
   display: flex;
-  gap: 24px;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
 .expanded-row-contact {
   display: flex;
-  gap: 24px;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
 .contact-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .contact-item label {
@@ -394,7 +394,7 @@ const { t } = useI18n()
 }
 
 .contact-link {
-  color: #2563eb;
+  color: var(--color-focus);
   text-decoration: none;
   font-weight: 500;
   font-size: 0.9rem;
@@ -413,7 +413,7 @@ const { t } = useI18n()
 .expanded-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .expanded-field label {
@@ -423,11 +423,11 @@ const { t } = useI18n()
 }
 
 .expanded-field select {
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
   background: var(--bg-primary);
   cursor: pointer;
 }
@@ -435,44 +435,44 @@ const { t } = useI18n()
 .expanded-field select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .notes-field {
   flex: 1;
-  min-width: 240px;
+  min-width: 15rem;
 }
 
 .notes-field textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
   font-family: inherit;
   resize: vertical;
-  min-height: 60px;
+  min-height: 3.75rem;
 }
 
 .notes-field textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .btn-save-notes {
   align-self: flex-start;
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-weight: 500;
   font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.2s;
-  min-height: 44px;
-  margin-top: 8px;
+  min-height: 2.75rem;
+  margin-top: 0.5rem;
 }
 
 .btn-save-notes:hover {

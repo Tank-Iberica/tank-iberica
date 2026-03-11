@@ -69,6 +69,24 @@
         <p class="result-includes">
           {{ $t('transport.includesNote') }}
         </p>
+        <!-- Total cost estimate -->
+        <div v-if="totalEstimate" class="cost-estimate">
+          <p class="cost-estimate__title">{{ $t('transport.totalEstimate') }}</p>
+          <div class="cost-estimate__row">
+            <span>{{ $t('vehicle.price') }}</span>
+            <span>{{ totalEstimate.vehicleText }}</span>
+          </div>
+          <div class="cost-estimate__row">
+            <span>{{ $t('transport.title') }}</span>
+            <span>{{ totalEstimate.transportText }}</span>
+          </div>
+          <div class="cost-estimate__row cost-estimate__row--total">
+            <span>{{ $t('transport.estimatedTotal') }}</span>
+            <span>{{ totalEstimate.totalText }}</span>
+          </div>
+          <p class="cost-estimate__note">{{ $t('transport.estimateNote') }}</p>
+        </div>
+
         <button class="transport-submit-btn" :disabled="loading" @click="onSubmit">
           <span v-if="loading" class="spinner" />
           <span v-else>{{ $t('transport.requestTransport') }}</span>
@@ -134,6 +152,8 @@ const props = defineProps<{
     location: string | null
     location_province: string | null
   }
+  /** Vehicle sale price in euros (for total cost estimate) */
+  vehiclePrice?: number | null
 }>()
 
 const { t } = useI18n()
@@ -156,6 +176,17 @@ const result = ref<CalculationResult | null>(null)
 const submitted = ref(false)
 const calculating = ref(false)
 const transportError = ref<string | null>(null)
+
+/** Estimated total: vehicle price + transport (no tax — shown separately) */
+const totalEstimate = computed(() => {
+  const transportCents = result.value?.zone?.price_cents
+  if (!props.vehiclePrice || !transportCents) return null
+  return {
+    vehicleText: formatCents(props.vehiclePrice * 100),
+    transportText: formatCents(transportCents),
+    totalText: formatCents(props.vehiclePrice * 100 + transportCents),
+  }
+})
 
 onMounted(async () => {
   // Load transport zones
@@ -314,7 +345,7 @@ async function onSubmit() {
 
 .transport-input {
   flex: 1;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-3);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -331,12 +362,12 @@ async function onSubmit() {
 .transport-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.15);
+  box-shadow: var(--shadow-ring-strong);
 }
 
 .transport-calc-btn {
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   padding: var(--spacing-2) var(--spacing-4);
   background: var(--color-primary);
   color: var(--color-white);
@@ -391,7 +422,7 @@ async function onSubmit() {
 
 .result-local-badge {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 0.125rem 0.5rem;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--color-success);
@@ -425,9 +456,51 @@ async function onSubmit() {
   margin: 0;
 }
 
+/* Cost estimate */
+.cost-estimate {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.cost-estimate__title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.cost-estimate__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.cost-estimate__row--total {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--border-color);
+  font-size: var(--font-size-base);
+}
+
+.cost-estimate__note {
+  font-size: var(--font-size-xs);
+  color: var(--text-auxiliary);
+  margin: 0;
+  font-style: italic;
+}
+
 /* Submit button */
 .transport-submit-btn {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: var(--spacing-3) var(--spacing-4);
   background: var(--color-primary);
   color: var(--color-white);
@@ -486,8 +559,8 @@ async function onSubmit() {
 /* Spinner */
 .spinner {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   border: 2px solid transparent;
   border-top-color: currentColor;
   border-radius: 50%;
@@ -503,7 +576,7 @@ async function onSubmit() {
 /* Desktop */
 @media (min-width: 48em) {
   .transport-calculator {
-    max-width: 400px;
+    max-width: 25rem;
   }
 }
 </style>

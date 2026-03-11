@@ -46,9 +46,9 @@ const { t } = useI18n()
 <style scoped>
 .options-card {
   background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
 .columns-header {
@@ -56,8 +56,8 @@ const { t } = useI18n()
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .columns-header h2 {
@@ -69,7 +69,7 @@ const { t } = useI18n()
 
 .columns-actions {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .btn-text {
@@ -78,8 +78,8 @@ const { t } = useI18n()
   color: var(--color-primary);
   font-size: 0.85rem;
   cursor: pointer;
-  padding: 4px 8px;
-  min-height: 44px;
+  padding: 0.25rem 0.5rem;
+  min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
 }
@@ -89,28 +89,28 @@ const { t } = useI18n()
 }
 
 .columns-count {
-  margin: 0 0 12px;
-  font-size: 0.8rem;
+  margin: 0 0 0.75rem;
+  font-size: var(--font-size-sm);
   color: var(--text-auxiliary);
 }
 
 .columns-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .column-checkbox {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.9rem;
-  color: #374151;
-  min-height: 44px;
+  color: var(--color-gray-700);
+  min-height: 2.75rem;
   transition: background 0.15s;
 }
 
@@ -119,8 +119,8 @@ const { t } = useI18n()
 }
 
 .column-checkbox input {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   accent-color: var(--color-primary);
 }
 

@@ -96,25 +96,25 @@ function onSearchInput(event: Event) {
 
 <style scoped>
 .conversation-list {
-  width: 340px;
-  border-right: 1px solid #e5e7eb;
+  width: 21.25rem;
+  border-right: 1px solid var(--color-gray-200);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
 }
 
 .search-box {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-3);
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .search-box input {
   width: 100%;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   border: 1px solid var(--border-color-light);
-  border-radius: 20px;
+  border-radius: var(--border-radius-full);
   font-size: 0.9rem;
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .search-box input:focus {
@@ -131,29 +131,29 @@ function onSearchInput(event: Event) {
 .conversation-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   width: 100%;
-  padding: 12px 16px;
+  padding: var(--spacing-3) var(--spacing-4);
   border: none;
   background: none;
   text-align: left;
   cursor: pointer;
   transition: background 0.15s;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--color-gray-100);
 }
 
 .conversation-item:hover {
-  background: #f9fafb;
+  background: var(--color-gray-50);
 }
 
 .conversation-item.active {
-  background: #eff6ff;
+  background: var(--color-blue-50);
 }
 
 .avatar {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   background: var(--bg-tertiary);
   display: flex;
@@ -172,15 +172,15 @@ function onSearchInput(event: Event) {
 .avatar-initials {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--color-gray-500);
 }
 
 .unread-dot {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 12px;
-  height: 12px;
+  top: 0.125rem;
+  right: 0.125rem;
+  width: 0.75rem;
+  height: 0.75rem;
   background: var(--color-success);
   border-radius: 50%;
   border: 2px solid white;
@@ -195,12 +195,12 @@ function onSearchInput(event: Event) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1);
 }
 
 .conversation-name {
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-gray-800);
   font-size: 0.95rem;
 }
 
@@ -212,13 +212,13 @@ function onSearchInput(event: Event) {
 .conversation-preview {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
 }
 
 .preview-text {
   flex: 1;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-gray-500);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -239,21 +239,21 @@ function onSearchInput(event: Event) {
   color: white;
   font-size: 0.7rem;
   font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 10px;
-  min-width: 20px;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--border-radius-md);
+  min-width: 1.25rem;
   text-align: center;
 }
 
 .empty-list {
-  padding: 40px 20px;
+  padding: var(--spacing-10) var(--spacing-5);
   text-align: center;
   color: var(--text-disabled);
 }
 
 .empty-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
+  font-size: 3rem;
+  margin-bottom: var(--spacing-3);
 }
 
 .empty-list p {
@@ -262,7 +262,7 @@ function onSearchInput(event: Event) {
 
 /* Scrollbar styling */
 .conversations::-webkit-scrollbar {
-  width: 6px;
+  width: 0.375rem;
 }
 
 .conversations::-webkit-scrollbar-track {
@@ -270,12 +270,12 @@ function onSearchInput(event: Event) {
 }
 
 .conversations::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
+  background: var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
 }
 
 .conversations::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: var(--color-gray-400);
 }
 
 /* Mobile responsive */
@@ -297,8 +297,8 @@ function onSearchInput(event: Event) {
   }
 
   .avatar {
-    width: 44px;
-    height: 44px;
+    width: 2.75rem;
+    height: 2.75rem;
   }
 }
 </style>

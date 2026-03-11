@@ -34,29 +34,29 @@ function getRevenuePercentage(amount: number): number {
 
 <style scoped>
 .section-card {
-  background: var(--bg-primary, #fff);
+  background: var(--bg-primary, var(--color-white));
   border-radius: var(--border-radius-md, 12px);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
-  padding: var(--spacing-4, 16px) var(--spacing-5, 20px);
+  box-shadow: var(--shadow-sm, var(--shadow-sm));
+  padding: var(--spacing-4) var(--spacing-5);
 }
 
 .section-title {
-  margin: 0 0 var(--spacing-4, 16px) 0;
+  margin: 0 0 var(--spacing-4) 0;
   font-size: var(--font-size-lg, 1.125rem);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
 }
 
 .type-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4, 16px);
+  gap: var(--spacing-4);
 }
 
 .type-row {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2, 8px);
+  gap: var(--spacing-2);
 }
 
 .type-info {
@@ -68,20 +68,20 @@ function getRevenuePercentage(amount: number): number {
 .type-label {
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-medium, 500);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
 }
 
 .type-amount {
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--text-primary, #1f2a2a);
+  color: var(--text-primary, var(--text-primary));
   font-variant-numeric: tabular-nums;
 }
 
 .type-bar-bg {
   width: 100%;
-  height: 8px;
-  background: var(--color-gray-100, #f3f4f6);
+  height: 0.5rem;
+  background: var(--color-gray-100, var(--color-gray-100));
   border-radius: var(--border-radius-full, 9999px);
   overflow: hidden;
 }
@@ -91,12 +91,12 @@ function getRevenuePercentage(amount: number): number {
   background: var(--color-primary);
   border-radius: var(--border-radius-full, 9999px);
   transition: width var(--transition-normal, 300ms ease);
-  min-width: 4px;
+  min-width: 0.25rem;
 }
 
 .type-pct {
   font-size: var(--font-size-xs, 0.75rem);
-  color: var(--text-auxiliary, #7a8a8a);
+  color: var(--text-auxiliary, var(--text-auxiliary));
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -105,11 +105,11 @@ function getRevenuePercentage(amount: number): number {
   .type-row {
     flex-direction: row;
     align-items: center;
-    gap: var(--spacing-4, 16px);
+    gap: var(--spacing-4);
   }
 
   .type-info {
-    min-width: 240px;
+    min-width: 15rem;
     flex-shrink: 0;
   }
 
@@ -118,13 +118,13 @@ function getRevenuePercentage(amount: number): number {
   }
 
   .type-pct {
-    min-width: 50px;
+    min-width: 3.125rem;
   }
 }
 
 @media (min-width: 64em) {
   .section-card {
-    padding: var(--spacing-6, 24px) var(--spacing-8, 32px);
+    padding: var(--spacing-6) var(--spacing-8);
   }
 }
 </style>

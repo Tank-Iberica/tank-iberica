@@ -201,7 +201,7 @@ function onNumberInput(field: keyof ValoracionFormData, event: Event): void {
   font-size: var(--font-size-base);
   color: var(--text-primary);
   background: var(--bg-primary);
-  min-height: 44px;
+  min-height: 2.75rem;
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
@@ -210,7 +210,7 @@ function onNumberInput(field: keyof ValoracionFormData, event: Event): void {
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .form-input::placeholder {
@@ -246,7 +246,7 @@ function onNumberInput(field: keyof ValoracionFormData, event: Event): void {
   border-radius: var(--border-radius);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
-  min-height: 48px;
+  min-height: 3rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   display: flex;
@@ -266,8 +266,8 @@ function onNumberInput(field: keyof ValoracionFormData, event: Event): void {
 }
 
 .spinner {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: var(--color-white);
   border-radius: 50%;

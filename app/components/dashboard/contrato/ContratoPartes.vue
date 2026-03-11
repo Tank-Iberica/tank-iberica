@@ -217,81 +217,81 @@ const { t } = useI18n()
 
 <style scoped>
 .contrato-partes {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .form-row {
   display: flex;
-  gap: 16px;
+  gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   flex: 1;
-  min-width: 120px;
+  min-width: 7.5rem;
 }
 
 .form-group label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .form-group input {
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(35, 66, 74, 0.1);
+  box-shadow: var(--shadow-ring);
 }
 
 .form-grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .divider {
   border: none;
-  border-top: 2px solid #0f2a2e;
-  margin: 20px 0;
+  border-top: 0.125rem solid var(--color-primary-darker);
+  margin: 1.25rem 0;
 }
 
 .section-subtitle {
-  margin: 0 0 12px;
+  margin: 0 0 0.75rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0f2a2e;
+  color: var(--color-primary-darker);
 }
 
 .radio-group-inline {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
 .radio-group-inline.compact {
-  gap: 16px;
+  gap: 1rem;
 }
 
 .radio-group-inline.compact label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   cursor: pointer;
   font-size: 0.9rem;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .radio-group-inline.compact label.active {
@@ -300,32 +300,32 @@ const { t } = useI18n()
 }
 
 .company-details {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .company-details summary {
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #6b7280;
-  padding: 8px 0;
-  min-height: 44px;
+  color: var(--color-gray-500);
+  padding: 0.5rem 0;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
 }
 
 .company-details summary:hover {
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .company-details[open] summary {
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 @media (max-width: 48em) {
   .form-row {
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
   }
 
   .form-grid-3 {

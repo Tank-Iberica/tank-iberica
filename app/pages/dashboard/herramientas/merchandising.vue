@@ -29,9 +29,8 @@ onMounted(() => init())
   <div class="merch-page">
     <MerchHeroBanner />
 
-    <div v-if="pageLoading" class="loading-state">
-      <div class="spinner" />
-      <span>{{ $t('common.loading') }}...</span>
+    <div v-if="pageLoading" class="loading-state" aria-busy="true">
+      <UiSkeletonCard v-for="n in 4" :key="n" :image="true" :lines="2" />
     </div>
 
     <template v-else>
@@ -51,27 +50,27 @@ onMounted(() => init())
 
 <style scoped>
 .merch-page {
-  max-width: 1024px;
+  max-width: 64rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: var(--spacing-8);
 }
 
 .loading-state {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: var(--spacing-3);
+  padding: 3.75rem var(--spacing-5);
   color: var(--text-auxiliary);
   font-size: 0.95rem;
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 3px solid var(--color-gray-200);
   border-top-color: var(--color-primary);
   border-radius: 50%;
@@ -85,9 +84,9 @@ onMounted(() => init())
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .merch-page {
-    padding: 24px;
+    padding: var(--spacing-6);
   }
 }
 </style>

@@ -57,7 +57,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .reviews-section {
-  max-width: 960px;
+  max-width: 60rem;
   margin: 0 auto var(--spacing-8);
   padding: 0 var(--spacing-4);
 }
@@ -109,7 +109,7 @@ const emit = defineEmits<{
 .review-stars {
   color: var(--color-gold);
   font-size: var(--font-size-sm);
-  letter-spacing: 1px;
+  letter-spacing: 0.0625rem;
 }
 
 .review-rating {
@@ -162,7 +162,7 @@ const emit = defineEmits<{
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: background var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .btn-load-more:hover {

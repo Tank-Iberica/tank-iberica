@@ -1,3 +1,5 @@
+import type { SupabaseClient } from '@supabase/supabase-js'
+
 /**
  * useDashboardImportar
  *
@@ -49,7 +51,7 @@ function parseCsvLine(
   separator: string,
   t: (key: string, opts?: Record<string, unknown>) => string,
 ): ParsedRow {
-  const cols = line.split(separator).map((col) => col.trim().replaceAll(/^"|"$/g, ''))
+  const cols = line.split(separator).map((col) => col.trim().replace(/^"/, '').replace(/"$/, ''))
   const row: ParsedRow = {
     brand: cols[0] || '',
     model: cols[1] || '',
@@ -113,6 +115,59 @@ function generateVehicleSlug(brand: string, model: string, year: number | null):
     .replaceAll(/[\u0300-\u036F]/g, '')
     .replaceAll(/[^a-z0-9]+/g, '-')
     .replaceAll(/(^-|-$)/g, '')
+}
+
+function parseCsvText(
+  text: string,
+  t: (key: string, opts?: Record<string, unknown>) => string,
+): { rows: ParsedRow[]; error: string | null } {
+  const lines = text.split('\n').filter((line) => line.trim())
+  if (lines.length < 2) {
+    return { rows: [], error: t('dashboard.import.errors.emptyFile') }
+  }
+  const headerLine = lines[0]!
+  const separator = headerLine.includes(';') ? ';' : ','
+  const rows: ParsedRow[] = []
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i]!.trim()
+    if (!line) continue
+    rows.push(parseCsvLine(line, separator, t))
+  }
+  return { rows, error: null }
+}
+
+async function insertVehicleRow(
+  supabase: SupabaseClient,
+  row: ParsedRow,
+  dealerId: string,
+  categories: CategoryOption[],
+  subcategories: SubcategoryOption[],
+  targetStatus: string,
+): Promise<boolean> {
+  try {
+    const { categoryId, subcategoryId } = resolveVehicleIds(row, categories, subcategories)
+    const slug = generateVehicleSlug(row.brand, row.model, row.year)
+    const { error } = await supabase.from('vehicles').insert({
+      dealer_id: dealerId,
+      brand: row.brand,
+      model: row.model,
+      year: row.year,
+      km: row.km,
+      price: row.price,
+      category_id: categoryId,
+      subcategory_id: subcategoryId,
+      description_es: row.description || null,
+      location: row.location || null,
+      slug,
+      status: targetStatus,
+      views: 0,
+      is_online: true,
+      vertical: getVerticalSlug(),
+    } as never)
+    return !error
+  } catch {
+    return false
+  }
 }
 
 function downloadTemplate(): void {
@@ -230,36 +285,18 @@ export function useDashboardImportar() {
   async function parseFile(): Promise<void> {
     if (!file.value) return
 
-    const reader = new FileReader()
-
-    reader.onload = (e) => {
-      const text = e.target?.result as string
-      const lines = text.split('\n').filter((line) => line.trim())
-
-      if (lines.length < 2) {
-        error.value = t('dashboard.import.errors.emptyFile')
+    try {
+      const text = await file.value.text()
+      const result = parseCsvText(text, t)
+      if (result.error) {
+        error.value = result.error
         return
       }
-
-      const headerLine = lines[0]!
-      const separator = headerLine.includes(';') ? ';' : ','
-      const rows: ParsedRow[] = []
-
-      for (let i = 1; i < lines.length; i++) {
-        const line = lines[i]!.trim()
-        if (!line) continue
-        rows.push(parseCsvLine(line, separator, t))
-      }
-
-      parsedRows.value = rows
+      parsedRows.value = result.rows
       step.value = 2
-    }
-
-    reader.onerror = () => {
+    } catch {
       error.value = t('dashboard.import.errors.fileReadError')
     }
-
-    reader.readAsText(file.value)
   }
 
   // ---------- Publishing ----------
@@ -275,7 +312,6 @@ export function useDashboardImportar() {
       return
     }
 
-    // Check plan limits
     const targetStatus = asDraft ? 'draft' : 'published'
     const newPublishedCount = targetStatus === 'published' ? validRows.length : 0
 
@@ -291,43 +327,12 @@ export function useDashboardImportar() {
     step.value = 3
 
     for (let i = 0; i < validRows.length; i++) {
-      const row = validRows[i]!
-
-      try {
-        const { categoryId, subcategoryId } = resolveVehicleIds(
-          row,
-          categories.value,
-          subcategories.value,
-        )
-        const slug = generateVehicleSlug(row.brand, row.model, row.year)
-
-        const { error: err } = await supabase.from('vehicles').insert({
-          dealer_id: dealer.id,
-          brand: row.brand,
-          model: row.model,
-          year: row.year,
-          km: row.km,
-          price: row.price,
-          category_id: categoryId,
-          subcategory_id: subcategoryId,
-          description_es: row.description || null,
-          location: row.location || null,
-          slug,
-          status: targetStatus,
-          views: 0,
-          is_online: true,
-          vertical: getVerticalSlug(),
-        } as never)
-
-        if (err) {
-          errorCount.value++
-        } else {
-          publishedCount.value++
-        }
-      } catch {
-        errorCount.value++
-      }
-
+      const success = await insertVehicleRow(
+        supabase, validRows[i]!, dealer.id,
+        categories.value, subcategories.value, targetStatus,
+      )
+      if (success) publishedCount.value++
+      else errorCount.value++
       progress.value = Math.round(((i + 1) / validRows.length) * 100)
     }
 
