@@ -28,7 +28,7 @@ const emit = defineEmits<{
     <div v-if="open" class="section-content">
       <label for="doc-upload-input" class="upload-zone-label">
         Subir documentos
-        <input id="doc-upload-input" type="file" multiple @change="emit('upload', $event)" />
+        <input id="doc-upload-input" type="file" multiple @change="emit('upload', $event)" >
       </label>
       <div v-if="documents.length === 0" class="empty-msg">Sin documentos.</div>
       <div v-for="d in documents" :key="d.id" class="doc-row">

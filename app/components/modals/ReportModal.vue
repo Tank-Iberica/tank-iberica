@@ -115,7 +115,7 @@ watch(
               autocomplete="email"
               required
               :placeholder="t('report.emailPlaceholder')"
-            />
+            >
           </div>
 
           <div class="report-field">

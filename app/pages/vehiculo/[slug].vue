@@ -164,15 +164,16 @@ const {
 
 const showChatModal = ref(false)
 
-// Duration tracking
-const { trackVehicleDuration } = useAnalyticsTracking()
+// Duration + funnel tracking
+const { trackVehicleDuration, trackFunnelViewVehicle } = useAnalyticsTracking()
 const pageStartedAt = ref(0)
 
-// Track ficha view + record start time on client-side mount
+// Track ficha view + funnel step + record start time on client-side mount
 onMounted(() => {
   pageStartedAt.value = Date.now()
   if (vehicle.value) {
     trackFichaView(vehicle.value.id, vehicleDetail.value?.dealer_id || '')
+    trackFunnelViewVehicle(vehicle.value.id, 'detail_page')
   }
 })
 
@@ -266,7 +267,12 @@ if (vehicle.value) {
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: t('site.title'), item: 'https://tracciona.com' },
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: t('site.title'),
+              item: 'https://tracciona.com',
+            },
             { '@type': 'ListItem', position: 2, name: productName, item: canonicalUrl },
           ],
         }),

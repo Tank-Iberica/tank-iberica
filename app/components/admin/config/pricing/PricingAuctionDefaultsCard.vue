@@ -48,7 +48,7 @@ function centsToEuros(cents: number): number {
             class="auction-input"
             :value="centsToEuros(auctionDefaults.bid_increment_cents)"
             @input="onInput('bid_increment_cents', $event)"
-          />
+          >
           <span class="input-suffix">&euro;</span>
         </div>
         <p class="field-hint">{{ t('admin.configPricing.auctionBidIncrementHint') }}</p>
@@ -68,7 +68,7 @@ function centsToEuros(cents: number): number {
             class="auction-input"
             :value="centsToEuros(auctionDefaults.deposit_cents)"
             @input="onInput('deposit_cents', $event)"
-          />
+          >
           <span class="input-suffix">&euro;</span>
         </div>
         <p class="field-hint">{{ t('admin.configPricing.auctionDepositHint') }}</p>
@@ -89,7 +89,7 @@ function centsToEuros(cents: number): number {
             class="auction-input"
             :value="auctionDefaults.duration_days"
             @input="onInput('duration_days', $event)"
-          />
+          >
           <span class="input-suffix">{{ t('admin.configPricing.days') }}</span>
         </div>
       </div>
@@ -109,7 +109,7 @@ function centsToEuros(cents: number): number {
             class="auction-input"
             :value="auctionDefaults.anti_snipe_seconds"
             @input="onInput('anti_snipe_seconds', $event)"
-          />
+          >
           <span class="input-suffix">{{ t('admin.configPricing.seconds') }}</span>
         </div>
         <p class="field-hint">{{ t('admin.configPricing.auctionAntiSnipeHint') }}</p>

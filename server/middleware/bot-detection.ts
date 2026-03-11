@@ -23,7 +23,7 @@ const SCANNER_UA_PATTERNS: RegExp[] = [
   /nuclei/i,
   /acunetix/i,
   /burpsuite/i,
-  /python-requests\/[0-9].*scan/i,
+  /python-requests\/\d.*scan/i,
 ]
 
 /** Paths that skip bot detection (health probes, CSP reports) */
@@ -42,10 +42,7 @@ export default defineEventHandler((event) => {
   if (SKIP_PATHS.some((p) => url.startsWith(p))) return
 
   const ua = getHeader(event, 'user-agent') ?? ''
-  const ip =
-    getHeader(event, 'x-forwarded-for') ??
-    getHeader(event, 'x-real-ip') ??
-    'unknown'
+  const ip = getHeader(event, 'x-forwarded-for') ?? getHeader(event, 'x-real-ip') ?? 'unknown'
 
   // Block known malicious scanners
   if (ua && SCANNER_UA_PATTERNS.some((p) => p.test(ua))) {

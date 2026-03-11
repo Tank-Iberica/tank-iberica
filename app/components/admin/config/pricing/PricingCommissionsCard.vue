@@ -38,7 +38,7 @@ function onInput(rateKey: string, event: Event) {
             class="commission-input"
             :value="commissionRates[def.key]"
             @input="onInput(def.key, $event)"
-          />
+          >
           <span class="input-suffix">{{ def.type === 'pct' ? '%' : '&euro;' }}</span>
         </div>
       </div>

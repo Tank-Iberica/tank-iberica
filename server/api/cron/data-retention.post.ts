@@ -16,7 +16,6 @@
  * Uses a 24 h cron lock to prevent duplicate runs.
  */
 import { defineEventHandler, readBody } from 'h3'
-import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { acquireCronLock } from '../../utils/cronLock'
@@ -104,9 +103,7 @@ export default defineEventHandler(async (event) => {
     const deleted = count ?? 0
 
     if (error) {
-      logger.warn(
-        `[data-retention] Failed to clean ${target.table}: ${error.message}`,
-      )
+      logger.warn(`[data-retention] Failed to clean ${target.table}: ${error.message}`)
       results.push({ table: target.table, deleted: 0, error: error.message })
     } else {
       if (deleted > 0) {

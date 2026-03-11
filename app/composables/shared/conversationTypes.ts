@@ -26,4 +26,6 @@ export interface ConversationMessage {
   is_system: boolean
   is_read: boolean
   created_at: string
+  /** Optimistic UI status — only set on client-side temp messages */
+  _status?: 'sending' | 'failed'
 }

@@ -23,7 +23,7 @@ function onToggle(event: Event) {
     </div>
     <div class="header-actions">
       <label class="toggle-switch">
-        <input type="checkbox" :checked="visitsEnabled" @change="onToggle" />
+        <input type="checkbox" :checked="visitsEnabled" @change="onToggle" >
         <span class="toggle-slider" />
         <span class="toggle-label">{{ t('visits.enableVisits') }}</span>
       </label>

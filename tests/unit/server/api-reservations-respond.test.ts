@@ -77,8 +77,10 @@ describe('POST /api/reservations/respond', () => {
     const errChain: Record<string, unknown> = {}
     const ms = ['select', 'eq', 'single']
     for (const m of ms) errChain[m] = () => errChain
-    errChain.then = (r: (v: unknown) => void) => Promise.resolve({ data: null, error: { message: 'not found' } }).then(r)
-    errChain.catch = (r: (v: unknown) => void) => Promise.resolve({ data: null, error: null }).catch(r)
+    errChain.then = (r: (v: unknown) => void) =>
+      Promise.resolve({ data: null, error: { message: 'not found' } }).then(r)
+    errChain.catch = (r: (v: unknown) => void) =>
+      Promise.resolve({ data: null, error: null }).catch(r)
     mockSupabase = { from: () => errChain }
 
     await expect((handler as Function)({})).rejects.toMatchObject({ statusCode: 404 })
@@ -88,7 +90,7 @@ describe('POST /api/reservations/respond', () => {
     mockServerUser.mockResolvedValue({ id: 'other-user' })
     mockReadBody.mockResolvedValue({ reservationId: VALID_UUID, response: LONG_RESPONSE })
 
-    let fromCall = 0
+    const fromCall = 0
     mockSupabase = {
       from: (table: string) => {
         if (table === 'reservations') {

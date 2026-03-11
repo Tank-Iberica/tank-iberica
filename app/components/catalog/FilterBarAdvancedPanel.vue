@@ -26,7 +26,7 @@
 
   <!-- DESKTOP: Collapsible advanced filters panel -->
   <Transition name="slide-down">
-    <div id="filter-advanced-panel" v-if="desktopOpen && filters.length" class="advanced-panel">
+    <div v-if="desktopOpen && filters.length" id="filter-advanced-panel" class="advanced-panel">
       <div class="advanced-panel-grid">
         <CatalogFilterBarDynamicFilters
           :filters="filters"

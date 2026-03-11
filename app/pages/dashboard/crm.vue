@@ -13,7 +13,6 @@ definePageMeta({
   middleware: ['auth', 'dealer'],
 })
 
-const { t } = useI18n()
 const { userId } = useAuth()
 
 // ── Dealer profile ──

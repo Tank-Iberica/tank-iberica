@@ -1,12 +1,15 @@
 import { onCLS, onINP, onLCP, onFCP, onTTFB } from 'web-vitals'
 import type { Metric } from 'web-vitals'
+import { getVerticalSlug } from '~/composables/useVerticalConfig'
 
 export default defineNuxtPlugin((nuxtApp) => {
   if (!import.meta.client) return
 
+  const vertical = getVerticalSlug()
+
   const sendMetric = (metric: Metric): void => {
     if (import.meta.dev) {
-      console.debug(`[Web Vitals] ${metric.name}: ${metric.value}`)
+      console.debug(`[Web Vitals] ${metric.name}: ${metric.value} (vertical: ${vertical})`)
       return
     }
 
@@ -20,6 +23,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       gtag('event', metric.name, {
         value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
         event_label: metric.id,
+        vertical,
         non_interaction: true,
       })
     }
@@ -41,8 +45,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       performance.mark('nuxt:page:finish')
       try {
         performance.measure('nuxt:page:navigation', 'nuxt:page:start', 'nuxt:page:finish')
-      }
-      catch {
+      } catch {
         // marks may be cleared between hook calls; ignore
       }
     })

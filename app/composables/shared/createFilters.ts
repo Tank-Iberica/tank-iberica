@@ -68,8 +68,7 @@ export function createFilters(config: CreateFiltersConfig = {}): FilterFactory {
   }
 
   const removeFilter = (key: string): void => {
-    const next = { ...state.activeFilters }
-    delete next[key]
+    const { [key]: _removed, ...next } = state.activeFilters
     state.activeFilters = next
   }
 

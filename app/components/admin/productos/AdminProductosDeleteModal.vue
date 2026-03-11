@@ -21,20 +21,36 @@ const localConfirmText = computed({
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
+    <div
+      v-if="show"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      @click.self="emit('close')"
+    >
       <div class="modal modal-sm">
         <div class="modal-header danger">
           <h3>{{ $t('admin.productos.deleteProduct') }}</h3>
-          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">×</button>
+          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">
+            ×
+          </button>
         </div>
         <div class="modal-body">
-          <p v-html="$t('admin.productos.deleteConfirmMsg', { name: `<strong>${vehicle?.brand} ${vehicle?.model}</strong>` })" />
+          <p
+            v-html="
+              $t('admin.productos.deleteConfirmMsg', {
+                name: `<strong>${vehicle?.brand} ${vehicle?.model}</strong>`,
+              })
+            "
+          />
           <p class="text-danger">
             {{ $t('admin.productos.deleteImagesWarning') }}
           </p>
           <div class="form-group">
-            <label v-html="$t('admin.productos.typeDeleteConfirm', { word: '<strong>borrar</strong>' })" />
-            <input v-model="localConfirmText" type="text" placeholder="borrar" autocomplete="off" />
+            <label
+              v-html="$t('admin.productos.typeDeleteConfirm', { word: '<strong>borrar</strong>' })"
+            />
+            <input v-model="localConfirmText" type="text" placeholder="borrar" autocomplete="off" >
           </div>
         </div>
         <div class="modal-footer">

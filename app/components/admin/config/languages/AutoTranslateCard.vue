@@ -19,7 +19,7 @@ function onChange(event: Event) {
     <h3 class="card-title">{{ t('admin.configLanguages.autoTranslateTitle') }}</h3>
     <p class="card-description">{{ t('admin.configLanguages.autoTranslateDesc') }}</p>
     <label class="toggle-label">
-      <input type="checkbox" class="toggle-input" :checked="enabled" @change="onChange" />
+      <input type="checkbox" class="toggle-input" :checked="enabled" @change="onChange" >
       <span class="toggle-switch" />
       <span class="toggle-text">
         {{ enabled ? t('common.enabled') : t('common.disabled') }}

@@ -39,6 +39,8 @@ const {
   handleSendMessage,
   handleAcceptDataShare,
   handleCloseConversation,
+  handleRetryMessage,
+  handleDiscardMessage,
   // Lifecycle
   init,
 } = usePerfilMensajes()
@@ -53,7 +55,13 @@ onMounted(async () => {
 <template>
   <div class="messages-page">
     <div class="messages-container">
-      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('messages.title') }]" />
+      <UiBreadcrumbNav
+        :items="[
+          { label: $t('nav.home'), to: '/' },
+          { label: $t('profile.dashboard.title'), to: '/perfil' },
+          { label: $t('messages.title') },
+        ]"
+      />
       <PerfilProfileNavPills />
       <PerfilMensajesMensajesPageHeader
         :unread-count="unreadCount"
@@ -104,6 +112,8 @@ onMounted(async () => {
               :current-user-id="currentUserId"
               :is-data-shared="isDataShared"
               :mask-contact-data="maskContactData"
+              @retry="handleRetryMessage"
+              @discard="handleDiscardMessage"
             />
 
             <PerfilMensajesMessageInputArea

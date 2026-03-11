@@ -30,16 +30,16 @@ describe('useVoiceSearch', () => {
   beforeEach(() => {
     mockRecognition = makeMockRecognition()
     // Use regular function (not arrow) so it works as a constructor with `new`
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(window as any).SpeechRecognition = function MockSR() { return mockRecognition }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(window as any).SpeechRecognition = function MockSR() {
+      return mockRecognition
+    }
+
     delete (window as any).webkitSpeechRecognition
   })
 
   afterEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (window as any).SpeechRecognition
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     delete (window as any).webkitSpeechRecognition
     vi.clearAllMocks()
   })
@@ -68,25 +68,23 @@ describe('useVoiceSearch', () => {
   })
 
   it('isSupported=true when webkitSpeechRecognition is present', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (window as any).SpeechRecognition
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(window as any).webkitSpeechRecognition = function MockSR() { return mockRecognition }
+    ;(window as any).webkitSpeechRecognition = function MockSR() {
+      return mockRecognition
+    }
     const { isSupported } = useVoiceSearch()
     expect(isSupported.value).toBe(true)
   })
 
   it('isSupported=false when neither API exists', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (window as any).SpeechRecognition
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     delete (window as any).webkitSpeechRecognition
     const { isSupported } = useVoiceSearch()
     expect(isSupported.value).toBe(false)
   })
 
   it('startListening sets error when not supported', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (window as any).SpeechRecognition
     const { startListening, error } = useVoiceSearch()
     startListening()

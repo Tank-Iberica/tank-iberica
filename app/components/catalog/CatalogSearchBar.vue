@@ -13,7 +13,7 @@
 import type { AutocompleteResult } from '~/composables/useSearchAutocomplete'
 import { useSearchHistory } from '~/composables/useSearchHistory'
 
-const props = withDefaults(
+const { compact } = withDefaults(
   defineProps<{
     /** Compact single-line variant for inline use inside filter bars */
     compact?: boolean
@@ -21,7 +21,7 @@ const props = withDefaults(
   { compact: false },
 )
 
-const { t, locale } = useI18n()
+const { locale } = useI18n()
 const { query, results, isLoading, isOpen, clear, close } = useSearchAutocomplete()
 const { history, addSearch, clearHistory } = useSearchHistory()
 const inputRef = ref<HTMLInputElement | null>(null)
@@ -41,7 +41,9 @@ onMounted(() => document.addEventListener('click', onDocClick))
 onUnmounted(() => document.removeEventListener('click', onDocClick))
 
 // Reset active index when results change
-watch(results, () => { activeIndex.value = -1 })
+watch(results, () => {
+  activeIndex.value = -1
+})
 
 function onFocus() {
   if (!query.value && history.value.length > 0) {
@@ -107,6 +109,7 @@ function onClear() {
     :class="['search-bar', { 'search-bar--compact': compact }]"
     role="combobox"
     :aria-expanded="isOpen"
+    aria-controls="search-results"
     aria-haspopup="listbox"
     aria-owns="search-results"
   >
@@ -139,7 +142,7 @@ function onClear() {
         :aria-activedescendant="activeIndex >= 0 ? `search-result-${activeIndex}` : undefined"
         @keydown="onKeydown"
         @focus="onFocus"
-      />
+      >
 
       <!-- Loading spinner -->
       <span v-if="isLoading" class="search-bar__spinner" aria-hidden="true" />
@@ -219,7 +222,15 @@ function onClear() {
           aria-selected="false"
           @click.stop="applyHistoryItem(term)"
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
             <circle cx="12" cy="12" r="10" />
             <polyline points="12 6 12 12 16 14" />
           </svg>
@@ -295,7 +306,9 @@ function onClear() {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Clear button ── */
@@ -455,7 +468,9 @@ function onClear() {
 /* ── Transition ── */
 .search-drop-enter-active,
 .search-drop-leave-active {
-  transition: opacity 0.12s ease, transform 0.12s ease;
+  transition:
+    opacity 0.12s ease,
+    transform 0.12s ease;
 }
 
 .search-drop-enter-from,

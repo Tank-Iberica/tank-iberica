@@ -33,7 +33,7 @@ function onCheckboxChange(localeValue: string, event: Event) {
           :value="locale.value"
           :checked="activeLocales.includes(locale.value)"
           @change="onCheckboxChange(locale.value, $event)"
-        />
+        >
         <span>{{ locale.label }}</span>
       </label>
     </div>

@@ -74,8 +74,14 @@ function isAlertEligible(alert: SearchAlertRow, now: Date): boolean {
   return false
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function applyAlertFilters(query: any, filters: SearchAlertFilters): any {
+function applyAlertFilters<
+  Q extends {
+    eq: (col: string, val: unknown) => Q
+    gte: (col: string, val: unknown) => Q
+    lte: (col: string, val: unknown) => Q
+    ilike: (col: string, val: string) => Q
+  },
+>(query: Q, filters: SearchAlertFilters): Q {
   if (filters.category_id) query = query.eq('category_id', filters.category_id)
   if (filters.price_min != null) query = query.gte('price', filters.price_min)
   if (filters.price_max != null) query = query.lte('price', filters.price_max)
@@ -146,7 +152,9 @@ export default defineEventHandler(async (event) => {
       const { data: vehicles, error: vehiclesError } = await applyAlertFilters(baseQuery, filters)
 
       if (vehiclesError) {
-        logger.error(`[search-alerts] Error querying vehicles for alert ${alert.id}: ${vehiclesError.message}`)
+        logger.error(
+          `[search-alerts] Error querying vehicles for alert ${alert.id}: ${vehiclesError.message}`,
+        )
         return
       }
 
@@ -164,7 +172,9 @@ export default defineEventHandler(async (event) => {
         .single()
 
       if (userError || !userData) {
-        logger.error(`[search-alerts] User not found for alert ${alert.id}: ${userError?.message ?? 'no data'}`)
+        logger.error(
+          `[search-alerts] User not found for alert ${alert.id}: ${userError?.message ?? 'no data'}`,
+        )
         return
       }
 

@@ -166,7 +166,14 @@
           :title="$t('vehicle.qrCode')"
           @click="toggleQR"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <path d="M3 9V3h6v6H3z" />
             <path d="M15 9V3h6v6h-6z" />
             <path d="M3 21v-6h6v6H3z" />
@@ -180,7 +187,13 @@
           </svg>
         </button>
         <div v-if="showQR" class="qr-popover" role="dialog" :aria-label="$t('vehicle.qrCode')">
-          <img v-if="qrDataUrl" :src="qrDataUrl" :alt="$t('vehicle.qrCode')" width="128" height="128" />
+          <img
+            v-if="qrDataUrl"
+            :src="qrDataUrl"
+            :alt="$t('vehicle.qrCode')"
+            width="128"
+            height="128"
+          >
           <div v-else class="qr-loading" aria-busy="true">⋯</div>
           <p class="qr-label">{{ $t('vehicle.qrCode') }}</p>
         </div>

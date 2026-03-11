@@ -21,8 +21,7 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: 'toggle-status' | 'open-sold-modal', vehicle: DealerVehicle): void
-  (e: 'set-delete-confirm' | 'delete-vehicle', id: string): void
-  (e: 'clone', id: string): void
+  (e: 'set-delete-confirm' | 'delete-vehicle' | 'clone', id: string): void
 }>()
 
 const { t } = useI18n()
@@ -50,7 +49,7 @@ function getStatusClass(status: string): string {
         v-if="getThumbnail(vehicle)"
         :src="getThumbnail(vehicle)!"
         :alt="`${vehicle.brand} ${vehicle.model}`"
-      />
+      >
       <div v-else class="image-placeholder">
         <span>{{ t('dashboard.vehicles.noImage') }}</span>
       </div>

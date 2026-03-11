@@ -39,7 +39,7 @@ function onSearchInput(event: Event): void {
         @input="onSearchInput"
         @focus="emit('focus')"
         @blur="emit('blur')"
-      />
+      >
       <button v-if="selectedVehicle" type="button" class="clear-btn" @click="emit('clear')">
         &#10005;
       </button>
@@ -69,7 +69,7 @@ function onSearchInput(event: Event): void {
         :src="vehicleThumbnail"
         :alt="vehicleTitle"
         class="selected-vehicle-img"
-      />
+      >
       <div class="selected-vehicle-info">
         <span class="sv-title">{{ vehicleTitle }}</span>
         <span class="sv-price">{{ formatPrice(vehiclePrice) }}</span>

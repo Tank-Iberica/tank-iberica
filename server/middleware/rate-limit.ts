@@ -19,7 +19,15 @@
  * Set ENABLE_MEMORY_RATE_LIMIT=true in .env to enable this for local dev.
  */
 import { defineEventHandler, createError, getResponseStatus } from 'h3'
-import { checkRateLimit, getRateLimitKey, getUserOrIpRateLimitKey, getRetryAfterSeconds, isIpBanned, record4xxError } from '../utils/rateLimit'
+import {
+  checkRateLimit,
+  getRateLimitKey,
+  getUserOrIpRateLimitKey,
+  getFingerprintKey,
+  getRetryAfterSeconds,
+  isIpBanned,
+  record4xxError,
+} from '../utils/rateLimit'
 import type { RateLimitConfig } from '../utils/rateLimit'
 
 interface RouteRateLimitRule {
@@ -90,7 +98,10 @@ export default defineEventHandler((event) => {
   })
 
   // Use user ID when available (prevents NAT shared-IP bypass), fallback to IP
+  // For anonymous users, add fingerprint to distinguish individuals behind same NAT
   const baseKey = getUserOrIpRateLimitKey(event)
+  const fingerprint = getFingerprintKey(event)
+  const compositeKey = fingerprint ? `${baseKey}:${fingerprint}` : baseKey
 
   // Check specific rules first
   for (const rule of RULES) {
@@ -99,7 +110,7 @@ export default defineEventHandler((event) => {
     // If rule has method restrictions, check them
     if (rule.methods && !rule.methods.includes(method)) continue
 
-    const key = `${baseKey}:${rule.pattern.source}`
+    const key = `${compositeKey}:${rule.pattern.source}`
     const allowed = checkRateLimit(key, rule.config)
 
     if (!allowed) {
@@ -123,9 +134,7 @@ export default defineEventHandler((event) => {
   const config = isWrite ? DEFAULT_POST_CONFIG : DEFAULT_GET_CONFIG
   // Writes: user-aware key (prevents one user from abusing shared NAT)
   // Reads: IP key (user ID lookup unnecessary for read-heavy public routes)
-  const key = isWrite
-    ? `${baseKey}:api:write`
-    : `${ip}:api:read`
+  const key = isWrite ? `${compositeKey}:api:write` : `${ip}:api:read`
   const allowed = checkRateLimit(key, config)
 
   if (!allowed) {

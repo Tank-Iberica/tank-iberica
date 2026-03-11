@@ -30,18 +30,26 @@ function onRoleSelectChange(event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
+    <div
+      v-if="show"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      @click.self="emit('close')"
+    >
       <div class="modal-content modal-medium">
         <div class="modal-header">
           <h3>Detalles del Usuario</h3>
-          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">×</button>
+          <button class="modal-close" :aria-label="$t('common.close')" @click="emit('close')">
+            ×
+          </button>
         </div>
         <div class="modal-body">
           <div v-if="user" class="detail-grid">
             <!-- Avatar & identity -->
             <div class="detail-section full-width user-identity">
               <div class="avatar large">
-                <img v-if="user.avatar_url" :src="user.avatar_url" :alt="user.email" />
+                <img v-if="user.avatar_url" :src="user.avatar_url" :alt="user.email" >
                 <span v-else class="avatar-initials">{{ getInitials(user) }}</span>
               </div>
               <div>

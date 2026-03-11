@@ -13,6 +13,7 @@
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { defineEventHandler } from 'h3'
 import { z } from 'zod'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { callAI } from '~~/server/services/aiProvider'
 import { safeError } from '~~/server/utils/safeError'
 import { validateBody } from '~~/server/utils/validateBody'
@@ -55,9 +56,8 @@ interface VerifyDocumentResponse {
   status: 'verified' | 'pending'
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function checkVehicleAccess(
-  supabase: any,
+  supabase: SupabaseClient,
   userId: string,
   dealerId: string | null,
 ): Promise<boolean> {

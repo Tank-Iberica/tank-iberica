@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useConversation } from '~/composables/useConversation'
 import { useToast } from '~/composables/useToast'
+import { useAnalyticsTracking } from '~/composables/useAnalyticsTracking'
 
 const props = defineProps<{
   visible: boolean
@@ -19,6 +20,7 @@ const router = useRouter()
 const toast = useToast()
 
 const { startConversation } = useConversation()
+const { trackFunnelContactSeller } = useAnalyticsTracking()
 
 const messageText = ref('')
 const sending = ref(false)
@@ -48,6 +50,7 @@ async function handleSend() {
   error.value = ''
   try {
     await startConversation(props.vehicleId, props.sellerUserId, messageText.value)
+    trackFunnelContactSeller(props.vehicleId, props.sellerUserId)
     toast.success(t('messages.contactSellerSuccess'))
     handleClose()
     await router.push('/perfil/mensajes')
@@ -102,7 +105,9 @@ onUnmounted(() => {
             </svg>
           </button>
 
-          <h2 id="contact-seller-title" class="modal-title">{{ $t('messages.contactSellerTitle') }}</h2>
+          <h2 id="contact-seller-title" class="modal-title">
+            {{ $t('messages.contactSellerTitle') }}
+          </h2>
           <p class="modal-subtitle">{{ vehicleTitle }}</p>
 
           <!-- Not logged in -->

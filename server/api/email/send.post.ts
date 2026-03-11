@@ -7,6 +7,7 @@
  */
 import { defineEventHandler, getHeader } from 'h3'
 import { z } from 'zod'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
 import { serverSupabaseServiceRole, serverSupabaseUser } from '#supabase/server'
@@ -133,7 +134,16 @@ function buildEmailHtml(params: {
   footerText: string
   locale?: string
 }): string {
-  const { bodyHtml, theme, logoUrl, siteName, siteUrl, unsubscribeUrl, footerText, locale = 'es' } = params
+  const {
+    bodyHtml,
+    theme,
+    logoUrl,
+    siteName,
+    siteUrl,
+    unsubscribeUrl,
+    footerText,
+    locale = 'es',
+  } = params
   const primary = theme.primary ?? '#23424A'
   const bgColor = theme.background ?? '#f4f4f5'
   const textColor = theme.text ?? '#1a1a1a'
@@ -188,8 +198,8 @@ function buildEmailHtml(params: {
 }
 
 async function loadEmailTemplate(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+   
+  supabase: SupabaseClient,
   vertical: string,
   templateKey: string,
 ): Promise<{ template: EmailTemplate; config: VerticalConfigRow }> {
@@ -213,8 +223,8 @@ async function loadEmailTemplate(
 }
 
 async function checkEmailPreference(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+   
+  supabase: SupabaseClient,
   userId: string,
   templateKey: string,
   vertical: string,
@@ -292,8 +302,8 @@ async function verifyEmailAuth(
 }
 
 async function fetchUnsubscribeToken(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+   
+  supabase: SupabaseClient,
   userId: string | undefined,
 ): Promise<string> {
   if (!userId) return ''
@@ -306,8 +316,8 @@ async function fetchUnsubscribeToken(
 }
 
 async function sendOrMockEmail(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+   
+  supabase: SupabaseClient,
   logBase: Record<string, unknown>,
   sendParams: {
     to: string
@@ -330,14 +340,12 @@ async function sendOrMockEmail(
     return await sendViaResend(resendApiKey, sendParams)
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown Resend error'
-    await supabase
-      .from('email_logs')
-      .insert({
-        ...logBase,
-        status: 'failed',
-        error: errorMessage,
-        sent_at: new Date().toISOString(),
-      } as never)
+    await supabase.from('email_logs').insert({
+      ...logBase,
+      status: 'failed',
+      error: errorMessage,
+      sent_at: new Date().toISOString(),
+    } as never)
     if (err && typeof err === 'object' && 'statusCode' in err) throw err
     throw safeError(500, `Email send failed: ${errorMessage}`)
   }
@@ -387,7 +395,10 @@ export default defineEventHandler(async (event) => {
   const rawSubject = resolveLocalized(template.subject, locale)
   const rawBody = resolveLocalized(template.body, locale)
   if (!rawSubject || !rawBody) {
-    throw safeError(500, `Template "${body.templateKey}" has empty subject or body for locale "${locale}"`)
+    throw safeError(
+      500,
+      `Template "${body.templateKey}" has empty subject or body for locale "${locale}"`,
+    )
   }
 
   const unsubscribeToken = await fetchUnsubscribeToken(supabase, body.userId)
@@ -435,14 +446,12 @@ export default defineEventHandler(async (event) => {
     { to: body.to, subject, html, unsubscribeUrl, unsubscribeToken },
     body.templateKey,
   )
-  await supabase
-    .from('email_logs')
-    .insert({
-      ...logBase,
-      status: 'sent',
-      resend_id: resendId || null,
-      sent_at: new Date().toISOString(),
-    })
+  await supabase.from('email_logs').insert({
+    ...logBase,
+    status: 'sent',
+    resend_id: resendId || null,
+    sent_at: new Date().toISOString(),
+  })
 
   return { success: true, messageId: resendId }
 })

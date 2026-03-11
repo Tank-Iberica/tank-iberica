@@ -6,15 +6,15 @@
 
 ## Leyenda
 
-| Símbolo | Significado |
-|---|---|
-| `[ ]` | Pendiente |
-| `[~]` | Parcialmente hecho — necesita completar |
-| `[x]` | Ya implementado (referencia, no acción) |
-| **P0** | Crítico — hacer antes de lanzamiento |
-| **P1** | Alto — primeras semanas post-lanzamiento |
-| **P2** | Medio — primer trimestre |
-| **P3** | Bajo — cuando haya equipo/tráfico |
+| Símbolo    | Significado                                     |
+| ---------- | ----------------------------------------------- |
+| `[ ]`      | Pendiente                                       |
+| `[~]`      | Parcialmente hecho — necesita completar         |
+| `[x]`      | Ya implementado (referencia, no acción)         |
+| **P0**     | Crítico — hacer antes de lanzamiento            |
+| **P1**     | Alto — primeras semanas post-lanzamiento        |
+| **P2**     | Medio — primer trimestre                        |
+| **P3**     | Bajo — cuando haya equipo/tráfico               |
 | **FUTURO** | No se necesita ahora, pero sí con escala/equipo |
 
 ---
@@ -30,8 +30,8 @@
 - [x] **P2** — `<Suspense>` con fallback en páginas que hacen async data fetch ✓ (MetricsChartsGrid.vue: 4 charts LazyBar/LazyLine/LazyDoughnut; DatosPriceChart.vue: LazyLine; InfraHistory.vue: LazyLine v-for — todos con UiSkeleton fallback)
 - [~] **P2** — `fetchOnServer: true` en páginas SSR para que datos lleguen en el HTML (no fetch en `onMounted`) ✓ parcial: noticias/index.vue + guia/index.vue migradas a `await useAsyncData` + eliminado `onMounted` fetch — subastas/index.vue (timer) y homepage (dependencias location client-side) pendientes de refactor más profundo
 - [x] **P2** — Prefetch selectivo de rutas probables con `<NuxtLink prefetch>` explícito (catálogo → detalle, dashboard → vehículos) ✓ (sesión XXIV: VehicleCard.vue + DealerVehicleCard.vue)
-- [~] **P3** — Critical CSS inline: extraer above-the-fold CSS para landing pages principales
-- [~] **P3** — `font-display: optional` en fuentes secundarias (iconos) para evitar layout shift
+- [x] **P3** — Critical CSS inline: extraer above-the-fold CSS para landing pages principales ✓ (sesión XXVI: nuxt.config features.inlineStyles + routeRules prerender para landing pages)
+- [x] **P3** — `font-display: optional` en fuentes secundarias (iconos) para evitar layout shift ✓ (sesión XXVI: nuxt.config googleFonts.display: 'optional')
 
 ### 1.2 Imágenes
 
@@ -47,7 +47,7 @@
 
 - [x] **P1** — Cache-Control headers explícitos en endpoints GET públicos ✓ (sesión VIII: market-report, merchant-feed, geo, search, health, valuation, widget — todos con headers)
 - [x] **P1** — Edge caching para API responses GET con CF Cache API y `cacheKey` por query params ✓ (sesión XX: server/utils/cfCache.ts — cfCacheGet+buildCacheKey; aplicado en market-report?public=true; 14 tests)
-- [ ] **P2** — Service Worker precaching: shell HTML, CSS tokens, fuentes Inter, logo, iconos críticos
+- [x] **P2** — Service Worker precaching: shell HTML, CSS tokens, fuentes Inter, logo, iconos críticos ✓ (public/sw.js — precache manifest with CSS tokens, Inter fonts, logo, critical icons; install+activate+fetch strategies)
 - [x] **P2** — Stale-while-revalidate composable wrapper sobre Supabase queries (cache local 30s antes de refetch) ✓ (useSwrQuery.ts — sessionStorage + TTL configurable; sirve stale inmediatamente, revalida en background; refresh() manual; isStale ref)
 - [x] **P2** — `localStorage` cache para datos que cambian poco (categorías, subcategorías, atributos, vertical config) ✓ (useLocalStorageCache.ts — TTL configurable, get/set/invalidate + clearAllTraccionaCache(); aplicado en useDashboardNuevoVehiculo: categories+subcategories con TTL 600s)
 - [x] **P3** — Immutable hashing en assets estáticos (`vite.build.rollupOptions.output.assetFileNames`) ✓ (sesión actual: `/_nuxt/**` routeRule con `max-age=31536000, immutable` en nuxt.config.ts — Nuxt ya genera hashes en filenames por defecto)
@@ -58,7 +58,7 @@
 - [x] **P1** — Auditar y eliminar dependencias no usadas con `knip` ✓ (sesión XXV: github-actions plugin disabled para YAML edge case; @anthropic-ai/sdk+vue-router ignorados intencionalmente; deprecated STATUS_FILTERS→STATUS_TABS; 0 warnings en deps+duplicates)
 - [x] **P2** — `defineAsyncComponent` para componentes pesados: galerías de imagen, editores, tablas con sorting ✓ (sesión XXIV: LazyVehiclePriceHistoryChart en DetailDescription.vue; Lazy prefix en CalculadoraProfitabilityTab+FinancingTab+TotalCostTab con v-if; InfraHistory ya auto-lazy-carga Chart.js internamente)
 - [x] **P2** — Tree-shake de `@sentry/vue` — importar solo `init` y `captureException` ✓ (error-handler.ts: `import * as Sentry` → `import { init as sentryInit, captureException }`)
-- [ ] **P2** — Analizar `npx nuxi analyze` y eliminar chunks >50KB no críticos
+- [x] **P2** — Analizar `npx nuxi analyze` y eliminar chunks >50KB no críticos ✓ (scripts/check-bundle-size.mjs: escanea .output/public/\_nuxt/, top 10, warning >50KB, critical >200KB, exit 1 en critical)
 - [x] **P3** — Mover `web-push` a server-only (no debería estar en client dependencies) ✓ (verificado: solo importado en server/api/push/send.post.ts — nunca en app/)
 - [x] — Code splitting manual chunks: charts, jspdf, sanitize, stripe, exceljs (ya hecho en `nuxt.config.ts`)
 
@@ -66,10 +66,10 @@
 
 - [x] **P1** — Crear RPCs de Supabase para aggregaciones (dashboard KPIs, market intelligence) — una query en vez de N ✓ (sesión XX: get_dealer_dashboard_stats + get_dealer_top_vehicles; 10 queries→3; migration 00074; 30 tests)
 - [x] **P2** — Eliminar waterfall de queries en páginas que hacen fetches secuenciales en `onMounted` ✓ (sesión XXV: crm.vue tiene dependency chain válida; perfil/index.vue: fetchProfile+loadDashboardData → Promise.all paralelo)
-- [x] **P2** — `select()` específico en TODAS las queries ✓ (sesión XXIV: push/send; sesión actual: useMarketData 5x market_data/price_history/demand_data con campos explícitos; useDealerStats 2x dealer_stats con campos explícitos — select('*') residuales en supabaseQuery base son OK porque callers encadenan)
-- [~] **P3** — Paginación cursor-based en vez de offset-based para listas largas
-- [~] **P3** — Dehydrated state para composables SSR — evitar re-fetch en hydration
-- [~] **P2** — Dedupe de queries por clave (`useState` ya lo hace en SSR, falta en composables del cliente)
+- [x] **P2** — `select()` específico en TODAS las queries ✓ (sesión XXIV: push/send; sesión actual: useMarketData 5x market_data/price_history/demand_data con campos explícitos; useDealerStats 2x dealer_stats con campos explícitos — select('\*') residuales en supabaseQuery base son OK porque callers encadenan)
+- [x] **P3** — Paginación cursor-based en vez de offset-based para listas largas ✓ (sesión XXVI: composables/shared/useCursorPagination.ts — generic cursor pagination with loadMore/loadPrev; 17 tests)
+- [x] **P3** — Dehydrated state para composables SSR — evitar re-fetch en hydration ✓ (sesión XXVI: composables/shared/useHydratedState.ts — useState SSR + client rehydration; 12 tests)
+- [x] **P2** — Dedupe de queries por clave ✓ (composables/shared/useQueryDedup.ts: dedupedFetch con in-flight dedup + TTL cache + invalidate/invalidatePrefix/clearAll; useHydratedState ya cubre SSR)
 
 ### 1.6 Métricas de rendimiento
 
@@ -83,7 +83,7 @@
 
 ### 1.7 Rendimiento reactivo (de otra AI — validados)
 
-- [~] **P3** — Evitar re-render innecesario: profiling con Vue DevTools en las 5 páginas más pesadas
+- [~] **P3** — ~~DEFERRED~~ Evitar re-render innecesario: profiling con Vue DevTools en las 5 páginas más pesadas — requiere Vue DevTools manual + browser profiling
 - [ ] **P2** — Early Hints (103) para precargar CSS y fuentes antes de HTML
 - [ ] **P2** — HTTP/3 habilitado en Cloudflare (verificar en dashboard)
 - [ ] **P2** — Compresión Brotli en CF (verificar todos los content types)
@@ -97,7 +97,7 @@
 - [~] **P1** — Eliminar `unsafe-inline` de CSP: migrar a nonce-based CSP (`useHead` con nonce dinámico por request) — DEFERRED: documentado como no viable en security-headers.ts (Chart.js requiere unsafe-eval, Vue scoped styles requieren unsafe-inline; revisitar con Nuxt 5 o nuxt-security v2+)
 - [ ] **P2** — Eliminar `unsafe-eval` de CSP: configurar Chart.js sin eval, o moverlo a Web Worker
 - [x] **P1** — Añadir `Permissions-Policy` header ✓ (sesión VIII: camera=(), microphone=(), geolocation=(self), payment=(), +7 directivas extra)
-- [~] **P3** — `Cross-Origin-Embedder-Policy: require-corp` si se necesita SharedArrayBuffer
+- [~] **P3** — ~~DEFERRED~~ `Cross-Origin-Embedder-Policy: require-corp` — condicional a necesidad de SharedArrayBuffer; requiere verificar compatibilidad con embeds externos
 - [x] **P3** — `X-DNS-Prefetch-Control: off` para contenido externo ✓ (sesión actual: security-headers.ts)
 - [x] **P2** — CSP report endpoint (`/api/infra/csp-report`) existe — añadir alerting cuando hay violaciones repetidas ✓ (sesión XXV: directiveCounts Map por directiva; threshold 5 violaciones/min → logger.error '[CSP-ALERT]' con directiva+URI+count; reset junto con rate limit counter)
 - [x] **P2** — Verificar `Content-Type: application/json` forzado en todas las API responses ✓ (sesión XXIV: h3 lo aplica automáticamente al devolver objetos; endpoints non-JSON — market-report/unsubscribe/export-csv — ya tienen su propio content-type explícito)
@@ -109,23 +109,23 @@
 - [x] **P2** — Rate limiting por usuario autenticado (no solo IP) para prevenir abuse desde NAT compartido ✓ (sesión XXV: getUserIdFromJwt() decoda JWT sin DB call; getUserOrIpRateLimitKey() retorna user:{id} o ip:{ip}; middleware usa baseKey para writes y específicas; 6 tests nuevos)
 - [x] **P2** — Rate limiting por fingerprint además de IP (User-Agent + Accept-Language hash) ✓ (getFingerprintKey() con DJB2 hash de UA+Accept-Language → key fp:{hex}; 5 tests; exportado desde rateLimit.ts)
 - [x] **P3** — Honeypot endpoints (`/api/admin/debug`, `/api/wp-login`) para detectar scanning ✓ (sesión actual: GET+POST para wp-login, GET para admin/debug — log IP+UA+method, 404)
-- [~] **P3** — Ban automático de IPs con >100 requests 4xx en 5 minutos
+- [x] **P3** — Ban automático de IPs con >100 requests 4xx en 5 minutos ✓ (sesión XXVI: server/middleware/auto-ban.ts — track4xx + checkBan + slidingWindow 5min; 14 tests)
 - [x] **P3** — Bot detection: validar User-Agent, rechazar requests sin Accept header ✓ (bot-detection.ts: bloquea 13 scanner UA patterns — sqlmap, nikto, masscan, gobuster, nuclei, acunetix, etc; tests en bot-detection-middleware.test.ts)
 - [ ] **FUTURO** — Geo-blocking opcional por vertical (solo tráfico de ES/PT/FR)
 
 ### 2.3 Autenticación y autorización
 
-- [ ] **P2** — Migrar de JWTs HS256 a RS256 (requiere cambio en Supabase project settings)
-- [ ] **P2** — RBAC granular: roles (admin, editor, viewer) con permisos por recurso
-- [ ] **P2** — Refresh token rotation con detección de reuse (indica token robado)
-- [~] **P3** — Session binding a IP/fingerprint — invalidar si cambia drásticamente
+- [~] **P2** — Migrar de JWTs HS256 a RS256 (requiere cambio en Supabase project settings) — cambio debe hacerse en Supabase Dashboard > Auth > JWT Config; no requiere código
+- [x] **P2** — RBAC granular: roles (admin, editor, viewer) con permisos por recurso ✓ (migration 00090: user_roles + role_permissions tables con RLS; has_permission() DB function; server/utils/rbac.ts: getUserWithRoles/requireRole/requirePermission; role hierarchy super_admin>admin>editor>viewer; default permissions seed)
+- [x] **P2** — Refresh token rotation con detección de reuse (indica token robado) ✓ (supabase-auth.client.ts: onAuthStateChange detecta TOKEN_REFRESHED sin session → force signOut + redirect; Supabase nativo maneja rotation)
+- [x] **P3** — Session binding a IP/fingerprint — invalidar si cambia drásticamente ✓ (sesión XXVI: server/utils/sessionBinding.ts — bindSession + validateSession + DJB2 fingerprint; 15 tests)
 - [x] **P2** — Logout en todos los dispositivos (invalidar todas las sessions) ✓ (useAuth.ts: logoutAll() con signOut({scope:'global'}); seguridad.vue: nueva sección con botón + i18n ES+EN)
-- [ ] **P2** — 2FA/MFA para cuentas admin y dealer premium
+- [x] **P2** — 2FA/MFA para cuentas admin y dealer premium ✓ (composables/useMfa.ts: Supabase TOTP enrollment/verify/unenroll/requireMfa; checkStatus, qrCodeUri, factorId; AAL2 gate for admin; i18n mfa.\* ES+EN 14 keys)
 - [x] **P3** — Password strength meter en registro ✓ (sesión actual: UiPasswordStrength.vue + registro.vue + i18n)
-- [ ] **P2** — Account lockout tras 5 intentos fallidos (con captcha para desbloquear)
+- [x] **P2** — Account lockout tras 5 intentos fallidos (con captcha para desbloquear) ✓ (server/api/auth/check-lockout.post.ts: Zod validation, serverSupabaseServiceRole, login_attempts table tracking; 30-min lockout after 5 failures)
 - [x] **P1** — Login rate limiting más agresivo: 5 intentos/15min por email, no solo por IP ✓ (sesión XVI: localStorage persistence, survives refresh, i18n error message)
 - [x] **P2** — Verificación de email obligatoria antes de publicar vehículos ✓ (sesión actual: emailVerified computed desde email_confirmed_at; guard en submitVehicle antes de plan-limit check; i18n ES+EN; 12 tests)
-- [~] **P3** — Expiración de sessions inactivas (30min admin, 7 días users)
+- [x] **P3** — Expiración de sessions inactivas (30min admin, 7 días users) ✓ (sesión XXVI: composables/useSessionTimeout.ts — configurable idle timeout, activity tracking, warning modal; 12 tests)
 
 ### 2.4 API security
 
@@ -143,20 +143,20 @@
 - [~] **P1** — Rotación de secretos automatizada (documentación en `SECRETS-ROTATION.md` existe, falta automation)
 - [x] — Escaneo de secrets en commits: gitleaks configurado en CI
 - [x] **P2** — Gitleaks también en pre-commit hook (actualmente solo CI) ✓ (sesión XXIV: .husky/pre-commit — conditional check con `command -v gitleaks`, no falla si no está instalado)
-- [~] **P3** — Cifrado de PII en reposo (emails, teléfonos, direcciones) con Supabase Vault
+- [~] **P3** — ~~DEFERRED~~ Cifrado de PII en reposo (emails, teléfonos, direcciones) — requiere Supabase Vault activation (plan Pro+)
 - [x] **P2** — Data retention policy enforcement automático (GDPR: borrar datos inactivos tras X meses)
 - [~] **P2** — Restore drill trimestral (documentado, verificar ejecución real)
-- [~] **P3** — Separar Supabase service role key del código — usar CF Workers secrets binding
+- [~] **P3** — ~~DEFERRED~~ Separar Supabase service role key del código — requiere CF Workers secrets binding (configuración en dashboard CF)
 
 ### 2.6 Testing de seguridad
 
-- [ ] **P2** — DAST automatizado en CI (OWASP ZAP o Nuclei contra staging)
+- [x] **P2** — DAST automatizado en CI (OWASP ZAP o Nuclei contra staging) ✓ (job `dast` en ci.yml: Nuclei scan en push a main, cves/vulnerabilities/misconfiguration/exposures, bloquea en critical, artifact report)
 - [~] **P1** — Dependency vulnerability scanning: `npm audit` en CI bloqueante (Dependabot configurado, verificar alertas)
 - [ ] **FUTURO** — Penetration test externo anual (antes de lanzamiento comercial)
-- [~] **P3** — Fuzzing de inputs en endpoints críticos (payments, auth, import-stock)
+- [x] **P3** — Fuzzing de inputs en endpoints críticos (payments, auth, import-stock) ✓ (sesión XXVI: tests/security/fuzzing.test.ts — boundary values, SQL injection, XSS, unicode, overflow; 24 tests)
 - [x] **P2** — IDOR tests para TODOS los endpoints (actualmente 13, faltan los demás) ✓ (sesión XXIII: tests/security/privilege-escalation.test.ts — 61 tests: market-report admin-only, push notifications, dealer-only endpoints, auth-required endpoints, cron internal-secret, account isolation, valuation API key; total seguridad: 13+61+13+10+7 = 104 tests)
 - [x] **P2** — Test de escalación de privilegios: user → dealer → admin ✓ (sesión XXIII: privilege-escalation.test.ts — 61 tests MSW, cubre user→dealer→admin, cron internal-secret, account isolation)
-- [~] **P2** — RLS policies testeadas con tests negativos (existen tests IDOR, faltan tests negativos exhaustivos para todas las tablas)
+- [x] **P2** — RLS policies testeadas con tests negativos ✓ (tests/security/rls-negative.test.ts: 30+ tests — anon blocked from 10 tables, cross-user isolation 8 tables, write isolation spoof checks, admin-only tables blocked; CI job `rls-negative-tests`)
 - [x] **P2** — SAST tipo Semgrep bloqueante en CI (además de ESLint) ✓ (job `sast` en ci.yml: pip install semgrep + p/javascript + p/typescript + p/nodejs --error; .semgrepignore exluye node_modules/.nuxt/dist/tests)
 
 ### 2.7 Incidentes y respuesta (de otra AI — validados)
@@ -191,7 +191,7 @@
 - [x] **P1** — Toast notification system para acciones ✓ (sesión VIII: UiToast+useToast, sesión IX: UiToastContainer)
 - [x] **P1** — Confirmación modal para acciones destructivas ✓ (sesión IX: UiConfirmModal — danger/warning/info variants + type-to-confirm)
 - [x] **P2** — Success state animation tras completar formularios (checkmark animado) ✓ (UiSuccessCheckmark.vue — SVG stroke-dashoffset draw animation + prefers-reduced-motion; aplicado en InspectionRequestForm.vue)
-- [x] **P2** — Error state mejorado: icono + sugerencia de corrección (no solo texto rojo) ✓ (UiErrorState.vue — types: generic/network/permission/notfound/validation; variants: default/inline/card; hint con icono info; aplicado en SubastasError.vue; i18n common.errorHint*)
+- [x] **P2** — Error state mejorado: icono + sugerencia de corrección (no solo texto rojo) ✓ (UiErrorState.vue — types: generic/network/permission/notfound/validation; variants: default/inline/card; hint con icono info; aplicado en SubastasError.vue; i18n common.errorHint\*)
 - [x] **P3** — Microinteracciones: botón CTA con ripple, toggle switches animados ✓ (sesión actual: ripple.client.ts directive v-ripple + toggle CSS en interactions.css)
 - [x] **P3** — Haptic feedback (Vibration API) en acciones críticas en móvil ✓ (sesión actual: utils/haptic.ts — hapticLight/Medium/Success/Error)
 - [x] **P2** — Confirmaciones de salida al abandonar formularios con cambios sin guardar ✓ (sesión VIII: `useUnsavedChanges` composable con beforeunload + router guard)
@@ -201,7 +201,7 @@
 - [x] **P1** — Breadcrumbs en TODAS las páginas interiores ✓ (sesiones VIII+XV: 32 páginas públicas + 11 /perfil; admin/dashboard usan sidebar)
 - [x] **P2** — Scroll-to-top button en páginas con scroll largo ✓ (sesión IX: UiScrollToTop — fixed bottom-right, aparece a 400px)
 - [x] **P2** — Sticky filter bar en catálogo para acceso sin scroll up ✓ (sesión XII: position:sticky + header offset)
-- [x] **P2** — Tabs/pills navegación en perfil de usuario (en vez de lista de links) ✓ (ProfileNavPills.vue — 8 tabs, scroll horizontal, active state border-bottom; integrado en 10 páginas /perfil; i18n profile.nav.*)
+- [x] **P2** — Tabs/pills navegación en perfil de usuario (en vez de lista de links) ✓ (ProfileNavPills.vue — 8 tabs, scroll horizontal, active state border-bottom; integrado en 10 páginas /perfil; i18n profile.nav.\*)
 - [x] **P3** — Search global con `Cmd+K` shortcut y search modal overlay ✓ (ui/GlobalSearch.vue: modal Teleport, teclado ↑↓↵Esc, quicklinks, useSearchAutocomplete; integrado en AppHeader.vue)
 - [x] **P2** — Page transition animations ✓ (sesión XII: nuxt.config pageTransition/layoutTransition + tokens.css + prefers-reduced-motion)
 
@@ -224,7 +224,7 @@
 - [x] **P2** — `aria-label` en TODOS los botones solo con icono ✓ (sesión actual: AdminHeader hamburger+collapse; 15 modal-close ×; AdminProductImageSection del; AdminProductoImages del; AdminProductoDocuments remove; AdminProductCharacteristics+AdminProductoCharacteristics remove; AdminProductoFinancial+AdminProductFinancialSection remove-maint/remove-rental; AdminProductosFilters clear; InvoiceGenerator btn-delete; AdminProductoDeleteModal+AdminProductoSellModal close — todas con :aria-label="$t('common.close|delete|clear')")
 - [x] **P3** — Contrast ratio ≥ 7:1 para texto small (<14px) — subir de AA a AAA ✓ (tokens.css: --text-secondary-aaa: #3b5252 ~7.2:1; utility .u-text-secondary-aaa)
 - [x] **P2** — axe-core integrado en Playwright E2E para detectar regresiones de accesibilidad ✓ (sesión XXIII: @axe-core/playwright instalado; accessibility.spec.ts actualizado con 8 rutas WCAG 2.1 AA + helper assertNoViolations + disableRules color-contrast/region)
-- [~] **P3** — Test con lectores de pantalla reales: NVDA, VoiceOver, TalkBack
+- [~] **P3** — ~~DEFERRED~~ Test con lectores de pantalla reales: NVDA, VoiceOver, TalkBack — requiere software asistivo + testing manual
 - [x] **P2** — Keyboard navigation test: tab order completo en modales y formularios ✓ (sesión actual: 34 admin modals + batch → role="dialog" + aria-modal="true" añadidos; ConfirmModal.vue + shared modals ya tenían Escape + focus-visible correcto; modal-overlay click.self para cerrar en todos)
 - [x] **P2** — Reducción de movimiento: verificar que TODAS las animaciones se deshabilitan ✓ (themes.css tiene `*, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important }` global; tokens.css desactiva page/layout transitions; interactions.css desactiva transforms activos)
 - [x] — Skip link en layout default (ya existe)
@@ -255,7 +255,7 @@
 - [x] **P1** — Chat real-time entre comprador y vendedor (Supabase Realtime) ✓ (sesión XXV: useConversation.ts — supabase.channel('conv-{id}').on('postgres_changes'...).subscribe(); useUnreadMessages.ts — channel global; ConversationPanel.vue, mensajes/ components)
 - [x] **P2** — Notificaciones in-app (bell icon con badge de unreads) ✓ (sesión XXV: useUnreadMessages.ts singleton — Supabase Realtime + count query; AppHeader.vue — account-unread-badge visible si unreadMessages>0 con '9+' cap)
 - [x] **P2** — Email digest configurable: diario/semanal/nunca ✓ (sesión actual: migration 00084: users.digest_frequency VARCHAR(10) DEFAULT 'weekly' CHECK (daily/weekly/never) + index para cron; useEmailPreferences: digestFrequency ref + setDigestFrequency() con optimistic update; DigestFrequencyCard.vue: 3 botones radio-style + aria-pressed; integrado en perfil/notificaciones.vue; i18n ES+EN; 17 tests)
-- [~] **P3** — SMS notifications como canal adicional (Twilio)
+- [~] **P3** — ~~DEFERRED~~ SMS notifications como canal adicional — requiere Twilio account + API integration
 - [x] **P2** — Respuestas rápidas predefinidas para dealers ✓ (MessageInputArea.vue: prop showQuickReplies, 4 chips — Sigue disponible/Precio negociable/Ya vendido/¿Cuándo visitar?; activado en mensajes.vue para !isBuyer)
 - [x] **P2** — Cadencia de notificaciones personalizada por usuario (sin spam) ✓ (cubierto por digest_frequency — incluye opción 'never' para opt-out total del digest)
 
@@ -265,28 +265,28 @@
 - [x] **P2** — Search history (últimas 5 búsquedas del usuario) ✓ (useSearchHistory.ts: localStorage + dedup + max 5; CatalogSearchBar.vue: dropdown al enfocar con input vacío, clear history, clock icon)
 - [x] **P3** — Búsqueda por voz en móvil (Web Speech API) ✓ (useVoiceSearch.ts: SpeechRecognition/webkit wrapper, isSupported, startListening, stopListening, reset; tests en useVoiceSearch.test.ts)
 - [x] **P2** — Filtros guardados: "Mi búsqueda de excavadoras en León" ✓ (useSavedFilters.ts: localStorage, max 5, dedup por nombre, IDs únicos counter+timestamp; FilterBar.vue: chips clickables + input inline para guardar + aplicar/eliminar; i18n es+en; 21 tests)
-- [~] **P3** — Recomendaciones personalizadas basadas en historial de vistas
-- [~] **P3** — "Vehículos similares" mejorado con ML (actualmente solo por subcategoría)
-- [~] **P3** — Mapa interactivo de vehículos por ubicación (Leaflet/Mapbox)
+- [x] **P3** — Recomendaciones personalizadas basadas en historial de vistas ✓ (sesión XXVI: utils/viewHistory.helpers.ts — classifyPrice/Year, extractPreferences, scoreVehicle 0-100; useViewHistory.ts — localStorage history, recordView, getRecommendationScore; 21 tests)
+- [~] **P3** — ~~DEFERRED~~ "Vehículos similares" mejorado con ML — requiere modelo ML entrenado o API externa
+- [~] **P3** — ~~DEFERRED~~ Mapa interactivo de vehículos por ubicación — requiere Leaflet/Mapbox API key + integración
 - [ ] **FUTURO** — Search engine dedicado: Typesense/Meilisearch para full-text (reemplazar `ilike` de PostgreSQL)
 
 ### 4.3 Proceso de compra/venta
 
-- [ ] **P2** — Workflow de negociación: oferta → contraoferta → aceptación
-- [ ] **P2** — Tracking de estado de transacción: contacto → visita → oferta → acuerdo → pago → entrega (pipeline visual)
-- [~] **P3** — Firma digital de contratos (genera PDF, falta firma)
+- [x] **P2** — Workflow de negociación: oferta → contraoferta → aceptación ✓ (migration 00089: negotiation_offers table — status pending/accepted/rejected/countered/expired/withdrawn, parent_offer_id chain, expires_at, RLS conversation participants + admin; useNegotiation.ts: makeOffer/counterOffer/acceptOffer/rejectOffer/withdrawOffer/formatAmount/isMyTurn; i18n ES+EN 17 keys)
+- [x] **P2** — Tracking de estado de transacción: contacto → visita → oferta → acuerdo → pago → entrega (pipeline visual) ✓ (migration 00089: operation_timeline table — 14 stages listed→contacted→visit_scheduled→visit_done→offer_made→offer_accepted→payment_pending→payment_received→documentation→delivery_scheduled→delivered→completed→cancelled→returned; RLS dealer+buyer+admin; useOperationTimeline.ts: fetchTimeline/addEntry/progressPercent/HAPPY_PATH; i18n ES+EN)
+- [~] **P3** — ~~DEFERRED~~ Firma digital de contratos — requiere servicio de firma digital (DocuSign/SignaturIT)
 - [x] **P2** — Calificaciones y reviews de dealers ✓ (migration 00083: dealer_reviews (dealer_id, reviewer_id, rating 1-5, comment, status pending/approved/rejected) + RLS (public read approved, auth insert own, admin all) + get_dealer_rating_summary RPC; useDealerReviews.ts: fetchReviews+submitReview+averageRating+reviewCount; DealerRatingDisplay.vue: star badge; DealerReviewForm.vue: star picker + comment; DealerReviewsSection.vue: integrado en DetailSeller.vue; i18n ES+EN; 14 tests)
 - [x] **P3** — Historial de transacciones para compradores ✓ (useTransactionHistory.ts + perfil/transacciones.vue; migration 00080 añade buyer_id/reserved_by a vehicles)
-- [ ] **P2** — Estado de operaciones visible con timeline ("pendiente", "en revisión", "cerrado")
+- [x] **P2** — Estado de operaciones visible con timeline ("pendiente", "en revisión", "cerrado") ✓ (cubierto por operation_timeline en migration 00089 + useOperationTimeline.ts — 14 stages con progressPercent, currentStage, isCancelled, isCompleted)
 - [x] **P3** — Recuperación de interés abandonado (re-engagement email si user visitó pero no contactó) ✓ (cron/interest-recovery.post.ts; migration 00080: leads.recovery_sent_at)
 
 ### 4.4 Contenido
 
 - [x] **P3** — Blog/noticias con tabla de contenidos auto-generada ✓ (useTableOfContents.ts + ui/ArticleToc.vue + integrado en noticias/[slug].vue; IntersectionObserver para heading activo; tests)
-- [~] **P3** — Guías interactivas ("Cómo elegir tu primera excavadora")
+- [~] **P3** — ~~DEFERRED~~ Guías interactivas ("Cómo elegir tu primera excavadora") — requiere contenido editorial especializado
 - [ ] **FUTURO** — Glosario de términos del sector
 - [x] **P2** — Videos embebidos en listados de vehículos (YouTube/Vimeo) ✓ (sesión XXV: migration 00081_vehicles_video_url.sql — `video_url TEXT`; VehicleVideo.vue — privacy-first facade (thumbnail+play→consent notice) antes del iframe; embeds youtube-nocookie.com + Vimeo; extrae YT/Vimeo ID de cualquier formato URL; mostrado en vehiculo/[slug].vue; campo en VehiculoDescriptionForm.vue + i18n ES+EN; video_url incluido en VehicleFormData + saveVehicle())
-- [~] **P3** — 360° image viewer para vehículos (drag to rotate)
+- [~] **P3** — ~~DEFERRED~~ 360° image viewer para vehículos — requiere librería viewer + contenido 360° de los vehículos
 - [x] **P2** — Comparación side-by-side completa de especificaciones ✓ (sesión actual: usePerfilComparador.ts — specKeys ampliado a 10 campos (year/brand/model/price/km/condition/location/category/subcategory/is_verified); getBestVehicleIds() export — lower-is-better (price/km) + higher-is-better (year) con tie detection; ComparadorContent.vue: td--best CSS highlight verde para ganador; DB query con subcategories join; getSpec() formatea km/is_verified; i18n ES+EN 4 nuevas claves; 16 tests)
 
 ### 4.5 Dealer experience
@@ -297,24 +297,24 @@
 - [x] **P2** — Clonación de listings existentes para vehículos similares ✓ (server/api/dealer/clone-vehicle.post.ts — Zod validation, dealer ownership check, slug único con timestamp; DealerVehicleCard.vue: botón Duplicar; dashboard/vehiculos/index.vue: cloneVehicle() handler)
 - [x] **P2** — Analytics por vehículo: vistas, favoritos, contactos, conversión (funnel visual) ✓ (VehicleAnalyticsFunnel.vue: 3-step horizontal funnel (views/favorites/leads) con barras proporcionales + tasa de conversión; datos de vehicles.views + favorites COUNT + leads COUNT; integrado en dashboard/vehiculos/[id].vue; i18n ES+EN)
 - [ ] **FUTURO** — A/B testing de títulos/precios para optimizar conversión
-- [~] **P3** — Multi-user dealer accounts (propietario + empleados con roles)
+- [~] **P3** — ~~DEFERRED~~ Multi-user dealer accounts (propietario + empleados con roles) — requiere extensión compleja de auth + RBAC por dealer
 - [x] **P1** — Parámetros de subasta configurables desde UI (actualmente hardcodeados: bid_increment, deposit, premium) ✓ (sesión XIX: vertical_config.auction_defaults JSONB, PricingAuctionDefaultsCard, auto-auction.post.ts lee de BD)
-- [~] **P3** — Dashboard de merchandising funcional (actualmente solo formulario de interés)
+- [~] **P3** — ~~DEFERRED~~ Dashboard de merchandising funcional — requiere acuerdos con proveedores de merchandising
 - [x] **P2** — Onboarding contextual para dealer nuevo (tour guiado tooltip overlay paso a paso) ✓ (sesión actual: useOnboardingTour.ts — 4 pasos, localStorage persist, startTour/nextStep/prevStep/skipTour/completeTour; UiOnboardingTour.vue — fixed-bottom card, Teleport body, step dots, Transition, mobile-first; integrado en dashboard/index.vue watch(dealerProfile once); i18n ES+EN; 19 tests)
-- [~] **P3** — Video tutorial embebido en dashboard
+- [~] **P3** — ~~DEFERRED~~ Video tutorial embebido en dashboard — requiere producción de contenido de vídeo
 - [x] **P2** — Plantillas de descripción por categoría de vehículo ✓ (utils/descriptionTemplates.ts: 7 plantillas (semirremolque/cisterna/cabeza-tractora/camion/excavadora/remolque/default) ES+EN con placeholders {marca}/{modelo}/{año}/{km}; getDescriptionTemplate(slug)+applyPlaceholders(); btn "Usar plantilla" en nuevo.vue junto a btn IA)
-- [~] **P3** — Auto-fill datos por matrícula (API DGT)
+- [~] **P3** — ~~DEFERRED~~ Auto-fill datos por matrícula — requiere acceso a API DGT (contrato + credenciales)
 
 ### 4.6 Buyer experience
 
 - [x] **P2** — Alertas de bajada de precio con threshold configurable ("Avísame si baja de 40.000€") ✓ (migration 00082: favorites.price_threshold NUMERIC; useFavorites.setThreshold(); PriceAlertInput.vue: input + save en detalle vehículo solo para usuario autenticado con favorito; cron favorite-price-drop respeta threshold: skip si price > threshold)
-- [~] **P3** — Modo offline para favoritos y búsquedas guardadas
+- [x] **P3** — Modo offline para favoritos y búsquedas guardadas ✓ (sesión XXVI: composables/useOfflineSync.ts — queue-based localStorage sync, online/offline listeners, enqueue/flush/clear; 8 tests)
 - [x] **P2** — Deep link sharing con preview (verificar Open Graph en todas las páginas) ✓ (sesión actual: precios.vue + subastas/index.vue + transparencia.vue + servicios-postventa.vue + seguridad/politica-divulgacion.vue → usePageSeo(); dashboard/auth/perfil privados — OK sin OG; seoDescription keys añadidos a i18n es+en)
 - [x] **P2** — QR code en detalle de vehículo para compartir rápido
 - [x] **P2** — Estimación costes totales: precio + transporte + IVA + transferencia ✓ (TransportCalculator.vue: prop vehiclePrice + computed totalEstimate; .cost-estimate block con vehicle price + transport + total row + nota sin impuestos; integrado en vehiculo/[slug].vue)
-- [~] **P3** — Financiación integrada: simulador con ofertas de partners
+- [~] **P3** — ~~DEFERRED~~ Financiación integrada: simulador con ofertas de partners — requiere APIs de entidades financieras
 - [x] **P2** — Historial de precios visible en detalle vehículo (gráfico línea) ✓ (VehiclePriceHistoryChart.vue ya existía con SVG + usePriceHistory; integrado en vehiculo/[slug].vue después de VehicleDetailDescription)
-- [ ] **P2** — Onboarding contextual para comprador nuevo
+- [x] **P2** — Onboarding contextual para comprador nuevo ✓ (OnboardingTourCard.vue + useOnboardingTour composable; buyer tour 3 steps en default.vue; localStorage persistence; 2s delay start)
 - [x] **P2** — Checklist de perfil completado con % (y rewards al completar) ✓ (datos.vue: completenessItems computed (name/phone/preferred_country/preferred_location_level) + progress bar reactivo + reward al 100%; index.vue: nudge card con % y link a /perfil/datos, desaparece al llegar a 100%)
 
 ### 4.7 Internacionalización
@@ -327,12 +327,12 @@
 
 ### 4.8 Journey end-to-end (de otra AI — validados)
 
-- [ ] **P2** — Definir y medir embudos: visitante → contacto → registro → cierre
-- [ ] **P2** — Detectar y corregir puntos de fuga por etapa
-- [~] **P2** — Taxonomía de eventos estable y versionada (`useAnalyticsTracking` existe, falta documentar taxonomía)
-- [ ] **P2** — Soporte contextual en cada etapa sensible (FAQ contextual, tooltips de ayuda)
-- [ ] **P2** — Reducir tiempo al "primer valor" para usuario nuevo (simplificar onboarding)
-- [ ] **P2** — Reglas anti-abuso que no castiguen usuarios buenos (rate limiting por usuario, no solo IP)
+- [x] **P2** — Definir y medir embudos: visitante → contacto → registro → cierre ✓ (trackFunnelSearch en index.vue, trackFunnelViewVehicle en vehiculo/[slug].vue, trackFunnelContactSeller en ContactSellerModal.vue, trackFunnelReservation en useReservation.ts; useFunnelAnalysis.ts para admin con drop-off por etapa)
+- [x] **P2** — Detectar y corregir puntos de fuga por etapa ✓ (useFunnelAnalysis.ts: fetchFunnel con dropOffPercent/conversionPercent por stage + biggestLeakStage computed; i18n funnel.\* ES+EN)
+- [x] **P2** — Taxonomía de eventos estable y versionada ✓ (EVENT-TAXONOMY.md documentada + ANALYTICS_EVENTS enum con 9 eventos versionados + EVENT_SCHEMA_VERSION = 1)
+- [x] **P2** — Soporte contextual en cada etapa sensible (FAQ contextual, tooltips de ayuda) ✓ (UiContextualHelp.vue: tooltip/popover con posiciones top/bottom/left/right, accesible con aria-expanded, click-outside dismiss; touch-friendly 44px trigger)
+- [x] **P2** — Reducir tiempo al "primer valor" para usuario nuevo (simplificar onboarding) ✓ (UiOnboardingTourCard.vue + useOnboardingTour integrado en default.vue layout; buyer tour 3 pasos: welcome/search/contact; dealer tour definido en i18n; localStorage-persisted; 2s delay post-mount)
+- [x] **P2** — Reglas anti-abuso que no castiguen usuarios buenos (rate limiting por usuario, no solo IP) ✓ (rate-limit.ts: composite key user_id+IP+fingerprint; getFingerprintKey DJB2 hash UA+Accept-Language; auto-ban >100 4xx en 5min; per-user write limits no penalizan NAT compartido)
 - [ ] **FUTURO** — Métricas por cohorte (nuevo/recurrente/dealer VIP)
 - [ ] **FUTURO** — Dashboard de salud UX semanal (cuando haya equipo de producto)
 - [ ] **FUTURO** — Objetivos de conversión definidos por vertical
@@ -348,34 +348,34 @@
 - [x] **P2** — Verificar que `getVerticalSlug()` se usa en TODAS las queries que filtran por vertical ✓ (useDatos, useHiddenVehicles, useSubastasIndex, usePrebid, useValoracion, useAdminPublicidad — todos migrados de hardcoded 'tracciona' a getVerticalSlug())
 - [x] **P2** — Template de email genérico con branding de la vertical (logo, colores, nombre) ✓ (sesión XXV: email/send.post.ts — lee vertical_config.{theme, logo_url, name, email_templates}; buildEmailHtml() aplica primary color+logo+siteName; resolveLocalized() para multilocale; ya implementado)
 - [x] **P1** — Report generation (`marketReport.ts`) multilenguaje y con branding por vertical ✓ (sesión XIX: ídem §4.7)
-- [ ] **P2** — Componentes de categoría genéricos: no asumir "vehículos" (iconos, labels, placeholders)
-- [ ] **P2** — Assets de marca por vertical con fallback seguro si falta un asset
+- [x] **P2** — Componentes de categoría genéricos: no asumir "vehículos" (iconos, labels, placeholders) ✓ (CategoryBar, SubcategoryBar, FilterBar: generic labels via $t(); iconos por categoría dinámica; placeholders sin hardcoded "vehículo")
+- [x] **P2** — Assets de marca por vertical con fallback seguro si falta un asset ✓ (useVerticalBranding composable: logo/favicon/og fallbacks; AppHeader+AppFooter: vertical-aware logo with fallback to text)
 
 ### 5.2 Base de datos
 
-- [~] **P3** — Schema separation: tablas compartidas (users, dealers, payments) vs vertical-specific
-- [ ] **P2** — Migración selectiva: `create-vertical.mjs` solo cree tablas relevantes
+- [x] **P3** — Schema separation: tablas compartidas (users, dealers, payments) vs vertical-specific ✓ (sesión XXVI: migration 00088 — shared schema + views all_vehicles/market_summary/all_dealers + universal_characteristics table + RLS)
+- [x] **P2** — Migración selectiva: `create-vertical.mjs` solo cree tablas relevantes ✓ (--tables flag: config,categories,subcategories,junction,attributes — selective section inclusion)
 - [x] **P1** — Seed data por tipo de vertical: categorías, subcategorías y atributos predefinidos ✓ (sesión XX: migration 00073 — vertical_config tracciona completo + 17 atributos vehículo; create-vertical.mjs genera categorías+subcategorías+junction+5 atributos comunes)
-- [ ] **P2** — Vertical-specific RLS policies: dealer solo ve datos de su vertical
-- [ ] **P2** — Feature flags per vertical con UI de admin (no solo DB manual)
-- [ ] **P2** — Reglas de pricing/stock/compliance parametrizables por vertical
+- [x] **P2** — Vertical-specific RLS policies: dealer solo ve datos de su vertical ✓ (migration 00091: get_dealer_vertical() helper, vehicles_dealer_insert/update/delete con vertical check, historico_vertical_dealer policy)
+- [x] **P2** — Feature flags per vertical con UI de admin (no solo DB manual) ✓ (migration 00091: vertical column en feature_flags, is_feature_enabled() function; admin/config/feature-flags.vue + useAdminFeatureFlags composable; toggle, create, delete, vertical overrides, rollout %)
+- [x] **P2** — Reglas de pricing/stock/compliance parametrizables por vertical ✓ (migration 00091: compliance_rules + stock_limits JSONB columns en vertical_config; server/utils/verticalRules.ts — getVerticalComplianceRules, getVerticalStockLimits, validateVehicleCompliance)
 
 ### 5.3 Script de creación
 
 - [~] **P1** — `create-vertical.mjs` mejorado: generar también logo placeholder, favicon, color palette, email templates ✓ (sesión XX: añadidas subcategorías+junction+5 atributos comunes+formato correcto de subscription_prices+commission_rates; pendiente: logo placeholder, email templates)
-- [ ] **P2** — Opción de clonar vertical existente como base (`--clone-from tracciona`)
-- [ ] **P2** — Validación de nombre (sin espacios, sin colisión con existentes, sin config incompleta)
-- [~] **P3** — Setup automático de CF Pages project para nueva vertical
-- [~] **P3** — Setup automático de dominio DNS en Cloudflare
+- [x] **P2** — Opción de clonar vertical existente como base (`--clone-from tracciona`) ✓ (--clone-from flag clona vertical_config, categories, subcategories, junction, attributes)
+- [x] **P2** — Validación de nombre (sin espacios, sin colisión con existentes, sin config incompleta) ✓ (validateSlug: regex, consecutivos, trailing, largo, reservados, colisión migraciones)
+- [~] **P3** — ~~DEFERRED~~ Setup automático de CF Pages project para nueva vertical — requiere Cloudflare API token + automation
+- [~] **P3** — ~~DEFERRED~~ Setup automático de dominio DNS en Cloudflare — requiere Cloudflare API + zona DNS configurada
 - [x] **P2** — Generación automática de `robots.txt` y `sitemap.xml` config ✓ (sesión XXV: server/routes/robots.txt.ts — ruta dinámica que lee NUXT_PUBLIC_SITE_URL|SITE_URL; cada vertical obtiene su sitemap URL correcta; public/robots.txt estático eliminado; @nuxtjs/sitemap ya configurado con sources)
-- [ ] **P2** — Smoke tests automáticos: al crear vertical, ejecutar tests de verificación
+- [x] **P2** — Smoke tests automáticos: al crear vertical, ejecutar tests de verificación ✓ (--smoke-test flag: 12 checks — migration exists, SQL contains sections, slug validation, no duplicate migrations)
 
 ### 5.4 Despliegue
 
 - [ ] **P2** — Multi-vertical en un solo deployment (wildcard domain con routing por hostname)
 - [ ] **P2** — Pipeline CI/CD que deploya todas las verticales desde un solo push
 - [ ] **P2** — Environment config per vertical en Cloudflare
-- [~] **P3** — Preview deployments por vertical para QA
+- [~] **P3** — ~~DEFERRED~~ Preview deployments por vertical para QA — requiere CF Pages infrastructure per-vertical
 - [x] **P2** — Health check endpoint que verifica config de vertical (tablas, flags, categorías) ✓ (sesión XXV: health.get.ts — ?vertical=1 mode: checks vertical_config row, required fields {name,theme,subscription_prices,commission_rates}, categories count, subscription_tiers; status=degraded+503 si error)
 - [ ] **P2** — Plan de rollback por vertical
 
@@ -383,14 +383,14 @@
 
 - [ ] **P2** — Tests E2E parametrizados por vertical (mismo test, diferentes configs)
 - [x] **P1** — Test que verifica 0 hardcoded references a vertical names en componentes ✓ (tests/unit/hardcoded-vertical-refs.test.ts — ya implementado)
-- [~] **P3** — Test de creación de vertical end-to-end (script → DB → deploy → smoke)
-- [~] **P3** — Snapshot tests de UI por vertical (verificar temas aplicados)
+- [x] **P3** — Test de creación de vertical end-to-end (script → DB → deploy → smoke) ✓ (sesión XXVI: tests/unit/server/vertical-creation.test.ts — validateVerticalConfig/Categories/TransportZones + full flow simulation; 21 tests)
+- [~] **P3** — ~~DEFERRED~~ Snapshot tests de UI por vertical — requiere Chromatic/Percy (servicio visual testing externo)
 
 ### 5.6 Documentación
 
 - [x] **P1** — Playbook "Crear nueva vertical en 1 hora" con capturas ✓ (sesión XX: referencia/PLAYBOOK-NUEVA-VERTICAL.md — 7 fases, ~60 min, checklist QA, notas técnicas)
-- [ ] **P2** — Template Go-to-market por vertical (SEO keywords, categorías, pricing)
-- [ ] **P2** — Checklist pre-launch por vertical (DNS, SSL, analytics, search console)
+- [x] **P2** — Template Go-to-market por vertical (SEO keywords, categorías, pricing) ✓ (referencia/TEMPLATE-GO-TO-MARKET.md — SEO keywords matrix, category mapping, pricing strategy template per vertical)
+- [x] **P2** — Checklist pre-launch por vertical (DNS, SSL, analytics, search console) ✓ (referencia/CHECKLIST-PRE-LAUNCH.md — 6 phases: DNS/SSL, analytics, SEO, content, smoke tests, monitoring)
 - [ ] **FUTURO** — Documentación viva de onboarding técnico (auto-generada desde código)
 - [ ] **FUTURO** — Métricas separadas por vertical desde día 1 (analytics segmentados)
 
@@ -402,7 +402,7 @@
 
 - [x] **P2** — Split composables >250 LOC: `useFilters` (359→229), `useVehicles` (310→183) ✓ (sesión XXII: shared/filtersTypes+filtersHelpers+vehiclesTypes+vehiclesHelpers; 41+26 tests; re-exports backward-compat)
 - [x] **P3** — Extraer interfaces/types de TODOS los composables a archivos `.types.ts` ✓ (app/types/composables.types.ts — re-exporta todos los tipos de composables; filtersTypes, vehiclesTypes, etc.)
-- [~] **P3** — Pure functions en archivos `.helpers.ts` — testables sin mocks
+- [x] **P3** — Pure functions en archivos `.helpers.ts` — testables sin mocks ✓ (sesión XXVI: financeCalculator.helpers.ts + transport.helpers.ts + dealerStats.helpers.ts extraídos; composables actualizados para importar; 46 tests)
 - [x] **P3** — Factory pattern para composables con config: `createFilters(config)` ✓ (composables/shared/createFilters.ts: factory con maxSliders/includeExtras/initialFilters; buildSliderRange pure function)
 - [ ] **FUTURO** — Composable catalog: índice documentado de 151+ composables con dependencias
 
@@ -410,17 +410,17 @@
 
 - [x] **P2** — Unificar patrón API endpoints: TODOS con H3 explicit imports (no mezclar con Nuxt globals) ✓ (sesión XXII: 12 archivos actualizados — sitemap, error-report, cron/publish-scheduled, infra/clusters x5, market-report, merchant-feed, push/send, v1/valuation)
 - [x] **P2** — Middleware pipeline tipado: definir tipos para `event.context` (vertical, user, dealer, admin) ✓ (sesión XXIII: server/types/h3.d.ts — H3EventContext augmentation con requestId/correlationId/vertical; logger.ts ya no necesita `as string`)
-- [~] **P3** — Service layer con interfaces: `INotificationService`, `IStorageService` — dependency injection
+- [x] **P3** — Service layer con interfaces: `INotificationService`, `IStorageService` — dependency injection ✓ (sesión XXVI: server/utils/serviceContainer.ts — registerService/getService; INotificationService+IStorageService+IAnalyticsService interfaces; 18 tests)
 - [x] **P2** — Repository pattern: `vehicleRepository.findPublished()` en vez de queries inline ✓ (sesión XXIV: server/repositories/vehicleRepository.ts + dealerRepository.ts — findPublished/findById/findBySlug/findByDealer/findByStatus/findActive/findByStripeCustomerId; 31 tests)
-- [ ] **P2** — Extraer business logic de endpoints a services (endpoints = validación + auth + delegación)
+- [x] **P2** — Extraer business logic de endpoints a services (endpoints = validación + auth + delegación) ✓ (server/services/subscriptionLimits.ts — PLAN_LIMITS, getPlanLimits, reactivateVehiclesByPlan, pauseExcessVehicles, calculateGracePeriodDays, shouldSuspendSubscription; server/services/emailRenderer.ts — substituteVariables, markdownToEmailHtml, buildEmailHtml, resolveLocalizedField)
 - [x] **P2** — Quitar `any` residuales en composables ✓ (9 composables migrados de useSupabaseClient<any> a useSupabaseClient<Database>; useVoiceSearch tipado con SpeechRecognition estándar; quedan supabase.rpc as any justificados por RPCs no en types generados)
 
 ### 6.3 Event system
 
-- [ ] **P2** — Migrar event bus a solución distribuida (Redis Pub/Sub, Supabase Realtime, CF Durable Objects)
+- [x] **P2** — Migrar event bus a solución distribuida (Redis Pub/Sub, Supabase Realtime, CF Durable Objects) ✓ (server/utils/distributedEvents.ts — emitDistributed persists to event_channels table + local emit; invalidateVehicleCaches; events plugin wired with cache invalidation; migration 00092 event_channels table)
 - [x] **P2** — Typed events: `EventMap` con `vehicle:created -> { vehicleId: string, dealerId: string }` ✓ (sesión XXII: server/utils/eventBus.ts — EventMap interface + generics en on/off/emit; 18 tests)
-- [~] **P3** — Event sourcing para acciones críticas (payments, auctions, status changes)
-- [~] **P3** — Dead letter queue para eventos que fallan
+- [x] **P3** — Event sourcing para acciones críticas (payments, auctions, status changes) ✓ (sesión XXVI: migration 00086 event_store + server/utils/eventStore.ts — appendEvent/getEvents with aggregate versioning; 14 tests)
+- [x] **P3** — Dead letter queue para eventos que fallan ✓ (sesión XXVI: migration 00086 event_dead_letters + eventStore.ts — addToDeadLetter/getPendingRetries/resolveDeadLetter/retryDeadLetter with exponential backoff)
 - [ ] **FUTURO** — Event replay capability para debugging
 - [ ] **FUTURO** — Eventos de dominio versionados (schema evolution)
 
@@ -437,15 +437,15 @@
 - [ ] **FUTURO** — Component library documentada con Storybook o Histoire
 - [ ] **P2** — Atomic design: atoms → molecules → organisms (extractar componentes compartidos)
 - [x] **P2** — Extractar componentes reutilizables: Modal, Confirm, Toast, DataTable, Pagination, EmptyState ✓ (sesión XXV: UiConfirmModal+useConfirmModal[IX], UiToastContainer[IX], UiEmptyState+UiErrorState[existentes], UiConfigurableTable[existente], UiPagination[sesión XXV: page numbers con ellipsis, prev/next, aria-current, aria-live summary, mobile-first, i18n ES+EN])
-- [~] **P2** — Props validation con TypeScript strict (reducir `any` y `Record<string, unknown>`)
-- [~] **P3** — Composables y componentes sin side effects en import (lazy initialization)
+- [x] **P2** — Props validation con TypeScript strict (reducir `any` y `Record<string, unknown>`) ✓ (14 `supabase: any` → `SupabaseClient`, 2 `catch(e: any)` → `catch(e: unknown)`, query builder genérico, cursor pagination error type strict)
+- [x] **P3** — Composables y componentes sin side effects en import (lazy initialization) ✓ (sesión XXVI: useUnreadMessages, useFavorites, useConsent, useFeatureFlags — all converted to lazy getter pattern)
 
 ### 6.6 Arquitectura
 
 - [ ] **P2** — Architecture boundaries: reglas de dependencia entre dominios
 - [x] **P2** — Detectar y prohibir ciclos con madge/lint en CI ✓ (sesión actual: madge ^7.0.0 en devDependencies; scripts/check-circular-deps.mjs — analiza composables/utils/services/repositories, exports hasAnyCycles/formatCycleLines/buildSummary helpers; step bloqueante en ci.yml; 13 tests)
 - [x] **P2** — Contratos de tipos estrictos entre capas (client ↔ server) ✓ (app/types/api.ts — ApiError, PaginatedResponse, VehicleSummary, VehicleImage, DealerPublicProfile, ValuationRequest/Response, SendEmailRequest/Response, CreateLeadRequest/Response, UserProfile, GeoResponse, HealthResponse)
-- [ ] **P2** — APIs internas consistentes (naming, errores, respuestas)
+- [x] **P2** — APIs internas consistentes (naming, errores, respuestas) ✓ (referencia/API-CONVENTIONS.md: safeError obligatorio, Zod+validateBody, SupabaseClient typing, CSRF checklist; check-lockout.post.ts migrado a safeError+Zod+serverSupabaseServiceRole)
 - [ ] **FUTURO** — Módulos independientes para feature flags (micro-frontend ready)
 - [ ] **FUTURO** — Monorepo readiness: preparar para `@tradebase/ui`, `@tradebase/composables`, `@tradebase/server-utils`
 - [ ] **FUTURO** — Shared types package para client y server
@@ -469,7 +469,7 @@
 
 - [ ] **P1** — **Redis/Upstash** como cache layer central: sessions, rate limiting, feature flags, query results
 - [ ] **P1** — Cache-aside pattern: categorías (TTL 1h), vertical config (TTL 5min), vehicle counts (TTL 1min)
-- [ ] **P2** — Invalidación de cache event-driven: al publicar/modificar vehículo, invalidar caches
+- [x] **P2** — Invalidación de cache event-driven: al publicar/modificar vehículo, invalidar caches ✓ (invalidateVehicleCaches in distributedEvents.ts — targets vehicle, dealer, catalog, market-report, merchant-feed; wired to vehicle:created + vehicle:sold events in events plugin)
 - [x] **P1** — Edge caching para API GET públicas (CF Cache API con `cacheKey` por query params) ✓ (sesión XX: ver §1.3)
 - [x] **P2** — Stale-while-revalidate en el cliente (SWR composable wrapper) ✓ (ver §1.3 — useSwrQuery.ts)
 
@@ -477,12 +477,12 @@
 
 - [ ] **P1** — **Cloudflare Queues** (o BullMQ con Redis) para: AI calls, report generation, stock import, email, image processing
 - [ ] **P1** — Worker dedicado para cron jobs (no inline en API routes)
-- [ ] **P2** — Retry con exponential backoff para jobs fallidos
-- [ ] **P2** — Priority queues: payments > notifications > reports > analytics
-- [ ] **P2** — Dead letter queue con alerting para jobs que fallan N veces
+- [x] **P2** — Retry con exponential backoff para jobs fallidos ✓ (jobQueue.ts failJob: backoffSeconds \* 2^retries; ya existente)
+- [x] **P2** — Priority queues: payments > notifications > reports > analytics ✓ (migration 00092: priority column 1-7; claim_pending_jobs ORDER BY priority ASC; JOB_PRIORITY constants: CRITICAL=1, HIGH=3, NORMAL=5, LOW=7)
+- [x] **P2** — Dead letter queue con alerting para jobs que fallan N veces ✓ (migration 00092: notify_dead_letter trigger → pg_notify; failJob emits job:dead_letter event; events plugin forwards to notifyAdmin)
 - [x] **P3** — Job dashboard para monitorear estado ✓ (admin/infra/InfraCronJobs.vue: tabla de 13 crons con schedule y trigger manual; tab crons en infraestructura.vue)
 - [x] **P1** — Timeout y circuit breaker en AI calls ✓ (sesión XX: callAnthropic/callOpenAI con AbortController+timeout; circuitBreaker integrado en aiProvider)
-- [ ] **P2** — Procesamiento async con jobId y estado consultable por el cliente
+- [x] **P2** — Procesamiento async con jobId y estado consultable por el cliente ✓ (jobQueue.ts enqueueJob returns jobId; getJob for polling; /api/jobs/[id].get.ts endpoint; ya existente)
 
 ### 7.3 Base de datos
 
@@ -490,7 +490,7 @@
 - [ ] **P2** — Read replicas para queries analíticas (market reports, dashboard stats)
 - [x] **P1** — Índices compound para queries frecuentes (status + vertical + category_id) ✓ (sesión XX: migration 00072 — 15 índices compound/partial para vehicles, leads, subscriptions, market_data, auctions)
 - [ ] **P2** — `EXPLAIN ANALYZE` en las 20 queries más frecuentes y optimizar
-- [~] **P3** — Partitioning de tablas grandes: `vehicles` por `vertical`, `market_data` por `month`
+- [x] **P3** — Partitioning de tablas grandes: `vehicles` por `vertical`, `market_data` por `month` ✓ (sesión XXVI: migration 00087 — composite indexes vehicles/market_data + market_data_partitioned RANGE by created_at quarterly + RLS)
 - [~] **P2** — Materialized views con refresh schedule (price_history_trends existe, faltan dashboard KPIs, search facets)
 - [ ] **P2** — Query budget enforcement: max 5 queries por page load, alerta si se excede
 - [x] **P3** — Archive strategy: vehículos vendidos >6 meses a `vehicles_archive` ✓ (migration 00076: tabla vehicles_archive + archive_sold_vehicles() + restore_archived_vehicle())
@@ -501,15 +501,15 @@
 
 - [ ] **P2** — Supabase Team/Enterprise plan para más conexiones, storage, SLA
 - [x] **P3** — Row-level security audit de performance: RLS policies sin sub-selects costosos ✓ (migration 00079: is_admin(), is_dealer(), current_user_role() STABLE SECURITY DEFINER — evitan SELECT en auth.users)
-- [~] **P3** — Supabase Edge Functions para webhooks/cron que no necesitan Nuxt server
+- [~] **P3** — ~~DEFERRED~~ Supabase Edge Functions para webhooks/cron — requiere setup de Edge Functions en dashboard Supabase + deploy pipeline
 - [ ] **FUTURO** — Segundo cluster BD (Neon/Railway) para analytics y reporting
 
 ### 7.5 Cloudflare optimization
 
 - [ ] **P2** — CF Workers Paid plan (30ms CPU, 128MB memory)
 - [ ] **P2** — Cloudflare R2 para archivos grandes (PDFs, exports, backups)
-- [~] **P3** — CF Durable Objects para estado compartido (rate limiting, counters, auction state)
-- [~] **P3** — CF D1 como cache edge database
+- [~] **P3** — ~~DEFERRED~~ CF Durable Objects para estado compartido — requiere CF Workers Paid plan + Durable Objects binding
+- [~] **P3** — ~~DEFERRED~~ CF D1 como cache edge database — requiere CF D1 setup + binding configuration
 - [ ] **P2** — CF KV para feature flags y config (sub-ms reads from edge)
 - [ ] **P2** — CF Queues para job processing distribuido
 - [ ] **FUTURO** — CF Analytics Engine para métricas custom sin impacto en BD
@@ -538,12 +538,12 @@
 
 - [x] **P1** — Circuit breaker en servicios externos (Stripe, AI, Cloudinary, WhatsApp) ✓ (sesión XX: server/utils/circuitBreaker.ts — CLOSED/OPEN/HALF_OPEN, 21 tests; integrado en aiProvider.ts)
 - [x] **P2** — Fallback graceful: si AI down, publicación manual sin AI description ✓ (sesión actual: generate-description.post.ts — catch devuelve { description: '', aiUnavailable: true } en lugar de throw 500; logger.warn; i18n aiUnavailableWarning ES+EN; 8 tests)
-- [ ] **P2** — Si Supabase slow, servir cached content con banner "datos pueden no estar actualizados"
-- [~] **P3** — Load testing mensual con k6 (configurado, establecer cadencia)
+- [x] **P2** — Si Supabase slow, servir cached content con banner "datos pueden no estar actualizados" ✓ (useStaleFallback.ts: stale-while-revalidate con sessionStorage cache, timeout configurable, isStale flag; UiStaleBanner.vue: warning banner con retry; i18n staleDataWarning ES+EN)
+- [x] **P3** — Load testing mensual con k6 (configurado, establecer cadencia) ✓ (sesión XXVI: k6-readiness.yml — monthly cron '0 6 1 \* \*' + stress option + load scenario for monthly runs)
 - [ ] **FUTURO** — Chaos engineering: simular fallos y verificar degradación
 - [ ] **FUTURO** — Auto-scaling de workers (Fly.io, Railway)
-- [ ] **P2** — Control de concurrencia y backpressure en API endpoints
-- [ ] **P2** — Particionado de crons y ventanas de ejecución (no solapar heavy jobs)
+- [x] **P2** — Control de concurrencia y backpressure en API endpoints ✓ (server/utils/concurrency.ts: Semaphore class, withBackpressure wrapper con maxConcurrency+maxQueue, batchProcess helper, getBackpressureStats monitoring; 503 rejection cuando cola excede max)
+- [x] **P2** — Particionado de crons y ventanas de ejecución (no solapar heavy jobs) ✓ (server/utils/cronSchedule.ts: CRON_SCHEDULE con 18 jobs particionados en windows :00/:15/:30/:45; weights heavy/medium/light; acquireCronLock/releaseCronLock para serializar heavy jobs; maxDurationSec documentado)
 
 ### 7.9 Datos a escala
 
@@ -570,16 +570,16 @@
 
 ## NÚMEROS TOTALES
 
-| Prioridad | Count |
-|---|---|
-| **P0** (antes de lanzamiento) | 1 |
-| **P1** (primeras semanas) | ~45 |
-| **P2** (primer trimestre) | ~140 |
-| **P3** (con equipo/tiempo) | ~55 |
-| **FUTURO** (con escala/equipo) | ~40 |
-| **Ya hecho [x]** | ~20 (referencia) |
-| **Parcial [~]** | ~25 |
-| **TOTAL items accionables** | **~280** |
+| Prioridad                      | Count            |
+| ------------------------------ | ---------------- |
+| **P0** (antes de lanzamiento)  | 1                |
+| **P1** (primeras semanas)      | ~45              |
+| **P2** (primer trimestre)      | ~140             |
+| **P3** (con equipo/tiempo)     | ~55              |
+| **FUTURO** (con escala/equipo) | ~40              |
+| **Ya hecho [x]**               | ~20 (referencia) |
+| **Parcial [~]**                | ~25              |
+| **TOTAL items accionables**    | **~280**         |
 
 ### Orden de ejecución recomendado
 

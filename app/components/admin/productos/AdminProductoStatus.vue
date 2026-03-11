@@ -7,19 +7,19 @@ const status = defineModel<'published' | 'draft' | 'rented' | 'maintenance'>({ r
     <div class="section-title">{{ $t('common.status') }}</div>
     <div class="estado-row">
       <label class="estado-opt" :class="{ active: status === 'published' }">
-        <input v-model="status" type="radio" value="published" />
+        <input v-model="status" type="radio" value="published" >
         <span class="dot green" />{{ $t('common.published') }}
       </label>
       <label class="estado-opt" :class="{ active: status === 'draft' }">
-        <input v-model="status" type="radio" value="draft" />
+        <input v-model="status" type="radio" value="draft" >
         <span class="dot gray" />{{ $t('common.hidden') }}
       </label>
       <label class="estado-opt" :class="{ active: status === 'rented' }">
-        <input v-model="status" type="radio" value="rented" />
+        <input v-model="status" type="radio" value="rented" >
         <span class="dot blue" />{{ $t('common.rented') }}
       </label>
       <label class="estado-opt" :class="{ active: status === 'maintenance' }">
-        <input v-model="status" type="radio" value="maintenance" />
+        <input v-model="status" type="radio" value="maintenance" >
         <span class="dot red" />{{ $t('common.maintenance') }}
       </label>
     </div>

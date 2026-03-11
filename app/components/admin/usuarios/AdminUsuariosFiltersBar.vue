@@ -44,7 +44,7 @@ function onSearchInput(event: Event) {
       placeholder="Buscar por nombre, email, pseudónimo..."
       class="filter-search"
       @input="onSearchInput"
-    />
+    >
   </div>
 </template>
 

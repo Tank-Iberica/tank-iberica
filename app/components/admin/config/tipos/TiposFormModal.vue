@@ -32,10 +32,18 @@ function onStatusToggle(currentStatus: string) {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
+    <div
+      v-if="show"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      @click.self="emit('close')"
+    >
       <div class="modal-content">
         <div class="modal-header">
-          <h3>{{ editingId ? $t('admin.configTipos.editType') : $t('admin.configTipos.newType') }}</h3>
+          <h3>
+            {{ editingId ? $t('admin.configTipos.editType') : $t('admin.configTipos.newType') }}
+          </h3>
           <button class="modal-close" @click="emit('close')">&times;</button>
         </div>
 
@@ -51,7 +59,7 @@ function onStatusToggle(currentStatus: string) {
                 required
                 :value="formData.name_es"
                 @input="onTextInput('name_es', $event)"
-              />
+              >
             </div>
             <div class="form-group">
               <label for="name_en">{{ $t('admin.configTipos.nameEn') }}</label>
@@ -61,7 +69,7 @@ function onStatusToggle(currentStatus: string) {
                 :placeholder="$t('admin.configTipos.nameEnPlaceholder')"
                 :value="formData.name_en || ''"
                 @input="onTextInput('name_en', $event)"
-              />
+              >
             </div>
           </div>
 
@@ -80,7 +88,7 @@ function onStatusToggle(currentStatus: string) {
                     type="checkbox"
                     :checked="formData.subcategory_ids.includes(subcat.id)"
                     @change="emit('toggleArrayItem', 'subcategory_ids', subcat.id)"
-                  />
+                  >
                   <span>{{ subcat.name_es }}</span>
                 </label>
               </template>
@@ -101,7 +109,7 @@ function onStatusToggle(currentStatus: string) {
                     type="checkbox"
                     :checked="formData.applicable_filters.includes(filter.id)"
                     @change="emit('toggleArrayItem', 'applicable_filters', filter.id)"
-                  />
+                  >
                   <span>{{ filter.label_es || filter.name }}</span>
                 </label>
               </template>
@@ -116,7 +124,7 @@ function onStatusToggle(currentStatus: string) {
                 type="checkbox"
                 :checked="formData.status === 'published'"
                 @change="onStatusToggle(formData.status)"
-              />
+              >
               <span>{{ $t('admin.configTipos.publishType') }}</span>
             </label>
           </div>

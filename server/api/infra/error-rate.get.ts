@@ -56,7 +56,7 @@ export default defineEventHandler(async (event) => {
 
   // Return result
   const result = {
-    errorRate: parseFloat(errorRate.toFixed(2)),
+    errorRate: Number.parseFloat(errorRate.toFixed(2)),
     errorCount,
     totalEvents: totalCount,
     period: `${hoursBack}h`,

@@ -52,7 +52,7 @@ const { t } = useI18n()
           multiple
           class="sr-only"
           @change="emit('photo-select', $event)"
-        />
+        >
       </label>
 
       <div class="photo-recommendations">
@@ -68,7 +68,7 @@ const { t } = useI18n()
 
       <div v-if="photoPreviews.length" class="photo-grid">
         <div v-for="(preview, i) in photoPreviews" :key="i" class="photo-thumb">
-          <img :src="preview" :alt="t('advertise.photos') + ' ' + (i + 1)" />
+          <img :src="preview" :alt="t('advertise.photos') + ' ' + (i + 1)" >
           <button type="button" class="photo-remove" @click="emit('remove-photo', i)">
             &times;
           </button>
@@ -107,11 +107,11 @@ const { t } = useI18n()
           accept="image/*"
           class="sr-only"
           @change="emit('tech-sheet-select', $event)"
-        />
+        >
       </label>
 
       <div v-if="techSheetPreview" class="tech-sheet-preview">
-        <img :src="techSheetPreview" :alt="t('advertise.techSheet')" />
+        <img :src="techSheetPreview" :alt="t('advertise.techSheet')" >
         <button type="button" class="photo-remove" @click="emit('remove-tech-sheet')">
           &times;
         </button>

@@ -81,7 +81,7 @@ function onBrokeragePopover(e: MouseEvent) {
             </svg>
           </button>
           <Transition name="dropdown">
-            <div id="sidebar-company-menu" v-if="showDropdown" class="dropdown-menu">
+            <div v-if="showDropdown" id="sidebar-company-menu" class="dropdown-menu">
               <button class="dropdown-item" @click="handleLogout">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
@@ -137,8 +137,12 @@ function onBrokeragePopover(e: MouseEvent) {
     <!-- Navigation -->
     <nav class="sidebar-nav">
       <!-- Dashboard -->
-      <NuxtLink to="/admin" class="nav-item" :class="{ active: isActive('/admin', true) }"
-        :aria-current="isActive('/admin', true) ? 'page' : undefined">
+      <NuxtLink
+        to="/admin"
+        class="nav-item"
+        :class="{ active: isActive('/admin', true) }"
+        :aria-current="isActive('/admin', true) ? 'page' : undefined"
+      >
         <svg
           class="nav-icon"
           viewBox="0 0 24 24"

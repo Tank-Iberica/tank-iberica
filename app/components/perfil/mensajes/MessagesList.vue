@@ -9,6 +9,10 @@ defineProps<{
   maskContactData: (text: string, isShared: boolean) => string
 }>()
 
+const emit = defineEmits<{
+  (e: 'retry' | 'discard', tempId: string): void
+}>()
+
 const { t } = useI18n()
 
 const messagesEndRef = ref<HTMLDivElement | null>(null)
@@ -59,11 +63,30 @@ defineExpose({ scrollToBottom })
       </div>
 
       <!-- Regular message -->
-      <div v-else class="message-bubble">
+      <div
+        v-else
+        class="message-bubble"
+        :class="{
+          'message-bubble--sending': msg._status === 'sending',
+          'message-bubble--failed': msg._status === 'failed',
+        }"
+      >
         <p class="message-text">
           {{ getDisplayContent(msg.content, false, isDataShared, maskContactData) }}
         </p>
-        <span class="message-time">{{ formatMessageTime(msg.created_at) }}</span>
+        <span v-if="msg._status === 'sending'" class="message-status">
+          {{ t('messages.sending') }}
+        </span>
+        <span v-else-if="msg._status === 'failed'" class="message-status message-status--failed">
+          {{ t('messages.sendFailed') }}
+          <button class="retry-btn" type="button" @click="emit('retry', msg.id)">
+            {{ t('messages.retry') }}
+          </button>
+          <button class="discard-btn" type="button" @click="emit('discard', msg.id)">
+            {{ t('messages.discard') }}
+          </button>
+        </span>
+        <span v-else class="message-time">{{ formatMessageTime(msg.created_at) }}</span>
       </div>
     </div>
 
@@ -145,6 +168,50 @@ defineExpose({ scrollToBottom })
 }
 
 .message-bubble-wrap--other .message-time {
+  color: var(--text-auxiliary);
+}
+
+.message-bubble--sending {
+  opacity: 0.6;
+}
+
+.message-bubble--failed {
+  border: 1px solid var(--color-error);
+}
+
+.message-status {
+  display: block;
+  font-size: 0.625rem;
+  text-align: right;
+  color: var(--text-auxiliary);
+  font-style: italic;
+}
+
+.message-status--failed {
+  color: var(--color-error);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.retry-btn,
+.discard-btn {
+  font-size: 0.625rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid currentColor;
+  background: transparent;
+  cursor: pointer;
+  min-height: 1.5rem;
+}
+
+.retry-btn {
+  color: var(--color-primary);
+}
+
+.discard-btn {
   color: var(--text-auxiliary);
 }
 

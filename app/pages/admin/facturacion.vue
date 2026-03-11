@@ -3,8 +3,6 @@ import { useAdminFacturacion } from '~/composables/admin/useAdminFacturacion'
 
 definePageMeta({ layout: 'admin', middleware: ['auth', 'admin'] })
 
-const { t } = useI18n()
-
 const {
   invoices,
   loading,

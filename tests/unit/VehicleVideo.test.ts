@@ -7,7 +7,7 @@ function parseVideoUrl(url: string | null | undefined): { provider: string; id: 
 
   // YouTube
   const ytMatch = trimmed.match(
-    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/,
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/,
   )
   if (ytMatch) return { provider: 'youtube', id: ytMatch[1]! }
 

@@ -589,6 +589,7 @@
     "seeMore": "See more...",
     "seeLess": "See less",
     "retry": "Retry",
+    "staleDataWarning": "Data may not be up to date. Loading latest version…",
     "errorHintNetwork": "Check your internet connection and try again.",
     "errorHintPermission": "You don't have permission to view this content.",
     "errorHintNotFound": "The resource does not exist or has been removed.",
@@ -2327,6 +2328,26 @@
     "configIndex": {
       "title": "Configuration"
     },
+    "featureFlags": {
+      "title": "Feature Flags",
+      "subtitle": "Manage toggleable features per vertical with progressive rollout.",
+      "createFlag": "Create flag",
+      "flagKey": "Flag key",
+      "keyPlaceholder": "e.g. new_feature",
+      "description": "Description",
+      "verticalScope": "Scope",
+      "global": "Global (all verticals)",
+      "enabled": "Enabled",
+      "rolloutPercentage": "Rollout percentage",
+      "verticalOverrides": "Vertical overrides",
+      "addOverride": "Add override",
+      "noOverrides": "No vertical overrides. Global config is used.",
+      "overrides": "overrides",
+      "expand": "Expand details",
+      "globalSettings": "Global settings",
+      "noFlags": "No feature flags configured.",
+      "confirmDeleteMsg": "Delete flag \"{key}\" ({vertical})?"
+    },
     "configIntegrations": {
       "title": "SEO & Integrations",
       "subtitle": "Configure integrations with external Google and Cloudinary services.",
@@ -2962,7 +2983,21 @@
       "deleteConfirmInstruction": "Type ELIMINAR to confirm:",
       "deleteConfirmError": "You must type ELIMINAR exactly to confirm",
       "confirmDelete": "Confirm deletion",
-      "deleteError": "Error deleting account. Please try again."
+      "deleteError": "Error deleting account. Please try again.",
+      "mfaTitle": "Two-Factor Authentication (2FA)",
+      "mfaDesc": "Add an extra layer of security to your account with an authenticator app.",
+      "mfaEnable": "Enable 2FA",
+      "mfaDisable": "Disable 2FA",
+      "mfaScanQr": "Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.):",
+      "mfaEnterCode": "Enter the 6-digit code:",
+      "mfaCodePlaceholder": "000000",
+      "mfaVerify": "Verify",
+      "mfaVerified": "2FA enabled successfully",
+      "mfaVerifyError": "Invalid code. Please try again.",
+      "mfaDisabled": "2FA disabled",
+      "mfaStatus": "Status: {status}",
+      "mfaStatusActive": "Active",
+      "mfaStatusInactive": "Inactive"
     }
   },
   "verification": {
@@ -4726,7 +4761,35 @@
       "location": "Location",
       "attributes": "Specifications",
       "preview": "Preview"
+    },
+    "prev": "Previous",
+    "finish": "Got it",
+    "tour": {
+      "buyerWelcomeTitle": "Welcome to Tracciona",
+      "buyerWelcomeDesc": "The marketplace for industrial machinery and vehicles. Search by category, filter by price, location and more.",
+      "buyerSearchTitle": "Find what you need",
+      "buyerSearchDesc": "Use filters to find the perfect vehicle. Save searches and get alerts when new matches appear.",
+      "buyerContactTitle": "Contact the seller",
+      "buyerContactDesc": "When you find an interesting vehicle, contact the seller directly. You can also reserve with a deposit.",
+      "buyerContactAction": "View catalog",
+      "dealerWelcomeTitle": "Your dealer dashboard",
+      "dealerWelcomeDesc": "Manage your inventory, leads, messages and tools from here. Start by uploading your first vehicle.",
+      "dealerUploadTitle": "Upload your first vehicle",
+      "dealerUploadDesc": "Add photos, description and price. Vehicles with good photos get 3x more contacts.",
+      "dealerUploadAction": "New vehicle",
+      "dealerToolsTitle": "Professional tools",
+      "dealerToolsDesc": "Generate invoices, contracts, export your inventory and analyze your stats from the dashboard."
     }
+  },
+  "funnel": {
+    "search": "Searches",
+    "viewVehicle": "Vehicle views",
+    "contactSeller": "Contacts",
+    "reservation": "Reservations",
+    "overallConversion": "Overall conversion",
+    "biggestLeak": "Biggest leak",
+    "dropOff": "Drop-off",
+    "noData": "No funnel data yet. Events are recorded as users browse."
   },
   "visits": {
     "title": "Visit Management",
@@ -4889,7 +4952,11 @@
     "quickReplyAvailable": "Still available",
     "quickReplyNegotiable": "Price negotiable",
     "quickReplySold": "Already sold",
-    "quickReplyVisit": "When would you like to visit?"
+    "quickReplyVisit": "When would you like to visit?",
+    "sending": "Sending...",
+    "sendFailed": "Failed to send",
+    "retry": "Retry",
+    "discard": "Discard"
   },
   "pagination": {
     "ariaLabel": "Page navigation",
@@ -4897,5 +4964,56 @@
     "next": "Next page",
     "goToPage": "Go to page {page}",
     "summary": "Page {current} of {total}"
+  },
+  "negotiation": {
+    "makeOffer": "Make offer",
+    "counterOffer": "Counter offer",
+    "acceptOffer": "Accept offer",
+    "rejectOffer": "Reject offer",
+    "withdrawOffer": "Withdraw offer",
+    "offerAmount": "Offer amount",
+    "offerMessage": "Message (optional)",
+    "pendingOffer": "Pending offer",
+    "yourTurn": "Your turn to respond",
+    "waitingResponse": "Waiting for response",
+    "offerAccepted": "Offer accepted",
+    "offerRejected": "Offer rejected",
+    "offerCountered": "Counter offer received",
+    "offerExpired": "Offer expired",
+    "offerWithdrawn": "Offer withdrawn",
+    "expiresIn": "Expires in {time}"
+  },
+  "timeline": {
+    "title": "Operation status",
+    "progress": "{percent}% completed",
+    "stages": {
+      "listed": "Listed",
+      "contacted": "Contacted",
+      "visit_scheduled": "Visit scheduled",
+      "visit_done": "Visit completed",
+      "offer_made": "Offer made",
+      "offer_accepted": "Offer accepted",
+      "payment_pending": "Payment pending",
+      "payment_received": "Payment received",
+      "documentation": "Documentation",
+      "delivery_scheduled": "Delivery scheduled",
+      "delivered": "Delivered",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "returned": "Returned"
+    },
+    "addNote": "Add note",
+    "updateStatus": "Update status"
+  },
+  "glossary": {
+    "title": "Industry Glossary",
+    "subtitle": "Terms and definitions for the industrial vehicle sector",
+    "searchPlaceholder": "Search term...",
+    "allCategories": "All categories",
+    "noResults": "No terms found",
+    "relatedTerms": "Related terms",
+    "seeAlso": "See also",
+    "category": "Category",
+    "backToList": "Back to glossary"
   }
 }

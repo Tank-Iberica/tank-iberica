@@ -19,11 +19,17 @@ function stubGoogleOAuth(token = 'test-token') {
   vi.stubGlobal('google', {
     accounts: {
       oauth2: {
-        initTokenClient: vi.fn().mockImplementation(
-          ({ callback }: { callback: (r: { access_token?: string; error?: string }) => void }) => ({
-            requestAccessToken: vi.fn(() => callback({ access_token: token })),
-          }),
-        ),
+        initTokenClient: vi
+          .fn()
+          .mockImplementation(
+            ({
+              callback,
+            }: {
+              callback: (r: { access_token?: string; error?: string }) => void
+            }) => ({
+              requestAccessToken: vi.fn(() => callback({ access_token: token })),
+            }),
+          ),
       },
     },
   })
@@ -39,7 +45,6 @@ async function makeConnected() {
 
 // ─── Vehicle fixture ──────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const vehicle: any = {
   id: 42,
   brand: 'Volvo',
@@ -133,11 +138,11 @@ describe('connect — OAuth error', () => {
     vi.stubGlobal('google', {
       accounts: {
         oauth2: {
-          initTokenClient: vi.fn().mockImplementation(
-            ({ callback }: { callback: (r: { error?: string }) => void }) => ({
+          initTokenClient: vi
+            .fn()
+            .mockImplementation(({ callback }: { callback: (r: { error?: string }) => void }) => ({
               requestAccessToken: vi.fn(() => callback({ error: errorCode })),
-            }),
-          ),
+            })),
         },
       },
     })
@@ -246,7 +251,10 @@ describe('checkConnection', () => {
 
   it('returns true when driveApi call succeeds', async () => {
     const c = await makeConnected()
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(makeResponse({ user: { displayName: 'Test' } })))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(makeResponse({ user: { displayName: 'Test' } })),
+    )
     const result = await c.checkConnection()
     expect(result).toBe(true)
   })
@@ -288,9 +296,10 @@ describe('getOrCreateFolder', () => {
 
   it('creates folder when search returns empty', async () => {
     const c = await makeConnected()
-    const fetchMock = vi.fn()
-      .mockResolvedValueOnce(makeResponse({ files: [] }))         // search: not found
-      .mockResolvedValueOnce(makeResponse({ id: 'new-folder' }))  // create: success
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(makeResponse({ files: [] })) // search: not found
+      .mockResolvedValueOnce(makeResponse({ id: 'new-folder' })) // create: success
     vi.stubGlobal('fetch', fetchMock)
     const id = await c.getOrCreateFolder('NewFolder')
     expect(id).toBe('new-folder')
@@ -298,7 +307,8 @@ describe('getOrCreateFolder', () => {
 
   it('calls fetch twice when folder needs to be created', async () => {
     const c = await makeConnected()
-    const fetchMock = vi.fn()
+    const fetchMock = vi
+      .fn()
       .mockResolvedValueOnce(makeResponse({ files: [] }))
       .mockResolvedValueOnce(makeResponse({ id: 'created-id' }))
     vi.stubGlobal('fetch', fetchMock)
@@ -308,20 +318,16 @@ describe('getOrCreateFolder', () => {
 
   it('returns cached id on second call without extra fetch', async () => {
     const c = await makeConnected()
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValue(makeResponse({ files: [{ id: 'cached-id' }] }))
+    const fetchMock = vi.fn().mockResolvedValue(makeResponse({ files: [{ id: 'cached-id' }] }))
     vi.stubGlobal('fetch', fetchMock)
-    await c.getOrCreateFolder('TankIberica')         // first call
-    await c.getOrCreateFolder('TankIberica')         // second call — cache hit
+    await c.getOrCreateFolder('TankIberica') // first call
+    await c.getOrCreateFolder('TankIberica') // second call — cache hit
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 
   it('different parent produces different cache key', async () => {
     const c = await makeConnected()
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValue(makeResponse({ files: [{ id: 'some-folder' }] }))
+    const fetchMock = vi.fn().mockResolvedValue(makeResponse({ files: [{ id: 'some-folder' }] }))
     vi.stubGlobal('fetch', fetchMock)
     await c.getOrCreateFolder('Fotos', 'parent-a')
     await c.getOrCreateFolder('Fotos', 'parent-b')
@@ -335,27 +341,22 @@ describe('moveToHistorico', () => {
   it('returns false when vehicle folder is not found', async () => {
     const c = await makeConnected()
     // All searches return empty files → getOrCreateFolder creates, final search not found
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(makeResponse({ files: [], id: 'folder-id' })),
-    )
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(makeResponse({ files: [], id: 'folder-id' })))
     const result = await c.moveToHistorico(vehicle)
     expect(result).toBe(false)
   })
 
   it('sets error when vehicle folder not found', async () => {
     const c = await makeConnected()
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(makeResponse({ files: [], id: 'folder-id' })),
-    )
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(makeResponse({ files: [], id: 'folder-id' })))
     await c.moveToHistorico(vehicle)
     expect(c.error.value).toBeTruthy()
   })
 
   it('returns true when folder is found and moved', async () => {
     const c = await makeConnected()
-    const fetchMock = vi.fn()
+    const fetchMock = vi
+      .fn()
       // getOrCreateFolder('TankIberica'): found
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'root-id' }] }))
       // getOrCreateFolder('Historico', root): found
@@ -373,7 +374,8 @@ describe('moveToHistorico', () => {
 
   it('sets loading to false after success', async () => {
     const c = await makeConnected()
-    const fetchMock = vi.fn()
+    const fetchMock = vi
+      .fn()
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'root-id' }] }))
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'hist-id' }] }))
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'vehi-id' }] }))
@@ -386,10 +388,7 @@ describe('moveToHistorico', () => {
 
   it('sets loading to false after failure', async () => {
     const c = await makeConnected()
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(makeResponse({ files: [], id: 'folder-id' })),
-    )
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(makeResponse({ files: [], id: 'folder-id' })))
     await c.moveToHistorico(vehicle)
     expect(c.loading.value).toBe(false)
   })
@@ -415,7 +414,8 @@ describe('openFolderById', () => {
 describe('openVehicleFolder', () => {
   it('sets loading to false after opening folder', async () => {
     const c = await makeConnected()
-    const fetchMock = vi.fn()
+    const fetchMock = vi
+      .fn()
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'root-id' }] }))
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'section-id' }] }))
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'vehicle-id' }] }))
@@ -442,7 +442,8 @@ describe('openVehicleFolder', () => {
 describe('openDocumentsFolder', () => {
   it('opens docs folder and sets loading to false', async () => {
     const c = await makeConnected()
-    const fetchMock = vi.fn()
+    const fetchMock = vi
+      .fn()
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'root-id' }] }))
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'section-id' }] }))
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'vehicle-id' }] }))
@@ -468,7 +469,8 @@ describe('openDocumentsFolder', () => {
 describe('openInvoicesFolder', () => {
   it('opens invoices folder and sets loading to false', async () => {
     const c = await makeConnected()
-    const fetchMock = vi.fn()
+    const fetchMock = vi
+      .fn()
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'root-id' }] }))
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'section-id' }] }))
       .mockResolvedValueOnce(makeResponse({ files: [{ id: 'vehicle-id' }] }))
@@ -487,13 +489,14 @@ describe('openInvoicesFolder', () => {
 describe('getVehicleFolders', () => {
   it('creates full folder structure and returns all IDs', async () => {
     const c = await makeConnected()
-    const fetchMock = vi.fn()
-      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'root-id' }] }))     // TankIberica
-      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'section-id' }] }))   // Vehiculos
-      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'vehicle-id' }] }))   // V42_Volvo...
-      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'fotos-id' }] }))     // Fotos
-      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'docs-id' }] }))      // Documentos
-      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'facturas-id' }] }))  // Facturas
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'root-id' }] })) // TankIberica
+      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'section-id' }] })) // Vehiculos
+      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'vehicle-id' }] })) // V42_Volvo...
+      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'fotos-id' }] })) // Fotos
+      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'docs-id' }] })) // Documentos
+      .mockResolvedValueOnce(makeResponse({ files: [{ id: 'facturas-id' }] })) // Facturas
     vi.stubGlobal('fetch', fetchMock)
     const folders = await c.getVehicleFolders(vehicle)
     expect(folders.root).toBe('root-id')
@@ -517,11 +520,14 @@ describe('getVehicleFolders', () => {
 describe('driveApi error handling', () => {
   it('throws on non-ok response with body text', async () => {
     const c = await makeConnected()
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: false,
-      status: 403,
-      text: () => Promise.resolve('Forbidden'),
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 403,
+        text: () => Promise.resolve('Forbidden'),
+      }),
+    )
     await expect(c.checkConnection()).resolves.toBe(false)
   })
 })

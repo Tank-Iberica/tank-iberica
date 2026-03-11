@@ -8,6 +8,7 @@
  * Protected by x-cron-secret header.
  */
 import { defineEventHandler, readBody } from 'h3'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
@@ -58,8 +59,8 @@ interface Notification {
 }
 
 async function buildPriceDropNotifications(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+   
+  supabase: SupabaseClient,
   drops: PriceHistoryRow[],
   vehicleMap: Map<string, VehicleInfo>,
 ): Promise<Notification[]> {
@@ -74,7 +75,9 @@ async function buildPriceDropNotifications(
       .eq('vehicle_id', drop.vehicle_id)
 
     if (favsError) {
-      logger.error(`[price-drop-alert] Error fetching favorites for vehicle ${drop.vehicle_id}: ${favsError.message}`)
+      logger.error(
+        `[price-drop-alert] Error fetching favorites for vehicle ${drop.vehicle_id}: ${favsError.message}`,
+      )
       continue
     }
     if (!favorites || favorites.length === 0) continue

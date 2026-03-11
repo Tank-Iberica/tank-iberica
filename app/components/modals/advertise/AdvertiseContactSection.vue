@@ -23,7 +23,7 @@ const { t } = useI18n()
         :class="{ 'input-error': errors.contactName }"
         :aria-invalid="!!errors.contactName || undefined"
         :aria-describedby="errors.contactName ? 'err-advc-name' : undefined"
-      />
+      >
       <p v-if="errors.contactName" id="err-advc-name" class="field-error" role="alert">
         {{ errors.contactName }}
       </p>
@@ -40,7 +40,7 @@ const { t } = useI18n()
         :class="{ 'input-error': errors.contactEmail }"
         :aria-invalid="!!errors.contactEmail || undefined"
         :aria-describedby="errors.contactEmail ? 'err-advc-email' : undefined"
-      />
+      >
       <p v-if="errors.contactEmail" id="err-advc-email" class="field-error" role="alert">
         {{ errors.contactEmail }}
       </p>
@@ -57,7 +57,7 @@ const { t } = useI18n()
         :class="{ 'input-error': errors.contactPhone }"
         :aria-invalid="!!errors.contactPhone || undefined"
         :aria-describedby="errors.contactPhone ? 'err-advc-phone' : undefined"
-      />
+      >
       <p v-if="errors.contactPhone" id="err-advc-phone" class="field-error" role="alert">
         {{ errors.contactPhone }}
       </p>
@@ -80,7 +80,7 @@ const { t } = useI18n()
           class="checkbox-input"
           :aria-invalid="!!errors.termsAccepted || undefined"
           :aria-describedby="errors.termsAccepted ? 'err-advc-terms' : undefined"
-        />
+        >
         <span>{{ t('advertise.acceptTermsFull') }}</span>
       </label>
       <p v-if="errors.termsAccepted" id="err-advc-terms" class="field-error" role="alert">

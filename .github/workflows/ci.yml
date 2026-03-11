@@ -129,6 +129,80 @@ jobs:
             --exclude '*.spec.ts' \
             server/ app/
 
+  dast:
+    name: DAST — Nuclei Security Scan
+    runs-on: ubuntu-latest
+    needs: [lint-and-typecheck]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Start preview server
+        run: npx nuxi preview &
+      - name: Wait for server health
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 1
+          done
+          echo "Server failed to start"
+          exit 1
+      - name: Install Nuclei
+        run: |
+          curl -sL https://github.com/projectdiscovery/nuclei/releases/latest/download/nuclei_linux_amd64.zip -o nuclei.zip
+          unzip nuclei.zip -d /usr/local/bin/
+          nuclei -version
+      - name: Run Nuclei DAST scan
+        run: |
+          nuclei -u http://localhost:3000 \
+            -t cves/ -t vulnerabilities/ -t misconfiguration/ \
+            -t exposures/ -t technologies/ \
+            -severity critical,high \
+            -silent -no-color \
+            -o nuclei-results.txt || true
+      - name: Check for critical findings
+        run: |
+          if [ -f nuclei-results.txt ] && [ -s nuclei-results.txt ]; then
+            echo "DAST findings detected:"
+            cat nuclei-results.txt
+            CRITICAL=$(grep -c '\[critical\]' nuclei-results.txt || true)
+            if [ "$CRITICAL" -gt 0 ]; then
+              echo "Critical vulnerabilities found — failing build"
+              exit 1
+            fi
+            echo "Warning: Non-critical findings above. Review recommended."
+          else
+            echo "No DAST findings — clean scan"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nuclei-dast-report
+          path: nuclei-results.txt
+          if-no-files-found: ignore
+
+  rls-negative-tests:
+    name: RLS Negative Tests
+    runs-on: ubuntu-latest
+    needs: [lint-and-typecheck]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Run RLS negative tests
+        run: npx vitest run tests/security/rls-negative.test.ts
+        env:
+          STAGING_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+          STAGING_SUPABASE_KEY: ${{ secrets.STAGING_SUPABASE_KEY }}
+
   lighthouse:
     runs-on: ubuntu-latest
     needs: lint-and-typecheck

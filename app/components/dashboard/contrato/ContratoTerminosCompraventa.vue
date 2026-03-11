@@ -43,10 +43,18 @@ const { t } = useI18n()
           :value="paymentMethod"
           @change="emit('update:paymentMethod', ($event.target as HTMLSelectElement).value)"
         >
-          <option :value="t('dashboard.tools.contract.paymentBankTransfer')">{{ t('dashboard.tools.contract.paymentBankTransfer') }}</option>
-          <option :value="t('dashboard.tools.contract.paymentCash')">{{ t('dashboard.tools.contract.paymentCash') }}</option>
-          <option :value="t('dashboard.tools.contract.paymentCheck')">{{ t('dashboard.tools.contract.paymentCheck') }}</option>
-          <option :value="t('dashboard.tools.contract.paymentFinancing')">{{ t('dashboard.tools.contract.paymentFinancing') }}</option>
+          <option :value="t('dashboard.tools.contract.paymentBankTransfer')">
+            {{ t('dashboard.tools.contract.paymentBankTransfer') }}
+          </option>
+          <option :value="t('dashboard.tools.contract.paymentCash')">
+            {{ t('dashboard.tools.contract.paymentCash') }}
+          </option>
+          <option :value="t('dashboard.tools.contract.paymentCheck')">
+            {{ t('dashboard.tools.contract.paymentCheck') }}
+          </option>
+          <option :value="t('dashboard.tools.contract.paymentFinancing')">
+            {{ t('dashboard.tools.contract.paymentFinancing') }}
+          </option>
         </select>
       </div>
       <div class="form-group" style="grid-column: 1 / -1">

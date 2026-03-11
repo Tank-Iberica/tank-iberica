@@ -133,8 +133,10 @@ const TRANSLATIONS: Record<string, ReportTranslations> = {
     topCategory: 'Categoría principal',
     priceChangeSummary: (rising: number, falling: number) => {
       if (rising === 0 && falling === 0) return 'Sin datos suficientes para calcular tendencias.'
-      if (rising > falling) return `Tendencia alcista: ${rising} subcategorías con precios al alza frente a ${falling} a la baja.`
-      if (falling > rising) return `Tendencia bajista: ${falling} subcategorías con precios a la baja frente a ${rising} al alza.`
+      if (rising > falling)
+        return `Tendencia alcista: ${rising} subcategorías con precios al alza frente a ${falling} a la baja.`
+      if (falling > rising)
+        return `Tendencia bajista: ${falling} subcategorías con precios a la baja frente a ${rising} al alza.`
       return `Mercado estable: ${rising} subcategorías al alza y ${falling} a la baja.`
     },
     priceTrend: 'Tendencia de precios',
@@ -160,7 +162,8 @@ const TRANSLATIONS: Record<string, ReportTranslations> = {
     trendRising: 'Al alza',
     trendFalling: 'A la baja',
     trendStable: 'Estable',
-    noDataTrends: 'Datos insuficientes para calcular tendencias. Se requieren al menos 2 meses de datos.',
+    noDataTrends:
+      'Datos insuficientes para calcular tendencias. Se requieren al menos 2 meses de datos.',
     noDataBrands: 'Datos insuficientes para generar el ranking de marcas.',
     noDataGeo: 'Datos insuficientes para generar el desglose geográfico.',
     noDataSummary: 'Datos insuficientes para generar el resumen ejecutivo.',
@@ -180,8 +183,10 @@ const TRANSLATIONS: Record<string, ReportTranslations> = {
     topCategory: 'Top category',
     priceChangeSummary: (rising: number, falling: number) => {
       if (rising === 0 && falling === 0) return 'Insufficient data to calculate trends.'
-      if (rising > falling) return `Upward trend: ${rising} subcategories rising vs ${falling} falling.`
-      if (falling > rising) return `Downward trend: ${falling} subcategories falling vs ${rising} rising.`
+      if (rising > falling)
+        return `Upward trend: ${rising} subcategories rising vs ${falling} falling.`
+      if (falling > rising)
+        return `Downward trend: ${falling} subcategories falling vs ${rising} rising.`
       return `Stable market: ${rising} subcategories rising and ${falling} falling.`
     },
     priceTrend: 'Price trend',
@@ -477,7 +482,12 @@ function rowClass(idx: number): string {
   return idx % 2 === 0 ? 'row-even' : 'row-odd'
 }
 
-function buildSubcatTableRow(s: SubcategoryStats, idx: number, isPublic: boolean, t: ReportTranslations): string {
+function buildSubcatTableRow(
+  s: SubcategoryStats,
+  idx: number,
+  isPublic: boolean,
+  _t: ReportTranslations,
+): string {
   const privateCols = isPublic
     ? ''
     : `<td class="num">${formatEUR(s.medianPrice)}</td>
@@ -517,7 +527,11 @@ function buildProvinceRow(p: ProvinceStats, idx: number): string {
     </tr>`
 }
 
-function buildSummarySection(summary: ExecutiveSummary, hasData: boolean, t: ReportTranslations): string {
+function buildSummarySection(
+  summary: ExecutiveSummary,
+  hasData: boolean,
+  t: ReportTranslations,
+): string {
   if (!hasData) {
     return `<div class="page">
       <h2 class="section-title">${t.executiveSummary}</h2>
@@ -644,7 +658,12 @@ function buildTableSection(
     </div>`
 }
 
-function buildCoverSection(quarterLabel: string, siteName: string, siteUrl: string, t: ReportTranslations): string {
+function buildCoverSection(
+  quarterLabel: string,
+  siteName: string,
+  siteUrl: string,
+  t: ReportTranslations,
+): string {
   return `<div class="page cover-page">
       <div class="cover-content">
         <div class="cover-logo">${escapeHtml(siteName.toUpperCase())}</div>
@@ -656,7 +675,12 @@ function buildCoverSection(quarterLabel: string, siteName: string, siteUrl: stri
     </div>`
 }
 
-function buildFooterSection(dateGenerated: string, siteName: string, siteUrl: string, t: ReportTranslations): string {
+function buildFooterSection(
+  dateGenerated: string,
+  siteName: string,
+  siteUrl: string,
+  t: ReportTranslations,
+): string {
   return `<div class="footer">
       <p class="disclaimer">${t.footerDisclaimer(siteName)}</p>
       <p class="generated-date">${t.generatedOn(escapeHtml(dateGenerated), escapeHtml(siteUrl))}</p>
@@ -746,7 +770,15 @@ function generateReportHTML(
   const summary = computeExecutiveSummary(subcategoryStats, trends, t)
 
   const fullReportSections = assembleReportSections(
-    { isPublic, hasData, quarterLabel, dateGenerated, siteName: resolvedSiteName, siteUrl: resolvedSiteUrl, t },
+    {
+      isPublic,
+      hasData,
+      quarterLabel,
+      dateGenerated,
+      siteName: resolvedSiteName,
+      siteUrl: resolvedSiteUrl,
+      t,
+    },
     subcategoryStats,
     brandStats,
     provinceStats,
@@ -1176,7 +1208,7 @@ export async function generateMarketReport(
   supabase: SupabaseClient,
   options: ReportOptions,
 ): Promise<{ html: string }> {
-  const vertical = options.vertical || (process.env.NUXT_PUBLIC_VERTICAL || 'tracciona')
+  const vertical = options.vertical || process.env.NUXT_PUBLIC_VERTICAL || 'tracciona'
 
   // Fetch market data (last 3 months)
   const threeMonthsAgo = new Date()
@@ -1210,7 +1242,8 @@ export async function generateMarketReport(
     throw new Error(`Error al obtener historial de precios: ${historyError.message}`)
   }
 
-  const siteName = process.env.NUXT_PUBLIC_SITE_NAME || vertical.charAt(0).toUpperCase() + vertical.slice(1)
+  const siteName =
+    process.env.NUXT_PUBLIC_SITE_NAME || vertical.charAt(0).toUpperCase() + vertical.slice(1)
   const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || `${vertical}.com`
 
   const html = generateReportHTML(

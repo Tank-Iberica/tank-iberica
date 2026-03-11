@@ -66,10 +66,12 @@ import type { VehicleFilters } from '~/composables/useVehicles'
 import { useGeoFallback } from '~/composables/catalog/useGeoFallback'
 import { useSimilarSearches } from '~/composables/catalog/useSimilarSearches'
 import { useHiddenVehicles } from '~/composables/catalog/useHiddenVehicles'
+import { useAnalyticsTracking } from '~/composables/useAnalyticsTracking'
 
 const { t, locale } = useI18n()
 const menuVisible = ref(true)
 const { vehicles, loading, loadingMore, hasMore, total, fetchVehicles, fetchMore } = useVehicles()
+const { trackFunnelSearch } = useAnalyticsTracking()
 const {
   filters,
   activeCategoryId,
@@ -176,6 +178,9 @@ async function loadVehicles() {
   resetCascade()
   nextCascadeDepth.value = 1
   await fetchVehicles({ ...filters.value, sortBy: sortBy.value })
+
+  // Track funnel: catalog search with applied filters
+  trackFunnelSearch({ ...filters.value, results_count: total.value })
 
   // Fetch hidden vehicles count (for the split card)
   void fetchHiddenVehicles(filters.value)

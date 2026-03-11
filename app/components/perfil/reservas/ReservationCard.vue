@@ -31,7 +31,7 @@ const { getImageUrl } = useImageUrl()
             :src="getImageUrl(reservation.vehicle_image, 'thumb')"
             :alt="reservation.vehicle_title || $t('reservations.vehicle')"
             loading="lazy"
-          />
+          >
           <div v-else class="reservation-card__image-placeholder">
             <svg
               viewBox="0 0 24 24"

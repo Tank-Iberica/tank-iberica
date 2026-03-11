@@ -9,7 +9,7 @@
           :alt="activeConversation.vehicle_title || ''"
           class="header-vehicle-img"
           loading="lazy"
-        >
+        />
         <div class="header-text">
           <h3 class="header-title">
             {{ activeConversation.vehicle_title || $t('conversation.vehicle') }}
@@ -141,8 +141,14 @@ const props = defineProps<{
   showQuickReplies?: boolean
 }>()
 
-const { t, locale } = useI18n()
-const localeMap: Record<string, string> = { es: 'es-ES', en: 'en-GB', fr: 'fr-FR', pt: 'pt-PT', de: 'de-DE' }
+const { locale } = useI18n()
+const localeMap: Record<string, string> = {
+  es: 'es-ES',
+  en: 'en-GB',
+  fr: 'fr-FR',
+  pt: 'pt-PT',
+  de: 'de-DE',
+}
 const user = useSupabaseUser()
 
 const {
@@ -505,7 +511,9 @@ function useQuickReply(text: string): void {
   cursor: pointer;
   white-space: nowrap;
   min-height: 2rem;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
   flex-shrink: 0;
 }
 

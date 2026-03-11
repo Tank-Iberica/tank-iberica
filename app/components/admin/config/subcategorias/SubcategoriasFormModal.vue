@@ -37,7 +37,13 @@ function onStatusToggle(currentStatus: string) {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
+    <div
+      v-if="show"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      @click.self="emit('close')"
+    >
       <div class="modal-content">
         <div class="modal-header">
           <h3>{{ editingId ? 'Editar Subcategoria' : 'Nueva Subcategoria' }}</h3>
@@ -61,7 +67,7 @@ function onStatusToggle(currentStatus: string) {
                 required
                 :value="formData.name_es"
                 @input="onTextInput('name_es', $event)"
-              />
+              >
             </div>
             <div class="form-group">
               <label for="name_en">Nombre (EN)</label>
@@ -71,7 +77,7 @@ function onStatusToggle(currentStatus: string) {
                 placeholder="Ej: Semi-trailers"
                 :value="formData.name_en || ''"
                 @input="onTextInput('name_en', $event)"
-              />
+              >
             </div>
           </div>
 
@@ -85,7 +91,7 @@ function onStatusToggle(currentStatus: string) {
                   type="checkbox"
                   :checked="formData.applicable_categories.includes(cat.id)"
                   @change="emit('toggleArrayItem', 'applicable_categories', cat.id)"
-                />
+                >
                 <span>{{ cat.label }}</span>
               </label>
             </div>
@@ -105,7 +111,7 @@ function onStatusToggle(currentStatus: string) {
                     type="checkbox"
                     :checked="formData.applicable_filters.includes(filter.id)"
                     @change="emit('toggleArrayItem', 'applicable_filters', filter.id)"
-                  />
+                  >
                   <span>{{ filter.label_es || filter.name }}</span>
                 </label>
               </template>
@@ -120,7 +126,7 @@ function onStatusToggle(currentStatus: string) {
                 type="checkbox"
                 :checked="formData.status === 'published'"
                 @change="onStatusToggle(formData.status)"
-              />
+              >
               <span>Publicar subcategoria</span>
             </label>
           </div>

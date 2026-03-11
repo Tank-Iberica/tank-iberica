@@ -27,7 +27,7 @@ const emit = defineEmits<{
           :value="preset.value"
           :checked="fontPreset === preset.value"
           @change="emit('update:fontPreset', preset.value)"
-        />
+        >
         <span class="radio-label">{{ preset.label }}</span>
       </label>
     </div>

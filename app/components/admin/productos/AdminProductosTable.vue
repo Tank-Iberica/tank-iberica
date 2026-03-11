@@ -62,7 +62,7 @@ function isSortActive(field: string): boolean {
       <thead>
         <tr>
           <th class="col-checkbox">
-            <input v-model="selectAll" type="checkbox" title="Seleccionar todos" />
+            <input v-model="selectAll" type="checkbox" title="Seleccionar todos" >
           </th>
           <th class="col-img">Img</th>
           <th class="col-type">Tipo</th>
@@ -126,11 +126,11 @@ function isSortActive(field: string): boolean {
               type="checkbox"
               :checked="selectedIds.has(v.id)"
               @change="emit('toggle-selection', v.id)"
-            />
+            >
           </td>
           <td class="col-img">
             <div class="thumb">
-              <img v-if="getThumbnail(v)" :src="getThumbnail(v)!" :alt="v.brand" />
+              <img v-if="getThumbnail(v)" :src="getThumbnail(v)!" :alt="v.brand" >
               <span v-else class="thumb-empty">📷</span>
             </div>
           </td>

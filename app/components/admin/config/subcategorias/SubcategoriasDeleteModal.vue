@@ -20,7 +20,13 @@ function onConfirmInput(event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="deleteModal.show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
+    <div
+      v-if="deleteModal.show"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      @click.self="emit('close')"
+    >
       <div class="modal-content modal-small">
         <div class="modal-header">
           <h3>Confirmar eliminaci&#xF3;n</h3>
@@ -44,7 +50,7 @@ function onConfirmInput(event: Event) {
               autocomplete="off"
               :value="deleteModal.confirmText"
               @input="onConfirmInput"
-            />
+            >
             <p v-if="deleteModal.confirmText && !canDelete" class="text-error">
               Escribe "Borrar" exactamente para continuar
             </p>

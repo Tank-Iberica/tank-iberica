@@ -128,7 +128,7 @@ function toggleCustomize() {
                     checked
                     disabled
                     :aria-label="$t('gdpr.categoryNecessary')"
-                  />
+                  >
                   <span class="cookie-toggle__slider" />
                 </label>
               </div>
@@ -148,7 +148,7 @@ function toggleCustomize() {
                     v-model="localConsent.analytics"
                     type="checkbox"
                     :aria-label="$t('gdpr.categoryAnalytics')"
-                  />
+                  >
                   <span class="cookie-toggle__slider" />
                 </label>
               </div>
@@ -168,7 +168,7 @@ function toggleCustomize() {
                     v-model="localConsent.marketing"
                     type="checkbox"
                     :aria-label="$t('gdpr.categoryMarketing')"
-                  />
+                  >
                   <span class="cookie-toggle__slider" />
                 </label>
               </div>

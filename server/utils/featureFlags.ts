@@ -12,6 +12,7 @@ interface FeatureFlag {
   enabled: boolean
   percentage: number
   allowed_dealers: string[] | null
+  vertical: string | null
 }
 
 // Simple in-memory cache
@@ -31,10 +32,10 @@ async function loadFlags(): Promise<void> {
 
   try {
     const data = await $fetch<FeatureFlag[]>(
-      `${rest.url}/rest/v1/feature_flags?select=key,enabled,percentage,allowed_dealers`,
+      `${rest.url}/rest/v1/feature_flags?select=key,enabled,percentage,allowed_dealers,vertical`,
       { headers: rest.headers },
     )
-    flagCache = new Map(data.map((f) => [f.key, f]))
+    flagCache = new Map(data.map((f) => [`${f.key}:${f.vertical ?? '_global'}`, f]))
     cacheExpiry = now + CACHE_TTL_MS
   } catch (err) {
     logger.error('[featureFlags] Failed to load flags:', { error: String(err) })
@@ -46,12 +47,18 @@ async function loadFlags(): Promise<void> {
  *
  * @param key - The flag key (e.g. 'auctions')
  * @param dealerId - Optional dealer ID for dealer-specific rollouts
+ * @param vertical - Optional vertical slug for per-vertical overrides
  * @returns true if the feature is enabled for this context
  */
-export async function isFeatureEnabled(key: string, dealerId?: string): Promise<boolean> {
+export async function isFeatureEnabled(
+  key: string,
+  dealerId?: string,
+  vertical?: string,
+): Promise<boolean> {
   await loadFlags()
 
-  const flag = flagCache.get(key)
+  // Check vertical-specific override first, then global
+  const flag = (vertical && flagCache.get(`${key}:${vertical}`)) || flagCache.get(`${key}:_global`)
   if (!flag) return false
   if (!flag.enabled) return false
 

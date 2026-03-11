@@ -11,12 +11,7 @@ import { join, extname } from 'node:path'
  */
 
 const ROOT = join(__dirname, '..', '..')
-const SCAN_DIRS = [
-  'app/components',
-  'app/composables',
-  'app/pages',
-  'app/layouts',
-]
+const SCAN_DIRS = ['app/components', 'app/composables', 'app/pages', 'app/layouts']
 
 // Allowed exceptions (files that legitimately reference "tracciona")
 const ALLOWED_FILES = new Set([
@@ -48,17 +43,17 @@ const PATTERNS = [
 const EXCLUDE_PATTERNS = [
   /import.*from/,
   /require\(/,
-  /\/\//,        // single-line comments
-  /\*\s/,        // block comments
+  /\/\//, // single-line comments
+  /\*\s/, // block comments
   /\.tracciona\./, // domain references (tracciona.com)
   /tracciona-docs/,
   /tracciona-conventions/,
   /console\./,
   /@tracciona/,
-  /TRACCIONA/,   // Brand name constant (OK in config)
-  /['"]tracciona['"]\s*[,)]/,  // vertical config value 'tracciona' (legitimate)
-  /vertical.*=.*['"]tracciona/i, // vertical assignment (legitimate)
-  /['"]tracciona\.com['"]/,     // domain (legitimate)
+  /TRACCIONA/, // Brand name constant (OK in config)
+  /['"]tracciona['"]\s*[,)]/, // vertical config value 'tracciona' (legitimate)
+  /vertical[^\n\r=\u2028\u2029]*=.*['"]tracciona/i, // vertical assignment (legitimate)
+  /['"]tracciona\.com['"]/, // domain (legitimate)
 ]
 
 function getAllFiles(dir: string, ext: string[]): string[] {
@@ -70,13 +65,11 @@ function getAllFiles(dir: string, ext: string[]): string[] {
       const stat = statSync(fullPath)
       if (stat.isDirectory()) {
         results.push(...getAllFiles(fullPath, ext))
-      }
-      else if (ext.includes(extname(entry))) {
+      } else if (ext.includes(extname(entry))) {
         results.push(fullPath)
       }
     }
-  }
-  catch {
+  } catch {
     // Directory doesn't exist
   }
   return results
@@ -90,7 +83,10 @@ describe('hardcoded vertical references', () => {
       const files = getAllFiles(join(ROOT, dir), ['.vue', '.ts'])
 
       for (const file of files) {
-        const relativePath = file.replace(ROOT + '\\', '').replace(ROOT + '/', '').replace(/\\/g, '/')
+        const relativePath = file
+          .replace(ROOT + '\\', '')
+          .replace(ROOT + '/', '')
+          .replace(/\\/g, '/')
         if (ALLOWED_FILES.has(relativePath)) continue
 
         const content = readFileSync(file, 'utf-8')
@@ -100,7 +96,7 @@ describe('hardcoded vertical references', () => {
           const line = lines[i]!
 
           // Skip lines that match exclude patterns
-          if (EXCLUDE_PATTERNS.some(p => p.test(line))) continue
+          if (EXCLUDE_PATTERNS.some((p) => p.test(line))) continue
 
           // Check for violation patterns
           for (const pattern of PATTERNS) {
@@ -114,7 +110,9 @@ describe('hardcoded vertical references', () => {
 
     if (violations.length > 0) {
       // For now, report as a warning. Once all are cleaned up, change to expect(violations).toHaveLength(0)
-      console.warn(`Found ${violations.length} hardcoded vertical references:\n${violations.join('\n')}`)
+      console.warn(
+        `Found ${violations.length} hardcoded vertical references:\n${violations.join('\n')}`,
+      )
     }
     // Track that we're monitoring — the count should decrease over time
     expect(violations.length).toBeLessThan(300)

@@ -69,7 +69,6 @@ const SUPABASE_DB_LIMIT_BYTES = 500 * 1024 * 1024 // 500 MB free tier
 const SUPABASE_CONNECTIONS_LIMIT = 60 // Free tier ~60 direct connections
 const RESEND_DAILY_LIMIT = 100 // Free tier 100/day
 
-
 // ── Metric Collectors ──────────────────────────────────────────────────────
 
 async function collectSupabaseRpc(
@@ -354,8 +353,10 @@ export default defineEventHandler(async (event) => {
   // Insert all collected metrics
   let metricsInserted = 0
   if (collectedMetrics.length > 0) {
+    const vertical = useRuntimeConfig().public.vertical || 'tracciona'
     const rows = collectedMetrics.map((m) => ({
       ...m,
+      vertical,
       recorded_at: new Date().toISOString(),
     }))
     const { error: insertError } = await supabase.from('infra_metrics').insert(rows as never)

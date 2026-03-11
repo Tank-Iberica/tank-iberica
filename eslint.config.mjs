@@ -16,6 +16,35 @@ export default createConfigForNuxt({
       'no-console': ['error', { allow: ['info'] }],
     },
   })
+  // Exclude k6 load test files (JavaScript, not TypeScript, uses k6 globals)
+  .append({
+    ignores: ['tests/load/**'],
+  })
+  // Relax strict TypeScript rules in test files — mocks and stubs legitimately use any/Function
+  .append({
+    files: ['tests/**/*.ts', '**/*.test.ts', '**/*.spec.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/ban-types': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-dynamic-delete': 'off',
+      '@typescript-eslint/consistent-type-imports': 'off',
+      '@typescript-eslint/no-extraneous-class': 'off',
+      '@typescript-eslint/no-useless-constructor': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      'import/first': 'off',
+      'no-undef': 'off',
+      'no-useless-escape': 'off',
+      'regexp/no-useless-escape': 'off',
+      'regexp/strict': 'off',
+      'unicorn/escape-case': 'off',
+      'unicorn/prefer-number-properties': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
+    },
+  })
   .append({
     ignores: ['docs/**'],
     rules: {
@@ -37,6 +66,7 @@ export default createConfigForNuxt({
       'vuejs-accessibility/no-distracting-elements': 'error',
       'vuejs-accessibility/no-onchange': 'warn',
       'vuejs-accessibility/no-redundant-roles': 'warn',
+      'vuejs-accessibility/no-static-element-interactions': 'warn',
       'vuejs-accessibility/role-has-required-aria-props': 'error',
       'vuejs-accessibility/tabindex-no-positive': 'error',
     },

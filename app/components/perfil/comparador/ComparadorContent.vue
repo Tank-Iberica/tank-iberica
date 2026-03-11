@@ -72,7 +72,7 @@ function isBest(vehicleId: string, key: string): boolean {
                 :src="vehicle.main_image_url"
                 :alt="`${vehicle.brand} ${vehicle.model}`"
                 loading="lazy"
-              />
+              >
               <div v-else class="card-ph">{{ vehicle.brand.charAt(0) }}</div>
             </div>
             <div class="card-body">

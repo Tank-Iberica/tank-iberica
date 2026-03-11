@@ -77,7 +77,7 @@ function onChange(field: keyof MerchForm, event: Event) {
           :value="form.quantity"
           :placeholder="$t('dashboard.tools.merchandising.quantityPlaceholder')"
           @input="onInput('quantity', $event)"
-        />
+        >
       </div>
 
       <div class="field">
@@ -94,7 +94,7 @@ function onChange(field: keyof MerchForm, event: Event) {
           :placeholder="$t('dashboard.tools.merchandising.emailPlaceholder')"
           required
           @input="onInput('email', $event)"
-        />
+        >
       </div>
 
       <div class="field">

@@ -39,8 +39,16 @@ const emit = defineEmits<{
 }>()
 
 const { setActions } = useCatalogState()
+const { config } = useVerticalConfig()
 
-const mainCategories = [{ key: 'alquiler' }, { key: 'venta' }, { key: 'terceros' }] as const
+// Use vertical_config.active_actions if available, otherwise fall back to defaults
+const FALLBACK_ACTIONS = ['alquiler', 'venta', 'terceros']
+const mainCategories = computed(() => {
+  const actions = config.value?.active_actions?.length
+    ? config.value.active_actions
+    : FALLBACK_ACTIONS
+  return actions.map((key) => ({ key }))
+})
 
 // Multi-select state — empty = show all (legacy behavior)
 const activeActions = ref<Set<string>>(new Set())

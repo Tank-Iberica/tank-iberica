@@ -15,6 +15,7 @@
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { logger } from './logger'
+import { emit } from './eventBus'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -49,6 +50,8 @@ export interface EnqueueOptions {
   maxRetries?: number
   backoffSeconds?: number
   scheduledAt?: Date
+  /** Job priority: 1=critical, 3=high, 5=normal (default), 7=low */
+  priority?: number
 }
 
 // ---------------------------------------------------------------------------
@@ -86,6 +89,7 @@ export async function enqueueJob(
       correlation_id: options.correlationId ?? null,
       max_retries: options.maxRetries ?? 3,
       backoff_seconds: options.backoffSeconds ?? 60,
+      priority: options.priority ?? 5,
       scheduled_at: (options.scheduledAt ?? new Date()).toISOString(),
     })
     .select('id')
@@ -107,10 +111,7 @@ export async function enqueueJob(
  * Uses SELECT FOR UPDATE SKIP LOCKED to prevent double-processing.
  * Returns claimed jobs with status set to 'processing'.
  */
-export async function claimJobs(
-  supabase: SupabaseClient,
-  batchSize: number = 10,
-): Promise<Job[]> {
+export async function claimJobs(supabase: SupabaseClient, batchSize: number = 10): Promise<Job[]> {
   // Use raw SQL for FOR UPDATE SKIP LOCKED (not available via PostgREST)
   const { data, error } = await supabase.rpc('claim_pending_jobs', {
     batch_size: batchSize,
@@ -179,6 +180,20 @@ export async function failJob(
       logger.error('[jobQueue] Failed to mark job as dead', { jobId, error: error.message })
     }
 
+    // Emit dead letter alert event
+    await emit('job:dead_letter', {
+      jobId,
+      jobType: 'email_send', // Will be overridden by caller context
+      error: errorMessage,
+    })
+
+    logger.warn('[jobQueue] Job moved to dead letter queue', {
+      jobId,
+      retries: newRetries,
+      maxRetries,
+      error: errorMessage,
+    })
+
     return 'dead'
   }
 
@@ -211,15 +226,8 @@ export async function failJob(
 /**
  * Get a job by ID (for status polling).
  */
-export async function getJob(
-  supabase: SupabaseClient,
-  jobId: string,
-): Promise<Job | null> {
-  const { data, error } = await supabase
-    .from('job_queue')
-    .select('*')
-    .eq('id', jobId)
-    .maybeSingle()
+export async function getJob(supabase: SupabaseClient, jobId: string): Promise<Job | null> {
+  const { data, error } = await supabase.from('job_queue').select('*').eq('id', jobId).maybeSingle()
 
   if (error) {
     logger.error('[jobQueue] Failed to get job', { jobId, error: error.message })
@@ -232,9 +240,7 @@ export async function getJob(
 /**
  * Count dead letter jobs (for monitoring/alerting).
  */
-export async function countDeadJobs(
-  supabase: SupabaseClient,
-): Promise<number> {
+export async function countDeadJobs(supabase: SupabaseClient): Promise<number> {
   const { count, error } = await supabase
     .from('job_queue')
     .select('*', { count: 'exact', head: true })

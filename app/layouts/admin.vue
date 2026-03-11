@@ -85,11 +85,13 @@
       />
       <main class="admin-content">
         <NuxtErrorBoundary @error="(e) => console.error('[admin] Error boundary caught:', e)">
-          <template #error="{ error, clearError }">
+          <template #error="{ clearError }">
             <div class="error-boundary">
               <p class="error-boundary__msg">{{ t('admin.layout.errorBoundaryMsg') }}</p>
               <div class="error-boundary__actions">
-                <button class="error-boundary__btn" @click="clearError">{{ t('common.retry') }}</button>
+                <button class="error-boundary__btn" @click="clearError">
+                  {{ t('common.retry') }}
+                </button>
                 <NuxtLink to="/admin" class="error-boundary__link" @click="clearError">
                   {{ t('admin.layout.backToStart') }}
                 </NuxtLink>

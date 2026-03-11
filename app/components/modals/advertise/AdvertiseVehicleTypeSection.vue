@@ -110,7 +110,7 @@ const { t, locale } = useI18n()
             class="form-input"
             :value="filterValues[filter.name] || ''"
             @input="emit('filter-change', filter.name, ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
 
         <div v-else-if="filter.type === 'slider' || filter.type === 'calc'" class="form-group">
@@ -127,7 +127,7 @@ const { t, locale } = useI18n()
             :step="(filter.options as Record<string, number>).step || 1"
             :value="filterValues[filter.name] ?? ''"
             @input="emit('filter-change', filter.name, ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
 
         <div v-else-if="filter.type === 'tick'" class="form-group">
@@ -139,7 +139,7 @@ const { t, locale } = useI18n()
               @change="
                 emit('filter-change', filter.name, ($event.target as HTMLInputElement).checked)
               "
-            />
+            >
             <span>{{ getFilterLabel(filter, locale) }}</span>
           </label>
         </div>

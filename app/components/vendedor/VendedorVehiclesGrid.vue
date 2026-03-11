@@ -25,7 +25,7 @@ const { getImageUrl } = useImageUrl()
             :src="getImageUrl(String(vehicle.images_json[0]), 'thumb')"
             :alt="`${vehicle.brand} ${vehicle.model}`"
             loading="lazy"
-          />
+          >
           <div v-else class="vehicle-card__placeholder">
             {{ vehicle.brand.charAt(0) }}
           </div>

@@ -20,7 +20,8 @@ name: k6 Load Test (Automated)
 
 on:
   schedule:
-    - cron: '0 9 * * 1' # Every Monday at 09:00 UTC
+    - cron: '0 9 * * 1' # Weekly smoke: Monday 09:00 UTC
+    - cron: '0 6 1 * *' # Monthly load: 1st of month 06:00 UTC
   workflow_dispatch:
     inputs:
       scenario:
@@ -28,7 +29,7 @@ on:
         required: false
         default: 'smoke'
         type: choice
-        options: [smoke, load]
+        options: [smoke, load, stress]
       force:
         description: 'Run even if readiness conditions not met'
         required: false
@@ -135,7 +136,8 @@ jobs:
         id: k6
         env:
           K6_BASE_URL: ${{ vars.APP_URL || 'https://tracciona.com' }}
-          K6_SCENARIO: ${{ github.event.inputs.scenario || 'smoke' }}
+          # Monthly cron (1st of month) uses 'load' scenario; weekly uses 'smoke'
+          K6_SCENARIO: ${{ github.event.inputs.scenario || (github.event.schedule == '0 6 1 * *' && 'load') || 'smoke' }}
           K6_VEHICLE_SLUGS: ${{ steps.slugs.outputs.slugs }}
         run: |
           mkdir -p tests/load/results
@@ -180,7 +182,7 @@ jobs:
           K6_STATUS: ${{ steps.k6.outputs.status }}
           VEHICLES: ${{ steps.readiness.outputs.vehicles }}
           DEALERS: ${{ steps.readiness.outputs.dealers }}
-          SCENARIO: ${{ github.event.inputs.scenario || 'smoke' }}
+          SCENARIO: ${{ github.event.inputs.scenario || (github.event.schedule == '0 6 1 * *' && 'load') || 'smoke' }}
           APP_URL: ${{ vars.APP_URL || 'https://tracciona.com' }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |

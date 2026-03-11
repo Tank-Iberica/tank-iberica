@@ -1,3 +1,5 @@
+import { useLocalStorageCache } from '~/composables/useLocalStorageCache'
+
 interface CategoryOption {
   id: string
   name: Record<string, string>
@@ -10,8 +12,6 @@ interface SubcategoryOption {
   slug: string
   category_id: string
 }
-
-import { useLocalStorageCache } from '~/composables/useLocalStorageCache'
 
 export function useDashboardNuevoVehiculo() {
   const { t } = useI18n()

@@ -48,7 +48,13 @@ function fmt(val: number | null | undefined): string {
           <button :aria-label="$t('common.close')" @click="emit('update:show', false)">×</button>
         </div>
         <div class="modal-body">
-          <p v-html="$t('admin.productos.sellVehicle', { name: `<strong>${vehicleBrand} ${vehicleModel}</strong>` })" />
+          <p
+            v-html="
+              $t('admin.productos.sellVehicle', {
+                name: `<strong>${vehicleBrand} ${vehicleModel}</strong>`,
+              })
+            "
+          />
           <div class="row-2">
             <div class="field">
               <label>{{ $t('admin.productos.finalSalePrice') }}</label>
@@ -59,7 +65,7 @@ function fmt(val: number | null | undefined): string {
                 @input="
                   updateField('sale_price', Number(($event.target as HTMLInputElement).value))
                 "
-              />
+              >
             </div>
             <div class="field">
               <label>{{ $t('admin.productos.commissionPercent') }}</label>
@@ -70,7 +76,7 @@ function fmt(val: number | null | undefined): string {
                 @input="
                   updateField('commission', Number(($event.target as HTMLInputElement).value))
                 "
-              />
+              >
             </div>
           </div>
           <div class="row-2">
@@ -81,7 +87,7 @@ function fmt(val: number | null | undefined): string {
                 type="text"
                 :placeholder="$t('admin.productos.buyerPlaceholder')"
                 @input="updateField('buyer', ($event.target as HTMLInputElement).value)"
-              />
+              >
             </div>
             <div class="field">
               <label>{{ $t('admin.productos.saleDate') }}</label>
@@ -89,7 +95,7 @@ function fmt(val: number | null | undefined): string {
                 :value="sellData.sale_date"
                 type="date"
                 @input="updateField('sale_date', ($event.target as HTMLInputElement).value)"
-              />
+              >
             </div>
           </div>
           <div class="field">
@@ -103,13 +109,17 @@ function fmt(val: number | null | undefined): string {
           </div>
           <div class="profit-box">
             <div class="profit-row">
-              <span>{{ $t('admin.productos.salePriceLabel') }}</span><span>{{ fmt(sellData.sale_price) }}</span>
+              <span>{{ $t('admin.productos.salePriceLabel') }}</span
+              ><span>{{ fmt(sellData.sale_price) }}</span>
             </div>
             <div class="profit-row">
-              <span>{{ $t('admin.productos.totalCostLabel') }}</span><span>{{ fmt(totalCost) }}</span>
+              <span>{{ $t('admin.productos.totalCostLabel') }}</span
+              ><span>{{ fmt(totalCost) }}</span>
             </div>
             <div class="profit-row">
-              <span>{{ $t('admin.productos.commissionLabel', { percent: sellData.commission }) }}</span>
+              <span>{{
+                $t('admin.productos.commissionLabel', { percent: sellData.commission })
+              }}</span>
               <span>{{ fmt((sellData.sale_price * sellData.commission) / 100) }}</span>
             </div>
             <div class="profit-row final" :class="finalProfit >= 0 ? 'pos' : 'neg'">
@@ -120,7 +130,9 @@ function fmt(val: number | null | undefined): string {
         </div>
         <div class="modal-foot">
           <button class="btn" @click="emit('update:show', false)">{{ $t('common.cancel') }}</button>
-          <button class="btn btn-primary" @click="emit('sell')">{{ $t('admin.productos.confirmSale') }}</button>
+          <button class="btn btn-primary" @click="emit('sell')">
+            {{ $t('admin.productos.confirmSale') }}
+          </button>
         </div>
       </div>
     </div>

@@ -17,10 +17,12 @@ const emit = defineEmits<{
       Sin características adicionales. Pulsa "+ Añadir" para crear una.
     </div>
     <div v-for="c in characteristics" :key="c.id" class="char-row">
-      <input v-model="c.key" type="text" placeholder="Nombre (ej: Motor)" />
-      <input v-model="c.value_es" type="text" placeholder="Valor ES" />
-      <input v-model="c.value_en" type="text" placeholder="Valor EN" />
-      <button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove', c.id)">×</button>
+      <input v-model="c.key" type="text" placeholder="Nombre (ej: Motor)" >
+      <input v-model="c.value_es" type="text" placeholder="Valor ES" >
+      <input v-model="c.value_en" type="text" placeholder="Valor EN" >
+      <button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove', c.id)">
+        ×
+      </button>
     </div>
   </div>
 </template>

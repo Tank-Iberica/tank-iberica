@@ -22,7 +22,7 @@ const { t } = useI18n()
         :class="{ 'input-error': errors.brand }"
         :aria-invalid="!!errors.brand || undefined"
         :aria-describedby="errors.brand ? 'err-adv-brand' : undefined"
-      />
+      >
       <p v-if="errors.brand" id="err-adv-brand" class="field-error" role="alert">
         {{ errors.brand }}
       </p>
@@ -38,7 +38,7 @@ const { t } = useI18n()
         :class="{ 'input-error': errors.model }"
         :aria-invalid="!!errors.model || undefined"
         :aria-describedby="errors.model ? 'err-adv-model' : undefined"
-      />
+      >
       <p v-if="errors.model" id="err-adv-model" class="field-error" role="alert">
         {{ errors.model }}
       </p>
@@ -56,7 +56,7 @@ const { t } = useI18n()
         :aria-describedby="errors.year ? 'err-adv-year' : undefined"
         min="1980"
         :max="new Date().getFullYear() + 1"
-      />
+      >
       <p v-if="errors.year" id="err-adv-year" class="field-error" role="alert">{{ errors.year }}</p>
     </div>
 
@@ -68,7 +68,7 @@ const { t } = useI18n()
         type="number"
         class="form-input"
         min="0"
-      />
+      >
     </div>
 
     <div class="form-group">
@@ -83,7 +83,7 @@ const { t } = useI18n()
         :aria-describedby="errors.price ? 'err-adv-price' : undefined"
         min="0"
         step="100"
-      />
+      >
       <p v-if="errors.price" id="err-adv-price" class="field-error" role="alert">
         {{ errors.price }}
       </p>
@@ -99,7 +99,7 @@ const { t } = useI18n()
         :class="{ 'input-error': errors.location }"
         :aria-invalid="!!errors.location || undefined"
         :aria-describedby="errors.location ? 'err-adv-location' : undefined"
-      />
+      >
       <p v-if="errors.location" id="err-adv-location" class="field-error" role="alert">
         {{ errors.location }}
       </p>

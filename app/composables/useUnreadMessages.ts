@@ -1,16 +1,23 @@
 /**
  * Global unread message count for the current user.
  * Shared singleton — all components read the same count.
+ * State is lazily initialized on first call to avoid import side effects.
  */
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import type { Database } from '~~/types/supabase'
 
-// Module-level state (shared across all uses of this composable)
-const unreadCount = ref(0)
-let channel: RealtimeChannel | null = null
-let initialized = false
+// Lazy-initialized module state (no side effects on import)
+let _unreadCount: Ref<number> | null = null
+let _channel: RealtimeChannel | null = null
+let _initialized = false
+
+function getUnreadCount(): Ref<number> {
+  if (!_unreadCount) _unreadCount = ref(0)
+  return _unreadCount
+}
 
 export function useUnreadMessages() {
+  const unreadCount = getUnreadCount()
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
 
@@ -47,10 +54,10 @@ export function useUnreadMessages() {
   }
 
   function subscribe(): void {
-    if (!user.value || initialized) return
-    initialized = true
+    if (!user.value || _initialized) return
+    _initialized = true
 
-    channel = supabase
+    _channel = supabase
       .channel('global-unread-messages')
       .on(
         'postgres_changes',
@@ -67,10 +74,10 @@ export function useUnreadMessages() {
   }
 
   function unsubscribe(): void {
-    if (channel) {
-      supabase.removeChannel(channel)
-      channel = null
-      initialized = false
+    if (_channel) {
+      supabase.removeChannel(_channel)
+      _channel = null
+      _initialized = false
     }
   }
 

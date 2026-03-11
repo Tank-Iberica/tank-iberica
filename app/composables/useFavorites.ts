@@ -1,20 +1,35 @@
 /**
  * Client-side favorites with Supabase sync for authenticated users.
  * Anonymous users fall back to localStorage only.
+ * State is lazily initialized on first call to avoid import side effects.
  */
 import { ref, readonly } from 'vue'
 import { useSupabaseClient, useSupabaseUser } from '#imports'
 
 const STORAGE_KEY = 'userFavorites'
 
-const favoriteIds = ref<Set<string>>(new Set())
-const favoritesOnly = ref(false)
-let loaded = false
-const synced = ref(false)
+// Lazy-initialized singleton state
+let _favoriteIds: Ref<Set<string>> | null = null
+let _favoritesOnly: Ref<boolean> | null = null
+let _loaded = false
+let _synced: Ref<boolean> | null = null
 
-function loadFromStorage() {
-  if (loaded) return
-  loaded = true
+function getFavoriteIds(): Ref<Set<string>> {
+  if (!_favoriteIds) _favoriteIds = ref<Set<string>>(new Set())
+  return _favoriteIds
+}
+function getFavoritesOnly(): Ref<boolean> {
+  if (!_favoritesOnly) _favoritesOnly = ref(false)
+  return _favoritesOnly
+}
+function getSynced(): Ref<boolean> {
+  if (!_synced) _synced = ref(false)
+  return _synced
+}
+
+function loadFromStorage(favoriteIds: Ref<Set<string>>) {
+  if (_loaded) return
+  _loaded = true
   if (import.meta.client) {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
@@ -28,7 +43,7 @@ function loadFromStorage() {
   }
 }
 
-function saveToStorage() {
+function saveToStorage(favoriteIds: Ref<Set<string>>) {
   if (import.meta.client) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify([...favoriteIds.value]))
@@ -39,7 +54,11 @@ function saveToStorage() {
 }
 
 export function useFavorites() {
-  loadFromStorage()
+  const favoriteIds = getFavoriteIds()
+  const favoritesOnly = getFavoritesOnly()
+  const synced = getSynced()
+
+  loadFromStorage(favoriteIds)
 
   const user = useSupabaseUser()
   const supabase = useSupabaseClient()
@@ -125,13 +144,17 @@ export function useFavorites() {
       next.delete(vehicleId)
     }
     favoriteIds.value = next
-    saveToStorage()
+    saveToStorage(favoriteIds)
 
     // Sync with Supabase for authenticated users — revert on error
     if (user.value) {
       const promise = wasAdded
         ? supabase.from('favorites').insert({ user_id: user.value.id, vehicle_id: vehicleId })
-        : supabase.from('favorites').delete().eq('user_id', user.value.id).eq('vehicle_id', vehicleId)
+        : supabase
+            .from('favorites')
+            .delete()
+            .eq('user_id', user.value.id)
+            .eq('vehicle_id', vehicleId)
 
       promise.then(({ error: err }) => {
         if (err) {
@@ -143,7 +166,7 @@ export function useFavorites() {
             reverted.add(vehicleId)
           }
           favoriteIds.value = reverted
-          saveToStorage()
+          saveToStorage(favoriteIds)
         }
       })
     }

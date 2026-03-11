@@ -16,7 +16,11 @@
         loading="lazy"
         decoding="async"
       />
-      <div v-else class="vehicle-video__thumb vehicle-video__thumb--placeholder" aria-hidden="true" />
+      <div
+        v-else
+        class="vehicle-video__thumb vehicle-video__thumb--placeholder"
+        aria-hidden="true"
+      />
 
       <button
         type="button"
@@ -40,7 +44,14 @@
       <iframe
         :src="embedUrl"
         :title="$t('vehicle.videoIframeTitle')"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allow="
+          accelerometer;
+          autoplay;
+          clipboard-write;
+          encrypted-media;
+          gyroscope;
+          picture-in-picture;
+        "
         allowfullscreen
         loading="lazy"
         class="vehicle-video__iframe"
@@ -70,7 +81,7 @@ const parsed = computed<{ provider: Provider; id: string } | null>(() => {
 
   // YouTube: youtu.be/ID or youtube.com/watch?v=ID or youtube.com/embed/ID
   const ytMatch = url.match(
-    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/,
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/,
   )
   if (ytMatch) return { provider: 'youtube', id: ytMatch[1]! }
 
@@ -83,9 +94,7 @@ const parsed = computed<{ provider: Provider; id: string } | null>(() => {
 
 const embedId = computed(() => parsed.value?.id ?? null)
 
-const providerName = computed(() =>
-  parsed.value?.provider === 'vimeo' ? 'Vimeo' : 'YouTube',
-)
+const providerName = computed(() => (parsed.value?.provider === 'vimeo' ? 'Vimeo' : 'YouTube'))
 
 const thumbnailUrl = computed(() => {
   if (!parsed.value) return null

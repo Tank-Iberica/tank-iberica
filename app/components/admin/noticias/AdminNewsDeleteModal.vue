@@ -14,12 +14,21 @@ defineEmits<{
 
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="modal-overlay" role="dialog" aria-modal="true" @click.self="$emit('close')">
+    <div
+      v-if="visible"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      @click.self="$emit('close')"
+    >
       <div class="modal-content">
         <h3>{{ $t('admin.news.deleteTitle') }}</h3>
         <p>{{ $t('admin.news.aboutToDelete') }}</p>
         <p class="delete-title">{{ articleTitle }}</p>
-        <p class="delete-warning" v-html="$t('admin.news.deleteWarning', { word: '<strong>borrar</strong>' })" />
+        <p
+          class="delete-warning"
+          v-html="$t('admin.news.deleteWarning', { word: '<strong>borrar</strong>' })"
+        />
         <input
           type="text"
           :placeholder="$t('admin.news.typeBorrar')"
@@ -27,7 +36,7 @@ defineEmits<{
           :value="confirmText"
           @input="$emit('update:confirmText', ($event.target as HTMLInputElement).value)"
           @keydown.enter="$emit('confirm')"
-        />
+        >
         <div class="modal-actions">
           <button class="btn" @click="$emit('close')">{{ $t('common.cancel') }}</button>
           <button

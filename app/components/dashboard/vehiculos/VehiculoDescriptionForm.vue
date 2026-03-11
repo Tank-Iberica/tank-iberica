@@ -13,7 +13,10 @@ const emit = defineEmits<{
   (e: 'generate'): void
 }>()
 
-function onDescriptionInput(field: 'description_es' | 'description_en' | 'video_url', event: Event): void {
+function onDescriptionInput(
+  field: 'description_es' | 'description_en' | 'video_url',
+  event: Event,
+): void {
   const target = event.target as HTMLTextAreaElement | HTMLInputElement
   emit('update', field, target.value)
 }
@@ -65,7 +68,7 @@ function onDescriptionInput(field: 'description_es' | 'description_en' | 'video_
         :placeholder="t('dashboard.vehicles.videoUrlPlaceholder')"
         autocomplete="off"
         @input="onDescriptionInput('video_url', $event)"
-      />
+      >
     </div>
   </section>
 </template>

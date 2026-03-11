@@ -69,7 +69,11 @@ const completenessItems = computed(() => [
   { key: 'name', done: !!form.name.trim(), label: t('profile.data.fullName') },
   { key: 'phone', done: !!form.phone.trim(), label: t('profile.data.phone') },
   { key: 'country', done: !!form.preferred_country, label: t('profile.data.preferredCountry') },
-  { key: 'level', done: !!form.preferred_location_level, label: t('profile.data.preferredLocationLevel') },
+  {
+    key: 'level',
+    done: !!form.preferred_location_level,
+    label: t('profile.data.preferredLocationLevel'),
+  },
 ])
 
 const completeness = computed(() => {
@@ -127,7 +131,13 @@ onMounted(async () => {
 <template>
   <div class="data-page">
     <div class="data-container">
-      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('profile.data.title') }]" />
+      <UiBreadcrumbNav
+        :items="[
+          { label: $t('nav.home'), to: '/' },
+          { label: $t('profile.dashboard.title'), to: '/perfil' },
+          { label: $t('profile.data.title') },
+        ]"
+      />
       <PerfilProfileNavPills />
       <h1 class="page-title">
         {{ $t('profile.data.title') }}
@@ -143,9 +153,17 @@ onMounted(async () => {
           <span
             class="completeness-percent"
             :class="{ 'completeness-percent--done': completeness === 100 }"
-          >{{ completeness }}%</span>
+            >{{ completeness }}%</span
+          >
         </div>
-        <div class="completeness-bar" :aria-label="`${completeness}%`" role="progressbar" :aria-valuenow="completeness" aria-valuemin="0" aria-valuemax="100">
+        <div
+          class="completeness-bar"
+          :aria-label="`${completeness}%`"
+          role="progressbar"
+          :aria-valuenow="completeness"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
           <div class="completeness-bar-fill" :style="{ width: `${completeness}%` }" />
         </div>
         <div v-if="completeness === 100" class="completeness-reward">
@@ -167,7 +185,11 @@ onMounted(async () => {
               height="14"
               aria-hidden="true"
             >
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              <path
+                fill-rule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clip-rule="evenodd"
+              />
             </svg>
             <svg
               v-else
@@ -206,7 +228,7 @@ onMounted(async () => {
             :alt="$t('profile.data.avatarAlt')"
             loading="lazy"
             decoding="async"
-          />
+          >
         </div>
         <div v-else class="avatar avatar--initials">
           {{ initials }}
@@ -225,7 +247,7 @@ onMounted(async () => {
             class="form-input"
             :placeholder="$t('profile.data.fullNamePlaceholder')"
             autocomplete="name"
-          />
+          >
         </div>
 
         <!-- Email (readonly) -->
@@ -238,7 +260,7 @@ onMounted(async () => {
             class="form-input form-input--readonly"
             readonly
             disabled
-          />
+          >
           <span class="form-hint">{{ $t('profile.data.emailHint') }}</span>
         </div>
 
@@ -255,7 +277,7 @@ onMounted(async () => {
             :aria-describedby="fieldErrors.phone ? 'err-profile-phone' : undefined"
             :placeholder="$t('profile.data.phonePlaceholder')"
             autocomplete="tel"
-          />
+          >
           <p v-if="fieldErrors.phone" id="err-profile-phone" class="field-error" role="alert">
             {{ fieldErrors.phone }}
           </p>

@@ -52,7 +52,9 @@ function fmt(val: number | null | undefined): string {
   <div class="section collapsible financial">
     <button class="section-toggle" @click="emit('update:open', !open)">
       <span>💰 {{ t('admin.productos.financial.accounts') }}</span>
-      <span class="cost-badge">{{ t('admin.productos.financial.totalCost') }}: {{ fmt(totalCost) }}</span>
+      <span class="cost-badge"
+        >{{ t('admin.productos.financial.totalCost') }}: {{ fmt(totalCost) }}</span
+      >
     </button>
     <div v-if="open" class="section-content">
       <div class="row-3">
@@ -65,7 +67,7 @@ function fmt(val: number | null | undefined): string {
             @input="
               emit('update:minPrice', Number(($event.target as HTMLInputElement).value) || null)
             "
-          />
+          >
         </div>
         <div class="field">
           <label>{{ t('admin.productos.financial.acquisitionCost') }}</label>
@@ -79,7 +81,7 @@ function fmt(val: number | null | undefined): string {
                 Number(($event.target as HTMLInputElement).value) || null,
               )
             "
-          />
+          >
         </div>
         <div class="field">
           <label>{{ t('admin.productos.financial.acquisitionDate') }}</label>
@@ -89,7 +91,7 @@ function fmt(val: number | null | undefined): string {
             @input="
               emit('update:acquisitionDate', ($event.target as HTMLInputElement).value || null)
             "
-          />
+          >
         </div>
       </div>
 
@@ -118,7 +120,7 @@ function fmt(val: number | null | undefined): string {
                   @input="
                     emit('update-maint', r.id, 'date', ($event.target as HTMLInputElement).value)
                   "
-                />
+                >
               </td>
               <td>
                 <input
@@ -128,7 +130,7 @@ function fmt(val: number | null | undefined): string {
                   @input="
                     emit('update-maint', r.id, 'reason', ($event.target as HTMLInputElement).value)
                   "
-                />
+                >
               </td>
               <td>
                 <input
@@ -143,7 +145,7 @@ function fmt(val: number | null | undefined): string {
                       Number(($event.target as HTMLInputElement).value),
                     )
                   "
-                />
+                >
               </td>
               <td class="invoice-cell">
                 <template v-if="r.invoice_url">
@@ -156,9 +158,12 @@ function fmt(val: number | null | undefined): string {
                   >
                     📎 {{ t('common.view') }}
                   </a>
-                  <label class="invoice-change" :title="t('admin.productos.financial.changeInvoice')">
+                  <label
+                    class="invoice-change"
+                    :title="t('admin.productos.financial.changeInvoice')"
+                  >
                     ↻
-                    <input type="file" @change="emit('upload-maint-invoice', r.id, $event)" />
+                    <input type="file" @change="emit('upload-maint-invoice', r.id, $event)" >
                   </label>
                 </template>
                 <label v-else class="invoice-upload">
@@ -167,22 +172,34 @@ function fmt(val: number | null | undefined): string {
                     type="file"
                     :disabled="driveLoading"
                     @change="emit('upload-maint-invoice', r.id, $event)"
-                  />
+                  >
                 </label>
               </td>
-              <td><button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove-maint', r.id)">×</button></td>
+              <td>
+                <button
+                  class="btn-x"
+                  :aria-label="$t('common.delete')"
+                  @click="emit('remove-maint', r.id)"
+                >
+                  ×
+                </button>
+              </td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="2" class="text-right">{{ t('admin.productos.financial.totalMaint') }}:</td>
+              <td colspan="2" class="text-right">
+                {{ t('admin.productos.financial.totalMaint') }}:
+              </td>
               <td colspan="3">
                 <strong>{{ fmt(totalMaint) }}</strong>
               </td>
             </tr>
           </tfoot>
         </table>
-        <div v-else class="empty-msg">{{ t('admin.productos.financial.noMaintenanceRecords') }}</div>
+        <div v-else class="empty-msg">
+          {{ t('admin.productos.financial.noMaintenanceRecords') }}
+        </div>
       </div>
 
       <!-- Rental income table -->
@@ -216,7 +233,7 @@ function fmt(val: number | null | undefined): string {
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                />
+                >
               </td>
               <td>
                 <input
@@ -230,7 +247,7 @@ function fmt(val: number | null | undefined): string {
                       ($event.target as HTMLInputElement).value,
                     )
                   "
-                />
+                >
               </td>
               <td>
                 <input
@@ -240,7 +257,7 @@ function fmt(val: number | null | undefined): string {
                   @input="
                     emit('update-rental', r.id, 'notes', ($event.target as HTMLInputElement).value)
                   "
-                />
+                >
               </td>
               <td>
                 <input
@@ -255,7 +272,7 @@ function fmt(val: number | null | undefined): string {
                       Number(($event.target as HTMLInputElement).value),
                     )
                   "
-                />
+                >
               </td>
               <td class="invoice-cell">
                 <template v-if="r.invoice_url">
@@ -268,9 +285,12 @@ function fmt(val: number | null | undefined): string {
                   >
                     📎 {{ t('common.view') }}
                   </a>
-                  <label class="invoice-change" :title="t('admin.productos.financial.changeInvoice')">
+                  <label
+                    class="invoice-change"
+                    :title="t('admin.productos.financial.changeInvoice')"
+                  >
                     ↻
-                    <input type="file" @change="emit('upload-rental-invoice', r.id, $event)" />
+                    <input type="file" @change="emit('upload-rental-invoice', r.id, $event)" >
                   </label>
                 </template>
                 <label v-else class="invoice-upload">
@@ -279,15 +299,25 @@ function fmt(val: number | null | undefined): string {
                     type="file"
                     :disabled="driveLoading"
                     @change="emit('upload-rental-invoice', r.id, $event)"
-                  />
+                  >
                 </label>
               </td>
-              <td><button class="btn-x" :aria-label="$t('common.delete')" @click="emit('remove-rental', r.id)">×</button></td>
+              <td>
+                <button
+                  class="btn-x"
+                  :aria-label="$t('common.delete')"
+                  @click="emit('remove-rental', r.id)"
+                >
+                  ×
+                </button>
+              </td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="4" class="text-right">{{ t('admin.productos.financial.totalRental') }}:</td>
+              <td colspan="4" class="text-right">
+                {{ t('admin.productos.financial.totalRental') }}:
+              </td>
               <td colspan="2">
                 <strong class="green">{{ fmt(totalRental) }}</strong>
               </td>
@@ -300,16 +330,20 @@ function fmt(val: number | null | undefined): string {
       <!-- Cost summary -->
       <div class="cost-summary">
         <div class="cost-row">
-          <span>{{ t('admin.productos.financial.acquisitionCostLabel') }}</span><span>{{ fmt(acquisitionCost) }}</span>
+          <span>{{ t('admin.productos.financial.acquisitionCostLabel') }}</span
+          ><span>{{ fmt(acquisitionCost) }}</span>
         </div>
         <div class="cost-row">
-          <span>+ {{ t('admin.productos.financial.maintenanceLabel') }}</span><span>{{ fmt(totalMaint) }}</span>
+          <span>+ {{ t('admin.productos.financial.maintenanceLabel') }}</span
+          ><span>{{ fmt(totalMaint) }}</span>
         </div>
         <div class="cost-row">
-          <span>− {{ t('admin.productos.financial.rentalLabel') }}</span><span class="green">{{ fmt(totalRental) }}</span>
+          <span>− {{ t('admin.productos.financial.rentalLabel') }}</span
+          ><span class="green">{{ fmt(totalRental) }}</span>
         </div>
         <div class="cost-row total">
-          <span>{{ t('admin.productos.financial.totalCost') }}</span><span>{{ fmt(totalCost) }}</span>
+          <span>{{ t('admin.productos.financial.totalCost') }}</span
+          ><span>{{ fmt(totalCost) }}</span>
         </div>
       </div>
     </div>

@@ -16,9 +16,17 @@ export default defineNuxtPlugin(() => {
   })
 
   // Reload profile whenever auth state changes (login, refresh, logout)
-  supabase.auth.onAuthStateChange((_event, session) => {
+  // Detect refresh token reuse (indicates potential token theft)
+  supabase.auth.onAuthStateChange((event, session) => {
     if (session?.user?.id) {
       fetchProfile()
+    }
+
+    // TOKEN_REFRESHED with no session = refresh token was revoked (reuse detected)
+    if (event === 'TOKEN_REFRESHED' && !session) {
+      console.warn('[auth] Refresh token reuse detected — forcing re-login')
+      supabase.auth.signOut()
+      navigateTo('/auth/login?reason=session_expired')
     }
   })
 })

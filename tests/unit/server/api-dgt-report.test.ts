@@ -82,7 +82,11 @@ describe('POST /api/dgt-report', () => {
   it('throws 400 for invalid provider', async () => {
     mockServerUser.mockResolvedValue({ id: 'u1' })
     mockSupabase = { from: () => makeChain({ role: 'admin' }) }
-    mockReadBody.mockResolvedValue({ vehicleId: VALID_UUID, matricula: '1234 BCD', provider: 'bad' })
+    mockReadBody.mockResolvedValue({
+      vehicleId: VALID_UUID,
+      matricula: '1234 BCD',
+      provider: 'bad',
+    })
     await expect((handler as Function)({})).rejects.toMatchObject({ statusCode: 400 })
   })
 
@@ -90,7 +94,7 @@ describe('POST /api/dgt-report', () => {
     mockServerUser.mockResolvedValue({ id: 'u1' })
     mockReadBody.mockResolvedValue({ vehicleId: VALID_UUID, matricula: '1234 BCD' })
 
-    let fromCall = 0
+    const fromCall = 0
     mockSupabase = {
       from: (table: string) => {
         if (table === 'users') return makeChain({ role: 'admin' })
@@ -98,8 +102,10 @@ describe('POST /api/dgt-report', () => {
           const chain: Record<string, unknown> = {}
           const ms = ['select', 'eq', 'single']
           for (const m of ms) chain[m] = () => chain
-          chain.then = (r: (v: unknown) => void) => Promise.resolve({ data: null, error: { message: 'not found' } }).then(r)
-          chain.catch = (r: (v: unknown) => void) => Promise.resolve({ data: null, error: null }).catch(r)
+          chain.then = (r: (v: unknown) => void) =>
+            Promise.resolve({ data: null, error: { message: 'not found' } }).then(r)
+          chain.catch = (r: (v: unknown) => void) =>
+            Promise.resolve({ data: null, error: null }).catch(r)
           return chain
         }
         return makeChain(null)
@@ -115,7 +121,14 @@ describe('POST /api/dgt-report', () => {
     mockSupabase = {
       from: (table: string) => {
         if (table === 'users') return makeChain({ role: 'admin' })
-        if (table === 'vehicles') return makeChain({ id: VALID_UUID, brand: 'Volvo', model: 'FH', year: 2020, verification_level: 1 })
+        if (table === 'vehicles')
+          return makeChain({
+            id: VALID_UUID,
+            brand: 'Volvo',
+            model: 'FH',
+            year: 2020,
+            verification_level: 1,
+          })
         if (table === 'verification_documents') return makeChain({ id: 'doc-1' })
         return makeChain(null)
       },
@@ -134,7 +147,14 @@ describe('POST /api/dgt-report', () => {
     mockSupabase = {
       from: (table: string) => {
         if (table === 'users') return makeChain({ role: 'admin' })
-        if (table === 'vehicles') return makeChain({ id: VALID_UUID, brand: 'Volvo', model: 'FH', year: 2020, verification_level: 3 })
+        if (table === 'vehicles')
+          return makeChain({
+            id: VALID_UUID,
+            brand: 'Volvo',
+            model: 'FH',
+            year: 2020,
+            verification_level: 3,
+          })
         if (table === 'verification_documents') return makeChain({ id: 'doc-2' })
         return makeChain(null)
       },

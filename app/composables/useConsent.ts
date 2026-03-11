@@ -23,9 +23,18 @@ const defaultConsent: ConsentState = {
   timestamp: '',
 }
 
-/** Shared reactive state across all consumers */
-const consent = ref<ConsentState | null>(null)
-const loaded = ref(false)
+/** Lazy-initialized shared state (no side effects on import) */
+let _consent: Ref<ConsentState | null> | null = null
+let _loaded: Ref<boolean> | null = null
+
+function getConsent(): Ref<ConsentState | null> {
+  if (!_consent) _consent = ref<ConsentState | null>(null)
+  return _consent
+}
+function getLoaded(): Ref<boolean> {
+  if (!_loaded) _loaded = ref(false)
+  return _loaded
+}
 
 function removeAnalyticsCookies(): void {
   if (import.meta.server) return
@@ -70,6 +79,8 @@ function removeMarketingCookies(): void {
 }
 
 export function useConsent() {
+  const consent = getConsent()
+  const loaded = getLoaded()
   const user = useSupabaseUser()
   const supabase = useSupabaseClient<Database>()
 

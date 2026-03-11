@@ -204,7 +204,7 @@ const { t } = useI18n()
             :checked="isEnabled(emailType.key)"
             :disabled="isAlwaysOn(emailType.key) || saving"
             @change="emit('toggle', emailType.key)"
-          />
+          >
           <span class="toggle__slider" />
         </label>
       </div>

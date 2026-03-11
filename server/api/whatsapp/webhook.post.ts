@@ -14,6 +14,7 @@
  * POST /api/whatsapp/webhook
  */
 import { serverSupabaseServiceRole } from '#supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { defineEventHandler, readBody, readRawBody, getHeader } from 'h3'
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import { logger } from '../../utils/logger'
@@ -219,8 +220,11 @@ function extractMessageContent(messages: WhatsAppMessage[]): {
 
 // ── Dealer lookup ───────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function lookupDealer(supabase: any, senderPhone: string): Promise<DealerRow | null> {
+ 
+async function lookupDealer(
+  supabase: SupabaseClient,
+  senderPhone: string,
+): Promise<DealerRow | null> {
   const variants = phoneVariants(senderPhone)
 
   const { data: waDealer } = await supabase
@@ -246,8 +250,8 @@ async function lookupDealer(supabase: any, senderPhone: string): Promise<DealerR
 
 async function processMessageChange(
   change: WhatsAppChange,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+   
+  supabase: SupabaseClient,
   supabaseUrl: string,
   supabaseKey: string,
 ): Promise<void> {
@@ -306,7 +310,9 @@ async function processMessageChange(
     body: { submissionId: submission.id },
   }).catch((err: unknown) => {
     const message = err instanceof Error ? err.message : 'Unknown error'
-    logger.error(`[WhatsApp Webhook] Process trigger failed for ${submission.id}:`, { error: String(message) })
+    logger.error(`[WhatsApp Webhook] Process trigger failed for ${submission.id}:`, {
+      error: String(message),
+    })
   })
 }
 

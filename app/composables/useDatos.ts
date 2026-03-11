@@ -1,18 +1,4 @@
 // Re-export types for backwards compatibility
-export type {
-  MarketRow,
-  PriceHistoryRow,
-  CategoryStat,
-  ProvinceStat,
-  BrandBreakdownItem,
-  ProvinceSortKey,
-  DatosChartDataset,
-  DatosChartData,
-} from '~/composables/shared/datosTypes'
-
-// Re-export formatPrice for backwards compatibility (tests import it from here)
-export { formatPrice } from '~/utils/formatters'
-
 import type {
   MarketRow,
   PriceHistoryRow,
@@ -32,6 +18,20 @@ import {
 
 import { formatPrice, formatDate } from '~/utils/formatters'
 import { getVerticalSlug } from '~/composables/useVerticalConfig'
+
+export type {
+  MarketRow,
+  PriceHistoryRow,
+  CategoryStat,
+  ProvinceStat,
+  BrandBreakdownItem,
+  ProvinceSortKey,
+  DatosChartDataset,
+  DatosChartData,
+} from '~/composables/shared/datosTypes'
+
+// Re-export formatPrice for backwards compatibility (tests import it from here)
+export { formatPrice } from '~/utils/formatters'
 
 /* ------------------------------------------------
    Composable
@@ -55,7 +55,9 @@ export function useDatos() {
     const [marketResult, historyResult] = await Promise.all([
       supabase
         .from('market_data')
-        .select('vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count')
+        .select(
+          'vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count',
+        )
         .eq('vertical', getVerticalSlug())
         .order('month', { ascending: false }),
       supabase

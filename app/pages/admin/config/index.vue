@@ -80,6 +80,13 @@ const configSections = [
     features: ['Aprobación artículos', 'Auto-publicar RRSS', 'Gestión noticias', 'Calendario'],
   },
   {
+    title: 'Feature Flags',
+    description: 'Activar/desactivar funcionalidades por vertical con rollout progresivo.',
+    icon: 'flag',
+    link: '/admin/config/feature-flags',
+    features: ['On/Off por feature', 'Per-vertical overrides', 'Rollout %', 'Dealer allowlist'],
+  },
+  {
     title: 'Sistema',
     description: 'Moderación de vehículos/artículos y logs de actividad del sistema.',
     icon: 'settings',
@@ -103,6 +110,7 @@ const iconPaths: Record<string, string> = {
     'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
   article:
     'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z',
+  flag: 'M4 15s1-1 4-1 4 0 3 1.5 3 1.5 0 0 3-1.5 3-1.5V3s-1 1-4 1-4 0-3-1.5-3-1.5c0 0-3 1.5-3 1.5V15M4 22v-7',
   settings:
     'M12 15a3 3 0 100-6 3 3 0 000 6zM19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z',
 }

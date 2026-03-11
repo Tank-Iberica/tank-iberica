@@ -58,7 +58,7 @@ const tabs: StatusFilter[] = ['all', 'received', 'processing', 'processed', 'pub
         type="text"
         :placeholder="t('admin.whatsapp.searchPlaceholder')"
         @input="emit('update:search', ($event.target as HTMLInputElement).value)"
-      />
+      >
       <button v-if="search" class="clear-btn" @click="emit('update:search', '')">
         <svg
           width="14"

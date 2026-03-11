@@ -161,7 +161,8 @@ export default defineNuxtConfig({
         'X-Content-Type-Options': 'nosniff',
         'X-Frame-Options': 'SAMEORIGIN',
         'Referrer-Policy': 'strict-origin-when-cross-origin',
-        'Permissions-Policy': 'camera=(), microphone=(), geolocation=(self), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), usb=(), payment=(), display-capture=()',
+        'Permissions-Policy':
+          'camera=(), microphone=(), geolocation=(self), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), usb=(), payment=(), display-capture=()',
         // Report-Only first — switch to Content-Security-Policy once violations confirmed zero
         'Content-Security-Policy-Report-Only': [
           "default-src 'self'",
@@ -176,7 +177,7 @@ export default defineNuxtConfig({
           // Fetch/XHR: Supabase, GA, GTM
           "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://www.googletagmanager.com https://pagead2.googlesyndication.com",
           // Frames: Turnstile widget
-          "frame-src https://challenges.cloudflare.com",
+          'frame-src https://challenges.cloudflare.com',
           // Block plugins/objects
           "object-src 'none'",
           // Block base tag hijacking
@@ -247,6 +248,9 @@ export default defineNuxtConfig({
     infraThresholdWarning: Number.parseInt(process.env.INFRA_ALERT_THRESHOLD_WARNING || '70'),
     infraThresholdCritical: Number.parseInt(process.env.INFRA_ALERT_THRESHOLD_CRITICAL || '85'),
     infraThresholdEmergency: Number.parseInt(process.env.INFRA_ALERT_THRESHOLD_EMERGENCY || '95'),
+    geoBlockingEnabled: process.env.NUXT_GEO_BLOCKING_ENABLED || '',
+    geoBlockingCountries: process.env.NUXT_GEO_BLOCKING_COUNTRIES || '',
+    geoBlockingMode: process.env.NUXT_GEO_BLOCKING_MODE || 'allow',
     cloudinaryApiKey: process.env.CLOUDINARY_API_KEY || '',
     cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET || '',
     public: {
@@ -290,7 +294,12 @@ export default defineNuxtConfig({
     payloadExtraction: true,
   },
 
-  css: ['@/assets/css/tokens.css', '@/assets/css/interactions.css', '@/assets/css/themes.css', '@/assets/css/print.css'],
+  css: [
+    '@/assets/css/tokens.css',
+    '@/assets/css/interactions.css',
+    '@/assets/css/themes.css',
+    '@/assets/css/print.css',
+  ],
 
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },

@@ -53,7 +53,7 @@ function onStatusChange(event: Event) {
           placeholder="Buscar por titulo..."
           class="search-input"
           @input="onSearchInput"
-        />
+        >
       </div>
 
       <div class="filter-group">

@@ -21,8 +21,8 @@ const saved = ref(false)
 
 async function saveThreshold(): Promise<void> {
   const raw = thresholdInput.value.trim()
-  const parsed = raw === '' ? null : parseFloat(raw.replace(',', '.'))
-  if (parsed !== null && (isNaN(parsed) || parsed <= 0)) return
+  const parsed = raw === '' ? null : Number.parseFloat(raw.replace(',', '.'))
+  if (parsed !== null && (Number.isNaN(parsed) || parsed <= 0)) return
 
   saving.value = true
   await setThreshold(props.vehicleId, parsed)
@@ -45,12 +45,16 @@ async function saveThreshold(): Promise<void> {
         v-model="thresholdInput"
         type="number"
         class="alert-input"
-        :placeholder="currentPrice ? String(Math.round(currentPrice * 0.9)) : t('vehicle.priceAlert.placeholder')"
+        :placeholder="
+          currentPrice
+            ? String(Math.round(currentPrice * 0.9))
+            : t('vehicle.priceAlert.placeholder')
+        "
         min="0"
         step="500"
         autocomplete="off"
         @keydown.enter="saveThreshold"
-      />
+      >
       <button
         class="alert-btn"
         :disabled="saving"

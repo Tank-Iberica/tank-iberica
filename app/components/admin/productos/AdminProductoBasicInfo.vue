@@ -92,7 +92,7 @@ function countryFlag(country: string): string {
       <div class="section-title">{{ t('admin.productos.basicInfo.categories') }} *</div>
       <div class="cat-row">
         <label class="cat-check" :class="{ active: hasCat('venta') }">
-          <input type="checkbox" :checked="hasCat('venta')" @change="toggleCategory('venta')" />
+          <input type="checkbox" :checked="hasCat('venta')" @change="toggleCategory('venta')" >
           {{ t('common.sale') }}
         </label>
         <label class="cat-check" :class="{ active: hasCat('alquiler') }">
@@ -100,7 +100,7 @@ function countryFlag(country: string): string {
             type="checkbox"
             :checked="hasCat('alquiler')"
             @change="toggleCategory('alquiler')"
-          />
+          >
           {{ t('common.rental') }}
         </label>
         <label class="cat-check" :class="{ active: hasCat('terceros') }">
@@ -108,11 +108,11 @@ function countryFlag(country: string): string {
             type="checkbox"
             :checked="hasCat('terceros')"
             @change="toggleCategory('terceros')"
-          />
+          >
           {{ t('common.thirdParty') }}
         </label>
         <label class="feat-check">
-          <input :checked="featured" type="checkbox" @change="emit('update:featured', !featured)" />
+          <input :checked="featured" type="checkbox" @change="emit('update:featured', !featured)" >
           ★ {{ t('admin.productos.basicInfo.featured') }}
         </label>
       </div>
@@ -145,7 +145,9 @@ function countryFlag(country: string): string {
             :value="typeId"
             @change="emit('update:typeId', ($event.target as HTMLSelectElement).value || null)"
           >
-            <option :value="null" disabled>{{ t('admin.productos.basicInfo.selectPlaceholder') }}</option>
+            <option :value="null" disabled>
+              {{ t('admin.productos.basicInfo.selectPlaceholder') }}
+            </option>
             <option v-for="t in types" :key="t.id" :value="t.id">
               {{ localizedName(t, locale) }}
             </option>
@@ -160,7 +162,7 @@ function countryFlag(country: string): string {
             type="text"
             placeholder="Scania"
             @input="emit('update:brand', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
         <div class="field">
           <label>{{ t('common.model') }} *</label>
@@ -169,7 +171,7 @@ function countryFlag(country: string): string {
             type="text"
             placeholder="R450"
             @input="emit('update:model', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
         <div class="field">
           <label>{{ t('admin.productos.basicInfo.year') }} *</label>
@@ -178,7 +180,7 @@ function countryFlag(country: string): string {
             type="number"
             placeholder="2023"
             @input="emit('update:year', Number(($event.target as HTMLInputElement).value) || null)"
-          />
+          >
         </div>
         <div class="field" />
       </div>
@@ -190,7 +192,7 @@ function countryFlag(country: string): string {
             type="text"
             placeholder="1234-ABC"
             @input="emit('update:plate', ($event.target as HTMLInputElement).value || null)"
-          />
+          >
         </div>
         <div class="field">
           <label>{{ t('admin.productos.basicInfo.salePrice') }}</label>
@@ -199,7 +201,7 @@ function countryFlag(country: string): string {
             type="number"
             :placeholder="t('admin.productos.basicInfo.priceConsultPlaceholder')"
             @input="emit('update:price', Number(($event.target as HTMLInputElement).value) || null)"
-          />
+          >
         </div>
         <div v-if="showRentalPrice" class="field">
           <label>{{ t('admin.productos.basicInfo.rentalPriceMonth') }}</label>
@@ -210,7 +212,7 @@ function countryFlag(country: string): string {
             @input="
               emit('update:rentalPrice', Number(($event.target as HTMLInputElement).value) || null)
             "
-          />
+          >
         </div>
         <div v-else class="field" />
         <div class="field" />
@@ -223,7 +225,7 @@ function countryFlag(country: string): string {
             type="text"
             placeholder="Madrid, España"
             @input="emit('update:location', ($event.target as HTMLInputElement).value || null)"
-          />
+          >
           <span v-if="locationCountry" class="location-detected">
             {{ countryFlag(locationCountry) }} {{ locationCountry }}
             <template v-if="locationProvince"> · {{ locationProvince }}</template>
@@ -237,7 +239,7 @@ function countryFlag(country: string): string {
             type="text"
             placeholder="Madrid, Spain"
             @input="emit('update:locationEn', ($event.target as HTMLInputElement).value || null)"
-          />
+          >
         </div>
       </div>
     </div>

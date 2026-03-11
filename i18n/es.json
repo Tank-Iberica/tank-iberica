@@ -589,6 +589,7 @@
     "seeMore": "Ver más...",
     "seeLess": "Ver menos",
     "retry": "Reintentar",
+    "staleDataWarning": "Los datos pueden no estar actualizados. Cargando la última versión…",
     "errorHintNetwork": "Comprueba tu conexión a internet e inténtalo de nuevo.",
     "errorHintPermission": "No tienes permiso para ver este contenido.",
     "errorHintNotFound": "El recurso no existe o ha sido eliminado.",
@@ -2328,6 +2329,26 @@
     "configIndex": {
       "title": "Configuración"
     },
+    "featureFlags": {
+      "title": "Feature Flags",
+      "subtitle": "Gestiona funcionalidades activables por vertical con rollout progresivo.",
+      "createFlag": "Crear flag",
+      "flagKey": "Clave del flag",
+      "keyPlaceholder": "ej: nueva_funcionalidad",
+      "description": "Descripción",
+      "verticalScope": "Ámbito",
+      "global": "Global (todas las verticales)",
+      "enabled": "Activado",
+      "rolloutPercentage": "Porcentaje de rollout",
+      "verticalOverrides": "Overrides por vertical",
+      "addOverride": "Añadir override",
+      "noOverrides": "Sin overrides de vertical. Se usa la configuración global.",
+      "overrides": "overrides",
+      "expand": "Expandir detalles",
+      "globalSettings": "Configuración global",
+      "noFlags": "No hay feature flags configurados.",
+      "confirmDeleteMsg": "¿Eliminar el flag \"{key}\" ({vertical})?"
+    },
     "configIntegrations": {
       "title": "SEO e Integraciones",
       "subtitle": "Configura las integraciones con servicios externos de Google y Cloudinary.",
@@ -2964,7 +2985,21 @@
       "deleteConfirmInstruction": "Escribe ELIMINAR para confirmar:",
       "deleteConfirmError": "Debes escribir ELIMINAR exactamente para confirmar",
       "confirmDelete": "Confirmar eliminación",
-      "deleteError": "No hemos podido eliminar la cuenta. Inténtalo de nuevo."
+      "deleteError": "No hemos podido eliminar la cuenta. Inténtalo de nuevo.",
+      "mfaTitle": "Autenticación en dos pasos (2FA)",
+      "mfaDesc": "Añade una capa extra de seguridad a tu cuenta con una app de autenticación.",
+      "mfaEnable": "Activar 2FA",
+      "mfaDisable": "Desactivar 2FA",
+      "mfaScanQr": "Escanea este código QR con tu app de autenticación (Google Authenticator, Authy, etc.):",
+      "mfaEnterCode": "Introduce el código de 6 dígitos:",
+      "mfaCodePlaceholder": "000000",
+      "mfaVerify": "Verificar",
+      "mfaVerified": "2FA activado correctamente",
+      "mfaVerifyError": "Código incorrecto. Inténtalo de nuevo.",
+      "mfaDisabled": "2FA desactivado",
+      "mfaStatus": "Estado: {status}",
+      "mfaStatusActive": "Activo",
+      "mfaStatusInactive": "Inactivo"
     }
   },
   "verification": {
@@ -4733,7 +4768,35 @@
       "location": "Ubicación",
       "attributes": "Características",
       "preview": "Vista previa"
+    },
+    "prev": "Anterior",
+    "finish": "Entendido",
+    "tour": {
+      "buyerWelcomeTitle": "Bienvenido a Tracciona",
+      "buyerWelcomeDesc": "El marketplace de maquinaria y vehículos industriales. Busca por categoría, filtra por precio, ubicación y más.",
+      "buyerSearchTitle": "Busca lo que necesitas",
+      "buyerSearchDesc": "Usa los filtros para encontrar el vehículo perfecto. Puedes guardar búsquedas y recibir alertas cuando haya novedades.",
+      "buyerContactTitle": "Contacta al vendedor",
+      "buyerContactDesc": "Cuando encuentres un vehículo interesante, contacta directamente al vendedor. También puedes reservar con señal.",
+      "buyerContactAction": "Ver catálogo",
+      "dealerWelcomeTitle": "Tu panel de concesionario",
+      "dealerWelcomeDesc": "Desde aquí gestionas tu inventario, leads, mensajes y herramientas. Empieza subiendo tu primer vehículo.",
+      "dealerUploadTitle": "Sube tu primer vehículo",
+      "dealerUploadDesc": "Añade fotos, descripción y precio. Los vehículos con buenas fotos reciben 3x más contactos.",
+      "dealerUploadAction": "Nuevo vehículo",
+      "dealerToolsTitle": "Herramientas profesionales",
+      "dealerToolsDesc": "Genera facturas, contratos, exporta tu inventario y analiza tus estadísticas desde el panel."
     }
+  },
+  "funnel": {
+    "search": "Búsquedas",
+    "viewVehicle": "Vistas de vehículo",
+    "contactSeller": "Contactos",
+    "reservation": "Reservas",
+    "overallConversion": "Conversión total",
+    "biggestLeak": "Mayor fuga",
+    "dropOff": "Caída",
+    "noData": "Sin datos de embudo aún. Los eventos se registran cuando los usuarios navegan."
   },
   "visits": {
     "title": "Gestión de Visitas",
@@ -4896,7 +4959,11 @@
     "quickReplyAvailable": "Sigue disponible",
     "quickReplyNegotiable": "Precio negociable",
     "quickReplySold": "Ya vendido",
-    "quickReplyVisit": "¿Cuándo quieres visitar?"
+    "quickReplyVisit": "¿Cuándo quieres visitar?",
+    "sending": "Enviando...",
+    "sendFailed": "Error al enviar",
+    "retry": "Reintentar",
+    "discard": "Descartar"
   },
   "pagination": {
     "ariaLabel": "Navegación de páginas",
@@ -4904,5 +4971,56 @@
     "next": "Página siguiente",
     "goToPage": "Ir a la página {page}",
     "summary": "Página {current} de {total}"
+  },
+  "negotiation": {
+    "makeOffer": "Hacer oferta",
+    "counterOffer": "Contraoferta",
+    "acceptOffer": "Aceptar oferta",
+    "rejectOffer": "Rechazar oferta",
+    "withdrawOffer": "Retirar oferta",
+    "offerAmount": "Importe de la oferta",
+    "offerMessage": "Mensaje (opcional)",
+    "pendingOffer": "Oferta pendiente",
+    "yourTurn": "Es tu turno de responder",
+    "waitingResponse": "Esperando respuesta",
+    "offerAccepted": "Oferta aceptada",
+    "offerRejected": "Oferta rechazada",
+    "offerCountered": "Contraoferta recibida",
+    "offerExpired": "Oferta expirada",
+    "offerWithdrawn": "Oferta retirada",
+    "expiresIn": "Expira en {time}"
+  },
+  "timeline": {
+    "title": "Estado de la operación",
+    "progress": "{percent}% completado",
+    "stages": {
+      "listed": "Publicado",
+      "contacted": "Contactado",
+      "visit_scheduled": "Visita programada",
+      "visit_done": "Visita realizada",
+      "offer_made": "Oferta realizada",
+      "offer_accepted": "Oferta aceptada",
+      "payment_pending": "Pago pendiente",
+      "payment_received": "Pago recibido",
+      "documentation": "Documentación",
+      "delivery_scheduled": "Entrega programada",
+      "delivered": "Entregado",
+      "completed": "Completado",
+      "cancelled": "Cancelado",
+      "returned": "Devuelto"
+    },
+    "addNote": "Añadir nota",
+    "updateStatus": "Actualizar estado"
+  },
+  "glossary": {
+    "title": "Glosario del sector",
+    "subtitle": "Términos y definiciones del sector de vehículos industriales",
+    "searchPlaceholder": "Buscar término...",
+    "allCategories": "Todas las categorías",
+    "noResults": "No se encontraron términos",
+    "relatedTerms": "Términos relacionados",
+    "seeAlso": "Ver también",
+    "category": "Categoría",
+    "backToList": "Volver al glosario"
   }
 }

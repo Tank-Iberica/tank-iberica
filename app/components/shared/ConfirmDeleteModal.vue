@@ -94,7 +94,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                 :placeholder="confirmWord"
                 autocomplete="off"
                 @keyup.enter="handleConfirm"
-              />
+              >
             </div>
           </div>
 

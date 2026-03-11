@@ -57,6 +57,8 @@ export function usePerfilMensajes() {
     fetchConversations,
     openConversation,
     sendMessage,
+    retryMessage,
+    discardFailedMessage,
     acceptDataShare,
     closeConversation,
     maskContactData,
@@ -172,6 +174,16 @@ export function usePerfilMensajes() {
     mobileShowConversation.value = false
   }
 
+  async function handleRetryMessage(tempId: string): Promise<void> {
+    await retryMessage(tempId)
+    await nextTick()
+    scrollToBottom()
+  }
+
+  function handleDiscardMessage(tempId: string): void {
+    discardFailedMessage(tempId)
+  }
+
   function scrollToBottom(): void {
     messagesListRef.value?.scrollToBottom()
   }
@@ -230,6 +242,8 @@ export function usePerfilMensajes() {
     handleSendMessage,
     handleAcceptDataShare,
     handleCloseConversation,
+    handleRetryMessage,
+    handleDiscardMessage,
 
     // Lifecycle
     init,

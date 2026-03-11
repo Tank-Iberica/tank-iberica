@@ -155,7 +155,9 @@ const quickLinks: QuickLink[] = [
 <template>
   <div class="profile-page">
     <div class="profile-container">
-      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title') }]" />
+      <UiBreadcrumbNav
+        :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title') }]"
+      />
       <PerfilProfileNavPills />
       <!-- Header -->
       <div class="profile-header">
@@ -195,22 +197,31 @@ const quickLinks: QuickLink[] = [
         </div>
 
         <!-- Profile completeness nudge (hidden when 100%) -->
-        <NuxtLink
-          v-if="profileCompleteness < 100"
-          to="/perfil/datos"
-          class="completeness-nudge"
-        >
+        <NuxtLink v-if="profileCompleteness < 100" to="/perfil/datos" class="completeness-nudge">
           <div class="nudge-text">
             <span class="nudge-title">{{ $t('profile.dashboard.completeProfile') }}</span>
-            <span class="nudge-hint">{{ profileCompleteness }}% {{ $t('profile.dashboard.completed') }}</span>
+            <span class="nudge-hint"
+              >{{ profileCompleteness }}% {{ $t('profile.dashboard.completed') }}</span
+            >
           </div>
           <div class="nudge-bar-wrap">
             <div class="nudge-bar">
               <div class="nudge-bar-fill" :style="{ width: `${profileCompleteness}%` }" />
             </div>
           </div>
-          <svg class="nudge-arrow" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true">
-            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          <svg
+            class="nudge-arrow"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            width="16"
+            height="16"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd"
+            />
           </svg>
         </NuxtLink>
 
@@ -280,20 +291,20 @@ const quickLinks: QuickLink[] = [
         </section>
       </template>
     </div>
-  </div>
 
-  <!-- Guided onboarding tour (fixed bottom card, shown once to new buyers) -->
-  <UiOnboardingTour
-    :visible="buyerTour.visible.value"
-    :current-step="buyerTour.currentStep.value"
-    :step-number="buyerTour.stepNumber.value"
-    :total-steps="buyerTour.totalSteps"
-    :is-first="buyerTour.isFirst.value"
-    :is-last="buyerTour.isLast.value"
-    @next="buyerTour.nextStep()"
-    @prev="buyerTour.prevStep()"
-    @skip="buyerTour.skipTour()"
-  />
+    <!-- Guided onboarding tour (fixed bottom card, shown once to new buyers) -->
+    <UiOnboardingTour
+      :visible="buyerTour.visible.value"
+      :current-step="buyerTour.currentStep.value"
+      :step-number="buyerTour.stepNumber.value"
+      :total-steps="buyerTour.totalSteps"
+      :is-first="buyerTour.isFirst.value"
+      :is-last="buyerTour.isLast.value"
+      @next="buyerTour.nextStep()"
+      @prev="buyerTour.prevStep()"
+      @skip="buyerTour.skipTour()"
+    />
+  </div>
 </template>
 
 <style scoped>

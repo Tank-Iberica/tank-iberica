@@ -7,11 +7,11 @@
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import type { Database } from '~~/types/supabase'
 
-// Re-export types for backwards compatibility
-export type { Conversation, ConversationMessage } from '~/composables/shared/conversationTypes'
-
 import type { Conversation, ConversationMessage } from '~/composables/shared/conversationTypes'
 import { maskContactData, resolveUserName } from '~/composables/shared/conversationHelpers'
+
+// Re-export types for backwards compatibility
+export type { Conversation, ConversationMessage } from '~/composables/shared/conversationTypes'
 
 export function useConversation() {
   const supabase = useSupabaseClient<Database>()
@@ -268,23 +268,40 @@ export function useConversation() {
   async function sendMessage(conversationId: string, content: string): Promise<void> {
     if (!user.value || !content.trim()) return
 
+    const trimmed = content.trim()
+    const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+
+    // Optimistic: show message immediately with "sending" status
+    const optimisticMsg: ConversationMessage = {
+      id: tempId,
+      conversation_id: conversationId,
+      sender_id: user.value.id,
+      content: trimmed,
+      is_system: false,
+      is_read: true,
+      created_at: new Date().toISOString(),
+      _status: 'sending',
+    }
+    messages.value.push(optimisticMsg)
     sending.value = true
+
     try {
       const { data: msg, error: sendErr } = await supabase
         .from('conversation_messages')
         .insert({
           conversation_id: conversationId,
           sender_id: user.value.id,
-          content: content.trim(),
+          content: trimmed,
         })
         .select('id, conversation_id, sender_id, content, is_system, is_read, created_at')
         .single()
 
       if (sendErr) throw sendErr
 
-      // Optimistic add (realtime will also deliver it, dedup by id)
-      if (msg && !messages.value.some((m) => m.id === msg.id)) {
-        messages.value.push(msg as ConversationMessage)
+      // Replace temp message with real server message
+      const idx = messages.value.findIndex((m) => m.id === tempId)
+      if (idx !== -1 && msg) {
+        messages.value[idx] = msg as ConversationMessage
       }
 
       // Update last_message_at on conversation
@@ -292,9 +309,28 @@ export function useConversation() {
         .from('conversations')
         .update({ last_message_at: new Date().toISOString() })
         .eq('id', conversationId)
+    } catch {
+      // Mark optimistic message as failed
+      const idx = messages.value.findIndex((m) => m.id === tempId)
+      if (idx !== -1) {
+        messages.value[idx] = { ...messages.value[idx], _status: 'failed' }
+      }
     } finally {
       sending.value = false
     }
+  }
+
+  /** Retry a failed optimistic message */
+  async function retryMessage(tempId: string): Promise<void> {
+    const msg = messages.value.find((m) => m.id === tempId && m._status === 'failed')
+    if (!msg) return
+    messages.value = messages.value.filter((m) => m.id !== tempId)
+    await sendMessage(msg.conversation_id, msg.content)
+  }
+
+  /** Discard a failed optimistic message */
+  function discardFailedMessage(tempId: string): void {
+    messages.value = messages.value.filter((m) => m.id !== tempId)
   }
 
   // ---------------------------------------------------------------------------
@@ -460,6 +496,8 @@ export function useConversation() {
     openConversation,
     startConversation,
     sendMessage,
+    retryMessage,
+    discardFailedMessage,
     markAsRead,
     acceptDataShare,
     closeConversation,

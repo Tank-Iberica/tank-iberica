@@ -12,6 +12,7 @@
  * Body: { submissionId: string }
  */
 import { serverSupabaseServiceRole } from '#supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { defineEventHandler, getHeader, getRequestIP } from 'h3'
 import { z } from 'zod'
 import { processWhatsAppSubmission, sanitizeSlug } from '~~/server/services/whatsappProcessor'
@@ -40,9 +41,8 @@ async function verifyAccess(
   throw safeError(401, 'Unauthorized')
 }
 
-
 async function createPlaceholderVehicle(
-  supabase: any,
+  supabase: SupabaseClient,
   submissionId: string,
 ): Promise<{ vehicleId: string }> {
   const { data: vehicle, error } = await supabase

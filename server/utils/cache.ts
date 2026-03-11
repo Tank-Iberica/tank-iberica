@@ -8,7 +8,7 @@
  * - Feature flags (TTL 10min)
  */
 
-export interface CacheEntry<T = any> {
+export interface CacheEntry<T = unknown> {
   value: T
   expiresAt: number
   createdAt: number
@@ -26,11 +26,7 @@ const serverCache = new Map<string, CacheEntry>()
  * @param ttl - Time to live in seconds
  * @param fetch - Function to fetch data if not cached
  */
-export async function cacheAside<T>(
-  key: string,
-  ttl: number,
-  fetch: () => Promise<T>
-): Promise<T> {
+export async function cacheAside<T>(key: string, ttl: number, fetch: () => Promise<T>): Promise<T> {
   // Check memory cache
   const cached = serverCache.get(key)
   if (cached && cached.expiresAt > Date.now()) {

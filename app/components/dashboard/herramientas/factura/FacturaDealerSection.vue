@@ -36,7 +36,7 @@ function onInput(field: DealerField, event: Event): void {
           class="form-field__input"
           :value="companyName"
           @input="onInput('companyName', $event)"
-        />
+        >
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.taxId') }}</label>
@@ -46,7 +46,7 @@ function onInput(field: DealerField, event: Event): void {
           placeholder="B12345678"
           :value="companyTaxId"
           @input="onInput('companyTaxId', $event)"
-        />
+        >
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.phone') }}</label>
@@ -55,7 +55,7 @@ function onInput(field: DealerField, event: Event): void {
           class="form-field__input"
           :value="companyPhone"
           @input="onInput('companyPhone', $event)"
-        />
+        >
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.email') }}</label>
@@ -64,7 +64,7 @@ function onInput(field: DealerField, event: Event): void {
           class="form-field__input"
           :value="companyEmail"
           @input="onInput('companyEmail', $event)"
-        />
+        >
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.address') }} 1</label>
@@ -73,7 +73,7 @@ function onInput(field: DealerField, event: Event): void {
           class="form-field__input"
           :value="companyAddress1"
           @input="onInput('companyAddress1', $event)"
-        />
+        >
       </div>
       <div class="form-field">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.address') }} 2</label>
@@ -82,7 +82,7 @@ function onInput(field: DealerField, event: Event): void {
           class="form-field__input"
           :value="companyAddress2"
           @input="onInput('companyAddress2', $event)"
-        />
+        >
       </div>
       <div class="form-field form-field--full">
         <label class="form-field__label">{{ t('dashboard.tools.invoice.address') }} 3</label>
@@ -91,7 +91,7 @@ function onInput(field: DealerField, event: Event): void {
           class="form-field__input"
           :value="companyAddress3"
           @input="onInput('companyAddress3', $event)"
-        />
+        >
       </div>
     </div>
   </fieldset>

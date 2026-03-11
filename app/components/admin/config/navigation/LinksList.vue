@@ -64,7 +64,7 @@ const emit = defineEmits<{
               @input="
                 emit('update-field', index, 'label_es', ($event.target as HTMLInputElement).value)
               "
-            />
+            >
           </td>
           <td>
             <input
@@ -74,7 +74,7 @@ const emit = defineEmits<{
               @input="
                 emit('update-field', index, 'label_en', ($event.target as HTMLInputElement).value)
               "
-            />
+            >
           </td>
           <td>
             <input
@@ -82,7 +82,7 @@ const emit = defineEmits<{
               :value="link.url"
               :placeholder="placeholderUrl"
               @input="emit('update-field', index, 'url', ($event.target as HTMLInputElement).value)"
-            />
+            >
           </td>
           <td class="td-toggle">
             <label class="toggle-switch">
@@ -97,7 +97,7 @@ const emit = defineEmits<{
                     ($event.target as HTMLInputElement).checked,
                   )
                 "
-              />
+              >
               <span class="toggle-slider" />
             </label>
           </td>
@@ -140,7 +140,7 @@ const emit = defineEmits<{
             @input="
               emit('update-field', index, 'label_es', ($event.target as HTMLInputElement).value)
             "
-          />
+          >
         </div>
         <div class="form-group-sm">
           <label>EN</label>
@@ -151,7 +151,7 @@ const emit = defineEmits<{
             @input="
               emit('update-field', index, 'label_en', ($event.target as HTMLInputElement).value)
             "
-          />
+          >
         </div>
         <div class="form-group-sm">
           <label>URL</label>
@@ -160,7 +160,7 @@ const emit = defineEmits<{
             :value="link.url"
             :placeholder="placeholderUrl"
             @input="emit('update-field', index, 'url', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
         <div class="form-group-sm">
           <label class="toggle-label-mobile">
@@ -170,7 +170,7 @@ const emit = defineEmits<{
               @change="
                 emit('update-field', index, 'visible', ($event.target as HTMLInputElement).checked)
               "
-            />
+            >
             <span>Visible</span>
           </label>
         </div>

@@ -36,10 +36,6 @@ interface VehicleData {
   vehicle_images: { url: string; position: number }[]
 }
 
-interface GeneratePostsBody {
-  vehicleId: string
-}
-
 interface GeneratePostsResponse {
   postIds: string[]
   count: number

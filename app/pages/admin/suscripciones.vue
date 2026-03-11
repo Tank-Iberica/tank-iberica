@@ -74,7 +74,7 @@ function handleExport() {
         type="text"
         placeholder="Buscar por email..."
         class="filter-search"
-      />
+      >
     </div>
 
     <div v-if="error" class="error-banner">

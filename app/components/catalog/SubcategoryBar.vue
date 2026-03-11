@@ -78,6 +78,7 @@
 
 <script setup lang="ts">
 import { localizedField as localizedJsonField } from '~/composables/useLocalized'
+import { getVerticalSlug } from '~/composables/useVerticalConfig'
 
 interface CategoryRow {
   id: string
@@ -179,6 +180,7 @@ async function fetchCategories() {
     .from('categories')
     .select('id, name_es, name_en, slug, applicable_actions, sort_order')
     .eq('status', 'published')
+    .eq('vertical', getVerticalSlug())
     .order('sort_order', { ascending: true })
 
   categories.value = (data as CategoryRow[]) || []
@@ -191,6 +193,7 @@ async function fetchSubcategories() {
     .from('subcategories')
     .select('id, name_es, name_en, slug, applicable_actions, sort_order')
     .eq('status', 'published')
+    .eq('vertical', getVerticalSlug())
     .order('sort_order', { ascending: true })
 
   subcategories.value = (data as SubcategoryRow[]) || []

@@ -20,17 +20,34 @@ function onConfirmInput(event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="deleteModal.show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
+    <div
+      v-if="deleteModal.show"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      @click.self="emit('close')"
+    >
       <div class="modal-content modal-small">
         <div class="modal-header">
           <h3>{{ $t('admin.configTipos.confirmDelete') }}</h3>
           <button class="modal-close" @click="emit('close')">&times;</button>
         </div>
         <div class="modal-body">
-          <p v-html="$t('admin.configTipos.deleteConfirmMsg', { name: `<strong>${deleteModal.type?.name_es}</strong>` })" />
+          <p
+            v-html="
+              $t('admin.configTipos.deleteConfirmMsg', {
+                name: `<strong>${deleteModal.type?.name_es}</strong>`,
+              })
+            "
+          />
           <p class="text-warning">{{ $t('admin.configTipos.deleteWarning') }}</p>
           <div class="form-group delete-confirm-group">
-            <label for="delete-confirm" v-html="$t('admin.configTipos.typeDeleteConfirm', { word: '<strong>Borrar</strong>' })" />
+            <label
+              for="delete-confirm"
+              v-html="
+                $t('admin.configTipos.typeDeleteConfirm', { word: '<strong>Borrar</strong>' })
+              "
+            />
             <input
               id="delete-confirm"
               type="text"
@@ -38,7 +55,7 @@ function onConfirmInput(event: Event) {
               autocomplete="off"
               :value="deleteModal.confirmText"
               @input="onConfirmInput"
-            />
+            >
             <p v-if="deleteModal.confirmText && !canDelete" class="text-error">
               {{ $t('admin.configTipos.typeDeleteExact', { word: 'Borrar' }) }}
             </p>

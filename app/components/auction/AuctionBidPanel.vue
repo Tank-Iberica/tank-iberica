@@ -65,7 +65,7 @@
             :min="minimumBid / 100"
             :placeholder="$t('auction.customAmount')"
             class="bid-input"
-          />
+          >
           <button
             class="btn btn-primary bid-btn-custom"
             :disabled="!customAmount || customAmount * 100 < minimumBid"

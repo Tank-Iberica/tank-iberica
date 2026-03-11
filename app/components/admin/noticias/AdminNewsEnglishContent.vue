@@ -29,7 +29,7 @@ defineEmits<{
           placeholder="English title..."
           :value="titleEn || ''"
           @input="$emit('update:titleEn', ($event.target as HTMLInputElement).value || null)"
-        />
+        >
       </div>
       <div class="field">
         <label>Meta Descripcion (EN)</label>

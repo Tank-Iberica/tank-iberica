@@ -23,14 +23,14 @@ const emit = defineEmits<Emits>()
     <div class="section-title">Visibilidad</div>
     <div class="row-2">
       <label class="radio-card" :class="{ active: isOnline }">
-        <input :checked="isOnline" type="radio" @change="emit('update:isOnline', true)" />
+        <input :checked="isOnline" type="radio" @change="emit('update:isOnline', true)" >
         <div class="radio-content">
           <strong>🌐 Web (Público)</strong>
           <span>Visible en la web pública</span>
         </div>
       </label>
       <label class="radio-card" :class="{ active: !isOnline }">
-        <input :checked="!isOnline" type="radio" @change="emit('update:isOnline', false)" />
+        <input :checked="!isOnline" type="radio" @change="emit('update:isOnline', false)" >
         <div class="radio-content">
           <strong>🤝 Intermediación (Interno)</strong>
           <span>Solo visible para administradores</span>
@@ -46,7 +46,7 @@ const emit = defineEmits<Emits>()
             type="text"
             placeholder="Nombre del propietario"
             @input="emit('update:ownerName', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
         <div class="field">
           <label>Contacto</label>
@@ -55,7 +55,7 @@ const emit = defineEmits<Emits>()
             type="text"
             placeholder="Tel / Email"
             @input="emit('update:ownerContact', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
         <div class="field">
           <label>Notas internas</label>
@@ -64,7 +64,7 @@ const emit = defineEmits<Emits>()
             type="text"
             placeholder="Notas..."
             @input="emit('update:ownerNotes', ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
       </div>
     </div>

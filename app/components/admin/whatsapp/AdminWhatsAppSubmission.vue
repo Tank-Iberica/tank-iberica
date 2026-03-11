@@ -158,7 +158,7 @@ const { t } = useI18n()
             rel="noopener noreferrer"
             class="image-thumb"
           >
-            <img :src="url" :alt="`${t('admin.whatsapp.image')} ${idx + 1}`" />
+            <img :src="url" :alt="`${t('admin.whatsapp.image')} ${idx + 1}`" >
           </a>
         </div>
       </div>

@@ -20,7 +20,13 @@ function onFieldInput(field: string, event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="visible && targetAlert" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
+    <div
+      v-if="visible && targetAlert"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      @click.self="emit('close')"
+    >
       <div class="modal">
         <div class="modal-header">
           <h3>{{ $t('profile.alerts.editTitle') }}</h3>
@@ -36,7 +42,7 @@ function onFieldInput(field: string, event: Event) {
                   :value="freq"
                   :checked="editForm.frequency === freq"
                   @change="emit('update-field', 'frequency', freq)"
-                />
+                >
                 {{ $t(`profile.alerts.freq_${freq}`) }}
               </label>
             </div>
@@ -48,7 +54,7 @@ function onFieldInput(field: string, event: Event) {
               class="form-input"
               :value="String(editForm.filters.brand ?? '')"
               @input="onFieldInput('brand', $event)"
-            />
+            >
           </div>
           <div class="form-row">
             <div class="form-group half">
@@ -58,7 +64,7 @@ function onFieldInput(field: string, event: Event) {
                 class="form-input"
                 :value="editForm.filters.price_min ?? ''"
                 @input="onFieldInput('price_min', $event)"
-              />
+              >
             </div>
             <div class="form-group half">
               <label class="form-label">{{ $t('profile.alerts.filterPriceMax') }}</label>
@@ -67,7 +73,7 @@ function onFieldInput(field: string, event: Event) {
                 class="form-input"
                 :value="editForm.filters.price_max ?? ''"
                 @input="onFieldInput('price_max', $event)"
-              />
+              >
             </div>
           </div>
           <div class="form-row">
@@ -78,7 +84,7 @@ function onFieldInput(field: string, event: Event) {
                 class="form-input"
                 :value="editForm.filters.year_min ?? ''"
                 @input="onFieldInput('year_min', $event)"
-              />
+              >
             </div>
             <div class="form-group half">
               <label class="form-label">{{ $t('profile.alerts.filterYearMax') }}</label>
@@ -87,7 +93,7 @@ function onFieldInput(field: string, event: Event) {
                 class="form-input"
                 :value="editForm.filters.year_max ?? ''"
                 @input="onFieldInput('year_max', $event)"
-              />
+              >
             </div>
           </div>
         </div>

@@ -64,7 +64,7 @@ const emit = defineEmits<{
         :placeholder="$t('comparator.newComparison')"
         @input="emit('update-new-comp-name', ($event.target as HTMLInputElement).value)"
         @keyup.enter="emit('create')"
-      />
+      >
       <button class="btn-fill" @click="emit('create')">{{ $t('common.create') }}</button>
     </div>
   </div>

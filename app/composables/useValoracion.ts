@@ -1,14 +1,4 @@
 // Re-export types and constants for backwards compatibility
-export type {
-  PriceTrend,
-  ConfidenceLevel,
-  ValoracionSubcategoryRow,
-  ValoracionFormData,
-  ValoracionResultData,
-  ValoracionHistoryItem,
-} from '~/composables/shared/valoracionTypes'
-export { PROVINCES } from '~/composables/shared/valoracionTypes'
-
 import type {
   ValoracionSubcategoryRow,
   ValoracionFormData,
@@ -31,6 +21,16 @@ import {
 import { formatPrice } from '~/utils/formatters'
 import { localizedField } from '~/composables/useLocalized'
 import { getVerticalSlug } from '~/composables/useVerticalConfig'
+
+export type {
+  PriceTrend,
+  ConfidenceLevel,
+  ValoracionSubcategoryRow,
+  ValoracionFormData,
+  ValoracionResultData,
+  ValoracionHistoryItem,
+} from '~/composables/shared/valoracionTypes'
+export { PROVINCES } from '~/composables/shared/valoracionTypes'
 
 /* ---- Composable ---- */
 

@@ -9,23 +9,28 @@
  * Returns: { locked: boolean, retryAfterSeconds?: number, attemptsRemaining?: number }
  */
 
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler } from 'h3'
+import { z } from 'zod'
+import { serverSupabaseServiceRole } from '#supabase/server'
+import { validateBody } from '../../utils/validateBody'
 
 const MAX_ATTEMPTS = 5
 const WINDOW_MS = 15 * 60 * 1000 // 15 min
 const LOCKOUT_MS = 30 * 60 * 1000 // 30 min
 
+const bodySchema = z.object({
+  email: z
+    .string()
+    .email()
+    .transform((v) => v.toLowerCase().trim()),
+  action: z.enum(['check', 'record_failure']),
+  turnstileToken: z.string().optional(),
+})
+
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-  const email = typeof body?.email === 'string' ? body.email.toLowerCase().trim() : ''
-  const action = body?.action as string
-  const turnstileToken = body?.turnstileToken as string | undefined
+  const { email, action, turnstileToken } = await validateBody(event, bodySchema)
 
-  if (!email || !['check', 'record_failure'].includes(action)) {
-    throw createError({ statusCode: 400, statusMessage: 'email and action (check|record_failure) required' })
-  }
-
-  const client = useSupabaseServiceClient(event)
+  const client = serverSupabaseServiceRole(event)
 
   // If turnstile token provided, verify it and unlock
   if (turnstileToken && action === 'check') {
@@ -138,7 +143,7 @@ async function verifyTurnstile(token: string): Promise<boolean> {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ secret, response: token }),
     })
-    const result = await response.json() as { success: boolean }
+    const result = (await response.json()) as { success: boolean }
     return result.success === true
   } catch {
     return false

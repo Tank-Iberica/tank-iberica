@@ -10,6 +10,8 @@
 </template>
 
 <script setup lang="ts">
+import { getVerticalSlug } from '~/composables/useVerticalConfig'
+
 const props = defineProps<{
   currentBrand?: string
   currentCategoryId?: string | null
@@ -32,6 +34,7 @@ async function fetchCategoryLinks() {
   const { data: categories } = await supabase
     .from('categories')
     .select('id, name, name_es, name_en, slug')
+    .eq('vertical', getVerticalSlug())
     .order('sort_order', { ascending: true })
     .limit(6)
 

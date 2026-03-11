@@ -358,7 +358,11 @@ function exportResumenExcel() {
 
 function exportResumenPDF() {
   const yearLabel = String(filters.year || 'Todos los años')
-  const sections = buildExporterResumenSections(resumenOptions, summary.value, monthlyBreakdown.value)
+  const sections = buildExporterResumenSections(
+    resumenOptions,
+    summary.value,
+    monthlyBreakdown.value,
+  )
   const html = buildResumenExportPdfHtml(yearLabel, sections)
   printExportHTML(html, () => toast.error(t('toast.printFailed')))
 }
@@ -439,21 +443,21 @@ function fmt(val: number): string {
         <div class="option-group">
           <label class="option-label">Formato:</label>
           <div class="radio-group horizontal">
-            <label><input v-model="exportFormat" type="radio" value="pdf" /> PDF (Imprimir)</label>
-            <label><input v-model="exportFormat" type="radio" value="excel" /> Excel (CSV)</label>
+            <label><input v-model="exportFormat" type="radio" value="pdf" > PDF (Imprimir)</label>
+            <label><input v-model="exportFormat" type="radio" value="excel" > Excel (CSV)</label>
           </div>
         </div>
 
         <div class="option-group">
           <label class="option-label">Columnas a incluir:</label>
           <div class="checkbox-grid">
-            <label><input v-model="exportColumns.tipo" type="checkbox" /> Tipo</label>
-            <label><input v-model="exportColumns.fecha" type="checkbox" /> Fecha</label>
-            <label><input v-model="exportColumns.razon" type="checkbox" /> Razón</label>
-            <label><input v-model="exportColumns.detalle" type="checkbox" /> Detalle</label>
-            <label><input v-model="exportColumns.importe" type="checkbox" /> Importe</label>
-            <label><input v-model="exportColumns.estado" type="checkbox" /> Estado</label>
-            <label><input v-model="exportColumns.notas" type="checkbox" /> Notas</label>
+            <label><input v-model="exportColumns.tipo" type="checkbox" > Tipo</label>
+            <label><input v-model="exportColumns.fecha" type="checkbox" > Fecha</label>
+            <label><input v-model="exportColumns.razon" type="checkbox" > Razón</label>
+            <label><input v-model="exportColumns.detalle" type="checkbox" > Detalle</label>
+            <label><input v-model="exportColumns.importe" type="checkbox" > Importe</label>
+            <label><input v-model="exportColumns.estado" type="checkbox" > Estado</label>
+            <label><input v-model="exportColumns.notas" type="checkbox" > Notas</label>
           </div>
         </div>
 
@@ -471,14 +475,14 @@ function fmt(val: number): string {
           <label class="option-label">Incluir en el resumen:</label>
           <div class="checkbox-group">
             <label
-              ><input v-model="resumenOptions.totales" type="checkbox" /> Totales
+              ><input v-model="resumenOptions.totales" type="checkbox" > Totales
               (Ingresos/Gastos/Balance)</label
             >
             <label
-              ><input v-model="resumenOptions.desglose" type="checkbox" /> Desglose por Razón</label
+              ><input v-model="resumenOptions.desglose" type="checkbox" > Desglose por Razón</label
             >
             <label
-              ><input v-model="resumenOptions.mensual" type="checkbox" /> Desglose Mensual</label
+              ><input v-model="resumenOptions.mensual" type="checkbox" > Desglose Mensual</label
             >
           </div>
         </div>

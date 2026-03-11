@@ -9,6 +9,7 @@
  */
 import { defineEventHandler } from 'h3'
 import { z } from 'zod'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { callAI } from '~~/server/services/aiProvider'
 import { checkRateLimit, getRateLimitKey, getRetryAfterSeconds } from '~~/server/utils/rateLimit'
@@ -19,7 +20,9 @@ import { logger } from '../../utils/logger'
 
 const importRequestSchema = z.object({
   url: z.string().url().max(2048),
-  consent: z.literal(true, { errorMap: () => ({ message: 'Explicit consent is required to import your stock' }) }),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: 'Explicit consent is required to import your stock' }),
+  }),
 })
 
 interface ExtractedVehicle {
@@ -64,8 +67,8 @@ async function fetchPageHtml(url: string): Promise<string> {
 }
 
 async function createDraftVehicles(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+   
+  supabase: SupabaseClient,
   dealerId: string,
   vehicles: ExtractedVehicle[],
   hostname: string,

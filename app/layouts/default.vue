@@ -18,7 +18,7 @@
     />
     <main id="main-content" class="main-content" :aria-busy="isPageLoading">
       <NuxtErrorBoundary @error="(e) => console.error('[layout] Error boundary caught:', e)">
-        <template #error="{ error, clearError }">
+        <template #error="{ clearError }">
           <div class="error-boundary">
             <p class="error-boundary__msg">{{ $t('errors.unexpected') }}</p>
             <div class="error-boundary__actions">
@@ -44,6 +44,18 @@
     <AccessibilityFAB />
     <UiToastContainer />
     <UiScrollToTop />
+    <UiOnboardingTourCard
+      :visible="tourVisible"
+      :step="tourStep"
+      :step-number="tourStepNumber"
+      :total-steps="tourTotalSteps"
+      :is-first="tourIsFirst"
+      :is-last="tourIsLast"
+      @next="tourNext"
+      @prev="tourPrev"
+      @skip="tourSkip"
+      @action="onTourAction"
+    />
 
     <!-- ARIA live region para notificaciones dinámicas (screen readers) -->
     <div id="aria-live-region" aria-live="polite" aria-atomic="true" class="sr-only" />
@@ -52,13 +64,22 @@
 </template>
 
 <script setup lang="ts">
+import { useOnboardingTour, BUYER_TOUR_KEY } from '~/composables/useOnboardingTour'
+import type { TourStep } from '~/composables/useOnboardingTour'
+
 const route = useRoute()
+const router = useRouter()
 const nuxtApp = useNuxtApp()
+const { t } = useI18n()
 const isPageLoading = ref(false)
 
 // Track page loading for aria-busy
-nuxtApp.hook('page:start', () => { isPageLoading.value = true })
-nuxtApp.hook('page:finish', () => { isPageLoading.value = false })
+nuxtApp.hook('page:start', () => {
+  isPageLoading.value = true
+})
+nuxtApp.hook('page:finish', () => {
+  isPageLoading.value = false
+})
 
 const authOpen = ref(false)
 const userPanelOpen = ref(false)
@@ -93,11 +114,51 @@ provide('openSubscribeModal', () => {
   subscribeOpen.value = true
 })
 
+// --- Buyer onboarding tour ---
+const buyerTourSteps = computed<TourStep[]>(() => [
+  {
+    key: 'welcome',
+    title: t('onboarding.tour.buyerWelcomeTitle'),
+    description: t('onboarding.tour.buyerWelcomeDesc'),
+  },
+  {
+    key: 'search',
+    title: t('onboarding.tour.buyerSearchTitle'),
+    description: t('onboarding.tour.buyerSearchDesc'),
+  },
+  {
+    key: 'contact',
+    title: t('onboarding.tour.buyerContactTitle'),
+    description: t('onboarding.tour.buyerContactDesc'),
+    actionLabel: t('onboarding.tour.buyerContactAction'),
+    actionRoute: '/',
+  },
+])
+
+const {
+  visible: tourVisible,
+  currentStep: tourStep,
+  stepNumber: tourStepNumber,
+  totalSteps: tourTotalSteps,
+  isFirst: tourIsFirst,
+  isLast: tourIsLast,
+  startTour,
+  nextStep: tourNext,
+  prevStep: tourPrev,
+  skipTour: tourSkip,
+} = useOnboardingTour(buyerTourSteps.value, BUYER_TOUR_KEY)
+
+function onTourAction(actionRoute: string) {
+  router.push(actionRoute)
+}
+
 // Auto-open auth modal if ?auth=login is in URL
 onMounted(() => {
   if (route.query.auth === 'login') {
     authOpen.value = true
   }
+  // Start buyer tour on first visit (after a brief delay for page load)
+  setTimeout(() => startTour(), 2000)
 })
 
 // Watch for route changes (in case of client-side navigation)

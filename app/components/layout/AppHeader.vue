@@ -4,7 +4,10 @@
     <UiGlobalSearch ref="globalSearchRef" />
 
     <div class="header-content">
-      <NuxtLink to="/" class="logo">TRACCIONA</NuxtLink>
+      <NuxtLink to="/" class="logo">
+        <img v-if="brandLogoUrl" :src="brandLogoUrl" :alt="brandName" class="logo-img" >
+        <span v-else>{{ brandName }}</span>
+      </NuxtLink>
 
       <div class="header-right">
         <!-- Search trigger button -->
@@ -14,7 +17,14 @@
           :title="`${$t('search.openSearch')} (Ctrl+K)`"
           @click="openGlobalSearch"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            width="18"
+            height="18"
+          >
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
@@ -157,7 +167,7 @@
               :src="`https://flagcdn.com/w40/${locale === 'es' ? 'es' : 'gb'}.png`"
               :alt="locale.toUpperCase()"
               class="lang-flag"
-            />
+            >
           </button>
           <Transition name="dropdown">
             <div v-if="openMenu === 'lang'" class="mobile-lang-dropdown">
@@ -174,7 +184,7 @@
                   :src="`https://flagcdn.com/w40/${locale === 'es' ? 'gb' : 'es'}.png`"
                   :alt="altLocale.toUpperCase()"
                   class="lang-flag"
-                />
+                >
               </button>
             </div>
           </Transition>
@@ -187,14 +197,28 @@
             title="Español"
             @click="setLocale('es')"
           >
-            <NuxtImg src="https://flagcdn.com/w40/es.png" alt="ES" width="20" height="15" format="webp" class="lang-flag-desktop" />
+            <NuxtImg
+              src="https://flagcdn.com/w40/es.png"
+              alt="ES"
+              width="20"
+              height="15"
+              format="webp"
+              class="lang-flag-desktop"
+            />
           </button>
           <button
             :class="['lang-flag-btn', { active: locale === 'en' }]"
             title="English"
             @click="setLocale('en')"
           >
-            <NuxtImg src="https://flagcdn.com/w40/gb.png" alt="EN" width="20" height="15" format="webp" class="lang-flag-desktop" />
+            <NuxtImg
+              src="https://flagcdn.com/w40/gb.png"
+              alt="EN"
+              width="20"
+              height="15"
+              format="webp"
+              class="lang-flag-desktop"
+            />
           </button>
         </div>
 
@@ -234,6 +258,8 @@
 </template>
 
 <script setup lang="ts">
+import { getVerticalSlug } from '~/composables/useVerticalConfig'
+
 defineEmits<{
   openAuth: []
   openAnunciate: []
@@ -243,6 +269,7 @@ defineEmits<{
 const user = useSupabaseUser()
 const authState = useAuth()
 const { unreadCount: unreadMessages } = useUnreadMessages()
+const { config: verticalConfig } = useVerticalConfig()
 
 const globalSearchRef = ref<{ open: () => void; close: () => void } | null>(null)
 function openGlobalSearch(): void {
@@ -254,6 +281,16 @@ const scrolled = ref(false)
 const openMenu = ref<string | null>(null)
 
 const altLocale = computed(() => (locale.value === 'es' ? 'en' : 'es'))
+
+/** Brand name from vertical_config, with fallback to uppercase slug */
+const brandName = computed(() => {
+  if (verticalConfig.value?.name?.[locale.value]) return verticalConfig.value.name[locale.value]
+  if (verticalConfig.value?.name?.es) return verticalConfig.value.name.es
+  return getVerticalSlug().toUpperCase()
+})
+
+/** Logo URL from vertical_config */
+const brandLogoUrl = computed(() => verticalConfig.value?.logo_url ?? null)
 
 const userDisplayName = computed(() => {
   if (authState.displayName.value) return authState.displayName.value
@@ -385,6 +422,18 @@ onUnmounted(() => {
   flex-shrink: 0;
   transition: font-size 0.4s ease;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.logo-img {
+  height: 1.75rem;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  transition: height 0.4s ease;
+}
+
+.scrolled .logo-img {
+  height: 1.5rem;
 }
 
 .header-right {

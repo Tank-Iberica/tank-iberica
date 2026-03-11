@@ -27,7 +27,7 @@ function onChange(event: Event) {
           :checked="engine === eng.value"
           name="translationEngine"
           @change="onChange"
-        />
+        >
         <span>{{ eng.label }}</span>
       </label>
     </div>

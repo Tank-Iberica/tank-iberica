@@ -138,20 +138,20 @@ onMounted(() => init())
       <!-- Quick Actions -->
       <DashboardIndexDashboardQuickActions :current-plan="currentPlan" />
     </template>
-  </div>
 
-  <!-- Guided onboarding tour (fixed bottom card, shown once) -->
-  <UiOnboardingTour
-    :visible="tour.visible.value"
-    :current-step="tour.currentStep.value"
-    :step-number="tour.stepNumber.value"
-    :total-steps="tour.totalSteps"
-    :is-first="tour.isFirst.value"
-    :is-last="tour.isLast.value"
-    @next="tour.nextStep()"
-    @prev="tour.prevStep()"
-    @skip="tour.skipTour()"
-  />
+    <!-- Guided onboarding tour (fixed bottom card, shown once) -->
+    <UiOnboardingTour
+      :visible="tour.visible.value"
+      :current-step="tour.currentStep.value"
+      :step-number="tour.stepNumber.value"
+      :total-steps="tour.totalSteps"
+      :is-first="tour.isFirst.value"
+      :is-last="tour.isLast.value"
+      @next="tour.nextStep()"
+      @prev="tour.prevStep()"
+      @skip="tour.skipTour()"
+    />
+  </div>
 </template>
 
 <style scoped>

@@ -37,8 +37,6 @@ const {
   init,
 } = useDashboardExportarAnuncio()
 
-const { t } = useI18n()
-
 onMounted(async () => {
   await init()
 })

@@ -38,7 +38,7 @@ function getFilterValue(id: string): string | number | boolean | undefined {
             type="text"
             :value="getFilterValue(f.id)"
             @input="emit('update-filter', f.id, ($event.target as HTMLInputElement).value)"
-          />
+          >
           <template v-else-if="f.type === 'desplegable' || f.type === 'desplegable_tick'">
             <select
               v-if="((f.options?.choices as string[]) || []).length"
@@ -56,14 +56,14 @@ function getFilterValue(id: string): string | number | boolean | undefined {
               :value="getFilterValue(f.id)"
               placeholder="Valor libre"
               @input="emit('update-filter', f.id, ($event.target as HTMLInputElement).value)"
-            />
+            >
           </template>
           <label v-else-if="f.type === 'tick'" class="tick-inline">
             <input
               type="checkbox"
               :checked="!!getFilterValue(f.id)"
               @change="emit('update-filter', f.id, ($event.target as HTMLInputElement).checked)"
-            />
+            >
             Sí
           </label>
           <input
@@ -71,7 +71,7 @@ function getFilterValue(id: string): string | number | boolean | undefined {
             type="number"
             :value="getFilterValue(f.id)"
             @input="emit('update-filter', f.id, Number(($event.target as HTMLInputElement).value))"
-          />
+          >
         </div>
       </div>
     </div>

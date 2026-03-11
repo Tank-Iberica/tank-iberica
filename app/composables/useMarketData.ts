@@ -8,18 +8,6 @@
  */
 
 // Re-export types for backwards compatibility
-export type {
-  MarketDataRow,
-  PriceHistoryRow,
-  DemandDataRow,
-  MarketFilters,
-  PriceHistoryFilters,
-  DemandFilters,
-  ValuationParams,
-  ValuationResult,
-  CategoryStat,
-} from '~/composables/shared/marketDataTypes'
-
 import type {
   MarketDataRow,
   PriceHistoryRow,
@@ -39,6 +27,18 @@ import {
   getMonthCutoff,
   getWeekCutoff,
 } from '~/composables/shared/marketDataHelpers'
+
+export type {
+  MarketDataRow,
+  PriceHistoryRow,
+  DemandDataRow,
+  MarketFilters,
+  PriceHistoryFilters,
+  DemandFilters,
+  ValuationParams,
+  ValuationResult,
+  CategoryStat,
+} from '~/composables/shared/marketDataTypes'
 
 // ---------------------------------------------------------------------------
 // Composable
@@ -69,7 +69,9 @@ export function useMarketData() {
 
       let query = supabase
         .from('market_data')
-        .select('vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count')
+        .select(
+          'vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count',
+        )
         .gte('month', cutoff)
         .order('month', { ascending: false })
 
@@ -143,7 +145,10 @@ export function useMarketData() {
     error.value = ''
 
     try {
-      let query = supabase.from('demand_data').select('vertical, category, subcategory, brand, province, month, alert_count').order('month', { ascending: false })
+      let query = supabase
+        .from('demand_data')
+        .select('vertical, category, subcategory, brand, province, month, alert_count')
+        .order('month', { ascending: false })
 
       if (filters.subcategory) {
         query = query.eq('subcategory', filters.subcategory)
@@ -179,7 +184,9 @@ export function useMarketData() {
     try {
       let marketQuery = supabase
         .from('market_data')
-        .select('vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count')
+        .select(
+          'vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count',
+        )
         .eq('brand', params.brand)
         .order('month', { ascending: false })
 
@@ -215,7 +222,9 @@ export function useMarketData() {
       const cutoff = getMonthCutoff(2)
       const { data, error: err } = await supabase
         .from('market_data')
-        .select('vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count')
+        .select(
+          'vertical, action, subcategory, brand, location_province, location_country, month, listings, avg_price, median_price, min_price, max_price, avg_days_to_sell, sold_count',
+        )
         .gte('month', cutoff)
         .order('month', { ascending: false })
 

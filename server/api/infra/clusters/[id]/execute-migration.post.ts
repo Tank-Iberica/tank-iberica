@@ -14,6 +14,7 @@
  * Body: { verticalToMigrate: string, targetClusterId: string }
  */
 import { defineEventHandler, getRouterParam } from 'h3'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { z } from 'zod'
 import { safeError } from '../../../../utils/safeError'
@@ -47,7 +48,7 @@ interface MigrationResult {
 }
 
 async function exportVerticalData(
-  supabase: any,
+  supabase: SupabaseClient,
   vertical: string,
 ): Promise<{ tables: TableMigrationResult[]; data: Record<string, unknown[]> }> {
   const tables: TableMigrationResult[] = []
@@ -99,7 +100,7 @@ async function exportVerticalData(
 
 async function validateMigrationRequest(
   event: Parameters<typeof getRouterParam>[0],
-  supabase: any,
+  supabase: SupabaseClient,
 ): Promise<{
   user: NonNullable<Awaited<ReturnType<typeof serverSupabaseUser>>>
   sourceClusterId: string
@@ -168,11 +169,8 @@ export default defineEventHandler(async (event): Promise<MigrationResult> => {
     exportedData = exported.data
   } catch (exportError: unknown) {
     // Revert status on failure
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await supabase
-      .from('infra_clusters')
-      .update({ status: 'active' } as any)
-      .eq('id', sourceClusterId)
+
+    await supabase.from('infra_clusters').update({ status: 'active' }).eq('id', sourceClusterId)
     const message = exportError instanceof Error ? exportError.message : 'Unknown export error'
     throw safeError(500, `Data export failed: ${message}`)
   }

@@ -24,7 +24,7 @@ function onInput(event: Event) {
         autocomplete="off"
         :value="apiKey"
         @input="onInput"
-      />
+      >
     </div>
   </div>
 </template>

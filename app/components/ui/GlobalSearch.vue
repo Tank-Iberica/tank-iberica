@@ -42,13 +42,9 @@
               @keydown.up.prevent="moveUp"
               @keydown.enter.prevent="selectActive"
               @keydown.esc="close"
-            />
-
-            <button
-              class="gs-close"
-              :aria-label="$t('common.close')"
-              @click="close"
             >
+
+            <button class="gs-close" :aria-label="$t('common.close')" @click="close">
               <span aria-hidden="true">Esc</span>
             </button>
           </div>
@@ -101,8 +97,22 @@
             <!-- Quick links (shown when no query) -->
             <div v-if="!query" class="gs-quick">
               <p class="gs-quick-label">{{ $t('search.quickLinks') }}</p>
-              <NuxtLink v-for="link in quickLinks" :key="link.to" class="gs-quick-link" :to="link.to" @click="close">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true">
+              <NuxtLink
+                v-for="link in quickLinks"
+                :key="link.to"
+                class="gs-quick-link"
+                :to="link.to"
+                @click="close"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  width="14"
+                  height="14"
+                  aria-hidden="true"
+                >
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
                 {{ link.label }}
@@ -113,9 +123,8 @@
           <!-- Footer hint -->
           <div class="gs-footer">
             <span class="gs-hint">
-              <kbd>↑↓</kbd> {{ $t('search.navHint') }} ·
-              <kbd>↵</kbd> {{ $t('search.selectHint') }} ·
-              <kbd>Esc</kbd> {{ $t('search.closeHint') }}
+              <kbd>↑↓</kbd> {{ $t('search.navHint') }} · <kbd>↵</kbd>
+              {{ $t('search.selectHint') }} · <kbd>Esc</kbd> {{ $t('search.closeHint') }}
             </span>
           </div>
         </div>
@@ -185,7 +194,11 @@ function formatPrice(price: number): string {
 function onKeydown(e: KeyboardEvent): void {
   if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
     e.preventDefault()
-    isOpen.value ? close() : open()
+    if (isOpen.value) {
+      close()
+    } else {
+      open()
+    }
   }
 }
 
@@ -257,7 +270,9 @@ defineExpose({ open, close, isOpen })
   caret-color: var(--color-primary);
 }
 
-.gs-input::placeholder { color: var(--text-auxiliary); }
+.gs-input::placeholder {
+  color: var(--text-auxiliary);
+}
 
 .gs-close {
   flex-shrink: 0;
@@ -271,7 +286,9 @@ defineExpose({ open, close, isOpen })
   transition: background var(--transition-fast);
 }
 
-.gs-close:hover { background: var(--bg-tertiary); }
+.gs-close:hover {
+  background: var(--bg-tertiary);
+}
 
 .gs-results {
   flex: 1;
@@ -280,7 +297,8 @@ defineExpose({ open, close, isOpen })
   min-height: 3rem;
 }
 
-.gs-loading, .gs-empty {
+.gs-loading,
+.gs-empty {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -298,7 +316,11 @@ defineExpose({ open, close, isOpen })
   animation: gs-spin 0.6s linear infinite;
 }
 
-@keyframes gs-spin { to { transform: rotate(360deg); } }
+@keyframes gs-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .gs-result {
   display: flex;
@@ -310,7 +332,9 @@ defineExpose({ open, close, isOpen })
   color: var(--text-primary);
   cursor: pointer;
   border-left: 2px solid transparent;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .gs-result:hover,
@@ -347,8 +371,13 @@ defineExpose({ open, close, isOpen })
   font-size: 0.8125rem;
 }
 
-.gs-result-price { font-weight: 600; color: var(--color-primary); }
-.gs-result-location { color: var(--text-secondary); }
+.gs-result-price {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+.gs-result-location {
+  color: var(--text-secondary);
+}
 
 /* Quick links */
 .gs-quick {
@@ -375,7 +404,9 @@ defineExpose({ open, close, isOpen })
   transition: color var(--transition-fast);
 }
 
-.gs-quick-link:hover { color: var(--color-primary); }
+.gs-quick-link:hover {
+  color: var(--color-primary);
+}
 
 /* Footer */
 .gs-footer {

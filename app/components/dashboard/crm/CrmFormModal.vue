@@ -42,7 +42,13 @@ function onSelectType(event: Event): void {
 
 <template>
   <Teleport to="body">
-    <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
+    <div
+      v-if="show"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      @click.self="emit('close')"
+    >
       <div class="modal modal-md">
         <div class="modal-header">
           <h3>

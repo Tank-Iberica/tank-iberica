@@ -11,6 +11,7 @@
  * Protected by x-cron-secret header.
  */
 import { defineEventHandler, readBody } from 'h3'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
@@ -43,7 +44,7 @@ type StripeInstance = InstanceType<typeof import('stripe').default>
 async function processOneReservation(
   reservation: ExpiredReservation,
   stripe: StripeInstance | null,
-  supabase: any,
+  supabase: SupabaseClient,
 ): Promise<{ refunded: boolean; hasError: boolean }> {
   let newStatus = 'expired'
   let refunded = false

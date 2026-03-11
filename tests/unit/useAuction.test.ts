@@ -10,14 +10,19 @@ function makeChain(data: unknown = [], error: unknown = null) {
   })
   const resolved = { data, error, count: 0 }
   chain.range = () => Promise.resolve(resolved)
-  chain.single = () => Promise.resolve({ data: Array.isArray(data) ? (data[0] ?? null) : data, error })
+  chain.single = () =>
+    Promise.resolve({ data: Array.isArray(data) ? (data[0] ?? null) : data, error })
   chain.limit = () => Promise.resolve(resolved)
   chain.then = (resolve: (v: unknown) => void) => Promise.resolve(resolved).then(resolve)
   chain.catch = (reject: (e: unknown) => void) => Promise.resolve(resolved).catch(reject)
   return chain
 }
 
-function stubClient({ data = [] as unknown[], insertError = null as unknown, updateError = null as unknown } = {}) {
+function stubClient({
+  data = [] as unknown[],
+  insertError = null as unknown,
+  updateError = null as unknown,
+} = {}) {
   vi.stubGlobal('useSupabaseClient', () => ({
     from: (_table: string) => ({
       select: () => makeChain(data),
@@ -27,7 +32,9 @@ function stubClient({ data = [] as unknown[], insertError = null as unknown, upd
       }),
     }),
     channel: () => ({
-      on: function (this: unknown) { return this },
+      on: function (this: unknown) {
+        return this
+      },
       subscribe: () => ({}),
     }),
     removeChannel: vi.fn(),
@@ -45,10 +52,22 @@ function stubClientWithSpy() {
   ;['neq', 'or', 'filter', 'gte', 'lte'].forEach((m) => {
     chain[m] = () => chain
   })
-  chain.eq = (...args: unknown[]) => { eqSpy(...args); return chain }
-  chain.in = (...args: unknown[]) => { inSpy(...args); return chain }
-  chain.order = (...args: unknown[]) => { orderSpy(...args); return chain }
-  chain.select = (...args: unknown[]) => { selectSpy(...args); return chain }
+  chain.eq = (...args: unknown[]) => {
+    eqSpy(...args)
+    return chain
+  }
+  chain.in = (...args: unknown[]) => {
+    inSpy(...args)
+    return chain
+  }
+  chain.order = (...args: unknown[]) => {
+    orderSpy(...args)
+    return chain
+  }
+  chain.select = (...args: unknown[]) => {
+    selectSpy(...args)
+    return chain
+  }
   const resolved = { data: [], error: null, count: 0 }
   chain.range = () => Promise.resolve(resolved)
   chain.single = () => Promise.resolve({ data: null, error: null })
@@ -60,12 +79,17 @@ function stubClientWithSpy() {
 
   vi.stubGlobal('useSupabaseClient', () => ({
     from: () => ({
-      select: (...args: unknown[]) => { selectSpy(...args); return chain },
+      select: (...args: unknown[]) => {
+        selectSpy(...args)
+        return chain
+      },
       insert: () => Promise.resolve({ data: null, error: null }),
       update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
     }),
     channel: () => ({
-      on: function (this: unknown) { return this },
+      on: function (this: unknown) {
+        return this
+      },
       subscribe: () => ({}),
     }),
     removeChannel: removeChannelSpy,
@@ -249,7 +273,12 @@ describe('fetchAuctions', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -264,7 +293,12 @@ describe('fetchAuctions', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -285,7 +319,12 @@ describe('fetchAuctions', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -303,7 +342,12 @@ describe('fetchAuctions', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -339,7 +383,12 @@ describe('fetchAuctions', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -388,7 +437,7 @@ describe('fetchAuctionById', () => {
     const bidData = [sampleBid]
     // We need the first call (auction select) to return auction data
     // and the second call (bids select) to return bid data
-    let callCount = 0
+    const callCount = 0
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => ({
         select: () => {
@@ -401,7 +450,12 @@ describe('fetchAuctionById', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -417,7 +471,12 @@ describe('fetchAuctionById', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -432,7 +491,12 @@ describe('fetchAuctionById', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -447,7 +511,12 @@ describe('fetchAuctionById', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -467,7 +536,12 @@ describe('fetchAuctionById', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -489,7 +563,12 @@ describe('fetchBids', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -504,7 +583,12 @@ describe('fetchBids', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -519,7 +603,12 @@ describe('fetchBids', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -534,7 +623,12 @@ describe('fetchBids', () => {
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useAuction()
@@ -616,7 +710,12 @@ describe('placeBid', () => {
           eq: updateEqSpy,
         }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
 
@@ -652,7 +751,12 @@ describe('placeBid', () => {
           eq: updateEqSpy,
         }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
 
@@ -686,7 +790,12 @@ describe('placeBid', () => {
           eq: updateEqSpy,
         }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
 
@@ -714,7 +823,12 @@ describe('placeBid', () => {
           eq: vi.fn().mockResolvedValue({ data: null, error: new Error('Update failed') }),
         }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
 
@@ -746,7 +860,9 @@ describe('placeBid', () => {
 describe('subscribeToAuction', () => {
   it('subscribes to bid and auction channels', () => {
     const channelSpy = vi.fn().mockReturnValue({
-      on: function (this: unknown) { return this },
+      on: function (this: unknown) {
+        return this
+      },
       subscribe: vi.fn(),
     })
     vi.stubGlobal('useSupabaseClient', () => ({
@@ -776,7 +892,12 @@ describe('subscribeToAuction', () => {
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
       channel: (name: string) => ({
-        on: function (this: unknown, _event: string, _opts: unknown, cb: (payload: { new: Record<string, unknown> }) => void) {
+        on: function (
+          this: unknown,
+          _event: string,
+          _opts: unknown,
+          cb: (payload: { new: Record<string, unknown> }) => void,
+        ) {
           if (name.startsWith('auction-bids:')) {
             bidCallback = cb
           }
@@ -822,7 +943,12 @@ describe('subscribeToAuction', () => {
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
       channel: (name: string) => ({
-        on: function (this: unknown, _event: string, _opts: unknown, cb: (payload: { new: Record<string, unknown> }) => void) {
+        on: function (
+          this: unknown,
+          _event: string,
+          _opts: unknown,
+          cb: (payload: { new: Record<string, unknown> }) => void,
+        ) {
           if (name.startsWith('auction-bids:')) bidCallback = cb
           return this
         },
@@ -836,7 +962,14 @@ describe('subscribeToAuction', () => {
     c.subscribeToAuction('a1')
 
     const payload = {
-      new: { id: 'bid-dup', auction_id: 'a1', user_id: 'user-2', amount_cents: 1800000, is_winning: true, created_at: '2026-01-02T15:00:00Z' },
+      new: {
+        id: 'bid-dup',
+        auction_id: 'a1',
+        user_id: 'user-2',
+        amount_cents: 1800000,
+        is_winning: true,
+        created_at: '2026-01-02T15:00:00Z',
+      },
     }
 
     // Send same bid twice
@@ -857,7 +990,12 @@ describe('subscribeToAuction', () => {
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
       channel: (name: string) => ({
-        on: function (this: unknown, _event: string, _opts: unknown, cb: (payload: { new: Record<string, unknown> }) => void) {
+        on: function (
+          this: unknown,
+          _event: string,
+          _opts: unknown,
+          cb: (payload: { new: Record<string, unknown> }) => void,
+        ) {
           if (name.startsWith('auction-status:')) auctionCallback = cb
           return this
         },
@@ -901,7 +1039,12 @@ describe('subscribeToAuction', () => {
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
       channel: (name: string) => ({
-        on: function (this: unknown, _event: string, _opts: unknown, cb: (payload: { new: Record<string, unknown> }) => void) {
+        on: function (
+          this: unknown,
+          _event: string,
+          _opts: unknown,
+          cb: (payload: { new: Record<string, unknown> }) => void,
+        ) {
           if (name.startsWith('auction-status:')) auctionCallback = cb
           return this
         },
@@ -929,7 +1072,12 @@ describe('subscribeToAuction', () => {
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
       channel: (name: string) => ({
-        on: function (this: unknown, _event: string, _opts: unknown, cb: (payload: { new: Record<string, unknown> }) => void) {
+        on: function (
+          this: unknown,
+          _event: string,
+          _opts: unknown,
+          cb: (payload: { new: Record<string, unknown> }) => void,
+        ) {
           if (name.startsWith('auction-bids:')) bidCallback = cb
           return this
         },
@@ -943,7 +1091,14 @@ describe('subscribeToAuction', () => {
 
     // Should not throw when auction is null
     bidCallback!({
-      new: { id: 'bid-x', auction_id: 'a1', user_id: 'u1', amount_cents: 2000000, is_winning: true, created_at: '' },
+      new: {
+        id: 'bid-x',
+        auction_id: 'a1',
+        user_id: 'u1',
+        amount_cents: 2000000,
+        is_winning: true,
+        created_at: '',
+      },
     })
 
     expect(c.bids.value).toHaveLength(1)
@@ -959,7 +1114,9 @@ describe('unsubscribe', () => {
     // subscribe() must return a truthy value (the channel itself) so bidChannel/auctionChannel are set
     const makeChannelObj = () => {
       const ch: Record<string, unknown> = {}
-      ch.on = function (this: unknown) { return this }
+      ch.on = function (this: unknown) {
+        return this
+      }
       ch.subscribe = () => ch
       return ch
     }
@@ -993,7 +1150,9 @@ describe('unsubscribe', () => {
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
       channel: () => ({
-        on: function (this: unknown) { return this },
+        on: function (this: unknown) {
+          return this
+        },
         subscribe: vi.fn(),
       }),
       removeChannel: removeChannelSpy,
@@ -1008,7 +1167,9 @@ describe('unsubscribe', () => {
     const removeChannelSpy = vi.fn()
     const makeChannelObj = () => {
       const ch: Record<string, unknown> = {}
-      ch.on = function (this: unknown) { return this }
+      ch.on = function (this: unknown) {
+        return this
+      }
       ch.subscribe = () => ch
       return ch
     }

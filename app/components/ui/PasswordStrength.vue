@@ -21,8 +21,8 @@ const strength = computed<StrengthInfo>(() => {
   if (pw.length >= 8) score++
   if (pw.length >= 12) score++
   if (/[A-Z]/.test(pw)) score++
-  if (/[0-9]/.test(pw)) score++
-  if (/[^A-Za-z0-9]/.test(pw)) score++
+  if (/\d/.test(pw)) score++
+  if (/[^A-Z0-9]/i.test(pw)) score++
 
   if (score <= 2) return { level: 'weak', score, label: t('auth.passwordWeak') }
   if (score <= 3) return { level: 'medium', score, label: t('auth.passwordMedium') }

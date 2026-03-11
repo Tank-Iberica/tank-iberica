@@ -1,9 +1,11 @@
 /**
  * Composable for dealer statistics and analytics.
  * Plan-gated access to metrics with daily and monthly aggregations.
+ * Pure functions extracted to ~/utils/dealerStats.helpers.ts
  */
 
 import type { Database } from '~~/types/supabase'
+import { canAccessMetric } from '~/utils/dealerStats.helpers'
 
 type DealerStatsRow = Database['public']['Tables']['dealer_stats']['Row']
 
@@ -24,27 +26,6 @@ interface BestPerformingVehicle {
   model: string
   views: number
   leads: number
-}
-
-/**
- * Metrics access control by subscription plan.
- * Each metric lists the plans that have access to it.
- */
-const METRIC_ACCESS: Record<string, string[]> = {
-  total_views: ['free', 'basic', 'premium', 'founding'],
-  total_leads: ['free', 'basic', 'premium', 'founding'],
-  per_vehicle_views: ['basic', 'premium', 'founding'],
-  per_vehicle_leads: ['basic', 'premium', 'founding'],
-  monthly_chart: ['basic', 'premium', 'founding'],
-  conversion_rate: ['premium', 'founding'],
-  sector_comparison: ['premium', 'founding'],
-  demand_matching: ['premium', 'founding'],
-}
-
-function canAccessMetric(plan: string, metric: string): boolean {
-  const allowedPlans = METRIC_ACCESS[metric]
-  if (!allowedPlans) return false
-  return allowedPlans.includes(plan)
 }
 
 export function useDealerStats() {
@@ -81,7 +62,9 @@ export function useDealerStats() {
 
       const { data, error: err } = await supabase
         .from('dealer_stats')
-        .select('period_date, vehicle_views, profile_views, leads_received, leads_responded, favorites_added')
+        .select(
+          'period_date, vehicle_views, profile_views, leads_received, leads_responded, favorites_added',
+        )
         .eq('dealer_id', dealerId)
         .gte('period_date', cutoffISO)
         .order('period_date', { ascending: true })
@@ -118,7 +101,9 @@ export function useDealerStats() {
 
       const { data, error: err } = await supabase
         .from('dealer_stats')
-        .select('period_date, vehicle_views, profile_views, leads_received, leads_responded, favorites_added')
+        .select(
+          'period_date, vehicle_views, profile_views, leads_received, leads_responded, favorites_added',
+        )
         .eq('dealer_id', dealerId)
         .gte('period_date', cutoffISO)
         .order('period_date', { ascending: true })

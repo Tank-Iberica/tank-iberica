@@ -16,6 +16,7 @@
  *   news.publish   · news.unpublish · news.delete
  */
 import type { H3Event } from 'h3'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { logger } from './logger'
 
 export interface AuditLogEntry {
@@ -46,8 +47,7 @@ function getUserAgent(event: H3Event): string | undefined {
  * @param entry     - Audit log entry fields
  */
 export async function logAdminAction(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   event: H3Event,
   entry: AuditLogEntry,
 ): Promise<void> {
@@ -64,6 +64,8 @@ export async function logAdminAction(
     })
   } catch (err) {
     // Audit log failure must never break the main action
-    logger.warn(`[auditLog] Failed to write audit entry: ${err instanceof Error ? err.message : String(err)}`)
+    logger.warn(
+      `[auditLog] Failed to write audit entry: ${err instanceof Error ? err.message : String(err)}`,
+    )
   }
 }

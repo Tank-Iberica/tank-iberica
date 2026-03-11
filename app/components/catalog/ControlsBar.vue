@@ -73,7 +73,7 @@
                 <path d="m21 21-4.35-4.35" />
               </svg>
             </button>
-            <div id="mobile-search-dropdown" v-show="searchExpanded" class="search-dropdown">
+            <div v-show="searchExpanded" id="mobile-search-dropdown" class="search-dropdown">
               <input
                 ref="mobileSearchInput"
                 :value="searchQuery"

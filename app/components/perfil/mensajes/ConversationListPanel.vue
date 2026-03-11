@@ -62,7 +62,7 @@ function getStatusLabel(status: Conversation['status']): string {
           :src="getImageUrl(conv.vehicle_image, 'thumb')"
           :alt="conv.vehicle_title || ''"
           loading="lazy"
-        />
+        >
         <div v-else class="conv-item__thumb-placeholder">
           <svg
             viewBox="0 0 24 24"

@@ -49,7 +49,7 @@ export function useTableOfContents(): UseTableOfContents {
       items.push({
         id: heading.id,
         text: heading.textContent?.trim() ?? '',
-        level: parseInt(heading.tagName[1], 10) as 2 | 3 | 4,
+        level: Number.parseInt(heading.tagName[1], 10) as 2 | 3 | 4,
       })
     })
 

@@ -1,12 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { existsSync } from 'fs'
-import { resolve } from 'path'
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 // ---------------------------------------------------------------------------
 // Import pure helpers from the check script (ESM named exports)
 // ---------------------------------------------------------------------------
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CycleResult = { dir: string; cycles: string[][] }
 
 // Inline copies of the pure helpers so this test file has no dynamic import complexity
@@ -116,7 +115,13 @@ describe('buildSummary', () => {
   it('sums cycles across dirs', () => {
     const { total } = buildSummary([
       { dir: 'a', cycles: [['x', 'y', 'x']] },
-      { dir: 'b', cycles: [['p', 'q', 'p'], ['m', 'n', 'm']] },
+      {
+        dir: 'b',
+        cycles: [
+          ['p', 'q', 'p'],
+          ['m', 'n', 'm'],
+        ],
+      },
     ])
     expect(total).toBe(3)
   })

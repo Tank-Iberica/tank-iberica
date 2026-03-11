@@ -11,7 +11,7 @@
             :alt="ad.title || $t('ads.sponsoredAd')"
             class="ad-card__logo"
             loading="lazy"
-          />
+          >
         </div>
         <div class="ad-card__body">
           <h3 v-if="ad.title" class="ad-card__title">{{ ad.title }}</h3>
@@ -56,7 +56,7 @@
           :alt="ad.title || $t('ads.sponsoredAd')"
           class="ad-banner__image"
           loading="lazy"
-        />
+        >
         <div v-if="ad.title || ad.description" class="ad-banner__overlay">
           <h3 v-if="ad.title" class="ad-banner__title">{{ ad.title }}</h3>
           <p v-if="ad.description" class="ad-banner__description">{{ ad.description }}</p>
@@ -85,7 +85,7 @@
           :alt="ad.title || $t('ads.sponsoredAd')"
           class="ad-logo-strip__logo"
           loading="lazy"
-        />
+        >
         <div class="ad-logo-strip__info">
           <span v-if="ad.title" class="ad-logo-strip__name">{{ ad.title }}</span>
           <a

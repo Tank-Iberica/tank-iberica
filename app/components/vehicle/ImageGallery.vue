@@ -25,7 +25,7 @@
         height="600"
         fetchpriority="high"
         decoding="async"
-      />
+      >
       <div v-else class="gallery-placeholder">
         <svg
           width="64"
@@ -97,7 +97,15 @@
           sizes="80px"
           placeholder
         />
-        <img v-else :src="img.url" :alt="`${alt} ${i + 1}`" width="100" height="75" loading="lazy" decoding="async" />
+        <img
+          v-else
+          :src="img.url"
+          :alt="`${alt} ${i + 1}`"
+          width="100"
+          height="75"
+          loading="lazy"
+          decoding="async"
+        >
       </button>
     </div>
   </div>

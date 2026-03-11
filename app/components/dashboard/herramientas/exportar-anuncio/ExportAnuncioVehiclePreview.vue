@@ -14,7 +14,7 @@ const { t } = useI18n()
   <section class="card preview-card">
     <div class="preview-layout">
       <div class="preview-image">
-        <img v-if="thumbnail" :src="thumbnail" :alt="`${vehicle.brand} ${vehicle.model}`" />
+        <img v-if="thumbnail" :src="thumbnail" :alt="`${vehicle.brand} ${vehicle.model}`" >
         <div v-else class="image-placeholder">
           <span>{{ t('dashboard.vehicles.noImage') }}</span>
         </div>

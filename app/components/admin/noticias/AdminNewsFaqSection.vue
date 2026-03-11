@@ -60,7 +60,7 @@ function updateAnswer(index: number, value: string) {
             class="input"
             placeholder="Ej: Que es un vehiculo industrial?"
             @input="updateQuestion(index, ($event.target as HTMLInputElement).value)"
-          />
+          >
         </div>
         <div class="field">
           <label>Respuesta</label>

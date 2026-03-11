@@ -9,7 +9,7 @@
 
 export function useCacheAside<T>(
   key: string,
-  ttl: number = 300 // 5 min default
+  ttl: number = 300, // 5 min default
 ) {
   const data = ref<T | null>(null)
   const isLoading = ref(false)
@@ -30,7 +30,7 @@ export function useCacheAside<T>(
           cached.value = true
           return
         }
-      } catch (e) {
+      } catch {
         // Ignore parse errors, proceed to fetch
       }
     }
@@ -50,7 +50,7 @@ export function useCacheAside<T>(
           value: result,
           expiresAt: Date.now() + ttl * 1000,
           createdAt: Date.now(),
-        })
+        }),
       )
 
       cached.value = false
@@ -84,7 +84,7 @@ export function useCacheAside<T>(
  */
 export function useCacheCategories(vertical: string) {
   const key = `categories:${vertical}`
-  const { data: categories, ...rest } = useCacheAside<any[]>(key, 3600) // 1h
+  const { data: categories, ...rest } = useCacheAside<Record<string, unknown>[]>(key, 3600) // 1h
 
   const fetch = async () => {
     const res = await $fetch(`/api/categories?vertical=${vertical}`)
@@ -103,7 +103,7 @@ export function useCacheCategories(vertical: string) {
  */
 export function useCacheVerticalConfig(vertical: string) {
   const key = `vertical:${vertical}`
-  const { data: config, ...rest } = useCacheAside<any>(key, 300) // 5min
+  const { data: config, ...rest } = useCacheAside<Record<string, unknown>>(key, 300) // 5min
 
   const fetch = async () => {
     const res = await $fetch(`/api/vertical/${vertical}`)
@@ -124,7 +124,7 @@ export function useCacheVehicleCounts(vertical: string, category?: string) {
   const key = `counts:${vertical}${category ? `:${category}` : ''}`
   const { data: counts, ...rest } = useCacheAside<Record<string, number>>(
     key,
-    60 // 1min
+    60, // 1min
   )
 
   const fetch = async () => {
