@@ -5101,5 +5101,57 @@
     "seeAlso": "See also",
     "category": "Category",
     "backToList": "Back to glossary"
+  },
+  "lifecycle": {
+    "changeStatus": "Change status",
+    "confirmTo": "Confirm change to: {status}",
+    "salePrice": "Sale price",
+    "salePricePlaceholder": "E.g.: 15000",
+    "buyerName": "Buyer name",
+    "buyerNamePlaceholder": "Buyer's name",
+    "reason": "Reason (optional)",
+    "reasonPlaceholder": "E.g.: sold to private buyer",
+    "confirm": "Confirm",
+    "transitioning": "Saving...",
+    "cancel": "Cancel",
+    "showHistory": "View status history",
+    "hideHistory": "Hide history",
+    "noHistory": "No history",
+    "postSale": {
+      "title": "Sale recorded!",
+      "reviewTitle": "Request a review",
+      "reviewDesc": "Share the link with the buyer so they can leave a rating.",
+      "copyLink": "Copy link",
+      "linkCopied": "Copied!",
+      "archiveTitle": "Archive listing",
+      "archiveDesc": "Move the vehicle to the sales history.",
+      "archiveBtn": "Archive now",
+      "shareTitle": "Share the sale",
+      "shareDesc": "Generate an image for social media.",
+      "shareBtn": "Share on social",
+      "skip": "Do this later"
+    },
+    "expiryAlert": {
+      "expiredTitle": "{count} expired listing | {count} expired listings",
+      "soonTitle": "{count} listing expires in {days} days | {count} listings expire in {days} days",
+      "bothTitle": "{expired} expired · {soon} expiring soon",
+      "desc": "Renew them to reappear in the catalog.",
+      "renewNow": "Renew now"
+    }
+  },
+  "admin": {
+    "lifecycle": {
+      "title": "Catalog status",
+      "statusDistribution": "Status distribution",
+      "dealersExpired": "Dealers with expired listings",
+      "recentTransitions": "Recent transitions (7 days)",
+      "dealer": "Dealer",
+      "expiredCount": "Expired",
+      "actions": "Actions",
+      "viewListings": "View listings",
+      "loading": "Loading...",
+      "refresh": "Refresh",
+      "empty": "No vehicles"
+    }
   }
 }

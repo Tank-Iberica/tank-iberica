@@ -5108,5 +5108,57 @@
     "seeAlso": "Ver también",
     "category": "Categoría",
     "backToList": "Volver al glosario"
+  },
+  "lifecycle": {
+    "changeStatus": "Cambiar estado",
+    "confirmTo": "Confirmar cambio a: {status}",
+    "salePrice": "Precio de venta",
+    "salePricePlaceholder": "Ej: 15000",
+    "buyerName": "Nombre del comprador",
+    "buyerNamePlaceholder": "Nombre del comprador",
+    "reason": "Motivo (opcional)",
+    "reasonPlaceholder": "Ej: vendido a cliente particular",
+    "confirm": "Confirmar",
+    "transitioning": "Guardando...",
+    "cancel": "Cancelar",
+    "showHistory": "Ver historial de estados",
+    "hideHistory": "Ocultar historial",
+    "noHistory": "Sin historial",
+    "postSale": {
+      "title": "¡Venta registrada!",
+      "reviewTitle": "Pide una reseña",
+      "reviewDesc": "Comparte el enlace con el comprador para que deje su valoración.",
+      "copyLink": "Copiar enlace",
+      "linkCopied": "¡Copiado!",
+      "archiveTitle": "Archivar anuncio",
+      "archiveDesc": "Mueve el vehículo al histórico de ventas.",
+      "archiveBtn": "Archivar ahora",
+      "shareTitle": "Comparte la venta",
+      "shareDesc": "Genera una imagen para redes sociales.",
+      "shareBtn": "Compartir en redes",
+      "skip": "Hacer esto más tarde"
+    },
+    "expiryAlert": {
+      "expiredTitle": "{count} anuncio caducado | {count} anuncios caducados",
+      "soonTitle": "{count} anuncio caduca en {days} días | {count} anuncios caducan en {days} días",
+      "bothTitle": "{expired} caducados · {soon} próximos a caducar",
+      "desc": "Renuévalos para que vuelvan a aparecer en el catálogo.",
+      "renewNow": "Renovar ahora"
+    }
+  },
+  "admin": {
+    "lifecycle": {
+      "title": "Estado del catálogo",
+      "statusDistribution": "Distribución por estado",
+      "dealersExpired": "Dealers con anuncios caducados",
+      "recentTransitions": "Transiciones recientes (7 días)",
+      "dealer": "Dealer",
+      "expiredCount": "Caducados",
+      "actions": "Acciones",
+      "viewListings": "Ver anuncios",
+      "loading": "Cargando...",
+      "refresh": "Actualizar",
+      "empty": "Sin vehículos"
+    }
   }
 }
