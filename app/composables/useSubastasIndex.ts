@@ -24,6 +24,7 @@ export function useSubastasIndex() {
   const { t } = useI18n()
   const route = useRoute()
   const { auctions, loading, error, fetchAuctions } = useAuction()
+  const siteUrl = useSiteUrl()
 
   const activeTab = ref<SubastasTab>('live')
 
@@ -113,7 +114,7 @@ export function useSubastasIndex() {
         item: {
           '@type': 'Product',
           name: auction.title || `${auction.vehicle?.brand} ${auction.vehicle?.model}`,
-          url: `https://tracciona.com/subastas/${auction.id}`,
+          url: `${siteUrl}/subastas/${auction.id}`,
           offers: {
             '@type': 'Offer',
             price:

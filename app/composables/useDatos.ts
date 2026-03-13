@@ -39,6 +39,7 @@ export { formatPrice } from '~/utils/formatters'
 export function useDatos() {
   const supabase = useSupabaseClient()
   const { t, locale } = useI18n()
+  const siteUrl = useSiteUrl()
 
   /* ---- Reactive state ---- */
   const loading = ref(true)
@@ -267,12 +268,12 @@ export function useDatos() {
     '@type': 'Dataset',
     name: t('data.seoTitle'),
     description: t('data.seoDescription'),
-    url: 'https://tracciona.com/datos',
+    url: `${siteUrl}/datos`,
     license: 'https://creativecommons.org/licenses/by-nc/4.0/',
     creator: {
       '@type': 'Organization',
       name: t('site.title'),
-      url: 'https://tracciona.com',
+      url: siteUrl,
     },
     temporalCoverage: lastUpdated.value ? `../${lastUpdated.value}` : undefined,
     spatialCoverage: {
@@ -282,7 +283,7 @@ export function useDatos() {
     distribution: {
       '@type': 'DataDownload',
       encodingFormat: 'application/pdf',
-      contentUrl: 'https://tracciona.com/informes/indice-precios-trimestral.pdf',
+      contentUrl: `${siteUrl}/informes/indice-precios-trimestral.pdf`,
     },
     keywords: [
       'precios vehículos industriales',

@@ -309,6 +309,7 @@ export function useDashboardExportar() {
   const { userId } = useAuth()
   const { dealerProfile, loadDealer } = useDealerDashboard()
   const { canExport, fetchSubscription } = useSubscriptionPlan(userId.value || undefined)
+  const siteUrl = useSiteUrl()
 
   // ---------- State ----------
 
@@ -503,8 +504,8 @@ export function useDashboardExportar() {
       const dealer = dealerProfile.value
       const companyName = dealer?.company_name || 'Tracciona'
       const profileUrl = dealer?.slug
-        ? `https://tracciona.com/dealer/${dealer.slug}`
-        : 'https://tracciona.com'
+        ? `${siteUrl}/dealer/${dealer.slug}`
+        : siteUrl
 
       renderPdfCoverPage(doc, companyName, profileUrl, vehicleCount.value, locale.value, t)
 

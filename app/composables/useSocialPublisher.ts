@@ -287,7 +287,7 @@ function generatePostContent(
     minimumFractionDigits: 0,
   }).format(vehicle.price_cents / 100)
 
-  const baseUrl = 'https://tracciona.com'
+  const baseUrl = useSiteUrl()
   const url = `${baseUrl}/vehiculo/${vehicle.slug}`
 
   return adapter.formatContent(vehicle.title, price, vehicle.location || '-', url, locale)

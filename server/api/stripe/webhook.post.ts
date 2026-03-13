@@ -272,7 +272,7 @@ async function handleInvoiceFailed(
   if (!userInfo) return
 
   const graceDays = getGraceDays((invoice.attempt_count as number) || 1)
-  const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
+  const baseUrl = getSiteUrl()
   const internalSecret = config.cronSecret || process.env.CRON_SECRET
   await sendDunningEmail(
     baseUrl,
@@ -283,7 +283,7 @@ async function handleInvoiceFailed(
     {
       name: userInfo.name,
       plan: userInfo.plan,
-      updateCardUrl: 'https://tracciona.com/dashboard/suscripcion',
+      updateCardUrl: `${getSiteUrl()}/dashboard/suscripcion`,
       gracePeriodDays: String(graceDays),
     },
   )
@@ -345,7 +345,7 @@ async function handleSubscriptionDeleted(
   if (cancelledUserInfo) {
     vehiclesPaused = await pauseExcessVehicles(sbConfig, patch, cancelledUserInfo.userId)
 
-    const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
+    const baseUrl = getSiteUrl()
     const internalSecret = config.cronSecret || process.env.CRON_SECRET
     await sendDunningEmail(
       baseUrl,
@@ -356,7 +356,7 @@ async function handleSubscriptionDeleted(
       {
         name: cancelledUserInfo.name,
         plan: cancelledUserInfo.plan,
-        resubscribeUrl: 'https://tracciona.com/precios',
+        resubscribeUrl: `${getSiteUrl()}/precios`,
       },
     )
   }

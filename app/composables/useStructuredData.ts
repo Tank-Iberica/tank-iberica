@@ -11,8 +11,8 @@
  * This composable centralizes the schema builders for reuse.
  */
 
-const SITE_URL = 'https://tracciona.com'
-const SITE_NAME = 'Tracciona'
+const SITE_URL = useSiteUrl()
+const SITE_NAME = useSiteName()
 
 interface VehicleSchemaInput {
   brand: string

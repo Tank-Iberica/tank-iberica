@@ -140,7 +140,7 @@ export default defineEventHandler(async (event) => {
   `.trim()
 
   const { error: emailError } = await resend.emails.send({
-    from: 'Tracciona Cron <noreply@tracciona.com>',
+    from: `${getSiteName()} Cron <noreply@${getSiteUrl().replace('https://', '')}>`,
     to: adminEmail,
     subject: `✅ k6 listo para ejecutar — ${vehicles} vehículos, ${dealers} dealers activos`,
     html: emailBody,

@@ -72,7 +72,7 @@ export default defineEventHandler(async (event): Promise<DeleteAccountResponse> 
       apellidos: null,
       pseudonimo: 'Deleted User',
       phone: null,
-      email: `deleted_${userId.slice(0, 8)}@tracciona.com`,
+      email: `deleted_${userId.slice(0, 8)}@${getSiteUrl().replace('https://', '')}`,
       avatar_url: null,
     })
     .eq('id', userId)

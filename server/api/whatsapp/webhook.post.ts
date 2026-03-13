@@ -285,7 +285,7 @@ async function processMessageChange(
   if (!dealer) {
     await sendWhatsAppMessage(
       senderPhone,
-      'No estás registrado como dealer en Tracciona. Visita tracciona.com para más información.',
+      `No estás registrado como dealer en ${getSiteName()}. Visita ${getSiteUrl().replace('https://', '')} para más información.`,
     )
     return
   }

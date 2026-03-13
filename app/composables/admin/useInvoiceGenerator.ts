@@ -73,8 +73,9 @@ export function useInvoiceGenerator(getVehicleOptions: () => VehicleOption[]) {
   const companyAddress2 = ref('28001 Madrid')
   const companyAddress3 = ref('España')
   const companyPhone = ref('+34 900 000 000')
-  const companyEmail = ref('info@tracciona.com')
-  const companyWeb = ref('TRACCIONA.COM')
+  const _siteUrl = useSiteUrl()
+  const companyEmail = ref(`info@${_siteUrl.replace('https://', '')}`)
+  const companyWeb = ref(_siteUrl.replace('https://', '').toUpperCase())
   const companyLogoUrl = ref('')
 
   function updateInvoiceNumber() {

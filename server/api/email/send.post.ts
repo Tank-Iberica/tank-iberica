@@ -268,7 +268,7 @@ async function sendViaResend(
 ): Promise<string> {
   const resend = new Resend(resendApiKey)
   const result = await resend.emails.send({
-    from: 'noreply@tracciona.com',
+    from: `noreply@${getSiteUrl().replace('https://', '')}`,
     to: params.to,
     subject: params.subject,
     html: params.html,
@@ -369,7 +369,7 @@ export default defineEventHandler(async (event) => {
 
   const locale = body.locale ?? 'es'
   const variables = body.variables ?? {}
-  const siteUrl = 'https://tracciona.com'
+  const siteUrl = getSiteUrl()
   const supabase = serverSupabaseServiceRole(event)
 
   // ── 1. Read vertical config + check preferences ───────────────────────────

@@ -339,7 +339,7 @@ export default defineEventHandler(async (event) => {
       try {
         const resend = new Resend(resendApiKey)
         const result = await resend.emails.send({
-          from: 'El Industrial <newsletter@tracciona.com>',
+          from: `El Industrial <newsletter@${getSiteUrl().replace('https://', '')}>`,
           to: subscriber.email,
           subject,
           html,

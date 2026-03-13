@@ -193,7 +193,7 @@ export default defineEventHandler(async (event) => {
         user_name: typedUser.name ?? typedUser.email,
         match_count: typedVehicles.length.toString(),
         vehicle_list: vehicleListHtml,
-        search_url: `https://tracciona.com/catalogo`,
+        search_url: `${getSiteUrl()}/catalogo`,
       }
 
       // -- 6. Send email via internal route -------------------------------------

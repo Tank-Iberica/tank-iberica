@@ -163,16 +163,21 @@ const BALANCE_PDF_STYLE = `
   .footer { background: #23424A; color: white; text-align: center; padding: 10px; font-size: 9px; margin-top: 24px; }
   @media print { body { margin: 0; } .footer { position: fixed; bottom: 0; left: 0; right: 0; } }`
 
-const BALANCE_PDF_HEADER = `<div class="header">
-  <div><h1>TRACCIONA</h1><div class="header-accent"></div></div>
-  <div class="header-info">TRACCIONA.COM<br>info@tracciona.com<br>+34 645 779 594</div>
+function getBalancePdfHeader(siteName: string, siteUrl: string): string {
+  const domain = siteUrl.replace('https://', '')
+  return `<div class="header">
+  <div><h1>${siteName.toUpperCase()}</h1><div class="header-accent"></div></div>
+  <div class="header-info">${domain.toUpperCase()}<br>info@${domain}<br>+34 645 779 594</div>
 </div>`
+}
 
 function buildBalancePdfHtml(
   data: BalanceEntry[],
   colDefs: BalanceColumnDef[],
   yearLabel: string,
   totals: { totalIngresos: number; totalGastos: number; balanceNeto: number },
+  siteName: string,
+  siteUrl: string,
 ): string {
   const tableStyle = `
   table { width: 100%; border-collapse: collapse; margin-top: 12px; }
@@ -187,9 +192,11 @@ function buildBalancePdfHtml(
   const headers = colDefs.map((c) => `<th>${c.header}</th>`).join('')
   const rows = data.map((e) => '<tr>' + colDefs.map((c) => c.cell(e)).join('') + '</tr>').join('')
 
-  return `<!DOCTYPE html><html><head><title>Balance ${yearLabel} - Tracciona</title>
+  const pdfHeader = getBalancePdfHeader(siteName, siteUrl)
+  const domain = siteUrl.replace('https://', '').toUpperCase()
+  return `<!DOCTYPE html><html><head><title>Balance ${yearLabel} - ${siteName}</title>
   <style>${BALANCE_PDF_STYLE}${tableStyle}</style>
-  </head><body>${BALANCE_PDF_HEADER}
+  </head><body>${pdfHeader}
   <div class="content">
   <p class="subtitle">Balance ${yearLabel}</p>
   <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>
@@ -199,10 +206,12 @@ function buildBalancePdfHtml(
     <p><strong>Total Gastos:</strong> <span class="gasto">-${totals.totalGastos.toFixed(2)}\u20AC</span></p>
     <p><strong>Balance Neto:</strong> <strong>${totals.balanceNeto.toFixed(2)}\u20AC</strong></p>
   </div></div>
-  <div class="footer">TRACCIONA.COM</div></body></html>`
+  <div class="footer">${domain}</div></body></html>`
 }
 
-function buildResumenPdfHtml(yearLabel: string, resumenSectionsHtml: string): string {
+function buildResumenPdfHtml(yearLabel: string, resumenSectionsHtml: string, siteName: string, siteUrl: string): string {
+  const pdfHeader = getBalancePdfHeader(siteName, siteUrl)
+  const domain = siteUrl.replace('https://', '').toUpperCase()
   const tableStyle = `
   h2 { font-size: 13px; color: #23424A; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
   table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
@@ -213,14 +222,14 @@ function buildResumenPdfHtml(yearLabel: string, resumenSectionsHtml: string): st
   .positive { color: #059669; font-weight: 600; }
   .negative { color: #dc2626; font-weight: 600; }`
 
-  return `<!DOCTYPE html><html><head><title>Resumen Balance - Tracciona</title>
+  return `<!DOCTYPE html><html><head><title>Resumen Balance - ${siteName}</title>
   <style>${BALANCE_PDF_STYLE}${tableStyle}</style>
-  </head><body>${BALANCE_PDF_HEADER}
+  </head><body>${pdfHeader}
   <div class="content">
   <p class="subtitle">Resumen Balance ${yearLabel}</p>
   <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>
   ${resumenSectionsHtml}</div>
-  <div class="footer">TRACCIONA.COM</div></body></html>`
+  <div class="footer">${domain}</div></body></html>`
 }
 
 /** Print HTML via hidden iframe with fallback to popup window. */
@@ -319,6 +328,8 @@ export function fmtPercent(val: number | null): string {
 // ─── Composable ─────────────────────────────────────────────
 export function useAdminBalanceUI() {
   const toast = useToast()
+  const _siteName = useSiteName()
+  const _siteUrl = useSiteUrl()
 
   // ─── Data layer ──────────────────────────────────────────
   const {
@@ -560,7 +571,7 @@ export function useAdminBalanceUI() {
   function exportToPDF(data: BalanceEntry[]) {
     const colDefs = buildBalanceColumnDefs(exportColumns)
     const yearLabel = String(filters.year || 'Todos los a\u00F1os')
-    const html = buildBalancePdfHtml(data, colDefs, yearLabel, summary.value)
+    const html = buildBalancePdfHtml(data, colDefs, yearLabel, summary.value, _siteName, _siteUrl)
     printHTMLContent(html, () => toast.error('toast.printBlocked'))
   }
 
@@ -584,7 +595,7 @@ export function useAdminBalanceUI() {
   function exportResumenPDF() {
     const yearLabel = String(filters.year || 'Todos los a\u00F1os')
     const sections = buildResumenSections(resumenOptions, summary.value, new Map(monthlyBreakdown.value))
-    const html = buildResumenPdfHtml(yearLabel, sections)
+    const html = buildResumenPdfHtml(yearLabel, sections, _siteName, _siteUrl)
     printHTMLContent(html, () => toast.error('toast.printBlocked'))
   }
 

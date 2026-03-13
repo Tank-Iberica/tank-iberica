@@ -58,7 +58,7 @@ function buildVehicleCardHtml(
     : ''
   const imageUrl =
     (v.images?.length ?? 0) > 0 && cloudinaryBase ? `${cloudinaryBase}${v.images![0]}` : ''
-  const vehicleUrl = `https://tracciona.com/vehiculo/${v.slug || v.id}${utm}`
+  const vehicleUrl = `${getSiteUrl()}/vehiculo/${v.slug || v.id}${utm}`
   return `<a href="${vehicleUrl}" target="_blank" rel="noopener" class="trk-card">
       ${imageUrl ? `<img src="${imageUrl}" alt="${title}" class="trk-img" loading="lazy" />` : '<div class="trk-img trk-placeholder"></div>'}
       <div class="trk-info">
@@ -140,7 +140,7 @@ export default defineEventHandler(async (event) => {
     .join('\n    ')
 
   const brandingHtml = showBranding
-    ? `<div class="trk-footer"><a href="https://tracciona.com${utm}" target="_blank" rel="noopener">Powered by Tracciona</a></div>`
+    ? `<div class="trk-footer"><a href="${getSiteUrl()}${utm}" target="_blank" rel="noopener">Powered by ${getSiteName()}</a></div>`
     : ''
 
   const html = `<!DOCTYPE html>

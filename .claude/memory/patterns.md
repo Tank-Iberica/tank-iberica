@@ -51,3 +51,50 @@ defineProps<{ item: Foo }>()
 ## Composable shared state
 - `ref()` creates per-call state (not shared). Don't call composable in child if parent already owns state.
 - Pass `isEnabled`/`isAlwaysOn` as function props when composable state is local to parent.
+
+## Plugin test pattern — DOM manipulation (happy-dom network guard)
+
+happy-dom tries to fetch external scripts/iframes when appended to DOM → use `vi.spyOn` to intercept:
+
+```typescript
+let appendedScripts: HTMLScriptElement[] = []
+vi.spyOn(document.head, 'appendChild').mockImplementation((node: Node) => {
+  if (node instanceof HTMLScriptElement) appendedScripts.push(node)
+  return node
+})
+vi.spyOn(document.body, 'insertAdjacentElement').mockReturnValue(null)
+```
+
+## Plugin test pattern — shared mutable consent state
+
+When a plugin captures `hasConsent` from `useConsent()` into a closure, per-test `stubConsent()` won't update the captured function. Use a shared mutable object:
+
+```typescript
+const _consent = { marketing: false }
+vi.stubGlobal('useConsent', () => ({
+  consent: { value: _consent },
+  hasConsent: (type: string) => type === 'marketing' && _consent.marketing,
+}))
+// In tests: mutate _consent.marketing directly, then fire watch callback
+```
+
+## Plugin test pattern — watch + onMounted stubs
+
+For plugins using Vue `watch`/`onMounted` (outside component context):
+
+```typescript
+let _watchCb: ((v: unknown) => void) | null = null
+vi.stubGlobal('watch', (source: unknown, cb: Function, opts?: { immediate?: boolean }) => {
+  _watchCb = cb as (v: unknown) => void
+  if (opts?.immediate && typeof source === 'function') cb((source as () => unknown)())
+})
+vi.stubGlobal('onMounted', (cb: Function) => cb())
+// Re-stub in beforeEach to reset _watchCb for each test
+```
+
+## Analytics tracking patterns
+
+- `trackBuyerGeo`: sessionStorage guard (`GEO_TRACKED_KEY`) — fire once per session
+- `trackVehicleDuration`: `visibilitychange` + `onBeforeUnmount` with `_durationTracked` flag (double-fire guard)
+- `trackVehicleComparison`: sessionStorage `analytics_session_views` array — fire when 2+ same-category vehicles viewed
+- Pure functions for session logic (`findSimilarInSession`, `addToSession`) — extract for testability

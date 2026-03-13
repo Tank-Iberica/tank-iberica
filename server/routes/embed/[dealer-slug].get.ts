@@ -158,7 +158,7 @@ export default defineEventHandler(async (event) => {
 
   const vehicles = (vehiclesData || []) as VehicleRow[]
   const theme = getThemeStyles(themeMode)
-  const siteUrl = 'https://tracciona.com'
+  const siteUrl = getSiteUrl()
   const companyName = escapeHtml(getDealerDisplayName(dealerData.company_name))
 
   // Build vehicle cards HTML

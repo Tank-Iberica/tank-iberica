@@ -150,12 +150,17 @@ function makeClient(data: any = null, error: any = null) {
 describe('GET /api/merchant-feed', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Reset getHeader so ETag check never matches by default
+    mockGetHeader.mockReturnValue(undefined)
     delete process.env.SUPABASE_URL
     delete process.env.SUPABASE_SERVICE_KEY
+    // Disable the min-threshold gate for most tests (1 valid item is enough)
+    process.env.MERCHANT_FEED_MIN_ITEMS = '1'
   })
   afterEach(() => {
     delete process.env.SUPABASE_URL
     delete process.env.SUPABASE_SERVICE_KEY
+    delete process.env.MERCHANT_FEED_MIN_ITEMS
   })
 
   it('returns error string when supabase not configured', async () => {
@@ -245,6 +250,50 @@ describe('GET /api/merchant-feed', () => {
     const result = await merchantFeedHandler({} as any)
     expect(result).toBe('')
     expect(mockSetResponseStatus).toHaveBeenCalledWith(expect.anything(), 304)
+  })
+
+  it('returns empty feed (no items) when valid items below min threshold', async () => {
+    process.env.SUPABASE_URL = 'https://test.supabase.co'
+    process.env.SUPABASE_SERVICE_KEY = 'test-key'
+    process.env.MERCHANT_FEED_MIN_ITEMS = '3' // threshold = 3
+    // Only 1 valid vehicle → below threshold
+    const vehicles = [
+      {
+        id: 'v1', slug: 'volvo-fh16', brand: 'Volvo', model: 'FH16',
+        year: 2021, price: 90000, description_es: 'Camion', category: 'camiones',
+        vehicle_images: [{ url: 'https://res.cloudinary.com/test/img.jpg', position: 0 }],
+      },
+    ]
+    mockCreateClient.mockReturnValue(makeClient(vehicles))
+    const result = await merchantFeedHandler({} as any)
+    expect(result).toContain('<?xml')
+    expect(result).toContain('<rss')
+    expect(result).not.toContain('<item>')
+    // Should set the X-Feed-Status header
+    const statusHeaderCall = mockSetResponseHeader.mock.calls.find(
+      (args: any[]) => args[1] === 'X-Feed-Status',
+    )
+    expect(statusHeaderCall).toBeTruthy()
+    expect(statusHeaderCall[2]).toContain('pending-minimum-threshold')
+  })
+
+  it('returns items when valid items meet or exceed min threshold', async () => {
+    process.env.SUPABASE_URL = 'https://test.supabase.co'
+    process.env.SUPABASE_SERVICE_KEY = 'test-key'
+    process.env.MERCHANT_FEED_MIN_ITEMS = '2' // threshold = 2
+    const makeVehicle = (id: string, slug: string) => ({
+      id, slug, brand: 'Volvo', model: 'FH16',
+      year: 2021, price: 90000, description_es: 'Camion', category: 'camiones',
+      vehicle_images: [{ url: `https://res.cloudinary.com/test/${id}.jpg`, position: 0 }],
+    })
+    mockCreateClient.mockReturnValue(makeClient([makeVehicle('v1', 'volvo-1'), makeVehicle('v2', 'volvo-2')]))
+    const result = await merchantFeedHandler({} as any)
+    expect(result).toContain('<item>')
+    // Should NOT set X-Feed-Status header
+    const statusHeaderCall = mockSetResponseHeader.mock.calls.find(
+      (args: any[]) => args[1] === 'X-Feed-Status',
+    )
+    expect(statusHeaderCall).toBeFalsy()
   })
 })
 

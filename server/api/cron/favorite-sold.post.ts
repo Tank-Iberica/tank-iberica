@@ -100,7 +100,7 @@ export default defineEventHandler(async (event) => {
 
       // Build a URL to similar vehicles based on the same category
       const similarParams = vehicle.category_id ? `?category=${vehicle.category_id}` : ''
-      const similarUrl = `https://tracciona.com/catalogo${similarParams}`
+      const similarUrl = `${getSiteUrl()}/catalogo${similarParams}`
 
       // -- 4. Send notification to each user who favorited ----------------------
       for (const fav of typedFavorites) {

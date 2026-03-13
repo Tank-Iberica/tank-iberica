@@ -3,7 +3,7 @@
  * Supports es (default, no prefix) and en (prefix /en/)
  */
 export function useHreflang(path: string) {
-  const SITE_URL = 'https://tracciona.com'
+  const SITE_URL = useSiteUrl()
 
   // Remove any existing locale prefix from path to get the base path
   const basePath = path.replace(/^\/(en|es)\//, '/').replace(/^\/(en|es)$/, '/')

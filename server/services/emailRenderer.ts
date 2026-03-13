@@ -63,8 +63,8 @@ export interface EmailTheme {
 const DEFAULT_THEME: EmailTheme = {
   primaryColor: '#23424A',
   logoUrl: null,
-  siteName: 'Tracciona',
-  siteUrl: 'https://tracciona.com',
+  siteName: getSiteName(),
+  siteUrl: getSiteUrl(),
 }
 
 /**

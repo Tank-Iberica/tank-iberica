@@ -23,6 +23,7 @@ export function useAuctionDetail(auctionId: Ref<string>) {
   const { t, locale } = useI18n()
   const toast = useToast()
   const route = useRoute()
+  const siteUrl = useSiteUrl()
 
   const {
     auction,
@@ -112,12 +113,12 @@ export function useAuctionDetail(auctionId: Ref<string>) {
       eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
       location: {
         '@type': 'VirtualLocation',
-        url: `https://tracciona.com/subastas/${auction.value.id}`,
+        url: `${siteUrl}/subastas/${auction.value.id}`,
       },
       organizer: {
         '@type': 'Organization',
         name: t('site.title'),
-        url: 'https://tracciona.com',
+        url: siteUrl,
       },
       offers: {
         '@type': 'Offer',

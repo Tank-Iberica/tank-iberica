@@ -91,7 +91,7 @@ export function infraAlertEmailHtml(opts: InfraAlertEmailOptions): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alerta de Infraestructura - Tracciona</title>
+  <title>Alerta de Infraestructura - ${getSiteName()}</title>
 </head>
 <body style="margin:0;padding:0;background-color:#F4F4F5;font-family:'Segoe UI',Arial,Helvetica,sans-serif;">
   <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F4F4F5;">
@@ -104,7 +104,7 @@ export function infraAlertEmailHtml(opts: InfraAlertEmailOptions): string {
               <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td>
-                    <h1 style="margin:0;font-size:20px;font-weight:700;color:#FFFFFF;letter-spacing:-0.5px;">Tracciona</h1>
+                    <h1 style="margin:0;font-size:20px;font-weight:700;color:#FFFFFF;letter-spacing:-0.5px;">${getSiteName()}</h1>
                     <p style="margin:4px 0 0;font-size:12px;color:#A0B4B8;">Infrastructure Monitoring</p>
                   </td>
                   <td align="right">
@@ -175,8 +175,8 @@ export function infraAlertEmailHtml(opts: InfraAlertEmailOptions): string {
           <tr>
             <td style="background-color:#F9FAFB;padding:16px 32px;border-top:1px solid #E5E7EB;">
               <p style="margin:0;font-size:11px;color:#9CA3AF;text-align:center;">
-                Este email fue enviado automaticamente por el sistema de monitorizacion de Tracciona.<br>
-                Para gestionar alertas, accede al <a href="https://tracciona.com/admin/infraestructura" style="color:#23424A;text-decoration:underline;">panel de administracion</a>.
+                Este email fue enviado automaticamente por el sistema de monitorizacion de ${getSiteName()}.<br>
+                Para gestionar alertas, accede al <a href="${getSiteUrl()}/admin/infraestructura" style="color:#23424A;text-decoration:underline;">panel de administracion</a>.
               </p>
             </td>
           </tr>
@@ -192,5 +192,5 @@ export function infraAlertEmailHtml(opts: InfraAlertEmailOptions): string {
 
 export function infraAlertSubject(component: string, usagePercent: number): string {
   const componentLabel = COMPONENT_LABELS[component] ?? component
-  return `[Tracciona] Alerta infraestructura: ${componentLabel} al ${usagePercent}%`
+  return `[${getSiteName()}] Alerta infraestructura: ${componentLabel} al ${usagePercent}%`
 }
