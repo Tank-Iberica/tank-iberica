@@ -61,12 +61,14 @@ git worktree remove .claude/worktrees/agent-X
 ```
 
 **¿Por qué?**
+
 - Cada worktree tiene su propio branch checkeado, HEAD independiente
 - `lint-staged` no puede mover el branch de otros agentes
 - `git stash`/`git checkout -- .` solo afectan al worktree local
 - Los commits siempre van al branch correcto
 
 **Reglas adicionales de worktrees:**
+
 - Los worktrees comparten el mismo `.git` y remote — los commits son visibles entre agentes
 - **NO hacer `git checkout <otro-branch>`** dentro del worktree — usar el branch asignado
 - Si necesitas código de otro agente: `git cherry-pick` o `git merge` desde tu worktree
@@ -116,8 +118,8 @@ git worktree remove .claude/worktrees/agent-X
 
 | Bloque                       | Items         | Estado                                        | Sesiones est. |
 | ---------------------------- | ------------- | --------------------------------------------- | ------------- |
-| 0 (Errores)                  | #2, #3, #4    | Pendiente (#1 founder, #5 ✅, #6 ✅)          | ~2            |
-| 1 (Créditos + Suscripciones) | #7, #8, #17   | Pendiente                                     | ~7            |
+| 0 (Errores)                  | #2, #3, #4    | #2 ✅ #4 ✅ — solo falta #3                   | ~1            |
+| 1 (Créditos + Suscripciones) | #7, #8, #17   | ✅ COMPLETADO                                 | 0             |
 | 2 (Features créditos)        | #9–#16        | Pendiente (necesita B1)                       | ~11           |
 | 10 (DGT Verificación)        | #56–#58, #160 | Pendiente (bloqueado API externa — preguntar) | ~10           |
 | 18 (Monetización)            | #142–#145     | Pendiente (#142 necesita #128 de E)           | ~5            |
@@ -141,11 +143,11 @@ git worktree remove .claude/worktrees/agent-X
 
 ### Progreso
 
-- **Siguiente item:** #3 (5 server routes exponen service names en errores — wrap en safeError)
-- **Último commit:** feat(agent-a): #2 tests ownership validation verify-document 11/11 pass
-- **Bloques completados:** —
-- **Items completados:** #2 ✅
-- **Notas:** #2 ya tenía el código de ownership implementado; faltaba el test file. Creado `tests/unit/server/api-verify-document.test.ts` con 11 tests cubriendo 401, 403 (2 casos), 200 owner, 200 admin, 404 vehicle, 404 doc, AI match, AI mismatch, AI fallback, 500 update.
+- **Siguiente item:** #3 (server routes que exponen service names en errores — wrap en safeError)
+- **Último commit:** feat(agent-a): #17 /precios — rename plan basic→classic, add PlanType.classic
+- **Bloques completados:** Bloque 1 ✅
+- **Items completados:** #2 ✅, #4 ✅, #7 ✅, #8 ✅, #17 ✅
+- **Notas:** Bloque 1 completo. Migrations 00115+00116 (credit_packs 5 canonical packs). checkout.post.ts ahora usa subscription_tiers de BD, acepta classic/premium. usePrecios usa 'classic' como plan slug. PlanType añade 'classic' como alias de 'basic' para backward compat con subscriptions existentes.
 
 ---
 
@@ -155,14 +157,14 @@ git worktree remove .claude/worktrees/agent-X
 
 ### Bloques (en orden)
 
-| Bloque                     | Items         | Estado               | Sesiones est. |
-| -------------------------- | ------------- | -------------------- | ------------- |
-| 3 (SEO Landings)           | #62, #63, #64 | ✅ COMPLETADO        | 0             |
-| 23 (SEO Avanzado)          | #164–#183     | Pendiente (20 items) | ~16           |
-| 24 (Código + UX Polish)    | #184–#194     | Pendiente (11 items) | ~10           |
-| 19 (Marketing + Contenido) | #146–#149     | Pendiente            | ~6            |
-| 21 (Operaciones + Calidad) | #153–#158     | Pendiente            | ~6            |
-| 14 (Infra + Documentación) | #96–#100      | Pendiente            | ~6            |
+| Bloque                     | Items         | Estado        | Sesiones est. |
+| -------------------------- | ------------- | ------------- | ------------- |
+| 3 (SEO Landings)           | #62, #63, #64 | ✅ COMPLETADO | 0             |
+| 23 (SEO Avanzado)          | #164–#183     | ✅ COMPLETADO | 0             |
+| 24 (Código + UX Polish)    | #184–#194     | ✅ COMPLETADO | 0             |
+| 19 (Marketing + Contenido) | #146–#149     | Pendiente     | ~6            |
+| 21 (Operaciones + Calidad) | #153–#158     | Pendiente     | ~6            |
+| 14 (Infra + Documentación) | #96–#100      | Pendiente     | ~6            |
 
 ### Coordinación
 
@@ -179,13 +181,13 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #184 (Bloque 24 — Código + UX Polish)
-- **Último commit:** `300804d` feat(agent-b): #174 Web Stories AMP route
-- **Bloques completados:** Bloque 3 ✅, **Bloque 23 ✅ COMPLETADO**
-- **Items completados Bloque 23:** #164 ✅ #165 ✅ #166 ✅ #167 ✅ #168 ✅ #169 ✅ #170 ✅ #174 ✅ #175 ✅ #177 ✅ #179 ✅ #180 ✅(ya existía) #181 ✅(ya existía) #182 ✅ #183 ✅
-- **Skips justificados:** #171 (negocio), #172 (risky restructure), #173 (contenido), #176 (manual), #178 (admin)
-- **Tests añadidos:** 71 nuevos tests (faqSchema×15, itemList×13, markdownToHtml×14, aggregateRating×9, indexNow×9, webStories×11)
-- **Notas:** #166 buildFaqPageSchema. #167 buildItemListSchema. #168 SEO titles. #169 parseSimpleMarkdown. #170 featured snippets. #174 AMP Web Stories /stories/:slug. #175 AggregateRating schema via RPC. #177 alt_text. #179 IndexNow+publishCron. #182 302 redirect. #183 child landings block.
+- **Siguiente item:** #146 (Bloque 19 — Marketing + Contenido)
+- **Último commit:** `94f6ea0` feat(C10): PDF footer URL+QR
+- **Bloques completados:** Bloque 3 ✅, **Bloque 23 ✅**, **Bloque 24 ✅**
+- **Items Bloque 24:** #184 ✅(ya existía) #185 ✅(ya existía) #186 ✅(no Google Drive) #187 ✅(8 guards) #188 ✅(CONTACT.phone) #189 ✅(activeSocialLinks) #190 ✅(ya existía) #191 ✅(ya existía) #192 ✅(ya existía) #193 ✅(URL+QR footer) #194 ✅(ya existía)
+- **Items Bloque 23:** #164 ✅ #165 ✅ #166 ✅ #167 ✅ #168 ✅ #169 ✅ #170 ✅ #174 ✅ #175 ✅ #177 ✅ #179 ✅ #180 ✅ #181 ✅ #182 ✅ #183 ✅
+- **Skips:** #171 (negocio), #172 (risky), #173 (contenido), #176 (manual), #178 (admin)
+- **Tests añadidos:** 71 (Bloque 23)
 
 ---
 
