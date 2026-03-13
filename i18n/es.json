@@ -4174,6 +4174,23 @@
       "pendingCount": "{count} pendientes",
       "articlesLabel": "Artículos",
       "vehiclesLabel": "Vehículos"
+    },
+    "editorial": {
+      "title": "Generación editorial con IA",
+      "generateDrafts": "Generar borradores",
+      "generating": "Generando contenido...",
+      "draftsCreated": "{count} borrador(es) creados",
+      "reviewBefore": "Revisa los borradores antes de publicar",
+      "featureDisabled": "La generación editorial está desactivada",
+      "enableFeature": "Activar en Feature Flags",
+      "categories": {
+        "guias": "Guías de compra",
+        "mercado": "Análisis de mercado",
+        "mantenimiento": "Mantenimiento",
+        "normativa": "Normativa",
+        "tecnologia": "Tecnología",
+        "flota": "Gestión de flotas"
+      }
     }
   },
   "glossary": {

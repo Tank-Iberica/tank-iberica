@@ -4169,6 +4169,23 @@
       "pendingCount": "{count} pending",
       "articlesLabel": "Articles",
       "vehiclesLabel": "Vehicles"
+    },
+    "editorial": {
+      "title": "AI editorial generation",
+      "generateDrafts": "Generate drafts",
+      "generating": "Generating content...",
+      "draftsCreated": "{count} draft(s) created",
+      "reviewBefore": "Review drafts before publishing",
+      "featureDisabled": "Editorial generation is disabled",
+      "enableFeature": "Enable in Feature Flags",
+      "categories": {
+        "guias": "Buying guides",
+        "mercado": "Market analysis",
+        "mantenimiento": "Maintenance",
+        "normativa": "Regulations",
+        "tecnologia": "Technology",
+        "flota": "Fleet management"
+      }
     }
   },
   "glossary": {
