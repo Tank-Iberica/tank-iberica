@@ -24,6 +24,10 @@
     "errorTitle": "Página no encontrada — Tracciona",
     "errorDescription": "La página que buscas no existe o ha sido movida."
   },
+  "landing": {
+    "exploreBy": "Explorar por tipo",
+    "vehicles": "vehículos"
+  },
   "a11y": {
     "skipToContent": "Saltar al contenido",
     "skipToCatalog": "Saltar al catálogo",
@@ -1730,6 +1734,21 @@
         "posted": "Publicado",
         "rejected": "Rechazado",
         "failed": "Fallido"
+      },
+      "calendar": {
+        "title": "Calendario editorial",
+        "today": "Hoy",
+        "prev": "Anterior",
+        "next": "Siguiente",
+        "weekView": "Semana",
+        "monthView": "Mes",
+        "loading": "Cargando calendario...",
+        "noContent": "Sin contenido",
+        "postDetail": "Detalle del post",
+        "impressions": "Impresiones",
+        "clicks": "Clics",
+        "externalId": "ID externo",
+        "calendarView": "Vista calendario"
       }
     },
     "pagos": {

@@ -24,6 +24,10 @@
     "errorTitle": "Page not found — Tracciona",
     "errorDescription": "The page you are looking for does not exist or has been moved."
   },
+  "landing": {
+    "exploreBy": "Explore by type",
+    "vehicles": "vehicles"
+  },
   "a11y": {
     "skipToContent": "Skip to content",
     "skipToCatalog": "Skip to catalog",
@@ -1730,6 +1734,21 @@
         "posted": "Published",
         "rejected": "Rejected",
         "failed": "Failed"
+      },
+      "calendar": {
+        "title": "Editorial calendar",
+        "today": "Today",
+        "prev": "Previous",
+        "next": "Next",
+        "weekView": "Week",
+        "monthView": "Month",
+        "loading": "Loading calendar...",
+        "noContent": "No content",
+        "postDetail": "Post detail",
+        "impressions": "Impressions",
+        "clicks": "Clicks",
+        "externalId": "External ID",
+        "calendarView": "Calendar view"
       }
     },
     "pagos": {

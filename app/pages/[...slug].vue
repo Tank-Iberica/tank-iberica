@@ -47,6 +47,24 @@
           {{ introText }}
         </div>
 
+        <!-- #183 (S23) — Child landing links: Explorar por tipo -->
+        <div v-if="childLandings?.length" class="landing-children">
+          <h2 class="landing-children-title">{{ $t('landing.exploreBy') }}</h2>
+          <div class="landing-children-list">
+            <NuxtLink
+              v-for="child in childLandings"
+              :key="child.slug"
+              :to="`/${child.slug}`"
+              class="landing-child-link"
+            >
+              <span class="landing-child-name">{{ childTitle(child) }}</span>
+              <span v-if="child.vehicle_count" class="landing-child-count">
+                {{ child.vehicle_count }} {{ $t('landing.vehicles') }}
+              </span>
+            </NuxtLink>
+          </div>
+        </div>
+
         <!-- Vehicles will be rendered here by the catalog system -->
         <div class="landing-catalog-placeholder">
           <p>{{ $t('catalog.comingSoon') }}</p>
@@ -78,6 +96,13 @@ const isReserved = computed(() => {
   const first = slugParts.value[0]
   return first ? RESERVED_SLUGS.includes(first) : false
 })
+
+interface ChildLanding {
+  slug: string
+  meta_title_es: string | null
+  meta_title_en: string | null
+  vehicle_count: number
+}
 
 interface Landing {
   id: string
@@ -218,6 +243,26 @@ const breadcrumbItems = computed(() => {
   return [{ label: t('nav.home'), to: '/' }, { label: landingTitle.value }]
 })
 
+// #183 (S23) — Fetch child landings (where parent_slug = current slug)
+const { data: childLandings } = await useAsyncData(
+  `landing-children-${fullSlug.value}`,
+  async () => {
+    if (!landing.value) return []
+    const { data } = await supabase
+      .from('active_landings')
+      .select('slug, meta_title_es, meta_title_en, vehicle_count')
+      .eq('parent_slug', landing.value.slug)
+      .order('vehicle_count', { ascending: false })
+      .limit(20)
+    return (data ?? []) as ChildLanding[]
+  },
+)
+
+function childTitle(child: ChildLanding): string {
+  if (locale.value === 'en' && child.meta_title_en) return child.meta_title_en
+  return child.meta_title_es || child.slug.replaceAll('-', ' ')
+}
+
 // SEO for landing pages (dealer SEO is handled by DealerPortal component)
 if (landing.value) {
   usePageSeo({
@@ -321,6 +366,56 @@ if (landing.value) {
   text-align: center;
   padding: 3rem 0;
   color: var(--text-auxiliary);
+}
+
+/* #183 — Child landing links */
+.landing-children {
+  margin-bottom: var(--spacing-8);
+}
+
+.landing-children-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-3);
+}
+
+.landing-children-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.landing-child-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: all var(--transition-fast);
+  min-height: 2.75rem;
+}
+
+.landing-child-link:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(35, 66, 74, 0.04);
+}
+
+.landing-child-name {
+  text-transform: capitalize;
+}
+
+.landing-child-count {
+  font-size: 0.75rem;
+  color: var(--text-auxiliary);
+  background: var(--bg-secondary);
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--border-radius-full);
 }
 
 /* Loading */
