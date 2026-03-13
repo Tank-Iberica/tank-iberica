@@ -70,11 +70,11 @@ export async function getVerticalComplianceRules(
 ): Promise<ComplianceRules> {
   const client = serverSupabaseServiceRole(event)
 
-  const { data } = await client
+  const { data } = (await client
     .from('vertical_config')
     .select('compliance_rules')
     .eq('vertical', vertical)
-    .single()
+    .single()) as { data: Record<string, unknown> | null }
 
   if (!data?.compliance_rules) return { ...DEFAULT_COMPLIANCE }
 
@@ -87,15 +87,19 @@ export async function getVerticalStockLimits(
 ): Promise<StockLimits> {
   const client = serverSupabaseServiceRole(event)
 
-  const { data } = await client
+  const { data } = (await client
     .from('vertical_config')
     .select('stock_limits')
     .eq('vertical', vertical)
-    .single()
+    .single()) as { data: Record<string, unknown> | null }
 
   if (!data?.stock_limits) return { ...DEFAULT_STOCK_LIMITS }
 
-  return { ...DEFAULT_STOCK_LIMITS, ...(data.stock_limits as Partial<StockLimits>) }
+  const limits = Object.fromEntries(
+    Object.entries(data.stock_limits as Record<string, unknown>).filter(([, v]) => v !== undefined),
+  ) as Partial<StockLimits>
+
+  return { ...DEFAULT_STOCK_LIMITS, ...limits }
 }
 
 // ---------------------------------------------------------------------------
