@@ -63,8 +63,27 @@ interface CronBody {
 
 // -- Helpers ------------------------------------------------------------------
 
-function isAlertEligible(alert: SearchAlertRow, now: Date): boolean {
-  const frequency = alert.frequency ?? 'daily'
+/** Max alert frequency allowed per subscription plan (backlog #12) */
+const PLAN_MAX_FREQUENCY: Record<string, string> = {
+  free: 'weekly',
+  basic: 'weekly',
+  classic: 'daily',
+  premium: 'instant',
+  founding: 'instant',
+}
+
+/** Numeric rank so we can cap frequencies — higher = faster */
+const FREQUENCY_RANK: Record<string, number> = { weekly: 0, daily: 1, instant: 2 }
+
+/** Returns the effective frequency respecting the plan cap */
+export function effectiveFrequency(alertFreq: string | null, planSlug: string): string {
+  const freq = alertFreq ?? 'daily'
+  const planMax = PLAN_MAX_FREQUENCY[planSlug] ?? 'weekly'
+  return (FREQUENCY_RANK[freq] ?? 0) <= (FREQUENCY_RANK[planMax] ?? 0) ? freq : planMax
+}
+
+function isAlertEligible(alert: SearchAlertRow, now: Date, planSlug: string): boolean {
+  const frequency = effectiveFrequency(alert.frequency, planSlug)
   const lastSent = alert.last_sent_at ? new Date(alert.last_sent_at) : null
   if (frequency === 'instant') return !lastSent || now.getTime() - lastSent.getTime() > 60_000
   if (frequency === 'daily')
@@ -123,10 +142,25 @@ export default defineEventHandler(async (event) => {
 
   const typedAlerts = alerts as unknown as SearchAlertRow[]
 
-  // -- 2. Filter alerts by frequency eligibility ------------------------------
-  const eligibleAlerts = typedAlerts.filter((alert) => isAlertEligible(alert, now))
+  // -- 2. Fetch subscription plans for all alert owners (#12 tier enforcement) -
+  const userIds = [...new Set(typedAlerts.map((a) => a.user_id))]
+  const { data: subsData } = await supabase
+    .from('subscriptions')
+    .select('user_id, plan')
+    .in('user_id', userIds)
+    .eq('status', 'active')
 
-  // -- 3. For each eligible alert, find matching vehicles ---------------------
+  const userPlanMap = new Map<string, string>()
+  for (const sub of (subsData ?? []) as Array<{ user_id: string; plan: string }>) {
+    userPlanMap.set(sub.user_id, sub.plan)
+  }
+
+  // -- 3. Filter alerts by frequency eligibility (capped by plan tier) --------
+  const eligibleAlerts = typedAlerts.filter((alert) =>
+    isAlertEligible(alert, now, userPlanMap.get(alert.user_id) ?? 'free'),
+  )
+
+  // -- 4. For each eligible alert, find matching vehicles ---------------------
   const result = await processBatch({
     items: eligibleAlerts,
     batchSize: 50,

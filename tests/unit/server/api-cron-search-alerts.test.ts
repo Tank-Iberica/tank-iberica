@@ -1,21 +1,27 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-const { mockReadBody, mockSafeError, mockServiceRole, mockVerifyCronSecret, mockProcessBatch, mockLogger } =
-  vi.hoisted(() => {
-    const mockSafeError = vi.fn((status: number, msg: string) => {
-      const err = new Error(msg)
-      ;(err as any).statusCode = status
-      return err
-    })
-    return {
-      mockReadBody: vi.fn().mockResolvedValue({ secret: 'cron-secret' }),
-      mockSafeError,
-      mockServiceRole: vi.fn(),
-      mockVerifyCronSecret: vi.fn(),
-      mockProcessBatch: vi.fn().mockResolvedValue({ processed: 0, errors: 0 }),
-      mockLogger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
-    }
+const {
+  mockReadBody,
+  mockSafeError,
+  mockServiceRole,
+  mockVerifyCronSecret,
+  mockProcessBatch,
+  mockLogger,
+} = vi.hoisted(() => {
+  const mockSafeError = vi.fn((status: number, msg: string) => {
+    const err = new Error(msg)
+    ;(err as any).statusCode = status
+    return err
   })
+  return {
+    mockReadBody: vi.fn().mockResolvedValue({ secret: 'cron-secret' }),
+    mockSafeError,
+    mockServiceRole: vi.fn(),
+    mockVerifyCronSecret: vi.fn(),
+    mockProcessBatch: vi.fn().mockResolvedValue({ processed: 0, errors: 0 }),
+    mockLogger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  }
+})
 
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
@@ -28,7 +34,9 @@ vi.mock('#supabase/server', () => ({
 
 vi.mock('../../../server/utils/safeError', () => ({ safeError: mockSafeError }))
 vi.mock('../../utils/safeError', () => ({ safeError: mockSafeError }))
-vi.mock('../../../server/utils/verifyCronSecret', () => ({ verifyCronSecret: mockVerifyCronSecret }))
+vi.mock('../../../server/utils/verifyCronSecret', () => ({
+  verifyCronSecret: mockVerifyCronSecret,
+}))
 vi.mock('../../utils/verifyCronSecret', () => ({ verifyCronSecret: mockVerifyCronSecret }))
 vi.mock('../../../server/utils/batchProcessor', () => ({ processBatch: mockProcessBatch }))
 vi.mock('../../utils/batchProcessor', () => ({ processBatch: mockProcessBatch }))
@@ -39,17 +47,26 @@ vi.stubGlobal('useRuntimeConfig', () => ({ cronSecret: 'cron-secret', public: {}
 const mockFetch = vi.fn().mockResolvedValue({ ok: true })
 vi.stubGlobal('$fetch', mockFetch)
 
-import handler from '../../../server/api/cron/search-alerts.post'
+import handler, { effectiveFrequency } from '../../../server/api/cron/search-alerts.post'
 
 function makeSupabase(alerts: unknown[], alertsError: unknown = null) {
+  // subscriptions query resolves via chain.then (no .limit() terminal)
+  // default to 'premium' so existing frequency tests are unaffected by tier enforcement
+  const subsData = (alerts as Array<{ user_id?: string }>)
+    .filter((a) => a.user_id)
+    .map((a) => ({ user_id: a.user_id, plan: 'premium' }))
+
   const chain: any = {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     gte: vi.fn().mockReturnThis(),
     lte: vi.fn().mockReturnThis(),
     ilike: vi.fn().mockReturnThis(),
+    in: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
     limit: vi.fn().mockResolvedValue({ data: alerts, error: alertsError }),
+    then: (r: (v: unknown) => void) => Promise.resolve({ data: subsData, error: null }).then(r),
+    catch: (r: (v: unknown) => void) => Promise.resolve({ data: subsData, error: null }).catch(r),
   }
   return { from: vi.fn().mockReturnValue(chain) }
 }
@@ -96,7 +113,14 @@ describe('POST /api/cron/search-alerts', () => {
 
   it('calls processBatch when alerts exist', async () => {
     const alerts = [
-      { id: 'alert-1', user_id: 'user-1', filters: { brand: 'Volvo' }, frequency: 'daily', last_sent_at: null, active: true },
+      {
+        id: 'alert-1',
+        user_id: 'user-1',
+        filters: { brand: 'Volvo' },
+        frequency: 'daily',
+        last_sent_at: null,
+        active: true,
+      },
     ]
     mockServiceRole.mockReturnValue(makeSupabase(alerts))
     mockProcessBatch.mockResolvedValue({ processed: 1, errors: 0 })
@@ -108,7 +132,14 @@ describe('POST /api/cron/search-alerts', () => {
 
   it('returns batchResult in response', async () => {
     const alerts = [
-      { id: 'a1', user_id: 'u1', filters: {}, frequency: 'instant', last_sent_at: null, active: true },
+      {
+        id: 'a1',
+        user_id: 'u1',
+        filters: {},
+        frequency: 'instant',
+        last_sent_at: null,
+        active: true,
+      },
     ]
     mockServiceRole.mockReturnValue(makeSupabase(alerts))
     mockProcessBatch.mockResolvedValue({ processed: 1, errors: 0 })
@@ -119,7 +150,14 @@ describe('POST /api/cron/search-alerts', () => {
   it('filters out ineligible alerts before batch processing', async () => {
     const recentDate = new Date(Date.now() - 3600 * 1000).toISOString() // 1 hour ago
     const alerts = [
-      { id: 'a1', user_id: 'u1', filters: {}, frequency: 'daily', last_sent_at: recentDate, active: true },
+      {
+        id: 'a1',
+        user_id: 'u1',
+        filters: {},
+        frequency: 'daily',
+        last_sent_at: recentDate,
+        active: true,
+      },
     ]
     mockServiceRole.mockReturnValue(makeSupabase(alerts))
     mockProcessBatch.mockResolvedValue({ processed: 0, errors: 0 })
@@ -131,7 +169,14 @@ describe('POST /api/cron/search-alerts', () => {
 
   it('passes eligible instant alerts to processBatch', async () => {
     const alerts = [
-      { id: 'a1', user_id: 'u1', filters: { brand: 'Volvo' }, frequency: 'instant', last_sent_at: null, active: true },
+      {
+        id: 'a1',
+        user_id: 'u1',
+        filters: { brand: 'Volvo' },
+        frequency: 'instant',
+        last_sent_at: null,
+        active: true,
+      },
     ]
     mockServiceRole.mockReturnValue(makeSupabase(alerts))
     mockProcessBatch.mockResolvedValue({ processed: 1, errors: 0 })
@@ -144,7 +189,14 @@ describe('POST /api/cron/search-alerts', () => {
   it('passes eligible weekly alerts (last_sent > 7d ago)', async () => {
     const tenDaysAgo = new Date(Date.now() - 10 * 24 * 3600 * 1000).toISOString()
     const alerts = [
-      { id: 'a1', user_id: 'u1', filters: {}, frequency: 'weekly', last_sent_at: tenDaysAgo, active: true },
+      {
+        id: 'a1',
+        user_id: 'u1',
+        filters: {},
+        frequency: 'weekly',
+        last_sent_at: tenDaysAgo,
+        active: true,
+      },
     ]
     mockServiceRole.mockReturnValue(makeSupabase(alerts))
     mockProcessBatch.mockResolvedValue({ processed: 1, errors: 0 })
@@ -166,7 +218,14 @@ describe('POST /api/cron/search-alerts', () => {
 
   it('filters out unknown frequency type', async () => {
     const alerts = [
-      { id: 'a1', user_id: 'u1', filters: {}, frequency: 'monthly', last_sent_at: null, active: true },
+      {
+        id: 'a1',
+        user_id: 'u1',
+        filters: {},
+        frequency: 'monthly',
+        last_sent_at: null,
+        active: true,
+      },
     ]
     mockServiceRole.mockReturnValue(makeSupabase(alerts))
     mockProcessBatch.mockResolvedValue({ processed: 0, errors: 0 })
@@ -178,7 +237,14 @@ describe('POST /api/cron/search-alerts', () => {
   it('instant alert is ineligible if last sent < 60s ago', async () => {
     const thirtySecsAgo = new Date(Date.now() - 30_000).toISOString()
     const alerts = [
-      { id: 'a1', user_id: 'u1', filters: {}, frequency: 'instant', last_sent_at: thirtySecsAgo, active: true },
+      {
+        id: 'a1',
+        user_id: 'u1',
+        filters: {},
+        frequency: 'instant',
+        last_sent_at: thirtySecsAgo,
+        active: true,
+      },
     ]
     mockServiceRole.mockReturnValue(makeSupabase(alerts))
     mockProcessBatch.mockResolvedValue({ processed: 0, errors: 0 })
@@ -190,7 +256,14 @@ describe('POST /api/cron/search-alerts', () => {
   it('instant alert is eligible if last sent > 60s ago', async () => {
     const twoMinsAgo = new Date(Date.now() - 120_000).toISOString()
     const alerts = [
-      { id: 'a1', user_id: 'u1', filters: {}, frequency: 'instant', last_sent_at: twoMinsAgo, active: true },
+      {
+        id: 'a1',
+        user_id: 'u1',
+        filters: {},
+        frequency: 'instant',
+        last_sent_at: twoMinsAgo,
+        active: true,
+      },
     ]
     mockServiceRole.mockReturnValue(makeSupabase(alerts))
     mockProcessBatch.mockResolvedValue({ processed: 1, errors: 0 })
@@ -202,7 +275,14 @@ describe('POST /api/cron/search-alerts', () => {
   it('weekly alert is ineligible if last sent < 7d ago', async () => {
     const threeDaysAgo = new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString()
     const alerts = [
-      { id: 'a1', user_id: 'u1', filters: {}, frequency: 'weekly', last_sent_at: threeDaysAgo, active: true },
+      {
+        id: 'a1',
+        user_id: 'u1',
+        filters: {},
+        frequency: 'weekly',
+        last_sent_at: threeDaysAgo,
+        active: true,
+      },
     ]
     mockServiceRole.mockReturnValue(makeSupabase(alerts))
     mockProcessBatch.mockResolvedValue({ processed: 0, errors: 0 })
@@ -221,9 +301,30 @@ describe('POST /api/cron/search-alerts', () => {
   it('mixes eligible and ineligible alerts, only eligible reach processor', async () => {
     const recentDate = new Date(Date.now() - 3600 * 1000).toISOString() // 1h ago
     const alerts = [
-      { id: 'a1', user_id: 'u1', filters: {}, frequency: 'daily', last_sent_at: recentDate, active: true }, // ineligible
-      { id: 'a2', user_id: 'u2', filters: {}, frequency: 'daily', last_sent_at: null, active: true }, // eligible
-      { id: 'a3', user_id: 'u3', filters: {}, frequency: 'monthly', last_sent_at: null, active: true }, // ineligible (unknown freq)
+      {
+        id: 'a1',
+        user_id: 'u1',
+        filters: {},
+        frequency: 'daily',
+        last_sent_at: recentDate,
+        active: true,
+      }, // ineligible
+      {
+        id: 'a2',
+        user_id: 'u2',
+        filters: {},
+        frequency: 'daily',
+        last_sent_at: null,
+        active: true,
+      }, // eligible
+      {
+        id: 'a3',
+        user_id: 'u3',
+        filters: {},
+        frequency: 'monthly',
+        last_sent_at: null,
+        active: true,
+      }, // ineligible (unknown freq)
     ]
     mockServiceRole.mockReturnValue(makeSupabase(alerts))
     mockProcessBatch.mockResolvedValue({ processed: 1, errors: 0 })
@@ -248,7 +349,12 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
       let processed = 0
       let errors = 0
       for (const item of items) {
-        try { await processor(item); processed++ } catch { errors++ }
+        try {
+          await processor(item)
+          processed++
+        } catch {
+          errors++
+        }
       }
       return { processed, errors }
     })
@@ -263,6 +369,7 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
       gte: vi.fn().mockImplementation(() => chain),
       lte: vi.fn().mockImplementation(() => chain),
       ilike: vi.fn().mockImplementation(() => chain),
+      in: vi.fn().mockImplementation(() => chain),
       order: vi.fn().mockImplementation(() => chain),
       limit: vi.fn().mockImplementation(() => chain),
       single: vi.fn().mockImplementation(() => chain),
@@ -304,6 +411,11 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
             }),
           }
         }
+        if (table === 'subscriptions') {
+          // Return premium plan for all alert owners so tier enforcement doesn't interfere
+          const subsData = alerts.map((a: any) => ({ user_id: a.user_id, plan: 'premium' }))
+          return makeThenableChain(subsData, null)
+        }
         if (table === 'vehicles') {
           return makeThenableChain(vehicles, vehiclesError)
         }
@@ -318,11 +430,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('sends email and updates last_sent_at when vehicles match', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: { brand: 'Volvo' },
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: { brand: 'Volvo' },
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'Volvo', model: 'FH16', price: 85000, year: 2023, slug: 'volvo-fh16', category_id: 'c1', location_country: 'ES', location_region: 'Madrid', created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'Volvo',
+        model: 'FH16',
+        price: 85000,
+        year: 2023,
+        slug: 'volvo-fh16',
+        category_id: 'c1',
+        location_country: 'ES',
+        location_region: 'Madrid',
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'Test User', lang: 'es' }
 
@@ -349,8 +476,12 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('skips email when no matching vehicles', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
 
     const supabase = makeFullSupabase({ alerts: [alert], vehicles: [], userData: null })
@@ -364,8 +495,12 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('skips when vehicles query returns null data', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
 
     const supabase = makeFullSupabase({ alerts: [alert], vehicles: null as any })
@@ -378,8 +513,12 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('logs error and skips when vehicle query fails', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
 
     const supabase = makeFullSupabase({
@@ -398,11 +537,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('logs error and skips when user not found', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'Scania', model: 'R500', price: 95000, year: 2022, slug: 'scania-r500', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'Scania',
+        model: 'R500',
+        price: 95000,
+        year: 2022,
+        slug: 'scania-r500',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
 
     const supabase = makeFullSupabase({
@@ -422,11 +576,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('logs error and skips when user data is null', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'MAN', model: 'TGX', price: 70000, year: 2021, slug: 'man-tgx', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'MAN',
+        model: 'TGX',
+        price: 70000,
+        year: 2021,
+        slug: 'man-tgx',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
 
     const supabase = makeFullSupabase({
@@ -447,11 +616,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('uses email as user_name when name is null', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'DAF', model: 'XF', price: 60000, year: 2020, slug: 'daf-xf', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'DAF',
+        model: 'XF',
+        price: 60000,
+        year: 2020,
+        slug: 'daf-xf',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'nolabel@test.com', name: null, lang: 'en' }
 
@@ -472,11 +656,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('defaults locale to es when user lang is null', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'Iveco', model: 'Daily', price: null, year: null, slug: 'iveco-daily', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'Iveco',
+        model: 'Daily',
+        price: null,
+        year: null,
+        slug: 'iveco-daily',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'Test', lang: null }
 
@@ -494,11 +693,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('logs error but does not crash when $fetch fails', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'Renault', model: 'T', price: 55000, year: 2019, slug: 'renault-t', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'Renault',
+        model: 'T',
+        price: 55000,
+        year: 2019,
+        slug: 'renault-t',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'User', lang: 'es' }
 
@@ -517,11 +731,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('logs error when $fetch throws non-Error', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'Renault', model: 'T', price: 55000, year: 2019, slug: 'renault-t', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'Renault',
+        model: 'T',
+        price: 55000,
+        year: 2019,
+        slug: 'renault-t',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'User', lang: 'es' }
 
@@ -532,14 +761,13 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
     const result = await handler({} as any)
     expect(result.emailsSent).toBe(0)
-    expect(mockLogger.error).toHaveBeenCalledWith(
-      expect.stringContaining('Unknown error'),
-    )
+    expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('Unknown error'))
   })
 
   it('applies all filter types correctly', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1',
+      id: 'a1',
+      user_id: 'u1',
       filters: {
         category_id: 'cat-1',
         price_min: 10000,
@@ -550,10 +778,23 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
         location_country: 'ES',
         location_region: 'Catalonia',
       },
-      frequency: 'daily', last_sent_at: null, active: true,
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'Volvo', model: 'FL', price: 35000, year: 2020, slug: 'volvo-fl', category_id: 'cat-1', location_country: 'ES', location_region: 'Catalonia', created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'Volvo',
+        model: 'FL',
+        price: 35000,
+        year: 2020,
+        slug: 'volvo-fl',
+        category_id: 'cat-1',
+        location_country: 'ES',
+        location_region: 'Catalonia',
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'Filters User', lang: 'es' }
 
@@ -565,10 +806,22 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
     // Thenable vehicle chain that tracks filter calls
     const vehicleChain: any = {
       select: vi.fn().mockImplementation(() => vehicleChain),
-      eq: vi.fn().mockImplementation((field: string) => { eqCalls.push(field); return vehicleChain }),
-      gte: vi.fn().mockImplementation((field: string) => { gteCalls.push(field); return vehicleChain }),
-      lte: vi.fn().mockImplementation((field: string) => { lteCalls.push(field); return vehicleChain }),
-      ilike: vi.fn().mockImplementation((field: string) => { ilikeCalls.push(field); return vehicleChain }),
+      eq: vi.fn().mockImplementation((field: string) => {
+        eqCalls.push(field)
+        return vehicleChain
+      }),
+      gte: vi.fn().mockImplementation((field: string) => {
+        gteCalls.push(field)
+        return vehicleChain
+      }),
+      lte: vi.fn().mockImplementation((field: string) => {
+        lteCalls.push(field)
+        return vehicleChain
+      }),
+      ilike: vi.fn().mockImplementation((field: string) => {
+        ilikeCalls.push(field)
+        return vehicleChain
+      }),
       order: vi.fn().mockImplementation(() => vehicleChain),
       limit: vi.fn().mockImplementation(() => vehicleChain),
       then: (resolve: Function) => resolve({ data: vehicles, error: null }),
@@ -596,6 +849,8 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
             }),
           }
         }
+        if (table === 'subscriptions')
+          return makeThenableChain([{ user_id: alert.user_id, plan: 'premium' }], null)
         if (table === 'vehicles') return vehicleChain
         if (table === 'users') return userChain
         return makeThenableChain([], null)
@@ -618,13 +873,24 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('caps vehicle list at 10 in email variables', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     // Generate 15 vehicles
     const vehicles = Array.from({ length: 15 }, (_, i) => ({
-      id: `v${i}`, brand: 'Brand', model: `Model${i}`, price: 10000 + i * 1000, year: 2020 + (i % 5),
-      slug: `brand-model${i}`, category_id: null, location_country: null, location_region: null,
+      id: `v${i}`,
+      brand: 'Brand',
+      model: `Model${i}`,
+      price: 10000 + i * 1000,
+      year: 2020 + (i % 5),
+      slug: `brand-model${i}`,
+      category_id: null,
+      location_country: null,
+      location_region: null,
       created_at: new Date().toISOString(),
     }))
     const user = { id: 'u1', email: 'user@test.com', name: 'User', lang: 'es' }
@@ -644,11 +910,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('formats vehicles without price or year correctly', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'Volvo', model: 'FH', price: null, year: null, slug: 'volvo-fh', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'Volvo',
+        model: 'FH',
+        price: null,
+        year: null,
+        slug: 'volvo-fh',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'User', lang: 'es' }
 
@@ -664,12 +945,27 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
   it('uses sinceDate from last_sent_at when available', async () => {
     const lastSentAt = new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString()
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: lastSentAt, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: lastSentAt,
+      active: true,
     }
     // Make the alert eligible by having last_sent > 24h ago (which it is)
     const vehicles = [
-      { id: 'v1', brand: 'DAF', model: 'CF', price: 40000, year: 2021, slug: 'daf-cf', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'DAF',
+        model: 'CF',
+        price: 40000,
+        year: 2021,
+        slug: 'daf-cf',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'User', lang: 'es' }
 
@@ -704,6 +1000,8 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
             }),
           }
         }
+        if (table === 'subscriptions')
+          return makeThenableChain([{ user_id: alert.user_id, plan: 'premium' }], null)
         if (table === 'vehicles') return vehicleChain
         if (table === 'users') return makeThenableChain(user, null)
         return makeThenableChain([], null)
@@ -718,11 +1016,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('uses 7-day fallback as sinceDate when last_sent_at is null', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'MAN', model: 'TGL', price: 30000, year: 2020, slug: 'man-tgl', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'MAN',
+        model: 'TGL',
+        price: 30000,
+        year: 2020,
+        slug: 'man-tgl',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'User', lang: 'es' }
 
@@ -757,6 +1070,8 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
             }),
           }
         }
+        if (table === 'subscriptions')
+          return makeThenableChain([{ user_id: alert.user_id, plan: 'premium' }], null)
         if (table === 'vehicles') return vehicleChain2
         if (table === 'users') return makeThenableChain(user, null)
         return makeThenableChain([], null)
@@ -774,11 +1089,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('handles null filters gracefully (defaults to {})', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: null,
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: null,
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'MB', model: 'Actros', price: 80000, year: 2022, slug: 'mb-actros', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'MB',
+        model: 'Actros',
+        price: 80000,
+        year: 2022,
+        slug: 'mb-actros',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'User', lang: 'es' }
 
@@ -791,11 +1121,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('sends x-internal-secret header when cronSecret is set', async () => {
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'Iveco', model: 'S-Way', price: 75000, year: 2023, slug: 'iveco-sway', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'Iveco',
+        model: 'S-Way',
+        price: 75000,
+        year: 2023,
+        slug: 'iveco-sway',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'User', lang: 'es' }
 
@@ -818,11 +1163,26 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
     delete process.env.CRON_SECRET
 
     const alert = {
-      id: 'a1', user_id: 'u1', filters: {},
-      frequency: 'daily', last_sent_at: null, active: true,
+      id: 'a1',
+      user_id: 'u1',
+      filters: {},
+      frequency: 'daily',
+      last_sent_at: null,
+      active: true,
     }
     const vehicles = [
-      { id: 'v1', brand: 'Iveco', model: 'Daily', price: 30000, year: 2021, slug: 'iveco-daily', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'Iveco',
+        model: 'Daily',
+        price: 30000,
+        year: 2021,
+        slug: 'iveco-daily',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user = { id: 'u1', email: 'user@test.com', name: 'User', lang: 'es' }
 
@@ -844,11 +1204,36 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
 
   it('processes multiple eligible alerts independently', async () => {
     const alerts = [
-      { id: 'a1', user_id: 'u1', filters: {}, frequency: 'daily', last_sent_at: null, active: true },
-      { id: 'a2', user_id: 'u2', filters: {}, frequency: 'daily', last_sent_at: null, active: true },
+      {
+        id: 'a1',
+        user_id: 'u1',
+        filters: {},
+        frequency: 'daily',
+        last_sent_at: null,
+        active: true,
+      },
+      {
+        id: 'a2',
+        user_id: 'u2',
+        filters: {},
+        frequency: 'daily',
+        last_sent_at: null,
+        active: true,
+      },
     ]
     const vehicles = [
-      { id: 'v1', brand: 'Volvo', model: 'FH', price: 90000, year: 2023, slug: 'volvo-fh', category_id: null, location_country: null, location_region: null, created_at: new Date().toISOString() },
+      {
+        id: 'v1',
+        brand: 'Volvo',
+        model: 'FH',
+        price: 90000,
+        year: 2023,
+        slug: 'volvo-fh',
+        category_id: null,
+        location_country: null,
+        location_region: null,
+        created_at: new Date().toISOString(),
+      },
     ]
     const user1 = { id: 'u1', email: 'u1@test.com', name: 'User1', lang: 'es' }
     const user2 = { id: 'u2', email: 'u2@test.com', name: 'User2', lang: 'en' }
@@ -868,6 +1253,10 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
             }),
           }
         }
+        if (table === 'subscriptions') {
+          const subsData = alerts.map((a: any) => ({ user_id: a.user_id, plan: 'premium' }))
+          return makeThenableChain(subsData, null)
+        }
         if (table === 'vehicles') {
           return makeThenableChain(vehicles, null)
         }
@@ -885,5 +1274,64 @@ describe('POST /api/cron/search-alerts — processor callback', () => {
     expect(result.alertsProcessed).toBe(2)
     expect(result.emailsSent).toBe(2)
     expect(mockFetch).toHaveBeenCalledTimes(2)
+  })
+})
+
+// ── effectiveFrequency unit tests (backlog #12 tier enforcement) ─────────────
+
+describe('effectiveFrequency', () => {
+  it('premium allows instant', () => {
+    expect(effectiveFrequency('instant', 'premium')).toBe('instant')
+  })
+
+  it('premium allows daily', () => {
+    expect(effectiveFrequency('daily', 'premium')).toBe('daily')
+  })
+
+  it('premium allows weekly', () => {
+    expect(effectiveFrequency('weekly', 'premium')).toBe('weekly')
+  })
+
+  it('founding allows instant', () => {
+    expect(effectiveFrequency('instant', 'founding')).toBe('instant')
+  })
+
+  it('classic caps instant to daily', () => {
+    expect(effectiveFrequency('instant', 'classic')).toBe('daily')
+  })
+
+  it('classic allows daily', () => {
+    expect(effectiveFrequency('daily', 'classic')).toBe('daily')
+  })
+
+  it('classic allows weekly', () => {
+    expect(effectiveFrequency('weekly', 'classic')).toBe('weekly')
+  })
+
+  it('basic caps instant to weekly', () => {
+    expect(effectiveFrequency('instant', 'basic')).toBe('weekly')
+  })
+
+  it('basic caps daily to weekly', () => {
+    expect(effectiveFrequency('daily', 'basic')).toBe('weekly')
+  })
+
+  it('basic allows weekly', () => {
+    expect(effectiveFrequency('weekly', 'basic')).toBe('weekly')
+  })
+
+  it('free caps instant to weekly', () => {
+    expect(effectiveFrequency('instant', 'free')).toBe('weekly')
+  })
+
+  it('null alert frequency defaults to daily before cap', () => {
+    // null → 'daily', premium cap = instant → effective = 'daily'
+    expect(effectiveFrequency(null, 'premium')).toBe('daily')
+    // null → 'daily', basic cap = weekly → effective = 'weekly'
+    expect(effectiveFrequency(null, 'basic')).toBe('weekly')
+  })
+
+  it('unknown plan defaults to weekly cap', () => {
+    expect(effectiveFrequency('instant', 'unknown_plan')).toBe('weekly')
   })
 })
