@@ -292,7 +292,7 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 | ------------------------- | --------------------- | -------------------------- | ------------- |
 | 15 (Plataforma Core)      | #124–#128             | ✅ Completado              | ~7            |
 | 16 (Producto Marketplace) | #129–#135, #161, #162 | ✅ Completado              | ~16           |
-| 20 (Data + Analytics)     | #150–#152             | Pendiente                  | ~14           |
+| 20 (Data + Analytics)     | #150–#152             | ✅ Completado              | ~14           |
 | 12 (Backlog Técnico)      | #74–#78, #80          | Pendiente (#79 ✅, #81 ✅) | ~11           |
 | Bloqueados                | #117–#122             | Al final                   | ~6            |
 
@@ -313,10 +313,10 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #150 (Bloque 20 — Data + Analytics)
-- **Último commit:** `f04e69f` feat(agent-e): #162 product metrics composable
-- **Bloques completados:** 15 ✅, 16 ✅
-- **Items completados:** #124 ✅ #125 ✅ #126 ✅ #127 ✅ #128 ✅ #129 ✅ #130 ✅ #131 ✅ #132 ✅ #133 ✅ #134 ✅ #135 ✅ #161 ✅ #162 ✅
+- **Siguiente item:** #74 (Bloque 12 — Backlog Técnico)
+- **Último commit:** `bcecf6c` feat(agent-e): #152 data reporting composable
+- **Bloques completados:** 15 ✅, 16 ✅, 20 ✅
+- **Items completados:** #124 ✅ #125 ✅ #126 ✅ #127 ✅ #128 ✅ #129 ✅ #130 ✅ #131 ✅ #132 ✅ #133 ✅ #134 ✅ #135 ✅ #161 ✅ #162 ✅ #150 ✅ #151 ✅ #152 ✅
 - **Notas Bloque 15:**
   - #124: P1 hardcoding migrado (18 archivos), useSiteConfig + audit-hardcoding.mjs, 13 tests
   - #125: vehicle_groups table (migration 00155) + useVehicleGroups composable, 14 tests
@@ -335,6 +335,11 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
   - #161: useInventoryTracking (stock levels, days on market, sell-through, turnover), 20 tests
   - #162: useProductMetrics (revenue summary, funnel, portfolio health, HHI), 30 tests
   - Total Bloque 16: 300 tests, 9 commits
+- **Notas Bloque 20:**
+  - #150: useInventoryData (aggregateByStatus/Category/Dealer, stockMovements, snapshots, valueAtRisk, staleListings), 34 tests
+  - #151: useAnalyticsProcessor (eventCounts, topPages, referrers, hourly/daily activity, visitors, topVehicles), 30 tests
+  - #152: useDataReporting (periodComparison, trendDetection, movingAverage, KPI summary, CSV, buckets), 40 tests
+  - Total Bloque 20: 104 tests, 3 commits
 
 ---
 
