@@ -5,7 +5,9 @@ import { usePrecios } from '../../app/composables/usePrecios'
 
 function makeChain(data: unknown = [], error: unknown = null) {
   const chain: Record<string, unknown> = {}
-  ;['eq', 'select'].forEach((m) => { chain[m] = () => chain })
+  ;['eq', 'select'].forEach((m) => {
+    chain[m] = () => chain
+  })
   const resolved = { data, error, count: 0 }
   chain.limit = () => Promise.resolve(resolved)
   chain.single = () => Promise.resolve({ data: null, error: null })
@@ -17,7 +19,9 @@ function makeChain(data: unknown = [], error: unknown = null) {
 beforeEach(() => {
   vi.clearAllMocks()
   vi.stubGlobal('computed', (fn: () => unknown) => ({
-    get value() { return fn() },
+    get value() {
+      return fn()
+    },
   }))
   vi.stubGlobal('useI18n', () => ({
     t: (key: string, _params?: unknown) => key,
@@ -79,10 +83,10 @@ describe('planCards', () => {
     expect(founding?.founding).toBe(true)
   })
 
-  it('basic plan is highlighted', () => {
+  it('classic plan is highlighted', () => {
     const c = usePrecios()
-    const basic = c.planCards.value.find((p) => p.plan === 'basic')
-    expect(basic?.highlighted).toBe(true)
+    const classic = c.planCards.value.find((p) => p.plan === 'classic')
+    expect(classic?.highlighted).toBe(true)
   })
 
   it('premium plan is not highlighted', () => {
@@ -91,18 +95,18 @@ describe('planCards', () => {
     expect(premium?.highlighted).toBe(false)
   })
 
-  it('basic suffix changes with billing interval', () => {
+  it('classic suffix changes with billing interval', () => {
     const c = usePrecios()
     c.billingInterval.value = 'year'
-    const basic = c.planCards.value.find((p) => p.plan === 'basic')
-    expect(basic?.suffix).toBe('pricing.year')
+    const classic = c.planCards.value.find((p) => p.plan === 'classic')
+    expect(classic?.suffix).toBe('pricing.year')
   })
 
-  it('basic suffix is month when interval is month', () => {
+  it('classic suffix is month when interval is month', () => {
     const c = usePrecios()
     c.billingInterval.value = 'month'
-    const basic = c.planCards.value.find((p) => p.plan === 'basic')
-    expect(basic?.suffix).toBe('pricing.month')
+    const classic = c.planCards.value.find((p) => p.plan === 'classic')
+    expect(classic?.suffix).toBe('pricing.month')
   })
 })
 
@@ -200,6 +204,34 @@ describe('handleCta', () => {
     if (originalHref) {
       Object.defineProperty(globalThis, 'location', originalHref)
     }
+  })
+
+  it('calls startCheckout with classic when classic plan selected', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ url: 'https://checkout.stripe.com/classic' })
+    vi.stubGlobal('$fetch', mockFetch)
+    const c = usePrecios()
+    c.handleCta('classic')
+    await Promise.resolve()
+    expect(mockFetch).toHaveBeenCalledWith(
+      '/api/stripe/checkout',
+      expect.objectContaining({
+        body: expect.objectContaining({ plan: 'classic' }),
+      }),
+    )
+  })
+
+  it('maps basic plan to classic checkout slug for backward compat', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ url: 'https://checkout.stripe.com/classic' })
+    vi.stubGlobal('$fetch', mockFetch)
+    const c = usePrecios()
+    c.handleCta('basic')
+    await Promise.resolve()
+    expect(mockFetch).toHaveBeenCalledWith(
+      '/api/stripe/checkout',
+      expect.objectContaining({
+        body: expect.objectContaining({ plan: 'classic' }),
+      }),
+    )
   })
 })
 

@@ -4,11 +4,13 @@ import type { PlanType } from '../../app/composables/useSubscriptionPlan'
 
 // ─── Stub helper ──────────────────────────────────────────────────────────────
 
-function makeSubRow(overrides: Partial<{
-  plan: string
-  status: string
-  expires_at: string | null
-}> = {}) {
+function makeSubRow(
+  overrides: Partial<{
+    plan: string
+    status: string
+    expires_at: string | null
+  }> = {},
+) {
   return {
     id: 'sub-1',
     user_id: 'user-1',
@@ -36,9 +38,7 @@ function stubSubscriptionFetch(row: Record<string, unknown> | null, queryError: 
               limit: () => ({
                 maybeSingle: () =>
                   Promise.resolve(
-                    queryError
-                      ? { data: null, error: queryError }
-                      : { data: row, error: null },
+                    queryError ? { data: null, error: queryError } : { data: row, error: null },
                   ),
               }),
             }),
@@ -131,6 +131,13 @@ describe('PLAN_LIMITS', () => {
 
   it('premium sortBoost is higher than basic', () => {
     expect(PLAN_LIMITS.premium.sortBoost).toBeGreaterThan(PLAN_LIMITS.basic.sortBoost)
+  })
+
+  it('classic plan has same limits as basic', () => {
+    expect(PLAN_LIMITS.classic.maxActiveListings).toBe(PLAN_LIMITS.basic.maxActiveListings)
+    expect(PLAN_LIMITS.classic.maxPhotosPerListing).toBe(PLAN_LIMITS.basic.maxPhotosPerListing)
+    expect(PLAN_LIMITS.classic.whatsappPublishing).toBe(PLAN_LIMITS.basic.whatsappPublishing)
+    expect(PLAN_LIMITS.classic.catalogExport).toBe(PLAN_LIMITS.basic.catalogExport)
   })
 })
 

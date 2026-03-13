@@ -970,6 +970,7 @@
     "whatsappRequiresPlan": "Available with Basic plan or higher",
     "planFree": "Free",
     "planBasic": "Basic",
+    "planClassic": "Classic",
     "planPremium": "Premium",
     "planFounding": "Founding",
     "planFeatures": "Plan features",
