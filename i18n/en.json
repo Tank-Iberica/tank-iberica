@@ -5063,5 +5063,18 @@
     "feature_requires_plan": "This feature requires the {plan} plan or higher",
     "feature_not_available": "This feature is not currently available",
     "upgrade_plan": "Upgrade plan"
+  },
+  "quality": {
+    "score_label": "Listing score",
+    "level_low": "Needs improvement",
+    "level_medium": "Acceptable",
+    "level_good": "Good",
+    "level_excellent": "Excellent",
+    "tip_more_photos": "Add more photos (minimum 6 recommended)",
+    "tip_longer_description": "Expand the description (minimum 200 characters)",
+    "tip_fill_attributes": "Complete brand, model, year and mileage",
+    "tip_add_price": "Add a price to improve visibility",
+    "tip_add_location": "Indicate the vehicle location",
+    "tip_complete_contact": "Complete phone and email contact info"
   }
 }

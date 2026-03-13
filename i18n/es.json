@@ -5070,5 +5070,18 @@
     "feature_requires_plan": "Esta función requiere el plan {plan} o superior",
     "feature_not_available": "Esta función no está disponible actualmente",
     "upgrade_plan": "Mejorar plan"
+  },
+  "quality": {
+    "score_label": "Puntuación del anuncio",
+    "level_low": "Mejorable",
+    "level_medium": "Aceptable",
+    "level_good": "Bueno",
+    "level_excellent": "Excelente",
+    "tip_more_photos": "Añade más fotos (mínimo 6 recomendado)",
+    "tip_longer_description": "Amplía la descripción (mínimo 200 caracteres)",
+    "tip_fill_attributes": "Completa marca, modelo, año y kilómetros",
+    "tip_add_price": "Añade el precio para mejorar la visibilidad",
+    "tip_add_location": "Indica la ubicación del vehículo",
+    "tip_complete_contact": "Completa teléfono y email de contacto"
   }
 }
