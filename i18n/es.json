@@ -5098,6 +5098,12 @@
       "PLN": "Złoty polaco (PLN)",
       "CZK": "Corona checa (CZK)",
       "SEK": "Corona sueca (SEK)"
+    },
+    "search": {
+      "multiLang": "Buscar en todos los idiomas",
+      "searchLanguage": "Idioma de búsqueda",
+      "noTranslations": "Sin traducciones disponibles",
+      "translatedFrom": "Traducido del {source}"
     }
   },
   "glossary": {
