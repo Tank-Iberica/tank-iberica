@@ -4892,5 +4892,37 @@
       "channelsLabel": "Canales de notificación",
       "channelsHint": "Elige cómo quieres recibir las alertas instantáneas"
     }
+  },
+  "trust": {
+    "badgeTop": "Top",
+    "badgeVerified": "Verificado",
+    "tooltipTop": "Dealer con máxima puntuación: perfil completo, activo y con buenas valoraciones",
+    "tooltipVerified": "Dealer verificado: perfil con información completa y actividad comprobada",
+    "ariaTop": "Dealer Top: máxima confianza",
+    "ariaVerified": "Dealer Verificado",
+    "noBadgeYet": "Sin badge — consigue 60+ puntos para Verificado",
+    "progressTo": "Progreso hacia",
+    "pointsNeeded": "Faltan {pts} puntos",
+    "topReached": "¡Máxima puntuación alcanzada!",
+    "pendingCriteria": "Criterios pendientes",
+    "doneCriteria": "Criterios conseguidos",
+    "improve": "Mejorar",
+    "automatic": "Automático",
+    "refresh": "Actualizar puntuación",
+    "alertNewAccount": "Vendedor con cuenta reciente (menos de 7 días de actividad)",
+    "alertLowTrust": "Este vendedor aún no ha completado su perfil de confianza",
+    "alertUnverified": "Perfil de vendedor no verificado",
+    "alertFewPhotos": "El anuncio tiene pocas fotos — solicita más al vendedor",
+    "criterion": {
+      "has_logo": "Logo del perfil",
+      "has_bio": "Descripción del negocio",
+      "has_contact": "Teléfono y email de contacto",
+      "has_legal": "Datos fiscales (CIF/NIF)",
+      "account_age": "Antigüedad de la cuenta",
+      "listing_activity": "Actividad de anuncios",
+      "responsiveness": "Tasa de respuesta",
+      "reviews": "Valoraciones de compradores",
+      "verified_docs": "Documentación verificada"
+    }
   }
 }

@@ -4885,5 +4885,37 @@
       "channelsLabel": "Notification channels",
       "channelsHint": "Choose how you want to receive instant alerts"
     }
+  },
+  "trust": {
+    "badgeTop": "Top",
+    "badgeVerified": "Verified",
+    "tooltipTop": "Top dealer: complete profile, active, and highly rated",
+    "tooltipVerified": "Verified dealer: complete profile and confirmed activity",
+    "ariaTop": "Top Dealer: highest trust",
+    "ariaVerified": "Verified Dealer",
+    "noBadgeYet": "No badge yet — get 60+ points for Verified",
+    "progressTo": "Progress toward",
+    "pointsNeeded": "{pts} points to go",
+    "topReached": "Maximum score reached!",
+    "pendingCriteria": "Pending criteria",
+    "doneCriteria": "Completed criteria",
+    "improve": "Improve",
+    "automatic": "Automatic",
+    "refresh": "Refresh score",
+    "alertNewAccount": "Seller with a new account (less than 7 days of activity)",
+    "alertLowTrust": "This seller has not yet completed their trust profile",
+    "alertUnverified": "Seller profile not verified",
+    "alertFewPhotos": "This listing has few photos — ask the seller for more",
+    "criterion": {
+      "has_logo": "Profile logo",
+      "has_bio": "Business description",
+      "has_contact": "Phone and email",
+      "has_legal": "Tax ID (CIF/NIF)",
+      "account_age": "Account age",
+      "listing_activity": "Listing activity",
+      "responsiveness": "Response rate",
+      "reviews": "Buyer reviews",
+      "verified_docs": "Verified documents"
+    }
   }
 }
