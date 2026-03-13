@@ -14,6 +14,7 @@ import { z } from 'zod'
 import { serverSupabaseUser } from '#supabase/server'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
+import { logger } from '../../utils/logger'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -154,7 +155,11 @@ async function processAllVariants(
         vehicleId,
       )
     } catch (err: unknown) {
-      errors.push(`${variant}: ${err instanceof Error ? err.message : 'Unknown error'}`)
+      logger.error('[images/process] Variant processing failed', {
+        variant,
+        error: err instanceof Error ? err.message : String(err),
+      })
+      errors.push(`${variant}: Processing failed`)
     }
   }
   // Fallback to Cloudinary for failed variants
@@ -239,7 +244,8 @@ export default defineEventHandler(async (event): Promise<ProcessImageResponse> =
   )
 
   if (Object.keys(urls).length === 0) {
-    throw safeError(502, `Image pipeline failed for all variants: ${errors.join('; ')}`)
+    logger.error('[images/process] Image pipeline failed for all variants', { errors })
+    throw safeError(502, 'Image pipeline failed')
   }
 
   return { urls: urls as VariantUrls, original: body.cloudinaryUrl, pipeline: effectiveMode }

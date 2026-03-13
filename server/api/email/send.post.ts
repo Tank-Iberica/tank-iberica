@@ -198,7 +198,6 @@ function buildEmailHtml(params: {
 }
 
 async function loadEmailTemplate(
-   
   supabase: SupabaseClient,
   vertical: string,
   templateKey: string,
@@ -223,7 +222,6 @@ async function loadEmailTemplate(
 }
 
 async function checkEmailPreference(
-   
   supabase: SupabaseClient,
   userId: string,
   templateKey: string,
@@ -281,7 +279,8 @@ async function sendViaResend(
   })
 
   if (result.error) {
-    throw safeError(500, `Resend error: ${result.error.message}`)
+    logger.error('[email/send] Delivery service error', { message: result.error.message })
+    throw safeError(500, 'Email delivery failed')
   }
 
   return result.data?.id ?? ''
@@ -302,7 +301,6 @@ async function verifyEmailAuth(
 }
 
 async function fetchUnsubscribeToken(
-   
   supabase: SupabaseClient,
   userId: string | undefined,
 ): Promise<string> {
@@ -316,7 +314,6 @@ async function fetchUnsubscribeToken(
 }
 
 async function sendOrMockEmail(
-   
   supabase: SupabaseClient,
   logBase: Record<string, unknown>,
   sendParams: {
@@ -339,7 +336,8 @@ async function sendOrMockEmail(
   try {
     return await sendViaResend(resendApiKey, sendParams)
   } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown Resend error'
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    logger.error('[email/send] Delivery service error', { errorMessage })
     await supabase.from('email_logs').insert({
       ...logBase,
       status: 'failed',
@@ -347,7 +345,7 @@ async function sendOrMockEmail(
       sent_at: new Date().toISOString(),
     } as never)
     if (err && typeof err === 'object' && 'statusCode' in err) throw err
-    throw safeError(500, `Email send failed: ${errorMessage}`)
+    throw safeError(500, 'Email delivery failed')
   }
 }
 

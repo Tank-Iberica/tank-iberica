@@ -15,6 +15,7 @@ import { defineEventHandler } from 'h3'
 import { z } from 'zod'
 import { safeError } from '../utils/safeError'
 import { validateBody } from '../utils/validateBody'
+import { logger } from '../utils/logger'
 
 /**
  * Spanish matricula formats:
@@ -146,7 +147,8 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
     .single()
 
   if (insertError) {
-    throw safeError(500, `Failed to save report: ${insertError.message}`)
+    logger.error('[dgt-report] Failed to save report', { error: insertError.message })
+    throw safeError(500, 'Failed to save report')
   }
 
   // 8. Update vehicle verification_level to audited (level 3) if currently lower
@@ -161,7 +163,10 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
       .eq('id', vehicleId)
 
     if (updateError) {
-      throw safeError(500, `Report saved but failed to update vehicle verification level: ${updateError.message}`)
+      logger.error('[dgt-report] Failed to update vehicle verification level', {
+        error: updateError.message,
+      })
+      throw safeError(500, 'Failed to update vehicle verification level')
     }
   }
 
