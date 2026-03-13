@@ -243,7 +243,7 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 | ---------------------------- | --------------- | ------------------------------------------------------------------------- | ------------- |
 | 7 (Content + Marketing)      | #65–#71         | ✅ COMPLETADO (agent-d/bloque-7, 251f569)                                 | 0             |
 | 8 (WhatsApp Funnel)          | #59–#61         | ✅ COMPLETADO                                                             | 0             |
-| 9 (Monetización "A Definir") | #18–#26         | Pendiente ⚠️ (necesita #7/#8 de A)                                        | ~12           |
+| 9 (Monetización "A Definir") | #18–#26         | ✅ COMPLETADO (agent-d/bloque-9, eddee7f)                                 | 0             |
 | 17 (Dealers)                 | #136–#141, #163 | ✅ COMPLETADO (agent-d/bloque-17, aa3e057)                                | 0             |
 | 26 (Ciclo Vida + Post-Venta) | #202–#207       | ✅ COMPLETADO (agent-d/bloque-26, 357367c)                                | 0             |
 | 11 (Hallazgos Auditoría)     | #82–#95         | ✅ COMPLETADO (agent-d/bloque-11, ca0f64f) — #83 blocked Nuxt4, rest done | 0             |
@@ -264,10 +264,10 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** Bloque 9 (bloqueado) → cuando Agent A entregue #7/#8
-- **Último commit:** ca0f64f (bloque-11), 357367c (bloque-26), aa3e057 (bloque-17)
-- **Bloques completados:** 7, 8, 11, 17, 26 — TODOS COMPLETADOS
-- **Notas:** Solo queda Bloque 9 (bloqueado por Agent A). #83 bloqueado Nuxt4.
+- **Siguiente item:** TODOS LOS BLOQUES DE AGENTE D COMPLETADOS 🎉
+- **Último commit:** eddee7f (bloque-9)
+- **Bloques completados:** 7, 8, 9, 11, 17, 26 — TODOS COMPLETADOS
+- **Notas:** Bloque 9 completado. #19/#21 ya existían (FairPriceBadge, PriceHistoryChart). #83 bloqueado Nuxt4. Migración 00145 (listing_certificates). creditService.ts compartido para deducción de créditos.
 
 ---
 
