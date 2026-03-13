@@ -258,7 +258,7 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **Gestión memoria:** Sección en PARALLEL-AGENTS.md — kill Node entre items, máx 1 dev server, heap 512MB, vitest run (no watch), agente pasivo = 0 procesos
 - **Coordinación:** `docs/PARALLEL-AGENTS.md` — 5 agentes (A–F), branches `agent-X/bloque-Y`
 - **Agente A:** branch `agent-a/bloque-0` · i18n: `credits.`, `tiers.`, `monetization.` · Migrations: 00115–00124 · Bloque 0 (Errores) · **#2 ✅, #3 ✅ completados · siguiente: #4**
-- **Agente C:** branch `agent-c/bloque-6b` · i18n: `trust.`, `security.`, `data.capture.` · Migrations: 00135–00144 · **Bloques 4,5,6a,6b,13,22,29 ✅ TODOS COMPLETOS · Overflow: #87+#2/#3+#29 ✅** · Migraciones 00135/00137/00138 pendientes `supabase db push` · **Último commit: `5a63f42`**
+- **Agente C:** branch `agent-c/bloque-6b` · i18n: `trust.`, `security.`, `data.capture.` · Migrations: 00135–00144 · **Bloques 4,5,6a,6b,13,22,29 ✅ TODOS COMPLETOS · Overflow: #87+#2/#3+#29+#30+#31+#32+#33 ✅ TODOS COMPLETADOS** · Migraciones 00135/00137/00138/00139 pendientes `supabase db push` · **Último commit: `e396e9d`**
 - **Agente D:** branch `agent-d/bloque-7` · i18n: `dealer.`, `newsletter.`, `lifecycle.`, `audit.` · Migrations: 00145–00154 · Bloque 7 (Content+Marketing #65–#71) · **#65 ✅ completado**
 - **Agente F:** branch `agent-f/bloque-X` · i18n: `i18n.`, `auto.` · Migrations: 00165–00174 (overflow 00225–00234)
 - **Linter/hook issue:** Pre-commit hook (lint-staged + ESLint + Prettier) puede revertir cambios. Usar `git -c core.hooksPath=/dev/null commit --no-verify` para commits seguros en entorno multi-agente.
