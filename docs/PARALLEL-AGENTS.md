@@ -40,6 +40,35 @@ Cada agente usa prefijo propio para evitar conflictos en `i18n/es.json` e `i18n/
 - **`git pull` antes de cada sesión** — los otros agentes habrán mergeado cambios
 - Si merge conflict en i18n → resolver aceptando ambos (keys con prefijos distintos)
 
+### Aislamiento con Git Worktrees (OBLIGATORIO)
+
+> **Problema real detectado:** Cuando varios agentes comparten el mismo working directory, `lint-staged` (que se ejecuta en cada commit) hace `git stash` + `git stash pop` que **cambia el branch activo**, causando que los commits de un agente aterricen en el branch de otro. Además, `git checkout -- .` de un agente borra cambios no commiteados de los demás.
+
+**Regla: Cada agente DEBE trabajar en su propio worktree aislado.**
+
+```bash
+# Crear worktree al inicio de sesión
+git worktree add .claude/worktrees/agent-X agent-X/bloque-N
+cd .claude/worktrees/agent-X
+npx nuxi prepare   # genera .nuxt/tsconfig.app.json para vitest
+
+# Al terminar la sesión:
+git worktree remove .claude/worktrees/agent-X
+```
+
+**¿Por qué?**
+- Cada worktree tiene su propio branch checkeado, HEAD independiente
+- `lint-staged` no puede mover el branch de otros agentes
+- `git stash`/`git checkout -- .` solo afectan al worktree local
+- Los commits siempre van al branch correcto
+
+**Reglas adicionales:**
+- NO hacer `git checkout <otro-branch>` dentro del worktree — invalidaría el aislamiento
+- Si necesitas código de otro agente: `git cherry-pick` o `git merge` desde dentro del worktree
+- Los worktrees se crean en `.claude/worktrees/` (ya en `.gitignore`)
+- Cada agente es responsable de limpiar su worktree al cerrar sesión
+- Si el worktree ya existe al iniciar sesión: `cd .claude/worktrees/agent-X && git pull` en lugar de recrear
+
 ### Archivos Compartidos (alto riesgo conflicto)
 
 | Archivo                                 | Dueño                 | Otros pueden                   |
@@ -284,10 +313,11 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #124 (auditoría hardcoding — 4 capas de impacto)
-- **Último commit:** —
+- **Siguiente item:** #125 (vehicle_groups + tipo-subcategoría flexible)
+- **Último commit:** `1553169` test(agent-e): #124 add tests for useSiteConfig and audit-hardcoding
 - **Bloques completados:** —
-- **Notas:** —
+- **Items completados:** #124 ✅
+- **Notas:** #124: P1 hardcoding migrado (18 archivos), `useSiteConfig.ts` composable + `siteConfig.ts` server util, `audit-hardcoding.mjs` script (4 capas), 13 tests. Worktree en `.claude/worktrees/agent-e`.
 
 ---
 

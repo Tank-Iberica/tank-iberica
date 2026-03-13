@@ -16,6 +16,9 @@ logs
 # Policy engine (compilado localmente, no commitear)
 .claude/policy/policy-compiled.json
 
+# Agent worktrees (cada agente trabaja en su propio worktree aislado)
+.claude/worktrees/
+
 # Misc
 .DS_Store
 .fleet
