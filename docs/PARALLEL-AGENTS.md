@@ -236,14 +236,14 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Bloques (en orden)
 
-| Bloque                       | Items           | Estado                              | Sesiones est. |
-| ---------------------------- | --------------- | ----------------------------------- | ------------- |
-| 7 (Content + Marketing)      | #65–#71         | Pendiente                           | ~13           |
-| 8 (WhatsApp Funnel)          | #59–#61         | ✅ COMPLETADO                       | 0             |
-| 9 (Monetización "A Definir") | #18–#26         | Pendiente ⚠️ (necesita #7/#8 de A)  | ~12           |
-| 17 (Dealers)                 | #136–#141, #163 | Pendiente                           | ~10           |
-| 26 (Ciclo Vida + Post-Venta) | #202–#207       | Pendiente (#205 necesita #135 de E) | ~6            |
-| 11 (Hallazgos Auditoría)     | #82–#95         | Pendiente                           | ~14           |
+| Bloque                       | Items           | Estado                                                                 | Sesiones est. |
+| ---------------------------- | --------------- | ---------------------------------------------------------------------- | ------------- |
+| 7 (Content + Marketing)      | #65–#71         | ✅ COMPLETADO (agent-d/bloque-7, 251f569)                              | 0             |
+| 8 (WhatsApp Funnel)          | #59–#61         | ✅ COMPLETADO                                                          | 0             |
+| 9 (Monetización "A Definir") | #18–#26         | Pendiente ⚠️ (necesita #7/#8 de A)                                     | ~12           |
+| 17 (Dealers)                 | #136–#141, #163 | ✅ COMPLETADO (agent-d/bloque-17, aa3e057)                             | 0             |
+| 26 (Ciclo Vida + Post-Venta) | #202–#207       | ✅ COMPLETADO (agent-d/bloque-26, 357367c)                             | 0             |
+| 11 (Hallazgos Auditoría)     | #82–#95         | ✅ PARCIAL (agent-d/bloque-11, af0683e) — #89/#91/#93 L-items deferred | ~3            |
 
 ### Coordinación
 
@@ -261,10 +261,10 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #65 (Newsletter "El Industrial" — cron semanal)
-- **Último commit:** —
-- **Bloques completados:** Bloque 8
-- **Notas:** —
+- **Siguiente item:** Bloque 9 (bloqueado) → cuando Agent A entregue #7/#8. Mientras: #89/#91/#93 (L deferred)
+- **Último commit:** af0683e (bloque-11), 357367c (bloque-26), aa3e057 (bloque-17)
+- **Bloques completados:** 7, 8, 17, 26, 11 (parcial)
+- **Notas:** Bloque 7 completado en sesión previa. #85 ya estaba resuelto. #83 bloqueado Nuxt 4.
 
 ---
 
