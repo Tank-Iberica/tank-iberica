@@ -290,7 +290,7 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 | Bloque                    | Items                 | Estado                     | Sesiones est. |
 | ------------------------- | --------------------- | -------------------------- | ------------- |
-| 15 (Plataforma Core)      | #124–#128             | Pendiente                  | ~7            |
+| 15 (Plataforma Core)      | #124–#128             | ✅ Completado              | ~7            |
 | 16 (Producto Marketplace) | #129–#135, #161, #162 | Pendiente                  | ~16           |
 | 20 (Data + Analytics)     | #150–#152             | Pendiente                  | ~14           |
 | 12 (Backlog Técnico)      | #74–#78, #80          | Pendiente (#79 ✅, #81 ✅) | ~11           |
@@ -313,11 +313,17 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #125 (vehicle_groups + tipo-subcategoría flexible)
-- **Último commit:** `1553169` test(agent-e): #124 add tests for useSiteConfig and audit-hardcoding
-- **Bloques completados:** —
-- **Items completados:** #124 ✅
-- **Notas:** #124: P1 hardcoding migrado (18 archivos), `useSiteConfig.ts` composable + `siteConfig.ts` server util, `audit-hardcoding.mjs` script (4 capas), 13 tests. Worktree en `.claude/worktrees/agent-e`.
+- **Siguiente item:** #129 (Bloque 16 — Producto Marketplace)
+- **Último commit:** `db62a8e` feat(agent-e): #127 per-vehicle product analytics composable
+- **Bloques completados:** 15 ✅
+- **Items completados:** #124 ✅ #125 ✅ #126 ✅ #127 ✅ #128 ✅
+- **Notas Bloque 15:**
+  - #124: P1 hardcoding migrado (18 archivos), useSiteConfig + audit-hardcoding.mjs, 13 tests
+  - #125: vehicle_groups table (migration 00155) + useVehicleGroups composable, 14 tests
+  - #126: useListingQuality per-listing 0-100 quality score, 38 tests
+  - #127: useProductAnalytics per-vehicle metrics, 21 tests
+  - #128: FeatureGate.vue + useFeatureGate (feature flags + plan enforcement), 30 tests
+  - Total Bloque 15: 116 tests, 12 commits
 
 ---
 
