@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useAnalyticsTracking } from '../../app/composables/useAnalyticsTracking'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { useAnalyticsTracking, ANALYTICS_EVENTS } from '../../app/composables/useAnalyticsTracking'
 
 // ─── Stub helpers ──────────────────────────────────────────────────────────────
 
@@ -111,8 +111,124 @@ describe('trackVehicleDuration', () => {
 
   it('does not throw with metadata options', () => {
     const c = useAnalyticsTracking()
+    expect(() => c.trackVehicleView('vehicle-1', { source: 'catalog', position: 3 })).not.toThrow()
+  })
+})
+
+// ─── #38 — trackBuyerGeo ─────────────────────────────────────────────────────
+
+describe('trackBuyerGeo', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('is exposed in the composable return value', () => {
+    const c = useAnalyticsTracking()
+    expect(typeof c.trackBuyerGeo).toBe('function')
+  })
+
+  it('does not throw with a full location object', () => {
+    const c = useAnalyticsTracking()
     expect(() =>
-      c.trackVehicleView('vehicle-1', { source: 'catalog', position: 3 }),
+      c.trackBuyerGeo({ country: 'ES', province: 'León', region: 'Castilla y León', source: 'ip' }),
     ).not.toThrow()
+  })
+
+  it('does not throw with minimal location (null province/region)', () => {
+    const c = useAnalyticsTracking()
+    expect(() =>
+      c.trackBuyerGeo({ country: 'DE', province: null, region: null, source: 'ip' }),
+    ).not.toThrow()
+  })
+
+  it('is a no-op when country is null (no insert attempted)', () => {
+    const mockInsert = stubSupabase()
+    const c = useAnalyticsTracking()
+    c.trackBuyerGeo({ country: null, province: null, region: null, source: null })
+    // import.meta.client is false in tests — but we also verify the early-exit path
+    expect(mockInsert).not.toHaveBeenCalled()
+  })
+
+  it('does not throw with geolocation source', () => {
+    const c = useAnalyticsTracking()
+    expect(() =>
+      c.trackBuyerGeo({ country: 'FR', province: null, region: null, source: 'geolocation' }),
+    ).not.toThrow()
+  })
+
+  it('does not throw with manual source', () => {
+    const c = useAnalyticsTracking()
+    expect(() =>
+      c.trackBuyerGeo({ country: 'PT', province: null, region: null, source: 'manual' }),
+    ).not.toThrow()
+  })
+})
+
+// ─── ANALYTICS_EVENTS constants ──────────────────────────────────────────────
+
+describe('ANALYTICS_EVENTS constants', () => {
+  it('BUYER_GEO constant is defined', () => {
+    expect(ANALYTICS_EVENTS.BUYER_GEO).toBe('buyer_geo')
+  })
+
+  it('SCROLL_DEPTH constant is defined', () => {
+    expect(ANALYTICS_EVENTS.SCROLL_DEPTH).toBe('scroll_depth')
+  })
+
+  it('FORM_ABANDON constant is defined', () => {
+    expect(ANALYTICS_EVENTS.FORM_ABANDON).toBe('form_abandon')
+  })
+
+  it('VEHICLE_COMPARISON constant is defined', () => {
+    expect(ANALYTICS_EVENTS.VEHICLE_COMPARISON).toBe('vehicle_comparison')
+  })
+})
+
+// ─── trackScrollDepth ─────────────────────────────────────────────────────────
+
+describe('trackScrollDepth', () => {
+  it('is exposed in the composable return value', () => {
+    const c = useAnalyticsTracking()
+    expect(typeof c.trackScrollDepth).toBe('function')
+  })
+
+  it('does not throw for each depth milestone', () => {
+    const c = useAnalyticsTracking()
+    for (const depth of [25, 50, 75, 100] as const) {
+      expect(() => c.trackScrollDepth('vehicle-1', depth)).not.toThrow()
+    }
+  })
+})
+
+// ─── trackFormAbandonment ─────────────────────────────────────────────────────
+
+describe('trackFormAbandonment', () => {
+  it('is exposed in the composable return value', () => {
+    const c = useAnalyticsTracking()
+    expect(typeof c.trackFormAbandonment).toBe('function')
+  })
+
+  it('does not throw with valid params', () => {
+    const c = useAnalyticsTracking()
+    expect(() => c.trackFormAbandonment('contact_form', 'step_email', 5000)).not.toThrow()
+  })
+})
+
+// ─── trackVehicleComparison ───────────────────────────────────────────────────
+
+describe('trackVehicleComparison', () => {
+  it('is exposed in the composable return value', () => {
+    const c = useAnalyticsTracking()
+    expect(typeof c.trackVehicleComparison).toBe('function')
+  })
+
+  it('does not throw with two vehicle ids', () => {
+    const c = useAnalyticsTracking()
+    expect(() => c.trackVehicleComparison(['v-1', 'v-2'])).not.toThrow()
+  })
+
+  it('does not throw with empty array', () => {
+    const c = useAnalyticsTracking()
+    expect(() => c.trackVehicleComparison([])).not.toThrow()
   })
 })

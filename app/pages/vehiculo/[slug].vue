@@ -24,6 +24,15 @@
 
         <!-- Info section -->
         <div class="vehicle-info">
+          <!-- Early-access unlock banner (#9) -->
+          <VehicleUnlockBanner
+            v-if="(vehicle as unknown as Record<string, unknown>).visible_from"
+            :vehicle-id="vehicle.id"
+            :visible-from="(vehicle as unknown as Record<string, unknown>).visible_from as string"
+            :initially-unlocked="isUnlocked"
+            @unlocked="isUnlocked = true"
+          />
+
           <VehicleDetailActions
             :vehicle-id="vehicle.id"
             :vehicle-slug="vehicle.slug"
@@ -57,6 +66,32 @@
             :location-country="vehicle.location_country"
             :is-ai-generated="!!(vehicle as unknown as Record<string, unknown>).ai_generated"
           />
+
+          <!-- Buyer trust alerts (#33) -->
+          <DealerTrustAlert
+            :dealer-verified="vehicle.dealers?.verified ?? null"
+            :dealer-trust-score="vehicle.dealers?.trust_score ?? null"
+            :dealer-created-at="vehicle.dealers?.created_at ?? null"
+            :image-count="vehicle.vehicle_images?.length ?? 0"
+            :price="vehicle.price"
+          />
+
+          <!-- #45 Price relative to market badge -->
+          <div
+            v-if="priceMarket.label.value && priceMarket.pctDiff.value !== null"
+            class="price-market-badge"
+            :class="`price-market-badge--${priceMarket.label.value}`"
+          >
+            <template v-if="priceMarket.label.value === 'below'">
+              {{ $t('vehicle.priceBelowMarket', { pct: Math.abs(priceMarket.pctDiff.value) }) }}
+            </template>
+            <template v-else-if="priceMarket.label.value === 'above'">
+              {{ $t('vehicle.priceAboveMarket', { pct: priceMarket.pctDiff.value }) }}
+            </template>
+            <template v-else>
+              {{ $t('vehicle.priceAtMarket') }}
+            </template>
+          </div>
 
           <VehicleDetailSeller
             id="main-form"
@@ -130,6 +165,14 @@
 <script setup lang="ts">
 import { useVehicleDetail } from '~/composables/useVehicleDetail'
 import { useAnalyticsTracking } from '~/composables/useAnalyticsTracking'
+import {
+  buildVehicleSchema,
+  buildBreadcrumbSchema,
+  useJsonLd,
+} from '~/composables/useStructuredData'
+import { usePriceRelativeToMarket } from '~/composables/usePriceRelativeToMarket'
+import { useScrollDepth } from '~/composables/useScrollDepth'
+import { useUserLocation } from '~/composables/useUserLocation'
 
 const route = useRoute()
 const { locale, t } = useI18n()
@@ -163,10 +206,30 @@ const {
 } = await useVehicleDetail(slug)
 
 const showChatModal = ref(false)
+const isUnlocked = ref(false)
+
+// #44 — Scroll depth tracking (registers scroll listener on mount)
+if (vehicle.value) {
+  useScrollDepth(vehicle.value.id)
+}
+
+// #45 — Price relative to market badge
+const priceMarket = usePriceRelativeToMarket(
+  vehicle.value?.price ?? null,
+  vehicle.value?.brand ?? null,
+  (vehicle.value as unknown as Record<string, unknown>)?.subcategory_id as string | null,
+)
+onMounted(() => {
+  priceMarket.fetch()
+})
 
 // Duration + funnel tracking
-const { trackVehicleDuration, trackFunnelViewVehicle } = useAnalyticsTracking()
+const { trackVehicleDuration, trackFunnelViewVehicle, trackBuyerGeo } = useAnalyticsTracking()
 const pageStartedAt = ref(0)
+
+// #38 — Buyer geo tracking (once per session)
+const { location: buyerLocation, detect: detectLocation } = useUserLocation()
+const GEO_TRACKED_KEY = 'analytics_geo_tracked'
 
 // Track ficha view + funnel step + record start time on client-side mount
 onMounted(() => {
@@ -174,6 +237,20 @@ onMounted(() => {
   if (vehicle.value) {
     trackFichaView(vehicle.value.id, vehicleDetail.value?.dealer_id || '')
     trackFunnelViewVehicle(vehicle.value.id, 'detail_page')
+  }
+
+  // #38 — Fire buyer_geo event once per session
+  try {
+    const alreadyTracked = sessionStorage.getItem(GEO_TRACKED_KEY)
+    if (!alreadyTracked) {
+      sessionStorage.setItem(GEO_TRACKED_KEY, '1')
+      // Detect location then emit event (fire-and-forget)
+      void detectLocation().then(() => {
+        trackBuyerGeo(buyerLocation.value)
+      })
+    }
+  } catch {
+    // sessionStorage unavailable (private mode) — skip silently
   }
 })
 
@@ -221,64 +298,35 @@ if (vehicle.value) {
       { rel: 'alternate', hreflang: 'x-default', href: canonicalUrl },
       ...(seoImage ? [{ rel: 'preload', as: 'image', href: seoImage, fetchpriority: 'high' }] : []),
     ],
-    script: [
-      {
-        type: 'application/ld+json',
-        innerHTML: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': ['Vehicle', 'Product'],
-          name: productName,
-          description: seoDesc,
-          image: seoImage,
-          brand: { '@type': 'Brand', name: vehicle.value.brand },
-          model: vehicle.value.model,
-          vehicleModelDate: vehicle.value.year?.toString(),
-          numberOfAxles:
-            (vehicle.value.attributes_json as Record<string, unknown>)?.ejes || undefined,
-          fuelType:
-            (vehicle.value.attributes_json as Record<string, unknown>)?.combustible || undefined,
-          sku: vehicle.value.slug,
-          offers: {
-            '@type': 'Offer',
-            priceCurrency: 'EUR',
-            price: vehicle.value.price || undefined,
-            availability: 'https://schema.org/InStock',
-            url: canonicalUrl,
-            seller: { '@type': 'Organization', name: t('site.title') },
-            itemCondition: 'https://schema.org/UsedCondition',
-          },
-          url: canonicalUrl,
-          availableAtOrFrom: vehicle.value.location
-            ? {
-                '@type': 'Place',
-                name: vehicle.value.location,
-                address: {
-                  '@type': 'PostalAddress',
-                  addressCountry: vehicle.value.location_country || 'ES',
-                  addressRegion: vehicle.value.location_region || undefined,
-                },
-              }
-            : undefined,
-        }),
-      },
-      {
-        type: 'application/ld+json',
-        innerHTML: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            {
-              '@type': 'ListItem',
-              position: 1,
-              name: t('site.title'),
-              item: 'https://tracciona.com',
-            },
-            { '@type': 'ListItem', position: 2, name: productName, item: canonicalUrl },
-          ],
-        }),
-      },
-    ],
   })
+
+  const attrs = (vehicle.value.attributes_json || {}) as Record<string, unknown>
+
+  useJsonLd([
+    buildVehicleSchema({
+      brand: vehicle.value.brand,
+      model: vehicle.value.model,
+      year: vehicle.value.year,
+      price: vehicle.value.price,
+      slug: vehicle.value.slug,
+      description: seoDesc,
+      image: seoImage,
+      km: vehicle.value.km as number | null,
+      fuelType: attrs.combustible as string | null,
+      numberOfAxles: attrs.ejes as number | string | null,
+      vehicleTransmission: attrs.transmision as string | null,
+      bodyType: attrs.carroceria as string | null,
+      weightTotal: attrs.pma as number | null,
+      location: vehicle.value.location,
+      locationCountry: vehicle.value.location_country,
+      locationRegion: vehicle.value.location_region,
+      sellerName: t('site.title'),
+    }),
+    buildBreadcrumbSchema([
+      { name: t('site.title'), url: 'https://tracciona.com' },
+      { name: productName, url: canonicalUrl },
+    ]),
+  ])
 }
 </script>
 
@@ -316,6 +364,33 @@ if (vehicle.value) {
 /* Info */
 .vehicle-info {
   margin-top: var(--spacing-4);
+}
+
+/* #45 Price market badge */
+.price-market-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-2);
+}
+
+.price-market-badge--below {
+  background: var(--color-success-light, #d4edda);
+  color: var(--color-success, #155724);
+}
+
+.price-market-badge--above {
+  background: var(--color-warning-light, #fff3cd);
+  color: var(--color-warning-dark, #856404);
+}
+
+.price-market-badge--at {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
 }
 
 /* ============================================

@@ -32,11 +32,17 @@ export const ANALYTICS_EVENTS = {
   FUNNEL_VIEW_VEHICLE: 'funnel:view_vehicle',
   FUNNEL_CONTACT_SELLER: 'funnel:contact_seller',
   FUNNEL_RESERVATION: 'funnel:reservation',
+  // Data capture — Bloque 6b
+  SCROLL_DEPTH: 'scroll_depth',
+  FORM_ABANDON: 'form_abandon',
+  VEHICLE_COMPARISON: 'vehicle_comparison',
+  BUYER_GEO: 'buyer_geo',
 } as const
 
-export type AnalyticsEventType = typeof ANALYTICS_EVENTS[keyof typeof ANALYTICS_EVENTS]
+export type AnalyticsEventType = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS]
 
 const SESSION_STORAGE_KEY = 'analytics_session_id'
+const GEO_STORAGE_KEY = 'analytics_geo_country'
 
 /**
  * Get or create a session ID stored in sessionStorage.
@@ -58,6 +64,103 @@ function getSessionId(): string | null {
   }
 }
 
+interface UtmParams {
+  utm_source: string | null
+  utm_medium: string | null
+  utm_campaign: string | null
+  utm_term: string | null
+  utm_content: string | null
+}
+
+/** Extract UTM parameters from the current URL query string */
+function getUtmParams(): UtmParams {
+  if (!import.meta.client)
+    return {
+      utm_source: null,
+      utm_medium: null,
+      utm_campaign: null,
+      utm_term: null,
+      utm_content: null,
+    }
+
+  try {
+    const params = new URLSearchParams(globalThis.location.search)
+    return {
+      utm_source: params.get('utm_source'),
+      utm_medium: params.get('utm_medium'),
+      utm_campaign: params.get('utm_campaign'),
+      utm_term: params.get('utm_term'),
+      utm_content: params.get('utm_content'),
+    }
+  } catch {
+    return {
+      utm_source: null,
+      utm_medium: null,
+      utm_campaign: null,
+      utm_term: null,
+      utm_content: null,
+    }
+  }
+}
+
+/** Get or lazily fetch the visitor's country code via /api/geo (CF-IPCountry).
+ *  Cached in sessionStorage to avoid repeated fetches. */
+let _geoCountryPromise: Promise<string | null> | null = null
+
+function getGeoCountry(): Promise<string | null> {
+  if (!import.meta.client) return Promise.resolve(null)
+
+  // Return cached promise if already in-flight or resolved
+  if (_geoCountryPromise) return _geoCountryPromise
+
+  // Check sessionStorage first
+  try {
+    const cached = sessionStorage.getItem(GEO_STORAGE_KEY)
+    if (cached !== null) return Promise.resolve(cached || null)
+  } catch {
+    // sessionStorage unavailable
+  }
+
+  _geoCountryPromise = $fetch<{ country: string | null }>('/api/geo')
+    .then((res) => {
+      const c = res.country ?? null
+      try {
+        sessionStorage.setItem(GEO_STORAGE_KEY, c ?? '')
+      } catch {
+        // ignore
+      }
+      return c
+    })
+    .catch(() => null)
+
+  return _geoCountryPromise
+}
+
+/** Detect device type from viewport width */
+function getDeviceType(): string | null {
+  if (!import.meta.client) return null
+  const w = window.innerWidth
+  if (w < 768) return 'mobile'
+  if (w < 1024) return 'tablet'
+  return 'desktop'
+}
+
+/** Detect platform/OS from user agent */
+function getPlatform(): string | null {
+  if (!import.meta.client) return null
+  const ua = navigator.userAgent.toLowerCase()
+  if (ua.includes('iphone') || ua.includes('ipad')) return 'ios'
+  if (ua.includes('android')) return 'android'
+  if (ua.includes('win')) return 'windows'
+  if (ua.includes('mac')) return 'macos'
+  if (ua.includes('linux')) return 'linux'
+  return 'other'
+}
+
+/**
+ * Composable for analytics tracking.
+ * @returns Vue composable state and methods for analytics tracking
+ */
 export function useAnalyticsTracking() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()
@@ -70,19 +173,31 @@ export function useAnalyticsTracking() {
     if (!import.meta.client) return
 
     const sessionId = getSessionId()
+    const utm = getUtmParams()
 
-    const row = {
-      event_type: event.event_type,
-      entity_type: event.entity_type ?? null,
-      entity_id: event.entity_id ?? null,
-      metadata: event.metadata ?? null,
-      session_id: sessionId,
-      user_id: user.value?.id ?? null,
-      vertical: getVerticalSlug(),
-      version: EVENT_SCHEMA_VERSION,
-    }
+    // Fire-and-forget including geo (may be null on first event of session)
+    void getGeoCountry().then((buyerCountry) => {
+      const row = {
+        event_type: event.event_type,
+        entity_type: event.entity_type ?? null,
+        entity_id: event.entity_id ?? null,
+        metadata: event.metadata ?? null,
+        session_id: sessionId,
+        user_id: user.value?.id ?? null,
+        vertical: getVerticalSlug(),
+        version: EVENT_SCHEMA_VERSION,
+        utm_source: utm.utm_source,
+        utm_medium: utm.utm_medium,
+        utm_campaign: utm.utm_campaign,
+        utm_term: utm.utm_term,
+        utm_content: utm.utm_content,
+        device_type: getDeviceType(),
+        platform: getPlatform(),
+        buyer_country: buyerCountry,
+      }
 
-    void supabase.from('analytics_events').insert(row as never)
+      void supabase.from('analytics_events').insert(row as never)
+    })
   }
 
   /**
@@ -185,6 +300,60 @@ export function useAnalyticsTracking() {
     })
   }
 
+  /** #44 — Track scroll depth milestones (25/50/75/100) */
+  function trackScrollDepth(vehicleId: string, depth: 25 | 50 | 75 | 100): void {
+    trackEvent({
+      event_type: ANALYTICS_EVENTS.SCROLL_DEPTH,
+      entity_type: 'vehicle',
+      entity_id: vehicleId,
+      metadata: { depth_pct: depth },
+    })
+  }
+
+  /** #43 — Track form abandonment */
+  function trackFormAbandonment(formId: string, stepReached: string, timeSpentMs: number): void {
+    trackEvent({
+      event_type: ANALYTICS_EVENTS.FORM_ABANDON,
+      metadata: {
+        form_id: formId,
+        step_reached: stepReached,
+        time_spent_seconds: Math.round(timeSpentMs / 1000),
+      },
+    })
+  }
+
+  /** #40 — Track when user has viewed 2+ similar vehicles in one session */
+  function trackVehicleComparison(vehicleIds: string[]): void {
+    trackEvent({
+      event_type: ANALYTICS_EVENTS.VEHICLE_COMPARISON,
+      metadata: { vehicle_ids: vehicleIds, count: vehicleIds.length },
+    })
+  }
+
+  /**
+   * #38 — Track buyer geographic origin as a dedicated event.
+   * Emits a BUYER_GEO event with enriched location data (country, province, region, source).
+   * Should be called once per session from the vehicle detail page or app init.
+   * The country is also passively added to every event via getGeoCountry().
+   */
+  function trackBuyerGeo(location: {
+    country: string | null
+    province: string | null
+    region: string | null
+    source: 'geolocation' | 'ip' | 'manual' | null
+  }): void {
+    if (!location.country) return
+    trackEvent({
+      event_type: ANALYTICS_EVENTS.BUYER_GEO,
+      metadata: {
+        country: location.country,
+        province: location.province ?? null,
+        region: location.region ?? null,
+        source: location.source ?? null,
+      },
+    })
+  }
+
   return {
     trackEvent,
     trackVehicleView,
@@ -196,5 +365,9 @@ export function useAnalyticsTracking() {
     trackFunnelViewVehicle,
     trackFunnelContactSeller,
     trackFunnelReservation,
+    trackScrollDepth,
+    trackFormAbandonment,
+    trackVehicleComparison,
+    trackBuyerGeo,
   }
 }
