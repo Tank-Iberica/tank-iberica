@@ -13,13 +13,13 @@
     "homeTitle": "Tracciona — Semirremolques, Cisternas, Cabezas Tractoras y Camiones",
     "homeH1": "Vehículos industriales en venta: camiones, semirremolques, cisternas y cabezas tractoras",
     "homeDescription": "Compra, venta y alquiler de vehículos industriales: semirremolques, cisternas, cabezas tractoras, camiones y más. Mercado ibérico y europeo.",
-    "newsTitle": "Noticias — Tracciona",
+    "newsTitle": "Noticias de vehículos industriales — Tracciona",
     "newsDescription": "Noticias y actualidad del sector de vehículos industriales: transporte, logística y normativa.",
     "aboutTitle": "Sobre Nosotros — Tracciona",
     "aboutDescription": "Conoce Tracciona: plataforma de vehículos industriales — semirremolques, cisternas, cabezas tractoras y camiones en el mercado ibérico.",
     "legalTitle": "Términos, Privacidad y Cookies — Tracciona",
     "legalDescription": "Términos y condiciones, política de privacidad y política de cookies de Tracciona.",
-    "guidesTitle": "Guías — Tracciona",
+    "guidesTitle": "Guías de compra de vehículos industriales — Tracciona",
     "guidesDescription": "Guías de compra, normativa y comparativas de vehículos industriales: semirremolques, cisternas, cabezas tractoras y camiones.",
     "errorTitle": "Página no encontrada — Tracciona",
     "errorDescription": "La página que buscas no existe o ha sido movida."
@@ -369,6 +369,12 @@
     "shareCopied": "Enlace copiado al portapapeles",
     "perMonth": "/mes",
     "characteristics": "Características",
+    "priceBadge": {
+      "goodPrice": "Buen precio",
+      "highPrice": "Precio alto",
+      "goodPriceTip": "Este precio está un {pct}% por debajo de la media del mercado.",
+      "highPriceTip": "Este precio está un {pct}% por encima de la media del mercado."
+    },
     "sellerInfo": "Información del vendedor",
     "sellerCif": "CIF",
     "viewSellerProfile": "Ver perfil del vendedor",
@@ -902,6 +908,47 @@
     "since": "desde",
     "rating": "estrellas",
     "badgeFounding": "Anunciante Fundador",
+    "autoSettings": {
+      "title": "Configuración automática",
+      "description": "Ajusta el comportamiento automático de tu cuenta de dealer.",
+      "autoNotifyLeads": "Notificaciones de leads",
+      "autoNotifyLeadsHint": "Recibe una notificación push cuando llegue un nuevo lead.",
+      "autoRenew": "Renovación automática",
+      "autoRenewHint": "Renueva los anuncios automáticamente antes de que caduquen.",
+      "listingDuration": "Duración por defecto",
+      "listingDurationHint": "Duración predeterminada para nuevos anuncios.",
+      "days": "{n} días",
+      "highlightThreshold": "Umbral de destacado automático",
+      "highlightThresholdHint": "Destaca automáticamente los vehículos con Health Score por encima de este valor."
+    },
+    "mercado": {
+      "title": "Inteligencia de Mercado",
+      "subtitle": "Compara el precio de tu stock con la media del mercado",
+      "belowMarket": "Por debajo del mercado",
+      "atMarket": "En línea con el mercado",
+      "aboveMarket": "Por encima del mercado",
+      "avgDeviation": "Desviación media",
+      "vehiclesTitle": "Análisis por vehículo",
+      "colVehicle": "Vehículo",
+      "colDealerPrice": "Tu precio",
+      "colMarketAvg": "Media mercado",
+      "colPosition": "Posición",
+      "colDeviation": "Desviación",
+      "position": {
+        "below": "Bajo",
+        "above": "Alto",
+        "average": "Medio"
+      },
+      "suggestionsTitle": "Recomendaciones",
+      "noData": "No hay datos de mercado suficientes para tus vehículos. Publica más anuncios o espera a que haya más referencias de mercado.",
+      "loadError": "Error al cargar los datos de mercado"
+    },
+    "badge": {
+      "topDealer": "Top Dealer",
+      "verified": "Verificado",
+      "topDealerTooltip": "Este dealer tiene una puntuación excelente: responde rápido, mantiene su stock actualizado y tiene un perfil completo.",
+      "verifiedTooltip": "Este dealer ha verificado su identidad y mantiene buenas prácticas en la plataforma."
+    },
     "foundingBadge": "Anunciante Fundador 🏆",
     "badgePremium": "Anunciante Premium",
     "badgeVerified": "Anunciante Verificado",
@@ -1100,6 +1147,23 @@
         "banner": "Banner",
         "anunciantes": "Anunciantes",
         "solicitantes": "Solicitantes",
+        "dealerHealth": {
+          "title": "Health Score de Dealers",
+          "filter": {
+            "all": "Todos",
+            "top": "Top Dealer",
+            "verified": "Verificado",
+            "none": "Sin badge"
+          },
+          "colDealer": "Dealer",
+          "colScore": "Score",
+          "colBadge": "Badge",
+          "colVehicles": "Vehículos",
+          "colResponse": "Respuesta",
+          "noBadge": "Sin badge",
+          "unknown": "Sin nombre",
+          "empty": "No hay dealers con ese filtro"
+        },
         "usuarios": "Usuarios",
         "agenda": "Agenda",
         "chat": "Chat",
@@ -1730,6 +1794,21 @@
         "posted": "Publicado",
         "rejected": "Rechazado",
         "failed": "Fallido"
+      },
+      "calendar": {
+        "title": "Calendario editorial",
+        "today": "Hoy",
+        "prev": "Anterior",
+        "next": "Siguiente",
+        "weekView": "Semana",
+        "monthView": "Mes",
+        "loading": "Cargando calendario...",
+        "noContent": "Sin contenido",
+        "postDetail": "Detalle del post",
+        "impressions": "Impresiones",
+        "clicks": "Clics",
+        "externalId": "ID externo",
+        "calendarView": "Vista calendario"
       }
     },
     "pagos": {
@@ -3906,7 +3985,14 @@
       "profileComplete": "Perfil completo",
       "activeVehicles": "Vehículos activos",
       "badgeEligible": "Elegible para badge Dealer Activo",
-      "notEligible": "Mejora tu puntuacion para obtener el badge"
+      "notEligible": "Mejora tu puntuación para obtener el badge",
+      "tipsPhotos": "Añade más de 3 fotos por vehículo para mejorar tu puntuación.",
+      "tipsDescriptions": "Escribe descripciones de más de 100 caracteres en cada vehículo.",
+      "tipsResponse": "Responde a los leads en menos de 24h para máxima puntuación.",
+      "tipsPriceUpdates": "Actualiza los precios de tus vehículos al menos una vez al mes.",
+      "tipsProfile": "Completa tu perfil con logo, bio, teléfono y email.",
+      "tipsVehicles": "Publica más vehículos activos para ganar puntos adicionales.",
+      "viewMarket": "Ver inteligencia de mercado"
     },
     "quote": {
       "title": "Generador de presupuestos",
@@ -4590,7 +4676,7 @@
     "avgPriceChange": "Cambio precio medio"
   },
   "valuation": {
-    "seoTitle": "Valoración de vehículos industriales",
+    "seoTitle": "Valoración de vehículos industriales — Tracciona",
     "seoDescription": "Obtén una estimación del valor de mercado de tu vehículo industrial basada en datos reales del mercado.",
     "heroTitle": "Valoración de vehículo",
     "heroSubtitle": "Descubre el valor de mercado de tu vehículo industrial con datos reales y actualizados",
@@ -5097,6 +5183,56 @@
     "transition_error": "No se puede cambiar de {from} a {to}",
     "transition_invalid": "Transición no válida",
     "bulk_success": "{count} vehículos actualizados",
-    "bulk_partial": "{succeeded} actualizados, {failed} fallidos"
+    "bulk_partial": "{succeeded} actualizados, {failed} fallidos",
+    "changeStatus": "Cambiar estado",
+    "confirmTo": "Confirmar cambio a: {status}",
+    "salePrice": "Precio de venta",
+    "salePricePlaceholder": "Ej: 15000",
+    "buyerName": "Nombre del comprador",
+    "buyerNamePlaceholder": "Nombre del comprador",
+    "reason": "Motivo (opcional)",
+    "reasonPlaceholder": "Ej: vendido a cliente particular",
+    "confirm": "Confirmar",
+    "transitioning": "Guardando...",
+    "cancel": "Cancelar",
+    "showHistory": "Ver historial de estados",
+    "hideHistory": "Ocultar historial",
+    "noHistory": "Sin historial",
+    "postSale": {
+      "title": "¡Venta registrada!",
+      "reviewTitle": "Pide una reseña",
+      "reviewDesc": "Comparte el enlace con el comprador para que deje su valoración.",
+      "copyLink": "Copiar enlace",
+      "linkCopied": "¡Copiado!",
+      "archiveTitle": "Archivar anuncio",
+      "archiveDesc": "Mueve el vehículo al histórico de ventas.",
+      "archiveBtn": "Archivar ahora",
+      "shareTitle": "Comparte la venta",
+      "shareDesc": "Genera una imagen para redes sociales.",
+      "shareBtn": "Compartir en redes",
+      "skip": "Hacer esto más tarde"
+    },
+    "expiryAlert": {
+      "expiredTitle": "{count} anuncio caducado | {count} anuncios caducados",
+      "soonTitle": "{count} anuncio caduca en {days} días | {count} anuncios caducan en {days} días",
+      "bothTitle": "{expired} caducados · {soon} próximos a caducar",
+      "desc": "Renuévalos para que vuelvan a aparecer en el catálogo.",
+      "renewNow": "Renovar ahora"
+    }
+  },
+  "admin": {
+    "lifecycle": {
+      "title": "Estado del catálogo",
+      "statusDistribution": "Distribución por estado",
+      "dealersExpired": "Dealers con anuncios caducados",
+      "recentTransitions": "Transiciones recientes (7 días)",
+      "dealer": "Dealer",
+      "expiredCount": "Caducados",
+      "actions": "Acciones",
+      "viewListings": "Ver anuncios",
+      "loading": "Cargando...",
+      "refresh": "Actualizar",
+      "empty": "Sin vehículos"
+    }
   }
 }

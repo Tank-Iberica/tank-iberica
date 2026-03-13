@@ -2,6 +2,7 @@
  * Composable for the dealer dashboard index page.
  * Orchestrates data loading, formatting helpers, and derived state.
  */
+import type { HealthScoreBreakdown } from '~/composables/useDealerHealthScore'
 export { formatPrice } from '~/composables/shared/useListingUtils'
 
 export interface OnboardingStep {
@@ -50,7 +51,13 @@ function getStatusColor(status: string): string {
 export function useDashboardIndex() {
   const { t, locale } = useI18n()
 
-  const localeMap: Record<string, string> = { es: 'es-ES', en: 'en-GB', fr: 'fr-FR', pt: 'pt-PT', de: 'de-DE' }
+  const localeMap: Record<string, string> = {
+    es: 'es-ES',
+    en: 'en-GB',
+    fr: 'fr-FR',
+    pt: 'pt-PT',
+    de: 'de-DE',
+  }
   function formatDate(dateStr: string | null): string {
     if (!dateStr) return '-'
     const intlLocale = localeMap[locale.value] ?? 'es-ES'
@@ -65,7 +72,7 @@ export function useDashboardIndex() {
   const { currentPlan, planLimits, fetchSubscription } = useSubscriptionPlan(
     userId.value || undefined,
   )
-  const healthScore = ref<{ total: number } | null>(null)
+  const healthScore = ref<HealthScoreBreakdown | null>(null)
 
   // ---------------------------------------------------------------------------
   // Derived state

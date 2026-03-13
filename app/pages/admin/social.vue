@@ -8,6 +8,9 @@ definePageMeta({
 
 const { t } = useI18n()
 
+// Toggle between list view and calendar view
+const pageView = ref<'list' | 'calendar'>('list')
+
 const {
   // State
   statusFilter,
@@ -75,6 +78,55 @@ watch(statusFilter, () => {
         </span>
       </div>
       <div class="header-actions">
+        <!-- View toggle -->
+        <div class="view-toggle" role="group" :aria-label="t('admin.social.calendar.calendarView')">
+          <button
+            class="btn-view-toggle"
+            :class="{ 'btn-view-active': pageView === 'list' }"
+            :aria-pressed="pageView === 'list'"
+            @click="pageView = 'list'"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+          </button>
+          <button
+            class="btn-view-toggle"
+            :class="{ 'btn-view-active': pageView === 'calendar' }"
+            :aria-pressed="pageView === 'calendar'"
+            :title="t('admin.social.calendar.calendarView')"
+            @click="pageView = 'calendar'"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          </button>
+        </div>
+
         <button class="btn-generate" @click="openGenerateModal">
           <svg
             width="16"
@@ -103,74 +155,80 @@ watch(statusFilter, () => {
     <!-- Stats cards -->
     <AdminSocialStatsCards :counts="statusCounts" />
 
-    <!-- Tab filters -->
-    <AdminSocialStatusTabs v-model="statusFilter" :counts="statusCounts" />
+    <!-- Calendar view -->
+    <AdminSocialCalendar v-if="pageView === 'calendar'" />
 
-    <!-- Error -->
-    <div v-if="error" class="alert-error">
-      {{ error }}
-      <button class="dismiss-btn" @click="() => {}">
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-    </div>
+    <!-- List view controls (only in list mode) -->
+    <template v-if="pageView === 'list'">
+      <!-- Tab filters -->
+      <AdminSocialStatusTabs v-model="statusFilter" :counts="statusCounts" />
 
-    <!-- Loading -->
-    <div v-if="loading && filteredPosts.length === 0" class="loading-state" aria-busy="true">
-      <UiSkeletonCard v-for="n in 4" :key="n" :image="true" :lines="2" />
-    </div>
-
-    <!-- Empty state -->
-    <div v-else-if="filteredPosts.length === 0" class="empty-state">
-      <div class="empty-icon">
-        <svg
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          opacity="0.3"
-        >
-          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v-2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 00-3-3.87" />
-          <path d="M16 3.13a4 4 0 010 7.75" />
-        </svg>
+      <!-- Error -->
+      <div v-if="error" class="alert-error">
+        {{ error }}
+        <button class="dismiss-btn" @click="() => {}">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
-      <p>{{ t('admin.social.noPosts') }}</p>
-      <button class="btn-generate" @click="openGenerateModal">
-        {{ t('admin.social.generatePosts') }}
-      </button>
-    </div>
 
-    <!-- Post cards grid -->
-    <div v-else class="posts-grid">
-      <AdminSocialPostCard
-        v-for="post in filteredPosts"
-        :key="post.id"
-        :post="post"
-        :vehicle-title="getVehicleTitle(post)"
-        :preview="truncateContent(post)"
-        :platform-label="getPlatformLabel(post.platform)"
-        :platform-class="getPlatformClass(post.platform)"
-        :status-class="getStatusClass(post.status)"
-        :status-label="getStatusLabel(post.status)"
-        :formatted-date="formatDate(post.created_at)"
-        @select="openPostModal"
-        @approve="handleApprove"
-        @publish="handlePublish"
-      />
-    </div>
+      <!-- Loading -->
+      <div v-if="loading && filteredPosts.length === 0" class="loading-state" aria-busy="true">
+        <UiSkeletonCard v-for="n in 4" :key="n" :image="true" :lines="2" />
+      </div>
+
+      <!-- Empty state -->
+      <div v-else-if="filteredPosts.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            opacity="0.3"
+          >
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v-2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 00-3-3.87" />
+            <path d="M16 3.13a4 4 0 010 7.75" />
+          </svg>
+        </div>
+        <p>{{ t('admin.social.noPosts') }}</p>
+        <button class="btn-generate" @click="openGenerateModal">
+          {{ t('admin.social.generatePosts') }}
+        </button>
+      </div>
+
+      <!-- Post cards grid -->
+      <div v-else class="posts-grid">
+        <AdminSocialPostCard
+          v-for="post in filteredPosts"
+          :key="post.id"
+          :post="post"
+          :vehicle-title="getVehicleTitle(post)"
+          :preview="truncateContent(post)"
+          :platform-label="getPlatformLabel(post.platform)"
+          :platform-class="getPlatformClass(post.platform)"
+          :status-class="getStatusClass(post.status)"
+          :status-label="getStatusLabel(post.status)"
+          :formatted-date="formatDate(post.created_at)"
+          @select="openPostModal"
+          @approve="handleApprove"
+          @publish="handlePublish"
+        />
+      </div> </template
+    ><!-- end list view -->
 
     <!-- Post Detail / Edit Modal -->
     <AdminSocialPostDetailModal
@@ -254,6 +312,48 @@ watch(statusFilter, () => {
 .count-badge.pending {
   background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
+}
+
+.view-toggle {
+  display: flex;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.btn-view-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.625rem;
+  background: var(--bg-primary);
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.btn-view-toggle + .btn-view-toggle {
+  border-left: 1px solid var(--color-gray-200);
+}
+
+.btn-view-toggle:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.btn-view-active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-view-active:hover {
+  background: var(--color-primary-dark);
+  color: #fff;
 }
 
 .btn-generate {

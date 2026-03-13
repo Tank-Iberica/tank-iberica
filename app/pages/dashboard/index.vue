@@ -133,6 +133,7 @@ onMounted(() => init())
         v-if="healthScore"
         :total="healthScore.total"
         :score-class="healthScoreClass"
+        :breakdown="healthScore"
       />
 
       <!-- Quick Actions -->

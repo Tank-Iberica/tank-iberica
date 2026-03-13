@@ -3,6 +3,12 @@
     <!-- Seller Info (DSA compliance) -->
     <div v-if="sellerInfo" class="vehicle-seller-info">
       <h3>{{ $t('vehicle.sellerInfo') }}</h3>
+      <!-- Trust badge based on dealer health score -->
+      <SharedDealerTrustBadge
+        v-if="dealerScore !== null"
+        :score="dealerScore"
+        class="trust-badge-wrap"
+      />
       <div class="seller-details">
         <span v-if="sellerInfo.company_name" class="seller-item">
           <strong>{{ sellerInfo.company_name }}</strong>
@@ -46,12 +52,22 @@
 <script setup lang="ts">
 import type { SellerInfo } from '~/composables/useVehicleDetail'
 
-defineProps<{
+const props = defineProps<{
   sellerInfo: SellerInfo | null
   dealerId: string | null
   dealerSlug: string | null
   isTerceros: boolean
 }>()
+
+// Lazily load dealer health score to show trust badge
+const dealerScore = ref<number | null>(null)
+
+onMounted(async () => {
+  if (!props.dealerId) return
+  const { score, calculateScore } = useDealerHealthScore(props.dealerId)
+  await calculateScore()
+  dealerScore.value = score.value?.total ?? null
+})
 </script>
 
 <style scoped>

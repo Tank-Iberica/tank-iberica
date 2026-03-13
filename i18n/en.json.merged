@@ -1148,23 +1148,23 @@
         "anunciantes": "Advertisers",
         "solicitantes": "Applicants",
         "dealerHealth": {
-          "title": "Dealer Health Scores",
-          "filter": {
-            "all": "All",
-            "top": "Top Dealer",
-            "verified": "Verified",
-            "none": "No badge"
-          },
-          "colDealer": "Dealer",
-          "colScore": "Score",
-          "colBadge": "Badge",
-          "colVehicles": "Vehicles",
-          "colResponse": "Response",
-          "noBadge": "No badge",
-          "unknown": "Unknown",
-          "empty": "No dealers match this filter"
-        },
-        "usuarios": "Users",
+      "title": "Dealer Health Scores",
+      "filter": {
+        "all": "All",
+        "top": "Top Dealer",
+        "verified": "Verified",
+        "none": "No badge"
+      },
+      "colDealer": "Dealer",
+      "colScore": "Score",
+      "colBadge": "Badge",
+      "colVehicles": "Vehicles",
+      "colResponse": "Response",
+      "noBadge": "No badge",
+      "unknown": "Unknown",
+      "empty": "No dealers match this filter"
+    },
+    "usuarios": "Users",
         "agenda": "Agenda",
         "chat": "Chat",
         "suscripciones": "Subscriptions",
@@ -5176,7 +5176,7 @@
     "transition_error": "Cannot change from {from} to {to}",
     "transition_invalid": "Invalid transition",
     "bulk_success": "{count} vehicles updated",
-    "bulk_partial": "{succeeded} updated, {failed} failed",
+    "bulk_partial": "{succeeded} updated, {failed} failed"
     "changeStatus": "Change status",
     "confirmTo": "Confirm change to: {status}",
     "salePrice": "Sale price",
