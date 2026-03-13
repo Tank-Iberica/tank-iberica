@@ -33,7 +33,7 @@
         <span>{{ $t('messages.contactSeller') }}</span>
       </button>
       <a
-        :href="`mailto:info@tracciona.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`"
+        :href="`mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`"
         class="contact-btn contact-email"
         @click="$emit('contact-click', vehicleId, dealerId, 'form')"
       >

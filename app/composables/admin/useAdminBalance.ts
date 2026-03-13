@@ -109,7 +109,10 @@ type FilterChain = {
   or: (filters: string) => FilterChain
 } & Promise<FilterChainResult>
 
-function applyBalanceFilters(query: FilterChain, filters: BalanceFilters): Promise<FilterChainResult> {
+function applyBalanceFilters(
+  query: FilterChain,
+  filters: BalanceFilters,
+): Promise<FilterChainResult> {
   if (filters.year) {
     query = query.gte('fecha', `${filters.year}-01-01`).lte('fecha', `${filters.year}-12-31`)
   }
@@ -205,7 +208,11 @@ export function useAdminBalance() {
         .select('*, vehicles(brand, model, year), subcategories(name_es)', { count: 'exact' })
         .order('fecha', { ascending: false })
 
-      const { data, error: err, count } = await applyBalanceFilters(baseQuery, filters)
+      const {
+        data,
+        error: err,
+        count,
+      } = await applyBalanceFilters(baseQuery as unknown as FilterChain, filters)
 
       if (err) throw err
 

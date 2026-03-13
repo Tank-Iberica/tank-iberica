@@ -19,7 +19,12 @@ import type {
   RawLead,
 } from './shared/dealerDashboardTypes'
 
-export type { DealerProfile, DashboardStats, RecentLead, TopVehicle } from './shared/dealerDashboardTypes'
+export type {
+  DealerProfile,
+  DashboardStats,
+  RecentLead,
+  TopVehicle,
+} from './shared/dealerDashboardTypes'
 
 export function mapLeads(raw: RawLead[]): RecentLead[] {
   return raw.map((lead) => ({
@@ -61,7 +66,9 @@ export function useDealerDashboard() {
     try {
       const { data, error: err } = await (supabase as ReturnType<typeof useSupabaseClient>)
         .from('dealers')
-        .select('id, user_id, company_name, slug, bio, logo_url, phone, email, website, location, theme_primary, theme_accent, social_links, certifications, auto_reply_message, onboarding_completed, created_at')
+        .select(
+          'id, user_id, company_name, slug, bio, logo_url, phone, email, website, location, theme_primary, theme_accent, social_links, certifications, auto_reply_message, onboarding_completed, created_at',
+        )
         .eq('user_id', userId.value)
         .single()
 
@@ -89,24 +96,28 @@ export function useDealerDashboard() {
       const vertical = getVerticalSlug()
 
       // 3 queries in parallel → 1 round-trip (was 10 queries / 4 round-trips)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sb = supabase as any
       const [statsRes, recentLeadsRes, topVehiclesRes] = await Promise.all([
         // All 8 KPIs in one server-side CTE
-        (supabase as ReturnType<typeof useSupabaseClient>).rpc('get_dealer_dashboard_stats', {
+        sb.rpc('get_dealer_dashboard_stats', {
           p_dealer_id: dealer.id,
           p_vertical: vertical,
           p_month_start: monthStart,
         }),
 
         // Recent leads — PostgREST join (already a single query)
-        (supabase as ReturnType<typeof useSupabaseClient>)
+        sb
           .from('leads')
-          .select('id, buyer_name, buyer_email, vehicle_id, status, message, created_at, vehicles(brand, model)')
+          .select(
+            'id, buyer_name, buyer_email, vehicle_id, status, message, created_at, vehicles(brand, model)',
+          )
           .eq('dealer_id', dealer.id)
           .order('created_at', { ascending: false })
           .limit(5),
 
         // Top vehicles with leads + favorites (was 2 queries, now 1 RPC)
-        (supabase as ReturnType<typeof useSupabaseClient>).rpc('get_dealer_top_vehicles', {
+        sb.rpc('get_dealer_top_vehicles', {
           p_dealer_id: dealer.id,
           p_vertical: vertical,
           p_limit: 5,
@@ -114,9 +125,10 @@ export function useDealerDashboard() {
       ])
 
       // Map stats RPC response (returns array with one row for RETURNS TABLE functions)
-      const statsRow = Array.isArray(statsRes.data) && statsRes.data.length > 0
-        ? (statsRes.data[0] as DashboardStatsRaw)
-        : null
+      const statsRow =
+        Array.isArray(statsRes.data) && statsRes.data.length > 0
+          ? (statsRes.data[0] as DashboardStatsRaw)
+          : null
 
       if (statsRes.error || !statsRow) {
         throw statsRes.error || new Error('Dashboard stats RPC returned no data')

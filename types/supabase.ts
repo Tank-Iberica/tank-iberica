@@ -2110,12 +2110,15 @@ export type Database = {
           total_listings: number | null
           total_reviews: number | null
           updated_at: string | null
+          address: Json | null
+          favicon_url: string | null
           user_id: string | null
           verified: boolean | null
           vertical: string
           visits_enabled: boolean | null
           website: string | null
           whatsapp: string | null
+          logo_text_config: Json | null
         }
         Insert: {
           active_listings?: number | null
@@ -2155,12 +2158,15 @@ export type Database = {
           total_listings?: number | null
           total_reviews?: number | null
           updated_at?: string | null
+          address?: Json | null
+          favicon_url?: string | null
           user_id?: string | null
           verified?: boolean | null
           vertical?: string
           visits_enabled?: boolean | null
           website?: string | null
           whatsapp?: string | null
+          logo_text_config?: Json | null
         }
         Update: {
           active_listings?: number | null
@@ -2200,12 +2206,15 @@ export type Database = {
           total_listings?: number | null
           total_reviews?: number | null
           updated_at?: string | null
+          address?: Json | null
+          favicon_url?: string | null
           user_id?: string | null
           verified?: boolean | null
           vertical?: string
           visits_enabled?: boolean | null
           website?: string | null
           whatsapp?: string | null
+          logo_text_config?: Json | null
         }
         Relationships: [
           {
@@ -2421,6 +2430,7 @@ export type Database = {
       }
       email_preferences: {
         Row: {
+          created_at: string | null
           email_type: string
           enabled: boolean | null
           id: string
@@ -2428,6 +2438,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          created_at?: string | null
           email_type: string
           enabled?: boolean | null
           id?: string
@@ -2435,6 +2446,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          created_at?: string | null
           email_type?: string
           enabled?: boolean | null
           id?: string
@@ -2455,18 +2467,21 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          price_threshold: number | null
           user_id: string
           vehicle_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
+          price_threshold?: number | null
           user_id: string
           vehicle_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
+          price_threshold?: number | null
           user_id?: string
           vehicle_id?: string
         }
@@ -2496,6 +2511,7 @@ export type Database = {
           key: string
           percentage: number | null
           updated_at: string | null
+          vertical: string | null
         }
         Insert: {
           allowed_dealers?: string[] | null
@@ -2505,6 +2521,7 @@ export type Database = {
           key: string
           percentage?: number | null
           updated_at?: string | null
+          vertical?: string | null
         }
         Update: {
           allowed_dealers?: string[] | null
@@ -2514,6 +2531,7 @@ export type Database = {
           key?: string
           percentage?: number | null
           updated_at?: string | null
+          vertical?: string | null
         }
         Relationships: []
       }
@@ -2937,10 +2955,13 @@ export type Database = {
           first_viewed_at: string | null
           id: string
           message: string | null
+          recovery_sent_at: string | null
           sale_price_cents: number | null
           source: string | null
           status: string | null
           updated_at: string | null
+          user_email: string | null
+          user_name: string | null
           vehicle_id: string | null
         }
         Insert: {
@@ -2958,10 +2979,13 @@ export type Database = {
           first_viewed_at?: string | null
           id?: string
           message?: string | null
+          recovery_sent_at?: string | null
           sale_price_cents?: number | null
           source?: string | null
           status?: string | null
           updated_at?: string | null
+          user_email?: string | null
+          user_name?: string | null
           vehicle_id?: string | null
         }
         Update: {
@@ -2979,10 +3003,13 @@ export type Database = {
           first_viewed_at?: string | null
           id?: string
           message?: string | null
+          recovery_sent_at?: string | null
           sale_price_cents?: number | null
           source?: string | null
           status?: string | null
           updated_at?: string | null
+          user_email?: string | null
+          user_name?: string | null
           vehicle_id?: string | null
         }
         Relationships: [
@@ -3547,12 +3574,14 @@ export type Database = {
           id: string
           locale: string | null
           phone: string | null
+          digest_frequency: string | null
           role: string | null
           user_id: string | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
+          digest_frequency?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
@@ -3564,6 +3593,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string | null
+          digest_frequency?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
@@ -4152,6 +4182,12 @@ export type Database = {
           started_at: string | null
           status: string | null
           stripe_customer_id: string | null
+          pref_csr: boolean | null
+          pref_events: boolean | null
+          pref_featured: boolean | null
+          pref_newsletter: boolean | null
+          pref_press: boolean | null
+          pref_web: boolean | null
           stripe_subscription_id: string | null
           updated_at: string | null
           user_id: string
@@ -4168,6 +4204,12 @@ export type Database = {
           price_cents?: number | null
           started_at?: string | null
           status?: string | null
+          pref_csr?: boolean | null
+          pref_events?: boolean | null
+          pref_featured?: boolean | null
+          pref_newsletter?: boolean | null
+          pref_press?: boolean | null
+          pref_web?: boolean | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string | null
@@ -4182,6 +4224,12 @@ export type Database = {
           has_had_trial?: boolean | null
           id?: string
           plan?: string
+          pref_csr?: boolean | null
+          pref_events?: boolean | null
+          pref_featured?: boolean | null
+          pref_newsletter?: boolean | null
+          pref_press?: boolean | null
+          pref_web?: boolean | null
           price_cents?: number | null
           started_at?: string | null
           status?: string | null
@@ -4455,12 +4503,14 @@ export type Database = {
           role: Database['public']['Enums']['user_role'] | null
           unsubscribe_token: string | null
           user_type: string | null
+          digest_frequency: string | null
         }
         Insert: {
           apellidos?: string | null
           avatar_url?: string | null
           company_name?: string | null
           created_at?: string | null
+          digest_frequency?: string | null
           email: string
           id: string
           lang?: string | null
@@ -4481,6 +4531,7 @@ export type Database = {
           avatar_url?: string | null
           company_name?: string | null
           created_at?: string | null
+          digest_frequency?: string | null
           email?: string
           id?: string
           lang?: string | null
@@ -4628,7 +4679,20 @@ export type Database = {
           status: Database['public']['Enums']['vehicle_status'] | null
           updated_at: string | null
           verification_level: string | null
+          condition: string | null
+          filters_json: Json | null
+          hours: number | null
+          intermediation_commission: number | null
+          intermediation_expenses: Json | null
+          intermediation_status: string | null
+          is_verified: boolean | null
+          km: number | null
+          main_image_url: string | null
+          subcategory_id: string | null
+          title_en: string | null
+          title_es: string | null
           vertical: string
+          video_url: string | null
           visible_from: string | null
           year: number | null
         }
@@ -4685,7 +4749,20 @@ export type Database = {
           status?: Database['public']['Enums']['vehicle_status'] | null
           updated_at?: string | null
           verification_level?: string | null
+          condition?: string | null
+          filters_json?: Json | null
+          hours?: number | null
+          intermediation_commission?: number | null
+          intermediation_expenses?: Json | null
+          intermediation_status?: string | null
+          is_verified?: boolean | null
+          km?: number | null
+          main_image_url?: string | null
+          subcategory_id?: string | null
+          title_en?: string | null
+          title_es?: string | null
           vertical?: string
+          video_url?: string | null
           visible_from?: string | null
           year?: number | null
         }
@@ -4742,7 +4819,20 @@ export type Database = {
           status?: Database['public']['Enums']['vehicle_status'] | null
           updated_at?: string | null
           verification_level?: string | null
+          condition?: string | null
+          filters_json?: Json | null
+          hours?: number | null
+          intermediation_commission?: number | null
+          intermediation_expenses?: Json | null
+          intermediation_status?: string | null
+          is_verified?: boolean | null
+          km?: number | null
+          main_image_url?: string | null
+          subcategory_id?: string | null
+          title_en?: string | null
+          title_es?: string | null
           vertical?: string
+          video_url?: string | null
           visible_from?: string | null
           year?: number | null
         }
@@ -4889,6 +4979,10 @@ export type Database = {
           tagline: Json | null
           theme: Json
           translation_api_key_encrypted: string | null
+          auction_defaults: Json | null
+          compliance_rules: Json | null
+          feature_flags: Json | null
+          stock_limits: Json | null
           translation_engine: string | null
           updated_at: string | null
           vertical: string
@@ -4930,6 +5024,10 @@ export type Database = {
           subscription_prices?: Json | null
           tagline?: Json | null
           theme?: Json
+          auction_defaults?: Json | null
+          compliance_rules?: Json | null
+          feature_flags?: Json | null
+          stock_limits?: Json | null
           translation_api_key_encrypted?: string | null
           translation_engine?: string | null
           updated_at?: string | null
@@ -4972,10 +5070,101 @@ export type Database = {
           subscription_prices?: Json | null
           tagline?: Json | null
           theme?: Json
+          auction_defaults?: Json | null
+          compliance_rules?: Json | null
+          feature_flags?: Json | null
+          stock_limits?: Json | null
           translation_api_key_encrypted?: string | null
           translation_engine?: string | null
           updated_at?: string | null
           vertical?: string
+        }
+        Relationships: []
+      }
+      job_queue: {
+        Row: {
+          completed_at: string | null
+          correlation_id: string | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          job_type: string
+          result: Json | null
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          correlation_id?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          job_type: string
+          result?: Json | null
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          correlation_id?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          job_type?: string
+          result?: Json | null
+          status?: string
+        }
+        Relationships: []
+      }
+      login_attempts: {
+        Row: {
+          attempts: number
+          created_at: string | null
+          email: string | null
+          first_attempt_at: string | null
+          id: string
+          key: string
+          locked_until: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string | null
+          email?: string | null
+          first_attempt_at?: string | null
+          id?: string
+          key?: string
+          locked_until?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          created_at?: string | null
+          email?: string | null
+          first_attempt_at?: string | null
+          id?: string
+          key?: string
+          locked_until?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -5157,6 +5346,261 @@ export type Database = {
           },
         ]
       }
+      negotiation_offers: {
+        Row: {
+          id: string
+          conversation_id: string
+          vehicle_id: string
+          sender_id: string
+          amount_cents: number
+          currency: string
+          message: string | null
+          status: string
+          parent_offer_id: string | null
+          expires_at: string | null
+          responded_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          conversation_id: string
+          vehicle_id: string
+          sender_id: string
+          amount_cents: number
+          currency?: string
+          message?: string | null
+          status?: string
+          parent_offer_id?: string | null
+          expires_at?: string | null
+          responded_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          conversation_id?: string
+          vehicle_id?: string
+          sender_id?: string
+          amount_cents?: number
+          currency?: string
+          message?: string | null
+          status?: string
+          parent_offer_id?: string | null
+          expires_at?: string | null
+          responded_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      dealer_reviews: {
+        Row: {
+          id: string
+          dealer_id: string
+          reviewer_id: string | null
+          rating: number
+          comment: string | null
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          dealer_id: string
+          reviewer_id?: string | null
+          rating: number
+          comment?: string | null
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          dealer_id?: string
+          reviewer_id?: string | null
+          rating?: number
+          comment?: string | null
+          status?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      brokerage_messages: {
+        Row: {
+          id: string
+          deal_id: string
+          direction: string
+          channel: string
+          sender_entity: string
+          recipient_entity: string
+          content: string
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          deal_id: string
+          direction: string
+          channel: string
+          sender_entity: string
+          recipient_entity: string
+          content: string
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          deal_id?: string
+          direction?: string
+          channel?: string
+          sender_entity?: string
+          recipient_entity?: string
+          content?: string
+          metadata?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      brokerage_audit_log: {
+        Row: {
+          id: string
+          deal_id: string | null
+          actor: string
+          action: string
+          legal_basis: string | null
+          model_version: string | null
+          human_override: boolean
+          override_reason: string | null
+          details: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          deal_id?: string | null
+          actor: string
+          action: string
+          legal_basis?: string | null
+          model_version?: string | null
+          human_override?: boolean
+          override_reason?: string | null
+          details?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          deal_id?: string | null
+          actor?: string
+          action?: string
+          legal_basis?: string | null
+          model_version?: string | null
+          human_override?: boolean
+          override_reason?: string | null
+          details?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      glossary: {
+        Row: {
+          id: string
+          slug: string
+          term: Json
+          definition: Json
+          category: string | null
+          related_terms: string[]
+          status: string
+          vertical: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          term: Json
+          definition: Json
+          category?: string | null
+          related_terms?: string[]
+          status?: string
+          vertical: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          term?: Json
+          definition?: Json
+          category?: string | null
+          related_terms?: string[]
+          status?: string
+          vertical?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      error_events: {
+        Row: {
+          id: string
+          user_id: string | null
+          endpoint: string | null
+          status_code: number | null
+          error_message: string | null
+          stack_trace: string | null
+          vertical: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          endpoint?: string | null
+          status_code?: number | null
+          error_message?: string | null
+          stack_trace?: string | null
+          vertical?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          endpoint?: string | null
+          status_code?: number | null
+          error_message?: string | null
+          stack_trace?: string | null
+          vertical?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      operation_timeline: {
+        Row: {
+          id: string
+          vehicle_id: string
+          dealer_id: string
+          buyer_id: string | null
+          stage: string
+          notes: string | null
+          metadata: Json
+          created_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          vehicle_id: string
+          dealer_id: string
+          buyer_id?: string | null
+          stage: string
+          notes?: string | null
+          metadata?: Json
+          created_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          vehicle_id?: string
+          dealer_id?: string
+          buyer_id?: string | null
+          stage?: string
+          notes?: string | null
+          metadata?: Json
+          created_by?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       founding_expiry_check: {
@@ -5223,8 +5667,86 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       refresh_all_materialized_views: { Args: never; Returns: undefined }
+      has_permission: {
+        Args: { p_user_id: string; p_resource: string; p_action: string }
+        Returns: boolean
+      }
+      search_vehicles: {
+        Args: {
+          search_query: string
+          filter_category_id?: string | null
+          filter_price_min?: number | null
+          filter_price_max?: number | null
+          filter_year_min?: number | null
+          filter_year_max?: number | null
+          filter_province?: string | null
+          filter_country?: string | null
+          cursor_id?: string | null
+          cursor_rank?: number | null
+          page_limit?: number
+        }
+        Returns: {
+          id: string
+          brand: string
+          model: string
+          year: number | null
+          price: number | null
+          slug: string
+          location: string | null
+          location_province: string | null
+          location_country: string | null
+          category_id: string | null
+          dealer_id: string | null
+          created_at: string
+          rank: number
+          total_estimate: number
+        }[]
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { '': string }; Returns: string[] }
+      get_dealer_dashboard_stats: {
+        Args: {
+          p_dealer_id: string
+          p_vertical: string
+          p_month_start: string
+        }
+        Returns: {
+          active_listings: number
+          total_leads: number
+          total_views: number
+          leads_this_month: number
+          response_rate: number
+          contacts_this_month: number
+          ficha_views_this_month: number
+          conversion_rate: number
+        }[]
+      }
+      get_dealer_top_vehicles: {
+        Args: {
+          p_dealer_id: string
+          p_vertical: string
+          p_limit: number
+        }
+        Returns: {
+          id: string
+          brand: string
+          model: string
+          year: number | null
+          slug: string
+          leads_count: number
+          favorites_count: number
+          views_count: number
+        }[]
+      }
+      get_dealer_rating_summary: {
+        Args: {
+          p_dealer_id: string
+        }
+        Returns: {
+          average_rating: number
+          review_count: number
+        }[]
+      }
     }
     Enums: {
       balance_reason:
@@ -5257,6 +5779,7 @@ export type Database = {
         | 'maintenance'
         | 'paused'
         | 'expired'
+        | 'reserved'
     }
     CompositeTypes: {
       [_ in never]: never
@@ -5413,6 +5936,7 @@ export const Constants = {
         'maintenance',
         'paused',
         'expired',
+        'reserved',
       ],
     },
   },

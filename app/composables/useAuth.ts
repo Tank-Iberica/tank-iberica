@@ -158,10 +158,11 @@ export function useAuth() {
 
     // Server-side lockout check
     try {
-      const lockoutCheck = await $fetch('/api/auth/check-lockout', {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const lockoutCheck = (await ($fetch as any)('/api/auth/check-lockout', {
         method: 'POST',
         body: { email, action: 'check', turnstileToken },
-      }) as { locked: boolean; retryAfterSeconds?: number; attemptsRemaining?: number }
+      })) as { locked: boolean; retryAfterSeconds?: number; attemptsRemaining?: number }
 
       if (lockoutCheck.locked) {
         accountLocked.value = true
@@ -176,7 +177,10 @@ export function useAuth() {
       showCaptcha.value = false
     } catch (err: unknown) {
       // If it's our lockout error, re-throw
-      if (err instanceof Error && err.message.includes(t('auth.accountLocked', { minutes: 0 }).split('0')[0])) {
+      if (
+        err instanceof Error &&
+        err.message.includes(t('auth.accountLocked', { minutes: 0 }).split('0')[0] ?? '')
+      ) {
         throw err
       }
       // Server check failed — continue with login (graceful degradation)

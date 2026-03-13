@@ -9,6 +9,8 @@
  * P1 § Error Rate Monitoring
  */
 
+import { serverSupabaseServiceRole } from '#supabase/server'
+
 export default defineEventHandler(async (event) => {
   // Auth: Check CRON_SECRET
   const cronSecret = useRuntimeConfig().cronSecret
@@ -20,7 +22,7 @@ export default defineEventHandler(async (event) => {
   // For now: read from Sentry JS client error events (via Supabase)
   // In production: integrate with Sentry API or custom error logging
 
-  const db = useSupabaseServer(event)
+  const db = serverSupabaseServiceRole(event)
   const hoursBack = 24
 
   // Calculate time window
@@ -37,7 +39,7 @@ export default defineEventHandler(async (event) => {
 
   if (queryError && queryError.code !== 'PGRST116') {
     // PGRST116 = table doesn't exist
-    logger.error('Error querying error_events:', queryError)
+    logger.error('Error querying error_events:', queryError as unknown as Record<string, unknown>)
   }
 
   // Alternative: count from API response logs (if error_events table not ready)

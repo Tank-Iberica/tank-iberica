@@ -89,7 +89,7 @@ export function useConversation() {
         seller: UserRow | null
       }
 
-      const mapped = ((data ?? []) as ConversationRow[]).map((row) => {
+      const mapped = ((data ?? []) as unknown as ConversationRow[]).map((row) => {
         const firstImage =
           row.vehicles?.images && row.vehicles.images.length > 0
             ? row.vehicles.images[0]
@@ -313,7 +313,7 @@ export function useConversation() {
       // Mark optimistic message as failed
       const idx = messages.value.findIndex((m) => m.id === tempId)
       if (idx !== -1) {
-        messages.value[idx] = { ...messages.value[idx], _status: 'failed' }
+        messages.value[idx] = { ...messages.value[idx]!, _status: 'failed' }
       }
     } finally {
       sending.value = false

@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
 
   let sent = 0
 
-  for (const lead of leads as LeadWithVehicle[]) {
+  for (const lead of leads as unknown as LeadWithVehicle[]) {
     if (!lead.user_email) continue
 
     try {
@@ -77,10 +77,7 @@ export default defineEventHandler(async (event) => {
       })
 
       // Mark recovery email as sent
-      await supabase
-        .from('leads')
-        .update({ recovery_sent_at: now.toISOString() })
-        .eq('id', lead.id)
+      await supabase.from('leads').update({ recovery_sent_at: now.toISOString() }).eq('id', lead.id)
 
       sent++
     } catch (e) {

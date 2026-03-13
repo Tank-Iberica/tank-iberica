@@ -65,7 +65,7 @@ export function useTransactionHistory(): UseTransactionHistory {
       }
 
       transactions.value = (data ?? []).map((v) => {
-        const raw = v as Record<string, unknown>
+        const raw = v as unknown as Record<string, unknown>
         const dealer = raw.dealers as { name: string } | null
         const images = (raw.images as string[] | null) ?? []
         const locale = useI18n().locale.value

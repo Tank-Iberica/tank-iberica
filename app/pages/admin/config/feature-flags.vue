@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAdminFeatureFlags } from '~/composables/admin/useAdminFeatureFlags'
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
@@ -179,7 +180,11 @@ onMounted(() => {
               {{ t('admin.featureFlags.noOverrides') }}
             </div>
 
-            <div v-for="override in group.overrides" :key="override.vertical" class="override-row">
+            <div
+              v-for="override in group.overrides"
+              :key="override.vertical ?? ''"
+              class="override-row"
+            >
               <code class="vertical-tag">{{ override.vertical }}</code>
               <label class="toggle-switch toggle-sm">
                 <input

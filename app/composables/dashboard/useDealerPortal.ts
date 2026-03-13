@@ -179,7 +179,9 @@ export function useDealerPortal() {
 
     const { data, error: fetchError } = await supabase
       .from('dealers')
-      .select('id, slug, company_name, logo_url, favicon_url, cover_image_url, logo_text_config, theme, bio, phone, email, address, whatsapp, contact_config, social_links, certifications, catalog_sort')
+      .select(
+        'id, slug, company_name, logo_url, favicon_url, cover_image_url, logo_text_config, theme, bio, phone, email, address, whatsapp, contact_config, social_links, certifications, catalog_sort',
+      )
       .eq('user_id', user.value.id)
       .single()
 
@@ -190,8 +192,8 @@ export function useDealerPortal() {
       return
     }
 
-    dealerId.value = (data as Record<string, unknown>).id as string
-    initForm(data as Record<string, unknown>)
+    dealerId.value = (data as unknown as Record<string, unknown>).id as string
+    initForm(data as unknown as Record<string, unknown>)
   }
 
   // Certifications
