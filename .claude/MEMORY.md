@@ -236,6 +236,27 @@ vi.stubGlobal('onMounted', vi.fn())
 vi.stubGlobal('onUnmounted', vi.fn())
 ```
 
+## Instant Alerts System (#212, 13-mar-2026)
+
+- **Endpoint:** `POST /api/alerts/instant` — auth: internal secret OR authenticated user
+- **Matcher:** `server/utils/alertMatcher.ts` — pure function `matchesVehicle(vehicle, filters)`, AND logic, case-insensitive partial match (ILIKE equivalent), null-safe
+- **Trigger helper:** `server/utils/triggerInstantAlerts.ts` — fire-and-forget `$fetch`
+- **Migration 00165:** `channels` JSONB column on `search_alerts` (default `["email"]`) + index on `(active, frequency) WHERE active = true`
+- **Integrated triggers:** publish-scheduled cron, dashboard nuevo vehiculo, WhatsApp publish
+- **Pro tier check:** `normalizePlan()` → only premium/founding get instant alerts
+- **Cooldown:** 60s per alert (prevents duplicate sends)
+- **i18n prefix:** `auto.instantAlert.*`
+- **Tests:** 29 (alertMatcher) + 10 (endpoint) = 39, 0 failures
+- **Pending:** `supabase db push` for migration 00165
+
+## Parallel Agent Pattern (Agente F)
+
+- **Branch:** `agent-f/bloque-X` (actualmente en `agent-c/bloque-6b` — branch compartido)
+- **i18n prefix:** `i18n.`, `auto.`
+- **Migrations:** 00165–00174 (overflow 00225–00234)
+- **Linter/hook issue:** Pre-commit hook (lint-staged + ESLint + Prettier) puede revertir cambios en archivos ya modificados por otros agentes. Verificar siempre que los cambios persisten después del commit.
+- **git index.lock:** En Windows con múltiples agentes, `rm .git/index.lock` puede ser necesario entre commits rápidos
+
 ## Sub-archivos (leer bajo demanda)
 
 - `.claude/memory/patterns.md` — patrones de código confirmados (Vue, composables, ESLint)
