@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
 
   if (error) {
     logger.error('[interest-recovery] fetch error', { error: error.message })
-    return { sent: 0, error: error.message }
+    return { sent: 0, error: 'Database error' }
   }
 
   if (!leads || leads.length === 0) {
@@ -77,10 +77,7 @@ export default defineEventHandler(async (event) => {
       })
 
       // Mark recovery email as sent
-      await supabase
-        .from('leads')
-        .update({ recovery_sent_at: now.toISOString() })
-        .eq('id', lead.id)
+      await supabase.from('leads').update({ recovery_sent_at: now.toISOString() }).eq('id', lead.id)
 
       sent++
     } catch (e) {

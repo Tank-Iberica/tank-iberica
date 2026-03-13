@@ -446,7 +446,7 @@ export default defineEventHandler(async (event) => {
 
   if (fetchError) {
     logger.error('[recalculate-landings] Fetch error:', { error: String(fetchError.message) })
-    return { ok: false, error: fetchError.message }
+    return { ok: false, error: 'Database error' }
   }
 
   const vehicles = (rawVehicles || []) as VehicleRow[]

@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
 
   if (error) {
     setResponseStatus(event, 500)
-    return `Error fetching vehicles: ${error.message}`
+    return 'Internal server error'
   }
 
   const siteUrl = getSiteUrl()

@@ -561,6 +561,6 @@ describe('POST /api/cron/recalculate-landings', () => {
 
     const result = await handler({} as any)
     expect(result.ok).toBe(false)
-    expect(result.error).toBe('DB error')
+    expect(result.error).toBe('Database error')
   })
 })

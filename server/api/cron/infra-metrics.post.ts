@@ -95,10 +95,10 @@ async function collectSupabaseRpc(
         }
       }
     }
-    if (error) return { metric: null, error: `supabase.${metricName}: ${error.message}` }
+    if (error) return { metric: null, error: `${metricName}: collection failed` }
     return { metric: null, error: null }
   } catch {
-    return { metric: null, error: `supabase.${metricName}: exception during collection` }
+    return { metric: null, error: `${metricName}: exception during collection` }
   }
 }
 
