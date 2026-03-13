@@ -308,7 +308,7 @@
       <h2 class="section-title">{{ t('dealer.followUs') }}</h2>
       <div class="social-links">
         <a
-          v-for="(url, platform) in dealer.social_links"
+          v-for="(url, platform) in activeSocialLinks"
           :key="platform"
           :href="url"
           target="_blank"
@@ -544,11 +544,13 @@ const workingHours = computed(() => {
   return wh[locale.value] || wh['es'] || ''
 })
 
-// Social links presence check
-const hasSocialLinks = computed(() => {
+// Social links presence check — only count non-empty URL entries
+const activeSocialLinks = computed((): Record<string, string> => {
   const links = props.dealer.social_links
-  return links && Object.keys(links).length > 0
+  if (!links) return {}
+  return Object.fromEntries(Object.entries(links).filter(([, url]) => !!url))
 })
+const hasSocialLinks = computed(() => Object.keys(activeSocialLinks.value).length > 0)
 
 // Contact form state
 const supabase = useSupabaseClient()
@@ -614,15 +616,12 @@ useHead({
 })
 
 // #175 (S15) — AggregateRating schema from dealer reviews
-const { data: ratingSummary } = useLazyAsyncData(
-  `dealer-rating-${props.dealer.id}`,
-  async () => {
-    const { data } = await supabase.rpc('get_dealer_rating_summary', {
-      p_dealer_id: props.dealer.id,
-    })
-    return (data as Array<{ average_rating: number; review_count: number }>)?.[0] ?? null
-  },
-)
+const { data: ratingSummary } = useLazyAsyncData(`dealer-rating-${props.dealer.id}`, async () => {
+  const { data } = await supabase.rpc('get_dealer_rating_summary', {
+    p_dealer_id: props.dealer.id,
+  })
+  return (data as Array<{ average_rating: number; review_count: number }>)?.[0] ?? null
+})
 
 watchEffect(() => {
   const summary = ratingSummary.value
