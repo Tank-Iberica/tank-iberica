@@ -84,6 +84,8 @@ interface Landing {
   slug: string
   vertical: string
   vehicle_count: number
+  is_active: boolean
+  parent_slug: string | null
   meta_title_es: string | null
   meta_title_en: string | null
   meta_description_es: string | null
@@ -126,19 +128,28 @@ interface DealerProfile {
 // 2. dealers WHERE slug = input AND status = 'active' → dealer portal
 // 3. Nothing → 404
 async function resolveSlug(): Promise<
-  { type: 'landing'; data: Landing } | { type: 'dealer'; data: DealerProfile } | null
+  | { type: 'landing'; data: Landing }
+  | { type: 'dealer'; data: DealerProfile }
+  | { type: 'redirect'; parentSlug: string }
+  | null
 > {
   if (isReserved.value || !fullSlug.value) return null
 
-  // 1. Try active_landings
+  // 1. Try active_landings (any is_active — inactive ones → 302 redirect to parent)
   const { data: landingData } = await supabase
     .from('active_landings')
-    .select('id, slug, vertical, vehicle_count, meta_title_es, meta_title_en, meta_description_es, meta_description_en, intro_text_es, intro_text_en, breadcrumb, schema_data')
+    .select('id, slug, vertical, vehicle_count, is_active, parent_slug, meta_title_es, meta_title_en, meta_description_es, meta_description_en, intro_text_es, intro_text_en, breadcrumb, schema_data')
     .eq('slug', fullSlug.value)
-    .eq('is_active', true)
     .single()
 
-  if (landingData) return { type: 'landing', data: landingData as Landing }
+  if (landingData) {
+    const landing = landingData as Landing
+    // #182 (S22) — inactive landing → 302 to parent or root
+    if (!landing.is_active) {
+      return { type: 'redirect', parentSlug: landing.parent_slug || '' }
+    }
+    return { type: 'landing', data: landing }
+  }
 
   // 2. Try dealers (only for single-segment slugs)
   if (slugParts.value.length === 1) {
@@ -168,6 +179,12 @@ const landing = computed(() =>
 const dealer = computed(() =>
   resolved.value?.type === 'dealer' ? (resolved.value.data as DealerProfile) : null,
 )
+
+// #182 (S22) — inactive landing → 302 redirect to parent slug or home
+if (resolved.value?.type === 'redirect') {
+  const parentSlug = (resolved.value as { type: 'redirect'; parentSlug: string }).parentSlug
+  await navigateTo(parentSlug ? `/${parentSlug}` : '/', { redirectCode: 302 })
+}
 
 // If reserved or not found after loading, show 404
 if (!loading.value && !resolved.value && !isReserved.value) {
