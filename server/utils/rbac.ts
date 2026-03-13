@@ -6,8 +6,9 @@
  *   const user = await requirePermission(event, 'vehicles', 'update')
  */
 
-import { createError, type H3Event } from 'h3'
+import { createError, getRequestIP, type H3Event } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import { recordSecurityEvent } from './securityEvents'
 
 export type Role = 'super_admin' | 'admin' | 'editor' | 'viewer'
 export type Action = 'create' | 'read' | 'update' | 'delete' | 'manage'
@@ -57,6 +58,13 @@ export async function requireRole(event: H3Event, requiredRole: Role): Promise<U
   const maxLevel = Math.max(0, ...user.roles.map((r) => ROLE_HIERARCHY[r] ?? 0))
 
   if (maxLevel < requiredLevel) {
+    recordSecurityEvent({
+      type: 'rbac_failure',
+      ip: getRequestIP(event, { xForwardedFor: true }) ?? 'unknown',
+      path: event.path,
+      detail: `requires role: ${requiredRole}`,
+      timestamp: Date.now(),
+    })
     throw createError({
       statusCode: 403,
       statusMessage: 'Forbidden',
@@ -89,6 +97,13 @@ export async function requirePermission(
   })
 
   if (!data) {
+    recordSecurityEvent({
+      type: 'rbac_failure',
+      ip: getRequestIP(event, { xForwardedFor: true }) ?? 'unknown',
+      path: event.path,
+      detail: `no ${action} permission on ${resource}`,
+      timestamp: Date.now(),
+    })
     throw createError({
       statusCode: 403,
       statusMessage: 'Forbidden',

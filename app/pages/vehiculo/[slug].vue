@@ -99,6 +99,7 @@
             :dealer-id="vehicleDetail?.dealer_id || null"
             :dealer-slug="vehicleDetail?.dealer_slug || null"
             :is-terceros="vehicle.category === 'terceros'"
+            :dealer-tier="dealerTrustTier"
           />
 
           <VehicleDetailSpecs
@@ -185,6 +186,7 @@ const {
   description,
   sellerInfo,
   sellerUserId,
+  dealerTrustTier,
   showReport,
   hasSpecs,
   vehicleLocation,

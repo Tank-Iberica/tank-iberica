@@ -10,8 +10,9 @@
         class="trust-badge-wrap"
       />
       <div class="seller-details">
-        <span v-if="sellerInfo.company_name" class="seller-item">
+        <span v-if="sellerInfo.company_name" class="seller-item seller-name-row">
           <strong>{{ sellerInfo.company_name }}</strong>
+          <SharedDealerTrustBadge v-if="dealerTier" :tier="dealerTier" />
         </span>
         <span v-if="sellerInfo.location" class="seller-item">{{ sellerInfo.location }}</span>
         <span v-if="sellerInfo.cif" class="seller-item"
@@ -51,12 +52,14 @@
 
 <script setup lang="ts">
 import type { SellerInfo } from '~/composables/useVehicleDetail'
+import type { TrustBadgeTier } from '~/composables/useDealerTrustScore'
 
 const props = defineProps<{
   sellerInfo: SellerInfo | null
   dealerId: string | null
   dealerSlug: string | null
   isTerceros: boolean
+  dealerTier?: TrustBadgeTier
 }>()
 
 // Lazily load dealer health score to show trust badge
@@ -97,6 +100,13 @@ onMounted(async () => {
 .seller-item {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
+}
+
+.seller-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .vehicle-disclaimer {

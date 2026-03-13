@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '../../utils/logger'
 
 /**
  * Embeddable widget route for dealer vehicle listings.
@@ -152,8 +153,9 @@ export default defineEventHandler(async (event) => {
   const { data: vehiclesData, error: vehiclesError } = await vehicleQuery
 
   if (vehiclesError) {
+    logger.error('[embed] Error fetching vehicles:', vehiclesError)
     setResponseStatus(event, 500)
-    return `Error fetching vehicles: ${vehiclesError.message}`
+    return '<p>Error loading listings</p>'
   }
 
   const vehicles = (vehiclesData || []) as VehicleRow[]

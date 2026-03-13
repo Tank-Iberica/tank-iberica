@@ -1,3 +1,9 @@
+import {
+  numberToWords,
+  formatDateSpanish,
+  printHTML,
+} from '~/utils/contractGenerator'
+
 export type ContractType = 'arrendamiento' | 'venta'
 
 function detectVehicleTypeFromLabel(label: string): string {
@@ -33,114 +39,6 @@ export interface VehicleOption {
   id: string
   label: string
   source: 'vehicles' | 'historico'
-}
-
-const NUM_UNITS = [
-  '',
-  'UN',
-  'DOS',
-  'TRES',
-  'CUATRO',
-  'CINCO',
-  'SEIS',
-  'SIETE',
-  'OCHO',
-  'NUEVE',
-  'DIEZ',
-  'ONCE',
-  'DOCE',
-  'TRECE',
-  'CATORCE',
-  'QUINCE',
-  'DIECISEIS',
-  'DIECISIETE',
-  'DIECIOCHO',
-  'DIECINUEVE',
-]
-const NUM_TENS = [
-  '',
-  '',
-  'VEINTE',
-  'TREINTA',
-  'CUARENTA',
-  'CINCUENTA',
-  'SESENTA',
-  'SETENTA',
-  'OCHENTA',
-  'NOVENTA',
-]
-const NUM_HUNDREDS = [
-  '',
-  'CIEN',
-  'DOSCIENTOS',
-  'TRESCIENTOS',
-  'CUATROCIENTOS',
-  'QUINIENTOS',
-  'SEISCIENTOS',
-  'SETECIENTOS',
-  'OCHOCIENTOS',
-  'NOVECIENTOS',
-]
-
-function numBelow100(n: number): string {
-  if (n < 20) return NUM_UNITS[n] ?? ''
-  const t = Math.floor(n / 10),
-    u = n % 10
-  if (t === 2 && u > 0) return `VEINTI${NUM_UNITS[u] ?? ''}`
-  return u > 0 ? `${NUM_TENS[t] ?? ''} Y ${NUM_UNITS[u] ?? ''}` : (NUM_TENS[t] ?? '')
-}
-
-function numBelow1000(n: number): string {
-  if (n < 100) return numBelow100(n)
-  if (n === 100) return 'CIEN'
-  const h = Math.floor(n / 100),
-    rest = n % 100
-  return rest > 0 ? `${NUM_HUNDREDS[h] ?? ''} ${numBelow100(rest)}` : (NUM_HUNDREDS[h] ?? '')
-}
-
-function numberToWords(n: number): string {
-  if (n === 0) return 'CERO'
-  if (n < 1000) return numBelow1000(n)
-  if (n < 10000) {
-    const th = Math.floor(n / 1000),
-      rest = n % 1000
-    const thWord = th === 1 ? 'MIL' : `${NUM_UNITS[th]} MIL`
-    return rest > 0 ? `${thWord} ${numBelow1000(rest)}` : thWord
-  }
-  return n.toLocaleString('es-ES')
-}
-function printHTML(html: string) {
-  const existingFrame = document.getElementById('print-frame')
-  if (existingFrame) {
-    existingFrame.remove()
-  }
-
-  const iframe = document.createElement('iframe')
-  iframe.id = 'print-frame'
-  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:none;'
-  document.body.appendChild(iframe)
-
-  const doc = iframe.contentDocument || iframe.contentWindow?.document
-  if (!doc) return
-
-  doc.open()
-  doc.write(html) // NOSONAR typescript:S1874
-  doc.close()
-
-  setTimeout(() => {
-    try {
-      iframe.contentWindow?.focus()
-      iframe.contentWindow?.print()
-    } catch {
-      const win = globalThis.open('', '_blank')
-      if (win) {
-        win.document.write(html) // NOSONAR typescript:S1874
-        win.document.close()
-        win.focus()
-        win.print()
-      }
-    }
-  }, 100)
 }
 
 export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
@@ -202,25 +100,6 @@ export function useContractGenerator(getVehicleOptions: () => VehicleOption[]) {
       if (plateMatch) contractVehiclePlate.value = plateMatch[1] ?? ''
       contractVehicleType.value = detectVehicleTypeFromLabel(vehicle.label)
     }
-  }
-
-  function formatDateSpanish(dateStr: string): string {
-    const months = [
-      'Enero',
-      'Febrero',
-      'Marzo',
-      'Abril',
-      'Mayo',
-      'Junio',
-      'Julio',
-      'Agosto',
-      'Septiembre',
-      'Octubre',
-      'Noviembre',
-      'Diciembre',
-    ]
-    const d = new Date(dateStr)
-    return `${d.getDate()} de ${months[d.getMonth()]} de ${d.getFullYear()}`
   }
 
   function generateRentalContract(): string {

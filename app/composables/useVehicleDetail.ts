@@ -11,6 +11,7 @@ import { useToast } from '~/composables/useToast'
 import { useVehicleComparator } from '~/composables/useVehicleComparator'
 import { formatPrice } from '~/composables/shared/useListingUtils'
 import type { Vehicle } from '~/composables/useVehicles'
+import type { TrustBadgeTier } from '~/composables/useDealerTrustScore'
 
 function resolveFilterLabel(key: string): string {
   return key.charAt(0).toUpperCase() + key.slice(1)
@@ -187,18 +188,23 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
 
   const sellerInfo = ref<SellerInfo | null>(null)
   const sellerUserId = ref<string | null>(null)
+  const dealerTrustTier = ref<TrustBadgeTier>(null)
 
   async function loadSellerInfo() {
     const detail = vehicleDetail.value
     if (!detail?.dealer_id) return
     const { data } = await supabase
       .from('dealers')
-      .select('company_name, location, cif, user_id')
+      .select('company_name, location, cif, user_id, trust_score')
       .eq('id', detail.dealer_id)
       .single()
     if (data) {
       sellerInfo.value = data as unknown as SellerInfo
       sellerUserId.value = (data as unknown as { user_id: string | null }).user_id ?? null
+      const score = (data as unknown as { trust_score: number | null }).trust_score ?? 0
+      if (score >= 80) dealerTrustTier.value = 'top'
+      else if (score >= 60) dealerTrustTier.value = 'verified'
+      else dealerTrustTier.value = null
     }
   }
 
@@ -278,6 +284,7 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
     description,
     sellerInfo,
     sellerUserId,
+    dealerTrustTier,
     showReport,
 
     // Computed

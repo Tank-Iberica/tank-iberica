@@ -7,6 +7,7 @@
  */
 import { defineEventHandler, getHeader, setResponseStatus } from 'h3'
 import { logger } from '../utils/logger'
+import { recordSecurityEvent } from '../utils/securityEvents'
 
 /** Known malicious scanner signatures */
 const SCANNER_UA_PATTERNS: RegExp[] = [
@@ -51,6 +52,13 @@ export default defineEventHandler((event) => {
       url,
       ip,
       method: event.method,
+    })
+    recordSecurityEvent({
+      type: 'bot_detected',
+      ip,
+      path: url,
+      detail: ua.substring(0, 100),
+      timestamp: Date.now(),
     })
     setResponseStatus(event, 403)
     return { error: 'Forbidden' }

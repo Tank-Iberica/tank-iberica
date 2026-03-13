@@ -915,7 +915,7 @@ export type Database = {
           reserve_price_cents: number | null
           start_price_cents: number
           starts_at: string
-          status: string | null
+          status: Database['public']['Enums']['auction_status'] | null
           title: string | null
           vehicle_id: string
           vertical: string
@@ -938,7 +938,7 @@ export type Database = {
           reserve_price_cents?: number | null
           start_price_cents: number
           starts_at: string
-          status?: string | null
+          status?: Database['public']['Enums']['auction_status'] | null
           title?: string | null
           vehicle_id: string
           vertical?: string
@@ -961,7 +961,7 @@ export type Database = {
           reserve_price_cents?: number | null
           start_price_cents?: number
           starts_at?: string
-          status?: string | null
+          status?: Database['public']['Enums']['auction_status'] | null
           title?: string | null
           vehicle_id?: string
           vertical?: string
@@ -1189,7 +1189,7 @@ export type Database = {
           created_at: string | null
           id: string
           parent_id: string | null
-          status: string
+          status: Database['public']['Enums']['comment_status']
           updated_at: string | null
           user_id: string | null
           vertical: string
@@ -1202,7 +1202,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           parent_id?: string | null
-          status?: string
+          status?: Database['public']['Enums']['comment_status']
           updated_at?: string | null
           user_id?: string | null
           vertical?: string
@@ -1215,7 +1215,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           parent_id?: string | null
-          status?: string
+          status?: Database['public']['Enums']['comment_status']
           updated_at?: string | null
           user_id?: string | null
           vertical?: string
@@ -2939,7 +2939,7 @@ export type Database = {
           message: string | null
           sale_price_cents: number | null
           source: string | null
-          status: string | null
+          status: Database['public']['Enums']['lead_status'] | null
           updated_at: string | null
           vehicle_id: string | null
         }
@@ -2960,7 +2960,7 @@ export type Database = {
           message?: string | null
           sale_price_cents?: number | null
           source?: string | null
-          status?: string | null
+          status?: Database['public']['Enums']['lead_status'] | null
           updated_at?: string | null
           vehicle_id?: string | null
         }
@@ -2981,7 +2981,7 @@ export type Database = {
           message?: string | null
           sale_price_cents?: number | null
           source?: string | null
-          status?: string | null
+          status?: Database['public']['Enums']['lead_status'] | null
           updated_at?: string | null
           vehicle_id?: string | null
         }
@@ -3356,7 +3356,7 @@ export type Database = {
           description: string | null
           id: string
           metadata: Json | null
-          status: string | null
+          status: Database['public']['Enums']['payment_status'] | null
           stripe_checkout_session_id: string | null
           stripe_payment_intent_id: string | null
           type: string
@@ -3371,7 +3371,7 @@ export type Database = {
           description?: string | null
           id?: string
           metadata?: Json | null
-          status?: string | null
+          status?: Database['public']['Enums']['payment_status'] | null
           stripe_checkout_session_id?: string | null
           stripe_payment_intent_id?: string | null
           type: string
@@ -3386,7 +3386,7 @@ export type Database = {
           description?: string | null
           id?: string
           metadata?: Json | null
-          status?: string | null
+          status?: Database['public']['Enums']['payment_status'] | null
           stripe_checkout_session_id?: string | null
           stripe_payment_intent_id?: string | null
           type?: string
@@ -3716,7 +3716,7 @@ export type Database = {
           seller_id: string
           seller_responded_at: string | null
           seller_response: string | null
-          status: string | null
+          status: Database['public']['Enums']['reservation_status'] | null
           stripe_payment_intent_id: string | null
           subscription_freebie: boolean | null
           updated_at: string | null
@@ -3732,7 +3732,7 @@ export type Database = {
           seller_id: string
           seller_responded_at?: string | null
           seller_response?: string | null
-          status?: string | null
+          status?: Database['public']['Enums']['reservation_status'] | null
           stripe_payment_intent_id?: string | null
           subscription_freebie?: boolean | null
           updated_at?: string | null
@@ -3748,7 +3748,7 @@ export type Database = {
           seller_id?: string
           seller_responded_at?: string | null
           seller_response?: string | null
-          status?: string | null
+          status?: Database['public']['Enums']['reservation_status'] | null
           stripe_payment_intent_id?: string | null
           subscription_freebie?: boolean | null
           updated_at?: string | null
@@ -3983,7 +3983,7 @@ export type Database = {
           posted_at: string | null
           rejection_reason: string | null
           scheduled_at: string | null
-          status: string | null
+          status: Database['public']['Enums']['social_post_status'] | null
           vehicle_id: string | null
           vertical: string | null
         }
@@ -4002,7 +4002,7 @@ export type Database = {
           posted_at?: string | null
           rejection_reason?: string | null
           scheduled_at?: string | null
-          status?: string | null
+          status?: Database['public']['Enums']['social_post_status'] | null
           vehicle_id?: string | null
           vertical?: string | null
         }
@@ -4021,7 +4021,7 @@ export type Database = {
           posted_at?: string | null
           rejection_reason?: string | null
           scheduled_at?: string | null
-          status?: string | null
+          status?: Database['public']['Enums']['social_post_status'] | null
           vehicle_id?: string | null
           vertical?: string | null
         }
@@ -4150,7 +4150,7 @@ export type Database = {
           plan: string
           price_cents: number | null
           started_at: string | null
-          status: string | null
+          status: Database['public']['Enums']['subscription_status'] | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           updated_at: string | null
@@ -4167,7 +4167,7 @@ export type Database = {
           plan?: string
           price_cents?: number | null
           started_at?: string | null
-          status?: string | null
+          status?: Database['public']['Enums']['subscription_status'] | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string | null
@@ -4184,7 +4184,7 @@ export type Database = {
           plan?: string
           price_cents?: number | null
           started_at?: string | null
-          status?: string | null
+          status?: Database['public']['Enums']['subscription_status'] | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string | null
@@ -4796,7 +4796,7 @@ export type Database = {
           notes: string | null
           price_cents: number | null
           rejection_reason: string | null
-          status: string | null
+          status: Database['public']['Enums']['verification_status'] | null
           submitted_by: string | null
           vehicle_id: string
           verified_by: string | null
@@ -4812,7 +4812,7 @@ export type Database = {
           notes?: string | null
           price_cents?: number | null
           rejection_reason?: string | null
-          status?: string | null
+          status?: Database['public']['Enums']['verification_status'] | null
           submitted_by?: string | null
           vehicle_id: string
           verified_by?: string | null
@@ -4828,7 +4828,7 @@ export type Database = {
           notes?: string | null
           price_cents?: number | null
           rejection_reason?: string | null
-          status?: string | null
+          status?: Database['public']['Enums']['verification_status'] | null
           submitted_by?: string | null
           vehicle_id?: string
           verified_by?: string | null
@@ -5257,6 +5257,22 @@ export type Database = {
         | 'maintenance'
         | 'paused'
         | 'expired'
+      // ── Added by migration 00137 ──────────────────────────────────────────
+      auction_status: 'draft' | 'scheduled' | 'active' | 'ended' | 'cancelled'
+      comment_status: 'pending' | 'approved' | 'spam' | 'rejected'
+      lead_status: 'new' | 'viewed' | 'contacted' | 'negotiating' | 'won' | 'lost'
+      payment_status: 'pending' | 'succeeded' | 'failed' | 'refunded' | 'cancelled'
+      reservation_status:
+        | 'pending'
+        | 'active'
+        | 'seller_responded'
+        | 'completed'
+        | 'expired'
+        | 'refunded'
+        | 'forfeited'
+      social_post_status: 'draft' | 'scheduled' | 'posted' | 'failed'
+      subscription_status: 'active' | 'canceled' | 'past_due' | 'trialing'
+      verification_status: 'pending' | 'verified' | 'rejected'
     }
     CompositeTypes: {
       [_ in never]: never
@@ -5414,6 +5430,18 @@ export const Constants = {
         'paused',
         'expired',
       ],
+      // Added by migration 00137
+      auction_status: ['draft', 'scheduled', 'active', 'ended', 'cancelled'],
+      comment_status: ['pending', 'approved', 'spam', 'rejected'],
+      lead_status: ['new', 'viewed', 'contacted', 'negotiating', 'won', 'lost'],
+      payment_status: ['pending', 'succeeded', 'failed', 'refunded', 'cancelled'],
+      reservation_status: [
+        'pending', 'active', 'seller_responded', 'completed',
+        'expired', 'refunded', 'forfeited',
+      ],
+      social_post_status: ['draft', 'scheduled', 'posted', 'failed'],
+      subscription_status: ['active', 'canceled', 'past_due', 'trialing'],
+      verification_status: ['pending', 'verified', 'rejected'],
     },
   },
 } as const

@@ -19,8 +19,8 @@ Criterio: Resolver antes de cualquier feature nueva. Seguridad y estabilidad.
 | #   | Item                                              | Esfuerzo | Tipo           | Depende de | Hecho cuando...                                                                |
 | --- | ------------------------------------------------- | -------- | -------------- | ---------- | ------------------------------------------------------------------------------ |
 | 1   | Rate limiting en produccion — reglas CF WAF       | S        | Config/Founder | —          | CF WAF dashboard tiene reglas activas, test con curl devuelve 429 tras umbral  |
-| 2   | `/api/verify-document` sin validacion ownership   | S        | Code           | —          | Endpoint devuelve 403 si dealer_id != session.user.dealer_id                   |
-| 3   | 5 server routes exponen nombres servicio en error | S        | Code           | —          | Todos los catch usan `safeError()`, ningun nombre de servicio en response body |
+| 2   | `/api/verify-document` sin validacion ownership   | S        | Code           | ✅ done     | checkVehicleAccess() verifica dealer_id==session.user.dealer OR role=admin; 403 si no coincide |
+| 3   | 5 server routes exponen nombres servicio en error | S        | Code           | ✅ agent-c  | merchant-feed.get.ts + embed/[dealer-slug].get.ts: error.message → logger.error + generic text; safeError ya cubre el resto en prod |
 | 4   | 10 errores TypeScript restantes                   | M        | Code           | —          | `npm run typecheck` = 0 errores                                                |
 | 5   | 2 test stubs en useVehicles.test.ts               | S        | Code           | —          | Tests implementados o marcados `it.skip()` con TODO                            |
 | 6   | exceljs no incluido en manualChunks               | S        | Code           | —          | `npm run build` muestra chunk `vendor-excel` separado                          |
@@ -104,14 +104,14 @@ Criterio: Trust Score es prerequisito de badges, alertas, y reputacion publica.
 
 | #   | Item                                                  | Esfuerzo | Tipo | Depende de | Hecho cuando...                                                                                        |
 | --- | ----------------------------------------------------- | -------- | ---- | ---------- | ------------------------------------------------------------------------------------------------------ |
-| 30  | Trust Score 0-100 calculo automatico                  | L        | Code | —          | Funcion calcula score segun 9 criterios, actualiza dealer profile, recalculo diario via cron           |
-| 31  | Badges publicos (sin/<60, Verificado 60-79, Top >=80) | M        | Code | #30        | Badge visible en VehicleCard y perfil dealer, tooltip explica criterio                                 |
-| 32  | Guia "Mejora tu puntuacion" en dashboard              | S        | Code | #30        | Pagina muestra criterios cumplidos/pendientes, enlace a acciones                                       |
-| 33  | Alertas contextuales al comprador                     | M        | Code | #30        | Banner suave si: dealer sin verificar + precio bajo, cuenta <7d, pocas fotos, precio >30% bajo mercado |
-| 27  | Phone verification SMS OTP                            | M        | Code | —          | Al crear primera publicacion, dealer recibe SMS con codigo, verificado queda en profile                |
+| 30  | Trust Score 0-100 calculo automatico                  | L        | Code | —          | ✅ agent-c — 9 criterios, cron diario, composable, 50 tests                                            |
+| 31  | Badges publicos (sin/<60, Verificado 60-79, Top >=80) | M        | Code | #30        | ✅ agent-c — DealerTrustBadge component, VehicleCard + DetailSeller, 9 tests                          |
+| 32  | Guia "Mejora tu puntuacion" en dashboard              | S        | Code | #30        | ✅ agent-c — /dashboard/herramientas/puntuacion, progress bar, criteria list, i18n ES+EN              |
+| 33  | Alertas contextuales al comprador                     | M        | Code | #30        | ✅ agent-c — DealerTrustAlert component, new account/low trust/few photos alerts, 10 tests             |
+| 27  | Phone verification SMS OTP                            | M        | Code | —          | ⏳ Fundadores — requiere cuenta Twilio + API key. Cuando esté configurado: al crear primera publicacion, dealer recibe SMS con codigo, verificado queda en profile |
 | 28  | Duplicate detection (hash imagenes + titulo)          | L        | Code | —          | Al publicar, sistema detecta duplicados potenciales, admin ve lista, seller recibe aviso               |
-| 29  | IP/device fingerprint (background)                    | M        | Code | —          | Fingerprint guardado en BD, admin ve flag si multiples cuentas desde mismo dispositivo                 |
-| 34  | Excepcion fleet companies rate limit                  | S        | Code | #1         | Si subscription_tier >= basic o verificado manual, rate limit sube a 500/hora                          |
+| 29  | IP/device fingerprint (background)                    | M        | Code | ✅ agent-c  | migration 00138 (user_fingerprints + duplicate_device_users view + upsert_user_fingerprint RPC); recordFingerprint.ts fire-and-forget util; /api/auth/fp endpoint; AdminFingerprintFlags.vue; 8 tests |
+| 34  | Excepcion fleet companies rate limit                  | S        | Code | #1         | ⏳ Fundadores — depende de #1 (CF WAF rules activas). Cuando #1 esté hecho: subscription_tier >= basic o verificado manual → rate limit 500/hora |
 
 **Total Bloque 4:** ~12 sesiones | **Desbloquea:** Bloque 5 (reputation)
 
@@ -236,8 +236,8 @@ Criterio: Requieren masa critica de datos y transacciones para ser utiles.
 | 83  | CSP unsafe-inline/unsafe-eval               | M        | Code   | —          | CSP nonce-based (cuando Nuxt 4 estable) + reporting endpoint         |
 | 84  | HEALTH_TOKEN no configurado                 | S        | Config | —          | Variable en .env + Cloudflare, health endpoint protegido             |
 | 85  | infra_alerts no existe en types/supabase.ts | S        | Code   | —          | `npx supabase gen types` ejecutado, tipos regenerados                |
-| 86  | CHECK constraints limitados                 | S        | Code   | —          | Migracion anade CHECK a balance, payments, auction_bids              |
-| 87  | VARCHAR statuses a ENUMs                    | M        | Code   | —          | Migracion convierte statuses frecuentes a ENUM types                 |
+| 86  | CHECK constraints limitados                 | S        | Code   | ✅ agent-c  | migration 00136: CHECK en auction_bids.amount_cents, payments.amount_cents, payments.status IN(...), balance.importe, balance.coste_asociado |
+| 87  | VARCHAR statuses a ENUMs                    | M        | Code   | ✅ agent-c  | migration 00137: 8 ENUM types (payment/lead/subscription/auction/verification/reservation/comment/social_post_status) + types/supabase.ts actualizado |
 | 88  | sizes en imagenes responsive (NuxtImg)      | M        | Code   | —          | Todas las NuxtImg tienen atributo `sizes` apropiado                  |
 | 89  | Libreria validacion forms (Zod/VeeValidate) | L        | Code   | —          | Formularios criticos usan validacion con mensajes descriptivos       |
 | 90  | ARIA live regions contenido dinamico        | M        | Code   | —          | Regiones dinamicas (catalogo, chat, notificaciones) tienen aria-live |
@@ -245,7 +245,7 @@ Criterio: Requieren masa critica de datos y transacciones para ser utiles.
 | 92  | Backup originales imagenes documentado      | S        | Config | —          | Proceso documentado en DISASTER-RECOVERY.md                          |
 | 93  | OpenAPI/Swagger spec                        | L        | Code   | —          | Spec generada automaticamente o mantenida, accesible en /api/docs    |
 | 94  | JSDoc incompleto en composables             | M        | Code   | —          | Composables publicos tienen JSDoc con @param y @returns              |
-| 95  | Snyk en CI                                  | S        | Config | —          | GitHub Action ejecuta `snyk test` en cada PR                         |
+| 95  | Snyk en CI                                  | S        | Config | ✅ agent-c  | ci.yml: job snyk (opt-in via vars.SNYK_ENABLED=true, --severity-threshold=high --fail-on=all) |
 
 **Total Bloque 11:** ~14 sesiones
 
@@ -255,7 +255,7 @@ Criterio: Requieren masa critica de datos y transacciones para ser utiles.
 
 | #   | Item                                                       | Esfuerzo | Tipo   | Depende de | Hecho cuando...                                                                                                                                                                                                                     |
 | --- | ---------------------------------------------------------- | -------- | ------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 74  | Tests seguridad expandidos (IDOR, rate limit, info leak)   | M        | Code   | —          | Tests verifican: dealer no ve datos de otro, 429 tras umbral, sin info leak. **Entregables:** `tests/security/idor-protection.test.ts`, `rate-limiting.test.ts`, `information-leakage.test.ts`, `referencia/RATE-LIMITING-RULES.md` |
+| 74  | Tests seguridad expandidos (IDOR, rate limit, info leak)   | M        | Code   | ✅ agent-c  | idor-protection.test.ts (270L) + rate-limiting.test.ts + information-leakage.test.ts + referencia/RATE-LIMITING-RULES.md (reglas, CF WAF config, auto-ban, composite key) |
 | 75  | CSP nonce-based + reporting + auditoria licencias          | M        | Code   | #83        | Resolver junto con #83. **Entregables:** editar `security-headers.ts`, crear `csp-report.post.ts`, `scripts/audit-licenses.mjs`. **Dep:** Nuxt 4 estable                                                                            |
 | 76  | Test restore backup en BD temporal (Neon) + mirror repo    | M        | Config | —          | Restore ejecutado en Neon free, datos verificados, documentado. **Entregables:** `scripts/test-restore.sh` (ampliar), `.github/workflows/mirror.yml`. **Prereq humano:** crear cuenta Neon + Bitbucket + GitHub Secrets             |
 | 77  | Modularizacion endpoints largos restantes                  | M        | Code   | —          | Ningun endpoint >200 lineas, logica extraida a services/. **Entregables:** 4 archivos en `server/services/` (imageUploader, vehicleCreator, whatsappProcessor, notifications) — whatsapp/process ya hecho, verificar otros          |
@@ -377,6 +377,8 @@ No bloquean ni son bloqueadas por codigo. Ejecutar cuando sea posible.
 
 | #   | Item                                          | Esfuerzo | Urgencia | Hecho cuando...                                                                                                                                                                                                                                                                                                                                                 |
 | --- | --------------------------------------------- | -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 27  | Twilio — cuenta + API key para SMS OTP        | S        | MEDIA    | Cuenta Twilio creada, TWILIO_ACCOUNT_SID + TWILIO_AUTH_TOKEN + TWILIO_FROM configurados en .env y GitHub Secrets. Desbloquea: item #27 código (ya implementable)                                                                                                                                                                                                |
+| 34  | CF WAF activo (#1) → activar fleet rate limit | S        | BAJA     | Tras completar #1 (CF WAF): indicar a Claude "activa excepción fleet" — 30 min de código                                                                                                                                                                                                                                                                       |
 | 101 | Configurar reglas CF WAF (rate limiting)      | S        | ALTA     | Reglas activas en dashboard CF                                                                                                                                                                                                                                                                                                                                  |
 | 123 | Configurar GitHub Secrets (crons + k6 + CI)   | S        | ALTA     | 6 secrets añadidos: `CRON_SECRET` (generar con `openssl rand -hex 32`) + `SUPABASE_URL` + `SUPABASE_ANON_KEY` (ambos de Supabase Dashboard → Project Settings → API) + `RESEND_API_KEY` (tras tarea #21) + `INFRA_ALERT_EMAIL` = tankiberica@gmail.com. Variable: `APP_URL` = https://tracciona.com. GitHub → repo → Settings → Secrets and variables → Actions |
 | 102 | DMARC + SPF + DKIM en Cloudflare DNS          | S        | ALTA     | Records DNS configurados, DMARC report sin fallos                                                                                                                                                                                                                                                                                                               |

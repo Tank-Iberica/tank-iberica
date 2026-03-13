@@ -6,8 +6,9 @@
  *
  * POST /api/infra/csp-report
  */
-import { defineEventHandler, readBody } from 'h3'
+import { defineEventHandler, readBody, getHeader } from 'h3'
 import { logger } from '../../utils/logger'
+import { recordSecurityEvent } from '../../utils/securityEvents'
 
 interface CspReport {
   'csp-report'?: {
@@ -33,6 +34,9 @@ const directiveCounts = new Map<string, number>()
 const ALERT_THRESHOLD = 5 // alert when same directive fires >5 times/min
 
 export default defineEventHandler(async (event) => {
+  const reporterIp =
+    getHeader(event, 'x-forwarded-for') ?? getHeader(event, 'x-real-ip') ?? 'unknown'
+
   // Simple rate limit for report flooding
   const now = Date.now()
   if (now - lastResetTime > 60_000) {
@@ -94,6 +98,13 @@ export default defineEventHandler(async (event) => {
       count: prevCount + 1,
       windowMs: 60_000,
       timestamp: new Date().toISOString(),
+    })
+    recordSecurityEvent({
+      type: 'csp_violation',
+      ip: reporterIp,
+      path: report['document-uri'],
+      detail: violatedDirective,
+      timestamp: Date.now(),
     })
   }
 

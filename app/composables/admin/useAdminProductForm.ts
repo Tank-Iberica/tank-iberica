@@ -6,8 +6,6 @@
 import {
   useAdminVehicles,
   type VehicleFormData,
-  type MaintenanceEntry,
-  type RentalEntry,
 } from '~/composables/admin/useAdminVehicles'
 import { useAdminTypes } from '~/composables/admin/useAdminTypes'
 import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories'
@@ -22,6 +20,7 @@ import {
 import { localizedName } from '~/composables/useLocalized'
 import { parseLocationText, geocodeLocation } from '~/utils/parseLocation'
 import { countryFlag } from '~/utils/geoData'
+import { useAdminProductRecords } from './useAdminProductRecords'
 
 // ── Types ──────────────────────────────────────────────
 export interface CharacteristicEntry {
@@ -124,6 +123,10 @@ export function useAdminProductForm() {
     documents: false,
     financial: false,
   })
+
+  // ── Records sub-composable (maintenance + rentals) ───
+  const { addMaint, removeMaint, updateMaint, addRental, removeRental, updateRental } =
+    useAdminProductRecords(formData as Ref<{ maintenance_records?: unknown[]; rental_records?: unknown[] }>)
 
   // ── Junction data: type ↔ subcategory links ──────────
   const typeSubcategoryLinks = ref<{ type_id: string; subcategory_id: string }[]>([])
@@ -330,55 +333,6 @@ export function useAdminProductForm() {
 
   function removeDocument(id: string) {
     documents.value = documents.value.filter((d) => d.id !== id)
-  }
-
-  // ── Maintenance ──────────────────────────────────────
-  function addMaint() {
-    formData.value.maintenance_records = [
-      ...(formData.value.maintenance_records || []),
-      {
-        id: crypto.randomUUID(),
-        date: new Date().toISOString().split('T')[0] ?? '',
-        reason: '',
-        cost: 0,
-        invoice_url: undefined,
-      },
-    ]
-  }
-
-  function removeMaint(id: string) {
-    formData.value.maintenance_records =
-      formData.value.maintenance_records?.filter((r) => r.id !== id) || []
-  }
-
-  function updateMaint(id: string, field: keyof MaintenanceEntry, val: string | number) {
-    formData.value.maintenance_records =
-      formData.value.maintenance_records?.map((r) => (r.id === id ? { ...r, [field]: val } : r)) ||
-      []
-  }
-
-  // ── Rentals ──────────────────────────────────────────
-  function addRental() {
-    const today = new Date().toISOString().split('T')[0] ?? ''
-    formData.value.rental_records = [
-      ...(formData.value.rental_records || []),
-      {
-        id: crypto.randomUUID(),
-        from_date: today,
-        to_date: today,
-        amount: 0,
-        notes: '',
-      },
-    ]
-  }
-
-  function removeRental(id: string) {
-    formData.value.rental_records = formData.value.rental_records?.filter((r) => r.id !== id) || []
-  }
-
-  function updateRental(id: string, field: keyof RentalEntry, val: string | number) {
-    formData.value.rental_records =
-      formData.value.rental_records?.map((r) => (r.id === id ? { ...r, [field]: val } : r)) || []
   }
 
   // ── Save / Cancel ────────────────────────────────────
