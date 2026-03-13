@@ -134,7 +134,10 @@
       <div v-if="vehicle.category === 'terceros'" class="terceros-banner">
         {{ $t('catalog.tercerosDisclaimer') }}
       </div>
-      <h3 ref="titleRef" class="product-title">{{ buildProductName(vehicle, locale, true) }}</h3>
+      <div class="title-badge-row">
+        <h3 ref="titleRef" class="product-title">{{ buildProductName(vehicle, locale, true) }}</h3>
+        <SharedDealerTrustBadge v-if="dealerTier" :tier="dealerTier" />
+      </div>
       <div v-if="hasSpecs" class="product-specs">
         <div v-if="vehicle.year" class="spec-item">
           <span class="spec-label">{{ $t('vehicle.year') }}</span>
@@ -154,11 +157,14 @@
 <script setup lang="ts">
 import type { Vehicle } from '~/composables/useVehicles'
 import { formatPrice } from '~/composables/shared/useListingUtils'
+import type { TrustBadgeTier } from '~/composables/useDealerTrustScore'
 
 const props = defineProps<{
   vehicle: Vehicle
   /** True for above-fold cards: disables lazy loading and sets fetchpriority=high */
   priority?: boolean
+  /** Trust badge tier for the dealer; null = no badge shown */
+  dealerTier?: TrustBadgeTier
 }>()
 
 const { t, locale } = useI18n()
@@ -470,6 +476,13 @@ function nextImage() {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.title-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
 .product-title {

@@ -104,10 +104,10 @@ Criterio: Trust Score es prerequisito de badges, alertas, y reputacion publica.
 
 | #   | Item                                                  | Esfuerzo | Tipo | Depende de | Hecho cuando...                                                                                        |
 | --- | ----------------------------------------------------- | -------- | ---- | ---------- | ------------------------------------------------------------------------------------------------------ |
-| 30  | Trust Score 0-100 calculo automatico                  | L        | Code | —          | Funcion calcula score segun 9 criterios, actualiza dealer profile, recalculo diario via cron           |
-| 31  | Badges publicos (sin/<60, Verificado 60-79, Top >=80) | M        | Code | #30        | Badge visible en VehicleCard y perfil dealer, tooltip explica criterio                                 |
+| 30  | Trust Score 0-100 calculo automatico                  | L        | Code | —          | ✅ agent-c — 9 criterios, cron diario, composable, 50 tests                                            |
+| 31  | Badges publicos (sin/<60, Verificado 60-79, Top >=80) | M        | Code | #30        | ✅ agent-c — DealerTrustBadge component, VehicleCard + DetailSeller, 9 tests                          |
 | 32  | Guia "Mejora tu puntuacion" en dashboard              | S        | Code | #30        | Pagina muestra criterios cumplidos/pendientes, enlace a acciones                                       |
-| 33  | Alertas contextuales al comprador                     | M        | Code | #30        | Banner suave si: dealer sin verificar + precio bajo, cuenta <7d, pocas fotos, precio >30% bajo mercado |
+| 33  | Alertas contextuales al comprador                     | M        | Code | #30        | ✅ agent-c — DealerTrustAlert component, new account/low trust/few photos alerts, 10 tests             |
 | 27  | Phone verification SMS OTP                            | M        | Code | —          | Al crear primera publicacion, dealer recibe SMS con codigo, verificado queda en profile                |
 | 28  | Duplicate detection (hash imagenes + titulo)          | L        | Code | —          | Al publicar, sistema detecta duplicados potenciales, admin ve lista, seller recibe aviso               |
 | 29  | IP/device fingerprint (background)                    | M        | Code | ✅ agent-c  | migration 00138 (user_fingerprints + duplicate_device_users view + upsert_user_fingerprint RPC); recordFingerprint.ts fire-and-forget util; /api/auth/fp endpoint; AdminFingerprintFlags.vue; 8 tests |
