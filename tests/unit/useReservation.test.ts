@@ -475,6 +475,23 @@ describe('respondToReservation', () => {
     const c = useReservation()
     await expect(c.respondToReservation('res-1', '')).rejects.toThrow('at least 50')
   })
+
+  it('reverts optimistic update on DB error', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        update: () => ({ eq: () => ({ eq: () => Promise.resolve({ data: null, error: new Error('DB fail') }) }) }),
+      }),
+    }))
+    const c = useReservation()
+    c.reservations.value = [{ ...sampleReservation, status: 'active', seller_response: null, seller_responded_at: null }]
+
+    await expect(c.respondToReservation('res-1', 'a'.repeat(60))).rejects.toThrow('DB fail')
+
+    // State should be reverted to original
+    expect(c.reservations.value[0].status).toBe('active')
+    expect(c.reservations.value[0].seller_response).toBeNull()
+    expect(c.reservations.value[0].seller_responded_at).toBeNull()
+  })
 })
 
 // ─── createReservation ────────────────────────────────────────────────────────
@@ -639,6 +656,22 @@ describe('cancelReservation', () => {
     await c.cancelReservation('res-1')
     expect(c.reservations.value[0].status).toBe('active')
   })
+
+  it('reverts optimistic update on DB error', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        select: () => makeChain([]),
+        update: () => ({ eq: () => ({ eq: () => ({ in: () => Promise.resolve({ data: null, error: new Error('Cancel fail') }) }) }) }),
+      }),
+    }))
+    const c = useReservation()
+    c.reservations.value = [{ ...sampleReservation, status: 'active' }]
+
+    await expect(c.cancelReservation('res-1')).rejects.toThrow('Cancel fail')
+
+    // State should be reverted to original
+    expect(c.reservations.value[0].status).toBe('active')
+  })
 })
 
 // ─── confirmReservation ─────────────────────────────────────────────────────
@@ -686,6 +719,23 @@ describe('confirmReservation', () => {
     c.reservations.value = [{ ...sampleReservation, id: 'other' }]
     await c.confirmReservation('res-1')
     expect(c.reservations.value[0].status).toBe('active')
+  })
+
+  it('reverts optimistic update on DB error', async () => {
+    vi.stubGlobal('useSupabaseClient', () => ({
+      from: () => ({
+        select: () => makeChain([]),
+        update: () => ({ eq: () => ({ eq: () => ({ eq: () => Promise.resolve({ data: null, error: new Error('Confirm fail') }) }) }) }),
+      }),
+    }))
+    const c = useReservation()
+    c.reservations.value = [{ ...sampleReservation, status: 'seller_responded', buyer_confirmed_at: null }]
+
+    await expect(c.confirmReservation('res-1')).rejects.toThrow('Confirm fail')
+
+    // State should be reverted to original
+    expect(c.reservations.value[0].status).toBe('seller_responded')
+    expect(c.reservations.value[0].buyer_confirmed_at).toBeNull()
   })
 })
 

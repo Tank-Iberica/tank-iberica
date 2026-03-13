@@ -211,11 +211,25 @@ export function useReservation() {
 
   /**
    * Seller responds to a reservation with a message.
-   * Message must be at least 50 characters.
+   * Optimistic: updates UI immediately, reverts on Supabase error.
    */
   async function respondToReservation(reservationId: string, message: string): Promise<void> {
     if (message.length < SELLER_RESPONSE_MIN_LENGTH) {
       throw new Error(`Response must be at least ${SELLER_RESPONSE_MIN_LENGTH} characters`)
+    }
+
+    // Optimistic update
+    const idx = reservations.value.findIndex((r) => r.id === reservationId)
+    const snapshot = idx !== -1 ? { ...reservations.value[idx]! } : null
+    const respondedAt = new Date().toISOString()
+
+    if (idx !== -1) {
+      reservations.value[idx] = {
+        ...reservations.value[idx]!,
+        status: 'seller_responded',
+        seller_response: message,
+        seller_responded_at: respondedAt,
+      }
     }
 
     const { error } = await supabase
@@ -223,32 +237,38 @@ export function useReservation() {
       .update({
         status: 'seller_responded' as ReservationStatus,
         seller_response: message,
-        seller_responded_at: new Date().toISOString(),
+        seller_responded_at: respondedAt,
       })
       .eq('id', reservationId)
       .eq('status', 'active')
 
-    if (error) throw error
-
-    // Update local state
-    const idx = reservations.value.findIndex((r) => r.id === reservationId)
-    if (idx !== -1) {
-      reservations.value[idx] = {
-        ...reservations.value[idx]!,
-        status: 'seller_responded',
-        seller_response: message,
-        seller_responded_at: new Date().toISOString(),
+    if (error) {
+      // Revert optimistic update
+      if (snapshot && idx !== -1) {
+        reservations.value[idx] = snapshot
       }
+      throw error
     }
   }
 
   /**
    * Buyer cancels a pending or active reservation.
-   * Sets status to 'refunded'.
+   * Optimistic: updates UI immediately, reverts on Supabase error.
    */
   async function cancelReservation(reservationId: string): Promise<void> {
     if (!user.value) {
       throw new Error('Must be logged in to cancel a reservation')
+    }
+
+    // Optimistic update
+    const idx = reservations.value.findIndex((r) => r.id === reservationId)
+    const snapshot = idx !== -1 ? { ...reservations.value[idx]! } : null
+
+    if (idx !== -1) {
+      reservations.value[idx] = {
+        ...reservations.value[idx]!,
+        status: 'refunded',
+      }
     }
 
     const { error } = await supabase
@@ -258,47 +278,53 @@ export function useReservation() {
       .eq('buyer_id', user.value.id)
       .in('status', ['pending', 'active'])
 
-    if (error) throw error
-
-    // Update local state
-    const idx = reservations.value.findIndex((r) => r.id === reservationId)
-    if (idx !== -1) {
-      reservations.value[idx] = {
-        ...reservations.value[idx]!,
-        status: 'refunded',
+    if (error) {
+      // Revert optimistic update
+      if (snapshot && idx !== -1) {
+        reservations.value[idx] = snapshot
       }
+      throw error
     }
   }
 
   /**
    * Buyer confirms a reservation after the seller has responded.
-   * Sets status to 'completed' and records confirmation timestamp.
+   * Optimistic: updates UI immediately, reverts on Supabase error.
    */
   async function confirmReservation(reservationId: string): Promise<void> {
     if (!user.value) {
       throw new Error('Must be logged in to confirm a reservation')
     }
 
+    // Optimistic update
+    const idx = reservations.value.findIndex((r) => r.id === reservationId)
+    const snapshot = idx !== -1 ? { ...reservations.value[idx]! } : null
+    const confirmedAt = new Date().toISOString()
+
+    if (idx !== -1) {
+      reservations.value[idx] = {
+        ...reservations.value[idx]!,
+        status: 'completed',
+        buyer_confirmed_at: confirmedAt,
+      }
+    }
+
     const { error } = await supabase
       .from('reservations')
       .update({
         status: 'completed' as ReservationStatus,
-        buyer_confirmed_at: new Date().toISOString(),
+        buyer_confirmed_at: confirmedAt,
       })
       .eq('id', reservationId)
       .eq('buyer_id', user.value.id)
       .eq('status', 'seller_responded')
 
-    if (error) throw error
-
-    // Update local state
-    const idx = reservations.value.findIndex((r) => r.id === reservationId)
-    if (idx !== -1) {
-      reservations.value[idx] = {
-        ...reservations.value[idx]!,
-        status: 'completed',
-        buyer_confirmed_at: new Date().toISOString(),
+    if (error) {
+      // Revert optimistic update
+      if (snapshot && idx !== -1) {
+        reservations.value[idx] = snapshot
       }
+      throw error
     }
   }
 
