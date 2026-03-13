@@ -14,6 +14,14 @@ import {
   type SaleContractData,
 } from '~/utils/contractGenerator'
 import { useFormAutosave } from '~/composables/useFormAutosave'
+import {
+  useDashboardContratoHistory,
+  type ContractRow,
+  type ContractStatus,
+} from './useDashboardContratoHistory'
+
+// Re-export for consumers that import from this module
+export type { ContractRow, ContractStatus } from './useDashboardContratoHistory'
 
 // ---------------------------------------------------------------------------
 // Types (module-scoped — only used by this feature)
@@ -21,7 +29,6 @@ import { useFormAutosave } from '~/composables/useFormAutosave'
 
 export type ContractType = 'arrendamiento' | 'compraventa'
 export type ClientType = 'persona' | 'empresa'
-export type ContractStatus = 'draft' | 'signed' | 'active' | 'expired' | 'cancelled'
 export type ActiveTab = 'nuevo' | 'historial'
 
 export interface VehicleOption {
@@ -29,24 +36,6 @@ export interface VehicleOption {
   label: string
   plate: string
   vehicleType: string
-}
-
-export interface ContractRow {
-  id: string
-  dealer_id: string
-  contract_type: string
-  contract_date: string
-  vehicle_id: string | null
-  vehicle_plate: string | null
-  vehicle_type: string | null
-  client_name: string
-  client_doc_number: string | null
-  client_address: string | null
-  terms: Record<string, unknown>
-  pdf_url: string | null
-  status: string
-  created_at: string | null
-  updated_at: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -118,6 +107,10 @@ export function useDashboardContrato() {
   const { userId } = useAuth()
   const { dealerProfile, loadDealer } = useDealerDashboard()
   const { currentPlan, fetchSubscription } = useSubscriptionPlan(userId.value || undefined)
+
+  // History sub-composable
+  const { contracts, loadingHistory, historyError, loadContractHistory, updateContractStatus } =
+    useDashboardContratoHistory(dealerProfile as Ref<{ id: string } | null>)
 
   // -----------------------------------------------------------------------
   // Plan Gate
@@ -194,11 +187,6 @@ export function useDashboardContrato() {
   // Vehicle options
   const vehicleOptions = ref<VehicleOption[]>([])
   const loadingVehicles = ref(false)
-
-  // History
-  const contracts = ref<ContractRow[]>([])
-  const loadingHistory = ref(false)
-  const historyError = ref<string | null>(null)
 
   // -----------------------------------------------------------------------
   // Autosave draft (client-entered data; lessor data reloads from DB)
@@ -516,54 +504,6 @@ export function useDashboardContrato() {
       saveError.value = err instanceof Error ? err.message : t('dashboard.tools.contract.saveError')
     } finally {
       saving.value = false
-    }
-  }
-
-  // -----------------------------------------------------------------------
-  // Contract History
-  // -----------------------------------------------------------------------
-
-  async function loadContractHistory(): Promise<void> {
-    const dealer = dealerProfile.value
-    if (!dealer) return
-
-    loadingHistory.value = true
-    historyError.value = null
-
-    try {
-      const { data, error: err } = (await supabase
-        .from('dealer_contracts')
-        .select('id, dealer_id, contract_type, contract_date, vehicle_id, vehicle_plate, vehicle_type, client_name, client_doc_number, client_address, terms, pdf_url, status, created_at, updated_at')
-        .eq('dealer_id', dealer.id)
-        .order('created_at', { ascending: false })) as never as {
-        data: ContractRow[] | null
-        error: { message: string } | null
-      }
-
-      if (err) throw new Error(err.message)
-      contracts.value = data ?? []
-    } catch (err: unknown) {
-      historyError.value =
-        err instanceof Error ? err.message : t('dashboard.tools.contract.historyError')
-    } finally {
-      loadingHistory.value = false
-    }
-  }
-
-  async function updateContractStatus(
-    contractId: string,
-    newStatus: ContractStatus,
-  ): Promise<void> {
-    try {
-      const { error: err } = (await supabase
-        .from('dealer_contracts')
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
-        .eq('id', contractId)) as never as { error: { message: string } | null }
-
-      if (err) throw new Error(err.message)
-      await loadContractHistory()
-    } catch (err: unknown) {
-      historyError.value = err instanceof Error ? err.message : 'Error updating status'
     }
   }
 
