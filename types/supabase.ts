@@ -4628,6 +4628,7 @@ export type Database = {
           sold_at: string | null
           sold_price_cents: number | null
           sold_via_tracciona: boolean | null
+          highlight_style: string | null
           sort_boost: number | null
           status: Database['public']['Enums']['vehicle_status'] | null
           updated_at: string | null
@@ -4689,6 +4690,7 @@ export type Database = {
           sold_at?: string | null
           sold_price_cents?: number | null
           sold_via_tracciona?: boolean | null
+          highlight_style?: string | null
           sort_boost?: number | null
           status?: Database['public']['Enums']['vehicle_status'] | null
           updated_at?: string | null
@@ -4750,6 +4752,7 @@ export type Database = {
           sold_at?: string | null
           sold_price_cents?: number | null
           sold_via_tracciona?: boolean | null
+          highlight_style?: string | null
           sort_boost?: number | null
           status?: Database['public']['Enums']['vehicle_status'] | null
           updated_at?: string | null
