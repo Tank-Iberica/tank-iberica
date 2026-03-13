@@ -200,7 +200,7 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 | Bloque                       | Items           | Estado                              | Sesiones est. |
 | ---------------------------- | --------------- | ----------------------------------- | ------------- |
-| 7 (Content + Marketing)      | #65–#71         | Pendiente                           | ~13           |
+| 7 (Content + Marketing)      | #65–#71         | 🔄 En progreso (#65 ✅)             | ~13           |
 | 8 (WhatsApp Funnel)          | #59–#61         | ✅ COMPLETADO                       | 0             |
 | 9 (Monetización "A Definir") | #18–#26         | Pendiente ⚠️ (necesita #7/#8 de A)  | ~12           |
 | 17 (Dealers)                 | #136–#141, #163 | Pendiente                           | ~10           |
@@ -223,9 +223,9 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #65 (Newsletter "El Industrial" — cron semanal)
-- **Último commit:** —
-- **Bloques completados:** Bloque 8
+- **Siguiente item:** #66 (Dealer onboarding email sequence)
+- **Último commit:** `feat(agent-d): #65 newsletter El Industrial — cron semanal` (2c6c02e)
+- **Bloques completados:** Bloque 8 | #65 ✅
 - **Notas:** —
 
 ---
