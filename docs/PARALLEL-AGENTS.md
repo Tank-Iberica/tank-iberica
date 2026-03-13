@@ -40,6 +40,39 @@ Cada agente usa prefijo propio para evitar conflictos en `i18n/es.json` e `i18n/
 - **`git pull` antes de cada sesión** — los otros agentes habrán mergeado cambios
 - Si merge conflict en i18n → resolver aceptando ambos (keys con prefijos distintos)
 
+### Aislamiento con Git Worktrees (OBLIGATORIO)
+
+> **Problema real detectado:** Cuando varios agentes comparten el mismo working directory, `lint-staged` (que se ejecuta en cada commit) hace `git stash` + `git stash pop` que **cambia el branch activo**, causando que los commits de un agente aterricen en el branch de otro. Además, `git checkout -- .` de un agente borra cambios no commiteados de los demás.
+
+**Regla: Cada agente DEBE trabajar en su propio worktree aislado.**
+
+```bash
+# Al iniciar sesión, cada agente crea su worktree:
+git worktree add .claude/worktrees/agent-X agent-X/bloque-N
+
+# Trabajar SIEMPRE desde el worktree:
+cd .claude/worktrees/agent-X
+
+# Preparar Nuxt en el worktree (necesario para tests):
+npx nuxi prepare
+
+# Al terminar, limpiar el worktree:
+git worktree remove .claude/worktrees/agent-X
+```
+
+**¿Por qué?**
+- Cada worktree tiene su propio branch checkeado, HEAD independiente
+- `lint-staged` no puede mover el branch de otros agentes
+- `git stash`/`git checkout -- .` solo afectan al worktree local
+- Los commits siempre van al branch correcto
+
+**Reglas adicionales de worktrees:**
+- Los worktrees comparten el mismo `.git` y remote — los commits son visibles entre agentes
+- **NO hacer `git checkout <otro-branch>`** dentro del worktree — usar el branch asignado
+- Si necesitas código de otro agente: `git cherry-pick` o `git merge` desde tu worktree
+- Al finalizar la sesión: commit todo, push, y `git worktree remove`
+- Los worktrees se crean en `.claude/worktrees/` (ya en `.gitignore`)
+
 ### Archivos Compartidos (alto riesgo conflicto)
 
 | Archivo                                 | Dueño                 | Otros pueden                   |
@@ -146,10 +179,12 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #167 (Schema ItemList en catálogo)
-- **Último commit:** `5d7eef5` feat(agent-b): #166 inject FAQPage schema in [...slug].vue landing pages
+- **Siguiente item:** #174 (S14 Web Stories) o #175 (S15 AggregateRating schema)
+- **Último commit:** `22c1694` feat(agent-b): #177 (S17) alt text descriptivo — ImageGallery usa per-image alt_text
 - **Bloques completados:** Bloque 3
-- **Notas:** #164 ✅ cron intro_text ES/EN (45 tests). #165 ✅ Merchant feed gate. #166 ✅ buildFaqPageSchema pure util + useJsonLd inject (15 tests).
+- **Items completados Bloque 23:** #164 ✅ #165 ✅ #166 ✅ #167 ✅ #168 ✅ #169 ✅ #170 ✅ #177 ✅ #179 ✅ #180 ✅(ya existía) #181 ✅(ya existía) #182 ✅ #183 ✅
+- **Skips justificados:** #171 (negocio), #172 (risky restructure), #173 (contenido), #176 (manual), #178 (admin)
+- **Notas:** #166 buildFaqPageSchema (15 tests). #167 buildItemListSchema (13 tests). #168 SEO titles ES+EN. #169 parseSimpleMarkdown+DOMPurify (14 tests). #170 featured snippet prose styles. #177 alt_text per-image. #179 IndexNow utility + publish-scheduled integration. #182 302 redirect landings inactivas. #183 child landings links block.
 
 ---
 
