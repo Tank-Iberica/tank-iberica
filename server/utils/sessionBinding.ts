@@ -9,6 +9,8 @@
  * Both changing at once is suspicious.
  */
 
+import { recordSecurityEvent } from './securityEvents'
+
 interface SessionFingerprint {
   ip: string
   uaHash: number
@@ -51,7 +53,13 @@ export function checkSessionBinding(
   const uaChanged = existing.uaHash !== uaHash
 
   if (ipChanged && uaChanged) {
-    // Both changed — suspicious
+    // Both changed — suspicious (possible session hijacking)
+    recordSecurityEvent({
+      type: 'session_anomaly',
+      ip,
+      detail: `session ${sessionId.substring(0, 8)}: ip+ua changed`,
+      timestamp: Date.now(),
+    })
     return 'suspicious'
   }
 

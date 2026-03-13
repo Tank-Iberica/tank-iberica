@@ -29,6 +29,7 @@ import {
   record4xxError,
 } from '../utils/rateLimit'
 import type { RateLimitConfig } from '../utils/rateLimit'
+import { recordSecurityEvent } from '../utils/securityEvents'
 
 interface RouteRateLimitRule {
   pattern: RegExp
@@ -82,6 +83,7 @@ export default defineEventHandler((event) => {
   const banExpiry = isIpBanned(ip)
   if (banExpiry) {
     const retryAfter = Math.ceil((banExpiry - Date.now()) / 1000)
+    recordSecurityEvent({ type: 'ip_banned', ip, path, timestamp: Date.now() })
     throw createError({
       statusCode: 403,
       statusMessage: 'Forbidden',
@@ -93,7 +95,10 @@ export default defineEventHandler((event) => {
   event.node.res.on('finish', () => {
     const status = getResponseStatus(event)
     if (status >= 400 && status < 500) {
-      record4xxError(ip)
+      const wasBanned = record4xxError(ip)
+      if (wasBanned) {
+        recordSecurityEvent({ type: 'ip_banned', ip, path, timestamp: Date.now() })
+      }
     }
   })
 
@@ -115,6 +120,7 @@ export default defineEventHandler((event) => {
 
     if (!allowed) {
       const retryAfter = getRetryAfterSeconds(key, rule.config)
+      recordSecurityEvent({ type: 'rate_limit_exceeded', ip, path, timestamp: Date.now() })
       throw createError({
         statusCode: 429,
         statusMessage: 'Too Many Requests',
@@ -139,6 +145,7 @@ export default defineEventHandler((event) => {
 
   if (!allowed) {
     const retryAfter = getRetryAfterSeconds(key, config)
+    recordSecurityEvent({ type: 'rate_limit_exceeded', ip, path, timestamp: Date.now() })
     throw createError({
       statusCode: 429,
       statusMessage: 'Too Many Requests',
