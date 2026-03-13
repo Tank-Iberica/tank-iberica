@@ -372,7 +372,7 @@ if (vehicle.value) {
       sellerName: t('site.title'),
     }),
     buildBreadcrumbSchema([
-      { name: t('site.title'), url: 'https://tracciona.com' },
+      { name: t('site.title'), url: useSiteUrl() },
       { name: productName, url: canonicalUrl },
     ]),
   ])
