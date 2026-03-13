@@ -179,12 +179,13 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #174 (S14 Web Stories) o #175 (S15 AggregateRating schema)
-- **Último commit:** `22c1694` feat(agent-b): #177 (S17) alt text descriptivo — ImageGallery usa per-image alt_text
-- **Bloques completados:** Bloque 3
-- **Items completados Bloque 23:** #164 ✅ #165 ✅ #166 ✅ #167 ✅ #168 ✅ #169 ✅ #170 ✅ #177 ✅ #179 ✅ #180 ✅(ya existía) #181 ✅(ya existía) #182 ✅ #183 ✅
+- **Siguiente item:** #184 (Bloque 24 — Código + UX Polish)
+- **Último commit:** `300804d` feat(agent-b): #174 Web Stories AMP route
+- **Bloques completados:** Bloque 3 ✅, **Bloque 23 ✅ COMPLETADO**
+- **Items completados Bloque 23:** #164 ✅ #165 ✅ #166 ✅ #167 ✅ #168 ✅ #169 ✅ #170 ✅ #174 ✅ #175 ✅ #177 ✅ #179 ✅ #180 ✅(ya existía) #181 ✅(ya existía) #182 ✅ #183 ✅
 - **Skips justificados:** #171 (negocio), #172 (risky restructure), #173 (contenido), #176 (manual), #178 (admin)
-- **Notas:** #166 buildFaqPageSchema (15 tests). #167 buildItemListSchema (13 tests). #168 SEO titles ES+EN. #169 parseSimpleMarkdown+DOMPurify (14 tests). #170 featured snippet prose styles. #177 alt_text per-image. #179 IndexNow utility + publish-scheduled integration. #182 302 redirect landings inactivas. #183 child landings links block.
+- **Tests añadidos:** 71 nuevos tests (faqSchema×15, itemList×13, markdownToHtml×14, aggregateRating×9, indexNow×9, webStories×11)
+- **Notas:** #166 buildFaqPageSchema. #167 buildItemListSchema. #168 SEO titles. #169 parseSimpleMarkdown. #170 featured snippets. #174 AMP Web Stories /stories/:slug. #175 AggregateRating schema via RPC. #177 alt_text. #179 IndexNow+publishCron. #182 302 redirect. #183 child landings block.
 
 ---
 
