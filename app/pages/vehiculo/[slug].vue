@@ -189,7 +189,8 @@ if (vehicle.value) {
   const seoTitle = `${buildProductName(vehicle.value, locale.value, true)} - ${t('site.title')}`
   const seoDesc = description.value || t('site.description')
   const seoImage = vehicle.value.vehicle_images?.[0]?.url || ''
-  const canonicalUrl = `https://tracciona.com/vehiculo/${vehicle.value.slug}`
+  const siteUrl = useSiteUrl()
+  const canonicalUrl = `${siteUrl}/vehiculo/${vehicle.value.slug}`
   const productName = buildProductName(vehicle.value, locale.value, true)
 
   useSeoMeta({
@@ -216,7 +217,7 @@ if (vehicle.value) {
       {
         rel: 'alternate',
         hreflang: 'en',
-        href: `https://tracciona.com/en/vehiculo/${vehicle.value.slug}`,
+        href: `${siteUrl}/en/vehiculo/${vehicle.value.slug}`,
       },
       { rel: 'alternate', hreflang: 'x-default', href: canonicalUrl },
       ...(seoImage ? [{ rel: 'preload', as: 'image', href: seoImage, fetchpriority: 'high' }] : []),
@@ -271,7 +272,7 @@ if (vehicle.value) {
               '@type': 'ListItem',
               position: 1,
               name: t('site.title'),
-              item: 'https://tracciona.com',
+              item: siteUrl,
             },
             { '@type': 'ListItem', position: 2, name: productName, item: canonicalUrl },
           ],

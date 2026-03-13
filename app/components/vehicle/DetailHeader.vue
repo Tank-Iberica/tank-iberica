@@ -52,7 +52,7 @@
     <UiAiBadge v-if="isAiGenerated" type="generated" />
 
     <!-- Share buttons -->
-    <UiShareButtons :url="`https://tracciona.com/vehiculo/${slug}`" :title="productName" />
+    <UiShareButtons :url="`${useSiteUrl()}/vehiculo/${slug}`" :title="productName" />
   </div>
 </template>
 
@@ -112,7 +112,11 @@ const formattedRentalPrice = computed(() =>
 .vehicle-price {
   font-size: var(--font-size-2xl);
   font-weight: 800;
-  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark, var(--color-success-dark)) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-success) 0%,
+    var(--color-success-dark, var(--color-success-dark)) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

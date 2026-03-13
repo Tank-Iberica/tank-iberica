@@ -1,16 +1,23 @@
 import { defineEventHandler, setResponseHeader } from 'h3'
 import { createClient } from '@supabase/supabase-js'
 import { makeEtag, checkEtag } from '../utils/etag'
+import { getSiteUrl, getSiteName } from '../utils/siteConfig'
 
 /**
  * Google Merchant Center feed.
  *
  * Generates an RSS 2.0 feed with Google Shopping namespace
  * for free product listings in Google Shopping tab.
+ * Only populates items when there are at least MERCHANT_FEED_MIN_ITEMS valid listings
+ * (with image + price) to avoid thin-content penalties in GMC.
  *
  * Docs: https://support.google.com/merchants/answer/7052112
+ * Backlog #165 — Google Merchant Center feed activar
  */
+
 export default defineEventHandler(async (event) => {
+  /** Minimum valid items required before the feed is populated. Override with MERCHANT_FEED_MIN_ITEMS env var. */
+  const feedMinItems = Number(process.env.MERCHANT_FEED_MIN_ITEMS ?? '50')
   const supabaseUrl = process.env.SUPABASE_URL
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
 
@@ -38,7 +45,8 @@ export default defineEventHandler(async (event) => {
     return `Error fetching vehicles: ${error.message}`
   }
 
-  const siteUrl = 'https://tracciona.com'
+  const siteUrl = getSiteUrl()
+  const siteName = getSiteName()
 
   const escapeXml = (str: string): string => {
     return str
@@ -79,17 +87,27 @@ export default defineEventHandler(async (event) => {
     </item>`
     })
     .filter(Boolean)
-    .join('\n')
+
+  // Below minimum threshold: return valid but empty feed to avoid GMC thin-content issues
+  const itemsXml = items.length >= feedMinItems ? items.join('\n') : ''
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>Tracciona - Vehiculos Industriales</title>
+    <title>${escapeXml(siteName)} - Vehiculos Industriales</title>
     <link>${siteUrl}</link>
     <description>Compra, venta y alquiler de vehiculos industriales</description>
-${items}
+${itemsXml}
   </channel>
 </rss>`
+
+  if (items.length < feedMinItems) {
+    setResponseHeader(
+      event,
+      'X-Feed-Status',
+      `pending-minimum-threshold (${items.length}/${feedMinItems})`,
+    )
+  }
 
   setResponseHeader(event, 'Cache-Control', 'public, max-age=43200, s-maxage=43200') // 12h
   const etag = makeEtag(xml)
