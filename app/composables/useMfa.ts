@@ -29,7 +29,7 @@ export function useMfa() {
 
     const { data, error } = await supabase.auth.mfa.listFactors()
     if (error) {
-      console.error('[mfa] Failed to list factors:', error.message)
+      if (import.meta.dev) console.error('[mfa] Failed to list factors:', error.message)
       status.value = 'not_enrolled'
       return status.value
     }
@@ -65,7 +65,7 @@ export function useMfa() {
 
       return { qrUri: data.totp.qr_code, secret: data.totp.secret }
     } catch (e) {
-      console.error('[mfa] Enrollment failed:', e)
+      if (import.meta.dev) console.error('[mfa] Enrollment failed:', e)
       return null
     } finally {
       loading.value = false
@@ -97,7 +97,7 @@ export function useMfa() {
       status.value = 'verified'
       return true
     } catch (e) {
-      console.error('[mfa] Verification failed:', e)
+      if (import.meta.dev) console.error('[mfa] Verification failed:', e)
       return false
     } finally {
       loading.value = false
@@ -124,7 +124,7 @@ export function useMfa() {
       secret.value = null
       return true
     } catch (e) {
-      console.error('[mfa] Unenroll failed:', e)
+      if (import.meta.dev) console.error('[mfa] Unenroll failed:', e)
       return false
     } finally {
       loading.value = false
