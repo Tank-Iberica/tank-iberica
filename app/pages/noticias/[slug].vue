@@ -407,8 +407,52 @@ function formatDate(date: string): string {
   font-size: 1rem;
   line-height: 1.8;
   color: var(--text-secondary);
-  white-space: pre-line;
   max-width: 65ch;
+}
+
+/* Prose styles for v-html rendered content — featured snippet structure (#170) */
+.article-body :deep(p) {
+  margin-bottom: 1rem;
+}
+
+.article-body :deep(h2) {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 2rem 0 0.5rem;
+  line-height: 1.3;
+}
+
+.article-body :deep(h3) {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 1.5rem 0 0.375rem;
+}
+
+/* First paragraph after h2 — styled as featured snippet answer (#170) */
+.article-body :deep(h2 + p) {
+  font-size: 1rem;
+  color: var(--text-primary, var(--text-secondary));
+  font-weight: 400;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+
+.article-body :deep(a) {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.article-body :deep(ul),
+.article-body :deep(ol) {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.article-body :deep(li) {
+  margin-bottom: 0.25rem;
 }
 
 /* Tags */
