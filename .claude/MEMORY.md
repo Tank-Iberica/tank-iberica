@@ -236,6 +236,32 @@ vi.stubGlobal('onMounted', vi.fn())
 vi.stubGlobal('onUnmounted', vi.fn())
 ```
 
+## Agent D — Parallel Agents Progress (13-mar-2026)
+
+- **Bloque 7** (#65-#71): ✅ COMPLETADO — agent-d/bloque-7 (251f569)
+- **Bloque 8** (#59-#61): ✅ COMPLETADO (previo)
+- **Bloque 11** (#82-#95): ✅ COMPLETADO — agent-d/bloque-11 (ca0f64f)
+  - #83 blocked Nuxt4. #85 already done. #89 already done (Zod/VeeValidate).
+  - #91: CSS content-visibility on VehicleCard + VehicleTable rows
+  - #93: OpenAPI 3.1 spec at /public/openapi.json + /api-docs Scalar UI
+- **Bloque 17** (#136-#141, #163): ✅ COMPLETADO — agent-d/bloque-17 (aa3e057)
+- **Bloque 26** (#202-#207): ✅ COMPLETADO — agent-d/bloque-26 (357367c)
+  - useListingLifecycle stub created for cross-branch compatibility with Agent E
+- **Bloque 9** (#18-#26): BLOQUEADO — esperando Agent A #7/#8
+
+### Worktree path pattern
+
+- Tools (Read/Edit/Write): use full path `C:\Users\j_m_g\AppData\Local\Temp\agent-d-bXX\`
+- Bash: use `/c/Users/j_m_g/AppData/Local/Temp/agent-d-bXX/`
+- NOT `/tmp/agent-d-bXX` in tools (maps to `C:\tmp\`)
+- After creating worktree: run `npx nuxi prepare` to generate .nuxt/tsconfig.app.json before tests
+
+### Vitest mocking (server routes)
+
+- Single `vi.hoisted()` call (not multiple). `vi.clearAllMocks()` not `vi.resetAllMocks()`.
+- `.lt()` should return chain (not Promise) when `.limit()` or other method chains after it.
+- Handler defensive: `const query = getQuery(event) ?? {}`
+
 ## Sub-archivos (leer bajo demanda)
 
 - `.claude/memory/patterns.md` — patrones de código confirmados (Vue, composables, ESLint)
