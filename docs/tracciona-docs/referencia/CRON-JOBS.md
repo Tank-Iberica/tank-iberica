@@ -25,6 +25,7 @@
 | `/api/cron/data-retention`      | GDPR data retention: delete whatsapp/analytics/logs past TTL  | Daily (03:00 UTC)  | Medium   |
 | `/api/cron/newsletter`          | Weekly newsletter "El Industrial" — 5 featured vehicles       | Weekly (Tue 09:00) | Medium   |
 | `/api/cron/dealer-onboarding`   | 5-step onboarding sequence for new dealers (days 0,1,3,7,14)  | Daily (10:00 UTC)  | Medium   |
+| `/api/cron/generate-market-report` | Generate quarterly market report HTML and store in Supabase Storage (lead magnet) | Quarterly (1-jan/apr/jul/oct 06:00 UTC) | Low      |
 
 ## Scheduler Configuration
 
