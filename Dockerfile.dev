@@ -1,0 +1,28 @@
+# Dockerfile.dev — Tracciona imagen de desarrollo
+#
+# Optimizado para desarrollo local con hot reload.
+# Para producción, usar el build de Cloudflare Pages (no este Dockerfile).
+#
+# Uso: gestionado por docker-compose.yml — no invocar directamente.
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Dependencias de sistema (necesarias para node-gyp y algunos paquetes nativos)
+RUN apk add --no-cache libc6-compat python3 make g++
+
+# Copiar manifiestos primero para cachear la capa de dependencias
+COPY package.json package-lock.json ./
+
+# Instalar todas las dependencias (incluyendo devDependencies para hot reload)
+RUN npm ci
+
+# Copiar el resto del código
+# (en dev, el volumen monta el código del host, por lo que COPY es para el build inicial)
+COPY . .
+
+EXPOSE 3000
+
+# Arrancar Nuxt en modo dev accesible desde la red del contenedor
+CMD ["npm", "run", "dev"]

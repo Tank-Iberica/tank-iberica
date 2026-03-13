@@ -1,0 +1,76 @@
+# docker-compose.yml — Tracciona entorno de desarrollo local
+#
+# Prerequisitos:
+#   1. Docker Desktop instalado y corriendo
+#   2. cp .env.example .env.local  →  rellenar SUPABASE_URL, SUPABASE_KEY, etc.
+#   3. supabase start               →  levanta Supabase local (puerto 54321)
+#      (una vez iniciado: supabase status muestra las URLs y claves locales)
+#
+# Uso básico:
+#   docker compose up               →  levanta app Nuxt en http://localhost:3000
+#   docker compose up --build       →  fuerza rebuild de imagen (tras npm install)
+#   docker compose down             →  para todos los servicios
+#
+# Con SonarQube (análisis de calidad):
+#   docker compose --profile quality up   →  añade SonarQube en http://localhost:9000
+#
+# Variables de entorno locales para Supabase local (supabase start):
+#   SUPABASE_URL=http://localhost:54321
+#   SUPABASE_KEY=<anon key de `supabase status`>
+#   SUPABASE_SERVICE_ROLE_KEY=<service_role key de `supabase status`>
+
+services:
+
+  # ── Nuxt 3 app — dev con hot reload ────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: tracciona-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      # Código fuente montado para hot reload
+      - .:/app
+      # node_modules del contenedor (no se sobreescribe con el del host)
+      - /app/node_modules
+      # Cache de Nuxt (no se sobreescribe)
+      - /app/.nuxt
+    env_file:
+      - path: .env.local
+        required: false  # Crear desde: cp .env.example .env.local
+    environment:
+      NODE_ENV: development
+      NUXT_HOST: 0.0.0.0
+      NUXT_PORT: 3000
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ── SonarQube — análisis de calidad (opcional, profile: quality) ────────────
+  # Acceso: http://localhost:9000  (admin / admin la primera vez)
+  # Uso:    docker compose --profile quality up
+  sonarqube:
+    image: sonarqube:community
+    container_name: tracciona-sonar
+    profiles:
+      - quality
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_logs:/opt/sonarqube/logs
+      - sonar_extensions:/opt/sonarqube/extensions
+    mem_limit: 2g
+    restart: unless-stopped
+
+volumes:
+  sonar_data:
+  sonar_logs:
+  sonar_extensions:
