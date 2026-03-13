@@ -151,7 +151,7 @@
 ### 2.6 Testing de seguridad
 
 - [x] **P2** — DAST automatizado en CI (OWASP ZAP o Nuclei contra staging) ✓ (job `dast` en ci.yml: Nuclei scan en push a main, cves/vulnerabilities/misconfiguration/exposures, bloquea en critical, artifact report)
-- [~] **P1** — Dependency vulnerability scanning: `npm audit` en CI bloqueante (Dependabot configurado, verificar alertas)
+- [x] **P1** — Dependency vulnerability scanning: `npm audit --audit-level=high` en CI bloqueante ✓ (ci.yml job lint-and-typecheck: step "Dependency vulnerability audit" — bloquea en high+critical; Dependabot configurado)
 - [ ] **FUTURO** — Penetration test externo anual (antes de lanzamiento comercial)
 - [x] **P3** — Fuzzing de inputs en endpoints críticos (payments, auth, import-stock) ✓ (sesión XXVI: tests/security/fuzzing.test.ts — boundary values, SQL injection, XSS, unicode, overflow, SSRF, path traversal; 68 tests — ampliado en #159)
 - [x] **P2** — IDOR tests para TODOS los endpoints (actualmente 13, faltan los demás) ✓ (sesión XXIII: tests/security/privilege-escalation.test.ts — 61 tests: market-report admin-only, push notifications, dealer-only endpoints, auth-required endpoints, cron internal-secret, account isolation, valuation API key; total seguridad: 13+61+13+10+7 = 104 tests)
