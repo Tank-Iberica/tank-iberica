@@ -420,6 +420,7 @@
 import { localizedField } from '~/composables/useLocalized'
 import { useDealerTheme } from '~/composables/useDealerTheme'
 import type { SortOption } from '~/composables/useCatalogState'
+import { buildAggregateRatingSchema } from '~/utils/aggregateRatingSchema'
 
 interface DealerProfile {
   id: string
@@ -610,6 +611,31 @@ useHead({
   ],
   link: [{ rel: 'canonical', href: canonicalUrl }],
   script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(jsonLd) }],
+})
+
+// #175 (S15) — AggregateRating schema from dealer reviews
+const { data: ratingSummary } = useLazyAsyncData(
+  `dealer-rating-${props.dealer.id}`,
+  async () => {
+    const { data } = await supabase.rpc('get_dealer_rating_summary', {
+      p_dealer_id: props.dealer.id,
+    })
+    return (data as Array<{ average_rating: number; review_count: number }>)?.[0] ?? null
+  },
+)
+
+watchEffect(() => {
+  const summary = ratingSummary.value
+  if (!summary || !summary.review_count) return
+  const schema = buildAggregateRatingSchema({
+    name: companyName.value,
+    url: canonicalUrl,
+    ratingValue: summary.average_rating,
+    reviewCount: summary.review_count,
+  })
+  if (schema) {
+    useHead({ script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(schema) }] })
+  }
 })
 
 // Apply dealer theme on mount, restore on unmount
