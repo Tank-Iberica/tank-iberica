@@ -59,6 +59,7 @@
 <script setup lang="ts">
 import { RESERVED_SLUGS } from '~/utils/reserved-slugs'
 import { buildFaqPageSchema } from '~/utils/faqSchema'
+import { buildItemListSchema } from '~/utils/itemListSchema'
 
 const route = useRoute()
 const { locale, t } = useI18n()
@@ -217,6 +218,38 @@ if (landing.value) {
   })
   if (faqSchema) {
     useJsonLd(faqSchema)
+  }
+
+  // #167 — ItemList schema: fetch top 10 vehicles for this landing's vertical
+  const { data: landingVehicles } = await useAsyncData(
+    `landing-items-${fullSlug.value}`,
+    async () => {
+      const { data } = await supabase
+        .from('vehicles')
+        .select('slug, brand, model, year, vehicle_images(url, position)')
+        .eq('status', 'published')
+        .order('featured', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(10)
+      return data ?? []
+    },
+  )
+
+  if (landingVehicles.value?.length) {
+    const siteUrl = useSiteUrl()
+    const itemListSchema = buildItemListSchema(
+      landingVehicles.value.map((v) => ({
+        slug: v.slug as string,
+        name: [v.brand, v.model, v.year ? `(${v.year})` : ''].filter(Boolean).join(' '),
+        imageUrl: (v.vehicle_images as Array<{ url: string; position: number }>)
+          ?.sort((a, b) => a.position - b.position)[0]?.url,
+      })),
+      siteUrl,
+      landingTitle.value,
+    )
+    if (itemListSchema) {
+      useJsonLd(itemListSchema)
+    }
   }
 }
 </script>
