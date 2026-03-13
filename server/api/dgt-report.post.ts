@@ -119,7 +119,7 @@ export default defineEventHandler(async (event): Promise<DgtReportResponse> => {
       { date: '2024-03-20', km: 62000, source: 'ITV' },
     ],
     kmScore: 85,
-    reportUrl: `https://placeholder.tracciona.com/reports/${vehicleId}/${provider}`,
+    reportUrl: `${getSiteUrl()}/reports/${vehicleId}/${provider}`,
     accidents: 0,
     previousOwners: 2,
     technicalInspectionValid: true,

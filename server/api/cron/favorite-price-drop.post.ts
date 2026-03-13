@@ -121,7 +121,7 @@ export default defineEventHandler(async (event) => {
       const vehicleTitle = `${vehicle.brand} ${vehicle.model}`
       const oldPrice = vehicle.previous_price.toLocaleString('es-ES')
       const newPrice = vehicle.price.toLocaleString('es-ES')
-      const vehicleUrl = `https://tracciona.com/vehiculo/${vehicle.slug}`
+      const vehicleUrl = `${getSiteUrl()}/vehiculo/${vehicle.slug}`
 
       // -- 4. Send notification to each user who favorited ----------------------
       for (const fav of typedFavorites) {

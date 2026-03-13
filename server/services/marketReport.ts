@@ -754,7 +754,7 @@ function generateReportHTML(
   const quarterLabel = getQuarterLabel(now)
   const resolvedLocale = locale ?? 'es'
   const resolvedSiteName = siteName ?? 'Tracciona'
-  const resolvedSiteUrl = siteUrl ?? 'tracciona.com'
+  const resolvedSiteUrl = siteUrl ?? getSiteUrl()
   const t = getTranslations(resolvedLocale)
   const dateGenerated = now.toLocaleDateString(resolvedLocale === 'en' ? 'en-GB' : 'es-ES', {
     day: '2-digit',
@@ -1242,9 +1242,8 @@ export async function generateMarketReport(
     throw new Error(`Error al obtener historial de precios: ${historyError.message}`)
   }
 
-  const siteName =
-    process.env.NUXT_PUBLIC_SITE_NAME || vertical.charAt(0).toUpperCase() + vertical.slice(1)
-  const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || `${vertical}.com`
+  const siteName = getSiteName()
+  const siteUrl = getSiteUrl()
 
   const html = generateReportHTML(
     (marketRows ?? []) as unknown as MarketRow[],

@@ -117,7 +117,7 @@ function buildHtmlPage(params: {
 }): string {
   const { title, heading, message, showBackLink } = params
   const primary = '#23424A'
-  const siteUrl = 'https://tracciona.com'
+  const siteUrl = getSiteUrl()
 
   return `<!DOCTYPE html>
 <html lang="es">

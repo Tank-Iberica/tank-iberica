@@ -11,11 +11,7 @@ export default defineEventHandler((event) => {
   setResponseHeader(event, 'Content-Type', 'text/plain; charset=utf-8')
   setResponseHeader(event, 'Cache-Control', 'public, max-age=86400, s-maxage=86400')
 
-  const siteUrl = (
-    process.env.NUXT_PUBLIC_SITE_URL ||
-    process.env.SITE_URL ||
-    'https://tracciona.com'
-  ).replace(/\/$/, '')
+  const siteUrl = getSiteUrl().replace(/\/$/, '')
 
   return [
     'User-agent: *',

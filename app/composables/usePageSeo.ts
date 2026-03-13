@@ -11,7 +11,7 @@ export function usePageSeo(options: {
   jsonLd?: Record<string, unknown>
 }) {
   const { t } = useI18n()
-  const SITE_URL = 'https://tracciona.com'
+  const SITE_URL = useSiteUrl()
   const DEFAULT_IMAGE = `${SITE_URL}/og-default.png`
   const canonicalUrl = `${SITE_URL}${options.path}`
 

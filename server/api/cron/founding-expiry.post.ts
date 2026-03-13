@@ -337,7 +337,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const now = new Date()
-  const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
+  const siteUrl = getSiteUrl()
   const upgradeUrl = `${siteUrl}/dashboard/suscripcion`
 
   let notified30d = 0

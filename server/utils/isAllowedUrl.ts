@@ -8,9 +8,10 @@
  * Used to prevent open redirect attacks in Stripe redirect URLs.
  */
 export function isAllowedUrl(url: string): boolean {
+  const siteUrl = getSiteUrl().replace(/\/$/, '')
   const ALLOWED_ORIGINS = [
-    'https://tracciona.com',
-    'https://www.tracciona.com',
+    siteUrl,
+    siteUrl.replace('https://', 'https://www.'),
     process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '',
   ].filter(Boolean)
   try {

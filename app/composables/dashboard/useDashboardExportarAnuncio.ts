@@ -62,6 +62,7 @@ export function useDashboardExportarAnuncio() {
   const { userId } = useAuth()
   const { dealerProfile, loadDealer } = useDealerDashboard()
   const { canExport, fetchSubscription } = useSubscriptionPlan(userId.value || undefined)
+  const siteUrl = useSiteUrl()
 
   // ---------- State ----------
 
@@ -217,7 +218,7 @@ export function useDashboardExportarAnuncio() {
       price: vehicle.price ? formatPrice(vehicle.price) : '',
       location: vehicle.location || '',
       description: vehicle.description_es || '',
-      backlink: `tracciona.com/vehiculo/${vehicle.slug}`,
+      backlink: `${siteUrl.replace('https://', '')}/vehiculo/${vehicle.slug}`,
       category: vehicle.category || '',
     }
     const maxChars = PLATFORMS.find((p) => p.key === platform)?.maxChars || 2000
