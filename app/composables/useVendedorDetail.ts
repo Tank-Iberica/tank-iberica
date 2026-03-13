@@ -164,12 +164,12 @@ export function useVendedorDetail() {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://tracciona.com' },
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: useSiteUrl() },
         {
           '@type': 'ListItem',
           position: 2,
           name: sellerName.value,
-          item: `https://tracciona.com/${route.params.slug}`,
+          item: `${useSiteUrl()}/${route.params.slug}`,
         },
       ],
     })
@@ -179,10 +179,10 @@ export function useVendedorDetail() {
     const s = route.params.slug as string
     const path = `/${s}`
     return [
-      { rel: 'canonical', href: `https://tracciona.com${path}` },
-      { rel: 'alternate', hreflang: 'es', href: `https://tracciona.com${path}` },
-      { rel: 'alternate', hreflang: 'en', href: `https://tracciona.com/en${path}` },
-      { rel: 'alternate', hreflang: 'x-default', href: `https://tracciona.com${path}` },
+      { rel: 'canonical', href: `${useSiteUrl()}${path}` },
+      { rel: 'alternate', hreflang: 'es', href: `${useSiteUrl()}${path}` },
+      { rel: 'alternate', hreflang: 'en', href: `${useSiteUrl()}/en${path}` },
+      { rel: 'alternate', hreflang: 'x-default', href: `${useSiteUrl()}${path}` },
     ]
   })
 

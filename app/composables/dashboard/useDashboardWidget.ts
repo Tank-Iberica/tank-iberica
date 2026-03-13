@@ -35,7 +35,7 @@ export function useDashboardWidget() {
     params.set('limit', String(vehicleCount.value))
     params.set('theme', theme.value)
     if (selectedCategory.value) params.set('category', selectedCategory.value)
-    return `https://tracciona.com/embed/${dealerSlug.value}?${params.toString()}`
+    return `${useSiteUrl()}/embed/${dealerSlug.value}?${params.toString()}`
   })
 
   const iframeHeight = computed<string>(() =>

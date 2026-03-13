@@ -294,7 +294,7 @@ export function useAdminHistoricoPage() {
   </head><body>
     <div class="header">
       <div><h1>TRACCIONA</h1><div class="header-accent"></div></div>
-      <div class="header-info">TRACCIONA.COM<br>info@tracciona.com<br>+34 645 779 594</div>
+      <div class="header-info">${useSiteUrl().replace('https://', '').replace('http://', '').toUpperCase()}<br>info@${useSiteUrl().replace('https://', '').replace('http://', '')}<br>+34 645 779 594</div>
     </div>
     <div class="content">
     <p class="subtitle">Hist\u00F3rico de Ventas ${filters.year || 'Todos los a\u00F1os'}</p>

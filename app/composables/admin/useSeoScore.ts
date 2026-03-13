@@ -650,7 +650,7 @@ export function useSeoScore(input: Ref<SeoInput> | ComputedRef<SeoInput>) {
     const sectionPrefix = data.section === 'guia' ? 'guia' : 'noticias'
     const snippetPreview: SeoSnippetPreview = {
       title: truncate(data.title_es || 'Sin titulo', 60),
-      url: `tracciona.com/${sectionPrefix}/${data.slug || 'sin-url'}`,
+      url: `${useSiteUrl().replace('https://', '').replace('http://', '')}/${sectionPrefix}/${data.slug || 'sin-url'}`,
       description: truncate(snippetDescription, 155),
     }
 

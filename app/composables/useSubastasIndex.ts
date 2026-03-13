@@ -113,7 +113,7 @@ export function useSubastasIndex() {
         item: {
           '@type': 'Product',
           name: auction.title || `${auction.vehicle?.brand} ${auction.vehicle?.model}`,
-          url: `https://tracciona.com/subastas/${auction.id}`,
+          url: `${useSiteUrl()}/subastas/${auction.id}`,
           offers: {
             '@type': 'Offer',
             price:

@@ -287,7 +287,7 @@ function generatePostContent(
     minimumFractionDigits: 0,
   }).format(vehicle.price_cents / 100)
 
-  const baseUrl = 'https://tracciona.com'
+  const baseUrl = useSiteUrl()
   const url = `${baseUrl}/vehiculo/${vehicle.slug}`
 
   return adapter.formatContent(vehicle.title, price, vehicle.location || '-', url, locale)
@@ -423,7 +423,9 @@ export function useSocialPublisher() {
       // 1. Fetch the post
       const { data: post, error: fetchErr } = await supabase
         .from('social_posts')
-        .select('id, vehicle_id, article_id, platform, content, image_url, status, scheduled_at, posted_at, external_post_id, impressions, clicks, approved_at, approved_by, rejection_reason, created_at')
+        .select(
+          'id, vehicle_id, article_id, platform, content, image_url, status, scheduled_at, posted_at, external_post_id, impressions, clicks, approved_at, approved_by, rejection_reason, created_at',
+        )
         .eq('id', postId)
         .single()
 
@@ -537,7 +539,9 @@ export function useSocialPublisher() {
     try {
       const { data, error: fetchErr } = await supabase
         .from('social_posts')
-        .select('id, vehicle_id, article_id, platform, content, image_url, status, scheduled_at, posted_at, external_post_id, impressions, clicks, approved_at, approved_by, rejection_reason, created_at')
+        .select(
+          'id, vehicle_id, article_id, platform, content, image_url, status, scheduled_at, posted_at, external_post_id, impressions, clicks, approved_at, approved_by, rejection_reason, created_at',
+        )
         .eq('vehicle_id', vehicleId)
         .order('created_at', { ascending: false })
 

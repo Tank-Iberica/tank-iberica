@@ -8,7 +8,7 @@ const localePath = useLocalePath()
     <NuxtLink
       :to="localePath('/datos')"
       class="datos-cta__button"
-      href="https://tracciona.com/informes/indice-precios-trimestral.pdf"
+      :href="`${useSiteUrl()}/informes/indice-precios-trimestral.pdf`"
       target="_blank"
       rel="noopener noreferrer"
     >

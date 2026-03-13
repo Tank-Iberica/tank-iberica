@@ -217,7 +217,7 @@ export function useDashboardExportarAnuncio() {
       price: vehicle.price ? formatPrice(vehicle.price) : '',
       location: vehicle.location || '',
       description: vehicle.description_es || '',
-      backlink: `tracciona.com/vehiculo/${vehicle.slug}`,
+      backlink: `${useSiteUrl().replace('https://', '').replace('http://', '')}/vehiculo/${vehicle.slug}`,
       category: vehicle.category || '',
     }
     const maxChars = PLATFORMS.find((p) => p.key === platform)?.maxChars || 2000

@@ -502,9 +502,8 @@ export function useDashboardExportar() {
 
       const dealer = dealerProfile.value
       const companyName = dealer?.company_name || 'Tracciona'
-      const profileUrl = dealer?.slug
-        ? `https://tracciona.com/dealer/${dealer.slug}`
-        : 'https://tracciona.com'
+      const siteUrl = useSiteUrl()
+      const profileUrl = dealer?.slug ? `${siteUrl}/dealer/${dealer.slug}` : siteUrl
 
       renderPdfCoverPage(doc, companyName, profileUrl, vehicleCount.value, locale.value, t)
 

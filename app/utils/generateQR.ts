@@ -39,7 +39,7 @@ export async function generateQRDataURL(options: QROptions): Promise<string> {
 
 /**
  * Generate a QR code for a dealer profile URL.
- * Encodes: https://tracciona.com/{dealer-slug}
+ * Encodes: {siteUrl}/{dealer-slug}
  */
 export async function generateDealerQR(dealerSlug: string, size = 256): Promise<string> {
   return generateQRDataURL({
@@ -50,7 +50,7 @@ export async function generateDealerQR(dealerSlug: string, size = 256): Promise<
 
 /**
  * Generate a QR code for a vehicle page URL.
- * Encodes: https://tracciona.com/vehiculo/{vehicle-slug}
+ * Encodes: {siteUrl}/vehiculo/{vehicle-slug}
  */
 export async function generateVehicleQR(vehicleSlug: string, size = 256): Promise<string> {
   return generateQRDataURL({

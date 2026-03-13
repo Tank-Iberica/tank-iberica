@@ -1,7 +1,9 @@
 <template>
   <div class="about-page">
     <div class="about-container">
-      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('about.title') }]" />
+      <UiBreadcrumbNav
+        :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('about.title') }]"
+      />
       <h1 class="about-title">{{ $t('about.title') }}</h1>
 
       <section id="quienes-somos" class="about-section">
@@ -33,9 +35,9 @@ usePageSeo({
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: t('site.title'),
-    url: 'https://tracciona.com',
+    url: useSiteUrl(),
     description: t('seo.aboutDescription'),
-    logo: 'https://tracciona.com/og-default.png',
+    logo: useSiteUrl() + '/og-default.png',
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',

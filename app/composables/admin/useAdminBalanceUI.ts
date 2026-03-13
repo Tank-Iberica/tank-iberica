@@ -165,7 +165,7 @@ const BALANCE_PDF_STYLE = `
 
 const BALANCE_PDF_HEADER = `<div class="header">
   <div><h1>TRACCIONA</h1><div class="header-accent"></div></div>
-  <div class="header-info">TRACCIONA.COM<br>info@tracciona.com<br>+34 645 779 594</div>
+  <div class="header-info">${useSiteUrl().replace('https://', '').replace('http://', '').toUpperCase()}<br>info@${useSiteUrl().replace('https://', '').replace('http://', '')}<br>+34 645 779 594</div>
 </div>`
 
 function buildBalancePdfHtml(
@@ -234,7 +234,10 @@ function printHTMLContent(html: string, onError: () => void): void {
   document.body.appendChild(iframe)
 
   const doc = iframe.contentDocument || iframe.contentWindow?.document
-  if (!doc) { onError(); return }
+  if (!doc) {
+    onError()
+    return
+  }
 
   doc.open()
   doc.write(html) // NOSONAR typescript:S1874
@@ -261,7 +264,9 @@ function printHTMLContent(html: string, onError: () => void): void {
     try {
       iframe.contentWindow?.focus()
       iframe.contentWindow?.print()
-    } catch { /* Silent fail - onload will handle it */ }
+    } catch {
+      /* Silent fail - onload will handle it */
+    }
   }, 100)
 }
 
@@ -583,7 +588,11 @@ export function useAdminBalanceUI() {
 
   function exportResumenPDF() {
     const yearLabel = String(filters.year || 'Todos los a\u00F1os')
-    const sections = buildResumenSections(resumenOptions, summary.value, new Map(monthlyBreakdown.value))
+    const sections = buildResumenSections(
+      resumenOptions,
+      summary.value,
+      new Map(monthlyBreakdown.value),
+    )
     const html = buildResumenPdfHtml(yearLabel, sections)
     printHTMLContent(html, () => toast.error('toast.printBlocked'))
   }

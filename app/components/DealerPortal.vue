@@ -580,7 +580,7 @@ const seoDescription = props.dealer.address
   ? t('dealer.seoDescription', { name: companyName.value, location: props.dealer.address })
   : t('dealer.seoDescriptionNoLocation', { name: companyName.value })
 
-const canonicalUrl = `https://tracciona.com/${props.dealer.slug}`
+const canonicalUrl = `${useSiteUrl()}/${props.dealer.slug}`
 const ogImage = props.dealer.cover_image_url || props.dealer.logo_url || null
 
 const jsonLd = {

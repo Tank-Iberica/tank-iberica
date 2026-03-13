@@ -112,12 +112,12 @@ export function useAuctionDetail(auctionId: Ref<string>) {
       eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
       location: {
         '@type': 'VirtualLocation',
-        url: `https://tracciona.com/subastas/${auction.value.id}`,
+        url: `${useSiteUrl()}/subastas/${auction.value.id}`,
       },
       organizer: {
         '@type': 'Organization',
         name: t('site.title'),
-        url: 'https://tracciona.com',
+        url: useSiteUrl(),
       },
       offers: {
         '@type': 'Offer',
