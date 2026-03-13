@@ -26,7 +26,53 @@
   },
   "landing": {
     "exploreBy": "Explorar por tipo",
-    "vehicles": "vehículos"
+    "vehicles": "vehículos",
+    "competitor": {
+      "title": "¿Por qué Tracciona?",
+      "subtitle": "La única plataforma diseñada específicamente para vehículos industriales — no un generador genérico.",
+      "colFeature": "Característica",
+      "rowCost": "Coste mensual",
+      "rowAudience": "Audiencia",
+      "rowAI": "IA y automatización",
+      "rowTools": "Herramientas dealer",
+      "rowBilingual": "Ficha bilingüe ES+EN",
+      "rowVerification": "Verificación vehículo",
+      "rowData": "Datos de mercado",
+      "rowSupport": "Soporte",
+      "traccionaCost": "Desde 0 € (gratis)",
+      "mascusCost": "€€€ (cuota alta)",
+      "wallapopCost": "Gratuito / anuncios",
+      "excelCost": "0 € (pero manual)",
+      "traccionaAudience": "Compradores industriales ES+EU",
+      "mascusAudience": "Internacional genérico",
+      "wallapopAudience": "Consumidor general",
+      "excelAudience": "Solo tu red directa",
+      "traccionaAI": "IA genera ficha en 2 min",
+      "mascusAI": "Sin IA",
+      "wallapopAI": "Sin IA",
+      "excelAI": "Sin IA",
+      "traccionaTools": "Contrato, factura, CRM, transporte",
+      "mascusTools": "Sin herramientas",
+      "wallapopTools": "Sin herramientas",
+      "excelTools": "Manual (horas)",
+      "traccionaBilingual": "Automático ES+EN",
+      "mascusBilingual": "Manual",
+      "wallapopBilingual": "Solo español",
+      "excelBilingual": "Manual",
+      "traccionaVerification": "Badge + documentos",
+      "mascusVerification": "Básica",
+      "wallapopVerification": "Sin verificación",
+      "excelVerification": "Sin verificación",
+      "traccionaData": "Observatorio de precios",
+      "mascusData": "Sin datos",
+      "wallapopData": "Sin datos",
+      "excelData": "Nulo",
+      "traccionaSupport": "Chat + email español",
+      "mascusSupport": "Email internacional",
+      "wallapopSupport": "Solo ticket",
+      "excelSupport": "Sin soporte",
+      "cta": "WhatsApp con fotos → listado profesional bilingüe en minutos. Ninguna otra plataforma lo hace."
+    }
   },
   "a11y": {
     "skipToContent": "Saltar al contenido",
@@ -315,6 +361,14 @@
       "apply": "Aplicar búsqueda guardada",
       "delete": "Eliminar búsqueda '{name}'"
     }
+  },
+  "unlock": {
+    "hiddenUntil": "Este anuncio será visible públicamente el {date}.",
+    "unlockDesc": "Desbloquea el acceso anticipado por 1 crédito y vélo ahora.",
+    "cta": "Desbloquear (1 crédito)",
+    "unlocking": "Desbloqueando…",
+    "unlocked": "Desbloqueado — tienes acceso anticipado a este anuncio.",
+    "creditsRemaining": "{count} crédito restante | {count} créditos restantes"
   },
   "vehicle": {
     "year": "Año",
@@ -2340,6 +2394,10 @@
       "calendarDesc": "Planifica y programa la publicación de contenido.",
       "comingSoon": "Proximamente",
       "calendarComingSoonDesc": "El calendario editorial permitira programar articulos, gestionar borradores y coordinar la publicación de contenido en el sitio y redes sociales."
+    },
+    "editorial": {
+      "prevPeriod": "Período anterior",
+      "nextPeriod": "Período siguiente"
     },
     "configHomepage": {
       "title": "Página de inicio",

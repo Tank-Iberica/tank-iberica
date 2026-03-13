@@ -43,6 +43,13 @@
             @start-chat="showChatModal = true"
           />
 
+          <!-- Early-access unlock banner -->
+          <VehicleUnlockBanner
+            v-if="earlyAccessVisibleFrom"
+            :vehicle-id="vehicle.id"
+            :visible-from="earlyAccessVisibleFrom!"
+          />
+
           <VehicleDetailHeader
             :vehicle-id="vehicle.id"
             :slug="vehicle.slug"
@@ -163,6 +170,16 @@ const {
 } = await useVehicleDetail(slug)
 
 const showChatModal = ref(false)
+
+// Early-access: show unlock banner if visible_from is in the future
+const earlyAccessVisibleFrom = computed<string | null>(() => {
+  const vf = (vehicle.value as unknown as Record<string, unknown>)?.visible_from as
+    | string
+    | null
+    | undefined
+  if (!vf) return null
+  return new Date(vf) > new Date() ? vf : null
+})
 
 // Duration + funnel tracking
 const { trackVehicleDuration, trackFunnelViewVehicle } = useAnalyticsTracking()

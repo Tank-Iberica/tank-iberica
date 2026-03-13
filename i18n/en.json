@@ -26,7 +26,53 @@
   },
   "landing": {
     "exploreBy": "Explore by type",
-    "vehicles": "vehicles"
+    "vehicles": "vehicles",
+    "competitor": {
+      "title": "Why Tracciona?",
+      "subtitle": "The only platform built specifically for industrial vehicles — not a generic listing site.",
+      "colFeature": "Feature",
+      "rowCost": "Monthly cost",
+      "rowAudience": "Audience",
+      "rowAI": "AI & automation",
+      "rowTools": "Dealer tools",
+      "rowBilingual": "Bilingual listing ES+EN",
+      "rowVerification": "Vehicle verification",
+      "rowData": "Market data",
+      "rowSupport": "Support",
+      "traccionaCost": "From €0 (free plan)",
+      "mascusCost": "€€€ (high subscription)",
+      "wallapopCost": "Free / ad-supported",
+      "excelCost": "€0 (but manual)",
+      "traccionaAudience": "Industrial buyers ES+EU",
+      "mascusAudience": "Generic international",
+      "wallapopAudience": "General consumer",
+      "excelAudience": "Your network only",
+      "traccionaAI": "AI builds listing in 2 min",
+      "mascusAI": "No AI",
+      "wallapopAI": "No AI",
+      "excelAI": "No AI",
+      "traccionaTools": "Contract, invoice, CRM, transport",
+      "mascusTools": "No tools",
+      "wallapopTools": "No tools",
+      "excelTools": "Manual (hours)",
+      "traccionaBilingual": "Automatic ES+EN",
+      "mascusBilingual": "Manual",
+      "wallapopBilingual": "Spanish only",
+      "excelBilingual": "Manual",
+      "traccionaVerification": "Badge + documents",
+      "mascusVerification": "Basic",
+      "wallapopVerification": "No verification",
+      "excelVerification": "No verification",
+      "traccionaData": "Price observatory",
+      "mascusData": "No data",
+      "wallapopData": "No data",
+      "excelData": "None",
+      "traccionaSupport": "Chat + email in Spanish",
+      "mascusSupport": "International email",
+      "wallapopSupport": "Ticket only",
+      "excelSupport": "No support",
+      "cta": "WhatsApp photos → professional bilingual listing in minutes. No other platform does this."
+    }
   },
   "a11y": {
     "skipToContent": "Skip to content",
@@ -315,6 +361,14 @@
       "apply": "Apply saved search",
       "delete": "Delete search '{name}'"
     }
+  },
+  "unlock": {
+    "hiddenUntil": "This listing will be publicly visible on {date}.",
+    "unlockDesc": "Unlock early access for 1 credit and view it now.",
+    "cta": "Unlock (1 credit)",
+    "unlocking": "Unlocking…",
+    "unlocked": "Unlocked — you have early access to this listing.",
+    "creditsRemaining": "{count} credit | {count} credits remaining"
   },
   "vehicle": {
     "year": "Year",
@@ -2340,6 +2394,10 @@
       "calendarDesc": "Plan and schedule content publication.",
       "comingSoon": "Coming soon",
       "calendarComingSoonDesc": "The editorial calendar will allow scheduling articles, managing drafts and coordinating content publication on the site and social media."
+    },
+    "editorial": {
+      "prevPeriod": "Previous period",
+      "nextPeriod": "Next period"
     },
     "configHomepage": {
       "title": "Homepage",
