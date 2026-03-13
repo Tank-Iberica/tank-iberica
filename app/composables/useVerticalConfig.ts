@@ -52,6 +52,7 @@ interface VerticalConfig {
   require_article_approval: boolean
   auto_translate_on_publish: boolean
   auto_publish_social: boolean
+  default_currency: string | null
   [key: string]: unknown
 }
 
@@ -82,5 +83,9 @@ export function useVerticalConfig() {
     return config.value?.active_actions?.includes(action) ?? false
   }
 
-  return { config, loadConfig, applyTheme, isSectionActive, isLocaleActive, isActionActive }
+  function getCurrency(): string {
+    return config.value?.default_currency || 'EUR'
+  }
+
+  return { config, loadConfig, applyTheme, isSectionActive, isLocaleActive, isActionActive, getCurrency }
 }
