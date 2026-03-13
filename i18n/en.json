@@ -5031,6 +5031,32 @@
       "channelWhatsapp": "WhatsApp",
       "channelsLabel": "Notification channels",
       "channelsHint": "Choose how you want to receive instant alerts"
+    },
+    "invoice": {
+      "emailSubject": "New invoice available — Tracciona",
+      "emailPreheader": "Your invoice is ready to download",
+      "title": "Invoice generated",
+      "body": "Your invoice for {amount} has been automatically generated",
+      "viewInvoice": "View invoice",
+      "viewAll": "View all invoices",
+      "downloadPdf": "Download PDF",
+      "exportCsv": "Export CSV",
+      "exportJson": "Export JSON",
+      "exportFormat": "Export format",
+      "exportPeriod": "Period",
+      "exportAll": "All",
+      "exportYear": "Year",
+      "exportMonth": "Month",
+      "typeSubscription": "Subscription",
+      "typeCredits": "Credits",
+      "typeAuction": "Auction premium",
+      "typeTransport": "Transport",
+      "typeVerification": "Verification",
+      "typeAd": "Advertising",
+      "taxIncluded": "Tax included",
+      "netAmount": "Net amount",
+      "accountingExport": "Export for accounting",
+      "accountingHint": "Download invoices in a format compatible with your accounting software"
     }
   }
 }

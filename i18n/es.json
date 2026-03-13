@@ -5038,6 +5038,32 @@
       "channelWhatsapp": "WhatsApp",
       "channelsLabel": "Canales de notificación",
       "channelsHint": "Elige cómo quieres recibir las alertas instantáneas"
+    },
+    "invoice": {
+      "emailSubject": "Nueva factura disponible — Tracciona",
+      "emailPreheader": "Tu factura ya está disponible para descargar",
+      "title": "Factura generada",
+      "body": "Tu factura por {amount} ha sido generada automáticamente",
+      "viewInvoice": "Ver factura",
+      "viewAll": "Ver todas las facturas",
+      "downloadPdf": "Descargar PDF",
+      "exportCsv": "Exportar CSV",
+      "exportJson": "Exportar JSON",
+      "exportFormat": "Formato de exportación",
+      "exportPeriod": "Período",
+      "exportAll": "Todo",
+      "exportYear": "Año",
+      "exportMonth": "Mes",
+      "typeSubscription": "Suscripción",
+      "typeCredits": "Créditos",
+      "typeAuction": "Subasta premium",
+      "typeTransport": "Transporte",
+      "typeVerification": "Verificación",
+      "typeAd": "Publicidad",
+      "taxIncluded": "IVA incluido",
+      "netAmount": "Importe neto",
+      "accountingExport": "Exportar para contabilidad",
+      "accountingHint": "Descarga facturas en formato compatible con tu software contable"
     }
   }
 }
