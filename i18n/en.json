@@ -369,6 +369,12 @@
     "shareCopied": "Link copied to clipboard",
     "perMonth": "/month",
     "characteristics": "Characteristics",
+    "priceBadge": {
+      "goodPrice": "Good price",
+      "highPrice": "High price",
+      "goodPriceTip": "This price is {pct}% below the market average.",
+      "highPriceTip": "This price is {pct}% above the market average."
+    },
     "sellerInfo": "Seller information",
     "sellerCif": "Tax ID",
     "viewSellerProfile": "View seller profile",
@@ -902,6 +908,47 @@
     "since": "since",
     "rating": "stars",
     "badgeFounding": "Founding Partner",
+    "autoSettings": {
+      "title": "Auto settings",
+      "description": "Configure automatic behavior for your dealer account.",
+      "autoNotifyLeads": "Lead notifications",
+      "autoNotifyLeadsHint": "Receive a push notification when a new lead arrives.",
+      "autoRenew": "Auto-renew listings",
+      "autoRenewHint": "Automatically renew listings before they expire.",
+      "listingDuration": "Default duration",
+      "listingDurationHint": "Default duration for new vehicle listings.",
+      "days": "{n} days",
+      "highlightThreshold": "Auto-highlight threshold",
+      "highlightThresholdHint": "Automatically highlight vehicles with a Health Score above this value."
+    },
+    "mercado": {
+      "title": "Market Intelligence",
+      "subtitle": "Compare your stock prices against the market average",
+      "belowMarket": "Below market",
+      "atMarket": "At market",
+      "aboveMarket": "Above market",
+      "avgDeviation": "Average deviation",
+      "vehiclesTitle": "Vehicle analysis",
+      "colVehicle": "Vehicle",
+      "colDealerPrice": "Your price",
+      "colMarketAvg": "Market avg",
+      "colPosition": "Position",
+      "colDeviation": "Deviation",
+      "position": {
+        "below": "Low",
+        "above": "High",
+        "average": "Mid"
+      },
+      "suggestionsTitle": "Recommendations",
+      "noData": "Not enough market data for your vehicles. Publish more listings or wait for more market references.",
+      "loadError": "Error loading market data"
+    },
+    "badge": {
+      "topDealer": "Top Dealer",
+      "verified": "Verified",
+      "topDealerTooltip": "This dealer has an excellent score: quick responses, up-to-date stock, and a complete profile.",
+      "verifiedTooltip": "This dealer has verified their identity and follows good practices on the platform."
+    },
     "foundingBadge": "Founding Partner 🏆",
     "badgePremium": "Premium Professional",
     "badgeVerified": "Verified Professional",
@@ -1100,7 +1147,24 @@
         "banner": "Banner",
         "anunciantes": "Advertisers",
         "solicitantes": "Applicants",
-        "usuarios": "Users",
+        "dealerHealth": {
+      "title": "Dealer Health Scores",
+      "filter": {
+        "all": "All",
+        "top": "Top Dealer",
+        "verified": "Verified",
+        "none": "No badge"
+      },
+      "colDealer": "Dealer",
+      "colScore": "Score",
+      "colBadge": "Badge",
+      "colVehicles": "Vehicles",
+      "colResponse": "Response",
+      "noBadge": "No badge",
+      "unknown": "Unknown",
+      "empty": "No dealers match this filter"
+    },
+    "usuarios": "Users",
         "agenda": "Agenda",
         "chat": "Chat",
         "suscripciones": "Subscriptions",
@@ -3919,7 +3983,14 @@
       "profileComplete": "Complete profile",
       "activeVehicles": "Active vehicles",
       "badgeEligible": "Eligible for Active Dealer badge",
-      "notEligible": "Improve your score to get the badge"
+      "notEligible": "Improve your score to get the badge",
+      "tipsPhotos": "Add more than 3 photos per vehicle to improve your score.",
+      "tipsDescriptions": "Write descriptions with more than 100 characters for each vehicle.",
+      "tipsResponse": "Reply to leads within 24h for maximum points.",
+      "tipsPriceUpdates": "Update your vehicle prices at least once a month.",
+      "tipsProfile": "Complete your profile with logo, bio, phone and email.",
+      "tipsVehicles": "Publish more active vehicles to gain additional points.",
+      "viewMarket": "View market intelligence"
     },
     "quote": {
       "title": "Quote generator",

@@ -3,6 +3,7 @@
  * Orchestrates data loading, formatting helpers, and derived state.
  */
 export { formatPrice } from '~/composables/shared/useListingUtils'
+import type { HealthScoreBreakdown } from '~/composables/useDealerHealthScore'
 
 export interface OnboardingStep {
   key: string
@@ -65,7 +66,7 @@ export function useDashboardIndex() {
   const { currentPlan, planLimits, fetchSubscription } = useSubscriptionPlan(
     userId.value || undefined,
   )
-  const healthScore = ref<{ total: number } | null>(null)
+  const healthScore = ref<HealthScoreBreakdown | null>(null)
 
   // ---------------------------------------------------------------------------
   // Derived state

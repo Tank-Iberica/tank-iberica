@@ -10,7 +10,7 @@
  *   - Active vehicles: +10 per every 5 vehicles (max +40):   0-40
  */
 
-interface HealthScoreBreakdown {
+export interface HealthScoreBreakdown {
   photosScore: number // 0-10
   descriptionScore: number // 0-10
   responseScore: number // 0-20

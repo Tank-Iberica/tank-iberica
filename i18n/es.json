@@ -369,6 +369,12 @@
     "shareCopied": "Enlace copiado al portapapeles",
     "perMonth": "/mes",
     "characteristics": "Características",
+    "priceBadge": {
+      "goodPrice": "Buen precio",
+      "highPrice": "Precio alto",
+      "goodPriceTip": "Este precio está un {pct}% por debajo de la media del mercado.",
+      "highPriceTip": "Este precio está un {pct}% por encima de la media del mercado."
+    },
     "sellerInfo": "Información del vendedor",
     "sellerCif": "CIF",
     "viewSellerProfile": "Ver perfil del vendedor",
@@ -902,6 +908,47 @@
     "since": "desde",
     "rating": "estrellas",
     "badgeFounding": "Anunciante Fundador",
+    "autoSettings": {
+      "title": "Configuración automática",
+      "description": "Ajusta el comportamiento automático de tu cuenta de dealer.",
+      "autoNotifyLeads": "Notificaciones de leads",
+      "autoNotifyLeadsHint": "Recibe una notificación push cuando llegue un nuevo lead.",
+      "autoRenew": "Renovación automática",
+      "autoRenewHint": "Renueva los anuncios automáticamente antes de que caduquen.",
+      "listingDuration": "Duración por defecto",
+      "listingDurationHint": "Duración predeterminada para nuevos anuncios.",
+      "days": "{n} días",
+      "highlightThreshold": "Umbral de destacado automático",
+      "highlightThresholdHint": "Destaca automáticamente los vehículos con Health Score por encima de este valor."
+    },
+    "mercado": {
+      "title": "Inteligencia de Mercado",
+      "subtitle": "Compara el precio de tu stock con la media del mercado",
+      "belowMarket": "Por debajo del mercado",
+      "atMarket": "En línea con el mercado",
+      "aboveMarket": "Por encima del mercado",
+      "avgDeviation": "Desviación media",
+      "vehiclesTitle": "Análisis por vehículo",
+      "colVehicle": "Vehículo",
+      "colDealerPrice": "Tu precio",
+      "colMarketAvg": "Media mercado",
+      "colPosition": "Posición",
+      "colDeviation": "Desviación",
+      "position": {
+        "below": "Bajo",
+        "above": "Alto",
+        "average": "Medio"
+      },
+      "suggestionsTitle": "Recomendaciones",
+      "noData": "No hay datos de mercado suficientes para tus vehículos. Publica más anuncios o espera a que haya más referencias de mercado.",
+      "loadError": "Error al cargar los datos de mercado"
+    },
+    "badge": {
+      "topDealer": "Top Dealer",
+      "verified": "Verificado",
+      "topDealerTooltip": "Este dealer tiene una puntuación excelente: responde rápido, mantiene su stock actualizado y tiene un perfil completo.",
+      "verifiedTooltip": "Este dealer ha verificado su identidad y mantiene buenas prácticas en la plataforma."
+    },
     "foundingBadge": "Anunciante Fundador 🏆",
     "badgePremium": "Anunciante Premium",
     "badgeVerified": "Anunciante Verificado",
@@ -1100,7 +1147,24 @@
         "banner": "Banner",
         "anunciantes": "Anunciantes",
         "solicitantes": "Solicitantes",
-        "usuarios": "Usuarios",
+        "dealerHealth": {
+      "title": "Health Score de Dealers",
+      "filter": {
+        "all": "Todos",
+        "top": "Top Dealer",
+        "verified": "Verificado",
+        "none": "Sin badge"
+      },
+      "colDealer": "Dealer",
+      "colScore": "Score",
+      "colBadge": "Badge",
+      "colVehicles": "Vehículos",
+      "colResponse": "Respuesta",
+      "noBadge": "Sin badge",
+      "unknown": "Sin nombre",
+      "empty": "No hay dealers con ese filtro"
+    },
+    "usuarios": "Usuarios",
         "agenda": "Agenda",
         "chat": "Chat",
         "suscripciones": "Suscripciones",
@@ -3921,7 +3985,14 @@
       "profileComplete": "Perfil completo",
       "activeVehicles": "Vehículos activos",
       "badgeEligible": "Elegible para badge Dealer Activo",
-      "notEligible": "Mejora tu puntuacion para obtener el badge"
+      "notEligible": "Mejora tu puntuación para obtener el badge",
+      "tipsPhotos": "Añade más de 3 fotos por vehículo para mejorar tu puntuación.",
+      "tipsDescriptions": "Escribe descripciones de más de 100 caracteres en cada vehículo.",
+      "tipsResponse": "Responde a los leads en menos de 24h para máxima puntuación.",
+      "tipsPriceUpdates": "Actualiza los precios de tus vehículos al menos una vez al mes.",
+      "tipsProfile": "Completa tu perfil con logo, bio, teléfono y email.",
+      "tipsVehicles": "Publica más vehículos activos para ganar puntos adicionales.",
+      "viewMarket": "Ver inteligencia de mercado"
     },
     "quote": {
       "title": "Generador de presupuestos",
