@@ -522,7 +522,23 @@ export function useDashboardExportar() {
 
   // ---------- Actions ----------
 
-  function handleExport() {
+  async function handleExport() {
+    error.value = null
+    // Credit gate: deducts 1 credit for basic/classic; free for premium/founding
+    try {
+      await $fetch('/api/credits/export-catalog', { method: 'POST' })
+    } catch (err: unknown) {
+      const e = err as { data?: { message?: string }; statusCode?: number }
+      if (e?.statusCode === 402) {
+        error.value = t('dashboard.tools.export.errorNoCredits')
+      } else if (e?.statusCode === 403) {
+        error.value = t('dashboard.tools.export.errorPlanRequired')
+      } else {
+        error.value = e?.data?.message ?? t('dashboard.tools.export.errorExport')
+      }
+      return
+    }
+
     if (exportFormat.value === 'csv') {
       exportCSV()
     } else {
