@@ -5097,6 +5097,28 @@
       "searchLanguage": "Search language",
       "noTranslations": "No translations available",
       "translatedFrom": "Translated from {source}"
+    },
+    "translate": {
+      "title": "Batch auto-translation",
+      "batchRunning": "Translating pending content...",
+      "batchComplete": "Translation complete: {translated} translations, {failed} errors",
+      "pendingVehicles": "{count} vehicles pending",
+      "pendingArticles": "{count} articles pending",
+      "noPending": "No pending content to translate",
+      "translateAll": "Translate all",
+      "translating": "Translating...",
+      "targetLocales": "Target languages",
+      "sourceLocale": "Source language",
+      "engine": "Translation engine",
+      "engineHaiku": "Claude Haiku (Anthropic)",
+      "engineGpt4o": "GPT-4o Mini (OpenAI)",
+      "engineDeepl": "DeepL",
+      "fieldDescription": "Description",
+      "fieldContent": "Content",
+      "fieldExcerpt": "Excerpt",
+      "fieldMeta": "Meta description",
+      "translatedAt": "Translated on {date}",
+      "sourceTag": "Source: {source}"
     }
   },
   "glossary": {
