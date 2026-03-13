@@ -293,7 +293,7 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 | 15 (Plataforma Core)      | #124–#128             | ✅ Completado              | ~7            |
 | 16 (Producto Marketplace) | #129–#135, #161, #162 | ✅ Completado              | ~16           |
 | 20 (Data + Analytics)     | #150–#152             | ✅ Completado              | ~14           |
-| 12 (Backlog Técnico)      | #74–#78, #80          | Pendiente (#79 ✅, #81 ✅) | ~11           |
+| 12 (Backlog Técnico)      | #74–#78, #80          | ✅ Completado (pre-existing) | ~11           |
 | Bloqueados                | #117–#122             | Al final                   | ~6            |
 
 ### Coordinación
@@ -313,10 +313,10 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #74 (Bloque 12 — Backlog Técnico)
-- **Último commit:** `bcecf6c` feat(agent-e): #152 data reporting composable
-- **Bloques completados:** 15 ✅, 16 ✅, 20 ✅
-- **Items completados:** #124 ✅ #125 ✅ #126 ✅ #127 ✅ #128 ✅ #129 ✅ #130 ✅ #131 ✅ #132 ✅ #133 ✅ #134 ✅ #135 ✅ #161 ✅ #162 ✅ #150 ✅ #151 ✅ #152 ✅
+- **Siguiente item:** #117 (Bloqueados)
+- **Último commit:** `94a2318` docs(agent-e): mark Bloque 20 complete
+- **Bloques completados:** 15 ✅, 16 ✅, 20 ✅, 12 ✅ (pre-existing)
+- **Items completados:** #124 ✅ #125 ✅ #126 ✅ #127 ✅ #128 ✅ #129 ✅ #130 ✅ #131 ✅ #132 ✅ #133 ✅ #134 ✅ #135 ✅ #161 ✅ #162 ✅ #150 ✅ #151 ✅ #152 ✅ #74–#78 ✅ #80 ✅ (pre-existing)
 - **Notas Bloque 15:**
   - #124: P1 hardcoding migrado (18 archivos), useSiteConfig + audit-hardcoding.mjs, 13 tests
   - #125: vehicle_groups table (migration 00155) + useVehicleGroups composable, 14 tests
