@@ -146,10 +146,10 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #165 (Google Merchant Center feed activar)
-- **Último commit:** `3d107b5` feat(agent-b): #164 texto auto-generado en landings con datos reales
+- **Siguiente item:** #167 (Schema ItemList en catálogo)
+- **Último commit:** `5d7eef5` feat(agent-b): #166 inject FAQPage schema in [...slug].vue landing pages
 - **Bloques completados:** Bloque 3
-- **Notas:** #164 ✅ — cron recalcula intro_text_es/en con count+precio+marcas. 45 tests.
+- **Notas:** #164 ✅ cron intro_text ES/EN (45 tests). #165 ✅ Merchant feed gate. #166 ✅ buildFaqPageSchema pure util + useJsonLd inject (15 tests).
 
 ---
 
