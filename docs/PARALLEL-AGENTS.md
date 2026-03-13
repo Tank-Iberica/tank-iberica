@@ -261,35 +261,36 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Bloques (en orden)
 
-| Bloque                    | Items                 | Estado                     | Sesiones est. |
-| ------------------------- | --------------------- | -------------------------- | ------------- |
-| 15 (Plataforma Core)      | #124–#128             | Pendiente                  | ~7            |
-| 16 (Producto Marketplace) | #129–#135, #161, #162 | Pendiente                  | ~16           |
-| 20 (Data + Analytics)     | #150–#152             | Pendiente                  | ~14           |
-| 12 (Backlog Técnico)      | #74–#78, #80          | Pendiente (#79 ✅, #81 ✅) | ~11           |
-| Bloqueados                | #117–#122             | Al final                   | ~6            |
+| Bloque                    | Items                 | Estado                                            | Sesiones est. |
+| ------------------------- | --------------------- | ------------------------------------------------- | ------------- |
+| 15 (Plataforma Core)      | #124–#128             | ✅ COMPLETADO                                     | 0             |
+| 16 (Producto Marketplace) | #129–#135, #161, #162 | ✅ COMPLETADO                                     | 0             |
+| 20 (Data + Analytics)     | #150–#152             | ✅ COMPLETADO                                     | 0             |
+| 12 (Backlog Técnico)      | #74–#78, #80          | ✅ COMPLETADO (pre-existing)                      | 0             |
+| Bloqueados                | #117–#122             | ⚠️ PARCIAL — #117 ✅ · #118 pre-existing · #119/#120/#122 fuera dominio · #121 ⏳ | ~1 |
 
 ### Coordinación
 
 - **Migraciones:** 00155–00164 (overflow: 00215–00224)
 - **i18n:** `product.`, `quality.`, `analytics.`, `platform.`
-- **Branch:** `agent-e/bloque-X`
+- **Branch:** `agent-e/bloque-12` (42 commits, NO mergeado a main)
 - **Dueño de:** producto core, vehicle_groups, calidad anuncios, analytics stack
 - **NO tocar:** monetización/créditos, SEO/landings, trust/security, dealers/WhatsApp
-- Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente B
 
-### Sync — Tú entregas (¡PRIORIZA estos items!)
+### Sync — Entregados ✅
 
-- **#128** (FeatureGate.vue) → Agente A lo necesita para Bloque 18. **Hazlo PRONTO en Bloque 15.**
-- **#135** (ciclo vida anuncio) → Agente D lo necesita para Bloque 26. **Hazlo en Bloque 16.**
-- **#150** (inventario datos) → Agente A lo necesita para #198 en Bloque 25.
+- **#128** FeatureGate.vue → entregado. Agente A puede usar.
+- **#135** ciclo vida anuncio → entregado. Agente D puede usar.
+- **#150** inventario datos → entregado. Agente A puede usar.
 
 ### Progreso
 
-- **Siguiente item:** #124 (auditoría hardcoding — 4 capas de impacto)
-- **Último commit:** —
-- **Bloques completados:** —
-- **Notas:** —
+- **Siguiente item:** #121 (split composables >500 líneas) — ⏳ espera a que A/B/D terminen (17 archivos admin/dashboard fuera del dominio de E)
+- **Último commit:** `07264ba` chore: update STATUS.md — Agent E session 3 complete
+- **Bloques completados:** 15 ✅, 16 ✅, 20 ✅, 12 ✅ — **TODOS LOS BLOQUES ASIGNADOS COMPLETOS**
+- **Items completados:** #124–#128 · #129–#135 · #161 · #162 · #150–#152 · #74–#78 · #80 (pre-existing) · #117 · #118 (pre-existing)
+- **Pendiente:** #121 (split composables admin/dashboard — depende de que A/B/D estabilicen sus archivos)
+- **Notas:** E trabajó en orden correcto y entregó los 3 sync críticos (#128/#135/#150) antes de avanzar. Sin trabajo prematuro. Branch `agent-e/bloque-12` listo para merge salvo #121.
 
 ---
 
@@ -301,24 +302,24 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 | Bloque                       | Items     | Estado        | Sesiones est. |
 | ---------------------------- | --------- | ------------- | ------------- |
-| 27 (Internacionalización)    | #208–#211 | ✅ COMPLETADO | 0             |
-| 28 (Automatización Avanzada) | #212–#216 | ✅ COMPLETADO | 0             |
+| 27 (Internacionalización)    | #208–#211 | ⚠️ PARCIAL — #208/#210/#211 ✅ · #209 ⏳ espera D | ~1            |
+| 28 (Automatización Avanzada) | #212–#216 | ✅ COMPLETADO                                     | 0             |
 
 ### Coordinación
 
 - **Migraciones:** 00165–00174 (overflow: 00225–00234)
 - **i18n:** `i18n.`, `auto.`
-- **Branch:** `agent-f/bloque-28` (listo para merge)
-- **Prerequisito:** UI estable (Agentes B, C, D deben haber terminado cambios principales)
+- **Branch:** `agent-f/bloque-28` (NO mergear hasta cerrar #209)
+- **Prerequisito pendiente:** D debe terminar Bloque 7 antes de cerrar #209
 
 ### Progreso
 
-- **Siguiente item:** TODOS COMPLETADOS — Agente F terminado
+- **Siguiente item:** #209 extensión — tras merge de Agente D (Bloque 7)
 - **Último commit:** `190b218` feat(i18n): #209 batch auto-translation cron + tests
-- **Bloques completados:** Bloque 27 ✅, Bloque 28 ✅
+- **Bloques completados:** Bloque 28 ✅
 - **Items completados:**
   - #208 ✅ prefix_except_default + hreflang (ya implementado, verificado)
-  - #209 ✅ batch auto-translation cron + 12 tests + i18n
+  - #209 ⏳ translate-batch implementado para `vehicles`+`articles` — **pendiente extender a nuevos content-types de D** (newsletters, etc.) tras Bloque 7
   - #210 ✅ FTS multilang search function + migration 00166
   - #211 ✅ default_currency + migration 00165 + getCurrency helper
   - #212 ✅ alertas instantáneas Pro (ya implementado)
@@ -326,7 +327,7 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
   - #214 ✅ ad export 5 platforms (ya implementado, 31 tests)
   - #215 ✅ scheduled publishing (verificado + 11 tests + i18n)
   - #216 ✅ AI editorial generation (verificado + 7 tests + i18n)
-- **Notas:** ~80 tests nuevos. Migraciones 00165 + 00166 pendientes `supabase db push`.
+- **Notas:** ~80 tests nuevos. Migraciones 00165+00166 pendientes `supabase db push`. Bloque 27 queda abierto hasta que D complete Bloque 7.
 
 ---
 
@@ -357,12 +358,12 @@ En la semana 6 evaluar:
 
 ## Resumen
 
-| Agente    | Sesiones restantes | Semanas est. | Estado           |
-| --------- | ------------------ | ------------ | ---------------- |
-| A         | ~55                | ~11          | En curso (#4)    |
-| B         | ~44                | ~9           | En curso (#164)  |
-| **C**     | **0**              | **—**        | **✅ COMPLETO**  |
-| D         | ~55                | ~11          | En curso (#66)   |
-| E         | ~54                | ~11          | En curso (#124)  |
-| **F**     | **0**              | **—**        | **✅ COMPLETO**  |
-| **Total** | **~208**           | **~11**      | —                |
+| Agente    | Sesiones restantes | Estado                                                    |
+| --------- | ------------------ | --------------------------------------------------------- |
+| A         | ~55                | En curso — próximo #4                                     |
+| B         | ~44                | En curso — próximo #164                                   |
+| **C**     | **0**              | **✅ COMPLETO** — merge pendiente                         |
+| D         | ~55                | En curso — próximo #66 (desbloquea #209 de F y #121 de E) |
+| **E**     | **~1**             | **~COMPLETO** — solo #121 pendiente (espera A/B/D)        |
+| **F**     | **~1**             | **~COMPLETO** — solo #209 pendiente (espera D Bloque 7)   |
+| **Total** | **~156**           | —                                                         |
