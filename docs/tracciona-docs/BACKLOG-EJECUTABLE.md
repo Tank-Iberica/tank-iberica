@@ -110,7 +110,7 @@ Criterio: Trust Score es prerequisito de badges, alertas, y reputacion publica.
 | 33  | Alertas contextuales al comprador                     | M        | Code | #30        | Banner suave si: dealer sin verificar + precio bajo, cuenta <7d, pocas fotos, precio >30% bajo mercado |
 | 27  | Phone verification SMS OTP                            | M        | Code | —          | Al crear primera publicacion, dealer recibe SMS con codigo, verificado queda en profile                |
 | 28  | Duplicate detection (hash imagenes + titulo)          | L        | Code | —          | Al publicar, sistema detecta duplicados potenciales, admin ve lista, seller recibe aviso               |
-| 29  | IP/device fingerprint (background)                    | M        | Code | —          | Fingerprint guardado en BD, admin ve flag si multiples cuentas desde mismo dispositivo                 |
+| 29  | IP/device fingerprint (background)                    | M        | Code | ✅ agent-c  | migration 00138 (user_fingerprints + duplicate_device_users view + upsert_user_fingerprint RPC); recordFingerprint.ts fire-and-forget util; /api/auth/fp endpoint; AdminFingerprintFlags.vue; 8 tests |
 | 34  | Excepcion fleet companies rate limit                  | S        | Code | #1         | Si subscription_tier >= basic o verificado manual, rate limit sube a 500/hora                          |
 
 **Total Bloque 4:** ~12 sesiones | **Desbloquea:** Bloque 5 (reputation)
