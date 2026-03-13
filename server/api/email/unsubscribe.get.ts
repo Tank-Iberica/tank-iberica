@@ -23,12 +23,30 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const token = query.token as string | undefined
   const emailType = query.type as string | undefined
+  const newsletterId = query.newsletter_id as string | undefined
+
+  const supabase = serverSupabaseServiceRole(event)
+
+  // ── Newsletter one-click unsubscribe (from El Industrial cron) ────────────
+  if (newsletterId) {
+    await supabase
+      .from('newsletter_subscriptions')
+      .update({ pref_newsletter: false })
+      .eq('id', newsletterId)
+
+    event.node.res.setHeader('Content-Type', 'text/html; charset=utf-8')
+    return buildHtmlPage({
+      title: 'Suscripcion cancelada',
+      heading: 'Suscripcion cancelada con exito',
+      message:
+        'Has cancelado la suscripcion a la newsletter El Industrial.<br><br>You have been unsubscribed from El Industrial newsletter.',
+      showBackLink: true,
+    })
+  }
 
   if (!token || !emailType) {
     throw safeError(400, 'Missing required query params: token, type')
   }
-
-  const supabase = serverSupabaseServiceRole(event)
 
   // ── 1. Look up user by unsubscribe_token ──────────────────────────────────
   const { data: user, error: userError } = await supabase
