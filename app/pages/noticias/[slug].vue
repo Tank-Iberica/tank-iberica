@@ -190,12 +190,12 @@ if (article.value) {
     author: {
       '@type': 'Organization',
       name: t('site.title'),
-      url: 'https://tracciona.com',
+      url: useSiteUrl(),
     },
     publisher: {
       '@type': 'Organization',
       name: t('site.title'),
-      url: 'https://tracciona.com',
+      url: useSiteUrl(),
       logo: {
         '@type': 'ImageObject',
         url: `${useSiteUrl()}/logo.png`,
