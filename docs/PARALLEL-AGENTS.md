@@ -208,10 +208,11 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** Pedir overflow de otro agente o siguiente bloque asignado
-- **Último commit:** `de80cc0` feat(agent-c): #218-#222 Block 29 Seguridad+Legal
+- **Siguiente item:** Sin items propios. Disponible para overflow de otro agente si el usuario lo solicita.
+- **Último commit:** `5a63f42` feat(agent-c): overflow #29 — device fingerprint multi-account detection
 - **Bloques completados:** 4, 5, 6a, 6b, 13, 22, 29 — **TODOS LOS BLOQUES ASIGNADOS COMPLETOS**
-- **Notas:** Migration 00135 (buyer_country en analytics_events) — pendiente `supabase db push`
+- **Overflow completado:** #87 (migration 00137: 8 ENUM types + supabase types 24 campos) · #2/#3 (info leaks: merchant-feed + embed → logger + generic error) · #29 (migration 00138: user_fingerprints + duplicate_device_users view + upsert_user_fingerprint RPC; recordFingerprint.ts; POST /api/auth/fp; AdminFingerprintFlags.vue; 8 tests)
+- **Notas:** Migraciones pendientes `supabase db push`: 00135 (buyer_country), 00137 (ENUM types), 00138 (user_fingerprints)
 
 ---
 

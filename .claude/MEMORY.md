@@ -170,6 +170,7 @@ beforeAll(async () => {
 - **`merchant-feed.get.ts`** uses `SUPABASE_SERVICE_KEY` (not `SERVICE_ROLE_KEY`)
 - **`getRouterParam`** = Nuxt global → `vi.stubGlobal('getRouterParam', mockFn)`
 - **Constructor mocks (`new Foo()`)**: MUST use regular function in vi.hoisted: `vi.fn(function() { return {...} })`. Arrow functions can't be constructors → `new Foo()` throws TypeError. NO `mockImplementation(() => {...})` in beforeEach — it overwrites the hoisted regular-fn with an arrow-fn. `vi.clearAllMocks()` does NOT reset implementations, so the hoisted regular-fn persists safely across tests.
+- **`vi.hoisted()` for any variable referenced in vi.mock factory**: `vi.mock()` factories are hoisted to top-of-file, but variable declarations are NOT. Any variable used inside a `vi.mock(() => ...)` factory must be declared with `vi.hoisted()`: `const mockFn = vi.hoisted(() => vi.fn())`. Example: `recordFingerprint.test.ts` — `mockRpc` and `mockGetHeaderFn` both hoisted.
 - **validateBody mock** (multi-handler file): `vi.mock('~~/server/utils/validateBody', () => ({ validateBody: vi.fn(async (_e, schema) => schema.parseAsync(mockBody)) }))` donde `mockBody` es variable mutable a nivel módulo.
 
 ## Acceso Remoto (configurado 09-mar)
@@ -257,7 +258,7 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **Gestión memoria:** Sección en PARALLEL-AGENTS.md — kill Node entre items, máx 1 dev server, heap 512MB, vitest run (no watch), agente pasivo = 0 procesos
 - **Coordinación:** `docs/PARALLEL-AGENTS.md` — 5 agentes (A–F), branches `agent-X/bloque-Y`
 - **Agente A:** branch `agent-a/bloque-0` · i18n: `credits.`, `tiers.`, `monetization.` · Migrations: 00115–00124 · Bloque 0 (Errores) · **#2 ✅, #3 ✅ completados · siguiente: #4**
-- **Agente C:** branch `agent-c/bloque-6b` · i18n: `trust.`, `security.`, `data.capture.` · Migrations: 00135–00144 · **Bloques 4,5,6a,6b,13,22 ✅ · #38 #39 #40 #72 #159 completados · siguiente: #217–#224 Bloque 29** · Migration 00135 pendiente `supabase db push`
+- **Agente C:** branch `agent-c/bloque-6b` · i18n: `trust.`, `security.`, `data.capture.` · Migrations: 00135–00144 · **Bloques 4,5,6a,6b,13,22,29 ✅ TODOS COMPLETOS · Overflow: #87+#2/#3+#29 ✅** · Migraciones 00135/00137/00138 pendientes `supabase db push` · **Último commit: `5a63f42`**
 - **Agente D:** branch `agent-d/bloque-7` · i18n: `dealer.`, `newsletter.`, `lifecycle.`, `audit.` · Migrations: 00145–00154 · Bloque 7 (Content+Marketing #65–#71) · **#65 ✅ completado**
 - **Agente F:** branch `agent-f/bloque-X` · i18n: `i18n.`, `auto.` · Migrations: 00165–00174 (overflow 00225–00234)
 - **Linter/hook issue:** Pre-commit hook (lint-staged + ESLint + Prettier) puede revertir cambios. Usar `git -c core.hooksPath=/dev/null commit --no-verify` para commits seguros en entorno multi-agente.
