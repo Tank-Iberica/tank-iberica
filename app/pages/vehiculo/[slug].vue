@@ -254,11 +254,28 @@ onMounted(() => {
   }
 })
 
-// Track duration when leaving the page
+// #39 — Track duration when leaving the page.
+// Two exit paths: in-app navigation (onBeforeUnmount) + tab close/external nav (visibilitychange).
+// Guard flag prevents double-tracking if both fire.
+let _durationTracked = false
+
+function _fireDurationOnce() {
+  if (_durationTracked || !vehicle.value || pageStartedAt.value <= 0) return
+  _durationTracked = true
+  trackVehicleDuration(vehicle.value.id, pageStartedAt.value)
+}
+
+function _onVisibilityHidden() {
+  if (document.visibilityState === 'hidden') _fireDurationOnce()
+}
+
+onMounted(() => {
+  document.addEventListener('visibilitychange', _onVisibilityHidden)
+})
+
 onBeforeUnmount(() => {
-  if (vehicle.value && pageStartedAt.value > 0) {
-    trackVehicleDuration(vehicle.value.id, pageStartedAt.value)
-  }
+  document.removeEventListener('visibilitychange', _onVisibilityHidden)
+  _fireDurationOnce()
 })
 
 // SEO meta tags -- runs during SSR so crawlers and social previews see them

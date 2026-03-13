@@ -89,17 +89,28 @@ describe('no Supabase calls in test env (import.meta.client guard)', () => {
   })
 })
 
-// ─── trackVehicleDuration — 3s minimum filter ────────────────────────────────
-// Even though trackEvent is a no-op in test env, trackVehicleDuration has its
-// own early exit for durations < 3s, which can be verified indirectly.
+// ─── #39 — trackVehicleDuration ──────────────────────────────────────────────
+// import.meta.client is false in test env so the Supabase insert never fires.
+// We verify the function signature, edge-case safety, and the 3s-minimum logic
+// via indirect checks (no throw + constant exists).
 
 describe('trackVehicleDuration', () => {
-  it('does not throw with very short duration (< 3s)', () => {
+  it('is exposed in the composable return value', () => {
     const c = useAnalyticsTracking()
+    expect(typeof c.trackVehicleDuration).toBe('function')
+  })
+
+  it('VEHICLE_DURATION event constant is defined', () => {
+    expect(ANALYTICS_EVENTS.VEHICLE_DURATION).toBe('vehicle_duration')
+  })
+
+  it('does not throw with duration < 3s (early exit path)', () => {
+    const c = useAnalyticsTracking()
+    // startedAt 1 second ago → 1s duration → below 3s threshold
     expect(() => c.trackVehicleDuration('vehicle-1', Date.now() - 1000)).not.toThrow()
   })
 
-  it('does not throw with long duration (> 3s)', () => {
+  it('does not throw with duration > 3s (normal path)', () => {
     const c = useAnalyticsTracking()
     expect(() => c.trackVehicleDuration('vehicle-1', Date.now() - 10000)).not.toThrow()
   })
@@ -109,7 +120,18 @@ describe('trackVehicleDuration', () => {
     expect(() => c.trackVehicleDuration('vehicle-1', Date.now())).not.toThrow()
   })
 
-  it('does not throw with metadata options', () => {
+  it('does not throw with very large duration (1 hour)', () => {
+    const c = useAnalyticsTracking()
+    expect(() => c.trackVehicleDuration('vehicle-1', Date.now() - 3_600_000)).not.toThrow()
+  })
+
+  it('does not throw when startedAt is in the future (negative duration)', () => {
+    const c = useAnalyticsTracking()
+    // startedAt in the future → negative duration → below 3s → early exit
+    expect(() => c.trackVehicleDuration('vehicle-1', Date.now() + 5000)).not.toThrow()
+  })
+
+  it('does not throw with metadata options on trackVehicleView', () => {
     const c = useAnalyticsTracking()
     expect(() => c.trackVehicleView('vehicle-1', { source: 'catalog', position: 3 })).not.toThrow()
   })
