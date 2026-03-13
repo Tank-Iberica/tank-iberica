@@ -5058,5 +5058,10 @@
       "accountingExport": "Export for accounting",
       "accountingHint": "Download invoices in a format compatible with your accounting software"
     }
+  },
+  "platform": {
+    "feature_requires_plan": "This feature requires the {plan} plan or higher",
+    "feature_not_available": "This feature is not currently available",
+    "upgrade_plan": "Upgrade plan"
   }
 }

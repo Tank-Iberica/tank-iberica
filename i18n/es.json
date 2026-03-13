@@ -5065,5 +5065,10 @@
       "accountingExport": "Exportar para contabilidad",
       "accountingHint": "Descarga facturas en formato compatible con tu software contable"
     }
+  },
+  "platform": {
+    "feature_requires_plan": "Esta función requiere el plan {plan} o superior",
+    "feature_not_available": "Esta función no está disponible actualmente",
+    "upgrade_plan": "Mejorar plan"
   }
 }
