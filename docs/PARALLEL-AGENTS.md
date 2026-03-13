@@ -291,7 +291,7 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 | Bloque                    | Items                 | Estado                     | Sesiones est. |
 | ------------------------- | --------------------- | -------------------------- | ------------- |
 | 15 (Plataforma Core)      | #124–#128             | ✅ Completado              | ~7            |
-| 16 (Producto Marketplace) | #129–#135, #161, #162 | Pendiente                  | ~16           |
+| 16 (Producto Marketplace) | #129–#135, #161, #162 | ✅ Completado              | ~16           |
 | 20 (Data + Analytics)     | #150–#152             | Pendiente                  | ~14           |
 | 12 (Backlog Técnico)      | #74–#78, #80          | Pendiente (#79 ✅, #81 ✅) | ~11           |
 | Bloqueados                | #117–#122             | Al final                   | ~6            |
@@ -313,10 +313,10 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #129 (Bloque 16 — Producto Marketplace)
-- **Último commit:** `db62a8e` feat(agent-e): #127 per-vehicle product analytics composable
-- **Bloques completados:** 15 ✅
-- **Items completados:** #124 ✅ #125 ✅ #126 ✅ #127 ✅ #128 ✅
+- **Siguiente item:** #150 (Bloque 20 — Data + Analytics)
+- **Último commit:** `f04e69f` feat(agent-e): #162 product metrics composable
+- **Bloques completados:** 15 ✅, 16 ✅
+- **Items completados:** #124 ✅ #125 ✅ #126 ✅ #127 ✅ #128 ✅ #129 ✅ #130 ✅ #131 ✅ #132 ✅ #133 ✅ #134 ✅ #135 ✅ #161 ✅ #162 ✅
 - **Notas Bloque 15:**
   - #124: P1 hardcoding migrado (18 archivos), useSiteConfig + audit-hardcoding.mjs, 13 tests
   - #125: vehicle_groups table (migration 00155) + useVehicleGroups composable, 14 tests
@@ -324,6 +324,17 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
   - #127: useProductAnalytics per-vehicle metrics, 21 tests
   - #128: FeatureGate.vue + useFeatureGate (feature flags + plan enforcement), 30 tests
   - Total Bloque 15: 116 tests, 12 commits
+- **Notas Bloque 16:**
+  - #135: useListingLifecycle state machine (8 statuses, transition validation, audit trail), 46 tests
+  - #129: usePricingSuggestion (IQR outlier removal, percentile, market positioning), 41 tests
+  - #130: useVehicleScoring (5 dimensions: completeness/freshness/engagement/trust/boost), 33 tests
+  - #131: useSearchRelevance (text/filter/geo/recency scoring), 33 tests
+  - #132: useSimilarVehicles (6-dimension similarity scoring), 42 tests
+  - #133: useCatalogStats (price distribution, category/province stats, age calc), 25 tests
+  - #134: useProductExport (JSON-LD, OpenGraph, share text, CSV), 30 tests
+  - #161: useInventoryTracking (stock levels, days on market, sell-through, turnover), 20 tests
+  - #162: useProductMetrics (revenue summary, funnel, portfolio health, HHI), 30 tests
+  - Total Bloque 16: 300 tests, 9 commits
 
 ---
 
