@@ -4619,6 +4619,7 @@ export type Database = {
           plate: string | null
           price: number | null
           price_trend: string | null
+          priority_reserved_until: string | null
           rental_price: number | null
           rental_records: Json | null
           slug: string
@@ -4677,6 +4678,7 @@ export type Database = {
           plate?: string | null
           price?: number | null
           price_trend?: string | null
+          priority_reserved_until?: string | null
           rental_price?: number | null
           rental_records?: Json | null
           slug: string
@@ -4735,6 +4737,7 @@ export type Database = {
           plate?: string | null
           price?: number | null
           price_trend?: string | null
+          priority_reserved_until?: string | null
           rental_price?: number | null
           rental_records?: Json | null
           slug?: string
