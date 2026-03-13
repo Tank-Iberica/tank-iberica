@@ -1,3 +1,12 @@
+/**
+ * Composable for fetching and filtering published news articles.
+ *
+ * Queries the `news` table ordered by `published_at` desc.
+ * Supports category filtering, search, and pagination.
+ * All text fields are localised (ES/EN via `localizedField()`).
+ *
+ * @returns `{ articles, total, loading, fetch, fetchOne }` — reactive state and fetch helpers.
+ */
 import { ref } from 'vue'
 import { useSupabaseClient } from '#imports'
 
@@ -21,7 +30,8 @@ export interface News {
 }
 
 const PAGE_SIZE = 12
-const NEWS_COLUMNS = 'id, title_es, title_en, slug, category, image_url, description_es, description_en, content_es, content_en, hashtags, views, status, published_at, created_at, updated_at'
+const NEWS_COLUMNS =
+  'id, title_es, title_en, slug, category, image_url, description_es, description_en, content_es, content_en, hashtags, views, status, published_at, created_at, updated_at'
 
 export function useNews() {
   const supabase = useSupabaseClient()
@@ -61,12 +71,10 @@ export function useNews() {
       news.value = (data as News[]) || []
       total.value = count || 0
       hasMore.value = news.value.length < total.value
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching news'
       news.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -88,12 +96,10 @@ export function useNews() {
       const newItems = (data as News[]) || []
       news.value = [...news.value, ...newItems]
       hasMore.value = news.value.length < total.value
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error fetching more news'
       page.value--
-    }
-    finally {
+    } finally {
       loadingMore.value = false
     }
   }

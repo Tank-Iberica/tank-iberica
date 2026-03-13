@@ -271,6 +271,10 @@ function nextImage() {
    Matches legacy: 16px radius, shadow, hover lift
    ============================================ */
 .product-card {
+  /* CSS virtual rendering: skip paint/layout for off-screen cards (#91)
+     contain-intrinsic-size reserves approximate height so scroll stays stable */
+  content-visibility: auto;
+  contain-intrinsic-size: 0 320px;
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);
@@ -297,7 +301,11 @@ function nextImage() {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-color, var(--color-gray-200)) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--bg-secondary) 0%,
+    var(--border-color, var(--color-gray-200)) 100%
+  );
 }
 
 .card-img {

@@ -1,3 +1,15 @@
+/**
+ * Build a correctly-sized image URL for a given delivery variant.
+ *
+ * Supports two providers:
+ * - **Cloudflare Images** (`imagedelivery.net`) — appends the variant segment.
+ * - **Cloudinary** — replaces the transformation segment with preset parameters.
+ * - Falls back to the original URL for any other host.
+ *
+ * @param url - Raw image URL stored in the DB (may be null/undefined).
+ * @param variant - Requested size variant. Defaults to `'card'`.
+ * @returns A fully-qualified image URL, or `/placeholder-vehicle.svg` for missing images.
+ */
 function getImageUrl(
   url: string | null | undefined,
   variant: 'thumb' | 'card' | 'gallery' | 'og' = 'card',

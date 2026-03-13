@@ -38,7 +38,15 @@ watch(
 
 <template>
   <div>
-    <div ref="chatContainer" class="chat-messages">
+    <!-- aria-live: new messages announced to screen readers (#90) -->
+    <div
+      ref="chatContainer"
+      class="chat-messages"
+      role="log"
+      aria-live="polite"
+      aria-relevant="additions"
+      :aria-label="t('user.chatMessages')"
+    >
       <div v-if="loading" class="chat-loading">{{ t('common.loading') }}...</div>
       <div v-else-if="messages.length === 0" class="chat-empty">
         {{ t('user.noMessages') }}

@@ -218,6 +218,7 @@ onMounted(async () => {
             :alt="$t('profile.data.avatarAlt')"
             width="96"
             height="96"
+            sizes="96px"
             fit="cover"
             format="webp"
             loading="lazy"

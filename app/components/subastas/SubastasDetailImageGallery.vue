@@ -1,7 +1,17 @@
 <template>
   <div class="vehicle-image-section">
     <div class="vehicle-image-wrapper">
-      <NuxtImg v-if="currentImage" :src="currentImage" :alt="vehicleTitle" class="vehicle-image" width="800" height="600" fetchpriority="high" decoding="async" sizes="(max-width: 48rem) 100vw, 800px" />
+      <NuxtImg
+        v-if="currentImage"
+        :src="currentImage"
+        :alt="vehicleTitle"
+        class="vehicle-image"
+        width="800"
+        height="600"
+        fetchpriority="high"
+        decoding="async"
+        sizes="(max-width: 48rem) 100vw, 800px"
+      />
       <div v-else class="vehicle-image-placeholder">
         <svg
           width="48"
@@ -28,7 +38,16 @@
         :class="['thumb-btn', { active: selectedIndex === idx }]"
         @click="$emit('select-image', idx)"
       >
-        <NuxtImg :src="img.url" :alt="`${vehicleTitle} - ${idx + 1}`" loading="lazy" width="100" height="75" decoding="async" />
+        <NuxtImg
+          :src="img.url"
+          :alt="`${vehicleTitle} - ${idx + 1}`"
+          loading="lazy"
+          width="100"
+          height="75"
+          sizes="100px"
+          format="webp"
+          decoding="async"
+        />
       </button>
     </div>
   </div>

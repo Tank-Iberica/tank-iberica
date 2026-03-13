@@ -42,11 +42,7 @@
 
     <!-- Transactions list -->
     <div v-else class="transactions-list">
-      <article
-        v-for="tx in transactions"
-        :key="tx.id"
-        class="tx-card"
-      >
+      <article v-for="tx in transactions" :key="tx.id" class="tx-card">
         <!-- Image -->
         <div class="tx-image">
           <NuxtImg
@@ -55,11 +51,20 @@
             :alt="tx.title"
             width="100"
             height="75"
+            sizes="100px"
+            format="webp"
             loading="lazy"
             decoding="async"
           />
           <div v-else class="tx-image-placeholder" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              width="28"
+              height="28"
+            >
               <rect x="3" y="3" width="18" height="18" rx="2" />
               <circle cx="8.5" cy="8.5" r="1.5" />
               <polyline points="21 15 16 10 5 21" />
@@ -180,10 +185,24 @@ onMounted(fetch)
   flex-shrink: 0;
 }
 
-.sk-body { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.25rem; }
-.sk-line { height: 0.875rem; border-radius: 0.25rem; background: var(--color-skeleton-bg); }
-.sk-line.wide { width: 70%; }
-.sk-line.medium { width: 45%; }
+.sk-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}
+.sk-line {
+  height: 0.875rem;
+  border-radius: 0.25rem;
+  background: var(--color-skeleton-bg);
+}
+.sk-line.wide {
+  width: 70%;
+}
+.sk-line.medium {
+  width: 45%;
+}
 
 /* Transactions list */
 .transactions-list {
@@ -203,7 +222,9 @@ onMounted(fetch)
   transition: border-color var(--transition-fast);
 }
 
-.tx-card:hover { border-color: var(--color-primary); }
+.tx-card:hover {
+  border-color: var(--color-primary);
+}
 
 .tx-image {
   flex-shrink: 0;
@@ -214,7 +235,11 @@ onMounted(fetch)
   background: var(--bg-secondary);
 }
 
-.tx-image img { width: 100%; height: 100%; object-fit: cover; }
+.tx-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 .tx-image-placeholder {
   width: 100%;
@@ -225,7 +250,10 @@ onMounted(fetch)
   color: var(--text-auxiliary);
 }
 
-.tx-info { flex: 1; min-width: 0; }
+.tx-info {
+  flex: 1;
+  min-width: 0;
+}
 
 .tx-title {
   display: block;
@@ -238,7 +266,9 @@ onMounted(fetch)
   margin-bottom: 0.25rem;
 }
 
-.tx-title:hover { color: var(--color-primary); }
+.tx-title:hover {
+  color: var(--color-primary);
+}
 
 .tx-dealer {
   font-size: 0.8125rem;
@@ -246,7 +276,12 @@ onMounted(fetch)
   margin: 0 0 0.5rem;
 }
 
-.tx-meta { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.tx-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
 
 .tx-price {
   font-size: 0.9375rem;
@@ -291,5 +326,7 @@ onMounted(fetch)
   transition: background var(--transition-fast);
 }
 
-.btn-primary:hover { background: var(--color-primary-dark); }
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+}
 </style>

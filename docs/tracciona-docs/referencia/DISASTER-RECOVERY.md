@@ -44,10 +44,40 @@
 3. Restaurar: `psql $DATABASE_URL < backup.sql`
 4. Verificar conteos de tablas clave
 
+## Backup de imágenes originales (#92)
+
+Las imágenes de vehículos son irreemplazables. Proceso para preservar los originales:
+
+### Cloudinary (transformaciones + entrega)
+
+- Los originales subidos se almacenan en Cloudinary bajo la carpeta `tracciona/vehicles/{dealer_id}/`.
+- Cloudinary Pro incluye backup automático. Verificar que está activo: Settings → Backup → S3 bucket propio.
+- **Proceso de backup manual (mensual):** Usar Cloudinary CLI para exportar a B2:
+  ```bash
+  # Requiere: cloudinary-cli instalado y CLOUDINARY_URL configurada
+  cld fetch-resources --folder tracciona/vehicles --output /tmp/cloudinary-backup
+  # Subir a B2
+  b2 sync /tmp/cloudinary-backup b2://tracciona-backups/images/
+  ```
+
+### Cloudflare Images (almacenamiento permanente)
+
+- Los IDs de imagen se guardan en la BD (`vehicles.image_ids[]`). Si se pierde una imagen en CF Images, la referencia queda huérfana.
+- **Recuperación:** Con el backup de BD, se pueden identificar todos los `image_ids` y verificar disponibilidad en CF Images via API.
+- No hay backup automático propio de CF Images — la BD es el índice de verdad.
+
+### Política de retención de originales
+
+| Tipo           | Almacén              | Backup           | Retención  |
+| -------------- | -------------------- | ---------------- | ---------- |
+| Fotos vehículo | CF Images            | Solo BD (índice) | Permanente |
+| Docs dealer    | Cloudinary (privado) | CF R2 mensual    | 5 años     |
+| Logos/branding | Cloudinary           | CF R2 mensual    | Permanente |
+
 ## Servicios NO cubiertos por backup de BD
 
-- Cloudinary: imágenes (tiene su propio backup)
-- Cloudflare Images: imágenes (tiene su propio backup)
+- Cloudinary: imágenes (tiene su propio backup, ver sección anterior)
+- Cloudflare Images: imágenes (BD es el índice, ver sección anterior)
 - Stripe: datos de pago (Stripe mantiene su propio historial)
 - GitHub: código fuente (git es el backup)
 

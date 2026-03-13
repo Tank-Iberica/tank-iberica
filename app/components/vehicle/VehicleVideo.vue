@@ -10,6 +10,7 @@
         :alt="$t('vehicle.videoThumbnailAlt')"
         width="800"
         height="450"
+        sizes="(max-width: 48em) 100vw, 800px"
         fit="cover"
         format="webp"
         class="vehicle-video__thumb"

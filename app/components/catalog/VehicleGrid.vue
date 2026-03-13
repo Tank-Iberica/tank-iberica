@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <!-- aria-live: announces result count changes to screen readers (#90) -->
+  <div aria-live="polite" aria-atomic="false">
     <!-- Loading skeleton -->
-    <div v-if="loading" class="vehicle-grid">
+    <div v-if="loading" class="vehicle-grid" aria-busy="true" aria-label="$t('common.loading')">
       <div v-for="n in 6" :key="n" class="skeleton-card">
         <div class="skeleton-image" />
         <div class="skeleton-body">
@@ -22,7 +23,11 @@
     <div v-else-if="displayedVehicles.length" class="vehicle-grid">
       <template v-for="(item, idx) in gridItems" :key="item.key">
         <!-- Vehicle card -->
-        <CatalogVehicleCard v-if="item.type === 'vehicle'" :vehicle="item.vehicle!" :priority="idx < 4" />
+        <CatalogVehicleCard
+          v-if="item.type === 'vehicle'"
+          :vehicle="item.vehicle!"
+          :priority="idx < 4"
+        />
         <!-- Promo card (demand + hidden split, or end-of-catalog promos) -->
         <CatalogPromoCard
           v-else

@@ -202,6 +202,7 @@
               alt="ES"
               width="20"
               height="15"
+              sizes="20px"
               format="webp"
               class="lang-flag-desktop"
             />
@@ -216,6 +217,7 @@
               alt="EN"
               width="20"
               height="15"
+              sizes="20px"
               format="webp"
               class="lang-flag-desktop"
             />
