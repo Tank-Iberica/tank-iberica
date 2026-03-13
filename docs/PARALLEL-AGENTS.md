@@ -108,11 +108,11 @@ Cada agente usa prefijo propio para evitar conflictos en `i18n/es.json` e `i18n/
 
 ### Progreso
 
-- **Siguiente item:** #3 (5 server routes exponen service names en errores — wrap en safeError)
-- **Último commit:** feat(agent-a): #2 tests ownership validation verify-document 11/11 pass
+- **Siguiente item:** #4 (10 errores TypeScript restantes — npm run typecheck = 0)
+- **Último commit:** feat(agent-a): #3 sanitize brokerage error messages + 20 tests
 - **Bloques completados:** —
-- **Items completados:** #2 ✅
-- **Notas:** #2 ya tenía el código de ownership implementado; faltaba el test file. Creado `tests/unit/server/api-verify-document.test.ts` con 11 tests cubriendo 401, 403 (2 casos), 200 owner, 200 admin, 404 vehicle, 404 doc, AI match, AI mismatch, AI fallback, 500 update.
+- **Items completados:** #2 ✅, #3 ✅
+- **Notas:** #3: 5 brokerage routes exponían error.message de Supabase. Añadido logger + mensaje genérico. Tests: `api-brokerage-routes.test.ts` (20 tests). Pattern thenable chain + h3 mock a nivel módulo.
 
 ---
 
@@ -289,10 +289,11 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #208 (slugs traducidos + hreflang) o #212 (alertas instantáneas Pro)
-- **Último commit:** —
+- **Siguiente item:** #213 (facturación automática Stripe + software contable)
+- **Último commit:** feat(agent-f): #212 instant Pro alerts (3315eba)
 - **Bloques completados:** —
-- **Notas:** No iniciar hasta semana 8.
+- **Items completados:** #212 ✅
+- **Notas:** Empezado por Bloque 28 (automatización). Migration 00165 pendiente de `supabase db push`.
 
 ---
 
