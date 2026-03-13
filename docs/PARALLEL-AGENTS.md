@@ -276,8 +276,8 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 | Bloque                       | Items     | Estado    | Sesiones est. |
 | ---------------------------- | --------- | --------- | ------------- |
-| 27 (Internacionalización)    | #208–#211 | Pendiente | ~8            |
-| 28 (Automatización Avanzada) | #212–#216 | Pendiente | ~10           |
+| 27 (Internacionalización)    | #208–#211 | ✅ Completo | 3 sesiones  |
+| 28 (Automatización Avanzada) | #212–#216 | ✅ Completo | 3 sesiones  |
 
 ### Coordinación
 
@@ -289,11 +289,23 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #214 (generación de anuncios para otras plataformas)
-- **Último commit:** `df7c1d2` feat(invoicing): #213 auto-invoicing with dynamic VAT, Quaderno, and accounting export
-- **Bloques completados:** —
-- **Items completados:** #212 ✅ (alertas instantáneas Pro), #213 ✅ (facturación automática Stripe + contable)
-- **Notas:** Started Block 28 first (automation, less UI dependency). vatRates shared util, enhanced billing.ts createAutoInvoice, export-csv JSON format. 47 tests.
+- **Siguiente item:** TODOS COMPLETADOS — Agent F trabajo terminado
+- **Último commit:** `190b218` feat(i18n): #209 batch auto-translation cron endpoint + tests + i18n keys
+- **Branch pushed:** `agent-f/bloque-28` (remote)
+- **Bloques completados:** Bloque 27 ✅, Bloque 28 ✅
+- **Items completados:**
+  - #208 ✅ (prefix_except_default + hreflang — ya implementado, verificado)
+  - #209 ✅ (batch auto-translation cron + 12 tests + i18n)
+  - #210 ✅ (FTS multilang search function + migration 00166)
+  - #211 ✅ (default_currency + migration 00165 + getCurrency helper)
+  - #212 ✅ (alertas instantáneas Pro — ya implementado)
+  - #213 ✅ (auto-invoicing: dynamic VAT, Quaderno, export + 47 tests)
+  - #214 ✅ (ad export 5 platforms — ya implementado, 31 tests)
+  - #215 ✅ (scheduled publishing — verified + 11 tests + i18n)
+  - #216 ✅ (AI editorial generation — verified + 7 tests + i18n)
+- **Total nuevos tests:** ~80 tests across 5 test files
+- **Migraciones creadas:** 00165, 00166
+- **Notas:** All 9 items complete. Several were already implemented (verification-only). Created vatRates shared util, batch translation cron, FTS search function, default_currency support. 80+ i18n keys (ES+EN) under `auto.*` prefix.
 
 ---
 
