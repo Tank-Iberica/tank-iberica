@@ -271,6 +271,10 @@ function nextImage() {
    Matches legacy: 16px radius, shadow, hover lift
    ============================================ */
 .product-card {
+  /* CSS virtual rendering: skip paint/layout for off-screen cards (#91)
+     contain-intrinsic-size reserves approximate height so scroll stays stable */
+  content-visibility: auto;
+  contain-intrinsic-size: 0 320px;
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);

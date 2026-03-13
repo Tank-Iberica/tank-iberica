@@ -483,10 +483,12 @@ function onTouchEnd() {
   vertical-align: middle;
 }
 
-/* Row */
+/* Row — CSS virtual rendering for large lists (#91) */
 .table-row {
   cursor: pointer;
   transition: background-color 0.2s;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 56px; /* approximate row height */
 }
 
 .table-row:hover {

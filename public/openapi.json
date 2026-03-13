@@ -1,0 +1,340 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tracciona API",
+    "version": "1.0.0",
+    "description": "Public and internal API for Tracciona — marketplace de vehículos industriales. Base URL: https://tracciona.es",
+    "contact": {
+      "name": "Tracciona Support",
+      "email": "support@tracciona.es"
+    }
+  },
+  "servers": [
+    { "url": "https://tracciona.es", "description": "Production" },
+    { "url": "http://localhost:3000", "description": "Local dev" }
+  ],
+  "tags": [
+    { "name": "public", "description": "No auth required" },
+    { "name": "auth", "description": "Authentication" },
+    { "name": "dealer", "description": "Dealer dashboard" },
+    { "name": "admin", "description": "Admin only (role=admin)" },
+    { "name": "cron", "description": "Internal cron jobs (CRON_SECRET)" }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": ["public"],
+        "summary": "Health check",
+        "description": "Returns service health status. Protected by HEALTH_TOKEN header in production.",
+        "parameters": [
+          { "name": "x-health-token", "in": "header", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "ts": { "type": "string", "format": "date-time" },
+                    "db": { "type": "string", "enum": ["ok", "error"] }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "tags": ["public"],
+        "summary": "Full-text vehicle search",
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "schema": { "type": "string" }, "description": "Search term" },
+          { "name": "vertical", "in": "query", "schema": { "type": "string", "default": "tracciona" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10, "maximum": 50 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "vehicles": { "type": "array", "items": { "$ref": "#/components/schemas/VehicleSummary" } },
+                    "total": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market-report": {
+      "get": {
+        "tags": ["public"],
+        "summary": "Market intelligence report",
+        "description": "Returns aggregated market data. Email required for full PDF download.",
+        "parameters": [
+          { "name": "email", "in": "query", "schema": { "type": "string", "format": "email" } },
+          { "name": "vertical", "in": "query", "schema": { "type": "string", "default": "tracciona" } }
+        ],
+        "responses": {
+          "200": { "description": "Market data JSON or PDF redirect" }
+        }
+      }
+    },
+    "/api/widget/{dealerId}": {
+      "get": {
+        "tags": ["public"],
+        "summary": "Dealer embeddable widget data",
+        "parameters": [
+          { "name": "dealerId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Widget vehicle list" },
+          "404": { "description": "Dealer not found" }
+        }
+      }
+    },
+    "/api/v1/vehicles": {
+      "get": {
+        "tags": ["public"],
+        "summary": "List vehicles (public API v1)",
+        "description": "Requires API key in X-API-Key header or ?api_key= query param.",
+        "parameters": [
+          { "name": "X-API-Key", "in": "header", "required": true, "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string", "default": "published" } },
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20, "maximum": 100 } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated vehicle list" },
+          "401": { "description": "Missing or invalid API key" }
+        }
+      }
+    },
+    "/api/stripe/checkout": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Create Stripe checkout session",
+        "security": [{ "supabaseAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["priceId"],
+                "properties": {
+                  "priceId": { "type": "string" },
+                  "successUrl": { "type": "string" },
+                  "cancelUrl": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Checkout URL" },
+          "401": { "description": "Not authenticated" }
+        }
+      }
+    },
+    "/api/stripe/webhook": {
+      "post": {
+        "tags": ["public"],
+        "summary": "Stripe webhook receiver",
+        "description": "Receives Stripe events. Must be called by Stripe with valid signature.",
+        "responses": {
+          "200": { "description": "Event processed" },
+          "400": { "description": "Invalid signature" }
+        }
+      }
+    },
+    "/api/cron/expire-listings": {
+      "post": {
+        "tags": ["cron"],
+        "summary": "Expire published listings older than 60 days",
+        "security": [{ "cronSecret": [] }],
+        "responses": {
+          "200": {
+            "description": "Expiry result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "expired": { "type": "integer" },
+                    "notified": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid cron secret" }
+        }
+      }
+    },
+    "/api/cron/search-alerts": {
+      "post": {
+        "tags": ["cron"],
+        "summary": "Process saved search alerts and notify users",
+        "security": [{ "cronSecret": [] }],
+        "responses": {
+          "200": { "description": "Alerts processed" }
+        }
+      }
+    },
+    "/api/cron/price-drop-alert": {
+      "post": {
+        "tags": ["cron"],
+        "summary": "Send price drop notifications for favorited vehicles",
+        "security": [{ "cronSecret": [] }],
+        "responses": {
+          "200": { "description": "Notifications sent" }
+        }
+      }
+    },
+    "/api/dealer/api-key": {
+      "get": {
+        "tags": ["dealer"],
+        "summary": "Get dealer API key",
+        "security": [{ "supabaseAuth": [] }],
+        "responses": {
+          "200": { "description": "API key" },
+          "401": { "description": "Not authenticated" }
+        }
+      },
+      "post": {
+        "tags": ["dealer"],
+        "summary": "Rotate dealer API key",
+        "security": [{ "supabaseAuth": [] }],
+        "responses": {
+          "200": { "description": "New API key" }
+        }
+      }
+    },
+    "/api/images/process": {
+      "post": {
+        "tags": ["dealer"],
+        "summary": "Process and upload vehicle image",
+        "security": [{ "supabaseAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": { "type": "string", "format": "binary" },
+                  "vehicleId": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Uploaded image URL" },
+          "413": { "description": "File too large" }
+        }
+      }
+    },
+    "/api/generate-description": {
+      "post": {
+        "tags": ["dealer"],
+        "summary": "AI-generate vehicle description",
+        "security": [{ "supabaseAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["make", "model", "year"],
+                "properties": {
+                  "make": { "type": "string" },
+                  "model": { "type": "string" },
+                  "year": { "type": "integer" },
+                  "km": { "type": "integer" },
+                  "features": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Generated description" }
+        }
+      }
+    },
+    "/api/admin/dealers/health-scores": {
+      "get": {
+        "tags": ["admin"],
+        "summary": "Dealer health scores overview",
+        "security": [{ "supabaseAuth": [] }],
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50 } },
+          { "name": "minScore", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Dealer health score list" },
+          "401": { "description": "Not authenticated" },
+          "403": { "description": "Not admin" }
+        }
+      }
+    },
+    "/api/whatsapp/webhook": {
+      "post": {
+        "tags": ["public"],
+        "summary": "WhatsApp Business webhook",
+        "description": "Receives incoming WhatsApp messages from Meta.",
+        "responses": {
+          "200": { "description": "OK" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "VehicleSummary": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "slug": { "type": "string" },
+          "make": { "type": "string" },
+          "model": { "type": "string" },
+          "year": { "type": "integer" },
+          "price_cents": { "type": "integer" },
+          "status": { "type": "string", "enum": ["draft", "published", "sold", "archived", "expired", "paused"] },
+          "image_url": { "type": "string", "nullable": true }
+        }
+      }
+    },
+    "securitySchemes": {
+      "supabaseAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Supabase JWT token from auth session"
+      },
+      "cronSecret": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-cron-secret",
+        "description": "CRON_SECRET environment variable"
+      },
+      "apiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Dealer API key from /api/dealer/api-key"
+      }
+    }
+  }
+}
