@@ -163,8 +163,8 @@ git worktree remove .claude/worktrees/agent-X
 | 23 (SEO Avanzado)          | #164–#183     | ✅ COMPLETADO | 0             |
 | 24 (Código + UX Polish)    | #184–#194     | ✅ COMPLETADO | 0             |
 | 19 (Marketing + Contenido) | #146–#149     | ✅ COMPLETADO | 0             |
-| 21 (Operaciones + Calidad) | #153–#158     | Pendiente     | ~6            |
-| 14 (Infra + Documentación) | #96–#100      | Pendiente     | ~6            |
+| 21 (Operaciones + Calidad) | #153–#158     | ✅ COMPLETADO | 0             |
+| 14 (Infra + Documentación) | #96–#100      | ✅ COMPLETADO | 0             |
 
 ### Coordinación
 
@@ -181,9 +181,10 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #96 (Bloque 14 — Infra + Documentación)
-- **Último commit:** `(pendiente)` feat(agent-b): #153-#158 Bloque 21
-- **Bloques completados:** Bloque 3 ✅, **Bloque 23 ✅**, **Bloque 24 ✅**, **Bloque 19 ✅**, **Bloque 21 ✅**
+- **Siguiente item:** TODOS LOS BLOQUES DE AGENTE B COMPLETADOS 🎉
+- **Último commit:** `8f6505b` feat(agent-b): #153-#158 Bloque 21 + Bloque 14
+- **Bloques completados:** Bloque 3 ✅, **Bloque 23 ✅**, **Bloque 24 ✅**, **Bloque 19 ✅**, **Bloque 21 ✅**, **Bloque 14 ✅**
+- **Items Bloque 14:** #96 ✅(script run) #97 ⏭️(founder/legal) #98 ✅(ya existía) #99 ✅(ya existía) #100 ✅(dr-drill.sh + historial)
 - **Items Bloque 21:** #153 ✅(F1 email notif) #154 ✅(F2 ya existía) #155 ✅(F4 ya existía+email) #156 ✅(F5 ya existía) #157 ✅(F6 new cron) #158 ✅(F7 ya existía)
 - **Items Bloque 19:** #146 ✅(A6 ya existía) #147 ✅(P6 editorial calendar) #148 ✅(A7 AI article gen) #149 ✅(N2 competitor table)
 - **Items Bloque 24:** #184 ✅(ya existía) #185 ✅(ya existía) #186 ✅(no-op) #187 ✅(8 guards) #188 ✅(CONTACT.phone) #189 ✅(activeSocialLinks) #190 ✅(ya existía) #191 ✅(ya existía) #192 ✅(ya existía) #193 ✅(URL+QR footer) #194 ✅(ya existía)

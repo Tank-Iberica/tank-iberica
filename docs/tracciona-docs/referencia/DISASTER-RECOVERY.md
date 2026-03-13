@@ -51,11 +51,25 @@
 - Stripe: datos de pago (Stripe mantiene su propio historial)
 - GitHub: código fuente (git es el backup)
 
-## Test de restauración
+## Test de restauración (DR Drill)
 
-Ejecutar 1x/trimestre:
+Ejecutar 1x/trimestre. El script automatiza los 5 pasos y añade una fila al historial:
 
-1. Descargar último backup daily
-2. Restaurar en instancia temporal (Railway/Neon)
-3. Verificar conteos: vehicles, dealers, users, subscriptions
-4. Documentar resultado en PLAN-AUDITORIA.md
+```bash
+# Requiere: TARGET_DATABASE_URL (Neon/Railway), BACKUP_ENCRYPTION_KEY, B2 credentials
+bash scripts/dr-drill.sh [ruta-backup-opcional]
+```
+
+Pasos manuales si no se usa el script:
+
+1. Descargar último backup daily desde B2
+2. Descifrar con openssl (AES-256-CBC)
+3. Restaurar en instancia temporal (Neon free tier)
+4. Verificar conteos: vehicles, dealers, users, subscriptions
+5. Documentar resultado en la tabla de abajo
+
+## Historial de Drills
+
+| Fecha                                                              | Backup usado | Tiempo total | Download | Decrypt | Restore | Verify | Vehicles | Dealers | Resultado | Gaps |
+| ------------------------------------------------------------------ | ------------ | ------------ | -------- | ------- | ------- | ------ | -------- | ------- | --------- | ---- |
+| (pendiente — ejecutar primer drill con `bash scripts/dr-drill.sh`) |              |              |          |         |         |        |          |         |           |      |
