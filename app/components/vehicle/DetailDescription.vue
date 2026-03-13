@@ -3,7 +3,8 @@
     <!-- Description -->
     <div v-if="description" class="vehicle-description">
       <h2>{{ $t('vehicle.description') }}</h2>
-      <p>{{ description }}</p>
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <div class="vehicle-description-body" v-html="renderedDescription" />
       <div class="vehicle-description-badges">
         <UiAiDisclosureBadge v-if="isAiGenerated" type="generated" />
         <UiAiDisclosureBadge v-if="locale !== 'es'" type="translated" />
@@ -19,12 +20,19 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue'
+import { markdownToSafeHtml } from '~/utils/markdownToHtml'
+
+const props = defineProps<{
   description: string | null
   vehicleId: string
   locale: string
   isAiGenerated: boolean
 }>()
+
+const renderedDescription = computed(() =>
+  props.description ? markdownToSafeHtml(props.description) : '',
+)
 </script>
 
 <style scoped>
@@ -41,12 +49,29 @@ defineProps<{
   letter-spacing: 0.5px;
 }
 
-.vehicle-description p {
+.vehicle-description-body {
   font-size: var(--font-size-base);
   color: var(--text-secondary);
   line-height: var(--line-height-relaxed);
-  white-space: pre-line;
   max-width: 65ch;
+}
+
+.vehicle-description-body :deep(p) {
+  margin-bottom: var(--spacing-3);
+}
+
+.vehicle-description-body :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+.vehicle-description-body :deep(a) {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.vehicle-description-body :deep(a:hover) {
+  opacity: 0.8;
 }
 
 .vehicle-description-badges {
