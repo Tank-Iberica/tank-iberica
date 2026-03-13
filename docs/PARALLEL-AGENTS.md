@@ -299,26 +299,34 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Bloques (en orden)
 
-| Bloque                       | Items     | Estado    | Sesiones est. |
-| ---------------------------- | --------- | --------- | ------------- |
-| 27 (Internacionalización)    | #208–#211 | Pendiente | ~8            |
-| 28 (Automatización Avanzada) | #212–#216 | Pendiente | ~10           |
+| Bloque                       | Items     | Estado        | Sesiones est. |
+| ---------------------------- | --------- | ------------- | ------------- |
+| 27 (Internacionalización)    | #208–#211 | ✅ COMPLETADO | 0             |
+| 28 (Automatización Avanzada) | #212–#216 | ✅ COMPLETADO | 0             |
 
 ### Coordinación
 
 - **Migraciones:** 00165–00174 (overflow: 00225–00234)
 - **i18n:** `i18n.`, `auto.`
-- **Branch:** `agent-f/bloque-X`
+- **Branch:** `agent-f/bloque-28` (listo para merge)
 - **Prerequisito:** UI estable (Agentes B, C, D deben haber terminado cambios principales)
-- Si UI no estable → empezar por **Bloque 28** (automatización, menos dependencia UI)
 
 ### Progreso
 
-- **Siguiente item:** #213 (facturación automática Stripe + software contable)
-- **Último commit:** feat(agent-f): #212 instant Pro alerts (3315eba)
-- **Bloques completados:** —
-- **Items completados:** #212 ✅
-- **Notas:** Empezado por Bloque 28 (automatización). Migration 00165 pendiente de `supabase db push`.
+- **Siguiente item:** TODOS COMPLETADOS — Agente F terminado
+- **Último commit:** `190b218` feat(i18n): #209 batch auto-translation cron + tests
+- **Bloques completados:** Bloque 27 ✅, Bloque 28 ✅
+- **Items completados:**
+  - #208 ✅ prefix_except_default + hreflang (ya implementado, verificado)
+  - #209 ✅ batch auto-translation cron + 12 tests + i18n
+  - #210 ✅ FTS multilang search function + migration 00166
+  - #211 ✅ default_currency + migration 00165 + getCurrency helper
+  - #212 ✅ alertas instantáneas Pro (ya implementado)
+  - #213 ✅ auto-invoicing: dynamic VAT, Quaderno, export + 47 tests
+  - #214 ✅ ad export 5 platforms (ya implementado, 31 tests)
+  - #215 ✅ scheduled publishing (verificado + 11 tests + i18n)
+  - #216 ✅ AI editorial generation (verificado + 7 tests + i18n)
+- **Notas:** ~80 tests nuevos. Migraciones 00165 + 00166 pendientes `supabase db push`.
 
 ---
 
@@ -349,12 +357,12 @@ En la semana 6 evaluar:
 
 ## Resumen
 
-| Agente    | Sesiones restantes | Semanas est. | Primer item |
-| --------- | ------------------ | ------------ | ----------- |
-| A         | ~55                | ~11          | #2          |
-| B         | ~44                | ~9           | #164        |
-| C         | ~17                | ~3.5         | #38         |
-| D         | ~55                | ~11          | #65         |
-| E         | ~54                | ~11          | #124        |
-| F         | ~18                | ~3.5         | W8          |
-| **Total** | **~243**           | **~12**      | —           |
+| Agente    | Sesiones restantes | Semanas est. | Estado           |
+| --------- | ------------------ | ------------ | ---------------- |
+| A         | ~55                | ~11          | En curso (#4)    |
+| B         | ~44                | ~9           | En curso (#164)  |
+| **C**     | **0**              | **—**        | **✅ COMPLETO**  |
+| D         | ~55                | ~11          | En curso (#66)   |
+| E         | ~54                | ~11          | En curso (#124)  |
+| **F**     | **0**              | **—**        | **✅ COMPLETO**  |
+| **Total** | **~208**           | **~11**      | —                |
