@@ -21,8 +21,10 @@
 | `/api/cron/infra-metrics`       | Collect infrastructure metrics (DB size, cache, etc.)         | Every 5 min        | Low      |
 | `/api/cron/whatsapp-retry`      | Retry failed WhatsApp submissions                             | Every 15 min       | Medium   |
 | `/api/cron/dealer-weekly-stats` | Send weekly performance digest to dealers                     | Weekly (Mon 09:00) | Medium   |
-| `/api/cron/k6-readiness-check` | Check ≥50 vehicles + ≥2 dealers → trigger k6 CI workflow      | Weekly (Mon 09:00) | Low      |
-| `/api/cron/data-retention`     | GDPR data retention: delete whatsapp/analytics/logs past TTL  | Daily (03:00 UTC)  | Medium   |
+| `/api/cron/k6-readiness-check`  | Check ≥50 vehicles + ≥2 dealers → trigger k6 CI workflow      | Weekly (Mon 09:00) | Low      |
+| `/api/cron/data-retention`      | GDPR data retention: delete whatsapp/analytics/logs past TTL  | Daily (03:00 UTC)  | Medium   |
+| `/api/cron/newsletter`          | Weekly newsletter "El Industrial" — 5 featured vehicles       | Weekly (Tue 09:00) | Medium   |
+| `/api/cron/dealer-onboarding`   | 5-step onboarding sequence for new dealers (days 0,1,3,7,14)  | Daily (10:00 UTC)  | Medium   |
 
 ## Scheduler Configuration
 
