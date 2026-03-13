@@ -8,6 +8,9 @@ definePageMeta({
 
 const { t } = useI18n()
 
+// Toggle between list view and calendar view
+const pageView = ref<'list' | 'calendar'>('list')
+
 const {
   // State
   statusFilter,
@@ -75,6 +78,33 @@ watch(statusFilter, () => {
         </span>
       </div>
       <div class="header-actions">
+        <!-- View toggle -->
+        <div class="view-toggle" role="group" :aria-label="t('admin.social.calendar.calendarView')">
+          <button
+            class="btn-view-toggle"
+            :class="{ 'btn-view-active': pageView === 'list' }"
+            :aria-pressed="pageView === 'list'"
+            @click="pageView = 'list'"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+          </button>
+          <button
+            class="btn-view-toggle"
+            :class="{ 'btn-view-active': pageView === 'calendar' }"
+            :aria-pressed="pageView === 'calendar'"
+            :title="t('admin.social.calendar.calendarView')"
+            @click="pageView = 'calendar'"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          </button>
+        </div>
+
         <button class="btn-generate" @click="openGenerateModal">
           <svg
             width="16"
@@ -102,6 +132,12 @@ watch(statusFilter, () => {
 
     <!-- Stats cards -->
     <AdminSocialStatsCards :counts="statusCounts" />
+
+    <!-- Calendar view -->
+    <AdminSocialCalendar v-if="pageView === 'calendar'" />
+
+    <!-- List view controls (only in list mode) -->
+    <template v-if="pageView === 'list'">
 
     <!-- Tab filters -->
     <AdminSocialStatusTabs v-model="statusFilter" :counts="statusCounts" />
@@ -171,6 +207,8 @@ watch(statusFilter, () => {
         @publish="handlePublish"
       />
     </div>
+
+    </template><!-- end list view -->
 
     <!-- Post Detail / Edit Modal -->
     <AdminSocialPostDetailModal
@@ -254,6 +292,46 @@ watch(statusFilter, () => {
 .count-badge.pending {
   background: var(--color-warning-bg, var(--color-warning-bg));
   color: var(--color-warning-text);
+}
+
+.view-toggle {
+  display: flex;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.btn-view-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.625rem;
+  background: var(--bg-primary);
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-view-toggle + .btn-view-toggle {
+  border-left: 1px solid var(--color-gray-200);
+}
+
+.btn-view-toggle:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.btn-view-active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-view-active:hover {
+  background: var(--color-primary-dark);
+  color: #fff;
 }
 
 .btn-generate {
