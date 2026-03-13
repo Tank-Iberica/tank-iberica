@@ -5022,5 +5022,22 @@
     "seeAlso": "Ver también",
     "category": "Categoría",
     "backToList": "Volver al glosario"
+  },
+  "auto": {
+    "instantAlert": {
+      "title": "Nuevo vehículo coincide con tu alerta",
+      "body": "{vehicleTitle} coincide con tu búsqueda guardada",
+      "emailSubject": "Nuevo vehículo: {vehicleTitle}",
+      "emailPreheader": "Un vehículo recién publicado coincide con tu alerta de búsqueda",
+      "viewVehicle": "Ver vehículo",
+      "manageAlerts": "Gestionar alertas",
+      "matchReason": "Este vehículo coincide con {alertCount} de tus alertas guardadas",
+      "proFeature": "Alertas instantáneas — función exclusiva de tu plan Premium",
+      "channelEmail": "Correo electrónico",
+      "channelPush": "Notificación push",
+      "channelWhatsapp": "WhatsApp",
+      "channelsLabel": "Canales de notificación",
+      "channelsHint": "Elige cómo quieres recibir las alertas instantáneas"
+    }
   }
 }

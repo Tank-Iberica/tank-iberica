@@ -222,6 +222,14 @@ export function useAdminWhatsApp() {
         return
       }
 
+      // #212 — Trigger instant alerts for Pro subscribers (fire-and-forget)
+      if (submission.vehicle_id) {
+        $fetch('/api/alerts/instant', {
+          method: 'POST',
+          body: { vehicle_id: submission.vehicle_id },
+        }).catch(() => {})
+      }
+
       showSuccess(t('admin.whatsapp.publishSuccess'))
       await fetchSubmissions()
     } catch (err) {

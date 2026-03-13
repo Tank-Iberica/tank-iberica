@@ -14,6 +14,7 @@
 import { defineEventHandler } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
+import { triggerInstantAlerts } from '../../utils/triggerInstantAlerts'
 
 interface ScheduledArticle {
   id: string
@@ -92,6 +93,11 @@ export default defineEventHandler(async (event) => {
       throw safeError(500, `Update scheduled vehicles failed: ${updateErr.message}`)
     }
     publishedVehicles = typedVehicles.length
+
+    // #212 — Trigger instant alerts for Pro subscribers (fire-and-forget)
+    for (const v of typedVehicles) {
+      triggerInstantAlerts(v.id)
+    }
   }
 
   return {

@@ -5015,5 +5015,22 @@
     "seeAlso": "See also",
     "category": "Category",
     "backToList": "Back to glossary"
+  },
+  "auto": {
+    "instantAlert": {
+      "title": "New vehicle matches your alert",
+      "body": "{vehicleTitle} matches your saved search",
+      "emailSubject": "New vehicle: {vehicleTitle}",
+      "emailPreheader": "A newly published vehicle matches your search alert",
+      "viewVehicle": "View vehicle",
+      "manageAlerts": "Manage alerts",
+      "matchReason": "This vehicle matches {alertCount} of your saved alerts",
+      "proFeature": "Instant alerts — exclusive feature of your Premium plan",
+      "channelEmail": "Email",
+      "channelPush": "Push notification",
+      "channelWhatsapp": "WhatsApp",
+      "channelsLabel": "Notification channels",
+      "channelsHint": "Choose how you want to receive instant alerts"
+    }
   }
 }

@@ -190,6 +190,14 @@ export function useDashboardNuevoVehiculo() {
         await supabase.from('vehicle_images').insert(imageInserts)
       }
 
+      // #212 — Trigger instant alerts for Pro subscribers (fire-and-forget)
+      if (vehicle?.id) {
+        $fetch('/api/alerts/instant', {
+          method: 'POST',
+          body: { vehicle_id: vehicle.id },
+        }).catch(() => {})
+      }
+
       success.value = true
       setTimeout(() => {
         router.push('/dashboard/vehiculos')
