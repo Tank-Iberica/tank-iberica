@@ -136,6 +136,19 @@ describe('POST /api/credits/unlock-vehicle', () => {
     expect(result).toEqual({ alreadyVisible: true })
   })
 
+  it('returns alreadyVisible when vehicle is_protected (bypasses visible_from delay)', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: vi
+        .fn()
+        .mockResolvedValue([
+          { id: 'v1', visible_from: futureDate(), is_protected: true, status: 'published' },
+        ]),
+    })
+    const result = await unlockHandler({} as any)
+    expect(result).toEqual({ alreadyVisible: true })
+  })
+
   it('returns alreadyUnlocked when existing unlock record found', async () => {
     mockFetch
       .mockResolvedValueOnce({

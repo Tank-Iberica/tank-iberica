@@ -4600,6 +4600,7 @@ export type Database = {
           id: string
           internal_id: number
           is_online: boolean | null
+          is_protected: boolean
           listing_type: string | null
           location: string | null
           location_country: string | null
@@ -4657,6 +4658,7 @@ export type Database = {
           id?: string
           internal_id?: number
           is_online?: boolean | null
+          is_protected?: boolean
           listing_type?: string | null
           location?: string | null
           location_country?: string | null
@@ -4714,6 +4716,7 @@ export type Database = {
           id?: string
           internal_id?: number
           is_online?: boolean | null
+          is_protected?: boolean
           listing_type?: string | null
           location?: string | null
           location_country?: string | null

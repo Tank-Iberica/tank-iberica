@@ -171,12 +171,11 @@ const {
 
 const showChatModal = ref(false)
 
-// Early-access: show unlock banner if visible_from is in the future
+// Early-access: show unlock banner if visible_from is in the future and not is_protected
 const earlyAccessVisibleFrom = computed<string | null>(() => {
-  const vf = (vehicle.value as unknown as Record<string, unknown>)?.visible_from as
-    | string
-    | null
-    | undefined
+  const v = vehicle.value as unknown as Record<string, unknown>
+  if (v?.is_protected) return null // protected vehicles are visible to everyone — no unlock needed
+  const vf = v?.visible_from as string | null | undefined
   if (!vf) return null
   return new Date(vf) > new Date() ? vf : null
 })

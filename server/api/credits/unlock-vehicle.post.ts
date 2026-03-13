@@ -36,12 +36,13 @@ export default defineEventHandler(async (event) => {
 
   // 1. Check vehicle exists and has a future visible_from
   const vehicleRes = await fetch(
-    `${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicleId}&select=id,visible_from,status`,
+    `${supabaseUrl}/rest/v1/vehicles?id=eq.${vehicleId}&select=id,visible_from,is_protected,status`,
     { headers },
   )
   const vehicles = (await vehicleRes.json()) as Array<{
     id: string
     visible_from: string | null
+    is_protected: boolean
     status: string
   }>
   const vehicle = vehicles[0]
@@ -55,8 +56,8 @@ export default defineEventHandler(async (event) => {
 
   const now = new Date()
   const visibleFrom = vehicle.visible_from ? new Date(vehicle.visible_from) : null
-  if (!visibleFrom || visibleFrom <= now) {
-    // Already visible — no need to unlock
+  // is_protected vehicles bypass visible_from — already visible to everyone
+  if (vehicle.is_protected || !visibleFrom || visibleFrom <= now) {
     return { alreadyVisible: true }
   }
 
