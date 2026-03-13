@@ -242,7 +242,7 @@ export default defineEventHandler(async (event) => {
                 user_name: user.name ?? user.email,
                 vehicle_title: `${vehicleTitle}${yearStr}`,
                 vehicle_price: priceStr,
-                vehicle_url: `https://tracciona.com/vehiculo/${vehicle.slug}`,
+                vehicle_url: `${getSiteUrl()}/vehiculo/${vehicle.slug}`,
                 alert_count: notification.alerts.length.toString(),
               },
               locale,
@@ -271,7 +271,7 @@ export default defineEventHandler(async (event) => {
                 locale === 'es'
                   ? `${vehicleTitle}${yearStr}${priceStr ? ' — ' + priceStr : ''} coincide con tu alerta`
                   : `${vehicleTitle}${yearStr}${priceStr ? ' — ' + priceStr : ''} matches your alert`,
-              url: `https://tracciona.com/vehiculo/${vehicle.slug}`,
+              url: `${getSiteUrl()}/vehiculo/${vehicle.slug}`,
             },
           })
         } catch (err: unknown) {

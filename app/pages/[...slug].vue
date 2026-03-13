@@ -38,7 +38,12 @@
           <h1 class="landing-title">{{ landingTitle }}</h1>
           <p v-if="landingDescription" class="landing-description">{{ landingDescription }}</p>
           <p v-if="landing!.vehicle_count" class="landing-count">
-            {{ $t('catalog.resultsCount', { count: landing!.vehicle_count, itemsName: $t('vertical.itemsName') }) }}
+            {{
+              $t('catalog.resultsCount', {
+                count: landing!.vehicle_count,
+                itemsName: $t('vertical.itemsName'),
+              })
+            }}
           </p>
         </div>
 
@@ -58,6 +63,7 @@
 
 <script setup lang="ts">
 import { RESERVED_SLUGS } from '~/utils/reserved-slugs'
+import { buildFaqPageSchema } from '~/utils/faqSchema'
 
 const route = useRoute()
 const { locale, t } = useI18n()
@@ -131,7 +137,9 @@ async function resolveSlug(): Promise<
   // 1. Try active_landings
   const { data: landingData } = await supabase
     .from('active_landings')
-    .select('id, slug, vertical, vehicle_count, meta_title_es, meta_title_en, meta_description_es, meta_description_en, intro_text_es, intro_text_en, breadcrumb, schema_data')
+    .select(
+      'id, slug, vertical, vehicle_count, meta_title_es, meta_title_en, meta_description_es, meta_description_en, intro_text_es, intro_text_en, breadcrumb, schema_data',
+    )
     .eq('slug', fullSlug.value)
     .eq('is_active', true)
     .single()
@@ -207,6 +215,16 @@ if (landing.value) {
     path: `/${landing.value.slug}`,
     jsonLd: landing.value.schema_data || undefined,
   })
+
+  // #166 — FAQPage schema for featured snippets
+  const faqSchema = buildFaqPageSchema({
+    title: landingTitle.value,
+    count: landing.value.vehicle_count,
+    locale: locale.value,
+  })
+  if (faqSchema) {
+    useJsonLd(faqSchema)
+  }
 }
 </script>
 
