@@ -55,6 +55,8 @@
             :alt="tx.title"
             width="100"
             height="75"
+            sizes="100px"
+            format="webp"
             loading="lazy"
             decoding="async"
           />

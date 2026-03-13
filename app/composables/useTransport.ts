@@ -1,3 +1,13 @@
+/**
+ * Composable for managing vehicle transport requests.
+ *
+ * Calculates shipping quotes based on postal code zones, saves and retrieves
+ * transport requests from the `transport_requests` table.
+ *
+ * Quote lifecycle: draft → quoted → accepted → in_transit → completed / cancelled.
+ *
+ * @returns `{ quote, request, loading, getQuote, createRequest, updateStatus }` — transport state and actions.
+ */
 import { ref } from 'vue'
 import { useSupabaseClient, useSupabaseUser } from '#imports'
 import {

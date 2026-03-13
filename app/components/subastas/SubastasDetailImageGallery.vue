@@ -28,7 +28,7 @@
         :class="['thumb-btn', { active: selectedIndex === idx }]"
         @click="$emit('select-image', idx)"
       >
-        <NuxtImg :src="img.url" :alt="`${vehicleTitle} - ${idx + 1}`" loading="lazy" width="100" height="75" decoding="async" />
+        <NuxtImg :src="img.url" :alt="`${vehicleTitle} - ${idx + 1}`" loading="lazy" width="100" height="75" sizes="100px" format="webp" decoding="async" />
       </button>
     </div>
   </div>

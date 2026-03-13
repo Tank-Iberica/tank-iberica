@@ -1,3 +1,14 @@
+/**
+ * Composable for verifying admin role access.
+ *
+ * Reads the `admin_users` table to check if the current user has admin privileges.
+ * Result is cached in shared state for 5 minutes to avoid repeated DB hits.
+ *
+ * @returns `{ isAdmin, checkAdmin }` — reactive admin flag and check function.
+ * @example
+ * const { isAdmin } = useAdminRole()
+ * if (!isAdmin.value) navigateTo('/')
+ */
 export function useAdminRole() {
   const supabase = useSupabaseClient()
   const isAdmin = useState<boolean | null>('admin-role', () => null)

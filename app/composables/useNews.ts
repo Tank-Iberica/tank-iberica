@@ -1,3 +1,12 @@
+/**
+ * Composable for fetching and filtering published news articles.
+ *
+ * Queries the `news` table ordered by `published_at` desc.
+ * Supports category filtering, search, and pagination.
+ * All text fields are localised (ES/EN via `localizedField()`).
+ *
+ * @returns `{ articles, total, loading, fetch, fetchOne }` — reactive state and fetch helpers.
+ */
 import { ref } from 'vue'
 import { useSupabaseClient } from '#imports'
 

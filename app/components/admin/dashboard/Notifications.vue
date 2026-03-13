@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <!-- aria-live: dashboard counters update automatically (#90) -->
+  <div aria-live="polite" aria-atomic="true">
     <!-- Notifications Grid -->
     <div class="notifications-grid">
       <NuxtLink
