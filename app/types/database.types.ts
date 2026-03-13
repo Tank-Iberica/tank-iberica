@@ -1522,6 +1522,42 @@ export type Database = {
           },
         ]
       }
+      credit_packs: {
+        Row: {
+          id: string
+          slug: string
+          name_es: string
+          name_en: string
+          credits: number
+          price_cents: number
+          is_active: boolean
+          sort_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          name_es: string
+          name_en: string
+          credits: number
+          price_cents: number
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          name_es?: string
+          name_en?: string
+          credits?: number
+          price_cents?: number
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           buyer_accepted_share: boolean | null
