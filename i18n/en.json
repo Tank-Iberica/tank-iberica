@@ -5081,6 +5081,16 @@
         "tecnologia": "Technology",
         "flota": "Fleet management"
       }
+    },
+    "currency": {
+      "label": "Currency",
+      "defaultCurrency": "Default currency",
+      "EUR": "Euro (EUR)",
+      "GBP": "British Pound (GBP)",
+      "USD": "US Dollar (USD)",
+      "PLN": "Polish Złoty (PLN)",
+      "CZK": "Czech Koruna (CZK)",
+      "SEK": "Swedish Krona (SEK)"
     }
   },
   "glossary": {
