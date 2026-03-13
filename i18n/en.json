@@ -4196,6 +4196,12 @@
       "PLN": "Polish Złoty (PLN)",
       "CZK": "Czech Koruna (CZK)",
       "SEK": "Swedish Krona (SEK)"
+    },
+    "search": {
+      "multiLang": "Search in all languages",
+      "searchLanguage": "Search language",
+      "noTranslations": "No translations available",
+      "translatedFrom": "Translated from {source}"
     }
   },
   "glossary": {
