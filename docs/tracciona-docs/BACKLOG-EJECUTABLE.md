@@ -19,8 +19,8 @@ Criterio: Resolver antes de cualquier feature nueva. Seguridad y estabilidad.
 | #   | Item                                              | Esfuerzo | Tipo           | Depende de | Hecho cuando...                                                                |
 | --- | ------------------------------------------------- | -------- | -------------- | ---------- | ------------------------------------------------------------------------------ |
 | 1   | Rate limiting en produccion — reglas CF WAF       | S        | Config/Founder | —          | CF WAF dashboard tiene reglas activas, test con curl devuelve 429 tras umbral  |
-| 2   | `/api/verify-document` sin validacion ownership   | S        | Code           | —          | Endpoint devuelve 403 si dealer_id != session.user.dealer_id                   |
-| 3   | 5 server routes exponen nombres servicio en error | S        | Code           | —          | Todos los catch usan `safeError()`, ningun nombre de servicio en response body |
+| 2   | `/api/verify-document` sin validacion ownership   | S        | Code           | ✅ done     | checkVehicleAccess() verifica dealer_id==session.user.dealer OR role=admin; 403 si no coincide |
+| 3   | 5 server routes exponen nombres servicio en error | S        | Code           | ✅ agent-c  | merchant-feed.get.ts + embed/[dealer-slug].get.ts: error.message → logger.error + generic text; safeError ya cubre el resto en prod |
 | 4   | 10 errores TypeScript restantes                   | M        | Code           | —          | `npm run typecheck` = 0 errores                                                |
 | 5   | 2 test stubs en useVehicles.test.ts               | S        | Code           | —          | Tests implementados o marcados `it.skip()` con TODO                            |
 | 6   | exceljs no incluido en manualChunks               | S        | Code           | —          | `npm run build` muestra chunk `vendor-excel` separado                          |

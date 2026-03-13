@@ -2,6 +2,7 @@ import { defineEventHandler, setResponseHeader } from 'h3'
 import { createClient } from '@supabase/supabase-js'
 import { makeEtag, checkEtag } from '../utils/etag'
 import { getSiteUrl, getSiteName } from '../utils/siteConfig'
+import { logger } from '../utils/logger'
 
 /**
  * Google Merchant Center feed.
@@ -41,8 +42,9 @@ export default defineEventHandler(async (event) => {
     .limit(500)
 
   if (error) {
+    logger.error('[merchant-feed] Error fetching vehicles:', error)
     setResponseStatus(event, 500)
-    return `Error fetching vehicles: ${error.message}`
+    return 'Error generating feed'
   }
 
   const siteUrl = getSiteUrl()
