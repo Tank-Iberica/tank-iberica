@@ -227,7 +227,7 @@ export function useSellerProfile(dealerSlug?: string) {
       await fetchReviews()
       return true
     } catch (err) {
-      console.error('[useSellerProfile] submitReview failed:', err)
+      if (import.meta.dev) console.error('[useSellerProfile] submitReview failed:', err)
       return false
     }
   }
