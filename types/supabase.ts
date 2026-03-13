@@ -4599,6 +4599,8 @@ export type Database = {
           freshness_reminder_count: number | null
           id: string
           internal_id: number
+          auto_feature: boolean
+          auto_renew: boolean
           is_online: boolean | null
           is_protected: boolean
           listing_type: string | null
@@ -4658,6 +4660,8 @@ export type Database = {
           freshness_reminder_count?: number | null
           id?: string
           internal_id?: number
+          auto_feature?: boolean
+          auto_renew?: boolean
           is_online?: boolean | null
           is_protected?: boolean
           listing_type?: string | null
@@ -4717,6 +4721,8 @@ export type Database = {
           freshness_reminder_count?: number | null
           id?: string
           internal_id?: number
+          auto_feature?: boolean
+          auto_renew?: boolean
           is_online?: boolean | null
           is_protected?: boolean
           listing_type?: string | null
