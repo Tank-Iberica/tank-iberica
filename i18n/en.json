@@ -5046,6 +5046,24 @@
       "netAmount": "Net amount",
       "accountingExport": "Accounting export",
       "accountingHint": "Compatible with accounting software (Quaderno, A3, Sage)"
+    },
+    "schedule": {
+      "title": "Scheduled publishing",
+      "scheduledFor": "Scheduled for",
+      "publishNow": "Publish now",
+      "schedulePublish": "Schedule publish",
+      "cancelSchedule": "Cancel schedule",
+      "scheduledAt": "Scheduled date and time",
+      "queueTitle": "Publishing queue",
+      "queueEmpty": "No scheduled publications",
+      "countdown": "Publishes in",
+      "days": "days",
+      "hours": "hours",
+      "minutes": "minutes",
+      "publishedCount": "{count} published",
+      "pendingCount": "{count} pending",
+      "articlesLabel": "Articles",
+      "vehiclesLabel": "Vehicles"
     }
   },
   "glossary": {
