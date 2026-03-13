@@ -58,6 +58,7 @@
 
 <script setup lang="ts">
 import { RESERVED_SLUGS } from '~/utils/reserved-slugs'
+import { buildFaqPageSchema } from '~/utils/faqSchema'
 
 const route = useRoute()
 const { locale, t } = useI18n()
@@ -207,6 +208,16 @@ if (landing.value) {
     path: `/${landing.value.slug}`,
     jsonLd: landing.value.schema_data || undefined,
   })
+
+  // #166 — FAQPage schema for featured snippets
+  const faqSchema = buildFaqPageSchema({
+    title: landingTitle.value,
+    count: landing.value.vehicle_count,
+    locale: locale.value,
+  })
+  if (faqSchema) {
+    useJsonLd(faqSchema)
+  }
 }
 </script>
 
