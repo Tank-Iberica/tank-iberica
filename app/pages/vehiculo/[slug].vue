@@ -224,7 +224,8 @@ onMounted(() => {
 })
 
 // Duration + funnel tracking
-const { trackVehicleDuration, trackFunnelViewVehicle, trackBuyerGeo, trackVehicleComparison } = useAnalyticsTracking()
+const { trackVehicleDuration, trackFunnelViewVehicle, trackBuyerGeo, trackVehicleComparison } =
+  useAnalyticsTracking()
 const pageStartedAt = ref(0)
 
 // #38 — Buyer geo tracking (once per session)
@@ -314,7 +315,7 @@ if (vehicle.value) {
   const seoTitle = `${buildProductName(vehicle.value, locale.value, true)} - ${t('site.title')}`
   const seoDesc = description.value || t('site.description')
   const seoImage = vehicle.value.vehicle_images?.[0]?.url || ''
-  const canonicalUrl = `https://tracciona.com/vehiculo/${vehicle.value.slug}`
+  const canonicalUrl = `${useSiteUrl()}/vehiculo/${vehicle.value.slug}`
   const productName = buildProductName(vehicle.value, locale.value, true)
 
   useSeoMeta({
@@ -341,7 +342,7 @@ if (vehicle.value) {
       {
         rel: 'alternate',
         hreflang: 'en',
-        href: `https://tracciona.com/en/vehiculo/${vehicle.value.slug}`,
+        href: `${useSiteUrl()}/en/vehiculo/${vehicle.value.slug}`,
       },
       { rel: 'alternate', hreflang: 'x-default', href: canonicalUrl },
       ...(seoImage ? [{ rel: 'preload', as: 'image', href: seoImage, fetchpriority: 'high' }] : []),

@@ -37,7 +37,7 @@ usePageSeo({
         <h2>{{ t('security.disclosure.howToReport') }}</h2>
         <p>{{ t('security.disclosure.howToReportText') }}</p>
         <p class="email-contact">
-          <a href="mailto:security@tracciona.com">security@tracciona.com</a>
+          <a :href="`mailto:security@${siteDomain}`">security@{{ siteDomain }}</a>
         </p>
         <p>{{ t('security.disclosure.includeInfo') }}</p>
         <ul>

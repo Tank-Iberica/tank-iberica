@@ -164,7 +164,7 @@ onMounted(async () => {
 
         <div class="code-block">
           <pre><code>curl -H "Authorization: Bearer YOUR_API_KEY" \
-  "https://tracciona.com/api/v1/valuation?brand=scania&amp;subcategory=tractora"</code></pre>
+  `${useSiteUrl()}/api/v1/valuation?brand=scania&amp;subcategory=tractora`</code></pre>
         </div>
 
         <h3 class="docs-subtitle">{{ t('dashboard.api.params') }}</h3>

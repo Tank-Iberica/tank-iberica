@@ -12,7 +12,9 @@ usePageSeo({
 
 <template>
   <div class="transparency-page">
-    <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: t('transparency.title') }]" />
+    <UiBreadcrumbNav
+      :items="[{ label: $t('nav.home'), to: '/' }, { label: t('transparency.title') }]"
+    />
     <h1>{{ t('transparency.title') }}</h1>
     <p class="transparency-subtitle">{{ t('transparency.subtitle') }}</p>
 
@@ -23,7 +25,7 @@ usePageSeo({
       <div class="contact-info">
         <div class="contact-item">
           <strong>{{ t('transparency.contactEmail') }}:</strong>
-          <a href="mailto:legal@tracciona.com">legal@tracciona.com</a>
+          <a :href="`mailto:legal@${siteDomain}`">legal@{{ siteDomain }}</a>
         </div>
         <div class="contact-item">
           <strong>{{ t('transparency.contactForm') }}:</strong>

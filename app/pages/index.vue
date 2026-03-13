@@ -133,11 +133,11 @@ usePageSeo({
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: t('site.title'),
-    url: 'https://tracciona.com',
+    url: useSiteUrl(),
     description: t('seo.homeDescription'),
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://tracciona.com/?search={search_term_string}',
+      target: `${useSiteUrl()}/?search={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
   },
@@ -154,7 +154,7 @@ const itemListJsonLd = computed(() => {
     itemListElement: vehicles.value.slice(0, 20).map((v, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      url: `https://tracciona.com/vehiculo/${v.slug}`,
+      url: `${useSiteUrl()}/vehiculo/${v.slug}`,
       name: buildProductName(v, locale.value, true),
       ...(v.vehicle_images?.[0]?.url ? { image: v.vehicle_images[0].url } : {}),
     })),

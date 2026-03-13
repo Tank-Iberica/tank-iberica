@@ -14,7 +14,7 @@ usePageSeo({
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: t('valuation.seoTitle'),
-    url: 'https://tracciona.com/valoracion',
+    url: `${useSiteUrl()}/valoracion`,
     description: t('valuation.seoDescription'),
     applicationCategory: 'BusinessApplication',
     offers: {
@@ -66,7 +66,10 @@ onMounted(() => {
 
 <template>
   <div class="valuation-page">
-    <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('valuation.title') }]" class="valuation-breadcrumb" />
+    <UiBreadcrumbNav
+      :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('valuation.title') }]"
+      class="valuation-breadcrumb"
+    />
     <ValoracionHero />
 
     <div class="valuation-container">

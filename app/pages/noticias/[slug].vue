@@ -33,7 +33,15 @@
           <h1 class="article-title">{{ title }}</h1>
 
           <div v-if="article.image_url" class="article-image">
-            <NuxtImg :src="article.image_url" :alt="title" width="800" height="450" fetchpriority="high" decoding="async" sizes="(max-width: 48rem) 100vw, 800px" />
+            <NuxtImg
+              :src="article.image_url"
+              :alt="title"
+              width="800"
+              height="450"
+              fetchpriority="high"
+              decoding="async"
+              sizes="(max-width: 48rem) 100vw, 800px"
+            />
           </div>
 
           <!-- Table of contents (auto-generated from headings) -->
@@ -190,12 +198,12 @@ if (article.value) {
       url: 'https://tracciona.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://tracciona.com/logo.png',
+        url: `${useSiteUrl()}/logo.png`,
       },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tracciona.com/noticias/${articleSlug}`,
+      '@id': `${useSiteUrl()}/noticias/${articleSlug}`,
     },
   }
 
@@ -235,18 +243,18 @@ if (article.value) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: t('site.title'), item: 'https://tracciona.com' },
+      { '@type': 'ListItem', position: 1, name: t('site.title'), item: useSiteUrl() },
       {
         '@type': 'ListItem',
         position: 2,
         name: t('news.title'),
-        item: 'https://tracciona.com/noticias',
+        item: `${useSiteUrl()}/noticias`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: title.value,
-        item: `https://tracciona.com/noticias/${articleSlug}`,
+        item: `${useSiteUrl()}/noticias/${articleSlug}`,
       },
     ],
   }

@@ -2,7 +2,16 @@
   <div class="dealer-vehicle-page">
     <!-- Dealer banner: branded header with logo + link back to dealer portal -->
     <NuxtLink :to="`/${dealerSlug}`" class="dealer-banner" :style="bannerStyle">
-      <NuxtImg v-if="dealer?.logo_url" :src="dealer.logo_url" :alt="companyName" class="dealer-logo" loading="eager" decoding="async" width="48" height="48" />
+      <NuxtImg
+        v-if="dealer?.logo_url"
+        :src="dealer.logo_url"
+        :alt="companyName"
+        class="dealer-logo"
+        loading="eager"
+        decoding="async"
+        width="48"
+        height="48"
+      />
       <div class="dealer-banner-text">
         <span class="dealer-name">{{ companyName }}</span>
         <span class="dealer-back">{{ $t('dashboard.portal.viewAllVehicles') }}</span>
@@ -196,7 +205,7 @@ const cssVars = computed(() => ({
 
 // 5. SEO: noindex on dealer context + canonical pointing to marketplace URL
 if (vehicle.value) {
-  const canonicalUrl = `https://tracciona.com/vehiculo/${vehicle.value.slug}`
+  const canonicalUrl = `${useSiteUrl()}/vehiculo/${vehicle.value.slug}`
   useHead({
     meta: [{ name: 'robots', content: 'noindex, follow' }],
     link: [{ rel: 'canonical', href: canonicalUrl }],

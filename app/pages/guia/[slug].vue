@@ -33,7 +33,15 @@
           <h1 class="article-title">{{ title }}</h1>
 
           <div v-if="article.image_url" class="article-image">
-            <NuxtImg :src="article.image_url" :alt="title" loading="eager" decoding="async" sizes="(max-width: 48rem) 100vw, 800px" width="800" height="450" />
+            <NuxtImg
+              :src="article.image_url"
+              :alt="title"
+              loading="eager"
+              decoding="async"
+              sizes="(max-width: 48rem) 100vw, 800px"
+              width="800"
+              height="450"
+            />
           </div>
 
           <div class="article-body">
@@ -91,7 +99,9 @@ const supabase = useSupabaseClient()
 async function fetchGuideBySlug(slug: string): Promise<GuideArticle | null> {
   const { data, error } = await supabase
     .from('news')
-    .select('id, title_es, title_en, content_es, content_en, description_es, description_en, image_url, published_at, updated_at, category, hashtags, slug')
+    .select(
+      'id, title_es, title_en, content_es, content_en, description_es, description_en, image_url, published_at, updated_at, category, hashtags, slug',
+    )
     .eq('slug', slug)
     .eq('status', 'published')
     .eq('section', 'guia')
@@ -164,10 +174,10 @@ if (article.value) {
       publisher: {
         '@type': 'Organization',
         name: t('site.title'),
-        logo: { '@type': 'ImageObject', url: 'https://tracciona.com/og-default.png' },
+        logo: { '@type': 'ImageObject', url: `${useSiteUrl()}/og-default.png` },
       },
       articleSection: 'Guías',
-      mainEntityOfPage: `https://tracciona.com/guia/${route.params.slug}`,
+      mainEntityOfPage: `${useSiteUrl()}/guia/${route.params.slug}`,
     },
   })
 
@@ -179,18 +189,18 @@ if (article.value) {
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: t('site.title'), item: 'https://tracciona.com' },
+            { '@type': 'ListItem', position: 1, name: t('site.title'), item: useSiteUrl() },
             {
               '@type': 'ListItem',
               position: 2,
               name: t('guide.title'),
-              item: 'https://tracciona.com/guia',
+              item: `${useSiteUrl()}/guia`,
             },
             {
               '@type': 'ListItem',
               position: 3,
               name: title.value,
-              item: `https://tracciona.com/guia/${route.params.slug}`,
+              item: `${useSiteUrl()}/guia/${route.params.slug}`,
             },
           ],
         }),
