@@ -122,6 +122,7 @@ Los más grandes sin cubrir son componentes Vue y páginas:
 
 **Agente A — siguiente item:** `"Lee docs/PARALLEL-AGENTS.md. Eres el Agente A. Continúa por donde está tu sección de progreso."` (siguiente: #4 typecheck = 0 errores)
 **Agente C — COMPLETO:** Todos los bloques asignados (4,5,6a,6b,13,22,29) + overflow (#87+#2/#3+#29+#30+#31+#32+#33) completados. Sin más items propios. Disponible para overflow de otro agente si el usuario lo solicita.
+**Pendiente Fundadores (Bloque 4):** #27 requiere cuenta Twilio (TWILIO_ACCOUNT_SID + TWILIO_AUTH_TOKEN + TWILIO_FROM) · #34 requiere #1 (CF WAF activo) como prerequisito.
 **Agente D — siguiente item:** `"Lee docs/PARALLEL-AGENTS.md. Eres el Agente D. Continúa Bloque 7 — item #66 dealer onboarding email sequence."`
 **Plan Maestro continuación:** `"continuar Plan Maestro — siguiente lote de items P1/P2"`
 **Coverage (cuando feature freeze):** `"continuar coverage sprint — páginas Vue y componentes con >40 uncov statements"`

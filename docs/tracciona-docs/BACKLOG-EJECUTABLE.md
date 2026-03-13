@@ -108,10 +108,10 @@ Criterio: Trust Score es prerequisito de badges, alertas, y reputacion publica.
 | 31  | Badges publicos (sin/<60, Verificado 60-79, Top >=80) | M        | Code | #30        | ✅ agent-c — DealerTrustBadge component, VehicleCard + DetailSeller, 9 tests                          |
 | 32  | Guia "Mejora tu puntuacion" en dashboard              | S        | Code | #30        | ✅ agent-c — /dashboard/herramientas/puntuacion, progress bar, criteria list, i18n ES+EN              |
 | 33  | Alertas contextuales al comprador                     | M        | Code | #30        | ✅ agent-c — DealerTrustAlert component, new account/low trust/few photos alerts, 10 tests             |
-| 27  | Phone verification SMS OTP                            | M        | Code | —          | Al crear primera publicacion, dealer recibe SMS con codigo, verificado queda en profile                |
+| 27  | Phone verification SMS OTP                            | M        | Code | —          | ⏳ Fundadores — requiere cuenta Twilio + API key. Cuando esté configurado: al crear primera publicacion, dealer recibe SMS con codigo, verificado queda en profile |
 | 28  | Duplicate detection (hash imagenes + titulo)          | L        | Code | —          | Al publicar, sistema detecta duplicados potenciales, admin ve lista, seller recibe aviso               |
 | 29  | IP/device fingerprint (background)                    | M        | Code | ✅ agent-c  | migration 00138 (user_fingerprints + duplicate_device_users view + upsert_user_fingerprint RPC); recordFingerprint.ts fire-and-forget util; /api/auth/fp endpoint; AdminFingerprintFlags.vue; 8 tests |
-| 34  | Excepcion fleet companies rate limit                  | S        | Code | #1         | Si subscription_tier >= basic o verificado manual, rate limit sube a 500/hora                          |
+| 34  | Excepcion fleet companies rate limit                  | S        | Code | #1         | ⏳ Fundadores — depende de #1 (CF WAF rules activas). Cuando #1 esté hecho: subscription_tier >= basic o verificado manual → rate limit 500/hora |
 
 **Total Bloque 4:** ~12 sesiones | **Desbloquea:** Bloque 5 (reputation)
 
@@ -288,6 +288,8 @@ No bloquean ni son bloqueadas por codigo. Ejecutar cuando sea posible.
 
 | #   | Item                                          | Esfuerzo | Urgencia | Hecho cuando...                                           |
 | --- | --------------------------------------------- | -------- | -------- | --------------------------------------------------------- |
+| 27  | Twilio — cuenta + API key para SMS OTP        | S        | MEDIA    | Cuenta Twilio creada, TWILIO_ACCOUNT_SID + TWILIO_AUTH_TOKEN + TWILIO_FROM configurados en .env y GitHub Secrets. Desbloquea: item #27 código (ya implementable) |
+| 34  | CF WAF activo (#1) → activar fleet rate limit | S        | BAJA     | Tras completar #1 (CF WAF): indicar a Claude "activa excepción fleet" — 30 min de código |
 | 101 | Configurar reglas CF WAF (rate limiting)      | S        | ALTA     | Reglas activas en dashboard CF                            |
 | 123 | Configurar GitHub Secrets (crons + k6 + CI)   | S        | ALTA     | 6 secrets añadidos: `CRON_SECRET` (generar con `openssl rand -hex 32`) + `SUPABASE_URL` + `SUPABASE_ANON_KEY` (ambos de Supabase Dashboard → Project Settings → API) + `RESEND_API_KEY` (tras tarea #21) + `INFRA_ALERT_EMAIL` = tankiberica@gmail.com. Variable: `APP_URL` = https://tracciona.com. GitHub → repo → Settings → Secrets and variables → Actions |
 | 102 | DMARC + SPF + DKIM en Cloudflare DNS          | S        | ALTA     | Records DNS configurados, DMARC report sin fallos         |
