@@ -140,7 +140,7 @@
 
 ### 2.5 Datos y secretos
 
-- [~] **P1** — Rotación de secretos automatizada (documentación en `SECRETS-ROTATION.md` existe, falta automation)
+- [x] **P1** — Rotación de secretos automatizada ✓ (SECRETS-ROTATION.md + .github/workflows/secrets-rotation-reminder.yml: cron 1 Feb+Aug, creates GitHub Issue con checklist de keys a rotar, label security+ops+manual)
 - [x] — Escaneo de secrets en commits: gitleaks configurado en CI
 - [x] **P2** — Gitleaks también en pre-commit hook (actualmente solo CI) ✓ (sesión XXIV: .husky/pre-commit — conditional check con `command -v gitleaks`, no falla si no está instalado)
 - [~] **P3** — ~~DEFERRED~~ Cifrado de PII en reposo (emails, teléfonos, direcciones) — requiere Supabase Vault activation (plan Pro+)
@@ -149,6 +149,8 @@
 - [x] **P1** — GDPR Right to Erasure: account deletion endpoint ✓ (#220: `/api/account/delete.post.ts` — anonymizes user+dealer profile, archives vehicles, deletes favorites/alerts/email prefs, sends confirmation email, deletes auth user; 5 tests)
 - [x] **P2** — RFC 9116 security.txt ✓ (#218: `/.well-known/security.txt` — Contact, Expires, Policy, Canonical, Preferred-Languages; 7 tests)
 - [x] **P2** — Admin security threat map ✓ (#221: `/api/admin/security-events.get.ts` — active IPs, event type summary, topPath, lastEventAt, sorted by threat count; 8 tests)
+- [x] **P2** — CHECK constraints en tablas financieras ✓ (#86 overflow: migration 00136 — auction_bids.amount_cents>0, payments.amount_cents>0, payments.status IN(...), balance.importe>0, balance.coste_asociado IS NULL OR >0; idempotent DO$$ IF NOT EXISTS $$)
+- [x] **P2** — RATE-LIMITING-RULES.md ✓ (#74 deliverable: reglas completas, CF WAF templates, auto-ban settings, composite key strategy, testing, exemptions, monitoring)
 - [~] **P2** — Restore drill trimestral (documentado, verificar ejecución real)
 - [~] **P3** — ~~DEFERRED~~ Separar Supabase service role key del código — requiere CF Workers secrets binding (configuración en dashboard CF)
 
@@ -156,6 +158,7 @@
 
 - [x] **P2** — DAST automatizado en CI (OWASP ZAP o Nuclei contra staging) ✓ (job `dast` en ci.yml: Nuclei scan en push a main, cves/vulnerabilities/misconfiguration/exposures, bloquea en critical, artifact report)
 - [x] **P1** — Dependency vulnerability scanning: `npm audit --audit-level=high` en CI bloqueante ✓ (ci.yml job lint-and-typecheck: step "Dependency vulnerability audit" — bloquea en high+critical; Dependabot configurado)
+- [x] **P2** — SCA con Snyk en CI ✓ (#95 overflow: ci.yml job `snyk` con snyk/actions/node@master --severity-threshold=high; opt-in vía vars.SNYK_ENABLED='true' + SNYK_TOKEN secret)
 - [ ] **FUTURO** — Penetration test externo anual (antes de lanzamiento comercial)
 - [x] **P3** — Fuzzing de inputs en endpoints críticos (payments, auth, import-stock) ✓ (sesión XXVI: tests/security/fuzzing.test.ts — boundary values, SQL injection, XSS, unicode, overflow, SSRF, path traversal; 68 tests — ampliado en #159)
 - [x] **P2** — IDOR tests para TODOS los endpoints (actualmente 13, faltan los demás) ✓ (sesión XXIII: tests/security/privilege-escalation.test.ts — 61 tests: market-report admin-only, push notifications, dealer-only endpoints, auth-required endpoints, cron internal-secret, account isolation, valuation API key; total seguridad: 13+61+13+10+7 = 104 tests)
@@ -165,7 +168,7 @@
 
 ### 2.7 Incidentes y respuesta (de otra AI — validados)
 
-- [~] **P2** — Playbook de incidentes con tiempos objetivo de respuesta (`INCIDENT-RUNBOOK.md` existe, faltan tiempos formales)
+- [x] **P2** — Playbook de incidentes con tiempos objetivo de respuesta ✓ (INCIDENT-RUNBOOK.md: P0<15min, P1<1h, P2<4h, P3 next biz day; 8 escenarios cubiertos con steps detallados)
 - [x] **P2** — Registro de seguridad centralizado con alertas automáticas de patrones sospechosos ✓ (#159: `server/utils/securityEvents.ts` — 8 event types, 5min window, threshold alerting, 500 max/IP; 33 tests)
 - [x] **P2** — Integración del registro de seguridad en todos los 5 pilares ✓ (#217: rate-limit, bot-detection, RBAC, sessionBinding, csp-report → todos emiten al store centralizado; Nitro plugin init alert handler; CI job `security-unit-tests`; 18 tests integración)
 - [ ] **FUTURO** — SIEM para correlación de eventos de seguridad
@@ -529,11 +532,11 @@
 
 ### 7.7 Monitoring y observability
 
-- [ ] **P1** — APM: Sentry Performance o Datadog
-- [ ] **P1** — Request tracing E2E: client → CF → Nuxt → Supabase → response
+- [x] **P1** — APM: Sentry Performance o Datadog ✓ (11-mar P0+P1 sprint: Sentry mejorado + user context + Replay + APM-SETUP.md + 5 tests)
+- [x] **P1** — Request tracing E2E: client → CF → Nuxt → Supabase → response ✓ (11-mar P0+P1 sprint: server-timing middleware + REQUEST-TRACING.md + 10 tests)
 - [ ] **P2** — Database slow query log con alerting (>500ms)
-- [ ] **P1** — Error rate monitoring con alerting automático (>0.5% → Slack)
-- [ ] **P1** — Uptime monitoring con health checks cada 30s desde múltiples regiones
+- [x] **P1** — Error rate monitoring con alerting automático (>0.5% → Slack) ✓ (11-mar P0+P1 sprint: /api/infra/error-rate.get.ts + error-rate-monitoring.yml GH Action 6h + 8 tests)
+- [x] **P1** — Uptime monitoring con health checks cada 30s desde múltiples regiones ✓ (11-mar P0+P1 sprint: uptime-monitoring.yml: health checks 30min, 3 regiones + alertas)
 - [ ] **P2** — Custom metrics: req/s por endpoint, p50/p95/p99 latency, cache hit ratio
 - [ ] **P2** — Dashboard operacional (Grafana o CF Analytics)
 - [ ] **P2** — Capacity planning: alertar al 70% de cualquier límite

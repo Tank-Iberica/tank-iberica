@@ -236,8 +236,8 @@ Criterio: Requieren masa critica de datos y transacciones para ser utiles.
 | 83  | CSP unsafe-inline/unsafe-eval               | M        | Code   | —          | CSP nonce-based (cuando Nuxt 4 estable) + reporting endpoint         |
 | 84  | HEALTH_TOKEN no configurado                 | S        | Config | —          | Variable en .env + Cloudflare, health endpoint protegido             |
 | 85  | infra_alerts no existe en types/supabase.ts | S        | Code   | —          | `npx supabase gen types` ejecutado, tipos regenerados                |
-| 86  | CHECK constraints limitados                 | S        | Code   | —          | Migracion anade CHECK a balance, payments, auction_bids              |
-| 87  | VARCHAR statuses a ENUMs                    | M        | Code   | —          | Migracion convierte statuses frecuentes a ENUM types                 |
+| 86  | CHECK constraints limitados                 | S        | Code   | ✅ agent-c  | migration 00136: CHECK en auction_bids.amount_cents, payments.amount_cents, payments.status IN(...), balance.importe, balance.coste_asociado |
+| 87  | VARCHAR statuses a ENUMs                    | M        | Code   | ✅ agent-c  | migration 00137: 8 ENUM types (payment/lead/subscription/auction/verification/reservation/comment/social_post_status) + types/supabase.ts actualizado |
 | 88  | sizes en imagenes responsive (NuxtImg)      | M        | Code   | —          | Todas las NuxtImg tienen atributo `sizes` apropiado                  |
 | 89  | Libreria validacion forms (Zod/VeeValidate) | L        | Code   | —          | Formularios criticos usan validacion con mensajes descriptivos       |
 | 90  | ARIA live regions contenido dinamico        | M        | Code   | —          | Regiones dinamicas (catalogo, chat, notificaciones) tienen aria-live |
@@ -245,7 +245,7 @@ Criterio: Requieren masa critica de datos y transacciones para ser utiles.
 | 92  | Backup originales imagenes documentado      | S        | Config | —          | Proceso documentado en DISASTER-RECOVERY.md                          |
 | 93  | OpenAPI/Swagger spec                        | L        | Code   | —          | Spec generada automaticamente o mantenida, accesible en /api/docs    |
 | 94  | JSDoc incompleto en composables             | M        | Code   | —          | Composables publicos tienen JSDoc con @param y @returns              |
-| 95  | Snyk en CI                                  | S        | Config | —          | GitHub Action ejecuta `snyk test` en cada PR                         |
+| 95  | Snyk en CI                                  | S        | Config | ✅ agent-c  | ci.yml: job snyk (opt-in via vars.SNYK_ENABLED=true, --severity-threshold=high --fail-on=all) |
 
 **Total Bloque 11:** ~14 sesiones
 
@@ -255,7 +255,7 @@ Criterio: Requieren masa critica de datos y transacciones para ser utiles.
 
 | #   | Item                                                       | Esfuerzo | Tipo   | Depende de | Hecho cuando...                                                                                                                                                                                                                     |
 | --- | ---------------------------------------------------------- | -------- | ------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 74  | Tests seguridad expandidos (IDOR, rate limit, info leak)   | M        | Code   | —          | Tests verifican: dealer no ve datos de otro, 429 tras umbral, sin info leak. **Entregables:** `tests/security/idor-protection.test.ts`, `rate-limiting.test.ts`, `information-leakage.test.ts`, `referencia/RATE-LIMITING-RULES.md` |
+| 74  | Tests seguridad expandidos (IDOR, rate limit, info leak)   | M        | Code   | ✅ agent-c  | idor-protection.test.ts (270L) + rate-limiting.test.ts + information-leakage.test.ts + referencia/RATE-LIMITING-RULES.md (reglas, CF WAF config, auto-ban, composite key) |
 | 75  | CSP nonce-based + reporting + auditoria licencias          | M        | Code   | #83        | Resolver junto con #83. **Entregables:** editar `security-headers.ts`, crear `csp-report.post.ts`, `scripts/audit-licenses.mjs`. **Dep:** Nuxt 4 estable                                                                            |
 | 76  | Test restore backup en BD temporal (Neon) + mirror repo    | M        | Config | —          | Restore ejecutado en Neon free, datos verificados, documentado. **Entregables:** `scripts/test-restore.sh` (ampliar), `.github/workflows/mirror.yml`. **Prereq humano:** crear cuenta Neon + Bitbucket + GitHub Secrets             |
 | 77  | Modularizacion endpoints largos restantes                  | M        | Code   | —          | Ningun endpoint >200 lineas, logica extraida a services/. **Entregables:** 4 archivos en `server/services/` (imageUploader, vehicleCreator, whatsappProcessor, notifications) — whatsapp/process ya hecho, verificar otros          |
