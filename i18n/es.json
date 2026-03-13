@@ -4207,6 +4207,28 @@
       "searchLanguage": "Idioma de búsqueda",
       "noTranslations": "Sin traducciones disponibles",
       "translatedFrom": "Traducido del {source}"
+    },
+    "translate": {
+      "title": "Traducción automática por lotes",
+      "batchRunning": "Traduciendo contenido pendiente...",
+      "batchComplete": "Traducción completada: {translated} traducciones, {failed} errores",
+      "pendingVehicles": "{count} vehículos pendientes",
+      "pendingArticles": "{count} artículos pendientes",
+      "noPending": "No hay contenido pendiente de traducción",
+      "translateAll": "Traducir todo",
+      "translating": "Traduciendo...",
+      "targetLocales": "Idiomas destino",
+      "sourceLocale": "Idioma origen",
+      "engine": "Motor de traducción",
+      "engineHaiku": "Claude Haiku (Anthropic)",
+      "engineGpt4o": "GPT-4o Mini (OpenAI)",
+      "engineDeepl": "DeepL",
+      "fieldDescription": "Descripción",
+      "fieldContent": "Contenido",
+      "fieldExcerpt": "Extracto",
+      "fieldMeta": "Meta descripción",
+      "translatedAt": "Traducido el {date}",
+      "sourceTag": "Fuente: {source}"
     }
   },
   "glossary": {
