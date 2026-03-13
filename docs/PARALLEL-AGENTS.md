@@ -67,11 +67,34 @@ Cada agente usa prefijo propio para evitar conflictos en `i18n/es.json` e `i18n/
 - Formato: `feat(agent-X): #NNN descripción breve`
 - Seguir `CONTRIBUTING.md` para convenciones generales
 
+### Gestión de Memoria (Node)
+
+Con 5+ agentes abiertos, Node consume toda la RAM del sistema. Reglas obligatorias:
+
+1. **Kill Node al cambiar de item:** Antes de empezar cada nuevo item del backlog:
+   ```bash
+   taskkill /F /IM node.exe 2>nul
+   ```
+2. **No levantar dev server salvo necesidad:** La mayoría de tareas (escribir código, tests, migraciones) NO necesitan `npm run dev`. Solo levantarlo para verificación visual en navegador.
+3. **Máximo 1 dev server simultáneo:** Si necesitas dev server, verifica que ningún otro agente lo tiene corriendo. Los demás trabajan en modo "cold" (edit + test unitario).
+4. **Limitar heap por proceso:** Cuando sí necesites Node (dev/build):
+   ```bash
+   NODE_OPTIONS="--max-old-space-size=512" npm run dev
+   NODE_OPTIONS="--max-old-space-size=1024" npm run build
+   ```
+5. **Tests en single-run, nunca watch:**
+   ```bash
+   npx vitest run tests/unit/archivo.test.ts
+   ```
+   Nunca `npx vitest` sin `run` (queda en watch mode consumiendo memoria).
+6. **Agente pasivo = 0 procesos Node:** Si estás esperando confirmación del usuario o entre tareas, mata todos tus procesos Node.
+
 ### Al terminar cada sesión
 
-1. Actualizar la sección "Progreso" de TU agente en ESTE archivo
-2. Actualizar STATUS.md si corresponde
-3. Commit + push a main (o a tu feature branch)
+1. `taskkill /F /IM node.exe 2>nul`
+2. Actualizar la sección "Progreso" de TU agente en ESTE archivo
+3. Actualizar STATUS.md si corresponde
+4. Commit + push a main (o a tu feature branch)
 
 ---
 
@@ -164,8 +187,8 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 | 4 (Anti-Fraude)            | #28–#34       | ✅ (solo #27 deferred — Twilio)                      | 0             |
 | 5 (Reviews)                | #50–#55       | ✅ COMPLETADO                                        | 0             |
 | 6a (Data Capture Rápido)   | #35–#48       | ✅ COMPLETADO                                        | 0             |
-| 6b (Data Capture Avanzado) | #38, #39, #40 | Pendiente (#43 ✅, #44 ✅, #45 ✅, #46/#49 deferred) | ~3            |
-| 13 (Retargeting)           | #72, #73      | Pendiente                                            | ~2            |
+| 6b (Data Capture Avanzado) | #38, #39, #40 | ✅ COMPLETADO                                        | 0             |
+| 13 (Retargeting)           | #72, #73      | ✅ COMPLETADO (#73 ya existía)                       | 0             |
 | 22 (Seguridad 5 Pilares)   | #159          | Pendiente (item grande — L)                          | ~5            |
 | 29 (Seguridad + Legal)     | #217–#224     | Pendiente (8 items)                                  | ~7            |
 
@@ -185,9 +208,9 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #39 (tiempo en página por vehículo)
-- **Último commit:** `34aedce` feat(agent-c): #38 buyer geo origin
-- **Bloques completados:** 4, 5, 6a
+- **Siguiente item:** #159 (Seguridad 5 Pilares — bloque 22)
+- **Último commit:** `c0eb5eb` feat(agent-c): #72 GTM container plugin
+- **Bloques completados:** 4, 5, 6a, 6b, 13
 - **Notas:** Migration 00135 (buyer_country en analytics_events) — pendiente `supabase db push`
 
 ---
