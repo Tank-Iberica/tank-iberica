@@ -294,7 +294,7 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 | 16 (Producto Marketplace) | #129–#135, #161, #162 | ✅ Completado              | ~16           |
 | 20 (Data + Analytics)     | #150–#152             | ✅ Completado              | ~14           |
 | 12 (Backlog Técnico)      | #74–#78, #80          | ✅ Completado (pre-existing) | ~11           |
-| Bloqueados                | #117–#122             | Al final                   | ~6            |
+| Bloqueados                | #117–#122             | En progreso (#117 ✅)      | ~6            |
 
 ### Coordinación
 
@@ -313,10 +313,10 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #117 (Bloqueados)
-- **Último commit:** `94a2318` docs(agent-e): mark Bloque 20 complete
+- **Siguiente item:** #121 (Split composables >500 líneas) — depende de otros agentes
+- **Último commit:** `713a1f8` feat(#117): add optimistic UI with rollback to useReservation
 - **Bloques completados:** 15 ✅, 16 ✅, 20 ✅, 12 ✅ (pre-existing)
-- **Items completados:** #124 ✅ #125 ✅ #126 ✅ #127 ✅ #128 ✅ #129 ✅ #130 ✅ #131 ✅ #132 ✅ #133 ✅ #134 ✅ #135 ✅ #161 ✅ #162 ✅ #150 ✅ #151 ✅ #152 ✅ #74–#78 ✅ #80 ✅ (pre-existing)
+- **Items completados:** #124 ✅ #125 ✅ #126 ✅ #127 ✅ #128 ✅ #129 ✅ #130 ✅ #131 ✅ #132 ✅ #133 ✅ #134 ✅ #135 ✅ #161 ✅ #162 ✅ #150 ✅ #151 ✅ #152 ✅ #74–#78 ✅ #80 ✅ (pre-existing) #117 ✅
 - **Notas Bloque 15:**
   - #124: P1 hardcoding migrado (18 archivos), useSiteConfig + audit-hardcoding.mjs, 13 tests
   - #125: vehicle_groups table (migration 00155) + useVehicleGroups composable, 14 tests
@@ -340,6 +340,12 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
   - #151: useAnalyticsProcessor (eventCounts, topPages, referrers, hourly/daily activity, visitors, topVehicles), 30 tests
   - #152: useDataReporting (periodComparison, trendDetection, movingAverage, KPI summary, CSV, buckets), 40 tests
   - Total Bloque 20: 104 tests, 3 commits
+- **Notas Bloqueados:**
+  - #117: Optimistic UI rollback for useReservation (respondToReservation, cancelReservation, confirmReservation), 3 new tests (60 total)
+  - #118: Structured logs — already implemented (all server/services use `logger`)
+  - #119–#120: Outside Agent E domain
+  - #121: Split composables >500 lines — 17 files identified but owned by other agents (admin/dashboard)
+  - #122: Outside Agent E domain
 
 ---
 
