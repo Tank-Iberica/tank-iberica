@@ -26,7 +26,9 @@ usePageSeo({
 <template>
   <div class="pricing-page">
     <div class="pricing-container">
-      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('pricing.title') }]" />
+      <UiBreadcrumbNav
+        :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('pricing.title') }]"
+      />
       <PreciosHero />
 
       <PreciosBillingToggle :interval="billingInterval" @update="billingInterval = $event" />
@@ -53,6 +55,8 @@ usePageSeo({
       </div>
 
       <PreciosComparisonTable :rows="comparisonRows" />
+
+      <PreciosCompetitorTable />
 
       <PreciosFaq :faqs="faqs" :open-index="openFaq" @toggle="toggleFaq" />
 
