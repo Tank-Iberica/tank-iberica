@@ -184,7 +184,7 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 | Bloque                     | Items         | Estado                                               | Sesiones est. |
 | -------------------------- | ------------- | ---------------------------------------------------- | ------------- |
-| 4 (Anti-Fraude)            | #28–#34       | ✅ (solo #27 deferred — Twilio)                      | 0             |
+| 4 (Anti-Fraude)            | #27–#34       | ✅ (#27 ⏳ Fundadores — Twilio · #34 ⏳ Fundadores — CF WAF #1) | 0             |
 | 5 (Reviews)                | #50–#55       | ✅ COMPLETADO                                        | 0             |
 | 6a (Data Capture Rápido)   | #35–#48       | ✅ COMPLETADO                                        | 0             |
 | 6b (Data Capture Avanzado) | #38, #39, #40 | ✅ COMPLETADO                                        | 0             |
