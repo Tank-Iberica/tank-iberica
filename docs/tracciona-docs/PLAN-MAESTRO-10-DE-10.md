@@ -145,6 +145,10 @@
 - [x] **P2** — Gitleaks también en pre-commit hook (actualmente solo CI) ✓ (sesión XXIV: .husky/pre-commit — conditional check con `command -v gitleaks`, no falla si no está instalado)
 - [~] **P3** — ~~DEFERRED~~ Cifrado de PII en reposo (emails, teléfonos, direcciones) — requiere Supabase Vault activation (plan Pro+)
 - [x] **P2** — Data retention policy enforcement automático (GDPR: borrar datos inactivos tras X meses)
+- [x] **P1** — GDPR Right to Data Portability: export endpoint ✓ (#219: `/api/account/export.get.ts` — profile, dealer, vehicles, leads, favorites, alerts, consents, email logs, demands, ads; JSON download; logs export in consents table; 5 tests)
+- [x] **P1** — GDPR Right to Erasure: account deletion endpoint ✓ (#220: `/api/account/delete.post.ts` — anonymizes user+dealer profile, archives vehicles, deletes favorites/alerts/email prefs, sends confirmation email, deletes auth user; 5 tests)
+- [x] **P2** — RFC 9116 security.txt ✓ (#218: `/.well-known/security.txt` — Contact, Expires, Policy, Canonical, Preferred-Languages; 7 tests)
+- [x] **P2** — Admin security threat map ✓ (#221: `/api/admin/security-events.get.ts` — active IPs, event type summary, topPath, lastEventAt, sorted by threat count; 8 tests)
 - [~] **P2** — Restore drill trimestral (documentado, verificar ejecución real)
 - [~] **P3** — ~~DEFERRED~~ Separar Supabase service role key del código — requiere CF Workers secrets binding (configuración en dashboard CF)
 
@@ -163,6 +167,7 @@
 
 - [~] **P2** — Playbook de incidentes con tiempos objetivo de respuesta (`INCIDENT-RUNBOOK.md` existe, faltan tiempos formales)
 - [x] **P2** — Registro de seguridad centralizado con alertas automáticas de patrones sospechosos ✓ (#159: `server/utils/securityEvents.ts` — 8 event types, 5min window, threshold alerting, 500 max/IP; 33 tests)
+- [x] **P2** — Integración del registro de seguridad en todos los 5 pilares ✓ (#217: rate-limit, bot-detection, RBAC, sessionBinding, csp-report → todos emiten al store centralizado; Nitro plugin init alert handler; CI job `security-unit-tests`; 18 tests integración)
 - [ ] **FUTURO** — SIEM para correlación de eventos de seguridad
 
 ---

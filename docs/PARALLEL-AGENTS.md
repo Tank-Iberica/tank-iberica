@@ -190,7 +190,7 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 | 6b (Data Capture Avanzado) | #38, #39, #40 | ✅ COMPLETADO                                        | 0             |
 | 13 (Retargeting)           | #72, #73      | ✅ COMPLETADO (#73 ya existía)                       | 0             |
 | 22 (Seguridad 5 Pilares)   | #159          | ✅ COMPLETADO (179 tests, securityEvents.ts)          | 0             |
-| 29 (Seguridad + Legal)     | #217–#224     | En progreso                                          | ~6            |
+| 29 (Seguridad + Legal)     | #217–#224     | ✅ COMPLETADO (security.txt, GDPR, securityEvents integration, admin API) | 0 |
 
 ### Coordinación
 
@@ -208,9 +208,9 @@ Si necesitas editar `vehiculo/[slug].vue` → coordina con Agente E.
 
 ### Progreso
 
-- **Siguiente item:** #217–#224 (Bloque 29 Seguridad + Legal)
-- **Último commit:** `db87ea5` feat(agent-c): #159 Seguridad 5 Pilares (179 tests)
-- **Bloques completados:** 4, 5, 6a, 6b, 13, 22
+- **Siguiente item:** Pedir overflow de otro agente o siguiente bloque asignado
+- **Último commit:** `de80cc0` feat(agent-c): #218-#222 Block 29 Seguridad+Legal
+- **Bloques completados:** 4, 5, 6a, 6b, 13, 22, 29 — **TODOS LOS BLOQUES ASIGNADOS COMPLETOS**
 - **Notas:** Migration 00135 (buyer_country en analytics_events) — pendiente `supabase db push`
 
 ---
