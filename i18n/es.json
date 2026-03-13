@@ -4156,6 +4156,24 @@
       "netAmount": "Importe neto",
       "accountingExport": "Exportación contable",
       "accountingHint": "Compatible con software contable (Quaderno, A3, Sage)"
+    },
+    "schedule": {
+      "title": "Publicación programada",
+      "scheduledFor": "Programado para",
+      "publishNow": "Publicar ahora",
+      "schedulePublish": "Programar publicación",
+      "cancelSchedule": "Cancelar programación",
+      "scheduledAt": "Fecha y hora programada",
+      "queueTitle": "Cola de publicación",
+      "queueEmpty": "No hay publicaciones programadas",
+      "countdown": "Se publica en",
+      "days": "días",
+      "hours": "horas",
+      "minutes": "minutos",
+      "publishedCount": "{count} publicados",
+      "pendingCount": "{count} pendientes",
+      "articlesLabel": "Artículos",
+      "vehiclesLabel": "Vehículos"
     }
   },
   "glossary": {
