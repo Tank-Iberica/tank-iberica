@@ -168,7 +168,8 @@ export async function generateDealerCardPdf(opts: CardOptions): Promise<void> {
   // URL under QR
   doc.setFontSize(4.5)
   doc.setTextColor(...accentColor)
-  doc.text('tracciona.com', qrX + qrSize / 2, qrY + qrSize + 3, { align: 'center' })
+  const siteDomain = useSiteUrl().replace('https://', '').replace('http://', '')
+  doc.text(siteDomain, qrX + qrSize / 2, qrY + qrSize + 3, { align: 'center' })
 
   // ===== BACK SIDE =====
   doc.addPage([90, 55])
@@ -205,7 +206,7 @@ export async function generateDealerCardPdf(opts: CardOptions): Promise<void> {
   doc.setFontSize(8)
   doc.setTextColor(...petrolBlue)
   doc.setFont('helvetica', 'bold')
-  const profileUrl = `tracciona.com/${dealer.slug}`
+  const profileUrl = `${siteDomain}/${dealer.slug}`
   doc.text(profileUrl, cardW / 2, 34, { align: 'center' })
 
   // Large QR code centered

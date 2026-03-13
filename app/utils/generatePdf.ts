@@ -153,12 +153,13 @@ async function renderHeader(layout: PdfLayout, headerHeight: number): Promise<vo
   const accentStart = logoBase64 ? margin + 24 : margin
   doc.line(accentStart, 23, accentStart + 45, 23)
 
+  const siteDomain = useSiteUrl().replace('https://', '').replace('http://', '')
   doc.setTextColor(...COLORS.white)
   doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
   const contactX = pageWidth - margin
-  doc.text('TRACCIONA.COM', contactX, 12, { align: 'right' })
-  doc.text('info@tracciona.com', contactX, 18, { align: 'right' })
+  doc.text(siteDomain.toUpperCase(), contactX, 12, { align: 'right' })
+  doc.text(`info@${siteDomain}`, contactX, 18, { align: 'right' })
   doc.text('+34 645 779 594', contactX, 24, { align: 'right' })
 }
 
@@ -354,7 +355,8 @@ async function renderFooter(
 ): Promise<void> {
   const { doc, margin, pageWidth, pageHeight, locale } = layout
   const footerY = pageHeight - footerHeight
-  const vehicleUrl = `https://tracciona.com/vehiculo/${vehicleSlug}`
+  const siteUrl = useSiteUrl()
+  const vehicleUrl = `${siteUrl}/vehiculo/${vehicleSlug}`
 
   let qrDataUrl: string | null = null
   try {
@@ -384,12 +386,13 @@ async function renderFooter(
   doc.setFontSize(7)
   doc.setTextColor(...COLORS.white)
   doc.text(vehicleUrl, margin, footerY + 5)
+  const footerDomain = siteUrl.replace('https://', '').replace('http://', '')
   doc.text(
-    locale === 'es' ? 'Más vehículos en tracciona.com' : 'More vehicles at tracciona.com',
+    locale === 'es' ? `Más vehículos en ${footerDomain}` : `More vehicles at ${footerDomain}`,
     margin,
     footerY + 10,
   )
-  doc.text('TRACCIONA.COM', pageWidth - margin, footerY + 8, { align: 'right' })
+  doc.text(footerDomain.toUpperCase(), pageWidth - margin, footerY + 8, { align: 'right' })
 }
 
 export async function generateVehiclePdf(opts: PdfOptions): Promise<void> {
