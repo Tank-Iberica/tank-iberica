@@ -224,7 +224,7 @@ onMounted(() => {
 })
 
 // Duration + funnel tracking
-const { trackVehicleDuration, trackFunnelViewVehicle, trackBuyerGeo } = useAnalyticsTracking()
+const { trackVehicleDuration, trackFunnelViewVehicle, trackBuyerGeo, trackVehicleComparison } = useAnalyticsTracking()
 const pageStartedAt = ref(0)
 
 // #38 — Buyer geo tracking (once per session)
@@ -251,6 +251,37 @@ onMounted(() => {
     }
   } catch {
     // sessionStorage unavailable (private mode) — skip silently
+  }
+
+  // #40 — Track comparison: fire when user views 2+ similar vehicles in session.
+  // "Similar" = same category. Stored as JSON in sessionStorage.
+  if (vehicle.value) {
+    const currentId = vehicle.value.id
+    const currentCategory = vehicle.value.category ?? null
+    try {
+      const SESSION_VIEWS_KEY = 'analytics_session_views'
+      type SessionView = { id: string; category: string | null }
+      const raw = sessionStorage.getItem(SESSION_VIEWS_KEY)
+      const sessionViews: SessionView[] = raw ? (JSON.parse(raw) as SessionView[]) : []
+
+      if (currentCategory) {
+        const similarIds = sessionViews
+          .filter((v) => v.category === currentCategory && v.id !== currentId)
+          .map((v) => v.id)
+
+        if (similarIds.length > 0) {
+          trackVehicleComparison([...similarIds, currentId])
+        }
+      }
+
+      // Append current view (deduplicated by id)
+      if (!sessionViews.some((v) => v.id === currentId)) {
+        sessionViews.push({ id: currentId, category: currentCategory })
+        sessionStorage.setItem(SESSION_VIEWS_KEY, JSON.stringify(sessionViews))
+      }
+    } catch {
+      // sessionStorage unavailable — skip silently
+    }
   }
 })
 
