@@ -5083,5 +5083,20 @@
     "tip_add_price": "Añade el precio para mejorar la visibilidad",
     "tip_add_location": "Indica la ubicación del vehículo",
     "tip_complete_contact": "Completa teléfono y email de contacto"
+  },
+  "lifecycle": {
+    "status_draft": "Borrador",
+    "status_published": "Publicado",
+    "status_sold": "Vendido",
+    "status_archived": "Archivado",
+    "status_rented": "Alquilado",
+    "status_maintenance": "En mantenimiento",
+    "status_paused": "Pausado",
+    "status_expired": "Expirado",
+    "transition_success": "Estado cambiado a {status}",
+    "transition_error": "No se puede cambiar de {from} a {to}",
+    "transition_invalid": "Transición no válida",
+    "bulk_success": "{count} vehículos actualizados",
+    "bulk_partial": "{succeeded} actualizados, {failed} fallidos"
   }
 }

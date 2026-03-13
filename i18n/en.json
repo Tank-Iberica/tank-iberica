@@ -5076,5 +5076,20 @@
     "tip_add_price": "Add a price to improve visibility",
     "tip_add_location": "Indicate the vehicle location",
     "tip_complete_contact": "Complete phone and email contact info"
+  },
+  "lifecycle": {
+    "status_draft": "Draft",
+    "status_published": "Published",
+    "status_sold": "Sold",
+    "status_archived": "Archived",
+    "status_rented": "Rented",
+    "status_maintenance": "Maintenance",
+    "status_paused": "Paused",
+    "status_expired": "Expired",
+    "transition_success": "Status changed to {status}",
+    "transition_error": "Cannot change from {from} to {to}",
+    "transition_invalid": "Invalid transition",
+    "bulk_success": "{count} vehicles updated",
+    "bulk_partial": "{succeeded} updated, {failed} failed"
   }
 }
