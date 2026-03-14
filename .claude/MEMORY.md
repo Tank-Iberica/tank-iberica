@@ -24,7 +24,16 @@
 
 ## Stack
 
-- Nuxt 3 + Supabase + Cloudflare Pages + Stripe + Cloudinary/CF Images + Resend + WhatsApp Meta Cloud API
+- Nuxt 3 + Supabase + Cloudflare Pages + Stripe + Cloudinary/CF Images + Resend + WhatsApp Meta Cloud API + **Billin** (facturación)
+
+## Decisiones Facturación (14-mar-2026)
+
+- **Billin Unlimited (€20/mes, ilimitado)** elegido sobre Quaderno — precio fijo vs $49-149/mes escalonado por volumen
+- Todo lo diferencial de Quaderno se construye en #447: VIES (API pública EU gratis), OSS B2C, tax nexus, multi-divisa (BCE API gratis), credit notes
+- **Código existente** (`billing.ts`, `create-invoice.post.ts`) usa Quaderno → migrar a Billin en sesión de #8
+- **Fiscal compliance:** B2B EU = inversión sujeto pasivo (0% IVA, cliente declara en su país). Solo necesitas ROI (AEAT, gratuito) + Modelo 349 trimestral. Sin registro fiscal en otros países EU para B2B.
+- **OSS B2C aplica** porque particulares pueden comprar créditos (no se puede controlar quién compra) → campo NIF IVA opcional en checkout: con NIF válido VIES = B2B; sin NIF = B2C IVA por país
+- **#447 Fiscal Compliance Engine** (Bloque 1, depende de #8, tamaño L): Billin adapter + multi-divisa + IVA multi-país global + OSS B2C + tax nexus vertical-aware (umbrales son TradeBase SL total, no por vertical)
 - Supabase Project ID: gmnrfuzekbwyzkgsaftv
 - Supabase URL: https://gmnrfuzekbwyzkgsaftv.supabase.co
 - Supabase Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtbnJmdXpla2J3eXprZ3NhZnR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5MDkxMTUsImV4cCI6MjA4NTQ4NTExNX0.zN8JWkQvkzlFHXFunaanpJr391mHUVdViBbTmTkm3Qw
@@ -51,9 +60,9 @@
 - Plan completo: `docs/legacy/TESTING-IMPROVEMENT-PLAN.md` (8 fases — TODAS COMPLETAS)
 - **IDOR tests** (13 tests): Supabase staging directo. Requieren `STAGING_SUPABASE_URL` + `STAGING_SUPABASE_KEY`.
 - **Suite (09-mar pre-merge)**: 747 archivos, 0 fallos. Coverage: 73.67% statements.
-- **Suite (14-mar post-merge agentes)**: 885 archivos, 85 failing (979 tests failed de 16,194). Pre-existentes del código de agentes — pendiente fix.
-- **Backlog total (14-mar)**: ~404 items, 26 bloques, Fases 1-7c, ~316 sesiones estimadas. Items #1-#311 + D1-D25 + F1-F59.
-- **Sesión autónoma 14-mar**: 100+ S/M tasks verificados como ya hechos. Mayoría de code tasks del backlog están implementados. Quedan: L-sized, external APIs, fundadores.
+- **Suite (14-mar post-merge agentes)**: 894 archivos, 7 failing (39 tests) — pre-existentes (contaminación entre tests, timeouts). Ver T-01 en STATUS.md.
+- **Backlog total (14-mar)**: ~540 items (33 bloques). Casi todos S-sized autónomos completados/verificados.
+- **Sesiones autónomas 14-mar (#1-#4)**: 130+ S/M tasks verificados como ya hechos. Implementados: #221 select('\*') cleanup, #212 views fix, #227/#228 de-hardcoding 8 archivos. Quedan: L-sized, external APIs, fundadores.
 - **Nuevos composables (14-mar)**: useTopDealers, useVirtualList, usePresence, useReferral, useAbTest, useFormAutosave (pre-existente)
 - **k6 tests suite (14-mar)**: spike, load, stress, soak, concurrent-writes, concurrent-bids en scripts/
 
@@ -276,6 +285,15 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **Chrome-profile en git:** NUNCA trackear archivos de Chrome profile. Fix: `.gitignore` + `.eslintignore` + `git rm --cached -r`.
 - **Stash cleanup verification:** Antes de `git stash drop`, comparar `git show stash@{N}:file | wc -l` vs `wc -l file` — si working tree tiene más líneas, el stash es supersedido.
 - **Pre-push hook en branch deletion:** `git push origin --delete` TAMBIÉN dispara pre-push hook. Usar `--no-verify` si solo se eliminan ramas.
+
+## De-hardcoding Multi-Vertical (completado 14-mar)
+
+- **Server-side:** `getSiteName()`, `getSiteUrl()`, `getSiteEmail()` de `server/utils/siteConfig.ts`
+- **Client-side:** `useSiteName()` de `app/composables/useSiteName.ts`, `useSiteUrl()` de `app/composables/useSiteUrl.ts`
+- **Fallback final:** siempre `'Tracciona'` / `'https://tracciona.com'` como último recurso
+- **Archivos limpiados:** stories/[slug], security.txt, adminEmailTemplates, adminProductosExport, indexNow, marketReport, useDashboardExportar, useAdminSidebar
+- **Quedan legítimos:** `siteConfig.ts` (define el fallback), `useAdminSidebar.ts` (lee de vertical_config BD primero)
+- **Cron files:** ya usan `process.env.NUXT_PUBLIC_VERTICAL ?? 'tracciona'` — OK
 
 ## Sub-archivos (leer bajo demanda)
 

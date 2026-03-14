@@ -14,6 +14,7 @@
  */
 import { defineEventHandler, getRouterParam, setResponseHeader, createError } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import { getSiteName, getSiteUrl } from '~~/server/utils/siteConfig'
 
 const AMP_BOILERPLATE = `body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}`
 const AMP_BOILERPLATE_NOSCRIPT = `body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}`
@@ -32,7 +33,11 @@ interface VehicleRow {
 
 function formatPrice(price: number | null): string {
   if (!price) return ''
-  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(price)
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(price)
 }
 
 function safeText(text: string): string {
@@ -64,12 +69,15 @@ export default defineEventHandler(async (event) => {
   if (!slug) throw createError({ statusCode: 400, statusMessage: 'Missing slug' })
 
   const supabase = serverSupabaseServiceRole(event)
-  const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://tracciona.com'
+  const siteUrl = getSiteUrl()
+  const siteName = getSiteName()
   const logoUrl = `${siteUrl}/logo.png`
 
   const { data: vehicle, error } = await supabase
     .from('vehicles')
-    .select('slug, brand, model, year, price, location, description_es, vehicle_images(url, position, alt_text), dealers(slug, company_name)')
+    .select(
+      'slug, brand, model, year, price, location, description_es, vehicle_images(url, position, alt_text), dealers(slug, company_name)',
+    )
     .eq('slug', slug)
     .eq('status', 'published')
     .single()
@@ -85,7 +93,7 @@ export default defineEventHandler(async (event) => {
 
   const title = `${v.brand} ${v.model}${v.year ? ` (${v.year})` : ''}`
   const vehicleUrl = `${siteUrl}/vehiculo/${v.slug}`
-  const dealerName = v.dealers?.company_name?.es || v.dealers?.company_name?.en || 'Tracciona'
+  const dealerName = v.dealers?.company_name?.es || v.dealers?.company_name?.en || siteName
   const price = formatPrice(v.price)
   const specs = [v.brand, v.model, v.year ? String(v.year) : null].filter(Boolean).join(' · ')
   const desc = (v.description_es || '').slice(0, 120).trim()
@@ -93,40 +101,60 @@ export default defineEventHandler(async (event) => {
   const slides: string[] = []
 
   // Slide 1 — Cover
-  slides.push(slide('cover', '#1a2d31',
-    `<h1 style="color:#fff;font-size:1.4rem;font-weight:700;margin:0 0 8px">${safeText(title)}</h1>
+  slides.push(
+    slide(
+      'cover',
+      '#1a2d31',
+      `<h1 style="color:#fff;font-size:1.4rem;font-weight:700;margin:0 0 8px">${safeText(title)}</h1>
      <p style="color:rgba(255,255,255,0.8);font-size:0.85rem;margin:0">${safeText(dealerName)}</p>`,
-    mainImage || undefined,
-  ))
+      mainImage || undefined,
+    ),
+  )
 
   // Slide 2 — Specs
-  slides.push(slide('specs', '#23424a',
-    `<p style="color:rgba(255,255,255,0.6);font-size:0.75rem;text-transform:uppercase;margin:0 0 8px">Especificaciones</p>
+  slides.push(
+    slide(
+      'specs',
+      '#23424a',
+      `<p style="color:rgba(255,255,255,0.6);font-size:0.75rem;text-transform:uppercase;margin:0 0 8px">Especificaciones</p>
      <h2 style="color:#fff;font-size:1.2rem;font-weight:600;margin:0">${safeText(specs)}</h2>`,
-  ))
+    ),
+  )
 
   // Slide 3 — Price
   if (price) {
-    slides.push(slide('price', '#14532d',
-      `<p style="color:rgba(255,255,255,0.6);font-size:0.75rem;text-transform:uppercase;margin:0 0 8px">Precio</p>
+    slides.push(
+      slide(
+        'price',
+        '#14532d',
+        `<p style="color:rgba(255,255,255,0.6);font-size:0.75rem;text-transform:uppercase;margin:0 0 8px">Precio</p>
        <h2 style="color:#4ade80;font-size:2rem;font-weight:700;margin:0">${safeText(price)}</h2>`,
-    ))
+      ),
+    )
   }
 
   // Slide 4 — Location
   if (v.location) {
-    slides.push(slide('location', '#1e3a5f',
-      `<p style="color:rgba(255,255,255,0.6);font-size:0.75rem;text-transform:uppercase;margin:0 0 8px">Ubicación</p>
+    slides.push(
+      slide(
+        'location',
+        '#1e3a5f',
+        `<p style="color:rgba(255,255,255,0.6);font-size:0.75rem;text-transform:uppercase;margin:0 0 8px">Ubicación</p>
        <h2 style="color:#fff;font-size:1.1rem;font-weight:600;margin:0">${safeText(v.location)}</h2>`,
-    ))
+      ),
+    )
   }
 
   // Slide 5 — Second image (if available)
   if (secondImage) {
-    slides.push(slide('photo2', '#1a2d31',
-      `<p style="color:rgba(255,255,255,0.8);font-size:0.9rem;margin:0">${safeText(desc || title)}</p>`,
-      secondImage,
-    ))
+    slides.push(
+      slide(
+        'photo2',
+        '#1a2d31',
+        `<p style="color:rgba(255,255,255,0.8);font-size:0.9rem;margin:0">${safeText(desc || title)}</p>`,
+        secondImage,
+      ),
+    )
   }
 
   // Slide 6 — CTA
@@ -145,7 +173,7 @@ export default defineEventHandler(async (event) => {
   <meta charset="utf-8">
   <script async src="https://cdn.ampproject.org/v0.js"></script>
   <script async custom-element="amp-story" src="https://cdn.ampproject.org/v0/amp-story-1.0.js"></script>
-  <title>${safeText(title)} — Tracciona</title>
+  <title>${safeText(title)} — ${safeText(siteName)}</title>
   <link rel="canonical" href="${safeText(vehicleUrl)}">
   <meta name="viewport" content="width=device-width">
   <style amp-boilerplate>${AMP_BOILERPLATE}</style>
@@ -159,7 +187,7 @@ export default defineEventHandler(async (event) => {
   <amp-story
     standalone
     title="${safeText(title)}"
-    publisher="Tracciona"
+    publisher="${safeText(siteName)}"
     publisher-logo-src="${safeText(logoUrl)}"
     poster-portrait-src="${safeText(mainImage || logoUrl)}"
   >

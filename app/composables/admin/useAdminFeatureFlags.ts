@@ -25,7 +25,12 @@ export function useAdminFeatureFlags() {
     loading.value = true
     error.value = ''
     try {
-      const { data, error: err } = await client.from('feature_flags').select('*').order('key')
+      const { data, error: err } = await client
+        .from('feature_flags')
+        .select(
+          'key, enabled, description, percentage, allowed_dealers, vertical, created_at, updated_at',
+        )
+        .order('key')
 
       if (err) throw err
       flags.value = (data as FeatureFlag[]) ?? []

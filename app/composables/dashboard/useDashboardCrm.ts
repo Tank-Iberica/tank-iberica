@@ -105,7 +105,10 @@ export function useDashboardCrm() {
     try {
       let query = supabase
         .from('contacts')
-        .select('*', { count: 'exact' })
+        .select(
+          'id, contact_type, company, contact_name, phone, email, location, vertical, notes, last_contact_date, dealer_id, created_at, updated_at',
+          { count: 'exact' },
+        )
         .eq('dealer_id', dealerId)
         .order('company', { ascending: true })
         .limit(PAGE_SIZE)

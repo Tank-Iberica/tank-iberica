@@ -10,6 +10,8 @@
  * Spec: https://www.indexnow.org/documentation
  */
 
+import { getSiteUrl } from './siteConfig'
+
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow'
 
 export interface IndexNowResult {
@@ -21,8 +23,7 @@ export interface IndexNowResult {
 
 export async function sendIndexNow(urls: string[]): Promise<IndexNowResult> {
   const key = process.env.INDEXNOW_KEY
-  const siteUrl =
-    process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://tracciona.com'
+  const siteUrl = getSiteUrl()
 
   if (!key) {
     // No key configured — skip silently (not an error in dev)
@@ -44,7 +45,11 @@ export async function sendIndexNow(urls: string[]): Promise<IndexNowResult> {
     })
 
     // 200 = accepted, 202 = accepted (async), 422 = key mismatch
-    return { ok: res.status === 200 || res.status === 202, status: res.status, urlCount: urls.length }
+    return {
+      ok: res.status === 200 || res.status === 202,
+      status: res.status,
+      urlCount: urls.length,
+    }
   } catch {
     // Network error — don't fail the parent operation
     return { ok: false, urlCount: urls.length }

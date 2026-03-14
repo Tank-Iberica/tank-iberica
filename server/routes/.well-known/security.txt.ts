@@ -7,6 +7,7 @@
  * Spec: https://securitytxt.org / RFC 9116
  */
 import { defineEventHandler } from 'h3'
+import { getSiteUrl, getSiteName } from '~~/server/utils/siteConfig'
 
 export default defineEventHandler((event) => {
   const config = useRuntimeConfig()
@@ -16,7 +17,7 @@ export default defineEventHandler((event) => {
   const expiresDate = new Date('2027-01-01T00:00:00.000Z').toISOString()
 
   const contactEmail = config.public.contactEmail || 'tankiberica@gmail.com'
-  const siteUrl = config.public.siteUrl || 'https://tracciona.es'
+  const siteUrl = config.public.siteUrl || getSiteUrl()
 
   const content = [
     `Contact: mailto:${contactEmail}`,
@@ -28,7 +29,7 @@ export default defineEventHandler((event) => {
     `Encryption: ${siteUrl}/pgp-key.txt`,
     `Acknowledgments: ${siteUrl}/hall-of-fame-seguridad`,
     '',
-    '# Tracciona — Responsible Disclosure',
+    `# ${getSiteName()} — Responsible Disclosure`,
     '# We appreciate security researchers who help keep our platform safe.',
     '# Please allow up to 72 hours for an initial response.',
   ].join('\n')

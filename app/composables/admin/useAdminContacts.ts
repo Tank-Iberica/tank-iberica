@@ -45,7 +45,10 @@ export function useAdminContacts() {
     try {
       let query = supabase
         .from('contacts')
-        .select('*', { count: 'exact' })
+        .select(
+          'id, contact_type, company, contact_name, phone, email, location, products, notes, created_at, updated_at',
+          { count: 'exact' },
+        )
         .order('company', { ascending: true })
         .limit(PAGE_SIZE)
 
@@ -55,7 +58,9 @@ export function useAdminContacts() {
 
       if (filters.search) {
         const term = `%${filters.search}%`
-        query = query.or(`company.ilike.${term},contact_name.ilike.${term},email.ilike.${term},products.ilike.${term}`)
+        query = query.or(
+          `company.ilike.${term},contact_name.ilike.${term},email.ilike.${term},products.ilike.${term}`,
+        )
       }
 
       const { data, error: err, count } = await query
@@ -63,12 +68,10 @@ export function useAdminContacts() {
 
       contacts.value = (data as unknown as Contact[]) || []
       total.value = count || 0
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = (err as { message?: string })?.message || 'Error al cargar contactos'
       contacts.value = []
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }
@@ -85,12 +88,10 @@ export function useAdminContacts() {
 
       if (err) throw err
       return (data as { id: string } | null)?.id || null
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = (err as { message?: string })?.message || 'Error al crear contacto'
       return null
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -106,12 +107,10 @@ export function useAdminContacts() {
 
       if (err) throw err
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = (err as { message?: string })?.message || 'Error al actualizar contacto'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }
@@ -120,22 +119,17 @@ export function useAdminContacts() {
     saving.value = true
     error.value = null
     try {
-      const { error: err } = await supabase
-        .from('contacts')
-        .delete()
-        .eq('id', id)
+      const { error: err } = await supabase.from('contacts').delete().eq('id', id)
 
       if (err) throw err
 
-      contacts.value = contacts.value.filter(c => c.id !== id)
+      contacts.value = contacts.value.filter((c) => c.id !== id)
       total.value--
       return true
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = (err as { message?: string })?.message || 'Error al eliminar contacto'
       return false
-    }
-    finally {
+    } finally {
       saving.value = false
     }
   }

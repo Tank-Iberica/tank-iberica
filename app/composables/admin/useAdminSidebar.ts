@@ -10,9 +10,9 @@ export function useAdminSidebar() {
   const { t, locale } = useI18n()
   const { config } = useVerticalConfig()
   const siteName = computed(() => {
-    if (!config.value?.name) return 'Tracciona'
+    if (!config.value?.name) return useSiteName() || 'Tracciona'
     const names = config.value.name
-    return names[locale.value] || names.es || names.en || 'Tracciona'
+    return names[locale.value] || names.es || names.en || useSiteName() || 'Tracciona'
   })
 
   // Dropdown state

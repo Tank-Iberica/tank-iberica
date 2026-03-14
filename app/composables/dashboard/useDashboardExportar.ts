@@ -501,7 +501,7 @@ export function useDashboardExportar() {
       const doc = new jsPDF('p', 'mm', 'a4')
 
       const dealer = dealerProfile.value
-      const companyName = dealer?.company_name || 'Tracciona'
+      const companyName = dealer?.company_name || useSiteName() || 'Tracciona'
       const siteUrl = useSiteUrl()
       const profileUrl = dealer?.slug ? `${siteUrl}/dealer/${dealer.slug}` : siteUrl
 

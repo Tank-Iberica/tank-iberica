@@ -171,7 +171,7 @@ export async function exportVehicleFicha(
   doc.rect(0, 0, pageWidth, 40, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(24)
-  doc.text('Tracciona', 14, 20)
+  doc.text(useSiteName() || 'Tracciona', 14, 20)
   doc.setFontSize(12)
   doc.text('Ficha de Producto', 14, 30)
 

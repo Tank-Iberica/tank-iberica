@@ -528,7 +528,7 @@ export function getSampleValue(varName: string): string {
   const samples: Record<string, string> = {
     dealer_name: 'TransMotor S.L.',
     dealer_email: 'info@transmotor.es',
-    site_name: 'Tracciona',
+    site_name: useSiteName() || 'Tracciona',
     login_url: `${useSiteUrl()}/login`,
     vehicle_title: 'Schmitz Cargobull SCB S3T 2022',
     vehicle_url: `${useSiteUrl()}/vehiculo/schmitz-scb-s3t-2022`,

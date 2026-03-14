@@ -55,7 +55,10 @@ export function useAdminNews() {
     try {
       let query = supabase
         .from('news')
-        .select('*', { count: 'exact' })
+        .select(
+          'id, title_es, title_en, slug, category, image_url, description_es, description_en, content_es, content_en, hashtags, views, status, published_at, created_at, updated_at',
+          { count: 'exact' },
+        )
         .order('created_at', { ascending: false })
 
       if (filters.status) {
@@ -94,7 +97,13 @@ export function useAdminNews() {
     error.value = null
 
     try {
-      const { data, error: err } = await supabase.from('news').select('id, title_es, title_en, slug, category, image_url, description_es, description_en, content_es, content_en, hashtags, views, status, published_at, created_at, updated_at, section, faq_schema, excerpt_es, excerpt_en, scheduled_at, social_post_text, related_categories, target_markets').eq('id', id).single()
+      const { data, error: err } = await supabase
+        .from('news')
+        .select(
+          'id, title_es, title_en, slug, category, image_url, description_es, description_en, content_es, content_en, hashtags, views, status, published_at, created_at, updated_at, section, faq_schema, excerpt_es, excerpt_en, scheduled_at, social_post_text, related_categories, target_markets',
+        )
+        .eq('id', id)
+        .single()
 
       if (err) throw err
 

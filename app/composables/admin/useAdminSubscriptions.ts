@@ -50,7 +50,10 @@ export function useAdminSubscriptions() {
     try {
       let query = supabase
         .from('subscriptions')
-        .select('*', { count: 'exact' })
+        .select(
+          'id, email, pref_web, pref_press, pref_newsletter, pref_featured, pref_events, pref_csr, created_at',
+          { count: 'exact' },
+        )
         .order('created_at', { ascending: false })
 
       if (filters.search) {

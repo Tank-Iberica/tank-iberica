@@ -6,6 +6,7 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { getSiteName } from '~~/server/utils/siteConfig'
 
 /* ------------------------------------------------------------------ */
 /*  Type definitions                                                   */
@@ -753,7 +754,7 @@ function generateReportHTML(
   const now = new Date()
   const quarterLabel = getQuarterLabel(now)
   const resolvedLocale = locale ?? 'es'
-  const resolvedSiteName = siteName ?? 'Tracciona'
+  const resolvedSiteName = siteName ?? getSiteName()
   const resolvedSiteUrl = siteUrl ?? getSiteUrl()
   const t = getTranslations(resolvedLocale)
   const dateGenerated = now.toLocaleDateString(resolvedLocale === 'en' ? 'en-GB' : 'es-ES', {

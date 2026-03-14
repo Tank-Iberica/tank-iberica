@@ -110,28 +110,35 @@ async function loadStats(): Promise<void> {
       if (vehicleStats.value.length > 0) {
         const vehicleIds = vehicleStats.value.map((vs) => vs.id)
 
-        // Views from user_vehicle_views (aggregated by vehicle_id)
+        // Views from analytics_events (vehicle_view events grouped by entity_id)
         const { data: viewsData } = await supabase
-          .from('user_vehicle_views')
-          .select('vehicle_id')
-          .in('vehicle_id', vehicleIds)
+          .from('analytics_events')
+          .select('entity_id')
+          .eq('event_type', 'vehicle_view')
+          .in('entity_id', vehicleIds)
         if (viewsData) {
           const viewCounts = new Map<string, number>()
-          for (const row of viewsData as Array<{ vehicle_id: string }>) {
-            viewCounts.set(row.vehicle_id, (viewCounts.get(row.vehicle_id) || 0) + 1)
+          for (const row of viewsData as Array<{ entity_id: string }>) {
+            viewCounts.set(row.entity_id, (viewCounts.get(row.entity_id) || 0) + 1)
           }
           for (const vs of vehicleStats.value) {
             vs.views = viewCounts.get(vs.id) || 0
           }
         }
 
-        // Lead counts
-        for (const vs of vehicleStats.value) {
-          const { count } = await supabase
-            .from('leads')
-            .select('id', { count: 'exact', head: true })
-            .eq('vehicle_id', vs.id)
-          vs.leads = count || 0
+        // Lead counts (batch query instead of N+1)
+        const { data: leadsData } = await supabase
+          .from('leads')
+          .select('vehicle_id')
+          .in('vehicle_id', vehicleIds)
+        if (leadsData) {
+          const leadCounts = new Map<string, number>()
+          for (const row of leadsData as Array<{ vehicle_id: string }>) {
+            leadCounts.set(row.vehicle_id, (leadCounts.get(row.vehicle_id) || 0) + 1)
+          }
+          for (const vs of vehicleStats.value) {
+            vs.leads = leadCounts.get(vs.id) || 0
+          }
         }
       }
     }
