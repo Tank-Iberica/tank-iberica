@@ -49,7 +49,7 @@ function onNumberInput(field: keyof ValoracionFormData, event: Event): void {
           :aria-invalid="!!formErrors.brand || undefined"
           :aria-describedby="formErrors.brand ? 'err-val-brand' : undefined"
           @input="onInput('brand', $event)"
-        />
+        >
         <span v-if="formErrors.brand" id="err-val-brand" class="form-error" role="alert">{{
           $t('valuation.requiredField')
         }}</span>
@@ -70,7 +70,7 @@ function onNumberInput(field: keyof ValoracionFormData, event: Event): void {
           :aria-invalid="!!formErrors.model || undefined"
           :aria-describedby="formErrors.model ? 'err-val-model' : undefined"
           @input="onInput('model', $event)"
-        />
+        >
         <span v-if="formErrors.model" id="err-val-model" class="form-error" role="alert">{{
           $t('valuation.requiredField')
         }}</span>
@@ -92,7 +92,7 @@ function onNumberInput(field: keyof ValoracionFormData, event: Event): void {
           :aria-invalid="!!formErrors.year || undefined"
           :aria-describedby="formErrors.year ? 'err-val-year' : undefined"
           @input="onNumberInput('year', $event)"
-        />
+        >
         <span v-if="formErrors.year" id="err-val-year" class="form-error" role="alert">{{
           $t('valuation.requiredField')
         }}</span>
@@ -109,7 +109,7 @@ function onNumberInput(field: keyof ValoracionFormData, event: Event): void {
           :placeholder="$t('valuation.kmPlaceholder')"
           min="0"
           @input="onNumberInput('km', $event)"
-        />
+        >
       </div>
 
       <!-- Province -->
@@ -153,7 +153,7 @@ function onNumberInput(field: keyof ValoracionFormData, event: Event): void {
           :placeholder="$t('valuation.emailPlaceholder')"
           autocomplete="email"
           @input="onInput('email', $event)"
-        />
+        >
         <span class="form-hint">{{ $t('valuation.emailHint') }}</span>
       </div>
 

@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 const cov = JSON.parse(readFileSync('./coverage/coverage-final.json', 'utf-8'))
 const targets = ['health.get.ts','merchant-feed.get.ts','try-vehicle.post.ts','slow-queries.get.ts','redirects.ts','whatsappProcessor.ts','useAuctionRegistration.ts','useFormValidation.ts','useNews.ts','useAdminMetrics.ts','useAdminVerticalConfig.ts']
 // These have ambiguous names — match by path

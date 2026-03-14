@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 const data = JSON.parse(readFileSync('coverage/coverage-summary.json', 'utf8'));
 const files = [];
 for (const [file, info] of Object.entries(data)) {

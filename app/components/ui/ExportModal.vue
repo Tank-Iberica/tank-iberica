@@ -311,7 +311,7 @@ watch(
                     class="export-checkbox"
                     :checked="col.enabled"
                     @change="toggleColumn(i)"
-                  />
+                  >
                   <span class="export-column-label">{{ col.label }}</span>
                 </label>
               </div>
@@ -337,7 +337,7 @@ watch(
                     name="export-format"
                     :value="fmt"
                     class="export-radio"
-                  />
+                  >
                   <svg
                     v-if="fmt === 'excel'"
                     class="export-format-icon"

@@ -49,10 +49,11 @@ export default defineEventHandler((event) => {
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://challenges.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com",
     // unsafe-inline: Vue scoped styles + Nuxt SSR inline styles
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://res.cloudinary.com https://*.supabase.co https://flagcdn.com https://*.googleusercontent.com https://*.usercontent.google.com https://www.google-analytics.com https://www.googletagmanager.com",
+    "img-src 'self' data: blob: https://res.cloudinary.com https://*.supabase.co https://flagcdn.com https://*.googleusercontent.com https://*.usercontent.google.com https://accounts.google.com https://picsum.photos https://www.google-analytics.com https://www.googletagmanager.com",
     "font-src 'self' https://fonts.gstatic.com",
     "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://challenges.cloudflare.com https://www.google-analytics.com https://api.cloudflare.com",
     'frame-src https://js.stripe.com https://challenges.cloudflare.com',
+    "worker-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

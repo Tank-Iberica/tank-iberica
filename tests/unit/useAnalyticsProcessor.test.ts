@@ -71,7 +71,7 @@ function summarizeReferrers(events: AnalyticsEvent[]) {
 }
 
 function getHourlyActivity(events: AnalyticsEvent[]) {
-  const counts = new Array(24).fill(0)
+  const counts = Array.from({length: 24}).fill(0)
   for (const event of events) {
     const hour = new Date(event.timestamp).getHours()
     counts[hour] += 1

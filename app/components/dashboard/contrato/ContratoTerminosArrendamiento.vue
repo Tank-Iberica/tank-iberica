@@ -49,7 +49,7 @@ const { t } = useI18n()
           type="number"
           step="100"
           @input="emit('update:monthlyRent', Number(($event.target as HTMLInputElement).value))"
-        />
+        >
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.deposit') }}</label>
@@ -58,7 +58,7 @@ const { t } = useI18n()
           type="number"
           step="100"
           @input="emit('update:deposit', Number(($event.target as HTMLInputElement).value))"
-        />
+        >
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.paymentDays') }}</label>
@@ -66,7 +66,7 @@ const { t } = useI18n()
           :value="paymentDays"
           type="number"
           @input="emit('update:paymentDays', Number(($event.target as HTMLInputElement).value))"
-        />
+        >
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.duration') }}</label>
@@ -74,7 +74,7 @@ const { t } = useI18n()
           :value="duration"
           type="number"
           @input="emit('update:duration', Number(($event.target as HTMLInputElement).value))"
-        />
+        >
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.durationUnit') }}</label>
@@ -99,7 +99,7 @@ const { t } = useI18n()
           type="number"
           step="1000"
           @input="emit('update:residualValue', Number(($event.target as HTMLInputElement).value))"
-        />
+        >
       </div>
     </div>
 
@@ -110,7 +110,7 @@ const { t } = useI18n()
           :checked="hasPurchaseOption"
           type="checkbox"
           @change="emit('update:hasPurchaseOption', ($event.target as HTMLInputElement).checked)"
-        />
+        >
         <span>{{ t('dashboard.tools.contract.includePurchaseOption') }}</span>
       </label>
     </div>
@@ -123,7 +123,7 @@ const { t } = useI18n()
           type="number"
           step="1000"
           @input="emit('update:purchasePrice', Number(($event.target as HTMLInputElement).value))"
-        />
+        >
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.purchaseNotice') }}</label>
@@ -131,7 +131,7 @@ const { t } = useI18n()
           :value="purchaseNotice"
           type="number"
           @input="emit('update:purchaseNotice', Number(($event.target as HTMLInputElement).value))"
-        />
+        >
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.rentMonthsDiscount') }}</label>
@@ -141,7 +141,7 @@ const { t } = useI18n()
           @input="
             emit('update:rentMonthsToDiscount', Number(($event.target as HTMLInputElement).value))
           "
-        />
+        >
       </div>
     </div>
   </div>

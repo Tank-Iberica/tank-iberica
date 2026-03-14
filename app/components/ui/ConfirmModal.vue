@@ -118,7 +118,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                 type="text"
                 :placeholder="requireType"
                 autocomplete="off"
-              />
+              >
             </div>
           </div>
 

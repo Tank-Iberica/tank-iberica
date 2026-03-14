@@ -72,7 +72,7 @@ for (const tool of tools) {
     // Check minimum version for Node
     if (tool.minMajor) {
       const match = ver.match(/v?(\d+)/)
-      if (match && parseInt(match[1]) < tool.minMajor) {
+      if (match && Number.parseInt(match[1]) < tool.minMajor) {
         return { ok: false, detail: `${ver} (need v${tool.minMajor}+)` }
       }
     }
@@ -180,7 +180,7 @@ check('Database', 'Migrations', () => {
   if (!existsSync(migDir)) return { ok: false, detail: 'migrations dir MISSING' }
   try {
     const files = execSync(`ls "${migDir}" | wc -l`, { encoding: 'utf-8' }).trim()
-    return { ok: parseInt(files) > 0, detail: `${files} migration files` }
+    return { ok: Number.parseInt(files) > 0, detail: `${files} migration files` }
   } catch {
     return { ok: false, detail: 'could not list migrations' }
   }
@@ -195,7 +195,7 @@ check('Tests', 'Vitest config', () => ({
 check('Tests', 'Test files exist', () => {
   try {
     const count = execSync('find tests -name "*.test.ts" -o -name "*.spec.ts" 2>/dev/null | wc -l', { encoding: 'utf-8' }).trim()
-    return { ok: parseInt(count) > 0, detail: `${count} test files` }
+    return { ok: Number.parseInt(count) > 0, detail: `${count} test files` }
   } catch {
     return { ok: false, detail: 'could not count test files' }
   }

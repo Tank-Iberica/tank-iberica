@@ -15,7 +15,7 @@ import { readdirSync, statSync, readFileSync, writeFileSync, existsSync } from '
 import { join, relative } from 'node:path'
 
 const ROOT = new URL('..', import.meta.url).pathname
-  .replace(/^\/([A-Za-z]:)/, '$1') // fix Windows /C:/... → C:/...
+  .replace(/^\/([A-Z]:)/i, '$1') // fix Windows /C:/... → C:/...
   .replace(/\/$/, '')
 const API_DIR = join(ROOT, 'server', 'api')
 const BASELINE_FILE = join(ROOT, 'scripts', 'endpoint-baseline.json')

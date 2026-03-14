@@ -1,5 +1,4 @@
 import type { PlanType } from '~/composables/useSubscriptionPlan'
-
 import type { FaqItem } from '~/utils/faqSchema'
 
 export interface PlanCardData {

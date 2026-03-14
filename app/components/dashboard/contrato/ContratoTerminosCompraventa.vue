@@ -35,7 +35,7 @@ const { t } = useI18n()
           type="number"
           step="1000"
           @input="emit('update:salePrice', Number(($event.target as HTMLInputElement).value))"
-        />
+        >
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.paymentMethod') }}</label>
@@ -64,7 +64,7 @@ const { t } = useI18n()
           type="text"
           :placeholder="t('dashboard.tools.contract.deliveryPlaceholder')"
           @input="emit('update:deliveryConditions', ($event.target as HTMLInputElement).value)"
-        />
+        >
       </div>
       <div class="form-group" style="grid-column: 1 / -1">
         <label>{{ t('dashboard.tools.contract.warranty') }}</label>
@@ -73,7 +73,7 @@ const { t } = useI18n()
           type="text"
           :placeholder="t('dashboard.tools.contract.warrantyPlaceholder')"
           @input="emit('update:warranty', ($event.target as HTMLInputElement).value)"
-        />
+        >
       </div>
     </div>
   </div>

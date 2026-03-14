@@ -1,5 +1,5 @@
-import { readFileSync, existsSync } from 'fs'
-import { basename } from 'path'
+import { readFileSync, existsSync } from 'node:fs'
+import { basename } from 'node:path'
 
 const manifest = JSON.parse(readFileSync('tests/pure-utils.manifest.json', 'utf8'))
 let missing = 0

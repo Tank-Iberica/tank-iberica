@@ -73,7 +73,7 @@ function onSelectType(event: Event): void {
               :placeholder="t('dashboard.crm.placeholderCompany')"
               autocomplete="organization"
               @input="onInputField('company', $event)"
-            />
+            >
           </div>
           <div class="form-group">
             <label>{{ t('dashboard.crm.labelContactName') }}</label>
@@ -83,7 +83,7 @@ function onSelectType(event: Event): void {
               :placeholder="t('dashboard.crm.placeholderName')"
               autocomplete="name"
               @input="onInputField('contact_name', $event)"
-            />
+            >
           </div>
           <div class="form-row">
             <div class="form-group half">
@@ -94,7 +94,7 @@ function onSelectType(event: Event): void {
                 :placeholder="t('dashboard.crm.placeholderPhone')"
                 autocomplete="tel"
                 @input="onInputField('phone', $event)"
-              />
+              >
             </div>
             <div class="form-group half">
               <label>{{ t('dashboard.crm.labelEmail') }}</label>
@@ -104,7 +104,7 @@ function onSelectType(event: Event): void {
                 :placeholder="t('dashboard.crm.placeholderEmail')"
                 autocomplete="email"
                 @input="onInputField('email', $event)"
-              />
+              >
             </div>
           </div>
           <div class="form-group">
@@ -114,7 +114,7 @@ function onSelectType(event: Event): void {
               :value="form.location"
               :placeholder="t('dashboard.crm.placeholderLocation')"
               @input="onInputField('location', $event)"
-            />
+            >
           </div>
           <div class="form-group">
             <label>{{ t('dashboard.crm.labelVertical') }}</label>
@@ -123,7 +123,7 @@ function onSelectType(event: Event): void {
               :value="form.vertical"
               :placeholder="t('dashboard.crm.placeholderVertical')"
               @input="onInputField('vertical', $event)"
-            />
+            >
           </div>
           <div class="form-group">
             <label>{{ t('dashboard.crm.labelLastContact') }}</label>
@@ -131,7 +131,7 @@ function onSelectType(event: Event): void {
               type="date"
               :value="form.last_contact_date"
               @input="onInputField('last_contact_date', $event)"
-            />
+            >
           </div>
           <div class="form-group">
             <label>{{ t('dashboard.crm.labelNotes') }}</label>

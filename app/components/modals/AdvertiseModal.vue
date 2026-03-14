@@ -89,7 +89,7 @@ const {
             <!-- Section 1: Vehicle Type -->
             <div class="form-section">
               <h3 class="form-section-title">{{ t('advertise.sectionVehicleType') }}</h3>
-              <AdvertiseVehicleTypeSection
+              <ModalsAdvertiseVehicleTypeSection
                 :categories="categories"
                 :linked-subcategories="linkedSubcategories"
                 :attributes="attributes"
@@ -110,13 +110,13 @@ const {
             <!-- Section 2: Vehicle Data -->
             <div class="form-section">
               <h3 class="form-section-title">{{ t('advertise.sectionVehicleData') }}</h3>
-              <AdvertiseVehicleDataSection v-model:form="formData" :errors="validationErrors" />
+              <ModalsAdvertiseVehicleDataSection v-model:form="formData" :errors="validationErrors" />
             </div>
 
             <!-- Section 3: Images -->
             <div class="form-section">
               <h3 class="form-section-title">{{ t('advertise.sectionImages') }}</h3>
-              <AdvertiseImagesSection
+              <ModalsAdvertiseImagesSection
                 :photos="photos"
                 :photo-previews="photoPreviews"
                 :tech-sheet="techSheet"
@@ -132,7 +132,7 @@ const {
             <!-- Section 4: Contact -->
             <div class="form-section">
               <h3 class="form-section-title">{{ t('advertise.sectionContact') }}</h3>
-              <AdvertiseContactSection v-model:form="formData" :errors="validationErrors" />
+              <ModalsAdvertiseContactSection v-model:form="formData" :errors="validationErrors" />
             </div>
 
             <p v-if="hasValidationErrors" class="validation-summary">

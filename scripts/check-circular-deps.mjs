@@ -8,9 +8,9 @@
  * Usage: node scripts/check-circular-deps.mjs
  */
 
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { existsSync } from 'fs'
+import { resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { existsSync } from 'node:fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const rootDir = resolve(__dirname, '..')

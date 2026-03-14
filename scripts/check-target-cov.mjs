@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 const cov = JSON.parse(readFileSync('./coverage/coverage-final.json', 'utf-8'))
 const targets = ['kmScore.ts', 'fuzzyMatch.ts', 'default.vue', 'admin.vue', 'adminProductosExport.ts', 'contractGenerator.ts', 'generateDealerCard.ts', 'generatePdf.ts', 'geoData.ts', 'invoicePdf.ts', 'parseLocation.ts']
 for (const [path, data] of Object.entries(cov)) {

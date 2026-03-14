@@ -9,7 +9,7 @@
           :alt="activeConversation.vehicle_title || ''"
           class="header-vehicle-img"
           loading="lazy"
-        />
+        >
         <div class="header-text">
           <h3 class="header-title">
             {{ activeConversation.vehicle_title || $t('conversation.vehicle') }}

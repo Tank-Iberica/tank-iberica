@@ -29,7 +29,7 @@ const { t } = useI18n()
           :value="contractJurisdiction"
           type="text"
           @input="emit('update:contractJurisdiction', ($event.target as HTMLInputElement).value)"
-        />
+        >
       </div>
     </div>
 

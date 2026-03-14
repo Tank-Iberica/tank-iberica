@@ -15,8 +15,8 @@
  *   node scripts/audit-hardcoding.mjs --strict   # Exit code 1 if findings
  */
 
-import { readFileSync, readdirSync, statSync } from 'fs'
-import { join, relative } from 'path'
+import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { join, relative } from 'node:path'
 
 const args = process.argv.slice(2)
 const summaryOnly = args.includes('--summary')
@@ -56,7 +56,7 @@ const P1_PATTERNS = [
   },
   {
     name: 'Hardcoded "Tracciona" site name in code (non-brand context)',
-    regex: /['"`]Tracciona['"`]\s*(?:(?:<|,|\+|\}|;))/g,
+    regex: /['"`]Tracciona['"`]\s*[<,+};]/g,
     severity: 'low',
   },
 ]

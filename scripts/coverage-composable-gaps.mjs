@@ -1,5 +1,5 @@
-import { readFileSync, existsSync } from 'fs'
-import { basename } from 'path'
+import { readFileSync, existsSync } from 'node:fs'
+import { basename } from 'node:path'
 
 const cov = JSON.parse(readFileSync('./coverage/coverage-final.json', 'utf-8'))
 const gaps = []

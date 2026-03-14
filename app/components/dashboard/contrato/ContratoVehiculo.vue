@@ -57,7 +57,7 @@ function onVehicleChange(event: Event) {
           :value="contractVehicleType"
           type="text"
           @input="emit('update:contractVehicleType', ($event.target as HTMLInputElement).value)"
-        />
+        >
       </div>
       <div class="form-group">
         <label>{{ t('dashboard.tools.contract.plate') }}</label>
@@ -65,7 +65,7 @@ function onVehicleChange(event: Event) {
           :value="contractVehiclePlate"
           type="text"
           @input="emit('update:contractVehiclePlate', ($event.target as HTMLInputElement).value)"
-        />
+        >
       </div>
     </div>
   </div>

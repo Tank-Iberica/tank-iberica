@@ -4,7 +4,7 @@
  * Usage: node scripts/coverage-inventory.mjs
  * Prerequisite: npx vitest run --coverage --coverage.reporter=json
  */
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 
 const data = JSON.parse(readFileSync('coverage/coverage-final.json', 'utf8'))
 

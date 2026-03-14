@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 
 // Files that had local $t mock added — revert those additions
 // since setup.ts now provides a proper global $t mock

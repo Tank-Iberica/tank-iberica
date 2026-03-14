@@ -25,7 +25,7 @@ function getArg(name, fallback) {
 }
 
 const outputJson = args.includes('--json')
-const limit = parseInt(getArg('limit', '500'), 10)
+const limit = Number.parseInt(getArg('limit', '500'), 10)
 
 const defaultSince = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 const since = getArg('since', defaultSince)

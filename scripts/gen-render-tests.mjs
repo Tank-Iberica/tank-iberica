@@ -4,8 +4,8 @@
  *
  * Usage: node scripts/gen-render-tests.mjs [--dry-run]
  */
-import { readFileSync, writeFileSync, existsSync } from 'fs'
-import { basename, dirname, resolve } from 'path'
+import { readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { basename, dirname, resolve } from 'node:path'
 
 const dryRun = process.argv.includes('--dry-run')
 const cov = JSON.parse(readFileSync('./coverage/coverage-final.json', 'utf-8'))

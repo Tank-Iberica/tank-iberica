@@ -74,7 +74,7 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
                 class="field-input"
                 :placeholder="t('dashboard.tools.rentals.form.clientNamePlaceholder')"
                 @input="updateField('client_name', ($event.target as HTMLInputElement).value)"
-              />
+              >
             </div>
             <div class="field">
               <label>{{ t('dashboard.tools.rentals.form.clientContact') }}</label>
@@ -84,7 +84,7 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
                 class="field-input"
                 :placeholder="t('dashboard.tools.rentals.form.clientContactPlaceholder')"
                 @input="updateField('client_contact', ($event.target as HTMLInputElement).value)"
-              />
+              >
             </div>
           </div>
 
@@ -97,7 +97,7 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
                 type="date"
                 class="field-input"
                 @input="updateField('start_date', ($event.target as HTMLInputElement).value)"
-              />
+              >
             </div>
             <div class="field">
               <label>{{ t('dashboard.tools.rentals.form.endDate') }}</label>
@@ -106,7 +106,7 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
                 type="date"
                 class="field-input"
                 @input="updateField('end_date', ($event.target as HTMLInputElement).value)"
-              />
+              >
             </div>
           </div>
 
@@ -124,7 +124,7 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
                 @input="
                   updateField('monthly_rent', Number(($event.target as HTMLInputElement).value))
                 "
-              />
+              >
             </div>
             <div class="field">
               <label>{{ t('dashboard.tools.rentals.form.deposit') }}</label>
@@ -136,7 +136,7 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
                 class="field-input"
                 placeholder="0.00"
                 @input="updateField('deposit', Number(($event.target as HTMLInputElement).value))"
-              />
+              >
             </div>
           </div>
 
@@ -151,7 +151,7 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
                   name="rental-status"
                   value="active"
                   @change="updateField('status', 'active')"
-                />
+                >
                 {{ t('dashboard.tools.rentals.statuses.active') }}
               </label>
               <label class="radio-label">
@@ -161,7 +161,7 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
                   name="rental-status"
                   value="finished"
                   @change="updateField('status', 'finished')"
-                />
+                >
                 {{ t('dashboard.tools.rentals.statuses.finished') }}
               </label>
               <label class="radio-label">
@@ -171,7 +171,7 @@ function updateField<K extends keyof RentalFormData>(key: K, value: RentalFormDa
                   name="rental-status"
                   value="overdue"
                   @change="updateField('status', 'overdue')"
-                />
+                >
                 {{ t('dashboard.tools.rentals.statuses.overdue') }}
               </label>
             </div>

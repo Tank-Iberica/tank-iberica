@@ -60,7 +60,7 @@
                 autocomplete="email"
                 :placeholder="$t('auth.email')"
                 :aria-describedby="errorMsg ? 'auth-error' : undefined"
-              />
+              >
             </div>
 
             <div class="field">
@@ -73,7 +73,7 @@
                 autocomplete="current-password"
                 :placeholder="$t('auth.password')"
                 minlength="6"
-              />
+              >
             </div>
 
             <div v-if="mode === 'register'" class="field">
@@ -86,7 +86,7 @@
                 autocomplete="new-password"
                 :placeholder="$t('auth.confirmPassword')"
                 minlength="6"
-              />
+              >
             </div>
 
             <p v-if="errorMsg" id="auth-error" class="error-msg" role="alert">{{ errorMsg }}</p>

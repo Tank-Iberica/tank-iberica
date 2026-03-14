@@ -21,9 +21,9 @@
  *   - Reporte final detallado con conteos y errores
  */
 
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { globSync } from 'glob'
 
 const __filename = fileURLToPath(import.meta.url)

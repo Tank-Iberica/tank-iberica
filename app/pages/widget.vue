@@ -77,11 +77,11 @@ async function copySnippet() {
           <label>{{ $t('demo.widgetTheme') }}</label>
           <div class="radio-group">
             <label>
-              <input v-model="theme" type="radio" value="light" />
+              <input v-model="theme" type="radio" value="light" >
               {{ $t('demo.widgetLight') }}
             </label>
             <label>
-              <input v-model="theme" type="radio" value="dark" />
+              <input v-model="theme" type="radio" value="dark" >
               {{ $t('demo.widgetDark') }}
             </label>
           </div>
@@ -91,11 +91,11 @@ async function copySnippet() {
           <label>Layout</label>
           <div class="radio-group">
             <label>
-              <input v-model="layout" type="radio" value="grid" />
+              <input v-model="layout" type="radio" value="grid" >
               Grid
             </label>
             <label>
-              <input v-model="layout" type="radio" value="list" />
+              <input v-model="layout" type="radio" value="list" >
               List
             </label>
           </div>

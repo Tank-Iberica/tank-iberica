@@ -186,7 +186,7 @@ useHead({
               autocomplete="new-password"
               minlength="8"
               required
-            />
+            >
           </div>
 
           <div class="form-group">
@@ -202,7 +202,7 @@ useHead({
               autocomplete="new-password"
               minlength="8"
               required
-            />
+            >
           </div>
 
           <div v-if="passwordError" class="form-error" role="alert">
@@ -240,7 +240,7 @@ useHead({
               class="mfa-qr"
               width="200"
               height="200"
-            />
+            >
             <div class="form-group">
               <label for="mfa_code" class="form-label">{{
                 $t('profile.security.mfaCodeLabel')
@@ -255,7 +255,7 @@ useHead({
                 class="form-input"
                 :placeholder="$t('profile.security.mfaCodePlaceholder')"
                 autocomplete="one-time-code"
-              />
+              >
             </div>
             <button class="btn-primary" :disabled="mfaLoading" @click="onVerifyMfa">
               {{ mfaLoading ? $t('common.loading') : $t('profile.security.mfaVerify') }}
@@ -315,7 +315,7 @@ useHead({
             type="text"
             class="form-input"
             placeholder="ELIMINAR"
-          />
+          >
           <div v-if="deleteError" class="form-error" role="alert">
             {{ deleteError }}
           </div>

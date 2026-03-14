@@ -279,6 +279,9 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    optimizeDeps: {
+      include: ['cookie'],
+    },
     build: {
       rollupOptions: {
         output: {

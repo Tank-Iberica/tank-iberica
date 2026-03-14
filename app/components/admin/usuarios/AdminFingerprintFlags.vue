@@ -10,7 +10,7 @@
     <p class="fp-flags__desc">{{ $t('admin.users.fp_flags.description') }}</p>
 
     <div v-if="loading" class="fp-flags__loading" aria-live="polite" aria-busy="true">
-      <span class="fp-flags__spinner" aria-hidden="true"></span>
+      <span class="fp-flags__spinner" aria-hidden="true"/>
       {{ $t('common.loading') }}
     </div>
 

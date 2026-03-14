@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 const cov = JSON.parse(readFileSync('./coverage/coverage-final.json', 'utf-8'))
 
 const dirs = {}

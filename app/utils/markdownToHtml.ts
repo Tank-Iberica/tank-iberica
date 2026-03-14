@@ -20,7 +20,7 @@ const ALLOWED_ATTR = ['href', 'rel']
  *
  * Supported syntax:
  *   **bold** → <strong>bold</strong>
- *   *italic* → <em>italic</em>
+ *   italic* → <em>italic</em>
  *   [text](url) → <a href="url" rel="noopener noreferrer">text</a>
  *   Blank line → paragraph break
  *   Single newline → <br>
