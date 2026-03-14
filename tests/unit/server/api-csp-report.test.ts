@@ -7,6 +7,7 @@ const { mockReadBody } = vi.hoisted(() => ({
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   readBody: mockReadBody,
+  getHeader: vi.fn().mockReturnValue(undefined),
 }))
 
 // Stub global auto-imports used in the handler

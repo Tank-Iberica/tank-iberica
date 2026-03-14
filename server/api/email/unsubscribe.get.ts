@@ -124,7 +124,7 @@ function buildHtmlPage(params: {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} — Tracciona</title>
+  <title>${title} — ${getSiteName()}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -192,7 +192,7 @@ function buildHtmlPage(params: {
     </div>
     <h1>${heading}</h1>
     <p>${message}</p>
-    ${showBackLink ? `<a href="${siteUrl}" class="back-link">Ir a Tracciona / Go to Tracciona</a>` : ''}
+    ${showBackLink ? `<a href="${siteUrl}" class="back-link">Ir a ${getSiteName()} / Go to ${getSiteName()}</a>` : ''}
   </div>
 </body>
 </html>`

@@ -56,6 +56,20 @@ const activeCount = computed(() => vehicles.value.filter((v) => v.status === 'pu
 const maxListings = computed(() => planLimits.value.maxActiveListings)
 const canPublishNew = computed(() => canPublish(activeCount.value))
 
+// #37 — Withdrawal reason modal
+const withdrawalModalOpen = ref(false)
+const withdrawalVehicle = ref<DealerVehicle | null>(null)
+const withdrawalReason = ref('')
+
+const WITHDRAWAL_REASONS = [
+  'sold_elsewhere',
+  'too_expensive',
+  'changed_mind',
+  'seasonal',
+  'duplicate',
+  'other',
+] as const
+
 async function toggleStatus(vehicle: DealerVehicle): Promise<void> {
   const newStatus = vehicle.status === 'published' ? 'draft' : 'published'
 
@@ -64,14 +78,41 @@ async function toggleStatus(vehicle: DealerVehicle): Promise<void> {
     return
   }
 
+  // If unpublishing, ask for withdrawal reason
+  if (newStatus === 'draft') {
+    withdrawalVehicle.value = vehicle
+    withdrawalReason.value = ''
+    withdrawalModalOpen.value = true
+    return
+  }
+
   const { error: err } = await supabase
     .from('vehicles')
-    .update({ status: newStatus })
+    .update({ status: newStatus, withdrawal_reason: null })
     .eq('id', vehicle.id)
 
   if (!err) {
     vehicle.status = newStatus
   }
+}
+
+async function confirmWithdrawal(): Promise<void> {
+  if (!withdrawalVehicle.value || !withdrawalReason.value) return
+
+  const { error: err } = await supabase
+    .from('vehicles')
+    .update({
+      status: 'draft',
+      withdrawal_reason: withdrawalReason.value,
+    })
+    .eq('id', withdrawalVehicle.value.id)
+
+  if (!err) {
+    withdrawalVehicle.value.status = 'draft'
+  }
+
+  withdrawalModalOpen.value = false
+  withdrawalVehicle.value = null
 }
 
 const soldModalOpen = ref(false)
@@ -178,6 +219,61 @@ async function cloneVehicle(vehicleId: string): Promise<void> {
       :vehicle-title="`${selectedVehicleForSale.brand} ${selectedVehicleForSale.model}`"
       @sold="handleVehicleSold"
     />
+
+    <!-- #37 Withdrawal Reason Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="withdrawalModalOpen"
+          class="modal-overlay"
+          @click.self="withdrawalModalOpen = false"
+        >
+          <div class="modal-container withdrawal-modal">
+            <button
+              class="modal-close"
+              :aria-label="t('common.close')"
+              @click="withdrawalModalOpen = false"
+            >
+              &times;
+            </button>
+            <div class="modal-content">
+              <h2>{{ t('dashboard.vehicles.withdrawalTitle') }}</h2>
+              <p class="withdrawal-subtitle">{{ t('dashboard.vehicles.withdrawalSubtitle') }}</p>
+
+              <div class="withdrawal-options">
+                <label
+                  v-for="reason in WITHDRAWAL_REASONS"
+                  :key="reason"
+                  class="withdrawal-option"
+                  :class="{ selected: withdrawalReason === reason }"
+                >
+                  <input
+                    v-model="withdrawalReason"
+                    type="radio"
+                    name="withdrawal_reason"
+                    :value="reason"
+                  >
+                  <span>{{ t(`dashboard.vehicles.withdrawalReason.${reason}`) }}</span>
+                </label>
+              </div>
+
+              <div class="modal-actions">
+                <button class="btn-secondary" @click="withdrawalModalOpen = false">
+                  {{ t('common.cancel') }}
+                </button>
+                <button
+                  class="btn-primary"
+                  :disabled="!withdrawalReason"
+                  @click="confirmWithdrawal"
+                >
+                  {{ t('dashboard.vehicles.confirmWithdrawal') }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -318,6 +414,132 @@ async function cloneVehicle(vehicleId: string): Promise<void> {
 @media (min-width: 64em) {
   .vehicles-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* #37 Withdrawal Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-container {
+  position: relative;
+  background: var(--bg-primary);
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: none;
+  background: var(--bg-secondary);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-auxiliary);
+  z-index: 10;
+}
+
+.modal-content {
+  padding: 2.5rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.modal-content h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.withdrawal-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-auxiliary);
+}
+
+.withdrawal-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.withdrawal-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  min-height: 2.75rem;
+}
+
+.withdrawal-option.selected {
+  border-color: var(--color-primary);
+  background: var(--bg-secondary);
+}
+
+.withdrawal-option input[type='radio'] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+.withdrawal-option span {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--spacing-3);
+  flex-direction: column-reverse;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+@media (min-width: 48em) {
+  .modal-overlay {
+    align-items: center;
+    padding: var(--spacing-6);
+  }
+
+  .modal-container {
+    max-width: 30rem;
+    border-radius: var(--border-radius-lg);
+  }
+
+  .modal-actions {
+    flex-direction: row;
+    justify-content: flex-end;
   }
 }
 </style>

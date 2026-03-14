@@ -11,6 +11,7 @@ vi.mock('h3', () => ({
     err.data = opts.data
     return err
   },
+  getRequestIP: vi.fn().mockReturnValue('127.0.0.1'),
 }))
 
 // ── Mock #supabase/server ───────────────────────────────────────────────────

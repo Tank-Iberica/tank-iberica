@@ -5,7 +5,9 @@ import { useUserChat } from '../../app/composables/useUserChat'
 
 function makeChain(data: unknown = [], error: unknown = null) {
   const chain: Record<string, unknown> = {}
-  ;['eq', 'or', 'order', 'select', 'filter'].forEach((m) => { chain[m] = () => chain })
+  ;['eq', 'or', 'order', 'select', 'filter'].forEach((m) => {
+    chain[m] = () => chain
+  })
   const resolved = { data, error, count: 0 }
   chain.range = () => Promise.resolve(resolved)
   chain.single = () => Promise.resolve({ data: null, error: null })
@@ -15,7 +17,11 @@ function makeChain(data: unknown = [], error: unknown = null) {
   return chain
 }
 
-function stubClient({ data = [] as unknown[], insertError = null as unknown, updateError = null as unknown } = {}) {
+function stubClient({
+  data = [] as unknown[],
+  insertError = null as unknown,
+  updateError = null as unknown,
+} = {}) {
   vi.stubGlobal('useSupabaseClient', () => ({
     from: () => ({
       select: () => makeChain(data),
@@ -27,7 +33,9 @@ function stubClient({ data = [] as unknown[], insertError = null as unknown, upd
       }),
     }),
     channel: () => ({
-      on: function (this: unknown) { return this },
+      on: function (this: unknown) {
+        return this
+      },
       subscribe: () => ({}),
     }),
     removeChannel: vi.fn(),
@@ -84,7 +92,8 @@ describe('formatTime', () => {
     yesterday.setDate(yesterday.getDate() - 1)
     const c = useUserChat()
     const result = c.formatTime(yesterday.toISOString())
-    expect(result).toBe('Ayer')
+    // Source uses t('messages.yesterday'), mock i18n returns the key
+    expect(result).toBe('messages.yesterday')
   })
 
   it('returns weekday for 3 days ago', () => {
@@ -122,11 +131,13 @@ describe('fetchMessages', () => {
   })
 
   it('counts unread admin messages', async () => {
-    stubClient({ data: [
-      { id: 'm1', direction: 'admin_to_user', is_read: false },
-      { id: 'm2', direction: 'admin_to_user', is_read: true },
-      { id: 'm3', direction: 'user_to_admin', is_read: false },
-    ]})
+    stubClient({
+      data: [
+        { id: 'm1', direction: 'admin_to_user', is_read: false },
+        { id: 'm2', direction: 'admin_to_user', is_read: true },
+        { id: 'm3', direction: 'user_to_admin', is_read: false },
+      ],
+    })
     const c = useUserChat()
     await c.fetchMessages()
     expect(c.unreadCount.value).toBe(1)
@@ -143,7 +154,12 @@ describe('fetchMessages', () => {
       from: () => ({
         select: () => makeChain(null, new Error('DB error')),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useUserChat()

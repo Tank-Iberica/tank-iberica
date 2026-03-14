@@ -18,6 +18,8 @@ vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   readBody: (...a: unknown[]) => mockReadBody(...a),
   getRequestIP: vi.fn().mockReturnValue('1.2.3.4'),
+  getHeaders: vi.fn().mockReturnValue({}),
+  getHeader: vi.fn().mockReturnValue(undefined),
   createError: (opts: { statusCode?: number; statusMessage?: string; data?: unknown }) => {
     const err = new Error(opts.statusMessage ?? 'Error')
     ;(err as any).statusCode = opts.statusCode

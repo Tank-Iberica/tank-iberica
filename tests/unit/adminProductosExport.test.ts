@@ -1,6 +1,6 @@
 /**
  * Tests for app/utils/adminProductosExport.ts
- * Covers: getStatusLabel, exportToExcel, exportToPdf, exportVehicleFicha
+ * Covers: getExportStatusLabel, exportToExcel, exportToPdf, exportVehicleFicha
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
@@ -35,7 +35,9 @@ const mockPdfDoc = {
 }
 
 vi.mock('jspdf', () => {
-  function JsPDFConstructor() { return mockPdfDoc }
+  function JsPDFConstructor() {
+    return mockPdfDoc
+  }
   return { jsPDF: JsPDFConstructor }
 })
 
@@ -60,7 +62,9 @@ const mockWorkbook = {
 }
 
 vi.mock('exceljs', () => {
-  function WorkbookConstructor() { return mockWorkbook }
+  function WorkbookConstructor() {
+    return mockWorkbook
+  }
   return { Workbook: WorkbookConstructor }
 })
 
@@ -78,7 +82,7 @@ vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
 // ── Static imports ───────────────────────────────────────────────────────────
 
 import {
-  getStatusLabel,
+  getExportStatusLabel,
   exportToExcel,
   exportToPdf,
   exportVehicleFicha,
@@ -88,7 +92,7 @@ import type { AdminVehicle } from '../../app/composables/admin/useAdminVehicles'
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 const helpers = {
-  getSubcategoryName: (id: string | null | undefined) => id ? `Type-${id}` : '-',
+  getSubcategoryName: (id: string | null | undefined) => (id ? `Type-${id}` : '-'),
 }
 
 function makeVehicle(overrides: Partial<AdminVehicle> = {}): AdminVehicle {
@@ -115,15 +119,15 @@ function makeVehicle(overrides: Partial<AdminVehicle> = {}): AdminVehicle {
 
 // ══ Tests ═════════════════════════════════════════════════════════════════════
 
-// ─── getStatusLabel ──────────────────────────────────────────────────────────
+// ─── getExportStatusLabel ──────────────────────────────────────────────────────────
 
-describe('getStatusLabel', () => {
+describe('getExportStatusLabel', () => {
   it('returns "Publicado" for published', () => {
-    expect(getStatusLabel('published')).toBe('Publicado')
+    expect(getExportStatusLabel('published')).toBe('Publicado')
   })
 
   it('returns raw status for unknown values', () => {
-    expect(getStatusLabel('unknown')).toBe('unknown')
+    expect(getExportStatusLabel('unknown')).toBe('unknown')
   })
 })
 
@@ -204,7 +208,9 @@ describe('exportToPdf', () => {
   it('includes vehicle count in subtitle', async () => {
     await exportToPdf([makeVehicle(), makeVehicle({ id: 'v2' })], helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => c[0])
-    expect(textCalls.some((t: string) => typeof t === 'string' && t.includes('2 productos'))).toBe(true)
+    expect(textCalls.some((t: string) => typeof t === 'string' && t.includes('2 productos'))).toBe(
+      true,
+    )
   })
 
   it('calls autoTable with headers and rows', async () => {
@@ -261,14 +267,14 @@ describe('exportVehicleFicha', () => {
   it('renders year when provided', async () => {
     await exportVehicleFicha(makeVehicle(), helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('2020'))).toBe(true)
+    expect(textCalls.some((t) => t.includes('2020'))).toBe(true)
   })
 
   it('renders price box when price exists', async () => {
     await exportVehicleFicha(makeVehicle(), helpers)
     expect(mockPdfDoc.roundedRect).toHaveBeenCalled()
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('65000'))).toBe(true)
+    expect(textCalls.some((t) => t.includes('65000'))).toBe(true)
   })
 
   it('skips price box when price is null', async () => {
@@ -292,38 +298,38 @@ describe('exportVehicleFicha', () => {
   it('includes rental price when provided', async () => {
     await exportVehicleFicha(makeVehicle(), helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('200'))).toBe(true)
+    expect(textCalls.some((t) => t.includes('200'))).toBe(true)
   })
 
   it('renders description section when description_es exists', async () => {
     await exportVehicleFicha(makeVehicle(), helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('Descripci'))).toBe(true)
+    expect(textCalls.some((t) => t.includes('Descripci'))).toBe(true)
   })
 
   it('skips description section when description_es is empty', async () => {
     await exportVehicleFicha(makeVehicle({ description_es: '' } as any), helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('Descripci'))).toBe(false)
+    expect(textCalls.some((t) => t.includes('Descripci'))).toBe(false)
   })
 
   it('renders financial section when acquisition_cost exists', async () => {
     await exportVehicleFicha(makeVehicle(), helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('Financiera'))).toBe(true)
+    expect(textCalls.some((t) => t.includes('Financiera'))).toBe(true)
   })
 
   it('renders margin when both price and acquisition_cost exist', async () => {
     await exportVehicleFicha(makeVehicle(), helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
     // Margin = 65000 - 50000 = 15000
-    expect(textCalls.some(t => t.includes('Margen'))).toBe(true)
+    expect(textCalls.some((t) => t.includes('Margen'))).toBe(true)
   })
 
   it('renders min_price in financial section', async () => {
     await exportVehicleFicha(makeVehicle(), helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('55000'))).toBe(true)
+    expect(textCalls.some((t) => t.includes('55000'))).toBe(true)
   })
 
   it('skips financial section when no cost data', async () => {
@@ -332,7 +338,7 @@ describe('exportVehicleFicha', () => {
       helpers,
     )
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('Financiera'))).toBe(false)
+    expect(textCalls.some((t) => t.includes('Financiera'))).toBe(false)
   })
 
   it('saves with brand_model_year filename', async () => {
@@ -348,18 +354,18 @@ describe('exportVehicleFicha', () => {
   it('renders Online visibility for online vehicle', async () => {
     await exportVehicleFicha(makeVehicle(), helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('Online'))).toBe(true)
+    expect(textCalls.some((t) => t.includes('Online'))).toBe(true)
   })
 
   it('renders Offline visibility for offline vehicle', async () => {
     await exportVehicleFicha(makeVehicle({ is_online: false }), helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('Offline'))).toBe(true)
+    expect(textCalls.some((t) => t.includes('Offline'))).toBe(true)
   })
 
   it('includes generated date in footer', async () => {
     await exportVehicleFicha(makeVehicle(), helpers)
     const textCalls = mockPdfDoc.text.mock.calls.map((c: unknown[]) => String(c[0]))
-    expect(textCalls.some(t => t.includes('Generado'))).toBe(true)
+    expect(textCalls.some((t) => t.includes('Generado'))).toBe(true)
   })
 })

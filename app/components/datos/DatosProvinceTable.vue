@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatPrice } from '~/composables/useDatos'
+import { formatPrice } from '~/utils/formatters'
 import type { ProvinceStat, ProvinceSortKey } from '~/composables/useDatos'
 
 const props = defineProps<{

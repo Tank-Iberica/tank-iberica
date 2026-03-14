@@ -194,7 +194,7 @@ export function useAdminSidebar() {
     }
     const { count } = await client
       .from('infra_alerts')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .is('acknowledged_at', null)
       .in('alert_level', ['critical', 'emergency'])
     infraAlertCount.value = count ?? 0
@@ -207,7 +207,7 @@ export function useAdminSidebar() {
     try {
       const { count } = await sb
         .from('brokerage_deals')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .in('status', ['qualifying_buyer', 'manual_review', 'escalated_to_humans'])
       pendingDeals.value = count ?? 0
     } catch {

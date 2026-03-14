@@ -100,23 +100,23 @@ Mapa completo de documentacion actual: [`docs/README.md`](docs/README.md)
 
 ### Documentacion tecnica
 
-| Documento                                                                                       | Que contiene                                     |
-| ----------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [`ENTORNO-DESARROLLO.md`](docs/tracciona-docs/referencia/ENTORNO-DESARROLLO.md)                 | Requisitos de instalacion para ordenador nuevo   |
-| [`INVENTARIO-ENDPOINTS.md`](docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)             | Todos los endpoints con auth y proposito         |
-| [`ARQUITECTURA-ESCALABILIDAD.md`](docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md) | Diseno multi-cluster, costes, decisiones         |
-| [`FLUJOS-OPERATIVOS.md`](docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md)                   | Diagramas ASCII de flujos principales            |
-| [`ERD.md`](docs/tracciona-docs/referencia/ERD.md)                                               | Diagrama entidad-relacion (97 tablas, Mermaid)   |
-| [`CRON-JOBS.md`](docs/tracciona-docs/referencia/CRON-JOBS.md)                                   | 14 cron endpoints con frecuencia y config        |
-| [`THIRD-PARTY-DEPENDENCIES.md`](docs/tracciona-docs/referencia/THIRD-PARTY-DEPENDENCIES.md)     | Dependencias externas, failovers, vendor lock-in |
-| [`SECURITY-TESTING.md`](docs/tracciona-docs/referencia/SECURITY-TESTING.md)                     | DAST (ZAP + Nuclei), testing de seguridad        |
-| [`CLOUDFLARE-WAF-CONFIG.md`](docs/tracciona-docs/referencia/CLOUDFLARE-WAF-CONFIG.md)           | Reglas WAF, rate limiting, configuracion         |
-| [`DISASTER-RECOVERY.md`](docs/tracciona-docs/referencia/DISASTER-RECOVERY.md)                   | Backups multi-capa, procedimientos DR            |
-| [`SECRETS-ROTATION.md`](docs/tracciona-docs/referencia/SECRETS-ROTATION.md)                     | Rotacion de secretos y API keys                  |
-| [`DATA-RETENTION.md`](docs/tracciona-docs/referencia/DATA-RETENTION.md)                         | Politica de retencion de datos GDPR              |
-| [`API-PUBLIC.md`](docs/tracciona-docs/referencia/API-PUBLIC.md)                                 | Documentacion de endpoints publicos              |
-| [`INCIDENT-RESPONSE.md`](docs/tracciona-docs/operativo/INCIDENT-RESPONSE.md)                   | Respuesta operativa a incidentes                 |
-| [`PLAN-MAESTRO-10-DE-10.md`](docs/tracciona-docs/PLAN-MAESTRO-10-DE-10.md)                     | Plan tecnico de mejora y excelencia              |
+| Documento                                                                                       | Que contiene                                          |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| [`ENTORNO-DESARROLLO.md`](docs/tracciona-docs/referencia/ENTORNO-DESARROLLO.md)                 | Requisitos de instalacion para ordenador nuevo        |
+| [`INVENTARIO-ENDPOINTS.md`](docs/tracciona-docs/referencia/INVENTARIO-ENDPOINTS.md)             | Todos los endpoints con auth y proposito              |
+| [`ARQUITECTURA-ESCALABILIDAD.md`](docs/tracciona-docs/referencia/ARQUITECTURA-ESCALABILIDAD.md) | Diseno multi-cluster, costes, decisiones              |
+| [`FLUJOS-OPERATIVOS.md`](docs/tracciona-docs/referencia/FLUJOS-OPERATIVOS.md)                   | Diagramas ASCII de flujos principales                 |
+| [`ERD.md`](docs/tracciona-docs/referencia/ERD.md)                                               | Diagrama entidad-relacion (97 tablas, Mermaid)        |
+| [`CRON-JOBS.md`](docs/tracciona-docs/referencia/CRON-JOBS.md)                                   | 14 cron endpoints con frecuencia y config             |
+| [`THIRD-PARTY-DEPENDENCIES.md`](docs/tracciona-docs/referencia/THIRD-PARTY-DEPENDENCIES.md)     | Dependencias externas, failovers, vendor lock-in      |
+| [`SECURITY-TESTING.md`](docs/tracciona-docs/referencia/SECURITY-TESTING.md)                     | DAST (ZAP + Nuclei), testing de seguridad             |
+| [`CLOUDFLARE-WAF-CONFIG.md`](docs/tracciona-docs/referencia/CLOUDFLARE-WAF-CONFIG.md)           | Reglas WAF, rate limiting, configuracion              |
+| [`DISASTER-RECOVERY.md`](docs/tracciona-docs/referencia/DISASTER-RECOVERY.md)                   | Backups multi-capa, procedimientos DR                 |
+| [`SECRETS-ROTATION.md`](docs/tracciona-docs/referencia/SECRETS-ROTATION.md)                     | Rotacion de secretos y API keys                       |
+| [`DATA-RETENTION.md`](docs/tracciona-docs/referencia/DATA-RETENTION.md)                         | Politica de retencion de datos GDPR                   |
+| [`API-PUBLIC.md`](docs/tracciona-docs/referencia/API-PUBLIC.md)                                 | Documentacion de endpoints publicos                   |
+| [`INCIDENT-RESPONSE.md`](docs/tracciona-docs/operativo/INCIDENT-RESPONSE.md)                    | Respuesta operativa a incidentes                      |
+| ~~[`PLAN-MAESTRO-10-DE-10.md`](docs/tracciona-docs/PLAN-MAESTRO-10-DE-10.md)~~                  | ~~Plan maestro~~ → fusionado en BACKLOG-EJECUTABLE.md |
 
 ### Legal
 

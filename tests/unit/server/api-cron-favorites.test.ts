@@ -32,7 +32,9 @@ vi.mock('#supabase/server', () => ({
 
 vi.mock('../../../server/utils/safeError', () => ({ safeError: mockSafeError }))
 vi.mock('../../utils/safeError', () => ({ safeError: mockSafeError }))
-vi.mock('../../../server/utils/verifyCronSecret', () => ({ verifyCronSecret: mockVerifyCronSecret }))
+vi.mock('../../../server/utils/verifyCronSecret', () => ({
+  verifyCronSecret: mockVerifyCronSecret,
+}))
 vi.mock('../../utils/verifyCronSecret', () => ({ verifyCronSecret: mockVerifyCronSecret }))
 vi.mock('../../../server/utils/batchProcessor', () => ({ processBatch: mockProcessBatch }))
 vi.mock('../../utils/batchProcessor', () => ({ processBatch: mockProcessBatch }))
@@ -52,6 +54,7 @@ describe('POST /api/cron/favorite-price-drop', () => {
       not: vi.fn().mockReturnThis(),
       gte: vi.fn().mockReturnThis(),
       limit: vi.fn().mockResolvedValue({ data: vehicles, error: vehiclesError }),
+      insert: vi.fn().mockResolvedValue({ data: null, error: null }),
     }
     return { from: vi.fn().mockReturnValue(chain) }
   }
@@ -77,7 +80,18 @@ describe('POST /api/cron/favorite-price-drop', () => {
 
   it('returns 0 counts when vehicles have no price drop', async () => {
     mockServiceRole.mockReturnValue(
-      makeSupabase([{ id: 'v1', brand: 'Volvo', model: 'FH', slug: 'volvo-fh', price: 80000, previous_price: 70000, updated_at: new Date().toISOString(), category_id: null }]),
+      makeSupabase([
+        {
+          id: 'v1',
+          brand: 'Volvo',
+          model: 'FH',
+          slug: 'volvo-fh',
+          price: 80000,
+          previous_price: 70000,
+          updated_at: new Date().toISOString(),
+          category_id: null,
+        },
+      ]),
     )
     const result = await pricedropHandler({} as any)
     // previous_price (70000) < price (80000) → no drop
@@ -93,7 +107,16 @@ describe('POST /api/cron/favorite-price-drop', () => {
     const now = new Date().toISOString()
     mockServiceRole.mockReturnValue(
       makeSupabase([
-        { id: 'v1', brand: 'DAF', model: 'XF', slug: 'daf-xf', price: 50000, previous_price: 60000, updated_at: now, category_id: null },
+        {
+          id: 'v1',
+          brand: 'DAF',
+          model: 'XF',
+          slug: 'daf-xf',
+          price: 50000,
+          previous_price: 60000,
+          updated_at: now,
+          category_id: null,
+        },
       ]),
     )
     mockProcessBatch.mockResolvedValue({ processed: 1, errors: 0 })
@@ -115,6 +138,7 @@ describe('POST /api/cron/favorite-sold', () => {
       not: vi.fn().mockReturnThis(),
       gte: vi.fn().mockReturnThis(),
       limit: vi.fn().mockResolvedValue({ data: vehicles, error: vehiclesError }),
+      insert: vi.fn().mockResolvedValue({ data: null, error: null }),
     }
     return { from: vi.fn().mockReturnValue(chain) }
   }
@@ -146,8 +170,22 @@ describe('POST /api/cron/favorite-sold', () => {
     const now = new Date().toISOString()
     mockServiceRole.mockReturnValue(
       makeSoldSupabase([
-        { id: 'v1', brand: 'Iveco', model: 'Daily', slug: 'iveco-daily', sold_at: now, category_id: 'cat-1' },
-        { id: 'v2', brand: 'Renault', model: 'Trucks T', slug: 'renault-t', sold_at: now, category_id: null },
+        {
+          id: 'v1',
+          brand: 'Iveco',
+          model: 'Daily',
+          slug: 'iveco-daily',
+          sold_at: now,
+          category_id: 'cat-1',
+        },
+        {
+          id: 'v2',
+          brand: 'Renault',
+          model: 'Trucks T',
+          slug: 'renault-t',
+          sold_at: now,
+          category_id: null,
+        },
       ]),
     )
     mockProcessBatch.mockResolvedValue({ processed: 2, errors: 0 })

@@ -14,16 +14,19 @@ function stubClient({
   queryError = null as unknown,
   upsertError = null as unknown,
 } = {}) {
+  const resolved = queryError ? { data: null, error: queryError } : { data: rows, error: null }
+  // Build a thenable chain that also supports .single()
+  const eqResult = {
+    single: () => Promise.resolve({ data: null, error: null }),
+    then: (onFulfilled: Function, onRejected?: Function) =>
+      Promise.resolve(resolved).then(onFulfilled as any, onRejected as any),
+  }
   vi.stubGlobal('useSupabaseClient', () => ({
     from: () => ({
       select: () => ({
-        eq: () =>
-          Promise.resolve(
-            queryError ? { data: null, error: queryError } : { data: rows, error: null },
-          ),
+        eq: () => eqResult,
       }),
-      upsert: () =>
-        Promise.resolve(upsertError ? { error: upsertError } : { error: null }),
+      upsert: () => Promise.resolve(upsertError ? { error: upsertError } : { error: null }),
     }),
   }))
 }
@@ -68,9 +71,7 @@ describe('isAlwaysOn', () => {
 describe('isEnabled', () => {
   it('always returns true for confirm_email regardless of map', () => {
     const c = useEmailPreferences()
-    ;(c.preferences as { value: Map<string, boolean> }).value = new Map([
-      ['confirm_email', false],
-    ])
+    ;(c.preferences as { value: Map<string, boolean> }).value = new Map([['confirm_email', false]])
     expect(c.isEnabled('confirm_email')).toBe(true)
   })
 
@@ -139,8 +140,22 @@ describe('loadPreferences', () => {
     stubUser('user-1')
     stubClient({
       rows: [
-        { id: '1', user_id: 'user-1', email_type: 'new_lead', enabled: true, created_at: '', updated_at: '' },
-        { id: '2', user_id: 'user-1', email_type: 'price_drop', enabled: false, created_at: '', updated_at: '' },
+        {
+          id: '1',
+          user_id: 'user-1',
+          email_type: 'new_lead',
+          enabled: true,
+          created_at: '',
+          updated_at: '',
+        },
+        {
+          id: '2',
+          user_id: 'user-1',
+          email_type: 'price_drop',
+          enabled: false,
+          created_at: '',
+          updated_at: '',
+        },
       ],
     })
     const c = useEmailPreferences()
@@ -176,12 +191,23 @@ describe('loadPreferences', () => {
   it('clears previous error before new fetch', async () => {
     stubUser('user-1')
     // Use a single mock that fails then succeeds on consecutive calls
-    const mockEq = vi.fn()
-      .mockResolvedValueOnce({ data: null, error: { message: 'first error' } })
-      .mockResolvedValueOnce({ data: [], error: null })
+    let callCount = 0
     vi.stubGlobal('useSupabaseClient', () => ({
       from: () => ({
-        select: () => ({ eq: mockEq }),
+        select: () => ({
+          eq: () => {
+            callCount++
+            const result =
+              callCount <= 2
+                ? { data: null, error: { message: 'first error' } } // first loadPreferences (2 Promise.all calls)
+                : { data: [], error: null } // second loadPreferences
+            return {
+              single: () => Promise.resolve(result),
+              then: (onFulfilled: Function, onRejected?: Function) =>
+                Promise.resolve(result).then(onFulfilled as any, onRejected as any),
+            }
+          },
+        }),
         upsert: () => Promise.resolve({ error: null }),
       }),
     }))
@@ -375,4 +401,3 @@ describe('bulkUpdate', () => {
     expect(c.saving.value).toBe(false)
   })
 })
-

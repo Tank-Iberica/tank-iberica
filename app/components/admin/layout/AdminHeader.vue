@@ -2,7 +2,11 @@
   <header class="admin-header">
     <!-- Mobile: hamburger + title -->
     <div class="header-left">
-      <button class="hamburger-btn" :aria-label="$t('admin.header.openSidebar')" @click="$emit('toggle-sidebar')">
+      <button
+        class="hamburger-btn"
+        :aria-label="$t('admin.header.openSidebar')"
+        @click="$emit('toggle-sidebar')"
+      >
         <svg
           width="24"
           height="24"
@@ -18,7 +22,11 @@
       </button>
 
       <!-- Desktop: collapse toggle -->
-      <button class="collapse-btn" :aria-label="$t('admin.header.collapseSidebar')" @click="$emit('toggle-collapse')">
+      <button
+        class="collapse-btn"
+        :aria-label="$t('admin.header.collapseSidebar')"
+        @click="$emit('toggle-collapse')"
+      >
         <svg
           width="20"
           height="20"
@@ -41,8 +49,22 @@
       </nav>
     </div>
 
-    <!-- Right side: user info -->
+    <!-- Right side: vertical selector + user info -->
     <div class="header-right">
+      <!-- Vertical selector (#250) -->
+      <div v-if="verticals.length > 1" class="vertical-selector">
+        <select
+          :value="currentVertical"
+          class="vertical-select"
+          :aria-label="$t('admin.header.selectVertical')"
+          @change="switchVertical(($event.target as HTMLSelectElement).value)"
+        >
+          <option v-for="v in verticals" :key="v.slug" :value="v.slug">
+            {{ v.name }}
+          </option>
+        </select>
+      </div>
+
       <NuxtLink to="/" class="view-site-btn" target="_blank">
         <svg
           width="16"
@@ -117,6 +139,36 @@ const supabase = useSupabaseClient()
 
 const menuOpen = ref(false)
 
+// Vertical selector (#250)
+const currentVertical = getVerticalSlug()
+const verticals = ref<{ slug: string; name: string }[]>([])
+
+async function loadVerticals() {
+  const { data } = await supabase
+    .from('vertical_config')
+    .select('vertical, site_name')
+    .order('vertical')
+  if (data) {
+    verticals.value = (data as { vertical: string; site_name: string }[]).map((v) => ({
+      slug: v.vertical,
+      name: v.site_name,
+    }))
+  }
+}
+
+function switchVertical(slug: string) {
+  // In multi-vertical, this would change the context.
+  // For now, store preference and reload.
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('admin_vertical', slug)
+    window.location.reload()
+  }
+}
+
+onMounted(() => {
+  void loadVerticals()
+})
+
 // Close menu on click outside
 onMounted(() => {
   const handleClickOutside = (e: MouseEvent) => {
@@ -169,6 +221,7 @@ const currentSection = computed(() => {
     '/admin/noticias': t('admin.header.breadcrumbs.noticias'),
     '/admin/comentarios': t('admin.header.breadcrumbs.comentarios'),
     '/admin/balance': t('admin.header.breadcrumbs.balance'),
+    '/admin/design-system': t('admin.nav.designSystem'),
   }
 
   for (const [prefix, name] of Object.entries(sections)) {
@@ -265,6 +318,26 @@ async function handleLogout() {
 
 .breadcrumb-separator {
   color: var(--text-auxiliary);
+}
+
+/* Vertical selector */
+.vertical-selector {
+  display: flex;
+  align-items: center;
+}
+
+.vertical-select {
+  appearance: none;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-1) var(--spacing-6) var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
 }
 
 /* Right side */

@@ -47,7 +47,7 @@ function buildPrompt(topic: string, type: ArticleType, catalogContext?: string):
   const typeLabel = TYPE_LABELS[type]
   const contextBlock = catalogContext ? `\nContexto del catálogo actual: ${catalogContext}\n` : ''
 
-  return `Eres un redactor especializado en vehículos industriales (camiones, maquinaria, semirremolques) para el marketplace B2B "Tracciona" (tracciona.com). Escribes en un tono profesional, claro y orientado a compradores y vendedores de vehículos industriales en España y Europa.
+  return `Eres un redactor especializado en vehículos industriales (camiones, maquinaria, semirremolques) para el marketplace B2B "${getSiteName()}" (${getSiteUrl().replace('https://', '')}). Escribes en un tono profesional, claro y orientado a compradores y vendedores de vehículos industriales en España y Europa.
 ${contextBlock}
 Genera un borrador de ${typeLabel} sobre el siguiente tema:
 "${topic}"

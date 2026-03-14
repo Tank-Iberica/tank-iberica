@@ -49,10 +49,14 @@ describe('DashboardHealthScore', () => {
   })
 
   it('shows badge eligible when score >= 80', () => {
-    expect(factory({ total: 80, scoreClass: 'score-high' }).find('.health-badge-eligible').exists()).toBe(true)
+    expect(
+      factory({ total: 80, scoreClass: 'score-high' }).find('.health-message--good').exists(),
+    ).toBe(true)
   })
 
   it('hides badge eligible when score < 80', () => {
-    expect(factory({ total: 60, scoreClass: 'score-mid' }).find('.health-badge-eligible').exists()).toBe(false)
+    expect(
+      factory({ total: 60, scoreClass: 'score-mid' }).find('.health-message--good').exists(),
+    ).toBe(false)
   })
 })

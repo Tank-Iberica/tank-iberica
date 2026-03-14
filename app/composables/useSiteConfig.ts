@@ -3,18 +3,26 @@
  * Mirror of server/utils/siteConfig.ts for use in Vue components and composables.
  * Auto-imported by Nuxt — no explicit import needed.
  */
-export function useSiteUrl(): string {
+/**
+ * @deprecated Use useSiteUrl() from ~/composables/useSiteUrl instead.
+ * Kept as a no-export internal fallback for backwards compatibility.
+ */
+function _useSiteUrl(): string {
   try {
-    return (useRuntimeConfig().public.siteUrl as string) || 'https://tracciona.com'
+    return (useRuntimeConfig().public.siteUrl as string) || ''
   } catch {
-    return 'https://tracciona.com'
+    return process.env.NUXT_PUBLIC_SITE_URL || ''
   }
 }
 
-export function useSiteName(): string {
+/**
+ * @deprecated Use useSiteName() from ~/composables/useSiteName instead.
+ * Kept as a no-export internal fallback for backwards compatibility.
+ */
+function _useSiteName(): string {
   try {
-    return (useRuntimeConfig().public.siteName as string) || 'Tracciona'
+    return (useRuntimeConfig().public.siteName as string) || ''
   } catch {
-    return 'Tracciona'
+    return process.env.NUXT_PUBLIC_SITE_NAME || ''
   }
 }

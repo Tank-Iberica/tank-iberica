@@ -13,7 +13,7 @@
  * Sync point S3: Agent D (Bloque 26) depends on this.
  */
 
-export type VehicleStatus =
+export type ListingStatus =
   | 'draft'
   | 'published'
   | 'sold'
@@ -27,7 +27,7 @@ export type VehicleStatus =
  * Allowed status transitions (state machine).
  * Key = current status, Value = array of valid target statuses.
  */
-export const STATUS_TRANSITIONS: Record<VehicleStatus, VehicleStatus[]> = {
+export const STATUS_TRANSITIONS: Record<ListingStatus, ListingStatus[]> = {
   draft: ['published'],
   published: ['draft', 'sold', 'archived', 'rented', 'paused', 'maintenance'],
   sold: ['archived'],
@@ -41,10 +41,7 @@ export const STATUS_TRANSITIONS: Record<VehicleStatus, VehicleStatus[]> = {
 /**
  * Check if a status transition is valid.
  */
-export function isValidTransition(
-  from: VehicleStatus,
-  to: VehicleStatus,
-): boolean {
+export function isValidTransition(from: ListingStatus, to: ListingStatus): boolean {
   if (from === to) return false
   return (STATUS_TRANSITIONS[from] ?? []).includes(to)
 }
@@ -52,7 +49,7 @@ export function isValidTransition(
 /**
  * Get all valid target statuses from current status.
  */
-export function getValidTargets(current: VehicleStatus): VehicleStatus[] {
+export function getValidTargets(current: ListingStatus): ListingStatus[] {
   return STATUS_TRANSITIONS[current] ?? []
 }
 
@@ -66,7 +63,7 @@ export interface StatusMeta {
 /**
  * Metadata for each vehicle status — labels, colors, icons.
  */
-export const STATUS_META: Record<VehicleStatus, StatusMeta> = {
+export const STATUS_META: Record<ListingStatus, StatusMeta> = {
   draft: {
     label: { es: 'Borrador', en: 'Draft' },
     color: '#6b7280',
@@ -120,10 +117,7 @@ export const STATUS_META: Record<VehicleStatus, StatusMeta> = {
 /**
  * Get localized status label.
  */
-export function getStatusLabel(
-  status: VehicleStatus,
-  locale: string = 'es',
-): string {
+export function getStatusLabel(status: ListingStatus, locale: string = 'es'): string {
   const meta = STATUS_META[status]
   if (!meta) return status
   return locale === 'en' ? meta.label.en : meta.label.es
@@ -132,8 +126,8 @@ export function getStatusLabel(
 export interface TransitionResult {
   success: boolean
   error?: string
-  previousStatus?: VehicleStatus
-  newStatus?: VehicleStatus
+  previousStatus?: ListingStatus
+  newStatus?: ListingStatus
 }
 
 export function useListingLifecycle() {
@@ -147,7 +141,7 @@ export function useListingLifecycle() {
    */
   async function transition(
     vehicleId: string,
-    targetStatus: VehicleStatus,
+    targetStatus: ListingStatus,
     options?: {
       dealerId?: string
       reason?: string
@@ -172,7 +166,7 @@ export function useListingLifecycle() {
         return { success: false, error: msg }
       }
 
-      const currentStatus = vehicle.status as VehicleStatus
+      const currentStatus = vehicle.status as ListingStatus
 
       // Validate transition
       if (!isValidTransition(currentStatus, targetStatus)) {
@@ -239,7 +233,7 @@ export function useListingLifecycle() {
    */
   async function bulkTransition(
     vehicleIds: string[],
-    targetStatus: VehicleStatus,
+    targetStatus: ListingStatus,
     options?: { dealerId?: string; reason?: string },
   ): Promise<{ succeeded: string[]; failed: Array<{ id: string; error: string }> }> {
     const succeeded: string[] = []
@@ -263,12 +257,14 @@ export function useListingLifecycle() {
   async function getTransitionHistory(
     vehicleId: string,
     limit: number = 20,
-  ): Promise<Array<{
-    from: VehicleStatus
-    to: VehicleStatus
-    reason: string | null
-    timestamp: string
-  }>> {
+  ): Promise<
+    Array<{
+      from: ListingStatus
+      to: ListingStatus
+      reason: string | null
+      timestamp: string
+    }>
+  > {
     const { data, error: fetchErr } = await supabase
       .from('analytics_events')
       .select('metadata, created_at')
@@ -279,12 +275,14 @@ export function useListingLifecycle() {
 
     if (fetchErr || !data) return []
 
-    return (data as Array<{ metadata: Record<string, unknown>; created_at: string }>).map((row) => ({
-      from: (row.metadata?.from as VehicleStatus) ?? 'draft',
-      to: (row.metadata?.to as VehicleStatus) ?? 'draft',
-      reason: (row.metadata?.reason as string) ?? null,
-      timestamp: row.created_at,
-    }))
+    return (data as Array<{ metadata: Record<string, unknown>; created_at: string }>).map(
+      (row) => ({
+        from: (row.metadata?.from as ListingStatus) ?? 'draft',
+        to: (row.metadata?.to as ListingStatus) ?? 'draft',
+        reason: (row.metadata?.reason as string) ?? null,
+        timestamp: row.created_at,
+      }),
+    )
   }
 
   return {

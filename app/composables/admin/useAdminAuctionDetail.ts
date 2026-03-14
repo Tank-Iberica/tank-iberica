@@ -1,6 +1,10 @@
 import type { Ref } from 'vue'
 import type { Database } from '~~/types/supabase'
-import type { Auction, AuctionStatus, AuctionBid } from '~/composables/useAuction'
+import type {
+  Auction,
+  AuctionDisplayStatus as AuctionStatus,
+  AuctionBid,
+} from '~/composables/useAuction'
 import type {
   AuctionRegistration,
   RegistrationStatus,
@@ -145,7 +149,9 @@ export function useAdminAuctionDetail(auctionId: Ref<string>) {
   async function loadRegistrations() {
     const { data, error: err } = await supabase
       .from('auction_registrations')
-      .select('id, auction_id, user_id, deposit_paid, registered_at, id_type, id_number, id_document_url, company_name, transport_license_url, additional_docs, stripe_payment_intent_id')
+      .select(
+        'id, auction_id, user_id, deposit_paid, registered_at, id_type, id_number, id_document_url, company_name, transport_license_url, additional_docs, stripe_payment_intent_id',
+      )
       .eq('auction_id', auctionId.value)
       .order('registered_at', { ascending: false })
 

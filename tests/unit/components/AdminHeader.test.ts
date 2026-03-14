@@ -14,8 +14,14 @@ beforeAll(() => {
   vi.stubGlobal('onMounted', vi.fn())
   vi.stubGlobal('onUnmounted', vi.fn())
   vi.stubGlobal('navigateTo', mockNavigateTo)
+  vi.stubGlobal('getVerticalSlug', () => 'tracciona')
   vi.stubGlobal('useSupabaseClient', () => ({
     auth: { signOut: mockSignOut },
+    from: () => ({
+      select: () => ({
+        eq: () => Promise.resolve({ data: [], error: null }),
+      }),
+    }),
   }))
 })
 

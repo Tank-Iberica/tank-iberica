@@ -174,7 +174,7 @@ describe('GET /api/merchant-feed', () => {
     process.env.SUPABASE_SERVICE_KEY = 'test-key'
     mockCreateClient.mockReturnValue(makeClient(null, { message: 'db error' }))
     const result = await merchantFeedHandler({} as any)
-    expect(result).toContain('Error fetching vehicles')
+    expect(result).toContain('Internal server error')
     expect(mockSetResponseStatus).toHaveBeenCalledWith(expect.anything(), 500)
   })
 

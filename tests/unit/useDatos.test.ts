@@ -5,12 +5,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const mockFrom = vi.fn()
 vi.stubGlobal('useSupabaseClient', () => ({ from: mockFrom }))
 
-import {
-  formatPrice,
-  useDatos,
-  type MarketRow,
-  type PriceHistoryRow,
-} from '../../app/composables/useDatos'
+import { formatPrice } from '../../app/utils/formatters'
+import { useDatos, type MarketRow, type PriceHistoryRow } from '../../app/composables/useDatos'
 
 // ─── Chain builder ─────────────────────────────────────────────────────────
 
@@ -313,8 +309,18 @@ describe('categoryStats with market data', () => {
 
   it('fetchData sets loading=false and calls both tables', async () => {
     const rows = [
-      makeMarketRow({ subcategory: 'camion', subcategory_label: 'Camiones', month: '2026-01', listing_count: 10 }),
-      makeMarketRow({ subcategory: 'semirremolque', subcategory_label: 'Semirremolques', month: '2026-01', listing_count: 5 }),
+      makeMarketRow({
+        subcategory: 'camion',
+        subcategory_label: 'Camiones',
+        month: '2026-01',
+        listing_count: 10,
+      }),
+      makeMarketRow({
+        subcategory: 'semirremolque',
+        subcategory_label: 'Semirremolques',
+        month: '2026-01',
+        listing_count: 5,
+      }),
     ]
     mockFrom.mockImplementation((table: string) => {
       if (table === 'market_data') return makeChain({ data: rows, error: null })
@@ -358,18 +364,39 @@ describe('categoryStats with market data', () => {
 
 describe('useDatos computed with reactive stubs', () => {
   beforeEach(() => {
-    vi.stubGlobal('computed', (fn: () => unknown) => ({ get value() { return fn() } }))
+    vi.stubGlobal('computed', (fn: () => unknown) => ({
+      get value() {
+        return fn()
+      },
+    }))
     vi.stubGlobal('ref', (v: unknown) => {
       let _v = v
-      return { get value() { return _v }, set value(x: unknown) { _v = x } }
+      return {
+        get value() {
+          return _v
+        },
+        set value(x: unknown) {
+          _v = x
+        },
+      }
     })
     vi.stubGlobal('readonly', (r: unknown) => r)
   })
 
   it('categoryStats computes from marketRows after fetchData', async () => {
     const rows = [
-      makeMarketRow({ subcategory: 'camion', subcategory_label: 'Camiones', month: '2026-02', listing_count: 20 }),
-      makeMarketRow({ subcategory: 'semirremolque', subcategory_label: 'Semirremolques', month: '2026-02', listing_count: 10 }),
+      makeMarketRow({
+        subcategory: 'camion',
+        subcategory_label: 'Camiones',
+        month: '2026-02',
+        listing_count: 20,
+      }),
+      makeMarketRow({
+        subcategory: 'semirremolque',
+        subcategory_label: 'Semirremolques',
+        month: '2026-02',
+        listing_count: 10,
+      }),
     ]
     mockFrom.mockImplementation((table: string) => {
       if (table === 'market_data') return makeChain({ data: rows, error: null })
@@ -395,9 +422,7 @@ describe('useDatos computed with reactive stubs', () => {
   })
 
   it('selectedCategoryStat returns matched category', async () => {
-    const rows = [
-      makeMarketRow({ subcategory: 'camion', month: '2026-02', listing_count: 15 }),
-    ]
+    const rows = [makeMarketRow({ subcategory: 'camion', month: '2026-02', listing_count: 15 })]
     mockFrom.mockImplementation((table: string) => {
       if (table === 'market_data') return makeChain({ data: rows, error: null })
       return makeChain({ data: [], error: null })
@@ -411,8 +436,20 @@ describe('useDatos computed with reactive stubs', () => {
 
   it('brandBreakdown computes brands for selected category', async () => {
     const rows = [
-      makeMarketRow({ subcategory: 'camion', brand: 'Volvo', month: '2026-02', avg_price: 80000, listing_count: 10 }),
-      makeMarketRow({ subcategory: 'camion', brand: 'Scania', month: '2026-02', avg_price: 70000, listing_count: 5 }),
+      makeMarketRow({
+        subcategory: 'camion',
+        brand: 'Volvo',
+        month: '2026-02',
+        avg_price: 80000,
+        listing_count: 10,
+      }),
+      makeMarketRow({
+        subcategory: 'camion',
+        brand: 'Scania',
+        month: '2026-02',
+        avg_price: 70000,
+        listing_count: 5,
+      }),
     ]
     mockFrom.mockImplementation((table: string) => {
       if (table === 'market_data') return makeChain({ data: rows, error: null })
@@ -461,7 +498,12 @@ describe('useDatos computed with reactive stubs', () => {
   it('sortedProvinces sorts by province name when key is province', async () => {
     const rows = [
       makeMarketRow({ province: 'Madrid', month: '2026-02', listing_count: 10, avg_price: 80000 }),
-      makeMarketRow({ province: 'Barcelona', month: '2026-02', listing_count: 15, avg_price: 70000 }),
+      makeMarketRow({
+        province: 'Barcelona',
+        month: '2026-02',
+        listing_count: 15,
+        avg_price: 70000,
+      }),
     ]
     mockFrom.mockImplementation((table: string) => {
       if (table === 'market_data') return makeChain({ data: rows, error: null })

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { acquireCronLock } from '../../../server/utils/cronLock'
+import { acquireDbCronLock } from '../../../server/utils/cronLock'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 vi.mock('../../../server/utils/logger', () => ({
@@ -18,26 +18,26 @@ function makeSupabase(insertError: { code?: string; message?: string } | null = 
   } as unknown as SupabaseClient
 }
 
-describe('acquireCronLock', () => {
+describe('acquireDbCronLock', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('returns true when insert succeeds (lock acquired)', async () => {
     const supabase = makeSupabase(null)
-    const result = await acquireCronLock(supabase, 'test-cron')
+    const result = await acquireDbCronLock(supabase, 'test-cron')
     expect(result).toBe(true)
   })
 
   it('returns false on unique violation (23505) — lock already held', async () => {
     const supabase = makeSupabase({ code: '23505', message: 'duplicate key' })
-    const result = await acquireCronLock(supabase, 'test-cron')
+    const result = await acquireDbCronLock(supabase, 'test-cron')
     expect(result).toBe(false)
   })
 
   it('returns true on non-unique DB error — proceeds rather than blocking cron', async () => {
     const supabase = makeSupabase({ code: '42P01', message: 'table not found' })
-    const result = await acquireCronLock(supabase, 'test-cron')
+    const result = await acquireDbCronLock(supabase, 'test-cron')
     expect(result).toBe(true)
   })
 
@@ -47,7 +47,7 @@ describe('acquireCronLock', () => {
       from: vi.fn().mockReturnValue({ insert: insertMock }),
     } as unknown as SupabaseClient
 
-    await acquireCronLock(supabase, 'my-cron', 3600_000)
+    await acquireDbCronLock(supabase, 'my-cron', 3600_000)
 
     expect(supabase.from).toHaveBeenCalledWith('idempotency_keys')
     const [insertArg] = insertMock.mock.calls[0] as [Record<string, unknown>]
@@ -64,7 +64,7 @@ describe('acquireCronLock', () => {
     } as unknown as SupabaseClient
 
     const windowMs = 2 * 60 * 60 * 1000 // 2 hours
-    await acquireCronLock(supabase, 'cron-a', windowMs)
+    await acquireDbCronLock(supabase, 'cron-a', windowMs)
 
     const [insertArg] = insertMock.mock.calls[0] as [Record<string, unknown>]
     const expectedWindowKey = Math.floor(Date.now() / windowMs).toString()
@@ -74,14 +74,14 @@ describe('acquireCronLock', () => {
   it('logs a warning when lock is already held', async () => {
     const { logger } = await import('../../../server/utils/logger')
     const supabase = makeSupabase({ code: '23505', message: 'dup' })
-    await acquireCronLock(supabase, 'dup-cron')
+    await acquireDbCronLock(supabase, 'dup-cron')
     expect(logger.warn).toHaveBeenCalled()
   })
 
   it('logs a warning but proceeds on non-unique DB error', async () => {
     const { logger } = await import('../../../server/utils/logger')
     const supabase = makeSupabase({ code: '08006', message: 'connection failure' })
-    const result = await acquireCronLock(supabase, 'fragile-cron')
+    const result = await acquireDbCronLock(supabase, 'fragile-cron')
     expect(result).toBe(true)
     expect(logger.warn).toHaveBeenCalled()
   })

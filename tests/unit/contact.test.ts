@@ -1,19 +1,26 @@
-import { describe, it, expect } from 'vitest'
-import { CONTACT } from '../../app/utils/contact'
+import { describe, it, expect, vi } from 'vitest'
 
-describe('CONTACT constants', () => {
+// Stub the composable auto-import used inside getContact()
+vi.stubGlobal('useSiteUrl', () => 'https://tracciona.com')
+
+import { getContact } from '../../app/utils/contact'
+
+describe('CONTACT constants (getContact)', () => {
   it('has phone number', () => {
-    expect(CONTACT.phone).toBeTruthy()
-    expect(CONTACT.phone).toMatch(/^\+/)
+    const contact = getContact()
+    expect(contact.phone).toBeTruthy()
+    expect(contact.phone).toMatch(/^\+/)
   })
 
   it('has whatsappNumber without plus sign', () => {
-    expect(CONTACT.whatsappNumber).toBeTruthy()
-    expect(CONTACT.whatsappNumber).not.toContain('+')
+    const contact = getContact()
+    expect(contact.whatsappNumber).toBeTruthy()
+    expect(contact.whatsappNumber).not.toContain('+')
   })
 
   it('has email', () => {
-    expect(CONTACT.email).toContain('@')
-    expect(CONTACT.email).toContain('tracciona.com')
+    const contact = getContact()
+    expect(contact.email).toContain('@')
+    expect(contact.email).toContain('tracciona.com')
   })
 })

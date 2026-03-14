@@ -1,0 +1,177 @@
+/* tokens/colors.css — Color palette tokens */
+
+@layer tokens {
+  :root {
+    /* ---- Colors: Base ---- */
+    --color-primary: #23424a;
+    --color-primary-dark: #1a3238;
+    --color-primary-light: #2d545e;
+    --color-white: #ffffff;
+
+    /* ---- Colors: Accent ---- */
+    --color-accent: #7fd1c8;
+    --color-accent-hover: #5fbfb4;
+
+    /* ---- Colors: Gold ---- */
+    --color-gold: #d4a017;
+    --color-gold-dark: #b8860b;
+
+    /* ---- Colors: States ---- */
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+    --color-info: #3b82f6;
+    --color-focus: #2563eb;
+
+    /* ---- Colors: State backgrounds ---- */
+    --color-success-bg: #dcfce7;
+    --color-warning-bg: #fef3c7;
+    --color-error-bg: #fef2f2;
+    --color-info-bg: #dbeafe;
+
+    /* ---- Colors: State borders & text variants ---- */
+    --color-error-border: #fecaca;
+    --color-success-border: #bbf7d0;
+    --color-info-border: #bfdbfe;
+    --color-warning-text: #92400e; /* 6.33:1 on --color-warning-bg */
+
+    /* ---- Colors: Soft badge text (light bg + dark text, WCAG AA) ---- */
+    --color-success-text: #065f46; /* 6.75:1 on --color-success-bg */
+    --color-error-text: #991b1b; /* 6.48:1 on --color-error-bg */
+    --color-info-text: #1e3a8a; /* 7.72:1 on --color-info-bg */
+
+    /* ---- Colors: Solid badges (dark bg + white text, multi-tenant safe) ---- */
+    --badge-success-bg: #166534; /* 6.47:1 with white */
+    --badge-success-text: #ffffff;
+    --badge-error-bg: #991b1b; /* 6.48:1 with white */
+    --badge-error-text: #ffffff;
+    --badge-warning-bg: #92400e; /* 7.02:1 with white */
+    --badge-warning-text: #ffffff;
+    --badge-info-bg: #1e40af; /* 8.50:1 with white */
+    --badge-info-text: #ffffff;
+
+    /* ---- Colors: Specialized badge palettes (independent of dealer palette) ---- */
+    --color-purple-bg: #ede9fe;
+    --color-purple-text: #5b21b6; /* 7.08:1 on --color-purple-bg */
+    --color-purple-600: #7c3aed; /* Auction/bid accent */
+    --color-orange-bg: #fff7ed;
+    --color-orange-text: #9a3412; /* 6.54:1 on --color-orange-bg */
+    --color-cyan-bg: #cffafe;
+    --color-cyan-text: #155e75; /* 6.22:1 on --color-cyan-bg */
+    --color-teal-bg: #ccfbf1;
+    --color-teal-text: #134e4a; /* 7.99:1 on --color-teal-bg */
+    --color-gold-bg: #f59e0b;
+    --color-gold-text: #451a03; /* 6.41:1 on --color-gold-bg */
+
+    /* ---- Colors: Extended semantic ---- */
+    --color-green-700: #15803d; /* Success dark (high contrast text/badge) */
+    --color-success-dark: #059669; /* Success-600: dark success bg/text */
+    --color-amber-50: #fffbeb; /* Amber background (lighter than warning-bg) */
+    --color-amber-200: #fde68a; /* Amber-200: warning highlight */
+    --color-danger: #c41e3a; /* Strong danger/critical red */
+    --color-error-soft: #fca5a5; /* Red-300: soft error border/bg */
+    --color-blue-50: #eff6ff; /* Info background light */
+    --color-sky-50: #f0f9ff; /* Sky background very light */
+    --color-emerald-100: #d1fae5; /* Emerald-100: success bg variant */
+    --color-violet-500: #8b5cf6; /* Violet-500: premium/feature accent */
+    --color-slate-700: #334155; /* Slate-700: dark neutral text */
+    --color-primary-darker: #0f2a2e; /* Deepest primary (headers, overlays) */
+    --color-near-black: #1a1a1a; /* Near-black text/background */
+
+    /* ---- Colors: Third-party / contextual ---- */
+    --color-whatsapp: #25d366; /* WhatsApp green */
+    --color-whatsapp-bg: #dcf8c6; /* WhatsApp message bubble */
+    --color-stripe: #635bff; /* Stripe brand */
+    --color-ui-gray: #f0f2f5; /* Chat/panel UI background */
+
+    /* ---- Colors: Additional palette ---- */
+    --color-orange-500: #f97316; /* Orange-500 accent */
+    --color-orange-700: #c2410c; /* Orange-700 strong text */
+    --color-orange-100: #ffedd5; /* Orange-100 soft bg */
+    --color-orange-200: #fed7aa; /* Orange-200 border/highlight */
+    --color-amber-400: #fbbf24; /* Amber-400 highlight */
+    --color-violet-700: #6d28d9; /* Violet-700 deep accent */
+    --color-purple-100: #f3e8ff; /* Purple-100 tint bg */
+    --color-indigo-100: #e0e7ff; /* Indigo-100 tint bg */
+    --color-skeleton-bg: #f0f0f0; /* Skeleton loading base */
+    --color-skeleton-shine: #e0e0e0; /* Skeleton shimmer highlight */
+    --color-sky-100: #e0f2fe; /* Sky-100 very light blue */
+    --color-sky-200: #bae6fd; /* Sky-200 light blue border */
+    --color-teal-600: #0d9488; /* Teal-600 dark teal text */
+    --color-indigo-700: #4338ca; /* Indigo-700 deep indigo */
+    --color-green-300: #86efac; /* Green-300 light success */
+    --color-amber-300: #fde047; /* Amber-300 yellow highlight */
+    --color-amber-600: #d97706; /* Amber-600 deep amber text */
+    --color-green-600: #16a34a; /* Green-600 active/confirmed */
+    --color-cyan-600: #0891b2; /* Cyan-600 info/metric */
+    --color-indigo-600: #4f46e5; /* Indigo-600 accent */
+    --color-indigo-800: #3730a3; /* Indigo-800 deep accent */
+    --color-purple-50: #faf5ff; /* Purple-50 very light tint */
+    --color-purple-200: #e9d5ff; /* Purple-200 light purple */
+    --color-purple-800: #6b21a8; /* Purple-800 deep text */
+    --color-violet-300: #c4b5fd; /* Violet-300 soft accent */
+    --color-emerald-50: #ecfdf5; /* Emerald-50 very light green */
+    --color-emerald-700: #047857; /* Emerald-700 dark green */
+    --color-green-50: #f0fff4; /* Green-50 very light green */
+    --color-teal-50: #f0fdfa; /* Teal-50 very light teal */
+    --color-sky-300: #7dd3fc; /* Sky-300 light blue border */
+    --color-sky-700: #0369a1; /* Sky-700 dark blue */
+    --color-sky-900: #0c4a6e; /* Sky-900 very dark blue */
+    --color-yellow-50: #fefce8; /* Yellow-50 very light yellow */
+    --color-red-50: #fff5f5; /* Red-50 very light red */
+    --color-amber-700: #a16207; /* Amber-700 deep amber */
+    --color-green-500: #22c55e; /* Green-500 bright success */
+    --color-success-mid: #218838; /* Success mid (hover/dark) */
+    --color-error-mid: #dc3545; /* Error mid (Bootstrap-style) */
+    --color-error-dark: #c82333; /* Error dark (hover) */
+    --color-chat-text-secondary: #8696a0; /* Chat gray secondary text */
+    --color-chat-link: #53bdeb; /* Chat blue link color */
+    --color-near-black: #0d0d0d; /* Near-black strong text */
+    --color-off-white: #fafbfc; /* Off-white panel background */
+    --color-slate-500: #64748b; /* Slate-500 muted text */
+    --color-yellow-400: #f5d547; /* Yellow-400 highlight */
+    --color-amber-800: #5a4500; /* Amber-800 very dark amber */
+    --color-teal-dark: #4a5a5a; /* Dark teal-gray neutral */
+    --color-teal-500: #14b8a6; /* Teal-500 accent */
+    --color-sky-400: #38bdf8; /* Sky-400 light blue */
+    --color-blue-300: #93c5fd; /* Blue-300 light blue border */
+    --color-linkedin: #0077b5; /* LinkedIn brand blue */
+    --color-pink-500: #ec4899; /* Pink-500 accent */
+    --color-red-600: #dc2626; /* Red-600 danger strong */
+    --color-violet-800: #5b21b6; /* Violet-800 deep purple */
+    --color-emerald-300: #6ee7b7; /* Emerald-300 light green */
+    --color-amber-900: #78350f; /* Amber-900 very dark amber */
+    --color-success-bs: #28a745; /* Bootstrap success green */
+
+    /* ---- Text on dark background ---- */
+    --text-on-dark-primary: #e6ecec;
+    --text-on-dark-secondary: #c9d4d4;
+    --text-on-dark-auxiliary: #9fb1b1;
+    --text-on-dark-accent: #7fd1c8;
+
+    /* ---- Text on light background ---- */
+    --text-primary: #1f2a2a; /* ~15.9:1 on --bg-primary — WCAG AAA */
+    --text-secondary: #4a5a5a; /* ~6.4:1 on --bg-primary  — WCAG AA */
+    --text-secondary-aaa: #3b5252; /* ~7.2:1 on --bg-primary  — WCAG AAA for <14px text */
+    --text-auxiliary: #7a8a8a; /* ~3.2:1 on --bg-primary  — decorative/supplementary */
+    --text-disabled: #9ca3af;
+
+    /* ---- Backgrounds ---- */
+    --bg-primary: #faf9f8;
+    --bg-secondary: #f3f4f6;
+    --bg-tertiary: #e5e7eb;
+    --bg-dark: #23424a;
+
+    /* ---- Grays ---- */
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-200: #e5e7eb;
+    --color-gray-300: #d1d5db;
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1f2937;
+    --color-gray-900: #111827;
+  }
+}

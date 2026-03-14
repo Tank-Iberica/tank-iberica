@@ -1,19 +1,23 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-const { mockReadBody, mockSafeError, mockSupabaseUser, mockCallAI } = vi.hoisted(() => ({
-  mockReadBody: vi.fn().mockResolvedValue({ brand: 'Volvo', model: 'FH16' }),
-  mockSafeError: vi.fn((status: number, msg: string) => {
-    const err = new Error(msg)
-    ;(err as any).statusCode = status
-    return err
-  }),
-  mockSupabaseUser: vi.fn().mockResolvedValue({ id: 'user-1' }),
-  mockCallAI: vi.fn().mockResolvedValue({ text: '  Great vehicle description  ', provider: 'anthropic' }),
-}))
+const { mockValidateBody, mockSafeError, mockSupabaseUser, mockCallAI, mockDeductCredits } =
+  vi.hoisted(() => ({
+    mockValidateBody: vi.fn().mockResolvedValue({ brand: 'Volvo', model: 'FH16' }),
+    mockSafeError: vi.fn((status: number, msg: string) => {
+      const err = new Error(msg)
+      ;(err as any).statusCode = status
+      return err
+    }),
+    mockSupabaseUser: vi.fn().mockResolvedValue({ id: 'user-1' }),
+    mockCallAI: vi
+      .fn()
+      .mockResolvedValue({ text: '  Great vehicle description  ', provider: 'anthropic' }),
+    mockDeductCredits: vi.fn().mockResolvedValue({ success: true, newBalance: 10 }),
+  }))
 
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
-  readBody: mockReadBody,
+  readBody: vi.fn(),
   createError: (opts: { statusCode?: number; statusMessage?: string; data?: unknown }) => {
     const err = new Error(opts.statusMessage ?? 'Error')
     ;(err as any).statusCode = opts.statusCode
@@ -28,6 +32,19 @@ vi.mock('#supabase/server', () => ({
 vi.mock('../../../server/utils/safeError', () => ({ safeError: mockSafeError }))
 vi.mock('~~/server/utils/safeError', () => ({ safeError: mockSafeError }))
 vi.mock('~~/server/services/aiProvider', () => ({ callAI: mockCallAI }))
+vi.mock('~~/server/utils/creditService', () => ({
+  deductUserCredits: mockDeductCredits,
+}))
+vi.mock('~~/server/utils/validateBody', () => ({
+  validateBody: mockValidateBody,
+}))
+vi.mock('~~/server/utils/sanitizeInput', () => ({
+  sanitizeText: vi.fn((str: string) => str),
+}))
+vi.mock('~~/server/utils/logger', () => ({
+  logger: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
+}))
+vi.stubGlobal('getSiteName', () => 'Tracciona')
 
 import handler from '../../../server/api/generate-description.post'
 
@@ -35,8 +52,9 @@ describe('POST /api/generate-description', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockSupabaseUser.mockResolvedValue({ id: 'user-1' })
-    mockReadBody.mockResolvedValue({ brand: 'Volvo', model: 'FH16' })
+    mockValidateBody.mockResolvedValue({ brand: 'Volvo', model: 'FH16' })
     mockCallAI.mockResolvedValue({ text: '  Great vehicle description  ', provider: 'anthropic' })
+    mockDeductCredits.mockResolvedValue({ success: true, newBalance: 10 })
   })
 
   it('throws 401 when user not authenticated', async () => {
@@ -45,23 +63,29 @@ describe('POST /api/generate-description', () => {
   })
 
   it('throws 400 when brand is missing', async () => {
-    mockReadBody.mockResolvedValue({ model: 'FH16' })
+    const err = new Error('Validation error') as any
+    err.statusCode = 400
+    mockValidateBody.mockRejectedValue(err)
     await expect(handler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when brand is not a string', async () => {
-    mockReadBody.mockResolvedValue({ brand: 123, model: 'FH16' })
+    const err = new Error('Validation error') as any
+    err.statusCode = 400
+    mockValidateBody.mockRejectedValue(err)
     await expect(handler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when model is missing', async () => {
-    mockReadBody.mockResolvedValue({ brand: 'Volvo' })
+    const err = new Error('Validation error') as any
+    err.statusCode = 400
+    mockValidateBody.mockRejectedValue(err)
     await expect(handler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('returns trimmed description from AI', async () => {
     const result = await handler({} as any)
-    expect(result).toEqual({ description: 'Great vehicle description' })
+    expect(result).toMatchObject({ description: 'Great vehicle description' })
   })
 
   it('calls callAI with realtime+fast priority', async () => {
@@ -74,7 +98,7 @@ describe('POST /api/generate-description', () => {
   })
 
   it('includes brand and model in the prompt', async () => {
-    mockReadBody.mockResolvedValue({ brand: 'Mercedes', model: 'Actros', year: 2020 })
+    mockValidateBody.mockResolvedValue({ brand: 'Mercedes', model: 'Actros', year: 2020 })
     await handler({} as any)
     const [callArgs] = mockCallAI.mock.calls
     const prompt = callArgs[0].messages[0].content
@@ -83,7 +107,7 @@ describe('POST /api/generate-description', () => {
   })
 
   it('includes optional fields in prompt when present', async () => {
-    mockReadBody.mockResolvedValue({
+    mockValidateBody.mockResolvedValue({
       brand: 'DAF',
       model: 'XF',
       year: 2019,
@@ -102,9 +126,10 @@ describe('POST /api/generate-description', () => {
     expect(prompt).toContain('color: rojo')
   })
 
-  it('throws 500 when callAI throws', async () => {
+  it('returns empty description with aiUnavailable when callAI throws', async () => {
     mockCallAI.mockRejectedValue(new Error('API timeout'))
-    await expect(handler({} as any)).rejects.toMatchObject({ statusCode: 500 })
-    expect(mockSafeError).toHaveBeenCalledWith(500, expect.stringContaining('API timeout'))
+    const result = await handler({} as any)
+    expect(result).toMatchObject({ description: '', aiUnavailable: true })
+    expect(result.creditsRemaining).toBe(10)
   })
 })

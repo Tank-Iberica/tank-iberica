@@ -106,8 +106,26 @@ async function loadStats(): Promise<void> {
         price: v.price,
       }))
 
-      // Fetch lead counts per vehicle
+      // Fetch view and lead counts per vehicle
       if (vehicleStats.value.length > 0) {
+        const vehicleIds = vehicleStats.value.map((vs) => vs.id)
+
+        // Views from user_vehicle_views (aggregated by vehicle_id)
+        const { data: viewsData } = await supabase
+          .from('user_vehicle_views')
+          .select('vehicle_id')
+          .in('vehicle_id', vehicleIds)
+        if (viewsData) {
+          const viewCounts = new Map<string, number>()
+          for (const row of viewsData as Array<{ vehicle_id: string }>) {
+            viewCounts.set(row.vehicle_id, (viewCounts.get(row.vehicle_id) || 0) + 1)
+          }
+          for (const vs of vehicleStats.value) {
+            vs.views = viewCounts.get(vs.id) || 0
+          }
+        }
+
+        // Lead counts
         for (const vs of vehicleStats.value) {
           const { count } = await supabase
             .from('leads')

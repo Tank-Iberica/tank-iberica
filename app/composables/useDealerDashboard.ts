@@ -19,12 +19,7 @@ import type {
   RawLead,
 } from './shared/dealerDashboardTypes'
 
-export type {
-  DealerProfile,
-  DashboardStats,
-  RecentLead,
-  TopVehicle,
-} from './shared/dealerDashboardTypes'
+export type { DealerProfile, DashboardStats, RecentLead } from './shared/dealerDashboardTypes'
 
 export function mapLeads(raw: RawLead[]): RecentLead[] {
   return raw.map((lead) => ({

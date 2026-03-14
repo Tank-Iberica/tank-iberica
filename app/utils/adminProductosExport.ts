@@ -10,7 +10,7 @@ import type { AdminVehicle } from '~/composables/admin/useAdminVehicles'
 // Helpers (internal to exports)
 // -------------------------------------------------------------------------
 
-export function getStatusLabel(status: string): string {
+export function getExportStatusLabel(status: string): string {
   const statusOptions = [
     { value: 'published', label: 'Publicado' },
     { value: 'draft', label: 'Oculto' },
@@ -87,7 +87,7 @@ export async function exportToExcel(data: AdminVehicle[], helpers: ExportHelpers
       year: v.year,
       price: v.price,
       category: v.category,
-      status: getStatusLabel(v.status),
+      status: getExportStatusLabel(v.status),
       plate: v.plate || '-',
       location: v.location || '-',
       min_price: v.min_price || '-',
@@ -139,7 +139,7 @@ export async function exportToPdf(data: AdminVehicle[], helpers: ExportHelpers):
     v.year || '-',
     formatPrice(v.price),
     v.category || '-',
-    getStatusLabel(v.status),
+    getExportStatusLabel(v.status),
   ])
 
   autoTable(doc, {
@@ -200,7 +200,7 @@ export async function exportVehicleFicha(
   const details: [string, string][] = [
     ['Categor\u00EDa', vehicle.category?.toUpperCase() || '-'],
     ['Tipo', getSubcategoryName(vehicle.type_id)],
-    ['Estado', getStatusLabel(vehicle.status)],
+    ['Estado', getExportStatusLabel(vehicle.status)],
     ['Visibilidad', vehicle.is_online ? 'Online (Web)' : 'Offline (Intermediaci\u00F3n)'],
   ]
 
@@ -243,7 +243,7 @@ export async function exportVehicleFicha(
   }
 
   // C10 — PDF footer: vehicle URL + CTA + QR
-  const vehicleUrl = `https://tracciona.com/vehiculo/${vehicle.slug}`
+  const vehicleUrl = `${useSiteUrl()}/vehiculo/${vehicle.slug}`
   const footerY = 275
 
   // QR image (25×25 mm) — fetched via public QR API
@@ -273,7 +273,7 @@ export async function exportVehicleFicha(
   doc.setFontSize(7)
   doc.setTextColor(150, 150, 150)
   doc.text(
-    `Más vehículos en tracciona.com  ·  Generado: ${new Date().toLocaleDateString('es-ES')}`,
+    `Más vehículos en ${useSiteUrl().replace('https://', '')}  ·  Generado: ${new Date().toLocaleDateString('es-ES')}`,
     14,
     footerY + 9,
   )

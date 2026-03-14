@@ -29,7 +29,7 @@ function buildVehicleUrls(
       changefreq: 'weekly' as const,
       images: images.map((img) => ({
         loc: img.url,
-        title: img.alt_text || `${v.brand} ${v.model} ${v.year || ''} - Tracciona`,
+        title: img.alt_text || `${v.brand} ${v.model} ${v.year || ''} - ${getSiteName()}`,
         caption: img.alt_text || `${v.brand} ${v.model} ${v.year || ''}`,
       })),
     }

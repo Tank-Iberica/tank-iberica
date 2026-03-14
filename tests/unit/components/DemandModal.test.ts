@@ -91,6 +91,10 @@ vi.mock('#imports', () => ({
 
 // Also set the stubGlobal for useVehicleTypeSelector (auto-imported)
 vi.stubGlobal('useVehicleTypeSelector', () => buildSelectorMock())
+vi.stubGlobal('useFocusTrap', () => ({
+  activate: vi.fn(),
+  deactivate: vi.fn(),
+}))
 
 import DemandModal from '../../../app/components/modals/DemandModal.vue'
 
@@ -121,8 +125,20 @@ beforeEach(() => {
   vi.useFakeTimers()
   mockUser.value = { id: 'u1', email: 'test@test.com' }
   mockCategories.value = [
-    { id: 'c1', name: { es: 'Camiones', en: 'Trucks' }, name_es: 'Camiones', name_en: 'Trucks', slug: 'camiones' },
-    { id: 'c2', name: { es: 'Furgonetas', en: 'Vans' }, name_es: 'Furgonetas', name_en: 'Vans', slug: 'furgonetas' },
+    {
+      id: 'c1',
+      name: { es: 'Camiones', en: 'Trucks' },
+      name_es: 'Camiones',
+      name_en: 'Trucks',
+      slug: 'camiones',
+    },
+    {
+      id: 'c2',
+      name: { es: 'Furgonetas', en: 'Vans' },
+      name_es: 'Furgonetas',
+      name_en: 'Vans',
+      slug: 'furgonetas',
+    },
   ]
   mockLinkedSubcategories.value = []
   mockAttributes.value = []
@@ -254,7 +270,13 @@ describe('DemandModal', () => {
     it('renders subcategory selector when category is selected and has linked subs', () => {
       mockSelectedCategoryId.value = 'c1'
       mockLinkedSubcategories.value = [
-        { id: 's1', name: { es: 'Volquetes' }, name_es: 'Volquetes', name_en: 'Tippers', slug: 'volquetes' },
+        {
+          id: 's1',
+          name: { es: 'Volquetes' },
+          name_es: 'Volquetes',
+          name_en: 'Tippers',
+          slug: 'volquetes',
+        },
       ]
       const w = factory()
       const select = w.find('#dem-subcategory')
@@ -340,7 +362,18 @@ describe('DemandModal', () => {
 
     it('renders desplegable attribute as select', () => {
       mockAttributes.value = [
-        { id: 'a1', name: 'ejes', type: 'desplegable', label: null, label_es: 'Ejes', label_en: null, unit: null, options: { choices: ['2', '3'] }, is_extra: false, sort_order: 1 },
+        {
+          id: 'a1',
+          name: 'ejes',
+          type: 'desplegable',
+          label: null,
+          label_es: 'Ejes',
+          label_en: null,
+          unit: null,
+          options: { choices: ['2', '3'] },
+          is_extra: false,
+          sort_order: 1,
+        },
       ]
       const w = factory()
       expect(w.find('#f-ejes').exists()).toBe(true)
@@ -349,7 +382,18 @@ describe('DemandModal', () => {
 
     it('renders desplegable_tick attribute as select', () => {
       mockAttributes.value = [
-        { id: 'a2', name: 'transmision', type: 'desplegable_tick', label: null, label_es: 'Transmision', label_en: null, unit: null, options: { choices: ['manual', 'auto'] }, is_extra: false, sort_order: 1 },
+        {
+          id: 'a2',
+          name: 'transmision',
+          type: 'desplegable_tick',
+          label: null,
+          label_es: 'Transmision',
+          label_en: null,
+          unit: null,
+          options: { choices: ['manual', 'auto'] },
+          is_extra: false,
+          sort_order: 1,
+        },
       ]
       const w = factory()
       expect(w.find('#f-transmision').exists()).toBe(true)
@@ -358,7 +402,18 @@ describe('DemandModal', () => {
 
     it('renders caja attribute as text input', () => {
       mockAttributes.value = [
-        { id: 'a3', name: 'potencia', type: 'caja', label: null, label_es: 'Potencia', label_en: null, unit: 'CV', options: {}, is_extra: false, sort_order: 1 },
+        {
+          id: 'a3',
+          name: 'potencia',
+          type: 'caja',
+          label: null,
+          label_es: 'Potencia',
+          label_en: null,
+          unit: 'CV',
+          options: {},
+          is_extra: false,
+          sort_order: 1,
+        },
       ]
       const w = factory()
       const input = w.find('#f-potencia')
@@ -368,7 +423,18 @@ describe('DemandModal', () => {
 
     it('renders slider attribute as text input', () => {
       mockAttributes.value = [
-        { id: 'a4', name: 'peso', type: 'slider', label: null, label_es: 'Peso', label_en: null, unit: 'kg', options: {}, is_extra: false, sort_order: 1 },
+        {
+          id: 'a4',
+          name: 'peso',
+          type: 'slider',
+          label: null,
+          label_es: 'Peso',
+          label_en: null,
+          unit: 'kg',
+          options: {},
+          is_extra: false,
+          sort_order: 1,
+        },
       ]
       const w = factory()
       expect(w.find('#f-peso').exists()).toBe(true)
@@ -377,7 +443,18 @@ describe('DemandModal', () => {
 
     it('renders calc attribute as text input', () => {
       mockAttributes.value = [
-        { id: 'a5', name: 'capacidad', type: 'calc', label: null, label_es: 'Capacidad', label_en: null, unit: 'm3', options: {}, is_extra: false, sort_order: 1 },
+        {
+          id: 'a5',
+          name: 'capacidad',
+          type: 'calc',
+          label: null,
+          label_es: 'Capacidad',
+          label_en: null,
+          unit: 'm3',
+          options: {},
+          is_extra: false,
+          sort_order: 1,
+        },
       ]
       const w = factory()
       expect(w.find('#f-capacidad').exists()).toBe(true)
@@ -385,7 +462,18 @@ describe('DemandModal', () => {
 
     it('renders tick attribute as checkbox', () => {
       mockAttributes.value = [
-        { id: 'a6', name: 'aireacond', type: 'tick', label: null, label_es: 'Aire Acond.', label_en: null, unit: null, options: {}, is_extra: false, sort_order: 1 },
+        {
+          id: 'a6',
+          name: 'aireacond',
+          type: 'tick',
+          label: null,
+          label_es: 'Aire Acond.',
+          label_en: null,
+          unit: null,
+          options: {},
+          is_extra: false,
+          sort_order: 1,
+        },
       ]
       const w = factory()
       const checkboxes = w.findAll('.checkbox-input')
@@ -395,7 +483,18 @@ describe('DemandModal', () => {
 
     it('shows unit label when filter has unit', () => {
       mockAttributes.value = [
-        { id: 'a3', name: 'potencia', type: 'caja', label: null, label_es: 'Potencia', label_en: null, unit: 'CV', options: {}, is_extra: false, sort_order: 1 },
+        {
+          id: 'a3',
+          name: 'potencia',
+          type: 'caja',
+          label: null,
+          label_es: 'Potencia',
+          label_en: null,
+          unit: 'CV',
+          options: {},
+          is_extra: false,
+          sort_order: 1,
+        },
       ]
       const w = factory()
       expect(w.find('.unit-label').exists()).toBe(true)
@@ -404,7 +503,18 @@ describe('DemandModal', () => {
 
     it('shows section label when attributes exist', () => {
       mockAttributes.value = [
-        { id: 'a1', name: 'ejes', type: 'desplegable', label: null, label_es: 'Ejes', label_en: null, unit: null, options: { choices: ['2'] }, is_extra: false, sort_order: 1 },
+        {
+          id: 'a1',
+          name: 'ejes',
+          type: 'desplegable',
+          label: null,
+          label_es: 'Ejes',
+          label_en: null,
+          unit: null,
+          options: { choices: ['2'] },
+          is_extra: false,
+          sort_order: 1,
+        },
       ]
       const w = factory()
       expect(w.find('.section-title').exists()).toBe(true)
@@ -414,7 +524,18 @@ describe('DemandModal', () => {
     it('does not show attributes section when no subcategory selected', () => {
       mockSelectedSubcategoryId.value = null
       mockAttributes.value = [
-        { id: 'a1', name: 'ejes', type: 'desplegable', label: null, label_es: 'Ejes', label_en: null, unit: null, options: { choices: ['2'] }, is_extra: false, sort_order: 1 },
+        {
+          id: 'a1',
+          name: 'ejes',
+          type: 'desplegable',
+          label: null,
+          label_es: 'Ejes',
+          label_en: null,
+          unit: null,
+          options: { choices: ['2'] },
+          is_extra: false,
+          sort_order: 1,
+        },
       ]
       const w = factory()
       expect(w.find('.section-title').exists()).toBe(false)
@@ -744,7 +865,13 @@ describe('DemandModal', () => {
     it('calls selectSubcategory on subcategory change', async () => {
       mockSelectedCategoryId.value = 'c1'
       mockLinkedSubcategories.value = [
-        { id: 's1', name: { es: 'Volquetes' }, name_es: 'Volquetes', name_en: null, slug: 'volquetes' },
+        {
+          id: 's1',
+          name: { es: 'Volquetes' },
+          name_es: 'Volquetes',
+          name_en: null,
+          slug: 'volquetes',
+        },
       ]
       const w = factory()
       await w.find('#dem-subcategory').trigger('change')
@@ -775,7 +902,13 @@ describe('DemandModal', () => {
   describe('catName helper (via rendering)', () => {
     it('uses localized name field', () => {
       mockCategories.value = [
-        { id: 'c1', name: { es: 'Localized Es' }, name_es: 'Fallback Es', name_en: 'Fallback En', slug: 'test' },
+        {
+          id: 'c1',
+          name: { es: 'Localized Es' },
+          name_es: 'Fallback Es',
+          name_en: 'Fallback En',
+          slug: 'test',
+        },
       ]
       const w = factory()
       const options = w.findAll('#dem-category option')

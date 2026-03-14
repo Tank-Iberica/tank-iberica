@@ -54,7 +54,9 @@ const restConfig = { url: 'https://api.supabase.co', serviceRoleKey: 'service-ke
 // ══ billing.ts ══════════════════════════════════════════════════════════════
 
 describe('billing — supabaseRestPatch', () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('calls fetch with PATCH method and correct URL', async () => {
     mockFetch.mockResolvedValue({ ok: true })
@@ -75,7 +77,9 @@ describe('billing — supabaseRestPatch', () => {
 })
 
 describe('billing — supabaseRestInsert', () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('calls fetch with POST method', async () => {
     mockFetch.mockResolvedValue({ ok: true })
@@ -97,7 +101,9 @@ describe('billing — supabaseRestInsert', () => {
 })
 
 describe('billing — supabaseRestGet', () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('returns parsed array on success', async () => {
     const items = [{ id: '1', plan: 'basic' }]
@@ -121,7 +127,9 @@ describe('billing — supabaseRestGet', () => {
 })
 
 describe('billing — getSubscriptionUserInfo', () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('returns null when no subscription found', async () => {
     mockFetch.mockResolvedValue({ json: vi.fn().mockResolvedValue([]) })
@@ -189,7 +197,9 @@ describe('billing — getSubscriptionUserInfo', () => {
 })
 
 describe('billing — sendDunningEmail', () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('does nothing when internalSecret is undefined', async () => {
     await sendDunningEmail('http://app', undefined, 'tmpl', 'to@x.com', 'u1', {})
@@ -198,7 +208,9 @@ describe('billing — sendDunningEmail', () => {
 
   it('calls fetch with correct endpoint when secret provided', async () => {
     mockFetch.mockResolvedValue({ ok: true })
-    await sendDunningEmail('http://app', 'secret-key', 'payment_failed', 'to@x.com', 'u1', { plan: 'basic' })
+    await sendDunningEmail('http://app', 'secret-key', 'payment_failed', 'to@x.com', 'u1', {
+      plan: 'basic',
+    })
     expect(mockFetch).toHaveBeenCalledWith(
       'http://app/api/email/send',
       expect.objectContaining({
@@ -217,29 +229,32 @@ describe('billing — sendDunningEmail', () => {
 })
 
 describe('billing — createAutoInvoice', () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('fetches dealer and inserts invoice', async () => {
     let callCount = 0
     mockFetch.mockImplementation(() => {
       callCount++
-      return Promise.resolve({
-        json: vi.fn().mockResolvedValue(callCount === 1 ? [{ id: 'dealer-1' }] : []),
-      })
+      // 1: idempotency check (no existing invoice), 2: dealer fetch, 3: insert, 4+: email etc.
+      if (callCount === 1) return Promise.resolve({ json: vi.fn().mockResolvedValue([]) }) // no existing
+      if (callCount === 2)
+        return Promise.resolve({ json: vi.fn().mockResolvedValue([{ id: 'dealer-1' }]) }) // dealer
+      return Promise.resolve({ json: vi.fn().mockResolvedValue([]), ok: true })
     })
     await createAutoInvoice(restConfig, {
       userId: 'user-1',
       stripeInvoiceId: 'in_xxx',
       amountCents: 2900,
     })
-    expect(mockFetch).toHaveBeenCalledTimes(2)
+    // At minimum: idempotency + dealer + insert (+ possible audit/analytics) >= 3
+    expect(mockFetch.mock.calls.length).toBeGreaterThanOrEqual(3)
   })
 
   it('uses null dealer_id when no dealer found', async () => {
-    let callCount = 0
     mockFetch.mockImplementation(() => {
-      callCount++
-      return Promise.resolve({ json: vi.fn().mockResolvedValue([]) }) // no dealer
+      return Promise.resolve({ json: vi.fn().mockResolvedValue([]), ok: true })
     })
     await createAutoInvoice(restConfig, {
       userId: 'user-x',
@@ -247,22 +262,29 @@ describe('billing — createAutoInvoice', () => {
       amountCents: 7900,
       serviceType: 'verification',
     })
-    const insertCall = mockFetch.mock.calls[1]!
-    const body = JSON.parse(insertCall[1].body)
+    // stripeInvoiceId null => no idempotency check, so call[0] is dealer fetch, call[1] is insert
+    const insertCall = mockFetch.mock.calls.find(
+      (c) => typeof c[0] === 'string' && c[0].includes('/invoices') && c[1]?.method === 'POST',
+    )
+    expect(insertCall).toBeTruthy()
+    const body = JSON.parse(insertCall![1].body)
     expect(body.dealer_id).toBeNull()
     expect(body.service_type).toBe('verification')
   })
 
   it('computes tax_cents as 21% on top (IVA calculation)', async () => {
-    mockFetch.mockResolvedValue({ json: vi.fn().mockResolvedValue([]) })
+    mockFetch.mockResolvedValue({ json: vi.fn().mockResolvedValue([]), ok: true })
     await createAutoInvoice(restConfig, {
       userId: 'u1',
       stripeInvoiceId: null,
       amountCents: 1210,
     })
-    const insertCall = mockFetch.mock.calls[1]!
-    const body = JSON.parse(insertCall[1].body)
-    // 1210 * 21 / 121 = 210
+    const insertCall = mockFetch.mock.calls.find(
+      (c) => typeof c[0] === 'string' && c[0].includes('/invoices') && c[1]?.method === 'POST',
+    )
+    expect(insertCall).toBeTruthy()
+    const body = JSON.parse(insertCall![1].body)
+    // calculateTaxFromGross(1210, 0.21) = 1210 - 1210/1.21 = 1210 - 1000 = 210
     expect(body.tax_cents).toBe(210)
   })
 })

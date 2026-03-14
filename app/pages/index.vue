@@ -145,8 +145,8 @@ usePageSeo({
 })
 
 // ItemList JSON-LD — injected dynamically after vehicles load
+const siteUrl = useSiteUrl()
 const itemListJsonLd = computed(() => {
-  const siteUrl = useSiteUrl()
   return buildItemListSchema(
     vehicles.value.slice(0, 20).map((v) => ({
       slug: v.slug,
@@ -278,7 +278,27 @@ defineOptions({ name: 'Index' })
 
 const { saveScrollPosition, scrollPosition } = useCatalogState()
 
-onMounted(loadVehicles)
+// SSR: fetch initial vehicles server-side for SEO crawlers
+await useAsyncData(
+  'homepage-vehicles',
+  () => fetchVehicles({ ...filters.value, sortBy: sortBy.value }),
+  { server: true },
+)
+
+onMounted(() => {
+  // Only run client-side analytics/suggestions if vehicles already loaded (from SSR)
+  if (vehicles.value.length > 0) {
+    trackFunnelSearch({ ...filters.value, results_count: total.value })
+    void fetchHiddenVehicles(filters.value)
+    if (total.value === 0 || isFewResults(locationLevel.value, total.value)) {
+      void fetchNextLevelCount(filters.value)
+      void generateSuggestions(filters.value, total.value)
+    }
+    void loadCascadeLevel(1, filters.value, total.value)
+  } else {
+    loadVehicles()
+  }
+})
 
 onActivated(() => {
   if (scrollPosition.value) {

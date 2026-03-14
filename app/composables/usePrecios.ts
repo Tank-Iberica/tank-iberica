@@ -1,5 +1,7 @@
 import type { PlanType } from '~/composables/useSubscriptionPlan'
 
+import type { FaqItem } from '~/utils/faqSchema'
+
 export interface PlanCardData {
   plan: PlanType
   name: string
@@ -16,11 +18,6 @@ export interface ComparisonRow {
   basic: string | boolean
   premium: string | boolean
   founding: string | boolean
-}
-
-export interface FaqItem {
-  question: string
-  answer: string
 }
 
 export type BillingInterval = 'month' | 'year'

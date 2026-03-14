@@ -22,6 +22,9 @@ const toast = useToast()
 const { startConversation } = useConversation()
 const { trackFunnelContactSeller } = useAnalyticsTracking()
 
+const dialogRef = ref<HTMLElement | null>(null)
+const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
+
 const messageText = ref('')
 const sending = ref(false)
 const error = ref('')
@@ -65,6 +68,14 @@ function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') handleClose()
 }
 
+watch(
+  () => props.visible,
+  (val) => {
+    if (val) nextTick(() => activateTrap(dialogRef.value))
+    else deactivateTrap()
+  },
+)
+
 onMounted(() => {
   if (import.meta.client) {
     document.addEventListener('keydown', handleKeydown)
@@ -89,7 +100,7 @@ onUnmounted(() => {
         aria-labelledby="contact-seller-title"
         @click.self="handleClose"
       >
-        <div class="modal-box">
+        <div ref="dialogRef" class="modal-box">
           <button class="modal-close" :aria-label="$t('common.close')" @click="handleClose">
             <svg
               width="20"
@@ -134,8 +145,9 @@ onUnmounted(() => {
               rows="4"
               autocomplete="off"
               maxlength="1000"
+              :aria-describedby="error ? 'contact-error' : undefined"
             />
-            <div v-if="error" class="modal-error" role="alert">{{ error }}</div>
+            <div v-if="error" id="contact-error" class="modal-error" role="alert">{{ error }}</div>
             <div class="modal-actions">
               <button class="btn-secondary" :disabled="sending" @click="handleClose">
                 {{ $t('common.cancel') }}

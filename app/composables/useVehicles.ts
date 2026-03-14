@@ -32,7 +32,7 @@ export function useVehicles() {
     let query = supabase
       .from('vehicles')
       .select(
-        '*, vehicle_images(*), subcategories(*, subcategory_categories(categories(id, name_es, name_en, name, name_singular, name_singular_es, name_singular_en)))',
+        'id, brand, model, year, price, rental_price, slug, location, location_en, location_country, featured, sort_boost, category, created_at, dealer_id, subcategory_id, title_es, title_en, vehicle_images(id, url, position, alt_text), subcategories(*, subcategory_categories(categories(id, name_es, name_en, name, name_singular, name_singular_es, name_singular_en)))',
         { count: 'exact' },
       )
       .eq('status', 'published')
@@ -74,11 +74,11 @@ export function useVehicles() {
   async function fetchCount(filters: VehicleFilters): Promise<number> {
     const base = supabase
       .from('vehicles')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .eq('status', 'published')
 
     const query = applyFilters(base, filters)
-    const { count } = await query as any // NOSONAR: Supabase builders implement PromiseLike but are not native Promises
+    const { count } = await (query as PromiseLike<{ count: number | null }>) // NOSONAR: Supabase builders implement PromiseLike but are not native Promises
     return count ?? 0
   }
 

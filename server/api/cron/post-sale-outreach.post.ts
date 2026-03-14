@@ -20,7 +20,7 @@ import { Resend } from 'resend'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
-import { getSiteUrl, getSiteName } from '../../utils/siteConfig'
+import { getSiteUrl, getSiteName, getSiteEmail } from '../../utils/siteConfig'
 import { logger } from '../../utils/logger'
 
 interface CronBody {
@@ -87,8 +87,8 @@ function buildPostSaleHtml(
           <p style="margin:0 0 16px;">
             ${
               isEs
-                ? 'Para facilitarte los trámites, en Tracciona ofrecemos servicios que pueden ayudarte:'
-                : 'To make the process easier, Tracciona offers services that can help you:'
+                ? `Para facilitarte los trámites, en ${getSiteName()} ofrecemos servicios que pueden ayudarte:`
+                : `To make the process easier, ${getSiteName()} offers services that can help you:`
             }
           </p>
           <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:16px;">
@@ -143,6 +143,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
   const config = useRuntimeConfig()
   const resendApiKey = config.resendApiKey || process.env.RESEND_API_KEY || ''
@@ -210,6 +211,7 @@ export default defineEventHandler(async (event) => {
   const batchResult = await processBatch({
     items: leads as LeadRow[],
     batchSize: 50,
+    delayBetweenBatchesMs: 5000,
     processor: async (lead: LeadRow) => {
       if (!lead.user_email) {
         skipped++
@@ -228,7 +230,7 @@ export default defineEventHandler(async (event) => {
 
       try {
         await resend.emails.send({
-          from: `${siteName} <hola@tracciona.com>`,
+          from: `${siteName} <${getSiteEmail()}>`,
           to: lead.user_email,
           subject: `${vehicleTitle} — Servicios post-venta`,
           html: buildPostSaleHtml(

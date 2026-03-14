@@ -75,7 +75,13 @@ export function useAuth() {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const lastFetched = useState<number>('auth-profile-ts', () => 0)
-  const { t } = useI18n()
+  // Safe for plugin context: useI18n() requires Vue instance (unavailable in some plugins)
+  let t: (key: string, values?: Record<string, unknown>) => string
+  try {
+    ;({ t } = useI18n())
+  } catch {
+    t = (key: string) => key
+  }
   const TTL = 5 * 60 * 1000 // 5 min cache
 
   const isAuthenticated = computed(() => !!supabaseUser.value || !!profile.value?.id)

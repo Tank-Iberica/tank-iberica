@@ -86,13 +86,13 @@ function generateLinkedIn(v: VehicleData, url: string): Record<string, string> {
 
   return {
     es: [
-      `\uD83D\uDE9B Nuevo en Tracciona: ${title}`,
+      `\uD83D\uDE9B Nuevo en ${getSiteName()}: ${title}`,
       `\uD83D\uDCCD ${location} | \uD83D\uDCB0 ${priceEs}`,
       `\u2705 Disponible ahora`,
       `\uD83D\uDC49 ${url}`,
     ].join('\n'),
     en: [
-      `\uD83D\uDE9B New on Tracciona: ${title}`,
+      `\uD83D\uDE9B New on ${getSiteName()}: ${title}`,
       `\uD83D\uDCCD ${location} | \uD83D\uDCB0 ${priceEn}`,
       `\u2705 Available now`,
       `\uD83D\uDC49 ${url}`,
@@ -131,14 +131,14 @@ function generateInstagram(v: VehicleData): Record<string, string> {
 
   return {
     es: [
-      `${title} disponible en Tracciona \uD83D\uDE9B`,
+      `${title} disponible en ${getSiteName()} \uD83D\uDE9B`,
       `\uD83D\uDCCD ${location}`,
       `\uD83D\uDCB0 ${priceEs}`,
       ``,
       `#vehiculosindustriales #transporte #tracciona #camiones #${typeTag}`,
     ].join('\n'),
     en: [
-      `${title} available on Tracciona \uD83D\uDE9B`,
+      `${title} available on ${getSiteName()} \uD83D\uDE9B`,
       `\uD83D\uDCCD ${location}`,
       `\uD83D\uDCB0 ${priceEn}`,
       ``,

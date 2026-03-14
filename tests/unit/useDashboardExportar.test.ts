@@ -5,7 +5,9 @@ vi.stubGlobal('useAuth', () => ({
   userId: { value: 'user-1' },
 }))
 
-const mockLoadDealer = vi.fn().mockResolvedValue({ id: 'dealer-1', company_name: 'Test Dealer', slug: 'test-dealer' })
+const mockLoadDealer = vi
+  .fn()
+  .mockResolvedValue({ id: 'dealer-1', company_name: 'Test Dealer', slug: 'test-dealer' })
 vi.stubGlobal('useDealerDashboard', () => ({
   dealerProfile: { value: { id: 'dealer-1', company_name: 'Test Dealer', slug: 'test-dealer' } },
   loadDealer: mockLoadDealer,
@@ -15,6 +17,9 @@ vi.stubGlobal('useSubscriptionPlan', () => ({
   canExport: { value: true },
   fetchSubscription: vi.fn().mockResolvedValue(undefined),
 }))
+
+// Stub $fetch for credit gate in handleExport
+vi.stubGlobal('$fetch', vi.fn().mockResolvedValue({ success: true }))
 
 import {
   useDashboardExportar,
@@ -35,7 +40,11 @@ function makeExportVehicle(overrides: Partial<ExportVehicle> = {}): ExportVehicl
     description_es: 'Camión en buen estado',
     description_en: 'Truck in good condition',
     vehicle_images: [{ url: 'https://example.com/img.jpg', position: 0 }],
-    subcategories: { name_es: 'Camiones', name_en: 'Trucks', name: { es: 'Camiones', en: 'Trucks' } },
+    subcategories: {
+      name_es: 'Camiones',
+      name_en: 'Trucks',
+      name: { es: 'Camiones', en: 'Trucks' },
+    },
     ...overrides,
   }
 }
@@ -128,10 +137,21 @@ describe('useDashboardExportar', () => {
 
 describe('filteredVehicles with data', () => {
   beforeEach(() => {
-    vi.stubGlobal('computed', (fn: () => unknown) => ({ get value() { return fn() } }))
+    vi.stubGlobal('computed', (fn: () => unknown) => ({
+      get value() {
+        return fn()
+      },
+    }))
     vi.stubGlobal('ref', (v: unknown) => {
       let _v = v
-      return { get value() { return _v }, set value(x: unknown) { _v = x } }
+      return {
+        get value() {
+          return _v
+        },
+        set value(x: unknown) {
+          _v = x
+        },
+      }
     })
   })
 
@@ -215,7 +235,21 @@ describe('init', () => {
 
   it('populates vehicles after successful load', async () => {
     const vehicleData = [
-      { id: 'v1', brand: 'Volvo', model: 'FH', year: 2020, price: 60000, category: 'camiones', location: 'Madrid', status: 'published', description_es: null, description_en: null, vehicle_images: [], subcategories: null, attributes_json: { km: 150000 } },
+      {
+        id: 'v1',
+        brand: 'Volvo',
+        model: 'FH',
+        year: 2020,
+        price: 60000,
+        category: 'camiones',
+        location: 'Madrid',
+        status: 'published',
+        description_es: null,
+        description_en: null,
+        vehicle_images: [],
+        subcategories: null,
+        attributes_json: { km: 150000 },
+      },
     ]
     vi.stubGlobal('useSupabaseClient', () => ({
       from: () => ({
@@ -255,7 +289,9 @@ describe('init', () => {
     }))
     // Restore dealer mock
     vi.stubGlobal('useDealerDashboard', () => ({
-      dealerProfile: { value: { id: 'dealer-1', company_name: 'Test Dealer', slug: 'test-dealer' } },
+      dealerProfile: {
+        value: { id: 'dealer-1', company_name: 'Test Dealer', slug: 'test-dealer' },
+      },
       loadDealer: vi.fn().mockResolvedValue({ id: 'dealer-1' }),
     }))
     const exp = useDashboardExportar()
@@ -287,19 +323,43 @@ describe('exportCSV — via mocked exceljs', () => {
 
   beforeEach(() => {
     vi.resetModules()
-    vi.stubGlobal('computed', (fn: () => unknown) => ({ get value() { return fn() } }))
+    vi.stubGlobal('computed', (fn: () => unknown) => ({
+      get value() {
+        return fn()
+      },
+    }))
     vi.stubGlobal('ref', (v: unknown) => {
       let _v = v
-      return { get value() { return _v }, set value(x: unknown) { _v = x } }
+      return {
+        get value() {
+          return _v
+        },
+        set value(x: unknown) {
+          _v = x
+        },
+      }
     })
     // Preserve the original URL constructor but add createObjectURL/revokeObjectURL
-    const PatchedURL = Object.assign(function (...args: ConstructorParameters<typeof URL>) { return new _OriginalURL(...args) }, {
-      createObjectURL: vi.fn().mockReturnValue('blob:test'),
-      revokeObjectURL: vi.fn(),
-      prototype: _OriginalURL.prototype,
-    })
+    const PatchedURL = Object.assign(
+      function (...args: ConstructorParameters<typeof URL>) {
+        return new _OriginalURL(...args)
+      },
+      {
+        createObjectURL: vi.fn().mockReturnValue('blob:test'),
+        revokeObjectURL: vi.fn(),
+        prototype: _OriginalURL.prototype,
+      },
+    )
     vi.stubGlobal('URL', PatchedURL)
-    vi.stubGlobal('Blob', class MockBlob { constructor(public p: unknown[], public o: unknown) {} })
+    vi.stubGlobal(
+      'Blob',
+      class MockBlob {
+        constructor(
+          public p: unknown[],
+          public o: unknown,
+        ) {}
+      },
+    )
     vi.stubGlobal('document', {
       createElement: vi.fn().mockReturnValue({ href: '', download: '', click: vi.fn() }),
     })
@@ -318,7 +378,8 @@ describe('exportCSV — via mocked exceljs', () => {
       },
     }))
 
-    const { useDashboardExportar: useExportar } = await import('../../app/composables/dashboard/useDashboardExportar')
+    const { useDashboardExportar: useExportar } =
+      await import('../../app/composables/dashboard/useDashboardExportar')
     const exp = useExportar()
     exp.vehicles.value = [
       makeExportVehicle({ id: 'v1', status: 'published' }),
@@ -342,7 +403,8 @@ describe('exportCSV — via mocked exceljs', () => {
       },
     }))
 
-    const { useDashboardExportar: useExportar } = await import('../../app/composables/dashboard/useDashboardExportar')
+    const { useDashboardExportar: useExportar } =
+      await import('../../app/composables/dashboard/useDashboardExportar')
     const exp = useExportar()
     exp.vehicles.value = [makeExportVehicle({ status: 'published' })]
     exp.statusFilter.value = 'all'
@@ -358,10 +420,21 @@ describe('exportCSV — via mocked exceljs', () => {
 
 describe('exportPDF — via mocked jspdf', () => {
   beforeEach(() => {
-    vi.stubGlobal('computed', (fn: () => unknown) => ({ get value() { return fn() } }))
+    vi.stubGlobal('computed', (fn: () => unknown) => ({
+      get value() {
+        return fn()
+      },
+    }))
     vi.stubGlobal('ref', (v: unknown) => {
       let _v = v
-      return { get value() { return _v }, set value(x: unknown) { _v = x } }
+      return {
+        get value() {
+          return _v
+        },
+        set value(x: unknown) {
+          _v = x
+        },
+      }
     })
   })
 
@@ -386,7 +459,13 @@ describe('exportPDF — via mocked jspdf', () => {
 
     const exp = useDashboardExportar()
     exp.vehicles.value = [
-      makeExportVehicle({ id: 'v1', status: 'published', price: 50000, year: 2020, description_es: 'Desc' }),
+      makeExportVehicle({
+        id: 'v1',
+        status: 'published',
+        price: 50000,
+        year: 2020,
+        description_es: 'Desc',
+      }),
     ]
     exp.statusFilter.value = 'all'
     exp.exportFormat.value = 'pdf'
@@ -419,7 +498,15 @@ describe('exportPDF — via mocked jspdf', () => {
 
     const exp = useDashboardExportar()
     exp.vehicles.value = [
-      makeExportVehicle({ id: 'v1', status: 'published', price: null, year: null, description_es: null, description_en: null, vehicle_images: [] }),
+      makeExportVehicle({
+        id: 'v1',
+        status: 'published',
+        price: null,
+        year: null,
+        description_es: null,
+        description_en: null,
+        vehicle_images: [],
+      }),
     ]
     exp.statusFilter.value = 'all'
     exp.exportFormat.value = 'pdf'
@@ -431,7 +518,9 @@ describe('exportPDF — via mocked jspdf', () => {
   })
 
   it('sets error on jspdf import failure', async () => {
-    vi.doMock('jspdf', () => { throw new Error('jsPDF unavailable') })
+    vi.doMock('jspdf', () => {
+      throw new Error('jsPDF unavailable')
+    })
 
     const exp = useDashboardExportar()
     exp.exportFormat.value = 'pdf'
@@ -469,7 +558,11 @@ describe('exportPDF — via mocked jspdf', () => {
         status: 'published',
         km: 100000,
         location: 'Barcelona',
-        subcategories: { name: { es: 'Camiones', en: 'Trucks' }, name_es: 'Camiones', name_en: 'Trucks' },
+        subcategories: {
+          name: { es: 'Camiones', en: 'Trucks' },
+          name_es: 'Camiones',
+          name_en: 'Trucks',
+        },
       }),
     ]
     exp.statusFilter.value = 'all'

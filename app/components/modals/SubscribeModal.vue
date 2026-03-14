@@ -11,6 +11,9 @@ const { t: _t } = useI18n()
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const supabase = useSupabaseClient<any>()
 
+const dialogRef = ref<HTMLElement | null>(null)
+const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
+
 const email = ref('')
 const prefs = ref({
   web: false,
@@ -72,9 +75,11 @@ watch(
     if (val) {
       document.body.style.overflow = 'hidden'
       document.addEventListener('keydown', handleKeyDown)
+      nextTick(() => activateTrap(dialogRef.value))
     } else {
       document.body.style.overflow = ''
       document.removeEventListener('keydown', handleKeyDown)
+      deactivateTrap()
     }
   },
 )
@@ -84,7 +89,7 @@ watch(
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="modelValue" class="modal-backdrop" @click="handleBackdrop">
-        <div class="modal-container">
+        <div ref="dialogRef" class="modal-container">
           <div class="modal-header">
             <h2 class="modal-title">{{ $t('subscribe.title') }}</h2>
             <button
@@ -116,33 +121,33 @@ watch(
                 autocomplete="email"
                 required
                 placeholder="tu@email.com"
-              >
+              />
             </div>
 
             <div class="prefs-group">
               <h3>{{ $t('subscribe.selectPrefs') }}</h3>
               <label class="checkbox-label">
-                <input v-model="prefs.web" type="checkbox" >
+                <input v-model="prefs.web" type="checkbox" />
                 <span>{{ $t('subscribe.prefWeb') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.press" type="checkbox" >
+                <input v-model="prefs.press" type="checkbox" />
                 <span>{{ $t('subscribe.prefPress') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.newsletter" type="checkbox" >
+                <input v-model="prefs.newsletter" type="checkbox" />
                 <span>{{ $t('subscribe.prefNewsletter') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.featured" type="checkbox" >
+                <input v-model="prefs.featured" type="checkbox" />
                 <span>{{ $t('subscribe.prefFeatured') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.events" type="checkbox" >
+                <input v-model="prefs.events" type="checkbox" />
                 <span>{{ $t('subscribe.prefEvents') }}</span>
               </label>
               <label class="checkbox-label">
-                <input v-model="prefs.csr" type="checkbox" >
+                <input v-model="prefs.csr" type="checkbox" />
                 <span>{{ $t('subscribe.prefCsr') }}</span>
               </label>
             </div>

@@ -27,30 +27,22 @@ function stubAuth({
           },
         }),
       signInWithPassword: () =>
-        Promise.resolve(
-          signInError ? { error: signInError } : { error: null },
-        ),
-      signUp: () =>
-        Promise.resolve(
-          signUpError ? { error: signUpError } : { error: null },
-        ),
+        Promise.resolve(signInError ? { error: signInError } : { error: null }),
+      signUp: () => Promise.resolve(signUpError ? { error: signUpError } : { error: null }),
       signInWithOAuth: () => Promise.resolve({ error: null }),
       signOut: () => Promise.resolve({ error: null }),
       resetPasswordForEmail: () =>
-        Promise.resolve(
-          resetError ? { error: resetError } : { error: null },
-        ),
-      updateUser: () =>
-        Promise.resolve(
-          updateError ? { error: updateError } : { error: null },
-        ),
+        Promise.resolve(resetError ? { error: resetError } : { error: null }),
+      updateUser: () => Promise.resolve(updateError ? { error: updateError } : { error: null }),
     },
     from: () => ({
       select: () => ({
         eq: () => ({
           single: () =>
             Promise.resolve(
-              profileRow ? { data: profileRow, error: null } : { data: null, error: { message: 'not found' } },
+              profileRow
+                ? { data: profileRow, error: null }
+                : { data: null, error: { message: 'not found' } },
             ),
         }),
       }),
@@ -60,6 +52,8 @@ function stubAuth({
 
 beforeEach(() => {
   vi.clearAllMocks()
+  // Stub $fetch for lockout check calls
+  vi.stubGlobal('$fetch', vi.fn().mockResolvedValue({ locked: false, attemptsRemaining: 5 }))
   stubAuth() // default: no user
 })
 
@@ -182,7 +176,10 @@ describe('fetchProfile', () => {
   })
 
   it('sets loading to false after fetch', async () => {
-    stubAuth({ userId: 'user-1', profileRow: { id: 'user-1', email: 'u@e.com', user_type: 'buyer' } as Record<string, unknown> })
+    stubAuth({
+      userId: 'user-1',
+      profileRow: { id: 'user-1', email: 'u@e.com', user_type: 'buyer' } as Record<string, unknown>,
+    })
     const c = useAuth()
     await c.fetchProfile()
     expect(c.loading.value).toBe(false)
@@ -310,7 +307,9 @@ describe('clearCache', () => {
   it('forces DB call on next fetchProfile after clearCache', async () => {
     const profileRow = { id: 'user-1', email: 'u@e.com', user_type: 'buyer' }
     const mockSingle = vi.fn().mockResolvedValue({ data: profileRow, error: null })
-    vi.stubGlobal('useSupabaseUser', () => ({ value: { id: 'user-1', email: 'u@e.com', user_metadata: {} } }))
+    vi.stubGlobal('useSupabaseUser', () => ({
+      value: { id: 'user-1', email: 'u@e.com', user_metadata: {} },
+    }))
     vi.stubGlobal('useSupabaseClient', () => ({
       auth: {
         getSession: () => Promise.resolve({ data: { session: null } }),
@@ -413,14 +412,16 @@ describe('loginWithGoogle', () => {
         getSession: () => Promise.resolve({ data: { session: null } }),
         signInWithOAuth: mockOAuth,
       },
-      from: () => ({ select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }) }),
+      from: () => ({
+        select: () => ({
+          eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }),
+        }),
+      }),
     }))
 
     const c = useAuth()
     await c.loginWithGoogle()
-    expect(mockOAuth).toHaveBeenCalledWith(
-      expect.objectContaining({ provider: 'google' }),
-    )
+    expect(mockOAuth).toHaveBeenCalledWith(expect.objectContaining({ provider: 'google' }))
   })
 
   it('appends redirect path to callback URL when provided', async () => {
@@ -431,7 +432,11 @@ describe('loginWithGoogle', () => {
         getSession: () => Promise.resolve({ data: { session: null } }),
         signInWithOAuth: mockOAuth,
       },
-      from: () => ({ select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }) }),
+      from: () => ({
+        select: () => ({
+          eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }),
+        }),
+      }),
     }))
 
     const c = useAuth()
@@ -453,7 +458,11 @@ describe('loginWithGoogle', () => {
         getSession: () => Promise.resolve({ data: { session: null } }),
         signInWithOAuth: mockOAuth,
       },
-      from: () => ({ select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }) }),
+      from: () => ({
+        select: () => ({
+          eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }),
+        }),
+      }),
     }))
     const c = useAuth()
     await c.loginWithGoogle()
@@ -555,7 +564,11 @@ describe('register — error edge cases', () => {
         getSession: () => Promise.resolve({ data: { session: null } }),
         signUp: mockSignUp,
       },
-      from: () => ({ select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }) }),
+      from: () => ({
+        select: () => ({
+          eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }),
+        }),
+      }),
     }))
     const c = useAuth()
     await c.register('dealer@e.com', 'pass', {
@@ -585,7 +598,11 @@ describe('register — error edge cases', () => {
         getSession: () => Promise.resolve({ data: { session: null } }),
         signUp: mockSignUp,
       },
-      from: () => ({ select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }) }),
+      from: () => ({
+        select: () => ({
+          eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }),
+        }),
+      }),
     }))
     const c = useAuth()
     await c.register('buyer@e.com', 'pass')
@@ -607,7 +624,9 @@ describe('register — error edge cases', () => {
 
 describe('fetchProfile — edge cases', () => {
   it('sets generic error when DB throws a non-Error object', async () => {
-    vi.stubGlobal('useSupabaseUser', () => ({ value: { id: 'user-1', email: 'u@e.com', user_metadata: {} } }))
+    vi.stubGlobal('useSupabaseUser', () => ({
+      value: { id: 'user-1', email: 'u@e.com', user_metadata: {} },
+    }))
     vi.stubGlobal('useSupabaseClient', () => ({
       auth: {
         getSession: () => Promise.resolve({ data: { session: null } }),
@@ -628,15 +647,27 @@ describe('fetchProfile — edge cases', () => {
 
   it('fetches profile via session when supabaseUser is null', async () => {
     const profileRow = {
-      id: 'session-user-1', email: 's@e.com', pseudonimo: null, name: 'Session User',
-      user_type: 'buyer', role: null, company_name: null, phone: null,
-      phone_verified: false, onboarding_completed: false, avatar_url: null,
-      lang: null, preferred_country: null, last_login_at: null, login_count: 0,
+      id: 'session-user-1',
+      email: 's@e.com',
+      pseudonimo: null,
+      name: 'Session User',
+      user_type: 'buyer',
+      role: null,
+      company_name: null,
+      phone: null,
+      phone_verified: false,
+      onboarding_completed: false,
+      avatar_url: null,
+      lang: null,
+      preferred_country: null,
+      last_login_at: null,
+      login_count: 0,
     }
     vi.stubGlobal('useSupabaseUser', () => ({ value: null }))
     vi.stubGlobal('useSupabaseClient', () => ({
       auth: {
-        getSession: () => Promise.resolve({ data: { session: { user: { id: 'session-user-1' } } } }),
+        getSession: () =>
+          Promise.resolve({ data: { session: { user: { id: 'session-user-1' } } } }),
       },
       from: () => ({
         select: () => ({
@@ -678,17 +709,36 @@ describe('fetchProfile — edge cases', () => {
 describe('displayName — profile-based', () => {
   beforeEach(() => {
     // Use getter-based computed so profile changes are reflected in computed values
-    vi.stubGlobal('computed', (fn: () => unknown) => ({ get value() { return fn() } }))
+    vi.stubGlobal('computed', (fn: () => unknown) => ({
+      get value() {
+        return fn()
+      },
+    }))
   })
 
   it('uses pseudonimo from profile when available', async () => {
     const profileRow = {
-      id: 'user-1', email: 'u@e.com', pseudonimo: 'NickFromDB',
-      name: 'Real Name', user_type: 'buyer', role: null, company_name: null,
-      phone: null, phone_verified: false, onboarding_completed: false,
-      avatar_url: null, lang: null, preferred_country: null, last_login_at: null, login_count: 0,
+      id: 'user-1',
+      email: 'u@e.com',
+      pseudonimo: 'NickFromDB',
+      name: 'Real Name',
+      user_type: 'buyer',
+      role: null,
+      company_name: null,
+      phone: null,
+      phone_verified: false,
+      onboarding_completed: false,
+      avatar_url: null,
+      lang: null,
+      preferred_country: null,
+      last_login_at: null,
+      login_count: 0,
     }
-    stubAuth({ userId: 'user-1', email: 'u@e.com', profileRow: profileRow as Record<string, unknown> })
+    stubAuth({
+      userId: 'user-1',
+      email: 'u@e.com',
+      profileRow: profileRow as Record<string, unknown>,
+    })
     const c = useAuth()
     await c.fetchProfile()
     expect(c.displayName.value).toBe('NickFromDB')
@@ -696,12 +746,27 @@ describe('displayName — profile-based', () => {
 
   it('uses name from profile when no pseudonimo', async () => {
     const profileRow = {
-      id: 'user-1', email: 'u@e.com', pseudonimo: null,
-      name: 'John Smith', user_type: 'buyer', role: null, company_name: null,
-      phone: null, phone_verified: false, onboarding_completed: false,
-      avatar_url: null, lang: null, preferred_country: null, last_login_at: null, login_count: 0,
+      id: 'user-1',
+      email: 'u@e.com',
+      pseudonimo: null,
+      name: 'John Smith',
+      user_type: 'buyer',
+      role: null,
+      company_name: null,
+      phone: null,
+      phone_verified: false,
+      onboarding_completed: false,
+      avatar_url: null,
+      lang: null,
+      preferred_country: null,
+      last_login_at: null,
+      login_count: 0,
     }
-    stubAuth({ userId: 'user-1', email: 'u@e.com', profileRow: profileRow as Record<string, unknown> })
+    stubAuth({
+      userId: 'user-1',
+      email: 'u@e.com',
+      profileRow: profileRow as Record<string, unknown>,
+    })
     const c = useAuth()
     await c.fetchProfile()
     expect(c.displayName.value).toBe('John Smith')
@@ -713,17 +778,36 @@ describe('displayName — profile-based', () => {
 describe('computed — with profile loaded', () => {
   beforeEach(() => {
     // Use getter-based computed so profile changes are reflected in computed values
-    vi.stubGlobal('computed', (fn: () => unknown) => ({ get value() { return fn() } }))
+    vi.stubGlobal('computed', (fn: () => unknown) => ({
+      get value() {
+        return fn()
+      },
+    }))
   })
 
   it('isDealer is true for dealer user_type', async () => {
     const profileRow = {
-      id: 'user-1', email: 'u@e.com', pseudonimo: null, name: null,
-      user_type: 'dealer', role: null, company_name: 'TruckCo',
-      phone: null, phone_verified: false, onboarding_completed: false,
-      avatar_url: null, lang: null, preferred_country: null, last_login_at: null, login_count: 0,
+      id: 'user-1',
+      email: 'u@e.com',
+      pseudonimo: null,
+      name: null,
+      user_type: 'dealer',
+      role: null,
+      company_name: 'TruckCo',
+      phone: null,
+      phone_verified: false,
+      onboarding_completed: false,
+      avatar_url: null,
+      lang: null,
+      preferred_country: null,
+      last_login_at: null,
+      login_count: 0,
     }
-    stubAuth({ userId: 'user-1', email: 'u@e.com', profileRow: profileRow as Record<string, unknown> })
+    stubAuth({
+      userId: 'user-1',
+      email: 'u@e.com',
+      profileRow: profileRow as Record<string, unknown>,
+    })
     const c = useAuth()
     await c.fetchProfile()
     expect(c.isDealer.value).toBe(true)
@@ -732,12 +816,27 @@ describe('computed — with profile loaded', () => {
 
   it('isAdmin is true when role is admin', async () => {
     const profileRow = {
-      id: 'user-1', email: 'admin@e.com', pseudonimo: null, name: null,
-      user_type: 'buyer', role: 'admin', company_name: null,
-      phone: null, phone_verified: false, onboarding_completed: false,
-      avatar_url: null, lang: null, preferred_country: null, last_login_at: null, login_count: 0,
+      id: 'user-1',
+      email: 'admin@e.com',
+      pseudonimo: null,
+      name: null,
+      user_type: 'buyer',
+      role: 'admin',
+      company_name: null,
+      phone: null,
+      phone_verified: false,
+      onboarding_completed: false,
+      avatar_url: null,
+      lang: null,
+      preferred_country: null,
+      last_login_at: null,
+      login_count: 0,
     }
-    stubAuth({ userId: 'user-1', email: 'admin@e.com', profileRow: profileRow as Record<string, unknown> })
+    stubAuth({
+      userId: 'user-1',
+      email: 'admin@e.com',
+      profileRow: profileRow as Record<string, unknown>,
+    })
     const c = useAuth()
     await c.fetchProfile()
     expect(c.isAdmin.value).toBe(true)
@@ -746,10 +845,21 @@ describe('computed — with profile loaded', () => {
   it('isAuthenticated is true when profile has id but no supabaseUser', async () => {
     // Edge case: profile loaded but supabase user ref is null
     const profileRow = {
-      id: 'user-1', email: 'u@e.com', pseudonimo: null, name: null,
-      user_type: 'buyer', role: null, company_name: null,
-      phone: null, phone_verified: false, onboarding_completed: false,
-      avatar_url: null, lang: null, preferred_country: null, last_login_at: null, login_count: 0,
+      id: 'user-1',
+      email: 'u@e.com',
+      pseudonimo: null,
+      name: null,
+      user_type: 'buyer',
+      role: null,
+      company_name: null,
+      phone: null,
+      phone_verified: false,
+      onboarding_completed: false,
+      avatar_url: null,
+      lang: null,
+      preferred_country: null,
+      last_login_at: null,
+      login_count: 0,
     }
     // Use session-based auth (no supabaseUser, but session exists)
     vi.stubGlobal('useSupabaseUser', () => ({ value: null }))

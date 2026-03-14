@@ -18,7 +18,7 @@
 import { defineEventHandler, readBody } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
-import { acquireCronLock } from '../../utils/cronLock'
+import { acquireDbCronLock } from '../../utils/cronLock'
 import { logger } from '../../utils/logger'
 
 interface CronBody {
@@ -47,10 +47,11 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
 
   // 2. Cron lock — 24 h window, one run per day max
-  if (!(await acquireCronLock(supabase, 'data-retention', 24 * 60 * 60 * 1000))) {
+  if (!(await acquireDbCronLock(supabase, 'data-retention', 24 * 60 * 60 * 1000))) {
     return { skipped: true, reason: 'already_ran_in_window', timestamp: new Date().toISOString() }
   }
 

@@ -38,6 +38,12 @@ vi.mock('~~/server/utils/logger', () => ({
   logger: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
 }))
 
+vi.mock('~~/server/utils/creditService', () => ({
+  deductUserCredits: vi.fn().mockResolvedValue({ success: true, newBalance: 10 }),
+}))
+
+vi.stubGlobal('getSiteName', () => 'Tracciona')
+
 // ---------------------------------------------------------------------------
 // Static imports (after mocks)
 // ---------------------------------------------------------------------------
@@ -159,7 +165,9 @@ describe('POST /api/generate-description', () => {
   it('returns empty description when all providers fail', async () => {
     vi.mocked(serverSupabaseUser).mockResolvedValueOnce(mockUser)
     vi.mocked(validateBody).mockResolvedValueOnce({ brand: 'DAF', model: 'XF' })
-    vi.mocked(callAI).mockRejectedValueOnce(new Error('All AI providers failed: anthropic: timeout; openai: 503'))
+    vi.mocked(callAI).mockRejectedValueOnce(
+      new Error('All AI providers failed: anthropic: timeout; openai: 503'),
+    )
 
     const result = await handler(mockEvent)
 

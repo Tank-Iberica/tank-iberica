@@ -105,7 +105,7 @@ export default defineEventHandler(async (event) => {
   const resend = new Resend(resendApiKey)
 
   const emailBody = `
-<h2>✅ Tracciona — k6 Load Tests Ready</h2>
+<h2>✅ ${getSiteName()} — k6 Load Tests Ready</h2>
 
 <p>Las condiciones para ejecutar los tests de carga <strong>están cumplidas</strong>:</p>
 

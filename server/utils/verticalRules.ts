@@ -106,7 +106,7 @@ export async function getVerticalStockLimits(
 // Feature flag check (server-side)
 // ---------------------------------------------------------------------------
 
-export async function isFeatureEnabled(
+export async function isVerticalFeatureEnabled(
   event: H3Event,
   featureKey: string,
   vertical?: string,

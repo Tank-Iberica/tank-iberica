@@ -9,12 +9,12 @@
  */
 import type { H3Event } from 'h3'
 import type { ZodSchema, ZodError, z } from 'zod'
-import { readBody, createError } from 'h3'
+import { readBody } from 'h3'
+import { safeError } from './safeError'
+import { logger } from './logger'
 
 function formatZodErrors(error: ZodError): string {
-  return error.issues
-    .map((i) => `${i.path.join('.')}: ${i.message}`)
-    .join('; ')
+  return error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')
 }
 
 export async function validateBody<T extends ZodSchema>(
@@ -25,12 +25,9 @@ export async function validateBody<T extends ZodSchema>(
   const result = schema.safeParse(body)
 
   if (!result.success) {
-    const errors = formatZodErrors(result.error)
-    throw createError({
-      statusCode: 400,
-      statusMessage: `Validation Error: ${errors}`,
-      data: { errors },
-    })
+    const details = formatZodErrors(result.error)
+    logger.warn('Validation failed', { details, path: event.path })
+    throw safeError(400, 'Datos inválidos')
   }
 
   return result.data

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useAuction, formatCents } from '../../app/composables/useAuction'
+import { useAuction, formatAuctionCents } from '../../app/composables/useAuction'
 
 // ─── Stub helpers ──────────────────────────────────────────────────────────────
 
@@ -136,34 +136,34 @@ beforeEach(() => {
   stubClient()
 })
 
-// ─── formatCents (exported pure function) ─────────────────────────────────────
+// ─── formatAuctionCents (exported pure function) ─────────────────────────────────────
 
-describe('formatCents', () => {
+describe('formatAuctionCents', () => {
   it('formats 100000 cents as 1000 EUR', () => {
-    const result = formatCents(100000)
+    const result = formatAuctionCents(100000)
     expect(result).toContain('1')
     expect(result).toContain('€')
   })
 
   it('formats 0 cents', () => {
-    const result = formatCents(0)
+    const result = formatAuctionCents(0)
     expect(result).toContain('0')
   })
 
   it('formats 2500000 cents (25000 EUR)', () => {
-    const result = formatCents(2500000)
+    const result = formatAuctionCents(2500000)
     expect(result).toContain('25')
     expect(result).toContain('€')
   })
 
   it('formats negative cents', () => {
-    const result = formatCents(-50000)
+    const result = formatAuctionCents(-50000)
     expect(result).toContain('500')
     expect(result).toContain('€')
   })
 
   it('formats small amounts (1 cent = 0.01 EUR)', () => {
-    const result = formatCents(1)
+    const result = formatAuctionCents(1)
     expect(result).toContain('€')
   })
 })
@@ -198,7 +198,7 @@ describe('initial state', () => {
 
   it('exposes formatCents on the returned object', () => {
     const c = useAuction()
-    expect(c.formatCents).toBe(formatCents)
+    expect(c.formatCents).toBe(formatAuctionCents)
   })
 })
 

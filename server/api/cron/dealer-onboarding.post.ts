@@ -49,8 +49,8 @@ export const ONBOARDING_SCHEDULE: OnboardingStep[] = [
   {
     step: 0,
     dayOffset: 0,
-    subjectEs: 'Bienvenido a Tracciona — tus primeros pasos',
-    subjectEn: 'Welcome to Tracciona — your first steps',
+    subjectEs: `Bienvenido a ${getSiteName()} — tus primeros pasos`,
+    subjectEn: `Welcome to ${getSiteName()} — your first steps`,
   },
   {
     step: 1,
@@ -67,8 +67,8 @@ export const ONBOARDING_SCHEDULE: OnboardingStep[] = [
   {
     step: 3,
     dayOffset: 7,
-    subjectEs: 'Tu primera semana en Tracciona — resumen',
-    subjectEn: 'Your first week on Tracciona — recap',
+    subjectEs: `Tu primera semana en ${getSiteName()} — resumen`,
+    subjectEn: `Your first week on ${getSiteName()} — recap`,
   },
   {
     step: 4,
@@ -123,14 +123,14 @@ export function buildOnboardingHtml(
     0: {
       heading: isEs ? `Bienvenido, ${dealerName}` : `Welcome, ${dealerName}`,
       body: isEs
-        ? `<p>Tu cuenta de anunciante está activa en Tracciona. Para empezar a recibir consultas, publica tu primer vehículo.</p>
+        ? `<p>Tu cuenta de anunciante está activa en ${getSiteName()}. Para empezar a recibir consultas, publica tu primer vehículo.</p>
 <ul style="text-align:left;padding-left:20px;color:#374151;">
   <li>Añade fotos de calidad (mínimo 4)</li>
   <li>Rellena precio, kilometraje y descripción</li>
   <li>Activa el contacto vía WhatsApp si tienes número</li>
 </ul>
 <p>El primer anuncio suele tardar menos de 10 minutos.</p>`
-        : `<p>Your dealer account is active on Tracciona. To start receiving enquiries, publish your first vehicle.</p>
+        : `<p>Your dealer account is active on ${getSiteName()}. To start receiving enquiries, publish your first vehicle.</p>
 <ul style="text-align:left;padding-left:20px;color:#374151;">
   <li>Add quality photos (minimum 4)</li>
   <li>Fill in price, mileage and description</li>
@@ -191,7 +191,7 @@ export function buildOnboardingHtml(
         ? `Tu primera semana — ¿cómo va todo, ${dealerName}?`
         : `Your first week — how is everything going, ${dealerName}?`,
       body: isEs
-        ? `<p>Ya llevas una semana en Tracciona. Algunos consejos para mejorar resultados:</p>
+        ? `<p>Ya llevas una semana en ${getSiteName()}. Algunos consejos para mejorar resultados:</p>
 <ul style="text-align:left;padding-left:20px;color:#374151;">
   <li>Responde las consultas en menos de <strong>2 horas</strong> (mejora tu tasa de respuesta)</li>
   <li>Actualiza los precios regularmente — los anuncios con precio actualizado tienen más visibilidad</li>
@@ -199,7 +199,7 @@ export function buildOnboardingHtml(
   <li>Revisa tus estadísticas para saber qué vehículos generan más interés</li>
 </ul>
 <p>Puedes ver todas tus métricas en el panel de estadísticas.</p>`
-        : `<p>You have been on Tracciona for a week now. Some tips to improve results:</p>
+        : `<p>You have been on ${getSiteName()} for a week now. Some tips to improve results:</p>
 <ul style="text-align:left;padding-left:20px;color:#374151;">
   <li>Reply to enquiries within <strong>2 hours</strong> (improves your response rate)</li>
   <li>Update prices regularly — listings with updated prices get more visibility</li>
@@ -212,10 +212,10 @@ export function buildOnboardingHtml(
     },
     4: {
       heading: isEs
-        ? `Dos semanas en Tracciona — maximiza tu visibilidad, ${dealerName}`
-        : `Two weeks on Tracciona — maximise your visibility, ${dealerName}`,
+        ? `Dos semanas en ${getSiteName()} — maximiza tu visibilidad, ${dealerName}`
+        : `Two weeks on ${getSiteName()} — maximise your visibility, ${dealerName}`,
       body: isEs
-        ? `<p>Los dealers con mejor rendimiento en Tracciona siguen estas prácticas:</p>
+        ? `<p>Los dealers con mejor rendimiento en ${getSiteName()} siguen estas prácticas:</p>
 <ul style="text-align:left;padding-left:20px;color:#374151;">
   <li><strong>Stock actualizado</strong> — eliminan los vendidos y añaden novedades rápido</li>
   <li><strong>Fotos profesionales</strong> — 8-12 fotos por vehículo, buena iluminación</li>
@@ -223,7 +223,7 @@ export function buildOnboardingHtml(
   <li><strong>Precios competitivos</strong> — comparan con el mercado antes de publicar</li>
 </ul>
 <p>¿Tienes dudas o necesitas ayuda? Responde este email o escríbenos directamente.</p>`
-        : `<p>The best-performing dealers on Tracciona follow these practices:</p>
+        : `<p>The best-performing dealers on ${getSiteName()} follow these practices:</p>
 <ul style="text-align:left;padding-left:20px;color:#374151;">
   <li><strong>Up-to-date stock</strong> — remove sold vehicles and add new ones quickly</li>
   <li><strong>Professional photos</strong> — 8-12 photos per vehicle, good lighting</li>
@@ -291,7 +291,7 @@ export function buildOnboardingHtml(
               text-align:center;font-size:12px;color:#9ca3af;">
               <p style="margin:0 0 4px;">
                 ${isEs ? 'Recibes este email porque eres anunciante en' : 'You receive this email because you are a dealer on'}
-                <a href="${siteUrl}" style="color:#9ca3af;text-decoration:underline;">Tracciona</a>.
+                <a href="${siteUrl}" style="color:#9ca3af;text-decoration:underline;">${getSiteName()}</a>.
               </p>
               <p style="margin:0;">
                 <a href="${dashboardUrl}" style="color:#9ca3af;text-decoration:underline;">
@@ -316,6 +316,7 @@ export function buildOnboardingHtml(
  */
 export async function getPendingDealers(supabase: SupabaseClient): Promise<DealerRow[]> {
   const cutoff = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any)
     .from('dealers')
     .select('id, user_id, company_name, email, created_at, locale')
@@ -334,6 +335,7 @@ export async function getPendingDealers(supabase: SupabaseClient): Promise<Deale
  * Fetch already-sent steps for a dealer.
  */
 export async function getSentSteps(supabase: SupabaseClient, dealerId: string): Promise<number[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data } = await (supabase as any)
     .from('dealer_onboarding_emails')
     .select('step')
@@ -350,6 +352,7 @@ export async function markStepSent(
   dealerId: string,
   step: number,
 ): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (supabase as any)
     .from('dealer_onboarding_emails')
     .upsert({ dealer_id: dealerId, step, sent_at: new Date().toISOString() })
@@ -361,6 +364,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
   const siteUrl = getSiteUrl()
   const runtimeConfig = useRuntimeConfig()
@@ -383,6 +387,7 @@ export default defineEventHandler(async (event) => {
   const batchResult = await processBatch({
     items: dealers,
     batchSize: 50,
+    delayBetweenBatchesMs: 5000,
     processor: async (dealer: DealerRow) => {
       // Compute days since registration
       const createdAt = dealer.created_at ? new Date(dealer.created_at).getTime() : now

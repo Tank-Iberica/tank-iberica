@@ -19,7 +19,7 @@ import { logger } from './logger'
  * @param windowMs  Lock window in milliseconds (default: 1 hour)
  * @returns true if lock acquired (safe to proceed), false if already ran in this window
  */
-export async function acquireCronLock(
+export async function acquireDbCronLock(
   supabase: SupabaseClient,
   cronName: string,
   windowMs = 60 * 60 * 1000,
@@ -42,7 +42,9 @@ export async function acquireCronLock(
       return false
     }
     // Other DB errors → proceed rather than block cron on infrastructure issues
-    logger.warn(`[cronLock] Lock acquisition failed for ${cronName}: ${error.message} — proceeding anyway`)
+    logger.warn(
+      `[cronLock] Lock acquisition failed for ${cronName}: ${error.message} — proceeding anyway`,
+    )
   }
 
   return true

@@ -80,6 +80,7 @@ export default defineEventHandler(async (event) => {
   const result = await processBatch({
     items: typedVehicles,
     batchSize: 50,
+    delayBetweenBatchesMs: 5000,
     processor: async (vehicle: SoldVehicle) => {
       const { data: favorites, error: favsError } = await supabase
         .from('favorites')
@@ -87,7 +88,9 @@ export default defineEventHandler(async (event) => {
         .eq('vehicle_id', vehicle.id)
 
       if (favsError) {
-        logger.error(`[favorite-sold] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`)
+        logger.error(
+          `[favorite-sold] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`,
+        )
         return
       }
 

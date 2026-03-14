@@ -10,7 +10,7 @@ import { defineEventHandler, readBody } from 'h3'
 import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
-import { acquireCronLock } from '../../utils/cronLock'
+import { acquireDbCronLock } from '../../utils/cronLock'
 import { processBatch } from '../../utils/batchProcessor'
 import { logger } from '../../utils/logger'
 
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
   const supabase = serverSupabaseServiceRole(event)
 
   // Cron lock — prevent duplicate weekly emails if scheduler fires twice in the same hour
-  if (!(await acquireCronLock(supabase, 'dealer-weekly-stats'))) {
+  if (!(await acquireDbCronLock(supabase, 'dealer-weekly-stats'))) {
     return { skipped: true, reason: 'already_ran_in_window', timestamp: new Date().toISOString() }
   }
 
@@ -80,6 +80,7 @@ export default defineEventHandler(async (event) => {
   const result = await processBatch({
     items: typedDealers,
     batchSize: 50,
+    delayBetweenBatchesMs: 5000,
     processor: async (dealer: DealerRow) => {
       dealersProcessed++
 

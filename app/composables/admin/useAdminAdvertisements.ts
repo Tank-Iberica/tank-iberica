@@ -259,7 +259,7 @@ export function useAdminAdvertisements() {
     try {
       const { count, error: err } = await supabase
         .from('advertisements')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .eq('status', 'pending')
 
       if (err) throw err

@@ -164,6 +164,7 @@ export default defineEventHandler(async (event) => {
   const result = await processBatch({
     items: eligibleAlerts,
     batchSize: 50,
+    delayBetweenBatchesMs: 5000,
     processor: async (alert: SearchAlertRow) => {
       alertsProcessed++
 

@@ -34,7 +34,12 @@ const displayRating = computed(() => hoverRating.value || rating.value)
   <form class="review-form" novalidate @submit.prevent="handleSubmit">
     <div class="form-group">
       <label class="form-label">{{ t('vehicle.reviews.ratingLabel') }}</label>
-      <div class="star-picker" :class="{ 'star-picker--error': ratingError }" role="radiogroup" :aria-label="t('vehicle.reviews.ratingLabel')">
+      <div
+        class="star-picker"
+        :class="{ 'star-picker--error': ratingError }"
+        role="radiogroup"
+        :aria-label="t('vehicle.reviews.ratingLabel')"
+      >
         <button
           v-for="i in 5"
           :key="i"
@@ -64,6 +69,7 @@ const displayRating = computed(() => hoverRating.value || rating.value)
         id="review-comment"
         v-model="comment"
         class="form-textarea"
+        autocomplete="off"
         :placeholder="t('vehicle.reviews.commentPlaceholder')"
         rows="3"
         maxlength="500"

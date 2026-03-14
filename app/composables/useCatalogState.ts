@@ -3,8 +3,7 @@ import { useState } from '#imports'
 import type { VehicleFilters } from './useVehicles'
 import type { LocationLevel } from '~/utils/geoData'
 import { getCountriesForLevel, getRegionsForLevel } from '~/utils/geoData'
-
-export type VehicleAction = 'alquiler' | 'venta' | 'terceros'
+import type { VehicleAction } from '~~/shared/types/vehicle'
 
 export type SortOption =
   | 'recommended'

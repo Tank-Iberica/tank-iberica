@@ -13,6 +13,7 @@
 **Está PROHIBIDO llamar cualquier herramienta (Read, Glob, Grep, Bash, Task, Edit, Write) hasta que el usuario haya confirmado TANTO la tarea (Paso 2) COMO el modelo (Paso 3). El único output permitido antes de ambas confirmaciones es texto plano al usuario. CERO excepciones. Si violas esto, estás violando el protocolo.**
 
 Esto significa:
+
 - Tras Paso 2 ("¿Es correcto?") → ESPERA respuesta. No hagas nada más.
 - Tras Paso 3 ("¿Cambio modelo?") → ESPERA respuesta. No hagas nada más.
 - Solo cuando el usuario confirma AMBOS → Paso 4, empieza a trabajar.
@@ -48,11 +49,11 @@ UN RESUMEN DE UNA LÍNEA con conclusiones del Paso 1. Termina con "¿Es correcto
 
 ### Paso 3 — Recomienda modelo y ESPERA
 
-| Tipo | Modelo | Ejemplos |
-|---|---|---|
-| Simple | **Haiku** | Correcciones, listar archivos, renombrar, consultas rápidas |
-| Intermedia | **Sonnet** | Componentes, bugs, refactoring, features |
-| Compleja | **Opus** | Auditorías, arquitectura, migraciones, análisis profundo |
+| Tipo       | Modelo     | Ejemplos                                                    |
+| ---------- | ---------- | ----------------------------------------------------------- |
+| Simple     | **Haiku**  | Correcciones, listar archivos, renombrar, consultas rápidas |
+| Intermedia | **Sonnet** | Componentes, bugs, refactoring, features                    |
+| Compleja   | **Opus**   | Auditorías, arquitectura, migraciones, análisis profundo    |
 
 Mensaje EXACTO: "Para esta tarea recomiendo **[modelo]** porque [razón]. ¿Cambio con /model o mantengo?"
 
@@ -98,10 +99,10 @@ Solo tras confirmar tarea (Paso 2) Y modelo (Paso 3), empieza a trabajar.
 
 GitHub Actions crea issues cada trimestre (1-ene, 1-abr, 1-jul, 1-oct).
 
-| Tarea | Documentación |
-|---|---|
+| Tarea                  | Documentación                     |
+| ---------------------- | --------------------------------- |
 | **Auditoría completa** | `referencia/AUDIT-METHODOLOGY.md` |
-| **Restore Drill** | `referencia/DISASTER-RECOVERY.md` |
+| **Restore Drill**      | `referencia/DISASTER-RECOVERY.md` |
 
 Cuando veas la issue → conecta Claude Code → copia texto → se guía paso a paso.
 
@@ -115,42 +116,42 @@ STATUS.md se lee SIEMPRE al inicio. El resto bajo demanda tras confirmar tarea e
 
 **REGLA — No releer sin motivo:** En una misma sesión, no releer documentos largos que ya se leyeron si no han cambiado. Usar el resumen en memoria de sesión. Releer solo si: (a) se detectó un cambio en el archivo, o (b) es una validación final crítica.
 
-| Tipo de tarea | Lee también |
-|---|---|
-| Bug fix / error | Código relevante |
-| Feature monetización | `ESTRATEGIA-NEGOCIO.md` + `BACKLOG-EJECUTABLE.md` (bloque) |
-| Componente / página | `PROYECTO-CONTEXTO.md` §4 + `CONTRIBUTING.md` |
-| Migración / BD | `referencia/ERD.md` + `referencia/INVENTARIO-ENDPOINTS.md` |
-| SEO / landings | `PROYECTO-CONTEXTO.md` §5.1 + `BACKLOG-EJECUTABLE.md` Bloque 3 |
-| Anti-fraude / seguridad | `ESTRATEGIA-NEGOCIO.md` §2.12 + `referencia/SECURITY-TESTING.md` |
-| Marketing / contenido | `ESTRATEGIA-NEGOCIO.md` §3 + `BACKLOG-EJECUTABLE.md` Bloque 7 |
-| Arquitectura / multi-vertical | `PROYECTO-CONTEXTO.md` completo + `referencia/ARQUITECTURA-ESCALABILIDAD.md` |
-| Auditoría | `auditorias/AUDITORIA-26-FEBRERO.md` + `referencia/AUDIT-METHODOLOGY.md` |
-| Estrategia / dirección | `PROYECTO-CONTEXTO.md` + `ESTRATEGIA-NEGOCIO.md` |
-| Backlog / planificación | `BACKLOG-EJECUTABLE.md` |
-| Infra / DR / secrets | `referencia/DISASTER-RECOVERY.md`, `SECRETS-ROTATION.md`, `CLOUDFLARE-WAF-CONFIG.md` |
-| GDPR / legal | `legal/RAT-BORRADOR.md` + `referencia/DATA-RETENTION.md` |
-| No sé qué tipo | `PROYECTO-CONTEXTO.md` completo |
+| Tipo de tarea                 | Lee también                                                                          |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
+| Bug fix / error               | Código relevante                                                                     |
+| Feature monetización          | `ESTRATEGIA-NEGOCIO.md` + `BACKLOG-EJECUTABLE.md` (bloque)                           |
+| Componente / página           | `PROYECTO-CONTEXTO.md` §4 + `CONTRIBUTING.md`                                        |
+| Migración / BD                | `referencia/ERD.md` + `referencia/INVENTARIO-ENDPOINTS.md`                           |
+| SEO / landings                | `PROYECTO-CONTEXTO.md` §5.1 + `BACKLOG-EJECUTABLE.md` Bloque 3                       |
+| Anti-fraude / seguridad       | `ESTRATEGIA-NEGOCIO.md` §2.12 + `referencia/SECURITY-TESTING.md`                     |
+| Marketing / contenido         | `ESTRATEGIA-NEGOCIO.md` §3 + `BACKLOG-EJECUTABLE.md` Bloque 7                        |
+| Arquitectura / multi-vertical | `PROYECTO-CONTEXTO.md` completo + `referencia/ARQUITECTURA-ESCALABILIDAD.md`         |
+| Auditoría                     | `auditorias/AUDITORIA-26-FEBRERO.md` + `referencia/AUDIT-METHODOLOGY.md`             |
+| Estrategia / dirección        | `PROYECTO-CONTEXTO.md` + `ESTRATEGIA-NEGOCIO.md`                                     |
+| Backlog / planificación       | `BACKLOG-EJECUTABLE.md`                                                              |
+| Infra / DR / secrets          | `referencia/DISASTER-RECOVERY.md`, `SECRETS-ROTATION.md`, `CLOUDFLARE-WAF-CONFIG.md` |
+| GDPR / legal                  | `legal/RAT-BORRADOR.md` + `referencia/DATA-RETENTION.md`                             |
+| No sé qué tipo                | `PROYECTO-CONTEXTO.md` completo                                                      |
 
 ## Documentación — Índice
 
-| Documento | Función |
-|---|---|
-| `docs/README.md` | Mapa documental actual y rutas canónicas |
-| `STATUS.md` | Estado actual: métricas, errores, changelog |
-| `docs/PROYECTO-CONTEXTO.md` | Maestro: visión, arquitectura, decisiones |
-| `docs/ESTRATEGIA-NEGOCIO.md` | Monetización, pricing, go-to-market, datos |
-| `docs/IDEAS-A-REVISAR.md` | 103+ ideas (brainstorming, NO backlog) |
-| `docs/tracciona-docs/BACKLOG-EJECUTABLE.md` | **Única fuente de verdad** trabajo pendiente (116 items) |
-| `docs/MANUAL-CORPORATIVO-Y-OPERATIVO.md` | Snapshot corporativo (no mantener sesión a sesión) |
-| `docs/auditorias/AUDITORIA-26-FEBRERO.md` | Auditoría canónica (~83/100) |
-| `docs/legal/RAT-BORRADOR.md` | Borrador GDPR RAT |
-| `docs/tracciona-docs/referencia/` | Técnicos: ERD, endpoints, crons, seguridad, DR, WAF |
-| `docs/tracciona-docs/PLAN-MAESTRO-10-DE-10.md` | Plan maestro técnico y lotes de mejora |
-| `README.md` | Stack, estructura, comandos |
-| `CONTRIBUTING.md` | Convenciones, workflow git |
-| `CHANGELOG.md` | Historial versiones |
-| `docs/legacy/` | 30+ docs obsoletos (solo referencia) |
+| Documento                                      | Función                                                                                   |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `docs/README.md`                               | Mapa documental actual y rutas canónicas                                                  |
+| `STATUS.md`                                    | Estado actual: métricas, errores, changelog                                               |
+| `docs/PROYECTO-CONTEXTO.md`                    | Maestro: visión, arquitectura, decisiones                                                 |
+| `docs/ESTRATEGIA-NEGOCIO.md`                   | Monetización, pricing, go-to-market, datos                                                |
+| `docs/IDEAS-A-REVISAR.md`                      | 103+ ideas (brainstorming, NO backlog)                                                    |
+| `docs/tracciona-docs/BACKLOG-EJECUTABLE.md`    | **Única fuente de verdad** trabajo pendiente (~268 items, incluye Plan Maestro fusionado) |
+| `docs/MANUAL-CORPORATIVO-Y-OPERATIVO.md`       | Snapshot corporativo (no mantener sesión a sesión)                                        |
+| `docs/auditorias/AUDITORIA-26-FEBRERO.md`      | Auditoría canónica (~83/100)                                                              |
+| `docs/legal/RAT-BORRADOR.md`                   | Borrador GDPR RAT                                                                         |
+| `docs/tracciona-docs/referencia/`              | Técnicos: ERD, endpoints, crons, seguridad, DR, WAF                                       |
+| `docs/tracciona-docs/PLAN-MAESTRO-10-DE-10.md` | ~~Plan maestro~~ → FUSIONADO en BACKLOG-EJECUTABLE.md                                     |
+| `README.md`                                    | Stack, estructura, comandos                                                               |
+| `CONTRIBUTING.md`                              | Convenciones, workflow git                                                                |
+| `CHANGELOG.md`                                 | Historial versiones                                                                       |
+| `docs/legacy/`                                 | 30+ docs obsoletos (solo referencia)                                                      |
 
 **Reglas críticas:**
 
@@ -238,7 +239,7 @@ NUNCA lanzar Node sin `taskkill` previo.
 
 - Errores resueltos → ELIMINAR (git preserva historial)
 - Sesión nueva → 1 línea changelog
-- >10 entradas → comprimir antiguas
+- > 10 entradas → comprimir antiguas
 - No duplicar tablas de PROYECTO-CONTEXTO.md
 - STATUS.md = estado actual. `git log STATUS.md` = historial.
 

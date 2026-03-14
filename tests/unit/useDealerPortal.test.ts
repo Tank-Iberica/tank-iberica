@@ -24,17 +24,29 @@ const sampleDealer = {
     working_hours: { es: 'L-V 9-18', en: 'M-F 9-18' },
     cta_text: { es: 'Contactar', en: 'Contact' },
   },
-  social_links: { linkedin: 'https://linkedin.com/in/test', instagram: '', facebook: '', youtube: '' },
+  social_links: {
+    linkedin: 'https://linkedin.com/in/test',
+    instagram: '',
+    facebook: '',
+    youtube: '',
+  },
   certifications: [],
   catalog_sort: 'newest',
   auto_reply_message: { es: '', en: '' },
-  notification_config: { email_on_lead: true, email_on_sale: false, email_weekly_stats: true, email_auction_updates: false },
+  notification_config: {
+    email_on_lead: true,
+    email_on_sale: false,
+    email_weekly_stats: true,
+    email_auction_updates: false,
+  },
   brokerage_opt_out: false,
 }
 
 function makeChain(data: unknown = null, error: unknown = null) {
   const chain: Record<string, unknown> = {}
-  ;['eq', 'order', 'select', 'update', 'insert', 'maybeSingle', 'single'].forEach((m) => { chain[m] = () => chain })
+  ;['eq', 'order', 'select', 'update', 'insert', 'maybeSingle', 'single'].forEach((m) => {
+    chain[m] = () => chain
+  })
   const resolved = { data, error }
   chain.then = (resolve: (v: unknown) => void) => Promise.resolve(resolved).then(resolve)
   chain.catch = (reject: (e: unknown) => void) => Promise.resolve(resolved).catch(reject)
@@ -46,9 +58,20 @@ beforeEach(() => {
   mockUser.value = { id: 'user-1', email: 'user@test.com' }
   vi.stubGlobal('ref', (v: unknown) => {
     let _v = v
-    return { get value() { return _v }, set value(x) { _v = x } }
+    return {
+      get value() {
+        return _v
+      },
+      set value(x) {
+        _v = x
+      },
+    }
   })
-  vi.stubGlobal('computed', (fn: () => unknown) => ({ get value() { return fn() } }))
+  vi.stubGlobal('computed', (fn: () => unknown) => ({
+    get value() {
+      return fn()
+    },
+  }))
   vi.stubGlobal('useSupabaseUser', () => mockUser)
   vi.stubGlobal('useSupabaseClient', () => ({
     from: () => makeChain(sampleDealer),
@@ -141,13 +164,14 @@ describe('loadPortal', () => {
     expect(c.loading.value).toBe(false)
   })
 
-  it('sets error when dealer not found', async () => {
+  it('sets needsProfile when dealer not found', async () => {
     vi.stubGlobal('useSupabaseClient', () => ({
       from: () => makeChain(null, { message: 'not found' }),
     }))
     const c = useDealerPortal()
     await c.loadPortal()
-    expect(c.error.value).toBeTruthy()
+    // Source sets needsProfile=true instead of error when dealer not found
+    expect(c.needsProfile.value).toBe(true)
   })
 })
 

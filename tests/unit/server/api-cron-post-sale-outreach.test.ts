@@ -58,6 +58,7 @@ vi.mock('../../../server/utils/batchProcessor', () => ({
 vi.mock('../../../server/utils/siteConfig', () => ({
   getSiteUrl: () => 'https://tracciona.com',
   getSiteName: () => 'Tracciona',
+  getSiteEmail: () => 'hola@tracciona.com',
 }))
 
 vi.mock('../../../server/utils/logger', () => ({ logger: mockLogger }))

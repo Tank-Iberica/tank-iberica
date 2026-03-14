@@ -3,7 +3,11 @@ import { z } from 'zod'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
-import { getIdempotencyKey, checkIdempotency, storeIdempotencyResponse } from '../../utils/idempotency'
+import {
+  getIdempotencyKey,
+  checkIdempotency,
+  storeIdempotencyResponse,
+} from '../../utils/idempotency'
 import { getVatRate } from '../../utils/vatRates'
 
 const invoiceRequestSchema = z.object({
@@ -88,13 +92,13 @@ export default defineEventHandler(async (event) => {
           currency: body.currency || 'EUR',
           items: [
             {
-              description: body.description || `Tracciona ${body.serviceType}`,
+              description: body.description || `${getSiteName()} ${body.serviceType}`,
               quantity: 1,
               unit_price: (body.amountCents / 100).toFixed(2),
             },
           ],
           payment_method: 'credit_card',
-          tag_list: [body.serviceType, 'tracciona'],
+          tag_list: [body.serviceType, getSiteName().toLowerCase()],
         }),
       })
 
@@ -142,7 +146,12 @@ export default defineEventHandler(async (event) => {
   }
 
   if (idempotencyKey) {
-    await storeIdempotencyResponse(supabase, idempotencyKey, 'POST /api/invoicing/create-invoice', response)
+    await storeIdempotencyResponse(
+      supabase,
+      idempotencyKey,
+      'POST /api/invoicing/create-invoice',
+      response,
+    )
   }
 
   return response

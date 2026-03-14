@@ -5,6 +5,7 @@ import { describe, it, expect, vi } from 'vitest'
 
 vi.mock('~/composables/useAuction', () => ({
   formatCents: (cents: number) => `${(cents / 100).toLocaleString('es-ES')} €`,
+  formatAuctionCents: (cents: number) => `${(cents / 100).toLocaleString('es-ES')} €`,
 }))
 
 import { shallowMount } from '@vue/test-utils'
@@ -35,7 +36,10 @@ describe('SubastasAuctionCard', () => {
         mocks: { $t: (k: string) => k },
         stubs: {
           NuxtLink: { template: '<a :href="to"><slot /></a>', props: ['to'] },
-          NuxtImg: { template: '<img :src="src" :alt="alt" />', props: ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'sizes'] },
+          NuxtImg: {
+            template: '<img :src="src" :alt="alt" />',
+            props: ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'sizes'],
+          },
         },
       },
     })
@@ -49,7 +53,9 @@ describe('SubastasAuctionCard', () => {
   })
 
   it('shows image', () => {
-    expect(factory().find('.auction-card-image img').attributes('src')).toBe('https://img.com/1.jpg')
+    expect(factory().find('.auction-card-image img').attributes('src')).toBe(
+      'https://img.com/1.jpg',
+    )
   })
 
   it('shows placeholder when no image', () => {

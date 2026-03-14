@@ -39,6 +39,9 @@ export default defineEventHandler((event) => {
 
   const headers = event.node.res
 
+  // Guard: headers may already be sent (e.g. streaming responses in dev mode)
+  if (headers.headersSent) return
+
   // Content-Security-Policy
   const csp = [
     "default-src 'self'",
@@ -46,7 +49,7 @@ export default defineEventHandler((event) => {
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://challenges.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com",
     // unsafe-inline: Vue scoped styles + Nuxt SSR inline styles
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://res.cloudinary.com https://*.supabase.co https://flagcdn.com https://www.google-analytics.com https://www.googletagmanager.com",
+    "img-src 'self' data: blob: https://res.cloudinary.com https://*.supabase.co https://flagcdn.com https://*.googleusercontent.com https://*.usercontent.google.com https://www.google-analytics.com https://www.googletagmanager.com",
     "font-src 'self' https://fonts.gstatic.com",
     "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://challenges.cloudflare.com https://www.google-analytics.com https://api.cloudflare.com",
     'frame-src https://js.stripe.com https://challenges.cloudflare.com',
@@ -58,11 +61,16 @@ export default defineEventHandler((event) => {
   ].join('; ')
 
   headers.setHeader('Content-Security-Policy', csp)
+  // Reporting-Endpoints (new standard, complements deprecated report-uri for CSP)
+  headers.setHeader('Reporting-Endpoints', 'csp="/api/infra/csp-report"')
   headers.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
   headers.setHeader('X-Content-Type-Options', 'nosniff')
   headers.setHeader('X-Frame-Options', 'DENY')
   headers.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
-  headers.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), usb=(), payment=(), display-capture=()')
+  headers.setHeader(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(self), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), usb=(), payment=(), display-capture=()',
+  )
   // Cross-Origin headers for additional isolation
   headers.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
   headers.setHeader('Cross-Origin-Resource-Policy', 'same-origin')

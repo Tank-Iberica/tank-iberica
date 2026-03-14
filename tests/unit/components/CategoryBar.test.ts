@@ -3,14 +3,18 @@
  */
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const mockSetActions = vi.fn()
 
 beforeAll(() => {
   vi.stubGlobal('ref', ref)
+  vi.stubGlobal('computed', computed)
   vi.stubGlobal('useCatalogState', () => ({
     setActions: mockSetActions,
+  }))
+  vi.stubGlobal('useVerticalConfig', () => ({
+    config: ref(null),
   }))
   vi.stubGlobal('onMounted', vi.fn())
   vi.stubGlobal('onUnmounted', vi.fn())

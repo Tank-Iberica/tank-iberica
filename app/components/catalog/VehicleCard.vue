@@ -101,6 +101,11 @@
         {{ priceText }}
       </span>
 
+      <!-- Top-rated badge (#54) -->
+      <span v-if="dealerTier === 'top'" class="badge-top-rated">
+        {{ $t('catalog.topRatedBadge') }}
+      </span>
+
       <!-- Category badge (bottom-left) -->
       <span class="badge-category">
         {{ $t(`catalog.${vehicle.category}`) }}
@@ -135,7 +140,7 @@
         {{ $t('catalog.tercerosDisclaimer') }}
       </div>
       <div class="title-badge-row">
-        <h3 ref="titleRef" class="product-title">{{ buildProductName(vehicle, locale, true) }}</h3>
+        <h3 class="product-title">{{ buildProductName(vehicle, locale, true) }}</h3>
         <SharedDealerTrustBadge v-if="dealerTier" :tier="dealerTier" />
       </div>
       <div v-if="hasSpecs" class="product-specs">
@@ -218,33 +223,7 @@ const hasSpecs = computed(() => {
   return props.vehicle.year || props.vehicle.rental_price
 })
 
-// Title auto-fit: measure rendered width and adjust font-size to fill the card
-const titleRef = ref<HTMLElement | null>(null)
-
-function adjustTitleSize() {
-  const el = titleRef.value
-  if (!el) return
-
-  // Start at max size and shrink until it fits
-  let size = 20
-  el.style.fontSize = `${size}px`
-
-  // Read layout (triggers synchronous reflow)
-  while (el.scrollWidth > el.clientWidth && size > 11) {
-    size--
-    el.style.fontSize = `${size}px`
-  }
-}
-
-onMounted(() => {
-  nextTick(adjustTitleSize)
-})
-watch(
-  () => [props.vehicle.id, locale.value],
-  () => {
-    nextTick(adjustTitleSize)
-  },
-)
+// #219: Title sizing handled by CSS (text-overflow: ellipsis) instead of JS reflow loop
 
 const highlightClass = computed(() => {
   const s = props.vehicle.highlight_style
@@ -424,6 +403,24 @@ function nextImage() {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Top-rated badge — gold star on image (#54) */
+.badge-top-rated {
+  position: absolute;
+  top: 0;
+  left: 2.75rem;
+  background: linear-gradient(135deg, #d4af37 0%, #b8962e 100%);
+  color: var(--color-white);
+  padding: 0.35rem 0.7rem;
+  font-size: var(--font-size-2xs, 0.6875rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.031rem;
+  border-bottom-right-radius: var(--border-radius-sm);
+  border-bottom-left-radius: var(--border-radius-sm);
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(212, 175, 55, 0.4);
+}
+
 .badge-category {
   position: absolute;
   bottom: 0;
@@ -503,9 +500,11 @@ function nextImage() {
   color: var(--color-primary);
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   max-width: 100%;
   line-height: 1.35;
-  font-size: var(--font-size-md); /* default, overridden by JS adjustTitleSize */
+  font-size: clamp(0.75rem, 2.5vw, 1.25rem);
 }
 
 /* Specs grid — 3 columns matching legacy */

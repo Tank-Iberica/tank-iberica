@@ -87,5 +87,57 @@ export function useVerticalConfig() {
     return config.value?.default_currency || 'EUR'
   }
 
-  return { config, loadConfig, applyTheme, isSectionActive, isLocaleActive, isActionActive, getCurrency }
+  /**
+   * Get a vertical-specific localized term.
+   * Falls back to i18n defaults if vertical_config.terms is not set.
+   *
+   * Usage: localizedTerm('product', 'singular') → "vehículo" (for Tracciona ES)
+   *                                              → "equipo" (for Horecaria ES)
+   */
+  function localizedTerm(
+    key: string,
+    form: 'singular' | 'plural' = 'singular',
+    locale?: string,
+  ): string {
+    const loc = locale || (useI18n?.().locale?.value ?? 'es')
+
+    // Try reading from vertical_config.terms JSONB
+    const terms = (config.value as Record<string, unknown>)?.terms as
+      | Record<string, Record<string, Record<string, string>>>
+      | undefined
+
+    if (terms?.[key]?.[form]?.[loc]) {
+      return terms[key]![form]![loc]!
+    }
+
+    // Defaults per vertical
+    const defaults: Record<string, Record<string, Record<string, Record<string, string>>>> = {
+      tracciona: {
+        product: {
+          singular: { es: 'vehículo', en: 'vehicle' },
+          plural: { es: 'vehículos', en: 'vehicles' },
+        },
+      },
+      horecaria: {
+        product: {
+          singular: { es: 'equipo', en: 'equipment' },
+          plural: { es: 'equipos', en: 'equipment' },
+        },
+      },
+    }
+
+    const slug = getVerticalSlug()
+    return defaults[slug]?.[key]?.[form]?.[loc] ?? defaults.tracciona?.[key]?.[form]?.[loc] ?? key
+  }
+
+  return {
+    config,
+    loadConfig,
+    applyTheme,
+    isSectionActive,
+    isLocaleActive,
+    isActionActive,
+    getCurrency,
+    localizedTerm,
+  }
 }

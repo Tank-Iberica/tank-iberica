@@ -2,10 +2,7 @@
   <div class="auctions-page">
     <div class="auctions-container">
       <UiBreadcrumbNav
-        :items="[
-          { label: $t('nav.home'), to: '/' },
-          { label: $t('nav.subastas') },
-        ]"
+        :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('nav.subastas') }]"
       />
       <h1 class="auctions-title">{{ $t('auction.pageTitle') }}</h1>
 
@@ -27,7 +24,7 @@
       <SubastasEmpty v-else-if="auctions.length === 0" :message="emptyMessage" />
 
       <!-- Auction grid -->
-      <div v-else class="auctions-grid">
+      <TransitionGroup v-else name="list" tag="div" class="auctions-grid">
         <SubastasAuctionCard
           v-for="item in auctions"
           :key="item.id"
@@ -37,7 +34,7 @@
           :status-label="getStatusLabel(item.status)"
           :countdown="getCardCountdown(item)"
         />
-      </div>
+      </TransitionGroup>
     </div>
   </div>
 </template>
@@ -68,6 +65,9 @@ const {
   getStatusLabel,
   getCardCountdown,
 } = useSubastasIndex()
+
+// SSR: fetch initial auctions server-side for SEO + faster paint
+await useAsyncData('subastas-list', () => loadTab(), { server: true })
 
 onMounted(init)
 onUnmounted(destroy)
@@ -134,5 +134,25 @@ onUnmounted(destroy)
   .auctions-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+
+/* ── List transitions ── */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease;
+}
+
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(1rem);
+}
+
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.list-move {
+  transition: transform 0.3s ease;
 }
 </style>

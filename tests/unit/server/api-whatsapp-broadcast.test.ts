@@ -35,6 +35,8 @@ vi.mock('~~/server/utils/logger', () => ({
 
 vi.mock('~~/server/utils/siteConfig', () => ({
   getSiteUrl: () => 'https://tracciona.com',
+  getSiteName: () => 'Tracciona',
+  getSiteEmail: () => 'hola@tracciona.com',
 }))
 
 const mockFetch = vi.fn()

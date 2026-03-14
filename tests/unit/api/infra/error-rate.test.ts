@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
+const { mockServiceRole } = vi.hoisted(() => ({
+  mockServiceRole: vi.fn(),
+}))
+vi.mock('#supabase/server', () => ({
+  serverSupabaseServiceRole: mockServiceRole,
+}))
+
 describe('GET /api/infra/error-rate', () => {
   let handler: Function
   let mockEvent: any
@@ -9,7 +16,6 @@ describe('GET /api/infra/error-rate', () => {
     vi.stubGlobal('defineEventHandler', (fn: Function) => fn)
     vi.stubGlobal('useRuntimeConfig', () => ({ cronSecret: 'test-secret' }))
     vi.stubGlobal('getHeader', vi.fn())
-    vi.stubGlobal('useSupabaseServer', vi.fn())
     vi.stubGlobal('createError', (opts: any) => new Error(opts.statusMessage))
     vi.stubGlobal('logger', { warn: vi.fn(), error: vi.fn() })
 
@@ -19,6 +25,7 @@ describe('GET /api/infra/error-rate', () => {
       gte: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
     }
+    mockServiceRole.mockReturnValue(mockDb)
 
     mockEvent = {
       node: { req: { headers: {} } },
@@ -52,8 +59,7 @@ describe('GET /api/infra/error-rate', () => {
     vi.stubGlobal('getHeader', getHeaderMock)
 
     mockDb.order.mockResolvedValue({ data: [], error: null })
-    const useSupaMock = vi.fn().mockReturnValue(mockDb)
-    vi.stubGlobal('useSupabaseServer', useSupaMock)
+    mockServiceRole.mockReturnValue(mockDb)
 
     const result = await handler(mockEvent)
 
@@ -72,8 +78,7 @@ describe('GET /api/infra/error-rate', () => {
 
     const mockErrors = Array(5).fill({ id: 1, status_code: 500 })
     mockDb.order.mockResolvedValue({ data: mockErrors, error: null })
-    const useSupaMock = vi.fn().mockReturnValue(mockDb)
-    vi.stubGlobal('useSupabaseServer', useSupaMock)
+    mockServiceRole.mockReturnValue(mockDb)
 
     const result = await handler(mockEvent)
 
@@ -90,8 +95,7 @@ describe('GET /api/infra/error-rate', () => {
     // 50 errors out of 100 = 50%
     const mockErrors = Array(50).fill({ id: 1, status_code: 500 })
     mockDb.order.mockResolvedValue({ data: mockErrors, error: null })
-    const useSupaMock = vi.fn().mockReturnValue(mockDb)
-    vi.stubGlobal('useSupabaseServer', useSupaMock)
+    mockServiceRole.mockReturnValue(mockDb)
 
     const result = await handler(mockEvent)
 
@@ -108,14 +112,13 @@ describe('GET /api/infra/error-rate', () => {
 
     const mockErrors = Array(50).fill({ id: 1, status_code: 500 })
     mockDb.order.mockResolvedValue({ data: mockErrors, error: null })
-    const useSupaMock = vi.fn().mockReturnValue(mockDb)
-    vi.stubGlobal('useSupabaseServer', useSupaMock)
+    mockServiceRole.mockReturnValue(mockDb)
 
     await handler(mockEvent)
 
     expect(loggerMock.warn).toHaveBeenCalledWith(
       expect.stringContaining('Error rate ALERT'),
-      expect.any(Object)
+      expect.any(Object),
     )
   })
 
@@ -128,8 +131,7 @@ describe('GET /api/infra/error-rate', () => {
 
     const dbError = { code: 'ERROR_CODE', message: 'DB error' }
     mockDb.order.mockResolvedValue({ data: [], error: dbError })
-    const useSupaMock = vi.fn().mockReturnValue(mockDb)
-    vi.stubGlobal('useSupabaseServer', useSupaMock)
+    mockServiceRole.mockReturnValue(mockDb)
 
     const result = await handler(mockEvent)
 
@@ -143,8 +145,7 @@ describe('GET /api/infra/error-rate', () => {
     vi.stubGlobal('getHeader', getHeaderMock)
 
     mockDb.order.mockResolvedValue({ data: [], error: null })
-    const useSupaMock = vi.fn().mockReturnValue(mockDb)
-    vi.stubGlobal('useSupabaseServer', useSupaMock)
+    mockServiceRole.mockReturnValue(mockDb)
 
     const result = await handler(mockEvent)
 

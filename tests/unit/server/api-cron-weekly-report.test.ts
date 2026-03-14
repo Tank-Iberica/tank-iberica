@@ -46,18 +46,25 @@ function makeChain(data: unknown = [], extra: Record<string, unknown> = {}) {
   return chain
 }
 
-function stubSupabase(opts: {
-  alerts?: unknown[]
-  deadCount?: number
-  vehicleCount?: number
-  publishedCount?: number
-  dealerCount?: number
-  searchCount?: number
-  viewCount?: number
-  contactCount?: number
-  latency?: unknown[]
-} = {}) {
+function stubSupabase(
+  opts: {
+    alerts?: unknown[]
+    deadCount?: number
+    vehicleCount?: number
+    publishedCount?: number
+    newVehicleCount?: number
+    dealerCount?: number
+    activeDealerCount?: number
+    leadsCount?: number
+    payments?: unknown[]
+    searchCount?: number
+    viewCount?: number
+    contactCount?: number
+    latency?: unknown[]
+  } = {},
+) {
   let vehicleCall = 0
+  let dealerCall = 0
   let analyticsCall = 0
   mockSupabase = {
     from: (table: string) => {
@@ -66,9 +73,16 @@ function stubSupabase(opts: {
       if (table === 'vehicles') {
         vehicleCall++
         if (vehicleCall === 1) return makeChain([], { count: opts.vehicleCount ?? 0 })
-        return makeChain([], { count: opts.publishedCount ?? 0 })
+        if (vehicleCall === 2) return makeChain([], { count: opts.publishedCount ?? 0 })
+        return makeChain([], { count: opts.newVehicleCount ?? 0 })
       }
-      if (table === 'dealers') return makeChain([], { count: opts.dealerCount ?? 0 })
+      if (table === 'dealers') {
+        dealerCall++
+        if (dealerCall === 1) return makeChain([], { count: opts.dealerCount ?? 0 })
+        return makeChain([], { count: opts.activeDealerCount ?? 0 })
+      }
+      if (table === 'leads') return makeChain([], { count: opts.leadsCount ?? 0 })
+      if (table === 'payments') return makeChain(opts.payments ?? [])
       if (table === 'analytics_events') {
         analyticsCall++
         if (analyticsCall === 1) return makeChain([], { count: opts.searchCount ?? 0 })
@@ -170,9 +184,60 @@ describe('weekly-report cron', () => {
     expect(result.success).toBe(true)
   })
 
+  it('collects new business KPIs', async () => {
+    stubSupabase({
+      vehicleCount: 50,
+      publishedCount: 40,
+      newVehicleCount: 5,
+      dealerCount: 10,
+      activeDealerCount: 8,
+      leadsCount: 25,
+      payments: [{ amount_cents: 1500 }, { amount_cents: 2500 }],
+    })
+    const result = await (handler as Function)({})
+    expect(result.metrics.newVehiclesThisWeek).toBe(5)
+    expect(result.metrics.activeDealers).toBe(8)
+    expect(result.metrics.leadsThisWeek).toBe(25)
+    expect(result.metrics.revenueThisWeekCents).toBe(4000)
+  })
+
+  it('text report includes BUSINESS section with revenue', async () => {
+    stubSupabase({
+      leadsCount: 12,
+      payments: [{ amount_cents: 9900 }],
+    })
+    const result = await (handler as Function)({})
+    expect(result.report).toContain('BUSINESS')
+    expect(result.report).toContain('Leads: 12')
+    expect(result.report).toMatch(/Revenue.*99\.00/)
+  })
+
+  it('handles zero revenue gracefully', async () => {
+    stubSupabase({ payments: [] })
+    const result = await (handler as Function)({})
+    expect(result.metrics.revenueThisWeekCents).toBe(0)
+    expect(result.report).toContain('0.00')
+  })
+
+  it('text report shows new vehicles and active dealers', async () => {
+    stubSupabase({
+      vehicleCount: 200,
+      publishedCount: 150,
+      newVehicleCount: 12,
+      dealerCount: 30,
+      activeDealerCount: 22,
+    })
+    const result = await (handler as Function)({})
+    expect(result.report).toContain('New vehicles this week: 12')
+    expect(result.report).toContain('200 (150 published)')
+    expect(result.report).toContain('30 (22 active)')
+  })
+
   it('throws when collectMetrics fails', async () => {
     mockSupabase = {
-      from: () => { throw new Error('DB down') },
+      from: () => {
+        throw new Error('DB down')
+      },
     }
     await expect((handler as Function)({})).rejects.toThrow()
   })

@@ -68,14 +68,14 @@ function buildPostContent(v: VehicleData, platform: SocialPlatform, locale: stri
     const content =
       platform === 'x'
         ? `🚛 ${title} | ${price} | ${location}\n${url}`
-        : `🚛 New on Tracciona: ${title}\n📍 ${location} | 💰 ${price}\n✅ Available now\n${url}`
+        : `🚛 New on ${getSiteName()}: ${title}\n📍 ${location} | 💰 ${price}\n✅ Available now\n${url}`
     return content.substring(0, LIMITS[platform])
   }
 
   const content =
     platform === 'x'
       ? `🚛 ${title} | ${price} | ${location}\n${url}`
-      : `🚛 Nuevo en Tracciona: ${title}\n📍 ${location} | 💰 ${price}\n✅ Disponible ahora\n${url}`
+      : `🚛 Nuevo en ${getSiteName()}: ${title}\n📍 ${location} | 💰 ${price}\n✅ Disponible ahora\n${url}`
   return content.substring(0, LIMITS[platform])
 }
 

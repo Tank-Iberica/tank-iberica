@@ -34,6 +34,7 @@ export function useDealerPortal() {
   const error = ref<string | null>(null)
   const dealerId = ref<string | null>(null)
   const dealerSlug = ref('')
+  const needsProfile = ref(false)
 
   // Identity
   const companyName = ref<Record<string, string>>({ es: '', en: '' })
@@ -81,6 +82,9 @@ export function useDealerPortal() {
 
   // Brokerage
   const brokerageOptOut = ref(false)
+
+  // Simple mode — auto-renew, no CRM, publish-and-forget
+  const simpleMode = ref(false)
 
   const { t } = useI18n()
 
@@ -169,6 +173,9 @@ export function useDealerPortal() {
 
     // Brokerage
     brokerageOptOut.value = (data.brokerage_opt_out as boolean) ?? false
+
+    // Simple mode
+    simpleMode.value = (data.simple_mode as boolean) ?? false
   }
 
   async function loadPortal() {
@@ -188,7 +195,8 @@ export function useDealerPortal() {
     loading.value = false
 
     if (fetchError || !data) {
-      error.value = 'No se encontró tu perfil de dealer.'
+      needsProfile.value = true
+      loading.value = false
       return
     }
 
@@ -275,6 +283,7 @@ export function useDealerPortal() {
       },
       brokerage_opt_out: brokerageOptOut.value,
       brokerage_opt_out_at: brokerageOptOut.value ? new Date().toISOString() : null,
+      simple_mode: simpleMode.value,
       updated_at: new Date().toISOString(),
     }
 
@@ -314,12 +323,46 @@ export function useDealerPortal() {
     }
   }
 
+  async function createDealerProfile(name: string): Promise<boolean> {
+    if (!user.value?.id) return false
+    saving.value = true
+    error.value = null
+    try {
+      const slug = name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '')
+      const { data: newDealer, error: insertError } = await supabase
+        .from('dealers')
+        .insert({
+          user_id: user.value.id,
+          slug,
+          company_name: { es: name, en: name },
+          status: 'active',
+        } as never)
+        .select('id')
+        .single()
+      if (insertError) throw insertError
+      dealerId.value = (newDealer as { id: string }).id
+      needsProfile.value = false
+      // Reload the full portal data
+      await loadPortal()
+      return true
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Error creating dealer profile'
+      return false
+    } finally {
+      saving.value = false
+    }
+  }
+
   return {
     // UI
     loading,
     saving,
     saved,
     error,
+    needsProfile,
     portalUrl,
     // Identity
     companyName,
@@ -361,10 +404,13 @@ export function useDealerPortal() {
     // Brokerage
     brokerageOptOut,
     toggleBrokerageOptOut,
+    // Simple mode
+    simpleMode,
     // Static
     phoneModeOptions,
     // Actions
     loadPortal,
+    createDealerProfile,
     save,
     resetThemeColors,
     addCertification,

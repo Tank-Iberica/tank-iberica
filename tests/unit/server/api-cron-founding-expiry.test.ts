@@ -36,11 +36,22 @@ vi.mock('~~/server/utils/fetchWithRetry', () => ({
 
 // Inline processBatch that calls processor
 vi.mock('../../../server/utils/batchProcessor', () => ({
-  processBatch: async ({ items, processor }: { items: unknown[]; processor: (item: unknown) => Promise<void> }) => {
+  processBatch: async ({
+    items,
+    processor,
+  }: {
+    items: unknown[]
+    processor: (item: unknown) => Promise<void>
+  }) => {
     let processed = 0
     let errors = 0
     for (const item of items) {
-      try { await processor(item); processed++ } catch { errors++ }
+      try {
+        await processor(item)
+        processed++
+      } catch {
+        errors++
+      }
     }
     return { processed, errors }
   },
@@ -63,7 +74,12 @@ process.env.SUPABASE_URL = 'https://test.supabase.co'
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'sb-key'
 
 function jsonRes(data: unknown, ok = true) {
-  return { ok, json: () => Promise.resolve(data), status: ok ? 200 : 500, text: () => Promise.resolve('') }
+  return {
+    ok,
+    json: () => Promise.resolve(data),
+    status: ok ? 200 : 500,
+    text: () => Promise.resolve(''),
+  }
 }
 
 import handler from '../../../server/api/cron/founding-expiry.post'
@@ -110,13 +126,23 @@ describe('POST /api/cron/founding-expiry', () => {
   it('returns zeros when no founding subscriptions', async () => {
     mockFetchWithRetry.mockResolvedValue(jsonRes([]))
     const result = await (handler as Function)({})
-    expect(result).toMatchObject({ notified_30d: 0, notified_7d: 0, expired: 0, vehicles_paused: 0 })
+    expect(result).toMatchObject({
+      notified_30d: 0,
+      notified_7d: 0,
+      expired: 0,
+      vehicles_paused: 0,
+    })
   })
 
   it('returns zeros when subscriptions array is not an array', async () => {
     mockFetchWithRetry.mockResolvedValue(jsonRes('not-an-array'))
     const result = await (handler as Function)({})
-    expect(result).toMatchObject({ notified_30d: 0, notified_7d: 0, expired: 0, vehicles_paused: 0 })
+    expect(result).toMatchObject({
+      notified_30d: 0,
+      notified_7d: 0,
+      expired: 0,
+      vehicles_paused: 0,
+    })
   })
 
   it('throws 500 when subscription fetch fails', async () => {
@@ -128,18 +154,40 @@ describe('POST /api/cron/founding-expiry', () => {
     mockReadBody.mockRejectedValueOnce(new Error('parse error'))
     mockFetchWithRetry.mockResolvedValue(jsonRes([]))
     const result = await (handler as Function)({})
-    expect(result).toMatchObject({ notified_30d: 0, notified_7d: 0, expired: 0, vehicles_paused: 0 })
+    expect(result).toMatchObject({
+      notified_30d: 0,
+      notified_7d: 0,
+      expired: 0,
+      vehicles_paused: 0,
+    })
   })
 
   // ── 30-day reminder tests ─────────────────────────────────────────────────
 
   it('sends 30d reminder for subscription expiring in 20 days', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub])) // subscriptions
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }])) // dealer
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      ) // dealer
       .mockResolvedValueOnce(jsonRes([])) // email_logs (not sent yet)
 
     const result = await (handler as Function)({})
@@ -149,12 +197,38 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('skips 30d reminder if already sent', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'log-1', template_key: 'founding_expiring_30d', recipient_email: 'test@test.com', created_at: new Date().toISOString() }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'log-1',
+            template_key: 'founding_expiring_30d',
+            recipient_email: 'test@test.com',
+            created_at: new Date().toISOString(),
+          },
+        ]),
+      )
 
     const result = await (handler as Function)({})
     expect(result.notified_30d).toBe(0)
@@ -162,11 +236,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('does not send 30d reminder if expiry is more than 30 days away', async () => {
     const expiresAt = new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
 
     const result = await (handler as Function)({})
     expect(result.notified_30d).toBe(0)
@@ -177,13 +268,30 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('sends 7d reminder for subscription expiring in 5 days', async () => {
     const expiresAt = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     // sendReminder7d: 1 fetchWithRetry for hasAlreadySentEmail
     // sendReminder30d returns false immediately (daysUntilExpiry <= 7), no fetch
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub])) // subscriptions
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: 'Test Dealer', email: 'test@test.com', locale: null, badge: 'founding' }])) // dealer
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: 'Test Dealer',
+            email: 'test@test.com',
+            locale: null,
+            badge: 'founding',
+          },
+        ]),
+      ) // dealer
       .mockResolvedValueOnce(jsonRes([])) // 7d email_logs check
 
     const result = await (handler as Function)({})
@@ -192,12 +300,38 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('skips 7d reminder if already sent within 7 days', async () => {
     const expiresAt = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'log-7d', template_key: 'founding_expiring_7d', recipient_email: 'test@test.com', created_at: new Date().toISOString() }])) // already sent
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'log-7d',
+            template_key: 'founding_expiring_7d',
+            recipient_email: 'test@test.com',
+            created_at: new Date().toISOString(),
+          },
+        ]),
+      ) // already sent
 
     const result = await (handler as Function)({})
     expect(result.notified_7d).toBe(0)
@@ -205,11 +339,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('does not send 30d reminder in 7d window (daysUntilExpiry <= 7)', async () => {
     const expiresAt = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // 7d check - not sent
 
     const result = await (handler as Function)({})
@@ -222,11 +373,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('downgrades expired subscription', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub])) // subscriptions
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Expired' }, email: 'test@test.com', locale: 'es', badge: 'founding' }])) // dealer
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Expired' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      ) // dealer
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade subscription PATCH
       .mockResolvedValueOnce(jsonRes(null, true)) // update dealer PATCH
       .mockResolvedValueOnce(jsonRes([])) // vehicles (none to pause)
@@ -238,11 +406,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('does not downgrade when subscription PATCH fails', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, false)) // downgrade sub FAILS
 
     const result = await (handler as Function)({})
@@ -258,11 +443,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('logs error but continues when dealer PATCH fails after subscription downgrade', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade sub OK
       .mockResolvedValueOnce(jsonRes(null, false)) // update dealer FAILS
       .mockResolvedValueOnce(jsonRes([])) // vehicles
@@ -279,17 +481,31 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('does not pause vehicles if 3 or fewer', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: 'Small', email: 'test@test.com', locale: 'es', badge: null }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          { id: 'd1', company_name: 'Small', email: 'test@test.com', locale: 'es', badge: null },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade sub
       .mockResolvedValueOnce(jsonRes(null, true)) // update dealer
-      .mockResolvedValueOnce(jsonRes([ // only 2 vehicles
-        { id: 'v1', status: 'published', created_at: '2024-01-01' },
-        { id: 'v2', status: 'published', created_at: '2024-01-02' },
-      ]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          // only 2 vehicles
+          { id: 'v1', status: 'published', created_at: '2024-01-01' },
+          { id: 'v2', status: 'published', created_at: '2024-01-02' },
+        ]),
+      )
 
     const result = await (handler as Function)({})
     expect(result.vehicles_paused).toBe(0)
@@ -297,20 +513,40 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('pauses excess vehicles beyond the 3-vehicle free limit', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub])) // subscriptions
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Big Dealer' }, email: 'test@test.com', locale: 'es', badge: 'founding' }])) // dealer
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Big Dealer' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      ) // dealer
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade sub
       .mockResolvedValueOnce(jsonRes(null, true)) // update dealer
-      .mockResolvedValueOnce(jsonRes([ // 5 vehicles - 2 over the limit
-        { id: 'v1', status: 'published', created_at: '2024-01-01' },
-        { id: 'v2', status: 'published', created_at: '2024-01-02' },
-        { id: 'v3', status: 'published', created_at: '2024-01-03' },
-        { id: 'v4', status: 'published', created_at: '2024-01-04' },
-        { id: 'v5', status: 'published', created_at: '2024-01-05' },
-      ])) // vehicles
+      .mockResolvedValueOnce(
+        jsonRes([
+          // 5 vehicles - 2 over the limit
+          { id: 'v1', status: 'published', created_at: '2024-01-01' },
+          { id: 'v2', status: 'published', created_at: '2024-01-02' },
+          { id: 'v3', status: 'published', created_at: '2024-01-03' },
+          { id: 'v4', status: 'published', created_at: '2024-01-04' },
+          { id: 'v5', status: 'published', created_at: '2024-01-05' },
+        ]),
+      ) // vehicles
       .mockResolvedValueOnce(jsonRes(null, true)) // pause v4
       .mockResolvedValueOnce(jsonRes(null, true)) // pause v5
 
@@ -321,19 +557,38 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('logs error when a vehicle pause PATCH fails', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Dealer' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Dealer' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade sub
       .mockResolvedValueOnce(jsonRes(null, true)) // update dealer
-      .mockResolvedValueOnce(jsonRes([
-        { id: 'v1', status: 'published', created_at: '2024-01-01' },
-        { id: 'v2', status: 'published', created_at: '2024-01-02' },
-        { id: 'v3', status: 'published', created_at: '2024-01-03' },
-        { id: 'v4', status: 'published', created_at: '2024-01-04' },
-      ]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          { id: 'v1', status: 'published', created_at: '2024-01-01' },
+          { id: 'v2', status: 'published', created_at: '2024-01-02' },
+          { id: 'v3', status: 'published', created_at: '2024-01-03' },
+          { id: 'v4', status: 'published', created_at: '2024-01-04' },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, false)) // pause v4 FAILS
 
     const result = await (handler as Function)({})
@@ -345,21 +600,40 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('counts only successfully paused vehicles', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Dealer' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Dealer' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade sub
       .mockResolvedValueOnce(jsonRes(null, true)) // update dealer
-      .mockResolvedValueOnce(jsonRes([
-        { id: 'v1', status: 'published', created_at: '2024-01-01' },
-        { id: 'v2', status: 'published', created_at: '2024-01-02' },
-        { id: 'v3', status: 'published', created_at: '2024-01-03' },
-        { id: 'v4', status: 'published', created_at: '2024-01-04' },
-        { id: 'v5', status: 'published', created_at: '2024-01-05' },
-      ]))
-      .mockResolvedValueOnce(jsonRes(null, true))  // pause v4 OK
+      .mockResolvedValueOnce(
+        jsonRes([
+          { id: 'v1', status: 'published', created_at: '2024-01-01' },
+          { id: 'v2', status: 'published', created_at: '2024-01-02' },
+          { id: 'v3', status: 'published', created_at: '2024-01-03' },
+          { id: 'v4', status: 'published', created_at: '2024-01-04' },
+          { id: 'v5', status: 'published', created_at: '2024-01-05' },
+        ]),
+      )
+      .mockResolvedValueOnce(jsonRes(null, true)) // pause v4 OK
       .mockResolvedValueOnce(jsonRes(null, false)) // pause v5 FAILS
 
     const result = await (handler as Function)({})
@@ -368,11 +642,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('returns 0 paused when vehicle fetch fails', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Dealer' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Dealer' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade sub
       .mockResolvedValueOnce(jsonRes(null, true)) // update dealer
       .mockResolvedValueOnce(jsonRes(null, false)) // vehicles fetch FAILS
@@ -387,11 +678,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('returns 0 paused when vehicles response is not an array', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Dealer' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Dealer' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade sub
       .mockResolvedValueOnce(jsonRes(null, true)) // update dealer
       .mockResolvedValueOnce(jsonRes('not-an-array')) // vehicles is not array
@@ -404,11 +712,20 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('skips dealer without email', async () => {
     const expiresAt = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: 'No Email', email: null, locale: null, badge: null }]))
+      .mockResolvedValueOnce(
+        jsonRes([{ id: 'd1', company_name: 'No Email', email: null, locale: null, badge: null }]),
+      )
 
     const result = await (handler as Function)({})
     expect(result.notified_30d).toBe(0)
@@ -416,7 +733,14 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('skips when dealer fetch fails', async () => {
     const expiresAt = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
@@ -428,21 +752,32 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('skips when dealer list is empty', async () => {
     const expiresAt = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
-    mockFetchWithRetry
-      .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([])) // no dealers found
+    mockFetchWithRetry.mockResolvedValueOnce(jsonRes([sub])).mockResolvedValueOnce(jsonRes([])) // no dealers found
 
     const result = await (handler as Function)({})
     expect(result.notified_30d).toBe(0)
   })
 
   it('skips subscription with no expires_at', async () => {
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: null, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: null,
+      vertical: 'tracciona',
+    }
 
-    mockFetchWithRetry
-      .mockResolvedValueOnce(jsonRes([sub]))
+    mockFetchWithRetry.mockResolvedValueOnce(jsonRes([sub]))
 
     const result = await (handler as Function)({})
     expect(result.notified_30d).toBe(0)
@@ -454,11 +789,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('resolves dealer name from multilingual object with correct locale', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Empresa', en: 'Company' }, email: 'test@test.com', locale: 'en', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Empresa', en: 'Company' },
+            email: 'test@test.com',
+            locale: 'en',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // email_logs
 
     await (handler as Function)({})
@@ -474,11 +826,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('resolves dealer name from string type', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: 'Simple Name', email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: 'Simple Name',
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // email_logs
 
     await (handler as Function)({})
@@ -494,11 +863,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('falls back to "es" locale in company_name when requested locale is missing', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Nombre ES', de: 'Name DE' }, email: 'test@test.com', locale: 'fr', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Nombre ES', de: 'Name DE' },
+            email: 'test@test.com',
+            locale: 'fr',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // email_logs
 
     await (handler as Function)({})
@@ -514,11 +900,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('falls back to any truthy value when locale and "es" are both missing', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { de: 'German Name' }, email: 'test@test.com', locale: 'fr', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { de: 'German Name' },
+            email: 'test@test.com',
+            locale: 'fr',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // email_logs
 
     await (handler as Function)({})
@@ -535,11 +938,28 @@ describe('POST /api/cron/founding-expiry', () => {
   it('uses empty string from company_name when locale value is empty (nullish coalescing)', async () => {
     // The ?? operator treats '' as non-nullish, so companyName['es'] = '' resolves to ''
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: '', en: '' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: '', en: '' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // email_logs
 
     await (handler as Function)({})
@@ -556,11 +976,28 @@ describe('POST /api/cron/founding-expiry', () => {
   it('falls back to "Dealer" when company_name object has only undefined values', async () => {
     // Only undefined/null values fall through ?? chains to the 'Dealer' fallback
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { fr: undefined }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { fr: undefined },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // email_logs
 
     await (handler as Function)({})
@@ -576,11 +1013,22 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('falls back to "Dealer" when company_name is null', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: null, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          { id: 'd1', company_name: null, email: 'test@test.com', locale: 'es', badge: 'founding' },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // email_logs
 
     await (handler as Function)({})
@@ -598,11 +1046,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('logs error when 30d email $fetch fails', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // email_logs - not sent
 
     mockFetch.mockRejectedValueOnce(new Error('email service down'))
@@ -617,11 +1082,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('logs error when 7d email $fetch fails', async () => {
     const expiresAt = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // 7d email_logs
 
     mockFetch.mockRejectedValueOnce(new Error('email service down'))
@@ -635,11 +1117,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('logs error when expiry email $fetch fails with non-Error', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade sub
       .mockResolvedValueOnce(jsonRes(null, true)) // update dealer
       .mockResolvedValueOnce(jsonRes([])) // vehicles (none)
@@ -655,11 +1154,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('logs error when 30d email $fetch fails with non-Error', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // email_logs
 
     mockFetch.mockRejectedValueOnce('string error')
@@ -675,11 +1191,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('returns false for hasAlreadySentEmail when fetch returns non-ok', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, false)) // email_logs check fails
 
     const result = await (handler as Function)({})
@@ -691,11 +1224,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('uses "es" locale when dealer locale is null', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: 'Test Dealer', email: 'test@test.com', locale: null, badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: 'Test Dealer',
+            email: 'test@test.com',
+            locale: null,
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([]))
 
     await (handler as Function)({})
@@ -711,11 +1261,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('uses "en" locale when dealer locale is "en"', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { en: 'English Dealer' }, email: 'test@test.com', locale: 'en', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { en: 'English Dealer' },
+            email: 'test@test.com',
+            locale: 'en',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([]))
 
     await (handler as Function)({})
@@ -733,11 +1300,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('sends x-internal-secret header when cronSecret is set', async () => {
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([]))
 
     await (handler as Function)({})
@@ -759,11 +1343,28 @@ describe('POST /api/cron/founding-expiry', () => {
     delete process.env.CRON_SECRET
 
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([]))
 
     await (handler as Function)({})
@@ -781,21 +1382,72 @@ describe('POST /api/cron/founding-expiry', () => {
   // ── Multiple subscriptions test ───────────────────────────────────────────
 
   it('processes multiple subscriptions with different lifecycle stages', async () => {
-    const sub30d = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(), vertical: 'tracciona' }
-    const sub7d = { id: 's2', user_id: 'u2', plan: 'founding', status: 'active', expires_at: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), vertical: 'tracciona' }
-    const subExpired = { id: 's3', user_id: 'u3', plan: 'founding', status: 'active', expires_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), vertical: 'tracciona' }
+    const sub30d = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
+      vertical: 'tracciona',
+    }
+    const sub7d = {
+      id: 's2',
+      user_id: 'u2',
+      plan: 'founding',
+      status: 'active',
+      expires_at: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+      vertical: 'tracciona',
+    }
+    const subExpired = {
+      id: 's3',
+      user_id: 'u3',
+      plan: 'founding',
+      status: 'active',
+      expires_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       // All subs
       .mockResolvedValueOnce(jsonRes([sub30d, sub7d, subExpired]))
       // sub30d: dealer + email_logs
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Dealer1' }, email: 'd1@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Dealer1' },
+            email: 'd1@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([]))
       // sub7d: dealer + 7d email_logs
-      .mockResolvedValueOnce(jsonRes([{ id: 'd2', company_name: { es: 'Dealer2' }, email: 'd2@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd2',
+            company_name: { es: 'Dealer2' },
+            email: 'd2@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([]))
       // subExpired: dealer + downgrade + update dealer + vehicles
-      .mockResolvedValueOnce(jsonRes([{ id: 'd3', company_name: { es: 'Dealer3' }, email: 'd3@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd3',
+            company_name: { es: 'Dealer3' },
+            email: 'd3@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade
       .mockResolvedValueOnce(jsonRes(null, true)) // update dealer
       .mockResolvedValueOnce(jsonRes([])) // no vehicles
@@ -809,15 +1461,31 @@ describe('POST /api/cron/founding-expiry', () => {
   // ── upgradeUrl test ───────────────────────────────────────────────────────
 
   it('includes correct upgradeUrl in email variables', async () => {
-    const origSiteUrl = process.env.NUXT_PUBLIC_SITE_URL
-    process.env.NUXT_PUBLIC_SITE_URL = 'https://custom.tracciona.com'
+    vi.stubGlobal('getSiteUrl', () => 'https://custom.tracciona.com')
 
     const expiresAt = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([]))
 
     await (handler as Function)({})
@@ -833,19 +1501,35 @@ describe('POST /api/cron/founding-expiry', () => {
     )
 
     // Restore
-    if (origSiteUrl !== undefined) process.env.NUXT_PUBLIC_SITE_URL = origSiteUrl
-    else delete process.env.NUXT_PUBLIC_SITE_URL
+    vi.stubGlobal('getSiteUrl', () => 'https://tracciona.com')
   })
 
   // ── 7d reminder includes daysLeft ─────────────────────────────────────────
 
   it('includes daysLeft in 7d reminder email variables', async () => {
     const expiresAt = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes([])) // 7d email_logs
 
     await (handler as Function)({})
@@ -866,11 +1550,28 @@ describe('POST /api/cron/founding-expiry', () => {
 
   it('sends founding_expired template on expiry', async () => {
     const expiresAt = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-    const sub = { id: 's1', user_id: 'u1', plan: 'founding', status: 'active', expires_at: expiresAt, vertical: 'tracciona' }
+    const sub = {
+      id: 's1',
+      user_id: 'u1',
+      plan: 'founding',
+      status: 'active',
+      expires_at: expiresAt,
+      vertical: 'tracciona',
+    }
 
     mockFetchWithRetry
       .mockResolvedValueOnce(jsonRes([sub]))
-      .mockResolvedValueOnce(jsonRes([{ id: 'd1', company_name: { es: 'Test' }, email: 'test@test.com', locale: 'es', badge: 'founding' }]))
+      .mockResolvedValueOnce(
+        jsonRes([
+          {
+            id: 'd1',
+            company_name: { es: 'Test' },
+            email: 'test@test.com',
+            locale: 'es',
+            badge: 'founding',
+          },
+        ]),
+      )
       .mockResolvedValueOnce(jsonRes(null, true)) // downgrade sub
       .mockResolvedValueOnce(jsonRes(null, true)) // update dealer
       .mockResolvedValueOnce(jsonRes([])) // vehicles

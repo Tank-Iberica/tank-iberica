@@ -16,6 +16,7 @@ const mockReadBody = vi.fn()
 vi.mock('h3', () => ({
   defineEventHandler: (fn: unknown) => fn,
   readBody: (...args: unknown[]) => mockReadBody(...args),
+  getHeader: vi.fn().mockReturnValue(undefined),
 }))
 
 // Mock useSupabaseRestHeaders and $fetch — used for optional DB write
@@ -32,14 +33,16 @@ import cspReportHandler from '../../../server/api/infra/csp-report.post'
 const handler = cspReportHandler as (event: never) => Promise<{ status: string }>
 const mockEvent = {} as never
 
-function makeCspBody(overrides: Partial<{
-  'document-uri': string
-  'violated-directive': string
-  'blocked-uri': string
-  'source-file': string
-  'line-number': number
-  'disposition': string
-}> = {}) {
+function makeCspBody(
+  overrides: Partial<{
+    'document-uri': string
+    'violated-directive': string
+    'blocked-uri': string
+    'source-file': string
+    'line-number': number
+    disposition: string
+  }> = {},
+) {
   return {
     'csp-report': {
       'document-uri': 'https://tracciona.com/vehiculos',
@@ -47,7 +50,7 @@ function makeCspBody(overrides: Partial<{
       'blocked-uri': 'https://evil.com/script.js',
       'source-file': 'inline',
       'line-number': 42,
-      'disposition': 'enforce',
+      disposition: 'enforce',
       ...overrides,
     },
   }
@@ -171,7 +174,10 @@ describe('CSP Report endpoint — threshold alerting', () => {
     // Fire 5 reports with the same directive (threshold = 5)
     for (let i = 0; i < 5; i++) {
       mockReadBody.mockResolvedValue(
-        makeCspBody({ 'violated-directive': violatedDirective, 'blocked-uri': `https://external${i}.com` }),
+        makeCspBody({
+          'violated-directive': violatedDirective,
+          'blocked-uri': `https://external${i}.com`,
+        }),
       )
       await handler(mockEvent)
     }
@@ -190,9 +196,7 @@ describe('CSP Report endpoint — threshold alerting', () => {
     const violatedDirective = 'img-src-below-threshold'
 
     for (let i = 0; i < 4; i++) {
-      mockReadBody.mockResolvedValue(
-        makeCspBody({ 'violated-directive': violatedDirective }),
-      )
+      mockReadBody.mockResolvedValue(makeCspBody({ 'violated-directive': violatedDirective }))
       await handler(mockEvent)
     }
 
@@ -204,7 +208,7 @@ describe('CSP Report endpoint — threshold alerting', () => {
 
 describe('CSP Report endpoint — disposition handling', () => {
   it('includes disposition in log entry', async () => {
-    mockReadBody.mockResolvedValue(makeCspBody({ 'disposition': 'report' }))
+    mockReadBody.mockResolvedValue(makeCspBody({ disposition: 'report' }))
     await handler(mockEvent)
     expect(mockWarn).toHaveBeenCalledWith(
       '[CSP-Violation]',

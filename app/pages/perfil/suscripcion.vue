@@ -63,6 +63,32 @@ const isPaid = computed(() => {
   return currentPlan.value !== 'free'
 })
 
+const portalLoading = ref(false)
+
+async function openStripePortal() {
+  const customerId = subscription.value?.stripe_customer_id
+  if (!customerId) return
+
+  portalLoading.value = true
+  try {
+    const { url } = await $fetch<{ url: string }>('/api/stripe/portal', {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      body: {
+        customerId,
+        returnUrl: `${window.location.origin}/perfil/suscripcion`,
+      },
+    })
+    if (url) {
+      window.location.href = url
+    }
+  } catch {
+    // Silently handle — user stays on page
+  } finally {
+    portalLoading.value = false
+  }
+}
+
 useHead({
   title: t('profile.subscription.title'),
 })
@@ -77,7 +103,13 @@ onMounted(() => {
 <template>
   <div class="subscription-page">
     <div class="subscription-container">
-      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('profile.subscription.title') }]" />
+      <UiBreadcrumbNav
+        :items="[
+          { label: $t('nav.home'), to: '/' },
+          { label: $t('profile.dashboard.title'), to: '/perfil' },
+          { label: $t('profile.subscription.title') },
+        ]"
+      />
       <PerfilProfileNavPills />
       <h1 class="page-title">
         {{ $t('profile.subscription.title') }}
@@ -110,8 +142,12 @@ onMounted(() => {
                 <span class="plan-detail-value">Stripe</span>
               </div>
             </div>
-            <button class="btn-outline">
-              {{ $t('profile.subscription.managePlan') }}
+            <button
+              class="btn-outline"
+              :disabled="portalLoading || !subscription?.stripe_customer_id"
+              @click="openStripePortal"
+            >
+              {{ portalLoading ? $t('common.loading') : $t('profile.subscription.managePlan') }}
             </button>
           </template>
 

@@ -5,15 +5,15 @@
  * of the security event store into the response.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { SecurityEvent } from '~/server/utils/securityEvents'
+import type { SecurityEvent } from '~~/server/utils/securityEvents'
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
-vi.mock('~/server/utils/rbac', () => ({
+vi.mock('~~/server/utils/rbac', () => ({
   requireRole: vi.fn().mockResolvedValue({ id: 'admin-user', roles: ['admin'] }),
 }))
 
-vi.mock('~/server/utils/securityEvents', () => ({
+vi.mock('~~/server/utils/securityEvents', () => ({
   getActiveSecurityIps: vi.fn(() => ['1.2.3.4', '5.6.7.8']),
   getEventSummaryForIp: vi.fn((ip: string) => {
     if (ip === '1.2.3.4') return { rate_limit_exceeded: 3, bot_detected: 2 }
@@ -34,8 +34,8 @@ vi.mock('~/server/utils/securityEvents', () => ({
   getStoreSize: vi.fn(() => 2),
 }))
 
-import { requireRole } from '~/server/utils/rbac'
-import { getActiveSecurityIps, getRecentEventsForIp } from '~/server/utils/securityEvents'
+import { requireRole } from '~~/server/utils/rbac'
+import { getActiveSecurityIps, getRecentEventsForIp } from '~~/server/utils/securityEvents'
 
 describe('GET /api/admin/security-events', () => {
   beforeEach(() => {
@@ -48,7 +48,7 @@ describe('GET /api/admin/security-events', () => {
       method: 'GET',
       node: { req: {}, res: {} },
     } as unknown as Parameters<
-      (typeof import('~/server/api/admin/security-events.get'))['default']
+      (typeof import('~~/server/api/admin/security-events.get'))['default']
     >[0]
   }
 
@@ -56,13 +56,13 @@ describe('GET /api/admin/security-events', () => {
     vi.mocked(requireRole).mockRejectedValueOnce(
       Object.assign(new Error('Forbidden'), { statusCode: 403 }),
     )
-    const { default: handler } = await import('~/server/api/admin/security-events.get')
+    const { default: handler } = await import('~~/server/api/admin/security-events.get')
     await expect(handler(makeEvent())).rejects.toThrow()
     expect(requireRole).toHaveBeenCalledWith(expect.anything(), 'admin')
   })
 
   it('returns threat map with active IPs', async () => {
-    const { default: handler } = await import('~/server/api/admin/security-events.get')
+    const { default: handler } = await import('~~/server/api/admin/security-events.get')
     const result = await handler(makeEvent())
 
     expect(result).toMatchObject({
@@ -78,7 +78,7 @@ describe('GET /api/admin/security-events', () => {
   })
 
   it('sorts threats by event count descending', async () => {
-    const { default: handler } = await import('~/server/api/admin/security-events.get')
+    const { default: handler } = await import('~~/server/api/admin/security-events.get')
     const result = await handler(makeEvent())
 
     expect(result.threats[0]!.ip).toBe('1.2.3.4') // 3 events > 1 event
@@ -87,7 +87,7 @@ describe('GET /api/admin/security-events', () => {
   })
 
   it('includes type summary per IP', async () => {
-    const { default: handler } = await import('~/server/api/admin/security-events.get')
+    const { default: handler } = await import('~~/server/api/admin/security-events.get')
     const result = await handler(makeEvent())
 
     const threat1 = result.threats.find((t) => t.ip === '1.2.3.4')
@@ -95,7 +95,7 @@ describe('GET /api/admin/security-events', () => {
   })
 
   it('includes topPath (most frequent path)', async () => {
-    const { default: handler } = await import('~/server/api/admin/security-events.get')
+    const { default: handler } = await import('~~/server/api/admin/security-events.get')
     const result = await handler(makeEvent())
 
     const threat1 = result.threats.find((t) => t.ip === '1.2.3.4')
@@ -104,7 +104,7 @@ describe('GET /api/admin/security-events', () => {
   })
 
   it('includes lastEventAt as ISO string', async () => {
-    const { default: handler } = await import('~/server/api/admin/security-events.get')
+    const { default: handler } = await import('~~/server/api/admin/security-events.get')
     const result = await handler(makeEvent())
 
     const threat1 = result.threats.find((t) => t.ip === '1.2.3.4')
@@ -115,7 +115,7 @@ describe('GET /api/admin/security-events', () => {
     vi.mocked(getActiveSecurityIps).mockReturnValueOnce([])
     vi.mocked(getRecentEventsForIp).mockReturnValue([])
 
-    const { default: handler } = await import('~/server/api/admin/security-events.get')
+    const { default: handler } = await import('~~/server/api/admin/security-events.get')
     const result = await handler(makeEvent())
 
     expect(result.threats).toEqual([])
@@ -128,7 +128,7 @@ describe('GET /api/admin/security-events', () => {
       { type: 'bot_detected', ip: '9.9.9.9', timestamp: Date.now() },
     ])
 
-    const { default: handler } = await import('~/server/api/admin/security-events.get')
+    const { default: handler } = await import('~~/server/api/admin/security-events.get')
     const result = await handler(makeEvent())
 
     expect(result.threats[0]?.topPath).toBeNull()

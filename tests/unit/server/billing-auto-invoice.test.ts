@@ -56,7 +56,7 @@ describe('createAutoInvoice (billing service)', () => {
       serviceType: 'subscription',
     })
 
-    expect(result.vatRate).toBe(23) // Portugal rate
+    expect(result.vatRate).toBe(0.23) // Portugal rate (decimal)
     expect(result.taxCountry).toBe('PT')
     expect(result.id).toBe('inv-1')
     expect(result.dealerId).toBe('dealer-1')
@@ -87,7 +87,7 @@ describe('createAutoInvoice (billing service)', () => {
       amountCents: 2100,
     })
 
-    expect(result.vatRate).toBe(21)
+    expect(result.vatRate).toBe(0.21)
     expect(result.taxCountry).toBe('ES')
   })
 
@@ -221,7 +221,7 @@ describe('createAutoInvoice (billing service)', () => {
     })
 
     expect(result.dealerId).toBeNull()
-    expect(result.vatRate).toBe(21) // default, no fiscal data looked up
+    expect(result.vatRate).toBe(0.21) // default, no fiscal data looked up (decimal)
     const insertCall = mockFetch.mock.calls.find(
       (c) => typeof c[0] === 'string' && c[0].includes('/invoices') && c[1]?.method === 'POST',
     )

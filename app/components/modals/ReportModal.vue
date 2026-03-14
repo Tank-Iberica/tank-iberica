@@ -17,6 +17,9 @@ const { t } = useI18n()
 const { submitReport, submitting, submitted, error, reset } = useReports()
 const user = useSupabaseUser()
 
+const dialogRef = ref<HTMLElement | null>(null)
+const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
+
 const email = ref(user.value?.email || '')
 const reason = ref('')
 const details = ref('')
@@ -57,6 +60,9 @@ watch(
     if (val) {
       reset()
       email.value = user.value?.email || ''
+      nextTick(() => activateTrap(dialogRef.value))
+    } else {
+      deactivateTrap()
     }
   },
 )
@@ -65,7 +71,7 @@ watch(
 <template>
   <Teleport to="body">
     <div v-if="visible" class="report-overlay" @click.self="handleClose">
-      <div class="report-modal">
+      <div ref="dialogRef" class="report-modal">
         <div class="report-header">
           <h2>{{ t('report.title') }}</h2>
           <button type="button" class="report-close" @click="handleClose">
@@ -115,7 +121,7 @@ watch(
               autocomplete="email"
               required
               :placeholder="t('report.emailPlaceholder')"
-            >
+            />
           </div>
 
           <div class="report-field">
@@ -138,7 +144,7 @@ watch(
             />
           </div>
 
-          <div v-if="error" class="report-error">{{ error }}</div>
+          <div v-if="error" class="report-error" role="alert">{{ error }}</div>
 
           <div class="report-actions">
             <button type="button" class="report-btn-secondary" @click="handleClose">

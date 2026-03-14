@@ -10,12 +10,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const mockVerifyCronSecret = vi.hoisted(() => vi.fn())
 const mockAcquireCronLock = vi.hoisted(() => vi.fn().mockResolvedValue(true))
 const mockProcessBatch = vi.hoisted(() =>
-  vi.fn().mockImplementation(
-    async ({ items, processor }: { items: unknown[]; processor: (item: unknown) => Promise<void> }) => {
-      for (const item of items) await processor(item)
-      return { processed: items.length, errors: 0 }
-    },
-  ),
+  vi
+    .fn()
+    .mockImplementation(
+      async ({
+        items,
+        processor,
+      }: {
+        items: unknown[]
+        processor: (item: unknown) => Promise<void>
+      }) => {
+        for (const item of items) await processor(item)
+        return { processed: items.length, errors: 0 }
+      },
+    ),
 )
 
 const mockSelect = vi.hoisted(() => vi.fn())
@@ -27,14 +35,16 @@ const mockServiceRole = vi.hoisted(() =>
         return {
           select: mockSelect,
           update: mockUpdate,
+          insert: vi.fn().mockResolvedValue({ data: null, error: null }),
         }
       }
-      // cronLock table
+      // cronLock table or any other
       return {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: null, error: null }),
         upsert: vi.fn().mockResolvedValue({ error: null }),
+        insert: vi.fn().mockResolvedValue({ data: null, error: null }),
       }
     }),
   })),
@@ -49,7 +59,7 @@ vi.mock('~~/server/utils/verifyCronSecret', () => ({
 }))
 
 vi.mock('~~/server/utils/cronLock', () => ({
-  acquireCronLock: mockAcquireCronLock,
+  acquireDbCronLock: mockAcquireCronLock,
 }))
 
 vi.mock('~~/server/utils/batchProcessor', () => ({
@@ -78,7 +88,10 @@ beforeEach(async () => {
   vi.clearAllMocks()
   mockAcquireCronLock.mockResolvedValue(true)
   vi.stubGlobal('defineEventHandler', (fn: (e: unknown) => unknown) => fn)
-  vi.stubGlobal('useRuntimeConfig', () => ({ supabaseServiceRoleKey: 'svc-key', cronSecret: 'secret' }))
+  vi.stubGlobal('useRuntimeConfig', () => ({
+    supabaseServiceRoleKey: 'svc-key',
+    cronSecret: 'secret',
+  }))
   vi.resetModules()
   const mod = await import('~~/server/api/cron/trust-score.post')
   handler = mod.default as typeof handler
@@ -120,8 +133,11 @@ const MOCK_DEALERS = [
 describe('POST /api/cron/trust-score', () => {
   it('returns skipped when cron lock not acquired', async () => {
     mockAcquireCronLock.mockResolvedValue(false)
-    mockSelect.mockReturnValue({ eq: vi.fn().mockReturnThis(), limit: vi.fn().mockResolvedValue({ data: [], error: null }) })
-    const result = await handler({}) as { skipped: boolean; reason: string }
+    mockSelect.mockReturnValue({
+      eq: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+    })
+    const result = (await handler({})) as { skipped: boolean; reason: string }
     expect(result.skipped).toBe(true)
     expect(result.reason).toBe('already_ran_in_window')
   })
@@ -131,7 +147,7 @@ describe('POST /api/cron/trust-score', () => {
       eq: vi.fn().mockReturnThis(),
       limit: vi.fn().mockResolvedValue({ data: [], error: null }),
     })
-    const result = await handler({}) as { updated: number; total: number }
+    const result = (await handler({})) as { updated: number; total: number }
     expect(result.updated).toBe(0)
     expect(result.total).toBe(0)
   })
@@ -154,7 +170,7 @@ describe('POST /api/cron/trust-score', () => {
       limit: vi.fn().mockResolvedValue({ data: MOCK_DEALERS, error: null }),
     })
 
-    const result = await handler({}) as { updated: number; total: number }
+    const result = (await handler({})) as { updated: number; total: number }
     expect(result.total).toBe(2)
     expect(result.updated).toBe(2)
     expect(mockUpdate).toHaveBeenCalledTimes(2)
@@ -203,7 +219,7 @@ describe('POST /api/cron/trust-score', () => {
       limit: vi.fn().mockResolvedValue({ data: MOCK_DEALERS, error: null }),
     })
 
-    const result = await handler({}) as { updated: number; errors: number }
+    const result = (await handler({})) as { updated: number; errors: number }
     expect(result.errors).toBe(2)
     expect(result.updated).toBe(0)
   })
@@ -230,7 +246,7 @@ describe('POST /api/cron/trust-score', () => {
       eq: vi.fn().mockReturnThis(),
       limit: vi.fn().mockResolvedValue({ data: [], error: null }),
     })
-    const result = await handler({}) as { timestamp: string }
+    const result = (await handler({})) as { timestamp: string }
     expect(typeof result.timestamp).toBe('string')
     expect(() => new Date(result.timestamp)).not.toThrow()
   })

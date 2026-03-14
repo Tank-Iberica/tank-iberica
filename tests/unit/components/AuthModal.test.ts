@@ -73,6 +73,13 @@ beforeEach(() => {
   }))
   // globalThis.location used by loginWithGoogle / forgotPassword
   vi.stubGlobal('location', { origin: 'https://tracciona.com' })
+  // Focus trap composable
+  vi.stubGlobal('useFocusTrap', () => ({
+    activate: vi.fn(),
+    deactivate: vi.fn(),
+  }))
+  // Stub $fetch for lockout checks used by useAuth inside component
+  vi.stubGlobal('$fetch', vi.fn().mockResolvedValue({ locked: false, attemptsRemaining: 5 }))
   document.body.style.overflow = ''
 })
 

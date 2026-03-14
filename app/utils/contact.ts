@@ -10,10 +10,3 @@ export function getContact() {
     email: `info@${domain}`,
   } as const
 }
-
-/** @deprecated Use getContact() instead */
-export const CONTACT = {
-  phone: '+34645779594',
-  whatsappNumber: '34645779594',
-  email: 'info@tracciona.com', // TODO: make dynamic when multi-vertical
-} as const

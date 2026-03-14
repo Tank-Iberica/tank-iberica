@@ -187,7 +187,7 @@ function buildBalancePdfHtml(
   const headers = colDefs.map((c) => `<th>${c.header}</th>`).join('')
   const rows = data.map((e) => '<tr>' + colDefs.map((c) => c.cell(e)).join('') + '</tr>').join('')
 
-  return `<!DOCTYPE html><html><head><title>Balance ${yearLabel} - Tracciona</title>
+  return `<!DOCTYPE html><html><head><title>Balance ${yearLabel} - ${useSiteName()}</title>
   <style>${BALANCE_PDF_STYLE}${tableStyle}</style>
   </head><body>${BALANCE_PDF_HEADER}
   <div class="content">
@@ -199,7 +199,7 @@ function buildBalancePdfHtml(
     <p><strong>Total Gastos:</strong> <span class="gasto">-${totals.totalGastos.toFixed(2)}\u20AC</span></p>
     <p><strong>Balance Neto:</strong> <strong>${totals.balanceNeto.toFixed(2)}\u20AC</strong></p>
   </div></div>
-  <div class="footer">TRACCIONA.COM</div></body></html>`
+  <div class="footer">${useSiteUrl().replace('https://', '').replace('http://', '').toUpperCase()}</div></body></html>`
 }
 
 function buildResumenPdfHtml(yearLabel: string, resumenSectionsHtml: string): string {
@@ -213,14 +213,14 @@ function buildResumenPdfHtml(yearLabel: string, resumenSectionsHtml: string): st
   .positive { color: #059669; font-weight: 600; }
   .negative { color: #dc2626; font-weight: 600; }`
 
-  return `<!DOCTYPE html><html><head><title>Resumen Balance - Tracciona</title>
+  return `<!DOCTYPE html><html><head><title>Resumen Balance - ${useSiteName()}</title>
   <style>${BALANCE_PDF_STYLE}${tableStyle}</style>
   </head><body>${BALANCE_PDF_HEADER}
   <div class="content">
   <p class="subtitle">Resumen Balance ${yearLabel}</p>
   <p class="date">Generado: ${new Date().toLocaleDateString('es-ES')}</p>
   ${resumenSectionsHtml}</div>
-  <div class="footer">TRACCIONA.COM</div></body></html>`
+  <div class="footer">${useSiteUrl().replace('https://', '').replace('http://', '').toUpperCase()}</div></body></html>`
 }
 
 /** Print HTML via hidden iframe with fallback to popup window. */

@@ -192,7 +192,7 @@ export function buildNewsletterHtml(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>El Industrial &mdash; Tracciona</title>
+  <title>El Industrial &mdash; ${getSiteName()}</title>
 </head>
 <body style="margin: 0; padding: 0; background: #f4f4f5;
   font-family: 'Inter', Arial, Helvetica, sans-serif; -webkit-text-size-adjust: 100%;">
@@ -257,7 +257,7 @@ export function buildNewsletterHtml(
             <td style="padding: 20px 24px; background: #f9fafb; border-top: 1px solid #e5e7eb;
               text-align: center; font-size: 12px; color: #9ca3af;">
               <p style="margin: 0 0 8px;">
-                Recibes esta newsletter porque te suscribiste en Tracciona.
+                Recibes esta newsletter porque te suscribiste en ${getSiteName()}.
               </p>
               <p style="margin: 0;">
                 <a href="${unsubscribeUrl}" style="color: #9ca3af; text-decoration: underline;">
@@ -326,6 +326,7 @@ export default defineEventHandler(async (event) => {
   const batchResult = await processBatch({
     items: subscribers,
     batchSize: 50,
+    delayBetweenBatchesMs: 5000,
     processor: async (subscriber: NewsletterSubscriberRow) => {
       const unsubscribeUrl = `${siteUrl}/api/email/unsubscribe?newsletter_id=${subscriber.id}`
       const html = buildNewsletterHtml(vehicles, insight, siteUrl, unsubscribeUrl)

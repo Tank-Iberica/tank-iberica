@@ -152,7 +152,7 @@ export default defineEventHandler(async (event) => {
     price ? `💰 ${price}` : null,
     `📍 ${location}`,
     categoryName,
-    'Encuentra este y otros vehículos industriales en Tracciona',
+    `Encuentra este y otros vehículos industriales en ${getSiteName()}`,
   ].filter(Boolean)
 
   const payload: PinterestPinPayload = {

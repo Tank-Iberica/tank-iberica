@@ -7,6 +7,55 @@ definePageMeta({
 const { t } = useI18n()
 const { updatePassword, logoutAll, loading: authLoading } = useAuth()
 const { deleteAccount, exportData, loading: profileLoading, error: profileError } = useUserProfile()
+const {
+  status: mfaStatus,
+  loading: mfaLoading,
+  qrCodeUri,
+  enroll,
+  verify,
+  unenroll,
+  checkStatus,
+} = useMfa()
+
+/** MFA state */
+const mfaCode = ref('')
+const mfaError = ref<string | null>(null)
+const showMfaSetup = ref(false)
+
+onMounted(() => {
+  void checkStatus()
+})
+
+async function onEnrollMfa() {
+  mfaError.value = null
+  const result = await enroll()
+  if (result) {
+    showMfaSetup.value = true
+  } else {
+    mfaError.value = t('profile.security.mfaVerifyError')
+  }
+}
+
+async function onVerifyMfa() {
+  mfaError.value = null
+  if (mfaCode.value.length !== 6) {
+    mfaError.value = t('profile.security.mfaVerifyError')
+    return
+  }
+  const ok = await verify(mfaCode.value)
+  if (ok) {
+    showMfaSetup.value = false
+    mfaCode.value = ''
+  } else {
+    mfaError.value = t('profile.security.mfaVerifyError')
+  }
+}
+
+async function onDisableMfa() {
+  mfaError.value = null
+  const ok = await unenroll()
+  if (!ok) mfaError.value = t('profile.security.mfaVerifyError')
+}
 
 /** Password change form */
 const passwordForm = reactive({
@@ -104,7 +153,13 @@ useHead({
 <template>
   <div class="security-page">
     <div class="security-container">
-      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('profile.security.title') }]" />
+      <UiBreadcrumbNav
+        :items="[
+          { label: $t('nav.home'), to: '/' },
+          { label: $t('profile.dashboard.title'), to: '/perfil' },
+          { label: $t('profile.security.title') },
+        ]"
+      />
       <PerfilProfileNavPills />
       <h1 class="page-title">
         {{ $t('profile.security.title') }}
@@ -131,7 +186,7 @@ useHead({
               autocomplete="new-password"
               minlength="8"
               required
-            >
+            />
           </div>
 
           <div class="form-group">
@@ -147,7 +202,7 @@ useHead({
               autocomplete="new-password"
               minlength="8"
               required
-            >
+            />
           </div>
 
           <div v-if="passwordError" class="form-error" role="alert">
@@ -162,6 +217,66 @@ useHead({
             {{ authLoading ? $t('common.loading') : $t('profile.security.changePasswordBtn') }}
           </button>
         </form>
+      </section>
+
+      <!-- MFA / 2FA -->
+      <section class="section-card">
+        <h2 class="section-title">{{ $t('profile.security.mfaTitle') }}</h2>
+        <p class="section-desc">{{ $t('profile.security.mfaDesc') }}</p>
+
+        <template v-if="mfaStatus === 'not_enrolled'">
+          <button class="btn-outline" :disabled="mfaLoading" @click="onEnrollMfa">
+            {{ mfaLoading ? $t('common.loading') : $t('profile.security.mfaEnable') }}
+          </button>
+        </template>
+
+        <template v-else-if="showMfaSetup">
+          <div class="mfa-setup">
+            <p class="mfa-instruction">{{ $t('profile.security.mfaScanQr') }}</p>
+            <img
+              v-if="qrCodeUri"
+              :src="qrCodeUri"
+              alt="QR Code"
+              class="mfa-qr"
+              width="200"
+              height="200"
+            />
+            <div class="form-group">
+              <label for="mfa_code" class="form-label">{{
+                $t('profile.security.mfaCodeLabel')
+              }}</label>
+              <input
+                id="mfa_code"
+                v-model="mfaCode"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]{6}"
+                maxlength="6"
+                class="form-input"
+                :placeholder="$t('profile.security.mfaCodePlaceholder')"
+                autocomplete="one-time-code"
+              />
+            </div>
+            <button class="btn-primary" :disabled="mfaLoading" @click="onVerifyMfa">
+              {{ mfaLoading ? $t('common.loading') : $t('profile.security.mfaVerify') }}
+            </button>
+          </div>
+        </template>
+
+        <template v-else>
+          <div class="mfa-active">
+            <p class="form-success" role="status">{{ $t('profile.security.mfaActive') }}</p>
+            <button
+              class="btn-outline btn-outline--danger"
+              :disabled="mfaLoading"
+              @click="onDisableMfa"
+            >
+              {{ mfaLoading ? $t('common.loading') : $t('profile.security.mfaDisable') }}
+            </button>
+          </div>
+        </template>
+
+        <div v-if="mfaError" class="form-error" role="alert">{{ mfaError }}</div>
       </section>
 
       <!-- Logout all devices -->
@@ -200,7 +315,7 @@ useHead({
             type="text"
             class="form-input"
             placeholder="ELIMINAR"
-          >
+          />
           <div v-if="deleteError" class="form-error" role="alert">
             {{ deleteError }}
           </div>
@@ -417,6 +532,41 @@ useHead({
 
 .btn-ghost:hover {
   color: var(--text-primary);
+}
+
+/* MFA */
+.mfa-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mfa-instruction {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+
+.mfa-qr {
+  align-self: center;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color-light);
+}
+
+.mfa-active {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.btn-outline--danger {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.btn-outline--danger:hover:not(:disabled) {
+  background: var(--color-error);
+  color: var(--color-white);
 }
 
 /* Delete confirmation */

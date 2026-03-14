@@ -23,11 +23,13 @@ const {
   updateLeadStatus,
   updateLeadNotes,
   updateCloseReason,
+  updateNegotiatedPrice,
 } = useDealerLeads(dealerId)
 
 const leadId = route.params.id as string
 const notesText = ref('')
 const closeReasonText = ref('')
+const negotiatedPrice = ref<number | null>(null)
 const saving = ref(false)
 const saveSuccess = ref(false)
 
@@ -37,6 +39,7 @@ async function fetchLead(): Promise<void> {
   if (lead) {
     notesText.value = lead.dealer_notes || ''
     closeReasonText.value = lead.close_reason || ''
+    negotiatedPrice.value = lead.negotiated_price_cents ? lead.negotiated_price_cents / 100 : null
   }
 }
 
@@ -53,6 +56,11 @@ async function handleStatusChange(newStatus: LeadStatus): Promise<void> {
 
   if (success && newStatus === 'lost' && closeReasonText.value) {
     await updateCloseReason(leadId, closeReasonText.value)
+  }
+
+  // Save negotiated price when closing as won
+  if (success && newStatus === 'won' && negotiatedPrice.value) {
+    await updateNegotiatedPrice(leadId, Math.round(negotiatedPrice.value * 100))
   }
 
   saving.value = false
@@ -197,6 +205,37 @@ function getStatusColor(status: string): string {
             {{ t(`dashboard.leadStatus.${status}`) }}
           </button>
         </div>
+      </section>
+
+      <!-- Negotiated Price (visible when won or negotiating) -->
+      <section
+        v-if="
+          currentLead.status === 'won' || currentLead.status === 'negotiating' || negotiatedPrice
+        "
+        class="card"
+      >
+        <h2>{{ t('dashboard.leads.negotiatedPrice') }}</h2>
+        <div class="price-input-wrapper">
+          <span class="price-currency">&euro;</span>
+          <input
+            v-model.number="negotiatedPrice"
+            type="number"
+            min="0"
+            step="100"
+            class="price-input"
+            autocomplete="off"
+            :placeholder="t('dashboard.leads.negotiatedPricePlaceholder')"
+          >
+        </div>
+        <button
+          class="btn-primary btn-sm"
+          :disabled="saving"
+          @click="
+            negotiatedPrice && updateNegotiatedPrice(leadId, Math.round(negotiatedPrice * 100))
+          "
+        >
+          {{ t('common.save') }}
+        </button>
       </section>
 
       <!-- Close Reason (required for lost) -->
@@ -434,6 +473,50 @@ function getStatusColor(status: string): string {
 .status-btn.active {
   border-width: 0.125rem;
   font-weight: 700;
+}
+
+.price-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  min-height: 3rem;
+  margin-bottom: var(--spacing-3);
+}
+
+.price-input-wrapper:focus-within {
+  border-color: var(--color-primary);
+}
+
+.price-currency {
+  padding: 0 var(--spacing-3);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-auxiliary);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--color-gray-200);
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.price-input {
+  flex: 1;
+  border: none;
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: transparent;
+  outline: none;
+  min-width: 0;
+}
+
+.btn-sm {
+  font-size: 0.85rem;
+  min-height: 2.25rem;
+  padding: var(--spacing-2) var(--spacing-4);
 }
 
 textarea {

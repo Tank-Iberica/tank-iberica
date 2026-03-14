@@ -28,6 +28,7 @@ export interface Lead {
   status: LeadStatus
   dealer_notes: string | null
   close_reason: string | null
+  negotiated_price_cents: number | null
   created_at: string | null
   updated_at: string | null
   vehicle_brand: string | null
@@ -112,6 +113,7 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
           status: LeadStatus
           dealer_notes: string | null
           close_reason: string | null
+          negotiated_price_cents: number | null
           created_at: string | null
           updated_at: string | null
           status_history: StatusChange[] | null
@@ -129,6 +131,7 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
         status: lead.status,
         dealer_notes: lead.dealer_notes,
         close_reason: lead.close_reason,
+        negotiated_price_cents: lead.negotiated_price_cents ?? null,
         created_at: lead.created_at,
         updated_at: lead.updated_at,
         vehicle_brand: lead.vehicles?.brand || null,
@@ -174,6 +177,7 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
         status: LeadStatus
         dealer_notes: string | null
         close_reason: string | null
+        negotiated_price_cents: number | null
         created_at: string | null
         updated_at: string | null
         status_history: StatusChange[] | null
@@ -192,6 +196,7 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
         status: lead.status,
         dealer_notes: lead.dealer_notes,
         close_reason: lead.close_reason,
+        negotiated_price_cents: lead.negotiated_price_cents ?? null,
         created_at: lead.created_at,
         updated_at: lead.updated_at,
         vehicle_brand: lead.vehicles?.brand || null,
@@ -329,6 +334,34 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
     }
   }
 
+  async function updateNegotiatedPrice(
+    leadId: string,
+    priceCents: number | null,
+  ): Promise<boolean> {
+    error.value = null
+
+    try {
+      const { error: err } = await supabase
+        .from('leads')
+        .update({
+          negotiated_price_cents: priceCents,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', leadId)
+
+      if (err) throw err
+
+      if (currentLead.value?.id === leadId) {
+        currentLead.value = { ...currentLead.value, negotiated_price_cents: priceCents }
+      }
+
+      return true
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error updating negotiated price'
+      return false
+    }
+  }
+
   return {
     leads: readonly(leads),
     currentLead: readonly(currentLead),
@@ -340,5 +373,6 @@ export function useDealerLeads(dealerId: Ref<string | null> | string | null) {
     updateLeadStatus,
     updateLeadNotes,
     updateCloseReason,
+    updateNegotiatedPrice,
   }
 }

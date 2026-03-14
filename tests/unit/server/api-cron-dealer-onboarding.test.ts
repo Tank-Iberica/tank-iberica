@@ -36,6 +36,8 @@ vi.mock('../../../server/utils/verifyCronSecret', () => ({
 vi.mock('../../../server/utils/logger', () => ({ logger: mockLogger }))
 vi.mock('../../../server/utils/siteConfig', () => ({
   getSiteUrl: () => 'https://tracciona.com',
+  getSiteName: () => 'Tracciona',
+  getSiteEmail: () => 'hola@tracciona.com',
 }))
 vi.mock('../../../server/utils/batchProcessor', () => ({
   processBatch: async ({

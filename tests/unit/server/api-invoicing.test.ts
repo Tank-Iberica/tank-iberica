@@ -5,31 +5,30 @@
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-const {
-  mockReadBody,
-  mockGetQuery,
-  mockSafeError,
-  mockServiceRole,
-  mockSupabaseUser,
-} = vi.hoisted(() => {
-  const mockSafeError = vi.fn((status: number, msg: string) => {
-    const err = new Error(msg)
-    ;(err as any).statusCode = status
-    return err
-  })
-  return {
-    mockReadBody: vi.fn().mockResolvedValue({}),
-    mockGetQuery: vi.fn().mockReturnValue({}),
-    mockSafeError,
-    mockServiceRole: vi.fn(),
-    mockSupabaseUser: vi.fn().mockResolvedValue(null),
-  }
-})
+const { mockReadBody, mockGetQuery, mockSafeError, mockServiceRole, mockSupabaseUser } = vi.hoisted(
+  () => {
+    const mockSafeError = vi.fn((status: number, msg: string) => {
+      const err = new Error(msg)
+      ;(err as any).statusCode = status
+      return err
+    })
+    return {
+      mockReadBody: vi.fn().mockResolvedValue({}),
+      mockGetQuery: vi.fn().mockReturnValue({}),
+      mockSafeError,
+      mockServiceRole: vi.fn(),
+      mockSupabaseUser: vi.fn().mockResolvedValue(null),
+    }
+  },
+)
 
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   readBody: mockReadBody,
   getQuery: mockGetQuery,
+  getHeaders: vi.fn().mockReturnValue({}),
+  getHeader: vi.fn().mockReturnValue(undefined),
+  getRequestIP: vi.fn().mockReturnValue('127.0.0.1'),
   createError: (opts: { statusCode?: number; statusMessage?: string; data?: unknown }) => {
     const err = new Error(opts.statusMessage ?? 'Error')
     ;(err as any).statusCode = opts.statusCode
@@ -81,9 +80,12 @@ describe('GET /api/invoicing/export-csv', () => {
     mockSupabaseUser.mockResolvedValue({ id: 'user-1' })
     delete process.env.SUPABASE_URL
     delete process.env.SUPABASE_SERVICE_ROLE_KEY
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue([]),
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue([]),
+      }),
+    )
   })
 
   afterEach(() => {
@@ -136,11 +138,27 @@ describe('GET /api/invoicing/export-csv', () => {
     process.env.SUPABASE_URL = 'https://test.supabase.co'
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key'
     mockServiceRole.mockReturnValue(makeChain({ role: 'admin' }))
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue([
-        { id: 'inv-1', dealer_id: 'd1', user_id: 'u1', stripe_invoice_id: null, service_type: 'subscription', amount_cents: 2900, tax_cents: 609, currency: 'EUR', status: 'paid', created_at: '2024-01-01' },
-      ]),
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi
+          .fn()
+          .mockResolvedValue([
+            {
+              id: 'inv-1',
+              dealer_id: 'd1',
+              user_id: 'u1',
+              stripe_invoice_id: null,
+              service_type: 'subscription',
+              amount_cents: 2900,
+              tax_cents: 609,
+              currency: 'EUR',
+              status: 'paid',
+              created_at: '2024-01-01',
+            },
+          ]),
+      }),
+    )
     const result = await exportCsvHandler(csvEvent)
     expect(typeof result).toBe('string')
     expect(result).toContain('ID')
@@ -178,9 +196,12 @@ describe('POST /api/invoicing/create-invoice', () => {
     mockReadBody.mockResolvedValue({ ...validInvoiceBody })
     delete process.env.SUPABASE_URL
     delete process.env.SUPABASE_SERVICE_ROLE_KEY
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue([]),
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue([]),
+      }),
+    )
   })
 
   afterEach(() => {
@@ -213,13 +234,18 @@ describe('POST /api/invoicing/create-invoice', () => {
     process.env.SUPABASE_URL = 'https://test.supabase.co'
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key'
     mockServiceRole.mockReturnValue(makeChain({ id: 'dealer-1' }))
-    vi.stubGlobal('fetch', vi.fn()
-      .mockResolvedValueOnce({ json: vi.fn().mockResolvedValue([{ tax_country: 'ES' }]) }) // fiscal data
-      .mockResolvedValueOnce({ json: vi.fn().mockResolvedValue([{ id: 'inv-1', ...validInvoiceBody }]) }), // insert
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce({ json: vi.fn().mockResolvedValue([{ tax_country: 'ES' }]) }) // fiscal data
+        .mockResolvedValueOnce({
+          json: vi.fn().mockResolvedValue([{ id: 'inv-1', ...validInvoiceBody }]),
+        }), // insert
     )
     const result = await createInvoiceHandler({} as any)
     expect(result.success).toBe(true)
-    expect(result.vatRate).toBe(21)
+    expect(result.vatRate).toBe(0.21)
     expect(result.taxCountry).toBe('ES')
   })
 
@@ -227,12 +253,15 @@ describe('POST /api/invoicing/create-invoice', () => {
     process.env.SUPABASE_URL = 'https://test.supabase.co'
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key'
     mockServiceRole.mockReturnValue(makeChain({ id: 'dealer-1' }))
-    vi.stubGlobal('fetch', vi.fn()
-      .mockResolvedValueOnce({ json: vi.fn().mockResolvedValue([]) }) // no fiscal data
-      .mockResolvedValueOnce({ json: vi.fn().mockResolvedValue([{ id: 'inv-1' }]) }),
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce({ json: vi.fn().mockResolvedValue([]) }) // no fiscal data
+        .mockResolvedValueOnce({ json: vi.fn().mockResolvedValue([{ id: 'inv-1' }]) }),
     )
     const result = await createInvoiceHandler({} as any)
-    expect(result.vatRate).toBe(21)
+    expect(result.vatRate).toBe(0.21)
     expect(result.taxCountry).toBe('ES')
   })
 })

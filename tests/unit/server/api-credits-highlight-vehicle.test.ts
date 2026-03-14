@@ -23,7 +23,12 @@ const { mockSafeError, mockSupabaseUser, mockVerifyCsrf, mockValidateBody, mockF
   },
 )
 
-vi.mock('h3', () => ({ defineEventHandler: (fn: Function) => fn }))
+vi.mock('h3', () => ({
+  defineEventHandler: (fn: Function) => fn,
+  readBody: mockValidateBody,
+  getHeaders: vi.fn().mockReturnValue({}),
+  getHeader: vi.fn().mockReturnValue(undefined),
+}))
 vi.mock('#supabase/server', () => ({ serverSupabaseUser: mockSupabaseUser }))
 vi.mock('../../../server/utils/safeError', () => ({ safeError: mockSafeError }))
 vi.mock('../../../server/utils/verifyCsrf', () => ({ verifyCsrf: mockVerifyCsrf }))
@@ -37,9 +42,9 @@ vi.stubGlobal('useRuntimeConfig', () => ({
 
 // ── constants ────────────────────────────────────────────────────────────────
 
-const USER_ID = 'user-1'
-const DEALER_ID = 'dealer-1'
-const VEHICLE_ID = 'vehicle-1'
+const USER_ID = '00000000-0000-4000-a000-000000000001'
+const DEALER_ID = '00000000-0000-4000-a000-000000000002'
+const VEHICLE_ID = '00000000-0000-4000-a000-000000000003'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 

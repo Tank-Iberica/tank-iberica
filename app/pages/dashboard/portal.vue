@@ -13,6 +13,7 @@ const {
   saving,
   saved,
   error,
+  needsProfile,
   portalUrl,
   companyName,
   logoUrl,
@@ -44,14 +45,23 @@ const {
   emailAuctionUpdates,
   brokerageOptOut,
   toggleBrokerageOptOut,
+  simpleMode,
   phoneModeOptions,
   loadPortal,
+  createDealerProfile,
   save,
   resetThemeColors,
   addCertification,
   removeCertification,
   updateCertificationField,
 } = useDealerPortal()
+
+const newDealerName = ref('')
+
+async function onCreateProfile() {
+  if (!newDealerName.value.trim()) return
+  await createDealerProfile(newDealerName.value.trim())
+}
 
 onMounted(loadPortal)
 
@@ -89,6 +99,39 @@ const coverRecommendations = [
     <div v-if="loading" class="loading-state" aria-busy="true">
       <UiSkeletonCard :lines="5" />
     </div>
+
+    <!-- ── CREATE PROFILE (no dealer record yet) ─────────── -->
+    <section v-else-if="needsProfile" class="form-section create-profile-section">
+      <h2>{{ t('dashboard.portal.createProfileTitle', 'Crea tu perfil de concesionario') }}</h2>
+      <p class="section-desc">
+        {{
+          t(
+            'dashboard.portal.createProfileDesc',
+            'Introduce el nombre de tu empresa para empezar a configurar tu portal.',
+          )
+        }}
+      </p>
+      <div v-if="error" class="alert-error">{{ error }}</div>
+      <div class="form-group">
+        <label for="new_dealer_name">{{ t('dashboard.portal.companyName') }}</label>
+        <input
+          id="new_dealer_name"
+          v-model="newDealerName"
+          type="text"
+          autocomplete="organization"
+          :placeholder="t('dashboard.portal.companyNamePlaceholder')"
+          @keyup.enter="onCreateProfile"
+        >
+      </div>
+      <button
+        type="button"
+        class="btn-primary"
+        :disabled="saving || !newDealerName.trim()"
+        @click="onCreateProfile"
+      >
+        {{ saving ? t('common.loading') : t('dashboard.portal.createProfile', 'Crear perfil') }}
+      </button>
+    </section>
 
     <template v-else>
       <div v-if="error" class="alert-error">{{ error }}</div>
@@ -396,7 +439,7 @@ const coverRecommendations = [
           {{ t('dashboard.portal.certificationsDesc') }}
         </p>
 
-        <div v-if="certifications.length" class="cert-list">
+        <TransitionGroup v-if="certifications.length" name="list" tag="div" class="cert-list">
           <div v-for="cert in certifications" :key="cert.id" class="cert-item">
             <div class="cert-row">
               <select
@@ -462,7 +505,7 @@ const coverRecommendations = [
               </button>
             </div>
           </div>
-        </div>
+        </TransitionGroup>
 
         <button type="button" class="btn-outline" @click="addCertification">
           {{ t('dashboard.portal.addCertification') }}
@@ -546,6 +589,22 @@ const coverRecommendations = [
         <h2>{{ t('dashboard.portal.sectionServices') }}</h2>
         <div class="toggle-group">
           <label class="toggle-row">
+            <span class="toggle-label">{{
+              t('dashboard.portal.simpleModeLabel', 'Modo simple')
+            }}</span>
+            <input v-model="simpleMode" type="checkbox" class="toggle-input" role="switch" >
+          </label>
+          <p class="field-hint">
+            {{
+              t(
+                'dashboard.portal.simpleModeHint',
+                'Auto-renovar anuncios sin CRM avanzado. Publica y olvídate.',
+              )
+            }}
+          </p>
+        </div>
+        <div class="toggle-group">
+          <label class="toggle-row">
             <span class="toggle-label">{{ t('dashboard.portal.brokerageLabel') }}</span>
             <input
               :checked="!brokerageOptOut"
@@ -618,6 +677,21 @@ const coverRecommendations = [
   display: flex;
   justify-content: center;
   padding: var(--spacing-10);
+}
+
+.create-profile-section {
+  text-align: center;
+  max-width: 28rem;
+  margin: var(--spacing-8) auto 0;
+}
+
+.create-profile-section .form-group {
+  text-align: left;
+}
+
+.create-profile-section .btn-primary {
+  width: 100%;
+  margin-top: var(--spacing-2);
 }
 
 .spinner {
@@ -1061,5 +1135,25 @@ const coverRecommendations = [
   .lang-field {
     flex: 1;
   }
+}
+
+/* ── List transitions ── */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.25s ease;
+}
+
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}
+
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(1rem);
+}
+
+.list-move {
+  transition: transform 0.25s ease;
 }
 </style>

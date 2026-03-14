@@ -23,7 +23,6 @@ import { localizedField } from '~/composables/useLocalized'
 import { getVerticalSlug } from '~/composables/useVerticalConfig'
 
 export type {
-  PriceTrend,
   ConfidenceLevel,
   ValoracionSubcategoryRow,
   ValoracionFormData,
@@ -106,7 +105,9 @@ export function useValoracion() {
       /* 1. Fetch matching market data */
       let query = supabase
         .from('market_data' as never)
-        .select('*')
+        .select(
+          'brand, subcategory_slug, province, avg_price, min_price, max_price, sample_count, last_updated',
+        )
         .eq('vertical', getVerticalSlug())
         .eq('brand', form.brand.toLowerCase())
 

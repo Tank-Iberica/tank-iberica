@@ -7,21 +7,26 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-// ── Shared Supabase mock ───────────────────────────────────────────────────────
+// ── Hoisted values for vi.mock factory ────────────────────────────────────────
 
-const mockUser = { id: 'user-123', email: 'test@example.com' }
-const mockProfile = {
-  id: 'user-123',
-  name: 'Test',
-  apellidos: 'User',
-  pseudonimo: null,
-  phone: null,
-  email: 'test@example.com',
-  role: 'user',
-  avatar_url: null,
-  created_at: '2025-01-01T00:00:00Z',
-}
-const mockDealer = { id: 'dealer-456', user_id: 'user-123', company_name: 'Test Dealer' }
+const { mockUser, mockProfile, mockDealer, mockServerSupabaseUser, mockServerSupabaseServiceRole } =
+  vi.hoisted(() => ({
+    mockUser: { id: 'user-123', email: 'test@example.com' },
+    mockProfile: {
+      id: 'user-123',
+      name: 'Test',
+      apellidos: 'User',
+      pseudonimo: null,
+      phone: null,
+      email: 'test@example.com',
+      role: 'user',
+      avatar_url: null,
+      created_at: '2025-01-01T00:00:00Z',
+    },
+    mockDealer: { id: 'dealer-456', user_id: 'user-123', company_name: 'Test Dealer' },
+    mockServerSupabaseUser: vi.fn(),
+    mockServerSupabaseServiceRole: vi.fn(),
+  }))
 
 function makeMockSupabase(overrides: Record<string, unknown> = {}) {
   const fromImpl = (table: string) => {
@@ -49,24 +54,27 @@ function makeMockSupabase(overrides: Record<string, unknown> = {}) {
   }
 }
 
+mockServerSupabaseUser.mockResolvedValue(mockUser)
+
 vi.mock('#supabase/server', () => ({
-  serverSupabaseUser: vi.fn().mockResolvedValue(mockUser),
-  serverSupabaseServiceRole: vi.fn(),
+  serverSupabaseUser: mockServerSupabaseUser,
+  serverSupabaseServiceRole: mockServerSupabaseServiceRole,
 }))
 
-vi.mock('~/server/utils/safeError', () => ({
+vi.mock('~~/server/utils/safeError', () => ({
   safeError: (code: number, msg: string) => Object.assign(new Error(msg), { statusCode: code }),
 }))
 
-vi.mock('~/server/utils/verifyCsrf', () => ({
+vi.mock('~~/server/utils/verifyCsrf', () => ({
   verifyCsrf: vi.fn(),
 }))
 
-vi.mock('~/server/utils/logger', () => ({
+vi.mock('~~/server/utils/logger', () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
 }))
 
-import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+const serverSupabaseUser = mockServerSupabaseUser
+const serverSupabaseServiceRole = mockServerSupabaseServiceRole
 
 // ── export.get.ts ──────────────────────────────────────────────────────────────
 
@@ -87,14 +95,12 @@ describe('GET /api/account/export', () => {
         },
       },
       _responseHeaders: headers,
-    } as unknown as Parameters<
-      (typeof import('~/server/api/account/export.get'))['default']
-    >[0]
+    } as unknown as Parameters<(typeof import('~~/server/api/account/export.get'))['default']>[0]
   }
 
   it('returns 401 when not authenticated', async () => {
     vi.mocked(serverSupabaseUser).mockResolvedValueOnce(null)
-    const { default: handler } = await import('~/server/api/account/export.get')
+    const { default: handler } = await import('~~/server/api/account/export.get')
     await expect(handler(makeExportEvent())).rejects.toThrow()
   })
 
@@ -114,7 +120,7 @@ describe('GET /api/account/export', () => {
       supabase as unknown as ReturnType<typeof serverSupabaseServiceRole>,
     )
 
-    const { default: handler } = await import('~/server/api/account/export.get')
+    const { default: handler } = await import('~~/server/api/account/export.get')
     const result = await handler(makeExportEvent())
 
     expect(result).toMatchObject({
@@ -139,7 +145,7 @@ describe('GET /api/account/export', () => {
       supabase as unknown as ReturnType<typeof serverSupabaseServiceRole>,
     )
 
-    const { default: handler } = await import('~/server/api/account/export.get')
+    const { default: handler } = await import('~~/server/api/account/export.get')
     const result = await handler(makeExportEvent())
 
     expect(result.dealer).toBeNull()
@@ -152,7 +158,7 @@ describe('GET /api/account/export', () => {
       supabase as unknown as ReturnType<typeof serverSupabaseServiceRole>,
     )
 
-    const { default: handler } = await import('~/server/api/account/export.get')
+    const { default: handler } = await import('~~/server/api/account/export.get')
     const event = makeExportEvent()
     await handler(event)
 
@@ -170,7 +176,7 @@ describe('GET /api/account/export', () => {
       supabase as unknown as ReturnType<typeof serverSupabaseServiceRole>,
     )
 
-    const { default: handler } = await import('~/server/api/account/export.get')
+    const { default: handler } = await import('~~/server/api/account/export.get')
     const event = makeExportEvent()
     await handler(event)
 
@@ -195,14 +201,12 @@ describe('POST /api/account/delete', () => {
         res: {},
       },
       method: 'POST',
-    } as unknown as Parameters<
-      (typeof import('~/server/api/account/delete.post'))['default']
-    >[0]
+    } as unknown as Parameters<(typeof import('~~/server/api/account/delete.post'))['default']>[0]
   }
 
   it('returns 401 when not authenticated', async () => {
     vi.mocked(serverSupabaseUser).mockResolvedValueOnce(null)
-    const { default: handler } = await import('~/server/api/account/delete.post')
+    const { default: handler } = await import('~~/server/api/account/delete.post')
     await expect(handler(makeDeleteEvent())).rejects.toThrow()
   })
 
@@ -222,7 +226,7 @@ describe('POST /api/account/delete', () => {
       supabase as unknown as ReturnType<typeof serverSupabaseServiceRole>,
     )
 
-    const { default: handler } = await import('~/server/api/account/delete.post')
+    const { default: handler } = await import('~~/server/api/account/delete.post')
     const result = await handler(makeDeleteEvent())
 
     expect(result).toEqual({ success: true })
@@ -243,7 +247,7 @@ describe('POST /api/account/delete', () => {
       supabase as unknown as ReturnType<typeof serverSupabaseServiceRole>,
     )
 
-    const { default: handler } = await import('~/server/api/account/delete.post')
+    const { default: handler } = await import('~~/server/api/account/delete.post')
     await handler(makeDeleteEvent())
 
     expect(supabase.auth.admin.deleteUser).toHaveBeenCalledWith('user-123')
@@ -267,7 +271,7 @@ describe('POST /api/account/delete', () => {
       supabase as unknown as ReturnType<typeof serverSupabaseServiceRole>,
     )
 
-    const { default: handler } = await import('~/server/api/account/delete.post')
+    const { default: handler } = await import('~~/server/api/account/delete.post')
     const result = await handler(makeDeleteEvent())
 
     // Should still succeed — deletion already happened
@@ -291,7 +295,7 @@ describe('POST /api/account/delete', () => {
       supabase as unknown as ReturnType<typeof serverSupabaseServiceRole>,
     )
 
-    const { default: handler } = await import('~/server/api/account/delete.post')
+    const { default: handler } = await import('~~/server/api/account/delete.post')
     await handler(makeDeleteEvent())
 
     // update was called (for dealer anonymization + user anonymization)

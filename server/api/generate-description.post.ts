@@ -20,7 +20,12 @@ import { deductUserCredits } from '~~/server/utils/creditService'
 const generateDescriptionSchema = z.object({
   brand: z.string().min(1).max(128),
   model: z.string().min(1).max(128),
-  year: z.number().int().min(1900).max(new Date().getFullYear() + 2).optional(),
+  year: z
+    .number()
+    .int()
+    .min(1900)
+    .max(new Date().getFullYear() + 2)
+    .optional(),
   km: z.number().nonnegative().optional(),
   category: z.string().max(128).optional(),
   subcategory: z.string().max(128).optional(),
@@ -63,7 +68,9 @@ export default defineEventHandler(async (event): Promise<GenerateDescriptionResp
   const brand = sanitizeText(body.brand, { maxLength: 128 })
   const model = sanitizeText(body.model, { maxLength: 128 })
   const category = body.category ? sanitizeText(body.category, { maxLength: 128 }) : undefined
-  const subcategory = body.subcategory ? sanitizeText(body.subcategory, { maxLength: 128 }) : undefined
+  const subcategory = body.subcategory
+    ? sanitizeText(body.subcategory, { maxLength: 128 })
+    : undefined
 
   // 4. Build prompt
   const vehicleInfo = [
@@ -86,7 +93,7 @@ export default defineEventHandler(async (event): Promise<GenerateDescriptionResp
         .join('\n')
   }
 
-  const prompt = `Genera una descripcion SEO-optimizada en espanol para un vehiculo industrial que se vendera en un marketplace online (Tracciona). La descripcion debe:
+  const prompt = `Genera una descripcion SEO-optimizada en espanol para un vehiculo industrial que se vendera en un marketplace online (${getSiteName()}). La descripcion debe:
 
 - Tener aproximadamente 150 palabras
 - Incluir palabras clave relevantes para SEO (vehiculo industrial, marca, tipo)
@@ -114,7 +121,9 @@ Responde SOLO con la descripcion, sin titulos ni encabezados.`
     // Graceful fallback: if all AI providers are down (circuit open, timeout, no keys),
     // return an empty description so the user can still publish the vehicle manually.
     const message = err instanceof Error ? err.message : String(err)
-    logger.warn(`[generate-description] AI unavailable (${message}) — returning empty for manual input`)
+    logger.warn(
+      `[generate-description] AI unavailable (${message}) — returning empty for manual input`,
+    )
     return { description: '', aiUnavailable: true, creditsRemaining: creditResult.newBalance }
   }
 })

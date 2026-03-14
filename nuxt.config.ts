@@ -172,12 +172,14 @@ export default defineNuxtConfig({
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           // Fonts: Google Fonts CDN
           "font-src 'self' https://fonts.gstatic.com",
-          // Images: Cloudinary, CF Images, GA pixel, data URIs
-          "img-src 'self' data: https://res.cloudinary.com https://imagedelivery.net https://www.google.com https://www.google-analytics.com https://www.googletagmanager.com",
+          // Images: Cloudinary, CF Images, GA pixel, flags, Google OAuth avatars, data URIs
+          "img-src 'self' data: https://res.cloudinary.com https://imagedelivery.net https://flagcdn.com https://*.googleusercontent.com https://*.usercontent.google.com https://accounts.google.com https://picsum.photos https://www.google.com https://www.google-analytics.com https://www.googletagmanager.com",
           // Fetch/XHR: Supabase, GA, GTM
           "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://www.googletagmanager.com https://pagead2.googlesyndication.com",
           // Frames: Turnstile widget
           'frame-src https://challenges.cloudflare.com',
+          // Workers: Vite dev + workbox service workers
+          "worker-src 'self' blob:",
           // Block plugins/objects
           "object-src 'none'",
           // Block base tag hijacking
@@ -194,6 +196,10 @@ export default defineNuxtConfig({
     '/guia': { swr: 60 * 60 },
     '/guia/**': { swr: 60 * 60 },
     '/sobre-nosotros': { prerender: true },
+    '/transparencia': { prerender: true },
+    '/preguntas-frecuentes': { prerender: true },
+    '/top-dealers': { swr: 60 * 60 },
+    '/servicios-postventa': { prerender: true },
     '/legal': { prerender: true },
     '/legal/**': { prerender: true },
     '/subastas': { swr: 60 },

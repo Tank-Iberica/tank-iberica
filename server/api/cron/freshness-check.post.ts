@@ -16,7 +16,7 @@ import { safeError } from '../../utils/safeError'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
 import { fetchWithRetry } from '../../utils/fetchWithRetry'
-import { getSiteUrl, getSiteName } from '../../utils/siteConfig'
+import { getSiteUrl, getSiteName, getSiteEmail } from '../../utils/siteConfig'
 import { logger } from '../../utils/logger'
 
 interface CronBody {
@@ -212,7 +212,7 @@ export default defineEventHandler(async (event) => {
             const vehicleTitle = v.title_es ?? 'Tu vehículo'
             const vehicleUrl = `${siteUrl}/dashboard/vehiculos/${v.id}`
             await resend.emails.send({
-              from: `${siteName} <hola@tracciona.com>`,
+              from: `${siteName} <${getSiteEmail()}>`,
               to: dealerEmail,
               subject: isEs
                 ? `¿Tu ${vehicleTitle} sigue disponible?`
@@ -310,7 +310,7 @@ export default defineEventHandler(async (event) => {
             const vehicleTitle = v.title_es ?? 'Tu vehículo'
             const renewUrl = `${siteUrl}/dashboard/vehiculos/${v.id}`
             await resend.emails.send({
-              from: `${siteName} <hola@tracciona.com>`,
+              from: `${siteName} <${getSiteEmail()}>`,
               to: dealerEmail,
               subject: isEs
                 ? `Anuncio archivado: ${vehicleTitle}`

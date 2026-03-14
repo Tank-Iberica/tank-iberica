@@ -57,7 +57,7 @@ function buildBroadcastMessage(v: VehicleData): string {
   const url = `${getSiteUrl()}/vehiculo/${v.slug}`
 
   return (
-    `🚛 *Nuevo en Tracciona*\n\n` +
+    `🚛 *Nuevo en ${getSiteName()}*\n\n` +
     `*${title}*\n` +
     `📍 ${location}\n` +
     `💰 ${price}\n\n` +

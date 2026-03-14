@@ -1,0 +1,15 @@
+/* tokens/borders.css — Border colors and radius tokens */
+
+@layer tokens {
+  :root {
+    --border-color: #d1d5db;
+    --border-color-light: #e5e7eb;
+    --border-color-dark: #9ca3af;
+    --border-radius-sm: 0.25rem;
+    --border-radius: 0.5rem;
+    --border-radius-md: 0.75rem;
+    --border-radius-lg: 1rem;
+    --border-radius-xl: 1.5rem;
+    --border-radius-full: 9999px;
+  }
+}

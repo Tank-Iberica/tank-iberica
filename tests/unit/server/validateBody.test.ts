@@ -12,6 +12,18 @@ vi.mock('h3', () => ({
   },
 }))
 
+vi.mock('../../../server/utils/safeError', () => ({
+  safeError: (code: number, msg: string) => {
+    const err = new Error(msg) as Error & { statusCode: number }
+    err.statusCode = code
+    return err
+  },
+}))
+
+vi.mock('../../../server/utils/logger', () => ({
+  logger: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
+}))
+
 import { validateBody } from '../../../server/utils/validateBody'
 
 // Minimal Zod-compatible schema interface
@@ -53,9 +65,10 @@ describe('validateBody', () => {
       await validateBody({} as never, schema as never)
       expect.fail('Should have thrown')
     } catch (err: unknown) {
-      const e = err as { data: { errors: string } }
-      expect(e.data.errors).toContain('name: Required')
-      expect(e.data.errors).toContain('email: Invalid email')
+      const e = err as { statusCode: number; message: string }
+      expect(e.statusCode).toBe(400)
+      // The source logs the details via logger.warn, not in the error data
+      expect(e.message).toBe('Datos inválidos')
     }
   })
 
@@ -65,8 +78,9 @@ describe('validateBody', () => {
     try {
       await validateBody({} as never, schema as never)
     } catch (err: unknown) {
-      const e = err as { data: { errors: string } }
-      expect(e.data.errors).toContain('address.city: Required')
+      const e = err as { statusCode: number; message: string }
+      expect(e.statusCode).toBe(400)
+      expect(e.message).toBe('Datos inválidos')
     }
   })
 })

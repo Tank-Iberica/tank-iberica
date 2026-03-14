@@ -18,7 +18,18 @@ describe('AdminHistoricoRestoreModal', () => {
         saving: false,
         ...overrides,
       },
-      global: { stubs: { Teleport: true } },
+      global: {
+        stubs: { Teleport: true },
+        mocks: {
+          $t: (key: string) => {
+            const map: Record<string, string> = {
+              'vertical.itemNameCapitalized': 'Vehículo',
+              'vertical.itemName': 'vehículo',
+            }
+            return map[key] || key
+          },
+        },
+      },
     })
 
   it('renders when visible', () => {
@@ -30,7 +41,7 @@ describe('AdminHistoricoRestoreModal', () => {
   })
 
   it('shows header title', () => {
-    expect(factory().find('.modal-head').text()).toContain('Restaurar vehículo')
+    expect(factory().find('.modal-head').text()).toContain('Restaurar Vehículo')
   })
 
   it('shows target vehicle info', () => {

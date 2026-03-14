@@ -21,8 +21,6 @@ import { getVerticalSlug } from '~/composables/useVerticalConfig'
 
 export type {
   MarketRow,
-  PriceHistoryRow,
-  CategoryStat,
   ProvinceStat,
   BrandBreakdownItem,
   ProvinceSortKey,
@@ -30,8 +28,7 @@ export type {
   DatosChartData,
 } from '~/composables/shared/datosTypes'
 
-// Re-export formatPrice for backwards compatibility (tests import it from here)
-export { formatPrice } from '~/utils/formatters'
+// formatPrice is available via auto-import from ~/utils/formatters
 
 /* ------------------------------------------------
    Composable

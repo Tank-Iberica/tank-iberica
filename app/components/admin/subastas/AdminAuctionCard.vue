@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { formatPriceCents } from '~/composables/shared/useListingUtils'
 import type { AuctionWithVehicle } from '~/composables/admin/useAdminAuctionList'
-import type { AuctionStatus } from '~/composables/useAuction'
+import type { AuctionDisplayStatus as AuctionStatus } from '~/composables/useAuction'
 
 const props = defineProps<{
   auction: AuctionWithVehicle

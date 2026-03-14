@@ -10,7 +10,7 @@
  * Used in the dealer dashboard for managing fleet expirations.
  */
 import { useListingLifecycle, isValidTransition } from '~/composables/useListingLifecycle'
-import type { VehicleStatus } from '~/composables/useListingLifecycle'
+import type { ListingStatus as VehicleStatus } from '~/composables/useListingLifecycle'
 
 export interface RenewalResult {
   vehicleId: string

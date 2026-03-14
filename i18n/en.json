@@ -225,6 +225,8 @@
     "noResults": "No vehicles found",
     "advancedFilters": "Advanced filters",
     "typeFilters": "Type filters",
+    "topRatedOnly": "Top Rated sellers only",
+    "topRatedBadge": "Top Rated",
     "clearFilters": "Clear filters",
     "clearAll": "Clear all",
     "locationAll": "Worldwide",
@@ -307,8 +309,10 @@
     "saveSearch": "Save search",
     "saveSearchSuccess": "Search saved",
     "price": "Price",
+    "priceRange": "Price range",
     "brand": "Brand",
     "year": "Year",
+    "yearRange": "Year range",
     "resultsCount": "{count} {itemsName}",
     "viewDetails": "View details",
     "tercerosDisclaimer": "Third-party vehicle. Tracciona acts as intermediary.",
@@ -371,6 +375,7 @@
     "creditsRemaining": "{count} credit | {count} credits remaining"
   },
   "vehicle": {
+    "viewersNow": "{count} people viewing now",
     "year": "Year",
     "price": "Price",
     "rentalPrice": "Rental price",
@@ -615,6 +620,8 @@
     "sale": "Sale",
     "rental": "Rental",
     "thirdParty": "Third party",
+    "offlineBanner": "You are offline — changes will sync when reconnected",
+    "offlinePending": "({count} pending)",
     "searchPlaceholder": "Brand or model...",
     "view": "View",
     "copy": "Copy",
@@ -1085,6 +1092,19 @@
     "iconShield": "Shield",
     "iconStar": "Star"
   },
+  "topDealers": {
+    "title": "Top 100 dealers",
+    "seoTitle": "Top 100 verified dealers",
+    "seoDescription": "Ranking of the highest-rated dealers on our platform. Find trusted sellers with the best scores.",
+    "subtitle": "The highest-rated dealers by service quality, reliability, and buyer satisfaction.",
+    "empty": "No dealers in the ranking yet.",
+    "colName": "Dealer",
+    "colBadge": "Badge",
+    "colScore": "Score",
+    "colVehicles": "Listings",
+    "colProvince": "Province",
+    "anonymous": "Anonymous dealer"
+  },
   "auction": {
     "pageTitle": "Auctions",
     "seoTitle": "Industrial Vehicle Auctions | Tracciona",
@@ -1190,7 +1210,19 @@
       "communication": "Communication",
       "community": "Community",
       "brokerage": "Brokerage",
-      "infrastructure": "Infrastructure"
+      "infrastructure": "Infrastructure",
+      "designSystem": "Design System"
+    },
+    "designSystem": {
+      "subtitle": "Visual reference of components, tokens and design system patterns.",
+      "colors": "Colors",
+      "typography": "Typography",
+      "spacing": "Spacing",
+      "buttons": "Buttons",
+      "forms": "Forms",
+      "badges": "Badges",
+      "skeletons": "Skeleton Loaders",
+      "breakpoints": "Breakpoints"
     },
     "header": {
       "viewSite": "View site",
@@ -2238,7 +2270,7 @@
       "contactName": "Contact name *",
       "contactNamePlaceholder": "Full name",
       "phonePlaceholder": "+34 600 000 000",
-      "emailPlaceholder": "email@company.com",
+      "emailPlaceholder": "email{'@'}company.com",
       "locationPlaceholder": "City, country",
       "products": "Product(s) handled",
       "productsPlaceholder": "Trucks, vans, cranes...",
@@ -2985,7 +3017,9 @@
       "mfaDisable": "Disable 2FA",
       "mfaScanQr": "Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.):",
       "mfaEnterCode": "Enter the 6-digit code:",
+      "mfaCodeLabel": "Verification code",
       "mfaCodePlaceholder": "000000",
+      "mfaActive": "Two-factor authentication is enabled.",
       "mfaVerify": "Verify",
       "mfaVerified": "2FA enabled successfully",
       "mfaVerifyError": "Invalid code. Please try again.",
@@ -3265,6 +3299,17 @@
       "cloneError": "Error duplicating the listing",
       "confirmDelete": "Confirm",
       "limitReached": "You have reached the listing limit for your plan",
+      "withdrawalTitle": "Why are you withdrawing this listing?",
+      "withdrawalSubtitle": "This information helps us improve the service",
+      "confirmWithdrawal": "Withdraw listing",
+      "withdrawalReason": {
+        "sold_elsewhere": "Sold outside Tracciona",
+        "too_expensive": "Price was not competitive",
+        "changed_mind": "Changed my mind",
+        "seasonal": "Temporary / seasonal withdrawal",
+        "duplicate": "Duplicate listing",
+        "other": "Other reason"
+      },
       "used": "used",
       "upgradePlan": "Upgrade plan",
       "editTitle": "Edit vehicle",
@@ -3456,6 +3501,8 @@
       "closeReason": "Close reason",
       "closeReasonRequired": "Close reason is required when marking as lost",
       "closeReasonPlaceholder": "Indicate why this lead was lost...",
+      "negotiatedPrice": "Negotiated price",
+      "negotiatedPricePlaceholder": "Final agreed price",
       "notes": "Private notes",
       "notesPlaceholder": "Write notes about this lead (only visible to you)...",
       "timeline": "Status history",
@@ -3514,6 +3561,8 @@
       "notifWeeklyStats": "Weekly statistics digest",
       "notifAuctionUpdates": "Auction updates",
       "sectionServices": "Services",
+      "simpleModeLabel": "Simple mode",
+      "simpleModeHint": "Auto-renew listings without advanced CRM. Publish and forget.",
       "brokerageLabel": "Receive brokered purchase offers",
       "address": "Address",
       "addressPlaceholder": "Street and number, city",
@@ -5302,5 +5351,16 @@
       "reviews": "Buyer reviews",
       "verified_docs": "Verified documents"
     }
+  },
+  "feedback": {
+    "ariaLabel": "Page feedback",
+    "question": "Was this helpful?",
+    "yes": "Yes",
+    "no": "No",
+    "commentPrompt": "How can we improve?",
+    "commentPlaceholder": "Tell us what could be better...",
+    "send": "Send",
+    "skip": "Skip",
+    "thanks": "Thanks for your feedback!"
   }
 }

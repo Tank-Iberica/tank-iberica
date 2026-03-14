@@ -16,11 +16,22 @@ vi.mock('h3', () => ({
 
 // Inline processBatch that actually calls the processor
 vi.mock('../../../server/utils/batchProcessor', () => ({
-  processBatch: async ({ items, processor }: { items: unknown[]; processor: (item: unknown) => Promise<void> }) => {
+  processBatch: async ({
+    items,
+    processor,
+  }: {
+    items: unknown[]
+    processor: (item: unknown) => Promise<void>
+  }) => {
     let processed = 0
     let errors = 0
     for (const item of items) {
-      try { await processor(item); processed++ } catch { errors++ }
+      try {
+        await processor(item)
+        processed++
+      } catch {
+        errors++
+      }
     }
     return { processed, errors }
   },
@@ -56,6 +67,7 @@ function makeChain(data: unknown = null, error: unknown = null) {
   const chain: Record<string, unknown> = {}
   const ms = ['select', 'eq', 'not', 'gte', 'limit']
   for (const m of ms) chain[m] = (..._a: unknown[]) => chain
+  chain.insert = (..._a: unknown[]) => Promise.resolve({ data: null, error: null })
   chain.then = (r: (v: unknown) => void) => Promise.resolve({ data, error }).then(r)
   chain.catch = (r: (v: unknown) => void) => Promise.resolve({ data, error: null }).catch(r)
   return chain
@@ -71,9 +83,14 @@ describe('favorite-price-drop processor', () => {
 
   it('sends emails to users who favorited a price-dropped vehicle', async () => {
     const vehicle = {
-      id: 'v1', brand: 'DAF', model: 'XF', slug: 'daf-xf',
-      price: 50000, previous_price: 60000,
-      updated_at: new Date().toISOString(), category_id: null,
+      id: 'v1',
+      brand: 'DAF',
+      model: 'XF',
+      slug: 'daf-xf',
+      price: 50000,
+      previous_price: 60000,
+      updated_at: new Date().toISOString(),
+      category_id: null,
     }
 
     const favorites = [
@@ -94,20 +111,28 @@ describe('favorite-price-drop processor', () => {
     expect(result.notificationsSent).toBe(2)
     expect(mockFetch).toHaveBeenCalledTimes(2)
     // Check email template
-    expect(mockFetch).toHaveBeenCalledWith('/api/email/send', expect.objectContaining({
-      method: 'POST',
-      body: expect.objectContaining({
-        templateKey: 'buyer_favorite_price_drop',
-        to: 'user1@test.com',
+    expect(mockFetch).toHaveBeenCalledWith(
+      '/api/email/send',
+      expect.objectContaining({
+        method: 'POST',
+        body: expect.objectContaining({
+          templateKey: 'buyer_favorite_price_drop',
+          to: 'user1@test.com',
+        }),
       }),
-    }))
+    )
   })
 
   it('skips favorites with no user email', async () => {
     const vehicle = {
-      id: 'v1', brand: 'MAN', model: 'TGX', slug: 'man-tgx',
-      price: 40000, previous_price: 50000,
-      updated_at: new Date().toISOString(), category_id: null,
+      id: 'v1',
+      brand: 'MAN',
+      model: 'TGX',
+      slug: 'man-tgx',
+      price: 40000,
+      previous_price: 50000,
+      updated_at: new Date().toISOString(),
+      category_id: null,
     }
 
     const favorites = [
@@ -130,9 +155,14 @@ describe('favorite-price-drop processor', () => {
 
   it('handles favorites DB error gracefully', async () => {
     const vehicle = {
-      id: 'v1', brand: 'Volvo', model: 'FH', slug: 'volvo-fh',
-      price: 30000, previous_price: 40000,
-      updated_at: new Date().toISOString(), category_id: null,
+      id: 'v1',
+      brand: 'Volvo',
+      model: 'FH',
+      slug: 'volvo-fh',
+      price: 30000,
+      previous_price: 40000,
+      updated_at: new Date().toISOString(),
+      category_id: null,
     }
 
     mockSupabase = {
@@ -149,9 +179,14 @@ describe('favorite-price-drop processor', () => {
 
   it('handles no favorites for a vehicle', async () => {
     const vehicle = {
-      id: 'v1', brand: 'Scania', model: 'R500', slug: 'scania-r500',
-      price: 60000, previous_price: 70000,
-      updated_at: new Date().toISOString(), category_id: null,
+      id: 'v1',
+      brand: 'Scania',
+      model: 'R500',
+      slug: 'scania-r500',
+      price: 60000,
+      previous_price: 70000,
+      updated_at: new Date().toISOString(),
+      category_id: null,
     }
 
     mockSupabase = {
@@ -169,9 +204,14 @@ describe('favorite-price-drop processor', () => {
 
   it('handles email send failure and continues', async () => {
     const vehicle = {
-      id: 'v1', brand: 'DAF', model: 'CF', slug: 'daf-cf',
-      price: 35000, previous_price: 45000,
-      updated_at: new Date().toISOString(), category_id: null,
+      id: 'v1',
+      brand: 'DAF',
+      model: 'CF',
+      slug: 'daf-cf',
+      price: 35000,
+      previous_price: 45000,
+      updated_at: new Date().toISOString(),
+      category_id: null,
     }
 
     const favorites = [
@@ -197,9 +237,14 @@ describe('favorite-price-drop processor', () => {
 
   it('uses user lang for locale', async () => {
     const vehicle = {
-      id: 'v1', brand: 'Iveco', model: 'S-Way', slug: 'iveco-sway',
-      price: 70000, previous_price: 80000,
-      updated_at: new Date().toISOString(), category_id: null,
+      id: 'v1',
+      brand: 'Iveco',
+      model: 'S-Way',
+      slug: 'iveco-sway',
+      price: 70000,
+      previous_price: 80000,
+      updated_at: new Date().toISOString(),
+      category_id: null,
     }
 
     const favorites = [
@@ -215,8 +260,11 @@ describe('favorite-price-drop processor', () => {
     }
 
     await (handler as Function)({})
-    expect(mockFetch).toHaveBeenCalledWith('/api/email/send', expect.objectContaining({
-      body: expect.objectContaining({ locale: 'en' }),
-    }))
+    expect(mockFetch).toHaveBeenCalledWith(
+      '/api/email/send',
+      expect.objectContaining({
+        body: expect.objectContaining({ locale: 'en' }),
+      }),
+    )
   })
 })

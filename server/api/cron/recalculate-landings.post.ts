@@ -14,6 +14,8 @@ import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { logger } from '../../utils/logger'
 
+const VERTICAL = process.env.NUXT_PUBLIC_VERTICAL || 'tracciona'
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -79,7 +81,7 @@ export function buildTypeIntroEs(
   topBrands: string[],
 ): string {
   const type = nameEs.toLowerCase()
-  let text = `En Tracciona encontrarás ${count} ${type} de segunda mano.`
+  let text = `En ${getSiteName()} encontrarás ${count} ${type} de segunda mano.`
   text += buildPriceTextEs(minPrice, maxPrice)
   if (topBrands.length > 0) text += ` Las marcas más habituales son ${topBrands.join(', ')}.`
   text += ' Compra directamente a propietarios y empresas verificadas de toda España.'
@@ -94,7 +96,7 @@ export function buildTypeIntroEn(
   topBrands: string[],
 ): string {
   const type = nameEn.toLowerCase()
-  let text = `Tracciona has ${count} used ${type} for sale.`
+  let text = `${getSiteName()} has ${count} used ${type} for sale.`
   text += buildPriceTextEn(minPrice, maxPrice)
   if (topBrands.length > 0) text += ` Top brands include ${topBrands.join(', ')}.`
   text += ' Buy directly from verified owners and businesses across Spain.'
@@ -139,7 +141,7 @@ export function buildTypeBrandIntroEs(
   maxPrice: number | null,
 ): string {
   const type = nameEs.toLowerCase()
-  let text = `Encuentra ${count} ${brand} ${type} de segunda mano en Tracciona.`
+  let text = `Encuentra ${count} ${brand} ${type} de segunda mano en ${getSiteName()}.`
   text += buildPriceTextEs(minPrice, maxPrice)
   text += ' Todos los anuncios revisados con descripción completa.'
   return text
@@ -153,7 +155,7 @@ export function buildTypeBrandIntroEn(
   maxPrice: number | null,
 ): string {
   const type = nameEn.toLowerCase()
-  let text = `Find ${count} used ${brand} ${type} on Tracciona.`
+  let text = `Find ${count} used ${brand} ${type} on ${getSiteName()}.`
   text += buildPriceTextEn(minPrice, maxPrice)
   text += ' All listings reviewed with full description.'
   return text
@@ -325,17 +327,17 @@ function buildTypeLandings(typeCounts: Map<string, TypeEntry>, now: string): Lan
     const topBrands = getTopBrands(brandCounts)
     landings.push({
       slug,
-      vertical: 'tracciona',
+      vertical: VERTICAL,
       vehicle_count: count,
       parent_slug: null,
       overlap_percentage: 0,
       overlap_threshold: calcThreshold(count),
       is_active: count >= 3,
       filters_json: { subcategory_id: sub.id },
-      meta_title_es: `${nameEs} de Segunda Mano — Compra y Venta | Tracciona`,
-      meta_title_en: `Used ${nameEn} for Sale | Tracciona`,
-      meta_description_es: `Compra y vende ${nameEs.toLowerCase()} de segunda mano. ${count} vehículos disponibles en Tracciona.`,
-      meta_description_en: `Buy and sell used ${nameEn.toLowerCase()}. ${count} vehicles available on Tracciona.`,
+      meta_title_es: `${nameEs} de Segunda Mano — Compra y Venta | ${getSiteName()}`,
+      meta_title_en: `Used ${nameEn} for Sale | ${getSiteName()}`,
+      meta_description_es: `Compra y vende ${nameEs.toLowerCase()} de segunda mano. ${count} vehículos disponibles en ${getSiteName()}.`,
+      meta_description_en: `Buy and sell used ${nameEn.toLowerCase()}. ${count} vehicles available on ${getSiteName()}.`,
       intro_text_es: buildTypeIntroEs(nameEs, count, minPrice, maxPrice, topBrands),
       intro_text_en: buildTypeIntroEn(nameEn, count, minPrice, maxPrice, topBrands),
       last_calculated: now,
@@ -361,15 +363,15 @@ function buildTypeProvinceLandings(
     const topBrands = getTopBrands(brandCounts)
     landings.push({
       slug,
-      vertical: 'tracciona',
+      vertical: VERTICAL,
       vehicle_count: count,
       parent_slug: sub.slug,
       overlap_percentage: Math.round(overlapPct * 100) / 100,
       overlap_threshold: threshold,
       is_active: isActive,
       filters_json: { subcategory_id: sub.id, location_province_eq: province },
-      meta_title_es: `${nameEs} de Segunda Mano en ${province} | Tracciona`,
-      meta_title_en: `Used ${nameEn} in ${province} | Tracciona`,
+      meta_title_es: `${nameEs} de Segunda Mano en ${province} | ${getSiteName()}`,
+      meta_title_en: `Used ${nameEn} in ${province} | ${getSiteName()}`,
       meta_description_es: `${count} ${nameEs.toLowerCase()} de segunda mano en ${province}. Compra directa a propietario.`,
       meta_description_en: `${count} used ${nameEn.toLowerCase()} in ${province}. Buy directly from the owner.`,
       intro_text_es: buildTypeProvinceIntroEs(
@@ -407,17 +409,17 @@ function buildTypeBrandLandings(
     const { overlapPct, threshold, isActive } = calcOverlap(count, parentCount)
     landings.push({
       slug,
-      vertical: 'tracciona',
+      vertical: VERTICAL,
       vehicle_count: count,
       parent_slug: sub.slug,
       overlap_percentage: Math.round(overlapPct * 100) / 100,
       overlap_threshold: threshold,
       is_active: isActive,
       filters_json: { subcategory_id: sub.id, brand },
-      meta_title_es: `${nameEs} ${brand} de Segunda Mano | Tracciona`,
-      meta_title_en: `Used ${brand} ${nameEn} for Sale | Tracciona`,
-      meta_description_es: `${count} ${nameEs.toLowerCase()} ${brand} de segunda mano. Ofertas actualizadas en Tracciona.`,
-      meta_description_en: `${count} used ${brand} ${nameEn.toLowerCase()} for sale. Updated listings on Tracciona.`,
+      meta_title_es: `${nameEs} ${brand} de Segunda Mano | ${getSiteName()}`,
+      meta_title_en: `Used ${brand} ${nameEn} for Sale | ${getSiteName()}`,
+      meta_description_es: `${count} ${nameEs.toLowerCase()} ${brand} de segunda mano. Ofertas actualizadas en ${getSiteName()}.`,
+      meta_description_en: `${count} used ${brand} ${nameEn.toLowerCase()} for sale. Updated listings on ${getSiteName()}.`,
       intro_text_es: buildTypeBrandIntroEs(nameEs, brand, count, minPrice, maxPrice),
       intro_text_en: buildTypeBrandIntroEn(nameEn, brand, count, minPrice, maxPrice),
       last_calculated: now,
@@ -432,6 +434,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<{ secret?: string }>(event).catch(() => ({}) as { secret?: string })
   verifyCronSecret(event, body?.secret)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
   const now = new Date().toISOString()
 
@@ -485,7 +488,7 @@ export default defineEventHandler(async (event) => {
   await supabase
     .from('active_landings')
     .update({ is_active: false })
-    .eq('vertical', 'tracciona')
+    .eq('vertical', VERTICAL)
     .lt('last_calculated', now)
 
   const activeCount = landings.filter((l) => l.is_active).length

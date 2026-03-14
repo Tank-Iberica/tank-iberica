@@ -57,7 +57,7 @@ const ALLOWED_DOMAINS = [
 async function fetchPageHtml(url: string): Promise<string> {
   const response = await fetch(url, {
     headers: {
-      'User-Agent': 'Mozilla/5.0 (compatible; Tracciona Stock Import)',
+      'User-Agent': `Mozilla/5.0 (compatible; ${getSiteName()} Stock Import)`,
       Accept: 'text/html',
     },
     signal: AbortSignal.timeout(15000),

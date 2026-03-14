@@ -53,6 +53,32 @@ function formatListings(count: number): string {
   if (count === Infinity) return t('dashboard.subscription.unlimited')
   return String(count)
 }
+
+const portalLoading = ref(false)
+
+async function openStripePortal() {
+  const customerId = subscription.value?.stripe_customer_id
+  if (!customerId) return
+
+  portalLoading.value = true
+  try {
+    const { url } = await $fetch<{ url: string }>('/api/stripe/portal', {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      body: {
+        customerId,
+        returnUrl: `${window.location.origin}/dashboard/suscripcion`,
+      },
+    })
+    if (url) {
+      window.location.href = url
+    }
+  } catch {
+    // Silently handle
+  } finally {
+    portalLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -155,9 +181,14 @@ function formatListings(count: number): string {
         class="cancel-section"
       >
         <p>{{ t('dashboard.subscription.cancelInfo') }}</p>
-        <NuxtLink to="/precios" class="btn-text">
-          {{ t('dashboard.subscription.manageBilling') }}
-        </NuxtLink>
+        <button
+          type="button"
+          class="btn-text"
+          :disabled="portalLoading || !subscription?.stripe_customer_id"
+          @click="openStripePortal"
+        >
+          {{ portalLoading ? t('common.loading') : t('dashboard.subscription.manageBilling') }}
+        </button>
       </div>
     </template>
   </div>

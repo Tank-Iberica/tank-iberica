@@ -12,8 +12,11 @@ import {
   useAdminAuctionDetail,
   type ModalType,
 } from '../../app/composables/admin/useAdminAuctionDetail'
-import type { AuctionStatus } from '../../app/composables/useAuction'
-import type { RegistrationStatus, DepositStatus } from '../../app/composables/useAuctionRegistration'
+import type { AuctionDisplayStatus as AuctionStatus } from '../../app/composables/useAuction'
+import type {
+  RegistrationStatus,
+  DepositStatus,
+} from '../../app/composables/useAuctionRegistration'
 
 // ─── Chain builder ─────────────────────────────────────────────────────────
 
@@ -271,7 +274,9 @@ describe('getVehicleThumbnail', () => {
 
   it('returns null when no vehicle images', () => {
     const c = useAdminAuctionDetail(makeAuctionId())
-    c.auction.value = makeAuction({ vehicle: { ...makeAuction().vehicle, vehicle_images: [] } }) as never
+    c.auction.value = makeAuction({
+      vehicle: { ...makeAuction().vehicle, vehicle_images: [] },
+    }) as never
     expect(c.getVehicleThumbnail()).toBeNull()
   })
 
@@ -405,7 +410,9 @@ describe('loadAuctionData', () => {
   })
 
   it('sets error on auction fetch failure', async () => {
-    mockFrom.mockImplementation(() => makeChain({ data: null, error: { message: 'Auction error' } }))
+    mockFrom.mockImplementation(() =>
+      makeChain({ data: null, error: { message: 'Auction error' } }),
+    )
     const c = useAdminAuctionDetail(makeAuctionId())
     await c.loadAuctionData()
     expect(c.error.value).toBeTruthy() // fallback string used when thrown object is not Error instance
@@ -450,7 +457,9 @@ describe('startAuction', () => {
   })
 
   it('updates status to active on success', async () => {
-    mockFrom.mockImplementation(() => makeChain({ data: makeAuction({ status: 'active' }), error: null }))
+    mockFrom.mockImplementation(() =>
+      makeChain({ data: makeAuction({ status: 'active' }), error: null }),
+    )
     const c = useAdminAuctionDetail(makeAuctionId())
     c.auction.value = makeAuction({ status: 'draft' }) as never
     await c.startAuction()

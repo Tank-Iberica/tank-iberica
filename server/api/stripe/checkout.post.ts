@@ -101,7 +101,7 @@ export default defineEventHandler(async (event) => {
     : {
         price_data: {
           currency: 'eur',
-          product_data: { name: `Tracciona ${tier.name_en}` },
+          product_data: { name: `${getSiteName()} ${tier.name_en}` },
           unit_amount: unitAmount,
           recurring: { interval },
         },

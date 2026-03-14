@@ -91,17 +91,42 @@ export interface DealStatusDef {
 }
 
 export const DEAL_STATUSES: DealStatusDef[] = [
-  { value: 'qualifying_buyer', label: 'Calificando comprador', color: '#8b5cf6', group: 'qualifying' },
+  {
+    value: 'qualifying_buyer',
+    label: 'Calificando comprador',
+    color: '#8b5cf6',
+    group: 'qualifying',
+  },
   { value: 'manual_review', label: 'Revision manual', color: '#f59e0b', group: 'qualifying' },
   { value: 'buyer_qualified', label: 'Comprador calificado', color: '#06b6d4', group: 'active' },
-  { value: 'contacting_seller_broker', label: 'Contactando vendedor (broker)', color: '#3b82f6', group: 'active' },
+  {
+    value: 'contacting_seller_broker',
+    label: 'Contactando vendedor (broker)',
+    color: '#3b82f6',
+    group: 'active',
+  },
   { value: 'broker_negotiating', label: 'Negociando (broker)', color: '#3b82f6', group: 'active' },
   { value: 'broker_failed', label: 'Broker fallido', color: '#ef4444', group: 'closed' },
-  { value: 'contacting_seller_tank', label: 'Contactando vendedor (Tank)', color: '#f97316', group: 'active' },
-  { value: 'negotiating_seller', label: 'Negociando con vendedor', color: '#f97316', group: 'active' },
+  {
+    value: 'contacting_seller_tank',
+    label: 'Contactando vendedor (Tank)',
+    color: '#f97316',
+    group: 'active',
+  },
+  {
+    value: 'negotiating_seller',
+    label: 'Negociando con vendedor',
+    color: '#f97316',
+    group: 'active',
+  },
   { value: 'seller_declined', label: 'Vendedor rechazo', color: '#ef4444', group: 'closed' },
   { value: 'no_margin', label: 'Sin margen', color: '#ef4444', group: 'closed' },
-  { value: 'pending_buyer_confirm', label: 'Pendiente confirmacion comprador', color: '#eab308', group: 'active' },
+  {
+    value: 'pending_buyer_confirm',
+    label: 'Pendiente confirmacion comprador',
+    color: '#eab308',
+    group: 'active',
+  },
   { value: 'escalated_to_humans', label: 'Escalado a humanos', color: '#f59e0b', group: 'active' },
   { value: 'human_takeover', label: 'Gestion humana', color: '#f59e0b', group: 'active' },
   { value: 'deal_closed', label: 'Cerrado', color: '#10b981', group: 'closed' },
@@ -117,7 +142,13 @@ export const VALID_TRANSITIONS: Record<DealStatus, DealStatus[]> = {
   broker_negotiating: ['broker_failed', 'pending_buyer_confirm', 'deal_cancelled'],
   broker_failed: ['contacting_seller_tank', 'deal_cancelled'],
   contacting_seller_tank: ['negotiating_seller', 'deal_cancelled'],
-  negotiating_seller: ['seller_declined', 'no_margin', 'pending_buyer_confirm', 'deal_cancelled', 'expired'],
+  negotiating_seller: [
+    'seller_declined',
+    'no_margin',
+    'pending_buyer_confirm',
+    'deal_cancelled',
+    'expired',
+  ],
   seller_declined: ['deal_cancelled'],
   no_margin: ['deal_cancelled'],
   pending_buyer_confirm: ['escalated_to_humans', 'deal_cancelled'],
@@ -131,13 +162,22 @@ export const VALID_TRANSITIONS: Record<DealStatus, DealStatus[]> = {
 const STATUS_GROUPS: Record<string, DealStatus[]> = {
   qualifying: ['qualifying_buyer', 'manual_review'],
   active: [
-    'buyer_qualified', 'contacting_seller_broker', 'broker_negotiating',
-    'contacting_seller_tank', 'negotiating_seller',
-    'pending_buyer_confirm', 'escalated_to_humans', 'human_takeover',
+    'buyer_qualified',
+    'contacting_seller_broker',
+    'broker_negotiating',
+    'contacting_seller_tank',
+    'negotiating_seller',
+    'pending_buyer_confirm',
+    'escalated_to_humans',
+    'human_takeover',
   ],
   closed: [
-    'deal_closed', 'deal_cancelled', 'expired',
-    'seller_declined', 'no_margin', 'broker_failed',
+    'deal_closed',
+    'deal_cancelled',
+    'expired',
+    'seller_declined',
+    'no_margin',
+    'broker_failed',
   ],
 }
 
@@ -285,7 +325,7 @@ export function useAdminBrokerage() {
     try {
       const { count, error: err } = await sb
         .from('brokerage_deals')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .in('status', ['qualifying_buyer', 'manual_review', 'escalated_to_humans'])
 
       if (err) throw err

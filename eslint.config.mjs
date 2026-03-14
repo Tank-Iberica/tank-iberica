@@ -17,8 +17,15 @@ export default createConfigForNuxt({
     },
   })
   // Exclude k6 load test files (JavaScript, not TypeScript, uses k6 globals)
+  // and internal tooling / agent worktrees / build artifacts
   .append({
-    ignores: ['tests/load/**'],
+    ignores: [
+      'tests/load/**',
+      '.claude/**',
+      '.claude/worktrees/**',
+      'Tracciona-agent-c/**',
+      '.pdf-build/**',
+    ],
   })
   // Relax strict TypeScript rules in test files — mocks and stubs legitimately use any/Function
   .append({

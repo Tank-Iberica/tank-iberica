@@ -5,28 +5,49 @@ const { mockCheckRateLimit, mockGetRateLimitKey, mockGetRetryAfterSeconds, mockC
     mockCheckRateLimit: vi.fn().mockReturnValue(true),
     mockGetRateLimitKey: vi.fn().mockReturnValue('127.0.0.1'),
     mockGetRetryAfterSeconds: vi.fn().mockReturnValue(30),
-    mockCreateError: vi.fn((opts: { statusCode: number; statusMessage: string; data?: unknown }) => {
-      const err = new Error(opts.statusMessage)
-      ;(err as any).statusCode = opts.statusCode
-      return err
-    }),
+    mockCreateError: vi.fn(
+      (opts: { statusCode: number; statusMessage: string; data?: unknown }) => {
+        const err = new Error(opts.statusMessage)
+        ;(err as any).statusCode = opts.statusCode
+        return err
+      },
+    ),
   }))
 
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   createError: mockCreateError,
+  getResponseStatus: vi.fn().mockReturnValue(200),
 }))
 
 vi.mock('../../../server/utils/rateLimit', () => ({
   checkRateLimit: mockCheckRateLimit,
   getRateLimitKey: mockGetRateLimitKey,
   getRetryAfterSeconds: mockGetRetryAfterSeconds,
+  getUserOrIpRateLimitKey: vi.fn().mockReturnValue('127.0.0.1'),
+  getFingerprintKey: vi.fn().mockReturnValue(null),
+  isIpBanned: vi.fn().mockReturnValue(null),
+  record4xxError: vi.fn().mockReturnValue(false),
+}))
+
+vi.mock('../../../server/utils/securityEvents', () => ({
+  recordSecurityEvent: vi.fn(),
 }))
 
 import handler from '../../../server/middleware/rate-limit'
 
 function makeEvent(path: string, method = 'GET') {
-  return { path, method } as any
+  return {
+    path,
+    method,
+    node: {
+      res: {
+        on: vi.fn(),
+        statusCode: 200,
+      },
+      req: { headers: {} },
+    },
+  } as any
 }
 
 describe('rate-limit middleware', () => {
@@ -75,7 +96,10 @@ describe('rate-limit middleware', () => {
     expect(() => handler(makeEvent('/api/email/send', 'POST'))).toThrow()
     expect(mockGetRetryAfterSeconds).toHaveBeenCalled()
     expect(mockCreateError).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: 429, data: expect.objectContaining({ retryAfter: 30 }) }),
+      expect.objectContaining({
+        statusCode: 429,
+        data: expect.objectContaining({ retryAfter: 30 }),
+      }),
     )
   })
 

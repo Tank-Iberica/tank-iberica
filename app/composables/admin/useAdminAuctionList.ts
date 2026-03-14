@@ -1,6 +1,6 @@
 import { formatPriceCents } from '~/composables/shared/useListingUtils'
 import type { Database } from '~~/types/supabase'
-import type { AuctionStatus } from '~/composables/useAuction'
+import type { AuctionDisplayStatus as AuctionStatus } from '~/composables/useAuction'
 import type { RegistrationStatus, DepositStatus } from '~/composables/useAuctionRegistration'
 
 // ─── Types ───────────────────────────────────────────────────
@@ -79,7 +79,6 @@ export const STATUS_TABS: Array<{ value: AuctionStatus | 'all'; labelKey: string
   { value: 'ended', labelKey: 'admin.subastas.tabs.ended' },
   { value: 'cancelled', labelKey: 'admin.subastas.tabs.cancelled' },
 ]
-
 
 export const STATUS_COLORS: Record<AuctionStatus, string> = {
   draft: '#6b7280',

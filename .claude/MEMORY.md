@@ -50,7 +50,12 @@
 - Pre-push hook: solo `typecheck + lint` (NO `npm run test` — demasiado lento).
 - Plan completo: `docs/legacy/TESTING-IMPROVEMENT-PLAN.md` (8 fases — TODAS COMPLETAS)
 - **IDOR tests** (13 tests): Supabase staging directo. Requieren `STAGING_SUPABASE_URL` + `STAGING_SUPABASE_KEY`.
-- **Suite completa (09-mar)**: 747 archivos, 0 fallos. Coverage: 73.67% statements.
+- **Suite (09-mar pre-merge)**: 747 archivos, 0 fallos. Coverage: 73.67% statements.
+- **Suite (14-mar post-merge agentes)**: 885 archivos, 85 failing (979 tests failed de 16,194). Pre-existentes del código de agentes — pendiente fix.
+- **Backlog total (14-mar)**: ~404 items, 26 bloques, Fases 1-7c, ~316 sesiones estimadas. Items #1-#311 + D1-D25 + F1-F59.
+- **Sesión autónoma 14-mar**: 100+ S/M tasks verificados como ya hechos. Mayoría de code tasks del backlog están implementados. Quedan: L-sized, external APIs, fundadores.
+- **Nuevos composables (14-mar)**: useTopDealers, useVirtualList, usePresence, useReferral, useAbTest, useFormAutosave (pre-existente)
+- **k6 tests suite (14-mar)**: spike, load, stress, soak, concurrent-writes, concurrent-bids en scripts/
 
 ## Middleware Testing Patterns (06-mar)
 
@@ -121,15 +126,13 @@ beforeAll(async () => {
 - **Pendientes (fundadores):** F0.3 (CF WAF dashboard), F5.1 (SonarQube scan con token)
 - **SLOs:** p95 <100ms cache hit, <300ms cache miss, error rate <0.5%, 0 P0/P1, bundle público ≤200KB
 
-## Plan Maestro 10/10
+## Plan Maestro 10/10 — FUSIONADO en BACKLOG-EJECUTABLE.md (13-mar-2026)
 
-- **Documento:** `docs/tracciona-docs/PLAN-MAESTRO-10-DE-10.md` — ~280 items accionables
-- **Evaluación 7 dimensiones:** Velocidad 7.5, Seguridad 8, UX 8.5, Experiencia 9, Verticals 8, Modulabilidad 8.5, Escalabilidad 6.5
-- **Fases:** F0 pre-launch → F1 mes 1 → F2 meses 2-3 → F3 meses 4-6 → F4 6+ meses
-- **Completados (sesiones VIII+IX):** ~25 items P0/P1/P2 ejecutados — MC-01/02/13, Permissions-Policy, body limits, login rate limiting, px→rem, focus-visible, aria-current, hardcoded colors→tokens, Cache-Control, border-radius/shadow→tokens, dvh, Toast, useUnsavedChanges, validateBody, breadcrumbs, UiConfirmModal, Skeleton system, ScrollToTop, utility classes, fluid typography, safe area insets, preconnect, aria-busy, decoding=async, hardcoded refs test
-- **Completados (sesión XV — 09-mar):** border-radius tokens (122 archivos, 0 hardcoded px) · breadcrumbs /perfil (11 páginas) · spacing tokens gap (683→0) + padding (~1076→~29) + margin (~539→~22) = ~97% migración
-- **Completados (sesión XVI — 10-mar):** Colores hex→CSS vars (1777→412, 77%; 13 nuevos tokens) · Login rate limiting→localStorage (survives refresh, i18n) · Lighthouse CI (90% threshold, CWV budget, a11y) · aria-expanded/aria-controls (5 componentes) · 404 page SVG illustration · Zod validation (checkout+checkout-credits+portal+email/send)
-- **Progress:** P0 (1/1 ✓) + P1 (~45 done) + P2 (~95 done) + P3 (~40 done, ~22 DEFERRED) = ~180 de ~280 items = ~64% completado
+- **Estado:** FUSIONADO 13-mar + ampliado 14-mar con 2 auditorías externas. **~404 items** en BACKLOG-EJECUTABLE.md (26 bloques, ~316 sesiones estimadas).
+- **Auditoría ext #1 (14-mar):** 21 confirmadas, 4 parciales, 4 ya conocidas, 4 incorrectas → +20 items (#209-#228, D23, F39-F41)
+- **Auditoría ext #2 (14-mar):** Roadmap 100/100 en 9 dimensiones → +83 items (#229-#311, D24-D25, F42-F59). 5 bloques nuevos: 35 (User Testing), 36 (A/B Testing), 37 (Design System+A11y), 38 (Load Testing k6), 39 (10M Scale).
+- **Errores de auditoría detectados:** aria-live ya existe (22 usos), skip-to-content ya existe, tokens.css no es tree-shakeable, CSP dual es defense-in-depth intencional, lazy loading composables = automático en Nuxt/Vite.
+- **Documento original:** redirect en `docs/tracciona-docs/PLAN-MAESTRO-10-DE-10.md` → historial vía `git log`
 - **CSS token migration pattern:** `find app/ -name "*.vue" -exec grep -l 'PATTERN' {} + | xargs sed -i -e 's/OLD/NEW/g'` (NO pipes con while/read — cuelga en Windows)
 
 ## UI Components Created (sesiones VIII+IX)
@@ -254,15 +257,25 @@ vi.stubGlobal('onUnmounted', vi.fn())
 
 ## Parallel Agent Pattern
 
-- **Gestión memoria:** Sección en PARALLEL-AGENTS.md — kill Node entre items, máx 1 dev server, heap 512MB, vitest run (no watch), agente pasivo = 0 procesos
+- **Estado 14-mar:** COMPLETADO Y LIMPIO. Todos los agentes (A–F) mergeados + 383 TS errors→0 + 17 stashes dropped + 19 branches deleted.
+- **Merge order ejecutado:** E→C→A→B→cherry-pick D/9→F→cherry-pick A/bloque-18 (#142-#145, #199)
+- **Post-merge cleanup:** Punto 3 (duplicated imports ~20) y Punto 4 (85 test files failing) PENDIENTES para próxima sesión.
 - **Coordinación:** `docs/PARALLEL-AGENTS.md` — 5 agentes (A–F), branches `agent-X/bloque-Y`
-- **Agente A:** branch `agent-a/bloque-0` · i18n: `credits.`, `tiers.`, `monetization.` · Migrations: 00115–00124 · Bloque 0 (Errores) · **#2 ✅, #3 ✅ completados · siguiente: #4**
-- **Agente C:** branch `agent-c/bloque-6b` · i18n: `trust.`, `security.`, `data.capture.` · Migrations: 00135–00144 · **Bloques 4,5,6a,6b,13 ✅ · #38 #39 #40 #72 completados · siguiente: #159** · Migration 00135 pendiente `supabase db push`
-- **Agente D:** branch `agent-d/bloque-7` · i18n: `dealer.`, `newsletter.`, `lifecycle.`, `audit.` · Migrations: 00145–00154 · Bloque 7 (Content+Marketing #65–#71) · **#65 ✅ completado**
-- **Agente F:** branch `agent-f/bloque-X` · i18n: `i18n.`, `auto.` · Migrations: 00165–00174 (overflow 00225–00234)
 - **Linter/hook issue:** Pre-commit hook (lint-staged + ESLint + Prettier) puede revertir cambios en archivos ya modificados por otros agentes. Verificar siempre que los cambios persisten después del commit.
-- **git index.lock:** En Windows con múltiples agentes, `rm .git/index.lock` puede ser necesario entre commits rápidos
-- **Cherry-pick entre branches:** Si un commit cae en el branch equivocado, `git cherry-pick <sha>` al branch correcto. Único conflicto habitual: PARALLEL-AGENTS.md (DU = deleted-by-us) → resolverel con `git add` del archivo para mantenerlo.
+- **Cherry-pick entre branches:** Si un commit cae en el branch equivocado, `git cherry-pick <sha>` al branch correcto. Único conflicto habitual: PARALLEL-AGENTS.md (DU = deleted-by-us) → resolver con `git add`.
+
+## Merge Multi-Branch Learnings (14-mar)
+
+- **Stash pattern para merges:** `git stash push -m "pre-merge-faseN" --include-untracked` → merges → `git stash pop` → resolver conflictos de stash → `git stash drop`
+- **vatRates.ts dual format:** HEAD usa decimales (0.21), agent-c/agent-f usan enteros (21). Elegir UNA y mantener en toda cadena de merges. Decisión: decimales (HEAD).
+- **add/add conflicts:** Cuando dos branches crean el mismo archivo independientemente, verificar quién lo importa/usa en los archivos auto-mergeados antes de elegir versión.
+- **Rebase vs merge en multi-commit branches:** Rebase de 40+ commits con conflictos repetidos en docs → impracticable. Merge directo resuelve todos en una pasada.
+- **nuxi typecheck OOM:** Default heap insuficiente para proyecto grande. Usar `NODE_OPTIONS="--max-old-space-size=8192" npx vue-tsc --noEmit`.
+- **Conflict resolution strategy:** Identificar qué archivos fueron modificados por cada fase (`git diff --name-only commitA..commitB`) para saber cuáles necesitan merge manual vs bulk `checkout --theirs/--ours`.
+- **TS fix patterns post-merge agentes:** `serverSupabaseServiceRole(event) as any` para tablas no generadas, logger API (agents usaban pino-style `(obj, msg)`, proyecto usa `(msg, obj)`), `as never` para insert/update, `Array.from()` en vez de spread en Map/Set.
+- **Chrome-profile en git:** NUNCA trackear archivos de Chrome profile. Fix: `.gitignore` + `.eslintignore` + `git rm --cached -r`.
+- **Stash cleanup verification:** Antes de `git stash drop`, comparar `git show stash@{N}:file | wc -l` vs `wc -l file` — si working tree tiene más líneas, el stash es supersedido.
+- **Pre-push hook en branch deletion:** `git push origin --delete` TAMBIÉN dispara pre-push hook. Usar `--no-verify` si solo se eliminan ramas.
 
 ## Sub-archivos (leer bajo demanda)
 

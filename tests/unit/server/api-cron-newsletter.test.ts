@@ -40,7 +40,11 @@ vi.mock('../../../server/utils/verifyCronSecret', () => ({
   verifyCronSecret: mockVerifyCronSecret,
 }))
 vi.mock('../../../server/utils/logger', () => ({ logger: mockLogger }))
-vi.mock('../../../server/utils/siteConfig', () => ({ getSiteUrl: () => 'https://tracciona.com' }))
+vi.mock('../../../server/utils/siteConfig', () => ({
+  getSiteUrl: () => 'https://tracciona.com',
+  getSiteName: () => 'Tracciona',
+  getSiteEmail: () => 'hola@tracciona.com',
+}))
 vi.mock('../../../server/utils/batchProcessor', () => ({
   processBatch: async ({
     items,
@@ -190,13 +194,11 @@ function makeSupabase({
       if (opts?.count === 'exact') {
         // getMarketInsight: published prices with count
         return {
-          eq: vi
-            .fn()
-            .mockResolvedValue({
-              data: publishedPrices,
-              count: publishedPrices.length,
-              error: null,
-            }),
+          eq: vi.fn().mockResolvedValue({
+            data: publishedPrices,
+            count: publishedPrices.length,
+            error: null,
+          }),
         }
       }
       if (cols === 'category') {

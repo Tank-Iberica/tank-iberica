@@ -72,8 +72,21 @@ vi.stubGlobal('useFilters', () => ({
   reset: mockResetFilters,
 }))
 
-// Mock useHead (Nuxt)
+// Mock useHead and useLazyAsyncData (Nuxt)
 vi.stubGlobal('useHead', vi.fn())
+vi.stubGlobal('useLazyAsyncData', (_key: string, fn: Function) => {
+  const data = ref(null)
+  const pending = ref(true)
+  fn()
+    .then((r: unknown) => {
+      data.value = r
+      pending.value = false
+    })
+    .catch(() => {
+      pending.value = false
+    })
+  return { data, pending, refresh: vi.fn() }
+})
 
 // Supabase mock with configurable insert behaviour
 let insertResult: { data: null; error: null | { message: string } } = { data: null, error: null }
@@ -471,27 +484,21 @@ describe('DealerPortal', () => {
 
     it('marks verified certifications with .verified class', () => {
       const w = factory({
-        certifications: [
-          { label: { es: 'ISO 9001' }, icon: 'badge', verified: true },
-        ],
+        certifications: [{ label: { es: 'ISO 9001' }, icon: 'badge', verified: true }],
       })
       expect(w.find('.certification-pill.verified').exists()).toBe(true)
     })
 
     it('shows cert check icon for verified certifications', () => {
       const w = factory({
-        certifications: [
-          { label: { es: 'Verified Cert' }, icon: 'badge', verified: true },
-        ],
+        certifications: [{ label: { es: 'Verified Cert' }, icon: 'badge', verified: true }],
       })
       expect(w.find('.cert-check').exists()).toBe(true)
     })
 
     it('hides cert check icon for unverified certifications', () => {
       const w = factory({
-        certifications: [
-          { label: { es: 'Unverified' }, icon: 'badge', verified: false },
-        ],
+        certifications: [{ label: { es: 'Unverified' }, icon: 'badge', verified: false }],
       })
       expect(w.find('.cert-check').exists()).toBe(false)
     })
@@ -522,7 +529,10 @@ describe('DealerPortal', () => {
   describe('social links', () => {
     it('shows social links section when links are provided', () => {
       const w = factory({
-        social_links: { facebook: 'https://facebook.com/acme', instagram: 'https://instagram.com/acme' },
+        social_links: {
+          facebook: 'https://facebook.com/acme',
+          instagram: 'https://instagram.com/acme',
+        },
       })
       expect(w.find('.social-links').exists()).toBe(true)
       const links = w.findAll('.social-link')

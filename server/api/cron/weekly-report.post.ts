@@ -22,14 +22,20 @@ interface WeeklyMetrics {
   deadLetterJobs: number
   totalVehicles: number
   publishedVehicles: number
+  newVehiclesThisWeek: number
   totalDealers: number
+  activeDealers: number
+  leadsThisWeek: number
+  revenueThisWeekCents: number
   funnelSearches: number
   funnelViews: number
   funnelContacts: number
   latencyP95: number | null
 }
 
-async function collectMetrics(supabase: import('@supabase/supabase-js').SupabaseClient): Promise<WeeklyMetrics> {
+async function collectMetrics(
+  supabase: import('@supabase/supabase-js').SupabaseClient,
+): Promise<WeeklyMetrics> {
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
 
   // Run queries in parallel
@@ -38,7 +44,11 @@ async function collectMetrics(supabase: import('@supabase/supabase-js').Supabase
     deadJobsRes,
     vehiclesRes,
     publishedRes,
+    newVehiclesRes,
     dealersRes,
+    activeDealersRes,
+    leadsRes,
+    revenueRes,
     searchesRes,
     viewsRes,
     contactsRes,
@@ -51,15 +61,10 @@ async function collectMetrics(supabase: import('@supabase/supabase-js').Supabase
       .gte('created_at', oneWeekAgo),
 
     // Dead letter jobs
-    supabase
-      .from('job_queue')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'dead'),
+    supabase.from('job_queue').select('id', { count: 'exact', head: true }).eq('status', 'dead'),
 
     // Total vehicles
-    supabase
-      .from('vehicles')
-      .select('id', { count: 'exact', head: true }),
+    supabase.from('vehicles').select('id', { count: 'exact', head: true }),
 
     // Published vehicles
     supabase
@@ -67,10 +72,30 @@ async function collectMetrics(supabase: import('@supabase/supabase-js').Supabase
       .select('id', { count: 'exact', head: true })
       .eq('status', 'published'),
 
-    // Total dealers
+    // New vehicles this week
     supabase
-      .from('dealers')
-      .select('id', { count: 'exact', head: true }),
+      .from('vehicles')
+      .select('id', { count: 'exact', head: true })
+      .gte('created_at', oneWeekAgo),
+
+    // Total dealers
+    supabase.from('dealers').select('id', { count: 'exact', head: true }),
+
+    // Active dealers (with at least 1 published vehicle)
+    supabase.from('dealers').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+
+    // Leads this week
+    supabase
+      .from('leads')
+      .select('id', { count: 'exact', head: true })
+      .gte('created_at', oneWeekAgo),
+
+    // Revenue this week (succeeded payments)
+    supabase
+      .from('payments')
+      .select('amount_cents')
+      .eq('status', 'succeeded')
+      .gte('created_at', oneWeekAgo),
 
     // Funnel: searches this week
     supabase
@@ -114,13 +139,26 @@ async function collectMetrics(supabase: import('@supabase/supabase-js').Supabase
 
   const latencyRow = metricsRes.data?.[0] as { metric_value: number } | undefined
 
+  // Sum revenue from individual payment rows
+  const revenueThisWeekCents =
+    (revenueRes.data as Array<{ amount_cents: number }> | null)?.reduce(
+      (sum, row) => sum + (row.amount_cents || 0),
+      0,
+    ) ?? 0
+
+  const activeDealers = activeDealersRes.count ?? 0
+
   return {
     errorsThisWeek,
     errorsByLevel,
     deadLetterJobs: deadJobsRes.count ?? 0,
     totalVehicles: vehiclesRes.count ?? 0,
     publishedVehicles: publishedRes.count ?? 0,
+    newVehiclesThisWeek: newVehiclesRes.count ?? 0,
     totalDealers: dealersRes.count ?? 0,
+    activeDealers,
+    leadsThisWeek: leadsRes.count ?? 0,
+    revenueThisWeekCents,
     funnelSearches: searchesRes.count ?? 0,
     funnelViews: viewsRes.count ?? 0,
     funnelContacts: contactsRes.count ?? 0,
@@ -130,13 +168,15 @@ async function collectMetrics(supabase: import('@supabase/supabase-js').Supabase
 
 function formatReport(metrics: WeeklyMetrics): string {
   const date = new Date().toISOString().slice(0, 10)
-  const errorLevels = Object.entries(metrics.errorsByLevel)
-    .map(([level, count]) => `  - ${level}: ${count}`)
-    .join('\n') || '  - None'
+  const errorLevels =
+    Object.entries(metrics.errorsByLevel)
+      .map(([level, count]) => `  - ${level}: ${count}`)
+      .join('\n') || '  - None'
 
-  const conversionRate = metrics.funnelSearches > 0
-    ? ((metrics.funnelContacts / metrics.funnelSearches) * 100).toFixed(1)
-    : 'N/A'
+  const conversionRate =
+    metrics.funnelSearches > 0
+      ? ((metrics.funnelContacts / metrics.funnelSearches) * 100).toFixed(1)
+      : 'N/A'
 
   return `
 Weekly Technical Report — ${date}
@@ -150,7 +190,12 @@ ${errorLevels}
 
 PLATFORM
   Total vehicles: ${metrics.totalVehicles} (${metrics.publishedVehicles} published)
-  Total dealers: ${metrics.totalDealers}
+  New vehicles this week: ${metrics.newVehiclesThisWeek}
+  Total dealers: ${metrics.totalDealers} (${metrics.activeDealers} active)
+
+BUSINESS (last 7 days)
+  Leads: ${metrics.leadsThisWeek}
+  Revenue: €${(metrics.revenueThisWeekCents / 100).toFixed(2)}
 
 FUNNEL (last 7 days)
   Searches: ${metrics.funnelSearches}
@@ -164,18 +209,17 @@ ${metrics.deadLetterJobs > 0 ? '⚠️  ACTION REQUIRED: Dead letter jobs need i
 
 function formatReportHtml(metrics: WeeklyMetrics): string {
   const date = new Date().toISOString().slice(0, 10)
-  const conversionRate = metrics.funnelSearches > 0
-    ? ((metrics.funnelContacts / metrics.funnelSearches) * 100).toFixed(1)
-    : 'N/A'
+  const conversionRate =
+    metrics.funnelSearches > 0
+      ? ((metrics.funnelContacts / metrics.funnelSearches) * 100).toFixed(1)
+      : 'N/A'
 
   let alertBadge: string
   if (metrics.errorsThisWeek > 5) {
     alertBadge = '<span style="color:#dc2626;font-weight:bold">⚠️ HIGH</span>'
-  }
-  else if (metrics.errorsThisWeek > 0) {
+  } else if (metrics.errorsThisWeek > 0) {
     alertBadge = '<span style="color:#d97706">⚠️</span>'
-  }
-  else {
+  } else {
     alertBadge = '<span style="color:#16a34a">✅</span>'
   }
 
@@ -193,7 +237,14 @@ function formatReportHtml(metrics: WeeklyMetrics): string {
   <h3>Platform</h3>
   <table style="width:100%;border-collapse:collapse;">
     <tr><td style="padding:4px 8px;">Vehicles</td><td style="padding:4px 8px;font-weight:bold;">${metrics.totalVehicles} (${metrics.publishedVehicles} published)</td></tr>
-    <tr><td style="padding:4px 8px;">Dealers</td><td style="padding:4px 8px;font-weight:bold;">${metrics.totalDealers}</td></tr>
+    <tr><td style="padding:4px 8px;">New this week</td><td style="padding:4px 8px;font-weight:bold;color:#16a34a;">${metrics.newVehiclesThisWeek}</td></tr>
+    <tr><td style="padding:4px 8px;">Dealers</td><td style="padding:4px 8px;font-weight:bold;">${metrics.totalDealers} (${metrics.activeDealers} active)</td></tr>
+  </table>
+
+  <h3>Business (7 days)</h3>
+  <table style="width:100%;border-collapse:collapse;">
+    <tr><td style="padding:4px 8px;">Leads</td><td style="padding:4px 8px;font-weight:bold;">${metrics.leadsThisWeek}</td></tr>
+    <tr><td style="padding:4px 8px;">Revenue</td><td style="padding:4px 8px;font-weight:bold;color:#16a34a;">€${(metrics.revenueThisWeekCents / 100).toFixed(2)}</td></tr>
   </table>
 
   <h3>Funnel (7 days)</h3>
@@ -207,7 +258,7 @@ function formatReportHtml(metrics: WeeklyMetrics): string {
   ${metrics.deadLetterJobs > 0 ? '<p style="color:#dc2626;font-weight:bold;">⚠️ Dead letter jobs need investigation.</p>' : ''}
 
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;">
-  <p style="font-size:12px;color:#6b7280;">Tracciona — Automated weekly report</p>
+  <p style="font-size:12px;color:#6b7280;">${getSiteName()} — Automated weekly report</p>
 </div>`.trim()
 }
 
@@ -233,7 +284,7 @@ export default defineEventHandler(async (event) => {
         },
         body: {
           to: adminEmail,
-          subject: `[Tracciona] Weekly Report — ${new Date().toISOString().slice(0, 10)}`,
+          subject: `[${getSiteName()}] Weekly Report — ${new Date().toISOString().slice(0, 10)}`,
           text: textReport,
           html: htmlReport,
         },

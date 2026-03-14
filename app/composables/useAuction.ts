@@ -6,7 +6,7 @@
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import type { Database } from '~~/types/supabase'
 
-export type AuctionStatus =
+export type AuctionDisplayStatus =
   | 'draft'
   | 'scheduled'
   | 'active'
@@ -32,7 +32,7 @@ export interface Auction {
   ends_at: string
   anti_snipe_seconds: number
   extended_until: string | null
-  status: AuctionStatus
+  status: AuctionDisplayStatus
   winner_id: string | null
   winning_bid_cents: number | null
   created_at: string
@@ -62,7 +62,7 @@ export interface AuctionBid {
  * Format cents to a EUR currency string (0 decimal places).
  * Exported standalone so display components can import without calling useAuction().
  */
-export function formatCents(cents: number): string {
+export function formatAuctionCents(cents: number): string {
   return new Intl.NumberFormat('es-ES', {
     style: 'currency',
     currency: 'EUR',
@@ -86,7 +86,7 @@ export function useAuction() {
 
   // --- Fetch auctions list (public) ---
   async function fetchAuctions(filters?: {
-    status?: AuctionStatus | AuctionStatus[]
+    status?: AuctionDisplayStatus | AuctionDisplayStatus[]
     vertical?: string
   }) {
     loading.value = true
@@ -326,6 +326,6 @@ export function useAuction() {
     unsubscribe,
     getEffectiveEndTime,
     getMinimumBid,
-    formatCents,
+    formatCents: formatAuctionCents,
   }
 }

@@ -326,7 +326,7 @@ export function useAdminHistoricoPage() {
       <p><strong>Beneficio Medio:</strong> ${summary.value.avgBeneficioPercent}%</p>
     </div>
     </div>
-    <div class="footer">TRACCIONA.COM</div>
+    <div class="footer">${useSiteUrl().replace('https://', '').replace('http://', '').toUpperCase()}</div>
   </body></html>`
 
     printHTML(html)

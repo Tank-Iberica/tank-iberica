@@ -12,7 +12,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
-import { acquireCronLock } from '../../utils/cronLock'
+import { acquireDbCronLock } from '../../utils/cronLock'
 import { logger } from '../../utils/logger'
 
 // -- Types --------------------------------------------------------------------
@@ -101,18 +101,16 @@ async function buildPriceDropNotifications(
     )
 
     const dropNotifications = typedFavorites
-      .filter(
-        (fav): fav is FavoriteRow & { users: NonNullable<FavoriteRow['users']> } => {
-          if (!fav.users?.email) return false
-          // Respect price_threshold: only notify if no threshold OR price dropped to/below threshold
-          // price_threshold is stored in euros (same unit as vehicles.price)
-          if (fav.price_threshold !== null) {
-            const thresholdCents = fav.price_threshold * 100
-            if (drop.price_cents > thresholdCents) return false
-          }
-          return true
-        },
-      )
+      .filter((fav): fav is FavoriteRow & { users: NonNullable<FavoriteRow['users']> } => {
+        if (!fav.users?.email) return false
+        // Respect price_threshold: only notify if no threshold OR price dropped to/below threshold
+        // price_threshold is stored in euros (same unit as vehicles.price)
+        if (fav.price_threshold !== null) {
+          const thresholdCents = fav.price_threshold * 100
+          if (drop.price_cents > thresholdCents) return false
+        }
+        return true
+      })
       .map((fav) => ({
         userId: fav.users.id,
         email: fav.users.email,
@@ -182,7 +180,7 @@ export default defineEventHandler(async (event) => {
   const supabase = serverSupabaseServiceRole(event)
 
   // Cron lock — prevent duplicate emails if scheduler fires twice in the same hour
-  if (!(await acquireCronLock(supabase, 'price-drop-alert'))) {
+  if (!(await acquireDbCronLock(supabase, 'price-drop-alert'))) {
     return { skipped: true, reason: 'already_ran_in_window', timestamp: new Date().toISOString() }
   }
 

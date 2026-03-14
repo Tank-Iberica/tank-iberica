@@ -119,9 +119,7 @@ describe('GET /embed/[dealer-slug]', () => {
   })
 
   it('returns 404 when dealer not found', async () => {
-    makeMultiSupabase([
-      { data: null, error: { message: 'not found' } },
-    ])
+    makeMultiSupabase([{ data: null, error: { message: 'not found' } }])
     const result = await embedHandler(event)
     expect(mockSetResponseStatus).toHaveBeenCalledWith(event, 404)
     expect(result).toContain('Dealer not found')
@@ -134,7 +132,7 @@ describe('GET /embed/[dealer-slug]', () => {
     ])
     const result = await embedHandler(event)
     expect(mockSetResponseStatus).toHaveBeenCalledWith(event, 500)
-    expect(result).toContain('Error fetching vehicles')
+    expect(result).toContain('Error loading listings')
   })
 
   it('returns valid HTML on happy path', async () => {
@@ -151,32 +149,31 @@ describe('GET /embed/[dealer-slug]', () => {
   })
 
   it('sets correct response headers', async () => {
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [vehicleRow] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [vehicleRow] }])
     await embedHandler(event)
-    expect(mockSetResponseHeader).toHaveBeenCalledWith(event, 'content-type', 'text/html; charset=utf-8')
+    expect(mockSetResponseHeader).toHaveBeenCalledWith(
+      event,
+      'content-type',
+      'text/html; charset=utf-8',
+    )
     expect(mockSetResponseHeader).toHaveBeenCalledWith(event, 'x-frame-options', 'ALLOWALL')
-    expect(mockSetResponseHeader).toHaveBeenCalledWith(event, 'content-security-policy', 'frame-ancestors *;')
+    expect(mockSetResponseHeader).toHaveBeenCalledWith(
+      event,
+      'content-security-policy',
+      'frame-ancestors *;',
+    )
   })
 
   it('applies dark theme when ?theme=dark', async () => {
     mockGetQuery.mockReturnValue({ theme: 'dark' })
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [vehicleRow] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [vehicleRow] }])
     const result = await embedHandler(event)
     expect(result).toContain('#1e293b') // dark bg color
   })
 
   it('applies light theme by default', async () => {
     mockGetQuery.mockReturnValue({})
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [vehicleRow] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [vehicleRow] }])
     const result = await embedHandler(event)
     expect(result).toContain('#f8fafc') // light bg color
   })
@@ -192,10 +189,7 @@ describe('GET /embed/[dealer-slug]', () => {
 
   it('limits vehicle count by limit param (min 1, max 24)', async () => {
     mockGetQuery.mockReturnValue({ limit: '100' }) // over max
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [] }])
     // We can't directly check the query, but it should not throw
     const result = await embedHandler(event)
     expect(result).toContain('<!DOCTYPE html>')
@@ -215,20 +209,14 @@ describe('GET /embed/[dealer-slug]', () => {
 
   it('handles vehicle without price gracefully', async () => {
     const vehicleNoPrice = { ...vehicleRow, price: null }
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [vehicleNoPrice] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [vehicleNoPrice] }])
     const result = await embedHandler(event)
     expect(result).not.toContain('€') // no price badge
   })
 
   it('handles vehicle without year gracefully', async () => {
     const vehicleNoYear = { ...vehicleRow, year: null }
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [vehicleNoYear] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [vehicleNoYear] }])
     const result = await embedHandler(event)
     expect(result).toContain('Volvo FH16')
     expect(result).not.toContain('undefined')
@@ -236,40 +224,28 @@ describe('GET /embed/[dealer-slug]', () => {
 
   it('handles vehicle without images gracefully (shows placeholder)', async () => {
     const vehicleNoImages = { ...vehicleRow, vehicle_images: [] }
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [vehicleNoImages] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [vehicleNoImages] }])
     const result = await embedHandler(event)
     expect(result).toContain('Sin imagen')
   })
 
   it('handles vehicle without location gracefully', async () => {
     const vehicleNoLocation = { ...vehicleRow, location: null }
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [vehicleNoLocation] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [vehicleNoLocation] }])
     const result = await embedHandler(event)
     expect(result).toContain('Volvo FH16')
   })
 
   it('uses company_name string when not an object', async () => {
     const dealerStringName = { ...dealerRow, company_name: 'Mi Dealer Directo' }
-    makeMultiSupabase([
-      { data: dealerStringName },
-      { data: [] },
-    ])
+    makeMultiSupabase([{ data: dealerStringName }, { data: [] }])
     const result = await embedHandler(event)
     expect(result).toContain('Mi Dealer Directo')
   })
 
   it('handles null company_name gracefully', async () => {
     const dealerNullName = { ...dealerRow, company_name: null }
-    makeMultiSupabase([
-      { data: dealerNullName },
-      { data: [] },
-    ])
+    makeMultiSupabase([{ data: dealerNullName }, { data: [] }])
     const result = await embedHandler(event)
     expect(result).toContain('<!DOCTYPE html>')
   })
@@ -280,10 +256,7 @@ describe('GET /embed/[dealer-slug]', () => {
       brand: '<script>alert("xss")</script>',
       model: 'FH16',
     }
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [vehicleXss] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [vehicleXss] }])
     const result = await embedHandler(event)
     expect(result).not.toContain('<script>alert')
     expect(result).toContain('&lt;script&gt;')
@@ -297,20 +270,14 @@ describe('GET /embed/[dealer-slug]', () => {
         { url: 'https://cdn/img0.jpg', position: 0 },
       ],
     }
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [vehicleMultiImages] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [vehicleMultiImages] }])
     const result = await embedHandler(event)
     // First image by position should be used
     expect(result).toContain('https://cdn/img0.jpg')
   })
 
   it('includes Powered by Tracciona link in footer', async () => {
-    makeMultiSupabase([
-      { data: dealerRow },
-      { data: [] },
-    ])
+    makeMultiSupabase([{ data: dealerRow }, { data: [] }])
     const result = await embedHandler(event)
     expect(result).toContain('Powered by Tracciona')
     expect(result).toContain('tracciona.com')

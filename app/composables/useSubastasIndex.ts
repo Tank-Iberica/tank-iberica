@@ -2,7 +2,12 @@
  * Composable for the /subastas index page.
  * Handles tab switching, auction fetching, countdown timer, helpers, and SEO.
  */
-import { useAuction, formatCents, type AuctionStatus, type Auction } from '~/composables/useAuction'
+import {
+  useAuction,
+  formatAuctionCents as formatCents,
+  type AuctionDisplayStatus as AuctionStatus,
+  type Auction,
+} from '~/composables/useAuction'
 import { getVerticalSlug } from '~/composables/useVerticalConfig'
 
 export type SubastasTab = 'live' | 'scheduled' | 'ended'
@@ -151,8 +156,10 @@ export function useSubastasIndex() {
     // Watch tab changes
     watch(activeTab, loadTab)
 
-    // Initial load
-    loadTab()
+    // Only fetch if not already loaded (e.g. via SSR useAsyncData)
+    if (auctions.value.length === 0 && !loading.value) {
+      loadTab()
+    }
 
     // Setup SEO
     setupSeo()

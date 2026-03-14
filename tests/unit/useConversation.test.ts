@@ -28,7 +28,9 @@ function stubClient() {
       }),
     }),
     channel: () => ({
-      on: function (this: unknown) { return this },
+      on: function (this: unknown) {
+        return this
+      },
       subscribe: () => ({}),
     }),
     removeChannel: vi.fn(),
@@ -38,7 +40,11 @@ function stubClient() {
 beforeEach(() => {
   vi.clearAllMocks()
   // Use getter-based computed so reactive state changes are reflected
-  vi.stubGlobal('computed', (fn: () => unknown) => ({ get value() { return fn() } }))
+  vi.stubGlobal('computed', (fn: () => unknown) => ({
+    get value() {
+      return fn()
+    },
+  }))
   vi.stubGlobal('useSupabaseUser', () => ({ value: { id: 'user-1' } }))
   vi.stubGlobal('onUnmounted', vi.fn())
   stubClient()
@@ -130,9 +136,33 @@ describe('unreadCount', () => {
   it('counts messages from other users that are unread', () => {
     const c = useConversation()
     c.messages.value = [
-      { id: 'm1', conversation_id: 'conv-1', sender_id: 'other-user', content: 'Hi', is_system: false, is_read: false, created_at: '' },
-      { id: 'm2', conversation_id: 'conv-1', sender_id: 'user-1', content: 'Hello', is_system: false, is_read: false, created_at: '' },
-      { id: 'm3', conversation_id: 'conv-1', sender_id: 'other-user', content: 'Are you there?', is_system: false, is_read: true, created_at: '' },
+      {
+        id: 'm1',
+        conversation_id: 'conv-1',
+        sender_id: 'other-user',
+        content: 'Hi',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
+      {
+        id: 'm2',
+        conversation_id: 'conv-1',
+        sender_id: 'user-1',
+        content: 'Hello',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
+      {
+        id: 'm3',
+        conversation_id: 'conv-1',
+        sender_id: 'other-user',
+        content: 'Are you there?',
+        is_system: false,
+        is_read: true,
+        created_at: '',
+      },
     ]
     expect(c.unreadCount.value).toBe(1) // only m1 (other-user, unread)
   })
@@ -144,9 +174,15 @@ describe('isDataShared', () => {
   it('returns true when active conversation status is data_shared', () => {
     const c = useConversation()
     c.activeConversation.value = {
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'data_shared', buyer_accepted_share: true, seller_accepted_share: true,
-      last_message_at: '', created_at: '',
+      id: 'conv-1',
+      vehicle_id: 'v-1',
+      buyer_id: 'user-1',
+      seller_id: 'seller-1',
+      status: 'data_shared',
+      buyer_accepted_share: true,
+      seller_accepted_share: true,
+      last_message_at: '',
+      created_at: '',
     }
     expect(c.isDataShared.value).toBe(true)
   })
@@ -154,9 +190,15 @@ describe('isDataShared', () => {
   it('returns false when status is active', () => {
     const c = useConversation()
     c.activeConversation.value = {
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
+      id: 'conv-1',
+      vehicle_id: 'v-1',
+      buyer_id: 'user-1',
+      seller_id: 'seller-1',
+      status: 'active',
+      buyer_accepted_share: false,
+      seller_accepted_share: false,
+      last_message_at: '',
+      created_at: '',
     }
     expect(c.isDataShared.value).toBe(false)
   })
@@ -168,9 +210,15 @@ describe('hasAcceptedShare', () => {
   it('returns buyer_accepted_share when current user is buyer', () => {
     const c = useConversation()
     c.activeConversation.value = {
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: true, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
+      id: 'conv-1',
+      vehicle_id: 'v-1',
+      buyer_id: 'user-1',
+      seller_id: 'seller-1',
+      status: 'active',
+      buyer_accepted_share: true,
+      seller_accepted_share: false,
+      last_message_at: '',
+      created_at: '',
     }
     expect(c.hasAcceptedShare.value).toBe(true)
   })
@@ -178,9 +226,15 @@ describe('hasAcceptedShare', () => {
   it('returns seller_accepted_share when current user is seller', () => {
     const c = useConversation()
     c.activeConversation.value = {
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'other', seller_id: 'user-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: true,
-      last_message_at: '', created_at: '',
+      id: 'conv-1',
+      vehicle_id: 'v-1',
+      buyer_id: 'other',
+      seller_id: 'user-1',
+      status: 'active',
+      buyer_accepted_share: false,
+      seller_accepted_share: true,
+      last_message_at: '',
+      created_at: '',
     }
     expect(c.hasAcceptedShare.value).toBe(true)
   })
@@ -223,10 +277,19 @@ describe('sendMessage', () => {
   it('sets sending=false after sending', async () => {
     const mockInsert = vi.fn().mockReturnValue({
       select: () => ({
-        single: () => Promise.resolve({
-          data: { id: 'msg-1', conversation_id: 'conv-1', sender_id: 'user-1', content: 'Hello', is_system: false, is_read: false, created_at: '' },
-          error: null,
-        }),
+        single: () =>
+          Promise.resolve({
+            data: {
+              id: 'msg-1',
+              conversation_id: 'conv-1',
+              sender_id: 'user-1',
+              content: 'Hello',
+              is_system: false,
+              is_read: false,
+              created_at: '',
+            },
+            error: null,
+          }),
       }),
     })
     const mockUpdate = vi.fn().mockReturnValue({
@@ -238,7 +301,12 @@ describe('sendMessage', () => {
         insert: mockInsert,
         update: mockUpdate,
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -248,7 +316,15 @@ describe('sendMessage', () => {
   })
 
   it('adds message to messages array optimistically', async () => {
-    const newMsg = { id: 'msg-new', conversation_id: 'conv-1', sender_id: 'user-1', content: 'Test', is_system: false, is_read: false, created_at: '' }
+    const newMsg = {
+      id: 'msg-new',
+      conversation_id: 'conv-1',
+      sender_id: 'user-1',
+      content: 'Test',
+      is_system: false,
+      is_read: false,
+      created_at: '',
+    }
     vi.stubGlobal('useSupabaseClient', () => ({
       from: () => ({
         select: () => makeChain([]),
@@ -259,7 +335,12 @@ describe('sendMessage', () => {
         }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -281,11 +362,19 @@ describe('openConversation', () => {
   it('sets loading=false after opening conversation', async () => {
     const c = useConversation()
     // Set up conversations first
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.openConversation('conv-1')
     expect(c.loading.value).toBe(false)
   })
@@ -293,9 +382,15 @@ describe('openConversation', () => {
   it('sets activeConversation when found', async () => {
     const c = useConversation()
     const conv = {
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active' as const, buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
+      id: 'conv-1',
+      vehicle_id: 'v-1',
+      buyer_id: 'user-1',
+      seller_id: 'seller-1',
+      status: 'active' as const,
+      buyer_accepted_share: false,
+      seller_accepted_share: false,
+      last_message_at: '',
+      created_at: '',
     }
     c.conversations.value = [conv]
     await c.openConversation('conv-1')
@@ -310,29 +405,52 @@ describe('openConversation', () => {
         return {
           select: () => makeChain([]),
           update: () => makeChain(null),
-          insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }),
+          insert: () => ({
+            select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }),
+          }),
         }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.openConversation('conv-1')
     expect(c.sellerAvgResponseMinutes.value).toBe(15)
   })
 
   it('sets sellerAvgResponseMinutes to null when user is seller', async () => {
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'other-buyer', seller_id: 'user-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'other-buyer',
+        seller_id: 'user-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.openConversation('conv-1')
     expect(c.sellerAvgResponseMinutes.value).toBeNull()
   })
@@ -352,8 +470,24 @@ describe('markAsRead', () => {
   it('marks unread messages from other users as read locally', async () => {
     const c = useConversation()
     c.messages.value = [
-      { id: 'm1', conversation_id: 'conv-1', sender_id: 'other', content: 'Hi', is_system: false, is_read: false, created_at: '' },
-      { id: 'm2', conversation_id: 'conv-1', sender_id: 'user-1', content: 'Reply', is_system: false, is_read: false, created_at: '' },
+      {
+        id: 'm1',
+        conversation_id: 'conv-1',
+        sender_id: 'other',
+        content: 'Hi',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
+      {
+        id: 'm2',
+        conversation_id: 'conv-1',
+        sender_id: 'user-1',
+        content: 'Reply',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
     ]
     await c.markAsRead('conv-1')
     // m1 (from other) should be marked as read, m2 (from user-1) stays
@@ -403,12 +537,26 @@ describe('closeConversation', () => {
   it('clears activeConversation when closing active conv', async () => {
     const c = useConversation()
     c.activeConversation.value = {
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
+      id: 'conv-1',
+      vehicle_id: 'v-1',
+      buyer_id: 'user-1',
+      seller_id: 'seller-1',
+      status: 'active',
+      buyer_accepted_share: false,
+      seller_accepted_share: false,
+      last_message_at: '',
+      created_at: '',
     }
     c.messages.value = [
-      { id: 'm1', conversation_id: 'conv-1', sender_id: 'user-1', content: 'Hello', is_system: false, is_read: true, created_at: '' },
+      {
+        id: 'm1',
+        conversation_id: 'conv-1',
+        sender_id: 'user-1',
+        content: 'Hello',
+        is_system: false,
+        is_read: true,
+        created_at: '',
+      },
     ]
     await c.closeConversation('conv-1')
     expect(c.activeConversation.value).toBeNull()
@@ -418,9 +566,15 @@ describe('closeConversation', () => {
   it('does not clear activeConversation when closing a different conv', async () => {
     const c = useConversation()
     c.activeConversation.value = {
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
+      id: 'conv-1',
+      vehicle_id: 'v-1',
+      buyer_id: 'user-1',
+      seller_id: 'seller-1',
+      status: 'active',
+      buyer_accepted_share: false,
+      seller_accepted_share: false,
+      last_message_at: '',
+      created_at: '',
     }
     await c.closeConversation('conv-other')
     expect(c.activeConversation.value).not.toBeNull()
@@ -440,27 +594,54 @@ describe('sellerAvgResponseMinutes', () => {
 
 describe('fetchConversations with data', () => {
   it('maps conversation rows correctly', async () => {
-    const convRows = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '2026-03-01', created_at: '2026-02-28',
-      vehicles: { title: 'Volvo FH', images: ['img1.jpg', 'img2.jpg'] },
-      buyer: { name: 'John', apellidos: 'Doe', pseudonimo: null, company_name: null },
-      seller: { name: 'Seller', apellidos: 'Corp', pseudonimo: null, company_name: 'SellerCo' },
-    }]
+    const convRows = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '2026-03-01',
+        created_at: '2026-02-28',
+        vehicles: { title: 'Volvo FH', images: ['img1.jpg', 'img2.jpg'] },
+        buyer: { name: 'John', apellidos: 'Doe', pseudonimo: null, company_name: null },
+        seller: { name: 'Seller', apellidos: 'Corp', pseudonimo: null, company_name: 'SellerCo' },
+      },
+    ]
     const msgRows = [
-      { conversation_id: 'conv-1', content: 'Hello there, interested in the truck', is_system: false },
+      {
+        conversation_id: 'conv-1',
+        content: 'Hello there, interested in the truck',
+        is_system: false,
+      },
     ]
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return { select: () => ({ or: () => ({ order: () => Promise.resolve({ data: convRows, error: null }) }) }) }
-        if (table === 'conversation_messages') return {
-          select: () => ({ in: () => ({ eq: () => ({ order: () => Promise.resolve({ data: msgRows, error: null }) }) }) }),
-          update: () => makeChain(null),
-        }
+        if (table === 'conversations')
+          return {
+            select: () => ({
+              or: () => ({ order: () => Promise.resolve({ data: convRows, error: null }) }),
+            }),
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              in: () => ({
+                eq: () => ({ order: () => Promise.resolve({ data: msgRows, error: null }) }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -468,7 +649,9 @@ describe('fetchConversations with data', () => {
     expect(c.conversations.value).toHaveLength(1)
     expect(c.conversations.value[0]!.vehicle_title).toBe('Volvo FH')
     expect(c.conversations.value[0]!.vehicle_image).toBe('img1.jpg')
-    expect(c.conversations.value[0]!.last_message_preview).toBe('Hello there, interested in the truck')
+    expect(c.conversations.value[0]!.last_message_preview).toBe(
+      'Hello there, interested in the truck',
+    )
   })
 
   it('handles empty conversations list', async () => {
@@ -477,7 +660,12 @@ describe('fetchConversations with data', () => {
         select: () => ({ or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
         update: () => makeChain(null),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -486,23 +674,47 @@ describe('fetchConversations with data', () => {
   })
 
   it('handles conversations with no vehicle images', async () => {
-    const convRows = [{
-      id: 'conv-2', vehicle_id: 'v-2', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '2026-03-01', created_at: '2026-02-28',
-      vehicles: { title: 'Truck', images: [] },
-      buyer: null, seller: null,
-    }]
+    const convRows = [
+      {
+        id: 'conv-2',
+        vehicle_id: 'v-2',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '2026-03-01',
+        created_at: '2026-02-28',
+        vehicles: { title: 'Truck', images: [] },
+        buyer: null,
+        seller: null,
+      },
+    ]
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return { select: () => ({ or: () => ({ order: () => Promise.resolve({ data: convRows, error: null }) }) }) }
-        if (table === 'conversation_messages') return {
-          select: () => ({ in: () => ({ eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }) }),
-          update: () => makeChain(null),
-        }
+        if (table === 'conversations')
+          return {
+            select: () => ({
+              or: () => ({ order: () => Promise.resolve({ data: convRows, error: null }) }),
+            }),
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              in: () => ({
+                eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -517,33 +729,49 @@ describe('startConversation — existing conversation', () => {
   it('returns existing conversation id and opens it', async () => {
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          select: () => ({
-            eq: () => ({
+        if (table === 'conversations')
+          return {
+            select: () => ({
               eq: () => ({
                 eq: () => ({
-                  neq: () => ({
-                    maybeSingle: () => Promise.resolve({ data: { id: 'existing-conv' }, error: null }),
+                  eq: () => ({
+                    neq: () => ({
+                      maybeSingle: () =>
+                        Promise.resolve({ data: { id: 'existing-conv' }, error: null }),
+                    }),
                   }),
                 }),
               }),
+              or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
             }),
-            or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
-          }),
-          insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: { id: 'new-conv' }, error: null }) }) }),
-          update: () => makeChain(null),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
-            in: () => ({ eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
-          }),
-          update: () => makeChain(null),
-          insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }),
-        }
+            insert: () => ({
+              select: () => ({
+                single: () => Promise.resolve({ data: { id: 'new-conv' }, error: null }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+              in: () => ({
+                eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+              }),
+            }),
+            update: () => makeChain(null),
+            insert: () => ({
+              select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }),
+            }),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -556,47 +784,83 @@ describe('startConversation — existing conversation', () => {
 
 describe('acceptDataShare — with conversations', () => {
   it('updates buyer_accepted_share when current user is buyer', async () => {
-    const updateField = vi.fn().mockReturnValue({ eq: () => Promise.resolve({ data: null, error: null }) })
+    const updateField = vi
+      .fn()
+      .mockReturnValue({ eq: () => Promise.resolve({ data: null, error: null }) })
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          update: updateField,
-          select: () => ({ or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
-        }
+        if (table === 'conversations')
+          return {
+            update: updateField,
+            select: () => ({
+              or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+            }),
+          }
         return { select: () => makeChain([]), update: () => makeChain(null) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.acceptDataShare('conv-1')
     expect(updateField).toHaveBeenCalledWith({ buyer_accepted_share: true })
   })
 
   it('updates seller_accepted_share when current user is seller', async () => {
-    const updateField = vi.fn().mockReturnValue({ eq: () => Promise.resolve({ data: null, error: null }) })
+    const updateField = vi
+      .fn()
+      .mockReturnValue({ eq: () => Promise.resolve({ data: null, error: null }) })
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          update: updateField,
-          select: () => ({ or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
-        }
+        if (table === 'conversations')
+          return {
+            update: updateField,
+            select: () => ({
+              or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+            }),
+          }
         return { select: () => makeChain([]), update: () => makeChain(null) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'other', seller_id: 'user-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'other',
+        seller_id: 'user-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.acceptDataShare('conv-1')
     expect(updateField).toHaveBeenCalledWith({ seller_accepted_share: true })
   })
@@ -610,27 +874,44 @@ describe('acceptDataShare — with conversations', () => {
     const insertFn = vi.fn().mockResolvedValue({ data: null, error: null })
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          update: updateFn,
-          select: () => ({ or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
-        }
-        if (table === 'conversation_messages') return {
-          insert: insertFn,
-          select: () => makeChain([]),
-          update: () => makeChain(null),
-        }
+        if (table === 'conversations')
+          return {
+            update: updateFn,
+            select: () => ({
+              or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+            }),
+          }
+        if (table === 'conversation_messages')
+          return {
+            insert: insertFn,
+            select: () => makeChain([]),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
     // Seller already accepted, buyer now accepting
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: true,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: true,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.acceptDataShare('conv-1')
     // First update: buyer_accepted_share=true; Second: status='data_shared'
     expect(updateCalls).toContainEqual({ buyer_accepted_share: true })
@@ -645,21 +926,37 @@ describe('acceptDataShare — with conversations', () => {
     })
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          update: updateFn,
-          select: () => ({ or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
-        }
+        if (table === 'conversations')
+          return {
+            update: updateFn,
+            select: () => ({
+              or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+            }),
+          }
         return { select: () => makeChain([]), update: () => makeChain(null) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await expect(c.acceptDataShare('conv-1')).rejects.toBeDefined()
   })
 
@@ -669,19 +966,33 @@ describe('acceptDataShare — with conversations', () => {
     })
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          update: updateFn,
-          select: () => ({ or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
-        }
+        if (table === 'conversations')
+          return {
+            update: updateFn,
+            select: () => ({
+              or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+            }),
+          }
         return { select: () => makeChain([]), update: () => makeChain(null) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const conv = {
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active' as const, buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
+      id: 'conv-1',
+      vehicle_id: 'v-1',
+      buyer_id: 'user-1',
+      seller_id: 'seller-1',
+      status: 'active' as const,
+      buyer_accepted_share: false,
+      seller_accepted_share: false,
+      last_message_at: '',
+      created_at: '',
     }
     const c = useConversation()
     c.conversations.value = [conv]
@@ -700,22 +1011,38 @@ describe('acceptDataShare — with conversations', () => {
     })
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          update: updateFn,
-          select: () => ({ or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
-        }
+        if (table === 'conversations')
+          return {
+            update: updateFn,
+            select: () => ({
+              or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+            }),
+          }
         return { select: () => makeChain([]), update: () => makeChain(null) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
     // Neither party has accepted yet — buyer now accepts
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.acceptDataShare('conv-1')
     // Only buyer_accepted_share should be set, NOT status='data_shared'
     expect(updateCalls).toContainEqual({ buyer_accepted_share: true })
@@ -735,7 +1062,12 @@ describe('fetchConversations — error handling', () => {
           }),
         }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -752,7 +1084,12 @@ describe('fetchConversations — error handling', () => {
           }),
         }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -762,35 +1099,51 @@ describe('fetchConversations — error handling', () => {
   })
 
   it('handles conversation with null vehicles', async () => {
-    const convRows = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '2026-03-01', created_at: '2026-02-28',
-      vehicles: null,
-      buyer: null, seller: null,
-    }]
+    const convRows = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '2026-03-01',
+        created_at: '2026-02-28',
+        vehicles: null,
+        buyer: null,
+        seller: null,
+      },
+    ]
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          select: () => ({
-            or: () => ({
-              order: () => Promise.resolve({ data: convRows, error: null }),
-            }),
-          }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            in: () => ({
-              eq: () => ({
-                order: () => Promise.resolve({ data: [], error: null }),
+        if (table === 'conversations')
+          return {
+            select: () => ({
+              or: () => ({
+                order: () => Promise.resolve({ data: convRows, error: null }),
               }),
             }),
-          }),
-          update: () => makeChain(null),
-        }
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              in: () => ({
+                eq: () => ({
+                  order: () => Promise.resolve({ data: [], error: null }),
+                }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -801,35 +1154,51 @@ describe('fetchConversations — error handling', () => {
   })
 
   it('handles null lastMsgs response', async () => {
-    const convRows = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '2026-03-01', created_at: '2026-02-28',
-      vehicles: { title: 'Truck', images: ['img.jpg'] },
-      buyer: null, seller: null,
-    }]
+    const convRows = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '2026-03-01',
+        created_at: '2026-02-28',
+        vehicles: { title: 'Truck', images: ['img.jpg'] },
+        buyer: null,
+        seller: null,
+      },
+    ]
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          select: () => ({
-            or: () => ({
-              order: () => Promise.resolve({ data: convRows, error: null }),
-            }),
-          }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            in: () => ({
-              eq: () => ({
-                order: () => Promise.resolve({ data: null, error: null }),
+        if (table === 'conversations')
+          return {
+            select: () => ({
+              or: () => ({
+                order: () => Promise.resolve({ data: convRows, error: null }),
               }),
             }),
-          }),
-          update: () => makeChain(null),
-        }
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              in: () => ({
+                eq: () => ({
+                  order: () => Promise.resolve({ data: null, error: null }),
+                }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -840,38 +1209,52 @@ describe('fetchConversations — error handling', () => {
 
   it('truncates long message previews to 80 chars', async () => {
     const longContent = 'A'.repeat(200)
-    const convRows = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '2026-03-01', created_at: '2026-02-28',
-      vehicles: { title: 'Truck', images: [] },
-      buyer: null, seller: null,
-    }]
-    const msgRows = [
-      { conversation_id: 'conv-1', content: longContent, is_system: false },
+    const convRows = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '2026-03-01',
+        created_at: '2026-02-28',
+        vehicles: { title: 'Truck', images: [] },
+        buyer: null,
+        seller: null,
+      },
     ]
+    const msgRows = [{ conversation_id: 'conv-1', content: longContent, is_system: false }]
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          select: () => ({
-            or: () => ({
-              order: () => Promise.resolve({ data: convRows, error: null }),
-            }),
-          }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            in: () => ({
-              eq: () => ({
-                order: () => Promise.resolve({ data: msgRows, error: null }),
+        if (table === 'conversations')
+          return {
+            select: () => ({
+              or: () => ({
+                order: () => Promise.resolve({ data: convRows, error: null }),
               }),
             }),
-          }),
-          update: () => makeChain(null),
-        }
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              in: () => ({
+                eq: () => ({
+                  order: () => Promise.resolve({ data: msgRows, error: null }),
+                }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -880,39 +1263,55 @@ describe('fetchConversations — error handling', () => {
   })
 
   it('uses first message per conversation for preview (dedup)', async () => {
-    const convRows = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '2026-03-01', created_at: '2026-02-28',
-      vehicles: { title: 'Truck', images: [] },
-      buyer: null, seller: null,
-    }]
+    const convRows = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '2026-03-01',
+        created_at: '2026-02-28',
+        vehicles: { title: 'Truck', images: [] },
+        buyer: null,
+        seller: null,
+      },
+    ]
     const msgRows = [
       { conversation_id: 'conv-1', content: 'Latest message', is_system: false },
       { conversation_id: 'conv-1', content: 'Older message', is_system: false },
     ]
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          select: () => ({
-            or: () => ({
-              order: () => Promise.resolve({ data: convRows, error: null }),
-            }),
-          }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            in: () => ({
-              eq: () => ({
-                order: () => Promise.resolve({ data: msgRows, error: null }),
+        if (table === 'conversations')
+          return {
+            select: () => ({
+              or: () => ({
+                order: () => Promise.resolve({ data: convRows, error: null }),
               }),
             }),
-          }),
-          update: () => makeChain(null),
-        }
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              in: () => ({
+                eq: () => ({
+                  order: () => Promise.resolve({ data: msgRows, error: null }),
+                }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -935,48 +1334,94 @@ describe('openConversation — error handling', () => {
         }),
         update: () => makeChain(null),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await expect(c.openConversation('conv-1')).rejects.toBeDefined()
     expect(c.loading.value).toBe(false)
   })
 
   it('loads messages and marks unread when successful', async () => {
     const mockMessages = [
-      { id: 'm1', conversation_id: 'conv-1', sender_id: 'other', content: 'Hi', is_system: false, is_read: false, created_at: '' },
-      { id: 'm2', conversation_id: 'conv-1', sender_id: 'user-1', content: 'Hello', is_system: false, is_read: true, created_at: '' },
+      {
+        id: 'm1',
+        conversation_id: 'conv-1',
+        sender_id: 'other',
+        content: 'Hi',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
+      {
+        id: 'm2',
+        conversation_id: 'conv-1',
+        sender_id: 'user-1',
+        content: 'Hello',
+        is_system: false,
+        is_read: true,
+        created_at: '',
+      },
     ]
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'dealers') return {
-          select: () => ({ eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }) }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            eq: () => ({
-              order: () => Promise.resolve({ data: mockMessages, error: null }),
+        if (table === 'dealers')
+          return {
+            select: () => ({
+              eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }),
             }),
-          }),
-          update: () => makeChain(null),
-        }
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              eq: () => ({
+                order: () => Promise.resolve({ data: mockMessages, error: null }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]), update: () => makeChain(null) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.openConversation('conv-1')
     expect(c.messages.value).toHaveLength(2)
     expect(c.activeConversation.value?.id).toBe('conv-1')
@@ -985,28 +1430,45 @@ describe('openConversation — error handling', () => {
   it('handles null message data', async () => {
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'dealers') return {
-          select: () => ({ eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }) }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            eq: () => ({
-              order: () => Promise.resolve({ data: null, error: null }),
+        if (table === 'dealers')
+          return {
+            select: () => ({
+              eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }),
             }),
-          }),
-          update: () => makeChain(null),
-        }
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              eq: () => ({
+                order: () => Promise.resolve({ data: null, error: null }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]), update: () => makeChain(null) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.openConversation('conv-1')
     expect(c.messages.value).toHaveLength(0)
   })
@@ -1021,7 +1483,12 @@ describe('openConversation — error handling', () => {
         }),
         update: () => makeChain(null),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -1042,43 +1509,64 @@ describe('startConversation — new conversation', () => {
     })
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          select: () => ({
-            eq: () => ({
+        if (table === 'conversations')
+          return {
+            select: () => ({
               eq: () => ({
                 eq: () => ({
-                  neq: () => ({
-                    maybeSingle: () => Promise.resolve({ data: null, error: null }),
+                  eq: () => ({
+                    neq: () => ({
+                      maybeSingle: () => Promise.resolve({ data: null, error: null }),
+                    }),
                   }),
                 }),
               }),
+              or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
             }),
-            or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
-          }),
-          insert: insertFn,
-          update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
-            in: () => ({ eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
-          }),
-          update: () => makeChain(null),
-          insert: () => ({
+            insert: insertFn,
+            update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
+          }
+        if (table === 'conversation_messages')
+          return {
             select: () => ({
-              single: () => Promise.resolve({
-                data: { id: 'msg-1', conversation_id: 'new-conv-1', sender_id: 'user-1', content: 'Hello', is_system: false, is_read: false, created_at: '' },
-                error: null,
+              eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+              in: () => ({
+                eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
               }),
             }),
-          }),
-        }
-        if (table === 'dealers') return {
-          select: () => ({ eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }) }),
-        }
+            update: () => makeChain(null),
+            insert: () => ({
+              select: () => ({
+                single: () =>
+                  Promise.resolve({
+                    data: {
+                      id: 'msg-1',
+                      conversation_id: 'new-conv-1',
+                      sender_id: 'user-1',
+                      content: 'Hello',
+                      is_system: false,
+                      is_read: false,
+                      created_at: '',
+                    },
+                    error: null,
+                  }),
+              }),
+            }),
+          }
+        if (table === 'dealers')
+          return {
+            select: () => ({
+              eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }),
+            }),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -1096,27 +1584,33 @@ describe('startConversation — new conversation', () => {
   it('throws when insert fails', async () => {
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          select: () => ({
-            eq: () => ({
+        if (table === 'conversations')
+          return {
+            select: () => ({
               eq: () => ({
                 eq: () => ({
-                  neq: () => ({
-                    maybeSingle: () => Promise.resolve({ data: null, error: null }),
+                  eq: () => ({
+                    neq: () => ({
+                      maybeSingle: () => Promise.resolve({ data: null, error: null }),
+                    }),
                   }),
                 }),
               }),
             }),
-          }),
-          insert: () => ({
-            select: () => ({
-              single: () => Promise.resolve({ data: null, error: { message: 'Insert failed' } }),
+            insert: () => ({
+              select: () => ({
+                single: () => Promise.resolve({ data: null, error: { message: 'Insert failed' } }),
+              }),
             }),
-          }),
-        }
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -1127,39 +1621,51 @@ describe('startConversation — new conversation', () => {
     const msgInsert = vi.fn()
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          select: () => ({
-            eq: () => ({
+        if (table === 'conversations')
+          return {
+            select: () => ({
               eq: () => ({
                 eq: () => ({
-                  neq: () => ({
-                    maybeSingle: () => Promise.resolve({ data: null, error: null }),
+                  eq: () => ({
+                    neq: () => ({
+                      maybeSingle: () => Promise.resolve({ data: null, error: null }),
+                    }),
                   }),
                 }),
               }),
+              or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
             }),
-            or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
-          }),
-          insert: () => ({
+            insert: () => ({
+              select: () => ({
+                single: () => Promise.resolve({ data: { id: 'new-conv' }, error: null }),
+              }),
+            }),
+          }
+        if (table === 'conversation_messages')
+          return {
             select: () => ({
-              single: () => Promise.resolve({ data: { id: 'new-conv' }, error: null }),
+              eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+              in: () => ({
+                eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+              }),
             }),
-          }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
-            in: () => ({ eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
-          }),
-          update: () => makeChain(null),
-          insert: msgInsert,
-        }
-        if (table === 'dealers') return {
-          select: () => ({ eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }) }),
-        }
+            update: () => makeChain(null),
+            insert: msgInsert,
+          }
+        if (table === 'dealers')
+          return {
+            select: () => ({
+              eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }),
+            }),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -1171,43 +1677,65 @@ describe('startConversation — new conversation', () => {
   it('sends message on existing conversation when firstMessage has content', async () => {
     const msgInsert = vi.fn().mockReturnValue({
       select: () => ({
-        single: () => Promise.resolve({
-          data: { id: 'msg-1', conversation_id: 'existing-conv', sender_id: 'user-1', content: 'Hello again', is_system: false, is_read: false, created_at: '' },
-          error: null,
-        }),
+        single: () =>
+          Promise.resolve({
+            data: {
+              id: 'msg-1',
+              conversation_id: 'existing-conv',
+              sender_id: 'user-1',
+              content: 'Hello again',
+              is_system: false,
+              is_read: false,
+              created_at: '',
+            },
+            error: null,
+          }),
       }),
     })
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'conversations') return {
-          select: () => ({
-            eq: () => ({
+        if (table === 'conversations')
+          return {
+            select: () => ({
               eq: () => ({
                 eq: () => ({
-                  neq: () => ({
-                    maybeSingle: () => Promise.resolve({ data: { id: 'existing-conv' }, error: null }),
+                  eq: () => ({
+                    neq: () => ({
+                      maybeSingle: () =>
+                        Promise.resolve({ data: { id: 'existing-conv' }, error: null }),
+                    }),
                   }),
                 }),
               }),
+              or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
             }),
-            or: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
-          }),
-          update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
-            in: () => ({ eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) }),
-          }),
-          update: () => makeChain(null),
-          insert: msgInsert,
-        }
-        if (table === 'dealers') return {
-          select: () => ({ eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }) }),
-        }
+            update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+              in: () => ({
+                eq: () => ({ order: () => Promise.resolve({ data: [], error: null }) }),
+              }),
+            }),
+            update: () => makeChain(null),
+            insert: msgInsert,
+          }
+        if (table === 'dealers')
+          return {
+            select: () => ({
+              eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }),
+            }),
+          }
         return { select: () => makeChain([]) }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
@@ -1219,7 +1747,7 @@ describe('startConversation — new conversation', () => {
 // ─── sendMessage — error handling ───────────────────────────────────────────
 
 describe('sendMessage — error handling', () => {
-  it('throws when insert fails', async () => {
+  it('marks optimistic message as failed when insert fails', async () => {
     vi.stubGlobal('useSupabaseClient', () => ({
       from: () => ({
         select: () => makeChain([]),
@@ -1230,41 +1758,61 @@ describe('sendMessage — error handling', () => {
         }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    await expect(c.sendMessage('conv-1', 'Hello')).rejects.toBeDefined()
+    // Source uses optimistic UI: catches error and marks message as "failed"
+    await c.sendMessage('conv-1', 'Hello')
     expect(c.sending.value).toBe(false)
+    // Optimistic message remains with failed status
+    const failedMsgs = c.messages.value.filter((m: any) => m._status === 'failed')
+    expect(failedMsgs.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('does not add duplicate messages (dedup by id)', async () => {
-    const existingMsg = {
-      id: 'msg-dup', conversation_id: 'conv-1', sender_id: 'user-1',
-      content: 'Hello', is_system: false, is_read: false, created_at: '',
+  it('replaces optimistic temp message with server response (dedup by temp id)', async () => {
+    const serverMsg = {
+      id: 'msg-new',
+      conversation_id: 'conv-1',
+      sender_id: 'user-1',
+      content: 'Hello',
+      is_system: false,
+      is_read: false,
+      created_at: '',
     }
     vi.stubGlobal('useSupabaseClient', () => ({
       from: () => ({
         select: () => makeChain([]),
         insert: () => ({
           select: () => ({
-            single: () => Promise.resolve({ data: existingMsg, error: null }),
+            single: () => Promise.resolve({ data: serverMsg, error: null }),
           }),
         }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    // Pre-populate with the same message ID
-    c.messages.value = [existingMsg]
+    c.messages.value = []
     await c.sendMessage('conv-1', 'Hello')
-    // Should not duplicate
-    expect(c.messages.value.filter((m) => m.id === 'msg-dup')).toHaveLength(1)
+    // Optimistic UI: temp message is replaced by server response
+    // No temp messages should remain; the final message has the server id
+    expect(c.messages.value.filter((m) => m.id === 'msg-new')).toHaveLength(1)
+    expect(c.messages.value.filter((m) => (m.id as string).startsWith('temp-'))).toHaveLength(0)
   })
 
-  it('does not add message when response data is null', async () => {
+  it('keeps optimistic message when response data is null', async () => {
     vi.stubGlobal('useSupabaseClient', () => ({
       from: () => ({
         select: () => makeChain([]),
@@ -1275,21 +1823,36 @@ describe('sendMessage — error handling', () => {
         }),
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
     await c.sendMessage('conv-1', 'Hello')
-    expect(c.messages.value).toHaveLength(0)
+    // Source uses optimistic UI: the temp message remains even if server returns null
+    expect(c.messages.value.length).toBeGreaterThanOrEqual(1)
   })
 
   it('trims message content before sending', async () => {
     const insertFn = vi.fn().mockReturnValue({
       select: () => ({
-        single: () => Promise.resolve({
-          data: { id: 'msg-1', conversation_id: 'conv-1', sender_id: 'user-1', content: 'Hello', is_system: false, is_read: false, created_at: '' },
-          error: null,
-        }),
+        single: () =>
+          Promise.resolve({
+            data: {
+              id: 'msg-1',
+              conversation_id: 'conv-1',
+              sender_id: 'user-1',
+              content: 'Hello',
+              is_system: false,
+              is_read: false,
+              created_at: '',
+            },
+            error: null,
+          }),
       }),
     })
     vi.stubGlobal('useSupabaseClient', () => ({
@@ -1298,14 +1861,17 @@ describe('sendMessage — error handling', () => {
         insert: insertFn,
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
       }),
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
     await c.sendMessage('conv-1', '  Hello  ')
-    expect(insertFn).toHaveBeenCalledWith(
-      expect.objectContaining({ content: 'Hello' }),
-    )
+    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({ content: 'Hello' }))
   })
 })
 
@@ -1316,17 +1882,21 @@ describe('closeConversation — realtime cleanup', () => {
     const removeFn = vi.fn()
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'dealers') return {
-          select: () => ({ eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }) }),
-        }
-        if (table === 'conversations') return {
-          select: () => ({
-            or: () => ({
-              order: () => Promise.resolve({ data: [], error: null }),
+        if (table === 'dealers')
+          return {
+            select: () => ({
+              eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }),
             }),
-          }),
-          update: () => makeChain(null),
-        }
+          }
+        if (table === 'conversations')
+          return {
+            select: () => ({
+              or: () => ({
+                order: () => Promise.resolve({ data: [], error: null }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         // conversation_messages and others
         return {
           select: () => ({
@@ -1338,16 +1908,24 @@ describe('closeConversation — realtime cleanup', () => {
         }
       },
       channel: () => ({
-        on: function (this: unknown) { return this },
+        on: function (this: unknown) {
+          return this
+        },
         subscribe: () => ({}),
       }),
       removeChannel: removeFn,
     }))
     const c = useConversation()
     const conv = {
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active' as const, buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
+      id: 'conv-1',
+      vehicle_id: 'v-1',
+      buyer_id: 'user-1',
+      seller_id: 'seller-1',
+      status: 'active' as const,
+      buyer_accepted_share: false,
+      seller_accepted_share: false,
+      last_message_at: '',
+      created_at: '',
     }
     c.conversations.value = [conv]
     c.activeConversation.value = conv
@@ -1378,15 +1956,28 @@ describe('fetchSellerResponseTime', () => {
           update: () => makeChain(null),
         }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.openConversation('conv-1')
     expect(c.sellerAvgResponseMinutes.value).toBeNull()
   })
@@ -1403,15 +1994,28 @@ describe('fetchSellerResponseTime', () => {
           update: () => makeChain(null),
         }
       },
-      channel: () => ({ on: function (this: unknown) { return this }, subscribe: () => ({}) }),
+      channel: () => ({
+        on: function (this: unknown) {
+          return this
+        },
+        subscribe: () => ({}),
+      }),
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.openConversation('conv-1')
     expect(c.sellerAvgResponseMinutes.value).toBeNull()
   })
@@ -1423,8 +2027,24 @@ describe('markAsRead — edge cases', () => {
   it('does not modify messages from other conversations', async () => {
     const c = useConversation()
     c.messages.value = [
-      { id: 'm1', conversation_id: 'conv-1', sender_id: 'other', content: 'Hi', is_system: false, is_read: false, created_at: '' },
-      { id: 'm2', conversation_id: 'conv-2', sender_id: 'other', content: 'Other conv', is_system: false, is_read: false, created_at: '' },
+      {
+        id: 'm1',
+        conversation_id: 'conv-1',
+        sender_id: 'other',
+        content: 'Hi',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
+      {
+        id: 'm2',
+        conversation_id: 'conv-2',
+        sender_id: 'other',
+        content: 'Other conv',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
     ]
     await c.markAsRead('conv-1')
     // m1 in conv-1 should be marked as read
@@ -1436,7 +2056,15 @@ describe('markAsRead — edge cases', () => {
   it('does not modify own messages', async () => {
     const c = useConversation()
     c.messages.value = [
-      { id: 'm1', conversation_id: 'conv-1', sender_id: 'user-1', content: 'My msg', is_system: false, is_read: false, created_at: '' },
+      {
+        id: 'm1',
+        conversation_id: 'conv-1',
+        sender_id: 'user-1',
+        content: 'My msg',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
     ]
     await c.markAsRead('conv-1')
     // Own message should remain unchanged
@@ -1451,17 +2079,21 @@ describe('subscribeToRealtime — via openConversation', () => {
     let realtimeCallback: ((payload: { new: Record<string, unknown> }) => void) | null = null
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'dealers') return {
-          select: () => ({ eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }) }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            eq: () => ({
-              order: () => Promise.resolve({ data: [], error: null }),
+        if (table === 'dealers')
+          return {
+            select: () => ({
+              eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }),
             }),
-          }),
-          update: () => makeChain(null),
-        }
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              eq: () => ({
+                order: () => Promise.resolve({ data: [], error: null }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]), update: () => makeChain(null) }
       },
       channel: () => ({
@@ -1474,23 +2106,47 @@ describe('subscribeToRealtime — via openConversation', () => {
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.openConversation('conv-1')
 
     // Simulate realtime new message
     expect(realtimeCallback).toBeTruthy()
     realtimeCallback!({
-      new: { id: 'rt-msg-1', conversation_id: 'conv-1', sender_id: 'other', content: 'Realtime!', is_system: false, is_read: false, created_at: '' },
+      new: {
+        id: 'rt-msg-1',
+        conversation_id: 'conv-1',
+        sender_id: 'other',
+        content: 'Realtime!',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
     })
     expect(c.messages.value.some((m) => m.id === 'rt-msg-1')).toBe(true)
 
     // Simulate duplicate (should not add again)
     realtimeCallback!({
-      new: { id: 'rt-msg-1', conversation_id: 'conv-1', sender_id: 'other', content: 'Realtime!', is_system: false, is_read: false, created_at: '' },
+      new: {
+        id: 'rt-msg-1',
+        conversation_id: 'conv-1',
+        sender_id: 'other',
+        content: 'Realtime!',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
     })
     expect(c.messages.value.filter((m) => m.id === 'rt-msg-1')).toHaveLength(1)
   })
@@ -1499,17 +2155,21 @@ describe('subscribeToRealtime — via openConversation', () => {
     let realtimeCallback: ((payload: { new: Record<string, unknown> }) => void) | null = null
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'dealers') return {
-          select: () => ({ eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }) }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            eq: () => ({
-              order: () => Promise.resolve({ data: [], error: null }),
+        if (table === 'dealers')
+          return {
+            select: () => ({
+              eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }),
             }),
-          }),
-          update: () => makeChain(null),
-        }
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              eq: () => ({
+                order: () => Promise.resolve({ data: [], error: null }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]), update: () => makeChain(null) }
       },
       channel: () => ({
@@ -1522,16 +2182,32 @@ describe('subscribeToRealtime — via openConversation', () => {
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.openConversation('conv-1')
 
     // Simulate message from another user — should trigger markAsRead
     realtimeCallback!({
-      new: { id: 'rt-other', conversation_id: 'conv-1', sender_id: 'other-user', content: 'Hello', is_system: false, is_read: false, created_at: '' },
+      new: {
+        id: 'rt-other',
+        conversation_id: 'conv-1',
+        sender_id: 'other-user',
+        content: 'Hello',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
     })
     // The message should have been added
     expect(c.messages.value.some((m) => m.id === 'rt-other')).toBe(true)
@@ -1541,17 +2217,21 @@ describe('subscribeToRealtime — via openConversation', () => {
     let realtimeCallback: ((payload: { new: Record<string, unknown> }) => void) | null = null
     vi.stubGlobal('useSupabaseClient', () => ({
       from: (table: string) => {
-        if (table === 'dealers') return {
-          select: () => ({ eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }) }),
-        }
-        if (table === 'conversation_messages') return {
-          select: () => ({
-            eq: () => ({
-              order: () => Promise.resolve({ data: [], error: null }),
+        if (table === 'dealers')
+          return {
+            select: () => ({
+              eq: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }),
             }),
-          }),
-          update: () => makeChain(null),
-        }
+          }
+        if (table === 'conversation_messages')
+          return {
+            select: () => ({
+              eq: () => ({
+                order: () => Promise.resolve({ data: [], error: null }),
+              }),
+            }),
+            update: () => makeChain(null),
+          }
         return { select: () => makeChain([]), update: () => makeChain(null) }
       },
       channel: () => ({
@@ -1564,16 +2244,32 @@ describe('subscribeToRealtime — via openConversation', () => {
       removeChannel: vi.fn(),
     }))
     const c = useConversation()
-    c.conversations.value = [{
-      id: 'conv-1', vehicle_id: 'v-1', buyer_id: 'user-1', seller_id: 'seller-1',
-      status: 'active', buyer_accepted_share: false, seller_accepted_share: false,
-      last_message_at: '', created_at: '',
-    }]
+    c.conversations.value = [
+      {
+        id: 'conv-1',
+        vehicle_id: 'v-1',
+        buyer_id: 'user-1',
+        seller_id: 'seller-1',
+        status: 'active',
+        buyer_accepted_share: false,
+        seller_accepted_share: false,
+        last_message_at: '',
+        created_at: '',
+      },
+    ]
     await c.openConversation('conv-1')
 
     // Simulate message from current user — should NOT trigger markAsRead
     realtimeCallback!({
-      new: { id: 'rt-own', conversation_id: 'conv-1', sender_id: 'user-1', content: 'My msg', is_system: false, is_read: false, created_at: '' },
+      new: {
+        id: 'rt-own',
+        conversation_id: 'conv-1',
+        sender_id: 'user-1',
+        content: 'My msg',
+        is_system: false,
+        is_read: false,
+        created_at: '',
+      },
     })
     // Message added but not auto-marked
     expect(c.messages.value.some((m) => m.id === 'rt-own')).toBe(true)

@@ -96,6 +96,7 @@ export interface VehicleFilters {
   location_regions?: string[]
   location_province_eq?: string
   dealer_id?: string
+  top_rated?: boolean
   [key: string]: unknown
 }
 

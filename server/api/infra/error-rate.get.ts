@@ -42,16 +42,16 @@ export default defineEventHandler(async (event) => {
     logger.error('Error querying error_events:', queryError as unknown as Record<string, unknown>)
   }
 
-  // Alternative: count from API response logs (if error_events table not ready)
-  let errorCount = 0
-  let totalCount = 100 // placeholder
+  // Count errors from error_events table
+  const errorCount = errorEvents?.length ?? 0
 
-  if (errorEvents && errorEvents.length > 0) {
-    errorCount = errorEvents.length
-    // Estimate total from DB: all requests in period
-    // For now, use Sentry client-side errors
-    totalCount = errorEvents.length + 99 // rough estimate
-  }
+  // Get total request count from analytics_events in the same window
+  const { count: analyticsCount } = await db
+    .from('analytics_events')
+    .select('id', { count: 'exact', head: true })
+    .gte('created_at', startTime.toISOString())
+
+  const totalCount = Math.max(analyticsCount ?? 0, errorCount)
 
   // Calculate error rate
   const errorRate = totalCount > 0 ? (errorCount / totalCount) * 100 : 0

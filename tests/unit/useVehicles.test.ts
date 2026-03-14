@@ -258,31 +258,63 @@ describe('useVehicles', () => {
     ).resolves.not.toThrow()
   })
 
-  it('pagination: fetchVehicles should use offset 0', async () => {
-    const { fetchVehicles } = useVehicles()
+  it('pagination: fetchVehicles should use offset 0 and replace vehicles', async () => {
+    const { fetchVehicles, fetchMore, hasMore, vehicles } = useVehicles()
 
-    // First fetch should start from 0
+    // Initial fetch returns 1 vehicle
+    mockRetryQuery.mockImplementationOnce(async () => ({
+      data: [createMockVehicle({ id: 'v1' })],
+      error: null,
+      count: 2,
+    }))
     await fetchVehicles()
+    expect(vehicles.value).toHaveLength(1)
 
-    // Calling again should reset to 0
+    // fetchMore appends a second vehicle
+    hasMore.value = true
+    mockRetryQuery.mockImplementationOnce(async () => ({
+      data: [createMockVehicle({ id: 'v2' })],
+      error: null,
+      count: 2,
+    }))
+    await fetchMore()
+    expect(vehicles.value).toHaveLength(2)
+
+    // fetchVehicles resets page to 0 and REPLACES vehicles (not appends)
+    mockRetryQuery.mockImplementationOnce(async () => ({
+      data: [createMockVehicle({ id: 'v3' })],
+      error: null,
+      count: 1,
+    }))
     await fetchVehicles()
-
-    // No errors expected
-    expect(true).toBe(true)
+    expect(vehicles.value).toHaveLength(1)
+    expect(vehicles.value[0].id).toBe('v3')
   })
 
-  it('pagination: fetchMore increments offset correctly', async () => {
-    const { fetchVehicles, fetchMore, hasMore } = useVehicles()
+  it('pagination: fetchMore increments offset and appends vehicles', async () => {
+    const { fetchVehicles, fetchMore, hasMore, vehicles } = useVehicles()
 
+    // Initial fetch
+    mockRetryQuery.mockImplementationOnce(async () => ({
+      data: [createMockVehicle({ id: 'v1' })],
+      error: null,
+      count: 2,
+    }))
     await fetchVehicles()
+    expect(vehicles.value).toHaveLength(1)
 
-    // Force hasMore to true so fetchMore will execute
+    // fetchMore should APPEND results, not replace
     hasMore.value = true
-
+    mockRetryQuery.mockImplementationOnce(async () => ({
+      data: [createMockVehicle({ id: 'v2' })],
+      error: null,
+      count: 2,
+    }))
     await fetchMore()
 
-    // fetchMore should have executed without errors
-    expect(true).toBe(true)
+    expect(vehicles.value).toHaveLength(2)
+    expect(vehicles.value[0].id).toBe('v1')
+    expect(vehicles.value[1].id).toBe('v2')
   })
 })
 
@@ -332,7 +364,11 @@ describe('useVehicles — error paths', () => {
 
   it('fetchVehicles handles result.error object (Supabase error in response)', async () => {
     // retryQuery resolves (doesn't throw) but returns an object with error field
-    mockRetryQuery.mockResolvedValueOnce({ data: null, error: { message: 'DB error from result' }, count: 0 })
+    mockRetryQuery.mockResolvedValueOnce({
+      data: null,
+      error: { message: 'DB error from result' },
+      count: 0,
+    })
     const { fetchVehicles, error } = useVehicles()
     await fetchVehicles()
     // The thrown error object is not instanceof Error → generic message

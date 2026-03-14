@@ -57,6 +57,8 @@
       @action="onTourAction"
     />
 
+    <LazyUiOfflineBanner />
+
     <!-- ARIA live region para notificaciones dinámicas (screen readers) -->
     <div id="aria-live-region" aria-live="polite" aria-atomic="true" class="sr-only" />
     <div id="aria-live-assertive" aria-live="assertive" aria-atomic="true" class="sr-only" />

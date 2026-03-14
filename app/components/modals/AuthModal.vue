@@ -2,7 +2,7 @@
   <Teleport to="body">
     <Transition name="auth-modal">
       <div v-if="modelValue" class="auth-backdrop" @click.self="close">
-        <div class="auth-panel" role="dialog" :aria-label="$t('auth.login')">
+        <div ref="panelRef" class="auth-panel" role="dialog" :aria-label="$t('auth.login')">
           <button class="close-btn" :aria-label="$t('common.close')" @click="close">
             <svg
               width="24"
@@ -59,7 +59,8 @@
                 required
                 autocomplete="email"
                 :placeholder="$t('auth.email')"
-              >
+                :aria-describedby="errorMsg ? 'auth-error' : undefined"
+              />
             </div>
 
             <div class="field">
@@ -72,7 +73,7 @@
                 autocomplete="current-password"
                 :placeholder="$t('auth.password')"
                 minlength="6"
-              >
+              />
             </div>
 
             <div v-if="mode === 'register'" class="field">
@@ -85,10 +86,10 @@
                 autocomplete="new-password"
                 :placeholder="$t('auth.confirmPassword')"
                 minlength="6"
-              >
+              />
             </div>
 
-            <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
+            <p v-if="errorMsg" id="auth-error" class="error-msg" role="alert">{{ errorMsg }}</p>
 
             <button type="submit" class="btn-primary" :disabled="loading">
               {{
@@ -136,6 +137,9 @@ const redirectUrl = computed(() => {
   const redirect = route.query.redirect as string | undefined
   return redirect || null
 })
+
+const panelRef = ref<HTMLElement | null>(null)
+const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
 
 const mode = ref<'login' | 'register'>('login')
 const email = ref('')
@@ -258,9 +262,11 @@ watch(
     if (val) {
       document.addEventListener('keydown', onKeydown)
       document.body.style.overflow = 'hidden'
+      nextTick(() => activateTrap(panelRef.value))
     } else {
       document.removeEventListener('keydown', onKeydown)
       document.body.style.overflow = ''
+      deactivateTrap()
     }
   },
 )

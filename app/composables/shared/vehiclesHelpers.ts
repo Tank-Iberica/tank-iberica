@@ -49,5 +49,8 @@ export function applyFilters(query: FilterChain, filters: VehicleFilters): Filte
   if (filters.featured) q = q.eq('featured', true)
   if (filters.dealer_id) q = q.eq('dealer_id', filters.dealer_id)
 
+  // #54 — Top-rated filter: only vehicles from dealers with trust_score >= 80
+  if (filters.top_rated) q = q.gte('dealers.trust_score' as never, 80)
+
   return q
 }

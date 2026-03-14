@@ -2,7 +2,16 @@
   <NuxtLink :to="`/subastas/${auction.id}`" class="auction-card">
     <!-- Card image -->
     <div class="auction-card-image">
-      <NuxtImg v-if="firstImage" :src="firstImage" :alt="vehicleTitle" loading="lazy" width="400" height="300" decoding="async" sizes="(max-width: 48rem) 100vw, 400px" />
+      <NuxtImg
+        v-if="firstImage"
+        :src="firstImage"
+        :alt="vehicleTitle"
+        loading="lazy"
+        width="400"
+        height="300"
+        decoding="async"
+        sizes="(max-width: 48rem) 100vw, 400px"
+      />
       <div v-else class="auction-card-placeholder">
         <svg
           width="32"
@@ -84,7 +93,7 @@
 
 <script setup lang="ts">
 import type { Auction } from '~/composables/useAuction'
-import { formatCents } from '~/composables/useAuction'
+import { formatAuctionCents as formatCents } from '~/composables/useAuction'
 
 defineProps<{
   auction: Auction

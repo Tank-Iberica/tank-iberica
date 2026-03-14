@@ -14,7 +14,7 @@ vi.mock('~/composables/useListingLifecycle', () => ({
 }))
 
 import { isRenewable } from '../../app/composables/useListingRenewal'
-import type { VehicleStatus } from '../../app/composables/useListingLifecycle'
+import type { ListingStatus as VehicleStatus } from '../../app/composables/useListingLifecycle'
 
 describe('isRenewable', () => {
   it('expired status is renewable', () => {

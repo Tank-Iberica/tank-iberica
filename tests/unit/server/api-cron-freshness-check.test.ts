@@ -61,6 +61,7 @@ vi.mock('../../../server/utils/logger', () => ({ logger: mockLogger }))
 vi.mock('../../../server/utils/siteConfig', () => ({
   getSiteUrl: () => 'https://tracciona.com',
   getSiteName: () => 'Tracciona',
+  getSiteEmail: () => 'hola@tracciona.com',
 }))
 
 vi.mock('resend', () => ({ Resend: MockResend }))

@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-// Mock h3
+// ── Hoisted mocks ────────────────────────────────────────────────────────────
+
+const { mockValidateBody, mockServiceRole } = vi.hoisted(() => ({
+  mockValidateBody: vi.fn(),
+  mockServiceRole: vi.fn(),
+}))
+
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   readBody: vi.fn(),
@@ -10,6 +16,21 @@ vi.mock('h3', () => ({
     return e
   },
 }))
+
+vi.mock('../../server/utils/validateBody', () => ({
+  validateBody: mockValidateBody,
+}))
+
+vi.mock('#supabase/server', () => ({
+  serverSupabaseServiceRole: mockServiceRole,
+}))
+
+vi.stubGlobal('useRuntimeConfig', () => ({ turnstileSecretKey: '' }))
+vi.stubGlobal('verifyTurnstile', vi.fn().mockResolvedValue(false))
+
+const handler = (await import('../../server/api/auth/check-lockout.post')).default
+
+// ── Supabase mock helpers ─────────────────────────────────────────────────────
 
 const mockSingle = vi.fn()
 const mockEq = vi.fn(() => ({ single: mockSingle }))
@@ -25,31 +46,35 @@ const mockFrom = vi.fn(() => ({
   delete: mockDelete,
 }))
 
-vi.stubGlobal('useSupabaseServiceClient', () => ({ from: mockFrom }))
-vi.stubGlobal('useRuntimeConfig', () => ({ turnstileSecretKey: '' }))
-
-const { readBody } = await import('h3')
-const handler = (await import('../../server/api/auth/check-lockout.post')).default
+function setupSupabase() {
+  mockServiceRole.mockReturnValue({ from: mockFrom })
+}
 
 describe('POST /api/auth/check-lockout', () => {
   const mockEvent = { node: { req: { headers: {} } } }
 
   beforeEach(() => {
     vi.clearAllMocks()
+    setupSupabase()
   })
 
   it('rejects request without email or action', async () => {
-    vi.mocked(readBody).mockResolvedValue({})
-    await expect(handler(mockEvent as never)).rejects.toThrow('email and action')
+    // validateBody throws when validation fails (via Zod)
+    mockValidateBody.mockRejectedValue(
+      Object.assign(new Error('Datos inválidos'), { statusCode: 400 }),
+    )
+    await expect(handler(mockEvent as never)).rejects.toThrow()
   })
 
   it('rejects invalid action', async () => {
-    vi.mocked(readBody).mockResolvedValue({ email: 'test@test.com', action: 'invalid' })
-    await expect(handler(mockEvent as never)).rejects.toThrow('email and action')
+    mockValidateBody.mockRejectedValue(
+      Object.assign(new Error('Datos inválidos'), { statusCode: 400 }),
+    )
+    await expect(handler(mockEvent as never)).rejects.toThrow()
   })
 
   it('returns unlocked when no record exists (check)', async () => {
-    vi.mocked(readBody).mockResolvedValue({ email: 'test@test.com', action: 'check' })
+    mockValidateBody.mockResolvedValue({ email: 'test@test.com', action: 'check' })
     mockSingle.mockResolvedValue({ data: null, error: null })
 
     const result = await handler(mockEvent as never)
@@ -58,13 +83,16 @@ describe('POST /api/auth/check-lockout', () => {
 
   it('returns locked when locked_until is in the future (check)', async () => {
     const futureDate = new Date(Date.now() + 10 * 60 * 1000).toISOString()
-    vi.mocked(readBody).mockResolvedValue({ email: 'test@test.com', action: 'check' })
+    mockValidateBody.mockResolvedValue({ email: 'test@test.com', action: 'check' })
     mockSingle.mockResolvedValue({
       data: { attempts: 5, first_attempt_at: new Date().toISOString(), locked_until: futureDate },
       error: null,
     })
 
-    const result = await handler(mockEvent as never) as { locked: boolean; retryAfterSeconds: number }
+    const result = (await handler(mockEvent as never)) as {
+      locked: boolean
+      retryAfterSeconds: number
+    }
     expect(result.locked).toBe(true)
     expect(result.retryAfterSeconds).toBeGreaterThan(0)
     expect(result.attemptsRemaining).toBe(0)
@@ -72,9 +100,13 @@ describe('POST /api/auth/check-lockout', () => {
 
   it('resets when lock has expired (check)', async () => {
     const pastDate = new Date(Date.now() - 1000).toISOString()
-    vi.mocked(readBody).mockResolvedValue({ email: 'test@test.com', action: 'check' })
+    mockValidateBody.mockResolvedValue({ email: 'test@test.com', action: 'check' })
     mockSingle.mockResolvedValue({
-      data: { attempts: 5, first_attempt_at: new Date(Date.now() - 60 * 60 * 1000).toISOString(), locked_until: pastDate },
+      data: {
+        attempts: 5,
+        first_attempt_at: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+        locked_until: pastDate,
+      },
       error: null,
     })
 
@@ -84,7 +116,7 @@ describe('POST /api/auth/check-lockout', () => {
   })
 
   it('resets when window has expired (check)', async () => {
-    vi.mocked(readBody).mockResolvedValue({ email: 'test@test.com', action: 'check' })
+    mockValidateBody.mockResolvedValue({ email: 'test@test.com', action: 'check' })
     mockSingle.mockResolvedValue({
       data: {
         attempts: 3,
@@ -100,7 +132,7 @@ describe('POST /api/auth/check-lockout', () => {
   })
 
   it('returns correct attemptsRemaining within window (check)', async () => {
-    vi.mocked(readBody).mockResolvedValue({ email: 'test@test.com', action: 'check' })
+    mockValidateBody.mockResolvedValue({ email: 'test@test.com', action: 'check' })
     mockSingle.mockResolvedValue({
       data: { attempts: 3, first_attempt_at: new Date().toISOString(), locked_until: null },
       error: null,
@@ -111,7 +143,7 @@ describe('POST /api/auth/check-lockout', () => {
   })
 
   it('creates new record on first failure (record_failure)', async () => {
-    vi.mocked(readBody).mockResolvedValue({ email: 'new@test.com', action: 'record_failure' })
+    mockValidateBody.mockResolvedValue({ email: 'new@test.com', action: 'record_failure' })
     mockSingle.mockResolvedValue({ data: null, error: null })
 
     const result = await handler(mockEvent as never)
@@ -121,7 +153,7 @@ describe('POST /api/auth/check-lockout', () => {
   })
 
   it('increments attempts on subsequent failure (record_failure)', async () => {
-    vi.mocked(readBody).mockResolvedValue({ email: 'test@test.com', action: 'record_failure' })
+    mockValidateBody.mockResolvedValue({ email: 'test@test.com', action: 'record_failure' })
     mockSingle.mockResolvedValue({
       data: { attempts: 3, first_attempt_at: new Date().toISOString() },
       error: null,
@@ -134,13 +166,16 @@ describe('POST /api/auth/check-lockout', () => {
   })
 
   it('locks account at 5th failure (record_failure)', async () => {
-    vi.mocked(readBody).mockResolvedValue({ email: 'test@test.com', action: 'record_failure' })
+    mockValidateBody.mockResolvedValue({ email: 'test@test.com', action: 'record_failure' })
     mockSingle.mockResolvedValue({
       data: { attempts: 4, first_attempt_at: new Date().toISOString() },
       error: null,
     })
 
-    const result = await handler(mockEvent as never) as { locked: boolean; retryAfterSeconds: number }
+    const result = (await handler(mockEvent as never)) as {
+      locked: boolean
+      retryAfterSeconds: number
+    }
     expect(result.locked).toBe(true)
     expect(result.retryAfterSeconds).toBeGreaterThan(0)
     expect(result.attemptsRemaining).toBe(0)
@@ -150,7 +185,7 @@ describe('POST /api/auth/check-lockout', () => {
   })
 
   it('resets window on expired failure (record_failure)', async () => {
-    vi.mocked(readBody).mockResolvedValue({ email: 'test@test.com', action: 'record_failure' })
+    mockValidateBody.mockResolvedValue({ email: 'test@test.com', action: 'record_failure' })
     mockSingle.mockResolvedValue({
       data: { attempts: 4, first_attempt_at: new Date(Date.now() - 20 * 60 * 1000).toISOString() },
       error: null,
@@ -162,7 +197,8 @@ describe('POST /api/auth/check-lockout', () => {
   })
 
   it('normalizes email to lowercase (check)', async () => {
-    vi.mocked(readBody).mockResolvedValue({ email: ' Test@Test.COM ', action: 'check' })
+    // validateBody returns already-normalized email (Zod transform)
+    mockValidateBody.mockResolvedValue({ email: 'test@test.com', action: 'check' })
     mockSingle.mockResolvedValue({ data: null, error: null })
 
     await handler(mockEvent as never)

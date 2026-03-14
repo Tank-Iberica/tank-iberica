@@ -24,9 +24,12 @@ beforeAll(() => {
     return name[locale] || name['es'] || ''
   })
 
+  vi.stubGlobal('getVerticalSlug', () => 'tracciona')
+
   mockLimit.mockResolvedValue({ data: mockCategories, error: null })
   mockOrder.mockReturnValue({ limit: mockLimit })
-  mockSelectFn.mockReturnValue({ order: mockOrder })
+  const mockEq = vi.fn().mockReturnValue({ order: mockOrder })
+  mockSelectFn.mockReturnValue({ eq: mockEq })
 
   vi.stubGlobal('useSupabaseClient', () => ({
     from: () => ({ select: mockSelectFn }),

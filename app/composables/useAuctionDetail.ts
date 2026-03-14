@@ -5,19 +5,18 @@
  */
 
 import type { Ref } from 'vue'
-import { useAuction, type AuctionStatus, type AuctionBid } from '~/composables/useAuction'
+import {
+  useAuction,
+  type AuctionDisplayStatus as AuctionStatus,
+  type AuctionBid,
+} from '~/composables/useAuction'
 import {
   useAuctionRegistration,
   type RegistrationFormData,
 } from '~/composables/useAuctionRegistration'
 import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
 import { formatPrice } from '~/composables/shared/useListingUtils'
-
-/** Image entry from the vehicle_images join */
-export interface VehicleImage {
-  url: string
-  position: number
-}
+import type { VehicleImage } from '~/composables/shared/vehiclesTypes'
 
 export function useAuctionDetail(auctionId: Ref<string>) {
   const { t, locale } = useI18n()

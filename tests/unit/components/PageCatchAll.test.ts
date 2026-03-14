@@ -35,9 +35,18 @@ beforeAll(() => {
 vi.mock('~/utils/reserved-slugs', () => ({
   RESERVED_SLUGS: ['admin', 'dashboard', 'login', 'noticias', 'vehiculo'],
 }))
+vi.mock('~/utils/faqSchema', () => ({
+  buildFaqPageSchema: vi.fn(() => null),
+}))
+vi.mock('~/utils/itemListSchema', () => ({
+  buildItemListSchema: vi.fn(() => null),
+}))
 
 vi.stubGlobal('usePageSeo', vi.fn())
 vi.stubGlobal('useHead', vi.fn())
+vi.stubGlobal('useJsonLd', vi.fn())
+vi.stubGlobal('useSiteUrl', () => 'https://tracciona.es')
+vi.stubGlobal('navigateTo', vi.fn())
 
 // createError: in the component, `throw createError(...)` is used.
 // We make it return an error object, but the component's `throw` will propagate it.
@@ -60,8 +69,15 @@ let mockResolved: ReturnType<typeof ref>
 let mockStatus: ReturnType<typeof ref>
 let mockRouteSlug: string | string[]
 
+let useAsyncDataCallCount = 0
 vi.stubGlobal('useAsyncData', (_key: string, _fn: () => unknown) => {
-  return Promise.resolve({ data: mockResolved, status: mockStatus })
+  useAsyncDataCallCount++
+  // First call = slug resolution (returns mockResolved)
+  // Subsequent calls = child landings, landing vehicles (return empty)
+  if (useAsyncDataCallCount === 1) {
+    return Promise.resolve({ data: mockResolved, status: mockStatus })
+  }
+  return Promise.resolve({ data: ref([]), status: ref('success') })
 })
 
 vi.stubGlobal('useRoute', () => ({
@@ -76,16 +92,15 @@ vi.stubGlobal('useI18n', () => ({
 }))
 
 // Chainable Supabase mock — not actually called since useAsyncData is mocked
+const supabaseChain: Record<string, unknown> = {}
+for (const m of ['select', 'eq', 'order', 'limit', 'single', 'in', 'gte', 'lte']) {
+  supabaseChain[m] = () => supabaseChain
+}
+supabaseChain.single = () => Promise.resolve({ data: null, error: null })
+supabaseChain.then = (r: (v: unknown) => void) =>
+  Promise.resolve({ data: null, error: null }).then(r)
 vi.stubGlobal('useSupabaseClient', () => ({
-  from: () => ({
-    select: () => ({
-      eq: () => ({
-        eq: () => ({
-          single: () => Promise.resolve({ data: null, error: null }),
-        }),
-      }),
-    }),
-  }),
+  from: () => supabaseChain,
 }))
 
 // Import after mocks
@@ -100,6 +115,8 @@ function makeLanding(overrides: Record<string, unknown> = {}) {
       slug: 'camiones-usados',
       vertical: 'tracciona',
       vehicle_count: 42,
+      is_active: true,
+      parent_slug: null,
       meta_title_es: 'Camiones Usados',
       meta_title_en: 'Used Trucks',
       meta_description_es: 'Mejores camiones usados',
@@ -157,6 +174,7 @@ async function factory(
   slug: string | string[] = ['camiones-usados'],
   locale = 'es',
 ) {
+  useAsyncDataCallCount = 0
   mockResolved = ref(resolved)
   mockStatus = ref(status)
   mockRouteSlug = slug
@@ -318,9 +336,7 @@ describe('PageCatchAll ([...slug])', () => {
     })
 
     it('hides intro text when empty', async () => {
-      const { wrapper: w } = await factory(
-        makeLanding({ intro_text_es: '', intro_text_en: '' }),
-      )
+      const { wrapper: w } = await factory(makeLanding({ intro_text_es: '', intro_text_en: '' }))
       expect(w.find('.landing-intro').exists()).toBe(false)
     })
 

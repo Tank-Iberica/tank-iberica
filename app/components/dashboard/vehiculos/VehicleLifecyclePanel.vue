@@ -10,7 +10,7 @@ import {
   STATUS_META,
   getValidTargets,
 } from '~/composables/useListingLifecycle'
-import type { VehicleStatus } from '~/composables/useListingLifecycle'
+import type { ListingStatus as VehicleStatus } from '~/composables/useListingLifecycle'
 
 const props = defineProps<{
   vehicleId: string

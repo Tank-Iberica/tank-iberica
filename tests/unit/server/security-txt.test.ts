@@ -5,13 +5,12 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-vi.mock('#imports', () => ({
-  useRuntimeConfig: () => ({
-    public: {
-      contactEmail: 'security@tracciona.es',
-      siteUrl: 'https://tracciona.es',
-    },
-  }),
+vi.stubGlobal('defineEventHandler', (fn: Function) => fn)
+vi.stubGlobal('useRuntimeConfig', () => ({
+  public: {
+    contactEmail: 'security@tracciona.es',
+    siteUrl: 'https://tracciona.es',
+  },
 }))
 
 describe('security.txt route', () => {
@@ -31,12 +30,12 @@ describe('security.txt route', () => {
       },
       _headers: headers,
     } as unknown as Parameters<
-      (typeof import('~/server/routes/.well-known/security.txt'))['default']
+      (typeof import('~~/server/routes/.well-known/security.txt'))['default']
     >[0]
   }
 
   it('returns text/plain content type', async () => {
-    const { default: handler } = await import('~/server/routes/.well-known/security.txt')
+    const { default: handler } = await import('~~/server/routes/.well-known/security.txt')
     const event = makeEvent()
     await handler(event)
     expect((event as { _headers: Record<string, string> })._headers['content-type']).toContain(
@@ -45,7 +44,7 @@ describe('security.txt route', () => {
   })
 
   it('contains RFC 9116 required Contact field', async () => {
-    const { default: handler } = await import('~/server/routes/.well-known/security.txt')
+    const { default: handler } = await import('~~/server/routes/.well-known/security.txt')
     const event = makeEvent()
     const result = (await handler(event)) as string
 
@@ -54,7 +53,7 @@ describe('security.txt route', () => {
   })
 
   it('contains RFC 9116 required Expires field in ISO format', async () => {
-    const { default: handler } = await import('~/server/routes/.well-known/security.txt')
+    const { default: handler } = await import('~~/server/routes/.well-known/security.txt')
     const event = makeEvent()
     const result = (await handler(event)) as string
 
@@ -62,7 +61,7 @@ describe('security.txt route', () => {
   })
 
   it('contains Canonical field pointing to site URL', async () => {
-    const { default: handler } = await import('~/server/routes/.well-known/security.txt')
+    const { default: handler } = await import('~~/server/routes/.well-known/security.txt')
     const event = makeEvent()
     const result = (await handler(event)) as string
 
@@ -70,7 +69,7 @@ describe('security.txt route', () => {
   })
 
   it('contains Policy field', async () => {
-    const { default: handler } = await import('~/server/routes/.well-known/security.txt')
+    const { default: handler } = await import('~~/server/routes/.well-known/security.txt')
     const event = makeEvent()
     const result = (await handler(event)) as string
 
@@ -78,7 +77,7 @@ describe('security.txt route', () => {
   })
 
   it('contains Preferred-Languages field', async () => {
-    const { default: handler } = await import('~/server/routes/.well-known/security.txt')
+    const { default: handler } = await import('~~/server/routes/.well-known/security.txt')
     const event = makeEvent()
     const result = (await handler(event)) as string
 
@@ -88,11 +87,11 @@ describe('security.txt route', () => {
   })
 
   it('sets cache-control header', async () => {
-    const { default: handler } = await import('~/server/routes/.well-known/security.txt')
+    const { default: handler } = await import('~~/server/routes/.well-known/security.txt')
     const event = makeEvent()
     await handler(event)
-    expect(
-      (event as { _headers: Record<string, string> })._headers['cache-control'],
-    ).toContain('max-age=')
+    expect((event as { _headers: Record<string, string> })._headers['cache-control']).toContain(
+      'max-age=',
+    )
   })
 })

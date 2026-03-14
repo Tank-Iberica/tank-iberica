@@ -26,7 +26,7 @@ export interface PeriodComparison {
   trend: 'up' | 'down' | 'stable'
 }
 
-export interface KpiSummary {
+export interface ReportKpiSummary {
   label: string
   value: number
   formatted: string
@@ -51,9 +51,8 @@ export function comparePeriods(
 ): PeriodComparison[] {
   return metrics.map(({ metric, current, previous }) => {
     const change = current - previous
-    const changePercent = previous !== 0
-      ? Math.round((change / previous) * 1000) / 10
-      : current > 0 ? 100 : 0
+    const changePercent =
+      previous !== 0 ? Math.round((change / previous) * 1000) / 10 : current > 0 ? 100 : 0
 
     let trend: 'up' | 'down' | 'stable'
     if (Math.abs(changePercent) <= stabilityThreshold) {
@@ -77,7 +76,10 @@ export function detectTrend(
   if (values.length < 2) return 'stable'
 
   const n = values.length
-  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0
+  let sumX = 0,
+    sumY = 0,
+    sumXY = 0,
+    sumX2 = 0
 
   for (let i = 0; i < n; i++) {
     sumX += i
@@ -105,7 +107,8 @@ export function detectTrend(
  */
 export function movingAverage(values: number[], windowSize: number = 3): number[] {
   if (values.length === 0 || windowSize < 1) return []
-  if (windowSize > values.length) return [Math.round(values.reduce((s, v) => s + v, 0) / values.length)]
+  if (windowSize > values.length)
+    return [Math.round(values.reduce((s, v) => s + v, 0) / values.length)]
 
   const result: number[] = []
   for (let i = 0; i <= values.length - windowSize; i++) {
@@ -140,10 +143,15 @@ export function formatMetricValue(
 /**
  * Generate KPI summary cards from raw metrics.
  */
-export function generateKpiSummary(
-  metrics: Array<{ label: string; value: number; previousValue?: number; type: 'number' | 'currency' | 'percent' | 'days' }>,
+export function generateReportKpiSummary(
+  metrics: Array<{
+    label: string
+    value: number
+    previousValue?: number
+    type: 'number' | 'currency' | 'percent' | 'days'
+  }>,
   locale: string = 'es-ES',
-): KpiSummary[] {
+): ReportKpiSummary[] {
   return metrics.map(({ label, value, previousValue, type }) => {
     const formatted = formatMetricValue(value, type, locale)
     let trend: 'up' | 'down' | 'stable' | undefined
@@ -151,9 +159,8 @@ export function generateKpiSummary(
 
     if (previousValue !== undefined) {
       const change = value - previousValue
-      changePercent = previousValue !== 0
-        ? Math.round((change / previousValue) * 1000) / 10
-        : value > 0 ? 100 : 0
+      changePercent =
+        previousValue !== 0 ? Math.round((change / previousValue) * 1000) / 10 : value > 0 ? 100 : 0
 
       trend = Math.abs(changePercent) <= 2 ? 'stable' : changePercent > 0 ? 'up' : 'down'
     }
@@ -165,10 +172,7 @@ export function generateKpiSummary(
 /**
  * Generate CSV from tabular data with headers.
  */
-export function generateCsv(
-  headers: string[],
-  rows: Array<Array<string | number>>,
-): string {
+export function generateCsv(headers: string[], rows: Array<Array<string | number>>): string {
   const escape = (val: string | number): string => {
     const str = String(val)
     if (str.includes(',') || str.includes('"') || str.includes('\n')) {
@@ -186,10 +190,7 @@ export function generateCsv(
 /**
  * Generate report metadata.
  */
-export function generateReportMeta(
-  periodDays: number,
-  recordCount: number,
-): ReportMeta {
+export function generateReportMeta(periodDays: number, recordCount: number): ReportMeta {
   const now = new Date()
   const periodEnd = now.toISOString().slice(0, 10)
   const periodStart = new Date(now.getTime() - periodDays * 24 * 60 * 60 * 1000)

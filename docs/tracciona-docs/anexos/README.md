@@ -5,14 +5,15 @@ Indice de compatibilidad para referencias historicas que siguen apareciendo en `
 Estos anexos ya no son la documentacion activa del proyecto. Se mantienen para que las rutas historicas sigan resolviendo.
 
 Documentacion canonica actual:
+
 - [../../README.md](../../README.md)
 - [../../PROYECTO-CONTEXTO.md](../../PROYECTO-CONTEXTO.md)
-- [../BACKLOG-EJECUTABLE.md](../BACKLOG-EJECUTABLE.md)
-- [../PLAN-MAESTRO-10-DE-10.md](../PLAN-MAESTRO-10-DE-10.md)
+- [../BACKLOG-EJECUTABLE.md](../BACKLOG-EJECUTABLE.md) — única fuente de verdad (Plan Maestro fusionado aquí)
 - [../referencia/ARQUITECTURA-ESCALABILIDAD.md](../referencia/ARQUITECTURA-ESCALABILIDAD.md)
 - [../referencia/FLUJOS-OPERATIVOS.md](../referencia/FLUJOS-OPERATIVOS.md)
 
 ## Anexos disponibles
+
 - [A-verticales-confirmados.md](A-verticales-confirmados.md)
 - [B-verticales-futuros.md](B-verticales-futuros.md)
 - [D-monetizacion.md](D-monetizacion.md)
@@ -35,4 +36,3 @@ Documentacion canonica actual:
 - [V-tablas-placeholder-capa2.md](V-tablas-placeholder-capa2.md)
 - [W-panel-configuracion.md](W-panel-configuracion.md)
 - [X-integraciones-externas.md](X-integraciones-externas.md)
-

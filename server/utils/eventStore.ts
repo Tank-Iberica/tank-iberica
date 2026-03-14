@@ -17,10 +17,14 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { logger } from './logger'
-import type { DomainEvent, StoredEvent, ReplayHandler, ReplayOptions } from '../../shared/types/event'
+import type {
+  DomainEvent,
+  StoredEvent,
+  ReplayHandler,
+  ReplayOptions,
+} from '../../shared/types/event'
 
-// Re-export domain types from shared package
-export type { DomainEvent, StoredEvent, ReplayHandler, ReplayOptions } from '../../shared/types/event'
+// Types imported from shared/types/event.ts (single source for Nuxt auto-import)
 
 /**
  * Append a new event to the event store.
@@ -32,6 +36,7 @@ export async function appendEvent(
   client: SupabaseClient,
   event: DomainEvent,
 ): Promise<StoredEvent> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = client as any
   // Get the current max version for this aggregate
   const { data: maxVersionData } = await db
@@ -86,6 +91,7 @@ export async function getEvents(
   aggregateType: string,
   aggregateId: string,
 ): Promise<StoredEvent[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = client as any
   const { data, error } = await db
     .from('event_store')
@@ -174,6 +180,7 @@ export async function getEventsByType(
   limit = 100,
   offset = 0,
 ): Promise<StoredEvent[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = client as any
   const { data, error } = await db
     .from('event_store')
@@ -201,6 +208,7 @@ export async function addToDeadLetter(
   eventData: Record<string, unknown>,
   errorMessage: string,
 ): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = client as any
   const retryDelayMinutes = 5
   const nextRetry = new Date(Date.now() + retryDelayMinutes * 60 * 1000).toISOString()
@@ -234,6 +242,7 @@ export async function getPendingRetries(
     maxRetries: number
   }>
 > {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = client as any
   const { data, error } = await db
     .from('event_dead_letter')
@@ -247,6 +256,7 @@ export async function getPendingRetries(
     throw new Error(`Failed to get pending retries: ${error.message}`)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (data ?? []).map((d: any) => ({
     id: d.id,
     eventType: d.event_type,
@@ -260,6 +270,7 @@ export async function getPendingRetries(
  * Mark a dead letter entry as resolved.
  */
 export async function resolveDeadLetter(client: SupabaseClient, id: number): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (client as any)
     .from('event_dead_letter')
     .update({ status: 'resolved', resolved_at: new Date().toISOString() })
@@ -284,6 +295,7 @@ export async function retryDeadLetter(
   const delayMinutes = 5 ** newCount
   const nextRetry = new Date(Date.now() + delayMinutes * 60 * 1000).toISOString()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (client as any)
     .from('event_dead_letter')
     .update({

@@ -33,7 +33,9 @@ vi.mock('#supabase/server', () => ({
 
 vi.mock('../../../server/utils/safeError', () => ({ safeError: mockSafeError }))
 vi.mock('../../utils/safeError', () => ({ safeError: mockSafeError }))
-vi.mock('../../../server/utils/verifyCronSecret', () => ({ verifyCronSecret: mockVerifyCronSecret }))
+vi.mock('../../../server/utils/verifyCronSecret', () => ({
+  verifyCronSecret: mockVerifyCronSecret,
+}))
 vi.mock('../../utils/verifyCronSecret', () => ({ verifyCronSecret: mockVerifyCronSecret }))
 vi.mock('../../../server/utils/batchProcessor', () => ({ processBatch: mockProcessBatch }))
 vi.mock('../../utils/batchProcessor', () => ({ processBatch: mockProcessBatch }))
@@ -58,6 +60,7 @@ describe('POST /api/cron/dealer-weekly-stats', () => {
       gte: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: null, error: null }),
       limit: vi.fn().mockResolvedValue({ data: dealers, error: dealersError }),
+      insert: vi.fn().mockResolvedValue({ data: null, error: null }),
     }
     return { from: vi.fn().mockReturnValue(chain) }
   }
@@ -87,7 +90,14 @@ describe('POST /api/cron/dealer-weekly-stats', () => {
 
   it('calls processBatch with active dealers', async () => {
     const dealers = [
-      { id: 'dealer-1', user_id: 'user-1', company_name: { es: 'Test' }, email: 'dealer@test.com', locale: 'es', status: 'active' },
+      {
+        id: 'dealer-1',
+        user_id: 'user-1',
+        company_name: { es: 'Test' },
+        email: 'dealer@test.com',
+        locale: 'es',
+        status: 'active',
+      },
     ]
     mockServiceRole.mockReturnValue(makeSupabase(dealers))
     mockProcessBatch.mockResolvedValue({ processed: 1, errors: 0 })
@@ -110,6 +120,7 @@ describe('POST /api/cron/price-drop-alert', () => {
       in: vi.fn().mockReturnThis(),
       gte: vi.fn().mockReturnThis(),
       limit: vi.fn().mockResolvedValue({ data: priceChanges, error: priceError }),
+      insert: vi.fn().mockResolvedValue({ data: null, error: null }),
     }
     return { from: vi.fn().mockReturnValue(chain) }
   }
@@ -134,7 +145,13 @@ describe('POST /api/cron/price-drop-alert', () => {
   it('returns 0 sent when all changes are price increases', async () => {
     mockServiceRole.mockReturnValue(
       makePriceDropSupabase([
-        { id: 'h1', vehicle_id: 'v1', previous_price_cents: 50000, price_cents: 70000, changed_at: new Date().toISOString() },
+        {
+          id: 'h1',
+          vehicle_id: 'v1',
+          previous_price_cents: 50000,
+          price_cents: 70000,
+          changed_at: new Date().toISOString(),
+        },
       ]),
     )
     const result = await priceDropAlertHandler({} as any)
@@ -155,12 +172,14 @@ describe('POST /api/cron/reservation-expiry', () => {
   function makeReservationSupabase(reservations: unknown[], error: unknown = null) {
     const chain: any = {
       select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
       in: vi.fn().mockReturnThis(),
       lt: vi.fn().mockReturnThis(),
       limit: vi.fn().mockResolvedValue({ data: reservations, error }),
       update: vi.fn().mockReturnValue({
         eq: vi.fn().mockResolvedValue({ data: null, error: null }),
       }),
+      insert: vi.fn().mockResolvedValue({ data: null, error: null }),
     }
     return { from: vi.fn().mockReturnValue(chain) }
   }
@@ -189,12 +208,20 @@ describe('POST /api/cron/reservation-expiry', () => {
 
   it('processes reservations without stripe payment', async () => {
     const reservations = [
-      { id: 'res-1', stripe_payment_intent_id: null, status: 'pending', deposit_cents: 10000, buyer_id: 'buyer-1', vehicle_id: 'v-1' },
+      {
+        id: 'res-1',
+        stripe_payment_intent_id: null,
+        status: 'pending',
+        deposit_cents: 10000,
+        buyer_id: 'buyer-1',
+        vehicle_id: 'v-1',
+      },
     ]
     let updatedData: any
     const supabase = {
       from: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
         in: vi.fn().mockReturnThis(),
         lt: vi.fn().mockReturnThis(),
         limit: vi.fn().mockResolvedValue({ data: reservations, error: null }),
@@ -202,6 +229,7 @@ describe('POST /api/cron/reservation-expiry', () => {
           updatedData = data
           return { eq: vi.fn().mockResolvedValue({ data: null, error: null }) }
         }),
+        insert: vi.fn().mockResolvedValue({ data: null, error: null }),
       }),
     }
     mockServiceRole.mockReturnValue(supabase)

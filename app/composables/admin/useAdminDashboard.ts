@@ -261,7 +261,7 @@ export function useAdminDashboard() {
     try {
       const { count } = await supabase
         .from('subscriptions')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
 
       stats.value.suscripciones = count || 0
       stats.value.suscripcionesPending = 0
@@ -303,7 +303,7 @@ export function useAdminDashboard() {
     try {
       const { count: usersCount } = await supabase
         .from('users')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
 
       userStats.value.registered = usersCount || 0
 
@@ -322,7 +322,7 @@ export function useAdminDashboard() {
       try {
         const { count: demandsCount } = await supabase
           .from('demands')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact', head: true })
         userStats.value.requests = demandsCount || 0
       } catch {
         // Table doesn't exist
@@ -332,7 +332,7 @@ export function useAdminDashboard() {
       try {
         const { count: commentsCount } = await supabase
           .from('comments')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact', head: true })
         userStats.value.newsComments = commentsCount || 0
       } catch {
         // Table doesn't exist

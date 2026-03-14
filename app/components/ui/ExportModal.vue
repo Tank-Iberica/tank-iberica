@@ -36,6 +36,9 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
+const dialogRef = ref<HTMLElement | null>(null)
+const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
+
 const localColumns = ref<ExportColumn[]>([])
 const selectedFormat = ref<ExportFormat>('excel')
 const isExporting = ref(false)
@@ -236,9 +239,11 @@ watch(
       selectedFormat.value = props.formats[0] ?? 'excel'
       document.body.style.overflow = 'hidden'
       document.addEventListener('keydown', handleKeyDown)
+      nextTick(() => activateTrap(dialogRef.value))
     } else {
       document.body.style.overflow = ''
       document.removeEventListener('keydown', handleKeyDown)
+      deactivateTrap()
     }
   },
 )
@@ -248,7 +253,7 @@ watch(
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="modelValue" class="export-backdrop" @click="handleBackdropClick">
-        <div class="export-modal" role="dialog" :aria-label="modalTitle">
+        <div ref="dialogRef" class="export-modal" role="dialog" :aria-label="modalTitle">
           <!-- Header -->
           <div class="export-header">
             <h2 class="export-title">{{ modalTitle }}</h2>
@@ -306,7 +311,7 @@ watch(
                     class="export-checkbox"
                     :checked="col.enabled"
                     @change="toggleColumn(i)"
-                  >
+                  />
                   <span class="export-column-label">{{ col.label }}</span>
                 </label>
               </div>
@@ -332,7 +337,7 @@ watch(
                     name="export-format"
                     :value="fmt"
                     class="export-radio"
-                  >
+                  />
                   <svg
                     v-if="fmt === 'excel'"
                     class="export-format-icon"

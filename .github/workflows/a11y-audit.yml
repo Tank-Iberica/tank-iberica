@@ -1,0 +1,67 @@
+name: Accessibility Audit (axe-core)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 5 * * 1' # Mondays 05:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  a11y:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NUXT_PUBLIC_SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Start server
+        run: |
+          node .output/server/index.mjs &
+          sleep 5
+        env:
+          PORT: 3000
+          NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NUXT_PUBLIC_SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Install axe-core CLI
+        run: npm install -g @axe-core/cli
+
+      - name: Run axe-core on key pages
+        run: |
+          FAILED=0
+          PAGES=(
+            "http://localhost:3000/"
+            "http://localhost:3000/catalogo"
+            "http://localhost:3000/subastas"
+            "http://localhost:3000/noticias"
+            "http://localhost:3000/auth/login"
+            "http://localhost:3000/auth/registro"
+            "http://localhost:3000/sobre-nosotros"
+            "http://localhost:3000/top-dealers"
+            "http://localhost:3000/transparencia"
+            "http://localhost:3000/preguntas-frecuentes"
+          )
+          for PAGE in "${PAGES[@]}"; do
+            echo "=== Auditing $PAGE ==="
+            axe "$PAGE" --exit --tags wcag2a,wcag2aa --timeout 30000 || FAILED=1
+          done
+          if [ "$FAILED" -eq 1 ]; then
+            echo "::error::Accessibility violations found on one or more pages"
+            exit 1
+          fi
+
+      - name: Stop server
+        if: always()
+        run: kill %1 2>/dev/null || true

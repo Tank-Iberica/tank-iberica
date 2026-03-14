@@ -47,14 +47,13 @@ const { t } = useI18n()
 
 useScrollLock(toRef(props, 'show'))
 
+const dialogRef = ref<HTMLElement | null>(null)
+const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
+
 const typedText = ref('')
 
-const resolvedConfirmLabel = computed(
-  () => props.confirmLabel || t('common.confirm'),
-)
-const resolvedCancelLabel = computed(
-  () => props.cancelLabel || t('common.cancel'),
-)
+const resolvedConfirmLabel = computed(() => props.confirmLabel || t('common.confirm'))
+const resolvedCancelLabel = computed(() => props.cancelLabel || t('common.cancel'))
 
 const isConfirmEnabled = computed(() => {
   if (props.saving) return false
@@ -64,11 +63,16 @@ const isConfirmEnabled = computed(() => {
   return true
 })
 
-// Reset typed text when modal opens
+// Reset typed text and manage focus trap when modal opens/closes
 watch(
   () => props.show,
   (val) => {
-    if (val) typedText.value = ''
+    if (val) {
+      typedText.value = ''
+      nextTick(() => activateTrap(dialogRef.value))
+    } else {
+      deactivateTrap()
+    }
   },
 )
 
@@ -92,14 +96,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
         :aria-label="title"
         @click.self="emit('close')"
       >
-        <div class="confirm-dialog" :class="`confirm-dialog--${variant}`">
+        <div ref="dialogRef" class="confirm-dialog" :class="`confirm-dialog--${variant}`">
           <div class="confirm-header">
             <h3 class="confirm-title">{{ title }}</h3>
-            <button
-              class="confirm-close"
-              :aria-label="$t('common.close')"
-              @click="emit('close')"
-            >
+            <button class="confirm-close" :aria-label="$t('common.close')" @click="emit('close')">
               &#215;
             </button>
           </div>
@@ -118,7 +118,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                 type="text"
                 :placeholder="requireType"
                 autocomplete="off"
-              >
+              />
             </div>
           </div>
 

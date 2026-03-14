@@ -36,6 +36,9 @@ const {
   reset: resetSelector,
 } = useVehicleTypeSelector()
 
+const dialogRef = ref<HTMLElement | null>(null)
+const { activate: activateTrap, deactivate: deactivateTrap } = useFocusTrap()
+
 const isSubmitting = ref(false)
 const isSuccess = ref(false)
 const validationErrors = ref<Record<string, string>>({})
@@ -205,9 +208,11 @@ watch(
       document.body.style.overflow = 'hidden'
       document.addEventListener('keydown', handleKeyDown)
       fetchInitialData()
+      nextTick(() => activateTrap(dialogRef.value))
     } else {
       document.body.style.overflow = ''
       document.removeEventListener('keydown', handleKeyDown)
+      deactivateTrap()
       if (!isSuccess.value) {
         resetForm()
       }
@@ -220,7 +225,7 @@ watch(
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="modelValue" class="modal-backdrop" @click="handleBackdropClick">
-        <div class="modal-container">
+        <div ref="dialogRef" class="modal-container">
           <div class="modal-header">
             <h2 class="modal-title">{{ $t('demand.title') }}</h2>
             <button
@@ -328,7 +333,7 @@ watch(
                       @input="
                         setFilterValue(filter.name, ($event.target as HTMLInputElement).value)
                       "
-                    >
+                    />
                   </div>
 
                   <!-- Slider / Calc → text input (demand: single value preference) -->
@@ -349,7 +354,7 @@ watch(
                       @input="
                         setFilterValue(filter.name, ($event.target as HTMLInputElement).value)
                       "
-                    >
+                    />
                   </div>
 
                   <!-- Tick → checkbox -->
@@ -362,7 +367,7 @@ watch(
                         @change="
                           setFilterValue(filter.name, ($event.target as HTMLInputElement).checked)
                         "
-                      >
+                      />
                       <span>{{ getFilterLabel(filter, locale) }}</span>
                     </label>
                   </div>
@@ -382,7 +387,7 @@ watch(
                   type="text"
                   class="form-input"
                   :placeholder="$t('demand.brandPlaceholder')"
-                >
+                />
               </div>
 
               <!-- Year range -->
@@ -439,7 +444,7 @@ watch(
                   :aria-describedby="validationErrors.contactName ? 'err-demand-name' : undefined"
                   autocomplete="name"
                   required
-                >
+                />
                 <p
                   v-if="validationErrors.contactName"
                   id="err-demand-name"
@@ -462,7 +467,7 @@ watch(
                   :aria-describedby="validationErrors.contactEmail ? 'err-demand-email' : undefined"
                   autocomplete="email"
                   required
-                >
+                />
                 <p
                   v-if="validationErrors.contactEmail"
                   id="err-demand-email"
@@ -481,7 +486,7 @@ watch(
                   type="tel"
                   class="form-input"
                   autocomplete="tel"
-                >
+                />
               </div>
 
               <div class="form-group">
@@ -508,7 +513,7 @@ watch(
                     :aria-describedby="
                       validationErrors.termsAccepted ? 'err-demand-terms' : undefined
                     "
-                  >
+                  />
                   <span>{{ $t('demand.acceptTerms') }}</span>
                 </label>
                 <p

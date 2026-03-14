@@ -13,6 +13,10 @@ vi.mock('../../../server/utils/verifyCronSecret', () => ({
   verifyCronSecret: vi.fn(),
 }))
 
+vi.mock('../../../server/utils/cronLock', () => ({
+  acquireDbCronLock: vi.fn().mockResolvedValue(true),
+}))
+
 vi.mock('../../../server/utils/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }))
@@ -34,6 +38,7 @@ function makeChain(data: unknown = [], extra: Record<string, unknown> = {}) {
   const chain: Record<string, unknown> = {}
   const ms = ['select', 'eq', 'gte', 'lte', 'in', 'order', 'limit', 'single', 'maybeSingle']
   for (const m of ms) chain[m] = () => chain
+  chain.insert = () => Promise.resolve({ data: null, error: null })
   chain.then = (r: (v: unknown) => void) => Promise.resolve({ data, error: null, ...extra }).then(r)
   chain.catch = (r: (v: unknown) => void) => Promise.resolve({ data, error: null }).catch(r)
   return chain
@@ -91,6 +96,7 @@ describe('price-drop-alert cron', () => {
         if (table === 'price_history') return makeChain(priceChanges)
         if (table === 'vehicles') return makeChain(vehicles)
         if (table === 'favorites') return makeChain(favorites)
+        if (table === 'subscriptions') return makeChain([{ user_id: 'u1', plan: 'premium' }])
         return makeChain([])
       },
     }
@@ -134,6 +140,7 @@ describe('price-drop-alert cron', () => {
         if (table === 'price_history') return makeChain(priceChanges)
         if (table === 'vehicles') return makeChain(vehicles)
         if (table === 'favorites') return makeChain(favorites)
+        if (table === 'subscriptions') return makeChain([{ user_id: 'u1', plan: 'premium' }])
         return makeChain([])
       },
     }
@@ -204,6 +211,7 @@ describe('price-drop-alert cron', () => {
         if (table === 'price_history') return makeChain(priceChanges)
         if (table === 'vehicles') return makeChain(vehicles)
         if (table === 'favorites') return makeChain(favorites)
+        if (table === 'subscriptions') return makeChain([{ user_id: 'u1', plan: 'premium' }])
         return makeChain([])
       },
     }
@@ -233,6 +241,7 @@ describe('price-drop-alert cron', () => {
         if (table === 'price_history') return makeChain(priceChanges)
         if (table === 'vehicles') return makeChain(vehicles)
         if (table === 'favorites') return makeChain(favorites)
+        if (table === 'subscriptions') return makeChain([{ user_id: 'u1', plan: 'premium' }])
         return makeChain([])
       },
     }
@@ -378,6 +387,7 @@ describe('price-drop-alert cron', () => {
         if (table === 'price_history') return makeChain(priceChanges)
         if (table === 'vehicles') return makeChain(vehicles)
         if (table === 'favorites') return makeChain(favorites)
+        if (table === 'subscriptions') return makeChain([{ user_id: 'u1', plan: 'premium' }])
         return makeChain([])
       },
     }
@@ -438,6 +448,7 @@ describe('price-drop-alert cron', () => {
             },
           ])
         }
+        if (table === 'subscriptions') return makeChain([{ user_id: 'u1', plan: 'premium' }])
         return makeChain([])
       },
     }
@@ -471,6 +482,7 @@ describe('price-drop-alert cron', () => {
         if (table === 'price_history') return makeChain(priceChanges)
         if (table === 'vehicles') return makeChain(vehicles)
         if (table === 'favorites') return makeChain(favorites)
+        if (table === 'subscriptions') return makeChain([{ user_id: 'u1', plan: 'premium' }])
         return makeChain([])
       },
     }

@@ -14,7 +14,7 @@
  *   3. Deploy checklist: docs/deploy-checklist-<name>.md
  */
 
-import { writeFileSync, readFileSync, existsSync, readdirSync } from 'node:fs'
+import { writeFileSync, readFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
@@ -336,6 +336,16 @@ END $$;`)
   }
 
   parts.push(`
+-- 6. Seed email templates for the new vertical
+INSERT INTO email_templates (vertical, template_key, subject, body_html, is_active)
+VALUES
+  ('${targetSlug}', 'welcome',          '{"es": "Bienvenido a ${targetDisplayName}", "en": "Welcome to ${targetDisplayName}"}',                                           '{"es": "<h1>Bienvenido</h1><p>Gracias por unirte a ${targetDisplayName}.</p>", "en": "<h1>Welcome</h1><p>Thank you for joining ${targetDisplayName}.</p>"}',                 true),
+  ('${targetSlug}', 'lead_notification','{"es": "Nuevo contacto en ${targetDisplayName}", "en": "New lead on ${targetDisplayName}"}',                                      '{"es": "<p>Has recibido un nuevo contacto.</p>", "en": "<p>You have received a new lead.</p>"}',                                                                               true),
+  ('${targetSlug}', 'vehicle_approved', '{"es": "Tu anuncio ha sido aprobado", "en": "Your listing has been approved"}',                                                    '{"es": "<p>Tu anuncio en ${targetDisplayName} ya está visible.</p>", "en": "<p>Your listing on ${targetDisplayName} is now live.</p>"}',                                      true),
+  ('${targetSlug}', 'password_reset',   '{"es": "Restablecer contraseña", "en": "Reset your password"}',                                                                    '{"es": "<p>Haz clic en el enlace para restablecer tu contraseña.</p>", "en": "<p>Click the link to reset your password.</p>"}',                                              true),
+  ('${targetSlug}', 'weekly_report',    '{"es": "Tu resumen semanal en ${targetDisplayName}", "en": "Your weekly report on ${targetDisplayName}"}',                          '{"es": "<p>Aquí tienes tu resumen semanal.</p>", "en": "<p>Here is your weekly summary.</p>"}',                                                                              true)
+ON CONFLICT DO NOTHING;
+
 -- RLS policies — existing RLS uses .eq('vertical', getVerticalSlug()), no additional needed
 
 -- IMPORTANT: After running this migration:
@@ -475,7 +485,25 @@ function runSmokeTests() {
     )
   }
 
-  // 5. Slug validation
+  // 5. Logo placeholder files exist
+  check(
+    'Logo SVG exists',
+    existsSync(resolve(logoDir, 'logo.svg')),
+    `Expected: public/verticals/${slug}/logo.svg`,
+  )
+  check(
+    'Favicon SVG exists',
+    existsSync(resolve(logoDir, 'favicon.svg')),
+    `Expected: public/verticals/${slug}/favicon.svg`,
+  )
+
+  // 6. Email templates in migration
+  if (existsSync(migrationPath)) {
+    const sql = readFileSync(migrationPath, 'utf-8')
+    check('Migration has email_templates INSERT', sql.includes("INSERT INTO email_templates"))
+  }
+
+  // 7. Slug validation
   check('Slug passes validation', validateSlug(slug).length === 0)
   check('Slug is lowercase', slug === slug.toLowerCase())
   check('Slug has no spaces', !slug.includes(' '))
@@ -503,6 +531,18 @@ function runSmokeTests() {
     console.log('\nAll smoke tests passed.')
   }
 }
+
+// --- 4. Logo placeholder SVG ---
+const logoDir = resolve(ROOT, 'public', 'verticals', slug)
+const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <rect width="200" height="60" rx="8" fill="#23424A"/>
+  <text x="100" y="38" text-anchor="middle" fill="white" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700">${displayName}</text>
+</svg>`
+
+const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="6" fill="#23424A"/>
+  <text x="16" y="23" text-anchor="middle" fill="white" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700">${displayName.charAt(0)}</text>
+</svg>`
 
 // --- Output ---
 console.log(`\nScaffolding vertical: ${slug} (${domain})${cloneFrom ? ` [cloned from ${cloneFrom}]` : ''}\n`)
@@ -553,13 +593,27 @@ if (dryRun) {
   console.log(`  Written to: docs/deploy-checklist-${slug}.md`)
 }
 
+// Logo & favicon placeholders
+console.log(`\nLogo placeholders: public/verticals/${slug}/`)
+if (dryRun) {
+  console.log(`  logo.svg (${logoSvg.length} bytes)`)
+  console.log(`  favicon.svg (${faviconSvg.length} bytes)`)
+} else {
+  mkdirSync(logoDir, { recursive: true })
+  writeFileSync(resolve(logoDir, 'logo.svg'), logoSvg, 'utf-8')
+  writeFileSync(resolve(logoDir, 'favicon.svg'), faviconSvg, 'utf-8')
+  console.log(`  Written: public/verticals/${slug}/logo.svg`)
+  console.log(`  Written: public/verticals/${slug}/favicon.svg`)
+}
+
 console.log(`\nScaffold complete for "${slug}".`)
 if (!dryRun) {
   console.log(`\nNext steps:`)
   console.log(`  1. Review and customize the migration SQL`)
   console.log(`  2. Apply migration: supabase migration up (or via MCP)`)
   console.log(`  3. Configure branding in admin panel`)
-  console.log(`  4. Follow the deploy checklist`)
+  console.log(`  4. Replace placeholder logos with real branding assets`)
+  console.log(`  5. Follow the deploy checklist`)
 }
 
 // Run smoke tests if requested

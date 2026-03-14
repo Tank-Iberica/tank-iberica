@@ -1,8 +1,15 @@
 /**
  * Tests for app/components/vehicle/DetailActions.vue
  */
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
+
+vi.stubGlobal('getContact', () => ({
+  email: 'info@tracciona.com',
+  phone: '+34600000000',
+  whatsapp: '34600000000',
+}))
+
 import DetailActions from '../../../app/components/vehicle/DetailActions.vue'
 
 describe('DetailActions', () => {
@@ -21,7 +28,14 @@ describe('DetailActions', () => {
     shallowMount(DetailActions, {
       props: { ...defaultProps, ...props },
       global: {
-        mocks: { $t: (key: string) => key },
+        mocks: {
+          $t: (key: string) => key,
+          getContact: () => ({
+            email: 'info@tracciona.com',
+            phone: '+34600000000',
+            whatsapp: '34600000000',
+          }),
+        },
       },
     })
 

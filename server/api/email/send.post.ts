@@ -413,7 +413,7 @@ export default defineEventHandler(async (event) => {
   const unsubscribeUrl = unsubscribeToken
     ? `${siteUrl}/api/email/unsubscribe?token=${unsubscribeToken}&type=${body.templateKey}`
     : siteUrl
-  const siteName = resolveLocalized(typedConfig.name, locale) || 'Tracciona'
+  const siteName = resolveLocalized(typedConfig.name, locale) || getSiteName()
   const footerTextMap: Record<string, string> = {
     es: `Este correo fue enviado por ${siteName}. Si no deseas recibir estos correos, puedes cancelar tu suscripcion.`,
     en: `This email was sent by ${siteName}. If you no longer wish to receive these emails, you can unsubscribe.`,

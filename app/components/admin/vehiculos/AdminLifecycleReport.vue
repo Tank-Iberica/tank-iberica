@@ -8,7 +8,7 @@
  * - Dealers with most expired listings (action needed)
  */
 import { STATUS_META } from '~/composables/useListingLifecycle'
-import type { VehicleStatus } from '~/composables/useListingLifecycle'
+import type { ListingStatus as VehicleStatus } from '~/composables/useListingLifecycle'
 
 const { t } = useI18n()
 const supabase = useSupabaseClient()

@@ -65,6 +65,10 @@ beforeAll(() => {
   vi.stubGlobal('ref', ref)
   vi.stubGlobal('computed', computed)
   vi.stubGlobal('watch', watch)
+  vi.stubGlobal('useFocusTrap', () => ({
+    activate: vi.fn(),
+    deactivate: vi.fn(),
+  }))
 })
 
 // ---------- component import (after mocks) ----------
@@ -124,10 +128,13 @@ describe('ExportModal', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     // Stub URL.createObjectURL / revokeObjectURL while keeping constructor intact
-    vi.stubGlobal('URL', class extends URL {
-      static override createObjectURL = vi.fn().mockReturnValue('blob:http://localhost/mock')
-      static override revokeObjectURL = vi.fn()
-    })
+    vi.stubGlobal(
+      'URL',
+      class extends URL {
+        static override createObjectURL = vi.fn().mockReturnValue('blob:http://localhost/mock')
+        static override revokeObjectURL = vi.fn()
+      },
+    )
   })
 
   // ====== Rendering ======

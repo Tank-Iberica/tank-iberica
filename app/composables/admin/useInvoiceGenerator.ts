@@ -1,4 +1,4 @@
-import { CONTACT } from '~/utils/contact'
+import { getContact } from '~/utils/contact'
 
 export interface InvoiceLine {
   id: number
@@ -74,9 +74,9 @@ export function useInvoiceGenerator(getVehicleOptions: () => VehicleOption[]) {
   const companyAddress1 = ref('Calle Principal 123')
   const companyAddress2 = ref('28001 Madrid')
   const companyAddress3 = ref('España')
-  const companyPhone = ref(CONTACT.phone)
+  const companyPhone = ref(getContact().phone)
   const companyEmail = ref('info@' + useSiteUrl().replace('https://', '').replace('http://', ''))
-  const companyWeb = ref('TRACCIONA.COM')
+  const companyWeb = ref(useSiteUrl().replace('https://', '').replace('http://', '').toUpperCase())
   const companyLogoUrl = ref('')
 
   function updateInvoiceNumber() {

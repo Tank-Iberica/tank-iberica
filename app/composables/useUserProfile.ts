@@ -38,7 +38,9 @@ export function useUserProfile() {
     try {
       const { data, error: err } = await supabase
         .from('users')
-        .select('*')
+        .select(
+          'id, email, name, phone, avatar_url, role, dealer_id, locale, created_at, subscription_tier, trust_score, company_name',
+        )
         .eq('id', user.value.id)
         .single()
 
@@ -115,11 +117,41 @@ export function useUserProfile() {
     try {
       const userId = user.value.id
 
-      const [profileRes, favoritesRes, leadsRes, viewsRes] = await Promise.all([
+      const [
+        profileRes,
+        favoritesRes,
+        leadsRes,
+        viewsRes,
+        messagesRes,
+        alertsRes,
+        reservationsRes,
+        transactionsRes,
+        emailPrefsRes,
+      ] = await Promise.all([
         supabase.from('users').select('*').eq('id', userId).single(),
         supabase.from('favorites').select('*').eq('user_id', userId),
         supabase.from('leads').select('*').eq('buyer_user_id', userId),
         supabase.from('user_vehicle_views').select('*').eq('user_id', userId),
+        supabase
+          .from('messages' as never)
+          .select('*')
+          .eq('sender_id', userId),
+        supabase
+          .from('search_alerts' as never)
+          .select('*')
+          .eq('user_id', userId),
+        supabase
+          .from('reservations' as never)
+          .select('*')
+          .eq('buyer_id', userId),
+        supabase
+          .from('transactions' as never)
+          .select('*')
+          .eq('user_id', userId),
+        supabase
+          .from('email_preferences' as never)
+          .select('*')
+          .eq('user_id', userId),
       ])
 
       return {
@@ -127,6 +159,11 @@ export function useUserProfile() {
         favorites: (favoritesRes.data as Record<string, unknown>[]) ?? [],
         leads: (leadsRes.data as Record<string, unknown>[]) ?? [],
         views: (viewsRes.data as Record<string, unknown>[]) ?? [],
+        messages: (messagesRes.data as Record<string, unknown>[]) ?? [],
+        search_alerts: (alertsRes.data as Record<string, unknown>[]) ?? [],
+        reservations: (reservationsRes.data as Record<string, unknown>[]) ?? [],
+        transactions: (transactionsRes.data as Record<string, unknown>[]) ?? [],
+        email_preferences: (emailPrefsRes.data as Record<string, unknown>[]) ?? [],
       }
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error exporting data'

@@ -60,7 +60,11 @@ vi.mock('#supabase/server', () => ({
 vi.mock('../../../server/utils/safeError', () => ({ safeError: mockSafeError }))
 vi.mock('~~/server/utils/safeError', () => ({ safeError: mockSafeError }))
 vi.mock('~~/server/services/aiProvider', () => ({ callAI: mockCallAI }))
-vi.mock('~~/server/utils/siteConfig', () => ({ getSiteUrl: mockGetSiteUrl }))
+vi.mock('~~/server/utils/siteConfig', () => ({
+  getSiteUrl: mockGetSiteUrl,
+  getSiteName: () => 'Tracciona',
+  getSiteEmail: () => 'hola@tracciona.com',
+}))
 vi.mock('~~/server/utils/rateLimit', () => ({
   checkRateLimit: mockCheckRateLimit,
   getRateLimitKey: mockGetRateLimitKey,
@@ -70,11 +74,14 @@ vi.mock('~~/server/services/marketReport', () => ({
   generateDealerIntelligence: mockGenerateDealerIntelligence,
 }))
 
-vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-  ok: true,
-  json: vi.fn().mockResolvedValue([]),
-  text: vi.fn().mockResolvedValue('<html>page</html>'),
-}))
+vi.stubGlobal(
+  'fetch',
+  vi.fn().mockResolvedValue({
+    ok: true,
+    json: vi.fn().mockResolvedValue([]),
+    text: vi.fn().mockResolvedValue('<html>page</html>'),
+  }),
+)
 
 function makeChain(steps: any[]) {
   let callCount = 0
@@ -127,7 +134,11 @@ describe('POST /api/verify-document', () => {
   })
 
   it('throws 400 when documentId is missing', async () => {
-    mockReadBody.mockResolvedValue({ vehicleId: validVehicleUuid, imageUrl: 'https://example.com/doc.jpg', declaredData: validVerifyBody.declaredData })
+    mockReadBody.mockResolvedValue({
+      vehicleId: validVehicleUuid,
+      imageUrl: 'https://example.com/doc.jpg',
+      declaredData: validVerifyBody.declaredData,
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
@@ -142,7 +153,10 @@ describe('POST /api/verify-document', () => {
   })
 
   it('throws 400 when declaredData is invalid (bad year)', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH', year: 1800, km: 0 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH', year: 1800, km: 0 },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
@@ -153,31 +167,72 @@ describe('POST /api/verify-document', () => {
 
   it('throws 403 when user has no access', async () => {
     // vehicle found, but dealer check returns different dealer_id
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'other-dealer' }, error: null }, // vehicle
-      { data: { id: 'user-dealer-id' }, error: null },  // user dealer (different)
-      { data: { role: 'user' }, error: null },          // user role (not admin)
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'other-dealer',
+          },
+          error: null,
+        }, // vehicle
+        { data: { id: 'user-dealer-id' }, error: null }, // user dealer (different)
+        { data: { role: 'user' }, error: null }, // user role (not admin)
+      ]),
+    )
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 403 })
   })
 
   it('throws 404 when document not found', async () => {
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null }, // vehicle
-      { data: { id: 'dealer-1' }, error: null },  // user dealer (matches)
-      { data: null, error: { message: 'not found' } }, // document not found
-      { data: null, error: null }, // update result
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        }, // vehicle
+        { data: { id: 'dealer-1' }, error: null }, // user dealer (matches)
+        { data: null, error: { message: 'not found' } }, // document not found
+        { data: null, error: null }, // update result
+      ]),
+    )
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 404 })
   })
 
   it('returns match:true and status:verified on match', async () => {
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null }, // vehicle
-      { data: { id: 'dealer-1' }, error: null }, // user dealer
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null }, // doc
-      { data: null, error: null }, // update
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        }, // vehicle
+        { data: { id: 'dealer-1' }, error: null }, // user dealer
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        }, // doc
+        { data: null, error: null }, // update
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
     expect(result.status).toBe('verified')
@@ -186,12 +241,31 @@ describe('POST /api/verify-document', () => {
 
   it('uses mock data when AI call fails', async () => {
     mockCallAI.mockRejectedValueOnce(new Error('AI down'))
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     // Mock data copies declared data → match
     expect(result.match).toBe(true)
@@ -200,7 +274,11 @@ describe('POST /api/verify-document', () => {
   // ── Extended validation tests ─────────────────────────────────────────
 
   it('throws 400 when vehicleId is missing', async () => {
-    mockReadBody.mockResolvedValue({ documentId: validDocUuid, imageUrl: 'https://example.com/doc.jpg', declaredData: validVerifyBody.declaredData })
+    mockReadBody.mockResolvedValue({
+      documentId: validDocUuid,
+      imageUrl: 'https://example.com/doc.jpg',
+      declaredData: validVerifyBody.declaredData,
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
@@ -210,95 +288,164 @@ describe('POST /api/verify-document', () => {
   })
 
   it('throws 400 when imageUrl is missing entirely', async () => {
-    mockReadBody.mockResolvedValue({ documentId: validDocUuid, vehicleId: validVehicleUuid, declaredData: validVerifyBody.declaredData })
+    mockReadBody.mockResolvedValue({
+      documentId: validDocUuid,
+      vehicleId: validVehicleUuid,
+      declaredData: validVerifyBody.declaredData,
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when declaredData is missing entirely', async () => {
-    mockReadBody.mockResolvedValue({ documentId: validDocUuid, vehicleId: validVehicleUuid, imageUrl: 'https://example.com/doc.jpg' })
+    mockReadBody.mockResolvedValue({
+      documentId: validDocUuid,
+      vehicleId: validVehicleUuid,
+      imageUrl: 'https://example.com/doc.jpg',
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when declaredData.brand is empty string', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: '  ', model: 'FH16', year: 2020, km: 100000 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: '  ', model: 'FH16', year: 2020, km: 100000 },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when declaredData.model is empty string', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: '', year: 2020, km: 100000 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: '', year: 2020, km: 100000 },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when declaredData.year is null', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', year: null, km: 100000 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', year: null, km: 100000 },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when declaredData.year is undefined', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', km: 100000 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', km: 100000 },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when declaredData.year is too far in the future', async () => {
     const futureYear = new Date().getFullYear() + 5
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', year: futureYear, km: 100000 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', year: futureYear, km: 100000 },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when declaredData.km is null', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', year: 2020, km: null } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', year: 2020, km: null },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when declaredData.km is negative', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', year: 2020, km: -1000 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', year: 2020, km: -1000 },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when declaredData.brand is not a string', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 123, model: 'FH16', year: 2020, km: 100000 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 123, model: 'FH16', year: 2020, km: 100000 },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when declaredData.km is not a number', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', year: 2020, km: 'many' } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', year: 2020, km: 'many' },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 with multiple validation errors combined', async () => {
-    mockReadBody.mockResolvedValue({ documentId: 'bad', vehicleId: 'bad', imageUrl: 'bad', declaredData: { brand: '', model: '', year: 1800, km: -1 } })
+    mockReadBody.mockResolvedValue({
+      documentId: 'bad',
+      vehicleId: 'bad',
+      imageUrl: 'bad',
+      declaredData: { brand: '', model: '', year: 1800, km: -1 },
+    })
     try {
       await verifyDocumentHandler({} as any)
       expect.fail('Should have thrown')
     } catch (e: any) {
       expect(e.statusCode).toBe(400)
-      expect(e.message).toContain('Validation Error:')
-      // Should contain multiple error messages joined by semicolons
-      expect(e.message).toContain(';')
+      // validateBody returns generic message (details only in logger)
+      expect(e.message).toContain('inválid')
     }
   })
 
   // ── Access control: admin can access any vehicle ──────────────────────
 
   it('grants access when user is admin (even if not vehicle owner)', async () => {
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'other-dealer' }, error: null }, // vehicle
-      { data: null, error: { message: 'no dealer' } },  // user is NOT a dealer
-      { data: { role: 'admin' }, error: null },          // but user IS admin
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null }, // doc
-      { data: null, error: null }, // update
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'other-dealer',
+          },
+          error: null,
+        }, // vehicle
+        { data: null, error: { message: 'no dealer' } }, // user is NOT a dealer
+        { data: { role: 'admin' }, error: null }, // but user IS admin
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        }, // doc
+        { data: null, error: null }, // update
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
     expect(result.status).toBe('verified')
   })
 
   it('denies access when dealer lookup errors and user is not admin', async () => {
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'other-dealer' }, error: null }, // vehicle
-      { data: null, error: { message: 'dealer error' } },  // dealer lookup error
-      { data: { role: 'dealer' }, error: null },            // not admin
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'other-dealer',
+          },
+          error: null,
+        }, // vehicle
+        { data: null, error: { message: 'dealer error' } }, // dealer lookup error
+        { data: { role: 'dealer' }, error: null }, // not admin
+      ]),
+    )
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 403 })
   })
 
@@ -309,12 +456,31 @@ describe('POST /api/verify-document', () => {
       text: '{"brand":"Scania","model":"FH16","year":2020,"km":100000,"matricula":null,"vin":null}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(false)
     expect(result.status).toBe('pending')
@@ -327,12 +493,31 @@ describe('POST /api/verify-document', () => {
       text: '{"brand":"Volvo","model":"FH12","year":2020,"km":100000,"matricula":null,"vin":null}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(false)
     expect(result.discrepancies).toContainEqual(expect.stringContaining('Model mismatch'))
@@ -343,12 +528,31 @@ describe('POST /api/verify-document', () => {
       text: '{"brand":"Volvo","model":"FH16","year":2019,"km":100000,"matricula":null,"vin":null}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(false)
     expect(result.discrepancies).toContainEqual(expect.stringContaining('Year mismatch'))
@@ -360,12 +564,31 @@ describe('POST /api/verify-document', () => {
       text: '{"brand":"Volvo","model":"FH16","year":2020,"km":120000,"matricula":null,"vin":null}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(false)
     expect(result.discrepancies).toContainEqual(expect.stringContaining('Km mismatch'))
@@ -378,12 +601,31 @@ describe('POST /api/verify-document', () => {
       text: '{"brand":"Volvo","model":"FH16","year":2020,"km":104000,"matricula":null,"vin":null}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
     expect(result.discrepancies).toHaveLength(0)
@@ -394,12 +636,31 @@ describe('POST /api/verify-document', () => {
       text: '{"brand":null,"model":null,"year":null,"km":null,"matricula":"1234ABC","vin":"VIN123"}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
     expect(result.discrepancies).toHaveLength(0)
@@ -412,12 +673,31 @@ describe('POST /api/verify-document', () => {
       text: '{"brand":"Scania","model":"R450","year":2018,"km":200000,"matricula":null,"vin":null}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(false)
     expect(result.discrepancies.length).toBeGreaterThanOrEqual(3)
@@ -430,12 +710,31 @@ describe('POST /api/verify-document', () => {
       text: '```json\n{"brand":"Volvo","model":"FH16","year":2020,"km":100000,"matricula":"1234ABC","vin":"VIN123"}\n```',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
     expect(result.extractedData.matricula).toBe('1234ABC')
@@ -446,12 +745,31 @@ describe('POST /api/verify-document', () => {
       text: '```\n{"brand":"Volvo","model":"FH16","year":2020,"km":100000,"matricula":null,"vin":null}\n```',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
   })
@@ -464,9 +782,26 @@ describe('POST /api/verify-document', () => {
     // resolve to { error }.
     let callCount = 0
     const steps = [
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
+      {
+        data: {
+          id: validVehicleUuid,
+          brand: 'Volvo',
+          model: 'FH16',
+          year: 2020,
+          dealer_id: 'dealer-1',
+        },
+        error: null,
+      },
       { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
+      {
+        data: {
+          id: validDocUuid,
+          vehicle_id: validVehicleUuid,
+          doc_type: 'itv',
+          status: 'pending',
+        },
+        error: null,
+      },
       { data: null, error: { message: 'update failed: constraint violation' } },
     ]
     const supabase = {
@@ -498,12 +833,31 @@ describe('POST /api/verify-document', () => {
       text: '{"brand":"VOLVO","model":"fh16","year":2020,"km":100000,"matricula":null,"vin":null}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
     expect(result.discrepancies).toHaveLength(0)
@@ -513,12 +867,31 @@ describe('POST /api/verify-document', () => {
 
   it('returns confidence 0.95 on match and 0.4 on mismatch', async () => {
     // Test match confidence
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const matchResult = await verifyDocumentHandler({} as any)
     expect(matchResult.confidence).toBe(0.95)
 
@@ -530,12 +903,31 @@ describe('POST /api/verify-document', () => {
       text: '{"brand":"Scania","model":"FH16","year":2020,"km":100000,"matricula":null,"vin":null}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const mismatchResult = await verifyDocumentHandler({} as any)
     expect(mismatchResult.confidence).toBe(0.4)
   })
@@ -543,17 +935,39 @@ describe('POST /api/verify-document', () => {
   // ── Zero km edge case ─────────────────────────────────────────────────
 
   it('accepts declaredData.km = 0 as valid (new vehicle)', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', year: 2024, km: 0 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', year: 2024, km: 0 },
+    })
     mockCallAI.mockResolvedValue({
       text: '{"brand":"Volvo","model":"FH16","year":2024,"km":0,"matricula":null,"vin":null}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2024, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2024,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
   })
@@ -561,59 +975,131 @@ describe('POST /api/verify-document', () => {
   // ── Year at boundary values ───────────────────────────────────────────
 
   it('accepts declaredData.year = 1950 (minimum boundary)', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', year: 1950, km: 500000 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', year: 1950, km: 500000 },
+    })
     mockCallAI.mockResolvedValue({
       text: '{"brand":"Volvo","model":"FH16","year":1950,"km":500000,"matricula":null,"vin":null}',
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 1950, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 1950,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
   })
 
   it('throws 400 when declaredData.year = 1949 (below minimum)', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', year: 1949, km: 100000 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', year: 1949, km: 100000 },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('accepts year = currentYear + 2 (max boundary)', async () => {
     const maxYear = new Date().getFullYear() + 2
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', year: maxYear, km: 0 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', year: maxYear, km: 0 },
+    })
     mockCallAI.mockResolvedValue({
       text: `{"brand":"Volvo","model":"FH16","year":${maxYear},"km":0,"matricula":null,"vin":null}`,
       provider: 'anthropic',
     })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: maxYear, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: maxYear,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
   })
 
   it('throws 400 when year = currentYear + 3 (above max boundary)', async () => {
     const overMax = new Date().getFullYear() + 3
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, declaredData: { brand: 'Volvo', model: 'FH16', year: overMax, km: 100000 } })
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      declaredData: { brand: 'Volvo', model: 'FH16', year: overMax, km: 100000 },
+    })
     await expect(verifyDocumentHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   // ── imageUrl with whitespace ──────────────────────────────────────────
 
   it('trims imageUrl whitespace before validation', async () => {
-    mockReadBody.mockResolvedValue({ ...validVerifyBody, imageUrl: '  https://example.com/doc.jpg  ' })
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { id: validVehicleUuid, brand: 'Volvo', model: 'FH16', year: 2020, dealer_id: 'dealer-1' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-      { data: { id: validDocUuid, vehicle_id: validVehicleUuid, doc_type: 'itv', status: 'pending' }, error: null },
-      { data: null, error: null },
-    ]))
+    mockReadBody.mockResolvedValue({
+      ...validVerifyBody,
+      imageUrl: '  https://example.com/doc.jpg  ',
+    })
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        {
+          data: {
+            id: validVehicleUuid,
+            brand: 'Volvo',
+            model: 'FH16',
+            year: 2020,
+            dealer_id: 'dealer-1',
+          },
+          error: null,
+        },
+        { data: { id: 'dealer-1' }, error: null },
+        {
+          data: {
+            id: validDocUuid,
+            vehicle_id: validVehicleUuid,
+            doc_type: 'itv',
+            status: 'pending',
+          },
+          error: null,
+        },
+        { data: null, error: null },
+      ]),
+    )
     const result = await verifyDocumentHandler({} as any)
     expect(result.match).toBe(true)
   })
@@ -668,11 +1154,13 @@ describe('POST /api/social/generate-posts', () => {
   })
 
   it('throws 403 when user is not owner and not admin', async () => {
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { ...validVehicle, dealer_id: 'other-dealer' }, error: null }, // vehicle
-      { data: { id: 'dealer-1' }, error: null },  // user dealer (different)
-      { data: { role: 'user' }, error: null },     // user role
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        { data: { ...validVehicle, dealer_id: 'other-dealer' }, error: null }, // vehicle
+        { data: { id: 'dealer-1' }, error: null }, // user dealer (different)
+        { data: { role: 'user' }, error: null }, // user role
+      ]),
+    )
     await expect(socialGenerateHandler({} as any)).rejects.toMatchObject({ statusCode: 403 })
   })
 
@@ -701,7 +1189,11 @@ describe('POST /api/social/generate-posts', () => {
             select: vi.fn().mockResolvedValue({ data: insertedPosts, error: null }),
           }
         }
-        return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: null, error: null }) }
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: null, error: null }),
+        }
       }),
     }
     mockServiceRole.mockReturnValue(supabase)
@@ -736,7 +1228,11 @@ describe('POST /api/social/generate-posts', () => {
             select: vi.fn().mockResolvedValue({ data: insertedPosts, error: null }),
           }
         }
-        return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: null, error: null }) }
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: null, error: null }),
+        }
       }),
     }
     mockServiceRole.mockReturnValue(supabase)
@@ -767,10 +1263,12 @@ describe('GET /api/dealer/market-intelligence', () => {
   })
 
   it('throws 403 when non-admin tries to access another dealer', async () => {
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { role: 'dealer' }, error: null },  // user profile
-      { data: null, error: null },                  // dealer not owned by user
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        { data: { role: 'dealer' }, error: null }, // user profile
+        { data: null, error: null }, // dealer not owned by user
+      ]),
+    )
     await expect(marketIntelligenceHandler({} as any)).rejects.toMatchObject({ statusCode: 403 })
   })
 
@@ -782,10 +1280,12 @@ describe('GET /api/dealer/market-intelligence', () => {
   })
 
   it('returns report when user owns the dealer', async () => {
-    mockServiceRole.mockReturnValue(makeChain([
-      { data: { role: 'dealer' }, error: null },
-      { data: { id: 'dealer-1' }, error: null },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeChain([
+        { data: { role: 'dealer' }, error: null },
+        { data: { id: 'dealer-1' }, error: null },
+      ]),
+    )
     const result = await marketIntelligenceHandler({} as any)
     expect(result).toEqual({ report: 'data' })
   })
@@ -801,10 +1301,13 @@ describe('POST /api/dealer/import-stock', () => {
     mockSupabaseUser.mockResolvedValue({ id: 'user-1' })
     mockReadBody.mockResolvedValue({ url: 'https://mascus.es/dealer/profile', consent: true })
     mockCheckRateLimit.mockReturnValue(true)
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      text: vi.fn().mockResolvedValue('<html><body>Vehicle listings</body></html>'),
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: vi.fn().mockResolvedValue('<html><body>Vehicle listings</body></html>'),
+      }),
+    )
     mockCallAI.mockResolvedValue({
       text: '[{"brand":"Volvo","model":"FH16","year":2020,"price":80000,"description":"Good truck","imageUrls":[]}]',
       provider: 'anthropic',
@@ -840,7 +1343,9 @@ describe('POST /api/dealer/import-stock', () => {
   })
 
   it('returns imported:0 when AI returns no vehicles', async () => {
-    mockServiceRole.mockReturnValue(makeChain([{ data: { id: 'dealer-1', company_name: 'Test' }, error: null }]))
+    mockServiceRole.mockReturnValue(
+      makeChain([{ data: { id: 'dealer-1', company_name: 'Test' }, error: null }]),
+    )
     mockCallAI.mockResolvedValue({ text: '[]', provider: 'anthropic' })
     const result = await importStockHandler({} as any)
     expect(result.imported).toBe(0)
@@ -852,8 +1357,18 @@ describe('POST /api/dealer/import-stock', () => {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         insert: vi.fn().mockResolvedValue({ data: null, error: null }),
-        maybeSingle: vi.fn().mockResolvedValue({ data: table === 'dealers' ? { id: 'dealer-1', company_name: 'Test' } : null, error: null }),
-        single: vi.fn().mockResolvedValue({ data: table === 'dealers' ? { id: 'dealer-1', company_name: 'Test' } : null, error: null }),
+        maybeSingle: vi
+          .fn()
+          .mockResolvedValue({
+            data: table === 'dealers' ? { id: 'dealer-1', company_name: 'Test' } : null,
+            error: null,
+          }),
+        single: vi
+          .fn()
+          .mockResolvedValue({
+            data: table === 'dealers' ? { id: 'dealer-1', company_name: 'Test' } : null,
+            error: null,
+          }),
       })),
     }
     mockServiceRole.mockReturnValue(supabase)

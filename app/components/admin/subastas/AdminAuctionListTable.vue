@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AuctionStatus } from '~/composables/useAuction'
+import type { AuctionDisplayStatus as AuctionStatus } from '~/composables/useAuction'
 import type { AuctionWithVehicle } from '~/composables/admin/useAdminAuctionList'
 
 defineProps<{

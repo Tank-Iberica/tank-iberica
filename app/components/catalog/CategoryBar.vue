@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import type { VehicleAction } from '~/composables/useCatalogState'
+import type { VehicleAction } from '~~/shared/types/vehicle'
 
 const emit = defineEmits<{
   change: [actions: VehicleAction[]]

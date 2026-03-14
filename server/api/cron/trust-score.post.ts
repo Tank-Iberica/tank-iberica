@@ -12,7 +12,7 @@ import { defineEventHandler, readBody } from 'h3'
 import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
-import { acquireCronLock } from '../../utils/cronLock'
+import { acquireDbCronLock } from '../../utils/cronLock'
 import { processBatch } from '../../utils/batchProcessor'
 import { logger } from '../../utils/logger'
 import { calculateTrustScore, type DealerForTrustScore } from '../../utils/trustScore'
@@ -35,10 +35,11 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
 
   // 2. Acquire cron lock (runs once per day)
-  if (!(await acquireCronLock(supabase, 'trust-score'))) {
+  if (!(await acquireDbCronLock(supabase, 'trust-score'))) {
     return { skipped: true, reason: 'already_ran_in_window', timestamp: new Date().toISOString() }
   }
 

@@ -111,7 +111,7 @@ export async function fetchTrendData(
   try {
     const { data } = await supabase
       .from('price_history' as never)
-      .select('*')
+      .select('month, avg_price, sample_count')
       .eq('brand', brand.toLowerCase())
       .order('month', { ascending: false })
       .limit(2)

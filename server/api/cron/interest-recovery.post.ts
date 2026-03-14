@@ -31,6 +31,7 @@ interface LeadWithVehicle {
 export default defineEventHandler(async (event) => {
   verifyCronSecret(event)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
   const now = new Date()
   const cutoff24h = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
@@ -72,7 +73,7 @@ export default defineEventHandler(async (event) => {
           <p>Hace unos días mostraste interés en <strong>${lead.vehicle_title}</strong>.</p>
           <p>El vehículo sigue disponible. ¿Te gustaría retomar el contacto?</p>
           <p><a href="${process.env.NUXT_PUBLIC_SITE_URL}/vehiculo/${lead.vehicle_slug}">Ver vehículo</a></p>
-          <p>El equipo de Tracciona</p>
+          <p>El equipo de ${getSiteName()}</p>
         `,
       )
 

@@ -225,6 +225,8 @@
     "noResults": "No se encontraron vehículos",
     "advancedFilters": "Filtros avanzados",
     "typeFilters": "Filtros de tipo",
+    "topRatedOnly": "Solo vendedores Top",
+    "topRatedBadge": "Top Rated",
     "clearFilters": "Limpiar filtros",
     "clearAll": "Limpiar todos",
     "locationAll": "Todo el mundo",
@@ -307,8 +309,10 @@
     "saveSearch": "Guardar búsqueda",
     "saveSearchSuccess": "Búsqueda guardada",
     "price": "Precio",
+    "priceRange": "Rango de precio",
     "brand": "Marca",
     "year": "Año",
+    "yearRange": "Rango de año",
     "resultsCount": "{count} {itemsName}",
     "viewDetails": "Ver detalles",
     "tercerosDisclaimer": "Vehículo de terceros. Tracciona actúa como intermediario.",
@@ -371,6 +375,7 @@
     "creditsRemaining": "{count} crédito restante | {count} créditos restantes"
   },
   "vehicle": {
+    "viewersNow": "{count} personas viendo ahora",
     "year": "Año",
     "price": "Precio",
     "rentalPrice": "Precio alquiler",
@@ -615,6 +620,8 @@
     "sale": "Venta",
     "rental": "Alquiler",
     "thirdParty": "Terceros",
+    "offlineBanner": "Sin conexión — los cambios se sincronizarán al reconectar",
+    "offlinePending": "({count} pendientes)",
     "searchPlaceholder": "Marca o modelo...",
     "view": "Ver",
     "copy": "Copiar",
@@ -1085,6 +1092,19 @@
     "currentPlan": "Plan actual",
     "planExpires": "Expira el {date}"
   },
+  "topDealers": {
+    "title": "Top 100 profesionales",
+    "seoTitle": "Top 100 profesionales verificados",
+    "seoDescription": "Ranking de los profesionales mejor valorados en nuestra plataforma. Encuentra vendedores de confianza con las mejores puntuaciones.",
+    "subtitle": "Los profesionales mejor valorados por calidad de servicio, fiabilidad y satisfacción del comprador.",
+    "empty": "Aún no hay profesionales en el ranking.",
+    "colName": "Profesional",
+    "colBadge": "Insignia",
+    "colScore": "Puntuación",
+    "colVehicles": "Anuncios",
+    "colProvince": "Provincia",
+    "anonymous": "Profesional anónimo"
+  },
   "auction": {
     "pageTitle": "Subastas",
     "seoTitle": "Subastas de vehículos industriales | Tracciona",
@@ -1190,7 +1210,19 @@
       "communication": "Comunicación",
       "community": "Comunidad",
       "brokerage": "Brokeraje",
-      "infrastructure": "Infraestructura"
+      "infrastructure": "Infraestructura",
+      "designSystem": "Design System"
+    },
+    "designSystem": {
+      "subtitle": "Referencia visual de componentes, tokens y patrones del sistema de diseño.",
+      "colors": "Colores",
+      "typography": "Tipografía",
+      "spacing": "Espaciado",
+      "buttons": "Botones",
+      "forms": "Formularios",
+      "badges": "Badges",
+      "skeletons": "Skeleton Loaders",
+      "breakpoints": "Breakpoints"
     },
     "header": {
       "viewSite": "Ver sitio",
@@ -2238,7 +2270,7 @@
       "contactName": "Nombre de contacto *",
       "contactNamePlaceholder": "Nombre y apellidos",
       "phonePlaceholder": "+34 600 000 000",
-      "emailPlaceholder": "email@empresa.com",
+      "emailPlaceholder": "email{'@'}empresa.com",
       "locationPlaceholder": "Ciudad, país",
       "products": "Producto/s que maneja",
       "productsPlaceholder": "Camiones, furgonetas, grúas...",
@@ -2987,7 +3019,9 @@
       "mfaDisable": "Desactivar 2FA",
       "mfaScanQr": "Escanea este código QR con tu app de autenticación (Google Authenticator, Authy, etc.):",
       "mfaEnterCode": "Introduce el código de 6 dígitos:",
+      "mfaCodeLabel": "Código de verificación",
       "mfaCodePlaceholder": "000000",
+      "mfaActive": "La autenticación en dos pasos está activada.",
       "mfaVerify": "Verificar",
       "mfaVerified": "2FA activado correctamente",
       "mfaVerifyError": "Código incorrecto. Inténtalo de nuevo.",
@@ -3267,6 +3301,17 @@
       "cloneError": "No hemos podido duplicar el anuncio. Inténtalo de nuevo.",
       "confirmDelete": "Confirmar",
       "limitReached": "Has alcanzado el límite de anuncios de tu plan",
+      "withdrawalTitle": "¿Por qué retiras este anuncio?",
+      "withdrawalSubtitle": "Esta información nos ayuda a mejorar el servicio",
+      "confirmWithdrawal": "Retirar anuncio",
+      "withdrawalReason": {
+        "sold_elsewhere": "Vendido fuera de Tracciona",
+        "too_expensive": "El precio no era competitivo",
+        "changed_mind": "He cambiado de opinión",
+        "seasonal": "Retirada temporal / estacional",
+        "duplicate": "Anuncio duplicado",
+        "other": "Otro motivo"
+      },
       "used": "utilizados",
       "upgradePlan": "Mejorar plan",
       "editTitle": "Editar vehículo",
@@ -3458,6 +3503,8 @@
       "closeReason": "Motivo de cierre",
       "closeReasonRequired": "El motivo de cierre es obligatorio al marcar como perdido",
       "closeReasonPlaceholder": "Indica por qué se perdió esta consulta...",
+      "negotiatedPrice": "Precio negociado",
+      "negotiatedPricePlaceholder": "Precio final acordado",
       "notes": "Notas privadas",
       "notesPlaceholder": "Escribe notas sobre esta consulta (solo visibles para ti)...",
       "timeline": "Historial de cambios",
@@ -3516,6 +3563,8 @@
       "notifWeeklyStats": "Resumen semanal de estadísticas",
       "notifAuctionUpdates": "Actualizaciones de subastas",
       "sectionServices": "Servicios",
+      "simpleModeLabel": "Modo simple",
+      "simpleModeHint": "Auto-renovar anuncios sin CRM avanzado. Publica y olvídate.",
       "brokerageLabel": "Recibir ofertas de compra intermediadas",
       "address": "Dirección",
       "addressPlaceholder": "Calle y número, ciudad",
@@ -5309,5 +5358,16 @@
       "reviews": "Valoraciones de compradores",
       "verified_docs": "Documentación verificada"
     }
+  },
+  "feedback": {
+    "ariaLabel": "Valoración de la página",
+    "question": "¿Te ha sido útil?",
+    "yes": "Sí",
+    "no": "No",
+    "commentPrompt": "¿Cómo podemos mejorar?",
+    "commentPlaceholder": "Cuéntanos qué podría ser mejor...",
+    "send": "Enviar",
+    "skip": "Omitir",
+    "thanks": "¡Gracias por tu opinión!"
   }
 }

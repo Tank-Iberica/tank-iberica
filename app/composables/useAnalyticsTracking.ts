@@ -19,6 +19,15 @@ interface AnalyticsEvent {
 const EVENT_SCHEMA_VERSION = 1
 
 /**
+ * #243 — Batch write buffer for analytics events.
+ * Accumulates events for BATCH_FLUSH_MS, then inserts in a single query.
+ * Reduces DB writes by ~90% compared to one INSERT per event.
+ */
+const BATCH_FLUSH_MS = 10_000
+const _eventBuffer: Record<string, unknown>[] = []
+let _flushTimer: ReturnType<typeof setTimeout> | null = null
+
+/**
  * Canonical event type constants.
  * See docs/tracciona-docs/referencia/EVENT-TAXONOMY.md for full documentation.
  */
@@ -37,6 +46,7 @@ export const ANALYTICS_EVENTS = {
   FORM_ABANDON: 'form_abandon',
   VEHICLE_COMPARISON: 'vehicle_comparison',
   BUYER_GEO: 'buyer_geo',
+  FEEDBACK: 'feedback',
 } as const
 
 export type AnalyticsEventType = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS]
@@ -165,8 +175,23 @@ export function useAnalyticsTracking() {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()
 
+  /** Flush buffered events to DB in a single batch INSERT */
+  function flushEventBuffer(): void {
+    if (_eventBuffer.length === 0) return
+    const batch = _eventBuffer.splice(0)
+    void supabase.from('analytics_events').insert(batch as never)
+  }
+
+  // Flush on page unload to avoid losing buffered events
+  if (import.meta.client) {
+    addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') flushEventBuffer()
+    })
+  }
+
   /**
    * Insert a raw analytics event into the analytics_events table.
+   * Events are buffered for 10s and flushed as a batch INSERT.
    * Fire-and-forget — never blocks the UI.
    */
   function trackEvent(event: AnalyticsEvent): void {
@@ -196,7 +221,15 @@ export function useAnalyticsTracking() {
         buyer_country: buyerCountry,
       }
 
-      void supabase.from('analytics_events').insert(row as never)
+      _eventBuffer.push(row)
+
+      // Schedule flush if not already scheduled
+      if (!_flushTimer) {
+        _flushTimer = setTimeout(() => {
+          _flushTimer = null
+          flushEventBuffer()
+        }, BATCH_FLUSH_MS)
+      }
     })
   }
 
@@ -354,6 +387,18 @@ export function useAnalyticsTracking() {
     })
   }
 
+  /** #267 — Track in-app feedback (thumbs up/down + optional comment) */
+  function trackFeedback(page: string, helpful: boolean, comment?: string): void {
+    trackEvent({
+      event_type: ANALYTICS_EVENTS.FEEDBACK,
+      metadata: {
+        page,
+        helpful,
+        ...(comment ? { comment } : {}),
+      },
+    })
+  }
+
   return {
     trackEvent,
     trackVehicleView,
@@ -369,5 +414,6 @@ export function useAnalyticsTracking() {
     trackFormAbandonment,
     trackVehicleComparison,
     trackBuyerGeo,
+    trackFeedback,
   }
 }

@@ -128,7 +128,7 @@ export function useRevenueMetrics() {
 
     const { count } = await supabase
       .from('analytics_events')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .eq('event_type', 'contact_click')
       .gte('created_at', monthStart)
 

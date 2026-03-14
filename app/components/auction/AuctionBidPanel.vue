@@ -141,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatCents } from '~/composables/useAuction'
+import { formatAuctionCents as formatCents } from '~/composables/useAuction'
 import type { Auction, AuctionBid } from '~/composables/useAuction'
 
 const props = defineProps<{

@@ -92,7 +92,9 @@ async function submitRequest() {
 
     submitted.value = true
     await nextTick()
-    requestAnimationFrame(() => { showCheckmark.value = true })
+    requestAnimationFrame(() => {
+      showCheckmark.value = true
+    })
 
     // Reset form
     formData.value = {
@@ -143,7 +145,7 @@ function resetForm() {
           :aria-invalid="!!fieldErrors.name || undefined"
           :aria-describedby="fieldErrors.name ? 'err-insp-name' : undefined"
           :placeholder="$t('inspection.namePlaceholder')"
-        >
+        />
         <p v-if="fieldErrors.name" id="err-insp-name" class="field-error" role="alert">
           {{ fieldErrors.name }}
         </p>
@@ -159,7 +161,7 @@ function resetForm() {
           :aria-invalid="!!fieldErrors.email || undefined"
           :aria-describedby="fieldErrors.email ? 'err-insp-email' : undefined"
           :placeholder="$t('inspection.emailPlaceholder')"
-        >
+        />
         <p v-if="fieldErrors.email" id="err-insp-email" class="field-error" role="alert">
           {{ fieldErrors.email }}
         </p>
@@ -175,7 +177,7 @@ function resetForm() {
           :aria-invalid="!!fieldErrors.phone || undefined"
           :aria-describedby="fieldErrors.phone ? 'err-insp-phone' : undefined"
           :placeholder="$t('inspection.phonePlaceholder')"
-        >
+        />
         <p v-if="fieldErrors.phone" id="err-insp-phone" class="field-error" role="alert">
           {{ fieldErrors.phone }}
         </p>
@@ -187,8 +189,9 @@ function resetForm() {
           id="preferredDate"
           v-model="formData.preferredDate"
           type="date"
+          autocomplete="off"
           :min="new Date().toISOString().split('T')[0]"
-        >
+        />
       </div>
 
       <div class="form-group">
@@ -197,6 +200,7 @@ function resetForm() {
           id="notes"
           v-model="formData.notes"
           rows="4"
+          autocomplete="off"
           :placeholder="$t('inspection.notesPlaceholder')"
         />
       </div>
@@ -330,7 +334,6 @@ function resetForm() {
   text-align: center;
   padding: 2rem 1rem;
 }
-
 
 .success-message h3 {
   color: var(--color-success);

@@ -11,6 +11,8 @@ import { defineEventHandler, readBody } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { logger } from '../../utils/logger'
+import { getSiteUrl } from '../../utils/siteConfig'
+import { purgeUrls } from '../../utils/cfPurge'
 
 /** Default listing duration in days if not set per dealer/vertical */
 const DEFAULT_DURATION_DAYS = 60
@@ -78,6 +80,14 @@ export default defineEventHandler(async (event) => {
     return { ok: false, error: updateErr.message }
   }
 
+  // Purge Cloudflare cache for expired vehicles
+  const siteUrl = getSiteUrl()
+  const purgeUrlList = vehicles.map(
+    (v: ExpiredVehicle) => `${siteUrl.replace(/\/$/, '')}/vehiculo/${v.id}`,
+  )
+  purgeUrlList.push(`${siteUrl.replace(/\/$/, '')}/catalogo`)
+  void purgeUrls(purgeUrlList)
+
   // Log transitions as analytics_events
   const events = vehicles.map((v: ExpiredVehicle) => ({
     event_type: 'status_transition' as const,
@@ -124,7 +134,13 @@ export default defineEventHandler(async (event) => {
     if (!typedDealer?.email) continue
 
     // Queue email notification
-    const { error: emailErr } = await (supabase as unknown as { from: (t: string) => { insert: (r: Record<string, unknown>) => Promise<{ error: { message: string } | null }> } })
+    const { error: emailErr } = await (
+      supabase as unknown as {
+        from: (t: string) => {
+          insert: (r: Record<string, unknown>) => Promise<{ error: { message: string } | null }>
+        }
+      }
+    )
       .from('email_queue')
       .insert({
         to: typedDealer.email,
@@ -132,13 +148,17 @@ export default defineEventHandler(async (event) => {
         data: {
           company_name: typedDealer.company_name,
           count: dealerVehicles.length,
-          vehicles: dealerVehicles.slice(0, 5).map((v: ExpiredVehicle) => `${v.brand} ${v.model} ${v.year ?? ''}`),
-          renewal_url: `${process.env.SITE_URL ?? 'https://tracciona.es'}/dashboard/vehiculos`,
+          vehicles: dealerVehicles
+            .slice(0, 5)
+            .map((v: ExpiredVehicle) => `${v.brand} ${v.model} ${v.year ?? ''}`),
+          renewal_url: `${getSiteUrl()}/dashboard/vehiculos`,
         },
       })
 
     if (emailErr) {
-      logger.warn(`[expire-listings] Failed to queue notification for dealer ${dealerId}: ${emailErr.message}`)
+      logger.warn(
+        `[expire-listings] Failed to queue notification for dealer ${dealerId}: ${emailErr.message}`,
+      )
     } else {
       notified++
     }

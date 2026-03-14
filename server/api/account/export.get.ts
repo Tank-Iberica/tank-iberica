@@ -37,6 +37,9 @@ interface ExportData {
   emailLogs: unknown[]
   demands: unknown[]
   advertisements: unknown[]
+  messages: unknown[]
+  reservations: unknown[]
+  transactions: unknown[]
 }
 
 export default defineEventHandler(async (event): Promise<ExportData> => {
@@ -143,10 +146,28 @@ export default defineEventHandler(async (event): Promise<ExportData> => {
     .select('id, brand, model, year, status, created_at')
     .eq('user_id', userId)
 
-  // ── 15. Build export object ───────────────────────────────────────────────
+  // ── 15. Collect messages ────────────────────────────────────────────────
+  const { data: messages } = await supabase
+    .from('messages')
+    .select('id, conversation_id, content, created_at')
+    .eq('sender_id', userId)
+
+  // ── 16. Collect reservations ────────────────────────────────────────────
+  const { data: reservations } = await supabase
+    .from('reservations')
+    .select('id, vehicle_id, status, deposit_amount, created_at')
+    .eq('buyer_id', userId)
+
+  // ── 17. Collect transactions ────────────────────────────────────────────
+  const { data: transactions } = await supabase
+    .from('transactions')
+    .select('id, type, amount, currency, status, created_at')
+    .eq('user_id', userId)
+
+  // ── 18. Build export object ───────────────────────────────────────────────
   const exportData: ExportData = {
     exportDate: new Date().toISOString(),
-    platform: 'Tracciona',
+    platform: getSiteName(),
     userId,
     profile: (profile as UserProfile) ?? null,
     dealer: dealer ?? null,
@@ -160,9 +181,12 @@ export default defineEventHandler(async (event): Promise<ExportData> => {
     emailLogs: emailLogs ?? [],
     demands: demands ?? [],
     advertisements: ads ?? [],
+    messages: messages ?? [],
+    reservations: reservations ?? [],
+    transactions: transactions ?? [],
   }
 
-  // ── 16. Log the export in consents table ──────────────────────────────────
+  // ── 19. Log the export in consents table ──────────────────────────────────
   await supabase.from('consents').insert({
     user_id: userId,
     consent_type: 'data_export',

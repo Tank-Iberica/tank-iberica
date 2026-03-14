@@ -21,9 +21,11 @@ const translations: Record<string, string> = {
   'common.loadingItems': 'Cargando...',
 }
 
-// Global Vue Test Utils config — makes $t available in all component templates
+// Global Vue Test Utils config — makes $t and auto-imports available in all component templates
 config.global.mocks = {
   $t: (key: string) => translations[key] ?? key,
+  useSiteUrl: () => 'https://tracciona.com',
+  useSiteName: () => 'Tracciona',
 }
 
 // Mock useState (Nuxt)
@@ -112,8 +114,11 @@ vi.stubGlobal('unref', (val: unknown) =>
   val && typeof val === 'object' && 'value' in val ? (val as { value: unknown }).value : val,
 )
 vi.stubGlobal('toValue', (val: unknown) =>
-  typeof val === 'function' ? (val as () => unknown)() :
-  val && typeof val === 'object' && 'value' in val ? (val as { value: unknown }).value : val,
+  typeof val === 'function'
+    ? (val as () => unknown)()
+    : val && typeof val === 'object' && 'value' in val
+      ? (val as { value: unknown }).value
+      : val,
 )
 vi.stubGlobal('watch', () => {})
 vi.stubGlobal('watchEffect', () => {})
@@ -124,6 +129,32 @@ vi.stubGlobal('navigateTo', () => {})
 vi.stubGlobal('useRoute', () => ({ params: {}, query: {} }))
 vi.stubGlobal('useRouter', () => ({ push: () => {} }))
 vi.stubGlobal('definePageMeta', () => {})
+
+// Mock useSiteUrl / useSiteName / getSiteUrl / getSiteName / getSiteEmail (Nuxt auto-imports)
+vi.stubGlobal('useSiteUrl', () => 'https://tracciona.com')
+vi.stubGlobal('useSiteName', () => 'Tracciona')
+vi.stubGlobal('getSiteUrl', () => 'https://tracciona.com')
+vi.stubGlobal('getSiteName', () => 'Tracciona')
+vi.stubGlobal('getSiteEmail', () => 'hola@tracciona.com')
+
+// Mock useSubscriptionPlan (Nuxt auto-import)
+vi.stubGlobal('useSubscriptionPlan', () => ({
+  currentPlan: { value: 'free' },
+  isFounder: { value: false },
+  limits: { value: {} },
+  canExport: { value: true },
+  canUseWidget: { value: true },
+  fetchSubscription: vi.fn().mockResolvedValue(undefined),
+}))
+
+// Mock localizedField
+vi.stubGlobal('localizedField', (field: Record<string, string> | null, locale: string) => {
+  if (!field) return ''
+  return field[locale] || field['es'] || ''
+})
+
+// Mock useLocalePath
+vi.stubGlobal('useLocalePath', () => (path: string) => path)
 
 // Reset state between tests
 beforeEach(() => {

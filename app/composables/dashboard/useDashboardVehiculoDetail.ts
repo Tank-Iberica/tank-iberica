@@ -143,7 +143,9 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
       const [vehicleRes, catRes, subRes, , , favRes, leadsRes] = await Promise.all([
         supabase
           .from('vehicles')
-          .select('*')
+          .select(
+            'id, title, brand, model, year, price, price_negotiable, description, description_en, status, images, slug, category_id, subcategory_id, location_province, location_city, location_country, condition, hours, mileage, fuel_type, power_hp, weight_kg, dealer_id, created_at, updated_at, featured, sold_price_cents, sold_at, withdrawal_reason, ref_code, extras',
+          )
           .eq('id', vehicleId)
           .eq('dealer_id', dealer.id)
           .single(),

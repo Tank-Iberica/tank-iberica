@@ -15,6 +15,8 @@ import { defineEventHandler } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { sendIndexNow, vehicleUrl, articleUrl } from '../../utils/indexNow'
+import { getSiteUrl } from '../../utils/siteConfig'
+import { purgeVehicleCache } from '../../utils/cfPurge'
 
 interface ScheduledArticle {
   id: string
@@ -95,13 +97,19 @@ export default defineEventHandler(async (event) => {
     publishedVehicles = typedVehicles.length
   }
 
-  // ── 3. Notify IndexNow for all newly published content ────────────────────
-  const siteUrl =
-    process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://tracciona.com'
+  // ── 3. Purge Cloudflare cache for newly published vehicles ────────────────
+  if (vehicles && vehicles.length > 0) {
+    for (const v of vehicles as ScheduledVehicle[]) {
+      purgeVehicleCache(v.slug)
+    }
+  }
+
+  // ── 4. Notify IndexNow for all newly published content ────────────────────
+  const siteUrl = getSiteUrl()
 
   const indexNowUrls: string[] = [
-    ...(articles as ScheduledArticle[] | null ?? []).map((a) => articleUrl(a.slug, siteUrl)),
-    ...(vehicles as ScheduledVehicle[] | null ?? []).map((v) => vehicleUrl(v.slug, siteUrl)),
+    ...((articles as ScheduledArticle[] | null) ?? []).map((a) => articleUrl(a.slug, siteUrl)),
+    ...((vehicles as ScheduledVehicle[] | null) ?? []).map((v) => vehicleUrl(v.slug, siteUrl)),
   ]
 
   if (indexNowUrls.length > 0) {

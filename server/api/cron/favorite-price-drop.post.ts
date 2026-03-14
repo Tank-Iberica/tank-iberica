@@ -15,7 +15,7 @@ import { defineEventHandler, readBody } from 'h3'
 import { safeError } from '../../utils/safeError'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
-import { acquireCronLock } from '../../utils/cronLock'
+import { acquireDbCronLock } from '../../utils/cronLock'
 import { processBatch } from '../../utils/batchProcessor'
 import { logger } from '../../utils/logger'
 
@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
   const supabase = serverSupabaseServiceRole(event)
 
   // Cron lock — prevent duplicate emails if scheduler fires twice in the same hour
-  if (!(await acquireCronLock(supabase, 'favorite-price-drop'))) {
+  if (!(await acquireDbCronLock(supabase, 'favorite-price-drop'))) {
     return { skipped: true, reason: 'already_ran_in_window', timestamp: new Date().toISOString() }
   }
 
@@ -102,6 +102,7 @@ export default defineEventHandler(async (event) => {
   const result = await processBatch({
     items: priceDropVehicles,
     batchSize: 50,
+    delayBetweenBatchesMs: 5000,
     processor: async (vehicle: PriceDropVehicle) => {
       const { data: favorites, error: favsError } = await supabase
         .from('favorites')
@@ -109,7 +110,9 @@ export default defineEventHandler(async (event) => {
         .eq('vehicle_id', vehicle.id)
 
       if (favsError) {
-        logger.error(`[favorite-price-drop] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`)
+        logger.error(
+          `[favorite-price-drop] Error fetching favorites for vehicle ${vehicle.id}: ${favsError.message}`,
+        )
         return
       }
 
@@ -160,7 +163,9 @@ export default defineEventHandler(async (event) => {
           notificationsSent++
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-          logger.error(`[favorite-price-drop] Failed to send email to user ${user.id}: ${errorMessage}`)
+          logger.error(
+            `[favorite-price-drop] Failed to send email to user ${user.id}: ${errorMessage}`,
+          )
         }
       }
     },

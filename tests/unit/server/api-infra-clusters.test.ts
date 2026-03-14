@@ -27,7 +27,18 @@ const {
     mockSafeError,
     mockServiceRole: vi.fn(),
     mockSupabaseUser: vi.fn().mockResolvedValue(null),
-    mockFetch: vi.fn().mockResolvedValue({ pipeline: 'cloudflare', urls: { gallery: 'https://cf.img/g', thumb: 'https://cf.img/t', card: 'https://cf.img/c', og: 'https://cf.img/og' }, original: 'https://res.cloudinary.com/img.jpg' }),
+    mockFetch: vi
+      .fn()
+      .mockResolvedValue({
+        pipeline: 'cloudflare',
+        urls: {
+          gallery: 'https://cf.img/g',
+          thumb: 'https://cf.img/t',
+          card: 'https://cf.img/c',
+          og: 'https://cf.img/og',
+        },
+        original: 'https://res.cloudinary.com/img.jpg',
+      }),
   }
 })
 
@@ -35,6 +46,7 @@ vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   readBody: mockReadBody,
   getRouterParam: mockGetRouterParam,
+  getHeader: vi.fn().mockReturnValue(undefined),
   createError: (opts: { statusCode?: number; statusMessage?: string; data?: unknown }) => {
     const err = new Error(opts.statusMessage ?? 'Error')
     ;(err as any).statusCode = opts.statusCode
@@ -75,7 +87,9 @@ let prepareMigrationHandler: any
 beforeAll(async () => {
   createClusterHandler = (await import('../../../server/api/infra/clusters/index.post')).default
   patchClusterHandler = (await import('../../../server/api/infra/clusters/[id].patch')).default
-  prepareMigrationHandler = (await import('../../../server/api/infra/clusters/[id]/prepare-migration.post')).default
+  prepareMigrationHandler = (
+    await import('../../../server/api/infra/clusters/[id]/prepare-migration.post')
+  ).default
 })
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -112,7 +126,10 @@ function makeMultiChain(steps: Array<{ data?: any; error?: any; count?: number }
   }
 }
 
-function makeAdminSupabase(adminRole = 'admin', ...extraSteps: Array<{ data?: any; error?: any; count?: number }>) {
+function makeAdminSupabase(
+  adminRole = 'admin',
+  ...extraSteps: Array<{ data?: any; error?: any; count?: number }>
+) {
   return makeMultiChain([{ data: { role: adminRole } }, ...extraSteps])
 }
 
@@ -149,12 +166,18 @@ describe('POST /api/infra/clusters', () => {
 
   it('throws 400 when weight_limit is invalid', async () => {
     mockServiceRole.mockReturnValue(makeAdminSupabase())
-    mockReadBody.mockResolvedValue({ name: 'Cluster', supabase_url: 'https://x.supabase.co', weight_limit: -1 })
+    mockReadBody.mockResolvedValue({
+      name: 'Cluster',
+      supabase_url: 'https://x.supabase.co',
+      weight_limit: -1,
+    })
     await expect(createClusterHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 500 when DB insert fails', async () => {
-    mockServiceRole.mockReturnValue(makeAdminSupabase('admin', { data: null, error: { message: 'DB error' } }))
+    mockServiceRole.mockReturnValue(
+      makeAdminSupabase('admin', { data: null, error: { message: 'DB error' } }),
+    )
     await expect(createClusterHandler({} as any)).rejects.toMatchObject({ statusCode: 500 })
   })
 
@@ -205,7 +228,9 @@ describe('PATCH /api/infra/clusters/:id', () => {
   })
 
   it('throws 500 when DB update fails', async () => {
-    mockServiceRole.mockReturnValue(makeAdminSupabase('admin', { data: null, error: { message: 'DB error' } }))
+    mockServiceRole.mockReturnValue(
+      makeAdminSupabase('admin', { data: null, error: { message: 'DB error' } }),
+    )
     await expect(patchClusterHandler({} as any)).rejects.toMatchObject({ statusCode: 500 })
   })
 
@@ -269,18 +294,23 @@ describe('POST /api/infra/clusters/:id/prepare-migration', () => {
   })
 
   it('throws 404 when source cluster not found', async () => {
-    mockServiceRole.mockReturnValue(makeAdminSupabase('admin',
-      { data: null, error: { message: 'not found' } }, // source cluster
-    ))
+    mockServiceRole.mockReturnValue(
+      makeAdminSupabase(
+        'admin',
+        { data: null, error: { message: 'not found' } }, // source cluster
+      ),
+    )
     await expect(prepareMigrationHandler({} as any)).rejects.toMatchObject({ statusCode: 404 })
   })
 
   it('throws 404 when target cluster not found', async () => {
-    mockServiceRole.mockReturnValue(makeMultiChain([
-      { data: { role: 'admin' } },
-      { data: { id: validUUID, name: 'Source' } },
-      { data: null, error: { message: 'not found' } },
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeMultiChain([
+        { data: { role: 'admin' } },
+        { data: { id: validUUID, name: 'Source' } },
+        { data: null, error: { message: 'not found' } },
+      ]),
+    )
     await expect(prepareMigrationHandler({} as any)).rejects.toMatchObject({ statusCode: 404 })
   })
 
@@ -290,19 +320,21 @@ describe('POST /api/infra/clusters/:id/prepare-migration', () => {
     // Steps: admin check, source cluster, target cluster, then multiple count queries
     const countStep = { data: null, error: null, count: 5 }
     const dealerIdsStep = { data: [{ id: 'd1' }, { id: 'd2' }], error: null }
-    mockServiceRole.mockReturnValue(makeMultiChain([
-      { data: { role: 'admin' } },   // admin check
-      { data: sourceCluster },        // source cluster
-      { data: targetCluster },        // target cluster
-      { data: null, count: 2 },       // dealers count
-      { data: dealerIdsStep.data },   // dealer IDs for vehicles
-      { data: null, count: 10 },      // vehicles count
-      { data: null, count: 5 },       // categories
-      { data: null, count: 3 },       // subcategories
-      { data: null, count: 1 },       // vertical_config
-      { data: null, count: 0 },       // active_landings
-      { data: null, count: 7 },       // articles
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeMultiChain([
+        { data: { role: 'admin' } }, // admin check
+        { data: sourceCluster }, // source cluster
+        { data: targetCluster }, // target cluster
+        { data: null, count: 2 }, // dealers count
+        { data: dealerIdsStep.data }, // dealer IDs for vehicles
+        { data: null, count: 10 }, // vehicles count
+        { data: null, count: 5 }, // categories
+        { data: null, count: 3 }, // subcategories
+        { data: null, count: 1 }, // vertical_config
+        { data: null, count: 0 }, // active_landings
+        { data: null, count: 7 }, // articles
+      ]),
+    )
     const result = await prepareMigrationHandler({} as any)
     expect(result.vertical).toBe('tracciona')
     expect(result.source_cluster.name).toBe('Source')
@@ -349,11 +381,13 @@ describe('POST /api/infra/migrate-images', () => {
       cloudflareImagesDeliveryUrl: 'https://imagedelivery.net',
       public: {},
     }))
-    mockServiceRole.mockReturnValue(makeMultiChain([
-      { data: { role: 'admin' } },  // admin check
-      { data: [] },                  // images query (empty)
-      { data: null, count: 0 },      // remaining count
-    ]))
+    mockServiceRole.mockReturnValue(
+      makeMultiChain([
+        { data: { role: 'admin' } }, // admin check
+        { data: [] }, // images query (empty)
+        { data: null, count: 0 }, // remaining count
+      ]),
+    )
     const result = await migrateImagesHandler({} as any)
     expect(result.processed).toBe(0)
     expect(result.remaining).toBe(0)
@@ -366,14 +400,23 @@ describe('POST /api/infra/migrate-images', () => {
       cloudflareImagesDeliveryUrl: 'https://imagedelivery.net',
       public: {},
     }))
-    const images = [{ id: 'img-1', url: 'https://res.cloudinary.com/test/img.jpg', vehicle_id: 'v1', thumbnail_url: null }]
-    mockServiceRole.mockReturnValue(makeMultiChain([
-      { data: { role: 'admin' } },
-      { data: images },
-      { data: null, count: 0 },
-    ]))
+    const images = [
+      {
+        id: 'img-1',
+        url: 'https://res.cloudinary.com/test/img.jpg',
+        vehicle_id: 'v1',
+        thumbnail_url: null,
+      },
+    ]
+    mockServiceRole.mockReturnValue(
+      makeMultiChain([{ data: { role: 'admin' } }, { data: images }, { data: null, count: 0 }]),
+    )
     // $fetch returns cloudinary pipeline (fallback) → errorCount++
-    mockFetch.mockResolvedValue({ pipeline: 'cloudinary', urls: { gallery: '', thumb: '', card: '', og: '' }, original: images[0].url })
+    mockFetch.mockResolvedValue({
+      pipeline: 'cloudinary',
+      urls: { gallery: '', thumb: '', card: '', og: '' },
+      original: images[0].url,
+    })
     const result = await migrateImagesHandler({} as any)
     expect(result.processed).toBe(0)
     expect(result.errors).toBe(1)
