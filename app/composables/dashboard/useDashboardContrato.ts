@@ -14,11 +14,7 @@ import {
   type SaleContractData,
 } from '~/utils/contractGenerator'
 import { useFormAutosave } from '~/composables/useFormAutosave'
-import {
-  useDashboardContratoHistory,
-  type ContractRow,
-  type ContractStatus,
-} from './useDashboardContratoHistory'
+import { useDashboardContratoHistory } from './useDashboardContratoHistory'
 
 // Re-export for consumers that import from this module
 export type { ContractRow, ContractStatus } from './useDashboardContratoHistory'

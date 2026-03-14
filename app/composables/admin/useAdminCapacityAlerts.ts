@@ -22,7 +22,8 @@ export interface CapacityAlert {
 }
 
 export function useAdminCapacityAlerts() {
-  const supabase = useSupabaseClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
   const alerts = ref<CapacityAlert[]>([])
   const loading = ref(false)
   const error = ref('')

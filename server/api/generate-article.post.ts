@@ -89,6 +89,7 @@ export default defineEventHandler(async (event): Promise<GenerateArticleResponse
           'You are a professional content writer for industrial vehicles marketplace. Always respond with valid JSON only.',
       },
       'background',
+      'content',
     )
 
     // 4. Parse JSON response

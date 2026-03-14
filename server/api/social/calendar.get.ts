@@ -90,7 +90,7 @@ export default defineEventHandler(async (event) => {
   const { data, error } = await queryBuilder
 
   if (error) {
-    logger.error({ error }, 'Failed to fetch calendar posts')
+    logger.error('Failed to fetch calendar posts', { error: String(error) })
     throw safeError(500, 'Failed to fetch calendar data')
   }
 

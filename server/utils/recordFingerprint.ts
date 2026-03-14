@@ -49,17 +49,19 @@ export function recordFingerprint(event: H3Event, userId: string): void {
     null
   const ipHintVal = rawIp ? ipHint(rawIp) : null
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
 
   // Fire-and-forget
-  supabase
-    .rpc('upsert_user_fingerprint', {
-      p_user_id: userId,
-      p_fp_hash: fpHash,
-      p_ua_hint: uaHint,
-      p_ip_hint: ipHintVal,
-    })
-    .then(({ error }) => {
+  Promise.resolve(
+    supabase
+      .rpc('upsert_user_fingerprint', {
+        p_user_id: userId,
+        p_fp_hash: fpHash,
+        p_ua_hint: uaHint,
+        p_ip_hint: ipHintVal,
+      })
+  )
+    .then(({ error }: { error?: { message: string } | null }) => {
       if (error) {
         logger.warn('[recordFingerprint] RPC failed', {
           userId: userId.substring(0, 8),

@@ -6,7 +6,7 @@
       <!-- Trust badge based on dealer health score -->
       <SharedDealerTrustBadge
         v-if="dealerScore !== null"
-        :score="dealerScore"
+        :tier="dealerScore >= 80 ? 'top' : dealerScore >= 60 ? 'verified' : null"
         class="trust-badge-wrap"
       />
       <div class="seller-details">

@@ -432,7 +432,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<{ secret?: string }>(event).catch(() => ({}) as { secret?: string })
   verifyCronSecret(event, body?.secret)
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
   const now = new Date().toISOString()
 
   // Fetch all published vehicles with subcategory info, price and brand for intro text

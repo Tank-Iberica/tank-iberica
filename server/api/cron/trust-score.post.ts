@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
 
   // 2. Acquire cron lock (runs once per day)
   if (!(await acquireCronLock(supabase, 'trust-score'))) {

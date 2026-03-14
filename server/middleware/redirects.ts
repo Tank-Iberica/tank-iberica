@@ -89,7 +89,7 @@ export function track404(path: string): void {
       .slice(0, 20)
 
     if (frequent.length > 0) {
-      logger.warn('[Redirects] Frequent 404s (consider adding redirects):', frequent)
+      logger.warn('[Redirects] Frequent 404s (consider adding redirects)', { paths: frequent.map(([path, count]) => `${path}(${count})`) })
     }
 
     // Reset counters

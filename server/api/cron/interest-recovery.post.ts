@@ -31,7 +31,7 @@ interface LeadWithVehicle {
 export default defineEventHandler(async (event) => {
   verifyCronSecret(event)
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
   const now = new Date()
   const cutoff24h = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
   const cutoff48h = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString()
@@ -64,17 +64,17 @@ export default defineEventHandler(async (event) => {
     if (!lead.user_email) continue
 
     try {
-      await sendEmail({
-        to: lead.user_email,
-        subject: `¿Todavía te interesa ${lead.vehicle_title}?`,
-        html: `
+      await sendEmail(
+        lead.user_email,
+        `¿Todavía te interesa ${lead.vehicle_title}?`,
+        `
           <p>Hola${lead.user_name ? ` ${lead.user_name}` : ''},</p>
           <p>Hace unos días mostraste interés en <strong>${lead.vehicle_title}</strong>.</p>
           <p>El vehículo sigue disponible. ¿Te gustaría retomar el contacto?</p>
           <p><a href="${process.env.NUXT_PUBLIC_SITE_URL}/vehiculo/${lead.vehicle_slug}">Ver vehículo</a></p>
           <p>El equipo de Tracciona</p>
         `,
-      })
+      )
 
       // Mark recovery email as sent
       await supabase.from('leads').update({ recovery_sent_at: now.toISOString() }).eq('id', lead.id)

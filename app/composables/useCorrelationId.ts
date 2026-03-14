@@ -43,7 +43,8 @@ export function useCorrelationId() {
         ...existingHeaders,
         'x-correlation-id': correlationId,
       },
-    } as Parameters<typeof useFetch>[1])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
   }
 
   return {

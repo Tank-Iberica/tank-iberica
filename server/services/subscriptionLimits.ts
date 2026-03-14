@@ -155,3 +155,5 @@ export function shouldSuspendSubscription(
   const graceDays = calculateGracePeriodDays(attemptCount)
   return daysSinceFirstFailure >= graceDays
 }
+
+export function normalizePlan(plan: string | null | undefined): string { return (plan || 'free').toLowerCase().trim() }

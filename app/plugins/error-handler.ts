@@ -7,7 +7,7 @@
  * In production: sends error reports to Sentry (if DSN configured).
  */
 
-import { init as sentryInit, captureException, setUser, Replay } from '@sentry/vue'
+import { init as sentryInit, captureException, setUser, replayIntegration } from '@sentry/vue'
 
 export default defineNuxtPlugin(async (nuxtApp) => {
   const config = useRuntimeConfig()
@@ -22,7 +22,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       // P1 § Monitoring: increased from 0.1 to 0.5 for better coverage
       tracesSampleRate: import.meta.dev ? 0.1 : 0.5,
       integrations: [
-        new Replay({
+        replayIntegration({
           maskAllText: true,
           blockAllMedia: true,
         }),
@@ -32,12 +32,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     })
 
     // Automatically set user context when authenticated
-    const { user } = await useAuth()
-    if (user.value?.id) {
+    const { profile, userEmail } = useAuth()
+    if (profile.value?.id) {
       setUser({
-        id: user.value.id,
-        email: user.value.email,
-        username: user.value.username || undefined,
+        id: profile.value.id,
+        email: userEmail.value,
+        username: profile.value.pseudonimo || undefined,
       })
     }
   }

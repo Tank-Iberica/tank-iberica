@@ -131,3 +131,16 @@ async function sendEmailNotification(
     },
   })
 }
+
+export async function sendEmail(to: string, subject: string, html: string): Promise<void> {
+  const internalSecret = process.env.CRON_SECRET || ''
+  await $fetch('/api/email/send', {
+    method: 'POST',
+    headers: internalSecret ? { 'x-internal-secret': internalSecret } : {},
+    body: {
+      templateKey: 'direct_email',
+      to,
+      variables: { subject, html },
+    },
+  })
+}

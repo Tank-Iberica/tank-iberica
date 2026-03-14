@@ -7,21 +7,20 @@
  * Highlight is permanent until the dealer removes it or replaces it.
  * Protected with CSRF + auth.
  */
-import { defineEventHandler } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
 import { serverSupabaseUser } from '#supabase/server'
 import { safeError } from '../../utils/safeError'
 import { verifyCsrf } from '../../utils/verifyCsrf'
-import { validateBody } from '../../utils/validateBody'
+import { z } from 'zod'
 
 const HIGHLIGHT_COST = 2
 
 const VALID_STYLES = ['gold', 'premium', 'spotlight', 'urgent'] as const
-type HighlightStyle = (typeof VALID_STYLES)[number]
 
-interface HighlightBody {
-  vehicleId: string
-  style: HighlightStyle
-}
+const HighlightSchema = z.object({
+  vehicleId: z.string().uuid(),
+  style: z.enum(VALID_STYLES),
+})
 
 export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
@@ -29,19 +28,19 @@ export default defineEventHandler(async (event) => {
 
   verifyCsrf(event)
 
-  const body = await validateBody<HighlightBody>(event, ['vehicleId', 'style'])
-  const { vehicleId, style } = body
-
-  if (!VALID_STYLES.includes(style)) {
-    throw safeError(400, `Invalid style. Allowed: ${VALID_STYLES.join(', ')}`)
+  const raw = await readBody(event)
+  const parsed = HighlightSchema.safeParse(raw)
+  if (!parsed.success) {
+    throw safeError(400, parsed.error.errors[0]?.message ?? 'Invalid body')
   }
+  const { vehicleId, style } = parsed.data
 
   const config = useRuntimeConfig()
   const supabaseUrl = config.public.supabaseUrl || process.env.SUPABASE_URL
   const serviceKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  const headers = {
-    apikey: serviceKey,
+  const headers: Record<string, string> = {
+    apikey: serviceKey as string,
     Authorization: `Bearer ${serviceKey}`,
     'Content-Type': 'application/json',
     Prefer: 'return=representation',

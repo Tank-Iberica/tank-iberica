@@ -126,7 +126,7 @@ export function useAdminProductForm() {
 
   // ── Records sub-composable (maintenance + rentals) ───
   const { addMaint, removeMaint, updateMaint, addRental, removeRental, updateRental } =
-    useAdminProductRecords(formData as Ref<{ maintenance_records?: unknown[]; rental_records?: unknown[] }>)
+    useAdminProductRecords(formData as any)
 
   // ── Junction data: type ↔ subcategory links ──────────
   const typeSubcategoryLinks = ref<{ type_id: string; subcategory_id: string }[]>([])

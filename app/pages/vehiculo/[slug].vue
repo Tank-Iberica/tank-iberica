@@ -380,7 +380,7 @@ if (vehicle.value) {
         href: `${siteUrl}/en/vehiculo/${vehicle.value.slug}`,
       },
       { rel: 'alternate', hreflang: 'x-default', href: canonicalUrl },
-      ...(seoImage ? [{ rel: 'preload', as: 'image', href: seoImage, fetchpriority: 'high' }] : []),
+      ...(seoImage ? [{ rel: 'preload', as: 'image', href: seoImage, fetchpriority: 'high' } as any] : []),
     ],
   })
 

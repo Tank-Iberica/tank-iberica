@@ -3,17 +3,17 @@
  * Uses Supabase service-role REST API directly to avoid auth context issues.
  */
 
-interface CreditDeductResult {
+export interface CreditDeductResult {
   success: true
   newBalance: number
 }
 
-interface CreditDeductError {
+export interface CreditDeductError {
   success: false
   reason: 'insufficient' | 'not_configured' | 'db_error'
 }
 
-type CreditDeductResponse = CreditDeductResult | CreditDeductError
+export type CreditDeductResponse = CreditDeductResult | CreditDeductError
 
 /**
  * Deducts `amount` credits from a user and records the transaction.

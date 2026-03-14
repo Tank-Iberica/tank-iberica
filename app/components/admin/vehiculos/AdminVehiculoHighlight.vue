@@ -63,7 +63,7 @@ const emit = defineEmits<{
 const currentStyle = ref<string | null>(props.initialStyle)
 const applying = ref(false)
 const error = ref<string | null>(null)
-const { $csrfFetch } = useNuxtApp()
+const { $csrfFetch } = useNuxtApp() as unknown as { $csrfFetch: typeof $fetch }
 
 async function applyStyle(style: string) {
   if (applying.value) return

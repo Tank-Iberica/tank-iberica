@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
     return { ok: true, ...result }
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unknown error'
-    logger.error({ err }, 'generate-market-report failed')
+    logger.error('generate-market-report failed', { err: String(err) })
     throw safeError(500, msg)
   }
 })
@@ -101,7 +101,7 @@ export async function generateQuarterlyReport(
         .single()
 
       if (existing) {
-        logger.info({ quarter, locale }, 'Market report already exists — skipping')
+        logger.info('Market report already exists — skipping', { quarter, locale })
         localesProcessed.push(locale)
         continue
       }
@@ -144,12 +144,12 @@ export async function generateQuarterlyReport(
         throw new Error(`DB upsert failed: ${upsertError.message}`)
       }
 
-      logger.info({ quarter, locale, storagePath }, 'Market report generated and stored')
+      logger.info('Market report generated and stored', { quarter, locale, storagePath })
       localesProcessed.push(locale)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'unknown error'
       errors.push(`${locale}: ${msg}`)
-      logger.error({ quarter, locale, err }, 'Failed to generate market report for locale')
+      logger.error('Failed to generate market report for locale', { quarter, locale, err: String(err) })
     }
   }
 
@@ -179,7 +179,7 @@ async function extractReportMetadata(supabase: SupabaseClient): Promise<Record<s
   for (const r of rows) {
     subcatMap.set(r.subcategory, (subcatMap.get(r.subcategory) ?? 0) + (r.listings || 0))
   }
-  const topSubcategory = [...subcatMap.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? ''
+  const topSubcategory = Array.from(subcatMap.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? ''
 
   return { totalListings, avgPrice, topSubcategory }
 }

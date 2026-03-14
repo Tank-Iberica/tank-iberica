@@ -144,11 +144,11 @@ export function summarizeReferrers(events: AnalyticsEvent[]): ReferrerSummary[] 
  * Generate hourly activity distribution (0-23 hours).
  */
 export function getHourlyActivity(events: AnalyticsEvent[]): HourlyActivity[] {
-  const counts = new Array(24).fill(0)
+  const counts = Array.from({ length: 24 }, () => 0)
 
   for (const event of events) {
     const hour = new Date(event.timestamp).getHours()
-    counts[hour] += 1
+    counts[hour] = (counts[hour] ?? 0) + 1
   }
 
   return counts.map((count, hour) => ({ hour, count }))

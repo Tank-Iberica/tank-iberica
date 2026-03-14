@@ -50,7 +50,8 @@ export default defineEventHandler(async (event) => {
   }
   const { email, locale } = parsed.data
 
-  const supabase = serverSupabaseServiceRole(event)
+  // Tables market_report_leads & market_reports are not yet in generated types
+  const supabase = serverSupabaseServiceRole(event) as any
   const quarter = getCurrentQuarter()
 
   try {
@@ -82,8 +83,8 @@ export default defineEventHandler(async (event) => {
       if (signErr || !signedData?.signedUrl) {
         // Fall through to on-the-fly generation
         logger.warn(
-          { quarter, locale, signErr },
           'Signed URL creation failed — falling back to on-the-fly',
+          { quarter, locale, signErr },
         )
       } else {
         return {
@@ -108,7 +109,7 @@ export default defineEventHandler(async (event) => {
   } catch (err: unknown) {
     if (err && typeof err === 'object' && 'statusCode' in err) throw err
     const msg = err instanceof Error ? err.message : 'Error al procesar la solicitud'
-    logger.error({ err, email, quarter }, 'market-report/download failed')
+    logger.error('market-report/download failed', { err: String(err), email, quarter })
     throw safeError(500, msg)
   }
 })

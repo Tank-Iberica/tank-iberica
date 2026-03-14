@@ -41,6 +41,7 @@
           <div class="vehicle-info">
             <VehicleDetailActions
               :vehicle-id="vehicle.id"
+              :vehicle-slug="vehicle.slug"
               :dealer-id="vehicleDetail?.dealer_id || ''"
               :seller-user-id="null"
               :email-subject="emailSubject"

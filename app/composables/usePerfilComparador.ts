@@ -46,7 +46,7 @@ export function getBestVehicleIds(
   if (vehicles.length <= 1) return new Set()
 
   const validPairs = vehicles
-    .map((v, i) => ({ id: v.id, val: values[i] }))
+    .map((v, i) => ({ id: v.id, val: values[i] ?? null }))
     .filter((p): p is { id: string; val: number } => p.val !== null && p.val > 0)
 
   if (validPairs.length === 0) return new Set()
@@ -63,7 +63,8 @@ function printPage(): void {
 }
 
 export function usePerfilComparador() {
-  const supabase = useSupabaseClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
   const {
     comparisons,
     activeComparison,

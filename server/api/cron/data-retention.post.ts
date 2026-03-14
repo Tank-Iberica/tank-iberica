@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
 
   // 2. Cron lock — 24 h window, one run per day max
   if (!(await acquireCronLock(supabase, 'data-retention', 24 * 60 * 60 * 1000))) {

@@ -94,7 +94,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const results = (data ?? []) as Array<SearchResult & { total_estimate: number }>
-  const totalEstimate = results.length > 0 ? results[0].total_estimate : 0
+  const totalEstimate = results.length > 0 ? results[0]!.total_estimate : 0
   const nextCursor = results.length === limit ? results.at(-1)!.id : null
 
   setResponseHeader(event, 'Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=60')

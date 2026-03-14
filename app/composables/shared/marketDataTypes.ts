@@ -85,3 +85,6 @@ export interface CategoryStat {
   listings: number
   trend_pct: number
 }
+
+export interface MarketDataState { loading: boolean; data: MarketDataRow[]; filters: MarketFilters }
+export interface DealerDashboardStats { totalVehicles: number; activeListings: number; totalViews: number; totalLeads: number; conversionRate: number }

@@ -172,8 +172,9 @@ function moveUp(): void {
 }
 
 function selectActive(): void {
-  if (activeIndex.value >= 0 && results.value[activeIndex.value]) {
-    const slug = results.value[activeIndex.value].slug
+  const activeResult = activeIndex.value >= 0 ? results.value[activeIndex.value] : undefined
+  if (activeResult) {
+    const slug = activeResult.slug
     router.push(`/vehiculo/${slug}`)
     close()
   } else if (query.value.trim()) {
@@ -203,15 +204,7 @@ function onKeydown(e: KeyboardEvent): void {
 }
 
 // Lock scroll when open
-const { lock, unlock } = useScrollLock()
-
-watch(isOpen, (val) => {
-  if (val) {
-    lock()
-  } else {
-    unlock()
-  }
-})
+useScrollLock(isOpen)
 
 onMounted(() => window.addEventListener('keydown', onKeydown))
 onUnmounted(() => window.removeEventListener('keydown', onKeydown))

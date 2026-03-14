@@ -56,6 +56,13 @@ interface TokenResponse {
   scope?: string
 }
 
+interface OAuthStateRecord {
+  platform: string
+  admin_id: string
+  redirect_to: string | null
+  expires_at: string
+}
+
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const { code, state, error: oauthError, error_description } = query as Record<string, string>
@@ -64,7 +71,7 @@ export default defineEventHandler(async (event) => {
 
   // Handle user-denied flow
   if (oauthError) {
-    logger.warn({ oauthError, error_description }, 'OAuth denied by user or platform')
+    logger.warn('OAuth denied by user or platform', { oauthError, error_description })
     return sendRedirect(
       event,
       `${siteUrl}/admin/social?oauth_error=${encodeURIComponent(error_description || oauthError)}`,
@@ -76,26 +83,27 @@ export default defineEventHandler(async (event) => {
   }
 
   // 1. Validate CSRF state
-  const { data: stateRecord, error: stateErr } = await supabase
+  // Table social_oauth_states is not in generated types yet — cast to bypass
+  const { data: stateRecord, error: stateErr } = await (supabase as any)
     .from('social_oauth_states')
     .select('platform, admin_id, redirect_to, expires_at')
     .eq('state', state)
-    .single()
+    .single() as { data: OAuthStateRecord | null; error: any }
 
   if (stateErr || !stateRecord) {
-    logger.warn({ state }, 'OAuth state not found or already used')
+    logger.warn('OAuth state not found or already used', { state })
     return sendRedirect(event, `${siteUrl}/admin/social?oauth_error=invalid_state`)
   }
 
   // Check expiry
   if (new Date(stateRecord.expires_at) < new Date()) {
-    logger.warn({ state }, 'OAuth state expired')
-    await supabase.from('social_oauth_states').delete().eq('state', state)
+    logger.warn('OAuth state expired', { state })
+    await (supabase as any).from('social_oauth_states').delete().eq('state', state)
     return sendRedirect(event, `${siteUrl}/admin/social?oauth_error=state_expired`)
   }
 
   // Delete state (one-time use)
-  await supabase.from('social_oauth_states').delete().eq('state', state)
+  await (supabase as any).from('social_oauth_states').delete().eq('state', state)
 
   const platform = stateRecord.platform as SocialPlatform
   const redirectTo = stateRecord.redirect_to || '/admin/social'
@@ -109,7 +117,7 @@ export default defineEventHandler(async (event) => {
   const clientSecret = process.env[tokenConfig.clientSecretEnv]
 
   if (!clientId || !clientSecret) {
-    logger.error({ platform }, 'OAuth credentials not configured')
+    logger.error('OAuth credentials not configured', { platform })
     return sendRedirect(event, `${siteUrl}${redirectTo}?oauth_error=server_misconfigured`)
   }
 
@@ -151,7 +159,7 @@ export default defineEventHandler(async (event) => {
     tokens = (await resp.json()) as TokenResponse
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Token exchange error'
-    logger.error({ platform, err }, msg)
+    logger.error(msg, { platform, error: String(err) })
     return sendRedirect(event, `${siteUrl}${redirectTo}?oauth_error=token_exchange_failed`)
   }
 
@@ -168,20 +176,21 @@ export default defineEventHandler(async (event) => {
     connected_by: stateRecord.admin_id,
   }
 
-  const { error: upsertErr } = await supabase.from('vertical_config').upsert(
+  // vertical_config uses key/value columns not in generated types — cast to bypass
+  const { error: upsertErr } = await (supabase as any).from('vertical_config').upsert(
     {
       key: `social_tokens_${platform}`,
       value: tokenData,
       description: `OAuth2 tokens for ${platform} social publishing`,
     },
     { onConflict: 'key' },
-  )
+  ) as { error: any }
 
   if (upsertErr) {
-    logger.error({ platform, err: upsertErr }, 'Failed to store OAuth tokens')
+    logger.error('Failed to store OAuth tokens', { platform, error: String(upsertErr) })
     return sendRedirect(event, `${siteUrl}${redirectTo}?oauth_error=token_storage_failed`)
   }
 
-  logger.info({ platform, adminId: stateRecord.admin_id }, 'OAuth connected successfully')
+  logger.info('OAuth connected successfully', { platform, adminId: stateRecord.admin_id })
   return sendRedirect(event, `${siteUrl}${redirectTo}?oauth_success=${platform}`)
 })

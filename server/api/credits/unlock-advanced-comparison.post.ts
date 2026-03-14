@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
   if (!user) throw safeError(401, 'Authentication required')
 
-  const body = await readBody<{ comparisonId?: string }>(event).catch(() => ({}))
+  const body = await readBody<{ comparisonId?: string }>(event).catch(() => ({}) as { comparisonId?: string })
   const comparisonId = typeof body?.comparisonId === 'string' ? body.comparisonId : undefined
 
   const creditResult = await deductUserCredits(

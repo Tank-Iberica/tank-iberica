@@ -62,7 +62,8 @@ export function classifyPerformance(
 }
 
 export function useProductAnalytics(dealerId?: Ref<string | null>) {
-  const supabase = useSupabaseClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
 
   const metrics = ref<VehicleMetrics[]>([])
   const summary = ref<VehicleMetricsSummary | null>(null)

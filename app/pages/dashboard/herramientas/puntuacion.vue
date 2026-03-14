@@ -117,7 +117,7 @@ const done = computed(() => criteriaRows.value.filter((r) => r.done))
             <div class="progress-bar-fill" :style="{ width: `${progressPct}%` }" />
           </div>
           <p class="points-needed">
-            {{ t('trust.pointsNeeded', `Faltan {pts} puntos`, { pts: pointsToNextTier }) }}
+            {{ t('trust.pointsNeeded', { pts: pointsToNextTier }) }}
           </p>
         </div>
 

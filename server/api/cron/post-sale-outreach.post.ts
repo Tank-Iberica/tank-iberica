@@ -143,7 +143,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
   const config = useRuntimeConfig()
   const resendApiKey = config.resendApiKey || process.env.RESEND_API_KEY || ''
   const resend = resendApiKey ? new Resend(resendApiKey) : null
@@ -184,7 +184,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // ── 2. Find leads for those vehicles ──────────────────────────────────────
-  const vehicleIds = soldVehicles.map((v) => (v as SoldVehicleRow).id)
+  const vehicleIds = (soldVehicles as SoldVehicleRow[]).map((v) => v.id)
 
   const { data: leads, error: leadError } = await supabase
     .from('leads')

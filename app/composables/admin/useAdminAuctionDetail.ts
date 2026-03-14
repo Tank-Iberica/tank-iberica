@@ -71,7 +71,8 @@ function getDepositStatusClass(status: DepositStatus): string {
 
 export function useAdminAuctionDetail(auctionId: Ref<string>) {
   const { t } = useI18n()
-  const supabase = useSupabaseClient<Database>()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient<Database>() as any
 
   // ---------- State ----------
   const auction = ref<Auction | null>(null)

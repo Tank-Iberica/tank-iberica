@@ -64,7 +64,8 @@
 </template>
 
 <script setup lang="ts">
-const { $supabase } = useNuxtApp()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const $supabase = useSupabaseClient() as any
 
 interface DuplicateDeviceRow {
   fp_hash: string

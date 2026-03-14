@@ -88,8 +88,8 @@ export function calculateRevenueSummary(
   const avgSalePrice = Math.round(totalGmv / prices.length)
 
   const mid = prices.length % 2 === 0
-    ? Math.round((prices[prices.length / 2 - 1] + prices[prices.length / 2]) / 2)
-    : prices[Math.floor(prices.length / 2)]
+    ? Math.round((prices[prices.length / 2 - 1]! + prices[prices.length / 2]!) / 2)
+    : prices[Math.floor(prices.length / 2)]!
 
   return {
     totalGmv,

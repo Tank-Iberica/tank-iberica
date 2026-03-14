@@ -33,7 +33,8 @@ export interface VehicleGroupWithCount extends VehicleGroup {
 }
 
 export function useVehicleGroups() {
-  const supabase = useSupabaseClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
   const { locale } = useI18n()
 
   const groups = ref<VehicleGroupWithCount[]>([])
@@ -100,7 +101,7 @@ export function useVehicleGroups() {
 
     if (err) throw err
     return (data ?? []).map((item: { vehicle_id: string; sort_order: number; vehicles: unknown }) => ({
-      ...item.vehicles,
+      ...(item.vehicles as Record<string, unknown>),
       _sort_order: item.sort_order,
     }))
   }

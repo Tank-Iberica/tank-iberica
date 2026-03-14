@@ -79,7 +79,7 @@ export default defineEventHandler(async (event) => {
   )
   const dealers = (await dealerRes.json()) as DealerRecord[]
   if (dealers.length === 0) throw safeError(403, 'Not authorized')
-  const dealerName = dealers[0].name
+  const dealerName = dealers[0]?.name ?? ''
 
   // 3. Deduct 1 credit
   const creditResult = await deductUserCredits(

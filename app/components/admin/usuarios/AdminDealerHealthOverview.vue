@@ -5,7 +5,14 @@
  * Shows a table of dealers sorted by health score with badge indicators.
  * Uses GET /api/admin/dealers/health-scores.
  */
-import type { DealerHealthRow } from '~/server/api/admin/dealers/health-scores.get'
+interface DealerHealthRow {
+  id: string
+  company_name: string | null
+  healthTotal: number
+  badge: 'top' | 'verified' | 'none'
+  activeVehicles: number
+  avg_response_time_hours: number | null
+}
 
 const { t } = useI18n()
 
@@ -16,7 +23,7 @@ const filterBadge = ref<'all' | 'top' | 'verified' | 'none'>('all')
 
 const filtered = computed(() => {
   if (filterBadge.value === 'all') return rows.value
-  return rows.value.filter((r) => r.badge === filterBadge.value)
+  return rows.value.filter((r: DealerHealthRow) => r.badge === filterBadge.value)
 })
 
 async function load() {

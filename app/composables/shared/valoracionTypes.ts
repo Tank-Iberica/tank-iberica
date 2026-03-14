@@ -97,3 +97,5 @@ export const PROVINCES: readonly string[] = [
   'Zamora',
   'Zaragoza',
 ] as const
+
+export interface ValoracionState { loading: boolean; form: ValoracionFormData; result: ValoracionResultData | null; history: ValoracionHistoryItem[] }

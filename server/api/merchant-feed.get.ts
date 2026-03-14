@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
     .limit(500)
 
   if (error) {
-    logger.error('[merchant-feed] Error fetching vehicles:', error)
+    logger.error('[merchant-feed] Error fetching vehicles', { error: String(error) })
     setResponseStatus(event, 500)
     return 'Internal server error'
   }

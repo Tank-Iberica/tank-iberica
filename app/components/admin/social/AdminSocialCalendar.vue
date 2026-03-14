@@ -231,9 +231,9 @@ function handleDragOver(dateStr: string, e: DragEvent) {
           <div class="cal-drawer-content">
             <p>
               {{
-                selectedPost.content?.es ||
-                selectedPost.content?.en ||
-                t('admin.social.calendar.noContent')
+                typeof selectedPost.content === 'object' && selectedPost.content
+                  ? ((selectedPost.content as Record<string, string>).es || (selectedPost.content as Record<string, string>).en)
+                  : selectedPost.content || t('admin.social.calendar.noContent')
               }}
             </p>
           </div>
@@ -241,11 +241,11 @@ function handleDragOver(dateStr: string, e: DragEvent) {
           <div v-if="selectedPost.status === 'posted'" class="cal-drawer-stats">
             <div class="cal-stat">
               <span class="cal-stat-label">{{ t('admin.social.calendar.impressions') }}</span>
-              <span class="cal-stat-value">{{ selectedPost.impressions.toLocaleString() }}</span>
+              <span class="cal-stat-value">{{ (selectedPost.impressions ?? 0).toLocaleString() }}</span>
             </div>
             <div class="cal-stat">
               <span class="cal-stat-label">{{ t('admin.social.calendar.clicks') }}</span>
-              <span class="cal-stat-value">{{ selectedPost.clicks.toLocaleString() }}</span>
+              <span class="cal-stat-value">{{ (selectedPost.clicks ?? 0).toLocaleString() }}</span>
             </div>
           </div>
 

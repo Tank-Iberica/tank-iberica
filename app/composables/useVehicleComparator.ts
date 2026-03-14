@@ -174,7 +174,8 @@ export function useVehicleComparator() {
   loadFromStorage()
 
   const user = useSupabaseUser()
-  const supabase = useSupabaseClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
 
   const comparisonCount = computed<number>(() => activeComparison.value?.vehicle_ids.length ?? 0)
 
@@ -518,7 +519,7 @@ export function useVehicleComparator() {
 
   /** True if the user's plan includes advanced comparison at no extra cost */
   const isPremiumPlan = computed<boolean>(() => {
-    return currentPlan.value === 'premium' || currentPlan.value === 'full'
+    return currentPlan.value === 'premium' || (currentPlan.value as string) === 'full'
   })
 
   /** True if advanced metrics are accessible for the active comparison */

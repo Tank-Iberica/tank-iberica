@@ -28,7 +28,7 @@ export type {
 
 // ── Market data ────────────────────────────────────────────────────────────
 export type {
-  MarketDataEntry,
+  MarketDataRow,
   MarketDataState,
   DealerDashboardStats,
 } from '~/composables/shared/marketDataTypes'
@@ -38,7 +38,7 @@ export type { DatosState } from '~/composables/shared/datosTypes'
 export type { ValoracionState } from '~/composables/shared/valoracionTypes'
 
 // ── Dealer dashboard ────────────────────────────────────────────────────────
-export type { DealerDashboardState } from '~/composables/shared/dealerDashboardTypes'
+export type { DashboardStats } from '~/composables/shared/dealerDashboardTypes'
 
 // ── Conversation ───────────────────────────────────────────────────────────
 export type {

@@ -15,7 +15,7 @@ import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { processBatch } from '../../utils/batchProcessor'
 import { logger } from '../../utils/logger'
-import { getSiteUrl } from '../../utils/siteConfig'
+import { getSiteUrl, getSiteName } from '../../utils/siteConfig'
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -236,7 +236,8 @@ export function buildOnboardingHtml(
     },
   }
 
-  const content = contents[step] ?? contents[0]
+  const content = contents[step] ?? contents[0]!
+  if (!content) return ''
   // Fix template literal in step 1 heading (dealerName is not a template variable here)
   const heading = content.heading.replace('${dealerName}', dealerName)
 
@@ -315,7 +316,7 @@ export function buildOnboardingHtml(
  */
 export async function getPendingDealers(supabase: SupabaseClient): Promise<DealerRow[]> {
   const cutoff = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('dealers')
     .select('id, user_id, company_name, email, created_at, locale')
     .eq('status', 'active')
@@ -333,7 +334,7 @@ export async function getPendingDealers(supabase: SupabaseClient): Promise<Deale
  * Fetch already-sent steps for a dealer.
  */
 export async function getSentSteps(supabase: SupabaseClient, dealerId: string): Promise<number[]> {
-  const { data } = await supabase
+  const { data } = await (supabase as any)
     .from('dealer_onboarding_emails')
     .select('step')
     .eq('dealer_id', dealerId)
@@ -349,7 +350,7 @@ export async function markStepSent(
   dealerId: string,
   step: number,
 ): Promise<void> {
-  await supabase
+  await (supabase as any)
     .from('dealer_onboarding_emails')
     .upsert({ dealer_id: dealerId, step, sent_at: new Date().toISOString() })
 }
@@ -360,7 +361,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
   const siteUrl = getSiteUrl()
   const runtimeConfig = useRuntimeConfig()
   const resendApiKey = runtimeConfig.resendApiKey || process.env.RESEND_API_KEY

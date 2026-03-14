@@ -17,10 +17,10 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { logger } from './logger'
-import type { DomainEvent, StoredEvent, ReplayHandler, ReplayOptions } from '~/shared/types/event'
+import type { DomainEvent, StoredEvent, ReplayHandler, ReplayOptions } from '../../shared/types/event'
 
 // Re-export domain types from shared package
-export type { DomainEvent, StoredEvent, ReplayHandler, ReplayOptions } from '~/shared/types/event'
+export type { DomainEvent, StoredEvent, ReplayHandler, ReplayOptions } from '../../shared/types/event'
 
 /**
  * Append a new event to the event store.
@@ -32,8 +32,9 @@ export async function appendEvent(
   client: SupabaseClient,
   event: DomainEvent,
 ): Promise<StoredEvent> {
+  const db = client as any
   // Get the current max version for this aggregate
-  const { data: maxVersionData } = await client
+  const { data: maxVersionData } = await db
     .from('event_store')
     .select('version')
     .eq('aggregate_type', event.aggregateType)
@@ -44,7 +45,7 @@ export async function appendEvent(
 
   const nextVersion = (maxVersionData?.version ?? 0) + 1
 
-  const { data, error } = await client
+  const { data, error } = await db
     .from('event_store')
     .insert({
       aggregate_type: event.aggregateType,
@@ -85,7 +86,8 @@ export async function getEvents(
   aggregateType: string,
   aggregateId: string,
 ): Promise<StoredEvent[]> {
-  const { data, error } = await client
+  const db = client as any
+  const { data, error } = await db
     .from('event_store')
     .select(
       'id, aggregate_type, aggregate_id, event_type, event_data, metadata, version, schema_version, created_at',
@@ -172,7 +174,8 @@ export async function getEventsByType(
   limit = 100,
   offset = 0,
 ): Promise<StoredEvent[]> {
-  const { data, error } = await client
+  const db = client as any
+  const { data, error } = await db
     .from('event_store')
     .select(
       'id, aggregate_type, aggregate_id, event_type, event_data, metadata, version, schema_version, created_at',
@@ -198,10 +201,11 @@ export async function addToDeadLetter(
   eventData: Record<string, unknown>,
   errorMessage: string,
 ): Promise<void> {
+  const db = client as any
   const retryDelayMinutes = 5
   const nextRetry = new Date(Date.now() + retryDelayMinutes * 60 * 1000).toISOString()
 
-  const { error } = await client.from('event_dead_letter').insert({
+  const { error } = await db.from('event_dead_letter').insert({
     event_id: eventId,
     event_type: eventType,
     event_data: eventData,
@@ -230,7 +234,8 @@ export async function getPendingRetries(
     maxRetries: number
   }>
 > {
-  const { data, error } = await client
+  const db = client as any
+  const { data, error } = await db
     .from('event_dead_letter')
     .select('id, event_type, event_data, retry_count, max_retries')
     .in('status', ['pending', 'retrying'])
@@ -242,7 +247,7 @@ export async function getPendingRetries(
     throw new Error(`Failed to get pending retries: ${error.message}`)
   }
 
-  return (data ?? []).map((d) => ({
+  return (data ?? []).map((d: any) => ({
     id: d.id,
     eventType: d.event_type,
     eventData: d.event_data,
@@ -255,7 +260,7 @@ export async function getPendingRetries(
  * Mark a dead letter entry as resolved.
  */
 export async function resolveDeadLetter(client: SupabaseClient, id: number): Promise<void> {
-  await client
+  await (client as any)
     .from('event_dead_letter')
     .update({ status: 'resolved', resolved_at: new Date().toISOString() })
     .eq('id', id)
@@ -279,7 +284,7 @@ export async function retryDeadLetter(
   const delayMinutes = 5 ** newCount
   const nextRetry = new Date(Date.now() + delayMinutes * 60 * 1000).toISOString()
 
-  await client
+  await (client as any)
     .from('event_dead_letter')
     .update({
       retry_count: newCount,

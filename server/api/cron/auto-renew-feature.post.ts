@@ -49,7 +49,10 @@ export async function deductOneCredit(
   userId: string,
   now: Date,
 ): Promise<number | null> {
-  const { data: creditRows } = await supabase
+  // user_credits / credit_transactions tables not yet in generated types
+  const db = supabase as any
+
+  const { data: creditRows } = await db
     .from('user_credits')
     .select('balance')
     .eq('user_id', userId)
@@ -59,7 +62,7 @@ export async function deductOneCredit(
   if (balance < 1) return null
 
   const newBalance = balance - 1
-  await supabase
+  await db
     .from('user_credits')
     .update({ balance: newBalance, updated_at: now.toISOString() })
     .eq('user_id', userId)
@@ -71,7 +74,9 @@ export default defineEventHandler(async (event): Promise<AutoRenewResult> => {
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
 
-  const supabase = serverSupabaseServiceRole(event)
+  // Tables like user_credits, credit_transactions, auto_renew/auto_feature columns not in generated types
+  const supabase = serverSupabaseServiceRole(event) as any
+  const db = supabase
   const now = new Date()
 
   // 1. Fetch published vehicles with auto settings enabled
@@ -93,7 +98,7 @@ export default defineEventHandler(async (event): Promise<AutoRenewResult> => {
   const typedVehicles = vehicles as unknown as AutoVehicle[]
 
   // 2. Get unique dealer IDs and map to user_ids
-  const dealerIds = [...new Set(typedVehicles.map((v) => v.dealer_id).filter(Boolean) as string[])]
+  const dealerIds = Array.from(new Set(typedVehicles.map((v) => v.dealer_id).filter(Boolean) as string[]))
 
   const { data: dealers } = await supabase.from('dealers').select('id, user_id').in('id', dealerIds)
 
@@ -133,7 +138,7 @@ export default defineEventHandler(async (event): Promise<AutoRenewResult> => {
           .update({ updated_at: now.toISOString() })
           .eq('id', vehicle.id)
 
-        await supabase.from('credit_transactions').insert({
+        await db.from('credit_transactions').insert({
           user_id: userId,
           type: 'spend',
           credits: -1,
@@ -163,7 +168,7 @@ export default defineEventHandler(async (event): Promise<AutoRenewResult> => {
           .update({ featured: true, updated_at: now.toISOString() })
           .eq('id', vehicle.id)
 
-        await supabase.from('credit_transactions').insert({
+        await db.from('credit_transactions').insert({
           user_id: userId,
           type: 'spend',
           credits: -1,

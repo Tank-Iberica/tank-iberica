@@ -98,3 +98,6 @@ export interface VehicleFilters {
   dealer_id?: string
   [key: string]: unknown
 }
+
+export type VehicleStatus = 'active' | 'paused' | 'sold' | 'draft' | 'expired' | 'reserved'
+export type VehicleVisibility = 'public' | 'private' | 'unlisted'

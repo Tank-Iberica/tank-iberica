@@ -270,7 +270,7 @@ export default defineEventHandler(async (event) => {
     externalPostId = await publisher(content, socialPost.image_url, tokens)
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Publish failed'
-    logger.error({ platform: socialPost.platform, postId, err }, msg)
+    logger.error(msg, { platform: socialPost.platform, postId, err: String(err) })
 
     await supabase
       .from('social_posts')
@@ -291,9 +291,9 @@ export default defineEventHandler(async (event) => {
     .eq('id', postId)
 
   if (updateErr) {
-    logger.error({ postId, updateErr }, 'Failed to update post status after publishing')
+    logger.error('Failed to update post status after publishing', { postId, updateErr: String(updateErr) })
   }
 
-  logger.info({ platform: socialPost.platform, postId, externalPostId }, 'Social post published')
+  logger.info('Social post published', { platform: socialPost.platform, postId, externalPostId })
   return { ok: true, postId, externalPostId, platform: socialPost.platform }
 })

@@ -1,4 +1,16 @@
-import type { CalendarPost } from '~/server/api/social/calendar.get'
+export interface CalendarPost {
+  id: string
+  content: string | Record<string, string> | null
+  platform: string
+  status: string
+  scheduled_at: string | null
+  posted_at: string | null
+  vehicle?: { brand?: string; model?: string; year?: number } | null
+  image_url?: string | null
+  impressions?: number
+  clicks?: number
+  external_post_id?: string | null
+}
 
 export type CalendarView = 'week' | 'month'
 
@@ -180,7 +192,7 @@ export function useAdminSocialCalendar() {
     if (!draggedPostId.value) return
 
     // Build ISO datetime from the dropped date (keep current time if already scheduled, else noon)
-    const post = posts.value.find((p) => p.id === draggedPostId.value)
+    const post = posts.value.find((p: CalendarPost) => p.id === draggedPostId.value)
     if (!post) return
 
     const existingTime = post.scheduled_at ? new Date(post.scheduled_at) : null
@@ -209,7 +221,7 @@ export function useAdminSocialCalendar() {
         body: { postId, scheduledAt },
       })
       // Optimistic update
-      const idx = posts.value.findIndex((p) => p.id === postId)
+      const idx = posts.value.findIndex((p: CalendarPost) => p.id === postId)
       if (idx !== -1) {
         posts.value[idx] = { ...posts.value[idx]!, scheduled_at: scheduledAt }
       }

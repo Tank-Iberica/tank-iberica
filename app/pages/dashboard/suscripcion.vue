@@ -29,6 +29,7 @@ function getPlanPrice(plan: PlanType): string {
   const prices: Record<PlanType, string> = {
     free: '0',
     basic: '29',
+    classic: '29',
     premium: '79',
     founding: '0',
   }

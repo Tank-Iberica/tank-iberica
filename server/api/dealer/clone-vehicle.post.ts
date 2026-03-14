@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
   const { data: source, error: fetchErr } = await supabase
     .from('vehicles')
     .select(
-      'brand, model, year, km, price, rental_price, category_id, subcategory_id, description_es, description_en, location, location_country, location_province, location_region, attributes_json, featured, is_online, vertical',
+      'brand, model, year, price, rental_price, category, category_id, description_es, description_en, location, location_country, location_province, location_region, attributes_json, featured, is_online, vertical',
     )
     .eq('id', parsed.data.vehicleId)
     .eq('dealer_id', dealer.id)
@@ -64,11 +64,10 @@ export default defineEventHandler(async (event) => {
       brand: source.brand,
       model: source.model,
       year: source.year,
-      km: source.km,
       price: source.price,
       rental_price: source.rental_price,
+      category: source.category,
       category_id: source.category_id,
-      subcategory_id: source.subcategory_id,
       description_es: source.description_es,
       description_en: source.description_en,
       location: source.location,
@@ -81,7 +80,6 @@ export default defineEventHandler(async (event) => {
       status: 'draft',
       vertical: source.vertical,
       slug,
-      views: 0,
     } as never)
     .select('id, slug')
     .single()

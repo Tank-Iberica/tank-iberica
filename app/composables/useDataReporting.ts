@@ -81,8 +81,8 @@ export function detectTrend(
 
   for (let i = 0; i < n; i++) {
     sumX += i
-    sumY += values[i]
-    sumXY += i * values[i]
+    sumY += values[i]!
+    sumXY += i * values[i]!
     sumX2 += i * i
   }
 

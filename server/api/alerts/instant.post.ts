@@ -18,6 +18,7 @@ import { matchesVehicle } from '../../utils/alertMatcher'
 import { logger } from '../../utils/logger'
 import { normalizePlan } from '../../services/subscriptionLimits'
 import { processBatch } from '../../utils/batchProcessor'
+import { getSiteUrl } from '../../utils/siteConfig'
 import type { AlertFilters, VehicleForMatching } from '../../utils/alertMatcher'
 
 // -- Types ------------------------------------------------------------------
@@ -72,14 +73,14 @@ export default defineEventHandler(async (event) => {
   }
 
   // ── Parse body ────────────────────────────────────────────────────────
-  const body = await readBody<{ vehicle_id?: string }>(event).catch(() => ({}))
+  const body = await readBody<{ vehicle_id?: string }>(event).catch(() => ({}) as { vehicle_id?: string })
   const vehicleId = body?.vehicle_id
 
   if (!vehicleId || typeof vehicleId !== 'string') {
     throw safeError(400, 'vehicle_id is required')
   }
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
   const now = new Date()
   let notificationsSent = 0
 
@@ -211,11 +212,13 @@ export default defineEventHandler(async (event) => {
   }
 
   // ── 6. Send notifications ─────────────────────────────────────────────
-  const _internalSecret =
+  const _internalSecret = String(
     config.internalApiSecret ||
     process.env.INTERNAL_API_SECRET ||
     config.cronSecret ||
-    process.env.CRON_SECRET
+    process.env.CRON_SECRET ||
+    '',
+  )
 
   await processBatch({
     items: notifications,

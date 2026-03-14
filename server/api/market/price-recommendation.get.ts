@@ -78,7 +78,7 @@ export default defineEventHandler(async (event): Promise<PriceRecommendation> =>
         marketContext = `\n\nDatos de mercado (${prices.length} vehículos similares en plataforma):\n- Precio medio: ${avg.toLocaleString('es-ES')} EUR\n- Rango: ${min.toLocaleString('es-ES')} – ${max.toLocaleString('es-ES')} EUR`
       }
     } catch (err) {
-      logger.warn('[price-recommendation] Failed to fetch market data', String(err))
+      logger.warn('[price-recommendation] Failed to fetch market data', { error: String(err) })
     }
   }
 

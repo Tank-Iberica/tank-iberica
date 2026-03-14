@@ -13,7 +13,7 @@
 import type { AutocompleteResult } from '~/composables/useSearchAutocomplete'
 import { useSearchHistory } from '~/composables/useSearchHistory'
 
-const { compact } = withDefaults(
+const props = withDefaults(
   defineProps<{
     /** Compact single-line variant for inline use inside filter bars */
     compact?: boolean
@@ -70,12 +70,13 @@ function onKeydown(e: KeyboardEvent) {
     inputRef.value?.blur()
   } else if (e.key === 'Enter' && activeIndex.value >= 0) {
     e.preventDefault()
-    navigateTo(results.value[activeIndex.value])
+    const selected = results.value[activeIndex.value]
+    if (selected) goToResult(selected)
   }
 }
 
 const router = useRouter()
-function navigateTo(result: AutocompleteResult) {
+function goToResult(result: AutocompleteResult) {
   addSearch(`${result.brand} ${result.model}`)
   clear()
   showHistory.value = false
@@ -106,7 +107,7 @@ function onClear() {
 <template>
   <div
     ref="wrapRef"
-    :class="['search-bar', { 'search-bar--compact': compact }]"
+    :class="['search-bar', { 'search-bar--compact': props.compact }]"
     role="combobox"
     :aria-expanded="isOpen"
     aria-controls="search-results"
@@ -175,7 +176,7 @@ function onClear() {
           role="option"
           :aria-selected="activeIndex === i"
           :class="['search-bar__option', { 'search-bar__option--active': activeIndex === i }]"
-          @click="navigateTo(result)"
+          @click="goToResult(result)"
           @mouseover="activeIndex = i"
         >
           <span class="search-bar__option-title">

@@ -106,7 +106,8 @@ function formatDate(dateStr: string | null): string {
 export function useAdminAuctionList() {
   const { t } = useI18n()
   const toast = useToast()
-  const supabase = useSupabaseClient<Database>()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient<Database>() as any
 
   // ─── State ───────────────────────────────────────────────
   const activeFilter = ref<AuctionStatus | 'all'>('all')

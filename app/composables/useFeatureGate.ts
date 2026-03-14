@@ -27,6 +27,7 @@ export interface FeatureGateOptions {
 const PLAN_HIERARCHY: Record<PlanType, number> = {
   free: 0,
   basic: 1,
+  classic: 1,
   premium: 2,
   founding: 2,
 }

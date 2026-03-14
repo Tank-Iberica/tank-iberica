@@ -43,7 +43,8 @@ export function classifyDeviation(deviation: number): 'good' | 'high' | 'average
 }
 
 export function usePriceRelativeToMarket() {
-  const supabase = useSupabaseClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
 
   const comparison = ref<MarketComparison | null>(null)
   const loading = ref(false)
@@ -84,7 +85,7 @@ export function usePriceRelativeToMarket() {
 
       if (fetchErr) throw fetchErr
 
-      const prices = (data ?? []).map((v: { price: number }) => v.price).filter((p) => p > 0)
+      const prices = (data ?? []).map((v: { price: number }) => v.price).filter((p: number) => p > 0)
 
       const hasData = prices.length >= 3
       const marketAvg = hasData ? Math.round(calcMean(prices)) : 0

@@ -32,8 +32,8 @@ export default defineEventHandler(async (event) => {
   const supabaseUrl = config.public.supabaseUrl || process.env.SUPABASE_URL
   const serviceKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  const headers = {
-    apikey: serviceKey,
+  const headers: Record<string, string> = {
+    apikey: serviceKey as string,
     Authorization: `Bearer ${serviceKey}`,
     'Content-Type': 'application/json',
     Prefer: 'return=representation',

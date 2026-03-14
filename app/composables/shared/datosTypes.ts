@@ -69,3 +69,5 @@ export interface DatosChartData {
   labels: string[]
   datasets: DatosChartDataset[]
 }
+
+export interface DatosState { loading: boolean; data: MarketRow[]; priceHistory: PriceHistoryRow[]; filters: Record<string, unknown> }

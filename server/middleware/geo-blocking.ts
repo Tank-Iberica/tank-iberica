@@ -18,7 +18,7 @@ export default defineEventHandler((event) => {
   const config = useRuntimeConfig()
 
   // Feature flag — disabled by default
-  const enabled = config.geoBlockingEnabled === 'true' || config.geoBlockingEnabled === true
+  const enabled = config.geoBlockingEnabled === 'true' || String(config.geoBlockingEnabled) === 'true'
   if (!enabled) return
 
   // Never block API routes (webhooks, crons, health checks)

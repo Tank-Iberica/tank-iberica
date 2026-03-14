@@ -72,7 +72,8 @@ export function formatCents(cents: number): string {
 }
 
 export function useAuction() {
-  const supabase = useSupabaseClient<Database>()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient<Database>() as any
 
   const auctions = ref<Auction[]>([])
   const auction = ref<Auction | null>(null)

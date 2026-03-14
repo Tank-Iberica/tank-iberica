@@ -153,7 +153,7 @@ export default defineEventHandler(async (event) => {
   const { data: vehiclesData, error: vehiclesError } = await vehicleQuery
 
   if (vehiclesError) {
-    logger.error('[embed] Error fetching vehicles:', vehiclesError)
+    logger.error('[embed] Error fetching vehicles', { error: String(vehiclesError) })
     setResponseStatus(event, 500)
     return '<p>Error loading listings</p>'
   }

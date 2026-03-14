@@ -41,8 +41,8 @@ export default defineEventHandler((event) => {
     setHeader(event, 'X-Response-Time', `${totalTime}ms`)
   }
 
-  // Register response hook
-  onBeforeResponse(event, closeHandler)
+  // Register response hook via Node.js response finish event
+  event.node.res.on('finish', closeHandler)
 
   return
 })

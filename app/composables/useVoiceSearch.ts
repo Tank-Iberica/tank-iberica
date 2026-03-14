@@ -8,6 +8,25 @@
  * Usage:
  *   const { isListening, transcript, isSupported, startListening, stopListening, reset } = useVoiceSearch()
  */
+
+/** Web Speech API types — not in standard lib.dom.d.ts */
+interface SpeechRecognitionInstance {
+  lang: string
+  continuous: boolean
+  interimResults: boolean
+  maxAlternatives: number
+  onstart: ((ev: Event) => void) | null
+  onresult: ((ev: { results: { [index: number]: { [index: number]: { transcript: string } | undefined } | undefined } }) => void) | null
+  onend: ((ev: Event) => void) | null
+  onerror: ((ev: { error: string }) => void) | null
+  start(): void
+  stop(): void
+  abort(): void
+}
+
+type SpeechRecognitionCtor = new () => SpeechRecognitionInstance
+type WindowWithSpeech = Window & { SpeechRecognition?: SpeechRecognitionCtor; webkitSpeechRecognition?: SpeechRecognitionCtor }
+
 export interface UseVoiceSearch {
   isListening: Ref<boolean>
   transcript: Ref<string>
@@ -31,9 +50,7 @@ export function useVoiceSearch(): UseVoiceSearch {
     )
   })
 
-  type SpeechRecognitionCtor = new () => SpeechRecognition
-  type WindowWithSpeech = Window & { SpeechRecognition?: SpeechRecognitionCtor; webkitSpeechRecognition?: SpeechRecognitionCtor }
-  let recognition: SpeechRecognition | null = null
+  let recognition: SpeechRecognitionInstance | null = null
 
   const startListening = (locale = 'es-ES'): void => {
     if (!isSupported.value) {
@@ -41,7 +58,7 @@ export function useVoiceSearch(): UseVoiceSearch {
       return
     }
 
-    const w = window as WindowWithSpeech
+    const w = window as unknown as WindowWithSpeech
     const SpeechRecognitionAPI = w.SpeechRecognition || w.webkitSpeechRecognition
 
     if (!SpeechRecognitionAPI) return
@@ -56,7 +73,7 @@ export function useVoiceSearch(): UseVoiceSearch {
       error.value = null
     }
 
-    recognition.onresult = (e: SpeechRecognitionEvent): void => {
+    recognition.onresult = (e): void => {
       transcript.value = e.results[0]?.[0]?.transcript ?? ''
     }
 
@@ -64,7 +81,7 @@ export function useVoiceSearch(): UseVoiceSearch {
       isListening.value = false
     }
 
-    recognition.onerror = (e: SpeechRecognitionErrorEvent): void => {
+    recognition.onerror = (e): void => {
       isListening.value = false
       error.value = e.error ?? 'voice_error'
     }

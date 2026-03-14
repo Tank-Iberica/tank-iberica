@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
   if (!user) throw safeError(401, 'Unauthorized')
 
   const { postId, scheduledAt } = await validateBody(event, RescheduleSchema)
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
 
   // Fetch post to verify it exists and is reschedulable
   const { data: post, error: fetchErr } = await supabase
@@ -64,11 +64,11 @@ export default defineEventHandler(async (event) => {
     .single()
 
   if (updateErr) {
-    logger.error({ postId, error: updateErr }, 'Failed to reschedule post')
+    logger.error('Failed to reschedule post', { postId, error: updateErr })
     throw safeError(500, 'Failed to reschedule post')
   }
 
-  logger.info({ postId, scheduledAt, newStatus }, 'Post rescheduled')
+  logger.info('Post rescheduled', { postId, scheduledAt, newStatus })
 
   return {
     ok: true,

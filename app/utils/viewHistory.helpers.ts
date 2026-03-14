@@ -80,7 +80,7 @@ export function extractPreferences(history: ViewEntry[]): UserPreferences {
     priceCounts.size > 0
       ? (Array.from(priceCounts.entries()).sort(
           (a, b) => b[1] - a[1],
-        )[0][0] as ViewEntry['priceRange'])
+        )[0]![0] as ViewEntry['priceRange'])
       : null
 
   // Year preference (mode)
@@ -92,7 +92,7 @@ export function extractPreferences(history: ViewEntry[]): UserPreferences {
     yearCounts.size > 0
       ? (Array.from(yearCounts.entries()).sort(
           (a, b) => b[1] - a[1],
-        )[0][0] as ViewEntry['yearRange'])
+        )[0]![0] as ViewEntry['yearRange'])
       : null
 
   return { topBrands, topCategories, pricePreference, yearPreference }

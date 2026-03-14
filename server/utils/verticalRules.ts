@@ -99,7 +99,7 @@ export async function getVerticalStockLimits(
     Object.entries(data.stock_limits as Record<string, unknown>).filter(([, v]) => v !== undefined),
   ) as Partial<StockLimits>
 
-  return { ...DEFAULT_STOCK_LIMITS, ...limits }
+  return { ...DEFAULT_STOCK_LIMITS, ...limits } as StockLimits
 }
 
 // ---------------------------------------------------------------------------

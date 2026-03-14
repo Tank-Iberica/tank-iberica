@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
   if (!user) throw safeError(401, 'Unauthorized')
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
 
   // Admin guard
   const { data: profile } = await supabase
@@ -66,7 +66,7 @@ export default defineEventHandler(async (event) => {
   ])
 
   if (dealersRes.error) {
-    logger.error({ error: dealersRes.error }, 'Failed to fetch dealers')
+    logger.error('Failed to fetch dealers', { error: String(dealersRes.error) })
     throw safeError(500, 'Failed to fetch dealer health scores')
   }
 
@@ -85,7 +85,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Calculate simplified health score per dealer
-  const rows: DealerHealthRow[] = dealers.map((dealer) => {
+  const rows: DealerHealthRow[] = dealers.map((dealer: { id: string; company_name: string | null; avg_response_time_hours: number | null; logo_url: string | null }) => {
     const activeVehicles = vehiclesByDealer.get(dealer.id) ?? 0
     const imageCount = imagesByDealer.get(dealer.id) ?? 0
 

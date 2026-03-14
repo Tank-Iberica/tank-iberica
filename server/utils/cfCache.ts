@@ -16,6 +16,16 @@
  *   5. On miss → call fn(), store response in cache (background), return data
  */
 
+/** Cloudflare Workers Cache API types (not in standard lib) */
+interface CFCacheStorage {
+  default: {
+    match(request: Request): Promise<Response | undefined>
+    put(request: Request, response: Response): Promise<void>
+  }
+}
+
+declare const caches: CFCacheStorage | undefined
+
 /** Response format stored in CF cache */
 interface CFCacheEntry<T> {
   data: T
@@ -36,7 +46,7 @@ export async function cfCacheGet<T>(
   fn: () => Promise<T>,
 ): Promise<T> {
   // CF Workers caches API only available in CF Workers runtime
-  if (typeof caches === 'undefined' || typeof caches.default === 'undefined') {
+  if (typeof caches === 'undefined' || !caches || typeof caches.default === 'undefined') {
     return fn()
   }
 

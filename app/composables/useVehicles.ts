@@ -17,7 +17,8 @@ export type {
 const PAGE_SIZE = 20
 
 export function useVehicles() {
-  const supabase = useSupabaseClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
 
   const vehicles = ref<Vehicle[]>([])
   const loading = ref(false)
@@ -77,7 +78,7 @@ export function useVehicles() {
       .eq('status', 'published')
 
     const query = applyFilters(base, filters)
-    const { count } = await query // NOSONAR: Supabase builders implement PromiseLike but are not native Promises
+    const { count } = await query as any // NOSONAR: Supabase builders implement PromiseLike but are not native Promises
     return count ?? 0
   }
 

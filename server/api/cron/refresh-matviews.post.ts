@@ -26,7 +26,7 @@ const MATVIEWS = ['mv_dashboard_kpis', 'mv_search_facets'] as const
 export default defineEventHandler(async (event) => {
   verifyCronSecret(event)
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
   const results: Record<string, 'ok' | 'error'> = {}
   const startMs = Date.now()
 

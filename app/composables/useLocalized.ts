@@ -65,3 +65,5 @@ export async function fetchTranslation(
     data.find((d) => d.locale === 'es')
   return match?.value || ''
 }
+
+export const useLocalized = () => ({ localizedField, localizedName, fetchTranslation })

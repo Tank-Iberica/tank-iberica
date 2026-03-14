@@ -147,7 +147,7 @@ export default defineEventHandler(async (event) => {
 
     if (insertErr || !postData) {
       errors.push(`${platform}: Failed to create post`)
-      logger.error({ platform, vehicleId, err: insertErr }, 'Failed to create social post')
+      logger.error('Failed to create social post', { platform, vehicleId, err: String(insertErr) })
       continue
     }
 
@@ -158,7 +158,7 @@ export default defineEventHandler(async (event) => {
     if (tokens?.access_token && autoPublishEnabled) {
       // Token expiry check
       if (tokens.expires_at && new Date(tokens.expires_at) < new Date()) {
-        logger.warn({ platform }, 'Token expired, skipping auto-publish')
+        logger.warn('Token expired, skipping auto-publish', { platform })
         errors.push(`${platform}: Token expired`)
         continue
       }
@@ -177,7 +177,7 @@ export default defineEventHandler(async (event) => {
 
         if (publishResp.ok) {
           autoPublished.push(platform)
-          logger.info({ platform, vehicleId, postId: createdPost.id }, 'Auto-published to social')
+          logger.info('Auto-published to social', { platform, vehicleId, postId: createdPost.id })
         } else {
           const err = await publishResp.text()
           errors.push(`${platform}: Auto-publish failed - ${err}`)
@@ -185,7 +185,7 @@ export default defineEventHandler(async (event) => {
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : 'auto-publish error'
         errors.push(`${platform}: ${msg}`)
-        logger.error({ platform, vehicleId, err }, 'Auto-publish error')
+        logger.error('Auto-publish error', { platform, vehicleId, err: String(err) })
       }
     }
   }

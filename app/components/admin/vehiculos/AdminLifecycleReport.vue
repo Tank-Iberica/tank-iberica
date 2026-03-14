@@ -99,7 +99,7 @@ async function load() {
       .limit(20)
 
     if (!tErr && transitions) {
-      recentTransitions.value = transitions as RecentTransition[]
+      recentTransitions.value = transitions as unknown as RecentTransition[]
     }
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : 'Error loading lifecycle report'

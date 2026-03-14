@@ -30,7 +30,8 @@ function deriveBadge(score: number): TrustBadgeTier {
 }
 
 export function useDealerTrustScore(dealerId: Ref<string | null>) {
-  const supabase = useSupabaseClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
 
   const score = ref<number>(0)
   const breakdown = ref<TrustScoreBreakdown | null>(null)

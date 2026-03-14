@@ -18,7 +18,8 @@ export interface CalendarEvent {
 }
 
 export function useAdminEditorialCalendar() {
-  const supabase = useSupabaseClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
   const view = ref<CalendarView>('week')
   const referenceDate = ref(new Date())
   const events = ref<CalendarEvent[]>([])
@@ -113,7 +114,7 @@ export function useAdminEditorialCalendar() {
           .order('scheduled_at'),
       ])
 
-      const articleEvents: CalendarEvent[] = (articlesRes.data ?? []).map((a) => ({
+      const articleEvents: CalendarEvent[] = (articlesRes.data ?? []).map((a: any) => ({
         id: `article-${a.id}`,
         type: 'article' as ContentType,
         title: a.title_es ?? '(sin título)',
@@ -122,7 +123,7 @@ export function useAdminEditorialCalendar() {
         url: `/admin/noticias/${a.id}`,
       }))
 
-      const vehicleEvents: CalendarEvent[] = (vehiclesRes.data ?? []).map((v) => ({
+      const vehicleEvents: CalendarEvent[] = (vehiclesRes.data ?? []).map((v: any) => ({
         id: `vehicle-${v.id}`,
         type: 'vehicle' as ContentType,
         title: v.title_es || `${v.brand ?? ''} ${v.model ?? ''}`.trim() || '(sin título)',
@@ -131,7 +132,7 @@ export function useAdminEditorialCalendar() {
         url: `/admin/vehiculos/${v.id}`,
       }))
 
-      const socialEvents: CalendarEvent[] = (socialRes.data ?? []).map((s) => ({
+      const socialEvents: CalendarEvent[] = (socialRes.data ?? []).map((s: any) => ({
         id: `social-${s.id}`,
         type: 'social' as ContentType,
         title: `${s.platform ?? 'Social'}: ${(s.content as string | null)?.slice(0, 40) ?? ''}…`,
@@ -154,7 +155,7 @@ export function useAdminEditorialCalendar() {
   const eventsByDay = computed(() => {
     const map = new Map<string, CalendarEvent[]>()
     for (const ev of events.value) {
-      const key = ev.scheduledAt.toISOString().split('T')[0]
+      const key = ev.scheduledAt.toISOString().split('T')[0] ?? ''
       if (!map.has(key)) map.set(key, [])
       map.get(key)!.push(ev)
     }
@@ -162,7 +163,7 @@ export function useAdminEditorialCalendar() {
   })
 
   function eventsForDay(day: Date): CalendarEvent[] {
-    const key = day.toISOString().split('T')[0]
+    const key = day.toISOString().split('T')[0] ?? ''
     return eventsByDay.value.get(key) ?? []
   }
 

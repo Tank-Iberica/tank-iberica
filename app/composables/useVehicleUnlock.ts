@@ -5,7 +5,8 @@
 
 export function useVehicleUnlock(vehicleId: Ref<string | undefined>) {
   const user = useSupabaseUser()
-  const supabase = useSupabaseClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = useSupabaseClient() as any
 
   const loading = ref(false)
   const error = ref('')

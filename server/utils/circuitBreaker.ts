@@ -136,7 +136,7 @@ export function getAllCircuits(): Array<CircuitStats & { name: string }> {
  * Error thrown when a circuit is OPEN (service is considered down).
  */
 export class CircuitOpenError extends Error {
-  readonly name = 'CircuitOpenError'
+  override readonly name = 'CircuitOpenError'
   readonly circuit: string
   readonly retryAfterSec: number
 

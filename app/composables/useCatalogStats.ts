@@ -67,12 +67,12 @@ export function calculatePriceDistribution(prices: number[]): PriceDistribution 
   }
 
   const sorted = [...valid].sort((a, b) => a - b)
-  const min = sorted[0]
-  const max = sorted[sorted.length - 1]
+  const min = sorted[0]!
+  const max = sorted[sorted.length - 1]!
   const avg = Math.round(valid.reduce((s, v) => s + v, 0) / valid.length)
   const mid = sorted.length % 2 === 0
-    ? Math.round((sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2)
-    : sorted[Math.floor(sorted.length / 2)]
+    ? Math.round((sorted[sorted.length / 2 - 1]! + sorted[sorted.length / 2]!) / 2)
+    : sorted[Math.floor(sorted.length / 2)]!
 
   const ranges = PRICE_RANGES.map((r) => ({
     ...r,

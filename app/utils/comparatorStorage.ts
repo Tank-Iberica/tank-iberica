@@ -39,8 +39,8 @@ interface LocalStorageData {
 export const comparisons = ref<Comparison[]>([])
 export const activeComparison = ref<Comparison | null>(null)
 export const notes = ref<Map<string, ComparisonNote>>(new Map())
-export let loaded = false
-export let synced = false
+// Module-level mutable flag — singleton for this module
+let loaded = false
 
 // ---------------------------------------------------------------------------
 // Pure helpers

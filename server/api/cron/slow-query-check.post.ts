@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event)
 
   const vertical = process.env.NUXT_PUBLIC_VERTICAL ?? 'tracciona'
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
 
   // 1. Query pg_stat_statements via RPC
   const { data: rows, error: rpcErr } = await supabase.rpc(

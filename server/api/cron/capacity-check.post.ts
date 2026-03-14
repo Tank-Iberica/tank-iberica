@@ -41,7 +41,7 @@ function pct(used: number, limit: number): number {
 }
 
 async function checkStorage(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  supabase: any,
 ): Promise<CapacityMetric | null> {
   const storageLimitGb = Number(process.env.SUPABASE_STORAGE_LIMIT_GB ?? 8)
   const limitBytes = storageLimitGb * 1024 * 1024 * 1024
@@ -64,7 +64,7 @@ async function checkStorage(
 }
 
 async function checkConnections(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  supabase: any,
 ): Promise<CapacityMetric | null> {
   const maxConn = Number(process.env.SUPABASE_MAX_CONNECTIONS ?? 60)
 
@@ -91,7 +91,7 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event)
 
   const vertical = process.env.NUXT_PUBLIC_VERTICAL ?? 'tracciona'
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
 
   const metrics = await Promise.all([
     checkStorage(supabase),

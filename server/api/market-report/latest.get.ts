@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
   setHeader(event, 'Cache-Control', 'public, max-age=3600, stale-while-revalidate=1800')
 
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
 
   try {
     const { data, error } = await supabase

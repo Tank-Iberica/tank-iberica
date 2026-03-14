@@ -77,7 +77,7 @@ export default defineEventHandler(async (event) => {
   const callbackUrl = `${getSiteUrl()}/api/social/oauth/callback`
 
   // Store state in DB
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
   const { error: stateErr } = await supabase.from('social_oauth_states').insert({
     state,
     platform,
@@ -86,7 +86,7 @@ export default defineEventHandler(async (event) => {
   })
 
   if (stateErr) {
-    logger.error({ err: stateErr }, 'Failed to store OAuth state')
+    logger.error('Failed to store OAuth state', { err: stateErr })
     throw createError({ statusCode: 500, message: 'Failed to initiate OAuth flow' })
   }
 
@@ -106,7 +106,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const redirectUrl = `${config.authUrl}?${params.toString()}`
-  logger.info({ platform, adminId: user.id }, 'OAuth connect initiated')
+  logger.info('OAuth connect initiated', { platform, adminId: user.id })
 
   return { redirectUrl }
 })

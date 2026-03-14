@@ -74,13 +74,13 @@ async function processOneReservation(
 
 // -- Handler ----------------------------------------------------------------
 
-export default defineEventHandler(async (event): Promise<ExpiryResult> => {
+export default defineEventHandler(async (event) => {
   // ── 1. Verify cron secret ─────────────────────────────────────────────────
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
 
   // ── 2. Get Supabase service role client ───────────────────────────────────
-  const supabase = serverSupabaseServiceRole(event)
+  const supabase = serverSupabaseServiceRole(event) as any
   const now = new Date()
 
   // ── 3. Fetch expired reservations ─────────────────────────────────────────
@@ -103,12 +103,12 @@ export default defineEventHandler(async (event): Promise<ExpiryResult> => {
 
   // ── 4. Set up Stripe (if configured) ──────────────────────────────────────
   const config = useRuntimeConfig()
-  const stripeKey = config.stripeSecretKey || process.env.STRIPE_SECRET_KEY
+  const stripeKey = (config.stripeSecretKey || process.env.STRIPE_SECRET_KEY) as string | undefined
 
   let stripe: InstanceType<typeof import('stripe').default> | null = null
   if (stripeKey) {
     const { default: Stripe } = await import('stripe')
-    stripe = new Stripe(stripeKey)
+    stripe = new Stripe(stripeKey as string)
   }
 
   let refundedCount = 0
