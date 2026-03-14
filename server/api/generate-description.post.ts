@@ -15,6 +15,7 @@ import { validateBody } from '~~/server/utils/validateBody'
 import { callAI } from '~~/server/services/aiProvider'
 import { sanitizeText } from '~~/server/utils/sanitizeInput'
 import { logger } from '~~/server/utils/logger'
+import { deductUserCredits } from '~~/server/utils/creditService'
 
 const generateDescriptionSchema = z.object({
   brand: z.string().min(1).max(128),
@@ -26,8 +27,11 @@ const generateDescriptionSchema = z.object({
   attributes: z.record(z.unknown()).optional(),
 })
 
+const DESCRIPTION_CREDIT_COST = 1
+
 interface GenerateDescriptionResponse {
   description: string
+  creditsRemaining?: number
   /** True when all AI providers were unavailable — caller should let user fill manually */
   aiUnavailable?: boolean
 }
@@ -39,16 +43,29 @@ export default defineEventHandler(async (event): Promise<GenerateDescriptionResp
     throw safeError(401, 'Authentication required')
   }
 
-  // 2. Read and validate body
+  // 2. Deduct 1 credit for AI generation
+  const creditResult = await deductUserCredits(
+    user.id,
+    DESCRIPTION_CREDIT_COST,
+    'Generación IA descripción vehículo',
+  )
+  if (!creditResult.success) {
+    if (creditResult.reason === 'insufficient') {
+      throw safeError(402, 'Insufficient credits')
+    }
+    throw safeError(500, 'Credit service unavailable')
+  }
+
+  // 3. Read and validate body
   const body = await validateBody(event, generateDescriptionSchema)
 
-  // 2.5 Sanitize string fields before interpolating into AI prompt
+  // 3.5 Sanitize string fields before interpolating into AI prompt
   const brand = sanitizeText(body.brand, { maxLength: 128 })
   const model = sanitizeText(body.model, { maxLength: 128 })
   const category = body.category ? sanitizeText(body.category, { maxLength: 128 }) : undefined
   const subcategory = body.subcategory ? sanitizeText(body.subcategory, { maxLength: 128 }) : undefined
 
-  // 3. Build prompt
+  // 4. Build prompt
   const vehicleInfo = [
     `Marca: ${brand}`,
     `Modelo: ${model}`,
@@ -85,19 +102,19 @@ ${vehicleInfo}${attributesText}
 
 Responde SOLO con la descripcion, sin titulos ni encabezados.`
 
-  // 4. Call AI with failover (Anthropic primary, OpenAI fallback)
+  // 5. Call AI with failover (Anthropic primary, OpenAI fallback)
   try {
     const response = await callAI(
       { messages: [{ role: 'user', content: prompt }], maxTokens: 500 },
       'realtime',
       'fast',
     )
-    return { description: response.text.trim() }
+    return { description: response.text.trim(), creditsRemaining: creditResult.newBalance }
   } catch (err: unknown) {
     // Graceful fallback: if all AI providers are down (circuit open, timeout, no keys),
     // return an empty description so the user can still publish the vehicle manually.
     const message = err instanceof Error ? err.message : String(err)
     logger.warn(`[generate-description] AI unavailable (${message}) — returning empty for manual input`)
-    return { description: '', aiUnavailable: true }
+    return { description: '', aiUnavailable: true, creditsRemaining: creditResult.newBalance }
   }
 })

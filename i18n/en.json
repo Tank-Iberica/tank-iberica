@@ -3531,7 +3531,18 @@
       "noVehicles": "No vehicles to display",
       "upgradeTitle": "Unlock advanced analytics",
       "upgradeDesc": "Upgrade your plan to see per-vehicle stats, leads and more.",
-      "upgradeCta": "Upgrade plan"
+      "upgradeCta": "Upgrade plan",
+      "marketPosition": "Market Position",
+      "priceVsMarket": "Price vs. market",
+      "yourAvgPrice": "Your avg. price",
+      "marketAvgPrice": "Market avg. price",
+      "conversionRate": "Conversion rate",
+      "competitors": "Competing vehicles",
+      "aboveMarket": "above market",
+      "belowMarket": "below market",
+      "atMarket": "In line with market",
+      "upgradeMarketTitle": "Market analysis available on Premium",
+      "upgradeMarketDesc": "Compare your prices with the market, measure your conversion rate and discover how to position against competitors."
     },
     "subscription": {
       "title": "My subscription",

@@ -38,6 +38,7 @@ interface VehicleInfo {
 
 interface FavoriteRow {
   user_id: string
+  price_threshold: number | null
   users: {
     id: string
     email: string
@@ -82,7 +83,7 @@ async function buildPriceDropNotifications(
 
     const { data: favorites, error: favsError } = await supabase
       .from('favorites')
-      .select('user_id, users(id, email, name, lang)')
+      .select('user_id, price_threshold, users(id, email, name, lang)')
       .eq('vehicle_id', drop.vehicle_id)
 
     if (favsError) {
@@ -101,8 +102,16 @@ async function buildPriceDropNotifications(
 
     const dropNotifications = typedFavorites
       .filter(
-        (fav): fav is FavoriteRow & { users: NonNullable<FavoriteRow['users']> } =>
-          !!fav.users?.email,
+        (fav): fav is FavoriteRow & { users: NonNullable<FavoriteRow['users']> } => {
+          if (!fav.users?.email) return false
+          // Respect price_threshold: only notify if no threshold OR price dropped to/below threshold
+          // price_threshold is stored in euros (same unit as vehicles.price)
+          if (fav.price_threshold !== null) {
+            const thresholdCents = fav.price_threshold * 100
+            if (drop.price_cents > thresholdCents) return false
+          }
+          return true
+        },
       )
       .map((fav) => ({
         userId: fav.users.id,

@@ -3533,7 +3533,18 @@
       "noVehicles": "No hay vehículos para mostrar",
       "upgradeTitle": "Desbloquea estadísticas avanzadas",
       "upgradeDesc": "Mejora tu plan para ver estadísticas por vehículo, consultas y más.",
-      "upgradeCta": "Mejorar plan"
+      "upgradeCta": "Mejorar plan",
+      "marketPosition": "Posición en el Mercado",
+      "priceVsMarket": "Precio vs. mercado",
+      "yourAvgPrice": "Tu precio medio",
+      "marketAvgPrice": "Media del mercado",
+      "conversionRate": "Tasa de conversión",
+      "competitors": "Vehículos competidores",
+      "aboveMarket": "sobre mercado",
+      "belowMarket": "bajo mercado",
+      "atMarket": "En línea con el mercado",
+      "upgradeMarketTitle": "Análisis de mercado disponible en Premium",
+      "upgradeMarketDesc": "Compara tus precios con el mercado, mide tu tasa de conversión y descubre cómo posicionarte frente a la competencia."
     },
     "subscription": {
       "title": "Mi suscripción",

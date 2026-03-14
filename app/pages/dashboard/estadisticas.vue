@@ -1,7 +1,10 @@
 <script setup lang="ts">
 /**
  * Analytics Page
- * Plan-gated stats display. Free: totals only. Basic+: per-vehicle breakdowns.
+ * Plan-gated stats display.
+ * - Free/basic:  totals only
+ * - Standard:    per-vehicle breakdowns + conversion rate
+ * - Full:        + market comparison (price positioning, demand, # competitors)
  */
 definePageMeta({
   layout: 'default',
@@ -32,9 +35,19 @@ interface VehicleStat {
   year: number | null
   views: number
   leads: number
+  price: number | null
+}
+
+interface MarketComparison {
+  dealerAvgPrice: number | null
+  marketAvgPrice: number | null
+  pricePositionPercent: number | null // positive = dealer is above market
+  competitorCount: number
+  conversionRate: number | null // leads/views * 100
 }
 
 const vehicleStats = ref<VehicleStat[]>([])
+const marketComparison = ref<MarketComparison | null>(null)
 
 async function loadStats(): Promise<void> {
   loading.value = true
@@ -69,28 +82,28 @@ async function loadStats(): Promise<void> {
     if (statsLevel.value !== 'basic') {
       const { data: vehiclesData } = await supabase
         .from('vehicles')
-        .select('id, brand, model, year')
+        .select('id, brand, model, year, price')
         .eq('dealer_id', dealer.id)
         .eq('status', 'published')
         .order('created_at', { ascending: false })
         .limit(20)
 
-      type VehicleStat = {
+      type VehicleRow = {
         id: string
         brand: string
         model: string
         year: number | null
-        views: number
+        price: number | null
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const rawVehicles = (vehiclesData || []) as any as VehicleStat[]
+      const rawVehicles = (vehiclesData || []) as VehicleRow[]
       vehicleStats.value = rawVehicles.map((v) => ({
         id: v.id,
         brand: v.brand,
         model: v.model,
         year: v.year,
-        views: v.views || 0,
+        views: 0,
         leads: 0,
+        price: v.price,
       }))
 
       // Fetch lead counts per vehicle
@@ -104,12 +117,96 @@ async function loadStats(): Promise<void> {
         }
       }
     }
+
+    // Market comparison - only for full plan
+    if (statsLevel.value === 'full' && vehicleStats.value.length > 0) {
+      await loadMarketComparison(dealer.id)
+    }
   } catch (err: unknown) {
     error.value = err instanceof Error ? err.message : 'Error loading stats'
   } finally {
     loading.value = false
   }
 }
+
+async function loadMarketComparison(dealerId: string): Promise<void> {
+  try {
+    // Fetch dealer's category IDs from their published vehicles
+    const { data: dealerVehicles } = await supabase
+      .from('vehicles')
+      .select('price, category_id')
+      .eq('dealer_id', dealerId)
+      .eq('status', 'published')
+      .limit(50)
+
+    if (!dealerVehicles || dealerVehicles.length === 0) return
+
+    type VehiclePrice = { price: number | null; category_id: string | null }
+    const typed = dealerVehicles as VehiclePrice[]
+    const dealerPrices = typed.map((v) => v.price).filter((p): p is number => p != null)
+    const categoryIds = [...new Set(typed.map((v) => v.category_id).filter(Boolean))] as string[]
+
+    const dealerAvgPrice =
+      dealerPrices.length > 0
+        ? Math.round(dealerPrices.reduce((a, b) => a + b, 0) / dealerPrices.length)
+        : null
+
+    // Fetch market-wide avg for same categories (excluding this dealer)
+    const { data: marketVehicles } = await supabase
+      .from('vehicles')
+      .select('price')
+      .neq('dealer_id', dealerId)
+      .eq('status', 'published')
+      .in('category_id', categoryIds.length > 0 ? categoryIds : ['__no_match__'])
+      .limit(200)
+
+    type MarketVehicle = { price: number | null }
+    const marketPrices = ((marketVehicles || []) as MarketVehicle[])
+      .map((v) => v.price)
+      .filter((p): p is number => p != null)
+
+    const marketAvgPrice =
+      marketPrices.length > 0
+        ? Math.round(marketPrices.reduce((a, b) => a + b, 0) / marketPrices.length)
+        : null
+
+    const pricePositionPercent =
+      dealerAvgPrice != null && marketAvgPrice != null && marketAvgPrice > 0
+        ? Math.round(((dealerAvgPrice - marketAvgPrice) / marketAvgPrice) * 100)
+        : null
+
+    const conversionRate =
+      totals.value.totalViews > 0
+        ? Math.round((totals.value.totalLeads / totals.value.totalViews) * 1000) / 10
+        : null
+
+    marketComparison.value = {
+      dealerAvgPrice,
+      marketAvgPrice,
+      pricePositionPercent,
+      competitorCount: marketVehicles?.length ?? 0,
+      conversionRate,
+    }
+  } catch {
+    // Market comparison is non-critical — fail silently
+  }
+}
+
+const pricePositionLabel = computed(() => {
+  const pct = marketComparison.value?.pricePositionPercent
+  if (pct == null) return '—'
+  if (pct > 5) return `+${pct}% ${t('dashboard.stats.aboveMarket')}`
+  if (pct < -5) return `${pct}% ${t('dashboard.stats.belowMarket')}`
+  return t('dashboard.stats.atMarket')
+})
+
+const pricePositionClass = computed(() => {
+  const pct = marketComparison.value?.pricePositionPercent
+  if (pct == null) return 'neutral'
+  if (pct > 5) return 'above'
+  if (pct < -5) return 'below'
+  return 'neutral'
+})
 
 onMounted(loadStats)
 </script>
@@ -170,10 +267,77 @@ onMounted(loadStats)
         </div>
       </section>
 
-      <!-- Upgrade CTA for free plan -->
+      <!-- Market Comparison (full plan only) -->
+      <section v-if="statsLevel === 'full' && marketComparison" class="card market-card">
+        <h2>{{ t('dashboard.stats.marketPosition') }}</h2>
+        <div class="market-grid">
+          <!-- Price position vs market -->
+          <div class="market-metric">
+            <span class="market-metric__value" :class="`pos-${pricePositionClass}`">
+              {{ pricePositionLabel }}
+            </span>
+            <span class="market-metric__label">{{ t('dashboard.stats.priceVsMarket') }}</span>
+          </div>
+
+          <!-- Dealer avg price -->
+          <div class="market-metric">
+            <span class="market-metric__value">
+              {{
+                marketComparison.dealerAvgPrice != null
+                  ? marketComparison.dealerAvgPrice.toLocaleString('es-ES') + ' €'
+                  : '—'
+              }}
+            </span>
+            <span class="market-metric__label">{{ t('dashboard.stats.yourAvgPrice') }}</span>
+          </div>
+
+          <!-- Market avg price -->
+          <div class="market-metric">
+            <span class="market-metric__value muted">
+              {{
+                marketComparison.marketAvgPrice != null
+                  ? marketComparison.marketAvgPrice.toLocaleString('es-ES') + ' €'
+                  : '—'
+              }}
+            </span>
+            <span class="market-metric__label">{{ t('dashboard.stats.marketAvgPrice') }}</span>
+          </div>
+
+          <!-- Conversion rate -->
+          <div class="market-metric">
+            <span class="market-metric__value">
+              {{
+                marketComparison.conversionRate != null
+                  ? marketComparison.conversionRate + '%'
+                  : '—'
+              }}
+            </span>
+            <span class="market-metric__label">{{ t('dashboard.stats.conversionRate') }}</span>
+          </div>
+
+          <!-- Competitor count -->
+          <div class="market-metric">
+            <span class="market-metric__value muted">
+              {{ marketComparison.competitorCount }}
+            </span>
+            <span class="market-metric__label">{{ t('dashboard.stats.competitors') }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Upgrade CTA — show for basic to get standard stats -->
       <div v-if="statsLevel === 'basic'" class="upgrade-card">
         <h3>{{ t('dashboard.stats.upgradeTitle') }}</h3>
         <p>{{ t('dashboard.stats.upgradeDesc') }}</p>
+        <NuxtLink to="/dashboard/suscripcion" class="btn-primary">
+          {{ t('dashboard.stats.upgradeCta') }}
+        </NuxtLink>
+      </div>
+
+      <!-- Upgrade CTA — show for standard to get market comparison -->
+      <div v-else-if="statsLevel === 'standard'" class="upgrade-card upgrade-card--market">
+        <h3>{{ t('dashboard.stats.upgradeMarketTitle') }}</h3>
+        <p>{{ t('dashboard.stats.upgradeMarketDesc') }}</p>
         <NuxtLink to="/dashboard/suscripcion" class="btn-primary">
           {{ t('dashboard.stats.upgradeCta') }}
         </NuxtLink>
@@ -319,12 +483,62 @@ onMounted(loadStats)
   font-variant-numeric: tabular-nums;
 }
 
+/* Market comparison section */
+.market-card {
+  border-top: 3px solid var(--color-primary);
+}
+
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-4);
+}
+
+.market-metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.market-metric__value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.market-metric__value.muted {
+  color: var(--text-secondary);
+}
+
+.market-metric__value.pos-above {
+  color: var(--color-warning, #b45309);
+}
+
+.market-metric__value.pos-below {
+  color: var(--color-success, #15803d);
+}
+
+.market-metric__value.pos-neutral {
+  color: var(--color-primary);
+}
+
+.market-metric__label {
+  font-size: 0.8rem;
+  color: var(--text-auxiliary);
+}
+
 .upgrade-card {
   background: linear-gradient(135deg, var(--color-info-bg), var(--color-info-bg));
   border: 1px solid var(--color-info-border);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-6);
   text-align: center;
+}
+
+.upgrade-card--market {
+  background: linear-gradient(135deg, var(--color-primary-bg, #f0f4f5), var(--color-info-bg));
+  border-color: var(--color-primary);
 }
 
 .upgrade-card h3 {
@@ -358,7 +572,12 @@ onMounted(loadStats)
   .stats-page {
     padding: var(--spacing-6);
   }
+
   .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .market-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
