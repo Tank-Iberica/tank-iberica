@@ -1,0 +1,9 @@
+# PDF build artifacts
+.pdf-build/
+
+# Build outputs
+.output/
+.nuxt/
+dist/
+node_modules/
+coverage/

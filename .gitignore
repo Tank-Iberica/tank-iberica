@@ -59,6 +59,9 @@ sonar_token.json
 # Windows artifacts
 nul
 
+# PDF build artifacts (Chrome profile, render cache)
+.pdf-build/rendered/chrome-profile/
+
 # Local / private
 Contratos/
 *.vue.new
