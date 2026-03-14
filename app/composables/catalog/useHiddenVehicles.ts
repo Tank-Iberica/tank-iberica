@@ -83,35 +83,42 @@ export function useHiddenVehicles() {
       const now = new Date().toISOString()
 
       // Count hidden vehicles
-      let countQuery = supabase
+      let countQuery: FilterChain = supabase
         .from('vehicles')
         .select('id', { count: 'exact', head: true })
         .eq('vertical', getVerticalSlug())
         .eq('status', 'published')
-        .gt('visible_from', now)
+        .gt('visible_from', now) as unknown as FilterChain
 
       countQuery = applyNonLocationFilters(countQuery, filters)
       countQuery = applyLocationFilters(countQuery, filters)
 
-      const { count, error: countErr } = await countQuery
+      const { count, error: countErr } = await (countQuery as unknown as Promise<{
+        count: number | null
+        error: unknown
+      }>)
       if (countErr) throw countErr
       hiddenCount.value = count ?? 0
 
       // Get earliest visible_from to compute hours
       if (hiddenCount.value > 0) {
-        let earliestQuery = supabase
+        let earliestQuery: FilterChain = supabase
           .from('vehicles')
           .select('visible_from')
           .eq('vertical', getVerticalSlug())
           .eq('status', 'published')
           .gt('visible_from', now)
           .order('visible_from', { ascending: true })
-          .limit(1)
+          .limit(1) as unknown as FilterChain
 
         earliestQuery = applyNonLocationFilters(earliestQuery, filters)
         earliestQuery = applyLocationFilters(earliestQuery, filters)
 
-        const { data } = await earliestQuery.maybeSingle()
+        const { data } = await (
+          earliestQuery as unknown as {
+            maybeSingle: () => Promise<{ data: { visible_from: string } | null }>
+          }
+        ).maybeSingle()
         if (data?.visible_from) {
           const diff = new Date(data.visible_from).getTime() - Date.now()
           hoursUntilNext.value = Math.max(1, Math.round(diff / (1000 * 60 * 60)))

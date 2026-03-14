@@ -128,20 +128,22 @@ export function useAdminBrokerageDeal(dealId: Ref<string | null>) {
     error.value = null
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sb = supabase as any
       const [dealResult, messagesResult, auditResult] = await Promise.all([
-        supabase
-          .from('brokerage_deals')
-          .select(DEAL_SELECT)
-          .eq('id', dealId.value)
-          .single(),
-        supabase
+        sb.from('brokerage_deals').select(DEAL_SELECT).eq('id', dealId.value).single(),
+        sb
           .from('brokerage_messages')
-          .select('id, deal_id, direction, channel, sender_entity, recipient_entity, content, metadata, created_at')
+          .select(
+            'id, deal_id, direction, channel, sender_entity, recipient_entity, content, metadata, created_at',
+          )
           .eq('deal_id', dealId.value)
           .order('created_at', { ascending: true }),
-        supabase
+        sb
           .from('brokerage_audit_log')
-          .select('id, deal_id, actor, action, legal_basis, model_version, human_override, override_reason, details, created_at')
+          .select(
+            'id, deal_id, actor, action, legal_basis, model_version, human_override, override_reason, details, created_at',
+          )
           .eq('deal_id', dealId.value)
           .order('created_at', { ascending: false }),
       ])
@@ -189,7 +191,8 @@ export function useAdminBrokerageDeal(dealId: Ref<string | null>) {
       if (newStatus === 'deal_closed') updatePayload.closed_at = now
       if (reason) updatePayload.escalation_reason = reason
 
-      const { error: updateErr } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: updateErr } = await (supabase as any)
         .from('brokerage_deals')
         .update(updatePayload)
         .eq('id', deal.value.id)
@@ -227,16 +230,14 @@ export function useAdminBrokerageDeal(dealId: Ref<string | null>) {
     error.value = null
 
     try {
-      const { error: insertErr } = await supabase
-        .from('brokerage_messages')
-        .insert({
-          deal_id: deal.value.id,
-          direction: payload.direction,
-          channel: payload.channel,
-          sender_entity: payload.sender_entity,
-          recipient_entity: payload.recipient_entity,
-          content: payload.content,
-        })
+      const { error: insertErr } = await supabase.from('brokerage_messages').insert({
+        deal_id: deal.value.id,
+        direction: payload.direction,
+        channel: payload.channel,
+        sender_entity: payload.sender_entity,
+        recipient_entity: payload.recipient_entity,
+        content: payload.content,
+      })
 
       if (insertErr) throw insertErr
 
@@ -255,7 +256,9 @@ export function useAdminBrokerageDeal(dealId: Ref<string | null>) {
       // Refresh messages
       const { data } = await supabase
         .from('brokerage_messages')
-        .select('id, deal_id, direction, channel, sender_entity, recipient_entity, content, metadata, created_at')
+        .select(
+          'id, deal_id, direction, channel, sender_entity, recipient_entity, content, metadata, created_at',
+        )
         .eq('deal_id', deal.value.id)
         .order('created_at', { ascending: true })
 
@@ -276,7 +279,8 @@ export function useAdminBrokerageDeal(dealId: Ref<string | null>) {
     error.value = null
 
     try {
-      const { error: updateErr } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: updateErr } = await (supabase as any)
         .from('brokerage_deals')
         .update({ ...fields, updated_at: new Date().toISOString() })
         .eq('id', deal.value.id)

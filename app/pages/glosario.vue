@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { useGlossary } from '~/composables/useGlossary'
-import { useLocalized } from '~/composables/useLocalized'
+import { localizedField } from '~/composables/useLocalized'
 
 definePageMeta({ layout: 'default' })
 
-const { t } = useI18n()
-const { localizedField } = useLocalized()
+const { t, locale } = useI18n()
 const {
   loading,
   error,
@@ -86,13 +85,13 @@ await fetchTerms()
         <dl class="glossary-terms">
           <div v-for="term in group" :key="term.id" class="glossary-term-item">
             <dt class="glossary-term-name">
-              {{ localizedField(term.term) }}
+              {{ localizedField(term.term, locale) }}
               <span v-if="term.category" class="glossary-term-category">
                 {{ term.category }}
               </span>
             </dt>
             <dd class="glossary-term-definition">
-              {{ localizedField(term.definition) }}
+              {{ localizedField(term.definition, locale) }}
             </dd>
             <dd v-if="term.related_terms.length > 0" class="glossary-related">
               <span class="glossary-related-label">{{ t('glossary.relatedTerms') }}:</span>

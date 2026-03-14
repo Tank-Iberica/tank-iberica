@@ -165,7 +165,7 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
         .select('id, vehicle_type, status, created_at')
         .eq('user_id', sessionUser.value.id)
         .order('created_at', { ascending: false })
-      userDemands.value = data || []
+      userDemands.value = (data || []) as unknown as UserDemand[]
     } catch {
       /* ignore */
     } finally {
@@ -182,7 +182,7 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
         .select('id, brand, model, status, created_at')
         .eq('user_id', sessionUser.value.id)
         .order('created_at', { ascending: false })
-      userAds.value = data || []
+      userAds.value = (data || []) as unknown as UserAd[]
     } catch {
       /* ignore */
     } finally {
@@ -248,8 +248,9 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
   async function saveSubscriptions() {
     if (!sessionUser.value) return
     try {
-      await supabase.from('subscriptions').upsert({
-        email: sessionUser.value.email,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from('subscriptions').upsert({
+        email: sessionUser.value.email || '',
         pref_web: subscriptions.value.web,
         pref_press: subscriptions.value.prensa,
         pref_newsletter: subscriptions.value.boletines,
@@ -361,7 +362,7 @@ export function useUserPanel(isOpen: () => boolean, onClose: () => void) {
       const { data: subData } = await supabase
         .from('subscriptions')
         .select('pref_web, pref_press, pref_newsletter, pref_featured, pref_events, pref_csr')
-        .eq('email', sessionUser.value.email)
+        .eq('email', sessionUser.value.email || '')
         .single()
 
       if (subData) {

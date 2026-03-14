@@ -61,7 +61,7 @@ export function useOperationTimeline() {
 
   const currentStage = computed<OperationStage | null>(() => {
     if (entries.value.length === 0) return null
-    return entries.value[entries.value.length - 1].stage
+    return entries.value.at(-1)?.stage ?? null
   })
 
   const progressPercent = computed<number>(() => {
@@ -105,7 +105,8 @@ export function useOperationTimeline() {
   ): Promise<void> {
     if (!user.value) return
 
-    const { error } = await supabase.from('operation_timeline').insert({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any).from('operation_timeline').insert({
       vehicle_id: vehicleId,
       dealer_id: dealerId,
       buyer_id: opts?.buyerId || null,

@@ -211,7 +211,7 @@ export function useAdminSocialCalendar() {
       // Optimistic update
       const idx = posts.value.findIndex((p) => p.id === postId)
       if (idx !== -1) {
-        posts.value[idx] = { ...posts.value[idx], scheduled_at: scheduledAt }
+        posts.value[idx] = { ...posts.value[idx]!, scheduled_at: scheduledAt }
       }
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to reschedule post'

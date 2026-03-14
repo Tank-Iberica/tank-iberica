@@ -149,7 +149,10 @@ export default defineEventHandler(async (event) => {
         .order('created_at', { ascending: false })
         .limit(20)
 
-      const { data: vehicles, error: vehiclesError } = await applyAlertFilters(baseQuery, filters)
+      const { data: vehicles, error: vehiclesError } = await (applyAlertFilters(
+        baseQuery as Parameters<typeof applyAlertFilters>[0],
+        filters,
+      ) as unknown as Promise<{ data: unknown[] | null; error: { message: string } | null }>)
 
       if (vehiclesError) {
         logger.error(

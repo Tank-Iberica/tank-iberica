@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useAdminSocialCalendar } from '~/composables/admin/useAdminSocialCalendar'
-import type { CalendarPost as _CalendarPost } from '~/server/api/social/calendar.get'
 
 const { t } = useI18n()
 

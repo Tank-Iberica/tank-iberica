@@ -38,7 +38,7 @@ export function useNegotiation() {
 
   const latestOffer = computed<NegotiationOffer | null>(() => {
     if (offers.value.length === 0) return null
-    return offers.value[offers.value.length - 1]
+    return offers.value.at(-1) ?? null
   })
 
   const hasPendingOffer = computed<boolean>(() => {

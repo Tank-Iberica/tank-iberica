@@ -108,7 +108,9 @@ export function useSellerProfile(dealerSlug?: string) {
     try {
       const { data, error } = await supabase
         .from('dealers')
-        .select('id, user_id, slug, company_name, legal_name, logo_url, cover_image_url, location_data, phone, email, website, bio, verified, featured, badge, total_listings, active_listings, total_reviews, avg_response_minutes, response_rate_pct, rating, social_links, created_at')
+        .select(
+          'id, user_id, slug, company_name, legal_name, logo_url, cover_image_url, location_data, phone, email, website, bio, verified, featured, badge, total_listings, active_listings, total_reviews, avg_response_minutes, response_rate_pct, rating, social_links, created_at',
+        )
         .eq('slug', targetSlug)
         .single()
 
@@ -129,7 +131,7 @@ export function useSellerProfile(dealerSlug?: string) {
         }
       }
     } catch (err) {
-      console.error('[useSellerProfile] fetchProfile failed:', err)
+      if (import.meta.dev) console.error('[useSellerProfile] fetchProfile failed:', err)
       profile.value = null
     } finally {
       loading.value = false
@@ -156,7 +158,7 @@ export function useSellerProfile(dealerSlug?: string) {
       if (error) throw error
       reviews.value = (data ?? []) as unknown as SellerReview[]
     } catch (err) {
-      console.error('[useSellerProfile] fetchReviews failed:', err)
+      if (import.meta.dev) console.error('[useSellerProfile] fetchReviews failed:', err)
       reviews.value = []
     } finally {
       reviewsLoading.value = false
@@ -178,7 +180,7 @@ export function useSellerProfile(dealerSlug?: string) {
       if (error) throw error
       activeVehicles.value = (data ?? []) as unknown as ActiveVehicle[]
     } catch (err) {
-      console.error('[useSellerProfile] fetchActiveVehicles failed:', err)
+      if (import.meta.dev) console.error('[useSellerProfile] fetchActiveVehicles failed:', err)
       activeVehicles.value = []
     }
   }
@@ -225,7 +227,7 @@ export function useSellerProfile(dealerSlug?: string) {
       await fetchReviews()
       return true
     } catch (err) {
-      console.error('[useSellerProfile] submitReview failed:', err)
+      if (import.meta.dev) console.error('[useSellerProfile] submitReview failed:', err)
       return false
     }
   }

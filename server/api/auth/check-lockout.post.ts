@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Check if window expired
-    const firstAttempt = new Date(data.first_attempt_at).getTime()
+    const firstAttempt = new Date(data.first_attempt_at ?? '').getTime()
     if (Date.now() - firstAttempt > WINDOW_MS) {
       await client.from('login_attempts').delete().eq('email', email)
       return { locked: false, attemptsRemaining: MAX_ATTEMPTS }
@@ -96,7 +96,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Window expired — reset
-  const firstAttempt = new Date(existing.first_attempt_at).getTime()
+  const firstAttempt = new Date(existing.first_attempt_at ?? '').getTime()
   if (Date.now() - firstAttempt > WINDOW_MS) {
     await client.from('login_attempts').upsert({
       email,

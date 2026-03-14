@@ -74,11 +74,19 @@ vi.mock('../../../server/services/billing', () => ({
 
 vi.mock('stripe', () => ({
   default: class MockStripe {
-    checkout = { sessions: { create: vi.fn().mockResolvedValue({ id: 'cs_test', url: 'https://stripe.com/pay' }) } }
-    billingPortal = { sessions: { create: vi.fn().mockResolvedValue({ url: 'https://stripe.com/portal' }) } }
+    checkout = {
+      sessions: {
+        create: vi.fn().mockResolvedValue({ id: 'cs_test', url: 'https://stripe.com/pay' }),
+      },
+    }
+    billingPortal = {
+      sessions: { create: vi.fn().mockResolvedValue({ url: 'https://stripe.com/portal' }) },
+    }
     webhooks = { constructEvent: vi.fn() }
     accounts = { create: vi.fn().mockResolvedValue({ id: 'acct_new_123' }) }
-    accountLinks = { create: vi.fn().mockResolvedValue({ url: 'https://connect.stripe.com/onboard' }) }
+    accountLinks = {
+      create: vi.fn().mockResolvedValue({ url: 'https://connect.stripe.com/onboard' }),
+    }
   },
 }))
 
@@ -105,10 +113,35 @@ function makeSubabaseChain(data: any = null) {
 import checkoutHandler from '../../../server/api/stripe/checkout.post'
 
 const validCheckoutBody = {
-  plan: 'basic',
+  plan: 'classic',
   interval: 'month',
   successUrl: 'https://tracciona.com/success',
   cancelUrl: 'https://tracciona.com/cancel',
+}
+
+// Mock tier returned by subscription_tiers fetch
+const mockClassicTier = {
+  id: 'tier-classic',
+  slug: 'classic',
+  name_en: 'Classic',
+  price_cents_monthly: 1900,
+  price_cents_yearly: 14900,
+  stripe_price_id_monthly: null,
+  stripe_price_id_yearly: null,
+}
+
+// Helper: mocks 2 sequential fetch calls (tiers, then subscriptions)
+function mockFetchForCheckout(tierResult: unknown[], subResult: unknown[]) {
+  let call = 0
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockImplementation(() => {
+      call++
+      return Promise.resolve({
+        json: vi.fn().mockResolvedValue(call === 1 ? tierResult : subResult),
+      })
+    }),
+  )
 }
 
 describe('POST /api/stripe/checkout', () => {
@@ -126,7 +159,7 @@ describe('POST /api/stripe/checkout', () => {
   })
 
   it('throws 400 when missing required fields', async () => {
-    mockReadBody.mockResolvedValue({ plan: 'basic' })
+    mockReadBody.mockResolvedValue({ plan: 'classic' })
     await expect(checkoutHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
@@ -167,7 +200,9 @@ describe('POST /api/stripe/checkout', () => {
     delete process.env.SUPABASE_SERVICE_ROLE_KEY
     await expect(checkoutHandler({} as any)).rejects.toMatchObject({ statusCode: 500 })
     vi.stubGlobal('useRuntimeConfig', () => ({
-      stripeSecretKey: undefined, supabaseServiceRoleKey: undefined, public: {},
+      stripeSecretKey: undefined,
+      supabaseServiceRoleKey: undefined,
+      public: {},
     }))
   })
 
@@ -179,15 +214,15 @@ describe('POST /api/stripe/checkout', () => {
       supabaseServiceRoleKey: 'test-key',
       public: {},
     }))
-    // No existing subscription (first time = trial eligible)
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue([]),
-    }))
+    // 1st fetch: tier lookup → classic tier; 2nd fetch: subscriptions → none (first sub)
+    mockFetchForCheckout([mockClassicTier], [])
     const result = await checkoutHandler({} as any)
     expect(result.url).toBe('https://stripe.com/pay')
     expect(result.sessionId).toBe('cs_test')
     vi.stubGlobal('useRuntimeConfig', () => ({
-      stripeSecretKey: undefined, supabaseServiceRoleKey: undefined, public: {},
+      stripeSecretKey: undefined,
+      supabaseServiceRoleKey: undefined,
+      public: {},
     }))
     delete process.env.SUPABASE_URL
     delete process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -201,15 +236,64 @@ describe('POST /api/stripe/checkout', () => {
       supabaseServiceRoleKey: 'test-key',
       public: {},
     }))
-    // Existing subscription with stripe_customer_id
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue([{ stripe_customer_id: 'cus_existing', has_had_trial: true }]),
-    }))
+    // 1st fetch: tier lookup; 2nd fetch: subscriptions with existing customer
+    mockFetchForCheckout(
+      [mockClassicTier],
+      [{ stripe_customer_id: 'cus_existing', has_had_trial: true }],
+    )
     const result = await checkoutHandler({} as any)
     expect(result.url).toBe('https://stripe.com/pay')
     expect(result.sessionId).toBe('cs_test')
     vi.stubGlobal('useRuntimeConfig', () => ({
-      stripeSecretKey: undefined, supabaseServiceRoleKey: undefined, public: {},
+      stripeSecretKey: undefined,
+      supabaseServiceRoleKey: undefined,
+      public: {},
+    }))
+    delete process.env.SUPABASE_URL
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY
+  })
+
+  it('throws 400 when tier slug not found in DB', async () => {
+    process.env.SUPABASE_URL = 'https://test.supabase.co'
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key'
+    vi.stubGlobal('useRuntimeConfig', () => ({
+      stripeSecretKey: 'sk_test_123',
+      supabaseServiceRoleKey: 'test-key',
+      public: {},
+    }))
+    // Tier not found in DB
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ json: vi.fn().mockResolvedValue([]) }))
+    await expect(checkoutHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
+    vi.stubGlobal('useRuntimeConfig', () => ({
+      stripeSecretKey: undefined,
+      supabaseServiceRoleKey: undefined,
+      public: {},
+    }))
+    delete process.env.SUPABASE_URL
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY
+  })
+
+  it('uses stripe_price_id when available (no inline price_data)', async () => {
+    process.env.SUPABASE_URL = 'https://test.supabase.co'
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key'
+    vi.stubGlobal('useRuntimeConfig', () => ({
+      stripeSecretKey: 'sk_test_123',
+      supabaseServiceRoleKey: 'test-key',
+      public: {},
+    }))
+    const tierWithStripeId = {
+      ...mockClassicTier,
+      stripe_price_id_monthly: 'price_test_classic_monthly',
+    }
+    mockFetchForCheckout([tierWithStripeId], [])
+    // Should succeed (returns URL) — Stripe is called with price ID not price_data
+    const result = await checkoutHandler({} as any)
+    expect(result.url).toBe('https://stripe.com/pay')
+    expect(result.sessionId).toBe('cs_test')
+    vi.stubGlobal('useRuntimeConfig', () => ({
+      stripeSecretKey: undefined,
+      supabaseServiceRoleKey: undefined,
+      public: {},
     }))
     delete process.env.SUPABASE_URL
     delete process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -321,11 +405,16 @@ describe('POST /api/stripe/checkout-credits', () => {
   it('returns mock URL when pack found but stripeKey not configured', async () => {
     process.env.SUPABASE_URL = 'https://test.supabase.co'
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key'
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue([
-        { id: 'pack-1', name_es: 'Starter', name_en: 'Starter', credits: 10, price_cents: 999 },
-      ]),
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi
+          .fn()
+          .mockResolvedValue([
+            { id: 'pack-1', name_es: 'Starter', name_en: 'Starter', credits: 10, price_cents: 999 },
+          ]),
+      }),
+    )
     const result = await checkoutCreditsHandler({} as any)
     expect(result.message).toBe('Service not configured')
     expect(result.url).toContain('mock')
@@ -347,28 +436,42 @@ describe('POST /api/stripe/checkout-credits', () => {
       public: {},
     }))
     let fetchCall = 0
-    vi.stubGlobal('fetch', vi.fn().mockImplementation(() => {
-      fetchCall++
-      if (fetchCall === 1) {
-        // credit_packs lookup
-        return Promise.resolve({
-          json: () => Promise.resolve([{ id: 'pack-1', name_es: 'Starter', name_en: 'Starter', credits: 10, price_cents: 999 }]),
-        })
-      }
-      if (fetchCall === 2) {
-        // subscriptions lookup with existing customer
-        return Promise.resolve({
-          json: () => Promise.resolve([{ stripe_customer_id: 'cus_existing' }]),
-        })
-      }
-      // payments insert
-      return Promise.resolve({ ok: true })
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => {
+        fetchCall++
+        if (fetchCall === 1) {
+          // credit_packs lookup
+          return Promise.resolve({
+            json: () =>
+              Promise.resolve([
+                {
+                  id: 'pack-1',
+                  name_es: 'Starter',
+                  name_en: 'Starter',
+                  credits: 10,
+                  price_cents: 999,
+                },
+              ]),
+          })
+        }
+        if (fetchCall === 2) {
+          // subscriptions lookup with existing customer
+          return Promise.resolve({
+            json: () => Promise.resolve([{ stripe_customer_id: 'cus_existing' }]),
+          })
+        }
+        // payments insert
+        return Promise.resolve({ ok: true })
+      }),
+    )
     const result = await checkoutCreditsHandler({} as any)
     expect(result.url).toBe('https://stripe.com/pay')
     expect(result.sessionId).toBe('cs_test')
     vi.stubGlobal('useRuntimeConfig', () => ({
-      stripeSecretKey: undefined, supabaseServiceRoleKey: undefined, public: {},
+      stripeSecretKey: undefined,
+      supabaseServiceRoleKey: undefined,
+      public: {},
     }))
   })
 
@@ -381,25 +484,40 @@ describe('POST /api/stripe/checkout-credits', () => {
       public: {},
     }))
     let fetchCall = 0
-    vi.stubGlobal('fetch', vi.fn().mockImplementation(() => {
-      fetchCall++
-      if (fetchCall === 1) {
-        // credit_packs with single credit (singular description)
-        return Promise.resolve({
-          json: () => Promise.resolve([{ id: 'pack-single', name_es: 'Single', name_en: 'Single', credits: 1, price_cents: 500 }]),
-        })
-      }
-      if (fetchCall === 2) {
-        // no existing subscription
-        return Promise.resolve({ json: () => Promise.resolve([]) })
-      }
-      return Promise.resolve({ ok: true })
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => {
+        fetchCall++
+        if (fetchCall === 1) {
+          // credit_packs with single credit (singular description)
+          return Promise.resolve({
+            json: () =>
+              Promise.resolve([
+                {
+                  id: 'pack-single',
+                  name_es: 'Single',
+                  name_en: 'Single',
+                  credits: 1,
+                  price_cents: 500,
+                },
+              ]),
+          })
+        }
+        if (fetchCall === 2) {
+          // no existing subscription
+          return Promise.resolve({ json: () => Promise.resolve([]) })
+        }
+        return Promise.resolve({ ok: true })
+      }),
+    )
     const result = await checkoutCreditsHandler({} as any)
     expect(result.url).toBe('https://stripe.com/pay')
     expect(result.sessionId).toBe('cs_test')
     vi.stubGlobal('useRuntimeConfig', () => ({
-      stripeSecretKey: undefined, supabaseServiceRoleKey: undefined, cronSecret: 'test-cron', public: {},
+      stripeSecretKey: undefined,
+      supabaseServiceRoleKey: undefined,
+      cronSecret: 'test-cron',
+      public: {},
     }))
   })
 })
@@ -414,8 +532,11 @@ describe('POST /api/stripe/webhook', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.stubGlobal('useRuntimeConfig', () => ({
-      stripeSecretKey: undefined, stripeWebhookSecret: undefined,
-      supabaseServiceRoleKey: undefined, cronSecret: 'test-cron', public: {},
+      stripeSecretKey: undefined,
+      stripeWebhookSecret: undefined,
+      supabaseServiceRoleKey: undefined,
+      cronSecret: 'test-cron',
+      public: {},
     }))
     process.env.STRIPE_SECRET_KEY = 'sk_test_123'
     process.env.SUPABASE_URL = 'https://test.supabase.co'
@@ -490,7 +611,9 @@ describe('POST /api/stripe/webhook', () => {
   it('returns idempotent:true for invoice.payment_failed already processed', async () => {
     const body = JSON.stringify({
       type: 'invoice.payment_failed',
-      data: { object: { id: 'inv_dup_fail', subscription: 'sub_1', amount_due: 100, customer: 'c1' } },
+      data: {
+        object: { id: 'inv_dup_fail', subscription: 'sub_1', amount_due: 100, customer: 'c1' },
+      },
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet.mockResolvedValue([{ id: 'existing' }])
@@ -569,9 +692,9 @@ describe('POST /api/stripe/webhook', () => {
     // First call: idempotency check returns [] (not processed)
     // Second call: existing subscription found
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency check
-      .mockResolvedValueOnce([{ id: 'sub-existing' }])  // existing subscription check
-      .mockResolvedValueOnce([])  // reactivateVehicles: dealers lookup
+      .mockResolvedValueOnce([]) // idempotency check
+      .mockResolvedValueOnce([{ id: 'sub-existing' }]) // existing subscription check
+      .mockResolvedValueOnce([]) // reactivateVehicles: dealers lookup
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     // Should patch existing subscription
@@ -646,11 +769,11 @@ describe('POST /api/stripe/webhook', () => {
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency check
-      .mockResolvedValueOnce([])  // existing subscription check
-      .mockResolvedValueOnce([{ id: 'dealer-1' }])  // dealer lookup
-      .mockResolvedValueOnce([{ id: 'v1' }, { id: 'v2' }])  // published vehicles
-      .mockResolvedValueOnce([{ id: 'v3' }, { id: 'v4' }, { id: 'v5' }])  // paused vehicles
+      .mockResolvedValueOnce([]) // idempotency check
+      .mockResolvedValueOnce([]) // existing subscription check
+      .mockResolvedValueOnce([{ id: 'dealer-1' }]) // dealer lookup
+      .mockResolvedValueOnce([{ id: 'v1' }, { id: 'v2' }]) // published vehicles
+      .mockResolvedValueOnce([{ id: 'v3' }, { id: 'v4' }, { id: 'v5' }]) // paused vehicles
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesReactivated).toBe(3)
     // Should unpause vehicles
@@ -680,11 +803,11 @@ describe('POST /api/stripe/webhook', () => {
     // basic plan limit = 20; 15 published = 5 slots
     // 10 paused vehicles = only 5 should be reactivated
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency check
-      .mockResolvedValueOnce([])  // existing subscription
-      .mockResolvedValueOnce([{ id: 'dealer-1' }])  // dealer lookup
-      .mockResolvedValueOnce(Array.from({ length: 15 }, (_, i) => ({ id: `pub-${i}` })))  // 15 published
-      .mockResolvedValueOnce(Array.from({ length: 10 }, (_, i) => ({ id: `paused-${i}` })))  // 10 paused
+      .mockResolvedValueOnce([]) // idempotency check
+      .mockResolvedValueOnce([]) // existing subscription
+      .mockResolvedValueOnce([{ id: 'dealer-1' }]) // dealer lookup
+      .mockResolvedValueOnce(Array.from({ length: 15 }, (_, i) => ({ id: `pub-${i}` }))) // 15 published
+      .mockResolvedValueOnce(Array.from({ length: 10 }, (_, i) => ({ id: `paused-${i}` }))) // 10 paused
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesReactivated).toBe(5)
   })
@@ -705,10 +828,10 @@ describe('POST /api/stripe/webhook', () => {
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([])  // existing subscription
-      .mockResolvedValueOnce([{ id: 'dealer-1' }])  // dealer
-      .mockResolvedValueOnce(Array.from({ length: 20 }, (_, i) => ({ id: `pub-${i}` })))  // 20 published = full
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([]) // existing subscription
+      .mockResolvedValueOnce([{ id: 'dealer-1' }]) // dealer
+      .mockResolvedValueOnce(Array.from({ length: 20 }, (_, i) => ({ id: `pub-${i}` }))) // 20 published = full
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesReactivated).toBe(0)
   })
@@ -729,9 +852,9 @@ describe('POST /api/stripe/webhook', () => {
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([])  // existing subscription
-      .mockResolvedValueOnce([])  // no dealer
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([]) // existing subscription
+      .mockResolvedValueOnce([]) // no dealer
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesReactivated).toBe(0)
   })
@@ -752,11 +875,11 @@ describe('POST /api/stripe/webhook', () => {
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([])  // existing subscription
-      .mockResolvedValueOnce([{ id: 'dealer-1' }])  // dealer
-      .mockResolvedValueOnce([{ id: 'v1' }])  // published vehicles
-      .mockResolvedValueOnce([])  // no paused vehicles
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([]) // existing subscription
+      .mockResolvedValueOnce([{ id: 'dealer-1' }]) // dealer
+      .mockResolvedValueOnce([{ id: 'v1' }]) // published vehicles
+      .mockResolvedValueOnce([]) // no paused vehicles
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesReactivated).toBe(0)
   })
@@ -777,9 +900,9 @@ describe('POST /api/stripe/webhook', () => {
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([])  // existing subscription
-      .mockRejectedValueOnce(new Error('DB error'))  // dealer lookup fails
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([]) // existing subscription
+      .mockRejectedValueOnce(new Error('DB error')) // dealer lookup fails
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesReactivated).toBe(0)
   })
@@ -801,10 +924,10 @@ describe('POST /api/stripe/webhook', () => {
     mockReadRawBody.mockResolvedValue(body)
     // Unknown plan defaults to 3 limit; 3 published = 0 available slots
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([])  // existing subscription
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([]) // existing subscription
       .mockResolvedValueOnce([{ id: 'dealer-1' }])
-      .mockResolvedValueOnce([{ id: 'v1' }, { id: 'v2' }, { id: 'v3' }])  // 3 published = full for default
+      .mockResolvedValueOnce([{ id: 'v1' }, { id: 'v2' }, { id: 'v3' }]) // 3 published = full for default
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesReactivated).toBe(0)
   })
@@ -818,14 +941,21 @@ describe('POST /api/stripe/webhook', () => {
         object: {
           id: 'cs_cr1',
           amount_total: 999,
-          metadata: { user_id: 'u1', type: 'credits', credits: '10', pack_id: 'p1', pack_slug: 'starter', vertical: 'tracciona' },
+          metadata: {
+            user_id: 'u1',
+            type: 'credits',
+            credits: '10',
+            pack_id: 'p1',
+            pack_slug: 'starter',
+            vertical: 'tracciona',
+          },
         },
       },
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency check
-      .mockResolvedValueOnce([])  // no existing credits
+      .mockResolvedValueOnce([]) // idempotency check
+      .mockResolvedValueOnce([]) // no existing credits
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     // Should insert new user_credits
@@ -854,14 +984,21 @@ describe('POST /api/stripe/webhook', () => {
         object: {
           id: 'cs_cr2',
           amount_total: 1999,
-          metadata: { user_id: 'u1', type: 'credits', credits: '20', pack_id: 'p2', pack_slug: 'pro', vertical: 'tracciona' },
+          metadata: {
+            user_id: 'u1',
+            type: 'credits',
+            credits: '20',
+            pack_id: 'p2',
+            pack_slug: 'pro',
+            vertical: 'tracciona',
+          },
         },
       },
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([{ balance: 5, total_purchased: 30 }])  // existing credits
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([{ balance: 5, total_purchased: 30 }]) // existing credits
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     // Should patch user_credits (5 + 20 = 25, total = 30 + 20 = 50)
@@ -880,12 +1017,19 @@ describe('POST /api/stripe/webhook', () => {
         object: {
           id: 'cs_cr0',
           amount_total: 0,
-          metadata: { user_id: 'u1', type: 'credits', credits: '0', pack_id: 'p0', pack_slug: 'free', vertical: 'tracciona' },
+          metadata: {
+            user_id: 'u1',
+            type: 'credits',
+            credits: '0',
+            pack_id: 'p0',
+            pack_slug: 'free',
+            vertical: 'tracciona',
+          },
         },
       },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     // Should still patch payments but NOT insert user_credits or credit_transactions
@@ -915,14 +1059,21 @@ describe('POST /api/stripe/webhook', () => {
         object: {
           id: 'cs_cr_noamt',
           amount_total: 0,
-          metadata: { user_id: 'u1', type: 'credits', credits: '5', pack_id: 'p1', pack_slug: 's', vertical: 'tracciona' },
+          metadata: {
+            user_id: 'u1',
+            type: 'credits',
+            credits: '5',
+            pack_id: 'p1',
+            pack_slug: 's',
+            vertical: 'tracciona',
+          },
         },
       },
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([])  // no existing credits
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([]) // no existing credits
     await webhookHandler(eventWithHeaders)
     expect(mockCreateAutoInvoice).not.toHaveBeenCalled()
   })
@@ -934,14 +1085,20 @@ describe('POST /api/stripe/webhook', () => {
         object: {
           id: 'cs_cr_nopack',
           amount_total: 500,
-          metadata: { user_id: 'u1', type: 'credits', credits: '3', pack_slug: 'x', vertical: 'tracciona' },
+          metadata: {
+            user_id: 'u1',
+            type: 'credits',
+            credits: '3',
+            pack_slug: 'x',
+            vertical: 'tracciona',
+          },
         },
       },
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([])  // no existing credits
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([]) // no existing credits
     await webhookHandler(eventWithHeaders)
     expect(mockSupabaseRestInsert).toHaveBeenCalledWith(
       expect.anything(),
@@ -958,7 +1115,7 @@ describe('POST /api/stripe/webhook', () => {
       data: { object: { id: 'cs_no_user', metadata: { plan: 'basic' } } },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     // No subscription or credit handling should trigger
@@ -971,7 +1128,7 @@ describe('POST /api/stripe/webhook', () => {
       data: { object: { id: 'cs_no_type', metadata: { user_id: 'u1' } } },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     expect(mockSupabaseRestInsert).not.toHaveBeenCalled()
@@ -988,8 +1145,8 @@ describe('POST /api/stripe/webhook', () => {
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([{ user_id: 'u1' }])  // subscription user lookup
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([{ user_id: 'u1' }]) // subscription user lookup
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     // Should patch subscription as active
@@ -1020,7 +1177,7 @@ describe('POST /api/stripe/webhook', () => {
       },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     expect(mockSupabaseRestPatch).not.toHaveBeenCalled()
@@ -1035,7 +1192,7 @@ describe('POST /api/stripe/webhook', () => {
       },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     expect(mockSupabaseRestPatch).toHaveBeenCalled()
@@ -1046,13 +1203,18 @@ describe('POST /api/stripe/webhook', () => {
     const body = JSON.stringify({
       type: 'invoice.payment_succeeded',
       data: {
-        object: { id: 'inv_nouser', subscription: 'sub_orphan', amount_paid: 1000, customer: 'cus_x' },
+        object: {
+          id: 'inv_nouser',
+          subscription: 'sub_orphan',
+          amount_paid: 1000,
+          customer: 'cus_x',
+        },
       },
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([])  // no subscription user found
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([]) // no subscription user found
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     expect(mockCreateAutoInvoice).not.toHaveBeenCalled()
@@ -1074,7 +1236,7 @@ describe('POST /api/stripe/webhook', () => {
       },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     mockGetSubscriptionUserInfo.mockResolvedValue({
       email: 'dealer@test.com',
       userId: 'u_fail',
@@ -1121,14 +1283,20 @@ describe('POST /api/stripe/webhook', () => {
       },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     mockGetSubscriptionUserInfo.mockResolvedValue({
-      email: 'dealer@test.com', userId: 'u2', name: 'Dealer', plan: 'basic',
+      email: 'dealer@test.com',
+      userId: 'u2',
+      name: 'Dealer',
+      plan: 'basic',
     })
     await webhookHandler(eventWithHeaders)
     expect(mockSendDunningEmail).toHaveBeenCalledWith(
-      expect.any(String), expect.any(String),
-      'dealer_payment_failed', 'dealer@test.com', 'u2',
+      expect.any(String),
+      expect.any(String),
+      'dealer_payment_failed',
+      'dealer@test.com',
+      'u2',
       expect.objectContaining({ gracePeriodDays: '7' }),
     )
   })
@@ -1147,14 +1315,20 @@ describe('POST /api/stripe/webhook', () => {
       },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     mockGetSubscriptionUserInfo.mockResolvedValue({
-      email: 'dealer@test.com', userId: 'u3', name: 'Dealer', plan: 'premium',
+      email: 'dealer@test.com',
+      userId: 'u3',
+      name: 'Dealer',
+      plan: 'premium',
     })
     await webhookHandler(eventWithHeaders)
     expect(mockSendDunningEmail).toHaveBeenCalledWith(
-      expect.any(String), expect.any(String),
-      'dealer_payment_failed', 'dealer@test.com', 'u3',
+      expect.any(String),
+      expect.any(String),
+      'dealer_payment_failed',
+      'dealer@test.com',
+      'u3',
       expect.objectContaining({ gracePeriodDays: '3' }),
     )
   })
@@ -1167,7 +1341,7 @@ describe('POST /api/stripe/webhook', () => {
       },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
     expect(mockSupabaseRestPatch).not.toHaveBeenCalled()
@@ -1188,7 +1362,7 @@ describe('POST /api/stripe/webhook', () => {
       },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     mockGetSubscriptionUserInfo.mockResolvedValue(null)
     await webhookHandler(eventWithHeaders)
     // Should still patch subscription and insert payment
@@ -1213,12 +1387,18 @@ describe('POST /api/stripe/webhook', () => {
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet.mockResolvedValueOnce([])
     mockGetSubscriptionUserInfo.mockResolvedValue({
-      email: 'a@b.com', userId: 'ux', name: 'X', plan: 'basic',
+      email: 'a@b.com',
+      userId: 'ux',
+      name: 'X',
+      plan: 'basic',
     })
     await webhookHandler(eventWithHeaders)
     expect(mockSendDunningEmail).toHaveBeenCalledWith(
-      expect.any(String), expect.any(String),
-      'dealer_payment_failed', 'a@b.com', 'ux',
+      expect.any(String),
+      expect.any(String),
+      'dealer_payment_failed',
+      'a@b.com',
+      'ux',
       expect.objectContaining({ gracePeriodDays: '14' }),
     )
   })
@@ -1232,13 +1412,14 @@ describe('POST /api/stripe/webhook', () => {
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([{ id: 'dealer-1' }])  // dealer lookup for pauseExcess
-      .mockResolvedValueOnce(
-        Array.from({ length: 6 }, (_, i) => ({ id: `v-${i}` })),
-      )  // 6 published vehicles (free limit = 3, so 3 excess)
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([{ id: 'dealer-1' }]) // dealer lookup for pauseExcess
+      .mockResolvedValueOnce(Array.from({ length: 6 }, (_, i) => ({ id: `v-${i}` }))) // 6 published vehicles (free limit = 3, so 3 excess)
     mockGetSubscriptionUserInfo.mockResolvedValue({
-      email: 'cancel@test.com', userId: 'u_cancel', name: 'Cancel Dealer', plan: 'basic',
+      email: 'cancel@test.com',
+      userId: 'u_cancel',
+      name: 'Cancel Dealer',
+      plan: 'basic',
     })
     const result = await webhookHandler(eventWithHeaders)
     expect(result.received).toBe(true)
@@ -1252,8 +1433,11 @@ describe('POST /api/stripe/webhook', () => {
     )
     // Should send cancellation email
     expect(mockSendDunningEmail).toHaveBeenCalledWith(
-      expect.any(String), expect.any(String),
-      'dealer_subscription_cancelled', 'cancel@test.com', 'u_cancel',
+      expect.any(String),
+      expect.any(String),
+      'dealer_subscription_cancelled',
+      'cancel@test.com',
+      'u_cancel',
       expect.objectContaining({ resubscribeUrl: 'https://tracciona.com/precios' }),
     )
   })
@@ -1264,7 +1448,7 @@ describe('POST /api/stripe/webhook', () => {
       data: { object: { id: '', metadata: {} } },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesPaused).toBe(0)
   })
@@ -1275,7 +1459,7 @@ describe('POST /api/stripe/webhook', () => {
       data: { object: { id: 'sub_no_info', metadata: {} } },
     })
     mockReadRawBody.mockResolvedValue(body)
-    mockSupabaseRestGet.mockResolvedValueOnce([])  // idempotency
+    mockSupabaseRestGet.mockResolvedValueOnce([]) // idempotency
     mockGetSubscriptionUserInfo.mockResolvedValue(null)
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesPaused).toBe(0)
@@ -1289,11 +1473,14 @@ describe('POST /api/stripe/webhook', () => {
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([{ id: 'dealer-1' }])  // dealer lookup for pauseExcess
-      .mockResolvedValueOnce([{ id: 'v1' }, { id: 'v2' }])  // 2 published (under free limit of 3)
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([{ id: 'dealer-1' }]) // dealer lookup for pauseExcess
+      .mockResolvedValueOnce([{ id: 'v1' }, { id: 'v2' }]) // 2 published (under free limit of 3)
     mockGetSubscriptionUserInfo.mockResolvedValue({
-      email: 'x@y.com', userId: 'ux', name: 'X', plan: 'basic',
+      email: 'x@y.com',
+      userId: 'ux',
+      name: 'X',
+      plan: 'basic',
     })
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesPaused).toBe(0)
@@ -1306,10 +1493,13 @@ describe('POST /api/stripe/webhook', () => {
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockResolvedValueOnce([])  // no dealer
+      .mockResolvedValueOnce([]) // idempotency
+      .mockResolvedValueOnce([]) // no dealer
     mockGetSubscriptionUserInfo.mockResolvedValue({
-      email: 'x@y.com', userId: 'ux', name: 'X', plan: 'basic',
+      email: 'x@y.com',
+      userId: 'ux',
+      name: 'X',
+      plan: 'basic',
     })
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesPaused).toBe(0)
@@ -1322,10 +1512,13 @@ describe('POST /api/stripe/webhook', () => {
     })
     mockReadRawBody.mockResolvedValue(body)
     mockSupabaseRestGet
-      .mockResolvedValueOnce([])  // idempotency
-      .mockRejectedValueOnce(new Error('DB error'))  // pauseExcess throws
+      .mockResolvedValueOnce([]) // idempotency
+      .mockRejectedValueOnce(new Error('DB error')) // pauseExcess throws
     mockGetSubscriptionUserInfo.mockResolvedValue({
-      email: 'x@y.com', userId: 'ux', name: 'X', plan: 'basic',
+      email: 'x@y.com',
+      userId: 'ux',
+      name: 'X',
+      plan: 'basic',
     })
     const result = await webhookHandler(eventWithHeaders)
     expect(result.vehiclesPaused).toBe(0)
@@ -1351,9 +1544,9 @@ describe('POST /api/stripe/webhook', () => {
     mockSupabaseRestGet.mockResolvedValue([])
     // Make the has_had_trial patch fail — it should be caught
     mockSupabaseRestPatch
-      .mockResolvedValueOnce([])  // payments patch
-      .mockResolvedValueOnce([])  // subscriptions insert/patch
-      .mockRejectedValueOnce(new Error('patch trial error'))  // has_had_trial patch
+      .mockResolvedValueOnce([]) // payments patch
+      .mockResolvedValueOnce([]) // subscriptions insert/patch
+      .mockRejectedValueOnce(new Error('patch trial error')) // has_had_trial patch
     const result = await webhookHandler(eventWithHeaders)
     // Should not throw — error is caught by .catch(() => null)
     expect(result.received).toBe(true)
@@ -1426,17 +1619,26 @@ describe('POST /api/stripe-connect-onboard', () => {
   })
 
   it('throws 400 when dealerId is missing', async () => {
-    mockReadBody.mockResolvedValue({ returnUrl: validBody.returnUrl, refreshUrl: validBody.refreshUrl })
+    mockReadBody.mockResolvedValue({
+      returnUrl: validBody.returnUrl,
+      refreshUrl: validBody.refreshUrl,
+    })
     await expect(connectOnboardHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when returnUrl is missing', async () => {
-    mockReadBody.mockResolvedValue({ dealerId: '00000000-0000-0000-0000-000000000001', refreshUrl: validBody.refreshUrl })
+    mockReadBody.mockResolvedValue({
+      dealerId: '00000000-0000-0000-0000-000000000001',
+      refreshUrl: validBody.refreshUrl,
+    })
     await expect(connectOnboardHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
   it('throws 400 when refreshUrl is missing', async () => {
-    mockReadBody.mockResolvedValue({ dealerId: '00000000-0000-0000-0000-000000000001', returnUrl: validBody.returnUrl })
+    mockReadBody.mockResolvedValue({
+      dealerId: '00000000-0000-0000-0000-000000000001',
+      returnUrl: validBody.returnUrl,
+    })
     await expect(connectOnboardHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
@@ -1481,9 +1683,7 @@ describe('POST /api/stripe-connect-onboard', () => {
   it('throws 400 when refreshUrl is not allowed', async () => {
     vi.stubGlobal('useRuntimeConfig', runtimeWithStripe)
     mockFetch.mockResolvedValue({ json: vi.fn().mockResolvedValue([{ id: 'dealer-1' }]) })
-    mockIsAllowedUrl
-      .mockReturnValueOnce(true)
-      .mockReturnValueOnce(false)
+    mockIsAllowedUrl.mockReturnValueOnce(true).mockReturnValueOnce(false)
     await expect(connectOnboardHandler({} as any)).rejects.toMatchObject({ statusCode: 400 })
   })
 
@@ -1507,7 +1707,9 @@ describe('POST /api/stripe-connect-onboard', () => {
     vi.stubGlobal('useRuntimeConfig', runtimeWithStripe)
     mockFetch
       .mockResolvedValueOnce({ json: vi.fn().mockResolvedValue([{ id: 'dealer-1' }]) })
-      .mockResolvedValueOnce({ json: vi.fn().mockResolvedValue([{ stripe_account_id: 'acct_existing' }]) })
+      .mockResolvedValueOnce({
+        json: vi.fn().mockResolvedValue([{ stripe_account_id: 'acct_existing' }]),
+      })
     const result = await connectOnboardHandler({} as any)
     expect(result.url).toBe('https://connect.stripe.com/onboard')
     expect(result.accountId).toBe('acct_existing')
@@ -1535,7 +1737,9 @@ describe('POST /api/stripe-connect-onboard', () => {
     await connectOnboardHandler({} as any)
     // First fetch call should include apikey and Authorization headers
     const firstCallArgs = mockFetch.mock.calls[0]
-    expect(firstCallArgs[0]).toContain('dealers?id=eq.00000000-0000-0000-0000-000000000001&user_id=eq.user-1')
+    expect(firstCallArgs[0]).toContain(
+      'dealers?id=eq.00000000-0000-0000-0000-000000000001&user_id=eq.user-1',
+    )
     expect(firstCallArgs[1].headers).toHaveProperty('apikey')
     expect(firstCallArgs[1].headers).toHaveProperty('Authorization')
   })

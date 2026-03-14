@@ -6,21 +6,23 @@ import { verifyCsrf } from '../../utils/verifyCsrf'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
 
+// Supported tier slugs (matches subscription_tiers.slug)
+const TIER_SLUGS = ['classic', 'premium'] as const
 const checkoutSchema = z.object({
-  plan: z.enum(['basic', 'premium']),
+  plan: z.enum(TIER_SLUGS),
   interval: z.enum(['month', 'year']),
   successUrl: z.string().url(),
   cancelUrl: z.string().url(),
 })
 
-const PRICES: Record<string, Record<string, number>> = {
-  basic: { month: 2900, year: 29000 },
-  premium: { month: 7900, year: 79000 },
-}
-
-const PLAN_NAMES: Record<string, string> = {
-  basic: 'Tracciona Basic',
-  premium: 'Tracciona Premium',
+interface SubscriptionTier {
+  id: string
+  slug: string
+  name_en: string
+  price_cents_monthly: number
+  price_cents_yearly: number
+  stripe_price_id_monthly: string | null
+  stripe_price_id_yearly: string | null
 }
 
 export default defineEventHandler(async (event) => {
@@ -52,11 +54,9 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Dynamic import to avoid build errors if stripe is not installed
   const { default: Stripe } = await import('stripe')
   const stripe = new Stripe(stripeKey)
 
-  // Supabase REST API config
   const supabaseUrl = process.env.SUPABASE_URL || ''
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
@@ -64,47 +64,59 @@ export default defineEventHandler(async (event) => {
     throw safeError(500, 'Service not configured')
   }
 
-  // Check if user already has a subscription (for stripe_customer_id + trial eligibility)
+  const authHeaders = {
+    apikey: supabaseKey,
+    Authorization: `Bearer ${supabaseKey}`,
+  }
+
+  // Fetch tier config from subscription_tiers
+  const tierRes = await fetch(
+    `${supabaseUrl}/rest/v1/subscription_tiers?slug=eq.${plan}&is_active=eq.true&select=id,slug,name_en,price_cents_monthly,price_cents_yearly,stripe_price_id_monthly,stripe_price_id_yearly`,
+    { headers: authHeaders },
+  )
+  const tiers = (await tierRes.json()) as SubscriptionTier[]
+  const tier = tiers[0]
+
+  if (!tier) {
+    throw safeError(400, `Unknown plan: ${plan}`)
+  }
+
+  const unitAmount = interval === 'year' ? tier.price_cents_yearly : tier.price_cents_monthly
+  const stripePriceId =
+    interval === 'year' ? tier.stripe_price_id_yearly : tier.stripe_price_id_monthly
+
+  // Check existing subscription (for customer ID + trial eligibility)
   const subRes = await fetch(
     `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${user.id}&select=id,stripe_customer_id,has_had_trial`,
-    {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-      },
-    },
+    { headers: authHeaders },
   )
   const subData = await subRes.json()
   const existingCustomerId = subData?.[0]?.stripe_customer_id || null
   const hasHadTrial = subData?.[0]?.has_had_trial === true
   const isFirstSubscription = (!Array.isArray(subData) || subData.length === 0) && !hasHadTrial
 
-  // Determine price
-  const unitAmount = PRICES[plan]?.[interval] ?? 0
-
-  // Create Stripe Checkout Session
-  const sessionParams: Record<string, unknown> = {
-    mode: 'subscription',
-    line_items: [
-      {
+  // Build line item — prefer Stripe Price ID if configured, else inline price_data
+  const lineItem = stripePriceId
+    ? { price: stripePriceId, quantity: 1 }
+    : {
         price_data: {
           currency: 'eur',
-          product_data: {
-            name: PLAN_NAMES[plan],
-          },
+          product_data: { name: `Tracciona ${tier.name_en}` },
           unit_amount: unitAmount,
-          recurring: {
-            interval,
-          },
+          recurring: { interval },
         },
         quantity: 1,
-      },
-    ],
-    success_url: successUrl.replace('{CHECKOUT_SESSION_ID}', '{CHECKOUT_SESSION_ID}'),
+      }
+
+  const sessionParams: Record<string, unknown> = {
+    mode: 'subscription',
+    line_items: [lineItem],
+    success_url: successUrl,
     cancel_url: cancelUrl,
     metadata: {
       user_id: user.id,
       plan,
+      tier_id: tier.id,
       vertical: process.env.NUXT_PUBLIC_VERTICAL || 'tracciona',
     },
   }
@@ -113,13 +125,14 @@ export default defineEventHandler(async (event) => {
     sessionParams.customer = existingCustomerId
   }
 
-  // Add 14-day trial for first-time subscribers
+  // 14-day trial for first-time subscribers
   if (isFirstSubscription) {
     sessionParams.subscription_data = {
       trial_period_days: 14,
       metadata: {
         user_id: user.id,
         plan,
+        tier_id: tier.id,
         vertical: process.env.NUXT_PUBLIC_VERTICAL || 'tracciona',
       },
     }
@@ -129,15 +142,10 @@ export default defineEventHandler(async (event) => {
     sessionParams as Parameters<typeof stripe.checkout.sessions.create>[0],
   )
 
-  // Insert pending payment record into payments table
+  // Insert pending payment record
   await fetch(`${supabaseUrl}/rest/v1/payments`, {
     method: 'POST',
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-      'Content-Type': 'application/json',
-      Prefer: 'return=minimal',
-    },
+    headers: { ...authHeaders, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
     body: JSON.stringify({
       user_id: user.id,
       type: 'subscription',
@@ -145,7 +153,12 @@ export default defineEventHandler(async (event) => {
       amount_cents: unitAmount,
       currency: 'eur',
       stripe_checkout_session_id: session.id,
-      metadata: { plan, interval, vertical: process.env.NUXT_PUBLIC_VERTICAL || 'tracciona' },
+      metadata: {
+        plan,
+        interval,
+        tier_id: tier.id,
+        vertical: process.env.NUXT_PUBLIC_VERTICAL || 'tracciona',
+      },
     }),
   })
 
