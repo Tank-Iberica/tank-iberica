@@ -69,6 +69,7 @@ export interface Vehicle {
   location_region: string | null
   status: string
   featured: boolean
+  highlight_style: string | null
   created_at: string
   updated_at: string
   video_url: string | null

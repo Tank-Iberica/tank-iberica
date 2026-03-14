@@ -443,7 +443,7 @@ export default defineEventHandler(async (event) => {
         try {
           const resend = new Resend(resendApiKey)
           const result = await resend.emails.send({
-            from: 'Tracciona <hola@tracciona.com>',
+            from: `${getSiteName()} <hola@${getSiteUrl().replace('https://', '').replace('http://', '')}>`,
             to: recipientEmail,
             subject,
             html,

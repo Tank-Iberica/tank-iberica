@@ -266,7 +266,7 @@ describe('createPinterestPin (unit)', () => {
     expect(result).toEqual({ id: 'pin-xyz', link: 'https://pinterest.com/pin/pin-xyz' })
   })
 
-  it('throws on non-ok response', async () => {
+  it('throws on non-ok response with generic 502', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 422,
@@ -283,6 +283,6 @@ describe('createPinterestPin (unit)', () => {
         },
         'tok',
       ),
-    ).rejects.toThrow('Pinterest API error (422)')
+    ).rejects.toMatchObject({ statusCode: 502 })
   })
 })

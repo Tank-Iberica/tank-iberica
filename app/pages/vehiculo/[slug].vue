@@ -24,15 +24,6 @@
 
         <!-- Info section -->
         <div class="vehicle-info">
-          <!-- Early-access unlock banner (#9) -->
-          <VehicleUnlockBanner
-            v-if="(vehicle as unknown as Record<string, unknown>).visible_from"
-            :vehicle-id="vehicle.id"
-            :visible-from="(vehicle as unknown as Record<string, unknown>).visible_from as string"
-            :initially-unlocked="isUnlocked"
-            @unlocked="isUnlocked = true"
-          />
-
           <VehicleDetailActions
             :vehicle-id="vehicle.id"
             :vehicle-slug="vehicle.slug"
@@ -52,6 +43,13 @@
             @start-chat="showChatModal = true"
           />
 
+          <!-- Early-access unlock banner -->
+          <VehicleUnlockBanner
+            v-if="earlyAccessVisibleFrom"
+            :vehicle-id="vehicle.id"
+            :visible-from="earlyAccessVisibleFrom!"
+          />
+
           <VehicleDetailHeader
             :vehicle-id="vehicle.id"
             :slug="vehicle.slug"
@@ -69,24 +67,24 @@
 
           <!-- Buyer trust alerts (#33) -->
           <DealerTrustAlert
-            :dealer-verified="vehicle.dealers?.verified ?? null"
-            :dealer-trust-score="vehicle.dealers?.trust_score ?? null"
-            :dealer-created-at="vehicle.dealers?.created_at ?? null"
+            :dealer-verified="vehicleDealerData?.verified ?? null"
+            :dealer-trust-score="vehicleDealerData?.trust_score ?? null"
+            :dealer-created-at="vehicleDealerData?.created_at ?? null"
             :image-count="vehicle.vehicle_images?.length ?? 0"
             :price="vehicle.price"
           />
 
           <!-- #45 Price relative to market badge -->
           <div
-            v-if="priceMarket.label.value && priceMarket.pctDiff.value !== null"
+            v-if="priceMarketLabel && priceMarketDeviation !== null"
             class="price-market-badge"
-            :class="`price-market-badge--${priceMarket.label.value}`"
+            :class="`price-market-badge--${priceMarketLabel}`"
           >
-            <template v-if="priceMarket.label.value === 'below'">
-              {{ $t('vehicle.priceBelowMarket', { pct: Math.abs(priceMarket.pctDiff.value) }) }}
+            <template v-if="priceMarketLabel === 'below'">
+              {{ $t('vehicle.priceBelowMarket', { pct: Math.abs(priceMarketDeviation!) }) }}
             </template>
-            <template v-else-if="priceMarket.label.value === 'above'">
-              {{ $t('vehicle.priceAboveMarket', { pct: priceMarket.pctDiff.value }) }}
+            <template v-else-if="priceMarketLabel === 'above'">
+              {{ $t('vehicle.priceAboveMarket', { pct: priceMarketDeviation }) }}
             </template>
             <template v-else>
               {{ $t('vehicle.priceAtMarket') }}
@@ -118,8 +116,8 @@
           <VehiclePriceHistoryChart :vehicle-id="vehicle.id" />
 
           <VehicleVideo
-            v-if="(vehicle as unknown as Record<string, unknown>).video_url"
-            :video-url="(vehicle as unknown as Record<string, unknown>).video_url as string"
+            v-if="vehicle.video_url"
+            :video-url="vehicle.video_url!"
           />
 
           <VehicleTransportCalculator
@@ -208,7 +206,6 @@ const {
 } = await useVehicleDetail(slug)
 
 const showChatModal = ref(false)
-const isUnlocked = ref(false)
 
 // #44 — Scroll depth tracking (registers scroll listener on mount)
 if (vehicle.value) {
@@ -216,13 +213,48 @@ if (vehicle.value) {
 }
 
 // #45 — Price relative to market badge
-const priceMarket = usePriceRelativeToMarket(
-  vehicle.value?.price ?? null,
-  vehicle.value?.brand ?? null,
-  (vehicle.value as unknown as Record<string, unknown>)?.subcategory_id as string | null,
-)
+const priceMarket = usePriceRelativeToMarket()
+
+// Computed helpers for price market badge in template
+const priceMarketLabel = computed<'below' | 'above' | 'at' | null>(() => {
+  const c = priceMarket.comparison.value
+  if (!c?.hasData) return null
+  if (c.deviationPercent < -5) return 'below'
+  if (c.deviationPercent > 5) return 'above'
+  return 'at'
+})
+
+const priceMarketDeviation = computed<number | null>(() => {
+  const c = priceMarket.comparison.value
+  if (!c?.hasData) return null
+  return Math.round(Math.abs(c.deviationPercent))
+})
+
+// Computed to extract dealer join data (not on Vehicle type but may come from DB join)
+const vehicleDealerData = computed<Record<string, unknown> | null>(() => {
+  const v = vehicle.value as unknown as Record<string, unknown> | null
+  if (!v?.dealers) return null
+  return v.dealers as Record<string, unknown>
+})
+
 onMounted(() => {
-  priceMarket.fetch()
+  if (vehicle.value?.brand && vehicle.value?.model && vehicle.value?.price) {
+    priceMarket.fetchComparison({
+      brand: vehicle.value.brand,
+      model: vehicle.value.model,
+      year: vehicle.value.year ?? 0,
+      price: vehicle.value.price,
+    })
+  }
+})
+
+// Early-access: show unlock banner if visible_from is in the future and not is_protected
+const earlyAccessVisibleFrom = computed<string | null>(() => {
+  const v = vehicle.value as unknown as Record<string, unknown>
+  if (v?.is_protected) return null // protected vehicles are visible to everyone — no unlock needed
+  const vf = v?.visible_from as string | null | undefined
+  if (!vf) return null
+  return new Date(vf) > new Date() ? vf : null
 })
 
 // Duration + funnel tracking
@@ -317,7 +349,8 @@ if (vehicle.value) {
   const seoTitle = `${buildProductName(vehicle.value, locale.value, true)} - ${t('site.title')}`
   const seoDesc = description.value || t('site.description')
   const seoImage = vehicle.value.vehicle_images?.[0]?.url || ''
-  const canonicalUrl = `${useSiteUrl()}/vehiculo/${vehicle.value.slug}`
+  const siteUrl = useSiteUrl()
+  const canonicalUrl = `${siteUrl}/vehiculo/${vehicle.value.slug}`
   const productName = buildProductName(vehicle.value, locale.value, true)
 
   useSeoMeta({
@@ -344,7 +377,7 @@ if (vehicle.value) {
       {
         rel: 'alternate',
         hreflang: 'en',
-        href: `${useSiteUrl()}/en/vehiculo/${vehicle.value.slug}`,
+        href: `${siteUrl}/en/vehiculo/${vehicle.value.slug}`,
       },
       { rel: 'alternate', hreflang: 'x-default', href: canonicalUrl },
       ...(seoImage ? [{ rel: 'preload', as: 'image', href: seoImage, fetchpriority: 'high' }] : []),
@@ -362,19 +395,15 @@ if (vehicle.value) {
       slug: vehicle.value.slug,
       description: seoDesc,
       image: seoImage,
-      km: vehicle.value.km as number | null,
-      fuelType: attrs.combustible as string | null,
-      numberOfAxles: attrs.ejes as number | string | null,
-      vehicleTransmission: attrs.transmision as string | null,
-      bodyType: attrs.carroceria as string | null,
-      weightTotal: attrs.pma as number | null,
+      km: (attrs.km as number | null) ?? null,
+      fuelType: (attrs.combustible as string | null) ?? null,
       location: vehicle.value.location,
       locationCountry: vehicle.value.location_country,
       locationRegion: vehicle.value.location_region,
       sellerName: t('site.title'),
     }),
     buildBreadcrumbSchema([
-      { name: t('site.title'), url: useSiteUrl() },
+      { name: t('site.title'), url: siteUrl },
       { name: productName, url: canonicalUrl },
     ]),
   ])

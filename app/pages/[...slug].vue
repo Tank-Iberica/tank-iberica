@@ -38,18 +38,31 @@
           <h1 class="landing-title">{{ landingTitle }}</h1>
           <p v-if="landingDescription" class="landing-description">{{ landingDescription }}</p>
           <p v-if="landing!.vehicle_count" class="landing-count">
-            {{
-              $t('catalog.resultsCount', {
-                count: landing!.vehicle_count,
-                itemsName: $t('vertical.itemsName'),
-              })
-            }}
+            {{ $t('catalog.resultsCount', { count: landing!.vehicle_count, itemsName: $t('vertical.itemsName') }) }}
           </p>
         </div>
 
         <!-- Intro text -->
         <div v-if="introText" class="landing-intro">
           {{ introText }}
+        </div>
+
+        <!-- #183 (S23) — Child landing links: Explorar por tipo -->
+        <div v-if="childLandings?.length" class="landing-children">
+          <h2 class="landing-children-title">{{ $t('landing.exploreBy') }}</h2>
+          <div class="landing-children-list">
+            <NuxtLink
+              v-for="child in childLandings"
+              :key="child.slug"
+              :to="`/${child.slug}`"
+              class="landing-child-link"
+            >
+              <span class="landing-child-name">{{ childTitle(child) }}</span>
+              <span v-if="child.vehicle_count" class="landing-child-count">
+                {{ child.vehicle_count }} {{ $t('landing.vehicles') }}
+              </span>
+            </NuxtLink>
+          </div>
         </div>
 
         <!-- Vehicles will be rendered here by the catalog system -->
@@ -64,6 +77,7 @@
 <script setup lang="ts">
 import { RESERVED_SLUGS } from '~/utils/reserved-slugs'
 import { buildFaqPageSchema } from '~/utils/faqSchema'
+import { buildItemListSchema } from '~/utils/itemListSchema'
 
 const route = useRoute()
 const { locale, t } = useI18n()
@@ -83,11 +97,20 @@ const isReserved = computed(() => {
   return first ? RESERVED_SLUGS.includes(first) : false
 })
 
+interface ChildLanding {
+  slug: string
+  meta_title_es: string | null
+  meta_title_en: string | null
+  vehicle_count: number
+}
+
 interface Landing {
   id: string
   slug: string
   vertical: string
   vehicle_count: number
+  is_active: boolean
+  parent_slug: string | null
   meta_title_es: string | null
   meta_title_en: string | null
   meta_description_es: string | null
@@ -130,21 +153,28 @@ interface DealerProfile {
 // 2. dealers WHERE slug = input AND status = 'active' → dealer portal
 // 3. Nothing → 404
 async function resolveSlug(): Promise<
-  { type: 'landing'; data: Landing } | { type: 'dealer'; data: DealerProfile } | null
+  | { type: 'landing'; data: Landing }
+  | { type: 'dealer'; data: DealerProfile }
+  | { type: 'redirect'; parentSlug: string }
+  | null
 > {
   if (isReserved.value || !fullSlug.value) return null
 
-  // 1. Try active_landings
+  // 1. Try active_landings (any is_active — inactive ones → 302 redirect to parent)
   const { data: landingData } = await supabase
     .from('active_landings')
-    .select(
-      'id, slug, vertical, vehicle_count, meta_title_es, meta_title_en, meta_description_es, meta_description_en, intro_text_es, intro_text_en, breadcrumb, schema_data',
-    )
+    .select('id, slug, vertical, vehicle_count, is_active, parent_slug, meta_title_es, meta_title_en, meta_description_es, meta_description_en, intro_text_es, intro_text_en, breadcrumb, schema_data')
     .eq('slug', fullSlug.value)
-    .eq('is_active', true)
     .single()
 
-  if (landingData) return { type: 'landing', data: landingData as Landing }
+  if (landingData) {
+    const landing = landingData as Landing
+    // #182 (S22) — inactive landing → 302 to parent or root
+    if (!landing.is_active) {
+      return { type: 'redirect', parentSlug: landing.parent_slug || '' }
+    }
+    return { type: 'landing', data: landing }
+  }
 
   // 2. Try dealers (only for single-segment slugs)
   if (slugParts.value.length === 1) {
@@ -174,6 +204,12 @@ const landing = computed(() =>
 const dealer = computed(() =>
   resolved.value?.type === 'dealer' ? (resolved.value.data as DealerProfile) : null,
 )
+
+// #182 (S22) — inactive landing → 302 redirect to parent slug or home
+if (resolved.value?.type === 'redirect') {
+  const parentSlug = (resolved.value as { type: 'redirect'; parentSlug: string }).parentSlug
+  await navigateTo(parentSlug ? `/${parentSlug}` : '/', { redirectCode: 302 })
+}
 
 // If reserved or not found after loading, show 404
 if (!loading.value && !resolved.value && !isReserved.value) {
@@ -207,6 +243,26 @@ const breadcrumbItems = computed(() => {
   return [{ label: t('nav.home'), to: '/' }, { label: landingTitle.value }]
 })
 
+// #183 (S23) — Fetch child landings (where parent_slug = current slug)
+const { data: childLandings } = await useAsyncData(
+  `landing-children-${fullSlug.value}`,
+  async () => {
+    if (!landing.value) return []
+    const { data } = await supabase
+      .from('active_landings')
+      .select('slug, meta_title_es, meta_title_en, vehicle_count')
+      .eq('parent_slug', landing.value.slug)
+      .order('vehicle_count', { ascending: false })
+      .limit(20)
+    return (data ?? []) as ChildLanding[]
+  },
+)
+
+function childTitle(child: ChildLanding): string {
+  if (locale.value === 'en' && child.meta_title_en) return child.meta_title_en
+  return child.meta_title_es || child.slug.replaceAll('-', ' ')
+}
+
 // SEO for landing pages (dealer SEO is handled by DealerPortal component)
 if (landing.value) {
   usePageSeo({
@@ -224,6 +280,38 @@ if (landing.value) {
   })
   if (faqSchema) {
     useJsonLd(faqSchema)
+  }
+
+  // #167 — ItemList schema: fetch top 10 vehicles for this landing's vertical
+  const { data: landingVehicles } = await useAsyncData(
+    `landing-items-${fullSlug.value}`,
+    async () => {
+      const { data } = await supabase
+        .from('vehicles')
+        .select('slug, brand, model, year, vehicle_images(url, position)')
+        .eq('status', 'published')
+        .order('featured', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(10)
+      return data ?? []
+    },
+  )
+
+  if (landingVehicles.value?.length) {
+    const siteUrl = useSiteUrl()
+    const itemListSchema = buildItemListSchema(
+      landingVehicles.value.map((v) => ({
+        slug: v.slug as string,
+        name: [v.brand, v.model, v.year ? `(${v.year})` : ''].filter(Boolean).join(' '),
+        imageUrl: (v.vehicle_images as Array<{ url: string; position: number }>)
+          ?.sort((a, b) => a.position - b.position)[0]?.url,
+      })),
+      siteUrl,
+      landingTitle.value,
+    )
+    if (itemListSchema) {
+      useJsonLd(itemListSchema)
+    }
   }
 }
 </script>
@@ -278,6 +366,56 @@ if (landing.value) {
   text-align: center;
   padding: 3rem 0;
   color: var(--text-auxiliary);
+}
+
+/* #183 — Child landing links */
+.landing-children {
+  margin-bottom: var(--spacing-8);
+}
+
+.landing-children-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-3);
+}
+
+.landing-children-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.landing-child-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: all var(--transition-fast);
+  min-height: 2.75rem;
+}
+
+.landing-child-link:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(35, 66, 74, 0.04);
+}
+
+.landing-child-name {
+  text-transform: capitalize;
+}
+
+.landing-child-count {
+  font-size: 0.75rem;
+  color: var(--text-auxiliary);
+  background: var(--bg-secondary);
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--border-radius-full);
 }
 
 /* Loading */

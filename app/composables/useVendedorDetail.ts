@@ -64,7 +64,6 @@ export function renderStars(rating: number): string {
 export function useVendedorDetail() {
   const { t, locale } = useI18n()
   const route = useRoute()
-  const siteUrl = useSiteUrl()
 
   const {
     profile,
@@ -165,12 +164,12 @@ export function useVendedorDetail() {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Inicio', item: siteUrl },
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: useSiteUrl() },
         {
           '@type': 'ListItem',
           position: 2,
           name: sellerName.value,
-          item: `${siteUrl}/${route.params.slug}`,
+          item: `${useSiteUrl()}/${route.params.slug}`,
         },
       ],
     })
@@ -180,10 +179,10 @@ export function useVendedorDetail() {
     const s = route.params.slug as string
     const path = `/${s}`
     return [
-      { rel: 'canonical', href: `${siteUrl}${path}` },
-      { rel: 'alternate', hreflang: 'es', href: `${siteUrl}${path}` },
-      { rel: 'alternate', hreflang: 'en', href: `${siteUrl}/en${path}` },
-      { rel: 'alternate', hreflang: 'x-default', href: `${siteUrl}${path}` },
+      { rel: 'canonical', href: `${useSiteUrl()}${path}` },
+      { rel: 'alternate', hreflang: 'es', href: `${useSiteUrl()}${path}` },
+      { rel: 'alternate', hreflang: 'en', href: `${useSiteUrl()}/en${path}` },
+      { rel: 'alternate', hreflang: 'x-default', href: `${useSiteUrl()}${path}` },
     ]
   })
 

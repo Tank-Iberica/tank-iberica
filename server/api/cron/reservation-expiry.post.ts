@@ -121,11 +121,64 @@ export default defineEventHandler(async (event): Promise<ExpiryResult> => {
     if (result.hasError) errorCount++
   }
 
-  // ── 6. Return summary ─────────────────────────────────────────────────────
+  // ── 6. Process expired priority_reservations (credit refunds) ─────────────
+  const { data: expiredPriority } = await supabase
+    .from('priority_reservations')
+    .select('id, vehicle_id, buyer_id, credits_spent')
+    .eq('status', 'pending')
+    .lt('expires_at', now.toISOString())
+    .limit(200)
+
+  let priorityRefunded = 0
+  for (const pr of (expiredPriority ?? []) as unknown as Array<{
+    id: string
+    vehicle_id: string
+    buyer_id: string
+    credits_spent: number
+  }>) {
+    // Refund buyer credits
+    const { data: creditRows } = await supabase
+      .from('user_credits')
+      .select('balance')
+      .eq('user_id', pr.buyer_id)
+      .limit(1)
+
+    const currentBalance = (creditRows as Array<{ balance: number }> | null)?.[0]?.balance ?? 0
+    const newBalance = currentBalance + pr.credits_spent
+
+    await supabase
+      .from('user_credits')
+      .update({ balance: newBalance, updated_at: now.toISOString() })
+      .eq('user_id', pr.buyer_id)
+
+    await supabase.from('credit_transactions').insert({
+      user_id: pr.buyer_id,
+      type: 'refund',
+      credits: pr.credits_spent,
+      balance_after: newBalance,
+      vehicle_id: pr.vehicle_id,
+      description: 'Reembolso automático — Reserva Prioritaria expirada (48h sin respuesta)',
+    })
+
+    await supabase
+      .from('priority_reservations')
+      .update({ status: 'expired', updated_at: now.toISOString() })
+      .eq('id', pr.id)
+
+    await supabase
+      .from('vehicles')
+      .update({ priority_reserved_until: null, updated_at: now.toISOString() })
+      .eq('id', pr.vehicle_id)
+
+    priorityRefunded++
+  }
+
+  // ── 7. Return summary ─────────────────────────────────────────────────────
   return {
     processed: typedReservations.length,
     refunded: refundedCount,
     errors: errorCount,
+    priorityExpired: priorityRefunded,
     timestamp: now.toISOString(),
   }
 })

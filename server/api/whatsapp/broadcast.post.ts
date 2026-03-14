@@ -94,7 +94,8 @@ export async function sendWhatsAppBroadcast(
 
   if (!resp.ok) {
     const text = await resp.text()
-    throw new Error(`WhatsApp API error (${resp.status}): ${text}`)
+    logger.error('[whatsapp/broadcast] External service error', { status: resp.status, body: text })
+    throw safeError(502, 'External service error')
   }
 
   const data = (await resp.json()) as { messages?: { id: string }[] }
@@ -115,7 +116,7 @@ export default defineEventHandler(async (event) => {
   const channelId = process.env.WHATSAPP_CHANNEL_ID
 
   if (!phoneNumberId || !accessToken || !channelId) {
-    logger.warn({ vehicleId }, 'WhatsApp broadcast skipped: env vars not configured')
+    logger.warn('WhatsApp broadcast skipped: env vars not configured', { vehicleId })
     return { ok: false, skipped: true, reason: 'WhatsApp not configured' }
   }
 
@@ -161,11 +162,10 @@ export default defineEventHandler(async (event) => {
       raw_payload: { vehicleId, messageId, type: 'vehicle_broadcast' },
     } as never)
 
-    logger.info({ vehicleId, messageId }, 'WhatsApp broadcast sent')
+    logger.info('WhatsApp broadcast sent', { vehicleId, messageId })
     return { ok: true, vehicleId, messageId }
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Broadcast failed'
-    logger.error({ vehicleId, err }, msg)
-    throw safeError(502, msg)
+    logger.error('[whatsapp/broadcast] Broadcast failed', { vehicleId, err: String(err) })
+    throw safeError(502, 'External service error')
   }
 })

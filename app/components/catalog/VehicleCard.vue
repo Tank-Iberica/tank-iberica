@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="`/vehiculo/${vehicle.slug}`" prefetch class="product-card">
+  <NuxtLink :to="`/vehiculo/${vehicle.slug}`" prefetch :class="['product-card', highlightClass]">
     <div class="card-image">
       <!-- Images carousel -->
       <template v-if="images.length">
@@ -245,6 +245,11 @@ watch(
     nextTick(adjustTitleSize)
   },
 )
+
+const highlightClass = computed(() => {
+  const s = props.vehicle.highlight_style
+  return s ? `highlight-${s}` : null
+})
 
 const priceText = computed(() => {
   if (props.vehicle.category === 'terceros') {
@@ -619,6 +624,96 @@ function nextImage() {
 
   .spec-value {
     font-size: var(--font-size-base);
+  }
+}
+
+/* ============================================
+   HIGHLIGHT STYLES — paid visual boost
+   ============================================ */
+
+/* Gold — amber border + warm shadow */
+.product-card.highlight-gold {
+  border-color: #d4af37;
+  box-shadow:
+    0 4px 20px rgba(212, 175, 55, 0.25),
+    0 0 0 2px rgba(212, 175, 55, 0.15);
+}
+
+@media (hover: hover) {
+  .product-card.highlight-gold:hover {
+    border-color: #d4af37;
+    box-shadow:
+      0 20px 40px rgba(212, 175, 55, 0.35),
+      0 0 0 2px #d4af37;
+  }
+}
+
+/* Premium — teal/primary gradient border */
+.product-card.highlight-premium {
+  border-color: var(--color-primary);
+  box-shadow:
+    0 4px 20px rgba(35, 66, 74, 0.2),
+    0 0 0 2px rgba(35, 66, 74, 0.12);
+}
+
+@media (hover: hover) {
+  .product-card.highlight-premium:hover {
+    border-color: var(--color-primary);
+    box-shadow:
+      0 20px 40px rgba(35, 66, 74, 0.3),
+      0 0 0 2px var(--color-primary);
+  }
+}
+
+/* Spotlight — white border + bright glow */
+.product-card.highlight-spotlight {
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.15),
+    0 0 0 3px rgba(255, 255, 255, 0.6),
+    0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+@media (hover: hover) {
+  .product-card.highlight-spotlight:hover {
+    border-color: #ffffff;
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.2),
+      0 0 0 3px #ffffff,
+      0 0 30px rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Urgent — red border with subtle pulse */
+.product-card.highlight-urgent {
+  border-color: var(--color-danger, #dc2626);
+  box-shadow:
+    0 4px 20px rgba(220, 38, 38, 0.2),
+    0 0 0 2px rgba(220, 38, 38, 0.15);
+  animation: pulse-urgent 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-urgent {
+  0%,
+  100% {
+    box-shadow:
+      0 4px 20px rgba(220, 38, 38, 0.2),
+      0 0 0 2px rgba(220, 38, 38, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 4px 20px rgba(220, 38, 38, 0.35),
+      0 0 0 2px rgba(220, 38, 38, 0.4);
+  }
+}
+
+@media (hover: hover) {
+  .product-card.highlight-urgent:hover {
+    border-color: var(--color-danger, #dc2626);
+    animation: none;
+    box-shadow:
+      0 20px 40px rgba(220, 38, 38, 0.3),
+      0 0 0 2px var(--color-danger, #dc2626);
   }
 }
 </style>

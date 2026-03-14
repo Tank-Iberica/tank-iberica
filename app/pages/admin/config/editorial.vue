@@ -93,16 +93,11 @@ async function handleSave() {
         </NuxtLink>
       </div>
 
-      <!-- Calendario placeholder -->
-      <div class="config-card config-card--muted">
+      <!-- Calendario editorial (P6) -->
+      <div class="config-card">
         <h3 class="card-title">{{ $t('admin.configEditorial.calendarSection') }}</h3>
         <p class="card-description">{{ $t('admin.configEditorial.calendarDesc') }}</p>
-        <div class="placeholder-box">
-          <span class="placeholder-text">{{ $t('admin.configEditorial.comingSoon') }}</span>
-          <p class="placeholder-description">
-            {{ $t('admin.configEditorial.calendarComingSoonDesc') }}
-          </p>
-        </div>
+        <AdminConfigEditorialEditorialCalendar />
       </div>
 
       <!-- Save button -->
@@ -165,11 +160,6 @@ async function handleSave() {
   padding: var(--spacing-6);
   box-shadow: var(--shadow-card);
   margin-bottom: var(--spacing-5);
-}
-
-.config-card--muted {
-  border: 1px dashed var(--border-color);
-  box-shadow: none;
 }
 
 .card-title {

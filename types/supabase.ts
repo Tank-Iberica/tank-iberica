@@ -4686,7 +4686,10 @@ export type Database = {
           freshness_reminder_count: number | null
           id: string
           internal_id: number
+          auto_feature: boolean
+          auto_renew: boolean
           is_online: boolean | null
+          is_protected: boolean
           listing_type: string | null
           location: string | null
           location_country: string | null
@@ -4705,12 +4708,14 @@ export type Database = {
           plate: string | null
           price: number | null
           price_trend: string | null
+          priority_reserved_until: string | null
           rental_price: number | null
           rental_records: Json | null
           slug: string
           sold_at: string | null
           sold_price_cents: number | null
           sold_via_tracciona: boolean | null
+          highlight_style: string | null
           sort_boost: number | null
           status: Database['public']['Enums']['vehicle_status'] | null
           updated_at: string | null
@@ -4756,7 +4761,10 @@ export type Database = {
           freshness_reminder_count?: number | null
           id?: string
           internal_id?: number
+          auto_feature?: boolean
+          auto_renew?: boolean
           is_online?: boolean | null
+          is_protected?: boolean
           listing_type?: string | null
           location?: string | null
           location_country?: string | null
@@ -4775,12 +4783,14 @@ export type Database = {
           plate?: string | null
           price?: number | null
           price_trend?: string | null
+          priority_reserved_until?: string | null
           rental_price?: number | null
           rental_records?: Json | null
           slug: string
           sold_at?: string | null
           sold_price_cents?: number | null
           sold_via_tracciona?: boolean | null
+          highlight_style?: string | null
           sort_boost?: number | null
           status?: Database['public']['Enums']['vehicle_status'] | null
           updated_at?: string | null
@@ -4826,7 +4836,10 @@ export type Database = {
           freshness_reminder_count?: number | null
           id?: string
           internal_id?: number
+          auto_feature?: boolean
+          auto_renew?: boolean
           is_online?: boolean | null
+          is_protected?: boolean
           listing_type?: string | null
           location?: string | null
           location_country?: string | null
@@ -4845,12 +4858,14 @@ export type Database = {
           plate?: string | null
           price?: number | null
           price_trend?: string | null
+          priority_reserved_until?: string | null
           rental_price?: number | null
           rental_records?: Json | null
           slug?: string
           sold_at?: string | null
           sold_price_cents?: number | null
           sold_via_tracciona?: boolean | null
+          highlight_style?: string | null
           sort_boost?: number | null
           status?: Database['public']['Enums']['vehicle_status'] | null
           updated_at?: string | null

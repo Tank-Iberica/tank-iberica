@@ -53,6 +53,22 @@ function onUpdateFaqSchema(schema: Array<{ question: string; answer: string }> |
 function onUpdateSocialPostText(value: Record<string, string> | null) {
   formData.value.social_post_text = value
 }
+
+// A7 — AI-generated article draft: pre-fill form fields
+function onAiGenerated(result: {
+  title_es: string
+  title_en: string
+  meta_description_es: string
+  meta_description_en: string
+  content_es: string
+  content_en: string
+}) {
+  if (result.title_es) formData.value.title_es = result.title_es
+  if (result.title_en) formData.value.title_en = result.title_en
+  if (result.meta_description_es) formData.value.description_es = result.meta_description_es
+  if (result.content_es) formData.value.content_es = result.content_es
+  if (result.content_en) formData.value.content_en = result.content_en
+}
 </script>
 
 <template>
@@ -68,6 +84,7 @@ function onUpdateSocialPostText(value: Record<string, string> | null) {
         <h1>{{ $t('admin.noticias.newTitle') }}</h1>
       </div>
       <div class="nf-right">
+        <AdminNewsAiGenerate @generated="onAiGenerated" />
         <button class="btn" @click="handleCancel">{{ $t('common.cancel') }}</button>
         <button class="btn btn-primary" :disabled="saving || !isValid" @click="handleSave">
           {{ saving ? $t('admin.common.saving') : $t('admin.common.save') }}

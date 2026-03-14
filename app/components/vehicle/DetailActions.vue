@@ -33,7 +33,7 @@
         <span>{{ $t('messages.contactSeller') }}</span>
       </button>
       <a
-        :href="`mailto:info@${useSiteUrl().replace('https://', '').replace('http://', '')}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`"
+        :href="`mailto:${getContact().email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`"
         class="contact-btn contact-email"
         @click="$emit('contact-click', vehicleId, dealerId, 'form')"
       >

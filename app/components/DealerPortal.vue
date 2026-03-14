@@ -308,7 +308,7 @@
       <h2 class="section-title">{{ t('dealer.followUs') }}</h2>
       <div class="social-links">
         <a
-          v-for="(url, platform) in dealer.social_links"
+          v-for="(url, platform) in activeSocialLinks"
           :key="platform"
           :href="url"
           target="_blank"
@@ -420,6 +420,7 @@
 import { localizedField } from '~/composables/useLocalized'
 import { useDealerTheme } from '~/composables/useDealerTheme'
 import type { SortOption } from '~/composables/useCatalogState'
+import { buildAggregateRatingSchema } from '~/utils/aggregateRatingSchema'
 
 interface DealerProfile {
   id: string
@@ -543,11 +544,13 @@ const workingHours = computed(() => {
   return wh[locale.value] || wh['es'] || ''
 })
 
-// Social links presence check
-const hasSocialLinks = computed(() => {
+// Social links presence check — only count non-empty URL entries
+const activeSocialLinks = computed((): Record<string, string> => {
   const links = props.dealer.social_links
-  return links && Object.keys(links).length > 0
+  if (!links) return {}
+  return Object.fromEntries(Object.entries(links).filter(([, url]) => !!url))
 })
+const hasSocialLinks = computed(() => Object.keys(activeSocialLinks.value).length > 0)
 
 // Contact form state
 const supabase = useSupabaseClient()
@@ -633,6 +636,8 @@ watchEffect(() => {
     useHead({ script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(schema) }] })
   }
 })
+
+
 // Apply dealer theme on mount, restore on unmount
 onMounted(async () => {
   applyDealerTheme(props.dealer.theme)

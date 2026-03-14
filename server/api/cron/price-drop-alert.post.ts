@@ -58,8 +58,19 @@ interface Notification {
   dropPercent: number
 }
 
+/**
+ * Tier enforcement for price-drop alerts (#13).
+ * Returns whether this user's plan allows receiving a price-drop email today.
+ * - free/basic: only on Mondays (≈ weekly)
+ * - classic/premium/founding: always (daily cron)
+ */
+export function isPriceDropEligible(planSlug: string, now: Date): boolean {
+  if (planSlug === 'premium' || planSlug === 'founding' || planSlug === 'classic') return true
+  // basic/free: allow only on Mondays (day=1)
+  return now.getDay() === 1
+}
+
 async function buildPriceDropNotifications(
-   
   supabase: SupabaseClient,
   drops: PriceHistoryRow[],
   vehicleMap: Map<string, VehicleInfo>,
@@ -222,10 +233,25 @@ export default defineEventHandler(async (event) => {
   // 5. Group notifications by userId so each user gets ONE email with all their drops
   const byUser = groupNotificationsByUser(notifications)
 
+  // 5b. Fetch subscription plans to apply tier enforcement (#13)
+  const notifUserIds = [...byUser.keys()]
+  const { data: subsData } = await supabase
+    .from('subscriptions')
+    .select('user_id, plan')
+    .in('user_id', notifUserIds)
+    .eq('status', 'active')
+
+  const userPlanMap = new Map<string, string>()
+  for (const sub of (subsData ?? []) as Array<{ user_id: string; plan: string }>) {
+    userPlanMap.set(sub.user_id, sub.plan)
+  }
+
   // 6. Send one email per user with all their price-dropped favorites
   let emailsSent = 0
 
-  for (const [, userNotifications] of byUser) {
+  for (const [userId, userNotifications] of byUser) {
+    const plan = userPlanMap.get(userId) ?? 'free'
+    if (!isPriceDropEligible(plan, now)) continue
     const first = userNotifications[0]!
     const sent = await sendPriceDropEmail(first, userNotifications, _internalSecret)
     if (sent) emailsSent++

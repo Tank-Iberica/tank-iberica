@@ -6,7 +6,7 @@
         v-if="currentImage && isCloudinary(currentImageRaw)"
         provider="cloudinary"
         :src="currentImage"
-        :alt="alt"
+        :alt="currentAlt"
         width="800"
         height="600"
         fit="cover"
@@ -19,7 +19,7 @@
       <img
         v-else-if="currentImageRaw"
         :src="currentImageRaw.url"
-        :alt="alt"
+        :alt="currentAlt"
         class="gallery-img"
         width="800"
         height="600"
@@ -88,7 +88,7 @@
           v-if="isCloudinary(img)"
           provider="cloudinary"
           :src="extractPath(img)"
-          :alt="`${alt} ${i + 1}`"
+          :alt="imageAlt(img, i)"
           width="100"
           height="75"
           fit="cover"
@@ -100,7 +100,7 @@
         <img
           v-else
           :src="img.url"
-          :alt="`${alt} ${i + 1}`"
+          :alt="imageAlt(img, i)"
           width="100"
           height="75"
           loading="lazy"
@@ -131,6 +131,13 @@ const currentImage = computed(() => {
   if (!img) return null
   return extractPath(img)
 })
+
+// #177 (S17) — use per-image alt_text when available, fall back to generic alt
+const currentAlt = computed(() => currentImageRaw.value?.alt_text || props.alt)
+
+function imageAlt(img: VehicleImage, index: number): string {
+  return img.alt_text || `${props.alt} ${index + 1}`
+}
 
 function isCloudinary(img: VehicleImage | null): boolean {
   return !!img?.url?.includes('cloudinary.com')

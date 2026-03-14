@@ -77,7 +77,11 @@ export async function createPinterestPin(
 
   if (!resp.ok) {
     const text = await resp.text()
-    throw new Error(`Pinterest API error (${resp.status}): ${text}`)
+    logger.error('[pinterest/create-pin] External service error', {
+      status: resp.status,
+      body: text,
+    })
+    throw safeError(502, 'External service error')
   }
 
   return (await resp.json()) as PinterestPinResponse
@@ -111,7 +115,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!accessToken || !boardId) {
-    logger.warn({ vehicleId }, 'Pinterest pin skipped: credentials not configured')
+    logger.warn('Pinterest pin skipped: credentials not configured', { vehicleId })
     return { ok: false, skipped: true, reason: 'Pinterest not configured' }
   }
 
@@ -133,7 +137,7 @@ export default defineEventHandler(async (event) => {
   const imageUrl = images?.[0]?.url
 
   if (!imageUrl) {
-    logger.warn({ vehicleId }, 'Pinterest pin skipped: no image available')
+    logger.warn('Pinterest pin skipped: no image available', { vehicleId })
     return { ok: false, skipped: true, reason: 'No image available for pin' }
   }
 
@@ -165,11 +169,10 @@ export default defineEventHandler(async (event) => {
   try {
     const pin = await createPinterestPin(payload, accessToken)
 
-    logger.info({ vehicleId, pinId: pin.id }, 'Pinterest pin created')
+    logger.info('Pinterest pin created', { vehicleId, pinId: pin.id })
     return { ok: true, vehicleId, pinId: pin.id, pinUrl: pin.link }
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Pin creation failed'
-    logger.error({ vehicleId, err }, msg)
-    throw safeError(502, msg)
+    logger.error('[pinterest/create-pin] Pin creation failed', { vehicleId, err: String(err) })
+    throw safeError(502, 'External service error')
   }
 })

@@ -3,7 +3,7 @@
  * Manages plan limits, feature gates, and subscription status.
  */
 
-export type PlanType = 'free' | 'basic' | 'premium' | 'founding'
+export type PlanType = 'free' | 'basic' | 'classic' | 'premium' | 'founding'
 
 export type StatsLevel = 'basic' | 'standard' | 'full'
 
@@ -38,6 +38,19 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimitsConfig> = {
     demandAlerts: false,
   },
   basic: {
+    maxActiveListings: 20,
+    maxPhotosPerListing: 15,
+    badge: 'basic',
+    publicProfile: 'full',
+    statsAccess: 'standard',
+    sortBoost: 1,
+    aiListingsPerMonth: 20,
+    whatsappPublishing: true,
+    embeddableWidget: false,
+    catalogExport: true,
+    demandAlerts: false,
+  },
+  classic: {
     maxActiveListings: 20,
     maxPhotosPerListing: 15,
     badge: 'basic',
@@ -94,7 +107,7 @@ interface SubscriptionRow {
 }
 
 function isValidPlan(plan: string): plan is PlanType {
-  return ['free', 'basic', 'premium', 'founding'].includes(plan)
+  return ['free', 'basic', 'classic', 'premium', 'founding'].includes(plan)
 }
 
 /**
@@ -215,7 +228,9 @@ export function useSubscriptionPlan(dealerId?: string) {
     try {
       const { data, error: err } = await supabase
         .from('subscriptions')
-        .select('id, user_id, plan, status, started_at, expires_at, stripe_subscription_id, stripe_customer_id, price_cents, vertical, created_at, updated_at')
+        .select(
+          'id, user_id, plan, status, started_at, expires_at, stripe_subscription_id, stripe_customer_id, price_cents, vertical, created_at, updated_at',
+        )
         .eq('user_id', id)
         .eq('status', 'active')
         .order('created_at', { ascending: false })

@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
   if (error) {
     logger.error('[merchant-feed] Error fetching vehicles:', error)
     setResponseStatus(event, 500)
-    return 'Error generating feed'
+    return 'Internal server error'
   }
 
   const siteUrl = getSiteUrl()
@@ -104,7 +104,11 @@ ${itemsXml}
 </rss>`
 
   if (items.length < feedMinItems) {
-    setResponseHeader(event, 'X-Feed-Status', `pending-minimum-threshold (${items.length}/${feedMinItems})`)
+    setResponseHeader(
+      event,
+      'X-Feed-Status',
+      `pending-minimum-threshold (${items.length}/${feedMinItems})`,
+    )
   }
 
   setResponseHeader(event, 'Cache-Control', 'public, max-age=43200, s-maxage=43200') // 12h

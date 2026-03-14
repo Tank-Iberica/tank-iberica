@@ -96,8 +96,6 @@ export function useAdminHistoricoPage() {
     search: '',
   })
 
-  const _siteName = useSiteName()
-  const _siteUrl = useSiteUrl()
   const categoryOptions = Object.entries(SALE_CATEGORIES)
 
   function clearFilters() {
@@ -295,8 +293,8 @@ export function useAdminHistoricoPage() {
     </style>
   </head><body>
     <div class="header">
-      <div><h1>${_siteName.toUpperCase()}</h1><div class="header-accent"></div></div>
-      <div class="header-info">${_siteUrl.replace('https://', '').toUpperCase()}<br>info@${_siteUrl.replace('https://', '')}<br>+34 645 779 594</div>
+      <div><h1>TRACCIONA</h1><div class="header-accent"></div></div>
+      <div class="header-info">${useSiteUrl().replace('https://', '').replace('http://', '').toUpperCase()}<br>info@${useSiteUrl().replace('https://', '').replace('http://', '')}<br>+34 645 779 594</div>
     </div>
     <div class="content">
     <p class="subtitle">Hist\u00F3rico de Ventas ${filters.year || 'Todos los a\u00F1os'}</p>
@@ -328,7 +326,7 @@ export function useAdminHistoricoPage() {
       <p><strong>Beneficio Medio:</strong> ${summary.value.avgBeneficioPercent}%</p>
     </div>
     </div>
-    <div class="footer">${_siteUrl.replace('https://', '').toUpperCase()}</div>
+    <div class="footer">TRACCIONA.COM</div>
   </body></html>`
 
     printHTML(html)

@@ -61,6 +61,7 @@
 
 <script setup lang="ts">
 import { buildProductName } from '~/utils/productName'
+import { buildItemListSchema } from '~/utils/itemListSchema'
 import type { LocationLevel } from '~/utils/geoData'
 import type { VehicleFilters } from '~/composables/useVehicles'
 import { useGeoFallback } from '~/composables/catalog/useGeoFallback'
@@ -145,20 +146,16 @@ usePageSeo({
 
 // ItemList JSON-LD — injected dynamically after vehicles load
 const itemListJsonLd = computed(() => {
-  if (!vehicles.value.length) return null
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: t('seo.homeTitle'),
-    numberOfItems: vehicles.value.length,
-    itemListElement: vehicles.value.slice(0, 20).map((v, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      url: `${useSiteUrl()}/vehiculo/${v.slug}`,
+  const siteUrl = useSiteUrl()
+  return buildItemListSchema(
+    vehicles.value.slice(0, 20).map((v) => ({
+      slug: v.slug,
       name: buildProductName(v, locale.value, true),
-      ...(v.vehicle_images?.[0]?.url ? { image: v.vehicle_images[0].url } : {}),
+      imageUrl: v.vehicle_images?.[0]?.url,
     })),
-  }
+    siteUrl,
+    t('seo.homeTitle'),
+  )
 })
 
 useHead({

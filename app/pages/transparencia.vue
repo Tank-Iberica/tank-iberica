@@ -2,6 +2,7 @@
 definePageMeta({ layout: 'default' })
 
 const { t } = useI18n()
+const siteDomain = useSiteUrl().replace('https://', '').replace('http://', '')
 
 usePageSeo({
   title: t('transparency.pageTitle'),

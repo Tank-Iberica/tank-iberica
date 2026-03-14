@@ -9,7 +9,6 @@ export function useDashboardWidget() {
   const { t } = useI18n()
   const supabase = useSupabaseClient()
   const { userId } = useAuth()
-  const siteUrl = useSiteUrl()
   const { dealerProfile, loadDealer } = useDealerDashboard()
   const { canUseWidget, fetchSubscription } = useSubscriptionPlan(userId.value || undefined)
 
@@ -36,7 +35,7 @@ export function useDashboardWidget() {
     params.set('limit', String(vehicleCount.value))
     params.set('theme', theme.value)
     if (selectedCategory.value) params.set('category', selectedCategory.value)
-    return `${siteUrl}/embed/${dealerSlug.value}?${params.toString()}`
+    return `${useSiteUrl()}/embed/${dealerSlug.value}?${params.toString()}`
   })
 
   const iframeHeight = computed<string>(() =>

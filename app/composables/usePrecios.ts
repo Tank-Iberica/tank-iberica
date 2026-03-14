@@ -84,8 +84,8 @@ export function usePrecios() {
       ],
     },
     {
-      plan: 'basic',
-      name: t('pricing.planBasic'),
+      plan: 'classic',
+      name: t('pricing.planClassic'),
       price: prices.value.basic[billingInterval.value],
       suffix: billingInterval.value === 'month' ? t('pricing.month') : t('pricing.year'),
       highlighted: true,
@@ -228,7 +228,7 @@ export function usePrecios() {
     openFaq.value = openFaq.value === index ? null : index
   }
 
-  async function startCheckout(plan: 'basic' | 'premium') {
+  async function startCheckout(plan: 'classic' | 'premium') {
     if (!user.value) {
       navigateTo(localePath('/login'))
       return
@@ -267,7 +267,9 @@ export function usePrecios() {
       globalThis.location.href =
         'mailto:tankiberica@gmail.com?subject=Solicitud%20Founding%20Dealer'
     } else {
-      startCheckout(plan)
+      // 'basic' is kept for backward compat; maps to 'classic' checkout slug
+      const checkoutSlug = plan === 'basic' ? 'classic' : (plan as 'classic' | 'premium')
+      startCheckout(checkoutSlug)
     }
   }
 

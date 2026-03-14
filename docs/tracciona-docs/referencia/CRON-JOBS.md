@@ -6,26 +6,25 @@
 
 ## Cron Endpoints
 
-| Endpoint                           | Purpose                                                                           | Frequency                               | Priority |
-| ---------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------- | -------- |
-| `/api/cron/freshness-check`        | Mark stale vehicles as inactive (>90 days without update)                         | Daily                                   | High     |
-| `/api/cron/search-alerts`          | Send email to users with saved searches matching new vehicles                     | Daily                                   | High     |
-| `/api/cron/favorite-price-drop`    | Notify users when a favorited vehicle's price drops                               | Daily                                   | High     |
-| `/api/cron/favorite-sold`          | Notify users when a favorited vehicle is sold                                     | Daily                                   | Medium   |
-| `/api/cron/price-drop-alert`       | General price drop notifications (all users)                                      | Daily                                   | Medium   |
-| `/api/cron/reservation-expiry`     | Expire reservations past their hold date                                          | Daily                                   | High     |
-| `/api/cron/publish-scheduled`      | Publish vehicles and articles scheduled for future dates                          | Daily                                   | High     |
-| `/api/cron/founding-expiry`        | Handle founding member subscription expirations                                   | Daily                                   | Low      |
-| `/api/cron/generate-editorial`     | Generate editorial content automatically with AI                                  | Daily/Weekly                            | Low      |
-| `/api/cron/auto-auction`           | Process auction end times, determine winners                                      | Every 5 min                             | High     |
-| `/api/cron/infra-metrics`          | Collect infrastructure metrics (DB size, cache, etc.)                             | Every 5 min                             | Low      |
-| `/api/cron/whatsapp-retry`         | Retry failed WhatsApp submissions                                                 | Every 15 min                            | Medium   |
-| `/api/cron/dealer-weekly-stats`    | Send weekly performance digest to dealers                                         | Weekly (Mon 09:00)                      | Medium   |
-| `/api/cron/k6-readiness-check`     | Check ≥50 vehicles + ≥2 dealers → trigger k6 CI workflow                          | Weekly (Mon 09:00)                      | Low      |
-| `/api/cron/data-retention`         | GDPR data retention: delete whatsapp/analytics/logs past TTL                      | Daily (03:00 UTC)                       | Medium   |
-| `/api/cron/newsletter`             | Weekly newsletter "El Industrial" — 5 featured vehicles                           | Weekly (Tue 09:00 UTC)                  | Medium   |
-| `/api/cron/dealer-onboarding`      | 5-step onboarding sequence for new dealers (days 0,1,3,7,14)                      | Daily (10:00 UTC)                       | Medium   |
-| `/api/cron/generate-market-report` | Generate quarterly market report HTML and store in Supabase Storage (lead magnet) | Quarterly (1-jan/apr/jul/oct 06:00 UTC) | Low      |
+| Endpoint                        | Purpose                                                       | Frequency          | Priority |
+| ------------------------------- | ------------------------------------------------------------- | ------------------ | -------- |
+| `/api/cron/freshness-check`     | Mark stale vehicles as inactive (>90 days without update)     | Daily              | High     |
+| `/api/cron/search-alerts`       | Send email to users with saved searches matching new vehicles | Daily              | High     |
+| `/api/cron/favorite-price-drop` | Notify users when a favorited vehicle's price drops           | Daily              | High     |
+| `/api/cron/favorite-sold`       | Notify users when a favorited vehicle is sold                 | Daily              | Medium   |
+| `/api/cron/price-drop-alert`    | General price drop notifications (all users)                  | Daily              | Medium   |
+| `/api/cron/reservation-expiry`  | Expire reservations past their hold date                      | Daily              | High     |
+| `/api/cron/publish-scheduled`   | Publish vehicles and articles scheduled for future dates      | Daily              | High     |
+| `/api/cron/founding-expiry`     | Handle founding member subscription expirations               | Daily              | Low      |
+| `/api/cron/generate-editorial`  | Generate editorial content automatically with AI              | Daily/Weekly       | Low      |
+| `/api/cron/auto-auction`        | Process auction end times, determine winners                  | Every 5 min        | High     |
+| `/api/cron/infra-metrics`       | Collect infrastructure metrics (DB size, cache, etc.)         | Every 5 min        | Low      |
+| `/api/cron/whatsapp-retry`      | Retry failed WhatsApp submissions                             | Every 15 min       | Medium   |
+| `/api/cron/dealer-weekly-stats` | Send weekly performance digest to dealers                     | Weekly (Mon 09:00) | Medium   |
+| `/api/cron/k6-readiness-check`  | Check ≥50 vehicles + ≥2 dealers → trigger k6 CI workflow      | Weekly (Mon 09:00) | Low      |
+| `/api/cron/data-retention`      | GDPR data retention: delete whatsapp/analytics/logs past TTL  | Daily (03:00 UTC)  | Medium   |
+| `/api/cron/newsletter`          | Weekly newsletter "El Industrial" — 5 featured vehicles       | Weekly (Tue 09:00) | Medium   |
+| `/api/cron/dealer-onboarding`   | 5-step onboarding sequence for new dealers (days 0,1,3,7,14)  | Daily (10:00 UTC)  | Medium   |
 
 ## Scheduler Configuration
 

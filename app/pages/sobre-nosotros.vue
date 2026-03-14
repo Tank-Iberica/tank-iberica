@@ -37,7 +37,7 @@ usePageSeo({
     name: t('site.title'),
     url: useSiteUrl(),
     description: t('seo.aboutDescription'),
-    logo: `${useSiteUrl()}/og-default.png`,
+    logo: useSiteUrl() + '/og-default.png',
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',

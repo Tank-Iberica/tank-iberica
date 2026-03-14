@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { t } = useI18n()
+const siteDomain = useSiteUrl().replace('https://', '').replace('http://', '')
 
 usePageSeo({
   title: `${t('security.disclosure.title')} — ${t('site.title')}`,

@@ -11,8 +11,6 @@
         decoding="async"
         width="48"
         height="48"
-        sizes="48px"
-        format="webp"
       />
       <div class="dealer-banner-text">
         <span class="dealer-name">{{ companyName }}</span>
@@ -207,7 +205,7 @@ const cssVars = computed(() => ({
 
 // 5. SEO: noindex on dealer context + canonical pointing to marketplace URL
 if (vehicle.value) {
-  const canonicalUrl = `https://tracciona.com/vehiculo/${vehicle.value.slug}`
+  const canonicalUrl = `${useSiteUrl()}/vehiculo/${vehicle.value.slug}`
   useHead({
     meta: [{ name: 'robots', content: 'noindex, follow' }],
     link: [{ rel: 'canonical', href: canonicalUrl }],

@@ -223,7 +223,8 @@ export async function exportVehicleFicha(
     yPos += 7
   }
 
-  if (vehicle.description_es) { // NOSONAR typescript:S1874
+  if (vehicle.description_es) {
+    // NOSONAR typescript:S1874
     yPos += 10
     doc.setFontSize(14)
     doc.setTextColor(35, 66, 74)
@@ -241,9 +242,41 @@ export async function exportVehicleFicha(
     addFinancialSection(doc, vehicle, yPos, pageWidth)
   }
 
+  // C10 — PDF footer: vehicle URL + CTA + QR
+  const vehicleUrl = `https://tracciona.com/vehiculo/${vehicle.slug}`
+  const footerY = 275
+
+  // QR image (25×25 mm) — fetched via public QR API
+  try {
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(vehicleUrl)}`
+    const qrRes = await fetch(qrApiUrl)
+    if (qrRes.ok) {
+      const blob = await qrRes.blob()
+      const dataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader()
+        reader.onloadend = () => resolve(reader.result as string)
+        reader.readAsDataURL(blob)
+      })
+      doc.addImage(dataUrl, 'PNG', pageWidth - 38, footerY - 2, 25, 25)
+    }
+  } catch {
+    // QR fetch failed silently — footer still shows text
+  }
+
+  doc.setDrawColor(35, 66, 74)
+  doc.line(14, footerY - 3, pageWidth - 14, footerY - 3)
+
   doc.setFontSize(8)
+  doc.setTextColor(35, 66, 74)
+  doc.text(vehicleUrl, 14, footerY + 3)
+
+  doc.setFontSize(7)
   doc.setTextColor(150, 150, 150)
-  doc.text(`Generado: ${new Date().toLocaleDateString('es-ES')} · Tracciona`, 14, 285)
+  doc.text(
+    `Más vehículos en tracciona.com  ·  Generado: ${new Date().toLocaleDateString('es-ES')}`,
+    14,
+    footerY + 9,
+  )
 
   doc.save(`ficha_${vehicle.brand}_${vehicle.model}_${vehicle.year || ''}.pdf`)
 }

@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
 
   if (error) {
     logger.error('[interest-recovery] fetch error', { error: error.message })
-    return { sent: 0, error: error.message }
+    return { sent: 0, error: 'Database error' }
   }
 
   if (!leads || leads.length === 0) {

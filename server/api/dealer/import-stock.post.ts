@@ -67,7 +67,6 @@ async function fetchPageHtml(url: string): Promise<string> {
 }
 
 async function createDraftVehicles(
-   
   supabase: SupabaseClient,
   dealerId: string,
   vehicles: ExtractedVehicle[],
@@ -154,8 +153,8 @@ export default defineEventHandler(async (event) => {
   let pageHtml: string
   try {
     pageHtml = await fetchPageHtml(body.url)
-  } catch (err) {
-    throw safeError(502, `Could not fetch the page: ${extractErrorMessage(err)}`)
+  } catch {
+    throw safeError(502, 'Could not fetch the page')
   }
 
   // Truncate HTML to avoid exceeding AI token limits

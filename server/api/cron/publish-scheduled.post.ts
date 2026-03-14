@@ -14,7 +14,7 @@
 import { defineEventHandler } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
-import { triggerInstantAlerts } from '../../utils/triggerInstantAlerts'
+import { sendIndexNow, vehicleUrl, articleUrl } from '../../utils/indexNow'
 
 interface ScheduledArticle {
   id: string
@@ -93,11 +93,19 @@ export default defineEventHandler(async (event) => {
       throw safeError(500, `Update scheduled vehicles failed: ${updateErr.message}`)
     }
     publishedVehicles = typedVehicles.length
+  }
 
-    // #212 — Trigger instant alerts for Pro subscribers (fire-and-forget)
-    for (const v of typedVehicles) {
-      triggerInstantAlerts(v.id)
-    }
+  // ── 3. Notify IndexNow for all newly published content ────────────────────
+  const siteUrl =
+    process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://tracciona.com'
+
+  const indexNowUrls: string[] = [
+    ...(articles as ScheduledArticle[] | null ?? []).map((a) => articleUrl(a.slug, siteUrl)),
+    ...(vehicles as ScheduledVehicle[] | null ?? []).map((v) => vehicleUrl(v.slug, siteUrl)),
+  ]
+
+  if (indexNowUrls.length > 0) {
+    await sendIndexNow(indexNowUrls)
   }
 
   return {

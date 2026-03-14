@@ -44,9 +44,8 @@
             />
           </div>
 
-          <div class="article-body">
-            {{ content }}
-          </div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="article-body" v-html="content" />
 
           <div v-if="article.hashtags?.length" class="article-tags">
             <span v-for="tag in article.hashtags" :key="tag" class="tag"> #{{ tag }} </span>
@@ -76,6 +75,8 @@
 </template>
 
 <script setup lang="ts">
+import { markdownToSafeHtml } from '~/utils/markdownToHtml'
+
 interface GuideArticle {
   id: string
   title_es: string | null
@@ -123,11 +124,14 @@ const title = computed(() => {
   return article.value.title_es || ''
 })
 
-const content = computed(() => {
+const rawContent = computed(() => {
   if (!article.value) return ''
   if (locale.value === 'en' && article.value.content_en) return article.value.content_en
   return article.value.content_es || ''
 })
+
+// #169 + #170 — render as sanitized markdown for prose structure
+const content = computed(() => markdownToSafeHtml(rawContent.value))
 
 const metaDesc = computed(() => {
   if (!article.value) return ''
@@ -174,7 +178,7 @@ if (article.value) {
       publisher: {
         '@type': 'Organization',
         name: t('site.title'),
-        logo: { '@type': 'ImageObject', url: `${useSiteUrl()}/og-default.png` },
+        logo: { '@type': 'ImageObject', url: useSiteUrl() + '/og-default.png' },
       },
       articleSection: 'Guías',
       mainEntityOfPage: `${useSiteUrl()}/guia/${route.params.slug}`,
@@ -194,7 +198,7 @@ if (article.value) {
               '@type': 'ListItem',
               position: 2,
               name: t('guide.title'),
-              item: `${useSiteUrl()}/guia`,
+              item: useSiteUrl() + '/guia',
             },
             {
               '@type': 'ListItem',
@@ -331,8 +335,52 @@ function formatDate(date: string | null): string {
   font-size: 1rem;
   line-height: 1.8;
   color: var(--text-secondary);
-  white-space: pre-line;
   max-width: 65ch;
+}
+
+/* Prose styles for markdown-rendered content — featured snippet structure (#170) */
+.article-body :deep(p) {
+  margin-bottom: 1rem;
+}
+
+.article-body :deep(h2) {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 2rem 0 0.5rem;
+  line-height: 1.3;
+}
+
+.article-body :deep(h3) {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 1.5rem 0 0.375rem;
+}
+
+/* First paragraph after h2 — styled as featured snippet answer (#170) */
+.article-body :deep(h2 + p) {
+  font-size: 1rem;
+  color: var(--text-primary, var(--text-secondary));
+  font-weight: 400;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+
+.article-body :deep(a) {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.article-body :deep(ul),
+.article-body :deep(ol) {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.article-body :deep(li) {
+  margin-bottom: 0.25rem;
 }
 
 /* Tags */

@@ -39,7 +39,7 @@ function makeChain(data: unknown = [], extra: Record<string, unknown> = {}) {
   return chain
 }
 
-import handler from '../../../server/api/cron/price-drop-alert.post'
+import handler, { isPriceDropEligible } from '../../../server/api/cron/price-drop-alert.post'
 
 describe('price-drop-alert cron', () => {
   beforeEach(() => {
@@ -482,5 +482,43 @@ describe('price-drop-alert cron', () => {
         headers: { 'x-internal-secret': 'my-secret' },
       }),
     )
+  })
+})
+
+// ── isPriceDropEligible unit tests (backlog #13 tier enforcement) ─────────────
+
+describe('isPriceDropEligible', () => {
+  const monday = new Date('2026-03-09T10:00:00Z') // Monday
+  const tuesday = new Date('2026-03-10T10:00:00Z') // Tuesday
+  const wednesday = new Date('2026-03-11T10:00:00Z') // Wednesday
+
+  it('premium receives on any day', () => {
+    expect(isPriceDropEligible('premium', tuesday)).toBe(true)
+    expect(isPriceDropEligible('premium', wednesday)).toBe(true)
+  })
+
+  it('founding receives on any day', () => {
+    expect(isPriceDropEligible('founding', tuesday)).toBe(true)
+  })
+
+  it('classic receives on any day', () => {
+    expect(isPriceDropEligible('classic', tuesday)).toBe(true)
+    expect(isPriceDropEligible('classic', wednesday)).toBe(true)
+  })
+
+  it('basic receives only on Monday', () => {
+    expect(isPriceDropEligible('basic', monday)).toBe(true)
+    expect(isPriceDropEligible('basic', tuesday)).toBe(false)
+    expect(isPriceDropEligible('basic', wednesday)).toBe(false)
+  })
+
+  it('free receives only on Monday', () => {
+    expect(isPriceDropEligible('free', monday)).toBe(true)
+    expect(isPriceDropEligible('free', tuesday)).toBe(false)
+  })
+
+  it('unknown plan receives only on Monday (defaults to free behavior)', () => {
+    expect(isPriceDropEligible('unknown', monday)).toBe(true)
+    expect(isPriceDropEligible('unknown', tuesday)).toBe(false)
   })
 })

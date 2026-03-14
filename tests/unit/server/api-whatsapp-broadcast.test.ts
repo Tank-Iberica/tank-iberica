@@ -230,14 +230,14 @@ describe('sendWhatsAppBroadcast (unit)', () => {
     expect(result).toEqual({ messageId: 'wamid.xyz' })
   })
 
-  it('throws on non-ok response', async () => {
+  it('throws on non-ok response with generic 502', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 403,
       text: () => Promise.resolve('Forbidden'),
     })
-    await expect(sendWhatsAppBroadcast('hello', 'ch-1', 'ph-1', 'tok-1')).rejects.toThrow(
-      'WhatsApp API error (403)',
-    )
+    await expect(sendWhatsAppBroadcast('hello', 'ch-1', 'ph-1', 'tok-1')).rejects.toMatchObject({
+      statusCode: 502,
+    })
   })
 })
