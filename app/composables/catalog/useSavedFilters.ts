@@ -14,7 +14,7 @@ export interface SavedFilterPreset {
 }
 
 function loadFromStorage(): SavedFilterPreset[] {
-  if (typeof window === 'undefined') return []
+  if (typeof globalThis.window === 'undefined') return []
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     return raw ? (JSON.parse(raw) as SavedFilterPreset[]) : []
@@ -24,7 +24,7 @@ function loadFromStorage(): SavedFilterPreset[] {
 }
 
 function saveToStorage(presets: SavedFilterPreset[]): void {
-  if (typeof window === 'undefined') return
+  if (typeof globalThis.window === 'undefined') return
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(presets))
   } catch {

@@ -187,8 +187,8 @@ export function applyPlaceholders(
   values: { marca?: string; modelo?: string; año?: string | number; km?: string | number },
 ): string {
   return template
-    .replace(/\{marca\}/g, values.marca || 'Marca')
-    .replace(/\{modelo\}/g, values.modelo || 'Modelo')
-    .replace(/\{año\}/g, String(values.año || new Date().getFullYear()))
-    .replace(/\{km\}/g, String(values.km || '0'))
+    .replaceAll(/\{marca\}/g, values.marca || 'Marca')
+    .replaceAll(/\{modelo\}/g, values.modelo || 'Modelo')
+    .replaceAll(/\{año\}/g, String(values.año || new Date().getFullYear()))
+    .replaceAll(/\{km\}/g, String(values.km || '0'))
 }

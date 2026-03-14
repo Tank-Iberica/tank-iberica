@@ -6,7 +6,7 @@
  */
 export function useSiteName(): string {
   try {
-    return (useRuntimeConfig().public.siteName as string) || ''
+    return useRuntimeConfig().public.siteName || ''
   } catch {
     return process.env.NUXT_PUBLIC_SITE_NAME || ''
   }

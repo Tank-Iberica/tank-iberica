@@ -97,7 +97,7 @@ function markdownToEmailHtml(md: string): string {
     .replaceAll('>', '&gt;')
 
   // Bold: **text**
-  html = html.replaceAll(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  html = html.replaceAll(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
 
   // Links: [text](url)
   html = html.replaceAll(

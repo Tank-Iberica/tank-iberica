@@ -32,6 +32,7 @@ interface ExpiredReservation {
   vehicle_id: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ExpiryResult {
   processed: number
   refunded: number
@@ -80,6 +81,7 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event, body?.secret)
 
   // ── 2. Get Supabase service role client ───────────────────────────────────
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
   const now = new Date()
 
@@ -103,12 +105,12 @@ export default defineEventHandler(async (event) => {
 
   // ── 4. Set up Stripe (if configured) ──────────────────────────────────────
   const config = useRuntimeConfig()
-  const stripeKey = (config.stripeSecretKey || process.env.STRIPE_SECRET_KEY) as string | undefined
+  const stripeKey = config.stripeSecretKey || process.env.STRIPE_SECRET_KEY
 
   let stripe: InstanceType<typeof import('stripe').default> | null = null
   if (stripeKey) {
     const { default: Stripe } = await import('stripe')
-    stripe = new Stripe(stripeKey as string)
+    stripe = new Stripe(stripeKey)
   }
 
   let refundedCount = 0

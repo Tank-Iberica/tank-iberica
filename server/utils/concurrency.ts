@@ -12,7 +12,7 @@
 
 export class Semaphore {
   private permits: number
-  private queue: Array<() => void> = []
+  private readonly queue: Array<() => void> = []
 
   constructor(maxConcurrency: number) {
     this.permits = maxConcurrency

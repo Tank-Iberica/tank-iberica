@@ -25,15 +25,15 @@ interface FeedVehicle {
 
 function escapeXml(str: string): string {
   return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
+    .replaceAll(/&/g, '&amp;')
+    .replaceAll(/</g, '&lt;')
+    .replaceAll(/>/g, '&gt;')
+    .replaceAll(/"/g, '&quot;')
+    .replaceAll(/'/g, '&apos;')
 }
 
 export default defineEventHandler(async (event) => {
-  const db = serverSupabaseServiceRole(event) as ReturnType<typeof serverSupabaseServiceRole>
+  const db = serverSupabaseServiceRole(event)
   const siteUrl = getSiteUrl().replace(/\/$/, '')
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

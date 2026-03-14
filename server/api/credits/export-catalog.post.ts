@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
   verifyCsrf(event)
 
   const config = useRuntimeConfig()
-  const supabaseUrl = config.public.supabaseUrl || process.env.SUPABASE_URL
+  const supabaseUrl = String(config.public.supabaseUrl || process.env.SUPABASE_URL || '')
   const serviceKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
 
   const headers: Record<string, string> = {
@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
     { headers },
   )
   const subs = (await subRes.json()) as Array<{ plan: string }>
-  const plan = (subs?.[0]?.plan ?? 'free') as string
+  const plan = subs?.[0]?.plan ?? 'free'
 
   // 3. Check plan eligibility
   if (

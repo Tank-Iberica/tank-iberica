@@ -35,6 +35,8 @@ jobs:
         run: node scripts/check-circular-deps.mjs
       - run: npm run typecheck
       - run: npm run build
+      - name: Bundle size budget check
+        run: node scripts/check-bundle-size.mjs
 
   e2e-tests:
     runs-on: ubuntu-latest

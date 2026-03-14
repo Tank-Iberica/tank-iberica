@@ -144,7 +144,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
         supabase
           .from('vehicles')
           .select(
-            'id, title, brand, model, year, price, price_negotiable, description, description_en, status, images, slug, category_id, subcategory_id, location_province, location_city, location_country, condition, hours, mileage, fuel_type, power_hp, weight_kg, dealer_id, created_at, updated_at, featured, sold_price_cents, sold_at, withdrawal_reason, ref_code, extras',
+            'id, brand, model, year, price, km, description_es, description_en, status, slug, category_id, subcategory_id, location, location_province, location_country, condition, hours, dealer_id, created_at, updated_at, featured, sold_price_cents, sold_at, video_url, main_image_url',
           )
           .eq('id', vehicleId)
           .eq('dealer_id', dealer.id)
@@ -171,21 +171,21 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
       favoritesCount.value = favRes.count || 0
       leadCount.value = leadsRes.count || 0
 
-      const v = vehicleRes.data as Record<string, unknown>
-      viewCount.value = (v.views as number) || 0
+      const v = vehicleRes.data
+      viewCount.value = 0
       form.value = {
-        brand: (v.brand as string) || '',
-        model: (v.model as string) || '',
-        year: (v.year as number) || new Date().getFullYear(),
-        km: (v.km as number) || 0,
-        price: (v.price as number) || 0,
-        category_id: (v.category_id as string) || '',
-        subcategory_id: (v.subcategory_id as string) || '',
-        description_es: (v.description_es as string) || '',
-        description_en: (v.description_en as string) || '',
-        location: (v.location as string) || '',
-        status: (v.status as string) || 'published',
-        video_url: (v.video_url as string) || '',
+        brand: v.brand || '',
+        model: v.model || '',
+        year: v.year || new Date().getFullYear(),
+        km: v.km || 0,
+        price: v.price || 0,
+        category_id: v.category_id || '',
+        subcategory_id: v.subcategory_id || '',
+        description_es: v.description_es || '',
+        description_en: v.description_en || '',
+        location: v.location || '',
+        status: v.status || 'published',
+        video_url: v.video_url || '',
       }
 
       categories.value = (catRes.data || []) as CategoryOption[]

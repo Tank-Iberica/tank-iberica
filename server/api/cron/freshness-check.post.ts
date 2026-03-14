@@ -198,7 +198,7 @@ export default defineEventHandler(async (event) => {
           headers,
           body: JSON.stringify({
             freshness_reminded_at: now.toISOString(),
-            freshness_reminder_count: ((v.freshness_reminder_count as number) || 0) + 1,
+            freshness_reminder_count: (v.freshness_reminder_count || 0) + 1,
           }),
         })
         if (!updateRes.ok) throw new Error('Update failed')

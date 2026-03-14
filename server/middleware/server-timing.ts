@@ -43,6 +43,4 @@ export default defineEventHandler((event) => {
 
   // Register response hook via Node.js response finish event
   event.node.res.on('finish', closeHandler)
-
-  return
 })

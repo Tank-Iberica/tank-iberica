@@ -46,7 +46,7 @@ export function useCursorPagination<T>(
   const pageSize = options.pageSize ?? 20
 
   const items = ref<T[]>([]) as Ref<T[]>
-  const cursor = ref<string | null>(null) as Ref<string | null>
+  const cursor = ref<string | null>(null)
   const hasMore = ref(true)
   const isLoading = ref(false)
   const error = ref<string | null>(null)

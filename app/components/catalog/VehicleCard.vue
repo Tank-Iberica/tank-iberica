@@ -501,7 +501,6 @@ function nextImage() {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
   max-width: 100%;
   line-height: 1.35;
   font-size: clamp(0.75rem, 2.5vw, 1.25rem);

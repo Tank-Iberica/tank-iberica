@@ -76,11 +76,11 @@ async function openStripePortal() {
       headers: { 'X-Requested-With': 'XMLHttpRequest' },
       body: {
         customerId,
-        returnUrl: `${window.location.origin}/perfil/suscripcion`,
+        returnUrl: `${globalThis.location.origin}/perfil/suscripcion`,
       },
     })
     if (url) {
-      window.location.href = url
+      globalThis.location.href = url
     }
   } catch {
     // Silently handle — user stays on page

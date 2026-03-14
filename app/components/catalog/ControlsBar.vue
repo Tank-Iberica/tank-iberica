@@ -314,7 +314,7 @@ function handleCategoryClick(cat: string) {
   }
   activeActions.value = next
   const arr = [...next]
-  setActions(arr as import('~/composables/useCatalogState').VehicleAction[])
+  setActions(arr as import('~~/shared/types/vehicle').VehicleAction[])
   emit('categoryChange', arr)
 }
 

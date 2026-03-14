@@ -37,11 +37,13 @@ export function formatPriceDecimal(value: number, locale = 'es'): string {
   }).format(value)
 }
 
+const DEFAULT_DATE_OPTIONS: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }
+
 /** Format a date string or Date object for display. */
 export function formatDate(
   date: string | Date,
   locale = 'es',
-  options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' },
+  options: Intl.DateTimeFormatOptions = DEFAULT_DATE_OPTIONS,
 ): string {
   const d = typeof date === 'string' ? new Date(date) : date
   if (Number.isNaN(d.getTime())) return ''

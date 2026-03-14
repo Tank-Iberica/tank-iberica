@@ -8,6 +8,7 @@ const { mockVerifyCron } = vi.hoisted(() => ({
   mockVerifyCron: vi.fn(),
 }))
 
+vi.mock('~~/server/utils/cronLock', () => ({ acquireDbCronLock: vi.fn().mockResolvedValue(true) }))
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   getHeader: vi.fn(),
@@ -65,7 +66,7 @@ import handler from '../../../server/api/cron/capacity-check.post'
 
 describe('POST /api/cron/capacity-check', () => {
   beforeEach(() => {
-    vi.resetAllMocks()
+    vi.clearAllMocks()
     process.env.SUPABASE_STORAGE_LIMIT_GB = '8'
     process.env.SUPABASE_MAX_CONNECTIONS = '60'
     process.env.NUXT_PUBLIC_VERTICAL = 'tracciona'

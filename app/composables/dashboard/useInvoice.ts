@@ -87,7 +87,7 @@ export function useInvoice() {
   const showVehicleDropdown = ref(false)
 
   // ============ AUTOSAVE DRAFT ============
-  const _autosaveRef = ref<Record<string, unknown>>({}) as Ref<Record<string, unknown>>
+  const _autosaveRef = ref<Record<string, unknown>>({})
   const { hasDraft, restoreDraft, clearDraft, draftSavedAt } = useFormAutosave(
     'factura',
     _autosaveRef,

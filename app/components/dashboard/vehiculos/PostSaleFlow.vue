@@ -30,7 +30,7 @@ const reviewBaseUrl = computed(() => `/vehiculo/${props.vehicleId}?review=1`)
 
 async function copyReviewLink() {
   try {
-    await navigator.clipboard.writeText(window.location.origin + reviewBaseUrl.value)
+    await navigator.clipboard.writeText(globalThis.location.origin + reviewBaseUrl.value)
     reviewCopied.value = true
     setTimeout(() => {
       reviewCopied.value = false

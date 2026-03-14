@@ -8,6 +8,7 @@ const { mockVerifyCron } = vi.hoisted(() => ({
   mockVerifyCron: vi.fn(),
 }))
 
+vi.mock('~~/server/utils/cronLock', () => ({ acquireDbCronLock: vi.fn().mockResolvedValue(true) }))
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
 }))
@@ -69,7 +70,7 @@ import handler from '../../../server/api/cron/slow-query-check.post'
 
 describe('POST /api/cron/slow-query-check', () => {
   beforeEach(() => {
-    vi.resetAllMocks()
+    vi.clearAllMocks()
     process.env.NUXT_PUBLIC_VERTICAL = 'tracciona'
     mockSupabase = makeSupabase()
   })

@@ -147,8 +147,9 @@ export default defineEventHandler(async (event): Promise<ExportData> => {
     .eq('user_id', userId)
 
   // ── 15. Collect messages ────────────────────────────────────────────────
-  const { data: messages } = await supabase
-    .from('messages')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: messages } = await (supabase
+    .from('messages' as never) as any)
     .select('id, conversation_id, content, created_at')
     .eq('sender_id', userId)
 
@@ -159,8 +160,9 @@ export default defineEventHandler(async (event): Promise<ExportData> => {
     .eq('buyer_id', userId)
 
   // ── 17. Collect transactions ────────────────────────────────────────────
-  const { data: transactions } = await supabase
-    .from('transactions')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: transactions } = await (supabase
+    .from('transactions' as never) as any)
     .select('id, type, amount, currency, status, created_at')
     .eq('user_id', userId)
 

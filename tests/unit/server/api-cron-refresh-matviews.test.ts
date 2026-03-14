@@ -8,6 +8,7 @@ const { mockVerifyCron } = vi.hoisted(() => ({
   mockVerifyCron: vi.fn(),
 }))
 
+vi.mock('~~/server/utils/cronLock', () => ({ acquireDbCronLock: vi.fn().mockResolvedValue(true) }))
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
 }))
@@ -44,7 +45,7 @@ import handler from '../../../server/api/cron/refresh-matviews.post'
 
 describe('POST /api/cron/refresh-matviews', () => {
   beforeEach(() => {
-    vi.resetAllMocks()
+    vi.clearAllMocks()
     mockSupabase = makeSupabase()
   })
 

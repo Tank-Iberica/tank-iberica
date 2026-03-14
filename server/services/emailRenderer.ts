@@ -18,9 +18,9 @@ export function substituteVariables(
   text: string,
   variables: Record<string, string | number | undefined>,
 ): string {
-  return text.replace(/\{\{(\w+)\}\}/g, (match, key: string) => {
+  return text.replaceAll(/\{\{(\w+)\}\}/g, (match, key: string) => {
     const value = variables[key]
-    return value !== undefined ? String(value) : ''
+    return value === undefined ? '' : String(value)
   })
 }
 
@@ -35,13 +35,13 @@ export function substituteVariables(
 export function markdownToEmailHtml(text: string): string {
   let html = text
     // Bold
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replaceAll(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     // Links
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" style="color: inherit;">$1</a>')
+    .replaceAll(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: inherit;">$1</a>')
     // Double newline = paragraph break
-    .replace(/\n\n/g, '</p><p style="margin: 0 0 16px 0;">')
+    .replaceAll(/\n\n/g, '</p><p style="margin: 0 0 16px 0;">')
     // Single newline = line break
-    .replace(/\n/g, '<br />')
+    .replaceAll(/\n/g, '<br />')
 
   // Wrap in paragraph
   html = `<p style="margin: 0 0 16px 0;">${html}</p>`

@@ -92,7 +92,7 @@ export function useSessionTimeout() {
   }
 
   function setup() {
-    if (typeof window === 'undefined') return
+    if (typeof globalThis.window === 'undefined') return
     if (!user.value) return
 
     // Initialize last activity
@@ -100,7 +100,7 @@ export function useSessionTimeout() {
 
     // Listen for activity events
     for (const evt of ACTIVITY_EVENTS) {
-      window.addEventListener(evt, onUserActivity, { passive: true })
+      globalThis.addEventListener(evt, onUserActivity, { passive: true })
     }
 
     startChecking()
@@ -111,9 +111,9 @@ export function useSessionTimeout() {
       clearInterval(checkInterval)
       checkInterval = null
     }
-    if (typeof window === 'undefined') return
+    if (typeof globalThis.window === 'undefined') return
     for (const evt of ACTIVITY_EVENTS) {
-      window.removeEventListener(evt, onUserActivity)
+      globalThis.removeEventListener(evt, onUserActivity)
     }
   }
 

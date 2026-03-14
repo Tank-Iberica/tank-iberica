@@ -9,7 +9,7 @@
  */
 function _useSiteUrl(): string {
   try {
-    return (useRuntimeConfig().public.siteUrl as string) || ''
+    return (useRuntimeConfig().public.siteUrl) || ''
   } catch {
     return process.env.NUXT_PUBLIC_SITE_URL || ''
   }
@@ -21,7 +21,7 @@ function _useSiteUrl(): string {
  */
 function _useSiteName(): string {
   try {
-    return (useRuntimeConfig().public.siteName as string) || ''
+    return (useRuntimeConfig().public.siteName) || ''
   } catch {
     return process.env.NUXT_PUBLIC_SITE_NAME || ''
   }

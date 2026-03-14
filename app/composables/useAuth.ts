@@ -31,7 +31,7 @@ const LOGIN_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
 const LS_PREFIX = 'lr_' // login-rate prefix
 
 function _getLSEntry(key: string): { count: number; firstAttempt: number } | null {
-  if (typeof window === 'undefined') return null
+  if (typeof globalThis.window === 'undefined') return null
   try {
     const raw = localStorage.getItem(LS_PREFIX + key)
     return raw ? (JSON.parse(raw) as { count: number; firstAttempt: number }) : null
@@ -41,7 +41,7 @@ function _getLSEntry(key: string): { count: number; firstAttempt: number } | nul
 }
 
 function _setLSEntry(key: string, entry: { count: number; firstAttempt: number }): void {
-  if (typeof window === 'undefined') return
+  if (typeof globalThis.window === 'undefined') return
   try {
     localStorage.setItem(LS_PREFIX + key, JSON.stringify(entry))
   } catch {

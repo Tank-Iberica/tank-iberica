@@ -38,6 +38,16 @@ const {
 
 onMounted(fetchCalendar)
 
+const drawerContentText = computed(() => {
+  if (!selectedPost.value) return ''
+  const c = selectedPost.value.content
+  if (typeof c === 'object' && c) {
+    const obj = c as Record<string, string>
+    return obj.es || obj.en || ''
+  }
+  return (c as string) || t('admin.social.calendar.noContent')
+})
+
 function handleDragOver(dateStr: string, e: DragEvent) {
   onDragOver(dateStr, e)
 }
@@ -229,13 +239,7 @@ function handleDragOver(dateStr: string, e: DragEvent) {
           </div>
 
           <div class="cal-drawer-content">
-            <p>
-              {{
-                typeof selectedPost.content === 'object' && selectedPost.content
-                  ? ((selectedPost.content as Record<string, string>).es || (selectedPost.content as Record<string, string>).en)
-                  : selectedPost.content || t('admin.social.calendar.noContent')
-              }}
-            </p>
+            <p>{{ drawerContentText }}</p>
           </div>
 
           <div v-if="selectedPost.status === 'posted'" class="cal-drawer-stats">
@@ -424,7 +428,6 @@ function handleDragOver(dateStr: string, e: DragEvent) {
 }
 
 .cal-day-today .cal-day-number {
-  color: var(--color-primary, #23424a);
   background: var(--color-primary, #23424a);
   color: #fff;
   width: 22px;

@@ -19,6 +19,7 @@ const { mockSafeError, mockServiceRole, mockVerifyCronSecret, mockCallAI, mockIs
     }
   })
 
+vi.mock('~~/server/utils/cronLock', () => ({ acquireDbCronLock: vi.fn().mockResolvedValue(true) }))
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
 }))

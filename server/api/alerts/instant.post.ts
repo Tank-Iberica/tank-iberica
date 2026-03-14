@@ -80,6 +80,7 @@ export default defineEventHandler(async (event) => {
     throw safeError(400, 'vehicle_id is required')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
   const now = new Date()
   let notificationsSent = 0
@@ -228,7 +229,7 @@ export default defineEventHandler(async (event) => {
       const locale = user.lang ?? 'es'
 
       const vehicleTitle = `${vehicle.brand ?? ''} ${vehicle.model ?? ''}`.trim()
-      const priceStr = vehicle.price != null ? vehicle.price.toLocaleString('es-ES') + ' €' : ''
+      const priceStr = vehicle.price == null ? '' : vehicle.price.toLocaleString('es-ES') + ' €'
       const yearStr = vehicle.year ? ` (${vehicle.year})` : ''
 
       // ── Email ───────────────────────────────────────────────────────

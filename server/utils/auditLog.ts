@@ -36,7 +36,7 @@ function getClientIp(event: H3Event): string | undefined {
 }
 
 function getUserAgent(event: H3Event): string | undefined {
-  return event.node.req.headers['user-agent'] as string | undefined
+  return event.node.req.headers['user-agent']
 }
 
 /**

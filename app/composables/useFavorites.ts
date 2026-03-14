@@ -15,15 +15,15 @@ let _loaded = false
 let _synced: Ref<boolean> | null = null
 
 function getFavoriteIds(): Ref<Set<string>> {
-  if (!_favoriteIds) _favoriteIds = ref<Set<string>>(new Set())
+  _favoriteIds ??= ref<Set<string>>(new Set())
   return _favoriteIds
 }
 function getFavoritesOnly(): Ref<boolean> {
-  if (!_favoritesOnly) _favoritesOnly = ref(false)
+  _favoritesOnly ??= ref(false)
   return _favoritesOnly
 }
 function getSynced(): Ref<boolean> {
-  if (!_synced) _synced = ref(false)
+  _synced ??= ref(false)
   return _synced
 }
 

@@ -427,7 +427,7 @@ export default defineEventHandler(async (event) => {
       }
 
       const locale = dealer.locale ?? 'es'
-      const dealerName = resolveName(dealer.company_name as Record<string, string> | string, locale)
+      const dealerName = resolveName(dealer.company_name, locale)
 
       // Send each pending step in sequence
       for (const step of pendingSteps) {

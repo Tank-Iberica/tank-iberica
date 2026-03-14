@@ -7,6 +7,7 @@
  * Stores a CSRF state token in social_oauth_states for validation on callback.
  */
 import { defineEventHandler, getQuery, createError } from 'h3'
+import { randomBytes } from 'node:crypto'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 import { getSiteUrl } from '../../../utils/siteConfig'
 import { logger } from '../../../utils/logger'
@@ -40,12 +41,7 @@ const PLATFORM_CONFIG: Record<
 }
 
 function randomHex(length: number): string {
-  const chars = '0123456789abcdef'
-  let result = ''
-  for (let i = 0; i < length; i++) {
-    result += chars[Math.floor(Math.random() * chars.length)]
-  }
-  return result
+  return randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length)
 }
 
 export default defineEventHandler(async (event) => {
@@ -77,6 +73,7 @@ export default defineEventHandler(async (event) => {
   const callbackUrl = `${getSiteUrl()}/api/social/oauth/callback`
 
   // Store state in DB
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
   const { error: stateErr } = await supabase.from('social_oauth_states').insert({
     state,

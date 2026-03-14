@@ -16,6 +16,7 @@ const { mockVerifyCronSecret, mockSafeError, mockLogger } = vi.hoisted(() => ({
   mockLogger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
 }))
 
+vi.mock('~~/server/utils/cronLock', () => ({ acquireDbCronLock: vi.fn().mockResolvedValue(true) }))
 vi.mock('../../../server/utils/verifyCronSecret', () => ({
   verifyCronSecret: mockVerifyCronSecret,
 }))

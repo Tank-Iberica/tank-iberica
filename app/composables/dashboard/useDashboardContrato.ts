@@ -188,7 +188,7 @@ export function useDashboardContrato() {
   // Autosave draft (client-entered data; lessor data reloads from DB)
   // -----------------------------------------------------------------------
 
-  const _autosaveRef = ref<Record<string, unknown>>({}) as Ref<Record<string, unknown>>
+  const _autosaveRef = ref<Record<string, unknown>>({})
   const { hasDraft, restoreDraft, clearDraft, draftSavedAt } = useFormAutosave(
     'contrato',
     _autosaveRef,

@@ -31,7 +31,7 @@ export default defineEventHandler((event) => {
   // If no header (local dev, non-CF), allow through
   if (!country || country === 'XX' || country === 'T1') return
 
-  const countriesRaw = (config.geoBlockingCountries as string) || ''
+  const countriesRaw = (config.geoBlockingCountries) || ''
   if (!countriesRaw) return
 
   const countries = countriesRaw
@@ -40,7 +40,7 @@ export default defineEventHandler((event) => {
     .filter(Boolean)
   if (countries.length === 0) return
 
-  const mode = ((config.geoBlockingMode as string) || 'allow').toLowerCase()
+  const mode = ((config.geoBlockingMode) || 'allow').toLowerCase()
 
   const isInList = countries.includes(country)
 

@@ -8,6 +8,7 @@ const { mockVerifyCronSecret, mockReadBody } = vi.hoisted(() => ({
   mockReadBody: vi.fn(),
 }))
 
+vi.mock('~~/server/utils/cronLock', () => ({ acquireDbCronLock: vi.fn().mockResolvedValue(true) }))
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   readBody: (...a: unknown[]) => mockReadBody(...a),

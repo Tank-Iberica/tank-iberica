@@ -35,21 +35,21 @@ export function parseSimpleMarkdown(text: string): string {
     let html = para
 
     // Links: [text](url)
-    html = html.replace(
+    html = html.replaceAll(
       /\[([^\]]+)\]\(([^)]+)\)/g,
       '<a href="$2" rel="noopener noreferrer">$1</a>',
     )
 
     // Bold: **text** or __text__
-    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    html = html.replace(/__(.+?)__/g, '<strong>$1</strong>')
+    html = html.replaceAll(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    html = html.replaceAll(/__([^_]+)__/g, '<strong>$1</strong>')
 
     // Italic: *text* or _text_ (not preceded/followed by *)
-    html = html.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
-    html = html.replace(/(?<!_)_(?!_)(.+?)(?<!_)_(?!_)/g, '<em>$1</em>')
+    html = html.replaceAll(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+    html = html.replaceAll(/(?<!_)_(?!_)(.+?)(?<!_)_(?!_)/g, '<em>$1</em>')
 
     // Single newlines → <br>
-    html = html.replace(/\n/g, '<br>')
+    html = html.replaceAll(/\n/g, '<br>')
 
     return `<p>${html}</p>`
   })

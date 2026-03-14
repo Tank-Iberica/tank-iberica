@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useConsent } from '../../app/composables/useConsent'
+import { useConsent, CURRENT_POLICY_VERSION } from '../../app/composables/useConsent'
 import type { ConsentState } from '../../app/composables/useConsent'
 
 // ─── localStorage stub ────────────────────────────────────────────────────────
@@ -78,6 +78,7 @@ describe('loadConsent', () => {
       analytics: true,
       marketing: false,
       timestamp: '2026-01-01T00:00:00.000Z',
+      policyVersion: CURRENT_POLICY_VERSION,
     }
     localStorageStore.set('tracciona_consent', JSON.stringify(stored))
 
@@ -88,12 +89,28 @@ describe('loadConsent', () => {
   })
 
   it('forces necessary=true even if stored as false', () => {
-    const stored = { necessary: false, analytics: false, marketing: false, timestamp: '' }
+    const stored = { necessary: false, analytics: false, marketing: false, timestamp: '', policyVersion: CURRENT_POLICY_VERSION }
     localStorageStore.set('tracciona_consent', JSON.stringify(stored))
 
     const c = useConsent()
     const result = c.loadConsent()
     expect(result!.necessary).toBe(true)
+  })
+
+  it('returns null when policyVersion is outdated (#381)', () => {
+    const stored: ConsentState = {
+      necessary: true,
+      analytics: true,
+      marketing: true,
+      timestamp: '2026-01-01T00:00:00.000Z',
+      policyVersion: '2025-01-01',
+    }
+    localStorageStore.set('tracciona_consent', JSON.stringify(stored))
+
+    const c = useConsent()
+    const result = c.loadConsent()
+    expect(result).toBeNull()
+    expect(c.loaded.value).toBe(true)
   })
 
   it('sets consent.value after loading', () => {
@@ -102,6 +119,7 @@ describe('loadConsent', () => {
       analytics: true,
       marketing: false,
       timestamp: '',
+      policyVersion: CURRENT_POLICY_VERSION,
     }
     localStorageStore.set('tracciona_consent', JSON.stringify(stored))
 
@@ -112,7 +130,7 @@ describe('loadConsent', () => {
   })
 
   it('sets loaded to true after successful load', () => {
-    const stored: ConsentState = { necessary: true, analytics: false, marketing: false, timestamp: '' }
+    const stored: ConsentState = { necessary: true, analytics: false, marketing: false, timestamp: '', policyVersion: CURRENT_POLICY_VERSION }
     localStorageStore.set('tracciona_consent', JSON.stringify(stored))
 
     const c = useConsent()
@@ -135,7 +153,7 @@ describe('loadConsent', () => {
   })
 
   it('shared state — two consumers see same consent after load', () => {
-    const stored: ConsentState = { necessary: true, analytics: true, marketing: false, timestamp: '' }
+    const stored: ConsentState = { necessary: true, analytics: true, marketing: false, timestamp: '', policyVersion: CURRENT_POLICY_VERSION }
     localStorageStore.set('tracciona_consent', JSON.stringify(stored))
 
     const c1 = useConsent()

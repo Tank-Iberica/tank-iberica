@@ -98,7 +98,7 @@ export default defineEventHandler(async (event) => {
   if (vehicleErr || !vehicle) throw safeError(404, 'Vehicle not found')
 
   const v = vehicle as VehicleData
-  const imageUrl = v.vehicle_images?.sort((a, b) => a.position - b.position)[0]?.url || null
+  const imageUrl = v.vehicle_images?.toSorted((a, b) => a.position - b.position)[0]?.url || null
 
   const platforms: SocialPlatform[] = ['linkedin', 'facebook', 'instagram', 'x']
   const postIds: string[] = []

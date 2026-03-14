@@ -220,7 +220,7 @@ export function useReservation() {
 
     // Optimistic update
     const idx = reservations.value.findIndex((r) => r.id === reservationId)
-    const snapshot = idx !== -1 ? { ...reservations.value[idx]! } : null
+    const snapshot = idx === -1 ? null : { ...reservations.value[idx]! }
     const respondedAt = new Date().toISOString()
 
     if (idx !== -1) {
@@ -262,7 +262,7 @@ export function useReservation() {
 
     // Optimistic update
     const idx = reservations.value.findIndex((r) => r.id === reservationId)
-    const snapshot = idx !== -1 ? { ...reservations.value[idx]! } : null
+    const snapshot = idx === -1 ? null : { ...reservations.value[idx]! }
 
     if (idx !== -1) {
       reservations.value[idx] = {
@@ -298,7 +298,7 @@ export function useReservation() {
 
     // Optimistic update
     const idx = reservations.value.findIndex((r) => r.id === reservationId)
-    const snapshot = idx !== -1 ? { ...reservations.value[idx]! } : null
+    const snapshot = idx === -1 ? null : { ...reservations.value[idx]! }
     const confirmedAt = new Date().toISOString()
 
     if (idx !== -1) {

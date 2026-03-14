@@ -41,11 +41,11 @@ export async function purgeUrls(urls: string[]): Promise<void> {
         body: JSON.stringify({ files: batch }),
       })
 
-      if (!response.ok) {
+      if (response.ok) {
+        logger.info('[cfPurge] Purged URLs', { count: batch.length })
+      } else {
         const body = await response.text()
         logger.warn('[cfPurge] Purge failed', { status: response.status, body: body.slice(0, 200) })
-      } else {
-        logger.info('[cfPurge] Purged URLs', { count: batch.length })
       }
     } catch (err) {
       logger.warn('[cfPurge] Purge error', { error: String(err) })

@@ -33,23 +33,23 @@ export function sanitizeText(value: string, options: SanitizeOptions = {}): stri
 
   let result = value
     // Remove null bytes — PostgreSQL and browsers handle them inconsistently
-    .replace(/\0/g, '')
+    .replaceAll(/\0/g, '')
     // Collapse carriage returns to newlines
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n')
+    .replaceAll(/\r\n/g, '\n')
+    .replaceAll(/\r/g, '\n')
 
   if (stripHtml) {
     // Strip HTML/script tags — simple regex is fine for stored text fields
     // (not a security-critical sanitizer for HTML rendering — use DOMPurify for that)
     result = result
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      .replace(/<[^>]+>/g, '')
+      .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replaceAll(/<[^>]+>/g, '')
       // Decode common HTML entities to plain text
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#x27;/g, "'")
+      .replaceAll(/&amp;/g, '&')
+      .replaceAll(/&lt;/g, '<')
+      .replaceAll(/&gt;/g, '>')
+      .replaceAll(/&quot;/g, '"')
+      .replaceAll(/&#x27;/g, "'")
   }
 
   // Trim and collapse repeated internal whitespace (preserve newlines)
@@ -91,9 +91,9 @@ export function sanitizeRecord<T extends Record<string, unknown>>(
 export function sanitizeSlug(value: string): string {
   return value
     .toLowerCase()
-    .replace(/\0/g, '')
-    .replace(/[^a-z0-9-]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
+    .replaceAll(/\0/g, '')
+    .replaceAll(/[^a-z0-9-]/g, '-')
+    .replaceAll(/-+/g, '-')
+    .replaceAll(/(?:^-|-$)/g, '')
     .slice(0, 200)
 }

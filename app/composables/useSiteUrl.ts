@@ -6,7 +6,7 @@
  */
 export function useSiteUrl(): string {
   try {
-    return (useRuntimeConfig().public.siteUrl as string) || ''
+    return useRuntimeConfig().public.siteUrl || ''
   } catch {
     return process.env.NUXT_PUBLIC_SITE_URL || ''
   }

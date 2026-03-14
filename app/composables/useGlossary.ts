@@ -59,7 +59,7 @@ export function useGlossary() {
     for (const t of terms.value) {
       if (t.category) cats.add(t.category)
     }
-    return [...cats].sort()
+    return [...cats].sort((a, b) => a.localeCompare(b))
   })
 
   /** Filtered terms by search query and category */
@@ -87,7 +87,7 @@ export function useGlossary() {
     const groups: Record<string, GlossaryTerm[]> = {}
     for (const t of filteredTerms.value) {
       const firstLetter = (t.slug[0] || '#').toUpperCase()
-      if (!groups[firstLetter]) groups[firstLetter] = []
+      groups[firstLetter] ??= []
       groups[firstLetter].push(t)
     }
     return groups

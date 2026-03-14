@@ -156,7 +156,7 @@ export function generateCsvRow(product: ProductData): string {
     product.url,
   ]
 
-  return fields.map((f) => `"${f.replace(/"/g, '""')}"`).join(',')
+  return fields.map((f) => `"${f.replaceAll(/"/g, '""')}"`).join(',')
 }
 
 /**

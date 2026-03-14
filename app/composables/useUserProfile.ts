@@ -17,6 +17,11 @@ interface ExportedData {
   favorites: Record<string, unknown>[]
   leads: Record<string, unknown>[]
   views: Record<string, unknown>[]
+  messages: Record<string, unknown>[]
+  search_alerts: Record<string, unknown>[]
+  reservations: Record<string, unknown>[]
+  transactions: Record<string, unknown>[]
+  email_preferences: Record<string, unknown>[]
 }
 
 export function useUserProfile() {

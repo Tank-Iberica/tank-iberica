@@ -133,7 +133,7 @@ export default defineEventHandler(async (event) => {
   const v = vehicle as VehicleData
 
   // Get primary image
-  const images = v.vehicle_images?.sort((a, b) => a.position - b.position)
+  const images = v.vehicle_images?.toSorted((a, b) => a.position - b.position)
   const imageUrl = images?.[0]?.url
 
   if (!imageUrl) {

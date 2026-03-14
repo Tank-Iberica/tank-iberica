@@ -87,11 +87,11 @@ export default defineEventHandler(async (event): Promise<PriceRecommendation> =>
     `Marca: ${brand}`,
     `Modelo: ${model}`,
     year ? `Año: ${year}` : null,
-    km != null ? `Kilómetros: ${km.toLocaleString('es-ES')}` : null,
+    km == null ? null : `Kilómetros: ${km.toLocaleString('es-ES')}`,
     category ? `Categoría: ${category}` : null,
-    currentPrice != null
-      ? `Precio actual del anunciante: ${currentPrice.toLocaleString('es-ES')} EUR`
-      : null,
+    currentPrice == null
+      ? null
+      : `Precio actual del anunciante: ${currentPrice.toLocaleString('es-ES')} EUR`,
   ]
     .filter(Boolean)
     .join('\n')

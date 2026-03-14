@@ -18,11 +18,11 @@ let _flagStore: Ref<Map<string, FeatureFlag>> | null = null
 let _loaded: Ref<boolean> | null = null
 
 function getFlagStore(): Ref<Map<string, FeatureFlag>> {
-  if (!_flagStore) _flagStore = ref<Map<string, FeatureFlag>>(new Map())
+  _flagStore ??= ref<Map<string, FeatureFlag>>(new Map())
   return _flagStore
 }
 function getLoaded(): Ref<boolean> {
-  if (!_loaded) _loaded = ref(false)
+  _loaded ??= ref(false)
   return _loaded
 }
 

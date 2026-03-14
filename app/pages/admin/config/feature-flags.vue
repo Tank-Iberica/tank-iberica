@@ -40,7 +40,7 @@ function toggleExpand(key: string) {
 
 async function handleCreate() {
   await createFlag({
-    key: newFlag.key.toLowerCase().replace(/\s+/g, '_'),
+    key: newFlag.key.toLowerCase().replaceAll(/\s+/g, '_'),
     enabled: newFlag.enabled,
     description: newFlag.description,
     percentage: newFlag.percentage,

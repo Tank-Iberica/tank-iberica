@@ -30,14 +30,14 @@ export default defineNuxtPlugin(() => {
   /** Initialize dataLayer (GTM requires this before the script loads) */
   function initDataLayer(): void {
     if (!import.meta.client) return
-    window.dataLayer = window.dataLayer ?? []
+    globalThis.dataLayer = globalThis.dataLayer ?? []
   }
 
   /** Push an event to GTM dataLayer (no-op on server or if no consent) */
   function pushEvent(event: Record<string, unknown>): void {
     if (!import.meta.client) return
     initDataLayer()
-    window.dataLayer.push(event)
+    globalThis.dataLayer?.push(event)
   }
 
   function loadGtm(): void {

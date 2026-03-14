@@ -40,9 +40,9 @@ export function useTableOfContents(): UseTableOfContents {
         const slug = (heading.textContent ?? '')
           .toLowerCase()
           .trim()
-          .replace(/[^a-z0-9\s-]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/(^-|-$)/g, '')
+          .replaceAll(/[^a-z0-9\s-]/g, '')
+          .replaceAll(/\s+/g, '-')
+          .replaceAll(/(^-|-$)/g, '')
         heading.id = slug || `heading-${index}`
       }
 

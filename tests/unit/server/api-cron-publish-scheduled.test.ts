@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 /* ---------- mocks ---------- */
 const mockVerifyCronSecret = vi.fn()
+vi.mock('~~/server/utils/cronLock', () => ({ acquireDbCronLock: vi.fn().mockResolvedValue(true) }))
 vi.mock('../../../server/utils/verifyCronSecret', () => ({
   verifyCronSecret: (...args: unknown[]) => mockVerifyCronSecret(...args),
 }))

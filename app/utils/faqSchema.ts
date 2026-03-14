@@ -24,7 +24,7 @@ export interface FaqPageInput {
 }
 
 function getEsQuestions(title: string, count: number): FaqItem[] {
-  const countText = `${count} anuncio${count !== 1 ? 's' : ''}`
+  const countText = `${count} anuncio${count === 1 ? '' : 's'}`
   return [
     {
       question: `¿Cuántas ${title} están en venta?`,
@@ -50,7 +50,7 @@ function getEsQuestions(title: string, count: number): FaqItem[] {
 }
 
 function getEnQuestions(title: string, count: number): FaqItem[] {
-  const countText = `${count} listing${count !== 1 ? 's' : ''}`
+  const countText = `${count} listing${count === 1 ? '' : 's'}`
   return [
     {
       question: `How many ${title} are for sale?`,

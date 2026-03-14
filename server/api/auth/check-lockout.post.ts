@@ -134,7 +134,7 @@ export default defineEventHandler(async (event) => {
 
 async function verifyTurnstile(token: string): Promise<boolean> {
   const config = useRuntimeConfig()
-  const secret = config.turnstileSecretKey as string
+  const secret = config.turnstileSecretKey
   if (!secret) return false
 
   try {

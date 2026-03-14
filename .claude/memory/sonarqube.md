@@ -17,10 +17,24 @@
 ## Historial de auditoría
 - Documento completo: `docs/legacy/AUDITORIA-SONARQUBE-100.md` (movido a legacy, no borrar)
 
-## Audit Progress — COMPLETE ✅
+## Audit Progress — COMPLETE ✅ (09-mar)
 - **345→0 OPEN** — confirmed 05-mar-2026 15:09 UTC (analysisId: 9ad58c8f)
 - All 13 phases complete. Zero SonarQube issues.
 - Quality Gate: falla por `new_coverage` 7.6% < 10%. Fix: tests utils puros + CI check permanente (COMPLETO)
+
+## 2º Scan post-merge agentes (14-mar-2026)
+- **Pre-fixes:** 7 bugs · 22 hotspots · 275 smells · Coverage 66.1% · Quality Gate OK
+- **Bugs fijados (7/7):** S2871 sort sin comparador, S5850 regex anchors, S6959 reduce sin valor inicial, S4656 CSS duplicado, S2245 Math.random OAuth → crypto.randomBytes
+- **Hotspots (22/22):** 19 SAFE via API (Math.random no-crypto, MD5 ETag, geolocation, safe regex) · 3 fijados en código (OAuth CSRF, emailRenderer ReDoS, send.post.ts bold regex)
+- **Smells completados (14-mar):**
+  - S7781 (replace→replaceAll): ~47 → ✅ todos
+  - S7764 (window→globalThis): 34 → ✅ todos
+  - S4325 (type assertions innecesarias): 27 → ✅ ~22 fijados
+  - S6551 (supabaseUrl stringify): 12 → ✅ todos
+  - S7735 (negated conditions): 18 → 🔶 ~10 fijados
+  - S3358 (nested ternaries): 23 → 🔶 parcial
+- **Pendientes:** S3358 (~18), S7735 (~8), S3776 (25 cognitive complexity), S6606 (13), menores (~40)
+- **Próximo scan:** lanzar tras terminar S3358+S7735 para verificar
 
 ## CRÍTICO — S5850 Fix: regex alternations con anchors
 - `/^-|-$/g` sigue siendo flaggeado por S5850 aunque no tenga grupos innecesarios

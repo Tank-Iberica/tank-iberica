@@ -114,27 +114,30 @@ export function useAdminEditorialCalendar() {
           .order('scheduled_at'),
       ])
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const articleEvents: CalendarEvent[] = (articlesRes.data ?? []).map((a: any) => ({
         id: `article-${a.id}`,
-        type: 'article' as ContentType,
+        type: 'article',
         title: a.title_es ?? '(sin título)',
         scheduledAt: new Date(a.scheduled_at!),
         status: a.status,
         url: `/admin/noticias/${a.id}`,
       }))
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const vehicleEvents: CalendarEvent[] = (vehiclesRes.data ?? []).map((v: any) => ({
         id: `vehicle-${v.id}`,
-        type: 'vehicle' as ContentType,
+        type: 'vehicle',
         title: v.title_es || `${v.brand ?? ''} ${v.model ?? ''}`.trim() || '(sin título)',
         scheduledAt: new Date(v.scheduled_publish_at!),
         status: v.status,
         url: `/admin/vehiculos/${v.id}`,
       }))
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const socialEvents: CalendarEvent[] = (socialRes.data ?? []).map((s: any) => ({
         id: `social-${s.id}`,
-        type: 'social' as ContentType,
+        type: 'social',
         title: `${s.platform ?? 'Social'}: ${(s.content as string | null)?.slice(0, 40) ?? ''}…`,
         scheduledAt: new Date(s.scheduled_at!),
         status: s.status,

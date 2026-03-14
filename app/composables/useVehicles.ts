@@ -78,7 +78,7 @@ export function useVehicles() {
       .eq('status', 'published')
 
     const query = applyFilters(base, filters)
-    const { count } = await (query as PromiseLike<{ count: number | null }>) // NOSONAR: Supabase builders implement PromiseLike but are not native Promises
+    const { count } = await (query as unknown as PromiseLike<{ count: number | null }>) // NOSONAR: Supabase builders implement PromiseLike but are not native Promises
     return count ?? 0
   }
 

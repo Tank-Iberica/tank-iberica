@@ -118,7 +118,7 @@ async function loadStats(): Promise<void> {
           .in('entity_id', vehicleIds)
         if (viewsData) {
           const viewCounts = new Map<string, number>()
-          for (const row of viewsData as Array<{ entity_id: string }>) {
+          for (const row of viewsData as unknown as Array<{ entity_id: string }>) {
             viewCounts.set(row.entity_id, (viewCounts.get(row.entity_id) || 0) + 1)
           }
           for (const vs of vehicleStats.value) {

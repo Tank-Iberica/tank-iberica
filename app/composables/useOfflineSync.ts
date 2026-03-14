@@ -22,7 +22,7 @@ let _syncing: Ref<boolean> | null = null
 let _listenersBound = false
 
 function getIsOnline(): Ref<boolean> {
-  if (!_isOnline) _isOnline = ref(typeof navigator !== 'undefined' ? navigator.onLine : true)
+  _isOnline ??= ref(typeof navigator === 'undefined' ? true : navigator.onLine)
   return _isOnline
 }
 
@@ -74,8 +74,8 @@ export function useOfflineSync() {
       isOnline.value = false
     }
 
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline)
+    globalThis.addEventListener('online', handleOnline)
+    globalThis.addEventListener('offline', handleOffline)
   }
 
   /**

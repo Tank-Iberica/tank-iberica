@@ -34,7 +34,7 @@ await useAsyncData('top-dealers', () => loadTopDealers(100), { server: true })
       <UiSkeletonTable v-if="loading" :rows="10" :cols="5" />
 
       <!-- Error -->
-      <UiErrorState v-else-if="error" :message="error" />
+      <UiErrorState v-else-if="error" :title="error" />
 
       <!-- Empty -->
       <div v-else-if="!dealers.length" class="top-dealers-empty">

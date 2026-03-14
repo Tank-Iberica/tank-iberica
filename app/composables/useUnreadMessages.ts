@@ -12,7 +12,7 @@ let _channel: RealtimeChannel | null = null
 let _initialized = false
 
 function getUnreadCount(): Ref<number> {
-  if (!_unreadCount) _unreadCount = ref(0)
+  _unreadCount ??= ref(0)
   return _unreadCount
 }
 

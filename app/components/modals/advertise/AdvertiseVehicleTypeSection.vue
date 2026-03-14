@@ -1,22 +1,22 @@
 <script setup lang="ts">
 defineProps<{
-  categories: Array<{
+  categories: ReadonlyArray<{
     id: string
     name_es: string
     name_en: string | null
     name?: Record<string, string> | null
   }>
-  linkedSubcategories: Array<{
+  linkedSubcategories: ReadonlyArray<{
     id: string
     name_es: string
     name_en: string | null
     name?: Record<string, string> | null
   }>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  attributes: Array<{ id: string; name: string; type: string; unit?: string | null; options?: any }>
+  attributes: ReadonlyArray<{ id: string; name: string; type: string; unit?: string | null; options?: any }>
   selectedCategoryId: string | null
   selectedSubcategoryId: string | null
-  filterValues: Record<string, string | number | boolean>
+  filterValues: Readonly<Record<string, unknown>>
   selectorLoading: boolean
   filtersLoading: boolean
   catName: (item: {
@@ -24,10 +24,8 @@ defineProps<{
     name_en: string | null
     name?: Record<string, string> | null
   }) => string
-  getFilterLabel: (
-    filter: { name: string; label_es?: string | null; label_en?: string | null },
-    locale: string,
-  ) => string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getFilterLabel: (filter: any, locale: string) => string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getFilterOptions: (filter: any) => string[]
 }>()

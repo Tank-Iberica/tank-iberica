@@ -56,8 +56,8 @@ function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') close()
 }
 
-onMounted(() => window.addEventListener('keydown', onKeydown))
-onUnmounted(() => window.removeEventListener('keydown', onKeydown))
+onMounted(() => globalThis.addEventListener('keydown', onKeydown))
+onUnmounted(() => globalThis.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>

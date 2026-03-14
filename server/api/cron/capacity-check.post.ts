@@ -13,10 +13,9 @@
  *
  * #142 Bloque 18
  */
-import { defineEventHandler, getHeader } from 'h3'
+import { defineEventHandler } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
 import { logger } from '../../utils/logger'
-import { safeError } from '../../utils/safeError'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -41,6 +40,7 @@ function pct(used: number, limit: number): number {
 }
 
 async function checkStorage(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: any,
 ): Promise<CapacityMetric | null> {
   const storageLimitGb = Number(process.env.SUPABASE_STORAGE_LIMIT_GB ?? 8)
@@ -64,6 +64,7 @@ async function checkStorage(
 }
 
 async function checkConnections(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: any,
 ): Promise<CapacityMetric | null> {
   const maxConn = Number(process.env.SUPABASE_MAX_CONNECTIONS ?? 60)
@@ -91,6 +92,7 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event)
 
   const vertical = process.env.NUXT_PUBLIC_VERTICAL ?? 'tracciona'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
 
   const metrics = await Promise.all([

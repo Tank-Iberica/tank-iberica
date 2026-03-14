@@ -38,10 +38,11 @@ Criterio: Sin esto, ningun feature de pago funciona. Prerequisito de Bloque 2.
 | #   | Item                                                         | Esfuerzo | Tipo | Depende de | Hecho cuando...                                                                                                  |
 | --- | ------------------------------------------------------------ | -------- | ---- | ---------- | ---------------------------------------------------------------------------------------------------------------- |
 | 7   | Actualizar seed credit_packs (5 packs nuevos con bonus)      | S        | Code | —          | `credit_packs` en BD tiene 5 filas con amounts correctos (1/3/10+1/25+3/50+10)                                   |
-| 8   | Tiers Classic EUR19 / Premium EUR39 con Stripe subscriptions | L        | Code | —          | Tabla `subscription_tiers` con 3 filas, Stripe Products creados, checkout funciona, webhook actualiza tier en BD |
+| 8   | Tiers Classic EUR19 / Premium EUR39 con Stripe subscriptions | L        | Code | —          | Tabla `subscription_tiers` con 3 filas, Stripe Products creados, checkout funciona, webhook actualiza tier en BD. **Incluye Fase A fiscal:** campo NIF IVA opcional en checkout, validación VIES básica, VAT rates por país en config JSON, factura B2B (0% ISP) o B2C (IVA local) según si aporta NIF válido. **Facturación: Billin Unlimited (€20/mes, ilimitado)** — adapter en `billing.ts` reemplaza Quaderno; `BILLIN_API_KEY` + `BILLIN_API_URL` en env |
+| 447 | Fiscal Compliance Engine + Billin adapter + Multi-divisa + IVA multi-país | L | Code | #8         | **Fase B completa** — (1) **Billin adapter**: `server/utils/billingAdapter.ts` abstrae Billin API (create invoice, credit note en refunds, send email); migración de Quaderno→Billin en `billing.ts` y `create-invoice.post.ts`; (2) **Multi-divisa**: campo `currency` + `exchange_rate` en tabla `invoices`; helper `getExchangeRate(currency)` vía API pública BCE (gratis, sin límites); facturas emitidas en la divisa del cliente con EUR equivalente; (3) **IVA multi-país completo**: migración `country_vat_rates` (27 UE + UK + CH + US + resto) + `tax_thresholds` (umbrales OSS); `server/utils/fiscalCompliance.ts`: `validateVIES()` (API pública EU), `getVatRateForCountry()`, `isOSSApplicable()`, `checkTaxNexus()`, `createCreditNote()`; (4) **Tax nexus + OSS**: cron mensual tax-nexus-check + alerta admin >80% umbral; informe OSS por periodo descargable; vertical-aware (umbrales son TradeBase SL total); cubre B2C puntual cualquier vertical |
 | 17  | Frontend pagina compra creditos completa                     | M        | Code | #7         | Pagina `/precios` muestra 5 packs, click abre Stripe Checkout, vuelta con success actualiza balance              |
 
-**Total Bloque 1:** ~7 sesiones | **Desbloquea:** Bloque 2 completo
+**Total Bloque 1:** ~9 sesiones | **Desbloquea:** Bloque 2 completo + cobertura legal fiscal EU
 
 ---
 
@@ -675,7 +676,7 @@ No bloquean ni son bloqueadas por codigo. Ejecutar cuando sea posible.
 
 | #   | Item                                       | Hecho cuando...                        |
 | --- | ------------------------------------------ | -------------------------------------- |
-| 195 | Quaderno o Billin para TicketBAI/Verifactu | Cuenta activa, integración configurada |
+| 195 | **Billin Unlimited** para TicketBAI/Verifactu (€20/mes, ilimitado) | Cuenta creada en billin.net, `BILLIN_API_KEY` configurada en env y GitHub Secrets. Decisión: Billin sobre Quaderno — precio fijo ilimitado vs $49-149/mes por volumen en Quaderno; multi-divisa e IVA multi-país construidos en #447 |
 
 ### DevOps / CI
 

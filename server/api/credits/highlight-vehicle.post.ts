@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
   const { vehicleId, style } = parsed.data
 
   const config = useRuntimeConfig()
-  const supabaseUrl = config.public.supabaseUrl || process.env.SUPABASE_URL
+  const supabaseUrl = String(config.public.supabaseUrl || process.env.SUPABASE_URL || '')
   const serviceKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
 
   const headers: Record<string, string> = {

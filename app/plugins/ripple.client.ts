@@ -10,7 +10,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       el.style.overflow = 'hidden'
 
       const handler = (e: MouseEvent | TouchEvent) => {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+        if (globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
         const rect = el.getBoundingClientRect()
         const clientX = e instanceof TouchEvent ? e.touches[0]?.clientX ?? rect.left + rect.width / 2 : e.clientX

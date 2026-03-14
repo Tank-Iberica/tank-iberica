@@ -18,6 +18,7 @@ const { mockGenerateMarketReport } = vi.hoisted(() => ({
     .mockResolvedValue({ html: '<html><body>Market Report</body></html>' }),
 }))
 
+vi.mock('~~/server/utils/cronLock', () => ({ acquireDbCronLock: vi.fn().mockResolvedValue(true) }))
 vi.mock('../../../server/utils/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }))

@@ -206,8 +206,8 @@ function onKeydown(e: KeyboardEvent): void {
 // Lock scroll when open
 useScrollLock(isOpen)
 
-onMounted(() => window.addEventListener('keydown', onKeydown))
-onUnmounted(() => window.removeEventListener('keydown', onKeydown))
+onMounted(() => globalThis.addEventListener('keydown', onKeydown))
+onUnmounted(() => globalThis.removeEventListener('keydown', onKeydown))
 
 // Expose open() so parent can trigger it
 defineExpose({ open, close, isOpen })

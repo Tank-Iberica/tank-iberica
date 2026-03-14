@@ -1,8 +1,8 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-14 · Merge 6 agentes completado + 383 TS errors→0 + chrome-profile cleanup + stashes/branches limpiados
+**Última actualización:** 2026-03-14 · SonarQube fix sprint: 7 bugs ✅, 22 hotspots ✅, ~100+ smells (S7781/S7764/S4325/S6551/S7735/S3358 parcial) CLOSING_SESSION
 **Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→14-mar (ver git log)
-**Puntuación global:** ~83/100 · SonarQube: **0 bugs · 0 vulns · 0 smells · 0 hotspots · Quality Gate OK** · Coverage: **72.7% (SQ) / ~75%+ (vitest)**
+**Puntuación global:** ~83/100 · SonarQube: **0 bugs · 0 vulns · ~160 smells (bajando) · 3 hotspots ya en SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
 
 ---
@@ -78,7 +78,7 @@ Los más grandes sin cubrir son componentes Vue y páginas:
 
 ## Próximas tareas (prioridad)
 
-1. **Bloque 0:** #209 y #210 ya implementados (verificado en sesión autónoma 14-mar)
+1. **SonarQube smells (EN PROGRESO):** Pendiente: S7735 parcial, S3358 (23), S3776 (25), S6606 (~13), + reglas menores. Prompt: "continua fix smells sonarqube desde S7735"
 2. **CF WAF (P0-3 / #1):** Cloudflare dashboard → Security → WAF (tarea de fundadores)
 3. **Coverage (POSPUESTO hasta feature freeze)** — Actual: ~74.8%. Pendiente solo componentes Vue y páginas.
 4. **Tarea #21 fundadores — Resend** — verificar dominio → `gh secret set RESEND_API_KEY --body "re_xxx"`

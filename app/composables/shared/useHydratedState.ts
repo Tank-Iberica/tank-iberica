@@ -67,7 +67,7 @@ export function useHydratedState<T>(
   }
 
   return {
-    data: data as Ref<T | null>,
+    data,
     error,
     isLoading,
     isStale,

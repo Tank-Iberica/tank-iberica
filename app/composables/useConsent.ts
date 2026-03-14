@@ -32,7 +32,7 @@ function getConsent(): Ref<ConsentState | null> {
   return _consent
 }
 function getLoaded(): Ref<boolean> {
-  if (!_loaded) _loaded = ref(false)
+  _loaded ??= ref(false)
   return _loaded
 }
 

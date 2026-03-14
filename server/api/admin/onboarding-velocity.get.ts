@@ -57,7 +57,7 @@ export default defineEventHandler(async (event) => {
       deltas.length > 0 ? Math.round(deltas.reduce((a, b) => a + b, 0) / deltas.length) : 0
     const medianHours =
       deltas.length > 0
-        ? Math.round(deltas.sort((a, b) => a - b)[Math.floor(deltas.length / 2)]!)
+        ? Math.round([...deltas].sort((a, b) => a - b)[Math.floor(deltas.length / 2)]!)
         : 0
 
     return {

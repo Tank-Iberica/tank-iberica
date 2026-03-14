@@ -45,8 +45,8 @@ export function useVoiceSearch(): UseVoiceSearch {
   const isSupported = computed<boolean>(() => {
     if (import.meta.server) return false
     return (
-      typeof window !== 'undefined' &&
-      ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
+      typeof globalThis.window !== 'undefined' &&
+      ('SpeechRecognition' in globalThis || 'webkitSpeechRecognition' in globalThis)
     )
   })
 
@@ -58,7 +58,7 @@ export function useVoiceSearch(): UseVoiceSearch {
       return
     }
 
-    const w = window as unknown as WindowWithSpeech
+    const w = globalThis.window as unknown as WindowWithSpeech
     const SpeechRecognitionAPI = w.SpeechRecognition || w.webkitSpeechRecognition
 
     if (!SpeechRecognitionAPI) return

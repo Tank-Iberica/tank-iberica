@@ -17,6 +17,7 @@ vi.stubGlobal('safeError', (statusCode: number, message: string) => {
 })
 
 // Mock h3
+vi.mock('~~/server/utils/cronLock', () => ({ acquireDbCronLock: vi.fn().mockResolvedValue(true) }))
 vi.mock('h3', () => ({
   defineEventHandler: (fn: Function) => fn,
   getQuery: (event: Record<string, unknown>) => (event as Record<string, unknown>)._query || {},

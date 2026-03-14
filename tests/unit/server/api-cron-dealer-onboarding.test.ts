@@ -20,6 +20,7 @@ const { mockVerifyCronSecret, mockLogger, mockResendSend, MockResend } = vi.hois
   }
 })
 
+vi.mock('~~/server/utils/cronLock', () => ({ acquireDbCronLock: vi.fn().mockResolvedValue(true) }))
 vi.mock('#supabase/server', () => ({
   serverSupabaseServiceRole: vi.fn(),
 }))

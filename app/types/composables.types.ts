@@ -54,7 +54,7 @@ export type { UserType } from '~/composables/useAuth'
 
 // ── Auction ────────────────────────────────────────────────────────────────
 export type {
-  AuctionStatus,
+  AuctionDisplayStatus as AuctionStatus,
   Auction,
   AuctionBid,
 } from '~/composables/useAuction'

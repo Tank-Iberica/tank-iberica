@@ -1,0 +1,22 @@
+# CODEOWNERS — Tracciona
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default: all PRs require review from the core team
+* @tankiberica
+
+# Database migrations require explicit approval
+supabase/migrations/ @tankiberica
+
+# Security-sensitive files
+server/middleware/security-headers.ts @tankiberica
+server/middleware/rate-limit.ts @tankiberica
+server/utils/rbac.ts @tankiberica
+server/utils/sanitizeInput.ts @tankiberica
+server/utils/sessionBinding.ts @tankiberica
+
+# CI/CD pipelines
+.github/workflows/ @tankiberica
+
+# Configuration
+nuxt.config.ts @tankiberica
+CLAUDE.md @tankiberica

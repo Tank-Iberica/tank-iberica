@@ -97,7 +97,8 @@ export function useFunnelAnalysis() {
     if (!funnel.value) return null
     const stages = funnel.value.stages.filter((s) => s.dropOffPercent > 0)
     if (stages.length === 0) return null
-    return stages.reduce((max, s) => (s.dropOffPercent > max.dropOffPercent ? s : max))
+    const first = stages[0]!
+    return stages.reduce((max, s) => (s.dropOffPercent > max.dropOffPercent ? s : max), first)
   })
 
   return {

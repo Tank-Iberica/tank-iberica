@@ -41,6 +41,19 @@ describe('GET /api/health', () => {
     vi.stubGlobal('setHeader', vi.fn())
     mockGetQuery.mockReturnValue({})
     mockVerifyCronSecret.mockReturnValue(undefined)
+    // Restore default supabase mock (tests that override it pollute later tests)
+    mockServiceRole.mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          limit: vi.fn().mockReturnValue({
+            throwOnError: vi.fn().mockResolvedValue({ data: [], error: null }),
+          }),
+        }),
+      }),
+      auth: {
+        admin: { listUsers: vi.fn().mockResolvedValue({ data: { users: [] }, error: null }) },
+      },
+    })
   })
 
   it('light mode returns status:ok with timestamp, uptime, version', async () => {
@@ -126,5 +139,29 @@ describe('GET /api/health', () => {
     const result = await handler({})
     expect(result).toMatchObject({ db: 'error' })
     expect(result.status).toBe('degraded')
+  })
+
+  it('deep mode skips external checks when env vars absent', async () => {
+    delete process.env.STRIPE_SECRET_KEY
+    delete process.env.NUXT_CLOUDINARY_CLOUD_NAME
+    delete process.env.RESEND_API_KEY
+    mockGetQuery.mockReturnValue({ deep: '1' })
+    const result = await handler({})
+    // No external checks means core-only status
+    expect(result.status).toBe('ok')
+    expect(result.db).toBe('connected')
+    expect(result.auth).toBe('ok')
+  })
+
+  it('deep mode returns degraded when external service fails but core ok', async () => {
+    process.env.STRIPE_SECRET_KEY = 'sk_test_xxx'
+    // $fetch.raw will throw in test env (not a real network call)
+    mockGetQuery.mockReturnValue({ deep: '1' })
+    const result = await handler({})
+    // Core (db+auth) is ok, but external fails → degraded
+    expect(result.status).toBe('degraded')
+    expect(result.db).toBe('connected')
+    expect(result.auth).toBe('ok')
+    delete process.env.STRIPE_SECRET_KEY
   })
 })
