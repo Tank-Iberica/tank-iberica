@@ -35,42 +35,44 @@ export interface VehicleForMatching {
   slug: string
 }
 
+/** Check if a numeric field fails a minimum filter. */
+function failsMin(value: number | null, min: number | undefined | null): boolean {
+  return min != null && (value == null || value < min)
+}
+
+/** Check if a numeric field fails a maximum filter. */
+function failsMax(value: number | null, max: number | undefined | null): boolean {
+  return max != null && (value == null || value > max)
+}
+
+/** Check if a string field fails an exact-match filter. */
+function failsEq(value: string | null, filter: string | undefined): boolean {
+  return !!filter && value !== filter
+}
+
+/** Check if a string field fails a case-insensitive partial-match filter. */
+function failsCi(value: string | null, filter: string | undefined): boolean {
+  return !!filter && !ciMatch(value, filter)
+}
+
 /**
  * Check if a vehicle matches the given alert filters.
  * All defined filters must match (AND logic).
  * Undefined/null filter fields are ignored (match anything).
  */
 export function matchesVehicle(vehicle: VehicleForMatching, filters: AlertFilters): boolean {
-  if (filters.category_id && vehicle.category_id !== filters.category_id) return false
-
-  if (filters.subcategory_id && vehicle.subcategory_id !== filters.subcategory_id) return false
-
-  if (filters.price_min != null && (vehicle.price == null || vehicle.price < filters.price_min))
-    return false
-
-  if (filters.price_max != null && (vehicle.price == null || vehicle.price > filters.price_max))
-    return false
-
-  if (filters.year_min != null && (vehicle.year == null || vehicle.year < filters.year_min))
-    return false
-
-  if (filters.year_max != null && (vehicle.year == null || vehicle.year > filters.year_max))
-    return false
-
-  if (filters.km_max != null && (vehicle.km == null || vehicle.km > filters.km_max)) return false
-
-  if (filters.brand && !ciMatch(vehicle.brand, filters.brand)) return false
-
-  if (filters.model && !ciMatch(vehicle.model, filters.model)) return false
-
-  if (filters.location_country && vehicle.location_country !== filters.location_country)
-    return false
-
-  if (filters.location_region && !ciMatch(vehicle.location_region, filters.location_region))
-    return false
-
-  if (filters.zone && !ciMatch(vehicle.location_region, filters.zone)) return false
-
+  if (failsEq(vehicle.category_id, filters.category_id)) return false
+  if (failsEq(vehicle.subcategory_id, filters.subcategory_id)) return false
+  if (failsMin(vehicle.price, filters.price_min)) return false
+  if (failsMax(vehicle.price, filters.price_max)) return false
+  if (failsMin(vehicle.year, filters.year_min)) return false
+  if (failsMax(vehicle.year, filters.year_max)) return false
+  if (failsMax(vehicle.km, filters.km_max)) return false
+  if (failsCi(vehicle.brand, filters.brand)) return false
+  if (failsCi(vehicle.model, filters.model)) return false
+  if (failsEq(vehicle.location_country, filters.location_country)) return false
+  if (failsCi(vehicle.location_region, filters.location_region)) return false
+  if (failsCi(vehicle.location_region, filters.zone)) return false
   return true
 }
 

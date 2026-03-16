@@ -15,6 +15,24 @@ export interface FilterChain {
   ilike: (col: string, pattern: string) => FilterChain
 }
 
+function applyCategoryFilter(q: FilterChain, filters: VehicleFilters): FilterChain {
+  if ((filters.actions || filters.categories)?.length) {
+    return q.in('category', (filters.actions || filters.categories!) as never)
+  }
+  if (filters.action || filters.category) {
+    return q.eq('category', (filters.action || filters.category!) as never)
+  }
+  return q
+}
+
+function applyLocationFilter(q: FilterChain, filters: VehicleFilters): FilterChain {
+  if (filters.location_province_eq) return q.eq('location_province', filters.location_province_eq)
+  if (filters.location_regions?.length) return q.in('location_region', filters.location_regions)
+  if (filters.location_countries?.length)
+    return q.in('location_country', filters.location_countries)
+  return q
+}
+
 /**
  * Applies catalog filters to a Supabase query builder chain.
  * Handles location (province > region > country), category, price, year, brand, featured.
@@ -23,12 +41,7 @@ export function applyFilters(query: FilterChain, filters: VehicleFilters): Filte
   let q = query
 
   q = q.or('visible_from.is.null,visible_from.lte.' + new Date().toISOString())
-
-  if ((filters.actions || filters.categories)?.length) {
-    q = q.in('category', (filters.actions || filters.categories!) as never)
-  } else if (filters.action || filters.category) {
-    q = q.eq('category', (filters.action || filters.category!) as never)
-  }
+  q = applyCategoryFilter(q, filters)
 
   if (filters.category_id) q = q.eq('category_id', filters.category_id)
   if (filters.price_min !== undefined) q = q.gte('price', filters.price_min)
@@ -37,14 +50,7 @@ export function applyFilters(query: FilterChain, filters: VehicleFilters): Filte
   if (filters.year_max !== undefined) q = q.lte('year', filters.year_max)
   if (filters.brand) q = q.ilike('brand', `%${filters.brand}%`)
 
-  // Location filters (mutually exclusive, most specific wins)
-  if (filters.location_province_eq) {
-    q = q.eq('location_province', filters.location_province_eq)
-  } else if (filters.location_regions?.length) {
-    q = q.in('location_region', filters.location_regions)
-  } else if (filters.location_countries?.length) {
-    q = q.in('location_country', filters.location_countries)
-  }
+  q = applyLocationFilter(q, filters)
 
   if (filters.featured) q = q.eq('featured', true)
   if (filters.dealer_id) q = q.eq('dealer_id', filters.dealer_id)
