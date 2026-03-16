@@ -48,8 +48,12 @@
   - S6598 `.at(-1)`: 7 instancias ✅
   - S6747 return types: 6 funciones (cache.ts, safeError.ts, logger.ts) ✅
   - S4138 for-of: 0 válidos (16 instancias todas legítimas con index) — SKIP
-- **Pendientes:** ~10 menores restantes
-- **Próximo scan:** lanzar para verificar near-zero smells
+- **Sprint 16-mar-noche — bug fixes en commit previo (36a0e9e):**
+  - `useAbTest.ts`: Haiku cambió `|= 0` a `Math.trunc()` — INCORRECTO (32-bit wrap ≠ truncation). Revertido con NOSONAR.
+  - `useDataReporting.ts`: `replace_all` creó tipo circular `TrendDirection = TrendDirection`. Corregido.
+  - Commit: `5293724`
+- **Pendientes (~10 menores):** S6598 (6, Vue defineEmits convention — skip), S1135 (1, TODO comment), S1874 (1, deprecated DB field — NOSONAR), S7767 (1, `|= 0` — NOSONAR)
+- **Próximo scan:** lanzar para verificar near-zero smells y confirmar stale issues resueltas
 
 ## CRÍTICO — S5850 Fix: regex alternations con anchors
 
@@ -60,9 +64,16 @@
 ## CRÍTICO — Replace_all con tipos en TypeScript
 
 - NUNCA usar `replace_all: true` para reemplazar una literal de tipo union donde ese literal aparece en la definición del type alias
-- FIX: primero añadir el type alias, luego reemplazar manualmente línea por línea
+- FIX: primero añadir el type alias, luego reemplazar manualmente línea por línea (EXCLUYENDO la definición)
 - **Patrón peligroso adicional (16-mar):** `replace_all` de `CategoryStat` → `DatosCategoryStat` TAMBIÉN renombra variables (`selectedCategoryStat` → `selectedDatosCategoryStat`) y puede double-rename (`DatosDatosCategoryStat`)
+- **Bug confirmado (16-mar-noche):** `replace_all` de `'up' | 'down' | 'stable'` → `TrendDirection` TAMBIÉN reemplaza dentro de `export type TrendDirection = 'up' | 'down' | 'stable'` creando `export type TrendDirection = TrendDirection` (circular). Commit `36a0e9e` lo introdujo, `5293724` lo corrigió.
 - **Regla:** Para renombrar tipos, hacer reemplazos individuales por línea, NUNCA `replace_all: true`
+
+## CRÍTICO — `|= 0` vs `Math.trunc()` en hash functions
+
+- `hash |= 0` convierte a signed 32-bit integer (wraps values >2^31). Necesario para hash functions.
+- `Math.trunc(hash)` solo quita decimales, NO wraps. `Math.trunc(3_000_000_000) = 3_000_000_000` pero `3_000_000_000 | 0 = -1_294_967_296`
+- SonarQube S7767 sugiere `Math.trunc` como reemplazo — **INCORRECTO para hash functions**. Usar NOSONAR.
 
 ## SonarQube scan tips
 

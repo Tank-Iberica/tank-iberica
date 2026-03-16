@@ -5,6 +5,17 @@
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
 
+## Sesión 16-mar-noche (SonarQube bug fixes)
+
+- **Contexto:** Continuación de sesión SonarQube smells. Otra sesión (Haiku, commit `36a0e9e`) ya había aplicado los fixes pendientes (S7735, S4624, S6551, S7721, S4325, etc.)
+- **Bugs encontrados en `36a0e9e`:**
+  1. `useAbTest.ts`: `Math.trunc(hash)` incorrecto — `|= 0` hace 32-bit wrap (necesario para hash), `Math.trunc` solo quita decimales
+  2. `useDataReporting.ts`: tipo circular `TrendDirection = TrendDirection` — causado por `replace_all` que reemplazó la definición del alias
+- **Fix:** Commit `5293724` — revierte `|= 0` con NOSONAR + corrige tipo circular
+- **Push:** OK (`8f2dd4f..5293724 main → main`)
+- **Smells restantes (~10):** S6598 (6, convención Vue defineEmits), S1135 (1, TODO), S1874 (1, campo deprecated), S7767 (1, NOSONAR), stale issues de scans anteriores
+- **Próximo paso:** Rescan SonarQube para verificar near-zero
+
 ## Sesión 16-mar (presupuestos + auditoría items completados)
 
 ### Presupuestos

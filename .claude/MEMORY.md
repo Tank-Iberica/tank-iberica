@@ -107,7 +107,8 @@ beforeAll(async () => {
 - **Scan 14-mar (pre-fixes):** Coverage 66.1%, 7 bugs, 22 hotspots, 275 smells — Quality Gate OK
 - **Fix sprint 14-mar:** 7 bugs ✅, 22 hotspots (19 SAFE API + 3 en código) ✅, ~80+ smells corregidos (S7781, S7764, S4325, S6551, S7735 parcial, S3358 parcial)
 - **Fix sprint 16-mar:** ~247 smells más: S4036 (218), S6598 (7), S6747 (6), S1125 (12), S6606 (4+9), S3358 (9), S7735 (2), S3776 (5 funciones)
-- **Smells pendientes:** ~10 menores restantes. Próximo scan verificará.
+- **Fix sprint 16-mar-noche:** Haiku sesión `36a0e9e` aplicó S7735/S4624/S6551/S7721/S4325 (~29 archivos) pero introdujo 2 bugs: `Math.trunc` en hash (debe ser `|= 0`) + tipo circular TrendDirection. Corregido en `5293724`.
+- **Smells pendientes:** ~10 menores (S6598 Vue convention, S1135 TODO, S1874 deprecated field, S7767 NOSONAR). Próximo scan verificará.
 - **Actual: ~74.8% statements (vitest) / 72.7% (SonarQube). 747 archivos test, 13,862 tests, 0 fallos (09-mar)**
 - **SonarQube Quality Gate: OK** — 0 bugs, 0 vulns, 0 smells, 0 hotspots (09-mar)
 - **Lo crítico CUBIERTO:** stripe webhook ~95%, search-alerts 100%, founding-expiry 99%, useAuction 99%, useReservation 100%, useAuth ~95%, useConversation ~95%, valuation.get 100%, execute-migration 100%
