@@ -51,6 +51,66 @@ interface MatchedNotification {
   channels: string[]
 }
 
+// -- Helpers ----------------------------------------------------------------
+
+/** Group matched alerts by user, skipping those on 60-second cooldown. */
+function groupAlertsByUser(alerts: AlertRow[], now: Date): Map<string, AlertRow[]> {
+  const map = new Map<string, AlertRow[]>()
+  for (const alert of alerts) {
+    if (alert.last_sent_at) {
+      const lastSent = new Date(alert.last_sent_at)
+      if (now.getTime() - lastSent.getTime() < 60_000) continue
+    }
+    const existing = map.get(alert.user_id)
+    if (existing) {
+      existing.push(alert)
+    } else {
+      map.set(alert.user_id, [alert])
+    }
+  }
+  return map
+}
+
+/** Build localized push notification title and body. */
+function buildPushPayload(
+  locale: string,
+  vehicleTitle: string,
+  yearStr: string,
+  priceStr: string,
+): { title: string; body: string } {
+  const pricePart = priceStr ? ` — ${priceStr}` : ''
+  if (locale === 'es') {
+    return {
+      title: `Nuevo vehículo: ${vehicleTitle}`,
+      body: `${vehicleTitle}${yearStr}${pricePart} coincide con tu alerta`,
+    }
+  }
+  return {
+    title: `New vehicle: ${vehicleTitle}`,
+    body: `${vehicleTitle}${yearStr}${pricePart} matches your alert`,
+  }
+}
+
+/** Build notification list by merging channels per user. */
+function buildNotifications(
+  userAlertMap: Map<string, AlertRow[]>,
+  usersMap: Map<string, UserRow>,
+): MatchedNotification[] {
+  const notifications: MatchedNotification[] = []
+  for (const [userId, userAlerts] of userAlertMap) {
+    const user = usersMap.get(userId)
+    if (!user) continue
+    const channelSet = new Set<string>()
+    for (const alert of userAlerts) {
+      for (const ch of alert.channels ?? ['email']) {
+        channelSet.add(ch)
+      }
+    }
+    notifications.push({ user, alerts: userAlerts, channels: [...channelSet] })
+  }
+  return notifications
+}
+
 // -- Handler ----------------------------------------------------------------
 
 export default defineEventHandler(async (event) => {
@@ -73,7 +133,9 @@ export default defineEventHandler(async (event) => {
   }
 
   // ── Parse body ────────────────────────────────────────────────────────
-  const body = await readBody<{ vehicle_id?: string }>(event).catch(() => ({}) as { vehicle_id?: string })
+  const body = await readBody<{ vehicle_id?: string }>(event).catch(
+    () => ({}) as { vehicle_id?: string },
+  )
   const vehicleId = body?.vehicle_id
 
   if (!vehicleId || typeof vehicleId !== 'string') {
@@ -154,22 +216,8 @@ export default defineEventHandler(async (event) => {
     return { matched: 0, notified: 0, reason: 'no_matches' }
   }
 
-  // ── 4. Group by user for deduplication ────────────────────────────────
-  const userAlertMap = new Map<string, AlertRow[]>()
-  for (const alert of matchedAlerts) {
-    // Skip if already notified recently (60s cooldown)
-    if (alert.last_sent_at) {
-      const lastSent = new Date(alert.last_sent_at)
-      if (now.getTime() - lastSent.getTime() < 60_000) continue
-    }
-
-    const existing = userAlertMap.get(alert.user_id)
-    if (existing) {
-      existing.push(alert)
-    } else {
-      userAlertMap.set(alert.user_id, [alert])
-    }
-  }
+  // ── 4. Group by user for deduplication (60s cooldown) ─────────────────
+  const userAlertMap = groupAlertsByUser(matchedAlerts, now)
 
   if (userAlertMap.size === 0) {
     return { matched: matchedAlerts.length, notified: 0, reason: 'all_on_cooldown' }
@@ -192,33 +240,15 @@ export default defineEventHandler(async (event) => {
   }
 
   // Build notification list
-  const notifications: MatchedNotification[] = []
-  for (const [userId, userAlerts] of userAlertMap) {
-    const user = usersMap.get(userId)
-    if (!user) continue
-
-    // Merge channels from all matched alerts (deduplicated)
-    const channelSet = new Set<string>()
-    for (const alert of userAlerts) {
-      for (const ch of alert.channels ?? ['email']) {
-        channelSet.add(ch)
-      }
-    }
-
-    notifications.push({
-      user,
-      alerts: userAlerts,
-      channels: [...channelSet],
-    })
-  }
+  const notifications = buildNotifications(userAlertMap, usersMap)
 
   // ── 6. Send notifications ─────────────────────────────────────────────
   const _internalSecret = String(
     config.internalApiSecret ||
-    process.env.INTERNAL_API_SECRET ||
-    config.cronSecret ||
-    process.env.CRON_SECRET ||
-    '',
+      process.env.INTERNAL_API_SECRET ||
+      config.cronSecret ||
+      process.env.CRON_SECRET ||
+      '',
   )
 
   await processBatch({
@@ -261,20 +291,15 @@ export default defineEventHandler(async (event) => {
 
       // ── Push ────────────────────────────────────────────────────────
       if (channels.includes('push')) {
+        const pushPayload = buildPushPayload(locale, vehicleTitle, yearStr, priceStr)
         try {
           await $fetch('/api/push/send', {
             method: 'POST',
             headers: _internalSecret ? { 'x-internal-secret': _internalSecret } : {},
             body: {
               userId: user.id,
-              title:
-                locale === 'es'
-                  ? `Nuevo vehículo: ${vehicleTitle}`
-                  : `New vehicle: ${vehicleTitle}`,
-              body:
-                locale === 'es'
-                  ? `${vehicleTitle}${yearStr}${priceStr ? ' — ' + priceStr : ''} coincide con tu alerta`
-                  : `${vehicleTitle}${yearStr}${priceStr ? ' — ' + priceStr : ''} matches your alert`,
+              title: pushPayload.title,
+              body: pushPayload.body,
               url: `${getSiteUrl()}/vehiculo/${vehicle.slug}`,
             },
           })
