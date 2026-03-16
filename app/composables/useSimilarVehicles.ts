@@ -45,7 +45,8 @@ export function scoreCategoryMatch(
   ref: Pick<VehicleForSimilarity, 'categoryId' | 'subcategoryId'>,
   candidate: Pick<VehicleForSimilarity, 'categoryId' | 'subcategoryId'>,
 ): number {
-  if (ref.subcategoryId && candidate.subcategoryId && ref.subcategoryId === candidate.subcategoryId) return 25
+  if (ref.subcategoryId && candidate.subcategoryId && ref.subcategoryId === candidate.subcategoryId)
+    return 25
   if (ref.categoryId && candidate.categoryId && ref.categoryId === candidate.categoryId) return 15
   return 0
 }
@@ -82,7 +83,7 @@ export function scorePriceProximity(
   if (ratio >= 0.8 && ratio <= 1.2) return 20
   if (ratio >= 0.6 && ratio <= 1.4) return 14
   if (ratio >= 0.4 && ratio <= 1.6) return 8
-  if (ratio >= 0.2 && ratio <= 2.0) return 4
+  if (ratio >= 0.2 && ratio <= 2) return 4
   return 0
 }
 
@@ -127,10 +128,18 @@ export function scoreGeoMatch(
   ref: Pick<VehicleForSimilarity, 'province' | 'country'>,
   candidate: Pick<VehicleForSimilarity, 'province' | 'country'>,
 ): number {
-  if (ref.province && candidate.province &&
-      ref.province.toLowerCase() === candidate.province.toLowerCase()) return 15
-  if (ref.country && candidate.country &&
-      ref.country.toLowerCase() === candidate.country.toLowerCase()) return 8
+  if (
+    ref.province &&
+    candidate.province &&
+    ref.province.toLowerCase() === candidate.province.toLowerCase()
+  )
+    return 15
+  if (
+    ref.country &&
+    candidate.country &&
+    ref.country.toLowerCase() === candidate.country.toLowerCase()
+  )
+    return 8
   return 0
 }
 

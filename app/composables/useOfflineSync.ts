@@ -43,7 +43,7 @@ function getQueue(): Ref<OfflineAction[]> {
 }
 
 function getSyncing(): Ref<boolean> {
-  if (!_syncing) _syncing = ref(false)
+  _syncing ??= ref(false)
   return _syncing
 }
 

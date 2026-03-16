@@ -28,7 +28,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         }),
       ],
       replaysSessionSampleRate: 0.1,
-      replaysOnErrorSampleRate: 1.0,
+      replaysOnErrorSampleRate: 1,
     })
 
     // Automatically set user context when authenticated
@@ -49,7 +49,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         extra: {
           info,
           component: instance?.$options?.name || 'unknown',
-        }
+        },
       })
     }
     console.error('Component error:', error, info)

@@ -224,12 +224,10 @@ export function useAnalyticsTracking() {
       _eventBuffer.push(row)
 
       // Schedule flush if not already scheduled
-      if (!_flushTimer) {
-        _flushTimer = setTimeout(() => {
-          _flushTimer = null
-          flushEventBuffer()
-        }, BATCH_FLUSH_MS)
-      }
+      _flushTimer ??= setTimeout(() => {
+        _flushTimer = null
+        flushEventBuffer()
+      }, BATCH_FLUSH_MS)
     })
   }
 

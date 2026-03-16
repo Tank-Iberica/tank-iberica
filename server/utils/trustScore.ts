@@ -94,7 +94,7 @@ function scoreTiered(
 
 function scoreReviews(totalReviews: number, rating: number): number {
   if (totalReviews < 1) return 0
-  return rating >= 4.0 ? 20 : 10
+  return rating >= 4 ? 20 : 10
 }
 
 /**

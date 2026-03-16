@@ -31,7 +31,7 @@ let _consent: Ref<ConsentState | null> | null = null
 let _loaded: Ref<boolean> | null = null
 
 function getConsent(): Ref<ConsentState | null> {
-  if (!_consent) _consent = ref<ConsentState | null>(null)
+  _consent ??= ref<ConsentState | null>(null)
   return _consent
 }
 function getLoaded(): Ref<boolean> {

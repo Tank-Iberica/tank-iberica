@@ -118,7 +118,7 @@ export default defineEventHandler(async (event): Promise<MigrationPlan> => {
   let vehicleCount = 0
   const { data: dealerIds } = await supabase.from('dealers').select('id').eq('vertical', vertical)
 
-  if (dealerIds && dealerIds.length) {
+  if (dealerIds?.length) {
     const ids = dealerIds.map((d: Record<string, unknown>) => d.id as string)
     const { count } = await supabase
       .from('vehicles')

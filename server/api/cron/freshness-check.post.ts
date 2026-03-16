@@ -220,10 +220,10 @@ export default defineEventHandler(async (event) => {
               html: buildReminderHtml(vehicleTitle, vehicleUrl, siteUrl, siteName, isEs),
             })
             emailsSent++
-          } catch (emailErr) {
+          } catch (error_) {
             logger.warn('[freshness-check] Reminder email failed', {
               vehicleId: v.id,
-              error: String(emailErr),
+              error: String(error_),
             })
           }
         }
@@ -318,10 +318,10 @@ export default defineEventHandler(async (event) => {
               html: buildExpiryHtml(vehicleTitle, renewUrl, siteUrl, siteName, isEs),
             })
             emailsSent++
-          } catch (emailErr) {
+          } catch (error_) {
             logger.warn('[freshness-check] Expiry email failed', {
               vehicleId: v.id,
-              error: String(emailErr),
+              error: String(error_),
             })
           }
         }

@@ -22,7 +22,7 @@ const reserveSchema = z.object({
   vehicleId: z.string().uuid(),
 })
 
-const IMMUNE_PLANS = ['premium', 'founding']
+const IMMUNE_PLANS = new Set(['premium', 'founding'])
 
 /**
  * Check seller immunity: fetches their subscription and throws if plan is immune.
@@ -47,7 +47,7 @@ async function checkSellerImmunity(
     )
     const subs = (await subsRes.json()) as Array<{ plan: string }>
     const sellerPlan = subs[0]?.plan ?? 'free'
-    if (IMMUNE_PLANS.includes(sellerPlan)) {
+    if (IMMUNE_PLANS.has(sellerPlan)) {
       throw safeError(
         409,
         'This seller has a Premium subscription — their vehicles cannot be priority-reserved',

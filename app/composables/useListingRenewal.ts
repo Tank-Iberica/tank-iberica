@@ -27,10 +27,10 @@ export interface BulkRenewalSummary {
 }
 
 /** Statuses that can be renewed to 'published' */
-const RENEWABLE_STATUSES: VehicleStatus[] = ['expired', 'paused', 'draft']
+const RENEWABLE_STATUSES = new Set<VehicleStatus>(['expired', 'paused', 'draft'])
 
 export function isRenewable(status: VehicleStatus): boolean {
-  return RENEWABLE_STATUSES.includes(status) && isValidTransition(status, 'published')
+  return RENEWABLE_STATUSES.has(status) && isValidTransition(status, 'published')
 }
 
 export function useListingRenewal() {

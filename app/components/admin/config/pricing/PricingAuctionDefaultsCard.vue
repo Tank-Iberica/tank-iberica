@@ -14,12 +14,12 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const centFields: Array<keyof AuctionDefaults> = ['bid_increment_cents', 'deposit_cents']
+const centFields = new Set<keyof AuctionDefaults>(['bid_increment_cents', 'deposit_cents'])
 
 function onInput(key: keyof AuctionDefaults, event: Event) {
   const target = event.target as HTMLInputElement
   const raw = Number(target.value)
-  const value = centFields.includes(key) ? Math.round(raw * 100) : raw
+  const value = centFields.has(key) ? Math.round(raw * 100) : raw
   emit('update', { key, value })
 }
 

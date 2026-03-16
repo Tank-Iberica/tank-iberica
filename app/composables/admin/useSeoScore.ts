@@ -418,7 +418,7 @@ function evaluateImage(imageUrl: string | null): SeoCriterion {
   let score = 0
   let description = ''
 
-  if (imageUrl && imageUrl.trim().length) {
+  if (imageUrl?.trim().length) {
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       score = 100
       description = 'Imagen presente. Se usara como og:image en redes sociales'

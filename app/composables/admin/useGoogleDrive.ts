@@ -13,7 +13,12 @@
  * Requires GOOGLE_CLIENT_ID in .env
  */
 
-import { generateDocFileName, getFileExtension, generateVehicleFolderName, generateInterFolderName } from '~/utils/fileNaming'
+import {
+  generateDocFileName,
+  getFileExtension,
+  generateVehicleFolderName,
+  generateInterFolderName,
+} from '~/utils/fileNaming'
 import type { FileNamingData } from '~/utils/fileNaming'
 import {
   DRIVE_API,
@@ -22,11 +27,8 @@ import {
   loadGis,
   openFolderById,
 } from '~/utils/googleDriveUtils'
-import type { DriveSection, DriveUploadResult } from '~/utils/googleDriveUtils'
 import { useGoogleDriveFolders } from '~/composables/admin/useGoogleDriveFolders'
-
-// Re-export types for consumers
-export type { DriveSection, DriveUploadResult }
+export type { DriveSection, DriveUploadResult } from '~/utils/googleDriveUtils'
 
 export function useGoogleDrive() {
   const config = useRuntimeConfig()

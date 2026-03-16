@@ -214,7 +214,7 @@ export function getFingerprintKey(event: H3Event): string {
   const raw = `${ua}|${lang}`
   let hash = 5381
   for (let i = 0; i < raw.length; i++) {
-    hash = ((hash << 5) + hash) ^ raw.charCodeAt(i)
+    hash = ((hash << 5) + hash) ^ raw.codePointAt(i)!
     hash = hash >>> 0 // keep as unsigned 32-bit
   }
   return `fp:${hash.toString(16)}`

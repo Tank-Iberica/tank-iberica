@@ -22,7 +22,7 @@ const STORAGE_KEY_PREFIX = 'ab_test_'
 function stableHash(str: string): number {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
+    const char = str.codePointAt(i)!
     hash = (hash << 5) - hash + char
     hash |= 0 // Convert to 32bit integer
   }

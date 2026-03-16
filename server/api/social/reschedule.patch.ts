@@ -24,7 +24,7 @@ const RescheduleSchema = z.object({
     .nullable(),
 })
 
-const RESCHEDULABLE_STATUSES = ['draft', 'pending', 'approved', 'scheduled']
+const RESCHEDULABLE_STATUSES = new Set(['draft', 'pending', 'approved', 'scheduled'])
 
 export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
 
   const { status } = post as { status: string; platform: string }
 
-  if (!RESCHEDULABLE_STATUSES.includes(status)) {
+  if (!RESCHEDULABLE_STATUSES.has(status)) {
     throw safeError(
       409,
       `Cannot reschedule a post with status '${status}'. Only draft, pending, approved, or scheduled posts can be rescheduled.`,

@@ -16,7 +16,7 @@ import { logger } from './logger'
 function djb2Hex(raw: string): string {
   let hash = 5381
   for (let i = 0; i < raw.length; i++) {
-    hash = ((hash << 5) + hash) ^ raw.charCodeAt(i)
+    hash = ((hash << 5) + hash) ^ raw.codePointAt(i)!
     hash = hash >>> 0
   }
   return hash.toString(16)

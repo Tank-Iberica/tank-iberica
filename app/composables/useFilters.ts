@@ -1,13 +1,7 @@
 import { computed } from 'vue'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { useSupabaseClient, useState } from '#imports'
-import type {
-  AttributeDefinition,
-  ActiveFilters,
-  SliderRange,
-  FiltersState,
-  VehicleAttrs,
-} from './shared/filtersTypes'
+import type { VehicleAttrs } from './shared/filtersTypes'
 import {
   extractFilterValues,
   computeSliderRanges,
@@ -15,9 +9,12 @@ import {
   getFilterOptions,
   computeVisibleFilters,
 } from './shared/filtersHelpers'
-
-// Re-export types for backward compatibility
-export type { AttributeDefinition, ActiveFilters, SliderRange, FiltersState }
+export type {
+  AttributeDefinition,
+  ActiveFilters,
+  SliderRange,
+  FiltersState,
+} from './shared/filtersTypes'
 
 // ── Default state ─────────────────────────────────────────────────────────────
 
@@ -51,7 +48,9 @@ async function querySubcategoryFilters(
 
   const { data: subcatFilterData, error: subcatFilterErr } = await supabase
     .from('attributes')
-    .select('id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order')
+    .select(
+      'id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order',
+    )
     .in('id', subcatFilterIds)
     .eq('status', 'published')
     .eq('is_hidden', false)
@@ -87,7 +86,9 @@ async function queryFilterDefinitions(
 
   const { data: filterData, error: filterErr } = await supabase
     .from('attributes')
-    .select('id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order')
+    .select(
+      'id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order',
+    )
     .in('id', filterIds)
     .eq('status', 'published')
     .eq('is_hidden', false)
@@ -138,7 +139,9 @@ export function useFilters() {
     try {
       const { data, error: err } = await supabase
         .from('attributes')
-        .select('id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order')
+        .select(
+          'id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order',
+        )
         .eq('subcategory_id', subcategoryId)
         .eq('status', 'published')
         .eq('is_hidden', false)

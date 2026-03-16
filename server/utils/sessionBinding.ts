@@ -23,7 +23,7 @@ const sessionStore = new Map<string, SessionFingerprint>()
 function hashUA(ua: string): number {
   let hash = 5381
   for (let i = 0; i < ua.length; i++) {
-    hash = ((hash << 5) + hash) ^ ua.charCodeAt(i)
+    hash = ((hash << 5) + hash) ^ ua.codePointAt(i)!
     hash = hash >>> 0
   }
   return hash

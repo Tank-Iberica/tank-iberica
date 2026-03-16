@@ -122,7 +122,7 @@ function hashIp(ip: string): string {
   // Simple hash to avoid storing raw IPs (GDPR)
   let h = 5381
   for (let i = 0; i < ip.length; i++) {
-    h = (h * 33) ^ ip.charCodeAt(i)
+    h = (h * 33) ^ ip.codePointAt(i)!
   }
   return (h >>> 0).toString(16)
 }
