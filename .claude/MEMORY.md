@@ -350,7 +350,42 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - Deprecated lines (`#!/usr/bin/env sh` + `. "$(dirname -- "$0")/_/husky.sh"`) ya removidas de pre-push
 - v10 solo necesita el comando directo en el hook file
 
+## AUDITORÍA PROFUNDA BACKLOG (16-mar-2026)
+
+**Sesión 16-mar:** Auditoría exhaustiva item-por-item de 325 items PENDIENTE + 9 HECHO.
+
+### Hallazgos principales
+
+- **30+ items IMPLEMENTADOS** pero marcados como PENDIENTE en backlog (encontrados vía búsqueda de crons, páginas, endpoints)
+- **7 items completamente ausentes** (especialmente Bloque 5: reviews)
+- **Actualizado BACKLOG-EJECUTABLE.md** con estatus real + referencias a archivos
+
+### Items ENCONTRADOS (no marcados antes como HECHO):
+
+- Bloque 1: #7 #8 #17 (credit_packs, subscription_tiers, precios.vue)
+- Bloque 2: #11 #12 #13 #14 #16 #18 #22 (reserva, alertas, auto-renew, exportar)
+- Bloque 3: #62 #64 (landing motor, JSON-LD)
+- Bloque 7: #65-71 (newsletter, onboarding, market-report, social, whatsapp, pinterest, calendar)
+- Bloque 9: #20 #24 (comparador, estadísticas)
+
+### Items NOT FOUND (críticos):
+
+- **Bloque 5 (Reviews):** #50-54 completamente ausente (seller_reviews backend/display/NPS/Top-Rated)
+- **Bloque 2:** #15 color/fondo anuncios especiales
+
+### Items a REVISAR (parcial):
+
+- Bloque 3: #63 catálogo landing
+- Bloque 9: #19 #21 #23 #25 #26 (valuación IA, historial precio, generación IA, recomendación, certificado PDF)
+
+### Pasos a hacer
+
+1. **Tests backfill:** T1-T4 (Roadmap Tests) — E2E puntuación, IDOR verify-document, merchant-feed errors, build chunks
+2. **Bloque 5 implementation:** #50-54 requieren: tabla seller_reviews + RLS, API endpoints, UI display, JSONB dimensions, NPS, Top-Rated badge
+3. **Búsqueda Phase 2:** Verificación COMPLETA de 30+ items encontrados (tests, funcionalidad, integración)
+
 ## Sub-archivos (leer bajo demanda)
 
 - `.claude/memory/patterns.md` — patrones de código confirmados (Vue, composables, ESLint)
+- `.claude/memory/sonarqube.md` — calidad código + SonarQube analysis
 - `.claude/memory/sonarqube.md` — acceso local, progreso auditoría, SonarQube tips
