@@ -303,7 +303,7 @@ export function useDatos() {
     ],
   }))
 
-  const hasData = computed(() => categoryStats.value.length)
+  const hasData = computed(() => !!categoryStats.value.length)
 
   return {
     // State

@@ -109,7 +109,7 @@ export async function useVehicleDetail(slug: Ref<string>, options?: { cacheKey?:
 
   const hasSpecs = computed(() => {
     if (!vehicle.value?.attributes_json) return false
-    return Object.keys(vehicle.value.attributes_json).length
+    return !!Object.keys(vehicle.value.attributes_json).length
   })
 
   const vehicleLocation = computed(() => {

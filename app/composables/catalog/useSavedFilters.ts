@@ -44,7 +44,7 @@ export function useSavedFilters() {
     hydrated = true
   }
 
-  const hasPresets = computed(() => savedPresets.value.length)
+  const hasPresets = computed(() => !!savedPresets.value.length)
 
   function savePreset(
     name: string,

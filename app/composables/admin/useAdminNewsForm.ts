@@ -199,9 +199,11 @@ export function useAdminNewsForm(newsId: Ref<string>) {
   // Validation
   const isValid = computed(
     () =>
-      formData.value.title_es.trim().length &&
-      formData.value.content_es.trim().length &&
-      formData.value.slug.trim().length,
+      !!(
+        formData.value.title_es.trim().length &&
+        formData.value.content_es.trim().length &&
+        formData.value.slug.trim().length
+      ),
   )
 
   // Image upload

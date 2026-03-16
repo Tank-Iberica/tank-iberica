@@ -103,7 +103,8 @@ beforeAll(async () => {
 - **SonarQube:** localhost:9000. Token: `squ_adc0fdaf7926b9de67c7fe692fecd5ab281b84b9`. Escanear con Docker: `docker run --rm -v "${PWD}:/usr/src" -e SONAR_HOST_URL=http://host.docker.internal:9000 sonarsource/sonar-scanner-cli:latest`
 - **Scan 14-mar (pre-fixes):** Coverage 66.1%, 7 bugs, 22 hotspots, 275 smells — Quality Gate OK
 - **Fix sprint 14-mar:** 7 bugs ✅, 22 hotspots (19 SAFE API + 3 en código) ✅, ~80+ smells corregidos (S7781, S7764, S4325, S6551, S7735 parcial, S3358 parcial)
-- **Smells pendientes:** S3358 (23), S7735 (~10), S3776 (25), S6606 (13), menores (~40)
+- **Fix sprint 16-mar:** ~247 smells más: S4036 (218), S6598 (7), S6747 (6), S1125 (12), S6606 (4+9), S3358 (9), S7735 (2), S3776 (5 funciones)
+- **Smells pendientes:** ~10 menores restantes. Próximo scan verificará.
 - **Actual: ~74.8% statements (vitest) / 72.7% (SonarQube). 747 archivos test, 13,862 tests, 0 fallos (09-mar)**
 - **SonarQube Quality Gate: OK** — 0 bugs, 0 vulns, 0 smells, 0 hotspots (09-mar)
 - **Lo crítico CUBIERTO:** stripe webhook ~95%, search-alerts 100%, founding-expiry 99%, useAuction 99%, useReservation 100%, useAuth ~95%, useConversation ~95%, valuation.get 100%, execute-migration 100%
@@ -305,6 +306,22 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **Archivos limpiados:** stories/[slug], security.txt, adminEmailTemplates, adminProductosExport, indexNow, marketReport, useDashboardExportar, useAdminSidebar
 - **Quedan legítimos:** `siteConfig.ts` (define el fallback), `useAdminSidebar.ts` (lee de vertical_config BD primero)
 - **Cron files:** ya usan `process.env.NUXT_PUBLIC_VERTICAL ?? 'tracciona'` — OK
+
+## Boolean context con .length (S4036, 16-mar)
+
+- `.length` retorna `number`. En `if()`/`v-if`/ternarios = OK (truthy coercion). En asignaciones `boolean`/returns `boolean` → `!!arr.length`
+- Bulk replace `.length > 0` → `.length` requiere segundo paso typecheck para detectar boolean contexts
+
+## Duplicate auto-imports en Nuxt (16-mar)
+
+- Dos composables exportando mismo nombre de tipo → Nuxt warning "Duplicated imports"
+- Estructuras diferentes → renombrar con prefijo (ej: `DatosPriceHistoryRow` vs `PriceHistoryRow`)
+- Re-export redundante → eliminar, actualizar imports al source canónico
+
+## Husky v10 (16-mar)
+
+- Deprecated lines (`#!/usr/bin/env sh` + `. "$(dirname -- "$0")/_/husky.sh"`) ya removidas de pre-push
+- v10 solo necesita el comando directo en el hook file
 
 ## Sub-archivos (leer bajo demanda)
 
