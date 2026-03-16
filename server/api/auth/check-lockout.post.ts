@@ -27,56 +27,49 @@ const bodySchema = z.object({
   turnstileToken: z.string().optional(),
 })
 
-export default defineEventHandler(async (event) => {
-  const { email, action, turnstileToken } = await validateBody(event, bodySchema)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type LockoutClient = ReturnType<typeof serverSupabaseServiceRole<any>>
 
-  const client = serverSupabaseServiceRole(event)
-
-  // If turnstile token provided, verify it and unlock
-  if (turnstileToken && action === 'check') {
+async function handleCheck(client: LockoutClient, email: string, turnstileToken?: string) {
+  if (turnstileToken) {
     const verified = await verifyTurnstile(turnstileToken)
     if (verified) {
-      // Reset lockout
       await client.from('login_attempts').delete().eq('email', email)
       return { locked: false, attemptsRemaining: MAX_ATTEMPTS }
     }
   }
 
-  if (action === 'check') {
-    const { data } = await client
-      .from('login_attempts')
-      .select('attempts, first_attempt_at, locked_until')
-      .eq('email', email)
-      .single()
+  const { data } = await client
+    .from('login_attempts')
+    .select('attempts, first_attempt_at, locked_until')
+    .eq('email', email)
+    .single()
 
-    if (!data) {
-      return { locked: false, attemptsRemaining: MAX_ATTEMPTS }
-    }
+  if (!data) return { locked: false, attemptsRemaining: MAX_ATTEMPTS }
 
-    // Check if currently locked
-    if (data.locked_until) {
-      const lockedUntil = new Date(data.locked_until).getTime()
-      const now = Date.now()
-      if (now < lockedUntil) {
-        const retryAfterSeconds = Math.ceil((lockedUntil - now) / 1000)
-        return { locked: true, retryAfterSeconds, attemptsRemaining: 0 }
+  if (data.locked_until) {
+    const lockedUntil = new Date(data.locked_until).getTime()
+    if (Date.now() < lockedUntil) {
+      return {
+        locked: true,
+        retryAfterSeconds: Math.ceil((lockedUntil - Date.now()) / 1000),
+        attemptsRemaining: 0,
       }
-      // Lock expired — reset
-      await client.from('login_attempts').delete().eq('email', email)
-      return { locked: false, attemptsRemaining: MAX_ATTEMPTS }
     }
-
-    // Check if window expired
-    const firstAttempt = new Date(data.first_attempt_at ?? '').getTime()
-    if (Date.now() - firstAttempt > WINDOW_MS) {
-      await client.from('login_attempts').delete().eq('email', email)
-      return { locked: false, attemptsRemaining: MAX_ATTEMPTS }
-    }
-
-    return { locked: false, attemptsRemaining: Math.max(0, MAX_ATTEMPTS - data.attempts) }
+    await client.from('login_attempts').delete().eq('email', email)
+    return { locked: false, attemptsRemaining: MAX_ATTEMPTS }
   }
 
-  // action === 'record_failure'
+  const firstAttempt = new Date(data.first_attempt_at ?? '').getTime()
+  if (Date.now() - firstAttempt > WINDOW_MS) {
+    await client.from('login_attempts').delete().eq('email', email)
+    return { locked: false, attemptsRemaining: MAX_ATTEMPTS }
+  }
+
+  return { locked: false, attemptsRemaining: Math.max(0, MAX_ATTEMPTS - data.attempts) }
+}
+
+async function handleRecordFailure(client: LockoutClient, email: string) {
   const { data: existing } = await client
     .from('login_attempts')
     .select('attempts, first_attempt_at')
@@ -86,25 +79,17 @@ export default defineEventHandler(async (event) => {
   const now = new Date().toISOString()
 
   if (!existing) {
-    await client.from('login_attempts').insert({
-      email,
-      attempts: 1,
-      first_attempt_at: now,
-      updated_at: now,
-    })
+    await client
+      .from('login_attempts')
+      .insert({ email, attempts: 1, first_attempt_at: now, updated_at: now })
     return { locked: false, attemptsRemaining: MAX_ATTEMPTS - 1 }
   }
 
-  // Window expired — reset
   const firstAttempt = new Date(existing.first_attempt_at ?? '').getTime()
   if (Date.now() - firstAttempt > WINDOW_MS) {
-    await client.from('login_attempts').upsert({
-      email,
-      attempts: 1,
-      first_attempt_at: now,
-      locked_until: null,
-      updated_at: now,
-    })
+    await client
+      .from('login_attempts')
+      .upsert({ email, attempts: 1, first_attempt_at: now, locked_until: null, updated_at: now })
     return { locked: false, attemptsRemaining: MAX_ATTEMPTS - 1 }
   }
 
@@ -112,24 +97,36 @@ export default defineEventHandler(async (event) => {
 
   if (newAttempts >= MAX_ATTEMPTS) {
     const lockedUntil = new Date(Date.now() + LOCKOUT_MS).toISOString()
-    await client.from('login_attempts').upsert({
-      email,
-      attempts: newAttempts,
-      first_attempt_at: existing.first_attempt_at,
-      locked_until: lockedUntil,
-      updated_at: now,
-    })
+    await client
+      .from('login_attempts')
+      .upsert({
+        email,
+        attempts: newAttempts,
+        first_attempt_at: existing.first_attempt_at,
+        locked_until: lockedUntil,
+        updated_at: now,
+      })
     return { locked: true, retryAfterSeconds: Math.ceil(LOCKOUT_MS / 1000), attemptsRemaining: 0 }
   }
 
-  await client.from('login_attempts').upsert({
-    email,
-    attempts: newAttempts,
-    first_attempt_at: existing.first_attempt_at,
-    locked_until: null,
-    updated_at: now,
-  })
+  await client
+    .from('login_attempts')
+    .upsert({
+      email,
+      attempts: newAttempts,
+      first_attempt_at: existing.first_attempt_at,
+      locked_until: null,
+      updated_at: now,
+    })
   return { locked: false, attemptsRemaining: MAX_ATTEMPTS - newAttempts }
+}
+
+export default defineEventHandler(async (event) => {
+  const { email, action, turnstileToken } = await validateBody(event, bodySchema)
+  const client = serverSupabaseServiceRole(event)
+
+  if (action === 'check') return handleCheck(client, email, turnstileToken)
+  return handleRecordFailure(client, email)
 })
 
 async function verifyTurnstile(token: string): Promise<boolean> {

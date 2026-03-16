@@ -17,22 +17,28 @@ function sleepBackoff(attempt: number, baseDelayMs: number): Promise<void> {
  *
  * Optionally propagates x-request-id header for cross-service correlation (#384).
  */
+function applyRequestId(options: RequestInit, requestId?: string): RequestInit {
+  if (!requestId) return options
+  const headers = new Headers(options.headers)
+  if (!headers.has('x-request-id')) headers.set('x-request-id', requestId)
+  return { ...options, headers }
+}
+
 export async function fetchWithRetry(
   url: string,
   options: RequestInit,
-  { maxRetries = 3, baseDelayMs = 500, requestId }: { maxRetries?: number; baseDelayMs?: number; requestId?: string } = {},
+  {
+    maxRetries = 3,
+    baseDelayMs = 500,
+    requestId,
+  }: { maxRetries?: number; baseDelayMs?: number; requestId?: string } = {},
 ): Promise<Response> {
-  if (requestId) {
-    const headers = new Headers(options.headers)
-    if (!headers.has('x-request-id')) headers.set('x-request-id', requestId)
-    options = { ...options, headers }
-  }
-
+  const opts = applyRequestId(options, requestId)
   let lastError: Error | null = null
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      const response = await fetch(url, options)
+      const response = await fetch(url, opts)
       if (isClientError(response.status)) return response
       if (isRetryableStatus(response.status) && attempt < maxRetries) {
         await sleepBackoff(attempt, baseDelayMs)

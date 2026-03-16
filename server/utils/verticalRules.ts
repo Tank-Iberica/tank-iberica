@@ -146,25 +146,18 @@ export interface ComplianceViolation {
   message: string
 }
 
-export function validateVehicleCompliance(
-  vehicle: {
-    price?: number
-    images?: string[]
-    description?: string
-    currency?: string
-  },
-  rules: ComplianceRules,
-): ComplianceViolation[] {
+type ComplianceVehicle = {
+  price?: number
+  images?: string[]
+  description?: string
+  currency?: string
+}
+
+function validatePrice(vehicle: ComplianceVehicle, rules: ComplianceRules): ComplianceViolation[] {
   const violations: ComplianceViolation[] = []
-
   if (rules.require_price && (!vehicle.price || vehicle.price <= 0)) {
-    violations.push({
-      field: 'price',
-      rule: 'require_price',
-      message: 'Price is required',
-    })
+    violations.push({ field: 'price', rule: 'require_price', message: 'Price is required' })
   }
-
   if (vehicle.price) {
     if (vehicle.price < rules.min_price_cents) {
       violations.push({
@@ -181,25 +174,37 @@ export function validateVehicleCompliance(
       })
     }
   }
+  return violations
+}
 
-  if (rules.require_vehicle_images) {
-    const imageCount = vehicle.images?.length ?? 0
-    if (imageCount < rules.min_images) {
-      violations.push({
-        field: 'images',
-        rule: 'min_images',
-        message: `At least ${rules.min_images} images required`,
-      })
-    }
+function validateImages(vehicle: ComplianceVehicle, rules: ComplianceRules): ComplianceViolation[] {
+  const violations: ComplianceViolation[] = []
+  const imageCount = vehicle.images?.length ?? 0
+  if (rules.require_vehicle_images && imageCount < rules.min_images) {
+    violations.push({
+      field: 'images',
+      rule: 'min_images',
+      message: `At least ${rules.min_images} images required`,
+    })
   }
-
-  if ((vehicle.images?.length ?? 0) > rules.max_images) {
+  if (imageCount > rules.max_images) {
     violations.push({
       field: 'images',
       rule: 'max_images',
       message: `Maximum ${rules.max_images} images allowed`,
     })
   }
+  return violations
+}
+
+export function validateVehicleCompliance(
+  vehicle: ComplianceVehicle,
+  rules: ComplianceRules,
+): ComplianceViolation[] {
+  const violations: ComplianceViolation[] = [
+    ...validatePrice(vehicle, rules),
+    ...validateImages(vehicle, rules),
+  ]
 
   if (rules.require_description) {
     const descLen = vehicle.description?.length ?? 0

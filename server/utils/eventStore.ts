@@ -130,6 +130,15 @@ function mapStoredEvent(e: Record<string, unknown>): StoredEvent {
  *
  * Events are always replayed in version order (ascending).
  */
+function shouldReplayEvent(event: StoredEvent, options?: ReplayOptions): boolean {
+  if (options?.eventTypes && !options.eventTypes.includes(event.eventType)) return false
+  if (options?.fromVersion !== undefined && event.version < options.fromVersion) return false
+  if (options?.toVersion !== undefined && event.version > options.toVersion) return false
+  if (options?.after && event.createdAt <= options.after) return false
+  if (options?.before && event.createdAt >= options.before) return false
+  return true
+}
+
 export async function replayEvents(
   client: SupabaseClient,
   aggregateType: string,
@@ -142,28 +151,10 @@ export async function replayEvents(
   let skipped = 0
 
   for (const event of events) {
-    // Apply filters
-    if (options?.eventTypes && !options.eventTypes.includes(event.eventType)) {
+    if (!shouldReplayEvent(event, options)) {
       skipped++
       continue
     }
-    if (options?.fromVersion !== undefined && event.version < options.fromVersion) {
-      skipped++
-      continue
-    }
-    if (options?.toVersion !== undefined && event.version > options.toVersion) {
-      skipped++
-      continue
-    }
-    if (options?.after && event.createdAt <= options.after) {
-      skipped++
-      continue
-    }
-    if (options?.before && event.createdAt >= options.before) {
-      skipped++
-      continue
-    }
-
     await handler(event)
     replayed++
   }

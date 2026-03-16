@@ -101,7 +101,7 @@ export function useVehicles() {
 
       // Log zero-result searches to surface unmet demand
       if (import.meta.client && total.value === 0) {
-        void supabase.from('search_logs').insert({
+        supabase.from('search_logs').insert({
           query: (filters as Record<string, unknown>).q ?? null,
           filters: filters as never,
           results_count: 0,

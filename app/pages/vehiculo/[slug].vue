@@ -277,9 +277,11 @@ onMounted(() => {
     if (!alreadyTracked) {
       sessionStorage.setItem(GEO_TRACKED_KEY, '1')
       // Detect location then emit event (fire-and-forget)
-      void detectLocation().then(() => {
-        trackBuyerGeo(buyerLocation.value)
-      })
+      detectLocation()
+        .then(() => {
+          trackBuyerGeo(buyerLocation.value)
+        })
+        .catch(() => {})
     }
   } catch {
     // sessionStorage unavailable (private mode) — skip silently

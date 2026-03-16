@@ -58,7 +58,7 @@ export interface GenerateResult {
 // ── Main handler ──────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event) => {
-  await verifyCronSecret(event)
+  verifyCronSecret(event)
 
   const body = await readBody(event).catch(() => ({}))
   const quarter = typeof body?.quarter === 'string' ? body.quarter : getCurrentQuarter()

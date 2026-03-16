@@ -54,7 +54,7 @@ export function usePresence(entityType: string, entityId: string) {
         viewerCount.value = countPresences(state)
       })
 
-    await channel.subscribe(async (status) => {
+    channel.subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
         await channel!.track({
           user_id: userId,

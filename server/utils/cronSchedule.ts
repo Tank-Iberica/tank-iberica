@@ -188,10 +188,9 @@ export function releaseCronLock(name: string): void {
  * Check if a cron job is within its allowed execution window (±5 min tolerance).
  * For external schedulers that might fire slightly off-schedule.
  */
-export function isInExecutionWindow(name: string): boolean {
-  const job = CRON_SCHEDULE.find((j) => j.name === name)
-  if (!job) return true // Unknown jobs always allowed
-  return true // Window enforcement is done by the external scheduler
+export function isInExecutionWindow(_name: string): boolean {
+  // Window enforcement is done by the external scheduler — always allow
+  return true
 }
 
 /**
