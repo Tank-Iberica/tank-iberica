@@ -358,6 +358,83 @@ export async function markStepSent(
     .upsert({ dealer_id: dealerId, step, sent_at: new Date().toISOString() })
 }
 
+// ── Extracted helpers (reduce cognitive complexity of processor) ─────────────
+
+/**
+ * Resolve dealer email: use dealer.email, fall back to linked user's email.
+ */
+async function resolveRecipientEmail(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  dealer: DealerRow,
+): Promise<string | null> {
+  if (dealer.email) return dealer.email
+  if (!dealer.user_id) return null
+  const { data: userData } = await supabase
+    .from('users')
+    .select('email')
+    .eq('id', dealer.user_id)
+    .single()
+  return (userData as { email?: string } | null)?.email ?? null
+}
+
+/**
+ * Attempt to send a single onboarding step email.
+ * Returns 'sent', 'skipped' (mock mode / no schedule), or 'error'.
+ */
+async function sendOnboardingStep(params: {
+  step: number
+  recipientEmail: string
+  locale: string
+  dealerName: string
+  dealerId: string
+  siteUrl: string
+  resendApiKey: string | undefined
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any
+}): Promise<'sent' | 'skipped' | 'error'> {
+  const { step, recipientEmail, locale, dealerName, dealerId, siteUrl, resendApiKey, supabase } =
+    params
+
+  const schedule = ONBOARDING_SCHEDULE.find((s) => s.step === step)
+  if (!schedule) return 'skipped'
+
+  const subject = locale === 'en' ? schedule.subjectEn : schedule.subjectEs
+  const html = buildOnboardingHtml(step, dealerName, siteUrl, locale)
+
+  if (!resendApiKey) {
+    logger.warn(
+      `[dealer-onboarding] RESEND_API_KEY not set — mock send step ${step} to ${recipientEmail}`,
+    )
+    await markStepSent(supabase, dealerId, step)
+    return 'skipped'
+  }
+
+  try {
+    const resend = new Resend(resendApiKey)
+    const result = await resend.emails.send({
+      from: `${getSiteName()} <hola@${getSiteUrl().replace('https://', '').replace('http://', '')}>`,
+      to: recipientEmail,
+      subject,
+      html,
+    })
+
+    if (result.error) {
+      logger.error(
+        `[dealer-onboarding] Resend error step ${step} for ${recipientEmail}: ${result.error.message}`,
+      )
+      return 'error'
+    }
+
+    await markStepSent(supabase, dealerId, step)
+    return 'sent'
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Unknown error'
+    logger.error(`[dealer-onboarding] Send failed step ${step} for ${recipientEmail}: ${msg}`)
+    return 'error'
+  }
+}
+
 // ── Handler ──────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event) => {
@@ -389,37 +466,23 @@ export default defineEventHandler(async (event) => {
     batchSize: 50,
     delayBetweenBatchesMs: 5000,
     processor: async (dealer: DealerRow) => {
-      // Compute days since registration
       const createdAt = dealer.created_at ? new Date(dealer.created_at).getTime() : now
       const daysSince = Math.floor((now - createdAt) / (24 * 60 * 60 * 1000))
 
-      // Steps that should have been sent by now
       const dueSteps = getDueSteps(daysSince)
       if (dueSteps.length === 0) {
         skipped++
         return
       }
 
-      // Steps already sent
       const sentSteps = await getSentSteps(supabase, dealer.id)
       const pendingSteps = dueSteps.filter((s) => !sentSteps.includes(s))
-
       if (pendingSteps.length === 0) {
         skipped++
         return
       }
 
-      // Resolve email address (dealer.email or linked user)
-      let recipientEmail = dealer.email
-      if (!recipientEmail && dealer.user_id) {
-        const { data: userData } = await supabase
-          .from('users')
-          .select('email')
-          .eq('id', dealer.user_id)
-          .single()
-        recipientEmail = (userData as { email?: string } | null)?.email ?? null
-      }
-
+      const recipientEmail = await resolveRecipientEmail(supabase, dealer)
       if (!recipientEmail) {
         logger.warn(`[dealer-onboarding] No email for dealer ${dealer.id}, skipping`)
         skipped++
@@ -429,46 +492,20 @@ export default defineEventHandler(async (event) => {
       const locale = dealer.locale ?? 'es'
       const dealerName = resolveName(dealer.company_name, locale)
 
-      // Send each pending step in sequence
       for (const step of pendingSteps) {
-        const schedule = ONBOARDING_SCHEDULE.find((s) => s.step === step)
-        if (!schedule) continue
-
-        const subject = locale === 'en' ? schedule.subjectEn : schedule.subjectEs
-        const html = buildOnboardingHtml(step, dealerName, siteUrl, locale)
-
-        if (!resendApiKey) {
-          logger.warn(
-            `[dealer-onboarding] RESEND_API_KEY not set — mock send step ${step} to ${recipientEmail}`,
-          )
-          await markStepSent(supabase, dealer.id, step)
-          skipped++
-          continue
-        }
-
-        try {
-          const resend = new Resend(resendApiKey)
-          const result = await resend.emails.send({
-            from: `${getSiteName()} <hola@${getSiteUrl().replace('https://', '').replace('http://', '')}>`,
-            to: recipientEmail,
-            subject,
-            html,
-          })
-
-          if (result.error) {
-            errors++
-            logger.error(
-              `[dealer-onboarding] Resend error step ${step} for ${recipientEmail}: ${result.error.message}`,
-            )
-          } else {
-            await markStepSent(supabase, dealer.id, step)
-            sent++
-          }
-        } catch (err: unknown) {
-          errors++
-          const msg = err instanceof Error ? err.message : 'Unknown error'
-          logger.error(`[dealer-onboarding] Send failed step ${step} for ${recipientEmail}: ${msg}`)
-        }
+        const result = await sendOnboardingStep({
+          step,
+          recipientEmail,
+          locale,
+          dealerName,
+          dealerId: dealer.id,
+          siteUrl,
+          resendApiKey,
+          supabase,
+        })
+        if (result === 'sent') sent++
+        else if (result === 'error') errors++
+        else skipped++
       }
     },
   })
