@@ -87,18 +87,15 @@ export async function createPinterestPin(
   return (await resp.json()) as PinterestPinResponse
 }
 
-export default defineEventHandler(async (event) => {
-  const user = await serverSupabaseUser(event)
-  if (!user) throw safeError(401, 'Unauthorized')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PinClient = ReturnType<typeof serverSupabaseServiceRole<any>>
 
-  const { vehicleId } = await validateBody(event, CreatePinSchema)
-  const supabase = serverSupabaseServiceRole(event)
-
-  // Get Pinterest credentials — env vars override vertical_config
+async function resolvePinterestCredentials(
+  supabase: PinClient,
+): Promise<{ accessToken: string; boardId: string } | null> {
   let accessToken = process.env.PINTEREST_ACCESS_TOKEN
   let boardId = process.env.PINTEREST_BOARD_ID
 
-  // Fallback to vertical_config
   if (!accessToken || !boardId) {
     const { data: configData } = await supabase
       .from('vertical_config')
@@ -114,10 +111,23 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (!accessToken || !boardId) {
+  if (!accessToken || !boardId) return null
+  return { accessToken, boardId }
+}
+
+export default defineEventHandler(async (event) => {
+  const user = await serverSupabaseUser(event)
+  if (!user) throw safeError(401, 'Unauthorized')
+
+  const { vehicleId } = await validateBody(event, CreatePinSchema)
+  const supabase = serverSupabaseServiceRole(event)
+
+  const creds = await resolvePinterestCredentials(supabase)
+  if (!creds) {
     logger.warn('Pinterest pin skipped: credentials not configured', { vehicleId })
     return { ok: false, skipped: true, reason: 'Pinterest not configured' }
   }
+  const { accessToken, boardId } = creds
 
   // Fetch vehicle
   const { data: vehicle, error: vehicleErr } = await supabase

@@ -23,6 +23,88 @@ interface PriceRecommendation {
   aiUnavailable?: boolean
 }
 
+interface VehicleParams {
+  brand: string
+  model: string
+  year?: number
+  km?: number
+  category?: string
+  currentPrice?: number
+}
+
+async function fetchMarketContext(
+  brand: string,
+  year?: number,
+  category?: string,
+): Promise<{ marketContext: string; marketSamples: number }> {
+  const config = useRuntimeConfig()
+  const supabaseUrl = process.env.SUPABASE_URL || ''
+  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+
+  if (!supabaseUrl || !supabaseKey) return { marketContext: '', marketSamples: 0 }
+
+  try {
+    const apiHeaders = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` }
+    const params = new URLSearchParams({
+      status: 'eq.published',
+      brand: `ilike.${brand}`,
+      select: 'price,year',
+      limit: '30',
+      order: 'created_at.desc',
+    })
+    if (category) params.set('category_id', `eq.${category}`)
+    if (year) {
+      params.set('year', `gte.${year - 3}`)
+      params.append('year', `lte.${year + 3}`)
+    }
+
+    const res = await fetch(`${supabaseUrl}/rest/v1/vehicles?${params}`, { headers: apiHeaders })
+    const comparables = (await res.json()) as Array<{ price: number | null; year: number | null }>
+    const prices = comparables.map((c) => c.price).filter((p): p is number => p != null)
+
+    if (!prices.length) return { marketContext: '', marketSamples: 0 }
+
+    const avg = Math.round(prices.reduce((a, b) => a + b, 0) / prices.length)
+    const min = Math.min(...prices)
+    const max = Math.max(...prices)
+    return {
+      marketContext: `\n\nDatos de mercado (${prices.length} vehículos similares en plataforma):\n- Precio medio: ${avg.toLocaleString('es-ES')} EUR\n- Rango: ${min.toLocaleString('es-ES')} – ${max.toLocaleString('es-ES')} EUR`,
+      marketSamples: prices.length,
+    }
+  } catch (err) {
+    logger.warn('[price-recommendation] Failed to fetch market data', { error: String(err) })
+    return { marketContext: '', marketSamples: 0 }
+  }
+}
+
+function buildPricePrompt(v: VehicleParams, marketContext: string): string {
+  const vehicleDesc = [
+    `Marca: ${v.brand}`,
+    `Modelo: ${v.model}`,
+    v.year ? `Año: ${v.year}` : null,
+    v.km == null ? null : `Kilómetros: ${v.km.toLocaleString('es-ES')}`,
+    v.category ? `Categoría: ${v.category}` : null,
+    v.currentPrice == null
+      ? null
+      : `Precio actual del anunciante: ${v.currentPrice.toLocaleString('es-ES')} EUR`,
+  ]
+    .filter(Boolean)
+    .join('\n')
+
+  return `Eres un experto en valoración de vehículos industriales. Analiza los datos del vehículo y sugiere un precio óptimo de venta para el mercado español.
+
+Datos del vehículo:
+${vehicleDesc}${marketContext}
+
+Responde ÚNICAMENTE con un objeto JSON con este esquema exacto, sin texto adicional:
+{
+  "suggested_price": <número entero en EUR>,
+  "confidence": "low" | "medium" | "high",
+  "reasoning": "<1-2 frases en español explicando el razonamiento>",
+  "price_range": { "min": <número>, "max": <número> }
+}`
+}
+
 export default defineEventHandler(async (event): Promise<PriceRecommendation> => {
   const user = await serverSupabaseUser(event)
   if (!user) throw safeError(401, 'Authentication required')
@@ -38,76 +120,8 @@ export default defineEventHandler(async (event): Promise<PriceRecommendation> =>
 
   if (!brand || !model) throw safeError(400, 'brand and model are required')
 
-  // --- Fetch comparable vehicles from market for context ---------------------
-  const config = useRuntimeConfig()
-  const supabaseUrl = process.env.SUPABASE_URL || ''
-  const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-
-  let marketContext = ''
-  let marketSamples = 0
-
-  if (supabaseUrl && supabaseKey) {
-    try {
-      const apiHeaders = {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-      }
-      const params = new URLSearchParams({
-        status: 'eq.published',
-        brand: `ilike.${brand}`,
-        select: 'price,year',
-        limit: '30',
-        order: 'created_at.desc',
-      })
-      if (category) params.set('category_id', `eq.${category}`)
-      // Narrow to ±3 years if year provided
-      if (year) {
-        params.set('year', `gte.${year - 3}`)
-        params.append('year', `lte.${year + 3}`)
-      }
-
-      const res = await fetch(`${supabaseUrl}/rest/v1/vehicles?${params}`, { headers: apiHeaders })
-      const comparables = (await res.json()) as Array<{ price: number | null; year: number | null }>
-      const prices = comparables.map((c) => c.price).filter((p): p is number => p != null)
-      marketSamples = prices.length
-
-      if (prices.length) {
-        const avg = Math.round(prices.reduce((a, b) => a + b, 0) / prices.length)
-        const min = Math.min(...prices)
-        const max = Math.max(...prices)
-        marketContext = `\n\nDatos de mercado (${prices.length} vehículos similares en plataforma):\n- Precio medio: ${avg.toLocaleString('es-ES')} EUR\n- Rango: ${min.toLocaleString('es-ES')} – ${max.toLocaleString('es-ES')} EUR`
-      }
-    } catch (err) {
-      logger.warn('[price-recommendation] Failed to fetch market data', { error: String(err) })
-    }
-  }
-
-  // --- Build AI prompt -------------------------------------------------------
-  const vehicleDesc = [
-    `Marca: ${brand}`,
-    `Modelo: ${model}`,
-    year ? `Año: ${year}` : null,
-    km == null ? null : `Kilómetros: ${km.toLocaleString('es-ES')}`,
-    category ? `Categoría: ${category}` : null,
-    currentPrice == null
-      ? null
-      : `Precio actual del anunciante: ${currentPrice.toLocaleString('es-ES')} EUR`,
-  ]
-    .filter(Boolean)
-    .join('\n')
-
-  const prompt = `Eres un experto en valoración de vehículos industriales. Analiza los datos del vehículo y sugiere un precio óptimo de venta para el mercado español.
-
-Datos del vehículo:
-${vehicleDesc}${marketContext}
-
-Responde ÚNICAMENTE con un objeto JSON con este esquema exacto, sin texto adicional:
-{
-  "suggested_price": <número entero en EUR>,
-  "confidence": "low" | "medium" | "high",
-  "reasoning": "<1-2 frases en español explicando el razonamiento>",
-  "price_range": { "min": <número>, "max": <número> }
-}`
+  const { marketContext, marketSamples } = await fetchMarketContext(brand, year, category)
+  const prompt = buildPricePrompt({ brand, model, year, km, category, currentPrice }, marketContext)
 
   try {
     const response = await callAI(

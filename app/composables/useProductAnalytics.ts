@@ -64,6 +64,95 @@ export function classifyPerformance(
   return 'average'
 }
 
+interface RawEvent {
+  entity_id: string
+  event_type: string
+  session_id: string | null
+  metadata: Record<string, unknown> | null
+}
+
+interface EventBucket {
+  views: number
+  sessions: Set<string>
+  leads: number
+  favorites: number
+  totalDuration: number
+  durationCount: number
+}
+
+function aggregateEvents(vehicleIds: string[], events: unknown[]): VehicleMetrics[] {
+  const agg = new Map<string, EventBucket>()
+  for (const vid of vehicleIds) {
+    agg.set(vid, {
+      views: 0,
+      sessions: new Set(),
+      leads: 0,
+      favorites: 0,
+      totalDuration: 0,
+      durationCount: 0,
+    })
+  }
+
+  for (const event of events as RawEvent[]) {
+    const bucket = agg.get(event.entity_id)
+    if (!bucket) continue
+
+    switch (event.event_type) {
+      case 'vehicle_view':
+        bucket.views++
+        if (event.session_id) bucket.sessions.add(event.session_id)
+        break
+      case 'vehicle_duration': {
+        const duration = Number(event.metadata?.page_duration_seconds ?? 0)
+        if (duration > 0) {
+          bucket.totalDuration += duration
+          bucket.durationCount++
+        }
+        break
+      }
+      case 'lead_sent':
+        bucket.leads++
+        break
+      case 'favorite_added':
+        bucket.favorites++
+        break
+    }
+  }
+
+  const result: VehicleMetrics[] = []
+  for (const [vid, data] of agg.entries()) {
+    const uniqueViews = data.sessions.size || data.views
+    result.push({
+      vehicleId: vid,
+      totalViews: data.views,
+      uniqueViews,
+      totalLeads: data.leads,
+      favorites: data.favorites,
+      avgDurationSeconds:
+        data.durationCount > 0 ? Math.round(data.totalDuration / data.durationCount) : 0,
+      conversionRate: calcConversionRate(data.leads, uniqueViews),
+    })
+  }
+  return result
+}
+
+function buildMetricsSummary(result: VehicleMetrics[]): VehicleMetricsSummary {
+  const totalViews = result.reduce((s, m) => s + m.totalViews, 0)
+  const totalLeads = result.reduce((s, m) => s + m.totalLeads, 0)
+  const totalFavorites = result.reduce((s, m) => s + m.favorites, 0)
+  const totalUniqueViews = result.reduce((s, m) => s + m.uniqueViews, 0)
+  const sorted = [...result].sort((a, b) => b.conversionRate - a.conversionRate)
+
+  return {
+    totalViews,
+    totalLeads,
+    totalFavorites,
+    avgConversionRate: calcConversionRate(totalLeads, totalUniqueViews),
+    topPerformers: sorted.slice(0, 5),
+    underperformers: sorted.slice(-5).reverse(),
+  }
+}
+
 export function useProductAnalytics(dealerId?: Ref<string | null>) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = useSupabaseClient() as any
@@ -119,96 +208,9 @@ export function useProductAnalytics(dealerId?: Ref<string | null>) {
       const { data: events, error: eErr } = await query
       if (eErr) throw eErr
 
-      // Aggregate per vehicle
-      const agg = new Map<
-        string,
-        {
-          views: number
-          sessions: Set<string>
-          leads: number
-          favorites: number
-          totalDuration: number
-          durationCount: number
-        }
-      >()
-
-      for (const vid of vehicleIds) {
-        agg.set(vid, {
-          views: 0,
-          sessions: new Set(),
-          leads: 0,
-          favorites: 0,
-          totalDuration: 0,
-          durationCount: 0,
-        })
-      }
-
-      for (const event of (events ?? []) as Array<{
-        entity_id: string
-        event_type: string
-        session_id: string | null
-        metadata: Record<string, unknown> | null
-      }>) {
-        const bucket = agg.get(event.entity_id)
-        if (!bucket) continue
-
-        switch (event.event_type) {
-          case 'vehicle_view':
-            bucket.views++
-            if (event.session_id) bucket.sessions.add(event.session_id)
-            break
-          case 'vehicle_duration': {
-            const duration = Number(event.metadata?.page_duration_seconds ?? 0)
-            if (duration > 0) {
-              bucket.totalDuration += duration
-              bucket.durationCount++
-            }
-            break
-          }
-          case 'lead_sent':
-            bucket.leads++
-            break
-          case 'favorite_added':
-            bucket.favorites++
-            break
-        }
-      }
-
-      // Build metrics array
-      const result: VehicleMetrics[] = []
-      for (const [vid, data] of agg.entries()) {
-        const uniqueViews = data.sessions.size || data.views
-        result.push({
-          vehicleId: vid,
-          totalViews: data.views,
-          uniqueViews,
-          totalLeads: data.leads,
-          favorites: data.favorites,
-          avgDurationSeconds:
-            data.durationCount > 0 ? Math.round(data.totalDuration / data.durationCount) : 0,
-          conversionRate: calcConversionRate(data.leads, uniqueViews),
-        })
-      }
-
+      const result = aggregateEvents(vehicleIds, events ?? [])
       metrics.value = result
-
-      // Build summary
-      const totalViews = result.reduce((s, m) => s + m.totalViews, 0)
-      const totalLeads = result.reduce((s, m) => s + m.totalLeads, 0)
-      const totalFavorites = result.reduce((s, m) => s + m.favorites, 0)
-      const totalUniqueViews = result.reduce((s, m) => s + m.uniqueViews, 0)
-      const avgConversionRate = calcConversionRate(totalLeads, totalUniqueViews)
-
-      const sorted = [...result].sort((a, b) => b.conversionRate - a.conversionRate)
-
-      summary.value = {
-        totalViews,
-        totalLeads,
-        totalFavorites,
-        avgConversionRate,
-        topPerformers: sorted.slice(0, 5),
-        underperformers: sorted.slice(-5).reverse(),
-      }
+      summary.value = buildMetricsSummary(result)
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Error fetching analytics'
     } finally {

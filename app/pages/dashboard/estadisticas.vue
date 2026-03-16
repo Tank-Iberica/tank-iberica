@@ -49,6 +49,37 @@ interface MarketComparison {
 const vehicleStats = ref<VehicleStat[]>([])
 const marketComparison = ref<MarketComparison | null>(null)
 
+async function loadViewCounts(vehicleIds: string[]): Promise<void> {
+  const { data: viewsData } = await supabase
+    .from('analytics_events')
+    .select('entity_id')
+    .eq('event_type', 'vehicle_view')
+    .in('entity_id', vehicleIds)
+  if (!viewsData) return
+  const viewCounts = new Map<string, number>()
+  for (const row of viewsData as unknown as Array<{ entity_id: string }>) {
+    viewCounts.set(row.entity_id, (viewCounts.get(row.entity_id) || 0) + 1)
+  }
+  for (const vs of vehicleStats.value) {
+    vs.views = viewCounts.get(vs.id) || 0
+  }
+}
+
+async function loadLeadCounts(vehicleIds: string[]): Promise<void> {
+  const { data: leadsData } = await supabase
+    .from('leads')
+    .select('vehicle_id')
+    .in('vehicle_id', vehicleIds)
+  if (!leadsData) return
+  const leadCounts = new Map<string, number>()
+  for (const row of leadsData as Array<{ vehicle_id: string }>) {
+    leadCounts.set(row.vehicle_id, (leadCounts.get(row.vehicle_id) || 0) + 1)
+  }
+  for (const vs of vehicleStats.value) {
+    vs.leads = leadCounts.get(vs.id) || 0
+  }
+}
+
 async function loadStats(): Promise<void> {
   loading.value = true
   error.value = null
@@ -109,37 +140,7 @@ async function loadStats(): Promise<void> {
       // Fetch view and lead counts per vehicle
       if (vehicleStats.value.length) {
         const vehicleIds = vehicleStats.value.map((vs) => vs.id)
-
-        // Views from analytics_events (vehicle_view events grouped by entity_id)
-        const { data: viewsData } = await supabase
-          .from('analytics_events')
-          .select('entity_id')
-          .eq('event_type', 'vehicle_view')
-          .in('entity_id', vehicleIds)
-        if (viewsData) {
-          const viewCounts = new Map<string, number>()
-          for (const row of viewsData as unknown as Array<{ entity_id: string }>) {
-            viewCounts.set(row.entity_id, (viewCounts.get(row.entity_id) || 0) + 1)
-          }
-          for (const vs of vehicleStats.value) {
-            vs.views = viewCounts.get(vs.id) || 0
-          }
-        }
-
-        // Lead counts (batch query instead of N+1)
-        const { data: leadsData } = await supabase
-          .from('leads')
-          .select('vehicle_id')
-          .in('vehicle_id', vehicleIds)
-        if (leadsData) {
-          const leadCounts = new Map<string, number>()
-          for (const row of leadsData as Array<{ vehicle_id: string }>) {
-            leadCounts.set(row.vehicle_id, (leadCounts.get(row.vehicle_id) || 0) + 1)
-          }
-          for (const vs of vehicleStats.value) {
-            vs.leads = leadCounts.get(vs.id) || 0
-          }
-        }
+        await Promise.all([loadViewCounts(vehicleIds), loadLeadCounts(vehicleIds)])
       }
     }
 

@@ -6,13 +6,7 @@
  *
  * The composable does NOT call onMounted — lifecycle management stays in the page.
  */
-import {
-  generateRentalContract,
-  generateSaleContract,
-  printHTML,
-  type RentalContractData,
-  type SaleContractData,
-} from '~/utils/contractGenerator'
+import { generateRentalContract, generateSaleContract, printHTML } from '~/utils/contractGenerator'
 import { useFormAutosave } from '~/composables/useFormAutosave'
 import { useDashboardContratoHistory } from './useDashboardContratoHistory'
 
@@ -347,73 +341,103 @@ export function useDashboardContrato() {
   // Generate contract and save to DB
   // -----------------------------------------------------------------------
 
-  async function generateContract(): Promise<void> {
-    let html = ''
+  function buildContractHTML(): string {
+    const common = {
+      contractDate: contractDate.value,
+      contractLocation: contractLocation.value,
+      contractVehicleType: contractVehicleType.value,
+      contractVehiclePlate: contractVehiclePlate.value,
+      lessorRepresentative: lessorRepresentative.value,
+      lessorRepresentativeNIF: lessorRepresentativeNIF.value,
+      lessorCompany: lessorCompany.value,
+      lessorCIF: lessorCIF.value,
+      lessorAddress: lessorAddress.value,
+      clientType: clientType.value,
+      clientName: clientName.value,
+      clientNIF: clientNIF.value,
+      clientCompany: clientCompany.value,
+      clientCIF: clientCIF.value,
+      clientRepresentative: clientRepresentative.value,
+      clientRepresentativeNIF: clientRepresentativeNIF.value,
+      clientAddress: clientAddress.value,
+      contractJurisdiction: contractJurisdiction.value,
+    }
 
     if (contractType.value === 'arrendamiento') {
-      const rentalData: RentalContractData = {
-        contractDate: contractDate.value,
-        contractLocation: contractLocation.value,
-        contractVehicleType: contractVehicleType.value,
-        contractVehiclePlate: contractVehiclePlate.value,
-        lessorRepresentative: lessorRepresentative.value,
-        lessorRepresentativeNIF: lessorRepresentativeNIF.value,
-        lessorCompany: lessorCompany.value,
-        lessorCIF: lessorCIF.value,
-        lessorAddress: lessorAddress.value,
-        clientType: clientType.value,
-        clientName: clientName.value,
-        clientNIF: clientNIF.value,
-        clientCompany: clientCompany.value,
-        clientCIF: clientCIF.value,
-        clientRepresentative: clientRepresentative.value,
-        clientRepresentativeNIF: clientRepresentativeNIF.value,
-        clientAddress: clientAddress.value,
+      return generateRentalContract({
+        ...common,
         contractMonthlyRent: contractMonthlyRent.value,
         contractDeposit: contractDeposit.value,
         contractDuration: contractDuration.value,
         contractDurationUnit: contractDurationUnit.value,
         contractPaymentDays: contractPaymentDays.value,
         contractVehicleResidualValue: contractVehicleResidualValue.value,
-        contractJurisdiction: contractJurisdiction.value,
         contractHasPurchaseOption: contractHasPurchaseOption.value,
         contractPurchasePrice: contractPurchasePrice.value,
         contractPurchaseNotice: contractPurchaseNotice.value,
         contractRentMonthsToDiscount: contractRentMonthsToDiscount.value,
-      }
-      html = generateRentalContract(rentalData)
-    } else {
-      const saleData: SaleContractData = {
-        contractDate: contractDate.value,
-        contractLocation: contractLocation.value,
-        contractVehicleType: contractVehicleType.value,
-        contractVehiclePlate: contractVehiclePlate.value,
-        lessorRepresentative: lessorRepresentative.value,
-        lessorRepresentativeNIF: lessorRepresentativeNIF.value,
-        lessorCompany: lessorCompany.value,
-        lessorCIF: lessorCIF.value,
-        lessorAddress: lessorAddress.value,
-        clientType: clientType.value,
-        clientName: clientName.value,
-        clientNIF: clientNIF.value,
-        clientCompany: clientCompany.value,
-        clientCIF: clientCIF.value,
-        clientRepresentative: clientRepresentative.value,
-        clientRepresentativeNIF: clientRepresentativeNIF.value,
-        clientAddress: clientAddress.value,
-        contractSalePrice: contractSalePrice.value,
-        contractSalePaymentMethod: contractSalePaymentMethod.value,
-        contractSaleDeliveryConditions: contractSaleDeliveryConditions.value,
-        contractSaleWarranty: contractSaleWarranty.value,
-        contractJurisdiction: contractJurisdiction.value,
-      }
-      html = generateSaleContract(saleData)
+      })
     }
 
-    // Print
-    printHTML(html)
+    return generateSaleContract({
+      ...common,
+      contractSalePrice: contractSalePrice.value,
+      contractSalePaymentMethod: contractSalePaymentMethod.value,
+      contractSaleDeliveryConditions: contractSaleDeliveryConditions.value,
+      contractSaleWarranty: contractSaleWarranty.value,
+    })
+  }
 
-    // Save to DB
+  function buildContractTerms(): ContractTerms {
+    const terms = buildBaseContractTerms(
+      clientType.value,
+      lessorRepresentative.value,
+      lessorCompany.value,
+      lessorCIF.value,
+      lessorAddress.value,
+      contractJurisdiction.value,
+      contractLocation.value,
+    )
+
+    if (contractType.value === 'arrendamiento') {
+      Object.assign(terms, {
+        monthlyRent: contractMonthlyRent.value,
+        deposit: contractDeposit.value,
+        duration: contractDuration.value,
+        durationUnit: contractDurationUnit.value,
+        paymentDays: contractPaymentDays.value,
+        residualValue: contractVehicleResidualValue.value,
+        hasPurchaseOption: contractHasPurchaseOption.value,
+        ...(contractHasPurchaseOption.value && {
+          purchasePrice: contractPurchasePrice.value,
+          purchaseNotice: contractPurchaseNotice.value,
+          rentMonthsToDiscount: contractRentMonthsToDiscount.value,
+        }),
+      })
+    } else {
+      Object.assign(terms, {
+        salePrice: contractSalePrice.value,
+        paymentMethod: contractSalePaymentMethod.value,
+        deliveryConditions: contractSaleDeliveryConditions.value,
+        warranty: contractSaleWarranty.value,
+      })
+    }
+
+    if (clientType.value === 'empresa') {
+      Object.assign(terms, {
+        clientRepresentative: clientRepresentative.value,
+        clientRepresentativeNIF: clientRepresentativeNIF.value,
+        clientCompany: clientCompany.value,
+        clientCIF: clientCIF.value,
+      })
+    }
+
+    return terms
+  }
+
+  async function generateContract(): Promise<void> {
+    printHTML(buildContractHTML())
+
     const dealer = dealerProfile.value
     if (!dealer) return
 
@@ -422,54 +446,6 @@ export function useDashboardContrato() {
     saveSuccess.value = false
 
     try {
-      const clientDisplayName =
-        clientType.value === 'persona' ? clientName.value : clientCompany.value
-
-      const clientDocNum = clientType.value === 'persona' ? clientNIF.value : clientCIF.value
-
-      const terms = buildBaseContractTerms(
-        clientType.value,
-        lessorRepresentative.value,
-        lessorCompany.value,
-        lessorCIF.value,
-        lessorAddress.value,
-        contractJurisdiction.value,
-        contractLocation.value,
-      )
-
-      if (contractType.value === 'arrendamiento') {
-        Object.assign(terms, {
-          monthlyRent: contractMonthlyRent.value,
-          deposit: contractDeposit.value,
-          duration: contractDuration.value,
-          durationUnit: contractDurationUnit.value,
-          paymentDays: contractPaymentDays.value,
-          residualValue: contractVehicleResidualValue.value,
-          hasPurchaseOption: contractHasPurchaseOption.value,
-          ...(contractHasPurchaseOption.value && {
-            purchasePrice: contractPurchasePrice.value,
-            purchaseNotice: contractPurchaseNotice.value,
-            rentMonthsToDiscount: contractRentMonthsToDiscount.value,
-          }),
-        })
-      } else {
-        Object.assign(terms, {
-          salePrice: contractSalePrice.value,
-          paymentMethod: contractSalePaymentMethod.value,
-          deliveryConditions: contractSaleDeliveryConditions.value,
-          warranty: contractSaleWarranty.value,
-        })
-      }
-
-      if (clientType.value === 'empresa') {
-        Object.assign(terms, {
-          clientRepresentative: clientRepresentative.value,
-          clientRepresentativeNIF: clientRepresentativeNIF.value,
-          clientCompany: clientCompany.value,
-          clientCIF: clientCIF.value,
-        })
-      }
-
       const insertData = {
         dealer_id: dealer.id,
         contract_type: contractType.value,
@@ -477,15 +453,15 @@ export function useDashboardContrato() {
         vehicle_id: contractVehicle.value || null,
         vehicle_plate: contractVehiclePlate.value || null,
         vehicle_type: contractVehicleType.value || null,
-        client_name: clientDisplayName,
-        client_doc_number: clientDocNum || null,
+        client_name: clientType.value === 'persona' ? clientName.value : clientCompany.value,
+        client_doc_number:
+          (clientType.value === 'persona' ? clientNIF.value : clientCIF.value) || null,
         client_address: clientAddress.value || null,
-        terms,
+        terms: buildContractTerms(),
         status: 'draft' as const,
       }
 
       const { error: err } = await supabase.from('dealer_contracts').insert(insertData as never)
-
       if (err) throw new Error(err.message)
 
       saveSuccess.value = true
@@ -493,8 +469,6 @@ export function useDashboardContrato() {
       setTimeout(() => {
         saveSuccess.value = false
       }, 4000)
-
-      // Refresh history
       await loadContractHistory()
     } catch (err: unknown) {
       saveError.value = err instanceof Error ? err.message : t('dashboard.tools.contract.saveError')

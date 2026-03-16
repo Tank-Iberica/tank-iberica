@@ -137,6 +137,76 @@ function buildPostSaleHtml(
 </body></html>`
 }
 
+// ── Data fetching ────────────────────────────────────────────────────────────
+
+interface FetchResult {
+  vehicleMap: Map<string, SoldVehicleRow>
+  leads: LeadRow[]
+  soldCount: number
+  earlyReturn?: { sent: number; skipped?: number; error?: string }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchSoldVehiclesAndLeads(supabase: any, now: Date): Promise<FetchResult> {
+  const cutoff = new Date(now.getTime() - 25 * 60 * 60 * 1000).toISOString()
+
+  const { data: soldVehicles, error: vehicleError } = await supabase
+    .from('vehicles')
+    .select('id, title_es, slug')
+    .eq('status', 'sold')
+    .gte('sold_at', cutoff)
+    .limit(100)
+
+  if (vehicleError) {
+    logger.error('[post-sale-outreach] Failed to fetch sold vehicles', {
+      error: vehicleError.message,
+    })
+    return {
+      vehicleMap: new Map(),
+      leads: [],
+      soldCount: 0,
+      earlyReturn: { sent: 0, error: 'database_error' },
+    }
+  }
+
+  if (!soldVehicles || soldVehicles.length === 0) {
+    return { vehicleMap: new Map(), leads: [], soldCount: 0, earlyReturn: { sent: 0, skipped: 0 } }
+  }
+
+  const vehicleMap = new Map<string, SoldVehicleRow>()
+  for (const v of soldVehicles as SoldVehicleRow[]) vehicleMap.set(v.id, v)
+
+  const vehicleIds = (soldVehicles as SoldVehicleRow[]).map((v) => v.id)
+  const { data: leads, error: leadError } = await supabase
+    .from('leads')
+    .select('id, user_email, user_name, vehicle_id')
+    .in('vehicle_id', vehicleIds)
+    .not('user_email', 'is', null)
+    .is('post_sale_outreach_sent_at', null)
+    .limit(200)
+
+  if (leadError) {
+    logger.error('[post-sale-outreach] Failed to fetch leads', { error: leadError.message })
+    return {
+      vehicleMap,
+      leads: [],
+      soldCount: soldVehicles.length,
+      earlyReturn: { sent: 0, error: 'database_error' },
+    }
+  }
+
+  if (!leads || leads.length === 0) {
+    return {
+      vehicleMap,
+      leads: [],
+      soldCount: soldVehicles.length,
+      earlyReturn: { sent: 0, skipped: 0 },
+    }
+  }
+
+  return { vehicleMap, leads: leads as LeadRow[], soldCount: soldVehicles.length }
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event) => {
@@ -157,52 +227,11 @@ export default defineEventHandler(async (event) => {
   }
 
   const now = new Date()
-  // Look back 25h to provide a small safety buffer over the 24h schedule
-  const cutoff = new Date(now.getTime() - 25 * 60 * 60 * 1000).toISOString()
-
-  // ── 1. Find recently sold vehicles ────────────────────────────────────────
-  const { data: soldVehicles, error: vehicleError } = await supabase
-    .from('vehicles')
-    .select('id, title_es, slug')
-    .eq('status', 'sold')
-    .gte('sold_at', cutoff)
-    .limit(100)
-
-  if (vehicleError) {
-    logger.error('[post-sale-outreach] Failed to fetch sold vehicles', {
-      error: vehicleError.message,
-    })
-    return { sent: 0, error: 'database_error' }
-  }
-
-  if (!soldVehicles || soldVehicles.length === 0) {
-    return { sent: 0, skipped: 0 }
-  }
-
-  const vehicleMap = new Map<string, SoldVehicleRow>()
-  for (const v of soldVehicles as SoldVehicleRow[]) {
-    vehicleMap.set(v.id, v)
-  }
-
-  // ── 2. Find leads for those vehicles ──────────────────────────────────────
-  const vehicleIds = (soldVehicles as SoldVehicleRow[]).map((v) => v.id)
-
-  const { data: leads, error: leadError } = await supabase
-    .from('leads')
-    .select('id, user_email, user_name, vehicle_id')
-    .in('vehicle_id', vehicleIds)
-    .not('user_email', 'is', null)
-    .is('post_sale_outreach_sent_at', null)
-    .limit(200)
-
-  if (leadError) {
-    logger.error('[post-sale-outreach] Failed to fetch leads', { error: leadError.message })
-    return { sent: 0, error: 'database_error' }
-  }
-
-  if (!leads || leads.length === 0) {
-    return { sent: 0, skipped: 0 }
-  }
+  const { vehicleMap, leads, soldCount, earlyReturn } = await fetchSoldVehiclesAndLeads(
+    supabase,
+    now,
+  )
+  if (earlyReturn) return earlyReturn
 
   // ── 3. Send post-sale emails ───────────────────────────────────────────────
   let sent = 0
@@ -263,10 +292,10 @@ export default defineEventHandler(async (event) => {
   logger.info('[post-sale-outreach] Complete', {
     sent,
     skipped,
-    vehicles: soldVehicles.length,
+    vehicles: soldCount,
     leads: leads.length,
     batchResult: { processed: batchResult.processed, errors: batchResult.errors },
   })
 
-  return { sent, skipped, vehicles: soldVehicles.length, leads: leads.length }
+  return { sent, skipped, vehicles: soldCount, leads: leads.length }
 })

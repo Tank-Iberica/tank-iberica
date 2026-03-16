@@ -71,6 +71,45 @@ export async function deductOneCredit(
   return newBalance
 }
 
+async function applyAutoOperation(
+  supabase: SupabaseClient,
+  db: SupabaseClient,
+  vehicleId: string,
+  userId: string,
+  dealerId: string,
+  now: Date,
+  op: 'renew' | 'feature',
+): Promise<boolean> {
+  const newBalance = await deductOneCredit(supabase, userId, now)
+  if (newBalance === null) {
+    logger.info(
+      `[auto-renew-feature] Insufficient credits for dealer ${dealerId} — skipping auto_${op} on ${vehicleId}`,
+    )
+    return false
+  }
+
+  const update =
+    op === 'renew'
+      ? { updated_at: now.toISOString() }
+      : { featured: true, updated_at: now.toISOString() }
+
+  await supabase.from('vehicles').update(update).eq('id', vehicleId)
+
+  await db.from('credit_transactions').insert({
+    user_id: userId,
+    type: 'spend',
+    credits: -1,
+    balance_after: newBalance,
+    vehicle_id: vehicleId,
+    description: op === 'renew' ? 'Auto-renovar anuncio' : 'Auto-destacar anuncio',
+  })
+
+  logger.info(
+    `[auto-renew-feature] auto_${op} applied to vehicle ${vehicleId} (balance: ${newBalance})`,
+  )
+  return true
+}
+
 export default defineEventHandler(async (event): Promise<AutoRenewResult> => {
   const body = await readBody<CronBody>(event).catch(() => ({}) as CronBody)
   verifyCronSecret(event, body?.secret)
@@ -120,71 +159,38 @@ export default defineEventHandler(async (event): Promise<AutoRenewResult> => {
       skipped++
       continue
     }
-
     const userId = dealerUserMap.get(vehicle.dealer_id)
     if (!userId) {
       skipped++
       continue
     }
 
-    // Process auto_renew (costs 1 credit)
     if (vehicle.auto_renew) {
-      const newBalance = await deductOneCredit(supabase, userId, now)
-      if (newBalance === null) {
-        logger.info(
-          `[auto-renew-feature] Insufficient credits for dealer ${vehicle.dealer_id} — skipping auto_renew on ${vehicle.id}`,
-        )
-        skipped++
-      } else {
-        await supabase
-          .from('vehicles')
-          .update({ updated_at: now.toISOString() })
-          .eq('id', vehicle.id)
-
-        await db.from('credit_transactions').insert({
-          user_id: userId,
-          type: 'spend',
-          credits: -1,
-          balance_after: newBalance,
-          vehicle_id: vehicle.id,
-          description: 'Auto-renovar anuncio',
-        })
-
-        renewed++
-        logger.info(
-          `[auto-renew-feature] auto_renew applied to vehicle ${vehicle.id} (balance: ${newBalance})`,
-        )
-      }
+      const ok = await applyAutoOperation(
+        supabase,
+        db,
+        vehicle.id,
+        userId,
+        vehicle.dealer_id,
+        now,
+        'renew',
+      )
+      if (ok) renewed++
+      else skipped++
     }
 
-    // Process auto_feature (costs 1 credit, separate from auto_renew)
     if (vehicle.auto_feature) {
-      const newBalance = await deductOneCredit(supabase, userId, now)
-      if (newBalance === null) {
-        logger.info(
-          `[auto-renew-feature] Insufficient credits for dealer ${vehicle.dealer_id} — skipping auto_feature on ${vehicle.id}`,
-        )
-        skipped++
-      } else {
-        await supabase
-          .from('vehicles')
-          .update({ featured: true, updated_at: now.toISOString() })
-          .eq('id', vehicle.id)
-
-        await db.from('credit_transactions').insert({
-          user_id: userId,
-          type: 'spend',
-          credits: -1,
-          balance_after: newBalance,
-          vehicle_id: vehicle.id,
-          description: 'Auto-destacar anuncio',
-        })
-
-        featured++
-        logger.info(
-          `[auto-renew-feature] auto_feature applied to vehicle ${vehicle.id} (balance: ${newBalance})`,
-        )
-      }
+      const ok = await applyAutoOperation(
+        supabase,
+        db,
+        vehicle.id,
+        userId,
+        vehicle.dealer_id,
+        now,
+        'feature',
+      )
+      if (ok) featured++
+      else skipped++
     }
   }
 
