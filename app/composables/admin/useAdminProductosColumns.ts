@@ -135,8 +135,8 @@ export function useAdminProductosColumns(adminFilterDefs: {
       const saved = localStorage.getItem(STORAGE_KEY)
       if (saved) {
         const parsed = JSON.parse(saved)
-        if (parsed.groups && Array.isArray(parsed.groups)) columnGroups.value = parsed.groups
-        if (parsed.order && Array.isArray(parsed.order)) columnOrder.value = parsed.order
+        if (Array.isArray(parsed.groups)) columnGroups.value = parsed.groups
+        if (Array.isArray(parsed.order)) columnOrder.value = parsed.order
       }
     } catch {
       /* use defaults */

@@ -114,7 +114,7 @@ export function useDashboardTransaccion(vehicleId: string) {
     const acquisitionCost = vehicle.value.acquisition_cost || 0
 
     let maintenanceCost = 0
-    if (vehicle.value.maintenance_records && Array.isArray(vehicle.value.maintenance_records)) {
+    if (Array.isArray(vehicle.value.maintenance_records)) {
       maintenanceCost = (vehicle.value.maintenance_records as Array<{ cost?: number }>).reduce(
         (sum: number, r: { cost?: number }) => sum + (r.cost || 0),
         0,
@@ -122,7 +122,7 @@ export function useDashboardTransaccion(vehicleId: string) {
     }
 
     let rentalIncome = 0
-    if (vehicle.value.rental_records && Array.isArray(vehicle.value.rental_records)) {
+    if (Array.isArray(vehicle.value.rental_records)) {
       rentalIncome = (vehicle.value.rental_records as Array<{ amount?: number }>).reduce(
         (sum: number, r: { amount?: number }) => sum + (r.amount || 0),
         0,

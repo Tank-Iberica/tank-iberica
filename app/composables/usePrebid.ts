@@ -96,7 +96,7 @@ export function usePrebid(
   const winningBid = ref<PrebidBidResponse | null>(null)
   const loading = ref(false)
 
-  const isEnabled = computed(() => runtimeConfig.public.prebidEnabled === true)
+  const isEnabled = computed(() => !!runtimeConfig.public.prebidEnabled)
   const timeout = computed(() => runtimeConfig.public.prebidTimeout || 1500)
 
   /**

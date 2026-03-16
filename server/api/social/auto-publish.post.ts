@@ -123,7 +123,7 @@ export default defineEventHandler(async (event) => {
       .eq('key', `social_auto_publish_${platform}`)
       .single()
 
-    const autoPublishEnabled = (autoConfig as { value: boolean } | null)?.value === true
+    const autoPublishEnabled = !!(autoConfig as { value: boolean } | null)?.value
 
     // Generate content
     const contentEs = buildPostContent(v, platform, 'es')

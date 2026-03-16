@@ -62,7 +62,7 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event).catch(() => ({}))
   const quarter = typeof body?.quarter === 'string' ? body.quarter : getCurrentQuarter()
-  const forceRegen = body?.force === true
+  const forceRegen = !!body?.force
 
   const supabase = serverSupabaseServiceRole(event)
 
@@ -149,7 +149,11 @@ export async function generateQuarterlyReport(
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'unknown error'
       errors.push(`${locale}: ${msg}`)
-      logger.error('Failed to generate market report for locale', { quarter, locale, err: String(err) })
+      logger.error('Failed to generate market report for locale', {
+        quarter,
+        locale,
+        err: String(err),
+      })
     }
   }
 

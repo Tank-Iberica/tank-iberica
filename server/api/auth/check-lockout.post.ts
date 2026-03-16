@@ -144,7 +144,7 @@ async function verifyTurnstile(token: string): Promise<boolean> {
       body: new URLSearchParams({ secret, response: token }),
     })
     const result = (await response.json()) as { success: boolean }
-    return result.success === true
+    return !!result.success
   } catch {
     return false
   }

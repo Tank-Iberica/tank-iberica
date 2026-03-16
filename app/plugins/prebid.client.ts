@@ -100,9 +100,9 @@ export default defineNuxtPlugin(() => {
     (newConsent) => {
       if (!newConsent) return
 
-      if (newConsent.marketing === true && !prebidLoaded) {
+      if (newConsent.marketing && !prebidLoaded) {
         loadPrebid()
-      } else if (newConsent.marketing !== true && prebidLoaded) {
+      } else if (!newConsent.marketing && prebidLoaded) {
         unloadPrebid()
       }
     },

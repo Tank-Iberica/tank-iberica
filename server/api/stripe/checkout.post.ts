@@ -92,7 +92,7 @@ export default defineEventHandler(async (event) => {
   )
   const subData = await subRes.json()
   const existingCustomerId = subData?.[0]?.stripe_customer_id || null
-  const hasHadTrial = subData?.[0]?.has_had_trial === true
+  const hasHadTrial = !!subData?.[0]?.has_had_trial
   const isFirstSubscription = (!Array.isArray(subData) || subData.length === 0) && !hasHadTrial
 
   // Build line item — prefer Stripe Price ID if configured, else inline price_data

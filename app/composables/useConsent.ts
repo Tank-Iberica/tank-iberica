@@ -123,7 +123,7 @@ export function useConsent() {
   function hasConsent(type: 'necessary' | 'analytics' | 'marketing'): boolean {
     if (type === 'necessary') return true
     if (!consent.value) return false
-    return consent.value[type] === true
+    return !!consent.value[type]
   }
 
   /**

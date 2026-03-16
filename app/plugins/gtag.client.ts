@@ -109,7 +109,7 @@ export default defineNuxtPlugin(() => {
     (newConsent) => {
       if (!newConsent) return
 
-      const hasMarketingConsent = newConsent.marketing === true
+      const hasMarketingConsent = !!newConsent.marketing
 
       if (hasMarketingConsent && !gtagLoaded) {
         // User just gave consent → load gtag

@@ -110,9 +110,9 @@ export default defineNuxtPlugin(() => {
     () => consent.value,
     (newConsent) => {
       if (!newConsent) return
-      if (newConsent.marketing === true && !gtmLoaded) {
+      if (newConsent.marketing && !gtmLoaded) {
         loadGtm()
-      } else if (newConsent.marketing !== true && gtmLoaded) {
+      } else if (!newConsent.marketing && gtmLoaded) {
         unloadGtm()
       }
     },

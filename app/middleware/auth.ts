@@ -17,10 +17,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   // Force password reset for migrated Tank Ibérica users (Session 13)
-  if (
-    session.user.user_metadata?.force_password_reset === true &&
-    to.path !== '/auth/nueva-password'
-  ) {
+  if (session.user.user_metadata?.force_password_reset && to.path !== '/auth/nueva-password') {
     return navigateTo('/auth/nueva-password')
   }
 })

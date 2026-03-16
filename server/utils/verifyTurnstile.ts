@@ -35,7 +35,7 @@ export async function verifyTurnstile(token: string, ip?: string): Promise<boole
     })
 
     const data = (await response.json()) as TurnstileVerifyResponse
-    return data.success === true
+    return !!data.success
   } catch {
     // If verification service is unavailable, fail closed
     return false

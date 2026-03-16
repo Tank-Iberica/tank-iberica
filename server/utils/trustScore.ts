@@ -134,7 +134,7 @@ export function calculateTrustScore(
   }
 
   // 9. Verification documents (15 pts)
-  if (dealer.verified === true) bd.verified_docs = 15
+  if (dealer.verified) bd.verified_docs = 15
 
   const score =
     bd.has_logo +
