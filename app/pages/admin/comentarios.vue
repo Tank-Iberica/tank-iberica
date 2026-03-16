@@ -68,7 +68,7 @@ onMounted(() => {
     <AdminComentariosLoadingSkeleton v-if="loading" />
 
     <!-- Comments list -->
-    <div v-else-if="filteredComments.length > 0" class="comments-list">
+    <div v-else-if="filteredComments.length" class="comments-list">
       <AdminComentariosCommentCard
         v-for="comment in filteredComments"
         :key="comment.id"

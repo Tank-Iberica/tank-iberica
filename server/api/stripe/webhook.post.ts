@@ -50,7 +50,7 @@ async function handleCreditPurchase(
   const currentTotal = existingCredits[0]?.total_purchased ?? 0
   const newBalance = currentBalance + credits
 
-  if (existingCredits.length > 0) {
+  if (existingCredits.length) {
     await patch('user_credits', `user_id=eq.${userId}`, {
       balance: newBalance,
       total_purchased: currentTotal + credits,
@@ -158,7 +158,7 @@ async function handleSubscriptionCheckout(
     expires_at: expiresAt.toISOString(),
   }
 
-  if (existingData.length > 0) {
+  if (existingData.length) {
     await patch('subscriptions', `user_id=eq.${userId}`, subFields)
   } else {
     await insert('subscriptions', { user_id: userId, ...subFields })
@@ -408,7 +408,7 @@ async function checkIdempotency(
     rule.filterFn(obj),
     rule.columns,
   )
-  return existing.length > 0
+  return !!existing.length
 }
 
 // ── Webhook verification ──────────────────────────────────────────────────
@@ -423,9 +423,10 @@ function verifyStripeEvent(
   webhookSecret: string | undefined,
 ): StripeEvent {
   if (!webhookSecret) {
-    if (process.env.NODE_ENV === 'production')
-      throw safeError(500, 'Webhook secret not configured')
-    logger.warn('[Stripe Webhook] No webhook secret configured — dev mode, processing without verification')
+    if (process.env.NODE_ENV === 'production') throw safeError(500, 'Webhook secret not configured')
+    logger.warn(
+      '[Stripe Webhook] No webhook secret configured — dev mode, processing without verification',
+    )
     return JSON.parse(rawBody) as StripeEvent
   }
 
@@ -454,8 +455,7 @@ export default defineEventHandler(async (event) => {
 
   const supabaseUrl = process.env.SUPABASE_URL || ''
   const supabaseKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  if (!supabaseUrl || !supabaseKey)
-    throw safeError(500, 'Service not configured')
+  if (!supabaseUrl || !supabaseKey) throw safeError(500, 'Service not configured')
 
   const sbConfig: SupabaseRestConfig = { url: supabaseUrl, serviceRoleKey: supabaseKey }
   const sig = event.node.req.headers['stripe-signature'] as string

@@ -50,13 +50,10 @@ export default defineEventHandler(async (event) => {
   // Validate UUID format for category_id and cursor
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-  const categoryId = query.category_id && uuidRegex.test(query.category_id)
-    ? query.category_id
-    : null
+  const categoryId =
+    query.category_id && uuidRegex.test(query.category_id) ? query.category_id : null
 
-  const cursor = query.cursor && uuidRegex.test(query.cursor)
-    ? query.cursor
-    : null
+  const cursor = query.cursor && uuidRegex.test(query.cursor) ? query.cursor : null
 
   const priceMin = query.price_min ? Number(query.price_min) : null
   const priceMax = query.price_max ? Number(query.price_max) : null
@@ -94,10 +91,14 @@ export default defineEventHandler(async (event) => {
   }
 
   const results = (data ?? []) as Array<SearchResult & { total_estimate: number }>
-  const totalEstimate = results.length > 0 ? results[0]!.total_estimate : 0
+  const totalEstimate = results.length ? results[0]!.total_estimate : 0
   const nextCursor = results.length === limit ? results.at(-1)!.id : null
 
-  setResponseHeader(event, 'Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=60')
+  setResponseHeader(
+    event,
+    'Cache-Control',
+    'public, max-age=60, s-maxage=120, stale-while-revalidate=60',
+  )
 
   return {
     results: results.map(({ total_estimate: _te, ...r }) => r),

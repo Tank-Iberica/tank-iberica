@@ -24,5 +24,5 @@ export function resolveUserName(
   if (u.pseudonimo) return u.pseudonimo
   if (u.company_name) return u.company_name
   const parts = [u.name, u.apellidos].filter(Boolean)
-  return parts.length > 0 ? parts.join(' ') : undefined
+  return parts.length ? parts.join(' ') : undefined
 }

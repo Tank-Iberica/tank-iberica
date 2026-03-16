@@ -40,7 +40,7 @@ const { t } = useI18n()
 
   <!-- Table -->
   <div v-else class="table-container">
-    <table v-if="records.length > 0" class="data-table">
+    <table v-if="records.length" class="data-table">
       <thead>
         <tr>
           <th class="sortable" @click="emit('toggleSort', 'vehicle')">

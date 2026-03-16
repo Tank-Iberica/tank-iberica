@@ -99,7 +99,7 @@ async function confirm() {
     if (updateError) throw updateError
 
     // 2. Insert service requests for selected services
-    if (selectedServices.value.length > 0) {
+    if (selectedServices.value.length) {
       const serviceRequests = selectedServices.value.map((serviceKey) => ({
         type: serviceKey,
         vehicle_id: props.vehicleId,

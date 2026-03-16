@@ -61,7 +61,7 @@ export function depreciationFactor(year: number | undefined): number {
 /** Average days-to-sell from rows, or null if no data. */
 export function avgDaysToSell(rows: MarketDataRow[]): number | null {
   const vals = rows.map((r) => r.avg_days_to_sell).filter((d): d is number => d !== null && d > 0)
-  return vals.length > 0 ? Math.round(vals.reduce((s, d) => s + d, 0) / vals.length) : null
+  return vals.length ? Math.round(vals.reduce((s, d) => s + d, 0) / vals.length) : null
 }
 
 /** Trend pct between the two most recent months in rows. */
@@ -70,8 +70,8 @@ export function computeRowsTrend(rows: MarketDataRow[]): number {
   if (months.length < 2) return 0
   const cur = rows.filter((r) => r.month === months[0])
   const prev = rows.filter((r) => r.month === months[1])
-  const curAvg = cur.length > 0 ? cur.reduce((s, r) => s + r.avg_price, 0) / cur.length : 0
-  const prevAvg = prev.length > 0 ? prev.reduce((s, r) => s + r.avg_price, 0) / prev.length : 0
+  const curAvg = cur.length ? cur.reduce((s, r) => s + r.avg_price, 0) / cur.length : 0
+  const prevAvg = prev.length ? prev.reduce((s, r) => s + r.avg_price, 0) / prev.length : 0
   return pctChange(curAvg, prevAvg)
 }
 

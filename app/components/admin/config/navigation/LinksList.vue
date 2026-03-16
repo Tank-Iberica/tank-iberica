@@ -112,7 +112,7 @@ const emit = defineEmits<{
   </div>
 
   <!-- Mobile card version -->
-  <div v-if="links.length > 0" class="links-cards-mobile">
+  <div v-if="links.length" class="links-cards-mobile">
     <div v-for="(link, index) in links" :key="index" class="link-card-mobile">
       <div class="link-card-header">
         <span class="link-card-index">#{{ index + 1 }}</span>

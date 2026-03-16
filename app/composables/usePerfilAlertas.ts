@@ -76,9 +76,11 @@ export function usePerfilAlertas() {
       parts.push(`${min} - ${max} \u20AC`)
     }
     if (filters.year_min || filters.year_max) {
-      parts.push(`${filters.year_min == null ? '...' : Number(filters.year_min)} - ${filters.year_max == null ? '...' : Number(filters.year_max)}`)
+      parts.push(
+        `${filters.year_min == null ? '...' : Number(filters.year_min)} - ${filters.year_max == null ? '...' : Number(filters.year_max)}`,
+      )
     }
-    return parts.length > 0 ? parts.join(' \u00B7 ') : t('profile.alerts.noFilters')
+    return parts.length ? parts.join(' \u00B7 ') : t('profile.alerts.noFilters')
   }
 
   function frequencyLabel(frequency: string): string {

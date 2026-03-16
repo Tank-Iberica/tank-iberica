@@ -116,7 +116,7 @@ function onDeleteClose() {
       />
 
       <!-- Ending Soon Alerts -->
-      <div v-if="endingSoonRentals.length > 0" class="ending-soon-alert">
+      <div v-if="endingSoonRentals.length" class="ending-soon-alert">
         <strong>{{ t('dashboard.tools.rentals.endingSoonTitle') }}</strong>
         <div v-for="r in endingSoonRentals" :key="r.id" class="ending-soon-item">
           <span>{{ r.vehicle_brand }} {{ r.vehicle_model }} &mdash; {{ r.client_name }}</span>

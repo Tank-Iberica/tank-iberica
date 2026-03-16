@@ -100,7 +100,7 @@ function formatDate(iso: string): string {
     <div v-if="error" class="error-msg" role="alert">{{ error }}</div>
 
     <!-- Available transitions -->
-    <div v-if="validTargets.length > 0 && !confirmTarget" class="transitions-section">
+    <div v-if="validTargets.length && !confirmTarget" class="transitions-section">
       <p class="transitions-title">{{ t('lifecycle.changeStatus') }}</p>
       <div class="transitions-grid">
         <button

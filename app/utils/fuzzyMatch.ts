@@ -66,5 +66,5 @@ export function fuzzyMatch(text: string, query: string, threshold = 0.45): boole
     if (!wordMatchesText(qw, textWords, threshold)) return false
   }
 
-  return queryWords.length > 0
+  return !!queryWords.length
 }

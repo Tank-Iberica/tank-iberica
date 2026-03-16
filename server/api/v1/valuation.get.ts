@@ -61,7 +61,10 @@ interface PriceEstimate {
   max: number
 }
 
-export function computePriceEstimate(prices: number[], yearParam: string | undefined): PriceEstimate {
+export function computePriceEstimate(
+  prices: number[],
+  yearParam: string | undefined,
+): PriceEstimate {
   const sortedPrices = [...prices].sort((a, b) => a - b)
   let minPrice = Math.min(...prices) * 0.9
   let maxPrice = Math.max(...prices) * 1.1
@@ -134,7 +137,10 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
   // Ver FLUJOS-OPERATIVOS §15 para criterios de activación
   const VALUATION_API_ENABLED = process.env.VALUATION_API_ENABLED === 'true'
   if (!VALUATION_API_ENABLED) {
-    throw safeError(503, 'Valuation API coming soon. Insufficient market data for reliable estimates.')
+    throw safeError(
+      503,
+      'Valuation API coming soon. Insufficient market data for reliable estimates.',
+    )
   }
 
   const query = getQuery(event)
@@ -231,12 +237,9 @@ export default defineEventHandler(async (event): Promise<ValuationResponse> => {
     (r): r is typeof r & { avg_days_to_sell: number } =>
       r.avg_days_to_sell !== null && r.avg_days_to_sell > 0,
   )
-  const avgDaysToSell =
-    rowsWithDays.length > 0
-      ? Math.round(
-          rowsWithDays.reduce((sum, r) => sum + r.avg_days_to_sell, 0) / rowsWithDays.length,
-        )
-      : null
+  const avgDaysToSell = rowsWithDays.length
+    ? Math.round(rowsWithDays.reduce((sum, r) => sum + r.avg_days_to_sell, 0) / rowsWithDays.length)
+    : null
 
   // Log successful usage
   await logUsage(supabase, apiKey, query as Record<string, unknown>, Date.now() - startTime, 200)

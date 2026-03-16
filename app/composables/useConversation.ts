@@ -113,7 +113,7 @@ export function useConversation() {
       })
 
       // Fetch last message preview for each conversation
-      if (mapped.length > 0) {
+      if (mapped.length) {
         const convIds = mapped.map((c) => c.id)
         const { data: lastMsgs } = await supabase
           .from('conversation_messages')

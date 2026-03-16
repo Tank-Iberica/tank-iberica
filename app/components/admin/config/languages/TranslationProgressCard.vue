@@ -16,7 +16,7 @@ defineProps<{
 
     <div v-if="loadingProgress" class="progress-loading">Cargando progreso...</div>
 
-    <div v-else-if="progress.length > 0" class="progress-list">
+    <div v-else-if="progress.length" class="progress-list">
       <div v-for="prog in progress" :key="prog.locale" class="progress-item">
         <div class="progress-header">
           <span class="progress-locale">{{ prog.label }}</span>

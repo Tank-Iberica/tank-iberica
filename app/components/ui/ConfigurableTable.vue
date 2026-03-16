@@ -259,7 +259,7 @@ watch(
       </table>
 
       <!-- Data table -->
-      <table v-else-if="sortedData.length > 0" class="ct-table">
+      <table v-else-if="sortedData.length" class="ct-table">
         <thead>
           <tr>
             <th

@@ -16,11 +16,7 @@ const dealerId = ref<string | null>(null)
 
 onMounted(async () => {
   if (!user.value?.id) return
-  const { data } = await supabase
-    .from('dealers')
-    .select('id')
-    .eq('user_id', user.value.id)
-    .single()
+  const { data } = await supabase.from('dealers').select('id').eq('user_id', user.value.id).single()
   if (data) dealerId.value = (data as { id: string }).id
 })
 
@@ -44,15 +40,15 @@ interface CriterionConfig {
 }
 
 const CRITERIA: CriterionConfig[] = [
-  { key: 'has_logo',         maxPts: 5,  actionPath: '/dashboard/herramientas#logo' },
-  { key: 'has_bio',          maxPts: 5,  actionPath: '/dashboard/herramientas#bio' },
-  { key: 'has_contact',      maxPts: 5,  actionPath: '/dashboard/herramientas#contacto' },
-  { key: 'has_legal',        maxPts: 5,  actionPath: '/dashboard/herramientas#legal' },
-  { key: 'account_age',      maxPts: 15, actionPath: '' },
+  { key: 'has_logo', maxPts: 5, actionPath: '/dashboard/herramientas#logo' },
+  { key: 'has_bio', maxPts: 5, actionPath: '/dashboard/herramientas#bio' },
+  { key: 'has_contact', maxPts: 5, actionPath: '/dashboard/herramientas#contacto' },
+  { key: 'has_legal', maxPts: 5, actionPath: '/dashboard/herramientas#legal' },
+  { key: 'account_age', maxPts: 15, actionPath: '' },
   { key: 'listing_activity', maxPts: 15, actionPath: '/dashboard/vehiculos/nuevo' },
-  { key: 'responsiveness',   maxPts: 15, actionPath: '/dashboard/leads' },
-  { key: 'reviews',          maxPts: 20, actionPath: '' },
-  { key: 'verified_docs',    maxPts: 15, actionPath: '/admin/verificaciones' },
+  { key: 'responsiveness', maxPts: 15, actionPath: '/dashboard/leads' },
+  { key: 'reviews', maxPts: 20, actionPath: '' },
+  { key: 'verified_docs', maxPts: 15, actionPath: '/admin/verificaciones' },
 ]
 
 const criteriaRows = computed(() => {
@@ -73,7 +69,14 @@ const done = computed(() => criteriaRows.value.filter((r) => r.done))
     <header class="page-header">
       <div>
         <h1>{{ t('dashboard.trustScore.title', 'Puntuación de confianza') }}</h1>
-        <p class="subtitle">{{ t('dashboard.trustScore.subtitle', 'Mejora tu perfil para conseguir el badge Top y generar más confianza') }}</p>
+        <p class="subtitle">
+          {{
+            t(
+              'dashboard.trustScore.subtitle',
+              'Mejora tu perfil para conseguir el badge Top y generar más confianza',
+            )
+          }}
+        </p>
       </div>
       <NuxtLink to="/dashboard/herramientas" class="btn-back">
         ← {{ t('common.back', 'Volver') }}
@@ -109,8 +112,14 @@ const done = computed(() => criteriaRows.value.filter((r) => r.done))
         <!-- Progress bar to next tier -->
         <div v-if="nextTier" class="progress-section">
           <div class="progress-label">
-            <span>{{ t('trust.progressTo', 'Progreso hacia') }}
-              {{ nextTier === 'top' ? t('trust.badgeTop', 'Top') : t('trust.badgeVerified', 'Verificado') }}</span>
+            <span
+              >{{ t('trust.progressTo', 'Progreso hacia') }}
+              {{
+                nextTier === 'top'
+                  ? t('trust.badgeTop', 'Top')
+                  : t('trust.badgeVerified', 'Verificado')
+              }}</span
+            >
             <span>{{ progressPct }}%</span>
           </div>
           <div class="progress-bar-bg">
@@ -127,16 +136,20 @@ const done = computed(() => criteriaRows.value.filter((r) => r.done))
       </div>
 
       <!-- Pending criteria -->
-      <section v-if="pending.length > 0" class="criteria-section">
+      <section v-if="pending.length" class="criteria-section">
         <h2>{{ t('trust.pendingCriteria', 'Criterios pendientes') }}</h2>
         <div class="criteria-list">
-          <div
-            v-for="c in pending"
-            :key="c.key"
-            class="criterion-row criterion-row--pending"
-          >
+          <div v-for="c in pending" :key="c.key" class="criterion-row criterion-row--pending">
             <div class="criterion-status criterion-status--pending">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="8" x2="12" y2="16" />
               </svg>
@@ -145,11 +158,7 @@ const done = computed(() => criteriaRows.value.filter((r) => r.done))
               <span class="criterion-name">{{ t(`trust.criterion.${c.key}`, c.key) }}</span>
               <span class="criterion-pts">{{ c.pts }} / {{ c.maxPts }} pts</span>
             </div>
-            <NuxtLink
-              v-if="c.actionPath"
-              :to="c.actionPath"
-              class="criterion-action"
-            >
+            <NuxtLink v-if="c.actionPath" :to="c.actionPath" class="criterion-action">
               {{ t('trust.improve', 'Mejorar') }} →
             </NuxtLink>
             <span v-else class="criterion-auto">
@@ -160,16 +169,20 @@ const done = computed(() => criteriaRows.value.filter((r) => r.done))
       </section>
 
       <!-- Done criteria -->
-      <section v-if="done.length > 0" class="criteria-section">
+      <section v-if="done.length" class="criteria-section">
         <h2>{{ t('trust.doneCriteria', 'Criterios conseguidos') }}</h2>
         <div class="criteria-list">
-          <div
-            v-for="c in done"
-            :key="c.key"
-            class="criterion-row criterion-row--done"
-          >
+          <div v-for="c in done" :key="c.key" class="criterion-row criterion-row--done">
             <div class="criterion-status criterion-status--done">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
@@ -295,7 +308,11 @@ const done = computed(() => criteriaRows.value.filter((r) => r.done))
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark, #1a4248) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark, #1a4248) 100%
+  );
   border-radius: var(--border-radius-full);
   transition: width 0.4s ease;
 }

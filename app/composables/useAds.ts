@@ -84,7 +84,9 @@ export function useAds(
       // Build query: active ads matching position, geo, and category
       let query = supabase
         .from('ads')
-        .select('id, advertiser_id, vertical, title, description, image_url, logo_url, link_url, phone, email, cta_text, format, positions, countries, regions, provinces, category_slugs, action_slugs, include_in_pdf, include_in_email, target_segments')
+        .select(
+          'id, advertiser_id, vertical, title, description, image_url, logo_url, link_url, phone, email, cta_text, format, positions, countries, regions, provinces, category_slugs, action_slugs, include_in_pdf, include_in_email, target_segments',
+        )
         .eq('status', 'active')
         .contains('positions', [position])
         .lte('starts_at', new Date().toISOString())
@@ -120,7 +122,7 @@ export function useAds(
         // Segment matching: if ad targets specific segments, check user segments
         if ((ad.target_segments?.length ?? 0) > 0) {
           const userSegs = options?.userSegments || []
-          if (userSegs.length > 0) {
+          if (userSegs.length) {
             const hasMatch = ad.target_segments.some((s) => userSegs.includes(s))
             if (!hasMatch) return false
           }

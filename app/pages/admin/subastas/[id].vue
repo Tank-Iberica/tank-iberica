@@ -100,7 +100,7 @@ function goBack() {
 
         <AdminAuctionActions
           :auction="auction"
-          :bids-exist="bids.length > 0"
+          :bids-exist="bids.length"
           :action-loading="actionLoading"
           @start="startAuction"
           @end="endAuction"

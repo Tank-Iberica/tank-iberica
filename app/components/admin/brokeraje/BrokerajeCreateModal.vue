@@ -13,8 +13,15 @@ defineEmits<{
 }>()
 
 const vehicleSearch = ref('')
-const vehicleResults = ref<Array<{ id: string; brand: string; model: string; year: number | null }>>([])
-const selectedVehicle = ref<{ id: string; brand: string; model: string; year: number | null } | null>(null)
+const vehicleResults = ref<
+  Array<{ id: string; brand: string; model: string; year: number | null }>
+>([])
+const selectedVehicle = ref<{
+  id: string
+  brand: string
+  model: string
+  year: number | null
+} | null>(null)
 const searchingVehicles = ref(false)
 
 const buyerPhone = ref('')
@@ -76,9 +83,12 @@ function resetForm() {
   dealMode.value = 'broker'
 }
 
-watch(() => props.show, (val) => {
-  if (!val) resetForm()
-})
+watch(
+  () => props.show,
+  (val) => {
+    if (!val) resetForm()
+  },
+)
 </script>
 
 <template>
@@ -103,9 +113,11 @@ watch(() => props.show, (val) => {
                 autocomplete="off"
                 @input="onSearchInput"
               >
-              <button v-if="selectedVehicle" class="clear-btn" @click="clearVehicle">&times;</button>
+              <button v-if="selectedVehicle" class="clear-btn" @click="clearVehicle">
+                &times;
+              </button>
             </div>
-            <div v-if="vehicleResults.length > 0" class="search-results">
+            <div v-if="vehicleResults.length" class="search-results">
               <button
                 v-for="v in vehicleResults"
                 :key="v.id"
@@ -157,7 +169,7 @@ watch(() => props.show, (val) => {
           <!-- Financing -->
           <div class="form-group">
             <label class="checkbox-label">
-              <input v-model="buyerFinancing" type="checkbox">
+              <input v-model="buyerFinancing" type="checkbox" >
               Necesita financiacion
             </label>
           </div>
@@ -167,11 +179,11 @@ watch(() => props.show, (val) => {
             <label class="form-label">Modo</label>
             <div class="radio-group">
               <label class="radio-label">
-                <input v-model="dealMode" type="radio" value="broker">
+                <input v-model="dealMode" type="radio" value="broker" >
                 Broker (Tracciona intermedia)
               </label>
               <label class="radio-label">
-                <input v-model="dealMode" type="radio" value="tank">
+                <input v-model="dealMode" type="radio" value="tank" >
                 Tank (compra directa)
               </label>
             </div>
@@ -185,14 +197,16 @@ watch(() => props.show, (val) => {
           <button
             class="btn-primary"
             :disabled="saving"
-            @click="$emit('create', {
-              vehicle_id: selectedVehicle?.id,
-              buyer_phone: buyerPhone || undefined,
-              buyer_budget_min: buyerBudgetMin,
-              buyer_budget_max: buyerBudgetMax,
-              buyer_financing: buyerFinancing,
-              deal_mode: dealMode,
-            })"
+            @click="
+              $emit('create', {
+                vehicle_id: selectedVehicle?.id,
+                buyer_phone: buyerPhone || undefined,
+                buyer_budget_min: buyerBudgetMin,
+                buyer_budget_max: buyerBudgetMax,
+                buyer_financing: buyerFinancing,
+                deal_mode: dealMode,
+              })
+            "
           >
             {{ saving ? 'Creando...' : 'Crear Deal' }}
           </button>

@@ -48,7 +48,7 @@ const modalTitle = computed(() => props.title || t('exportModal.title'))
 const enabledColumns = computed(() => localColumns.value.filter((col) => col.enabled))
 
 const allSelected = computed(
-  () => localColumns.value.length > 0 && localColumns.value.every((col) => col.enabled),
+  () => !!localColumns.value.length && localColumns.value.every((col) => col.enabled),
 )
 
 const noneSelected = computed(() => localColumns.value.every((col) => !col.enabled))

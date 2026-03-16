@@ -7,7 +7,11 @@ import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
 
 const checkoutCreditsSchema = z.object({
-  packSlug: z.string().min(1).max(64).regex(/^[a-z0-9-]+$/, 'packSlug must be lowercase alphanumeric with dashes'),
+  packSlug: z
+    .string()
+    .min(1)
+    .max(64)
+    .regex(/^[a-z0-9-]+$/, 'packSlug must be lowercase alphanumeric with dashes'),
   successUrl: z.string().url(),
   cancelUrl: z.string().url(),
 })
@@ -58,7 +62,7 @@ export default defineEventHandler(async (event) => {
     throw safeError(404, 'Credit pack not found or inactive')
   }
 
-  // packs.length > 0 guaranteed by check above
+  // packs.length guaranteed by check above
 
   const pack = packs[0]!
 

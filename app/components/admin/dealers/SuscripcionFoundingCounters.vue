@@ -14,7 +14,7 @@ defineProps<{
 </script>
 
 <template>
-  <div v-if="Object.keys(foundingCountByVertical).length > 0" class="founding-stats">
+  <div v-if="Object.keys(foundingCountByVertical).length" class="founding-stats">
     <div
       v-for="(count, vertical) in foundingCountByVertical"
       :key="vertical"

@@ -27,10 +27,9 @@ export default defineEventHandler(async (event) => {
   const threats = activeIps.map((ip) => {
     const summary = getEventSummaryForIp(ip)
     const recentEvents = getRecentEventsForIp(ip)
-    const lastEventAt =
-      recentEvents.length > 0
-        ? new Date(recentEvents[recentEvents.length - 1]!.timestamp).toISOString()
-        : null
+    const lastEventAt = recentEvents.length
+      ? new Date(recentEvents.at(-1)!.timestamp).toISOString()
+      : null
 
     return {
       ip,
@@ -56,9 +55,7 @@ export default defineEventHandler(async (event) => {
   }
 })
 
-function getMostFrequentPath(
-  events: ReturnType<typeof getRecentEventsForIp>,
-): string | null {
+function getMostFrequentPath(events: ReturnType<typeof getRecentEventsForIp>): string | null {
   const counts = new Map<string, number>()
   for (const event of events) {
     if (event.path) {

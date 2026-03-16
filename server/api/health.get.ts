@@ -124,9 +124,10 @@ export default defineEventHandler(
         const tiers = Object.keys(config.subscription_prices as Record<string, unknown>)
         checks.push({
           check: 'subscription_tiers',
-          status: tiers.length > 0 ? 'ok' : 'warn',
-          detail:
-            tiers.length > 0 ? `${tiers.length} tiers: ${tiers.join(', ')}` : 'no tiers configured',
+          status: tiers.length ? 'ok' : 'warn',
+          detail: tiers.length
+            ? `${tiers.length} tiers: ${tiers.join(', ')}`
+            : 'no tiers configured',
         })
       }
 

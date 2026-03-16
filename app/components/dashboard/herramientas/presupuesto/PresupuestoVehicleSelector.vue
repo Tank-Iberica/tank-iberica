@@ -44,7 +44,7 @@ function onSearchInput(event: Event): void {
         &#10005;
       </button>
 
-      <div v-if="showDropdown && filteredVehicles.length > 0" class="vehicle-dropdown">
+      <div v-if="showDropdown && filteredVehicles.length" class="vehicle-dropdown">
         <button
           v-for="v in filteredVehicles"
           :key="v.id"

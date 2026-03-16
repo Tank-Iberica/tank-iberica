@@ -93,7 +93,7 @@ export function useFavorites() {
       }
 
       // Insert localStorage-only favorites into Supabase (fire-and-forget)
-      if (localOnlyIds.length > 0) {
+      if (localOnlyIds.length) {
         supabase
           .from('favorites')
           .insert(

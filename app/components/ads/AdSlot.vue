@@ -1,5 +1,5 @@
 <template>
-  <div v-if="ads.length > 0" ref="adSlotRef" class="ad-slot" :class="`ad-slot--${position}`">
+  <div v-if="ads.length" ref="adSlotRef" class="ad-slot" :class="`ad-slot--${position}`">
     <div v-for="ad in ads" :key="ad.id" class="ad-item" :class="`ad-item--${ad.format}`">
       <!-- Card format -->
       <div v-if="ad.format === 'card'" class="ad-card" @click="handleClick(ad)">

@@ -168,7 +168,7 @@ const newMessage = ref('')
 const messagesContainer = ref<HTMLDivElement | null>(null)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
-const canSend = computed(() => newMessage.value.trim().length > 0 && !sending.value)
+const canSend = computed(() => newMessage.value.trim().length && !sending.value)
 
 // Open conversation on mount
 onMounted(async () => {

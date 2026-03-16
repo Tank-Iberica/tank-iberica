@@ -301,7 +301,7 @@ const gridItems = computed<GridItem[]>(() => {
   }
 
   // If fewer than 3 vehicles, the position-2 promo wasn't inserted — add at end
-  if (vList.length > 0 && vList.length < 3) {
+  if (vList.length && vList.length < 3) {
     if (hiddenSlot.value) {
       items.push({
         type: 'promo',

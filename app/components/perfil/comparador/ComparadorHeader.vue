@@ -33,7 +33,7 @@ const emit = defineEmits<{
       </button>
     </div>
 
-    <div v-if="comparisons.length > 0" class="selector-row">
+    <div v-if="comparisons.length" class="selector-row">
       <select
         class="cmp-select"
         :value="activeComparison?.id ?? ''"

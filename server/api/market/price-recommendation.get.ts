@@ -71,7 +71,7 @@ export default defineEventHandler(async (event): Promise<PriceRecommendation> =>
       const prices = comparables.map((c) => c.price).filter((p): p is number => p != null)
       marketSamples = prices.length
 
-      if (prices.length > 0) {
+      if (prices.length) {
         const avg = Math.round(prices.reduce((a, b) => a + b, 0) / prices.length)
         const min = Math.min(...prices)
         const max = Math.max(...prices)

@@ -35,7 +35,7 @@ function getOptionsArray(filter: FilterDefinition): string[] {
 </script>
 
 <template>
-  <section v-if="filters.length > 0" class="form-section">
+  <section v-if="filters.length" class="form-section">
     <h2 class="section-title">Especificaciones</h2>
     <div class="filters-grid">
       <div v-for="filter in filters" :key="filter.id" class="form-group">

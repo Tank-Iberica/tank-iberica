@@ -53,7 +53,7 @@ export function useTopDealers() {
       const dealerIds = rows.map((d) => d.id)
       const vehicleCounts = new Map<string, number>()
 
-      if (dealerIds.length > 0) {
+      if (dealerIds.length) {
         const { data: vehicleData } = await (supabase as ReturnType<typeof useSupabaseClient>)
           .from('vehicles')
           .select('dealer_id')

@@ -171,7 +171,7 @@ const selectedSubcategoryName = computed(() => {
 
 // Check if we have items to display
 const hasItems = computed(() => {
-  return categories.value.length > 0 || subcategories.value.length > 0
+  return categories.value.length || subcategories.value.length
 })
 
 // Fetch categories from the categories table

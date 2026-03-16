@@ -103,8 +103,7 @@ export async function getMarketInsight(supabase: SupabaseClient): Promise<Market
     .map((v: { price: number | null }) => v.price)
     .filter((p): p is number => p != null && p > 0)
 
-  const avgPrice =
-    prices.length > 0 ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : 0
+  const avgPrice = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : 0
 
   // Count categories to find the most active
   const categoryCounts: Record<string, number> = {}

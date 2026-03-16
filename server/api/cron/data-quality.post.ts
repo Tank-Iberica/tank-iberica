@@ -110,7 +110,11 @@ export default defineEventHandler(async (event) => {
     .map((v: { id: string }) => v.id)
 
   if (noImageIds.length) {
-    checks.push({ name: 'no_images', count: noImageIds.length, vehicleIds: noImageIds.slice(0, 50) })
+    checks.push({
+      name: 'no_images',
+      count: noImageIds.length,
+      vehicleIds: noImageIds.slice(0, 50),
+    })
   }
 
   // 5. Missing brand or model
@@ -140,9 +144,11 @@ export default defineEventHandler(async (event) => {
     metadata: { vehicle_ids: c.vehicleIds.slice(0, 20) },
   }))
 
-  if (alertsToInsert.length > 0) {
+  if (alertsToInsert.length) {
     await supabase.from('infra_alerts').insert(alertsToInsert)
-    logger.warn('[data-quality] Anomalies found', { checks: checks.map((c) => ({ name: c.name, count: c.count })) })
+    logger.warn('[data-quality] Anomalies found', {
+      checks: checks.map((c) => ({ name: c.name, count: c.count })),
+    })
   } else {
     logger.info('[data-quality] No anomalies found')
   }

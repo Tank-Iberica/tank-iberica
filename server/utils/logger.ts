@@ -17,7 +17,13 @@ export const logger = {
  * Structured logger that includes request ID for traceability.
  * Use instead of console.log/error/warn in server routes.
  */
-export function createLogger(event: H3Event) {
+interface Logger {
+  info: (msg: string, data?: Record<string, unknown>) => void
+  warn: (msg: string, data?: Record<string, unknown>) => void
+  error: (msg: string, data?: Record<string, unknown>) => void
+}
+
+export function createLogger(event: H3Event): Logger {
   const reqId = event.context.requestId ?? 'no-id'
   const correlationId = event.context.correlationId ?? reqId
   const path = event.path || 'unknown'

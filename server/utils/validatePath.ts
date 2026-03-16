@@ -13,7 +13,7 @@ export function isSafeSlug(value: string): boolean {
 /** Filename: no path separators, no null bytes, no traversal sequences */
 export function isSafeFilename(value: string): boolean {
   return (
-    value.length > 0 &&
+    !!value.length &&
     value.length <= 255 &&
     !value.includes('/') &&
     !value.includes('\\') &&

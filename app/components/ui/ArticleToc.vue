@@ -1,15 +1,15 @@
 <template>
-  <nav
-    v-if="tocItems.length > 0"
-    class="article-toc"
-    :aria-label="$t('article.tocLabel')"
-  >
+  <nav v-if="tocItems.length" class="article-toc" :aria-label="$t('article.tocLabel')">
     <p class="toc-title">{{ $t('article.tocTitle') }}</p>
     <ol class="toc-list">
       <li
         v-for="item in tocItems"
         :key="item.id"
-        :class="['toc-item', `toc-level-${item.level}`, { 'toc-item--active': activeId === item.id }]"
+        :class="[
+          'toc-item',
+          `toc-level-${item.level}`,
+          { 'toc-item--active': activeId === item.id },
+        ]"
       >
         <a
           :href="`#${item.id}`"
@@ -65,8 +65,12 @@ defineProps<{
   line-height: 1.4;
 }
 
-.toc-level-3 { padding-left: 1rem; }
-.toc-level-4 { padding-left: 2rem; }
+.toc-level-3 {
+  padding-left: 1rem;
+}
+.toc-level-4 {
+  padding-left: 2rem;
+}
 
 .toc-link {
   display: block;
@@ -76,7 +80,9 @@ defineProps<{
   padding: 0.2rem 0;
   border-left: 2px solid transparent;
   padding-left: 0.5rem;
-  transition: color var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .toc-link:hover,

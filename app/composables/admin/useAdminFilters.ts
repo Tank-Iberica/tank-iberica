@@ -56,7 +56,14 @@ export interface FilterFormData {
   step: number | null
 }
 
-export const FILTER_TYPE_VALUES: FilterType[] = ['caja', 'desplegable', 'desplegable_tick', 'tick', 'slider', 'calc']
+export const FILTER_TYPE_VALUES: FilterType[] = [
+  'caja',
+  'desplegable',
+  'desplegable_tick',
+  'tick',
+  'slider',
+  'calc',
+]
 export const FILTER_STATUS_VALUES: FilterStatus[] = ['published', 'draft', 'archived']
 
 /** Use inside composable for translated labels. For raw values use FILTER_TYPE_VALUES. */
@@ -85,7 +92,7 @@ function mergeFilterOptions(
   for (const key of OPTION_MERGE_KEYS) {
     if (formData[key] === undefined) continue
     const val = formData[key]
-    const hasValue = Array.isArray(val) ? val.length > 0 : Boolean(val)
+    const hasValue = Array.isArray(val) ? val.length : Boolean(val)
     if (hasValue) {
       ;(options as Record<string, unknown>)[key] = val
     } else {
@@ -197,7 +204,9 @@ export function useAdminFilters() {
     try {
       const { data, error: err } = await supabase
         .from('attributes')
-        .select('id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order, created_at, updated_at')
+        .select(
+          'id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order, created_at, updated_at',
+        )
         .order('sort_order', { ascending: true })
       if (err) throw err
       filters.value = (data as unknown as AdminFilter[]) || []
@@ -215,7 +224,9 @@ export function useAdminFilters() {
     try {
       const { data, error: err } = await supabase
         .from('attributes')
-        .select('id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order, created_at, updated_at')
+        .select(
+          'id, subcategory_id, name, type, label_es, label_en, unit, options, is_extra, is_hidden, status, sort_order, created_at, updated_at',
+        )
         .eq('id', id)
         .single()
       if (err) throw err

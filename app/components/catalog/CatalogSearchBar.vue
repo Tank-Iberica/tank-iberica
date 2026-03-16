@@ -46,14 +46,14 @@ watch(results, () => {
 })
 
 function onFocus() {
-  if (!query.value && history.value.length > 0) {
+  if (!query.value && history.value.length) {
     showHistory.value = true
   }
 }
 
 watch(query, (q) => {
   if (q) showHistory.value = false
-  else if (history.value.length > 0) showHistory.value = true
+  else if (history.value.length) showHistory.value = true
 })
 
 function onKeydown(e: KeyboardEvent) {

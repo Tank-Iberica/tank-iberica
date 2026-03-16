@@ -39,9 +39,7 @@ export default defineEventHandler(async (event) => {
   const results: OrphanCheck[] = []
 
   // 1. Vehicles with dealer_id pointing to non-existent dealers
-  const { data: orphanVehicles, error: e1 } = await supabase.rpc(
-    'count_orphan_vehicles' as never,
-  )
+  const { data: orphanVehicles, error: e1 } = await supabase.rpc('count_orphan_vehicles' as never)
   if (!e1 && orphanVehicles !== null) {
     results.push({ name: 'vehicles_no_dealer', count: Number(orphanVehicles) || 0 })
   }
@@ -57,9 +55,7 @@ export default defineEventHandler(async (event) => {
 
   // 3. Leads for non-existent vehicles (vehicle deleted but lead remains)
   // This requires an RPC since we can't do NOT EXISTS easily via PostgREST
-  const { data: orphanLeads, error: e3 } = await supabase.rpc(
-    'count_orphan_leads' as never,
-  )
+  const { data: orphanLeads, error: e3 } = await supabase.rpc('count_orphan_leads' as never)
   if (!e3 && orphanLeads !== null) {
     results.push({ name: 'leads_no_vehicle', count: Number(orphanLeads) || 0 })
   }
@@ -76,7 +72,7 @@ export default defineEventHandler(async (event) => {
       message: `Found ${r.count} orphan records: ${r.name}`,
     }))
 
-  if (alertsToInsert.length > 0) {
+  if (alertsToInsert.length) {
     await supabase.from('infra_alerts').insert(alertsToInsert)
     logger.warn('[orphan-cleanup] Orphan records found', { results })
   } else {

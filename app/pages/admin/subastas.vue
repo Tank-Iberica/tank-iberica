@@ -90,7 +90,7 @@ function handleFormUpdate(form: typeof auctionModal.value.form) {
     </div>
 
     <!-- Auctions list -->
-    <div v-else-if="auctions.length > 0" class="auctions-list">
+    <div v-else-if="auctions.length" class="auctions-list">
       <AdminAuctionCard
         v-for="auction in auctions"
         :key="auction.id"

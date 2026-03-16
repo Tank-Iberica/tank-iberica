@@ -33,7 +33,8 @@ function buildArticleSlug(article: GeneratedArticle): string {
       .replaceAll(/[\u0300-\u036F]/g, '')
       .replaceAll(/[^a-z0-9]+/g, '-')
       .replaceAll(/-+/g, '-')
-      .replace(/^-/, '').replace(/-$/, '')
+      .replace(/^-/, '')
+      .replace(/-$/, '')
   )
 }
 
@@ -87,8 +88,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const contextInfo = [
-    brands.length > 0 ? `Popular brands this week: ${brands.join(', ')}` : '',
-    trendingSearches.length > 0 ? `Trending searches: ${trendingSearches.join(', ')}` : '',
+    brands.length ? `Popular brands this week: ${brands.join(', ')}` : '',
+    trendingSearches.length ? `Trending searches: ${trendingSearches.join(', ')}` : '',
   ]
     .filter(Boolean)
     .join('\n')

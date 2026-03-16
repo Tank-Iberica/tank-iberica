@@ -25,7 +25,7 @@ defineEmits<{
       >
       <button class="btn btn-sm" @click="$emit('addCategory')">+ Anadir</button>
     </div>
-    <div v-if="(relatedCategories || []).length > 0" class="hashtag-list">
+    <div v-if="(relatedCategories || []).length" class="hashtag-list">
       <span v-for="cat in relatedCategories" :key="cat" class="hashtag-chip">
         {{ cat }}
         <button class="chip-remove" @click="$emit('removeCategory', cat)">&times;</button>

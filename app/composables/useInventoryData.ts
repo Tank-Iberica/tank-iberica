@@ -172,7 +172,7 @@ export function generateSnapshots(
       date: new Date(point).toISOString().slice(0, 10),
       activeCount: active.length,
       totalValue,
-      avgPrice: active.length > 0 ? Math.round(totalValue / active.length) : 0,
+      avgPrice: active.length ? Math.round(totalValue / active.length) : 0,
     })
   }
 
@@ -207,9 +207,7 @@ export function calculateValueAtRisk(
   return {
     totalUnsoldValue,
     agingValue,
-    agingPercentage: totalUnsoldValue > 0
-      ? Math.round((agingValue / totalUnsoldValue) * 100)
-      : 0,
+    agingPercentage: totalUnsoldValue > 0 ? Math.round((agingValue / totalUnsoldValue) * 100) : 0,
     avgDaysUnsold: Math.round(totalDaysUnsold / unsold.length),
   }
 }
@@ -244,7 +242,13 @@ export function findStaleListings(
  */
 export function aggregateByDealer(
   vehicles: VehicleRecord[],
-): Array<{ dealerId: string; activeCount: number; totalValue: number; avgPrice: number; oldestDays: number }> {
+): Array<{
+  dealerId: string
+  activeCount: number
+  totalValue: number
+  avgPrice: number
+  oldestDays: number
+}> {
   const now = Date.now()
   const map = new Map<string, { activeCount: number; totalValue: number; oldestCreated: number }>()
 

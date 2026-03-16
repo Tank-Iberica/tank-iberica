@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
     { headers },
   )
   const existing = await existingRes.json()
-  if (Array.isArray(existing) && existing.length > 0) {
+  if (Array.isArray(existing) && existing.length) {
     return { alreadyUnlocked: true }
   }
 
@@ -86,7 +86,7 @@ export default defineEventHandler(async (event) => {
   const newBalance = currentBalance - UNLOCK_COST
 
   // 4. Deduct credits
-  if (creditsData.length > 0) {
+  if (creditsData.length) {
     await fetch(`${supabaseUrl}/rest/v1/user_credits?user_id=eq.${user.id}`, {
       method: 'PATCH',
       headers: { ...headers, Prefer: 'return=minimal' },

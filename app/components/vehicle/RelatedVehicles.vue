@@ -1,5 +1,5 @@
 <template>
-  <section v-if="related.length > 0" class="related-vehicles">
+  <section v-if="related.length" class="related-vehicles">
     <h2>{{ $t('vehicle.relatedVehicles') }}</h2>
     <div class="related-grid">
       <NuxtLink v-for="v in related" :key="v.id" :to="`/vehiculo/${v.slug}`" class="related-card">
@@ -82,7 +82,7 @@ async function fetchRelated() {
     .order('created_at', { ascending: false })
     .limit(4)
 
-  if (data != null && data.length > 0) {
+  if (data != null && data.length) {
     related.value = data as unknown as Vehicle[]
     return
   }

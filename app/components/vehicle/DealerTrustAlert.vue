@@ -16,12 +16,13 @@
     price            (number | null): listed price (reserved for future %delta check)
 -->
 <template>
-  <div v-if="alerts.length > 0" class="dealer-trust-alerts" role="note" aria-label="Información sobre el vendedor">
-    <div
-      v-for="alert in alerts"
-      :key="alert.key"
-      class="trust-alert"
-    >
+  <div
+    v-if="alerts.length"
+    class="dealer-trust-alerts"
+    role="note"
+    aria-label="Información sobre el vendedor"
+  >
+    <div v-for="alert in alerts" :key="alert.key" class="trust-alert">
       <svg
         class="alert-icon"
         width="14"
@@ -62,7 +63,10 @@ const alerts = computed(() => {
     if (ageDays < 7) {
       result.push({
         key: 'new-account',
-        text: t('trust.alertNewAccount', 'Vendedor con cuenta reciente (menos de 7 días de actividad)'),
+        text: t(
+          'trust.alertNewAccount',
+          'Vendedor con cuenta reciente (menos de 7 días de actividad)',
+        ),
       })
     }
   }

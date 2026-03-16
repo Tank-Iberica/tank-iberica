@@ -65,7 +65,7 @@ async function submitRequest() {
     fieldErrors.value.phone = t('validation.required')
   }
 
-  if (Object.keys(fieldErrors.value).length > 0) return
+  if (Object.keys(fieldErrors.value).length) return
 
   loading.value = true
 

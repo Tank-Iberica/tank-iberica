@@ -31,7 +31,13 @@ onUnmounted(() => cleanup())
 <template>
   <div class="reservations-page">
     <div class="reservations-container">
-      <UiBreadcrumbNav :items="[{ label: $t('nav.home'), to: '/' }, { label: $t('profile.dashboard.title'), to: '/perfil' }, { label: $t('reservations.pageTitle') }]" />
+      <UiBreadcrumbNav
+        :items="[
+          { label: $t('nav.home'), to: '/' },
+          { label: $t('profile.dashboard.title'), to: '/perfil' },
+          { label: $t('reservations.pageTitle') },
+        ]"
+      />
       <PerfilProfileNavPills />
       <h1 class="page-title">{{ $t('reservations.pageTitle') }}</h1>
       <p class="page-subtitle">{{ $t('reservations.pageSubtitle') }}</p>
@@ -69,7 +75,7 @@ onUnmounted(() => cleanup())
         }}</NuxtLink>
       </div>
 
-      <div v-if="!loading && reservations.length > 0" class="reservation-list">
+      <div v-if="!loading && reservations.length" class="reservation-list">
         <ReservationCard
           v-for="reservation in reservations"
           :key="reservation.id"

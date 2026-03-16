@@ -46,7 +46,7 @@
 
           <!-- Table of contents (auto-generated from headings) -->
           <UiArticleToc
-            v-if="tocItems.length > 0"
+            v-if="tocItems.length"
             :toc-items="tocItems"
             :active-id="activeId"
             :scroll-to-heading="scrollToHeading"
@@ -223,7 +223,7 @@ if (article.value) {
     | undefined
 
   const faqJsonLd =
-    faqData != null && faqData.length > 0
+    faqData != null && faqData.length
       ? {
           '@context': 'https://schema.org',
           '@type': 'FAQPage',

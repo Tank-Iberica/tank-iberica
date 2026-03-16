@@ -62,7 +62,7 @@ function onSelectPeriod(value: string): void {
       />
 
       <FacturacionRevenueByType
-        v-if="revenueByType.length > 0"
+        v-if="revenueByType.length"
         :revenue-by-type="revenueByType"
         :total-revenue="totalRevenue"
       />

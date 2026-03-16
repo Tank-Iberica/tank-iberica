@@ -111,7 +111,7 @@ onMounted(() => {
 
     <!-- Mobile card list -->
     <TransporteCards
-      v-if="!loading && filteredRequests.length > 0"
+      v-if="!loading && filteredRequests.length"
       :requests="filteredRequests"
       :expanded-id="expandedId"
       :editing-notes="editingNotes"

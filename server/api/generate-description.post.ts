@@ -85,7 +85,7 @@ export default defineEventHandler(async (event): Promise<GenerateDescriptionResp
     .join('\n')
 
   let attributesText = ''
-  if (body.attributes && Object.keys(body.attributes).length > 0) {
+  if (body.attributes && Object.keys(body.attributes).length) {
     attributesText =
       '\nAtributos adicionales:\n' +
       Object.entries(body.attributes)

@@ -49,7 +49,8 @@ export function sanitizeSlug(raw: string): string {
     .normalize('NFD')
     .replaceAll(/[\u0300-\u036F]/g, '')
     .replaceAll(/[^a-z0-9]+/g, '-')
-    .replace(/^-+/, '').replace(/-+$/, '')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '')
     .slice(0, 120)
 }
 
@@ -137,7 +138,7 @@ export async function createVehicleFromAI(
   })
 
   // Insert vehicle images
-  if (images.length > 0) {
+  if (images.length) {
     const imageInserts = images.map((img) => ({
       vehicle_id: vehicleResult.id,
       url: img.result.secureUrl,
@@ -149,7 +150,9 @@ export async function createVehicleFromAI(
     const { error: imageInsertError } = await supabase.from('vehicle_images').insert(imageInserts)
 
     if (imageInsertError) {
-      logger.error('[vehicleCreator] Failed to insert vehicle images:', { error: String(imageInsertError.message) })
+      logger.error('[vehicleCreator] Failed to insert vehicle images:', {
+        error: String(imageInsertError.message),
+      })
     }
   }
 

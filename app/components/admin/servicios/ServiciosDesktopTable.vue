@@ -91,7 +91,7 @@ const { t } = useI18n()
             <td colspan="7">
               <div class="expanded-content">
                 <h4>{{ t('admin.servicios.details') }}</h4>
-                <div v-if="req.details && Object.keys(req.details).length > 0" class="details-grid">
+                <div v-if="req.details && Object.keys(req.details).length" class="details-grid">
                   <div v-for="(value, key) in req.details" :key="String(key)" class="detail-item">
                     <span class="detail-key">{{ String(key) }}</span>
                     <span class="detail-val">{{ formatDetailValue(value) }}</span>

@@ -230,7 +230,7 @@ export function useSocialAdminUI() {
       images: v.vehicle_images,
     })
     actionLoading.value = false
-    if (ids.length > 0) {
+    if (ids.length) {
       showSuccess(t('admin.social.postsGenerated', { count: ids.length }))
       closeGenerateModal()
       await refreshPosts()

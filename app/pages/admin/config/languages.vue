@@ -90,7 +90,7 @@ onMounted(() => {
       <AdminConfigLanguagesTranslationProgressCard
         :progress="translationProgress"
         :loading-progress="loadingProgress"
-        :visible="translatableLocales.length > 0"
+        :visible="!!translatableLocales.length"
       />
 
       <!-- Pending Translation Queue -->

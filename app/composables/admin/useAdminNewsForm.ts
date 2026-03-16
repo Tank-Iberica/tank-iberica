@@ -121,7 +121,7 @@ export function useAdminNewsForm(newsId: Ref<string>) {
   const contentWordCount = computed(() => {
     const text = formData.value.content_es.trim()
     if (!text) return 0
-    return text.split(/\s+/).filter((w) => w.length > 0).length
+    return text.split(/\s+/).filter((w) => w.length).length
   })
 
   const wordCountClass = computed(() => {
@@ -199,9 +199,9 @@ export function useAdminNewsForm(newsId: Ref<string>) {
   // Validation
   const isValid = computed(
     () =>
-      formData.value.title_es.trim().length > 0 &&
-      formData.value.content_es.trim().length > 0 &&
-      formData.value.slug.trim().length > 0,
+      formData.value.title_es.trim().length &&
+      formData.value.content_es.trim().length &&
+      formData.value.slug.trim().length,
   )
 
   // Image upload
@@ -307,10 +307,7 @@ export function useAdminNewsForm(newsId: Ref<string>) {
     }
 
     // Open social section if social data exists
-    if (
-      formData.value.social_post_text &&
-      Object.keys(formData.value.social_post_text).length > 0
-    ) {
+    if (formData.value.social_post_text && Object.keys(formData.value.social_post_text).length) {
       sections.social = true
     }
   })

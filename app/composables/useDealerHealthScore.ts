@@ -95,11 +95,11 @@ function calcProfileScore(profile: DealerProfileData): number {
   if (profile.logo_url) filledFields++
   if (profile.bio) {
     // Bio can be JSONB (localized) or string
-    if (typeof profile.bio === 'string' && profile.bio.trim().length > 0) {
+    if (typeof profile.bio === 'string' && profile.bio.trim().length) {
       filledFields++
     } else if (typeof profile.bio === 'object') {
       const values = Object.values(profile.bio)
-      if (values.some((v) => typeof v === 'string' && v.trim().length > 0)) {
+      if (values.some((v) => typeof v === 'string' && v.trim().length)) {
         filledFields++
       }
     }

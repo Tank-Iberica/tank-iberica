@@ -122,7 +122,7 @@
     </template>
 
     <!-- Bid history -->
-    <div v-if="bids.length > 0" class="bid-history">
+    <div v-if="bids.length" class="bid-history">
       <span class="history-title">{{ $t('auction.bidHistory') }}</span>
       <div
         v-for="bid in displayedBids"

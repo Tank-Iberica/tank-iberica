@@ -135,7 +135,9 @@ export function useDashboardPipeline() {
     try {
       const { data, error: err } = await supabase
         .from('pipeline_items')
-        .select('id, dealer_id, title, contact_name, contact_phone, contact_email, estimated_value, stage, position, vehicle_id, lead_id, notes, close_reason, created_at, updated_at')
+        .select(
+          'id, dealer_id, title, contact_name, contact_phone, contact_email, estimated_value, stage, position, vehicle_id, lead_id, notes, close_reason, created_at, updated_at',
+        )
         .eq('dealer_id', dealerId.value)
         .order('position', { ascending: true })
 
@@ -154,7 +156,7 @@ export function useDashboardPipeline() {
     if (!dealerId.value) return null
 
     const stageItems = itemsByStage.value[itemData.stage]
-    const maxPosition = stageItems.length > 0 ? Math.max(...stageItems.map((i) => i.position)) : -1
+    const maxPosition = stageItems.length ? Math.max(...stageItems.map((i) => i.position)) : -1
 
     const payload = {
       dealer_id: dealerId.value,
@@ -283,8 +285,7 @@ export function useDashboardPipeline() {
     if (!itemId) return
 
     const stageItems = itemsByStage.value[stage]
-    const newPosition =
-      stageItems.length > 0 ? Math.max(...stageItems.map((i) => i.position)) + 1 : 0
+    const newPosition = stageItems.length ? Math.max(...stageItems.map((i) => i.position)) + 1 : 0
 
     await moveItem(itemId, stage, newPosition)
   }

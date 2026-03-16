@@ -175,7 +175,7 @@ function formatDate(iso: string): string {
       </section>
 
       <!-- Dealers with most expired -->
-      <section v-if="dealersWithExpired.length > 0" class="report-section">
+      <section v-if="dealersWithExpired.length" class="report-section">
         <h3>{{ t('admin.lifecycle.dealersExpired') }}</h3>
         <table class="report-table">
           <thead>
@@ -205,7 +205,7 @@ function formatDate(iso: string): string {
       </section>
 
       <!-- Recent transitions -->
-      <section v-if="recentTransitions.length > 0" class="report-section">
+      <section v-if="recentTransitions.length" class="report-section">
         <h3>{{ t('admin.lifecycle.recentTransitions') }}</h3>
         <ul class="transitions-list">
           <li v-for="(tx, i) in recentTransitions" :key="i" class="transition-row">

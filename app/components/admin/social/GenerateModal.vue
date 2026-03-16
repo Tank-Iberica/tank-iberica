@@ -1,7 +1,13 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="show" class="modal-overlay" role="dialog" aria-modal="true" @click.self="$emit('close')">
+      <div
+        v-if="show"
+        class="modal-overlay"
+        role="dialog"
+        aria-modal="true"
+        @click.self="$emit('close')"
+      >
         <div class="modal-panel modal-generate">
           <div class="modal-header">
             <h2>{{ t('admin.social.generatePosts') }}</h2>
@@ -33,7 +39,7 @@
             </div>
 
             <!-- Vehicle results -->
-            <div v-if="vehicleResults.length > 0" class="vehicle-list">
+            <div v-if="vehicleResults.length" class="vehicle-list">
               <button
                 v-for="v in vehicleResults"
                 :key="v.id"

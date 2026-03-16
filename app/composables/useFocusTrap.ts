@@ -38,7 +38,7 @@ export function useFocusTrap() {
     }
 
     const first = focusable[0]!
-    const last = focusable[focusable.length - 1]!
+    const last = focusable.at(-1)!
 
     if (e.shiftKey) {
       // Shift+Tab: if on first element, wrap to last
@@ -64,7 +64,7 @@ export function useFocusTrap() {
     // Focus the first focusable element (or the container itself)
     nextTick(() => {
       const focusable = getFocusableElements()
-      if (focusable.length > 0) {
+      if (focusable.length) {
         focusable[0]!.focus()
       } else {
         container?.focus()

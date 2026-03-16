@@ -16,9 +16,7 @@ export default defineNitroPlugin(() => {
       types: [...new Set(events.map((e) => e.type))],
       paths: [...new Set(events.map((e) => e.path).filter(Boolean))].slice(0, 5),
       firstEventAt: events[0] ? new Date(events[0].timestamp).toISOString() : null,
-      lastEventAt: events[events.length - 1]
-        ? new Date(events[events.length - 1]!.timestamp).toISOString()
-        : null,
+      lastEventAt: events.at(-1) ? new Date(events.at(-1)!.timestamp).toISOString() : null,
     })
   })
 

@@ -262,7 +262,7 @@ function getStatusColor(status: string): string {
       </section>
 
       <!-- Timeline -->
-      <section v-if="currentLead.status_history.length > 0" class="card">
+      <section v-if="currentLead.status_history.length" class="card">
         <h2>{{ t('dashboard.leads.timeline') }}</h2>
         <div class="timeline">
           <div v-for="(change, idx) in currentLead.status_history" :key="idx" class="timeline-item">

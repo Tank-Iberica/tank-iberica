@@ -231,7 +231,7 @@ const stackSummaryRows = computed<StackSummaryRow[]>(() => {
   const liveRows: StackSummaryRow[] = props.componentCards.map((card) => {
     // Worst usage percent across all metrics of this card
     const percents = card.metrics.map((m) => m.percent).filter((p): p is number => p !== null)
-    const worstPercent = percents.length > 0 ? Math.max(...percents) : null
+    const worstPercent = percents.length ? Math.max(...percents) : null
 
     // Worst recommendation message (first non-null, cards are already worst-status-first)
     const firstRec = card.metrics.find((m) => m.recommendation !== null)?.recommendation ?? null

@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { type BrokerageAuditEntry, getActionLabel, getActorLabel } from '~/composables/admin/useAdminBrokerageDeal'
+import {
+  type BrokerageAuditEntry,
+  getActionLabel,
+  getActorLabel,
+} from '~/composables/admin/useAdminBrokerageDeal'
 
 defineProps<{
   entries: readonly BrokerageAuditEntry[]
@@ -43,12 +47,10 @@ function formatTime(dateStr: string): string {
             <span class="entry-time">{{ formatTime(entry.created_at) }}</span>
           </div>
           <div class="entry-actor">{{ getActorLabel(entry.actor) }}</div>
-          <div v-if="entry.details && Object.keys(entry.details).length > 0" class="entry-details">
+          <div v-if="entry.details && Object.keys(entry.details).length" class="entry-details">
             <template v-if="entry.details.from && entry.details.to">
               {{ entry.details.from }} → {{ entry.details.to }}
-              <template v-if="entry.details.reason">
-                ({{ entry.details.reason }})
-              </template>
+              <template v-if="entry.details.reason"> ({{ entry.details.reason }}) </template>
             </template>
             <template v-else-if="entry.details.fields_updated">
               Campos: {{ (entry.details.fields_updated as string[]).join(', ') }}

@@ -36,7 +36,7 @@ function getDescLengthLabel(len: number): string {
         <span class="char-count" :class="descLengthClass">
           {{ (descriptionEs || '').length }}/160 caracteres
         </span>
-        <span v-if="(descriptionEs || '').length > 0" class="char-count" :class="descLengthClass">
+        <span v-if="(descriptionEs || '').length" class="char-count" :class="descLengthClass">
           {{ getDescLengthLabel((descriptionEs || '').length) }}
         </span>
       </div>

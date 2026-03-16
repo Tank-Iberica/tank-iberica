@@ -22,7 +22,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const isFormValid = computed(() => props.form.contact_name.trim().length > 0)
+const isFormValid = computed(() => props.form.contact_name.trim().length)
 
 function updateField<K extends keyof ContactFormData>(key: K, value: ContactFormData[K]): void {
   emit('update:form', { ...props.form, [key]: value })

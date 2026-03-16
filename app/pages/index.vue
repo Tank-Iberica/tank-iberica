@@ -287,7 +287,7 @@ await useAsyncData(
 
 onMounted(() => {
   // Only run client-side analytics/suggestions if vehicles already loaded (from SSR)
-  if (vehicles.value.length > 0) {
+  if (vehicles.value.length) {
     trackFunnelSearch({ ...filters.value, results_count: total.value })
     void fetchHiddenVehicles(filters.value)
     if (total.value === 0 || isFewResults(locationLevel.value, total.value)) {

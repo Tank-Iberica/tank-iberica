@@ -37,7 +37,7 @@ function getExcerptLengthLabel(len: number): string {
         <span class="char-count" :class="excerptLengthClass">
           {{ (excerptEs || '').length }}/300 {{ t('admin.newsForm.characters') }}
         </span>
-        <span v-if="(excerptEs || '').length > 0" class="char-count" :class="excerptLengthClass">
+        <span v-if="(excerptEs || '').length" class="char-count" :class="excerptLengthClass">
           {{ getExcerptLengthLabel((excerptEs || '').length) }}
         </span>
       </div>

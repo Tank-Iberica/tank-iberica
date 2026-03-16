@@ -93,7 +93,7 @@ await fetchTerms()
             <dd class="glossary-term-definition">
               {{ localizedField(term.definition, locale) }}
             </dd>
-            <dd v-if="term.related_terms.length > 0" class="glossary-related">
+            <dd v-if="term.related_terms.length" class="glossary-related">
               <span class="glossary-related-label">{{ t('glossary.relatedTerms') }}:</span>
               <span v-for="(rel, i) in term.related_terms" :key="rel">
                 <a :href="`#term-${rel}`" class="glossary-related-link">{{ rel }}</a>

@@ -107,7 +107,7 @@ async function loadStats(): Promise<void> {
       }))
 
       // Fetch view and lead counts per vehicle
-      if (vehicleStats.value.length > 0) {
+      if (vehicleStats.value.length) {
         const vehicleIds = vehicleStats.value.map((vs) => vs.id)
 
         // Views from analytics_events (vehicle_view events grouped by entity_id)
@@ -144,7 +144,7 @@ async function loadStats(): Promise<void> {
     }
 
     // Market comparison - only for full plan
-    if (statsLevel.value === 'full' && vehicleStats.value.length > 0) {
+    if (statsLevel.value === 'full' && vehicleStats.value.length) {
       await loadMarketComparison(dealer.id)
     }
   } catch (err: unknown) {
@@ -171,10 +171,9 @@ async function loadMarketComparison(dealerId: string): Promise<void> {
     const dealerPrices = typed.map((v) => v.price).filter((p): p is number => p != null)
     const categoryIds = [...new Set(typed.map((v) => v.category_id).filter(Boolean))] as string[]
 
-    const dealerAvgPrice =
-      dealerPrices.length > 0
-        ? Math.round(dealerPrices.reduce((a, b) => a + b, 0) / dealerPrices.length)
-        : null
+    const dealerAvgPrice = dealerPrices.length
+      ? Math.round(dealerPrices.reduce((a, b) => a + b, 0) / dealerPrices.length)
+      : null
 
     // Fetch market-wide avg for same categories (excluding this dealer)
     const { data: marketVehicles } = await supabase
@@ -182,7 +181,7 @@ async function loadMarketComparison(dealerId: string): Promise<void> {
       .select('price')
       .neq('dealer_id', dealerId)
       .eq('status', 'published')
-      .in('category_id', categoryIds.length > 0 ? categoryIds : ['__no_match__'])
+      .in('category_id', categoryIds.length ? categoryIds : ['__no_match__'])
       .limit(200)
 
     type MarketVehicle = { price: number | null }
@@ -190,10 +189,9 @@ async function loadMarketComparison(dealerId: string): Promise<void> {
       .map((v) => v.price)
       .filter((p): p is number => p != null)
 
-    const marketAvgPrice =
-      marketPrices.length > 0
-        ? Math.round(marketPrices.reduce((a, b) => a + b, 0) / marketPrices.length)
-        : null
+    const marketAvgPrice = marketPrices.length
+      ? Math.round(marketPrices.reduce((a, b) => a + b, 0) / marketPrices.length)
+      : null
 
     const pricePositionPercent =
       dealerAvgPrice != null && marketAvgPrice != null && marketAvgPrice > 0

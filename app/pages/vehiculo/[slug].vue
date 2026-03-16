@@ -301,7 +301,7 @@ onMounted(() => {
           .filter((v) => v.category === currentCategory && v.id !== currentId)
           .map((v) => v.id)
 
-        if (similarIds.length > 0) {
+        if (similarIds.length) {
           trackVehicleComparison([...similarIds, currentId])
         }
       }

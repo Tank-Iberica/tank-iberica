@@ -344,7 +344,7 @@ export function useAdminProductForm() {
     if (!vehicleId) return
 
     // 2. Upload pending images via Cloudinary
-    if (pendingImages.value.length > 0) {
+    if (pendingImages.value.length) {
       uploadingImages.value = true
 
       // Update fileNamingData with the real vehicle ID

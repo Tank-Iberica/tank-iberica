@@ -112,7 +112,7 @@ function reset() {
     <!-- Upload form -->
     <section v-if="!preview" class="demo-form">
       <div class="demo-upload-area">
-        <label class="demo-dropzone" :class="{ 'has-images': images.length > 0 }">
+        <label class="demo-dropzone" :class="{ 'has-images': images.length }">
           <input type="file" accept="image/*" multiple class="sr-only" @change="handleFiles" >
           <div v-if="images.length === 0" class="dropzone-content">
             <span class="dropzone-icon">📷</span>
@@ -121,7 +121,7 @@ function reset() {
           </div>
         </label>
 
-        <div v-if="images.length > 0" class="demo-previews">
+        <div v-if="images.length" class="demo-previews">
           <div v-for="(img, idx) in images" :key="idx" class="preview-thumb">
             <img :src="img.preview" :alt="`Photo ${idx + 1}`" >
             <button class="remove-btn" @click="removeImage(idx)">✕</button>

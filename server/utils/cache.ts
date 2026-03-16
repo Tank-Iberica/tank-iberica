@@ -49,14 +49,14 @@ export async function cacheAside<T>(key: string, ttl: number, fetch: () => Promi
 /**
  * Invalidate cache entry
  */
-export function invalidateCache(key: string) {
+export function invalidateCache(key: string): void {
   serverCache.delete(key)
 }
 
 /**
  * Invalidate multiple cache entries by pattern
  */
-export function invalidateCachePattern(pattern: string) {
+export function invalidateCachePattern(pattern: string): void {
   const regex = new RegExp(pattern)
   for (const key of serverCache.keys()) {
     if (regex.test(key)) {
@@ -68,14 +68,14 @@ export function invalidateCachePattern(pattern: string) {
 /**
  * Clear all cache
  */
-export function clearCache() {
+export function clearCache(): void {
   serverCache.clear()
 }
 
 /**
  * Get cache stats
  */
-export function getCacheStats() {
+export function getCacheStats(): { entries: number; memory: number } {
   return {
     entries: serverCache.size,
     memory: JSON.stringify(Array.from(serverCache.keys())).length,

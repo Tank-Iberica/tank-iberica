@@ -550,7 +550,7 @@ const activeSocialLinks = computed((): Record<string, string> => {
   if (!links) return {}
   return Object.fromEntries(Object.entries(links).filter(([, url]) => !!url))
 })
-const hasSocialLinks = computed(() => Object.keys(activeSocialLinks.value).length > 0)
+const hasSocialLinks = computed(() => Object.keys(activeSocialLinks.value).length)
 
 // Contact form state
 const supabase = useSupabaseClient()
@@ -636,7 +636,6 @@ watchEffect(() => {
     useHead({ script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(schema) }] })
   }
 })
-
 
 // Apply dealer theme on mount, restore on unmount
 onMounted(async () => {

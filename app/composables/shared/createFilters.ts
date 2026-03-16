@@ -55,7 +55,7 @@ export function createFilters(config: CreateFiltersConfig = {}): FilterFactory {
   const isActive = (filterId: string): boolean => {
     const val = state.activeFilters[filterId]
     if (val === undefined || val === null || val === '') return false
-    if (Array.isArray(val)) return val.length > 0
+    if (Array.isArray(val)) return !!val.length
     return true
   }
 

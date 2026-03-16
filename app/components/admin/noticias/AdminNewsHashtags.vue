@@ -25,7 +25,7 @@ defineEmits<{
       >
       <button class="btn btn-sm" @click="$emit('addHashtag')">+ Anadir</button>
     </div>
-    <div v-if="hashtags.length > 0" class="hashtag-list">
+    <div v-if="hashtags.length" class="hashtag-list">
       <span v-for="tag in hashtags" :key="tag" class="hashtag-chip">
         #{{ tag }}
         <button class="chip-remove" @click="$emit('removeHashtag', tag)">&times;</button>

@@ -8,7 +8,11 @@ import {
   formatDealPrice,
   formatDealDate,
 } from '~/composables/admin/useAdminBrokerage'
-import type { BrokerageMessage, BrokerageAuditEntry, AddMessagePayload } from '~/composables/admin/useAdminBrokerageDeal'
+import type {
+  BrokerageMessage,
+  BrokerageAuditEntry,
+  AddMessagePayload,
+} from '~/composables/admin/useAdminBrokerageDeal'
 
 const props = defineProps<{
   show: boolean
@@ -36,7 +40,13 @@ const showTransitionInput = ref(false)
 const pendingTransition = ref<DealStatus | null>(null)
 
 function startTransition(status: DealStatus) {
-  const needsReason = ['deal_cancelled', 'broker_failed', 'seller_declined', 'no_margin', 'escalated_to_humans'].includes(status)
+  const needsReason = [
+    'deal_cancelled',
+    'broker_failed',
+    'seller_declined',
+    'no_margin',
+    'escalated_to_humans',
+  ].includes(status)
   if (needsReason) {
     pendingTransition.value = status
     showTransitionInput.value = true
@@ -135,7 +145,10 @@ function transitionBtnClass(status: DealStatus): string {
             </div>
             <div v-if="deal.buyer_budget_min || deal.buyer_budget_max" class="info-row">
               <span class="info-label">Presupuesto</span>
-              <span>{{ formatDealPrice(deal.buyer_budget_min) }} - {{ formatDealPrice(deal.buyer_budget_max) }}</span>
+              <span
+                >{{ formatDealPrice(deal.buyer_budget_min) }} -
+                {{ formatDealPrice(deal.buyer_budget_max) }}</span
+              >
             </div>
             <div v-if="deal.buyer_score != null" class="info-row">
               <span class="info-label">Score</span>
@@ -182,7 +195,7 @@ function transitionBtnClass(status: DealStatus): string {
           </div>
 
           <!-- Status transitions -->
-          <section v-if="validNextStatuses.length > 0" class="transitions-section">
+          <section v-if="validNextStatuses.length" class="transitions-section">
             <h3 class="section-title">Acciones</h3>
             <div class="transition-btns">
               <button
@@ -205,8 +218,12 @@ function transitionBtnClass(status: DealStatus): string {
                 :placeholder="`Motivo para '${getStatusLabel(pendingTransition!)}'`"
                 @keyup.enter="confirmTransition"
               >
-              <button class="btn-sm" :disabled="saving" @click="confirmTransition">{{ $t('common.confirm') }}</button>
-              <button class="btn-sm-ghost" @click="cancelTransition">{{ $t('common.cancel') }}</button>
+              <button class="btn-sm" :disabled="saving" @click="confirmTransition">
+                {{ $t('common.confirm') }}
+              </button>
+              <button class="btn-sm-ghost" @click="cancelTransition">
+                {{ $t('common.cancel') }}
+              </button>
             </div>
           </section>
 
@@ -232,10 +249,7 @@ function transitionBtnClass(status: DealStatus): string {
               </div>
             </div>
 
-            <AdminBrokerajeBrokerajeMessageForm
-              :saving="saving"
-              @submit="onAddMessage"
-            />
+            <AdminBrokerajeBrokerajeMessageForm :saving="saving" @submit="onAddMessage" />
           </section>
 
           <!-- Audit log -->

@@ -175,8 +175,7 @@ async function extractReportMetadata(supabase: SupabaseClient): Promise<Record<s
   const rows = data as Array<{ listings: number; avg_price: number; subcategory: string }>
   const totalListings = rows.reduce((s, r) => s + (r.listings || 0), 0)
   const prices = rows.filter((r) => r.avg_price > 0).map((r) => r.avg_price)
-  const avgPrice =
-    prices.length > 0 ? Math.round(prices.reduce((s, v) => s + v, 0) / prices.length) : 0
+  const avgPrice = prices.length ? Math.round(prices.reduce((s, v) => s + v, 0) / prices.length) : 0
 
   // Find top subcategory by listings
   const subcatMap = new Map<string, number>()

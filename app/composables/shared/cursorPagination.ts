@@ -75,8 +75,8 @@ export function useCursorPagination<T>(
       hasMore.value = data.length >= pageSize
 
       // Update cursor to the last item
-      if (data.length > 0) {
-        cursor.value = options.getCursor(data[data.length - 1]!)
+      if (data.length) {
+        cursor.value = options.getCursor(data.at(-1)!)
       }
     } catch (e: unknown) {
       error.value = e instanceof Error ? e.message : 'Unexpected error'

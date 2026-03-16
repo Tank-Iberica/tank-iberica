@@ -112,7 +112,7 @@ export default defineEventHandler(async (event) => {
     ...((vehicles as ScheduledVehicle[] | null) ?? []).map((v) => vehicleUrl(v.slug, siteUrl)),
   ]
 
-  if (indexNowUrls.length > 0) {
+  if (indexNowUrls.length) {
     await sendIndexNow(indexNowUrls)
   }
 

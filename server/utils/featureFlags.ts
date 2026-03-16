@@ -63,7 +63,7 @@ export async function isFeatureEnabled(
   if (!flag.enabled) return false
 
   // Check dealer allowlist
-  if (flag.allowed_dealers && flag.allowed_dealers.length > 0) {
+  if (flag.allowed_dealers && flag.allowed_dealers.length) {
     if (!dealerId || !flag.allowed_dealers.includes(dealerId)) return false
   }
 

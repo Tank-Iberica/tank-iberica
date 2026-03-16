@@ -45,7 +45,7 @@ init()
     </div>
 
     <!-- Reports list -->
-    <div v-else-if="reports.length > 0" class="reports-list">
+    <div v-else-if="reports.length" class="reports-list">
       <ReporteCard
         v-for="report in reports"
         :key="report.id"

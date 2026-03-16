@@ -32,7 +32,7 @@ const strength = computed<StrengthInfo>(() => {
 
 <template>
   <div
-    v-if="password.length > 0"
+    v-if="password.length"
     class="password-strength"
     role="status"
     aria-live="polite"

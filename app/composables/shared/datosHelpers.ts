@@ -34,7 +34,10 @@ export function computeTrend(
   return { pct, direction }
 }
 
-export function computeSubcategoryStat(subcategory: string, rows: MarketRow[]): CategoryStat | null {
+export function computeSubcategoryStat(
+  subcategory: string,
+  rows: MarketRow[],
+): CategoryStat | null {
   const byMonth = groupByMonth(rows)
   const months = Array.from(byMonth.keys()).sort((a, b) => b.localeCompare(a))
   if (!months.length) return null
@@ -43,10 +46,9 @@ export function computeSubcategoryStat(subcategory: string, rows: MarketRow[]): 
   const totalListings = latestRows.reduce((sum, r) => sum + r.listing_count, 0)
   const avgPrice = weightedAverage(latestRows, 'avg_price')
   const daysRows = latestRows.filter((r) => r.avg_days_to_sell !== null)
-  const daysToSell =
-    daysRows.length > 0
-      ? daysRows.reduce((sum, r) => sum + (r.avg_days_to_sell ?? 0), 0) / daysRows.length
-      : null
+  const daysToSell = daysRows.length
+    ? daysRows.reduce((sum, r) => sum + (r.avg_days_to_sell ?? 0), 0) / daysRows.length
+    : null
 
   const trend =
     months.length > 1

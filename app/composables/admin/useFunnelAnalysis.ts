@@ -77,7 +77,7 @@ export function useFunnelAnalysis() {
       })
 
       const first = stages[0]?.count ?? 0
-      const last = stages[stages.length - 1]?.count ?? 0
+      const last = stages.at(-1)?.count ?? 0
       const overallConversion = first > 0 ? Math.round((last / first) * 100) : 0
 
       funnel.value = {

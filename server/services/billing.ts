@@ -168,7 +168,7 @@ export async function createAutoInvoice(
       `stripe_invoice_id=eq.${params.stripeInvoiceId}`,
       'id',
     )
-    if (existing.length > 0) {
+    if (existing.length) {
       return {
         id: existing[0]!.id,
         dealerId: null,
@@ -221,7 +221,8 @@ export async function createAutoInvoice(
           currency: 'EUR',
           items: [
             {
-              description: params.description || `Tracciona ${params.serviceType || 'subscription'}`,
+              description:
+                params.description || `Tracciona ${params.serviceType || 'subscription'}`,
               quantity: 1,
               unit_price: (params.amountCents / 100).toFixed(2),
             },
@@ -264,7 +265,12 @@ export async function createAutoInvoice(
   const invoiceId = inserted?.[0]?.id || null
 
   // Fire-and-forget: send email notification
-  sendInvoiceNotification(config, params.userId, params.amountCents, params.serviceType || 'subscription')
+  sendInvoiceNotification(
+    config,
+    params.userId,
+    params.amountCents,
+    params.serviceType || 'subscription',
+  )
 
   return {
     id: invoiceId,

@@ -22,7 +22,7 @@ export function useVehicleUnlock(vehicleId: Ref<string | undefined>) {
       .eq('user_id', user.value.id)
       .eq('vehicle_id', vehicleId.value)
       .limit(1)
-    unlocked.value = Array.isArray(data) && data.length > 0
+    unlocked.value = Array.isArray(data) && !!data.length
   }
 
   watch([user, vehicleId], checkExistingUnlock, { immediate: true })

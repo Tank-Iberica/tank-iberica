@@ -103,7 +103,7 @@ const { t } = useI18n()
         >
           {{ t('admin.servicios.notifyPartner') }}
         </button>
-        <div v-if="req.details && Object.keys(req.details).length > 0" class="expanded-details">
+        <div v-if="req.details && Object.keys(req.details).length" class="expanded-details">
           <h4>{{ t('admin.servicios.details') }}</h4>
           <div class="details-grid">
             <div v-for="(value, key) in req.details" :key="String(key)" class="detail-item">

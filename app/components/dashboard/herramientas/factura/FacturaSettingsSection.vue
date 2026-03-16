@@ -97,10 +97,7 @@ function onSelect(field: SettingsField, event: Event): void {
           >
             &times;
           </button>
-          <ul
-            v-if="showVehicleDropdown && filteredVehicles.length > 0"
-            class="autocomplete-dropdown"
-          >
+          <ul v-if="showVehicleDropdown && filteredVehicles.length" class="autocomplete-dropdown">
             <li
               v-for="v in filteredVehicles"
               :key="v.id"

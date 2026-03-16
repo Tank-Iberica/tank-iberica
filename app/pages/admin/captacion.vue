@@ -175,7 +175,7 @@ const {
 
     <!-- Mobile card list -->
     <AdminLeadCards
-      v-if="!loading && filteredLeads.length > 0"
+      v-if="!loading && filteredLeads.length"
       :leads="filteredLeads"
       :expanded-id="expandedId"
       :editing-notes="editingNotes"

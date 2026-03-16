@@ -67,7 +67,7 @@ export function useSellerProfile(dealerSlug?: string) {
   // --------------- Computed ---------------
 
   const avgRating = computed<number>(() => {
-    if (reviews.value.length > 0) {
+    if (reviews.value.length) {
       const sum = reviews.value.reduce((acc, r) => acc + r.rating, 0)
       return Math.round((sum / reviews.value.length) * 10) / 10
     }

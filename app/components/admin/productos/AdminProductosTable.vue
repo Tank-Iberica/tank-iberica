@@ -42,7 +42,7 @@ const emit = defineEmits<{
 }>()
 
 const selectAll = computed({
-  get: () => props.vehicles.length > 0 && props.vehicles.every((v) => props.selectedIds.has(v.id)),
+  get: () => props.vehicles.length && props.vehicles.every((v) => props.selectedIds.has(v.id)),
   set: (val: boolean) => emit('update:selectAll', val),
 })
 

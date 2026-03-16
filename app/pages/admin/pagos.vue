@@ -86,7 +86,7 @@ onMounted(() => {
     </template>
 
     <!-- Mobile card list -->
-    <div v-if="!loading && filteredPayments.length > 0" class="mobile-only">
+    <div v-if="!loading && filteredPayments.length" class="mobile-only">
       <PagosPaymentCardList
         :payments="filteredPayments"
         :expanded-id="expandedId"
@@ -95,7 +95,7 @@ onMounted(() => {
     </div>
 
     <!-- Stripe Connect Section -->
-    <PagosStripeConnect v-if="stripeAccounts.length > 0" :accounts="stripeAccounts" />
+    <PagosStripeConnect v-if="stripeAccounts.length" :accounts="stripeAccounts" />
   </div>
 </template>
 

@@ -57,7 +57,7 @@ const emit = defineEmits<{
             <td>{{ row.price || '-' }}</td>
             <td>{{ row.category || '-' }}</td>
             <td>
-              <span v-if="row.errors.length > 0" class="error-list">
+              <span v-if="row.errors.length" class="error-list">
                 {{ row.errors.join(', ') }}
               </span>
             </td>

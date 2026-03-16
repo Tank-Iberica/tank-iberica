@@ -110,7 +110,7 @@ function countWords(text: string): number {
   return text
     .trim()
     .split(/\s+/)
-    .filter((w) => w.length > 0).length
+    .filter((w) => w.length).length
 }
 
 function extractKeywords(text: string): string[] {
@@ -165,10 +165,10 @@ function evaluateTitleKeywords(title: string): SeoCriterion {
     .normalize('NFD')
     .replaceAll(/[\u0300-\u036F]/g, '')
     .split(/\s+/)
-    .filter((w) => w.length > 0)
+    .filter((w) => w.length)
 
   const keywords = words.filter((w) => w.length > 4 && !STOPWORDS_ES.has(w))
-  const ratio = words.length > 0 ? keywords.length / words.length : 0
+  const ratio = words.length ? keywords.length / words.length : 0
 
   let score = 0
   let description = ''
@@ -180,7 +180,7 @@ function evaluateTitleKeywords(title: string): SeoCriterion {
     score = 50
     description = `Mejorable: solo ${keywords.length} palabra(s) clave. Incluye terminos descriptivos`
   } else {
-    score = words.length > 0 ? 20 : 0
+    score = words.length ? 20 : 0
     description =
       words.length === 0
         ? 'Sin titulo'
@@ -203,12 +203,12 @@ function evaluateKeywordsInUrl(slug: string, title: string): SeoCriterion {
   const slugParts = slug
     .toLowerCase()
     .split('-')
-    .filter((p) => p.length > 0)
+    .filter((p) => p.length)
 
   let score = 0
   let description = ''
 
-  if (slug && titleKeywords.length > 0) {
+  if (slug && titleKeywords.length) {
     const matched = titleKeywords.filter((kw) =>
       slugParts.some((part) => part.includes(kw) || kw.includes(part)),
     )
@@ -240,7 +240,7 @@ function evaluateKeywordsInUrl(slug: string, title: string): SeoCriterion {
 
 // ─── 4. Slug quality ───
 function evaluateSlugQuality(slug: string): SeoCriterion {
-  const parts = slug.split('-').filter((p) => p.length > 0)
+  const parts = slug.split('-').filter((p) => p.length)
   const wordCount = parts.length
 
   let score = 0
@@ -308,7 +308,7 @@ function evaluateContentLength(content: string): SeoCriterion {
 
 // ─── 6. Content structure ───
 function evaluateContentStructure(content: string): SeoCriterion {
-  const paragraphs = content.split(/\n\n|\r\n\r\n/).filter((p) => p.trim().length > 0)
+  const paragraphs = content.split(/\n\n|\r\n\r\n/).filter((p) => p.trim().length)
   const count = paragraphs.length
 
   let score = 0
@@ -418,7 +418,7 @@ function evaluateImage(imageUrl: string | null): SeoCriterion {
   let score = 0
   let description = ''
 
-  if (imageUrl && imageUrl.trim().length > 0) {
+  if (imageUrl && imageUrl.trim().length) {
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       score = 100
       description = 'Imagen presente. Se usara como og:image en redes sociales'
@@ -534,7 +534,7 @@ function evaluateFaqSchema(
 // ─── 13. Social post text ───
 function evaluateSocialText(socialPostText: Record<string, string> | null): SeoCriterion {
   const texts = socialPostText || {}
-  const filled = Object.values(texts).filter((t) => t?.trim().length > 0)
+  const filled = Object.values(texts).filter((t) => t?.trim().length)
 
   let score = 0
   let description = ''
@@ -697,7 +697,7 @@ export function calculateMiniSeoScore(data: {
   total += 10
 
   // Slug (10%)
-  const slugWords = data.slug.split('-').filter((p) => p.length > 0).length
+  const slugWords = data.slug.split('-').filter((p) => p.length).length
   if (slugWords >= 3 && slugWords <= 5) score += 10
   else if (slugWords >= 1) score += 5
   total += 10

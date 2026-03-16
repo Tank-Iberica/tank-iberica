@@ -76,7 +76,7 @@ async function hasAlreadySentEmail(
   )
   if (!res.ok) return false
   const logs = (await res.json()) as EmailLogRow[]
-  return Array.isArray(logs) && logs.length > 0
+  return Array.isArray(logs) && !!logs.length
 }
 
 async function pauseExcessVehicles(
@@ -91,7 +91,9 @@ async function pauseExcessVehicles(
   )
 
   if (!vehiclesRes.ok) {
-    logger.error(`[founding-expiry] Failed to fetch vehicles for dealer ${dealerId}: ${vehiclesRes.status}`)
+    logger.error(
+      `[founding-expiry] Failed to fetch vehicles for dealer ${dealerId}: ${vehiclesRes.status}`,
+    )
     return 0
   }
 
@@ -106,8 +108,7 @@ async function pauseExcessVehicles(
       body: JSON.stringify({ status: 'paused', updated_at: now.toISOString() }),
     })
     if (pauseRes.ok) paused++
-    else
-      logger.error(`[founding-expiry] Failed to pause vehicle ${vehicle.id}: ${pauseRes.status}`)
+    else logger.error(`[founding-expiry] Failed to pause vehicle ${vehicle.id}: ${pauseRes.status}`)
   }
   return paused
 }
@@ -129,7 +130,9 @@ async function downgradeSubscription(
   )
 
   if (!subUpdateRes.ok) {
-    logger.error(`[founding-expiry] Failed to downgrade subscription ${subscriptionId}: ${subUpdateRes.status}`)
+    logger.error(
+      `[founding-expiry] Failed to downgrade subscription ${subscriptionId}: ${subUpdateRes.status}`,
+    )
     return false
   }
 
@@ -144,7 +147,9 @@ async function downgradeSubscription(
   })
 
   if (!dealerUpdateRes.ok) {
-    logger.error(`[founding-expiry] Failed to update dealer ${dealerId} after expiry: ${dealerUpdateRes.status}`)
+    logger.error(
+      `[founding-expiry] Failed to update dealer ${dealerId} after expiry: ${dealerUpdateRes.status}`,
+    )
   }
 
   return true

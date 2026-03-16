@@ -84,7 +84,7 @@ export default defineEventHandler(async (event) => {
       message: `Integrity check: ${r.count} orphan/incomplete records — ${r.name}`,
     }))
 
-  if (alertsToInsert.length > 0) {
+  if (alertsToInsert.length) {
     await supabase.from('infra_alerts').insert(alertsToInsert)
     logger.warn('[integrity-check] Issues found', { results })
   } else {

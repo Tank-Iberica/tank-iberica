@@ -86,7 +86,7 @@ export function useAdvertiseModal(
   })
 
   const isAuthenticated = computed(() => !!user.value)
-  const hasValidationErrors = computed(() => Object.keys(validationErrors.value).length > 0)
+  const hasValidationErrors = computed(() => Object.keys(validationErrors.value).length)
 
   // ---------------------------------------------------------------------------
   // Helpers

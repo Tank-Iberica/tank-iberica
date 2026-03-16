@@ -68,7 +68,7 @@ function onDocTypeChange(event: Event): void {
     </div>
 
     <!-- Next Level Hint -->
-    <div v-if="props.nextLevel && props.missingDocuments.length > 0" class="next-level-hint">
+    <div v-if="props.nextLevel && props.missingDocuments.length" class="next-level-hint">
       <p class="hint-title">
         {{ t('dashboard.verification.nextLevel') }}:
         {{ t(`dashboard.verification.level.${props.nextLevel}`) }}

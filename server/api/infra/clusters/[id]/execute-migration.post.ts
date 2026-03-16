@@ -60,7 +60,7 @@ async function exportVerticalData(
 
   const dealerIds = (data.dealers ?? []).map((d) => (d as Record<string, unknown>).id as string)
   data.vehicles = []
-  if (dealerIds.length > 0) {
+  if (dealerIds.length) {
     const { data: vehicles } = await supabase
       .from('vehicles')
       .select('*')

@@ -168,7 +168,9 @@ export function useAdminCaptacion() {
     try {
       const { data, error: fetchError } = await supabase
         .from('dealer_leads')
-        .select('id, vertical, source, source_url, company_name, phone, email, location, active_listings, vehicle_types, status, assigned_to, contact_notes, contacted_at, scraped_at, created_at, updated_at')
+        .select(
+          'id, vertical, source, source_url, company_name, phone, email, location, active_listings, vehicle_types, status, assigned_to, contact_notes, contacted_at, scraped_at, created_at, updated_at',
+        )
         .order('created_at', { ascending: false })
 
       if (fetchError) {
@@ -437,7 +439,7 @@ export function useAdminCaptacion() {
         return
       }
 
-      if (data?.length > 0) {
+      if (data?.length) {
         leads.value.unshift(data[0] as unknown as DealerLead)
       }
 

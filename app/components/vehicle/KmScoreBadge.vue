@@ -28,7 +28,7 @@
       {{ analysis.explanation }}
     </p>
 
-    <div v-if="analysis.anomalies.length > 0" class="score-anomalies">
+    <div v-if="analysis.anomalies.length" class="score-anomalies">
       <span
         v-for="(anomaly, idx) in analysis.anomalies.slice(0, 2)"
         :key="idx"

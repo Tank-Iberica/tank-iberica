@@ -1,5 +1,5 @@
 <template>
-  <nav v-if="links.length > 0" class="category-links" :aria-label="$t('vehicle.browseCategories')">
+  <nav v-if="links.length" class="category-links" :aria-label="$t('vehicle.browseCategories')">
     <h3>{{ $t('vehicle.browseCategories') }}</h3>
     <div class="category-links-list">
       <NuxtLink v-for="link in links" :key="link.to" :to="link.to" class="category-link-chip">

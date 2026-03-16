@@ -223,7 +223,7 @@ export function useVehicleComparator() {
       const remoteIds = new Set(typedRemote.map((c) => c.id))
       const localOnly = comparisons.value.filter((c) => !remoteIds.has(c.id))
 
-      if (localOnly.length > 0) {
+      if (localOnly.length) {
         const userId = user.value.id
         supabase
           .from('vehicle_comparisons')
@@ -243,7 +243,7 @@ export function useVehicleComparator() {
       // Migrate local-only notes to Supabase
       const localOnlyNotes = findLocalOnlyNotes(notes.value, remoteNotesMap)
 
-      if (localOnlyNotes.length > 0) {
+      if (localOnlyNotes.length) {
         const userId = user.value.id
         const compId = activeComparison.value?.id ?? null
         supabase
@@ -497,7 +497,7 @@ export function useVehicleComparator() {
       }
 
       // Set active comparison to first if none selected
-      if (!activeComparison.value && comparisons.value.length > 0) {
+      if (!activeComparison.value && comparisons.value.length) {
         activeComparison.value = comparisons.value[0] ?? null
       }
     } else {

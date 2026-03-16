@@ -143,7 +143,7 @@ export function analyzeUsageReliability(
   }
 
   // Calculate average rate per year
-  const avgPerYear = rates.length > 0 ? rates.reduce((a, b) => a + b, 0) / rates.length : 0
+  const avgPerYear = rates.length ? rates.reduce((a, b) => a + b, 0) / rates.length : 0
 
   // Calculate score
   const score = calculateScore(anomalies, rates, config.maxReasonablePerYear)
@@ -202,7 +202,7 @@ function calculateScore(anomalies: Anomaly[], rates: number[], maxReasonable: nu
   }
 
   // Very high average is suspicious even without spikes
-  if (rates.length > 0) {
+  if (rates.length) {
     const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length
     if (avgRate > maxReasonable * 0.8) score -= 10
   }

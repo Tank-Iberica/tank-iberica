@@ -101,7 +101,7 @@ export default defineEventHandler(async (event) => {
 
   // Prefetch all vehicle IDs with active auctions (dedup N+1)
   const vehicleIdsWithAuctions = new Set<string>()
-  if (eligibleVehicles.length > 0) {
+  if (eligibleVehicles.length) {
     const vehicleIdList = eligibleVehicles.map((v) => `"${v.id as string}"`).join(',')
     const auctionsRes = await fetchWithRetry(
       `${supabaseUrl}/rest/v1/auctions?vehicle_id=in.(${vehicleIdList})&status=not.eq.cancelled&select=vehicle_id`,

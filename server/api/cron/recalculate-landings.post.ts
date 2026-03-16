@@ -83,7 +83,7 @@ export function buildTypeIntroEs(
   const type = nameEs.toLowerCase()
   let text = `En ${getSiteName()} encontrarás ${count} ${type} de segunda mano.`
   text += buildPriceTextEs(minPrice, maxPrice)
-  if (topBrands.length > 0) text += ` Las marcas más habituales son ${topBrands.join(', ')}.`
+  if (topBrands.length) text += ` Las marcas más habituales son ${topBrands.join(', ')}.`
   text += ' Compra directamente a propietarios y empresas verificadas de toda España.'
   return text
 }
@@ -98,7 +98,7 @@ export function buildTypeIntroEn(
   const type = nameEn.toLowerCase()
   let text = `${getSiteName()} has ${count} used ${type} for sale.`
   text += buildPriceTextEn(minPrice, maxPrice)
-  if (topBrands.length > 0) text += ` Top brands include ${topBrands.join(', ')}.`
+  if (topBrands.length) text += ` Top brands include ${topBrands.join(', ')}.`
   text += ' Buy directly from verified owners and businesses across Spain.'
   return text
 }
@@ -114,7 +114,7 @@ export function buildTypeProvinceIntroEs(
   const type = nameEs.toLowerCase()
   let text = `Disponemos de ${count} ${type} de segunda mano en ${province}.`
   text += buildPriceTextEs(minPrice, maxPrice)
-  if (topBrands.length > 0) text += ` Marcas disponibles: ${topBrands.join(', ')}.`
+  if (topBrands.length) text += ` Marcas disponibles: ${topBrands.join(', ')}.`
   return text
 }
 
@@ -129,7 +129,7 @@ export function buildTypeProvinceIntroEn(
   const type = nameEn.toLowerCase()
   let text = `We have ${count} used ${type} for sale in ${province}.`
   text += buildPriceTextEn(minPrice, maxPrice)
-  if (topBrands.length > 0) text += ` Available brands: ${topBrands.join(', ')}.`
+  if (topBrands.length) text += ` Available brands: ${topBrands.join(', ')}.`
   return text
 }
 

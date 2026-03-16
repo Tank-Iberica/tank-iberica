@@ -127,7 +127,7 @@ export function usePriceHistory(vehicleId: string) {
       }
 
       history.value = (data ?? []) as unknown as PricePoint[]
-      currentPrice.value = history.value.length > 0 ? history.value[0]!.price_cents : null
+      currentPrice.value = history.value.length ? history.value[0]!.price_cents : null
     } finally {
       loading.value = false
     }
@@ -136,10 +136,9 @@ export function usePriceHistory(vehicleId: string) {
   async function calculateFairPrice(): Promise<void> {
     // Step 1: Vehicle history average (last N price points)
     const recentPrices = history.value.slice(0, FAIR_PRICE_SAMPLE_SIZE)
-    const vehicleAvg =
-      recentPrices.length > 0
-        ? recentPrices.reduce((sum, p) => sum + p.price_cents, 0) / recentPrices.length
-        : null
+    const vehicleAvg = recentPrices.length
+      ? recentPrices.reduce((sum, p) => sum + p.price_cents, 0) / recentPrices.length
+      : null
 
     // Step 2: Get vehicle details for category comparison
     const { data: vehicle, error: vehicleError } = await supabase
@@ -176,10 +175,10 @@ export function usePriceHistory(vehicleId: string) {
 
       const { data: similarVehicles, error: catError } = await query
 
-      if (!catError && similarVehicles?.length > 0) {
+      if (!catError && similarVehicles?.length) {
         const prices = similarVehicles.map((v) => v.price).filter((p): p is number => p !== null)
 
-        if (prices.length > 0) {
+        if (prices.length) {
           // Convert euros to cents for comparison (vehicles.price is in euros)
           categoryAvg = (prices.reduce((sum, p) => sum + p, 0) / prices.length) * 100
         }

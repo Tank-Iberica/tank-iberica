@@ -24,7 +24,7 @@ const { t } = useI18n()
 
 <template>
   <div class="table-container">
-    <table v-if="sortedRecords.length > 0" class="data-table">
+    <table v-if="sortedRecords.length" class="data-table">
       <thead>
         <tr>
           <th>{{ t('dashboard.tools.rentals.table.vehicle') }}</th>

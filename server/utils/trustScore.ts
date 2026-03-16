@@ -62,10 +62,10 @@ export function trustBadge(score: number): TrustBadgeTier {
 
 function isBioNonEmpty(bio: unknown): boolean {
   if (!bio) return false
-  if (typeof bio === 'string') return bio.trim().length > 0
+  if (typeof bio === 'string') return !!bio.trim().length
   if (typeof bio === 'object') {
     return Object.values(bio as Record<string, unknown>).some(
-      (v) => typeof v === 'string' && v.trim().length > 0,
+      (v) => typeof v === 'string' && v.trim().length,
     )
   }
   return false

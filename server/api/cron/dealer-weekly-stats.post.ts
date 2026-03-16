@@ -107,7 +107,7 @@ export default defineEventHandler(async (event) => {
 
       // -- 2b. Count new favorites on dealer's vehicles in last 7 days ----------
       let totalFavorites = 0
-      if (vehicleIds.length > 0) {
+      if (vehicleIds.length) {
         const { count: favsCount } = (await supabase
           .from('favorites')
           .select('id', { count: 'exact', head: true })

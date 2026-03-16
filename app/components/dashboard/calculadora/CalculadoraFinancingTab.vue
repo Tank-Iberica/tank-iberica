@@ -149,7 +149,7 @@ function onTermChange(event: Event): void {
     </section>
 
     <!-- Amortization summary table -->
-    <section v-if="amortizationPreview.length > 0" class="table-section">
+    <section v-if="amortizationPreview.length" class="table-section">
       <h2>{{ t('dashboard.calculator.amortizationSummary') }}</h2>
       <div class="table-wrapper">
         <table class="data-table">

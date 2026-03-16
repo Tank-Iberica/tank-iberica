@@ -7,7 +7,17 @@ const props = defineProps<{
 
 const { t } = useI18n()
 const user = useSupabaseUser()
-const { reviews, loading, submitting, error, submitSuccess, averageRating, reviewCount, fetchReviews, submitReview } = useDealerReviews(props.dealerId)
+const {
+  reviews,
+  loading,
+  submitting,
+  error,
+  submitSuccess,
+  averageRating,
+  reviewCount,
+  fetchReviews,
+  submitReview,
+} = useDealerReviews(props.dealerId)
 
 const showForm = ref(false)
 
@@ -35,10 +45,16 @@ async function handleSubmit(rating: number, comment: string): Promise<void> {
 
     <template v-else>
       <!-- Review list -->
-      <div v-if="reviews.length > 0" class="reviews-list">
+      <div v-if="reviews.length" class="reviews-list">
         <article v-for="review in reviews" :key="review.id" class="review-card">
           <div class="review-stars" aria-hidden="true">
-            <span v-for="i in 5" :key="i" class="star" :class="i <= review.rating ? 'star-on' : 'star-off'">★</span>
+            <span
+              v-for="i in 5"
+              :key="i"
+              class="star"
+              :class="i <= review.rating ? 'star-on' : 'star-off'"
+              >★</span
+            >
           </div>
           <p v-if="review.comment" class="review-comment">{{ review.comment }}</p>
           <time class="review-date" :datetime="review.created_at">

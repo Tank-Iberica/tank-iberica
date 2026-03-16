@@ -65,7 +65,7 @@ const { ads, loading } = useAds(props.position, {
   category: props.category,
 })
 
-const hasDirectAd = computed(() => !loading.value && ads.value.length > 0)
+const hasDirectAd = computed(() => !loading.value && ads.value.length)
 
 // Prebid.js integration
 const prebidElementId = `prebid-${props.position}-${Date.now()}`
@@ -80,11 +80,11 @@ const {
 // Viewability tracking for the whole slot
 const adSenseSlotRef = ref<HTMLElement | null>(null)
 const slotAdId = computed(() => {
-  if (ads.value.length > 0) return ads.value[0]?.id ?? ''
+  if (ads.value.length) return ads.value[0]?.id ?? ''
   return prebidWon.value ? `prebid-${props.position}` : ''
 })
 const adSource = computed<'direct' | 'prebid' | 'adsense'>(() => {
-  if (ads.value.length > 0) return 'direct'
+  if (ads.value.length) return 'direct'
   if (prebidWon.value) return 'prebid'
   return 'adsense'
 })
@@ -95,7 +95,7 @@ useAdViewability(adSenseSlotRef, slotAdId.value || null, {
 
 const showAdSense = computed(() => {
   if (loading.value) return false
-  if (ads.value.length > 0) return false
+  if (ads.value.length) return false
   if (prebidWon.value) return false
   if (ADSENSE_BLOCKED_POSITIONS.has(props.position as AdPosition)) return false
   if (!adClient.value) return false

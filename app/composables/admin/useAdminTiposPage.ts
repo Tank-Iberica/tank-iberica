@@ -227,7 +227,8 @@ export function useAdminTiposPage() {
         .replaceAll(/[\u0300-\u036F]/g, '')
         .replaceAll(/[^a-z0-9-]/g, '-')
         .replaceAll(/-+/g, '-')
-        .replace(/^-/, '').replace(/-$/, '')
+        .replace(/^-/, '')
+        .replace(/-$/, '')
     }
 
     // Extract subcategory_ids before saving (not part of type table)
@@ -267,7 +268,7 @@ export function useAdminTiposPage() {
       await supabase.from('subcategory_categories').delete().eq('subcategory_id', typeId)
 
       // Insert new links
-      if (subcategoryIds.length > 0) {
+      if (subcategoryIds.length) {
         const links = subcategoryIds.map((subcatId) => ({
           subcategory_id: typeId,
           category_id: subcatId,

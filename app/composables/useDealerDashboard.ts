@@ -121,7 +121,7 @@ export function useDealerDashboard() {
 
       // Map stats RPC response (returns array with one row for RETURNS TABLE functions)
       const statsRow =
-        Array.isArray(statsRes.data) && statsRes.data.length > 0
+        Array.isArray(statsRes.data) && statsRes.data.length
           ? (statsRes.data[0] as DashboardStatsRaw)
           : null
 

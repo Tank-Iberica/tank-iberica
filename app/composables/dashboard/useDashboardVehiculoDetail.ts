@@ -273,7 +273,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
 
   function handleFileSelect(event: Event): void {
     const target = event.target as HTMLInputElement
-    if (target.files && target.files.length > 0) {
+    if (target.files && target.files.length) {
       uploadForm.value.file = target.files[0] ?? null
     }
   }

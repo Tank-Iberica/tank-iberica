@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
       const link = `${siteUrl}/vehiculo/${v.slug}`
       const images = (v.vehicle_images as Array<{ url: string; position: number }>) || []
       const sortedImages = [...images].sort((a, b) => a.position - b.position)
-      const imageLink = sortedImages.length > 0 ? escapeXml(sortedImages[0]!.url) : ''
+      const imageLink = sortedImages.length ? escapeXml(sortedImages[0]!.url) : ''
       const price = v.price ? `${v.price.toFixed(2)} EUR` : ''
 
       if (!imageLink || !price) return ''

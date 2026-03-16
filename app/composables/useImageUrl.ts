@@ -22,7 +22,7 @@ function getImageUrl(
     const parts = url.split('/')
     const knownVariants = ['thumb', 'card', 'gallery', 'og', 'public']
 
-    if (parts.length > 0 && knownVariants.includes(parts.at(-1)!)) {
+    if (parts.length && knownVariants.includes(parts.at(-1)!)) {
       parts[parts.length - 1] = variant
     } else {
       parts.push(variant)

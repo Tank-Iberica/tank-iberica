@@ -75,7 +75,7 @@ export function useAdminMetrics() {
         }
       })
 
-      if (failures.length > 0) error.value = failures.join('; ')
+      if (failures.length) error.value = failures.join('; ')
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Error loading metrics'
     } finally {

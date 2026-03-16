@@ -9,9 +9,11 @@ const GENERIC_MESSAGES: Record<number, string> = {
   500: 'Error interno del servidor',
 }
 
-function isProd() { return process.env.NODE_ENV === 'production' }
+function isProd() {
+  return process.env.NODE_ENV === 'production'
+}
 
-export function safeError(statusCode: number, devMessage: string) {
+export function safeError(statusCode: number, devMessage: string): ReturnType<typeof createError> {
   return createError({
     statusCode,
     message: isProd() ? GENERIC_MESSAGES[statusCode] || 'Error' : devMessage,

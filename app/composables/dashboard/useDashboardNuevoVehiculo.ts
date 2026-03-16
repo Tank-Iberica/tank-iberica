@@ -178,7 +178,7 @@ export function useDashboardNuevoVehiculo() {
       if (err) throw err
 
       // Insert uploaded photos into vehicle_images
-      if (vehicle && photos.length > 0) {
+      if (vehicle && photos.length) {
         const imageInserts = photos.map((photo, index) => ({
           vehicle_id: vehicle.id,
           url: photo.url,

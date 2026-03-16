@@ -58,17 +58,9 @@ function buyerLabel(deal: BrokerageDeal): string {
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="deal in deals"
-            :key="deal.id"
-            class="table-row"
-            @click="$emit('select', deal)"
-          >
+          <tr v-for="deal in deals" :key="deal.id" class="table-row" @click="$emit('select', deal)">
             <td>
-              <span
-                class="status-badge"
-                :style="{ '--badge-color': getStatusColor(deal.status) }"
-              >
+              <span class="status-badge" :style="{ '--badge-color': getStatusColor(deal.status) }">
                 {{ getStatusLabel(deal.status) }}
               </span>
             </td>
@@ -87,7 +79,7 @@ function buyerLabel(deal: BrokerageDeal): string {
     </div>
 
     <!-- Mobile cards -->
-    <div v-if="!loading && !error && deals.length > 0" class="cards-mobile">
+    <div v-if="!loading && !error && deals.length" class="cards-mobile">
       <button
         v-for="deal in deals"
         :key="`card-${deal.id}`"
@@ -95,10 +87,7 @@ function buyerLabel(deal: BrokerageDeal): string {
         @click="$emit('select', deal)"
       >
         <div class="card-header">
-          <span
-            class="status-badge"
-            :style="{ '--badge-color': getStatusColor(deal.status) }"
-          >
+          <span class="status-badge" :style="{ '--badge-color': getStatusColor(deal.status) }">
             {{ getStatusLabel(deal.status) }}
           </span>
           <span class="mode-badge" :class="`mode-${deal.deal_mode}`">

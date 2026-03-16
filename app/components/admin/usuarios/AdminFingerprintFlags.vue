@@ -2,7 +2,7 @@
   <div class="fp-flags">
     <div class="fp-flags__header">
       <h3 class="fp-flags__title">{{ $t('admin.users.fp_flags.title') }}</h3>
-      <span class="fp-flags__badge" :class="{ 'fp-flags__badge--alert': duplicates.length > 0 }">
+      <span class="fp-flags__badge" :class="{ 'fp-flags__badge--alert': duplicates.length }">
         {{ duplicates.length }}
       </span>
     </div>
@@ -10,7 +10,7 @@
     <p class="fp-flags__desc">{{ $t('admin.users.fp_flags.description') }}</p>
 
     <div v-if="loading" class="fp-flags__loading" aria-live="polite" aria-busy="true">
-      <span class="fp-flags__spinner" aria-hidden="true"/>
+      <span class="fp-flags__spinner" aria-hidden="true" />
       {{ $t('common.loading') }}
     </div>
 
@@ -23,11 +23,7 @@
     </div>
 
     <ul v-else class="fp-flags__list" aria-label="Duplicate device fingerprints">
-      <li
-        v-for="dup in duplicates"
-        :key="dup.fp_hash"
-        class="fp-flags__item"
-      >
+      <li v-for="dup in duplicates" :key="dup.fp_hash" class="fp-flags__item">
         <div class="fp-flags__item-header">
           <code class="fp-flags__hash" :title="dup.fp_hash">
             {{ dup.fp_hash.substring(0, 8) }}&hellip;
@@ -35,11 +31,7 @@
           <span class="fp-flags__count">
             {{ $t('admin.users.fp_flags.accounts', { count: dup.account_count }) }}
           </span>
-          <time
-            class="fp-flags__last-seen"
-            :datetime="dup.last_seen"
-            :title="dup.last_seen"
-          >
+          <time class="fp-flags__last-seen" :datetime="dup.last_seen" :title="dup.last_seen">
             {{ formatDate(dup.last_seen) }}
           </time>
         </div>
@@ -264,6 +256,8 @@ onMounted(fetchDuplicates)
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

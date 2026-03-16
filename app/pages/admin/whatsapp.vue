@@ -165,7 +165,7 @@ const {
           {{ t('admin.whatsapp.loadMore') }}
         </button>
       </div>
-      <div v-if="loading && submissions.length > 0" class="loading-more">
+      <div v-if="loading && submissions.length" class="loading-more">
         <div class="spinner small" />
       </div>
     </div>

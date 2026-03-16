@@ -140,7 +140,13 @@ export function buildComponentCard(
     })
   }
 
-  return { key: def.key, name: def.name, icon: def.icon, overallStatus: worstStatus, metrics: metricDisplays }
+  return {
+    key: def.key,
+    name: def.name,
+    icon: def.icon,
+    overallStatus: worstStatus,
+    metrics: metricDisplays,
+  }
 }
 
 export function groupMetricsByComponent(metricsData: InfraMetric[]): Map<string, InfraMetric[]> {
@@ -205,7 +211,7 @@ export function buildHistoryCharts(
 
   for (const [component, compMetrics] of grouped) {
     const { datasets, labels } = buildDatasetsForComponent(compMetrics, component, colors)
-    if (datasets.length > 0) {
+    if (datasets.length) {
       const def = definitions.find((d) => d.key === component)
       charts.push({ component, label: def?.name || component, chartData: { labels, datasets } })
     }

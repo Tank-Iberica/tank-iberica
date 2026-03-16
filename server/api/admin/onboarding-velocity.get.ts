@@ -53,22 +53,21 @@ export default defineEventHandler(async (event) => {
       if (deltaHours >= 0) deltas.push(deltaHours)
     }
 
-    const avgHours =
-      deltas.length > 0 ? Math.round(deltas.reduce((a, b) => a + b, 0) / deltas.length) : 0
-    const medianHours =
-      deltas.length > 0
-        ? Math.round([...deltas].sort((a, b) => a - b)[Math.floor(deltas.length / 2)]!)
-        : 0
+    const avgHours = deltas.length
+      ? Math.round(deltas.reduce((a, b) => a + b, 0) / deltas.length)
+      : 0
+    const medianHours = deltas.length
+      ? Math.round([...deltas].sort((a, b) => a - b)[Math.floor(deltas.length / 2)]!)
+      : 0
 
     return {
       totalDealers: userFirstVehicle.size,
       avgHours,
       medianHours,
       // Percentage publishing within 24h
-      within24h:
-        deltas.length > 0
-          ? Math.round((deltas.filter((d) => d <= 24).length / deltas.length) * 100)
-          : 0,
+      within24h: deltas.length
+        ? Math.round((deltas.filter((d) => d <= 24).length / deltas.length) * 100)
+        : 0,
     }
   }
 

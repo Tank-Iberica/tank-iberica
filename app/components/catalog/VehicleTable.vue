@@ -240,9 +240,7 @@
         </tbody>
       </table>
     </div>
-    <p v-if="vehicles.length > 0" class="scroll-hint">
-      &larr; {{ $t('catalog.scrollHint') }} &rarr;
-    </p>
+    <p v-if="vehicles.length" class="scroll-hint">&larr; {{ $t('catalog.scrollHint') }} &rarr;</p>
 
     <CatalogVehicleTablePdfModal
       :open="showPdfModal"

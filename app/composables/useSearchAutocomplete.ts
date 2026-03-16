@@ -51,7 +51,7 @@ export function useSearchAutocomplete() {
         query: { q, limit: String(MAX_SUGGESTIONS) },
       })
       results.value = data.results.slice(0, MAX_SUGGESTIONS)
-      isOpen.value = results.value.length > 0
+      isOpen.value = !!results.value.length
     } catch {
       results.value = []
       isOpen.value = false

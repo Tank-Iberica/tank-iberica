@@ -142,7 +142,7 @@ async function downloadWhatsAppImages(mediaIds: string[]): Promise<Buffer[]> {
   for (const mediaId of mediaIds) {
     try {
       const buffer = await downloadWhatsAppMedia(mediaId)
-      if (buffer.length > 0) buffers.push(buffer)
+      if (buffer.length) buffers.push(buffer)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unknown error'
       logger.error('[whatsappProcessor] Failed to download media:', { error: String(message) })
@@ -227,8 +227,9 @@ export async function processWhatsAppSubmission(
     // 4. Get category names from DB for the prompt
     const { data: categoryNamesRaw } = await supabase.from('categories').select('name_es')
     const categoryNames = (categoryNamesRaw ?? []) as unknown as { name_es: string }[]
-    const categoryList =
-      categoryNames.length > 0 ? categoryNames.map((c) => `'${c.name_es}'`).join(', ') : undefined
+    const categoryList = categoryNames.length
+      ? categoryNames.map((c) => `'${c.name_es}'`).join(', ')
+      : undefined
 
     // 5. Call AI Vision (uses callAI with failover)
     const imageBlocks: AIContentBlock[] = imageBuffers.map((buffer) => ({
@@ -242,10 +243,9 @@ export async function processWhatsAppSubmission(
 
     const textBlock: AIContentBlock = {
       type: 'text',
-      text:
-        imageBuffers.length > 0
-          ? `Analyze these ${imageBuffers.length} image(s) of an industrial vehicle.`
-          : 'No images could be downloaded. Analyze based on the text content provided in the system prompt.',
+      text: imageBuffers.length
+        ? `Analyze these ${imageBuffers.length} image(s) of an industrial vehicle.`
+        : 'No images could be downloaded. Analyze based on the text content provided in the system prompt.',
     }
 
     const aiResponse = await callAI(
@@ -290,7 +290,9 @@ export async function processWhatsAppSubmission(
     }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown processing error'
-    logger.error(`[whatsappProcessor] Error processing submission ${submissionId}:`, { error: String(message) })
+    logger.error(`[whatsappProcessor] Error processing submission ${submissionId}:`, {
+      error: String(message),
+    })
 
     await updateSubmission(supabaseUrl, supabaseKey, submissionId, {
       status: 'failed',

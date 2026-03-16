@@ -23,7 +23,13 @@ async function init(): Promise<void> {
 onMounted(init)
 
 function formatDate(dateStr: string): string {
-  const localeMap: Record<string, string> = { es: 'es-ES', en: 'en-GB', fr: 'fr-FR', pt: 'pt-PT', de: 'de-DE' }
+  const localeMap: Record<string, string> = {
+    es: 'es-ES',
+    en: 'en-GB',
+    fr: 'fr-FR',
+    pt: 'pt-PT',
+    de: 'de-DE',
+  }
   const intlLocale = localeMap[locale.value] ?? 'es-ES'
   return new Date(dateStr).toLocaleDateString(intlLocale, {
     day: 'numeric',
@@ -71,7 +77,7 @@ function getServiceLabel(type: string): string {
 
     <template v-else>
       <!-- Summary cards -->
-      <div v-if="invoices.length > 0" class="summary-cards">
+      <div v-if="invoices.length" class="summary-cards">
         <div class="summary-card">
           <span class="summary-label">{{ t('billing.totalRevenue') }}</span>
           <span class="summary-value">{{ formatAmount(totalAmount) }}</span>

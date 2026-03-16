@@ -23,7 +23,7 @@ const WEEKDAY_LABELS_FULL_ES = [
 const rangeLabel = computed(() => {
   const { from, to } = (() => {
     const d = calendarDays.value
-    return { from: d[0], to: d[d.length - 1] }
+    return { from: d[0], to: d.at(-1) }
   })()
   if (!from || !to) return ''
   if (view.value === 'week') {

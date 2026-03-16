@@ -352,7 +352,7 @@ export default defineEventHandler(async (event) => {
 
   // Insert all collected metrics
   let metricsInserted = 0
-  if (collectedMetrics.length > 0) {
+  if (collectedMetrics.length) {
     const vertical = useRuntimeConfig().public.vertical || 'tracciona'
     const rows = collectedMetrics.map((m) => ({
       ...m,
@@ -370,7 +370,7 @@ export default defineEventHandler(async (event) => {
   return {
     metricsInserted,
     alertsCreated,
-    errors: errors.length > 0 ? errors : undefined,
+    errors: errors.length ? errors : undefined,
     timestamp: new Date().toISOString(),
   }
 })

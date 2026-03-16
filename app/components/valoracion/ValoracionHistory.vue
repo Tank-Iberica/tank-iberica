@@ -15,7 +15,7 @@ defineProps<{
 </script>
 
 <template>
-  <section v-if="history.length > 0" class="history-section">
+  <section v-if="history.length" class="history-section">
     <h2 class="history-title">{{ $t('valuation.history') }}</h2>
     <div class="history-list">
       <div v-for="item in history" :key="item.id" class="history-item">

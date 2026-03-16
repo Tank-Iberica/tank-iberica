@@ -127,7 +127,7 @@ const { t } = useI18n()
 
       <!-- Extracted data -->
       <div
-        v-if="submission.extracted_data && Object.keys(submission.extracted_data).length > 0"
+        v-if="submission.extracted_data && Object.keys(submission.extracted_data).length"
         class="detail-section"
       >
         <h4>{{ t('admin.whatsapp.extractedData') }}</h4>
@@ -145,7 +145,7 @@ const { t } = useI18n()
 
       <!-- Image thumbnails -->
       <div
-        v-if="submission.image_urls != null && submission.image_urls.length > 0"
+        v-if="submission.image_urls != null && submission.image_urls.length"
         class="detail-section"
       >
         <h4>{{ t('admin.whatsapp.images') }} ({{ submission.image_urls.length }})</h4>

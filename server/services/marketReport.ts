@@ -260,7 +260,7 @@ function escapeHtml(str: string): string {
 }
 
 function avgPositive(arr: number[]): number {
-  return arr.length > 0 ? arr.reduce((s, v) => s + v, 0) / arr.length : 0
+  return arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : 0
 }
 
 function groupRows(rows: MarketRow[]): Map<string, MarketRow[]> {
@@ -291,8 +291,8 @@ function computeSingleSubcatStats(subcategory: string, items: MarketRow[]): Subc
     subcategory,
     avgPrice: avgPositive(avgPrices),
     medianPrice: avgPositive(medianPrices),
-    minPrice: minPrices.length > 0 ? Math.min(...minPrices) : 0,
-    maxPrice: maxPrices.length > 0 ? Math.max(...maxPrices) : 0,
+    minPrice: minPrices.length ? Math.min(...minPrices) : 0,
+    maxPrice: maxPrices.length ? Math.max(...maxPrices) : 0,
     totalListings,
     totalSold,
     avgDaysToSell: avgPositive(daysList),
@@ -459,11 +459,12 @@ function computeExecutiveSummary(
   const totalListings = subcategoryStats.reduce((s, r) => s + r.totalListings, 0)
   const totalSold = subcategoryStats.reduce((s, r) => s + r.totalSold, 0)
   const allAvgPrices = subcategoryStats.filter((s) => s.avgPrice > 0).map((s) => s.avgPrice)
-  const overallAvgPrice =
-    allAvgPrices.length > 0 ? allAvgPrices.reduce((s, v) => s + v, 0) / allAvgPrices.length : 0
+  const overallAvgPrice = allAvgPrices.length
+    ? allAvgPrices.reduce((s, v) => s + v, 0) / allAvgPrices.length
+    : 0
 
-  const topCategory = subcategoryStats.length > 0 ? subcategoryStats[0]!.subcategory : 'N/A'
-  const topCategoryListings = subcategoryStats.length > 0 ? subcategoryStats[0]!.totalListings : 0
+  const topCategory = subcategoryStats.length ? subcategoryStats[0]!.subcategory : 'N/A'
+  const topCategoryListings = subcategoryStats.length ? subcategoryStats[0]!.totalListings : 0
 
   return {
     totalListings,
@@ -763,7 +764,7 @@ function generateReportHTML(
     year: 'numeric',
   })
 
-  const hasData = rows.length > 0
+  const hasData = !!rows.length
   const subcategoryStats = hasData ? computeSubcategoryStats(rows) : []
   const brandStats = hasData ? computeBrandStats(rows) : []
   const provinceStats = hasData ? computeProvinceStats(rows) : []
@@ -1123,10 +1124,9 @@ function summarizeInsights(insights: DealerVehicleInsight[]): DealerIntelligence
   const belowMarket = insights.filter((i) => i.pricePosition === 'below').length
   const atMarket = insights.filter((i) => i.pricePosition === 'average').length
   const aboveMarket = insights.filter((i) => i.pricePosition === 'above').length
-  const avgDeviation =
-    insights.length > 0
-      ? insights.reduce((s, i) => s + i.priceDeviationPercent, 0) / insights.length
-      : 0
+  const avgDeviation = insights.length
+    ? insights.reduce((s, i) => s + i.priceDeviationPercent, 0) / insights.length
+    : 0
   return {
     belowMarket,
     atMarket,

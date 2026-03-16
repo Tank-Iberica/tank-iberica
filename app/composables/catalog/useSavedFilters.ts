@@ -44,9 +44,13 @@ export function useSavedFilters() {
     hydrated = true
   }
 
-  const hasPresets = computed(() => savedPresets.value.length > 0)
+  const hasPresets = computed(() => savedPresets.value.length)
 
-  function savePreset(name: string, filters: VehicleFilters, locationLevel: LocationLevel | null): void {
+  function savePreset(
+    name: string,
+    filters: VehicleFilters,
+    locationLevel: LocationLevel | null,
+  ): void {
     const trimmedName = name.trim()
     if (!trimmedName) return
 
