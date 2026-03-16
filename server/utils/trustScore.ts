@@ -71,6 +71,32 @@ function isBioNonEmpty(bio: unknown): boolean {
   return false
 }
 
+function scoreAccountAge(createdAt: string | null | undefined, nowOverride?: Date): number {
+  const now = nowOverride ? nowOverride.getTime() : Date.now()
+  const ageMs = createdAt ? now - new Date(createdAt).getTime() : 0
+  const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24))
+  if (ageDays >= 90) return 15
+  if (ageDays >= 30) return 10
+  return 0
+}
+
+function scoreTiered(
+  value: number,
+  highThreshold: number,
+  highScore: number,
+  lowThreshold: number,
+  lowScore: number,
+): number {
+  if (value >= highThreshold) return highScore
+  if (value >= lowThreshold) return lowScore
+  return 0
+}
+
+function scoreReviews(totalReviews: number, rating: number): number {
+  if (totalReviews < 1) return 0
+  return rating >= 4.0 ? 20 : 10
+}
+
 /**
  * Calculate trust score for a dealer.
  * All inputs are optional/nullable — defaults to 0 for any missing field.
@@ -103,37 +129,10 @@ export function calculateTrustScore(
   // 4. Legal ID (5 pts)
   if (dealer.cif_nif) bd.has_legal = 5
 
-  // 5. Account age (0-15 pts)
-  const ageMs = nowOverride
-    ? dealer.created_at
-      ? nowOverride.getTime() - new Date(dealer.created_at).getTime()
-      : 0
-    : dealer.created_at
-      ? Date.now() - new Date(dealer.created_at).getTime()
-      : 0
-  const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24))
-  if (ageDays >= 90) bd.account_age = 15
-  else if (ageDays >= 30) bd.account_age = 10
-
-  // 6. Listing activity (0-15 pts)
-  const activeListings = dealer.active_listings ?? 0
-  if (activeListings >= 5) bd.listing_activity = 15
-  else if (activeListings >= 1) bd.listing_activity = 10
-
-  // 7. Responsiveness (0-15 pts)
-  const responseRate = dealer.response_rate_pct ?? 0
-  if (responseRate >= 80) bd.responsiveness = 15
-  else if (responseRate >= 50) bd.responsiveness = 10
-
-  // 8. Reviews (0-20 pts)
-  const totalReviews = dealer.total_reviews ?? 0
-  const rating = dealer.rating ?? 0
-  if (totalReviews >= 1) {
-    bd.reviews = 10
-    if (rating >= 4.0) bd.reviews = 20
-  }
-
-  // 9. Verification documents (15 pts)
+  bd.account_age = scoreAccountAge(dealer.created_at, nowOverride)
+  bd.listing_activity = scoreTiered(dealer.active_listings ?? 0, 5, 15, 1, 10)
+  bd.responsiveness = scoreTiered(dealer.response_rate_pct ?? 0, 80, 15, 50, 10)
+  bd.reviews = scoreReviews(dealer.total_reviews ?? 0, dealer.rating ?? 0)
   if (dealer.verified) bd.verified_docs = 15
 
   const score =

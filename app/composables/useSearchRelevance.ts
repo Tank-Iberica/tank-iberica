@@ -74,56 +74,48 @@ export function scoreTextMatch(
 }
 
 /**
+ * Check if a value falls within a range (min/max both optional).
+ */
+function isInRange(value: number | undefined, min?: number, max?: number): boolean {
+  if (value === undefined) return false
+  if (min !== undefined && value < min) return false
+  if (max !== undefined && value > max) return false
+  return true
+}
+
+/**
  * Score how well a vehicle matches filter criteria (0-30).
  */
-export function scoreFilterMatch(
-  query: SearchQuery,
-  vehicle: SearchableVehicle,
-): number {
+export function scoreFilterMatch(query: SearchQuery, vehicle: SearchableVehicle): number {
   let score = 0
   let filterCount = 0
 
-  // Category match
   if (query.categoryId) {
     filterCount++
     if (vehicle.categoryId === query.categoryId) score += 10
   }
 
-  // Subcategory match (more specific = more relevant)
   if (query.subcategoryId) {
     filterCount++
     if (vehicle.subcategoryId === query.subcategoryId) score += 10
   }
 
-  // Price range match
   if (query.minPrice !== undefined || query.maxPrice !== undefined) {
     filterCount++
-    if (vehicle.price !== undefined) {
-      const inRange =
-        (query.minPrice === undefined || vehicle.price >= query.minPrice) &&
-        (query.maxPrice === undefined || vehicle.price <= query.maxPrice)
-      if (inRange) score += 10
-    }
+    if (isInRange(vehicle.price, query.minPrice, query.maxPrice)) score += 10
   }
 
-  // Year range match
   if (query.minYear !== undefined || query.maxYear !== undefined) {
     filterCount++
-    if (vehicle.year !== undefined) {
-      const inRange =
-        (query.minYear === undefined || vehicle.year >= query.minYear) &&
-        (query.maxYear === undefined || vehicle.year <= query.maxYear)
-      if (inRange) score += 5
-    }
+    if (isInRange(vehicle.year, query.minYear, query.maxYear)) score += 5
   }
 
-  // KM max
   if (query.maxKm !== undefined) {
     filterCount++
     if (vehicle.km !== undefined && vehicle.km <= query.maxKm) score += 5
   }
 
-  if (filterCount === 0) return 15 // No filters = neutral
+  if (filterCount === 0) return 15
   return Math.min(30, score)
 }
 
@@ -139,13 +131,19 @@ export function scoreGeoProximity(
   let score = 0
 
   // Same province: 15 points
-  if (query.province && vehicle.province &&
-      query.province.toLowerCase() === vehicle.province.toLowerCase()) {
+  if (
+    query.province &&
+    vehicle.province &&
+    query.province.toLowerCase() === vehicle.province.toLowerCase()
+  ) {
     score += 15
   }
   // Same country: 8 points
-  else if (query.country && vehicle.country &&
-           query.country.toLowerCase() === vehicle.country.toLowerCase()) {
+  else if (
+    query.country &&
+    vehicle.country &&
+    query.country.toLowerCase() === vehicle.country.toLowerCase()
+  ) {
     score += 8
   }
 
@@ -167,10 +165,7 @@ export function scoreRecency(createdDaysAgo: number): number {
 /**
  * Calculate total search relevance score (0-100).
  */
-export function calculateSearchRelevance(
-  query: SearchQuery,
-  vehicle: SearchableVehicle,
-): number {
+export function calculateSearchRelevance(query: SearchQuery, vehicle: SearchableVehicle): number {
   const text = scoreTextMatch(query.text ?? '', vehicle)
   const filter = scoreFilterMatch(query, vehicle)
   const geo = scoreGeoProximity(query, vehicle)

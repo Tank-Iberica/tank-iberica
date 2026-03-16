@@ -111,6 +111,58 @@ function buildNotifications(
   return notifications
 }
 
+// -- Data fetching ----------------------------------------------------------
+
+interface AlertFetchResult {
+  alerts: AlertRow[]
+  earlyReturn?: { matched: number; notified: number; reason: string }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchProAlerts(supabase: any): Promise<AlertFetchResult> {
+  const { data: subs } = await supabase
+    .from('subscriptions')
+    .select('user_id, plan')
+    .eq('status', 'active')
+
+  if (!subs || subs.length === 0) {
+    return {
+      alerts: [],
+      earlyReturn: { matched: 0, notified: 0, reason: 'no_active_subscriptions' },
+    }
+  }
+
+  const proUserIds = (subs as unknown as SubscriptionRow[])
+    .filter((s) => {
+      const plan = normalizePlan(s.plan)
+      return plan === 'premium' || plan === 'founding'
+    })
+    .map((s) => s.user_id)
+
+  if (proUserIds.length === 0) {
+    return { alerts: [], earlyReturn: { matched: 0, notified: 0, reason: 'no_pro_users' } }
+  }
+
+  const { data: alerts, error: alertsErr } = await supabase
+    .from('search_alerts')
+    .select('id, user_id, filters, frequency, last_sent_at, channels')
+    .eq('active', true)
+    .in('user_id', proUserIds)
+    .limit(500)
+
+  if (alertsErr) {
+    logger.error(`[instant-alerts] Error fetching alerts: ${alertsErr.message}`)
+    throw safeError(500, `Error fetching alerts: ${alertsErr.message}`)
+  }
+
+  const typedAlerts = (alerts ?? []) as unknown as AlertRow[]
+  if (typedAlerts.length === 0) {
+    return { alerts: [], earlyReturn: { matched: 0, notified: 0, reason: 'no_active_alerts' } }
+  }
+
+  return { alerts: typedAlerts }
+}
+
 // -- Handler ----------------------------------------------------------------
 
 export default defineEventHandler(async (event) => {
@@ -165,46 +217,8 @@ export default defineEventHandler(async (event) => {
   const vehicle = vehicleData as unknown as VehicleForMatching
 
   // ── 2. Fetch active instant alerts from Pro users ─────────────────────
-  // First get all premium/founding subscriptions
-  const { data: subs } = await supabase
-    .from('subscriptions')
-    .select('user_id, plan')
-    .eq('status', 'active')
-
-  if (!subs || subs.length === 0) {
-    return { matched: 0, notified: 0, reason: 'no_active_subscriptions' }
-  }
-
-  // Filter to Pro-tier users (premium/founding = instant eligible)
-  const proUserIds = (subs as unknown as SubscriptionRow[])
-    .filter((s) => {
-      const plan = normalizePlan(s.plan)
-      return plan === 'premium' || plan === 'founding'
-    })
-    .map((s) => s.user_id)
-
-  if (proUserIds.length === 0) {
-    return { matched: 0, notified: 0, reason: 'no_pro_users' }
-  }
-
-  // Fetch active alerts for these Pro users
-  const { data: alerts, error: alertsErr } = await supabase
-    .from('search_alerts')
-    .select('id, user_id, filters, frequency, last_sent_at, channels')
-    .eq('active', true)
-    .in('user_id', proUserIds)
-    .limit(500)
-
-  if (alertsErr) {
-    logger.error(`[instant-alerts] Error fetching alerts: ${alertsErr.message}`)
-    throw safeError(500, `Error fetching alerts: ${alertsErr.message}`)
-  }
-
-  const typedAlerts = (alerts ?? []) as unknown as AlertRow[]
-
-  if (typedAlerts.length === 0) {
-    return { matched: 0, notified: 0, reason: 'no_active_alerts' }
-  }
+  const { alerts: typedAlerts, earlyReturn } = await fetchProAlerts(supabase)
+  if (earlyReturn) return earlyReturn
 
   // ── 3. Match vehicle against each alert's filters ─────────────────────
   const matchedAlerts = typedAlerts.filter((alert) => {

@@ -1,5 +1,54 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type VelocityClient = ReturnType<typeof serverSupabaseServiceRole<any>>
+
+async function calculateVelocityFallback(client: VelocityClient) {
+  const { data: velocityData, error: queryError } = await client
+    .from('vehicles')
+    .select('user_id, created_at, users!inner(created_at)')
+    .order('created_at', { ascending: true })
+    .limit(500)
+
+  if (queryError) {
+    throw createError({ statusCode: 500, statusMessage: 'Error fetching onboarding data' })
+  }
+
+  const userFirstVehicle = new Map<string, { registered: string; firstPublish: string }>()
+  for (const row of (velocityData || []) as unknown as Array<{
+    user_id: string
+    created_at: string
+    users: { created_at: string }
+  }>) {
+    if (!userFirstVehicle.has(row.user_id)) {
+      userFirstVehicle.set(row.user_id, {
+        registered: row.users.created_at,
+        firstPublish: row.created_at,
+      })
+    }
+  }
+
+  const deltas: number[] = []
+  for (const { registered, firstPublish } of userFirstVehicle.values()) {
+    const deltaHours =
+      (new Date(firstPublish).getTime() - new Date(registered).getTime()) / (1000 * 60 * 60)
+    if (deltaHours >= 0) deltas.push(deltaHours)
+  }
+
+  const avgHours = deltas.length ? Math.round(deltas.reduce((a, b) => a + b, 0) / deltas.length) : 0
+  const sortedDeltas = [...deltas].sort((a, b) => a - b)
+  const medianHours = deltas.length ? Math.round(sortedDeltas[Math.floor(deltas.length / 2)]!) : 0
+
+  return {
+    totalDealers: userFirstVehicle.size,
+    avgHours,
+    medianHours,
+    within24h: deltas.length
+      ? Math.round((deltas.filter((d) => d <= 24).length / deltas.length) * 100)
+      : 0,
+  }
+}
+
 /**
  * GET /api/admin/onboarding-velocity
  * Returns average time from user registration to first vehicle publication.
@@ -18,58 +67,6 @@ export default defineEventHandler(async (event) => {
   // Use RPC or raw query to calculate onboarding velocity
   const { data, error } = await client.rpc('calculate_onboarding_velocity' as never)
 
-  if (error) {
-    // Fallback: calculate via direct query
-    const { data: velocityData, error: queryError } = await client
-      .from('vehicles')
-      .select('user_id, created_at, users!inner(created_at)')
-      .order('created_at', { ascending: true })
-      .limit(500)
-
-    if (queryError) {
-      throw createError({ statusCode: 500, statusMessage: 'Error fetching onboarding data' })
-    }
-
-    // Group by user and get first vehicle per user
-    const userFirstVehicle = new Map<string, { registered: string; firstPublish: string }>()
-
-    for (const row of (velocityData || []) as unknown as Array<{
-      user_id: string
-      created_at: string
-      users: { created_at: string }
-    }>) {
-      if (!userFirstVehicle.has(row.user_id)) {
-        userFirstVehicle.set(row.user_id, {
-          registered: row.users.created_at,
-          firstPublish: row.created_at,
-        })
-      }
-    }
-
-    const deltas: number[] = []
-    for (const { registered, firstPublish } of userFirstVehicle.values()) {
-      const deltaHours =
-        (new Date(firstPublish).getTime() - new Date(registered).getTime()) / (1000 * 60 * 60)
-      if (deltaHours >= 0) deltas.push(deltaHours)
-    }
-
-    const avgHours = deltas.length
-      ? Math.round(deltas.reduce((a, b) => a + b, 0) / deltas.length)
-      : 0
-    const medianHours = deltas.length
-      ? Math.round([...deltas].sort((a, b) => a - b)[Math.floor(deltas.length / 2)]!)
-      : 0
-
-    return {
-      totalDealers: userFirstVehicle.size,
-      avgHours,
-      medianHours,
-      // Percentage publishing within 24h
-      within24h: deltas.length
-        ? Math.round((deltas.filter((d) => d <= 24).length / deltas.length) * 100)
-        : 0,
-    }
-  }
-
+  if (error) return calculateVelocityFallback(client)
   return data
 })

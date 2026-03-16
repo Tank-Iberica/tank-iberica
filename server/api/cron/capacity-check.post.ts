@@ -20,8 +20,8 @@ import { verifyCronSecret } from '../../utils/verifyCronSecret'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const WARNING_THRESHOLD = 70   // percentage — trigger alert
-const CRITICAL_THRESHOLD = 90  // percentage — flag is_critical
+const WARNING_THRESHOLD = 70 // percentage — trigger alert
+const CRITICAL_THRESHOLD = 90 // percentage — flag is_critical
 
 interface CapacityMetric {
   metric: 'storage' | 'connections'
@@ -86,6 +86,50 @@ async function checkConnections(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type CapacityClient = any
+async function insertCapacityAlert(
+  supabase: CapacityClient,
+  m: CapacityMetric,
+  vertical: string,
+): Promise<string | null> {
+  const isCritical = m.pct >= CRITICAL_THRESHOLD
+  const details: Record<string, unknown> = { pct: m.pct }
+  if (m.currentBytes !== undefined) {
+    details.currentBytes = m.currentBytes
+    details.limitBytes = m.limitBytes
+    details.currentGb = Math.round((m.currentBytes / 1024 ** 3) * 100) / 100
+  }
+  if (m.currentCount !== undefined) {
+    details.currentCount = m.currentCount
+    details.limitCount = m.limitCount
+  }
+
+  const { error: insertErr } = await supabase
+    .from('capacity_alerts')
+    .insert({
+      vertical,
+      metric: m.metric,
+      current_value: m.pct,
+      threshold: WARNING_THRESHOLD,
+      is_critical: isCritical,
+      details,
+    } as never)
+
+  if (insertErr) {
+    logger.error('[capacity-check] Failed to insert alert', {
+      metric: m.metric,
+      error: insertErr.message,
+    })
+    return null
+  }
+
+  const label = `${m.metric}:${m.pct}%${isCritical ? '!CRITICAL' : ''}`
+  if (isCritical) logger.error(`[capacity-check] CRITICAL: ${m.metric} at ${m.pct}%`, details)
+  else logger.warn(`[capacity-check] WARNING: ${m.metric} at ${m.pct}%`, details)
+  return label
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event) => {
@@ -95,10 +139,7 @@ export default defineEventHandler(async (event) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = serverSupabaseServiceRole(event) as any
 
-  const metrics = await Promise.all([
-    checkStorage(supabase),
-    checkConnections(supabase),
-  ])
+  const metrics = await Promise.all([checkStorage(supabase), checkConnections(supabase)])
 
   const alertsInserted: string[] = []
   const skipped: string[] = []
@@ -109,41 +150,8 @@ export default defineEventHandler(async (event) => {
       skipped.push(`${m.metric}:${m.pct}%`)
       continue
     }
-
-    const isCritical = m.pct >= CRITICAL_THRESHOLD
-
-    const details: Record<string, unknown> = { pct: m.pct }
-    if (m.currentBytes !== undefined) {
-      details.currentBytes = m.currentBytes
-      details.limitBytes = m.limitBytes
-      details.currentGb = Math.round((m.currentBytes / (1024 ** 3)) * 100) / 100
-    }
-    if (m.currentCount !== undefined) {
-      details.currentCount = m.currentCount
-      details.limitCount = m.limitCount
-    }
-
-    const { error: insertErr } = await supabase
-      .from('capacity_alerts')
-      .insert({
-        vertical,
-        metric: m.metric,
-        current_value: m.pct,
-        threshold: WARNING_THRESHOLD,
-        is_critical: isCritical,
-        details,
-      } as never)
-
-    if (insertErr) {
-      logger.error('[capacity-check] Failed to insert alert', { metric: m.metric, error: insertErr.message })
-    } else {
-      alertsInserted.push(`${m.metric}:${m.pct}%${isCritical ? '!CRITICAL' : ''}`)
-      if (isCritical) {
-        logger.error(`[capacity-check] CRITICAL: ${m.metric} at ${m.pct}%`, details)
-      } else {
-        logger.warn(`[capacity-check] WARNING: ${m.metric} at ${m.pct}%`, details)
-      }
-    }
+    const result = await insertCapacityAlert(supabase, m, vertical)
+    if (result) alertsInserted.push(result)
   }
 
   logger.info('[capacity-check] Check complete', { alertsInserted, skipped })

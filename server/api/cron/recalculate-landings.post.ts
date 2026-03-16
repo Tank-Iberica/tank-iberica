@@ -242,6 +242,74 @@ function calcOverlap(
 
 // ─── Dimension map builders ───────────────────────────────────────────────────
 
+function accumulateType(
+  map: Map<string, TypeEntry>,
+  slug: string,
+  sub: SubcategoryRow,
+  v: VehicleRow,
+): void {
+  const existing = map.get(slug)
+  if (existing) {
+    existing.count++
+    updatePriceRange(existing, v.price)
+    incrementBrandCount(existing.brandCounts, v.brand)
+  } else {
+    const entry: TypeEntry = {
+      sub,
+      count: 1,
+      minPrice: null,
+      maxPrice: null,
+      brandCounts: new Map(),
+    }
+    updatePriceRange(entry, v.price)
+    incrementBrandCount(entry.brandCounts, v.brand)
+    map.set(slug, entry)
+  }
+}
+
+function accumulateTypeProvince(
+  map: Map<string, TypeProvinceEntry>,
+  key: string,
+  sub: SubcategoryRow,
+  v: VehicleRow,
+): void {
+  const existing = map.get(key)
+  if (existing) {
+    existing.count++
+    updatePriceRange(existing, v.price)
+    incrementBrandCount(existing.brandCounts, v.brand)
+  } else {
+    const entry: TypeProvinceEntry = {
+      sub,
+      province: v.location_province!,
+      count: 1,
+      minPrice: null,
+      maxPrice: null,
+      brandCounts: new Map(),
+    }
+    updatePriceRange(entry, v.price)
+    incrementBrandCount(entry.brandCounts, v.brand)
+    map.set(key, entry)
+  }
+}
+
+function accumulateTypeBrand(
+  map: Map<string, TypeBrandEntry>,
+  key: string,
+  sub: SubcategoryRow,
+  v: VehicleRow,
+): void {
+  const existing = map.get(key)
+  if (existing) {
+    existing.count++
+    updatePriceRange(existing, v.price)
+  } else {
+    const entry: TypeBrandEntry = { sub, brand: v.brand!, count: 1, minPrice: null, maxPrice: null }
+    updatePriceRange(entry, v.price)
+    map.set(key, entry)
+  }
+}
+
 function buildDimensionMaps(vehicles: VehicleRow[]): DimensionMaps {
   const typeCounts = new Map<string, TypeEntry>()
   const typeProvinceCounts = new Map<string, TypeProvinceEntry>()
@@ -250,69 +318,16 @@ function buildDimensionMaps(vehicles: VehicleRow[]): DimensionMaps {
   for (const v of vehicles) {
     const sub = v.subcategories
     if (!sub) continue
-    const typeSlug = sub.slug
 
-    // type
-    const typeEntry = typeCounts.get(typeSlug)
-    if (typeEntry) {
-      typeEntry.count++
-      updatePriceRange(typeEntry, v.price)
-      incrementBrandCount(typeEntry.brandCounts, v.brand)
-    } else {
-      const entry: TypeEntry = {
+    accumulateType(typeCounts, sub.slug, sub, v)
+    if (v.location_province)
+      accumulateTypeProvince(
+        typeProvinceCounts,
+        `${sub.slug}-${slugify(v.location_province)}`,
         sub,
-        count: 1,
-        minPrice: null,
-        maxPrice: null,
-        brandCounts: new Map(),
-      }
-      updatePriceRange(entry, v.price)
-      incrementBrandCount(entry.brandCounts, v.brand)
-      typeCounts.set(typeSlug, entry)
-    }
-
-    // type+province
-    if (v.location_province) {
-      const key = `${typeSlug}-${slugify(v.location_province)}`
-      const tpEntry = typeProvinceCounts.get(key)
-      if (tpEntry) {
-        tpEntry.count++
-        updatePriceRange(tpEntry, v.price)
-        incrementBrandCount(tpEntry.brandCounts, v.brand)
-      } else {
-        const entry: TypeProvinceEntry = {
-          sub,
-          province: v.location_province,
-          count: 1,
-          minPrice: null,
-          maxPrice: null,
-          brandCounts: new Map(),
-        }
-        updatePriceRange(entry, v.price)
-        incrementBrandCount(entry.brandCounts, v.brand)
-        typeProvinceCounts.set(key, entry)
-      }
-    }
-
-    // type+brand
-    if (v.brand) {
-      const key = `${typeSlug}-${slugify(v.brand)}`
-      const tbEntry = typeBrandCounts.get(key)
-      if (tbEntry) {
-        tbEntry.count++
-        updatePriceRange(tbEntry, v.price)
-      } else {
-        const entry: TypeBrandEntry = {
-          sub,
-          brand: v.brand,
-          count: 1,
-          minPrice: null,
-          maxPrice: null,
-        }
-        updatePriceRange(entry, v.price)
-        typeBrandCounts.set(key, entry)
-      }
-    }
+        v,
+      )
+    if (v.brand) accumulateTypeBrand(typeBrandCounts, `${sub.slug}-${slugify(v.brand)}`, sub, v)
   }
 
   return { typeCounts, typeProvinceCounts, typeBrandCounts }
