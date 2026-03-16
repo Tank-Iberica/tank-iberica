@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { formatPrice } from '~/utils/formatters'
-import type { CategoryStat, BrandBreakdownItem } from '~/composables/useDatos'
+import type { DatosCategoryStat, BrandBreakdownItem } from '~/composables/useDatos'
 
 defineProps<{
-  categoryStat: CategoryStat | undefined
+  categoryStat: DatosCategoryStat | undefined
   brandBreakdown: BrandBreakdownItem[]
 }>()
 </script>

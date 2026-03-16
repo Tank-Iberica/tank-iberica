@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { formatPrice } from '~/utils/formatters'
-import type { CategoryStat } from '~/composables/useDatos'
+import type { DatosCategoryStat } from '~/composables/useDatos'
 
 defineProps<{
-  categories: CategoryStat[]
+  categories: DatosCategoryStat[]
   selectedCategory: string | null
 }>()
 

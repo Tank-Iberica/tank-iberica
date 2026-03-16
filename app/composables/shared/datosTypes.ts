@@ -19,7 +19,7 @@ export interface MarketRow {
   avg_days_to_sell: number | null
 }
 
-export interface PriceHistoryRow {
+export interface DatosPriceHistoryRow {
   id: string
   vertical: string
   subcategory: string
@@ -28,7 +28,7 @@ export interface PriceHistoryRow {
   listing_count: number
 }
 
-export interface CategoryStat {
+export interface DatosCategoryStat {
   subcategory: string
   label: string
   avgPrice: number
@@ -70,4 +70,9 @@ export interface DatosChartData {
   datasets: DatosChartDataset[]
 }
 
-export interface DatosState { loading: boolean; data: MarketRow[]; priceHistory: PriceHistoryRow[]; filters: Record<string, unknown> }
+export interface DatosState {
+  loading: boolean
+  data: MarketRow[]
+  priceHistory: DatosPriceHistoryRow[]
+  filters: Record<string, unknown>
+}

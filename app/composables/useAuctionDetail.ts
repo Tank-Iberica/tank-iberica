@@ -17,7 +17,6 @@ import {
 import { useCloudinaryUpload } from '~/composables/admin/useCloudinaryUpload'
 import { formatPrice } from '~/composables/shared/useListingUtils'
 import type { VehicleImage } from '~/composables/shared/vehiclesTypes'
-export type { VehicleImage } from '~/composables/shared/vehiclesTypes'
 
 export function useAuctionDetail(auctionId: Ref<string>) {
   const { t, locale } = useI18n()
@@ -58,11 +57,11 @@ export function useAuctionDetail(auctionId: Ref<string>) {
     return [...images]
       .sort((a, b) => a.position - b.position)
       .map((img) => ({
-        id: (img as Record<string, unknown>).id as string ?? '',
+        id: ((img as Record<string, unknown>).id as string) ?? '',
         url: img.url,
-        thumbnail_url: (img as Record<string, unknown>).thumbnail_url as string | null ?? null,
+        thumbnail_url: ((img as Record<string, unknown>).thumbnail_url as string | null) ?? null,
         position: img.position,
-        alt_text: (img as Record<string, unknown>).alt_text as string | null ?? null,
+        alt_text: ((img as Record<string, unknown>).alt_text as string | null) ?? null,
       }))
   })
 

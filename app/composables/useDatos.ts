@@ -1,5 +1,5 @@
 import type {
-  CategoryStat,
+  DatosCategoryStat,
   ProvinceStat,
   BrandBreakdownItem,
   ProvinceSortKey,
@@ -19,8 +19,8 @@ import { getVerticalSlug } from '~/composables/useVerticalConfig'
 // Re-export types for backwards compatibility
 export type {
   MarketRow,
-  PriceHistoryRow,
-  CategoryStat,
+  DatosPriceHistoryRow,
+  DatosCategoryStat,
   ProvinceStat,
   BrandBreakdownItem,
   ProvinceSortKey,
@@ -40,7 +40,7 @@ export function useDatos() {
   /* ---- Reactive state ---- */
   const loading = ref(true)
   const marketRows = ref<MarketRow[]>([])
-  const historyRows = ref<PriceHistoryRow[]>([])
+  const historyRows = ref<DatosPriceHistoryRow[]>([])
   const selectedCategory = ref<string | null>(null)
   const provinceSortKey = ref<ProvinceSortKey>('listingCount')
   const provinceSortAsc = ref(false)
@@ -68,18 +68,18 @@ export function useDatos() {
       marketRows.value = marketResult.data as unknown as MarketRow[]
     }
     if (historyResult.data) {
-      historyRows.value = historyResult.data as unknown as PriceHistoryRow[]
+      historyRows.value = historyResult.data as unknown as DatosPriceHistoryRow[]
     }
 
     loading.value = false
   }
 
   /* ---- Category stats computation ---- */
-  const categoryStats = computed<CategoryStat[]>(() => {
+  const categoryStats = computed<DatosCategoryStat[]>(() => {
     if (!marketRows.value.length) return []
 
     const grouped = groupBy(marketRows.value, (r) => r.subcategory)
-    const stats: CategoryStat[] = []
+    const stats: DatosCategoryStat[] = []
     for (const [subcategory, rows] of grouped) {
       const stat = computeSubcategoryStat(subcategory, rows)
       if (stat) stats.push(stat)
@@ -88,7 +88,7 @@ export function useDatos() {
   })
 
   /* ---- Selected category stat ---- */
-  const selectedCategoryStat = computed<CategoryStat | undefined>(() => {
+  const selectedCategoryStat = computed<DatosCategoryStat | undefined>(() => {
     if (!selectedCategory.value) return undefined
     return categoryStats.value.find((c) => c.subcategory === selectedCategory.value)
   })

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FaqItem } from '~/composables/usePrecios'
+import type { FaqItem } from '~/utils/faqSchema'
 
 defineProps<{
   faqs: FaqItem[]

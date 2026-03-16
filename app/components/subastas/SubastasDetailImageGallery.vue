@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import type { VehicleImage } from '~/composables/useAuctionDetail'
+import type { VehicleImage } from '~/composables/shared/vehiclesTypes'
 
 defineProps<{
   images: VehicleImage[]

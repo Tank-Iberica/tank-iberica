@@ -3,7 +3,7 @@
  * No reactive state — all functions are deterministic and testable in isolation.
  */
 
-import type { MarketRow, CategoryStat, ProvinceStat, PriceTrend } from './datosTypes'
+import type { MarketRow, DatosCategoryStat, ProvinceStat, PriceTrend } from './datosTypes'
 
 export function groupByMonth(rows: MarketRow[]): Map<string, MarketRow[]> {
   const byMonth = new Map<string, MarketRow[]>()
@@ -37,7 +37,7 @@ export function computeTrend(
 export function computeSubcategoryStat(
   subcategory: string,
   rows: MarketRow[],
-): CategoryStat | null {
+): DatosCategoryStat | null {
   const byMonth = groupByMonth(rows)
   const months = Array.from(byMonth.keys()).sort((a, b) => b.localeCompare(a))
   if (!months.length) return null
