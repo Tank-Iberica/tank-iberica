@@ -28,9 +28,12 @@
 
 ## Decisiones Facturación (14-mar-2026)
 
-- **Billin Unlimited (€20/mes, ilimitado)** elegido sobre Quaderno — precio fijo vs $49-149/mes escalonado por volumen
+- **Billin Unlimited (€20/mes = €240/año, ilimitado)** elegido sobre Quaderno — precio fijo vs $49-149/mes escalonado por volumen
+- **Implementación:** Items #8 (tiers dealer) + #447 (Fiscal Compliance Engine) en BACKLOG-EJECUTABLE.md
+- **Adapter:** `server/utils/billingAdapter.ts` abstrae Billin API; reemplaza Quaderno en `billing.ts` + `create-invoice.post.ts`
+- **Razón:** API completa incluida (necesaria para automatizar facturas desde Stripe webhook), TicketBAI/Verifactu automático, multi-divisa, credit notes en refunds
 - Todo lo diferencial de Quaderno se construye en #447: VIES (API pública EU gratis), OSS B2C, tax nexus, multi-divisa (BCE API gratis), credit notes
-- **Código existente** (`billing.ts`, `create-invoice.post.ts`) usa Quaderno → migrar a Billin en sesión de #8
+- **Código existente:** actualmente en Quaderno → migración planificada sesión de #8
 - **Fiscal compliance:** B2B EU = inversión sujeto pasivo (0% IVA, cliente declara en su país). Solo necesitas ROI (AEAT, gratuito) + Modelo 349 trimestral. Sin registro fiscal en otros países EU para B2B.
 - **OSS B2C aplica** porque particulares pueden comprar créditos (no se puede controlar quién compra) → campo NIF IVA opcional en checkout: con NIF válido VIES = B2B; sin NIF = B2C IVA por país
 - **#447 Fiscal Compliance Engine** (Bloque 1, depende de #8, tamaño L): Billin adapter + multi-divisa + IVA multi-país global + OSS B2C + tax nexus vertical-aware (umbrales son TradeBase SL total, no por vertical)

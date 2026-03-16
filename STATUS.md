@@ -1,9 +1,17 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-16 · SonarQube smells sprint COMPLETO (~247 smells resueltos) · Duplicate imports fix · Husky v10 ready · ESLint 0 errores
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→16-mar (ver git log)
+**Última actualización:** 2026-03-16 (sesión auditoría presupuestos) · SonarQube smells sprint COMPLETO (~247 smells resueltos) · Duplicate imports fix · Husky v10 ready · ESLint 0 errores
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→16-mar + presupuestos (ver git log)
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
+
+## Sesión 16-mar (presupuestos)
+
+- **Hallazgo:** Billin API (€240/año) no estaba presupuestado en PRESUPUESTOS.md
+- **Verificación:** Confirmado en BACKLOG-EJECUTABLE.md (#8, #447) y MEMORIA.md (decisión 14-mar-2026)
+- **Acción:** Actualizado PRESUPUESTOS.md con Billin Unlimited (€20/mes) en Partida 11.4
+- **Impacto:** OPEX Año 1: ~16.100€ → Inversión total 3 años: ~51.800€ (+750€)
+- **Documento:** C:\TradeBase\PRESUPUESTOS.md (corporativo, externo a Tracciona)
 
 ---
 
