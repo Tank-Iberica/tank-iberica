@@ -1,9 +1,48 @@
 # STATUS — Tracciona
 
-**Última actualización:** 2026-03-16 (sesión auditoría presupuestos) · SonarQube smells sprint COMPLETO (~247 smells resueltos) · Duplicate imports fix · Husky v10 ready · ESLint 0 errores
-**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→16-mar + presupuestos (ver git log)
-**Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)**
+**Última actualización:** 2026-03-16 (sesión auditoría presupuestos + DEEP AUDIT 30+ items encontrados) · SonarQube smells sprint COMPLETO (~247 smells resueltos) · Duplicate imports fix · Husky v10 ready · ESLint 0 errores
+**Sesiones completadas:** 0–64 + Iter 1–16 auditoría + sesiones ad-hoc + sesiones 04→16-mar + presupuestos + deep audit (ver git log)
+**Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)** · **Backlog accuracy: 30+ hidden implementations found**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
+
+## Sesión 16-mar-tarde (AUDITORÍA PROFUNDA — 30+ items encontrados)
+
+**Scope:** Auditoría exhaustiva item-por-item de 325 PENDIENTE + 9 HECHO. Búsqueda dirigida por bloques (crons, páginas, endpoints, APIs).
+
+### Hallazgos principales
+
+- **30+ items IMPLEMENTADOS** pero marcados como PENDIENTE (nunca reexaminados):
+  - Bloque 1: #7 #8 #17 (Monetización: credit_packs, subscription_tiers, precios.vue)
+  - Bloque 2: #11 #12 #13 #14 #16 #18 #22 (Features: reserva, alertas, auto-renew, exportar)
+  - Bloque 3: #62 #64 (SEO: landing motor, JSON-LD)
+  - Bloque 7: #65-71 (Marketing: newsletter, onboarding, market-report, social, whatsapp, pinterest, calendar)
+  - Bloque 9: #20 #24 (Monetización avanzada: comparador, estadísticas)
+  - Bloque 11: #35 #74 #86 #87 #95 (Auditoría: data capture, tests, migrations, CI)
+
+- **7 items completamente ausentes** (críticos):
+  - Bloque 5 (Reviews): #50-54 — NO CÓDIGO (tabla, API, display, JSONB, NPS, Top-Rated)
+  - Bloque 2: #15 (Color anuncios) — NO CÓDIGO
+  - Bloque 3: #63 (Catálogo landing) — PARCIAL
+
+- **Test coverage analysis (Phase 2)**:
+  - ✓ Completos (código + tests): 17 items (#8 #12-14 #18 #22 #29-31 #33 #62 #64 #65-67 #74 #86 #87 #95)
+  - ⚠️ Necesitan tests: 12 items (#7 #11 #16 #17 #20 #24 #32 #35 #68 #69 #70 #71)
+  - **~40% de implementaciones sin tests** — backfill necesario
+
+### Acciones tomadas
+
+1. **BACKLOG-EJECUTABLE.md:** Actualizado 30+ items con estatus real + referencias a archivos (commit `aadb256`)
+2. **GitHub Issues:** Creados 6 issues para items críticos:
+   - Issues #19-23: Bloque 5 (reviews backend + display + JSONB + NPS + Top-Rated) [5 issues]
+   - Issue #24: #15 color anuncios especiales
+   - Issue #25: Roadmap Tests (T1-T4) — backfill tests para items críticos
+3. **MEMORY.md:** Documentados hallazgos + próximos pasos (commit `78dc2e1`)
+
+### Próximo paso
+
+**Phase 3:** Implementar Bloque 5 (reviews) — completamente PENDIENTE, crítico para reputación pública
+
+---
 
 ## Sesión 16-mar-noche (SonarQube bug fixes)
 
