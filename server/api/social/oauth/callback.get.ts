@@ -188,7 +188,10 @@ export default defineEventHandler(async (event) => {
   )) as { error: unknown }
 
   if (upsertErr) {
-    logger.error('Failed to store OAuth tokens', { platform, error: String(upsertErr) })
+    logger.error('Failed to store OAuth tokens', {
+      platform,
+      error: upsertErr instanceof Error ? upsertErr.message : JSON.stringify(upsertErr),
+    })
     return sendRedirect(event, `${siteUrl}${redirectTo}?oauth_error=token_storage_failed`)
   }
 

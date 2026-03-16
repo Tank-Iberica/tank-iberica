@@ -224,7 +224,7 @@ export async function exportVehicleFicha(
   }
 
   if (vehicle.description_es) {
-    // NOSONAR typescript:S1874
+    // NOSONAR — field exists in DB schema
     yPos += 10
     doc.setFontSize(14)
     doc.setTextColor(35, 66, 74)

@@ -73,7 +73,7 @@ export function useAdminSocialCalendar() {
     const gridStart = getWeekStart(start)
     // Show 5 or 6 complete weeks (35 or 42 days)
     const daysInMonth = new Date(start.getFullYear(), start.getMonth() + 1, 0).getDate()
-    const dayOffset = gridStart.getDate() !== start.getDate() ? (start.getDay() || 7) - 1 : 0
+    const dayOffset = gridStart.getDate() === start.getDate() ? 0 : (start.getDay() || 7) - 1
     const totalCells = daysInMonth + dayOffset
     const weeks = Math.ceil(totalCells / 7)
     return getDays(gridStart, weeks * 7)

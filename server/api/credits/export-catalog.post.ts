@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
   verifyCsrf(event)
 
   const config = useRuntimeConfig()
-  const supabaseUrl = String(config.public.supabaseUrl || process.env.SUPABASE_URL || '')
+  const supabaseUrl = (config.public.supabaseUrl as string) || process.env.SUPABASE_URL || ''
   const serviceKey = config.supabaseServiceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
 
   const headers: Record<string, string> = {

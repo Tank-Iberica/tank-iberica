@@ -20,18 +20,18 @@ declare global {
   }
 }
 
+/** Initialize dataLayer (GTM requires this before the script loads) */
+function initDataLayer(): void {
+  if (!import.meta.client) return
+  globalThis.dataLayer = globalThis.dataLayer ?? []
+}
+
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
   const { consent, hasConsent } = useConsent()
 
   let gtmLoaded = false
   let gtmScript: HTMLScriptElement | null = null
-
-  /** Initialize dataLayer (GTM requires this before the script loads) */
-  function initDataLayer(): void {
-    if (!import.meta.client) return
-    globalThis.dataLayer = globalThis.dataLayer ?? []
-  }
 
   /** Push an event to GTM dataLayer (no-op on server or if no consent) */
   function pushEvent(event: Record<string, unknown>): void {

@@ -137,7 +137,8 @@ export function formatEur(amount: number): string {
 
 function buildVehicleCard(vehicle: FeaturedVehicleRow, siteUrl: string): string {
   const url = `${siteUrl}/vehiculo/${vehicle.slug}`
-  const title = `${vehicle.brand} ${vehicle.model}${vehicle.year ? ` (${vehicle.year})` : ''}`
+  const yearSuffix = vehicle.year ? ` (${vehicle.year})` : ''
+  const title = `${vehicle.brand} ${vehicle.model}${yearSuffix}`
   const price = vehicle.price ? formatEur(vehicle.price) : 'Consultar precio'
   const imgUrl = getFirstImageUrl(vehicle.vehicle_images)
 

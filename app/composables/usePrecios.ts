@@ -264,7 +264,7 @@ export function usePrecios() {
         'mailto:tankiberica@gmail.com?subject=Solicitud%20Founding%20Dealer'
     } else {
       // 'basic' is kept for backward compat; maps to 'classic' checkout slug
-      const checkoutSlug = plan === 'basic' ? 'classic' : (plan as 'classic' | 'premium')
+      const checkoutSlug = plan === 'basic' ? 'classic' : plan
       startCheckout(checkoutSlug)
     }
   }

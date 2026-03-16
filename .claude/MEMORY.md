@@ -147,6 +147,29 @@ beforeAll(async () => {
 ## Plan Maestro 10/10 — FUSIONADO en BACKLOG-EJECUTABLE.md (13-mar-2026)
 
 - **Estado:** FUSIONADO 13-mar + ampliado 14-mar con 2 auditorías externas. **~404 items** en BACKLOG-EJECUTABLE.md (26 bloques, ~316 sesiones estimadas).
+
+## POLÍTICA DE DOBLE-CHECK + TESTS OBLIGATORIOS (16-mar-2026)
+
+**Auditoría Manual:** Verificados 14 items completados.
+
+- **Resultado:** 13/14 BIEN HECHOS (código + tests presentes).
+- **1 BLOQUEADO:** #4 (TypeScript errors) — `npm run typecheck` falla por vue-router config.
+- **Tests encontrados:** 7 items con tests (241 tests totales), 4 sin tests automáticos.
+
+**Nueva Política:**
+
+1. **Completado ≠ Seguro.** Toda tarea requiere doble-check: ✅ Código presente + ✅ Tests presentes
+2. **Marcado en backlog:** Items completos muestran "✅ Completado + ✅ X tests" o "⏳ Tests pendientes" (referenciado a Roadmap Tests)
+3. **Nuevas tareas (OBLIGATORIO):** Criterio "Tests" incluido en definición de completitud. Ejemplo: ">80% coverage de lógica" O ">3 tests de integración" O "1 E2E test"
+4. **Items sin tests:** Van a **Roadmap Tests (Prioridad 0)** para backfill ANTES de siguiente fase. Ej: T1-T4 en BACKLOG-EJECUTABLE.md
+5. **Riesgo de regresión:** Items con dependencias críticas (#30-#33 Trust Score, #29 Fingerprint, #74 Security, #2 IDOR) requieren E2E tests adicionales
+
+**Roadmap Tests creados:**
+
+- T1: puntuacion.vue E2E (mount, score visible, progress, criteria, i18n)
+- T2: verify-document IDOR tests (401/403/200 casoscorridos)
+- T3: merchant-feed error handling (no service name exposure)
+- T4: Build artifact check (exceljs chunk generation)
 - **Auditoría ext #1 (14-mar):** 21 confirmadas, 4 parciales, 4 ya conocidas, 4 incorrectas → +20 items (#209-#228, D23, F39-F41)
 - **Auditoría ext #2 (14-mar):** Roadmap 100/100 en 9 dimensiones → +83 items (#229-#311, D24-D25, F42-F59). 5 bloques nuevos: 35 (User Testing), 36 (A/B Testing), 37 (Design System+A11y), 38 (Load Testing k6), 39 (10M Scale).
 - **Errores de auditoría detectados:** aria-live ya existe (22 usos), skip-to-content ya existe, tokens.css no es tree-shakeable, CSP dual es defense-in-depth intencional, lazy loading composables = automático en Nuxt/Vite.

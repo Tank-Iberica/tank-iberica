@@ -29,6 +29,14 @@ export interface NegotiationOffer {
   created_at: string
 }
 
+function formatAmount(amountCents: number, currency = 'EUR'): string {
+  return new Intl.NumberFormat(undefined, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 0,
+  }).format(amountCents / 100)
+}
+
 export function useNegotiation() {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
@@ -155,14 +163,6 @@ export function useNegotiation() {
       .eq('id', offerId)
 
     await fetchOffers(conversationId)
-  }
-
-  function formatAmount(amountCents: number, currency = 'EUR'): string {
-    return new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency,
-      minimumFractionDigits: 0,
-    }).format(amountCents / 100)
   }
 
   return {

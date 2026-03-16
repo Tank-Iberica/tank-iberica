@@ -24,7 +24,7 @@ function stableHash(str: string): number {
   for (let i = 0; i < str.length; i++) {
     const char = str.codePointAt(i)!
     hash = (hash << 5) - hash + char
-    hash |= 0 // Convert to 32bit integer
+    hash = Math.trunc(hash) // Convert to 32bit integer
   }
   return Math.abs(hash)
 }

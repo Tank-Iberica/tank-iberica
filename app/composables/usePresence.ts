@@ -15,22 +15,22 @@ interface PresenceState {
   joined_at: string
 }
 
+function countPresences(state: Record<string, PresenceState[]>): number {
+  const seen = new Set<string>()
+  for (const presences of Object.values(state)) {
+    for (const p of presences) {
+      seen.add(p.user_id)
+    }
+  }
+  return seen.size
+}
+
 export function usePresence(entityType: string, entityId: string) {
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()
 
   const viewerCount = ref(0)
   let channel: RealtimeChannel | null = null
-
-  function countPresences(state: Record<string, PresenceState[]>): number {
-    const seen = new Set<string>()
-    for (const presences of Object.values(state)) {
-      for (const p of presences) {
-        seen.add(p.user_id)
-      }
-    }
-    return seen.size
-  }
 
   async function join(): Promise<void> {
     if (channel) return

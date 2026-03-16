@@ -185,15 +185,6 @@ export function releaseCronLock(name: string): void {
 }
 
 /**
- * Check if a cron job is within its allowed execution window (±5 min tolerance).
- * For external schedulers that might fire slightly off-schedule.
- */
-export function isInExecutionWindow(_name: string): boolean {
-  // Window enforcement is done by the external scheduler — always allow
-  return true
-}
-
-/**
  * Get the schedule config for a specific cron job.
  */
 export function getCronConfig(name: string): CronJobConfig | undefined {

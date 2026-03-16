@@ -12,6 +12,8 @@
  * Used in admin reports, dealer exports, and scheduled email digests.
  */
 
+export type TrendDirection = TrendDirection
+
 export interface MetricPoint {
   label: string
   value: number
@@ -23,14 +25,14 @@ export interface PeriodComparison {
   previous: number
   change: number
   changePercent: number
-  trend: 'up' | 'down' | 'stable'
+  trend: TrendDirection
 }
 
 export interface ReportKpiSummary {
   label: string
   value: number
   formatted: string
-  trend?: 'up' | 'down' | 'stable'
+  trend?: TrendDirection
   changePercent?: number
 }
 
@@ -52,13 +54,13 @@ export function comparePeriods(
   return metrics.map(({ metric, current, previous }) => {
     const change = current - previous
     let changePercent: number
-    if (previous !== 0) {
-      changePercent = Math.round((change / previous) * 1000) / 10
-    } else {
+    if (previous === 0) {
       changePercent = current > 0 ? 100 : 0
+    } else {
+      changePercent = Math.round((change / previous) * 1000) / 10
     }
 
-    let trend: 'up' | 'down' | 'stable'
+    let trend: TrendDirection
     if (Math.abs(changePercent) <= stabilityThreshold) {
       trend = 'stable'
     } else {
@@ -73,10 +75,7 @@ export function comparePeriods(
  * Detect trend direction from a series of values.
  * Uses simple linear regression slope sign.
  */
-export function detectTrend(
-  values: number[],
-  stabilityThreshold: number = 0.01,
-): 'up' | 'down' | 'stable' {
+export function detectTrend(values: number[], stabilityThreshold: number = 0.01): TrendDirection {
   if (values.length < 2) return 'stable'
 
   const n = values.length
@@ -158,15 +157,15 @@ export function generateReportKpiSummary(
 ): ReportKpiSummary[] {
   return metrics.map(({ label, value, previousValue, type }) => {
     const formatted = formatMetricValue(value, type, locale)
-    let trend: 'up' | 'down' | 'stable' | undefined
+    let trend: TrendDirection | undefined
     let changePercent: number | undefined
 
     if (previousValue !== undefined) {
       const change = value - previousValue
-      if (previousValue !== 0) {
-        changePercent = Math.round((change / previousValue) * 1000) / 10
-      } else {
+      if (previousValue === 0) {
         changePercent = value > 0 ? 100 : 0
+      } else {
+        changePercent = Math.round((change / previousValue) * 1000) / 10
       }
 
       if (Math.abs(changePercent) <= 2) {

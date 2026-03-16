@@ -23,6 +23,15 @@ const ACTIVITY_EVENTS: Array<keyof WindowEventMap> = [
 // Throttle activity updates to max once per 60 seconds to avoid excessive writes
 const ACTIVITY_THROTTLE_MS = 60 * 1000
 
+function getLastActivity(): number {
+  try {
+    const raw = localStorage.getItem(LS_KEY)
+    return raw ? Number.parseInt(raw, 10) : Date.now()
+  } catch {
+    return Date.now()
+  }
+}
+
 export function useSessionTimeout() {
   const user = useSupabaseUser()
   const supabase = useSupabaseClient()
@@ -46,15 +55,6 @@ export function useSessionTimeout() {
       localStorage.setItem(LS_KEY, String(now))
     } catch {
       // localStorage unavailable
-    }
-  }
-
-  function getLastActivity(): number {
-    try {
-      const raw = localStorage.getItem(LS_KEY)
-      return raw ? Number.parseInt(raw, 10) : Date.now()
-    } catch {
-      return Date.now()
     }
   }
 

@@ -19,7 +19,7 @@ export function isSafeFilename(value: string): boolean {
     !value.includes('\\') &&
     !value.includes('\0') &&
     !value.includes('..') &&
-    !/^\./.test(value)
+    !value.startsWith('.')
   )
 }
 

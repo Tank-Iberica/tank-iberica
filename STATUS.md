@@ -5,13 +5,24 @@
 **Puntuación global:** ~84/100 · SonarQube: **0 bugs · 0 vulns · ~10 smells (menores) · 3 hotspots SAFE** · Coverage: **66.1% (SQ scan) / ~75%+ (vitest)**
 **Navegación rápida:** [`docs/README.md`](docs/README.md) · [`docs/PROYECTO-CONTEXTO.md`](docs/PROYECTO-CONTEXTO.md) · [`docs/tracciona-docs/BACKLOG-EJECUTABLE.md`](docs/tracciona-docs/BACKLOG-EJECUTABLE.md) · [`CLAUDE.md`](CLAUDE.md)
 
-## Sesión 16-mar (presupuestos)
+## Sesión 16-mar (presupuestos + auditoría items completados)
+
+### Presupuestos
 
 - **Hallazgo:** Billin API (€240/año) no estaba presupuestado en PRESUPUESTOS.md
 - **Verificación:** Confirmado en BACKLOG-EJECUTABLE.md (#8, #447) y MEMORIA.md (decisión 14-mar-2026)
 - **Acción:** Actualizado PRESUPUESTOS.md con Billin Unlimited (€20/mes) en Partida 11.4
 - **Impacto:** OPEX Año 1: ~16.100€ → Inversión total 3 años: ~51.800€ (+750€)
 - **Documento:** C:\TradeBase\PRESUPUESTOS.md (corporativo, externo a Tracciona)
+
+### Auditoría Manual Items Completados
+
+- **Verificados:** 14 items marcados como ✅ done/agent-c en backlog
+- **Resultado:** 13/14 BIEN HECHOS (código presente, tests presentes donde corresponde)
+- **1 BLOQUEADO:** #4 (TypeScript errors) — `npm run typecheck` falla por vue-router config error
+- **Tests encontrados:** 7 items con tests (241 tests totales), 4 sin tests (T1-T4 creados en Roadmap Tests)
+- **Acción:** Creado "Roadmap Tests — Prioridad 0" en backlog con 4 items (T1-T4) para backfill de tests faltantes
+- **Nueva política:** Doble-check obligatorio (Completado + Testeado), nuevas tareas INCLUYEN tests como criterio de completitud
 
 ---
 

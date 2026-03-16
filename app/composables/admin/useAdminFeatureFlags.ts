@@ -166,10 +166,10 @@ export function useAdminFeatureFlags() {
         groups.set(flag.key, { global: null, overrides: [] })
       }
       const group = groups.get(flag.key)!
-      if (!flag.vertical) {
-        group.global = flag
-      } else {
+      if (flag.vertical) {
         group.overrides.push(flag)
+      } else {
+        group.global = flag
       }
     }
 

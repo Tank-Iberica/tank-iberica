@@ -84,13 +84,13 @@ export function useSwrQuery<T>(
 
   async function fetch(): Promise<void> {
     const cached = getCache<T>(key, ttl)
-    if (cached !== null) {
+    if (cached === null) {
+      await revalidate()
+    } else {
       // Serve stale immediately, revalidate in background
       data.value = cached
       isStale.value = true
       revalidate() // fire-and-forget background refresh
-    } else {
-      await revalidate()
     }
   }
 

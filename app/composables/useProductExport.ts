@@ -37,7 +37,9 @@ export function generateJsonLd(product: ProductData): Record<string, unknown> {
   const jsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: `${product.brand} ${product.model}${product.year ? ` (${product.year})` : ''}`,
+    name: product.year
+      ? `${product.brand} ${product.model} (${product.year})`
+      : `${product.brand} ${product.model}`,
     description: product.description ?? '',
     url: product.url,
     category: product.category ?? 'Vehicle',
@@ -87,7 +89,8 @@ export function generateJsonLd(product: ProductData): Record<string, unknown> {
  * Generate Open Graph metadata for social sharing.
  */
 export function generateOpenGraph(product: ProductData): Record<string, string> {
-  const title = `${product.brand} ${product.model}${product.year ? ` ${product.year}` : ''}`
+  const yearPart = product.year ? ` ${product.year}` : ''
+  const title = `${product.brand} ${product.model}${yearPart}`
   const priceStr = product.price
     ? `${product.price.toLocaleString('es-ES')} ${product.currency ?? '€'}`
     : ''
@@ -125,9 +128,9 @@ export function generateShareText(product: ProductData, locale: string = 'es'): 
   const isEn = locale === 'en'
   const year = product.year ? `${isEn ? 'Year' : 'Año'}: ${product.year}` : ''
   const km =
-    product.km !== undefined
-      ? `${isEn ? 'Mileage' : 'Km'}: ${product.km.toLocaleString('es-ES')} km`
-      : ''
+    product.km === undefined
+      ? ''
+      : `${isEn ? 'Mileage' : 'Km'}: ${product.km.toLocaleString('es-ES')} km`
   const price = product.price
     ? `${isEn ? 'Price' : 'Precio'}: ${product.price.toLocaleString('es-ES')} ${product.currency ?? '€'}`
     : ''

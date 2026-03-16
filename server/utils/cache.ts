@@ -97,7 +97,7 @@ export const CACHE_KEYS = {
 
   // Vehicle counts (1min)
   VEHICLE_COUNT: (vertical: string, category?: string) =>
-    `cache:count:${vertical}${category ? `:${category}` : ''}`,
+    category ? `cache:count:${vertical}:${category}` : `cache:count:${vertical}`,
 
   // Feature flags (10min)
   FEATURE_FLAGS: 'cache:features',

@@ -257,13 +257,12 @@ export default defineEventHandler(async (event) => {
   const notifications = buildNotifications(userAlertMap, usersMap)
 
   // ── 6. Send notifications ─────────────────────────────────────────────
-  const _internalSecret = String(
-    config.internalApiSecret ||
-      process.env.INTERNAL_API_SECRET ||
-      config.cronSecret ||
-      process.env.CRON_SECRET ||
-      '',
-  )
+  const _internalSecret =
+    (config.internalApiSecret as string) ||
+    process.env.INTERNAL_API_SECRET ||
+    (config.cronSecret as string) ||
+    process.env.CRON_SECRET ||
+    ''
 
   await processBatch({
     items: notifications,

@@ -25,68 +25,64 @@ const inflight = new Map<string, Promise<unknown>>()
 
 const DEFAULT_TTL = 60_000 // 1 minute
 
+/**
+ * Fetch data with deduplication.
+ * If a request for the same key is already in-flight, returns the same promise.
+ * If cached data exists and is within TTL, returns cached.
+ */
+async function dedupedFetch<T>(
+  key: string,
+  fetcher: () => Promise<T>,
+  ttl: number = DEFAULT_TTL,
+): Promise<T> {
+  // Check cache
+  const cached = cache.get(key) as CacheEntry<T> | undefined
+  if (cached && Date.now() - cached.fetchedAt < ttl) {
+    return cached.data
+  }
+
+  // Check in-flight
+  const existing = inflight.get(key) as Promise<T> | undefined
+  if (existing) {
+    return existing
+  }
+
+  // Start new fetch
+  const promise = fetcher()
+    .then((data) => {
+      cache.set(key, { data, fetchedAt: Date.now() })
+      inflight.delete(key)
+      return data
+    })
+    .catch((err) => {
+      inflight.delete(key)
+      throw err
+    })
+
+  inflight.set(key, promise)
+  return promise
+}
+
+/** Invalidate a specific cache key */
+function invalidate(key: string): void {
+  cache.delete(key)
+}
+
+/** Invalidate all cache entries matching a prefix */
+function invalidatePrefix(prefix: string): void {
+  for (const key of cache.keys()) {
+    if (key.startsWith(prefix)) {
+      cache.delete(key)
+    }
+  }
+}
+
+/** Clear all cached data */
+function clearAll(): void {
+  cache.clear()
+}
+
 export function useQueryDedup() {
-  /**
-   * Fetch data with deduplication.
-   * If a request for the same key is already in-flight, returns the same promise.
-   * If cached data exists and is within TTL, returns cached.
-   *
-   * @param key - Unique cache key
-   * @param fetcher - Async function to fetch data
-   * @param ttl - Cache time-to-live in ms (default: 60s)
-   */
-  async function dedupedFetch<T>(
-    key: string,
-    fetcher: () => Promise<T>,
-    ttl: number = DEFAULT_TTL,
-  ): Promise<T> {
-    // Check cache
-    const cached = cache.get(key) as CacheEntry<T> | undefined
-    if (cached && Date.now() - cached.fetchedAt < ttl) {
-      return cached.data
-    }
-
-    // Check in-flight
-    const existing = inflight.get(key) as Promise<T> | undefined
-    if (existing) {
-      return existing
-    }
-
-    // Start new fetch
-    const promise = fetcher()
-      .then((data) => {
-        cache.set(key, { data, fetchedAt: Date.now() })
-        inflight.delete(key)
-        return data
-      })
-      .catch((err) => {
-        inflight.delete(key)
-        throw err
-      })
-
-    inflight.set(key, promise)
-    return promise
-  }
-
-  /** Invalidate a specific cache key */
-  function invalidate(key: string): void {
-    cache.delete(key)
-  }
-
-  /** Invalidate all cache entries matching a prefix */
-  function invalidatePrefix(prefix: string): void {
-    for (const key of cache.keys()) {
-      if (key.startsWith(prefix)) {
-        cache.delete(key)
-      }
-    }
-  }
-
-  /** Clear all cached data */
-  function clearAll(): void {
-    cache.clear()
-  }
-
   return {
     dedupedFetch,
     invalidate,

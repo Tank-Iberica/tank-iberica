@@ -91,7 +91,8 @@ export default defineEventHandler(async (event) => {
   const mainImage = images[0]?.url || ''
   const secondImage = images[1]?.url || ''
 
-  const title = `${v.brand} ${v.model}${v.year ? ` (${v.year})` : ''}`
+  const yearSuffix = v.year ? ` (${v.year})` : ''
+  const title = `${v.brand} ${v.model}${yearSuffix}`
   const vehicleUrl = `${siteUrl}/vehiculo/${v.slug}`
   const dealerName = v.dealers?.company_name?.es || v.dealers?.company_name?.en || siteName
   const price = formatPrice(v.price)
@@ -100,7 +101,7 @@ export default defineEventHandler(async (event) => {
 
   const slides: string[] = []
 
-  // Slide 1 — Cover
+  // Slides 1 & 2 — Cover + Specs
   slides.push(
     slide(
       'cover',
@@ -109,10 +110,6 @@ export default defineEventHandler(async (event) => {
      <p style="color:rgba(255,255,255,0.8);font-size:0.85rem;margin:0">${safeText(dealerName)}</p>`,
       mainImage || undefined,
     ),
-  )
-
-  // Slide 2 — Specs
-  slides.push(
     slide(
       'specs',
       '#23424a',

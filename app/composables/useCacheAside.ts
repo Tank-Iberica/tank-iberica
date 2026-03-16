@@ -121,7 +121,8 @@ export function useCacheVerticalConfig(vertical: string) {
  * Specific cache for vehicle counts
  */
 export function useCacheVehicleCounts(vertical: string, category?: string) {
-  const key = `counts:${vertical}${category ? `:${category}` : ''}`
+  const categorySuffix = category ? `:${category}` : ''
+  const key = `counts:${vertical}${categorySuffix}`
   const { data: counts, ...rest } = useCacheAside<Record<string, number>>(
     key,
     60, // 1min

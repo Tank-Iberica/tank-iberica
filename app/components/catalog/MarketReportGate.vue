@@ -195,7 +195,7 @@ function triggerDownload(url: string, filename: string) {
   a.download = filename
   document.body.appendChild(a)
   a.click()
-  document.body.removeChild(a)
+  a.remove()
 }
 
 function onManualDownload() {
