@@ -7,11 +7,14 @@
 
 import type { Database } from '~~/types/supabase'
 
+export const CURRENT_POLICY_VERSION = '2026-01-01'
+
 export interface ConsentState {
   necessary: boolean
   analytics: boolean
   marketing: boolean
   timestamp: string
+  policyVersion?: string
 }
 
 const CONSENT_KEY = 'tracciona_consent'
@@ -98,6 +101,11 @@ export function useConsent() {
         return null
       }
       const parsed = JSON.parse(raw) as ConsentState
+      // Reject outdated policy versions — user must re-consent
+      if (parsed.policyVersion !== CURRENT_POLICY_VERSION) {
+        loaded.value = true
+        return null
+      }
       // Ensure necessary is always true
       parsed.necessary = true
       consent.value = parsed

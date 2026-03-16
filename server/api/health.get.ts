@@ -45,7 +45,12 @@ interface VerticalHealthResponse {
 }
 
 /** Required top-level fields in vertical_config */
-const REQUIRED_VERTICAL_FIELDS = ['name', 'theme', 'subscription_prices', 'commission_rates'] as const
+const REQUIRED_VERTICAL_FIELDS = [
+  'name',
+  'theme',
+  'subscription_prices',
+  'commission_rates',
+] as const
 
 export default defineEventHandler(
   async (event): Promise<LightHealthResponse | DeepHealthResponse | VerticalHealthResponse> => {
@@ -74,7 +79,11 @@ export default defineEventHandler(
         .single()
 
       if (configErr || !config) {
-        checks.push({ check: 'vertical_config_row', status: 'error', detail: configErr?.message ?? 'not found' })
+        checks.push({
+          check: 'vertical_config_row',
+          status: 'error',
+          detail: configErr?.message ?? 'not found',
+        })
       } else {
         checks.push({ check: 'vertical_config_row', status: 'ok' })
         for (const field of REQUIRED_VERTICAL_FIELDS) {
@@ -107,19 +116,29 @@ export default defineEventHandler(
       }
 
       // 3. At least one subscription price tier is defined
-      if (config && typeof config.subscription_prices === 'object' && config.subscription_prices !== null) {
+      if (
+        config &&
+        typeof config.subscription_prices === 'object' &&
+        config.subscription_prices !== null
+      ) {
         const tiers = Object.keys(config.subscription_prices as Record<string, unknown>)
         checks.push({
           check: 'subscription_tiers',
           status: tiers.length > 0 ? 'ok' : 'warn',
-          detail: tiers.length > 0 ? `${tiers.length} tiers: ${tiers.join(', ')}` : 'no tiers configured',
+          detail:
+            tiers.length > 0 ? `${tiers.length} tiers: ${tiers.join(', ')}` : 'no tiers configured',
         })
       }
 
       const hasError = checks.some((c) => c.status === 'error')
       const status: 'ok' | 'degraded' = hasError ? 'degraded' : 'ok'
       if (hasError) setResponseStatus(event, 503)
-      return { status, timestamp, vertical: process.env.NUXT_PUBLIC_VERTICAL || 'tracciona', checks }
+      return {
+        status,
+        timestamp,
+        vertical: process.env.NUXT_PUBLIC_VERTICAL || 'tracciona',
+        checks,
+      }
     }
 
     // ── Deep mode — requires cron secret ────────────────────────────────────
@@ -153,7 +172,17 @@ export default defineEventHandler(
       // auth stays 'error'
     }
 
-    const status = db === 'connected' && auth === 'ok' ? 'ok' : 'degraded'
+    // External service checks (only when env vars are configured)
+    let externalOk = true
+    if (process.env.STRIPE_SECRET_KEY) {
+      try {
+        await $fetch.raw('https://api.stripe.com/v1/')
+      } catch {
+        externalOk = false
+      }
+    }
+
+    const status = db === 'connected' && auth === 'ok' && externalOk ? 'ok' : 'degraded'
     if (status === 'degraded') setResponseStatus(event, 503)
 
     return { status, timestamp, uptime, version: APP_VERSION, db, db_latency_ms, auth }
