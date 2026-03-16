@@ -87,7 +87,8 @@ async function translateText(
     {
       messages: [{ role: 'user', content: prompt }],
       maxTokens: 4096,
-      system: 'You are a professional translator for an industrial vehicles marketplace. Translate accurately, preserving tone and technical vocabulary.',
+      system:
+        'You are a professional translator for an industrial vehicles marketplace. Translate accurately, preserving tone and technical vocabulary.',
     },
     'background',
     'content',
@@ -138,15 +139,12 @@ export default defineEventHandler(async (event): Promise<TranslateResponse> => {
 
   let vehicleCount = 0
 
-  if (vehicles && vehicles.length > 0) {
+  if (vehicles?.length) {
     for (const vehicle of vehicles) {
       const sourceText = vehicle.description_es as string | null
       if (!sourceText) {
         // No source text — clear flag and skip
-        await supabase
-          .from('vehicles')
-          .update({ pending_translations: false })
-          .eq('id', vehicle.id)
+        await supabase.from('vehicles').update({ pending_translations: false }).eq('id', vehicle.id)
         continue
       }
 
@@ -154,7 +152,12 @@ export default defineEventHandler(async (event): Promise<TranslateResponse> => {
 
       for (const targetLocale of targetLocales) {
         try {
-          const translated = await translateText(sourceText, defaultLocale, targetLocale, 'description')
+          const translated = await translateText(
+            sourceText,
+            defaultLocale,
+            targetLocale,
+            'description',
+          )
 
           await supabase.from('content_translations').upsert(
             {
@@ -169,19 +172,28 @@ export default defineEventHandler(async (event): Promise<TranslateResponse> => {
             { onConflict: 'entity_type,entity_id,field,locale' },
           )
 
-          results.push({ entityType: 'vehicle', entityId: vehicle.id, locale: targetLocale, field: 'description', ok: true })
+          results.push({
+            entityType: 'vehicle',
+            entityId: vehicle.id,
+            locale: targetLocale,
+            field: 'description',
+            ok: true,
+          })
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err)
           logger.error(`[translate-batch] Vehicle ${vehicle.id} → ${targetLocale}: ${msg}`)
-          results.push({ entityType: 'vehicle', entityId: vehicle.id, locale: targetLocale, field: 'description', ok: false })
+          results.push({
+            entityType: 'vehicle',
+            entityId: vehicle.id,
+            locale: targetLocale,
+            field: 'description',
+            ok: false,
+          })
         }
       }
 
       // Clear pending flag
-      await supabase
-        .from('vehicles')
-        .update({ pending_translations: false })
-        .eq('id', vehicle.id)
+      await supabase.from('vehicles').update({ pending_translations: false }).eq('id', vehicle.id)
     }
   }
 
@@ -195,7 +207,7 @@ export default defineEventHandler(async (event): Promise<TranslateResponse> => {
 
   let articleCount = 0
 
-  if (articles && articles.length > 0) {
+  if (articles?.length) {
     for (const article of articles) {
       articleCount++
 
@@ -231,10 +243,7 @@ export default defineEventHandler(async (event): Promise<TranslateResponse> => {
       }
 
       if (fieldsToTranslate.length === 0) {
-        await supabase
-          .from('articles')
-          .update({ pending_translations: false })
-          .eq('id', article.id)
+        await supabase.from('articles').update({ pending_translations: false }).eq('id', article.id)
         continue
       }
 
@@ -256,20 +265,31 @@ export default defineEventHandler(async (event): Promise<TranslateResponse> => {
               { onConflict: 'entity_type,entity_id,field,locale' },
             )
 
-            results.push({ entityType: 'article', entityId: article.id, locale: targetLocale, field, ok: true })
+            results.push({
+              entityType: 'article',
+              entityId: article.id,
+              locale: targetLocale,
+              field,
+              ok: true,
+            })
           } catch (err) {
             const msg = err instanceof Error ? err.message : String(err)
-            logger.error(`[translate-batch] Article ${article.id} → ${targetLocale}/${field}: ${msg}`)
-            results.push({ entityType: 'article', entityId: article.id, locale: targetLocale, field, ok: false })
+            logger.error(
+              `[translate-batch] Article ${article.id} → ${targetLocale}/${field}: ${msg}`,
+            )
+            results.push({
+              entityType: 'article',
+              entityId: article.id,
+              locale: targetLocale,
+              field,
+              ok: false,
+            })
           }
         }
       }
 
       // Clear pending flag
-      await supabase
-        .from('articles')
-        .update({ pending_translations: false })
-        .eq('id', article.id)
+      await supabase.from('articles').update({ pending_translations: false }).eq('id', article.id)
     }
   }
 

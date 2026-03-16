@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
   }
 
   let publishedArticles = 0
-  if (articles && articles.length > 0) {
+  if (articles?.length) {
     const typedArticles = articles as ScheduledArticle[]
     const ids = typedArticles.map((a) => a.id)
     const { error: updateErr } = await supabase
@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
   }
 
   let publishedVehicles = 0
-  if (vehicles && vehicles.length > 0) {
+  if (vehicles?.length) {
     const typedVehicles = vehicles as ScheduledVehicle[]
     const ids = typedVehicles.map((v) => v.id)
     const { error: updateErr } = await supabase
@@ -98,7 +98,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // ── 3. Purge Cloudflare cache for newly published vehicles ────────────────
-  if (vehicles && vehicles.length > 0) {
+  if (vehicles?.length) {
     for (const v of vehicles as ScheduledVehicle[]) {
       purgeVehicleCache(v.slug)
     }

@@ -29,7 +29,7 @@ const serverCache = new Map<string, CacheEntry>()
 export async function cacheAside<T>(key: string, ttl: number, fetch: () => Promise<T>): Promise<T> {
   // Check memory cache
   const cached = serverCache.get(key)
-  if (cached && cached.expiresAt > Date.now()) {
+  if ((cached?.expiresAt ?? 0) > Date.now()) {
     return cached.value as T
   }
 

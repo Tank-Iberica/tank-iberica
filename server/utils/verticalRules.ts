@@ -193,7 +193,7 @@ export function validateVehicleCompliance(
     }
   }
 
-  if (vehicle.images && vehicle.images.length > rules.max_images) {
+  if ((vehicle.images?.length ?? 0) > rules.max_images) {
     violations.push({
       field: 'images',
       rule: 'max_images',

@@ -90,10 +90,7 @@ export function useConversation() {
       }
 
       const mapped = ((data ?? []) as unknown as ConversationRow[]).map((row) => {
-        const firstImage =
-          row.vehicles?.images && row.vehicles.images.length > 0
-            ? row.vehicles.images[0]
-            : undefined
+        const firstImage = row.vehicles?.images?.length ? row.vehicles.images[0] : undefined
 
         const isBuyer = row.buyer_id === userId
         const otherParty = isBuyer ? row.seller : row.buyer

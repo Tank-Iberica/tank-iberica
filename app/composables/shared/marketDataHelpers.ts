@@ -99,7 +99,10 @@ export function aggregateBySubcategory(rows: MarketDataRow[]): Map<string, Subca
 
 /** Compute valuation result from market data rows. */
 export function computeValuation(rows: MarketDataRow[], year?: number): ValuationResult {
-  const prices = rows.map((r) => r.avg_price).filter((p) => p > 0).sort((a, b) => a - b)
+  const prices = rows
+    .map((r) => r.avg_price)
+    .filter((p) => p > 0)
+    .sort((a, b) => a - b)
   const totalSample = rows.reduce((sum, r) => sum + r.listings, 0)
   const factor = depreciationFactor(year)
   const trendPct = computeRowsTrend(rows)
@@ -134,7 +137,7 @@ export function buildCategoryStats(rows: MarketDataRow[]): CategoryStat[] {
     const avgPrice = data.totalListings > 0 ? Math.round(data.totalPrice / data.totalListings) : 0
     const prev = prevMap.get(subcategory)
     const prevAvgPrice =
-      prev && prev.totalListings > 0 ? Math.round(prev.totalPrice / prev.totalListings) : 0
+      (prev?.totalListings ?? 0) > 0 ? Math.round(prev!.totalPrice / prev!.totalListings) : 0
     stats.push({
       subcategory,
       avg_price: avgPrice,
