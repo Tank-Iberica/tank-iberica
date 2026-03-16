@@ -443,7 +443,19 @@
     "viewSellerProfile": "View seller profile",
     "relatedVehicles": "Similar vehicles",
     "browseCategories": "Browse by category",
-    "moreBrand": "More from"
+    "moreBrand": "More from",
+    "highlightStyle": "Highlight style",
+    "highlightStyleDesc": "Boost your listing with special styles for more visibility (2 credits per change).",
+    "highlight": {
+      "gold": "Gold",
+      "premium": "Premium",
+      "spotlight": "Spotlight",
+      "urgent": "Urgent"
+    },
+    "highlightCost": "{n} credit | {n} credits",
+    "highlightRemove": "Remove highlight",
+    "highlightRemoveFree": "Free",
+    "highlightActive": "Active highlight: {style}"
   },
   "banner": {
     "moreInfo": "More info"

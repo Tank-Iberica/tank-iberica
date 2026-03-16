@@ -443,7 +443,19 @@
     "viewSellerProfile": "Ver perfil del vendedor",
     "relatedVehicles": "Vehículos similares",
     "browseCategories": "Explorar por categoría",
-    "moreBrand": "Más de"
+    "moreBrand": "Más de",
+    "highlightStyle": "Estilo destacado",
+    "highlightStyleDesc": "Destaca tu anuncio con estilos especiales para que tenga más visibilidad (2 créditos por cambio).",
+    "highlight": {
+      "gold": "Oro",
+      "premium": "Premium",
+      "spotlight": "Spotlight",
+      "urgent": "Urgente"
+    },
+    "highlightCost": "{n} crédito | {n} créditos",
+    "highlightRemove": "Quitar destaque",
+    "highlightRemoveFree": "Gratis",
+    "highlightActive": "Destaque activo: {style}"
   },
   "banner": {
     "moreInfo": "Más información"

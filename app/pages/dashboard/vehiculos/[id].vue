@@ -57,7 +57,10 @@ function onCategoryUpdate(field: 'category_id' | 'subcategory_id', value: string
   updateFormField(field, value)
 }
 
-function onDescriptionUpdate(field: 'description_es' | 'description_en' | 'video_url', value: string): void {
+function onDescriptionUpdate(
+  field: 'description_es' | 'description_en' | 'video_url',
+  value: string,
+): void {
   updateFormField(field, value)
 }
 
@@ -116,6 +119,13 @@ function onUploadDocTypeUpdate(value: string): void {
       />
 
       <VehiculoPhotosSection :max-photos="maxPhotos" />
+
+      <!-- #15: Highlight styles (2 credits) -->
+      <AdminVehiculoHighlight
+        :vehicle-id="vehicleId"
+        :initial-style="form.highlight_style"
+        @updated="(style) => updateFormField('highlight_style', style)"
+      />
 
       <VehiculoVerificationSection
         :current-level="currentLevel"

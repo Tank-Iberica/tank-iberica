@@ -32,6 +32,7 @@ export interface VehicleFormData {
   location: string
   status: string
   video_url: string
+  highlight_style: string | null
 }
 
 export interface UploadFormData {
@@ -97,6 +98,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
     location: '',
     status: 'published',
     video_url: '',
+    highlight_style: null,
   })
 
   const uploadForm = ref<UploadFormData>({
@@ -144,7 +146,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
         supabase
           .from('vehicles')
           .select(
-            'id, brand, model, year, price, km, description_es, description_en, status, slug, category_id, subcategory_id, location, location_province, location_country, condition, hours, dealer_id, created_at, updated_at, featured, sold_price_cents, sold_at, video_url, main_image_url',
+            'id, brand, model, year, price, km, description_es, description_en, status, slug, category_id, subcategory_id, location, location_province, location_country, condition, hours, dealer_id, created_at, updated_at, featured, sold_price_cents, sold_at, video_url, main_image_url, highlight_style',
           )
           .eq('id', vehicleId)
           .eq('dealer_id', dealer.id)
@@ -186,6 +188,7 @@ export function useDashboardVehiculoDetail(vehicleId: string) {
         location: v.location || '',
         status: v.status || 'published',
         video_url: v.video_url || '',
+        highlight_style: v.highlight_style || null,
       }
 
       categories.value = (catRes.data || []) as CategoryOption[]
