@@ -73,13 +73,8 @@ export function useAdminSocialCalendar() {
     const gridStart = getWeekStart(start)
     // Show 5 or 6 complete weeks (35 or 42 days)
     const daysInMonth = new Date(start.getFullYear(), start.getMonth() + 1, 0).getDate()
-    const totalCells =
-      daysInMonth +
-      (gridStart.getDate() !== start.getDate()
-        ? start.getDay() === 0
-          ? 6
-          : start.getDay() - 1
-        : 0)
+    const dayOffset = gridStart.getDate() !== start.getDate() ? (start.getDay() || 7) - 1 : 0
+    const totalCells = daysInMonth + dayOffset
     const weeks = Math.ceil(totalCells / 7)
     return getDays(gridStart, weeks * 7)
   })
@@ -100,11 +95,8 @@ export function useAdminSocialCalendar() {
   const postsByDate = computed(() => {
     const map = new Map<string, CalendarPost[]>()
     for (const post of posts.value) {
-      const dateStr = post.scheduled_at
-        ? toLocalDateStr(new Date(post.scheduled_at))
-        : post.posted_at
-          ? toLocalDateStr(new Date(post.posted_at))
-          : null
+      const postDate = post.scheduled_at ?? post.posted_at
+      const dateStr = postDate ? toLocalDateStr(new Date(postDate)) : null
       if (!dateStr) continue
       if (!map.has(dateStr)) map.set(dateStr, [])
       map.get(dateStr)!.push(post)

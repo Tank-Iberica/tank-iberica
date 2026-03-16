@@ -144,12 +144,11 @@ const currentVertical = getVerticalSlug()
 const verticals = ref<{ slug: string; name: string }[]>([])
 
 async function loadVerticals() {
-  const { data } = await supabase
-    .from('vertical_config')
-    .select('vertical, name')
-    .order('vertical')
+  const { data } = await supabase.from('vertical_config').select('vertical, name').order('vertical')
   if (data) {
-    verticals.value = (data as unknown as { vertical: string; name: Record<string, string> | null }[]).map((v) => ({
+    verticals.value = (
+      data as unknown as { vertical: string; name: Record<string, string> | null }[]
+    ).map((v) => ({
       slug: v.vertical,
       name: v.name?.es || v.name?.en || v.vertical,
     }))
@@ -159,7 +158,7 @@ async function loadVerticals() {
 function switchVertical(slug: string) {
   // In multi-vertical, this would change the context.
   // For now, store preference and reload.
-  if (typeof globalThis.window !== 'undefined') {
+  if (globalThis.window !== undefined) {
     localStorage.setItem('admin_vertical', slug)
     globalThis.location.reload()
   }

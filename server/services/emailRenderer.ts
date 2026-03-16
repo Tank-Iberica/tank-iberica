@@ -39,9 +39,9 @@ export function markdownToEmailHtml(text: string): string {
     // Links
     .replaceAll(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: inherit;">$1</a>')
     // Double newline = paragraph break
-    .replaceAll(/\n\n/g, '</p><p style="margin: 0 0 16px 0;">')
+    .replaceAll('\n\n', '</p><p style="margin: 0 0 16px 0;">')
     // Single newline = line break
-    .replaceAll(/\n/g, '<br />')
+    .replaceAll('\n', '<br />')
 
   // Wrap in paragraph
   html = `<p style="margin: 0 0 16px 0;">${html}</p>`
@@ -91,8 +91,9 @@ export function buildEmailHtml(
     ? `<img src="${t.logoUrl}" alt="${t.siteName}" width="160" style="display: block; margin: 0 auto 24px;" />`
     : `<h1 style="text-align: center; color: ${t.primaryColor}; font-size: 24px; margin: 0 0 24px;">${t.siteName}</h1>`
 
+  const unsubLabel = locale === 'en' ? 'Unsubscribe' : 'Cancelar suscripción'
   const unsubscribeHtml = options?.unsubscribeUrl
-    ? `<a href="${options.unsubscribeUrl}" style="color: #999; text-decoration: underline;">${locale === 'en' ? 'Unsubscribe' : 'Cancelar suscripción'}</a>`
+    ? `<a href="${options.unsubscribeUrl}" style="color: #999; text-decoration: underline;">${unsubLabel}</a>`
     : ''
 
   return `<!DOCTYPE html>

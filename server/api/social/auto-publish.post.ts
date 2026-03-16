@@ -49,11 +49,8 @@ function getVehicleTitle(v: VehicleData): string {
 
 function buildPostContent(v: VehicleData, platform: SocialPlatform, locale: string): string {
   const title = getVehicleTitle(v)
-  const price = v.price
-    ? formatPrice(v.price)
-    : locale === 'es'
-      ? 'Precio a consultar'
-      : 'Price on request'
+  const priceOnRequest = locale === 'es' ? 'Precio a consultar' : 'Price on request'
+  const price = v.price ? formatPrice(v.price) : priceOnRequest
   const location = v.location || (locale === 'es' ? 'España' : 'Spain')
   const url = `${getSiteUrl()}/${locale === 'es' ? 'vehiculo' : 'vehicle'}/${v.slug}`
 

@@ -148,8 +148,7 @@ export function useReferral() {
   /** Generate a shareable referral URL */
   const referralUrl = computed(() => {
     if (!referralCode.value) return null
-    const siteUrl =
-      (typeof globalThis.window !== 'undefined' ? globalThis.location.origin : '') || ''
+    const siteUrl = (globalThis.window !== undefined ? globalThis.location.origin : '') || ''
     return `${siteUrl}/registro?ref=${referralCode.value}`
   })
 

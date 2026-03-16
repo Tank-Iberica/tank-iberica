@@ -42,10 +42,10 @@ function formatPrice(price: number | null): string {
 
 function safeText(text: string): string {
   return text
-    .replaceAll(/&/g, '&amp;')
-    .replaceAll(/</g, '&lt;')
-    .replaceAll(/>/g, '&gt;')
-    .replaceAll(/"/g, '&quot;')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
 }
 
 function slide(id: string, bgColor: string, content: string, image?: string): string {

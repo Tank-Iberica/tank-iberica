@@ -52,13 +52,8 @@ function buildPostSaleHtml(
   isEs: boolean,
 ): string {
   const primary = '#23424A'
-  const greeting = buyerName
-    ? isEs
-      ? `Hola ${buyerName},`
-      : `Hello ${buyerName},`
-    : isEs
-      ? 'Hola,'
-      : 'Hello,'
+  const greetWord = isEs ? 'Hola' : 'Hello'
+  const greeting = buyerName ? `${greetWord} ${buyerName},` : `${greetWord},`
 
   return `<!DOCTYPE html>
 <html lang="${isEs ? 'es' : 'en'}">

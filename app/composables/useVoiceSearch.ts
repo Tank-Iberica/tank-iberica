@@ -16,7 +16,13 @@ interface SpeechRecognitionInstance {
   interimResults: boolean
   maxAlternatives: number
   onstart: ((ev: Event) => void) | null
-  onresult: ((ev: { results: { [index: number]: { [index: number]: { transcript: string } | undefined } | undefined } }) => void) | null
+  onresult:
+    | ((ev: {
+        results: {
+          [index: number]: { [index: number]: { transcript: string } | undefined } | undefined
+        }
+      }) => void)
+    | null
   onend: ((ev: Event) => void) | null
   onerror: ((ev: { error: string }) => void) | null
   start(): void
@@ -25,7 +31,10 @@ interface SpeechRecognitionInstance {
 }
 
 type SpeechRecognitionCtor = new () => SpeechRecognitionInstance
-type WindowWithSpeech = Window & { SpeechRecognition?: SpeechRecognitionCtor; webkitSpeechRecognition?: SpeechRecognitionCtor }
+type WindowWithSpeech = Window & {
+  SpeechRecognition?: SpeechRecognitionCtor
+  webkitSpeechRecognition?: SpeechRecognitionCtor
+}
 
 export interface UseVoiceSearch {
   isListening: Ref<boolean>
@@ -45,7 +54,7 @@ export function useVoiceSearch(): UseVoiceSearch {
   const isSupported = computed<boolean>(() => {
     if (import.meta.server) return false
     return (
-      typeof globalThis.window !== 'undefined' &&
+      globalThis.window !== undefined &&
       ('SpeechRecognition' in globalThis || 'webkitSpeechRecognition' in globalThis)
     )
   })

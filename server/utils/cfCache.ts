@@ -46,7 +46,7 @@ export async function cfCacheGet<T>(
   fn: () => Promise<T>,
 ): Promise<T> {
   // CF Workers caches API only available in CF Workers runtime
-  if (typeof caches === 'undefined' || !caches || typeof caches.default === 'undefined') {
+  if (caches === undefined || !caches || caches.default === undefined) {
     return fn()
   }
 

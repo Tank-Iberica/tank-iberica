@@ -189,7 +189,7 @@ async function onSubmit() {
 }
 
 function triggerDownload(url: string, filename: string) {
-  if (typeof globalThis.window === 'undefined') return
+  if (globalThis.window === undefined) return
   const a = document.createElement('a')
   a.href = url
   a.download = filename

@@ -58,9 +58,10 @@ export function generateJsonLd(product: ProductData): Record<string, unknown> {
   }
 
   if (product.condition) {
-    jsonLd.itemCondition = product.condition === 'Nuevo'
-      ? 'https://schema.org/NewCondition'
-      : 'https://schema.org/UsedCondition'
+    jsonLd.itemCondition =
+      product.condition === 'Nuevo'
+        ? 'https://schema.org/NewCondition'
+        : 'https://schema.org/UsedCondition'
   }
 
   if (product.dealerName) {
@@ -91,9 +92,11 @@ export function generateOpenGraph(product: ProductData): Record<string, string> 
     ? `${product.price.toLocaleString('es-ES')} ${product.currency ?? '€'}`
     : ''
 
+  const priceSuffix = priceStr ? ` - ${priceStr}` : ''
+  const locationSuffix = product.location ? ` en ${product.location}` : ''
   const description = product.description
     ? product.description.slice(0, 200)
-    : `${title}${priceStr ? ` - ${priceStr}` : ''}${product.location ? ` en ${product.location}` : ''}`
+    : `${title}${priceSuffix}${locationSuffix}`
 
   const meta: Record<string, string> = {
     'og:title': title,
@@ -117,21 +120,18 @@ export function generateOpenGraph(product: ProductData): Record<string, string> 
 /**
  * Generate plain text summary for WhatsApp/email sharing.
  */
-export function generateShareText(
-  product: ProductData,
-  locale: string = 'es',
-): string {
+export function generateShareText(product: ProductData, locale: string = 'es'): string {
   const title = `${product.brand} ${product.model}`
-  const year = product.year ? `${locale === 'en' ? 'Year' : 'Año'}: ${product.year}` : ''
-  const km = product.km !== undefined
-    ? `${locale === 'en' ? 'Mileage' : 'Km'}: ${product.km.toLocaleString('es-ES')} km`
-    : ''
+  const isEn = locale === 'en'
+  const year = product.year ? `${isEn ? 'Year' : 'Año'}: ${product.year}` : ''
+  const km =
+    product.km !== undefined
+      ? `${isEn ? 'Mileage' : 'Km'}: ${product.km.toLocaleString('es-ES')} km`
+      : ''
   const price = product.price
-    ? `${locale === 'en' ? 'Price' : 'Precio'}: ${product.price.toLocaleString('es-ES')} ${product.currency ?? '€'}`
+    ? `${isEn ? 'Price' : 'Precio'}: ${product.price.toLocaleString('es-ES')} ${product.currency ?? '€'}`
     : ''
-  const location = product.location
-    ? `${locale === 'en' ? 'Location' : 'Ubicación'}: ${product.location}`
-    : ''
+  const location = product.location ? `${isEn ? 'Location' : 'Ubicación'}: ${product.location}` : ''
 
   const parts = [title, year, km, price, location, product.url].filter(Boolean)
   return parts.join('\n')
@@ -156,10 +156,11 @@ export function generateCsvRow(product: ProductData): string {
     product.url,
   ]
 
-  return fields.map((f) => `"${f.replaceAll(/"/g, '""')}"`).join(',')
+  return fields.map((f) => `"${f.replaceAll('"', '""')}"`).join(',')
 }
 
 /**
  * CSV header row matching generateCsvRow field order.
  */
-export const CSV_HEADER = 'id,brand,model,year,km,price,currency,location,condition,category,dealer,url'
+export const CSV_HEADER =
+  'id,brand,model,year,km,price,currency,location,condition,category,dealer,url'

@@ -49,7 +49,7 @@ export function parseSimpleMarkdown(text: string): string {
     html = html.replaceAll(/(?<!_)_(?!_)(.+?)(?<!_)_(?!_)/g, '<em>$1</em>')
 
     // Single newlines → <br>
-    html = html.replaceAll(/\n/g, '<br>')
+    html = html.replaceAll('\n', '<br>')
 
     return `<p>${html}</p>`
   })

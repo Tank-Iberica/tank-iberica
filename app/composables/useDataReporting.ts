@@ -187,7 +187,7 @@ export function generateCsv(headers: string[], rows: Array<Array<string | number
   const escape = (val: string | number): string => {
     const str = String(val)
     if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-      return `"${str.replaceAll(/"/g, '""')}"`
+      return `"${str.replaceAll('"', '""')}"`
     }
     return str
   }
