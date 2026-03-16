@@ -24,6 +24,56 @@ const reserveSchema = z.object({
 
 const IMMUNE_PLANS = ['premium', 'founding']
 
+/**
+ * Check seller immunity: fetches their subscription and throws if plan is immune.
+ * Returns the seller's user_id for later use.
+ */
+async function checkSellerImmunity(
+  dealerId: string,
+  headers: Record<string, string>,
+  supabaseUrl: string,
+): Promise<string | null> {
+  const dealerUserRes = await fetch(
+    `${supabaseUrl}/rest/v1/dealers?id=eq.${dealerId}&select=user_id`,
+    { headers },
+  )
+  const dealerUsers = (await dealerUserRes.json()) as Array<{ user_id: string | null }>
+  const sellerUserId = dealerUsers[0]?.user_id ?? null
+
+  if (sellerUserId) {
+    const subsRes = await fetch(
+      `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${sellerUserId}&status=eq.active&select=plan`,
+      { headers },
+    )
+    const subs = (await subsRes.json()) as Array<{ plan: string }>
+    const sellerPlan = subs[0]?.plan ?? 'free'
+    if (IMMUNE_PLANS.includes(sellerPlan)) {
+      throw safeError(
+        409,
+        'This seller has a Premium subscription — their vehicles cannot be priority-reserved',
+      )
+    }
+  }
+
+  return sellerUserId
+}
+
+/** Throws if the buyer is also the seller of the vehicle. */
+async function checkBuyerIsNotSeller(
+  dealerId: string,
+  buyerUserId: string,
+  headers: Record<string, string>,
+  supabaseUrl: string,
+): Promise<void> {
+  const res = await fetch(`${supabaseUrl}/rest/v1/dealers?user_id=eq.${buyerUserId}&select=id`, {
+    headers,
+  })
+  const dealers = (await res.json()) as Array<{ id: string }>
+  if (dealers[0]?.id === dealerId) {
+    throw safeError(400, 'You cannot reserve your own vehicle')
+  }
+}
+
 export default defineEventHandler(async (event) => {
   verifyCsrf(event)
   const user = await serverSupabaseUser(event)
@@ -76,53 +126,11 @@ export default defineEventHandler(async (event) => {
     throw safeError(409, 'Vehicle already has an active priority reservation')
   }
 
-  // 2. Check seller's plan immunity (Premium/Founding dealers cannot be priority-reserved)
-  if (vehicle.dealer_id) {
-    const dealerUserRes = await fetch(
-      `${supabaseUrl}/rest/v1/dealers?id=eq.${vehicle.dealer_id}&select=user_id`,
-      { headers },
-    )
-    const dealerUsers = (await dealerUserRes.json()) as Array<{ user_id: string | null }>
-    const sellerUserId = dealerUsers[0]?.user_id
-
-    if (sellerUserId) {
-      const subsRes = await fetch(
-        `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${sellerUserId}&status=eq.active&select=plan`,
-        { headers },
-      )
-      const subs = (await subsRes.json()) as Array<{ plan: string }>
-      const sellerPlan = subs[0]?.plan ?? 'free'
-
-      if (IMMUNE_PLANS.includes(sellerPlan)) {
-        throw safeError(
-          409,
-          'This seller has a Premium subscription — their vehicles cannot be priority-reserved',
-        )
-      }
-    }
-  }
-
-  // 3. Buyer must not be the seller
-  if (vehicle.dealer_id) {
-    const buyerDealerRes = await fetch(
-      `${supabaseUrl}/rest/v1/dealers?user_id=eq.${user.id}&select=id`,
-      { headers },
-    )
-    const buyerDealers = (await buyerDealerRes.json()) as Array<{ id: string }>
-    if (buyerDealers[0]?.id === vehicle.dealer_id) {
-      throw safeError(400, 'You cannot reserve your own vehicle')
-    }
-  }
-
-  // 4. Get seller user_id from dealer (needed for priority_reservations record)
+  // 2–4. Seller immunity + buyer-is-not-seller checks (consolidated)
   let sellerUserId: string | null = null
   if (vehicle.dealer_id) {
-    const dealerUserRes2 = await fetch(
-      `${supabaseUrl}/rest/v1/dealers?id=eq.${vehicle.dealer_id}&select=user_id`,
-      { headers },
-    )
-    const dealerUsers2 = (await dealerUserRes2.json()) as Array<{ user_id: string | null }>
-    sellerUserId = dealerUsers2[0]?.user_id ?? null
+    sellerUserId = await checkSellerImmunity(vehicle.dealer_id, headers, supabaseUrl)
+    await checkBuyerIsNotSeller(vehicle.dealer_id, user.id, headers, supabaseUrl)
   }
 
   if (!sellerUserId) {
