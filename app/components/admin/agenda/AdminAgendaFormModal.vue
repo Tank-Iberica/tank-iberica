@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { CONTACT_TYPES, type ContactFormData } from '~/composables/admin/useAdminAgenda'
 
-defineProps<{
+const props = defineProps<{
   visible: boolean
   isEditing: boolean
   formData: ContactFormData
   saving: boolean
 }>()
+
+const { t } = useI18n()
+const submitLabel = computed(() => {
+  if (props.saving) return t('common.saving')
+  return props.isEditing ? t('common.save') : t('common.create')
+})
 
 const emit = defineEmits<{
   (e: 'close' | 'submit'): void
@@ -24,7 +30,13 @@ function onSelectChange(event: Event) {
 
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="modal-overlay" role="dialog" aria-modal="true" @click.self="emit('close')">
+    <div
+      v-if="visible"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      @click.self="emit('close')"
+    >
       <div class="modal modal-md">
         <div class="modal-header">
           <h3>{{ isEditing ? $t('admin.agenda.editContact') : $t('admin.agenda.newContact') }}</h3>
@@ -116,7 +128,7 @@ function onSelectChange(event: Event) {
             :disabled="saving || !formData.contact_name.trim()"
             @click="emit('submit')"
           >
-            {{ saving ? $t('common.saving') : isEditing ? $t('common.save') : $t('common.create') }}
+            {{ submitLabel }}
           </button>
         </div>
       </div>

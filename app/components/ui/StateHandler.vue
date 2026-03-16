@@ -67,26 +67,22 @@ const errorMessage = computed<string>(() => {
   return t('common.error')
 })
 
-const wrapStyle = computed(() =>
-  props.minHeight ? { minHeight: props.minHeight } : {},
-)
+const wrapStyle = computed(() => (props.minHeight ? { minHeight: props.minHeight } : {}))
+
+function skeletonWidth(n: number): string {
+  if (n % 3 === 0) return '55%'
+  if (n % 2 === 0) return '80%'
+  return '100%'
+}
 </script>
 
 <template>
-  <div
-    class="state-handler"
-    :style="wrapStyle"
-    :aria-busy="loading || undefined"
-  >
+  <div class="state-handler" :style="wrapStyle" :aria-busy="loading || undefined">
     <!-- ── LOADING ─────────────────────────────────────────────── -->
     <template v-if="loading">
       <slot name="loading">
         <div class="state-handler__loading" aria-hidden="true">
-          <UiSkeleton
-            v-for="n in skeletonCount"
-            :key="n"
-            :width="n % 3 === 0 ? '55%' : n % 2 === 0 ? '80%' : '100%'"
-          />
+          <UiSkeleton v-for="n in skeletonCount" :key="n" :width="skeletonWidth(n)" />
         </div>
       </slot>
     </template>
@@ -112,14 +108,8 @@ const wrapStyle = computed(() =>
           <p class="state-handler__error-msg">
             {{ errorMessage || $t('common.error') }}
           </p>
-          <button
-            v-if="retry"
-            class="state-handler__retry"
-            type="button"
-            @click="retry"
-          >
+          <button v-if="retry" class="state-handler__retry" type="button" @click="retry">
             {{ $t('common.retry') }}
-
           </button>
         </div>
       </slot>

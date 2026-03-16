@@ -22,8 +22,8 @@ defineEmits<{
     <button
       class="nav-group-header"
       :class="{ 'has-badge': badge > 0, active: isActiveGroup }"
-      :aria-expanded="!collapsed ? isOpen : undefined"
-      :aria-controls="!collapsed ? `nav-group-${label}` : undefined"
+      :aria-expanded="collapsed ? undefined : isOpen"
+      :aria-controls="collapsed ? undefined : `nav-group-${label}`"
       @click="collapsed ? $emit('openPopover', $event) : $emit('toggle')"
     >
       <slot name="icon" />
@@ -42,7 +42,13 @@ defineEmits<{
         <path d="M6 9l6 6 6-6" />
       </svg>
     </button>
-    <div v-if="!collapsed" v-show="isOpen" :id="`nav-group-${label}`" class="nav-group-items" role="region">
+    <div
+      v-if="!collapsed"
+      v-show="isOpen"
+      :id="`nav-group-${label}`"
+      class="nav-group-items"
+      role="region"
+    >
       <NuxtLink
         v-for="item in items"
         :key="item.to"

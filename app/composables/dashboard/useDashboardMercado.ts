@@ -32,11 +32,15 @@ export interface MarketReport {
 }
 
 export function positionClass(position: VehicleInsight['pricePosition']): string {
-  return position === 'below' ? 'pos-below' : position === 'above' ? 'pos-above' : 'pos-average'
+  if (position === 'below') return 'pos-below'
+  if (position === 'above') return 'pos-above'
+  return 'pos-average'
 }
 
 export function positionIcon(position: VehicleInsight['pricePosition']): string {
-  return position === 'below' ? '↓' : position === 'above' ? '↑' : '='
+  if (position === 'below') return '↓'
+  if (position === 'above') return '↑'
+  return '='
 }
 
 export function formatDeviation(dev: number): string {

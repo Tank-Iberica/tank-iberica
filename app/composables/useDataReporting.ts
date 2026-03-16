@@ -51,8 +51,12 @@ export function comparePeriods(
 ): PeriodComparison[] {
   return metrics.map(({ metric, current, previous }) => {
     const change = current - previous
-    const changePercent =
-      previous !== 0 ? Math.round((change / previous) * 1000) / 10 : current > 0 ? 100 : 0
+    let changePercent: number
+    if (previous !== 0) {
+      changePercent = Math.round((change / previous) * 1000) / 10
+    } else {
+      changePercent = current > 0 ? 100 : 0
+    }
 
     let trend: 'up' | 'down' | 'stable'
     if (Math.abs(changePercent) <= stabilityThreshold) {
@@ -159,10 +163,17 @@ export function generateReportKpiSummary(
 
     if (previousValue !== undefined) {
       const change = value - previousValue
-      changePercent =
-        previousValue !== 0 ? Math.round((change / previousValue) * 1000) / 10 : value > 0 ? 100 : 0
+      if (previousValue !== 0) {
+        changePercent = Math.round((change / previousValue) * 1000) / 10
+      } else {
+        changePercent = value > 0 ? 100 : 0
+      }
 
-      trend = Math.abs(changePercent) <= 2 ? 'stable' : changePercent > 0 ? 'up' : 'down'
+      if (Math.abs(changePercent) <= 2) {
+        trend = 'stable'
+      } else {
+        trend = changePercent > 0 ? 'up' : 'down'
+      }
     }
 
     return { label, value, formatted, trend, changePercent }

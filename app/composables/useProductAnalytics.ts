@@ -18,7 +18,7 @@ export interface VehicleMetrics {
   totalLeads: number
   favorites: number
   avgDurationSeconds: number
-  conversionRate: number  // leads / uniqueViews (0-1)
+  conversionRate: number // leads / uniqueViews (0-1)
 }
 
 export interface VehicleMetricsSummary {
@@ -34,7 +34,10 @@ export type MetricsPeriod = '7d' | '30d' | '90d' | 'all'
 
 function periodToDate(period: MetricsPeriod): string | null {
   if (period === 'all') return null
-  const days = period === '7d' ? 7 : period === '30d' ? 30 : 90
+  let days: number
+  if (period === '7d') days = 7
+  else if (period === '30d') days = 30
+  else days = 90
   const d = new Date()
   d.setDate(d.getDate() - days)
   return d.toISOString()
@@ -117,14 +120,17 @@ export function useProductAnalytics(dealerId?: Ref<string | null>) {
       if (eErr) throw eErr
 
       // Aggregate per vehicle
-      const agg = new Map<string, {
-        views: number
-        sessions: Set<string>
-        leads: number
-        favorites: number
-        totalDuration: number
-        durationCount: number
-      }>()
+      const agg = new Map<
+        string,
+        {
+          views: number
+          sessions: Set<string>
+          leads: number
+          favorites: number
+          totalDuration: number
+          durationCount: number
+        }
+      >()
 
       for (const vid of vehicleIds) {
         agg.set(vid, {
@@ -178,9 +184,8 @@ export function useProductAnalytics(dealerId?: Ref<string | null>) {
           uniqueViews,
           totalLeads: data.leads,
           favorites: data.favorites,
-          avgDurationSeconds: data.durationCount > 0
-            ? Math.round(data.totalDuration / data.durationCount)
-            : 0,
+          avgDurationSeconds:
+            data.durationCount > 0 ? Math.round(data.totalDuration / data.durationCount) : 0,
           conversionRate: calcConversionRate(data.leads, uniqueViews),
         })
       }

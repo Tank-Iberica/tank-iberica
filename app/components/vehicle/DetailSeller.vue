@@ -5,8 +5,8 @@
       <h3>{{ $t('vehicle.sellerInfo') }}</h3>
       <!-- Trust badge based on dealer health score -->
       <SharedDealerTrustBadge
-        v-if="dealerScore !== null"
-        :tier="dealerScore >= 80 ? 'top' : dealerScore >= 60 ? 'verified' : null"
+        v-if="dealerTierFromScore !== null"
+        :tier="dealerTierFromScore"
         class="trust-badge-wrap"
       />
       <div class="seller-details">
@@ -64,6 +64,13 @@ const props = defineProps<{
 
 // Lazily load dealer health score to show trust badge
 const dealerScore = ref<number | null>(null)
+
+const dealerTierFromScore = computed<TrustBadgeTier | null>(() => {
+  if (dealerScore.value === null) return null
+  if (dealerScore.value >= 80) return 'top'
+  if (dealerScore.value >= 60) return 'verified'
+  return null
+})
 
 onMounted(async () => {
   if (!props.dealerId) return
