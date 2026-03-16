@@ -1,3 +1,4 @@
+/* global __ENV */
 /**
  * k6 spike test — Backlog #288
  *

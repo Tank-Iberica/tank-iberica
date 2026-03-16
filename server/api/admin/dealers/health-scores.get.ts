@@ -8,6 +8,7 @@
  */
 import { defineEventHandler, getQuery } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { safeError } from '~~/server/utils/safeError'
 import { logger } from '~~/server/utils/logger'
 
@@ -34,7 +35,7 @@ export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
   if (!user) throw safeError(401, 'Unauthorized')
 
-  const supabase = serverSupabaseServiceRole(event) as any
+  const supabase = serverSupabaseServiceRole(event) as SupabaseClient
 
   // Admin guard
   const { data: profile } = await supabase
@@ -79,46 +80,55 @@ export default defineEventHandler(async (event) => {
   }
 
   const imagesByDealer = new Map<string, number>()
-  for (const img of (imageCountRes.data ?? []) as Array<{ vehicles: { dealer_id: string } }>) {
+  for (const img of (imageCountRes.data ?? []) as unknown as Array<{
+    vehicles: { dealer_id: string }
+  }>) {
     const did = img.vehicles?.dealer_id
     if (did) imagesByDealer.set(did, (imagesByDealer.get(did) ?? 0) + 1)
   }
 
   // Calculate simplified health score per dealer
-  const rows: DealerHealthRow[] = dealers.map((dealer: { id: string; company_name: string | null; avg_response_time_hours: number | null; logo_url: string | null }) => {
-    const activeVehicles = vehiclesByDealer.get(dealer.id) ?? 0
-    const imageCount = imagesByDealer.get(dealer.id) ?? 0
+  const rows: DealerHealthRow[] = dealers.map(
+    (dealer: {
+      id: string
+      company_name: string | null
+      avg_response_time_hours: number | null
+      logo_url: string | null
+    }) => {
+      const activeVehicles = vehiclesByDealer.get(dealer.id) ?? 0
+      const imageCount = imagesByDealer.get(dealer.id) ?? 0
 
-    // Simplified scoring (profile + vehicles + photos)
-    const profileFields = [dealer.logo_url].filter(Boolean).length
-    const profileScore = Math.round((profileFields / 1) * 10)
+      // Simplified scoring (profile + vehicles + photos)
+      const profileFields = [dealer.logo_url].filter(Boolean).length
+      const profileScore = Math.round((profileFields / 1) * 10)
 
-    const avgPhotos = activeVehicles > 0 ? imageCount / activeVehicles : 0
-    const photosScore = avgPhotos > 3 ? 10 : Math.round((avgPhotos / 3) * 10)
+      const avgPhotos = activeVehicles > 0 ? imageCount / activeVehicles : 0
+      const photosScore = avgPhotos > 3 ? 10 : Math.round((avgPhotos / 3) * 10)
 
-    const groups = Math.floor(activeVehicles / 5)
-    const vehiclesScore = Math.min(groups * 10, 40)
+      const groups = Math.floor(activeVehicles / 5)
+      const vehiclesScore = Math.min(groups * 10, 40)
 
-    const responseHours = dealer.avg_response_time_hours
-    let responseScore = 0
-    if (responseHours !== null) {
-      if (responseHours <= 24) responseScore = 20
-      else if (responseHours < 72) responseScore = Math.round(((72 - responseHours) / 48) * 20)
-    }
+      const responseHours = dealer.avg_response_time_hours
+      let responseScore = 0
+      if (responseHours !== null) {
+        if (responseHours <= 24) responseScore = 20
+        else if (responseHours < 72) responseScore = Math.round(((72 - responseHours) / 48) * 20)
+      }
 
-    const healthTotal = Math.min(profileScore + photosScore + vehiclesScore + responseScore, 100)
+      const healthTotal = Math.min(profileScore + photosScore + vehiclesScore + responseScore, 100)
 
-    return {
-      id: dealer.id,
-      company_name: dealer.company_name,
-      avg_response_time_hours: dealer.avg_response_time_hours,
-      logo_url: dealer.logo_url,
-      activeVehicles,
-      imageCount,
-      healthTotal,
-      badge: scoreToBadge(healthTotal),
-    }
-  })
+      return {
+        id: dealer.id,
+        company_name: dealer.company_name,
+        avg_response_time_hours: dealer.avg_response_time_hours,
+        logo_url: dealer.logo_url,
+        activeVehicles,
+        imageCount,
+        healthTotal,
+        badge: scoreToBadge(healthTotal),
+      }
+    },
+  )
 
   return {
     ok: true,

@@ -30,7 +30,7 @@ for (const target of targets) {
     const norm = file.replace(/\\/g, '/');
     if (!norm.includes('/' + target + '/')) continue;
     const s = data.s;
-    for (const [id, count] of Object.entries(s)) {
+    for (const [, count] of Object.entries(s)) {
       totalStmts++;
       if (count === 0) totalUncov++;
     }

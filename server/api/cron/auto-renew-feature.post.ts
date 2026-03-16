@@ -17,6 +17,7 @@
  */
 import { defineEventHandler, readBody } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { safeError } from '../../utils/safeError'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 import { logger } from '../../utils/logger'
@@ -45,12 +46,12 @@ export interface AutoRenewResult {
  * Returns the new balance, or null if insufficient credits.
  */
 export async function deductOneCredit(
-  supabase: ReturnType<typeof serverSupabaseServiceRole>,
+  supabase: SupabaseClient,
   userId: string,
   now: Date,
 ): Promise<number | null> {
   // user_credits / credit_transactions tables not yet in generated types
-  const db = supabase as any
+  const db = supabase
 
   const { data: creditRows } = await db
     .from('user_credits')
@@ -75,7 +76,7 @@ export default defineEventHandler(async (event): Promise<AutoRenewResult> => {
   verifyCronSecret(event, body?.secret)
 
   // Tables like user_credits, credit_transactions, auto_renew/auto_feature columns not in generated types
-  const supabase = serverSupabaseServiceRole(event) as any
+  const supabase = serverSupabaseServiceRole(event) as SupabaseClient
   const db = supabase
   const now = new Date()
 
@@ -98,7 +99,9 @@ export default defineEventHandler(async (event): Promise<AutoRenewResult> => {
   const typedVehicles = vehicles as unknown as AutoVehicle[]
 
   // 2. Get unique dealer IDs and map to user_ids
-  const dealerIds = Array.from(new Set(typedVehicles.map((v) => v.dealer_id).filter(Boolean) as string[]))
+  const dealerIds = Array.from(
+    new Set(typedVehicles.map((v) => v.dealer_id).filter(Boolean) as string[]),
+  )
 
   const { data: dealers } = await supabase.from('dealers').select('id, user_id').in('id', dealerIds)
 

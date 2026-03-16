@@ -22,7 +22,7 @@ function slugify(text: string): string {
     .normalize('NFD')
     .replaceAll(/[\u0300-\u036F]/g, '') // strip diacritics
     .replaceAll(/[^a-z0-9]+/g, '-')
-    .replaceAll(/(?:^-|-$)/g, '')
+    .replaceAll(/^-|-$/g, '')
 }
 
 function calcThreshold(parentCount: number): number {

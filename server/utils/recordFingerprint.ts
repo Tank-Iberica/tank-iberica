@@ -9,6 +9,7 @@
 import type { H3Event } from 'h3'
 import { getHeader } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { logger } from './logger'
 
 // DJB2 hash — same algorithm as getFingerprintKey() in rateLimit.ts
@@ -49,17 +50,16 @@ export function recordFingerprint(event: H3Event, userId: string): void {
     null
   const ipHintVal = rawIp ? ipHint(rawIp) : null
 
-  const supabase = serverSupabaseServiceRole(event) as any
+  const supabase = serverSupabaseServiceRole(event) as SupabaseClient
 
   // Fire-and-forget
   Promise.resolve(
-    supabase
-      .rpc('upsert_user_fingerprint', {
-        p_user_id: userId,
-        p_fp_hash: fpHash,
-        p_ua_hint: uaHint,
-        p_ip_hint: ipHintVal,
-      })
+    supabase.rpc('upsert_user_fingerprint', {
+      p_user_id: userId,
+      p_fp_hash: fpHash,
+      p_ua_hint: uaHint,
+      p_ip_hint: ipHintVal,
+    }),
   )
     .then(({ error }: { error?: { message: string } | null }) => {
       if (error) {

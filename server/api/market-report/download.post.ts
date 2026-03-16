@@ -13,6 +13,7 @@
 import { defineEventHandler, readBody, setHeader, createError } from 'h3'
 import { z } from 'zod'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { getRateLimitKey, checkRateLimit } from '../../utils/rateLimit'
 import { logger } from '../../utils/logger'
 import { safeError } from '../../utils/safeError'
@@ -51,7 +52,7 @@ export default defineEventHandler(async (event) => {
   const { email, locale } = parsed.data
 
   // Tables market_report_leads & market_reports are not yet in generated types
-  const supabase = serverSupabaseServiceRole(event) as any
+  const supabase = serverSupabaseServiceRole(event) as SupabaseClient
   const quarter = getCurrentQuarter()
 
   try {
@@ -82,10 +83,11 @@ export default defineEventHandler(async (event) => {
 
       if (signErr || !signedData?.signedUrl) {
         // Fall through to on-the-fly generation
-        logger.warn(
-          'Signed URL creation failed — falling back to on-the-fly',
-          { quarter, locale, signErr },
-        )
+        logger.warn('Signed URL creation failed — falling back to on-the-fly', {
+          quarter,
+          locale,
+          signErr,
+        })
       } else {
         return {
           ok: true,

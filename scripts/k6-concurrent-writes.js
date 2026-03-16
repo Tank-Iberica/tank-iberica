@@ -1,3 +1,4 @@
+/* global __ENV, __VU, __ITER */
 /**
  * k6 concurrent writes test — Backlog #290
  *

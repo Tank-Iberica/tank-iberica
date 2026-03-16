@@ -115,10 +115,7 @@
 
           <VehiclePriceHistoryChart :vehicle-id="vehicle.id" />
 
-          <VehicleVideo
-            v-if="vehicle.video_url"
-            :video-url="vehicle.video_url!"
-          />
+          <VehicleVideo v-if="vehicle.video_url" :video-url="vehicle.video_url!" />
 
           <VehicleTransportCalculator
             :vehicle="{
@@ -380,7 +377,9 @@ if (vehicle.value) {
         href: `${siteUrl}/en/vehiculo/${vehicle.value.slug}`,
       },
       { rel: 'alternate', hreflang: 'x-default', href: canonicalUrl },
-      ...(seoImage ? [{ rel: 'preload', as: 'image', href: seoImage, fetchpriority: 'high' } as any] : []),
+      ...(seoImage
+        ? [{ rel: 'preload', as: 'image' as const, href: seoImage, fetchpriority: 'high' as const }]
+        : []),
     ],
   })
 

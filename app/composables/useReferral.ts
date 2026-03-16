@@ -7,6 +7,7 @@
  *
  * Tables: dealers (referral_code, referred_by), referral_rewards
  */
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 interface ReferralReward {
   id: string
@@ -66,12 +67,11 @@ export function useReferral() {
 
       const dealerId = (dealer as { id: string }).id
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error: err } = await (supabase
-        .from('referral_rewards' as never)
+      const { data, error: err } = await (supabase as SupabaseClient)
+        .from('referral_rewards')
         .select(
           'id, inviter_dealer_id, invitee_dealer_id, inviter_credits_awarded, invitee_credits_awarded, status, created_at, awarded_at',
-        ) as any)
+        )
         .or(`inviter_dealer_id.eq.${dealerId},invitee_dealer_id.eq.${dealerId}`)
         .order('created_at', { ascending: false })
 
@@ -126,13 +126,15 @@ export function useReferral() {
 
       // Create pending referral reward
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: rewardErr } = await (supabase.from('referral_rewards' as never) as any).insert({
-        inviter_dealer_id: inviterId,
-        invitee_dealer_id: currentDealerId,
-        inviter_credits_awarded: 0,
-        invitee_credits_awarded: 0,
-        status: 'pending',
-      } as never)
+      const { error: rewardErr } = await (supabase.from('referral_rewards' as never) as any).insert(
+        {
+          inviter_dealer_id: inviterId,
+          invitee_dealer_id: currentDealerId,
+          inviter_credits_awarded: 0,
+          invitee_credits_awarded: 0,
+          status: 'pending',
+        } as never,
+      )
 
       if (rewardErr) throw rewardErr
 
@@ -146,7 +148,8 @@ export function useReferral() {
   /** Generate a shareable referral URL */
   const referralUrl = computed(() => {
     if (!referralCode.value) return null
-    const siteUrl = (typeof globalThis.window !== 'undefined' ? globalThis.location.origin : '') || ''
+    const siteUrl =
+      (typeof globalThis.window !== 'undefined' ? globalThis.location.origin : '') || ''
     return `${siteUrl}/registro?ref=${referralCode.value}`
   })
 

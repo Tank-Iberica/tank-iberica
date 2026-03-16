@@ -94,6 +94,6 @@ export function sanitizeSlug(value: string): string {
     .replaceAll(/\0/g, '')
     .replaceAll(/[^a-z0-9-]/g, '-')
     .replaceAll(/-+/g, '-')
-    .replaceAll(/(?:^-|-$)/g, '')
+    .replaceAll(/^-|-$/g, '')
     .slice(0, 200)
 }

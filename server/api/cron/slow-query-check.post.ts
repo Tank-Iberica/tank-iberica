@@ -16,10 +16,11 @@
  */
 import { defineEventHandler } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { logger } from '../../utils/logger'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 
-const SLOW_THRESHOLD_MS = 500   // log queries slower than this
+const SLOW_THRESHOLD_MS = 500 // log queries slower than this
 const ALERT_THRESHOLD_MS = 2000 // emit logger.warn for queries this slow
 
 interface SlowQueryRow {
@@ -36,13 +37,12 @@ export default defineEventHandler(async (event) => {
   verifyCronSecret(event)
 
   const vertical = process.env.NUXT_PUBLIC_VERTICAL ?? 'tracciona'
-  const supabase = serverSupabaseServiceRole(event) as any
+  const supabase = serverSupabaseServiceRole(event) as SupabaseClient
 
   // 1. Query pg_stat_statements via RPC
-  const { data: rows, error: rpcErr } = await supabase.rpc(
-    'get_slow_queries' as never,
-    { p_threshold_ms: SLOW_THRESHOLD_MS },
-  )
+  const { data: rows, error: rpcErr } = await supabase.rpc('get_slow_queries' as never, {
+    p_threshold_ms: SLOW_THRESHOLD_MS,
+  })
 
   if (rpcErr) {
     logger.error('[slow-query-check] RPC failed', { error: rpcErr.message })

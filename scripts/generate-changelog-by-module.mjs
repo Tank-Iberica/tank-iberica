@@ -196,19 +196,6 @@ for (const mod of moduleNames) {
   }
 
   const typeOrder = ['feature', 'fix', 'refactor', 'perf', 'test', 'docs', 'chore', 'ci', 'style', 'other']
-  const typeEmoji = {
-    feature: '+',
-    fix: '!',
-    refactor: '~',
-    perf: '^',
-    test: 'T',
-    docs: 'D',
-    chore: '.',
-    ci: 'C',
-    style: 'S',
-    other: '?',
-  }
-
   for (const type of typeOrder) {
     if (!byType[type]) continue
     md += `### ${type} (${byType[type].length})\n\n`

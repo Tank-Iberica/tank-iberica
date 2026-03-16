@@ -18,6 +18,7 @@
  */
 import { defineEventHandler } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { logger } from '../../utils/logger'
 import { verifyCronSecret } from '../../utils/verifyCronSecret'
 
@@ -26,16 +27,13 @@ const MATVIEWS = ['mv_dashboard_kpis', 'mv_search_facets'] as const
 export default defineEventHandler(async (event) => {
   verifyCronSecret(event)
 
-  const supabase = serverSupabaseServiceRole(event) as any
+  const supabase = serverSupabaseServiceRole(event) as SupabaseClient
   const results: Record<string, 'ok' | 'error'> = {}
   const startMs = Date.now()
 
   for (const view of MATVIEWS) {
     const t0 = Date.now()
-    const { error } = await supabase.rpc(
-      'refresh_matview' as never,
-      { view_name: view },
-    )
+    const { error } = await supabase.rpc('refresh_matview' as never, { view_name: view })
 
     if (error) {
       logger.error(`[refresh-matviews] Failed to refresh ${view}`, { error: error.message })

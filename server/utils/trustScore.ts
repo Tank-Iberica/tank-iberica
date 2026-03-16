@@ -71,14 +71,6 @@ function isBioNonEmpty(bio: unknown): boolean {
   return false
 }
 
-function accountAgeDays(createdAt: string | null | undefined): number {
-  if (!createdAt) return 0
-  const created = new Date(createdAt)
-  if (isNaN(created.getTime())) return 0
-  const nowMs = Date.now()
-  return Math.floor((nowMs - created.getTime()) / (1000 * 60 * 60 * 24))
-}
-
 /**
  * Calculate trust score for a dealer.
  * All inputs are optional/nullable — defaults to 0 for any missing field.
@@ -116,7 +108,9 @@ export function calculateTrustScore(
     ? dealer.created_at
       ? nowOverride.getTime() - new Date(dealer.created_at).getTime()
       : 0
-    : (dealer.created_at ? Date.now() - new Date(dealer.created_at).getTime() : 0)
+    : dealer.created_at
+      ? Date.now() - new Date(dealer.created_at).getTime()
+      : 0
   const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24))
   if (ageDays >= 90) bd.account_age = 15
   else if (ageDays >= 30) bd.account_age = 10

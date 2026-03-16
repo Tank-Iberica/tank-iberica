@@ -1,3 +1,4 @@
+/* global __ENV, __VU, __ITER */
 /**
  * k6 concurrent bids test — Backlog #291
  *

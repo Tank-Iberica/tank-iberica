@@ -10,6 +10,7 @@
  */
 import { defineEventHandler } from 'h3'
 import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { safeError } from '../../utils/safeError'
 import { validateBody } from '../../utils/validateBody'
 import { logger } from '../../utils/logger'
@@ -30,7 +31,7 @@ export default defineEventHandler(async (event) => {
   if (!user) throw safeError(401, 'Unauthorized')
 
   const { postId, scheduledAt } = await validateBody(event, RescheduleSchema)
-  const supabase = serverSupabaseServiceRole(event) as any
+  const supabase = serverSupabaseServiceRole(event) as SupabaseClient
 
   // Fetch post to verify it exists and is reschedulable
   const { data: post, error: fetchErr } = await supabase

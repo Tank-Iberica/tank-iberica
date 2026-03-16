@@ -331,7 +331,7 @@ export function useDealerPortal() {
       const slug = name
         .toLowerCase()
         .replaceAll(/[^a-z0-9]+/g, '-')
-        .replaceAll(/(?:^-|-$)/g, '')
+        .replaceAll(/^-|-$/g, '')
       const { data: newDealer, error: insertError } = await supabase
         .from('dealers')
         .insert({

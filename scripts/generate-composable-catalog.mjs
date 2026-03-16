@@ -8,7 +8,7 @@
  * Usage: node scripts/generate-composable-catalog.mjs [--json] [--markdown]
  */
 
-import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join, relative, basename, dirname } from 'node:path'
 
 const COMPOSABLES_DIR = join(process.cwd(), 'app', 'composables')

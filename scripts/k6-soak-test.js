@@ -1,3 +1,4 @@
+/* global __ENV */
 /**
  * k6 soak test — Backlog #289
  *

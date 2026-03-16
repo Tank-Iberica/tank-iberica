@@ -5,7 +5,7 @@
  * Usage: node scripts/gen-render-tests.mjs [--dry-run]
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
-import { basename, dirname, resolve } from 'node:path'
+import { basename, resolve } from 'node:path'
 
 const dryRun = process.argv.includes('--dry-run')
 const cov = JSON.parse(readFileSync('./coverage/coverage-final.json', 'utf-8'))
@@ -58,7 +58,7 @@ for (const { filePath, stmts } of targets) {
     // Parse simple prop declarations like "title: string" or "count: number"
     const propLines = propsBlock.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('//'))
     for (const line of propLines) {
-      const m = line.match(/^(\w+)\??\s*:\s*(.+?)(?:$|;)/)
+      const m = line.match(/^(\w+)\??\s*:\s*([^;]+)/)
       if (m) {
         const [, name, type] = m
         const cleanType = type.replace(/\s/g, '')

@@ -1,3 +1,4 @@
+/* global __ENV */
 /**
  * k6 load test — Backlog #286
  *

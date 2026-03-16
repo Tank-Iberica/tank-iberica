@@ -15,7 +15,7 @@
  *   node scripts/audit-hardcoding.mjs --strict   # Exit code 1 if findings
  */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
 const args = process.argv.slice(2)

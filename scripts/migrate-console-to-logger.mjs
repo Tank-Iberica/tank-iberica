@@ -87,7 +87,7 @@ function alreadyImportsLogger(content) {
  * True if the file has any console.error or console.warn call.
  */
 function hasConsoleCalls(content) {
-  return /console\.(error|warn)\(/.test(content)
+  return /console\.(?:error|warn)\(/.test(content)
 }
 
 /**
@@ -143,7 +143,7 @@ function applyReplacements(content) {
   // Shared: match any string or template literal arg (single-line or multiline)
   // [^`]* matches newlines because it means "not a backtick"
   // [^']* matches newlines similarly
-  const STR = /(?:`[^`]*`|'[^']*'|"[^"]*")/
+  const STR = /`[^`]*`|'[^']*'|"[^"]*"/
 
   // Pattern 1: console.X(msg, JSON.stringify(identifier)) → logger.X(msg, identifier)
   // Handles trailing comma before the closing paren (common in multiline calls)

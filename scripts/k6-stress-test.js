@@ -1,3 +1,4 @@
+/* global __ENV */
 /**
  * k6 stress test — Backlog #287
  *

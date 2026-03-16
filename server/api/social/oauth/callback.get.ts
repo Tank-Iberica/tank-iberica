@@ -9,6 +9,7 @@
  */
 import { defineEventHandler, getQuery, sendRedirect } from 'h3'
 import { serverSupabaseServiceRole } from '#supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { getSiteUrl } from '../../../utils/siteConfig'
 import { logger } from '../../../utils/logger'
 
@@ -84,11 +85,11 @@ export default defineEventHandler(async (event) => {
 
   // 1. Validate CSRF state
   // Table social_oauth_states is not in generated types yet — cast to bypass
-  const { data: stateRecord, error: stateErr } = await (supabase as any)
+  const { data: stateRecord, error: stateErr } = (await (supabase as SupabaseClient)
     .from('social_oauth_states')
     .select('platform, admin_id, redirect_to, expires_at')
     .eq('state', state)
-    .single() as { data: OAuthStateRecord | null; error: any }
+    .single()) as { data: OAuthStateRecord | null; error: unknown }
 
   if (stateErr || !stateRecord) {
     logger.warn('OAuth state not found or already used', { state })
@@ -98,12 +99,12 @@ export default defineEventHandler(async (event) => {
   // Check expiry
   if (new Date(stateRecord.expires_at) < new Date()) {
     logger.warn('OAuth state expired', { state })
-    await (supabase as any).from('social_oauth_states').delete().eq('state', state)
+    await (supabase as SupabaseClient).from('social_oauth_states').delete().eq('state', state)
     return sendRedirect(event, `${siteUrl}/admin/social?oauth_error=state_expired`)
   }
 
   // Delete state (one-time use)
-  await (supabase as any).from('social_oauth_states').delete().eq('state', state)
+  await (supabase as SupabaseClient).from('social_oauth_states').delete().eq('state', state)
 
   const platform = stateRecord.platform as SocialPlatform
   const redirectTo = stateRecord.redirect_to || '/admin/social'
@@ -177,14 +178,14 @@ export default defineEventHandler(async (event) => {
   }
 
   // vertical_config uses key/value columns not in generated types — cast to bypass
-  const { error: upsertErr } = await (supabase as any).from('vertical_config').upsert(
+  const { error: upsertErr } = (await (supabase as SupabaseClient).from('vertical_config').upsert(
     {
       key: `social_tokens_${platform}`,
       value: tokenData,
       description: `OAuth2 tokens for ${platform} social publishing`,
     },
     { onConflict: 'key' },
-  ) as { error: any }
+  )) as { error: unknown }
 
   if (upsertErr) {
     logger.error('Failed to store OAuth tokens', { platform, error: String(upsertErr) })

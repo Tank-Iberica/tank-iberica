@@ -1,15 +1,3 @@
-// Re-export types for backwards compatibility
-export type {
-  MarketRow,
-  PriceHistoryRow,
-  CategoryStat,
-  ProvinceStat,
-  BrandBreakdownItem,
-  ProvinceSortKey,
-  DatosChartDataset,
-  DatosChartData,
-} from '~/composables/shared/datosTypes'
-
 import type {
   CategoryStat,
   ProvinceStat,
@@ -27,6 +15,18 @@ import {
 
 import { formatPrice, formatDate } from '~/utils/formatters'
 import { getVerticalSlug } from '~/composables/useVerticalConfig'
+
+// Re-export types for backwards compatibility
+export type {
+  MarketRow,
+  PriceHistoryRow,
+  CategoryStat,
+  ProvinceStat,
+  BrandBreakdownItem,
+  ProvinceSortKey,
+  DatosChartDataset,
+  DatosChartData,
+} from '~/composables/shared/datosTypes'
 
 // formatPrice is available via auto-import from ~/utils/formatters
 

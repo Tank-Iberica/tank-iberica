@@ -3,10 +3,7 @@
  * Extracts all reactive state, computed properties, watchers, and handler functions
  * from the original `nuevo.vue` page into a reusable composable.
  */
-import {
-  useAdminVehicles,
-  type VehicleFormData,
-} from '~/composables/admin/useAdminVehicles'
+import { useAdminVehicles, type VehicleFormData } from '~/composables/admin/useAdminVehicles'
 import { useAdminTypes } from '~/composables/admin/useAdminTypes'
 import { useAdminSubcategories } from '~/composables/admin/useAdminSubcategories'
 import { useAdminFilters, type AdminFilter } from '~/composables/admin/useAdminFilters'
@@ -126,7 +123,7 @@ export function useAdminProductForm() {
 
   // ── Records sub-composable (maintenance + rentals) ───
   const { addMaint, removeMaint, updateMaint, addRental, removeRental, updateRental } =
-    useAdminProductRecords(formData as any)
+    useAdminProductRecords(formData as never)
 
   // ── Junction data: type ↔ subcategory links ──────────
   const typeSubcategoryLinks = ref<{ type_id: string; subcategory_id: string }[]>([])
