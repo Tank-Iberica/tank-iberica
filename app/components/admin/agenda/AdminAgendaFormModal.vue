@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import { CONTACT_TYPES, type ContactFormData } from '~/composables/admin/useAdminAgenda'
 
-const props = defineProps<{
+defineProps<{
   visible: boolean
   isEditing: boolean
   formData: ContactFormData
   saving: boolean
 }>()
-
-const { t } = useI18n()
-const submitLabel = computed(() => {
-  if (props.saving) return t('common.saving')
-  return props.isEditing ? t('common.save') : t('common.create')
-})
 
 const emit = defineEmits<{
   (e: 'close' | 'submit'): void
@@ -128,7 +122,9 @@ function onSelectChange(event: Event) {
             :disabled="saving || !formData.contact_name.trim()"
             @click="emit('submit')"
           >
-            {{ submitLabel }}
+            <template v-if="saving">{{ $t('common.saving') }}</template>
+            <template v-else-if="isEditing">{{ $t('common.save') }}</template>
+            <template v-else>{{ $t('common.create') }}</template>
           </button>
         </div>
       </div>

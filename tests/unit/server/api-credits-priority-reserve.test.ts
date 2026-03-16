@@ -64,28 +64,26 @@ function makeVehicle(overrides: Record<string, unknown> = {}) {
 /** Setup sequential fetches for the happy path */
 function setupHappyPath(credits = [{ balance: 5 }]) {
   mockFetch
-    // vehicles GET
+    // [0] vehicles GET
     .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue(makeVehicle()) })
-    // dealers GET (immunity check — seller user_id)
+    // [1] dealers GET (immunity check — returns seller user_id)
     .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue([{ user_id: SELLER_ID }]) })
-    // subscriptions GET (seller plan — not premium)
+    // [2] subscriptions GET (seller plan — not premium)
     .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue([{ plan: 'classic' }]) })
-    // dealers GET (buyer owns check)
+    // [3] dealers GET (buyer owns check)
     .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue([]) }) // buyer is not a dealer
-    // dealers GET (seller user_id for reservation record)
-    .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue([{ user_id: SELLER_ID }]) })
-    // user_credits GET
+    // [4] user_credits GET
     .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue(credits) })
-    // user_credits PATCH (deduct)
+    // [5] user_credits PATCH (deduct)
     .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue({}) })
-    // priority_reservations POST
+    // [6] priority_reservations POST
     .mockResolvedValueOnce({
       ok: true,
       json: vi.fn().mockResolvedValue([{ id: RESERVATION_ID }]),
     })
-    // vehicles PATCH (set priority_reserved_until)
+    // [7] vehicles PATCH (set priority_reserved_until)
     .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue({}) })
-    // credit_transactions POST
+    // [8] credit_transactions POST
     .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue({}) })
 }
 
@@ -173,10 +171,6 @@ describe('POST /api/credits/priority-reserve', () => {
       })
       .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue([{ plan: 'classic' }]) })
       .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue([]) }) // no buyer dealer
-      .mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValue([{ user_id: SELLER_ID }]),
-      })
       .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue([{ balance: 1 }]) })
     await expect(handler({} as any)).rejects.toMatchObject({ statusCode: 402 })
   })
@@ -195,8 +189,8 @@ describe('POST /api/credits/priority-reserve', () => {
   it('deducts exactly 2 credits', async () => {
     setupHappyPath([{ balance: 7 }])
     await handler({} as any)
-    // user_credits PATCH is 7th fetch call (index 6)
-    const patchCall = mockFetch.mock.calls[6]
+    // user_credits PATCH is 6th fetch call (index 5)
+    const patchCall = mockFetch.mock.calls[5]
     const body = JSON.parse(patchCall[1].body)
     expect(body.balance).toBe(5)
   })
@@ -205,8 +199,8 @@ describe('POST /api/credits/priority-reserve', () => {
     setupHappyPath()
     const before = Date.now()
     await handler({} as any)
-    // vehicles PATCH is 9th call (index 8)
-    const vehiclePatch = mockFetch.mock.calls[8]
+    // vehicles PATCH is 8th call (index 7)
+    const vehiclePatch = mockFetch.mock.calls[7]
     const body = JSON.parse(vehiclePatch[1].body)
     const expiresAt = new Date(body.priority_reserved_until).getTime()
     const expected48h = before + 48 * 60 * 60 * 1000
@@ -218,8 +212,8 @@ describe('POST /api/credits/priority-reserve', () => {
   it('inserts credit_transaction with type=spend and credits=-2', async () => {
     setupHappyPath([{ balance: 4 }])
     await handler({} as any)
-    // credit_transactions POST is 10th call (index 9)
-    const txCall = mockFetch.mock.calls[9]
+    // credit_transactions POST is 9th call (index 8)
+    const txCall = mockFetch.mock.calls[8]
     const body = JSON.parse(txCall[1].body)
     expect(body.type).toBe('spend')
     expect(body.credits).toBe(-2)
