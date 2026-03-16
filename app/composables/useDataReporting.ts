@@ -12,7 +12,7 @@
  * Used in admin reports, dealer exports, and scheduled email digests.
  */
 
-export type TrendDirection = TrendDirection
+export type TrendDirection = 'up' | 'down' | 'stable'
 
 export interface MetricPoint {
   label: string
