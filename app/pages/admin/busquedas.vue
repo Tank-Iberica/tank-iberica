@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useAdminSearchAnalytics } from '~/composables/admin/useAdminSearchAnalytics'
+
 definePageMeta({
   layout: 'admin',
   middleware: ['auth', 'admin'],
@@ -59,15 +61,21 @@ onMounted(() => {
       <div class="sa-kpis">
         <div class="sa-kpi-card">
           <span class="sa-kpi-value">{{ summary.totalSearches.toLocaleString() }}</span>
-          <span class="sa-kpi-label">{{ t('admin.searchAnalytics.totalSearches', 'Búsquedas totales') }}</span>
+          <span class="sa-kpi-label">{{
+            t('admin.searchAnalytics.totalSearches', 'Búsquedas totales')
+          }}</span>
         </div>
         <div class="sa-kpi-card">
           <span class="sa-kpi-value">{{ summary.zeroResultSearches.toLocaleString() }}</span>
-          <span class="sa-kpi-label">{{ t('admin.searchAnalytics.zeroResults', 'Sin resultados') }}</span>
+          <span class="sa-kpi-label">{{
+            t('admin.searchAnalytics.zeroResults', 'Sin resultados')
+          }}</span>
         </div>
         <div class="sa-kpi-card" :class="{ 'sa-kpi-card--alert': summary.zeroResultRate > 30 }">
           <span class="sa-kpi-value">{{ summary.zeroResultRate }}%</span>
-          <span class="sa-kpi-label">{{ t('admin.searchAnalytics.zeroRate', 'Tasa sin resultados') }}</span>
+          <span class="sa-kpi-label">{{
+            t('admin.searchAnalytics.zeroRate', 'Tasa sin resultados')
+          }}</span>
         </div>
       </div>
 
@@ -96,12 +104,12 @@ onMounted(() => {
             </tbody>
           </table>
           <!-- Pagination -->
-          <nav v-if="totalPages > 1" class="sa-pagination" :aria-label="t('common.pagination', 'Paginación')">
-            <button
-              class="sa-pagination-btn"
-              :disabled="page <= 1"
-              @click="goToPage(page - 1)"
-            >
+          <nav
+            v-if="totalPages > 1"
+            class="sa-pagination"
+            :aria-label="t('common.pagination', 'Paginación')"
+          >
+            <button class="sa-pagination-btn" :disabled="page <= 1" @click="goToPage(page - 1)">
               &laquo;
             </button>
             <span class="sa-pagination-info">{{ page }} / {{ totalPages }}</span>
@@ -115,7 +123,12 @@ onMounted(() => {
           </nav>
         </div>
         <p v-else class="sa-empty">
-          {{ t('admin.searchAnalytics.noZeroResults', 'No hay búsquedas sin resultados en este período.') }}
+          {{
+            t(
+              'admin.searchAnalytics.noZeroResults',
+              'No hay búsquedas sin resultados en este período.',
+            )
+          }}
         </p>
       </section>
 

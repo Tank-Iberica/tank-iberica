@@ -17,6 +17,7 @@
  * Roadmap: N78 — SSE alternative to WebSockets
  */
 import { defineEventHandler, setHeader, setResponseStatus } from 'h3'
+import { serverSupabaseUser } from '#supabase/server'
 import { logger } from '../../utils/logger'
 
 export const SSE_HEARTBEAT_INTERVAL_MS = 30_000
@@ -39,7 +40,9 @@ export default defineEventHandler(async (event) => {
   const writable = event.node.res
 
   // Send initial connection event
-  writable.write(`event: connected\ndata: ${JSON.stringify({ userId: user.id, timestamp: Date.now() })}\n\n`)
+  writable.write(
+    `event: connected\ndata: ${JSON.stringify({ userId: user.id, timestamp: Date.now() })}\n\n`,
+  )
 
   // Heartbeat to keep connection alive
   const heartbeat = setInterval(() => {

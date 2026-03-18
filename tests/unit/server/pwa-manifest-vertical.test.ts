@@ -8,10 +8,7 @@ const MANIFEST_SRC = readFileSync(
   'utf-8',
 )
 const NUXT_CFG = readFileSync(resolve(ROOT, 'nuxt.config.ts'), 'utf-8')
-const VERTICAL_CFG = readFileSync(
-  resolve(ROOT, 'app/composables/useVerticalConfig.ts'),
-  'utf-8',
-)
+const VERTICAL_CFG = readFileSync(resolve(ROOT, 'app/composables/useVerticalConfig.ts'), 'utf-8')
 
 describe('PWA manifest per-vertical (N50)', () => {
   describe('Dynamic manifest route', () => {
@@ -45,12 +42,12 @@ describe('PWA manifest per-vertical (N50)', () => {
     })
 
     it('uses locale-aware name from vertical_config', () => {
-      expect(MANIFEST_SRC).toContain('data.name?.[locale]')
-      expect(MANIFEST_SRC).toContain('data.name?.es')
+      expect(MANIFEST_SRC).toContain('nameObj?.[locale]')
+      expect(MANIFEST_SRC).toContain('nameObj?.es')
     })
 
     it('uses theme color_primary for theme_color', () => {
-      expect(MANIFEST_SRC).toContain('data.theme?.color_primary')
+      expect(MANIFEST_SRC).toContain('themeObj?.color_primary')
     })
 
     it('generates short_name from name', () => {
@@ -139,8 +136,8 @@ describe('PWA manifest per-vertical (N50)', () => {
     // Extract from dynamic route DEFAULT_MANIFEST
     it('default theme_color matches nuxt.config', () => {
       // Both should use #23424A
-      expect(MANIFEST_SRC).toContain("#23424A")
-      expect(NUXT_CFG).toContain("#23424A")
+      expect(MANIFEST_SRC).toContain('#23424A')
+      expect(NUXT_CFG).toContain('#23424A')
     })
 
     it('default background_color matches nuxt.config', () => {

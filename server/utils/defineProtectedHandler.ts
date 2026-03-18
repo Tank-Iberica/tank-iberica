@@ -18,6 +18,7 @@
  * Roadmap: N63
  */
 import type { H3Event } from 'h3'
+import { serverSupabaseUser } from '#supabase/server'
 import { safeError } from './safeError'
 import { logger } from './logger'
 
@@ -39,10 +40,7 @@ type HandlerFn = (event: H3Event, context: HandlerContext) => Promise<unknown>
 /**
  * Create a protected event handler with built-in auth, role, and error handling.
  */
-export function defineProtectedHandler(
-  options: ProtectedHandlerOptions,
-  handler: HandlerFn,
-) {
+export function defineProtectedHandler(options: ProtectedHandlerOptions, handler: HandlerFn) {
   return defineEventHandler(async (event: H3Event) => {
     try {
       // Logging

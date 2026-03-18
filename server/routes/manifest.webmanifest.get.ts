@@ -4,7 +4,8 @@
  *
  * Roadmap: N50 — manifest per-vertical (name, icons, theme_color from vertical_config)
  */
-import { createError, defineEventHandler, setHeader } from 'h3'
+import { defineEventHandler, setHeader } from 'h3'
+import { serverSupabaseServiceRole } from '#supabase/server'
 
 interface ManifestIcon {
   src: string
@@ -36,7 +37,7 @@ export default defineEventHandler(async (event) => {
   setHeader(event, 'Cache-Control', 'public, max-age=3600, s-maxage=86400')
 
   try {
-    const client = useSupabaseClient()
+    const client = serverSupabaseServiceRole(event)
     const vertical = process.env.NUXT_PUBLIC_VERTICAL || 'tracciona'
 
     const { data } = await client
@@ -49,23 +50,21 @@ export default defineEventHandler(async (event) => {
       return DEFAULT_MANIFEST
     }
 
-    const locale = data.default_locale || 'es'
-    const name = data.name?.[locale] || data.name?.es || DEFAULT_MANIFEST.name
+    const locale = (data.default_locale as string) || 'es'
+    const nameObj = data.name as Record<string, string> | null
+    const name = nameObj?.[locale] || nameObj?.es || DEFAULT_MANIFEST.name
     const shortName = name.split('—')[0]?.trim() || name.substring(0, 20)
-    const description =
-      data.meta_description?.[locale] ||
-      data.meta_description?.es ||
-      DEFAULT_MANIFEST.description
-    const themeColor = data.theme?.color_primary || DEFAULT_MANIFEST.theme_color
+    const descObj = data.meta_description as Record<string, string> | null
+    const description = descObj?.[locale] || descObj?.es || DEFAULT_MANIFEST.description
+    const themeObj = data.theme as Record<string, string> | null
+    const themeColor = themeObj?.color_primary || DEFAULT_MANIFEST.theme_color
 
     // Build icons array — use vertical-specific if available, else defaults
     const icons: ManifestIcon[] = []
 
     if (data.favicon_url) {
       // If vertical has custom icons, use them
-      icons.push(
-        { src: data.favicon_url, sizes: '192x192', type: 'image/png' },
-      )
+      icons.push({ src: data.favicon_url, sizes: '192x192', type: 'image/png' })
     } else {
       icons.push({ src: '/icon-192x192.png', sizes: '192x192', type: 'image/png' })
     }

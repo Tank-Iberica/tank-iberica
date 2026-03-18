@@ -24,12 +24,18 @@ export default defineEventHandler(async (event) => {
 
   // Validate required fields
   if (!body?.name || typeof body.value !== 'number' || !body.id || !body.route) {
-    throw createError({ statusCode: 400, statusMessage: 'Missing required fields: name, value, id, route' })
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Missing required fields: name, value, id, route',
+    })
   }
 
   // Validate metric name
   if (!VALID_METRICS.includes(body.name)) {
-    throw createError({ statusCode: 400, statusMessage: `Invalid metric name. Must be one of: ${VALID_METRICS.join(', ')}` })
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Invalid metric name. Must be one of: ${VALID_METRICS.join(', ')}`,
+    })
   }
 
   // Validate value range (no negative, reasonable max)
@@ -39,7 +45,9 @@ export default defineEventHandler(async (event) => {
 
   const db = serverSupabaseServiceRole(event)
 
-  const { error } = await db.from('web_vitals').insert({
+  // web_vitals table not yet in generated types — cast needed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (db.from as any)('web_vitals').insert({
     metric_name: body.name,
     metric_value: body.value,
     metric_id: body.id,

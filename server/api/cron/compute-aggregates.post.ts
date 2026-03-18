@@ -15,8 +15,9 @@
  * Roadmap: N77 — Pre-computed aggregates table
  */
 import { defineEventHandler } from 'h3'
+import { serverSupabaseServiceRole } from '#supabase/server'
 import { logger } from '../../utils/logger'
-import { verifyCronSecret } from '../../utils/cronLock'
+import { verifyCronSecret } from '../../utils/verifyCronSecret'
 
 export const AGGREGATE_METRICS = [
   'total_vehicles',
@@ -43,14 +44,14 @@ export default defineEventHandler(async (event) => {
     const { count: vehicleCount } = await supabase
       .from('vehicles')
       .select('*', { count: 'exact', head: true })
-      .eq('status', 'active')
+      .eq('status', 'published')
     results.total_vehicles = vehicleCount ?? 0
 
     // Total active dealers
     const { count: dealerCount } = await supabase
       .from('dealers')
       .select('*', { count: 'exact', head: true })
-      .eq('status', 'active')
+      .eq('status', 'active' as never)
     results.total_dealers = dealerCount ?? 0
 
     // Total leads last 30d
@@ -78,9 +79,10 @@ export default defineEventHandler(async (event) => {
 
     // Upsert by metric name
     for (const row of inserts) {
-      await supabase
-        .from('dashboard_aggregates')
-        .upsert(row, { onConflict: 'metric,vertical' })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from as any)('dashboard_aggregates').upsert(row, {
+        onConflict: 'metric,vertical',
+      })
     }
 
     logger.info('[compute-aggregates] Computed', results)

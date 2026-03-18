@@ -20,9 +20,9 @@ const THRESHOLDS: Record<string, { good: number; poor: number }> = {
 }
 
 function percentile(sorted: number[], p: number): number {
-  if (sorted.length === 0) return 0
+  if (!sorted.length) return 0
   const idx = Math.ceil((p / 100) * sorted.length) - 1
-  return sorted[Math.max(0, idx)]
+  return sorted[Math.max(0, idx)] ?? 0
 }
 
 export default defineEventHandler(async (event) => {
@@ -35,8 +35,9 @@ export default defineEventHandler(async (event) => {
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
   const db = serverSupabaseServiceRole(event)
 
-  let dbQuery = db
-    .from('web_vitals')
+  // web_vitals table not yet in generated types — cast needed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let dbQuery = (db.from as any)('web_vitals')
     .select('metric_name, metric_value, route, created_at')
     .gte('created_at', since)
     .order('created_at', { ascending: false })
@@ -69,7 +70,10 @@ export default defineEventHandler(async (event) => {
   }
 
   // Calculate percentiles per metric
-  const metrics: Record<string, { p50: number; p75: number; p95: number; count: number; rating: string }> = {}
+  const metrics: Record<
+    string,
+    { p50: number; p75: number; p95: number; count: number; rating: string }
+  > = {}
 
   for (const [name, values] of Object.entries(byMetric)) {
     const sorted = [...values].sort((a, b) => a - b)
@@ -77,7 +81,12 @@ export default defineEventHandler(async (event) => {
     const threshold = THRESHOLDS[name]
     let rating = 'unknown'
     if (threshold) {
-      rating = p75Value <= threshold.good ? 'good' : p75Value <= threshold.poor ? 'needs-improvement' : 'poor'
+      rating =
+        p75Value <= threshold.good
+          ? 'good'
+          : p75Value <= threshold.poor
+            ? 'needs-improvement'
+            : 'poor'
     }
 
     metrics[name] = {

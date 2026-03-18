@@ -188,7 +188,6 @@ useHead({
               class="form-input"
               :class="{ 'input-error': passwordErrors.newPassword }"
               :placeholder="$t('profile.security.newPasswordPlaceholder')"
-              autocomplete="new-password"
               :aria-invalid="!!passwordErrors.newPassword || undefined"
               :aria-describedby="passwordErrors.newPassword ? 'err-sec-pw' : undefined"
             >
@@ -209,11 +208,15 @@ useHead({
               class="form-input"
               :class="{ 'input-error': passwordErrors.confirmPassword }"
               :placeholder="$t('profile.security.confirmPasswordPlaceholder')"
-              autocomplete="new-password"
               :aria-invalid="!!passwordErrors.confirmPassword || undefined"
               :aria-describedby="passwordErrors.confirmPassword ? 'err-sec-confirm' : undefined"
             >
-            <p v-if="passwordErrors.confirmPassword" id="err-sec-confirm" class="field-error" role="alert">
+            <p
+              v-if="passwordErrors.confirmPassword"
+              id="err-sec-confirm"
+              class="field-error"
+              role="alert"
+            >
               {{ passwordErrors.confirmPassword }}
             </p>
           </div>
@@ -227,7 +230,9 @@ useHead({
           </div>
 
           <button type="submit" class="btn-primary" :disabled="passwordSubmitting">
-            {{ passwordSubmitting ? $t('common.loading') : $t('profile.security.changePasswordBtn') }}
+            {{
+              passwordSubmitting ? $t('common.loading') : $t('profile.security.changePasswordBtn')
+            }}
           </button>
         </form>
       </section>
@@ -268,7 +273,6 @@ useHead({
                 maxlength="6"
                 class="form-input"
                 :placeholder="$t('profile.security.mfaCodePlaceholder')"
-                autocomplete="one-time-code"
               >
             </div>
             <button class="btn-primary" :disabled="mfaLoading" @click="onVerifyMfa">

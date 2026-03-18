@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
@@ -31,7 +31,7 @@ describe('Web Vitals analytics endpoints', () => {
     })
 
     it('stores in web_vitals table', () => {
-      expect(src).toContain("from('web_vitals')")
+      expect(src).toContain("('web_vitals')")
       expect(src).toContain('.insert(')
     })
 
