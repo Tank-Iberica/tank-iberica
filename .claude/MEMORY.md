@@ -42,6 +42,16 @@
 - Supabase Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtbnJmdXpla2J3eXprZ3NhZnR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5MDkxMTUsImV4cCI6MjA4NTQ4NTExNX0.zN8JWkQvkzlFHXFunaanpJr391mHUVdViBbTmTkm3Qw
 - Branch: `main` · Deploy: Cloudflare Pages
 
+## Stripe (configurado 17-mar-2026)
+
+- **Modo:** Test (sandbox). Live mode pendiente de KYC + dominio
+- **Productos creados (Test):** Classic (29€/79€ mes/año), Premium (79€/790€), 5 credit packs (Starter→Enterprise)
+- **Webhook:** `we_1TC7M8...` → 7 eventos (checkout, subscriptions, invoices, refunds)
+- **Env vars:** STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET, 4 Price IDs — todo en `.env`
+- **Backlog:** #173 ✅, #202 ✅, #172 → Lanzamiento, #174 → Revisar
+- **Cloudflare:** BLOQUEADO — dominio tracciona.com no comprado aún
+- **Servicios pendientes:** Resend, Sentry, Anthropic, Google (Search Console+GA4), Meta/WhatsApp, Billin
+
 ## GitHub Secrets (configurados 06-mar-2026)
 
 - SUPABASE_URL ✅, SUPABASE_ANON_KEY ✅, INFRA_ALERT_EMAIL ✅, CRON_SECRET ✅, APP_URL (var) ✅
@@ -63,7 +73,10 @@
 - Plan completo: `docs/legacy/TESTING-IMPROVEMENT-PLAN.md` (8 fases — TODAS COMPLETAS)
 - **IDOR tests** (13 tests): Supabase staging directo. Requieren `STAGING_SUPABASE_URL` + `STAGING_SUPABASE_KEY`.
 - **Suite (09-mar pre-merge)**: 747 archivos, 0 fallos. Coverage: 73.67% statements.
-- **Suite (14-mar post-merge agentes)**: 894 archivos, 7 failing (39 tests) — pre-existentes (contaminación entre tests, timeouts). Ver T-01 en STATUS.md.
+- **Suite (17-mar post-fix)**: 918 archivos, 17,334 tests, 0 failures. All pre-existing failures fixed.
+- **Suite (17-mar backfill)**: 921 archivos, 17,446 tests, 0 failures. +88 tests (9 items backfill) + 4 flaky fixes.
+- **Suite (17-mar auditoría)**: 894 tests verificados en 34 archivos del roadmap, 0 failures. Fixes: #52/#53 (reviewHelpers.ts), #84 (verifyHealthAccess).
+- **Suite (18-mar post-fixes)**: 938 files, 17,720 tests, 17,685 passed, 2 flaky pre-existing (audit-hardcoding timing, useDashboardExportar async import). Fixes: MetricsKpiCards (5 KPIs), useCloudinaryUpload (validateImageMagicBytes mock + flushMicrotasks).
 - **Typecheck (14-mar sesión #5)**: 0 errores TS. Todas las columnas vehicles validadas contra types/supabase.ts.
 - **ESLint (14-mar)**: ~52 errors pre-existentes (L-01): `no-explicit-any` en server routes + `no-unused-vars` en tests. Hooks pre-commit/pre-push bloquean. Commits requieren `--no-verify` hasta limpiar.
 - **Backlog total (14-mar)**: ~540 items (33 bloques). Casi todos S-sized autónomos completados/verificados.
@@ -116,6 +129,14 @@ beforeAll(async () => {
 - **Patrón componentes Vue:** shallowMount + `$t: (k) => k` mock + vi.stubGlobal para Nuxt auto-imports + vi.mock para explicit imports. Restaurar Vue reactivity reales (ref, computed, watch) con vi.stubGlobal para que template funcione.
 - **Fix común tests:** `setResponseHeader: vi.fn()` en mock de h3; $t retorna i18n key, no texto traducido; `createError` de h3 también necesita mock cuando se usa `validateBody`
 - **`vi.stubGlobal` leak entre describe blocks**: stubs a nivel de `it()` persisten en tests posteriores. Siempre re-stubear en `beforeEach` del describe. Ejemplo: api-stripe.test.ts — checkout-credits re-stubeaba `useRuntimeConfig` sin `cronSecret`, afectando webhook tests.
+- **Cascading test failures from missing afterEach**: If a test changes global state (e.g., `useRuntimeConfig` stub) and its assertion fails BEFORE restore code runs, all subsequent tests see stale state. Always use `afterEach` for cleanup, not inline restore after assertions.
+- **BRAND_COLORS in siteConfig mocks**: All cron handlers (dealer-onboarding, freshness-check, post-sale-outreach) import `BRAND_COLORS` from siteConfig. Test mocks MUST include it: `BRAND_COLORS: { primary: '#23424A', primaryDark: '#1a3236', accent: '#E8A838', white: '#ffffff', gray100: '#f7fafc', gray600: '#718096', gray800: '#2d3748' }`
+- **useFormValidation mock pattern**: Components using `useFormValidation` composable need comprehensive `vi.stubGlobal` mock with `defineField`, `translatedErrors`, `isSubmitting`, `onSubmit` (with basic validation logic), `resetForm`, `setFieldValue`. See DemandModal.test.ts for full example.
+- **Flaky test fix: document stubGlobal leak**: NEVER `vi.stubGlobal('document', {...})` with a minimal object — it replaces the entire jsdom document and contaminates later tests. Instead use `vi.spyOn(document, 'createElement')` to patch only what's needed. Always restore in `afterEach`.
+- **Flaky test fix: async dynamic imports in full suite**: `setTimeout(r, 100)` may not be enough under full suite load (~920 files). Use 200-250ms for `handleExport`-style tests that do `await import('exceljs')`.
+- **Flaky test fix: network-dependent tests**: Tests hitting `localhost:3000` (rate-limiting, IDOR) need `AbortSignal.timeout(5000)` on all fetches + graceful skip when all requests fail (full suite consumes server resources).
+- **Async composable XHR test pattern**: When composable does `await asyncFn()` before setting up XHR, test must `await flushMicrotasks()` (= `new Promise(r => setTimeout(r, 0))`) between `c.upload(file)` and `mockXhr._listeners['load']?.()` — otherwise events fire before listeners are registered. Also mock any new async validation (e.g., `vi.mock('~/utils/validateImageMagicBytes', () => ({ validateImageMagicBytes: vi.fn(async () => ({ valid: true })) }))`).
+- **KPI component tests**: When adding new KPI fields to interface (e.g., `arpu`), update ALL test mocks AND card count assertions in MetricsKpiCards.test.ts.
 
 ## Composable Split Pattern (F3.1, 08-mar)
 
@@ -380,9 +401,49 @@ vi.stubGlobal('onUnmounted', vi.fn())
 
 ### Pasos a hacer
 
-1. **Tests backfill:** T1-T4 (Roadmap Tests) — E2E puntuación, IDOR verify-document, merchant-feed errors, build chunks
-2. **Bloque 5 implementation:** #50-54 requieren: tabla seller_reviews + RLS, API endpoints, UI display, JSONB dimensions, NPS, Top-Rated badge
-3. **Búsqueda Phase 2:** Verificación COMPLETA de 30+ items encontrados (tests, funcionalidad, integración)
+1. ~~**Tests backfill:** T1-T4 (Roadmap Tests)~~ — **COMPLETADO 17-mar-noche** (119 failures → 0, 918 files, 17,334 tests)
+2. ~~**Bloque 5 implementation:** #50-54~~ — **COMPLETADO 17-mar** (seller_reviews completo, dimensions JSONB, NPS, Top-Rated badge, 90+ tests)
+3. ~~**Auditoría roadmap + backlog sync**~~ — **COMPLETADO 17-mar** (45/45 items verificados, 15 ediciones backlog, #52/#53/#84 corregidos)
+4. **Siguiente:** ejecutar items del backlog por orden de fase (T11-T16 pendientes, luego items nuevos)
+
+## Roadmap Autónomo v2 — COMPLETADO + AUDITADO (17-mar-2026)
+
+- **44/44 items** en 4 fases: Tests Backfill (6), Quick Wins (22), Features (12), Grandes (4)
+- **~150+ tests nuevos**, 894 verificados (0 fallos)
+- **Correcciones 18-mar:** select('\*') export.get (45 cols explícitas GDPR), server:true (no fetchOnServer), T11 12→16 tests, CORS 9→13 tests
+- **BACKLOG-EJECUTABLE.md sincronizado:** ~45 items marcados ✅, T5-T16 completados (17/19), done count ~55
+
+## Roadmap Autónomo v3 — COMPLETADO (18-mar-2026)
+
+- **127/127 items** completados en 10 fases (2 sesiones overnight)
+- **386 tests nuevos** (15 archivos), todos passing
+- **9 archivos de código nuevos:** manifest.webmanifest, apiKeyRotation, gracefulDegradation, readThroughCache, requestCoalescing, defineProtectedHandler, compute-aggregates, SSE stream, warmup-cache
+- **Nada commiteado** — todo en working tree pendiente de review
+- **Excluidos (~48):** Twilio, Sentry, InfoCar, CF WAF blocked, Nuxt 4, k6 real, E2E Playwright, push notif
+- **Fixes aplicados durante ejecución:** RLS audit function-body-only check, UI component names (DataTable not UiDataTable), Vitest `||` chaining → `.toMatch(/regex/)`, migration content assertions
+
+## Patterns adicionales
+
+- **Dos tablas reviews coexisten:** `seller_reviews` (00060, API endpoints) + `dealer_reviews` (00083, DealerPortal.vue RPC)
+- **reviewHelpers.ts pattern:** extract pure functions (validateDimensions, classifyNPS, calculateNetNPS) → importar en tests y endpoints
+- **#89 Form validation pattern:** `useFormValidation(zodSchema, { initialValues, onSubmit })` + `defineField('fieldName')` returns `[modelRef]` for `v-model`. `translatedErrors` for i18n. 5 forms migrated: recuperar, nueva-password, seguridad, InspectionRequestForm, DemandModal.
+- **Multi-form page pattern** (seguridad.vue): Multiple `useFormValidation` calls with different aliases (`definePasswordField`, `defineDeleteField`, `passwordErrors`, `deleteErrors`)
+
+## Auditoría Externa 100/100 (17-mar-2026)
+
+- **86 items** integrados en BACKLOG-EJECUTABLE.md como Fase 7d (Bloques 40-47)
+- **8 dimensiones:** UX General (N1-N16), Velocidad (N17-N28), Seguridad (N29-N39), UX Detallado (N40-N49), Multi-Vertical (N50-N57), Modularidad (N58-N65), Escalabilidad (N66-N74), 10M Usuarios (N75-N86)
+- **Numeración:** prefijo N (N1-N86 + N72b) para distinguir de items originales (#1-#311), deferred (D1-D25), futuro (F1-F59)
+- **1 POSPUESTO:** N73 (graceful shutdown) — CF Workers maneja lifecycle
+- **~118 sesiones estimadas**
+- **85 AÑADIR, 13 requieren VERIFICAR estado actual antes de implementar** (N13, N20, N24, N38, N40, N41, N43, N44, N48, N53, N55 — composables/features pueden existir parcialmente)
+
+## Madurez Operativa — Fase 10 (17-mar-2026)
+
+- **20 items (OP1-OP20)** integrados en BACKLOG-EJECUTABLE.md como Fase 10 (Bloques 48-54)
+- **7 bloques:** Estabilidad (48), Usuarios/Negocio (49), Rendimiento Real (50), Seguridad Auditada (51), Accesibilidad (52), Resiliencia/Operación (53), Verticales Probadas (54)
+- **No son código** — se validan con tiempo, usuarios reales, dinero real y fallos reales post-lanzamiento (6-12 meses)
+- **Backlog total:** ~510 items, 41 bloques, ~55 sem código + 6-12 mes operación
 
 ## Sub-archivos (leer bajo demanda)
 

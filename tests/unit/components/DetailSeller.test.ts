@@ -1,8 +1,14 @@
 /**
  * Tests for app/components/vehicle/DetailSeller.vue
  */
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
+import { ref, computed } from 'vue'
+
+// Override setup.ts plain-object stubs with real Vue refs so v-if auto-unwraps correctly
+vi.stubGlobal('ref', ref)
+vi.stubGlobal('computed', computed)
+
 import DetailSeller from '../../../app/components/vehicle/DetailSeller.vue'
 
 describe('DetailSeller', () => {

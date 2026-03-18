@@ -1,8 +1,11 @@
 /**
  * Tests for app/components/modals/DevModal.vue
  */
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
+
+vi.stubGlobal('useFocusTrap', () => ({ activate: vi.fn(), deactivate: vi.fn() }))
+
 import DevModal from '../../../app/components/modals/DevModal.vue'
 
 describe('DevModal', () => {
@@ -13,7 +16,10 @@ describe('DevModal', () => {
         ...overrides,
       },
       global: {
-        mocks: { $t: (k: string, params?: Record<string, string>) => params ? `${k}:${JSON.stringify(params)}` : k },
+        mocks: {
+          $t: (k: string, params?: Record<string, string>) =>
+            params ? `${k}:${JSON.stringify(params)}` : k,
+        },
         stubs: { Teleport: true, Transition: true },
       },
     })
