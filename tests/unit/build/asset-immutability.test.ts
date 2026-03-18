@@ -47,7 +47,7 @@ describe('Static asset immutability', () => {
   test.skipIf(!hasBuild)('build output has hashed filenames', () => {
     const jsFiles = globSync(['**/*.js'], { cwd: BUILD_DIR })
     // Vite uses short hashes as filenames (e.g. 5pXzGXty.js)
-    const hashedFiles = jsFiles.filter(f => /[A-Za-z0-9_-]{5,}\.js$/.test(f))
+    const hashedFiles = jsFiles.filter((f) => /[\w-]{5,}\.js$/.test(f))
     // Most JS files should have content hashes
     expect(hashedFiles.length).toBeGreaterThan(0)
     const ratio = hashedFiles.length / jsFiles.length
@@ -56,7 +56,7 @@ describe('Static asset immutability', () => {
 
   test.skipIf(!hasBuild)('CSS files have hashed filenames', () => {
     const cssFiles = globSync(['**/*.css'], { cwd: BUILD_DIR })
-    const hashedFiles = cssFiles.filter(f => /[a-zA-Z0-9_-]{5,}\.css$/.test(f))
+    const hashedFiles = cssFiles.filter((f) => /[\w-]{5,}\.css$/.test(f))
     expect(hashedFiles.length).toBeGreaterThan(0)
   })
 })

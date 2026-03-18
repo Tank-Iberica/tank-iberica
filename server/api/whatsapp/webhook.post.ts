@@ -238,11 +238,17 @@ async function handleRefCodeLookup(
   }
 
   const siteUrl = getSiteUrl()
-  const title = vehicle.title || `${vehicle.brand || ''} ${vehicle.model || ''} ${vehicle.year || ''}`.trim()
+  const title =
+    vehicle.title || `${vehicle.brand || ''} ${vehicle.model || ''} ${vehicle.year || ''}`.trim()
   const price = vehicle.price ? `${vehicle.price.toLocaleString('es-ES')} €` : 'Consultar'
   const location = vehicle.location_province || ''
   const fichaUrl = `${siteUrl}/${vehicle.slug}`
-  const statusLabel = vehicle.status === 'published' ? 'Disponible' : vehicle.status === 'reserved' ? 'Reservado' : vehicle.status
+  const statusLabel =
+    vehicle.status === 'published'
+      ? 'Disponible'
+      : vehicle.status === 'reserved'
+        ? 'Reservado'
+        : vehicle.status
 
   const message = [
     `🔍 *${refCode}*`,
@@ -284,7 +290,6 @@ function extractMessageContent(messages: WhatsAppMessage[]): {
 
 // ── Dealer lookup ───────────────────────────────────────────────────────────
 
- 
 async function lookupDealer(
   supabase: SupabaseClient,
   senderPhone: string,
@@ -314,7 +319,7 @@ async function lookupDealer(
 
 async function processMessageChange(
   change: WhatsAppChange,
-   
+
   supabase: SupabaseClient,
   supabaseUrl: string,
   supabaseKey: string,
@@ -346,12 +351,12 @@ async function processMessageChange(
   const textContent = textParts.join('\n').trim() || null
 
   // #60 — Check for TRC ref_code before processing as submission
-  if (textContent && await handleRefCodeLookup(supabase, senderPhone, textContent)) {
+  if (textContent && (await handleRefCodeLookup(supabase, senderPhone, textContent))) {
     return // Ref code handled, no submission needed
   }
 
   // #61 — Check for interactive menu selection
-  if (textContent && await handleMenuSelection(senderPhone, textContent)) {
+  if (textContent && (await handleMenuSelection(senderPhone, textContent))) {
     return // Menu selection handled
   }
 
@@ -454,7 +459,9 @@ async function sendInteractiveMenu(recipientPhone: string): Promise<void> {
   } catch (err: unknown) {
     // Fallback to plain text if interactive not supported
     const message = err instanceof Error ? err.message : 'Unknown error'
-    logger.warn('[WhatsApp Webhook] Interactive menu failed, falling back to text:', { error: String(message) })
+    logger.warn('[WhatsApp Webhook] Interactive menu failed, falling back to text:', {
+      error: String(message),
+    })
     await sendWhatsAppMessage(
       recipientPhone,
       `👋 ¡Bienvenido a ${getSiteName()}!\n\n¿Qué buscas?\n${MENU_CATEGORIES.map((c, i) => `${i + 1}. ${c.title}`).join('\n')}\n\n💡 Envía un código (ej: TRC-00123) para consultar un vehículo.`,
@@ -472,7 +479,7 @@ function isMenuSelection(textContent: string): string | null {
   if (match?.[1]) return match[1]
 
   // Match numeric selection "1", "2", etc.
-  const num = parseInt(textContent.trim(), 10)
+  const num = Number.parseInt(textContent.trim(), 10)
   if (num >= 1 && num <= MENU_CATEGORIES.length) {
     return MENU_CATEGORIES[num - 1]?.id ?? null
   }
@@ -480,10 +487,7 @@ function isMenuSelection(textContent: string): string | null {
   return null
 }
 
-async function handleMenuSelection(
-  senderPhone: string,
-  textContent: string,
-): Promise<boolean> {
+async function handleMenuSelection(senderPhone: string, textContent: string): Promise<boolean> {
   const categoryId = isMenuSelection(textContent)
   if (!categoryId) return false
 

@@ -64,11 +64,7 @@ export interface WriteBehindCache<T extends Record<string, unknown>> {
 export function createWriteBehindCache<T extends Record<string, unknown>>(
   options: WriteBehindOptions,
 ): WriteBehindCache<T> {
-  const {
-    flushIntervalMs = 5000,
-    maxRetries = 3,
-    cacheTtlMs = 60_000,
-  } = options
+  const { flushIntervalMs: _flushIntervalMs = 5000, maxRetries = 3, cacheTtlMs = 60_000 } = options
 
   const cache = new Map<string, CacheEntry<T>>()
   let _flushInterval: ReturnType<typeof setInterval> | null = null

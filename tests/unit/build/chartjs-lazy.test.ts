@@ -22,13 +22,20 @@ describe('Chart.js lazy loading', () => {
     for (const file of files) {
       const content = readFile(file)
       // Only flag non-type imports
-      if (/import\s+\{[^}]*Chart[^}]*\}\s+from\s+['"]chart\.js['"]/.test(content) &&
-          !/import\s+type\s+/.test(content.match(/import\s+.*Chart.*from\s+['"]chart\.js['"]/)?.[0] ?? '')) {
+      if (
+        /import\s+\{[^}]*Chart[^}]*\}\s+from\s+['"]chart\.js['"]/.test(content) &&
+        !/import\s+type\s+/.test(
+          content.match(/import\s+(?:\S.*)?Chart.*from\s+['"]chart\.js['"]/)?.[0] ?? '',
+        )
+      ) {
         staticImports.push(file)
       }
     }
 
-    expect(staticImports, `Static Chart.js imports found in: ${staticImports.join(', ')}`).toHaveLength(0)
+    expect(
+      staticImports,
+      `Static Chart.js imports found in: ${staticImports.join(', ')}`,
+    ).toHaveLength(0)
   })
 
   it('Chart.js usage is via defineAsyncComponent', () => {
@@ -42,10 +49,10 @@ describe('Chart.js lazy loading', () => {
       const fullPath = resolve(ROOT, file)
       if (!existsSync(fullPath)) continue
       const content = readFile(file)
-      expect(content, `${file} should use defineAsyncComponent for Chart.js`)
-        .toContain('defineAsyncComponent')
-      expect(content, `${file} should dynamically import chart.js`)
-        .toContain("import('chart.js')")
+      expect(content, `${file} should use defineAsyncComponent for Chart.js`).toContain(
+        'defineAsyncComponent',
+      )
+      expect(content, `${file} should dynamically import chart.js`).toContain("import('chart.js')")
     }
   })
 
@@ -59,8 +66,9 @@ describe('Chart.js lazy loading', () => {
       const fullPath = resolve(ROOT, file)
       if (!existsSync(fullPath)) continue
       const content = readFile(file)
-      expect(content, `${file} should dynamically import vue-chartjs`)
-        .toContain("import('vue-chartjs')")
+      expect(content, `${file} should dynamically import vue-chartjs`).toContain(
+        "import('vue-chartjs')",
+      )
     }
   })
 
@@ -73,7 +81,11 @@ describe('Chart.js lazy loading', () => {
       const lines = content.split('\n')
       for (const line of lines) {
         // Match top-level imports from chart.js that are NOT type-only
-        if (line.match(/^import\s+\{/) && line.includes("from 'chart.js'") && !line.includes('import type')) {
+        if (
+          line.match(/^import\s+\{/) &&
+          line.includes("from 'chart.js'") &&
+          !line.includes('import type')
+        ) {
           violations.push(file)
         }
       }

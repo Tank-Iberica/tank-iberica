@@ -24,7 +24,8 @@ describe('siteConfig', () => {
     else delete process.env.SITE_EMAIL
     if (origBrandPrimary !== undefined) process.env.BRAND_COLOR_PRIMARY = origBrandPrimary
     else delete process.env.BRAND_COLOR_PRIMARY
-    if (origBrandPrimaryDark !== undefined) process.env.BRAND_COLOR_PRIMARY_DARK = origBrandPrimaryDark
+    if (origBrandPrimaryDark !== undefined)
+      process.env.BRAND_COLOR_PRIMARY_DARK = origBrandPrimaryDark
     else delete process.env.BRAND_COLOR_PRIMARY_DARK
     if (origBrandAccent !== undefined) process.env.BRAND_COLOR_ACCENT = origBrandAccent
     else delete process.env.BRAND_COLOR_ACCENT
@@ -140,7 +141,7 @@ describe('siteConfig', () => {
 
   it('BRAND_COLORS all values are valid hex colors', async () => {
     const { BRAND_COLORS } = await import('../../../server/utils/siteConfig')
-    const hexPattern = /^#[0-9a-fA-F]{6}$/
+    const hexPattern = /^#[0-9a-f]{6}$/i
     Object.values(BRAND_COLORS).forEach((color) => {
       expect(color).toMatch(hexPattern)
     })

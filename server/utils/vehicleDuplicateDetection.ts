@@ -40,7 +40,7 @@ export function normalizeText(text: string): string {
   return text
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\u0300-\u036F]/g, '')
     .replace(/[^a-z0-9\s]/g, '')
     .replace(/\s+/g, ' ')
     .trim()
@@ -67,7 +67,13 @@ export function hashImageUrl(url: string): string {
  */
 export function calculateSimilarity(
   input: DuplicateCheckInput,
-  candidate: { brand: string; model: string; year: number | null; price: number | null; cover_url: string | null },
+  candidate: {
+    brand: string
+    model: string
+    year: number | null
+    price: number | null
+    cover_url: string | null
+  },
 ): { score: number; reasons: string[] } {
   let score = 0
   const reasons: string[] = []
@@ -161,7 +167,5 @@ export async function findDuplicates(
   }
 
   // Sort by similarity descending, take top N
-  return candidates
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, limit)
+  return candidates.sort((a, b) => b.similarity - a.similarity).slice(0, limit)
 }

@@ -597,14 +597,12 @@ describe('simpleMode', () => {
     c.simpleMode.value = true
     await c.save()
 
-    expect(updateMock).toHaveBeenCalledWith(
-      expect.objectContaining({ simple_mode: true }),
-    )
+    expect(updateMock).toHaveBeenCalledWith(expect.objectContaining({ simple_mode: true }))
   })
 
   it('defaults to false when dealer data has no simple_mode field', async () => {
     const dealerWithout = { ...sampleDealer }
-    // @ts-ignore
+    // @ts-expect-error testing missing field
     delete dealerWithout.simple_mode
     vi.stubGlobal('useSupabaseClient', () => ({
       from: () => makeChain(dealerWithout),

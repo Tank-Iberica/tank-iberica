@@ -30,7 +30,8 @@ describe('Service Worker precache & runtime caching', () => {
     it('page cache has reasonable expiration (max 20 entries, 7 days)', () => {
       // Verify maxEntries and 7-day TTL for navigations
       const navCacheMatch = CONFIG.match(
-        /page-navigations[\s\S]*?maxEntries:\s*(\d+)[\s\S]*?maxAgeSeconds:\s*([^,}]+)/
+        // eslint-disable-next-line regexp/no-super-linear-backtracking
+        /page-navigations[\s\S]*?maxEntries:\s*(\d+)[\s\S]*?maxAgeSeconds:\s*([^,}]+)/,
       )
       expect(navCacheMatch).toBeTruthy()
       if (navCacheMatch) {
@@ -66,9 +67,7 @@ describe('Service Worker precache & runtime caching', () => {
     })
 
     it('Supabase API cache has short TTL (5 min)', () => {
-      const supabaseMatch = CONFIG.match(
-        /supabase-api[\s\S]*?maxAgeSeconds:\s*([^,}]+)/
-      )
+      const supabaseMatch = CONFIG.match(/supabase-api[\s\S]*?maxAgeSeconds:\s*([^,}]+)/)
       expect(supabaseMatch).toBeTruthy()
       if (supabaseMatch) {
         // 60 * 5 = 300

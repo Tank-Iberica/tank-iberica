@@ -20,7 +20,7 @@ describe('VehicleCard prefetch', () => {
 
   it('NuxtLink has prefetch attribute', () => {
     // Check that NuxtLink has prefetch (Nuxt 3 viewport-based prefetching)
-    expect(cardContent).toMatch(/<NuxtLink[^>]*\bprefetch\b/)
+    expect(cardContent).toMatch(/<NuxtLink[^>]*\sprefetch[\s/>]/)
   })
 
   it('NuxtLink uses dynamic vehicle slug route', () => {
@@ -57,6 +57,9 @@ describe('NuxtLink prefetch across catalog components', () => {
       }
     }
 
-    expect(missingPrefetch, `NuxtLinks missing prefetch: ${missingPrefetch.join(', ')}`).toHaveLength(0)
+    expect(
+      missingPrefetch,
+      `NuxtLinks missing prefetch: ${missingPrefetch.join(', ')}`,
+    ).toHaveLength(0)
   })
 })

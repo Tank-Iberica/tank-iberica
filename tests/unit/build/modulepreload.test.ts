@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { existsSync, readdirSync } from 'node:fs'
+import { existsSync, readdirSync, statSync, readFileSync } from 'node:fs'
 import { resolve, join } from 'node:path'
 
 /**
@@ -12,24 +12,24 @@ describe('Modulepreload readiness', () => {
   const hasBuild = existsSync(nuxtDir)
 
   it.skipIf(!hasBuild)('build produces JS modules (ESM chunks)', () => {
-    const jsFiles = readdirSync(nuxtDir).filter(f => f.endsWith('.js'))
+    const jsFiles = readdirSync(nuxtDir).filter((f) => f.endsWith('.js'))
     expect(jsFiles.length).toBeGreaterThan(50) // Should have many code-split chunks
   })
 
   it.skipIf(!hasBuild)('entry chunk exists', () => {
-    const jsFiles = readdirSync(nuxtDir).filter(f => f.endsWith('.js'))
+    const jsFiles = readdirSync(nuxtDir).filter((f) => f.endsWith('.js'))
     // Nuxt entry is typically named with a hash, look for reasonable entry size
-    const entryCandidates = jsFiles.filter(f => {
-      const stat = require('fs').statSync(join(nuxtDir, f))
+    const entryCandidates = jsFiles.filter((f) => {
+      const stat = statSync(join(nuxtDir, f))
       return stat.size > 100 * 1024 // Entry is usually > 100KB
     })
     expect(entryCandidates.length).toBeGreaterThan(0)
   })
 
   it.skipIf(!hasBuild)('has route-level code splitting (many small chunks)', () => {
-    const jsFiles = readdirSync(nuxtDir).filter(f => f.endsWith('.js'))
-    const smallChunks = jsFiles.filter(f => {
-      const stat = require('fs').statSync(join(nuxtDir, f))
+    const jsFiles = readdirSync(nuxtDir).filter((f) => f.endsWith('.js'))
+    const smallChunks = jsFiles.filter((f) => {
+      const stat = statSync(join(nuxtDir, f))
       return stat.size < 50 * 1024
     })
     // Most chunks should be small (route-level splits)
@@ -38,10 +38,7 @@ describe('Modulepreload readiness', () => {
   })
 
   it('nuxt.config has font preload enabled', () => {
-    const nuxtConfig = require('fs').readFileSync(
-      resolve(__dirname, '../../../nuxt.config.ts'),
-      'utf-8',
-    )
+    const nuxtConfig = readFileSync(resolve(__dirname, '../../../nuxt.config.ts'), 'utf-8')
     expect(nuxtConfig).toContain('preload: true')
   })
 })

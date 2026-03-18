@@ -8,8 +8,8 @@
  * Output: docs/composable-deps.md (Mermaid flowchart)
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs'
-import { resolve, relative, basename } from 'node:path'
+import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
+import { resolve, relative } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const COMPOSABLES_DIR = resolve(ROOT, 'app/composables')

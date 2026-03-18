@@ -10,7 +10,7 @@
  */
 
 const SITE_URL = getArg('--site') || process.env.SITE_URL || 'https://tracciona.com'
-const CONCURRENCY = parseInt(getArg('--concurrency') || '3', 10)
+const CONCURRENCY = Number.parseInt(getArg('--concurrency') || '3', 10)
 const TIMEOUT_MS = 15_000
 
 // ── Top pages to warm ──────────────────────────────────────────────────────────

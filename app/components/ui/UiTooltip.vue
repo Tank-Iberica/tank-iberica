@@ -26,12 +26,7 @@
       </svg>
     </button>
     <Transition name="tooltip">
-      <span
-        v-if="show"
-        :id="tooltipId"
-        role="tooltip"
-        class="ui-tooltip-content"
-      >
+      <span v-if="show" :id="tooltipId" role="tooltip" class="ui-tooltip-content">
         <slot>{{ text }}</slot>
       </span>
     </Transition>
@@ -41,7 +36,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const props = defineProps<{
+const _props = defineProps<{
   text?: string
   label?: string
 }>()
@@ -95,7 +90,9 @@ const tooltipId = `tooltip-${Math.random().toString(36).slice(2, 8)}`
 }
 
 .tooltip-enter-active {
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
 }
 
 .tooltip-leave-active {

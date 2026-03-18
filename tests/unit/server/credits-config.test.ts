@@ -75,12 +75,12 @@ describe('CREDIT_COSTS', () => {
 
 describe('BRAND_COLORS', () => {
   it('primary is valid hex', () => {
-    expect(BRAND_COLORS.primary).toMatch(/^#[0-9a-fA-F]{6}$/)
+    expect(BRAND_COLORS.primary).toMatch(/^#[0-9a-f]{6}$/i)
   })
 
   it('all colors are valid hex', () => {
     for (const [key, value] of Object.entries(BRAND_COLORS)) {
-      expect(value, `${key} should be hex`).toMatch(/^#[0-9a-fA-F]{6}$/)
+      expect(value, `${key} should be hex`).toMatch(/^#[0-9a-f]{6}$/i)
     }
   })
 

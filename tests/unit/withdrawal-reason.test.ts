@@ -100,7 +100,7 @@ describe('Withdrawal Reasons (#37)', () => {
     it('should reset modal state after confirmation', () => {
       let withdrawalModalOpen = true
       let withdrawalVehicle: { id: string } | null = { id: 'v-1' }
-      let withdrawalReason = 'sold_elsewhere'
+      const _withdrawalReason = 'sold_elsewhere'
 
       // Simulate confirmWithdrawal cleanup
       withdrawalModalOpen = false

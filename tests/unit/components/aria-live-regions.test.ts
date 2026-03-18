@@ -54,21 +54,15 @@ describe('UiCharCounter — aria-live', () => {
 describe('SubscribeModal error text — aria-live', () => {
   it('error text template includes role="alert" and aria-live="assertive"', async () => {
     // Read the source file to verify the attribute is present
-    const fs = await import('fs')
-    const source = fs.readFileSync(
-      'app/components/modals/SubscribeModal.vue',
-      'utf-8',
-    )
+    const fs = await import('node:fs')
+    const source = fs.readFileSync('app/components/modals/SubscribeModal.vue', 'utf-8')
     expect(source).toContain('aria-live="assertive"')
     expect(source).toContain('class="error-text"')
   })
 
   it('success message template includes aria-live="polite"', async () => {
-    const fs = await import('fs')
-    const source = fs.readFileSync(
-      'app/components/modals/SubscribeModal.vue',
-      'utf-8',
-    )
+    const fs = await import('node:fs')
+    const source = fs.readFileSync('app/components/modals/SubscribeModal.vue', 'utf-8')
     expect(source).toContain('class="success-message" aria-live="polite"')
   })
 })
@@ -77,11 +71,8 @@ describe('SubscribeModal error text — aria-live', () => {
 
 describe('ReportModal success state — aria-live', () => {
   it('success div includes aria-live="polite"', async () => {
-    const fs = await import('fs')
-    const source = fs.readFileSync(
-      'app/components/modals/ReportModal.vue',
-      'utf-8',
-    )
+    const fs = await import('node:fs')
+    const source = fs.readFileSync('app/components/modals/ReportModal.vue', 'utf-8')
     expect(source).toContain('class="report-success" aria-live="polite"')
   })
 })
@@ -90,11 +81,8 @@ describe('ReportModal success state — aria-live', () => {
 
 describe('ConversationPanel messages area — aria-live', () => {
   it('messages area includes aria-live="polite"', async () => {
-    const fs = await import('fs')
-    const source = fs.readFileSync(
-      'app/components/conversation/ConversationPanel.vue',
-      'utf-8',
-    )
+    const fs = await import('node:fs')
+    const source = fs.readFileSync('app/components/conversation/ConversationPanel.vue', 'utf-8')
     expect(source).toContain('class="messages-area" aria-live="polite"')
   })
 })
@@ -103,11 +91,8 @@ describe('ConversationPanel messages area — aria-live', () => {
 
 describe('ImageUploader error — aria-live', () => {
   it('error paragraph includes role="alert" and aria-live', async () => {
-    const fs = await import('fs')
-    const source = fs.readFileSync(
-      'app/components/shared/ImageUploader.vue',
-      'utf-8',
-    )
+    const fs = await import('node:fs')
+    const source = fs.readFileSync('app/components/shared/ImageUploader.vue', 'utf-8')
     expect(source).toContain('class="uploader-error" role="alert" aria-live="assertive"')
   })
 })
@@ -116,11 +101,8 @@ describe('ImageUploader error — aria-live', () => {
 
 describe('DashboardPhotoUpload error — aria-live', () => {
   it('error div includes aria-live="assertive"', async () => {
-    const fs = await import('fs')
-    const source = fs.readFileSync(
-      'app/components/dashboard/DashboardPhotoUpload.vue',
-      'utf-8',
-    )
+    const fs = await import('node:fs')
+    const source = fs.readFileSync('app/components/dashboard/DashboardPhotoUpload.vue', 'utf-8')
     expect(source).toContain('class="upload-error" role="alert" aria-live="assertive"')
   })
 })

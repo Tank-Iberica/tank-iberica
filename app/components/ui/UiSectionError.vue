@@ -1,6 +1,7 @@
 <template>
   <NuxtErrorBoundary @error="handleError">
     <slot />
+    <!-- eslint-disable-next-line vue/no-unused-vars -->
     <template #error="{ error, clearError }">
       <div class="section-error" role="alert">
         <svg
@@ -16,7 +17,9 @@
           <line x1="12" y1="8" x2="12" y2="12" />
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
-        <p class="section-error-text">{{ message || $t('error.sectionFailed', 'No se pudo cargar esta sección') }}</p>
+        <p class="section-error-text">
+          {{ message || $t('error.sectionFailed', 'No se pudo cargar esta sección') }}
+        </p>
         <button class="section-error-retry" @click="clearError">
           {{ $t('common.retry', 'Reintentar') }}
         </button>
