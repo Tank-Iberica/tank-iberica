@@ -59,9 +59,22 @@
 - **Header actualizado:** ~182 done → **~300 done** (incl. Roadmap Autónomo v3)
 - **Excluidos:** #46/#49 (specs-only, no full implementation)
 
+### Post-roadmap fixes (18-mar sesión 2)
+
+- **Typecheck fixes:** 12 archivos corregidos (duplicate attrs, wrong imports, missing imports, JSONB casts, untyped table casts, duplicate component name)
+- **Lint fixes:** 30 errores pre-existentes resueltos (unused imports, node:fs protocol, regex patterns, @ts-ignore→@ts-expect-error, Number.parseInt)
+- **Push exitoso:** `228ff5d..8c3491b main → main` (typecheck 0 errors + lint 0 errors)
+- **Commits:** `869aed9` (typecheck/eslint fixes) + `8c3491b` (pre-existing lint)
+
 ### Pendiente
 
-- **Siguiente:** Commit selectivo de todo el trabajo del roadmap v3 + backlog sync
+- **Siguiente:** Ejecutar items del backlog por orden de fase
+
+### Prompt para continuar
+
+`Roadmap v3 completo, commiteado y pushed. Typecheck 0 errors, lint 0 errors. Continuar con items del backlog por orden de fase.`
+
+CLOSING_SESSION
 
 ---
 

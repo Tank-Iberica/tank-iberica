@@ -78,7 +78,7 @@
 - **Suite (17-mar auditoría)**: 894 tests verificados en 34 archivos del roadmap, 0 failures. Fixes: #52/#53 (reviewHelpers.ts), #84 (verifyHealthAccess).
 - **Suite (18-mar post-fixes)**: 938 files, 17,720 tests, 17,685 passed, 2 flaky pre-existing (audit-hardcoding timing, useDashboardExportar async import). Fixes: MetricsKpiCards (5 KPIs), useCloudinaryUpload (validateImageMagicBytes mock + flushMicrotasks).
 - **Typecheck (14-mar sesión #5)**: 0 errores TS. Todas las columnas vehicles validadas contra types/supabase.ts.
-- **ESLint (14-mar)**: ~52 errors pre-existentes (L-01): `no-explicit-any` en server routes + `no-unused-vars` en tests. Hooks pre-commit/pre-push bloquean. Commits requieren `--no-verify` hasta limpiar.
+- **ESLint (18-mar)**: 0 errors. Todos los pre-existentes resueltos (30 errores en 14 archivos). Pre-commit + pre-push hooks pasan sin `--no-verify`.
 - **Backlog total (14-mar)**: ~540 items (33 bloques). Casi todos S-sized autónomos completados/verificados.
 - **Sesiones autónomas 14-mar (#1-#5)**: 130+ S/M tasks verificados como ya hechos. Implementados: #221 select('\*') cleanup, #212 views fix, #227/#228 de-hardcoding 8 archivos, typecheck 0 errores. Quedan: L-sized, external APIs, fundadores.
 - **Nuevos composables (14-mar)**: useTopDealers, useVirtualList, usePresence, useReferral, useAbTest, useFormAutosave (pre-existente)
@@ -336,6 +336,12 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **nuxi typecheck OOM:** Default heap insuficiente para proyecto grande. Usar `NODE_OPTIONS="--max-old-space-size=8192" npx vue-tsc --noEmit`.
 - **Conflict resolution strategy:** Identificar qué archivos fueron modificados por cada fase (`git diff --name-only commitA..commitB`) para saber cuáles necesitan merge manual vs bulk `checkout --theirs/--ours`.
 - **TS fix patterns post-merge agentes:** `serverSupabaseServiceRole(event) as any` para tablas no generadas, logger API (agents usaban pino-style `(obj, msg)`, proyecto usa `(msg, obj)`), `as never` para insert/update, `Array.from()` en vez de spread en Map/Set.
+- **H3-explicit files need explicit imports:** Files that `import { defineEventHandler } from 'h3'` don't get Nuxt auto-imports — must explicitly `import { serverSupabaseUser } from '#supabase/server'`, etc.
+- **Server-side Supabase:** Use `serverSupabaseServiceRole(event)` NOT `useSupabaseClient()` (client-side only).
+- **Untyped tables:** `web_vitals`, `dashboard_aggregates` not in generated types → `(db.from as any)('table')` + `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
+- **Vehicles status enum:** `'published'` (not `'active'`); dealers status needs `as never` cast.
+- **Duplicate Nuxt components:** `ui/EmptyState.vue` + `ui/UiEmptyState.vue` both resolve to `UiEmptyState` → renamed to `EmptyStateLegacy.vue`.
+- **JSONB fields from Supabase:** Cast with `as Record<string, string> | null` before accessing properties.
 - **Chrome-profile en git:** NUNCA trackear archivos de Chrome profile. Fix: `.gitignore` + `.eslintignore` + `git rm --cached -r`.
 - **Stash cleanup verification:** Antes de `git stash drop`, comparar `git show stash@{N}:file | wc -l` vs `wc -l file` — si working tree tiene más líneas, el stash es supersedido.
 - **Pre-push hook en branch deletion:** `git push origin --delete` TAMBIÉN dispara pre-push hook. Usar `--no-verify` si solo se eliminan ramas.
@@ -418,7 +424,7 @@ vi.stubGlobal('onUnmounted', vi.fn())
 - **127/127 items** completados en 10 fases (2 sesiones overnight)
 - **386 tests nuevos** (15 archivos), todos passing
 - **9 archivos de código nuevos:** manifest.webmanifest, apiKeyRotation, gracefulDegradation, readThroughCache, requestCoalescing, defineProtectedHandler, compute-aggregates, SSE stream, warmup-cache
-- **Nada commiteado** — todo en working tree pendiente de review
+- **Commiteado y pushed:** `f00d921` (roadmap v3) + `2b4de9a` (docs) + `869aed9` (typecheck fixes) + `8c3491b` (lint fixes)
 - **Excluidos (~48):** Twilio, Sentry, InfoCar, CF WAF blocked, Nuxt 4, k6 real, E2E Playwright, push notif
 - **Fixes aplicados durante ejecución:** RLS audit function-body-only check, UI component names (DataTable not UiDataTable), Vitest `||` chaining → `.toMatch(/regex/)`, migration content assertions
 
